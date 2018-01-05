@@ -35,9 +35,6 @@ const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
 	? process.env.MINIFY_JS === 'true'
 	: ! isDevelopment;
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
-const shouldBuildSourceMaps = process.env.hasOwnProperty( 'SOURCEMAPS' )
-	? process.env.SOURCEMAPS === 'true'
-	: false;
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -255,7 +252,7 @@ if ( isDevelopment ) {
 	webpackConfig.devtool = '#eval';
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
-	webpackConfig.devtool = false;
+	webpackConfig.devtool = process.env.SOURCEMAP || false;
 }
 
 if ( ! config.isEnabled( 'desktop' ) ) {
@@ -273,17 +270,13 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	);
 }
 
-if ( shouldBuildSourceMaps ) {
-	webpackConfig.devtool = 'source-map';
-}
-
 if ( shouldMinify ) {
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
 			cache: true,
 			parallel: true,
 			uglifyOptions: { ecma: 5 },
-			sourceMap: shouldBuildSourceMaps,
+			sourceMap: Boolean( process.env.SOURCEMAP ),
 		} )
 	);
 }
