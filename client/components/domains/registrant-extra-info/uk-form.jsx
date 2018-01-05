@@ -14,7 +14,6 @@ import { camelCase, difference, includes, isEmpty, keys, map, pick } from 'lodas
  * Internal dependencies
  */
 import { getContactDetailsCache } from 'state/selectors';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -54,16 +53,11 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 			OTHER: translate( 'UK Entity that does not fit another category' ),
 			FOTHER: translate( 'Non-UK Entity that does not fit another category' ),
 		};
-		const registrantTypeOptions = map( registrantTypes, ( text, optionValue ) => (
+		this.registrantTypeOptions = map( registrantTypes, ( text, optionValue ) => (
 			<option value={ optionValue } key={ optionValue }>
 				{ text }
 			</option>
 		) );
-
-		this.state = {
-			registrantTypes,
-			registrantTypeOptions,
-		};
 	}
 
 	componentWillMount() {
@@ -125,7 +119,7 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 
 	renderRegistrationNumberField() {
 		const { contactDetails, translate } = this.props;
-		const { registrationNumber } = contactDetails.extra;
+		const { registrationNumber } = contactDetails.extra || '';
 		return (
 			<div>
 				<FormFieldset>
@@ -151,7 +145,6 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 
 	render() {
 		const { translate } = this.props;
-		const { registrantTypeOptions } = this.state;
 		const { registrantType } = {
 			...defaultValues,
 			...this.props.contactDetails.extra,
@@ -166,7 +159,9 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 				</p>
 				<FormFieldset>
 					<FormLabel htmlFor="registrant-type">
-						{ translate( 'Choose the option that best describes your United Kingdom presence:' ) }
+						{ translate(
+							'Choose the option that best describes your presence in the United Kingdom:'
+						) }
 					</FormLabel>
 					<FormSelect
 						id="registrant-type"
@@ -174,7 +169,7 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 						className="registrant-extra-info__form-registrant-type"
 						onChange={ this.handleChangeEvent }
 					>
-						{ registrantTypeOptions }
+						{ this.registrantTypeOptions }
 					</FormSelect>
 				</FormFieldset>
 
@@ -192,7 +187,6 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 export default connect(
 	state => ( {
 		contactDetails: getContactDetailsCache( state ),
-		userWpcomLang: getCurrentUserLocale( state ),
 	} ),
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoUkForm ) );
