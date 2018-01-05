@@ -2,6 +2,7 @@
 /**
  * Internal dependencies
  */
+import { createNoteSuccess } from 'woocommerce/state/sites/orders/notes/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import {
 	orderInvoiceFailure,
@@ -34,6 +35,7 @@ export const onError = ( action, error ) => dispatch => {
 export const onSuccess = ( action, { data } ) => dispatch => {
 	const { siteId, orderId } = action;
 	dispatch( orderInvoiceSuccess( siteId, orderId, data ) );
+	dispatch( createNoteSuccess( siteId, orderId, data ) );
 	if ( action.onSuccess ) {
 		dispatch( action.onSuccess );
 	}
