@@ -15,9 +15,7 @@ import EmbedViewManager from './views/embed';
 import * as ContactFormView from './views/contact-form';
 import * as VideoView from './views/video';
 import SimplePaymentsView from './views/simple-payments';
-import config from 'config';
-
-const { isEnabled } = config;
+import { isEnabled } from 'config';
 
 /**
  * Module variables

@@ -12,7 +12,7 @@ import { get, isEqual, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import { isEnabled } from 'config';
 import Card from 'components/card';
 import CommentActions from 'my-sites/comments/comment/comment-actions';
 import CommentContent from 'my-sites/comments/comment/comment-content';
@@ -24,8 +24,6 @@ import QueryComment from 'components/data/query-comment';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-
-const { isEnabled } = config;
 
 export class Comment extends Component {
 	static propTypes = {

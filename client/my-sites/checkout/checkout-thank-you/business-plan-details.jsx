@@ -15,11 +15,9 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import config from 'config';
+import { isEnabled } from 'config';
 import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
-
-const { isEnabled } = config;
 
 function trackOnboardingButtonClick() {
 	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );

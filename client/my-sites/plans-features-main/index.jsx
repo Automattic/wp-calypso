@@ -32,13 +32,11 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
-import config from 'config';
+import { isEnabled } from 'config';
 import purchasesPaths from 'me/purchases/paths';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-
-const { isEnabled } = config;
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {

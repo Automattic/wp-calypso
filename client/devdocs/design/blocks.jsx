@@ -15,9 +15,7 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import SearchCard from 'components/search-card';
-import config from 'config';
-
-const { isEnabled } = config;
+import { isEnabled } from 'config';
 
 /**
  * Docs examples

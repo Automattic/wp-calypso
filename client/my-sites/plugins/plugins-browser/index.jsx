@@ -44,10 +44,8 @@ import HeaderButton from 'components/header-button';
 import { isBusiness, isEnterprise, isPremium } from 'lib/products-values';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import Banner from 'components/banner';
-import config from 'config';
+import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
-
-const { isEnabled } = config;
 
 const PluginsBrowser = createReactClass( {
 	displayName: 'PluginsBrowser',

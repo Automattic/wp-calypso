@@ -3,10 +3,8 @@
  * External dependencies
  */
 import page from 'page';
-import config from 'config';
+import { isEnabled } from 'config';
 import { values } from 'lodash';
-
-const { isEnabled } = config;
 
 /**
  * Internal dependencies

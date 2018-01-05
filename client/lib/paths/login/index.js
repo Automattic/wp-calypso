@@ -6,9 +6,7 @@
 
 import { addQueryArgs } from 'lib/url';
 import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
-import config from 'config';
-
-const { isEnabled } = config;
+import config, { isEnabled } from 'config';
 
 export function login(
 	{

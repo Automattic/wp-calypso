@@ -15,7 +15,7 @@ import page from 'page';
  */
 import { addQueryArgs } from 'lib/url';
 import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
-import config from 'config';
+import { isEnabled } from 'config';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
@@ -26,8 +26,6 @@ import {
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-
-const { isEnabled } = config;
 
 export class LoginLinks extends React.Component {
 	static propTypes = {

@@ -19,9 +19,7 @@ import RootChild from 'components/root-child';
 import { getSectionName } from 'state/ui/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { hideView } from 'state/ui/first-view/actions';
-import config from 'config';
-
-const { isEnabled } = config;
+import { isEnabled } from 'config';
 
 // component to avoid having a wrapper element for the transition
 // see: https://facebook.github.io/react/docs/animation.html#rendering-a-single-child

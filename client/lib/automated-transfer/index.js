@@ -8,11 +8,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config, { isEnabled } from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
-
-const { isEnabled } = config;
 
 /**
  * Returns true if Automated Transfer is enabled for the given site

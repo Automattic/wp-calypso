@@ -11,8 +11,7 @@ import { compact, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-const { isEnabled } = config;
+import { isEnabled } from 'config';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';

@@ -11,9 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import config from 'config';
-
-const { isEnabled } = config;
+import { isEnabled } from 'config';
 
 function isCustomizeEnabled() {
 	return isEnabled( 'manage/customize' );
