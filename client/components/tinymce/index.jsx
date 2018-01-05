@@ -87,7 +87,7 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 import i18n from './i18n';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
 
@@ -319,7 +319,7 @@ export default class extends React.Component {
 			// minus the surrounding editor chrome to avoid scrollbars. In the
 			// future, we should calculate from the rendered editor bounds.
 			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
-			autoresize_bottom_margin: viewport.isMobile() ? 10 : 50,
+			autoresize_bottom_margin: isMobile() ? 10 : 50,
 
 			toolbar1: `wpcom_insert_menu,formatselect,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,spellchecker,wp_more,${ ltrButton }wpcom_advanced`,
 			toolbar2:

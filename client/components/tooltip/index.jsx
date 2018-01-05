@@ -12,7 +12,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import Popover from 'components/popover';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 
 /**
  * Module variables
@@ -39,7 +39,7 @@ class Tooltip extends Component {
 	};
 
 	render() {
-		if ( ! this.props.showOnMobile && viewport.isMobile() ) {
+		if ( ! this.props.showOnMobile && isMobile() ) {
 			return null;
 		}
 

@@ -16,7 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
@@ -57,7 +57,7 @@ class MasterbarItemNew extends React.Component {
 	};
 
 	getPopoverPosition = () => {
-		if ( viewport.isMobile() ) {
+		if ( isMobile() ) {
 			return 'bottom';
 		}
 

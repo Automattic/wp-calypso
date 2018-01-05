@@ -18,7 +18,7 @@ import { sectionify } from 'lib/route/path';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import { isATEnabled } from 'lib/automated-transfer';
@@ -86,7 +86,7 @@ class PlansNavigation extends React.Component {
 
 		return (
 			<SectionNav
-				hasPinnedItems={ viewport.isMobile() }
+				hasPinnedItems={ isMobile() }
 				selectedText={ sectionTitle }
 				onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 			>
@@ -157,7 +157,7 @@ class PlansNavigation extends React.Component {
 				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.toggleCartVisibility }
-				pinned={ viewport.isMobile() }
+				pinned={ isMobile() }
 				visible={ this.state.cartVisible }
 				showKeepSearching={ this.state.cartShowKeepSearching }
 				onKeepSearchingClick={ this.onKeepSearchingClick }

@@ -33,7 +33,7 @@ import observe from 'lib/mixins/data-observe';
 import ReaderListsStore from 'lib/reader-lists/lists';
 import userSettings from 'lib/user-settings';
 import userUtils from 'lib/user/utils';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 import { isDiscoverEnabled } from 'reader/discover/helper';
 import { isAutomatticTeamMember } from 'reader/lib/teams';
 import { getTagStreamUrl } from 'reader/route';
@@ -317,7 +317,7 @@ export const shouldRenderAppPromo = ( options = {} ) => {
 	const haveUserSettingsLoaded = userSettings.getSetting( ' is_desktop_app_user' ) === null;
 	const {
 		isDesktopPromoDisabled = store.get( 'desktop_promo_disabled' ),
-		isViewportMobile = viewport.isMobile(),
+		isViewportMobile = isMobile(),
 		isUserLocaleEnglish = 'en' === userUtils.getLocaleSlug(),
 		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
 		isUserDesktopAppUser = haveUserSettingsLoaded ||
