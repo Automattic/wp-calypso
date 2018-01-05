@@ -275,7 +275,7 @@ if ( shouldMinify ) {
 		new UglifyJsPlugin( {
 			cache: true,
 			parallel: true,
-			uglifyOptions: { ecma: 5 },
+			uglifyOptions: { ecma: 5, compress: { passes: 2, toplevel: true } },
 			sourceMap: false,
 		} )
 	);
