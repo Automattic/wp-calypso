@@ -25,7 +25,12 @@ import {
 	getOrderEdits,
 	getOrderWithEdits,
 } from 'woocommerce/state/ui/orders/selectors';
-import { isOrderUpdating, getOrder } from 'woocommerce/state/sites/orders/selectors';
+import {
+	isOrderInvoiceSending,
+	isOrderUpdating,
+	getOrder,
+} from 'woocommerce/state/sites/orders/selectors';
+import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import Main from 'components/main';
 import OrderCustomer from './order-customer';
@@ -33,6 +38,7 @@ import OrderDetails from './order-details';
 import OrderActivityLog from './order-activity-log';
 import { ProtectFormGuard } from 'lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
+import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
 class Order extends Component {
 	componentDidMount() {
@@ -97,11 +103,23 @@ class Order extends Component {
 		this.props.saveOrder( siteId, order, onSuccess, onFailure );
 	};
 
+	triggerInvoice = () => {
+		const { siteId, orderId, translate } = this.props;
+		if ( siteId && orderId ) {
+			const onSuccess = successNotice( translate( 'Order invoice sent.' ), { duration: 5000 } );
+			const onFailure = errorNotice( translate( 'Unable to send order invoice.' ), {
+				duration: 5000,
+			} );
+			this.props.sendOrderInvoice( siteId, orderId, onSuccess, onFailure );
+		}
+	};
+
 	render() {
 		const {
 			className,
 			hasOrderEdits,
 			isEditing,
+			isInvoiceSending,
 			isSaving,
 			order,
 			orderId,
@@ -134,11 +152,23 @@ class Order extends Component {
 			</Button>,
 		];
 		if ( ! isEditing ) {
-			button = (
-				<Button primary onClick={ this.toggleEditing }>
+			button = [
+				<Button key="edit" primary onClick={ this.toggleEditing }>
 					{ translate( 'Edit Order' ) }
-				</Button>
-			);
+				</Button>,
+			];
+			if ( isOrderWaitingPayment( order.status ) ) {
+				button.unshift(
+					<Button
+						key="resend-invoice"
+						onClick={ this.triggerInvoice }
+						busy={ isInvoiceSending }
+						disabled={ isInvoiceSending }
+					>
+						{ translate( 'Resend Invoice' ) }
+					</Button>
+				);
+			}
 		}
 
 		return (
@@ -166,12 +196,14 @@ export default connect(
 		const orderId = parseInt( props.params.order );
 		const isSaving = isOrderUpdating( state, orderId );
 		const isEditing = isCurrentlyEditingOrder( state );
+		const isInvoiceSending = isOrderInvoiceSending( state, orderId );
 		const hasOrderEdits = ! isEmpty( getOrderEdits( state ) );
 		const order = isEditing ? getOrderWithEdits( state ) : getOrder( state, orderId );
 
 		return {
 			hasOrderEdits,
 			isEditing,
+			isInvoiceSending,
 			isSaving,
 			order,
 			orderId,
@@ -181,7 +213,7 @@ export default connect(
 	},
 	dispatch =>
 		bindActionCreators(
-			{ clearOrderEdits, editOrder, fetchNotes, fetchOrder, saveOrder },
+			{ clearOrderEdits, editOrder, fetchNotes, fetchOrder, saveOrder, sendOrderInvoice },
 			dispatch
 		)
 )( localize( Order ) );
