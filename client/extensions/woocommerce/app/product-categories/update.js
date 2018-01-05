@@ -33,6 +33,10 @@ class ProductCategoryUpdate extends React.Component {
 	static propTypes = {
 		params: PropTypes.object,
 		className: PropTypes.string,
+		site: PropTypes.shape( {
+			ID: PropTypes.number,
+			slug: PropTypes.string,
+		} ),
 		category: PropTypes.shape( {
 			id: PropTypes.isRequired,
 		} ),
