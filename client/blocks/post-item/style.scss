@@ -72,7 +72,8 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item__title {
 	@extend %content-font;
-	margin-bottom: 2px;
+	padding-bottom: 2px;
+	padding-right: 8px;
 	font-weight: 700;
 	font-size: 18px;
 	line-height: 1.2;
@@ -120,5 +121,50 @@ a.post-item__title-link:visited {
 }
 
 .post-item__meta-time-status {
+	display: inline-block;
 	margin-right: 16px;
+}
+
+.post-item__time-status-link,
+.post-item__time-status-link:active,
+.post-item__time-status-link:visited {
+	color: $gray-text-min;
+	display: block;
+}
+
+.post-type-list__post-thumbnail-wrapper {
+	display: none;
+	position: relative;
+	width: 80px;
+	align-self: stretch;
+	overflow: hidden;
+
+	margin: 8px 0;
+	.post-item__card.is-mini & {
+		margin: 0;
+	}
+
+	&.has-image,
+	.post-item__card.is-placeholder & {
+		display: block;
+	}
+
+	.post-item__card.is-placeholder & {
+		@include placeholder;
+	}
+}
+
+.post-type-list__post-thumbnail-link {
+	display: block;
+	height: 100%;
+}
+
+.post-type-list__post-thumbnail {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+	height: 100%;
+	max-height: 80px;
+	max-width: none;
 }
