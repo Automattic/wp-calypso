@@ -44,7 +44,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 
 		const transferEligibleMoment = moment( transferEligibleDate );
 
-		let heading = translate(
+		const heading = translate(
 			'{{strong}}%(domain)s{{/strong}} can be transferred in %(transferDelayInDays)s days.',
 			{
 				args: {
@@ -57,7 +57,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 			}
 		);
 
-		let message = translate(
+		const message = translate(
 			"You don't have to wait though. Connect your domain to your site now, without transferring it. " +
 				'{{a}}Learn how{{/a}}.',
 			{
