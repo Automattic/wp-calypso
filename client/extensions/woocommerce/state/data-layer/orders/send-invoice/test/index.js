@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { sendOrderInvoice } from 'woocommerce/state/ui/orders/send-invoice/actions';
+import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 import { fetch } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 

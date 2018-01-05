@@ -6,7 +6,7 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import {
 	orderInvoiceFailure,
 	orderInvoiceSuccess,
-} from 'woocommerce/state/ui/orders/send-invoice/actions';
+} from 'woocommerce/state/sites/orders/send-invoice/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_ORDER_INVOICE_SEND } from 'woocommerce/state/action-types';
 
