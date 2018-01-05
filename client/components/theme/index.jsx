@@ -205,7 +205,7 @@ export class Theme extends Component {
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
 
 		return (
-			<Card className={ themeClass }>
+			<Card className={ themeClass } data-e2e-theme={ this.props.theme.id }>
 				{ this.isBeginnerTheme() && (
 					<Ribbon className="theme__ribbon" color="green">
 						{ translate( 'Beginner' ) }
