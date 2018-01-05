@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 import { pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -151,4 +150,4 @@ class ActivityLogItem extends Component {
 	}
 }
 
-export default connect()( localize( ActivityLogItem ) );
+export default localize( ActivityLogItem );
