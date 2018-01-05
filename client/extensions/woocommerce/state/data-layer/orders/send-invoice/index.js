@@ -23,11 +23,21 @@ export function fromApi( response ) {
 	return response;
 }
 
-export const onError = ( { siteId, orderId }, error ) =>
-	orderInvoiceFailure( siteId, orderId, error );
+export const onError = ( action, error ) => dispatch => {
+	const { siteId, orderId } = action;
+	dispatch( orderInvoiceFailure( siteId, orderId, error ) );
+	if ( action.onFailure ) {
+		dispatch( action.onFailure );
+	}
+};
 
-export const onSuccess = ( { siteId, orderId }, { data } ) =>
-	orderInvoiceSuccess( siteId, orderId, data );
+export const onSuccess = ( action, { data } ) => dispatch => {
+	const { siteId, orderId } = action;
+	dispatch( orderInvoiceSuccess( siteId, orderId, data ) );
+	if ( action.onSuccess ) {
+		dispatch( action.onSuccess );
+	}
+};
 
 export default {
 	[ WOOCOMMERCE_ORDER_INVOICE_SEND ]: [

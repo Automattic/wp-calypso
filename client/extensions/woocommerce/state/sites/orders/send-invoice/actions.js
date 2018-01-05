@@ -9,11 +9,13 @@ import {
 	WOOCOMMERCE_ORDER_INVOICE_SEND_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const sendOrderInvoice = ( siteId, orderId ) => {
+export const sendOrderInvoice = ( siteId, orderId, onSuccess, onFailure ) => {
 	return {
 		type: WOOCOMMERCE_ORDER_INVOICE_SEND,
 		siteId,
 		orderId,
+		onSuccess,
+		onFailure,
 	};
 };
 
