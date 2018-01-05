@@ -468,7 +468,7 @@ describe( 'actions', () => {
 			ID: 2916284,
 			jetpack: true,
 			canUpdateFiles: true,
-			isMainNetworkSite: () => true,
+			isMainNetworkSite: true,
 			capabilities: {
 				manage_options: true,
 			},
@@ -537,7 +537,7 @@ describe( 'actions', () => {
 			ID: 2916284,
 			jetpack: true,
 			canUpdateFiles: true,
-			isMainNetworkSite: () => true,
+			isMainNetworkSite: true,
 			capabilities: {
 				manage_options: true,
 			},

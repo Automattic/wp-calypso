@@ -41,5 +41,5 @@ export default {
 	user_can_manage: true,
 	visible: true,
 	wpcom_url: 'example.com/site1',
-	isMainNetworkSite: function() {},
+	isMainNetworkSite: false,
 };
