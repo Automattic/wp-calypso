@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { every, includes, isEmpty, keys, pick, trim } from 'lodash';
+import { every, isEmpty, keys, pick, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -59,6 +59,7 @@ class StoreLocationSetupView extends Component {
 			countryCode: PropTypes.string,
 		} ),
 		adminURL: PropTypes.string.isRequired,
+		onRequestRedirect: PropTypes.func.isRequired,
 		pushDefaultsForCountry: PropTypes.bool.isRequired,
 		settingsGeneralLoaded: PropTypes.bool,
 		storeLocation: PropTypes.shape( {
@@ -85,19 +86,15 @@ class StoreLocationSetupView extends Component {
 					postcode: '',
 					country: 'US',
 				};
-				// If the settings general country is US or CA and it has a street address, use it
-				// Otherwise, if the contact details country is US or CA and it has a street address, use it
-				if (
-					includes( [ 'US', 'CA' ], storeLocation.country ) &&
-					! isEmpty( storeLocation.street )
-				) {
+
+				// If settings general has an address, use it
+				// Otherwise, if the contact details has an address, use it
+				if ( ! isEmpty( storeLocation.street ) ) {
 					address = pick( storeLocation, keys( address ) );
-				} else if (
-					includes( [ 'US', 'CA' ], contactDetails.countryCode ) &&
-					! isEmpty( contactDetails.address1 )
-				) {
+				} else if ( ! isEmpty( contactDetails.address1 ) ) {
 					address = this.getAddressFromContactDetails( contactDetails );
 				}
+
 				this.setState( { address } );
 			}
 		}
@@ -126,7 +123,7 @@ class StoreLocationSetupView extends Component {
 	};
 
 	onNext = event => {
-		const { adminURL, currentUserEmailVerified, siteId, translate } = this.props;
+		const { adminURL, currentUserEmailVerified, onRequestRedirect, siteId, translate } = this.props;
 		event.preventDefault();
 
 		if ( ! currentUserEmailVerified ) {
@@ -149,7 +146,7 @@ class StoreLocationSetupView extends Component {
 			if ( ! isStoreManagementSupportedInCalypsoForCountry( this.state.address.country ) ) {
 				const storeSetupURL =
 					adminURL + 'admin.php?page=wc-setup&step=store_setup&activate_error=false&from=calypso';
-				window.location = storeSetupURL;
+				onRequestRedirect( storeSetupURL );
 			}
 
 			return setSetStoreAddressDuringInitialSetup( siteId, true );

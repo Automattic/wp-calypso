@@ -65,6 +65,10 @@ class Dashboard extends Component {
 		setupChoicesLoading: PropTypes.bool,
 	};
 
+	state = {
+		redirectURL: false,
+	};
+
 	componentDidMount = () => {
 		const { siteId } = this.props;
 
@@ -80,6 +84,21 @@ class Dashboard extends Component {
 		if ( siteId && oldSiteId !== siteId ) {
 			this.fetchStoreData();
 		}
+	};
+
+	// If the user 1) has set the store address in StoreLocationSetupView
+	// and 2) we have a redirectURL, don't render but go ahead and
+	// redirect (i.e. to the WooCommerce Setup Wizard in wp-admin)
+	shouldComponentUpdate = ( nextProps, nextState ) => {
+		const { setStoreAddressDuringInitialSetup } = nextProps;
+		const { redirectURL } = nextState;
+
+		if ( setStoreAddressDuringInitialSetup && redirectURL ) {
+			window.location = redirectURL;
+			return false;
+		}
+
+		return true;
 	};
 
 	fetchStoreData = () => {
@@ -122,6 +141,10 @@ class Dashboard extends Component {
 		return translate( 'Dashboard' );
 	};
 
+	onRequestRedirect = redirectURL => {
+		this.setState( { redirectURL } );
+	};
+
 	renderDashboardSetupContent = () => {
 		const {
 			finishedInstallOfRequiredPlugins,
@@ -153,6 +176,7 @@ class Dashboard extends Component {
 			return (
 				<StoreLocationSetupView
 					adminURL={ adminURL }
+					onRequestRedirect={ this.onRequestRedirect }
 					siteId={ selectedSite.ID }
 					pushDefaultsForCountry={ ! hasProducts }
 				/>
