@@ -3,7 +3,6 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -27,62 +26,64 @@ import SelfHostedInstructions from './self-hosted-instructions';
 import LostPassword from './lost-password';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-export const Login = createReactClass( {
-	displayName: 'Auth',
+class Auth extends React.Component {
+	state = Object.assign(
+		{
+			login: '',
+			password: '',
+			auth_code: '',
+		},
+		AuthStore.get()
+	);
 
-	componentDidMount: function() {
+	componentDidMount() {
 		AuthStore.on( 'change', this.refreshData );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		AuthStore.off( 'change', this.refreshData );
-	},
+	}
 
-	getClickHandler( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
-	},
+	getClickHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
-	getFocusHandler( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	},
+	getFocusHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 
-	refreshData: function() {
+	refreshData = () => {
 		this.setState( AuthStore.get() );
-	},
+	};
 
-	focusInput( input ) {
+	focusInput = input => {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
 			input.focus();
 		}
-	},
+	};
 
-	getInitialState: function() {
-		return Object.assign(
-			{
-				login: '',
-				password: '',
-				auth_code: '',
-			},
-			AuthStore.get()
-		);
-	},
-
-	submitForm: function( event ) {
+	submitForm = event => {
 		event.preventDefault();
 		event.stopPropagation();
 
 		AuthActions.login( this.state.login, this.state.password, this.state.auth_code );
-	},
+	};
 
-	hasLoginDetails: function() {
+	toggleSelfHostedInstructions = () => {
+		const isShowing = ! this.state.showInstructions;
+		this.setState( { showInstructions: isShowing } );
+	};
+
+	handleChange = e => {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
+	};
+
+	hasLoginDetails() {
 		if ( this.state.login === '' || this.state.password === '' ) {
 			return false;
 		}
 
 		return true;
-	},
+	}
 
-	canSubmitForm: function() {
+	canSubmitForm() {
 		// No submission until the ajax has finished
 		if ( this.state.inProgress ) {
 			return false;
@@ -95,14 +96,9 @@ export const Login = createReactClass( {
 
 		// Don't allow submission until username+password is entered
 		return this.hasLoginDetails();
-	},
+	}
 
-	toggleSelfHostedInstructions: function() {
-		const isShowing = ! this.state.showInstructions;
-		this.setState( { showInstructions: isShowing } );
-	},
-
-	render: function() {
+	render() {
 		const { translate } = this.props;
 		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
@@ -188,14 +184,9 @@ export const Login = createReactClass( {
 				</div>
 			</Main>
 		);
-	},
-
-	handleChange( e ) {
-		const { name, value } = e.currentTarget;
-		this.setState( { [ name ]: value } );
-	},
-} );
+	}
+}
 
 export default connect( null, {
 	recordGoogleEvent,
-} )( localize( Login ) );
+} )( localize( Auth ) );
