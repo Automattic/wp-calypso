@@ -19,7 +19,7 @@ import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 import AuthStore from 'lib/oauth-store';
-import * as AuthActions from 'lib/oauth-store/actions';
+import { login } from 'lib/oauth-store/actions';
 import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
 import SelfHostedInstructions from './self-hosted-instructions';
@@ -62,7 +62,7 @@ class Auth extends React.Component {
 		event.preventDefault();
 		event.stopPropagation();
 
-		AuthActions.login( this.state.login, this.state.password, this.state.auth_code );
+		login( this.state.login, this.state.password, this.state.auth_code );
 	};
 
 	toggleSelfHostedInstructions = () => {
