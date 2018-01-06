@@ -1,29 +1,30 @@
 /** @format */
+
 /**
  * External dependencies
  */
 import React from 'react';
+import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import AuthCodeButton from './auth-code-button';
+import AuthStore from 'lib/oauth-store';
 import config from 'config';
-import Main from 'components/main';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'components/notice';
-import AuthStore from 'lib/oauth-store';
-import { login } from 'lib/oauth-store/actions';
-import WordPressLogo from 'components/wordpress-logo';
-import AuthCodeButton from './auth-code-button';
-import SelfHostedInstructions from './self-hosted-instructions';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormTextInput from 'components/forms/form-text-input';
 import LostPassword from './lost-password';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import SelfHostedInstructions from './self-hosted-instructions';
+import WordPressLogo from 'components/wordpress-logo';
+import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class Auth extends React.Component {
