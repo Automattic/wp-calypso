@@ -21,7 +21,6 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 import AuthStore from 'lib/oauth-store';
 import * as AuthActions from 'lib/oauth-store/actions';
-import eventRecorder from 'me/event-recorder';
 import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
 import SelfHostedInstructions from './self-hosted-instructions';
@@ -30,7 +29,6 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 
 export const Login = createReactClass( {
 	displayName: 'Auth',
-	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		AuthStore.on( 'change', this.refreshData );
