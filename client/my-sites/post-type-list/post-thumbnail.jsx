@@ -16,11 +16,8 @@ import { get, noop } from 'lodash';
 import resizeImageUrl from 'lib/resize-image-url';
 import safeImageUrl from 'lib/safe-image-url';
 import { getNormalizedPost } from 'state/posts/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
-import { canCurrentUserEditPost } from 'state/selectors';
-import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 
-function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
+function PostTypeListPostThumbnail( { onClick, thumbnail } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
 		'has-image': !! thumbnail,
 	} );
@@ -28,13 +25,11 @@ function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	return (
 		<div className={ classes }>
 			{ thumbnail && (
-				<a href={ postLink } className="post-type-list__post-thumbnail-link">
-					<img
-						src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
-						className="post-type-list__post-thumbnail"
-						onClick={ onClick }
-					/>
-				</a>
+				<img
+					src={ resizeImageUrl( safeImageUrl( thumbnail ), { h: 80 } ) }
+					className="post-type-list__post-thumbnail"
+					onClick={ onClick }
+				/>
 			) }
 		</div>
 	);
@@ -44,7 +39,6 @@ PostTypeListPostThumbnail.propTypes = {
 	globalId: PropTypes.string,
 	onClick: PropTypes.func,
 	thumbnail: PropTypes.string,
-	postUrl: PropTypes.string,
 };
 
 PostTypeListPostThumbnail.defaultProps = {
@@ -55,14 +49,5 @@ export default connect( ( state, ownProps ) => {
 	const post = getNormalizedPost( state, ownProps.globalId );
 	const thumbnail = get( post, 'canonical_image.uri' );
 
-	const siteId = get( post, 'site_ID' );
-	const postId = get( post, 'ID' );
-	const postUrl = canCurrentUserEditPost( state, ownProps.globalId )
-		? getEditorPath( state, siteId, postId )
-		: get( post, 'URL' );
-
-	// Null if the item is a placeholder or bulk edit mode is active.
-	const postLink = ! ownProps.globalId || isMultiSelectEnabled( state ) ? null : postUrl;
-
-	return { thumbnail, postLink };
+	return { thumbnail };
 } )( PostTypeListPostThumbnail );
