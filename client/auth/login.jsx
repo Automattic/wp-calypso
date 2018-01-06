@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -25,6 +26,7 @@ import WordPressLogo from 'components/wordpress-logo';
 import AuthCodeButton from './auth-code-button';
 import SelfHostedInstructions from './self-hosted-instructions';
 import LostPassword from './lost-password';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 export const Login = createReactClass( {
 	displayName: 'Auth',
@@ -36,6 +38,14 @@ export const Login = createReactClass( {
 
 	componentWillUnmount: function() {
 		AuthStore.off( 'change', this.refreshData );
+	},
+
+	getClickHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+	},
+
+	getFocusHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	},
 
 	refreshData: function() {
@@ -110,7 +120,7 @@ export const Login = createReactClass( {
 									name="login"
 									disabled={ requires2fa || inProgress }
 									placeholder={ translate( 'Email address or username' ) }
-									onFocus={ this.recordFocusEvent( 'Username or email address' ) }
+									onFocus={ this.getFocusHandler( 'Username or email address' ) }
 									value={ this.state.login }
 									onChange={ this.handleChange }
 								/>
@@ -121,7 +131,7 @@ export const Login = createReactClass( {
 									name="password"
 									disabled={ requires2fa || inProgress }
 									placeholder={ translate( 'Password' ) }
-									onFocus={ this.recordFocusEvent( 'Password' ) }
+									onFocus={ this.getFocusHandler( 'Password' ) }
 									hideToggle={ requires2fa }
 									submitting={ inProgress }
 									value={ this.state.password }
@@ -136,7 +146,7 @@ export const Login = createReactClass( {
 										ref={ this.focusInput }
 										disabled={ inProgress }
 										placeholder={ translate( 'Verification code' ) }
-										onFocus={ this.recordFocusEvent( 'Verification code' ) }
+										onFocus={ this.getFocusHandler( 'Verification code' ) }
 										value={ this.state.auth_code }
 										onChange={ this.handleChange }
 									/>
@@ -146,7 +156,7 @@ export const Login = createReactClass( {
 						<FormButtonsBar>
 							<FormButton
 								disabled={ ! this.canSubmitForm() }
-								onClick={ this.recordClickEvent( 'Sign in' ) }
+								onClick={ this.getClickHandler( 'Sign in' ) }
 							>
 								{ requires2fa ? translate( 'Verify' ) : translate( 'Sign in' ) }
 							</FormButton>
@@ -188,4 +198,6 @@ export const Login = createReactClass( {
 	},
 } );
 
-export default localize( Login );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Login ) );
