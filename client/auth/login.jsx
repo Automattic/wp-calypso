@@ -27,7 +27,7 @@ import WordPressLogo from 'components/wordpress-logo';
 import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-class Auth extends React.Component {
+export class Auth extends React.Component {
 	state = Object.assign(
 		{
 			login: '',
