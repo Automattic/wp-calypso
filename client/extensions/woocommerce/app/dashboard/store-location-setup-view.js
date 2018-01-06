@@ -15,6 +15,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
+import analytics from 'lib/analytics';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
@@ -140,6 +141,9 @@ class StoreLocationSetupView extends Component {
 			// No need to set isSaving to false here - we're navigating away from here
 			// and setting isSaving to false will just light the button up again right
 			// before the next step's dialog displays
+
+			// mc stat 32 char max :P
+			analytics.mc.bumpStat( 'calypso_woo_store_setup_country', this.state.address.country );
 
 			// If we don't support a calypso experience yet for this country, let
 			// them complete setup with the wp-admin WooCommerce wizard
