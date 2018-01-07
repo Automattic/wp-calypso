@@ -36,6 +36,7 @@ import {
 	isRenewing,
 	isSubscription,
 	purchaseType,
+	cardProcessorSupportsUpdates,
 } from 'lib/purchases';
 import {
 	canEditPaymentDetails,
@@ -206,10 +207,13 @@ class ManagePurchase extends Component {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getEditCardDetailsPath( this.props.selectedSite, purchase );
+			const renewing = isRenewing( purchase );
 
-			const text = isRenewing( purchase )
-				? translate( 'Edit Payment Method' )
-				: translate( 'Add Credit Card' );
+			if ( renewing && ! cardProcessorSupportsUpdates( purchase ) ) {
+				return null;
+			}
+
+			const text = renewing ? translate( 'Edit Payment Method' ) : translate( 'Add Credit Card' );
 
 			return <CompactCard href={ path }>{ text }</CompactCard>;
 		}
