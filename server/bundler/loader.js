@@ -3,6 +3,7 @@ const config = require( 'config' ),
 	fs = require( 'fs' ),
 	groupBy = require( 'lodash/groupBy' ),
 	toPairs = require( 'lodash/toPairs' ),
+	partial = require( 'lodash/partial' ),
 	path = require( 'path' ),
 	utils = require( './utils' );
 
@@ -11,8 +12,8 @@ function getSectionsModule( sections ) {
 		? 'loader-template-code-split.js'
 		: 'loader-template.js';
 	const loaderFactory = config.isEnabled( 'code-splitting' )
-		? getSectionPreLoaderTemplate
-		: getSectionRequire;
+		? partial( getSectionsLoadersTemplate, true )
+		: partial( getSectionsLoadersTemplate, false );
 
 	return fs
 		.readFileSync( path.join( __dirname, templateFile ), 'utf8' )
@@ -25,30 +26,22 @@ function getSectionsModule( sections ) {
 		);
 }
 
-function getSectionRequire( section ) {
-	return `
-		case ${ JSON.stringify( section.name ) }: return require( ${ JSON.stringify( section.module ) } );
-	`;
+function getModuleLoader( async = false, section ) {
+	return async
+		? `import( /* webpackChunkName: ${ JSON.stringify( section.name ) } */ ${ JSON.stringify(
+				section.module
+			) } )`
+		: `require( ${ JSON.stringify( section.module ) } )`;
 }
 
-function getSectionPreLoaderTemplate( sectionsByName ) {
+function getSectionsLoadersTemplate( async = false, sectionsByName ) {
 	const [ sectionName, sections ] = sectionsByName;
-	const sectionNameString = JSON.stringify( sectionName );
 
-	const getModuleLoader = ( importSectionName, importModuleName ) =>
-		`import( /* webpackChunkName: '${ importSectionName }' */ '${ importModuleName }' )`;
+	const loadersArray = `[ ${ sections.map( sec => getModuleLoader( async, sec ) ).join( ',' ) } ]`;
 
-	const loader =
-		sections.length === 1
-			? `${ getModuleLoader( sectionName, sections[ 0 ].module ) }`
-			: `Promise.all( [ ${ sections
-					.map( sec => getModuleLoader( sectionName, sec.module ) )
-					.join( ',' ) } ] )`;
+	const finalLoader = async ? `Promise.all( ${ loadersArray } )` : loadersArray;
 
-	return `
-		case ${ sectionNameString }:
-			return ${ loader };
-	`;
+	return `case ${ JSON.stringify( sectionName ) }: return ${ finalLoader };`;
 }
 
 function sectionsWithCSSUrls( sections ) {

@@ -65,10 +65,11 @@ function createPageDefinition( path, sectionDefinition ) {
 			return;
 		}
 		dispatch( { type: 'SECTION_SET', isLoading: true } );
-		preload( sectionDefinition.name ).then( function( requiredModule ) {
-			var loadedModules = Array.isArray( requiredModule ) ? requiredModule : [ requiredModule ];
+		preload( sectionDefinition.name ).then( function( requiredModules ) {
 			if ( ! _loadedSections[ sectionDefinition.module ] ) {
-				loadedModules.forEach( mod => mod( controller.clientRouter ) );
+				requiredModules.forEach( function moduleIterator( mod ) {
+					mod( controller.clientRouter );
+				} );
 				_loadedSections[ sectionDefinition.module ] = true;
 			}
 			return activateSection( sectionDefinition, context, next );

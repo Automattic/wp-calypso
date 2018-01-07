@@ -21,7 +21,9 @@ function createPageDefinition( path, sectionDefinition ) {
 			return next();
 		}
 		controller.setSection( sectionDefinition )( context );
-		load( sectionDefinition.name )( controller.clientRouter );
+		load( sectionDefinition.name ).forEach( function moduleIterator( mod ) {
+			mod( controller.clientRouter );
+		} );
 		next();
 	} );
 }
