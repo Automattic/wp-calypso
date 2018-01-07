@@ -300,7 +300,6 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 	}
 }
 
-
 function getPaygateParameters( cardDetails ) {
 	return {
 		name: cardDetails.name,
@@ -319,17 +318,16 @@ function getEbanxParameters( cardDetails ) {
 		card_number: cardDetails.number,
 		card_cvv: cardDetails.cvv,
 		card_due_date:
-		cardDetails[ 'expiration-date' ].substring( 0, 2 ) +
-		'/20' +
-		cardDetails[ 'expiration-date' ].substring( 3, 5 ),
+			cardDetails[ 'expiration-date' ].substring( 0, 2 ) +
+			'/20' +
+			cardDetails[ 'expiration-date' ].substring( 3, 5 ),
 	};
 }
 
-
 export function createCardToken( requestType, cardDetails, callback ) {
 	if ( isEbanxEnabledForCountry( cardDetails.country ) ) {
-	return createEbanxToken( requestType, cardDetails, callback );
-}
+		return createEbanxToken( requestType, cardDetails, callback );
+	}
 
 	return createPaygateToken( requestType, cardDetails, callback );
 }
