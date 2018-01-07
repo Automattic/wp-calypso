@@ -165,6 +165,14 @@ function isRedeemable( purchase ) {
 	return purchase.isRedeemable;
 }
 
+/**
+ * Checks if a purchase credit card number can be updated
+ * Payments done via CC & Paygate can have their CC updated, but this
+ * is not currently true for other providers such as EBANX.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} if the purchase card can be updated
+ */
 function cardProcessorSupportsUpdates( purchase ) {
 	return (
 		isPaidWithCreditCard( purchase ) &&
