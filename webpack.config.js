@@ -33,7 +33,6 @@ const isDevelopment = bundleEnv === 'development';
 const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
 	? process.env.MINIFY_JS === 'true'
 	: ! isDevelopment;
-const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
 // load in the babel config from babelrc and disable commonjs transform
 // this enables static analysis from webpack including treeshaking
@@ -176,7 +175,6 @@ const webpackConfig = {
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
-			COMMIT_SHA: JSON.stringify( commitSha ),
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [

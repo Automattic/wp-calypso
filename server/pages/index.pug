@@ -226,6 +226,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				}
 			})();
 
+		script(type='text/javascript')!='COMMIT_SHA = ' + commitSha
 		if user
 			script(type='text/javascript')!='var currentUser = ' + sanitize.jsonStringifyForHtml( user )
 		if app
