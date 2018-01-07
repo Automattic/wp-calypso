@@ -1,5 +1,6 @@
 /**
  * @format
+ * @jest-environment jsdom
  */
 
 /**
@@ -9,34 +10,31 @@
 /**
  * Internal dependencies
  */
-import { isEbanx, isValidCPF } from '../ebanx';
-import { isEnabled } from 'config';
+import { isEbanxEnabledForCountry, isValidCPF } from '../ebanx';
+import { isEbanxEnabled } from 'lib/cart-values';
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => 'ebanx',
-} ) );
-jest.mock( 'config', () => {
-	const config = () => 'development';
+jest.mock( 'lib/cart-values', () => {
+	const cartValues = {};
 
-	config.isEnabled = jest.fn( false );
+	cartValues.isEbanxEnabled = jest.fn( false );
 
-	return config;
+	return cartValues;
 } );
 
 describe( 'Ebanx payment processing methods', () => {
-	describe( 'isEbanx', () => {
+	describe( 'isEbanxEnabledForCountry', () => {
 		beforeAll( () => {
-			isEnabled.mockReturnValue( true );
+			isEbanxEnabled.mockReturnValue( true );
 		} );
 		afterAll( () => {
-			isEnabled.mockReturnValue( false );
+			isEbanxEnabled.mockReturnValue( false );
 		} );
 
 		test( 'should return false for non-ebanx country', () => {
-			expect( isEbanx( 'AU' ) ).toEqual( false );
+			expect( isEbanxEnabledForCountry( 'AU' ) ).toEqual( false );
 		} );
 		test( 'should return true for ebanx country', () => {
-			expect( isEbanx( 'BR' ) ).toEqual( true );
+			expect( isEbanxEnabledForCountry( 'BR' ) ).toEqual( true );
 		} );
 	} );
 

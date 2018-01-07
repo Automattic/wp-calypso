@@ -190,6 +190,13 @@ function isBelgiumBancontactEnabled( cart ) {
 	);
 }
 
+function isEbanxEnabled( cart ) {
+	return (
+		config.isEnabled( 'upgrades/ebanx' ) &&
+		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Ebanx' ) >= 0
+	);
+}
+
 export {
 	applyCoupon,
 	canRemoveFromCart,
@@ -205,6 +212,7 @@ export {
 	isPayPalExpressEnabled,
 	isNetherlandsIdealEnabled,
 	isCreditCardPaymentsEnabled,
+	isEbanxEnabled,
 };
 
 export default {
@@ -222,4 +230,5 @@ export default {
 	isPayPalExpressEnabled,
 	isNetherlandsIdealEnabled,
 	isCreditCardPaymentsEnabled,
+	isEbanxEnabled,
 };

@@ -9,18 +9,19 @@ import isString from 'lodash/isString';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
+import { isEbanxEnabled } from 'lib/cart-values';
+import CartStore from 'lib/cart/store';
 
 /**
  *
- * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
- * @returns {bool} Whether the country code requires ebanx payment processing
+ * @param {String} countryCode - a two-letter country code, e.g., 'DE', 'BR'
+ * @returns {Boolean} Whether the country code requires ebanx payment processing
  */
-export function isEbanx( countryCode = '' ) {
+export function isEbanxEnabledForCountry( countryCode = '' ) {
 	return (
 		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
-		config.isEnabled( 'upgrades/ebanx' )
+		isEbanxEnabled( CartStore.get() )
 	);
 }
 
@@ -30,8 +31,8 @@ export function isEbanx( countryCode = '' ) {
  * The following test is a weak test only. Full algorithm here: http://www.geradorcpf.com/algoritmo_do_cpf.htm
  *
  * See: http://www.geradorcpf.com/algoritmo_do_cpf.htm
- * @param {string} cpf - a Brazilian tax identification number
- * @returns {bool} Whether the cpf is valid or not
+ * @param {String} cpf - a Brazilian tax identification number
+ * @returns {Boolean} Whether the cpf is valid or not
  */
 
 export function isValidCPF( cpf = '' ) {
