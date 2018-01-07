@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { createSelector } from 'reselect';
 import { isObject } from 'lodash';
 import validator from 'is-my-json-valid';
 import ObjectPath from 'objectpath';
@@ -10,6 +9,7 @@ import ObjectPath from 'objectpath';
  * Internal dependencies
  */
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
+import { createSelector } from 'lib/create-selector';
 
 export const EMPTY_ERROR = {
 	level: 'error',
@@ -106,9 +106,6 @@ const getRawFormErrors = ( schema, data, pristine ) => {
 };
 
 export default createSelector(
-	( state ) => state.form.fieldsStatus,
-	( state, schema ) => schema,
-	( state ) => state.form.values,
-	( state ) => state.form.pristine,
-	( fieldsStatus, schema, data, pristine ) => parseErrorsList( fieldsStatus || getRawFormErrors( schema, data, pristine ) )
+	( state, schema ) => parseErrorsList( state.form.fieldsStatus || getRawFormErrors( schema, state.form.values, state.form.pristine ) ),
+	( state ) => [ state.form.fieldsStatus, state.form.values, state.form.pristine ],
 );
