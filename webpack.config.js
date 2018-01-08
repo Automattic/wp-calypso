@@ -84,7 +84,7 @@ const babelLoader = {
 const webpackConfig = {
 	bail: ! isDevelopment,
 	entry: {},
-	devtool: 'false',
+	devtool: isDevelopment ? '#eval' : process.env.SOURCEMAP || false, // in production builds you can specify a source-map via env var
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
@@ -249,10 +249,8 @@ if ( isDevelopment ) {
 		path.join( __dirname, 'client', 'boot', 'app' ),
 	];
 	webpackConfig.devServer = { hot: true, inline: true };
-	webpackConfig.devtool = '#eval';
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
-	webpackConfig.devtool = process.env.SOURCEMAP || false;
 }
 
 if ( ! config.isEnabled( 'desktop' ) ) {
