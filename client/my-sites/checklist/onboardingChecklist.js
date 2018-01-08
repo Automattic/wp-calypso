@@ -122,7 +122,7 @@ const sequence = [
 	'site_icon_set',
 	'blogdescription_set',
 	'avatar_uploaded',
-	'social_links_set',
+	// 'social_links_set',
 	'about_page_updated',
 	'contact_page_updated',
 	'post_published',
