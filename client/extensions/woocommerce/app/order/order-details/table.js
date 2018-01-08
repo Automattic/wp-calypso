@@ -114,7 +114,7 @@ class OrderDetailsTable extends Component {
 		// A zero quantity does strange things with the price, so we'll force 1
 		const quantity = Math.abs( event.target.value ) || 1;
 		const subtotal = getOrderItemCost( order, id ) * quantity;
-		const total = subtotal;
+		const total = parseFloat( item.price ) * quantity;
 		const newItem = { ...item, quantity, subtotal, total };
 		this.props.onChange( { line_items: { [ index ]: newItem } } );
 	};
