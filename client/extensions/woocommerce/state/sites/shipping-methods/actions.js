@@ -15,7 +15,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { areShippingMethodsLoaded, areShippingMethodsLoading } from './selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
-import { fetchShippingSchema } from 'woocommerce/woocommerce-services/state/shipping-schemas/actions';
+import { fetchShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/actions';
 
 export const fetchShippingMethodsSuccess = ( siteId, data ) => {
 	return {
@@ -50,7 +50,7 @@ export const fetchShippingMethods = siteId => ( dispatch, getState ) => {
 			const wcsMethods = isWcsEnabled( getState(), siteId )
 				? data.filter( ( { id } ) => startsWith( id, 'wc_services' ) )
 				: [];
-			wcsMethods.forEach( ( { id } ) => dispatch( fetchShippingSchema( siteId, id ) ) );
+			wcsMethods.forEach( ( { id } ) => dispatch( fetchShippingMethodSchema( siteId, id ) ) );
 		} )
 		.catch( err => {
 			dispatch( setError( siteId, getAction, err ) );

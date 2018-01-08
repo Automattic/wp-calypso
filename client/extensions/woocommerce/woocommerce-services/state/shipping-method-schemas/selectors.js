@@ -9,8 +9,8 @@ import { get, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getShippingSchemas = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingSchemas' ], {} );
+const getShippingMethodSchemas = ( state, siteId = getSelectedSiteId( state ) ) => {
+	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingMethodSchemas' ], {} );
 };
 
 /**
@@ -19,8 +19,8 @@ const getShippingSchemas = ( state, siteId = getSelectedSiteId( state ) ) => {
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the schema for the given shipping method has been successfully loaded from the server
  */
-export const isShippingSchemaLoaded = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
-	return isObject( getShippingSchemas( state, siteId )[ methodId ] );
+export const isShippingMethodSchemaLoaded = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
+	return isObject( getShippingMethodSchemas( state, siteId )[ methodId ] );
 };
 
 /**
@@ -29,8 +29,8 @@ export const isShippingSchemaLoaded = ( state, methodId, siteId = getSelectedSit
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Object|null} The shipping method schema object, or "null" if the schema hasn't been retrieved yet
  */
-export const getShippingSchema = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
-	return isShippingSchemaLoaded( state, methodId, siteId ) ? getShippingSchemas( state, siteId )[ methodId ] : null;
+export const getShippingMethodSchema = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
+	return isShippingMethodSchemaLoaded( state, methodId, siteId ) ? getShippingMethodSchemas( state, siteId )[ methodId ] : null;
 };
 
 /**
@@ -39,6 +39,6 @@ export const getShippingSchema = ( state, methodId, siteId = getSelectedSiteId( 
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {boolean} Whether the shipping method schema is currently being retrieved from the server
  */
-export const isShippingSchemaLoading = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getShippingSchemas( state, siteId )[ methodId ];
+export const isShippingMethodSchemaLoading = ( state, methodId, siteId = getSelectedSiteId( state ) ) => {
+	return LOADING === getShippingMethodSchemas( state, siteId )[ methodId ];
 };
