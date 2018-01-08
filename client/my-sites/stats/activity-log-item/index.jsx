@@ -26,7 +26,6 @@ class ActivityLogItem extends Component {
 	handleClickBackup = () => this.props.requestDialog( this.props.activityId, 'item', 'backup' );
 
 	renderHeader() {
-		const { activity } = this.props;
 		const {
 			activityDescription,
 			activityTitle,
@@ -34,30 +33,17 @@ class ActivityLogItem extends Component {
 			actorName,
 			actorRole,
 			actorType,
-		} = activity;
+		} = this.props.activity;
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor
-					{ ...{
-						actorActivityUrl,
-						actorName,
-						actorRole,
-						actorType,
-					} }
-				/>
-				{ activityDescription && (
-					<div className="activity-log-item__description">
-						<div className="activity-log-item__description-content">
-							{ activityDescription.map( ( part, key ) => (
-								<FormattedBlock key={ key } content={ part } />
-							) ) }
-						</div>
-						{ activityTitle && (
-							<div className="activity-log-item__description-summary">{ activityTitle }</div>
-						) }
+				<ActivityActor { ...{ actorActivityUrl, actorName, actorRole, actorType } } />
+				<div className="activity-log-item__description">
+					<div className="activity-log-item__description-content">
+						<FormattedBlock content={ activityDescription[ 0 ] } />
 					</div>
-				) }
+					<div className="activity-log-item__description-summary">{ activityTitle }</div>
+				</div>
 			</div>
 		);
 	}
