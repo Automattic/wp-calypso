@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { each, get, includes, isEqual, isUndefined, map, some } from 'lodash';
+import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,7 +39,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
+import { getSiteComment, hasPendingCommentRequests } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 
 const bulkActions = {
@@ -325,13 +325,6 @@ export class CommentNavigation extends Component {
 	}
 }
 
-const hasPendingRequests = state => {
-	const pendingActions = get( state, 'ui.comments.pendingActions' );
-	return some( pendingActions, requestKey => {
-		return get( state, [ 'dataRequests', requestKey, 'status' ] ) === 'pending';
-	} );
-};
-
 const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 	const visibleComments = map( commentsPage, commentId => {
@@ -349,7 +342,7 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	return {
 		visibleComments,
 		hasComments: visibleComments.length > 0,
-		hasPendingBulkAction: hasPendingRequests( state ),
+		hasPendingBulkAction: hasPendingCommentRequests( state ),
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};
