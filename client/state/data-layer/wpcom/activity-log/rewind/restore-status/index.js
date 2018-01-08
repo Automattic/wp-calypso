@@ -47,7 +47,7 @@ const fetchProgress = ( { dispatch }, action ) => {
 			{
 				apiVersion: '1',
 				method: 'GET',
-				path: `/activity-log/${ siteId }/rewind/${ restoreId }/restore-status`,
+				path: `/activity-log/${ siteId }/rewind/restore-status/${ restoreId }`,
 			},
 			action
 		)
