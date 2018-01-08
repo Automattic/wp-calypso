@@ -90,6 +90,9 @@ export const doInitialSetup = (
 
 	if ( pushDefaultsForCountry ) {
 		// TODO Support other currency positions, post-v1 etc. See https://github.com/Automattic/wp-calypso/issues/15498
+		// In the event this is a brand new site and ! isStoreManagementSupportedInCalypsoForCountry,
+		// WooCommerce defaults for that country will be automatically loaded by the WooCommerce Setup Wizard
+		// in the merchant's site's wp-admin (to which we redirect after setting up the store)
 		const currency = getCurrencyCodeForCountry( country );
 		if ( currency ) {
 			update = update.concat( [
