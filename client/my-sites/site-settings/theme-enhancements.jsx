@@ -19,7 +19,9 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { getCustomizerUrl } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
@@ -78,19 +80,21 @@ class ThemeEnhancements extends Component {
 	}
 
 	renderSimpleSiteInfiniteScrollSettings() {
-		const { translate } = this.props;
+		const { customizeUrl, translate } = this.props;
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
 
 				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
 					<InfoPopover position="left">
+						{ translate( 'Control how additional posts are loaded.' ) }
+						<br />
 						<ExternalLink
 							href="https://support.wordpress.com/infinite-scroll/"
 							icon
 							target="_blank"
 						>
-							{ translate( 'Learn more about Infinite Scroll.' ) }
+							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>
@@ -98,8 +102,18 @@ class ThemeEnhancements extends Component {
 				{ this.renderToggle(
 					'infinite_scroll',
 					false,
-					translate( 'Load posts as you scroll. Disable to show a clickable button to load posts' )
+					translate( 'Load posts as you scroll. Disable to show a clickable button to load posts.' )
 				) }
+				<FormSettingExplanation isIndented>
+					{ translate(
+						'If your site has a "footer" widget enabled, buttons will always be used. {{link}}Customize your site{{/link}}',
+						{
+							components: {
+								link: <a href={ customizeUrl } />,
+							},
+						}
+					) }
+				</FormSettingExplanation>
 			</FormFieldset>
 		);
 	}
@@ -213,6 +227,7 @@ export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
+		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		selectedSiteId,
 		infiniteScrollModuleActive: !! isJetpackModuleActive(
 			state,
