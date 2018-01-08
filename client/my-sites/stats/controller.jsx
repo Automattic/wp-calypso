@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -12,7 +10,7 @@ import { find, pick } from 'lodash';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
+import { getSiteFragment, getStatsDefaultSitePage, sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
@@ -111,13 +109,13 @@ export default {
 	},
 
 	redirectToDefaultSitePage: function( context, next ) {
-		const siteFragment = route.getSiteFragment( context.path );
+		const siteFragment = getSiteFragment( context.path );
 
 		if ( siteFragment ) {
 			// if we are redirecting we need to retain our intended layout-focus
 			const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
 			context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
-			page.redirect( route.getStatsDefaultSitePage( siteFragment ) );
+			page.redirect( getStatsDefaultSitePage( siteFragment ) );
 		} else {
 			next();
 		}
@@ -125,15 +123,11 @@ export default {
 
 	insights: function( context, next ) {
 		const FollowList = require( 'lib/follow-list' );
-		let siteId = context.params.site_id;
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 		const followList = new FollowList();
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
-
-		const site = getSite( context.store.getState(), siteId );
-		siteId = site ? site.ID || 0 : 0;
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
@@ -168,7 +162,7 @@ export default {
 				{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' },
 			];
 		};
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 
 		window.scrollTo( 0, 0 );
 
@@ -215,7 +209,7 @@ export default {
 		let chartTab;
 		let period;
 		let numPeriodAgo = 0;
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 		let baseAnalyticsPath;
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -292,7 +286,7 @@ export default {
 
 	summary: function( context, next ) {
 		let siteId = context.params.site_id;
-		const siteFragment = route.getSiteFragment( context.path );
+		const siteFragment = getSiteFragment( context.path );
 		const queryOptions = context.query;
 		const contextModule = context.params.module;
 		const filters = [
@@ -321,7 +315,7 @@ export default {
 			'searchterms',
 		];
 		let momentSiteZone = i18n.moment();
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
@@ -429,13 +423,13 @@ export default {
 		const FollowList = require( 'lib/follow-list' );
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 
 		const site = getSite( context.store.getState(), siteId );
 		siteId = site ? site.ID || 0 : 0;
 
 		const siteDomain =
-			site && typeof site.slug !== 'undefined' ? site.slug : route.getSiteFragment( context.path );
+			site && typeof site.slug !== 'undefined' ? site.slug : getSiteFragment( context.path );
 
 		if ( 0 === siteId ) {
 			window.location = '/stats';

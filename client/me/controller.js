@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
@@ -62,7 +62,7 @@ export default {
 	},
 
 	nextSteps( context, next ) {
-		const analyticsBasePath = route.sectionify( context.path ),
+		const analyticsBasePath = sectionify( context.path ),
 			NextSteps = require( './next-steps' ),
 			isWelcome = 'welcome' === context.params.welcome;
 

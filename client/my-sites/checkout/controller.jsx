@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { isEmpty } from 'lodash';
@@ -13,7 +11,7 @@ import page, { Route } from 'page';
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import route from 'lib/route';
+import { sectionifyWithRoutes } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
@@ -40,7 +38,7 @@ export default {
 			CheckoutData = require( 'components/data/checkout' ),
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
-			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
+			{ routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes ),
 			product = context.params.product,
 			selectedFeature = context.params.feature;
 
@@ -103,7 +101,7 @@ export default {
 
 	checkoutThankYou: function( context, next ) {
 		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
-			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
+			{ routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes ),
 			receiptId = Number( context.params.receiptId ),
 			gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 

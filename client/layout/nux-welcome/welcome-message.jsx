@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 import createReactClass from 'create-react-class';
@@ -14,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'config';
-import route from 'lib/route';
+import { getSiteFragment } from 'lib/route';
 import analytics from 'lib/analytics';
 
 function recordEvent( eventAction ) {
@@ -46,7 +44,7 @@ const NuxWelcomeMessage = createReactClass( {
 		var welcomeSite = this.props.welcomeSite || false,
 			adminURL = welcomeSite.options
 				? welcomeSite.options.admin_url
-				: route.getSiteFragment( window.location.href ) + '/wp-admin/',
+				: getSiteFragment( window.location.href ) + '/wp-admin/',
 			postLink = '#',
 			customizeLink = '#',
 			sharingLink = '#',

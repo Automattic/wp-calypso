@@ -24,7 +24,7 @@ import {
 	getFeedUrl,
 	getSiteUrl,
 } from 'reader/get-helpers';
-import untrailingslashit from 'lib/route/untrailingslashit';
+import { untrailingslashit } from 'lib/route';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 

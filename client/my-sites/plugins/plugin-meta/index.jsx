@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -40,7 +38,7 @@ import { userCan } from 'lib/site/utils';
 import Banner from 'components/banner';
 import { PLAN_BUSINESS, FEATURE_UPLOAD_PLUGINS } from 'lib/plans/constants';
 import { isBusiness, isEnterprise } from 'lib/products-values';
-import { addSiteFragment } from 'lib/route/path';
+import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isAutomatedTransferActive, isSiteAutomatedTransfer } from 'state/selectors';

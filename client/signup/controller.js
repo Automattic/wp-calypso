@@ -12,7 +12,7 @@ import { isEmpty } from 'lodash';
  * Internal Dependencies
  */
 import config from 'config';
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import SignupComponent from './main';
 import utils from './utils';
@@ -105,7 +105,7 @@ export default {
 	},
 
 	start( context, next ) {
-		const basePath = route.sectionify( context.path ),
+		const basePath = sectionify( context.path ),
 			flowName = utils.getFlowName( context.params ),
 			stepName = utils.getStepName( context.params ),
 			stepSectionName = utils.getStepSectionName( context.params );

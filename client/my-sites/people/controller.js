@@ -1,12 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
-import route from 'lib/route';
 import i18n from 'i18n-calypso';
 
 /**
@@ -22,12 +19,13 @@ import InvitePeople from './invite-people';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteFragment } from 'lib/route';
 
 export default {
 	redirectToTeam,
 
 	enforceSiteEnding( context, next ) {
-		const siteId = route.getSiteFragment( context.path );
+		const siteId = getSiteFragment( context.path );
 
 		if ( ! siteId ) {
 			redirectToTeam( context );

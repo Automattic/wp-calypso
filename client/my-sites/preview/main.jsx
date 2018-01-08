@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -15,7 +13,7 @@ import debugFactory from 'debug';
  */
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import Button from 'components/button';

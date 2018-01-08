@@ -24,7 +24,7 @@ import DocumentHead from 'components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import route from 'lib/route';
+import { getSiteFragment } from 'lib/route';
 
 class App extends Component {
 	static propTypes = {
@@ -78,7 +78,7 @@ class App extends Component {
 		// TODO This is temporary, until we have a valid "all sites" path to show.
 		// Calypso will detect if a user doesn't have access to a site at all, and redirects to the 'all sites'
 		// version of that URL. We don't want to render anything right now, so continue redirecting to my-sites.
-		if ( ! route.getSiteFragment( currentRoute ) ) {
+		if ( ! getSiteFragment( currentRoute ) ) {
 			this.redirect();
 			return null;
 		}
