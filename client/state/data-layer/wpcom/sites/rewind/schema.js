@@ -76,6 +76,22 @@ export const awaitingCredentials = {
 	required: [ 'state', 'last_updated' ],
 };
 
+export const provisioning = {
+	type: 'object',
+	properties: {
+		state: {
+			type: 'string',
+			pattern: '^provisioning$',
+		},
+		credentials: {
+			type: [ 'array', null ],
+			items: credential,
+		},
+		last_updated: { type: 'integer' },
+	},
+	required: [ 'state', 'last_updated' ],
+};
+
 export const active = {
 	type: 'object',
 	properties: {
@@ -98,5 +114,5 @@ export const active = {
 };
 
 export const rewind = {
-	oneOf: [ unavailable, inactive, awaitingCredentials, active ],
+	oneOf: [ unavailable, inactive, awaitingCredentials, provisioning, active ],
 };

@@ -31,23 +31,20 @@ const updateRewindState = ( { siteId }, data ) => ( {
 	data,
 } );
 
-const setUnknownState = ( { siteId }, { schemaErrors } ) => {
-	if ( schemaErrors ) {
-		return withAnalytics(
-			recordTracksEvent( 'rewind_state_parse_error', {
-				schemaErrors: JSON.stringify( schemaErrors, null, 2 ),
-			} ),
-			{
-				type: REWIND_STATE_UPDATE,
-				siteId,
-				data: {
-					state: 'unknown',
-					lastUpdated: new Date(),
-				},
-			}
-		);
-	}
-};
+const setUnknownState = ( { siteId }, error ) =>
+	withAnalytics(
+		recordTracksEvent( 'rewind_state_parse_error', {
+			error: JSON.stringify( error, null, 2 ),
+		} ),
+		{
+			type: REWIND_STATE_UPDATE,
+			siteId,
+			data: {
+				state: 'unknown',
+				lastUpdated: new Date(),
+			},
+		}
+	);
 
 export default mergeHandlers( downloads, {
 	[ REWIND_STATE_REQUEST ]: [
