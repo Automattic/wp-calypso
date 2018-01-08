@@ -10,9 +10,9 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_SCHEMA_REQUEST,
 	WOOCOMMERCE_SERVICES_SHIPPING_SCHEMA_REQUEST_SUCCESS,
 } from 'woocommerce/woocommerce-services/state/action-types';
-import { isShippingSchemaLoaded, isShippingSchemaLoading } from './selectors';
+import { isShippingMethodSchemaLoaded, isShippingMethodSchemaLoading } from './selectors';
 
-export const fetchShippingSchemaSuccess = ( siteId, methodId, data ) => {
+export const fetchShippingMethodSchemaSuccess = ( siteId, methodId, data ) => {
 	return {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_SCHEMA_REQUEST_SUCCESS,
 		siteId,
@@ -21,10 +21,10 @@ export const fetchShippingSchemaSuccess = ( siteId, methodId, data ) => {
 	};
 };
 
-export const fetchShippingSchema = ( siteId, methodId ) => ( dispatch, getState ) => {
+export const fetchShippingMethodSchema = ( siteId, methodId ) => ( dispatch, getState ) => {
 	if (
-		isShippingSchemaLoaded( getState(), methodId, siteId ) ||
-		isShippingSchemaLoading( getState(), methodId, siteId )
+		isShippingMethodSchemaLoaded( getState(), methodId, siteId ) ||
+		isShippingMethodSchemaLoading( getState(), methodId, siteId )
 	) {
 		return;
 	}
@@ -39,6 +39,6 @@ export const fetchShippingSchema = ( siteId, methodId ) => ( dispatch, getState 
 
 	return api
 		.get( siteId, api.url.serviceSettings( methodId ) )
-		.then( data => dispatch( fetchShippingSchemaSuccess( siteId, methodId, data ) ) )
+		.then( data => dispatch( fetchShippingMethodSchemaSuccess( siteId, methodId, data ) ) )
 		.catch( err => dispatch( setError( siteId, getAction, err ) ) );
 };
