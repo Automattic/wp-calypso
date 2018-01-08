@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
@@ -15,7 +13,7 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
 import MasterbarItem from './item';
 import SitesPopover from 'components/sites-popover';
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -71,7 +69,7 @@ class MasterbarItemNew extends React.Component {
 	render() {
 		const classes = classNames( this.props.className );
 		const currentSite = this.props.selectedSite || this.props.user.get().primarySiteSlug;
-		const newPostPath = paths.newPost( currentSite );
+		const newPostPath = newPost( currentSite );
 
 		return (
 			<div className="masterbar__publish">

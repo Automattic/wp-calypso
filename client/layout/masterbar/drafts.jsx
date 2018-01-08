@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,13 +11,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Popover from 'components/popover';
 import Count from 'components/count';
 import { getMyPostCounts } from 'state/posts/counts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostsForQueryIgnoringPage, isRequestingPostsForQuery } from 'state/posts/selectors';
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 import Draft from 'my-sites/draft';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
@@ -103,7 +100,7 @@ class MasterbarDrafts extends Component {
 						<Button
 							compact
 							className="masterbar__recent-drafts-add-new"
-							href={ paths.newPost( selectedSite ) }
+							href={ newPost( selectedSite ) }
 							onClick={ this.newDraftClicked }
 						>
 							{ translate( 'New Draft' ) }
