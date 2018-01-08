@@ -21,7 +21,11 @@ import {
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
-import { getOrderFeeCost, getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+import {
+	getOrderFeeCost,
+	getOrderItemCost,
+	getOrderRefundTotal,
+} from 'woocommerce/lib/order-values/totals';
 import OrderTotalRow from '../order-details/row-total';
 import PriceInput from 'woocommerce/components/price-input';
 import ScreenReaderText from 'components/screen-reader-text';
@@ -155,6 +159,32 @@ class OrderRefundTable extends Component {
 		const { order, translate } = this.props;
 		const tax = getOrderLineItemTax( order, item.id );
 		const inputId = `quantity-${ item.id }`;
+		let itemPrice = formatCurrency( item.price, order.currency );
+		let itemTotal = formatCurrency( item.total, order.currency );
+		if ( parseFloat( item.total ) !== parseFloat( item.subtotal ) ) {
+			const preDiscountCost = getOrderItemCost( order, item.id );
+			itemPrice = (
+				<Fragment>
+					<del className="order-payment__item-pre-discount order-details__item-pre-discount">
+						{ formatCurrency( preDiscountCost, order.currency ) }
+					</del>
+					<ins className="order-payment__item-with-discount order-details__item-with-discount">
+						{ formatCurrency( item.price, order.currency ) }
+					</ins>
+				</Fragment>
+			);
+
+			itemTotal = (
+				<Fragment>
+					<del className="order-payment__item-pre-discount order-details__item-pre-discount">
+						{ formatCurrency( item.subtotal, order.currency ) }
+					</del>
+					<ins className="order-payment__item-with-discount order-details__item-with-discount">
+						{ formatCurrency( item.total, order.currency ) }
+					</ins>
+				</Fragment>
+			);
+		}
 		return (
 			<TableRow key={ item.id } className="order-payment__items order-details__items">
 				<TableItem isRowHeader className="order-payment__item-product order-details__item-product">
@@ -162,7 +192,7 @@ class OrderRefundTable extends Component {
 					<span className="order-payment__item-sku order-details__item-sku">{ item.sku }</span>
 				</TableItem>
 				<TableItem className="order-payment__item-cost order-details__item-cost">
-					{ formatCurrency( item.price, order.currency ) }
+					{ itemPrice }
 				</TableItem>
 				<TableItem className="order-payment__item-quantity order-details__item-quantity">
 					<ScreenReaderText>
@@ -183,7 +213,7 @@ class OrderRefundTable extends Component {
 					{ formatCurrency( tax, order.currency ) }
 				</TableItem>
 				<TableItem className="order-payment__item-total order-details__item-total">
-					{ formatCurrency( item.total, order.currency ) }
+					{ itemTotal }
 				</TableItem>
 			</TableRow>
 		);
