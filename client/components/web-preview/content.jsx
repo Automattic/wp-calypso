@@ -1,10 +1,8 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -12,7 +10,7 @@ import debugModule from 'debug';
 import { noop, isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 
 /**
  * Internal dependencies
@@ -27,7 +25,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
 
-export class WebPreviewContent extends PureComponent {
+export class WebPreviewContent extends Component {
 	previewId = uuid();
 	_hasTouch = false;
 

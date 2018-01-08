@@ -16,6 +16,7 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_FOLLOWS_RECEIVE,
+	READER_SITE_REQUEST_SUCCESS,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
@@ -157,6 +158,25 @@ export const items = createReducer(
 				{}
 			);
 			return merge( {}, state, keyedNewFollows );
+		},
+		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => {
+			const incomingSite = action.payload;
+			if ( ! incomingSite || ! incomingSite.feed_URL || ! incomingSite.is_following ) {
+				return state;
+			}
+			const urlKey = prepareComparableUrl( incomingSite.feed_URL );
+			const currentFollow = state[ urlKey ];
+			const newFollow = {
+				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
+				is_following: true,
+				URL: incomingSite.URL,
+				feed_URL: incomingSite.feed_URL,
+				blog_ID: incomingSite.ID,
+			};
+			return {
+				...state,
+				[ urlKey ]: merge( {}, currentFollow, newFollow ),
+			};
 		},
 		[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) =>
 			updatePostSubscription( state, action ),

@@ -30,10 +30,10 @@ import EmptyContent from 'components/empty-content';
 import { getPostStat, isRequestingPostStats } from 'state/stats/posts/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Button from 'components/button';
-import WebPreview from 'components/web-preview';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'state/sites/selectors';
 import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'state/posts/selectors';
 import { hasNavigated } from 'state/selectors';
+import WebPreview from 'components/web-preview';
 
 class StatsPostDetail extends Component {
 	static propTypes = {

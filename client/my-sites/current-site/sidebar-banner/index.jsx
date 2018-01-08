@@ -5,44 +5,63 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
+/**
+ * Internal dependencies
+ */
+import TrackComponentView from 'lib/analytics/track-component-view';
+import { recordTracksEvent } from 'state/analytics/actions';
+
 export class SidebarBanner extends Component {
 	static defaultProps = {
 		className: '',
-		icon: null,
-		text: null,
 	};
 
 	static propTypes = {
 		className: PropTypes.string,
+		ctaName: PropTypes.string,
+		ctaText: PropTypes.string,
 		icon: PropTypes.string,
-		onDismissClick: PropTypes.func,
-		text: PropTypes.oneOfType( [
-			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) ),
-			PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ),
-		] ),
+		href: PropTypes.string,
+		text: PropTypes.string,
+		track: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
+	onClick = () => {
+		const { ctaName, track } = this.props;
+		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
+	};
+
 	render() {
-		const { children, className, icon, text } = this.props;
+		const { className, ctaName, ctaText, href, icon, text } = this.props;
 		const classes = classnames( 'sidebar-banner', className );
 
 		return (
 			<div className={ classes }>
-				<span className="sidebar-banner__icon-wrapper">
-					<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
-				</span>
-				<span className="sidebar-banner__content">
-					<span className="sidebar-banner__text">{ text ? text : children }</span>
-				</span>
-				{ text ? children : null }
+				<TrackComponentView
+					eventName="calypso_upgrade_nudge_impression"
+					eventProperties={ { cta_name: ctaName } }
+				/>
+				<a className="sidebar-banner__link" onClick={ this.onClick } href={ href }>
+					<span className="sidebar-banner__icon-wrapper">
+						<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
+					</span>
+					<span className="sidebar-banner__content">
+						<span className="sidebar-banner__text">{ text }</span>
+					</span>
+					<span className="sidebar-banner__cta">{ ctaText }</span>
+				</a>
 			</div>
 		);
 	}
 }
 
-export default localize( SidebarBanner );
+const mapStateToProps = null;
+const mapDispatchToProps = { track: recordTracksEvent };
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SidebarBanner ) );

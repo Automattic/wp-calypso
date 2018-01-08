@@ -41,7 +41,6 @@ class StatsMostPopular extends Component {
 			'is-loading': requesting && ! percent,
 			'is-empty': ! percent,
 		} );
-
 		return (
 			<div>
 				{ siteId && <QuerySiteStats siteId={ siteId } statType={ statType } /> }

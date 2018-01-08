@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { find, findIndex, noop } from 'lodash';
+import { find, findIndex, get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -133,19 +133,17 @@ class OrderDetailsTable extends Component {
 		this.props.onChange( { shipping_lines: [ { ...shippingLine, total } ] } );
 	};
 
-	onDelete = ( id, type = 'line_items' ) => {
-		return () => {
-			const index = findIndex( this.props.order[ type ], { id } );
-			if ( index >= 0 ) {
-				let newItem;
-				if ( 'line_items' === type ) {
-					newItem = { id, quantity: 0, subtotal: 0 };
-				} else {
-					newItem = { id, name: null, total: 0 };
-				}
-				this.props.onChange( { [ type ]: { [ index ]: newItem } } );
+	onDelete = ( id, type = 'line_items' ) => () => {
+		const index = findIndex( this.props.order[ type ], { id } );
+		if ( index >= 0 ) {
+			let newItem;
+			if ( 'line_items' === type ) {
+				newItem = { id, quantity: 0, subtotal: 0 };
+			} else {
+				newItem = { id, name: null, total: 0 };
 			}
-		};
+			this.props.onChange( { [ type ]: { [ index ]: newItem } } );
+		}
 	};
 
 	renderQuantity = item => {
@@ -261,6 +259,57 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
+	renderCoupons = () => {
+		const { order, site, translate } = this.props;
+		const showTax = this.shouldShowTax();
+		const coupons = order.coupon_lines || [];
+		const hasCoupons = parseFloat( order.discount_total ) > 0 || order.coupon_lines.length > 0;
+		if ( ! hasCoupons ) {
+			return null;
+		}
+
+		const couponMarkup = coupons.map( ( item, i ) => {
+			if ( ! item.code ) {
+				return null;
+			}
+			const meta = find( get( item, 'meta_data', [] ), { key: 'coupon_data' } );
+			// In rare cases this might not exist, so we'll check before showing a link.
+			const id = get( meta, 'value.id', false );
+			return (
+				<span key={ item.id }>
+					{ id ? (
+						<a
+							href={ getLink( `/store/promotion/:site/c${ id }`, site ) }
+							className="order-details__coupon-list-item"
+						>
+							{ item.code }
+						</a>
+					) : (
+						item.code
+					) }
+					{ i !== coupons.length - 1 ? ', ' : '' }
+				</span>
+			);
+		} );
+
+		return (
+			<TableRow className="order-details__coupon-list">
+				<TableItem isRowHeader className="order-details__coupon-list-label">
+					<h3 className="order-details__coupon-list-title">{ translate( 'Coupons' ) }</h3>
+					{ couponMarkup }
+				</TableItem>
+				{ showTax && (
+					<TableItem className="order-details__totals-tax">
+						{ formatCurrency( getOrderDiscountTax( order ) * -1, order.currency ) }
+					</TableItem>
+				) }
+				<TableItem className="order-details__totals-value">
+					{ formatCurrency( parseFloat( order.discount_total ) * -1, order.currency ) }
+				</TableItem>
+			</TableRow>
+		);
+	};
+
 	renderRefundTotals = () => {
 		const { isEditing, order, translate } = this.props;
 		const refundValue = getOrderRefundTotal( order );
@@ -297,6 +346,7 @@ class OrderDetailsTable extends Component {
 		}
 
 		const showTax = this.shouldShowTax();
+		const initialShippingValue = getCurrencyFormatDecimal( order.shipping_total, order.currency );
 		const refundValue = getOrderRefundTotal( order );
 		const totalTaxValue = getOrderTotalTax( order );
 		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
@@ -323,16 +373,11 @@ class OrderDetailsTable extends Component {
 				{ isEditing && <OrderAddItems /> }
 
 				<Table className={ totalsClasses } compact>
-					<OrderTotalRow
-						currency={ order.currency }
-						label={ translate( 'Discount' ) }
-						value={ order.discount_total }
-						taxValue={ getOrderDiscountTax( order ) }
-						showTax={ showTax }
-					/>
+					{ this.renderCoupons() }
 					<OrderTotalRow
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
+						initialValue={ initialShippingValue }
 						value={ getOrderShippingTotal( order ) }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }

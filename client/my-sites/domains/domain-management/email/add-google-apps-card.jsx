@@ -18,8 +18,8 @@ import { get } from 'lodash';
 import Button from 'components/forms/form-button';
 import CompactCard from 'components/card/compact';
 import config from 'config';
-import paths from 'my-sites/domains/paths';
-import support from 'lib/url/support';
+import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
+import { ADDING_GOOGLE_APPS_TO_YOUR_SITE } from 'lib/url/support';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -38,7 +38,7 @@ const AddGoogleAppsCard = createReactClass( {
 	render() {
 		const { currencyCode, translate } = this.props,
 			price = get( this.props, [ 'products', 'gapps', 'prices', currencyCode ], 0 ),
-			googleAppsSupportUrl = support.ADDING_GOOGLE_APPS_TO_YOUR_SITE,
+			googleAppsSupportUrl = ADDING_GOOGLE_APPS_TO_YOUR_SITE,
 			selectedDomainName = this.props.selectedSite.domain;
 
 		const annualPrice = getAnnualPrice( price, currencyCode );
@@ -216,10 +216,7 @@ const AddGoogleAppsCard = createReactClass( {
 
 	goToAddGoogleApps() {
 		page(
-			paths.domainManagementAddGoogleApps(
-				this.props.selectedSite.slug,
-				this.props.selectedDomainName
-			)
+			domainManagementAddGoogleApps( this.props.selectedSite.slug, this.props.selectedDomainName )
 		);
 	},
 } );

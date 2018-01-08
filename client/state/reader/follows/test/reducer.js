@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -26,13 +26,14 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	READER_FOLLOW_ERROR,
+	READER_SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#itemsCount()', () => {
 		test( 'should default to 0', () => {
 			const state = itemsCount( undefined, {} );
-			expect( state ).to.eql( 0 );
+			chaiExpect( state ).to.eql( 0 );
 		} );
 
 		test( 'should get set to whatever is in the payload', () => {
@@ -40,14 +41,14 @@ describe( 'reducer', () => {
 				type: READER_FOLLOWS_RECEIVE,
 				payload: { totalCount: 20 },
 			} );
-			expect( state ).eql( 20 );
+			chaiExpect( state ).eql( 20 );
 		} );
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			chaiExpect( state ).to.eql( {} );
 		} );
 
 		test( 'should insert a new URL when followed', () => {
@@ -59,7 +60,7 @@ describe( 'reducer', () => {
 				type: READER_RECORD_FOLLOW,
 				payload: { url: 'http://data.blog' },
 			} );
-			expect( state[ 'data.blog' ] ).to.eql( { is_following: true } );
+			chaiExpect( state[ 'data.blog' ] ).to.eql( { is_following: true } );
 		} );
 
 		test( 'should remove a URL when unfollowed', () => {
@@ -71,7 +72,10 @@ describe( 'reducer', () => {
 				type: READER_RECORD_UNFOLLOW,
 				payload: { url: 'http://discover.wordpress.com' },
 			} );
-			expect( state[ 'discover.wordpress.com' ] ).to.eql( { blog_ID: 123, is_following: false } );
+			chaiExpect( state[ 'discover.wordpress.com' ] ).to.eql( {
+				blog_ID: 123,
+				is_following: false,
+			} );
 		} );
 
 		test( 'should accept a new set of follows', () => {
@@ -89,14 +93,14 @@ describe( 'reducer', () => {
 			} );
 
 			// Updated follow
-			expect( state[ 'dailypost.wordpress.com' ] ).to.eql( {
+			chaiExpect( state[ 'dailypost.wordpress.com' ] ).to.eql( {
 				is_following: true,
 				blog_ID: 125,
 				URL: 'http://dailypost.wordpress.com',
 			} );
 
 			// Brand new follow
-			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql( {
+			chaiExpect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql( {
 				is_following: true,
 				blog_ID: 126,
 				URL: 'https://postcardsfromthereader.wordpress.com',
@@ -118,7 +122,7 @@ describe( 'reducer', () => {
 					blog_ID: 124,
 				},
 			} );
-			expect( items( original, { type: SERIALIZE } ) ).to.eql( {
+			chaiExpect( items( original, { type: SERIALIZE } ) ).to.eql( {
 				'dailypost.wordpress.com': {
 					feed_URL: 'http://dailypost.wordpress.com',
 					URL: 'http://dailypost.wordpress.com',
@@ -138,7 +142,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( items( original, { type: DESERIALIZE } ) ).to.eql( original );
+			chaiExpect( items( original, { type: DESERIALIZE } ) ).to.eql( original );
 		} );
 
 		test( 'should return the blank state for bad serialized data', () => {
@@ -150,7 +154,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( items( original, { type: DESERIALIZE } ) ).to.eql( {} );
+			chaiExpect( items( original, { type: DESERIALIZE } ) ).to.eql( {} );
 		} );
 
 		test( 'should update when passed new post subscription info', () => {
@@ -167,7 +171,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -195,7 +199,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should not update when passed bad new post subscription info', () => {
@@ -212,7 +216,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 456 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should update when passed updated post subscription info', () => {
@@ -231,7 +235,7 @@ describe( 'reducer', () => {
 
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
-				expect( state ).to.eql( {
+				chaiExpect( state ).to.eql( {
 					'example.com': {
 						is_following: true,
 						blog_ID: 123,
@@ -263,7 +267,7 @@ describe( 'reducer', () => {
 					},
 				} );
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
-				expect( state ).to.equal( original );
+				chaiExpect( state ).to.equal( original );
 			} );
 		} );
 
@@ -283,7 +287,7 @@ describe( 'reducer', () => {
 
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
 				const state = items( original, updateNewPostEmailSubscription( 456, frequency ) );
-				expect( state ).to.equal( original );
+				chaiExpect( state ).to.equal( original );
 			} );
 		} );
 
@@ -302,7 +306,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -332,7 +336,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should not update when passed bad post unsubscription info', () => {
@@ -350,7 +354,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 456 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should update when passed comment subscription info', () => {
@@ -367,7 +371,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 123 ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -395,7 +399,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 123 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should not update when passed comment sub info about a missing sub', () => {
@@ -412,7 +416,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 456 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should update when passed comment unsubscription info', () => {
@@ -429,7 +433,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -457,7 +461,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should not update when passed bad comment unsubscription info', () => {
@@ -474,7 +478,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should insert a follow error if one is received', () => {
@@ -486,10 +490,117 @@ describe( 'reducer', () => {
 				type: READER_FOLLOW_ERROR,
 				payload: { feedUrl: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
 			} );
-			expect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql( {
+			chaiExpect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql( {
 				is_following: true,
 				error: 'invalid_feed',
 			} );
+		} );
+
+		test( 'should add a new follow from a site request', () => {
+			const original = deepFreeze( {} );
+			const incomingSite = {
+				ID: 125,
+				name: 'Postcards from the Reader',
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				is_following: true,
+				subscription: {
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							send_comments: false,
+							post_delivery_frequency: 'weekly',
+						},
+					},
+				},
+			};
+
+			const state = items( original, {
+				type: READER_SITE_REQUEST_SUCCESS,
+				payload: incomingSite,
+			} );
+
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( {
+				is_following: true,
+				blog_ID: 125,
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				delivery_methods: {
+					email: {
+						send_posts: true,
+						send_comments: false,
+						post_delivery_frequency: 'weekly',
+					},
+				},
+			} );
+		} );
+
+		test( 'should update an existing follow from a site request', () => {
+			const original = deepFreeze( {
+				is_following: true,
+				blog_ID: 125,
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				delivery_methods: {
+					email: {
+						send_posts: false,
+						send_comments: true,
+					},
+				},
+			} );
+			const incomingSite = {
+				ID: 125,
+				name: 'Postcards from the Reader',
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				is_following: true,
+				subscription: {
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							send_comments: false,
+							post_delivery_frequency: 'weekly',
+						},
+					},
+				},
+			};
+
+			const state = items( original, {
+				type: READER_SITE_REQUEST_SUCCESS,
+				payload: incomingSite,
+			} );
+
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( {
+				is_following: true,
+				blog_ID: 125,
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: 'https://postcardsfromthereader.wordpress.com',
+				delivery_methods: {
+					email: {
+						send_posts: true,
+						send_comments: false,
+						post_delivery_frequency: 'weekly',
+					},
+				},
+			} );
+		} );
+
+		test( 'should disregard a site with no feed URL from a site request', () => {
+			const original = deepFreeze( {} );
+			const incomingSite = {
+				ID: 125,
+				name: 'Postcards from the Reader',
+				URL: 'https://postcardsfromthereader.wordpress.com',
+				feed_URL: null,
+				is_following: false,
+			};
+
+			const state = items( original, {
+				type: READER_SITE_REQUEST_SUCCESS,
+				payload: incomingSite,
+			} );
+
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( undefined );
 		} );
 	} );
 
@@ -503,7 +614,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, follow( 'http://example.com' ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					is_following: true,
 					feed_URL: 'http://example.com',
@@ -514,7 +625,7 @@ describe( 'reducer', () => {
 
 		test( 'should create a new entry for a new follow', () => {
 			const state = items( {}, follow( 'http://example.com' ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					feed_URL: 'http://example.com',
 					is_following: true,
@@ -543,7 +654,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( original, follow( 'http://example.com', subscriptionInfo ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					...subscriptionInfo,
 					is_following: true,
@@ -572,7 +683,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( original, follow( 'http://example.com', subscriptionInfo ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com/feed': {
 					...subscriptionInfo,
 					is_following: true,
@@ -593,7 +704,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example.com': {
 					is_following: false,
 					feed_URL: 'http://example.com',
@@ -612,13 +723,13 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 
 		test( 'should return the same state for an item that does not exist', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, unfollow( 'http://example.com' ) );
-			expect( state ).to.equal( original );
+			chaiExpect( state ).to.equal( original );
 		} );
 	} );
 
@@ -637,7 +748,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, syncComplete( [ 'http://example2.com' ] ) );
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				'example2.com': {
 					feed_URL: 'http://example2.com',
 					ID: 2,

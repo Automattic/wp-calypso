@@ -24,7 +24,7 @@ import {
 	isMultiSelectEnabled,
 	isPostSelected,
 } from 'state/ui/post-type-list/selectors';
-import { hideSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
+import { hideActiveSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
 import { bumpStat } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
 import FormInputCheckbox from 'components/forms/form-checkbox';
@@ -43,10 +43,6 @@ function preloadEditor() {
 }
 
 class PostItem extends React.Component {
-	hideCurrentSharePanel = () => {
-		this.props.hideSharePanel( this.props.globalId );
-	};
-
 	clickHandler = clickTarget => () => {
 		this.props.bumpStat( 'calypso_post_item_click', clickTarget );
 	};
@@ -122,7 +118,7 @@ class PostItem extends React.Component {
 				post={ post }
 				siteId={ post.site_ID }
 				showClose={ true }
-				onClose={ this.hideCurrentSharePanel }
+				onClose={ this.props.hideActiveSharePanel }
 			/>
 		);
 	}
@@ -142,6 +138,7 @@ class PostItem extends React.Component {
 
 		const title = post ? post.title : null;
 		const isPlaceholder = ! globalId;
+		const enabledPostLink = isPlaceholder || multiSelectEnabled ? null : postUrl;
 
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
@@ -160,15 +157,24 @@ class PostItem extends React.Component {
 					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
-							{ isAllSitesModeSelected && <PostTypeSiteInfo globalId={ globalId } /> }
-							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
+							{ isAllSitesModeSelected && (
+								<a href={ enabledPostLink } className="post-item__site-info-link">
+									<PostTypeSiteInfo globalId={ globalId } />
+								</a>
+							) }
+							{ isAuthorVisible && (
+								<a href={ enabledPostLink } className="post-item__post-author-link">
+									<PostTypePostAuthor globalId={ globalId } />
+								</a>
+							) }
 						</div>
-						<h1 className="post-item__title" onClick={ this.clickHandler( 'title' ) } onMouseOver={ preloadEditor }>
+						<h1
+							className="post-item__title"
+							onClick={ this.clickHandler( 'title' ) }
+							onMouseOver={ preloadEditor }
+						>
 							{ ! externalPostLink && (
-								<a
-									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }
-									className="post-item__title-link"
-								>
+								<a href={ enabledPostLink } className="post-item__title-link">
 									{ title || translate( 'Untitled' ) }
 								</a>
 							) }
@@ -186,8 +192,10 @@ class PostItem extends React.Component {
 						</h1>
 						<div className="post-item__meta">
 							<span className="post-item__meta-time-status">
-								<PostTime globalId={ globalId } />
-								<PostStatus globalId={ globalId } />
+								<a href={ enabledPostLink } className="post-item__time-status-link">
+									<PostTime globalId={ globalId } />
+									<PostStatus globalId={ globalId } />
+								</a>
 							</span>
 							<PostActionCounts globalId={ globalId } />
 						</div>
@@ -216,7 +224,7 @@ PostItem.propTypes = {
 	singleUserQuery: PropTypes.bool,
 	className: PropTypes.string,
 	compact: PropTypes.bool,
-	hideSharePanel: PropTypes.func,
+	hideActiveSharePanel: PropTypes.func,
 	hasExpandedContent: PropTypes.bool,
 };
 
@@ -249,7 +257,7 @@ export default connect(
 	},
 	{
 		bumpStat,
-		hideSharePanel,
+		hideActiveSharePanel,
 		togglePostSelection,
 	}
 )( localize( PostItem ) );

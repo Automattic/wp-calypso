@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, filter, sortBy } from 'lodash';
+import { find, filter, get, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,6 +43,39 @@ export const getStateData = ( country, state ) => {
 	}
 
 	return stateData;
+};
+
+/**
+ * Returns an appropriate default currency (code) for
+ * the given country (code).
+ * @param {string} country Country (code) to get currency code for
+ * @return {string} default currency code for country
+ */
+export const getCurrencyCodeForCountry = country => {
+	const countryData = getCountryData( country );
+	return get( countryData, 'currency', 'USD' );
+};
+
+/**
+ * Returns an appropriate default dimension unit for
+ * the given country (code).
+ * @param {string} country Country (code) to get dimension unit for
+ * @return {string} default dimension unit for country
+ */
+export const getDimensionUnitForCountry = country => {
+	const countryData = getCountryData( country );
+	return get( countryData, 'dimensionUnit', 'in' );
+};
+
+/**
+ * Returns an appropriate default weight unit for
+ * the given country (code).
+ * @param {string} country Country (code) to get weight unit for
+ * @return {string} default weight unit for country
+ */
+export const getWeightUnitForCountry = country => {
+	const countryData = getCountryData( country );
+	return get( countryData, 'weightUnit', 'lbs' );
 };
 
 /**

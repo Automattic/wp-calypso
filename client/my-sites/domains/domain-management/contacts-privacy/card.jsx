@@ -14,7 +14,10 @@ import { localize } from 'i18n-calypso';
 import CompactCard from 'components/card/compact';
 import ContactDisplay from './contact-display';
 import Notice from 'components/notice';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementPrivacyProtection,
+	domainManagementTransferOut,
+} from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
 import support from 'lib/url/support';
 
@@ -103,10 +106,7 @@ class ContactsPrivacyCard extends React.PureComponent {
 								strong: <strong />,
 								a: (
 									<a
-										href={ paths.domainManagementTransferOut(
-											selectedSite.slug,
-											selectedDomainName
-										) }
+										href={ domainManagementTransferOut( selectedSite.slug, selectedDomainName ) }
 									/>
 								),
 							},
@@ -127,7 +127,7 @@ class ContactsPrivacyCard extends React.PureComponent {
 							strong: <strong />,
 							a: (
 								<a
-									href={ paths.domainManagementPrivacyProtection(
+									href={ domainManagementPrivacyProtection(
 										selectedSite.slug,
 										selectedDomainName
 									) }

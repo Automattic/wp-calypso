@@ -100,10 +100,12 @@ class CurrentPlanHeader extends Component {
 	render() {
 		const {
 			currentPlanSlug,
+			includePlansLink,
 			isAutomatedTransfer,
 			isPlaceholder,
 			title,
 			tagLine,
+			translate,
 			selectedSite,
 		} = this.props;
 
@@ -132,6 +134,14 @@ class CurrentPlanHeader extends Component {
 							</h2>
 						</div>
 						{ this.renderPurchaseInfo() }
+						{ includePlansLink && (
+							<Button
+								className="current-plan__compare-plans"
+								href={ '/plans/' + selectedSite.slug }
+							>
+								{ translate( 'Compare Plans' ) }
+							</Button>
+						) }
 					</div>
 				</div>
 
@@ -139,6 +149,7 @@ class CurrentPlanHeader extends Component {
 					<div className="current-plan__header-item-content">
 						<HappinessSupport
 							isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+							isJetpackFreePlan={ currentPlanSlug === PLAN_JETPACK_FREE }
 							isPlaceholder={ isPlaceholder }
 							showLiveChatButton={ this.isEligibleForLiveChat() }
 							liveChatButtonEventName="calypso_plans_current_plan_chat_initiated"

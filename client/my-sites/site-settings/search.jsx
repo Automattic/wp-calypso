@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { overSome } from 'lodash';
+import { overSome, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -22,6 +22,7 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import untrailingslashit from 'lib/route/untrailingslashit';
 import {
 	getJetpackModule,
 	isActivatingJetpackModule,
@@ -69,7 +70,7 @@ class Search extends Component {
 
 		return (
 			<FormSettingExplanation>
-				{ translate( 'Your site is using enhanced search powered by Elasticsearch.' ) }
+				{ translate( 'Add the Jetpack Search widget to your sidebar to add search filters.' ) }
 			</FormSettingExplanation>
 		);
 	}
@@ -108,7 +109,9 @@ class Search extends Component {
 				<JetpackModuleToggle
 					siteId={ siteId }
 					moduleSlug="search"
-					label={ translate( 'Enable site-wide search powered by Elasticsearch' ) }
+					label={ translate(
+						'Replace WordPress built-in search with an improved search experience (Beta)'
+					) }
 					disabled={ isRequestingSettings || isSavingSettings }
 				/>
 
@@ -118,7 +121,14 @@ class Search extends Component {
 	}
 
 	render() {
-		const { siteId, siteIsJetpack, enableFeature, translate } = this.props;
+		const {
+			siteId,
+			site,
+			siteIsJetpack,
+			enableFeature,
+			searchModuleActive,
+			translate,
+		} = this.props;
 
 		// for now, don't even show upgrade nudge
 		if ( ! enableFeature ) {
@@ -130,15 +140,23 @@ class Search extends Component {
 			return null;
 		}
 
+		let widgetURL = get( site, 'options.admin_url', '' );
+		if ( widgetURL ) {
+			widgetURL = untrailingslashit( widgetURL ) + '/widgets.php';
+		}
+
 		return (
 			<div>
 				{ siteId && <QueryJetpackConnection siteId={ siteId } /> }
 
 				<SectionHeader label={ translate( 'Search' ) } />
 
-				<Card className="search__card site-settings__traffic-settings">
+				<CompactCard className="search__card site-settings__traffic-settings">
 					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
-				</Card>
+				</CompactCard>
+				{ searchModuleActive && (
+					<CompactCard href={ widgetURL }>{ translate( 'Add Jetpack Search Widget' ) }</CompactCard>
+				) }
 			</div>
 		);
 	}

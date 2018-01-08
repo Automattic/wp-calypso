@@ -51,7 +51,7 @@
 
 .order-details__actions {
 	margin: 0 -24px;
-	padding: 8px 78px 8px 24px;
+	padding: 16px 80px 16px 24px;
 	border-bottom: 1px solid lighten($gray, 30%);
 	text-align: right;
 
@@ -67,10 +67,14 @@
 
 // Duplicating `.table` for increased specificity
 .order-details__totals.table.table {
-	margin: 16px -24px;
+	margin: 8px -24px;
 	box-shadow: none;
 	border: none;
 	text-align: right;
+
+	& + .form-setting-explanation {
+		padding-right: 55px;
+	}
 
 	.table-row {
 		&:hover {
@@ -82,12 +86,47 @@
 		font-size: 14px;
 	}
 
+	.order-details__coupon-list {
+		.table-item {
+			padding-left: 24px;
+			border-bottom: 1px solid lighten($gray, 30%);
+			padding-bottom: 16px;
+		}
+
+		.table-item:not(.is-row-heading) {
+			border-bottom: 1px solid lighten($gray, 30%);
+			padding-top: 0;
+			vertical-align: top;
+		}
+
+		.order-details__coupon-list-label {
+			text-align: left;
+		}
+
+		.order-details__coupon-list-title {
+			font-weight: 600;
+			margin-bottom: -6px;
+		}
+	}
+
+	.order-details__coupon-list + .order-details__total {
+		.table-item {
+			padding-top: 16px;
+		}
+	}
+
 	.order-details__total-refund {
 		color: $alert-red;
 
-		td,
-		th {
-			border-top: 1px solid lighten($gray, 30%);
+		.table-item {
+			border-bottom: 1px solid lighten($gray, 30%);
+			padding-bottom: 16px;
+		}
+
+		& + .order-details__total-remaining {
+			.table-item {
+				padding-top: 16px;
+			}
 		}
 	}
 
@@ -121,8 +160,13 @@
 
 	&.is-editing {
 		.order-details__totals-value {
-			// Indent enough to account for delete button
-			padding-right: 78px !important;
+			// Increase width for PriceInput
+			width: 13em;
+			padding-right: 79px;
+		}
+
+		.form-text-input-with-affixes {
+			max-width: 13em;
 		}
 
 		.order-details__totals-tax {

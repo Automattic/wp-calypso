@@ -22,6 +22,8 @@ import Order from './app/order';
 import OrderCreate from './app/order/create';
 import Orders from './app/orders';
 import ProductCategories from './app/product-categories';
+import ProductCategoryCreate from './app/product-categories/create';
+import ProductCategoryUpdate from './app/product-categories/update';
 import Products from './app/products';
 import ProductCreate from './app/products/product-create';
 import ProductUpdate from './app/products/product-update';
@@ -36,6 +38,7 @@ import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
+import { tracksStore } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'controller';
 
 function initExtension() {
@@ -72,6 +75,18 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-product-categories',
 			documentTitle: translate( 'Product Categories' ),
 			path: '/store/products/categories/:site',
+		},
+		{
+			container: ProductCategoryUpdate,
+			configKey: 'woocommerce/extension-product-categories',
+			documentTitle: translate( 'Edit Product Category' ),
+			path: '/store/products/category/:site/:category',
+		},
+		{
+			container: ProductCategoryCreate,
+			configKey: 'woocommerce/extension-product-categories',
+			documentTitle: translate( 'New Product Category' ),
+			path: '/store/products/category/:site',
 		},
 		{
 			container: Orders,
@@ -202,6 +217,7 @@ function addStorePage( storePage, storeNavigation ) {
 			context.primary = React.createElement( App, appProps, component );
 			next();
 		},
+		addTracksContext,
 		makeLayout,
 		clientRender
 	);
@@ -226,6 +242,12 @@ function notFoundError( context, next ) {
 	next();
 }
 
+function addTracksContext( context, next ) {
+	tracksStore.setReduxStore( context.store );
+
+	next();
+}
+
 export default function() {
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
@@ -237,11 +259,19 @@ export default function() {
 	} );
 
 	// Add pages that use my-sites navigation instead
-	page( '/store/stats/:type/:unit', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/store/stats/:type/:unit',
+		siteSelection,
+		sites,
+		addTracksContext,
+		makeLayout,
+		clientRender
+	);
 	page(
 		'/store/stats/:type/:unit/:site',
 		siteSelection,
 		navigation,
+		addTracksContext,
 		StatsController,
 		makeLayout,
 		clientRender

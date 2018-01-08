@@ -16,11 +16,10 @@ import url from 'url';
 import accessibleFocus from 'lib/accessible-focus';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import config from 'config';
-import { receiveUser } from 'state/users/actions';
-import { setCurrentUserId, setCurrentUserFlags } from 'state/current-user/actions';
 import { setRoute as setRouteAction } from 'state/ui/actions';
 import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
+import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 
 const debug = debugFactory( 'calypso' );
 
@@ -178,12 +177,10 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 
 	if ( currentUser.get() ) {
 		// Set current user in Redux store
-		reduxStore.dispatch( receiveUser( currentUser.get() ) );
+		setCurrentUserOnReduxStore( currentUser.get(), reduxStore );
 		currentUser.on( 'change', () => {
-			reduxStore.dispatch( receiveUser( currentUser.get() ) );
+			setCurrentUserOnReduxStore( currentUser.get(), reduxStore );
 		} );
-		reduxStore.dispatch( setCurrentUserId( currentUser.get().ID ) );
-		reduxStore.dispatch( setCurrentUserFlags( currentUser.get().meta.data.flags.active_flags ) );
 	}
 
 	if ( config.isEnabled( 'network-connection' ) ) {

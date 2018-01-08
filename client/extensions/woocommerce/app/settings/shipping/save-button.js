@@ -15,7 +15,6 @@ import page from 'page';
  * Internal dependencies
  */
 import Button from 'components/button';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
@@ -30,25 +29,6 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 class ShippingSettingsSaveButton extends Component {
 	static propTypes = {
 		onSaveSuccess: PropTypes.func.isRequired,
-	};
-
-	componentDidMount = () => {
-		const { site } = this.props;
-
-		if ( site && site.ID ) {
-			this.props.fetchSetupChoices( site.ID );
-		}
-	};
-
-	componentWillReceiveProps = newProps => {
-		const { site } = this.props;
-
-		const newSiteId = newProps.site ? newProps.site.ID : null;
-		const oldSiteId = site ? site.ID : null;
-
-		if ( oldSiteId !== newSiteId ) {
-			this.props.fetchSetupChoices( newSiteId );
-		}
 	};
 
 	onSaveSuccess = dispatch => {
@@ -107,7 +87,7 @@ class ShippingSettingsSaveButton extends Component {
 				</Button>
 			) : null;
 		}
-		const label = wcsEnabled ? translate( 'Save and finish' ) : translate( "I'm Finished" );
+		const label = wcsEnabled ? translate( 'Save & finish' ) : translate( "I'm Finished" );
 		return (
 			<Button onClick={ this.redirect } primary busy={ isSaving } disabled={ isSaving }>
 				{ label }
@@ -133,7 +113,6 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			fetchSetupChoices,
 			createWcsShippingSaveActionList,
 		},
 		dispatch

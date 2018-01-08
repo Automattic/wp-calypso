@@ -13,7 +13,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 
 export default class extends React.Component {
 	static displayName = 'StickyPanel';
@@ -65,7 +65,7 @@ export default class extends React.Component {
 
 		if (
 			( this.props.minLimit !== false && this.props.minLimit >= window.innerWidth ) ||
-			viewport.isMobile()
+			isMobile()
 		) {
 			return this.setState( { isSticky: false } );
 		}

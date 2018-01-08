@@ -1,6 +1,9 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -23,11 +26,14 @@ import {
 	mailChimpSettings,
 	isRequestingSettings,
 	isRequestingSyncStatus,
-	isSavingSettings,
+	isSavingMailChimpSettings,
 	isSubmittingNewsletterSetting,
 	newsletterSettingsSubmitError,
-	} from 'woocommerce/state/sites/settings/mailchimp/selectors';
-import { submitMailChimpNewsletterSettings, requestResync } from 'woocommerce/state/sites/settings/mailchimp/actions.js';
+} from 'woocommerce/state/sites/settings/mailchimp/selectors';
+import {
+	submitMailChimpNewsletterSettings,
+	requestResync,
+} from 'woocommerce/state/sites/settings/mailchimp/actions.js';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import SyncTab from './sync_tab.js';
 
@@ -38,11 +44,11 @@ const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) =>
 		onChange( { mailchimp_checkbox_defaults: nextValue } );
 	};
 
-	const onNewsletterLabelChange = ( e ) => {
+	const onNewsletterLabelChange = e => {
 		onChange( { newsletter_label: e.target.value } );
 	};
 
-	const onToggleSubscribeMessage = ( e ) => {
+	const onToggleSubscribeMessage = e => {
 		// check if we had previously selected something in checked/unchecked area
 		// this way we can use old value on toggling visibility,
 		// this is just to improve UX
@@ -84,16 +90,19 @@ const Settings = localize( ( { translate, settings, oldCheckbox, onChange } ) =>
 						onChange={ onNewsletterLabelChange }
 						value={ settings.newsletter_label }
 					/>
-
 				</FormFieldset>
 			</span>
 			<span className="mailchimp__dashboard-settings-preview">
-				<div className="mailchimp__dashboard-settings-preview-heading">{ translate( 'PREVIEW' ) }</div>
+				<div className="mailchimp__dashboard-settings-preview-heading">
+					{ translate( 'PREVIEW' ) }
+				</div>
 				<div className="mailchimp__dashboard-settings-preview-view">
-					{ toggle && <FormLabel>
+					{ toggle && (
+						<FormLabel>
 							<FormCheckbox checked={ 'check' === subscriptionPromptState } disabled />
 							<span>{ settings.newsletter_label }</span>
-						</FormLabel>}
+						</FormLabel>
+					) }
 				</div>
 			</span>
 		</div>
@@ -119,24 +128,26 @@ class MailChimpDashboard extends React.Component {
 
 	componentWillReceiveProps( nextProps ) {
 		const { translate } = nextProps;
-		if ( ( false === nextProps.isSaving ) && this.props.isSaving ) {
+		if ( false === nextProps.isSaving && this.props.isSaving ) {
 			if ( nextProps.newsletterSettingsSubmitError ) {
-				nextProps.errorNotice( translate( 'There was a problem saving MailChimp settings. Please try again.' ) );
+				nextProps.errorNotice(
+					translate( 'There was a problem saving MailChimp settings. Please try again.' )
+				);
 			} else {
 				nextProps.successNotice( translate( 'MailChimp settings saved.' ), { duration: 4000 } );
 			}
 		}
-		if ( ( false === this.props.saveSettingsRequest ) && nextProps.saveSettingsRequest ) {
+		if ( false === this.props.saveSettingsRequest && nextProps.saveSettingsRequest ) {
 			this.onSave();
 		}
 	}
 
-	onSettingsChange = ( change ) => {
+	onSettingsChange = change => {
 		this.setState( { settings: Object.assign( {}, this.state.settings, change ) } );
 		if ( this.props.onChange ) {
 			this.props.onChange();
 		}
-	}
+	};
 
 	onSave = () => {
 		const { submitMailChimpNewsletterSettings: submit, siteId } = this.props;
@@ -149,21 +160,26 @@ class MailChimpDashboard extends React.Component {
 			mailchimp_checkbox_action: settings.mailchimp_checkbox_action,
 		};
 		submit( siteId, message );
-	}
+	};
 
 	render() {
 		const { siteId, syncStatusData, translate, onNoticeExit, wizardCompleted } = this.props;
 		return (
 			<div>
 				<QueryMailChimpSyncStatus siteId={ siteId } />
-				{ wizardCompleted && <Notice className="mailchimp__dashboard-success-notice"
-					status="is-success"
-					showDismiss
-					onDismissClick={ onNoticeExit }
-					text={ translate( 'Nice! The last thing to do is to make sure the newsletter subscriptions are looking good.' ) }
-				/> }
-				<Card className="mailchimp__dashboard" >
-					<div className="mailchimp__dashboard-first-section" >
+				{ wizardCompleted && (
+					<Notice
+						className="mailchimp__dashboard-success-notice"
+						status="is-success"
+						showDismiss
+						onDismissClick={ onNoticeExit }
+						text={ translate(
+							'Nice! The last thing to do is to make sure the newsletter subscriptions are looking good.'
+						) }
+					/>
+				) }
+				<Card className="mailchimp__dashboard">
+					<div className="mailchimp__dashboard-first-section">
 						<span className="mailchimp__dashboard-title-and-slogan">
 							<div>
 								<div className="mailchimp__dashboard-title">MailChimp</div>
@@ -172,22 +188,24 @@ class MailChimpDashboard extends React.Component {
 								</div>
 							</div>
 						</span>
-						<span className="mailchimp__dashboard-sync-status" >
+						<span className="mailchimp__dashboard-sync-status">
 							<SyncTab
 								siteId={ siteId }
 								isRequesting={ this.props.isRequestingSyncStatus }
 								syncState={ syncStatusData }
-								resync={ this.props.requestResync } />
+								resync={ this.props.requestResync }
+							/>
 						</span>
 					</div>
-					<div className="mailchimp__dashboard-second-section" >
+					<div className="mailchimp__dashboard-second-section">
 						<Settings
 							settings={ this.state.settings }
 							isRequesting={ this.props.isRequestingSettings }
 							onChange={ this.onSettingsChange }
 							onSave={ this.onSave }
 							isSaving={ this.props.isSaving }
-							oldCheckbox={ this.props.settings.mailchimp_checkbox_defaults } />
+							oldCheckbox={ this.props.settings.mailchimp_checkbox_defaults }
+						/>
 					</div>
 				</Card>
 			</div>
@@ -200,10 +218,7 @@ MailChimpDashboard.propTypes = {
 	syncStatusData: PropTypes.object,
 	isRequestingSettings: PropTypes.bool,
 	isSaving: PropTypes.bool,
-	newsletterSettingsSubmitError: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.bool,
-	] ),
+	newsletterSettingsSubmitError: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	onChange: PropTypes.func,
 	settings: PropTypes.object.isRequired,
 	errorNotice: PropTypes.func.isRequired,
@@ -219,7 +234,7 @@ export default connect(
 		isRequestingSettings: isRequestingSettings( state, siteId ),
 		isRequestingSyncStatus: isRequestingSyncStatus( state, siteId ),
 		isSaving: isSubmittingNewsletterSetting( state, siteId ),
-		saveSettingsRequest: isSavingSettings( state, siteId ),
+		saveSettingsRequest: isSavingMailChimpSettings( state, siteId ),
 		newsletterSettingsSubmitError: newsletterSettingsSubmitError( state, siteId ),
 		settings: mailChimpSettings( state, siteId ),
 	} ),

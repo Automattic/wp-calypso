@@ -169,3 +169,12 @@ export function isStoreSetupComplete( state, siteId = getSelectedSiteId( state )
 		getFinishedInitialSetup( state, siteId )
 	);
 }
+
+/**
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {boolean} Whether or not this site is a test site.
+ */
+export function isTestSite( state, siteId = getSelectedSiteId( state ) ) {
+	return isChoiceTrue( state, siteId, 'is_test_site' );
+}

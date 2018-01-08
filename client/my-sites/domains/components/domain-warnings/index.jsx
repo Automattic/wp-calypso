@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import _debug from 'debug';
@@ -22,16 +20,27 @@ import PendingGappsTosNotice from './pending-gapps-tos-notice';
 import purchasesPaths from 'me/purchases/paths';
 import { type as domainTypes, transferStatus } from 'lib/domains/constants';
 import { isSubdomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import support from 'lib/url/support';
-import paths from 'my-sites/domains/paths';
+import {
+	ALL_ABOUT_DOMAINS,
+	DOMAINS,
+	DOMAIN_HELPER_PREFIX,
+	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
+	MAP_EXISTING_DOMAIN_UPDATE_DNS,
+	MAP_SUBDOMAIN,
+} from 'lib/url/support';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementTransferIn,
+} from 'my-sites/domains/paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 const debug = _debug( 'calypso:domain-warnings' );
 
 const allAboutDomainsLink = (
-	<a href={ support.ALL_ABOUT_DOMAINS } target="_blank" rel="noopener noreferrer" />
+	<a href={ ALL_ABOUT_DOMAINS } target="_blank" rel="noopener noreferrer" />
 );
-const domainsLink = <a href={ support.DOMAINS } target="_blank" rel="noopener noreferrer" />;
+const domainsLink = <a href={ DOMAINS } target="_blank" rel="noopener noreferrer" />;
 const pNode = <p />;
 
 const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
@@ -162,7 +171,7 @@ export class DomainWarnings extends React.PureComponent {
 						context: 'Notice for mapped subdomain that has CNAME records need to set up',
 					}
 				);
-				learnMoreUrl = support.MAP_SUBDOMAIN;
+				learnMoreUrl = MAP_SUBDOMAIN;
 			} else {
 				text = translate(
 					"{{strong}}%(domainName)s's{{/strong}} name server records should be configured.",
@@ -172,7 +181,7 @@ export class DomainWarnings extends React.PureComponent {
 						context: 'Notice for mapped domain notice with NS records pointing to somewhere else',
 					}
 				);
-				learnMoreUrl = support.DOMAIN_HELPER_PREFIX + domain.name;
+				learnMoreUrl = DOMAIN_HELPER_PREFIX + domain.name;
 			}
 		} else {
 			offendingList = (
@@ -184,12 +193,12 @@ export class DomainWarnings extends React.PureComponent {
 				text = translate( "Some of your domains' CNAME records should be configured.", {
 					context: 'Notice for mapped subdomain that has CNAME records need to set up',
 				} );
-				learnMoreUrl = support.MAP_SUBDOMAIN;
+				learnMoreUrl = MAP_SUBDOMAIN;
 			} else {
 				text = translate( "Some of your domains' name server records should be configured.", {
 					context: 'Mapped domain notice with NS records pointing to somewhere else',
 				} );
-				learnMoreUrl = support.MAP_EXISTING_DOMAIN_UPDATE_DNS;
+				learnMoreUrl = MAP_EXISTING_DOMAIN_UPDATE_DNS;
 			}
 		}
 		const noticeProps = {
@@ -203,7 +212,7 @@ export class DomainWarnings extends React.PureComponent {
 		if ( this.props.isCompact ) {
 			noticeProps.text = translate( 'DNS configuration required' );
 			children = (
-				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ translate( 'Fix' ) }
 				</NoticeAction>
 			);
@@ -569,7 +578,7 @@ export class DomainWarnings extends React.PureComponent {
 					key="unverified-domains-can-manage"
 					text={ this.props.isCompact ? compactMessage : fullMessage }
 				>
-					<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain ) }>
+					<NoticeAction href={ domainManagementEdit( this.props.selectedSite.slug, domain ) }>
 						{ action }
 					</NoticeAction>
 				</Notice>
@@ -578,7 +587,7 @@ export class DomainWarnings extends React.PureComponent {
 
 		let fullContent, compactContent, compactNoticeText;
 
-		const editLink = name => paths.domainManagementEdit( this.props.selectedSite.slug, name );
+		const editLink = name => domainManagementEdit( this.props.selectedSite.slug, name );
 		if ( severity === 'is-error' ) {
 			fullContent = (
 				<span>
@@ -596,7 +605,7 @@ export class DomainWarnings extends React.PureComponent {
 			);
 			compactNoticeText = translate( 'Issues with your domains.' );
 			compactContent = (
-				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
 				</NoticeAction>
 			);
@@ -615,7 +624,7 @@ export class DomainWarnings extends React.PureComponent {
 			);
 			compactNoticeText = translate( 'Verification required for domains.' );
 			compactContent = (
-				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+				<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 					{ action }
 				</NoticeAction>
 			);
@@ -646,7 +655,7 @@ export class DomainWarnings extends React.PureComponent {
 
 		const { translate } = this.props;
 		const compactContent = (
-			<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+			<NoticeAction href={ domainManagementList( this.props.selectedSite.slug ) }>
 				{ translate( 'More' ) }
 			</NoticeAction>
 		);
@@ -774,7 +783,7 @@ export class DomainWarnings extends React.PureComponent {
 		let compactMessage = null;
 		let message;
 
-		const domainManagementLink = paths.domainManagementTransferIn(
+		const domainManagementLink = domainManagementTransferIn(
 			this.props.selectedSite.slug,
 			domainInTransfer.name
 		);
@@ -806,7 +815,7 @@ export class DomainWarnings extends React.PureComponent {
 							strong: <strong />,
 							a: (
 								<a
-									href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+									href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 									rel="noopener noreferrer"
 									target="_blank"
 								/>

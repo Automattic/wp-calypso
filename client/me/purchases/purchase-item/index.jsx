@@ -111,7 +111,7 @@ class PurchaseItem extends Component {
 			return translate( 'Included with Plan' );
 		}
 
-		if ( isOneTimePurchase( purchase ) ) {
+		if ( isOneTimePurchase( purchase ) && ! isDomainTransfer( purchase ) ) {
 			return translate( 'Never Expires' );
 		}
 

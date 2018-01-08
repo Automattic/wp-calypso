@@ -5,62 +5,65 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
-import { checkInboundTransferStatus, resendInboundTransferEmail } from 'lib/domains';
+import { resendInboundTransferEmail } from 'lib/domains';
 import support from 'lib/url/support';
+import Card from 'components/card';
 
-class InboundTransferEmailVerificationCard extends React.Component {
+class InboundTransferEmailVerificationCard extends React.PureComponent {
 	static propTypes = {
-		selectedDomainName: PropTypes.string.isRequired,
+		domain: PropTypes.object.isRequired,
 		selectedSiteSlug: PropTypes.string.isRequired,
 	};
 
-	state = {
-		email: '',
-		loading: true,
-	};
-
-	componentWillMount() {
-		this.refreshContactEmail();
-	}
-
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.selectedDomainName !== this.props.selectedDomainName ) {
-			this.refreshContactEmail();
-		}
-	}
-
-	refreshContactEmail = () => {
-		this.setState( { loading: true } );
-
-		checkInboundTransferStatus( this.props.selectedDomainName, ( error, result ) => {
-			if ( ! isEmpty( error ) ) {
-				return;
-			}
-
-			this.setState( {
-				contactEmail: result.admin_email,
-				loading: false,
-			} );
-		} );
-	};
-
 	render() {
-		const { selectedDomainName, selectedSiteSlug, translate } = this.props;
-		const { loading, contactEmail } = this.state;
+		const { domain, selectedSiteSlug, translate } = this.props;
 
-		if ( loading ) {
-			return null;
+		const { manualWhois, adminEmail } = domain;
+
+		if ( manualWhois ) {
+			return (
+				<Card highlight="warning">
+					<div>
+						<h1 className="inbound-transfer-verification__heading">
+							{ translate(
+								'The authorization email is still waiting to be sent.'
+							) }
+						</h1>
+						{ translate(
+							'The contact address for this domain wasn\'t immediately available. ' +
+							'We will keep checking and send the email to initiate the transfer once we have the ' +
+							'correct address. This could take up to 24 hours. We appreciate your patience.'
+						) }
+					</div>
+				</Card>
+			);
+		}
+
+		if ( ! adminEmail ) {
+			return (
+				<Card highlight="info">
+					<div>
+						<h1 className="inbound-transfer-verification__heading">
+							{ translate(
+								'The authorization email will be sent shortly.'
+							) }
+						</h1>
+						{ translate(
+							'Check again in a few minutes to see which mailbox you can find the email in.'
+						) }
+					</div>
+				</Card>
+			);
 		}
 
 		return (
 			<EmailVerificationCard
-				contactEmail={ contactEmail }
+				contactEmail={ adminEmail }
 				errorMessage={ translate( 'Unable to resend domain transfer email.' ) }
 				headerText={
 					translate(
@@ -74,7 +77,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						args: {
-							domain: selectedDomainName,
+							domain: domain.name,
 						},
 						components: {
 							learnMoreLink: (
@@ -89,7 +92,7 @@ class InboundTransferEmailVerificationCard extends React.Component {
 					}
 				) }
 				resendVerification={ resendInboundTransferEmail }
-				selectedDomainName={ selectedDomainName }
+				selectedDomainName={ domain.name }
 				selectedSiteSlug={ selectedSiteSlug }
 			/>
 		);

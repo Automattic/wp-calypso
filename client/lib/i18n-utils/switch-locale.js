@@ -32,11 +32,8 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 	switchCSS( 'main-css', cssUrl );
 }
 
+let lastRequestedLocale = null;
 export default function switchLocale( localeSlug ) {
-	if ( localeSlug === i18n.getLocaleSlug() ) {
-		return;
-	}
-
 	const language = getLanguage( localeSlug );
 
 	if ( ! language ) {
@@ -49,6 +46,8 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
+	lastRequestedLocale = localeSlug;
+
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM( localeSlug, !! language.rtl );
@@ -60,6 +59,12 @@ export default function switchLocale( localeSlug ) {
 						localeSlug +
 						'. Falling back to English.'
 				);
+				return;
+			}
+
+			// Handle race condition when we're requested to switch to a different
+			// locale while we're in the middle of request, we should abondon result
+			if ( localeSlug !== lastRequestedLocale ) {
 				return;
 			}
 

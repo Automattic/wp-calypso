@@ -3,6 +3,7 @@
 exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
 <Card
   className="theme is-actionable"
+  data-e2e-theme="twenty-seventeen"
   highlight={false}
   tagName="div"
 >

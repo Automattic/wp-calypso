@@ -532,7 +532,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 		labelId: label.label_id,
 	} ) );
 	const state = getShippingLabel( getState(), orderId, siteId );
-	const printUrl = getPrintURL( siteId, state.paperSize, labelsToPrint );
+	const printUrl = getPrintURL( state.paperSize, labelsToPrint );
 	let hasError = false;
 
 	api.get( siteId, printUrl )
@@ -755,7 +755,7 @@ export const confirmRefund = ( orderId, siteId ) => ( dispatch, getState ) => {
 export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, getState ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG, labelId, orderId, siteId } );
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
-	const printUrl = getPrintURL( siteId, shippingLabel.paperSize, [ { labelId } ] );
+	const printUrl = getPrintURL( shippingLabel.paperSize, [ { labelId } ] );
 
 	api.get( siteId, printUrl )
 		.then( ( fileData ) => {

@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
@@ -40,7 +39,7 @@ import Main from 'components/main';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import Placeholder from './placeholder';
-import PreSetupView from './pre-setup-view';
+import StoreLocationSetupView from './store-location-setup-view';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
@@ -61,7 +60,6 @@ class Dashboard extends Component {
 		siteId: PropTypes.number,
 		mailChimpConfigured: PropTypes.bool,
 		fetchOrders: PropTypes.func,
-		fetchSetupChoices: PropTypes.func,
 		requestSyncStatus: PropTypes.func,
 		setupChoicesLoading: PropTypes.bool,
 	};
@@ -85,7 +83,6 @@ class Dashboard extends Component {
 
 	fetchStoreData = () => {
 		const { siteId, productsLoaded } = this.props;
-		this.props.fetchSetupChoices( siteId );
 		this.props.fetchOrders( siteId );
 		this.props.requestSettings( siteId );
 
@@ -113,7 +110,7 @@ class Dashboard extends Component {
 			return translate( 'Setting Up Store Pages' );
 		}
 
-		if ( ! setStoreAddressDuringInitialSetup && ! hasProducts ) {
+		if ( ! setStoreAddressDuringInitialSetup ) {
 			return translate( 'Store Location' );
 		}
 
@@ -149,8 +146,13 @@ class Dashboard extends Component {
 			return <RequiredPagesSetupView site={ selectedSite } />;
 		}
 
-		if ( ! setStoreAddressDuringInitialSetup && ! hasProducts ) {
-			return <PreSetupView siteId={ selectedSite.ID } />;
+		if ( ! setStoreAddressDuringInitialSetup ) {
+			return (
+				<StoreLocationSetupView
+					siteId={ selectedSite.ID }
+					pushDefaultsForCountry={ ! hasProducts }
+				/>
+			);
 		}
 
 		if ( ! finishedInitialSetup ) {
@@ -229,7 +231,6 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchOrders,
-			fetchSetupChoices,
 			fetchProducts,
 			requestSettings,
 		},

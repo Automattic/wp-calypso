@@ -1,16 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { includes } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import trailingslashit from './trailingslashit';
-import untrailingslashit from './untrailingslashit';
+import { trailingslashit, untrailingslashit } from './index';
 
 /**
  * Module variables
@@ -23,7 +20,7 @@ const statsLocationsByTab = {
 	insights: '/stats/insights/',
 };
 
-function getSiteFragment( path ) {
+export function getSiteFragment( path ) {
 	const basePath = path.split( '?' )[ 0 ];
 	const pieces = basePath.split( '/' );
 
@@ -50,7 +47,7 @@ function getSiteFragment( path ) {
 	return false;
 }
 
-function addSiteFragment( path, site ) {
+export function addSiteFragment( path, site ) {
 	const pieces = sectionify( path ).split( '/' );
 
 	if ( includes( [ 'post', 'page', 'edit' ], pieces[ 1 ] ) ) {
@@ -66,7 +63,7 @@ function addSiteFragment( path, site ) {
 	return pieces.join( '/' );
 }
 
-function sectionifyWithRoutes( path, routes ) {
+export function sectionifyWithRoutes( path, routes ) {
 	const routeParams = {};
 	if ( ! routes || ! Array.isArray( routes ) ) {
 		return {
@@ -89,7 +86,7 @@ function sectionifyWithRoutes( path, routes ) {
 	};
 }
 
-function sectionify( path, siteFragment ) {
+export function sectionify( path, siteFragment ) {
 	let basePath = path.split( '?' )[ 0 ];
 
 	// Sometimes the caller knows better than `getSiteFragment` what the `siteFragment` is.
@@ -106,7 +103,7 @@ function sectionify( path, siteFragment ) {
 	return untrailingslashit( basePath );
 }
 
-function getStatsDefaultSitePage( slug ) {
+export function getStatsDefaultSitePage( slug ) {
 	const path = '/stats/day/';
 
 	if ( slug ) {
@@ -116,7 +113,7 @@ function getStatsDefaultSitePage( slug ) {
 	return untrailingslashit( path );
 }
 
-function getStatsPathForTab( tab, siteIdOrSlug ) {
+export function getStatsPathForTab( tab, siteIdOrSlug ) {
 	if ( ! tab ) {
 		return getStatsDefaultSitePage( siteIdOrSlug );
 	}
@@ -144,7 +141,7 @@ function getStatsPathForTab( tab, siteIdOrSlug ) {
  * @param  {string} status  Status param from route
  * @return {string}         mapped status value
  */
-function mapPostStatus( status ) {
+export function mapPostStatus( status ) {
 	switch ( status ) {
 		// Drafts
 		case 'drafts':
@@ -160,17 +157,6 @@ function mapPostStatus( status ) {
 	}
 }
 
-function externalRedirect( url ) {
+export function externalRedirect( url ) {
 	window.location = url;
 }
-
-export default {
-	getSiteFragment: getSiteFragment,
-	addSiteFragment: addSiteFragment,
-	getStatsDefaultSitePage: getStatsDefaultSitePage,
-	getStatsPathForTab: getStatsPathForTab,
-	sectionify: sectionify,
-	sectionifyWithRoutes: sectionifyWithRoutes,
-	mapPostStatus: mapPostStatus,
-	externalRedirect: externalRedirect,
-};

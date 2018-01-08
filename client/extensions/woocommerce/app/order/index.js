@@ -130,7 +130,7 @@ class Order extends Component {
 				busy={ isSaving }
 				disabled={ ! hasOrderEdits || isSaving }
 			>
-				{ translate( 'Save Order' ) }
+				{ translate( 'Update' ) }
 			</Button>,
 		];
 		if ( ! isEditing ) {

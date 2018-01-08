@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -18,12 +16,11 @@ import Card from 'components/card';
 import SiteSelector from 'components/site-selector';
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { getSites } from 'state/selectors';
+import { getSites, isDomainOnlySite } from 'state/selectors';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
+import { domainManagementList, domainManagementTransfer } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
-import { isDomainOnlySite } from 'state/selectors';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import SectionHeader from 'components/section-header';
@@ -93,9 +90,9 @@ class TransferToOtherSite extends React.Component {
 					if ( this.props.isDomainOnly ) {
 						this.props.requestSites();
 						const transferedTo = find( this.props.sites, { ID: targetSite.ID } );
-						page( paths.domainManagementList( transferedTo.slug ) );
+						page( domainManagementList( transferedTo.slug ) );
 					} else {
-						page( paths.domainManagementList( this.props.selectedSite.slug ) );
+						page( domainManagementList( this.props.selectedSite.slug ) );
 					}
 				},
 				error => {
@@ -124,7 +121,7 @@ class TransferToOtherSite extends React.Component {
 			<Main className="transfer-to-other-site">
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ paths.domainManagementTransfer( slug, selectedDomainName ) }
+					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
 				>
 					{ this.props.translate( 'Transfer Domain To Another Site' ) }
 				</Header>

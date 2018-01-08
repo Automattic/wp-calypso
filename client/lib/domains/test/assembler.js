@@ -34,6 +34,7 @@ describe( 'assembler', () => {
 		} ),
 		redirectDomainObject = {
 			autoRenewalMoment: undefined,
+			adminEmail: undefined,
 			currentUserCanManage: undefined,
 			canSetAsPrimary: undefined,
 			domainLockingAvailable: undefined,
@@ -48,6 +49,7 @@ describe( 'assembler', () => {
 			isPrimary: false,
 			name: DOMAIN_NAME,
 			manualTransferRequired: undefined,
+			manualWhois: undefined,
 			owner: undefined,
 			privateDomain: undefined,
 			privacyAvailable: undefined,

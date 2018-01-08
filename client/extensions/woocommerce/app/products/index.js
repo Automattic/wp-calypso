@@ -94,7 +94,7 @@ class Products extends Component {
 			const productsLabel = translate( 'Products' );
 
 			return (
-				<SectionNav>
+				<SectionNav selectedText={ productsLabel }>
 					<NavTabs label={ productsLabel } selectedText={ productsLabel }>
 						<NavItem path={ getLink( '/store/products/:site/', site ) } selected>
 							{ productsLabel }

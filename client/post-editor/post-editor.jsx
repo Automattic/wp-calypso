@@ -18,7 +18,7 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import actions from 'lib/posts/actions';
-import route from 'lib/route';
+import { addSiteFragment } from 'lib/route';
 import PostEditStore from 'lib/posts/post-edit-store';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';
@@ -661,7 +661,7 @@ export const PostEditor = createReactClass( {
 		}
 
 		if ( site ) {
-			path = route.addSiteFragment( path, site.slug );
+			path = addSiteFragment( path, site.slug );
 		}
 
 		return path;

@@ -19,9 +19,9 @@ import AccordionSection from 'components/accordion/section';
 import CountedTextarea from 'components/forms/counted-textarea';
 import PostActions from 'lib/posts/actions';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
-import WebPreview from 'components/web-preview';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import WebPreview from 'components/web-preview';
 
 class EditorSeoAccordion extends Component {
 	static propTypes = {

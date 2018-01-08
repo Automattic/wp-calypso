@@ -16,6 +16,9 @@ export default () => {
 		code: 'CA',
 		name: translate( 'Canada' ),
 		defaultState: 'AB',
+		currency: 'CAD',
+		dimensionUnit: 'cm',
+		weightUnit: 'kg',
 		states: [
 			{
 				code: 'AB',

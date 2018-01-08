@@ -1,9 +1,12 @@
 &.payments__dialog {
-	max-width: 660px;
+	@include breakpoint( ">660px" ) {
+		width: 660px;
+	}
 
 	.dialog__content {
-		height: 100%;
-		overflow-y: scroll;
+		.form-fieldset:last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.dialog__action-buttons {

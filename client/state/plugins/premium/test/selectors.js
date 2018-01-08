@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import selectors from '../selectors';
+import * as selectors from '../selectors';
 import { initSite, installingSite, finishedSite, configuringSite } from './examples';
 
 const state = deepFreeze( {

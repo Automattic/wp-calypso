@@ -16,7 +16,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 import { getHappychatAuth } from 'state/happychat/utils';
 import hasUnreadMessages from 'state/happychat/selectors/has-unread-messages';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
@@ -54,7 +54,7 @@ export class HappychatButton extends Component {
 	};
 
 	onClick = event => {
-		if ( this.props.allowMobileRedirect && viewport.isMobile() ) {
+		if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
 			// page componet instead of the sidebar
 			page( '/me/chat' );

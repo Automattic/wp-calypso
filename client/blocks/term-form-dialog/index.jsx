@@ -23,7 +23,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
@@ -329,7 +329,7 @@ class TermFormDialog extends Component {
 				<FormSectionHeading>{ isNew ? labels.add_new_item : labels.edit_item }</FormSectionHeading>
 				<FormFieldset>
 					<FormTextInput
-						autoFocus={ showDialog && ! viewport.isMobile() }
+						autoFocus={ showDialog && ! isMobile() }
 						placeholder={ labels.new_item_name }
 						ref="termName"
 						isError={ isError }

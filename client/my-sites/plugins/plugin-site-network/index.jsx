@@ -34,11 +34,7 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderInstallButton = () => {
-		if (
-			! ( typeof this.props.site.canManage === 'function'
-				? this.props.site.canManage()
-				: this.props.site.canManage )
-		) {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
 		const installInProgress = PluginsLog.isInProgressAction(
@@ -87,11 +83,7 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderPluginActions = () => {
-		if (
-			! ( typeof this.props.site.canManage === 'function'
-				? this.props.site.canManage()
-				: this.props.site.canManage )
-		) {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
 
@@ -159,7 +151,7 @@ class PluginSiteNetwork extends React.Component {
 	};
 
 	renderSecondarySiteActions = site => {
-		if ( ! ( site.canManage === 'function' ? site.canManage() : site.canManage ) ) {
+		if ( ! site.canManage ) {
 			return (
 				<div className="plugin-site-network__secondary-site-actions">
 					<PluginSiteDisabledManage site={ site } plugin={ site.plugin } />

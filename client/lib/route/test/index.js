@@ -12,7 +12,7 @@ import { Route } from 'page';
 /**
  * Internal dependencies
  */
-import route from '../';
+import * as route from '../';
 
 const checkoutRoutes = [
 	new Route( '/checkout/thank-you' ),

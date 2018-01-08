@@ -15,7 +15,7 @@ import { throttle } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import viewport from 'lib/viewport';
+import { getWindowInnerWidth } from 'lib/viewport';
 
 /**
  * Module variables
@@ -41,7 +41,7 @@ class HeaderCakeBack extends Component {
 	};
 
 	state = {
-		windowWidth: viewport.getWindowInnerWidth(),
+		windowWidth: getWindowInnerWidth(),
 	};
 
 	componentDidMount() {
@@ -55,7 +55,7 @@ class HeaderCakeBack extends Component {
 
 	handleWindowResize = () => {
 		this.setState( {
-			windowWidth: viewport.getWindowInnerWidth(),
+			windowWidth: getWindowInnerWidth(),
 		} );
 	};
 

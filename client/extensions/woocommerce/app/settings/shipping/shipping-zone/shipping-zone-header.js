@@ -49,8 +49,9 @@ const ShippingZoneHeader = ( {
 	return (
 		<ActionHeader breadcrumbs={ breadcrumbs }>
 			{ showDelete && (
-				<Button borderless onClick={ onDelete } disabled={ isSaving }>
+				<Button borderless scary onClick={ onDelete } disabled={ isSaving }>
 					<Gridicon icon="trash" />
+					{ translate( 'Delete' ) }
 				</Button>
 			) }
 			<Button primary onClick={ onSave } busy={ isSaving } disabled={ isSaving }>

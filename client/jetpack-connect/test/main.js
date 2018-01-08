@@ -7,7 +7,7 @@
  * External dependencies
  */
 import page from 'page';
-import { externalRedirect } from 'lib/route/path';
+import { externalRedirect } from 'lib/route';
 import { noop } from 'lodash';
 
 /**

@@ -21,6 +21,8 @@ import {
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
+	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
+	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 } from 'state/action-types';
 
 /**
@@ -191,6 +193,24 @@ export function subscribeToNewCommentEmail( blogId ) {
 export function unsubscribeToNewCommentEmail( blogId ) {
 	return {
 		type: READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+		payload: {
+			blogId,
+		},
+	};
+}
+
+export function subscribeToNewPostNotifications( blogId ) {
+	return {
+		type: READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
+		payload: {
+			blogId,
+		},
+	};
+}
+
+export function unsubscribeToNewPostNotifications( blogId ) {
+	return {
+		type: READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 		payload: {
 			blogId,
 		},

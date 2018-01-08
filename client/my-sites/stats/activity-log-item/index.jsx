@@ -3,10 +3,8 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { pick } from 'lodash';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -14,76 +12,38 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
-import EllipsisMenu from 'components/ellipsis-menu';
+import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
 import PopoverMenuItem from 'components/popover/menu-item';
+import { getActivityLog, getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
 
-const stopPropagation = event => event.stopPropagation();
+import { adjustMoment } from '../activity-log/utils';
 
 class ActivityLogItem extends Component {
-	static propTypes = {
-		applySiteOffset: PropTypes.func.isRequired,
-		disableRestore: PropTypes.bool.isRequired,
-		disableBackup: PropTypes.bool.isRequired,
-		hideRestore: PropTypes.bool,
-		requestDialog: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
+	handleClickRestore = () => this.props.requestDialog( this.props.activityId, 'item', 'restore' );
 
-		log: PropTypes.shape( {
-			// Base
-			activityDate: PropTypes.string.isRequired,
-			activityGroup: PropTypes.string.isRequired,
-			activityIcon: PropTypes.string.isRequired,
-			activityId: PropTypes.string.isRequired,
-			activityName: PropTypes.string.isRequired,
-			activityStatus: PropTypes.string,
-			activityTitle: PropTypes.string,
-			activityTs: PropTypes.number.isRequired,
-
-			// Actor
-			actorAvatarUrl: PropTypes.string.isRequired,
-			actorName: PropTypes.string.isRequired,
-			actorRemoteId: PropTypes.number.isRequired,
-			actorRole: PropTypes.string.isRequired,
-			actorType: PropTypes.string.isRequired,
-			actorWpcomId: PropTypes.number.isRequired,
-		} ).isRequired,
-
-		// localize
-		moment: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-	};
-
-	static defaultProps = {
-		disableRestore: false,
-		disableBackup: false,
-	};
-
-	handleClickRestore = () =>
-		this.props.requestDialog( this.props.log.activityId, 'item', 'restore' );
-
-	handleClickBackup = () => this.props.requestDialog( this.props.log.activityId, 'item', 'backup' );
+	handleClickBackup = () => this.props.requestDialog( this.props.activityId, 'item', 'backup' );
 
 	renderHeader() {
-		const { log } = this.props;
-		const { activityDescription, activityTitle } = log;
+		const {
+			activityDescription,
+			activityTitle,
+			actorActivityUrl,
+			actorName,
+			actorRole,
+			actorType,
+		} = this.props.activity;
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor
-					{ ...pick( log, [ 'actorAvatarUrl', 'actorName', 'actorRole', 'actorType' ] ) }
-				/>
-				{ activityDescription && (
-					<div className="activity-log-item__description">
-						<div className="activity-log-item__description-content">
-							{ activityDescription.map( ( part, key ) => (
-								<FormattedBlock key={ key } content={ part } />
-							) ) }
-						</div>
-						{ activityTitle && <div className="activity-log-item__description-summary">{ activityTitle }</div> }
+				<ActivityActor { ...{ actorActivityUrl, actorName, actorRole, actorType } } />
+				<div className="activity-log-item__description">
+					<div className="activity-log-item__description-content">
+						<FormattedBlock content={ activityDescription[ 0 ] } />
 					</div>
-				) }
+					<div className="activity-log-item__description-summary">{ activityTitle }</div>
+				</div>
 			</div>
 		);
 	}
@@ -94,7 +54,7 @@ class ActivityLogItem extends Component {
 			disableBackup,
 			hideRestore,
 			translate,
-			log: { activityIsRewindable },
+			activity: { activityIsRewindable },
 		} = this.props;
 
 		if ( hideRestore || ! activityIsRewindable ) {
@@ -103,14 +63,15 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__action">
-				<EllipsisMenu onClick={ stopPropagation } position="bottom right">
-					<PopoverMenuItem
-						disabled={ disableRestore }
-						icon="history"
-						onClick={ this.handleClickRestore }
-					>
-						{ translate( 'Rewind to this point' ) }
-					</PopoverMenuItem>
+				<SplitButton
+					icon="history"
+					label={ translate( 'Rewind' ) }
+					onClick={ this.handleClickRestore }
+					disableMain={ disableRestore }
+					disabled={ disableRestore && disableBackup }
+					compact
+					primary={ ! disableRestore }
+				>
 					<PopoverMenuItem
 						disabled={ disableBackup }
 						icon="cloud-download"
@@ -118,24 +79,28 @@ class ActivityLogItem extends Component {
 					>
 						{ translate( 'Download backup' ) }
 					</PopoverMenuItem>
-				</EllipsisMenu>
+				</SplitButton>
 			</div>
 		);
 	}
 
 	render() {
-		const { applySiteOffset, className, log, moment } = this.props;
-		const { activityIcon, activityIsDiscarded, activityStatus } = log;
+		const { activity, className, gmtOffset, isDiscarded, moment, timezone } = this.props;
+		const { activityIcon, activityStatus, activityTs } = activity;
 
 		const classes = classNames( 'activity-log-item', className, {
-			'is-discarded': activityIsDiscarded,
+			'is-discarded': isDiscarded,
 		} );
 
 		return (
 			<div className={ classes }>
 				<div className="activity-log-item__type">
 					<div className="activity-log-item__time">
-						{ applySiteOffset( moment.utc( log.activityTs ) ).format( 'LT' ) }
+						{ adjustMoment( {
+							gmtOffset,
+							moment: moment.utc( activityTs ),
+							timezone,
+						} ).format( 'LT' ) }
 					</div>
 					<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
 				</div>
@@ -150,4 +115,16 @@ class ActivityLogItem extends Component {
 	}
 }
 
-export default connect()( localize( ActivityLogItem ) );
+const mapStateToProps = ( state, { activityId, siteId } ) => {
+	const activity = getActivityLog( state, siteId, activityId );
+	const gmtOffset = getSiteGmtOffset( state, siteId );
+	const timezone = getSiteTimezoneValue( state, siteId );
+
+	return {
+		activity,
+		gmtOffset,
+		timezone,
+	};
+};
+
+export default connect( mapStateToProps )( localize( ActivityLogItem ) );

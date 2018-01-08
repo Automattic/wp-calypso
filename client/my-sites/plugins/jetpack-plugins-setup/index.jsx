@@ -27,7 +27,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import analytics from 'lib/analytics';
 import support from 'lib/url/support';
-import utils from 'lib/site/utils';
+import { getSiteFileModDisableReason } from 'lib/site/utils';
 
 // Redux actions & selectors
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
@@ -196,7 +196,7 @@ class PlansSetup extends React.Component {
 	renderCantInstallPlugins = () => {
 		const { translate } = this.props;
 		const site = this.props.selectedSite;
-		const reasons = utils.getSiteFileModDisableReason( site, 'modifyFiles' );
+		const reasons = getSiteFileModDisableReason( site, 'modifyFiles' );
 		let reason;
 
 		if ( reasons && reasons.length > 0 ) {

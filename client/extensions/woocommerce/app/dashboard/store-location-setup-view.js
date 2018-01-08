@@ -23,19 +23,27 @@ import BasicWidget from 'woocommerce/components/basic-widget';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
 import { getCountryData, getCountries } from 'woocommerce/lib/countries';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
+import SetupNotices from './setup-notices';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import userFactory from 'lib/user';
+import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
 
-class PreSetupView extends Component {
+const user = userFactory();
+
+class StoreLocationSetupView extends Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
 			address: {},
+			isFetchingUser: false,
 			isSaving: false,
+			showEmailVerificationDialog: false,
 			userBeganEditing: false,
 		};
 	}
@@ -50,6 +58,7 @@ class PreSetupView extends Component {
 			postalCode: PropTypes.string,
 			countryCode: PropTypes.string,
 		} ),
+		pushDefaultsForCountry: PropTypes.bool.isRequired,
 		settingsGeneralLoaded: PropTypes.bool,
 		storeLocation: PropTypes.shape( {
 			street: PropTypes.string,
@@ -122,8 +131,14 @@ class PreSetupView extends Component {
 	};
 
 	onNext = event => {
-		const { siteId, translate } = this.props;
+		const { currentUserEmailVerified, siteId, translate } = this.props;
 		event.preventDefault();
+
+		if ( ! currentUserEmailVerified ) {
+			this.setState( { showEmailVerificationDialog: true } );
+			return;
+		}
+
 		this.setState( { isSaving: true } );
 
 		// TODO before attempting to set the address, make sure all required
@@ -167,6 +182,7 @@ class PreSetupView extends Component {
 			state,
 			this.state.address.postcode,
 			country,
+			this.props.pushDefaultsForCountry,
 			onSuccess,
 			onFailure
 		);
@@ -181,7 +197,8 @@ class PreSetupView extends Component {
 		const everyRequiredFieldHasAValue = every( requiredAddressFields, field => {
 			return ! isEmpty( trim( field ) );
 		} );
-		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;
+		const submitDisabled =
+			this.state.isSaving || this.state.isFetchingUser || ! everyRequiredFieldHasAValue;
 
 		if ( ! showForm ) {
 			return (
@@ -209,20 +226,34 @@ class PreSetupView extends Component {
 		);
 	};
 
+	closeVerifyEmailDialog = () => {
+		this.setState( { showEmailVerificationDialog: false } );
+		// Re-fetch the user to see if they actually took care of things
+		user.fetch();
+		this.setState( { isFetchingUser: true } );
+		user.once( 'change', () => this.setState( { isFetchingUser: false } ) );
+	};
+
 	render = () => {
 		const { siteId, translate } = this.props;
 
 		return (
-			<div className="card dashboard__setup-wrapper dashboard__location">
-				<SetupHeader
-					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
-					imageWidth={ 160 }
-					title={ translate( 'Howdy! Ready to start selling?' ) }
-					subtitle={ translate( 'First we need to know where you are in the world.' ) }
-				/>
-				{ this.renderForm() }
-				<QuerySettingsGeneral siteId={ siteId } />
-				<QueryContactDetailsCache />
+			<div className="dashboard__setup-wrapper">
+				<SetupNotices />
+				{ this.state.showEmailVerificationDialog && (
+					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
+				) }
+				<div className="card dashboard__location">
+					<SetupHeader
+						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
+						imageWidth={ 160 }
+						title={ translate( 'Howdy! Ready to start selling?' ) }
+						subtitle={ translate( 'First we need to know where you are in the world.' ) }
+					/>
+					{ this.renderForm() }
+					<QuerySettingsGeneral siteId={ siteId } />
+					<QueryContactDetailsCache />
+				</div>
 			</div>
 		);
 	};
@@ -232,11 +263,13 @@ function mapStateToProps( state, ownProps ) {
 	const { siteId } = ownProps;
 
 	const contactDetails = getContactDetailsCache( state );
+	const currentUserEmailVerified = isCurrentUserEmailVerified( state );
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
 
 	return {
 		contactDetails,
+		currentUserEmailVerified,
 		settingsGeneralLoaded,
 		storeLocation,
 	};
@@ -251,4 +284,4 @@ function mapDispatchToProps( dispatch ) {
 	);
 }
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( PreSetupView ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( StoreLocationSetupView ) );

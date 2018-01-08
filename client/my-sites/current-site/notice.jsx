@@ -1,14 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import url from 'url';
 import { connect } from 'react-redux';
-import { localize, moment } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,9 +14,9 @@ import { localize, moment } from 'i18n-calypso';
 import SidebarBanner from 'my-sites/current-site/sidebar-banner';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import paths from 'my-sites/domains/paths';
+import { domainManagementList } from 'my-sites/domains/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
-import { canCurrentUser, isEligibleForFreeToPaidUpsell } from 'state/selectors';
+import { canCurrentUser, isDomainOnlySite, isEligibleForFreeToPaidUpsell } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import {
@@ -27,7 +25,6 @@ import {
 } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainToPaidPlanNotice from './domain-to-paid-plan-notice';
-import { isDomainOnlySite } from 'state/selectors';
 
 class SiteNotice extends React.Component {
 	static propTypes = {
@@ -56,7 +53,7 @@ class SiteNotice extends React.Component {
 					components: { a: <a href={ site.URL } /> },
 				} ) }
 			>
-				<NoticeAction href={ paths.domainManagementList( site.domain ) }>
+				<NoticeAction href={ domainManagementList( site.domain ) }>
 					{ translate( 'Edit' ) }
 				</NoticeAction>
 			</Notice>
@@ -91,26 +88,20 @@ class SiteNotice extends React.Component {
 	}
 
 	freeToPaidPlanNotice() {
-		if ( ! this.props.isEligibleForFreeToPaidUpsell || '/plans' === this.props.allSitesPath ) {
+		if ( ! this.props.isEligibleForFreeToPaidUpsell ) {
 			return null;
 		}
 
-		const eventName = 'calypso_upgrade_nudge_impression';
-		const eventProperties = { cta_name: 'free-to-paid-sidebar' };
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 
 		return (
-			<SidebarBanner icon="info-outline" text={ translate( 'Free domain with a plan' ) }>
-				<a
-					onClick={ this.props.clickFreeToPaidPlanNotice }
-					href={ `/plans/my-plan/${ this.props.site.slug }` }
-				>
-					<span>
-						{ translate( 'Upgrade' ) }
-						<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-					</span>
-				</a>
-			</SidebarBanner>
+			<SidebarBanner
+				ctaName="free-to-paid-sidebar"
+				ctaText={ translate( 'Upgrade' ) }
+				href={ `/plans/${ site.slug }` }
+				icon="info-outline"
+				text={ translate( 'Free domain with a plan' ) }
+			/>
 		);
 	}
 
@@ -163,7 +154,7 @@ export default connect(
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
-			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId, moment() ),
+			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
 			hasDomainCredit: hasDomainCredit( state, siteId ),
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 			pausedJetpackPluginsSetup:

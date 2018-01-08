@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import InfoPopover from 'components/info-popover';
-import viewport from 'lib/viewport';
+import { isMobile } from 'lib/viewport';
 
 export default function PlanFeaturesItem( { children, description, hideInfoPopover } ) {
 	return (
@@ -21,7 +21,7 @@ export default function PlanFeaturesItem( { children, description, hideInfoPopov
 			{ hideInfoPopover ? null : (
 				<InfoPopover
 					className="plan-features__item-tip-info"
-					position={ viewport.isMobile() ? 'top' : 'right' }
+					position={ isMobile() ? 'top' : 'right' }
 				>
 					{ description }
 				</InfoPopover>

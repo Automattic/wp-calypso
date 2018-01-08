@@ -12,14 +12,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import WebPreview from 'components/web-preview';
-import designPreview from 'my-sites/design-preview';
-import urlPreview from 'blocks/url-preview';
+import DesignPreview from 'my-sites/design-preview';
+import UrlPreview from 'blocks/url-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getCurrentPreviewType } from 'state/ui/preview/selectors';
-
-const DesignPreview = designPreview( WebPreview );
-const UrlPreview = urlPreview( WebPreview );
 
 class SitePreview extends Component {
 	render() {

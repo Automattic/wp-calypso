@@ -16,6 +16,9 @@ export default () => {
 		code: 'US',
 		name: translate( 'USA' ),
 		defaultState: 'AL',
+		currency: 'USD',
+		dimensionUnit: 'in',
+		weightUnit: 'lbs',
 		states: [
 			{
 				code: 'AL',
