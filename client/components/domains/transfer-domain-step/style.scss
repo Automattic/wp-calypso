@@ -181,16 +181,16 @@
 		color: $gray;
 	}
 
-	&.transfer-domain-step__unavailable {
-		color: $alert-yellow;
-	}
-
 	&.transfer-domain-step__unlocked {
 		color: $alert-green;
 	}
 
 	&.transfer-domain-step__locked {
 		color: $alert-red;
+	}
+
+	&.transfer-domain-step__unknown {
+		color: $alert-yellow;
 	}
 
 	&.transfer-domain-step__refresh {

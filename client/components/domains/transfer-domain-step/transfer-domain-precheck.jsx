@@ -21,22 +21,28 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
 import support from 'lib/url/support';
+import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 
 class TransferDomainPrecheck extends React.PureComponent {
 	static propTypes = {
 		domain: PropTypes.string,
+		selectedSiteSlug: PropTypes.string,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
 	};
 
 	state = {
-		unlocked: false,
-		privacy: false,
+		creationDate: '',
+		currentStep: 1,
 		email: '',
 		loading: true,
 		losingRegistrar: '',
 		losingRegistrarIanaId: '',
-		currentStep: 1,
+		privacy: false,
+		termMaximumInYears: 10,
+		transferEligibleDate: '',
+		transferRestrictionStatus: '',
+		unlocked: false,
 	};
 
 	componentWillMount() {
@@ -58,6 +64,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 		this.props.setValid( domain, supportsPrivacy );
 	};
 
+	transferIsRestricted = () =>
+		! this.state.loading && 'not_restricted' !== this.state.transferRestrictionStatus;
+
 	refreshStatus = ( proceedToNextStep = true ) => {
 		this.setState( { loading: true } );
 
@@ -76,12 +85,16 @@ class TransferDomainPrecheck extends React.PureComponent {
 			}
 
 			this.setState( {
+				creationDate: result.creation_date,
 				email: result.admin_email,
-				privacy: result.privacy,
-				unlocked: result.unlocked,
 				loading: false,
 				losingRegistrar: result.registrar,
 				losingRegistrarIanaId: result.registrar_iana_id,
+				privacy: result.privacy,
+				termMaximumInYears: result.term_maximum_in_years,
+				transferEligibleDate: result.transfer_eligible_date,
+				transferRestrictionStatus: result.transfer_restriction_status,
+				unlocked: result.unlocked,
 			} );
 		} );
 	};
@@ -140,13 +153,34 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 	}
 
+	getTransferRestrictionMessage() {
+		const { domain, selectedSiteSlug } = this.props;
+		const {
+			creationDate,
+			termMaximumInYears,
+			transferEligibleDate,
+			transferRestrictionStatus,
+		} = this.state;
+
+		return (
+			<TransferRestrictionMessage
+				creationDate={ creationDate }
+				domain={ domain }
+				selectedSiteSlug={ selectedSiteSlug }
+				termMaximumInYears={ termMaximumInYears }
+				transferEligibleDate={ transferEligibleDate }
+				transferRestrictionStatus={ transferRestrictionStatus }
+			/>
+		);
+	}
+
 	getStatusMessage() {
 		const { translate } = this.props;
 		const { currentStep, unlocked, loading } = this.state;
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
-		let heading = translate( 'Lock status unavailable.' );
+		let heading = translate( "Can't get the domain's lock status." );
 		if ( true === unlocked ) {
 			heading = translate( 'Domain is unlocked.' );
 		} else if ( false === unlocked ) {
@@ -171,6 +205,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 				},
 			}
 		);
+
 		if ( true === unlocked ) {
 			message = translate( 'Your domain is unlocked at your current registrar.' );
 		} else if ( false === unlocked ) {
@@ -208,7 +243,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			lockStatusIcon = 'cross';
 		}
 
-		let lockStatusText = 'Status unavailable';
+		let lockStatusText = translate( 'Status unavailable' );
 		if ( true === unlocked ) {
 			lockStatusText = translate( 'Unlocked' );
 		} else if ( false === unlocked ) {
@@ -363,6 +398,10 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const { translate } = this.props;
 		const { unlocked, currentStep } = this.state;
 
+		if ( this.transferIsRestricted() ) {
+			return this.getTransferRestrictionMessage();
+		}
+
 		return (
 			<div className="transfer-domain-step__precheck">
 				{ this.getHeader() }
@@ -390,7 +429,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 						</p>
 					</div>
 					<Button
-						disabled={ ! unlocked || currentStep < 4 }
+						disabled={ false === unlocked || currentStep < 4 }
 						onClick={ this.onClick }
 						primary={ true }
 					>
