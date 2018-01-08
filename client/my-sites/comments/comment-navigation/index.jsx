@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { each, get, includes, isEqual, isUndefined, map, filter } from 'lodash';
+import { each, get, includes, isEqual, isUndefined, map, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,7 +41,6 @@ import {
 import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
-import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE } from 'state/action-types';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -326,12 +325,11 @@ export class CommentNavigation extends Component {
 	}
 }
 
-const filterBulkActions = function( value, key ) {
-	return key.indexOf( COMMENTS_CHANGE_STATUS ) !== -1 || key.indexOf( COMMENTS_DELETE ) !== -1;
-};
-
-const hasPendingActions = function( accumulator, requestState ) {
-	return accumulator || requestState.status === 'pending';
+const hasPendingRequests = state => {
+	const pendingActions = get( state, 'ui.comments.pendingActions' );
+	return some( pendingActions, requestKey => {
+		return get( state, [ 'dataRequests', requestKey, 'status' ] ) === 'pending';
+	} );
 };
 
 const mapStateToProps = ( state, { commentsPage, siteId } ) => {
@@ -348,15 +346,10 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 		}
 	} );
 
-	const dataRequests = get( state, 'dataRequests' );
-	const hasPendingBulkAction = filter( dataRequests, filterBulkActions ).reduce(
-		hasPendingActions,
-		false
-	);
 	return {
 		visibleComments,
 		hasComments: visibleComments.length > 0,
-		hasPendingBulkAction,
+		hasPendingBulkAction: hasPendingRequests( state ),
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};
