@@ -204,24 +204,46 @@ class OrderDetailsTable extends Component {
 		if ( item.quantity <= 0 ) {
 			return null;
 		}
+		let itemPrice = formatCurrency( item.price, order.currency );
+		let itemTotal = formatCurrency( item.total, order.currency );
+		if ( parseFloat( item.total ) !== parseFloat( item.subtotal ) ) {
+			const preDiscountCost = getOrderItemCost( order, item.id );
+			itemPrice = (
+				<Fragment>
+					<del className="order-details__item-pre-discount">
+						{ formatCurrency( preDiscountCost, order.currency ) }
+					</del>
+					<ins className="order-details__item-with-discount">
+						{ formatCurrency( item.price, order.currency ) }
+					</ins>
+				</Fragment>
+			);
+
+			itemTotal = (
+				<Fragment>
+					<del className="order-details__item-pre-discount">
+						{ formatCurrency( item.subtotal, order.currency ) }
+					</del>
+					<ins className="order-details__item-with-discount">
+						{ formatCurrency( item.total, order.currency ) }
+					</ins>
+				</Fragment>
+			);
+		}
 		return (
 			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
 					{ this.renderName( item ) }
 					<span className="order-details__item-sku">{ item.sku }</span>
 				</TableItem>
-				<TableItem className="order-details__item-cost">
-					{ formatCurrency( item.price, order.currency ) }
-				</TableItem>
+				<TableItem className="order-details__item-cost">{ itemPrice }</TableItem>
 				<TableItem className="order-details__item-quantity">
 					{ this.renderQuantity( item, i ) }
 				</TableItem>
 				<TableItem className="order-details__item-tax">
 					{ formatCurrency( tax, order.currency ) }
 				</TableItem>
-				<TableItem className="order-details__item-total">
-					{ formatCurrency( item.total, order.currency ) }
-				</TableItem>
+				<TableItem className="order-details__item-total">{ itemTotal }</TableItem>
 				{ this.renderDeleteButton( item, 'line_items' ) }
 			</TableRow>
 		);

@@ -31,6 +31,17 @@
 		}
 	}
 
+	.order-details__item-pre-discount,
+	.order-details__item-with-discount {
+		display: block;
+		background: transparent;
+	}
+
+	.order-details__item-pre-discount {
+		font-size: 0.9em;
+		text-decoration: line-through;
+	}
+
 	.order-details__item-quantity .form-text-input {
 		width: 5em;
 	}
