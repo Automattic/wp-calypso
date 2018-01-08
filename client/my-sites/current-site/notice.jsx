@@ -20,7 +20,6 @@ import { canCurrentUser, isDomainOnlySite, isEligibleForFreeToPaidUpsell } from 
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import {
-	isDomainOnlySite,
 	isStarted as isJetpackPluginsStarted,
 	isFinished as isJetpackPluginsFinished,
 } from 'state/plugins/premium/selectors';
