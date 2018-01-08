@@ -70,7 +70,10 @@ class Chart extends React.Component {
 		const width = isTouch && clientWidth <= 0 ? 350 : clientWidth; // mobile safari bug with zero width
 		const maxBars = Math.floor( width / minWidth );
 
-		this.setState( { maxBars, width }, () => this.updateData( props ) );
+		this.setState( { maxBars, width }, () =>
+			// this may get called either directly or as a resize event callback
+			this.updateData( props instanceof Event ? this.props : props )
+		);
 	};
 
 	getYAxisMax = values => {
