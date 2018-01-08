@@ -11,11 +11,8 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import statsController from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
-import { enablePerfmonForRoute } from 'lib/perfmon';
 
 export default function() {
-	page( '/stats/*', enablePerfmonForRoute );
-
 	page(
 		'/stats/activity/:site_id',
 		siteSelection,
