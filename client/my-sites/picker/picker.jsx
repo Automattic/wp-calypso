@@ -18,6 +18,7 @@ import SiteSelector from 'components/site-selector';
 import { hasTouch } from 'lib/touch-detect';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
+import QuerySites from 'components/data/query-sites';
 
 class SitePicker extends React.Component {
 	static displayName = 'SitePicker';
@@ -93,6 +94,7 @@ class SitePicker extends React.Component {
 
 		return (
 			<div>
+				<QuerySites allSites />
 				<CloseOnEscape onEscape={ this.closePicker } />
 				<SiteSelector
 					ref="siteSelector"
