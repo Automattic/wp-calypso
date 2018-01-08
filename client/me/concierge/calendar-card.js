@@ -45,9 +45,9 @@ class CalendarCard extends Component {
 		// To find the best default time for the time picker, we're going to pick the time that's
 		// closest to the current time of day. To do this first we find out how many seconds it's
 		// been since midnight on the current real world day...
-		const timeSinceMidnight = moment().diff( moment().startOf( 'day' ) );
+		const timeSinceMidnight = moment().diff( this.withTimezone().startOf( 'day' ) );
 		// Then we'll use that to find the same time of day on the Card's given date...
-		const currentTimeOnGivenDate = moment( this.props.date )
+		const currentTimeOnGivenDate = this.withTimezone( this.props.date )
 			.startOf( 'day' )
 			.add( timeSinceMidnight );
 
