@@ -46,14 +46,12 @@ describe( 'notification-subscriptions-new', () => {
 			} ).toThrow();
 		} );
 
-		test( 'should throw an error when success is true', () => {
-			const response = {
+		test( 'should return response unchanged if response indicates a success', () => {
+			const response = Object.freeze( {
 				success: true,
-			};
+			} );
 
-			expect( () => {
-				fromApi( response );
-			} ).not.toThrow();
+			expect( fromApi( response ) ).toEqual( response );
 		} );
 	} );
 
