@@ -36,19 +36,22 @@ class ChecklistShow extends PureComponent {
 		const url = urlForTask( id, siteSlug );
 
 		if ( siteChecklist && siteChecklist.tasks && ( url || tour ) ) {
-			const status = siteChecklist.tasks[ id ] ? 'complete' : 'incomplete';
+			if ( siteChecklist.tasks[ id ] ) {
+				if ( url ) {
+					page( url );
+				}
+			} else {
+				track( 'calypso_checklist_task_start', {
+					checklist_name: 'new_blog',
+					step_name: id,
+				} );
 
-			track( 'calypso_checklist_task_start', {
-				checklist_name: 'new_blog',
-				step_name: id,
-				status,
-			} );
-
-			if ( url ) {
-				page( url );
-			}
-			if ( tour ) {
-				requestTour( tour );
+				if ( url ) {
+					page( url );
+				}
+				if ( tour ) {
+					requestTour( tour );
+				}
 			}
 		}
 	};
