@@ -11,6 +11,7 @@ import { filter, omit, isEmpty, setWith } from 'lodash';
  */
 import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
+import decodeEntitiesNode from 'lib/formatting/decode-entities/node';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
@@ -45,6 +46,10 @@ export default createReducer( null, {
 				Object
 			);
 		} );
+
+		options.email.woocommerce_email_from_name.value = decodeEntitiesNode(
+			options.email.woocommerce_email_from_name.value
+		);
 		return options;
 	},
 
