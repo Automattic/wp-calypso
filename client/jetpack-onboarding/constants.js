@@ -1,5 +1,12 @@
+/** @format */
+
 /**
- * Internal Dependencies
+ * External dependencies
+ */
+import i18n from 'i18n-calypso';
+
+/**
+ * Internal dependencies
  */
 import React from 'react';
 import JetpackOnboardingBusinessAddressStep from './steps/business-address';
@@ -21,15 +28,15 @@ export const JETPACK_ONBOARDING_STEPS = {
 };
 
 export const JETPACK_ONBOARDING_SUMMARY_STEPS = {
-	SITE_TITLE_DESCRIPTION: 'Site Title & Description',
-	SITE_TYPE: 'Type of Site',
-	HOMEPAGE_TYPE: 'Type of Homepage',
-	CONTACT_FORM: 'Contact Us Form',
-	JETPACK_CONNECTION: 'Jetpack Connection',
-	THEME: 'Choose a Theme',
-	SITE_ADDRESS: 'Add a Site Address',
-	STORE: 'Add a Store',
-	BLOG: 'Start a Blog',
+	SITE_TITLE_DESCRIPTION: i18n.translate( 'Site Title & Description' ),
+	SITE_TYPE: i18n.translate( 'Type of Site' ),
+	HOMEPAGE_TYPE: i18n.translate( 'Type of Homepage' ),
+	CONTACT_FORM: i18n.translate( 'Contact Us Form' ),
+	JETPACK_CONNECTION: i18n.translate( 'Jetpack Connection' ),
+	THEME: i18n.translate( 'Choose a Theme' ),
+	SITE_ADDRESS: i18n.translate( 'Add a Site Address' ),
+	STORE: i18n.translate( 'Add a Store' ),
+	BLOG: i18n.translate( 'Start a Blog' ),
 };
 
 export const JETPACK_ONBOARDING_COMPONENTS = {
