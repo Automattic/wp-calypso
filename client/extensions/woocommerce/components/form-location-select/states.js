@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
 
@@ -113,10 +114,17 @@ export default connect(
 	( state, props ) => {
 		const address = getStoreLocation( state );
 		const areSettingsLoaded = areSettingsGeneralLoaded( state );
+
 		let { country, value } = props;
-		// If value or country are empty, use the store's address
-		country = ! country ? address.country : country;
-		value = ! value ? address.state : value;
+		// If (state) value or country are empty, use the store's address
+		// Note: We only want to use te store's state if we are using
+		// the store's country, to avoid potential country-state mismatch
+		if ( isEmpty( country ) ) {
+			country = address.country; // use the store's country
+			if ( isEmpty( value ) ) {
+				value = address.state; // use the store's state
+			}
+		}
 
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site.ID || null;
