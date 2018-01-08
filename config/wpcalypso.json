@@ -143,6 +143,7 @@
 		"upgrades/paypal": true,
 		"upgrades/netherlands-ideal": true,
 		"upgrades/germany-giropay": true,
+		"upgrades/poland-p24": true,
 		"upgrades/belgium-bancontact": true,
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,

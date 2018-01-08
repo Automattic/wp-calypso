@@ -715,7 +715,7 @@
 		margin-left:8px;
 	}
 
-	&.ideal, &.giropay, &.bancontact {
+	&.ideal, &.giropay, &.bancontact, &.p24 {
 		margin-left: 1em;
 	}
 
@@ -936,6 +936,11 @@
     	margin-bottom: 2px;
     	margin-right: 4px;
   	}
+
+	.checkout__p24 {
+		width: 80px;
+		margin: -6px 0;
+	}
 
 	.checkout__credit-card {
 		margin-right: 5px;

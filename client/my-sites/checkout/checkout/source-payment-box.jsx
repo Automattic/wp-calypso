@@ -70,6 +70,8 @@ class SourcePaymentBox extends PureComponent {
 			return 'WPCOM_Billing_Stripe_Source_Giropay';
 		} else if ( paymentType === 'bancontact' ) {
 			return 'WPCOM_Billing_Stripe_Source_Bancontact';
+		} else if ( paymentType === 'p24' ) {
+			return 'WPCOM_Billing_Stripe_Source_P24';
 		}
 		return 'WPCOM_Billing_Stripe_Source';
 	}
@@ -181,6 +183,16 @@ class SourcePaymentBox extends PureComponent {
 				</div>
 			);
 		}
+		if ( 'p24' === this.props.paymentType ) {
+			return (
+				<Input
+					additionalClasses="checkout-field"
+					name="email"
+					onChange={ this.handleChange }
+					label={ translate( 'Email Address' ) }
+					eventFormName="Checkout Form" />
+			);
+		}
 	}
 
 	render() {
@@ -238,6 +250,8 @@ class SourcePaymentBox extends PureComponent {
 				return 'Giropay';
 			case 'bancontact':
 				return 'Bancontact';
+			case 'p24':
+				return 'Przelewy24';
 		}
 
 		return this.props.paymentType;

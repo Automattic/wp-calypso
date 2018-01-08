@@ -150,6 +150,9 @@ function isPaymentMethodEnabled( cart, method ) {
 			return isGermanyGiropayEnabled( cart );
 		case 'bancontact':
 			return isBelgiumBancontactEnabled( cart );
+		case 'p24':
+			return isPolandP24Enabled( cart );
+
 		default:
 			return false;
 	}
@@ -187,6 +190,13 @@ function isBelgiumBancontactEnabled( cart ) {
 		config.isEnabled( 'upgrades/belgium-bancontact' ) &&
 		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Bancontact' ) >= 0 &&
 		'EUR' === cart.currency
+	);
+}
+
+function isPolandP24Enabled( cart ) {
+	return (
+		config.isEnabled( 'upgrades/poland-p24' ) &&
+		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_P24' ) >= 0
 	);
 }
 

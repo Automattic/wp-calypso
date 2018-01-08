@@ -299,6 +299,7 @@ const SecurePaymentForm = createReactClass( {
 			case 'ideal':
 			case 'giropay':
 			case 'bancontact':
+			case 'p24':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
