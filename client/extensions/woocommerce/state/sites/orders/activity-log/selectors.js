@@ -1,4 +1,8 @@
 /**
+ * External dependencies
+ */
+import { filter } from 'lodash';
+/**
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -102,7 +106,9 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 	} ) );
 
 	if ( plugins.isWcsEnabled( state, siteId ) ) {
-		getLabels( state, orderId, siteId ).forEach( ( label, index, allLabels ) => {
+		const labels = getLabels( state, orderId, siteId );
+		const renderableLabels = filter( labels, { status: 'PURCHASED' } );
+		renderableLabels.forEach( ( label, index, allLabels ) => {
 			const labelIndex = allLabels.length - 1 - index;
 			if ( label.refund ) {
 				switch ( label.refund.status ) {
