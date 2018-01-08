@@ -28,14 +28,12 @@ import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 export class Auth extends Component {
-	state = Object.assign(
-		{
-			login: '',
-			password: '',
-			auth_code: '',
-		},
-		AuthStore.get()
-	);
+	state = {
+		login: '',
+		password: '',
+		auth_code: '',
+		...AuthStore.get(),
+	};
 
 	componentDidMount() {
 		AuthStore.on( 'change', this.refreshData );
