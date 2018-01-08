@@ -63,10 +63,8 @@ export class CommentNavigation extends Component {
 
 	componentDidUpdate = prevProps => {
 		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
-		if ( ! hasPendingBulkAction && prevProps.hasPendingBulkAction ) {
-			if ( commentsListQuery ) {
-				refreshPage( commentsListQuery );
-			}
+		if ( commentsListQuery && ! hasPendingBulkAction && prevProps.hasPendingBulkAction ) {
+			refreshPage( commentsListQuery );
 		}
 	};
 
