@@ -10,7 +10,7 @@ import stripTags from 'striptags';
  */
 import decode from './decode-entities';
 
-function decodeEntities( text ) {
+export function decodeEntities( text ) {
 	// Bypass decode if text doesn't include entities
 	if ( 'string' !== typeof text || -1 === text.indexOf( '&' ) ) {
 		return text;
@@ -26,7 +26,7 @@ function decodeEntities( text ) {
  * @param {*[]} list - list
  * @returns {*[]} the list with separators
  */
-function interpose( separator, list ) {
+export function interpose( separator, list ) {
 	return list.reduce( function( previousValue, currentValue, index ) {
 		let value;
 		if ( index > 0 ) {
@@ -43,7 +43,7 @@ function interpose( separator, list ) {
  * @param  {string} string The string to strip tags from
  * @return {string}        The stripped string
  */
-function stripHTML( string ) {
+export function stripHTML( string ) {
 	return stripTags( string );
 }
 
@@ -53,7 +53,7 @@ function stripHTML( string ) {
  * @param  {number} wordsToKeep the number of words to keep together
  * @return {string}             the widow-prevented string
  */
-function preventWidows( text, wordsToKeep = 2 ) {
+export function preventWidows( text, wordsToKeep = 2 ) {
 	let words, endWords;
 
 	if ( typeof text !== 'string' ) {
@@ -91,7 +91,7 @@ function preventWidows( text, wordsToKeep = 2 ) {
  * @param {string} pee     html string
  * @return {string}        html string with HTML paragraphs instead of double line-breaks
  */
-function wpautop( pee ) {
+export function wpautop( pee ) {
 	const blocklist =
 		'table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre' +
 		'|form|map|area|blockquote|address|math|style|p|h[1-6]|hr|fieldset|legend|section' +
@@ -181,7 +181,7 @@ function wpautop( pee ) {
 	return pee;
 }
 
-function removep( html ) {
+export function removep( html ) {
 	const blocklist = 'blockquote|ul|ol|li|table|thead|tbody|tfoot|tr|th|td|h[1-6]|fieldset';
 	const blocklist1 = blocklist + '|div|p';
 	const blocklist2 = blocklist + '|pre';
@@ -276,7 +276,7 @@ function removep( html ) {
 	return html;
 }
 
-function capitalPDangit( input ) {
+export function capitalPDangit( input ) {
 	if ( 'string' !== typeof input ) {
 		throw new Error( 'capitalPDangit expects a string as input' );
 	}
@@ -289,7 +289,7 @@ function capitalPDangit( input ) {
  * @param  {String} html HTML String to be converted into DOM fragment
  * @return {Dom} DOM fragment that can be queried using built in browser functions.
  */
-function parseHtml( html ) {
+export function parseHtml( html ) {
 	if ( html && html.querySelector ) {
 		return html;
 	}
@@ -331,18 +331,6 @@ const nbsp = String.fromCharCode( 160 );
  * @param	{String} str String to unescape in preparation for React rendering
  * @return	{String} Transformed string
  */
-function unescapeAndFormatSpaces( str ) {
+export function unescapeAndFormatSpaces( str ) {
 	return decodeEntities( str ).replace( / /g, nbsp );
 }
-
-export default {
-	decodeEntities: decodeEntities,
-	interpose: interpose,
-	stripHTML: stripHTML,
-	preventWidows: preventWidows,
-	wpautop: wpautop,
-	removep: removep,
-	capitalPDangit: capitalPDangit,
-	parseHtml: parseHtml,
-	unescapeAndFormatSpaces: unescapeAndFormatSpaces,
-};
