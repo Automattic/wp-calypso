@@ -7,8 +7,14 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE, COMMENTS_QUERY_UPDATE } from 'state/action-types';
-import { queries } from 'state/ui/comments/reducer';
+import {
+	COMMENTS_CHANGE_STATUS,
+	COMMENTS_DELETE,
+	COMMENTS_QUERY_UPDATE,
+	COMMENTS_LIST_REQUEST,
+} from 'state/action-types';
+import { queries, pendingActions } from 'state/ui/comments/reducer';
+import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 
 const siteId = 12345678;
 const postId = 1234;
@@ -137,6 +143,74 @@ describe( 'reducer', () => {
 				refreshCommentListQuery: { page: 1, status: 'all' },
 			} );
 			expect( query ).toEqual( { site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } } } );
+		} );
+	} );
+	describe( '#pendingActions', () => {
+		test( 'should keep track of pending comment action', () => {
+			const action = {
+				type: COMMENTS_CHANGE_STATUS,
+				commentId: 1,
+				status: 'approved',
+				meta: {
+					dataLayer: {
+						trackRequest: true,
+					},
+				},
+			};
+			const state = pendingActions( undefined, action );
+			expect( state ).toEqual( [ getRequestKey( action ) ] );
+		} );
+		test( 'should keep track of pending comment actions', () => {
+			const approveAction = {
+				type: COMMENTS_CHANGE_STATUS,
+				commentId: 1,
+				status: 'approved',
+				meta: {
+					dataLayer: {
+						trackRequest: true,
+					},
+				},
+			};
+			const deleteComment = {
+				type: COMMENTS_DELETE,
+				commentId: 2,
+				meta: {
+					dataLayer: {
+						trackRequest: true,
+					},
+				},
+			};
+			const state = deepFreeze( [ getRequestKey( approveAction ) ] );
+			const nextState = pendingActions( state, deleteComment );
+			expect( nextState ).toEqual( [
+				getRequestKey( approveAction ),
+				getRequestKey( deleteComment ),
+			] );
+		} );
+		test( 'does not update when we are not tracking the request', () => {
+			const action = {
+				type: COMMENTS_CHANGE_STATUS,
+				commentId: 1,
+				status: 'approved',
+			};
+			const state = pendingActions( undefined, action );
+			expect( state ).toEqual( [] );
+		} );
+		test( 'clears current pending requests when we detect a fresh view', () => {
+			const action = {
+				type: COMMENTS_CHANGE_STATUS,
+				commentId: 1,
+				status: 'approved',
+				meta: {
+					dataLayer: {
+						trackRequest: true,
+					},
+				},
+			};
+			const state = pendingActions( deepFreeze( [ getRequestKey( action ) ] ), {
+				type: COMMENTS_LIST_REQUEST,
+			} );
+			expect( state ).toEqual( [] );
 		} );
 	} );
 } );
