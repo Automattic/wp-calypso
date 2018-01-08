@@ -18,7 +18,7 @@ import ActivityLogItem from '../activity-log-item';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getActivityLog, getRewindEvents } from 'state/selectors';
-import { ms, rewriteStream } from 'state/activity-log/log/is-discarded';
+import { ms, makeIsDiscarded } from 'state/activity-log/log/is-discarded';
 
 /**
  * Module constants
@@ -157,17 +157,18 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
-			applySiteOffset,
-			disableRestore,
+			backupConfirmDialog,
 			disableBackup,
+			disableRestore,
+			isDiscardedPerspective,
 			isRewindActive,
 			isToday,
 			logs,
-			requestedRestoreId,
-			requestedBackupId,
 			requestDialog,
+			requestedBackupId,
+			requestedRestoreId,
 			restoreConfirmDialog,
-			backupConfirmDialog,
+			rewindEvents,
 			siteId,
 			tsEndOfSiteDay,
 		} = this.props;
@@ -186,14 +187,16 @@ class ActivityLogDay extends Component {
 			rewindId: requestedRestoreId,
 		} );
 
+		const isDiscarded = makeIsDiscarded( rewindEvents, isDiscardedPerspective );
+
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
 				className={ hasBreak ? 'is-before-dialog' : '' }
-				applySiteOffset={ applySiteOffset }
+				activityId={ log.activityId }
 				disableRestore={ disableRestore }
 				disableBackup={ disableBackup }
 				hideRestore={ ! isRewindActive }
-				log={ log }
+				isDiscarded={ isDiscarded( log.activityTs ) }
 				requestDialog={ requestDialog }
 				siteId={ siteId }
 			/>
@@ -241,7 +244,9 @@ export default localize(
 				: undefined;
 
 			return {
-				logs: rewriteStream( logs, rewindEvents, isDiscardedPerspective ),
+				logs,
+				rewindEvents,
+				isDiscardedPerspective,
 				requestedRestoreId,
 			};
 		},
