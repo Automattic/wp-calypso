@@ -47,13 +47,13 @@ const blogPostFetcher = new PostFetcher( {
 		} );
 	},
 	onError: function( error, postKey ) {
-		FeedPostActions.receivePost( error, null, {
+		receivePost( error, null, {
 			blogId: postKey.blogId,
 			postId: postKey.postId,
 		} );
 	},
 	onPostReceived: function( blogId, postId, post ) {
-		FeedPostActions.receivePost( null, post, {
+		receivePost( null, post, {
 			blogId: blogId,
 			postId: postId,
 		} );
