@@ -12,6 +12,7 @@ import { find, pick } from 'lodash';
  */
 import { getSiteFragment, getStatsDefaultSitePage, sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
+import { recordPlaceholdersTiming } from 'lib/perfmon';
 import titlecase from 'to-title-case';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { savePreference } from 'state/preferences/actions';
@@ -261,6 +262,7 @@ export default {
 				baseAnalyticsPath,
 				analyticsPageTitle + ' > ' + titlecase( activeFilter.period )
 			);
+			recordPlaceholdersTiming();
 
 			period = rangeOfPeriod( activeFilter.period, date );
 			chartTab = queryOptions.tab || 'views';

@@ -20,7 +20,7 @@ import { setRoute as setRouteAction } from 'state/ui/actions';
 import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
-import perfmon from 'lib/perfmon';
+import { installPerfmonPageHandlers } from 'lib/perfmon';
 
 const debug = debugFactory( 'calypso' );
 
@@ -194,7 +194,7 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 export const setupMiddlewares = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
-	perfmon();
+	installPerfmonPageHandlers();
 	setupContextMiddleware( reduxStore );
 	oauthTokenMiddleware();
 	loadSectionsMiddleware();
