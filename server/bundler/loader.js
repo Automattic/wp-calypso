@@ -9,7 +9,7 @@ function getSectionsModule( sections ) {
 		let sectionPreLoaders = '';
 
 		const dependencies = [
-			"var config = require( 'config' ),",
+			"var config = require( 'config' ).default,",
 			"\tpage = require( 'page' ),",
 			"\tReact = require( 'react' ),",
 			"\tactivateNextLayoutFocus = require( 'state/ui/layout-focus/actions' ).activateNextLayoutFocus,",
