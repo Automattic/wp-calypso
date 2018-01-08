@@ -3,7 +3,6 @@
  * External dependencies
  */
 import deepFreeze from 'deep-freeze';
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ describe( 'reducer', () => {
 				comments,
 				query: { page: 1 },
 			} );
-			expect( query ).to.eql( {
+			expect( query ).toEqual( {
 				site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } },
 			} );
 		} );
@@ -44,7 +43,7 @@ describe( 'reducer', () => {
 					postId,
 				},
 			} );
-			expect( query ).to.eql( {
+			expect( query ).toEqual( {
 				site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } },
 				[ postId ]: { 'all?order=DESC': { 1: [ 6, 7, 8, 9, 10 ] } },
 			} );
@@ -67,7 +66,7 @@ describe( 'reducer', () => {
 					status: 'spam',
 				},
 			} );
-			expect( query ).to.eql( {
+			expect( query ).toEqual( {
 				site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } },
 				[ postId ]: {
 					'all?order=DESC': { 1: [ 6, 7, 8, 9, 10 ] },
@@ -90,7 +89,7 @@ describe( 'reducer', () => {
 				comments: comments3,
 				query: { page: 1 },
 			} );
-			expect( query ).to.eql( {
+			expect( query ).toEqual( {
 				site: { 'all?order=DESC': { 1: [ 11, 12, 13, 14, 15 ] } },
 				[ postId ]: {
 					'all?order=DESC': { 1: [ 6, 7, 8, 9, 10 ] },
@@ -109,7 +108,7 @@ describe( 'reducer', () => {
 				commentId: 5,
 				refreshCommentListQuery: { page: 1, status: 'all' },
 			} );
-			expect( query ).to.eql( { site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4 ] } } } );
+			expect( query ).toEqual( { site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4 ] } } } );
 		} );
 
 		test( 'should remove a comment from a page when the comment status is changed', () => {
@@ -123,7 +122,7 @@ describe( 'reducer', () => {
 				status: 'approved',
 				refreshCommentListQuery: { page: 1, status: 'spam' },
 			} );
-			expect( query ).to.eql( { site: { 'spam?order=DESC': { 1: [ 1, 2, 3, 4 ] } } } );
+			expect( query ).toEqual( { site: { 'spam?order=DESC': { 1: [ 1, 2, 3, 4 ] } } } );
 		} );
 
 		test( "should not remove a comment from a page when the comment status is changed but it doesn't change filter list", () => {
@@ -137,7 +136,7 @@ describe( 'reducer', () => {
 				status: 'approved',
 				refreshCommentListQuery: { page: 1, status: 'all' },
 			} );
-			expect( query ).to.eql( { site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } } } );
+			expect( query ).toEqual( { site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } } } );
 		} );
 	} );
 } );
