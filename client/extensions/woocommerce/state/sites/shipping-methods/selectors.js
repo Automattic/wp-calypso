@@ -14,9 +14,9 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import { LOADING } from 'woocommerce/state/constants';
 import {
-	isShippingSchemaLoaded,
-	isShippingSchemaLoading,
-} from 'woocommerce/woocommerce-services/state/shipping-schemas/selectors';
+	isShippingMethodSchemaLoaded,
+	isShippingMethodSchemaLoading,
+} from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 
 /*
  * By default, those methods are called "XXXX (WooCommerce Services)".
@@ -65,7 +65,7 @@ export const areShippingMethodsLoaded = ( state, siteId = getSelectedSiteId( sta
 	const wcsMethods = filter( getShippingMethods( state, siteId ), ( { id } ) =>
 		startsWith( id, 'wc_services' )
 	);
-	return every( wcsMethods, ( { id } ) => isShippingSchemaLoaded( state, id, siteId ) );
+	return every( wcsMethods, ( { id } ) => isShippingMethodSchemaLoaded( state, id, siteId ) );
 };
 
 /**
@@ -80,7 +80,7 @@ export const areShippingMethodsLoading = ( state, siteId = getSelectedSiteId( st
 	const wcsMethods = filter( getShippingMethods( state, siteId ), ( { id } ) =>
 		startsWith( id, 'wc_services' )
 	);
-	return some( wcsMethods, ( { id } ) => isShippingSchemaLoading( state, id, siteId ) );
+	return some( wcsMethods, ( { id } ) => isShippingMethodSchemaLoading( state, id, siteId ) );
 };
 
 /**
