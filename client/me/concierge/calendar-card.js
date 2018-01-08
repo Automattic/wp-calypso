@@ -45,27 +45,26 @@ class CalendarCard extends Component {
 		// To find the best default time for the time picker, we're going to pick the time that's
 		// closest to the current time of day. To do this first we find out how many seconds it's
 		// been since midnight on the current real world day...
-		const timeSinceMidnight = moment().diff( this.withTimezone().startOf( 'day' ) );
-		// Then we'll use that to find the same time of day on the Card's given date...
-		const currentTimeOnGivenDate = this.withTimezone( this.props.date )
-			.startOf( 'day' )
-			.add( timeSinceMidnight );
+		const millisecondsSinceMidnight = moment().diff( this.withTimezone().startOf( 'day' ) );
 
-		// Then we'll use a reducer to find the timestamp that's closest (before or after) to the
-		// current time on the given date.
-		const closestTimestamp = this.props.times.reduce(
-			( closestTime, newTime ) => {
-				// On each iteration, return the time that's closer to the current time on the given date
-				const closestTimeOffset = Math.abs( closestTime - currentTimeOnGivenDate );
-				const newTimeOffset = Math.abs( newTime - currentTimeOnGivenDate );
-				if ( newTimeOffset < closestTimeOffset ) {
-					return newTime;
-				}
-				return closestTime;
-			},
-			// Seed the reducer with the first timestamp for a sensible default
-			this.props.times[ 0 ]
-		);
+		// Then we'll use that to find the same time of day on the Card's given date. This will be the
+		// target timestamp we're trying to get as close to as possible.
+		const targetTimestamp = this.withTimezone( this.props.date )
+			.startOf( 'day' )
+			.add( millisecondsSinceMidnight );
+
+		// Default to the first timestamp and calculate how many seconds it's offset from the target
+		let closestTimestamp = this.props.times[ 0 ];
+		let closestTimeOffset = Math.abs( closestTimestamp - targetTimestamp );
+
+		// Then look through all timestamps to find which one is the closest to the target
+		this.props.times.forEach( time => {
+			const offset = Math.abs( time - targetTimestamp );
+			if ( offset < closestTimeOffset ) {
+				closestTimestamp = time;
+				closestTimeOffset = offset;
+			}
+		} );
 
 		this.state = {
 			selectedTime: closestTimestamp,
