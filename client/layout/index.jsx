@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { property, sortBy } from 'lodash';
+import { property, sortBy, get } from 'lodash';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
@@ -51,6 +51,7 @@ import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
+import { getPrimarySiteId } from 'state/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -155,11 +156,19 @@ const Layout = createReactClass( {
 				'is-active': this.props.isLoading,
 			} );
 
+		const { recentSitesPreference, primarySiteId } = this.props;
+
+		let siteIdToFetch = get( recentSitesPreference, '0', null );
+
+		if ( ! siteIdToFetch ) {
+			siteIdToFetch = primarySiteId;
+		}
+
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<SitesListNotices />
-				<QuerySites allSites />
+				<QuerySites siteId={ siteIdToFetch } />
 				<QueryPreferences />
 				{ <GuidedTours /> }
 				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
@@ -213,5 +222,7 @@ export default connect( state => {
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
+		recentSitesPreference: getPreference( state, 'recentSites' ),
+		primarySiteId: getPrimarySiteId( state ),
 	};
 } )( Layout );
