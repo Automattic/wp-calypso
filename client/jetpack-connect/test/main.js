@@ -2,19 +2,18 @@
  * @format
  * @jest-environment jsdom
  */
+
 /**
  * External dependencies
  */
 import page from 'page';
-import { addQueryArgs, externalRedirect } from 'lib/route';
+import { externalRedirect } from 'lib/route';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { JetpackConnectMain } from '../main';
-import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_AUTH, REMOTE_PATH_INSTALL } from '../constants';
 
 const REQUIRED_PROPS = {
 	checkUrl: noop,
@@ -30,8 +29,7 @@ jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-jest.mock( 'lib/route', () => ( {
-	addQueryArgs: jest.fn(),
+jest.mock( 'lib/route/path', () => ( {
 	externalRedirect: jest.fn(),
 } ) );
 
@@ -65,7 +63,6 @@ describe( 'JetpackConnectMain', () => {
 		beforeEach( () => {
 			component.redirecting = false;
 			component.props.recordTracksEvent.mockReset();
-			addQueryArgs.mockReset();
 			externalRedirect.mockReset();
 		} );
 
@@ -73,10 +70,7 @@ describe( 'JetpackConnectMain', () => {
 			component.goToPluginActivation( 'example.com' );
 
 			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( addQueryArgs ).toHaveBeenCalledWith(
-				{ calypso_env: config( 'env_id' ) },
-				'example.com' + REMOTE_PATH_ACTIVATE
-			);
+			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
 		} );
 
 		test( 'should dispatch analytics', () => {
@@ -101,10 +95,7 @@ describe( 'JetpackConnectMain', () => {
 			component.goToPluginInstall( 'example.com' );
 
 			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( addQueryArgs ).toHaveBeenCalledWith(
-				{ calypso_env: config( 'env_id' ) },
-				'example.com' + REMOTE_PATH_INSTALL
-			);
+			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
 		} );
 
 		test( 'should dispatch analytics', () => {
@@ -129,10 +120,7 @@ describe( 'JetpackConnectMain', () => {
 			component.goToRemoteAuth( 'example.com' );
 
 			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( addQueryArgs ).toHaveBeenCalledWith(
-				{ calypso_env: config( 'env_id' ) },
-				'example.com' + REMOTE_PATH_AUTH
-			);
+			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
 		} );
 
 		test( 'should dispatch analytics', () => {
