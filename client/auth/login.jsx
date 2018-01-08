@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -27,7 +27,7 @@ import WordPressLogo from 'components/wordpress-logo';
 import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-export class Auth extends React.Component {
+export class Auth extends Component {
 	state = Object.assign(
 		{
 			login: '',
