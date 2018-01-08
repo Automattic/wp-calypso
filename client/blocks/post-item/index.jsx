@@ -138,6 +138,7 @@ class PostItem extends React.Component {
 
 		const title = post ? post.title : null;
 		const isPlaceholder = ! globalId;
+		const enabledPostLink = isPlaceholder || multiSelectEnabled ? null : postUrl;
 
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
@@ -156,8 +157,16 @@ class PostItem extends React.Component {
 					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
-							{ isAllSitesModeSelected && <PostTypeSiteInfo globalId={ globalId } /> }
-							{ isAuthorVisible && <PostTypePostAuthor globalId={ globalId } /> }
+							{ isAllSitesModeSelected && (
+								<a href={ enabledPostLink } className="post-item__site-info-link">
+									<PostTypeSiteInfo globalId={ globalId } />
+								</a>
+							) }
+							{ isAuthorVisible && (
+								<a href={ enabledPostLink } className="post-item__post-author-link">
+									<PostTypePostAuthor globalId={ globalId } />
+								</a>
+							) }
 						</div>
 						<h1
 							className="post-item__title"
@@ -165,10 +174,7 @@ class PostItem extends React.Component {
 							onMouseOver={ preloadEditor }
 						>
 							{ ! externalPostLink && (
-								<a
-									href={ isPlaceholder || multiSelectEnabled ? null : postUrl }
-									className="post-item__title-link"
-								>
+								<a href={ enabledPostLink } className="post-item__title-link">
 									{ title || translate( 'Untitled' ) }
 								</a>
 							) }
@@ -186,8 +192,10 @@ class PostItem extends React.Component {
 						</h1>
 						<div className="post-item__meta">
 							<span className="post-item__meta-time-status">
-								<PostTime globalId={ globalId } />
-								<PostStatus globalId={ globalId } />
+								<a href={ enabledPostLink } className="post-item__time-status-link">
+									<PostTime globalId={ globalId } />
+									<PostStatus globalId={ globalId } />
+								</a>
 							</span>
 							<PostActionCounts globalId={ globalId } />
 						</div>
