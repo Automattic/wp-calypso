@@ -1,13 +1,11 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import React from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { some, noop, throttle } from 'lodash';
+import { noop, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,10 +13,13 @@ import { some, noop, throttle } from 'lodash';
 import BarContainer from './bar-container';
 import { hasTouch } from 'lib/touch-detect';
 
-class ModuleChartExport extends React.Component {
+class Chart extends React.Component {
 	state = {
+		data: [],
+		isEmptyChart: false,
 		maxBars: 100, // arbitrarily high number. This will be calculated by resize method
 		width: 650,
+		yMax: 0,
 	};
 
 	static propTypes = {
@@ -37,101 +38,70 @@ class ModuleChartExport extends React.Component {
 		barClick: noop,
 	};
 
-	// Add listener for window resize
 	componentDidMount() {
 		this.resize = throttle( this.resize, 400 );
 		window.addEventListener( 'resize', this.resize );
-		this.resize();
+
+		this.resize( this.props );
 	}
 
-	// Remove listener
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resize );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.loading && ! nextProps.loading ) {
-			this.resize();
+			return this.resize( nextProps );
+		}
+
+		if ( nextProps.data !== this.props.data ) {
+			this.updateData( nextProps );
 		}
 	}
 
-	resize = () => {
-		const node = this.refs.chart;
-		let width = node.clientWidth - 82,
-			maxBars;
-
-		if ( hasTouch() ) {
-			width = width <= 0 ? 350 : width; // mobile safari bug with zero width
-			maxBars = Math.floor( width / this.props.minTouchBarWidth );
-		} else {
-			maxBars = Math.floor( width / this.props.minBarWidth );
+	resize = props => {
+		if ( ! this.chart ) {
+			return;
 		}
 
-		this.setState( {
-			maxBars: maxBars,
-			width: width,
-		} );
+		const isTouch = hasTouch();
+		const clientWidth = this.chart.clientWidth - 82;
+		const minWidth = isTouch ? this.props.minTouchBarWidth : this.props.minBarWidth;
+		const width = isTouch && clientWidth <= 0 ? 350 : clientWidth; // mobile safari bug with zero width
+		const maxBars = Math.floor( width / minWidth );
+
+		this.setState( { maxBars, width }, () => this.updateData( props ) );
 	};
 
 	getYAxisMax = values => {
-		const max = Math.max.apply( null, values ),
-			operand = Math.pow( 10, Math.floor( max ).toString().length - 1 );
-		let rounded = Math.ceil( ( max + 1 ) / operand ) * operand;
+		const max = Math.max.apply( null, values );
+		const operand = Math.pow( 10, Math.floor( max ).toString().length - 1 );
+		const rounded = Math.ceil( ( max + 1 ) / operand ) * operand;
 
-		if ( rounded < 10 ) {
-			rounded = 10;
-		}
-
-		return rounded;
+		return Math.max( 10, rounded );
 	};
 
-	getData = () => {
-		let data = this.props.data;
+	storeChart = ref => ( this.chart = ref );
 
-		data = data.slice( 0 - this.state.maxBars );
+	updateData = ( { data } ) => {
+		const { maxBars } = this.state;
 
-		return data;
-	};
+		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );
+		const nextVals = data.map( ( { value } ) => value );
 
-	getValues = () => {
-		let data = this.getData();
-
-		data = data.map( function( item ) {
-			return item.value;
-		}, this );
-
-		return data;
-	};
-
-	isEmptyChart = values => {
-		return ! some( values, value => value > 0 );
+		this.setState( {
+			data: nextData,
+			isEmptyChart: nextVals.length && ! nextVals.some( a => a > 0 ),
+			yMax: this.getYAxisMax( nextVals ),
+		} );
 	};
 
 	render() {
-		const values = this.getValues(),
-			yAxisMax = this.getYAxisMax( values ),
-			data = this.getData();
-		let emptyChart;
-
-		const { translate, numberFormat } = this.props;
-
-		// If we have an empty chart, show a message
-		// @todo this message needs to either use a <Notice> or make a custom "chart__notice" class
-		if ( values.length && this.isEmptyChart( values ) ) {
-			emptyChart = (
-				<div className="chart__empty">
-					<span className="chart__empty-notice">
-						{ translate( 'No activity this period', {
-							context: 'Message on empty bar chart in Stats',
-							comment: 'Should be limited to 32 characters to prevent wrapping',
-						} ) }
-					</span>
-				</div>
-			);
-		}
+		const { barClick, translate, numberFormat } = this.props;
+		const { data, isEmptyChart, width, yMax } = this.state;
 
 		return (
-			<div ref="chart" className="chart">
+			<div ref={ this.storeChart } className="chart">
 				<div className="chart__y-axis-markers">
 					<div className="chart__y-axis-marker is-hundred" />
 					<div className="chart__y-axis-marker is-fifty" />
@@ -139,21 +109,31 @@ class ModuleChartExport extends React.Component {
 				</div>
 				<div className="chart__y-axis">
 					<div className="chart__y-axis-width-fix">{ numberFormat( 100000 ) }</div>
-					<div className="chart__y-axis-label is-hundred">{ numberFormat( yAxisMax ) }</div>
-					<div className="chart__y-axis-label is-fifty">{ numberFormat( yAxisMax / 2 ) }</div>
+					<div className="chart__y-axis-label is-hundred">{ numberFormat( yMax ) }</div>
+					<div className="chart__y-axis-label is-fifty">{ numberFormat( yMax / 2 ) }</div>
 					<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
 				</div>
 				<BarContainer
-					barClick={ this.props.barClick }
+					barClick={ barClick }
 					data={ data }
-					yAxisMax={ yAxisMax }
-					chartWidth={ this.state.width }
+					yAxisMax={ yMax }
+					chartWidth={ width }
 					isTouch={ hasTouch() }
 				/>
-				{ emptyChart }
+				{ isEmptyChart && (
+					<div className="chart__empty">
+						{ /* @todo this message needs to either use a <Notice> or make a custom "chart__notice" class */ }
+						<span className="chart__empty-notice">
+							{ translate( 'No activity this period', {
+								context: 'Message on empty bar chart in Stats',
+								comment: 'Should be limited to 32 characters to prevent wrapping',
+							} ) }
+						</span>
+					</div>
+				) }
 			</div>
 		);
 	}
 }
 
-export default localize( ModuleChartExport );
+export default localize( Chart );
