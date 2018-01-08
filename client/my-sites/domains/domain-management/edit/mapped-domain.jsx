@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -19,7 +17,7 @@ import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import paths from 'my-sites/domains/paths';
+import { domainManagementDns, domainManagementEmail } from 'my-sites/domains/paths';
 
 const MappedDomain = createReactClass( {
 	displayName: 'MappedDomain',
@@ -120,16 +118,13 @@ const MappedDomain = createReactClass( {
 	},
 
 	emailNavItem() {
-		const path = paths.domainManagementEmail(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
+		const path = domainManagementEmail( this.props.selectedSite.slug, this.props.domain.name );
 
 		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
 	},
 
 	dnsRecordsNavItem() {
-		const path = paths.domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
+		const path = domainManagementDns( this.props.selectedSite.slug, this.props.domain.name );
 
 		return (
 			<VerticalNavItem path={ path }>{ this.props.translate( 'DNS Records' ) }</VerticalNavItem>

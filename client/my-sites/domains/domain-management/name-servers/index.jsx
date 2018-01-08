@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
@@ -20,7 +18,7 @@ import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification/icann-verification-card';
 import DnsTemplates from './dns-templates';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementDns } from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -154,9 +152,7 @@ class NameServers extends React.Component {
 	}
 
 	back = () => {
-		page(
-			paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
-		);
+		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 
 	customNameservers() {
@@ -215,10 +211,7 @@ class NameServers extends React.Component {
 		return (
 			<VerticalNavItem
 				isPlaceholder={ this.isLoading() }
-				path={ paths.domainManagementDns(
-					this.props.selectedSite.slug,
-					this.props.selectedDomainName
-				) }
+				path={ domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }
 			>
 				{ this.props.translate( 'DNS Records' ) }
 			</VerticalNavItem>

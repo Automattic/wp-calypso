@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -18,7 +16,7 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import EmailForwardingList from './email-forwarding-list';
 import EmailForwardingAddNew from './email-forwarding-add-new';
 import EmailForwardingDetails from './email-forwarding-details';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEmail } from 'my-sites/domains/paths';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 
@@ -63,9 +61,7 @@ class EmailForwarding extends React.Component {
 	};
 
 	goToEditEmail = () => {
-		page(
-			paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName )
-		);
+		page( domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 }
 

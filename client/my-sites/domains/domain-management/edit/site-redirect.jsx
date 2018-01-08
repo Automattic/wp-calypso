@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -18,7 +16,7 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from 'my-sites/domains/paths';
+import { domainManagementRedirectSettings } from 'my-sites/domains/paths';
 
 const SiteRedirect = createReactClass( {
 	displayName: 'SiteRedirect',
@@ -78,7 +76,7 @@ const SiteRedirect = createReactClass( {
 	siteRedirectNavItem() {
 		return (
 			<VerticalNavItem
-				path={ paths.domainManagementRedirectSettings(
+				path={ domainManagementRedirectSettings(
 					this.props.selectedSite.slug,
 					this.props.domain.name
 				) }
