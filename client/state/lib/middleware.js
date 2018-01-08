@@ -216,7 +216,7 @@ const handler = ( dispatch, action, getState ) => {
 		case SITES_RECEIVE:
 			// Wait a tick for the reducer to update the state tree
 			setTimeout( () => {
-				if ( action.type === SITES_RECEIVE ) {
+				if ( action.type === SITES_RECEIVE || action.type === SITE_RECEIVE ) {
 					fireChangeListeners();
 				}
 				if ( globalKeyBoardShortcutsEnabled ) {
