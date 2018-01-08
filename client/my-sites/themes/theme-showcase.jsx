@@ -210,9 +210,9 @@ class ThemeShowcase extends React.Component {
 				description={ translate(
 					"We understand your time contraints, and that's why we created this easy-to-set-up Premium theme called Small Business."
 				) }
-				ctaLabel={ translate( 'Learn about this theme' ) }
-				ctaAction={ this.helloWorld }
-				backgroundImage={ '/calypso/images/themes-banner/banner-bg.jpg' }
+				action={ this.helloWorld }
+				actionLabel={ translate( 'Learn about this theme' ) }
+				backgroundImage="/calypso/images/themes-banner/banner-bg.jpg"
 			/>
 		);
 
