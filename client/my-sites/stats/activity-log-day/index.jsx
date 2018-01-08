@@ -187,7 +187,8 @@ class ActivityLogDay extends Component {
 			rewindId: requestedRestoreId,
 		} );
 
-		const isDiscarded = makeIsDiscarded( rewindEvents, isDiscardedPerspective );
+		const isDiscarded =
+			isDiscardedPerspective && makeIsDiscarded( rewindEvents, isDiscardedPerspective );
 
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
@@ -196,7 +197,7 @@ class ActivityLogDay extends Component {
 				disableRestore={ disableRestore }
 				disableBackup={ disableBackup }
 				hideRestore={ ! isRewindActive }
-				isDiscarded={ isDiscarded( log.activityTs ) }
+				isDiscarded={ isDiscarded ? isDiscarded( log.activityTs ) : log.activityIsDiscarded }
 				requestDialog={ requestDialog }
 				siteId={ siteId }
 			/>

@@ -19,6 +19,7 @@ const activityItemSchema = {
 		activityGroup: { type: 'string' },
 		activityIcon: { type: 'string' },
 		activityId: { type: 'string' },
+		activityIsDiscarded: { type: 'boolean' },
 		activityIsRewindable: { type: 'boolean' },
 		activityName: { type: 'string' },
 		activityStatus: {
