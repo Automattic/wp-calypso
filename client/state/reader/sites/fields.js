@@ -1,9 +1,11 @@
+/** @format */
 export const fields = [
 	'ID',
 	'name',
 	'title',
 	'URL',
 	'icon',
+	'is_following',
 	'is_jetpack',
 	'description',
 	'is_private',
@@ -13,4 +15,5 @@ export const fields = [
 	'prefer_feed',
 	'subscribers_count',
 	'options', // have to include this to get options at all
+	'subscription',
 ];

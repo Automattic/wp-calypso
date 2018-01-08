@@ -62,7 +62,7 @@ function handleRequestFailure( state, action ) {
 
 function adaptSite( attributes ) {
 	// this also ends up cloning attributes, which is important since we mutate it
-	attributes = omit( attributes, [ 'meta' ] );
+	attributes = omit( attributes, [ 'meta', 'subscription' ] );
 
 	if ( attributes.URL ) {
 		attributes.domain = withoutHttp( attributes.URL );
