@@ -157,23 +157,20 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const { domain, selectedSiteSlug } = this.props;
 		const {
 			creationDate,
-			loading,
 			termMaximumInYears,
 			transferEligibleDate,
 			transferRestrictionStatus,
 		} = this.state;
 
 		return (
-			! loading && (
-				<TransferRestrictionMessage
-					creationDate={ creationDate }
-					domain={ domain }
-					selectedSiteSlug={ selectedSiteSlug }
-					termMaximumInYears={ termMaximumInYears }
-					transferEligibleDate={ transferEligibleDate }
-					transferRestrictionStatus={ transferRestrictionStatus }
-				/>
-			)
+			<TransferRestrictionMessage
+				creationDate={ creationDate }
+				domain={ domain }
+				selectedSiteSlug={ selectedSiteSlug }
+				termMaximumInYears={ termMaximumInYears }
+				transferEligibleDate={ transferEligibleDate }
+				transferRestrictionStatus={ transferRestrictionStatus }
+			/>
 		);
 	}
 
