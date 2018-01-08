@@ -152,7 +152,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ this.props.translate( 'Stats' ) }
+				label={ this.props.translate( 'Stats and Activity' ) }
 				className={ this.itemLinkClass( [ '/stats', '/store/stats' ], 'stats' ) }
 				link={ statsLink }
 				onNavigate={ this.onNavigate }
