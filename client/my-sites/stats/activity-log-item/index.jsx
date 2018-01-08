@@ -85,11 +85,11 @@ class ActivityLogItem extends Component {
 	}
 
 	render() {
-		const { activity, className, gmtOffset, moment, timezone } = this.props;
-		const { activityIcon, activityIsDiscarded, activityStatus, activityTs } = activity;
+		const { activity, className, gmtOffset, isDiscarded, moment, timezone } = this.props;
+		const { activityIcon, activityStatus, activityTs } = activity;
 
 		const classes = classNames( 'activity-log-item', className, {
-			'is-discarded': activityIsDiscarded,
+			'is-discarded': isDiscarded,
 		} );
 
 		return (
