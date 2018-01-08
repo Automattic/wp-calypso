@@ -37,7 +37,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		this.setState( { title: event.target.value } );
 	};
 
-	submit = () => {
+	handleSubmit = () => {
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.title,
 			siteDescription: this.state.description,
@@ -62,7 +62,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">
-					<form>
+					<form onSubmit={ this.handleSubmit }>
 						<FormFieldset>
 							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
 							<FormTextInput
@@ -70,6 +70,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 								id="title"
 								onChange={ this.setTitle }
 								value={ this.state.title }
+								required
 							/>
 						</FormFieldset>
 
@@ -79,10 +80,11 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 								id="description"
 								onChange={ this.setDescription }
 								value={ this.state.description }
+								required
 							/>
 						</FormFieldset>
 
-						<Button href={ this.props.getForwardUrl() } onClick={ this.submit } primary>
+						<Button primary type="submit" href={ this.props.getForwardUrl() }>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
