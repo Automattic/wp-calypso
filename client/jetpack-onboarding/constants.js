@@ -1,5 +1,12 @@
+/** @format */
+
 /**
- * Internal Dependencies
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
+ * Internal dependencies
  */
 import React from 'react';
 import JetpackOnboardingBusinessAddressStep from './steps/business-address';
@@ -18,6 +25,18 @@ export const JETPACK_ONBOARDING_STEPS = {
 	BUSINESS_ADDRESS: 'business-address',
 	WOOCOMMERCE: 'woocommerce',
 	SUMMARY: 'summary',
+};
+
+export const JETPACK_ONBOARDING_SUMMARY_STEPS = {
+	SITE_TITLE_DESCRIPTION: translate( 'Site Title & Description' ),
+	SITE_TYPE: translate( 'Type of Site' ),
+	HOMEPAGE_TYPE: translate( 'Type of Homepage' ),
+	CONTACT_FORM: translate( 'Contact Us Form' ),
+	JETPACK_CONNECTION: translate( 'Jetpack Connection' ),
+	THEME: translate( 'Choose a Theme' ),
+	SITE_ADDRESS: translate( 'Add a Site Address' ),
+	STORE: translate( 'Add a Store' ),
+	BLOG: translate( 'Start a Blog' ),
 };
 
 export const JETPACK_ONBOARDING_COMPONENTS = {
