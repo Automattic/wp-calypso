@@ -23,16 +23,17 @@ import SiteNotice from './notice';
 import CartStore from 'lib/cart/store';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSelectedOrAllSites, getVisibleSites } from 'state/selectors';
+import { getSelectedOrAllSites } from 'state/selectors';
 import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isRtl from 'state/selectors/is-rtl';
+import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 
 class CurrentSite extends Component {
 	static propTypes = {
-		siteCount: PropTypes.number.isRequired,
+		visibleSitesCount: PropTypes.number.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
@@ -90,13 +91,13 @@ class CurrentSite extends Component {
 	};
 
 	render() {
-		const { selectedSite, translate, anySiteSelected, rtlOn } = this.props;
+		const { selectedSite, translate, anySiteSelected, rtlOn, visibleSitesCount } = this.props;
 
 		if ( ! anySiteSelected.length ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Card className="current-site is-loading">
-					{ this.props.siteCount > 1 && <span className="current-site__switch-sites">&nbsp;</span> }
+					{ visibleSitesCount > 1 && <span className="current-site__switch-sites">&nbsp;</span> }
 
 					<div className="site">
 						<a className="site__content">
@@ -113,7 +114,7 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				{ this.props.siteCount > 1 && (
+				{ visibleSitesCount > 1 && (
 					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon={ rtlOn ? 'arrow-right' : 'arrow-left' } size={ 18 } />
@@ -143,7 +144,7 @@ export default connect(
 		rtlOn: isRtl( state ),
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
-		siteCount: getVisibleSites( state ).length,
+		visibleSitesCount: getCurrentUserVisibleSiteCount( state ),
 		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
 		sectionName: getSectionName( state ),
 	} ),
