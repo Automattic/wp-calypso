@@ -16,6 +16,7 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
@@ -28,7 +29,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			SUMMARY_STEPS.SITE_TYPE,
 			SUMMARY_STEPS.HOMEPAGE_TYPE,
 			SUMMARY_STEPS.CONTACT_FORM,
-			SUMMARY_STEPS.JETPACK_CONNECTION,
 		];
 		return map( stepsCompleted, ( fieldLabel, fieldIndex ) => (
 			<div key={ fieldIndex } className="steps__summary-entry completed">
@@ -40,18 +40,24 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 
 	renderTodo = () => {
 		const stepsTodo = [
+			SUMMARY_STEPS.JETPACK_CONNECTION,
 			SUMMARY_STEPS.THEME,
 			SUMMARY_STEPS.SITE_ADDRESS,
 			SUMMARY_STEPS.STORE,
 			SUMMARY_STEPS.BLOG,
 		];
-
-		// TODO: adapt when we have more info + it will differ for different steps
-		const siteRedirectHref = '#';
+		const stepLinks = [
+			'/jetpack/connect?url=' + this.props.siteUrl,
+			// TODO: update the following with relevant links
+			'#',
+			'#',
+			'#',
+			'#',
+		];
 
 		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (
 			<div key={ fieldIndex } className="steps__summary-entry todo">
-				<a href={ siteRedirectHref }>{ fieldLabel }</a>
+				<a href={ stepLinks[ fieldIndex ] }>{ fieldLabel }</a>
 			</div>
 		) );
 	};
@@ -95,9 +101,10 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default connect( () => {
+export default connect( ( state, { siteId } ) => {
 	const tasks = compact( [] );
 	return {
+		siteUrl: getUnconnectedSiteUrl( state, siteId ),
 		tasks,
 	};
 } )( localize( JetpackOnboardingSummaryStep ) );
