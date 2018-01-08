@@ -21,6 +21,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
 	isRenewing,
 	isSubscription,
@@ -230,6 +231,7 @@ class PurchaseMeta extends Component {
 		if (
 			! canEditPaymentDetails( purchase ) ||
 			! isPaidWithCreditCard( purchase ) ||
+			! cardProcessorSupportsUpdates( purchase ) ||
 			! getSelectedSite( this.props )
 		) {
 			return <li>{ paymentDetails }</li>;
