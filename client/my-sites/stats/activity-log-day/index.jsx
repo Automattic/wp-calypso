@@ -157,7 +157,6 @@ class ActivityLogDay extends Component {
 
 	render() {
 		const {
-			applySiteOffset,
 			disableRestore,
 			disableBackup,
 			isRewindActive,
@@ -189,11 +188,10 @@ class ActivityLogDay extends Component {
 		const LogItem = ( { log, hasBreak } ) => (
 			<ActivityLogItem
 				className={ hasBreak ? 'is-before-dialog' : '' }
-				applySiteOffset={ applySiteOffset }
+				activityId={ log.activityId }
 				disableRestore={ disableRestore }
 				disableBackup={ disableBackup }
 				hideRestore={ ! isRewindActive }
-				log={ log }
 				requestDialog={ requestDialog }
 				siteId={ siteId }
 			/>
