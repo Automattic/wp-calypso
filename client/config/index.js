@@ -38,7 +38,4 @@ if ( process.env.NODE_ENV === 'development' || configData.env_id === 'stage' ) {
 	}
 }
 
-const configApi = createConfig( configData );
-
-export default configApi;
-export const isEnabled = configApi.isEnabled;
+export default createConfig( configData );
