@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import escapeRegExp from 'lodash/escapeRegExp';
+import { escapeRegExp } from 'lodash';
 
 export function pathToRegExp( path ) {
 	// Prevents root level double dash urls from being validated.
