@@ -67,10 +67,10 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			return {
 				authorizeError: false,
 				authorizeSuccess: false,
-				isAuthorizing: false,
-				timestamp: Date.now(),
-				userAlreadyConnected: false,
 				clientId: action.clientId,
+				isAuthorizing: false,
+				timestamp: action.timestamp,
+				userAlreadyConnected: false,
 			};
 
 		case JETPACK_CONNECT_CREATE_ACCOUNT:

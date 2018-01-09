@@ -180,15 +180,17 @@ export function signupForm( context, next ) {
 		//
 		// FIXME
 		//
-		// However, from and clientId are required for some reducer logic :(
+		// However, clientId is required for some reducer logic :(
+		//
+		// Set timestamp here so reducer can remain pure
 		//
 		// Hopefully when actions move to data-layer, this will become clearer and
 		// we won't need to store clientId in state
 		//
 		context.store.dispatch( {
 			type: JETPACK_CONNECT_QUERY_SET,
-			from: transformedQuery.from,
 			clientId: transformedQuery.clientId,
+			timestamp: Date.now(),
 		} );
 
 		let interval = context.params.interval;
@@ -236,8 +238,8 @@ export function authorizeForm( context, next ) {
 		//
 		context.store.dispatch( {
 			type: JETPACK_CONNECT_QUERY_SET,
-			from: transformedQuery.from,
 			clientId: transformedQuery.clientId,
+			timestamp: Date.now(),
 		} );
 
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
