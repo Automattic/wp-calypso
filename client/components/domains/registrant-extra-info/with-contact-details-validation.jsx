@@ -19,7 +19,7 @@ const placeholderValidationErrors = {
 	address1: [ 'Oops!' ],
 	extra: {
 		tradingName: [ "It's broken!" ],
-		registrationNumber: [ 'Oh noes!' ],
+		registrationNumber: [ 'Oh noes!', 'Multiple things have gone wrong!' ],
 	},
 };
 
