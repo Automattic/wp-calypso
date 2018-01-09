@@ -3,7 +3,7 @@
  *
  * @type {Object}
  */
-export const EMPTY_SITES = Object.freeze( {} );
+const EMPTY_SITES = Object.freeze( {} );
 
 /**
  * Returns site items object or empty object.

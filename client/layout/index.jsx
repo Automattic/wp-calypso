@@ -51,8 +51,7 @@ import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
-import { getPrimarySiteId, getSitesItems } from 'state/selectors';
-import { EMPTY_SITES } from 'state/selectors/get-sites-items';
+import { getPrimarySiteId } from 'state/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -81,6 +80,18 @@ const Layout = createReactClass( {
 		section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		isOffline: PropTypes.bool,
 		colorSchemePreference: PropTypes.string,
+	},
+
+	getInitialState() {
+		return {
+			initialSiteFetched: false,
+		};
+	},
+
+	componentWillReceiveProps() {
+		if ( ! this.state.initialSiteFetched ) {
+			this.setState( { initialSiteFetched: true } );
+		}
 	},
 
 	closeWelcome: function() {
@@ -157,13 +168,14 @@ const Layout = createReactClass( {
 				'is-active': this.props.isLoading,
 			} );
 
-		const { siteIdToFetch, shouldFetchSite } = this.props;
+		const { siteIdToFetch } = this.props;
+		const { initialSiteFetched } = this.state;
 
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<SitesListNotices />
-				{ shouldFetchSite && <QuerySites siteId={ siteIdToFetch } /> }
+				{ ! initialSiteFetched && <QuerySites siteId={ siteIdToFetch } /> }
 				<QueryPreferences />
 				{ <GuidedTours /> }
 				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
@@ -222,7 +234,6 @@ export default connect( state => {
 		isLoading,
 		section,
 		siteIdToFetch,
-		shouldFetchSite: getSitesItems( state ) === EMPTY_SITES,
 		isSupportUser: state.support.isSupportUser,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
