@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { property, sortBy, get } from 'lodash';
+import { property, sortBy } from 'lodash';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
@@ -82,18 +82,6 @@ const Layout = createReactClass( {
 		colorSchemePreference: PropTypes.string,
 	},
 
-	getInitialState() {
-		return {
-			initialSiteFetched: false,
-		};
-	},
-
-	componentWillReceiveProps() {
-		if ( ! this.state.initialSiteFetched ) {
-			this.setState( { initialSiteFetched: true } );
-		}
-	},
-
 	closeWelcome: function() {
 		this.props.nuxWelcome.closeWelcome();
 		analytics.ga.recordEvent( 'Welcome Box', 'Clicked Close Button' );
@@ -168,14 +156,13 @@ const Layout = createReactClass( {
 				'is-active': this.props.isLoading,
 			} );
 
-		const { siteIdToFetch } = this.props;
-		const { initialSiteFetched } = this.state;
+		const { primarySiteId } = this.props;
 
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<SitesListNotices />
-				{ ! initialSiteFetched && <QuerySites siteId={ siteIdToFetch } /> }
+				<QuerySites siteId={ primarySiteId } />
 				<QueryPreferences />
 				{ <GuidedTours /> }
 				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
@@ -221,19 +208,10 @@ const Layout = createReactClass( {
 export default connect( state => {
 	const { isLoading, section } = state.ui;
 
-	const recentSitesPreference = getPreference( state, 'recentSites' );
-	const primarySiteId = getPrimarySiteId( state );
-
-	let siteIdToFetch = get( recentSitesPreference, '0', null );
-
-	if ( ! siteIdToFetch ) {
-		siteIdToFetch = primarySiteId;
-	}
-
 	return {
 		isLoading,
 		section,
-		siteIdToFetch,
+		primarySiteId: getPrimarySiteId( state ),
 		isSupportUser: state.support.isSupportUser,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
