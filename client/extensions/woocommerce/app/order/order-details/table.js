@@ -364,10 +364,18 @@ class OrderDetailsTable extends Component {
 			'is-editing': isEditing,
 		} );
 
+		const emptyLines = (
+			<TableRow>
+				<TableItem colSpan={ isEditing ? 6 : 5 }>
+					{ translate( 'There are no products on this order.' ) }
+				</TableItem>
+			</TableRow>
+		);
+
 		return (
 			<div>
 				<Table className={ tableClasses } header={ this.renderTableHeader() }>
-					{ order.line_items.map( this.renderOrderItem ) }
+					{ order.line_items.length ? order.line_items.map( this.renderOrderItem ) : emptyLines }
 					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
 				{ isEditing && <OrderAddItems orderId={ order.id } /> }
