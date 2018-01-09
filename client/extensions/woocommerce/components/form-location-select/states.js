@@ -39,7 +39,7 @@ class FormStateSelectFromApi extends Component {
 		onChange: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
 		translate: PropTypes.func.isRequired,
-		value: PropTypes.string.isRequired,
+		value: PropTypes.string,
 	};
 
 	componentWillMount() {
