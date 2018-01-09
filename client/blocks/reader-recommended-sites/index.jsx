@@ -80,7 +80,7 @@ export class RecommendedSites extends React.PureComponent {
 								<ConnectedSubscriptionListItem
 									siteId={ siteId }
 									railcar={ site.railcar }
-									showEmailSettings={ false }
+									showNotificationSettings={ false }
 									showLastUpdatedDate={ false }
 									followSource={ followSource }
 									onComponentMountWithNewRailcar={ recordRecommendationRender( index ) }

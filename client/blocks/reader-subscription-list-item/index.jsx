@@ -45,7 +45,7 @@ function ReaderSubscriptionListItem( {
 	className = '',
 	translate,
 	followSource,
-	showEmailSettings, // @todo rename to showNotificationSettings
+	showNotificationSettings,
 	showLastUpdatedDate,
 	isFollowing,
 	railcar,
@@ -92,11 +92,7 @@ function ReaderSubscriptionListItem( {
 	);
 
 	return (
-		<div
-			className={ classnames( 'reader-subscription-list-item', className, {
-				'has-email-settings': showEmailSettings && isFollowing,
-			} ) }
-		>
+		<div className={ classnames( 'reader-subscription-list-item', className ) }>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }
@@ -167,7 +163,7 @@ function ReaderSubscriptionListItem( {
 					siteId={ siteId }
 					railcar={ railcar }
 				/>
-				{ isFollowing && showEmailSettings && notificationSettings }
+				{ isFollowing && showNotificationSettings && notificationSettings }
 			</div>
 		</div>
 	);
