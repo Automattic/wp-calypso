@@ -6,6 +6,7 @@
 import {
 	ZONINATOR_REQUEST_LOCK,
 	ZONINATOR_REQUEST_LOCK_ERROR,
+	ZONINATOR_RESET_LOCK,
 	ZONINATOR_UPDATE_LOCK,
 } from '../action-types';
 
@@ -14,33 +15,29 @@ import {
  *
  * @param  {Number}  siteId          Site ID
  * @param  {Number}  zoneId          Zone ID
- * @param  {Date}    expires         Expiration date
+ * @param  {Number}  expires         Expiration time in milliseconds
  * @param  {Number}  maxLockPeriod   Maximum number of seconds to extend the lock to
- * @param  {Boolean} reset           Set to true to reset a lock
- * @return {Action}                  Action object
+ * @return {Object}                  Action object
  */
-export const updateLock = ( siteId, zoneId, expires, maxLockPeriod, reset ) => ( {
+export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
 	type: ZONINATOR_UPDATE_LOCK,
 	siteId,
 	zoneId,
 	expires,
 	maxLockPeriod,
-	reset,
 } );
 
 /**
  * Returns an action object to indicate that a zone lock should be requested
  *
- * @param  {Number}  siteId  Site ID
- * @param  {Number}  zoneId  Zone ID
- * @param  {Boolean} reset   Set to true to reset a lock
- * @return {Action}          Action
+ * @param  {Number}  siteId    Site ID
+ * @param  {Number}  zoneId    Zone ID
+ * @return {Object}            Action object
  */
-export const requestLock = ( siteId, zoneId, reset ) => ( {
+export const requestLock = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_LOCK,
 	siteId,
 	zoneId,
-	reset,
 } );
 
 /**
@@ -48,12 +45,24 @@ export const requestLock = ( siteId, zoneId, reset ) => ( {
  *
  * @param  {Number}  siteId  Site ID
  * @param  {Number}  zoneId  Zone ID
- * @param  {Boolean} blocked Set to true if the zone is blocked by another user
- * @return {Action}          Action object
+ * @return {Object}          Action object
  */
-export const requestLockError = ( siteId, zoneId, blocked ) => ( {
+export const requestLockError = ( siteId, zoneId ) => ( {
 	type: ZONINATOR_REQUEST_LOCK_ERROR,
 	siteId,
 	zoneId,
-	blocked,
+} );
+
+/**
+ * Returns an action object to indicate that a zone lock should be reset
+ *
+ * @param  {Number} siteId Site ID
+ * @param  {Number} zoneId Zone ID
+ * @return {Object}        Action object
+ */
+export const resetLock = ( siteId, zoneId ) => ( {
+	type: ZONINATOR_RESET_LOCK,
+	time: new Date().getTime(),
+	siteId,
+	zoneId,
 } );

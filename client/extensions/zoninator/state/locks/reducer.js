@@ -5,63 +5,33 @@
  */
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
-	ZONINATOR_REQUEST_LOCK,
 	ZONINATOR_REQUEST_LOCK_ERROR,
+	ZONINATOR_RESET_LOCK,
 	ZONINATOR_UPDATE_LOCK,
 } from '../action-types';
 
-const isRequesting = createReducer(
-	{},
-	{
-		[ ZONINATOR_REQUEST_LOCK ]: () => true,
-		[ ZONINATOR_REQUEST_LOCK_ERROR ]: () => false,
-		[ ZONINATOR_UPDATE_LOCK ]: () => false,
-	}
-);
+export const blocked = createReducer( false, {
+	[ ZONINATOR_UPDATE_LOCK ]: () => false,
+	[ ZONINATOR_REQUEST_LOCK_ERROR ]: () => true,
+} );
 
-export const requesting = keyedReducer( 'siteId', keyedReducer( 'zoneId', isRequesting ) );
+export const created = createReducer( 0, {
+	[ ZONINATOR_RESET_LOCK ]: ( state, { time } ) => time,
+} );
 
-const isBlocked = createReducer(
-	{},
-	{
-		[ ZONINATOR_UPDATE_LOCK ]: () => false,
-		[ ZONINATOR_REQUEST_LOCK_ERROR ]: ( state, { blocked } ) => blocked,
-	}
-);
+export const expires = createReducer( 0, {
+	[ ZONINATOR_UPDATE_LOCK ]: ( state, action ) => action.expires,
+} );
 
-export const blocked = keyedReducer( 'siteId', keyedReducer( 'zoneId', isBlocked ) );
+export const maxLockPeriod = createReducer( 0, {
+	[ ZONINATOR_UPDATE_LOCK ]: ( state, action ) => action.maxLockPeriod,
+} );
 
-const lockInit = createReducer(
-	{},
-	{
-		[ ZONINATOR_UPDATE_LOCK ]: ( state, { reset } ) => ( reset ? new Date().getTime() : state ),
-	}
-);
-
-export const created = keyedReducer( 'siteId', keyedReducer( 'zoneId', lockInit ) );
-
-const lock = createReducer(
-	{},
-	{
-		[ ZONINATOR_UPDATE_LOCK ]: ( state, { expires } ) => expires,
-	}
-);
-
-export const items = keyedReducer( 'siteId', keyedReducer( 'zoneId', lock ) );
-
-const lockSettings = createReducer(
-	{},
-	{
-		[ ZONINATOR_UPDATE_LOCK ]: ( state, { maxLockPeriod } ) => maxLockPeriod,
-	}
-);
-
-export const maxLockPeriod = keyedReducer( 'siteId', lockSettings );
-
-export default combineReducers( {
-	requesting,
+export const items = combineReducers( {
 	blocked,
 	created,
-	items,
+	expires,
 	maxLockPeriod,
 } );
+
+export default keyedReducer( 'siteId', keyedReducer( 'zoneId', items ) );

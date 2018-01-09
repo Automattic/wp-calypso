@@ -9,17 +9,6 @@ import { get } from 'lodash';
 const getLocksState = state => get( state, 'extensions.zoninator.locks', {} );
 
 /**
- * Returns the lock expiration date for the specified site and zone IDs.
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @param  {Number} zoneId Zone ID
- * @return {Number}        Lock expiration date
- */
-export const getLock = ( state, siteId, zoneId ) =>
-	get( getLocksState( state ), [ 'items', siteId, zoneId ], 0 );
-
-/**
  * Returns true if a zone is currently blocked by another user.
  *
  * @param  {Object}  state  Global state tree
@@ -27,42 +16,8 @@ export const getLock = ( state, siteId, zoneId ) =>
  * @param  {Number}  zoneId Zone ID
  * @return {Boolean}        Blocked status
  */
-export const isBlocked = ( state, siteId, zoneId ) =>
-	get( getLocksState( state ), [ 'blocked', siteId, zoneId ], false );
-
-/**
- * Returns true if a zone lock has expired
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  zoneId Zone ID
- * @return {Boolean}        Expired
- */
-export const isExpired = ( state, siteId, zoneId ) => {
-	const lock = getLock( state, siteId, zoneId );
-	return !! lock && lock <= new Date().getTime();
-};
-
-/**
- * Returns true if a zone lock is being requested
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Number}  zoneId Zone ID
- * @return {Boolean}        Requesting
- */
-export const isRequesting = ( state, siteId, zoneId ) =>
-	get( getLocksState( state ), [ 'requesting', siteId, zoneId ], false );
-
-/**
- * Returns the max zone lock period for a site
- *
- * @param  {Object} state  Global state tree
- * @param  {Number} siteId Site ID
- * @return {Number}        Maximum lock period in miliseconds
- */
-export const getMaxLockPeriod = ( state, siteId ) =>
-	get( getLocksState( state ), [ 'maxLockPeriod', siteId ], -1 );
+export const blocked = ( state, siteId, zoneId ) =>
+	get( getLocksState( state ), [ siteId, zoneId, 'blocked' ], false );
 
 /**
  * Returns the time when the lock was created
@@ -72,5 +27,27 @@ export const getMaxLockPeriod = ( state, siteId ) =>
  * @param  {Number} zoneId Zone ID
  * @return {Number}        Lock creation date
  */
-export const getLockTimeCreated = ( state, siteId, zoneId ) =>
-	get( getLocksState( state ), [ 'created', siteId, zoneId ], 0 );
+export const created = ( state, siteId, zoneId ) =>
+	get( getLocksState( state ), [ siteId, zoneId, 'created' ], 0 );
+
+/**
+ * Returns the lock's expiration time in milliseconds
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} zoneId Zone ID
+ * @return {Number}        Lock expiration time
+ */
+export const expires = ( state, siteId, zoneId ) =>
+	get( getLocksState( state ), [ siteId, zoneId, 'expires' ], 0 );
+
+/**
+ * Returns the max lock period for a zone
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} zoneId Zone ID
+ * @return {Number}        Maximum lock period in miliseconds
+ */
+export const maxLockPeriod = ( state, siteId, zoneId ) =>
+	get( getLocksState( state ), [ siteId, zoneId, 'maxLockPeriod' ], 0 );

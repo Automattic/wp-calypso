@@ -4,19 +4,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { cloneDeep, tap } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import {
-	getLock,
-	getLockTimeCreated,
-	getMaxLockPeriod,
-	isBlocked,
-	isExpired,
-	isRequesting,
-} from '../selectors';
+import { blocked, created, expires, maxLockPeriod } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123;
@@ -32,227 +24,124 @@ describe( 'selectors', () => {
 		},
 	};
 
-	describe( 'getLock()', () => {
-		const state = tap( cloneDeep( emptyState ), stateTree => {
-			stateTree.extensions.zoninator.locks = {
-				items: {
-					[ primarySiteId ]: {
-						[ primaryZoneId ]: 1000,
+	const state = {
+		extensions: {
+			zoninator: {
+				locks: {
+					[ 123 ]: {
+						[ 456 ]: {
+							blocked: true,
+							expires: 1000,
+							created: 100,
+							maxLockPeriod: 2000,
+						},
 					},
 				},
-			};
-		} );
+			},
+		},
+	};
 
-		test( 'should return 0 if no state exists', () => {
-			const lock = getLock( emptyState, primarySiteId, primaryZoneId );
-
-			expect( lock ).to.deep.equal( 0 );
-		} );
-
-		test( 'should return 0 if no state is attached for the given site ID', () => {
-			const lock = getLock( state, secondarySiteId, primaryZoneId );
-
-			expect( lock ).to.deep.equal( 0 );
-		} );
-
-		test( 'should return 0 if no state is attached for the given zone ID', () => {
-			const lock = getLock( state, primarySiteId, secondaryZoneId );
-
-			expect( lock ).to.deep.equal( 0 );
-		} );
-
-		test( 'should return a lock for the given site and zone IDs', () => {
-			const lock = getLock( state, primarySiteId, primaryZoneId );
-
-			expect( lock ).to.deep.equal( 1000 );
-		} );
-	} );
-
-	describe( 'isBlocked()', () => {
-		const state = tap( cloneDeep( emptyState ), stateTree => {
-			stateTree.extensions.zoninator.locks = {
-				blocked: {
-					[ primarySiteId ]: {
-						[ primaryZoneId ]: true,
-					},
-				},
-			};
-		} );
-
+	describe( 'blocked()', () => {
 		test( 'should return false if no state exists', () => {
-			const blocked = isBlocked( emptyState, primarySiteId, primaryZoneId );
+			const isBlocked = blocked( emptyState, primarySiteId, primaryZoneId );
 
-			expect( blocked ).to.deep.equal( false );
+			expect( isBlocked ).to.deep.equal( false );
 		} );
 
 		test( 'should return false if no state is attached for the given site ID', () => {
-			const blocked = isBlocked( state, secondarySiteId, primaryZoneId );
+			const isBlocked = blocked( state, secondarySiteId, primaryZoneId );
 
-			expect( blocked ).to.deep.equal( false );
+			expect( isBlocked ).to.deep.equal( false );
 		} );
 
 		test( 'should return false if no state is attached for the given zone ID', () => {
-			const blocked = isBlocked( state, primarySiteId, secondaryZoneId );
+			const isBlocked = blocked( state, primarySiteId, secondaryZoneId );
 
-			expect( blocked ).to.deep.equal( false );
+			expect( isBlocked ).to.deep.equal( false );
 		} );
 
 		test( 'should return the blocked status value for the given site and zone IDs', () => {
-			const blocked = isBlocked( state, primarySiteId, primaryZoneId );
+			const isBlocked = blocked( state, primarySiteId, primaryZoneId );
 
-			expect( blocked ).to.deep.equal( true );
+			expect( isBlocked ).to.deep.equal( true );
 		} );
 	} );
 
-	describe( 'isExpired()', () => {
-		const state = tap( cloneDeep( emptyState ), stateTree => {
-			stateTree.extensions.zoninator.locks = {
-				items: {
-					[ primarySiteId ]: {
-						[ primaryZoneId ]: new Date().getTime(),
-					},
-				},
-			};
-		} );
-
-		test( 'should return false if no state exists', () => {
-			const expired = isExpired( emptyState, primarySiteId, primaryZoneId );
-
-			expect( expired ).to.deep.equal( false );
-		} );
-
-		test( 'should return false if no state is attached for the given site ID', () => {
-			const expired = isExpired( state, secondarySiteId, primaryZoneId );
-
-			expect( expired ).to.deep.equal( false );
-		} );
-
-		test( 'should return false if no state is attached for the given zone ID', () => {
-			const expired = isExpired( state, primarySiteId, secondaryZoneId );
-
-			expect( expired ).to.deep.equal( false );
-		} );
-
-		test( "should return false if the expiry time hasn't passed yet", () => {
-			const unexpiredState = tap( cloneDeep( state ), stateTree => {
-				stateTree.extensions.zoninator.locks.items[ primarySiteId ][ primaryZoneId ] =
-					new Date().getTime() + 1000;
-			} );
-
-			const expired = isExpired( unexpiredState, primarySiteId, primaryZoneId );
-
-			expect( expired ).to.deep.equal( false );
-		} );
-
-		test( 'should return true if the expiry time has passed', () => {
-			const expiredState = tap( cloneDeep( state ), stateTree => {
-				stateTree.extensions.zoninator.locks.items[ primarySiteId ][ primaryZoneId ] =
-					new Date().getTime() - 1000;
-			} );
-
-			const expired = isExpired( expiredState, primarySiteId, primaryZoneId );
-
-			expect( expired ).to.deep.equal( true );
-		} );
-	} );
-
-	describe( 'isRequesting()', () => {
-		const state = tap( cloneDeep( emptyState ), stateTree => {
-			stateTree.extensions.zoninator.locks = {
-				requesting: {
-					[ primarySiteId ]: {
-						[ primaryZoneId ]: true,
-					},
-				},
-			};
-		} );
-
-		test( 'should return false if no state exists', () => {
-			const requesting = isRequesting( emptyState, primarySiteId, primaryZoneId );
-
-			expect( requesting ).to.deep.equal( false );
-		} );
-
-		test( 'should return false if no state is attached for the given site ID', () => {
-			const requesting = isRequesting( state, secondarySiteId, primaryZoneId );
-
-			expect( requesting ).to.deep.equal( false );
-		} );
-
-		test( 'should return false if no state is attached for the given zone ID', () => {
-			const requesting = isRequesting( state, primarySiteId, secondaryZoneId );
-
-			expect( requesting ).to.deep.equal( false );
-		} );
-
-		test( 'should return requesting status for the given site and zone IDs', () => {
-			const requesting = isRequesting( state, primarySiteId, primaryZoneId );
-
-			expect( requesting ).to.deep.equal( true );
-		} );
-	} );
-
-	describe( 'getMaxLockPeriod()', () => {
-		const state = tap( cloneDeep( emptyState ), stateTree => {
-			stateTree.extensions.zoninator.locks = {
-				maxLockPeriod: {
-					[ primarySiteId ]: 600,
-				},
-			};
-		} );
-
-		test( 'should return -1 if no state exists', () => {
-			const maxLockPeriod = getMaxLockPeriod( emptyState, primarySiteId );
-
-			expect( maxLockPeriod ).to.deep.equal( -1 );
-		} );
-
-		test( 'should return -1 if no state is attached for the given site ID', () => {
-			const maxLockPeriod = getMaxLockPeriod( state, secondarySiteId );
-
-			expect( maxLockPeriod ).to.deep.equal( -1 );
-		} );
-
-		test( 'should return the max lock period for the given site ID', () => {
-			const maxLockPeriod = getMaxLockPeriod( state, primarySiteId );
-
-			expect( maxLockPeriod ).to.deep.equal( 600 );
-		} );
-	} );
-
-	describe( 'getLockTimeCreated()', () => {
-		const state = tap( cloneDeep( emptyState ), stateTree => {
-			stateTree.extensions.zoninator.locks = {
-				created: {
-					[ primarySiteId ]: {
-						[ primaryZoneId ]: 600,
-					},
-				},
-			};
-		} );
-
+	describe( 'created()', () => {
 		test( 'should return 0 if no state exists', () => {
-			const timeCreated = getLockTimeCreated( emptyState, primarySiteId, primaryZoneId );
+			const time = created( emptyState, primarySiteId, primaryZoneId );
 
-			expect( timeCreated ).to.deep.equal( 0 );
+			expect( time ).to.deep.equal( 0 );
 		} );
 
 		test( 'should return 0 if no state is attached for the given site ID', () => {
-			const timeCreated = getLockTimeCreated( state, secondarySiteId, primaryZoneId );
+			const time = created( state, secondarySiteId, primaryZoneId );
 
-			expect( timeCreated ).to.deep.equal( 0 );
+			expect( time ).to.deep.equal( 0 );
 		} );
 
 		test( 'should return 0 if no state is attached for the given zone ID', () => {
-			const timeCreated = getLockTimeCreated( state, primarySiteId, secondaryZoneId );
+			const time = created( state, primarySiteId, secondaryZoneId );
 
-			expect( timeCreated ).to.deep.equal( 0 );
+			expect( time ).to.deep.equal( 0 );
 		} );
 
 		test( 'should return the time a lock was created for the given site and zone IDs', () => {
-			const timeCreated = getLockTimeCreated( state, primarySiteId, primaryZoneId );
+			const time = created( state, primarySiteId, primaryZoneId );
 
-			expect( timeCreated ).to.deep.equal( 600 );
+			expect( time ).to.deep.equal( 100 );
+		} );
+	} );
+
+	describe( 'expires()', () => {
+		test( 'should return 0 if no state exists', () => {
+			const time = expires( emptyState, primarySiteId, primaryZoneId );
+
+			expect( time ).to.deep.equal( 0 );
+		} );
+
+		test( 'should return 0 if no state is attached for the given site ID', () => {
+			const time = expires( state, secondarySiteId, primaryZoneId );
+
+			expect( time ).to.deep.equal( 0 );
+		} );
+
+		test( 'should return 0 if no state is attached for the given zone ID', () => {
+			const time = expires( state, primarySiteId, secondaryZoneId );
+
+			expect( time ).to.deep.equal( 0 );
+		} );
+
+		test( 'should return an expiration time for the given site and zone IDs', () => {
+			const time = expires( state, primarySiteId, primaryZoneId );
+
+			expect( time ).to.deep.equal( 1000 );
+		} );
+	} );
+
+	describe( 'maxLockPeriod()', () => {
+		test( 'should return 0 if no state exists', () => {
+			const timeout = maxLockPeriod( emptyState, primarySiteId, primaryZoneId );
+
+			expect( timeout ).to.deep.equal( 0 );
+		} );
+
+		test( 'should return 0 if no state is attached for the given site ID', () => {
+			const timeout = maxLockPeriod( state, secondarySiteId, primaryZoneId );
+
+			expect( timeout ).to.deep.equal( 0 );
+		} );
+
+		test( 'should return 0 if no state is attached for the given zone ID', () => {
+			const timeout = maxLockPeriod( state, primarySiteId, secondaryZoneId );
+
+			expect( timeout ).to.deep.equal( 0 );
+		} );
+
+		test( 'should return the max lock period for the given site and zone IDs', () => {
+			const timeout = maxLockPeriod( state, primarySiteId, primaryZoneId );
+
+			expect( timeout ).to.deep.equal( 2000 );
 		} );
 	} );
 } );
