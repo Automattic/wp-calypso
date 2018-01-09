@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -31,11 +30,24 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+const exampleFollow = {
+	is_following: true,
+	blog_ID: 123,
+	URL: 'http://example.com',
+	feed_URL: 'http://example.com',
+	delivery_methods: {
+		email: {
+			send_posts: false,
+		},
+		notification: {},
+	},
+};
+
 describe( 'reducer', () => {
 	describe( '#itemsCount()', () => {
 		test( 'should default to 0', () => {
 			const state = itemsCount( undefined, {} );
-			chaiExpect( state ).to.eql( 0 );
+			expect( state ).toBe( 0 );
 		} );
 
 		test( 'should get set to whatever is in the payload', () => {
@@ -43,14 +55,14 @@ describe( 'reducer', () => {
 				type: READER_FOLLOWS_RECEIVE,
 				payload: { totalCount: 20 },
 			} );
-			chaiExpect( state ).eql( 20 );
+			expect( state ).toBe( 20 );
 		} );
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			chaiExpect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should insert a new URL when followed', () => {
@@ -62,7 +74,7 @@ describe( 'reducer', () => {
 				type: READER_RECORD_FOLLOW,
 				payload: { url: 'http://data.blog' },
 			} );
-			chaiExpect( state[ 'data.blog' ] ).to.eql( { is_following: true } );
+			expect( state[ 'data.blog' ] ).toEqual( { is_following: true } );
 		} );
 
 		test( 'should remove a URL when unfollowed', () => {
@@ -74,7 +86,7 @@ describe( 'reducer', () => {
 				type: READER_RECORD_UNFOLLOW,
 				payload: { url: 'http://discover.wordpress.com' },
 			} );
-			chaiExpect( state[ 'discover.wordpress.com' ] ).to.eql( {
+			expect( state[ 'discover.wordpress.com' ] ).toEqual( {
 				blog_ID: 123,
 				is_following: false,
 			} );
@@ -95,14 +107,14 @@ describe( 'reducer', () => {
 			} );
 
 			// Updated follow
-			chaiExpect( state[ 'dailypost.wordpress.com' ] ).to.eql( {
+			expect( state[ 'dailypost.wordpress.com' ] ).toEqual( {
 				is_following: true,
 				blog_ID: 125,
 				URL: 'http://dailypost.wordpress.com',
 			} );
 
 			// Brand new follow
-			chaiExpect( state[ 'postcardsfromthereader.wordpress.com' ] ).to.eql( {
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( {
 				is_following: true,
 				blog_ID: 126,
 				URL: 'https://postcardsfromthereader.wordpress.com',
@@ -124,7 +136,7 @@ describe( 'reducer', () => {
 					blog_ID: 124,
 				},
 			} );
-			chaiExpect( items( original, { type: SERIALIZE } ) ).to.eql( {
+			expect( items( original, { type: SERIALIZE } ) ).toEqual( {
 				'dailypost.wordpress.com': {
 					feed_URL: 'http://dailypost.wordpress.com',
 					URL: 'http://dailypost.wordpress.com',
@@ -144,7 +156,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			chaiExpect( items( original, { type: DESERIALIZE } ) ).to.eql( original );
+			expect( items( original, { type: DESERIALIZE } ) ).toEqual( original );
 		} );
 
 		test( 'should return the blank state for bad serialized data', () => {
@@ -156,15 +168,13 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			chaiExpect( items( original, { type: DESERIALIZE } ) ).to.eql( {} );
+			expect( items( original, { type: DESERIALIZE } ) ).toEqual( {} );
 		} );
 
-		test( 'should update when passed new post subscription info', () => {
+		test( 'should update when passed new post email subscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: false,
@@ -176,9 +186,7 @@ describe( 'reducer', () => {
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
 			expect( state ).toEqual( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: true,
@@ -189,12 +197,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should not update when passed identical new post subscription info', () => {
+		test( 'should not update when passed identical new post email subscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: true,
@@ -203,15 +209,13 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
-		test( 'should not update when passed bad new post subscription info', () => {
+		test( 'should not update when passed bad new post email subscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: false,
@@ -220,15 +224,13 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 456 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
-		test( 'should update when passed updated post subscription info', () => {
+		test( 'should update when passed updated post email subscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: true,
@@ -242,9 +244,7 @@ describe( 'reducer', () => {
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
 				expect( state ).toEqual( {
 					'example.com': {
-						is_following: true,
-						blog_ID: 123,
-						URL: 'http://example.com',
+						...exampleFollow,
 						delivery_methods: {
 							email: {
 								send_posts: true,
@@ -257,13 +257,11 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should not update when passed identical updated post subscription info', () => {
+		test( 'should not update when passed identical updated post email subscription info', () => {
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
 				const original = deepFreeze( {
 					'example.com': {
-						is_following: true,
-						blog_ID: 123,
-						URL: 'http://example.com',
+						...exampleFollow,
 						delivery_methods: {
 							email: {
 								send_posts: true,
@@ -273,16 +271,14 @@ describe( 'reducer', () => {
 					},
 				} );
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
-				chaiExpect( state ).to.equal( original );
+				expect( state ).toEqual( original );
 			} );
 		} );
 
-		test( 'should not update when passed bad updated post subscription info', () => {
+		test( 'should not update when passed bad updated post email subscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: true,
@@ -293,16 +289,14 @@ describe( 'reducer', () => {
 
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
 				const state = items( original, updateNewPostEmailSubscription( 456, frequency ) );
-				chaiExpect( state ).to.equal( original );
+				expect( state ).toEqual( original );
 			} );
 		} );
 
-		test( 'should update when passed post unsubscription info', () => {
+		test( 'should update when passed post email unsubscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: true,
@@ -315,9 +309,7 @@ describe( 'reducer', () => {
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
 			expect( state ).toEqual( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: false,
@@ -329,12 +321,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should not update when passed identical post unsubscription info', () => {
+		test( 'should not update when passed identical post email unsubscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: false,
@@ -344,15 +334,13 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
-		test( 'should not update when passed bad post unsubscription info', () => {
+		test( 'should not update when passed bad post email unsubscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_posts: true,
@@ -362,10 +350,10 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 456 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
-		test( 'should update when passed comment subscription info', () => {
+		test( 'should update when passed comment email subscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
 					is_following: true,
@@ -395,12 +383,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should not update when passed identical comment subscription info', () => {
+		test( 'should not update when passed identical comment email subscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_comments: true,
@@ -412,12 +398,10 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( original );
 		} );
 
-		test( 'should not update when passed comment sub info about a missing sub', () => {
+		test( 'should not update when passed comment email sub info about a missing sub', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_comments: true,
@@ -426,15 +410,13 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 456 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
-		test( 'should update when passed comment unsubscription info', () => {
+		test( 'should update when passed comment email unsubscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_comments: true,
@@ -446,9 +428,7 @@ describe( 'reducer', () => {
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
 			expect( state ).toEqual( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_comments: false,
@@ -459,12 +439,10 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'should not update when passed identical comment unsubscription info', () => {
+		test( 'should not update when passed identical comment email unsubscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					...exampleFollow,
 					delivery_methods: {
 						email: {
 							send_comments: false,
@@ -473,15 +451,13 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
-		test( 'should not update when passed bad comment unsubscription info', () => {
+		test( 'should not update when passed bad comment email unsubscription info', () => {
 			const original = deepFreeze( {
 				'example.com': {
-					is_following: true,
-					blog_ID: 123,
-					URL: 'http://example.com',
+					exampleFollow,
 					delivery_methods: {
 						email: {
 							send_comments: true,
@@ -490,7 +466,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should update when a new post notification subscription is received', () => {
@@ -654,7 +630,7 @@ describe( 'reducer', () => {
 				type: READER_FOLLOW_ERROR,
 				payload: { feedUrl: 'http://discoverinvalid.wordpress.com', error: 'invalid_feed' },
 			} );
-			chaiExpect( state[ 'discoverinvalid.wordpress.com' ] ).to.eql( {
+			expect( state[ 'discoverinvalid.wordpress.com' ] ).toEqual( {
 				is_following: true,
 				error: 'invalid_feed',
 			} );
@@ -772,24 +748,23 @@ describe( 'reducer', () => {
 		test( 'should mark an existing feed as followed, add in a feed_URL if missing, and leave the rest alone', () => {
 			const original = deepFreeze( {
 				'example.com': {
+					...exampleFollow,
 					is_following: false,
-					blog_ID: 123,
 				},
 			} );
 
 			const state = items( original, follow( 'http://example.com' ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
+					...exampleFollow,
 					is_following: true,
-					feed_URL: 'http://example.com',
-					blog_ID: 123,
 				},
 			} );
 		} );
 
 		test( 'should create a new entry for a new follow', () => {
 			const state = items( {}, follow( 'http://example.com' ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
 					feed_URL: 'http://example.com',
 					is_following: true,
@@ -818,7 +793,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( original, follow( 'http://example.com', subscriptionInfo ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
 					...subscriptionInfo,
 					is_following: true,
@@ -847,7 +822,7 @@ describe( 'reducer', () => {
 			};
 
 			const state = items( original, follow( 'http://example.com', subscriptionInfo ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com/feed': {
 					...subscriptionInfo,
 					is_following: true,
@@ -861,18 +836,16 @@ describe( 'reducer', () => {
 		test( 'should mark an existing follow as unfollowed', () => {
 			const original = deepFreeze( {
 				'example.com': {
+					...exampleFollow,
 					is_following: true,
-					feed_URL: 'http://example.com',
-					blog_ID: 123,
 				},
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
+					...exampleFollow,
 					is_following: false,
-					feed_URL: 'http://example.com',
-					blog_ID: 123,
 				},
 			} );
 		} );
@@ -880,20 +853,19 @@ describe( 'reducer', () => {
 		test( 'should return the original state when already unfollowed', () => {
 			const original = deepFreeze( {
 				'example.com': {
+					...exampleFollow,
 					is_following: false,
-					feed_URL: 'http://example.com',
-					blog_ID: 123,
 				},
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return the same state for an item that does not exist', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, unfollow( 'http://example.com' ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 	} );
 
@@ -912,7 +884,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, syncComplete( [ 'http://example2.com' ] ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example2.com': {
 					feed_URL: 'http://example2.com',
 					ID: 2,
