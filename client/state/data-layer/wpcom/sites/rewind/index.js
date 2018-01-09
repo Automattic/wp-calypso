@@ -15,7 +15,7 @@ import downloads from './downloads';
 const fetchRewindState = action =>
 	http(
 		{
-			apiVersion: '1.1',
+			apiNamespace: 'wpcom/v2',
 			method: 'GET',
 			path: `/sites/${ action.siteId }/rewind`,
 			query: {
