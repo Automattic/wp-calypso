@@ -8,6 +8,7 @@
 	"login_url": "/oauth-login",
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
+	"faviconUrl": "//s1.wp.com/i/favicon.ico",
 	"discover_logged_out_redirect_url": "/",
 	"rebrand_cities_prefix": "rebrandcitiessite",
 	"support_locales": [

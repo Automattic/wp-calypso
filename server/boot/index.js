@@ -3,15 +3,15 @@
  * Module dependencies
  */
 
-const path = require( 'path' ),
-	build = require( 'build' ),
-	config = require( 'config' ),
-	chalk = require( 'chalk' ),
-	express = require( 'express' ),
-	cookieParser = require( 'cookie-parser' ),
-	userAgent = require( 'express-useragent' ),
-	morgan = require( 'morgan' ),
-	pages = require( 'pages' );
+const path = require( 'path' );
+const build = require( 'build' );
+const config = require( 'config' );
+const chalk = require( 'chalk' );
+const express = require( 'express' );
+const cookieParser = require( 'cookie-parser' );
+const userAgent = require( 'express-useragent' );
+const morgan = require( 'morgan' );
+const pages = require( 'pages' );
 
 /**
  * Returns the server HTTP request handler "app".
@@ -23,9 +23,6 @@ function setup() {
 
 	// for nginx
 	app.enable( 'trust proxy' );
-
-	// template engine
-	app.set( 'view engine', 'pug' );
 
 	app.use( cookieParser() );
 	app.use( userAgent.express() );

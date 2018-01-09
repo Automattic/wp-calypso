@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
@@ -26,6 +27,12 @@ import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
 import { getCacheKey } from 'isomorphic-routing';
+
+export function renderJsxStream( filename, options ) {
+	const requireComponent = require.context( '../../client/document', true, /\.jsx$/ );
+	const component = requireComponent( './' + filename + '.jsx' );
+	return ReactDomServer.renderToStaticNodeStream( React.createElement( component, options ) );
+}
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -137,10 +144,11 @@ export function serverRender( req, res ) {
 	context.config = config.ssrConfig;
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop', context );
-	} else {
-		res.render( 'index', context );
+		renderJsxStream( 'desktop', context ).pipe( res );
+		return;
 	}
+
+	renderJsxStream( 'index', context ).pipe( res );
 }
 
 export function serverRenderError( err, req, res, next ) {
@@ -150,7 +158,7 @@ export function serverRenderError( err, req, res, next ) {
 		}
 		req.error = err;
 		res.status( err.status || 500 );
-		res.render( '500', req.context );
+		renderJsxStream( '500', req.context ).pipe( res );
 		return;
 	}
 
