@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { range } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,14 +24,12 @@ export default class DevdocsAsyncLoadPlaceholder extends React.PureComponent {
 	render() {
 		return (
 			<Main className="design async-load__devdocs-placeholder">
-				{ Array( this.props.count )
-					.fill( 1 )
-					.map( () => (
-						<div>
-							<SitePlaceholder />
-							<PostItem />
-						</div>
-					) ) }
+				{ range( this.props.count ).map( () => (
+					<div>
+						<SitePlaceholder />
+						<PostItem />
+					</div>
+				) ) }
 			</Main>
 		);
 	}
