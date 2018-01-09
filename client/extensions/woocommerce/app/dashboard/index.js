@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -45,6 +45,7 @@ import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
 import MailChimp from 'woocommerce/app/settings/email/mailchimp/index.js';
+import warn from 'lib/warn';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -157,6 +158,9 @@ class Dashboard extends Component {
 		} = this.props;
 
 		const adminURL = get( selectedSite, 'options.admin_url', '' );
+		if ( isEmpty( adminURL ) ) {
+			warn( 'options.admin_url unexpectedly empty in renderDashboardSetupContent' );
+		}
 
 		if ( setupChoicesLoading ) {
 			// Many of the clauses below depend on setup choices being in the state tree
