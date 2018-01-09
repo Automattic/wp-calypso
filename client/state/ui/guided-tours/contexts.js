@@ -150,7 +150,7 @@ export const isSelectedSiteCustomizable = state =>
  *
  * @param {Object} state Global state tree
  * @return {Boolean} True if site has any media files, false otherwise.
-*/
+ */
 export const doesSelectedSiteHaveMediaFiles = state => {
 	const siteId = getSelectedSiteId( state );
 	if ( ! siteId ) {

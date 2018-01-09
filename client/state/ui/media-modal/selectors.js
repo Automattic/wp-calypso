@@ -1,7 +1,7 @@
 /**
  * Returns the current media modal view.
- * 
- * 
+ *
+ *
  *
  * @format
  * @see ./constants.js (MediaView)

@@ -1,6 +1,6 @@
 /**
  * Media modal views
- * 
+ *
  *
  * @format
  * @enum {String}

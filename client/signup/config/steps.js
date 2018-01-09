@@ -8,8 +8,8 @@ import { current } from 'page';
 import i18n from 'i18n-calypso';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import config from 'config';
 import {
 	addPlanToCart,

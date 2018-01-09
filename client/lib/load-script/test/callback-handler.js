@@ -1,6 +1,6 @@
 /**
  * @format
-*/
+ */
 
 /**
  * Internal dependencies

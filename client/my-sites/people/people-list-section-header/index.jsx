@@ -24,7 +24,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 
 class PeopleListSectionHeader extends Component {
 	static propTypes = {
-        label: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
+		label: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
 		count: PropTypes.number,
 		isFollower: PropTypes.bool,
 		site: PropTypes.object,

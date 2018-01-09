@@ -27,18 +27,16 @@ const _request = ( method, path, siteId, body, namespace = 'wc/v3' ) => {
 	// WPCOM API breaks if query parameters are passed after "?" instead of "&". Hide this hack from the calling code
 	path = path.replace( '?', '&' );
 
-	return wp.req
-		[ 'get' === method ? 'get' : 'post' ](
-			{
-				path: `/jetpack-blogs/${ siteId }/rest-api/`,
-			},
-			{
-				path: `/${ namespace }/${ path }&_method=${ method }`,
-				body: body && JSON.stringify( body ),
-				json: true,
-			}
-		)
-		.then( ( { data } ) => omitDeep( data, '_links' ) );
+	return wp.req[ 'get' === method ? 'get' : 'post' ](
+		{
+			path: `/jetpack-blogs/${ siteId }/rest-api/`,
+		},
+		{
+			path: `/${ namespace }/${ path }&_method=${ method }`,
+			body: body && JSON.stringify( body ),
+			json: true,
+		}
+	).then( ( { data } ) => omitDeep( data, '_links' ) );
 };
 
 const _requestWithHeaders = ( method, path, siteId, sendBody, namespace = 'wc/v3' ) => {

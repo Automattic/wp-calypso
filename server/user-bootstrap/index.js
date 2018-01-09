@@ -8,8 +8,8 @@ var config = require( 'config' ),
 	userUtils = require( './shared-utils' ),
 	AUTH_COOKIE_NAME = 'wordpress_logged_in',
 	/**
-	* WordPress.com REST API /me endpoint.
-	*/
+	 * WordPress.com REST API /me endpoint.
+	 */
 	url = 'https://public-api.wordpress.com/rest/v1/me?meta=flags';
 
 module.exports = function( authCookieValue, callback ) {

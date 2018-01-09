@@ -1,6 +1,6 @@
 /**
  * Return a boolean value indicating whether the account recovery reset options are fetched and ready to be used.
- * 
+ *
  *
  * @format
  * @param {Object} state Global state tree
