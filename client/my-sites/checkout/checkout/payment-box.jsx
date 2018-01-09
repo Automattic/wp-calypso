@@ -125,7 +125,6 @@ export class PaymentBox extends PureComponent {
 		if ( ! this.props.paymentMethods ) {
 			return null;
 		}
-
 		return this.props.paymentMethods.map( method => {
 			return this.paymentMethod( method );
 		} );

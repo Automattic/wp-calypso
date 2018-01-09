@@ -1226,11 +1226,28 @@ Undocumented.prototype.paygateConfiguration = function( query, fn ) {
 };
 
 /**
+ * GET ebanx js configuration
+ *
+ * @param {Object} query - query parameters
+ * @param {Function} fn The callback function
+ * @api public
+ *
+ * @returns {Promise} promise
+ */
+Undocumented.prototype.ebanxConfiguration = function( query, fn ) {
+	debug( '/me/ebanx-configuration query' );
+
+	return this.wpcom.req.get( '/me/ebanx-configuration', query, fn );
+};
+
+/**
  * GET paypal_express_url
  *
  * @param {object} [data] The GET data
  * @param {Function} fn The callback function
  * @api public
+ *
+ * @returns {string} Url
  *
  * The data format is: {
  *		country: {string} The billing country,
