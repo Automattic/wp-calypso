@@ -148,10 +148,6 @@ class ThemeShowcase extends React.Component {
 		return config.isEnabled( 'manage/themes/upload' ) && isLoggedIn && ! isMultisite;
 	};
 
-	helloWorld = () => {
-		alert( '=== HELLO WORLD!!! ===' );
-	};
-
 	render() {
 		const {
 			siteId,
