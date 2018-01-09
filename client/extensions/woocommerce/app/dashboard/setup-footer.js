@@ -30,4 +30,10 @@ SetupFooter.propTypes = {
 	primary: PropTypes.bool,
 };
 
+SetupFooter.defaultProps = {
+	busy: false,
+	disabled: false,
+	primary: false,
+};
+
 export default SetupFooter;
