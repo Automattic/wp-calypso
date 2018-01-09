@@ -6,7 +6,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -20,8 +19,14 @@ import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { onboardingTasks, urlForTask } from 'my-sites/checklist/onboardingChecklist';
+import {
+	launchCompletedTask,
+	launchTask,
+	onboardingTasks,
+} from 'my-sites/checklist/onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { createNotice } from 'state/notices/actions';
+import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
 export class ChecklistThankYou extends PureComponent {
 	static propTypes = {
@@ -31,25 +36,32 @@ export class ChecklistThankYou extends PureComponent {
 		receiptId: PropTypes.number,
 	};
 
-	handleAction = taskId => {
-		const { siteSlug, tasks, track } = this.props;
-		const url = urlForTask( taskId, siteSlug );
-		if ( url && tasks.length ) {
-			const status = tasks[ taskId ] ? 'complete' : 'incomplete';
-			track( 'calypso_checklist_task_start', {
-				checklist_name: 'thank_you',
-				step_name: taskId,
-				status,
-			} );
+	onAction = id => {
+		const { requestTour, siteSlug, siteChecklist, track } = this.props;
 
-			page( url );
+		if ( siteChecklist && siteChecklist.tasks ) {
+			if ( siteChecklist.tasks[ id ] ) {
+				launchCompletedTask( {
+					id,
+					siteSlug,
+				} );
+			} else {
+				launchTask( {
+					id,
+					location: 'checklist_thank_you',
+					requestTour,
+					siteSlug,
+					track,
+				} );
+			}
 		}
 	};
 
-	handleToggle = taskId => {
-		const { siteId, tasks, update } = this.props;
+	onToggle = taskId => {
+		const { notify, siteId, siteChecklist, update } = this.props;
 
-		if ( tasks && ! tasks[ taskId ] ) {
+		if ( siteChecklist && siteChecklist.tasks && ! siteChecklist.tasks[ taskId ] ) {
+			notify( 'is-success', 'You completed a task!' );
 			update( siteId, taskId );
 		}
 	};
@@ -81,8 +93,8 @@ export class ChecklistThankYou extends PureComponent {
 					<Checklist
 						isLoading={ ! tasks.length }
 						tasks={ tasks }
-						onAction={ this.handleAction }
-						onToggle={ this.handleToggle }
+						onAction={ this.onAction }
+						onToggle={ this.onToggle }
 					/>
 				</div>
 			</Main>
@@ -98,8 +110,11 @@ const mapStateToProps = state => {
 
 	return { siteId, siteSlug, tasks };
 };
+
 const mapDispatchToProps = {
 	track: recordTracksEvent,
+	notify: createNotice,
+	requestTour: requestGuidedTour,
 	update: requestSiteChecklistTaskUpdate,
 };
 
