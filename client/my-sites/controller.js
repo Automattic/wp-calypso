@@ -15,6 +15,7 @@ import userFactory from 'lib/user';
 import { receiveSite, requestSites } from 'state/sites/actions';
 import {
 	getSite,
+	getSiteSlug,
 	isJetpackModuleActive,
 	isJetpackSite,
 	isRequestingSites,
@@ -290,6 +291,12 @@ export function noSite( context, next ) {
 	return next();
 }
 
+// Helper selector to retrieve the primary site slug
+function getPrimarySiteSlug( state ) {
+	const primarySiteId = getPrimarySiteId( state );
+	return getSiteSlug( state, primarySiteId );
+}
+
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
@@ -300,18 +307,6 @@ export function siteSelection( context, next ) {
 	const currentUser = user.get();
 	const hasOneSite = currentUser.visible_site_count === 1;
 	const allSitesPath = sectionify( context.path, siteFragment );
-	const primaryId = getPrimarySiteId( getState() );
-	const primary = getSite( getState(), primaryId ) || '';
-
-	const redirectToPrimary = () => {
-		let redirectPath = `${ context.pathname }/${ primary.slug }`;
-
-		redirectPath = context.querystring
-			? `${ redirectPath }?${ context.querystring }`
-			: redirectPath;
-
-		page.redirect( redirectPath );
-	};
 
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
@@ -335,26 +330,38 @@ export function siteSelection( context, next ) {
 	 * If the user has only one site, redirect to the single site
 	 * context instead of rendering the all-site views.
 	 *
-	 * Note: The redirectToPrimary function will be continually executed
-	 * by repeatedly querying /stats/day/undefined until the /sites
-	 * endpoint has returned.
+	 * If the /me/sites API endpoint hasn't returned yet, postpone the redirect until
+	 * after the sites data are available by scheduling a `SITES_ONCE_CHANGED` callback.
 	 */
 	if ( hasOneSite && ! siteFragment ) {
+		const redirectToPrimary = () => {
+			const primarySiteSlug = getPrimarySiteSlug( getState() );
+			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
+
+			redirectPath = context.querystring
+				? `${ redirectPath }?${ context.querystring }`
+				: redirectPath;
+
+			page.redirect( redirectPath );
+		};
+
 		const hasInitialized = getSites( getState() ).length;
 		if ( hasInitialized ) {
-			if ( primary ) {
+			if ( getPrimarySiteSlug( getState() ) ) {
 				redirectToPrimary();
 			} else {
 				// If the primary site does not exist, skip redirect
 				// and display a useful error notification
 				showMissingPrimaryError( currentUser, dispatch );
 			}
-			return;
+		} else {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectToPrimary,
+			} );
 		}
-		dispatch( {
-			type: SITES_ONCE_CHANGED,
-			listener: redirectToPrimary,
-		} );
+
+		return;
 	}
 
 	// If the path fragment does not resemble a site, set all sites to visible
