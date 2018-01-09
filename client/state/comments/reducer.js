@@ -16,6 +16,7 @@ import {
 	isArray,
 	values,
 	omit,
+	startsWith,
 } from 'lodash';
 
 /**
@@ -419,7 +420,7 @@ export const counts = createReducer(
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
 		},
 		[ COMMENTS_DELETE ]: ( state, { siteId, postId, commentId } ) => {
-			if ( commentId && commentId.indexOf( 'placeholder' ) === 0 ) {
+			if ( commentId && startsWith( commentId, 'placeholder' ) ) {
 				return state;
 			}
 
@@ -430,6 +431,28 @@ export const counts = createReducer(
 
 			const newSiteCounts = updateCount( siteCounts, 'trash', -1 );
 			const newPostCounts = updateCount( postCounts, 'trash', -1 );
+
+			const newTotalSiteCounts = Object.assign(
+				{},
+				state[ siteId ],
+				newSiteCounts && { site: newSiteCounts },
+				newPostCounts && { [ postId ]: newPostCounts }
+			);
+			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
+		},
+		[ COMMENTS_RECEIVE ]: ( state, action ) => {
+			if ( get( action, 'meta.comment.context' ) !== 'add' ) {
+				return state;
+			}
+			const { siteId, postId } = action;
+			if ( ! siteId || ! postId || ! state[ siteId ] ) {
+				return state;
+			}
+			const { site: siteCounts, [ postId ]: postCounts } = state[ siteId ];
+			const status = get( action, [ 'comments', 0, 'status' ] );
+
+			const newSiteCounts = updateCount( siteCounts, status, 1 );
+			const newPostCounts = updateCount( postCounts, status, 1 );
 
 			const newTotalSiteCounts = Object.assign(
 				{},

@@ -130,6 +130,7 @@ describe( 'utility functions', () => {
 				postId: 1010,
 				comments: [ { ID: 1, content: 'this is the content' } ],
 				skipSort: false,
+				meta: { comment: { context: 'add' } },
 			} );
 		} );
 

@@ -103,6 +103,11 @@ export const updatePlaceholderComment = (
 		postId,
 		comments: [ comment ],
 		skipSort: !! parentCommentId,
+		meta: {
+			comment: {
+				context: 'add', //adds a hint for the counts reducer.
+			},
+		},
 	} );
 	// increment comments count
 	dispatch( { type: COMMENTS_COUNT_INCREMENT, siteId, postId } );
