@@ -28,7 +28,7 @@ function renderTrashButton( onTrash, category, translate ) {
 	);
 }
 
-function renderSaveButton( onSave, category, translate ) {
+function renderSaveButton( onSave, isBusy, category, translate ) {
 	const saveExists = 'undefined' !== typeof onSave;
 	const saveDisabled = false === onSave;
 
@@ -37,18 +37,23 @@ function renderSaveButton( onSave, category, translate ) {
 
 	return (
 		saveExists && (
-			<Button primary onClick={ onSave ? onSave : undefined } disabled={ saveDisabled }>
+			<Button
+				primary
+				onClick={ onSave ? onSave : undefined }
+				disabled={ saveDisabled }
+				busy={ isBusy }
+			>
 				{ saveLabel }
 			</Button>
 		)
 	);
 }
 
-const ProductCategoryHeader = ( { onTrash, onSave, translate, site, category } ) => {
+const ProductCategoryHeader = ( { onTrash, onSave, translate, site, category, isBusy } ) => {
 	const existing = category && ! isObject( category.id );
 
 	const trashButton = renderTrashButton( onTrash, category, translate );
-	const saveButton = renderSaveButton( onSave, category, translate );
+	const saveButton = renderSaveButton( onSave, isBusy, category, translate );
 
 	const currentCrumb =
 		category && existing ? (

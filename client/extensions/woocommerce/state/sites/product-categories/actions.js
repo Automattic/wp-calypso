@@ -7,6 +7,7 @@ import { getNormalizedProductCategoriesQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
 } from 'woocommerce/state/action-types';
 
@@ -37,6 +38,27 @@ export function createProductCategory( siteId, category, successAction, failureA
 
 	const action = {
 		type: WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+		siteId,
+		category,
+		successAction,
+		failureAction,
+	};
+
+	return action;
+}
+
+/**
+ * Action Creator: Update a product category.
+ *
+ * @param {Number} siteId The id of the site upon which to create.
+ * @param {Object} category The product category object.
+ * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
+ * @param {Object|Function} [failureAction] action with extra props { error }
+ * @return {Object} Action object
+ */
+export function updateProductCategory( siteId, category, successAction, failureAction ) {
+	const action = {
+		type: WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
 		siteId,
 		category,
 		successAction,

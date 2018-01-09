@@ -28,6 +28,7 @@ import { fetchProductCategories } from 'woocommerce/state/sites/product-categori
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import VirtualList from 'components/virtual-list';
+import { stripHTML, decodeEntities } from 'lib/formatting';
 
 const ITEM_HEIGHT = 70;
 
@@ -96,6 +97,8 @@ class ProductCategories extends Component {
 			page( link );
 		};
 
+		const description = decodeEntities( stripHTML( item.description ) );
+
 		return (
 			<div key={ 'product-category-' + itemId } className="product-categories__list-item">
 				<CompactCard key={ itemId } className="product-categories__list-item-card" onClick={ goToLink }>
@@ -110,7 +113,7 @@ class ProductCategories extends Component {
 						<span className="product-categories__list-item-info">
 							<a href={ link }>{ item.name }</a>
 							<Count count={ item.count } />
-							<span className="product-categories__list-item-description">{ item.description }</span>
+							<span className="product-categories__list-item-description">{ description }</span>
 						</span>
 					</div>
 				</CompactCard>

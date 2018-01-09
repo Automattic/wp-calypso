@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, isNumber } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -21,13 +22,16 @@ import {
 	clearProductCategoryEdits,
 	editProductCategory,
 } from 'woocommerce/state/ui/product-categories/actions';
+import { createProductCategory } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	getProductCategoryWithLocalEdits,
 	getCurrentlyEditingId,
 	getProductCategoryEdits,
 } from 'woocommerce/state/ui/product-categories/selectors';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
+import { successNotice, errorNotice } from 'state/notices/actions';
 
 class ProductCategoryCreate extends React.Component {
 	static propTypes = {
@@ -40,6 +44,10 @@ class ProductCategoryCreate extends React.Component {
 		category: PropTypes.object,
 		editProductCategory: PropTypes.func.isRequired,
 		clearProductCategoryEdits: PropTypes.func.isRequired,
+	};
+
+	state = {
+		busy: false,
 	};
 
 	componentDidMount() {
@@ -69,10 +77,34 @@ class ProductCategoryCreate extends React.Component {
 		}
 	}
 
-	onSave = () => {};
+	onSave = () => {
+		const { site, category, translate } = this.props;
+		this.setState( () => ( { busy: true } ) );
+
+		const successAction = () => {
+			page.redirect( getLink( '/store/products/categories/:site', site ) );
+			return successNotice( translate( 'Category successfully created.' ), {
+				displayOnNextPage: true,
+				duration: 8000,
+			} );
+		};
+
+		const failureAction = () => {
+			this.setState( () => ( { busy: false } ) );
+			return errorNotice(
+				translate( 'There was a problem saving your category. Please try again.' ),
+				{
+					duration: 8000,
+				}
+			);
+		};
+
+		this.props.createProductCategory( site.ID, category, successAction, failureAction );
+	};
 
 	render() {
 		const { site, category, hasEdits, className } = this.props;
+		const { busy } = this.state;
 
 		return (
 			<Main className={ className } wideLayout>
@@ -80,6 +112,7 @@ class ProductCategoryCreate extends React.Component {
 					site={ site }
 					category={ category }
 					onSave={ hasEdits ? this.onSave : false }
+					isBusy={ busy }
 				/>
 				<ProtectFormGuard isChanged={ hasEdits } />
 				<ProductCategoryForm
@@ -111,6 +144,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editProductCategory,
 			clearProductCategoryEdits,
+			createProductCategory,
 		},
 		dispatch
 	);
