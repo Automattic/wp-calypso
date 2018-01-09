@@ -26,6 +26,7 @@ import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import { pathToRegExp } from 'lib/sections-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -476,7 +477,7 @@ module.exports = function() {
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => {
-				const pathRegex = utils.pathToRegExp( sectionPath );
+				const pathRegex = pathToRegExp( sectionPath );
 
 				app.get( pathRegex, function( req, res, next ) {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
