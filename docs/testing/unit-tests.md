@@ -9,7 +9,6 @@ This guide is intended as a quick reference of common tools and conventions we u
 * [Writing tests](writing-tests)
     * [Folder structure](#folder-structure)
     * [Describing tests](#describing-tests)
-    * [Mocking HTTP requests with nock](#mocking-http-requests-with nock)
     * [Snapshot testing](#snapshot-testing)
 * [Examples](#examples)
 
