@@ -92,8 +92,13 @@ class Order extends Component {
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { siteId, order, translate } = this.props;
+		const successOpts = { duration: 5000 };
+		if ( isOrderWaitingPayment( order.status ) ) {
+			successOpts.button = translate( 'Send new invoice to customer' );
+			successOpts.onClick = this.triggerInvoice;
+		}
 		const onSuccess = dispatch => {
-			dispatch( successNotice( translate( 'Order saved.' ), { duration: 5000 } ) );
+			dispatch( successNotice( translate( 'Order successfully updated.' ), successOpts ) );
 		};
 		const onFailure = dispatch => {
 			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 5000 } ) );
