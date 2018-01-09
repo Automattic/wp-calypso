@@ -86,11 +86,10 @@ In most of the environments that Calypso is deployed to, the static assets are s
 
 ### Webpack Stats
 
-Webpack stats can be serialized as JSON for the purposes of analyzing the results of a build. This can be used with tools like [Webpack Analyze](https://webpack.github.io/analyse/) or [Webpack Visualizer](https://chrisbateman.github.io/webpack-visualizer/) to visualize the modules and dependencies comprising a build. To generate a JSON file during a build, use the `WEBPACK_OUTPUT_JSON` environment variable flag:
+Webpack stats can be serialized as JSON for the purposes of analyzing the results of a build. This can be used with tools like [Webpack Analyze](https://webpack.github.io/analyse/) or [Webpack Visualizer](https://chrisbateman.github.io/webpack-visualizer/) to visualize the modules and dependencies comprising a build. To generate a JSON file during a build, use the `preanalyze-bundles` NPM script:
 
 ```bash
-WEBPACK_OUTPUT_JSON=1 NODE_ENV=production npm run build
+NODE_ENV=production npm run preanalyze-bundles
 ```
 
 This will cause a JSON file `stats.json` to be written to the root project directory once the build succeeds.
-
