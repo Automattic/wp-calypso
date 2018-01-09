@@ -9,19 +9,20 @@ import { stub, spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { testSchema } from './mocks/schema';
+import warn from 'lib/warn';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { testSchema } from './mocks/schema';
 import {
 	cachingActionCreatorFactory,
+	combineReducers,
 	createReducer,
 	extendAction,
-	keyedReducer,
-	withSchemaValidation,
-	combineReducers,
 	isValidStateWithSchema,
+	keyedReducer,
+	throwIfSchemaInvalid,
 	withoutPersistence,
+	withSchemaValidation,
 } from 'state/utils';
-import warn from 'lib/warn';
 
 const jestExpect = global.expect;
 
@@ -880,6 +881,12 @@ describe( 'utils', () => {
 			return Promise.all( [ firstCall, secondCall ] ).then(
 				() => expect( failingWorker ).to.be.calledTwice
 			);
+		} );
+	} );
+
+	describe( '#throwIfSchemaInvalid', () => {
+		test( 'should warn when called with invalid schema', () => {
+			jestExpect( () => throwIfSchemaInvalid( false ) ).toThrow();
 		} );
 	} );
 } );

@@ -28,18 +28,36 @@ import LRU from 'lru-cache';
 import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
 
-let schemaValidator = () => true;
+/**
+ * Throw an error if not in production and schema is not valid according to spec.
+ *
+ * This is intended to catch invalid schemas early in development rather than shipping
+ * hard to track down bugs.
+ *
+ * @param {Object} schema Schema to validate against the draft spec schema
+ * @throws An error if the schema is invalid according to spec
+ */
+export function throwIfSchemaInvalid( schema ) {
+	if ( process.env.NODE_ENV === 'production' ) {
+		return;
+	}
 
-if ( process.env.NODE_ENV !== 'production' ) {
-	// we pull draft4 already from ajv via webpack
-	// However, we should pull it in explicitly as part of the dev build
-	// (from the url http://json-schema.org/draft-04/schema# or we publish it
-	// to npm, whichever is simpler)
-	const jsonSchemaDraft4 = require( 'ajv/lib/refs/json-schema-draft-04.json' );
-	schemaValidator = validator( jsonSchemaDraft4, { greedy: true, verbose: true } );
+	const jsonSchemaSchema = require( './jsonschema-spec-04' );
+	const schemaValidator = validator( jsonSchemaSchema, { greedy: true, verbose: true } );
+	if ( ! schemaValidator( schema ) ) {
+		throw new Error(
+			`Invalid schema provided:\n${ JSON.stringify(
+				schema,
+				undefined,
+				2
+			) }\n\nwith errors:\n${ JSON.stringify( schemaValidator.errors, undefined, 2 ) }`
+		);
+	}
 }
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
+	throwIfSchemaInvalid( schema );
+
 	const validate = validator( schema, {
 		greedy: process.env.NODE_ENV !== 'production',
 		verbose: process.env.NODE_ENV !== 'production',
@@ -236,6 +254,9 @@ export function extendAction( action, data ) {
  * @return {Function}                Reducer function
  */
 export function createReducer( initialState = null, customHandlers = {}, schema = null ) {
+	if ( null !== schema ) {
+		throwIfSchemaInvalid( schema );
+	}
 	// Define default handlers for serialization actions. If no schema is
 	// provided, always return the initial state. Otherwise, allow for
 	// serialization and validate on deserialize.
@@ -349,8 +370,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
 export const withSchemaValidation = ( schema, reducer ) => {
-	schemaValidator( schema ) ||
-		warn( 'validation schema is invalid, schema:', schema, 'errors:', schemaValidator.errors );
+	throwIfSchemaInvalid( schema );
 
 	const wrappedReducer = ( state, action ) => {
 		if ( SERIALIZE === action.type ) {
