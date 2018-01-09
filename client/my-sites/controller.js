@@ -362,7 +362,12 @@ export function siteSelection( context, next ) {
 
 	// If the path fragment does not resemble a site, set all sites to visible
 	if ( ! siteFragment ) {
+		if ( ! isRequestingSites( getState() ) ) {
+			dispatch( requestSites() );
+		}
+
 		dispatch( setAllSitesSelected() );
+
 		return next();
 	}
 

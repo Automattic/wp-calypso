@@ -51,7 +51,8 @@ import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
-import { getPrimarySiteId } from 'state/selectors';
+import { getPrimarySiteId, getSitesItems } from 'state/selectors';
+import { EMPTY_SITES } from 'state/selectors/get-sites-items';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -156,19 +157,13 @@ const Layout = createReactClass( {
 				'is-active': this.props.isLoading,
 			} );
 
-		const { recentSitesPreference, primarySiteId } = this.props;
-
-		let siteIdToFetch = get( recentSitesPreference, '0', null );
-
-		if ( ! siteIdToFetch ) {
-			siteIdToFetch = primarySiteId;
-		}
+		const { siteIdToFetch, shouldFetchSite } = this.props;
 
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<SitesListNotices />
-				<QuerySites siteId={ siteIdToFetch } />
+				{ shouldFetchSite && <QuerySites siteId={ siteIdToFetch } /> }
 				<QueryPreferences />
 				{ <GuidedTours /> }
 				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
@@ -213,16 +208,26 @@ const Layout = createReactClass( {
 
 export default connect( state => {
 	const { isLoading, section } = state.ui;
+
+	const recentSitesPreference = getPreference( state, 'recentSites' );
+	const primarySiteId = getPrimarySiteId( state );
+
+	let siteIdToFetch = get( recentSitesPreference, '0', null );
+
+	if ( ! siteIdToFetch ) {
+		siteIdToFetch = primarySiteId;
+	}
+
 	return {
 		isLoading,
-		isSupportUser: state.support.isSupportUser,
 		section,
+		siteIdToFetch,
+		shouldFetchSite: getSitesItems( state ) === EMPTY_SITES,
+		isSupportUser: state.support.isSupportUser,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
-		recentSitesPreference: getPreference( state, 'recentSites' ),
-		primarySiteId: getPrimarySiteId( state ),
 	};
 } )( Layout );

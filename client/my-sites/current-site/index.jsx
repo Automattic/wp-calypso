@@ -29,6 +29,7 @@ import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
+import { isRequestingSites } from 'state/sites/selectors';
 
 class CurrentSite extends Component {
 	static propTypes = {
@@ -90,9 +91,15 @@ class CurrentSite extends Component {
 	};
 
 	render() {
-		const { selectedSite, translate, anySiteSelected, visibleSitesCount } = this.props;
+		const {
+			selectedSite,
+			translate,
+			anySiteSelected,
+			visibleSitesCount,
+			isRequestingAllSites,
+		} = this.props;
 
-		if ( ! anySiteSelected.length ) {
+		if ( ! anySiteSelected.length || ( ! selectedSite && isRequestingAllSites ) ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Card className="current-site is-loading">
@@ -145,6 +152,7 @@ export default connect(
 		visibleSitesCount: getCurrentUserVisibleSiteCount( state ),
 		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, 'stale-cart-item-notice' ),
 		sectionName: getSectionName( state ),
+		isRequestingAllSites: isRequestingSites( state ),
 	} ),
 	{ setLayoutFocus, infoNotice, removeNotice, recordTracksEvent }
 )( localize( CurrentSite ) );
