@@ -16,7 +16,6 @@ import PostItem from 'blocks/post-item';
 import SitePlaceholder from 'blocks/site/placeholder';
 
 export default class DevdocsAsyncLoadPlaceholder extends React.PureComponent {
-	static displayName = 'DevdocsAsyncLoadPlaceholder';
 	static propTypes = {
 		count: PropTypes.number.isRequired,
 	};

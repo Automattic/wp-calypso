@@ -17,7 +17,6 @@ export default class DevdocsAsyncLoad extends React.PureComponent {
 	static defaultProps = {
 		placeholderCount: 5,
 	};
-	static displayName = 'DevdocsAsyncLoad';
 	static propTypes = {
 		placeholderCount: PropTypes.number,
 		require: PropTypes.string.isRequired,
