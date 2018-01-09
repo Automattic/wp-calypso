@@ -25,26 +25,20 @@ const placeholderValidationErrors = {
 
 const WithContactDetailsValidation = ( tld, WrappedComponent ) => {
 	return class FormWithValidation extends Component {
+		state = {};
 
-		state = {
-		}
-
-		receiveSchema = ( schema ) => {
+		receiveSchema = schema => {
 			this.setState( {
 				schema,
 				validate: validatorFactory( schema, { greedy: true, verbose: true } ),
 			} );
-		}
+		};
 
 		componentWillMount() {
-			const _this = this;
-			wpcom.getDomainContactInformationValidationSchema(
-				tld,
-				( error, data ) => {
-					// TODO: handle error
-					_this.receiveSchema( data[ tld ] );
-				}
-			);
+			wpcom.getDomainContactInformationValidationSchema( tld, ( error, data ) => {
+				// TODO: handle error
+				this.receiveSchema( data[ tld ] );
+			} );
 		}
 
 		validateContactDetails() {
@@ -63,11 +57,13 @@ const WithContactDetailsValidation = ( tld, WrappedComponent ) => {
 		}
 
 		render() {
-			return ( <WrappedComponent
+			return (
+				<WrappedComponent
 					{ ...this.props }
 					isValid="false"
 					validationErrors={ this.validateContactDetails() }
-			/> );
+				/>
+			);
 		}
 	};
 };
