@@ -4,7 +4,8 @@
  * External dependencies
  */
 
-import { uniqueId } from 'lib/impure-lodash';
+import impureLodash from 'lib/impure-lodash';
+const { uniqueId } = impureLodash;
 
 /**
  * Internal dependencies
