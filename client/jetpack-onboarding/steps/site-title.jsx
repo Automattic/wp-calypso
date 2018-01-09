@@ -4,8 +4,9 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import page from 'page';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -42,6 +43,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			siteTitle: this.state.title,
 			siteDescription: this.state.description,
 		} );
+		page( this.props.getForwardUrl() );
 	};
 
 	render() {
@@ -84,7 +86,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							/>
 						</FormFieldset>
 
-						<Button primary type="submit" href={ this.props.getForwardUrl() }>
+						<Button primary type="submit">
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
