@@ -131,7 +131,7 @@ class ProductCategoryForm extends Component {
 		} else if ( isUploading ) {
 			image = (
 				<figure>
-					<img src={ placeholder || <span /> } />
+					<img src={ placeholder || null } />
 					<Spinner />
 				</figure>
 			);
