@@ -199,6 +199,7 @@ export function createReduxStore( initialState = {} ) {
 			require( './routing/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		navigationMiddleware,
+		isBrowser && require( './comments/middleware.js' ).default,
 	].filter( Boolean );
 
 	const enhancers = [

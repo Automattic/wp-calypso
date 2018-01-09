@@ -364,23 +364,63 @@ export const activeReplies = createReducer(
 	}
 );
 
-export const counts = ( state = {}, action ) => {
-	const { type, ...actionData } = action;
-	if ( COMMENT_COUNTS_UPDATE === type ) {
-		const { siteId, postId, ...commentCounts } = actionData;
-		if ( ! siteId ) {
-			return state;
-		}
-		const keyName = siteId && postId ? postId : 'site';
-		const siteCounts = {
-			[ siteId ]: Object.assign( {}, state[ siteId ] || {}, {
-				[ keyName ]: commentCounts,
-			} ),
-		};
-		return Object.assign( {}, state, siteCounts );
+function updateCount( counts, rawStatus, value = 1 ) {
+	const status = rawStatus === 'unapproved' ? 'pending' : rawStatus;
+	if ( ! counts || ! counts[ status ] ) {
+		return undefined;
 	}
-	return state;
-};
+	const newCounts = {
+		...counts,
+		[ status ]: counts[ status ] + value,
+	};
+	const { pending, approved, spam } = newCounts;
+	return {
+		...newCounts,
+		all: pending + approved,
+		totalComments: pending + approved + spam,
+	};
+}
+
+export const counts = createReducer(
+	{},
+	{
+		[ COMMENT_COUNTS_UPDATE ]: ( state, action ) => {
+			const { siteId, postId, ...commentCounts } = omit( action, 'type' );
+			if ( ! siteId ) {
+				return state;
+			}
+			const keyName = siteId && postId ? postId : 'site';
+			const siteCounts = {
+				[ siteId ]: Object.assign( {}, state[ siteId ] || {}, {
+					[ keyName ]: commentCounts,
+				} ),
+			};
+			return Object.assign( {}, state, siteCounts );
+		},
+		[ COMMENTS_CHANGE_STATUS ]: ( state, action ) => {
+			const { siteId, postId, status } = action;
+			const previousStatus = get( action, 'meta.comment.previousStatus' );
+			if ( ! siteId || ! postId || ! status || ! state[ siteId ] || ! previousStatus ) {
+				return state;
+			}
+
+			const { site: siteCounts, [ postId ]: postCounts } = state[ siteId ];
+
+			//increase new status counts by one and decrement previous status counts by 1
+			const newSiteCounts = updateCount( updateCount( siteCounts, status, 1 ), previousStatus, -1 );
+
+			const newPostCounts = updateCount( updateCount( postCounts, status, 1 ), previousStatus, -1 );
+
+			const newTotalSiteCounts = Object.assign(
+				{},
+				state[ siteId ],
+				newSiteCounts && { site: newSiteCounts },
+				newPostCounts && { [ postId ]: newPostCounts }
+			);
+			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
+		},
+	}
+);
 
 export default combineReducers( {
 	counts,
