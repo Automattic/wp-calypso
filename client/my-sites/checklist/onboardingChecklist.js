@@ -5,6 +5,7 @@
  */
 
 import { assign, map } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -149,3 +150,33 @@ export const onboardingTasks = currentState =>
 		const task = tasks[ id ];
 		return assign( { id, completed }, task );
 	} );
+
+export const launchTask = ( { id, location, requestTour, siteSlug, track } ) => {
+	const checklist_name = 'new_blog';
+	const tour = tourForTask( id );
+	const url = urlForTask( id, siteSlug );
+
+	if ( ! tour && ! url ) {
+		return;
+	}
+
+	track( 'calypso_checklist_task_start', {
+		checklist_name,
+		step_name: id,
+		location,
+	} );
+
+	if ( url ) {
+		page( url );
+	}
+	if ( tour ) {
+		requestTour( tour );
+	}
+};
+
+export const launchCompletedTask = ( { id, siteSlug } ) => {
+	const url = urlForTask( id, siteSlug );
+	if ( url ) {
+		page( url );
+	}
+};

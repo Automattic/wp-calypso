@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { countBy, find, noop } from 'lodash';
 import Gridicon from 'gridicons';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -24,8 +23,9 @@ import ShareButton from 'components/share-button';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { onboardingTasks, urlForTask } from 'my-sites/checklist/onboardingChecklist';
+import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
 const storageKey = 'onboarding-checklist-banner-closed';
 
@@ -55,12 +55,15 @@ export class ChecklistBanner extends Component {
 	};
 
 	handleClick = () => {
-		const { task, siteSlug } = this.props;
-		const url = urlForTask( task.id, siteSlug );
+		const { requestTour, task, track, siteSlug } = this.props;
 
-		if ( url ) {
-			page( url );
-		}
+		launchTask( {
+			id: task.id,
+			location: 'checklist_banner',
+			requestTour,
+			siteSlug,
+			track,
+		} );
 	};
 
 	handleClose = () => {
@@ -202,6 +205,9 @@ const mapStateToProps = ( state, { siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = { track: recordTracksEvent };
+const mapDispatchToProps = {
+	track: recordTracksEvent,
+	requestTour: requestGuidedTour,
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistBanner ) );
