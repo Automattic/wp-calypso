@@ -526,7 +526,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for every WordPress site including ' +
+				'Security essentials for your WordPress site including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
@@ -563,7 +563,7 @@ export const PLANS_LIST = {
 		availableFor: plan => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for every WordPress site including ' +
+				'Security essentials for your WordPress site including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
