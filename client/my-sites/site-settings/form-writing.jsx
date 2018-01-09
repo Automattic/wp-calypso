@@ -210,6 +210,7 @@ const getFormSettings = settings => {
 		'jetpack_portfolio_posts_per_page',
 		'infinite-scroll',
 		'infinite_scroll',
+		'infinite_scroll_blocked',
 		'minileven',
 		'wp_mobile_excerpt',
 		'wp_mobile_featured_images',

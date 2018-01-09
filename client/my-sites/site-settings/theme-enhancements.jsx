@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -80,7 +81,9 @@ class ThemeEnhancements extends Component {
 	}
 
 	renderSimpleSiteInfiniteScrollSettings() {
-		const { customizeUrl, translate } = this.props;
+		const { customizeUrl, fields, translate } = this.props;
+		const blockedByFooter = 'footer' === get( fields, 'infinite_scroll_blocked' );
+
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
@@ -101,19 +104,21 @@ class ThemeEnhancements extends Component {
 
 				{ this.renderToggle(
 					'infinite_scroll',
-					false,
+					blockedByFooter,
 					translate( 'Load posts as you scroll. Disable to show a clickable button to load posts.' )
 				) }
-				<FormSettingExplanation isIndented>
-					{ translate(
-						'If your site has a "footer" widget enabled, buttons will always be used. {{link}}Customize your site{{/link}}',
-						{
-							components: {
-								link: <a href={ customizeUrl } />,
-							},
-						}
-					) }
-				</FormSettingExplanation>
+				{ blockedByFooter && (
+					<FormSettingExplanation isIndented>
+						{ translate(
+							'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
+							{
+								components: {
+									link: <a href={ customizeUrl } />,
+								},
+							}
+						) }
+					</FormSettingExplanation>
+				) }
 			</FormFieldset>
 		);
 	}
