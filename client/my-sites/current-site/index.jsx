@@ -28,6 +28,7 @@ import { infoNotice, removeNotice } from 'state/notices/actions';
 import { getNoticeLastTimeShown } from 'state/notices/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import isRtl from 'state/selectors/is-rtl';
 
 class CurrentSite extends Component {
 	static propTypes = {
@@ -89,7 +90,7 @@ class CurrentSite extends Component {
 	};
 
 	render() {
-		const { selectedSite, translate, anySiteSelected } = this.props;
+		const { selectedSite, translate, anySiteSelected, rtlOn } = this.props;
 
 		if ( ! anySiteSelected.length ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -115,7 +116,7 @@ class CurrentSite extends Component {
 				{ this.props.siteCount > 1 && (
 					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
-							<Gridicon icon="arrow-left" size={ 18 } />
+							<Gridicon icon={ rtlOn ? 'arrow-right' : 'arrow-left' } size={ 18 } />
 							{ translate( 'Switch Site' ) }
 						</Button>
 					</span>
@@ -139,6 +140,7 @@ class CurrentSite extends Component {
 
 export default connect(
 	state => ( {
+		rtlOn: isRtl( state ),
 		selectedSite: getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getVisibleSites( state ).length,
