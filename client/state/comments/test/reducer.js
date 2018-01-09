@@ -690,7 +690,6 @@ describe( 'reducer', () => {
 			const action = {
 				type: COMMENTS_CHANGE_STATUS,
 				siteId: 2916284,
-				postId: 234,
 				status: 'unapproved',
 				meta: { comment: { previousStatus: 'approved' } },
 			};

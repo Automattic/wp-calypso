@@ -399,9 +399,9 @@ export const counts = createReducer(
 			return Object.assign( {}, state, siteCounts );
 		},
 		[ COMMENTS_CHANGE_STATUS ]: ( state, action ) => {
-			const { siteId, postId, status } = action;
+			const { siteId, postId = -1, status } = action;
 			const previousStatus = get( action, 'meta.comment.previousStatus' );
-			if ( ! siteId || ! postId || ! status || ! state[ siteId ] || ! previousStatus ) {
+			if ( ! siteId || ! status || ! state[ siteId ] || ! previousStatus ) {
 				return state;
 			}
 
@@ -420,13 +420,13 @@ export const counts = createReducer(
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
 		},
 		[ COMMENTS_DELETE ]: ( state, action ) => {
-			const { siteId, postId, commentId } = action;
+			const { siteId, postId = -1, commentId } = action;
 			if ( commentId && startsWith( commentId, 'placeholder' ) ) {
 				return state;
 			}
 			const previousStatus = get( action, 'meta.comment.previousStatus' );
 
-			if ( ! siteId || ! postId || ! state[ siteId ] || ! previousStatus ) {
+			if ( ! siteId || ! state[ siteId ] || ! previousStatus ) {
 				return state;
 			}
 			const { site: siteCounts, [ postId ]: postCounts } = state[ siteId ];
@@ -446,8 +446,8 @@ export const counts = createReducer(
 			if ( get( action, 'meta.comment.context' ) !== 'add' ) {
 				return state;
 			}
-			const { siteId, postId } = action;
-			if ( ! siteId || ! postId || ! state[ siteId ] ) {
+			const { siteId, postId = -1 } = action;
+			if ( ! siteId || ! state[ siteId ] ) {
 				return state;
 			}
 			const { site: siteCounts, [ postId ]: postCounts } = state[ siteId ];
