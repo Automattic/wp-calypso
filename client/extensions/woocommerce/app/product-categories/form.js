@@ -18,11 +18,13 @@ import Button from 'components/button';
 import Card from 'components/card';
 import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import FormFieldSet from 'components/forms/form-fieldset';
+import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import ImagePreloader from 'components/image-preloader';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
 import Spinner from 'components/spinner';
+import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
 
 class ProductCategoryForm extends Component {
 	static propTypes = {
@@ -39,6 +41,8 @@ class ProductCategoryForm extends Component {
 
 		const { category } = props;
 		const image = ( category && category.image ) || {};
+		const selectedParent = ( category && category.parent && [ category.parent ] ) || [];
+		const isTopLevel = category && category.parent ? false : true;
 
 		this.state = {
 			id: image.id || null,
@@ -46,17 +50,30 @@ class ProductCategoryForm extends Component {
 			placeholder: null,
 			transientId: null,
 			isUploading: false,
+			search: '',
+			selectedParent,
+			isTopLevel,
 		};
 
 		this.debouncedSetDescription = debounce( this.setDescription, 200 );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.category !== this.props.category ) {
+		if ( nextProps.category.image !== this.props.category.image ) {
 			const image = ( nextProps.category && nextProps.category.image ) || {};
 			this.setState( {
 				id: image.id || null,
 				src: image.src || null,
+			} );
+		}
+
+		if ( nextProps.category.parent !== this.props.category.parent ) {
+			const selectedParent =
+				( nextProps.category && nextProps.category.parent && [ nextProps.category.parent ] ) || [];
+			const isTopLevel = nextProps.category && nextProps.category.parent ? false : true;
+			this.setState( {
+				selectedParent,
+				isTopLevel,
 			} );
 		}
 	}
@@ -70,6 +87,29 @@ class ProductCategoryForm extends Component {
 	setDescription = description => {
 		const { siteId, category, editProductCategory } = this.props;
 		editProductCategory( siteId, category, { description } );
+	};
+
+	setParent = parent => {
+		const { siteId, category, editProductCategory } = this.props;
+		editProductCategory( siteId, category, { parent: parent.ID } );
+	};
+
+	onTopLevelChange = () => {
+		const { siteId, category, editProductCategory } = this.props;
+		editProductCategory( siteId, category, { parent: 0 } );
+		if ( ! category.parent ) {
+			this.setState( {
+				isTopLevel: ! this.state.isTopLevel,
+			} );
+		}
+	};
+
+	onSearch = searchTerm => {
+		if ( searchTerm !== this.state.search ) {
+			this.setState( {
+				search: searchTerm,
+			} );
+		}
 	};
 
 	onSelect = files => {
@@ -88,7 +128,6 @@ class ProductCategoryForm extends Component {
 			id: file.ID,
 		};
 		this.setState( {
-			...image,
 			transientId: null,
 			isUploading: false,
 		} );
@@ -109,8 +148,6 @@ class ProductCategoryForm extends Component {
 			placeholder: null,
 			transientId: null,
 			isUploading: false,
-			src: null,
-			id: null,
 		} );
 		editProductCategory( siteId, category, { image: {} } );
 	};
@@ -196,12 +233,19 @@ class ProductCategoryForm extends Component {
 
 	render() {
 		const { siteId, category, translate } = this.props;
+		const { search, selectedParent, isTopLevel } = this.state;
 
 		const isCategoryLoaded = category && isNumber( category.id ) ? Boolean( category.slug ) : true;
 
 		if ( ! siteId || ! category || ! isCategoryLoaded ) {
 			return this.renderPlaceholder();
 		}
+
+		const query = {};
+		if ( search && search.length ) {
+			query.search = search;
+		}
+
 		return (
 			<div className={ classNames( 'product-categories__form', this.props.className ) }>
 				<Card>
@@ -218,6 +262,29 @@ class ProductCategoryForm extends Component {
 							</FormFieldSet>
 						</div>
 					</div>
+					<FormFieldSet>
+						<FormLabel>
+							<FormCheckbox checked={ this.state.isTopLevel } onChange={ this.onTopLevelChange } />
+							<span>{ translate( 'Top level category' ) }</span>
+						</FormLabel>
+
+						{ ! isTopLevel && (
+							<div>
+								<FormLabel>{ translate( 'Select a parent category' ) }</FormLabel>
+								<TermTreeSelectorTerms
+									siteId={ siteId }
+									taxonomy="product_cat"
+									selected={ selectedParent }
+									onChange={ this.setParent }
+									multiple={ false }
+									height={ 300 }
+									hideTermAndChildren={ ( isNumber( category.id ) && category.id ) || null }
+									query={ query }
+									onSearch={ this.onSearch }
+								/>
+							</div>
+						) }
+					</FormFieldSet>
 				</Card>
 			</div>
 		);
