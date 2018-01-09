@@ -21,9 +21,13 @@ import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions'
 
 class JetpackOnboardingContactFormStep extends React.PureComponent {
 	handleAddContactForm = () => {
-		const { siteId } = this.props;
+		const { jpUser, siteId, token } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_jpo_contact_form_clicked' );
+		this.props.recordTracksEvent( 'calypso_jpo_contact_form_clicked', {
+			blog_id: token,
+			site_id_type: 'jpo',
+			user_id_type: jpUser,
+		} );
 
 		this.props.saveJetpackOnboardingSettings( siteId, {
 			addContactForm: true,
