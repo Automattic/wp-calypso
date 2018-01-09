@@ -21,7 +21,6 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
-	getOrderLineItemTax,
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
@@ -32,6 +31,7 @@ import {
 	getOrderTotal,
 } from 'woocommerce/lib/order-values/totals';
 import OrderAddItems from './add-items';
+import OrderLineItem from './line-item';
 import OrderTotalRow from './row-total';
 import ScreenReaderText from 'components/screen-reader-text';
 import Table from 'woocommerce/components/table';
@@ -147,16 +147,25 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderQuantity = item => {
-		const { isEditing } = this.props;
+		const { isEditing, translate } = this.props;
+		const inputId = `quantity-${ item.id }`;
 		if ( isEditing ) {
 			return (
-				<FormTextInput
-					type="number"
-					min={ 1 }
-					name={ `quantity-${ item.id }` }
-					onChange={ this.onChange }
-					value={ item.quantity }
-				/>
+				<Fragment>
+					<ScreenReaderText>
+						<label htmlFor={ inputId }>
+							{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
+						</label>
+					</ScreenReaderText>
+					<FormTextInput
+						type="number"
+						id={ inputId }
+						min={ 1 }
+						name={ `quantity-${ item.id }` }
+						onChange={ this.onChange }
+						value={ item.quantity }
+					/>
+				</Fragment>
 			);
 		}
 		return item.quantity;
@@ -198,54 +207,20 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderItem = ( item, i ) => {
-		const { order } = this.props;
-		const tax = getOrderLineItemTax( order, item.id );
-		if ( item.quantity <= 0 ) {
-			return null;
-		}
-		let itemPrice = formatCurrency( item.price, order.currency );
-		let itemTotal = formatCurrency( item.total, order.currency );
-		if ( parseFloat( item.total ) !== parseFloat( item.subtotal ) ) {
-			const preDiscountCost = getOrderItemCost( order, item.id );
-			itemPrice = (
-				<Fragment>
-					<del className="order-details__item-pre-discount">
-						{ formatCurrency( preDiscountCost, order.currency ) }
-					</del>
-					<ins className="order-details__item-with-discount">
-						{ formatCurrency( item.price, order.currency ) }
-					</ins>
-				</Fragment>
-			);
-
-			itemTotal = (
-				<Fragment>
-					<del className="order-details__item-pre-discount">
-						{ formatCurrency( item.subtotal, order.currency ) }
-					</del>
-					<ins className="order-details__item-with-discount">
-						{ formatCurrency( item.total, order.currency ) }
-					</ins>
-				</Fragment>
-			);
-		}
+	renderOrderItem = item => {
+		const { isEditing, order, site } = this.props;
+		const deleteButton = this.renderDeleteButton( item, 'line_items' );
 		return (
-			<TableRow key={ item.id } className="order-details__items">
-				<TableItem isRowHeader className="order-details__item-product">
-					{ this.renderName( item ) }
-					<span className="order-details__item-sku">{ item.sku }</span>
-				</TableItem>
-				<TableItem className="order-details__item-cost">{ itemPrice }</TableItem>
-				<TableItem className="order-details__item-quantity">
-					{ this.renderQuantity( item, i ) }
-				</TableItem>
-				<TableItem className="order-details__item-tax">
-					{ formatCurrency( tax, order.currency ) }
-				</TableItem>
-				<TableItem className="order-details__item-total">{ itemTotal }</TableItem>
-				{ this.renderDeleteButton( item, 'line_items' ) }
-			</TableRow>
+			<OrderLineItem
+				key={ item.id }
+				deleteButton={ deleteButton }
+				isEditing={ isEditing }
+				item={ item }
+				order={ order }
+				site={ site }
+			>
+				{ this.renderQuantity( item ) }
+			</OrderLineItem>
 		);
 	};
 
