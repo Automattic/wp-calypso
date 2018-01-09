@@ -131,7 +131,7 @@ export default {
 
 	gsuiteNudge( context, next ) {
 		const CartData = require( 'components/data/cart' );
-		const { routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes );
+		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
 
