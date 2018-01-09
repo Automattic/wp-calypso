@@ -50,6 +50,7 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
+import { isNewSite } from 'state/sites/selectors';
 import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
@@ -119,8 +120,10 @@ const Checkout = createReactClass( {
 			this.setState( { previousCart: nextCart } );
 		}
 
+		// Although this is a part of the gsuiteUpsellTake2 A/B test,
+		// the `abtest()` is not called here to make the data more accurate.
 		if (
-			abtest( 'gsuiteUpsell' ) === 'show' &&
+			this.props.isNewlyCreatedSite &&
 			this.props.contactDetails &&
 			cartItems.hasGoogleApps( this.props.cart ) &&
 			this.needsDomainDetails()
@@ -131,7 +134,11 @@ const Checkout = createReactClass( {
 
 	setDomainDetailsForGsuiteCart() {
 		const { contactDetails, cart } = this.props;
-		const domainReceiptId = get( cartItems.getGoogleApps( cart ), '0.extra.receipt_for_domain', 0 );
+		const domainReceiptId = get(
+			cartItems.getGoogleApps( cart ),
+			'[0].extra.receipt_for_domain',
+			0
+		);
 
 		if ( domainReceiptId ) {
 			upgradesActions.setDomainDetails( contactDetails );
@@ -264,6 +271,11 @@ const Checkout = createReactClass( {
 	getCheckoutCompleteRedirectPath() {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
+		const domainReceiptId = get(
+			cartItems.getGoogleApps( cart ),
+			'[0].extra.receipt_for_domain',
+			0
+		);
 
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
 		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
@@ -298,25 +310,23 @@ const Checkout = createReactClass( {
 			return `/checklist/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 		}
 
-		if ( abtest( 'gsuiteUpsell' ) === 'show' ) {
-			const domainReceiptId = get(
-				cartItems.getGoogleApps( cart ),
-				'0.extra.receipt_for_domain',
-				0
+		if ( domainReceiptId && receiptId && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
+		}
+
+		if (
+			this.props.isNewlyCreatedSite &&
+			! cartItems.hasGoogleApps( cart ) &&
+			cartItems.hasDomainRegistration( cart ) &&
+			isEmpty( receipt.failed_purchases )
+		) {
+			const domainsForGsuite = filter( cartItems.getDomainRegistrations( cart ), ( { meta } ) =>
+				canAddGoogleApps( meta )
 			);
-			if ( domainReceiptId ) {
-				return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
-			}
 
-			if ( ! cartItems.hasGoogleApps( cart ) && cartItems.hasDomainRegistration( cart ) ) {
-				const domainsForGsuite = filter( cartItems.getDomainRegistrations( cart ), ( { meta } ) =>
-					canAddGoogleApps( meta )
-				);
-
-				if ( domainsForGsuite.length ) {
-					return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGsuite[ 0 ]
-						.meta }/${ receiptId }`;
-				}
+			if ( domainsForGsuite.length && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+				return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGsuite[ 0 ]
+					.meta }/${ receiptId }`;
 			}
 		}
 
@@ -519,6 +529,7 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
 			isEligibleForCheckoutToChecklist: isEligibleForCheckoutToChecklist(

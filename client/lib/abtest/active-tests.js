@@ -82,15 +82,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	gsuiteUpsell: {
-		datestamp: '20171025',
-		variations: {
-			show: 0,
-			hide: 100,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	signupSiteSegmentStep: {
 		datestamp: '20170329',
 		variations: {
@@ -115,6 +106,15 @@ export default {
 			hide: 50,
 		},
 		defaultVariation: 'hide',
+		allowExistingUsers: true,
+	},
+	gsuiteUpsellV2: {
+		datestamp: '20171225',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
 };

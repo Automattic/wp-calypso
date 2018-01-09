@@ -20,6 +20,7 @@ import {
 	startsWith,
 } from 'lodash';
 import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -1084,3 +1085,22 @@ export const siteSupportsGoogleAnalyticsBasicEcommerceTracking = ( state, siteId
 export const siteSupportsGoogleAnalyticsEnhancedEcommerceTracking = ( state, siteId ) => {
 	return isJetpackMinimumVersion( state, siteId, '5.6-beta2' );
 };
+
+/**
+ * Returns true if the site is created less than 30 mins ago.
+ * False otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether site is newly created.
+ */
+export function isNewSite( state, siteId ) {
+	const createdAt = getSiteOption( state, siteId, 'created_at' );
+
+	if ( ! createdAt ) {
+		return false;
+	}
+
+	// less than 30 minutes
+	return moment().diff( createdAt, 'minutes' ) < 30;
+}
