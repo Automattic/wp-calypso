@@ -3,7 +3,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 /**
@@ -18,12 +19,13 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
+import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	state = {
 		city: '',
 		name: '',
-		stateName: '',
+		state: '',
 		street: '',
 		zip: '',
 	};
@@ -41,20 +43,25 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			name: translate( 'Business Name' ),
 			street: translate( 'Street Address' ),
 			city: translate( 'City' ),
-			stateName: translate( 'State' ),
+			state: translate( 'State' ),
 			zip: translate( 'ZIP Code' ),
 		};
 	}
 
+	handleAddBusinessAddress = () => {
+		const { siteId } = this.props;
+		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
+	};
+
 	render() {
-		const { translate } = this.props;
+		const { getForwardUrl, translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
 		const subHeaderText = translate(
 			'Enter your business address to have a map added to your website.'
 		);
 
 		return (
-			<div className="steps__main">
+			<Fragment>
 				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
 					path={ '/jetpack/onboarding/' + STEPS.BUSINESS_ADDRESS + '/:site' }
@@ -76,14 +83,16 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 								/>
 							</FormFieldset>
 						) ) }
-						<Button href={ this.props.getForwardUrl() } primary>
+						<Button href={ getForwardUrl() } onClick={ this.handleAddBusinessAddress } primary>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
 				</Card>
-			</div>
+			</Fragment>
 		);
 	}
 }
 
-export default localize( JetpackOnboardingBusinessAddressStep );
+export default connect( null, { saveJetpackOnboardingSettings } )(
+	localize( JetpackOnboardingBusinessAddressStep )
+);
