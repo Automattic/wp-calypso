@@ -30,7 +30,7 @@ import {
 	requestComment as requestCommentAction,
 	requestCommentsList,
 } from 'state/comments/actions';
-import { updateCommentsQuery } from 'state/ui/comments/actions';
+import { updateCommentsProgress, updateCommentsQuery } from 'state/ui/comments/actions';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 const changeCommentStatus = ( { dispatch, getState }, action ) => {
@@ -58,20 +58,25 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 	);
 };
 
-export const handleChangeCommentStatusSuccess = (
-	{ dispatch },
-	{ commentId, refreshCommentListQuery }
-) => {
+export const handleChangeCommentStatusSuccess = ( { dispatch }, action ) => {
+	const { commentId, refreshCommentListQuery: query, siteId } = action;
 	dispatch( removeNotice( `comment-notice-error-${ commentId }` ) );
-	if ( !! refreshCommentListQuery ) {
-		dispatch( requestCommentsList( refreshCommentListQuery ) );
+	if ( !! query ) {
+		dispatch( requestCommentsList( query ) );
+		if ( !! query.progressId ) {
+			dispatch( updateCommentsProgress( siteId, query.progressId ) );
+		}
 	}
 };
 
-const announceStatusChangeFailure = ( { dispatch }, action ) => {
-	const { commentId, status, previousStatus } = action;
+export const announceStatusChangeFailure = ( { dispatch }, action ) => {
+	const { commentId, previousStatus, refreshCommentListQuery: query, siteId, status } = action;
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
+
+	if ( !! query && !! query.progressId ) {
+		dispatch( updateCommentsProgress( siteId, query.progressId, { failed: true } ) );
+	}
 
 	dispatch(
 		bypassDataLayer( {

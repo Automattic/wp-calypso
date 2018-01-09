@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
 import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -118,14 +119,23 @@ export class CommentNavigation extends Component {
 			toggleBulkMode,
 			unlike,
 		} = this.props;
+		const progressId = uuid();
 		this.props.removeNotice( 'comment-notice' );
 		each( selectedComments, ( { commentId, isLiked, postId, status } ) => {
 			if ( 'delete' === newStatus ) {
-				deletePermanently( postId, commentId );
+				deletePermanently( postId, commentId, {
+					progressId,
+					progressTotal: selectedComments.length,
+				} );
 				return;
 			}
 			const alsoUnlike = isLiked && 'approved' !== status;
-			changeStatus( postId, commentId, newStatus, { alsoUnlike, previousStatus: status } );
+			changeStatus( postId, commentId, newStatus, {
+				alsoUnlike,
+				previousStatus: status,
+				progressId,
+				progressTotal: selectedComments.length,
+			} );
 			if ( alsoUnlike ) {
 				unlike( postId, commentId );
 			}
@@ -346,29 +356,43 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
+const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
+	changeStatus: ( postId, commentId, status, options = { alsoUnlike: false } ) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_comment_management_change_status', {
-						also_unlike: analytics.alsoUnlike,
-						previous_status: analytics.previousStatus,
+						also_unlike: options.alsoUnlike,
+						previous_status: options.previousStatus,
 						status,
 					} ),
 					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
 				),
-				changeCommentStatus( siteId, postId, commentId, status )
+				changeCommentStatus( siteId, postId, commentId, status, {
+					...commentsListQuery,
+					progressId: options.progressId,
+					progressTotal: options.progressTotal,
+				} )
 			)
 		),
-	deletePermanently: ( postId, commentId ) =>
+	deletePermanently: ( postId, commentId, options ) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
 					recordTracksEvent( 'calypso_comment_management_delete' ),
 					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
-				deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+				deleteComment(
+					siteId,
+					postId,
+					commentId,
+					{ showSuccessNotice: true },
+					{
+						...commentsListQuery,
+						progressId: options.progressId,
+						progressTotal: options.progressTotal,
+					}
+				)
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>

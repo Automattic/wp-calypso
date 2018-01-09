@@ -12,6 +12,7 @@ import { spy } from 'sinon';
 import {
 	addComments,
 	announceEditFailure,
+	announceStatusChangeFailure,
 	editComment,
 	fetchCommentsList,
 	handleChangeCommentStatusSuccess,
@@ -331,6 +332,49 @@ describe( '#handleChangeCommentStatusSuccess', () => {
 				status: 'all',
 				type: 'any',
 			},
+		} );
+	} );
+
+	test( 'should increase the action progress', () => {
+		const dispatch = spy();
+		handleChangeCommentStatusSuccess(
+			{ dispatch },
+			{
+				siteId: 12345678,
+				commentId: 1234,
+				refreshCommentListQuery: {
+					progressId: 'foo',
+				},
+			}
+		);
+		expect( dispatch ).to.have.been.calledThrice;
+		expect( dispatch.lastCall ).to.have.been.calledWithExactly( {
+			type: 'COMMENTS_PROGRESS_UPDATE',
+			siteId: 12345678,
+			progressId: 'foo',
+			options: { failed: false },
+		} );
+	} );
+} );
+
+describe( '#announceStatusChangeFailure()', () => {
+	test( 'should fail the action progress', () => {
+		const dispatch = spy();
+		announceStatusChangeFailure(
+			{ dispatch },
+			{
+				siteId: 12345678,
+				commentId: 1234,
+				refreshCommentListQuery: {
+					progressId: 'foo',
+				},
+			}
+		);
+		expect( dispatch.secondCall ).to.have.been.calledWithExactly( {
+			type: 'COMMENTS_PROGRESS_UPDATE',
+			siteId: 12345678,
+			progressId: 'foo',
+			options: { failed: true },
 		} );
 	} );
 } );

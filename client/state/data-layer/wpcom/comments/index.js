@@ -23,6 +23,7 @@ import { requestCommentsList } from 'state/comments/actions';
 import { getPostOldestCommentDate, getPostNewestCommentDate } from 'state/comments/selectors';
 import getSiteComment from 'state/selectors/get-site-comment';
 import { decodeEntities } from 'lib/formatting';
+import { updateCommentsProgress } from 'state/ui/comments/actions';
 
 export const commentsFromApi = comments =>
 	map( comments, comment => ( {
@@ -214,7 +215,10 @@ export const deleteComment = ( { dispatch, getState }, action ) => {
 	);
 };
 
-export const handleDeleteSuccess = ( { dispatch }, { options, refreshCommentListQuery } ) => {
+export const handleDeleteSuccess = (
+	{ dispatch },
+	{ options, refreshCommentListQuery: query, siteId }
+) => {
 	const showSuccessNotice = get( options, 'showSuccessNotice', false );
 	if ( showSuccessNotice ) {
 		dispatch(
@@ -226,13 +230,20 @@ export const handleDeleteSuccess = ( { dispatch }, { options, refreshCommentList
 		);
 	}
 
-	if ( !! refreshCommentListQuery ) {
-		dispatch( requestCommentsList( refreshCommentListQuery ) );
+	if ( !! query ) {
+		dispatch( requestCommentsList( query ) );
+		if ( !! query.progressId ) {
+			dispatch( updateCommentsProgress( siteId, query.progressId ) );
+		}
 	}
 };
 
 export const announceDeleteFailure = ( { dispatch }, action ) => {
-	const { siteId, postId, comment } = action;
+	const { siteId, postId, comment, refreshCommentListQuery: query } = action;
+
+	if ( !! query && !! query.progressId ) {
+		dispatch( updateCommentsProgress( siteId, query.progressId, { failed: true } ) );
+	}
 
 	dispatch(
 		errorNotice( translate( 'Could not delete the comment.' ), {
