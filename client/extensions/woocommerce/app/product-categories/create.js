@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty, omit, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,12 +43,11 @@ class ProductCategoryCreate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { category, site } = this.props;
+		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			if ( ! category ) {
-				this.props.editProductCategory( site.ID, null, {} );
-			}
+			this.props.clearProductCategoryEdits( site.ID );
+			this.props.editProductCategory( site.ID, null, {} );
 		}
 	}
 
@@ -57,6 +56,7 @@ class ProductCategoryCreate extends React.Component {
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
+			this.props.clearProductCategoryEdits( newSiteId );
 			this.props.editProductCategory( newSiteId, null, {} );
 		}
 	}
@@ -95,7 +95,8 @@ class ProductCategoryCreate extends React.Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const categoryId = getCurrentlyEditingId( state );
-	const category = getProductCategoryWithLocalEdits( state, categoryId );
+	const category =
+		! isNumber( categoryId ) && getProductCategoryWithLocalEdits( state, categoryId );
 	const hasEdits = ! isEmpty( omit( getProductCategoryEdits( state, categoryId ), 'id' ) );
 
 	return {
