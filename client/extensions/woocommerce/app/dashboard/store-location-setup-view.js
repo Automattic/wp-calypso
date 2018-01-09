@@ -132,6 +132,11 @@ class StoreLocationSetupView extends Component {
 		const { adminURL, currentUserEmailVerified, onRequestRedirect, siteId, translate } = this.props;
 		event.preventDefault();
 
+		// Already saving? Bail.
+		if ( this.state.isSaving ) {
+			return;
+		}
+
 		if ( ! currentUserEmailVerified ) {
 			this.setState( { showEmailVerificationDialog: true } );
 			return;
@@ -226,6 +231,7 @@ class StoreLocationSetupView extends Component {
 					showAllLocations
 				/>
 				<SetupFooter
+					busy={ this.state.isSaving }
 					disabled={ submitDisabled }
 					onClick={ this.onNext }
 					label={ translate( "Let's Go!" ) }
