@@ -194,10 +194,7 @@ function isBelgiumBancontactEnabled( cart ) {
 }
 
 function isPolandP24Enabled( cart ) {
-	return (
-		config.isEnabled( 'upgrades/poland-p24' ) &&
-		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_P24' ) >= 0
-	);
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_P24' ) >= 0;
 }
 
 export {
