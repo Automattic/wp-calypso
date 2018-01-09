@@ -27,7 +27,7 @@ export class ThemesBanner extends PureComponent {
 			<div className="themes-banner" style={ backgroundStyle }>
 				<h1>{ title }</h1>
 				<p>{ description }</p>
-				<Button compact={ true } primary={ !! backgroundImage } onClick={ action } href={ href }>
+				<Button compact primary={ !! backgroundImage } onClick={ action } href={ href }>
 					{ actionLabel }
 				</Button>
 			</div>
