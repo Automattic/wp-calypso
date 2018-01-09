@@ -25,7 +25,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	state = {
 		city: '',
 		name: '',
-		stateName: '',
+		state: '',
 		street: '',
 		zip: '',
 	};
@@ -43,23 +43,14 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			name: translate( 'Business Name' ),
 			street: translate( 'Street Address' ),
 			city: translate( 'City' ),
-			stateName: translate( 'State' ),
+			state: translate( 'State' ),
 			zip: translate( 'ZIP Code' ),
 		};
 	}
 
 	handleAddBusinessAddress = () => {
 		const { siteId } = this.props;
-
-		this.props.saveJetpackOnboardingSettings( siteId, {
-			businessAddress: {
-				city: this.state.city,
-				state: this.state.stateName,
-				street: this.state.street,
-				zip: this.state.zip,
-				name: this.state.name,
-			},
-		} );
+		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
 	};
 
 	render() {
