@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { every, isEmpty, keys, pick, trim } from 'lodash';
+import { every, includes, isEmpty, keys, pick, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -23,6 +23,10 @@ import {
 import BasicWidget from 'woocommerce/components/basic-widget';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
+import {
+	areLocationsLoaded,
+	getCountriesWithStates,
+} from 'woocommerce/state/sites/locations/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
@@ -31,6 +35,7 @@ import SetupHeader from './setup-header';
 import SetupNotices from './setup-notices';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryLocations from 'woocommerce/components/query-locations';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import userFactory from 'lib/user';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
@@ -178,16 +183,30 @@ class StoreLocationSetupView extends Component {
 	};
 
 	renderForm = () => {
-		const { contactDetails, settingsGeneralLoaded, translate } = this.props;
-		const showForm = contactDetails && settingsGeneralLoaded;
+		const {
+			contactDetails,
+			countriesWithStates,
+			locationsLoaded,
+			settingsGeneralLoaded,
+			translate,
+		} = this.props;
+		const showForm =
+			contactDetails && settingsGeneralLoaded && locationsLoaded && ! this.state.isFetchingUser;
 
 		// Note: We will have to revisit this if/when we support countries that lack post codes
-		const requiredAddressFields = pick( this.state.address, [ 'street', 'city', 'postcode' ] );
+		const requiredKeys = [ 'country', 'city', 'postcode', 'street' ];
+
+		// See if this country has states
+		// TODO - refactor AddressView to do this for us
+		if ( includes( countriesWithStates, this.state.address.country ) ) {
+			requiredKeys.push( 'state' );
+		}
+
+		const requiredAddressFields = pick( this.state.address, requiredKeys );
 		const everyRequiredFieldHasAValue = every( requiredAddressFields, field => {
 			return ! isEmpty( trim( field ) );
 		} );
-		const submitDisabled =
-			this.state.isSaving || this.state.isFetchingUser || ! everyRequiredFieldHasAValue;
+		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;
 
 		if ( ! showForm ) {
 			return (
@@ -241,6 +260,7 @@ class StoreLocationSetupView extends Component {
 						subtitle={ translate( 'First we need to know where you are in the world.' ) }
 					/>
 					{ this.renderForm() }
+					<QueryLocations siteId={ siteId } />
 					<QuerySettingsGeneral siteId={ siteId } />
 					<QueryContactDetailsCache />
 				</div>
@@ -251,15 +271,18 @@ class StoreLocationSetupView extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const { siteId } = ownProps;
-
 	const contactDetails = getContactDetailsCache( state );
 	const currentUserEmailVerified = isCurrentUserEmailVerified( state );
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
+	const locationsLoaded = areLocationsLoaded( state, siteId );
+	const countriesWithStates = getCountriesWithStates( state, siteId );
 
 	return {
 		contactDetails,
+		countriesWithStates,
 		currentUserEmailVerified,
+		locationsLoaded,
 		settingsGeneralLoaded,
 		storeLocation,
 	};

@@ -14,6 +14,7 @@ import {
 	getContinents,
 	getCountries,
 	getCountryName,
+	getCountriesWithStates,
 	getStates,
 	hasStates,
 } from '../selectors';
@@ -257,6 +258,20 @@ describe( 'selectors', () => {
 
 		test( 'should return true if the country has states', () => {
 			expect( hasStates( loadedState, 'US' ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#getCountriesWithStates', () => {
+		test( 'should return an empty list if the locations are not loaded', () => {
+			expect( getCountriesWithStates( emptyState ) ).to.deep.equal( [] );
+		} );
+
+		test( 'should return an empty list if the locations are being loaded', () => {
+			expect( getCountriesWithStates( loadingState ) ).to.deep.equal( [] );
+		} );
+
+		test( 'should return the countries with states, sorted', () => {
+			expect( getCountriesWithStates( loadedState ) ).to.deep.equal( [ 'CA', 'US' ] );
 		} );
 	} );
 } );
