@@ -260,31 +260,41 @@ class ProductCategoryForm extends Component {
 								<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
 								{ this.renderTinyMCE() }
 							</FormFieldSet>
+							<FormFieldSet>
+								<FormLabel>
+									<FormCheckbox
+										checked={ this.state.isTopLevel }
+										onChange={ this.onTopLevelChange }
+									/>
+									<span>
+										{ translate( 'Top level category', {
+											context:
+												'Categories: New category being created is top level i.e. has no parent',
+										} ) }{' '}
+									</span>
+								</FormLabel>
+
+								{ ! isTopLevel && (
+									<div>
+										<FormLabel>{ translate( 'Select a parent category' ) }</FormLabel>
+										<TermTreeSelectorTerms
+											siteId={ siteId }
+											taxonomy="product_cat"
+											selected={ selectedParent }
+											onChange={ this.setParent }
+											multiple={ false }
+											height={ 300 }
+											hideTermAndChildren={ ( isNumber( category.id ) && category.id ) || null }
+											query={ query }
+											onSearch={ this.onSearch }
+											emptyMessage={ translate( 'No categories found.' ) }
+											searchThreshold={ 0 }
+										/>
+									</div>
+								) }
+							</FormFieldSet>
 						</div>
 					</div>
-					<FormFieldSet>
-						<FormLabel>
-							<FormCheckbox checked={ this.state.isTopLevel } onChange={ this.onTopLevelChange } />
-							<span>{ translate( 'Top level category' ) }</span>
-						</FormLabel>
-
-						{ ! isTopLevel && (
-							<div>
-								<FormLabel>{ translate( 'Select a parent category' ) }</FormLabel>
-								<TermTreeSelectorTerms
-									siteId={ siteId }
-									taxonomy="product_cat"
-									selected={ selectedParent }
-									onChange={ this.setParent }
-									multiple={ false }
-									height={ 300 }
-									hideTermAndChildren={ ( isNumber( category.id ) && category.id ) || null }
-									query={ query }
-									onSearch={ this.onSearch }
-								/>
-							</div>
-						) }
-					</FormFieldSet>
 				</Card>
 			</div>
 		);

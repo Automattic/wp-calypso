@@ -47,7 +47,7 @@ class ProductCategoryCreate extends React.Component {
 
 		if ( site && site.ID ) {
 			this.props.clearProductCategoryEdits( site.ID );
-			this.props.editProductCategory( site.ID, null, {} );
+			this.props.editProductCategory( site.ID, null, { parent: 0 } );
 		}
 	}
 
@@ -57,7 +57,7 @@ class ProductCategoryCreate extends React.Component {
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.props.clearProductCategoryEdits( newSiteId );
-			this.props.editProductCategory( newSiteId, null, {} );
+			this.props.editProductCategory( newSiteId, null, { parent: 0 } );
 		}
 	}
 
@@ -84,7 +84,7 @@ class ProductCategoryCreate extends React.Component {
 				<ProtectFormGuard isChanged={ hasEdits } />
 				<ProductCategoryForm
 					siteId={ site && site.ID }
-					category={ category || {} }
+					category={ category || { parent: 0 } }
 					editProductCategory={ this.props.editProductCategory }
 				/>
 			</Main>
