@@ -234,7 +234,7 @@ class StoreLocationSetupView extends Component {
 					busy={ this.state.isSaving }
 					disabled={ submitDisabled }
 					onClick={ this.onNext }
-					label={ translate( "Let's Go!" ) }
+					label={ translate( 'Next', { context: 'Label for button that submits a form' } ) }
 					primary
 				/>
 			</div>
