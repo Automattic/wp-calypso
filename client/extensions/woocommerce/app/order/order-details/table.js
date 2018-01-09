@@ -370,7 +370,7 @@ class OrderDetailsTable extends Component {
 					{ order.line_items.map( this.renderOrderItem ) }
 					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
-				{ isEditing && <OrderAddItems /> }
+				{ isEditing && <OrderAddItems orderId={ order.id } /> }
 
 				<Table className={ totalsClasses } compact>
 					{ this.renderCoupons() }

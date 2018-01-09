@@ -53,15 +53,9 @@
 	margin: 0 -24px;
 	padding: 16px 80px 16px 24px;
 	border-bottom: 1px solid lighten($gray, 30%);
-	text-align: right;
 
 	.button + .button {
 		margin-left: 24px;
-	}
-
-	// Fix alignment with neighboring primary button
-	.button.is-borderless {
-		padding-top: 3px;
 	}
 }
 
