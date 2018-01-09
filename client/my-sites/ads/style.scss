@@ -84,13 +84,21 @@
 			display: inline-block;
 		}
 	}
+
+	tbody tr:hover {
+		background-color: #f3f6f8;
+	}
 }
 
-.module-content-text ul.ads__earnings-history-statuses-list {
+.ads__module-content-text p {
+	text-align: left;
+}
+
+.module-content-text ul.ads__earnings-history-info-list {
 	margin: 1em 24px 1em 40px;
 }
 
-.ads__earnings-history-status {
+.ads__earnings-history-info {
 	padding-bottom: 10px;
 	text-align: left;
 }
