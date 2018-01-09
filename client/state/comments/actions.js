@@ -159,6 +159,11 @@ export const deleteComment = (
 	commentId,
 	options,
 	refreshCommentListQuery,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 /***
@@ -249,6 +254,11 @@ export const changeCommentStatus = (
 	commentId,
 	status,
 	refreshCommentListQuery,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 /**

@@ -52,7 +52,7 @@ const changeCommentStatus = ( { dispatch, getState }, action ) => {
 			},
 			{
 				...action,
-				previousStatus,
+				meta: Object.assign( {}, action.meta, { comment: { previousStatus } } ),
 			}
 		)
 	);
@@ -69,7 +69,8 @@ export const handleChangeCommentStatusSuccess = (
 };
 
 const announceStatusChangeFailure = ( { dispatch }, action ) => {
-	const { commentId, status, previousStatus } = action;
+	const { commentId, status } = action;
+	const previousStatus = get( action, 'meta.comment.previousStatus' );
 
 	dispatch( removeNotice( `comment-notice-${ commentId }` ) );
 
