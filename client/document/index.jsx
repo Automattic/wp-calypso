@@ -7,6 +7,7 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import get from 'lodash/get';
 
 /**
  * Internal dependencies
@@ -242,7 +243,7 @@ class Document extends React.Component {
 						<link
 							rel="stylesheet"
 							id={ 'section-css-' + sectionCss.id }
-							href={ sectionCss.urls[ isRtl ? 'rtl' : 'ltr' ] }
+							href={ get( sectionCss, `urls.${ isRtl ? 'rtl' : 'ltr' }` ) }
 						/>
 					) }
 

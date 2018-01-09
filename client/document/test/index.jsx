@@ -39,7 +39,9 @@ function createContext( additonalProps = {} ) {
 			shouldUseStylePreloadCommon: false,
 			shouldUseScriptPreload: false,
 			i18nLocaleScript: 'https://arbitrary-i18n-locale-script-url',
-			sectionCss: {},
+			sectionCss: {
+				urls: [],
+			},
 			chunk: 'chunk',
 			renderedLayout: '',
 			sectionGroup: 'reader',
