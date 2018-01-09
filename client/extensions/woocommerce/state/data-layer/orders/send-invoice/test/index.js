@@ -13,7 +13,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 describe( 'handlers', () => {
 	describe( '#fetch', () => {
-		test( 'should dispatch a get action to the API via the jetpack proxy for this siteId & orderId', () => {
+		test( 'should dispatch a post action to the API via the jetpack proxy for this siteId & orderId', () => {
 			const action = sendOrderInvoice( 123, 74 );
 			const result = fetch( action );
 

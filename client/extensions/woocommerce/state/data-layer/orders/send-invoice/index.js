@@ -13,7 +13,7 @@ import { WOOCOMMERCE_ORDER_INVOICE_SEND } from 'woocommerce/state/action-types';
 
 export const fetch = action => {
 	const { siteId, orderId } = action;
-	return request( siteId, action ).post( `orders/${ orderId }/send_invoice`, {} );
+	return request( siteId, action ).post( `orders/${ orderId }/send_invoice` );
 };
 
 export function fromApi( response ) {
