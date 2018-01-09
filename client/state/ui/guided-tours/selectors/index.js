@@ -86,7 +86,7 @@ const reallyGetTourFromQuery = state => {
 	const current = getCurrentQueryArguments( state );
 	const tourProps = [ 'tour', '_timestamp' ];
 
-	return current.tour ? pick( current, tourProps ) : pick( initial, tourProps );
+	return current && current.tour ? pick( current, tourProps ) : pick( initial, tourProps );
 };
 
 /*
