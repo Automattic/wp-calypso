@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -14,12 +15,13 @@ import { addLocaleToPath, getLanguage } from 'lib/i18n-utils';
 import LocaleSuggestionsListItem from './list-item';
 import LocaleSuggestionStore from 'lib/locale-suggestions';
 import Notice from 'components/notice';
-import switchLocale from 'lib/i18n-utils/switch-locale';
+import { setLocale } from 'state/ui/language/actions';
 
 class LocaleSuggestions extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
+		setLocale: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -40,7 +42,7 @@ class LocaleSuggestions extends Component {
 			}
 		}
 
-		switchLocale( locale );
+		this.props.setLocale( locale );
 	}
 
 	componentDidMount() {
@@ -55,7 +57,7 @@ class LocaleSuggestions extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.locale !== nextProps.locale ) {
-			switchLocale( nextProps.locale );
+			this.props.setLocale( nextProps.locale );
 		}
 	}
 
@@ -105,4 +107,6 @@ class LocaleSuggestions extends Component {
 	}
 }
 
-export default LocaleSuggestions;
+export default connect( null, {
+	setLocale,
+} )( LocaleSuggestions );
