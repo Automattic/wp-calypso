@@ -18,6 +18,7 @@ import promotions from '../sites/promotions/handlers';
 import request from './request';
 import reviews from '../sites/reviews/handlers';
 import reviewReplies from '../sites/review-replies/handlers';
+import sendInvoice from './orders/send-invoice';
 import settingsGeneral from '../sites/settings/general/handlers';
 import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
@@ -40,6 +41,7 @@ const handlers = mergeHandlers(
 	request,
 	reviews,
 	reviewReplies,
+	sendInvoice,
 	settingsGeneral,
 	shippingZoneLocations,
 	shippingZoneMethods,
