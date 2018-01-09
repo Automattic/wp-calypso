@@ -88,6 +88,6 @@ function createPageDefinition( path, sectionDefinition ) {
 }
 
 module.exports = {
-	get: sectionsUtils.getSectionsFactory( sections ),
+	get: () => sections,
 	load: sectionsUtils.loadSectionsFactory( sections, createPageDefinition ),
 };

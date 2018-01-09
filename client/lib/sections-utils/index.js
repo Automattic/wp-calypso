@@ -17,9 +17,3 @@ export function loadSectionsFactory( sections, createPageDefinition ) {
 		);
 	};
 }
-
-export function getSectionsFactory( sections ) {
-	return function getSections() {
-		return sections;
-	};
-}
