@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,15 +20,15 @@ import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import FormSecurity from 'my-sites/site-settings/form-security';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { isRewindActive } from 'state/selectors';
+import { getRewindState } from 'state/selectors';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import JetpackMonitor from 'my-sites/site-settings/form-jetpack-monitor';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import Backups from 'my-sites/site-settings/jetpack-credentials';
-import QueryRewindStatus from 'components/data/query-rewind-status';
+import QueryRewindState from 'components/data/query-rewind-state';
 
-const SiteSettingsSecurity = ( { rewindActive, site, siteId, siteIsJetpack, translate } ) => {
+const SiteSettingsSecurity = ( { rewindState, site, siteId, siteIsJetpack, translate } ) => {
 	if ( ! site ) {
 		return <Placeholder />;
 	}
@@ -63,12 +64,12 @@ const SiteSettingsSecurity = ( { rewindActive, site, siteId, siteIsJetpack, tran
 
 	return (
 		<Main className="settings-security__main site-settings">
-			<QueryRewindStatus siteId={ siteId } />
+			<QueryRewindState siteId={ siteId } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
-			{ rewindActive && <Backups /> }
+			{ includes( [ 'active', 'awaitingCredentials' ], rewindState.state ) && <Backups /> }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
@@ -76,7 +77,13 @@ const SiteSettingsSecurity = ( { rewindActive, site, siteId, siteIsJetpack, tran
 };
 
 SiteSettingsSecurity.propTypes = {
-	rewindActive: PropTypes.bool,
+	rewindState: PropTypes.shape( {
+		credentials: PropTypes.array,
+		downloads: PropTypes.array,
+		lastUpdated: PropTypes.object,
+		rewinds: PropTypes.array,
+		state: PropTypes.string,
+	} ),
 	site: PropTypes.object,
 	siteId: PropTypes.number,
 	siteIsJetpack: PropTypes.bool,
@@ -87,7 +94,7 @@ export default connect( state => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		rewindActive: isRewindActive( state, siteId ),
+		rewindState: getRewindState( state, siteId ),
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
