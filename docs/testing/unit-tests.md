@@ -7,55 +7,21 @@ This guide is intended as a quick reference of common tools and conventions we u
 ## Table of contents
 * [Running tests](running-tests)
 * [Writing tests](writing-tests)
-    * [Describing tests](#describing-tests)
     * [Folder structure](#folder-structure)
+    * [Describing tests](#describing-tests)
     * [Mocking HTTP requests with nock](#mocking-http-requests-with nock)
-
-## What should I unit test?
-We assume you've Googled the 'why' of unit testing, but sometimes deciding __what__ to unit test is more difficult. 
-
-If your code were to break or receive unexpected input, what side-effects would the rest of the application experience?
+    * [Snapshot testing](#snapshot-testing)
+* [Examples](#examples)
 
 ## Running tests
 
-To execute all client side tests, run the following command in the root of the project folder:
-
-```bash
-npm run test-client
-```
-
-You can also run all tests in a specific directory or matching pattern, for example:
-
-```bash
-# run test suites for all files in a specific folder
-npm run test-client client/lib/domains
-
-# run test suites for all files matching pattern
-npm run test-client client/*/domains
-```
-
-To run a __specific suite or test__, append `.only() ` to the `describe` and `test` functions:
-
-```javascript
-describe.only( 'just run this suite', function() {
-	test( 'should run these tests', function() {
-		// your test
-	} );
-
-	test.only( 'should only run this one test', function() {
-		// just run this test if the only is present
-	} );
-} );
-```
-**Note:** Be careful not to check in tests when using the `only()` feature, otherwise the build server will __only__ run those suites or tests.
-
-[eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest) runs over all tests files, and will catch common errors. Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
+See [testing-overview.md](testing-overview.md).
 
 ## Writing tests
-We use [Jest](https://facebook.github.io/jest) for testing our client-side application, and [Enzyme](https://github.com/airbnb/enzyme) for testing React components.
+
+We use [Jest](https://facebook.github.io/jest) testing framework for unit tests, and [Enzyme](https://github.com/airbnb/enzyme) for testing React components. You can find more information on testing components at [component tests](component-tests.md)._
 
 Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [globals](https://facebook.github.io/jest/docs/en/mock-function-api.html#content) (`describe`, `test`, `beforeEach` and so on) [assertions](http://facebook.github.io/jest/docs/en/expect.html#content), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html#content) and [mock function/spies](https://facebook.github.io/jest/docs/en/mock-function-api.html#content).
-
 
 ## Folder structure
 Keep your tests in a `test` folder in your working directory. The test file should have the same name as the test subject file, and use the extension `.js`.
@@ -69,7 +35,7 @@ Keep your tests in a `test` folder in your working directory. The test file shou
 ### Describing tests
 Use 'describe' block to group test cases. Each test case should ideally describe one behaviour only.
 
-In test cases, try to describe in plain words the expected behaviour For UI components, this might entail describing expected behaviour from a user perspective rather than explaining code internals.
+In test cases, try to describe in plain words the expected behaviour. For UI components, this might entail describing expected behaviour from a user perspective rather than explaining code internals.
 
 **Good**
 
@@ -92,7 +58,7 @@ describe( 'CheckboxWithLabel', () => {
 ```
 
 ### Snapshot testing
-See[Snapshot testing](snapshot-testing.md)
+See [Snapshot testing](snapshot-testing.md)
 
 ### Examples
 
@@ -157,7 +123,7 @@ describe( 'requestSomeData', () => {
 
 #### Dependency injection
 
-Passing dependencies to a function as arguments can often make your code simpler to test. A a basic example, we have a utility function that checks whether a value exists in a list.
+Passing dependencies to a function as arguments can often make your code simpler to test. As a basic example, we have a utility function that checks whether a value exists in a list:
 
 One way to do it would be to reference a dependency in a higher scope:
 
@@ -280,5 +246,3 @@ When stubbing properties or methods in the global scope, make sure to cache the 
 	    // some test cases ...
 	} );	
 ```
-
-### Debugging tests (?)

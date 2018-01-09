@@ -49,6 +49,9 @@ Tests can be run in 3 different modes:
 
 They are executed on every push on continuous integration (CircleCI). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
+Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
+
+
 _Check also how to write [unit tests](unit-tests.md) and [component tests](component-tests.md)._
 
 ### Integration tests
@@ -121,17 +124,17 @@ Example for client:
 The exclusivity feature allows you to run only the specified suite or test-case by appending `.only()` to the function.
 It works with `describe` and `it` functions. More details in [Jest documentation](https://facebook.github.io/jest/docs/api.html).
 
-Using `only` is a little bit dangerous, as you may end up committing the `only`, which would cause the test suite to only run your test on the build server. So be sure to look for stray only calls when reviewing a test. We have an `eslint` rule in the works that should catch them for you.
+Using `only` is a little bit dangerous, as you may end up committing the `only`, which would cause the test suite to only run your test on the build server. So be sure to look for stray only calls when reviewing a test. We have [eslint rules](https://github.com/jest-community/eslint-plugin-jest) that should catch them for you.
 
 Example:
 
 ```js
 describe.only( 'just run this suite', function() {
-	it( 'should run these tests', function() {
+	test( 'should run these tests', function() {
 		// your test
 	} );
 
-	it.only( 'should only run this one test', function() {
+	test.only( 'should only run this one test', function() {
 		// just run this test if the only is present
 	} );
 } );
