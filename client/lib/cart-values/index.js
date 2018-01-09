@@ -167,27 +167,15 @@ function isPayPalExpressEnabled( cart ) {
 }
 
 function isNetherlandsIdealEnabled( cart ) {
-	return (
-		config.isEnabled( 'upgrades/netherlands-ideal' ) &&
-		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Ideal' ) >= 0 &&
-		'EUR' === cart.currency
-	);
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Ideal' ) >= 0;
 }
 
 function isGermanyGiropayEnabled( cart ) {
-	return (
-		config.isEnabled( 'upgrades/germany-giropay' ) &&
-		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Giropay' ) >= 0 &&
-		'EUR' === cart.currency
-	);
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Giropay' ) >= 0;
 }
 
 function isBelgiumBancontactEnabled( cart ) {
-	return (
-		config.isEnabled( 'upgrades/belgium-bancontact' ) &&
-		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Bancontact' ) >= 0 &&
-		'EUR' === cart.currency
-	);
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Bancontact' ) >= 0;
 }
 
 export {
