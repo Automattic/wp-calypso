@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import scrollTo from 'lib/scroll-to';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,18 +13,34 @@ import { localize } from 'i18n-calypso';
  */
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
+import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
 import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { getActivityLog, getSiteGmtOffset, getSiteTimezoneValue } from 'state/selectors';
+import {
+	rewindBackup,
+	rewindBackupDismiss,
+	rewindRequestBackup,
+	rewindRequestDismiss,
+	rewindRequestRestore,
+	rewindRestore,
+} from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import {
+	getActivityLog,
+	getRequestedBackup,
+	getRequestedRewind,
+	getSiteGmtOffset,
+	getSiteTimezoneValue,
+} from 'state/selectors';
 
 import { adjustMoment } from '../activity-log/utils';
 
 class ActivityLogItem extends Component {
-	handleClickRestore = () => this.props.requestDialog( this.props.activityId, 'item', 'restore' );
+	confirmBackup = () => this.props.confirmBackup( this.props.activity.rewindId );
 
-	handleClickBackup = () => this.props.requestDialog( this.props.activityId, 'item', 'backup' );
+	confirmRewind = () => this.props.confirmRewind( this.props.activity.rewindId );
 
 	renderHeader() {
 		const {
@@ -50,6 +67,8 @@ class ActivityLogItem extends Component {
 
 	renderItemAction() {
 		const {
+			createBackup,
+			createRewind,
 			disableRestore,
 			disableBackup,
 			hideRestore,
@@ -66,7 +85,7 @@ class ActivityLogItem extends Component {
 				<SplitButton
 					icon="history"
 					label={ translate( 'Rewind' ) }
-					onClick={ this.handleClickRestore }
+					onClick={ createRewind }
 					disableMain={ disableRestore }
 					disabled={ disableRestore && disableBackup }
 					compact
@@ -75,7 +94,7 @@ class ActivityLogItem extends Component {
 					<PopoverMenuItem
 						disabled={ disableBackup }
 						icon="cloud-download"
-						onClick={ this.handleClickBackup }
+						onClick={ createBackup }
 					>
 						{ translate( 'Download backup' ) }
 					</PopoverMenuItem>
@@ -85,46 +104,151 @@ class ActivityLogItem extends Component {
 	}
 
 	render() {
-		const { activity, className, gmtOffset, isDiscarded, moment, timezone } = this.props;
+		const {
+			activity,
+			className,
+			dismissBackup,
+			dismissRewind,
+			gmtOffset,
+			isDiscarded,
+			mightBackup,
+			mightRewind,
+			moment,
+			timezone,
+			translate,
+		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
 
 		const classes = classNames( 'activity-log-item', className, {
 			'is-discarded': isDiscarded,
 		} );
 
+		const adjustedTime = adjustMoment( { gmtOffset, moment: moment.utc( activityTs ), timezone } );
+
 		return (
-			<div className={ classes }>
-				<div className="activity-log-item__type">
-					<div className="activity-log-item__time">
-						{ adjustMoment( {
-							gmtOffset,
-							moment: moment.utc( activityTs ),
-							timezone,
-						} ).format( 'LT' ) }
+			<React.Fragment>
+				{ mightRewind && (
+					<ActivityLogConfirmDialog
+						key="activity-rewind-dialog"
+						confirmTitle={ translate( 'Confirm Rewind' ) }
+						notice={
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							<span className="activity-log-confirm-dialog__notice-content">
+								{ translate(
+									'This will remove all content and options created or changed since then.'
+								) }
+							</span>
+						}
+						onClose={ dismissRewind }
+						onConfirm={ this.confirmRewind }
+						supportLink="https://jetpack.com/support/how-to-rewind"
+						title={ translate( 'Rewind Site' ) }
+					>
+						{ translate(
+							'This is the selected point for your site Rewind. ' +
+								'Are you sure you want to rewind your site back to {{time/}}?',
+							{
+								components: {
+									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
+								},
+							}
+						) }
+					</ActivityLogConfirmDialog>
+				) }
+				{ mightBackup && (
+					<ActivityLogConfirmDialog
+						key="activity-backup-dialog"
+						confirmTitle={ translate( 'Create download' ) }
+						onClose={ dismissBackup }
+						onConfirm={ this.confirmBackup }
+						supportLink="https://jetpack.com/support/backups"
+						title={ translate( 'Create downloadable backup' ) }
+						type={ 'backup' }
+						icon={ 'cloud-download' }
+					>
+						{ translate(
+							'We will build a downloadable backup of your site at {{time/}}. ' +
+								'You will get a notification when the backup is ready to download.',
+							{
+								components: {
+									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
+								},
+							}
+						) }
+					</ActivityLogConfirmDialog>
+				) }
+				<div className={ classes }>
+					<div className="activity-log-item__type">
+						<div className="activity-log-item__time">{ adjustedTime.format( 'LT' ) }</div>
+						<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
 					</div>
-					<ActivityIcon activityIcon={ activityIcon } activityStatus={ activityStatus } />
+					<FoldableCard
+						className="activity-log-item__card"
+						expandedSummary={ this.renderItemAction() }
+						header={ this.renderHeader() }
+						summary={ this.renderItemAction() }
+					/>
 				</div>
-				<FoldableCard
-					className="activity-log-item__card"
-					expandedSummary={ this.renderItemAction() }
-					header={ this.renderHeader() }
-					summary={ this.renderItemAction() }
-				/>
-			</div>
+			</React.Fragment>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { activityId, siteId } ) => {
-	const activity = getActivityLog( state, siteId, activityId );
-	const gmtOffset = getSiteGmtOffset( state, siteId );
-	const timezone = getSiteTimezoneValue( state, siteId );
+const mapStateToProps = ( state, { activityId, siteId } ) => ( {
+	activity: getActivityLog( state, siteId, activityId ),
+	gmtOffset: getSiteGmtOffset( state, siteId ),
+	mightBackup: activityId && activityId === getRequestedBackup( state, siteId ),
+	mightRewind: activityId && activityId === getRequestedRewind( state, siteId ),
+	timezone: getSiteTimezoneValue( state, siteId ),
+} );
 
-	return {
-		activity,
-		gmtOffset,
-		timezone,
-	};
-};
+const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
+	createBackup: () =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_backup_request', { from: 'item' } ),
+				rewindRequestBackup( siteId, activityId )
+			)
+		),
+	createRewind: () =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_request', { from: 'item' } ),
+				rewindRequestRestore( siteId, activityId )
+			)
+		),
+	dismissBackup: () =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_backup_cancel' ),
+				rewindBackupDismiss( siteId )
+			)
+		),
+	dismissRewind: () =>
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
+				rewindRequestDismiss( siteId )
+			)
+		),
+	confirmBackup: rewindId => (
+		scrollTo( { x: 0, y: 0, duration: 250 } ),
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_backup_confirm', { actionId: rewindId } ),
+				rewindBackup( siteId, rewindId )
+			)
+		)
+	),
+	confirmRewind: rewindId => (
+		scrollTo( { x: 0, y: 0, duration: 250 } ),
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_activitylog_restore_confirm', { actionId: rewindId } ),
+				rewindRestore( siteId, rewindId )
+			)
+		)
+	),
+} );
 
-export default connect( mapStateToProps )( localize( ActivityLogItem ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );
