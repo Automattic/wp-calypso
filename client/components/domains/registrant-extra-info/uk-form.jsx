@@ -8,13 +8,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { camelCase, difference, includes, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, difference, get, includes, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getContactDetailsCache } from 'state/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
@@ -98,6 +99,13 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 	renderTradingNameField() {
 		const { contactDetails, translate } = this.props;
 		const { tradingName } = contactDetails.extra;
+		const tradingNameErrors = get(
+			this.props.validationErrors,
+			[ 'contactDetails', 'extra', 'tradingName' ],
+			[]
+		);
+		const isError = ! isEmpty( tradingNameErrors );
+
 		return (
 			<div>
 				<FormFieldset>
@@ -112,7 +120,9 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 						autoCorrect="off"
 						placeholder={ '' }
 						onChange={ this.handleChangeEvent }
+						isError={ isError }
 					/>
+					{ map( tradingNameErrors, this.renderValidationError ) }
 				</FormFieldset>
 			</div>
 		);
@@ -121,6 +131,13 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 	renderRegistrationNumberField() {
 		const { contactDetails, translate } = this.props;
 		const { registrationNumber } = contactDetails.extra || '';
+		const registrationNumberErrors = get(
+			this.props.validationErrors,
+			[ 'contactDetails', 'extra', 'registrationNumber' ],
+			[]
+		);
+		const isError = ! isEmpty( registrationNumberErrors );
+
 		return (
 			<div>
 				<FormFieldset>
@@ -138,10 +155,16 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 						autoCorrect="off"
 						placeholder={ '' }
 						onChange={ this.handleChangeEvent }
+						isError={ isError }
 					/>
+					{ map( registrationNumberErrors, this.renderValidationError ) }
 				</FormFieldset>
 			</div>
 		);
+	}
+
+	renderValidationError( message ) {
+		return <FormInputValidation isError key={ message } text={ message } />;
 	}
 
 	render() {

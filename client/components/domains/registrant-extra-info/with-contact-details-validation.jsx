@@ -5,31 +5,69 @@
  */
 
 import React, { Component } from 'react';
+import validatorFactory from 'is-my-json-valid';
 
 /**
  * Internal dependencies
  */
+import wp from 'lib/wp';
 
-const placeHolderValidationErrors = {
-	organization: 'Yay!',
-	address1: 'Yay!',
+const wpcom = wp.undocumented();
+
+const placeholderValidationErrors = {
+	organization: [ 'Nope!' ],
+	address1: [ 'Oops!' ],
 	extra: {
-		registrantType: "It's broken!",
+		tradingName: [ "It's broken!" ],
+		registrationNumber: [ 'Oh noes!' ],
 	},
 };
 
 const WithContactDetailsValidation = ( tld, WrappedComponent ) => {
 	return class FormWithValidation extends Component {
-		// TODO: componentWillUpdate needs to be deep
+
+		state = {
+		}
+
+		receiveSchema = ( schema ) => {
+			this.setState( {
+				schema,
+				validate: validatorFactory( schema, { greedy: true, verbose: true } ),
+			} );
+		}
+
+		componentWillMount() {
+			const _this = this;
+			wpcom.getDomainContactInformationValidationSchema(
+				tld,
+				( error, data ) => {
+					// TODO: handle error
+					_this.receiveSchema( data[ tld ] );
+				}
+			);
+		}
+
+		validateContactDetails() {
+			const { validate } = this.state;
+
+			if ( typeof validate !== 'function' ) {
+				return {};
+			}
+
+			// TODO: memoize
+			const rawErrors = validate( this.props.contactDetails );
+			// TODO: error codes => localized strings
+			console.log( rawErrors );
+
+			return { contactDetails: placeholderValidationErrors };
+		}
 
 		render() {
-			return (
-				<WrappedComponent
+			return ( <WrappedComponent
 					{ ...this.props }
-					markedValidated
-					contactDetailsValidationErrors={ placeHolderValidationErrors }
-				/>
-			);
+					isValid="false"
+					validationErrors={ this.validateContactDetails() }
+			/> );
 		}
 	};
 };

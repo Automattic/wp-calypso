@@ -696,7 +696,7 @@ Undocumented.prototype.getDomainContactInformationValidationSchema = function( t
 			return fn( error );
 		}
 		const newData = mapKeysRecursively( data, camelCase );
-		fn( null, newData );
+		return fn( null, newData );
 	} );
 };
 
