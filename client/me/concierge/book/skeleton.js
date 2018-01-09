@@ -9,7 +9,7 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import PrimaryHeader from './primary-header';
+import PrimaryHeader from '../shared/primary-header';
 import SitePlaceholder from 'blocks/site/placeholder';
 
 class Skeleton extends Component {
@@ -17,7 +17,7 @@ class Skeleton extends Component {
 		return (
 			<div>
 				<PrimaryHeader />
-				<CompactCard className="concierge__site-block">
+				<CompactCard className="book__site-block">
 					<SitePlaceholder />
 				</CompactCard>
 			</div>

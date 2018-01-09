@@ -20,12 +20,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CalendarStep from './calendar-step';
-import ConfirmationStep from './confirmation-step';
-import InfoStep from './info-step';
 import Main from 'components/main';
-import Skeleton from './skeleton';
-import Upsell from './upsell';
 import QueryConciergeAvailableTimes from 'components/data/query-concierge-available-times';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -33,8 +28,7 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getConciergeAvailableTimes } from 'state/selectors';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
-
-const STEP_COMPONENTS = [ InfoStep, CalendarStep, ConfirmationStep ];
+import Upsell from './shared/upsell';
 
 class ConciergeMain extends Component {
 	constructor( props ) {
@@ -54,8 +48,9 @@ class ConciergeMain extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { availableTimes, site } = this.props;
-		const CurrentStep = STEP_COMPONENTS[ this.state.currentStep ];
+		const { availableTimes, site, steps } = this.props;
+		const CurrentStep = steps[ this.state.currentStep ];
+		const Skeleton = this.props.skeleton;
 
 		if ( ! availableTimes || ! site || ! site.plan ) {
 			return <Skeleton />;
@@ -79,8 +74,6 @@ class ConciergeMain extends Component {
 	render() {
 		const { site } = this.props;
 
-		// TODO:
-		// render the available times for real.
 		return (
 			<Main>
 				<QueryConciergeAvailableTimes scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID } />

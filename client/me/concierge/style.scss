@@ -1,20 +1,21 @@
 /** @format */
 
-.concierge__site-block .site__content {
+.book__site-block .site__content,
+.shared__site-block .site__content {
 	// Override the site block's padding to use the containing card's padding instead
 	padding: 0;
 }
 
-.concierge__calendar-card.is-expanded {
+.shared__calendar-card.is-expanded {
 	background: lighten($gray, 36%);
 }
 
-.concierge__calendar-card-header {
+.shared__calendar-card-header {
 	display: flex;
 	align-items: center;
 }
 
-.concierge__calendar-card-header-icon {
+.shared__calendar-card-header-icon {
 	color: $gray;
 	border: 1px solid lighten($gray, 20%);
 	border-radius: 100%;
@@ -22,26 +23,26 @@
 	margin-right: 12px;
 }
 
-.concierge__info-illustration {
+.shared__info-illustration {
 	display: block;
 	margin: 0 auto 20px;
 	max-width: 300px;
 }
 
-.concierge__info-link {
+.shared__info-link {
 	display: block;
 	margin: 0 auto;
 	width: auto;
 	text-align: center;
 }
 
-.concierge__confirmation-illustration {
+.shared__confirmation-illustration {
 	display: block;
 	margin: 50px auto 20px;
 	max-width: 182px;
 }
 
-.concierge__confirmation-button {
+.shared__confirmation-button {
 	display: block;
 	margin: 0 auto 40px;
 	max-width: 204px;

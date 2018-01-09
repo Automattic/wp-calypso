@@ -5,8 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize, moment } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,14 +13,6 @@ import { connect } from 'react-redux';
 import CalendarCard from './calendar-card';
 import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
-import { getConciergeSignupForm } from 'state/selectors';
-import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment } from 'state/concierge/actions';
-import {
-	CONCIERGE_STATUS_BOOKING,
-	CONCIERGE_STATUS_BOOKED,
-	WPCOM_CONCIERGE_SCHEDULE_ID,
-} from './constants';
 import { isDefaultLocale } from 'lib/i18n-utils';
 
 const NUMBER_OF_DAYS_TO_SHOW = 7;
@@ -56,54 +47,31 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 		.map( date => dates[ date ] );
 };
 
-class CalendarStep extends Component {
+class CalendarPage extends Component {
 	static propTypes = {
 		availableTimes: PropTypes.array.isRequired,
+		description: PropTypes.string.isRequired,
 		onBack: PropTypes.func.isRequired,
-		onComplete: PropTypes.func.isRequired,
+		onSubmit: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
 
-	onSubmit = timestamp => {
-		const { signupForm } = this.props;
-		const meta = {
-			message: signupForm.message,
-			timezone: signupForm.timezone,
-		};
-
-		this.props.bookConciergeAppointment(
-			WPCOM_CONCIERGE_SCHEDULE_ID,
-			timestamp,
-			this.props.currentUserId,
-			this.props.site.ID,
-			meta
-		);
-	};
-
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
-			// go to confirmation page if booking was successfull
-			this.props.onComplete();
-		}
-	}
-
 	render() {
-		const { availableTimes, currentUserLocale, onBack, signupForm, translate } = this.props;
+		const { availableTimes, currentUserLocale, description, disabled, onBack, onSubmit,
+			signupForm, title } = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes, signupForm.timezone );
 
 		return (
 			<div>
-				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
-				<CompactCard>
-					{ translate( 'Please select a day to have your Concierge session.' ) }
-				</CompactCard>
+				{ onBack && <HeaderCake onClick={ onBack }>{ title }</HeaderCake> }
+				<CompactCard> { description } </CompactCard>
 				{ availability.map( ( { date, times } ) => (
 					<CalendarCard
 						date={ date }
-						disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
+						disabled={ disabled }
 						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }
 						key={ date }
-						onSubmit={ this.onSubmit }
+						onSubmit={ onSubmit }
 						times={ times }
 						timezone={ signupForm.timezone }
 					/>
@@ -113,11 +81,4 @@ class CalendarStep extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		signupForm: getConciergeSignupForm( state ),
-		currentUserId: getCurrentUserId( state ),
-		currentUserLocale: getCurrentUserLocale( state ),
-	} ),
-	{ bookConciergeAppointment }
-)( localize( CalendarStep ) );
+export default CalendarPage;

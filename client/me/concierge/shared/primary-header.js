@@ -21,7 +21,7 @@ class PrimaryHeader extends Component {
 		return (
 			<Card>
 				<img
-					className="concierge__info-illustration"
+					className="shared__info-illustration"
 					src={ '/calypso/images/illustrations/illustration-start.svg' }
 				/>
 				<FormattedHeader
@@ -31,7 +31,7 @@ class PrimaryHeader extends Component {
 					) }
 				/>
 				<ExternalLink
-					className="concierge__info-link"
+					className="shared__info-link"
 					icon={ false }
 					href={ support.CONCIERGE_SUPPORT }
 					target="_blank"

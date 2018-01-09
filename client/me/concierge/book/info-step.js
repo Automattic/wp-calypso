@@ -17,11 +17,11 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
 import Timezone from 'components/timezone';
-import PrimaryHeader from './primary-header';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
 import { getConciergeSignupForm } from 'state/selectors';
+import PrimaryHeader from '../shared/primary-header';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -55,7 +55,7 @@ class InfoStep extends Component {
 		return (
 			<div>
 				<PrimaryHeader />
-				<CompactCard className="concierge__site-block">
+				<CompactCard className="book__site-block">
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
 

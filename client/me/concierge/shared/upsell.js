@@ -25,7 +25,7 @@ class Upsell extends Component {
 		return (
 			<div>
 				<PrimaryHeader />
-				<CompactCard className="concierge__site-block">
+				<CompactCard className="shared__site-block">
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
 				<CompactCard>
