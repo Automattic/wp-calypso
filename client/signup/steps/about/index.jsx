@@ -254,6 +254,7 @@ class AboutStep extends Component {
 		const siteTitleInput = formState.getFieldValue( this.state.form, 'siteTitle' );
 		const siteGoalsInput = formState.getFieldValue( this.state.form, 'siteGoals' );
 		const siteGoalsArray = siteGoalsInput.split( ',' );
+		const siteGoalsGroup = siteGoalsArray.sort().join();
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 
@@ -261,16 +262,17 @@ class AboutStep extends Component {
 		if ( siteTitleInput !== '' ) {
 			siteTitleValue = siteTitleInput;
 			this.props.setSiteTitle( siteTitleValue );
-			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-				field: 'Site title',
-				value: siteTitleInput,
-			} );
 		}
+
+		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
+			field: 'Site title',
+			value: siteTitleInput !== '' ? siteTitleInput : 'N/A',
+		} );
 
 		//Site Topic
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 			field: 'Site topic',
-			value: siteTopicInput,
+			value: siteTopicInput !== '' ? siteTopicInput : 'N/A',
 		} );
 
 		this.props.setSurvey( {
@@ -290,6 +292,11 @@ class AboutStep extends Component {
 				value: siteGoalsArray[ i ],
 			} );
 		}
+
+		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
+			field: 'Site goal selections',
+			value: siteGoalsGroup,
+		} );
 
 		//SET SITETYPE
 		this.props.setDesignType( designType );
