@@ -14,6 +14,8 @@ import {
 	unsubscribeToNewPostEmail,
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
+	subscribeToNewPostNotifications,
+	unsubscribeToNewPostNotifications,
 	follow,
 	unfollow,
 	syncComplete,
@@ -167,11 +169,12 @@ describe( 'reducer', () => {
 						email: {
 							send_posts: false,
 						},
+						notification: {},
 					},
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -180,6 +183,7 @@ describe( 'reducer', () => {
 						email: {
 							send_posts: true,
 						},
+						notification: {},
 					},
 				},
 			} );
@@ -229,13 +233,14 @@ describe( 'reducer', () => {
 						email: {
 							send_posts: true,
 						},
+						notification: {},
 					},
 				},
 			} );
 
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
-				chaiExpect( state ).to.eql( {
+				expect( state ).toEqual( {
 					'example.com': {
 						is_following: true,
 						blog_ID: 123,
@@ -245,6 +250,7 @@ describe( 'reducer', () => {
 								send_posts: true,
 								post_delivery_frequency: frequency,
 							},
+							notification: {},
 						},
 					},
 				} );
@@ -302,11 +308,12 @@ describe( 'reducer', () => {
 							send_posts: true,
 							post_delivery_frequency: 'instantly',
 						},
+						notification: {},
 					},
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -316,6 +323,7 @@ describe( 'reducer', () => {
 							send_posts: false,
 							post_delivery_frequency: 'instantly',
 						},
+						notification: {},
 					},
 				},
 			} );
@@ -367,11 +375,12 @@ describe( 'reducer', () => {
 						email: {
 							send_comments: false,
 						},
+						notification: {},
 					},
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 123 ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -380,6 +389,7 @@ describe( 'reducer', () => {
 						email: {
 							send_comments: true,
 						},
+						notification: {},
 					},
 				},
 			} );
@@ -399,7 +409,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 123 ) );
-			chaiExpect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not update when passed comment sub info about a missing sub', () => {
@@ -429,11 +439,12 @@ describe( 'reducer', () => {
 						email: {
 							send_comments: true,
 						},
+						notification: {},
 					},
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
-			chaiExpect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'example.com': {
 					is_following: true,
 					blog_ID: 123,
@@ -442,6 +453,7 @@ describe( 'reducer', () => {
 						email: {
 							send_comments: false,
 						},
+						notification: {},
 					},
 				},
 			} );
@@ -479,6 +491,158 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
 			chaiExpect( state ).to.equal( original );
+		} );
+
+		test( 'should update when a new post notification subscription is received', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false,
+						},
+						notification: {
+							send_posts: false,
+						},
+					},
+				},
+			} );
+			const state = items( original, subscribeToNewPostNotifications( 123 ) );
+			expect( state ).toEqual( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false,
+						},
+						notification: {
+							send_posts: true,
+						},
+					},
+				},
+			} );
+		} );
+
+		test( 'should not update when a new post notification subscription is identical', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true,
+						},
+						notification: {
+							send_posts: true,
+						},
+					},
+				},
+			} );
+			const state = items( original, subscribeToNewPostNotifications( 123 ) );
+			expect( state ).toEqual( original );
+		} );
+
+		test( 'should not update when a new post notification subscription for a non-existent follow is received', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false,
+						},
+						notification: {
+							send_posts: false,
+						},
+					},
+				},
+			} );
+			const state = items( original, subscribeToNewPostNotifications( 456 ) );
+			expect( state ).toEqual( original );
+		} );
+
+		test( 'should update when a new post notification unsubscription is received', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							post_delivery_frequency: 'instantly',
+						},
+						notification: {
+							send_posts: true,
+						},
+					},
+				},
+			} );
+			const state = items( original, unsubscribeToNewPostNotifications( 123 ) );
+			expect( state ).toEqual( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							post_delivery_frequency: 'instantly',
+						},
+						notification: {
+							send_posts: false,
+						},
+					},
+				},
+			} );
+		} );
+
+		test( 'should not update when a new post notification unsubscription is identical', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: false,
+							post_delivery_frequency: 'instantly',
+						},
+						notification: {
+							send_posts: false,
+						},
+					},
+				},
+			} );
+			const state = items( original, unsubscribeToNewPostNotifications( 123 ) );
+			expect( state ).toEqual( original );
+		} );
+
+		test( 'should not update when a new post notification unsubscription for a non-existent follow is received', () => {
+			const original = deepFreeze( {
+				'example.com': {
+					is_following: true,
+					blog_ID: 123,
+					URL: 'http://example.com',
+					delivery_methods: {
+						email: {
+							send_posts: true,
+							post_delivery_frequency: 'instantly',
+						},
+						notification: {
+							send_posts: true,
+						},
+					},
+				},
+			} );
+			const state = items( original, unsubscribeToNewPostNotifications( 456 ) );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should insert a follow error if one is received', () => {

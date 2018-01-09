@@ -22,13 +22,15 @@ import {
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
+	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	SERIALIZE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 
-function updatePostSubscription( state, { payload, type } ) {
+function updateEmailSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
 	if ( ! follow ) {
 		return state;
@@ -67,6 +69,44 @@ function updatePostSubscription( state, { payload, type } ) {
 			...follow,
 			delivery_methods: {
 				email: newFollowState,
+				notification: get( follow, [ 'delivery_methods', 'notification' ], {} ),
+			},
+		},
+	};
+}
+
+function updateNotificationSubscription( state, { payload, type } ) {
+	const follow = find( state, { blog_ID: +payload.blogId } );
+	if ( ! follow ) {
+		return state;
+	}
+
+	const currentFollowState = get( follow, [ 'delivery_methods', 'notification' ], {} );
+
+	const newProps = {};
+	switch ( type ) {
+		case READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS:
+		case READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS:
+			newProps.send_posts = ! ( type === READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS );
+			break;
+	}
+
+	const newFollowState = {
+		...currentFollowState,
+		...newProps,
+	};
+
+	if ( isEqual( currentFollowState, newFollowState ) ) {
+		return state;
+	}
+
+	return {
+		...state,
+		[ prepareComparableUrl( follow.URL ) ]: {
+			...follow,
+			delivery_methods: {
+				email: get( follow, [ 'delivery_methods', 'email' ], {} ),
+				notification: newFollowState,
 			},
 		},
 	};
@@ -179,15 +219,19 @@ export const items = createReducer(
 			};
 		},
 		[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
+			updateEmailSubscription( state, action ),
 		[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
+			updateEmailSubscription( state, action ),
 		[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
+			updateEmailSubscription( state, action ),
 		[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
+			updateEmailSubscription( state, action ),
 		[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
+			updateEmailSubscription( state, action ),
+		[ READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: ( state, action ) =>
+			updateNotificationSubscription( state, action ),
+		[ READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: ( state, action ) =>
+			updateNotificationSubscription( state, action ),
 		[ READER_FOLLOWS_SYNC_COMPLETE ]: ( state, action ) => {
 			const seenSubscriptions = new Set( action.payload );
 
