@@ -408,8 +408,28 @@ export const counts = createReducer(
 
 			//increase new status counts by one and decrement previous status counts by 1
 			const newSiteCounts = updateCount( updateCount( siteCounts, status, 1 ), previousStatus, -1 );
-
 			const newPostCounts = updateCount( updateCount( postCounts, status, 1 ), previousStatus, -1 );
+
+			const newTotalSiteCounts = Object.assign(
+				{},
+				state[ siteId ],
+				newSiteCounts && { site: newSiteCounts },
+				newPostCounts && { [ postId ]: newPostCounts }
+			);
+			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
+		},
+		[ COMMENTS_DELETE ]: ( state, { siteId, postId, commentId } ) => {
+			if ( commentId && commentId.indexOf( 'placeholder' ) === 0 ) {
+				return state;
+			}
+
+			if ( ! siteId || ! postId || ! state[ siteId ] ) {
+				return state;
+			}
+			const { site: siteCounts, [ postId ]: postCounts } = state[ siteId ];
+
+			const newSiteCounts = updateCount( siteCounts, 'trash', -1 );
+			const newPostCounts = updateCount( postCounts, 'trash', -1 );
 
 			const newTotalSiteCounts = Object.assign(
 				{},
