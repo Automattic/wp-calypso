@@ -751,6 +751,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 				postId: 234,
 				commentId: 2,
+				meta: { comment: { previousStatus: 'trash' } },
 			};
 			const state = deepFreeze( {
 				2916284: {
@@ -794,6 +795,61 @@ describe( 'reducer', () => {
 						spam: 1,
 						totalComments: 6,
 						trash: 3,
+					},
+				},
+			} );
+		} );
+
+		test( 'updates counts when a comment is deleted from spam', () => {
+			const action = {
+				type: COMMENTS_DELETE,
+				siteId: 2916284,
+				postId: 234,
+				commentId: 2,
+				meta: { comment: { previousStatus: 'spam' } },
+			};
+			const state = deepFreeze( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 10,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 6,
+						trash: 4,
+					},
+				},
+			} );
+			const nextState = counts( state, action );
+			expect( nextState ).toEqual( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 0,
+						totalComments: 11,
+						trash: 10,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 0,
+						totalComments: 5,
+						trash: 4,
 					},
 				},
 			} );
