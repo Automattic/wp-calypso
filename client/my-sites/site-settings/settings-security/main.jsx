@@ -69,7 +69,15 @@ const SiteSettingsSecurity = ( { rewindState, site, siteId, siteIsJetpack, trans
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
 			<SiteSettingsNavigation site={ site } section="security" />
-			{ includes( [ 'active', 'awaitingCredentials' ], rewindState.state ) && <Backups /> }
+			{ ( includes( [ 'active', 'awaitingCredentials', 'provisioning' ], rewindState.state ) ||
+				( 'unavailable' === rewindState.state &&
+					'vp_active_on_site' === rewindState.failureReason ) ) && (
+				<Backups
+					rewindStatus={
+						'unavailable' === rewindState.state ? rewindState.reason : rewindState.state
+					}
+				/>
+			) }
 			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
