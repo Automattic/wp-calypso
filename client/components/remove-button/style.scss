@@ -5,8 +5,7 @@
 		right: 0;
 	width: 28px;
 	height: 28px;
-	/*rtl:ignore*/
-	transform: translate( 25%, -25% );
+	transform: translate( 25%, -25% ); /*rtl:ignore*/
 	border: 1px solid lighten( $gray, 10% );
 	border-radius: 50%;
 	background-color: $gray-light;
