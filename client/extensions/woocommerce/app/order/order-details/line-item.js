@@ -50,6 +50,8 @@ class OrderLineItem extends Component {
 		translate: PropTypes.func,
 	};
 
+	isDiscountedProduct = item => parseFloat( item.total ) !== parseFloat( item.subtotal );
+
 	renderName = item => {
 		const { isEditing, site } = this.props;
 		if ( isEditing ) {
@@ -65,17 +67,11 @@ class OrderLineItem extends Component {
 		);
 	};
 
-	render() {
-		const { deleteButton, item, order, children: quantityField } = this.props;
-		const tax = getOrderLineItemTax( order, item.id );
-		if ( item.quantity <= 0 ) {
-			return null;
-		}
-		let itemPrice = formatCurrency( item.price, order.currency );
-		let itemTotal = formatCurrency( item.total, order.currency );
-		if ( parseFloat( item.total ) !== parseFloat( item.subtotal ) ) {
+	renderPrice = item => {
+		const { order } = this.props;
+		if ( this.isDiscountedProduct( item ) ) {
 			const preDiscountCost = getOrderItemCost( order, item.id );
-			itemPrice = (
+			return (
 				<Fragment>
 					<del className="order-details__item-pre-discount">
 						{ formatCurrency( preDiscountCost, order.currency ) }
@@ -85,8 +81,14 @@ class OrderLineItem extends Component {
 					</ins>
 				</Fragment>
 			);
+		}
+		return formatCurrency( item.price, order.currency );
+	};
 
-			itemTotal = (
+	renderTotal = item => {
+		const { order } = this.props;
+		if ( this.isDiscountedProduct( item ) ) {
+			return (
 				<Fragment>
 					<del className="order-details__item-pre-discount">
 						{ formatCurrency( item.subtotal, order.currency ) }
@@ -97,18 +99,28 @@ class OrderLineItem extends Component {
 				</Fragment>
 			);
 		}
+		return formatCurrency( item.total, order.currency );
+	};
+
+	render() {
+		const { deleteButton, item, order, children: quantityField } = this.props;
+		const tax = getOrderLineItemTax( order, item.id );
+		if ( item.quantity <= 0 ) {
+			return null;
+		}
+
 		return (
 			<TableRow key={ item.id } className="order-details__items">
 				<TableItem isRowHeader className="order-details__item-product">
 					{ this.renderName( item ) }
 					<span className="order-details__item-sku">{ item.sku }</span>
 				</TableItem>
-				<TableItem className="order-details__item-cost">{ itemPrice }</TableItem>
+				<TableItem className="order-details__item-cost">{ this.renderPrice( item ) }</TableItem>
 				<TableItem className="order-details__item-quantity">{ quantityField }</TableItem>
 				<TableItem className="order-details__item-tax">
 					{ formatCurrency( tax, order.currency ) }
 				</TableItem>
-				<TableItem className="order-details__item-total">{ itemTotal }</TableItem>
+				<TableItem className="order-details__item-total">{ this.renderTotal( item ) }</TableItem>
 				{ deleteButton || null }
 			</TableRow>
 		);
