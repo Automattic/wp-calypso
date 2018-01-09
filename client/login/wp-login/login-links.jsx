@@ -20,9 +20,7 @@ import safeProtocolUrl from 'lib/safe-protocol-url';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'gridicons';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import {
-	recordTracksEventWithClientId as recordTracksEvent,
-} from 'state/analytics/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { login } from 'lib/paths';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';

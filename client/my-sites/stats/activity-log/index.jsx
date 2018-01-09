@@ -626,68 +626,65 @@ class ActivityLog extends Component {
 					) }
 				{ ! isEmpty( logs ) && (
 					<section className="activity-log__wrapper">
-						{ intoVisualGroups(
-							moment,
-							logs,
-							this.getStartMoment(),
-							this.applySiteOffset
-						).map( ( [ type, [ start, end ], events ] ) => {
-							const isToday = today.isSame(
-								end
-									.clone()
-									.utc()
-									.startOf( 'day' )
-							);
+						{ intoVisualGroups( moment, logs, this.getStartMoment(), this.applySiteOffset ).map(
+							( [ type, [ start, end ], events ] ) => {
+								const isToday = today.isSame(
+									end
+										.clone()
+										.utc()
+										.startOf( 'day' )
+								);
 
-							switch ( type ) {
-								case 'empty-day':
-									return (
-										<div key={ start.format() } className="activity-log__empty-day">
-											<div className="activity-log__empty-day-title">
-												{ start.format( 'LL' ) }
-												{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+								switch ( type ) {
+									case 'empty-day':
+										return (
+											<div key={ start.format() } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
+													{ start.format( 'LL' ) }
+													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+												</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
 											</div>
-											<div className="activity-log__empty-day-events">
-												{ translate( 'No activity' ) }
-											</div>
-										</div>
-									);
+										);
 
-								case 'empty-range':
-									return (
-										<div key={ start.format( 'LL' ) } className="activity-log__empty-day">
-											<div className="activity-log__empty-day-title">
-												{ `${ start.format( 'LL' ) } - ${ end.format( 'LL' ) }` }
-												{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+									case 'empty-range':
+										return (
+											<div key={ start.format( 'LL' ) } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
+													{ `${ start.format( 'LL' ) } - ${ end.format( 'LL' ) }` }
+													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+												</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
 											</div>
-											<div className="activity-log__empty-day-events">
-												{ translate( 'No activity' ) }
-											</div>
-										</div>
-									);
+										);
 
-								case 'non-empty-day':
-									return (
-										<ActivityLogDay
-											key={ start.format() }
-											applySiteOffset={ this.applySiteOffset }
-											requestedRestoreId={ requestedRestoreId }
-											requestedBackupId={ requestedBackupId }
-											restoreConfirmDialog={ restoreConfirmDialog }
-											backupConfirmDialog={ backupConfirmDialog }
-											disableRestore={ disableRestore }
-											disableBackup={ disableBackup }
-											isRewindActive={ isRewindActive }
-											logs={ events }
-											requestDialog={ this.handleRequestDialog }
-											closeDialog={ this.handleCloseDialog }
-											siteId={ siteId }
-											tsEndOfSiteDay={ start.valueOf() }
-											isToday={ isToday }
-										/>
-									);
+									case 'non-empty-day':
+										return (
+											<ActivityLogDay
+												key={ start.format() }
+												applySiteOffset={ this.applySiteOffset }
+												requestedRestoreId={ requestedRestoreId }
+												requestedBackupId={ requestedBackupId }
+												restoreConfirmDialog={ restoreConfirmDialog }
+												backupConfirmDialog={ backupConfirmDialog }
+												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
+												isRewindActive={ isRewindActive }
+												logs={ events }
+												requestDialog={ this.handleRequestDialog }
+												closeDialog={ this.handleCloseDialog }
+												siteId={ siteId }
+												tsEndOfSiteDay={ start.valueOf() }
+												isToday={ isToday }
+											/>
+										);
+								}
 							}
-						} ) }
+						) }
 					</section>
 				) }
 				{ hasFirstBackup && this.renderMonthNavigation( 'bottom' ) }

@@ -106,20 +106,22 @@ const ReaderListActions = {
 		fetchingLists[ key ] = true;
 		ReaderListsStore.setIsFetching( true );
 
-		wpcom.undocumented().readList( {
-			owner: owner,
-			slug: slug,
-		},
-		function( error, data ) {
-			delete fetchingLists[ key ];
-			ReaderListsStore.setIsFetching( false );
+		wpcom.undocumented().readList(
+			{
+				owner: owner,
+				slug: slug,
+			},
+			function( error, data ) {
+				delete fetchingLists[ key ];
+				ReaderListsStore.setIsFetching( false );
 
-			Dispatcher.handleServerAction( {
-				type: actionTypes.RECEIVE_READER_LIST,
-				data: data,
-				error: error,
-			} );
-		} );
+				Dispatcher.handleServerAction( {
+					type: actionTypes.RECEIVE_READER_LIST,
+					data: data,
+					error: error,
+				} );
+			}
+		);
 	},
 
 	create: function( title ) {

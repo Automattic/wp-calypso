@@ -1,7 +1,7 @@
 /**
  * Tells whether the Directly RTM widget has started initialization
- * 
- * 
+ *
+ *
  *
  * @format
  * @see lib/directly for more about Directly

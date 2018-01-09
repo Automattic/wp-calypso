@@ -566,7 +566,11 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( { isNative: true, locale: this.props.locale, redirectTo: this.props.redirectToAfterLoginUrl } )
+			? login( {
+					isNative: true,
+					locale: this.props.locale,
+					redirectTo: this.props.redirectToAfterLoginUrl,
+				} )
 			: addLocaleToWpcomUrl( config( 'login_url' ), this.props.locale );
 
 		return (
