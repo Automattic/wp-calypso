@@ -237,7 +237,14 @@ class Document extends React.Component {
 						/>
 					) }
 
-					<link rel="stylesheet" href={ getStylesheetUrl( { urls, isRtl, env, isDebug } ) } />
+					<link rel="stylesheet" id="main-css" href={ getStylesheetUrl( { urls, isRtl, env, isDebug } ) } />
+					{ sectionCss && (
+						<link
+							rel="stylesheet"
+							id={ 'section-css-' + sectionCss.id }
+							href={ sectionCss.urls[ isRtl ? 'rtl' : 'ltr' ] }
+						/>
+					) }
 
 					{ shouldUsePreconnect && (
 						<Fragment>
