@@ -19,6 +19,7 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_TREE_SITE_ADD,
 	COMMENTS_EDIT,
+	COMMENTS_CHANGE_STATUS,
 } from '../../action-types';
 import { expandComments, setActiveReply } from '../actions';
 import { PLACEHOLDER_STATE } from '../constants';
@@ -626,6 +627,228 @@ describe( 'reducer', () => {
 						spam: 5,
 						totalComments: 6,
 						trash: 7,
+					},
+				},
+			} );
+		} );
+
+		test( 'updates counts when a comment status changes', () => {
+			const action = {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId: 2916284,
+				postId: 234,
+				status: 'unapproved',
+				meta: { comment: { previousStatus: 'approved' } },
+			};
+			const state = deepFreeze( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 0,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 6,
+						trash: 0,
+					},
+				},
+			} );
+			const nextState = counts( state, action );
+			expect( nextState ).toEqual( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 4,
+						pending: 7,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 0,
+					},
+					234: {
+						all: 5,
+						approved: 1,
+						pending: 4,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 6,
+						trash: 0,
+					},
+				},
+			} );
+		} );
+		test( 'can update counts when only site counts are loaded', () => {
+			const action = {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId: 2916284,
+				postId: 234,
+				status: 'unapproved',
+				meta: { comment: { previousStatus: 'approved' } },
+			};
+			const state = deepFreeze( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 0,
+					},
+				},
+				77203074: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 0,
+						totalComments: 11,
+						trash: 0,
+					},
+				},
+			} );
+			const nextState = counts( state, action );
+			expect( nextState ).toEqual( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 4,
+						pending: 7,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 0,
+					},
+				},
+				77203074: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 0,
+						totalComments: 11,
+						trash: 0,
+					},
+				},
+			} );
+		} );
+
+		test( 'updates counts when a comment is deleted', () => {
+			const action = {
+				type: COMMENTS_DELETE,
+				siteId: 2916284,
+				postId: 234,
+				commentId: 2,
+			};
+			const state = deepFreeze( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 10,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 6,
+						trash: 4,
+					},
+				},
+			} );
+			const nextState = counts( state, action );
+			expect( nextState ).toEqual( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 9,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 6,
+						trash: 3,
+					},
+				},
+			} );
+		} );
+
+		test( 'updates counts when a new comment is added', () => {
+			const action = {
+				type: COMMENTS_RECEIVE,
+				siteId: 2916284,
+				postId: 234,
+				comments: [ { status: 'approved' } ],
+				meta: { comment: { context: 'add' } },
+			};
+			const state = deepFreeze( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 12,
+						trash: 10,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 6,
+						trash: 4,
+					},
+				},
+			} );
+			const nextState = counts( state, action );
+			expect( nextState ).toEqual( {
+				2916284: {
+					site: {
+						all: 12,
+						approved: 6,
+						pending: 6,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 13,
+						trash: 10,
+					},
+					234: {
+						all: 6,
+						approved: 3,
+						pending: 3,
+						postTrashed: 0,
+						spam: 1,
+						totalComments: 7,
+						trash: 4,
 					},
 				},
 			} );
