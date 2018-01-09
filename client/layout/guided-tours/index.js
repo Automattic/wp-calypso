@@ -19,7 +19,7 @@ import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getSectionName, isSectionLoading } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import { getInitialQueryArguments } from 'state/selectors';
 import {
 	nextGuidedTourStep,
 	quitGuidedTour,

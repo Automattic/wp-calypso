@@ -15,6 +15,7 @@ import {
 	map,
 	startsWith,
 	uniq,
+	pick,
 } from 'lodash';
 import debugFactory from 'debug';
 
@@ -23,7 +24,7 @@ import debugFactory from 'debug';
  */
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
 import { getSectionName } from 'state/ui/selectors';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import { getInitialQueryArguments, getCurrentQueryArguments } from 'state/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
@@ -80,28 +81,37 @@ const getToursSeen = createSelector(
 	getToursHistory
 );
 
+const reallyGetTourFromQuery = state => {
+	const initial = getInitialQueryArguments( state );
+	const current = getCurrentQueryArguments( state );
+	const tourProps = [ 'tour', '_timestamp' ];
+
+	return current.tour ? pick( current, tourProps ) : pick( initial, tourProps );
+};
+
 /*
  * Returns the name of the tour requested via the URL's query arguments, if the
  * tour exists. Returns `undefined` otherwise.
  */
-const getTourFromQuery = createSelector( state => {
-	const { tour } = getInitialQueryArguments( state );
-	if ( tour && find( relevantFeatures, { tour } ) ) {
-		return tour;
-	}
-}, getInitialQueryArguments );
+const getTourFromQuery = createSelector(
+	state => {
+		const { tour, _timestamp } = reallyGetTourFromQuery( state );
+		if ( tour && find( relevantFeatures, { tour } ) ) {
+			return { tour, _timestamp };
+		}
+	},
+	[ getInitialQueryArguments, getCurrentQueryArguments ]
+);
 
 /*
  * Returns true if `tour` has been seen in the current Calypso session, false
  * otherwise.
  */
 const hasJustSeenTour = createSelector(
-	( state, tourName ) => {
-		const { _timestamp } = getInitialQueryArguments( state );
-		return getToursHistory( state ).some(
+	( state, { tour: tourName, _timestamp } ) =>
+		getToursHistory( state ).some(
 			entry => entry.tourName === tourName && entry.timestamp > _timestamp
-		);
-	},
+		),
 	[ getInitialQueryArguments, getToursHistory ]
 );
 
@@ -112,7 +122,7 @@ const hasJustSeenTour = createSelector(
 const findRequestedTour = state => {
 	const requestedTour = getTourFromQuery( state );
 	if ( requestedTour && ! hasJustSeenTour( state, requestedTour ) ) {
-		return requestedTour;
+		return requestedTour.tour;
 	}
 };
 
