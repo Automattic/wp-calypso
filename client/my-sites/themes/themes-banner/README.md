@@ -24,8 +24,6 @@ const SampleBanner = () => (
 
 When both `action` and `href` are specified, the callback will run first, then the URL will be followed.
 
-When `backgroundImage` is not set, the banner will have a default background set, and the button will not have the primary style.
-
 #### Props
 
 The following props are used to control the display of the component. The presence of a `href` prop determines whether an anchor element is rendered instead of a button.
