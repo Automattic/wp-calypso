@@ -19,6 +19,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
+import WithContactDetailsValidation from './with-contact-details-validation';
 
 const defaultValues = {
 	registrantType: 'IND',
@@ -189,4 +190,4 @@ export default connect(
 		contactDetails: getContactDetailsCache( state ),
 	} ),
 	{ updateContactDetailsCache }
-)( localize( RegistrantExtraInfoUkForm ) );
+)( WithContactDetailsValidation( 'uk', localize( RegistrantExtraInfoUkForm ) ) );
