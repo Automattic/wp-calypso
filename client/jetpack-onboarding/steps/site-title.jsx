@@ -43,7 +43,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			siteTitle: this.state.title,
 			siteDescription: this.state.description,
 		} );
-		page( this.props.getForwardUrl() );
+		page.redirect( this.props.getForwardUrl() );
 	};
 
 	render() {
@@ -71,8 +71,8 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 								autoFocus
 								id="title"
 								onChange={ this.setTitle }
-								value={ this.state.title }
 								required
+								value={ this.state.title }
 							/>
 						</FormFieldset>
 
@@ -81,8 +81,8 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							<FormTextarea
 								id="description"
 								onChange={ this.setDescription }
-								value={ this.state.description }
 								required
+								value={ this.state.description }
 							/>
 						</FormFieldset>
 
