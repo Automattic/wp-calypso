@@ -5,7 +5,7 @@ export const itemSchema = {
 	patternProperties: {
 		'^\\d+$': {
 			type: 'object',
-			required: 'ID',
+			required: [ 'ID' ],
 			properties: {
 				ID: { type: 'integer' },
 				additional_external_users: { type: 'array' },
