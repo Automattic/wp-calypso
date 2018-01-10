@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import Gridicon from 'gridicons';
-import { compact, map } from 'lodash';
+import { compact, map, without } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,22 +18,18 @@ import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getUnconnectedSiteUrl } from 'state/selectors';
 import {
+	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
 } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
-		const stepsCompleted = [
-			SUMMARY_STEPS.SITE_TITLE_DESCRIPTION,
-			SUMMARY_STEPS.SITE_TYPE,
-			SUMMARY_STEPS.HOMEPAGE_TYPE,
-			SUMMARY_STEPS.CONTACT_FORM,
-		];
-		return map( stepsCompleted, ( fieldLabel, fieldIndex ) => (
-			<div key={ fieldIndex } className="steps__summary-entry completed">
+		return map( without( this.props.steps, STEPS.SUMMARY ), stepName => (
+			// TODO: Make step completed state dynamic
+			<div key={ stepName } className="steps__summary-entry completed">
 				<Gridicon icon="checkmark" size={ 18 } />
-				{ fieldLabel }
+				{ STEP_TITLES[ stepName ] }
 			</div>
 		) );
 	};
