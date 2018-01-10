@@ -101,7 +101,7 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 		const { tradingName } = contactDetails.extra;
 		const tradingNameErrors = get(
 			this.props.validationErrors,
-			[ 'contactDetails', 'extra', 'tradingName' ],
+			[ 'extra', 'tradingName' ],
 			[]
 		);
 		const isError = ! isEmpty( tradingNameErrors );
@@ -133,7 +133,7 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 		const { registrationNumber } = contactDetails.extra || '';
 		const registrationNumberErrors = get(
 			this.props.validationErrors,
-			[ 'contactDetails', 'extra', 'registrationNumber' ],
+			[ 'extra', 'registrationNumber' ],
 			[]
 		);
 		const isError = ! isEmpty( registrationNumberErrors );
