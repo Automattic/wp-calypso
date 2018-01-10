@@ -66,6 +66,14 @@ class AddressView extends Component {
 		}
 	};
 
+	onChangeCountry = event => {
+		// First, always forward the country event through
+		this.props.onChange( event );
+
+		// Then, send a second onChange to clear state
+		this.props.onChange( { target: { name: 'state', value: '' } } );
+	};
+
 	getCountryData = () => {
 		const { country } = this.props.address;
 		let countryData = find( getCountries(), { code: country || 'US' } );
@@ -79,18 +87,18 @@ class AddressView extends Component {
 	};
 
 	renderCountry = () => {
-		const { address: { country }, onChange, showAllLocations, translate } = this.props;
+		const { address: { country }, showAllLocations, translate } = this.props;
 		if ( showAllLocations ) {
 			return (
 				<FormFieldSet className="address-view__country">
-					<FormCountrySelectFromApi value={ country } onChange={ onChange } />
+					<FormCountrySelectFromApi value={ country } onChange={ this.onChangeCountry } />
 				</FormFieldSet>
 			);
 		}
 		return (
 			<FormFieldSet className="address-view__country">
 				<FormLabel>{ translate( 'Country' ) }</FormLabel>
-				<FormSelect name="country" onChange={ onChange } value={ country || 'US' }>
+				<FormSelect name="country" onChange={ this.onChangeCountry } value={ country || 'US' }>
 					{ getCountries().map( option => {
 						return (
 							<option key={ option.code } value={ option.code }>
