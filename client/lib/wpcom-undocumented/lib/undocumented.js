@@ -2770,8 +2770,8 @@ Undocumented.prototype.externalMediaQuery = function( query ) {
  */
 Undocumented.prototype.externalMediaList = function( query, fn ) {
 	debug( `/meta/external-media/${ query.source }` );
-	//const externalQuery = this.externalMediaQuery( query );
-	return this.wpcom.req.get( `/meta/external-media/${ query.source }`, query, fn );
+	const externalQuery = this.externalMediaQuery( query );
+	return this.wpcom.req.get( `/meta/external-media/${ externalQuery.source }`, externalQuery, fn );
 };
 
 /**
