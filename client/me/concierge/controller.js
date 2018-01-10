@@ -13,6 +13,8 @@ import BookCalendarStep from './book/calendar-step';
 import BookConfirmationStep from './book/confirmation-step';
 import BookInfoStep from './book/info-step';
 import BookSkeleton from './book/skeleton';
+import CancelConfirmationStep from './cancel/confirmation-step';
+import CancelSkeleton from './cancel/skeleton';
 import RescheduleCalendarStep from './reschedule/calendar-step';
 import RescheduleConfirmationStep from './reschedule/confirmation-step';
 import RescheduleSkeleton from './reschedule/skeleton';
@@ -23,6 +25,18 @@ const book = ( context, next ) => {
 			skeleton={ BookSkeleton }
 			siteSlug={ context.params.siteSlug }
 			steps={ [ BookInfoStep, BookCalendarStep, BookConfirmationStep ] }
+		/>
+	);
+	next();
+};
+
+const cancel = ( context, next ) => {
+	context.primary = (
+		<ConciergeMain
+			appointmentId={ context.params.appointmentId }
+			skeleton={ CancelSkeleton }
+			siteSlug={ context.params.siteSlug }
+			steps={ [ CancelConfirmationStep ] }
 		/>
 	);
 	next();
@@ -42,5 +56,6 @@ const reschedule = ( context, next ) => {
 
 export default {
 	book,
+	cancel,
 	reschedule,
 };

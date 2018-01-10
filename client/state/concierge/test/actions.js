@@ -5,6 +5,7 @@
  */
 import {
 	bookConciergeAppointment,
+	cancelConciergeAppointment,
 	rescheduleConciergeAppointment,
 	requestConciergeAvailableTimes,
 	updateConciergeAvailableTimes,
@@ -15,6 +16,7 @@ import {
 import {
 	CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
+	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_APPOINTMENT_RESCHEDULE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
@@ -39,6 +41,17 @@ describe( 'state/concierge', () => {
 				customerId,
 				siteId,
 				meta,
+			} );
+		} );
+
+		test( 'cancelConciergeAppointment()', () => {
+			const scheduleId = 123;
+			const appointmentId = 1;
+
+			expect( cancelConciergeAppointment( scheduleId, appointmentId ) ).toEqual( {
+				type: CONCIERGE_APPOINTMENT_CANCEL,
+				scheduleId,
+				appointmentId,
 			} );
 		} );
 

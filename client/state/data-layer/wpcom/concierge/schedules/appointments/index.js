@@ -11,8 +11,12 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { errorNotice } from 'state/notices/actions';
-import { CONCIERGE_APPOINTMENT_CREATE, CONCIERGE_APPOINTMENT_RESCHEDULE } from 'state/action-types';
+import { errorNotice, successNotice } from 'state/notices/actions';
+import {
+	CONCIERGE_APPOINTMENT_CANCEL,
+	CONCIERGE_APPOINTMENT_CREATE,
+	CONCIERGE_APPOINTMENT_RESCHEDULE,
+} from 'state/action-types';
 import { CONCIERGE_STATUS_BOOKED, CONCIERGE_STATUS_BOOKING } from 'me/concierge/constants';
 import fromApi from './from-api';
 
@@ -22,6 +26,28 @@ export const toApi = ( { beginTimestamp, customerId, siteId, meta } ) => ( {
 	site_id: siteId,
 	meta: JSON.stringify( meta ),
 } );
+
+export const cancelConciergeAppointment = ( { dispatch }, action ) => {
+	dispatch(
+		http(
+			{
+				method: 'POST',
+				path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/cancel`,
+				apiNamespace: 'wpcom/v2',
+				body: {},
+			},
+			action
+		)
+	);
+};
+
+export const markSlotAsCancelled = ( { dispatch } ) =>
+	dispatch( successNotice( translate( 'Your appointment has been successfully cancelled.' ) ) );
+
+export const handleCancellingError = ( { dispatch } ) =>
+	dispatch(
+		errorNotice( translate( 'We could not cancel your appointment. Please try again later.' ) )
+	);
 
 export const bookConciergeAppointment = ( { dispatch }, action ) => {
 	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ) );
@@ -68,6 +94,11 @@ export const handleBookingError = ( { dispatch } ) => {
 };
 
 export default {
+	[ CONCIERGE_APPOINTMENT_CANCEL ]: [
+		dispatchRequest( cancelConciergeAppointment, markSlotAsCancelled, handleCancellingError, {
+			fromApi,
+		} ),
+	],
 	[ CONCIERGE_APPOINTMENT_CREATE ]: [
 		dispatchRequest( bookConciergeAppointment, markSlotAsBooked, handleBookingError, { fromApi } ),
 	],

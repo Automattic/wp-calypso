@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 /**
@@ -13,11 +14,23 @@ import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 
 class Confirmation extends Component {
+	static propTypes = {
+		confirmationButton: PropTypes.string.isRequired,
+		confirmationButtonUrl: PropTypes.string.isRequired,
+		confirmationDescription: PropTypes.string.isRequired,
+		confirmationTitle: PropTypes.string.isRequired,
+	};
+
 	render() {
-		const { site, confirmationButton, confirmationDescription, confirmationTitle } = this.props;
+		const {
+			confirmationButton,
+			confirmationButtonUrl,
+			confirmationDescription,
+			confirmationTitle,
+		} = this.props;
 
 		return (
-			<Card>
+			<Card className="shared__confirmation">
 				<img
 					className="shared__confirmation-illustration"
 					src={ '/calypso/images/illustrations/support.svg' }
@@ -31,7 +44,7 @@ class Confirmation extends Component {
 				<Button
 					className="shared__confirmation-button"
 					primary={ true }
-					href={ `/stats/day/${ site.slug }` }
+					href={ confirmationButtonUrl }
 				>
 					{ confirmationButton }
 				</Button>
