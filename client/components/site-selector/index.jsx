@@ -20,12 +20,7 @@ import { getPreference } from 'state/preferences/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import {
-	areAllSitesSingleUser,
-	getSites,
-	getVisibleSites,
-	isRequestingMissingSites,
-} from 'state/selectors';
+import { areAllSitesSingleUser, getSites, getVisibleSites, hasLoadedSites } from 'state/selectors';
 import AllSites from 'my-sites/all-sites';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
@@ -272,8 +267,7 @@ class SiteSelector extends Component {
 	renderSites() {
 		let sites;
 
-		// Assume that `sites` is falsy when loading
-		if ( this.props.isRequestingMissingSites ) {
+		if ( ! this.props.hasLoadedSites ) {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
@@ -395,8 +389,7 @@ class SiteSelector extends Component {
 					onSearch={ this.onSearch }
 					delaySearch={ true }
 					autoFocus={ this.props.autoFocus }
-					// Assume that `sites` is falsy when loading
-					disabled={ ! this.props.sites }
+					disabled={ ! this.props.hasLoadedSites }
 					onSearchClose={ this.props.onClose }
 					onKeyDown={ this.onKeyDown }
 				/>
@@ -495,6 +488,7 @@ const mapState = state => {
 	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 
 	return {
+		hasLoadedSites: hasLoadedSites( state ),
 		sites: getSites( state ),
 		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
 		recentSites: getPreference( state, 'recentSites' ),
@@ -503,7 +497,6 @@ const mapState = state => {
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
-		isRequestingMissingSites: isRequestingMissingSites( state ),
 	};
 };
 
