@@ -5,6 +5,7 @@
  */
 
 import {
+	MASTERBAR_HIDE,
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
@@ -91,6 +92,10 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
+export const hideMasterbar = createReducer( false, {
+	[ MASTERBAR_HIDE ]: ( state, { hide } ) => hide,
+} );
+
 const reducer = combineReducers( {
 	actionLog,
 	comments,
@@ -98,6 +103,7 @@ const reducer = combineReducers( {
 	editor,
 	guidedTour,
 	hasSidebar,
+	hideMasterbar,
 	isLoading,
 	isNotificationsOpen,
 	isPreviewShowing,

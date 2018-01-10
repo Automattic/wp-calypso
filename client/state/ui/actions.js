@@ -5,6 +5,7 @@
  */
 
 import {
+	MASTERBAR_HIDE,
 	SELECTED_SITE_SET,
 	ROUTE_SET,
 	SECTION_SET,
@@ -89,3 +90,11 @@ export const toggleNotificationsPanel = () => {
  * @return {Object}      Action object
  */
 export const navigate = path => ( { type: NAVIGATE, path } );
+
+/**
+ * Hide or show the masterbar.
+ *
+ * @param {bool} hide True to hide masterbar
+ * @return {Object} Action object
+ */
+export const setHideMasterbar = hide => ( { type: MASTERBAR_HIDE, hide } );

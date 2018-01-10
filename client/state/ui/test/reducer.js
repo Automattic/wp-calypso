@@ -20,6 +20,7 @@ describe( 'reducer', () => {
 			'editor',
 			'guidedTour',
 			'hasSidebar',
+			'hideMasterbar',
 			'isLoading',
 			'isNotificationsOpen',
 			'isPreviewShowing',
