@@ -2748,6 +2748,17 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
 	} );
 };
 
+Undocumented.prototype.externalMediaQuery = function( query ) {
+	// the external-media endpoint takes `max` instead of `number`, and different
+	// sources require different max limits to account for stability or API usage limits
+	const limits = {
+		pexels: 40,
+		google_photos: 20,
+	};
+	const limit = limits[ query.source ] || query.number;
+	return { ...query, max: limit, number: limit };
+};
+
 /**
  * Returns a list of media from an external media service. Similar to Site.mediaList in use, but
  * with a more restricted set of query params.
@@ -2759,8 +2770,8 @@ Undocumented.prototype.initiateTransfer = function( siteId, plugin, theme, onPro
  */
 Undocumented.prototype.externalMediaList = function( query, fn ) {
 	debug( `/meta/external-media/${ query.source }` );
-
-	return this.wpcom.req.get( `/meta/external-media/${ query.source }`, query, fn );
+	const externalQuery = this.externalMediaQuery( query );
+	return this.wpcom.req.get( `/meta/external-media/${ externalQuery.source }`, externalQuery, fn );
 };
 
 /**
