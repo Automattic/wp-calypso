@@ -29,6 +29,7 @@ const paymentMethods = {
 		NL: [ 'credit-card', 'ideal', 'paypal' ],
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
 		BE: [ 'credit-card', 'bancontact', 'paypal' ],
+		PL: [ 'credit-card', 'p24', 'paypal' ],
 	},
 
 	byWpcomLang: {},

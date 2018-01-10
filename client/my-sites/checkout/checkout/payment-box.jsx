@@ -43,6 +43,8 @@ export class PaymentBox extends PureComponent {
 				return 'Giropay';
 			case 'bancontact':
 				return 'Bancontact';
+			case 'p24':
+				return 'Przelewy24';
 			case 'credit-card':
 				return translate( 'Credit or debit card' );
 			case 'paypal':
@@ -95,6 +97,16 @@ export class PaymentBox extends PureComponent {
 							src="/calypso/images/upgrades/bancontact.svg"
 							alt="Bancontact"
 							className="checkout__bancontact"
+						/>
+					</div>
+				);
+			case 'p24':
+				return (
+					<div className="checkout__provider">
+						<img
+							src="/calypso/images/upgrades/p24.svg"
+							alt="Przelewy24"
+							className="checkout__p24"
 						/>
 					</div>
 				);

@@ -150,6 +150,9 @@ function isPaymentMethodEnabled( cart, method ) {
 			return isGermanyGiropayEnabled( cart );
 		case 'bancontact':
 			return isBelgiumBancontactEnabled( cart );
+		case 'p24':
+			return isPolandP24Enabled( cart );
+
 		default:
 			return false;
 	}
@@ -183,6 +186,10 @@ function isEbanxEnabled( cart ) {
 		config.isEnabled( 'upgrades/ebanx' ) &&
 		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Ebanx' ) >= 0
 	);
+}
+
+function isPolandP24Enabled( cart ) {
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_P24' ) >= 0;
 }
 
 export {
