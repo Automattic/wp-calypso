@@ -31,6 +31,7 @@ const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name
 
 class CalendarCard extends Component {
 	static propTypes = {
+		actionText: PropTypes.string.isRequired,
 		date: PropTypes.number.isRequired,
 		disabled: PropTypes.bool.isRequired,
 		isDefaultLocale: PropTypes.bool.isRequired,
@@ -122,12 +123,12 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { disabled, isDefaultLocale, times, translate } = this.props;
+		const { actionText, disabled, isDefaultLocale, times, translate } = this.props;
 		const description = isDefaultLocale
 			? translate( 'Sessions are 30 minutes long.' )
 			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
-				args: { defaultLanguage },
-			} );
+					args: { defaultLanguage },
+				} );
 
 		return (
 			<FoldableCard
@@ -159,7 +160,7 @@ class CalendarCard extends Component {
 
 				<FormFieldset>
 					<Button disabled={ disabled } primary onClick={ this.submitForm }>
-						{ translate( 'Book this session' ) }
+						{ actionText }
 					</Button>
 				</FormFieldset>
 			</FoldableCard>

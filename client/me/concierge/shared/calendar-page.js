@@ -49,16 +49,26 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 
 class CalendarPage extends Component {
 	static propTypes = {
+		actionText: PropTypes.string.isRequired,
 		availableTimes: PropTypes.array.isRequired,
 		description: PropTypes.string.isRequired,
-		onBack: PropTypes.func.isRequired,
+		onBack: PropTypes.func,
 		onSubmit: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
 
 	render() {
-		const { availableTimes, currentUserLocale, description, disabled, onBack, onSubmit,
-			signupForm, title } = this.props;
+		const {
+			actionText,
+			availableTimes,
+			currentUserLocale,
+			description,
+			disabled,
+			onBack,
+			onSubmit,
+			signupForm,
+			title,
+		} = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes, signupForm.timezone );
 
 		return (
@@ -67,6 +77,7 @@ class CalendarPage extends Component {
 				<CompactCard> { description } </CompactCard>
 				{ availability.map( ( { date, times } ) => (
 					<CalendarCard
+						actionText={ actionText }
 						date={ date }
 						disabled={ disabled }
 						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }

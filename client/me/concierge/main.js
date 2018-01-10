@@ -48,7 +48,7 @@ class ConciergeMain extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { availableTimes, site, steps } = this.props;
+		const { appointmentId, availableTimes, site, steps } = this.props;
 		const CurrentStep = steps[ this.state.currentStep ];
 		const Skeleton = this.props.skeleton;
 
@@ -63,6 +63,7 @@ class ConciergeMain extends Component {
 		// We have shift data and this is a business site — show the signup steps
 		return (
 			<CurrentStep
+				appointmentId={ appointmentId }
 				availableTimes={ availableTimes }
 				site={ site }
 				onComplete={ this.goToNextStep }

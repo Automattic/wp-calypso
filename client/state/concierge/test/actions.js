@@ -5,6 +5,7 @@
  */
 import {
 	bookConciergeAppointment,
+	rescheduleConciergeAppointment,
 	requestConciergeAvailableTimes,
 	updateConciergeAvailableTimes,
 	updateConciergeBookingStatus,
@@ -15,6 +16,7 @@ import {
 	CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
 	CONCIERGE_APPOINTMENT_CREATE,
+	CONCIERGE_APPOINTMENT_RESCHEDULE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
@@ -37,6 +39,21 @@ describe( 'state/concierge', () => {
 				customerId,
 				siteId,
 				meta,
+			} );
+		} );
+
+		test( 'rescheduleConciergeAppointment()', () => {
+			const scheduleId = 123;
+			const beginTimestamp = 1234567890;
+			const appointmentId = 1;
+
+			expect(
+				rescheduleConciergeAppointment( scheduleId, appointmentId, beginTimestamp )
+			).toEqual( {
+				type: CONCIERGE_APPOINTMENT_RESCHEDULE,
+				scheduleId,
+				appointmentId,
+				beginTimestamp,
 			} );
 		} );
 

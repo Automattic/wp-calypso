@@ -12,8 +12,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getConciergeSignupForm } from 'state/selectors';
-import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment } from 'state/concierge/actions';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { rescheduleConciergeAppointment } from 'state/concierge/actions';
 import CalendarPage from '../shared/calendar-page';
 import {
 	CONCIERGE_STATUS_BOOKING,
@@ -23,28 +23,21 @@ import {
 
 class CalendarStep extends Component {
 	static propTypes = {
+		appointmentId: PropTypes.string.isRequired,
 		availableTimes: PropTypes.array.isRequired,
-		currentUserId: PropTypes.number.isRequired,
 		currentUserLocale: PropTypes.string.isRequired,
-		onBack: PropTypes.func.isRequired,
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 		signupForm: PropTypes.object.isRequired,
 	};
 
 	onSubmit = timestamp => {
-		const { signupForm } = this.props;
-		const meta = {
-			message: signupForm.message,
-			timezone: signupForm.timezone,
-		};
+		const { appointmentId } = this.props;
 
-		this.props.bookConciergeAppointment(
+		this.props.rescheduleConciergeAppointment(
 			WPCOM_CONCIERGE_SCHEDULE_ID,
-			timestamp,
-			this.props.currentUserId,
-			this.props.site.ID,
-			meta
+			appointmentId,
+			timestamp
 		);
 	};
 
@@ -56,20 +49,19 @@ class CalendarStep extends Component {
 	}
 
 	render() {
-		const { availableTimes, currentUserLocale, onBack, signupForm, site, translate } = this.props;
+		const { availableTimes, currentUserLocale, signupForm, site, translate } = this.props;
 
 		return (
 			<CalendarPage
-				actionText={ translate( 'Book this session' ) }
+				actionText={ translate( 'Reschedule to this date' ) }
 				availableTimes={ availableTimes }
 				currentUserLocale={ currentUserLocale }
 				disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
-				description={ translate( 'Please select a day to have your Concierge session.' ) }
-				onBack={ onBack }
+				description={ translate( 'Please select a day to reschedule your Concierge session.' ) }
+				onBack={ null }
 				onSubmit={ this.onSubmit }
 				site={ site }
 				signupForm={ signupForm }
-				title={ translate( 'Choose Concierge Session' ) }
 			/>
 		);
 	}
@@ -78,8 +70,7 @@ class CalendarStep extends Component {
 export default connect(
 	state => ( {
 		signupForm: getConciergeSignupForm( state ),
-		currentUserId: getCurrentUserId( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 	} ),
-	{ bookConciergeAppointment }
+	{ rescheduleConciergeAppointment }
 )( localize( CalendarStep ) );
