@@ -76,6 +76,18 @@ class ActivityLogDay extends Component {
 		dayExpanded: false,
 	};
 
+	shouldComponentUpdate( nextProps ) {
+		return (
+			nextProps.logs.length !== this.props.logs.length ||
+			nextProps.disableRestore !== this.props.disableRestore ||
+			nextProps.disableBackup !== this.props.disableBackup ||
+			nextProps.requestedRestoreId !== this.props.requestedRestoreId ||
+			nextProps.requestedBackupId !== this.props.requestedBackupId ||
+			nextProps.isToday !== this.props.isToday ||
+			nextProps.isRewindActive !== this.props.isRewindActive
+		);
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		// if Rewind dialog is being displayed and it's then canceled or a different Rewind button is clicked
 		if ( this.state.rewindHere && this.props.requestedRestoreId !== nextProps.requestedRestoreId ) {
