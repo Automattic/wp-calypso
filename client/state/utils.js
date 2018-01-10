@@ -381,7 +381,9 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
 export const withSchemaValidation = ( schema, reducer ) => {
-	throwIfSchemaInvalid( schema );
+	if ( typeof schema !== 'undefined' ) {
+		throwIfSchemaInvalid( schema );
+	}
 
 	const wrappedReducer = ( state, action ) => {
 		if ( SERIALIZE === action.type ) {
