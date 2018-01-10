@@ -42,10 +42,13 @@ export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
 		case COMMENTS_DELETE:
-			if ( ! action.refreshCommentListQuery ) {
+			const query = action.refreshCommentListQuery
+				? action.refreshCommentListQuery
+				: get( action, 'meta.comment.commentsListQuery' );
+			if ( ! query ) {
 				return state;
 			}
-			const { page, postId, status } = action.refreshCommentListQuery;
+			const { page, postId, status } = query;
 			if (
 				COMMENTS_CHANGE_STATUS === action.type &&
 				'all' === status &&
@@ -56,15 +59,11 @@ export const queries = ( state = {}, action ) => {
 			}
 
 			const parent = postId || 'site';
-			const filter = getFiltersKey( action.refreshCommentListQuery );
+			const filter = getFiltersKey( query );
 
 			const comments = get( state, [ parent, filter, page ] );
 
-			return deepUpdateComments(
-				state,
-				without( comments, action.commentId ),
-				action.refreshCommentListQuery
-			);
+			return deepUpdateComments( state, without( comments, action.commentId ), query );
 		case COMMENTS_QUERY_UPDATE:
 			return isUndefined( get( action, 'query.page' ) )
 				? state

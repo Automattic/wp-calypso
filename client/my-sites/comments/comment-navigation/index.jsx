@@ -41,6 +41,7 @@ import {
 import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment, hasPendingCommentRequests } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
+import { extendAction } from 'state/utils';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -348,29 +349,35 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
 		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_change_status', {
-						also_unlike: analytics.alsoUnlike,
-						previous_status: analytics.previousStatus,
-						status,
-					} ),
-					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
+			extendAction(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_comment_management_change_status', {
+							also_unlike: analytics.alsoUnlike,
+							previous_status: analytics.previousStatus,
+							status,
+						} ),
+						bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
+					),
+					changeCommentStatus( siteId, postId, commentId, status )
 				),
-				changeCommentStatus( siteId, postId, commentId, status )
+				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
 			)
 		),
 	deletePermanently: ( postId, commentId ) =>
 		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_delete' ),
-					bumpStat( 'calypso_comment_management', 'comment_deleted' )
+			extendAction(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_comment_management_delete' ),
+						bumpStat( 'calypso_comment_management', 'comment_deleted' )
+					),
+					deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
 				),
-				deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>
