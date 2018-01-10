@@ -4,7 +4,17 @@
  * External dependencies
  */
 
-import { camelCase, clone, isPlainObject, omit, pick, reject, snakeCase } from 'lodash';
+import {
+	camelCase,
+	clone,
+	cloneDeepWith,
+	isPlainObject,
+	map,
+	omit,
+	pick,
+	reject,
+	snakeCase,
+} from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 import url from 'url';
@@ -695,8 +705,16 @@ Undocumented.prototype.getDomainContactInformationValidationSchema = function( t
 		if ( error ) {
 			return fn( error );
 		}
-		const newData = mapKeysRecursively( data, camelCase );
-		return fn( null, newData );
+		// Update the schema keys to suit calypso...
+		let camelCaseSchema = mapKeysRecursively( data, camelCase );
+
+		// ...then correct any `required` rules to match the new keys
+		camelCaseSchema = cloneDeepWith(
+			camelCaseSchema,
+			( value, key ) => ( key === 'required' ? map( value, camelCase ) : undefined )
+		);
+
+		return fn( null, camelCaseSchema );
 	} );
 };
 
