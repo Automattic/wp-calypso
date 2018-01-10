@@ -67,7 +67,7 @@ export default class ChatClosureNotice extends Component {
 	}
 }
 
-ChatClosureNotice.PropTypes = {
+ChatClosureNotice.propTypes = {
 	from: PropTypes.string.isRequired,
 	to: PropTypes.string.isRequired,
 };
