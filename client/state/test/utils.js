@@ -501,12 +501,12 @@ describe( 'utils', () => {
 		date.hasCustomPersistence = true;
 
 		test( 'should return initial state without a schema on SERIALIZE', () => {
-			const validated = withSchemaValidation( null, age );
+			const validated = withSchemaValidation( undefined, age );
 			expect( validated( 5, write ) ).to.equal( 0 );
 		} );
 
 		test( 'should return initial state without a schema on DESERIALIZE', () => {
-			const validated = withSchemaValidation( null, age );
+			const validated = withSchemaValidation( undefined, age );
 			expect( validated( 5, load ) ).to.equal( 0 );
 		} );
 
@@ -534,7 +534,7 @@ describe( 'utils', () => {
 		} );
 
 		test( 'actions work as expected without schema', () => {
-			const validated = withSchemaValidation( null, age );
+			const validated = withSchemaValidation( undefined, age );
 			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
 	} );
