@@ -17,6 +17,7 @@ import {
 	values,
 	omit,
 	startsWith,
+	isInteger,
 } from 'lodash';
 
 /**
@@ -367,7 +368,7 @@ export const activeReplies = createReducer(
 
 function updateCount( counts, rawStatus, value = 1 ) {
 	const status = rawStatus === 'unapproved' ? 'pending' : rawStatus;
-	if ( ! counts || ! counts[ status ] ) {
+	if ( ! counts || ! isInteger( counts[ status ] ) ) {
 		return undefined;
 	}
 	const newCounts = {

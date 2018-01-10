@@ -637,8 +637,8 @@ describe( 'reducer', () => {
 				type: COMMENTS_CHANGE_STATUS,
 				siteId: 2916284,
 				postId: 234,
-				status: 'unapproved',
-				meta: { comment: { previousStatus: 'approved' } },
+				status: 'trash',
+				meta: { comment: { previousStatus: 'unapproved' } },
 			};
 			const state = deepFreeze( {
 				2916284: {
@@ -666,22 +666,22 @@ describe( 'reducer', () => {
 			expect( nextState ).toEqual( {
 				2916284: {
 					site: {
-						all: 11,
-						approved: 4,
-						pending: 7,
+						all: 10,
+						approved: 5,
+						pending: 5,
 						postTrashed: 0,
 						spam: 1,
-						totalComments: 12,
-						trash: 0,
+						totalComments: 11,
+						trash: 1,
 					},
 					234: {
-						all: 5,
-						approved: 1,
-						pending: 4,
+						all: 4,
+						approved: 2,
+						pending: 2,
 						postTrashed: 0,
 						spam: 1,
-						totalComments: 6,
-						trash: 0,
+						totalComments: 5,
+						trash: 1,
 					},
 				},
 			} );
