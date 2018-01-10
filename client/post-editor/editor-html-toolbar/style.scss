@@ -35,7 +35,7 @@
 		border-top-width: 0;
 		max-width: none;
 		position: fixed;
-		top: 94px;
+		top: 46px;
 		width: 100%;
 		z-index: 2;
 
@@ -72,6 +72,10 @@
 		overflow-x: auto;
 		white-space: nowrap;
 		width: 100%;
+
+		button {
+			border-radius: 0;
+		}
 	}
 
 	&.is-scrollable .editor-html-toolbar__buttons::after {
