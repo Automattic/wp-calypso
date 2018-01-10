@@ -131,6 +131,8 @@
 	flex: 2
 }
 
+
+
 .product-categories__form-image-wrapper {
 	display: flex;
 	flex-direction: row;
@@ -139,14 +141,25 @@
 	width: 100%;
 	margin-bottom: 16px;
 
+	.product-image-uploader__wrapper {
+		@include breakpoint( ">960px" ) {
+			width: 175px;
+			height: 175px;
+		}
+		@include breakpoint( ">1040px" ) {
+			width: 225px;
+			height: 225px;
+		}
+	}
+
 	@include breakpoint( ">960px" ) {
 		margin-bottom: 0;
-		width: 250px;
+		width: 175px;
 		margin-right: 24px;
 	}
 
 	@include breakpoint( ">1040px" ) {
-		width: 339px;
+		width: 225px;
 	}
 
 	.product-categories__form-image {
