@@ -38,12 +38,13 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		this.setState( { title: event.target.value } );
 	};
 
-	handleSubmit = () => {
+	handleSubmit = event => {
+		event.preventDefault();
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.title,
 			siteDescription: this.state.description,
 		} );
-		page.redirect( this.props.getForwardUrl() );
+		page( this.props.getForwardUrl() );
 	};
 
 	render() {
