@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact } from 'lodash';
+import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -16,7 +16,7 @@ import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
-import { getUnconnectedSiteIdBySlug } from 'state/selectors';
+import { getJetpackOnboardingSettings, getUnconnectedSiteIdBySlug } from 'state/selectors';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -50,18 +50,22 @@ class JetpackOnboardingMain extends React.PureComponent {
 
 export default connect( ( state, { siteSlug } ) => {
 	// Note: here we can select which steps to display, based on user's input
+	const siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
+	const settings = getJetpackOnboardingSettings( state, siteId );
+	const isBusiness = get( settings, 'siteType' ) === 'business';
+
 	const steps = compact( [
 		STEPS.SITE_TITLE,
 		STEPS.SITE_TYPE,
 		STEPS.HOMEPAGE,
 		STEPS.CONTACT_FORM,
-		STEPS.BUSINESS_ADDRESS,
-		STEPS.WOOCOMMERCE,
+		isBusiness && STEPS.BUSINESS_ADDRESS,
+		isBusiness && STEPS.WOOCOMMERCE,
 		STEPS.SUMMARY,
 	] );
 
 	return {
-		siteId: getUnconnectedSiteIdBySlug( state, siteSlug ),
+		siteId,
 		siteSlug,
 		steps,
 	};
