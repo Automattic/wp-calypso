@@ -41,7 +41,7 @@ function getExistingLineItem( item, order ) {
 
 function createLineItem( item, allProducts ) {
 	const line = {
-		id: uniqueId( 'fee_' ),
+		id: uniqueId( 'product_' ),
 		name: item.name || '',
 		price: item.price,
 		subtotal: item.price,

@@ -11,17 +11,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatCurrency from 'lib/format-currency';
 import FormTextInput from 'components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
-	getOrderLineItemTax,
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
 import { getOrderFeeCost, getOrderRefundTotal } from 'woocommerce/lib/order-values/totals';
+import OrderLineItem from '../order-details/line-item';
 import OrderTotalRow from '../order-details/row-total';
 import PriceInput from 'woocommerce/components/price-input';
 import ScreenReaderText from 'components/screen-reader-text';
@@ -151,45 +150,29 @@ class OrderRefundTable extends Component {
 		);
 	};
 
-	renderOrderItems = item => {
-		const { order, translate } = this.props;
-		const tax = getOrderLineItemTax( order, item.id );
+	renderOrderItem = item => {
+		const { order, site, translate } = this.props;
 		const inputId = `quantity-${ item.id }`;
 		return (
-			<TableRow key={ item.id } className="order-payment__items order-details__items">
-				<TableItem isRowHeader className="order-payment__item-product order-details__item-product">
-					<span className="order-payment__item-link order-details__item-link">{ item.name }</span>
-					<span className="order-payment__item-sku order-details__item-sku">{ item.sku }</span>
-				</TableItem>
-				<TableItem className="order-payment__item-cost order-details__item-cost">
-					{ formatCurrency( item.price, order.currency ) }
-				</TableItem>
-				<TableItem className="order-payment__item-quantity order-details__item-quantity">
-					<ScreenReaderText>
-						<label htmlFor={ inputId }>
-							{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
-						</label>
-					</ScreenReaderText>
-					<FormTextInput
-						type="number"
-						id={ inputId }
-						onChange={ this.onChange( 'quantity', item.id ) }
-						min="0"
-						max={ item.quantity }
-						value={ this.state.quantities[ item.id ] || 0 }
-					/>
-				</TableItem>
-				<TableItem className="order-payment__item-tax order-details__item-tax">
-					{ formatCurrency( tax, order.currency ) }
-				</TableItem>
-				<TableItem className="order-payment__item-total order-details__item-total">
-					{ formatCurrency( item.total, order.currency ) }
-				</TableItem>
-			</TableRow>
+			<OrderLineItem key={ item.id } isEditing item={ item } order={ order } site={ site }>
+				<ScreenReaderText>
+					<label htmlFor={ inputId }>
+						{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
+					</label>
+				</ScreenReaderText>
+				<FormTextInput
+					type="number"
+					id={ inputId }
+					onChange={ this.onChange( 'quantity', item.id ) }
+					min="0"
+					max={ item.quantity }
+					value={ this.state.quantities[ item.id ] || 0 }
+				/>
+			</OrderLineItem>
 		);
 	};
 
-	renderOrderFees = ( item, i ) => {
+	renderOrderFee = ( item, i ) => {
 		const { order, translate } = this.props;
 		const value = this.state.fees[ i ];
 		const inputId = `fee_line-${ item.id }`;
@@ -280,8 +263,8 @@ class OrderRefundTable extends Component {
 					className="order-payment__table order-details__table"
 					header={ this.renderTableHeader() }
 				>
-					{ order.line_items.map( this.renderOrderItems ) }
-					{ order.fee_lines.map( this.renderOrderFees ) }
+					{ order.line_items.map( this.renderOrderItem ) }
+					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
 
 				<Table className={ totalsClasses } compact>

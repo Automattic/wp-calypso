@@ -31,6 +31,21 @@
 		}
 	}
 
+	.table-item {
+		vertical-align: top;
+	}
+
+	.order-details__item-pre-discount,
+	.order-details__item-with-discount {
+		display: block;
+		background: transparent;
+	}
+
+	.order-details__item-pre-discount {
+		font-size: 0.9em;
+		text-decoration: line-through;
+	}
+
 	.order-details__item-quantity .form-text-input {
 		width: 5em;
 	}
@@ -44,6 +59,9 @@
 	}
 }
 
+.order-details__item-cost,
+.order-details__item-quantity,
+.order-details__item-tax,
 .order-details__item-delete,
 .order-details__item-total {
 	text-align: right;
