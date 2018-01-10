@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import { isNumber, toArray } from 'lodash';
 
 /**
