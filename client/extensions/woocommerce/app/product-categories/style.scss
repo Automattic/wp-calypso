@@ -107,3 +107,123 @@
 		}
 	}
 }
+
+.product-categories__form-tinymce-placeholder {
+	@include placeholder();
+	background: lighten( $gray, 35% );
+	height: 225px;
+	border: 1px solid lighten( $gray, 20% );
+}
+
+.product-categories__form .compact-tinymce  .mce-container.mce-tinymce {
+	max-width: initial;
+}
+
+.product-categories__form-info-fields {
+	display: flex;
+	flex-direction: column;
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
+}
+
+.product-categories__form-name-description {
+	flex: 2
+}
+
+.product-categories__form-image-wrapper {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	width: 100%;
+	margin-bottom: 16px;
+
+	@include breakpoint( ">960px" ) {
+		margin-bottom: 0;
+		width: 250px;
+		margin-right: 24px;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		width: 339px;
+	}
+
+	.product-categories__form-image {
+		position: relative;
+		display: inline-block;
+		margin-bottom: 16px;
+		margin-right: 0;
+		margin-left: 0;
+		clear: both;
+		width: 100%;
+		cursor: pointer;
+
+		figure {
+			border: 1px solid lighten( $gray, 30% );
+		}
+
+		img {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	figure {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.product-categories__form-image.preview figure::after {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	.product-categories__form-image.preview img {
+		opacity: 0.7;
+	}
+
+	.spinner {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+	}
+
+	.product-categories__form-image-remove {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 28px;
+		height: 28px;
+		transform: translate( 25%, -25% );
+		border: 1px solid lighten( $gray, 10% );
+		border-radius: 50%;
+		background-color: $gray-light;
+		cursor: pointer;
+
+		&:hover {
+			background: lighten( $gray, 30% );
+		}
+	}
+
+	.product-categories__form-image-remove-icon.gridicon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		width: 24px;
+		height: 24px;
+		margin: 0;
+		color: lighten( $gray, 10% );
+
+		&:hover {
+			color: $gray;
+		}
+	}
+}
+

@@ -11,7 +11,6 @@ import {
 	getUserAlreadyConnected,
 	hasExpiredSecretError,
 	hasXmlrpcError,
-	isRedirectingToWpAdmin,
 	isRemoteSiteOnSitesList,
 } from '../selectors';
 
@@ -181,42 +180,6 @@ describe( 'selectors', () => {
 			};
 
 			expect( getSSO( state ) ).toEqual( jetpackSSO );
-		} );
-	} );
-
-	describe( '#isRedirectingToWpAdmin()', () => {
-		test( 'should return false if redirection flag is not set', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {},
-				},
-			};
-
-			expect( isRedirectingToWpAdmin( state ) ).toBe( false );
-		} );
-
-		test( 'should return false if redirection flag is set to false', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						isRedirectingToWpAdmin: false,
-					},
-				},
-			};
-
-			expect( isRedirectingToWpAdmin( state ) ).toBe( false );
-		} );
-
-		test( 'should return true if redirection flag is set to true', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						isRedirectingToWpAdmin: true,
-					},
-				},
-			};
-
-			expect( isRedirectingToWpAdmin( state ) ).toBe( true );
 		} );
 	} );
 

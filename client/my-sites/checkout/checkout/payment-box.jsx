@@ -43,6 +43,8 @@ export class PaymentBox extends PureComponent {
 				return 'Giropay';
 			case 'bancontact':
 				return 'Bancontact';
+			case 'p24':
+				return 'Przelewy24';
 			case 'credit-card':
 				return translate( 'Credit or debit card' );
 			case 'paypal':
@@ -98,6 +100,16 @@ export class PaymentBox extends PureComponent {
 						/>
 					</div>
 				);
+			case 'p24':
+				return (
+					<div className="checkout__provider">
+						<img
+							src="/calypso/images/upgrades/p24.svg"
+							alt="Przelewy24"
+							className="checkout__p24"
+						/>
+					</div>
+				);
 		}
 
 		return <span>{ this.getPaymentProviderName( method ) }</span>;
@@ -125,7 +137,6 @@ export class PaymentBox extends PureComponent {
 		if ( ! this.props.paymentMethods ) {
 			return null;
 		}
-
 		return this.props.paymentMethods.map( method => {
 			return this.paymentMethod( method );
 		} );

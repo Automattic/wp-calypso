@@ -1,6 +1,6 @@
 /**
  * Given a string, attempts to generate the equivalent HTMLElement
- * 
+ *
  *
  * @format
  * @param {string}      string HTML string

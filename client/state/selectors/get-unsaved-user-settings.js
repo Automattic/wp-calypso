@@ -1,6 +1,6 @@
 /**
  * Returns all unsaved user settings as one object
- * 
+ *
  *
  * @format
  * @param {Object} state Global state tree

@@ -542,12 +542,12 @@ class ThemeSheet extends React.Component {
 		const section = this.validateSection( this.props.section );
 		const { siteId, retired } = this.props;
 
-		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteId
-			? '/:site_id'
-			: '' }`;
-		const analyticsPageTitle = `Themes > Details Sheet${ section
-			? ' > ' + titlecase( section )
-			: '' }${ siteId ? ' > Site' : '' }`;
+		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${
+			siteId ? '/:site_id' : ''
+		}`;
+		const analyticsPageTitle = `Themes > Details Sheet${
+			section ? ' > ' + titlecase( section ) : ''
+		}${ siteId ? ' > Site' : '' }`;
 
 		const { canonicalUrl, currentUserId, description, name: themeName } = this.props;
 		const title =

@@ -188,9 +188,7 @@ export class EditorGroundControl extends PureComponent {
 					onClick={ this.onPreviewButtonClick }
 					tabIndex={ 4 }
 				>
-					<span className="editor-ground-control__button-label">
-						{ this.getPreviewLabel() }
-					</span>
+					<span className="editor-ground-control__button-label">{ this.getPreviewLabel() }</span>
 				</Button>
 				<div className="editor-ground-control__publish-button">
 					<EditorPublishButton
@@ -249,7 +247,7 @@ export class EditorGroundControl extends PureComponent {
 					onSelect={ this.props.recordSiteButtonClick }
 					indicator={ true }
 				/>
-				{ this.state.needsVerification &&
+				{ this.state.needsVerification && (
 					<div
 						className="editor-ground-control__email-verification-notice"
 						tabIndex={ 7 }
@@ -263,7 +261,8 @@ export class EditorGroundControl extends PureComponent {
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
-					</div> }
+					</div>
+				) }
 				<QuickSaveButtons
 					isSaving={ isSaving }
 					isSaveBlocked={ isSaveBlocked }

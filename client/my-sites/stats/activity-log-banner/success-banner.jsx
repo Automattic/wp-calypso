@@ -85,40 +85,40 @@ class SuccessBanner extends PureComponent {
 		const date = applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' );
 		const params = backupUrl
 			? {
-				title: translate( 'Your backup is now available for download' ),
-				icon: 'cloud-download',
-				track: (
-					<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
-				),
-				taskFinished: translate( 'We successfully created a backup of your site to %s!', {
-					args: date,
-				} ),
-				actionButton: (
-					<Button href={ backupUrl } onClick={ this.trackDownload } primary>
-						{ translate( 'Download' ) }
-					</Button>
-				),
-				trackHappyChat: trackHappyChatBackup,
-			}
+					title: translate( 'Your backup is now available for download' ),
+					icon: 'cloud-download',
+					track: (
+						<TrackComponentView eventName="calypso_activitylog_backup_successbanner_impression" />
+					),
+					taskFinished: translate( 'We successfully created a backup of your site to %s!', {
+						args: date,
+					} ),
+					actionButton: (
+						<Button href={ backupUrl } onClick={ this.trackDownload } primary>
+							{ translate( 'Download' ) }
+						</Button>
+					),
+					trackHappyChat: trackHappyChatBackup,
+				}
 			: {
-				title: translate( 'Your site has been successfully restored' ),
-				icon: 'history',
-				track: (
-					<TrackComponentView
-						eventName="calypso_activitylog_restore_successbanner_impression"
-						eventProperties={ { restore_to: timestamp } }
-					/>
-				),
-				taskFinished: translate( 'We successfully restored your site back to %s!', {
-					args: date,
-				} ),
-				actionButton: (
-					<Button href={ siteUrl } primary>
-						{ translate( 'View site' ) }
-					</Button>
-				),
-				trackHappyChat: trackHappyChatRestore,
-			};
+					title: translate( 'Your site has been successfully restored' ),
+					icon: 'history',
+					track: (
+						<TrackComponentView
+							eventName="calypso_activitylog_restore_successbanner_impression"
+							eventProperties={ { restore_to: timestamp } }
+						/>
+					),
+					taskFinished: translate( 'We successfully restored your site back to %s!', {
+						args: date,
+					} ),
+					actionButton: (
+						<Button href={ siteUrl } primary>
+							{ translate( 'View site' ) }
+						</Button>
+					),
+					trackHappyChat: trackHappyChatRestore,
+				};
 		return (
 			<ActivityLogBanner
 				isDismissable

@@ -15,7 +15,6 @@ import { includes } from 'lodash';
 import postNormalizer from 'lib/post-normalizer';
 
 var utils = {
-
 	getEditURL: function( post, site ) {
 		let basePath = '';
 

@@ -11,6 +11,7 @@ import { isFinite, keyBy, omit } from 'lodash';
  */
 import { combineReducers } from 'state/utils';
 import { getSerializedOrdersQuery } from './utils';
+import invoice from './send-invoice/reducer';
 import notes from './notes/reducer';
 import {
 	WOOCOMMERCE_ORDER_REQUEST,
@@ -150,6 +151,7 @@ export function total( state = 1, action ) {
 }
 
 export default combineReducers( {
+	invoice,
 	isQueryLoading,
 	isLoading,
 	isUpdating,

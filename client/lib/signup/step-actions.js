@@ -111,78 +111,80 @@ export function createSiteWithCart(
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 
-	wpcom.undocumented().sitesNew( {
-		blog_name: siteUrl,
-		blog_title: siteTitle,
-		options: {
-			designType: designType || undefined,
-			// the theme can be provided in this step's dependencies or the
-			// step object itself depending on if the theme is provided in a
-			// query. See `getThemeSlug` in `DomainsStep`.
-			theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
-			vertical: surveyVertical || undefined,
+	wpcom.undocumented().sitesNew(
+		{
+			blog_name: siteUrl,
+			blog_title: siteTitle,
+			options: {
+				designType: designType || undefined,
+				// the theme can be provided in this step's dependencies or the
+				// step object itself depending on if the theme is provided in a
+				// query. See `getThemeSlug` in `DomainsStep`.
+				theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
+				vertical: surveyVertical || undefined,
+			},
+			validate: false,
+			find_available_url: isPurchasingItem,
 		},
-		validate: false,
-		find_available_url: isPurchasingItem,
-	},
-	function( error, response ) {
-		if ( error ) {
-			callback( error );
+		function( error, response ) {
+			if ( error ) {
+				callback( error );
 
-			return;
-		}
-
-		const parsedBlogURL = parseURL( response.blog_details.url );
-
-		const siteSlug = parsedBlogURL.hostname;
-		const siteId = response.blog_details.blogid;
-		const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
-		const providedDependencies = {
-			siteId,
-			siteSlug,
-			domainItem,
-			themeItem,
-		};
-		const addToCartAndProceed = () => {
-			let privacyItem = null;
-			if ( domainItem ) {
-				privacyItem = cartItems.domainPrivacyProtection( {
-					domain: domainItem.meta,
-					source: 'signup',
-				} );
+				return;
 			}
 
-			const newCartItems = [
-				cartItem,
-				domainItem,
-				googleAppsCartItem,
-				themeItem,
-				privacyItem,
-			].filter( item => item );
+			const parsedBlogURL = parseURL( response.blog_details.url );
 
-			if ( newCartItems.length ) {
-				SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
-					callback( cartError, providedDependencies );
-				} );
-			} else {
-				callback( undefined, providedDependencies );
-			}
-		};
-
-		if ( ! user.get() && isFreeThemePreselected ) {
-			setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-		} else if ( user.get() && isFreeThemePreselected ) {
-			fetchSitesAndUser(
+			const siteSlug = parsedBlogURL.hostname;
+			const siteId = response.blog_details.blogid;
+			const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
+			const providedDependencies = {
+				siteId,
 				siteSlug,
-				setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
-				reduxStore
-			);
-		} else if ( user.get() ) {
-			fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
-		} else {
-			addToCartAndProceed();
+				domainItem,
+				themeItem,
+			};
+			const addToCartAndProceed = () => {
+				let privacyItem = null;
+				if ( domainItem ) {
+					privacyItem = cartItems.domainPrivacyProtection( {
+						domain: domainItem.meta,
+						source: 'signup',
+					} );
+				}
+
+				const newCartItems = [
+					cartItem,
+					domainItem,
+					googleAppsCartItem,
+					themeItem,
+					privacyItem,
+				].filter( item => item );
+
+				if ( newCartItems.length ) {
+					SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
+						callback( cartError, providedDependencies );
+					} );
+				} else {
+					callback( undefined, providedDependencies );
+				}
+			};
+
+			if ( ! user.get() && isFreeThemePreselected ) {
+				setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+			} else if ( user.get() && isFreeThemePreselected ) {
+				fetchSitesAndUser(
+					siteSlug,
+					setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+					reduxStore
+				);
+			} else if ( user.get() ) {
+				fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
+			} else {
+				addToCartAndProceed();
+			}
 		}
-	} );
+	);
 }
 
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
@@ -315,68 +317,72 @@ export function createAccount(
 
 	if ( service ) {
 		// We're creating a new social account
-		wpcom.undocumented().usersSocialNew( {
-			service,
-			access_token,
-			id_token,
-			signup_flow_name: flowName,
-		},
-		( error, response ) => {
-			const errors =
-				error && error.error
-					? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
-					: undefined;
-
-			if ( errors ) {
-				callback( errors );
-			} else {
-				callback( undefined, response );
-			}
-		} );
-	} else {
-		wpcom.undocumented().usersNew( assign(
-			{},
-			userData,
+		wpcom.undocumented().usersSocialNew(
 			{
-				ab_test_variations: getSavedVariations(),
-				validate: false,
+				service,
+				access_token,
+				id_token,
 				signup_flow_name: flowName,
-				nux_q_site_type: surveySiteType,
-				nux_q_question_primary: surveyVertical,
-				// url sent in the confirmation email
-				jetpack_redirect: queryArgs.jetpack_redirect,
 			},
-			oauth2Signup
-				? {
+			( error, response ) => {
+				const errors =
+					error && error.error
+						? [ { error: error.error, message: error.message, email: get( error, 'data.email' ) } ]
+						: undefined;
+
+				if ( errors ) {
+					callback( errors );
+				} else {
+					callback( undefined, response );
+				}
+			}
+		);
+	} else {
+		wpcom.undocumented().usersNew(
+			assign(
+				{},
+				userData,
+				{
+					ab_test_variations: getSavedVariations(),
+					validate: false,
+					signup_flow_name: flowName,
+					nux_q_site_type: surveySiteType,
+					nux_q_question_primary: surveyVertical,
+					// url sent in the confirmation email
+					jetpack_redirect: queryArgs.jetpack_redirect,
+				},
+				oauth2Signup
+					? {
+							oauth2_client_id: queryArgs.oauth2_client_id,
+							// url of the WordPress.com authorize page for this OAuth2 client
+							// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
+							oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
+						}
+					: null
+			),
+			( error, response ) => {
+				const errors =
+						error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
+					bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+
+				if ( ! errors ) {
+					// Fire after a new user registers.
+					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+				}
+
+				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
+
+				if ( oauth2Signup ) {
+					assign( providedDependencies, {
 						oauth2_client_id: queryArgs.oauth2_client_id,
-						// url of the WordPress.com authorize page for this OAuth2 client
-						// convert to legacy oauth2_redirect format: %s@https://public-api.wordpress.com/oauth2/authorize/...
-						oauth2_redirect: queryArgs.oauth2_redirect && '0@' + queryArgs.oauth2_redirect,
-					}
-				: null
-		),
-		( error, response ) => {
-			const errors =
-					error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
-				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+						oauth2_redirect: queryArgs.oauth2_redirect,
+					} );
+				}
 
-			if ( ! errors ) {
-				// Fire after a new user registers.
-				analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-				analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+				callback( errors, providedDependencies );
 			}
-
-			const providedDependencies = assign( {}, { username: userData.username }, bearerToken );
-
-			if ( oauth2Signup ) {
-				assign( providedDependencies, {
-					oauth2_client_id: queryArgs.oauth2_client_id,
-					oauth2_redirect: queryArgs.oauth2_redirect,
-				} );
-			}
-
-			callback( errors, providedDependencies );
-		} );
+		);
 	}
 }
 

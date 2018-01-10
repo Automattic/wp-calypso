@@ -1,6 +1,6 @@
 /**
  * `AccountRecoveryReset` constructor.
- * 
+ *
  *
  * @format
  * @constructor

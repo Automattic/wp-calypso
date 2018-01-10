@@ -451,10 +451,10 @@ PostActions = {
 	},
 
 	/**
-	* Fetch next page of posts from the user's sites via the WordPress.com REST API.
-	*
-	* @api public
-	*/
+	 * Fetch next page of posts from the user's sites via the WordPress.com REST API.
+	 *
+	 * @api public
+	 */
 	fetchNextPage: function( postListStoreId = 'default' ) {
 		const postListStore = postListStoreFactory( postListStoreId );
 

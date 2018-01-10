@@ -83,6 +83,24 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		},
 	};
 
+	const PlCountryState = {
+		geo: {
+			geo: {
+				country_short: 'PL',
+			},
+		},
+
+		users: {
+			items: {
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'pl' },
+			},
+		},
+
+		currentUser: {
+			id: 73705554,
+		},
+	};
+
 	const frLangFRCountryState = {
 		geo: {
 			geo: {
@@ -128,6 +146,14 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		expect( getCurrentUserPaymentMethods( nlCountryState ) ).to.eql( [
 			'credit-card',
 			'ideal',
+			'paypal',
+		] );
+	} );
+
+	test( 'pl-PL should return credit card, p24, PayPal ', () => {
+		expect( getCurrentUserPaymentMethods( PlCountryState ) ).to.eql( [
+			'credit-card',
+			'p24',
 			'paypal',
 		] );
 	} );

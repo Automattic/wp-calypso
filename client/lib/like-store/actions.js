@@ -36,15 +36,15 @@ function getQuery() {
 
 var LikeActions = {
 	/**
-	* Fetch a post's list of likes
-	*
-	*
-	* Note: the endpoint will currently return a maximum of 90 likes, and there's no pagination
-	*
-	*
-	* @param {int} Site ID
-	* @param {int} Post ID
-	*/
+	 * Fetch a post's list of likes
+	 *
+	 *
+	 * Note: the endpoint will currently return a maximum of 90 likes, and there's no pagination
+	 *
+	 *
+	 * @param {int} Site ID
+	 * @param {int} Post ID
+	 */
 	fetchLikes: function( siteId, postId ) {
 		if ( requestInflight( key( siteId, postId ) ) ) {
 			return;
@@ -62,11 +62,11 @@ var LikeActions = {
 	},
 
 	/**
-	* Like a post as the current user
-	*
-	* @param {int} siteId The Site ID
-	* @param {int} postId The Post ID
-	*/
+	 * Like a post as the current user
+	 *
+	 * @param {int} siteId The Site ID
+	 * @param {int} postId The Post ID
+	 */
 	likePost: function( siteId, postId ) {
 		Dispatcher.handleViewAction( {
 			type: 'LIKE_POST',

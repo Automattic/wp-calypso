@@ -2,14 +2,21 @@
 /**
  * External dependencies
  */
-import { get, includes, isUndefined, map, without } from 'lodash';
+import { get, includes, isUndefined, map, without, has } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { COMMENTS_CHANGE_STATUS, COMMENTS_DELETE, COMMENTS_QUERY_UPDATE } from 'state/action-types';
+import {
+	COMMENTS_CHANGE_STATUS,
+	COMMENTS_DELETE,
+	COMMENTS_LIST_REQUEST,
+	COMMENTS_QUERY_UPDATE,
+	COMMENTS_TREE_SITE_REQUEST,
+} from 'state/action-types';
 import { combineReducers, keyedReducer } from 'state/utils';
 import { getFiltersKey } from 'state/ui/comments/utils';
+import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 
 const deepUpdateComments = ( state, comments, query ) => {
 	const { page = 1, postId } = query;
@@ -67,4 +74,25 @@ export const queries = ( state = {}, action ) => {
 	}
 };
 
-export default combineReducers( { queries: keyedReducer( 'siteId', queries ) } );
+export const pendingActions = function( state = [], action ) {
+	switch ( action.type ) {
+		case COMMENTS_CHANGE_STATUS:
+		case COMMENTS_DELETE:
+			const key = getRequestKey( action );
+			if ( has( action, 'meta.dataLayer.trackRequest' ) && state.indexOf( key ) === -1 ) {
+				return [ ...state, key ];
+			}
+			return state;
+		case COMMENTS_LIST_REQUEST:
+		case COMMENTS_TREE_SITE_REQUEST:
+			//ignore pending requests if we're looking at a fresh view
+			return [];
+		default:
+			return state;
+	}
+};
+
+export default combineReducers( {
+	queries: keyedReducer( 'siteId', queries ),
+	pendingActions,
+} );

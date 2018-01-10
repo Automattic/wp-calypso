@@ -55,6 +55,15 @@ export const fetchNotes = ( siteId, orderId, refresh = false ) => ( dispatch, ge
 		} );
 };
 
+export const createNoteSuccess = ( siteId, orderId, note ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
+		siteId,
+		orderId,
+		note,
+	};
+};
+
 export const createNote = ( siteId, orderId, note ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
@@ -72,12 +81,7 @@ export const createNote = ( siteId, orderId, note ) => ( dispatch, getState ) =>
 		.then( data => {
 			// If note is customer note, maybe add a notice
 			// dispatch( successNotice( translate( 'Notified customer.' ), { duration: 5000 } ) );
-			dispatch( {
-				type: WOOCOMMERCE_ORDER_NOTE_CREATE_SUCCESS,
-				siteId,
-				orderId,
-				note: data,
-			} );
+			dispatch( createNoteSuccess( siteId, orderId, data ) );
 		} )
 		.catch( error => {
 			dispatch( {

@@ -4,8 +4,9 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import page from 'page';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -37,11 +38,12 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		this.setState( { title: event.target.value } );
 	};
 
-	submit = () => {
+	handleSubmit = () => {
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.title,
 			siteDescription: this.state.description,
 		} );
+		page.redirect( this.props.getForwardUrl() );
 	};
 
 	render() {
@@ -62,13 +64,14 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">
-					<form>
+					<form onSubmit={ this.handleSubmit }>
 						<FormFieldset>
 							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
 							<FormTextInput
 								autoFocus
 								id="title"
 								onChange={ this.setTitle }
+								required
 								value={ this.state.title }
 							/>
 						</FormFieldset>
@@ -78,11 +81,12 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							<FormTextarea
 								id="description"
 								onChange={ this.setDescription }
+								required
 								value={ this.state.description }
 							/>
 						</FormFieldset>
 
-						<Button href={ this.props.getForwardUrl() } onClick={ this.submit } primary>
+						<Button primary type="submit">
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>

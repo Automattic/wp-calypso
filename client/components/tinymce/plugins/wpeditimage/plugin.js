@@ -1,6 +1,6 @@
 /**
  * Adapted from the WordPress wp-editimage TinyMCE plugin.
- * 
+ *
  *
  * @format
  * @copyright 2015 by the WordPress contributors.

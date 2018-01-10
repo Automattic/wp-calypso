@@ -325,14 +325,16 @@ const Checkout = createReactClass( {
 			);
 
 			if ( domainsForGsuite.length && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
-				return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGsuite[ 0 ]
-					.meta }/${ receiptId }`;
+				return `/checkout/${ selectedSiteSlug }/with-gsuite/${
+					domainsForGsuite[ 0 ].meta
+				}/${ receiptId }`;
 			}
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${ this.props
-					.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
+			? `/checkout/thank-you/features/${
+					this.props.selectedFeature
+				}/${ selectedSiteSlug }/${ receiptId }`
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	},
 

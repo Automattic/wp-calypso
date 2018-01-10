@@ -135,9 +135,9 @@ User.prototype.fetch = function() {
 					error.error === 'authorization_required'
 				) {
 					/**
-				 * if the user bootstrap is disabled (in development), we need to rely on a request to
-				 * /me to determine if the user is logged in.
-				 */
+					 * if the user bootstrap is disabled (in development), we need to rely on a request to
+					 * /me to determine if the user is logged in.
+					 */
 					debug( 'The user is not logged in.' );
 
 					this.initialized = true;

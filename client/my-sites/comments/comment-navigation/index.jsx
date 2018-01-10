@@ -39,7 +39,7 @@ import {
 	unlikeComment,
 } from 'state/comments/actions';
 import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/selectors';
+import { getSiteComment, hasPendingCommentRequests } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
 
 const bulkActions = {
@@ -59,6 +59,13 @@ export class CommentNavigation extends Component {
 	};
 
 	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
+
+	componentDidUpdate = prevProps => {
+		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
+		if ( commentsListQuery && ! hasPendingBulkAction && prevProps.hasPendingBulkAction ) {
+			refreshPage( commentsListQuery );
+		}
+	};
 
 	bulkDeletePermanently = () => {
 		const { translate } = this.props;
@@ -108,11 +115,9 @@ export class CommentNavigation extends Component {
 	setBulkStatus = newStatus => () => {
 		const {
 			changeStatus,
-			commentsListQuery,
 			deletePermanently,
 			postId: isPostView,
 			recordBulkAction,
-			refreshPage,
 			selectedComments,
 			status: queryStatus,
 			toggleBulkMode,
@@ -130,10 +135,6 @@ export class CommentNavigation extends Component {
 				unlike( postId, commentId );
 			}
 		} );
-
-		if ( commentsListQuery ) {
-			refreshPage( commentsListQuery );
-		}
 
 		recordBulkAction(
 			newStatus,
@@ -341,6 +342,7 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	return {
 		visibleComments,
 		hasComments: visibleComments.length > 0,
+		hasPendingBulkAction: hasPendingCommentRequests( state ),
 		isCommentsTreeSupported:
 			! isJetpackSite( state, siteId ) || isJetpackMinimumVersion( state, siteId, '5.3' ),
 	};
