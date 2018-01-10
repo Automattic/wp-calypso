@@ -12,10 +12,10 @@ import PropTypes from 'prop-types';
  */
 import Button from 'components/button';
 
-const SetupFooter = ( { disabled, label, onClick, primary } ) => {
+const SetupFooter = ( { busy, disabled, label, onClick, primary } ) => {
 	return (
 		<div className="dashboard__setup-footer">
-			<Button disabled={ disabled } onClick={ onClick } primary={ primary }>
+			<Button busy={ busy } disabled={ disabled } onClick={ onClick } primary={ primary }>
 				{ label }
 			</Button>
 		</div>
@@ -23,10 +23,17 @@ const SetupFooter = ( { disabled, label, onClick, primary } ) => {
 };
 
 SetupFooter.propTypes = {
+	busy: PropTypes.bool,
 	disabled: PropTypes.bool,
 	label: PropTypes.string.isRequired,
 	onClick: PropTypes.func.isRequired,
 	primary: PropTypes.bool,
+};
+
+SetupFooter.defaultProps = {
+	busy: false,
+	disabled: false,
+	primary: false,
 };
 
 export default SetupFooter;
