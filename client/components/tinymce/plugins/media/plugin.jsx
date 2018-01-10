@@ -27,6 +27,7 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
 import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
+import { insertMediaAsLink, insertMedia } from './utils';
 import advanced from './advanced';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -57,10 +58,6 @@ function mediaButton( editor ) {
 		updateMedia; // eslint-disable-line
 
 	const getSelectedSiteFromState = () => getSelectedSite( getState() );
-
-	function insertMedia( markup ) {
-		editor.execCommand( 'mceInsertContent', false, markup );
-	}
 
 	function renderModal( props = {}, options = {} ) {
 		const selectedSite = getSelectedSiteFromState();
@@ -94,8 +91,13 @@ function mediaButton( editor ) {
 				/* eslint-disable react/jsx-no-bind */
 				onClose={ renderModal.bind( null, { visible: false } ) }
 				/* eslint-disable react/jsx-no-bind */
-				onInsertMedia={ markup => {
-					insertMedia( markup );
+				onInsertMedia={ ( markup, media ) => {
+					const selectedText = editor.selection.getContent( { format: 'text' } );
+					if ( media.length === 1 && selectedText ) {
+						insertMediaAsLink( editor, media[ 0 ] );
+					} else {
+						insertMedia( editor, markup );
+					}
 					renderModal( { visible: false } );
 				} }
 			/>,
