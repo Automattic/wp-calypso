@@ -147,19 +147,19 @@ function isPaidWithPaypal( purchase ) {
 }
 
 function isPaidWithIdeal( purchase ) {
-	return 'ideal' === purchase.payment.type.toLowerCase();
+	return 'ideal' === purchase.payment.type;
 }
 
 function isPaidWithGiropay( purchase ) {
-	return 'giropay' === purchase.payment.type.toLowerCase();
+	return 'giropay' === purchase.payment.type;
 }
 
 function isPaidWithBancontact( purchase ) {
-	return 'bancontact' === purchase.payment.type.toLowerCase();
+	return 'bancontact' === purchase.payment.type;
 }
 
 function isPaidWithP24( purchase ) {
-	return 'p24' === purchase.payment.type.toLowerCase();
+	return 'p24' === purchase.payment.type;
 }
 
 function isPendingTransfer( purchase ) {
