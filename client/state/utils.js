@@ -14,6 +14,7 @@ import {
 	isEqual,
 	mapValues,
 	merge,
+	noop,
 	omit,
 	omitBy,
 	partialRight,
@@ -37,34 +38,36 @@ import warn from 'lib/warn';
  * @param {Object} schema Schema to validate against the draft spec schema
  * @throws An error if the schema is invalid according to spec
  */
-export function throwIfSchemaInvalid( schema ) {
+export const throwIfSchemaInvalid = ( () => {
 	if ( process.env.NODE_ENV === 'production' ) {
-		return;
+		return noop;
 	}
 
 	const jsonSchemaSchema = require( './jsonschema-spec-04' );
 	const validateSchema = validator( jsonSchemaSchema, { greedy: true, verbose: true } );
-	if ( ! validateSchema( schema ) ) {
-		const validationErrorDescriptionParts = [ 'Invalid schema provided. Errors:', '' ];
-		forEach( validateSchema.errors, ( { field, message, schemaPath, value } ) => {
-			// data.myField is required
-			validationErrorDescriptionParts.push( `${ field } ${ message }` );
+	return schema => {
+		if ( ! validateSchema( schema ) ) {
+			const validationErrorDescriptionParts = [ 'Invalid schema provided. Errors:', '' ];
+			forEach( validateSchema.errors, ( { field, message, schemaPath, value } ) => {
+				// data.myField is required
+				validationErrorDescriptionParts.push( `${ field } ${ message }` );
 
-			// Found: { my: 'state' }
-			validationErrorDescriptionParts.push( `Found: ${ JSON.stringify( value ) }` );
+				// Found: { my: 'state' }
+				validationErrorDescriptionParts.push( `Found: ${ JSON.stringify( value ) }` );
 
-			// Violates rule: { type: 'boolean' }
-			if ( ! isEmpty( schemaPath ) ) {
-				validationErrorDescriptionParts.push(
-					`Violates rule: ${ JSON.stringify( get( schema, schemaPath ) ) }`
-				);
-			}
-			validationErrorDescriptionParts.push( '' );
-		} );
+				// Violates rule: { type: 'boolean' }
+				if ( ! isEmpty( schemaPath ) ) {
+					validationErrorDescriptionParts.push(
+						`Violates rule: ${ JSON.stringify( get( jsonSchemaSchema, schemaPath ) ) }`
+					);
+				}
+				validationErrorDescriptionParts.push( '' );
+			} );
 
-		throw new Error( validationErrorDescriptionParts.join( '\n' ) );
-	}
-}
+			throw new Error( validationErrorDescriptionParts.join( '\n' ) );
+		}
+	};
+} )();
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	throwIfSchemaInvalid( schema );
