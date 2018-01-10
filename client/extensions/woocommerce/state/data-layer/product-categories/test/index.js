@@ -274,7 +274,7 @@ describe( 'handlers', () => {
 	} );
 
 	describe( '#handleProductCategoryUpdate', () => {
-		test( 'should dispatch a post action', () => {
+		test( 'should dispatch a put action', () => {
 			const store = {
 				dispatch: spy(),
 			};
@@ -329,20 +329,14 @@ describe( 'handlers', () => {
 					receivedData: 'RECEIVED_DATA',
 				} )
 			);
-		} );
 
-		test( 'should dispatch a success function with extra parameters', () => {
-			const store = {
-				dispatch: spy(),
-			};
-
-			const category = { id: 2, name: 'Category 1', slug: 'category-1' };
-			const successAction = ( dispatch, getState, { sentData, receivedData } ) => {
+			const category2 = { id: 2, name: 'Category 1', slug: 'category-1' };
+			const successAction2 = ( dispatch, getState, { sentData, receivedData } ) => {
 				return { type: '%%success%%', sentData, receivedData };
 			};
-			const action = updateProductCategory( 123, category, successAction );
+			const action2 = updateProductCategory( 123, category2, successAction2 );
 
-			handleProductCategoryUpdate( store, action );
+			handleProductCategoryUpdate( store, action2 );
 
 			expect( store.dispatch ).to.have.been.calledWith(
 				match( {
@@ -353,8 +347,8 @@ describe( 'handlers', () => {
 				} )
 			);
 
-			const updatedSuccessAction = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
-			expect( updatedSuccessAction ).to.be.a( 'function' );
+			const updatedSuccessAction2 = store.dispatch.firstCall.args[ 0 ].onSuccessAction;
+			expect( updatedSuccessAction2 ).to.be.a( 'function' );
 
 			updatedSuccessAction( store.dispatch, null, { data: 'RECEIVED_DATA' } );
 

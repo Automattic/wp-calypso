@@ -79,7 +79,7 @@ class ProductCategoryCreate extends React.Component {
 
 	onSave = () => {
 		const { site, category, translate } = this.props;
-		this.setState( () => ( { busy: true } ) );
+		this.setState( { busy: true } );
 
 		const successAction = () => {
 			page.redirect( getLink( '/store/products/categories/:site', site ) );
@@ -90,7 +90,7 @@ class ProductCategoryCreate extends React.Component {
 		};
 
 		const failureAction = () => {
-			this.setState( () => ( { busy: false } ) );
+			this.setState( { busy: false } );
 			return errorNotice(
 				translate( 'There was a problem saving your category. Please try again.' ),
 				{
