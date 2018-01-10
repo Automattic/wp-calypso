@@ -18,6 +18,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import PaymentMethodsCard from 'blocks/payment-methods-card';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/domains/navigation';
@@ -96,7 +97,7 @@ class Plans extends React.Component {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }
 						/>
-
+						<PaymentMethodsCard />
 						<PlansFeaturesMain
 							displayJetpackPlans={ displayJetpackPlans }
 							hideFreePlan={ true }
