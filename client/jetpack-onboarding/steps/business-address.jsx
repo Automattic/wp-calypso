@@ -73,7 +73,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">
-					<form>
+					<form onSubmit={ this.handleSubmit }>
 						{ map( this.fields, ( fieldLabel, fieldName ) => (
 							<FormFieldset key={ fieldName }>
 								<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
