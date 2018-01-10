@@ -19,7 +19,6 @@ import {
 	extendAction,
 	isValidStateWithSchema,
 	keyedReducer,
-	throwIfSchemaInvalid,
 	withoutPersistence,
 	withSchemaValidation,
 } from 'state/utils';
@@ -881,12 +880,6 @@ describe( 'utils', () => {
 			return Promise.all( [ firstCall, secondCall ] ).then(
 				() => expect( failingWorker ).to.be.calledTwice
 			);
-		} );
-	} );
-
-	describe( '#throwIfSchemaInvalid', () => {
-		test( 'should warn when called with invalid schema', () => {
-			jestExpect( () => throwIfSchemaInvalid( false ) ).toThrow();
 		} );
 	} );
 } );

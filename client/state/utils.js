@@ -3,8 +3,9 @@
 /**
  * External dependencies
  */
-
+import LRU from 'lru-cache';
 import validator from 'is-my-json-valid';
+import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import {
 	flow,
 	forEach,
@@ -14,60 +15,18 @@ import {
 	isEqual,
 	mapValues,
 	merge,
-	noop,
 	omit,
 	omitBy,
 	partialRight,
 	reduce,
 } from 'lodash';
-import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
-import LRU from 'lru-cache';
 
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
-
-/**
- * Throw an error if not in production and schema is not valid according to spec.
- *
- * This is intended to catch invalid schemas early in development rather than shipping
- * hard to track down bugs.
- *
- * @param {Object} schema Schema to validate against the draft spec schema
- * @throws An error if the schema is invalid according to spec
- */
-export const throwIfSchemaInvalid = ( () => {
-	if ( process.env.NODE_ENV === 'production' ) {
-		return noop;
-	}
-
-	const jsonSchemaSchema = require( './jsonschema-spec-04' );
-	const validateSchema = validator( jsonSchemaSchema, { greedy: true, verbose: true } );
-	return schema => {
-		if ( ! validateSchema( schema ) ) {
-			const validationErrorDescriptionParts = [ 'Invalid schema provided. Errors:', '' ];
-			forEach( validateSchema.errors, ( { field, message, schemaPath, value } ) => {
-				// data.myField is required
-				validationErrorDescriptionParts.push( `${ field } ${ message }` );
-
-				// Found: { my: 'state' }
-				validationErrorDescriptionParts.push( `Found: ${ JSON.stringify( value ) }` );
-
-				// Violates rule: { type: 'boolean' }
-				if ( ! isEmpty( schemaPath ) ) {
-					validationErrorDescriptionParts.push(
-						`Violates rule: ${ JSON.stringify( get( jsonSchemaSchema, schemaPath ) ) }`
-					);
-				}
-				validationErrorDescriptionParts.push( '' );
-			} );
-
-			throw new Error( validationErrorDescriptionParts.join( '\n' ) );
-		}
-	};
-} )();
+import { DESERIALIZE, SERIALIZE } from './action-types';
+import { throwIfSchemaInvalid } from './schema-utils';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
 	throwIfSchemaInvalid( schema );
