@@ -6,6 +6,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { map } from 'lodash';
 /**
  * Internal dependencies
@@ -48,13 +49,15 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		};
 	}
 
-	handleAddBusinessAddress = () => {
+	handleSubmit = event => {
+		event.preventDefault();
 		const { siteId } = this.props;
 		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
+		page( this.props.getForwardUrl() );
 	};
 
 	render() {
-		const { getForwardUrl, translate } = this.props;
+		const { translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
 		const subHeaderText = translate(
 			'Enter your business address to have a map added to your website.'
@@ -71,19 +74,20 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">
-					<form>
+					<form onSubmit={ this.handleSubmit }>
 						{ map( this.fields, ( fieldLabel, fieldName ) => (
 							<FormFieldset key={ fieldName }>
 								<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
 								<FormTextInput
+									autoFocus={ fieldName === 'name' }
 									id={ fieldName }
 									onChange={ this.getChangeHandler( fieldName ) }
+									required={ fieldName !== 'state' }
 									value={ this.state[ fieldName ] }
-									autoFocus={ fieldName === 'name' }
 								/>
 							</FormFieldset>
 						) ) }
-						<Button href={ getForwardUrl() } onClick={ this.handleAddBusinessAddress } primary>
+						<Button primary type="submit">
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
