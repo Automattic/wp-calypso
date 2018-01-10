@@ -33,15 +33,15 @@ class OrderAddItems extends Component {
 		const isNewOrder = isObject( orderId );
 		return (
 			<div className="order-details__actions">
-				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
-					{ translate( 'Add Fee' ) }
-				</Button>
 				<Button
 					borderless={ ! isNewOrder }
 					primary={ isNewOrder }
 					onClick={ this.toggleDialog( 'product' ) }
 				>
 					{ translate( 'Add Product' ) }
+				</Button>
+				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
+					{ translate( 'Add Fee' ) }
 				</Button>
 				<OrderFeeDialog
 					isVisible={ 'fee' === this.state.showDialog }
