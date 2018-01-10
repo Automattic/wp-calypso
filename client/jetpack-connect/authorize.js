@@ -191,7 +191,7 @@ export class JetpackAuthorize extends Component {
 		const { state, redirectUri } = this.props.authQuery;
 		const code = this.props.authorizationData.authorizationCode;
 		const url = addQueryArgs( { code, state }, redirectUri );
-		debug( 'xmlrpc fallback to %s', url );
+		debug( 'xmlrpc fallback to', url );
 		this.externalRedirectOnce( url );
 	}
 
