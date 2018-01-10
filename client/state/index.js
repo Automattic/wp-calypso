@@ -91,6 +91,9 @@ import config from 'config';
 // Consolidate the extension reducers under 'extensions' for namespacing.
 const extensions = combineReducers( extensionsModule.reducers() );
 
+const perfCounter = ( state = 0, action ) =>
+	action.type === 'PERF_COUNTER_INC' ? state + 1 : state;
+
 const reducers = {
 	analyticsTracking,
 	accountRecovery,
@@ -159,6 +162,7 @@ const reducers = {
 	userProfileLinks,
 	userSettings,
 	wordads,
+	perfCounter,
 };
 
 export const reducer = combineReducers( reducers );
@@ -209,5 +213,15 @@ export function createReduxStore( initialState = {} ) {
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),
 	].filter( Boolean );
 
-	return compose( ...enhancers )( createStore )( reducer, initialState );
+	const store = compose( ...enhancers )( createStore )( reducer, initialState );
+	if ( isBrowser ) {
+		window.perfCounter = ( repeats = 1 ) => {
+			console.time( 'perfcounter' );
+			for ( let i = 0; i < repeats; i++ ) {
+				store.dispatch( { type: 'PERF_COUNTER_INC' } );
+			}
+			console.timeEnd( 'perfcounter' );
+		};
+	}
+	return store;
 }
