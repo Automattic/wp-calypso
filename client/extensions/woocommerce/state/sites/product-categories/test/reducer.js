@@ -215,6 +215,38 @@ describe( 'reducer', () => {
 			expect( newState[ 10 ].name ).to.eql( 'Tops' );
 			expect( newState[ 11 ].name ).to.eql( 'Cat Updated' );
 		} );
+
+		test( 'remove data after a deleted action', () => {
+			const testCats = [
+				{
+					id: 10,
+					name: 'Tops',
+					slug: 'tops',
+					description: '',
+					display: 'default',
+				},
+				{
+					id: 11,
+					name: 'Test',
+					slug: 'test',
+					description: '',
+					display: 'default',
+				},
+			];
+
+			const siteId = 123;
+			const category = { id: 10, name: 'Tops' };
+			const action = {
+				type: 'WOOCOMMERCE_PRODUCT_CATEGORY_DELETED',
+				siteId,
+				category,
+			};
+			const originalState = deepFreeze( keyBy( testCats, 'id' ) );
+			const newState = items( originalState, action );
+			expect( originalState[ 10 ].name ).to.eql( 'Tops' );
+			expect( newState[ 10 ] ).to.not.exist;
+			expect( newState[ 11 ].name ).to.eql( 'Test' );
+		} );
 	} );
 
 	describe( 'queries', () => {
