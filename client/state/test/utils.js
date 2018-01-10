@@ -21,9 +21,15 @@ import {
 	isValidStateWithSchema,
 	withoutPersistence,
 } from 'state/utils';
-jest.mock( 'lib/warn', () => () => {} );
+import warn from 'lib/warn';
+
+const jestExpect = global.expect;
+
+jest.mock( 'lib/warn', () => jest.fn() );
 
 describe( 'utils', () => {
+	beforeEach( () => warn.mockReset() );
+
 	const currentState = deepFreeze( {
 			test: [ 'one', 'two', 'three' ],
 		} ),
@@ -444,6 +450,23 @@ describe( 'utils', () => {
 			const prev = { 14: 5, 23: 19 };
 
 			expect( keyed( prev, { type: 'PURGE' } ) ).to.eql( { 14: 5 } );
+		} );
+	} );
+
+	describe( '#isValidStateWithSchema', () => {
+		test( 'should return true for valid state', () => {
+			const result = isValidStateWithSchema( 'a string', { type: 'string' } );
+			jestExpect( result ).toBe( true );
+		} );
+
+		test( 'should return false for invalid state', () => {
+			const result = isValidStateWithSchema( 'a string', { type: 'null' } );
+			jestExpect( result ).toBe( false );
+		} );
+
+		test( 'should warn for invalid state', () => {
+			isValidStateWithSchema( 'a string', { type: 'null' } );
+			jestExpect( warn ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
