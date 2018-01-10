@@ -41,8 +41,8 @@ class ProductCategoryForm extends Component {
 
 		const { category } = props;
 		const image = ( category && category.image ) || {};
-		const selectedParent = ( category && category.parent && [ category.parent ] ) || [];
 		const isTopLevel = category && category.parent ? false : true;
+		const selectedParent = ( ! isTopLevel && [ category.parent ] ) || [];
 
 		this.state = {
 			id: image.id || null,
@@ -68,9 +68,8 @@ class ProductCategoryForm extends Component {
 		}
 
 		if ( nextProps.category.parent !== this.props.category.parent ) {
-			const selectedParent =
-				( nextProps.category && nextProps.category.parent && [ nextProps.category.parent ] ) || [];
 			const isTopLevel = nextProps.category && nextProps.category.parent ? false : true;
+			const selectedParent = ( ! isTopLevel && [ nextProps.category.parent ] ) || [];
 			this.setState( {
 				selectedParent,
 				isTopLevel,
