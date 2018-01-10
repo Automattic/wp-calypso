@@ -43,7 +43,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			siteTitle: this.state.title,
 			siteDescription: this.state.description,
 		} );
-		page.redirect( this.props.getForwardUrl() );
+		page( this.props.getForwardUrl() );
 	};
 
 	render() {
