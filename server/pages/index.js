@@ -26,6 +26,7 @@ import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import { renderJsxStream } from '../render';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -187,7 +188,7 @@ function getDefaultContext( request ) {
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
-		faviconURL: shouldUseSingleCDN ? '//s0.wp.com/i/favicon.ico' : '//s1.wp.com/i/favicon.ico',
+		faviconUrl: shouldUseSingleCDN ? '//s0.wp.com/i/favicon.ico' : '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
@@ -219,26 +220,26 @@ function getDefaultContext( request ) {
 		context.badge = calypsoEnv;
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
+		context.faviconUrl = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
 
 	if ( calypsoEnv === 'horizon' ) {
 		context.badge = 'feedback';
 		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
-		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
+		context.faviconUrl = '/calypso/images/favicons/favicon-horizon.ico';
 	}
 
 	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
+		context.faviconUrl = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
 	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
+		context.faviconUrl = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
@@ -369,15 +370,12 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404', {
-		urls: generateStaticUrls(),
-	} );
+	response.status( 404 );
+	renderJsxStream( '404', { urls: generateStaticUrls() } ).pipe( response );
 }
 
 module.exports = function() {
 	const app = express();
-
-	app.set( 'views', __dirname );
 
 	app.use( logSectionResponseTime );
 	app.use( cookieParser() );
@@ -521,11 +519,9 @@ module.exports = function() {
 		const dashboardUrl = isWpcom
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
+		const context = { ...req.context, dashboardUrl };
 
-		res.render( 'browsehappy', {
-			...req.context,
-			dashboardUrl,
-		} );
+		renderJsxStream( 'browsehappy', context ).pipe( res );
 	} );
 
 	// catchall to render 404 for all routes not whitelisted in client/sections

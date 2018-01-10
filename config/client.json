@@ -11,6 +11,7 @@
   "env",
   "env_id",
   "facebook_api_key",
+  "faviconUrl",
   "features",
   "google_adwords_conversion_id",
   "google_analytics_enabled",
