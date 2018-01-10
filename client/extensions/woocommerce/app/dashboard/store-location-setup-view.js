@@ -15,12 +15,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddressView from 'woocommerce/components/address-view';
-import analytics from 'lib/analytics';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import BasicWidget from 'woocommerce/components/basic-widget';
+import { bumpStat } from 'state/analytics/actions';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
 import {
@@ -153,7 +153,7 @@ class StoreLocationSetupView extends Component {
 			// before the next step's dialog displays
 
 			// mc stat 32 char max :P
-			analytics.mc.bumpStat( 'calypso_woo_store_setup_country', this.state.address.country );
+			this.props.bumpStat( 'calypso_woo_store_setup_country', this.state.address.country );
 
 			// If we don't support a calypso experience yet for this country, let
 			// them complete setup with the wp-admin WooCommerce wizard
@@ -297,6 +297,7 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			bumpStat,
 			doInitialSetup,
 		},
 		dispatch
