@@ -227,6 +227,43 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 			})();
 
 		script(type='text/javascript')!='COMMIT_SHA = ' + sanitize.jsonStringifyForHtml( commitSha )
+		script.
+			(function () {
+				function createUUID( timestamp ){
+					var dt = timestamp;
+					var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+						var r = ( dt + Math.random()*16)%16 | 0;
+						dt = Math.floor(dt/16);
+						return (c=='x' ? r :(r &0x3|0x8) ).toString( 16 );
+					} );
+					return uuid;
+				}
+
+				try {
+					var pathName = window.location.pathname.split( "/" ).slice( 1, 2 )[ 0 ];
+					if ( pathName === "log-in" ) {
+						if ( ! window.calypsoLoadStartTime ) {
+							window.calypsoLoadStartTime = {};
+						}
+						var timestamp = Date.now();
+						window.calypsoLoadStartTime[ pathName ] = {
+							timestamp: timestamp,
+							uuid: createUUID( timestamp ),
+						};
+						if ( ! window._tkq ) {
+							window._tkq = [];
+						}
+						window._tkq.push( [ 'recordEvent', 'calypso_load_start', {
+							timestamp: window.calypsoLoadStartTime[ pathName ].timestamp,
+							uuid: window.calypsoLoadStartTime[ pathName ].uuid,
+							path: "/" + pathName
+						} ] );
+					}
+				} catch ( ex ) {
+					console.error( 'Unable to report load time', ex );
+				}
+			})();
+
 		if user
 			script(type='text/javascript')!='var currentUser = ' + sanitize.jsonStringifyForHtml( user )
 		if app

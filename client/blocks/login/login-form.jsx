@@ -80,6 +80,16 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.state.isFormDisabledWhileLoading ) {
+			if ( window && window.calypsoLoadStartTime[ 'log-in' ] ) {
+				this.props.recordTracksEvent( 'calypso_load_end', {
+					...window.calypsoLoadStartTime[ 'log-in' ],
+					elapsedMs: Date.now() - window.calypsoLoadStartTime[ 'log-in' ].timestamp,
+					path: '/log-in',
+				} );
+			}
+		}
+
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
 			this.usernameOrEmail && this.usernameOrEmail.focus();
