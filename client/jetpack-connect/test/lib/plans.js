@@ -243,7 +243,6 @@ export const DEFAULT_PROPS = {
 	context: CONTEXT,
 	flowType: false,
 	getPlanBySlug: noop,
-	goBackToWpAdmin: noop,
 	hasPlan: false,
 	isAutomatedTransfer: false,
 	isRequestingPlans: false,

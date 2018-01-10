@@ -8,7 +8,7 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { includes, startsWith } from 'lodash';
+import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -37,19 +37,17 @@ import userUtilities from 'lib/user/utils';
 import { authQueryPropTypes } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
-import {
-	isCalypsoStartedConnection,
-	isSsoApproved,
-	retrieveMobileRedirect,
-} from './persistence-utils';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 import {
+	isCalypsoStartedConnection,
+	isSsoApproved,
+	retrieveMobileRedirect,
+} from './persistence-utils';
+import {
 	authorize as authorizeAction,
-	goBackToWpAdmin as goBackToWpAdminAction,
-	goToXmlrpcErrorFallbackUrl as goToXmlrpcErrorFallbackUrlAction,
 	retryAuth as retryAuthAction,
 } from 'state/jetpack-connect/actions';
 import {
@@ -76,15 +74,13 @@ export class JetpackAuthorize extends Component {
 		// Connected props
 		authAttempts: PropTypes.number.isRequired,
 		authorizationData: PropTypes.shape( {
+			authorizationCode: PropTypes.string,
 			authorizeError: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 			authorizeSuccess: PropTypes.bool,
-			isRedirectingToWpAdmin: PropTypes.bool,
 			siteReceived: PropTypes.bool,
 		} ).isRequired,
 		authorize: PropTypes.func.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
-		goBackToWpAdmin: PropTypes.func.isRequired,
-		goToXmlrpcErrorFallbackUrl: PropTypes.func.isRequired,
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
 		isAlreadyOnSitesList: PropTypes.bool,
@@ -98,6 +94,7 @@ export class JetpackAuthorize extends Component {
 		userAlreadyConnected: PropTypes.bool.isRequired,
 	};
 
+	redirecting = false;
 	retryingAuth = false;
 
 	componentWillMount() {
@@ -112,13 +109,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { goBackToWpAdmin, retryAuth } = nextProps;
-		const {
-			authorizeError,
-			authorizeSuccess,
-			isRedirectingToWpAdmin,
-			siteReceived,
-		} = nextProps.authorizationData;
+		const { retryAuth } = nextProps;
+		const { authorizeError, authorizeSuccess, siteReceived } = nextProps.authorizationData;
 		const { alreadyAuthorized, redirectAfterAuth, site } = nextProps.authQuery;
 
 		if (
@@ -127,8 +119,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJpo( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps )
 		) {
-			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
-				return goBackToWpAdmin( redirectAfterAuth );
+			if ( authorizeSuccess ) {
+				return this.externalRedirectOnce( redirectAfterAuth );
 			}
 		} else if ( siteReceived ) {
 			return this.redirect();
@@ -164,8 +156,15 @@ export class JetpackAuthorize extends Component {
 		} );
 	}
 
+	externalRedirectOnce( url ) {
+		if ( ! this.redirecting ) {
+			this.redirecting = true;
+			externalRedirect( url );
+		}
+	}
+
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect, goBackToWpAdmin } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect } = this.props;
 		const { from, redirectAfterAuth } = this.props.authQuery;
 
 		if ( isMobileAppFlow ) {
@@ -182,10 +181,18 @@ export class JetpackAuthorize extends Component {
 				'SSO found:',
 				this.isSso()
 			);
-			goBackToWpAdmin( redirectAfterAuth );
+			this.externalRedirectOnce( redirectAfterAuth );
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
+	}
+
+	redirectToXmlRpcErrorFallbackUrl() {
+		const { state, redirectUri } = this.props.authQuery;
+		const code = this.props.authorizationData.authorizationCode;
+		const url = addQueryArgs( { code, state }, redirectUri );
+		debug( 'xmlrpc fallback to %s', url );
+		this.externalRedirectOnce( url );
 	}
 
 	shouldAutoAuthorize() {
@@ -254,38 +261,31 @@ export class JetpackAuthorize extends Component {
 	};
 
 	handleResolve = () => {
-		const { site, goToXmlrpcErrorFallbackUrl, recordTracksEvent } = this.props;
-		const { authorizationCode } = this.props.authorizationData;
+		const { site, recordTracksEvent } = this.props;
 		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
 		if ( this.props.hasExpiredSecretError ) {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
-			externalRedirect( site + authUrl );
+			this.externalRedirectOnce( site + authUrl );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
 		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
 		// legacy functions on the client.
 		recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
-		goToXmlrpcErrorFallbackUrl(
-			{
-				redirect_uri: this.props.authQuery.redirectUri,
-				state: this.props.authQuery.state,
-			},
-			authorizationCode
-		);
+		this.redirectToXmlRpcErrorFallbackUrl();
 	};
 
 	handleSubmit = () => {
-		const { goBackToWpAdmin, recordTracksEvent } = this.props;
+		const { recordTracksEvent } = this.props;
 		const { authorizeError, authorizeSuccess } = this.props.authorizationData;
 		const { alreadyAuthorized, redirectAfterAuth } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
 			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
-			return goBackToWpAdmin( redirectAfterAuth );
+			return this.externalRedirectOnce( redirectAfterAuth );
 		}
 
 		if ( this.props.isAlreadyOnSitesList && alreadyAuthorized ) {
@@ -401,7 +401,7 @@ export class JetpackAuthorize extends Component {
 			return null;
 		}
 
-		if ( authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
+		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
 		if ( this.props.hasExpiredSecretError ) {
@@ -420,12 +420,7 @@ export class JetpackAuthorize extends Component {
 
 	getButtonText() {
 		const { translate } = this.props;
-		const {
-			isAuthorizing,
-			authorizeSuccess,
-			isRedirectingToWpAdmin,
-			authorizeError,
-		} = this.props.authorizationData;
+		const { authorizeError, authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { alreadyAuthorized } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
@@ -440,7 +435,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Preparing authorization' );
 		}
 
-		if ( authorizeSuccess && isRedirectingToWpAdmin ) {
+		if ( authorizeSuccess && this.redirecting ) {
 			return translate( 'Returning to your site' );
 		}
 
@@ -532,11 +527,7 @@ export class JetpackAuthorize extends Component {
 
 	renderFooterLinks() {
 		const { translate } = this.props;
-		const {
-			authorizeSuccess,
-			isAuthorizing,
-			isRedirectingToWpAdmin,
-		} = this.props.authorizationData;
+		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const { blogname, redirectAfterAuth } = this.props.authQuery;
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
@@ -547,7 +538,7 @@ export class JetpackAuthorize extends Component {
 			</LoggedOutFormLinkItem>
 		);
 
-		if ( this.retryingAuth || isAuthorizing || isRedirectingToWpAdmin ) {
+		if ( this.retryingAuth || isAuthorizing || this.redirecting ) {
 			return null;
 		}
 
@@ -657,8 +648,6 @@ export default connect(
 	},
 	{
 		authorize: authorizeAction,
-		goBackToWpAdmin: goBackToWpAdminAction,
-		goToXmlrpcErrorFallbackUrl: goToXmlrpcErrorFallbackUrlAction,
 		recordTracksEvent: recordTracksEventAction,
 		retryAuth: retryAuthAction,
 	}

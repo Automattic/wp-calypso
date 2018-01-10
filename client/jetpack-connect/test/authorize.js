@@ -50,8 +50,6 @@ const DEFAULT_PROPS = deepFreeze( {
 		userEmail: `email@${ SITE_SLUG }`,
 	},
 	calypsoStartedConnection: false,
-	goBackToWpAdmin: noop,
-	goToXmlrpcErrorFallbackUrl: noop,
 	hasExpiredSecretError: false,
 	hasXmlrpcError: false,
 	isAlreadyOnSitesList: false,
