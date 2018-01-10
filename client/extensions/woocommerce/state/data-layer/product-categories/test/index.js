@@ -5,12 +5,15 @@
  */
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
 	handleProductCategoryCreate,
+	handleProductCategoryDelete,
+	handleProductCategoryDeleteSuccess,
 	handleProductCategoryUpdate,
 	handleProductCategoriesRequest,
 	handleProductCategoriesSuccess,
@@ -18,6 +21,8 @@ import {
 } from '../';
 import {
 	WOOCOMMERCE_API_REQUEST,
+	WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_DELETED,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
@@ -25,6 +30,7 @@ import {
 import {
 	createProductCategory,
 	updateProductCategory,
+	deleteProductCategory,
 } from 'woocommerce/state/sites/product-categories/actions';
 import { WPCOM_HTTP_REQUEST } from 'state/action-types';
 
@@ -359,6 +365,50 @@ describe( 'handlers', () => {
 					receivedData: 'RECEIVED_DATA',
 				} )
 			);
+		} );
+	} );
+	describe( '#handleProductCategoryDelete', () => {
+		test( 'should dispatch a delete action', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const category = { id: 2, name: 'Category 1', slug: 'category-1' };
+			const action = deleteProductCategory( 123, category, noop, noop );
+
+			handleProductCategoryDelete( store, action );
+
+			expect( store.dispatch ).to.have.been.calledWith(
+				match( {
+					type: WOOCOMMERCE_API_REQUEST,
+					method: 'del',
+					siteId: 123,
+					path: 'products/categories/2?force=true',
+				} )
+			);
+		} );
+
+		test( 'should dispatch a deleted action on success', () => {
+			const store = {
+				dispatch: spy(),
+			};
+
+			const siteId = 123;
+
+			const category = { id: 2, name: 'Category 1', slug: 'category-1' };
+
+			const action = {
+				type: WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
+				siteId,
+				category,
+			};
+			handleProductCategoryDeleteSuccess( store, action, category );
+
+			expect( store.dispatch ).calledWith( {
+				type: WOOCOMMERCE_PRODUCT_CATEGORY_DELETED,
+				siteId,
+				category,
+			} );
 		} );
 	} );
 } );

@@ -9,6 +9,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
+	WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
 } from 'woocommerce/state/action-types';
 
 export function fetchProductCategories( siteId, query = {} ) {
@@ -66,6 +67,25 @@ export function updateProductCategory( siteId, category, successAction, failureA
 	};
 
 	return action;
+}
+
+/**
+ * Action Creator: Delete a product category.
+ *
+ * @param {Number} siteId The id of the site upon which to delete.
+ * @param {Object} category The product category object.
+ * @param {Object|Function} [successAction] action with extra props { sentData, receivedData }
+ * @param {Object|Function} [failureAction] action with extra props { error }
+ * @return {Object} Action object
+ */
+export function deleteProductCategory( siteId, category, successAction, failureAction ) {
+	return {
+		type: WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
+		siteId,
+		category,
+		successAction,
+		failureAction,
+	};
 }
 
 /**
