@@ -43,15 +43,26 @@ export function throwIfSchemaInvalid( schema ) {
 	}
 
 	const jsonSchemaSchema = require( './jsonschema-spec-04' );
-	const schemaValidator = validator( jsonSchemaSchema, { greedy: true, verbose: true } );
-	if ( ! schemaValidator( schema ) ) {
-		throw new Error(
-			`Invalid schema provided:\n${ JSON.stringify(
-				schema,
-				undefined,
-				2
-			) }\n\nwith errors:\n${ JSON.stringify( schemaValidator.errors, undefined, 2 ) }`
-		);
+	const validateSchema = validator( jsonSchemaSchema, { greedy: true, verbose: true } );
+	if ( ! validateSchema( schema ) ) {
+		const validationErrorDescriptionParts = [ 'Invalid schema provided. Errors:', '' ];
+		forEach( validateSchema.errors, ( { field, message, schemaPath, value } ) => {
+			// data.myField is required
+			validationErrorDescriptionParts.push( `${ field } ${ message }` );
+
+			// Found: { my: 'state' }
+			validationErrorDescriptionParts.push( `Found: ${ JSON.stringify( value ) }` );
+
+			// Violates rule: { type: 'boolean' }
+			if ( ! isEmpty( schemaPath ) ) {
+				validationErrorDescriptionParts.push(
+					`Violates rule: ${ JSON.stringify( get( schema, schemaPath ) ) }`
+				);
+			}
+			validationErrorDescriptionParts.push( '' );
+		} );
+
+		throw new Error( validationErrorDescriptionParts.join( '\n' ) );
 	}
 }
 
