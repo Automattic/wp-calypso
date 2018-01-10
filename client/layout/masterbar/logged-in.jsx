@@ -49,6 +49,18 @@ class MasterbarLoggedIn extends React.Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 	};
 
+	preloadMySites = () => {
+		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
+	};
+
+	preloadReader = () => {
+		preload( 'reader' );
+	};
+
+	preloadMe = () => {
+		preload( 'me' );
+	};
+
 	isActive = section => {
 		return section === this.props.section && ! this.props.isNotificationsShowing;
 	};
@@ -79,7 +91,7 @@ class MasterbarLoggedIn extends React.Component {
 					tooltip={ translate( 'View a list of your sites and access their dashboards', {
 						textOnly: true,
 					} ) }
-					preloadSection={ () => preload( domainOnlySite ? 'domains' : 'stats' ) }
+					preloadSection={ this.preloadMySites }
 				>
 					{ this.props.user.get().site_count > 1
 						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
@@ -93,7 +105,7 @@ class MasterbarLoggedIn extends React.Component {
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
 					tooltip={ translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
-					preloadSection={ () => preload( 'reader' ) }
+					preloadSection={ this.preloadReader }
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
@@ -118,7 +130,7 @@ class MasterbarLoggedIn extends React.Component {
 					tooltip={ translate( 'Update your profile, personal settings, and more', {
 						textOnly: true,
 					} ) }
-					preloadSection={ () => preload( 'me' ) }
+					preloadSection={ this.preloadMe }
 				>
 					<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 					<span className="masterbar__item-me-label">
