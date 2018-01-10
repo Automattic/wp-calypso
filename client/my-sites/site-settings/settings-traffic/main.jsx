@@ -26,7 +26,7 @@ import JetpackAds from 'my-sites/site-settings/jetpack-ads';
 import RelatedPosts from 'my-sites/site-settings/related-posts';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
-import FeedSettings from 'my-sites/site-settings/feed';
+import FeedSettings from 'my-sites/site-settings/feed-settings';
 import Sitemaps from 'my-sites/site-settings/sitemaps';
 import Search from 'my-sites/site-settings/search';
 import Placeholder from 'my-sites/site-settings/placeholder';
