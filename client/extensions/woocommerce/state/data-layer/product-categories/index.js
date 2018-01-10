@@ -11,11 +11,13 @@ import qs from 'querystring';
  */
 
 import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { post, put } from 'woocommerce/state/data-layer/request/actions';
+import { post, put, del } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import { productCategoryUpdated } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_CREATE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_DELETE,
+	WOOCOMMERCE_PRODUCT_CATEGORY_DELETED,
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
@@ -81,6 +83,42 @@ export function handleProductCategoryUpdate( store, action ) {
 	store.dispatch(
 		put( siteId, `products/categories/${ id }`, categoryData, updatedAction, failureAction )
 	);
+}
+
+export function handleProductCategoryDelete( store, action ) {
+	const { siteId, category, successAction, failureAction } = action;
+
+	// Filter out any id we might have.
+	const { id, ...categoryData } = category;
+
+	if ( 'number' !== typeof id ) {
+		store.dispatch(
+			setError( siteId, action, {
+				message: 'Attempting to delete product category which has a placeholder ID.',
+				category,
+			} )
+		);
+		return;
+	}
+
+	store.dispatch(
+		del(
+			siteId,
+			`products/categories/${ id }?force=true`,
+			categoryData,
+			successAction,
+			failureAction
+		)
+	);
+}
+
+export function handleProductCategoryDeleteSuccess( { dispatch }, action, category ) {
+	const { siteId } = action;
+	dispatch( {
+		type: WOOCOMMERCE_PRODUCT_CATEGORY_DELETED,
+		siteId,
+		category,
+	} );
 }
 
 export function handleProductCategoriesRequest( { dispatch }, action ) {
@@ -160,6 +198,10 @@ function isValidProductCategory( category ) {
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_CREATE ]: [ handleProductCategoryCreate ],
+	[ WOOCOMMERCE_PRODUCT_CATEGORY_DELETE ]: [
+		handleProductCategoryDelete,
+		handleProductCategoryDeleteSuccess,
+	],
 	[ WOOCOMMERCE_PRODUCT_CATEGORY_UPDATE ]: [ handleProductCategoryUpdate ],
 	[ WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST ]: [
 		dispatchRequest(

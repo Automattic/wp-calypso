@@ -9,17 +9,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit } from 'lodash';
+import { isEmpty, omit, debounce } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import accept from 'lib/accept';
 import Main from 'components/main';
 import { ProtectFormGuard } from 'lib/protect-form';
 import {
 	fetchProductCategories,
 	updateProductCategory,
+	deleteProductCategory,
 } from 'woocommerce/state/sites/product-categories/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
@@ -86,7 +88,35 @@ class ProductCategoryUpdate extends React.Component {
 		}
 	}
 
-	onTrash = () => {};
+	onDelete = () => {
+		const { translate, site, category, deleteProductCategory: dispatchDelete } = this.props;
+		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
+			args: { name: category.name },
+		} );
+		accept( areYouSure, function( accepted ) {
+			if ( ! accepted ) {
+				return;
+			}
+			const successAction = () => {
+				debounce( () => {
+					page.redirect( getLink( '/store/products/categories/:site/', site ) );
+				}, 2000 )();
+				return successNotice(
+					translate( '%(name)s successfully deleted.', {
+						args: { name: category.name },
+					} )
+				);
+			};
+			const failureAction = () => {
+				return errorNotice(
+					translate( 'There was a problem deleting %(name)s. Please try again.', {
+						args: { name: category.name },
+					} )
+				);
+			};
+			dispatchDelete( site.ID, category, successAction, failureAction );
+		} );
+	};
 
 	onSave = () => {
 		const { site, category, translate } = this.props;
@@ -122,7 +152,7 @@ class ProductCategoryUpdate extends React.Component {
 				<ProductCategoryHeader
 					site={ site }
 					category={ category }
-					onTrash={ this.onTrash }
+					onDelete={ this.onDelete }
 					onSave={ hasEdits ? this.onSave : false }
 					isBusy={ busy }
 				/>
@@ -158,6 +188,7 @@ function mapDispatchToProps( dispatch ) {
 			fetchProductCategories,
 			clearProductCategoryEdits,
 			updateProductCategory,
+			deleteProductCategory,
 		},
 		dispatch
 	);
