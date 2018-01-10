@@ -73,12 +73,12 @@ class OrderLineItem extends Component {
 			const preDiscountCost = getOrderItemCost( order, item.id );
 			return (
 				<Fragment>
-					<del className="order-details__item-pre-discount">
-						{ formatCurrency( preDiscountCost, order.currency ) }
-					</del>
 					<ins className="order-details__item-with-discount">
 						{ formatCurrency( item.price, order.currency ) }
 					</ins>
+					<del className="order-details__item-pre-discount">
+						{ formatCurrency( preDiscountCost, order.currency ) }
+					</del>
 				</Fragment>
 			);
 		}
@@ -90,12 +90,12 @@ class OrderLineItem extends Component {
 		if ( this.isDiscountedProduct( item ) ) {
 			return (
 				<Fragment>
-					<del className="order-details__item-pre-discount">
-						{ formatCurrency( item.subtotal, order.currency ) }
-					</del>
 					<ins className="order-details__item-with-discount">
 						{ formatCurrency( item.total, order.currency ) }
 					</ins>
+					<del className="order-details__item-pre-discount">
+						{ formatCurrency( item.subtotal, order.currency ) }
+					</del>
 				</Fragment>
 			);
 		}
