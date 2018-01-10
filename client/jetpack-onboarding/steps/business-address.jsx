@@ -49,7 +49,8 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		};
 	}
 
-	handleSubmit = () => {
+	handleSubmit = event => {
+		event.preventDefault();
 		const { siteId } = this.props;
 		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
 		page( this.props.getForwardUrl() );
