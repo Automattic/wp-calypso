@@ -221,7 +221,9 @@ class Document extends React.Component {
 
 					<link
 						rel="stylesheet"
+						/* eslint-disable max-len */
 						href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+						/* eslint-disable max-len */
 					/>
 
 					{ shouldUseSingleCDN ? (
@@ -311,6 +313,7 @@ class Document extends React.Component {
 					) }
 				</head>
 				<body className={ classNames( { rtl: isRtl } ) }>
+					{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 					{ renderedLayout ? (
 						<div
 							id="wpcom"
@@ -392,6 +395,7 @@ class Document extends React.Component {
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>
+					{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 				</body>
 			</html>
 		);

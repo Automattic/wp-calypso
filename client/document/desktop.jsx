@@ -57,13 +57,16 @@ class Desktop extends React.Component {
 					<link rel="profile" href="http://gmpg.org/xfn/11" />
 					<link
 						rel="stylesheet"
+						/* eslint-disable max-len */
 						href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+						/* eslint-disable max-len */
 					/>
 					<link rel="stylesheet" href="//s1.wp.com/i/noticons/noticons.css?v=20150727" />
 					<link rel="stylesheet" href={ getStylesheetUrl( { urls, isRtl, env, isDebug } ) } />
 					<link rel="stylesheet" href="/desktop/wordpress-desktop.css" />
 				</head>
 				<body className={ isRtl ? 'rtl' : null }>
+					{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 					<div id="wpcom" className="wpcom-site">
 						<div className="layout">
 							<Masterbar />
@@ -99,6 +102,7 @@ class Desktop extends React.Component {
 					) }
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script>startApp();</script>
+					{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 				</body>
 			</html>
 		);

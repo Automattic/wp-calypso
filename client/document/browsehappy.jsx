@@ -118,12 +118,15 @@ class Browsehappy extends React.Component {
 					<link rel="manifest" href="/calypso/manifest.json" />
 					<link
 						rel="stylesheet"
+						/* eslint-disable max-len */
 						href="https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
+						/* eslint-enable max-len */
 					/>
 					<link rel="stylesheet" href="//s1.wp.com/i/noticons/noticons.css?v=20150727" />
 					<link rel="stylesheet" href={ getStylesheetUrl( { urls, isRtl, env, isDebug } ) } />
 				</head>
 				<body className={ isRtl ? 'rtl' : null }>
+					{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 					<div id="wpcom" className="wpcom-site">
 						<div className="layout has-no-sidebar">
 							<div id="content" className="layout__content">
@@ -145,6 +148,7 @@ class Browsehappy extends React.Component {
 							</div>
 						</div>
 					</div>
+					{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 				</body>
 			</html>
 		);
