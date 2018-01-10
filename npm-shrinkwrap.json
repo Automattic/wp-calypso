@@ -1821,7 +1821,7 @@
       "integrity": "sha1-IeCr+vbyApzy+vsTNWenAdQTVSQ=",
       "requires": {
         "bn.js": "4.11.8",
-        "randombytes": "2.0.5"
+        "randombytes": "2.0.6"
       }
     },
     "browserify-sign": {
@@ -2827,7 +2827,7 @@
         "inherits": "2.0.1",
         "pbkdf2": "3.0.14",
         "public-encrypt": "4.0.0",
-        "randombytes": "2.0.5",
+        "randombytes": "2.0.6",
         "randomfill": "1.0.3"
       }
     },
@@ -3241,7 +3241,7 @@
       "requires": {
         "bn.js": "4.11.8",
         "miller-rabin": "4.0.1",
-        "randombytes": "2.0.5"
+        "randombytes": "2.0.6"
       }
     },
     "discontinuous-range": {
@@ -3385,10 +3385,10 @@
       }
     },
     "duplexify": {
-      "version": "3.5.1",
-      "integrity": "sha512-j5goxHTwVED1Fpe5hh3q9R93Kip0Bg2KVAt4f8CEYM3UEwYcPSvWbXaUQOzdX/HtiNomipv+gU7ASQPDbV7pGQ==",
+      "version": "3.5.3",
+      "integrity": "sha512-g8ID9OroF9hKt2POf8YLayy+9594PzmM3scI00/uBXocX3TWNgoB67hjzkFe9ITAbQOne/lLdBxHXvYUM4ZgGA==",
       "requires": {
-        "end-of-stream": "1.4.0",
+        "end-of-stream": "1.4.1",
         "inherits": "2.0.1",
         "readable-stream": "2.3.3",
         "stream-shift": "1.0.0"
@@ -3537,8 +3537,8 @@
       }
     },
     "end-of-stream": {
-      "version": "1.4.0",
-      "integrity": "sha1-epDYM+/abPpurA9JSduw+tOmMgY=",
+      "version": "1.4.1",
+      "integrity": "sha512-1MkrZNvWTKCaigbn+W15elq2BB/L22nqrSY5DKlo3X6+vclJm8Bb5djXJBmEX6fS3+zCh/F4VBK5Z2KxJt4s2Q==",
       "requires": {
         "once": "1.4.0"
       }
@@ -6043,7 +6043,7 @@
       "integrity": "sha1-5dDtSvVfw+701WAHdp2YGSvLLso=",
       "dev": true,
       "requires": {
-        "duplexify": "3.5.1",
+        "duplexify": "3.5.3",
         "infinity-agent": "2.0.3",
         "is-redirect": "1.0.0",
         "is-stream": "1.1.0",
@@ -9579,13 +9579,13 @@
       "integrity": "sha1-0gFYPrEjJ+PFwWQqQEqcrPlONPU=",
       "requires": {
         "concat-stream": "1.5.2",
-        "duplexify": "3.5.1",
-        "end-of-stream": "1.4.0",
+        "duplexify": "3.5.3",
+        "end-of-stream": "1.4.1",
         "flush-write-stream": "1.0.2",
         "from2": "2.3.0",
         "parallel-transform": "1.1.0",
         "pump": "1.0.3",
-        "pumpify": "1.3.5",
+        "pumpify": "1.3.6",
         "stream-each": "1.2.2",
         "through2": "2.0.3"
       },
@@ -10206,8 +10206,8 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.1.3",
-      "integrity": "sha512-awI2c0ezP0BhF4rW8HWDE8x0+ZEVr0EJ0Rvbvm3oE72R1DJXwBLPynk/pe5izfZkqWzraHupGoLok3XCxgYa/w=="
+      "version": "2.1.4",
+      "integrity": "sha512-AXW2LlP2fYi7eKlEharJOtsiWOzeqQOWotNaf5QVZwkMh3bFdyMcAuzeJAQmNjTzBn5kxJ2oBlch5g3MrgOkUg=="
     },
     "npm-path": {
       "version": "1.1.0",
@@ -11552,7 +11552,7 @@
         "browserify-rsa": "4.0.1",
         "create-hash": "1.1.3",
         "parse-asn1": "5.1.0",
-        "randombytes": "2.0.5"
+        "randombytes": "2.0.6"
       }
     },
     "pug": {
@@ -11675,17 +11675,31 @@
       "version": "1.0.3",
       "integrity": "sha512-8k0JupWme55+9tCVE+FS5ULT3K6AbgqrGa58lTT49RpyfwwcGedHqaC5LlQNdEAumn/wFsu6aPwkuPMioy8kqw==",
       "requires": {
-        "end-of-stream": "1.4.0",
+        "end-of-stream": "1.4.1",
         "once": "1.4.0"
       }
     },
     "pumpify": {
-      "version": "1.3.5",
-      "integrity": "sha1-G2ccYZlAq8rqwK0OOjwWS+dgmTs=",
+      "version": "1.3.6",
+      "integrity": "sha512-BurGAcvezsINL5US9T9wGHHcLNrG6MCp//ECtxron3vcR+Rfx5Anqq7HbZXNJvFQli8FGVsWCAvywEJFV5Hx/Q==",
       "requires": {
-        "duplexify": "3.5.1",
-        "inherits": "2.0.1",
-        "pump": "1.0.3"
+        "duplexify": "3.5.3",
+        "inherits": "2.0.3",
+        "pump": "2.0.0"
+      },
+      "dependencies": {
+        "inherits": {
+          "version": "2.0.3",
+          "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
+        },
+        "pump": {
+          "version": "2.0.0",
+          "integrity": "sha512-6MYypjOvtiXhBSTOD0Zs5eNjCGfnqi5mPsCsW+dgKTxrZzQMZQNpBo3XRkLx7id753f3EeyHLBqzqqUymIolgw==",
+          "requires": {
+            "end-of-stream": "1.4.1",
+            "once": "1.4.0"
+          }
+        }
       }
     },
     "punycode": {
@@ -11780,8 +11794,8 @@
       }
     },
     "randombytes": {
-      "version": "2.0.5",
-      "integrity": "sha512-8T7Zn1AhMsQ/HI1SjcCfT/t4ii3eAqco3yOcSzS4mozsOz69lHLsoMXmF9nZgnFanYscnSlUSgs8uZyKzpE6kg==",
+      "version": "2.0.6",
+      "integrity": "sha512-CIQ5OFxf4Jou6uOKe9t1AOgqpeU5fd70A8NPdHSGeYXqXsPe6peOwI0cUl88RWZ6sP1vPMV3avd/R6cZ5/sP1A==",
       "requires": {
         "safe-buffer": "5.1.1"
       }
@@ -11790,7 +11804,7 @@
       "version": "1.0.3",
       "integrity": "sha512-YL6GrhrWoic0Eq8rXVbMptH7dAxCs0J+mh5Y0euNekPPYaxEmdVGim6GdoxoRzKW2yJoU8tueifS7mYxvcFDEQ==",
       "requires": {
-        "randombytes": "2.0.5",
+        "randombytes": "2.0.6",
         "safe-buffer": "5.1.1"
       }
     },
@@ -14050,7 +14064,7 @@
       "version": "1.2.2",
       "integrity": "sha512-mc1dbFhGBxvTM3bIWmAAINbqiuAk9TATcfIQC8P+/+HJefgaiTlMn2dHvkX8qlI12KeYKSQ1Ua9RrIqrn1VPoA==",
       "requires": {
-        "end-of-stream": "1.4.0",
+        "end-of-stream": "1.4.1",
         "stream-shift": "1.0.0"
       }
     },
@@ -14588,7 +14602,7 @@
       "integrity": "sha512-mQdgLPc/Vjfr3VWqWbfxW8yQNiJCbAZ+Gf6GDu1Cy0bdb33ofyiNGBtAY96jHFhDuivCwgW1H9DgTON+INiXgg==",
       "requires": {
         "bl": "1.2.1",
-        "end-of-stream": "1.4.0",
+        "end-of-stream": "1.4.1",
         "readable-stream": "2.3.3",
         "xtend": "4.0.1"
       },
