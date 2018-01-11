@@ -34,14 +34,14 @@ class FeedSettings extends Component {
 
 		return (
 			<div className="feed-settings">
-				<SectionHeader label={ translate( 'Syndication Feeds (RSS)' ) }>
+				<SectionHeader label={ translate( 'Feed Settings' ) }>
 					<Button compact primary disabled={ false } onClick={ handleSubmitForm }>
 						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
 				<CompactCard>
 					<FormFieldset>
-						{ translate( 'Show the {{field /}} most recent items', {
+						{ translate( 'Display {{field /}} most recent blog posts', {
 							components: {
 								field: (
 									<FormTextInput
@@ -60,7 +60,14 @@ class FeedSettings extends Component {
 							},
 						} ) }
 						<FormSettingExplanation>
-							{ translate( 'In syndication feeds, the number of items to show.' ) }
+							{ translate(
+								"The number of posts to include in your site's feed. {{link}}Learn more about feeds{{/link}}",
+								{
+									components: {
+										link: <a href="https://en.support.wordpress.com/feeds/" />,
+									},
+								}
+							) }
 						</FormSettingExplanation>
 					</FormFieldset>
 					<CompactFormToggle
@@ -68,10 +75,13 @@ class FeedSettings extends Component {
 						disabled={ false }
 						onChange={ handleToggle( 'rss_use_excerpt' ) }
 					>
-						{ translate( 'Use excerpts in the feed' ) }
+						{ translate( 'Limit feed to excerpt only' ) }
 					</CompactFormToggle>
-					<FormSettingExplanation isIndented>
-						When an excerpt is available for your content, it will be used instead of the full text.
+					<FormSettingExplanation isIndented className="feed-settings__excerpt-explanation">
+						{ translate(
+							'Enable this to include only an excerpt of your content. ' +
+								'Users will need to visit your site to view the full content.'
+						) }
 					</FormSettingExplanation>
 				</CompactCard>
 			</div>
