@@ -74,7 +74,7 @@ class BillingReceipt extends React.Component {
 
 		if ( transaction.pay_part === 'paypal_express' ) {
 			text = translate( 'PayPal' );
-		} else if ( 'XXXX' !== transaction.cc_num.toUpperCase() ) {
+		} else if ( 'XXXX' !== transaction.cc_num ) {
 			text = translate( '%(cardType)s ending in %(cardNum)s', {
 				args: {
 					cardType: transaction.cc_type.toUpperCase(),
