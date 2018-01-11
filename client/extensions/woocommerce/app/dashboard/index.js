@@ -208,7 +208,8 @@ class Dashboard extends Component {
 
 		let manageView = null;
 		const storeCountry = get( storeLocation, 'country' );
-		if ( isStoreManagementSupportedInCalypsoForCountry( storeCountry ) ) {
+		const manageInCalypso = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
+		if ( manageInCalypso ) {
 			if ( hasOrders ) {
 				manageView = <ManageOrdersView site={ selectedSite } />;
 			} else {
@@ -221,9 +222,8 @@ class Dashboard extends Component {
 		return (
 			<div>
 				{ manageView }
-				{ ! this.props.mailChimpConfigured && (
-					<MailChimp site={ selectedSite } redirectToSettings dashboardView />
-				) }
+				{ ! this.props.mailChimpConfigured &&
+					manageInCalypso && <MailChimp site={ selectedSite } redirectToSettings dashboardView /> }
 			</div>
 		);
 	};
