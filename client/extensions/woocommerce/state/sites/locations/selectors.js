@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';
+import { find, filter, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -110,6 +110,24 @@ export const getCountryName = createSelector(
 		return [ loaded, loaded && getRawLocations( state, siteId ) ];
 	}
 );
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} A list of countries (codes) that have states
+ */
+export const getCountriesWithStates = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areLocationsLoaded( state, siteId ) ) {
+		return [];
+	}
+
+	const allCountries = flatMap( getRawLocations( state, siteId ), 'countries' );
+	const countriesWithStates = filter( allCountries, country => {
+		return ! isEmpty( country.states );
+	} );
+
+	return countriesWithStates.map( country => country.code ).sort();
+};
 
 /**
  * @param {Object} state Whole Redux state tree

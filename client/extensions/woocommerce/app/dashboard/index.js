@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -44,6 +45,7 @@ import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
 import MailChimp from 'woocommerce/app/settings/email/mailchimp/index.js';
+import warn from 'lib/warn';
 
 class Dashboard extends Component {
 	static propTypes = {
@@ -64,6 +66,10 @@ class Dashboard extends Component {
 		setupChoicesLoading: PropTypes.bool,
 	};
 
+	state = {
+		redirectURL: false,
+	};
+
 	componentDidMount = () => {
 		const { siteId } = this.props;
 
@@ -79,6 +85,21 @@ class Dashboard extends Component {
 		if ( siteId && oldSiteId !== siteId ) {
 			this.fetchStoreData();
 		}
+	};
+
+	// If the user 1) has set the store address in StoreLocationSetupView
+	// and 2) we have a redirectURL, don't render but go ahead and
+	// redirect (i.e. to the WooCommerce Setup Wizard in wp-admin)
+	shouldComponentUpdate = ( nextProps, nextState ) => {
+		const { setStoreAddressDuringInitialSetup } = nextProps;
+		const { redirectURL } = nextState;
+
+		if ( setStoreAddressDuringInitialSetup && redirectURL ) {
+			window.location = redirectURL;
+			return false;
+		}
+
+		return true;
 	};
 
 	fetchStoreData = () => {
@@ -121,6 +142,10 @@ class Dashboard extends Component {
 		return translate( 'Dashboard' );
 	};
 
+	onRequestRedirect = redirectURL => {
+		this.setState( { redirectURL } );
+	};
+
 	renderDashboardSetupContent = () => {
 		const {
 			finishedInstallOfRequiredPlugins,
@@ -131,6 +156,11 @@ class Dashboard extends Component {
 			setStoreAddressDuringInitialSetup,
 			setupChoicesLoading,
 		} = this.props;
+
+		const adminURL = get( selectedSite, 'options.admin_url', '' );
+		if ( isEmpty( adminURL ) ) {
+			warn( 'options.admin_url unexpectedly empty in renderDashboardSetupContent' );
+		}
 
 		if ( setupChoicesLoading ) {
 			// Many of the clauses below depend on setup choices being in the state tree
@@ -149,6 +179,8 @@ class Dashboard extends Component {
 		if ( ! setStoreAddressDuringInitialSetup ) {
 			return (
 				<StoreLocationSetupView
+					adminURL={ adminURL }
+					onRequestRedirect={ this.onRequestRedirect }
 					siteId={ selectedSite.ID }
 					pushDefaultsForCountry={ ! hasProducts }
 				/>
