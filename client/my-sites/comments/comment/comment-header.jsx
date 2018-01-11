@@ -17,13 +17,20 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class CommentHeader extends PureComponent {
 	render() {
-		const { commentId, isBulkMode, isPostView, isSelected, showAuthorMoreInfo } = this.props;
+		const {
+			commentId,
+			isBulkMode,
+			isPostView,
+			isSelected,
+			showAuthorMoreInfo,
+			isDisabled,
+		} = this.props;
 
 		return (
 			<div className="comment__header">
 				{ isBulkMode && (
 					<span className="comment__bulk-select">
-						<FormCheckbox checked={ isSelected } tabIndex="0" />
+						<FormCheckbox checked={ isSelected } tabIndex="0" disabled={ isDisabled } />
 					</span>
 				) }
 
@@ -39,9 +46,11 @@ const mapStateToProps = ( state, { commentId, isBulkMode } ) => {
 	const siteId = getSelectedSiteId( state );
 	const comment = getSiteComment( state, siteId, commentId );
 	const commentType = get( comment, 'type', 'comment' );
+	const canModerateComment = get( comment, 'can_moderate', false );
 
 	return {
 		showAuthorMoreInfo: ! isBulkMode && 'comment' === commentType,
+		isDisabled: ! canModerateComment,
 	};
 };
 

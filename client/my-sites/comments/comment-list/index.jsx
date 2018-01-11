@@ -127,6 +127,10 @@ export class CommentList extends Component {
 	};
 
 	toggleCommentSelected = comment => {
+		if ( ! comment.can_moderate ) {
+			return;
+		}
+
 		if ( this.isCommentSelected( comment.commentId ) ) {
 			return this.setState( ( { selectedComments } ) => ( {
 				selectedComments: selectedComments.filter(
