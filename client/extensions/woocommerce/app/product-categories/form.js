@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { debounce, isNumber, head } from 'lodash';
+import { debounce, isNumber, head, isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,6 +68,13 @@ class ProductCategoryForm extends Component {
 		}
 
 		if ( nextProps.category.parent !== this.props.category.parent ) {
+			if ( isNull( nextProps.category.parent ) ) {
+				this.setState( {
+					selectedParent: [],
+					isTopLevel: false,
+				} );
+				return;
+			}
 			const isTopLevel = nextProps.category && nextProps.category.parent ? false : true;
 			const selectedParent = ( ! isTopLevel && [ nextProps.category.parent ] ) || [];
 			this.setState( {
@@ -95,7 +102,13 @@ class ProductCategoryForm extends Component {
 
 	onTopLevelChange = () => {
 		const { siteId, category, editProductCategory } = this.props;
-		editProductCategory( siteId, category, { parent: 0 } );
+
+		if ( this.state.isTopLevel ) {
+			editProductCategory( siteId, category, { parent: null } );
+		} else {
+			editProductCategory( siteId, category, { parent: 0 } );
+		}
+
 		if ( ! category.parent ) {
 			this.setState( {
 				isTopLevel: ! this.state.isTopLevel,
@@ -273,7 +286,7 @@ class ProductCategoryForm extends Component {
 									</span>
 								</FormLabel>
 
-								{ ! isTopLevel && (
+								{ ( ! isTopLevel || isNull( category.parent ) ) && (
 									<div>
 										<FormLabel>{ translate( 'Select a parent category' ) }</FormLabel>
 										<TermTreeSelectorTerms

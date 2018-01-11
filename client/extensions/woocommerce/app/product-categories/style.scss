@@ -131,7 +131,11 @@
 	flex: 2
 }
 
-
+.product_categories__list-wrapper {
+	.search, .search__open-icon, .search__close-icon {
+		z-index: initial;
+	}
+}
 
 .product-categories__form-image-wrapper {
 	display: flex;
