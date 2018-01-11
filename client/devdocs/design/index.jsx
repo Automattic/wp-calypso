@@ -191,7 +191,7 @@ class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton />
-					<SiteTitleControl />
+					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
