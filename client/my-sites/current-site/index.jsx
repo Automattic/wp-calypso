@@ -97,8 +97,6 @@ class CurrentSite extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Card className="current-site is-loading">
-					{ visibleSitesCount > 1 && <span className="current-site__switch-sites">&nbsp;</span> }
-
 					<div className="site">
 						<a className="site__content">
 							<div className="site-icon" />
