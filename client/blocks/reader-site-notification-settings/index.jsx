@@ -181,9 +181,9 @@ const mapStateToProps = ( state, ownProps ) => {
 	const deliveryMethodsEmail = get( follow, [ 'delivery_methods', 'email' ], {} );
 
 	return {
-		sendNewCommentsByEmail: !! deliveryMethodsEmail.send_comments,
-		sendNewPostsByEmail: !! deliveryMethodsEmail.send_posts,
-		emailDeliveryFrequency: deliveryMethodsEmail.post_delivery_frequency,
+		sendNewCommentsByEmail: deliveryMethodsEmail && !! deliveryMethodsEmail.send_comments,
+		sendNewPostsByEmail: deliveryMethodsEmail && !! deliveryMethodsEmail.send_posts,
+		emailDeliveryFrequency: deliveryMethodsEmail && deliveryMethodsEmail.post_delivery_frequency,
 		sendNewPostsByNotification: get(
 			follow,
 			[ 'delivery_methods', 'notification', 'send_posts' ],
