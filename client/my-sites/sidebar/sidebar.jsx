@@ -681,6 +681,16 @@ export class MySitesSidebar extends Component {
 		return allItems[ this.state.currentSubSidebar ] || null;
 	}
 
+	subSidebarTitles() {
+		// a database of subsidebar titles used for prototyping
+		const titles = {
+			settings: "Settings",
+			people: "People",
+		};
+
+		return titles[ this.state.currentSubSidebar ] || null;
+	}
+
 	render() {
 		const isSubSidebarShowing = !! this.state.currentSubSidebar;
 		return (
@@ -690,6 +700,8 @@ export class MySitesSidebar extends Component {
 				<SubSidebar
 					items={ this.subSidebarItems.bind( this ) }
 					resetSubSidebar={ this.loadSubSidebar( null ) }
+					title={ this.subSidebarTitles.bind( this ) }
+					siteTitle={ this.props.site.title }
 				/>
 				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
 			</Sidebar>

@@ -16,6 +16,8 @@ import Card from 'components/card/compact';
 class SubSidebar extends React.Component {
 	static propTypes = {
 		items: PropTypes.func.isRequired,
+		title: PropTypes.func.isRequired,
+		siteTitle: PropTypes.string.isRequired,
 	};
 
 	render() {
@@ -40,8 +42,8 @@ class SubSidebar extends React.Component {
 				<ul className={ classNames( 'sub-sidebar__list', this.props.className ) }>
 					<Card className="sidebar__header-card" onClick={ this.props.resetSubSidebar }>
 						<Gridicon className="sidebar__header-card__chevron" icon="chevron-left" />
-						<h2 className="sidebar__header-card__section-title">Settings</h2>
-						<h3 className="sidebar__header-card__site-title">Sporadic Thoughts</h3>
+						<h2 className="sidebar__header-card__section-title">{ this.props.title() }</h2>
+						<h3 className="sidebar__header-card__site-title">{ this.props.siteTitle }</h3>
 					</Card>
 					{ listItems }
 				</ul>
