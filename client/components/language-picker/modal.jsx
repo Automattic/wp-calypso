@@ -31,9 +31,7 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
-import { requestLanguageNames } from 'state/i18n/language-names/actions';
 import { getLocalizedLanguageNames } from 'state/selectors';
-import config from 'config';
 
 export class LanguagePickerModal extends PureComponent {
 	static propTypes = {
@@ -62,13 +60,6 @@ export class LanguagePickerModal extends PureComponent {
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
 		};
-	}
-
-	componentWillMount() {
-		const { localizedLanguageNames, loadLanguageNames } = this.props;
-		if ( config.isEnabled( 'i18n/language-names' ) && isEmpty( localizedLanguageNames ) ) {
-			loadLanguageNames();
-		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -292,11 +283,8 @@ export class LanguagePickerModal extends PureComponent {
 	}
 }
 
-export default connect(
-	state => {
-		return {
-			localizedLanguageNames: getLocalizedLanguageNames( state ),
-		};
-	},
-	{ loadLanguageNames: requestLanguageNames }
-)( localize( LanguagePickerModal ) );
+export default connect( state => {
+	return {
+		localizedLanguageNames: getLocalizedLanguageNames( state ),
+	};
+}, null )( localize( LanguagePickerModal ) );

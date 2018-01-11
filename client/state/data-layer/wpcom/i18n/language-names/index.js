@@ -1,15 +1,17 @@
 /** @format */
 
 /**
+* External dependencies
+*/
+import { noop } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { I18N_LANGUAGE_NAMES_REQUEST } from 'state/action-types';
-import {
-	receiveLanguageNames,
-	requestLanguageNamesFailed,
-} from 'state/i18n/language-names/actions';
+import { receiveLanguageNames } from 'state/i18n/language-names/actions';
 
 /**
  * @module state/data-layer/wpcom/i18n/language-names
@@ -25,8 +27,8 @@ export const fetchLanguageNames = action =>
 	http(
 		{
 			method: 'GET',
-			path: '/i18n/languages/names',
-			apiNamespace: 'wpcom/v2',
+			apiVersion: '1.1',
+			path: '/i18n/language-names',
 		},
 		action
 	);
@@ -37,22 +39,12 @@ export const fetchLanguageNames = action =>
  * @param {Array} data raw data from i18n/language-names
  * @returns {Array<Object>} Redux actions
  */
-export const fetchLanguageNamesSuccess = ( action, data ) => [ receiveLanguageNames( data ) ];
-
-/**
- * Dispatches returned error from localized language names  request
- *
- * @param {Object} action Redux action
- * @param {Object} rawError raw error from HTTP request
- * @returns {Object} Redux action
- */
-export const fetchLanguageNamesError = ( action, rawError ) =>
-	requestLanguageNamesFailed( rawError instanceof Error ? rawError.message : rawError );
+export const addLanguageNames = ( action, data ) => [ receiveLanguageNames( data ) ];
 
 export const dispatchPlansRequest = dispatchRequestEx( {
 	fetch: fetchLanguageNames,
-	onSuccess: fetchLanguageNamesSuccess,
-	onError: fetchLanguageNamesError,
+	onSuccess: addLanguageNames,
+	onError: noop,
 } );
 
 export default {

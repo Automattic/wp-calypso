@@ -23,7 +23,6 @@
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
-    "i18n/language-names": false,
 	"jetpack_min_version": false,
 	"login_url": false,
 	"logout_url": false,

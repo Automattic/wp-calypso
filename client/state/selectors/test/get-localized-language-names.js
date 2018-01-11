@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { getLocalizedLanguageNames } from 'state/selectors';
@@ -18,7 +13,7 @@ describe( 'getLocalizedLanguageNames()', () => {
 			},
 		} );
 
-		expect( localizedLanguageNames ).to.equal( null );
+		expect( localizedLanguageNames ).toBe( null );
 	} );
 
 	test( 'should return the language names', () => {
@@ -36,7 +31,7 @@ describe( 'getLocalizedLanguageNames()', () => {
 			},
 		} );
 
-		expect( localizedLanguageNames ).to.eql( {
+		expect( localizedLanguageNames ).toEqual( {
 			it: {
 				localized: 'Italienisch',
 				name: 'Italiano',
