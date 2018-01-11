@@ -57,6 +57,16 @@
 	.button + .button {
 		margin-left: 24px;
 	}
+
+	.button {
+		&.is-borderless {
+			color: $blue-wordpress;
+
+			&:hover {
+				color: $link-highlight;
+			}
+		}
+	}
 }
 
 // Duplicating `.table` for increased specificity
