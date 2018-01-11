@@ -366,9 +366,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__toggle-drafts.button.is-borderless {
-	background: lighten( $gray, 26% );
-	border-left: 1px solid lighten( $gray, 10% );
-	color: $gray-text-min;
+	background: $white;
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;
@@ -376,22 +374,15 @@ $autobar-height: 20px;
 	position: relative;
 	transition: all 0.2s ease-out;
 
-	.count {
-		border: none;
-		margin: 0;
-		font-size: 13px;
-		font-weight: 400;
-		color: $gray-dark;
-		padding: 0 4px;
-		line-height: 30px;
-	}
-
 	&:hover {
-		background: $white;
-
 		.count {
+			border-color: $blue-wordpress;
 			color: $blue-wordpress;
 		}
+	}
+
+	.masterbar__publish & {
+		margin-left: -20px;
 	}
 }
 

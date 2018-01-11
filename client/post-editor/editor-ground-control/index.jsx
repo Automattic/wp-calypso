@@ -23,6 +23,7 @@ import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-butto
 import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { canCurrentUser } from 'state/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
+import Drafts from 'layout/masterbar/drafts';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -258,6 +259,7 @@ export class EditorGroundControl extends PureComponent {
 					onSelect={ this.props.recordSiteButtonClick }
 					indicator={ true }
 				/>
+				<Drafts />
 				{ this.state.needsVerification && (
 					<div
 						className="editor-ground-control__email-verification-notice"
