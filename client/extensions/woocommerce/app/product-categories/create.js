@@ -31,6 +31,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSaveErrorMessage } from './utils';
 
@@ -102,6 +103,8 @@ class ProductCategoryCreate extends React.Component {
 		};
 
 		this.props.createProductCategory( site.ID, category, successAction, failureAction );
+
+		recordTrack( 'calypso_woocommerce_product_category_create' );
 	};
 
 	render() {

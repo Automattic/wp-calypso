@@ -20,6 +20,7 @@ import Main from 'components/main';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import ProductCategoriesList from 'woocommerce/app/product-categories/list';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import SectionNav from 'components/section-nav';
 import Search from 'components/search';
 
@@ -78,6 +79,10 @@ class ProductCategories extends Component {
 
 		this.setState( { searchQuery: query, requestedSearchPages: [ 1 ] } );
 		this.props.fetchProductCategories( site.ID, { search: query } );
+
+		recordTrack( 'calypso_woocommerce_product_category_search', {
+			query,
+		} );
 	};
 
 	render() {

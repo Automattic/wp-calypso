@@ -35,6 +35,7 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSaveErrorMessage } from './utils';
 
@@ -116,6 +117,7 @@ class ProductCategoryUpdate extends React.Component {
 				);
 			};
 			dispatchDelete( site.ID, category, successAction, failureAction );
+			recordTrack( 'calypso_woocommerce_product_category_delete', { id: category.id } );
 		} );
 	};
 
@@ -143,6 +145,8 @@ class ProductCategoryUpdate extends React.Component {
 		};
 
 		this.props.updateProductCategory( site.ID, category, successAction, failureAction );
+
+		recordTrack( 'calypso_woocommerce_product_category_update', { id: category.id } );
 	};
 
 	render() {
