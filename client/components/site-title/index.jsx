@@ -45,8 +45,10 @@ class SiteTitleControl extends React.Component {
 				<FormFieldset>
 					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput
+						autoFocus
 						name="blogname"
 						onChange={ this.onChangeSiteTitle }
+						required
 						value={ this.props.blogname }
 					/>
 				</FormFieldset>
