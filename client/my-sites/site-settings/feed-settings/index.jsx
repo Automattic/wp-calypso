@@ -27,10 +27,13 @@ class FeedSettings extends Component {
 			fields,
 			handleSubmitForm,
 			handleToggle,
+			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
 			translate,
 		} = this.props;
+
+		const isDisabled = isRequestingSettings || isSavingSettings;
 
 		if ( 'undefined' === typeof fields.posts_per_rss ) {
 			// Do not allow these settings to be updated if they cannot be read from the API.
@@ -40,7 +43,7 @@ class FeedSettings extends Component {
 		return (
 			<div className="feed-settings">
 				<SectionHeader label={ translate( 'Feed Settings' ) }>
-					<Button compact primary disabled={ false } onClick={ handleSubmitForm }>
+					<Button compact primary disabled={ isDisabled } onClick={ handleSubmitForm }>
 						{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
@@ -59,7 +62,7 @@ class FeedSettings extends Component {
 											'undefined' === typeof fields.posts_per_rss ? 10 : fields.posts_per_rss
 										}
 										onChange={ onChangeField( 'posts_per_rss' ) }
-										disabled={ false }
+										disabled={ isDisabled }
 									/>
 								),
 							},
@@ -77,7 +80,7 @@ class FeedSettings extends Component {
 					</FormFieldset>
 					<CompactFormToggle
 						checked={ !! fields.rss_use_excerpt }
-						disabled={ false }
+						disabled={ isDisabled }
 						onChange={ handleToggle( 'rss_use_excerpt' ) }
 					>
 						{ translate( 'Limit feed to excerpt only' ) }
