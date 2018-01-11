@@ -5,7 +5,7 @@
 import * as React from 'react';
 import { isEqual } from 'lodash';
 
-const wastedRenders = {};
+const wasterRenders = {};
 window.wastedRenders = wastedRenders;
 
 function getDisplayName( WrappedComponent ) {
@@ -57,4 +57,15 @@ const measuredComponent = Component => {
 	};
 };
 
-export default measuredComponent;
+function devOnly() {
+	if ( process.env.NODE_ENV === 'production' ) {
+		console.error(
+			'STOP. THERE IS A DEV ONLY PERFORMANCE TOOL IN PRODUCTION ' +
+				'See lib/performance/measured-component.js'
+		);
+		return Component => Component;
+	}
+	return measuredComponent;
+}
+
+export default devOnly();
