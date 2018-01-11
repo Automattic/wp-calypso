@@ -268,7 +268,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 	getPrivacyMessage() {
 		const { translate } = this.props;
-		const { currentStep, email, loading } = this.state;
+		const { currentStep, email, loading, privacy } = this.state;
 		const step = 2;
 		const isStepFinished = currentStep > step;
 
@@ -315,6 +315,33 @@ class TransferDomainPrecheck extends React.PureComponent {
 								highlight="warning"
 							/>
 						),
+						strong: <strong className="transfer-domain-step__admin-email" />,
+						a: (
+							<a
+								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+				}
+			);
+
+			buttonText = translate( 'I can access the email address listed' );
+		} else if ( privacy ) {
+			message = translate(
+				'{{notice}}It looks like you may have privacy protection enabled. It must be turned off to ' +
+					'transfer your domain.{{/notice}}' +
+					"{{card}}You must be able to access the email address listed for this domain's owner below. " +
+					"We'll send a link to start the process to the following email address: {{strong}}%(email)s{{/strong}}{{/card}}" +
+					'It looks like you have privacy protection enabled, which may prevent you from successfully ' +
+					'transferring your domain. Please contact your current domain provider or log into your ' +
+					"account to disable privacy protection. {{a}}Here's how to do that{{/a}}.",
+				{
+					args: { email },
+					components: {
+						notice: <Notice showDismiss={ false } status="is-error" />,
+						card: <Card className="transfer-domain-step__section-callout" compact={ true } />,
 						strong: <strong className="transfer-domain-step__admin-email" />,
 						a: (
 							<a
