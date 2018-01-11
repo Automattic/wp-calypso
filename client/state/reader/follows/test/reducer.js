@@ -156,7 +156,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( items( original, { type: DESERIALIZE } ) ).toEqual( original );
+			expect( items( original, { type: DESERIALIZE } ) ).toBe( original );
 		} );
 
 		test( 'should return the blank state for bad serialized data', () => {
@@ -209,7 +209,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 123 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should not update when passed bad new post email subscription info', () => {
@@ -224,7 +224,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostEmail( 456 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should update when passed updated post email subscription info', () => {
@@ -271,7 +271,7 @@ describe( 'reducer', () => {
 					},
 				} );
 				const state = items( original, updateNewPostEmailSubscription( 123, frequency ) );
-				expect( state ).toEqual( original );
+				expect( state ).toBe( original );
 			} );
 		} );
 
@@ -289,7 +289,7 @@ describe( 'reducer', () => {
 
 			[ 'instantly', 'daily', 'weekly' ].forEach( frequency => {
 				const state = items( original, updateNewPostEmailSubscription( 456, frequency ) );
-				expect( state ).toEqual( original );
+				expect( state ).toBe( original );
 			} );
 		} );
 
@@ -334,7 +334,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 123 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should not update when passed bad post email unsubscription info', () => {
@@ -350,7 +350,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostEmail( 456 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should update when passed comment email subscription info', () => {
@@ -395,7 +395,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 123 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should not update when passed comment email sub info about a missing sub', () => {
@@ -410,7 +410,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewCommentEmail( 456 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should update when passed comment email unsubscription info', () => {
@@ -451,7 +451,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 123 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should not update when passed bad comment email unsubscription info', () => {
@@ -466,7 +466,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewCommentEmail( 456 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should update when a new post notification subscription is received', () => {
@@ -520,7 +520,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostNotifications( 123 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should not update when a new post notification subscription for a non-existent follow is received', () => {
@@ -540,7 +540,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, subscribeToNewPostNotifications( 456 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should update when a new post notification unsubscription is received', () => {
@@ -597,7 +597,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostNotifications( 123 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should not update when a new post notification unsubscription for a non-existent follow is received', () => {
@@ -618,7 +618,7 @@ describe( 'reducer', () => {
 				},
 			} );
 			const state = items( original, unsubscribeToNewPostNotifications( 456 ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should insert a follow error if one is received', () => {
@@ -740,7 +740,7 @@ describe( 'reducer', () => {
 				payload: incomingSite,
 			} );
 
-			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toEqual( undefined );
+			expect( state[ 'postcardsfromthereader.wordpress.com' ] ).toBe( undefined );
 		} );
 	} );
 
@@ -859,13 +859,13 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should return the same state for an item that does not exist', () => {
 			const original = deepFreeze( {} );
 			const state = items( original, unfollow( 'http://example.com' ) );
-			expect( state ).toEqual( original );
+			expect( state ).toBe( original );
 		} );
 	} );
 
