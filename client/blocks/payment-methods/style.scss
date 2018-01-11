@@ -1,20 +1,28 @@
 .payment-methods {
-
-	text-align:center;
+	margin-bottom: 40px;
+	display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 
 	div {
 		display: inline-block;
 	}
 
-	.payment-methods__methods {
-		margin-left:10px;
-
-		> .payment-logo {
-			margin-left:12px;
-		}
+	.payment-logo {
+		margin-left: 5px;
 	}
+}
 
-	.payment-methods__cc-logos .payment-logo {
-		margin-right:4px;
+.payment-methods__methods {
+	margin-top: 5px;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: 0;
 	}
+}
+
+.payment-methods__icon {
+	margin-right: 3px;
 }

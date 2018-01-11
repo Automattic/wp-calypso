@@ -11,6 +11,7 @@ import React from 'react';
 class PaymentLogo extends React.Component {
 	static propTypes = {
 		type: PropTypes.string.isRequired,
+		altText: PropTypes.string.isRequired,
 		isCompact: PropTypes.bool,
 	};
 
@@ -19,7 +20,7 @@ class PaymentLogo extends React.Component {
 			'is-compact': this.props.isCompact,
 		} );
 
-		return <div className={ classes } />;
+		return <div className={ classes } aria-label={ this.props.altText } />;
 	}
 }
 

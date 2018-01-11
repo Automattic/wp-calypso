@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import PaymentLogo from 'components/payment-logo';
 import { getCurrentUserPaymentMethods } from 'state/selectors';
 
@@ -22,29 +21,37 @@ class PaymentMethods extends Component {
 			if ( method === 'credit-card' ) {
 				return (
 					<div key={ method } className="payment-methods__cc-logos">
-						<PaymentLogo type="mastercard" />
-						<PaymentLogo type="visa" />
-						<PaymentLogo type="amex" />
-						<PaymentLogo type="discover" />
+						<PaymentLogo type="mastercard" altText="Mastercard" />
+						<PaymentLogo type="visa" altText="Visa" />
+						<PaymentLogo type="amex" altText="Amex" />
+						<PaymentLogo type="discover" altText="Discover" />
 					</div>
 				);
 			}
 
-			return <PaymentLogo type={ method } key={ method } />;
+			return <PaymentLogo type={ method } key={ method } altText={ method } />;
 		} );
 
 		return <div className="payment-methods__methods">{ methodsLogos }</div>;
 	};
 
 	render() {
+		const { translate } = this.props;
+
 		return (
-			<Card className="payment-methods">
-				<Gridicon icon="lock" size={ 18 } />
-				{ this.props.translate( 'Secure payment using:', {
+			<div className="payment-methods">
+				<Gridicon
+					icon="lock"
+					size={ 18 }
+					aria-label={ translate( 'Lock icon' ) }
+					className="payment-methods__icon"
+				/>
+				{ translate( 'Secure payment using:', {
 					comment: 'Followed by a graphical list of payment methods available to the user',
 				} ) }
+
 				{ this.renderPaymentMethods( this.props.paymentMethods ) }
-			</Card>
+			</div>
 		);
 	}
 }
