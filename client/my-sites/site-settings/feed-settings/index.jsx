@@ -58,9 +58,7 @@ class FeedSettings extends Component {
 										step="1"
 										min="0"
 										id="posts_per_rss"
-										value={
-											'undefined' === typeof fields.posts_per_rss ? 10 : fields.posts_per_rss
-										}
+										value={ fields.posts_per_rss }
 										onChange={ onChangeField( 'posts_per_rss' ) }
 										disabled={ isDisabled }
 									/>
