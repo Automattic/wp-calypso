@@ -7,7 +7,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -23,7 +22,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { onboardingTasks, tourForTask, urlForTask } from '../onboardingChecklist';
+import { launchTask, launchCompletedTask, onboardingTasks } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -32,26 +31,20 @@ class ChecklistShow extends PureComponent {
 	onAction = id => {
 		const { requestTour, siteSlug, siteChecklist, track } = this.props;
 
-		const tour = tourForTask( id );
-		const url = urlForTask( id, siteSlug );
-
-		if ( siteChecklist && siteChecklist.tasks && ( url || tour ) ) {
+		if ( siteChecklist && siteChecklist.tasks ) {
 			if ( siteChecklist.tasks[ id ] ) {
-				if ( url ) {
-					page( url );
-				}
-			} else {
-				track( 'calypso_checklist_task_start', {
-					checklist_name: 'new_blog',
-					step_name: id,
+				launchCompletedTask( {
+					id,
+					siteSlug,
 				} );
-
-				if ( url ) {
-					page( url );
-				}
-				if ( tour ) {
-					requestTour( tour );
-				}
+			} else {
+				launchTask( {
+					id,
+					location: 'checklist_show',
+					requestTour,
+					siteSlug,
+					track,
+				} );
 			}
 		}
 	};

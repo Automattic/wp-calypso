@@ -42,6 +42,7 @@ export const ChecklistSiteTaglineTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
+				<Continue target="settings-site-profile-save" step="finish" click hidden />
 				<Next step="click-save">{ translate( 'All done, continue' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 			</ButtonRow>
