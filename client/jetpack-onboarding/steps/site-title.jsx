@@ -15,34 +15,27 @@ import Button from 'components/button';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
 import JetpackOnboardingDisclaimer from '../disclaimer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SiteTitle from 'components/site-title';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
-		description: '',
-		title: '',
+		blogname: '',
+		blogdescription: '',
 	};
 
-	setDescription = event => {
-		this.setState( { description: event.target.value } );
-	};
-
-	setTitle = event => {
-		this.setState( { title: event.target.value } );
+	handleChange = ( { blogname, blogdescription } ) => {
+		this.setState( { blogname, blogdescription } );
 	};
 
 	handleSubmit = event => {
 		event.preventDefault();
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
-			siteTitle: this.state.title,
-			siteDescription: this.state.description,
+			siteTitle: this.state.blogname,
+			siteDescription: this.state.blogdescription,
 		} );
 		page( this.props.getForwardUrl() );
 	};
@@ -66,26 +59,12 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
-						<FormFieldset>
-							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
-							<FormTextInput
-								autoFocus
-								id="title"
-								onChange={ this.setTitle }
-								required
-								value={ this.state.title }
-							/>
-						</FormFieldset>
-
-						<FormFieldset>
-							<FormLabel htmlFor="description">{ translate( 'Site Description' ) }</FormLabel>
-							<FormTextarea
-								id="description"
-								onChange={ this.setDescription }
-								required
-								value={ this.state.description }
-							/>
-						</FormFieldset>
+						<SiteTitle
+							autoFocusBlogname
+							blogname={ this.state.blogname }
+							blogdescription={ this.state.blogdescription }
+							onChange={ this.handleChange }
+						/>
 
 						<Button primary type="submit">
 							{ translate( 'Next Step' ) }
