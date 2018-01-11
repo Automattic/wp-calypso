@@ -283,6 +283,7 @@ class ProductCategoryForm extends Component {
 											onChange={ this.setParent }
 											multiple={ false }
 											height={ 300 }
+											width={ 400 }
 											hideTermAndChildren={ ( isNumber( category.id ) && category.id ) || null }
 											query={ query }
 											onSearch={ this.onSearch }
