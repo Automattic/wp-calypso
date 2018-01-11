@@ -8,13 +8,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { countBy, find, noop } from 'lodash';
+import { countBy, find, get, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-import localStorageHelper from 'store';
 import Button from 'components/button';
 import Card from 'components/card';
 import Gauge from 'components/gauge';
@@ -22,12 +22,12 @@ import ProgressBar from 'components/progress-bar';
 import ShareButton from 'components/share-button';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getSiteChecklist } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
-const storageKey = 'onboarding-checklist-banner-closed';
+const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
 export class ChecklistBanner extends Component {
 	static propTypes = {
@@ -51,7 +51,7 @@ export class ChecklistBanner extends Component {
 	};
 
 	state = {
-		closed: !! localStorageHelper.get( storageKey ),
+		closed: false,
 	};
 
 	handleClick = () => {
@@ -67,10 +67,16 @@ export class ChecklistBanner extends Component {
 	};
 
 	handleClose = () => {
-		this.setState( { closed: true } );
-		localStorageHelper.set( storageKey, true );
+		const { siteId } = this.props;
+		const sitesNeverShowBanner = store.get( storeKeyForNeverShow ) || {};
+		sitesNeverShowBanner[ `${ siteId }` ] = true;
+		store.set( storeKeyForNeverShow, sitesNeverShowBanner );
 
-		this.props.track( 'calypso_checklist_banner_close' );
+		this.setState( { closed: true } );
+
+		this.props.track( 'calypso_checklist_banner_close', {
+			site_id: siteId,
+		} );
 	};
 
 	getNextTask() {
@@ -93,6 +99,31 @@ export class ChecklistBanner extends Component {
 		}
 
 		return this.props.task;
+	}
+
+	canShow() {
+		if ( this.state.closed ) {
+			return false;
+		}
+
+		if ( this.props.siteDesignType !== 'blog' ) {
+			return false;
+		}
+
+		const abtests = store.get( 'ABTests' );
+		if (
+			get( abtests, 'checklistThankYouForPaidUser_20171204' ) !== 'show' &&
+			get( abtests, 'checklistThankYouForFreeUser_20171204' ) !== 'show'
+		) {
+			return false;
+		}
+
+		const sitesNeverShowBanner = store.get( storeKeyForNeverShow );
+		if ( get( sitesNeverShowBanner, String( this.props.siteId ) ) === true ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	renderShareButtons() {
@@ -134,7 +165,7 @@ export class ChecklistBanner extends Component {
 		const task = this.getNextTask();
 		const percentage = Math.round( completed / total * 100 );
 
-		if ( this.state.closed ) {
+		if ( ! this.canShow() ) {
 			return null;
 		}
 
@@ -196,12 +227,14 @@ const mapStateToProps = ( state, { siteId } ) => {
 	const task = find( tasks, [ 'completed', false ] );
 	const { true: completed } = countBy( tasks, 'completed' );
 	const siteSlug = getSiteSlug( state, siteId );
+	const siteDesignType = get( getSite( state, siteId ), 'options.design_type' );
 
 	return {
 		task,
 		completed,
 		total: tasks && tasks.length,
 		siteSlug,
+		siteDesignType,
 	};
 };
 
