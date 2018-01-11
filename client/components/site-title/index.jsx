@@ -46,16 +46,16 @@ class SiteTitleControl extends React.Component {
 					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput
 						name="blogname"
-						value={ this.props.blogname }
 						onChange={ this.onChangeSiteTitle }
+						value={ this.props.blogname }
 					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
 					<FormTextInput
 						name="blogdescription"
-						value={ this.props.blogdescription }
 						onChange={ this.onChangeDescription }
+						value={ this.props.blogdescription }
 					/>
 				</FormFieldset>
 			</div>
