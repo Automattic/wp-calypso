@@ -1,0 +1,20 @@
+.payment-methods {
+
+	text-align:center;
+
+	div {
+		display: inline-block;
+	}
+
+	.payment_methods__methods {
+		margin-left:10px;
+
+		> .payment-logo {
+			margin-left:12px;
+		}
+	}
+
+	.payment-methods__cc-logos .payment-logo {
+		margin-right:4px;
+	}
+}

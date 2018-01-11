@@ -37,6 +37,7 @@ import purchasesPaths from 'me/purchases/paths';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import PaymentMethods from 'blocks/payment-methods';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
@@ -401,6 +402,7 @@ class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
+				<PaymentMethods />
 				{ faqs }
 			</div>
 		);
