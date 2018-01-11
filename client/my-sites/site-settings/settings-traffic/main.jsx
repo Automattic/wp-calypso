@@ -140,8 +140,6 @@ const getFormSettings = partialRight( pick, [
 	'amp_is_supported',
 	'amp_is_enabled',
 	'blog_public',
-	'posts_per_rss',
-	'rss_use_excerpt',
 ] );
 
 export default flowRight( connectComponent, localize, wrapSettingsForm( getFormSettings ) )(
