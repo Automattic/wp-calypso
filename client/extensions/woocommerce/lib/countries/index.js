@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, filter, get, sortBy } from 'lodash';
+import { find, filter, get, includes, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,16 @@ export const getCountryData = country => {
 	return countryData;
 };
 
+/**
+ * Whether or not we support store management in calypso for
+ * the passed country
+ * @param {string} country Country (code) to check
+ * @return {bool} whether store management in calypso is supported
+ */
+export const isStoreManagementSupportedInCalypsoForCountry = country => {
+	return includes( [ 'US', 'CA' ], country );
+};
+
 export const getStateData = ( country, state ) => {
 	const countryData = getCountryData( country );
 	if ( ! countryData ) {
@@ -53,7 +63,7 @@ export const getStateData = ( country, state ) => {
  */
 export const getCurrencyCodeForCountry = country => {
 	const countryData = getCountryData( country );
-	return get( countryData, 'currency', 'USD' );
+	return get( countryData, 'currency', false );
 };
 
 /**
@@ -64,7 +74,7 @@ export const getCurrencyCodeForCountry = country => {
  */
 export const getDimensionUnitForCountry = country => {
 	const countryData = getCountryData( country );
-	return get( countryData, 'dimensionUnit', 'in' );
+	return get( countryData, 'dimensionUnit', false );
 };
 
 /**
@@ -75,7 +85,7 @@ export const getDimensionUnitForCountry = country => {
  */
 export const getWeightUnitForCountry = country => {
 	const countryData = getCountryData( country );
-	return get( countryData, 'weightUnit', 'lbs' );
+	return get( countryData, 'weightUnit', false );
 };
 
 /**
