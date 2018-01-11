@@ -10,8 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import StoreAddress from 'woocommerce/components/store-address';
+import ShippingUnits from './shipping-units';
 
 const ShippingOrigin = ( { translate } ) => {
 	return (
@@ -20,7 +22,10 @@ const ShippingOrigin = ( { translate } ) => {
 				label={ translate( 'Shipping Origin' ) }
 				description={ translate( 'The address of where you will be shipping from.' ) }
 			/>
-			<StoreAddress showLabel={ false } />
+			<Card className="shipping__origin-settings">
+				<StoreAddress showLabel={ false } />
+				<ShippingUnits />
+			</Card>
 		</div>
 	);
 };
