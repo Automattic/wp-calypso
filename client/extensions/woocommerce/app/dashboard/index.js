@@ -16,6 +16,10 @@ import { localize } from 'i18n-calypso';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import {
+	areSettingsGeneralLoading,
+	getStoreLocation,
+} from 'woocommerce/state/sites/settings/general/selectors';
+import {
 	areSetupChoicesLoading,
 	getFinishedInitialSetup,
 	getSetStoreAddressDuringInitialSetup,
@@ -36,7 +40,9 @@ import {
 	areProductsLoading,
 	areProductsLoaded,
 } from 'woocommerce/state/sites/products/selectors';
+import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import Main from 'components/main';
+import ManageExternalView from './manage-external-view';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import Placeholder from './placeholder';
@@ -45,6 +51,7 @@ import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup-tasks-view';
 import MailChimp from 'woocommerce/app/settings/email/mailchimp/index.js';
+import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import warn from 'lib/warn';
 
 class Dashboard extends Component {
@@ -193,15 +200,22 @@ class Dashboard extends Component {
 	};
 
 	renderDashboardContent = () => {
-		const { hasOrders, loading, selectedSite } = this.props;
+		const { hasOrders, loading, selectedSite, storeLocation } = this.props;
 
 		if ( loading || ! selectedSite ) {
 			return <Placeholder />;
 		}
 
-		let manageView = <ManageOrdersView site={ selectedSite } />;
-		if ( ! hasOrders ) {
-			manageView = <ManageNoOrdersView site={ selectedSite } />;
+		let manageView = null;
+		const storeCountry = get( storeLocation, 'country' );
+		if ( isStoreManagementSupportedInCalypsoForCountry( storeCountry ) ) {
+			if ( hasOrders ) {
+				manageView = <ManageOrdersView site={ selectedSite } />;
+			} else {
+				manageView = <ManageNoOrdersView site={ selectedSite } />;
+			}
+		} else {
+			manageView = <ManageExternalView site={ selectedSite } />;
 		}
 
 		return (
@@ -215,7 +229,7 @@ class Dashboard extends Component {
 	};
 
 	render = () => {
-		const { className, isSetupComplete, loading, selectedSite } = this.props;
+		const { className, isSetupComplete, loading, selectedSite, siteId } = this.props;
 
 		return (
 			<Main className={ classNames( 'dashboard', className ) } wideLayout>
@@ -224,6 +238,7 @@ class Dashboard extends Component {
 					isLoading={ loading || ! selectedSite }
 				/>
 				{ isSetupComplete ? this.renderDashboardContent() : this.renderDashboardSetupContent() }
+				<QuerySettingsGeneral siteId={ siteId } />
 			</Main>
 		);
 	};
@@ -233,7 +248,11 @@ function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
 	const siteId = selectedSite ? selectedSite.ID : null;
 	const setupChoicesLoading = areSetupChoicesLoading( state );
-	const loading = areOrdersLoading( state ) || setupChoicesLoading || areProductsLoading( state );
+	const loading =
+		areOrdersLoading( state ) ||
+		setupChoicesLoading ||
+		areProductsLoading( state ) ||
+		areSettingsGeneralLoading( state, siteId );
 	const hasOrders = getNewOrdersWithoutPayPalPending( state ).length > 0;
 	const hasProducts = getTotalProducts( state ) > 0;
 	const productsLoaded = areProductsLoaded( state );
@@ -242,6 +261,7 @@ function mapStateToProps( state ) {
 	const finishedPageSetup = getFinishedPageSetup( state );
 	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup( state );
 	const isSetupComplete = isStoreSetupComplete( state );
+	const storeLocation = getStoreLocation( state, siteId );
 
 	return {
 		finishedInitialSetup,
@@ -256,6 +276,7 @@ function mapStateToProps( state ) {
 		setStoreAddressDuringInitialSetup,
 		setupChoicesLoading,
 		siteId,
+		storeLocation,
 	};
 }
 
