@@ -95,16 +95,29 @@ const showCheckoutShippingInfo = ( props ) => {
 		translate,
 	} = props;
 
-	if ( shippingMethod && shippingCost ) {
-		const shippingInfo = translate(
-			'Your customer selected {{shippingMethod/}} and paid {{shippingCost/}}',
-			{
-				components: {
-					shippingMethod: <span className="rates-step__shipping-info-method">{ shippingMethod }</span>,
-					shippingCost: <span className="rates-step__shipping-info-cost">{ formatCurrency( shippingCost, currency ) }</span>,
-				},
-			}
-		);
+	if ( shippingMethod ) {
+		let shippingInfo;
+
+		if ( 0 < shippingCost ) {
+			shippingInfo = translate(
+				'Your customer selected {{shippingMethod/}} and paid {{shippingCost/}}',
+				{
+					components: {
+						shippingMethod: <span className="rates-step__shipping-info-method">{ shippingMethod }</span>,
+						shippingCost: <span className="rates-step__shipping-info-cost">{ formatCurrency( shippingCost, currency ) }</span>,
+					},
+				}
+			);
+		} else {
+			shippingInfo = translate(
+				'Your customer selected {{shippingMethod/}}',
+				{
+					components: {
+						shippingMethod: <span className="rates-step__shipping-info-method">{ shippingMethod }</span>,
+					},
+				}
+			);
+		}
 
 		return (
 			<div className="rates-step__shipping-info">
