@@ -32,6 +32,11 @@ class FeedSettings extends Component {
 			translate,
 		} = this.props;
 
+		if ( 'undefined' === typeof fields.posts_per_rss ) {
+			// Do not allow these settings to be updated if they cannot be read from the API.
+			return null;
+		}
+
 		return (
 			<div className="feed-settings">
 				<SectionHeader label={ translate( 'Feed Settings' ) }>

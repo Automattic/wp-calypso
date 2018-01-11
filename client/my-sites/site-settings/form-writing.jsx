@@ -144,6 +144,15 @@ class SiteSettingsFormWriting extends Component {
 					fields={ fields }
 				/>
 
+				<FeedSettings
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+					handleSubmitForm={ handleSubmitForm }
+					handleToggle={ handleToggle }
+					onChangeField={ onChangeField }
+				/>
+
 				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
@@ -165,15 +174,6 @@ class SiteSettingsFormWriting extends Component {
 							fields={ fields }
 						/>
 					) }
-
-				<FeedSettings
-					isSavingSettings={ isSavingSettings }
-					isRequestingSettings={ isRequestingSettings }
-					fields={ fields }
-					handleSubmitForm={ handleSubmitForm }
-					handleToggle={ handleToggle }
-					onChangeField={ onChangeField }
-				/>
 
 				{ config.isEnabled( 'press-this' ) &&
 					! this.isMobile() &&
