@@ -360,7 +360,6 @@ export class MySitesSidebar extends Component {
 	store() {
 		const {
 			canUserManageOptions,
-			isJetpack,
 			site,
 			siteSuffix,
 			translate,
@@ -371,7 +370,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const isPermittedSite = isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
+		const isPermittedSite = canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
 		if (
 			! isPermittedSite &&
