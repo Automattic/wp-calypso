@@ -28,6 +28,7 @@ describe( 'notification-subscriptions-delete', () => {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						path: `/read/sites/${ blogId }/notification-subscriptions/delete`,
+						body: {},
 					},
 					action
 				)

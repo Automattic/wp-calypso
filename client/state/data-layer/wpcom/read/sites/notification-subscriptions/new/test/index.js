@@ -28,6 +28,7 @@ describe( 'notification-subscriptions-new', () => {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						path: `/read/sites/${ blogId }/notification-subscriptions/new`,
+						body: {},
 					},
 					action
 				)
