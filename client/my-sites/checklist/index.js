@@ -17,7 +17,14 @@ import { makeLayout, render as clientRender } from 'controller';
 export default function() {
 	if ( config.isEnabled( 'onboarding-checklist' ) ) {
 		page( '/checklist', siteSelection, sites, makeLayout, clientRender );
-		page( '/checklist/:site_id', siteSelection, navigation, show, makeLayout, clientRender );
+		page(
+			'/checklist/:site_id/:displayMode?',
+			siteSelection,
+			navigation,
+			show,
+			makeLayout,
+			clientRender
+		);
 		page( '/checklist/thank-you/:site/:receiptId?', siteSelection, thankYou );
 	}
 }

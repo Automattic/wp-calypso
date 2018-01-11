@@ -17,7 +17,8 @@ import ChecklistShow from '../checklist-show';
 import ChecklistThankYou from '../checklist-thank-you';
 
 export function show( context, next ) {
-	context.primary = <ChecklistShow />;
+	const { params } = context;
+	context.primary = <ChecklistShow displayMode={ params.displayMode } />;
 	next();
 }
 

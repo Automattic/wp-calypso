@@ -285,7 +285,7 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	showChecklistAfterLogin = () => {
-		this.props.loginHandler( { redirectTo: `/checklist/thank-you/${ this.state.siteSlug }` } );
+		this.props.loginHandler( { redirectTo: `/checklist/${ this.state.siteSlug }/free` } );
 	};
 
 	shouldShowChecklist() {
