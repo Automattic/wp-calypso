@@ -97,15 +97,11 @@ class CurrentSite extends Component {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
 				<Card className="current-site is-loading">
-					{ this.props.siteCount > 1 && <span className="current-site__switch-sites">&nbsp;</span> }
-
 					<div className="site">
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
-								<span className="site__title">
-									{ translate( 'Loading My Sites…' ) }
-								</span>
+								<span className="site__title">{ translate( 'Loading My Sites…' ) }</span>
 							</div>
 						</a>
 					</div>
@@ -116,19 +112,22 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				{ this.props.siteCount > 1 &&
+				{ this.props.siteCount > 1 && (
 					<span className="current-site__switch-sites">
 						<Button compact borderless onClick={ this.switchSites }>
 							<Gridicon icon={ rtlOn ? 'arrow-right' : 'arrow-left' } size={ 18 } />
 							{ translate( 'Switch Site' ) }
 						</Button>
-					</span> }
+					</span>
+				) }
 
-				{ selectedSite
-					? <div>
-							<Site site={ selectedSite } />
-						</div>
-					: <AllSites /> }
+				{ selectedSite ? (
+					<div>
+						<Site site={ selectedSite } />
+					</div>
+				) : (
+					<AllSites />
+				) }
 
 				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
 
