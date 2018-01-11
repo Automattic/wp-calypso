@@ -75,7 +75,7 @@ export class ChecklistBanner extends Component {
 		this.setState( { closed: true } );
 
 		this.props.track( 'calypso_checklist_banner_close', {
-			siteId,
+			site_id: siteId,
 		} );
 	};
 
