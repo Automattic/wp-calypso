@@ -17,7 +17,6 @@ import PaymentLogo from 'components/payment-logo';
 import { getCurrentUserPaymentMethods } from 'state/selectors';
 
 class PaymentMethods extends Component {
-
 	renderPaymentMethods = methods => {
 		const methodsLogos = methods.map( method => {
 			if ( method === 'credit-card' ) {
@@ -34,21 +33,17 @@ class PaymentMethods extends Component {
 			return <PaymentLogo type={ method } key={ method } />;
 		} );
 
-		return (
-			<div className="payment_methods__methods">
-				{ methodsLogos }
-			</div>
-		);
+		return <div className="payment-methods__methods">{ methodsLogos }</div>;
 	};
 
 	render() {
 		return (
 			<Card className="payment-methods">
-					<Gridicon icon='lock' size={ 18 } />
-					{ this.props.translate( 'Secure payment using:', {
-						comment: 'Followed by a graphical list of payment methods available to the user'
-					} ) }
-					{ this.renderPaymentMethods( this.props.paymentMethods ) }
+				<Gridicon icon="lock" size={ 18 } />
+				{ this.props.translate( 'Secure payment using:', {
+					comment: 'Followed by a graphical list of payment methods available to the user',
+				} ) }
+				{ this.renderPaymentMethods( this.props.paymentMethods ) }
 			</Card>
 		);
 	}
