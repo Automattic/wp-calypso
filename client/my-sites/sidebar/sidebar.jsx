@@ -476,7 +476,11 @@ export class MySitesSidebar extends Component {
 				icon="user"
 				forceInternalLink={ true }
 				preloadSectionName="people"
-			/>
+			>
+				<div className="sidebar__chevron-right">
+					<Gridicon icon="chevron-right" />
+				</div>
+			</SidebarItem>
 		);
 	}
 
@@ -507,7 +511,9 @@ export class MySitesSidebar extends Component {
 				preloadSectionName="settings"
 				tipTarget="settings"
 			>
-				<Gridicon className="sidebar__chevron-right" icon="chevron-right" />
+				<div className="sidebar__chevron-right">
+					<Gridicon icon="chevron-right" />
+				</div>
 			</SidebarItem>
 		);
 	}
