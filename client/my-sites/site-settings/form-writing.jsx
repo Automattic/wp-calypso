@@ -213,6 +213,8 @@ const connectComponent = connect(
 const getFormSettings = settings => {
 	const formSettings = pick( settings, [
 		'posts_per_page',
+		'posts_per_rss',
+		'rss_use_excerpt',
 		'default_post_format',
 		'custom-content-types',
 		'jetpack_testimonial',
