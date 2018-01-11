@@ -28,7 +28,7 @@ class QuerySites extends Component {
 	request( props ) {
 		if ( props.allSites && ! props.requestingSites ) {
 			props.requestSites();
-			// setTimeout( () => props.requestSitesPlan(), 3000 );
+			setTimeout( () => props.requestSitesPlan(), 5000 );
 		}
 
 		if ( props.siteId && ! props.requestingSite ) {
