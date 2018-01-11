@@ -90,10 +90,12 @@ export default class Continue extends Component {
 			return null;
 		}
 
+		const instructionClassName = 'guided-tours__actionstep-instructions';
+
 		return (
-			<p className="guided-tours__actionstep-instructions">
+			<div className={ instructionClassName }>
 				<em>{ this.props.children || this.defaultMessage() }</em>
-			</p>
+			</div>
 		);
 	}
 }
