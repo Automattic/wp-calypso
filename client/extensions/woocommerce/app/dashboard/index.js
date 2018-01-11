@@ -157,11 +157,12 @@ class Dashboard extends Component {
 		const {
 			finishedInstallOfRequiredPlugins,
 			finishedPageSetup,
-			finishedInitialSetup,
 			hasProducts,
 			selectedSite,
 			setStoreAddressDuringInitialSetup,
 			setupChoicesLoading,
+			settingsGeneralLoading,
+			storeLocation,
 		} = this.props;
 
 		const adminURL = get( selectedSite, 'options.admin_url', '' );
@@ -194,9 +195,22 @@ class Dashboard extends Component {
 			);
 		}
 
-		if ( ! finishedInitialSetup ) {
-			return <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } />;
+		// At this point, we don't know what we want to render until
+		// we know the store's country (from settings general)
+		if ( settingsGeneralLoading ) {
+			return <Placeholder />;
 		}
+
+		// Not a supported country? Hold off on the setup tasks view until
+		// the country gains support - then the merchant will be able to complete
+		// tasks (or skip them)
+		const storeCountry = get( storeLocation, 'country' );
+		const manageInCalypso = isStoreManagementSupportedInCalypsoForCountry( storeCountry );
+		if ( ! manageInCalypso ) {
+			return <ManageExternalView site={ selectedSite } />;
+		}
+
+		return <SetupTasksView onFinished={ this.onStoreSetupFinished } site={ selectedSite } />;
 	};
 
 	renderDashboardContent = () => {
@@ -248,11 +262,12 @@ function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
 	const siteId = selectedSite ? selectedSite.ID : null;
 	const setupChoicesLoading = areSetupChoicesLoading( state );
+	const settingsGeneralLoading = areSettingsGeneralLoading( state, siteId );
 	const loading =
 		areOrdersLoading( state ) ||
 		setupChoicesLoading ||
 		areProductsLoading( state ) ||
-		areSettingsGeneralLoading( state, siteId );
+		settingsGeneralLoading;
 	const hasOrders = getNewOrdersWithoutPayPalPending( state ).length > 0;
 	const hasProducts = getTotalProducts( state ) > 0;
 	const productsLoaded = areProductsLoaded( state );
@@ -274,6 +289,7 @@ function mapStateToProps( state ) {
 		productsLoaded,
 		selectedSite,
 		setStoreAddressDuringInitialSetup,
+		settingsGeneralLoading,
 		setupChoicesLoading,
 		siteId,
 		storeLocation,
