@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -16,7 +18,7 @@ import { intersection } from 'lodash';
  */
 import Button from 'components/button';
 import PostScheduler from './post-scheduler';
-import { isBackDated, isFutureDated, isPublished } from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export class EditorPublishDate extends React.Component {
@@ -76,23 +78,23 @@ export class EditorPublishDate extends React.Component {
 	};
 
 	getHeaderDescription() {
-		const isPostSchduled = isFutureDated( this.props.post );
-		const isPostBackDated = isBackDated( this.props.post );
-		const isPostPublished = isPublished( this.props.post );
+		const isScheduled = utils.isFutureDated( this.props.post );
+		const isBackDated = utils.isBackDated( this.props.post );
+		const isPublished = utils.isPublished( this.props.post );
 
-		if ( isPostPublished && isPostSchduled ) {
+		if ( isPublished && isScheduled ) {
 			return this.props.translate( 'Scheduled' );
 		}
 
-		if ( isPostSchduled ) {
+		if ( isScheduled ) {
 			return this.props.translate( 'Schedule' );
 		}
 
-		if ( isPostPublished ) {
+		if ( isPublished ) {
 			return this.props.translate( 'Published' );
 		}
 
-		if ( isPostBackDated ) {
+		if ( isBackDated ) {
 			return this.props.translate( 'Backdate' );
 		}
 
@@ -100,15 +102,15 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	renderCalendarHeader() {
-		const isScheduled = isFutureDated( this.props.post );
-		const isPostBackDated = isBackDated( this.props.post );
-		const isPostPublished = isPublished( this.props.post );
+		const isScheduled = utils.isFutureDated( this.props.post );
+		const isBackDated = utils.isBackDated( this.props.post );
+		const isPublished = utils.isPublished( this.props.post );
 
-		if ( isPostPublished ) {
+		if ( isPublished ) {
 			return;
 		}
 
-		if ( ! isScheduled && ! isPostBackDated ) {
+		if ( ! isScheduled && ! isBackDated ) {
 			return (
 				<div className="editor-publish-date__choose-header">
 					{ this.props.translate( 'Choose a date to schedule' ) }
@@ -128,13 +130,13 @@ export class EditorPublishDate extends React.Component {
 	}
 
 	renderHeader() {
-		const isScheduled = isFutureDated( this.props.post );
-		const isPostBackDated = isBackDated( this.props.post );
-		const isPostPublishd = isPublished( this.props.post );
+		const isScheduled = utils.isFutureDated( this.props.post );
+		const isBackDated = utils.isBackDated( this.props.post );
+		const isPublished = utils.isPublished( this.props.post );
 		const className = classNames( 'editor-publish-date__header', {
 			'is-scheduled': isScheduled,
-			'is-back-dated': isPostBackDated,
-			'is-published': isPostPublishd,
+			'is-back-dated': isBackDated,
+			'is-published': isPublished,
 		} );
 		const selectedDay = this.props.post && this.props.post.date ? this.props.post.date : null;
 
@@ -145,7 +147,7 @@ export class EditorPublishDate extends React.Component {
 					<div className="editor-publish-date__header-description">
 						{ this.getHeaderDescription() }
 					</div>
-					{ ( isScheduled || isPostBackDated || isPostPublishd ) && (
+					{ ( isScheduled || isBackDated || isPublished ) && (
 						<div className="editor-publish-date__header-chrono">
 							{ this.props.moment( selectedDay ).calendar() }
 						</div>
@@ -158,7 +160,7 @@ export class EditorPublishDate extends React.Component {
 	renderSchedule() {
 		const selectedDay = this.props.post && this.props.post.date ? this.props.post.date : null;
 
-		const isScheduled = isFutureDated( this.props.post );
+		const isScheduled = utils.isFutureDated( this.props.post );
 		const className = classNames( 'editor-publish-date__schedule', {
 			'is-scheduled': isScheduled,
 		} );

@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -11,7 +13,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import { getEditedTime } from 'lib/posts/utils';
+import * as postUtils from 'lib/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 
 class StatusLabel extends React.PureComponent {
@@ -82,9 +84,9 @@ class StatusLabel extends React.PureComponent {
 	}
 
 	renderLabel = () => {
-		const post = this.props.post;
-		let editedTime = this.props.moment( getEditedTime( post ) );
-		let label;
+		var post = this.props.post,
+			editedTime = this.props.moment( postUtils.getEditedTime( post ) ),
+			label;
 
 		if ( ! post.modified ) {
 			return this.props.translate( 'New Draft' );

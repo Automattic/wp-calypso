@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +14,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getPermalinkBasePath, isPage } from 'lib/posts/utils';
+import * as PostUtils from 'lib/posts/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
 import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
@@ -77,9 +79,9 @@ class EditorTitle extends Component {
 	};
 
 	recordChangeStats = () => {
-		const isAPage = isPage( this.props.post );
-		stats.recordStat( isAPage ? 'page_title_changed' : 'post_title_changed' );
-		stats.recordEvent( isAPage ? 'Changed Page Title' : 'Changed Post Title' );
+		const isPage = PostUtils.isPage( this.props.post );
+		stats.recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
+		stats.recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
 	};
 
 	render() {
@@ -93,9 +95,9 @@ class EditorTitle extends Component {
 			<div className={ classes }>
 				{ post &&
 					post.ID &&
-					! isPage( post ) && (
+					! PostUtils.isPage( post ) && (
 						<EditorPermalink
-							path={ isPermalinkEditable ? getPermalinkBasePath( post ) : post.URL }
+							path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
 							isEditable={ isPermalinkEditable }
 						/>
 					) }

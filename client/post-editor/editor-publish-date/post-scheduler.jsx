@@ -12,8 +12,8 @@ import { get } from 'lodash';
  */
 import PostSchedule from 'components/post-schedule';
 import QueryPosts from 'components/data/query-posts';
+import * as postUtils from 'lib/posts/utils';
 import { timezone } from 'lib/site/utils';
-import { getOffsetDate, isPage } from 'lib/posts/utils';
 import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
 
 const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) => ( {
@@ -47,7 +47,7 @@ export default class PostScheduler extends PureComponent {
 	getFirstDayOfTheMonth( date ) {
 		const tz = timezone( this.props.site );
 
-		return getOffsetDate( date, tz ).set( {
+		return postUtils.getOffsetDate( date, tz ).set( {
 			year: date.year(),
 			month: date.month(),
 			date: 1,
@@ -82,7 +82,9 @@ export default class PostScheduler extends PureComponent {
 
 		return (
 			<div>
-				{ ! isPage( post ) && <QueryPosts siteId={ get( site, 'ID' ) } query={ query } /> }
+				{ ! postUtils.isPage( post ) && (
+					<QueryPosts siteId={ get( site, 'ID' ) } query={ query } />
+				) }
 				<PostScheduleWithOtherPostsIndicated
 					onDateChange={ setPostDate }
 					onMonthChange={ this.setCurrentMonth }

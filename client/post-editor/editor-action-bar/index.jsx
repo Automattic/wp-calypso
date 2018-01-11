@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -12,7 +14,7 @@ import { connect } from 'react-redux';
  */
 import AsyncLoad from 'components/async-load';
 import EditorSticky from 'post-editor/editor-sticky';
-import { getVisibility, isPublished } from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';
@@ -42,7 +44,7 @@ class EditorActionBar extends Component {
 		// This results in checking Flux for some items and Redux for others to correctly
 		// update based on post changes. Flux changes are passed down from parent components.
 		const multiUserSite = this.props.site && ! this.props.site.single_user_site;
-		const isPasswordProtected = getVisibility( this.props.post ) === 'password';
+		const isPasswordProtected = utils.getVisibility( this.props.post ) === 'password';
 		const { isPostPrivate, postAuthor } = this.props;
 
 		return (
@@ -65,7 +67,7 @@ class EditorActionBar extends Component {
 						this.props.type === 'post' &&
 						! isPasswordProtected &&
 						! isPostPrivate && <EditorSticky /> }
-					{ isPublished( this.props.savedPost ) && (
+					{ utils.isPublished( this.props.savedPost ) && (
 						<Button
 							href={ this.props.savedPost.URL }
 							target="_blank"

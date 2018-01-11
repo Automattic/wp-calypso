@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -14,7 +16,7 @@ import Gridicon from 'gridicons';
  */
 import actions from 'lib/posts/actions';
 import accept from 'lib/accept';
-import { userCan } from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 import Button from 'components/button';
 import { getSelectedSite } from 'state/ui/selectors';
 
@@ -32,7 +34,7 @@ class EditorDeletePost extends React.Component {
 	};
 
 	sendToTrash = () => {
-		if ( ! userCan( 'delete_post', this.props.post ) ) {
+		if ( ! utils.userCan( 'delete_post', this.props.post ) ) {
 			return;
 		}
 
