@@ -15,7 +15,7 @@ import { requestLocaleSuggestions } from 'state/i18n/locale-suggestions/actions'
 
 class QueryLocaleSuggestions extends Component {
 	static propTypes = {
-		localeSuggestions: PropTypes.bool,
+		localeSuggestions: PropTypes.array,
 		requestLocaleSuggestions: PropTypes.func,
 	};
 
