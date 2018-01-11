@@ -167,7 +167,7 @@
   },
   "scripts": {
     "preanalyze-bundles": "cross-env-shell WEBPACK_OUTPUT_JSON=1 CALYPSO_ENV=production npm run -s env -- node --max_old_space_size=8192 ./node_modules/.bin/webpack --config webpack.config.js --profile --json > stats.json",
-    "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 0.0.0.0 -p 9898",
+    "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 0.0.0.0 -p 9898 -s gzip",
     "analyze-css": "node bin/analyze-css.js",
     "autoprefixer": "postcss -r --use autoprefixer",
     "postcss": "postcss -r -u postcss-custom-properties -u autoprefixer -c postcss.config.json",
@@ -281,7 +281,7 @@
     "stylelint": "6.9.0",
     "supertest": "2.0.0",
     "terminal-kit": "1.13.13",
-    "webpack-bundle-analyzer": "2.8.2"
+    "webpack-bundle-analyzer": "2.9.2"
   },
   "optionalDependencies": {
     "fsevents": "1.1.3"
