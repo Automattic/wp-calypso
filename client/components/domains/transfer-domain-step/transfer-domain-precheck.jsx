@@ -328,7 +328,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 			);
 
 			buttonText = translate( 'I can access the email address listed' );
-		} else if ( privacy ) {
+		}
+
+		if ( privacy && email ) {
 			message = translate(
 				'{{notice}}It looks like you may have privacy protection enabled. It must be turned off to ' +
 					'transfer your domain.{{/notice}}' +
