@@ -14,7 +14,7 @@ import FormattedHeader from 'components/formatted-header';
 
 class Confirmation extends Component {
 	render() {
-		const { site, confirmationButton, confirmationDescription, confirmationTitle } = this.props;
+		const { site, buttonLabel, description, title } = this.props;
 
 		return (
 			<Card>
@@ -23,17 +23,14 @@ class Confirmation extends Component {
 					src={ '/calypso/images/illustrations/support.svg' }
 				/>
 
-				<FormattedHeader
-					headerText={ confirmationTitle }
-					subHeaderText={ confirmationDescription }
-				/>
+				<FormattedHeader headerText={ title } subHeaderText={ description } />
 
 				<Button
 					className="shared__confirmation-button"
 					primary={ true }
 					href={ `/stats/day/${ site.slug }` }
 				>
-					{ confirmationButton }
+					{ buttonLabel }
 				</Button>
 			</Card>
 		);

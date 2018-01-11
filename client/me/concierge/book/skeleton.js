@@ -17,7 +17,7 @@ class Skeleton extends Component {
 		return (
 			<div>
 				<PrimaryHeader />
-				<CompactCard className="book__site-block">
+				<CompactCard className="book__skeleton-site-block">
 					<SitePlaceholder />
 				</CompactCard>
 			</div>

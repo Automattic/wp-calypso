@@ -1,21 +1,22 @@
 /** @format */
 
-.book__site-block .site__content,
+.book__skeleton-site-block .site__content,
+.book__info-step-site-block .site__content,
 .shared__site-block .site__content {
 	// Override the site block's padding to use the containing card's padding instead
 	padding: 0;
 }
 
-.shared__calendar-card.is-expanded {
+.shared__available-time-card.is-expanded {
 	background: lighten($gray, 36%);
 }
 
-.shared__calendar-card-header {
+.shared__available-time-card-header {
 	display: flex;
 	align-items: center;
 }
 
-.shared__calendar-card-header-icon {
+.shared__available-time-card-header-icon {
 	color: $gray;
 	border: 1px solid lighten($gray, 20%);
 	border-radius: 100%;
