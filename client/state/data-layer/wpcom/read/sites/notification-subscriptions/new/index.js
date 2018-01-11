@@ -29,9 +29,10 @@ export function fromApi( response ) {
 export function requestNotificationSubscription( action ) {
 	return http(
 		{
-			path: `/read/sites/${ action.payload.blogId }/notification-subscriptions/new`,
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
+			path: `/read/sites/${ action.payload.blogId }/notification-subscriptions/new`,
+			body: {}, // have to have an empty body to make wpcom-http happy
 		},
 		action
 	);
