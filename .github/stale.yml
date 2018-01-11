@@ -12,14 +12,11 @@ exemptLabels:
   - "[Pri] High"
   - "[Pri] BLOCKER"
   - "[Status] Keep Open"
+  - "OSS Citizen"
 # Label to use when marking an issue as stale
 staleLabel: "[Status] Stale"
 # Comment to post when marking an issue as stale. Set to `false` to disable
 markComment: >
-  This issue has been marked as stale because it hasn't been updated in a while. It will be closed in a week.
-
-  If you would like it to remain open, can you please you comment below and see what you can do to get things moving with this issue?
-
-  Thanks! 🙏
+  This issue has been marked as stale because it hasn't been updated in a while. It will be closed in a week. If you would like it to remain open, can you please comment below and see what you can do to get things moving with this issue? Thanks! 🙏
 # Comment to post when closing a stale issue. Set to `false` to disable
 closeComment: false
