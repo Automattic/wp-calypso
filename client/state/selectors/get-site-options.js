@@ -6,6 +6,8 @@
 
 import { getRawSite } from 'state/sites/selectors';
 
+const EMTPY_OPTIONS = Object.freeze( {} );
+
 /**
  * Returns the site options
  *
@@ -18,11 +20,5 @@ export default ( state, siteId ) => {
 	if ( ! site ) {
 		return null;
 	}
-	let options = site.options || {};
-	const defaultPostFormat = options.default_post_format;
-	// The 'standard' post format is saved as an option of '0'
-	if ( ! defaultPostFormat || defaultPostFormat === '0' ) {
-		options = { ...options, default_post_format: 'standard' };
-	}
-	return options;
+	return site.options || EMTPY_OPTIONS;
 };
