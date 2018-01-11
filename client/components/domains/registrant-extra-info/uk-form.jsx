@@ -21,12 +21,13 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import WithContactDetailsValidation from './with-contact-details-validation';
+import contactDetailsUkSchema from './uk-schema';
 
 const defaultValues = {
 	registrantType: 'IND',
 };
 
-class RegistrantExtraInfoUkForm extends React.PureComponent {
+export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -60,6 +61,17 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 				{ text }
 			</option>
 		) );
+		this.errorMessages = {
+			dotukRegistrationNumberFormat: translate(
+				'A Company Registration Number is 8 numerals, or 2 letters followed by 6 numerals (e.g. AB123456 or 12345678).'
+			),
+			dotukRegistrantTypeRequiresRegistrationNumber: translate(
+				'A registration number is required for this registrant type.'
+			),
+			dotukRegistrantTypeRequiresTradingName: translate(
+				'A trading name is required for this registrant type.'
+			),
+		};
 	}
 
 	componentWillMount() {
@@ -98,12 +110,8 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 
 	renderTradingNameField() {
 		const { contactDetails, translate } = this.props;
-		const { tradingName } = contactDetails.extra;
-		const tradingNameErrors = get(
-			this.props.validationErrors,
-			[ 'extra', 'tradingName' ],
-			[]
-		);
+		const { tradingName } = contactDetails.extra || {};
+		const tradingNameErrors = get( this.props.validationErrors, [ 'extra', 'tradingName' ], [] );
 		const isError = ! isEmpty( tradingNameErrors );
 
 		return (
@@ -136,6 +144,7 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 			[ 'extra', 'registrationNumber' ],
 			[]
 		);
+
 		const isError = ! isEmpty( registrationNumberErrors );
 
 		return (
@@ -163,9 +172,22 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 		);
 	}
 
-	renderValidationError( message ) {
-		return <FormInputValidation isError key={ message } text={ message } />;
+	errorMessageFromCode( errorCode ) {
+		return (
+			this.errorMessages[ errorCode ] ||
+			this.props.translate( 'There was a problem with this field.' )
+		);
 	}
+
+	renderValidationError = errorCode => {
+		return (
+			<FormInputValidation
+				isError
+				key={ errorCode }
+				text={ this.errorMessageFromCode( errorCode ) }
+			/>
+		);
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -208,9 +230,14 @@ class RegistrantExtraInfoUkForm extends React.PureComponent {
 	}
 }
 
+export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
+	contactDetailsUkSchema,
+	RegistrantExtraInfoUkForm
+);
+
 export default connect(
 	state => ( {
 		contactDetails: getContactDetailsCache( state ),
 	} ),
 	{ updateContactDetailsCache }
-)( WithContactDetailsValidation( 'uk', localize( RegistrantExtraInfoUkForm ) ) );
+)( localize( ValidatedRegistrantExtraInfoUkForm ) );
