@@ -100,11 +100,6 @@ export class CommentList extends Component {
 		this.state.selectedComments.length &&
 		this.state.selectedComments.length === this.props.comments.length;
 
-	setOrder = order => () => {
-		this.props.setOrder( order );
-		this.setState( { page: 1 } );
-	};
-
 	toggleBulkMode = () => {
 		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
 	};
@@ -133,6 +128,7 @@ export class CommentList extends Component {
 			order,
 			page,
 			postId,
+			setOrder,
 			siteId,
 			siteFragment,
 			status,
@@ -173,7 +169,7 @@ export class CommentList extends Component {
 					order={ order }
 					postId={ postId }
 					selectedComments={ selectedComments }
-					setOrder={ this.setOrder }
+					setOrder={ setOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }

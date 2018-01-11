@@ -116,11 +116,6 @@ export class CommentTree extends Component {
 		return selectedComments.length && selectedComments.length === visibleComments.length;
 	};
 
-	setOrder = order => () => {
-		this.props.setOrder( order );
-		this.setState( { page: 1 } );
-	};
-
 	toggleBulkMode = () => {
 		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
 	};
@@ -150,6 +145,7 @@ export class CommentTree extends Component {
 			order,
 			page,
 			postId,
+			setOrder,
 			siteId,
 			siteFragment,
 			status,
@@ -190,7 +186,7 @@ export class CommentTree extends Component {
 					order={ order }
 					postId={ postId }
 					selectedComments={ selectedComments }
-					setOrder={ this.setOrder }
+					setOrder={ setOrder }
 					siteId={ siteId }
 					siteFragment={ siteFragment }
 					status={ status }
