@@ -27,6 +27,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
+import FeedSettings from 'my-sites/site-settings/feed-settings';
 import Masterbar from './masterbar';
 import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
@@ -66,6 +67,7 @@ class SiteSettingsFormWriting extends Component {
 			handleToggle,
 			handleAutosavingToggle,
 			handleAutosavingRadio,
+			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
 			jetpackMasterbarSupported,
@@ -163,6 +165,15 @@ class SiteSettingsFormWriting extends Component {
 							fields={ fields }
 						/>
 					) }
+
+				<FeedSettings
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+					handleSubmitForm={ handleSubmitForm }
+					handleToggle={ handleToggle }
+					onChangeField={ onChangeField }
+				/>
 
 				{ config.isEnabled( 'press-this' ) &&
 					! this.isMobile() &&
