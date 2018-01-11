@@ -22,6 +22,6 @@ export default () => {
 			clientRender
 		);
 
-		page( '/me/concierge/:siteSlug', controller.book, makeLayout, clientRender );
+		page( '/me/concierge/:siteSlug/book', controller.book, makeLayout, clientRender );
 	}
 };

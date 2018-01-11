@@ -55,7 +55,7 @@ class InfoStep extends Component {
 		return (
 			<div>
 				<PrimaryHeader />
-				<CompactCard className="book__site-block">
+				<CompactCard className="book__info-step-site-block">
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
 
