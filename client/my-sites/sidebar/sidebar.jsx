@@ -49,6 +49,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackSite,
 	isSitePreviewable,
+	getSitePlan,
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
@@ -309,7 +310,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
-		const { site, canUserManageOptions } = this.props;
+		const { site, canUserManageOptions, sitePlan } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -321,20 +322,24 @@ export class MySitesSidebar extends Component {
 
 		let planLink = '/plans' + this.props.siteSuffix;
 
+		if ( ! sitePlan ) {
+			return null;
+		}
+
 		// Show plan details for upgraded sites
-		if ( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) {
+		if ( isPersonal( sitePlan ) || isPremium( sitePlan ) || isBusiness( sitePlan ) ) {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
 		let linkClass = 'upgrades-nudge';
 
-		if ( site && isPlan( site.plan ) ) {
+		if ( site && isPlan( sitePlan ) ) {
 			linkClass += ' is-paid-plan';
 		}
 
-		let planName = site && site.plan.product_name_short;
+		let planName = site && sitePlan.product_name_short;
 
-		if ( site && isFreeTrial( site.plan ) ) {
+		if ( site && isFreeTrial( sitePlan ) ) {
 			planName = this.props.translate( 'Trial', {
 				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.',
 			} );
@@ -697,6 +702,7 @@ function mapStateToProps( state ) {
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 		siteHasBackgroundTransfer: hasSitePendingAT && transferStatus !== transferStates.ERROR,
+		sitePlan: getSitePlan( state, siteId ),
 	};
 }
 

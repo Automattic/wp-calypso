@@ -4,7 +4,18 @@
  * External dependencies
  */
 
-import { pick, omit, merge, get, includes, reduce, isEqual, stubFalse, stubTrue } from 'lodash';
+import {
+	pick,
+	omit,
+	merge,
+	get,
+	includes,
+	reduce,
+	isEqual,
+	stubFalse,
+	stubTrue,
+	forEach,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +49,7 @@ import {
 	SITES_REQUEST_SUCCESS,
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+	SITES_PLANS_RECEIVE,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
@@ -94,11 +106,33 @@ export function items( state = null, action ) {
 					}
 
 					memo[ site.ID ] = transformedSite;
+
+					memo[ site.ID ].plan = {
+						product_id: 1008,
+						product_slug: 'business-bundle',
+						product_name_short: 'loading...',
+						free_trial: false,
+						expired: false,
+						user_is_owner: false,
+						is_free: false,
+					};
+
 					return memo;
 				},
 				initialNextState || {}
 			);
 
+		case SITES_PLANS_RECEIVE:
+			const sitesPlans = action.sites;
+
+			const newState = {};
+
+			forEach(
+				sitesPlans,
+				sitePlan => ( newState[ sitePlan.ID ] = { ...state[ sitePlan.ID ], plan: sitePlan.plan } )
+			);
+
+			return newState;
 		case SITE_DELETE_RECEIVE:
 		case JETPACK_DISCONNECT_RECEIVE:
 			return omit( state, action.siteId );

@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
-import { requestSites, requestSite } from 'state/sites/actions';
+import { requestSites, requestSite, requestSitesPlan } from 'state/sites/actions';
 
 class QuerySites extends Component {
 	componentWillMount() {
@@ -28,6 +28,7 @@ class QuerySites extends Component {
 	request( props ) {
 		if ( props.allSites && ! props.requestingSites ) {
 			props.requestSites();
+			// setTimeout( () => props.requestSitesPlan(), 3000 );
 		}
 
 		if ( props.siteId && ! props.requestingSite ) {
@@ -62,5 +63,5 @@ export default connect(
 			requestingSite: isRequestingSite( state, siteId ),
 		};
 	},
-	{ requestSites, requestSite }
+	{ requestSites, requestSite, requestSitesPlan }
 )( QuerySites );
