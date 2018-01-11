@@ -6,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
@@ -19,11 +20,12 @@ import {
 	getWeightUnitSetting,
 	getDimensionsUnitSetting,
 } from 'woocommerce/state/sites/settings/products/selectors';
+import { changeSettingsProductsSetting } from 'woocommerce/state/sites/settings/products/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 
-const ShippingUnits = ( { siteId, loaded, weight, dimensions, translate } ) => {
+const ShippingUnits = ( { siteId, loaded, weight, dimensions, translate, change } ) => {
 	const renderOption = option => {
 		return (
 			<option key={ option } value={ option }>
@@ -32,9 +34,14 @@ const ShippingUnits = ( { siteId, loaded, weight, dimensions, translate } ) => {
 		);
 	};
 
-	const onChange = something => {
-		//console.log( something );
-		something;
+	const onChangeWeight = e => {
+		const setting = Object.assign( {}, weight, { value: e.target.value } );
+		change( siteId, setting );
+	};
+
+	const onChangeDimensions = e => {
+		const setting = Object.assign( {}, dimensions, { value: e.target.value } );
+		change( siteId, setting );
 	};
 
 	return (
@@ -42,13 +49,17 @@ const ShippingUnits = ( { siteId, loaded, weight, dimensions, translate } ) => {
 			<QuerySettingsProducts siteId={ siteId } />
 			<div className="shipping__weight-select">
 				<FormLabel>{ translate( 'Weight unit' ) }</FormLabel>
-				<FormSelect onChange={ onChange } value={ weight.value } disabled={ ! loaded }>
+				<FormSelect onChange={ onChangeWeight } value={ weight.value } disabled={ ! loaded }>
 					{ loaded && map( weight.options, renderOption ) }
 				</FormSelect>
 			</div>
-			<div className="shipping__weight-select">
+			<div className="shipping__dimension-select">
 				<FormLabel>{ translate( 'Dimension unit' ) }</FormLabel>
-				<FormSelect onChange={ onChange } value={ dimensions.value } disabled={ ! loaded }>
+				<FormSelect
+					onChange={ onChangeDimensions }
+					value={ dimensions.value }
+					disabled={ ! loaded }
+				>
 					{ loaded && map( dimensions.options, renderOption ) }
 				</FormSelect>
 			</div>
@@ -70,5 +81,13 @@ function mapStateToProps( state ) {
 		dimensions: getDimensionsUnitSetting( state, siteId ),
 	};
 }
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			change: changeSettingsProductsSetting,
+		},
+		dispatch
+	);
+}
 
-export default connect( mapStateToProps )( localize( ShippingUnits ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ShippingUnits ) );

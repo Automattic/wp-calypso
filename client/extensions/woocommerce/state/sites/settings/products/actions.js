@@ -7,6 +7,7 @@
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../../status/wc-api/actions';
 import {
+	WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
@@ -42,6 +43,23 @@ export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 		.catch( err => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
+};
+
+/**
+ * Updates change setting stored in Redux store
+ *
+ * @param {Number} siteId wpcom site id.
+ * @param {Mixed}  setting, single setting object { id: '', value: '' }
+ * @return {Object} Action object
+ */
+export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => {
+	dispatch( {
+		type: WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
+		siteId,
+		data: {
+			update: [ setting ],
+		},
+	} );
 };
 
 /**

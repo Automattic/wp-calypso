@@ -17,10 +17,30 @@
 
 .shipping__origin-settings {
 	display: flex;
+	align-items: center;
+	background: $white;
+}
+
+.store-address {
+	margin: 0;
+	padding: 0;
+	box-shadow: none;
+	flex-shrink: 1;
 }
 
 .shipping__units {
 	display: flex;
+	flex-grow: 1;
+	flex-direction: row;
+
+	@include breakpoint( '<1040px' ) {
+		flex-direction: column;
+	}
+
+	.shipping__weight-select,
+	.shipping__dimension-select {
+		flex-grow: 1;
+	}
 }
 
 .shipping__address {
