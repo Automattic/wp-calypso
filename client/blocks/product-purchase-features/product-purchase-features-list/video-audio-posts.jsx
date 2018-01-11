@@ -10,17 +10,34 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 import { newPost } from 'lib/paths';
+import { PLAN_BUSINESS, PLAN_PREMIUM } from 'lib/plans/constants';
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize( ( { selectedSite, plan, translate } ) => {
+	let featureDescription;
+
+	switch ( plan ) {
+		case PLAN_BUSINESS:
+			featureDescription = translate(
+				'Enrich your posts and pages with video or audio. Upload as much media as you want, ' +
+					'directly to your site — the Business Plan has unlimited storage.'
+			);
+			break;
+		case PLAN_PREMIUM:
+			featureDescription = translate(
+				'Enrich your posts and pages with video or audio. Upload up to 10GB of media directly to your site.'
+			);
+			break;
+		default:
+			featureDescription = '';
+			break;
+	}
+
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img src="/calypso/images/upgrades/media-post.svg" /> }
 				title={ translate( 'Video and audio posts' ) }
-				description={ translate(
-					'Enrich your posts with video and audio, uploaded directly on your site. ' +
-						'No ads or limits. The Premium plan also adds 10GB of file storage.'
-				) }
+				description={ featureDescription }
 				buttonText={ translate( 'Start a new post' ) }
 				href={ newPost( selectedSite ) }
 			/>
