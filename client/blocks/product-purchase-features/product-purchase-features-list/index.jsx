@@ -94,7 +94,11 @@ class ProductPurchaseFeaturesList extends Component {
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
 			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
 			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" />,
+			<VideoAudioPosts
+				selectedSite={ selectedSite }
+				key="videoAudioPostsFeature"
+				plan={ PLAN_BUSINESS }
+			/>,
 			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
 		];
 	}
@@ -111,7 +115,11 @@ class ProductPurchaseFeaturesList extends Component {
 			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
 			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
 			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" />,
+			<VideoAudioPosts
+				selectedSite={ selectedSite }
+				key="videoAudioPostsFeature"
+				plan={ PLAN_PREMIUM }
+			/>,
 			isWordadsInstantActivationEligible( selectedSite ) ? (
 				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
 			) : null,
