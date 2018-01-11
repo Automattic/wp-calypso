@@ -48,7 +48,7 @@ class SiteTitleControl extends React.Component {
 					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput
 						autoFocus={ this.props.autoFocusBlogname }
-						name="blogname"
+						id="blogname"
 						onChange={ this.onChangeSiteTitle }
 						required
 						value={ this.props.blogname }
@@ -57,7 +57,7 @@ class SiteTitleControl extends React.Component {
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
 					<FormTextInput
-						name="blogdescription"
+						id="blogdescription"
 						onChange={ this.onChangeDescription }
 						value={ this.props.blogdescription }
 					/>
