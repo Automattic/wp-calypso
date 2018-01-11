@@ -1,7 +1,9 @@
 /** @format */
+
 /**
  * External dependencies
  */
+
 import url from 'url';
 import i18n from 'i18n-calypso';
 import moment from 'moment-timezone';
@@ -12,9 +14,7 @@ import { includes } from 'lodash';
  */
 import postNormalizer from 'lib/post-normalizer';
 
-const MINUTE_IN_MS = 60 * 1000;
-
-export function getEditURL( post, site ) {
+export const getEditURL = function( post, site ) {
 	let basePath = '';
 
 	if ( ! includes( [ 'post', 'page' ], post.type ) ) {
@@ -22,9 +22,9 @@ export function getEditURL( post, site ) {
 	}
 
 	return `${ basePath }/${ post.type }/${ site.slug }/${ post.ID }`;
-}
+};
 
-export function getPreviewURL( site, post ) {
+export const getPreviewURL = function( site, post ) {
 	let parsed, previewUrl;
 
 	if ( ! post || ! post.URL || post.status === 'trash' ) {
@@ -59,56 +59,80 @@ export function getPreviewURL( site, post ) {
 	}
 
 	return previewUrl;
-}
+};
 
-export function userCan( capability, post ) {
+export const userCan = function( capability, post ) {
 	const hasCap = post.capabilities && post.capabilities[ capability ];
 
-	return capability === 'edit_post' ? hasCap && post.status !== 'trash' : hasCap;
-}
+	if ( capability === 'edit_post' ) {
+		return hasCap && post.status !== 'trash';
+	}
 
-export function isPublished( post ) {
+	return hasCap;
+};
+
+export const isPublished = function( post ) {
 	return (
 		post &&
 		( post.status === 'publish' || post.status === 'private' || this.isBackDatedPublished( post ) )
 	);
-}
+};
 
-export function isPrivate( post ) {
+export const isPrivate = function( post ) {
 	return post && 'private' === post.status;
-}
+};
 
-export function isPending( post ) {
+export const isPending = function( post ) {
 	return post && 'pending' === post.status;
-}
+};
 
-export function getEditedTime( post ) {
+export const getEditedTime = function( post ) {
 	if ( ! post ) {
 		return;
 	}
 
-	return post.status === 'publish' || post.status === 'future' ? post.date : post.modified;
-}
+	if ( post.status === 'publish' || post.status === 'future' ) {
+		return post.date;
+	}
 
-export function isBackDatedPublished( post ) {
-	return ! post || post.status !== 'future' ? false : moment( post.date ).isBefore( moment() );
-}
+	return post.modified;
+};
 
-export function isFutureDated( post ) {
-	return ! post ? false : post && +new Date() + MINUTE_IN_MS < +new Date( post.date );
-}
+export const isBackDatedPublished = function( post ) {
+	if ( ! post || post.status !== 'future' ) {
+		return false;
+	}
 
-export function isBackDated( post ) {
-	return ! post || ! post.date || ! post.modified
-		? false
-		: moment( post.date ).isBefore( moment( post.modified ) );
-}
+	return moment( post.date ).isBefore( moment() );
+};
 
-export function isPage( post ) {
-	return ! post ? false : post && 'page' === post.type;
-}
+export const isFutureDated = function( post ) {
+	if ( ! post ) {
+		return false;
+	}
 
-export function normalizeSync( post, callback ) {
+	const oneMinute = 1000 * 60;
+
+	return post && +new Date() + oneMinute < +new Date( post.date );
+};
+
+export const isBackDated = function( post ) {
+	if ( ! post || ! post.date || ! post.modified ) {
+		return false;
+	}
+
+	return moment( post.date ).isBefore( moment( post.modified ) );
+};
+
+export const isPage = function( post ) {
+	if ( ! post ) {
+		return false;
+	}
+
+	return post && 'page' === post.type;
+};
+
+export const normalizeSync = function( post, callback ) {
 	const imageWidth = 653;
 	postNormalizer(
 		post,
@@ -125,9 +149,9 @@ export function normalizeSync( post, callback ) {
 		],
 		callback
 	);
-}
+};
 
-export function getVisibility( post ) {
+export const getVisibility = function( post ) {
 	if ( ! post ) {
 		return;
 	}
@@ -141,13 +165,13 @@ export function getVisibility( post ) {
 	}
 
 	return 'public';
-}
+};
 
-export function normalizeAsync( post, callback ) {
+export const normalizeAsync = function( post, callback ) {
 	postNormalizer( post, [ postNormalizer.keepValidImages( 72, 72 ) ], callback );
-}
+};
 
-export function getPermalinkBasePath( post ) {
+export const getPermalinkBasePath = function( post ) {
 	if ( ! post ) {
 		return;
 	}
@@ -160,9 +184,9 @@ export function getPermalinkBasePath( post ) {
 	}
 
 	return this.removeSlug( path );
-}
+};
 
-export function getPagePath( post ) {
+export const getPagePath = function( post ) {
 	if ( ! post ) {
 		return;
 	}
@@ -171,9 +195,9 @@ export function getPagePath( post ) {
 	}
 
 	return this.removeSlug( post.URL );
-}
+};
 
-export function removeSlug( path ) {
+export const removeSlug = function( path ) {
 	if ( ! path ) {
 		return;
 	}
@@ -182,7 +206,7 @@ export function removeSlug( path ) {
 	pathParts[ pathParts.length - 1 ] = '';
 
 	return pathParts.join( '/' );
-}
+};
 
 /**
  * Returns the ID of the featured image assigned to the specified post, or
@@ -192,9 +216,9 @@ export function removeSlug( path ) {
  * in creating a post, the thumbnail ID is assigned to `featured_image`.
  *
  * @param  {Object} post Post object
- * @return {Number}      The featured image ID
+ * @ret
  */
-export function getFeaturedImageId( post ) {
+export const getFeaturedImageId = function( post ) {
 	if ( ! post ) {
 		return;
 	}
@@ -210,7 +234,7 @@ export function getFeaturedImageId( post ) {
 		// from the thumbnail object if one exists
 		return post.post_thumbnail.ID;
 	}
-}
+};
 
 /**
  * Return date with timezone offset.
@@ -220,6 +244,10 @@ export function getFeaturedImageId( post ) {
  * @param {String} tz - timezone
  * @return {Moment} moment instance
  */
-export function getOffsetDate( date, tz ) {
-	return ! tz ? i18n.moment( date ) : i18n.moment( moment.tz( date, tz ) );
-}
+export const getOffsetDate = function( date, tz ) {
+	if ( ! tz ) {
+		return i18n.moment( date );
+	}
+
+	return i18n.moment( moment.tz( date, tz ) );
+};
