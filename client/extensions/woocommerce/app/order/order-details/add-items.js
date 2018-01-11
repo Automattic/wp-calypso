@@ -3,8 +3,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import { isObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +15,11 @@ import OrderFeeDialog from './fee-dialog';
 import OrderProductDialog from './product-dialog';
 
 class OrderAddItems extends Component {
+	static propTypes = {
+		orderId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.object ] ).isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
 	state = {
 		showDialog: false,
 	};
@@ -23,16 +29,19 @@ class OrderAddItems extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { orderId, translate } = this.props;
+		const isNewOrder = isObject( orderId );
 		return (
 			<div className="order-details__actions">
-				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
-					<Gridicon icon="plus-small" />
-					{ translate( 'Add Fee' ) }
-				</Button>
-				<Button primary onClick={ this.toggleDialog( 'product' ) }>
-					<Gridicon icon="plus-small" />
+				<Button
+					borderless={ ! isNewOrder }
+					primary={ isNewOrder }
+					onClick={ this.toggleDialog( 'product' ) }
+				>
 					{ translate( 'Add Product' ) }
+				</Button>
+				<Button borderless onClick={ this.toggleDialog( 'fee' ) }>
+					{ translate( 'Add Fee' ) }
 				</Button>
 				<OrderFeeDialog
 					isVisible={ 'fee' === this.state.showDialog }

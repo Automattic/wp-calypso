@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { find, findIndex, get, noop } from 'lodash';
+import { every, find, findIndex, get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -361,13 +361,24 @@ class OrderDetailsTable extends Component {
 			'is-editing': isEditing,
 		} );
 
+		const emptyLines = (
+			<TableRow>
+				<TableItem colSpan={ isEditing ? 6 : 5 }>
+					{ translate( 'There are no products on this order.' ) }
+				</TableItem>
+			</TableRow>
+		);
+
+		// There are line_items, and they're not all quantity: 0
+		const hasLineItems = order.line_items.length && ! every( order.line_items, { quantity: 0 } );
+
 		return (
 			<div>
 				<Table className={ tableClasses } header={ this.renderTableHeader() }>
-					{ order.line_items.map( this.renderOrderItem ) }
+					{ hasLineItems ? order.line_items.map( this.renderOrderItem ) : emptyLines }
 					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
-				{ isEditing && <OrderAddItems /> }
+				{ isEditing && <OrderAddItems orderId={ order.id } /> }
 
 				<Table className={ totalsClasses } compact>
 					{ this.renderCoupons() }
