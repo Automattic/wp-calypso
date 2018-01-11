@@ -17,7 +17,6 @@ import {
 	omit,
 	omitBy,
 	partialRight,
-	reduce,
 } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import LRU from 'lru-cache';
@@ -429,16 +428,9 @@ export const withSchemaValidation = ( schema, reducer ) => {
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	const validatedReducers = reduce(
+	const validatedReducers = mapValues(
 		reducers,
-		( validated, next, key ) => {
-			const { schema, hasCustomPersistence } = next;
-			return {
-				...validated,
-				[ key ]: hasCustomPersistence ? next : withSchemaValidation( schema, next ),
-			};
-		},
-		{}
+		next => ( next.hasCustomPersistence ? next : withSchemaValidation( next.schema, next ) )
 	);
 	const combined = combine( validatedReducers );
 	combined.hasCustomPersistence = true;
