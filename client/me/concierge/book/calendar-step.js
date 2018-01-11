@@ -11,10 +11,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import HeaderCake from 'components/header-cake';
 import { getConciergeSignupForm } from 'state/selectors';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
 import { bookConciergeAppointment } from 'state/concierge/actions';
-import CalendarPage from '../shared/calendar-page';
+import AvailableTimePicker from '../shared/available-time-picker';
 import {
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKED,
@@ -59,18 +60,19 @@ class CalendarStep extends Component {
 		const { availableTimes, currentUserLocale, onBack, signupForm, site, translate } = this.props;
 
 		return (
-			<CalendarPage
-				actionText={ translate( 'Book this session' ) }
-				availableTimes={ availableTimes }
-				currentUserLocale={ currentUserLocale }
-				disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
-				description={ translate( 'Please select a day to have your Concierge session.' ) }
-				onBack={ onBack }
-				onSubmit={ this.onSubmit }
-				site={ site }
-				signupForm={ signupForm }
-				title={ translate( 'Choose Concierge Session' ) }
-			/>
+			<div>
+				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
+				<AvailableTimePicker
+					actionText={ translate( 'Book this session' ) }
+					availableTimes={ availableTimes }
+					currentUserLocale={ currentUserLocale }
+					disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
+					description={ translate( 'Please select a day to have your Concierge session.' ) }
+					onSubmit={ this.onSubmit }
+					site={ site }
+					signupForm={ signupForm }
+				/>
+			</div>
 		);
 	}
 }

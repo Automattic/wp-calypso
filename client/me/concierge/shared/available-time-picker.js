@@ -10,9 +10,8 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CalendarCard from './calendar-card';
+import AvailableTimeCard from './available-time-card';
 import CompactCard from 'components/card/compact';
-import HeaderCake from 'components/header-cake';
 import { isDefaultLocale } from 'lib/i18n-utils';
 
 const NUMBER_OF_DAYS_TO_SHOW = 7;
@@ -47,12 +46,11 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 		.map( date => dates[ date ] );
 };
 
-class CalendarPage extends Component {
+class AvailableTimePicker extends Component {
 	static propTypes = {
 		actionText: PropTypes.string.isRequired,
 		availableTimes: PropTypes.array.isRequired,
 		description: PropTypes.string.isRequired,
-		onBack: PropTypes.func,
 		onSubmit: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
@@ -64,19 +62,17 @@ class CalendarPage extends Component {
 			currentUserLocale,
 			description,
 			disabled,
-			onBack,
 			onSubmit,
 			signupForm,
-			title,
 		} = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes, signupForm.timezone );
 
 		return (
 			<div>
-				{ onBack && <HeaderCake onClick={ onBack }>{ title }</HeaderCake> }
 				<CompactCard> { description } </CompactCard>
+
 				{ availability.map( ( { date, times } ) => (
-					<CalendarCard
+					<AvailableTimeCard
 						actionText={ actionText }
 						date={ date }
 						disabled={ disabled }
@@ -92,4 +88,4 @@ class CalendarPage extends Component {
 	}
 }
 
-export default CalendarPage;
+export default AvailableTimePicker;

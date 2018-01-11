@@ -15,19 +15,14 @@ import FormattedHeader from 'components/formatted-header';
 
 class Confirmation extends Component {
 	static propTypes = {
-		confirmationButton: PropTypes.string.isRequired,
-		confirmationButtonUrl: PropTypes.string.isRequired,
-		confirmationDescription: PropTypes.string.isRequired,
-		confirmationTitle: PropTypes.string.isRequired,
+		buttonLabel: PropTypes.string.isRequired,
+		buttonUrl: PropTypes.string.isRequired,
+		description: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const {
-			confirmationButton,
-			confirmationButtonUrl,
-			confirmationDescription,
-			confirmationTitle,
-		} = this.props;
+		const { buttonLabel, buttonUrl, description, title } = this.props;
 
 		return (
 			<Card className="shared__confirmation">
@@ -36,17 +31,10 @@ class Confirmation extends Component {
 					src={ '/calypso/images/illustrations/support.svg' }
 				/>
 
-				<FormattedHeader
-					headerText={ confirmationTitle }
-					subHeaderText={ confirmationDescription }
-				/>
+				<FormattedHeader headerText={ title } subHeaderText={ description } />
 
-				<Button
-					className="shared__confirmation-button"
-					primary={ true }
-					href={ confirmationButtonUrl }
-				>
-					{ confirmationButton }
+				<Button className="shared__confirmation-button" primary={ true } href={ buttonUrl }>
+					{ buttonLabel }
 				</Button>
 			</Card>
 		);

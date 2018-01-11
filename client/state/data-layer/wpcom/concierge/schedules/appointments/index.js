@@ -32,7 +32,9 @@ export const cancelConciergeAppointment = ( { dispatch }, action ) => {
 		http(
 			{
 				method: 'POST',
-				path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/cancel`,
+				path: `/concierge/schedules/${ action.scheduleId }/appointments/${
+					action.appointmentId
+				}/cancel`,
 				apiNamespace: 'wpcom/v2',
 				body: {},
 			},
@@ -72,10 +74,12 @@ export const rescheduleConciergeAppointment = ( { dispatch }, action ) => {
 		http(
 			{
 				method: 'POST',
-				path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/reschedule`,
+				path: `/concierge/schedules/${ action.scheduleId }/appointments/${
+					action.appointmentId
+				}/reschedule`,
 				apiNamespace: 'wpcom/v2',
 				body: {
-					begin_timestamp: action.beginTimestamp / 1000,
+					begin_timestamp: action.beginTimestamp / 1000, // convert to UNIX timestamp.
 				},
 			},
 			action

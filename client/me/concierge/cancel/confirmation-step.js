@@ -27,10 +27,10 @@ class ConfirmationStep extends Component {
 		return (
 			<div>
 				<Confirmation
-					confirmationButton={ translate( 'Schedule' ) }
-					confirmationButtonUrl={ `/me/concierge/${ site.slug }` }
-					confirmationDescription={ translate( 'Would you like to schedule a new session?' ) }
-					confirmationTitle={ translate( 'Your Concierge session is being cancelled!' ) }
+					buttonLabel={ translate( 'Schedule' ) }
+					buttonUrl={ `/me/concierge/${ site.slug }` }
+					description={ translate( 'Would you like to schedule a new session?' ) }
+					title={ translate( 'Your Concierge session is being cancelled!' ) }
 				/>
 			</div>
 		);

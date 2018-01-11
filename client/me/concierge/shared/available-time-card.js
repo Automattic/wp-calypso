@@ -105,8 +105,8 @@ class CalendarCard extends Component {
 		const date = this.withTimezone( this.props.date );
 
 		return (
-			<div className="shared__calendar-card-header">
-				<Gridicon icon="calendar" className="shared__calendar-card-header-icon" />
+			<div className="shared__available-time-card-header">
+				<Gridicon icon="calendar" className="shared__available-time-card-header-icon" />
 				<span>
 					<b>{ this.getDayOfWeekString( date ) } —</b> { date.format( ' MMMM D' ) }
 				</span>
@@ -132,7 +132,7 @@ class CalendarCard extends Component {
 
 		return (
 			<FoldableCard
-				className="shared__calendar-card"
+				className="shared__available-time-card"
 				clickableHeader={ ! isEmpty( times ) }
 				compact
 				disabled={ isEmpty( times ) }

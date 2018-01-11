@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import { getConciergeSignupForm } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { rescheduleConciergeAppointment } from 'state/concierge/actions';
-import CalendarPage from '../shared/calendar-page';
+import AvailableTimePicker from '../shared/available-time-picker';
 import {
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKED,
@@ -52,7 +52,7 @@ class CalendarStep extends Component {
 		const { availableTimes, currentUserLocale, signupForm, site, translate } = this.props;
 
 		return (
-			<CalendarPage
+			<AvailableTimePicker
 				actionText={ translate( 'Reschedule to this date' ) }
 				availableTimes={ availableTimes }
 				currentUserLocale={ currentUserLocale }

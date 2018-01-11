@@ -17,12 +17,12 @@ class ConfirmationStep extends Component {
 
 		return (
 			<Confirmation
-				confirmationButton={ translate( 'Return to your dashboard' ) }
-				confirmationButtonUrl={ `/stats/day/${ site.slug }` }
-				confirmationDescription={ translate(
+				buttonLabel={ translate( 'Return to your dashboard' ) }
+				buttonUrl={ `/stats/day/${ site.slug }` }
+				description={ translate(
 					'We will send you an email with information on how to get prepared.'
 				) }
-				confirmationTitle={ translate( 'Your Concierge session has been rescheduled!' ) }
+				title={ translate( 'Your Concierge session has been rescheduled!' ) }
 			/>
 		);
 	}
