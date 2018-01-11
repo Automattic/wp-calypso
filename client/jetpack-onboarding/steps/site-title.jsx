@@ -60,6 +60,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
 						<SiteTitle
+							autoFocusBlogname
 							blogname={ this.state.blogname }
 							blogdescription={ this.state.blogdescription }
 							onChange={ this.handleChange }
