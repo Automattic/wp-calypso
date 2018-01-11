@@ -9,9 +9,9 @@ daysUntilStale: 270
 daysUntilClose: 7
 # Issues with these labels will never be considered stale
 exemptLabels:
-  - "label:\"[Pri] High\""
-  - "label:\"[Pri] BLOCKER\""
-  - "label:\"[Status] Keep Open\""
+  - "[Pri] High"
+  - "[Pri] BLOCKER"
+  - "[Status] Keep Open"
 # Label to use when marking an issue as stale
 staleLabel: "[Status] Stale"
 # Comment to post when marking an issue as stale. Set to `false` to disable
