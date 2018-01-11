@@ -30,6 +30,7 @@ const paymentMethods = {
 		DE: [ 'credit-card', 'giropay', 'paypal' ],
 		BE: [ 'credit-card', 'bancontact', 'paypal' ],
 		PL: [ 'credit-card', 'p24', 'paypal' ],
+		CN: [ 'credit-card', 'alipay', 'paypal' ],
 	},
 
 	byWpcomLang: {},

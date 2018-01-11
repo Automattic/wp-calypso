@@ -86,7 +86,8 @@ function hasPaymentMethod( purchase ) {
 		isPaidWithIdeal( purchase ) ||
 		isPaidWithGiropay( purchase ) ||
 		isPaidWithBancontact( purchase ) ||
-		isPaidWithP24( purchase )
+		isPaidWithP24( purchase ) ||
+		isPaidWithAlipay( purchase )
 	);
 }
 
@@ -160,6 +161,10 @@ function isPaidWithBancontact( purchase ) {
 
 function isPaidWithP24( purchase ) {
 	return 'p24' === purchase.payment.type;
+}
+
+function isPaidWithAlipay( purchase ) {
+	return 'alipay' === purchase.payment.type;
 }
 
 function isPendingTransfer( purchase ) {
@@ -315,6 +320,10 @@ function paymentLogoType( purchase ) {
 
 	if ( isPaidWithP24( purchase ) ) {
 		return 'p24';
+	}
+
+	if ( isPaidWithAlipay( purchase ) ) {
+		return 'alipay';
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {

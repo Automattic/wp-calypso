@@ -300,6 +300,7 @@ const SecurePaymentForm = createReactClass( {
 			case 'giropay':
 			case 'bancontact':
 			case 'p24':
+			case 'alipay':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }

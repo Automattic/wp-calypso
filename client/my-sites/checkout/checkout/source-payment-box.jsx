@@ -72,6 +72,8 @@ class SourcePaymentBox extends PureComponent {
 			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		} else if ( paymentType === 'p24' ) {
 			return 'WPCOM_Billing_Stripe_Source_P24';
+		} else if ( paymentType === 'alipay' ) {
+			return 'WPCOM_Billing_Stripe_Source_Alipay';
 		}
 		return 'WPCOM_Billing_Stripe_Source';
 	}
@@ -252,6 +254,8 @@ class SourcePaymentBox extends PureComponent {
 				return 'Bancontact';
 			case 'p24':
 				return 'Przelewy24';
+			case 'alipay':
+				return 'Alipay';
 		}
 
 		return this.props.paymentType;
