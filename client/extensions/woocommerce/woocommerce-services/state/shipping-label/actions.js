@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies
  */
@@ -516,8 +517,7 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
 		let note = '';
 		if ( 'usps' === carrierId ) {
 			note = translate(
-				'Your order consisting of %(packageNum)d package has been shipped with USPS. ' +
-					'The tracking number is %(trackingNumbers)s.',
+				'Your order has been shipped with USPS. The tracking number is %(trackingNumbers)s.',
 				'Your order consisting of %(packageNum)d packages has been shipped with USPS. ' +
 					'The tracking numbers are %(trackingNumbers)s.',
 				{
@@ -530,8 +530,7 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
 			);
 		} else {
 			note = translate(
-				'Your order consisting of %(packageNum)d package has been shipped. ' +
-					'The tracking number is %(trackingNumbers)s.',
+				'Your order has been shipped. The tracking number is %(trackingNumbers)s.',
 				'Your order consisting of %(packageNum)d packages has been shipped. ' +
 					'The tracking numbers are %(trackingNumbers)s.',
 				{
@@ -591,7 +590,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 	const printUrl = getPrintURL( state.paperSize, labelsToPrint );
 	const showSuccessNotice = () => {
 		dispatch( NoticeActions.successNotice( translate(
-			'Your %(count)d shipping label was purchased successfully',
+			'Your shipping label was purchased successfully',
 			'Your %(count)d shipping labels were purchased successfully',
 			{
 				count: labels.length,
