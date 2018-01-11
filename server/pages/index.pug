@@ -229,35 +229,48 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		script(type='text/javascript')!='COMMIT_SHA = ' + sanitize.jsonStringifyForHtml( commitSha )
 		script.
 			(function () {
-				function createUUID( timestamp ){
-					var dt = timestamp;
-					var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-						var r = ( dt + Math.random()*16)%16 | 0;
-						dt = Math.floor(dt/16);
-						return (c=='x' ? r :(r &0x3|0x8) ).toString( 16 );
-					} );
-					return uuid;
+				// Mini tracks
+				function recordTracksEvent( eventName ) {
+					var statsPixel = 'http://pixel.wp.com/t.gif';
+					var stats = {
+						_pf: navigator.platform,
+						_lg: navigator.language,
+						_en: eventName,
+						_ht: window.screen.height,
+						_wd: window.screen.width,
+						_ut: 'anon',
+						_dl: document.location.origin + '/' + document.location.pathname,
+						_ts: Date.now(),
+						_tz: new Date().getTimezoneOffset() / 60
+					};
+
+					if ( window.currentUser ) {
+						stats[ '_ut' ] = 'wpcom:user_id';
+						stats[ '_ul' ] = currentUser.username;
+						stats[ '_ui' ] = currentUser.ID;
+					}
+
+					var pixel = document.createElement( 'img' );
+					pixel.src = statsPixel + '?' + Object.keys( stats ).map( key => key + '=' + encodeURIComponent( stats[ key ] ) ).join( '& ' );
+
+					var head = document.getElementsByTagName( 'head' )[ 0 ];
+					head.appendChild( pixel );
+
+					return stats;
 				}
 
 				try {
 					var pathName = window.location.pathname.split( "/" ).slice( 1, 2 )[ 0 ];
-					if ( pathName === "log-in" ) {
+					if ( pathName === "log-in" && 'production' === window.configData.env ) {
+
+						var stats = recordTracksEvent( 'calypso_load_start' );
 						if ( ! window.calypsoLoadStartTime ) {
 							window.calypsoLoadStartTime = {};
 						}
-						var timestamp = Date.now();
 						window.calypsoLoadStartTime[ pathName ] = {
-							timestamp: timestamp,
-							uuid: createUUID( timestamp ),
+							startTimestamp: stats['_ts'],
 						};
-						if ( ! window._tkq ) {
-							window._tkq = [];
-						}
-						window._tkq.push( [ 'recordEvent', 'calypso_load_start', {
-							timestamp: window.calypsoLoadStartTime[ pathName ].timestamp,
-							uuid: window.calypsoLoadStartTime[ pathName ].uuid,
-							path: "/" + pathName
-						} ] );
+
 					}
 				} catch ( ex ) {
 					console.error( 'Unable to report load time', ex );
