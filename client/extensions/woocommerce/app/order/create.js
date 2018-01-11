@@ -57,7 +57,7 @@ class Order extends Component {
 		const onSuccess = dispatch => {
 			dispatch(
 				successNotice( translate( 'An invoice has been sent to the customer.' ), {
-					duration: 5000,
+					duration: 8000,
 				} )
 			);
 		};
@@ -71,7 +71,7 @@ class Order extends Component {
 		const onSuccess = ( dispatch, orderId ) => {
 			dispatch(
 				successNotice( translate( 'Order successfully created.' ), {
-					duration: 5000,
+					duration: 8000,
 					displayOnNextPage: true,
 				} )
 			);
@@ -82,7 +82,7 @@ class Order extends Component {
 			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
 		};
 		const onFailure = dispatch => {
-			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 5000 } ) );
+			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 8000 } ) );
 		};
 
 		this.props.saveOrder( siteId, order, onSuccess, onFailure );
