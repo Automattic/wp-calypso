@@ -17,12 +17,14 @@ import FormTextInput from 'components/forms/form-text-input';
 
 class SiteTitleControl extends React.Component {
 	static propTypes = {
+		autoFocusBlogname: PropTypes.bool,
 		blogname: PropTypes.string,
 		blogdescription: PropTypes.string,
 		onChange: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
+		autoFocusBlogname: false,
 		blogname: '',
 		blogdescription: '',
 	};
@@ -45,17 +47,19 @@ class SiteTitleControl extends React.Component {
 				<FormFieldset>
 					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput
-						name="blogname"
-						value={ this.props.blogname }
+						autoFocus={ this.props.autoFocusBlogname }
+						id="blogname"
 						onChange={ this.onChangeSiteTitle }
+						required
+						value={ this.props.blogname }
 					/>
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
 					<FormTextInput
-						name="blogdescription"
-						value={ this.props.blogdescription }
+						id="blogdescription"
 						onChange={ this.onChangeDescription }
+						value={ this.props.blogdescription }
 					/>
 				</FormFieldset>
 			</div>
