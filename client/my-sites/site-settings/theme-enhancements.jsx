@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -19,7 +20,9 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { getCustomizerUrl } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import InfoPopover from 'components/info-popover';
@@ -38,6 +41,7 @@ class ThemeEnhancements extends Component {
 		handleAutosavingRadio: PropTypes.func.isRequired,
 		isSavingSettings: PropTypes.bool,
 		isRequestingSettings: PropTypes.bool,
+		jetpackSettingsUI: PropTypes.bool,
 		fields: PropTypes.object,
 	};
 
@@ -76,7 +80,50 @@ class ThemeEnhancements extends Component {
 		);
 	}
 
-	renderInfiniteScrollSettings() {
+	renderSimpleSiteInfiniteScrollSettings() {
+		const { customizeUrl, fields, translate } = this.props;
+		const blockedByFooter = 'footer' === get( fields, 'infinite_scroll_blocked' );
+
+		return (
+			<FormFieldset>
+				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+
+				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
+					<InfoPopover position="left">
+						{ translate( 'Control how additional posts are loaded.' ) }
+						<br />
+						<ExternalLink
+							href="https://support.wordpress.com/infinite-scroll/"
+							icon
+							target="_blank"
+						>
+							{ translate( 'Learn more' ) }
+						</ExternalLink>
+					</InfoPopover>
+				</div>
+
+				{ this.renderToggle(
+					'infinite_scroll',
+					blockedByFooter,
+					translate( 'Load posts as you scroll. Disable to show a clickable button to load posts.' )
+				) }
+				{ blockedByFooter && (
+					<FormSettingExplanation isIndented>
+						{ translate(
+							'Your site has a "footer" widget enabled so buttons will always be used. {{link}}Customize your site{{/link}}',
+							{
+								components: {
+									link: <a href={ customizeUrl } />,
+								},
+							}
+						) }
+					</FormSettingExplanation>
+				) }
+			</FormFieldset>
+		);
+	}
+
+	renderJetpackInfiniteScrollSettings() {
 		const { translate } = this.props;
 
 		return (
@@ -160,17 +207,21 @@ class ThemeEnhancements extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { jetpackSettingsUI, translate } = this.props;
 		return (
 			<div>
 				<SectionHeader label={ translate( 'Theme Enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
-					{ this.renderInfiniteScrollSettings() }
-
-					<hr />
-
-					{ this.renderMinilevenSettings() }
+					{ jetpackSettingsUI ? (
+						<div>
+							{ this.renderJetpackInfiniteScrollSettings() }
+							<hr />
+							{ this.renderMinilevenSettings() }
+						</div>
+					) : (
+						this.renderSimpleSiteInfiniteScrollSettings()
+					) }
 				</Card>
 			</div>
 		);
@@ -181,6 +232,7 @@ export default connect( state => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
+		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		selectedSiteId,
 		infiniteScrollModuleActive: !! isJetpackModuleActive(
 			state,
