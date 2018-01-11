@@ -328,11 +328,10 @@ class TransferDomainPrecheck extends React.PureComponent {
 			);
 
 			buttonText = translate( 'I can access the email address listed' );
-		}
-
-		if ( privacy ) {
+		} else if ( privacy ) {
 			message = translate(
-				'{{notice}}You have privacy protection enabled. It must be turned off to transfer your domain.{{/notice}}' +
+				'{{notice}}It looks like you may have privacy protection enabled. It must be turned off to ' +
+					'transfer your domain.{{/notice}}' +
 					"{{card}}You must be able to access the email address listed for this domain's owner below. " +
 					"We'll send a link to start the process to the following email address: {{strong}}%(email)s{{/strong}}{{/card}}" +
 					'It looks like you have privacy protection enabled, which may prevent you from successfully ' +
