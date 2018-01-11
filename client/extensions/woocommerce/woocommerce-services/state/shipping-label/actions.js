@@ -513,26 +513,41 @@ const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, lab
 	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
 		const trackingNumbers = labels.map( ( label ) => label.tracking );
 		const carrierId = first( labels ).carrier_id;
-		const carrierName = 'usps' === carrierId ? translate( 'USPS' ) : translate( 'an unknown carrier' );
-
-		const note = {
-			note: translate(
-				'Your order consisting of %(packageNum)d package has been shipped with %(carrierName)s. ' +
+		let note = '';
+		if ( 'usps' === carrierId ) {
+			note = translate(
+				'Your order consisting of %(packageNum)d package has been shipped with USPS. ' +
 					'The tracking number is %(trackingNumbers)s.',
-				'Your order consisting of %(packageNum)d packages has been shipped with %(carrierName)s. ' +
+				'Your order consisting of %(packageNum)d packages has been shipped with USPS. ' +
 					'The tracking numbers are %(trackingNumbers)s.',
 				{
 					args: {
 						packageNum: trackingNumbers.length,
-						carrierName,
 						trackingNumbers: trackingNumbers.join( ', ' ),
 					},
 					count: trackingNumbers.length,
-				}
-			),
+				},
+			);
+		} else {
+			note = translate(
+				'Your order consisting of %(packageNum)d package has been shipped. ' +
+					'The tracking number is %(trackingNumbers)s.',
+				'Your order consisting of %(packageNum)d packages has been shipped. ' +
+					'The tracking numbers are %(trackingNumbers)s.',
+				{
+					args: {
+						packageNum: trackingNumbers.length,
+						trackingNumbers: trackingNumbers.join( ', ' ),
+					},
+					count: trackingNumbers.length,
+				},
+			);
+		}
+
+		dispatch( createNote( siteId, orderId, {
+			note,
 			customer_note: true,
-		};
-		dispatch( createNote( siteId, orderId, note ) );
+		} ) );
 	}
 
 	if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
