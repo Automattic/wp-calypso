@@ -11,13 +11,19 @@ import { translate } from 'i18n-calypso';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice } from 'state/notices/actions';
 import {
 	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_APPOINTMENT_RESCHEDULE,
 } from 'state/action-types';
-import { CONCIERGE_STATUS_BOOKED, CONCIERGE_STATUS_BOOKING } from 'me/concierge/constants';
+import {
+	CONCIERGE_STATUS_BOOKED,
+	CONCIERGE_STATUS_BOOKING,
+	CONCIERGE_STATUS_CANCELLED,
+	CONCIERGE_STATUS_CANCELLING,
+	CONCIERGE_STATUS_CANCELLING_ERROR,
+} from 'me/concierge/constants';
 import fromApi from './from-api';
 
 export const toApi = ( { beginTimestamp, customerId, siteId, meta } ) => ( {
@@ -28,6 +34,8 @@ export const toApi = ( { beginTimestamp, customerId, siteId, meta } ) => ( {
 } );
 
 export const cancelConciergeAppointment = ( { dispatch }, action ) => {
+	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING ) );
+
 	dispatch(
 		http(
 			{
@@ -44,12 +52,10 @@ export const cancelConciergeAppointment = ( { dispatch }, action ) => {
 };
 
 export const markSlotAsCancelled = ( { dispatch } ) =>
-	dispatch( successNotice( translate( 'Your appointment has been successfully cancelled.' ) ) );
+	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED ) );
 
 export const handleCancellingError = ( { dispatch } ) =>
-	dispatch(
-		errorNotice( translate( 'We could not cancel your appointment. Please try again later.' ) )
-	);
+	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR ) );
 
 export const bookConciergeAppointment = ( { dispatch }, action ) => {
 	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ) );
