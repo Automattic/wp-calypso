@@ -108,7 +108,7 @@ const mapStateToProps = state => {
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const tasks = siteChecklist ? onboardingTasks( siteChecklist.tasks ) : [];
 
-	return { siteId, siteSlug, tasks };
+	return { siteChecklist, siteId, siteSlug, tasks };
 };
 
 const mapDispatchToProps = {
