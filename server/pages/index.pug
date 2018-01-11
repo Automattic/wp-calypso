@@ -261,7 +261,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 				try {
 					var pathName = window.location.pathname.split( "/" ).slice( 1, 2 )[ 0 ];
-					if ( pathName === "log-in" && 'production' === window.configData.env ) {
+					if ( pathName === 'log-in' && 'production' === window.configData.env ) {
 
 						var stats = recordTracksEvent( 'calypso_load_start' );
 						if ( ! window.calypsoLoadStartTime ) {
