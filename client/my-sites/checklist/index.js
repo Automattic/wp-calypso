@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { show, thankYou } from './controller';
+import { show } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -25,6 +25,5 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
-		page( '/checklist/thank-you/:site/:receiptId?', siteSelection, thankYou );
 	}
 }
