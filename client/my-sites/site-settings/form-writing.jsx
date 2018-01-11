@@ -63,7 +63,6 @@ class SiteSettingsFormWriting extends Component {
 			uniqueEventTracker,
 			fields,
 			handleSelect,
-			handleSubmitForm,
 			handleToggle,
 			handleAutosavingToggle,
 			handleAutosavingRadio,
