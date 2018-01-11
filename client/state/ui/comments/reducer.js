@@ -38,6 +38,26 @@ const deepUpdateComments = ( state, comments, query ) => {
 	};
 };
 
+const sortDescending = function( a, b ) {
+	if ( a < b ) {
+		return 1;
+	}
+	if ( a > b ) {
+		return -1;
+	}
+	return 0;
+};
+
+const sortAscending = function( a, b ) {
+	if ( a < b ) {
+		return -1;
+	}
+	if ( a > b ) {
+		return 1;
+	}
+	return 0;
+};
+
 export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case COMMENTS_CHANGE_STATUS:
@@ -49,20 +69,30 @@ export const queries = ( state = {}, action ) => {
 				return state;
 			}
 			const { page, postId, status } = query;
+			const parent = postId || 'site';
+			const filter = getFiltersKey( query );
+			const comments = get( state, [ parent, filter, page ] );
+
 			if (
 				COMMENTS_CHANGE_STATUS === action.type &&
 				'all' === status &&
+				includes( comments, action.commentId ) && // if the comment is not in the current view this is an undo
 				includes( [ 'approved', 'unapproved' ], action.status )
 			) {
 				// No-op when status changes from `approved` or `unapproved` in the All tab
 				return state;
 			}
 
-			const parent = postId || 'site';
-			const filter = getFiltersKey( query );
-
-			const comments = get( state, [ parent, filter, page ] );
-
+			if (
+				status === action.status ||
+				( status === 'all' && includes( [ 'approved', 'unapproved' ], action.status ) )
+			) {
+				//with undo, we should add this back to the list
+				const sortedList = [ action.commentId ]
+					.concat( comments )
+					.sort( query.order === 'DESC' ? sortDescending : sortAscending );
+				return deepUpdateComments( state, sortedList, query );
+			}
 			return deepUpdateComments( state, without( comments, action.commentId ), query );
 		case COMMENTS_QUERY_UPDATE:
 			return isUndefined( get( action, 'query.page' ) )
