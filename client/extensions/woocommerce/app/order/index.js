@@ -92,11 +92,16 @@ class Order extends Component {
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { siteId, order, translate } = this.props;
+		const successOpts = { duration: 8000 };
+		if ( isOrderWaitingPayment( order.status ) ) {
+			successOpts.button = translate( 'Send new invoice to customer' );
+			successOpts.onClick = this.triggerInvoice;
+		}
 		const onSuccess = dispatch => {
-			dispatch( successNotice( translate( 'Order saved.' ), { duration: 5000 } ) );
+			dispatch( successNotice( translate( 'Order successfully updated.' ), successOpts ) );
 		};
 		const onFailure = dispatch => {
-			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 5000 } ) );
+			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 8000 } ) );
 		};
 
 		recordTrack( 'calypso_woocommerce_order_edit_save' );
@@ -106,9 +111,9 @@ class Order extends Component {
 	triggerInvoice = () => {
 		const { siteId, orderId, translate } = this.props;
 		if ( siteId && orderId ) {
-			const onSuccess = successNotice( translate( 'Order invoice sent.' ), { duration: 5000 } );
+			const onSuccess = successNotice( translate( 'Order invoice sent.' ), { duration: 8000 } );
 			const onFailure = errorNotice( translate( 'Unable to send order invoice.' ), {
-				duration: 5000,
+				duration: 8000,
 			} );
 			this.props.sendOrderInvoice( siteId, orderId, onSuccess, onFailure );
 		}
