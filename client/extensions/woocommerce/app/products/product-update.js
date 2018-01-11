@@ -39,15 +39,11 @@ import {
 	editProductVariation,
 	clearProductVariationEdits,
 } from 'woocommerce/state/ui/products/variations/actions';
-import {
-	getProductVariationsWithLocalEdits,
-	getVariationEditsStateForProduct,
-} from 'woocommerce/state/ui/products/variations/selectors';
+import { getVariationEditsStateForProduct } from 'woocommerce/state/ui/products/variations/selectors';
 import {
 	editProductCategory,
 	clearProductCategoryEdits,
 } from 'woocommerce/state/ui/product-categories/actions';
-import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { getSaveErrorMessage } from './save-error-message';
 import page from 'page';
 import ProductForm from './product-form';
@@ -191,15 +187,7 @@ class ProductUpdate extends React.Component {
 	}
 
 	render() {
-		const {
-			site,
-			product,
-			hasEdits,
-			className,
-			variations,
-			productCategories,
-			actionList,
-		} = this.props;
+		const { site, productId, product, hasEdits, className, actionList } = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
@@ -218,10 +206,9 @@ class ProductUpdate extends React.Component {
 				/>
 				<ProtectFormGuard isChanged={ hasEdits } />
 				<ProductForm
+					wcApiSite={ site && site.ID }
+					productId={ productId }
 					siteId={ site && site.ID }
-					product={ product || { type: 'simple' } }
-					variations={ variations }
-					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
 					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
@@ -242,16 +229,13 @@ function mapStateToProps( state, ownProps ) {
 	const hasEdits =
 		Boolean( getProductEdits( state, productId ) ) ||
 		Boolean( getVariationEditsStateForProduct( state, productId ) );
-	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
-	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
 
 	return {
+		productId,
 		site,
 		product,
 		hasEdits,
-		variations,
-		productCategories,
 		actionList,
 	};
 }

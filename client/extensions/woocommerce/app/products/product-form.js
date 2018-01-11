@@ -11,15 +11,20 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { getProductEdits } from 'woocommerce/state/ui/products/selectors';
+import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
+import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import ProductFormAdditionalDetailsCard from './product-form-additional-details-card';
 import ProductFormCategoriesCard from './product-form-categories-card';
 import ProductFormDetailsCard from './product-form-details-card';
 import ProductFormSimpleCard from './product-form-simple-card';
 import ProductFormVariationsCard from './product-form-variations-card';
+import { withWooCommerceSite } from 'woocommerce/state/wc-api';
 
-export default class ProductForm extends Component {
+class ProductForm extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		wcApiSite: PropTypes.any,
 		siteId: PropTypes.number,
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
@@ -48,7 +53,7 @@ export default class ProductForm extends Component {
 	}
 
 	render() {
-		const { siteId, product, productCategories, variations } = this.props;
+		const { siteId, isProductLoaded, product, productCategories, variations } = this.props;
 		const {
 			editProduct,
 			editProductCategory,
@@ -57,7 +62,7 @@ export default class ProductForm extends Component {
 		} = this.props;
 		const type = product.type || 'simple';
 
-		if ( ! siteId ) {
+		if ( ! isProductLoaded ) {
 			return this.renderPlaceholder();
 		}
 
@@ -108,3 +113,27 @@ export default class ProductForm extends Component {
 		);
 	}
 }
+
+function mapSiteDataToProps( siteData, ownProps, state ) {
+	const { wcApiSite, productId } = ownProps;
+
+	const apiProduct = siteData.products.single( productId );
+	const isProductLoaded = ! productId || Boolean( apiProduct );
+	const edits = getProductEdits( state, productId, wcApiSite );
+	const product = { ...( apiProduct || { id: productId, type: 'simple' } ), ...edits };
+
+	// TODO: Move this over to `siteData.variations`.
+	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
+
+	// TODO: Move this over to `siteData.productCategories`.
+	const productCategories = getProductCategoriesWithLocalEdits( state );
+
+	return {
+		isProductLoaded,
+		product,
+		variations,
+		productCategories,
+	};
+}
+
+export default withWooCommerceSite( mapSiteDataToProps )( ProductForm );
