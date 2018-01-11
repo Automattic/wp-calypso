@@ -144,6 +144,7 @@ class MasterbarItemNotifications extends Component {
 					isShowing={ this.props.isNotificationsOpen }
 					checkToggle={ this.checkToggleNotes }
 					setIndicator={ this.setNotesIndicator }
+					placeholder={ null }
 				/>
 			</div>
 		);
