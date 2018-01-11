@@ -4,7 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop, get } from 'lodash';
+import { identity, noop, get, last } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
@@ -22,6 +22,7 @@ import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { canCurrentUser } from 'state/selectors';
+import { getRouteHistory } from 'state/ui/action-log/selectors';
 
 export class EditorGroundControl extends PureComponent {
 	static propTypes = {
@@ -213,9 +214,19 @@ export class EditorGroundControl extends PureComponent {
 		);
 	}
 
-	onBackButtonClick = () => {
-		this.props.recordBackButtonClick();
-		page.back( this.props.allPostsUrl );
+	getCloseButtonPath() {
+		// find the first non-editor path in routeHistory, default to "all posts"
+		const nonEditorPaths = this.props.routeHistory.filter( action => {
+			return ! action.path.match( /^\/(post|page|(edit\/[^\/]+))\/[^\/]+(\/\d+)?$/i );
+		} );
+		return nonEditorPaths && last( nonEditorPaths ) && last( nonEditorPaths ).path
+			? last( nonEditorPaths ).path
+			: this.props.allPostsUrl;
+	}
+
+	onCloseButtonClick = () => {
+		this.props.recordCloseButtonClick();
+		page.show( this.getCloseButtonPath() );
 	};
 
 	render() {
@@ -236,7 +247,7 @@ export class EditorGroundControl extends PureComponent {
 					borderless
 					className="editor-ground-control__back"
 					href={ '' }
-					onClick={ this.onBackButtonClick }
+					onClick={ this.onCloseButtonClick }
 					aria-label={ translate( 'Close' ) }
 				>
 					{ translate( 'Close' ) }
@@ -285,6 +296,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 	return {
 		canUserPublishPosts,
+		routeHistory: getRouteHistory( state ),
 	};
 };
 
@@ -304,7 +316,8 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		),
 	recordSiteButtonClick: () => dispatch( recordTracksEvent( 'calypso_editor_site_button_click' ) ),
-	recordBackButtonClick: () => dispatch( recordTracksEvent( 'calypso_editor_back_button_click' ) ),
+	recordCloseButtonClick: () =>
+		dispatch( recordTracksEvent( 'calypso_editor_close_button_click' ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );
