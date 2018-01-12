@@ -609,7 +609,7 @@ class ActivityLog extends Component {
 					<Banner
 						icon="history"
 						href={ `/settings/security/${ slug }` }
-						title={ translate( 'Add your site credentials' ) }
+						title={ translate( 'Add site credentials' ) }
 						description={ translate(
 							'Backups and security scans require access to your site to work properly.'
 						) }
