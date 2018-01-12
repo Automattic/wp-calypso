@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -24,6 +25,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import page from 'page';
 import SiteUrlInput from './site-url-input';
+import { addQueryArgs } from 'lib/route';
 import { externalRedirect, untrailingslashit } from 'lib/route';
 import versionCompare from 'lib/version-compare';
 import { addCalypsoEnvQueryArg } from './utils';
@@ -32,7 +34,7 @@ import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { retrievePlan } from './persistence-utils';
+import { retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
 	JPC_PATH_PLANS,
@@ -41,6 +43,8 @@ import {
 	REMOTE_PATH_AUTH,
 	REMOTE_PATH_INSTALL,
 } from './constants';
+
+const debug = debugModule( 'calypso:jetpack-connect:main' );
 
 export class JetpackConnectMain extends Component {
 	static propTypes = {
@@ -100,6 +104,11 @@ export class JetpackConnectMain extends Component {
 			return this.goToRemoteAuth( this.state.currentUrl );
 		}
 		if ( this.getStatus() === 'alreadyOwned' && ! this.redirecting ) {
+			if ( this.props.isMobileAppFlow ) {
+				const url = addQueryArgs( { reason: 'already-connected' }, this.props.mobileAppRedirect );
+				debug( 'redirect to', url );
+				return window.location.replace( url );
+			}
 			return this.goToPlans( this.state.currentUrl );
 		}
 
@@ -530,11 +539,21 @@ export class JetpackConnectMain extends Component {
 }
 
 const connectComponent = connect(
-	state => ( {
-		getJetpackSiteByUrl: url => getJetpackSiteByUrl( state, url ),
-		isRequestingSites: isRequestingSites( state ),
-		jetpackConnectSite: getConnectingSite( state ),
-	} ),
+	state => {
+		// Note: reading from a cookie here rather than redux state,
+		// so any change in value will not execute connect().
+		const mobileAppRedirect = retrieveMobileRedirect();
+		const isMobileAppFlow = !! mobileAppRedirect;
+
+		return {
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			getJetpackSiteByUrl: url => getJetpackSiteByUrl( state, url ),
+			isMobileAppFlow,
+			isRequestingSites: isRequestingSites( state ),
+			jetpackConnectSite: getConnectingSite( state ),
+			mobileAppRedirect,
+		};
+	},
 	{
 		checkUrl,
 		confirmJetpackInstallStatus,
