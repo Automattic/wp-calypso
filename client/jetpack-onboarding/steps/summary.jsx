@@ -6,7 +6,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { compact, get, map, reduce, without } from 'lodash';
+import { compact, get, map, without } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -17,7 +17,7 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getUnconnectedSiteUrl, isJetpackOnboardingStepCompleted } from 'state/selectors';
+import { getJetpackOnboardingProgress, getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
@@ -106,15 +106,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 
 export default connect( ( state, { siteId, steps } ) => {
 	const tasks = compact( [] );
-	const stepsCompleted = reduce(
-		steps,
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		( result, stepName ) => {
-			result[ stepName ] = isJetpackOnboardingStepCompleted( state, siteId, stepName );
-			return result;
-		},
-		{}
-	);
+	const stepsCompleted = getJetpackOnboardingProgress( state, siteId, steps );
 
 	return {
 		siteUrl: getUnconnectedSiteUrl( state, siteId ),
