@@ -179,14 +179,15 @@ class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			translate,
 		} = this.props;
-		if ( siteIsJetpack ) {
-			return null;
-		}
+
 		return (
-			<FormFieldset>
+			<FormFieldset
+				className={ siteIsJetpack && classNames( 'site-settings__has-divider', 'is-top-only' ) }
+			>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
 				<LanguagePicker
 					languages={ config( 'languages' ) }
+					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
 					value={ fields.lang_id }
 					onChange={ onChangeField( 'lang_id' ) }
 					disabled={ isRequestingSettings }
@@ -379,10 +380,7 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, siteIsJetpack, translate } = this.props;
-		if ( siteIsJetpack ) {
-			return;
-		}
+		const { fields, isRequestingSettings, translate } = this.props;
 
 		return (
 			<FormFieldset>
