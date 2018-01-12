@@ -4,98 +4,57 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { translate } from 'i18n-calypso';
-import { omit } from 'lodash';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { requestZoneLock, handleLockSuccess, handleLockFailure } from '../';
+import { fetch, onSuccess, onError } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice } from 'state/notices/actions';
 import { requestLock, requestLockError, updateLock } from 'zoninator/state/locks/actions';
 
-describe( '#requestZoneLock()', () => {
-	test( 'should dispatch a HTTP request to the lock endpoint', () => {
-		const dispatch = sinon.spy();
-		const action = {
-			type: 'DUMMY_ACTION',
-			siteId: 123,
-			zoneId: 456,
-		};
+describe( 'handlers', () => {
+	describe( '#fetch()', () => {
+		test( 'should dispatch a HTTP request to the lock endpoint', () => {
+			const action = requestLock( 123, 456 );
 
-		requestZoneLock( { dispatch }, action );
+			const result = fetch( action );
 
-		expect( dispatch ).to.have.been.calledWith(
-			http(
-				{
-					method: 'POST',
-					path: '/jetpack-blogs/123/rest-api/',
-					query: {
-						path: '/zoninator/v1/zones/456/lock&_method=PUT',
+			expect( result ).to.deep.equal(
+				http(
+					{
+						method: 'POST',
+						path: '/jetpack-blogs/123/rest-api/',
+						query: {
+							path: '/zoninator/v1/zones/456/lock&_method=PUT',
+						},
 					},
-				},
-				action
-			)
-		);
+					action
+				)
+			);
+		} );
 	} );
 
-	test( 'should dispatch `removeNotice`', () => {
-		const dispatch = sinon.spy();
-		const action = {
-			type: 'DUMMY_ACTION',
-			siteId: 123,
-			zoneId: 456,
-		};
+	describe( '#onSuccess()', () => {
+		test( 'should dispatch `updateLock`', () => {
+			const action = requestLock( 123, 456 );
+			const lock = {
+				expires: new Date().getTime(),
+				maxLockPeriod: 300000,
+			};
 
-		requestZoneLock( { dispatch }, action );
+			const result = onSuccess( action, lock );
 
-		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-update-lock' ) );
-	} );
-} );
-
-describe( '#handleLockSuccess()', () => {
-	const response = {
-		data: {
-			timeout: 30,
-			max_lock_period: 600,
-		},
-	};
-
-	test( 'should dispatch `updateLock`', () => {
-		const dispatch = sinon.spy();
-		const action = requestLock( 123, 456, true );
-
-		handleLockSuccess( { dispatch }, action, response );
-
-		expect( dispatch ).to.have.been.calledOnce;
-		expect( dispatch ).to.have.been.calledWithMatch(
-			omit( updateLock( 123, 456, 30000, 600000, true ), [ 'expires' ] )
-		);
-	} );
-} );
-
-describe( '#handleLockFailure()', () => {
-	test( 'should dispatch `requestLockError`', () => {
-		const dispatch = sinon.spy();
-		const action = requestLock( 123, 456 );
-
-		handleLockFailure( { dispatch }, action );
-
-		expect( dispatch ).to.have.been.calledWith( requestLockError( 123, 456, true ) );
+			expect( result ).to.deep.equal( updateLock( 123, 456, lock.expires, lock.maxLockPeriod ) );
+		} );
 	} );
 
-	test( 'should dispatch `errorNotice` if the locking process fails', () => {
-		const dispatch = sinon.spy();
-		const action = requestLock( 123, 456, false );
+	describe( '#handleLockFailure()', () => {
+		test( 'should dispatch `requestLockError`', () => {
+			const action = requestLock( 123, 456 );
 
-		handleLockFailure( { dispatch }, action, {} );
+			const result = onError( action );
 
-		expect( dispatch ).to.have.been.calledWith(
-			errorNotice( translate( 'This zone is currently locked. Please try again later.' ), {
-				id: 'zoninator-update-lock',
-			} )
-		);
+			expect( result ).to.deep.equal( requestLockError( 123, 456 ) );
+		} );
 	} );
 } );
