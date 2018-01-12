@@ -15,6 +15,7 @@ import debugFactory from 'debug';
 import config from 'config';
 import { getSavedVariations } from 'lib/abtest'; // used by error logger
 import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
+import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import analytics from 'lib/analytics';
@@ -208,11 +209,10 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 
 	require( 'my-sites' )();
 
-	if ( currentUser.get() && config.isEnabled( 'olark' ) ) {
-		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
-	}
-
 	const state = reduxStore.getState();
+	if ( config.isEnabled( 'happychat' ) ) {
+		reduxStore.dispatch( requestHappychatEligibility() );
+	}
 	if ( wasHappychatRecentlyActive( state ) ) {
 		reduxStore.dispatch( initHappychatConnection( getHappychatAuth( state )() ) );
 	}

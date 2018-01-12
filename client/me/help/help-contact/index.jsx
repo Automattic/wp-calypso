@@ -16,7 +16,6 @@ import config from 'config';
 import Main from 'components/main';
 import Card from 'components/card';
 import Notice from 'components/notice';
-import olarkStore from 'lib/olark-store';
 import HelpContactForm from 'me/help/help-contact-form';
 import HelpContactClosed from 'me/help/help-contact-closed';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
@@ -26,6 +25,7 @@ import notices from 'notices';
 import analytics from 'lib/analytics';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
@@ -77,15 +77,12 @@ const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:0
 
 class HelpContact extends React.Component {
 	state = {
-		olark: olarkStore.get(),
 		isSubmitting: false,
 		confirmation: null,
 	};
 
 	componentDidMount() {
 		this.prepareDirectlyWidget();
-
-		olarkStore.on( 'change', this.updateOlarkState );
 	}
 
 	componentDidUpdate() {
@@ -94,14 +91,6 @@ class HelpContact extends React.Component {
 		// some other variation.
 		this.prepareDirectlyWidget();
 	}
-
-	componentWillUnmount() {
-		olarkStore.removeListener( 'change', this.updateOlarkState );
-	}
-
-	updateOlarkState = () => {
-		this.setState( { olark: olarkStore.get() } );
-	};
 
 	backToHelp = () => {
 		page( '/help' );
@@ -239,19 +228,13 @@ class HelpContact extends React.Component {
 	};
 
 	shouldUseHappychat = () => {
-		const { olark } = this.state;
-
 		// if happychat is disabled in the config, do not use it
 		if ( ! config.isEnabled( 'happychat' ) ) {
 			return false;
 		}
 
 		// if the happychat connection is able to accept chats, use it
-		return (
-			this.props.isHappychatAvailable &&
-			olark.isUserEligible &&
-			this.props.isSelectedHelpSiteOnPaidPlan
-		);
+		return this.props.isHappychatAvailable && this.props.isSelectedHelpSiteOnPaidPlan;
 	};
 
 	shouldUseDirectly = () => {
@@ -529,6 +512,7 @@ export default connect(
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
+			isHappychatUserEligible: isHappychatUserEligible( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportEligible: isTicketSupportEligible( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),

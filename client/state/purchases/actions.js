@@ -3,7 +3,6 @@
 import i18n from 'i18n-calypso';
 
 // Internal dependencies
-import olark from 'lib/olark';
 import {
 	PRIVACY_PROTECTION_CANCEL,
 	PRIVACY_PROTECTION_CANCEL_COMPLETED,
@@ -18,6 +17,7 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
 } from 'state/action-types';
+import { requestHappychatEligibility } from 'state/happychat/user/actions';
 
 import wp from 'lib/wp';
 const wpcom = wp.undocumented();
@@ -56,14 +56,9 @@ export const cancelPrivacyProtection = purchaseId => dispatch => {
 		} );
 };
 
-export const clearPurchases = () => {
-	// TODO: we should call this olark method elsewhere, so that this
-	// action creator doesn't have side effects.
-	olark.updateOlarkGroupAndEligibility();
-
-	return {
-		type: PURCHASES_REMOVE,
-	};
+export const clearPurchases = () => dispatch => {
+	dispatch( { type: PURCHASES_REMOVE } );
+	dispatch( requestHappychatEligibility() );
 };
 
 export const fetchSitePurchases = siteId => dispatch => {
@@ -130,7 +125,7 @@ export const removePurchase = ( purchaseId, userId ) => dispatch => {
 				userId,
 			} );
 
-			olark.updateOlarkGroupAndEligibility();
+			dispatch( requestHappychatEligibility() );
 		} )
 		.catch( error => {
 			dispatch( {

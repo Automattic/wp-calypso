@@ -23,6 +23,9 @@ describe( '#isHappychatAvailable', () => {
 					status: HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 					isAvailable: true,
 				},
+				user: {
+					isEligible: true,
+				},
 			},
 		} );
 		expect( isHappychatAvailable( state ) ).to.be.false;
@@ -34,6 +37,9 @@ describe( '#isHappychatAvailable', () => {
 				connection: {
 					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 					isAvailable: false,
+				},
+				user: {
+					isEligible: true,
 				},
 			},
 		} );
@@ -47,8 +53,26 @@ describe( '#isHappychatAvailable', () => {
 					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 					isAvailable: true,
 				},
+				user: {
+					isEligible: true,
+				},
 			},
 		} );
 		expect( isHappychatAvailable( state ) ).to.be.true;
+	} );
+
+	it( "should be false when the user isn't eligible", () => {
+		const state = deepFreeze( {
+			happychat: {
+				connection: {
+					status: HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
+					isAvailable: true,
+				},
+				user: {
+					isEligible: false,
+				},
+			},
+		} );
+		expect( isHappychatAvailable( state ) ).to.be.false;
 	} );
 } );

@@ -8,6 +8,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
+import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
 
 /**
  * Returns true if Happychat client is connected and server is available to take new chats
@@ -15,5 +16,9 @@ import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-c
  * @return {Boolean} Whether new chats can be taken
  */
 export default function( state ) {
-	return isHappychatClientConnected( state ) && get( state, 'happychat.connection.isAvailable' );
+	return (
+		isHappychatUserEligible( state ) &&
+		isHappychatClientConnected( state ) &&
+		get( state, 'happychat.connection.isAvailable' )
+	);
 }

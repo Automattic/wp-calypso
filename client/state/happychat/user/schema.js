@@ -9,3 +9,7 @@ export const geoLocationSchema = {
 		region: { type: 'string' },
 	},
 };
+
+export const isEligibleSchema = {
+	type: [ 'boolean', 'null' ],
+};
