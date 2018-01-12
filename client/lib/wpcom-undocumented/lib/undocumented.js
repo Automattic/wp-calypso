@@ -367,16 +367,9 @@ Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
-	debug( '/sites/:site_id:/invites query' );
-	return this.wpcom.req.get(
-		'/sites/' + siteId + '/invites',
-		{
-			number: number,
-			offset: offset,
-		},
-		fn
-	);
+Undocumented.prototype.invitesList = function( siteId, data = {}, fn ) {
+	debug( '/sites/:site_id:/invites query', siteId, data );
+	return this.wpcom.req.get( '/sites/' + siteId + '/invites', data, fn );
 };
 
 Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
