@@ -24,7 +24,6 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
-import ChatClosureNotice from '../chat-closure-notice';
 import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
 import { getHelpSelectedSite } from 'state/help/selectors';
@@ -290,12 +289,6 @@ export class HelpContactForm extends React.PureComponent {
 
 		return (
 			<div className="help-contact-form">
-				<ChatClosureNotice
-					reason="eoy-holidays"
-					from="2016-12-24T00:00:00Z"
-					to="2017-01-02T00:00:00Z"
-				/>
-
 				{ formDescription && <p>{ formDescription }</p> }
 
 				<ChatBusinessConciergeNotice from="2017-07-19T00:00:00Z" to="2017-07-21T00:00:00Z" />
