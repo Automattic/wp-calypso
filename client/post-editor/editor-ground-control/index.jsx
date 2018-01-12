@@ -20,6 +20,7 @@ import postUtils from 'lib/posts/utils';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
+import Drafts from 'layout/masterbar/drafts';
 import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { canCurrentUser } from 'state/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
@@ -258,6 +259,7 @@ export class EditorGroundControl extends PureComponent {
 					onSelect={ this.props.recordSiteButtonClick }
 					indicator={ true }
 				/>
+				<Drafts />
 				{ this.state.needsVerification && (
 					<div
 						className="editor-ground-control__email-verification-notice"
