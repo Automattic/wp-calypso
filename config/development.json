@@ -185,6 +185,7 @@
 		"woocommerce/extension-products": true,
 		"woocommerce/extension-product-categories": true,
 		"woocommerce/extension-promotions": true,
+		"woocommerce/extension-referrers": true,
 		"woocommerce/extension-reviews": true,
 		"woocommerce/extension-settings": true,
 		"woocommerce/extension-settings-email": true,

@@ -1966,6 +1966,7 @@ describe( 'utils', () => {
 				] );
 			} );
 		} );
+
 		describe( 'parseStoreStatsReferrers', () => {
 			const validData = {
 				data: [
