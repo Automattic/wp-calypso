@@ -11,7 +11,7 @@ import warn from 'lib/warn';
  * Internal dependencies
  */
 import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'woocommerce/state/wc-api/utils';
 import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
