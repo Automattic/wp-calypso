@@ -90,14 +90,6 @@ class HelpContact extends React.Component {
 		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
-
-		olarkActions.updateDetails();
-
-		// The following lines trick olark into thinking we are interacting with it. This interaction
-		// makes olark fire off its onOperatorsAway and onOperatorsAvailable events sooner.
-		olarkActions.expandBox();
-		olarkActions.shrinkBox();
-		olarkActions.hideBox();
 	}
 
 	componentDidUpdate() {
@@ -108,13 +100,7 @@ class HelpContact extends React.Component {
 	}
 
 	componentWillUnmount() {
-		const { details, isOperatorAvailable } = this.state.olark;
-
 		olarkStore.removeListener( 'change', this.updateOlarkState );
-
-		if ( details.isConversing && ! isOperatorAvailable ) {
-			olarkActions.shrinkBox();
-		}
 	}
 
 	updateOlarkState = () => {
@@ -333,18 +319,13 @@ class HelpContact extends React.Component {
 	};
 
 	getSupportVariation = () => {
-		const { olark } = this.state;
 		const { ticketSupportEligible } = this.props;
 
 		if ( this.shouldUseHappychat() ) {
 			return SUPPORT_HAPPYCHAT;
 		}
 
-		if ( olark.isUserEligible && olark.isOperatorAvailable ) {
-			return SUPPORT_LIVECHAT;
-		}
-
-		if ( olark.details.isConversing || ticketSupportEligible ) {
+		if ( ticketSupportEligible ) {
 			return SUPPORT_TICKET;
 		}
 
@@ -527,9 +508,6 @@ class HelpContact extends React.Component {
 				</div>
 			);
 		}
-
-		// Hide the olark widget in the bottom right corner.
-		olarkActions.hideBox();
 
 		const supportVariation = this.getSupportVariation();
 
