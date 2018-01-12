@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
 import moment from 'moment-timezone';
@@ -24,12 +23,6 @@ import { decodeURIIfValid } from 'lib/url';
 import { getSite } from 'state/sites/selectors';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import { addQueryArgs } from 'lib/route';
-
-/**
- * Module constants
- */
-const debug = debugFactory( 'calypso:posts:selectors' );
-const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
 
 /**
  * Returns the PostsQueryManager from the state tree for a given site ID (or
@@ -91,8 +84,6 @@ export const getNormalizedPost = createSelector(
  */
 export const getSitePosts = createSelector( ( state, siteId ) => {
 	if ( ! siteId ) {
-		debug( 'getSitePosts called without siteId', { siteId } );
-		mc.bumpStat( 'calypso_missing_site_id', 'getSitePosts' );
 		return null;
 	}
 
@@ -114,8 +105,6 @@ export const getSitePosts = createSelector( ( state, siteId ) => {
  */
 export const getSitePost = createSelector( ( state, siteId, postId ) => {
 	if ( ! siteId ) {
-		debug( 'getSitePost called without siteId', { siteId, postId } );
-		mc && mc.bumpStat( 'calypso_missing_site_id', 'getSitePost' );
 		return null;
 	}
 
@@ -313,8 +302,6 @@ export const isRequestingPostsForQueryIgnoringPage = createSelector(
  */
 export function isRequestingSitePost( state, siteId, postId ) {
 	if ( ! siteId ) {
-		debug( 'isRequestingSitePost called without siteId', { siteId, postId } );
-		mc && mc.bumpStat( 'calypso_missing_site_id', 'isRequestingSitePost' );
 		return null;
 	}
 

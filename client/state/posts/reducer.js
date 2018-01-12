@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import {
 	get,
 	set,
@@ -53,12 +52,6 @@ import {
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-
-/**
- * Module constants
- */
-const debug = debugFactory( 'calypso:posts:reducer' );
-const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -165,8 +158,6 @@ export function queryRequests( state = {}, action ) {
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
 		if ( ! siteId ) {
-			debug( 'state.posts.queries#applyToManager called without siteId', { siteId, method, args } );
-			mc && mc.bumpStat( 'calypso_missing_site_id', 'state.posts.queries' );
 			return state;
 		}
 
