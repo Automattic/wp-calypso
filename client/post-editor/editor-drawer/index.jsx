@@ -29,6 +29,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
+import { getPlugins } from 'state/plugins/installed/selectors';
 import {
 	isJetpackMinimumVersion,
 	isJetpackModuleActive,
@@ -41,6 +42,7 @@ import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
 import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
 import EditPostStatus from 'post-editor/edit-post-status';
+import { getConflictingSeoPlugins } from 'lib/seo';
 
 /**
  * Constants
@@ -241,7 +243,7 @@ class EditorDrawer extends Component {
 	}
 
 	renderSeo() {
-		const { jetpackVersionSupportsSeo } = this.props;
+		const { jetpackVersionSupportsSeo, activePlugins } = this.props;
 
 		if ( ! this.props.site ) {
 			return;
@@ -249,6 +251,11 @@ class EditorDrawer extends Component {
 
 		if ( this.props.isJetpack ) {
 			if ( ! this.props.isSeoToolsModuleActive || ! jetpackVersionSupportsSeo ) {
+				return;
+			}
+
+			// Don't show SEO accordion if this setting is managed by other SEO plugin.
+			if ( !! getConflictingSeoPlugins( activePlugins ).length ) {
 				return;
 			}
 		}
@@ -367,6 +374,7 @@ const enhance = flow(
 		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
 
 		return {
+			activePlugins: getPlugins( state, [ siteId ], 'active' ),
 			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
 			isJetpack: isJetpackSite( state, siteId ),

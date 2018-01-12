@@ -4,17 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-	get,
-	includes,
-	isArray,
-	isEqual,
-	mapValues,
-	omit,
-	overSome,
-	pickBy,
-	partial,
-} from 'lodash';
+import { get, isArray, isEqual, mapValues, omit, overSome, pickBy, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -64,6 +54,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
 import WebPreview from 'components/web-preview';
+import { getConflictingSeoPlugins } from 'lib/seo';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
@@ -268,19 +259,6 @@ export class SeoForm extends React.Component {
 		this.setState( { showPreview: false } );
 	};
 
-	getConflictingSeoPlugins = activePlugins => {
-		const conflictingSeoPlugins = [
-			'Yoast SEO',
-			'Yoast SEO Premium',
-			'All In One SEO Pack',
-			'All in One SEO Pack Pro',
-		];
-
-		return activePlugins
-			.filter( ( { name } ) => includes( conflictingSeoPlugins, name ) )
-			.map( ( { name, slug } ) => ( { name, slug } ) );
-	};
-
 	render() {
 		const {
 			siteId,
@@ -335,8 +313,7 @@ export class SeoForm extends React.Component {
 		);
 
 		const conflictedSeoPlugin = siteIsJetpack
-			? // Let's just pick the first one to keep the notice short.
-				this.getConflictingSeoPlugins( activePlugins )[ 0 ]
+			? getConflictingSeoPlugins( activePlugins )[ 0 ] // Pick first one to keep the notice short.
 			: null;
 
 		/* eslint-disable react/jsx-no-target-blank */
