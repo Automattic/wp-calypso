@@ -594,6 +594,22 @@ class ActivityLog extends Component {
 			.utc()
 			.startOf( 'day' );
 
+		// Content shown when there are no logs.
+		// The network request either finished with no events or is still ongoing.
+		const noLogsContent = requestData.logs.hasLoaded ? (
+			<EmptyContent
+				title={ translate( 'No activity for %s', {
+					args: this.getStartMoment().format( 'MMMM YYYY' ),
+				} ) }
+			/>
+		) : (
+			<section className="activity-log__wrapper">
+				<ActivityLogDayPlaceholder />
+				<ActivityLogDayPlaceholder />
+				<ActivityLogDayPlaceholder />
+			</section>
+		);
+
 		return (
 			<Main wideLayout>
 				<QueryRewindStatus siteId={ siteId } />
@@ -609,22 +625,9 @@ class ActivityLog extends Component {
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
-				{ ! requestData.logs.hasLoaded && (
-					<section className="activity-log__wrapper">
-						<ActivityLogDayPlaceholder />
-						<ActivityLogDayPlaceholder />
-						<ActivityLogDayPlaceholder />
-					</section>
-				) }
-				{ requestData.logs.hasLoaded &&
-					isEmpty( logs ) && (
-						<EmptyContent
-							title={ translate( 'No activity for %s', {
-								args: this.getStartMoment().format( 'MMMM YYYY' ),
-							} ) }
-						/>
-					) }
-				{ ! isEmpty( logs ) && (
+				{ isEmpty( logs ) ? (
+					noLogsContent
+				) : (
 					<section className="activity-log__wrapper">
 						{ intoVisualGroups( moment, logs, this.getStartMoment(), this.applySiteOffset ).map(
 							( [ type, [ start, end ], events ] ) => {
