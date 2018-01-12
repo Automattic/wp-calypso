@@ -87,16 +87,6 @@ We use [Jest](https://facebook.github.io/jest/) testing tool to execute all test
 Historically we have been using [Mocha](https://mochajs.org/) with [Chai assertions](http://chaijs.com/) and [Sinon mocks](http://sinonjs.org/). We still support Chai and Sinon for backward compatibility reasons, but Jest equivalents should be used whenever new tests are added.
 
 End-to-end tests are still using Mocha to run tests.
- 
-##### How to add a new test file?
-
-We should use the same file names as the implementation files for the tests.
-Example: if we want to write unit tests covering the file `hello-world/index.jsx`, we should name a test file `hello-world/test/index.jsx`.
-
-If we ever need to add non-test files to a `test` folder, we should put them in a deeper level. Common choices are:
-
-* `test/mocks/name.js` for test mocks
-* `test/fixtures/name.js` for test data
 
 ##### How to run all tests?
 

@@ -1,6 +1,6 @@
 # Unit Tests
 
-As well fostering code quality, well-written unit tests provide a fine way for developers to quickly understand how to run a piece of code, and what it does under various conditions. It's important therefore to maintain high standards not just in our source code, but in our tests as well. 
+Unit tests are important because they help ensure correctness. A good unit test also provides a concise example of the usage and expected behavior of code in an isolated context. It's therefore important to maintain high standards to maximize the effectiveness of our tests.
 
 This guide is intended as a quick reference of common tools and conventions we use for Calypso unit testing. You'll be able to glean a great deal from browsing through Calypso's existing tests, but we'll try to keep this page up to date with the most recent standards.
 
@@ -8,6 +8,7 @@ This guide is intended as a quick reference of common tools and conventions we u
 * [Running tests](running-tests)
 * [Writing tests](writing-tests)
     * [Folder structure](#folder-structure)
+    * [Importing tests](#importing-tests)
     * [Describing tests](#describing-tests)
     * [Snapshot testing](#snapshot-testing)
 * [Examples](#examples)
@@ -18,21 +19,40 @@ See [testing-overview.md](testing-overview.md).
 
 ## Writing tests
 
-We use [Jest](https://facebook.github.io/jest) testing framework for unit tests, and [Enzyme](https://github.com/airbnb/enzyme) for testing React components. You can find more information on testing components at [component tests](component-tests.md)._
+We use [Jest](https://facebook.github.io/jest) testing framework for unit tests, and [Enzyme](https://github.com/airbnb/enzyme) for testing React components. You can find more information on testing components at [component tests](component-tests.md).
 
-Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [globals](https://facebook.github.io/jest/docs/en/mock-function-api.html#content) (`describe`, `test`, `beforeEach` and so on) [assertions](http://facebook.github.io/jest/docs/en/expect.html#content), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html#content) and [mock function/spies](https://facebook.github.io/jest/docs/en/mock-function-api.html#content).
+Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [globals](https://facebook.github.io/jest/docs/en/api.html) (`describe`, `test`, `beforeEach` and so on) [assertions](http://facebook.github.io/jest/docs/en/expect.html), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html), [spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) and [mock functions](https://facebook.github.io/jest/docs/en/mock-function-api.html).
 
 ## Folder structure
 Keep your tests in a `test` folder in your working directory. The test file should have the same name as the test subject file, and use the extension `.js`.
 
 ```
 +-- test
-|   +-- index.js
-+-- index.jsx
+|   +-- bar.js
++-- bar.jsx
 ```
 
+Only test files (with at least one test case) should live directly under `/test`. If you need to add external mocks or fixtures, place them in a sub folder, for example:
+
+* `test/mocks/[file-name.js`
+* `test/fixtures/[file-name].js` 
+
+### Importing tests
+
+Given the previous folder structure, try to use relative paths when importing of the __code you're testing__, as opposed to using project paths.
+
+**Good**
+
+`import { bar } from '../bar';`
+
+**Not so good**
+
+`import { bar } from 'components/foo/bar';`
+
+It will make your life easier should you decide to relocate your code to another position in the application directory.
+
 ### Describing tests
-Use 'describe' block to group test cases. Each test case should ideally describe one behaviour only.
+Use a 'describe' block to group test cases. Each test case should ideally describe one behaviour only.
 
 In test cases, try to describe in plain words the expected behaviour. For UI components, this might entail describing expected behaviour from a user perspective rather than explaining code internals.
 
@@ -57,74 +77,17 @@ describe( 'CheckboxWithLabel', () => {
 ```
 
 ### Snapshot testing
-See [Snapshot testing](snapshot-testing.md)
+Snapshot testing is useful for verifying that any data produced during a test is not inadvertently changed. This is especially useful for large and complex data structures like component or state trees. See the [our full reference](snapshot-testing.md) for more information.
 
 ### Examples
-
-#### Mocking HTTP requests with Nock
-
-[Nock](https://github.com/node-nock/nock) allows us to override HTTP requests, and unit test code in isolation. For example, you might have an action  that returns a GET request in a thunk:
-
-```javascript
-// action.js
-export function requestSomeData() {
-	return dispatch => {
-		return wpcom
-            .getSomeData()
-            .then( data => {
-				dispatch( {
-					type: SOME_DATA_SUCCESS,
-					data,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: SOME_DATA_FAILURE,
-					error,
-				} );
-			} );
-	};
-}
-```
-
-To mock this response, we can specify the nock parameters in a describe block and use `persist()` to intercept all requests in that block.
-
-Here's a simple example:
-
-```javascript
-import { requestSomeData } from '../actions';
-import useNock from 'test/helpers/use-nock';
-
-describe( 'requestSomeData', () => {
-	describe( 'successful response', () => {
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.1/some-endpoint' )
-				.reply( 200, { hoo: 'ray!' } );
-		} );
-
-		test( 'dispatches success action object when successful request is completed', () => {
-			const mockDispatchCallback = jest.fn();
-            // Trigger the action to return the thunk
-			requestSomeData()( mockDispatchCallback ).then( () => {
-                expect( mockDispatchCallback.mock.calls[ 0 ][ 0 ] ).toEqual( {
-                    type: SOME_DATA_SUCCESS,
-                    data: { hoo: 'ray!' }
-                } );
-            } );
-		} );
-     } );
-} );
-```
 
 ### Mocking dependencies
 
 #### Dependency injection
 
-Passing dependencies to a function as arguments can often make your code simpler to test. As a basic example, we have a utility function that checks whether a value exists in a list:
+Passing dependencies to a function as arguments can often make your code simpler to test. Where possible, avoid referencing dependencies in a higher scope.
 
-One way to do it would be to reference a dependency in a higher scope:
+**Not so good**
 
 ```javascript
 import VALID_VALUES_LIST from './constants'
@@ -135,7 +98,7 @@ function isValueValid( value ) {
 
 ```
 
-Our happy path test would therefore have to import and use a value from `VALID_VALUES_LIST` in order to pass:
+Here we'd have to import and use a value from `VALID_VALUES_LIST` in order to pass:
 
 `expect( isValueValid( VALID_VALUES_LIST[ 0 ] ) ).toBe( true );`
 
@@ -144,7 +107,7 @@ The above assertion is testing two behaviours: 1) that the function can detect a
 
 But what if we don't care what's stored in `VALID_VALUES_LIST`, or if the list is fetched via an HTTP request, and we only want to test whether `isValueValid` can detect an item in a list?
 
-Let's refactor the original function so that it accepts the target list as an argument:
+**Good**
 
 ```javascript
 function isValueValid( value, validValuesList = [] ) {
@@ -152,7 +115,7 @@ function isValueValid( value, validValuesList = [] ) {
 }
 ```
 
-Now we can pass mock lists, and, as a bonus, test a few more scenarios:
+Because we're passing the list as an argument, we can pass mock  `validValuesList` values in our tests and, as a bonus, test a few more scenarios:
 
 `expect( isValueValid( 'hulk', [ 'batman', 'superman' ] ) ).toBe( false );`
 
@@ -171,11 +134,8 @@ For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp
 
 ```javascript
 // bilbo.js
-if ( config.isEnabled( 'the-ring' ) ) {
-    isBilboVisible = false;
-} else {
-	isBilboVisible = true;
-}
+import config from 'config';
+export const isBilboVisible = () => config.isEnabled( 'the-ring' ) ? false : true;
 ```
 
 To test the behaviour under each condition, we stub the config object and use a jest mocking function to control the return value of `isEnabled`.
@@ -183,65 +143,76 @@ To test the behaviour under each condition, we stub the config object and use a 
 ```javascript
 // test/bilbo.js
 import { isEnabled } from 'config';
+import { isBilboVisible } from '../bilbo';
 
-jest.mock( 'config', () => {
-	const config = () => 'development';
-    
-	// default value is true
-	config.isEnabled = jest.fn( true );
+jest.mock( 'config', () => ( {
+	// bilbo is visible by default
+	isEnabled: jest.fn( () => false ),
+} ) );
 
-	return config;
-} );
+describe( 'The bilbo module', () => {
+	test( 'bilbo should be visible by default', () => {
+		expect( isBilboVisible() ).toBe( true );
+	} );
 
-
-test( 'bilbo should be invisible when the `the-ring` config feature flag is disabled', () => {
-	isEnabled.mockReturnValue( false );
-	expect( isBilboVisible ).toBe( false );
+	test( 'bilbo should be invisible when the `the-ring` config feature flag is enabled', () => {
+		isEnabled.mockImplementationOnce( name => name === 'the-ring' );
+		expect( isBilboVisible() ).toBe( false );
+	} );
 } );
 
 ```
 
-We can use this approach to test all of Calypso's common, established libraries:
+### Testing globals
 
-[WP](https://github.com/Automattic/wp-calypso/tree/master/client/lib/wp) 
+We can use [Jest spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) to test code that calls global methods.
+
+When stubbing DOM properties or methods in the global scope, make sure to include `@jest-environment jsdom` the comment
+
+```javascript
+
+/**
+ * @format
+ * @jest-environment jsdom
+ */
+import { myModuleFunctionThatOpensANewWindow } from '../my-module';
+
+describe( 'my module', () => {
+	beforeAll( () => {
+		jest.spyOn( global, 'open' )
+			.mockImplementation( () => true );
+	} );
+
+	test( 'something', () => {
+		myModuleFunctionThatOpensANewWindow();
+		expect( global.open ).toHaveBeenCalled();
+	} );
+} );
+
+
+```
+
+### Testing legacy code
+
+Calypso is an amorphous, ever-changing creature, so you might find yourself having to extend or edit tests for legacy code.
+
+For example, the current preference for manage fetching and updating data remotely/asynchronously is via the [data layer](https://github.com/Automattic/wp-calypso/tree/master/client/state/data-layer).
+
+Still, you may come across components and actions containing calls to [lib/wp](https://github.com/Automattic/wp-calypso/tree/master/client/lib/wp):
+
+```javascript
+wpcom
+    .someWpComMethod()
+    .then( ( error, data ) => {
+         // do something with the response  
+     } );
+```
+
+In this case you can use Jest to stub out such libraries:
 
 ```javascript
 // 
 jest.mock( 'lib/wp', () => ( {
-	me: () => ( {
-		get: () => {},
-	} ),
-	undocumented: () => {},
+	someWpComMethod: jest.fn(),
 } ) );
-```
-
-Or event just stub out libraries whose effects we might not care about:
-
-`jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );`
-
-`jest.mock( 'lib/analytics', () => ( {} ) );`
-
-#### Global objects
-
-When stubbing properties or methods in the global scope, make sure to cache the original value and reinstate it after the tests have completed. This way we avoid breaking other test suites that may rely on them.
-
-```javascript
-	describe( 'suggested languages', () => {
-		const browserLanguages = [ 'en-GB', 'en', 'en-US', 'en-AU', 'it' ];
-		let _navigator;
-
-		beforeEach( () => {
-			_navigator = global.navigator;
-			Object.defineProperty( global.navigator, 'languages', {
-				get: () => browserLanguages,
-				configurable: true,
-			} );
-		} );
-
-		afterEach( () => {
-			global.navigator = _navigator;
-		} );
-	    
-	    // some test cases ...
-	} );	
 ```
