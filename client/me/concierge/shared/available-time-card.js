@@ -31,6 +31,7 @@ const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name
 
 class CalendarCard extends Component {
 	static propTypes = {
+		actionText: PropTypes.string.isRequired,
 		date: PropTypes.number.isRequired,
 		disabled: PropTypes.bool.isRequired,
 		isDefaultLocale: PropTypes.bool.isRequired,
@@ -104,8 +105,8 @@ class CalendarCard extends Component {
 		const date = this.withTimezone( this.props.date );
 
 		return (
-			<div className="concierge__calendar-card-header">
-				<Gridicon icon="calendar" className="concierge__calendar-card-header-icon" />
+			<div className="shared__available-time-card-header">
+				<Gridicon icon="calendar" className="shared__available-time-card-header-icon" />
 				<span>
 					<b>{ this.getDayOfWeekString( date ) } —</b> { date.format( ' MMMM D' ) }
 				</span>
@@ -122,7 +123,7 @@ class CalendarCard extends Component {
 	};
 
 	render() {
-		const { disabled, isDefaultLocale, times, translate } = this.props;
+		const { actionText, disabled, isDefaultLocale, times, translate } = this.props;
 		const description = isDefaultLocale
 			? translate( 'Sessions are 30 minutes long.' )
 			: translate( 'Sessions are 30 minutes long and in %(defaultLanguage)s.', {
@@ -131,7 +132,7 @@ class CalendarCard extends Component {
 
 		return (
 			<FoldableCard
-				className="concierge__calendar-card"
+				className="shared__available-time-card"
 				clickableHeader={ ! isEmpty( times ) }
 				compact
 				disabled={ isEmpty( times ) }
@@ -159,7 +160,7 @@ class CalendarCard extends Component {
 
 				<FormFieldset>
 					<Button disabled={ disabled } primary onClick={ this.submitForm }>
-						{ translate( 'Book this session' ) }
+						{ actionText }
 					</Button>
 				</FormFieldset>
 			</FoldableCard>
