@@ -18,6 +18,13 @@ export default () => {
 		page( '/me/concierge/:siteSlug/book', controller.book, makeLayout, clientRender );
 
 		page(
+			'/me/concierge/:siteSlug/:appointmentId/cancel',
+			controller.cancel,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/me/concierge/:siteSlug/:appointmentId/reschedule',
 			controller.reschedule,
 			makeLayout,

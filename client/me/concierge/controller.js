@@ -9,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ConciergeMain from './main';
+import ConciergeCancel from './cancel';
 import BookCalendarStep from './book/calendar-step';
 import BookConfirmationStep from './book/confirmation-step';
 import BookInfoStep from './book/info-step';
@@ -28,6 +29,16 @@ const book = ( context, next ) => {
 	next();
 };
 
+const cancel = ( context, next ) => {
+	context.primary = (
+		<ConciergeCancel
+			appointmentId={ context.params.appointmentId }
+			siteSlug={ context.params.siteSlug }
+		/>
+	);
+	next();
+};
+
 const reschedule = ( context, next ) => {
 	context.primary = (
 		<ConciergeMain
@@ -42,5 +53,6 @@ const reschedule = ( context, next ) => {
 
 export default {
 	book,
+	cancel,
 	reschedule,
 };

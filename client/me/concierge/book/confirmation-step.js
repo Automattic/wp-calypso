@@ -18,10 +18,10 @@ class ConfirmationStep extends Component {
 		return (
 			<Confirmation
 				buttonLabel={ translate( 'Return to your dashboard' ) }
+				buttonUrl={ `/stats/day/${ site.slug }` }
 				description={ translate(
 					'We will send you an email with information on how to get prepared.'
 				) }
-				site={ site }
 				title={ translate( 'Your Concierge session is booked!' ) }
 			/>
 		);

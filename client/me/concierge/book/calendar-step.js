@@ -34,7 +34,7 @@ class CalendarStep extends Component {
 	};
 
 	onSubmit = timestamp => {
-		const { signupForm } = this.props;
+		const { currentUserId, signupForm, site } = this.props;
 		const meta = {
 			message: signupForm.message,
 			timezone: signupForm.timezone,
@@ -43,8 +43,8 @@ class CalendarStep extends Component {
 		this.props.bookConciergeAppointment(
 			WPCOM_CONCIERGE_SCHEDULE_ID,
 			timestamp,
-			this.props.currentUserId,
-			this.props.site.ID,
+			currentUserId,
+			site.ID,
 			meta
 		);
 	};

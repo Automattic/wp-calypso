@@ -37,6 +37,10 @@
 	text-align: center;
 }
 
+.shared__confirmation {
+	text-align: center;
+}
+
 .shared__confirmation-illustration {
 	display: block;
 	margin: 50px auto 20px;
@@ -44,7 +48,5 @@
 }
 
 .shared__confirmation-button {
-	display: block;
-	margin: 0 auto 40px;
-	max-width: 204px;
+	margin-bottom: 40px;
 }
