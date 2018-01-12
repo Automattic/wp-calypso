@@ -37,8 +37,9 @@ describe( 'notification-subscriptions-new', () => {
 	} );
 
 	describe( 'fromApi', () => {
-		test( 'should throw an error when success is false', () => {
+		test( 'should throw an error when subscription fails', () => {
 			const response = {
+				subscribed: false,
 				success: false,
 			};
 
@@ -49,6 +50,7 @@ describe( 'notification-subscriptions-new', () => {
 
 		test( 'should return response unchanged if response indicates a success', () => {
 			const response = Object.freeze( {
+				subscribed: true,
 				success: true,
 			} );
 

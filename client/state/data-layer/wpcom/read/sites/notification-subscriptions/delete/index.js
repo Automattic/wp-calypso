@@ -16,8 +16,8 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { subscribeToNewPostNotifications } from 'state/reader/follows/actions';
 
 export function fromApi( response ) {
-	const isAdded = !! ( response && response.success );
-	if ( ! isAdded ) {
+	const isUnsubscribed = !! ( response && response.subscribed === false );
+	if ( ! isUnsubscribed ) {
 		throw new Error(
 			`Unsubscription from new post notifications failed with response: ${ JSON.stringify(
 				response
