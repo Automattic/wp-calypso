@@ -25,6 +25,7 @@
 	@import 'app/settings/taxes/style';
 	@import 'app/store-stats/store-stats-chart/style';
 	@import 'app/store-stats/store-stats-module/style';
+	@import 'app/store-stats/store-stats-referrer-widget/style';
 	@import 'app/store-stats/store-stats-widget-list/style';
 	@import 'app/store-stats/style';
 
@@ -33,6 +34,8 @@
 	@import 'components/bulk-select/style';
 	@import 'components/compact-tinymce/style';
 	@import 'components/d3/base/style';
+	@import 'components/d3/horizontal-bar/style';
+	@import 'components/d3/sparkline/style';
 	@import 'components/dashboard-widget/style';
 	@import 'components/delta/style';
 	@import 'components/extended-header/style';
@@ -49,7 +52,6 @@
 	@import 'components/product-search/style';
 	@import 'components/reading-widget/style';
 	@import 'components/share-widget/style';
-	@import 'components/d3/sparkline/style';
 	@import 'components/store-address/style';
 	@import 'components/table/style';
 

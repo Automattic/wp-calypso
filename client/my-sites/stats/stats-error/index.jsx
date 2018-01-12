@@ -24,7 +24,7 @@ class StatsError extends React.PureComponent {
 
 		return (
 			<div className={ classNames( 'module-content-text', 'is-error', className ) }>
-				<p>{ displayedMessage }</p>
+				<p key="primary">{ displayedMessage }</p>
 				{ children }
 			</div>
 		);
