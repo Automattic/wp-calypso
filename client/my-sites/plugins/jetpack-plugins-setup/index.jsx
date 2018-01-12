@@ -26,7 +26,12 @@ import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import analytics from 'lib/analytics';
-import support from 'lib/url/support';
+import {
+	JETPACK_CONTACT_SUPPORT,
+	JETPACK_SERVICE_AKISMET,
+	JETPACK_SERVICE_VAULTPRESS,
+	JETPACK_SUPPORT,
+} from 'lib/url/support';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
 
 // Redux actions & selectors
@@ -50,8 +55,8 @@ import {
 import PluginsStore from 'lib/plugins/store';
 
 const helpLinks = {
-	vaultpress: support.JETPACK_SERVICE_VAULTPRESS,
-	akismet: support.JETPACK_SERVICE_AKISMET,
+	vaultpress: JETPACK_SERVICE_VAULTPRESS,
+	akismet: JETPACK_SERVICE_AKISMET,
 };
 
 class PlansSetup extends React.Component {
@@ -219,7 +224,7 @@ class PlansSetup extends React.Component {
 			<JetpackManageErrorPage
 				siteId={ this.props.siteId }
 				action={ translate( 'Contact Support' ) }
-				actionURL={ support.JETPACK_CONTACT_SUPPORT }
+				actionURL={ JETPACK_CONTACT_SUPPORT }
 				title={ translate( "Oh no! We can't install plugins on this site." ) }
 				line={ reason }
 				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
@@ -422,7 +427,7 @@ class PlansSetup extends React.Component {
 						plugin: pluginsWithErrors[ 0 ].name,
 					},
 					components: {
-						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
 					},
 				}
 			);
@@ -432,14 +437,14 @@ class PlansSetup extends React.Component {
 					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
 				{
 					components: {
-						a: <a href={ support.JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
 					},
 				}
 			);
 		}
 		return (
 			<Notice status="is-error" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ support.JETPACK_CONTACT_SUPPORT } onClick={ this.trackContactSupport }>
+				<NoticeAction href={ JETPACK_CONTACT_SUPPORT } onClick={ this.trackContactSupport }>
 					{ translate( 'Contact Support' ) }
 				</NoticeAction>
 			</Notice>
@@ -536,7 +541,7 @@ class PlansSetup extends React.Component {
 					<Button primary href={ manageUrl }>
 						{ translate( 'Enable Manage' ) }
 					</Button>
-					<Button href={ support.JETPACK_SUPPORT }>{ translate( 'Manual Installation' ) }</Button>
+					<Button href={ JETPACK_SUPPORT }>{ translate( 'Manual Installation' ) }</Button>
 				</Card>
 			);
 		}

@@ -77,7 +77,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
 import paths from '../paths';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import * as upgradesActions from 'lib/upgrades/actions';
@@ -237,7 +237,7 @@ class ManagePurchase extends Component {
 			if ( isDomainRegistration( purchase ) ) {
 				if ( isRenewal( purchase ) ) {
 					text = translate( 'Contact Support to Cancel Domain and Refund' );
-					link = support.CALYPSO_CONTACT;
+					link = CALYPSO_CONTACT;
 				} else {
 					text = translate( 'Cancel Domain and Refund' );
 				}

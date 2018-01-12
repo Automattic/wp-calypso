@@ -19,7 +19,7 @@ import ReactDom from 'react-dom';
  */
 import { DomainWarnings } from '../';
 import { type as domainTypes } from 'lib/domains/constants';
-import support from 'lib/url/support';
+import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'lib/url/support';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 
@@ -161,7 +161,7 @@ describe( 'index', () => {
 			const domNode = ReactDom.findDOMNode( component ),
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			assert( links.some( link => link.href === support.MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
+			assert( links.some( link => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
 		} );
 
 		test( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
@@ -184,7 +184,7 @@ describe( 'index', () => {
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).to.contain( 'CNAME records should be configured' );
-			assert( links.some( link => link.href === support.MAP_SUBDOMAIN ) );
+			assert( links.some( link => link.href === MAP_SUBDOMAIN ) );
 		} );
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
@@ -215,7 +215,7 @@ describe( 'index', () => {
 			expect( textContent ).to.contain(
 				"Some of your domains' CNAME records should be configured"
 			);
-			assert( links.some( link => link.href === support.MAP_SUBDOMAIN ) );
+			assert( links.some( link => link.href === MAP_SUBDOMAIN ) );
 		} );
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
@@ -246,7 +246,7 @@ describe( 'index', () => {
 			expect( textContent ).to.contain(
 				"Some of your domains' name server records should be configured"
 			);
-			assert( links.some( link => link.href === support.MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
+			assert( links.some( link => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) );
 		} );
 	} );
 

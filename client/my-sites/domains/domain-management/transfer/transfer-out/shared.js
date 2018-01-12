@@ -11,7 +11,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import notices from 'notices';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 export const displayResponseError = responseError => {
 	const errorMessages = {
@@ -38,7 +38,7 @@ export const displayResponseError = responseError => {
 					args: errorMessages[ responseError.error ],
 					components: {
 						strong: <strong />,
-						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+						a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
 					},
 				}
 			)
@@ -51,7 +51,7 @@ export const displayResponseError = responseError => {
 					'to have trouble.',
 				{
 					components: {
-						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+						a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
 					},
 				}
 			)

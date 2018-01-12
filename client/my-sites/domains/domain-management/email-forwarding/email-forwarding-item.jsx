@@ -18,7 +18,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import Button from 'components/button';
 import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import * as upgradesActions from 'lib/upgrades/actions';
 
 const EmailForwardingItem = createReactClass( {
@@ -42,7 +42,7 @@ const EmailForwardingItem = createReactClass( {
 							'Failed to delete email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 							{
 								components: {
-									contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+									contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 								},
 							}
 						)
@@ -81,7 +81,7 @@ const EmailForwardingItem = createReactClass( {
 						'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 						{
 							components: {
-								contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+								contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 							},
 						}
 					)

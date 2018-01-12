@@ -26,7 +26,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { getSelectedSite } from 'state/ui/selectors';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import support from 'lib/url/support';
+import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 
@@ -132,7 +132,7 @@ class TransferDomainStep extends React.Component {
 									components: {
 										a: (
 											<a
-												href={ support.INCOMING_DOMAIN_TRANSFER }
+												href={ INCOMING_DOMAIN_TRANSFER }
 												rel="noopener noreferrer"
 												target="_blank"
 											/>
@@ -179,7 +179,7 @@ class TransferDomainStep extends React.Component {
 						) }
 						<a
 							className="transfer-domain-step__map-help"
-							href={ support.MAP_EXISTING_DOMAIN }
+							href={ MAP_EXISTING_DOMAIN }
 							rel="noopener noreferrer"
 							target="_blank"
 						>

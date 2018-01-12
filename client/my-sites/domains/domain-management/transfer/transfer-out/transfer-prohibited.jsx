@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
-import support from 'lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 const TransferProhibited = ( { translate } ) => (
 	<div>
@@ -27,7 +27,7 @@ const TransferProhibited = ( { translate } ) => (
 						components: {
 							learnMoreLink: (
 								<a
-									href={ support.TRANSFER_DOMAIN_REGISTRATION }
+									href={ TRANSFER_DOMAIN_REGISTRATION }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

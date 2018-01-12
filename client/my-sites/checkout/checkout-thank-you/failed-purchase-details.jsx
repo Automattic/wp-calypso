@@ -11,7 +11,7 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 	const successfulPurchases = purchases.length > 0 && (
@@ -50,7 +50,7 @@ const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 							"If the problem persists, please don't hesitate to {{a}}contact support{{/a}}.",
 						{
 							components: {
-								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+								a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
 							},
 						}
 					) }

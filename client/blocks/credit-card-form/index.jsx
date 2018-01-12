@@ -22,7 +22,7 @@ import notices from 'notices';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
-import support from 'lib/url/support';
+import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -289,14 +289,10 @@ const CreditCardForm = createReactClass( {
 											<a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />
 										),
 										autoRenewalSupportPage: (
-											<a href={ support.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+											<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
 										),
 										managePurchasesSupportPage: (
-											<a
-												href={ support.MANAGE_PURCHASES }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
+											<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
 										),
 									},
 								}

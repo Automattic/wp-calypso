@@ -16,7 +16,7 @@ import { getSelectedDomain } from 'lib/domains';
 import Button from 'components/button';
 import { requestTransferCode } from 'lib/upgrades/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import support from 'lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Locked extends React.Component {
 	state = {
@@ -74,11 +74,7 @@ class Locked extends React.Component {
 											'Your contact information will be publicly available during the transfer period.'
 									)
 								: translate( 'To transfer your domain, we must unlock it.' ) }{' '}
-							<a
-								href={ support.TRANSFER_DOMAIN_REGISTRATION }
-								target="_blank"
-								rel="noopener noreferrer"
-							>
+							<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
 								{ translate( 'Learn More.' ) }
 							</a>
 						</p>

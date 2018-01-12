@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import support from 'lib/url/support';
+import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'lib/url/support';
 
 const DesignatedAgentNotice = props => (
 	<div className="designated-agent-notice__container">
@@ -30,14 +30,12 @@ const DesignatedAgentNotice = props => (
 						strong: <strong />,
 						draLink: (
 							<a
-								href={ support.DOMAIN_REGISTRATION_AGREEMENTS }
+								href={ DOMAIN_REGISTRATION_AGREEMENTS }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
 						),
-						supportLink: (
-							<a href={ support.DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />
-						),
+						supportLink: <a href={ DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />,
 					},
 				}
 			) }

@@ -29,7 +29,7 @@ import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import upgradesActions from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
+import { UPDATE_CONTACT_INFORMATION } from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import Dialog from 'components/dialog';
@@ -196,7 +196,7 @@ class EditContactInfoFormCard extends React.Component {
 							components: {
 								link: (
 									<a
-										href={ support.UPDATE_CONTACT_INFORMATION }
+										href={ UPDATE_CONTACT_INFORMATION }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>

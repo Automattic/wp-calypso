@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AddButton from './add-button';
-import support from 'lib/url/support';
+import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 
 class Content extends React.PureComponent {
 	static propTypes = {
@@ -32,7 +32,7 @@ class Content extends React.PureComponent {
 						{ translate(
 							"With Privacy Protection, we show our partner's contact information instead of your own."
 						) }
-						<a href={ support.PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer">
+						<a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Learn more.' ) }
 						</a>
 					</p>

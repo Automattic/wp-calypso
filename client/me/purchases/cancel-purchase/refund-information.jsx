@@ -15,7 +15,7 @@ import i18n from 'i18n-calypso';
 import { getName, isRefundable, isSubscription, isOneTimePurchase } from 'lib/purchases';
 import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
 import { getIncludedDomainPurchase } from 'state/purchases/selectors';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } ) => {
 	const { refundPeriodInDays } = purchase;
@@ -98,7 +98,7 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 								'please {{contactLink}}contact support{{/contactLink}}.',
 							{
 								components: {
-									contactLink: <a href={ support.CALYPSO_CONTACT } />,
+									contactLink: <a href={ CALYPSO_CONTACT } />,
 								},
 							}
 						)
@@ -194,7 +194,7 @@ const CancelPurchaseRefundInformation = ( { purchase, includedDomainPurchase } )
 						'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
 						{
 							components: {
-								contactLink: <a href={ support.CALYPSO_CONTACT } />,
+								contactLink: <a href={ CALYPSO_CONTACT } />,
 							},
 						}
 					) }

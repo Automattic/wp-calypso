@@ -36,7 +36,7 @@ import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
 import paths from '../paths';
 import PaymentLogo from 'components/payment-logo';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
 import {
 	canEditPaymentDetails,
@@ -266,7 +266,7 @@ class PurchaseMeta extends Component {
 							siteSlug: this.props.selectedPurchase.domain,
 						},
 						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 						},
 					}
 				) }
