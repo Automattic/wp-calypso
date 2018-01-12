@@ -54,8 +54,8 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 							) }
 						</h1>
 						{ translate(
-							"The domain contact address wasn't immediately available but we should have it soon. " +
-							'Check again in a few minutes to see where to look for the authorization email.'
+							"We'll let you know which mailbox to check as soon as the email is sent. " 
+							+ 'Check again in a few minutes.'
 						) }
 					</div>
 				</Card>
