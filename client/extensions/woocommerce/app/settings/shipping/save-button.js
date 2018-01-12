@@ -24,6 +24,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { saveWeightAndDimensionsUnits } from 'woocommerce/state/sites/settings/products/actions';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class ShippingSettingsSaveButton extends Component {
@@ -44,11 +45,10 @@ class ShippingSettingsSaveButton extends Component {
 	};
 
 	save = () => {
-		const { translate, wcsEnabled } = this.props;
+		const { translate, wcsEnabled, site } = this.props;
 		if ( ! wcsEnabled ) {
 			return;
 		}
-
 		const failureAction = errorNotice(
 			translate( 'There was a problem saving the shipping settings. Please try again.' )
 		);
@@ -58,6 +58,20 @@ class ShippingSettingsSaveButton extends Component {
 			{
 				duration: 4000,
 			}
+		);
+
+		const unitsSaveSuccessNotice = successNotice( translate( 'Units settings saved' ), {
+			duration: 4000,
+		} );
+
+		const unitsSaveFailureNotice = errorNotice(
+			translate( 'There was a problem saving units settings. Please try again.' )
+		);
+
+		this.props.saveWeightAndDimensionsUnits(
+			site.ID,
+			unitsSaveSuccessNotice,
+			unitsSaveFailureNotice
 		);
 
 		this.props.createWcsShippingSaveActionList(
@@ -114,6 +128,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			createWcsShippingSaveActionList,
+			saveWeightAndDimensionsUnits,
 		},
 		dispatch
 	);

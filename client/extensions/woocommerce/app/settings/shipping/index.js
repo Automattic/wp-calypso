@@ -41,7 +41,7 @@ class Shipping extends Component {
 		return (
 			<Main className={ classNames( 'shipping', className ) } wideLayout>
 				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } />
-				<ShippingOrigin />
+				<ShippingOrigin onChange={ this.onChange } />
 				<ShippingZoneList />
 				{ wcsEnabled && <LabelSettings onChange={ this.onChange } /> }
 				{ wcsEnabled && <Packages onChange={ this.onChange } /> }

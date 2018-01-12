@@ -17,7 +17,7 @@ import {
 } from 'woocommerce/state/action-types';
 
 const update = ( state, { data } ) => {
-	if ( ! data ) {
+	if ( ! data || ! data.update ) {
 		return state;
 	}
 
@@ -37,7 +37,9 @@ export default createReducer( null, {
 
 	[ WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING ]: update,
 
-	[ WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS ]: update,
+	[ WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS ]: ( state, { data } ) => {
+		return updateSettings( 'products', state || [], data );
+	},
 
 	[ WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE ]: () => {
 		return ERROR;

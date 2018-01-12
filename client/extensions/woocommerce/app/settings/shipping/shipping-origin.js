@@ -15,7 +15,7 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import StoreAddress from 'woocommerce/components/store-address';
 import ShippingUnits from './shipping-units';
 
-const ShippingOrigin = ( { translate } ) => {
+const ShippingOrigin = ( { translate, onChange } ) => {
 	return (
 		<div className="shipping__origin">
 			<ExtendedHeader
@@ -24,7 +24,7 @@ const ShippingOrigin = ( { translate } ) => {
 			/>
 			<Card className="shipping__origin-settings">
 				<StoreAddress showLabel={ false } />
-				<ShippingUnits />
+				<ShippingUnits onChange={ onChange } />
 			</Card>
 		</div>
 	);

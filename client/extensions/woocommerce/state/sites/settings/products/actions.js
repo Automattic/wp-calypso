@@ -14,7 +14,12 @@ import {
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { areSettingsProductsLoaded, areSettingsProductsLoading } from './selectors';
+import {
+	areSettingsProductsLoaded,
+	areSettingsProductsLoading,
+	getWeightUnitSetting,
+	getDimensionsUnitSetting,
+} from './selectors';
 
 export const fetchSettingsProducts = siteId => ( dispatch, getState ) => {
 	if (
@@ -67,9 +72,16 @@ export const changeSettingsProductsSetting = ( siteId, setting ) => dispatch => 
  *
  * @param {Number} siteId wpcom site id.
  * @param {Mixed}  settingsData, either single object { id: '', value: '' }, or array of settings objects
+ * @param {Mixed}  successAction, either action object or empty (null)
+ * @param {Mixed}  failureAction, either action object or empty (null)
  * @return {Object} Action object
  */
-export const updateSettingsProducts = ( siteId, settingsData ) => dispatch => {
+export const updateSettingsProducts = (
+	siteId,
+	settingsData,
+	successAction = null,
+	failureAction = null
+) => dispatch => {
 	const updateData = Array.isArray( settingsData ) ? settingsData : [ settingsData ];
 	const updateAction = {
 		type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
@@ -82,6 +94,9 @@ export const updateSettingsProducts = ( siteId, settingsData ) => dispatch => {
 	return request( siteId )
 		.post( 'settings/products/batch', { update: updateData } )
 		.then( data => {
+			if ( successAction ) {
+				dispatch( successAction );
+			}
 			dispatch( {
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
 				siteId,
@@ -89,6 +104,9 @@ export const updateSettingsProducts = ( siteId, settingsData ) => dispatch => {
 			} );
 		} )
 		.catch( err => {
+			if ( failureAction ) {
+				dispatch( failureAction );
+			}
 			dispatch( {
 				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
 				error: err,
@@ -96,4 +114,30 @@ export const updateSettingsProducts = ( siteId, settingsData ) => dispatch => {
 				siteId,
 			} );
 		} );
+};
+
+/**
+ * Updates settings/products via batch endpoint.
+ *
+ * @param {Number} siteId wpcom site id.
+ * @param {Object}  successAction, success action object
+ * @param {Object}  failureAction, failure action object
+ * @return {Object} Action object
+ */
+export const saveWeightAndDimensionsUnits = ( siteId, successAction, failureAction ) => (
+	dispatch,
+	getState
+) => {
+	if (
+		! areSettingsProductsLoaded( getState(), siteId ) ||
+		areSettingsProductsLoading( getState(), siteId )
+	) {
+		return;
+	}
+
+	const weight = getWeightUnitSetting( getState(), siteId );
+	const dimensions = getDimensionsUnitSetting( getState(), siteId );
+	return dispatch(
+		updateSettingsProducts( siteId, [ weight, dimensions ], successAction, failureAction )
+	);
 };
