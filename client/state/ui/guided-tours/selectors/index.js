@@ -81,7 +81,7 @@ const getToursSeen = createSelector(
 	getToursHistory
 );
 
-const reallyGetTourFromQuery = state => {
+const getTourFromQuery = state => {
 	const initial = getInitialQueryArguments( state );
 	const current = getCurrentQueryArguments( state );
 	const tourProps = [ 'tour', '_timestamp' ];
@@ -93,9 +93,9 @@ const reallyGetTourFromQuery = state => {
  * Returns the name of the tour requested via the URL's query arguments, if the
  * tour exists. Returns `undefined` otherwise.
  */
-const getTourFromQuery = createSelector(
+const getTourNameFromQuery = createSelector(
 	state => {
-		const { tour, _timestamp } = reallyGetTourFromQuery( state );
+		const { tour, _timestamp } = getTourFromQuery( state );
 		if ( tour && find( relevantFeatures, { tour } ) ) {
 			return { tour, _timestamp };
 		}
@@ -120,7 +120,7 @@ const hasJustSeenTour = createSelector(
  * "just" been seen (i.e., in the current Calypso session).
  */
 const findRequestedTour = state => {
-	const requestedTour = getTourFromQuery( state );
+	const requestedTour = getTourNameFromQuery( state );
 	if ( requestedTour && ! hasJustSeenTour( state, requestedTour ) ) {
 		return requestedTour.tour;
 	}
