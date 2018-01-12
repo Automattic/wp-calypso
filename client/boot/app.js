@@ -13,7 +13,7 @@ import debugFactory from 'debug';
 import { invoke } from 'lodash';
 import page from 'page';
 import React from 'react';
-import measureComponents from 'lib/performance/measure-components';
+import measureWastedRenders from 'lib/performance/wasted-renders';
 
 /**
  * Internal dependencies
@@ -54,5 +54,5 @@ window.AppBoot = () => {
 
 // measure wasted component renders
 if ( process.env.NODE_ENV !== 'production' ) {
-	measureComponents( React );
+	measureWastedRenders( React );
 }
