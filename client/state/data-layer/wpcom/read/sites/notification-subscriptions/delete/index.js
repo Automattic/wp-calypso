@@ -16,8 +16,8 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { subscribeToNewPostNotifications } from 'state/reader/follows/actions';
 
 export function fromApi( response ) {
-	const isAdded = !! ( response && response.success );
-	if ( ! isAdded ) {
+	const isUnsubscribed = !! ( response && response.subscribed === false );
+	if ( ! isUnsubscribed ) {
 		throw new Error(
 			`Unsubscription from new post notifications failed with response: ${ JSON.stringify(
 				response
@@ -31,9 +31,10 @@ export function fromApi( response ) {
 export function requestNotificationUnsubscription( action ) {
 	return http(
 		{
-			path: `/read/sites/${ action.payload.blogId }/notification-subscriptions/delete`,
 			method: 'POST',
 			apiNamespace: 'wpcom/v2',
+			path: `/read/sites/${ action.payload.blogId }/notification-subscriptions/delete`,
+			body: {}, // have to have an empty body to make wpcom-http happy
 		},
 		action
 	);

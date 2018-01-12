@@ -28,6 +28,7 @@ describe( 'notification-subscriptions-delete', () => {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						path: `/read/sites/${ blogId }/notification-subscriptions/delete`,
+						body: {},
 					},
 					action
 				)
@@ -36,8 +37,9 @@ describe( 'notification-subscriptions-delete', () => {
 	} );
 
 	describe( 'fromApi', () => {
-		test( 'should throw an error when success is false', () => {
+		test( 'should throw an error when the unsubscription fails', () => {
 			const response = {
+				subscribed: true,
 				success: false,
 			};
 
@@ -49,6 +51,7 @@ describe( 'notification-subscriptions-delete', () => {
 		test( 'should return response unchanged if response indicates a success', () => {
 			const response = Object.freeze( {
 				success: true,
+				subscribed: false,
 			} );
 
 			expect( fromApi( response ) ).toEqual( response );
