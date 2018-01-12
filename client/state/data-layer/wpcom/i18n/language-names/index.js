@@ -1,8 +1,8 @@
 /** @format */
 
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import { noop } from 'lodash';
 
 /**
@@ -27,7 +27,7 @@ export const fetchLanguageNames = action =>
 	http(
 		{
 			method: 'GET',
-			apiVersion: '1.1',
+			apiNamespace: 'wpcom/v2',
 			path: '/i18n/language-names',
 		},
 		action
