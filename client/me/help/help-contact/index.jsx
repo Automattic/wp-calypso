@@ -24,7 +24,6 @@ import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
 import analytics from 'lib/analytics';
-import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import {
@@ -33,7 +32,6 @@ import {
 	getTicketSupportRequestError,
 } from 'state/help/ticket/selectors';
 import HappychatConnection from 'components/happychat/connection-connected';
-import QueryOlark from 'components/data/query-olark';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 import {
@@ -393,13 +391,11 @@ class HelpContact extends React.Component {
 	 * @returns {Boolean} Whether all the data is present to determine the variation to show
 	 */
 	hasDataToDetermineVariation = () => {
-		const { olark } = this.state;
 		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
 
-		const olarkReadyOrTimedOut = olark.isOlarkReady || this.props.olarkTimedOut;
 		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
 
-		return olarkReadyOrTimedOut && ticketReadyOrError;
+		return ticketReadyOrError;
 	};
 
 	shouldShowPreloadForm = () => {
@@ -512,7 +508,6 @@ class HelpContact extends React.Component {
 				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
-				<QueryOlark />
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
 			</Main>
@@ -532,7 +527,6 @@ export default connect(
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
-			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isHappychatAvailable: isHappychatAvailable( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
