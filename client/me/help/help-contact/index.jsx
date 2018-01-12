@@ -16,7 +16,6 @@ import config from 'config';
 import Main from 'components/main';
 import Card from 'components/card';
 import Notice from 'components/notice';
-import OlarkChatbox from 'components/olark-chatbox';
 import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
@@ -335,12 +334,6 @@ class HelpContact extends React.Component {
 	trackChatDisplayError = olarkEvent => {
 		const { olark, isChatEnded } = this.state;
 
-		// If the user sent/received a message to/from an operator but the chatbox is not inlined
-		// then something must be going wrong. Lets record this event and give some details
-		if ( this.canShowChatbox() ) {
-			return;
-		}
-
 		const tracksData = {
 			olark_event: olarkEvent,
 			olark_locale: olark.locale,
@@ -444,11 +437,6 @@ class HelpContact extends React.Component {
 	shouldUseDirectly = () => {
 		const isEn = this.props.currentUserLocale === 'en';
 		return isEn && ! this.props.isDirectlyFailed;
-	};
-
-	canShowChatbox = () => {
-		const { olark, isChatEnded } = this.state;
-		return isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable );
 	};
 
 	getSupportVariation = () => {
@@ -647,10 +635,6 @@ class HelpContact extends React.Component {
 			);
 		}
 
-		if ( this.canShowChatbox() ) {
-			return <OlarkChatbox />;
-		}
-
 		// Hide the olark widget in the bottom right corner.
 		olarkActions.hideBox();
 
@@ -726,11 +710,7 @@ class HelpContact extends React.Component {
 					{ this.props.translate( 'Contact Us' ) }
 				</HeaderCake>
 				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
-				<Card
-					className={ this.canShowChatbox() ? 'help-contact__chat-form' : 'help-contact__form' }
-				>
-					{ this.getView() }
-				</Card>
+				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryOlark />
 				<QueryTicketSupportConfiguration />
