@@ -33,6 +33,8 @@ class ProductFormVariationsCard extends Component {
 		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	simpleFields = [
@@ -144,6 +146,8 @@ class ProductFormVariationsCard extends Component {
 							product={ product }
 							variations={ variations }
 							editProductVariation={ editProductVariation }
+							onUploadStart={ this.props.onUploadStart }
+							onUploadFinish={ this.props.onUploadFinish }
 						/>
 					</div>
 				) }

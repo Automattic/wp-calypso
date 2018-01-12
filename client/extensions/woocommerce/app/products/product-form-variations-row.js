@@ -32,6 +32,8 @@ class ProductFormVariationsRow extends Component {
 		manageStock: PropTypes.bool,
 		onShowDialog: PropTypes.func,
 		editProductVariation: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -84,6 +86,7 @@ class ProductFormVariationsRow extends Component {
 			transientId: file.ID,
 			isUploading: true,
 		} );
+		this.props.onUploadStart();
 	};
 
 	onUpload = file => {
@@ -169,6 +172,7 @@ class ProductFormVariationsRow extends Component {
 					onSelect={ this.onSelect }
 					onUpload={ this.onUpload }
 					onError={ this.onError }
+					onFinish={ this.props.onUploadFinish }
 				>
 					{ image }
 				</ProductImageUploader>

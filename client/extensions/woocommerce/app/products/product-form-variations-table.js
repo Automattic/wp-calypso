@@ -26,6 +26,8 @@ class ProductFormVariationsTable extends React.Component {
 		variations: PropTypes.array,
 		product: PropTypes.object,
 		editProductVariation: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -125,6 +127,8 @@ class ProductFormVariationsTable extends React.Component {
 				manageStock={ manageStock }
 				editProductVariation={ editProductVariation }
 				onShowDialog={ this.onShowDialog }
+				onUploadStart={ this.props.onUploadStart }
+				onUploadFinish={ this.props.onUploadFinish }
 			/>
 		);
 	};

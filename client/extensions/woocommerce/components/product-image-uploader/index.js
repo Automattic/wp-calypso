@@ -51,6 +51,13 @@ class ProductImageUploader extends Component {
 		errors: [],
 	};
 
+	componentWillMount() {
+		this._isMounted = true;
+	}
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	showError = ( media, transientId ) => {
 		const { onError, errorNotice, translate } = this.props;
 		const { errors } = this.state;
@@ -159,6 +166,12 @@ class ProductImageUploader extends Component {
 
 			// File has finished uploading or failed.
 			if ( ! isUploadInProgress ) {
+				// Stop uploading and don't push events if they navigated away
+				if ( ! this._isMounted ) {
+					MediaStore.off( 'change', handleUpload );
+					return;
+				}
+
 				if ( media ) {
 					const file = find( filesToUpload, f => f.ID === transientId );
 					if ( media.URL ) {

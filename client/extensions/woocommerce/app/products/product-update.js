@@ -69,6 +69,10 @@ class ProductUpdate extends React.Component {
 		editProductVariation: PropTypes.func.isRequired,
 	};
 
+	state = {
+		isUploading: [],
+	};
+
 	componentDidMount() {
 		const { params, product, site, variations } = this.props;
 		const productId = Number( params.product );
@@ -107,6 +111,18 @@ class ProductUpdate extends React.Component {
 			this.props.clearProductVariationEdits( site.ID );
 		}
 	}
+
+	onUploadStart = () => {
+		this.setState( prevState => ( {
+			isUploading: [ ...prevState.isUploading, [ true ] ],
+		} ) );
+	};
+
+	onUploadFinish = () => {
+		this.setState( prevState => ( {
+			isUploading: prevState.isUploading.slice( 1 ),
+		} ) );
+	};
 
 	// TODO: In v1, this deletes a product, as we don't have trash management.
 	// Once we have trashing management, we can introduce 'trash' instead.
@@ -184,7 +200,7 @@ class ProductUpdate extends React.Component {
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
-		const saveEnabled = isValid && ! isBusy && hasEdits;
+		const saveEnabled = isValid && ! isBusy && hasEdits && 0 === this.state.isUploading.length;
 
 		return (
 			<Main className={ className } wideLayout>
@@ -207,6 +223,8 @@ class ProductUpdate extends React.Component {
 					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
+					onUploadStart={ this.onUploadStart }
+					onUploadFinish={ this.onUploadFinish }
 				/>
 			</Main>
 		);

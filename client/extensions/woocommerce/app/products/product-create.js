@@ -65,6 +65,10 @@ class ProductCreate extends React.Component {
 		editProductVariation: PropTypes.func.isRequired,
 	};
 
+	state = {
+		isUploading: [],
+	};
+
 	componentDidMount() {
 		const { product, site } = this.props;
 
@@ -95,6 +99,18 @@ class ProductCreate extends React.Component {
 			this.props.clearProductVariationEdits( site.ID );
 		}
 	}
+
+	onUploadStart = () => {
+		this.setState( prevState => ( {
+			isUploading: [ ...prevState.isUploading, [ true ] ],
+		} ) );
+	};
+
+	onUploadFinish = () => {
+		this.setState( prevState => ( {
+			isUploading: prevState.isUploading.slice( 1 ),
+		} ) );
+	};
 
 	onSave = () => {
 		const { site, product, finishedInitialSetup, translate } = this.props;
@@ -172,7 +188,7 @@ class ProductCreate extends React.Component {
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
-		const saveEnabled = isValid && ! isBusy;
+		const saveEnabled = isValid && ! isBusy && 0 === this.state.isUploading.length;
 
 		return (
 			<Main className={ className } wideLayout>
@@ -192,6 +208,8 @@ class ProductCreate extends React.Component {
 					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
+					onUploadStart={ this.onUploadStart }
+					onUploadFinish={ this.onUploadFinish }
 				/>
 			</Main>
 		);

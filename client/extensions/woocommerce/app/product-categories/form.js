@@ -34,6 +34,8 @@ class ProductCategoryForm extends Component {
 			id: PropTypes.isRequired,
 		} ),
 		editProductCategory: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -131,6 +133,7 @@ class ProductCategoryForm extends Component {
 			transientId: file.ID,
 			isUploading: true,
 		} );
+		this.props.onUploadStart();
 	};
 
 	onUpload = file => {
@@ -208,6 +211,7 @@ class ProductCategoryForm extends Component {
 					onSelect={ this.onSelect }
 					onUpload={ this.onUpload }
 					onError={ this.onError }
+					onFinish={ this.props.onUploadFinish }
 				>
 					{ image }
 				</ProductImageUploader>

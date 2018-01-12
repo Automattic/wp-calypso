@@ -31,6 +31,8 @@ export default class ProductFormDetailsCard extends Component {
 			name: PropTypes.string,
 		} ),
 		editProduct: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -130,6 +132,8 @@ export default class ProductFormDetailsCard extends Component {
 						images={ images }
 						onUpload={ this.onImageUpload }
 						onRemove={ this.onImageRemove }
+						onUploadStart={ this.props.onUploadStart }
+						onUploadFinish={ this.props.onUploadFinish }
 					/>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet className="products__product-form-details-basic-name">

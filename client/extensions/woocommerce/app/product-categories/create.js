@@ -49,6 +49,7 @@ class ProductCategoryCreate extends React.Component {
 
 	state = {
 		busy: false,
+		isUploading: false,
 	};
 
 	componentDidMount() {
@@ -78,6 +79,14 @@ class ProductCategoryCreate extends React.Component {
 		}
 	}
 
+	onUploadStart = () => {
+		this.setState( { isUploading: true } );
+	};
+
+	onUploadFinish = () => {
+		this.setState( { isUploading: false } );
+	};
+
 	onSave = () => {
 		const { site, category, translate } = this.props;
 		this.setState( { busy: true } );
@@ -106,13 +115,14 @@ class ProductCategoryCreate extends React.Component {
 
 	render() {
 		const { site, category, hasEdits, className } = this.props;
-		const { busy } = this.state;
+		const { busy, isUploading } = this.state;
 
 		const saveEnabled =
 			hasEdits &&
 			category &&
 			( category.name && category.name.length ) &&
-			! isNull( category.parent );
+			! isNull( category.parent ) &&
+			! isUploading;
 
 		return (
 			<Main className={ className } wideLayout>
@@ -127,6 +137,8 @@ class ProductCategoryCreate extends React.Component {
 					siteId={ site && site.ID }
 					category={ category || { parent: 0 } }
 					editProductCategory={ this.props.editProductCategory }
+					onUploadStart={ this.onUploadStart }
+					onUploadFinish={ this.onUploadFinish }
 				/>
 			</Main>
 		);

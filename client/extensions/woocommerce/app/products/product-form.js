@@ -32,6 +32,8 @@ export default class ProductForm extends Component {
 		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	renderPlaceholder() {
@@ -61,7 +63,13 @@ export default class ProductForm extends Component {
 
 		return (
 			<div className={ classNames( 'products__form', this.props.className ) }>
-				<ProductFormDetailsCard siteId={ siteId } product={ product } editProduct={ editProduct } />
+				<ProductFormDetailsCard
+					siteId={ siteId }
+					product={ product }
+					editProduct={ editProduct }
+					onUploadStart={ this.props.onUploadStart }
+					onUploadFinish={ this.props.onUploadFinish }
+				/>
 				<ProductFormAdditionalDetailsCard
 					siteId={ siteId }
 					product={ product }
@@ -83,6 +91,8 @@ export default class ProductForm extends Component {
 					editProductCategory={ editProductCategory }
 					editProductAttribute={ editProductAttribute }
 					editProductVariation={ editProductVariation }
+					onUploadStart={ this.props.onUploadStart }
+					onUploadFinish={ this.props.onUploadFinish }
 				/>
 
 				{ 'simple' === type && (

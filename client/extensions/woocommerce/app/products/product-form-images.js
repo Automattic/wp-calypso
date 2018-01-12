@@ -30,6 +30,8 @@ class ProductFormImages extends Component {
 		),
 		onUpload: PropTypes.func.isRequired,
 		onRemove: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -84,6 +86,7 @@ class ProductFormImages extends Component {
 				id: null,
 			};
 		} );
+		this.props.onUploadStart();
 		this.setState( {
 			images: [ ...images, ...newImages ],
 		} );
@@ -183,6 +186,7 @@ class ProductFormImages extends Component {
 							onUpload={ this.onUpload }
 							onError={ this.onError }
 							compact={ this.state.images.length > 0 }
+							onFinish={ this.props.onUploadFinish }
 						/>
 					</div>
 				</div>
