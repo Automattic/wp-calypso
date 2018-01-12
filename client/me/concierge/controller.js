@@ -51,8 +51,15 @@ const reschedule = ( context, next ) => {
 	next();
 };
 
+const siteSelector = ( context, next ) => {
+	context.getSiteSelectionHeaderText = () =>
+		'Please select a business site to book a Concierge session';
+	next();
+};
+
 export default {
 	book,
 	cancel,
 	reschedule,
+	siteSelector,
 };
