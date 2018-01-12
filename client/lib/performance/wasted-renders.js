@@ -9,7 +9,6 @@ import { isEqual, pickBy, forEach, cloneDeep } from 'lodash';
 const wastedRenders = {};
 window.wastedRenders = wastedRenders;
 
-const RENDER_COUNT = 'renderCount';
 const WASTED_COUNT = 'wastedRenderCount';
 const BAD_PROPS = 'bad_props';
 
@@ -18,7 +17,6 @@ const getDisplayName = o => o.displayName || o.constructor.displayName || o.cons
 function measuredComponentDidUpdate( nextProps ) {
 	const displayName = getDisplayName( this );
 	wastedRenders[ displayName ] = wastedRenders[ displayName ] || {
-		[ RENDER_COUNT ]: 0,
 		[ WASTED_COUNT ]: 0,
 		[ BAD_PROPS ]: {},
 	};
