@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Main from 'components/main';
+import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
 import Skeleton from './skeleton';
@@ -29,30 +30,29 @@ class ConciergeCancel extends Component {
 	};
 
 	getDisplayComponent = () => {
-		let cancellingMessage;
 		const { siteSlug, signupForm, translate } = this.props;
 
 		switch ( signupForm.status ) {
 			case CONCIERGE_STATUS_CANCELLED:
-				cancellingMessage = translate( 'Your Concierge session has been cancelled!' );
-				break;
+				return (
+					<Confirmation
+						buttonLabel={ translate( 'Schedule' ) }
+						buttonUrl={ `/me/concierge/${ siteSlug }/book` }
+						description={ translate( 'Would you like to schedule a new session?' ) }
+						title={ translate( 'Your Concierge session has been cancelled.' ) }
+					/>
+				);
 
 			case CONCIERGE_STATUS_CANCELLING_ERROR:
-				cancellingMessage = translate( 'We did not manage to cancel your session!' );
-				break;
+				return (
+					<Card highlight="error">
+						{ translate( "We couldn't cancel your session, please try again later." ) }
+					</Card>
+				);
 
 			default:
 				return <Skeleton />;
 		}
-
-		return (
-			<Confirmation
-				buttonLabel={ translate( 'Schedule' ) }
-				buttonUrl={ `/me/concierge/${ siteSlug }/book` }
-				description={ translate( 'Would you like to schedule a new session?' ) }
-				title={ cancellingMessage }
-			/>
-		);
 	};
 
 	componentDidMount() {
