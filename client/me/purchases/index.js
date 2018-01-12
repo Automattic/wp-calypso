@@ -116,7 +116,7 @@ export default function() {
 	);
 
 	// redirect legacy urls
-	page( '/purchases', () => page.redirect( paths.purchasesRoot() ) );
+	page( '/purchases', () => page.redirect( paths.purchasesRoot ) );
 	page( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
 		page.redirect( paths.managePurchase( siteName, purchaseId ) )
 	);
