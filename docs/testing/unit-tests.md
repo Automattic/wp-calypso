@@ -15,7 +15,7 @@ This guide is intended as a quick reference of common tools and conventions we u
 
 ## Running tests
 
-See [testing-overview.md](testing-overview.md).
+See [testing-overview.md](testing-overview.md) on how to run Calypso tests.
 
 ## Writing tests
 
@@ -80,6 +80,44 @@ describe( 'CheckboxWithLabel', () => {
 Snapshot testing is useful for verifying that any data produced during a test is not inadvertently changed. This is especially useful for large and complex data structures like component or state trees. See the [our full reference](snapshot-testing.md) for more information.
 
 ### Examples
+
+### Setup and Teardown methods
+
+The Jest API includes some nifty [setup and teardown methods](https://facebook.github.io/jest/docs/en/setup-teardown.html) that allow you to perform tasks *before* and *after* each or all of your tests, or tests within a specific `describe` block.
+
+These methods can handle asynchronous code to allow setup that you normally cannot do inline.
+
+For example, you 
+
+```javascript
+
+// one-time setup for *all* tests
+beforeAll( done => {
+    someAsyncAction()
+        .then( resp => {
+        	window.someGlobal = resp;
+        	done();
+        } );
+} );
+
+// one-time teardown for *all* tests
+afterAll( () => {
+    window.someGlobal = null;
+} );
+
+// one-time setup for *each* test
+beforeEach( () => {
+    
+} );
+
+// one-time teardown for *each* test
+afterEach( () => {
+    
+} );
+
+```
+
+Though it is good practice to clean up after your tests suites, Jest tests are run in isolation so changes to things such as global values won't effect other Calypso tests.
 
 ### Mocking dependencies
 
