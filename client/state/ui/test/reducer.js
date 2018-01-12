@@ -28,7 +28,6 @@ describe( 'reducer', () => {
 			'mediaModal',
 			'npsSurveyNotice',
 			'oauth2Clients',
-			'olark',
 			'postTypeList',
 			'preview',
 			'route',
