@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty, omit, isNumber } from 'lodash';
+import { isEmpty, omit, isNumber, isNull } from 'lodash';
 import page from 'page';
 
 /**
@@ -32,6 +32,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { getSaveErrorMessage } from './utils';
 
 class ProductCategoryCreate extends React.Component {
 	static propTypes = {
@@ -89,14 +90,15 @@ class ProductCategoryCreate extends React.Component {
 			} );
 		};
 
-		const failureAction = () => {
+		const failureAction = ( dispatch, getState, passedProps ) => {
 			this.setState( { busy: false } );
-			return errorNotice(
-				translate( 'There was a problem saving your category. Please try again.' ),
-				{
-					duration: 8000,
-				}
-			);
+
+			const { error } = passedProps;
+			const errorSlug = ( error && error.error ) || undefined;
+
+			return errorNotice( getSaveErrorMessage( errorSlug, translate ), {
+				duration: 8000,
+			} );
 		};
 
 		this.props.createProductCategory( site.ID, category, successAction, failureAction );
@@ -106,12 +108,18 @@ class ProductCategoryCreate extends React.Component {
 		const { site, category, hasEdits, className } = this.props;
 		const { busy } = this.state;
 
+		const saveEnabled =
+			hasEdits &&
+			category &&
+			( category.name && category.name.length ) &&
+			! isNull( category.parent );
+
 		return (
 			<Main className={ className } wideLayout>
 				<ProductCategoryHeader
 					site={ site }
 					category={ category }
-					onSave={ hasEdits ? this.onSave : false }
+					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ busy }
 				/>
 				<ProtectFormGuard isChanged={ hasEdits } />
