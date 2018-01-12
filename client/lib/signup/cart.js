@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { forEach, get } from 'lodash';
+import { forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,16 +13,13 @@ import wpcom from 'lib/wp';
 import productsListFactory from 'lib/products-list';
 const productsList = productsListFactory();
 import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 
-function addProductsToCart( cart, newCartItems, reduxStore ) {
-	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
-	const tldLandingPage = get( initialQueryArguments, 'tld_landing_page' );
+function addProductsToCart( cart, newCartItems, tldLandingPageNonce ) {
 	forEach( newCartItems, function( cartItem ) {
 		cartItem.extra = Object.assign(
 			cartItem.extra || {},
 			{ context: 'signup' },
-			tldLandingPage && { tld_landing_page: tldLandingPage }
+			tldLandingPageNonce && { tld_lp_nonce: tldLandingPageNonce }
 		);
 		const addFunction = cartItems.add( cartItem );
 
@@ -33,20 +30,20 @@ function addProductsToCart( cart, newCartItems, reduxStore ) {
 }
 
 export default {
-	createCart: function( cartKey, newCartItems, reduxStore, callback ) {
+	createCart: function( cartKey, newCartItems, tldLandingPageNonce, callback ) {
 		let newCart = {
 			cart_key: cartKey,
 			products: [],
 			temporary: false,
 		};
 
-		newCart = addProductsToCart( newCart, newCartItems, reduxStore );
+		newCart = addProductsToCart( newCart, newCartItems, tldLandingPageNonce );
 
 		wpcom.undocumented().cart( cartKey, 'POST', newCart, function( postError ) {
 			callback( postError );
 		} );
 	},
-	addToCart: function( cartKey, newCartItems, callback ) {
+	addToCart: function( cartKey, newCartItems, tldLandingPageNonce, callback ) {
 		wpcom.undocumented().cart( cartKey, function( error, data ) {
 			if ( error ) {
 				return callback( error );
@@ -56,7 +53,7 @@ export default {
 				newCartItems = [ newCartItems ];
 			}
 
-			const newCart = addProductsToCart( data, newCartItems );
+			const newCart = addProductsToCart( data, newCartItems, tldLandingPageNonce );
 
 			wpcom.undocumented().cart( cartKey, 'POST', newCart, callback );
 		} );

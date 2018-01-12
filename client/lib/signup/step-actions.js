@@ -27,12 +27,15 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteId } from 'state/selectors';
 import { requestSites } from 'state/sites/actions';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
+	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
+	const tldLandingPageNonce = get( initialQueryArguments, 'tld_lp_nonce' );
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -53,7 +56,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			);
 		}
 
-		SignupCart.createCart( cartKey, domainChoiceCart, reduxStore, error =>
+		SignupCart.createCart( cartKey, domainChoiceCart, tldLandingPageNonce, error =>
 			callback( error, providedDependencies )
 		);
 	} else if ( designType === 'existing-site' ) {
@@ -65,7 +68,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		SignupCart.createCart(
 			siteId,
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
-			reduxStore,
+			tldLandingPageNonce,
 			error => {
 				callback( error, providedDependencies );
 				page.redirect( `/checkout/${ siteSlug }` );
@@ -111,6 +114,8 @@ export function createSiteWithCart(
 	const designType = getDesignType( reduxStore.getState() ).trim();
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
+	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
+	const tldLandingPageNonce = get( initialQueryArguments, 'tld_lp_nonce' );
 
 	wpcom.undocumented().sitesNew(
 		{
@@ -163,7 +168,7 @@ export function createSiteWithCart(
 				].filter( item => item );
 
 				if ( newCartItems.length ) {
-					SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
+					SignupCart.addToCart( siteId, newCartItems, tldLandingPageNonce, function( cartError ) {
 						callback( cartError, providedDependencies );
 					} );
 				} else {
@@ -302,7 +307,7 @@ export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } )
 
 	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-	SignupCart.addToCart( siteId, newCartItems, error =>
+	SignupCart.addToCart( siteId, newCartItems, null, error =>
 		callback( error, { cartItem, privacyItem } )
 	);
 }
