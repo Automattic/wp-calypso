@@ -520,6 +520,17 @@ class ActivityLog extends Component {
 						) }
 					/>
 				) }
+				{ 'provisioning' === rewindState.state && (
+					<Banner
+						icon="history"
+						disableHref
+						title={ translate( 'Site configuration underway' ) }
+						description={ translate(
+							"There's nothing more you need to do right now. " +
+								"You'll be able to restore backups soon."
+						) }
+					/>
+				) }
 				{ this.renderErrorMessage() }
 				{ hasFirstBackup && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
