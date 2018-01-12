@@ -282,7 +282,8 @@
     "stylelint": "6.9.0",
     "supertest": "2.0.0",
     "terminal-kit": "1.13.13",
-    "webpack-bundle-analyzer": "2.9.2"
+    "webpack-bundle-analyzer": "2.9.2",
+    "why-did-you-update": "0.1.0"
   },
   "optionalDependencies": {
     "fsevents": "1.1.3"

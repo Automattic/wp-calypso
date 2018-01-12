@@ -9,6 +9,7 @@ if ( process.env.NODE_ENV === 'development' ) {
 /**
  * External dependencies
  */
+import React from 'react';
 import debugFactory from 'debug';
 import { invoke } from 'lodash';
 import page from 'page';
@@ -49,3 +50,9 @@ window.AppBoot = () => {
 		user.once( 'change', () => boot( user ) );
 	}
 };
+
+if ( process.env.NODE_ENV === 'development' ) {
+	const { whyDidYouUpdate } = require( 'why-did-you-update' );
+
+	whyDidYouUpdate( React );
+}
