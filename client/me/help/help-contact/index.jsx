@@ -18,7 +18,6 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
-import olarkEvents from 'lib/olark-events';
 import HelpContactForm from 'me/help/help-contact-form';
 import HelpContactClosed from 'me/help/help-contact-closed';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
@@ -85,18 +84,12 @@ class HelpContact extends React.Component {
 		olark: olarkStore.get(),
 		isSubmitting: false,
 		confirmation: null,
-		isChatEnded: false,
 	};
 
 	componentDidMount() {
 		this.prepareDirectlyWidget();
 
 		olarkStore.on( 'change', this.updateOlarkState );
-		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
-		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
-		olarkEvents.on( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
-		olarkEvents.on( 'api.chat.onMessageToVisitor', this.onMessageToVisitor );
-		olarkEvents.on( 'api.chat.onMessageToOperator', this.onMessageToOperator );
 
 		olarkActions.updateDetails();
 
@@ -118,11 +111,6 @@ class HelpContact extends React.Component {
 		const { details, isOperatorAvailable } = this.state.olark;
 
 		olarkStore.removeListener( 'change', this.updateOlarkState );
-		olarkEvents.off( 'api.chat.onOperatorsAway', this.onOperatorsAway );
-		olarkEvents.off( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
-		olarkEvents.off( 'api.chat.onCommandFromOperator', this.onCommandFromOperator );
-		olarkEvents.off( 'api.chat.onMessageToVisitor', this.onMessageToVisitor );
-		olarkEvents.off( 'api.chat.onMessageToOperator', this.onMessageToOperator );
 
 		if ( details.isConversing && ! isOperatorAvailable ) {
 			olarkActions.shrinkBox();
@@ -321,101 +309,6 @@ class HelpContact extends React.Component {
 
 		// Trigger the onkeydown callback added by olark so that we can send the message to the operator.
 		widgetInput.onkeydown( { keyCode: KEY_ENTER } );
-	};
-
-	onMessageToVisitor = () => {
-		this.trackChatDisplayError( 'onMessageToVisitor' );
-	};
-
-	onMessageToOperator = () => {
-		this.trackChatDisplayError( 'onMessageToOperator' );
-	};
-
-	trackChatDisplayError = olarkEvent => {
-		const { olark, isChatEnded } = this.state;
-
-		const tracksData = {
-			olark_event: olarkEvent,
-			olark_locale: olark.locale,
-			olark_is_chat_ended: isChatEnded,
-			olark_is_ready: olark.isOlarkReady,
-			olark_is_expanded: olark.isOlarkExpanded,
-			olark_is_user_eligible: olark.isUserEligible,
-			olark_is_operator_available: olark.isOperatorAvailable,
-		};
-
-		// Do a check here to make sure that details are present because an error in the
-		// olark event stack could cause it to be null/undefined
-		if ( olark.details ) {
-			tracksData.olark_is_conversing = olark.details.isConversing;
-		} else {
-			tracksData.olark_details_missing = true;
-		}
-
-		analytics.tracks.recordEvent( 'calypso_help_contact_chatbox_mistaken_display', tracksData );
-	};
-
-	trackContactFormAndFillSubject = () => {
-		const { details } = this.state.olark;
-		if ( ! details.isConversing ) {
-			analytics.tracks.recordEvent( 'calypso_help_offline_form_display', {
-				form_type: 'kayako',
-			} );
-		}
-		this.autofillSubject();
-	};
-
-	onOperatorsAway = () => {
-		const IS_UNAVAILABLE = false;
-		this.trackContactFormAndFillSubject();
-		this.showAvailabilityNotice( IS_UNAVAILABLE );
-	};
-
-	onOperatorsAvailable = () => {
-		const IS_AVAILABLE = true;
-
-		this.showAvailabilityNotice( IS_AVAILABLE );
-	};
-
-	showAvailabilityNotice = isAvailable => {
-		const { isUserEligible, isOlarkReady } = this.state.olark;
-
-		if ( ! isOlarkReady || ! isUserEligible ) {
-			return;
-		}
-
-		if ( isAvailable ) {
-			notices.success(
-				this.props.translate( 'Our Happiness Engineers have returned, chat with us.' )
-			);
-		} else {
-			notices.warning(
-				this.props.translate( 'Sorry! We just missed you as our Happiness Engineers stepped away.' )
-			);
-		}
-	};
-
-	/**
-	 * Auto fill the subject with the first five words contained in the message field of the contact form.
-	 */
-	autofillSubject = () => {
-		if ( ! savedContactForm || ! savedContactForm.message || savedContactForm.subject ) {
-			return;
-		}
-
-		const words = savedContactForm.message.split( /\s+/ );
-
-		savedContactForm = Object.assign( savedContactForm, {
-			subject: words.slice( 0, 5 ).join( ' ' ) + '…',
-		} );
-
-		this.forceUpdate();
-	};
-
-	onCommandFromOperator = event => {
-		if ( event.command.name === 'end' ) {
-			this.setState( { isChatEnded: true } );
-		}
 	};
 
 	shouldUseHappychat = () => {
