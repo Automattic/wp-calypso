@@ -2,9 +2,10 @@
 /**
  * External dependencies
  */
-import { addQueryArgs } from 'lib/route';
 import config from 'config';
 import PropTypes from 'prop-types';
+import { addQueryArgs } from 'lib/route';
+import { head, includes, isEmpty, split } from 'lodash';
 
 export function authQueryTransformer( queryObject ) {
 	return {
@@ -56,4 +57,23 @@ export const authQueryPropTypes = PropTypes.shape( {
 
 export function addCalypsoEnvQueryArg( url ) {
 	return addQueryArgs( { calypso_env: config( 'env_id' ) }, url );
+}
+
+/**
+ * Convert a auth query scope to a role
+ *
+ * Auth queries include a scope with is `role:hash`
+ *
+ * @param  {string}  scope From authorization query
+ * @return {?string}       Role parsed from scope if found
+ */
+export function getRoleFromScope( scope ) {
+	if ( ! includes( scope, ':' ) ) {
+		return null;
+	}
+	const role = head( split( scope, ':', 1 ) );
+	if ( ! isEmpty( role ) ) {
+		return role;
+	}
+	return null;
 }
