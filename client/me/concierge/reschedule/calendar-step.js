@@ -43,7 +43,7 @@ class CalendarStep extends Component {
 
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
-			// go to confirmation page if booking was successfull
+			// go to confirmation page if booking was successful
 			this.props.onComplete();
 		}
 	}
