@@ -522,14 +522,13 @@ class ActivityLog extends Component {
 				) }
 				{ 'provisioning' === rewindState.state && (
 					<Banner
-						description={ translate(
-							"We're configuring your site. " +
-								"There's nothing more you need to do right now. " +
-								'Check back soon to see your updated Activity Log ' +
-								'or restore backups.'
-						) }
 						icon="history"
 						disableHref
+						title={ translate( 'Site configuration underway' ) }
+						description={ translate(
+							"There's nothing more you need to do right now. " +
+								"You'll be able to restore backups soon."
+						) }
 					/>
 				) }
 				{ this.renderErrorMessage() }
