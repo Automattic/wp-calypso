@@ -17,7 +17,6 @@ import Main from 'components/main';
 import Card from 'components/card';
 import Notice from 'components/notice';
 import olarkStore from 'lib/olark-store';
-import olarkActions from 'lib/olark-store/actions';
 import HelpContactForm from 'me/help/help-contact-form';
 import HelpContactClosed from 'me/help/help-contact-closed';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
@@ -70,7 +69,6 @@ let savedContactForm = null;
 
 const SUPPORT_DIRECTLY = 'SUPPORT_DIRECTLY';
 const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
-const SUPPORT_LIVECHAT = 'SUPPORT_LIVECHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
@@ -128,28 +126,6 @@ class HelpContact extends React.Component {
 		} );
 
 		page( '/help' );
-	};
-
-	startChat = contactForm => {
-		const { message, howCanWeHelp, howYouFeel, site } = contactForm;
-
-		// Intentionally not translated since only HE's will see this in the olark console as a notification.
-		const notifications = [
-			'How can you help: ' + howCanWeHelp,
-			'How I feel: ' + howYouFeel,
-			'Site I need help with: ' + ( site ? site.URL : 'N/A' ),
-		];
-
-		notifications.forEach( olarkActions.sendNotificationToOperator );
-
-		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
-			site_plan_product_id: site ? site.plan.product_id : null,
-			is_automated_transfer: site ? site.options.is_automated_transfer : null,
-		} );
-
-		this.sendMessageToOperator( message );
-
-		this.clearSavedContactForm();
 	};
 
 	prepareDirectlyWidget = () => {
@@ -264,39 +240,6 @@ class HelpContact extends React.Component {
 		this.clearSavedContactForm();
 	};
 
-	/**
-	 * Send a message to an olark operator.
-	 * @param  {string} message The message to be sent to an operator
-	 */
-	sendMessageToOperator = message => {
-		// Get the DOM element of the olark textarea
-		const widgetInput = window.document.getElementById( 'habla_wcsend_input' );
-		const KEY_ENTER = 13;
-
-		if ( ! widgetInput ) {
-			// We couldn't find the input box in the olark widget so return false since we can't send the message
-			return;
-		}
-
-		// Theres no api call that sends a message to an operator so in order to achieve this we send a fake
-		// "enter" keypress event that olark will be listening for. The enter key event is what then triggers the sending of
-		// the message.
-
-		// Show the olark box so that we may manipulate it.
-		// You can only send a message when the olark box is expanded.
-		olarkActions.expandBox();
-
-		// Send focus to the textarea because olark expects it.
-		widgetInput.focus();
-
-		// IE requires this to be executed before the value is set, don't know why.
-		widgetInput.onkeydown( { keyCode: KEY_ENTER } );
-		widgetInput.value = message;
-
-		// Trigger the onkeydown callback added by olark so that we can send the message to the operator.
-		widgetInput.onkeydown( { keyCode: KEY_ENTER } );
-	};
-
 	shouldUseHappychat = () => {
 		const { olark } = this.state;
 
@@ -346,16 +289,6 @@ class HelpContact extends React.Component {
 				return {
 					onSubmit: this.startHappychat,
 					buttonLabel: isDev ? 'Happychat' : translate( 'Chat with us' ),
-					showSubjectField: false,
-					showHowCanWeHelpField: true,
-					showHowYouFeelField: true,
-					showSiteField: hasMoreThanOneSite,
-				};
-
-			case SUPPORT_LIVECHAT:
-				return {
-					onSubmit: this.startChat,
-					buttonLabel: translate( 'Chat with us' ),
 					showSubjectField: false,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
@@ -450,11 +383,7 @@ class HelpContact extends React.Component {
 	shouldShowTicketRequestErrorNotice = variationSlug => {
 		const { ticketSupportRequestError } = this.props;
 
-		return (
-			SUPPORT_HAPPYCHAT !== variationSlug &&
-			SUPPORT_LIVECHAT !== variationSlug &&
-			null != ticketSupportRequestError
-		);
+		return SUPPORT_HAPPYCHAT !== variationSlug && null != ticketSupportRequestError;
 	};
 
 	/**
