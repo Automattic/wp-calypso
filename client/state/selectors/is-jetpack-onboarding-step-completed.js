@@ -13,7 +13,7 @@ import createSelector from 'lib/create-selector';
 import { getJetpackOnboardingSettings } from 'state/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
 
-export const isJetpackOnboardingStepCompleted = createSelector(
+export default createSelector(
 	( state, siteId, stepName ) => {
 		const settings = getJetpackOnboardingSettings( state, siteId );
 
@@ -44,5 +44,3 @@ export const isJetpackOnboardingStepCompleted = createSelector(
 	},
 	state => [ state.jetpackOnboarding.settings ]
 );
-
-export default isJetpackOnboardingStepCompleted;
