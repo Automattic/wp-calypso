@@ -18,7 +18,7 @@ export const isJetpackOnboardingStepCompleted = createSelector(
 		const settings = getJetpackOnboardingSettings( state, siteId );
 
 		if ( ! settings ) {
-			return null;
+			return false;
 		}
 
 		switch ( stepName ) {
@@ -38,9 +38,9 @@ export const isJetpackOnboardingStepCompleted = createSelector(
 				return !! get( settings, 'businessAddress' );
 			case STEPS.WOOCOMMERCE:
 				return !! get( settings, 'woocommerce' );
+			default:
+				return false;
 		}
-
-		return null;
 	},
 	state => [ state.jetpackOnboarding.settings ]
 );

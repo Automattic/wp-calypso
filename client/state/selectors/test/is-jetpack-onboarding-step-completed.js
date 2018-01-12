@@ -5,7 +5,7 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants'
 import { isJetpackOnboardingStepCompleted } from 'state/selectors';
 
 describe( 'isJetpackOnboardingStepCompleted()', () => {
-	test( 'should return null for a null site ID', () => {
+	test( 'should return false for a null site ID', () => {
 		const state = {
 			jetpackOnboarding: {
 				settings: {
@@ -18,10 +18,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 		};
 		const completed = isJetpackOnboardingStepCompleted( state, null, STEPS.SITE_TITLE );
 
-		expect( completed ).toBeNull();
+		expect( completed ).toBe( false );
 	} );
 
-	test( 'should return null if we have no settings for that site', () => {
+	test( 'should return false if we have no settings for that site', () => {
 		const state = {
 			jetpackOnboarding: {
 				settings: {
@@ -34,10 +34,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 		};
 		const completed = isJetpackOnboardingStepCompleted( state, 12345678, STEPS.SITE_TITLE );
 
-		expect( completed ).toBeNull();
+		expect( completed ).toBe( false );
 	} );
 
-	test( 'should return null for an unexisting step', () => {
+	test( 'should return false for an unexisting step', () => {
 		const state = {
 			jetpackOnboarding: {
 				settings: {
@@ -50,7 +50,7 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 		};
 		const completed = isJetpackOnboardingStepCompleted( state, 2916284, 'some-unexisting-step' );
 
-		expect( completed ).toBeNull();
+		expect( completed ).toBe( false );
 	} );
 
 	test( 'should return true for site title step if we have modified the site title', () => {
