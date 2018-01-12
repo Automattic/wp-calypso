@@ -22,7 +22,7 @@ class ConfirmationStep extends Component {
 				description={ translate(
 					'We will send you an email with information on how to get prepared.'
 				) }
-				title={ translate( 'Your Concierge session is booked!' ) }
+				title={ translate( 'Your Concierge session has been rescheduled!' ) }
 			/>
 		);
 	}

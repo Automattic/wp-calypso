@@ -6,7 +6,9 @@
 import {
 	CONCIERGE_AVAILABLE_TIMES_REQUEST,
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
+	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,
+	CONCIERGE_APPOINTMENT_RESCHEDULE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
@@ -44,4 +46,17 @@ export const bookConciergeAppointment = (
 	customerId,
 	siteId,
 	meta,
+} );
+
+export const rescheduleConciergeAppointment = ( scheduleId, appointmentId, beginTimestamp ) => ( {
+	type: CONCIERGE_APPOINTMENT_RESCHEDULE,
+	scheduleId,
+	appointmentId,
+	beginTimestamp,
+} );
+
+export const cancelConciergeAppointment = ( scheduleId, appointmentId ) => ( {
+	type: CONCIERGE_APPOINTMENT_CANCEL,
+	scheduleId,
+	appointmentId,
 } );

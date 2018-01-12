@@ -48,6 +48,7 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 
 class AvailableTimePicker extends Component {
 	static propTypes = {
+		actionText: PropTypes.string.isRequired,
 		availableTimes: PropTypes.array.isRequired,
 		description: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -55,7 +56,14 @@ class AvailableTimePicker extends Component {
 	};
 
 	render() {
-		const { availableTimes, currentUserLocale, description, disabled, onSubmit, signupForm,
+		const {
+			actionText,
+			availableTimes,
+			currentUserLocale,
+			description,
+			disabled,
+			onSubmit,
+			signupForm,
 		} = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes, signupForm.timezone );
 
@@ -65,6 +73,7 @@ class AvailableTimePicker extends Component {
 
 				{ availability.map( ( { date, times } ) => (
 					<AvailableTimeCard
+						actionText={ actionText }
 						date={ date }
 						disabled={ disabled }
 						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }
