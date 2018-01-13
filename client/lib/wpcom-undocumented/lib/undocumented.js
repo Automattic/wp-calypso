@@ -46,16 +46,6 @@ function Undocumented( wpcom ) {
 	this.wpcom = wpcom;
 }
 
-Undocumented.prototype.timezones = function( params, fn ) {
-	if ( typeof params === 'function' ) {
-		fn = params;
-		params = {};
-	}
-
-	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
-	return this.wpcom.req.get( '/timezones', query, fn );
-};
-
 Undocumented.prototype.site = function( id ) {
 	return new Site( id, this.wpcom );
 };
@@ -2568,16 +2558,6 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 		},
 		fn
 	);
-};
-
-Undocumented.prototype.timezones = function( params, fn ) {
-	if ( typeof params === 'function' ) {
-		fn = params;
-		params = {};
-	}
-
-	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
-	return this.wpcom.req.get( '/timezones', query, fn );
 };
 
 /**
