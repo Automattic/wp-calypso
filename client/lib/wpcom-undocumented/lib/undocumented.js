@@ -1453,10 +1453,6 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {
-	return this.wpcom.req.get( '/read/recommendations/mine', query, fn );
-};
-
 Undocumented.prototype.graduateNewReader = function( fn ) {
 	const params = { apiVersion: '1.2' };
 	return this.wpcom.req.post( '/read/graduate-new-reader', params, {}, fn );
