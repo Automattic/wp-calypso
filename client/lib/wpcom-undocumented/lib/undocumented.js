@@ -1521,27 +1521,6 @@ Undocumented.prototype.usersSocialNew = function( query, fn ) {
 };
 
 /**
- * Verify a record in the signups table and create a new user from it
- *
- * @param {object} query - two key/value pairs;
- *           { 'phone_number': 'the users phone number', 'code': 'the verification code we sent to the phone number' }
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersPhoneVerification = function( query, fn ) {
-	var args;
-	debug( '/users/phone/verification' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/phone/verification',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
  * Sign up for a new email only account
  *
  * @param {object} query - a key/value pair; key: 'email', value: 'the users email address'
