@@ -105,26 +105,8 @@ Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
 };
 
 /*
- * Activate the Jetpack module with moduleSlug on the site with id siteId
- *
- * @param {int} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.jetpackModulesActivate = function( siteId, moduleSlug, fn ) {
-	debug( '/sites/:site_id:/jetpack/modules/:module_slug query' );
-	return this.wpcom.req.post(
-		{ path: '/sites/' + siteId + '/jetpack/modules/' + moduleSlug },
-		{},
-		{ active: true },
-		fn
-	);
-};
-
-/*
  * Activate a Jetpack module with slug moduleSlug for a site with id siteid.
- * Similar to jetpackModulesActivate(), but uses the REST API of the Jetpack site.
+ * Uses the REST API of the Jetpack site.
  *
  * @param {int} [siteId]
  * @param {string} [moduleSlug]
