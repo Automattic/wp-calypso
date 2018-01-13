@@ -7,14 +7,14 @@
 import * as api from '../../api';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
-	WOOCOMMERCE_SERVICES_SHIPPING_SCHEMA_REQUEST,
-	WOOCOMMERCE_SERVICES_SHIPPING_SCHEMA_REQUEST_SUCCESS,
+	WOOCOMMERCE_SERVICES_SHIPPING_METHOD_SCHEMA_REQUEST,
+	WOOCOMMERCE_SERVICES_SHIPPING_METHOD_SCHEMA_REQUEST_SUCCESS,
 } from 'woocommerce/woocommerce-services/state/action-types';
 import { isShippingMethodSchemaLoaded, isShippingMethodSchemaLoading } from './selectors';
 
 export const fetchShippingMethodSchemaSuccess = ( siteId, methodId, data ) => {
 	return {
-		type: WOOCOMMERCE_SERVICES_SHIPPING_SCHEMA_REQUEST_SUCCESS,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_METHOD_SCHEMA_REQUEST_SUCCESS,
 		siteId,
 		methodId,
 		data,
@@ -30,7 +30,7 @@ export const fetchShippingMethodSchema = ( siteId, methodId ) => ( dispatch, get
 	}
 
 	const getAction = {
-		type: WOOCOMMERCE_SERVICES_SHIPPING_SCHEMA_REQUEST,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_METHOD_SCHEMA_REQUEST,
 		methodId,
 		siteId,
 	};
