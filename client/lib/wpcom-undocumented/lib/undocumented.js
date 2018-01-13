@@ -2031,17 +2031,6 @@ Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
 };
 
-Undocumented.prototype.deleteEmailFollower = function( siteId, followerId, email, fn ) {
-	debug( '/site/:site_id/follower/:follower_id/delete' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/%s/follower/%d/delete',
-			body: { email: email },
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.fetchImporterState = function( siteId ) {
 	debug( `/sites/${ siteId }/importer/` );
 
