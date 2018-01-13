@@ -1521,26 +1521,6 @@ Undocumented.prototype.usersSocialNew = function( query, fn ) {
 };
 
 /**
- * Sign up for a new phone account
- *
- * @param {object} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersPhoneNew = function( query, fn ) {
-	var args;
-	debug( '/users/phone/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/phone/new',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
  * Log in to an existing phone account
  *
  * @param {object} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
