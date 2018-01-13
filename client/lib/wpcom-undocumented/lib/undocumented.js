@@ -1415,21 +1415,6 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readListTags = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:list/tags' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/tags',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readListItems = function( query, fn ) {
 	var params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:list/items' );
