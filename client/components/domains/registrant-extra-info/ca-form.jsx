@@ -88,7 +88,7 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.contactDetails.extra )
+			keys( this.props.contactDetailsExtra )
 		);
 
 		// Bail early as we already have the details from a previous purchase.
