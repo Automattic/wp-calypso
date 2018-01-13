@@ -224,15 +224,6 @@ UndocumentedMe.prototype.dismissSite = function( site, callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.devices = function( callback ) {
-	var args = {
-		apiVersion: '1.1',
-		path: '/notifications/devices/',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
 UndocumentedMe.prototype.sendVerificationEmail = function( callback ) {
 	debug( '/me/send-verification-email' );
 
