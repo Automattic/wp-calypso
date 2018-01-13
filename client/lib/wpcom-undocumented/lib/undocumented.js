@@ -1168,26 +1168,6 @@ Undocumented.prototype.paypalExpressUrl = function( data, fn ) {
 };
 
 /**
- * GET example domain suggestions
- *
- * @param {Function} fn - The callback funtion
- * @api public
- * @returns {Promise} promise
- */
-Undocumented.prototype.exampleDomainSuggestions = function( fn ) {
-	return this.wpcom.req.get( { path: '/domains/suggestions/examples' }, function(
-		error,
-		response
-	) {
-		if ( error ) {
-			return fn( error );
-		}
-
-		fn( null, response );
-	} );
-};
-
-/**
  * Update primary domain for blog
  *
  * @param {int} siteId The site ID
