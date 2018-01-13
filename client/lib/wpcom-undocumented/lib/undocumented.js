@@ -1453,11 +1453,6 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.graduateNewReader = function( fn ) {
-	const params = { apiVersion: '1.2' };
-	return this.wpcom.req.post( '/read/graduate-new-reader', params, {}, fn );
-};
-
 /**
  * Saves a user's A/B test variation on the backend
  *
