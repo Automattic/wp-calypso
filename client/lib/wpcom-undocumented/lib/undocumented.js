@@ -15,7 +15,6 @@ import url from 'url';
 import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
-import AccountRecoveryReset from './account-recovery-reset';
 import config from 'config';
 import i18n from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
@@ -56,10 +55,6 @@ Undocumented.prototype.me = function() {
 
 Undocumented.prototype.mailingList = function( category ) {
 	return new MailingList( category, this.wpcom );
-};
-
-Undocumented.prototype.accountRecoveryReset = function( userData ) {
-	return new AccountRecoveryReset( userData, this.wpcom );
 };
 
 /*
