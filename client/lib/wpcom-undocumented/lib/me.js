@@ -157,14 +157,6 @@ UndocumentedMe.prototype.getAppAuthCodes = function( callback ) {
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.getTrophies = function( callback ) {
-	var args = {
-		path: '/me/trophies',
-	};
-
-	return this.wpcom.req.get( args, callback );
-};
-
 UndocumentedMe.prototype.validateUsername = function( username, callback ) {
 	var args = {
 		apiVersion: '1.1',
