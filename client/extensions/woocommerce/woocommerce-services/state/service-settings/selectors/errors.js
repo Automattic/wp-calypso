@@ -9,7 +9,7 @@ import ObjectPath from 'objectpath';
  * Internal dependencies
  */
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
-import { createSelector } from 'lib/create-selector';
+import createSelector from 'lib/create-selector';
 
 export const EMPTY_ERROR = {
 	level: 'error',
