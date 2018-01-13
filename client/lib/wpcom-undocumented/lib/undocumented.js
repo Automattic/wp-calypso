@@ -1333,11 +1333,6 @@ Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
 	return this.wpcom.req.get( '/read/recommendations/posts', query, fn );
 };
 
-Undocumented.prototype.unfollowReaderTag = function( tag, fn ) {
-	debug( '/read/tags/' + tag + '/mine/delete' );
-	return this.wpcom.req.post( '/read/tags/' + tag + '/mine/delete', fn );
-};
-
 Undocumented.prototype.readLiked = function( query, fn ) {
 	var params = clone( query );
 	debug( '/read/liked' );
