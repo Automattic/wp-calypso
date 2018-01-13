@@ -1521,26 +1521,6 @@ Undocumented.prototype.usersSocialNew = function( query, fn ) {
 };
 
 /**
- * Log in to an existing email account
- *
- * @param {object} query - a key/value pair; key: 'email', value: 'the users email address'
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmail = function( query, fn ) {
-	var args;
-	debug( '/users/email' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/email',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
  * Verify a record in wp_signups and create a new user from it
  *
  * @param {object} query - two key/value pairs;
