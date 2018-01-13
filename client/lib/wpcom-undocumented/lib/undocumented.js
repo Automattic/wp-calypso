@@ -870,19 +870,6 @@ Undocumented.prototype.sharingButtons = function( siteId, query, fn ) {
 };
 
 /**
- * Return a single sharing buttons for the specified site
- *
- * @param {int|string} siteId The site ID or domain
- * @param {string} buttonId The sharing button ID
- * @param {Function} fn Method to invoke when request is complete
- * @api public
- */
-Undocumented.prototype.sharingButton = function( siteId, buttonId, fn ) {
-	debug( '/sites/:site_id:/sharing-buttons query' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/sharing-buttons/' + buttonId }, fn );
-};
-
-/**
  * Saves a single sharing buttons for the specified site
  *
  * @param {int|string} siteId The site ID or domain
