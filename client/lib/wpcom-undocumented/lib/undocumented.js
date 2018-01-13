@@ -89,20 +89,8 @@ Undocumented.prototype.updateJetpackJumpstart = function( siteId, active, fn ) {
 };
 
 /*
- * Jetpack modules data from the site with id siteId
- *
- * @param {int} [siteId]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.jetpackModules = function( siteId, fn ) {
-	debug( '/sites/:site_id:/jetpack/modules/ query' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/jetpack/modules', fn );
-};
-
-/*
  * Retrieve Jetpack modules data for a site with id siteid.
- * Similar to jetpackModules(), but uses the REST API of the Jetpack site.
+ * Uses the REST API of the Jetpack site.
  *
  * @param {int}      [siteId]
  * @param {Function} fn
