@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import {
 	areShippingZoneMethodsLoading,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 describe( 'selectors', () => {
 	describe( 'get shipping zone method', () => {
@@ -56,6 +58,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'shipping zone methods loading state', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'when some zone methods are still loading.', () => {
 			const state = {
 				extensions: {
