@@ -30,7 +30,7 @@ const defaultValues = {
 	ciraAgreementAccepted: false,
 };
 
-class RegistrantExtraInfoCaForm extends React.PureComponent {
+export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		contactDetailsExtra: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
