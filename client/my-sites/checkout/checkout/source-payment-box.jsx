@@ -122,7 +122,7 @@ class SourcePaymentBox extends PureComponent {
 				} );
 			} else if ( result.redirect_url ) {
 				this.setSubmitState( {
-					info: translate( 'Redirecting you to your bank to complete the payment.' ),
+					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
 					disabled: true
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
