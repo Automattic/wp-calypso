@@ -156,8 +156,9 @@ class Settings extends React.Component {
 	}
 
 	onChange = event => {
-		const { onChange, siteId } = this.props;
+		const { onChange, onSettingsChange, siteId } = this.props;
 		onChange( siteId, event );
+		onSettingsChange();
 	};
 
 	renderOriginNotification = ( item, index ) => {
@@ -252,6 +253,7 @@ Settings.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	fetchSettings: PropTypes.func.isRequired,
 	onChange: PropTypes.func.isRequired,
+	onSettingsChange: PropTypes.func.isRequired,
 	settings: PropTypes.object,
 	loading: PropTypes.bool,
 };
