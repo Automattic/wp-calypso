@@ -216,7 +216,7 @@ export const removeSlug = function( path ) {
  * in creating a post, the thumbnail ID is assigned to `featured_image`.
  *
  * @param  {Object} post Post object
- * @ret
+ * @returns {*} featured image id or undefined
  */
 export const getFeaturedImageId = function( post ) {
 	if ( ! post ) {
