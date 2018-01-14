@@ -13,6 +13,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS } from 'woocommerce/woocommerce-services/state/action-types';
 import { createReducer } from 'state/utils';
 
 const reducers = {};
@@ -36,6 +37,19 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ] = ( state, { data 
 
 reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = ( state, { data } ) => {
 	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ]( state, { data: [ data ] } );
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ] = (
+	state,
+	{ instanceId, data }
+) => {
+	return {
+		...state,
+		[ instanceId ]: {
+			...state[ instanceId ],
+			...data.formData,
+		},
+	};
 };
 
 export default createReducer( {}, reducers );
