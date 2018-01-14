@@ -34,6 +34,7 @@ export const transformApi = data =>
 			state: camelCase( data.state ),
 			lastUpdated: new Date( data.last_updated * 1000 ),
 		},
+		data.hasOwnProperty( 'can_autoconfigure' ) && { canAutoconfigure: data.can_autoconfigure },
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
 		data.downloads && { downloads: data.downloads.map( transformDownload ) },
 		data.reason && { failureReason: data.reason },
