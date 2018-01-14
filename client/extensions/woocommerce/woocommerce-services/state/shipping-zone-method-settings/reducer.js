@@ -16,8 +16,8 @@ const reducer = createReducer( null, {
 		return LOADING;
 	},
 
-	[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ]: ( state, { data } ) => {
-		return data;
+	[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS ]: () => {
+		return true;
 	},
 } );
 

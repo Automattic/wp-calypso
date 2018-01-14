@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, isObject } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,19 +20,7 @@ const getSAllhippingZoneMethodSettings = ( state, siteId = getSelectedSiteId( st
  * @return {boolean} Whether the settings for the giving shipping zone method have been successfully loaded from the server
  */
 export const isShippingZoneMethodSettingsLoaded = ( state, instanceId, siteId = getSelectedSiteId( state ) ) => {
-	return isObject( getSAllhippingZoneMethodSettings( state, siteId )[ instanceId ] );
-};
-
-/**
- * @param {Object} state Whole Redux state tree
- * @param {String} instanceId Shipping method instance ID
- * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Object|null} The shipping zone method settings object, or "null" if they haven't been retrieved yet
- */
-export const getShippingZoneMethodSettings = ( state, instanceId, siteId = getSelectedSiteId( state ) ) => {
-	return isShippingZoneMethodSettingsLoaded( state, instanceId, siteId )
-		? getSAllhippingZoneMethodSettings( state, siteId )[ instanceId ]
-		: null;
+	return true === getSAllhippingZoneMethodSettings( state, siteId )[ instanceId ];
 };
 
 /**
