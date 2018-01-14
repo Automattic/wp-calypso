@@ -56,6 +56,11 @@
 
 	.components__notification-origin {
 		width: 100%;
+		margin-bottom: 20px;
+	}
+
+	.components__notification-origin:last-child {
+		margin-bottom: 0;
 	}
 
 	.components__is-placeholder {
