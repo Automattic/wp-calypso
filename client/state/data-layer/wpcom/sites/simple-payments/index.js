@@ -22,8 +22,8 @@ import {
 	receiveDeleteProduct,
 } from 'state/simple-payments/product-list/actions';
 import { metaKeyToSchemaKeyMap, metadataSchema } from 'state/simple-payments/product-list/schema';
-import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, TransformerError } from 'state/data-layer/wpcom-http/utils';
+import wpcom, { returnAction } from 'state/data-layer/wpcom-http/wpcom';
 import { SIMPLE_PAYMENTS_PRODUCT_POST_TYPE } from 'lib/simple-payments/constants';
 import { isValidSimplePaymentsProduct } from 'lib/simple-payments/utils';
 import formatCurrency from 'lib/format-currency';
@@ -146,13 +146,10 @@ const deleteProduct = ( { siteId }, deletedPost ) => receiveDeleteProduct( siteI
 
 export const handleProductGet = dispatchRequestEx( {
 	fetch: action =>
-		http(
-			{
-				method: 'GET',
-				path: `/sites/${ action.siteId }/posts/${ action.productId }`,
-			},
-			action
-		),
+		wpcom
+			.site( action.siteId )
+			.post( action.productId )
+			.get( returnAction( action ) ),
 	fromApi: customPostToProduct,
 	onSuccess: addOrUpdateProduct,
 	onError: noop,
@@ -160,16 +157,12 @@ export const handleProductGet = dispatchRequestEx( {
 
 export const handleProductList = dispatchRequestEx( {
 	fetch: action =>
-		http(
+		wpcom.site( action.siteId ).postsList(
 			{
-				method: 'GET',
-				path: `/sites/${ action.siteId }/posts`,
-				query: {
-					type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
-					status: 'publish',
-				},
+				type: SIMPLE_PAYMENTS_PRODUCT_POST_TYPE,
+				status: 'publish',
 			},
-			action
+			returnAction( action )
 		),
 	fromApi: customPostsToProducts,
 	onSuccess: replaceProductList,
@@ -178,14 +171,9 @@ export const handleProductList = dispatchRequestEx( {
 
 export const handleProductListAdd = dispatchRequestEx( {
 	fetch: action =>
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ action.siteId }/posts/new`,
-				body: productToCustomPost( action.product ),
-			},
-			action
-		),
+		wpcom
+			.site( action.siteId )
+			.addPost( productToCustomPost( action.product ), returnAction( action ) ),
 	fromApi: customPostToProduct,
 	onSuccess: addOrUpdateProduct,
 	onError: noop,
@@ -193,14 +181,10 @@ export const handleProductListAdd = dispatchRequestEx( {
 
 export const handleProductListEdit = dispatchRequestEx( {
 	fetch: action =>
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ action.siteId }/posts/${ action.productId }`,
-				body: productToCustomPost( action.product ),
-			},
-			action
-		),
+		wpcom
+			.site( action.siteId )
+			.post( action.productId )
+			.update( productToCustomPost( action.product ), returnAction( action ) ),
 	fromApi: customPostToProduct,
 	onSuccess: addOrUpdateProduct,
 	onError: noop,
@@ -208,13 +192,10 @@ export const handleProductListEdit = dispatchRequestEx( {
 
 export const handleProductListDelete = dispatchRequestEx( {
 	fetch: action =>
-		http(
-			{
-				method: 'POST',
-				path: `/sites/${ action.siteId }/posts/${ action.productId }/delete`,
-			},
-			action
-		),
+		wpcom
+			.site( action.siteId )
+			.post( action.productId )
+			.del( returnAction( action ) ),
 	onSuccess: deleteProduct,
 	onError: noop,
 } );
