@@ -33,7 +33,9 @@ const defaultValues = {
 export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		contactDetailsExtra: PropTypes.object.isRequired,
+		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		getFieldProps: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
