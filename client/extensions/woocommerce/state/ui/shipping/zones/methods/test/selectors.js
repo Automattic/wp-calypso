@@ -24,6 +24,15 @@ const emptyZoneLocations = { country: [], continent: [], state: [], postcode: []
 
 describe( 'selectors', () => {
 	describe( 'getShippingZoneMethods', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
@@ -261,6 +270,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyEditingShippingZoneMethods', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
@@ -667,6 +685,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyOpenShippingZoneMethod', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return null when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
@@ -900,6 +927,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isCurrentlyOpenShippingZoneMethodNew', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return the isNew state of the current method', () => {
 			const state = createState( {
 				site: {

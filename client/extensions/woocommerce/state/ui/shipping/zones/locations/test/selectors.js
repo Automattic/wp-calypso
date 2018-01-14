@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ import {
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 const initialStateWithEmptyTempEdits = {
 	...initialState,
@@ -120,6 +122,15 @@ const createEditState = ( { zoneLocations, locationEdits } ) =>
 	} );
 
 describe( 'selectors', () => {
+	let wcsEnabledStub;
+	beforeEach( () => {
+		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+	} );
+
+	afterEach( () => {
+		wcsEnabledStub.restore();
+	} );
+
 	describe( 'getShippingZoneLocationsWithEdits', () => {
 		test( 'should return null when the shipping zones are not fully loaded', () => {
 			const state = createState( {
