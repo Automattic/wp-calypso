@@ -21,7 +21,7 @@ import {
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import treeSelect from 'lib/tree-select';
 import { fetchStatusInitialState } from './reducer';
 import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 
@@ -35,12 +35,11 @@ import { getStateKey, deconstructStateKey, getErrorKey } from './utils';
 export const getPostCommentItems = ( state, siteId, postId ) =>
 	get( state.comments.items, `${ siteId }-${ postId }` );
 
-export const getDateSortedPostComments = createSelector(
-	( state, siteId, postId ) => {
-		const comments = getPostCommentItems( state, siteId, postId );
+export const getDateSortedPostComments = treeSelect(
+	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
+	( [ comments ] ) => {
 		return sortBy( comments, comment => new Date( comment.date ) );
-	},
-	state => [ state.comments.items ]
+	}
 );
 
 export const getCommentById = ( { state, commentId, siteId } ) => {
@@ -77,11 +76,13 @@ export const getPostTotalCommentsCount = ( state, siteId, postId ) =>
  * @param {Number} postId site identification
  * @return {Date} most recent comment date
  */
-export const getPostNewestCommentDate = createSelector( ( state, siteId, postId ) => {
-	const items = getPostCommentItems( state, siteId, postId );
-	const firstContiguousComment = find( items, 'contiguous' );
-	return firstContiguousComment ? new Date( get( firstContiguousComment, 'date' ) ) : undefined;
-}, state => state.comments.items );
+export const getPostNewestCommentDate = treeSelect(
+	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
+	( [ comments ] ) => {
+		const firstContiguousComment = find( comments, 'contiguous' );
+		return firstContiguousComment ? new Date( get( firstContiguousComment, 'date' ) ) : undefined;
+	}
+);
 
 /***
  * Get oldest comment date for a given post
@@ -90,11 +91,13 @@ export const getPostNewestCommentDate = createSelector( ( state, siteId, postId 
  * @param {Number} postId site identification
  * @return {Date} earliest comment date
  */
-export const getPostOldestCommentDate = createSelector( ( state, siteId, postId ) => {
-	const items = getPostCommentItems( state, siteId, postId );
-	const lastContiguousComment = findLast( items, 'contiguous' );
-	return lastContiguousComment ? new Date( get( lastContiguousComment, 'date' ) ) : undefined;
-}, state => state.comments.items );
+export const getPostOldestCommentDate = treeSelect(
+	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
+	( [ comments ] ) => {
+		const lastContiguousComment = findLast( comments, 'contiguous' );
+		return lastContiguousComment ? new Date( get( lastContiguousComment, 'date' ) ) : undefined;
+	}
+);
 
 /***
  * Gets comment tree for a given post
@@ -105,9 +108,9 @@ export const getPostOldestCommentDate = createSelector( ( state, siteId, postId 
  * @param {Number} authorId - when specified we only return pending comments that match this id
  * @return {Object} comments tree, and in addition a children array
  */
-export const getPostCommentsTree = createSelector(
-	( state, siteId, postId, status = 'approved', authorId ) => {
-		const allItems = getPostCommentItems( state, siteId, postId );
+export const getPostCommentsTree = treeSelect(
+	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
+	( [ allItems ], siteId, postId, status = 'approved', authorId ) => {
 		const items = filter( allItems, item => {
 			//only return pending comments that match the comment author
 			if ( authorId && item.status === 'unapproved' && get( item, 'author.ID' ) !== authorId ) {
@@ -143,21 +146,22 @@ export const getPostCommentsTree = createSelector(
 			...commentsByIdMap,
 			children: map( roots, root => root.ID ).reverse(),
 		};
-	},
-	state => state.comments.items
+	}
 );
 
 export const getExpansionsForPost = ( state, siteId, postId ) =>
 	state.comments.expansions[ getStateKey( siteId, postId ) ];
 
-export const getHiddenCommentsForPost = createSelector(
-	( state, siteId, postId ) => {
-		const comments = keyBy( getPostCommentItems( state, siteId, postId ), 'ID' );
-		const expanded = getExpansionsForPost( state, siteId, postId );
+export const getHiddenCommentsForPost = treeSelect(
+	( state, siteId, postId ) => [
+		getPostCommentItems( state, siteId, postId ),
+		getExpansionsForPost( state, siteId, postId ),
+	],
+	( [ comments, expanded ] ) => {
+		const commentsById = keyBy( comments, 'ID' );
 
-		return pickBy( comments, comment => ! get( expanded, comment.ID ) );
-	},
-	state => [ state.comments.items, state.comments.expansions ]
+		return pickBy( commentsById, comment => ! get( expanded, comment.ID ) );
+	}
 );
 
 export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 ) => {
@@ -184,13 +188,16 @@ export const commentsFetchingStatus = ( state, siteId, postId, commentTotal = 0 
  * @param {Number} commentId comment identification
  * @return {Object} that has i_like and like_count props
  */
-export const getCommentLike = createSelector( ( state, siteId, postId, commentId ) => {
-	const items = getPostCommentItems( state, siteId, postId );
-	const comment = find( items, { ID: commentId } );
+export const getCommentLike = treeSelect(
+	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
+	( [ comments ], siteId, postId, commentId ) => {
+		const comment = find( comments, { ID: commentId } );
 
-	if ( ! comment ) {
-		return undefined;
-	}
-	const { i_like, like_count } = comment;
-	return { i_like, like_count };
-}, state => state.comments.items );
+		if ( ! comment ) {
+			return undefined;
+		}
+		const { i_like, like_count } = comment;
+		return { i_like, like_count };
+	},
+	state => state.comments.items
+);
