@@ -6,7 +6,7 @@
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
 export const credentialsReducer = keyedReducer(
@@ -24,7 +24,7 @@ export const settingsReducer = keyedReducer(
 	createReducer(
 		{},
 		{
-			[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: ( state, { settings } ) => ( {
+			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) => ( {
 				...state,
 				...settings,
 			} ),
