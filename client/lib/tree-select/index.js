@@ -3,45 +3,7 @@
 /**
  * External dependencies
  */
-import { isObject, forEach, some, isFunction } from 'lodash';
-
-/*
- * A map that is Weak with objects but Strong with primitives
- */
-export class MixedMap {
-	weakMap = new WeakMap();
-	map = new Map();
-
-	constructor( init ) {
-		forEach( init, ( [ key, val ] ) => {
-			this.mapForKey( key ).set( key, val );
-		} );
-	}
-
-	mapForKey = key => ( isObject( key ) ? this.weakMap : this.map );
-
-	clear() {
-		this.weakMap = new WeakMap();
-		this.map.clear();
-	}
-
-	set( k, v ) {
-		this.mapForKey( k ).set( k, v );
-		return this;
-	}
-
-	delete( k ) {
-		return this.mapForKey( k ).delete( k );
-	}
-
-	get( k ) {
-		return this.mapForKey( k ).get( k );
-	}
-
-	has( k ) {
-		return this.mapForKey( k ).has( k );
-	}
-}
+import { isObject, some, isFunction } from 'lodash';
 
 /**
  * Returns a selector that caches values.
@@ -58,7 +20,7 @@ export default function treeSelect( getDependents, selector ) {
 		);
 	}
 
-	const cache = new MixedMap();
+	const cache = new WeakMap();
 
 	const cachedSelector = function( state, ...args ) {
 		const dependents = getDependents( state, ...args );
@@ -86,11 +48,14 @@ export default function treeSelect( getDependents, selector ) {
 }
 
 /*
- * First tries to get the value (a MixedMap) for the key.
- * If the key is not present, then inserts a new MixedMap and returns it
+ * First tries to get the value for the key.
+ * If the key is not present, then inserts a new map and returns it
+ *
+ * Note: Inserts WeakMaps except for the last map which will be a regular Map.
  */
-function insertDependentKey( map, key ) {
-	return insertIfAbsent( map, key, new MixedMap() );
+function insertDependentKey( map, key, currentIndex, arr ) {
+	const NewMap = currentIndex === arr.length - 1 ? Map : WeakMap;
+	return insertIfAbsent( map, key, new NewMap() );
 }
 
 /*

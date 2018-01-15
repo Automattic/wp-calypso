@@ -4,7 +4,7 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import treeSelect, { MixedMap } from '../';
+import treeSelect from '../';
 
 describe( 'index', () => {
 	describe( '#treeSelect', () => {
@@ -49,6 +49,44 @@ describe( 'index', () => {
 			expect( selector.mock.calls.length ).toBe( 1 );
 		} );
 
+		test( 'should cache the result of a selector function that has multiple dependents', () => {
+			const site1 = { id: 'siteId1' };
+			const site2 = { id: 'siteId2' };
+			const reduxState = {
+				posts: {
+					[ post1.id ]: post1,
+					[ post2.id ]: post2,
+					[ post3.id ]: post3,
+				},
+				sites: {
+					[ site1.id ]: site1,
+					[ site2.id ]: site2,
+				},
+			};
+
+			const takeOne = jest.fn( ( [ posts, sites ] ) => [
+				Object.values( posts )[ 0 ],
+				Object.values( sites )[ 0 ],
+			] );
+			const getDeps = jest.fn( state => [ state.posts, state.sites ] );
+			const arborealTakeOne = treeSelect( getDeps, takeOne );
+
+			arborealTakeOne( reduxState, 42 );
+			const results = arborealTakeOne( reduxState, 42 );
+			expect( results[ 0 ] ).toBe( Object.values( reduxState.posts )[ 0 ] );
+			expect( results[ 1 ] ).toBe( Object.values( reduxState.sites )[ 0 ] );
+
+			expect( takeOne.mock.calls.length ).toBe( 1 );
+		} );
+
+		test( 'should throw an error if getDependents is missing', () => {
+			expect( () => treeSelect( undefined, selector ) ).toThrow();
+		} );
+
+		test( 'should throw an error if selector is missing', () => {
+			expect( () => treeSelect( getDependents ) ).toThrow();
+		} );
+
 		test( 'should throw an error in development when given object arguments', () => {
 			const state = {};
 
@@ -61,7 +99,7 @@ describe( 'index', () => {
 			const prevEnv = process.env.NODE_ENV;
 			process.env.NODE_ENV = 'production';
 
-			const state = {};
+			const state = { posts: [] };
 			expect( () => getSitePosts( state, {} ) ).not.toThrow();
 			expect( () => getSitePosts( state, [] ) ).not.toThrow();
 			expect( () => getSitePosts( state, 1, [] ) ).not.toThrow();
@@ -70,7 +108,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should not throw an error in development when given primitives', () => {
-			const state = {};
+			const state = { posts: [] };
 
 			expect( () => getSitePosts( state, 1 ) ).not.toThrow();
 			expect( () => getSitePosts( state, '' ) ).not.toThrow();
@@ -115,7 +153,7 @@ describe( 'index', () => {
 			expect( selector.mock.calls.length ).toBe( 2 );
 		} );
 
-		test( 'should maintain the cache for multiple dependents', () => {
+		test( 'should maintain the cache for unique dependents simultaneously', () => {
 			const getPostByIdWithDataSpy = jest.fn( ( [ post ] ) => {
 				return {
 					...post,
@@ -142,14 +180,6 @@ describe( 'index', () => {
 			expect( getPostByIdWithDataSpy.mock.calls.length ).toBe( 2 );
 		} );
 
-		test( 'should throw an error if getDependents is missing', () => {
-			expect( () => treeSelect( undefined, selector ) ).toThrow();
-		} );
-
-		test( 'should throw an error if selector is missing', () => {
-			expect( () => treeSelect( getDependents ) ).toThrow();
-		} );
-
 		test( 'should call dependant state getter with dependents and arguments', () => {
 			const memoizedSelector = treeSelect( getDependents, getDependents );
 			const state = { posts: {} };
@@ -157,35 +187,6 @@ describe( 'index', () => {
 			memoizedSelector( state, 1, 2, 3 );
 
 			expect( getDependents ).toHaveBeenCalledWith( [ state.posts ], 1, 2, 3 );
-		} );
-	} );
-
-	describe( '#MixedMap', () => {
-		test( 'should successfully construct a new version', () => {
-			expect( new MixedMap() ).toBeInstanceOf( MixedMap );
-		} );
-
-		test( 'should be able to set and get', () => {
-			const weakKey = {};
-			expect( new MixedMap().set( 4, 'four' ).get( 4 ) ).toBe( 'four' );
-			expect( new MixedMap().set( weakKey, 'weakKey' ).get( weakKey ) ).toBe( 'weakKey' );
-		} );
-
-		test( 'should be able to construct via iterator', () => {
-			const key = new Array();
-			const map = new MixedMap( [ [ 1, 1 ], [ 2, 2 ], [ key, 'key' ] ] );
-
-			expect( map.get( key ) ).toBe( 'key' );
-			expect( map.get( 1 ) ).toBe( 1 );
-		} );
-
-		test( 'should be able to clear', () => {
-			const key = new Array();
-			const map = new MixedMap().set( 4, 4 ).set( key, 'key' );
-			map.clear();
-
-			expect( map.get( 4 ) ).toBeFalsy();
-			expect( map.get( key ) ).toBeFalsy();
 		} );
 	} );
 } );
