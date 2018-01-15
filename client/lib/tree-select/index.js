@@ -56,7 +56,7 @@ export default function treeSelect( getDependents, selector ) {
  * If the key is not present, then inserts a new map and returns it
  *
  * Note: Inserts WeakMaps except for the last map which will be a regular Map.
- * It does this because the key for the last map is the string results of args.join()
+ * The last map is a regular one because the the key for the last map is the string results of args.join().
  */
 function insertDependentKey( map, key, currentIndex, arr ) {
 	if ( map.has( key ) ) {
