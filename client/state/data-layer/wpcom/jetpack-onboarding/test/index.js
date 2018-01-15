@@ -97,22 +97,23 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 } );
 
 describe( 'storeJetpackOnboardingSettings()', () => {
-	const dispatch = jest.fn();
-	const siteId = 12345678;
-	const settings = {
-		siteTitle: 'My Awesome Site',
-		siteDescription: 'Not just another WordPress Site',
-	};
+	test( 'should dispatch action that updates Redux state upon successful save request', () => {
+		const dispatch = jest.fn();
+		const siteId = 12345678;
+		const settings = {
+			siteTitle: 'My Awesome Site',
+			siteDescription: 'Not just another WordPress Site',
+		};
 
-	test( 'should dispatch action that updates Redux state upon successful save request', () => {} );
-	storeJetpackOnboardingSettings( { dispatch }, { siteId, settings } );
+		storeJetpackOnboardingSettings( { dispatch }, { siteId, settings } );
 
-	expect( dispatch ).toHaveBeenCalledWith(
-		expect.objectContaining( {
-			settings,
-			siteId,
-		} )
-	);
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				settings,
+				siteId,
+			} )
+		);
+	} );
 } );
 
 describe( 'announceSaveFailure()', () => {
