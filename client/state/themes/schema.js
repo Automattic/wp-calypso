@@ -109,7 +109,7 @@ export const themeFiltersSchema = {
 	type: 'object',
 	patternProperties: {
 		// Taxonomy ID
-		'^\\w+$': {
+		'^[\\w-]+$': {
 			title: 'Taxonomy',
 			type: 'object',
 			patternProperties: {
