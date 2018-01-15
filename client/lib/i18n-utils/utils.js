@@ -21,83 +21,79 @@ function getPathParts( path ) {
 	return path.replace( /\/$/, '' ).split( '/' );
 }
 
-const i18nUtils = {
-	/**
-	 * Checks if provided locale is a default one.
-	 *
-	 * @param {string} locale - locale slug (eg: 'fr')
-	 * @return {boolean} true when the default locale is provided
-	 */
-	isDefaultLocale: function( locale ) {
-		return locale === config( 'i18n_default_locale_slug' );
-	},
-
-	getLanguage: function( langSlug ) {
-		let language;
-
-		if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
-			language =
-				find( config( 'languages' ), { langSlug } ) ||
-				find( config( 'languages' ), { langSlug: langSlug.split( '-' )[ 0 ] } );
-		}
-
-		return language;
-	},
-
-	/**
-	 * Assuming that locale is adding at the end of path, retrieves the locale if present.
-	 * @param {string} path - original path
-	 * @return {string|undefined} The locale slug if present or undefined
-	 */
-	getLocaleFromPath: function( path ) {
-		const urlParts = parse( path );
-		const locale = getPathParts( urlParts.pathname ).pop();
-
-		return 'undefined' === typeof i18nUtils.getLanguage( locale ) ? undefined : locale;
-	},
-
-	/**
-	 * Adds a locale slug to the current path.
-	 *
-	 * Will replace existing locale slug, if present.
-	 *
-	 * @param {string} path - original path
-	 * @param {string} locale - locale slug (eg: 'fr')
-	 * @returns {string} original path with new locale slug
-	 */
-	addLocaleToPath: function( path, locale ) {
-		const urlParts = parse( path );
-		const queryString = urlParts.search || '';
-
-		return i18nUtils.removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
-	},
-
-	addLocaleToWpcomUrl: function( url, locale ) {
-		if ( locale && locale !== 'en' ) {
-			return url.replace( 'https://wordpress.com', 'https://' + locale + '.wordpress.com' );
-		}
-
-		return url;
-	},
-
-	/**
-	 * Removes the trailing locale slug from the path, if it is present.
-	 * '/start/en' => '/start', '/start' => '/start', '/start/flow/fr' => '/start/flow', '/start/flow' => '/start/flow'
-	 * @param {string} path - original path
-	 * @returns {string} original path minus locale slug
-	 */
-	removeLocaleFromPath: function( path ) {
-		const urlParts = parse( path );
-		const queryString = urlParts.search || '';
-		const parts = getPathParts( urlParts.pathname );
-		const locale = parts.pop();
-
-		if ( 'undefined' === typeof i18nUtils.getLanguage( locale ) ) {
-			parts.push( locale );
-		}
-
-		return parts.join( '/' ) + queryString;
-	},
+/**
+ * Checks if provided locale is a default one.
+ *
+ * @param {string} locale - locale slug (eg: 'fr')
+ * @return {boolean} true when the default locale is provided
+ */
+export const isDefaultLocale = locale => {
+	return locale === config( 'i18n_default_locale_slug' );
 };
 
-export default i18nUtils;
+export const getLanguage = langSlug => {
+	let language;
+
+	if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
+		language =
+			find( config( 'languages' ), { langSlug } ) ||
+			find( config( 'languages' ), { langSlug: langSlug.split( '-' )[ 0 ] } );
+	}
+
+	return language;
+};
+
+/**
+ * Assuming that locale is adding at the end of path, retrieves the locale if present.
+ * @param {string} path - original path
+ * @return {string|undefined} The locale slug if present or undefined
+ */
+export const getLocaleFromPath = path => {
+	const urlParts = parse( path );
+	const locale = getPathParts( urlParts.pathname ).pop();
+
+	return 'undefined' === typeof getLanguage( locale ) ? undefined : locale;
+};
+
+/**
+ * Removes the trailing locale slug from the path, if it is present.
+ * '/start/en' => '/start', '/start' => '/start', '/start/flow/fr' => '/start/flow', '/start/flow' => '/start/flow'
+ * @param {string} path - original path
+ * @returns {string} original path minus locale slug
+ */
+export const removeLocaleFromPath = path => {
+	const urlParts = parse( path );
+	const queryString = urlParts.search || '';
+	const parts = getPathParts( urlParts.pathname );
+	const locale = parts.pop();
+
+	if ( 'undefined' === typeof getLanguage( locale ) ) {
+		parts.push( locale );
+	}
+
+	return parts.join( '/' ) + queryString;
+};
+
+/**
+ * Adds a locale slug to the current path.
+ *
+ * Will replace existing locale slug, if present.
+ *
+ * @param {string} path - original path
+ * @param {string} locale - locale slug (eg: 'fr')
+ * @returns {string} original path with new locale slug
+ */
+export const addLocaleToPath = ( path, locale ) => {
+	const urlParts = parse( path );
+	const queryString = urlParts.search || '';
+
+	return removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
+};
+
+export const addLocaleToWpcomUrl = ( url, locale ) => {
+	if ( locale && locale !== 'en' ) {
+		return url.replace( 'https://wordpress.com', 'https://' + locale + '.wordpress.com' );
+	}
+
+	return url;
+};

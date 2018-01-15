@@ -17,7 +17,7 @@ import EmptyContent from 'components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from 'config';
 import userFactory from 'lib/user';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { localize } from 'i18n-calypso';
 import { LINK_EXPIRED_PAGE } from 'state/login/magic-login/constants';
 import {

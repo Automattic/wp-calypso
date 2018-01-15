@@ -16,7 +16,7 @@ import debugModule from 'debug';
  */
 import SignupForm from 'components/signup-form';
 import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { createAccount, acceptInvite } from 'lib/invites/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import LoggedOutFormLinks from 'components/logged-out-form/links';

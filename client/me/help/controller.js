@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';

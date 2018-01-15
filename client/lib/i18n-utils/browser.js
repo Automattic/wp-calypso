@@ -6,8 +6,5 @@
 
 import i18n from 'i18n-calypso';
 
-module.exports = require( './utils.js' );
-
-module.exports.getLocaleSlug = function() {
-	return i18n.getLocaleSlug();
-};
+export * from './utils';
+export const getLocaleSlug = () => i18n.getLocaleSlug();

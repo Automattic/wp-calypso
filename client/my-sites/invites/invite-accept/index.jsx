@@ -18,7 +18,7 @@ import { bindActionCreators } from 'redux';
 import InviteHeader from 'my-sites/invites/invite-header';
 import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import _user from 'lib/user';
 import { fetchInvite } from 'lib/invites/actions';
 import InvitesStore from 'lib/invites/stores/invites-accept-validation';

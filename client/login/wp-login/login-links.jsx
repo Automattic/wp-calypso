@@ -22,7 +22,7 @@ import Gridicon from 'gridicons';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {

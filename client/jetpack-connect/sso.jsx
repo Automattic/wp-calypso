@@ -36,7 +36,7 @@ import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
 import { getSSO } from 'state/jetpack-connect/selectors';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { persistSsoApproved } from './persistence-utils';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
 
