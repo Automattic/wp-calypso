@@ -15,6 +15,7 @@ import {
 	receiveReaderSiteRequestFailure,
 } from 'state/reader/sites/actions';
 import { fields } from 'state/reader/sites/fields';
+import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 export function requestReadSite( action ) {
 	return http(
@@ -26,6 +27,7 @@ export function requestReadSite( action ) {
 				fields: fields.join( ',' ),
 				options: [ 'is_mapped_domain', 'unmapped_url', 'is_redirect' ].join( ',' ),
 			},
+			retryPolicy: noRetry(),
 		},
 		action
 	);
