@@ -149,8 +149,9 @@ export const getPostCommentsTree = treeSelect(
 	}
 );
 
+const empty = {};
 export const getExpansionsForPost = ( state, siteId, postId ) =>
-	state.comments.expansions[ getStateKey( siteId, postId ) ];
+	state.comments.expansions[ getStateKey( siteId, postId ) ] || empty;
 
 export const getHiddenCommentsForPost = treeSelect(
 	( state, siteId, postId ) => [
