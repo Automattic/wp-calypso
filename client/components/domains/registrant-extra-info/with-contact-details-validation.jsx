@@ -13,6 +13,7 @@ const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 /**
  * Internal dependencies
  */
+import wp from 'lib/wp';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
@@ -26,6 +27,8 @@ export function disableSubmitButton( children ) {
 		} )
 	);
 }
+
+const wpcom = wp.undocumented();
 
 export function interpretIMJVError( error, schema ) {
 	let explicitPath, errorCode;
@@ -73,12 +76,34 @@ export function formatIMJVErrors( errors, schema ) {
 	);
 }
 
-const WithContactDetailsValidation = ( schema, WrappedComponent ) => {
+const WithContactDetailsValidation = ( tld, WrappedComponent ) => {
 	return class FormWithValidation extends Component {
-		validate = validatorFactory( schema, { greedy: true, verbose: true } );
+		state = {};
+
+		receiveSchema = schema => {
+			debug( 'received', schema );
+			this.setState( {
+				schema,
+				validate: validatorFactory( schema, { greedy: true, verbose: true } ),
+			} );
+		};
+
+		componentWillMount() {
+			wpcom.getDomainContactInformationValidationSchema( tld, ( error, data ) => {
+				// TODO: handle errors
+				this.receiveSchema( data[ tld ] );
+			} );
+		}
 
 		validateContactDetails() {
-			const isValid = this.validate( this.props.contactDetails );
+			const { validate, schema } = this.state;
+
+			if ( typeof validate !== 'function' ) {
+				return {};
+			}
+
+			// TODO: memoize
+			const isValid = validate( this.props.contactDetails );
 
 			if ( isValid ) {
 				debug( 'data is valid' );
@@ -86,14 +111,17 @@ const WithContactDetailsValidation = ( schema, WrappedComponent ) => {
 			}
 
 			// TODO: error codes => localized strings
-			const result = formatIMJVErrors( this.validate.errors, schema );
+			const result = formatIMJVErrors( validate.errors, schema );
 
 			return result;
 		}
 
 		render() {
 			return (
-				<WrappedComponent { ...this.props } validationErrors={ this.validateContactDetails() } />
+				<WrappedComponent
+					{ ...this.props }
+					validationErrors={ this.validateContactDetails() }
+				/>
 			);
 		}
 	};

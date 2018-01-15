@@ -23,7 +23,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import WithContactDetailsValidation, {
 	disableSubmitButton,
 } from './with-contact-details-validation';
-import contactDetailsUkSchema from './uk-schema';
 
 const defaultValues = {
 	registrantType: 'IND',
@@ -64,7 +63,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			</option>
 		) );
 		this.errorMessages = {
-			dotukRegistrationNumberFormat: translate(
+			dotUkRegistrationNumberFormat: translate(
 				'A Company Registration Number is 8 numerals, or 2 letters followed by 6 numerals (e.g. AB123456 or 12345678).'
 			),
 			dotukRegistrantTypeRequiresRegistrationNumber: translate(
@@ -239,7 +238,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 }
 
 export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
-	contactDetailsUkSchema,
+	'uk',
 	RegistrantExtraInfoUkForm
 );
 

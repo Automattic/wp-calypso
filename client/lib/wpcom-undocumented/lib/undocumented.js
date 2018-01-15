@@ -630,6 +630,29 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 	);
 };
 
+/**
+ * Retrieves the contact validation schema for the specified tld
+ *
+ * @param {string} tld The domain tld to validate for.
+ * @param {Function} fn The callback function
+ * @return {Promise} A Promise to resolve when complete
+ * @api public
+ */
+Undocumented.prototype.getDomainContactInformationValidationSchema = function( tld, fn ) {
+	debug( '/domains/validation-schema/ query' );
+
+	return this.wpcom.req.get( { path: '/domains/validation-schema/' + tld }, function(
+		error,
+		data
+	) {
+		if ( error ) {
+			return fn( error );
+		}
+
+		return fn( null, data );
+	} );
+};
+
 Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryCode, fn ) {
 	debug( '/domains/supported-states/ query' );
 
