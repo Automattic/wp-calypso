@@ -96,7 +96,6 @@ class Plans extends React.Component {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite }
 						/>
-
 						<PlansFeaturesMain
 							displayJetpackPlans={ displayJetpackPlans }
 							hideFreePlan={ true }
