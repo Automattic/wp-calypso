@@ -391,7 +391,7 @@ class HelpContact extends React.Component {
 	};
 
 	/**
-	 * Get the view for the contact page. This could either be the olark chat widget if a chat is in progress or a contact form.
+	 * Get the view for the contact page.
 	 * @return {object} A JSX object that should be rendered
 	 */
 	getView = () => {

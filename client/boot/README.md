@@ -40,7 +40,7 @@ Example of project (`WordPress.com`) specific features (see `client/boot/project
 - Rendering the main layout template
 - Focussing parts of the layout based on the query string
 - Handling query strings
-- Loading various helpers (olark, keyboard shortcuts)
+- Loading various helpers (Happychat initialization, keyboard shortcuts)
 
 ### Project specific API
 
