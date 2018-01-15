@@ -87,7 +87,7 @@ describe( 'index', () => {
 			expect( () => treeSelect( getDependents ) ).toThrow();
 		} );
 
-		test( 'should not throw an error in production for anything missing', () => {
+		test( 'should not throw an error in production for missing args', () => {
 			const prevEnv = process.env.NODE_ENV;
 			process.env.NODE_ENV = 'production';
 
