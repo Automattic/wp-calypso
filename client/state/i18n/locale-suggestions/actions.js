@@ -21,8 +21,6 @@ export const receiveLocaleSuggestions = items => ( {
  *
  * @return {Object} action object
  */
-export const requestLocaleSuggestions = () => {
-	return {
-		type: I18N_LOCALE_SUGGESTIONS_REQUEST,
-	};
-};
+export const requestLocaleSuggestions = () => ( {
+	type: I18N_LOCALE_SUGGESTIONS_REQUEST,
+} );

@@ -11,5 +11,5 @@ import { get } from 'lodash';
  * @returns {Array|Null} an array of guessed locales for the user
  */
 export default function getLocaleSuggestions( state ) {
-	return get( state, 'i18n.localeSuggestions.items', null );
+	return get( state, 'i18n.localeSuggestions', null );
 }

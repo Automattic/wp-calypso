@@ -5,8 +5,6 @@
  */
 import { I18N_LOCALE_SUGGESTIONS_ADD } from 'state/action-types';
 
-import { combineReducers } from 'state/utils';
-
 export const items = ( state = null, action ) => {
 	switch ( action.type ) {
 		case I18N_LOCALE_SUGGESTIONS_ADD:
@@ -16,6 +14,4 @@ export const items = ( state = null, action ) => {
 	}
 };
 
-export default combineReducers( {
-	items,
-} );
+export default items;

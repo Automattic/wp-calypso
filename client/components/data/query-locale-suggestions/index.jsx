@@ -23,7 +23,7 @@ class QueryLocaleSuggestions extends Component {
 		requestLocaleSuggestions: () => {},
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		if ( ! this.props.localeSuggestions ) {
 			this.props.requestLocaleSuggestions();
 		}

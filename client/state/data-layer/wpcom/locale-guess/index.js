@@ -21,7 +21,7 @@ import { receiveLocaleSuggestions } from 'state/i18n/locale-suggestions/actions'
  * Dispatches a request to /locale-guess to fetch locale suggestions
  *
  * @param {Object} action Redux action
- * @returns {Object} original action
+ * @returns {Object} WordPress.com API HTTP Request action object
  */
 export const fetchLocaleSuggestions = action =>
 	http(
@@ -32,6 +32,7 @@ export const fetchLocaleSuggestions = action =>
 		},
 		action
 	);
+
 /**
  * Dispatches returned locale suggestions data
  *
