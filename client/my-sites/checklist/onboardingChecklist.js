@@ -127,7 +127,7 @@ const sequence = [
 	'about_page_updated',
 	'contact_page_updated',
 	'post_published',
-	'custom_domain_registered',
+	// 'custom_domain_registered',
 ];
 
 export const urlForTask = ( id, siteSlug ) => {
