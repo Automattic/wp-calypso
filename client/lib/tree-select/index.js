@@ -5,11 +5,6 @@
  */
 import { isObject, forEach, some, isFunction } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import warn from 'lib/warn';
-
 /*
  * A map that is Weak with objects but Strong with primitives
  */
@@ -51,15 +46,15 @@ export class MixedMap {
 /**
  * Returns a selector that caches values.
  *
- * @param  {Function} selector      A standard selector for calculating cached result
  * @param  {Function} getDependents A Function describing the dependent(s) of the selector.
- *                                    Must return an object which gets used as the first arg of the selector
+ *                                    Must return an array which gets passed as the first arg to the selector
+ * @param  {Function} selector      A standard selector for calculating cached result
  * @return {Function}               Cached selector
  */
-export default function createCachedSelector( selector, getDependents ) {
-	if ( ! isFunction( selector ) || ! isFunction( getDependents ) ) {
+export default function treeSelect( getDependents, selector ) {
+	if ( ! isFunction( getDependents ) || ! isFunction( selector ) ) {
 		throw new TypeError(
-			'createCachedSelector: invalid arguments passed, selector and getDependents must both be functions'
+			'treeSelect: invalid arguments passed, selector and getDependents must both be functions'
 		);
 	}
 
@@ -67,34 +62,46 @@ export default function createCachedSelector( selector, getDependents ) {
 
 	const cachedSelector = function( state, ...args ) {
 		const dependents = getDependents( state, ...args );
-		const sortedDependentsArray = Object.keys( dependents )
-			.sort()
-			.map( key => dependents[ key ] );
 
 		if ( process.env.NODE_ENV !== 'production' ) {
 			if ( some( args, isObject ) ) {
-				warn( 'Do not pass complex objects as arguments to a cachedSelector' );
+				throw new Error( 'Do not pass objects as arguments to a treeSelector' );
 			}
 		}
 
 		// create a dependency tree for caching selector results.
 		// this is beneficial over standard memoization techniques so that we can
 		// garbage collect any values that are based on outdated dependents
-		let currCache = cache;
-		forEach( sortedDependentsArray, dependent => {
-			if ( ! currCache.has( dependent ) ) {
-				currCache.set( dependent, new MixedMap() );
-			}
-			currCache = currCache.get( dependent );
-		} );
+		const cursor = dependents.reduce( insertDependentKey, cache );
 
 		const key = args.join();
-		if ( ! currCache.has( key ) ) {
-			currCache.set( key, selector( dependents, ...args ) );
+		if ( ! cursor.has( key ) ) {
+			cursor.set( key, selector( dependents, ...args ) );
 		}
 
-		return currCache.get( key );
+		return cursor.get( key );
 	};
 
 	return cachedSelector;
+}
+
+/*
+ * First tries to get the value (a MixedMap) for the key.
+ * If the key is not present, then inserts a new MixedMap and returns it
+ */
+function insertDependentKey( map, key ) {
+	return insertIfAbsent( map, key, new MixedMap() );
+}
+
+/*
+ * If a key is present in the map, then return the value for that key.
+ * Otherwise, set the value for that key, and then return the value.
+ */
+function insertIfAbsent( map, key, value ) {
+	if ( map.has( key ) ) {
+		return map.get( key );
+	}
+
+	map.set( key, value );
+	return map.get( key );
 }

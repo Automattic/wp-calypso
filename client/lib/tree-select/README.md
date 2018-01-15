@@ -1,22 +1,23 @@
-`create-cached-selector`
+`treeSelect`
 =================
 
 This module exports a function which creates a cached state selector for use with the Redux global application state. It is a good idea to use this function over plain selectors whenever either the computation over state or React's rerenders are expensive.
+It is called `treeSelect` because it internally uses a [WeakMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap) based dependency tree in order to allow the gc to free memory without explicitly clearing the cache.
 
 ## Usage
 
-`createCachedSelector` accepts the following arguments:
+`treeSelect` accepts the following arguments:
 
 - **getDependents**: A function which maps over `state` and returns all of the relevant parts of state the selector needs. You should be creating an object whose values are all the return of other selectors -- no computations allowed here. 
 - **selector**: A function which takes in the same args as `getDependents` with one catch. Instead of being passed state as its first arg, it is given the results of getDependents.  This forces you to declare all of your state-dependencies.
 
-For example, imagine that our state contains post objects, each of which are assigned to a particular site. Retrieving an array of posts for a specific site would require us to filter over all of the known posts. While this would normally trigger a re-render in React, we can use `createCachedSelector` to create a cached version of the selector which can return a referentially equal object:
+For example, imagine that our state contains post objects, each of which are assigned to a particular site. Retrieving an array of posts for a specific site would require us to filter over all of the known posts. While this would normally trigger a re-render in React, we can use `treeSelect` to create a cached version of the selector which can return a referentially equal object:
 
 ```js
 const getDependents = state => ( { posts: state.posts } );
 const selector = ( { posts }, siteId ) => filter( posts, { siteId } );
 
-const getSitePosts = createCachedSelector( selector, getDependents );
+const getSitePosts = treeSelect( selector, getDependents );
 ```
 
 In using the selector, we pass in the arguments for `selector`. In this case, we'll need to pass a state object and siteId.
@@ -46,7 +47,7 @@ const getDependents = ( state, siteId ) => ( {
 	site: state.sites[ siteId ],
 } );
 const selector = ( { comments, site }, siteId ) => `Site ${ site.title } has ${ comments.length } comments`;
-const cachedSelector = createCachedSelector( selector, getDependents );
+const cachedSelector = treeSelect( selector, getDependents );
 ```
 
 internally, the selector will store a dependency tree of dependents where the last node is a map keyed by a run of `...args.join()`.  The tree would look like:

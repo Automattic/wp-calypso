@@ -4,13 +4,10 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import createCachedSelector, { MixedMap } from '../';
-import warn from 'lib/warn';
-
-jest.mock( 'lib/warn', () => jest.fn() );
+import treeSelect, { MixedMap } from '../';
 
 describe( 'index', () => {
-	describe( '#createCachedSelector', () => {
+	describe( '#treeSelect', () => {
 		const post1 = { id: 'id1', text: 'here is post 1', siteId: 'site1' };
 		const post2 = { id: 'id2', text: 'here is post 2', siteId: 'site1' };
 		const post3 = { id: 'id3', text: 'here is post 3', siteId: 'site2' };
@@ -20,9 +17,9 @@ describe( 'index', () => {
 		let getDependents;
 
 		beforeEach( () => {
-			selector = jest.fn( ( { posts }, siteId ) => filter( posts, { siteId } ) );
-			getDependents = jest.fn( state => ( { posts: state.posts } ) );
-			getSitePosts = createCachedSelector( selector, getDependents );
+			selector = jest.fn( ( [ posts ], siteId ) => filter( posts, { siteId } ) );
+			getDependents = jest.fn( state => [ state.posts ] );
+			getSitePosts = treeSelect( getDependents, selector );
 		} );
 
 		test( 'should create a function which returns the expected value when called', () => {
@@ -53,20 +50,17 @@ describe( 'index', () => {
 		} );
 
 		test( 'should warn against complex arguments in non-production mode', () => {
-			warn.mockClear();
 			const state = { posts: {} };
 
-			getSitePosts( state, 1 );
-			getSitePosts( state, '' );
-			getSitePosts( state, 'foo' );
-			getSitePosts( state, true );
-			getSitePosts( state, null );
-			getSitePosts( state, undefined );
-			getSitePosts( state, {} );
-			getSitePosts( state, [] );
-			getSitePosts( state, 1, [] );
-
-			expect( warn.mock.calls.length ).toBe( 3 );
+			expect( () => getSitePosts( state, 1 ) ).not.toThrow();
+			expect( () => getSitePosts( state, '' ) ).not.toThrow();
+			expect( () => getSitePosts( state, 'foo' ) ).not.toThrow();
+			expect( () => getSitePosts( state, true ) ).not.toThrow();
+			expect( () => getSitePosts( state, null ) ).not.toThrow();
+			expect( () => getSitePosts( state, undefined ) ).not.toThrow();
+			expect( () => getSitePosts( state, {} ) ).toThrow();
+			expect( () => getSitePosts( state, [] ) ).toThrow();
+			expect( () => getSitePosts( state, 1, [] ) ).toThrow();
 		} );
 
 		test( 'should call selector when making non-cached calls', () => {
@@ -105,16 +99,16 @@ describe( 'index', () => {
 		} );
 
 		test( 'should maintain the cache for multiple dependents', () => {
-			const getPostByIdWithDataSpy = jest.fn( ( { post } ) => {
+			const getPostByIdWithDataSpy = jest.fn( ( [ post ] ) => {
 				return {
 					...post,
 					withData: true,
 				};
 			} );
 
-			const getPostByIdWithData = createCachedSelector(
-				getPostByIdWithDataSpy,
-				( state, postId ) => ( { post: state.posts[ postId ] } )
+			const getPostByIdWithData = treeSelect(
+				( state, postId ) => [ state.posts[ postId ] ],
+				getPostByIdWithDataSpy
 			);
 
 			const state = {
@@ -124,28 +118,28 @@ describe( 'index', () => {
 				},
 			};
 
-			getPostByIdWithData( state, post1.id ); // dependents is { post: post1 }
-			getPostByIdWithData( state, post2.id ); // dependents is { post: post2 }
-			getPostByIdWithData( state, post1.id ); // dependents is { post: post1 }. should use cache
+			getPostByIdWithData( state, post1.id ); // dependents is [ post1 ]
+			getPostByIdWithData( state, post2.id ); // dependents is [ post2 ]
+			getPostByIdWithData( state, post1.id ); // dependents is [ post1 ]. should use cache
 
 			expect( getPostByIdWithDataSpy.mock.calls.length ).toBe( 2 );
 		} );
 
 		test( 'should throw an error if getDependents is missing', () => {
-			expect( () => createCachedSelector( selector ) ).toThrow();
+			expect( () => treeSelect( undefined, selector ) ).toThrow();
 		} );
 
 		test( 'should throw an error if selector is missing', () => {
-			expect( () => createCachedSelector( undefined, getDependents ) ).toThrow();
+			expect( () => treeSelect( getDependents ) ).toThrow();
 		} );
 
 		test( 'should call dependant state getter with dependents and arguments', () => {
-			const memoizedSelector = createCachedSelector( selector, getDependents );
+			const memoizedSelector = treeSelect( getDependents, getDependents );
 			const state = { posts: {} };
 
 			memoizedSelector( state, 1, 2, 3 );
 
-			expect( getDependents ).toHaveBeenCalledWith( { posts: {} }, 1, 2, 3 );
+			expect( getDependents ).toHaveBeenCalledWith( [ state.posts ], 1, 2, 3 );
 		} );
 	} );
 
