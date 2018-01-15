@@ -17,6 +17,7 @@ import BookSkeleton from './book/skeleton';
 import RescheduleCalendarStep from './reschedule/calendar-step';
 import RescheduleConfirmationStep from './reschedule/confirmation-step';
 import RescheduleSkeleton from './reschedule/skeleton';
+import i18n from 'i18n-calypso';
 
 const book = ( context, next ) => {
 	context.primary = (
@@ -53,7 +54,10 @@ const reschedule = ( context, next ) => {
 
 const siteSelector = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () =>
-		'Please select a business site to book a Concierge session';
+		i18n.translate(
+			'Please select a site for your {{strong}}Business Concierge Session{{/strong}}',
+			{ components: { strong: <strong /> } }
+		);
 	next();
 };
 
