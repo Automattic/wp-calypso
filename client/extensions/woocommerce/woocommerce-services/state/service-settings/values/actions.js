@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import _ from 'lodash';
+import { get, isEmpty, isObject, isString } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -61,11 +61,11 @@ export const submit = ( schema, silent ) => ( dispatch, getState, { methodId, in
 		dispatch( FormActions.setFormProperty( 'error', value ) );
 
 		if ( 'rest_cookie_invalid_nonce' !== value && ! silent ) {
-			if ( _.isString( value ) ) {
+			if ( isString( value ) ) {
 				dispatch( NoticeActions.errorNotice( value ) );
 			}
 
-			if ( _.isObject( value ) ) {
+			if ( isObject( value ) ) {
 				dispatch( NoticeActions.errorNotice( translate( 'There was a problem with one or more entries. ' +
 					'Please fix the errors below and try saving again.' ) ) );
 			}
@@ -78,7 +78,7 @@ export const submit = ( schema, silent ) => ( dispatch, getState, { methodId, in
 	dispatch( FormActions.setAllPristine( false ) );
 
 	const errors = getFormErrors( getState(), schema );
-	if ( ! _.isEmpty( errors ) ) {
+	if ( ! isEmpty( errors ) ) {
 		setError( errors );
 		return;
 	}
@@ -87,13 +87,9 @@ export const submit = ( schema, silent ) => ( dispatch, getState, { methodId, in
 	api.post( api.url.serviceSettings( methodId, instanceId ), coercedValues )
 		.then( () => setSuccess( true ) )
 		.catch( ( error ) => {
-			if ( 'validation_failure' === _.get( error, 'data.error' ) && _.get( error, 'data.data.fields' ) ) {
-				let fieldsStatus = error.data.data.fields;
-				// Some services still give the field errors in an array, keep backwards-compatibility
-				if ( _.isArray( fieldsStatus ) ) {
-					fieldsStatus = {};
-					error.data.data.fields.forEach( ( fieldName ) => fieldsStatus[ fieldName ] = EMPTY_ERROR );
-				}
+			if ( 'validation_failure' === get( error, 'data.error' ) && get( error, 'data.data.fields' ) ) {
+				const fieldsStatus = {};
+				error.data.data.fields.forEach( ( fieldName ) => fieldsStatus[ fieldName ] = EMPTY_ERROR );
 				return setFieldsStatus( fieldsStatus );
 			}
 
