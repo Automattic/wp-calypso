@@ -268,6 +268,17 @@ export const deleting = keyedReducer(
 	)
 );
 
+/**
+ * Tracks whether all sites have been fetched.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export const hasAllSitesList = createReducer( false, {
+	[ SITES_RECEIVE ]: () => true,
+} );
+
 export default combineReducers( {
 	connection,
 	deleting,
@@ -283,4 +294,5 @@ export default combineReducers( {
 	requesting,
 	sharingButtons,
 	blogStickers,
+	hasAllSitesList,
 } );
