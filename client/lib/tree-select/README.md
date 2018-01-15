@@ -1,7 +1,7 @@
 # `treeSelect`
 
 This module exports a function which creates a cached state selector for use with the Redux global application state. It is a good idea to use this function over plain selectors whenever either the computation over state or React's rerenders are expensive.
-It is called `treeSelect` because it internally uses a [WeakMap](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap) based dependency tree in order to allow the gc to free memory without explicitly clearing the cache.
+It is called `treeSelect` because it internally uses a tree of dependencies to allow the gc to free memory without explicitly clearing the cache.
 
 ## Usage
 
@@ -14,7 +14,7 @@ For example, imagine that our state contains post objects, each of which are ass
 
 ```js
 const getDependents = state => ( { posts: state.posts } );
-const selector = ( { posts }, siteId ) => filter( posts, { siteId } );
+const selector = ( [ posts ], siteId ) => filter( posts, { siteId } );
 
 const getSitePosts = treeSelect( selector, getDependents );
 ```

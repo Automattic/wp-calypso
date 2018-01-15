@@ -24,7 +24,7 @@ export default function treeSelect( getDependents, selector ) {
 
 	const cache = new WeakMap();
 
-	const cachedSelector = function( state, ...args ) {
+	return function( state, ...args ) {
 		const dependents = getDependents( state, ...args );
 
 		if ( process.env.NODE_ENV !== 'production' ) {
@@ -36,19 +36,17 @@ export default function treeSelect( getDependents, selector ) {
 		// create a dependency tree for caching selector results.
 		// this is beneficial over standard memoization techniques so that we can
 		// garbage collect any values that are based on outdated dependents
-		const cursor = dependents.reduce( insertDependentKey, cache );
+		const leafCache = dependents.reduce( insertDependentKey, cache );
 
 		const key = args.join();
-		if ( cursor.has( key ) ) {
-			return cursor.get( key );
+		if ( leafCache.has( key ) ) {
+			return leafCache.get( key );
 		}
 
 		const value = selector( dependents, ...args );
-		cursor.set( key, value );
+		leafCache.set( key, value );
 		return value;
 	};
-
-	return cachedSelector;
 }
 
 /*
