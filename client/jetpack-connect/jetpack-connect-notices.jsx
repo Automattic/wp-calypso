@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import debugModule from 'debug';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -10,6 +11,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Notice from 'components/notice';
+import { addQueryArgs } from 'lib/route';
+import { retrieveMobileRedirect } from './persistence-utils';
+
+const debug = debugModule( 'calypso:jetpack-connect:notices' );
 
 class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -106,6 +111,7 @@ class JetpackConnectNotices extends Component {
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
+				noticeValues.userCanRetry = true;
 				return noticeValues;
 
 			case 'retryAuth':
@@ -114,6 +120,7 @@ class JetpackConnectNotices extends Component {
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
+				noticeValues.userCanRetry = true;
 				return noticeValues;
 
 			case 'secretExpired':
@@ -157,6 +164,27 @@ class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
 				return noticeValues;
+		}
+	}
+
+	componenentDidUpdate() {
+		this.maybeRedirect();
+	}
+
+	componentDidMount() {
+		this.maybeRedirect();
+	}
+
+	maybeRedirect() {
+		const mobileRedirectUrl = retrieveMobileRedirect();
+		if ( ! mobileRedirectUrl ) {
+			return;
+		}
+		const notice = this.getNoticeValues();
+		if ( ! notice.userCanRetry ) {
+			const url = addQueryArgs( { reason: this.props.noticeType }, mobileRedirectUrl );
+			debug( 'Redirecting to', url );
+			return window.location.replace( url );
 		}
 	}
 
