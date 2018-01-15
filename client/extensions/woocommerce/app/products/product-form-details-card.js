@@ -46,6 +46,10 @@ export default class ProductFormDetailsCard extends Component {
 		this.debouncedSetDescription = debounce( this.setDescription, 200 );
 	}
 
+	componentWillUnmount() {
+		this.debouncedSetDescription.cancel();
+	}
+
 	// TODO: Consider consolidating the following set functions
 	// into a general purpose Higher Order Component
 	setName( e ) {
