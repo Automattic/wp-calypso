@@ -35,8 +35,8 @@ export function receiveReadSiteSuccess( action, response ) {
 	return bypassDataLayer( receiveReaderSiteRequestSuccess( response ) );
 }
 
-export function receiveReadSiteError( action ) {
-	return bypassDataLayer( receiveReaderSiteRequestFailure( action.payload.blogId ) );
+export function receiveReadSiteError( action, response ) {
+	return bypassDataLayer( receiveReaderSiteRequestFailure( action, response ) );
 }
 
 const index = {

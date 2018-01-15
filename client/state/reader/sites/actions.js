@@ -30,12 +30,11 @@ export function receiveReaderSiteRequestSuccess( data ) {
 	};
 }
 
-export function receiveReaderSiteRequestFailure( blogId ) {
+export function receiveReaderSiteRequestFailure( action, error ) {
 	return {
 		type: READER_SITE_REQUEST_FAILURE,
-		payload: {
-			ID: blogId,
-		},
+		payload: action.payload,
+		error,
 	};
 }
 

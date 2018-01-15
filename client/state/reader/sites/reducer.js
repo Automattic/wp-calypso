@@ -50,7 +50,6 @@ function handleRequestFailure( state, action ) {
 		return state;
 	}
 
-	// new object proceeds current state to prevent new errors from overwriting existing values
 	return assign( {}, state, {
 		[ action.payload.ID ]: {
 			ID: action.payload.ID,

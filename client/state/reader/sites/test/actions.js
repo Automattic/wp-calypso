@@ -36,10 +36,14 @@ describe( 'actions', () => {
 
 	describe( '#receiveReaderSiteRequestFailure', () => {
 		test( 'should return an action when a site request fails', () => {
-			const action = receiveReaderSiteRequestFailure( 123 );
+			const action = receiveReaderSiteRequestFailure(
+				{ payload: { ID: 123 } },
+				{ statusCode: 410 }
+			);
 			expect( action ).toEqual( {
 				type: READER_SITE_REQUEST_FAILURE,
 				payload: { ID: 123 },
+				error: { statusCode: 410 },
 			} );
 		} );
 	} );
