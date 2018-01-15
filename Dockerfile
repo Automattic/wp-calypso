@@ -4,6 +4,7 @@ LABEL maintainer="Automattic"
 WORKDIR    /calypso
 
 
+ENV        CONTAINER 'docker'
 ENV        NODE_PATH=/calypso/server:/calypso/client
 
 # Build a "base" layer
