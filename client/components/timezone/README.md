@@ -33,6 +33,9 @@ module.exports = React.createClass( {
 
 `selectedZone` - **optional** String value to define the selected timezone.
 
+`includeManualOffsets` - **optional** Boolean value to include/exclude the manual offsets from the 
+list of timezones, the default value is `true`
+
 `onSelect` - **optional** Called when user selects a timezone from the
 select. An object parameter is passed to the function which has two
 properties: `label` usually used to show the selected timezone to the user and
