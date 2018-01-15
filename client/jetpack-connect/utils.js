@@ -60,9 +60,10 @@ export function addCalypsoEnvQueryArg( url ) {
 }
 
 /**
- * Convert a auth query scope to a role
+ * Convert an auth query scope to a role
  *
- * Auth queries include a scope with is `role:hash`
+ * Auth queries include a scope like `role:hash`. This function will attempt to extract the role
+ * when provided with a scope.
  *
  * @param  {string}  scope From authorization query
  * @return {?string}       Role parsed from scope if found
