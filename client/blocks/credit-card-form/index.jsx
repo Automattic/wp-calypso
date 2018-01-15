@@ -99,12 +99,11 @@ class CreditCardForm extends Component {
 		}
 
 		const messages = formState.getErrorMessages( form );
-		let notice = null;
+		const notice =
+			messages.length > 0 ? notices.error( <ValidationErrorList messages={ messages } /> ) : null;
 
-		if ( messages.length > 0 ) {
-			notice = notices.error( <ValidationErrorList messages={ messages } /> );
-		} else {
-			this.state.notice && notices.removeNotice( this.state.notice );
+		if ( ! notice && this.state.notice ) {
+			notices.removeNotice( this.state.notice );
 		}
 
 		this.setState( {
@@ -246,19 +245,6 @@ class CreditCardForm extends Component {
 		} );
 	}
 
-	getSubmitButtonText() {
-		const { translate } = this.props;
-		return this.state.formSubmitting
-			? translate( 'Saving Card…', {
-					context: 'Button label',
-					comment: 'Credit card',
-				} )
-			: translate( 'Save Card', {
-					context: 'Button label',
-					comment: 'Credit card',
-				} );
-	}
-
 	render() {
 		const { translate } = this.props;
 		return (
@@ -305,7 +291,15 @@ class CreditCardForm extends Component {
 				<CompactCard className="credit-card-form__footer">
 					<em>{ translate( 'All fields required' ) }</em>
 					<FormButton disabled={ this.state.formSubmitting } type="submit">
-						{ this.getSubmitButtonText() }
+						{ this.state.formSubmitting
+							? translate( 'Saving Card…', {
+									context: 'Button label',
+									comment: 'Credit card',
+								} )
+							: translate( 'Save Card', {
+									context: 'Button label',
+									comment: 'Credit card',
+								} ) }
 					</FormButton>
 				</CompactCard>
 			</form>
@@ -314,16 +308,17 @@ class CreditCardForm extends Component {
 
 	renderUsedForExistingPurchases() {
 		const { translate, showUsedForExistingPurchasesInfo } = this.props;
-		if ( showUsedForExistingPurchasesInfo ) {
-			return (
-				<div className="credit-card-form__card-terms">
-					<Gridicon icon="info-outline" size={ 18 } />
-					<p>
-						{ translate( 'This card will be used for future renewals of existing purchases.' ) }
-					</p>
-				</div>
-			);
+
+		if ( ! showUsedForExistingPurchasesInfo ) {
+			return;
 		}
+
+		return (
+			<div className="credit-card-form__card-terms">
+				<Gridicon icon="info-outline" size={ 18 } />
+				<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
+			</div>
+		);
 	}
 }
 
