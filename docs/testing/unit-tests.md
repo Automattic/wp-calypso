@@ -18,7 +18,6 @@ This guide is intended as a quick reference of common tools and conventions we u
 
 Aside from the joy unit testing will bring to your life, unit tests are important not only because they help to ensure that our application behaves as it should, but also because they provide concise examples of how to use a piece of code. 
 
-
 Tests are part of our code base, which means we apply to them the same standards we apply to all our application code. 
 
 As with all code, tests have to be maintained. Writing tests for the sake of having a test isn't the goal – rather we should try to strike the right balance between covering expected and unexpected behaviours, speedy execution and code maintenance.
@@ -104,7 +103,6 @@ The Jest API includes some nifty [setup and teardown methods](https://facebook.g
 These methods can handle asynchronous code to allow setup that you normally cannot do inline. As with [individual test cases](https://facebook.github.io/jest/docs/en/asynchronous.html#promises), you can return a Promise and Jest will wait for it to resolve: 
 
 ```javascript
-
 // one-time setup for *all* tests
 beforeAll( () =>  someAsyncAction().then( resp => {
     window.someGlobal = resp;
@@ -114,8 +112,6 @@ beforeAll( () =>  someAsyncAction().then( resp => {
 afterAll( () => {
     window.someGlobal = null;
 } );
-
-
 ```
 
 Though it is good practice to clean up after your tests suites, Jest tests are run in isolation so changes to things such as global values won't effect other Calypso tests.
@@ -134,13 +130,11 @@ import VALID_VALUES_LIST from './constants'
 function isValueValid( value ) {
 	return VALID_VALUES_LIST.includes( value );
 }
-
 ```
 
 Here we'd have to import and use a value from `VALID_VALUES_LIST` in order to pass:
 
 `expect( isValueValid( VALID_VALUES_LIST[ 0 ] ) ).toBe( true );`
-
 
 The above assertion is testing two behaviours: 1) that the function can detect an item in a list, and 2) that it can detect an item in `VALID_VALUES_LIST`.
 
@@ -163,7 +157,6 @@ Because we're passing the list as an argument, we can pass mock  `validValuesLis
 `expect( isValueValid( 'hulk', [] ) ).toBe( false );`
 
 `expect( isValueValid( 'hulk', [ 'iron man', 'hulk' ] ) ).toBe( true );`
-
 
 #### Imported dependencies
 
@@ -206,7 +199,7 @@ describe( 'The bilbo module', () => {
 
 We can use [Jest spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) to test code that calls global methods.
 
-When stubbing DOM properties or methods in the global scope, make sure to include `@jest-environment jsdom` the comment
+When stubbing DOM properties or methods in the global scope, make sure to include the `@jest-environment jsdom` comment to ensure there's a DOM to stub :)
 
 ```javascript
 
@@ -227,8 +220,6 @@ describe( 'my module', () => {
 		expect( global.open ).toHaveBeenCalled();
 	} );
 } );
-
-
 ```
 
 ### Testing legacy code
