@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { memoize } from 'lodash';
 import shallowEqual from 'react-pure-render/shallowEqual';
 
@@ -31,14 +29,13 @@ const VALID_ARG_TYPES = [ 'number', 'boolean', 'string' ];
 const DEFAULT_GET_DEPENDANTS = state => state;
 
 /**
- * At runtime, assigns a function which returns a cache key for the memoized
- * selector function, given a state object and a variable set of arguments. In
- * development mode, this warns when the memoized selector is passed a complex
+ * In development mode, this warns when the memoized selector is passed a complex
  * object argument, as these cannot be depended upon as reliable cache keys.
+ * Note that the underlying function is created at runtime depending on the environment
  *
  * @type {Function} Function returning cache key for memoized selector
  */
-const DEFAULT_GET_CACHE_KEY = ( () => {
+const warnAgainstComplexArguments = ( () => {
 	let warn, includes;
 	if ( 'production' !== process.env.NODE_ENV ) {
 		// Webpack can optimize bundles if it can detect that a block will
@@ -46,22 +43,30 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
 		// these debugging modules will be excluded from the production build.
 		warn = require( 'lib/warn' );
 		includes = require( 'lodash/includes' );
-	} else {
-		return ( state, ...args ) => args.join();
 	}
 
-	return ( state, ...args ) => {
+	return ( ...args ) => {
 		const hasInvalidArg = args.some( arg => {
 			return arg && ! includes( VALID_ARG_TYPES, typeof arg );
 		} );
 
 		if ( hasInvalidArg ) {
-			warn( 'Do not pass complex objects as arguments for a memoized selector' );
+			warn(
+				'Do not pass complex objects as arguments for a memoized selector,' +
+					' as these can not be depended upon as reliable cache keys.'
+			);
 		}
-
-		return args.join();
 	};
 } )();
+
+/**
+ * Returns a function to be used as the default cache key resolver in _.memoize.
+ * It simply ignores the 'state' argument and joins all others.
+ *
+ * @param  {Object}    state Current state object
+ * @returns {Function} Function returning cache key for memoized selector
+ */
+const DEFAULT_GET_CACHE_KEY = ( state, ...args ) => args.join();
 
 /**
  * Given an array of getDependants functions, returns a single function which,
@@ -81,15 +86,15 @@ const makeSelectorFromArray = dependants => ( state, ...args ) =>
  *                                             state, or an array of dependent
  *                                             state selectors
  * @param  {Function}            getCacheKey   Function generating cache key
+ * @param  {Boolean}             cachePerKey   Flag whether caching should happen per key
  * @return {Function}                          Memoized selector
  */
-export default function createSelector(
-	selector,
-	getDependants = DEFAULT_GET_DEPENDANTS,
-	getCacheKey = DEFAULT_GET_CACHE_KEY
-) {
+export default function createSelector( selector, getDependants, getCacheKey, cachePerKey ) {
+	getDependants = getDependants || DEFAULT_GET_DEPENDANTS;
+	getCacheKey = getCacheKey || DEFAULT_GET_CACHE_KEY;
+
 	const memoizedSelector = memoize( selector, getCacheKey );
-	let lastDependants;
+	let lastDependants = cachePerKey ? {} : null;
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
@@ -97,16 +102,31 @@ export default function createSelector(
 
 	return Object.assign(
 		function( state, ...args ) {
+			warnAgainstComplexArguments( ...args );
+
+			const cacheKey = getCacheKey( state, ...args );
 			let currentDependants = getDependants( state, ...args );
+
 			if ( ! Array.isArray( currentDependants ) ) {
 				currentDependants = [ currentDependants ];
 			}
 
-			if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
-				memoizedSelector.cache.clear();
-			}
+			if ( cachePerKey ) {
+				if (
+					lastDependants[ cacheKey ] &&
+					! shallowEqual( currentDependants, lastDependants[ cacheKey ] )
+				) {
+					memoizedSelector.cache.delete( cacheKey );
+				}
 
-			lastDependants = currentDependants;
+				lastDependants[ cacheKey ] = currentDependants;
+			} else {
+				if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
+					memoizedSelector.cache.clear();
+				}
+
+				lastDependants = currentDependants;
+			}
 
 			return memoizedSelector( state, ...args );
 		},
