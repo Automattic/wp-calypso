@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -13,6 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'state/action-types';
+import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 /**
  * Dispatches a request to save particular onboarding settings on a site
@@ -49,11 +50,20 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 	);
 };
 
+/* Store onboarding settings in Redux state */
+export const storeJetpackOnboardingSettings = ( { dispatch }, { settings, siteId } ) => {
+	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
+};
+
 export const announceSaveFailure = ( { dispatch } ) =>
 	dispatch( errorNotice( translate( 'An unexpected error occurred. Please try again later.' ) ) );
 
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackOnboardingSettings, noop, announceSaveFailure ),
+		dispatchRequest(
+			saveJetpackOnboardingSettings,
+			storeJetpackOnboardingSettings,
+			announceSaveFailure
+		),
 	],
 };

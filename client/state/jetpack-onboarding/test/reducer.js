@@ -11,7 +11,7 @@ import deepFreeze from 'deep-freeze';
 import reducer, { credentialsReducer, settingsReducer } from '../reducer';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -103,7 +103,7 @@ describe( 'reducer', () => {
 			const siteId = 12345678;
 			const initialState = deepFreeze( {} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings,
 			} );
@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 				[ 12345678 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings,
 			} );
@@ -141,7 +141,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
 			} );
@@ -163,7 +163,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
 			} );

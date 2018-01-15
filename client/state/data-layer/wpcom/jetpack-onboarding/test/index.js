@@ -4,8 +4,13 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { saveJetpackOnboardingSettings, announceSaveFailure } from '../';
+import {
+	saveJetpackOnboardingSettings,
+	storeJetpackOnboardingSettings,
+	announceSaveFailure,
+} from '../';
 import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'state/action-types';
+import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 describe( 'saveJetpackOnboardingSettings()', () => {
 	const dispatch = jest.fn();
@@ -89,6 +94,21 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 				action
 			)
 		);
+	} );
+} );
+
+describe( 'storeJetpackOnboardingSettings()', () => {
+	test( 'should dispatch action that updates Redux state upon successful save request', () => {
+		const dispatch = jest.fn();
+		const siteId = 12345678;
+		const settings = {
+			siteTitle: 'My Awesome Site',
+			siteDescription: 'Not just another WordPress Site',
+		};
+
+		storeJetpackOnboardingSettings( { dispatch }, { siteId, settings } );
+
+		expect( dispatch ).toHaveBeenCalledWith( updateJetpackOnboardingSettings( siteId, settings ) );
 	} );
 } );
 
