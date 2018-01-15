@@ -49,8 +49,28 @@ describe( 'index', () => {
 			expect( selector.mock.calls.length ).toBe( 1 );
 		} );
 
-		test( 'should warn against complex arguments in non-production mode', () => {
-			const state = { posts: {} };
+		test( 'should throw an error in development when given object arguments', () => {
+			const state = {};
+
+			expect( () => getSitePosts( state, {} ) ).toThrow();
+			expect( () => getSitePosts( state, [] ) ).toThrow();
+			expect( () => getSitePosts( state, 1, [] ) ).toThrow();
+		} );
+
+		test( 'should not throw an error in production even when given object arguments', () => {
+			const prevEnv = process.env.NODE_ENV;
+			process.env.NODE_ENV = 'production';
+
+			const state = {};
+			expect( () => getSitePosts( state, {} ) ).not.toThrow();
+			expect( () => getSitePosts( state, [] ) ).not.toThrow();
+			expect( () => getSitePosts( state, 1, [] ) ).not.toThrow();
+
+			process.env.NODE_ENV = prevEnv;
+		} );
+
+		test( 'should not throw an error in development when given primitives', () => {
+			const state = {};
 
 			expect( () => getSitePosts( state, 1 ) ).not.toThrow();
 			expect( () => getSitePosts( state, '' ) ).not.toThrow();
@@ -58,9 +78,6 @@ describe( 'index', () => {
 			expect( () => getSitePosts( state, true ) ).not.toThrow();
 			expect( () => getSitePosts( state, null ) ).not.toThrow();
 			expect( () => getSitePosts( state, undefined ) ).not.toThrow();
-			expect( () => getSitePosts( state, {} ) ).toThrow();
-			expect( () => getSitePosts( state, [] ) ).toThrow();
-			expect( () => getSitePosts( state, 1, [] ) ).toThrow();
 		} );
 
 		test( 'should call selector when making non-cached calls', () => {
