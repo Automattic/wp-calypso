@@ -62,7 +62,12 @@ class InfoStep extends Component {
 				<CompactCard>
 					<FormFieldset>
 						<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
-						<Timezone name="timezone" onSelect={ this.setTimezone } selectedZone={ timezone } />
+						<Timezone
+							includeManualOffsets={ false }
+							name="timezone"
+							onSelect={ this.setTimezone }
+							selectedZone={ timezone }
+						/>
 						<FormSettingExplanation>
 							{ translate( 'Choose a city in your timezone.' ) }
 						</FormSettingExplanation>

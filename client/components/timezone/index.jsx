@@ -68,7 +68,7 @@ class Timezone extends Component {
 				<optgroup label="UTC">
 					<option value="UTC">UTC</option>
 				</optgroup>
-				{ this.renderManualUtcOffsets() }
+				{ this.props.includeManualOffsets && this.renderManualUtcOffsets() }
 			</select>
 		);
 	}
@@ -76,11 +76,13 @@ class Timezone extends Component {
 
 Timezone.defaultProps = {
 	onSelect: noop,
+	includeManualOffsets: true,
 };
 
 Timezone.propTypes = {
 	selectedZone: PropTypes.string,
 	onSelect: PropTypes.func,
+	includeManualOffsets: PropTypes.bool,
 };
 
 export default connect( state => ( {
