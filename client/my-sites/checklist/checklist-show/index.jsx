@@ -58,10 +58,32 @@ class ChecklistShow extends PureComponent {
 		}
 	};
 
-	renderHeader( completed ) {
+	renderHeader( completed, displayMode ) {
 		const shareTo = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
 
 		if ( ! completed ) {
+			if ( displayMode ) {
+				const title =
+					displayMode === 'free' ? 'Your site has been created!' : 'Thank you for your purchase!';
+
+				return (
+					<Fragment>
+						<img
+							src="/calypso/images/signup/confetti.svg"
+							aria-hidden="true"
+							className="checklist-show__confetti"
+						/>
+						<FormattedHeader
+							headerText={ title }
+							subHeaderText={
+								"Now that your site has been created, it's time to get it ready for you to share. " +
+								"We've prepared a list of things that will help you get there quickly."
+							}
+						/>
+					</Fragment>
+				);
+			}
+
 			return (
 				<FormattedHeader
 					headerText="Welcome back!"
@@ -97,7 +119,7 @@ class ChecklistShow extends PureComponent {
 	}
 
 	render() {
-		const { siteId, siteChecklist } = this.props;
+		const { displayMode, siteId, siteChecklist } = this.props;
 		let tasks = null;
 
 		if ( siteChecklist && siteChecklist.tasks ) {
@@ -106,11 +128,16 @@ class ChecklistShow extends PureComponent {
 
 		const completed = tasks && ! find( tasks, { completed: false } );
 
+		let title = 'Site Checklist';
+		if ( displayMode ) {
+			title = 'Thank You';
+		}
+
 		return (
 			<Main className="checklist-show">
-				<DocumentHead title="Site Checklist" />
+				<DocumentHead title={ title } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ this.renderHeader( completed ) }
+				{ this.renderHeader( completed, displayMode ) }
 				<Checklist
 					isLoading={ ! tasks }
 					tasks={ tasks }

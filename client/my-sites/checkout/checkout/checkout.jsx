@@ -307,7 +307,7 @@ const Checkout = createReactClass( {
 			this.props.isEligibleForCheckoutToChecklist &&
 			'show' === abtest( 'checklistThankYouForPaidUser' )
 		) {
-			return `/checklist/thank-you/${ selectedSiteSlug }/${ receiptId }`;
+			return `/checklist/${ selectedSiteSlug }/paid`;
 		}
 
 		if ( domainReceiptId && receiptId && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
