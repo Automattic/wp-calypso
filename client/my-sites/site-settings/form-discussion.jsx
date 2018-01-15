@@ -477,7 +477,7 @@ class SiteSettingsFormDiscussion extends Component {
 							'will match "WordPress".',
 						{
 							components: {
-								link: <a href={ `/comments/all/${ siteSlug }` } />,
+								link: <a href={ `/comments/pending/${ siteSlug }` } />,
 							},
 						}
 					) }
