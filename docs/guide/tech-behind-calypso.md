@@ -35,7 +35,6 @@ Key concepts checklist:
 Here are some great React resources:
 
 * [Official documentation](http://facebook.github.io/react/docs/getting-started.html)
-* [React.js Introduction For People Who Know Just Enough jQuery To Get By](http://reactfordesigners.com/labs/reactjs-introduction-for-people-who-know-just-enough-jquery-to-get-by/)
 * [Tutorial at Scotch.io](https://scotch.io/tutorials/learning-react-getting-started-and-concepts)
 * [ReactJS For Stupid People](http://blog.andrewray.me/reactjs-for-stupid-people/)
 * [Thinking in React](http://facebook.github.io/react/docs/thinking-in-react.html)
