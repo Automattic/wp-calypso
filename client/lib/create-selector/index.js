@@ -85,28 +85,26 @@ export default function createSelector(
 	getDependants = DEFAULT_GET_DEPENDANTS,
 	getCacheKey = DEFAULT_GET_CACHE_KEY
 ) {
-	const memoizedSelector = memoize( selector, getCacheKey );
-	let lastDependants;
+	const cache = new Map();
+	const dependants = new Map();
 
 	if ( Array.isArray( getDependants ) ) {
 		getDependants = makeSelectorFromArray( getDependants );
 	}
 
-	return Object.assign(
-		function( state, ...args ) {
-			let currentDependants = getDependants( state, ...args );
+	return ( ...args ) => {
+		const cacheKey = getCacheKey( ...args );
+		const lastDependants = dependants.get( cacheKey );
+		let currentDependants = getDependants( ...args );
 			if ( ! Array.isArray( currentDependants ) ) {
 				currentDependants = [ currentDependants ];
 			}
 
-			if ( lastDependants && ! shallowEqual( currentDependants, lastDependants ) ) {
-				memoizedSelector.cache.clear();
+		if ( ! lastDependants || ! shallowEqual( currentDependants, lastDependants ) ) {
+			cache.set( cacheKey, selector( ...args ) );
+			dependants.set( cacheKey, currentDependants );
 			}
 
-			lastDependants = currentDependants;
-
-			return memoizedSelector( state, ...args );
-		},
-		{ memoizedSelector }
-	);
+		return cache.get( cacheKey );
+	};
 }
