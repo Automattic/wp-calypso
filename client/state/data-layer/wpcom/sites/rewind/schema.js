@@ -56,7 +56,7 @@ export const inactive = {
 			pattern: '^inactive$',
 		},
 		credentials: {
-			type: [ 'array', null ],
+			type: [ 'array', 'null' ],
 			items: credential,
 		},
 		last_updated: { type: 'integer' },
@@ -84,7 +84,7 @@ export const provisioning = {
 			pattern: '^provisioning$',
 		},
 		credentials: {
-			type: [ 'array', null ],
+			type: [ 'array', 'null' ],
 			items: credential,
 		},
 		last_updated: { type: 'integer' },
@@ -100,11 +100,11 @@ export const active = {
 			pattern: '^active$',
 		},
 		credentials: {
-			type: [ 'array', null ],
+			type: [ 'array', 'null' ],
 			items: credential,
 		},
 		downloads: {
-			type: [ 'array', null ],
+			type: [ 'array', 'null' ],
 			items: download,
 		},
 		rewinds: { type: 'array', items: restore },
