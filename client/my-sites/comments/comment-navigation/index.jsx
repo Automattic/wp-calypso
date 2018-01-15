@@ -41,6 +41,7 @@ import {
 import { removeNotice, successNotice } from 'state/notices/actions';
 import { getSiteComment, hasPendingCommentRequests } from 'state/selectors';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
+import { extendAction } from 'state/utils';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],
@@ -55,7 +56,7 @@ export class CommentNavigation extends Component {
 		isSelectedAll: false,
 		selectedComments: [],
 		status: 'unapproved',
-		sortOrder: NEWEST_FIRST,
+		order: NEWEST_FIRST,
 	};
 
 	shouldComponentUpdate = nextProps => ! isEqual( this.props, nextProps );
@@ -192,8 +193,8 @@ export class CommentNavigation extends Component {
 			isSelectedAll,
 			query,
 			selectedComments,
-			setSortOrder,
-			sortOrder,
+			setOrder,
+			order,
 			status: queryStatus,
 			toggleBulkMode,
 			translate,
@@ -292,16 +293,16 @@ export class CommentNavigation extends Component {
 						hasComments && (
 							<SegmentedControl compact className="comment-navigation__sort-buttons">
 								<ControlItem
-									onClick={ setSortOrder( NEWEST_FIRST ) }
-									selected={ sortOrder === NEWEST_FIRST }
+									onClick={ setOrder( NEWEST_FIRST ) }
+									selected={ order === NEWEST_FIRST }
 								>
 									{ translate( 'Newest', {
 										comment: 'Chronological order for sorting the comments list.',
 									} ) }
 								</ControlItem>
 								<ControlItem
-									onClick={ setSortOrder( OLDEST_FIRST ) }
-									selected={ sortOrder === OLDEST_FIRST }
+									onClick={ setOrder( OLDEST_FIRST ) }
+									selected={ order === OLDEST_FIRST }
 								>
 									{ translate( 'Oldest', {
 										comment: 'Chronological order for sorting the comments list.',
@@ -348,29 +349,35 @@ const mapStateToProps = ( state, { commentsPage, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 	changeStatus: ( postId, commentId, status, analytics = { alsoUnlike: false } ) =>
 		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_change_status', {
-						also_unlike: analytics.alsoUnlike,
-						previous_status: analytics.previousStatus,
-						status,
-					} ),
-					bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
+			extendAction(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_comment_management_change_status', {
+							also_unlike: analytics.alsoUnlike,
+							previous_status: analytics.previousStatus,
+							status,
+						} ),
+						bumpStat( 'calypso_comment_management', 'comment_status_changed_to_' + status )
+					),
+					changeCommentStatus( siteId, postId, commentId, status )
 				),
-				changeCommentStatus( siteId, postId, commentId, status )
+				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
 			)
 		),
 	deletePermanently: ( postId, commentId ) =>
 		dispatch(
-			withAnalytics(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_comment_management_delete' ),
-					bumpStat( 'calypso_comment_management', 'comment_deleted' )
+			extendAction(
+				withAnalytics(
+					composeAnalytics(
+						recordTracksEvent( 'calypso_comment_management_delete' ),
+						bumpStat( 'calypso_comment_management', 'comment_deleted' )
+					),
+					deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
 				),
-				deleteComment( siteId, postId, commentId, { showSuccessNotice: true } )
+				{ meta: { comment: { commentsListQuery: commentsListQuery } } }
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>

@@ -131,7 +131,7 @@ describe( 'reducer', () => {
 			expect( query ).toEqual( { site: { 'spam?order=DESC': { 1: [ 1, 2, 3, 4 ] } } } );
 		} );
 
-		test( "should not remove a comment from a page when the comment status is changed but it doesn't change filter list", () => {
+		test( 'should not remove a comment from a page when the comment status is changed but it does not change filter list', () => {
 			const state = deepFreeze( {
 				site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } },
 			} );
@@ -143,6 +143,62 @@ describe( 'reducer', () => {
 				refreshCommentListQuery: { page: 1, status: 'all' },
 			} );
 			expect( query ).toEqual( { site: { 'all?order=DESC': { 1: [ 1, 2, 3, 4, 5 ] } } } );
+		} );
+
+		test( 'should add back a comment on undo in DESC order', () => {
+			const state = deepFreeze( {
+				site: { 'all?order=DESC': { 1: [ 5, 4, 2, 1 ] } },
+			} );
+			const query = queries( state, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 3,
+				status: 'approved',
+				refreshCommentListQuery: { page: 1, status: 'all', order: 'DESC' },
+			} );
+			expect( query ).toEqual( { site: { 'all?order=DESC': { 1: [ 5, 4, 3, 2, 1 ] } } } );
+		} );
+
+		test( 'should add back a comment on undo in ASC order', () => {
+			const state = deepFreeze( {
+				site: { 'all?order=ASC': { 1: [ 1, 3, 4, 5 ] } },
+			} );
+			const query = queries( state, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 2,
+				status: 'approved',
+				refreshCommentListQuery: { page: 1, status: 'all', order: 'ASC' },
+			} );
+			expect( query ).toEqual( { site: { 'all?order=ASC': { 1: [ 1, 2, 3, 4, 5 ] } } } );
+		} );
+
+		test( 'should update on undo in a tab other than all', () => {
+			const state = deepFreeze( {
+				site: { 'approved?order=ASC': { 1: [ 1, 3, 4, 5 ] } },
+			} );
+			const query = queries( state, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 2,
+				status: 'approved',
+				refreshCommentListQuery: { page: 1, status: 'approved', order: 'ASC' },
+			} );
+			expect( query ).toEqual( { site: { 'approved?order=ASC': { 1: [ 1, 2, 3, 4, 5 ] } } } );
+		} );
+
+		test( 'should update the view when a bulk action occurs', () => {
+			const state = deepFreeze( {
+				site: { 'approved?order=ASC': { 1: [ 1, 3, 4, 5 ] } },
+			} );
+			const query = queries( state, {
+				type: COMMENTS_CHANGE_STATUS,
+				siteId,
+				commentId: 4,
+				status: 'unapproved',
+				meta: { comment: { commentsListQuery: { page: 1, status: 'approved', order: 'ASC' } } },
+			} );
+			expect( query ).toEqual( { site: { 'approved?order=ASC': { 1: [ 1, 3, 5 ] } } } );
 		} );
 	} );
 	describe( '#pendingActions', () => {

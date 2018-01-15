@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { COMMENTS_DELETE, COMMENTS_CHANGE_STATUS } from 'state/action-types';
@@ -14,7 +19,9 @@ const handler = ( dispatch, action, getState ) => {
 			const previousStatus = siteComment && siteComment.status;
 			return {
 				...action,
-				meta: Object.assign( {}, action.meta, { comment: { previousStatus } } ),
+				meta: Object.assign( {}, action.meta, {
+					comment: Object.assign( {}, get( action, 'meta.comment' ), { previousStatus } ),
+				} ),
 			};
 		default:
 			return action;
