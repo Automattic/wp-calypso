@@ -54,7 +54,7 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
 import WebPreview from 'components/web-preview';
-import { getConflictingSeoPlugins } from 'lib/seo';
+import { getFirstConflictingPlugin } from 'lib/seo';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
@@ -261,6 +261,7 @@ export class SeoForm extends React.Component {
 
 	render() {
 		const {
+			conflictedSeoPlugin,
 			siteId,
 			siteIsJetpack,
 			jetpackVersionSupportsSeo,
@@ -271,7 +272,6 @@ export class SeoForm extends React.Component {
 			isSeoToolsActive,
 			isSitePrivate,
 			isSiteHidden,
-			activePlugins,
 			translate,
 		} = this.props;
 		const { slug = '', URL: siteUrl = '' } = site;
@@ -311,10 +311,6 @@ export class SeoForm extends React.Component {
 				{ isSubmittingForm ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 			</Button>
 		);
-
-		const conflictedSeoPlugin = siteIsJetpack
-			? getConflictingSeoPlugins( activePlugins )[ 0 ] // Pick first one to keep the notice short.
-			: null;
 
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
@@ -493,7 +489,13 @@ const mapStateToProps = ( state, ownProps ) => {
 	const isAdvancedSeoSupported =
 		site && ( ! siteIsJetpack || ( siteIsJetpack && jetpackVersionSupportsSeo ) );
 
+	const activePlugins = getPlugins( state, [ siteId ], 'active' );
+	const conflictedSeoPlugin = siteIsJetpack
+		? getFirstConflictingPlugin( activePlugins ) // Pick first one to keep the notice short.
+		: null;
+
 	return {
+		conflictedSeoPlugin,
 		siteId,
 		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
@@ -505,7 +507,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
-		activePlugins: getPlugins( state, [ siteId ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),

@@ -23,6 +23,7 @@ import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isBusiness, isEnterprise } from 'lib/products-values';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -42,7 +43,7 @@ import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
 import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
 import EditPostStatus from 'post-editor/edit-post-status';
-import { getConflictingSeoPlugins } from 'lib/seo';
+import { getFirstConflictingPlugin } from 'lib/seo';
 
 /**
  * Constants
@@ -243,7 +244,7 @@ class EditorDrawer extends Component {
 	}
 
 	renderSeo() {
-		const { jetpackVersionSupportsSeo, activePlugins } = this.props;
+		const { jetpackVersionSupportsSeo, hasConflictingSeoPlugins } = this.props;
 
 		if ( ! this.props.site ) {
 			return;
@@ -255,7 +256,7 @@ class EditorDrawer extends Component {
 			}
 
 			// Don't show SEO accordion if this setting is managed by other SEO plugin.
-			if ( !! getConflictingSeoPlugins( activePlugins ).length ) {
+			if ( hasConflictingSeoPlugins ) {
 				return;
 			}
 		}
@@ -351,6 +352,7 @@ class EditorDrawer extends Component {
 			<div className="editor-drawer">
 				{ site && <QueryPostTypes siteId={ site.ID } /> }
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
 				{ this.renderStatus() }
 				{ this.renderCategories() }
 				{ this.renderTaxonomies() }
@@ -372,9 +374,10 @@ const enhance = flow(
 	connect( state => {
 		const siteId = getSelectedSiteId( state );
 		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
+		const activePlugins = getPlugins( state, [ siteId ], 'active' );
 
 		return {
-			activePlugins: getPlugins( state, [ siteId ], 'active' ),
+			hasConflictingSeoPlugins: !! getFirstConflictingPlugin( activePlugins ),
 			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
 			isJetpack: isJetpackSite( state, siteId ),
