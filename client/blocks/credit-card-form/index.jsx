@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -36,6 +37,13 @@ class CreditCardForm extends Component {
 		saveStoredCard: PropTypes.func,
 		successCallback: PropTypes.func.isRequired,
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		apiParams: {},
+		initialValues: {},
+		saveStoredCard: noop,
+		showUsedForExistingPurchasesInfo: false,
 	};
 
 	constructor( props ) {
@@ -85,10 +93,10 @@ class CreditCardForm extends Component {
 		} );
 	}
 
-	storeForm = ref => ( this.form = ref );
+	storeForm = ref => ( this.formElem = ref );
 
 	validate = ( formValues, onComplete ) => {
-		if ( ! this.form ) {
+		if ( ! this.formElem ) {
 			return;
 		}
 
@@ -96,13 +104,28 @@ class CreditCardForm extends Component {
 	};
 
 	setFormState = form => {
-		if ( ! this.form ) {
+		if ( ! this.formElem ) {
 			return;
 		}
 
-		this.setState( {
-			form,
-		} );
+		const messages = formState.getErrorMessages( form );
+
+		if ( messages.length > 0 ) {
+			const notice = notices.error( <ValidationErrorList messages={ messages } /> );
+
+			this.setState( {
+				form,
+				notice,
+			} );
+		} else {
+			if ( this.state.notice ) {
+				notices.removeNotice( this.state.notice );
+			}
+			this.setState( {
+				form,
+				notice: null,
+			} );
+		}
 	};
 
 	onFieldChange = rawDetails => {
@@ -140,7 +163,7 @@ class CreditCardForm extends Component {
 		const cardDetails = this.getCardDetails();
 
 		this.props.createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
-			if ( ! this.form ) {
+			if ( ! this.formElem ) {
 				return;
 			}
 
@@ -161,7 +184,7 @@ class CreditCardForm extends Component {
 						this.props.successCallback();
 					} )
 					.catch( ( { message } ) => {
-						if ( this.form ) {
+						if ( this.formElem ) {
 							this.setState( { formSubmitting: false } );
 						}
 
@@ -180,7 +203,7 @@ class CreditCardForm extends Component {
 
 				wpcom.updateCreditCard( apiParams, ( apiError, response ) => {
 					if ( apiError ) {
-						if ( this.form ) {
+						if ( this.formElem ) {
 							this.setState( { formSubmitting: false } );
 						}
 						notices.error( apiError.message );
@@ -188,7 +211,7 @@ class CreditCardForm extends Component {
 					}
 
 					if ( response.error ) {
-						if ( this.form ) {
+						if ( this.formElem ) {
 							this.setState( { formSubmitting: false } );
 						}
 						notices.error( response.error );
