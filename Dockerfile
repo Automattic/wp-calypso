@@ -1,6 +1,8 @@
 FROM       node:8.9.3-alpine
 LABEL maintainer="Automattic"
 
+RUN apk add --no-cache git
+
 WORKDIR    /calypso
 
 
