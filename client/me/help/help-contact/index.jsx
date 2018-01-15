@@ -234,7 +234,11 @@ class HelpContact extends React.Component {
 		}
 
 		// if the happychat connection is able to accept chats, use it
-		return this.props.isHappychatAvailable && this.props.isSelectedHelpSiteOnPaidPlan;
+		return (
+			this.props.isHappychatAvailable &&
+			this.props.isHappychatUserEligible &&
+			this.props.isSelectedHelpSiteOnPaidPlan
+		);
 	};
 
 	shouldUseDirectly = () => {
@@ -374,11 +378,12 @@ class HelpContact extends React.Component {
 	 * @returns {Boolean} Whether all the data is present to determine the variation to show
 	 */
 	hasDataToDetermineVariation = () => {
-		const { ticketSupportConfigurationReady, ticketSupportRequestError } = this.props;
+		const ticketReadyOrError =
+			this.props.ticketSupportConfigurationReady || null != this.props.ticketSupportRequestError;
+		const happychatReadyOrDisabled =
+			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
 
-		const ticketReadyOrError = ticketSupportConfigurationReady || null != ticketSupportRequestError;
-
-		return ticketReadyOrError;
+		return ticketReadyOrError && happychatReadyOrDisabled;
 	};
 
 	shouldShowPreloadForm = () => {
