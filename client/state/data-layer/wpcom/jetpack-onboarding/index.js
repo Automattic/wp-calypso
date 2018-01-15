@@ -51,7 +51,7 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 };
 
 /* Store onboarding settings in Redux state */
-export const storeJetpackOnboardingSettings = ( { dispatch, getState }, { settings, siteId } ) => {
+export const storeJetpackOnboardingSettings = ( { dispatch }, { settings, siteId } ) => {
 	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
 };
 
