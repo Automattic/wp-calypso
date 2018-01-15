@@ -109,6 +109,7 @@ class MasterbarLoggedIn extends React.Component {
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
+				<Item onClick={ () => window.perfCounter( 1000 ) }>Count!</Item>
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				{ ! domainOnlySite && (
 					<Publish
