@@ -266,13 +266,13 @@ class AboutStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 			field: 'Site title',
-			value: siteTitleInput !== '' ? siteTitleInput : 'N/A',
+			value: siteTitleInput || 'N/A',
 		} );
 
 		//Site Topic
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 			field: 'Site topic',
-			value: siteTopicInput !== '' ? siteTopicInput : 'N/A',
+			value: siteTopicInput || 'N/A',
 		} );
 
 		this.props.setSurvey( {
