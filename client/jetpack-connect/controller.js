@@ -29,7 +29,7 @@ import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
-import { MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
+import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
@@ -309,7 +309,7 @@ export function plansSelection( context, next ) {
 	context.primary = (
 		<CheckoutData>
 			<Plans
-				basePlansPath={ '/jetpack/connect/plans' }
+				basePlansPath={ JPC_PATH_PLANS }
 				context={ context }
 				destinationType={ context.params.destinationType }
 				interval={ context.params.interval }

@@ -28,6 +28,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -80,7 +81,7 @@ class Plans extends Component {
 		}
 		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
 			// Invalid site
-			this.redirect( '/jetpack/connect/plans' );
+			this.redirect( JPC_PATH_PLANS );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.calypsoStartedConnection ) {
