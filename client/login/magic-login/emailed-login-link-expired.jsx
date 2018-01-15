@@ -11,7 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { addQueryArgs } from 'lib/route';
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';

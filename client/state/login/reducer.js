@@ -48,7 +48,7 @@ import {
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	USER_RECEIVE,
 } from 'state/action-types';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 
 export const isRequesting = createReducer( false, {
 	[ LOGIN_AUTH_ACCOUNT_TYPE_REQUEST ]: () => true,

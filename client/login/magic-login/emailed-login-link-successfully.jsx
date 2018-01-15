@@ -13,7 +13,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import Card from 'components/card';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';

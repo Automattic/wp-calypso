@@ -17,7 +17,7 @@ import { localize } from 'i18n-calypso';
 import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 
 class TwoFactorActions extends Component {
 	static propTypes = {

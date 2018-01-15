@@ -23,7 +23,7 @@ import { serverRender, serverRenderError } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 

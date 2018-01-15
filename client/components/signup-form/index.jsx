@@ -29,7 +29,7 @@ import FormButton from 'components/forms/form-button';
 import notices from 'notices';
 import Notice from 'components/notice';
 import LoggedOutForm from 'components/logged-out-form';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import formState from 'lib/form-state';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';

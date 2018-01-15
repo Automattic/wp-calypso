@@ -9,7 +9,7 @@ import page from 'page';
  */
 import userFactory from 'lib/user';
 import * as controller from './controller';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
 

@@ -9,9 +9,8 @@ import { has, isString, omit, startsWith } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import { addQueryArgs } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
-
+export { default as addQueryArgs } from 'lib/route/add-query-args';
 /**
  * Check if a URL is located outside of Calypso.
  * Note that the check this function implements is incomplete --
@@ -21,11 +20,11 @@ import { isLegacyRoute } from 'lib/route/legacy-routes';
  * @param {string} url - URL to check
  * @return {bool} true if the given URL is located outside of Calypso
  */
-function isOutsideCalypso( url ) {
+export function isOutsideCalypso( url ) {
 	return url && ( startsWith( url, '//' ) || ! startsWith( url, '/' ) );
 }
 
-function isExternal( url ) {
+export function isExternal( url ) {
 	// parseURL will return hostname = null if no protocol or double-slashes
 	// the url passed in might be of form `en.support.wordpress.com`
 	// so for this function we'll append double-slashes to fake it
@@ -59,7 +58,7 @@ function isExternal( url ) {
 	return hostname !== config( 'hostname' );
 }
 
-function isHttps( url ) {
+export function isHttps( url ) {
 	return url && startsWith( url, 'https://' );
 }
 
@@ -71,7 +70,7 @@ const urlWithoutHttpRegex = /^https?:\/\//;
  * @param  {String}  url The URL to remove http(s) from
  * @return {?String}     URL without the initial http(s)
  */
-function withoutHttp( url ) {
+export function withoutHttp( url ) {
 	if ( url === '' ) {
 		return '';
 	}
@@ -83,14 +82,14 @@ function withoutHttp( url ) {
 	return url.replace( urlWithoutHttpRegex, '' );
 }
 
-function addSchemeIfMissing( url, scheme ) {
+export function addSchemeIfMissing( url, scheme ) {
 	if ( false === schemeRegex.test( url ) ) {
 		return scheme + '://' + url;
 	}
 	return url;
 }
 
-function setUrlScheme( url, scheme ) {
+export function setUrlScheme( url, scheme ) {
 	const schemeWithSlashes = scheme + '://';
 	if ( startsWith( url, schemeWithSlashes ) ) {
 		return url;
@@ -104,7 +103,7 @@ function setUrlScheme( url, scheme ) {
 	return url.replace( schemeRegex, schemeWithSlashes );
 }
 
-function urlToSlug( url ) {
+export function urlToSlug( url ) {
 	if ( ! url ) {
 		return null;
 	}
@@ -120,7 +119,7 @@ function urlToSlug( url ) {
  * @param  {String} urlToConvert The URL to convert
  * @return {String} The URL's domain and path
  */
-function urlToDomainAndPath( urlToConvert ) {
+export function urlToDomainAndPath( urlToConvert ) {
 	return withoutHttp( urlToConvert ).replace( /\/$/, '' );
 }
 
@@ -133,7 +132,7 @@ function urlToDomainAndPath( urlToConvert ) {
  * @param  {String}  query The string to check
  * @return {Boolean} Does it appear to be a URL?
  */
-function resemblesUrl( query ) {
+export function resemblesUrl( query ) {
 	if ( ! query ) {
 		return false;
 	}
@@ -170,7 +169,7 @@ function resemblesUrl( query ) {
  * @param  {Array|String}  paramsToOmit The collection of params or single param to reject
  * @return {String} Url less the omitted params.
  */
-function omitUrlParams( url, paramsToOmit ) {
+export function omitUrlParams( url, paramsToOmit ) {
 	if ( ! url ) {
 		return null;
 	}
@@ -188,7 +187,7 @@ function omitUrlParams( url, paramsToOmit ) {
  * @param  {String} encodedURI URI to attempt to decode
  * @return {String}            Decoded URI (or passed in value on error)
  */
-function decodeURIIfValid( encodedURI ) {
+export function decodeURIIfValid( encodedURI ) {
 	if ( ! ( isString( encodedURI ) || has( encodedURI, 'toString' ) ) ) {
 		return '';
 	}
@@ -205,7 +204,7 @@ function decodeURIIfValid( encodedURI ) {
  * @param  {String} encodedURIComponent URI component to attempt to decode
  * @return {String}            Decoded URI component (or passed in value on error)
  */
-function decodeURIComponentIfValid( encodedURIComponent ) {
+export function decodeURIComponentIfValid( encodedURIComponent ) {
 	if ( ! ( isString( encodedURIComponent ) || has( encodedURIComponent, 'toString' ) ) ) {
 		return '';
 	}
@@ -215,20 +214,3 @@ function decodeURIComponentIfValid( encodedURIComponent ) {
 		return encodedURIComponent;
 	}
 }
-
-export default {
-	decodeURIIfValid,
-	decodeURIComponentIfValid,
-	isOutsideCalypso,
-	isExternal,
-	isHttps,
-	withoutHttp,
-	addSchemeIfMissing,
-	setUrlScheme,
-	urlToSlug,
-	urlToDomainAndPath,
-	// [TODO]: Move lib/route/add-query-args contents here
-	addQueryArgs,
-	resemblesUrl,
-	omitUrlParams,
-};

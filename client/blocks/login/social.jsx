@@ -24,7 +24,7 @@ import {
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import { InfoNotice } from 'blocks/global-notice';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 
 class SocialLoginForm extends Component {
 	static propTypes = {

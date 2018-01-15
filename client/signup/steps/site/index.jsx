@@ -16,7 +16,7 @@ import config from 'config';
 import wpcom from 'lib/wp';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import SignupActions from 'lib/signup/actions';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';

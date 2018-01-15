@@ -32,7 +32,7 @@ import {
 	loginUser,
 	resetAuthAccountType,
 } from 'state/login/actions';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import {

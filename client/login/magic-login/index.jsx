@@ -14,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import notices from 'notices';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
 import { getCurrentLocaleSlug, getMagicLoginCurrentView } from 'state/selectors';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';

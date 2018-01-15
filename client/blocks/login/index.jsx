@@ -30,7 +30,7 @@ import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import VerificationCodeForm from './two-factor-authentication/verification-code-form';
 import WaitingTwoFactorNotificationApproval from './two-factor-authentication/waiting-notification-approval';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';

@@ -14,7 +14,7 @@ import { getLocaleSlug, localize } from 'i18n-calypso';
  */
 import Item from './item';
 import config from 'config';
-import { login } from 'lib/paths';
+import { login } from 'lib/paths/login';
 import WordPressWordmark from 'components/wordpress-wordmark';
 import WordPressLogo from 'components/wordpress-logo';
 
