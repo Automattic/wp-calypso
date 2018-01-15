@@ -5,7 +5,7 @@
  */
 
 import {
-	MASTERBAR_HIDE,
+	MASTERBAR_TOGGLE_VISIBILITY,
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
@@ -92,9 +92,8 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
-export const hideMasterbar = createReducer( false, {
-	[ MASTERBAR_HIDE ]: ( state, { hide } ) => hide,
-} );
+export const masterbarVisibility = ( state = true, { type, isVisible } ) =>
+	type === MASTERBAR_TOGGLE_VISIBILITY ? isVisible : state;
 
 const reducer = combineReducers( {
 	actionLog,
@@ -103,12 +102,12 @@ const reducer = combineReducers( {
 	editor,
 	guidedTour,
 	hasSidebar,
-	hideMasterbar,
 	isLoading,
 	isNotificationsOpen,
 	isPreviewShowing,
 	language,
 	layoutFocus,
+	masterbarVisibility,
 	mediaModal,
 	npsSurveyNotice,
 	oauth2Clients,

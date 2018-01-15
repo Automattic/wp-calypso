@@ -135,6 +135,6 @@ export function hasSidebar( state ) {
 	return get( getSection( state ), 'secondary', true );
 }
 
-export function shouldHideMasterbar( state ) {
-	return get( state.ui, 'hideMasterbar', false );
+export function masterbarIsVisible( state ) {
+	return state.ui.masterbarVisibility;
 }

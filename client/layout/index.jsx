@@ -42,7 +42,7 @@ let KeyboardShortcutsMenu, SupportUser;
 import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
-import { hasSidebar, shouldHideMasterbar } from 'state/ui/selectors';
+import { hasSidebar, masterbarIsVisible } from 'state/ui/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -74,7 +74,7 @@ const Layout = createReactClass( {
 		translatorInvitation: PropTypes.object,
 		focus: PropTypes.object,
 		// connected props
-		hideMasterbar: PropTypes.bool,
+		masterbarIsHidden: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		isSupportUser: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
@@ -150,7 +150,7 @@ const Layout = createReactClass( {
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
 				{ 'has-chat': this.props.chatIsOpen },
-				{ 'hide-masterbar': this.props.hideMasterbar }
+				{ 'has-no-masterbar': this.props.masterbarIsHidden }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -207,7 +207,7 @@ const Layout = createReactClass( {
 export default connect( state => {
 	const { isLoading, section } = state.ui;
 	return {
-		hideMasterbar: shouldHideMasterbar( state ),
+		masterbarIsHidden: ! masterbarIsVisible( state ),
 		isLoading,
 		isSupportUser: state.support.isSupportUser,
 		section,

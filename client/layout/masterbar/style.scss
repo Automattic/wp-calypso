@@ -490,7 +490,7 @@ $autobar-height: 20px;
 	}
 }
 
-.hide-masterbar .masterbar {
+.has-no-masterbar .masterbar {
 	opacity: 0;
 	pointer-events: none;
 }
