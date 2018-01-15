@@ -15,7 +15,6 @@ import url from 'url';
 import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
-import AccountRecoveryReset from './account-recovery-reset';
 import config from 'config';
 import i18n from 'lib/i18n-utils';
 import readerContentWidth from 'reader/lib/content-width';
@@ -46,16 +45,6 @@ function Undocumented( wpcom ) {
 	this.wpcom = wpcom;
 }
 
-Undocumented.prototype.timezones = function( params, fn ) {
-	if ( typeof params === 'function' ) {
-		fn = params;
-		params = {};
-	}
-
-	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
-	return this.wpcom.req.get( '/timezones', query, fn );
-};
-
 Undocumented.prototype.site = function( id ) {
 	return new Site( id, this.wpcom );
 };
@@ -66,10 +55,6 @@ Undocumented.prototype.me = function() {
 
 Undocumented.prototype.mailingList = function( category ) {
 	return new MailingList( category, this.wpcom );
-};
-
-Undocumented.prototype.accountRecoveryReset = function( userData ) {
-	return new AccountRecoveryReset( userData, this.wpcom );
 };
 
 /*
@@ -104,20 +89,8 @@ Undocumented.prototype.updateJetpackJumpstart = function( siteId, active, fn ) {
 };
 
 /*
- * Jetpack modules data from the site with id siteId
- *
- * @param {int} [siteId]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.jetpackModules = function( siteId, fn ) {
-	debug( '/sites/:site_id:/jetpack/modules/ query' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/jetpack/modules', fn );
-};
-
-/*
  * Retrieve Jetpack modules data for a site with id siteid.
- * Similar to jetpackModules(), but uses the REST API of the Jetpack site.
+ * Uses the REST API of the Jetpack site.
  *
  * @param {int}      [siteId]
  * @param {Function} fn
@@ -132,26 +105,8 @@ Undocumented.prototype.getJetpackModules = function( siteId, fn ) {
 };
 
 /*
- * Activate the Jetpack module with moduleSlug on the site with id siteId
- *
- * @param {int} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.jetpackModulesActivate = function( siteId, moduleSlug, fn ) {
-	debug( '/sites/:site_id:/jetpack/modules/:module_slug query' );
-	return this.wpcom.req.post(
-		{ path: '/sites/' + siteId + '/jetpack/modules/' + moduleSlug },
-		{},
-		{ active: true },
-		fn
-	);
-};
-
-/*
  * Activate a Jetpack module with slug moduleSlug for a site with id siteid.
- * Similar to jetpackModulesActivate(), but uses the REST API of the Jetpack site.
+ * Uses the REST API of the Jetpack site.
  *
  * @param {int} [siteId]
  * @param {string} [moduleSlug]
@@ -170,26 +125,8 @@ Undocumented.prototype.jetpackModuleActivate = function( siteId, moduleSlug, fn 
 };
 
 /*
- * Deactivate the Jetpack module with moduleSlug on the site with id siteId
- *
- * @param {int} [siteId]
- * @param {string} [moduleSlug]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.jetpackModulesDeactivate = function( siteId, moduleSlug, fn ) {
-	debug( '/sites/:site_id:/jetpack/modules/:module_slug query' );
-	return this.wpcom.req.post(
-		{ path: '/sites/' + siteId + '/jetpack/modules/' + moduleSlug },
-		{},
-		{ active: false },
-		fn
-	);
-};
-
-/*
  * Deactivate a Jetpack module with slug moduleSlug for a site with id siteid.
- * Similar to jetpackModulesDeactivate(), but uses the REST API of the Jetpack site.
+ * Uses the REST API of the Jetpack site.
  *
  * @param {int} [siteId]
  * @param {string} [moduleSlug]
@@ -933,39 +870,6 @@ Undocumented.prototype.sharingButtons = function( siteId, query, fn ) {
 };
 
 /**
- * Return a single sharing buttons for the specified site
- *
- * @param {int|string} siteId The site ID or domain
- * @param {string} buttonId The sharing button ID
- * @param {Function} fn Method to invoke when request is complete
- * @api public
- */
-Undocumented.prototype.sharingButton = function( siteId, buttonId, fn ) {
-	debug( '/sites/:site_id:/sharing-buttons query' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/sharing-buttons/' + buttonId }, fn );
-};
-
-/**
- * Saves a single sharing buttons for the specified site
- *
- * @param {int|string} siteId The site ID or domain
- * @param {Object} button The sharing button object
- * @param {Function} fn Method to invoke when request is complete
- * @api public
- */
-Undocumented.prototype.saveSharingButton = function( siteId, button, fn ) {
-	debug( '/sites/:site_id:/sharing-buttons query' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/' + siteId + '/sharing-buttons/' + button.ID,
-			body: button,
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Saves the set of sharing buttons for the specified site
  *
  * @param {int|string} siteId The site ID or domain
@@ -1264,26 +1168,6 @@ Undocumented.prototype.paypalExpressUrl = function( data, fn ) {
 };
 
 /**
- * GET example domain suggestions
- *
- * @param {Function} fn - The callback funtion
- * @api public
- * @returns {Promise} promise
- */
-Undocumented.prototype.exampleDomainSuggestions = function( fn ) {
-	return this.wpcom.req.get( { path: '/domains/suggestions/examples' }, function(
-		error,
-		response
-	) {
-		if ( error ) {
-			return fn( error );
-		}
-
-		fn( null, response );
-	} );
-};
-
-/**
  * Update primary domain for blog
  *
  * @param {int} siteId The site ID
@@ -1449,16 +1333,6 @@ Undocumented.prototype.readRecommendedPosts = function( query, fn ) {
 	return this.wpcom.req.get( '/read/recommendations/posts', query, fn );
 };
 
-Undocumented.prototype.followReaderTag = function( tag, fn ) {
-	debug( '/read/tags/' + tag + '/mine/new' );
-	return this.wpcom.req.post( '/read/tags/' + tag + '/mine/new', fn );
-};
-
-Undocumented.prototype.unfollowReaderTag = function( tag, fn ) {
-	debug( '/read/tags/' + tag + '/mine/delete' );
-	return this.wpcom.req.post( '/read/tags/' + tag + '/mine/delete', fn );
-};
-
 Undocumented.prototype.readLiked = function( query, fn ) {
 	var params = clone( query );
 	debug( '/read/liked' );
@@ -1541,36 +1415,6 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readListTags = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:list/tags' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/tags',
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.readListItems = function( query, fn ) {
-	var params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:list/items' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/items',
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readSite = function( query, fn ) {
 	var params = omit( query, 'site' );
 	debug( '/read/sites/:site' );
@@ -1607,15 +1451,6 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
 		params,
 		fn
 	);
-};
-
-Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {
-	return this.wpcom.req.get( '/read/recommendations/mine', query, fn );
-};
-
-Undocumented.prototype.graduateNewReader = function( fn ) {
-	const params = { apiVersion: '1.2' };
-	return this.wpcom.req.post( '/read/graduate-new-reader', params, {}, fn );
 };
 
 /**
@@ -1682,128 +1517,6 @@ Undocumented.prototype.usersSocialNew = function( query, fn ) {
 		body: query,
 	};
 
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Sign up for a new phone account
- *
- * @param {object} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersPhoneNew = function( query, fn ) {
-	var args;
-	debug( '/users/phone/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/phone/new',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Log in to an existing phone account
- *
- * @param {object} query - a key/value pair; key: 'phone_number', value: 'the users phone number'
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersPhone = function( query, fn ) {
-	var args;
-	debug( '/users/phone' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/phone',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Verify a record in the signups table and create a new user from it
- *
- * @param {object} query - two key/value pairs;
- *           { 'phone_number': 'the users phone number', 'code': 'the verification code we sent to the phone number' }
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersPhoneVerification = function( query, fn ) {
-	var args;
-	debug( '/users/phone/verification' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/phone/verification',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Sign up for a new email only account
- *
- * @param {object} query - a key/value pair; key: 'email', value: 'the users email address'
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmailNew = function( query, fn ) {
-	var args;
-	debug( '/users/email/new' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/email/new',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Log in to an existing email account
- *
- * @param {object} query - a key/value pair; key: 'email', value: 'the users email address'
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmail = function( query, fn ) {
-	var args;
-	debug( '/users/email' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/email',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
-	return this.wpcom.req.post( args, fn );
-};
-
-/**
- * Verify a record in wp_signups and create a new user from it
- *
- * @param {object} query - two key/value pairs;
- *            { 'email': 'the users email address', 'code': 'the verification code we sent to the email address' }
- * @param {Function} fn - Function to invoke when request is complete
- */
-Undocumented.prototype.usersEmailVerification = function( query, fn ) {
-	var args;
-	debug( '/users/email/verification' );
-
-	// This API call is restricted to these OAuth keys
-	restrictByOauthKeys( query );
-
-	args = {
-		path: '/users/email/verification',
-		body: mapKeysRecursively( query, snakeCase ),
-	};
 	return this.wpcom.req.post( args, fn );
 };
 
@@ -2318,22 +2031,6 @@ Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
 };
 
-Undocumented.prototype.deleteWPCOMFollower = function( siteId, followerId, fn ) {
-	debug( '/site/:site_id/follower/:follower_id/delete' );
-	return this.wpcom.req.post( { path: '/sites/%s/follower/%d/delete' }, fn );
-};
-
-Undocumented.prototype.deleteEmailFollower = function( siteId, followerId, email, fn ) {
-	debug( '/site/:site_id/follower/:follower_id/delete' );
-	return this.wpcom.req.post(
-		{
-			path: '/sites/%s/follower/%d/delete',
-			body: { email: email },
-		},
-		fn
-	);
-};
-
 Undocumented.prototype.fetchImporterState = function( siteId ) {
 	debug( `/sites/${ siteId }/importer/` );
 
@@ -2570,16 +2267,6 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 	);
 };
 
-Undocumented.prototype.timezones = function( params, fn ) {
-	if ( typeof params === 'function' ) {
-		fn = params;
-		params = {};
-	}
-
-	let query = Object.assign( {}, params, { apiNamespace: 'wpcom/v2' } );
-	return this.wpcom.req.get( '/timezones', query, fn );
-};
-
 /**
  * Check different info about WordPress and Jetpack status on a url
  *
@@ -2600,23 +2287,6 @@ Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
 	}
 
 	return this.wpcom.req.get( `${ endpointUrl }`, params );
-};
-
-/**
- * Post an url to be stored under user's settings,
- * so we can know that they have started a jetpack-connect flow for that site
- *
- * @param {String} targetUrl          The url of the site to store
- * @returns {Promise} Promise
- */
-Undocumented.prototype.storeJetpackConnectUrl = function( targetUrl ) {
-	return this.wpcom.req.post(
-		{ path: '/me/settings' },
-		{},
-		{
-			jetpack_connect: targetUrl,
-		}
-	);
 };
 
 /**
