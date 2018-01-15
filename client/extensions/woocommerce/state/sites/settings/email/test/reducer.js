@@ -136,6 +136,38 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
 	} );
 
+	test( 'should decode entities in woocommerce_email_from_name', () => {
+		const siteId = 123;
+		const settings = [
+			{
+				id: 'woocommerce_email_from_name',
+				value: 'Tom&ampJerry',
+				group_id: 'email',
+				default: '',
+			},
+		];
+
+		const expectedResult = {
+			email: {
+				woocommerce_email_from_name: {
+					value: 'Tom&Jerry',
+					default: '',
+				},
+			},
+		};
+
+		const action = {
+			type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
+			siteId,
+			data: settings,
+		};
+
+		const newState = reducer( {}, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].settings ).to.exist;
+		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
+	} );
+
 	test( 'should use default value from setting for settings with default and no value.', () => {
 		// test check if default is not overwritten by default from woocommerce_email_from_address if it exists.
 		const siteId = 123;

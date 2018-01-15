@@ -4,13 +4,14 @@
  * @format
  */
 
-import { filter, omit, isEmpty, setWith } from 'lodash';
+import { filter, omit, isEmpty, setWith, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
 import { LOADING } from 'woocommerce/state/constants';
+import { decodeEntities } from 'lib/formatting';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
@@ -45,6 +46,13 @@ export default createReducer( null, {
 				Object
 			);
 		} );
+
+		// Decode: &, <, > entities.
+		const from_name = get( options, [ 'email', 'woocommerce_email_from_name', 'value' ], false );
+		if ( from_name ) {
+			options.email.woocommerce_email_from_name.value = decodeEntities( from_name );
+		}
+
 		return options;
 	},
 
