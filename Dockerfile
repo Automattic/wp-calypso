@@ -60,5 +60,8 @@ RUN        true \
            && find . -not -path './node_modules/*' -print0 | xargs -0 chown nobody \
            && true
 
+# Print files, just for testing
+RUN        find . -not -user nobody | wc -l
+
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js
