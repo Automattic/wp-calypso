@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import createReactClass from 'create-react-class';
-import config from 'config';
+import { isEnabled } from 'config';
 import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -111,6 +111,11 @@ class PeopleSectionNav extends Component {
 				path: '/people/viewers/' + siteFilter,
 				id: 'viewers',
 			},
+			{
+				title: translate( 'Invites', { context: 'Filter label for people list' } ),
+				path: '/people/invites/' + siteFilter,
+				id: 'invites',
+			},
 		];
 
 		return filters;
@@ -118,13 +123,20 @@ class PeopleSectionNav extends Component {
 
 	getNavigableFilters() {
 		var allowedFilterIds = [ 'team' ];
-		if ( config.isEnabled( 'manage/people/readers' ) ) {
+		if ( isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );
 
 			if ( this.shouldDisplayViewers() ) {
 				allowedFilterIds.push( 'viewers' );
 			}
+		}
+
+		if ( isEnabled( 'manage/people/invites' ) ) {
+			/*
+			 * @todo conditionally show invites filter when outstanding invites exist
+			 */
+			allowedFilterIds.push( 'invites' );
 		}
 
 		return this.getFilters().filter(

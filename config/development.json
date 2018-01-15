@@ -86,6 +86,7 @@
 		"manage/pages": true,
 		"manage/payment-methods": true,
 		"manage/people": true,
+		"manage/people/invites": true,
 		"manage/people/readers": true,
 		"manage/people/role-filtering": true,
 		"manage/plan-features": true,

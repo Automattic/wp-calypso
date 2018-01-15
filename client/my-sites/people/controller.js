@@ -16,6 +16,7 @@ import titlecase from 'to-title-case';
 import PeopleLogStore from 'lib/people/log-store';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
+import PeopleInvites from './people-invites';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -44,6 +45,10 @@ export default {
 
 	person( context, next ) {
 		renderSingleTeamMember( context, next );
+	},
+
+	peopleInvites( context, next ) {
+		renderPeopleInvites( context, next );
 	},
 };
 
@@ -79,6 +84,18 @@ function renderInvitePeople( context, next ) {
 
 	context.primary = React.createElement( InvitePeople, {
 		site: site,
+	} );
+	next();
+}
+
+function renderPeopleInvites( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	context.store.dispatch( setTitle( i18n.translate( 'Invites', { textOnly: true } ) ) );
+
+	context.primary = React.createElement( PeopleInvites, {
+		site,
 	} );
 	next();
 }
