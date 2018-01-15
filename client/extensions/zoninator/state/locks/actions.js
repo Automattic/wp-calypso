@@ -16,7 +16,7 @@ import {
  * @param  {Number}  siteId          Site ID
  * @param  {Number}  zoneId          Zone ID
  * @param  {Number}  expires         Expiration time in milliseconds
- * @param  {Number}  maxLockPeriod   Maximum number of seconds to extend the lock to
+ * @param  {Number}  maxLockPeriod   Maximum number of milliseconds to extend the lock to
  * @return {Object}                  Action object
  */
 export const updateLock = ( siteId, zoneId, expires, maxLockPeriod ) => ( {
