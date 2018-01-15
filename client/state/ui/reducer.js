@@ -5,6 +5,7 @@
  */
 
 import {
+	MASTERBAR_TOGGLE_VISIBILITY,
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
@@ -91,6 +92,9 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 	return state;
 };
 
+export const masterbarVisibility = ( state = true, { type, isVisible } ) =>
+	type === MASTERBAR_TOGGLE_VISIBILITY ? isVisible : state;
+
 const reducer = combineReducers( {
 	actionLog,
 	comments,
@@ -103,6 +107,7 @@ const reducer = combineReducers( {
 	isPreviewShowing,
 	language,
 	layoutFocus,
+	masterbarVisibility,
 	mediaModal,
 	npsSurveyNotice,
 	oauth2Clients,

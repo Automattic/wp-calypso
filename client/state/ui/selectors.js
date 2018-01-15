@@ -134,3 +134,7 @@ export function hasSidebar( state ) {
 	}
 	return get( getSection( state ), 'secondary', true );
 }
+
+export function masterbarIsVisible( state ) {
+	return state.ui.masterbarVisibility;
+}

@@ -25,6 +25,7 @@ describe( 'reducer', () => {
 			'isPreviewShowing',
 			'layoutFocus',
 			'language',
+			'masterbarVisibility',
 			'mediaModal',
 			'npsSurveyNotice',
 			'oauth2Clients',

@@ -480,3 +480,8 @@ $autobar-height: 20px;
 		transform: translateY( -48px );
 	}
 }
+
+.has-no-masterbar .masterbar {
+	opacity: 0;
+	pointer-events: none;
+}
