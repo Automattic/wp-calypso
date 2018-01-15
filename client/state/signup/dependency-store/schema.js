@@ -9,13 +9,13 @@ export const dependencyStoreSchema = {
 				{
 					type: 'object',
 					properties: {
-						product_slug: 'string',
-						free_trial: 'boolean',
+						product_slug: { type: 'string' },
+						free_trial: { type: 'boolean' },
 					},
 				},
 			],
 		},
-		designType: 'string',
+		designType: { type: 'string' },
 		domainItem: {
 			OneOfType: [
 				{ type: 'null' },
@@ -23,15 +23,15 @@ export const dependencyStoreSchema = {
 				{
 					type: 'object',
 					properties: {
-						is_domain_registration: 'boolean',
-						product_slug: 'string',
-						meta: 'string',
+						is_domain_registration: { type: 'boolean' },
+						product_slug: { type: 'string' },
+						meta: { type: 'string' },
 					},
 				},
 			],
 		},
-		surveyQuestion: 'string',
-		surveySiteType: 'string',
-		theme: 'string',
+		surveyQuestion: { type: 'string' },
+		surveySiteType: { type: 'string' },
+		theme: { type: 'string' },
 	},
 };
