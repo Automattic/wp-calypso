@@ -19,8 +19,12 @@ ENV        NODE_PATH=/calypso/server:/calypso/client
 # env-config.sh
 #   used by systems to overwrite some defaults
 #   such as the apt and npm mirrors
-COPY       ./env-config.sh /tmp/env-config.sh
-RUN        bash /tmp/env-config.sh
+
+#
+# ### TEMPORARILY DISABLED ###
+#
+# COPY       ./env-config.sh /tmp/env-config.sh
+# RUN        bash /tmp/env-config.sh
 
 # Build a "dependencies" layer
 #
