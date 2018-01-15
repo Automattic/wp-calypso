@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { property, sortBy, map } from 'lodash';
+import { property, sortBy } from 'lodash';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
@@ -51,7 +51,6 @@ import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
-import { getPrimarySiteId } from 'state/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -156,16 +155,11 @@ const Layout = createReactClass( {
 				'is-active': this.props.isLoading,
 			} );
 
-		const { primarySiteId, recentSiteIds } = this.props;
-
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<SitesListNotices />
-				{ primarySiteId && <QuerySites siteId={ primarySiteId } /> }
-				{ map( recentSiteIds, recentSiteId => (
-					<QuerySites key={ recentSiteId } siteId={ recentSiteId } />
-				) ) }
+				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
 				<QueryPreferences />
 				{ <GuidedTours /> }
@@ -220,7 +214,5 @@ export default connect( state => {
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
 		colorSchemePreference: getPreference( state, 'colorScheme' ),
-		primarySiteId: getPrimarySiteId( state ),
-		recentSiteIds: getPreference( state, 'recentSites' ),
 	};
 } )( Layout );
