@@ -1,6 +1,8 @@
+/** @format */
+
 .jetpack-onboarding {
 	.steps__main {
-		animation: appearWithScaling .3s ease-in-out;
+		animation: appearWithScaling 0.3s ease-in-out;
 	}
 
 	.steps__form {
@@ -49,6 +51,11 @@
 		.gridicon {
 			position: relative;
 			top: 3px;
+			margin-right: 12px;
+		}
+
+		.spinner {
+			float: left;
 			margin-right: 12px;
 		}
 
