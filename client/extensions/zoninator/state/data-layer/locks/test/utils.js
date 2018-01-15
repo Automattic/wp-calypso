@@ -21,8 +21,8 @@ describe( 'utils', () => {
 			const lock = fromApi( response );
 
 			expect( lock ).to.have.keys( [ 'expires', 'maxLockPeriod' ] );
-			expect( lock.maxLockPeriod ).to.deep.equal( 600000 ),
-				expect( lock.expires ).to.be.within( now + 30000, now + 31000 );
+			expect( lock.maxLockPeriod ).to.deep.equal( 600000 );
+			expect( lock.expires ).to.be.within( now + 30000, now + 31000 );
 		} );
 	} );
 } );
