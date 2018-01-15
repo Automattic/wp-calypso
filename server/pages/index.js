@@ -256,7 +256,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	let redirectUrl, protocol, start;
+	let redirectUrl, start;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
@@ -267,7 +267,8 @@ function setUpLoggedInRoute( req, res, next ) {
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
 
-		protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
+		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
+		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
@@ -284,7 +285,7 @@ function setUpLoggedInRoute( req, res, next ) {
 		start = new Date().getTime();
 
 		debug( 'Issuing API call to fetch user object' );
-		user( req.cookies.wordpress_logged_in, function( error, data ) {
+		user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
 			let searchParam, errorMessage;
 
 			if ( error ) {

@@ -12,7 +12,7 @@ var config = require( 'config' ),
 	 */
 	url = 'https://public-api.wordpress.com/rest/v1/me?meta=flags';
 
-module.exports = function( authCookieValue, callback ) {
+module.exports = function( authCookieValue, geoCountry, callback ) {
 	// create HTTP Request object
 	var req = superagent.get( url ),
 		hmac,
@@ -30,6 +30,7 @@ module.exports = function( authCookieValue, callback ) {
 		hmac.update( authCookieValue );
 		hash = hmac.digest( 'hex' );
 
+		req.set( 'X-Forwarded-GeoIP-Country-Code', geoCountry );
 		req.set( 'Authorization', 'X-WPCALYPSO ' + hash );
 		req.set( 'Cookie', AUTH_COOKIE_NAME + '=' + authCookieValue );
 		req.set( 'User-Agent', 'WordPress.com Calypso' );
