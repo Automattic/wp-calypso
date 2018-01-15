@@ -1,4 +1,4 @@
-FROM       node:8.9.3
+FROM       node:8.9.3-alpine
 LABEL maintainer="Automattic"
 
 WORKDIR    /calypso
