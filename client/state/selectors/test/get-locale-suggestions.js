@@ -8,9 +8,7 @@ import { getLocaleSuggestions } from 'state/selectors';
 describe( 'getLocaleSuggestions()', () => {
 	test( 'should return null if no items found', () => {
 		const suggestedLocales = getLocaleSuggestions( {
-			i18n: {
-				localeSuggestions: {},
-			},
+			i18n: {},
 		} );
 
 		expect( suggestedLocales ).toBe( null );
@@ -19,9 +17,7 @@ describe( 'getLocaleSuggestions()', () => {
 	test( 'should return the suggested locales', () => {
 		const suggestedLocales = getLocaleSuggestions( {
 			i18n: {
-				localeSuggestions: {
-					items: [ 'Phwoar!' ],
-				},
+				localeSuggestions: [ 'Phwoar!' ],
 			},
 		} );
 
