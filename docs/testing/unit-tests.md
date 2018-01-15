@@ -19,18 +19,17 @@ This guide is intended as a quick reference of common tools and conventions we u
 Aside from the joy unit testing will bring to your life, unit tests are important not only because they help to ensure that our application behaves as it should, but also because they provide concise examples of how to use a piece of code. 
 
 
-Tests are also part of our code base, which means we apply to them the same standards we apply to all our application code. 
+Tests are part of our code base, which means we apply to them the same standards we apply to all our application code. 
 
 As with all code, tests have to be maintained. Writing tests for the sake of having a test isn't the goal – rather we should try to strike the right balance between covering expected and unexpected behaviours, speedy execution and code maintenance.
-
 
 Unit tests test __units__ of behavior, and should contain relatively few abstractions. If our tests are failing in response to legitimate changes, it could be a sign that we have coupled our tests too closely to the internals of our code.
 
 When writing unit tests consider the following:
 
-* What behaviour are we testing?
+* What behaviour(s) are we testing?
 * What errors are likely to occur when we run this code?
-* Does the test test what we think they are testing? Or are we introducing false positives and false negatives into our results?
+* Does the test test what we think it is testing? Or are we introducing false positives/negatives?
 
 ## Running tests
 
