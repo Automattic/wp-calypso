@@ -10,6 +10,7 @@ import {
 	announceSaveFailure,
 } from '../';
 import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'state/action-types';
+import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 describe( 'saveJetpackOnboardingSettings()', () => {
 	const dispatch = jest.fn();
@@ -107,12 +108,7 @@ describe( 'storeJetpackOnboardingSettings()', () => {
 
 		storeJetpackOnboardingSettings( { dispatch }, { siteId, settings } );
 
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				settings,
-				siteId,
-			} )
-		);
+		expect( dispatch ).toHaveBeenCalledWith( updateJetpackOnboardingSettings( siteId, settings ) );
 	} );
 } );
 
