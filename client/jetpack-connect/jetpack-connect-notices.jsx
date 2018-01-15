@@ -13,6 +13,7 @@ import Notice from 'components/notice';
 
 class JetpackConnectNotices extends Component {
 	static propTypes = {
+		onTerminalError: PropTypes.func,
 		noticeType: PropTypes.oneOf( [
 			'alreadyConnected',
 			'alreadyConnectedByOtherUser',
@@ -106,6 +107,7 @@ class JetpackConnectNotices extends Component {
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
+				noticeValues.userCanRetry = true;
 				return noticeValues;
 
 			case 'retryAuth':
@@ -114,6 +116,7 @@ class JetpackConnectNotices extends Component {
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
+				noticeValues.userCanRetry = true;
 				return noticeValues;
 
 			case 'secretExpired':
@@ -160,8 +163,28 @@ class JetpackConnectNotices extends Component {
 		}
 	}
 
+	componentDidUpdate() {
+		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
+			this.props.onTerminalError();
+		}
+	}
+
+	componentDidMount() {
+		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
+			this.props.onTerminalError();
+		}
+	}
+
+	errorIsTerminal() {
+		const notice = this.getNoticeValues();
+		return ! notice.userCanRetry;
+	}
+
 	render() {
 		const values = this.getNoticeValues();
+		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
+			return null;
+		}
 		if ( values ) {
 			return (
 				<div className="jetpack-connect__notices-container">

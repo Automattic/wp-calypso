@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JetpackConnectNotices Should not render notice if callback supplied 1`] = `null`;
+
+exports[`JetpackConnectNotices Should render notice 1`] = `
+<div
+  className="jetpack-connect__notices-container"
+>
+  <div
+    className="notice is-error "
+  >
+    <span
+      className="notice__icon-wrapper"
+    >
+      <svg
+        className="gridicon gridicons-notice notice__icon"
+        height={24}
+        onClick={undefined}
+        viewBox="0 0 24 24"
+        width={24}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g>
+          <path
+            d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-2h2v2zm0-4h-2l-.5-6h3l-.5 6z"
+          />
+        </g>
+      </svg>
+    </span>
+    <span
+      className="notice__content"
+    >
+      <span
+        className="notice__text"
+      >
+        That's not a valid url.
+      </span>
+    </span>
+  </div>
+</div>
+`;
