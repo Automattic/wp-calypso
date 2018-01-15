@@ -12,7 +12,7 @@ import { some, forEach, isEqual, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
+import { isRequestingSites, isRequestingSite, hasAllSitesList } from 'state/sites/selectors';
 import { requestSites, requestSite } from 'state/sites/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { getPrimarySiteId } from 'state/selectors';
@@ -53,7 +53,7 @@ class QuerySites extends Component {
 	}
 
 	requestPrimary( props ) {
-		if ( props.primaryAndRecent ) {
+		if ( props.primaryAndRecent && ! props.hasAllSitesList ) {
 			const { primarySiteId, isRequestingPrimarySite } = props;
 
 			if ( primarySiteId && ! isRequestingPrimarySite ) {
@@ -63,7 +63,7 @@ class QuerySites extends Component {
 	}
 
 	requestRecent( props ) {
-		if ( props.primaryAndRecent ) {
+		if ( props.primaryAndRecent && ! props.hasAllSitesList ) {
 			const { recentSiteIds, isRequestingRecentSites, primarySiteId } = props;
 
 			if ( recentSiteIds && recentSiteIds.length && ! isRequestingRecentSites ) {
@@ -112,6 +112,7 @@ export default connect(
 		return {
 			primarySiteId,
 			recentSiteIds,
+			hasAllSitesList: hasAllSitesList( state ),
 			requestingSites: isRequestingSites( state ),
 			requestingSite: isRequestingSite( state, siteId ),
 			isRequestingPrimarySite: isRequestingSite( state, primarySiteId ),
