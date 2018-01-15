@@ -34,7 +34,7 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
-import { authQueryPropTypes } from './utils';
+import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
@@ -165,7 +165,7 @@ export class JetpackAuthorize extends Component {
 
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
-		const { from, redirectAfterAuth } = this.props.authQuery;
+		const { from, redirectAfterAuth, scope } = this.props.authQuery;
 
 		if ( isMobileAppFlow ) {
 			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
@@ -173,7 +173,13 @@ export class JetpackAuthorize extends Component {
 			return;
 		}
 
-		if ( this.isSso() || this.isWoo() || this.isFromJpo() || this.shouldRedirectJetpackStart() ) {
+		if (
+			this.isSso() ||
+			this.isWoo() ||
+			this.isFromJpo() ||
+			this.shouldRedirectJetpackStart() ||
+			getRoleFromScope( scope ) === 'subscriber'
+		) {
 			debug(
 				'Going back to WP Admin.',
 				'Connection initiated via: ',
