@@ -67,9 +67,9 @@ class PeopleSectionNav extends Component {
 			return false;
 		}
 
-		// Disable search for wpcom followers and viewers
+		// Disable search for wpcom followers and viewers and for invites
 		if ( filter ) {
-			if ( 'followers' === filter || 'viewers' === filter ) {
+			if ( 'followers' === filter || 'viewers' === filter || 'invites' === filter ) {
 				return false;
 			}
 		}
