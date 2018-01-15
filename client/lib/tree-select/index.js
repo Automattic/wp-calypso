@@ -14,10 +14,12 @@ import { isObject, some, isFunction } from 'lodash';
  * @return {Function}               Cached selector
  */
 export default function treeSelect( getDependents, selector ) {
-	if ( ! isFunction( getDependents ) || ! isFunction( selector ) ) {
-		throw new TypeError(
-			'treeSelect: invalid arguments passed, selector and getDependents must both be functions'
-		);
+	if ( process.env.NODE_ENV !== 'production' ) {
+		if ( ! isFunction( getDependents ) || ! isFunction( selector ) ) {
+			throw new TypeError(
+				'treeSelect: invalid arguments passed, selector and getDependents must both be functions'
+			);
+		}
 	}
 
 	const cache = new WeakMap();
@@ -37,11 +39,13 @@ export default function treeSelect( getDependents, selector ) {
 		const cursor = dependents.reduce( insertDependentKey, cache );
 
 		const key = args.join();
-		if ( ! cursor.has( key ) ) {
-			cursor.set( key, selector( dependents, ...args ) );
+		if ( cursor.has( key ) ) {
+			return cursor.get( key );
 		}
 
-		return cursor.get( key );
+		const value = selector( dependents, ...args );
+		cursor.set( key, value );
+		return value;
 	};
 
 	return cachedSelector;
@@ -52,21 +56,14 @@ export default function treeSelect( getDependents, selector ) {
  * If the key is not present, then inserts a new map and returns it
  *
  * Note: Inserts WeakMaps except for the last map which will be a regular Map.
+ * It does this because the key for the last map is the string results of args.join()
  */
 function insertDependentKey( map, key, currentIndex, arr ) {
-	const NewMap = currentIndex === arr.length - 1 ? Map : WeakMap;
-	return insertIfAbsent( map, key, new NewMap() );
-}
-
-/*
- * If a key is present in the map, then return the value for that key.
- * Otherwise, set the value for that key, and then return the value.
- */
-function insertIfAbsent( map, key, value ) {
 	if ( map.has( key ) ) {
 		return map.get( key );
 	}
 
-	map.set( key, value );
-	return map.get( key );
+	const newMap = currentIndex === arr.length - 1 ? new Map() : new WeakMap();
+	map.set( key, newMap );
+	return newMap;
 }
