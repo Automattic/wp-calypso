@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
  */
 import PaymentLogo from 'components/payment-logo';
 import { getCurrentUserPaymentMethods } from 'state/selectors';
+import { abtest } from 'lib/abtest';
 
 class PaymentMethods extends Component {
 	renderPaymentMethods = methods => {
@@ -37,6 +38,10 @@ class PaymentMethods extends Component {
 
 	render() {
 		const { translate } = this.props;
+
+		if ( 'hide' === abtest( 'paymentMethodsOnPlans' ) ) {
+			return null;
+		}
 
 		return (
 			<div className="payment-methods">
