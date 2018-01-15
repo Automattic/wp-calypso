@@ -1,17 +1,36 @@
 # Unit Tests
-
-Unit tests are important because they help ensure correctness. A good unit test also provides a concise example of the usage and expected behavior of code in an isolated context. It's therefore important to maintain high standards to maximize the effectiveness of our tests.
-
 This guide is intended as a quick reference of common tools and conventions we use for Calypso unit testing. You'll be able to glean a great deal from browsing through Calypso's existing tests, but we'll try to keep this page up to date with the most recent standards.
 
 ## Table of contents
-* [Running tests](running-tests)
-* [Writing tests](writing-tests)
+* [Why unit test?](#why-unit-test)
+* [Running tests](#running-tests)
+* [Writing tests](#writing-tests)
     * [Folder structure](#folder-structure)
     * [Importing tests](#importing-tests)
     * [Describing tests](#describing-tests)
     * [Snapshot testing](#snapshot-testing)
-* [Examples](#examples)
+    * [Setup and Teardown methods](#setup-and-teardown-methods)
+    * [Mocking dependencies](#mocking-dependencies)
+    * [Testing globals](#testing-globals)
+    * [Testing legacy code](#testing-legacy-code)
+    
+## Why unit test?
+
+Aside from the joy unit testing will bring to your life, unit tests are important not only because they help to ensure that our application behaves as it should, but also because they provide concise examples of how to use a piece of code. 
+
+
+Tests are also part of our code base, which means we apply to them the same standards we apply to all our application code. 
+
+As with all code, tests have to be maintained. Writing tests for the sake of having a test isn't the goal – rather we should try to strike the right balance between covering expected and unexpected behaviours, speedy execution and code maintenance.
+
+
+Unit tests test __units__ of behavior, and should contain relatively few abstractions. If our tests are failing in response to legitimate changes, it could be a sign that we have coupled our tests too closely to the internals of our code.
+
+When writing unit tests consider the following:
+
+* What behaviour are we testing?
+* What errors are likely to occur when we run this code?
+* Does the test test what we think they are testing? Or are we introducing false positives and false negatives into our results?
 
 ## Running tests
 
@@ -24,7 +43,7 @@ We use [Jest](https://facebook.github.io/jest) testing framework for unit tests,
 Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [globals](https://facebook.github.io/jest/docs/en/api.html) (`describe`, `test`, `beforeEach` and so on) [assertions](http://facebook.github.io/jest/docs/en/expect.html), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html), [spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) and [mock functions](https://facebook.github.io/jest/docs/en/mock-function-api.html).
 
 ## Folder structure
-Keep your tests in a `test` folder in your working directory. The test file should have the same name as the test subject file, and use the extension `.js`.
+Keep your tests in a `test` folder in your working directory. The test file should have the same name as the test subject file.
 
 ```
 +-- test
@@ -52,7 +71,7 @@ Given the previous folder structure, try to use relative paths when importing of
 It will make your life easier should you decide to relocate your code to another position in the application directory.
 
 ### Describing tests
-Use a 'describe' block to group test cases. Each test case should ideally describe one behaviour only.
+Use a `describe` block to group test cases. Each test case should ideally describe one behaviour only.
 
 In test cases, try to describe in plain words the expected behaviour. For UI components, this might entail describing expected behaviour from a user perspective rather than explaining code internals.
 
@@ -79,41 +98,24 @@ describe( 'CheckboxWithLabel', () => {
 ### Snapshot testing
 Snapshot testing is useful for verifying that any data produced during a test is not inadvertently changed. This is especially useful for large and complex data structures like component or state trees. See the [our full reference](snapshot-testing.md) for more information.
 
-### Examples
-
 ### Setup and Teardown methods
 
 The Jest API includes some nifty [setup and teardown methods](https://facebook.github.io/jest/docs/en/setup-teardown.html) that allow you to perform tasks *before* and *after* each or all of your tests, or tests within a specific `describe` block.
 
-These methods can handle asynchronous code to allow setup that you normally cannot do inline.
-
-For example, you 
+These methods can handle asynchronous code to allow setup that you normally cannot do inline. As with [individual test cases](https://facebook.github.io/jest/docs/en/asynchronous.html#promises), you can return a Promise and Jest will wait for it to resolve: 
 
 ```javascript
 
 // one-time setup for *all* tests
-beforeAll( done => {
-    someAsyncAction()
-        .then( resp => {
-        	window.someGlobal = resp;
-        	done();
-        } );
-} );
+beforeAll( () =>  someAsyncAction().then( resp => {
+    window.someGlobal = resp;
+} ) );
 
 // one-time teardown for *all* tests
 afterAll( () => {
     window.someGlobal = null;
 } );
 
-// one-time setup for *each* test
-beforeEach( () => {
-    
-} );
-
-// one-time teardown for *each* test
-afterEach( () => {
-    
-} );
 
 ```
 
