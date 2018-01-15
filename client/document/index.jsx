@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import Masterbar from '../layout/masterbar/masterbar.jsx';
-import getStylesheetUrl from './utils/stylesheet';
+import getStylesheet from './utils/stylesheet';
 
 class Document extends React.Component {
 	render() {
@@ -61,14 +61,16 @@ class Document extends React.Component {
 					<link
 						rel="stylesheet"
 						id="main-css"
-						href={ urls[ getStylesheetUrl( { isRTL, isDebug, env } ) ] }
+						href={
+							urls[ getStylesheet( { rtl: !! isRTL, debug: isDebug || env === 'development' } ) ]
+						}
 						type="text/css"
 					/>
 					{ sectionCss && (
 						<link
 							rel="stylesheet"
 							id={ 'section-css-' + sectionCss.id }
-							href={ get( sectionCss, `urls.${ isRTL ? 'rtl' : 'ltr' }` ) }
+							href={ get( sectionCss, 'urls.' + ( isRTL ? 'rtl' : 'ltr' ) ) }
 							type="text/css"
 						/>
 					) }

@@ -1,15 +1,13 @@
 /** @format */
 
-function addIf( cond, str ) {
-	return cond ? str : '';
-}
-
-function getStylesheetUrl( { isRtl, env, isDebug } ) {
-	const isDevOrDebug = env === 'development' || isDebug;
+/**
+ *
+ * @param {object} options Whether to return a 'debug' and/or 'rtl' stylesheet.
+ * @return {string} Returns stylesheet filename depending on options.
+ */
+function getStylesheet( { rtl, debug } = { rtl: false, debug: false } ) {
 	// style[-debug][-rtl].css
-	const stylesheet = 'style' + addIf( isDevOrDebug, '-debug' ) + addIf( isRtl, '-rtl' ) + '.css';
-
-	return stylesheet;
+	return 'style' + ( debug ? '-debug' : '' ) + ( rtl ? '-rtl' : '' ) + '.css';
 }
 
-export default getStylesheetUrl;
+export default getStylesheet;
