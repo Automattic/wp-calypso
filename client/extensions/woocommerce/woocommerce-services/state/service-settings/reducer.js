@@ -25,15 +25,6 @@ reducers[ SET_FORM_PROPERTY ] = ( state, action ) => {
 	newObj[ action.field ] = action.value;
 	if ( 'success' === action.field && action.value ) {
 		newObj.pristine = mapValues( state.pristine, () => true );
-	} else if ( 'fieldsStatus' === action.field && action.value ) {
-		Object.keys( action.value ).forEach( ( fieldPath ) => {
-			const fieldStatus = action.value[ fieldPath ];
-			if ( 'overwrite' === fieldStatus.level ) {
-				const overwriteAction = formValueActions.updateField( fieldPath, fieldStatus.value );
-				newObj.values = values( newObj.values || state.values || {}, overwriteAction );
-				delete action.value[ fieldPath ];
-			}
-		} );
 	}
 	return Object.assign( {}, state, newObj );
 };
