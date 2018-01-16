@@ -11,7 +11,10 @@ import {
 	announceRequestFailure,
 	announceSaveFailure,
 } from '../';
-import { JETPACK_ONBOARDING_SETTINGS_SAVE } from 'state/action-types';
+import {
+	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_UPDATE,
+} from 'state/action-types';
 import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 describe( 'announceRequestFailure()', () => {
@@ -38,7 +41,7 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 	const siteId = 12345678;
 
 	const action = {
-		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 		siteId,
 	};
 
