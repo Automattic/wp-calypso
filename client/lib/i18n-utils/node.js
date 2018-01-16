@@ -1,13 +1,22 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import config from 'config';
 
-module.exports = require( './utils.js' );
+// we cannot use the following export
+// until we have stopped compiling into
+// CommonJS modules through Babel due
+// to an issue with Babel faking a default export
+//
+// export * from './utils';
+export {
+	addLocaleToPath,
+	addLocaleToWpcomUrl,
+	getLanguage,
+	getLocaleFromPath,
+	isDefaultLocale,
+	removeLocaleFromPath,
+} from './utils';
 
-module.exports.getLocaleSlug = function() {
-	return config( 'i18n_default_locale_slug' );
-};
+export const getLocaleSlug = () => config( 'i18n_default_locale_slug' );

@@ -1,18 +1,15 @@
+/** @format **/
 /**
  * Exernal dependencies
- *
- * @format
  */
-
 import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import i18nUtils from 'lib/i18n-utils';
+import { getLanguage } from 'lib/i18n-utils';
 import steps from 'signup/config/steps';
-import flows from 'signup/config/flows';
-import { defaultFlowName } from 'signup/config/flows';
+import flows, { defaultFlowName } from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
 const user = userFactory();
@@ -63,7 +60,7 @@ function getLocale( parameters ) {
 }
 
 function isLocale( pathFragment ) {
-	return ! isEmpty( i18nUtils.getLanguage( pathFragment ) );
+	return ! isEmpty( getLanguage( pathFragment ) );
 }
 
 function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
