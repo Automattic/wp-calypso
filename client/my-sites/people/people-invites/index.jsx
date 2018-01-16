@@ -41,10 +41,7 @@ class PeopleInvites extends React.PureComponent {
 					{ ! requesting && ! invites && this.props.requestInvites( site.ID ) }
 					{ requesting && <Card>Loading invites...</Card> }
 					{ ( invites || [] ).map( invite => (
-						<Card
-							key={ invite.invite_key }
-							style={ { wordWrap: 'break-word' } }
-						>
+						<Card key={ invite.invite_key } style={ { wordWrap: 'break-word' } }>
 							{ JSON.stringify( invite ) }
 						</Card>
 					) ) }
@@ -54,13 +51,16 @@ class PeopleInvites extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.site && ownProps.site.ID;
+export default connect(
+	( state, ownProps ) => {
+		const siteId = ownProps.site && ownProps.site.ID;
 
-	return {
-		requesting: siteId && state.invites.requesting[ siteId ],
-		invites: siteId && state.invites.items[ siteId ],
-	};
-}, {
-	requestInvites,
-} )( localize( PeopleInvites ) );
+		return {
+			requesting: siteId && state.invites.requesting[ siteId ],
+			invites: siteId && state.invites.items[ siteId ],
+		};
+	},
+	{
+		requestInvites,
+	}
+)( localize( PeopleInvites ) );

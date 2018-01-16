@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -44,7 +46,7 @@ export const items = createReducer(
 		[ INVITES_REQUEST_SUCCESS ]: ( state, action ) => {
 			return {
 				...state,
-				[ action.siteId ]: action.invites
+				[ action.siteId ]: action.invites,
 			};
 		},
 	}

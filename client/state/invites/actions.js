@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -23,23 +25,25 @@ export function requestInvites( siteId, query = {} ) {
 			query,
 		} );
 
-		wpcom.undocumented().invitesList( siteId, { ...query, force: 'wpcom', status: 'all' } )
-		.then( ( { found, invites } ) => {
-			dispatch( {
-				type: INVITES_REQUEST_SUCCESS,
-				siteId,
-				query,
-				found,
-				invites,
+		wpcom
+			.undocumented()
+			.invitesList( siteId, { ...query, force: 'wpcom', status: 'all' } )
+			.then( ( { found, invites } ) => {
+				dispatch( {
+					type: INVITES_REQUEST_SUCCESS,
+					siteId,
+					query,
+					found,
+					invites,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: INVITES_REQUEST_FAILURE,
+					siteId,
+					query,
+					error,
+				} );
 			} );
-		} )
-		.catch( error => {
-			dispatch( {
-				type: INVITES_REQUEST_FAILURE,
-				siteId,
-				query,
-				error,
-			} );
-		} );
 	};
 }
