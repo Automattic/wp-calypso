@@ -10,6 +10,7 @@ import {
 	storeJetpackOnboardingSettings,
 	announceRequestFailure,
 	announceSaveFailure,
+	fromApi,
 } from '../';
 import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
@@ -226,6 +227,17 @@ describe( 'announceSaveFailure()', () => {
 					text: 'An unexpected error occurred. Please try again later.',
 				} ),
 			} )
+		);
+	} );
+} );
+
+describe( 'fromApi', () => {
+	it( 'should throw an error if no onboarding settings are given', () => {
+		expect( () => fromApi( { data: { noOnboarding: {} } } ) ).toThrow();
+	} );
+	it( 'should return onboarding settings object if present', () => {
+		expect( fromApi( { data: { onboarding: { siteTitle: 'Yet Another Site Title' } } } ) ).toEqual(
+			{ siteTitle: 'Yet Another Site Title' }
 		);
 	} );
 } );

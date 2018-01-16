@@ -24,17 +24,15 @@ export const announceRequestFailure = ( { dispatch } ) =>
 		errorNotice( translate( 'Could not fetch settings from site. Please try again later.' ) )
 	);
 
-const receiveJetpackOnboardingSettings = (
-	{ dispatch },
-	action,
-	{ data: { onboarding: settings } }
-) => {
-	const { siteId } = action;
-
-	if ( ! settings ) {
-		return announceRequestFailure( { dispatch }, action );
+export const fromApi = response => {
+	if ( ! response.data.onboarding || ! response.data.onboarding ) {
+		throw new Error( 'missing onboarding settings' );
 	}
 
+	return response.data.onboarding;
+};
+
+const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
 	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
 };
 
@@ -124,7 +122,8 @@ export default {
 		dispatchRequest(
 			requestJetpackOnboardingSettings,
 			receiveJetpackOnboardingSettings,
-			announceRequestFailure
+			announceRequestFailure,
+			{ fromApi }
 		),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
