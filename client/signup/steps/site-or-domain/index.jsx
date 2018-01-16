@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,9 +24,37 @@ import ExistingSite from 'signup/steps/design-type-with-store/existing-site';
 import NavigationLink from 'signup/navigation-link';
 import QueryProductsList from 'components/data/query-products-list';
 import { getAvailableProductsList } from 'state/products-list/selectors';
-import { getDomainProductSlug } from 'lib/domains';
+import { getDomainProductSlug, checkDomainAvailability } from 'lib/domains';
 
 class SiteOrDomain extends Component {
+	state = {
+		domainName: '',
+		domainSupportsPrivacy: null,
+		isLoadingAvailability: true,
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		const nextDomain = get( nextProps, 'initialContext.query.new', null );
+		if ( nextDomain !== this.state.domainName ) {
+			this.setState( { domainName: nextDomain } );
+			this.getDomainAvailability( nextDomain );
+		}
+	}
+
+	getDomainAvailability( domain ) {
+		if ( domain ) {
+			checkDomainAvailability(
+				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				( error, result ) => {
+					this.setState( {
+						domainSupportsPrivacy: get( result, 'supports_privacy', null ),
+						isLoadingAvailability: false,
+					} );
+				}
+			);
+		}
+	}
+
 	getDomainName() {
 		const { initialContext: { query }, step } = this.props;
 		let domain,
@@ -119,7 +147,8 @@ class SiteOrDomain extends Component {
 	renderScreen() {
 		return (
 			<div>
-				{ ! this.props.productsLoaded && <QueryProductsList /> }
+				{ ! this.props.productsLoaded &&
+					! this.state.isLoadingAvailability && <QueryProductsList /> }
 				{ this.renderChoices() }
 				{ this.renderBackLink() }
 			</div>
@@ -133,6 +162,7 @@ class SiteOrDomain extends Component {
 		const productSlug = getDomainProductSlug( domain );
 		const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
+		const { domainSupportsPrivacy } = this.state;
 
 		SignupActions.submitSignupStep(
 			{
@@ -144,13 +174,15 @@ class SiteOrDomain extends Component {
 				isPurchasingItem: true,
 			},
 			[],
-			{ designType, domainItem, siteUrl }
+			{ designType, domainItem, siteUrl, domainSupportsPrivacy: domainSupportsPrivacy }
 		);
 
 		if ( designType === 'domain' ) {
 			// we can skip the next two steps in the `domain-first` flow if the
 			// user is only purchasing a domain
-			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {
+				domainSupportsPrivacy: domainSupportsPrivacy,
+			} );
 			SignupActions.submitSignupStep( { stepName: 'themes', wasSkipped: true }, [], {
 				themeSlugWithRepo: 'pub/twentysixteen',
 			} );
@@ -162,7 +194,9 @@ class SiteOrDomain extends Component {
 		} else if ( designType === 'existing-site' ) {
 			goToNextStep();
 		} else {
-			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {} );
+			SignupActions.submitSignupStep( { stepName: 'site-picker', wasSkipped: true }, [], {
+				domainSupportsPrivacy: domainSupportsPrivacy,
+			} );
 			goToStep( 'themes' );
 		}
 	};
