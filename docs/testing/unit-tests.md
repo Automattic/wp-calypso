@@ -27,9 +27,9 @@ Unit tests test __units__ of behavior, and should contain relatively few abstrac
 
 When writing unit tests consider the following:
 
-* What behaviour are we testing?
+* What behaviour(s) are we testing?
 * What errors are likely to occur when we run this code?
-* Does the test test what we think they are testing? Or are we introducing false positives and false negatives into our results?
+* Does the test test what we think it is testing? Or are we introducing false positives/negatives?
 * Is it readable? Will other contributors be able to understand how our code behaves by looking at its corresponding test?
 
 ## Running tests
@@ -105,7 +105,6 @@ The Jest API includes some nifty [setup and teardown methods](https://facebook.g
 These methods can handle asynchronous code to allow setup that you normally cannot do inline. As with [individual test cases](https://facebook.github.io/jest/docs/en/asynchronous.html#promises), you can return a Promise and Jest will wait for it to resolve: 
 
 ```javascript
-
 // one-time setup for *all* tests
 beforeAll( () =>  someAsyncAction().then( resp => {
     window.someGlobal = resp;
@@ -115,8 +114,6 @@ beforeAll( () =>  someAsyncAction().then( resp => {
 afterAll( () => {
     window.someGlobal = null;
 } );
-
-
 ```
 
 `afterEach` and `afterAll` provide a perfect (and preferred) way to 'clean up' after our tests, for example, by resetting state data.
@@ -138,13 +135,11 @@ import VALID_VALUES_LIST from './constants'
 function isValueValid( value ) {
 	return VALID_VALUES_LIST.includes( value );
 }
-
 ```
 
 Here we'd have to import and use a value from `VALID_VALUES_LIST` in order to pass:
 
 `expect( isValueValid( VALID_VALUES_LIST[ 0 ] ) ).toBe( true );`
-
 
 The above assertion is testing two behaviours: 1) that the function can detect an item in a list, and 2) that it can detect an item in `VALID_VALUES_LIST`.
 
@@ -167,7 +162,6 @@ Because we're passing the list as an argument, we can pass mock  `validValuesLis
 `expect( isValueValid( 'hulk', [] ) ).toBe( false );`
 
 `expect( isValueValid( 'hulk', [ 'iron man', 'hulk' ] ) ).toBe( true );`
-
 
 #### Imported dependencies
 
@@ -203,14 +197,13 @@ describe( 'The bilbo module', () => {
 		expect( isBilboVisible() ).toBe( false );
 	} );
 } );
-
 ```
 
 ### Testing globals
 
 We can use [Jest spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) to test code that calls global methods.
 
-When stubbing DOM properties or methods in the global scope, make sure to include `@jest-environment jsdom` the comment
+When stubbing DOM properties or methods in the global scope, make sure to include the `@jest-environment jsdom` comment to ensure there's a DOM to stub :)
 
 ```javascript
 
