@@ -11,7 +11,7 @@ const validateSchema = imjv( jsonSchema, { verbose: true, greedy: true } );
 
 function throwOnInvalidSchema( schema ) {
 	if ( ! validateSchema( schema ) ) {
-		const msg = [ 'Invalid schema received', '' ];
+		const msg = [ 'Invalid schema received', '', JSON.stringify( schema, undefined, 2 ), '' ];
 		forEach( validateSchema.errors, ( { field, message, schemaPath, value } ) => {
 			// data.myField is required
 			msg.push( `${ field } ${ message }` );
