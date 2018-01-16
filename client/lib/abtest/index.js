@@ -5,9 +5,10 @@
  */
 
 import debugFactory from 'debug';
-import { every, get, includes, isArray, keys, map, reduce, some } from 'lodash';
+import { every, includes, isArray, keys, map, reduce, some } from 'lodash';
 import store from 'store';
 import i18n from 'i18n-calypso';
+import sha1 from 'hash.js/lib/hash/sha/1';
 
 /**
  * Internal dependencies
@@ -70,8 +71,6 @@ const parseDateStamp = datestamp => {
 
 const languageSlugs = map( config( 'languages' ), 'langSlug' );
 const langSlugIsValid = slug => languageSlugs.indexOf( slug ) !== -1;
-
-const crypto = require( 'crypto' );
 
 ABTest.prototype.init = function( name, geoLocation ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {
@@ -274,7 +273,7 @@ ABTest.prototype.assignVariation = function() {
 	let variationName, randomAllocationAmount;
 	let sum = 0;
 
-	const userId = get( user, 'data.ID' );
+	const userId = user.get().ID;
 	const allocationsTotal = reduce(
 		this.variationDetails,
 		( allocations, allocation ) => {
@@ -298,12 +297,12 @@ ABTest.prototype.assignVariation = function() {
 };
 
 ABTest.prototype.assignVariationWithCrypto = function( userId ) {
-	// Put userId and experimentId into md5 hashing algo to randomly assign variation
+	// Put userId and experimentId into sha1 hashing algo to randomly assign variation
 	// The returned value will be a float between 0 and 1.
-	const md5 = crypto.createHash( 'md5' );
-	md5.update( String( userId ) + this.experimentId ); // Hash userId and experiment Id
-	const hash = md5.digest( 'hex' ); // Build the hashed data
-	const hash_slice = hash.slice( 0, 6 ); // Only use first 6 chars
+	const hash = sha1(); // Use the sha1 hashing algo
+	hash.update( String( userId ) + this.experimentId ); // Hash userId and experiment Id
+	const hash_digested = hash.digest( 'hex' ).slice( 0, 6 ); // Build the hashed data
+	const hash_slice = hash_digested.slice( 0, 6 ); // Only use first 6 chars
 	return parseInt( hash_slice, 16 ) / 0xffffff; // Divide by the largest 6 digit hex number
 };
 
