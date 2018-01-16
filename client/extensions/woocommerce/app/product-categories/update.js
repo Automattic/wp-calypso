@@ -56,6 +56,7 @@ class ProductCategoryUpdate extends React.Component {
 
 	state = {
 		busy: false,
+		isUploading: false,
 	};
 
 	componentDidMount() {
@@ -88,6 +89,14 @@ class ProductCategoryUpdate extends React.Component {
 			this.props.clearProductCategoryEdits( site.ID );
 		}
 	}
+
+	onUploadStart = () => {
+		this.setState( { isUploading: true } );
+	};
+
+	onUploadFinish = () => {
+		this.setState( { isUploading: false } );
+	};
 
 	onDelete = () => {
 		const { translate, site, category, deleteProductCategory: dispatchDelete } = this.props;
@@ -147,13 +156,14 @@ class ProductCategoryUpdate extends React.Component {
 
 	render() {
 		const { site, category, hasEdits, className } = this.props;
-		const { busy } = this.state;
+		const { busy, isUploading } = this.state;
 
 		const saveEnabled =
 			hasEdits &&
 			category &&
 			( category.name && category.name.length ) &&
-			! isNull( category.parent );
+			! isNull( category.parent ) &&
+			! isUploading;
 
 		return (
 			<Main className={ className } wideLayout>
@@ -169,6 +179,8 @@ class ProductCategoryUpdate extends React.Component {
 					siteId={ site && site.ID }
 					category={ category || {} }
 					editProductCategory={ this.props.editProductCategory }
+					onUploadStart={ this.onUploadStart }
+					onUploadFinish={ this.onUploadFinish }
 				/>
 			</Main>
 		);
