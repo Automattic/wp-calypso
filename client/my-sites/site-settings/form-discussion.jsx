@@ -28,7 +28,7 @@ import Subscriptions from './subscriptions';
 import wrapSettingsForm from './wrap-settings-form';
 import { isJetpackSite, siteSupportsJetpackSettingsUi } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import JetpackModuleToggle from './jetpack-module-toggle';
 
 class SiteSettingsFormDiscussion extends Component {
@@ -452,6 +452,7 @@ class SiteSettingsFormDiscussion extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
+			siteSlug,
 			translate,
 			uniqueEventTracker,
 		} = this.props;
@@ -476,13 +477,7 @@ class SiteSettingsFormDiscussion extends Component {
 							'will match "WordPress".',
 						{
 							components: {
-								link: (
-									<a
-										href={ fields.admin_url + 'edit-comments.php?comment_status=moderated' }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
+								link: <a href={ `/comments/pending/${ siteSlug }` } />,
 							},
 						}
 					) }
@@ -633,6 +628,7 @@ class SiteSettingsFormDiscussion extends Component {
 
 const connectComponent = connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 
 	const isJetpack = isJetpackSite( state, siteId );
 	const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
@@ -640,6 +636,7 @@ const connectComponent = connect( state => {
 
 	return {
 		siteId,
+		siteSlug,
 		isJetpack,
 		jetpackSettingsUISupported,
 		isLikesModuleActive,
@@ -673,7 +670,6 @@ const getFormSettings = settings => {
 		'comment_max_links',
 		'moderation_keys',
 		'blacklist_keys',
-		'admin_url',
 		'highlander_comment_form_prompt',
 		'jetpack_comment_form_color_scheme',
 		'subscriptions',
