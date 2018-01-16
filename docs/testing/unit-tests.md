@@ -13,16 +13,15 @@ This guide is intended as a quick reference of common tools and conventions we u
     * [Mocking dependencies](#mocking-dependencies)
     * [Testing globals](#testing-globals)
     * [Testing legacy code](#testing-legacy-code)
-    
+* [Further reading](#further-reading)
+
 ## Why unit test?
 
 Aside from the joy unit testing will bring to your life, unit tests are important not only because they help to ensure that our application behaves as it should, but also because they provide concise examples of how to use a piece of code. 
 
-
 Tests are also part of our code base, which means we apply to them the same standards we apply to all our application code. 
 
 As with all code, tests have to be maintained. Writing tests for the sake of having a test isn't the goal – rather we should try to strike the right balance between covering expected and unexpected behaviours, speedy execution and code maintenance.
-
 
 Unit tests test __units__ of behavior, and should contain relatively few abstractions. If our tests are failing in response to legitimate changes, it could be a sign that we have coupled our tests too closely to the internals of our code.
 
@@ -31,6 +30,7 @@ When writing unit tests consider the following:
 * What behaviour are we testing?
 * What errors are likely to occur when we run this code?
 * Does the test test what we think they are testing? Or are we introducing false positives and false negatives into our results?
+* Is it readable? Will other contributors be able to understand how our code behaves by looking at its corresponding test?
 
 ## Running tests
 
@@ -119,7 +119,10 @@ afterAll( () => {
 
 ```
 
-Though it is good practice to clean up after your tests suites, Jest tests are run in isolation so changes to things such as global values won't effect other Calypso tests.
+`afterEach` and `afterAll` provide a perfect (and preferred) way to 'clean up' after our tests, for example, by resetting state data.
+ 
+Avoid placing clean up code after assertions since, if any of those tests fail, the clean up won't take place and may cause failures in unrelated tests.
+
 
 ### Mocking dependencies
 
@@ -256,3 +259,9 @@ jest.mock( 'lib/wp', () => ( {
 	someWpComMethod: jest.fn(),
 } ) );
 ```
+
+## Further reading
+* [React testing with Jest](https://facebook.github.io/jest/docs/en/tutorial-react.html)
+* [Enyzme API](https://github.com/airbnb/enzyme/tree/master/docs/api)
+* [Test Contra-variance](http://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html)
+* [The Failures of "Into to TDD"](http://blog.testdouble.com/posts/2014-01-25-the-failures-of-intro-to-tdd.html)
