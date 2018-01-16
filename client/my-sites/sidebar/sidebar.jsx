@@ -2,14 +2,15 @@
 /**
  * External dependencies
  */
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import debugFactory from 'debug';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { includes } from 'lodash';
 import page from 'page';
 
 /**
@@ -34,14 +35,25 @@ import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 import {
+	areSetupChoicesLoaded,
+	getSetStoreAddressDuringInitialSetup,
+} from 'extensions/woocommerce/state/sites/setup-choices/selectors';
+import {
+	areSettingsGeneralLoaded,
+	getStoreLocation,
+} from 'extensions/woocommerce/state/sites/settings/general/selectors';
+import {
 	canCurrentUser,
 	canCurrentUserManagePlugins,
 	getPrimarySiteId,
 	hasJetpackSites,
 	isDomainOnlySite,
 	isSiteAutomatedTransfer,
+	isSiteStore,
 	hasSitePendingAutomatedTransfer,
 } from 'state/selectors';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
+import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import {
 	getCustomizerUrl,
 	getSite,
@@ -52,6 +64,7 @@ import {
 } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { isStoreManagementSupportedInCalypsoForCountry } from 'extensions/woocommerce/lib/countries';
 import { transferStates } from 'state/automated-transfer/constants';
 
 /**
@@ -72,6 +85,19 @@ export class MySitesSidebar extends Component {
 
 	componentDidMount() {
 		debug( 'The sidebar React component is mounted.' );
+		const { siteId } = this.props;
+		if ( siteId ) {
+			this.props.fetchSetupChoices( siteId );
+			//this.props.fetchSettingsGeneral( siteId );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		const { siteId } = this.props;
+		if ( siteId && siteId !== prevProps.siteId ) {
+			this.props.fetchSetupChoices( siteId );
+			//this.props.fetchSettingsGeneral( siteId );
+		}
 	}
 
 	onNavigate = () => {
@@ -359,52 +385,61 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		// IMPORTANT: If you add a country to this list, you must also add it
-		// to ../../extensions/woocommerce/lib/countries in the getCountries function
-		const allowedCountryCodes = [ 'US', 'CA' ];
 		const {
-			currentUser,
 			canUserManageOptions,
-			isJetpack,
+			setStoreAddressDuringInitialSetup,
+			storeLocation,
+			storeSettingsGeneralLoaded,
+			storeSetupChoicesLoaded,
 			site,
 			siteSuffix,
 			translate,
 			siteHasBackgroundTransfer,
+			siteIsStore,
 		} = this.props;
 
 		if ( ! config.isEnabled( 'woocommerce/extension-dashboard' ) || ! site ) {
 			return null;
 		}
 
-		const storeLink = '/store' + siteSuffix;
-
-		const isJetpackOrAtomicSite =
-			isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
+		const isPermittedSite = canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
 		if (
-			! isJetpackOrAtomicSite &&
+			! isPermittedSite &&
 			! ( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
 		) {
 			return null;
 		}
 
-		const countryCode = currentUser.user_ip_country_code;
-		const isCountryAllowed =
-			includes( allowedCountryCodes, countryCode ) || 'development' === process.env.NODE_ENV;
+		let storeLink = '/store' + siteSuffix;
+
+		// Is woocommerce active on the site?
+		if ( siteIsStore ) {
+			// Wait for info to come back from the site before deciding what to link to
+			if ( ! storeSetupChoicesLoaded || ! storeSettingsGeneralLoaded ) {
+				return null;
+			}
+
+			// If calypso store management is not supported yet, link directly to WooCommerce in wp-admin
+			if ( setStoreAddressDuringInitialSetup ) {
+				const storeCountry = get( storeLocation, 'country' );
+				if ( ! isStoreManagementSupportedInCalypsoForCountry( storeCountry ) ) {
+					storeLink = site.URL + '/wp-admin/edit.php?post_type=shop_order';
+				}
+			}
+		}
 
 		return (
-			isCountryAllowed && (
-				<SidebarItem
-					label={ translate( 'Store' ) }
-					link={ storeLink }
-					onNavigate={ this.trackStoreClick }
-					icon="cart"
-				>
-					<div className="sidebar__chevron-right">
-						<Gridicon icon="chevron-right" />
-					</div>
-				</SidebarItem>
-			)
+			<SidebarItem
+				label={ translate( 'Store' ) }
+				link={ storeLink }
+				onNavigate={ this.trackStoreClick }
+				icon="cart"
+			>
+				<div className="sidebar__chevron-right">
+					<Gridicon icon="chevron-right" />
+				</div>
+			</SidebarItem>
 		);
 	}
 
@@ -678,6 +713,11 @@ function mapStateToProps( state ) {
 	const transferStatus = getAutomatedTransferStatus( state, siteId );
 	const hasSitePendingAT = hasSitePendingAutomatedTransfer( state, siteId );
 
+	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup( state, siteId );
+	const storeLocation = getStoreLocation( state, siteId );
+	const storeSettingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
+	const storeSetupChoicesLoaded = areSetupChoicesLoaded( state, siteId );
+
 	return {
 		canManagePlugins: canCurrentUserManagePlugins( state ),
 		canUserEditThemeOptions: canCurrentUser( state, siteId, 'edit_theme_options' ),
@@ -697,9 +737,23 @@ function mapStateToProps( state ) {
 		site,
 		siteSuffix: site ? '/' + site.slug : '',
 		siteHasBackgroundTransfer: hasSitePendingAT && transferStatus !== transferStates.ERROR,
+		siteIsStore: isSiteStore( state, selectedSiteId ),
+		setStoreAddressDuringInitialSetup,
+		storeLocation,
+		storeSettingsGeneralLoaded,
+		storeSetupChoicesLoaded,
 	};
 }
 
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
-	localize( MySitesSidebar )
-);
+function mapDispatchToProps( dispatch ) {
+	return bindActionCreators(
+		{
+			fetchSettingsGeneral,
+			fetchSetupChoices,
+			setLayoutFocus,
+			setNextLayoutFocus,
+		},
+		dispatch
+	);
+}
+export default connect( mapStateToProps, mapDispatchToProps )( localize( MySitesSidebar ) );
