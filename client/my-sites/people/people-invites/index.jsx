@@ -17,7 +17,6 @@ import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import Card from 'components/card';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestInvites } from 'state/invites/actions';
 
 class PeopleInvites extends React.PureComponent {
