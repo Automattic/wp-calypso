@@ -142,7 +142,7 @@ class Security2faBackupCodesList extends React.Component {
 	};
 
 	getBackupCodeHTML = codes => {
-		const datePrinted = this.props.moment().format( 'll @ LT' );
+		const datePrinted = this.props.moment().format( 'lll' );
 		let row;
 		let html = '<html><head><title>';
 
