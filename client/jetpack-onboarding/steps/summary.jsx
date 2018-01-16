@@ -38,7 +38,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			return (
 				<div key={ stepName } className={ className }>
 					{ isPending ? (
-						<Spinner />
+						<Spinner size={ 18 } />
 					) : (
 						<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
 					) }
