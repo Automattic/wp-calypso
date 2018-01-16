@@ -23,12 +23,14 @@ import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isBusiness, isEnterprise } from 'lib/products-values';
+import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
+import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
 import {
 	isJetpackMinimumVersion,
 	isJetpackModuleActive,
@@ -41,6 +43,7 @@ import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
 import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
 import EditPostStatus from 'post-editor/edit-post-status';
+import { getFirstConflictingPlugin } from 'lib/seo';
 
 /**
  * Constants
@@ -241,19 +244,32 @@ class EditorDrawer extends Component {
 	}
 
 	renderSeo() {
-		const { jetpackVersionSupportsSeo } = this.props;
+		const {
+			hasConflictingSeoPlugins,
+			isSeoToolsModuleActive,
+			isJetpack,
+			jetpackVersionSupportsSeo,
+			isRequestingPlugins,
+			site,
+		} = this.props;
 
-		if ( ! this.props.site ) {
+		if ( ! site ) {
 			return;
 		}
 
-		if ( this.props.isJetpack ) {
-			if ( ! this.props.isSeoToolsModuleActive || ! jetpackVersionSupportsSeo ) {
+		if ( isJetpack ) {
+			if (
+				isRequestingPlugins ||
+				! isSeoToolsModuleActive ||
+				! jetpackVersionSupportsSeo ||
+				// Hide SEO accordion if this setting is managed by another SEO plugin.
+				hasConflictingSeoPlugins
+			) {
 				return;
 			}
 		}
 
-		const { plan } = this.props.site;
+		const { plan } = site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
 
 		if ( ! hasBusinessPlan ) {
@@ -344,6 +360,7 @@ class EditorDrawer extends Component {
 			<div className="editor-drawer">
 				{ site && <QueryPostTypes siteId={ site.ID } /> }
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
+				{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
 				{ this.renderStatus() }
 				{ this.renderCategories() }
 				{ this.renderTaxonomies() }
@@ -365,13 +382,16 @@ const enhance = flow(
 	connect( state => {
 		const siteId = getSelectedSiteId( state );
 		const type = getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' );
+		const activePlugins = getPlugins( state, [ siteId ], 'active' );
 
 		return {
+			hasConflictingSeoPlugins: !! getFirstConflictingPlugin( activePlugins ),
 			isPermalinkEditable: areSitePermalinksEditable( state, siteId ),
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
 			isJetpack: isJetpackSite( state, siteId ),
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+			isRequestingPlugins: isRequesting( state, siteId ),
 			type,
 			typeObject: getPostType( state, siteId, type ),
 		};
