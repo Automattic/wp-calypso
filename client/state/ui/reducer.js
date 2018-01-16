@@ -22,7 +22,6 @@ import layoutFocus from './layout-focus/reducer';
 import mediaModal from './media-modal/reducer';
 import npsSurveyNotice from './nps-survey-notice/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
-import olark from './olark/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import reader from './reader/reducer';
@@ -111,7 +110,6 @@ const reducer = combineReducers( {
 	mediaModal,
 	npsSurveyNotice,
 	oauth2Clients,
-	olark,
 	postTypeList,
 	preview,
 	reader,

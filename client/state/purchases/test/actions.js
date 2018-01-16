@@ -28,10 +28,6 @@ import {
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
-jest.mock( 'lib/olark', () => ( {
-	updateOlarkGroupAndEligibility: () => {},
-} ) );
-
 describe( 'actions', () => {
 	const purchases = [ { ID: 1 } ],
 		userId = 1337,
@@ -45,8 +41,9 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#clearPurchases', () => {
-		test( 'should return a `PURCHASES_REMOVE` action', () => {
-			expect( clearPurchases() ).to.be.eql( {
+		test( 'should dispatch a `PURCHASES_REMOVE` action', () => {
+			clearPurchases()( spy );
+			expect( spy ).to.have.been.calledWith( {
 				type: PURCHASES_REMOVE,
 			} );
 		} );

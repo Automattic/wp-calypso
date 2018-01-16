@@ -21,10 +21,6 @@
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
 	"hotjar_enabled": true,
-	"olark": {
-		"business_account_id": "3146-815-10-9343",
-		"business_group_id": false
-	},
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
@@ -122,7 +118,6 @@
 		"notifications2beta": true,
 		"notifications/link-to-reader": true,
 		"oauth": false,
-		"olark": true,
 		"onboarding-checklist": true,
 		"perfmon": false,
 		"persist-redux": true,

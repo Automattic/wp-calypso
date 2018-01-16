@@ -81,7 +81,6 @@
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
 		"nps-survey/notice": true,
-		"olark": true,
 		"onboarding-checklist": false,
 		"perfmon": false,
 		"persist-redux": true,
@@ -160,9 +159,5 @@
 	"google_analytics_key": "UA-10673494-10",
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
-	"hotjar_enabled": true,
-	"olark": {
-		"business_account_id": "3146-815-10-9343",
-		"business_group_id": "3033aa025c1a9648c703eb70132ff220"
-	}
+	"hotjar_enabled": true
 }
