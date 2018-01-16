@@ -30,7 +30,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
+import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
 import {
 	isJetpackMinimumVersion,
 	isJetpackModuleActive,
@@ -244,24 +244,32 @@ class EditorDrawer extends Component {
 	}
 
 	renderSeo() {
-		const { jetpackVersionSupportsSeo, hasConflictingSeoPlugins } = this.props;
+		const {
+			hasConflictingSeoPlugins,
+			isSeoToolsModuleActive,
+			isJetpack,
+			jetpackVersionSupportsSeo,
+			isRequestingPlugins,
+			site,
+		} = this.props;
 
-		if ( ! this.props.site ) {
+		if ( ! site ) {
 			return;
 		}
 
-		if ( this.props.isJetpack ) {
-			if ( ! this.props.isSeoToolsModuleActive || ! jetpackVersionSupportsSeo ) {
-				return;
-			}
-
-			// Don't show SEO accordion if this setting is managed by other SEO plugin.
-			if ( hasConflictingSeoPlugins ) {
+		if ( isJetpack ) {
+			if (
+				isRequestingPlugins ||
+				! isSeoToolsModuleActive ||
+				! jetpackVersionSupportsSeo ||
+				// Hide SEO accordion if this setting is managed by another SEO plugin.
+				hasConflictingSeoPlugins
+			) {
 				return;
 			}
 		}
 
-		const { plan } = this.props.site;
+		const { plan } = site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
 
 		if ( ! hasBusinessPlan ) {
@@ -383,6 +391,7 @@ const enhance = flow(
 			isJetpack: isJetpackSite( state, siteId ),
 			isSeoToolsModuleActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 			jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4-beta1' ),
+			isRequestingPlugins: isRequesting( state, siteId ),
 			type,
 			typeObject: getPostType( state, siteId, type ),
 		};
