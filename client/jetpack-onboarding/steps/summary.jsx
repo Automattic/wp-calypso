@@ -7,7 +7,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { compact, get, map, mapValues, without } from 'lodash';
+import { compact, get, map, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,13 +18,16 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Spinner from 'components/spinner';
-import { getJetpackOnboardingProgress, getRequest, getUnconnectedSiteUrl } from 'state/selectors';
+import {
+	getJetpackOnboardingPending,
+	getJetpackOnboardingProgress,
+	getUnconnectedSiteUrl,
+} from 'state/selectors';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
 } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
@@ -115,18 +118,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 export default connect( ( state, { siteId, steps } ) => {
 	const tasks = compact( [] );
 	const stepsCompleted = getJetpackOnboardingProgress( state, siteId, steps );
-
-	const stepActionsMap = {
-		[ STEPS.WOOCOMMERCE ]: {
-			installWooCommerce: true,
-		},
-	};
-
-	const stepsPending = mapValues(
-		stepActionsMap,
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		action => getRequest( state, saveJetpackOnboardingSettings( siteId, action ) ).isLoading
-	);
+	const stepsPending = getJetpackOnboardingPending( state, siteId, steps );
 
 	return {
 		siteUrl: getUnconnectedSiteUrl( state, siteId ),
