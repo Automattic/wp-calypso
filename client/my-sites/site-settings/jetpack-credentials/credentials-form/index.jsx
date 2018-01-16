@@ -53,7 +53,7 @@ export class CredentialsForm extends Component {
 
 		this.setState( {
 			form,
-			formErrors: { ...this.state.formErrors, [ event.target.name ]: false },
+			formErrors: { ...this.state.formErrors, [ name ]: false },
 		} );
 	};
 
