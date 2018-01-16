@@ -21,7 +21,7 @@ import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions'
 class JetpackOnboardingContactFormStep extends React.PureComponent {
 	handleAddContactForm = () => {
 		const { siteId } = this.props;
-		this.props.recordTracksEventForJpoSite( 'calypso_jpo_contact_form_clicked' );
+		this.props.recordJpoEvent( 'calypso_jpo_contact_form_clicked' );
 
 		this.props.saveJetpackOnboardingSettings( siteId, {
 			addContactForm: true,

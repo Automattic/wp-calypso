@@ -31,7 +31,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	// TODO: Add lifecycle methods to redirect if no siteId
 
 	render() {
-		const { recordTracksEventForJpoSite, siteId, siteSlug, stepName, steps } = this.props;
+		const { recordJpoEvent, siteId, siteSlug, stepName, steps } = this.props;
 		return (
 			<Main className="jetpack-onboarding">
 				<Wizard
@@ -39,7 +39,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					baseSuffix={ siteSlug }
 					components={ COMPONENTS }
 					hideNavigation={ stepName === STEPS.SUMMARY }
-					recordTracksEventForJpoSite={ recordTracksEventForJpoSite }
+					recordJpoEvent={ recordJpoEvent }
 					siteId={ siteId }
 					stepName={ stepName }
 					steps={ steps }
@@ -65,16 +65,16 @@ export default connect(
 			STEPS.SUMMARY,
 		] );
 		return {
-			steps,
 			siteId,
 			siteSlug,
+			steps,
 		};
 	},
 	{ recordTracksEvent },
 	( { siteId, ...stateProps }, { recordTracksEvent: recordTracksEventAction }, ownProps ) => ( {
 		siteId,
 		...stateProps,
-		recordTracksEventForJpoSite: event =>
+		recordJpoEvent: event =>
 			recordTracksEventAction( event, {
 				blog_id: siteId,
 				site_id_type: 'jpo',
