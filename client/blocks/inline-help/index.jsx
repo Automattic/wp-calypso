@@ -16,6 +16,8 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Popover from 'components/popover';
+import SearchCard from 'components/search-card';
+import HelpResults from 'me/help/help-results';
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -26,10 +28,27 @@ class InlineHelp extends Component {
 		translate: identity,
 	};
 
-	handleOpenHelp = event => {
-		event.preventDefault();
-		console.log( '// TODO: open a Popover ...' );
-		return false;
+	state = {
+		showInlineHelp: false,
+	};
+
+	toggleInlineHelp = () => {
+		const { showInlineHelp } = this.state;
+		this.setState( {
+			showInlineHelp: ! showInlineHelp,
+		} );
+	};
+
+	closeInlineHelp = () => {
+		this.setState( { showInlineHelp: false } );
+	};
+
+	handleHelpButtonClicked = () => {
+		this.toggleInlineHelp();
+	};
+
+	onSearch = () => {
+		console.log( 'Searchin.' );
 	};
 
 	render() {
@@ -37,12 +56,37 @@ class InlineHelp extends Component {
 		return (
 			<Button
 				className="sidebar__footer-help"
-				onClick={ this.handleOpenHelp }
+				onClick={ this.handleHelpButtonClicked }
 				borderless
-				href="/help"
 				title={ translate( 'Help' ) }
+				ref={ node => ( this.inlineHelpToggle = node ) }
 			>
 				<Gridicon icon="help-outline" />
+				<Popover
+					isVisible={ this.state.showInlineHelp }
+					onClose={ this.closeInlineHelp }
+					position="top right"
+					context={ this.inlineHelpToggle }
+					className="inline-help__popover"
+				>
+					<div className="inline-help__heading">
+						<SearchCard
+							placeholder={ translate( 'How can we help?' ) }
+							onSearch={ this.onSearch }
+							delaySearch={ true }
+						/>
+
+						<ul className="inline-help__results-placeholder">
+							<li className="inline-help__results-placeholder-item" />
+							<li className="inline-help__results-placeholder-item" />
+							<li className="inline-help__results-placeholder-item" />
+						</ul>
+
+						<Button borderless href="/help">
+							<Gridicon icon="help" /> More help
+						</Button>
+					</div>
+				</Popover>
 			</Button>
 		);
 	}
