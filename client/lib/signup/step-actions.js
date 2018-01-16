@@ -34,6 +34,9 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
 
+	console.log( 'here:' );
+	console.log( dependencies );
+	console.log( 'continuing...' );
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
 		const providedDependencies = {

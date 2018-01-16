@@ -251,6 +251,7 @@ export default {
 			'privacyItem',
 			'siteUrl',
 			'themeSlugWithRepo',
+			'domainSupportsPrivacy',
 		],
 		delayApiRequestUntilComplete: true,
 	},
