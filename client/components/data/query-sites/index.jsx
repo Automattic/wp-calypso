@@ -17,10 +17,6 @@ import { requestSites, requestSite } from 'state/sites/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { getPrimarySiteId } from 'state/selectors';
 
-const isRequestingSiteFactory = state => {
-	return siteId => isRequestingSite( state, siteId );
-};
-
 class QuerySites extends Component {
 	componentWillMount() {
 		this.requestAll( this.props );
@@ -116,9 +112,9 @@ export default connect(
 			requestingSites: isRequestingSites( state ),
 			requestingSite: isRequestingSite( state, siteId ),
 			isRequestingPrimarySite: isRequestingSite( state, primarySiteId ),
-			isRequestingRecentSites: some(
-				recentSiteIdsWithoutPrimary,
-				isRequestingSiteFactory( state )
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			isRequestingRecentSites: some( recentSiteIdsWithoutPrimary, id =>
+				isRequestingSite( state, id )
 			),
 		};
 	},
