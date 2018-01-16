@@ -41,8 +41,11 @@ const receiveJetpackOnboardingSettings = (
 /**
  * Dispatches a request to fetch settings for a given site
  *
- * @param   {Object} action Redux action
- * @returns {Object} Dispatched http action
+ * @param   {Object}   store          Redux store
+ * @param   {Function} store.dispatch Dispatch Redux action
+ * @param   {Function} store.getState Get Redux state
+ * @param   {Object}   action         Redux action
+ * @returns {Object}   Dispatched http action
  */
 export const requestJetpackOnboardingSettings = ( { dispatch, getState }, action ) => {
 	const { siteId } = action;
