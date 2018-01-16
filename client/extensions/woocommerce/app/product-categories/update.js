@@ -38,6 +38,7 @@ import ProductCategoryHeader from './header';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSaveErrorMessage } from './utils';
+import { withAnalytics } from 'state/analytics/actions';
 
 class ProductCategoryUpdate extends React.Component {
 	static propTypes = {
@@ -117,7 +118,6 @@ class ProductCategoryUpdate extends React.Component {
 				);
 			};
 			dispatchDelete( site.ID, category, successAction, failureAction );
-			recordTrack( 'calypso_woocommerce_product_category_delete', { id: category.id } );
 		} );
 	};
 
@@ -145,8 +145,6 @@ class ProductCategoryUpdate extends React.Component {
 		};
 
 		this.props.updateProductCategory( site.ID, category, successAction, failureAction );
-
-		recordTrack( 'calypso_woocommerce_product_category_update', { id: category.id } );
 	};
 
 	render() {
@@ -199,8 +197,16 @@ function mapDispatchToProps( dispatch ) {
 			editProductCategory,
 			fetchProductCategories,
 			clearProductCategoryEdits,
-			updateProductCategory,
-			deleteProductCategory,
+			updateProductCategory: ( siteId, category, ...args ) =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_product_category_update', { id: category.id } ),
+					updateProductCategory( siteId, category, ...args )
+				),
+			deleteProductCategory: ( siteId, category, ...args ) =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_product_category_delete', { id: category.id } ),
+					deleteProductCategory( siteId, category, ...args )
+				),
 		},
 		dispatch
 	);

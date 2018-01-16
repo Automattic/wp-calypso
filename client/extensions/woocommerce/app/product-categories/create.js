@@ -34,6 +34,7 @@ import ProductCategoryHeader from './header';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSaveErrorMessage } from './utils';
+import { withAnalytics } from 'state/analytics/actions';
 
 class ProductCategoryCreate extends React.Component {
 	static propTypes = {
@@ -103,8 +104,6 @@ class ProductCategoryCreate extends React.Component {
 		};
 
 		this.props.createProductCategory( site.ID, category, successAction, failureAction );
-
-		recordTrack( 'calypso_woocommerce_product_category_create' );
 	};
 
 	render() {
@@ -155,7 +154,11 @@ function mapDispatchToProps( dispatch ) {
 		{
 			editProductCategory,
 			clearProductCategoryEdits,
-			createProductCategory,
+			createProductCategory: ( ...args ) =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_product_category_create' ),
+					createProductCategory( ...args )
+				),
 		},
 		dispatch
 	);
