@@ -51,10 +51,6 @@ var injectUrl,
  */
 const communityTranslatorJumpstart = {
 	isEnabled() {
-		if ( ! config.isEnabled( 'community-translator' ) ) {
-			return false;
-		}
-
 		const currentUser = user.get();
 
 		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
@@ -76,6 +72,7 @@ const communityTranslatorJumpstart = {
 
 		return true;
 	},
+
 	isActivated() {
 		return _shouldWrapTranslations;
 	},
@@ -109,8 +106,11 @@ const communityTranslatorJumpstart = {
 			props[ 'data-plural' ] = optionsFromPage.plural;
 		}
 
-		// React.DOM.data returns a frozen object, therefore we make a copy so that we can modify it below
-		const dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
+		// <data> returns a frozen object, therefore we make a copy so that we can modify it below
+		const dataElement = Object.assign(
+			{},
+			<data { ...props }>{ displayedTranslationFromPage }</data>
+		);
 
 		// now we can override the toString function which would otherwise return [object Object]
 		dataElement.toString = () => displayedTranslationFromPage;
