@@ -14,7 +14,7 @@ import { isEqual } from 'lodash';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { filterItemsByMimePrefix } from 'lib/media/utils';
 
 export default class extends React.Component {
 	static displayName = 'EditorMediaModalGalleryDropZone';
@@ -35,7 +35,7 @@ export default class extends React.Component {
 		}
 
 		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
-		const filteredItems = MediaUtils.filterItemsByMimePrefix( selectedItems, 'image' );
+		const filteredItems = filterItemsByMimePrefix( selectedItems, 'image' );
 
 		if ( ! isEqual( selectedItems, filteredItems ) ) {
 			MediaActions.setLibrarySelectedItems( site.ID, filteredItems );

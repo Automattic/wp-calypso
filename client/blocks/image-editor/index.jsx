@@ -21,7 +21,7 @@ import Notice from 'components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import MediaUtils from 'lib/media/utils';
+import { getMimeType, url } from 'lib/media/utils';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
@@ -112,13 +112,13 @@ class ImageEditor extends React.Component {
 		if ( media ) {
 			src =
 				media.src ||
-				MediaUtils.url( media, {
+				url( media, {
 					photon: site && ! site.is_private,
 				} );
 
 			fileName = media.file || path.basename( src );
 
-			mimeType = MediaUtils.getMimeType( media ) || mimeType;
+			mimeType = getMimeType( media ) || mimeType;
 
 			title = media.title || title;
 		}

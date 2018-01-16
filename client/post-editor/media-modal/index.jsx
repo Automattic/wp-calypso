@@ -32,7 +32,7 @@ import analytics from 'lib/analytics';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import MediaModalGallery from './gallery';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import * as MediaUtils from 'lib/media/utils';
 import Dialog from 'components/dialog';
 import CloseOnEscape from 'components/close-on-escape';
 import accept from 'lib/accept';

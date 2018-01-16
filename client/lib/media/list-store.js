@@ -11,7 +11,7 @@ import { assign, isEqual, map, omit } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import MediaStore from './store';
-import MediaUtils from './utils';
+import { sortItemsByDate } from './utils';
 import emitter from 'lib/mixins/emitter';
 
 /**
@@ -32,7 +32,7 @@ function sortItemsByDate( siteId ) {
 		return;
 	}
 
-	sortedItems = MediaUtils.sortItemsByDate( MediaListStore.getAll( siteId ) );
+	sortedItems = sortItemsByDate( MediaListStore.getAll( siteId ) );
 	MediaListStore._media[ siteId ] = map( sortedItems, 'ID' );
 }
 

@@ -12,7 +12,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaUtils from '../utils';
+import * as MediaUtils from '../utils';
 
 jest.mock( 'lib/impure-lodash', () => ( {
 	uniqueId: () => 'media-13',

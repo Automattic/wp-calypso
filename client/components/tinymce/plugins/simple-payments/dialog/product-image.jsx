@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import { url as mediaUrl } from 'lib/media/utils';
 import QueryMedia from 'components/data/query-media';
 import { getMediaItem } from 'state/selectors';
 
@@ -30,7 +30,7 @@ const ProductImage = ( { siteId, imageId, image } ) => {
 		);
 	}
 
-	const url = MediaUtils.url( image, { size: 'medium' } );
+	const url = mediaUrl( image, { size: 'medium' } );
 
 	return (
 		<figure className="editor-simple-payments-modal__figure">

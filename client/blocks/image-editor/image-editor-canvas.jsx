@@ -15,7 +15,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ImageEditorCrop from './image-editor-crop';
-import MediaUtils from 'lib/media/utils';
+import { canvasToBlob } from 'lib/media/utils';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
@@ -188,7 +188,7 @@ export class ImageEditorCanvas extends Component {
 		const newContext = newCanvas.getContext( '2d' );
 		newContext.putImageData( imageData, 0, 0 );
 
-		MediaUtils.canvasToBlob( newCanvas, callback, mimeType, 1 );
+		canvasToBlob( newCanvas, callback, mimeType, 1 );
 	}
 
 	drawImage() {

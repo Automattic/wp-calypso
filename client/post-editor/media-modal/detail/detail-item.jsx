@@ -25,7 +25,7 @@ import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import versionCompare from 'lib/version-compare';
-import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
+import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
@@ -97,7 +97,7 @@ class EditorMediaModalDetailItem extends Component {
 		const { isJetpack, isVideoPressEnabled, isVideoPressModuleActive } = this.props;
 
 		// Not a VideoPress video
-		if ( ! MediaUtils.isVideoPressItem( item ) ) {
+		if ( ! isVideoPressItem( item ) ) {
 			return false;
 		}
 
@@ -125,7 +125,7 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const mimePrefix = MediaUtils.getMimePrefix( item );
+		const mimePrefix = getMimePrefix( item );
 
 		if ( ! includes( [ 'image', 'video' ], mimePrefix ) ) {
 			return null;
@@ -178,7 +178,7 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const mimePrefix = MediaUtils.getMimePrefix( item );
+		const mimePrefix = getMimePrefix( item );
 
 		return 'video' === mimePrefix
 			? this.renderVideoEditorButtons( item, classname )
@@ -259,7 +259,7 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const mimePrefix = MediaUtils.getMimePrefix( item );
+		const mimePrefix = getMimePrefix( item );
 
 		let Item;
 

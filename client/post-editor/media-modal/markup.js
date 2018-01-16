@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { parse, stringify } from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
+import * as MediaUtils from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 
 /**

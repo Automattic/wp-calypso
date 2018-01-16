@@ -10,7 +10,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MediaUtils from 'lib/media/utils';
+import { url as mediaUrl } from 'lib/media/utils';
 import MediaLibraryListItemFileDetails from './list-item-file-details';
 
 import { MEDIA_IMAGE_PHOTON, MEDIA_IMAGE_THUMBNAIL } from 'lib/media/constants';
@@ -77,7 +77,7 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var url = MediaUtils.url( this.props.media, {
+		const url = mediaUrl( this.props.media, {
 			photon: this.props.thumbnailType === MEDIA_IMAGE_PHOTON,
 			maxWidth: this.props.maxImageWidth,
 			size: this.props.thumbnailType === MEDIA_IMAGE_THUMBNAIL ? 'medium' : false,
