@@ -11,6 +11,14 @@ import { difference, identity, set } from 'lodash';
  */
 import { ValidatedRegistrantExtraInfoUkForm } from '../uk-form';
 
+jest.mock( 'lib/wp', () => ( {
+	undocumented: () => ( {
+		getDomainContactInformationValidationSchema: ( _, callback ) => {
+			callback( null, { uk: require( './uk-schema.json' ) } );
+		},
+	} ),
+} ) );
+
 const mockProps = {
 	translate: identity,
 	updateContactDetailsCache: identity,

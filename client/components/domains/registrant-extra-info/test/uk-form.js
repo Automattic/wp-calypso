@@ -59,7 +59,7 @@ describe( 'uk-form', () => {
 				contactDetails: { extra: { registrantType: 'LLP' } },
 				validationErrors: {
 					extra: {
-						registrationNumber: [ 'dotukRegistrationNumberFormat' ],
+						registrationNumber: [ 'dotUkRegistrationNumberFormat' ],
 					},
 				},
 			};
