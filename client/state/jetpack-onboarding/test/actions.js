@@ -46,6 +46,11 @@ describe( 'actions', () => {
 				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 				siteId,
 				settings,
+				meta: {
+					dataLayer: {
+						trackRequest: true,
+					},
+				},
 			} );
 		} );
 	} );
