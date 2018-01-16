@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -18,11 +18,6 @@ import {
 } from 'state/action-types';
 import { getUnconnectedSite } from 'state/selectors';
 import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
-
-export const announceRequestFailure = ( { dispatch } ) =>
-	dispatch(
-		errorNotice( translate( 'Could not fetch settings from site. Please try again later.' ) )
-	);
 
 export const fromApi = response => {
 	if ( ! response.data.onboarding || ! response.data.onboarding ) {
@@ -119,12 +114,9 @@ export const announceSaveFailure = ( { dispatch } ) =>
 
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
-		dispatchRequest(
-			requestJetpackOnboardingSettings,
-			receiveJetpackOnboardingSettings,
-			announceRequestFailure,
-			{ fromApi }
-		),
+		dispatchRequest( requestJetpackOnboardingSettings, receiveJetpackOnboardingSettings, noop, {
+			fromApi,
+		} ),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
 		dispatchRequest(

@@ -8,7 +8,6 @@ import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 	storeJetpackOnboardingSettings,
-	announceRequestFailure,
 	announceSaveFailure,
 	fromApi,
 } from '../';
@@ -17,23 +16,6 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
-
-describe( 'announceRequestFailure()', () => {
-	const dispatch = jest.fn();
-
-	test( 'should trigger an error notice upon unsuccessful save request', () => {
-		announceRequestFailure( { dispatch } );
-
-		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				notice: expect.objectContaining( {
-					status: 'is-error',
-					text: 'Could not fetch settings from site. Please try again later.',
-				} ),
-			} )
-		);
-	} );
-} );
 
 describe( 'requestJetpackOnboardingSettings()', () => {
 	const dispatch = jest.fn();
