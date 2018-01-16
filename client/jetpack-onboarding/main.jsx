@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Internal dependencies
@@ -30,8 +31,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 	// TODO: Add lifecycle methods to redirect if no siteId
 
 	render() {
-		const { jpUser, siteId, siteSlug, stepName, steps, token } = this.props;
-
+		const { recordTracksEventForJpoSite, siteId, siteSlug, stepName, steps } = this.props;
 		return (
 			<Main className="jetpack-onboarding">
 				<Wizard
@@ -39,38 +39,46 @@ class JetpackOnboardingMain extends React.PureComponent {
 					baseSuffix={ siteSlug }
 					components={ COMPONENTS }
 					hideNavigation={ stepName === STEPS.SUMMARY }
-					jpUser={ jpUser }
+					recordTracksEventForJpoSite={ recordTracksEventForJpoSite }
 					siteId={ siteId }
-					steps={ steps }
 					stepName={ stepName }
-					token={ token }
+					steps={ steps }
 				/>
 			</Main>
 		);
 	}
 }
+export default connect(
+	( state, { siteSlug } ) => {
+		const siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
+		const settings = getJetpackOnboardingSettings( state, siteId );
+		const isBusiness = get( settings, 'siteType' ) === 'business';
 
-export default connect( ( state, { siteSlug } ) => {
-	// Note: here we can select which steps to display, based on user's input
-	const siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
-	const settings = getJetpackOnboardingSettings( state, siteId );
-	const isBusiness = get( settings, 'siteType' ) === 'business';
-
-	const steps = compact( [
-		STEPS.SITE_TITLE,
-		STEPS.SITE_TYPE,
-		STEPS.HOMEPAGE,
-		STEPS.CONTACT_FORM,
-		isBusiness && STEPS.BUSINESS_ADDRESS,
-		isBusiness && STEPS.WOOCOMMERCE,
-		STEPS.SUMMARY,
-	] );
-
-	return {
-		jpUser: get( state.jetpackOnboarding.credentials, [ siteId, 'userEmail' ], null ),
+		// Note: here we can select which steps to display, based on user's input
+		const steps = compact( [
+			STEPS.SITE_TITLE,
+			STEPS.SITE_TYPE,
+			STEPS.HOMEPAGE,
+			STEPS.CONTACT_FORM,
+			isBusiness && STEPS.BUSINESS_ADDRESS,
+			isBusiness && STEPS.WOOCOMMERCE,
+			STEPS.SUMMARY,
+		] );
+		return {
+			steps,
+			siteId,
+			siteSlug,
+		};
+	},
+	{ recordTracksEvent },
+	( { siteId, ...stateProps }, { recordTracksEvent: recordTracksEventAction }, ownProps ) => ( {
 		siteId,
-		siteSlug,
-		steps,
-		token: get( state.jetpackOnboarding.credentials, [ siteId, 'token' ], null ),
-	};
-} )( JetpackOnboardingMain );
+		...stateProps,
+		recordTracksEventForJpoSite: event =>
+			recordTracksEventAction( event, {
+				blog_id: siteId,
+				site_id_type: 'jpo',
+			} ),
+		...ownProps,
+	} )
+)( JetpackOnboardingMain );

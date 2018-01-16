@@ -16,18 +16,12 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import { recordTracksEvent } from 'state/analytics/actions';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingContactFormStep extends React.PureComponent {
 	handleAddContactForm = () => {
-		const { jpUser, siteId, token } = this.props;
-
-		this.props.recordTracksEvent( 'calypso_jpo_contact_form_clicked', {
-			blog_id: token,
-			site_id_type: 'jpo',
-			user_id_type: jpUser,
-		} );
+		const { siteId } = this.props;
+		this.props.recordTracksEventForJpoSite( 'calypso_jpo_contact_form_clicked' );
 
 		this.props.saveJetpackOnboardingSettings( siteId, {
 			addContactForm: true,
@@ -65,6 +59,6 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent, saveJetpackOnboardingSettings } )(
+export default connect( null, { saveJetpackOnboardingSettings } )(
 	localize( JetpackOnboardingContactFormStep )
 );
