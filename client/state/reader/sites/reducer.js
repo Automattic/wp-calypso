@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { assign, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
+import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -45,8 +45,10 @@ function handleDeserialize( state ) {
 }
 
 function handleRequestFailure( state, action ) {
-	// 410 means site moved. site used to be wpcom but is no longer
-	if ( action.error && action.error.statusCode !== 410 ) {
+	// 410 means site moved - site used to be on wpcom but is no longer
+	const handledStatusCodes = [ 403, 410 ];
+
+	if ( action.error && ! includes( handledStatusCodes, action.error.statusCode ) ) {
 		return state;
 	}
 
