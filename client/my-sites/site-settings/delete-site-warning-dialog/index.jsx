@@ -17,7 +17,10 @@ const DeleteSiteWarningDialog = ( { isVisible, onClose } ) => (
 		isVisible={ isVisible }
 		buttons={ [
 			{ action: 'dismiss', label: i18n.translate( 'Dismiss' ) },
-			<a className="button is-primary" href={ purchasesRoot }>
+			<a
+				className="button is-primary" // eslint-disable-line wpcalypso/jsx-classname-namespace
+				href={ purchasesRoot }
+			>
 				{ i18n.translate( 'Manage Purchases', { context: 'button label' } ) }
 			</a>,
 		] }
