@@ -28,22 +28,20 @@ function getQuery() {
 /**
  * Fetch a post's list of likes
  *
- *
  * Note: the endpoint will currently return a maximum of 90 likes, and there's no pagination
  *
- *
- * @param {int} Site ID
- * @param {int} Post ID
+ * @param {int} siteId Site ID
+ * @param {int} postId Post ID
  */
 export function fetchLikes( siteId, postId ) {
 	if ( requestInflight( key( siteId, postId ) ) ) {
 		return;
 	}
 
-	var requestKey = key( siteId, postId ),
-		callback = requestTracker( requestKey, function( error, data ) {
-			receivePostLikes( error, siteId, postId, data );
-		} );
+	const requestKey = key( siteId, postId );
+	const callback = requestTracker( requestKey, function( error, data ) {
+		receivePostLikes( error, siteId, postId, data );
+	} );
 
 	wpcom
 		.site( siteId )
@@ -54,8 +52,8 @@ export function fetchLikes( siteId, postId ) {
 /**
  * Like a post as the current user
  *
- * @param {int} siteId The Site ID
- * @param {int} postId The Post ID
+ * @param {int} siteId Site ID
+ * @param {int} postId Post ID
  */
 export function likePost( siteId, postId ) {
 	Dispatcher.handleViewAction( {
