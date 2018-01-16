@@ -1,5 +1,5 @@
 {
-	"id": "/contact-validation/fr",
+	"id": "https://public-api.wordpress.com/rest/v1/domains/validation-schema/fr",
 	"$schema": "http://json-schema.org/draft-04/schema",
 	"definitions": {
 		"empty": {
