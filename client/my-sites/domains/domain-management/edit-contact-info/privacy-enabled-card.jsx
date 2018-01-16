@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 class EditContactInfoPrivacyEnabledCard extends React.Component {
 	render() {
@@ -24,7 +24,7 @@ class EditContactInfoPrivacyEnabledCard extends React.Component {
 							"If you need to make a change to your domain's contact info, please {{a}}contact support{{/a}}.",
 						{
 							components: {
-								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+								a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
 							},
 						}
 					) }

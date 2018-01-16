@@ -22,7 +22,11 @@ import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import { domainMapping } from 'lib/cart-values/cart-items';
+import {
+	domainMapping,
+	planItem as getCartItemForPlan,
+	themeItem,
+} from 'lib/cart-values/cart-items';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
 import { hasDomainDetails } from 'lib/store-transactions';
@@ -36,22 +40,24 @@ import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
-import supportPaths from 'lib/url/support';
-import { themeItem } from 'lib/cart-values/cart-items';
+import { AUTO_RENEWAL } from 'lib/url/support';
 import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
 import upgradesActions from 'lib/upgrades/actions';
-import { getContactDetailsCache, isEligibleForCheckoutToChecklist } from 'state/selectors';
+import {
+	getContactDetailsCache,
+	getCurrentUserPaymentMethods,
+	isDomainOnlySite,
+	isEligibleForCheckoutToChecklist,
+} from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
 import { isNewSite } from 'state/sites/selectors';
-import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
@@ -380,9 +386,7 @@ const Checkout = createReactClass( {
 								productName: renewalItem.product_name,
 							},
 							components: {
-								a: (
-									<a href={ supportPaths.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
-								),
+								a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
 							},
 						}
 					),

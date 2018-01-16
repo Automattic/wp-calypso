@@ -10,7 +10,11 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getTld } from 'lib/domains';
-import support from 'lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
+	MAP_EXISTING_DOMAIN,
+} from 'lib/url/support';
 import { domainAvailability } from 'lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
@@ -92,7 +96,7 @@ function getAvailabilityNotice( domain, error, site ) {
 					args: { domain, site },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ support.CALYPSO_CONTACT } />,
+						a: <a rel="noopener noreferrer" href={ CALYPSO_CONTACT } />,
 					},
 				}
 			);
@@ -118,10 +122,7 @@ function getAvailabilityNotice( domain, error, site ) {
 					components: {
 						strong: <strong />,
 						a: (
-							<a
-								rel="noopener noreferrer"
-								href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
-							/>
+							<a rel="noopener noreferrer" href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } />
 						),
 					},
 				}
@@ -136,7 +137,7 @@ function getAvailabilityNotice( domain, error, site ) {
 						args: { tld },
 						components: {
 							strong: <strong />,
-							a: <a rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />,
+							a: <a rel="noopener noreferrer" href={ MAP_EXISTING_DOMAIN } />,
 						},
 					}
 				);
@@ -183,7 +184,7 @@ function getAvailabilityNotice( domain, error, site ) {
 									href="http://wordpressfoundation.org/trademark-policy/"
 								/>
 							),
-							a2: <a href={ support.CALYPSO_CONTACT } />,
+							a2: <a href={ CALYPSO_CONTACT } />,
 						},
 					}
 				);

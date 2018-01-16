@@ -14,13 +14,13 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import support from 'lib/url/support';
+import { COMPLETING_GOOGLE_APPS_SIGNUP } from 'lib/url/support';
 import { domainManagementEmail } from 'my-sites/domains/paths';
 import PendingGappsTosNoticeMultipleDomainListItem from './pending-gapps-tos-notice-multiple-domain-list-item';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 const learnMoreLink = (
-	<a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />
+	<a href={ COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />
 );
 const strong = <strong />;
 

@@ -11,7 +11,7 @@ import React from 'react';
  */
 import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
-import supportUrls from 'lib/url/support';
+import { MAP_EXISTING_DOMAIN } from 'lib/url/support';
 
 const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
 	const registrarSupportLink = registrarSupportUrl ? (
@@ -65,7 +65,7 @@ const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
 				icon="cog"
 				description={ description }
 				buttonText={ translate( 'Learn more' ) }
-				href={ supportUrls.MAP_EXISTING_DOMAIN }
+				href={ MAP_EXISTING_DOMAIN }
 				target="_blank"
 				rel="noopener noreferrer"
 				isRequired

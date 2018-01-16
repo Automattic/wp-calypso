@@ -18,7 +18,7 @@ import Button from 'components/button';
 import { requestTransferCode, cancelTransferRequest } from 'lib/upgrades/actions';
 import notices from 'notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
 
 class Unlocked extends React.Component {
 	state = {
@@ -71,7 +71,7 @@ class Unlocked extends React.Component {
 
 				if ( error ) {
 					const contactLink = (
-						<a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
+						<a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
 					);
 					let errorMessage;
 
@@ -294,11 +294,7 @@ class Unlocked extends React.Component {
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						{ this.renderBody( domain ) }
-						<a
-							href={ support.TRANSFER_DOMAIN_REGISTRATION }
-							target="_blank"
-							rel="noopener noreferrer"
-						>
+						<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
 							{ translate( 'Learn More.' ) }
 						</a>
 					</div>

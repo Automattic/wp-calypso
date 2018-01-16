@@ -14,7 +14,7 @@ import page from 'page';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
-import support from 'lib/url/support';
+import { MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import paths from 'my-sites/domains/paths';
 
 class TransferRestrictionMessage extends React.PureComponent {
@@ -62,7 +62,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 				'{{a}}Learn how{{/a}}.',
 			{
 				components: {
-					a: <a href={ support.MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+					a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
 				},
 			}
 		);

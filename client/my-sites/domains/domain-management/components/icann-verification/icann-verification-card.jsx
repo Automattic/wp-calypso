@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import support from 'lib/url/support';
+import { EMAIL_VALIDATION_AND_VERIFICATION } from 'lib/url/support';
 import upgradesActions from 'lib/upgrades/actions';
 import { errorNotice } from 'state/notices/actions';
 import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
@@ -45,7 +45,7 @@ class IcannVerificationCard extends React.Component {
 				components: {
 					learnMoreLink: (
 						<a
-							href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
+							href={ EMAIL_VALIDATION_AND_VERIFICATION }
 							target="_blank"
 							rel="noopener noreferrer"
 						/>

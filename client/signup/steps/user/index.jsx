@@ -21,7 +21,7 @@ import SignupActions from 'lib/signup/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import support from 'lib/url/support';
+import { WPCC } from 'lib/url/support';
 import config from 'config';
 
 function getSocialServiceFromClientId( clientId ) {
@@ -103,7 +103,7 @@ export class UserStep extends Component {
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
 					{
 						components: {
-							a: <a href={ support.WPCC } target="_blank" />,
+							a: <a href={ WPCC } target="_blank" />,
 						},
 						comment:
 							'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',

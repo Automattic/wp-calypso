@@ -22,7 +22,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import SectionHeader from 'components/section-header';
 import GoogleAppsUserItem from './google-apps-user-item';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const GoogleAppsUsers = createReactClass( {
 	displayName: 'GoogleAppsUsers',
@@ -96,7 +96,7 @@ const GoogleAppsUsers = createReactClass( {
 			let status = 'is-warning',
 				text = user.error,
 				supportLink = (
-					<a href={ support.CALYPSO_CONTACT }>
+					<a href={ CALYPSO_CONTACT }>
 						<strong>{ this.props.translate( 'Please contact support' ) }</strong>
 					</a>
 				);

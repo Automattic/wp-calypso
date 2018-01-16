@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import supportUrls from 'lib/url/support';
+import { GUIDED_TRANSFER } from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
 
 const GuidedTransferDetails = ( { translate } ) => (
@@ -23,7 +23,7 @@ const GuidedTransferDetails = ( { translate } ) => (
 				'the transfer.'
 		) }
 		buttonText={ translate( 'Learn more about Guided Transfers' ) }
-		href={ supportUrls.GUIDED_TRANSFER }
+		href={ GUIDED_TRANSFER }
 		target="_blank"
 		rel="noopener noreferrer"
 	/>

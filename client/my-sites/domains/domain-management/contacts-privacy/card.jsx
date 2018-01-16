@@ -19,7 +19,7 @@ import {
 	domainManagementTransferOut,
 } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import support from 'lib/url/support';
+import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
 
 class ContactsPrivacyCard extends React.PureComponent {
 	static propTypes = {
@@ -45,13 +45,7 @@ class ContactsPrivacyCard extends React.PureComponent {
 								'{{a}}Learn more.{{/a}}',
 							{
 								components: {
-									a: (
-										<a
-											href={ support.PUBLIC_VS_PRIVATE }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
+									a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
 								},
 							}
 						) }

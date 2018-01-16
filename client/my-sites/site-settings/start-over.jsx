@@ -19,12 +19,15 @@ import ActionPanelBody from 'my-sites/site-settings/action-panel/body';
 import ActionPanelFigure from 'my-sites/site-settings/action-panel/figure';
 import ActionPanelFooter from 'my-sites/site-settings/action-panel/footer';
 import Button from 'components/button';
-import support from 'lib/url/support';
+import { EMPTY_SITE } from 'lib/url/support';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {
 	return (
-		<div className="main main-column" role="main">
+		<div
+			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
+			role="main"
+		>
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
 				<h1>{ translate( 'Start Over' ) }</h1>
 			</HeaderCake>
@@ -54,13 +57,16 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 				</ActionPanelBody>
 				<ActionPanelFooter>
 					<Button
-						className="settings-action-panel__support-button is-external"
-						href={ support.EMPTY_SITE }
+						className="settings-action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace,max-len
+						href={ EMPTY_SITE }
 					>
 						{ translate( 'Follow the Steps' ) }
 						<Gridicon icon="external" size={ 48 } />
 					</Button>
-					<Button className="settings-action-panel__support-button" href="/help/contact">
+					<Button
+						className="settings-action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
+						href="/help/contact"
+					>
 						{ translate( 'Contact Support' ) }
 					</Button>
 				</ActionPanelFooter>

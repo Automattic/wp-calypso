@@ -20,7 +20,12 @@ import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
 import { checkInboundTransferStatus } from 'lib/domains';
-import support from 'lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
+} from 'lib/url/support';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 
 class TransferDomainPrecheck extends React.PureComponent {
@@ -197,7 +202,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					br: <br />,
 					a: (
 						<a
-							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -217,7 +222,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					components: {
 						a: (
 							<a
-								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
@@ -288,7 +293,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					br: <br />,
 					a: (
 						<a
-							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -318,7 +323,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 						strong: <strong className="transfer-domain-step__admin-email" />,
 						a: (
 							<a
-								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
@@ -347,7 +352,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 						strong: <strong className="transfer-domain-step__admin-email" />,
 						a: (
 							<a
-								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
@@ -388,7 +393,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 				components: {
 					a: (
 						<a
-							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE }
+							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -445,13 +450,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 									'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
 								{
 									components: {
-										a: (
-											<a
-												href={ support.CALYPSO_CONTACT }
-												rel="noopener noreferrer"
-												target="_blank"
-											/>
-										),
+										a: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />,
 									},
 								}
 							) }

@@ -1,7 +1,9 @@
 /**
  * External dependencies
  *
+ * @format
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -11,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
 import { resendInboundTransferEmail } from 'lib/domains';
-import support from 'lib/url/support';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from 'lib/url/support';
 import Card from 'components/card';
 
 class InboundTransferEmailVerificationCard extends React.PureComponent {
@@ -30,14 +32,12 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 				<Card highlight="warning">
 					<div>
 						<h1 className="inbound-transfer-verification__heading">
-							{ translate(
-								'The authorization email is still waiting to be sent.'
-							) }
+							{ translate( 'The authorization email is still waiting to be sent.' ) }
 						</h1>
 						{ translate(
-							'The contact address for this domain wasn\'t immediately available. ' +
-							'We will keep checking and send the email to initiate the transfer once we have the ' +
-							'correct address. This could take up to 24 hours. We appreciate your patience.'
+							"The contact address for this domain wasn't immediately available. " +
+								'We will keep checking and send the email to initiate the transfer once we have the ' +
+								'correct address. This could take up to 24 hours. We appreciate your patience.'
 						) }
 					</div>
 				</Card>
@@ -49,13 +49,11 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 				<Card highlight="info">
 					<div>
 						<h1 className="inbound-transfer-verification__heading">
-							{ translate(
-								'The authorization email will be sent shortly.'
-							) }
+							{ translate( 'The authorization email will be sent shortly.' ) }
 						</h1>
 						{ translate(
 							"We'll let you know which mailbox to check as soon as the email is sent. " +
-							'Check again in a few minutes.'
+								'Check again in a few minutes.'
 						) }
 					</div>
 				</Card>
@@ -66,15 +64,11 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 			<EmailVerificationCard
 				contactEmail={ adminEmail }
 				errorMessage={ translate( 'Unable to resend domain transfer email.' ) }
-				headerText={
-					translate(
-						'Important: Confirm the transfer to proceed.'
-					)
-				}
+				headerText={ translate( 'Important: Confirm the transfer to proceed.' ) }
 				verificationExplanation={ translate(
 					'We sent an email to confirm the transfer of {{strong}}%(domain)s{{/strong}}. ' +
-					'Open the email, click the link, and enter your domain authorization code to start the process. ' +
-					'Please confirm in 5 days or the transfer will be canceled. ' +
+						'Open the email, click the link, and enter your domain authorization code to start the process. ' +
+						'Please confirm in 5 days or the transfer will be canceled. ' +
 						'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						args: {
@@ -83,7 +77,7 @@ class InboundTransferEmailVerificationCard extends React.PureComponent {
 						components: {
 							learnMoreLink: (
 								<a
-									href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+									href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 									rel="noopener noreferrer"
 									target="_blank"
 								/>

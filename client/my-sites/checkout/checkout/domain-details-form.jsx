@@ -59,7 +59,7 @@ import GAppsFieldset from 'my-sites/domains/components/domain-form-fieldsets/g-a
 import RegionAddressFieldsets from 'my-sites/domains/components/domain-form-fieldsets/region-address-fieldsets';
 import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
 import notices from 'notices';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
@@ -482,7 +482,7 @@ export class DomainDetailsForm extends PureComponent {
 					'Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				{
 					components: {
-						contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+						contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 						firstErrorName: <NoticeErrorMessage message={ firstErrorName } />,
 					},
 					comment: 'Validation error when filling out domain checkout contact details form',

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Toggle from 'components/forms/form-toggle';
-import support from 'lib/url/support';
+import { CHANGE_NAME_SERVERS } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 class NameserversToggle extends React.PureComponent {
@@ -66,7 +66,7 @@ class NameserversToggle extends React.PureComponent {
 						components: {
 							a: (
 								<a
-									href={ support.CHANGE_NAME_SERVERS }
+									href={ CHANGE_NAME_SERVERS }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ this.handleLearnMoreClick }

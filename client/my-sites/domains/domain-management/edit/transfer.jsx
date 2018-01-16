@@ -18,7 +18,7 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { transferStatus } from 'lib/domains/constants';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED } from 'lib/url/support';
 import { restartInboundTransfer } from 'lib/domains';
 import { fetchDomains } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -139,7 +139,7 @@ class Transfer extends React.PureComponent {
 									strong: <strong />,
 									a: (
 										<a
-											href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED }
+											href={ INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED }
 											rel="noopener noreferrer"
 											target="_blank"
 										/>
@@ -163,7 +163,7 @@ class Transfer extends React.PureComponent {
 					</Button>
 					<Button
 						className="edit__transfer-button-fail edit__transfer-button-fail-margin"
-						href={ support.CALYPSO_CONTACT }
+						href={ CALYPSO_CONTACT }
 					>
 						{ this.props.translate( 'Contact Support' ) }
 					</Button>

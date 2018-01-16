@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-notice';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import { getExportingState } from 'state/site-settings/exporter/selectors';
 import { isGuidedTransferAwaitingPurchase } from 'state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -51,7 +51,7 @@ class Notices extends Component {
 							'again, or contact support.'
 					) }
 				>
-					<NoticeAction href={ support.CALYPSO_CONTACT }>{ translate( 'Get Help' ) }</NoticeAction>
+					<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Get Help' ) }</NoticeAction>
 				</Notice>
 			);
 		}

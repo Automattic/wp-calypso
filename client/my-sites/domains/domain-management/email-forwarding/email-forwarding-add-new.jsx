@@ -14,7 +14,7 @@ import createReactClass from 'create-react-class';
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
+import { emailForwardingPlanLimit, validateAllFields } from 'lib/domains/email-forwarding';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
@@ -26,8 +26,7 @@ import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
 import notices from 'notices';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { validateAllFields } from 'lib/domains/email-forwarding';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const EmailForwardingAddNew = createReactClass( {
 	displayName: 'EmailForwardingAddNew',
@@ -106,7 +105,7 @@ const EmailForwardingAddNew = createReactClass( {
 									'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 									{
 										components: {
-											contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+											contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 										},
 									}
 								)
