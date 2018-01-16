@@ -47,18 +47,6 @@ const reduxStoreReady = new Promise( resolve => {
 } );
 export const setReduxStore = _setReduxStore;
 
-let user, token;
-
-window.addEventListener( 'beforeunload', () => {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
-	if ( user && token ) {
-		store.set( STORAGE_KEY, { user, token } );
-	}
-} );
-
 // Get the value of the `?support_user=` query param for prefilling
 const getPrefillUsername = () => {
 	const queryString = get( window, 'location.search', null );
@@ -100,6 +88,18 @@ const _isSupportUserSession = ( () => {
 
 export const isSupportUserSession = () => _isSupportUserSession;
 
+let onBeforeUnload;
+
+const storeUserAndToken = ( user, token ) => () => {
+	if ( ! isEnabled() ) {
+		return;
+	}
+
+	if ( user && token ) {
+		store.set( STORAGE_KEY, { user, token } );
+	}
+};
+
 /**
  * Reboot normally as the main user
  */
@@ -111,7 +111,7 @@ export const rebootNormally = () => {
 	debug( 'Rebooting Calypso normally' );
 
 	store.remove( STORAGE_KEY );
-	user = token = null;
+	window.removeEventListener( 'beforeunload', onBeforeUnload );
 	window.location.search = '';
 };
 
@@ -145,9 +145,13 @@ export const boot = () => {
 		return;
 	}
 
-	( { user, token } = store.get( STORAGE_KEY ) );
+	const { user, token } = store.get( STORAGE_KEY );
 	debug( 'Booting Calypso with support user', user );
+
 	store.remove( STORAGE_KEY );
+
+	onBeforeUnload = storeUserAndToken( user, token );
+	window.addEventListener( 'beforeunload', onBeforeUnload );
 
 	localforage.bypass();
 
