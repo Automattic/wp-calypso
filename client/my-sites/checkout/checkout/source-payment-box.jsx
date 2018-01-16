@@ -72,6 +72,8 @@ class SourcePaymentBox extends PureComponent {
 			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		} else if ( paymentType === 'p24' ) {
 			return 'WPCOM_Billing_Stripe_Source_P24';
+		} else if ( paymentType === 'alipay' ) {
+			return 'WPCOM_Billing_Stripe_Source_Alipay';
 		}
 		return 'WPCOM_Billing_Stripe_Source';
 	}
@@ -120,7 +122,7 @@ class SourcePaymentBox extends PureComponent {
 				} );
 			} else if ( result.redirect_url ) {
 				this.setSubmitState( {
-					info: translate( 'Redirecting you to your bank to complete the payment.' ),
+					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
 					disabled: true
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
@@ -252,6 +254,8 @@ class SourcePaymentBox extends PureComponent {
 				return 'Bancontact';
 			case 'p24':
 				return 'Przelewy24';
+			case 'alipay':
+				return 'Alipay';
 		}
 
 		return this.props.paymentType;

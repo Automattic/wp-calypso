@@ -62,4 +62,11 @@
 		background-size: 70px auto;
 		width: 70px;
 	}
+
+	&.is-alipay {
+		background-image: url( '/calypso/images/upgrades/alipay.svg' );
+		height: 20px;
+		background-size: 70px auto;
+		width: 70px;
+	}
 }

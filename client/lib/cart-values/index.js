@@ -152,6 +152,8 @@ function isPaymentMethodEnabled( cart, method ) {
 			return isBelgiumBancontactEnabled( cart );
 		case 'p24':
 			return isPolandP24Enabled( cart );
+		case 'alipay':
+			return isAlipayEnabled( cart );
 
 		default:
 			return false;
@@ -192,6 +194,10 @@ function isPolandP24Enabled( cart ) {
 	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_P24' ) >= 0;
 }
 
+function isAlipayEnabled( cart ) {
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Alipay' ) >= 0;
+}
+
 export {
 	applyCoupon,
 	canRemoveFromCart,
@@ -208,6 +214,7 @@ export {
 	isNetherlandsIdealEnabled,
 	isCreditCardPaymentsEnabled,
 	isEbanxEnabled,
+	isAlipayEnabled,
 };
 
 export default {
