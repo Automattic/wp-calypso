@@ -11,28 +11,25 @@ import {
 } from 'state/action-types';
 
 /**
- * Triggers a network request to fetch invites for the specified site and query.
+ * Triggers a network request to fetch invites for the specified site.
  *
  * @param  {?Number}  siteId Site ID
- * @param  {Object}   query  Invites query (for pagination)
  * @return {Function}        Action thunk
  */
-export function requestInvites( siteId, query = {} ) {
+export function requestInvites( siteId ) {
 	return dispatch => {
 		dispatch( {
 			type: INVITES_REQUEST,
 			siteId,
-			query,
 		} );
 
 		wpcom
 			.undocumented()
-			.invitesList( siteId, { ...query, force: 'wpcom', status: 'all' } )
+			.invitesList( siteId, { force: 'wpcom', status: 'all', number: 100 } )
 			.then( ( { found, invites } ) => {
 				dispatch( {
 					type: INVITES_REQUEST_SUCCESS,
 					siteId,
-					query,
 					found,
 					invites,
 				} );
@@ -41,7 +38,6 @@ export function requestInvites( siteId, query = {} ) {
 				dispatch( {
 					type: INVITES_REQUEST_FAILURE,
 					siteId,
-					query,
 					error,
 				} );
 			} );
