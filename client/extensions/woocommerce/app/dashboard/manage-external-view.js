@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
+import ExternalLink from 'components/external-link';
 import { recordTrack } from 'woocommerce/lib/analytics';
 
 class ManageExternalView extends Component {
@@ -28,21 +29,24 @@ class ManageExternalView extends Component {
 	render = () => {
 		const { site, translate } = this.props;
 
-		const title = translate( 'Manage your store' );
+		const title = translate( 'Managing your store' );
 		const line = translate(
-			'Stores in your country are managed directly on your site. ' +
-				'We will let you know when you can manage your store here.'
+			'Howdy! It looks like your store is located in a country that we can not fully ' +
+				'support in this interface. Store setup and management will take place in wp-admin, ' +
+				'our classic admin interface. We are actively working on adding broader support and ' +
+				"we'll let you know when you can manage your store here!"
 		);
 
 		const actionURL = site.URL + '/wp-admin/edit.php?post_type=shop_order';
 		const action = (
-				<a
+				<ExternalLink
+					icon={ true }
 					className="dashboard__empty-action button is-primary"
 					onClick={ this.recordAction }
 					href={ actionURL }
 				>
-					{ translate( 'OK, take me to my site' ) }
-				</a>
+					{ translate( 'Manage my Store' ) }
+				</ExternalLink>
 			),
 			secondaryAction = null;
 
