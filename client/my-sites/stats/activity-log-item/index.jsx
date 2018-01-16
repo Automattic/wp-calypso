@@ -57,6 +57,10 @@ class ActivityLogItem extends Component {
 				<ActivityActor { ...{ actorActivityUrl, actorName, actorRole, actorType } } />
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
+						{ /* There is no great way to generate a more valid React key here
+						  * but the index is probably sufficient because these sub-items
+						  * shouldn't be changing.
+						  */ }
 						{ activityDescription.map( ( part, i ) => (
 							<FormattedBlock key={ i } content={ part } />
 						) ) }
