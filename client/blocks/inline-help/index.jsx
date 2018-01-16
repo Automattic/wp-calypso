@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, noop, omitBy, isUndefined } from 'lodash';
+import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -17,7 +17,6 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import SearchCard from 'components/search-card';
-import HelpResults from 'me/help/help-results';
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -47,19 +46,21 @@ class InlineHelp extends Component {
 		this.toggleInlineHelp();
 	};
 
-	onSearch = () => {
-		console.log( 'Searchin.' );
+	onSearch = () => {};
+
+	inlineHelpToggleRef = node => {
+		this.inlineHelpToggle = node;
 	};
 
 	render() {
 		const { translate } = this.props;
 		return (
 			<Button
-				className="sidebar__footer-help"
+				className="inline-help"
 				onClick={ this.handleHelpButtonClicked }
 				borderless
 				title={ translate( 'Help' ) }
-				ref={ node => ( this.inlineHelpToggle = node ) }
+				ref={ this.inlineHelpToggleRef }
 			>
 				<Gridicon icon="help-outline" />
 				<Popover
@@ -73,6 +74,7 @@ class InlineHelp extends Component {
 						<SearchCard
 							placeholder={ translate( 'How can we help?' ) }
 							onSearch={ this.onSearch }
+							autoFocus
 							delaySearch={ true }
 						/>
 
@@ -92,9 +94,7 @@ class InlineHelp extends Component {
 	}
 }
 
-const mapStateToProps = state => {
-	return {};
-};
-const mapDispatchToProps = {};
+const mapStateToProps = null;
+const mapDispatchToProps = null;
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );

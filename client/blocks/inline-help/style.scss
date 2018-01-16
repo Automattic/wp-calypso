@@ -1,3 +1,27 @@
+.sidebar .sidebar__footer .button {
+	&.inline-help {
+		border-left: 1px solid #c8d7e1;
+		flex: 0 1 40px;
+		margin-right: 0;
+		margin-left: 0;
+		outline: 0;
+
+		@include breakpoint( "<660px" ) {
+			flex: 0 1 56px;
+		}
+	}
+
+	&.inline-help {
+		margin-left: auto;
+		border-radius: 0;
+	}
+}
+
+.layout.is-section-help .sidebar .inline-help {
+	background-color: var( --sidebar-selected-color );
+	color: var( --white );
+}
+
 .popover.inline-help__popover {
 	width: 250px;
 	max-width: 250px;

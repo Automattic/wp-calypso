@@ -378,7 +378,6 @@ form.sidebar__button input {
 	line-height: 2.1;
 	margin-right: auto;
 
-	&.sidebar__footer-help,
 	&.sidebar__footer-chat {
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		flex: 0 1 40px;
@@ -390,11 +389,6 @@ form.sidebar__button input {
 			flex: 0 1 56px;
 		}
 
-	}
-
-	&.sidebar__footer-help {
-		margin-left: auto;
-		border-radius: 0;
 	}
 
 	&.sidebar__footer-chat.has-unread {
@@ -438,11 +432,6 @@ form.sidebar__button input {
 		margin-top: auto;
 	}
 
-}
-
-.layout.is-section-help .sidebar .sidebar__footer-help {
-	background-color: $sidebar-selected-color;
-	color: $white;
 }
 
 .sidebar__region {
