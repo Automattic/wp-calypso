@@ -8,12 +8,12 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import config from 'config';
+import { isEnabled } from 'config';
 import peopleController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	if ( config.isEnabled( 'manage/people' ) ) {
+	if ( isEnabled( 'manage/people' ) ) {
 		page(
 			'/people/:filter(team|followers|email-followers|viewers)',
 			siteSelection,
@@ -31,6 +31,18 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
+
+		if ( isEnabled( 'manage/people/invites' ) ) {
+			page(
+				'/people/invites/:site_id',
+				peopleController.enforceSiteEnding,
+				siteSelection,
+				navigation,
+				peopleController.peopleInvites,
+				makeLayout,
+				clientRender
+			);
+		}
 
 		page(
 			'/people/new/:site_id',
