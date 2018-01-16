@@ -2,8 +2,8 @@
 export const surveyStepSchema = {
 	type: 'object',
 	properties: {
-		vertical: 'string',
-		otherText: 'string',
-		siteType: 'string',
+		vertical: { type: 'string' },
+		otherText: { type: 'string' },
+		siteType: { type: 'string' },
 	},
 };

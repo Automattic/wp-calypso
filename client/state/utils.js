@@ -3,8 +3,9 @@
 /**
  * External dependencies
  */
-
+import LRU from 'lru-cache';
 import validator from 'is-my-json-valid';
+import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import {
 	flow,
 	forEach,
@@ -18,16 +19,17 @@ import {
 	omitBy,
 	partialRight,
 } from 'lodash';
-import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
-import LRU from 'lru-cache';
 
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from './action-types';
 import warn from 'lib/warn';
+import { DESERIALIZE, SERIALIZE } from './action-types';
+import { throwIfSchemaInvalid } from './schema-utils';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
+	throwIfSchemaInvalid( schema );
+
 	const validate = validator( schema, {
 		greedy: process.env.NODE_ENV !== 'production',
 		verbose: process.env.NODE_ENV !== 'production',
@@ -224,6 +226,9 @@ export function extendAction( action, data ) {
  * @return {Function}                Reducer function
  */
 export function createReducer( initialState = null, customHandlers = {}, schema = null ) {
+	if ( null !== schema ) {
+		throwIfSchemaInvalid( schema );
+	}
 	// Define default handlers for serialization actions. If no schema is
 	// provided, always return the initial state. Otherwise, allow for
 	// serialization and validate on deserialize.
@@ -337,6 +342,10 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
 export const withSchemaValidation = ( schema, reducer ) => {
+	if ( typeof schema !== 'undefined' ) {
+		throwIfSchemaInvalid( schema );
+	}
+
 	const wrappedReducer = ( state, action ) => {
 		if ( SERIALIZE === action.type ) {
 			return schema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
