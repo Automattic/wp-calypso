@@ -21,7 +21,7 @@ import DnsTemplates from './dns-templates';
 import { domainManagementEdit, domainManagementDns } from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { updateNameservers } from 'lib/upgrades/actions';
 import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
 import { getSelectedDomain } from 'lib/domains';
 import { isEmpty } from 'lodash';
@@ -127,7 +127,7 @@ class NameServers extends React.Component {
 
 		this.setState( { formSubmitting: true } );
 
-		upgradesActions.updateNameservers( selectedDomainName, nameservers, error => {
+		updateNameservers( selectedDomainName, nameservers, error => {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {

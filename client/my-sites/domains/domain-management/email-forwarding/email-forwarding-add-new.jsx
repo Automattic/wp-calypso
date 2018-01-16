@@ -1,13 +1,10 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-
 import createReactClass from 'create-react-class';
 
 /**
@@ -25,7 +22,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
 import notices from 'notices';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addEmailForwarding } from 'lib/upgrades/actions';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const EmailForwardingAddNew = createReactClass( {
@@ -85,11 +82,7 @@ const EmailForwardingAddNew = createReactClass( {
 
 			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
-			upgradesActions.addEmailForwarding(
-				this.props.selectedDomainName,
-				mailbox,
-				destination,
-				error => {
+			addEmailForwarding( this.props.selectedDomainName, mailbox, destination, error => {
 					this.recordEvent(
 						'addNewEmailForwardClick',
 						this.props.selectedDomainName,
@@ -102,7 +95,9 @@ const EmailForwardingAddNew = createReactClass( {
 						notices.error(
 							error.message ||
 								this.props.translate(
-									'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+								'Failed to add email forwarding record. ' +
+									'Please try again or ' +
+									'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
 									{
 										components: {
 											contactSupportLink: <a href={ CALYPSO_CONTACT } />,
@@ -115,7 +110,9 @@ const EmailForwardingAddNew = createReactClass( {
 
 						notices.success(
 							this.props.translate(
-								'%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.',
+							'%(email)s has been successfully added! ' +
+								'You must confirm your email before it starts working. ' +
+								'Please check your inbox for %(destination)s.',
 								{
 									args: {
 										email: mailbox + '@' + this.props.selectedDomainName,
@@ -129,8 +126,7 @@ const EmailForwardingAddNew = createReactClass( {
 						);
 					}
 					this.setState( { formSubmitting: false, showForm: ! error } );
-				}
-			);
+			} );
 		} );
 	},
 

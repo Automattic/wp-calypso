@@ -21,7 +21,7 @@ import SourcePaymentBox from './source-payment-box';
 import { fullCreditsPayment, newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
-import upgradesActions from 'lib/upgrades/actions';
+import { setPayment } from 'lib/upgrades/actions';
 import { forPayments as countriesListForPayments } from 'lib/countries-list';
 import debugFactory from 'debug';
 import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart-values';
@@ -134,9 +134,9 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		if ( newPayment ) {
-			// we need to defer this because this is mounted after `upgradesActions.setDomainDetails` is called
+			// we need to defer this because this is mounted after `setDomainDetails` is called
 			defer( function() {
-				upgradesActions.setPayment( newPayment );
+				setPayment( newPayment );
 			} );
 		}
 	},

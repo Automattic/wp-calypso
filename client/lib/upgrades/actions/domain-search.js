@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import page from 'page';
 import userFactory from 'lib/user';
 import { canAddGoogleApps } from 'lib/domains';
 
 const user = userFactory();
 
-function goToDomainCheckout( domainSuggestion, selectedSiteSlug ) {
+export function goToDomainCheckout( domainSuggestion, selectedSiteSlug ) {
 	if (
 		user.get().is_valid_google_apps_country &&
 		canAddGoogleApps( domainSuggestion.domain_name )
@@ -20,5 +18,3 @@ function goToDomainCheckout( domainSuggestion, selectedSiteSlug ) {
 		page( '/checkout/' + selectedSiteSlug );
 	}
 }
-
-export { goToDomainCheckout };

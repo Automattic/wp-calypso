@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +11,7 @@ import { connect } from 'react-redux';
  */
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
 import StoreConnection from 'components/data/store-connection';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { fetchEmailForwarding } from 'lib/upgrades/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 
 function getStateFromStores( props ) {
@@ -42,7 +40,7 @@ export class EmailForwardingData extends Component {
 	}
 
 	loadEmailForwarding = () => {
-		upgradesActions.fetchEmailForwarding( this.props.selectedDomainName );
+		fetchEmailForwarding( this.props.selectedDomainName );
 	};
 
 	render() {

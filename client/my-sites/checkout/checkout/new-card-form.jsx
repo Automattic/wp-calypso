@@ -13,7 +13,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import upgradesActions from 'lib/upgrades/actions';
+import { setNewCreditCardDetails } from 'lib/upgrades/actions';
 
 class NewCardForm extends Component {
 	static displayName = 'NewCardForm';
@@ -61,7 +61,7 @@ class NewCardForm extends Component {
 	}
 
 	handleFieldChange = ( rawDetails, maskedDetails ) => {
-		upgradesActions.setNewCreditCardDetails( {
+		setNewCreditCardDetails( {
 			rawDetails: rawDetails,
 			maskedDetails: maskedDetails,
 		} );
