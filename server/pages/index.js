@@ -17,6 +17,7 @@ import { get, pick, forEach, intersection } from 'lodash';
 import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
+import { pathToRegExp } from '../../client/utils';
 import sectionsModule from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
 import { serverRender, serverRenderError } from 'render';
@@ -477,7 +478,7 @@ module.exports = function() {
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => {
-				const pathRegex = utils.pathToRegExp( sectionPath );
+				const pathRegex = pathToRegExp( sectionPath );
 
 				app.get( pathRegex, function( req, res, next ) {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
