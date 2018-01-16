@@ -24,7 +24,10 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const StartOver = ( { translate, selectedSiteSlug } ) => {
 	return (
-		<div className="main main-column" role="main">
+		<div
+			className="main main-column" // eslint-disable-line wpcalypso/jsx-classname-namespace
+			role="main"
+		>
 			<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
 				<h1>{ translate( 'Start Over' ) }</h1>
 			</HeaderCake>
@@ -53,11 +56,17 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 					</p>
 				</ActionPanelBody>
 				<ActionPanelFooter>
-					<Button className="settings-action-panel__support-button is-external" href={ EMPTY_SITE }>
+					<Button
+						className="settings-action-panel__support-button is-external" // eslint-disable-line wpcalypso/jsx-classname-namespace,max-len
+						href={ EMPTY_SITE }
+					>
 						{ translate( 'Follow the Steps' ) }
 						<Gridicon icon="external" size={ 48 } />
 					</Button>
-					<Button className="settings-action-panel__support-button" href="/help/contact">
+					<Button
+						className="settings-action-panel__support-button" // eslint-disable-line wpcalypso/jsx-classname-namespace
+						href="/help/contact"
+					>
 						{ translate( 'Contact Support' ) }
 					</Button>
 				</ActionPanelFooter>
