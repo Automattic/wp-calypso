@@ -26,8 +26,8 @@ class ProductFormVariationsTable extends React.Component {
 		variations: PropTypes.array,
 		product: PropTypes.object,
 		editProductVariation: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func,
-		onUploadFinish: PropTypes.func,
+		onUploadStart: PropTypes.func.isRequired,
+		onUploadFinish: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {

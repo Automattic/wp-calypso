@@ -30,8 +30,8 @@ class ProductFormImages extends Component {
 		),
 		onUpload: PropTypes.func.isRequired,
 		onRemove: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func,
-		onUploadFinish: PropTypes.func,
+		onUploadStart: PropTypes.func.isRequired,
+		onUploadFinish: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {

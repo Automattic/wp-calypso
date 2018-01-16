@@ -33,8 +33,8 @@ class ProductFormVariationsCard extends Component {
 		editProduct: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func,
-		onUploadFinish: PropTypes.func,
+		onUploadStart: PropTypes.func.isRequired,
+		onUploadFinish: PropTypes.func.isRequired,
 	};
 
 	simpleFields = [

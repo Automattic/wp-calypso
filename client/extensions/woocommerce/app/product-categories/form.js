@@ -34,8 +34,8 @@ class ProductCategoryForm extends Component {
 			id: PropTypes.isRequired,
 		} ),
 		editProductCategory: PropTypes.func.isRequired,
-		onUploadStart: PropTypes.func,
-		onUploadFinish: PropTypes.func,
+		onUploadStart: PropTypes.func.isRequired,
+		onUploadFinish: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
