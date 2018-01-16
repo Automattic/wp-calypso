@@ -57,7 +57,9 @@ class ActivityLogItem extends Component {
 				<ActivityActor { ...{ actorActivityUrl, actorName, actorRole, actorType } } />
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
-						<FormattedBlock content={ activityDescription[ 0 ] } />
+						{ activityDescription.map( ( part, i ) => (
+							<FormattedBlock key={ i } content={ part } />
+						) ) }
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
