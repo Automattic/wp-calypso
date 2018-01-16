@@ -16,9 +16,10 @@
 }
 
 .reader-popover__wrapper {
+
 	.segmented-control {
 		background: inherit;
-		padding: 0 12px 0 16px;
+		padding: 0 12px 17px 16px;
 	}
 
 	.segmented-control__link {
@@ -27,11 +28,23 @@
 }
 
 .reader-site-notification-settings__popout-toggle {
+	border-top: 1px solid lighten( $gray, 20% );
 	color: $gray-dark;
 	display: flex;
 	justify-content: space-between;
 	font-size: 14px;
-	margin: 10px 0 10px 15px;
+	padding: 10px 0 10px 15px;
+
+	&:first-child {
+		border-top: 0;
+	}
+
+	.gridicon {
+		fill: $gray;
+		position: relative;
+			left: 3px;
+			top: 2px;
+	}
 }
 
 .reader-site-notification-settings .gridicons-cog {
@@ -48,7 +61,7 @@
 }
 
 .reader-site-notification-settings__popout-form-toggle {
-	margin-left: 10px;
+	margin-left: 20px;
 }
 
 .reader-site-notification-settings__popout-hint {
