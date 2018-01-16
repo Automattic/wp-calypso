@@ -38,6 +38,7 @@ import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
+import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -62,9 +63,8 @@ import {
 /**
  * Constants
  */
-const MAX_AUTH_ATTEMPTS = 3;
-const PLANS_PAGE = '/jetpack/connect/plans/';
 const debug = debugModule( 'calypso:jetpack-connect:authorize-form' );
+const MAX_AUTH_ATTEMPTS = 3;
 const PRESSABLE_PARTNER_ID = 49640;
 
 export class JetpackAuthorize extends Component {
@@ -268,13 +268,12 @@ export class JetpackAuthorize extends Component {
 
 	handleResolve = () => {
 		const { site, recordTracksEvent } = this.props;
-		const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 		this.retryingAuth = false;
 		if ( this.props.hasExpiredSecretError ) {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
-			this.externalRedirectOnce( site + authUrl );
+			this.externalRedirectOnce( site + REMOTE_PATH_AUTH );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
@@ -528,7 +527,7 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		return addQueryArgs( { redirect: redirectAfterAuth }, PLANS_PAGE + siteSlug );
+		return addQueryArgs( { redirect: redirectAfterAuth }, `${ JPC_PATH_PLANS }/${ siteSlug }` );
 	}
 
 	renderFooterLinks() {
