@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { includes } from 'lodash';
 import page from 'page';
 
 /**
@@ -359,13 +358,8 @@ export class MySitesSidebar extends Component {
 	};
 
 	store() {
-		// IMPORTANT: If you add a country to this list, you must also add it
-		// to ../../extensions/woocommerce/lib/countries in the getCountries function
-		const allowedCountryCodes = [ 'US', 'CA' ];
 		const {
-			currentUser,
 			canUserManageOptions,
-			isJetpack,
 			site,
 			siteSuffix,
 			translate,
@@ -376,35 +370,28 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const storeLink = '/store' + siteSuffix;
-
-		const isJetpackOrAtomicSite =
-			isJetpack && canUserManageOptions && this.props.isSiteAutomatedTransfer;
+		const isPermittedSite = canUserManageOptions && this.props.isSiteAutomatedTransfer;
 
 		if (
-			! isJetpackOrAtomicSite &&
+			! isPermittedSite &&
 			! ( config.isEnabled( 'signup/atomic-store-flow' ) && siteHasBackgroundTransfer )
 		) {
 			return null;
 		}
 
-		const countryCode = currentUser.user_ip_country_code;
-		const isCountryAllowed =
-			includes( allowedCountryCodes, countryCode ) || 'development' === process.env.NODE_ENV;
+		const storeLink = '/store' + siteSuffix;
 
 		return (
-			isCountryAllowed && (
-				<SidebarItem
-					label={ translate( 'Store' ) }
-					link={ storeLink }
-					onNavigate={ this.trackStoreClick }
-					icon="cart"
-				>
-					<div className="sidebar__chevron-right">
-						<Gridicon icon="chevron-right" />
-					</div>
-				</SidebarItem>
-			)
+			<SidebarItem
+				label={ translate( 'Store' ) }
+				link={ storeLink }
+				onNavigate={ this.trackStoreClick }
+				icon="cart"
+			>
+				<div className="sidebar__chevron-right">
+					<Gridicon icon="chevron-right" />
+				</div>
+			</SidebarItem>
 		);
 	}
 
