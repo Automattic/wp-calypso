@@ -27,4 +27,13 @@ describe( 'JetpackConnectNotices', () => {
 		expect( onTerminalError ).toHaveBeenCalledTimes( 1 );
 		expect( component ).toMatchSnapshot();
 	} );
+
+	test( 'Should render non-terminal notice if callback supplied', () => {
+		const onTerminalError = jest.fn();
+		const component = renderer.create(
+			<JetpackConnectNotices noticeType="retryAuth" onTerminalError={ onTerminalError } />
+		);
+		expect( onTerminalError ).toHaveNotBeenCalled;
+		expect( component ).toMatchSnapshot();
+	} );
 } );
