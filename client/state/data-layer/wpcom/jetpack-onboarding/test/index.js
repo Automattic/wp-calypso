@@ -214,10 +214,19 @@ describe( 'announceSaveFailure()', () => {
 } );
 
 describe( 'fromApi', () => {
-	it( 'should throw an error if no onboarding settings are given', () => {
-		expect( () => fromApi( { data: { noOnboarding: {} } } ) ).toThrow();
+	test( 'should throw an error if no data field is set', () => {
+		expect( () => fromApi( { noData: { onboarding: {} } } ) ).toThrow(
+			'missing onboarding settings'
+		);
 	} );
-	it( 'should return onboarding settings object if present', () => {
+
+	test( 'should throw an error if no onboarding settings are given', () => {
+		expect( () => fromApi( { data: { noOnboarding: {} } } ) ).toThrow(
+			'missing onboarding settings'
+		);
+	} );
+
+	test( 'should return onboarding settings object if present', () => {
 		expect( fromApi( { data: { onboarding: { siteTitle: 'Yet Another Site Title' } } } ) ).toEqual(
 			{ siteTitle: 'Yet Another Site Title' }
 		);

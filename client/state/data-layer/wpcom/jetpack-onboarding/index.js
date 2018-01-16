@@ -20,7 +20,7 @@ import { getUnconnectedSite } from 'state/selectors';
 import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 export const fromApi = response => {
-	if ( ! response.data.onboarding || ! response.data.onboarding ) {
+	if ( ! response.data || ! response.data.onboarding ) {
 		throw new Error( 'missing onboarding settings' );
 	}
 
