@@ -19,7 +19,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import PostMetadata from 'lib/post-metadata';
 import Sharing from './';
 import AccordionSection from 'components/accordion/section';
-import postUtils from 'lib/posts/utils';
+import * as postUtils from 'lib/posts/utils';
 import { isMobile } from 'lib/viewport';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getCurrentUserId } from 'state/current-user/selectors';

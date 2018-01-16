@@ -18,7 +18,6 @@ import MediaLibrarySelectedData from 'components/data/media-library-selected-dat
 import MediaModal from 'post-editor/media-modal';
 import MediaActions from 'lib/media/actions';
 import PostActions from 'lib/posts/actions';
-import PostUtils from 'lib/posts/utils';
 import * as stats from 'lib/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
@@ -128,7 +127,7 @@ class EditorFeaturedImage extends Component {
 			return;
 		}
 
-		const itemId = PostUtils.getFeaturedImageId( this.props.post );
+		const itemId = getFeaturedImageId( this.props.post );
 		if ( ! itemId ) {
 			return;
 		}
@@ -146,7 +145,7 @@ class EditorFeaturedImage extends Component {
 		const { site, post } = this.props;
 		const featuredImageId = getFeaturedImageId( post );
 		const classes = classnames( 'editor-featured-image', {
-			'is-assigned': PostUtils.getFeaturedImageId( this.props.post ),
+			'is-assigned': getFeaturedImageId( this.props.post ),
 			'has-active-drop-zone': this.props.hasDropZone && this.props.isDropZoneVisible,
 		} );
 

@@ -11,7 +11,7 @@ import assert from 'assert';
 /**
  * Internal dependencies
  */
-import postUtils from '../utils';
+import * as postUtils from '../utils';
 
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 

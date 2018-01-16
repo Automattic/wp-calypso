@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import Site from 'blocks/site';
-import postUtils from 'lib/posts/utils';
+import * as postUtils from 'lib/posts/utils';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';

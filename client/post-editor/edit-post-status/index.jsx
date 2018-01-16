@@ -18,7 +18,7 @@ import { isEnabled } from 'config';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
 import EditorRevisionsLegacyLink from 'post-editor/editor-revisions/legacy-link';
-import postUtils from 'lib/posts/utils';
+import * as postUtils from 'lib/posts/utils';
 import InfoPopover from 'components/info-popover';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { editPost } from 'state/posts/actions';

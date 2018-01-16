@@ -10,7 +10,7 @@ import { noop } from 'lodash';
  */
 import analytics from 'lib/analytics';
 import PostEditStore from 'lib/posts/post-edit-store';
-import utils from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 
 /**
  * Module variables

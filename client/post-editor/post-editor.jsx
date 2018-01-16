@@ -30,7 +30,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import utils from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
