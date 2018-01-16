@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-import jsonSchema from './lib/schema.json';
+import jsonSchemaDraft04 from './lib/json-schema-draft-04.json';
 import imjv from 'is-my-json-valid';
 import { forEach, get, isEmpty } from 'lodash';
 
-const validateSchema = imjv( jsonSchema, { verbose: true, greedy: true } );
+const validateSchema = imjv( jsonSchemaDraft04, { verbose: true, greedy: true } );
 
 function throwOnInvalidSchema( schema ) {
 	if ( ! validateSchema( schema ) ) {
@@ -21,7 +21,7 @@ function throwOnInvalidSchema( schema ) {
 
 			// Violates rule: { type: 'boolean' }
 			if ( ! isEmpty( schemaPath ) ) {
-				msg.push( `Violates rule: ${ JSON.stringify( get( jsonSchema, schemaPath ) ) }` );
+				msg.push( `Violates rule: ${ JSON.stringify( get( jsonSchemaDraft04, schemaPath ) ) }` );
 			}
 			msg.push( '' );
 		} );
