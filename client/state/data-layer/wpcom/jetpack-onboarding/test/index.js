@@ -198,15 +198,18 @@ describe( 'storeJetpackOnboardingSettings()', () => {
 
 describe( 'announceSaveFailure()', () => {
 	const dispatch = jest.fn();
+	const siteId = 12345678;
 
 	test( 'should trigger an error notice upon unsuccessful save request', () => {
-		announceSaveFailure( { dispatch } );
+		announceSaveFailure( { dispatch }, { siteId } );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				notice: expect.objectContaining( {
 					status: 'is-error',
 					text: 'An unexpected error occurred. Please try again later.',
+					noticeId: `jpo-notice-error-${ siteId }`,
+					duration: 5000,
 				} ),
 			} )
 		);
