@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -10,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import purchasesPaths from 'me/purchases/paths';
+import { billingHistoryReceipt } from 'me/purchases/paths';
 import TransactionsTable from './transactions-table';
 import { isSendingBillingReceiptEmail } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -56,7 +55,7 @@ class BillingHistoryTable extends React.Component {
 			<div className="billing-history__transaction-links">
 				<a
 					className="billing-history__view-receipt"
-					href={ purchasesPaths.billingHistoryReceipt( transaction.id ) }
+					href={ billingHistoryReceipt( transaction.id ) }
 					onClick={ this.handleReceiptLinkClick }
 				>
 					{ translate( 'View Receipt' ) }

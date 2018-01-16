@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import purchasesPaths from 'me/purchases/paths';
+import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import TransactionsTable from './transactions-table';
 import { getSiteSlugsForUpcomingTransactions } from 'state/selectors';
 
@@ -32,7 +30,7 @@ class UpcomingChargesTable extends Component {
 
 		return (
 			<div className="billing-history__transaction-links">
-				<a href={ purchasesPaths.managePurchase( siteSlug, transaction.id ) }>
+				<a href={ managePurchase( siteSlug, transaction.id ) }>
 					{ translate( 'Manage Purchase' ) }
 				</a>
 			</div>
@@ -45,7 +43,7 @@ class UpcomingChargesTable extends Component {
 			'The upgrades on your account will not renew automatically. ' +
 				'To manage your upgrades or enable Auto Renew visit {{link}}My Upgrades{{/link}}.',
 			{
-				components: { link: <a href={ purchasesPaths.purchasesRoot() } /> },
+				components: { link: <a href={ purchasesRoot } /> },
 			}
 		);
 		const noFilterResultsText = translate( 'No upcoming charges found.' );

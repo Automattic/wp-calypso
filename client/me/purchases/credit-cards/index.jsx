@@ -49,7 +49,7 @@ class CreditCards extends Component {
 	}
 
 	goToAddCreditCard() {
-		page( addCreditCard() );
+		page( addCreditCard );
 	}
 
 	renderAddCreditCardButton() {

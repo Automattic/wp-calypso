@@ -28,7 +28,7 @@ import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
 import Notice from 'components/notice';
-import paths from '../paths';
+import { managePurchase, purchasesRoot } from '../paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
@@ -65,7 +65,7 @@ class CancelPrivacyProtection extends Component {
 
 	redirectIfDataIsInvalid = ( props = this.props ) => {
 		if ( ! this.isDataValid( props ) ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 		}
 	};
 
@@ -106,7 +106,7 @@ class CancelPrivacyProtection extends Component {
 					{ persistent: true }
 				);
 
-				page( paths.managePurchase( this.props.selectedSite.slug, id ) );
+				page( managePurchase( this.props.selectedSite.slug, id ) );
 			} )
 			.catch( () => {
 				this.resetState();
