@@ -224,8 +224,6 @@ describe( 'my module', () => {
 		expect( global.open ).toHaveBeenCalled();
 	} );
 } );
-
-
 ```
 
 ### Testing legacy code
