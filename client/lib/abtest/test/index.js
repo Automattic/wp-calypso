@@ -70,6 +70,19 @@ jest.mock( 'lib/abtest/active-tests', () => ( {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
+	mockedTestAssignedWithUserID: {
+		datestamp: '20160627',
+		variations: {
+			var1: 20,
+			var2: 20,
+			var3: 20,
+			var4: 20,
+			var5: 20,
+		},
+		defaultVariation: 'var1',
+		assignmentMethod: 'userId',
+		allowExistingUsers: true,
+	},
 } ) );
 jest.mock( 'lib/user', () => {
 	const getStub = jest.fn();
@@ -141,6 +154,13 @@ describe( 'abtest', () => {
 			} );
 			test( 'should call store.set when allowExistingUsers is true', () => {
 				abtest( 'mockedTestAllowExisting' );
+				expect( setSpy ).to.have.been.calledOnce;
+			} );
+			test( 'should call store.set and assign var3', () => {
+				getUserStub.mockReturnValue( {
+					ID: '12321',
+				} );
+				expect( abtest( 'mockedTestAssignedWithUserID' ) ).to.equal( 'var3' );
 				expect( setSpy ).to.have.been.calledOnce;
 			} );
 		} );
