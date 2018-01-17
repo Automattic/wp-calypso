@@ -14,6 +14,7 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import compareProps from 'lib/compare-props';
 import Month from './month';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
@@ -200,7 +201,7 @@ class PostTrends extends React.Component {
 	}
 }
 
-export default connect( state => {
+const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
 	const query = {
 		startDate: i18n
@@ -225,4 +226,8 @@ export default connect( state => {
 		query,
 		siteId,
 	};
+};
+
+export default connect( mapStateToProps, null, null, {
+	areStatePropsEqual: compareProps( { deep: [ 'query' ] } ),
 } )( localize( PostTrends ) );
