@@ -2,7 +2,7 @@
 /**
  * Internal Dependencies
  */
-import { JITM_DISMISS, JITM_SET } from 'state/action-types.js';
+import { JITM_DISMISS, JITM_SET } from 'state/action-types';
 
 /**
  * Dismisses a jitm

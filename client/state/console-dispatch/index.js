@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * Console dispatcher Redux store enhancer
  *
@@ -10,21 +9,14 @@
  * Will only attach if the `window` variable is available
  * globally. If not it will simply be an empty link in the
  * chain, passing straight through.
+ *
+ * @param {Function} next next store enhancer in chain
+ * @returns {Function} console dispatcher store enhancer
  */
-
-/**
- * Internal dependencies
- */
-import * as actionTypes from 'state/action-types';
-
 export const consoleDispatcher = next => ( ...args ) => {
 	const store = next( ...args );
 
 	if ( 'undefined' !== typeof window ) {
-		Object.assign( window, store, {
-			actionTypes,
-		} );
-
 		Object.defineProperty( window, 'state', {
 			enumerable: true,
 			get: store.getState,

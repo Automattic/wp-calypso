@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from '../action-types';
+import { COMPONENTS_USAGE_STATS_REQUEST, COMPONENTS_USAGE_STATS_RECEIVE } from 'state/action-types';
 import request from 'superagent';
 
 /**

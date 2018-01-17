@@ -27,7 +27,8 @@
 					"kebabCase": true
 				}
 			}
-		]
+		],
+		"./inline-imports.js"
 	],
 	"env": {
 		"test": {
