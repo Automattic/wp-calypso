@@ -33,11 +33,11 @@ export default createSelector(
 			case STEPS.HOMEPAGE:
 				return !! get( settings, 'homepageFormat' );
 			case STEPS.CONTACT_FORM:
-				return !! get( settings, 'contactForm' );
+				return !! get( settings, 'addContactForm' );
 			case STEPS.BUSINESS_ADDRESS:
 				return !! get( settings, 'businessAddress' );
 			case STEPS.WOOCOMMERCE:
-				return !! get( settings, 'woocommerce' );
+				return !! get( settings, 'installWooCommerce' );
 			default:
 				return false;
 		}

@@ -196,7 +196,7 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						contactForm: true,
+						addContactForm: true,
 					},
 				},
 			},
@@ -226,7 +226,7 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						contactForm: false,
+						addContactForm: false,
 					},
 				},
 			},
@@ -286,7 +286,7 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						woocommerce: true,
+						installWooCommerce: true,
 					},
 				},
 			},
@@ -316,7 +316,7 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						woocommerce: false,
+						installWooCommerce: false,
 					},
 				},
 			},
