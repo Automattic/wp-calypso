@@ -12,7 +12,7 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants'
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 import { getRequest } from 'state/selectors';
 
-export default function getJetpackOnboardingPending( state, siteId, steps ) {
+export default function getJetpackOnboardingPendingSteps( state, siteId, steps ) {
 	const stepActionsMap = {
 		[ STEPS.WOOCOMMERCE ]: {
 			installWooCommerce: true,
