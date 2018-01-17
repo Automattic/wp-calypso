@@ -18,7 +18,7 @@ import ListItemImage from './list-item-image';
 import ListItemVideo from './list-item-video';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix } from 'lib/media/utils';
 import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
 import { MEDIA_IMAGE_PHOTON } from 'lib/media/constants';
 
@@ -67,7 +67,7 @@ export default class extends React.Component {
 			return;
 		}
 
-		switch ( MediaUtils.getMimePrefix( this.props.media ) ) {
+		switch ( getMimePrefix( this.props.media ) ) {
 			case 'image':
 				component = ListItemImage;
 				break;

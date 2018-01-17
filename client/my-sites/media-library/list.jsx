@@ -15,7 +15,7 @@ import React from 'react';
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
@@ -179,7 +179,7 @@ export class MediaLibraryList extends React.Component {
 			! this.props.single &&
 			selectedIndex !== -1 &&
 			selectedItems.length === 1 &&
-			'image' === MediaUtils.getMimePrefix( item );
+			'image' === getMimePrefix( item );
 
 		return (
 			<ListItem

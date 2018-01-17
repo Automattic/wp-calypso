@@ -20,7 +20,7 @@ import { serialize as serializeContactForm } from 'components/tinymce/plugins/co
 import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
 import MediaActions from 'lib/media/actions';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix } from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import PostActions from 'lib/posts/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
@@ -470,7 +470,7 @@ export class EditorHtmlToolbar extends Component {
 		// inserted directly into the post contents.
 		const selectedItems = MediaLibrarySelectedStore.getAll( site.ID );
 		const isSingleImage =
-			1 === selectedItems.length && 'image' === MediaUtils.getMimePrefix( selectedItems[ 0 ] );
+			1 === selectedItems.length && 'image' === getMimePrefix( selectedItems[ 0 ] );
 
 		if ( isSingleImage && ! MediaValidationStore.hasErrors( site.ID ) ) {
 			// For single image upload, insert into post content, blocking save

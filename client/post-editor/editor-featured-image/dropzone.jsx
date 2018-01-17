@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
+import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
 import PostActions from 'lib/posts/actions';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
@@ -32,7 +32,7 @@ class FeaturedImageDropZone extends Component {
 		 *
 		 * At the moment we ignore all the other images that were dragged onto the DropZone
 		 */
-		const droppedImage = head( MediaUtils.filterItemsByMimePrefix( files, 'image' ) );
+		const droppedImage = head( filterItemsByMimePrefix( files, 'image' ) );
 
 		if ( ! droppedImage ) {
 			return false;
@@ -43,7 +43,7 @@ class FeaturedImageDropZone extends Component {
 
 		const handleFeaturedImageUpload = () => {
 			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && MediaUtils.isItemBeingUploaded( media );
+			const isUploadInProgress = media && isItemBeingUploaded( media );
 			const isFailedUpload = ! media;
 
 			if ( isFailedUpload ) {

@@ -12,7 +12,7 @@ import { get, some } from 'lodash';
  * Internal dependencies
  */
 import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
+import { url } from 'lib/media/utils';
 import Spinner from 'components/spinner';
 import SpinnerLine from 'components/spinner-line';
 import ImagePreloader from 'components/image-preloader';
@@ -77,7 +77,7 @@ class EditorFeaturedImagePreview extends Component {
 			return;
 		}
 
-		return MediaUtils.url( props.image, {
+		return url( props.image, {
 			maxWidth: this.props.maxWidth,
 			size: 'post-thumbnail',
 		} );

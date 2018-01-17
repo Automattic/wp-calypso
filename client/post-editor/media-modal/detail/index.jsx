@@ -14,7 +14,7 @@ import { noop, partial } from 'lodash';
  * Internal dependencies
  */
 import DetailItem from './detail-item';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix, filterItemsByMimePrefix, url } from 'lib/media/utils';
 import HeaderCake from 'components/header-cake';
 import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
@@ -45,8 +45,8 @@ class EditorMediaModalDetailBase extends React.Component {
 	}
 
 	preloadImages = () => {
-		MediaUtils.filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
-			var src = MediaUtils.url( image, {
+		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
+			const src = url( image, {
 				photon: this.props.site && ! this.props.site.is_private,
 			} );
 
@@ -70,7 +70,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		} = this.props;
 
 		const item = items[ selectedIndex ];
-		const mimePrefix = MediaUtils.getMimePrefix( item );
+		const mimePrefix = getMimePrefix( item );
 
 		return (
 			<div className="editor-media-modal-detail">

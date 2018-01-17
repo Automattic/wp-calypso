@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix, url } from 'lib/media/utils';
 import MediaActions from 'lib/media/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormTextarea from 'components/forms/form-textarea';
@@ -61,7 +61,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	isMimePrefix( prefix ) {
-		return MediaUtils.getMimePrefix( this.props.item ) === prefix;
+		return getMimePrefix( this.props.item ) === prefix;
 	}
 
 	persistChange() {
@@ -157,7 +157,7 @@ class EditorMediaModalDetailFields extends Component {
 				</EditorMediaModalFieldset>
 
 				<EditorMediaModalFieldset legend={ translate( 'URL' ) }>
-					<ClipboardButtonInput value={ MediaUtils.url( this.props.item ) } />
+					<ClipboardButtonInput value={ url( this.props.item ) } />
 				</EditorMediaModalFieldset>
 			</div>
 		);

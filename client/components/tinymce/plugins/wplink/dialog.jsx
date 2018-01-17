@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
  */
 import { deserialize } from 'lib/media-serialization';
 import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
+import { url as mediaUrl } from 'lib/media/utils';
 import Dialog from 'components/dialog';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -169,7 +169,7 @@ class LinkDialog extends React.Component {
 			if ( this.props.site && parsedImage.media.ID ) {
 				knownImage =
 					MediaStore.get( this.props.site.ID, parsedImage.media.ID ) || parsedImage.media;
-				return MediaUtils.url( knownImage, {
+				return mediaUrl( knownImage, {
 					size: 'full',
 				} );
 			} else if ( parsedImage.media.URL ) {

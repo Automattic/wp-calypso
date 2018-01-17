@@ -10,7 +10,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import { Formats, MediaTypes } from './constants';
-import MediaUtils from 'lib/media/utils';
+import { getMimePrefix } from 'lib/media/utils';
 
 /**
  * Module variables
@@ -34,7 +34,7 @@ export default function( node ) {
 		return Formats.OBJECT;
 	}
 
-	if ( MediaUtils.getMimePrefix( node ) ) {
+	if ( getMimePrefix( node ) ) {
 		return Formats.API;
 	}
 
