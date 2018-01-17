@@ -10,8 +10,13 @@ import React, { Component } from 'react';
  */
 import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
+import analytics from 'lib/analytics';
 
 class ConfirmationStep extends Component {
+	componentDidMount() {
+		analytics.tracks.recordEvent( 'calypso_concierge_book_confirmation_step' );
+	}
+
 	render() {
 		const { site, translate } = this.props;
 

@@ -21,6 +21,7 @@ import {
 	CONCIERGE_STATUS_BOOKED,
 	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from '../constants';
+import analytics from 'lib/analytics';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -48,6 +49,10 @@ class CalendarStep extends Component {
 			meta
 		);
 	};
+
+	componentDidMount() {
+		analytics.tracks.recordEvent( 'calypso_concierge_book_calendar_step' );
+	}
 
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {

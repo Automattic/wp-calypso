@@ -22,12 +22,17 @@ import {
 	CONCIERGE_STATUS_CANCELLING_ERROR,
 } from '../constants';
 import { getConciergeSignupForm } from 'state/selectors';
+import analytics from 'lib/analytics';
 
 class ConciergeCancel extends Component {
 	static propTypes = {
 		appointmentId: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 	};
+
+	componentDidMount() {
+		analytics.tracks.recordEvent( 'calypso_concierge_cancel_step' );
+	}
 
 	getDisplayComponent = () => {
 		const { siteSlug, signupForm, translate } = this.props;
