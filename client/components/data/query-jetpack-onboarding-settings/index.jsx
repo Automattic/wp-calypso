@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 import { getRequest } from 'state/selectors';
+import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackOnboardingSettings extends Component {
 	static propTypes = {
