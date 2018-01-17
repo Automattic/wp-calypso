@@ -226,8 +226,8 @@ export class JetpackAuthorize extends Component {
 	 * Check whether this a valid authorized SSO request
 	 *
 	 * @param  {Object}  props          Props to test
-	 * @param  {?string} props.from     Where is the request from
-	 * @param  {?number} props.clientId Remote site ID
+	 * @param  {?string} props.authQuery.from     Where is the request from
+	 * @param  {?number} props.authQuery.clientId Remote site ID
 	 * @return {boolean}                True if it's a valid SSO request otherwise false
 	 */
 	isSso( props = this.props ) {
