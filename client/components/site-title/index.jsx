@@ -20,6 +20,7 @@ class SiteTitleControl extends React.Component {
 		autoFocusBlogname: PropTypes.bool,
 		blogname: PropTypes.string,
 		blogdescription: PropTypes.string,
+		disabled: PropTypes.bool,
 		onChange: PropTypes.func.isRequired,
 	};
 
@@ -27,6 +28,7 @@ class SiteTitleControl extends React.Component {
 		autoFocusBlogname: false,
 		blogname: '',
 		blogdescription: '',
+		disabled: false,
 	};
 
 	onChangeSiteTitle = event => {
@@ -42,24 +44,27 @@ class SiteTitleControl extends React.Component {
 	};
 
 	render() {
+		const { autoFocusBlogname, blogname, blogdescription, disabled, translate } = this.props;
 		return (
 			<div className="site-title">
 				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
+					<FormLabel htmlFor="blogname">{ translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ this.props.autoFocusBlogname }
+						autoFocus={ autoFocusBlogname }
+						disabled={ disabled }
 						id="blogname"
 						onChange={ this.onChangeSiteTitle }
 						required
-						value={ this.props.blogname }
+						value={ blogname }
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
+					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>
 					<FormTextInput
+						disabled={ disabled }
 						id="blogdescription"
 						onChange={ this.onChangeDescription }
-						value={ this.props.blogdescription }
+						value={ blogdescription }
 					/>
 				</FormFieldset>
 			</div>
