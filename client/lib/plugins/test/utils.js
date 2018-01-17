@@ -11,7 +11,7 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import PluginUtils from '../utils';
+import * as PluginUtils from '../utils';
 
 describe( 'Plugins Utils', () => {
 	describe( 'normalizePluginData', () => {

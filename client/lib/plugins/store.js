@@ -14,7 +14,7 @@ import emitter from 'lib/mixins/emitter';
 /* eslint-enable no-restricted-imports */
 import PluginsActions from 'lib/plugins/actions';
 import versionCompare from 'lib/version-compare';
-import PluginUtils from 'lib/plugins/utils';
+import { normalizePluginData } from 'lib/plugins/utils';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { getNetworkSites } from 'state/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -97,7 +97,7 @@ function update( site, slug, plugin ) {
 	if ( ! _pluginsBySite[ site.ID ][ slug ] ) {
 		_pluginsBySite[ site.ID ][ slug ] = { slug: slug };
 	}
-	plugin = PluginUtils.normalizePluginData( plugin );
+	plugin = normalizePluginData( plugin );
 	_pluginsBySite[ site.ID ][ slug ] = assign( {}, _pluginsBySite[ site.ID ][ slug ], plugin );
 
 	debug( 'update to ', _pluginsBySite[ site.ID ][ slug ] );
