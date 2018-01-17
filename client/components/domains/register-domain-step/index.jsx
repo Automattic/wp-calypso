@@ -648,7 +648,7 @@ class RegisterDomainStep extends React.Component {
 				/>
 			);
 
-			if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+			if ( this.props.transferInAllowed ) {
 				domainUnavailableSuggestion = (
 					<DomainTransferSuggestion
 						onButtonClick={ this.goToTransferDomainStep }

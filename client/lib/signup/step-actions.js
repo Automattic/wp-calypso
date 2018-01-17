@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import async from 'async';
@@ -22,6 +21,7 @@ import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
+import { isDomainTransfer } from 'lib/products-values';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
@@ -147,10 +147,17 @@ export function createSiteWithCart(
 			const addToCartAndProceed = () => {
 				let privacyItem = null;
 				if ( domainItem ) {
-					privacyItem = cartItems.domainPrivacyProtection( {
-						domain: domainItem.meta,
-						source: 'signup',
-					} );
+					if ( isDomainTransfer( domainItem ) ) {
+						privacyItem = cartItems.domainTransferPrivacy( {
+							domain: domainItem.meta,
+							source: 'signup',
+						} );
+					} else {
+						privacyItem = cartItems.domainPrivacyProtection( {
+							domain: domainItem.meta,
+							source: 'signup',
+						} );
+					}
 				}
 
 				const newCartItems = [

@@ -140,7 +140,6 @@ class DomainSearchResults extends React.Component {
 				if (
 					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
 					this.props.transferInAllowed &&
-					! this.props.isSignupStep &&
 					lastDomainIsTransferrable
 				) {
 					availabilityElement = (
@@ -192,10 +191,6 @@ class DomainSearchResults extends React.Component {
 		this.props.onAddMapping( this.props.lastDomainSearched );
 	};
 
-	handleAddTransfer = () => {
-		this.props.onAddTransfer( this.props.lastDomainSearched );
-	};
-
 	renderPlaceholders() {
 		return times( this.props.placeholderQuantity, function( n ) {
 			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
@@ -243,7 +238,7 @@ class DomainSearchResults extends React.Component {
 					/>
 				);
 
-				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+				if ( this.props.transferInAllowed ) {
 					unavailableOffer = (
 						<DomainTransferSuggestion
 							onButtonClick={ this.props.onClickTransfer }
