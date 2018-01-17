@@ -57,7 +57,7 @@ class ChatBusinessConciergeNotice extends Component {
 		return (
 			<HelpTeaserButton
 				onClick={ this.trackCalendlyOfferClick }
-				href="https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/"
+				href={ '/me/concierge' }
 				title={ translate( 'Chat with us over screenshare!' ) }
 				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) }
 			/>
