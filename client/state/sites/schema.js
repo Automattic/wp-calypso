@@ -50,3 +50,7 @@ export const sitesSchema = {
 	},
 	additionalProperties: false,
 };
+
+export const hasAllSitesListSchema = {
+	type: [ 'boolean', 'null' ],
+};

@@ -19,7 +19,7 @@ import debugFactory from 'debug';
 import { getPreference } from 'state/preferences/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite, hasAllSitesList } from 'state/sites/selectors';
 import { areAllSitesSingleUser, getSites, getVisibleSites, hasLoadedSites } from 'state/selectors';
 import AllSites from 'my-sites/all-sites';
 import Site from 'blocks/site';
@@ -267,7 +267,7 @@ class SiteSelector extends Component {
 	renderSites() {
 		let sites;
 
-		if ( ! this.props.hasLoadedSites ) {
+		if ( ! this.props.hasAllSitesList ) {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
@@ -497,6 +497,7 @@ const mapState = state => {
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
+		hasAllSitesList: hasAllSitesList( state ),
 	};
 };
 

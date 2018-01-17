@@ -161,6 +161,7 @@ const Layout = createReactClass( {
 			<div className={ sectionClass }>
 				<DocumentHead />
 				<SitesListNotices />
+				<QuerySites primaryAndRecent />
 				<QuerySites allSites />
 				<QueryPreferences />
 				{ <GuidedTours /> }
