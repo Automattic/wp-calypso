@@ -40,7 +40,7 @@ class ManageExternalView extends Component {
 		const actionURL = site.URL + '/wp-admin/edit.php?post_type=shop_order';
 		const action = (
 				<ExternalLink
-					icon={ true }
+					icon
 					className="dashboard__empty-action button is-primary"
 					onClick={ this.recordAction }
 					href={ actionURL }
