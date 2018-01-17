@@ -18,7 +18,7 @@ import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
-import sectionsModule from '../../client/sections';
+import sections from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
 import { serverRender, serverRenderError } from 'render';
 import stateCache from 'state-cache';
@@ -57,8 +57,6 @@ const prideLanguages = [];
 // List of geolocated locations to show pride styling for.
 // Geolocation may not be 100% accurate.
 const prideLocations = [];
-
-const sections = sectionsModule.getSections();
 
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
@@ -512,7 +510,7 @@ module.exports = function() {
 			} );
 
 			if ( section.isomorphic ) {
-				sectionsModule.load( section.module )( serverRouter( app, setUpRoute, section ) );
+				section.load()( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
 

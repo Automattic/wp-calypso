@@ -23,7 +23,8 @@ describe( '#addModuleImportToSections', () => {
 		"load": function() { return import( /* webpackChunkName: 'moduleName' */ 'module-to-require'); }
 	}
 ]`;
-		expect( addModuleImportToSections( { sections, shouldSplit: true } ) ).toBe( expected );
+		const options = { sections, shouldSplit: true, onlyIsomorphic: false };
+		expect( addModuleImportToSections( options ) ).toBe( expected );
 	} );
 
 	test( 'should insert a load fn to a section using require() if code splitting is turned off', () => {
@@ -41,7 +42,45 @@ describe( '#addModuleImportToSections', () => {
 		"load": function() { return require( /* webpackChunkName: 'moduleName' */ 'module-to-require'); }
 	}
 ]`;
-		expect( addModuleImportToSections( { sections, shouldSplit: false } ) ).toBe( expected );
+		const options = { sections, shouldSplit: false, onlyIsomorphic: false };
+		expect( addModuleImportToSections( options ) ).toBe( expected );
+	} );
+
+	test( 'should insert a load fn exclusively to isomorphic sections if onlyIsomorphic is enabled', () => {
+		const sections = [
+			{
+				name: 'moduleName',
+				module: 'module-to-require',
+			},
+			{
+				name: 'moduleName2',
+				module: 'module-to-require',
+				isomorphic: true,
+			},
+			{
+				name: 'moduleName3',
+				module: 'module-to-require',
+			},
+		];
+
+		const expected = `module.exports = [
+	{
+		"name": "moduleName",
+		"module": "module-to-require"
+	},
+	{
+		"name": "moduleName2",
+		"module": "module-to-require",
+		"isomorphic": true,
+		"load": function() { return require( /* webpackChunkName: 'moduleName2' */ 'module-to-require'); }
+	},
+	{
+		"name": "moduleName3",
+		"module": "module-to-require"
+	}
+]`;
+		const options = { sections, shouldSplit: false, onlyIsomorphic: true };
+		expect( addModuleImportToSections( options ) ).toBe( expected );
 	} );
 } );
 

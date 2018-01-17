@@ -1,7 +1,6 @@
+/** @format */
 /**
- * **** WARNING: No ES6 modules here. Not transpiled! ****
- *
- * @format
+ **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
 /**
@@ -108,8 +107,7 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 			},
 			{
-				test: /sections.js$/,
-				exclude: path.join( __dirname, 'node_modules' ),
+				include: path.join( __dirname, 'client/sections.js' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 			},
 			{

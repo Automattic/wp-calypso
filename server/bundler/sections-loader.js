@@ -1,6 +1,8 @@
 /** @format */
 const config = require( 'config' );
 const utils = require( './utils' );
+const loaderUtils = require( 'loader-utils' );
+const getOptions = loaderUtils.getOptions;
 
 /*
  * This sections-loader has two one responsibilties: adding import statements and css details.
@@ -16,9 +18,15 @@ const utils = require( './utils' );
  * in huge modules to the client, so for now its being done as part of the loader.
  */
 
-function addModuleImportToSections( { sections, shouldSplit } ) {
+function addModuleImportToSections( { sections, shouldSplit, onlyIsomorphic } ) {
 	sections.forEach( section => {
-		const loaderFunction = `function() { return require( /* webpackChunkName: '${ section.name }' */ '${ section.module }'); }`;
+		if ( onlyIsomorphic && ! section.isomorphic ) {
+			return;
+		}
+
+		const loaderFunction = `function() { return require( /* webpackChunkName: '${
+			section.name
+		}' */ '${ section.module }'); }`;
 
 		section.load = shouldSplit ? loaderFunction.replace( 'require', 'import' ) : loaderFunction;
 	} );
@@ -46,11 +54,13 @@ function withCss( sections ) {
 }
 
 const loader = function() {
+	const { forceRequire, onlyIsomorphic } = getOptions( this ) || {};
 	const sections = require( this.resourcePath );
 
 	return addModuleImportToSections( {
 		sections: withCss( sections ),
-		shouldSplit: config.isEnabled( 'code-splitting' ),
+		shouldSplit: config.isEnabled( 'code-splitting' ) && ! forceRequire,
+		onlyIsomorphic,
 	} );
 };
 loader.addModuleImportToSections = addModuleImportToSections;
