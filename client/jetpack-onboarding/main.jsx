@@ -74,10 +74,11 @@ export default connect(
 	( { siteId, ...stateProps }, { recordTracksEvent: recordTracksEventAction }, ownProps ) => ( {
 		siteId,
 		...stateProps,
-		recordJpoEvent: event =>
+		recordJpoEvent: ( event, additionalProperties ) =>
 			recordTracksEventAction( event, {
 				blog_id: siteId,
 				site_id_type: 'jpo',
+				...additionalProperties,
 			} ),
 		...ownProps,
 	} )
