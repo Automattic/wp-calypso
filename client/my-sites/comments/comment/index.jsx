@@ -21,9 +21,14 @@ import CommentHeader from 'my-sites/comments/comment/comment-header';
 import CommentReply from 'my-sites/comments/comment/comment-reply';
 import CommentRepliesList from 'my-sites/comments/comment-replies-list';
 import QueryComment from 'components/data/query-comment';
+import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+// Adjust the comment card `offsetTop` to avoid being covered by the masterbar.
+// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
+const COMMENT_SCROLL_TOP_MARGIN = 56;
 
 export class Comment extends Component {
 	static propTypes = {
@@ -31,10 +36,12 @@ export class Comment extends Component {
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
 		commentsListQuery: PropTypes.object,
+		hasScrolledToComment: PropTypes.bool,
 		isEditMode: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
+		onScrollToComment: PropTypes.func,
 		redirect: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
 		toggleSelected: PropTypes.func,
@@ -53,6 +60,8 @@ export class Comment extends Component {
 	componentWillReceiveProps( nextProps ) {
 		const { isBulkMode: wasBulkMode } = this.props;
 		const { isBulkMode } = nextProps;
+
+		this.scrollToComment( nextProps );
 
 		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
 			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
@@ -82,6 +91,26 @@ export class Comment extends Component {
 				event.preventDefault();
 				return this.toggleSelected();
 		}
+	};
+
+	scrollToComment = ( { commentId, hasScrolledToComment, onScrollToComment } ) => {
+		if ( ! window || hasScrolledToComment || `#comment-${ commentId }` !== window.location.hash ) {
+			return;
+		}
+
+		const commentNode = ReactDom.findDOMNode( this.commentCard );
+		const commentOffsetTop = commentNode.offsetTop - COMMENT_SCROLL_TOP_MARGIN;
+		scrollTo( {
+			x: 0,
+			y: commentOffsetTop,
+			duration: 1,
+			onComplete: () => {
+				if ( commentOffsetTop !== window.scrollY ) {
+					window.scrollTo( 0, commentOffsetTop );
+				}
+				onScrollToComment();
+			},
+		} );
 	};
 
 	toggleEditMode = () => {
