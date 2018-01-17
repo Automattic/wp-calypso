@@ -50,7 +50,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { isRequestingSettings, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -72,6 +72,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							autoFocusBlogname
 							blogname={ this.state.blogname }
 							blogdescription={ this.state.blogdescription }
+							disabled={ isRequestingSettings }
 							onChange={ this.handleChange }
 						/>
 
