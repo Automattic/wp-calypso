@@ -57,7 +57,6 @@ export default function() {
 
 		page(
 			'/jetpack/connect/authorize/:interval/:locale',
-
 			controller.maybeOnboard,
 			controller.setMasterbar,
 			controller.signupForm,
