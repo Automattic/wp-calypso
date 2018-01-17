@@ -273,7 +273,10 @@ class RemovePurchase extends Component {
 		];
 		const productName = getName( getPurchase( this.props ) );
 
-		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+		if (
+			config.isEnabled( 'upgrades/precancellation-chat' ) &&
+			this.state.surveyStep !== 'happychat_step'
+		) {
 			buttons.unshift( this.getChatButton() );
 		}
 
@@ -350,7 +353,10 @@ class RemovePurchase extends Component {
 					: [ buttons.cancel, buttons.prev, buttons.next ];
 		}
 
-		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+		if (
+			config.isEnabled( 'upgrades/precancellation-chat' ) &&
+			this.state.surveyStep !== 'happychat_step'
+		) {
 			buttonsArr.unshift( this.getChatButton() );
 		}
 
