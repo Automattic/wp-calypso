@@ -23,10 +23,10 @@ import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
-		getSiteStatsPostStreakData.memoizedSelector.cache.clear();
-		getSiteStatsMaxPostsByDay.memoizedSelector.cache.clear();
-		getSiteStatsTotalPostsForStreakQuery.memoizedSelector.cache.clear();
-		getSiteStatsNormalizedData.memoizedSelector.cache.clear();
+		getSiteStatsPostStreakData.clearCache();
+		getSiteStatsMaxPostsByDay.clearCache();
+		getSiteStatsTotalPostsForStreakQuery.clearCache();
+		getSiteStatsNormalizedData.clearCache();
 	} );
 
 	describe( 'isRequestingSiteStatsForQuery()', () => {
