@@ -37,6 +37,11 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
 	const tldLandingPageNonce = get( initialQueryArguments, 'tld_lp_nonce' );
 
+	domainItem.extra = Object.assign(
+		domainItem.extra || {},
+		tldLandingPageNonce && { tld_lp_nonce: tldLandingPageNonce }
+	);
+
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
 		const providedDependencies = {
@@ -56,7 +61,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 			);
 		}
 
-		SignupCart.createCart( cartKey, domainChoiceCart, tldLandingPageNonce, error =>
+		SignupCart.createCart( cartKey, domainChoiceCart, error =>
 			callback( error, providedDependencies )
 		);
 	} else if ( designType === 'existing-site' ) {
@@ -68,7 +73,6 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		SignupCart.createCart(
 			siteId,
 			omitBy( pick( dependencies, 'domainItem', 'privacyItem', 'cartItem' ), isNull ),
-			tldLandingPageNonce,
 			error => {
 				callback( error, providedDependencies );
 				page.redirect( `/checkout/${ siteSlug }` );
@@ -116,6 +120,11 @@ export function createSiteWithCart(
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
 	const tldLandingPageNonce = get( initialQueryArguments, 'tld_lp_nonce' );
+
+	domainItem.extra = Object.assign(
+		domainItem.extra || {},
+		tldLandingPageNonce && { tld_lp_nonce: tldLandingPageNonce }
+	);
 
 	wpcom.undocumented().sitesNew(
 		{
@@ -168,7 +177,7 @@ export function createSiteWithCart(
 				].filter( item => item );
 
 				if ( newCartItems.length ) {
-					SignupCart.addToCart( siteId, newCartItems, tldLandingPageNonce, function( cartError ) {
+					SignupCart.addToCart( siteId, newCartItems, function( cartError ) {
 						callback( cartError, providedDependencies );
 					} );
 				} else {
@@ -307,7 +316,7 @@ export function addPlanToCart( callback, { siteId }, { cartItem, privacyItem } )
 
 	const newCartItems = [ cartItem, privacyItem ].filter( item => item );
 
-	SignupCart.addToCart( siteId, newCartItems, null, error =>
+	SignupCart.addToCart( siteId, newCartItems, error =>
 		callback( error, { cartItem, privacyItem } )
 	);
 }
