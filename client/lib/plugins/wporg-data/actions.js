@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  */
 import Dispatcher from 'dispatcher';
 import wporg from 'lib/wporg';
-import utils from 'lib/plugins/utils';
+import { normalizePluginsList } from 'lib/plugins/utils';
 import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
 import impureLodash from 'lib/impure-lodash';
 
@@ -85,7 +85,7 @@ const PluginsDataActions = {
 						action: 'FETCH_WPORG_PLUGINS_LIST',
 						page: page,
 						category: category,
-						data: data ? utils.normalizePluginsList( data.plugins ) : null,
+						data: data ? normalizePluginsList( data.plugins ) : null,
 						error: error,
 					} );
 				}
@@ -103,7 +103,7 @@ const PluginsDataActions = {
 			action: 'FETCH_WPORG_PLUGINS_LIST',
 			page: 1,
 			category: 'featured',
-			data: utils.normalizePluginsList( CuratedPlugins ),
+			data: normalizePluginsList( CuratedPlugins ),
 			error: null,
 		} );
 	},
