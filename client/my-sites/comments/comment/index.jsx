@@ -94,7 +94,12 @@ export class Comment extends Component {
 	};
 
 	scrollToComment = ( { commentId, hasScrolledToComment, onScrollToComment } ) => {
-		if ( ! window || hasScrolledToComment || `#comment-${ commentId }` !== window.location.hash ) {
+		if (
+			! window ||
+			! onScrollToComment ||
+			hasScrolledToComment ||
+			`#comment-${ commentId }` !== window.location.hash
+		) {
 			return;
 		}
 
