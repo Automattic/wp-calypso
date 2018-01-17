@@ -101,7 +101,7 @@ export class JetpackAuthorize extends Component {
 		const { recordTracksEvent } = this.props;
 
 		const tracksProperties = pick( this.props.authQuery, 'from' );
-		tracksProperties[ 'is-mobile-app-flow' ] = this.props.isMobileAppFlow;
+		tracksProperties.is_mobile_app_flow = this.props.isMobileAppFlow;
 
 		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
 		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
