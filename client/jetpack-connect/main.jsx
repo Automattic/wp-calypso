@@ -104,9 +104,7 @@ export class JetpackConnectMain extends Component {
 		}
 		if ( this.getStatus() === 'alreadyOwned' && ! this.redirecting ) {
 			if ( this.props.isMobileAppFlow ) {
-				const url = addQueryArgs( { reason: 'already-connected' }, this.props.mobileAppRedirect );
-				debug( 'redirect to', url );
-				return window.location.replace( url );
+				return this.redirectToMobileApp( 'already-connected' );
 			}
 			return this.goToPlans( this.state.currentUrl );
 		}
@@ -162,6 +160,12 @@ export class JetpackConnectMain extends Component {
 		} );
 
 		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_ACTIVATE ) );
+	} );
+
+	redirectToMobileApp = this.makeSafeRedirectionFunction( reason => {
+		const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+		debug( `Redirecting to mobile app ${ url }` );
+		externalRedirect( url );
 	} );
 
 	isCurrentUrlFetched() {
@@ -414,6 +418,7 @@ export class JetpackConnectMain extends Component {
 						noticeType={ status }
 						onDismissClick={ this.dismissUrl }
 						url={ this.state.currentUrl }
+						onTerminalError={ this.props.isMobileAppFlow && this.redirectToMobileApp }
 					/>
 				) : null }
 
