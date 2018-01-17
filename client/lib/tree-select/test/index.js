@@ -197,5 +197,59 @@ describe( 'index', () => {
 
 			expect( getDependents ).toHaveBeenCalledWith( [ state.posts ], 1, 2, 3 );
 		} );
+
+		test( 'should bust the cache when clearCache() method is called', () => {
+			const reduxState = {
+				posts: {
+					[ post1.id ]: post1,
+					[ post2.id ]: post2,
+					[ post3.id ]: post3,
+				},
+			};
+
+			const firstResult = getSitePosts( reduxState, 'site1' );
+			const memoizedResult = getSitePosts( reduxState, 'site1' );
+
+			// Repeated call returns identical object
+			expect( memoizedResult ).toBe( firstResult );
+
+			getSitePosts.clearCache();
+			const afterClearResult = getSitePosts( reduxState, 2916284 );
+
+			// Is forced to compute a new result after clearCache()
+			expect( afterClearResult ).not.toBe( firstResult );
+		} );
+
+		test( 'should memoize a falsy value returned by getDependents', () => {
+			const memoizedSelector = treeSelect( () => [ null ], () => [] );
+			const state = {};
+
+			const firstResult = memoizedSelector( state );
+			const secondResult = memoizedSelector( state );
+			expect( firstResult ).toBe( secondResult );
+		} );
+
+		test( 'accepts a getCacheKey option that enables object arguments', () => {
+			const reduxState = {
+				posts: {
+					[ post1.id ]: post1,
+					[ post2.id ]: post2,
+					[ post3.id ]: post3,
+				},
+			};
+
+			const memoizedSelector = treeSelect(
+				state => [ state.posts ],
+				( [ posts ], query ) => filter( posts, { siteId: query.siteId } ),
+				{ getCacheKey: query => `key:${ query.siteId }` }
+			);
+
+			// The arguments are objects, they are not identical, but generated keys are.
+			// Therefore, the second call returns the memoized result.
+			const firstResult = memoizedSelector( reduxState, { siteId: 'site1', foo: 'bar' } );
+			const secondResult = memoizedSelector( reduxState, { siteId: 'site1', foo: 'baz' } );
+			expect( firstResult ).toEqual( [ post1, post2 ] );
+			expect( firstResult ).toBe( secondResult );
+		} );
 	} );
 } );
