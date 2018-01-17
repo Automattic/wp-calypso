@@ -6,6 +6,7 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -23,8 +24,8 @@ import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions'
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
-		blogname: '',
-		blogdescription: '',
+		blogname: get( this.props.settings, 'siteTitle' ),
+		blogdescription: get( this.props.settings, 'siteDescription' ),
 	};
 
 	componentWillReceiveProps( nextProps ) {
