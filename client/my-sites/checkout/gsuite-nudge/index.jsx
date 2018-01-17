@@ -18,7 +18,7 @@ import GoogleAppsDialog from 'components/upgrades/google-apps/google-apps-dialog
 import Main from 'components/main';
 import QuerySites from 'components/data/query-sites';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem, removeItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import { isDotComPlan } from 'lib/products-values';
 
@@ -46,14 +46,14 @@ export class GsuiteNudge extends React.Component {
 
 		this.removePlanFromCart();
 
-		upgradesActions.addItem( googleAppsCartItem );
+		addItem( googleAppsCartItem );
 		page( `/checkout/${ siteSlug }` );
 	};
 
 	removePlanFromCart() {
 		const items = cartItems.getAll( this.props.cart );
 		items.filter( isDotComPlan ).forEach( function( item ) {
-			upgradesActions.removeItem( item, false );
+			removeItem( item, false );
 		} );
 	}
 

@@ -15,7 +15,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import { MAP_EXISTING_DOMAIN } from 'lib/url/support';
-import paths from 'my-sites/domains/paths';
+import { domainMapping } from 'my-sites/domains/paths';
 
 class TransferRestrictionMessage extends React.PureComponent {
 	static propTypes = {
@@ -29,7 +29,7 @@ class TransferRestrictionMessage extends React.PureComponent {
 
 	goToMapDomainStep = event => {
 		event.preventDefault();
-		page( paths.domainMapping( this.props.selectedSiteSlug, this.props.domain ) );
+		page( domainMapping( this.props.selectedSiteSlug, this.props.domain ) );
 	};
 
 	render() {
