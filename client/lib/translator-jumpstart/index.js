@@ -18,7 +18,7 @@ import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
-import Translate from 'components/translate';
+import Translatable from 'components/translatable';
 import { hasTranslationSet } from 'lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
@@ -40,6 +40,7 @@ const user = new User(),
 			project: 'test',
 			translation_set_slug: 'default',
 		},
+		original_strings: [],
 	};
 
 /**
@@ -113,25 +114,30 @@ const communityTranslatorJumpstart = {
 			return displayedTranslationFromPage;
 		}
 
+		const original_string = {};
+
 		const props = {
-			className: 'translatable',
-			'data-singular': originalFromPage,
+			singular: originalFromPage,
 		};
+
+		original_string.singular = originalFromPage;
 
 		// Has Context
 		if ( 'string' === typeof optionsFromPage.context ) {
-			props[ 'data-context' ] = optionsFromPage.context;
+			props.context = optionsFromPage.context;
 		}
 
 		// Has Plural
 		if ( 'string' === typeof optionsFromPage.plural ) {
-			props[ 'data-plural' ] = optionsFromPage.plural;
+			props.plural = optionsFromPage.plural;
 		}
+
+		translationDataFromPage.original_strings.push( props );
 
 		// <data> returns a frozen object, therefore we make a copy so that we can modify it below
 		const dataElement = Object.assign(
 			{},
-			<Translate { ...props }>{ displayedTranslationFromPage }</Translate>
+			<Translatable { ...props }>{ displayedTranslationFromPage }</Translatable>
 		);
 
 		// now we can override the toString function which would otherwise return [object Object]
@@ -230,13 +236,13 @@ const communityTranslatorJumpstart = {
 			// Wrap DOM elements and then activate the translator
 			_shouldWrapTranslations = true;
 			i18n.reRenderTranslations();
-			window.communityTranslator.load();
+			//window.communityTranslator.load();
 			debug( 'Translator activated' );
 			return true;
 		}
 
 		function deactivate() {
-			window.communityTranslator.unload();
+			// window.communityTranslator.unload();
 			// Remove all the data tags from the DOM
 			_shouldWrapTranslations = false;
 			i18n.reRenderTranslations();
@@ -245,8 +251,10 @@ const communityTranslatorJumpstart = {
 		}
 
 		window.translatorJumpstart = translationDataFromPage;
+		// eslint-disable-next-line
+		console.log( 'translationDataFromPage', translationDataFromPage );
 
-		if ( 'undefined' === typeof window.communityTranslator ) {
+/*		if ( 'undefined' === typeof window.communityTranslator ) {
 			if ( ! injectUrl ) {
 				debug( 'Community translator toggled before initialization' );
 				_shouldWrapTranslations = false;
@@ -267,7 +275,7 @@ const communityTranslatorJumpstart = {
 				activate();
 			} );
 			return false;
-		}
+		}*/
 
 		if ( ! this.isActivated() ) {
 			activate();
@@ -317,6 +325,8 @@ i18n.registerTranslateHook( ( translation, options ) => {
 // the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
 i18n.registerComponentUpdateHook( () => {
 	if ( typeof translationDataFromPage.contentChangedCallback === 'function' ) {
+		// eslint-disable-next-line
+		console.log( 'registerComponentUpdateHook', registerComponentUpdateHook );
 		return translationDataFromPage.contentChangedCallback();
 	}
 } );
