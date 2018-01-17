@@ -161,6 +161,7 @@ export class JetpackAuthorize extends Component {
 	externalRedirectOnce( url ) {
 		if ( ! this.redirecting ) {
 			this.redirecting = true;
+			debug( `Redirecting to ${ url }` );
 			externalRedirect( url );
 		}
 	}
@@ -377,22 +378,43 @@ export class JetpackAuthorize extends Component {
 			userAlreadyConnected,
 		} = this.props.authorizationData;
 		const { alreadyAuthorized, site } = this.props.authQuery;
+
+		let redirectToMobileApp = null;
+		if ( this.props.isMobileAppFlow ) {
+			redirectToMobileApp = reason => {
+				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+				this.externalRedirectOnce( url );
+			};
+		}
+
 		if ( alreadyAuthorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
 			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
 			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
 			// flows will be reserved for brand new connections.
-			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
+			return (
+				<JetpackConnectNotices
+					noticeType="alreadyConnectedByOtherUser"
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if ( userAlreadyConnected ) {
 			// Via wp-admin it is possible to connect additional users after the initial connection is made. But if we
 			// are trying to connect an additional user, and we are logged into a wordpress.com account that is already
 			// connected, we need to show an error.
-			return <JetpackConnectNotices noticeType="userIsAlreadyConnectedToSite" />;
+			return (
+				<JetpackConnectNotices
+					noticeType="userIsAlreadyConnectedToSite"
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if ( this.retryingAuth ) {
-			return <JetpackConnectNotices noticeType="retryingAuth" />;
+			return (
+				<JetpackConnectNotices noticeType="retryingAuth" onTerminalError={ redirectToMobileApp } />
+			);
 		}
 
 		if (
@@ -401,7 +423,9 @@ export class JetpackAuthorize extends Component {
 			! isAuthorizing &&
 			! authorizeSuccess
 		) {
-			return <JetpackConnectNotices noticeType="retryAuth" />;
+			return (
+				<JetpackConnectNotices noticeType="retryAuth" onTerminalError={ redirectToMobileApp } />
+			);
 		}
 
 		if ( ! authorizeError ) {
@@ -409,17 +433,31 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
-			return <JetpackConnectNotices noticeType="alreadyConnected" />;
+			return (
+				<JetpackConnectNotices
+					noticeType="alreadyConnected"
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 		if ( this.props.hasExpiredSecretError ) {
-			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ site } />;
+			return (
+				<JetpackConnectNotices
+					noticeType="secretExpired"
+					siteUrl={ site }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 		if ( this.props.hasXmlrpcError ) {
 			return this.renderXmlrpcFeedback();
 		}
 		return (
 			<div>
-				<JetpackConnectNotices noticeType="defaultAuthorizeError" />
+				<JetpackConnectNotices
+					noticeType="defaultAuthorizeError"
+					onTerminalError={ redirectToMobileApp }
+				/>
 				{ this.renderErrorDetails() }
 			</div>
 		);
