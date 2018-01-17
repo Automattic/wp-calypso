@@ -19,6 +19,11 @@ export const receiveJetpackOnboardingCredentials = ( siteId, credentials ) => ( 
 export const requestJetpackOnboardingSettings = siteId => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	siteId,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {

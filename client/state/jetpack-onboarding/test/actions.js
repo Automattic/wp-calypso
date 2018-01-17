@@ -43,6 +43,11 @@ describe( 'actions', () => {
 			expect( action ).toEqual( {
 				type: JETPACK_ONBOARDING_SETTINGS_REQUEST,
 				siteId,
+				meta: {
+					dataLayer: {
+						trackRequest: true,
+					},
+				},
 			} );
 		} );
 	} );
