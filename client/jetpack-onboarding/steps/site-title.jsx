@@ -27,6 +27,15 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		blogdescription: '',
 	};
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
+			this.setState( {
+				blogname: nextProps.settings.siteTitle,
+				blogdescription: nextProps.settings.siteDescription,
+			} );
+		}
+	}
+
 	handleChange = ( { blogname, blogdescription } ) => {
 		this.setState( { blogname, blogdescription } );
 	};
