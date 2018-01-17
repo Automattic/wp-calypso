@@ -23,7 +23,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import validateContactDetails from './fr-validate-contact-details';
-import disableSubmitButton from './with-contact-details-validation';
+import { disableSubmitButton } from './with-contact-details-validation';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
