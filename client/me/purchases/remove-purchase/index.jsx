@@ -41,7 +41,7 @@ import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
-import { isPrecancellationChatAvailable } from 'state/ui/olark/selectors';
+import { isPrecancellationChatAvailable } from 'state/happychat/selectors/is-precancellation-chat-available';
 
 const user = userFactory();
 

@@ -29,7 +29,7 @@ import cartValues, { isPaidForFullyInCredits, isFree, cartItems } from 'lib/cart
 import Notice from 'components/notice';
 import { preventWidows } from 'lib/formatting';
 import PaymentBox from './payment-box';
-import { isPresalesChatAvailable } from 'state/ui/olark/selectors';
+import { isPresalesChatAvailable } from 'state/happychat/selectors/is-presales-chat-available';
 
 /**
  * Module variables

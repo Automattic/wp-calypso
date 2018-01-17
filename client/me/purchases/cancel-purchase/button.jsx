@@ -40,7 +40,7 @@ import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
-import { isPrecancellationChatAvailable } from 'state/ui/olark/selectors';
+import { isPrecancellationChatAvailable } from 'state/happychat/selectors/is-precancellation-chat-available';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
