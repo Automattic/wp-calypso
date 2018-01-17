@@ -66,4 +66,5 @@ RUN        true \
 USER       calypso
 ARG        commit_sha=(unknown)
 RUN        CALYPSO_ENV=production COMMIT_SHA=$commit_sha npm run build
+RUN        find . -not -user calypso -or -not -group calypso | wc -l
 CMD        NODE_ENV=production node build/bundle.js
