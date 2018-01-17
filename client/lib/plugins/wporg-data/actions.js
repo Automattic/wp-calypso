@@ -10,9 +10,9 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import Dispatcher from 'dispatcher';
+import wpcom from 'lib/wp';
 import wporg from 'lib/wporg';
 import { normalizePluginsList } from 'lib/plugins/utils';
-import CuratedPlugins from 'lib/plugins/wporg-data/curated.json';
 import impureLodash from 'lib/impure-lodash';
 
 const { debounce } = impureLodash;
@@ -94,18 +94,23 @@ const PluginsDataActions = {
 	}, 25 ),
 
 	fetchCuratedList: function() {
-		debug( 'curated plugin list', CuratedPlugins );
 		_fetchingLists.featured = null;
 		_lastFetchedPagePerCategory.featured = 1;
 		_totalPagesPerCategory.featured = 1;
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_WPORG_PLUGINS_LIST',
-			action: 'FETCH_WPORG_PLUGINS_LIST',
-			page: 1,
-			category: 'featured',
-			data: normalizePluginsList( CuratedPlugins ),
-			error: null,
-		} );
+		wpcom
+			.undocumented()
+			.getFeaturedPlugins()
+			.then( data => {
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_WPORG_PLUGINS_LIST',
+					action: 'FETCH_WPORG_PLUGINS_LIST',
+					page: 1,
+					category: 'featured',
+					data: normalizePluginsList( data ),
+					error: null,
+				} );
+				debug( 'curated plugin list', data );
+			} );
 	},
 
 	fetchNextCategoryPage: function( category, searchTerm ) {
