@@ -35,11 +35,14 @@ class SitePicker extends React.Component {
 
 	state = {
 		isAutoFocused: false,
-		isOpened: false,
-		isRendered: false,
+		isRendered: this.props.currentLayoutFocus === 'sites',
 	};
 
 	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.currentLayoutFocus === 'sites' && ! this.state.isRendered ) {
+			this.setState( { isRendered: true } );
+		}
+
 		if ( ! nextProps.currentLayoutFocus || hasTouch() ) {
 			return;
 		}
@@ -47,10 +50,6 @@ class SitePicker extends React.Component {
 		const isAutoFocused = nextProps.currentLayoutFocus === 'sites';
 		if ( isAutoFocused !== this.state.isAutoFocused ) {
 			this.setState( { isAutoFocused } );
-		}
-
-		if ( nextProps.currentLayoutFocus === 'sites' && ! this.state.isRendered ) {
-			this.setState( { isRendered: true } );
 		}
 	}
 
@@ -87,15 +86,11 @@ class SitePicker extends React.Component {
 	};
 
 	render() {
-		if ( ! this.state.isRendered && this.props.currentLayoutFocus !== 'sites' ) {
-			return null;
-		}
-
 		return (
 			<div>
 				<CloseOnEscape onEscape={ this.closePicker } />
 				<SiteSelector
-					ref="siteSelector"
+					isPlaceholder={ ! this.state.isRendered }
 					indicator={ true }
 					showAddNewSite={ true }
 					showAllSites={ true }
