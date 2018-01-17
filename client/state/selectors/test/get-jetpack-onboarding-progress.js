@@ -16,7 +16,7 @@ describe( 'getJetpackOnboardingProgress()', () => {
 				},
 			},
 		};
-		const steps = [ [ STEPS.SITE_TITLE ], [ STEPS.SITE_TYPE ] ];
+		const steps = [ STEPS.SITE_TITLE, STEPS.SITE_TYPE ];
 		const expected = {
 			[ STEPS.SITE_TITLE ]: isJetpackOnboardingStepCompleted( state, siteId, STEPS.SITE_TITLE ),
 			[ STEPS.SITE_TYPE ]: isJetpackOnboardingStepCompleted( state, siteId, STEPS.SITE_TYPE ),
