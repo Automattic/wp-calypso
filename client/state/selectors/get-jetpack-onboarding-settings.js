@@ -6,8 +6,8 @@
 import { get } from 'lodash';
 
 /**
- * Returns the Jetpack onboarding settings of a particular site.
- * Returns null if site is not known.
+ * Returns the Jetpack onboarding settings of a given site.
+ * Returns null it the site is unknown.
  *
  * @param  {Object}   state   Global state tree.
  * @param  {Integer}  siteId  Unconnected site ID.
