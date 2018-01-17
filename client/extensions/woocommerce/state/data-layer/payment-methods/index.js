@@ -26,6 +26,13 @@ export default {
 				settings[ settingKey ] = method.settings[ settingKey ].value;
 			} );
 
+			// Temporary Fix. See https://github.com/woocommerce/woocommerce-gateway-stripe/issues/459
+			// The API default when no choice has been chosen previously is a string 'default'
+			// If that gets passed back to the API, the entire request fails.
+			if ( 'stripe' === method.id ) {
+				settings.payment_request_button_theme = 'dark';
+			}
+
 			const payload = {
 				settings,
 				description: method.description,
