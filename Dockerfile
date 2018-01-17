@@ -4,6 +4,7 @@ LABEL maintainer="Automattic"
 WORKDIR    /calypso
 
 
+ENV        CONTAINER 'docker'
 ENV        NODE_PATH=/calypso/server:/calypso/client
 
 # Build a "base" layer
@@ -28,6 +29,7 @@ RUN        bash /tmp/env-config.sh
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
 RUN        true \
            && npm install --production \
+           && chown -R nobody node_modules \
            && rm -rf /root/.npm \
            && true
 
@@ -55,7 +57,7 @@ RUN        touch node_modules
 ARG        commit_sha=(unknown)
 RUN        true \
            && CALYPSO_ENV=production COMMIT_SHA=$commit_sha npm run build \
-           && chown -R nobody /calypso \
+           && find . -not -path './node_modules/*' -print0 | xargs -0 chown nobody \
            && true
 
 USER       nobody

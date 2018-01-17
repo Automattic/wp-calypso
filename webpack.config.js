@@ -272,7 +272,7 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 if ( shouldMinify ) {
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
-			cache: true,
+			cache: 'docker' !== process.env.CONTAINER,
 			parallel: true,
 			uglifyOptions: { ecma: 5 },
 			sourceMap: Boolean( process.env.SOURCEMAP ),
