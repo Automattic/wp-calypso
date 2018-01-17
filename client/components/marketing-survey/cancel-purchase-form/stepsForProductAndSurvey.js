@@ -45,11 +45,11 @@ export default function stepsForProductAndSurvey(
 			includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) &&
 		precancellationChatAvailable
 	) {
-		return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
+		return steps.DEFAULT_STEPS_WITH_HAPPYCHAT;
 	}
 
 	if ( canChat && includesProduct( JETPACK_PAID_PLANS, product ) ) {
-		return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
+		return steps.DEFAULT_STEPS_WITH_HAPPYCHAT;
 	}
 
 	return [ steps.INITIAL_STEP, steps.FINAL_STEP ];
