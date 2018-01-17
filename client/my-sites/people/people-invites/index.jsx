@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
@@ -13,13 +12,13 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import Card from 'components/card';
 import Gravatar from 'components/gravatar';
 import { requestInvites } from 'state/invites/actions';
+import { isRequestingInvitesForSite, getInvitesForSite } from 'state/invites/selectors';
 
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
@@ -78,8 +77,8 @@ export default connect(
 		const siteId = ownProps.site && ownProps.site.ID;
 
 		return {
-			requesting: siteId && state.invites.requesting[ siteId ],
-			invites: siteId && state.invites.items[ siteId ],
+			requesting: isRequestingInvitesForSite( state, siteId ),
+			invites: getInvitesForSite( state, siteId ),
 		};
 	},
 	{
