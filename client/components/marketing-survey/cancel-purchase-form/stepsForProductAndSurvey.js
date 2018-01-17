@@ -24,7 +24,7 @@ export default function stepsForProductAndSurvey(
 	survey,
 	product,
 	canChat,
-	precancellation = false
+	precancellationChatAvailable
 ) {
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) && abtest( 'ATPromptOnCancel' ) === 'show' ) {
@@ -43,7 +43,7 @@ export default function stepsForProductAndSurvey(
 		canChat &&
 		( includesProduct( BUSINESS_PLANS, product ) ||
 			includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) &&
-		precancellation
+		precancellationChatAvailable
 	) {
 		return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
 	}

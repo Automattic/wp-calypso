@@ -41,7 +41,7 @@ import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
-import { isCancellationChatAvailable } from 'state/ui/olark/selectors';
+import { isPrecancellationChatAvailable } from 'state/ui/olark/selectors';
 
 const user = userFactory();
 
@@ -122,14 +122,14 @@ class RemovePurchase extends Component {
 			selectedPurchase,
 			isChatAvailable,
 			isChatActive,
-			cancellationChatAvailable,
+			precancellationChatAvailable = false,
 		} = this.props;
 		const { surveyStep, survey } = this.state;
 		const steps = stepsForProductAndSurvey(
 			survey,
 			selectedPurchase,
 			isChatAvailable || isChatActive,
-			cancellationChatAvailable
+			precancellationChatAvailable
 		);
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
@@ -438,7 +438,7 @@ export default connect(
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		purchasesError: getPurchasesError( state ),
-		cancellationChatAvailable: isCancellationChatAvailable( state ),
+		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 	} ),
 	{
 		receiveDeletedSite,
