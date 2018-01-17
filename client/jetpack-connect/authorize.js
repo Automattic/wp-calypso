@@ -8,7 +8,7 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get, includes, startsWith } from 'lodash';
+import { get, includes, pick, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -99,8 +99,10 @@ export class JetpackAuthorize extends Component {
 
 	componentWillMount() {
 		const { recordTracksEvent } = this.props;
-		recordTracksEvent( 'calypso_jpc_authorize_form_view' );
-		recordTracksEvent( 'calypso_jpc_auth_view' );
+
+		const tracksProperties = pick( this.props.authQuery, 'from' );
+		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
+		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
 
 		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
