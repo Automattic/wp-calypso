@@ -87,27 +87,6 @@ class PostCommentList extends React.Component {
 		activeEditCommentId: null,
 	};
 
-	/**
-	 * Should we scroll down to a comment? Only if we have satisfied these conditions:
-	 * 1. there is a startingCommentId
-	 * 2. the comment has loaded and is on the DOM
-	 * 3. we haven't already scrolled to it yet
-	 * 4. we have loaded some comments above + below it already (or there is only 1 comment)
-	 *
-	 * @param {object} props - the propes to use when evaluating if window should be scrolled down to a comment.
-	 * @returns {boolean} - whether or not we should scroll to a comment
-	 */
-	shouldScrollToComment = ( props = this.props ) => {
-		return !! (
-			props.startingCommentId &&
-			props.commentsTree[ this.props.startingCommentId ] &&
-			props.commentsFetchingStatus.hasReceivedBefore &&
-			props.commentsFetchingStatus.hasReceivedAfter &&
-			! this.hasScrolledToComment &&
-			window.document.getElementById( `comment-${ props.startingCommentId }` )
-		);
-	};
-
 	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
 		return !! ( startingCommentId && ! initialComment );
 	};
@@ -191,9 +170,11 @@ class PostCommentList extends React.Component {
 		}
 	}
 
+	commentIsOnDOM = commentId => !! window.document.getElementById( `comment-${ commentId }` );
+
 	scrollWhenDOMReady = () => {
 		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
-			if ( this.shouldScrollToComment() ) {
+			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
 				delay( () => this.scrollToComment(), 50 );
 			}
 			delay( this.scrollWhenDOMReady, 100 );
