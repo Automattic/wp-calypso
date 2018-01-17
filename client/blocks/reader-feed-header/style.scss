@@ -119,7 +119,7 @@
 		width: 100%;
 
 		@include breakpoint( ">660px" ) {
-			padding-right: 12px;
+			padding-right: 10px;
 		}
 
 		@include breakpoint( "<480px" ) {

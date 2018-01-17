@@ -122,19 +122,20 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'New post notifications' ) }
+						{ translate( 'Notify me of new posts' ) }
+						<Gridicon icon="bell" size={ 18 } />
 						<FormToggle
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
 							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
 						/>
 						<p className="reader-site-notification-settings__popout-hint">
-							{ translate( 'Receive web and mobile notifications for new posts from this site' ) }
+							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
 					</div>
 
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'New post emails' ) }
+						{ translate( 'Email me new posts' ) }
 						<FormToggle onChange={ this.toggleNewPostEmail } checked={ sendNewPostsByEmail } />
 					</div>
 					{ sendNewPostsByEmail && (
@@ -160,7 +161,7 @@ class ReaderSiteNotificationSettings extends Component {
 						</SegmentedControl>
 					) }
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'New comment emails' ) }
+						{ translate( 'Email me new comments' ) }
 						<FormToggle
 							onChange={ this.toggleNewCommentEmail }
 							checked={ sendNewCommentsByEmail }
