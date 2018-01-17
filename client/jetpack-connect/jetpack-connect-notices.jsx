@@ -15,7 +15,7 @@ class JetpackConnectNotices extends Component {
 	static propTypes = {
 		// Supply a function that will be called for flow-ending error cases
 		// instead of showing a notice.
-		onTerminalError: PropTypes.func,
+		onTerminalError: PropTypes.oneOf( [ PropTypes.func, false ] ),
 		noticeType: PropTypes.oneOf( [
 			'alreadyConnected',
 			'alreadyConnectedByOtherUser',
