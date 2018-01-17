@@ -13,8 +13,10 @@ import Gridicon from 'gridicons';
  */
 import analytics from 'lib/analytics';
 import Button from 'components/button';
-import { submitSignupStep } from 'lib/signup/actions';
+import SignupActions from 'lib/signup/actions';
 import { getStepUrl } from 'signup/utils';
+
+const { submitSignupStep } = SignupActions;
 
 export class NavigationLink extends Component {
 	static propTypes = {
