@@ -214,7 +214,7 @@ class PostShare extends Component {
 			? this.props.connections.filter( this.isConnectionActive )
 			: [];
 		const requireCount = includes( map( targeted, 'service' ), 'twitter' );
-		const acceptableLength = requireCount ? 140 - 23 - 23 : null;
+		const acceptableLength = requireCount ? 280 - 23 - 23 : null;
 
 		return (
 			<PublicizeMessage
