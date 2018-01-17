@@ -4,13 +4,13 @@
  * External dependencies
  */
 
-import { forOwn, get, reduce, isArray, map, flatten } from 'lodash';
+import { get, reduce, isArray, map, flatten } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import treeSelect from 'lib/tree-select';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
 import { getSite } from 'state/sites/selectors';
 
@@ -71,11 +71,11 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  * @param  {?Number} query.gmtOffset    GMT offset of the queried site
  * @return {Object}           			Parsed Data for the query
  */
-export const getSiteStatsPostStreakData = createSelector(
-	( state, siteId, query ) => {
+export const getSiteStatsPostStreakData = treeSelect(
+	( state, siteId, query ) => [ getSiteStatsForQuery( state, siteId, 'statsStreak', query ) ],
+	( [ streakData ], siteId, query ) => {
 		const gmtOffset = query.gmtOffset || 0;
 		const response = {};
-		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
 		// ensure streakData.data exists and it is not an array
 		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
 			Object.keys( streakData.data ).forEach( timestamp => {
@@ -92,10 +92,8 @@ export const getSiteStatsPostStreakData = createSelector(
 
 		return response;
 	},
-	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, 'statsStreak', serializedQuery ].join();
+	{
+		getCacheKey: ( siteId, query ) => [ siteId, getSerializedStatsQuery( query ) ].join(),
 	}
 );
 
@@ -107,22 +105,12 @@ export const getSiteStatsPostStreakData = createSelector(
  * @param  {Object}  query    Stats query object
  * @return {?Number}          Max number of posts by day
  */
-export const getSiteStatsMaxPostsByDay = createSelector(
-	( state, siteId, query ) => {
-		let max = 0;
-
-		forOwn( getSiteStatsPostStreakData( state, siteId, query ), count => {
-			if ( count > max ) {
-				max = count;
-			}
-		} );
-
-		return max || null;
-	},
-	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, 'statsStreakMax', serializedQuery ].join();
+export const getSiteStatsMaxPostsByDay = treeSelect(
+	( state, siteId, query ) => [ getSiteStatsPostStreakData( state, siteId, query ) ],
+	( [ postStreakData ] ) =>
+		reduce( postStreakData, ( max, count ) => ( count > max ? count : max ), 0 ) || null,
+	{
+		getCacheKey: ( siteId, query ) => [ siteId, getSerializedStatsQuery( query ) ].join(),
 	}
 );
 
@@ -134,20 +122,11 @@ export const getSiteStatsMaxPostsByDay = createSelector(
  * @param  {Object}  query    Stats query object
  * @return {?Number}          Max number of posts by day
  */
-export const getSiteStatsTotalPostsForStreakQuery = createSelector(
-	( state, siteId, query ) => {
-		return reduce(
-			getSiteStatsPostStreakData( state, siteId, query ),
-			( posts, sum ) => {
-				return sum + posts;
-			},
-			0
-		);
-	},
-	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
-	( state, siteId, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, 'statsStreakMax', serializedQuery ].join();
+export const getSiteStatsTotalPostsForStreakQuery = treeSelect(
+	( state, siteId, query ) => [ getSiteStatsPostStreakData( state, siteId, query ) ],
+	( [ postStreakData ] ) => reduce( postStreakData, ( sum, posts ) => sum + posts, 0 ),
+	{
+		getCacheKey: ( siteId, query ) => [ siteId, getSerializedStatsQuery( query ) ].join(),
 	}
 );
 
@@ -175,19 +154,21 @@ export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
  * @param  {Object}  query    Stats query object
  * @return {*}                Normalized Data for the query, typically an array or object
  */
-export const getSiteStatsNormalizedData = createSelector(
-	( state, siteId, statType, query ) => {
-		const data = getSiteStatsForQuery( state, siteId, statType, query );
-		if ( 'function' === typeof normalizers[ statType ] ) {
-			const site = getSite( state, siteId );
-			return normalizers[ statType ].call( this, data, query, siteId, site );
+export const getSiteStatsNormalizedData = treeSelect(
+	( state, siteId, statType, query ) => [
+		getSiteStatsForQuery( state, siteId, statType, query ),
+		getSite( state, siteId ),
+	],
+	( [ siteStats, site ], siteId, statType, query ) => {
+		const normalizer = normalizers[ statType ];
+		if ( typeof normalizer !== 'function' ) {
+			return siteStats;
 		}
-		return data;
+		return normalizer( siteStats, query, siteId, site );
 	},
-	( state, siteId, statType, query ) => getSiteStatsForQuery( state, siteId, statType, query ),
-	( state, siteId, statType, query ) => {
-		const serializedQuery = getSerializedStatsQuery( query );
-		return [ siteId, statType, serializedQuery ].join();
+	{
+		getCacheKey: ( siteId, statType, query ) =>
+			[ siteId, statType, getSerializedStatsQuery( query ) ].join(),
 	}
 );
 
