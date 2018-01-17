@@ -35,8 +35,10 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSaveErrorMessage } from './utils';
+import { withAnalytics } from 'state/analytics/actions';
 
 class ProductCategoryUpdate extends React.Component {
 	static propTypes = {
@@ -207,8 +209,16 @@ function mapDispatchToProps( dispatch ) {
 			editProductCategory,
 			fetchProductCategories,
 			clearProductCategoryEdits,
-			updateProductCategory,
-			deleteProductCategory,
+			updateProductCategory: ( siteId, category, ...args ) =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_product_category_update', { id: category.id } ),
+					updateProductCategory( siteId, category, ...args )
+				),
+			deleteProductCategory: ( siteId, category, ...args ) =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_product_category_delete', { id: category.id } ),
+					deleteProductCategory( siteId, category, ...args )
+				),
 		},
 		dispatch
 	);
