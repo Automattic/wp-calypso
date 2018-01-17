@@ -20,7 +20,7 @@ function MyJetpackOnboardingSettings( { settings, siteId } ) {
 		<div>
 			<QueryJetpackOnboardingSettings siteId={ siteId } />
 			{ map( settings, ( value, name ) => (
-				<div>{ name }: { value }</div>
+				<div>{ name }: { value.toString() }</div>
 			) }
 		</div>
 	);
