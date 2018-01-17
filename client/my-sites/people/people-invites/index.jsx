@@ -17,7 +17,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import Card from 'components/card';
 import Gravatar from 'components/gravatar';
-import { requestSiteInvites } from 'state/invites/actions';
+import QuerySiteInvites from 'components/data/query-site-invites';
 import { isRequestingInvitesForSite, getInvitesForSite } from 'state/invites/selectors';
 
 class PeopleInvites extends React.PureComponent {
@@ -57,31 +57,28 @@ class PeopleInvites extends React.PureComponent {
 			return null;
 		}
 
+		const hasInvites = invites && invites.length;
+
 		return (
 			<Main className="people-invites">
+				<QuerySiteInvites siteId={ site.ID } />
 				<SidebarNavigation />
 
 				<div>
 					<PeopleSectionNav filter="invites" site={ site } />
-					{ ! requesting && ! invites && this.props.requestSiteInvites( site.ID ) }
-					{ requesting && <Card>Loading invites...</Card> }
-					{ ( invites || [] ).map( this.renderInvite ) }
+					{ requesting && ! hasInvites && <Card>Loading invites...</Card> }
+					{ hasInvites && invites.map( this.renderInvite ) }
 				</div>
 			</Main>
 		);
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const siteId = ownProps.site && ownProps.site.ID;
+export default connect( ( state, ownProps ) => {
+	const siteId = ownProps.site && ownProps.site.ID;
 
-		return {
-			requesting: isRequestingInvitesForSite( state, siteId ),
-			invites: getInvitesForSite( state, siteId ),
-		};
-	},
-	{
-		requestInvites,
-	}
-)( localize( PeopleInvites ) );
+	return {
+		requesting: isRequestingInvitesForSite( state, siteId ),
+		invites: getInvitesForSite( state, siteId ),
+	};
+} )( localize( PeopleInvites ) );
