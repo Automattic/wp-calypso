@@ -43,6 +43,7 @@
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack/google-analytics-for-stores-enhanced": true,
+		"jetpack/onboarding": true,
 		"jetpack_core_inline_update": true,
 		"jitms": true,
 		"login/magic-login": true,
