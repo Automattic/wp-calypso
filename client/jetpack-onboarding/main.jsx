@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import sha1 from 'hash.js/lib/hash/sha/1';
 import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -75,7 +76,9 @@ export default connect(
 
 		const site = getUnconnectedSite( state, siteId );
 		const userId = site ? get( site, 'userEmail', null ) : '';
-
+		const hash = sha1();
+		hash.update( userId );
+		const userIdHashed = hash.digest( 'hex' );
 		// Note: here we can select which steps to display, based on user's input
 		const steps = compact( [
 			STEPS.SITE_TITLE,
@@ -92,12 +95,12 @@ export default connect(
 			siteSlug,
 			settings,
 			steps,
-			userId,
+			userIdHashed,
 		};
 	},
 	{ recordTracksEvent },
 	(
-		{ siteId, userId, ...stateProps },
+		{ siteId, userIdHashed, ...stateProps },
 		{ recordTracksEvent: recordTracksEventAction },
 		ownProps
 	) => ( {
@@ -107,7 +110,7 @@ export default connect(
 			recordTracksEventAction( event, {
 				blog_id: siteId,
 				site_id_type: 'jpo',
-				user_id: userId,
+				user_id: 'jpo_user_' + userIdHashed,
 				...additionalProperties,
 			} ),
 		...ownProps,
