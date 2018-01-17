@@ -5,11 +5,13 @@
  */
 import {
 	receiveJetpackOnboardingCredentials,
+	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 	updateJetpackOnboardingSettings,
 } from '../actions';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
+	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
@@ -29,6 +31,18 @@ describe( 'actions', () => {
 				type: JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 				siteId,
 				credentials,
+			} );
+		} );
+	} );
+
+	describe( 'requestJetpackOnboardingSettings()', () => {
+		test( 'should return a jetpack onboarding settings request action object', () => {
+			const siteId = 12345678;
+			const action = requestJetpackOnboardingSettings( siteId );
+
+			expect( action ).toEqual( {
+				type: JETPACK_ONBOARDING_SETTINGS_REQUEST,
+				siteId,
 			} );
 		} );
 	} );
