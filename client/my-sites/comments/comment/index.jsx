@@ -124,6 +124,7 @@ export class Comment extends Component {
 		return (
 			<Card
 				className={ classes }
+				id={ `comment-${ commentId }` }
 				onClick={ isBulkMode ? this.toggleSelected : undefined }
 				onKeyDown={ this.keyDownHandler }
 				ref={ this.storeCardRef }
