@@ -16,7 +16,7 @@ import {
  * @param  {?Number}  siteId Site ID
  * @return {Function}        Action thunk
  */
-export function requestInvites( siteId ) {
+export function requestSiteInvites( siteId ) {
 	return dispatch => {
 		dispatch( {
 			type: INVITES_REQUEST,

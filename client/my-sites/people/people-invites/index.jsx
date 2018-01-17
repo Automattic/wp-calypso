@@ -17,7 +17,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import Card from 'components/card';
 import Gravatar from 'components/gravatar';
-import { requestInvites } from 'state/invites/actions';
+import { requestSiteInvites } from 'state/invites/actions';
 import { isRequestingInvitesForSite, getInvitesForSite } from 'state/invites/selectors';
 
 class PeopleInvites extends React.PureComponent {
@@ -63,7 +63,7 @@ class PeopleInvites extends React.PureComponent {
 
 				<div>
 					<PeopleSectionNav filter="invites" site={ site } />
-					{ ! requesting && ! invites && this.props.requestInvites( site.ID ) }
+					{ ! requesting && ! invites && this.props.requestSiteInvites( site.ID ) }
 					{ requesting && <Card>Loading invites...</Card> }
 					{ ( invites || [] ).map( this.renderInvite ) }
 				</div>
