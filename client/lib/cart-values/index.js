@@ -45,7 +45,11 @@ function canRemoveFromCart( cart, cartItem ) {
 		return false;
 	}
 
-	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivacyProtection( cartItem ) ) {
+	if (
+		cartItems.hasRenewalItem( cart ) &&
+		( productsValues.isPrivacyProtection( cartItem ) ||
+			productsValues.isDomainRedemption( cartItem ) )
+	) {
 		return false;
 	}
 
