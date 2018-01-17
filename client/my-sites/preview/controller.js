@@ -11,9 +11,7 @@ import React from 'react';
  */
 import PreviewMain from './main';
 
-export default {
-	preview: function( context, next ) {
-		context.primary = <PreviewMain site={ context.params.site } />;
-		next();
-	},
-};
+export function preview( context, next ) {
+	context.primary = <PreviewMain site={ context.params.site } />;
+	next();
+}

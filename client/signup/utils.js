@@ -9,10 +9,12 @@ import { filter, find, indexOf, isEmpty, merge, pick } from 'lodash';
  */
 import { getLanguage } from 'lib/i18n-utils';
 import steps from 'signup/config/steps';
-import flows, { defaultFlowName } from 'signup/config/flows';
+import flows from 'signup/config/flows';
 import formState from 'lib/form-state';
 import userFactory from 'lib/user';
 const user = userFactory();
+
+const { defaultFlowName } = flows;
 
 export function getFlowName( parameters ) {
 	const flow =
