@@ -171,7 +171,9 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 				<FormFieldset className="stripe__method-edit-field-container">
 					<FormLabel>{ translate( 'Use Apple Pay' ) }</FormLabel>
 					<PaymentMethodEditFormToggle
-						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
+						checked={
+							method.settings.apple_pay && method.settings.apple_pay.value === 'yes' ? true : false
+						}
 						name="apple_pay"
 						onChange={ this.props.onEditField }
 					/>
