@@ -52,4 +52,4 @@ export default connect(
 	<tr><th>Default</th><td><code>null</code></td></tr>
 </table>
 
-The site ID for which posts should be queried.
+The site ID for which invites should be queried.
