@@ -98,13 +98,6 @@ class PostCommentList extends React.Component {
 	 * @returns {boolean} - whether or not we should scroll to a comment
 	 */
 	shouldScrollToComment = ( props = this.props ) => {
-		console.error(
-			props.startingCommentId,
-			props.commentsTree[ this.props.startingCommentId ],
-			props.commentsFetchingStatus.hasReceivedBefore,
-			props.commentsFetchingStatus.hasReceivedAfter,
-			! this.hasScrolledToComment
-		);
 		return !! (
 			props.startingCommentId &&
 			props.commentsTree[ this.props.startingCommentId ] &&
