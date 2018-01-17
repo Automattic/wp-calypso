@@ -111,6 +111,7 @@ export default connect(
 				blog_id: siteId,
 				site_id_type: 'jpo',
 				user_id: 'jpo_user_' + userIdHashed,
+				id: siteId + '_' + userIdHashed,
 				...additionalProperties,
 			} ),
 		...ownProps,
