@@ -1,5 +1,5 @@
 {
-	"id": "\/contact-validation\/contact-validation\/uk",
+	"id": "https://public-api.wordpress.com/rest/v1/domains/validation-schema/uk",
 	"errorCode": "dotukValidation",
 	"$comment": "See http:\/\/domains.opensrs.guide\/docs\/tld#section-uk",
 	"type": "object",
