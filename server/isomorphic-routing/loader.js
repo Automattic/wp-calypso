@@ -15,10 +15,10 @@ function getSectionsModule( sections ) {
 
 	return [
 		'module.exports = {',
-		'	get: function() {',
+		'	getSections: function() {',
 		'		return ' + JSON.stringify( sections ) + ';',
 		'	},',
-		' require: function( module ) {',
+		'	load: function( module ) {',
 		'		switch ( module ) {',
 		caseSections,
 		'			default:',

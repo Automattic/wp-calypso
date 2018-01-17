@@ -58,7 +58,7 @@ const prideLanguages = [];
 // Geolocation may not be 100% accurate.
 const prideLocations = [];
 
-const sections = sectionsModule.get();
+const sections = sectionsModule.getSections();
 
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
@@ -512,7 +512,7 @@ module.exports = function() {
 			} );
 
 			if ( section.isomorphic ) {
-				sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+				sectionsModule.load( section.module )( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
 
