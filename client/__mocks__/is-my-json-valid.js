@@ -25,7 +25,7 @@ function throwOnInvalidSchema( schema ) {
 			}
 			msg.push( '' );
 		} );
-		throw new TypeError( msg.join( '\n' ) );
+		throw new Error( msg.join( '\n' ) );
 	}
 }
 
