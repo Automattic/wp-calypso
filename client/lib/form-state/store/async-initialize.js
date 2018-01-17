@@ -4,7 +4,9 @@
  * Internal dependencies
  */
 
-import { createInitialFormState, createNullFieldValues, initializeFields } from '../';
+import FormStateStore from '../';
+
+const { createInitialFormState, createNullFieldValues, initializeFields } = FormStateStore;
 
 function asyncInitialize( { fieldNames, loadFunction } ) {
 	return {
