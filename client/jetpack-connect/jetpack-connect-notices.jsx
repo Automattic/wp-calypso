@@ -167,19 +167,19 @@ class JetpackConnectNotices extends Component {
 
 	componentDidUpdate() {
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
-			this.props.onTerminalError();
+			this.props.onTerminalError( this.props.noticeType );
 		}
 	}
 
 	componentDidMount() {
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
-			this.props.onTerminalError();
+			this.props.onTerminalError( this.props.noticeType );
 		}
 	}
 
 	errorIsTerminal() {
 		const notice = this.getNoticeValues();
-		return ! notice.userCanRetry;
+		return notice && ! notice.userCanRetry;
 	}
 
 	render() {
