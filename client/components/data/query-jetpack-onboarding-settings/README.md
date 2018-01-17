@@ -11,8 +11,9 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 import React from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
-import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+
 import { getJetpackOnboardingSettings } from 'state/selectors';
+import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
 
 function MyJetpackOnboardingSettings( { settings, siteId } ) {
 	return (
