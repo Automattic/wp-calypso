@@ -418,7 +418,7 @@ export class JetpackConnectMain extends Component {
 						noticeType={ status }
 						onDismissClick={ this.dismissUrl }
 						url={ this.state.currentUrl }
-						onTerminalError={ this.props.isMobileAppFlow && this.redirectToMobileApp }
+						onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
 					/>
 				) : null }
 
