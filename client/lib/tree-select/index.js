@@ -56,6 +56,7 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 	};
 
 	cachedSelector.clearCache = () => {
+		// WeakMap doesn't have `clear` method, so we need to recreate it
 		cache = new WeakMap();
 	};
 
@@ -75,13 +76,14 @@ const STATIC_FALSY_KEY = {};
  * The last map is a regular one because the the key for the last map is the string results of args.join().
  */
 function insertDependentKey( map, key, currentIndex, arr ) {
-	key = key || STATIC_FALSY_KEY;
+	const weakMapKey = key || STATIC_FALSY_KEY;
 
-	if ( map.has( key ) ) {
-		return map.get( key );
+	const existingMap = map.get( weakMapKey );
+	if ( existingMap ) {
+		return existingMap;
 	}
 
 	const newMap = currentIndex === arr.length - 1 ? new Map() : new WeakMap();
-	map.set( key, newMap );
+	map.set( weakMapKey, newMap );
 	return newMap;
 }
