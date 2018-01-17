@@ -13,6 +13,8 @@ import Notice from 'components/notice';
 
 class JetpackConnectNotices extends Component {
 	static propTypes = {
+		// Supply a function that will be called for flow-ending error cases
+		// instead of showing a notice.
 		onTerminalError: PropTypes.func,
 		noticeType: PropTypes.oneOf( [
 			'alreadyConnected',
