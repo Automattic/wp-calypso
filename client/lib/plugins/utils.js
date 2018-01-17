@@ -146,7 +146,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 }
 
 export function normalizePluginData( plugin, pluginData ) {
-	plugin = this.whiteListPluginData( assign( plugin, pluginData ) );
+	plugin = whiteListPluginData( assign( plugin, pluginData ) );
 
 	return transform( plugin, function( returnData, item, key ) {
 		switch ( key ) {
