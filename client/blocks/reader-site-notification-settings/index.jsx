@@ -123,7 +123,7 @@ class ReaderSiteNotificationSettings extends Component {
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
 						{ translate( 'Notify me of new posts' ) }
-						<Gridicon icon="bell" size="18" />
+						<Gridicon icon="bell" size={ 18 } />
 						<FormToggle
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
