@@ -5,7 +5,7 @@ const loaderUtils = require( 'loader-utils' );
 const getOptions = loaderUtils.getOptions;
 
 /*
- * This sections-loader has two one responsibilties: adding import statements and css details.
+ * This sections-loader has two responsibilties: adding import statements and css details.
  *
  * It takes in a list of sections, and then for each one adds in a new key to the json
  * 'load'. The value for 'load' is a fn that returns the entry point for a section. (or a promise for the entry point)

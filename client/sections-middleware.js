@@ -40,7 +40,7 @@ function maybeLoadCSS( sectionName ) {
 function preload( sectionName ) {
 	maybeLoadCSS( sectionName );
 	const filteredSections = filter( sections, { name: sectionName } );
-	if ( isEmpty( sections ) ) {
+	if ( isEmpty( filteredSections ) ) {
 		return Promise.reject( `Attempting to load non-existent section: ${ sectionName }` );
 	}
 	return Promise.all( filteredSections.map( section => section.load() ) );
