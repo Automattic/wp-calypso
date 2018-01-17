@@ -20,6 +20,7 @@ import DeleteZoneDialog from './delete-zone-dialog';
 import QueryFeed from '../../data/query-feed';
 import ZoneContentForm from '../../forms/zone-content-form';
 import ZoneDetailsForm from '../../forms/zone-details-form';
+import ZoneLock from '../../data/zone-lock';
 import ZoneNotFound from './zone-not-found';
 import { saveFeed } from '../../../state/feeds/actions';
 import { deleteZone, saveZone } from '../../../state/zones/actions';
@@ -106,6 +107,7 @@ class Zone extends Component {
 		return (
 			<div>
 				{ siteId && zoneId && <QueryFeed siteId={ siteId } zoneId={ zoneId } /> }
+				{ siteId && zoneId && <ZoneLock siteId={ siteId } zoneId={ zoneId } /> }
 
 				<HeaderCake
 					backHref={ `${ settingsPath }/${ siteSlug }` }

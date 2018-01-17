@@ -14,8 +14,10 @@ describe( 'utils', () => {
 	describe( '#fromApi()', () => {
 		test( 'should parse expiration time and maximum lock period into milliseconds', () => {
 			const response = {
-				timeout: 30,
-				max_lock_period: 600,
+				data: {
+					timeout: 30,
+					max_lock_period: 600,
+				},
 			};
 			const now = new Date().getTime();
 			const lock = fromApi( response );
