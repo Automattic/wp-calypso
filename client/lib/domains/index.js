@@ -233,6 +233,10 @@ function getTld( domainName ) {
 	return tld;
 }
 
+function getTopLevelOfTld( domainName ) {
+	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
+}
+
 function getDomainProductSlug( domain ) {
 	const tld = getTld( domain );
 	const tldSlug = replace( tld, /\./g, 'dot' );
@@ -257,6 +261,7 @@ export {
 	getRegisteredDomains,
 	getMappedDomains,
 	getTld,
+	getTopLevelOfTld,
 	hasGoogleApps,
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
