@@ -34,6 +34,7 @@ const debug = debugFactory( 'calypso:site-selector' );
 
 class SiteSelector extends Component {
 	static propTypes = {
+		isPlaceholder: PropTypes.bool,
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		showAddNewSite: PropTypes.bool,
@@ -368,6 +369,12 @@ class SiteSelector extends Component {
 	}
 
 	render() {
+		// Render an empty div.site-selector element as a placeholder. It's useful for lazy
+		// rendering of the selector in sidebar while keeping the on-appear animation work.
+		if ( this.props.isPlaceholder ) {
+			return <div className="site-selector" />;
+		}
+
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
 		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
