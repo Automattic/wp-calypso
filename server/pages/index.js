@@ -17,7 +17,8 @@ import { get, pick, forEach, intersection } from 'lodash';
 import config from 'config';
 import sanitize from 'sanitize';
 import utils from 'bundler/utils';
-import sectionsModule from '../../client/sections';
+import { pathToRegExp } from '../../client/utils';
+import sections from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
 import { serverRender, serverRenderError } from 'render';
 import stateCache from 'state-cache';
@@ -56,8 +57,6 @@ const prideLanguages = [];
 // List of geolocated locations to show pride styling for.
 // Geolocation may not be 100% accurate.
 const prideLocations = [];
-
-const sections = sectionsModule.get();
 
 // TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
 function getInitialServerState( serializedServerState ) {
@@ -477,7 +476,7 @@ module.exports = function() {
 		.filter( section => ! section.envId || section.envId.indexOf( config( 'env_id' ) ) > -1 )
 		.forEach( section => {
 			section.paths.forEach( sectionPath => {
-				const pathRegex = utils.pathToRegExp( sectionPath );
+				const pathRegex = pathToRegExp( sectionPath );
 
 				app.get( pathRegex, function( req, res, next ) {
 					req.context = Object.assign( {}, req.context, { sectionName: section.name } );
@@ -511,7 +510,7 @@ module.exports = function() {
 			} );
 
 			if ( section.isomorphic ) {
-				sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
+				section.load()( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
 

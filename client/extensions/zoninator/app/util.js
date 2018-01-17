@@ -9,10 +9,10 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import sectionsModule from 'sections';
+import sectionsModule from 'sections-middleware';
 
 const getSettingsPath = () => {
-	const sections = sectionsModule.get();
+	const sections = sectionsModule.getSections();
 	const section = find( sections, value => value.name === 'zoninator' );
 
 	return get( section, 'settings_path' );
