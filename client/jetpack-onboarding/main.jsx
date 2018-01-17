@@ -21,6 +21,7 @@ import {
 import {
 	getJetpackOnboardingSettings,
 	getRequest,
+	getUnconnectedSite,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
 import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
@@ -35,7 +36,6 @@ class JetpackOnboardingMain extends React.PureComponent {
 	};
 
 	// TODO: Add lifecycle methods to redirect if no siteId
-
 	render() {
 		const {
 			isRequestingSettings,
@@ -73,6 +73,9 @@ export default connect(
 		const isRequestingSettings = getRequest( state, requestJetpackOnboardingSettings( siteId ) )
 			.isLoading;
 
+		const site = getUnconnectedSite( state, siteId );
+		const userId = site ? get( site, 'userEmail', null ) : '';
+
 		// Note: here we can select which steps to display, based on user's input
 		const steps = compact( [
 			STEPS.SITE_TITLE,
@@ -89,16 +92,22 @@ export default connect(
 			siteSlug,
 			settings,
 			steps,
+			userId,
 		};
 	},
 	{ recordTracksEvent },
-	( { siteId, ...stateProps }, { recordTracksEvent: recordTracksEventAction }, ownProps ) => ( {
+	(
+		{ siteId, userId, ...stateProps },
+		{ recordTracksEvent: recordTracksEventAction },
+		ownProps
+	) => ( {
 		siteId,
 		...stateProps,
 		recordJpoEvent: ( event, additionalProperties ) =>
 			recordTracksEventAction( event, {
 				blog_id: siteId,
 				site_id_type: 'jpo',
+				user_id: userId,
 				...additionalProperties,
 			} ),
 		...ownProps,
