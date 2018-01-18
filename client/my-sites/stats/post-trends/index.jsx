@@ -21,11 +21,7 @@ import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import {
-	getSiteStatsPostStreakData,
-	getSiteStatsMaxPostsByDay,
-	getSiteStatsTotalPostsForStreakQuery,
-} from 'state/stats/lists/selectors';
+import { getSiteStatsPostStreakData, getSiteStatsMaxPostsByDay } from 'state/stats/lists/selectors';
 
 class PostTrends extends React.Component {
 	static displayName = 'PostTrends';
@@ -60,14 +56,6 @@ class PostTrends extends React.Component {
 	// Remove listener
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.resize );
-	}
-
-	shouldComponentUpdate( nextProps ) {
-		// only update if the total number of posts, or query.endDate has changed
-		return (
-			nextProps.totalPosts !== this.props.totalPosts ||
-			nextProps.query.endDate !== this.props.query.endDate
-		);
 	}
 
 	resize = () => {
@@ -222,7 +210,6 @@ const mapStateToProps = state => {
 	return {
 		streakData: getSiteStatsPostStreakData( state, siteId, query ),
 		max: getSiteStatsMaxPostsByDay( state, siteId, query ),
-		totalPosts: getSiteStatsTotalPostsForStreakQuery( state, siteId, query ),
 		query,
 		siteId,
 	};
