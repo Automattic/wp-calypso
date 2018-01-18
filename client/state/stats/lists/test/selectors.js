@@ -11,7 +11,6 @@ import { expect } from 'chai';
 import {
 	getSiteStatsForQuery,
 	getSiteStatsPostStreakData,
-	getSiteStatsPostsCountByDay,
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 	getSiteStatsCSVData,
@@ -357,54 +356,6 @@ describe( 'selectors', () => {
 				'2016-04-30': 1,
 				'2016-05-01': 1,
 			} );
-		} );
-	} );
-
-	describe( 'getSiteStatsPostsCountByDay()', () => {
-		test( 'should return null if no matching query results exist', () => {
-			const stats = getSiteStatsPostsCountByDay(
-				{
-					stats: {
-						lists: {
-							items: {},
-						},
-					},
-				},
-				2916284,
-				{},
-				'2016-06-01'
-			);
-
-			expect( stats ).to.be.null;
-		} );
-
-		test( 'should properly correct number of max posts for a day', () => {
-			const stats = getSiteStatsPostsCountByDay(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461889800: 1, // 2016-04-29 00:30:00 (UTC)
-												1461972600: 1, // 2016-04-29 23:30:00 (UTC)
-												1462059000: 1, // 2016-04-30 23:30:00 (UTC)
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' },
-				'2016-04-29'
-			);
-
-			expect( stats ).to.eql( 2 );
 		} );
 	} );
 

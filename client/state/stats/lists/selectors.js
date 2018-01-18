@@ -98,20 +98,6 @@ export const getSiteStatsPostStreakData = treeSelect(
 );
 
 /**
- * Returns a number representing the posts made during a day for a given query
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Stats query object
- * @param  {String}  date   Date in YYYY-MM-DD format
- * @return {?Number}        Number of posts made on date
- */
-export function getSiteStatsPostsCountByDay( state, siteId, query, date ) {
-	const data = getSiteStatsPostStreakData( state, siteId, query );
-	return data[ date ] || null;
-}
-
-/**
  * Returns normalized stats data for a given query and stat type, or the un-normalized response
  * from the API if no normalizer method for that stats type exists in ./utils
  *
