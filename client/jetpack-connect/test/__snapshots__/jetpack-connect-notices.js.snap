@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`JetpackConnectNotices Should not render Notice on terminal error if callback supplied 1`] = `""`;
+exports[`JetpackConnectNotices Should not render terminal notice if callback supplied 1`] = `""`;
 
 exports[`JetpackConnectNotices Should render non-terminal notice if callback supplied 1`] = `
 <div

@@ -13,7 +13,6 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { JetpackConnectNotices } from '../jetpack-connect-notices';
-import Notice from 'components/notice';
 
 const terminalErrorNoticeType = 'notExists';
 const nonTerminalErrorNoticeType = 'retryAuth';
@@ -25,10 +24,10 @@ describe( 'JetpackConnectNotices', () => {
 			<JetpackConnectNotices { ...requiredProps } noticeType={ terminalErrorNoticeType } />
 		);
 		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( Notice ) ).toHaveLength( 1 );
+		expect( wrapper.isEmptyRender() ).toBe( false );
 	} );
 
-	test( 'Should not render Notice on terminal error if callback supplied', () => {
+	test( 'Should not render terminal notice if callback supplied', () => {
 		const onTerminalError = jest.fn();
 		const wrapper = shallow(
 			<JetpackConnectNotices
@@ -38,7 +37,7 @@ describe( 'JetpackConnectNotices', () => {
 			/>
 		);
 		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( Notice ) ).toHaveLength( 0 );
+		expect( wrapper.isEmptyRender() ).toBe( true );
 	} );
 
 	test( 'Should call callback on terminal error', () => {
@@ -64,6 +63,6 @@ describe( 'JetpackConnectNotices', () => {
 		);
 		expect( onTerminalError ).not.toHaveBeenCalled();
 		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.find( Notice ) ).toHaveLength( 1 );
+		expect( wrapper.isEmptyRender() ).toBe( false );
 	} );
 } );
