@@ -29,8 +29,8 @@ class ChatBusinessConciergeNotice extends Component {
 		translate: identity,
 	};
 
-	trackCalendlyOfferClick = () => {
-		analytics.tracks.recordEvent( 'calypso_help_calendly_offer_click' );
+	trackConciergeOfferClick = () => {
+		analytics.tracks.recordEvent( 'calypso_help_concierge_offer_click' );
 	};
 
 	render = () => {
@@ -56,7 +56,7 @@ class ChatBusinessConciergeNotice extends Component {
 
 		return (
 			<HelpTeaserButton
-				onClick={ this.trackCalendlyOfferClick }
+				onClick={ this.trackConciergeOfferClick }
 				href={ '/me/concierge' }
 				title={ translate( 'Chat with us over screenshare!' ) }
 				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) }
