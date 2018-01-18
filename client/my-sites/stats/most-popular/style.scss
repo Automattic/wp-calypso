@@ -80,7 +80,8 @@
 		padding: 13px 48px;
 		font-size: inherit;
 		display: inline-flex;
-		top: 18px;
+		top: 10px;
+		margin: 0 5px;
 
 		&::before {
 			@include noticon-style;
