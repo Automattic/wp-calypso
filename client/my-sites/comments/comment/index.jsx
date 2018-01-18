@@ -26,22 +26,16 @@ import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-// Adjust the comment card `offsetTop` to avoid being covered by the masterbar.
-// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
-const COMMENT_SCROLL_TOP_MARGIN = 56;
-
 export class Comment extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
 		commentsListQuery: PropTypes.object,
-		hasScrolledToComment: PropTypes.bool,
 		isEditMode: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
-		onScrollToComment: PropTypes.func,
 		redirect: PropTypes.func,
 		refreshCommentData: PropTypes.bool,
 		toggleSelected: PropTypes.func,
@@ -54,6 +48,7 @@ export class Comment extends Component {
 		this.state = {
 			isEditMode: props.isEditMode,
 			isReplyVisible: false,
+			offsetTop: 0,
 		};
 	}
 
@@ -61,12 +56,19 @@ export class Comment extends Component {
 		const { isBulkMode: wasBulkMode } = this.props;
 		const { isBulkMode } = nextProps;
 
-		this.scrollToComment( nextProps );
+		const newOffsetTop = this.getCommentOffsetTop();
 
-		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
+		this.setState( ( { isEditMode, isReplyVisible, offsetTop } ) => ( {
 			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
+			offsetTop: newOffsetTop > offsetTop && wasBulkMode === isBulkMode ? newOffsetTop : offsetTop,
 		} ) );
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		if ( prevState.offsetTop !== this.state.offsetTop ) {
+			this.scrollToOffset( this.state.offsetTop );
+		}
 	}
 
 	shouldComponentUpdate = ( nextProps, nextState ) =>
@@ -93,29 +95,21 @@ export class Comment extends Component {
 		}
 	};
 
-	scrollToComment = ( { commentId, hasScrolledToComment, onScrollToComment } ) => {
-		if (
-			! window ||
-			! onScrollToComment ||
-			hasScrolledToComment ||
-			`#comment-${ commentId }` !== window.location.hash
-		) {
+	getCommentOffsetTop = () => {
+		if ( ! window || `#comment-${ this.props.commentId }` !== window.location.hash ) {
+			return 0;
+		}
+		const commentNode = ReactDom.findDOMNode( this.commentCard );
+		// Adjust the comment card `offsetTop` to avoid being covered by the masterbar.
+		// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
+		return commentNode.offsetTop - 56;
+	};
+
+	scrollToOffset = () => {
+		if ( ! window || `#comment-${ this.props.commentId }` !== window.location.hash ) {
 			return;
 		}
-
-		const commentNode = ReactDom.findDOMNode( this.commentCard );
-		const commentOffsetTop = commentNode.offsetTop - COMMENT_SCROLL_TOP_MARGIN;
-		scrollTo( {
-			x: 0,
-			y: commentOffsetTop,
-			duration: 1,
-			onComplete: () => {
-				if ( commentOffsetTop !== window.scrollY ) {
-					window.scrollTo( 0, commentOffsetTop );
-				}
-				onScrollToComment();
-			},
-		} );
+		scrollTo( { x: 0, y: this.state.offsetTop } );
 	};
 
 	toggleEditMode = () => {

@@ -40,7 +40,6 @@ export class CommentList extends Component {
 	};
 
 	state = {
-		hasScrolledToComment: false,
 		isBulkMode: false,
 		selectedComments: [],
 	};
@@ -58,7 +57,6 @@ export class CommentList extends Component {
 			status !== nextProps.status
 		) {
 			this.setState( {
-				hasScrolledToComment: false,
 				isBulkMode: false,
 				selectedComments: [],
 			} );
@@ -73,7 +71,7 @@ export class CommentList extends Component {
 
 		recordChangePage( page, this.getTotalPages() );
 
-		this.setState( { hasScrolledToComment: false, selectedComments: [] } );
+		this.setState( { selectedComments: [] } );
 
 		changePage( page );
 	};
@@ -105,8 +103,6 @@ export class CommentList extends Component {
 	isSelectedAll = () =>
 		this.state.selectedComments.length &&
 		this.state.selectedComments.length === this.props.comments.length;
-
-	onScrollToComment = () => this.setState( { hasScrolledToComment: true } );
 
 	toggleBulkMode = () => {
 		this.setState( ( { isBulkMode } ) => ( { isBulkMode: ! isBulkMode, selectedComments: [] } ) );
@@ -145,7 +141,7 @@ export class CommentList extends Component {
 			siteFragment,
 			status,
 		} = this.props;
-		const { hasScrolledToComment, isBulkMode, selectedComments } = this.state;
+		const { isBulkMode, selectedComments } = this.state;
 
 		const validPage = this.isRequestedPageValid() ? page : 1;
 
@@ -199,12 +195,10 @@ export class CommentList extends Component {
 						<Comment
 							commentId={ commentId }
 							commentsListQuery={ commentsListQuery }
-							hasScrolledToComment={ hasScrolledToComment }
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
 							isSelected={ this.isCommentSelected( commentId ) }
 							key={ `comment-${ siteId }-${ commentId }` }
-							onScrollToComment={ this.onScrollToComment }
 							toggleSelected={ this.toggleCommentSelected }
 						/>
 					) ) }
