@@ -88,7 +88,6 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
 		userAlreadyConnected: PropTypes.bool.isRequired,
@@ -520,8 +519,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { siteSlug } = this.props;
-		const { clientId, partnerId, redirectAfterAuth } = this.props.authQuery;
+		const { clientId, homeUrl, partnerId, redirectAfterAuth } = this.props.authQuery;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -531,7 +529,10 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		return addQueryArgs( { redirect: redirectAfterAuth }, `${ JPC_PATH_PLANS }/${ siteSlug }` );
+		return addQueryArgs(
+			{ redirect: redirectAfterAuth },
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+		);
 	}
 
 	renderFooterLinks() {
@@ -632,8 +633,6 @@ export class JetpackAuthorize extends Component {
 
 export default connect(
 	( state, { authQuery } ) => {
-		const siteSlug = urlToSlug( authQuery.homeUrl );
-
 		// Note: reading from a cookie here rather than redux state,
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
@@ -650,7 +649,6 @@ export default connect(
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
 			mobileAppRedirect,
-			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
