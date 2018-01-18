@@ -13,7 +13,6 @@ import {
 	getSiteStatsForQuery,
 	getSiteStatsPostStreakData,
 	getSiteStatsPostsCountByDay,
-	getSiteStatsTotalPostsForStreakQuery,
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 	getSiteStatsCSVData,
@@ -25,7 +24,6 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getSiteStatsPostStreakData.clearCache();
 		getSiteStatsMaxPostsByDay.clearCache();
-		getSiteStatsTotalPostsForStreakQuery.clearCache();
 		getSiteStatsNormalizedData.clearCache();
 	} );
 
@@ -361,52 +359,6 @@ describe( 'selectors', () => {
 				'2016-04-30': 1,
 				'2016-05-01': 1,
 			} );
-		} );
-	} );
-
-	describe( 'getSiteStatsTotalPostsForStreakQuery()', () => {
-		test( 'should return null if no matching query results exist', () => {
-			const stats = getSiteStatsTotalPostsForStreakQuery(
-				{
-					stats: {
-						lists: {
-							items: {},
-						},
-					},
-				},
-				2916284,
-				{}
-			);
-
-			expect( stats ).to.eql( 0 );
-		} );
-
-		test( 'should properly correct number of total posts', () => {
-			const stats = getSiteStatsTotalPostsForStreakQuery(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461961382: 1,
-												1464110402: 1,
-												1464110448: 1,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' }
-			);
-
-			expect( stats ).to.eql( 3 );
 		} );
 	} );
 

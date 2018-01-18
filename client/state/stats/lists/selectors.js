@@ -115,22 +115,6 @@ export const getSiteStatsMaxPostsByDay = treeSelect(
 );
 
 /**
- * Returns the total number of posts per streak data for a query
- *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {Object}  query    Stats query object
- * @return {?Number}          Max number of posts by day
- */
-export const getSiteStatsTotalPostsForStreakQuery = treeSelect(
-	( state, siteId, query ) => [ getSiteStatsPostStreakData( state, siteId, query ) ],
-	( [ postStreakData ] ) => reduce( postStreakData, ( sum, posts ) => sum + posts, 0 ),
-	{
-		getCacheKey: ( siteId, query ) => [ siteId, getSerializedStatsQuery( query ) ].join(),
-	}
-);
-
-/**
  * Returns a number representing the posts made during a day for a given query
  *
  * @param  {Object}  state  Global state tree
