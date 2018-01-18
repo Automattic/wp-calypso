@@ -20,6 +20,7 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 } from 'state/action-types';
+import { uniqueId } from 'lodash';
 
 /**
  * Returns an action object to be used in signalling that a cached domains
@@ -66,6 +67,64 @@ export function requestContactDetailsCache() {
 export function updateContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
+		data,
+	};
+}
+
+/**
+ * Triggers a network request to validate domain contact details.
+ * The data must include:
+ *     contactDetails: the contact details to be validated
+ *     domains: the domains in the cart (tlds effect validation)
+ *
+ * @param   {Object}   data
+ * @returns {Object}   Action object
+ */
+export function validateContactDetails( data ) {
+	return dispatch => {
+		const requestId = uniqueId();
+		dispatch( {
+			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_REQUEST,
+			data: {
+				requestId,
+				...data,
+			},
+		} );
+
+		wpcom.undocumented().getDomainContactInformation( ( error, data ) => {
+			if ( error ) {
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_ERROR,
+					error,
+				} );
+				return;
+			}
+
+			dispatch(
+				receiveContactDetailsValidation( {
+					...data,
+				} )
+			);
+			dispatch( {
+				type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_SUCCESS,
+				data: { requestId },
+			} );
+		} );
+	};
+
+	return {};
+}
+
+/**
+ * Returns an action object to be used in signalling that a cached domains
+ * contact details object has been received.
+ *
+ * @param   {Object}   data   cached contact details object
+ * @returns {Object}   Action object
+ */
+export function receiveContactDetailsValidation( data ) {
+	return {
+		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 		data,
 	};
 }
