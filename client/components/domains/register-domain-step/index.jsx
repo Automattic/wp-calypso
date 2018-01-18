@@ -506,7 +506,7 @@ class RegisterDomainStep extends React.Component {
 					suggestion.is_free === true || suggestion.status === domainAvailability.UNKNOWN;
 				const strippedDomainBase = this.getStrippedDomainBase( domain );
 				const exactMatchBeforeTld = suggestion =>
-					suggestion === this.state.exactMatchDomain ||
+					suggestion.domain_name === this.state.exactMatchDomain ||
 					startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
 				const bestAlternative = suggestion =>
 					! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
