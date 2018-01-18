@@ -2,7 +2,6 @@
 /**
  * Internal dependencies
  */
-import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
 import { markSeen } from 'lib/feed-post-store/actions';
 import {
 	READER_EXPAND_CARD,
