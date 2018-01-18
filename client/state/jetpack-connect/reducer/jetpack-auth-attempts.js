@@ -6,26 +6,31 @@ import { AUTH_ATTEMPS_TTL } from '../constants';
 import { isStale } from '../utils';
 import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
 import { jetpackAuthAttemptsSchema } from './schema';
+import { keyedReducer } from 'state/utils';
 
-export default function jetpackAuthAttempts( state = {}, action ) {
-	switch ( action.type ) {
-		case JETPACK_CONNECT_RETRY_AUTH:
-			const slug = action.slug;
-			let currentTimestamp = state[ slug ] ? state[ slug ].timestamp || Date.now() : Date.now();
-			let attemptNumber = action.attemptNumber;
-			if ( attemptNumber > 0 ) {
-				const now = Date.now();
-				if ( isStale( currentTimestamp, AUTH_ATTEMPS_TTL ) ) {
-					currentTimestamp = now;
-					attemptNumber = 0;
+const jetpackAuthAttempts = keyedReducer(
+	'slug',
+	( state = undefined, { type, attemptNumber } ) => {
+		switch ( type ) {
+			case JETPACK_CONNECT_RETRY_AUTH:
+				const currentTimestamp = state ? state.timestamp : Date.now();
+				if ( attemptNumber > 0 && isStale( currentTimestamp, AUTH_ATTEMPS_TTL ) ) {
+					return {
+						attempt: 0,
+						timestamp: Date.now(),
+					};
 				}
-			}
-			return Object.assign( {}, state, {
-				[ slug ]: { attempt: attemptNumber, timestamp: currentTimestamp },
-			} );
-		case JETPACK_CONNECT_COMPLETE_FLOW:
-			return {};
+				return {
+					attempt: attemptNumber,
+					timestamp: currentTimestamp,
+				};
+
+			case JETPACK_CONNECT_COMPLETE_FLOW:
+				return undefined;
+		}
+		return state;
 	}
-	return state;
-}
+);
 jetpackAuthAttempts.schema = jetpackAuthAttemptsSchema;
+
+export default jetpackAuthAttempts;
