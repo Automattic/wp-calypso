@@ -85,6 +85,7 @@
 		"reader/full-errors": false,
 		"reader/search": true,
 		"reader/conversations": false,
+		"reader/new-post-notifications": true,
 		"resume-editing": true,
 		"republicize": false,
 		"rubberband-scroll-disable": false,
