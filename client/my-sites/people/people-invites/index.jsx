@@ -15,6 +15,7 @@ import { pick } from 'lodash';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
+import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
 import Gravatar from 'components/gravatar';
 import QuerySiteInvites from 'components/data/query-site-invites';
@@ -25,7 +26,7 @@ class PeopleInvites extends React.PureComponent {
 		site: PropTypes.object.isRequired,
 	};
 
-	renderInvite( invite ) {
+	renderInvite = invite => {
 		// If an invite was sent to a WP.com user, the invite object will have
 		// either a display name (if set) or the WP.com username.  Invites can
 		// also be sent to any email address, in which case the other details
@@ -35,13 +36,24 @@ class PeopleInvites extends React.PureComponent {
 		const gravatarUser = pick( user, 'ID', 'display_name', 'avatar_URL' );
 		const userNameOrEmail = user.name || user.login || user.email;
 
+		const { site } = this.props;
+
+		return (
+			<PeopleListItem
+				key={ invite.invite_key }
+				user={ user }
+				site={ site }
+				isSelectable={ false }
+			/>
+		);
+
 		return (
 			<Card key={ invite.invite_key }>
 				Invited <Gravatar user={ gravatarUser } /> <strong>{ userNameOrEmail }</strong> as{' '}
 				<strong>{ invite.role }</strong>
 			</Card>
 		);
-	}
+	};
 
 	render() {
 		const { site, requesting, invites } = this.props;
@@ -50,7 +62,7 @@ class PeopleInvites extends React.PureComponent {
 			return null;
 		}
 
-		const hasInvites = invites && invites.length;
+		const hasInvites = !! ( invites && invites.length );
 
 		return (
 			<Main className="people-invites">
