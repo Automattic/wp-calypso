@@ -110,7 +110,16 @@ export class Comment extends Component {
 		if ( ! window || `#comment-${ this.props.commentId }` !== window.location.hash ) {
 			return;
 		}
-		scrollTo( { x: 0, y: this.state.offsetTop } );
+		const { offsetTop } = this.state;
+		scrollTo( {
+			x: 0,
+			y: offsetTop,
+			onComplete: () => {
+				if ( offsetTop !== window.scrollY ) {
+					window.scrollTo( 0, offsetTop );
+				}
+			},
+		} );
 	};
 
 	toggleEditMode = () => {
