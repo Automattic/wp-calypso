@@ -43,6 +43,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 	handleSubmit = event => {
 		event.preventDefault();
+		if ( this.props.isRequestingSettings ) {
+			return;
+		}
+
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.blogname,
 			siteDescription: this.state.blogdescription,
