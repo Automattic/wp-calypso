@@ -205,9 +205,17 @@ export function createReduxStore( initialState = {} ) {
 	].filter( Boolean );
 
 	const enhancers = [
-		isBrowser && window.app && window.app.isDebug && consoleDispatcher,
+		process.env.NODE_ENV !== 'production' &&
+			isBrowser &&
+			window.app &&
+			window.app.isDebug &&
+			consoleDispatcher,
 		applyMiddleware( ...middlewares ),
-		isBrowser && window.app && window.app.isDebug && actionLogger,
+		process.env.NODE_ENV !== 'production' &&
+			isBrowser &&
+			window.app &&
+			window.app.isDebug &&
+			actionLogger,
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),
 	].filter( Boolean );
 
