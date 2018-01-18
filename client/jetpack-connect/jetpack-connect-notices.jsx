@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 
-class JetpackConnectNotices extends Component {
+export class JetpackConnectNotices extends Component {
 	static propTypes = {
 		// Supply a function that will be called for flow-ending error cases
 		// instead of showing a notice.
