@@ -61,7 +61,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { isRequestingSettings, translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
 		const subHeaderText = translate(
 			'Enter your business address to have a map added to your website.'
@@ -84,6 +84,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 								<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
 								<FormTextInput
 									autoFocus={ fieldName === 'name' }
+									disabled={ isRequestingSettings }
 									id={ fieldName }
 									onChange={ this.getChangeHandler( fieldName ) }
 									required={ fieldName !== 'state' }
@@ -91,7 +92,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 								/>
 							</FormFieldset>
 						) ) }
-						<Button primary type="submit">
+						<Button disabled={ isRequestingSettings } primary type="submit">
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
