@@ -12,7 +12,6 @@ import { reducer as form } from 'redux-form';
  * Internal dependencies
  */
 import { combineReducers } from 'state/utils';
-import actionLogger from './action-log';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import navigationMiddleware from './navigation/middleware';
@@ -26,7 +25,6 @@ import checklist from './checklist/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import concierge from './concierge/reducer';
-import consoleDispatcher from './console-dispatch';
 import countries from './countries/reducer';
 import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
@@ -209,13 +207,13 @@ export function createReduxStore( initialState = {} ) {
 			isBrowser &&
 			window.app &&
 			window.app.isDebug &&
-			consoleDispatcher,
+			require( './console-dispatch' ).default,
 		applyMiddleware( ...middlewares ),
 		process.env.NODE_ENV !== 'production' &&
 			isBrowser &&
 			window.app &&
 			window.app.isDebug &&
-			actionLogger,
+			require( './action-log' ).default,
 		isBrowser && window.devToolsExtension && window.devToolsExtension(),
 	].filter( Boolean );
 
