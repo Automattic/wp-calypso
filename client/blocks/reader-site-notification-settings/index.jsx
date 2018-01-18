@@ -26,6 +26,7 @@ import {
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
 } from 'state/reader/follows/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
@@ -59,30 +60,54 @@ class ReaderSiteNotificationSettings extends Component {
 		const { siteId } = this.props;
 		this.setState( { selected: text } );
 		this.props.updateNewPostEmailSubscription( siteId, text );
+
+		const tracksProperties = { site_id: siteId, delivery_frequency: text };
+		this.props.recordTracksEvent( 'calypso_reader_post_emails_set_frequency', tracksProperties );
 	};
 
 	toggleNewPostEmail = () => {
-		const toggleSubscription = this.props.sendNewPostsByEmail
-			? this.props.unsubscribeToNewPostEmail
-			: this.props.subscribeToNewPostEmail;
+		const { siteId } = this.props;
+		const tracksProperties = { site_id: siteId };
 
-		toggleSubscription( this.props.siteId );
+		if ( this.props.sendNewPostsByEmail ) {
+			this.props.unsubscribeToNewPostEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_off', tracksProperties );
+		} else {
+			this.props.subscribeToNewPostEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_on', tracksProperties );
+		}
 	};
 
 	toggleNewCommentEmail = () => {
-		const toggleSubscription = this.props.sendNewCommentsByEmail
-			? this.props.unsubscribeToNewCommentEmail
-			: this.props.subscribeToNewCommentEmail;
+		const { siteId } = this.props;
+		const tracksProperties = { site_id: siteId };
 
-		toggleSubscription( this.props.siteId );
+		if ( this.props.sendNewCommentsByEmail ) {
+			this.props.unsubscribeToNewCommentEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_off', tracksProperties );
+		} else {
+			this.props.subscribeToNewCommentEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_on', tracksProperties );
+		}
 	};
 
 	toggleNewPostNotification = () => {
-		const toggleSubscription = this.props.sendNewPostsByNotification
-			? this.props.unsubscribeToNewPostNotifications
-			: this.props.subscribeToNewPostNotifications;
+		const { siteId } = this.props;
+		const tracksProperties = { site_id: siteId };
 
-		toggleSubscription( this.props.siteId );
+		if ( this.props.sendNewPostsByNotification ) {
+			this.props.unsubscribeToNewPostNotifications( siteId );
+			this.props.recordTracksEvent(
+				'calypso_reader_post_notifications_toggle_off',
+				tracksProperties
+			);
+		} else {
+			this.props.subscribeToNewPostNotifications( siteId );
+			this.props.recordTracksEvent(
+				'calypso_reader_post_notifications_toggle_on',
+				tracksProperties
+			);
+		}
 	};
 
 	render() {
@@ -201,4 +226,5 @@ export default connect( mapStateToProps, {
 	unsubscribeToNewCommentEmail,
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
+	recordTracksEvent,
 } )( localize( ReaderSiteNotificationSettings ) );
