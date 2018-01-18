@@ -60,9 +60,15 @@ class PeopleInvites extends React.PureComponent {
 	};
 
 	renderEmptyContent() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
 
-		return <EmptyContent title={ translate( "You haven't sent any invites yet." ) } />;
+		return (
+			<EmptyContent
+				title={ translate( "You haven't sent any invites yet." ) }
+				action={ translate( 'Send Invite' ) }
+				actionURL={ `/people/new/${ site.slug }` }
+			/>
+		);
 	}
 
 	renderPlaceholder() {
