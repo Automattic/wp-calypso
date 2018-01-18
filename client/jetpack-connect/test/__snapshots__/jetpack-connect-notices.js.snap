@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JetpackConnectNotices Should not render terminal notice if callback supplied 1`] = `""`;
+
+exports[`JetpackConnectNotices Should render non-terminal notice if callback supplied 1`] = `
+<div
+  className="jetpack-connect__notices-container"
+>
+  <Localized(Notice)
+    icon="notice"
+    showDismiss={false}
+    status="is-warning"
+    text="In some cases, authorization can take a few attempts. Please try again."
+    userCanRetry={true}
+  />
+</div>
+`;
+
+exports[`JetpackConnectNotices Should render notice 1`] = `
+<div
+  className="jetpack-connect__notices-container"
+>
+  <Localized(Notice)
+    icon="notice"
+    showDismiss={false}
+    status="is-error"
+    text="That's not a valid url."
+  />
+</div>
+`;
