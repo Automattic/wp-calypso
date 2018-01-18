@@ -96,7 +96,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		yahooPixelId: '10014088',
 		twitterPixelId: 'nvzbs',
 		dcmFloodlightAdvertiserId: '6355556',
-		linkedInPartnerId: '36622',
+		linkedInPartnerId: '195308',
 		quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 		outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
 	},
