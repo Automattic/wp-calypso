@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs, externalRedirect } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -34,6 +33,7 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
