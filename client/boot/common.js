@@ -21,7 +21,7 @@ import { hasTouch } from 'lib/touch-detect';
 import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import { installPerfmonPageHandlers } from 'lib/perfmon';
-import * as sectionsMiddleware from 'sections-middleware';
+import { getSections, setupRoutes } from 'sections-middleware';
 
 const debug = debugFactory( 'calypso' );
 
@@ -75,7 +75,7 @@ const setupContextMiddleware = reduxStore => {
 };
 
 // We need to require sections to load React with i18n mixin
-const loadSectionsMiddleware = () => sectionsMiddleware.setupRoutes();
+const loadSectionsMiddleware = () => setupRoutes();
 
 const loggedOutMiddleware = currentUser => {
 	if ( currentUser.get() ) {
@@ -96,7 +96,7 @@ const loggedOutMiddleware = currentUser => {
 		} );
 	}
 
-	const validSections = sectionsMiddleware.getSections().reduce( ( acc, section ) => {
+	const validSections = getSections().reduce( ( acc, section ) => {
 		return section.enableLoggedOut ? acc.concat( section.paths ) : acc;
 	}, [] );
 	const isValidSection = sectionPath =>
