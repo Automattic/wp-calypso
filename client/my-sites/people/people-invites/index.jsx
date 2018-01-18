@@ -41,8 +41,10 @@ class PeopleInvites extends React.PureComponent {
 		return (
 			<PeopleListItem
 				key={ invite.invite_key }
+				invite={ invite }
 				user={ user }
 				site={ site }
+				type="invite"
 				isSelectable={ false }
 			/>
 		);
