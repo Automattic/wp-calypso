@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ const InternalNotification = ( {
 	onChange,
 	isPlaceholder,
 	placeholder,
+	translate,
 } ) => {
 	//Add field name to returned value
 	const toggle = value => {
@@ -61,15 +62,19 @@ const InternalNotification = ( {
 			<ListItemField className="components__notification-component-input">
 				<FormTextInput
 					className={ isPlaceholder ? 'components__is-placeholder' : null }
-					isError={ emailValidationError }
+					isError={ checked && emailValidationError }
 					name={ item.field }
 					onChange={ change }
 					value={ recipient }
 					placeholder={ placeholder }
 				/>
-				{ emailValidationError && (
-					<FormTextValidation isError={ true } text={ checkedEmails.messages[ 0 ].msg } />
-				) }
+				{ ! recipient &&
+					placeholder &&
+					checked && <FormTextValidation isWarning text={ translate( 'Default values used.' ) } /> }
+				{ checked &&
+					emailValidationError && (
+						<FormTextValidation isError text={ checkedEmails.messages[ 0 ].msg } />
+					) }
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
 				{ ! isPlaceholder ? (
@@ -89,4 +94,4 @@ InternalNotification.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-export default InternalNotification;
+export default localize( InternalNotification );
