@@ -102,7 +102,8 @@ export class Comment extends Component {
 		const commentNode = ReactDom.findDOMNode( this.commentCard );
 		// Adjust the comment card `offsetTop` to avoid being covered by the masterbar.
 		// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
-		return commentNode.offsetTop - 56;
+		// 66px = 58px (post view sticky header) + 8px (comment card vertical margin)
+		return commentNode.offsetTop - 56 - ( this.props.isPostView ? 66 : 0 );
 	};
 
 	scrollToOffset = () => {
