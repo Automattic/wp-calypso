@@ -33,7 +33,7 @@ describe( 'JetpackConnectNotices', () => {
 		const component = renderer.create(
 			<JetpackConnectNotices noticeType="retryAuth" onTerminalError={ onTerminalError } />
 		);
-		expect( onTerminalError ).toHaveNotBeenCalled;
+		expect( onTerminalError ).not.toHaveBeenCalled();
 		expect( component ).toMatchSnapshot();
 	} );
 } );
