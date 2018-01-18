@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { throttle } from 'lodash';
+import { max, throttle, values } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 
 /**
@@ -21,7 +21,7 @@ import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteStatsPostStreakData, getSiteStatsMaxPostsByDay } from 'state/stats/lists/selectors';
+import { getSiteStatsPostStreakData } from 'state/stats/lists/selectors';
 
 class PostTrends extends React.Component {
 	static displayName = 'PostTrends';
@@ -115,22 +115,18 @@ class PostTrends extends React.Component {
 	};
 
 	getMonthComponents = () => {
-		var i,
-			months = [],
-			startDate;
+		const { streakData } = this.props;
+		// Compute maximum per-day post count from the streakData. It's used to scale the chart.
+		const maxPosts = max( values( streakData ) );
+		const months = [];
 
-		for ( i = 11; i >= 0; i-- ) {
-			startDate = i18n
+		for ( let i = 11; i >= 0; i-- ) {
+			const startDate = i18n
 				.moment()
 				.subtract( i, 'months' )
 				.startOf( 'month' );
 			months.push(
-				<Month
-					key={ startDate.format( 'YYYYMM' ) }
-					startDate={ startDate }
-					streakData={ this.props.streakData }
-					max={ this.props.max }
-				/>
+				<Month key={ i } startDate={ startDate } streakData={ streakData } max={ maxPosts } />
 			);
 		}
 
@@ -209,7 +205,6 @@ const mapStateToProps = state => {
 
 	return {
 		streakData: getSiteStatsPostStreakData( state, siteId, query ),
-		max: getSiteStatsMaxPostsByDay( state, siteId, query ),
 		query,
 		siteId,
 	};

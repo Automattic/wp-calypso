@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { get, reduce, isArray, map, flatten } from 'lodash';
+import { get, isArray, map, flatten } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -92,23 +92,6 @@ export const getSiteStatsPostStreakData = treeSelect(
 
 		return response;
 	},
-	{
-		getCacheKey: ( siteId, query ) => [ siteId, getSerializedStatsQuery( query ) ].join(),
-	}
-);
-
-/**
- * Returns a number representing the most posts made during a day for a given query
- *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {Object}  query    Stats query object
- * @return {?Number}          Max number of posts by day
- */
-export const getSiteStatsMaxPostsByDay = treeSelect(
-	( state, siteId, query ) => [ getSiteStatsPostStreakData( state, siteId, query ) ],
-	( [ postStreakData ] ) =>
-		reduce( postStreakData, ( max, count ) => ( count > max ? count : max ), 0 ) || null,
 	{
 		getCacheKey: ( siteId, query ) => [ siteId, getSerializedStatsQuery( query ) ].join(),
 	}

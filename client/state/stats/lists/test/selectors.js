@@ -9,7 +9,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getSiteStatsMaxPostsByDay,
 	getSiteStatsForQuery,
 	getSiteStatsPostStreakData,
 	getSiteStatsPostsCountByDay,
@@ -23,7 +22,6 @@ import { userState } from 'state/selectors/test/fixtures/user-state';
 describe( 'selectors', () => {
 	beforeEach( () => {
 		getSiteStatsPostStreakData.clearCache();
-		getSiteStatsMaxPostsByDay.clearCache();
 		getSiteStatsNormalizedData.clearCache();
 	} );
 
@@ -359,79 +357,6 @@ describe( 'selectors', () => {
 				'2016-04-30': 1,
 				'2016-05-01': 1,
 			} );
-		} );
-	} );
-
-	describe( 'getSiteStatsMaxPostsByDay()', () => {
-		test( 'should return null if no matching query results exist', () => {
-			const stats = getSiteStatsMaxPostsByDay(
-				{
-					stats: {
-						lists: {
-							items: {},
-						},
-					},
-				},
-				2916284,
-				{}
-			);
-
-			expect( stats ).to.be.null;
-		} );
-
-		test( 'should properly correct number of max posts grouped by day', () => {
-			const stats = getSiteStatsMaxPostsByDay(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461889800: 1, // 2016-04-29 00:30:00 (UTC)
-												1461972600: 1, // 2016-04-29 23:30:00 (UTC)
-												1462059000: 1, // 2016-04-30 23:30:00 (UTC)
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' }
-			);
-
-			expect( stats ).to.eql( 2 );
-		} );
-
-		test( 'should compare numerically rather than lexically', () => {
-			const stats = getSiteStatsMaxPostsByDay(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461889800: 12, // 2016-04-29 00:30:00 (UTC)
-												1462059000: 2, // 2016-04-30 23:30:00 (UTC)
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' }
-			);
-
-			expect( stats ).to.eql( 12 );
 		} );
 	} );
 
