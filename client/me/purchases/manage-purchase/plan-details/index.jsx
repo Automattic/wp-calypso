@@ -18,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import QueryPluginKeys from 'components/data/query-plugin-keys';
 import SectionHeader from 'components/section-header';
 import PlanBillingPeriod from './billing-period';
-import { isRequestingSites } from 'state/sites/selectors';
+import { hasLoadedSites } from 'state/selectors';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getPurchase, isDataLoading } from 'me/purchases/utils';
 import { getName, isExpired } from 'lib/purchases';
@@ -96,7 +96,7 @@ class PurchasePlanDetails extends Component {
 // hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading,
 // selectedPurchase is used in getPurchase
 export default connect( ( state, props ) => ( {
-	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedSites: hasLoadedSites( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 	pluginList: props.selectedSite ? getPluginsForSite( state, props.selectedSite.ID ) : [],

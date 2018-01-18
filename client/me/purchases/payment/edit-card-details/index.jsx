@@ -19,7 +19,7 @@ import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDataLoading, recordPageView } from 'me/purchases/utils';
-import { isRequestingSites } from 'state/sites/selectors';
+import { hasLoadedSites } from 'state/selectors';
 import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryStoredCards from 'components/data/query-stored-cards';
@@ -84,7 +84,7 @@ class EditCardDetails extends PurchaseCardDetails {
 const mapStateToProps = ( state, { cardId, purchaseId } ) => {
 	return {
 		card: getStoredCardById( state, cardId ),
-		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedSites: hasLoadedSites( state ),
 		hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, purchaseId ),

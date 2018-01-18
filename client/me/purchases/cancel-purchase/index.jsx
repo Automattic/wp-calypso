@@ -34,7 +34,7 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
-import { isRequestingSites } from 'state/sites/selectors';
+import { hasLoadedSites } from 'state/selectors';
 import Main from 'components/main';
 import { managePurchase, purchasesRoot } from '../paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -188,7 +188,7 @@ class CancelPurchase extends React.Component {
 }
 
 export default connect( ( state, props ) => ( {
-	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedSites: hasLoadedSites( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	selectedPurchase: getByPurchaseId( state, props.purchaseId ),
 	selectedSite: getSelectedSiteSelector( state ),

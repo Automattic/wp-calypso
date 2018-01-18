@@ -31,7 +31,7 @@ import {
 import { isMonthly } from 'lib/plans/constants';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
+import { hasLoadedSites } from 'state/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
@@ -345,7 +345,7 @@ export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 
 	return {
-		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedSites: hasLoadedSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: purchase,
 		selectedSite: getSelectedSiteSelector( state ),
