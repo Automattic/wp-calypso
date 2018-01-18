@@ -110,6 +110,16 @@ const PluginsDataActions = {
 					error: null,
 				} );
 				debug( 'curated plugin list', data );
+			} )
+			.catch( () => {
+				Dispatcher.handleServerAction( {
+					type: 'RECEIVE_WPORG_PLUGINS_LIST',
+					action: 'FETCH_WPORG_PLUGINS_LIST',
+					page: 1,
+					category: 'featured',
+					data: normalizePluginsList( [] ),
+					error: null,
+				} );
 			} );
 	},
 
