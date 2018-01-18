@@ -17,6 +17,8 @@ export const consoleDispatcher = next => ( ...args ) => {
 	const store = next( ...args );
 
 	if ( 'undefined' !== typeof window ) {
+		Object.assign( window, store );
+
 		Object.defineProperty( window, 'state', {
 			enumerable: true,
 			get: store.getState,
