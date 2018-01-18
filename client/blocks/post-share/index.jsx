@@ -388,7 +388,7 @@ class PostShare extends Component {
 			return (
 				<Notice status="is-success" onDismissClick={ this.dismiss }>
 					{ translate( "We'll share your post on %s.", {
-						args: this.props.scheduledAt.format( 'ddd, MMMM Do YYYY, h:mm:ss a' ),
+						args: this.props.scheduledAt.format( 'LLLL' ),
 					} ) }
 				</Notice>
 			);

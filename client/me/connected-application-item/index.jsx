@@ -149,7 +149,7 @@ class ConnectedApplicationItem extends React.Component {
 							),
 						},
 						args: {
-							date: this.props.moment( authorized ).format( 'MMM D, YYYY @ h:mm a' ),
+							date: this.props.moment( authorized ).format( 'lll' ),
 						},
 					}
 				) }
