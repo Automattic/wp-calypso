@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import jetpackAuthAttempts from '../jetpack-auth-attempts';
-import { JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
+import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
 
 describe( '#jetpackAuthAttempts()', () => {
 	test( 'should default to an empty object', () => {
@@ -49,5 +49,18 @@ describe( '#jetpackAuthAttempts()', () => {
 		);
 
 		expect( state[ 'example.com' ] ).toMatchObject( { attempt: 2 } );
+	} );
+
+	test( 'should clear state on completion', () => {
+		const slug = 'example.com';
+		const state = jetpackAuthAttempts(
+			{ [ slug ]: { timestamp: Date.now(), attempt: 1 } },
+			{
+				type: JETPACK_CONNECT_COMPLETE_FLOW,
+				slug,
+			}
+		);
+
+		expect( state ).not.toHaveProperty( slug );
 	} );
 } );
