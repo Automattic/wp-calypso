@@ -45,17 +45,13 @@ export class CommentList extends Component {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		const { changePage, isPostView, siteId, status } = this.props;
+		const { siteId, status, changePage } = this.props;
 		const totalPages = this.getTotalPages();
 		if ( ! this.isRequestedPageValid() && totalPages > 1 ) {
 			return changePage( totalPages );
 		}
 
-		if (
-			isPostView !== nextProps.isPostView ||
-			siteId !== nextProps.siteId ||
-			status !== nextProps.status
-		) {
+		if ( siteId !== nextProps.siteId || status !== nextProps.status ) {
 			this.setState( {
 				isBulkMode: false,
 				selectedComments: [],
@@ -195,10 +191,10 @@ export class CommentList extends Component {
 						<Comment
 							commentId={ commentId }
 							commentsListQuery={ commentsListQuery }
+							key={ `comment-${ siteId }-${ commentId }` }
 							isBulkMode={ isBulkMode }
 							isPostView={ isPostView }
 							isSelected={ this.isCommentSelected( commentId ) }
-							key={ `comment-${ siteId }-${ commentId }` }
 							toggleSelected={ this.toggleCommentSelected }
 						/>
 					) ) }
