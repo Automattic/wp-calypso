@@ -632,7 +632,7 @@ export class JetpackAuthorize extends Component {
 
 export default connect(
 	( state, { authQuery } ) => {
-		const siteSlug = urlToSlug( authQuery.site );
+		const siteSlug = urlToSlug( authQuery.homeUrl );
 
 		// Note: reading from a cookie here rather than redux state,
 		// so any change in value will not execute connect().
@@ -640,7 +640,7 @@ export default connect(
 		const isMobileAppFlow = !! mobileAppRedirect;
 
 		return {
-			authAttempts: getAuthAttempts( state, siteSlug ),
+			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( authQuery.site ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
