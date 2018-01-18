@@ -28,12 +28,12 @@ import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
-import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
 import {
 	PLAN_JETPACK_BUSINESS,
@@ -187,23 +187,7 @@ export function signupForm( context, next ) {
 
 	if ( validQueryObject ) {
 		const transformedQuery = authQueryTransformer( query );
-
-		// No longer setting/persisting query
-		//
-		// FIXME
-		//
-		// However, clientId is required for some reducer logic :(
-		//
-		// Set timestamp here so reducer can remain pure
-		//
-		// Hopefully when actions move to data-layer, this will become clearer and
-		// we won't need to store clientId in state
-		//
-		context.store.dispatch( {
-			type: JETPACK_CONNECT_QUERY_SET,
-			clientId: transformedQuery.clientId,
-			timestamp: Date.now(),
-		} );
+		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
 		let interval = context.params.interval;
 		let locale = context.params.locale;
@@ -238,22 +222,7 @@ export function authorizeForm( context, next ) {
 
 	if ( validQueryObject ) {
 		const transformedQuery = authQueryTransformer( query );
-
-		// No longer setting/persisting query
-		//
-		// FIXME
-		//
-		// However, from and clientId are required for some reducer logic :(
-		//
-		// Hopefully when actions move to data-layer, this will become clearer and
-		// we won't need to store clientId in state
-		//
-		context.store.dispatch( {
-			type: JETPACK_CONNECT_QUERY_SET,
-			clientId: transformedQuery.clientId,
-			timestamp: Date.now(),
-		} );
-
+		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {
 		context.primary = <NoDirectAccessError />;
