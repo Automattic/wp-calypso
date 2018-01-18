@@ -19,7 +19,6 @@ import PeopleListSectionHeader from 'my-sites/people/people-list-section-header'
 import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
-import Gravatar from 'components/gravatar';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import { isRequestingInvitesForSite, getInvitesForSite } from 'state/invites/selectors';
 
@@ -49,13 +48,6 @@ class PeopleInvites extends React.PureComponent {
 				type="invite"
 				isSelectable={ false }
 			/>
-		);
-
-		return (
-			<Card key={ invite.invite_key }>
-				Invited <Gravatar user={ gravatarUser } /> <strong>{ userNameOrEmail }</strong> as{' '}
-				<strong>{ invite.role }</strong>
-			</Card>
 		);
 	};
 
