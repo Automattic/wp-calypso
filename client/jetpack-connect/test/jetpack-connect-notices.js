@@ -6,34 +6,64 @@
  * External dependencies
  */
 import React from 'react';
-import renderer from 'react-test-renderer';
+import { shallow } from 'enzyme';
+import { identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import JetpackConnectNotices from '../jetpack-connect-notices';
+import { JetpackConnectNotices } from '../jetpack-connect-notices';
+import Notice from 'components/notice';
+
+const terminalErrorNoticeType = 'notExists';
+const nonTerminalErrorNoticeType = 'retryAuth';
+const requiredProps = { translate: identity };
 
 describe( 'JetpackConnectNotices', () => {
 	test( 'Should render notice', () => {
-		const component = renderer.create( <JetpackConnectNotices noticeType="notExists" /> );
-		expect( component ).toMatchSnapshot();
+		const wrapper = shallow(
+			<JetpackConnectNotices { ...requiredProps } noticeType={ terminalErrorNoticeType } />
+		);
+		expect( wrapper ).toMatchSnapshot();
+		expect( wrapper.find( Notice ) ).toHaveLength( 1 );
 	} );
 
-	test( 'Should not render notice if callback supplied', () => {
+	test( 'Should not render Notice on terminal error if callback supplied', () => {
 		const onTerminalError = jest.fn();
-		const component = renderer.create(
-			<JetpackConnectNotices noticeType="notExists" onTerminalError={ onTerminalError } />
+		const wrapper = shallow(
+			<JetpackConnectNotices
+				{ ...requiredProps }
+				noticeType={ terminalErrorNoticeType }
+				onTerminalError={ onTerminalError }
+			/>
+		);
+		expect( wrapper ).toMatchSnapshot();
+		expect( wrapper.find( Notice ) ).toHaveLength( 0 );
+	} );
+
+	test( 'Should call callback on terminal error', () => {
+		const onTerminalError = jest.fn();
+		shallow(
+			<JetpackConnectNotices
+				{ ...requiredProps }
+				noticeType={ terminalErrorNoticeType }
+				onTerminalError={ onTerminalError }
+			/>
 		);
 		expect( onTerminalError ).toHaveBeenCalledTimes( 1 );
-		expect( component ).toMatchSnapshot();
 	} );
 
 	test( 'Should render non-terminal notice if callback supplied', () => {
 		const onTerminalError = jest.fn();
-		const component = renderer.create(
-			<JetpackConnectNotices noticeType="retryAuth" onTerminalError={ onTerminalError } />
+		const wrapper = shallow(
+			<JetpackConnectNotices
+				{ ...requiredProps }
+				noticeType={ nonTerminalErrorNoticeType }
+				onTerminalError={ onTerminalError }
+			/>
 		);
 		expect( onTerminalError ).not.toHaveBeenCalled();
-		expect( component ).toMatchSnapshot();
+		expect( wrapper ).toMatchSnapshot();
+		expect( wrapper.find( Notice ) ).toHaveLength( 1 );
 	} );
 } );
