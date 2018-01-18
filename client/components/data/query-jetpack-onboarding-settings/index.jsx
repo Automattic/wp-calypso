@@ -15,7 +15,8 @@ import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actio
 
 class QueryJetpackOnboardingSettings extends Component {
 	static propTypes = {
-		siteId: PropTypes.number.isRequired,
+		siteId: PropTypes.number,
+		// Connected props
 		requestingSettings: PropTypes.bool,
 		requestJetpackOnboardingSettings: PropTypes.func,
 	};
@@ -31,7 +32,7 @@ class QueryJetpackOnboardingSettings extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingSettings ) {
+		if ( props.requestingSettings || ! props.siteId ) {
 			return;
 		}
 

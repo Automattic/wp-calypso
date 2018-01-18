@@ -6,6 +6,7 @@
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -23,9 +24,18 @@ import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions'
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
-		blogname: '',
-		blogdescription: '',
+		blogname: get( this.props.settings, 'siteTitle' ),
+		blogdescription: get( this.props.settings, 'siteDescription' ),
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
+			this.setState( {
+				blogname: nextProps.settings.siteTitle,
+				blogdescription: nextProps.settings.siteDescription,
+			} );
+		}
+	}
 
 	handleChange = ( { blogname, blogdescription } ) => {
 		this.setState( { blogname, blogdescription } );
@@ -33,6 +43,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 	handleSubmit = event => {
 		event.preventDefault();
+		if ( this.props.isRequestingSettings ) {
+			return;
+		}
+
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.blogname,
 			siteDescription: this.state.blogdescription,
@@ -41,7 +55,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { isRequestingSettings, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -63,10 +77,11 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							autoFocusBlogname
 							blogname={ this.state.blogname }
 							blogdescription={ this.state.blogdescription }
+							disabled={ isRequestingSettings }
 							onChange={ this.handleChange }
 						/>
 
-						<Button primary type="submit">
+						<Button disabled={ isRequestingSettings } primary type="submit">
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
