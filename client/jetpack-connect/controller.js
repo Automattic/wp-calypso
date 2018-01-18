@@ -32,8 +32,8 @@ import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
-import { persistMobileRedirect, storePlan } from './persistence-utils';
+import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
+import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
 	PLAN_JETPACK_PREMIUM,
@@ -127,16 +127,8 @@ export function newSite( context, next ) {
 	next();
 }
 
-export function connect( context, next ) {
-	const { path, pathname, params, query } = context;
-	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-
-	debug( 'entered connect flow with params %o', params );
-
-	const planSlug = getPlanSlugFromFlowType( type, interval );
-	planSlug && storePlan( planSlug );
-
+export function persistMobileAppFlow( context, next ) {
+	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
 			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
@@ -147,6 +139,26 @@ export function connect( context, next ) {
 			persistMobileRedirect( '' );
 		}
 	}
+	next();
+}
+
+export function setMasterbar( context, next ) {
+	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
+		const masterbarToggle = retrieveMobileRedirect() ? hideMasterbar() : showMasterbar();
+		context.store.dispatch( masterbarToggle );
+	}
+	next();
+}
+
+export function connect( context, next ) {
+	const { path, pathname, params, query } = context;
+	const { type = false, interval } = params;
+	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+
+	debug( 'entered connect flow with params %o', params );
+
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+	planSlug && storePlan( planSlug );
 
 	analytics.pageView.record( pathname, analyticsPageTitle );
 
