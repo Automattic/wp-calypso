@@ -1,8 +1,10 @@
+/** @format */
 /**
  * External dependencies
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
@@ -13,57 +15,50 @@ import SetupStart from './setup-start';
 import SetupTos from './setup-tos';
 import SetupForm from './setup-form';
 import SetupFooter from './setup-footer';
+import { getCredentialsAutoConfigStatus } from 'state/selectors';
 
 class CredentialsSetupFlow extends Component {
 	static propTypes = {
-		isPressable: PropTypes.bool,
+		canAutoconfigure: PropTypes.bool,
 		formIsSubmitting: PropTypes.bool,
 		siteId: PropTypes.number,
-		updateCredentials: PropTypes.func,
-		autoConfigCredentials: PropTypes.func,
-		autoConfigStatus: PropTypes.string
+		autoConfigStatus: PropTypes.string,
 	};
 
-	componentWillMount() {
-		this.setState( { currentStep: 'start', showPopover: false } );
-	}
-
-	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
+	state = {
+		currentStep: 'start',
+		showPopover: false,
+	};
 
 	reset = () => this.setState( { currentStep: 'start' } );
 
-	getNextStep = step => get( {
-		start: 'tos',
-		tos: 'form',
-	}, step, step );
+	getNextStep = step =>
+		get(
+			{
+				start: 'tos',
+				tos: 'form',
+			},
+			step,
+			step
+		);
 
-	goToNextStep = () => this.setState( {
-		currentStep: this.getNextStep( this.state.currentStep )
-	} );
-
-	autoConfigure = () => this.props.autoConfigCredentials( this.props.siteId );
+	goToNextStep = () =>
+		this.setState( {
+			currentStep: this.getNextStep( this.state.currentStep ),
+		} );
 
 	render() {
-		const {
-			isPressable,
-			formIsSubmitting,
-			updateCredentials,
-			siteId
-		} = this.props;
+		const { canAutoconfigure, formIsSubmitting, siteId } = this.props;
 
 		return (
 			<div className="credentials-setup-flow">
-				{ 'start' === this.state.currentStep && (
-					<SetupStart
-						goToNextStep={ this.goToNextStep }
-					/>
-				) }
+				{ 'start' === this.state.currentStep && <SetupStart goToNextStep={ this.goToNextStep } /> }
 				{ 'tos' === this.state.currentStep && (
 					<SetupTos
-						autoConfigure={ this.autoConfigure }
-						isPressable={ isPressable }
-						reset={ this.reset }
+						canAutoconfigure={ canAutoconfigure }
 						goToNextStep={ this.goToNextStep }
+						reset={ this.reset }
+						siteId={ siteId }
 					/>
 				) }
 				{ 'form' === this.state.currentStep && [
@@ -72,7 +67,6 @@ class CredentialsSetupFlow extends Component {
 						formIsSubmitting={ formIsSubmitting }
 						reset={ this.reset }
 						siteId={ siteId }
-						updateCredentials={ updateCredentials }
 					/>,
 					<SetupFooter key="credentials-flow-setup-form-footer" />,
 				] }
@@ -81,4 +75,8 @@ class CredentialsSetupFlow extends Component {
 	}
 }
 
-export default localize( CredentialsSetupFlow );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	autoConfigStatus: getCredentialsAutoConfigStatus( state, siteId ),
+} );
+
+export default connect( mapStateToProps )( localize( CredentialsSetupFlow ) );

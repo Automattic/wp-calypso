@@ -4,6 +4,7 @@
  * External dependendies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -19,6 +20,7 @@ import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import Gridicon from 'gridicons';
+import { updateCredentials } from 'state/jetpack/credentials/actions';
 
 export class CredentialsForm extends Component {
 	state = {
@@ -237,4 +239,4 @@ export class CredentialsForm extends Component {
 	}
 }
 
-export default localize( CredentialsForm );
+export default connect( null, { updateCredentials } )( localize( CredentialsForm ) );

@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
@@ -14,11 +15,12 @@ import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
 import CredentialsForm from '../credentials-form/index';
 import Button from 'components/button';
+import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 
 class CredentialsConfigured extends Component {
-	componentWillMount() {
-		this.setState( { isRevoking: false } );
-	}
+	state = {
+		isRevoking: false,
+	};
 
 	getProtocolDescription = protocol => {
 		const { translate } = this.props;
@@ -43,13 +45,11 @@ class CredentialsConfigured extends Component {
 
 	render() {
 		const {
-			isPressable,
+			canAutoconfigure,
 			credentialsUpdating,
 			mainCredentials,
 			formIsSubmitting,
 			siteId,
-			updateCredentials,
-			deleteCredentials,
 			translate,
 		} = this.props;
 
@@ -89,7 +89,7 @@ class CredentialsConfigured extends Component {
 			);
 		}
 
-		if ( isPressable ) {
+		if ( canAutoconfigure ) {
 			return (
 				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking } href="#">
 					<Gridicon
@@ -133,10 +133,10 @@ class CredentialsConfigured extends Component {
 						role: 'main',
 						formIsSubmitting,
 						siteId,
-						updateCredentials,
+						updateCredentials: this.props.updateCredentials,
 						showCancelButton: false,
 						showDeleteButton: true,
-						deleteCredentials,
+						deleteCredentials: this.props.deleteCredentials,
 					} }
 				/>
 			</FoldableCard>
@@ -144,4 +144,9 @@ class CredentialsConfigured extends Component {
 	}
 }
 
-export default localize( CredentialsConfigured );
+const mapDispatchToProps = {
+	deleteCredentials,
+	updateCredentials,
+};
+
+export default connect( null, mapDispatchToProps )( localize( CredentialsConfigured ) );
