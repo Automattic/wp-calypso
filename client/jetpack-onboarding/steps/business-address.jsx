@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { map } from 'lodash';
+import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -23,13 +23,13 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
-	state = {
-		city: '',
-		name: '',
-		state: '',
-		street: '',
-		zip: '',
-	};
+	state = get( this.props.settings, 'businessAddress' );
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
+			this.setState( nextProps.settings.businessAddress );
+		}
+	}
 
 	getChangeHandler = field => event => {
 		this.setState( { [ field ]: event.target.value } );
