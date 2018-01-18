@@ -153,7 +153,7 @@
     "uuid": "2.0.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
-    "webpack": "3.8.1",
+    "webpack": "3.10.0",
     "webpack-dev-middleware": "1.11.0",
     "webpack-hot-middleware": "2.15.0",
     "wpcom": "5.4.0",
