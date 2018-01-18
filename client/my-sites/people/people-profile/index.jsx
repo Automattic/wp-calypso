@@ -20,13 +20,18 @@ class PeopleProfile extends React.PureComponent {
 	static displayName = 'PeopleProfile';
 
 	getRole = () => {
-		const user = this.props.user;
+		const { invite, user } = this.props;
+
+		if ( invite && invite.role ) {
+			return invite.role;
+		}
+
 		if ( ! user ) {
 			return 'subscriber';
 		}
 
 		if ( user && user.roles && user.roles[ 0 ] ) {
-			return this.props.user.roles[ 0 ];
+			return user.roles[ 0 ];
 		}
 
 		return;
@@ -101,17 +106,20 @@ class PeopleProfile extends React.PureComponent {
 		page( `/read/blogs/${ blogId }` );
 	};
 
-	renderName = () => {
-		const user = this.props.user;
+	renderNameOrEmail = () => {
+		const { translate, type, user } = this.props;
+
 		let name;
 		if ( ! user ) {
-			name = this.props.translate( 'Loading Users', {
+			name = translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
 			} );
 		} else if ( user.name ) {
 			name = user.name;
 		} else if ( user.label ) {
 			name = user.label;
+		} else if ( 'invite' === type && user.email ) {
+			name = user.email;
 		}
 
 		const blogId = get( user, 'follow_data.params.blog_id', false );
@@ -204,21 +212,31 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	render() {
-		const user = this.props.user,
-			classes = classNames( 'people-profile', {
-				'is-placeholder': ! user,
-			} );
+		const { gravatarUser, user } = this.props;
+		const classes = classNames( 'people-profile', {
+			'is-placeholder': ! user,
+		} );
 
 		return (
 			<div
-				{ ...omit( this.props, 'className', 'user', 'moment', 'numberFormat', 'translate' ) }
+				{ ...omit(
+					this.props,
+					'className',
+					'invite',
+					'type',
+					'gravatarUser',
+					'user',
+					'moment',
+					'numberFormat',
+					'translate'
+				) }
 				className={ classes }
 			>
 				<div className="people-profile__gravatar">
-					<Gravatar user={ user } size={ 72 } />
+					<Gravatar user={ gravatarUser || user } size={ 72 } />
 				</div>
 				<div className="people-profile__detail">
-					{ this.renderName() }
+					{ this.renderNameOrEmail() }
 					{ this.renderLogin() }
 					{ this.isFollowerType() ? this.renderSubscribedDate() : this.renderRole() }
 				</div>

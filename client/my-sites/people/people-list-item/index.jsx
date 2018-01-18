@@ -53,6 +53,7 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
+		const { className, gravatarUser, invite, onRemove, translate, type, user } = this.props;
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
 
@@ -61,29 +62,34 @@ class PeopleListItem extends React.PureComponent {
 				{ ...omit(
 					this.props,
 					'className',
+					'gravatarUser',
+					'invite',
 					'user',
 					'site',
 					'isSelectable',
 					'onRemove',
 					'moment',
 					'numberFormat',
-					'translate'
+					'translate',
+					'type'
 				) }
-				className={ classNames( 'people-list-item', this.props.className ) }
+				className={ classNames( 'people-list-item', className ) }
 				tagName={ tagName }
 				href={ this.getCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile user={ this.props.user } />
+					<PeopleProfile
+						invite={ invite }
+						gravatarUser={ gravatarUser }
+						type={ type }
+						user={ user }
+					/>
 				</div>
-				{ this.props.onRemove && (
+				{ onRemove && (
 					<div className="people-list-item__actions">
-						<button
-							className="button is-link people-list-item__remove-button"
-							onClick={ this.props.onRemove }
-						>
-							{ this.props.translate( 'Remove', {
+						<button className="button is-link people-list-item__remove-button" onClick={ onRemove }>
+							{ translate( 'Remove', {
 								context: 'Verb: Remove a user or follower from the blog.',
 							} ) }
 						</button>

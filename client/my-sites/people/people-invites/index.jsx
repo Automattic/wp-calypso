@@ -36,7 +36,6 @@ class PeopleInvites extends React.PureComponent {
 		// the email).
 		const user = invite.user;
 		const gravatarUser = pick( user, 'ID', 'display_name', 'avatar_URL' );
-		const userNameOrEmail = user.name || user.login || user.email;
 
 		const { site } = this.props;
 
@@ -44,6 +43,7 @@ class PeopleInvites extends React.PureComponent {
 			<PeopleListItem
 				key={ invite.invite_key }
 				invite={ invite }
+				gravatarUser={ gravatarUser }
 				user={ user }
 				site={ site }
 				type="invite"
