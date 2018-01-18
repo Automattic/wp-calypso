@@ -299,7 +299,7 @@ class CancelPurchaseButton extends Component {
 		if ( refundable ) {
 			cancelAndRefundPurchase(
 				purchase.id,
-				{ product_id: purchase.productId, cancel_bundled_domain: cancel_bundled_domain },
+				{ product_id: purchase.productId, cancel_bundled_domain: cancel_bundled_domain ? 1 : 0 },
 				this.handleSubmit
 			);
 		} else {
