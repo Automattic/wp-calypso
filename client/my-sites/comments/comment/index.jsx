@@ -124,15 +124,7 @@ export class Comment extends Component {
 			return;
 		}
 		const { offsetTop } = this.state;
-		scrollTo( {
-			x: 0,
-			y: offsetTop,
-			onComplete: () => {
-				if ( offsetTop !== window.scrollY ) {
-					window.scrollTo( 0, offsetTop );
-				}
-			},
-		} );
+		scrollTo( { x: 0, y: offsetTop } );
 	};
 
 	toggleEditMode = () => {
