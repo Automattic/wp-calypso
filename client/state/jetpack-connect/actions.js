@@ -27,6 +27,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
+	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
@@ -64,6 +65,14 @@ export function dismissUrl( url ) {
 	return {
 		type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 		url: url,
+	};
+}
+
+export function startAuthorizeStep( clientId ) {
+	return {
+		type: JETPACK_CONNECT_QUERY_SET,
+		clientId,
+		timestamp: Date.now(),
 	};
 }
 
