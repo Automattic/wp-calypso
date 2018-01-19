@@ -1,7 +1,8 @@
 module.exports = {
 	root: true,
 	'extends': [
-		'wpcalypso/react-a11y',
+		'wpcalypso/react',
+		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 	],
 	parser: 'babel-eslint',
