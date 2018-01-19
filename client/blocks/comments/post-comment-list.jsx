@@ -87,27 +87,6 @@ class PostCommentList extends React.Component {
 		activeEditCommentId: null,
 	};
 
-	/**
-	 * Should we scroll down to a comment? Only if we have satisfied these conditions:
-	 * 1. there is a startingCommentId
-	 * 2. the comment has loaded and is on the DOM
-	 * 3. we haven't already scrolled to it yet
-	 * 4. we have loaded some comments above + below it already (or there is only 1 comment)
-	 *
-	 * @param {object} props - the propes to use when evaluating if window should be scrolled down to a comment.
-	 * @returns {boolean} - whether or not we should scroll to a comment
-	 */
-	shouldScrollToComment = ( props = this.props ) => {
-		return !! (
-			props.startingCommentId &&
-			props.commentsTree[ this.props.startingCommentId ] &&
-			props.commentsFetchingStatus.hasReceivedBefore &&
-			props.commentsFetchingStatus.hasReceivedAfter &&
-			! this.hasScrolledToComment &&
-			window.document.getElementById( `comment-${ props.startingCommentId }` )
-		);
-	};
-
 	shouldFetchInitialComment = ( { startingCommentId, initialComment } ) => {
 		return !! ( startingCommentId && ! initialComment );
 	};
@@ -149,18 +128,30 @@ class PostCommentList extends React.Component {
 		return ( propsExist && propChanged ) || commentIdBail;
 	};
 
-	componentWillMount() {
-		const { post: { ID: postId, site_ID: siteId }, commentsFilter: status } = this.props;
+	initialFetches = ( props = this.props ) => {
+		const { postId, siteId, commentsFilter: status } = props;
 
-		if ( this.shouldFetchInitialComment( this.props ) ) {
-			this.props.requestComment( { siteId, commentId: this.props.startingCommentId } );
-		} else if ( this.shouldFetchInitialPages( this.props ) ) {
+		if ( this.shouldFetchInitialComment( props ) ) {
+			// there is an edgecase the initialComment can change while on the same post
+			// in this case we can't just load the exact comment in question because
+			// we could create a gap in the list.
+			if ( this.props.commentsTree ) {
+				this.viewEarlierCommentsHandler();
+			} else {
+				this.props.requestComment( { siteId, commentId: props.startingCommentId } );
+			}
+		} else if ( this.shouldFetchInitialPages( props ) ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
 		} else {
 			this.props.requestPostComments( { siteId, postId, status } );
 		}
+	};
+
+	componentWillMount() {
+		this.initialFetches();
+		this.scrollWhenDOMReady();
 	}
 
 	componentDidMount() {
@@ -168,36 +159,27 @@ class PostCommentList extends React.Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const siteId = get( nextProps, 'post.site_ID' );
-		const postId = get( nextProps, 'post.ID' );
-		const status = get( nextProps, 'commentsFilter' );
-
-		if ( this.shouldFetchInitialComment( nextProps ) ) {
-			// there is an edgecase the initialComment can change while on the same post
-			// in this case we can't just load the exact comment in question because
-			// we could create a gap in the list.
-			if ( this.props.commentsTree ) {
-				this.viewEarlierCommentsHandler();
-			} else {
-				this.props.requestComment( { siteId, commentId: nextProps.startingCommentId } );
-			}
+		this.initialFetches( nextProps );
+		if (
+			this.props.siteId !== nextProps.siteId ||
+			this.props.postId !== nextProps.postId ||
+			this.props.startingCommentId !== nextProps.startingCommentId
+		) {
 			this.hasScrolledToComment = false;
-		} else if ( this.shouldFetchInitialPages( nextProps ) ) {
-			this.viewEarlierCommentsHandler();
-			this.viewLaterCommentsHandler();
-			this.alreadyLoadedInitialSet = true;
-		} else if ( this.shouldNormalFetchAfterPropsChange( nextProps ) ) {
-			nextProps.requestPostComments( { siteId, postId, status } );
+			this.scrollWhenDOMReady();
 		}
+	}
 
-		// first defer is to give the startingCommentId time to render to the dom
-		// second defer is to give the above/below comments to render to the dom
-		delay( () => {
-			if ( this.shouldScrollToComment( nextProps ) ) {
+	commentIsOnDOM = commentId => !! window.document.getElementById( `comment-${ commentId }` );
+
+	scrollWhenDOMReady = () => {
+		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
+			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
 				delay( () => this.scrollToComment(), 50 );
 			}
-		}, 50 );
-	}
+			delay( this.scrollWhenDOMReady, 100 );
+		}
+	};
 
 	renderComment = commentId => {
 		if ( ! commentId ) {
@@ -481,29 +463,34 @@ class PostCommentList extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const authorId = getCurrentUserId( state );
+		const siteId = ownProps.post.site_ID;
+		const postId = ownProps.post.ID;
+
 		return {
+			siteId,
+			postId,
 			commentsTree: getPostCommentsTree(
 				state,
-				ownProps.post.site_ID,
-				ownProps.post.ID,
+				siteId,
+				postId,
 				ownProps.commentsFilterDisplay ? ownProps.commentsFilterDisplay : ownProps.commentsFilter,
 				authorId
 			),
 			commentsFetchingStatus: commentsFetchingStatus(
 				state,
-				ownProps.post.site_ID,
-				ownProps.post.ID,
+				siteId,
+				postId,
 				ownProps.commentCount
 			),
 			initialComment: getCommentById( {
 				state,
-				siteId: ownProps.post.site_ID,
+				siteId,
 				commentId: ownProps.startingCommentId,
 			} ),
 			activeReplyCommentId: getActiveReplyCommentId( {
 				state,
-				siteId: ownProps.post.site_ID,
-				postId: ownProps.post.ID,
+				siteId,
+				postId,
 			} ),
 		};
 	},
