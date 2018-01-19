@@ -68,6 +68,14 @@ reduxStoreReady.then( reduxStore => {
 	}
 } );
 
+const getStorageItem = () => {
+	try {
+		return JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) );
+	} catch ( error ) {
+		return {};
+	}
+};
+
 // Evaluate isSupportUserSession at module startup time, then freeze it
 // for the remainder of the session. This is needed because the User
 // module clears the store on change; it could return false if called
@@ -77,12 +85,9 @@ const _isSupportUserSession = ( () => {
 		return false;
 	}
 
-	const supportUser = JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) );
-	if ( supportUser && supportUser.user && supportUser.token ) {
-		return true;
-	}
+	const supportUser = getStorageItem();
 
-	return false;
+	return supportUser && supportUser.user && supportUser.token;
 } )();
 
 export const isSupportUserSession = () => _isSupportUserSession;
@@ -144,7 +149,7 @@ export const boot = () => {
 		return;
 	}
 
-	const { user, token } = JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) );
+	const { user, token } = getStorageItem();
 	debug( 'Booting Calypso with support user', user );
 
 	window.sessionStorage.removeItem( STORAGE_KEY );
@@ -178,12 +183,12 @@ export const fetchToken = ( user, password ) => {
 	return reduxStoreReady.then( reduxStore => {
 		reduxStore.dispatch( supportUserTokenFetch( user ) );
 
-		const setToken = response => {
-			rebootWithToken( response.username, response.token );
+		const setToken = ( { username, token } ) => {
+			rebootWithToken( username, token );
 		};
 
-		const errorFetchingToken = error => {
-			reduxStore.dispatch( supportUserError( error.message ) );
+		const errorFetchingToken = ( { message } ) => {
+			reduxStore.dispatch( supportUserError( message ) );
 		};
 
 		return wpcom
