@@ -29,6 +29,7 @@ import { authQueryTransformer } from './utils';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
+import { login } from 'lib/paths';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { sectionify } from 'lib/route';
@@ -156,6 +157,11 @@ export function connect( context, next ) {
 	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 
 	debug( 'entered connect flow with params %o', params );
+
+	if ( retrieveMobileRedirect() && ! userModule.get() ) {
+		// Force login for mobile app flow. App will intercept and prompt native login.
+		return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
+	}
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 	planSlug && storePlan( planSlug );
