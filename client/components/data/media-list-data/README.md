@@ -12,10 +12,10 @@ var React = require( 'react' ),
 	MediaListData = require( 'components/data/media-list-data' ),
 	MyChildComponent = require( './my-child-component' );
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class MyComponent extends React.Component {
+	displayName = 'MyComponent';
 
-	render: function() {
+	render() {
 		return (
 			<MediaListData siteId={ this.props.siteId }>
 				<MyChildComponent />

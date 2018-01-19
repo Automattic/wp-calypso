@@ -12,17 +12,17 @@ var React = require( 'react' ),
 	CartData = require( 'components/data/cart-data' ),
 	MyChildComponent = require( './my-child-component' );
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class MyComponent extends React.Component {
+	static displayName = 'MyComponent';
 
-	render: function() {
+	render() {
 		return (
 			<CartData>
 				<MyChildComponent />
 			</CartData>
 		);
 	}
-} );
+}
 ```
 
 The child component should expect to receive any props defined during the render.

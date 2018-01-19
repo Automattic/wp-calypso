@@ -10,15 +10,15 @@ React component used to display a Date Picker.
 ```js
 var DatePicker = require( 'components/date-picker' );
 
-module.exports = React.createClass( {
+export default class MyComponent extends React.Component {
 
 	// ...
 
-	this.onSelectDay: function( date ) {
+	onSelectDay = function( date ) {
 		this.setState( { date: date } );
-	},
+	};
 
-	render: function() {
+	render() {
 		var events = [
 			{
 				title: '1 other post scheduled',
@@ -40,9 +40,8 @@ module.exports = React.createClass( {
 				onSelectDay= { this.onSelectDay }
 				selectedDay= { this.state.date } />
 		);
-	}
-
-} );
+	} 
+}
 ```
 
 ---

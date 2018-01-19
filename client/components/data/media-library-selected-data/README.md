@@ -12,7 +12,7 @@ var React = require( 'react' ),
 	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
 	MyChildComponent = require( './my-child-component' );
 
-module.exports = React.createClass( {
+export default class MyComponent extends React.Component {
 	displayName: 'MyComponent',
 
 	render: function() {

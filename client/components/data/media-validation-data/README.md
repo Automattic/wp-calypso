@@ -12,17 +12,17 @@ var React = require( 'react' ),
 	MediaValidationData = require( 'components/data/media-validation-data' ),
 	MyChildComponent = require( './my-child-component' );
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class MyComponent extends React.Component {
+	static displayName = 'MyComponent',
 
-	render: function() {
+	render() {
 		return (
 			<MediaValidationData siteId={ this.props.siteId }>
 				<MyChildComponent />
 			</MediaValidationData>
 		);
 	}
-} );
+}
 ```
 
 The child component should expect to receive any props defined during the render, as well as the following additional props:

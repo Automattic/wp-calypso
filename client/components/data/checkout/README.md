@@ -12,17 +12,17 @@ var React = require( 'react' ),
 	CheckoutData = require( 'components/data/checkout' ),
 	MyChildComponent = require( './my-child-component' );
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class MyComponent extends React.Component {
+	static displayName = 'MyComponent';
 
-	render: function() {
+	render() {
 		return (
 			<CheckoutData>
 				<MyChildComponent />
 			</CheckoutData>
 		);
 	}
-} );
+}
 ```
 
 The child component should expect to receive any props defined during the render.
