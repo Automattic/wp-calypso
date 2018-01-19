@@ -133,7 +133,7 @@ class ConversationCaterpillarComponent extends React.Component {
 				>
 					{ commentCount > 1 &&
 						uniqueAuthorsCount > 1 &&
-						translate( '%(count)d comments from %(commenterName)s and others', {
+						translate( 'Load previous comments from %(commenterName)s and %(count)d others', {
 							args: {
 								commenterName: lastAuthorName,
 								count: commentCount,
@@ -141,14 +141,14 @@ class ConversationCaterpillarComponent extends React.Component {
 						} ) }
 					{ commentCount > 1 &&
 						uniqueAuthorsCount === 1 &&
-						translate( '%(count)d comments from %(commenterName)s', {
+						translate( 'Load previous comments from %(commenterName)s', {
 							args: {
 								commenterName: lastAuthorName,
 								count: commentCount,
 							},
 						} ) }
 					{ commentCount === 1 &&
-						translate( '1 comment from %(commenterName)s', {
+						translate( 'Load previous comment from %(commenterName)s', {
 							args: {
 								commenterName: lastAuthorName,
 							},
