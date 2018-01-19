@@ -26,6 +26,7 @@ import PlansLanding from './plans-landing';
 import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
@@ -95,7 +96,8 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	if ( userModule.get() && getLocaleFromPath( context.path ) ) {
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
@@ -158,7 +160,8 @@ export function connect( context, next ) {
 
 	debug( 'entered connect flow with params %o', params );
 
-	if ( retrieveMobileRedirect() && ! userModule.get() ) {
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept and prompt native login.
 		return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
 	}
