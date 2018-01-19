@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
@@ -14,6 +15,8 @@ import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
 import CredentialsForm from '../credentials-form/index';
 import Button from 'components/button';
+import { deleteCredentials } from 'state/jetpack/credentials/actions';
+import { getJetpackCredentials, isSitePressable } from 'state/selectors';
 
 class CredentialsConfigured extends Component {
 	componentWillMount() {
@@ -42,16 +45,7 @@ class CredentialsConfigured extends Component {
 	toggleRevoking = () => this.setState( { isRevoking: ! this.state.isRevoking } );
 
 	render() {
-		const {
-			isPressable,
-			credentialsUpdating,
-			mainCredentials,
-			formIsSubmitting,
-			siteId,
-			updateCredentials,
-			deleteCredentials,
-			translate,
-		} = this.props;
+		const { isPressable, mainCredentials, siteId, translate } = this.props;
 
 		const isRevoking = this.state.isRevoking;
 		const protocol = get( this.props.mainCredentials, 'protocol', 'SSH' ).toUpperCase();
@@ -122,7 +116,6 @@ class CredentialsConfigured extends Component {
 			<FoldableCard header={ header } className="credentials-configured">
 				<CredentialsForm
 					{ ...{
-						credentialsUpdating,
 						protocol: get( mainCredentials, 'protocol', 'ssh' ),
 						host: get( mainCredentials, 'host', '' ),
 						port: get( mainCredentials, 'port', '' ),
@@ -131,12 +124,9 @@ class CredentialsConfigured extends Component {
 						abspath: get( mainCredentials, 'abspath', '' ),
 						kpri: get( mainCredentials, 'kpri', '' ),
 						role: 'main',
-						formIsSubmitting,
 						siteId,
-						updateCredentials,
 						showCancelButton: false,
 						showDeleteButton: true,
-						deleteCredentials,
 					} }
 				/>
 			</FoldableCard>
@@ -144,4 +134,11 @@ class CredentialsConfigured extends Component {
 	}
 }
 
-export default localize( CredentialsConfigured );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	mainCredentials: getJetpackCredentials( state, siteId, 'main' ),
+	isPressable: isSitePressable( state, siteId ),
+} );
+
+export default connect( mapStateToProps, { deleteCredentials } )(
+	localize( CredentialsConfigured )
+);

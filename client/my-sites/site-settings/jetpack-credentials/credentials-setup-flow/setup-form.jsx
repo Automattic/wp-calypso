@@ -1,30 +1,34 @@
 /**
  * External dependencies
+ *
+ * @format
  */
+
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import CredentialsForm from '../credentials-form/index';
+import CredentialsForm from '../credentials-form';
 
-const SetupForm = ( { formIsSubmitting, reset, siteId, updateCredentials } ) => (
+const SetupForm = ( { reset, siteId } ) => (
 	<CompactCard>
-		<CredentialsForm { ...{
-			formIsSubmitting,
-			protocol: 'ssh',
-			host: '',
-			port: '22',
-			user: '',
-			pass: '',
-			abspath: '',
-			kpri: '',
-			onCancel: reset,
-			siteId,
-			updateCredentials,
-			showCancelButton: true
-		} } />
+		<CredentialsForm
+			{ ...{
+				protocol: 'ssh',
+				host: '',
+				port: '22',
+				user: '',
+				pass: '',
+				abspath: '',
+				kpri: '',
+				onCancel: reset,
+				role: 'main',
+				siteId,
+				showCancelButton: true,
+			} }
+		/>
 	</CompactCard>
 );
 
