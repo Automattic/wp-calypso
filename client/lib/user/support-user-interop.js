@@ -13,7 +13,6 @@ import qs from 'qs';
  */
 import wpcom from 'lib/wp';
 import config from 'config';
-import store from 'store';
 import localforage from 'lib/localforage';
 import {
 	supportUserTokenFetch,
@@ -78,7 +77,7 @@ const _isSupportUserSession = ( () => {
 		return false;
 	}
 
-	const supportUser = store.get( STORAGE_KEY );
+	const supportUser = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) );
 	if ( supportUser && supportUser.user && supportUser.token ) {
 		return true;
 	}
@@ -96,7 +95,7 @@ const storeUserAndToken = ( user, token ) => () => {
 	}
 
 	if ( user && token ) {
-		store.set( STORAGE_KEY, { user, token } );
+		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
 	}
 };
 
@@ -110,7 +109,7 @@ export const rebootNormally = () => {
 
 	debug( 'Rebooting Calypso normally' );
 
-	store.remove( STORAGE_KEY );
+	sessionStorage.removeItem( STORAGE_KEY );
 	window.removeEventListener( 'beforeunload', onBeforeUnload );
 	window.location.search = '';
 };
@@ -127,7 +126,7 @@ export const rebootWithToken = ( user, token ) => {
 
 	debug( 'Rebooting Calypso with support user' );
 
-	store.set( STORAGE_KEY, { user, token } );
+	sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
 	window.location.search = '';
 };
 
@@ -145,10 +144,10 @@ export const boot = () => {
 		return;
 	}
 
-	const { user, token } = store.get( STORAGE_KEY );
+	const { user, token } = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) );
 	debug( 'Booting Calypso with support user', user );
 
-	store.remove( STORAGE_KEY );
+	sessionStorage.removeItem( STORAGE_KEY );
 
 	onBeforeUnload = storeUserAndToken( user, token );
 	window.addEventListener( 'beforeunload', onBeforeUnload );
