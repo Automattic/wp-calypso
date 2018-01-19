@@ -13,9 +13,9 @@ import isPrecancellationChatAvailable from '../is-precancellation-chat-available
 describe( '#isPrecancellationChatAvailable()', () => {
 	test( 'should return false if cancellation chat is not available', () => {
 		const isPrecancellationAvailable = isPrecancellationChatAvailable( {
-			ui: {
-				olark: {
-					availability: {
+			happychat: {
+				user: {
+					isPresalesPrecancellationEligible: {
 						precancellation: false,
 					},
 				},
@@ -25,9 +25,9 @@ describe( '#isPrecancellationChatAvailable()', () => {
 	} );
 	test( 'should return true if cancellation chat is available', () => {
 		const isPrecancellationAvailable = isPrecancellationChatAvailable( {
-			ui: {
-				olark: {
-					availability: {
+			happychat: {
+				user: {
+					isPresalesPrecancellationEligible: {
 						precancellation: true,
 					},
 				},

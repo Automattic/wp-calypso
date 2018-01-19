@@ -4,5 +4,5 @@
  * @returns {Boolean}        true, when precancellation is available
  */
 export default function isPrecancellationChatAvailable( state ) {
-	return state.ui.olark.availability.precancellation;
+	return state.happychat.user.isPresalesPrecancellationEligible.precancellation;
 }
