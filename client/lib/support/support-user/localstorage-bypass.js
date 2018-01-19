@@ -84,11 +84,11 @@ export default function( allowedKeys ) {
 		const _getItem = window.Storage.prototype.getItem.bind( window.localStorage );
 		const _removeItem = window.Storage.prototype.removeItem.bind( window.localStorage );
 
-		Object.defineProperty( Storage.prototype, 'length', {
+		Object.defineProperty( window.localStorage, 'length', {
 			get: length( memoryStore ),
 		} );
 
-		Object.assign( Storage.prototype, {
+		Object.assign( window.localStorage, {
 			setItem: setItem( memoryStore, allowedKeys, _setItem ),
 			getItem: getItem( memoryStore, allowedKeys, _getItem ),
 			removeItem: removeItem( memoryStore, allowedKeys, _removeItem ),
