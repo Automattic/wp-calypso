@@ -566,7 +566,7 @@ const connectComponent = connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsLanguageSelection:
 				! siteIsJetpack ||
-				( isJetpackMinimumVersion( state, siteId, '5.8-beta' ) &&
+				( isJetpackMinimumVersion( state, siteId, '5.8-alpha' ) &&
 					config.isEnabled( 'jetpack/site-settings-language-selection' ) ),
 			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
