@@ -12,7 +12,6 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isRequestingPostTypes } from 'state/post-types/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
@@ -53,10 +52,6 @@ class QueryPostTypes extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingPostTypes ) {
-			return;
-		}
-
 		props.requestPostTypes( props.siteId );
 	}
 
@@ -68,7 +63,6 @@ class QueryPostTypes extends Component {
 export default connect(
 	( state, { siteId } ) => ( {
 		siteSettings: getSiteSettings( state, siteId ),
-		requestingPostTypes: isRequestingPostTypes( state, siteId ),
 		themeSlug: getSiteOption( state, siteId, 'theme_slug' ),
 	} ),
 	{ requestPostTypes }
