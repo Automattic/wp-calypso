@@ -26,6 +26,24 @@ export default {
 				settings[ settingKey ] = method.settings[ settingKey ].value;
 			} );
 
+			// Temporary Fix.
+			// If blank values get passed back to the API (see https://github.com/Automattic/wp-calypso/pull/21618#issuecomment-358844061)
+			// the API call will fail. We can remove this hack when we stop the payment method saving code from passing up all fields, and
+			// only pass edited fields. See https://github.com/Automattic/wp-calypso/issues/21670
+			if ( 'stripe' === method.id ) {
+				if ( ! settings.payment_request_button_theme ) {
+					settings.payment_request_button_theme = 'dark';
+				}
+
+				if ( ! settings.payment_request_button_type ) {
+					settings.payment_request_button_type = 'buy';
+				}
+
+				if ( ! settings.payment_request_button_height ) {
+					settings.payment_request_button_height = '44';
+				}
+			}
+
 			const payload = {
 				settings,
 				description: method.description,
