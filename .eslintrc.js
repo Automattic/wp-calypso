@@ -21,7 +21,6 @@ module.exports = {
 	],
 	rules: {
 		camelcase: 0, // REST API objects include underscores
-		'jsx-a11y/label-has-for': 0, // Allow nested labels, which don't use `for`
 		'jest/valid-expect': 0,
 		'max-len': [ 2, { code: 140 } ],
 		'no-restricted-imports': [ 2, 'lib/sites-list', 'lib/mixins/data-observe' ],
