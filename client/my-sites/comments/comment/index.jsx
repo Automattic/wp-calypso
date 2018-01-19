@@ -54,7 +54,7 @@ export class Comment extends Component {
 	}
 
 	componentWillMount() {
-		this.debounceScrollToOffset = debounce( this.scrollToOffset, 200 );
+		this.debounceScrollToOffset = debounce( this.scrollToOffset, 500 );
 	}
 
 	componentWillReceiveProps( nextProps ) {
