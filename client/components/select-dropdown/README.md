@@ -14,14 +14,14 @@ The children technique is appropriate when you'd like to define the "selection" 
 A good example for this case is navigation. Sometimes the option that is selected is defined by the route, other times it's a state value, external prop, etc.
 
 ```js
-var SelectDropdown = require( 'components/select-dropdown' ),
-	DropdownItem = require( 'components/select-dropdown/item' );
+import React from 'react';
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
-	render: function() {
+	render() {
 		return (
 			<SelectDropdown selectedText="Published">
 				<DropdownItem selected={ true } path="/published">Published</DropdownItem>
@@ -30,9 +30,8 @@ module.exports = React.createClass( {
 				<DropdownItem path="/trashed">Trashed</DropdownItem>
 			</SelectDropdown>
 		);
-	}
-
-} );
+	} 
+}
 ```
 
 The key here is that it's up to the parent component to explicitly define things like: which item is selected, what the selected text is (used in the dropdown header), and potentially `onClick` callbacks, etc.
