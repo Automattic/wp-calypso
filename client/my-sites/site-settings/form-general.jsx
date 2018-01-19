@@ -174,7 +174,7 @@ class SiteSettingsFormGeneral extends Component {
 		const { fields, translate } = this.props;
 
 		const langId = get( fields, 'lang_id', '' );
-		const matches = langId.match( /^error_(\w+)$/ );
+		const matches = /^error_(\w+)$/.exec( langId );
 
 		let notice;
 		switch ( matches && matches[ 1 ] ) {
