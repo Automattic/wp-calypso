@@ -8,6 +8,7 @@ import sha1 from 'hash.js/lib/hash/sha/1';
 /**
  * Internal dependencies
  */
+import createSelector from 'lib/create-selector';
 import { getUnconnectedSite } from 'state/selectors';
 
 /**
@@ -18,16 +19,19 @@ import { getUnconnectedSite } from 'state/selectors';
  * @param  {String}   siteId  	SiteId of the unconnected site.
  * @return {String}|null        Hashed userEmail of the unconnected site.
  */
-export default function getUnconnectedSiteUser( state, siteId ) {
-	const site = getUnconnectedSite( state, siteId );
-	let userIdHashed = null;
-	if ( site ) {
-		const userId = get( site, 'userEmail', null );
-		if ( userId ) {
-			const hash = sha1();
-			hash.update( userId );
-			userIdHashed = hash.digest( 'hex' );
+export default createSelector(
+	( state, siteId ) => {
+		const site = getUnconnectedSite( state, siteId );
+		let userIdHashed = null;
+		if ( site ) {
+			const userId = get( site, 'userEmail', null );
+			if ( userId ) {
+				const hash = sha1();
+				hash.update( userId );
+				userIdHashed = hash.digest( 'hex' );
+			}
 		}
-	}
-	return userIdHashed;
-}
+		return userIdHashed;
+	},
+	( state, siteId ) => [ getUnconnectedSite( state, siteId ) ]
+);
