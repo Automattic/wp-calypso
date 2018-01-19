@@ -252,6 +252,7 @@ export class UserStep extends Component {
 				socialServiceResponse = hashObject;
 			}
 		}
+		const isSocialFirst = this.props.initialContext && this.props.initialContext.query.social_first;
 
 		return (
 			<SignupForm
@@ -265,6 +266,7 @@ export class UserStep extends Component {
 				suggestedUsername={ this.props.suggestedUsername }
 				handleSocialResponse={ this.handleSocialResponse }
 				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
+				isSocialFirst={ isSocialFirst }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 			/>

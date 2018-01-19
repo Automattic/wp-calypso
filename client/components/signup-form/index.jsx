@@ -38,6 +38,8 @@ import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { createSocialUserFailed } from 'state/login/actions';
+import Card from 'components/card';
+import { preventWidows } from 'lib/formatting';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -65,6 +67,7 @@ class SignupForm extends Component {
 		goToNextStep: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
+		isSocialFirst: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		save: PropTypes.func,
@@ -78,6 +81,7 @@ class SignupForm extends Component {
 
 	static defaultProps = {
 		isSocialSignupEnabled: false,
+		isSocialFirst: false,
 	};
 
 	state = {
@@ -591,6 +595,20 @@ class SignupForm extends Component {
 			<div className={ classNames( 'signup-form', this.props.className ) }>
 				{ this.getNotice() }
 
+				{ this.props.isSocialSignupEnabled &&
+					this.props.isSocialFirst && (
+						<Card className="signup-form__social logged-out-form">
+							<SocialSignupForm
+								handleResponse={ this.props.handleSocialResponse }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+							/>
+							<p>
+								{ preventWidows( this.props.translate( 'Or register with your e-mail address.' ) ) }
+							</p>
+						</Card>
+					) }
+
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
@@ -601,13 +619,21 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ this.props.isSocialSignupEnabled && (
-					<SocialSignupForm
-						handleResponse={ this.props.handleSocialResponse }
-						socialService={ this.props.socialService }
-						socialServiceResponse={ this.props.socialServiceResponse }
-					/>
-				) }
+				{ this.props.isSocialSignupEnabled &&
+					! this.props.isSocialFirst && (
+						<Card className="signup-form__social">
+							<p>
+								{ preventWidows(
+									this.props.translate( 'Or connect your existing profile to get started faster.' )
+								) }
+							</p>
+							<SocialSignupForm
+								handleResponse={ this.props.handleSocialResponse }
+								socialService={ this.props.socialService }
+								socialServiceResponse={ this.props.socialServiceResponse }
+							/>
+						</Card>
+					) }
 
 				{ this.props.footerLink || this.footerLink() }
 			</div>
