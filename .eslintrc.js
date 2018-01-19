@@ -18,7 +18,8 @@ module.exports = {
 		COMMIT_SHA: true,
 	},
 	plugins: [
-		'jest'
+		'jest',
+		'jsx-a11y',
 	],
 	rules: {
 		camelcase: 0, // REST API objects include underscores
