@@ -219,9 +219,10 @@ class AdsFormEarnings extends Component {
 		return (
 			<div className="ads__module-content-text module-content-text module-content-text-info">
 				<p>
-					<strong>{ translate( 'Ads Served' ) } </strong>
 					{ translate(
-						'is the number of ads we attempted to display on your site (page impressions x available ad slots).'
+						'{{strong}}Ads Served{{/strong}} is the number of ads we attempted to display on your site ' +
+							'(page impressions x available ad slots).',
+						{ components: { strong: <strong /> } }
 					) }
 				</p>
 
