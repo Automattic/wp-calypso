@@ -2,27 +2,27 @@
 /**
  * Internal dependencies
  */
-import jetpackAuthAttempts from '../jetpack-auth-attempts';
+import { authAttempts } from '../jetpack-auth-attempts';
 import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state/action-types';
 
-describe( '#jetpackAuthAttempts()', () => {
+describe( '#authAttempts()', () => {
 	test( 'should update the timestamp when adding an existent slug with stale timestamp', () => {
-		const state = jetpackAuthAttempts(
-			{ 'example.com': { timestamp: 1, attempt: 1 } },
+		const state = authAttempts(
+			{ timestamp: 1, attempt: 1 },
 			{
 				type: JETPACK_CONNECT_RETRY_AUTH,
 				slug: 'example.com',
 				attemptNumber: 2,
 			}
 		);
-		expect( state[ 'example.com' ] ).toMatchObject( {
+		expect( state ).toMatchObject( {
 			timestamp: expect.any( Number ),
 		} );
 	} );
 
 	test( 'should reset the attempt number to 0 when adding an existent slug with stale timestamp', () => {
-		const state = jetpackAuthAttempts(
-			{ 'example.com': { timestamp: 1, attempt: 1 } },
+		const state = authAttempts(
+			{ timestamp: 1, attempt: 1 },
 			{
 				type: JETPACK_CONNECT_RETRY_AUTH,
 				slug: 'example.com',
@@ -30,12 +30,12 @@ describe( '#jetpackAuthAttempts()', () => {
 			}
 		);
 
-		expect( state[ 'example.com' ] ).toMatchObject( { attempt: 0 } );
+		expect( state ).toMatchObject( { attempt: 0 } );
 	} );
 
 	test( 'should store the attempt number when adding an existent slug with non-stale timestamp', () => {
-		const state = jetpackAuthAttempts(
-			{ 'example.com': { timestamp: Date.now(), attempt: 1 } },
+		const state = authAttempts(
+			{ timestamp: Date.now(), attempt: 1 },
 			{
 				type: JETPACK_CONNECT_RETRY_AUTH,
 				slug: 'example.com',
@@ -43,19 +43,18 @@ describe( '#jetpackAuthAttempts()', () => {
 			}
 		);
 
-		expect( state[ 'example.com' ] ).toMatchObject( { attempt: 2 } );
+		expect( state ).toMatchObject( { attempt: 2 } );
 	} );
 
 	test( 'should clear state on completion', () => {
-		const slug = 'example.com';
-		const state = jetpackAuthAttempts(
-			{ [ slug ]: { timestamp: Date.now(), attempt: 1 } },
+		const state = authAttempts(
+			{ timestamp: Date.now(), attempt: 1 },
 			{
 				type: JETPACK_CONNECT_COMPLETE_FLOW,
-				slug,
+				slug: 'example.com',
 			}
 		);
 
-		expect( state ).not.toHaveProperty( slug );
+		expect( state ).not.toBeDefined();
 	} );
 } );

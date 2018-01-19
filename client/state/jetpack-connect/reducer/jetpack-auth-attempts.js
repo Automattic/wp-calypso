@@ -8,29 +8,27 @@ import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state
 import { jetpackAuthAttemptsSchema } from './schema';
 import { keyedReducer } from 'state/utils';
 
-const jetpackAuthAttempts = keyedReducer(
-	'slug',
-	( state = undefined, { type, attemptNumber } ) => {
-		switch ( type ) {
-			case JETPACK_CONNECT_RETRY_AUTH:
-				const currentTimestamp = state ? state.timestamp : Date.now();
-				if ( attemptNumber > 0 && isStale( currentTimestamp, AUTH_ATTEMPS_TTL ) ) {
-					return {
-						attempt: 0,
-						timestamp: Date.now(),
-					};
-				}
+export function authAttempts( state = undefined, { type, attemptNumber } ) {
+	switch ( type ) {
+		case JETPACK_CONNECT_RETRY_AUTH:
+			if ( ! state || isStale( state.timestamp, AUTH_ATTEMPS_TTL ) ) {
 				return {
-					attempt: attemptNumber,
-					timestamp: currentTimestamp,
+					attempt: 0,
+					timestamp: Date.now(),
 				};
+			}
+			return {
+				attempt: attemptNumber,
+				timestamp: state.timestamp,
+			};
 
-			case JETPACK_CONNECT_COMPLETE_FLOW:
-				return undefined;
-		}
-		return state;
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return undefined;
 	}
-);
-jetpackAuthAttempts.schema = jetpackAuthAttemptsSchema;
+	return state;
+}
 
-export default jetpackAuthAttempts;
+const reducer = keyedReducer( 'slug', authAttempts );
+reducer.schema = jetpackAuthAttemptsSchema;
+
+export default reducer;
