@@ -77,7 +77,7 @@ const _isSupportUserSession = ( () => {
 		return false;
 	}
 
-	const supportUser = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) );
+	const supportUser = JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) );
 	if ( supportUser && supportUser.user && supportUser.token ) {
 		return true;
 	}
@@ -95,7 +95,7 @@ const storeUserAndToken = ( user, token ) => () => {
 	}
 
 	if ( user && token ) {
-		sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
+		window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
 	}
 };
 
@@ -109,7 +109,7 @@ export const rebootNormally = () => {
 
 	debug( 'Rebooting Calypso normally' );
 
-	sessionStorage.removeItem( STORAGE_KEY );
+	window.sessionStorage.removeItem( STORAGE_KEY );
 	window.removeEventListener( 'beforeunload', onBeforeUnload );
 	window.location.search = '';
 };
@@ -126,7 +126,7 @@ export const rebootWithToken = ( user, token ) => {
 
 	debug( 'Rebooting Calypso with support user' );
 
-	sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
+	window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
 	window.location.search = '';
 };
 
@@ -144,10 +144,10 @@ export const boot = () => {
 		return;
 	}
 
-	const { user, token } = JSON.parse( sessionStorage.getItem( STORAGE_KEY ) );
+	const { user, token } = JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) );
 	debug( 'Booting Calypso with support user', user );
 
-	sessionStorage.removeItem( STORAGE_KEY );
+	window.sessionStorage.removeItem( STORAGE_KEY );
 
 	onBeforeUnload = storeUserAndToken( user, token );
 	window.addEventListener( 'beforeunload', onBeforeUnload );
