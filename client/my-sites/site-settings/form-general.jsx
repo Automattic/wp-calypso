@@ -177,8 +177,12 @@ class SiteSettingsFormGeneral extends Component {
 			isRequestingSettings,
 			onChangeField,
 			siteIsJetpack,
+			supportsLanguageSelection,
 			translate,
 		} = this.props;
+		if ( ! supportsLanguageSelection ) {
+			return null;
+		}
 
 		return (
 			<FormFieldset
@@ -380,10 +384,14 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, translate } = this.props;
+		const { fields, isRequestingSettings, translate, supportsLanguageSelection } = this.props;
 
 		return (
-			<FormFieldset>
+			<FormFieldset
+				className={
+					! supportsLanguageSelection && classNames( 'site-settings__has-divider', 'is-top-only' )
+				}
+			>
 				<FormLabel htmlFor="blogtimezone">{ translate( 'Site Timezone' ) }</FormLabel>
 
 				<Timezone
@@ -527,6 +535,10 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
+			supportsLanguageSelection:
+				! siteIsJetpack ||
+				( isJetpackMinimumVersion( state, siteId, '5.8-beta' ) &&
+					config.isEnabled( 'jetpack/site-settings-language-selection' ) ),
 			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},
