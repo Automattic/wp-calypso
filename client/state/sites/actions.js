@@ -82,6 +82,7 @@ export function requestSites() {
 		return wpcom
 			.me()
 			.sites( {
+				apiVersion: '1.2',
 				site_visibility: 'all',
 				include_domain_only: true,
 				site_activity: 'active',
