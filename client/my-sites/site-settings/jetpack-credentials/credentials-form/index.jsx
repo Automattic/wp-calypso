@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,13 +20,14 @@ import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import Gridicon from 'gridicons';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 export class CredentialsForm extends Component {
 	state = {
 		showPrivateKeyField: false,
 		form: {
 			protocol: this.props.protocol,
-			host: this.props.host,
+			host: this.props.host ? this.props.host : this.props.siteSlug,
 			port: this.props.port,
 			user: this.props.user,
 			pass: this.props.pass,
@@ -237,4 +239,10 @@ export class CredentialsForm extends Component {
 	}
 }
 
-export default localize( CredentialsForm );
+export default connect( state => {
+	const siteSlug = getSelectedSiteSlug( state );
+
+	return {
+		siteSlug,
+	};
+} )( localize( CredentialsForm ) );
