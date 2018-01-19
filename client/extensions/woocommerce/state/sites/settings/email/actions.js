@@ -84,10 +84,10 @@ const settingsSubmit = siteId => ( {
 	siteId,
 } );
 
-const settingsSubmitSuccess = ( siteId, settings ) => ( {
+const settingsSubmitSuccess = ( siteId, update ) => ( {
 	type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
 	siteId,
-	settings,
+	update,
 } );
 
 const settingsSubmitFailure = ( siteId, { error } ) => ( {
@@ -103,6 +103,13 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 
 	dispatch( settingsSubmit( siteId ) );
 
+	// disable if user has emptied the input field
+	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], option => {
+		if ( settings[ option ].recipient.value === '' ) {
+			settings[ option ].enabled.value = 'no';
+		}
+	} );
+
 	const update = reduce(
 		omit( settings, [ 'save', 'isSaving', 'error' ] ),
 		( result, options, group_id ) => {
@@ -110,7 +117,7 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 				result.push( {
 					group_id,
 					id,
-					value: option.value || option.default,
+					value: option.value,
 				} );
 			} );
 			return result;
