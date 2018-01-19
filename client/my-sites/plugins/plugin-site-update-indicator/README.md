@@ -6,17 +6,17 @@ This component is used to display a update indicator which can be turned into a 
 #### How to use:
 
 ```js
-var PluginSiteUpdateIndicator= require( 'my-sites/plugins/plugin-site-update-indicator' );
+import PluginSiteUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 
-render: function() {
-    return (
-        <PluginSiteUpdateIndicator
-            site={ this.props.site }
-            plugin={ this.props.plugin }
-            notices={ this.props.notices }
-            expanded={ false }
-        />
-    );
+render() {
+	return (
+		<PluginSiteUpdateIndicator
+			site={ this.props.site }
+			plugin={ this.props.plugin }
+			notices={ this.props.notices }
+			expanded={ false }
+		/>
+	);
 }
 ```
 
