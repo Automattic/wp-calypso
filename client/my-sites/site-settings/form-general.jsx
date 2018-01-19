@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
+import { flowRight, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -170,6 +170,33 @@ class SiteSettingsFormGeneral extends Component {
 		} );
 	};
 
+	renderLanguagePickerNotice = () => {
+		const { fields, translate } = this.props;
+
+		const langId = get( fields, 'lang_id', '' );
+		const matches = langId.match( /^error_(\w+)$/ );
+
+		let notice;
+		switch ( matches && matches[ 1 ] ) {
+			case 'cap':
+				notice = translate(
+					'The Site Language setting is disabled due to insufficient permissions.'
+				);
+			case 'const':
+				notice = translate(
+					'The Site Language setting is disabled because your site has the WPLANG constant set.'
+				);
+		}
+
+		return (
+			notice && (
+				<FormSettingExplanation className="site-settings__language-picker-blocked">
+					{ notice }
+				</FormSettingExplanation>
+			)
+		);
+	};
+
 	languageOptions() {
 		const {
 			eventTracker,
@@ -189,14 +216,16 @@ class SiteSettingsFormGeneral extends Component {
 				className={ siteIsJetpack && classNames( 'site-settings__has-divider', 'is-top-only' ) }
 			>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
-				<LanguagePicker
-					languages={ config( 'languages' ) }
-					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
-					value={ fields.lang_id }
-					onChange={ onChangeField( 'lang_id' ) }
-					disabled={ isRequestingSettings }
-					onClick={ eventTracker( 'Clicked Language Field' ) }
-				/>
+				{ this.renderLanguagePickerNotice() || (
+					<LanguagePicker
+						languages={ config( 'languages' ) }
+						valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
+						value={ fields.lang_id }
+						onChange={ onChangeField( 'lang_id' ) }
+						disabled={ isRequestingSettings }
+						onClick={ eventTracker( 'Clicked Language Field' ) }
+					/>
+				) }
 				<FormSettingExplanation>
 					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
