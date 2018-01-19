@@ -166,10 +166,7 @@ function getDefaultContext( request ) {
 	}
 
 	if ( request.context && request.context.sectionCss ) {
-		sectionCss = {
-			id: request.context.sectionCss,
-			urls: utils.getCssUrls( request.context.sectionCss ),
-		};
+		sectionCss = request.context.sectionCss;
 	}
 
 	const shouldUseSingleCDN =
