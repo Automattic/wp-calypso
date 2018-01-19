@@ -11,8 +11,13 @@ import i18n from 'i18n-calypso';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { JETPACK_CREDENTIALS_AUTOCONFIGURE, JETPACK_CREDENTIALS_STORE } from 'state/action-types';
+import {
+	JETPACK_CREDENTIALS_AUTOCONFIGURE,
+	JETPACK_CREDENTIALS_STORE,
+	REWIND_STATE_UPDATE,
+} from 'state/action-types';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 export const fetch = ( { dispatch }, action ) => {
 	const notice = successNotice( i18n.translate( 'Obtaining your credentials…' ) );
@@ -32,7 +37,7 @@ export const fetch = ( { dispatch }, action ) => {
 	);
 };
 
-export const storeAndAnnounce = ( { dispatch }, { siteId, noticeId } ) => {
+export const storeAndAnnounce = ( { dispatch }, { siteId, noticeId }, { rewind_state } ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_STORE,
 		credentials: { main: { type: 'auto' } }, // fake for now until data actually comes through
@@ -45,6 +50,17 @@ export const storeAndAnnounce = ( { dispatch }, { siteId, noticeId } ) => {
 			id: noticeId,
 		} )
 	);
+
+	// the API transform could fail and the rewind data might
+	// be unavailable so if that's the case just let it go
+	// for now. we'll improve our rigor as time goes by.
+	try {
+		dispatch( {
+			type: REWIND_STATE_UPDATE,
+			siteId,
+			data: transformApi( rewind_state ),
+		} );
+	} catch ( e ) {}
 };
 
 export const announceFailure = ( { dispatch }, { noticeId } ) => {
