@@ -23,7 +23,6 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -50,7 +49,6 @@ import {
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
-const userModule = userFactory();
 const analyticsPageTitleByType = {
 	install: 'Jetpack Install',
 	personal: 'Jetpack Connect Personal',
