@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import ReactDom from 'react-dom';
-import { get, isEqual, isUndefined } from 'lodash';
+import { debounce, get, isEqual, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +22,7 @@ import CommentReply from 'my-sites/comments/comment/comment-reply';
 import CommentRepliesList from 'my-sites/comments/comment-replies-list';
 import QueryComment from 'components/data/query-comment';
 import scrollTo from 'lib/scroll-to';
+import { isWithinBreakpoint } from 'lib/viewport';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import { getSiteComment } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -52,22 +53,24 @@ export class Comment extends Component {
 		};
 	}
 
+	componentWillMount() {
+		this.debounceScrollToOffset = debounce( this.scrollToOffset, 200 );
+	}
+
 	componentWillReceiveProps( nextProps ) {
-		const { isBulkMode: wasBulkMode } = this.props;
-		const { isBulkMode } = nextProps;
+		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
+		const { isBulkMode, isPostView } = nextProps;
 
-		const newOffsetTop = this.getCommentOffsetTop();
-
-		this.setState( ( { isEditMode, isReplyVisible, offsetTop } ) => ( {
+		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
 			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
-			offsetTop: newOffsetTop > offsetTop && wasBulkMode === isBulkMode ? newOffsetTop : offsetTop,
+			offsetTop: wasPostView !== isPostView ? 0 : this.getCommentOffsetTop(),
 		} ) );
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.offsetTop !== this.state.offsetTop ) {
-			this.scrollToOffset( this.state.offsetTop );
+			this.debounceScrollToOffset( this.state.offsetTop );
 		}
 	}
 
@@ -99,11 +102,21 @@ export class Comment extends Component {
 		if ( ! window || `#comment-${ this.props.commentId }` !== window.location.hash ) {
 			return 0;
 		}
-		const commentNode = ReactDom.findDOMNode( this.commentCard );
-		// Adjust the comment card `offsetTop` to avoid being covered by the masterbar.
+
+		const { isPostView } = this.props;
+		const { offsetTop } = this.state;
+
+		// On >660px, adjust the comment card `offsetTop` to avoid being covered by the masterbar.
 		// 56px = 48px (masterbar height) + 8px (comment card vertical margin)
 		// 66px = 58px (post view sticky header) + 8px (comment card vertical margin)
-		return commentNode.offsetTop - 56 - ( this.props.isPostView ? 66 : 0 );
+		const offsetAdjustment = ~~isWithinBreakpoint( '>660px' ) && 56 - ( isPostView && 66 );
+
+		const commentNode = ReactDom.findDOMNode( this.commentCard );
+		const newOffsetTop = commentNode.offsetTop;
+
+		return newOffsetTop > offsetAdjustment && newOffsetTop > offsetTop
+			? newOffsetTop - offsetAdjustment
+			: offsetTop;
 	};
 
 	scrollToOffset = () => {
