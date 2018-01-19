@@ -8,9 +8,9 @@ It is a very thin wrapper around
 #### How to use:
 
 ```js
-var FilePicker = require( 'components/file-picker' );
+import FilePicker from 'components/file-picker';
 
-render: function() {
+render() {
 	return (
 		<FilePicker multiple accept="image/*" onPick={ console.log.bind(console) } >
 			<a href="#">Select a few images!</a>
