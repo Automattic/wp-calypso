@@ -1,6 +1,8 @@
 Searchable
 ==========
 
+## Deprecation Notice: mixins are deprecated! Please try to find an alternative way to accomplish the same goal
+
 `searchable` is a mixin that adds a text-based `search` method to filter a collection module.
 
 Pass the collections prototype into Searchable, along with an object to specify which nodes on each list-item should be searchable. The `search` method will do an initial `get()` on the collection, so make sure the collection supports a `get()` that will return an array of all items contained in the collection.
