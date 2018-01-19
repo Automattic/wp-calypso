@@ -185,7 +185,6 @@ class Settings extends React.Component {
 				item={ item }
 				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				recipient={ get( settings, [ item.field, 'recipient', 'value' ], '' ) }
-				placeholder={ get( settings, [ item.field, 'recipient', 'default' ], '' ) }
 				isPlaceholder={ loading }
 				onChange={ this.onChange }
 			/>

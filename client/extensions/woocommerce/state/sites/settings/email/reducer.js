@@ -4,7 +4,7 @@
  * @format
  */
 
-import { filter, omit, isEmpty, setWith, get } from 'lodash';
+import { filter, omit, isEmpty, setWith, get, forEach } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,20 +31,32 @@ const process_data = data => {
 	} );
 	const defaultEmail = isEmpty( fromAddress ) ? '' : fromAddress[ 0 ].default;
 	data.forEach( function( option ) {
-		const def = option.id === 'recipient' ? option.default || defaultEmail : option.default;
-		const value = option.value ? option.value : def;
 		setWith(
 			options,
 			[ option.group_id, option.id ],
 			{
-				value,
-				default: def,
+				value: option.value,
+				default: option.default,
 			},
 			Object
 		);
 	} );
 
-	// Decode: &, <, > entities.
+	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], key => {
+		const option = get( options, [ key ], {} );
+		const def = get( option, [ 'recipient', 'default' ], false ) || defaultEmail;
+		const value = get( option, [ 'recipient', 'value' ], '' );
+		const noValue = value === '';
+		const updatedValue = noValue ? def : value;
+		const enabled = get( option, [ 'enabled', 'value' ], false ) === 'yes';
+		options[ key ] && ( options[ key ].recipient.default = def );
+
+		if ( enabled && noValue ) {
+			options[ key ].recipient.value = updatedValue;
+		}
+	} );
+
+	// Decode1: &, <, > entities.
 	const from_name = get( options, [ 'email', 'woocommerce_email_from_name', 'value' ], false );
 	if ( from_name ) {
 		options.email.woocommerce_email_from_name.value = decodeEntities( from_name );

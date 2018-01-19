@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ const InternalNotification = ( {
 	checked,
 	onChange,
 	isPlaceholder,
-	placeholder,
+	translate,
 } ) => {
 	//Add field name to returned value
 	const toggle = value => {
@@ -64,12 +65,11 @@ const InternalNotification = ( {
 					name={ item.field }
 					onChange={ change }
 					value={ recipient }
-					placeholder={ placeholder }
+					placeholder={ isPlaceholder ? '' : translate( 'Enter recipients. Comma separated.' ) }
 				/>
-				{ checked &&
-					emailValidationError && (
-						<FormTextValidation isError text={ checkedEmails.messages[ 0 ].msg } />
-					) }
+				{ emailValidationError && (
+					<FormTextValidation isError text={ checkedEmails.messages[ 0 ].msg } />
+				) }
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
 				{ ! isPlaceholder ? (
@@ -89,4 +89,4 @@ InternalNotification.propTypes = {
 	onChange: PropTypes.func.isRequired,
 };
 
-export default InternalNotification;
+export default localize( InternalNotification );
