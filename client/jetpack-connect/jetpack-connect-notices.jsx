@@ -9,6 +9,26 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import {
+	ALREADY_CONNECTED,
+	ALREADY_CONNECTED_BY_OTHER_USER,
+	ALREADY_OWNED,
+	DEFAULT_AUTHORIZE_ERROR,
+	IS_DOT_COM,
+	JETPACK_IS_DISCONNECTED,
+	JETPACK_IS_VALID,
+	NOT_ACTIVE_JETPACK,
+	NOT_CONNECTED_JETPACK,
+	NOT_EXISTS,
+	NOT_JETPACK,
+	NOT_WORDPRESS,
+	OUTDATED_JETPACK,
+	RETRY_AUTH,
+	RETRYING_AUTH,
+	SECRET_EXPIRED,
+	USER_IS_ALREADY_CONNECTED_TO_SITE,
+	WORDPRESS_DOT_COM,
+} from './connection-notice-types';
 import Notice from 'components/notice';
 
 export class JetpackConnectNotices extends Component {
@@ -17,23 +37,24 @@ export class JetpackConnectNotices extends Component {
 		// instead of showing a notice.
 		onTerminalError: PropTypes.func,
 		noticeType: PropTypes.oneOf( [
-			'alreadyConnected',
-			'alreadyConnectedByOtherUser',
-			'alreadyOwned',
-			'defaultAuthorizeError',
-			'isDotCom',
-			'jetpackIsValid',
-			'notActiveJetpack',
-			'notConnectedJetpack', // notConnectedJetpack is expected, but no notice is shown.
-			'notExists',
-			'notJetpack',
-			'notWordPress',
-			'outdatedJetpack',
-			'retryAuth',
-			'retryingAuth',
-			'secretExpired',
-			'userIsAlreadyConnectedToSite',
-			'wordpress.com',
+			ALREADY_CONNECTED,
+			ALREADY_CONNECTED_BY_OTHER_USER,
+			ALREADY_OWNED,
+			DEFAULT_AUTHORIZE_ERROR,
+			IS_DOT_COM,
+			JETPACK_IS_DISCONNECTED,
+			JETPACK_IS_VALID,
+			NOT_ACTIVE_JETPACK,
+			NOT_CONNECTED_JETPACK,
+			NOT_EXISTS,
+			NOT_JETPACK,
+			NOT_WORDPRESS,
+			OUTDATED_JETPACK,
+			RETRY_AUTH,
+			RETRYING_AUTH,
+			SECRET_EXPIRED,
+			USER_IS_ALREADY_CONNECTED_TO_SITE,
+			WORDPRESS_DOT_COM,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
@@ -55,55 +76,55 @@ export class JetpackConnectNotices extends Component {
 		}
 
 		switch ( noticeType ) {
-			case 'notExists':
+			case NOT_EXISTS:
 				return noticeValues;
 
-			case 'isDotCom':
+			case IS_DOT_COM:
 				noticeValues.icon = 'block';
 				noticeValues.text = translate(
 					"That's a WordPress.com site, so you don't need to connect it."
 				);
 				return noticeValues;
 
-			case 'notWordPress':
+			case NOT_WORDPRESS:
 				noticeValues.icon = 'block';
 				noticeValues.text = translate( "That's not a WordPress site." );
 				return noticeValues;
 
-			case 'notActiveJetpack':
+			case NOT_ACTIVE_JETPACK:
 				noticeValues.icon = 'block';
 				noticeValues.text = translate( 'Jetpack is deactivated.' );
 				return noticeValues;
 
-			case 'outdatedJetpack':
+			case OUTDATED_JETPACK:
 				noticeValues.icon = 'block';
 				noticeValues.text = translate( 'You must update Jetpack before connecting.' );
 				return noticeValues;
 
-			case 'jetpackIsDisconnected':
+			case JETPACK_IS_DISCONNECTED:
 				noticeValues.icon = 'link-break';
 				noticeValues.text = translate( 'Jetpack is currently disconnected.' );
 				return noticeValues;
 
-			case 'jetpackIsValid':
+			case JETPACK_IS_VALID:
 				noticeValues.status = 'is-success';
 				noticeValues.icon = 'plugins';
 				noticeValues.text = translate( 'Jetpack is connected.' );
 				return noticeValues;
 
-			case 'notJetpack':
+			case NOT_JETPACK:
 				noticeValues.status = 'is-notice';
 				noticeValues.icon = 'status';
 				noticeValues.text = translate( "Jetpack couldn't be found." );
 				return noticeValues;
 
-			case 'wordpress.com':
+			case WORDPRESS_DOT_COM:
 				noticeValues.text = translate( "Oops, that's us." );
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'status';
 				return noticeValues;
 
-			case 'retryingAuth':
+			case RETRYING_AUTH:
 				noticeValues.text = translate(
 					'Error authorizing. Page is refreshing for another attempt.'
 				);
@@ -112,7 +133,7 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.userCanRetry = true;
 				return noticeValues;
 
-			case 'retryAuth':
+			case RETRY_AUTH:
 				noticeValues.text = translate(
 					'In some cases, authorization can take a few attempts. Please try again.'
 				);
@@ -121,13 +142,13 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.userCanRetry = true;
 				return noticeValues;
 
-			case 'secretExpired':
+			case SECRET_EXPIRED:
 				noticeValues.text = translate( "Oops, that took a while. You'll have to try again." );
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
 				return noticeValues;
 
-			case 'defaultAuthorizeError':
+			case DEFAULT_AUTHORIZE_ERROR:
 				noticeValues.text = translate(
 					'Error authorizing your site. Please {{link}}contact support{{/link}}.',
 					{
@@ -146,7 +167,7 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.icon = 'notice';
 				return noticeValues;
 
-			case 'alreadyConnectedByOtherUser':
+			case ALREADY_CONNECTED_BY_OTHER_USER:
 				noticeValues.text = translate(
 					'This site is already connected to a different WordPress.com user, ' +
 						'you need to disconnect that user before you can connect another.'
@@ -154,7 +175,8 @@ export class JetpackConnectNotices extends Component {
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
 				return noticeValues;
-			case 'userIsAlreadyConnectedToSite':
+
+			case USER_IS_ALREADY_CONNECTED_TO_SITE:
 				noticeValues.text = translate(
 					'This WordPress.com account is already connected to another user on this site. ' +
 						'Please login to another WordPress.com account to complete the connection.'
@@ -183,14 +205,14 @@ export class JetpackConnectNotices extends Component {
 	}
 
 	render() {
-		const values = this.getNoticeValues();
+		const noticeValues = this.getNoticeValues();
 		if ( this.errorIsTerminal() && this.props.onTerminalError ) {
 			return null;
 		}
-		if ( values ) {
+		if ( noticeValues ) {
 			return (
 				<div className="jetpack-connect__notices-container">
-					<Notice { ...values } />
+					<Notice { ...noticeValues } />
 				</div>
 			);
 		}

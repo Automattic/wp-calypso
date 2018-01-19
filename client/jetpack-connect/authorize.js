@@ -43,6 +43,15 @@ import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 import {
+	ALREADY_CONNECTED,
+	ALREADY_CONNECTED_BY_OTHER_USER,
+	DEFAULT_AUTHORIZE_ERROR,
+	RETRY_AUTH,
+	RETRYING_AUTH,
+	SECRET_EXPIRED,
+	USER_IS_ALREADY_CONNECTED_TO_SITE,
+} from './connection-notice-types';
+import {
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
@@ -395,7 +404,7 @@ export class JetpackAuthorize extends Component {
 			// flows will be reserved for brand new connections.
 			return (
 				<JetpackConnectNotices
-					noticeType="alreadyConnectedByOtherUser"
+					noticeType={ ALREADY_CONNECTED_BY_OTHER_USER }
 					onTerminalError={ redirectToMobileApp }
 				/>
 			);
@@ -407,7 +416,7 @@ export class JetpackAuthorize extends Component {
 			// connected, we need to show an error.
 			return (
 				<JetpackConnectNotices
-					noticeType="userIsAlreadyConnectedToSite"
+					noticeType={ USER_IS_ALREADY_CONNECTED_TO_SITE }
 					onTerminalError={ redirectToMobileApp }
 				/>
 			);
@@ -415,7 +424,10 @@ export class JetpackAuthorize extends Component {
 
 		if ( this.retryingAuth ) {
 			return (
-				<JetpackConnectNotices noticeType="retryingAuth" onTerminalError={ redirectToMobileApp } />
+				<JetpackConnectNotices
+					noticeType={ RETRYING_AUTH }
+					onTerminalError={ redirectToMobileApp }
+				/>
 			);
 		}
 
@@ -426,7 +438,7 @@ export class JetpackAuthorize extends Component {
 			! authorizeSuccess
 		) {
 			return (
-				<JetpackConnectNotices noticeType="retryAuth" onTerminalError={ redirectToMobileApp } />
+				<JetpackConnectNotices noticeType={ RETRY_AUTH } onTerminalError={ redirectToMobileApp } />
 			);
 		}
 
@@ -437,7 +449,7 @@ export class JetpackAuthorize extends Component {
 		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
 			return (
 				<JetpackConnectNotices
-					noticeType="alreadyConnected"
+					noticeType={ ALREADY_CONNECTED }
 					onTerminalError={ redirectToMobileApp }
 				/>
 			);
@@ -445,7 +457,7 @@ export class JetpackAuthorize extends Component {
 		if ( this.props.hasExpiredSecretError ) {
 			return (
 				<JetpackConnectNotices
-					noticeType="secretExpired"
+					noticeType={ SECRET_EXPIRED }
 					siteUrl={ site }
 					onTerminalError={ redirectToMobileApp }
 				/>
@@ -457,7 +469,7 @@ export class JetpackAuthorize extends Component {
 		return (
 			<div>
 				<JetpackConnectNotices
-					noticeType="defaultAuthorizeError"
+					noticeType={ DEFAULT_AUTHORIZE_ERROR }
 					onTerminalError={ redirectToMobileApp }
 				/>
 				{ this.renderErrorDetails() }
