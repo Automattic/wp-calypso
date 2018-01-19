@@ -8,9 +8,8 @@
 
 .reader-site-notification-settings__button-label {
 	font-size: 14px;
-	margin-left: -2px;
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( "<660px" ) {
 		display: none;
 	}
 }
