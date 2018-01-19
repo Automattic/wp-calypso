@@ -35,6 +35,7 @@ import NoticeAction from 'components/notice/notice-action';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import { decodeEntities } from 'lib/formatting';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSSO } from 'state/jetpack-connect/selectors';
 import { login } from 'lib/paths';
 import { persistSsoApproved } from './persistence-utils';
@@ -124,7 +125,7 @@ class JetpackSsoForm extends Component {
 	};
 
 	isButtonDisabled() {
-		const user = this.props.userModule.get();
+		const { currentUser } = this.props;
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl, authorizationError } = this.props;
 		return !! (
 			! nonceValid ||
@@ -132,7 +133,7 @@ class JetpackSsoForm extends Component {
 			isValidating ||
 			ssoUrl ||
 			authorizationError ||
-			! user.email_verified
+			! currentUser.email_verified
 		);
 	}
 
@@ -394,7 +395,7 @@ class JetpackSsoForm extends Component {
 	}
 
 	render() {
-		const user = this.props.userModule.get();
+		const { currentUser } = this.props;
 		const { ssoNonce, siteId, validationError, translate } = this.props;
 
 		if ( ! ssoNonce || ! siteId || validationError ) {
@@ -416,18 +417,18 @@ class JetpackSsoForm extends Component {
 						noticeStatus="is-info"
 					>
 						<Card>
-							{ user.email_verified && this.maybeRenderErrorNotice() }
+							{ currentUser.email_verified && this.maybeRenderErrorNotice() }
 							<div className="jetpack-connect__sso-user-profile">
-								<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
+								<Gravatar user={ currentUser } size={ 120 } imgSize={ 400 } />
 								<h3 className="jetpack-connect__sso-log-in-as">
 									{ translate( 'Log in as {{strong}}%s{{/strong}}', {
-										args: user.display_name,
+										args: currentUser.display_name,
 										components: {
 											strong: <strong className="jetpack-connect__sso-display-name" />,
 										},
 									} ) }
 								</h3>
-								<div className="jetpack-connect__sso-user-email">{ user.email }</div>
+								<div className="jetpack-connect__sso-user-email">{ currentUser.email }</div>
 							</div>
 
 							<LoggedOutFormFooter className="jetpack-connect__sso-actions">
@@ -481,6 +482,7 @@ export default connect(
 			validationError: get( jetpackSSO, 'validationError' ),
 			blogDetails: get( jetpackSSO, 'blogDetails' ),
 			sharedDetails: get( jetpackSSO, 'sharedDetails' ),
+			currentUser: getCurrentUser( state ),
 		};
 	},
 	{

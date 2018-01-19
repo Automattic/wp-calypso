@@ -242,14 +242,11 @@ export function sso( context, next ) {
 
 	removeSidebar( context );
 
-	userModule.fetch();
-
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = React.createElement( JetpackSsoForm, {
 		path: context.path,
 		locale: context.params.locale,
-		userModule: userModule,
 		siteId: context.params.siteId,
 		ssoNonce: context.params.ssoNonce,
 	} );
