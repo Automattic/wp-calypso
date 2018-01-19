@@ -5,8 +5,7 @@
  */
 
 import debugModule from 'debug';
-import { noop, get } from 'lodash';
-import qs from 'qs';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,12 +13,7 @@ import qs from 'qs';
 import wpcom from 'lib/wp';
 import config from 'config';
 import localforage from 'lib/localforage';
-import {
-	supportUserTokenFetch,
-	supportUserActivate,
-	supportUserError,
-	supportUserPrefill,
-} from 'state/support/actions';
+import { supportUserActivate } from 'state/support/actions';
 import localStorageBypass from 'lib/support/support-user/localstorage-bypass';
 
 /**
@@ -45,28 +39,6 @@ const reduxStoreReady = new Promise( resolve => {
 	_setReduxStore = reduxStore => resolve( reduxStore );
 } );
 export const setReduxStore = _setReduxStore;
-
-// Get the value of the `?support_user=` query param for prefilling
-const getPrefillUsername = () => {
-	const queryString = get( window, 'location.search', null );
-
-	if ( ! queryString ) {
-		return null;
-	}
-
-	// Remove the initial ? character
-	const query = qs.parse( queryString.slice( 1 ) );
-	return query.support_user || null;
-};
-
-// Check if we should prefill the support user login box
-reduxStoreReady.then( reduxStore => {
-	const prefillUsername = getPrefillUsername();
-
-	if ( prefillUsername ) {
-		reduxStore.dispatch( supportUserPrefill( prefillUsername ) );
-	}
-} );
 
 const getStorageItem = () => {
 	try {
@@ -119,22 +91,6 @@ export const rebootNormally = () => {
 	window.location.search = '';
 };
 
-/**
- * Reboot Calypso as the support user
- * @param  {string} user  The support user's username
- * @param  {string} token The support token
- */
-export const rebootWithToken = ( user, token ) => {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
-	debug( 'Rebooting Calypso with support user' );
-
-	window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
-	window.location.search = '';
-};
-
 // Called when an API call fails due to a token error
 const onTokenError = error => {
 	debug( 'Deactivating support user and rebooting due to token error', error.message );
@@ -170,30 +126,5 @@ export const boot = () => {
 	// wait for it to become available
 	reduxStoreReady.then( reduxStore => {
 		reduxStore.dispatch( supportUserActivate() );
-	} );
-};
-
-export const fetchToken = ( user, password ) => {
-	if ( ! isEnabled() ) {
-		return;
-	}
-
-	debug( 'Fetching support user token' );
-
-	return reduxStoreReady.then( reduxStore => {
-		reduxStore.dispatch( supportUserTokenFetch( user ) );
-
-		const setToken = ( { username, token } ) => {
-			rebootWithToken( username, token );
-		};
-
-		const errorFetchingToken = ( { message } ) => {
-			reduxStore.dispatch( supportUserError( message ) );
-		};
-
-		return wpcom
-			.fetchSupportUserToken( user, password )
-			.then( setToken )
-			.catch( errorFetchingToken );
 	} );
 };
