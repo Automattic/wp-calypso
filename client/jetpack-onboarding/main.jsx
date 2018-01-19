@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import sha1 from 'hash.js/lib/hash/sha/1';
 import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -21,6 +22,7 @@ import {
 import {
 	getJetpackOnboardingSettings,
 	getRequest,
+	getUnconnectedSite,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
 import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
@@ -35,7 +37,6 @@ class JetpackOnboardingMain extends React.PureComponent {
 	};
 
 	// TODO: Add lifecycle methods to redirect if no siteId
-
 	render() {
 		const {
 			isRequestingSettings,
@@ -73,6 +74,11 @@ export default connect(
 		const isRequestingSettings = getRequest( state, requestJetpackOnboardingSettings( siteId ) )
 			.isLoading;
 
+		const site = getUnconnectedSite( state, siteId );
+		const userId = site ? get( site, 'userEmail', null ) : '';
+		const hash = sha1();
+		hash.update( userId );
+		const userIdHashed = hash.digest( 'hex' );
 		// Note: here we can select which steps to display, based on user's input
 		const steps = compact( [
 			STEPS.SITE_TITLE,
@@ -89,16 +95,23 @@ export default connect(
 			siteSlug,
 			settings,
 			steps,
+			userIdHashed,
 		};
 	},
 	{ recordTracksEvent },
-	( { siteId, ...stateProps }, { recordTracksEvent: recordTracksEventAction }, ownProps ) => ( {
+	(
+		{ siteId, userIdHashed, ...stateProps },
+		{ recordTracksEvent: recordTracksEventAction },
+		ownProps
+	) => ( {
 		siteId,
 		...stateProps,
 		recordJpoEvent: ( event, additionalProperties ) =>
 			recordTracksEventAction( event, {
 				blog_id: siteId,
 				site_id_type: 'jpo',
+				user_id: 'jpo_user_' + userIdHashed,
+				id: siteId + '_' + userIdHashed,
 				...additionalProperties,
 			} ),
 		...ownProps,
