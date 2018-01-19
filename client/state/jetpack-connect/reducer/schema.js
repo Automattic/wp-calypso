@@ -34,9 +34,15 @@ export const jetpackAuthAttemptsSchema = {
 	patternProperties: {
 		'^.+$': {
 			type: 'object',
+			additionalProperties: false,
 			required: [ 'attempt', 'timestamp' ],
-			attempt: { type: 'integer' },
-			timestamp: { type: 'integer' },
+			properties: {
+				attempt: {
+					type: 'integer',
+					minimum: 0,
+				},
+				timestamp: { type: 'integer' },
+			},
 		},
 	},
 };
