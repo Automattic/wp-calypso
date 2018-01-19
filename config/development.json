@@ -65,6 +65,7 @@
 		"jetpack/google-analytics-for-stores": true,
 		"jetpack/google-analytics-for-stores-enhanced": true,
 		"jetpack/onboarding": true,
+		"jetpack/site-settings-language-selection": true,
 		"jetpack_core_inline_update": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
