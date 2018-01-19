@@ -17,6 +17,7 @@ import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
+import Notice from 'components/notice';
 import LanguagePicker from 'components/language-picker';
 import SectionHeader from 'components/section-header';
 import config from 'config';
@@ -188,13 +189,7 @@ class SiteSettingsFormGeneral extends Component {
 				);
 		}
 
-		return (
-			notice && (
-				<FormSettingExplanation className="site-settings__language-picker-blocked">
-					{ notice }
-				</FormSettingExplanation>
-			)
-		);
+		return notice && <Notice text={ notice } isCompact />;
 	};
 
 	languageOptions() {
