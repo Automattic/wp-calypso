@@ -173,15 +173,12 @@ export function connect( context, next ) {
 
 	removeSidebar( context );
 
-	userModule.fetch();
-
 	context.primary = React.createElement( JetpackConnect, {
 		context,
 		locale: params.locale,
 		path,
 		type,
 		url: query.url,
-		userModule,
 	} );
 	next();
 }

@@ -31,6 +31,7 @@ import { addCalypsoEnvQueryArg } from './utils';
 import { checkUrl, confirmJetpackInstallStatus, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { retrieveMobileRedirect, retrievePlan } from './persistence-utils';
@@ -450,7 +451,7 @@ export class JetpackConnectMain extends Component {
 	}
 
 	renderLocaleSuggestions() {
-		if ( this.props.userModule.get() || ! this.props.locale ) {
+		if ( this.props.isLoggedIn || ! this.props.locale ) {
 			return;
 		}
 
@@ -564,6 +565,7 @@ const connectComponent = connect(
 		return {
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getJetpackSiteByUrl: url => getJetpackSiteByUrl( state, url ),
+			isLoggedIn: !! getCurrentUserId( state ),
 			isMobileAppFlow,
 			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite: getConnectingSite( state ),
