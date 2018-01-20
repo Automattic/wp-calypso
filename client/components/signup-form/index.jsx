@@ -326,6 +326,7 @@ class SignupForm extends Component {
 		return login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
+			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 		} );
 	}
@@ -619,6 +620,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
-	trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
-	createSocialUserFailed,
-} )( localize( SignupForm ) );
+		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
+		createSocialUserFailed,
+	}
+)( localize( SignupForm ) );
