@@ -114,7 +114,11 @@ class EditorRevisionsList extends PureComponent {
 
 		return (
 			<div className={ classes }>
-				<EditorRevisionsListHeader numRevisions={ revisions.length } />
+				<EditorRevisionsListHeader
+					numRevisions={ revisions.length }
+					selectNextRevision={ this.selectNextRevision }
+					selectPreviousRevision={ this.selectPreviousRevision }
+				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
 						{ map( revisions, revision => {
