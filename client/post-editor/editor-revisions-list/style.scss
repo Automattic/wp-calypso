@@ -36,14 +36,11 @@
 }
 
 .editor-revisions-list__header {
-	$editor-revisions-list-header-height: 46px;
-	$editor-revisions-list-header-font-size: 16px;
 	padding: 0 16px;
-	height: $editor-revisions-list-header-height;
-	line-height: $editor-revisions-list-header-height;
+	height: 46px;
+	line-height: 64px;
 	color: $gray-text-min;
 	background: $white;
-	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 
 	.editor-revisions-list.is-loading & {
 		position: relative;
@@ -52,18 +49,34 @@
 			content: '';
 			display: block;
 			position: absolute;
-			top: ($editor-revisions-list-header-height - $editor-revisions-list-header-font-size) / 2;
+			top: 25px;
 			width: 50%;
-			height: $editor-revisions-list-header-font-size;
+			height: 16px;
 			@include placeholder(23%);
 		}
 	}
 }
 
+// Revision Navigation Buttons
+.editor-revisions-list__navigation {
+	height: 36px;
+	padding: 0 11px;
+	color: $gray-text-min;
+	background: $white;
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+}
+
+.editor-revisions-list__prev-button,
+.editor-revisions-list__next-button {
+	width: 28px;
+	height: 24px;
+	vertical-align: middle;
+}
+
 // Scrollable Box for Revisions List
 .editor-revisions-list__scroller {
 	position: absolute;
-	top: 47px;
+	top: 83px;
 	right: 0;
 	bottom: 0;
 	left: 0;
