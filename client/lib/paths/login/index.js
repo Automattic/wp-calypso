@@ -16,6 +16,7 @@ export function login( {
 	socialConnect,
 	emailAddress,
 	socialService,
+	oauth2ClientId,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -49,6 +50,10 @@ export function login( {
 
 	if ( emailAddress ) {
 		url = addQueryArgs( { email_address: emailAddress }, url );
+	}
+
+	if ( oauth2ClientId ) {
+		url = addQueryArgs( { client_id: oauth2ClientId }, url );
 	}
 
 	return url;
