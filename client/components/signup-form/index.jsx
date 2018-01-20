@@ -38,6 +38,7 @@ import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { createSocialUserFailed } from 'state/login/actions';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -74,6 +75,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		oauth2Client: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -320,11 +322,16 @@ class SignupForm extends Component {
 		} );
 	};
 
-	getNoticeMessageWithLogin( notice ) {
-		const link = login( {
+	loginLink() {
+		return login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
+			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 		} );
+	}
+
+	getNoticeMessageWithLogin( notice ) {
+		const link = this.loginLink();
 
 		if ( notice.error === '2FA_enabled' ) {
 			return (
@@ -368,11 +375,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		let link = login( {
-			isNative: config.isEnabled( 'login/native-login-links' ),
-			locale: this.props.locale,
-			redirectTo: this.props.redirectToAfterLoginUrl,
-		} );
+		let link = this.loginLink();
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
@@ -566,11 +569,7 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( {
-					isNative: true,
-					locale: this.props.locale,
-					redirectTo: this.props.redirectToAfterLoginUrl,
-				} )
+			? this.loginLink()
 			: addLocaleToWpcomUrl( config( 'login_url' ), this.props.locale );
 
 		return (
@@ -615,7 +614,11 @@ class SignupForm extends Component {
 	}
 }
 
-export default connect( null, {
+export default connect(
+	state => ( {
+		oauth2Client: getCurrentOAuth2Client( state ),
+	} ),
+	{
 	trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
 	createSocialUserFailed,
 } )( localize( SignupForm ) );
