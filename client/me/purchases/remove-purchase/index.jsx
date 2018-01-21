@@ -303,7 +303,7 @@ class RemovePurchase extends Component {
 	};
 
 	renderPlanDialogs = () => {
-		const { selectedPurchase, translate } = this.props;
+		const { selectedPurchase, selectedSite, translate } = this.props;
 		const buttons = {
 			cancel: {
 				action: 'cancel',
@@ -363,6 +363,7 @@ class RemovePurchase extends Component {
 						defaultContent={ this.renderPlanDialogsText() }
 						onInputChange={ this.onSurveyChange }
 						isJetpack={ isJetpackPlan( selectedPurchase ) }
+						selectedSite={ selectedSite }
 					/>
 				</Dialog>
 			</div>

@@ -122,7 +122,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	renderCancelConfirmationDialog = () => {
-		const { purchase, translate } = this.props;
+		const { purchase, selectedSite, translate } = this.props;
 		const buttons = {
 			close: {
 				action: 'close',
@@ -172,6 +172,7 @@ class CancelPurchaseButton extends Component {
 					chatInitiated={ this.chatInitiated }
 					productName={ getName( purchase ) }
 					surveyStep={ this.state.surveyStep }
+					selectedSite={ selectedSite }
 					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }

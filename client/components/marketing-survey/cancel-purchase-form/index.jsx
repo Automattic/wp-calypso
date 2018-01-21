@@ -33,6 +33,7 @@ class CancelPurchaseForm extends React.Component {
 		translate: PropTypes.func,
 		surveyStep: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.object.isRequired,
 		defaultContent: PropTypes.node.isRequired,
 		onInputChange: PropTypes.func.isRequired,
 		isJetpack: PropTypes.bool.isRequired,
@@ -463,7 +464,7 @@ class CancelPurchaseForm extends React.Component {
 
 	openConcierge = () => {
 		this.props.clickConcierge();
-		return window.open( '/me/concierge' );
+		return window.open( `/me/concierge/${ this.props.selectedSite.slug }/book` );
 	};
 
 	renderConciergeOffer = () => {

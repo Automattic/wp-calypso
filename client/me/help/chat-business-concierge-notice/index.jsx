@@ -22,6 +22,7 @@ class ChatBusinessConciergeNotice extends Component {
 		translate: PropTypes.func,
 		isBusinessPlanUser: PropTypes.bool.isRequired,
 		from: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object.isRequired,
 		to: PropTypes.string.isRequired,
 	};
 
@@ -34,7 +35,7 @@ class ChatBusinessConciergeNotice extends Component {
 	};
 
 	render = () => {
-		const { translate } = this.props;
+		const { selectedSite, translate } = this.props;
 		const fromDate = i18n.moment( this.props.from );
 		const toDate = i18n.moment( this.props.to );
 
@@ -57,7 +58,7 @@ class ChatBusinessConciergeNotice extends Component {
 		return (
 			<HelpTeaserButton
 				onClick={ this.trackConciergeOfferClick }
-				href={ '/me/concierge' }
+				href={ `/me/concierge/${ selectedSite.slug }/book` }
 				title={ translate( 'Chat with us over screenshare!' ) }
 				description={ translate( 'Click here to get one-on-one help with a Happiness Engineer.' ) }
 			/>
