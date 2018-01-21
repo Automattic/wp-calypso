@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import NumberField from 'woocommerce/woocommerce-services/components/number-field';
 import Text from 'woocommerce/woocommerce-services/components/text';
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import RadioButtons from 'woocommerce/woocommerce-services/components/radio-buttons';
@@ -81,6 +82,19 @@ const SettingsItem = ( {
 					title={ layout.title }
 					className={ layout.class }
 					value={ fieldValue || layout.description }
+				/>
+			);
+
+		case 'number':
+			return (
+				<NumberField
+					id={ id }
+					title={ fieldSchema.title }
+					description={ fieldSchema.description }
+					value={ fieldValue }
+					placeholder={ layout.placeholder }
+					updateValue={ updateValue }
+					error={ fieldError }
 				/>
 			);
 
