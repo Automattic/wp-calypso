@@ -9,7 +9,6 @@ import ObjectPath from 'objectpath';
  * Internal dependencies
  */
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
-import createSelector from 'lib/create-selector';
 
 export const EMPTY_ERROR = {
 	level: 'error',
@@ -81,8 +80,15 @@ const getFirstFieldPathNode = ( fieldPath ) => {
 	return fieldPathPieces[ 0 ];
 };
 
+let cachedValidator;
+let cachedValidatorSchema;
+
 const getRawFormErrors = ( schema, data, pristine ) => {
-	const validate = validator( schema, { greedy: true } );
+	if ( schema !== cachedValidatorSchema ) {
+		cachedValidator = validator( schema, { greedy: true } );
+		cachedValidatorSchema = schema;
+	}
+	const validate = cachedValidator;
 	const coerced = coerceFormValues( schema, data );
 	const success = validate( coerced );
 
@@ -105,7 +111,5 @@ const getRawFormErrors = ( schema, data, pristine ) => {
 	return {};
 };
 
-export default createSelector(
-	( state, schema ) => parseErrorsList( state.form.fieldsStatus || getRawFormErrors( schema, state.form.values, state.form.pristine ) ),
-	( state ) => [ state.form.fieldsStatus, state.form.values, state.form.pristine ],
-);
+export default ( state, schema ) =>
+	parseErrorsList( state.form.fieldsStatus || getRawFormErrors( schema, state.form.values, state.form.pristine ) );
