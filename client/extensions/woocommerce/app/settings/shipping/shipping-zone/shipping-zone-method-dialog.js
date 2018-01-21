@@ -88,7 +88,7 @@ const ShippingZoneMethodDialog = ( {
 			return <WcsSettingsForm siteId={ siteId } method={ method } />;
 		}
 		const titleField = (
-			<FormFieldSet>
+			<FormFieldSet key="1">
 				<FormLabel>{ translate( 'Title' ) }</FormLabel>
 				<FormTextInput
 					placeholder={ translate( 'Title' ) }
@@ -99,16 +99,19 @@ const ShippingZoneMethodDialog = ( {
 		);
 		switch ( method.methodType ) {
 			case 'flat_rate':
-				return [ titleField, <FlatRate siteId={ siteId } currency={ currency } { ...method } /> ];
+				return [
+					titleField,
+					<FlatRate key="2" siteId={ siteId } currency={ currency } { ...method } />,
+				];
 			case 'free_shipping':
 				return [
 					titleField,
-					<FreeShipping siteId={ siteId } currency={ currency } { ...method } />,
+					<FreeShipping key="2" siteId={ siteId } currency={ currency } { ...method } />,
 				];
 			case 'local_pickup':
 				return [
 					titleField,
-					<LocalPickup siteId={ siteId } currency={ currency } { ...method } />,
+					<LocalPickup key="2" siteId={ siteId } currency={ currency } { ...method } />,
 				];
 			default:
 				return null;
