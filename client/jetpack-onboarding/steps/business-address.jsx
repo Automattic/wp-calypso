@@ -23,10 +23,20 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
-	state = get( this.props.settings, 'businessAddress' );
+	state = get( this.props.settings, 'businessAddress', {
+		city: '',
+		name: '',
+		state: '',
+		street: '',
+		zip: '',
+	} );
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
+		if (
+			this.props.isRequestingSettings &&
+			! nextProps.isRequestingSettings &&
+			nextProps.settings.businessAddress
+		) {
 			this.setState( nextProps.settings.businessAddress );
 		}
 	}
