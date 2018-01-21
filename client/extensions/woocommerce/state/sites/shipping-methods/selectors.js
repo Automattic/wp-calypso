@@ -25,6 +25,7 @@ import {
 const METHOD_NAMES = {
 	wc_services_usps: translate( 'USPS', { comment: 'United States Postal Services' } ),
 	wc_services_canada_post: translate( 'Canada Post' ),
+	wc_services_fedex: translate( 'FedEx' ),
 };
 
 /**
