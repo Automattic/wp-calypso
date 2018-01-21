@@ -11,7 +11,7 @@ import classNames from 'classnames';
  */
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
 import FormSelect from 'components/forms/form-select';
-import NumberInput from 'woocommerce/woocommerce-services/components/number-input';
+import NumberInput from 'woocommerce/woocommerce-services/components/number-field/number-input';
 
 const ShippingServiceEntry = ( props ) => {
 	const {

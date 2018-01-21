@@ -27,13 +27,14 @@ import { getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
 import freeShipping from './free-shipping/reducer';
 import localPickup from './local-pickup/reducer';
+import wcsServiceSettings from 'woocommerce/woocommerce-services/state/service-settings/values/reducer';
 
 export const builtInShippingMethods = {
 	flat_rate: flatRate,
 	free_shipping: freeShipping,
 	local_pickup: localPickup,
-	wc_services_usps: () => {},
-	wc_services_canada_post: () => {},
+	wc_services_usps: wcsServiceSettings,
+	wc_services_canada_post: wcsServiceSettings,
 };
 
 export const initialState = {
