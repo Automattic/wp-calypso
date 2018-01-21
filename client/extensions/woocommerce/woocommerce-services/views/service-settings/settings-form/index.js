@@ -10,17 +10,14 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import SettingsGroup from './settings-group';
-import * as FormActions from 'woocommerce/woocommerce-services/state/actions';
+import * as FormActions from 'woocommerce/woocommerce-services/state/service-settings/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import * as FormValueActions from 'woocommerce/woocommerce-services/state/values/actions';
-import { getShippingSettingsForm } from 'woocommerce/woocommerce-services/state/selectors';
-import getFormErrors from 'woocommerce/woocommerce-services/state/selectors/errors';
+import * as FormValueActions from 'woocommerce/woocommerce-services/state/service-settings/values/actions';
+import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
+import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
+import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 
 const SettingsForm = ( props ) => {
-	if ( ! props.loaded ) {
-		return null; // TODO: placeholder
-	}
-
 	const renderGroup = ( index ) => {
 		return (
 			<SettingsGroup
