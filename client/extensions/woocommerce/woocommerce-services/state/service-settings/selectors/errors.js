@@ -9,6 +9,8 @@ import ObjectPath from 'objectpath';
  * Internal dependencies
  */
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
+import createSelector from 'lib/create-selector';
+import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 
 export const EMPTY_ERROR = {
 	level: 'error',
@@ -80,15 +82,8 @@ const getFirstFieldPathNode = ( fieldPath ) => {
 	return fieldPathPieces[ 0 ];
 };
 
-let cachedValidator;
-let cachedValidatorSchema;
-
 const getRawFormErrors = ( schema, data, pristine ) => {
-	if ( schema !== cachedValidatorSchema ) {
-		cachedValidator = validator( schema, { greedy: true } );
-		cachedValidatorSchema = schema;
-	}
-	const validate = cachedValidator;
+	const validate = validator( schema, { greedy: true } );
 	const coerced = coerceFormValues( schema, data );
 	const success = validate( coerced );
 
@@ -111,5 +106,16 @@ const getRawFormErrors = ( schema, data, pristine ) => {
 	return {};
 };
 
-export default ( state, schema ) =>
-	parseErrorsList( state.form.fieldsStatus || getRawFormErrors( schema, state.form.values, state.form.pristine ) );
+export default createSelector(
+	( state, siteId, methodType ) => {
+		const schema = getShippingMethodSchema( state, methodType, siteId );
+		const rawErrors = state.form.fieldsStatus || getRawFormErrors( schema, state.form.values, state.form.pristine );
+		return parseErrorsList( rawErrors );
+	},
+	( state, siteId, methodType ) => [
+		state.form.fieldsStatus,
+		state.form.values,
+		state.form.pristine,
+		getShippingMethodSchema( state, methodType, siteId ),
+	],
+);
