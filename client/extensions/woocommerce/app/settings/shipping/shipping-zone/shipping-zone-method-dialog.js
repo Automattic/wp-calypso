@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,6 +39,8 @@ import {
 	isCurrentlyOpenShippingZoneMethodNew,
 } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
+import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+import WcsSettingsForm from 'woocommerce/woocommerce-services/views/service-settings/settings-form';
 
 const ShippingZoneMethodDialog = ( {
 	siteId,
@@ -49,6 +52,7 @@ const ShippingZoneMethodDialog = ( {
 	isNew,
 	currency,
 	actions,
+	wcsEnabled,
 } ) => {
 	if ( ! isVisible ) {
 		return null;
@@ -80,13 +84,32 @@ const ShippingZoneMethodDialog = ( {
 	};
 
 	const renderMethodSettingsView = () => {
+		if ( wcsEnabled && startsWith( method.methodType, 'wc_services' ) ) {
+			return <WcsSettingsForm siteId={ siteId } method={ method } />;
+		}
+		const titleField = (
+			<FormFieldSet>
+				<FormLabel>{ translate( 'Title' ) }</FormLabel>
+				<FormTextInput
+					placeholder={ translate( 'Title' ) }
+					value={ title || '' }
+					onChange={ onMethodTitleChange }
+				/>
+			</FormFieldSet>
+		);
 		switch ( method.methodType ) {
 			case 'flat_rate':
-				return <FlatRate siteId={ siteId } currency={ currency } { ...method } />;
+				return [ titleField, <FlatRate siteId={ siteId } currency={ currency } { ...method } /> ];
 			case 'free_shipping':
-				return <FreeShipping siteId={ siteId } currency={ currency } { ...method } />;
+				return [
+					titleField,
+					<FreeShipping siteId={ siteId } currency={ currency } { ...method } />,
+				];
 			case 'local_pickup':
-				return <LocalPickup siteId={ siteId } currency={ currency } { ...method } />;
+				return [
+					titleField,
+					<LocalPickup siteId={ siteId } currency={ currency } { ...method } />,
+				];
 			default:
 				return null;
 		}
@@ -141,14 +164,6 @@ const ShippingZoneMethodDialog = ( {
 						{ renderMethodTypeOptions() }
 					</FormSelect>
 				</FormFieldSet>
-				<FormFieldSet>
-					<FormLabel>{ translate( 'Title' ) }</FormLabel>
-					<FormTextInput
-						placeholder={ translate( 'Title' ) }
-						value={ title || '' }
-						onChange={ onMethodTitleChange }
-					/>
-				</FormFieldSet>
 				{ renderMethodSettingsView() }
 			</FormFieldSet>
 		</Dialog>
@@ -160,7 +175,7 @@ ShippingZoneMethodDialog.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const method = getCurrentlyOpenShippingZoneMethod( state );
 
 		return {
@@ -170,6 +185,7 @@ export default connect(
 			methodNamesMap: getShippingMethodNameMap( state ),
 			methodTypeOptions: method && getMethodTypeChangeOptions( state, method.methodType ),
 			currency: getCurrencyWithEdits( state ),
+			wcsEnabled: isWcsEnabled( state, ownProps.siteId ),
 		};
 	},
 	( dispatch, ownProps ) => ( {
