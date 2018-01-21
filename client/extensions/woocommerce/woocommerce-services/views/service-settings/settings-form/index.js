@@ -37,24 +37,28 @@ const SettingsForm = ( props ) => {
 };
 
 SettingsForm.propTypes = {
-	loaded: PropTypes.bool.isRequired,
-	storeOptions: PropTypes.object,
-	schema: PropTypes.object,
-	layout: PropTypes.array,
+	siteId: PropTypes.number.isRequired,
+	method: PropTypes.object.isRequired,
 };
 
 function mapStateToProps( state, props ) {
+	const { storeOptions, formSchema, formLayout } = getShippingMethodSchema( state, props.method.methodType, props.siteId );
 	return {
-		form: getShippingSettingsForm( state ),
-		errors: props.loaded && getFormErrors( state, props.schema ),
+		formData: getCurrentlyOpenShippingZoneMethod( state, props.siteId ),
+		errors: getFormErrors( state, formSchema ),
+		storeOptions,
+		schema: formSchema,
+		layout: formLayout,
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps( dispatch, ownProps ) {
 	return {
 		formActions: bindActionCreators( FormActions, dispatch ),
 		noticeActions: bindActionCreators( { successNotice, errorNotice }, dispatch ),
-		formValueActions: bindActionCreators( FormValueActions, dispatch ),
+		formValueActions: {
+			updateField: ( path, value ) => dispatch( FormValueActions.updateField( ownProps.siteId, ownProps.method.id, path, value ) ),
+		},
 	};
 }
 
