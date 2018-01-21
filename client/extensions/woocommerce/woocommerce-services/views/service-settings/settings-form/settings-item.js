@@ -16,7 +16,7 @@ import ShippingServiceGroups from '../shipping-services';
 import FormLegend from 'components/forms/form-legend';
 
 const SettingsItem = ( {
-	form,
+	formData,
 	layout,
 	schema,
 	formValueActions,
@@ -27,7 +27,7 @@ const SettingsItem = ( {
 	const id = layout.key ? layout.key : layout;
 	const updateValue = ( value ) => formValueActions.updateField( id, value );
 	const updateSubValue = ( key, val ) => formValueActions.updateField( [ id ].concat( key ), val );
-	const fieldValue = form.values[ id ];
+	const fieldValue = formData[ id ];
 	const fieldSchema = schema.properties[ id ];
 	const fieldType = layout.type || fieldSchema.type || '';
 	const fieldError = errors[ '' ] ? ( errors[ '' ].value || layout.validation_hint || '' ) : false;
@@ -120,7 +120,6 @@ SettingsItem.propTypes = {
 	] ).isRequired,
 	schema: PropTypes.object.isRequired,
 	storeOptions: PropTypes.object.isRequired,
-	form: PropTypes.object.isRequired,
 	formValueActions: PropTypes.object.isRequired,
 	errors: PropTypes.object,
 	saveForm: PropTypes.func,

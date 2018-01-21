@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import SettingsItem from './settings-item';
-import SettingsGroupCard from 'components/settings-group-card';
+import SettingsGroupCard from 'woocommerce/woocommerce-services/components/settings-group-card';
 
 const SettingsGroup = ( props ) => {
 	const {
@@ -63,7 +63,6 @@ SettingsGroup.propTypes = {
 	schema: PropTypes.object.isRequired,
 	storeOptions: PropTypes.object.isRequired,
 	saveForm: PropTypes.func.isRequired,
-	form: PropTypes.object.isRequired,
 	formActions: PropTypes.object.isRequired,
 	errors: PropTypes.object,
 };
