@@ -35,6 +35,7 @@ export const builtInShippingMethods = {
 	local_pickup: localPickup,
 	wc_services_usps: wcsServiceSettings,
 	wc_services_canada_post: wcsServiceSettings,
+	wc_services_fedex: wcsServiceSettings,
 };
 
 export const initialState = {
