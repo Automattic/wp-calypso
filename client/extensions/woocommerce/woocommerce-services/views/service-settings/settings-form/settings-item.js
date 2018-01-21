@@ -14,6 +14,7 @@ import TextField from 'woocommerce/woocommerce-services/components/text-field';
 import RadioButtons from 'woocommerce/woocommerce-services/components/radio-buttons';
 import ShippingServiceGroups from '../shipping-services';
 import FormLegend from 'components/forms/form-legend';
+import { getLink } from 'woocommerce/lib/nav-utils';
 
 const SettingsItem = ( {
 	formData,
@@ -23,6 +24,7 @@ const SettingsItem = ( {
 	storeOptions,
 	errors,
 	translate,
+	site,
 } ) => {
 	const id = layout.key ? layout.key : layout;
 	const updateValue = ( value ) => formValueActions.updateField( id, value );
@@ -68,7 +70,7 @@ const SettingsItem = ( {
 						'Add and edit saved packages using the {{a}}Packaging Manager{{/a}}.',
 						{
 							components: {
-								a: <a href="admin.php?page=wc-settings&tab=shipping&section=package-settings" />,
+								a: <a href={ getLink( '/store/settings/shipping/:site/', site ) } />,
 							},
 						}
 					) }

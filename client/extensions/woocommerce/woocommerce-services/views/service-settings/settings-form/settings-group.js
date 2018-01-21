@@ -65,6 +65,7 @@ SettingsGroup.propTypes = {
 	saveForm: PropTypes.func.isRequired,
 	formActions: PropTypes.object.isRequired,
 	errors: PropTypes.object,
+	site: PropTypes.object.isRequired,
 };
 
 export default SettingsGroup;
