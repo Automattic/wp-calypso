@@ -14,8 +14,6 @@ import * as NoticeActions from 'state/notices/actions';
 import getFormErrors, { EMPTY_ERROR } from '../selectors/errors';
 
 export const UPDATE_FIELD = 'UPDATE_FIELD';
-export const REMOVE_FIELD = 'REMOVE_FIELD';
-export const ADD_ARRAY_FIELD_ITEM = 'ADD_ARRAY_FIELD_ITEM';
 
 export const updateField = ( siteId, methodId, path, value ) => ( {
 	type: UPDATE_FIELD,
@@ -24,17 +22,6 @@ export const updateField = ( siteId, methodId, path, value ) => ( {
 	methodType: 'wc_services_usps', // Will work for the other methods too since they share the same reducer
 	path,
 	value,
-} );
-
-export const removeField = ( path ) => ( {
-	type: REMOVE_FIELD,
-	path,
-} );
-
-export const addArrayFieldItem = ( path, item ) => ( {
-	type: ADD_ARRAY_FIELD_ITEM,
-	path,
-	item,
 } );
 
 export const submit = ( schema, silent ) => ( dispatch, getState, { methodId, instanceId } ) => {
