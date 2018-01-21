@@ -6,19 +6,11 @@ import { mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { INIT_FORM, SET_FORM_PROPERTY, SET_ALL_PRISTINE } from './actions';
-import initializeState from 'woocommerce/woocommerce-services/lib/initialize-form-state';
+import { SET_FORM_PROPERTY, SET_ALL_PRISTINE } from './actions';
 import values from './values/reducer';
 import * as formValueActions from './values/actions';
 
 const reducers = {};
-
-reducers[ INIT_FORM ] = ( state, { formSchema, formData, formLayout, storeOptions, noticeDismissed } ) => {
-	return {
-		...state,
-		...initializeState( formSchema, formData, formLayout, storeOptions, noticeDismissed ),
-	};
-};
 
 reducers[ SET_FORM_PROPERTY ] = ( state, action ) => {
 	const newObj = {};
