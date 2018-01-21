@@ -64,6 +64,8 @@ fieldMasks.cvv = {
 	unmask: identity,
 };
 
+// `document` is an EBANX field. Currently used for Brazilian CPF numbers
+// See isValidCPF() / ebanx.js
 fieldMasks.document = {
 	mask: function( previousValue, nextValue ) {
 		const digits = nextValue.replace( /[^0-9]/g, '' ),
