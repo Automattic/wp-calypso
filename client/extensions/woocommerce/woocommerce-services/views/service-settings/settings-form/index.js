@@ -16,6 +16,7 @@ import * as FormValueActions from 'woocommerce/woocommerce-services/state/servic
 import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
+import { getSite } from 'state/sites/selectors';
 
 const SettingsForm = ( props ) => {
 	const renderGroup = ( index ) => {
@@ -49,6 +50,7 @@ function mapStateToProps( state, props ) {
 		storeOptions,
 		schema: formSchema,
 		layout: formLayout,
+		site: getSite( state, props.siteId ),
 	};
 }
 
