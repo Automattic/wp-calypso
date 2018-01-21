@@ -105,7 +105,7 @@ export const handleBookingError = ( { dispatch }, action, error ) => {
 	switch ( error.code ) {
 		case CONCIERGE_ERROR_NO_AVAILABLE_STAFF:
 			errorMessage = translate(
-				'The selected time slot is not available anymore. Please select a different slot.'
+				'This session is no longer available. Please select a different time.'
 			);
 			break;
 
