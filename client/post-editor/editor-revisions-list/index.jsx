@@ -14,6 +14,7 @@ import { get, head, isEmpty, map } from 'lodash';
  * Internal dependencies
  */
 import EditorRevisionsListHeader from './header';
+import EditorRevisionsListControls from './controls';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
@@ -115,6 +116,7 @@ class EditorRevisionsList extends PureComponent {
 		return (
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
+				<EditorRevisionsListControls />
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
 						{ map( revisions, revision => {

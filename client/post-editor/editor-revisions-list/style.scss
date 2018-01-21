@@ -60,10 +60,21 @@
 	}
 }
 
+.editor-revisions-list__controls {
+	padding: 16px;
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	background: $white;
+	color: $gray-text-min;
+}
+
+.editor-revisions-list__unified-button {
+	margin-left: 10px;
+}
+
 // Scrollable Box for Revisions List
 .editor-revisions-list__scroller {
 	position: absolute;
-	top: 47px;
+	top: 109px;
 	right: 0;
 	bottom: 0;
 	left: 0;
