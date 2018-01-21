@@ -18,6 +18,7 @@ import EditorRevisionsListControls from './controls';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import config from 'config';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
@@ -111,12 +112,13 @@ class EditorRevisionsList extends PureComponent {
 		const { comparisons, postId, revisions, selectedRevisionId, siteId } = this.props;
 		const classes = classNames( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
+			'has-controls': config.isEnabled( 'post-editor/revisions-views' ),
 		} );
 
 		return (
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
-				<EditorRevisionsListControls />
+				{ config.isEnabled( 'post-editor/revisions-views' ) && <EditorRevisionsListControls /> }
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
 						{ map( revisions, revision => {

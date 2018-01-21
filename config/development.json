@@ -129,6 +129,7 @@
 		"post-editor/image-editor": true,
 		"post-editor/media-advanced": false,
 		"post-editor/revisions": true,
+        "post-editor/revisions-views": true,
 		"posts/post-type-list/bulk-edit": false,
 		"press-this": true,
 		"privacy-policy": true,

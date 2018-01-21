@@ -74,7 +74,7 @@
 // Scrollable Box for Revisions List
 .editor-revisions-list__scroller {
 	position: absolute;
-	top: 109px;
+	top: 47px;
 	right: 0;
 	bottom: 0;
 	left: 0;
@@ -84,6 +84,10 @@
 	@include breakpoint( '<660px' ) {
 		overflow-y: hidden;
 	}
+}
+
+.editor-revisions-list.has-controls .editor-revisions-list__scroller {
+	top: 109px;
 }
 
 .editor-revisions-list__list {
