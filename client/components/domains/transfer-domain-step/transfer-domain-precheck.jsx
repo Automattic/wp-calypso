@@ -118,7 +118,7 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	getStatusMessage() {
-		const { translate, unlocked, loading } = this.props;
+		const { loading, translate, unlocked } = this.props;
 		const { currentStep } = this.state;
 		const step = 1;
 		const isStepFinished = currentStep > step;
@@ -210,7 +210,7 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	getPrivacyMessage() {
-		const { translate, email, loading, privacy } = this.props;
+		const { email, loading, privacy, translate } = this.props;
 		const { currentStep } = this.state;
 		const step = 2;
 		const isStepFinished = currentStep > step;

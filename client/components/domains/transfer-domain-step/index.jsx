@@ -39,31 +39,31 @@ import TransferRestrictionMessage from 'components/domains/transfer-domain-step/
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
-		products: PropTypes.object.isRequired,
-		cart: PropTypes.object,
-		goBack: PropTypes.func,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
-		initialQuery: PropTypes.string,
 		analyticsSection: PropTypes.string.isRequired,
+		cart: PropTypes.object,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		goBack: PropTypes.func,
+		initialQuery: PropTypes.string,
 		onRegisterDomain: PropTypes.func.isRequired,
 		onTransferDomain: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
+		products: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	static defaultProps = {
-		onSave: noop,
 		analyticsSection: 'domains',
+		onSave: noop,
 	};
 
 	state = this.getDefaultState();
 
 	getDefaultState() {
 		return {
-			searchQuery: this.props.initialQuery || '',
 			domain: null,
 			inboundTransferStatus: {},
 			precheck: false,
+			searchQuery: this.props.initialQuery || '',
 			submittingAvailability: false,
 			submittingWhois: false,
 			supportsPrivacy: false,
@@ -299,12 +299,12 @@ class TransferDomainStep extends React.Component {
 					} ) }
 				</Notice>
 				<DomainRegistrationSuggestion
-					suggestion={ suggestion }
-					selectedSite={ this.props.selectedSite }
+					cart={ this.props.cart }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
-					cart={ this.props.cart }
 					onButtonClick={ this.registerSuggestedDomain }
+					selectedSite={ this.props.selectedSite }
+					suggestion={ suggestion }
 				/>
 			</div>
 		);
