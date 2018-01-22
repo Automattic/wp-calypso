@@ -457,15 +457,17 @@ export const PLANS_LIST = {
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
 				FEATURE_MARKETING_AUTOMATION,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_CDN_LIMITED,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -502,15 +504,17 @@ export const PLANS_LIST = {
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
 				FEATURE_MARKETING_AUTOMATION,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_CDN_LIMITED,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
@@ -917,7 +921,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getTitle: () => i18n.translate( 'Unlimited Video Hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'The easiest way to upload videos to your website and display them ' +
