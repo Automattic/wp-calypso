@@ -226,7 +226,7 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		selectedPurchase: getByPurchaseId( state, props.purchaseId ),
+		selectedPurchase: purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		selectedSite: getSelectedSiteSelector( state ),
 	};
