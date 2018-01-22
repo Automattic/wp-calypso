@@ -64,7 +64,7 @@ FollowListSite.prototype.unfollow = function() {
 		wpcom
 			.site( this.site_id )
 			.follow()
-			.del( function( resp ) {
+			.del( { source: config( 'readerFollowingSource' ) }, function( resp ) {
 				debug( 'unfollow success', resp );
 			} );
 	}
