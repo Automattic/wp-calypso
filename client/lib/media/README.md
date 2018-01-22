@@ -20,15 +20,17 @@ Whereas the MediaStore has no concept of ordering and is unaware of querying and
 The stores are singleton objects, which offer `get` and `getAll` methods to retrieve data.
 
 ```js
-var MediaStore = require( 'lib/media/store' )(),
-	allMedia = MediaStore.getAll( siteId ),
-	singleMedia = MediaStore.get( siteId, postId );
+import MediaStoreFactory from 'lib/media/store';
+const MediaStore = MediaStoreFactory();
+
+const allMedia = MediaStore.getAll( siteId );
+const singleMedia = MediaStore.get( siteId, postId );
 ```
 
 To interact with the store, use the actions made available in `actions.js`.
 
 ```js
-var MediaActions = require( 'lib/media/actions' );
+import MediaActions from 'lib/media/actions';
 
 MediaActions.fetchNextPage( siteId );
 ```
@@ -36,8 +38,8 @@ MediaActions.fetchNextPage( siteId );
 You should monitor the store for changes in case another module interacts with the store:
 
 ```js
-var MediaStore = require( 'lib/media/store' ),
-	mediaScale = MediaStore.get( 'media-scale' );
+import MediaStore 'lib/media/store';
+const mediaScale = MediaStore.get( 'media-scale' );
 
 MediaStore.on( 'change', function() {
 	mediaScale = MediaStore.get( 'media-scale' );

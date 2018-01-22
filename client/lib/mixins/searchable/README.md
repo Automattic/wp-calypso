@@ -1,6 +1,8 @@
 Searchable
 ==========
 
+## Deprecation Notice: mixins are deprecated! Please try to find an alternative way to accomplish the same goal
+
 `searchable` is a mixin that adds a text-based `search` method to filter a collection module.
 
 Pass the collections prototype into Searchable, along with an object to specify which nodes on each list-item should be searchable. The `search` method will do an initial `get()` on the collection, so make sure the collection supports a `get()` that will return an array of all items contained in the collection.
@@ -14,7 +16,7 @@ Adding mixin to a Collection:
  * Internal dependencies
  */
 
-var Searchable = require( 'searchable' );
+import Searchable from 'searchable';
 
 /**
  * SomeCollection component
@@ -38,14 +40,14 @@ Searchable( SomeCollection.prototype, [ 'title', 'description', 'author' ] );
  * Expose `SomeCollection`
  */
 
-module.exports = SomeCollection;
+export default SomeCollection;
 ```
 
 Example usage:
 
 ```js
-var list = require( 'some-collection' )(),
-    results = list.search( 'test' );
+import list from 'some-collection';
+const results = list.search( 'test' );
 ```
 
 When you add the mixin, you need to pass in a set of `searchNodes` where you specify which nodes on the item are available to search. We don't necessarily want to filter on every single node... for example, we may not want to return a result just because it has a header image whose filename matches the search term. We also cannot assume the list item will be a flat object. It could contain nested nodes that we want to search.

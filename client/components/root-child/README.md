@@ -9,13 +9,13 @@ positioning may impact the child's style.
 ## Usage
 
 ```jsx
-var React = require( 'react' ),
-	RootChild = require( 'components/root-child' );
+import React from 'react';
+import RootChild from 'components/root-child';
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class extends React.Component {
+	static displayName ='MyComponent';
 
-	render: function() {
+	render() {
 		return (
 			<div className="my-component">
 				<span>This text will be a child of MyComponent</span>
@@ -25,7 +25,7 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 ```
 
 ## Notes

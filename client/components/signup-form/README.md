@@ -12,9 +12,9 @@ disabled={ this.isDisabled() }
 submitting={ this.isSubmitting() }
 
 ```js
-var SignupForm = require( 'components/signup-form' ),
+import SignupForm from 'components/signup-form';
 
-render: function() {
+render() {
 	return (
 		<SignupForm
 			{ ...this.props }
