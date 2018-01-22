@@ -131,7 +131,9 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 	} );
 
 	if ( countriesData[ country ] ) {
-		const phoneValidationResult = phone && phoneValidation( phone );
+		const phoneValidationResult = phone && phoneValidation( phone, {
+			ignoreSpecialCharacters: true,
+		} );
 		if ( phoneValidationResult.error ) {
 			errors.phone = phoneValidationResult.message;
 		}

@@ -47,4 +47,8 @@ describe( 'Phone Validation Library', () => {
 	test( 'should pass a valid 7-digit jamaican number', () => {
 		assert.equal( 'phone_number_valid', phoneValidation( '+18761234567' ).info );
 	} );
+	test( 'should pass a number containing special characters if the ignore option is set', () => {
+		const result = phoneValidation( '+1(2345)678901', { ignoreSpecialCharacters: true } );
+		assert.equal( 'phone_number_valid', result.info );
+	} );
 } );
