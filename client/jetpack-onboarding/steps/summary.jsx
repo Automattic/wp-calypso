@@ -23,6 +23,7 @@ import {
 	getJetpackOnboardingCompletedSteps,
 	getUnconnectedSiteUrl,
 } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
@@ -120,6 +121,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 }
 
 export default connect( ( state, { siteId, steps } ) => ( {
+	isConnected: isJetpackSite( state, siteId ), // Will only return true if it's connected to WP.com
 	siteUrl: getUnconnectedSiteUrl( state, siteId ),
 	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
 	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
