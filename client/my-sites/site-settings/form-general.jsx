@@ -183,7 +183,11 @@ class SiteSettingsFormGeneral extends Component {
 			),
 		};
 
-		return errors[ langId ] && <Notice text={ errors[ langId ] } isCompact />;
+		return (
+			errors[ langId ] && (
+				<Notice text={ errors[ langId ] } className="language-picker-notice" isCompact />
+			)
+		);
 	};
 
 	languageOptions() {
@@ -196,6 +200,8 @@ class SiteSettingsFormGeneral extends Component {
 			supportsLanguageSelection,
 			translate,
 		} = this.props;
+		const errorNotice = this.renderLanguagePickerNotice();
+
 		if ( ! supportsLanguageSelection ) {
 			return null;
 		}
@@ -203,16 +209,15 @@ class SiteSettingsFormGeneral extends Component {
 		return (
 			<FormFieldset className={ siteIsJetpack && 'site-settings__has-divider is-top-only' }>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
-				{ this.renderLanguagePickerNotice() || (
-					<LanguagePicker
-						languages={ config( 'languages' ) }
-						valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
-						value={ fields.lang_id }
-						onChange={ onChangeField( 'lang_id' ) }
-						disabled={ isRequestingSettings }
-						onClick={ eventTracker( 'Clicked Language Field' ) }
-					/>
-				) }
+				{ errorNotice }
+				<LanguagePicker
+					languages={ config( 'languages' ) }
+					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
+					value={ errorNotice ? 'en_US' : fields.lang_id }
+					onChange={ onChangeField( 'lang_id' ) }
+					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
+					onClick={ eventTracker( 'Clicked Language Field' ) }
+				/>
 				<FormSettingExplanation>
 					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
