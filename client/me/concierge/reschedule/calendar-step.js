@@ -11,7 +11,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getConciergeSignupForm } from 'state/selectors';
+import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
+import { getConciergeAppointmentDetails, getConciergeSignupForm } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { rescheduleConciergeAppointment } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
@@ -49,28 +50,44 @@ class CalendarStep extends Component {
 	}
 
 	render() {
-		const { availableTimes, currentUserLocale, signupForm, site, translate } = this.props;
+		const {
+			appointmentId,
+			appointmentDetails,
+			availableTimes,
+			currentUserLocale,
+			signupForm,
+			site,
+			translate,
+		} = this.props;
 
 		return (
-			<AvailableTimePicker
-				actionText={ translate( 'Reschedule to this date' ) }
-				availableTimes={ availableTimes }
-				currentUserLocale={ currentUserLocale }
-				disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
-				description={ translate( 'Please select a day to reschedule your Concierge session.' ) }
-				onBack={ null }
-				onSubmit={ this.onSubmit }
-				site={ site }
-				signupForm={ signupForm }
-			/>
+			<div>
+				<QueryConciergeAppointmentDetails
+					appointmentId={ appointmentId }
+					scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID }
+				/>
+
+				<AvailableTimePicker
+					actionText={ translate( 'Reschedule to this date' ) }
+					availableTimes={ availableTimes }
+					currentUserLocale={ currentUserLocale }
+					disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING || ! appointmentDetails }
+					description={ translate( 'Please select a day to reschedule your Concierge session.' ) }
+					onBack={ null }
+					onSubmit={ this.onSubmit }
+					site={ site }
+					signupForm={ signupForm }
+				/>
+			</div>
 		);
 	}
 }
 
 export default connect(
 	state => ( {
-		signupForm: getConciergeSignupForm( state ),
+		appointmentDetails: getConciergeAppointmentDetails( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
+		signupForm: getConciergeSignupForm( state ),
 	} ),
 	{ rescheduleConciergeAppointment }
 )( localize( CalendarStep ) );
