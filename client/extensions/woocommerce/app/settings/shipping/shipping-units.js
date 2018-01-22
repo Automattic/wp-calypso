@@ -25,7 +25,15 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 
-const ShippingUnits = ( { siteId, loaded, weight, dimensions, translate, change, onChange } ) => {
+const ShippingUnits = ( {
+	siteId,
+	loaded,
+	weight,
+	dimensions,
+	translate,
+	changeSetting,
+	onChange,
+} ) => {
 	const renderOption = option => {
 		return (
 			<option key={ option } value={ option }>
@@ -37,13 +45,13 @@ const ShippingUnits = ( { siteId, loaded, weight, dimensions, translate, change,
 	const onChangeWeight = e => {
 		const setting = Object.assign( {}, weight, { value: e.target.value } );
 		onChange();
-		change( siteId, setting );
+		changeSetting( siteId, setting );
 	};
 
 	const onChangeDimensions = e => {
 		const setting = Object.assign( {}, dimensions, { value: e.target.value } );
 		onChange();
-		change( siteId, setting );
+		changeSetting( siteId, setting );
 	};
 
 	return (
@@ -75,7 +83,7 @@ ShippingUnits.propTypes = {
 	weight: PropTypes.object,
 	dimensions: PropTypes.object,
 	onChange: PropTypes.func.isRequired,
-	change: PropTypes.func.isRequired,
+	changeSetting: PropTypes.func.isRequired,
 };
 
 function mapStateToProps( state ) {
@@ -91,7 +99,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			change: changeSettingsProductsSetting,
+			changeSetting: changeSettingsProductsSetting,
 		},
 		dispatch
 	);

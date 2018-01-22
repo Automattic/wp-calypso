@@ -128,15 +128,16 @@ export const saveWeightAndDimensionsUnits = ( siteId, successAction, failureActi
 	dispatch,
 	getState
 ) => {
+	const state = getState();
 	if (
-		! areSettingsProductsLoaded( getState(), siteId ) ||
+		! areSettingsProductsLoaded( state, siteId ) ||
 		areSettingsProductsLoading( getState(), siteId )
 	) {
 		return;
 	}
 
-	const weight = getWeightUnitSetting( getState(), siteId );
-	const dimensions = getDimensionsUnitSetting( getState(), siteId );
+	const weight = getWeightUnitSetting( state, siteId );
+	const dimensions = getDimensionsUnitSetting( state, siteId );
 	return dispatch(
 		updateSettingsProducts( siteId, [ weight, dimensions ], successAction, failureAction )
 	);
