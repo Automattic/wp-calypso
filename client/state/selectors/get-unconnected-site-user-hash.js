@@ -16,8 +16,8 @@ import { getUnconnectedSite } from 'state/selectors';
  * Returns null if no email has been provided.
  *
  * @param  {Object}   state 		Global state tree.
- * @param  {String}   siteId		SiteId of the unconnected site.
- * @return {?String}		    		Hashed userEmail of the unconnected site.
+ * @param  {Integer}  siteId		SiteId of the unconnected site.
+ * @return {?String}						Hashed userEmail of the unconnected site.
  */
 export default createSelector(
 	( state, siteId ) => {

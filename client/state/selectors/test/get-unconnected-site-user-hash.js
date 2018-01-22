@@ -1,24 +1,18 @@
 /**
- * External dependencies
- */
-import sha1 from 'hash.js/lib/hash/sha/1';
-
-/**
  * Internal dependencies
  */
 import { getUnconnectedSiteUserHash } from 'state/selectors';
 
 describe( '#getUnconnectedSiteUserHash()', () => {
-	const hash = sha1();
 	const userEmail = 'contact@yourgroovydomain.com';
-	hash.update( userEmail );
-	const userEmailHashed = hash.digest( 'hex' );
+	// sha1 hash of the userEmail
+	const userEmailHashed = 'c71a8fb1da35d12dbc14ae2a49d67460b3975fe6';
 
 	const credentials = {
 		2916284: {
 			token: 'abcd1234',
 			siteUrl: 'http://yourgroovydomain.com',
-			userEmail: userEmail,
+			userEmail,
 		},
 	};
 
@@ -57,7 +51,7 @@ describe( '#getUnconnectedSiteUserHash()', () => {
 		expect( selected ).toBeNull();
 	} );
 
-	test( 'should return the userEmail if specified', () => {
+	test( 'should return hashed userEmail if specified', () => {
 		const selected = getUnconnectedSiteUserHash( {
 			jetpackOnboarding: {
 				credentials,
