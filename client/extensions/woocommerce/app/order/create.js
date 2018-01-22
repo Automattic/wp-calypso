@@ -30,6 +30,7 @@ import Main from 'components/main';
 import OrderCustomerCreate from './order-customer/create';
 import OrderDetails from './order-details';
 import { ProtectFormGuard } from 'lib/protect-form';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
 class Order extends Component {
@@ -85,6 +86,7 @@ class Order extends Component {
 			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 8000 } ) );
 		};
 
+		recordTrack( 'calypso_woocommerce_order_create' );
 		this.props.saveOrder( siteId, order, onSuccess, onFailure );
 	};
 
