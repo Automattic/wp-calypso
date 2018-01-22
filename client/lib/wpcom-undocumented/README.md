@@ -6,7 +6,7 @@ wpcom-undocumented
 These undocumented endpoints are automatically added to your `wpcom.js` instance when you use the `wp` constructor.
 
 ```javascript
-var wpcom = require( 'lib/wp' );
+import wpcom from 'lib/wp';
 
 wpcom.undocumented().readLists( function( err, data ) {
     debug( 'Posts:', data );

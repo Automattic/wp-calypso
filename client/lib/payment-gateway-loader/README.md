@@ -9,7 +9,7 @@ You can access the `Paygate` class from within the callback of `PaygateLoader.re
 
 
 ```es6
-var paymentGatewayLoader = require( 'lib/payment-gateway-loader' );
+import paymentGatewayLoader 'lib/payment-gateway-loader';
 
 function onSuccess( token ) {
 	// Do something with the Paygate token

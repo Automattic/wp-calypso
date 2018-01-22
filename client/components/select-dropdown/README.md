@@ -103,15 +103,15 @@ As a sibling to `DropdownItem`, an item "separator" or horizontal line can be us
 ![separator example screenshot](https://cldup.com/CWEH2K9PUf.png)
 
 ```js
-var SelectDropdown = require( 'components/select-dropdown' ),
-	DropdownItem = require( 'components/select-dropdown/item' ),
-	DropdownSeparator = require( 'components/select-dropdown/separator' );
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownSeparator from 'components/select-dropdown/separator';
 
-module.exports = React.createClass( {
+export default class extends React.Component {
 
 	// ...
 
-	render: function() {
+	render() {
 		return (
 			<SelectDropdown selectedText="Published">
 				<DropdownLabel><em>Post status<em></DropdownLabel>
@@ -123,7 +123,7 @@ module.exports = React.createClass( {
 			</SelectDropdown>
 		);
 	}
-} );
+}
 ```
 
 ---
@@ -137,7 +137,7 @@ A good example for this case is a form element. You don't want to have to write 
 > **NOTE** - there is still more work here in order to be fully functional as a form element, not recommended use case... yet.
 
 ```js
-var SelectDropdown = require( 'components/select-dropdown' );
+import SelectDropdown from 'components/select-dropdown';
 var options = [
 	{ label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
@@ -146,21 +146,19 @@ var options = [
 	{ value: 'trashed', label: 'Trashed' }
 ];
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	 // ...
 
-	render: function() {
+	handleOnSelect = ( option ) => {
+		console.log( 'selected option:', option ); // full object of selected option
+	}
+
+	render() {
 		return (
 			<SelectDropdown options={ options } onSelect={ this.handleOnSelect } />
 		);
 	},
-
-	handleOnSelect: function( option ) {
-		console.log( 'selected option:', option ); // full object of selected option
-	}
-
-} );
+}
 ```
 
 Note that all the "selection" logic will be applied in `SelectDropdown` itself using a simple `selected` value comparison in state. It will update itself when an option has been clicked.

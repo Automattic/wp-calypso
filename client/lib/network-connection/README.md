@@ -8,7 +8,7 @@ Network connection
 Public API can be used through main file:
 
 ```js
-var NetworkConnectionApp = require( 'lib/network-connection' );
+import NetworkConnectionApp from 'lib/network-connection';
 ```
 
 To init default handler which shows/hides error notice when connection lost/restored simply call:
