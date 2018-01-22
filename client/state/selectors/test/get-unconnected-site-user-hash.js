@@ -6,9 +6,9 @@ import sha1 from 'hash.js/lib/hash/sha/1';
 /**
  * Internal dependencies
  */
-import { getUnconnectedSiteUser } from 'state/selectors';
+import { getUnconnectedSiteUserHash } from 'state/selectors';
 
-describe( '#getUnconnectedSiteUser()', () => {
+describe( '#getUnconnectedSiteUserHash()', () => {
 	const hash = sha1();
 	const userEmail = 'contact@yourgroovydomain.com';
 	hash.update( userEmail );
@@ -23,7 +23,7 @@ describe( '#getUnconnectedSiteUser()', () => {
 	};
 
 	test( 'should return null if we have no credentials at all', () => {
-		const selected = getUnconnectedSiteUser( {
+		const selected = getUnconnectedSiteUserHash( {
 			jetpackOnboarding: {
 				credentials: {},
 			},
@@ -33,7 +33,7 @@ describe( '#getUnconnectedSiteUser()', () => {
 	} );
 
 	test( 'should return null if we have no credentials for the current site ID', () => {
-		const selected = getUnconnectedSiteUser( {
+		const selected = getUnconnectedSiteUserHash( {
 			jetpackOnboarding: {
 				credentials,
 			},
@@ -43,7 +43,7 @@ describe( '#getUnconnectedSiteUser()', () => {
 	} );
 
 	test( 'should return null if we have no userEmail in the credentials of the current site ID', () => {
-		const selected = getUnconnectedSiteUser( {
+		const selected = getUnconnectedSiteUserHash( {
 			jetpackOnboarding: {
 				credentials: {
 					2916284: {
@@ -58,7 +58,7 @@ describe( '#getUnconnectedSiteUser()', () => {
 	} );
 
 	test( 'should return the userEmail if specified', () => {
-		const selected = getUnconnectedSiteUser( {
+		const selected = getUnconnectedSiteUserHash( {
 			jetpackOnboarding: {
 				credentials,
 			},

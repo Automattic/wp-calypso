@@ -21,7 +21,7 @@ import {
 import {
 	getJetpackOnboardingSettings,
 	getRequest,
-	getUnconnectedSiteUser,
+	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
 import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
@@ -73,7 +73,7 @@ export default connect(
 		const isRequestingSettings = getRequest( state, requestJetpackOnboardingSettings( siteId ) )
 			.isLoading;
 
-		const userIdHashed = getUnconnectedSiteUser( state, siteId );
+		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
 		// Note: here we can select which steps to display, based on user's input
 		const steps = compact( [
 			STEPS.SITE_TITLE,
