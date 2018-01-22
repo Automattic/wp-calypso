@@ -174,7 +174,12 @@ export class UserStep extends Component {
 	 *                              So our server doesn't have to request the user profile on its end.
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null ) => {
-		this.submit( { service, access_token, id_token } );
+		this.submit( {
+			service,
+			access_token,
+			id_token,
+			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+		} );
 	};
 
 	userCreationComplete() {
