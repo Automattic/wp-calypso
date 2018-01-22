@@ -331,7 +331,7 @@ class CancelPurchaseButton extends Component {
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription and Refund' );
+				text = translate( 'Cancel Subscription' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {

@@ -57,8 +57,18 @@ const CancelPurchaseRefundInformation = ( {
 		}
 
 		if ( isSubscription( purchase ) ) {
+			text = [
+				i18n.translate(
+					"We're sorry to hear the %(productName)s plan didn't fit your current needs, but thank you for giving it a try.",
+					{
+						args: {
+							productName: getName( purchase ),
+						},
+					}
+				),
+			];
 			if ( includedDomainPurchase && isDomainMapping( includedDomainPurchase ) ) {
-				text = [
+				text.push(
 					i18n.translate(
 						'This plan includes mapping for the domain %(mappedDomain)s. ' +
 							"Cancelling will remove all the plan's features from your site, including the domain.",
@@ -85,23 +95,24 @@ const CancelPurchaseRefundInformation = ( {
 								mappedDomain: includedDomainPurchase.meta,
 							},
 						}
-					),
-				];
+					)
+				);
 
 				showSupportLink = false;
 			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
 				if ( isRefundable( includedDomainPurchase ) ) {
-					text = [
+					text.push(
 						i18n.translate(
-							'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
-								'Cancelling the domain could cause interruptions for your visitors.',
+							'Your plan included the custom domain %(domain)s. You can cancel your domain as well as the plan, but keep ' +
+								'in mind that when you cancel a domain you risk losing it forever, and visitors to your site may ' +
+								'experience difficulties acessing it.',
 							{
 								args: {
 									domain: includedDomainPurchase.meta,
-									domainCost: includedDomainPurchase.priceText,
 								},
 							}
 						),
+						i18n.translate( "We'd like to offer you two options to choose from:" ),
 						<FormLabel key="keep_bundled_domain">
 							<FormRadio
 								name="keep_bundled_domain_false"
@@ -110,20 +121,20 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 							/>
 							<span>
-								{ i18n.translate( 'Just cancel the plan and keep %(domain)s.', {
+								{ i18n.translate( 'Cancel the plan, but keep %(domain)s.', {
 									args: {
 										domain: includedDomainPurchase.meta,
 									},
 								} ) }
 								<br />
 								{ i18n.translate(
-									'You will receive a partial refund of %(refundAmount)s which is %(planCost)s for the plan ' +
-										'minus %(domainCost)s for the domain. The domain will remain registered to you and can be ' +
-										'used on WordPress.com or transferred.',
+									"You'll receive a partial refund of %(refundAmount)s -- the cost of the %(productName)s " +
+										'plan, minus %(domainCost)s for the domain. There will be no change to your domain ' +
+										"registration, and you're free to use it on WordPress.com or transfer it elsewhere.",
 									{
 										args: {
+											productName: getName( purchase ),
 											domainCost: includedDomainPurchase.priceText,
-											planCost: purchase.priceText,
 											refundAmount: purchase.refundText,
 										},
 									}
@@ -138,34 +149,35 @@ const CancelPurchaseRefundInformation = ( {
 								onChange={ onCancelBundledDomainChange }
 							/>
 							<span>
-								{ i18n.translate( 'Cancel the plan and the domain "%(domain)s."', {
+								{ i18n.translate( 'Cancel the plan {{em}}and{{/em}} the domain "%(domain)s."', {
 									args: {
 										domain: includedDomainPurchase.meta,
+									},
+									components: {
+										em: <em />,
 									},
 								} ) }
 								<br />
 								{ i18n.translate(
-									"You will be refunded %(planCost)s, but the domain will be canceled and can't be " +
-										'guaranteed to be available for registration again.',
+									"You'll receive a full refund of %(planCost)s. The domain will be cancelled, and it's possible " +
+										"you'll lose it permanently.",
 									{
 										args: {
-											domainCost: includedDomainPurchase.priceText,
 											planCost: purchase.priceText,
-											refundAmount: purchase.refundText,
 										},
 									}
 								) }
 							</span>
-						</FormLabel>,
-					];
+						</FormLabel>
+					);
 
 					if ( cancelBundledDomain ) {
-						text = text.concat( [
+						text.push(
 							i18n.translate(
-								'Canceling a domain name causes the domain to become unavailable for a brief period ' +
-									'before it can be purchased again, and someone may purchase it before you get a chance. ' +
-									'If you wish to use the domain with another service, ' +
-									'you’ll want to {{a}}update your name servers{{/a}} instead.',
+								"When you cancel a domain, it becomes unavailable for a while. Anyone may register it once it's " +
+									"available again, so it's possible you won't have another chance to register it in the future. " +
+									"If you'd like to use your domain on a site hosted elsewhere, consider {{a}}updating your name " +
+									'servers{{/a}} instead.',
 								{
 									components: {
 										a: <a href={ UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" />,
@@ -179,7 +191,8 @@ const CancelPurchaseRefundInformation = ( {
 								/>
 								<span>
 									{ i18n.translate(
-										'I understand that canceling means that I may {{strong}}lose this domain forever{{/strong}}.',
+										'I understand that canceling my domain means I might {{strong}}never be able to register it ' +
+											'again{{/strong}}.',
 										{
 											components: {
 												strong: <strong />,
@@ -187,11 +200,11 @@ const CancelPurchaseRefundInformation = ( {
 										}
 									) }
 								</span>
-							</FormLabel>,
-						] );
+							</FormLabel>
+						);
 					}
 				} else {
-					text = [
+					text.push(
 						i18n.translate(
 							'This plan includes the custom domain, %(domain)s, normally a %(domainCost)s purchase. ' +
 								'The domain will not be removed along with the plan, to avoid any interruptions for your visitors. ',
@@ -212,8 +225,8 @@ const CancelPurchaseRefundInformation = ( {
 									refundAmount: purchase.refundText,
 								},
 							}
-						),
-					];
+						)
+					);
 				}
 
 				showSupportLink = false;
