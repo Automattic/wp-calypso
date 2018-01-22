@@ -30,16 +30,17 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 class ShippingSettingsSaveButton extends Component {
 	static propTypes = {
 		onSaveSuccess: PropTypes.func.isRequired,
+		onSaveSuccessUnits: PropTypes.func.isRequired,
 		toSave: PropTypes.shape( {
 			units: PropTypes.bool,
-			shippingSettings: PropTypes.bool,
+			shipping: PropTypes.bool,
 		} ),
 	};
 
 	onSaveSuccess = dispatch => {
 		const { translate } = this.props;
 
-		this.props.onSaveSuccess();
+		this.props.onSaveSuccess( 'shipping' );
 
 		dispatch(
 			successNotice( translate( 'Shipping settings saved' ), {
@@ -51,9 +52,15 @@ class ShippingSettingsSaveButton extends Component {
 	saveUnits = () => {
 		const { translate, site } = this.props;
 
-		const unitsSaveSuccessNotice = successNotice( translate( 'Units settings saved' ), {
-			duration: 4000,
-		} );
+		const unitsSaveSuccessNotice = dispatch => {
+			this.props.onSaveSuccess( 'units' );
+
+			dispatch(
+				successNotice( translate( 'Units settings saved' ), {
+					duration: 4000,
+				} )
+			);
+		};
 
 		const unitsSaveFailureNotice = errorNotice(
 			translate( 'There was a problem saving units settings. Please try again.' )
@@ -93,7 +100,7 @@ class ShippingSettingsSaveButton extends Component {
 	save = () => {
 		const { toSave } = this.props;
 
-		if ( toSave.shippingSettings ) {
+		if ( toSave.shipping ) {
 			this.saveShippingSettings();
 		}
 

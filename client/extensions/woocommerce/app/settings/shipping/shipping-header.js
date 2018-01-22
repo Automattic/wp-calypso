@@ -40,7 +40,7 @@ ShippingHeader.propTypes = {
 	} ),
 	toSave: PropTypes.shape( {
 		units: PropTypes.bool,
-		shippingSettings: PropTypes.bool,
+		shipping: PropTypes.bool,
 	} ),
 };
 

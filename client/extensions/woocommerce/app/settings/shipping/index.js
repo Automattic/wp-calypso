@@ -4,6 +4,7 @@
  * External dependencies
  */
 
+import { every } from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -24,39 +25,34 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class Shipping extends Component {
 	state = {
-		pristineUnits: true,
-		pristineShippingSettings: true,
+		pristine: { units: true, shipping: true },
 	};
 
 	onChangeUnits = () => {
-		this.setState( { pristineUnits: false } );
+		this.setState( { pristine: Object.assign( {}, this.state.pristine, { units: false } ) } );
 	};
 
-	onChangeShippingSettings = () => {
-		this.setState( { pristineShippingSettings: false } );
+	onChangeShipping = () => {
+		this.setState( { pristine: Object.assign( {}, this.state.pristine, { shipping: false } ) } );
 	};
 
-	onSaveSuccess = () => {
-		this.setState( { pristineUnits: true, pristineShippingSettings: false } );
+	onSaveSuccess = option => {
+		this.setState( { pristine: Object.assign( {}, this.state.pristine, { [ option ]: true } ) } );
 	};
 
 	render = () => {
 		const { className, wcsEnabled } = this.props;
-		const toSave = {
-			units: this.state.pristineUnits,
-			shippingSettings: this.state.pristineShippingSettings,
-		};
+		const { pristine } = this.state;
+		const toSave = { units: ! pristine.units, shipping: ! pristine.shipping };
 
 		return (
 			<Main className={ classNames( 'shipping', className ) } wideLayout>
 				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } toSave={ toSave } />
 				<ShippingOrigin onChange={ this.onChangeUnits } />
 				<ShippingZoneList />
-				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShippingSettings } /> }
-				{ wcsEnabled && <Packages onChange={ this.onChangeShippingSettings } /> }
-				<ProtectFormGuard
-					isChanged={ ! ( this.state.pristineUnits || this.state.pristineShippingSettings ) }
-				/>
+				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShipping } /> }
+				{ wcsEnabled && <Packages onChange={ this.onChangeShipping } /> }
+				<ProtectFormGuard isChanged={ ! every( this.state.pristine ) } />
 			</Main>
 		);
 	};
