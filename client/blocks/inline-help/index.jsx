@@ -88,6 +88,7 @@ class InlineHelp extends Component {
 					<li className="inline-help__results-placeholder-item" />
 					<li className="inline-help__results-placeholder-item" />
 					<li className="inline-help__results-placeholder-item" />
+					<li className="inline-help__results-placeholder-item" />
 				</ul>
 			);
 		}
@@ -96,7 +97,7 @@ class InlineHelp extends Component {
 			// search done, but nothing found
 			return (
 				<div>
-					<p>Nothing found.</p>
+					<p className="inline-help__empty-results">No results&hellip;</p>
 					{ this.renderContextHelp() }
 				</div>
 			);
@@ -165,7 +166,7 @@ class InlineHelp extends Component {
 		const { translate } = this.props;
 		return (
 			<Button
-				className="inline-help"
+				className="inline-help is-active"
 				onClick={ this.handleHelpButtonClicked }
 				borderless
 				title={ translate( 'Help' ) }
@@ -181,7 +182,7 @@ class InlineHelp extends Component {
 				>
 					<div className="inline-help__heading">
 						<SearchCard
-							placeholder={ translate( 'How can we help?' ) }
+							placeholder={ translate( 'Search for help...' ) }
 							onSearch={ this.onSearch }
 							autoFocus
 							delaySearch={ true }
