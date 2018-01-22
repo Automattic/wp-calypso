@@ -7,13 +7,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, isBoolean } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Button from 'components/button';
+import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
@@ -200,6 +201,47 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	renderEmailReceiptsSection = () => {
+		const {
+			emailReceipts,
+			translate,
+			masterUserName,
+			masterUserLogin,
+			canEditSettings,
+			canEditPayments,
+			setFormDataValue,
+		} = this.props;
+
+		if ( ! isBoolean( emailReceipts ) ) {
+			return null;
+		}
+
+		const onChange = () => setFormDataValue( 'email_receipts', ! emailReceipts );
+
+		return (
+			<FormFieldSet>
+				<FormLabel className="label-settings__cards-label">
+					{ translate( 'Email Receipts' ) }
+				</FormLabel>
+				<FormLabel>
+					<FormCheckbox
+						checked={ emailReceipts }
+						onChange={ onChange }
+						disabled={ ! canEditPayments && ! canEditSettings }
+					/>
+					<span className="label-settings__credit-card-description">
+						{ translate( 'Email the label purchase receipts to %(ownerName)s (%(ownerLogin)s)', {
+							args: {
+								ownerName: masterUserName,
+								ownerLogin: masterUserLogin,
+							},
+						} ) }
+					</span>
+				</FormLabel>
+			</FormFieldSet>
+		);
+	};
+
 	renderContent = () => {
 		const {
 			canEditSettings,
@@ -240,6 +282,7 @@ class ShippingLabels extends Component {
 					<FormLabel className="label-settings__cards-label">{ translate( 'Payment' ) }</FormLabel>
 					{ this.renderPaymentsSection() }
 				</FormFieldSet>
+				{ this.renderEmailReceiptsSection() }
 			</div>
 		);
 	};
@@ -261,6 +304,7 @@ ShippingLabels.propTypes = {
 	canEditSettings: PropTypes.bool,
 	masterUserName: PropTypes.string,
 	masterUserLogin: PropTypes.string,
+	emailReceipts: PropTypes.bool,
 };
 
 export default localize( ShippingLabels );

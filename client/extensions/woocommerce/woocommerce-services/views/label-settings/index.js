@@ -67,6 +67,7 @@ class AccountSettingsRootView extends Component {
 					setFormDataValue={ setValue }
 					selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }
 					paperSize={ ( formData || {} ).paper_size }
+					emailReceipts={ ( formData || {} ).email_receipts }
 					storeOptions={ storeOptions }
 					canEditPayments={ formMeta.can_manage_payments }
 					canEditSettings={ Boolean( formMeta.can_manage_payments || formMeta.can_edit_settings ) }

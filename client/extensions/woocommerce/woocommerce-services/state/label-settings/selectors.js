@@ -62,3 +62,8 @@ export const isPristine = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const meta = getLabelSettingsFormMeta( state, siteId );
 	return meta && meta.pristine;
 };
+
+export const getEmailReceipts = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const data = getLabelSettingsFormData( state, siteId );
+	return data && data.email_receipts;
+};

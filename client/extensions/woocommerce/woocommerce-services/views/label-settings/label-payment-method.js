@@ -79,7 +79,7 @@ const PaymentMethod = ( {
 				checked={ selected }
 				onChange={ onSelect }
 			/>
-			<PaymentLogo className="label-settings__card-logo" type={ typeId } altText={ '' } />
+			<PaymentLogo className="label-settings__card-logo" type={ typeId } altText={ typeTitle } />
 			<div className="label-settings__card-details">
 				<p className="label-settings__card-number">{ typeName }</p>
 				<p className="label-settings__card-name">{ name }</p>
