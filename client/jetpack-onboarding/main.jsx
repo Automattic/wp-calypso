@@ -57,6 +57,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					isRequestingSettings={ isRequestingSettings }
 					recordJpoEvent={ recordJpoEvent }
 					siteId={ siteId }
+					siteSlug={ siteSlug }
 					settings={ settings }
 					stepName={ stepName }
 					steps={ steps }
