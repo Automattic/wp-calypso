@@ -336,7 +336,7 @@ function install() {
 	iframe = document.createElement( 'iframe' );
 
 	// set `src` and hide the iframe
-	iframe.src = proxyOrigin + '/wp-admin/rest-proxy/#' + origin;
+	iframe.src = proxyOrigin + '/wp-admin/rest-proxy/?v=2.0#' + origin;
 	iframe.style.display = 'none';
 
 	// inject the <iframe> into the <body>
