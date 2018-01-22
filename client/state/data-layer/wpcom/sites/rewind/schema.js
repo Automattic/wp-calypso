@@ -5,10 +5,17 @@ export const credential = {
 	properties: {
 		still_valid: { type: 'boolean' },
 		type: { type: 'string', enum: [ 'auto', 'ftp', 'sftp', 'ssh' ] },
+		role: { type: 'string' },
 		host: { type: 'string' },
 		port: { type: 'integer' },
+		user: { type: 'string' },
+		password: { type: 'boolean' },
+		abspath: { type: 'string' },
+		kpri: { type: 'boolean' },
+		baseUrl: { type: 'string' },
+		maxConcurrent: { type: 'integer' },
 	},
-	required: [ 'still_valid', 'type' ],
+	required: [ 'still_valid', 'type', 'role' ],
 };
 
 export const download = {
