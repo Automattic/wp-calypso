@@ -6,9 +6,9 @@ This component is used to display a button that launch a install action when cli
 #### How to use:
 
 ```js
-var PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' );
+import PluginInstallButton 'my-sites/plugins/plugin-install-button';
 
-render: function() {
+render() {
     return <PluginInstallButton
             plugin={ plugin }
             selectedSite={ site }

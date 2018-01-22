@@ -10,15 +10,17 @@ The Preferences store extends the EventEmitter interface and can be monitored fo
 The store is a singleton object which offers `get` and `getAll` methods to retrieve data from the store.
 
 ```js
-var PreferencesStore = require( 'lib/preferences/store' )(),
-	allPreferences = PreferencesStore.getAll(),
-	singlePreference = PreferenceStore.get( 'media-scale' );
+import PreferencesStoreFactory from 'lib/preferences/store' );
+
+const PreferencesStore = PreferencesStoreFactory();
+const allPreferences = PreferencesStore.getAll();
+const singlePreference = PreferenceStore.get( 'media-scale' );
 ```
 
 To interact with the store, use the actions made available in `actions.js`.
 
 ```js
-var PreferencesActions = require( 'lib/preferences/actions' );
+import PreferencesActions from 'lib/preferences/actions';
 
 PreferencesActions.fetch();
 
@@ -28,10 +30,12 @@ PreferencesActions.set( 'media-scale', 0.75 );
 You should monitor the store for changes in case another module interacts with the store:
 
 ```js
-var PreferencesStore = require( 'lib/preferences/store' )(),
-	mediaScale = PreferencesStore.get( 'media-scale' );
+import PreferencesStoreFactory from 'lib/preferences/store' );
 
-PreferencesStore.on( 'change', function() {
-	mediaScale = PreferencesStore.get( 'media-scale' );
+const PreferencesStore = PreferencesStoreFactory();
+let mediaScale = PreferencesStore.get( 'media-scale' );
+
+PreferencesStore.on( 'change', () => {
+	mediaScale = PreferencesStore.get( 'media-scale' )
 } );
 ```

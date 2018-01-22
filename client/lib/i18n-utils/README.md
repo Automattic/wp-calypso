@@ -6,5 +6,5 @@ I18n-related utilities, for use both client- and server-side.
 ## Usage
 
 ```js
-var i18nUtils = require( 'lib/i18n-utils' );
+import i18nUtils from 'lib/i18n-utils';
 ```

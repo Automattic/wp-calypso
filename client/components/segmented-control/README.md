@@ -16,14 +16,14 @@ The children technique is appropriate when you'd like to define the "selection" 
 A good example for this case is navigation. Sometimes the option that is selected is defined by the route, other times it's a state value, external prop, etc.
 
 ```js
-var SegmentedControl = require( 'components/segmented-control' ),
-	ControlItem = require( 'components/segmented-control/item' );
+import React from 'react';
+import SegmentedControl from 'components/segmented-control';
+import ControlItem from 'components/segmented-control/item';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
-	render: function() {
+	render() {
 		return (
 			<SegmentedControl>
 				<ControlItem
@@ -75,7 +75,7 @@ module.exports = React.createClass( {
 			} );
 		}.bind( this );
 	}
-} );
+}
 ```
 
 The key here is that it's up to the parent component to explicitly define things like: which item is selected, and potentially `onClick` callbacks, etc.
@@ -127,7 +127,9 @@ A good example for this case is a form element. You don't want to have to write 
 > **NOTE** - there is still more work here in order to be fully functional as a form element, not recommended use case... yet.
 
 ```js
-var SegmentedControl = require( 'components/segmented-control' );
+import React from 'react';
+import SegmentedControl from 'components/segmented-control';
+
 var options = [
 	{ value: 'all', label: 'All' },
 	{ value: 'unread', label: 'Unread' },
@@ -136,21 +138,19 @@ var options = [
 	{ value: 'likes', label: 'Likes' }
 ];
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
-
-	render: function() {
-		return (
-			<SegmentedControl options={ options } onSelect={ this.handleOnSelect } />
-		);
-	},
-
-	handleOnSelect: function( option ) {
+	
+	handleOnSelect = ( option ) => {
 		console.log( 'selected option:', option ); // full object of selected option
 	}
 
-} );
+	render() {
+		return (
+			<SegmentedControl options={ options } onSelect={ this.handleOnSelect } />
+		);
+	}, 
+}
 ```
 
 Note that all the "selection" logic will be applied in `SegmentedControl` itself using a simple `selected` value comparison in state. It will update itself when an option has been clicked.
