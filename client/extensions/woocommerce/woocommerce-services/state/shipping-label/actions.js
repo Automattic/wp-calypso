@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, fill, find, first, flatten, includes, isEqual, map, noop, pick } from 'lodash';
+import { every, fill, find, first, flatten, includes, isBoolean, isEqual, map, noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -661,7 +661,6 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 		form = state.form;
 		const formData = {
 			async: true,
-			email_receipt: Boolean( getEmailReceipts( getState(), siteId ) ),
 			origin: form.origin.selectNormalized ? form.origin.normalized : form.origin.values,
 			destination: form.destination.selectNormalized ? form.destination.normalized : form.destination.values,
 			packages: map( form.packages.selected, ( pckg, pckgId ) => {
@@ -677,6 +676,12 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 				};
 			} ),
 		};
+
+		//compatibility - only add the email_receipt if the plugin and the server support it
+		const emailReceipt = getEmailReceipts( getState(), siteId );
+		if ( isBoolean( emailReceipt ) ) {
+			formData.email_receipt = emailReceipt;
+		}
 
 		setIsSaving( true );
 		api.post( siteId, api.url.orderLabels( orderId ), formData )
