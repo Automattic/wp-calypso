@@ -6,7 +6,7 @@ This component is used to display a plugin card in a list of plugins.
 #### How to use:
 
 ```js
-import PluginItem from my-sites/plugins/plugin-item/plugin-item';
+import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
 render() {
     return (
