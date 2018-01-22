@@ -207,9 +207,7 @@ class SiteSettingsFormGeneral extends Component {
 		}
 
 		return (
-			<FormFieldset
-				className={ siteIsJetpack && classNames( 'site-settings__has-divider', 'is-top-only' ) }
-			>
+			<FormFieldset className={ siteIsJetpack && 'site-settings__has-divider is-top-only' }>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
 				{ this.renderLanguagePickerNotice() || (
 					<LanguagePicker
@@ -412,9 +410,7 @@ class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset
-				className={
-					! supportsLanguageSelection && classNames( 'site-settings__has-divider', 'is-top-only' )
-				}
+				className={ ! supportsLanguageSelection && 'site-settings__has-divider is-top-only' }
 			>
 				<FormLabel htmlFor="blogtimezone">{ translate( 'Site Timezone' ) }</FormLabel>
 
