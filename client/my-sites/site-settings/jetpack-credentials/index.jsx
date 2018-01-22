@@ -19,7 +19,7 @@ import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasMainCredentials, isRewindActive } from 'state/selectors';
 
-class Backups extends Component {
+class JetpackCredentials extends Component {
 	static propTypes = {
 		hasMainCredentials: PropTypes.bool,
 		isRewindActive: PropTypes.bool,
@@ -68,4 +68,4 @@ export default connect( state => {
 		isRewindActive: isRewindActive( state, siteId ),
 		siteId,
 	};
-} )( localize( Backups ) );
+} )( localize( JetpackCredentials ) );
