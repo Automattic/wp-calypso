@@ -30,8 +30,6 @@ export const JETPACK_ONBOARDING_STEPS = {
 export const JETPACK_ONBOARDING_SUMMARY_STEPS = {
 	JETPACK_CONNECTION: translate( 'Connect to WordPress.com' ),
 	THEME: translate( 'Choose a Theme' ),
-	SITE_ADDRESS: translate( 'Add a Site Address' ),
-	STORE: translate( 'Add a Store' ),
 	BLOG: translate( 'Start a Blog' ),
 };
 

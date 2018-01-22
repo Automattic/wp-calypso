@@ -52,18 +52,10 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	};
 
 	renderTodo = () => {
-		const stepsTodo = [
-			SUMMARY_STEPS.JETPACK_CONNECTION,
-			SUMMARY_STEPS.THEME,
-			SUMMARY_STEPS.SITE_ADDRESS,
-			SUMMARY_STEPS.STORE,
-			SUMMARY_STEPS.BLOG,
-		];
+		const stepsTodo = [ SUMMARY_STEPS.JETPACK_CONNECTION, SUMMARY_STEPS.THEME, SUMMARY_STEPS.BLOG ];
 		const stepLinks = [
 			'/jetpack/connect?url=' + this.props.siteUrl,
 			// TODO: update the following with relevant links
-			'#',
-			'#',
 			'#',
 			'#',
 		];
