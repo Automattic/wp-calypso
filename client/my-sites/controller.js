@@ -12,13 +12,14 @@ import { noop, some, startsWith, uniq } from 'lodash';
  */
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 import userFactory from 'lib/user';
-import { receiveSite, requestSites } from 'state/sites/actions';
+import { receiveSite, requestSites, requestSite } from 'state/sites/actions';
 import {
 	getSite,
 	getSiteSlug,
 	isJetpackModuleActive,
 	isJetpackSite,
 	isRequestingSites,
+	isRequestingSite,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
@@ -381,9 +382,20 @@ export function siteSelection( context, next ) {
 			return;
 		}
 	} else {
+		// Fetch the site from siteFragment.
+		dispatch( requestSite( siteFragment ) ).then( () => {
+			const initialSiteId = getSiteId( getState(), siteFragment );
+
+			dispatch( setSelectedSiteId( initialSiteId ) );
+
+			if ( getSite( getState(), initialSiteId ) ) {
+				onSelectedSiteAvailable( context );
+			}
+		} );
+
 		// if sites has fresh data and siteId is invalid
 		// redirect to allSitesPath
-		if ( ! isRequestingSites( getState() ) ) {
+		if ( ! isRequestingSites( getState() ) && ! isRequestingSite( getState(), siteFragment ) ) {
 			return page.redirect( allSitesPath );
 		}
 
