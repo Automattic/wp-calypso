@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthFormHeader renders as expected 1`] = `
+<div>
+  <FormattedHeader
+    headerText="Create your account"
+    subHeaderText="You are moments away from connecting your site."
+  />
+  <SiteCard
+    authQuery={
+      Object {
+        "authApproved": false,
+        "blogname": "Example Blog",
+        "clientId": 98765,
+        "from": "banner-44-slide-1-dashboard",
+        "homeUrl": "http://an.example.site",
+        "jpVersion": "5.4",
+        "nonce": "fooBarNonce",
+        "redirectAfterAuth": "http://an.example.site/wp-admin/admin.php?page=jetpack",
+        "redirectUri": "http://an.example.site/wp-admin/admin.php?page=jetpack&action=authorize&_wpnonce=fooBarNonce&redirect=http%3A%2F%2Fan.example.site%2Fwp-admin%2Fadmin.php%3Fpage%3Djetpack",
+        "scope": "administrator:fooBarBaz",
+        "secret": "fooBarSecret",
+        "site": "http://an.example.site",
+        "siteIcon": "",
+        "siteUrl": "http://an.example.site",
+        "state": "1",
+        "userEmail": "email@an.example.site",
+      }
+    }
+  />
+</div>
+`;

@@ -13,11 +13,18 @@ import { localize } from 'i18n-calypso';
 import FormattedHeader from 'components/formatted-header';
 import SiteCard from './site-card';
 import versionCompare from 'lib/version-compare';
+import { authQueryPropTypes } from './utils';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-class AuthFormHeader extends Component {
-	static propTypes = { authQuery: PropTypes.object.isRequired };
+export class AuthFormHeader extends Component {
+	static propTypes = {
+		authQuery: authQueryPropTypes.isRequired,
+
+		// Connected props
+		translate: PropTypes.func.isRequired,
+		user: PropTypes.object,
+	};
 
 	getState() {
 		const { user, authorize } = this.props;
