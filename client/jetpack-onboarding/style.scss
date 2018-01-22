@@ -61,12 +61,12 @@
 
 		&.completed,
 		&.completed a {
-			color: $gray;
+			color: darken($gray, 20%);
 		}
 
 		&.todo,
 		&.todo a {
-			color: $blue-medium;
+			color: $blue-wordpress;
 		}
 	}
 
