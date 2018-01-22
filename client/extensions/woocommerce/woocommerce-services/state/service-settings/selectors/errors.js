@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isObject } from 'lodash';
+import { isObject, mapValues, omit } from 'lodash';
 import validator from 'is-my-json-valid';
 import ObjectPath from 'objectpath';
 
@@ -11,6 +11,8 @@ import ObjectPath from 'objectpath';
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
 import createSelector from 'lib/create-selector';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
+import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export const EMPTY_ERROR = {
 	level: 'error',
@@ -82,40 +84,44 @@ const getFirstFieldPathNode = ( fieldPath ) => {
 	return fieldPathPieces[ 0 ];
 };
 
-const getRawFormErrors = ( schema, data, pristine ) => {
+const getRawFormErrors = ( schema, data, fieldsToCheck ) => {
 	const validate = validator( schema, { greedy: true } );
 	const coerced = coerceFormValues( schema, data );
 	const success = validate( coerced );
+	const rawErrors = {};
 
 	if ( ! success && validate.errors && validate.errors.length ) {
-		const rawErrors = {};
-
 		validate.errors.forEach( ( error ) => {
 			// Ignore validation errors for fields that haven't been interacted with
 			const errorField = getFirstFieldPathNode( error.field );
 
-			if ( errorField && pristine[ errorField ] ) {
+			if ( errorField && ! fieldsToCheck[ errorField ] ) {
 				return;
 			}
 			rawErrors[ error.field ] = EMPTY_ERROR;
 		} );
-
-		return rawErrors;
 	}
 
-	return {};
+	return rawErrors;
 };
 
 export default createSelector(
-	( state, siteId, methodType ) => {
-		const schema = getShippingMethodSchema( state, methodType, siteId );
-		const rawErrors = state.form.fieldsStatus || getRawFormErrors( schema, state.form.values, state.form.pristine );
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		const zone = getCurrentlyEditingShippingZone( state, siteId );
+		if ( ! zone || ! zone.methods || ! zone.methods.currentlyEditingId ) {
+			return {};
+		}
+		let { methodType, ...method } = zone.methods.currentlyEditingChanges;
+		const schema = getShippingMethodSchema( state, methodType, siteId ).formSchema;
+		method = omit( method, [ 'id', 'enabled' ] );
+		const fieldsToCheck = mapValues( method, () => true );
+		const rawErrors = getRawFormErrors( schema, method, fieldsToCheck );
 		return parseErrorsList( rawErrors );
 	},
-	( state, siteId, methodType ) => [
-		state.form.fieldsStatus,
-		state.form.values,
-		state.form.pristine,
-		getShippingMethodSchema( state, methodType, siteId ),
-	],
+	( state, siteId = getSelectedSiteId( state ) ) => {
+		return [
+			siteId,
+			getCurrentlyEditingShippingZone( state, siteId ),
+		];
+	}
 );
