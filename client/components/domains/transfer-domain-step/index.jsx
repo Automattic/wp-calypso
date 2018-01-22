@@ -335,6 +335,7 @@ class TransferDomainStep extends React.Component {
 	handleFormSubmit = event => {
 		event.preventDefault();
 
+		const domain = getFixedDomainSearch( this.state.searchQuery );
 		this.props.recordFormSubmitInTransferDomain( this.state.searchQuery );
 		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
 
@@ -358,6 +359,10 @@ class TransferDomainStep extends React.Component {
 
 					return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
 				} );
+
+				if ( this.props.isSignupStep && ! this.transferIsRestricted() ) {
+					this.props.onTransferDomain( domain );
+				}
 			}
 		);
 	};
@@ -375,15 +380,11 @@ class TransferDomainStep extends React.Component {
 						break;
 					case domainAvailability.TRANSFERRABLE:
 					case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-						if ( this.props.isSignupStep ) {
-							this.props.onTransferDomain( domain );
-						} else {
-							this.setState( {
-								domain,
-								supportsPrivacy: get( result, 'supports_privacy', false ),
-							} );
-							break;
-						}
+						this.setState( {
+							domain,
+							supportsPrivacy: get( result, 'supports_privacy', false ),
+						} );
+						break;
 					case domainAvailability.MAPPABLE:
 					case domainAvailability.TLD_NOT_SUPPORTED:
 						const tld = getTld( domain );
