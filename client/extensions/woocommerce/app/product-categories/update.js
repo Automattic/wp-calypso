@@ -101,7 +101,13 @@ class ProductCategoryUpdate extends React.Component {
 	};
 
 	onDelete = () => {
-		const { translate, site, category, deleteProductCategory: dispatchDelete } = this.props;
+		const {
+			translate,
+			site,
+			category,
+			deleteProductCategory: dispatchDelete,
+			clearProductCategoryEdits: clearEdits,
+		} = this.props;
 		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
 			args: { name: category.name },
 		} );
@@ -109,6 +115,9 @@ class ProductCategoryUpdate extends React.Component {
 			if ( ! accepted ) {
 				return;
 			}
+
+			clearEdits( site.ID );
+
 			const successAction = () => {
 				debounce( () => {
 					page.redirect( getLink( '/store/products/categories/:site/', site ) );
