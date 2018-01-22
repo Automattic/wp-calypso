@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { startsWith } from 'lodash';
+import { isEmpty, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -41,6 +41,7 @@ import {
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import WcsSettingsForm from 'woocommerce/woocommerce-services/views/service-settings/settings-form';
+import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
 
 const ShippingZoneMethodDialog = ( {
 	siteId,
@@ -53,6 +54,7 @@ const ShippingZoneMethodDialog = ( {
 	currency,
 	actions,
 	wcsEnabled,
+	canSave,
 } ) => {
 	if ( ! isVisible ) {
 		return null;
@@ -125,6 +127,7 @@ const ShippingZoneMethodDialog = ( {
 			label: isNew ? translate( 'Add' ) : translate( 'Done' ),
 			onClick: onClose,
 			isPrimary: true,
+			disabled: ! canSave,
 		},
 	];
 
@@ -189,6 +192,9 @@ export default connect(
 			methodTypeOptions: method && getMethodTypeChangeOptions( state, method.methodType ),
 			currency: getCurrencyWithEdits( state ),
 			wcsEnabled: isWcsEnabled( state, ownProps.siteId ),
+			canSave:
+				( method && ! startsWith( method.methodType, 'wc_services' ) ) ||
+				isEmpty( getFormErrors( state ) ),
 		};
 	},
 	( dispatch, ownProps ) => ( {
