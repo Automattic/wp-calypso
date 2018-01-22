@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import classNames from 'classnames';
-import { endsWith, includes, times } from 'lodash';
+import { endsWith, get, includes, times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +61,7 @@ class DomainSearchResults extends React.Component {
 			availableDomain,
 			lastDomainIsTransferrable,
 			lastDomainStatus,
-			lastDomainSearched: domain,
+			lastDomainSearched,
 			translate,
 		} = this.props;
 		const availabilityElementClasses = classNames( {
@@ -70,6 +70,8 @@ class DomainSearchResults extends React.Component {
 		} );
 		const suggestions = this.props.suggestions || [];
 		const { MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
+
+		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
 		let availabilityElement, domainSuggestionElement, offer;
 

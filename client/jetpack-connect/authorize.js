@@ -8,7 +8,7 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get, includes, startsWith } from 'lodash';
+import { get, includes, pick, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -42,6 +42,15 @@ import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
+import {
+	ALREADY_CONNECTED,
+	ALREADY_CONNECTED_BY_OTHER_USER,
+	DEFAULT_AUTHORIZE_ERROR,
+	RETRY_AUTH,
+	RETRYING_AUTH,
+	SECRET_EXPIRED,
+	USER_IS_ALREADY_CONNECTED_TO_SITE,
+} from './connection-notice-types';
 import {
 	isCalypsoStartedConnection,
 	isSsoApproved,
@@ -99,8 +108,12 @@ export class JetpackAuthorize extends Component {
 
 	componentWillMount() {
 		const { recordTracksEvent } = this.props;
-		recordTracksEvent( 'calypso_jpc_authorize_form_view' );
-		recordTracksEvent( 'calypso_jpc_auth_view' );
+
+		const tracksProperties = pick( this.props.authQuery, 'from' );
+		tracksProperties.is_mobile_app_flow = this.props.isMobileAppFlow;
+
+		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
+		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
 
 		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
@@ -159,6 +172,7 @@ export class JetpackAuthorize extends Component {
 	externalRedirectOnce( url ) {
 		if ( ! this.redirecting ) {
 			this.redirecting = true;
+			debug( `Redirecting to ${ url }` );
 			externalRedirect( url );
 		}
 	}
@@ -226,8 +240,8 @@ export class JetpackAuthorize extends Component {
 	 * Check whether this a valid authorized SSO request
 	 *
 	 * @param  {Object}  props          Props to test
-	 * @param  {?string} props.from     Where is the request from
-	 * @param  {?number} props.clientId Remote site ID
+	 * @param  {?string} props.authQuery.from     Where is the request from
+	 * @param  {?number} props.authQuery.clientId Remote site ID
 	 * @return {boolean}                True if it's a valid SSO request otherwise false
 	 */
 	isSso( props = this.props ) {
@@ -375,22 +389,46 @@ export class JetpackAuthorize extends Component {
 			userAlreadyConnected,
 		} = this.props.authorizationData;
 		const { alreadyAuthorized, site } = this.props.authQuery;
+
+		let redirectToMobileApp = null;
+		if ( this.props.isMobileAppFlow ) {
+			redirectToMobileApp = reason => {
+				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+				this.externalRedirectOnce( url );
+			};
+		}
+
 		if ( alreadyAuthorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
 			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
 			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
 			// flows will be reserved for brand new connections.
-			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ ALREADY_CONNECTED_BY_OTHER_USER }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if ( userAlreadyConnected ) {
 			// Via wp-admin it is possible to connect additional users after the initial connection is made. But if we
 			// are trying to connect an additional user, and we are logged into a wordpress.com account that is already
 			// connected, we need to show an error.
-			return <JetpackConnectNotices noticeType="userIsAlreadyConnectedToSite" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ USER_IS_ALREADY_CONNECTED_TO_SITE }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if ( this.retryingAuth ) {
-			return <JetpackConnectNotices noticeType="retryingAuth" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ RETRYING_AUTH }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if (
@@ -399,7 +437,9 @@ export class JetpackAuthorize extends Component {
 			! isAuthorizing &&
 			! authorizeSuccess
 		) {
-			return <JetpackConnectNotices noticeType="retryAuth" />;
+			return (
+				<JetpackConnectNotices noticeType={ RETRY_AUTH } onTerminalError={ redirectToMobileApp } />
+			);
 		}
 
 		if ( ! authorizeError ) {
@@ -407,17 +447,31 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
-			return <JetpackConnectNotices noticeType="alreadyConnected" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ ALREADY_CONNECTED }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 		if ( this.props.hasExpiredSecretError ) {
-			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ site } />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ SECRET_EXPIRED }
+					siteUrl={ site }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 		if ( this.props.hasXmlrpcError ) {
 			return this.renderXmlrpcFeedback();
 		}
 		return (
 			<div>
-				<JetpackConnectNotices noticeType="defaultAuthorizeError" />
+				<JetpackConnectNotices
+					noticeType={ DEFAULT_AUTHORIZE_ERROR }
+					onTerminalError={ redirectToMobileApp }
+				/>
 				{ this.renderErrorDetails() }
 			</div>
 		);

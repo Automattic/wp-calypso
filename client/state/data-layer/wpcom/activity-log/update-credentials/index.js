@@ -16,8 +16,10 @@ import {
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
 	JETPACK_CREDENTIALS_STORE,
+	REWIND_STATE_UPDATE,
 } from 'state/action-types';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 export const request = ( { dispatch }, action ) => {
 	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 4000 } );
@@ -38,7 +40,7 @@ export const request = ( { dispatch }, action ) => {
 	);
 };
 
-export const success = ( { dispatch }, action ) => {
+export const success = ( { dispatch }, action, { rewind_state } ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 		siteId: action.siteId,
@@ -58,6 +60,17 @@ export const success = ( { dispatch }, action ) => {
 			id: action.noticeId,
 		} )
 	);
+
+	// the API transform could fail and the rewind data might
+	// be unavailable so if that's the case just let it go
+	// for now. we'll improve our rigor as time goes by.
+	try {
+		dispatch( {
+			type: REWIND_STATE_UPDATE,
+			siteId: action.siteId,
+			data: transformApi( rewind_state ),
+		} );
+	} catch ( e ) {}
 };
 
 export const failure = ( { dispatch }, action, error ) => {

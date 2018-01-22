@@ -109,8 +109,13 @@ export const storeJetpackOnboardingSettings = ( { dispatch }, { settings, siteId
 	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
 };
 
-export const announceSaveFailure = ( { dispatch } ) =>
-	dispatch( errorNotice( translate( 'An unexpected error occurred. Please try again later.' ) ) );
+export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
+	dispatch(
+		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
+			id: `jpo-notice-error-${ siteId }`,
+			duration: 5000,
+		} )
+	);
 
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [

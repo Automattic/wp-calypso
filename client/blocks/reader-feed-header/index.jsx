@@ -79,17 +79,19 @@ class FeedHeader extends Component {
 								} ) }
 							</span>
 						) }
-						{ feed &&
-							! feed.is_error && (
-								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
-								</div>
-							) }
-						{ site &&
-							following &&
-							! isEmailBlocked && (
-								<div className="reader-feed-header__email-settings">{ notificationSettings }</div>
-							) }
+						<div className="reader-feed-header__follow-and-settings">
+							{ feed &&
+								! feed.is_error && (
+									<div className="reader-feed-header__follow-button">
+										<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
+									</div>
+								) }
+							{ site &&
+								following &&
+								! isEmailBlocked && (
+									<div className="reader-feed-header__email-settings">{ notificationSettings }</div>
+								) }
+						</div>
 					</div>
 				</div>
 				<Card className="reader-feed-header__site">

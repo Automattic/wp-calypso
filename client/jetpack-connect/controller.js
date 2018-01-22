@@ -15,7 +15,6 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
-import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
@@ -24,24 +23,26 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import { sectionify } from 'lib/route';
 import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
-import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
+import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
+import { login } from 'lib/paths';
+import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
+import { sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
-import { persistMobileRedirect, storePlan } from './persistence-utils';
+import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
 import {
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 
 /**
@@ -127,16 +128,8 @@ export function newSite( context, next ) {
 	next();
 }
 
-export function connect( context, next ) {
-	const { path, pathname, params, query } = context;
-	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-
-	debug( 'entered connect flow with params %o', params );
-
-	const planSlug = getPlanSlugFromFlowType( type, interval );
-	planSlug && storePlan( planSlug );
-
+export function persistMobileAppFlow( context, next ) {
+	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
 			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
@@ -147,6 +140,31 @@ export function connect( context, next ) {
 			persistMobileRedirect( '' );
 		}
 	}
+	next();
+}
+
+export function setMasterbar( context, next ) {
+	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
+		const masterbarToggle = retrieveMobileRedirect() ? hideMasterbar() : showMasterbar();
+		context.store.dispatch( masterbarToggle );
+	}
+	next();
+}
+
+export function connect( context, next ) {
+	const { path, pathname, params, query } = context;
+	const { type = false, interval } = params;
+	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+
+	debug( 'entered connect flow with params %o', params );
+
+	if ( retrieveMobileRedirect() && ! userModule.get() ) {
+		// Force login for mobile app flow. App will intercept and prompt native login.
+		return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
+	}
+
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+	planSlug && storePlan( planSlug );
 
 	analytics.pageView.record( pathname, analyticsPageTitle );
 
@@ -175,23 +193,7 @@ export function signupForm( context, next ) {
 
 	if ( validQueryObject ) {
 		const transformedQuery = authQueryTransformer( query );
-
-		// No longer setting/persisting query
-		//
-		// FIXME
-		//
-		// However, clientId is required for some reducer logic :(
-		//
-		// Set timestamp here so reducer can remain pure
-		//
-		// Hopefully when actions move to data-layer, this will become clearer and
-		// we won't need to store clientId in state
-		//
-		context.store.dispatch( {
-			type: JETPACK_CONNECT_QUERY_SET,
-			clientId: transformedQuery.clientId,
-			timestamp: Date.now(),
-		} );
+		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
 		let interval = context.params.interval;
 		let locale = context.params.locale;
@@ -226,22 +228,7 @@ export function authorizeForm( context, next ) {
 
 	if ( validQueryObject ) {
 		const transformedQuery = authQueryTransformer( query );
-
-		// No longer setting/persisting query
-		//
-		// FIXME
-		//
-		// However, from and clientId are required for some reducer logic :(
-		//
-		// Hopefully when actions move to data-layer, this will become clearer and
-		// we won't need to store clientId in state
-		//
-		context.store.dispatch( {
-			type: JETPACK_CONNECT_QUERY_SET,
-			clientId: transformedQuery.clientId,
-			timestamp: Date.now(),
-		} );
-
+		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {
 		context.primary = <NoDirectAccessError />;

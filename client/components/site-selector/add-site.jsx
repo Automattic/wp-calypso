@@ -12,7 +12,6 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { hasJetpackSites } from 'state/selectors';
 
 class SiteSelectorAddSite extends Component {
 	getAddNewSiteUrl() {
@@ -35,11 +34,4 @@ class SiteSelectorAddSite extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		hasJetpackSites: hasJetpackSites( state ),
-	} ),
-	{
-		recordTracksEvent,
-	}
-)( localize( SiteSelectorAddSite ) );
+export default connect( null, { recordTracksEvent } )( localize( SiteSelectorAddSite ) );

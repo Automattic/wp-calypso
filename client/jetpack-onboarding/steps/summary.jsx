@@ -20,7 +20,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Spinner from 'components/spinner';
 import {
 	getJetpackOnboardingPendingSteps,
-	getJetpackOnboardingProgress,
+	getJetpackOnboardingCompletedSteps,
 	getUnconnectedSiteUrl,
 } from 'state/selectors';
 import {
@@ -117,7 +117,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 
 export default connect( ( state, { siteId, steps } ) => {
 	const tasks = compact( [] );
-	const stepsCompleted = getJetpackOnboardingProgress( state, siteId, steps );
+	const stepsCompleted = getJetpackOnboardingCompletedSteps( state, siteId, steps );
 	const stepsPending = getJetpackOnboardingPendingSteps( state, siteId, steps );
 
 	return {

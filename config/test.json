@@ -37,6 +37,7 @@
 		"devdocs/components-usage-stats": false,
 		"help": true,
 		"jetpack/happychat": true,
+		"jetpack/onboarding": true,
 		"jetpack_core_inline_update": true,
 		"jitms": true,
 		"login/wp-login": true,

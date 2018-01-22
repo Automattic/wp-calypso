@@ -10,7 +10,12 @@ import { noop } from 'lodash';
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { JETPACK_CREDENTIALS_DELETE, JETPACK_CREDENTIALS_STORE } from 'state/action-types';
+import {
+	JETPACK_CREDENTIALS_DELETE,
+	JETPACK_CREDENTIALS_STORE,
+	REWIND_STATE_UPDATE,
+} from 'state/action-types';
+import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 export const request = ( { dispatch }, action ) => {
 	dispatch(
@@ -26,14 +31,25 @@ export const request = ( { dispatch }, action ) => {
 	);
 };
 
-export const success = ( { dispatch }, action ) => {
+export const success = ( { dispatch }, { siteId }, { rewind_state } ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_STORE,
 		credentials: {
 			main: null,
 		},
-		siteId: action.siteId,
+		siteId,
 	} );
+
+	// the API transform could fail and the rewind data might
+	// be unavailable so if that's the case just let it go
+	// for now. we'll improve our rigor as time goes by.
+	try {
+		dispatch( {
+			type: REWIND_STATE_UPDATE,
+			siteId,
+			data: transformApi( rewind_state ),
+		} );
+	} catch ( e ) {}
 };
 
 export default {

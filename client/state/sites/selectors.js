@@ -1104,3 +1104,12 @@ export function isNewSite( state, siteId ) {
 	// less than 30 minutes
 	return moment().diff( createdAt, 'minutes' ) < 30;
 }
+
+/**
+ * Returns whether all sites have been fetched.
+ * @param {Object}    state  Global state tree
+ * @return {Boolean}        Request State
+ */
+export function hasAllSitesList( state ) {
+	return !! state.sites.hasAllSitesList;
+}

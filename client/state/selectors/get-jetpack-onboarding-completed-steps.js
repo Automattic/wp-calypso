@@ -18,7 +18,7 @@ import { isJetpackOnboardingStepCompleted } from 'state/selectors';
  * @param  {Array}    steps   Array of steps to retrieve onboarding progress for.
  * @return {Object}           An object containing all steps and whether each of them has been completed.
  */
-export default function getJetpackOnboardingProgress( state, siteId, steps ) {
+export default function getJetpackOnboardingCompletedSteps( state, siteId, steps ) {
 	return reduce(
 		steps,
 		( result, stepName ) => {

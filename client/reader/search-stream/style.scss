@@ -316,6 +316,17 @@
 	.reader-subscription-list-item__settings-label {
 		display: none;
 	}
+
+	.reader-site-notification-settings__button-label {
+		display: none;
+	}
+}
+
+.search-stream .search-stream__single-column-results .reader-site-notification-settings__button-label {
+
+	@include breakpoint ( "<660px" ) {
+		display: none;
+	}
 }
 
 .search-stream__results.is-two-columns .reader-subscription-list-item__byline {
@@ -339,10 +350,6 @@
 // Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
 .search-stream__single-column-results .reader-subscription-list-item__timestamp {
 	display: none;
-}
-
-.search-stream__results.is-two-columns .gridicons-reader-follow {
-	left: 2px;
 }
 
 // Custom styling for cards in post results
@@ -411,8 +418,8 @@
 }
 
 .search-stream__results.is-two-columns .search-stream__site-results {
+
 	.gridicons-cog {
-		left: -2px;
 		top: 8px;
 	}
 
@@ -422,8 +429,9 @@
 }
 
 .search-stream .reader-subscription-list-item .gridicons-cog {
+
 	@include breakpoint( "<660px" ) {
-		left: 1px;
+		left: -1px;
 	}
 }
 

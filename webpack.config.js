@@ -1,7 +1,6 @@
+/** @format */
 /**
- * **** WARNING: No ES6 modules here. Not transpiled! ****
- *
- * @format
+ **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
 /**
@@ -108,9 +107,8 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 			},
 			{
-				test: /sections.js$/,
-				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'loader' ),
+				include: path.join( __dirname, 'client/sections.js' ),
+				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 			},
 			{
 				test: /\.html$/,
@@ -184,6 +182,7 @@ const webpackConfig = {
 			if ( chunk.name ) {
 				return chunk.name;
 			}
+
 			return chunk.modules.map( m => path.relative( m.context, m.request ) ).join( '_' );
 		} ),
 		new NameAllModulesPlugin(),

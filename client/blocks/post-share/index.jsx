@@ -214,7 +214,7 @@ class PostShare extends Component {
 			? this.props.connections.filter( this.isConnectionActive )
 			: [];
 		const requireCount = includes( map( targeted, 'service' ), 'twitter' );
-		const acceptableLength = requireCount ? 140 - 23 - 23 : null;
+		const acceptableLength = requireCount ? 280 - 23 - 23 : null;
 
 		return (
 			<PublicizeMessage
@@ -388,7 +388,7 @@ class PostShare extends Component {
 			return (
 				<Notice status="is-success" onDismissClick={ this.dismiss }>
 					{ translate( "We'll share your post on %s.", {
-						args: this.props.scheduledAt.format( 'ddd, MMMM Do YYYY, h:mm:ss a' ),
+						args: this.props.scheduledAt.format( 'LLLL' ),
 					} ) }
 				</Notice>
 			);

@@ -18,6 +18,7 @@ import {
 	CONCIERGE_APPOINTMENT_CREATE,
 	CONCIERGE_APPOINTMENT_RESCHEDULE,
 } from 'state/action-types';
+import { CONCIERGE_STATUS_BOOKING_ERROR } from 'me/concierge/constants';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {
@@ -40,7 +41,9 @@ describe( 'wpcom-api', () => {
 				http(
 					{
 						method: 'POST',
-						path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/cancel`,
+						path: `/concierge/schedules/${ action.scheduleId }/appointments/${
+							action.appointmentId
+						}/cancel`,
 						apiNamespace: 'wpcom/v2',
 						body: {},
 					},
@@ -90,7 +93,9 @@ describe( 'wpcom-api', () => {
 				http(
 					{
 						method: 'POST',
-						path: `/concierge/schedules/${ action.scheduleId }/appointments/${ action.appointmentId }/reschedule`,
+						path: `/concierge/schedules/${ action.scheduleId }/appointments/${
+							action.appointmentId
+						}/reschedule`,
 						apiNamespace: 'wpcom/v2',
 						body: {
 							begin_timestamp: action.beginTimestamp / 1000,
@@ -112,9 +117,11 @@ describe( 'wpcom-api', () => {
 		test( 'handleBookingError()', () => {
 			const dispatch = jest.fn();
 
-			handleBookingError( { dispatch } );
+			handleBookingError( { dispatch }, {}, { code: 'error' } );
 
-			expect( dispatch ).toHaveBeenCalledWith( updateConciergeBookingStatus( null ) );
+			expect( dispatch ).toHaveBeenCalledWith(
+				updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
+			);
 		} );
 	} );
 } );

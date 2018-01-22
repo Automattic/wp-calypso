@@ -12,10 +12,12 @@ import { isEqual, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isRequestingPostTypes } from 'state/post-types/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getSiteSettings } from 'state/site-settings/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
+
+// list of site settings properties that trigger a new query when they change
+const POST_TYPE_SETTINGS = [ 'jetpack_portfolio', 'jetpack_testimonial' ];
 
 class QueryPostTypes extends Component {
 	static propTypes = {
@@ -31,14 +33,18 @@ class QueryPostTypes extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { postTypeSettings, siteId, themeSlug } = this.props;
+		const { siteSettings, siteId, themeSlug } = this.props;
 		const {
-			postTypeSettings: nextPostTypeSettings,
+			siteSettings: nextSiteSettings,
 			siteId: nextSiteId,
 			themeSlug: nextThemeSlug,
 		} = nextProps;
+
 		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
-		const hasPostTypeSettingChanged = ! isEqual( postTypeSettings, nextPostTypeSettings );
+		const hasPostTypeSettingChanged = ! isEqual(
+			pick( siteSettings, POST_TYPE_SETTINGS ),
+			pick( nextSiteSettings, POST_TYPE_SETTINGS )
+		);
 
 		if ( siteId !== nextSiteId || hasThemeChanged || hasPostTypeSettingChanged ) {
 			this.request( nextProps );
@@ -46,10 +52,6 @@ class QueryPostTypes extends Component {
 	}
 
 	request( props ) {
-		if ( props.requestingPostTypes ) {
-			return;
-		}
-
 		props.requestPostTypes( props.siteId );
 	}
 
@@ -59,14 +61,9 @@ class QueryPostTypes extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const settings = getSiteSettings( state, ownProps.siteId );
-
-		return {
-			postTypeSettings: pick( settings, [ 'jetpack_portfolio', 'jetpack_testimonial' ] ),
-			requestingPostTypes: isRequestingPostTypes( state, ownProps.siteId ),
-			themeSlug: getSiteOption( state, ownProps.siteId, 'theme_slug' ),
-		};
-	},
+	( state, { siteId } ) => ( {
+		siteSettings: getSiteSettings( state, siteId ),
+		themeSlug: getSiteOption( state, siteId, 'theme_slug' ),
+	} ),
 	{ requestPostTypes }
 )( QueryPostTypes );

@@ -367,16 +367,9 @@ Undocumented.prototype.scheduleJetpackFullysync = function( siteId, fn ) {
 	return this.wpcom.req.post( { path: endpointPath }, {}, fn );
 };
 
-Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
-	debug( '/sites/:site_id:/invites query' );
-	return this.wpcom.req.get(
-		'/sites/' + siteId + '/invites',
-		{
-			number: number,
-			offset: offset,
-		},
-		fn
-	);
+Undocumented.prototype.invitesList = function( siteId, data = {}, fn ) {
+	debug( '/sites/:site_id:/invites query', siteId, data );
+	return this.wpcom.req.get( '/sites/' + siteId + '/invites', data, fn );
 };
 
 Undocumented.prototype.getInvite = function( siteId, inviteKey, fn ) {
@@ -1413,12 +1406,6 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 		params,
 		fn
 	);
-};
-
-Undocumented.prototype.readSite = function( query, fn ) {
-	var params = omit( query, 'site' );
-	debug( '/read/sites/:site' );
-	return this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
 };
 
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
@@ -2500,6 +2487,15 @@ Undocumented.prototype.oauth2ClientId = function( clientId, fn ) {
 		{ apiNamespace: 'wpcom/v2' },
 		fn
 	);
+};
+
+/**
+ * Fetch the curated list of featured plugins.
+ * @param {Function}   fn             The callback function
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.getFeaturedPlugins = function( fn ) {
+	return this.wpcom.req.get( '/plugins/featured', { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**

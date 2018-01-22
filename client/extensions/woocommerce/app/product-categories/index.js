@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -20,8 +19,10 @@ import Main from 'components/main';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import ProductCategoriesList from 'woocommerce/app/product-categories/list';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import SectionNav from 'components/section-nav';
 import Search from 'components/search';
+import { withAnalytics } from 'state/analytics/actions';
 
 class ProductCategories extends Component {
 
@@ -77,7 +78,7 @@ class ProductCategories extends Component {
 		}
 
 		this.setState( { searchQuery: query, requestedSearchPages: [ 1 ] } );
-		this.props.fetchProductCategories( site.ID, { search: query } );
+		this.props.searchProductCategories( site.ID, { search: query } );
 	};
 
 	render() {
@@ -132,13 +133,12 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			fetchProductCategories,
-		},
-		dispatch
-	);
-}
+const mapDispatchToProps = dispatch => ( {
+	searchProductCategories: ( siteId, query ) => withAnalytics(
+		recordTrack( 'calypso_woocommerce_product_category_search', query ),
+		fetchProductCategories( siteId, query )( dispatch ),
+	),
+	fetchProductCategories: ( ...args ) => fetchProductCategories( ...args )( dispatch ),
+} );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ProductCategories ) );

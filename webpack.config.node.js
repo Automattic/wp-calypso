@@ -103,9 +103,11 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 			},
 			{
-				test: /sections.js$/,
-				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' ),
+				include: path.join( __dirname, 'client/sections.js' ),
+				use: {
+					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					options: { forceRequire: true, onlyIsomorphic: true },
+				},
 			},
 			{
 				test: /\.jsx?$/,

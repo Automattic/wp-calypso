@@ -14,11 +14,12 @@ import { connect } from 'react-redux';
 import HeaderCake from 'components/header-cake';
 import { getConciergeSignupForm } from 'state/selectors';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment } from 'state/concierge/actions';
+import { bookConciergeAppointment, requestConciergeAvailableTimes } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
 import {
-	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKED,
+	CONCIERGE_STATUS_BOOKING,
+	CONCIERGE_STATUS_BOOKING_ERROR,
 	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from '../constants';
 import analytics from 'lib/analytics';
@@ -58,6 +59,9 @@ class CalendarStep extends Component {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
 			// go to confirmation page if booking was successfull
 			this.props.onComplete();
+		} else if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
+			// request new available times
+			this.props.requestConciergeAvailableTimes( WPCOM_CONCIERGE_SCHEDULE_ID );
 		}
 	}
 
@@ -88,5 +92,5 @@ export default connect(
 		currentUserId: getCurrentUserId( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 	} ),
-	{ bookConciergeAppointment }
+	{ bookConciergeAppointment, requestConciergeAvailableTimes }
 )( localize( CalendarStep ) );

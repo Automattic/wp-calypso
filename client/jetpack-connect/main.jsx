@@ -42,6 +42,18 @@ import {
 	REMOTE_PATH_AUTH,
 	REMOTE_PATH_INSTALL,
 } from './constants';
+import {
+	ALREADY_CONNECTED,
+	ALREADY_OWNED,
+	IS_DOT_COM,
+	NOT_ACTIVE_JETPACK,
+	NOT_CONNECTED_JETPACK,
+	NOT_EXISTS,
+	NOT_JETPACK,
+	NOT_WORDPRESS,
+	OUTDATED_JETPACK,
+	WORDPRESS_DOT_COM,
+} from './connection-notice-types';
 
 const debug = debugModule( 'calypso:jetpack-connect:main' );
 
@@ -96,17 +108,15 @@ export class JetpackConnectMain extends Component {
 
 	componentDidUpdate() {
 		if (
-			this.getStatus() === 'notConnectedJetpack' &&
+			this.getStatus() === NOT_CONNECTED_JETPACK &&
 			this.isCurrentUrlFetched() &&
 			! this.redirecting
 		) {
 			return this.goToRemoteAuth( this.state.currentUrl );
 		}
-		if ( this.getStatus() === 'alreadyOwned' && ! this.redirecting ) {
+		if ( this.getStatus() === ALREADY_OWNED && ! this.redirecting ) {
 			if ( this.props.isMobileAppFlow ) {
-				const url = addQueryArgs( { reason: 'already-connected' }, this.props.mobileAppRedirect );
-				debug( 'redirect to', url );
-				return window.location.replace( url );
+				return this.redirectToMobileApp( 'already-connected' );
 			}
 			return this.goToPlans( this.state.currentUrl );
 		}
@@ -162,6 +172,12 @@ export class JetpackConnectMain extends Component {
 		} );
 
 		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_ACTIVATE ) );
+	} );
+
+	redirectToMobileApp = this.makeSafeRedirectionFunction( reason => {
+		const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+		debug( `Redirecting to mobile app ${ url }` );
+		externalRedirect( url );
 	} );
 
 	isCurrentUrlFetched() {
@@ -249,50 +265,50 @@ export class JetpackConnectMain extends Component {
 		}
 
 		if ( this.checkProperty( 'userOwnsSite' ) ) {
-			return 'alreadyOwned';
+			return ALREADY_OWNED;
 		}
 
 		if ( this.props.jetpackConnectSite.installConfirmedByUser === false ) {
-			return 'notJetpack';
+			return NOT_JETPACK;
 		}
 
 		if ( this.props.jetpackConnectSite.installConfirmedByUser === true ) {
-			return 'notActiveJetpack';
+			return NOT_ACTIVE_JETPACK;
 		}
 
 		if (
 			this.state.currentUrl.toLowerCase() === 'http://wordpress.com' ||
 			this.state.currentUrl.toLowerCase() === 'https://wordpress.com'
 		) {
-			return 'wordpress.com';
+			return WORDPRESS_DOT_COM;
 		}
 		if ( this.checkProperty( 'isWordPressDotCom' ) ) {
-			return 'isDotCom';
+			return IS_DOT_COM;
 		}
 		if ( ! this.checkProperty( 'exists' ) ) {
-			return 'notExists';
+			return NOT_EXISTS;
 		}
 		if ( ! this.checkProperty( 'isWordPress' ) ) {
-			return 'notWordPress';
+			return NOT_WORDPRESS;
 		}
 		if ( ! this.checkProperty( 'hasJetpack' ) ) {
-			return 'notJetpack';
+			return NOT_JETPACK;
 		}
 		const jetpackVersion = this.checkProperty( 'jetpackVersion' );
 		if ( jetpackVersion && versionCompare( jetpackVersion, MINIMUM_JETPACK_VERSION, '<' ) ) {
-			return 'outdatedJetpack';
+			return OUTDATED_JETPACK;
 		}
 		if ( ! this.checkProperty( 'isJetpackActive' ) ) {
-			return 'notActiveJetpack';
+			return NOT_ACTIVE_JETPACK;
 		}
 		if (
 			! this.checkProperty( 'isJetpackConnected' ) ||
 			( this.checkProperty( 'isJetpackConnected' ) && ! this.checkProperty( 'userOwnsSite' ) )
 		) {
-			return 'notConnectedJetpack';
+			return NOT_CONNECTED_JETPACK;
 		}
 		if ( this.checkProperty( 'isJetpackConnected' ) && this.checkProperty( 'userOwnsSite' ) ) {
-			return 'alreadyConnected';
+			return ALREADY_CONNECTED;
 		}
 
 		return false;
@@ -370,19 +386,19 @@ export class JetpackConnectMain extends Component {
 		const { translate } = this.props;
 		return {
 			headerTitle:
-				'notJetpack' === status
+				NOT_JETPACK === status
 					? translate( 'Ready for installation' )
 					: translate( 'Ready for activation' ),
 			headerSubtitle: translate(
 				"We'll need to send you to your site dashboard for a few manual steps."
 			),
 			steps:
-				'notJetpack' === status
+				NOT_JETPACK === status
 					? [ 'installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall' ]
 					: [ 'activateJetpack', 'connectJetpack' ],
-			buttonOnClick: 'notJetpack' === status ? this.installJetpack : this.activateJetpack,
+			buttonOnClick: NOT_JETPACK === status ? this.installJetpack : this.activateJetpack,
 			buttonText:
-				'notJetpack' === status ? translate( 'Install Jetpack' ) : translate( 'Activate Jetpack' ),
+				NOT_JETPACK === status ? translate( 'Install Jetpack' ) : translate( 'Activate Jetpack' ),
 		};
 	}
 
@@ -414,6 +430,7 @@ export class JetpackConnectMain extends Component {
 						noticeType={ status }
 						onDismissClick={ this.dismissUrl }
 						url={ this.state.currentUrl }
+						onTerminalError={ this.props.isMobileAppFlow ? this.redirectToMobileApp : null }
 					/>
 				) : null }
 
@@ -528,7 +545,7 @@ export class JetpackConnectMain extends Component {
 	render() {
 		const status = this.getStatus();
 		if (
-			includes( [ 'notJetpack', 'notActiveJetpack' ], status ) &&
+			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) &&
 			! this.props.jetpackConnectSite.isDismissed
 		) {
 			return this.renderInstructions( this.getInstructionsData( status ) );
