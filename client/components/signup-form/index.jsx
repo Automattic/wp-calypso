@@ -67,7 +67,7 @@ class SignupForm extends Component {
 		goToNextStep: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
-		isSocialFirst: PropTypes.bool,
+		isSocialSignupFirst: PropTypes.bool,
 		locale: PropTypes.string,
 		positionInFlow: PropTypes.number,
 		save: PropTypes.func,
@@ -81,7 +81,7 @@ class SignupForm extends Component {
 
 	static defaultProps = {
 		isSocialSignupEnabled: false,
-		isSocialFirst: false,
+		isSocialSignupFirst: false,
 	};
 
 	state = {
@@ -596,7 +596,7 @@ class SignupForm extends Component {
 				{ this.getNotice() }
 
 				{ this.props.isSocialSignupEnabled &&
-					this.props.isSocialFirst && (
+					this.props.isSocialSignupFirst && (
 						<Card className="signup-form__social logged-out-form">
 							<SocialSignupForm
 								handleResponse={ this.props.handleSocialResponse }
@@ -620,7 +620,7 @@ class SignupForm extends Component {
 				</LoggedOutForm>
 
 				{ this.props.isSocialSignupEnabled &&
-					! this.props.isSocialFirst && (
+					! this.props.isSocialSignupFirst && (
 						<Card className="signup-form__social">
 							<p>
 								{ preventWidows(
