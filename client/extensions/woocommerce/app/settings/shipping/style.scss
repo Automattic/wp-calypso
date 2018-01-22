@@ -16,13 +16,13 @@
 }
 
 .shipping__origin-settings {
-	display: flex;
-	align-items: center;
-	background: $white;
+	@include breakpoint( '>960px' ) {
+		display: flex;
+	}
 }
 
 .store-address {
-	margin: 0;
+	margin: 0 0 16px;
 	padding: 0;
 	box-shadow: none;
 	flex-shrink: 1;
@@ -37,9 +37,9 @@
 		flex-direction: column;
 	}
 
-	.shipping__weight-select,
-	.shipping__dimension-select {
-		flex-grow: 1;
+	.shipping__weight-select {
+		margin-right: 16px;
+		margin-bottom: 12px;
 	}
 }
 
