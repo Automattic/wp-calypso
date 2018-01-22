@@ -40,6 +40,7 @@ import TransferRestrictionMessage from 'components/domains/transfer-domain-step/
 class TransferDomainStep extends React.Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
+		basePath: PropTypes.string,
 		cart: PropTypes.object,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		goBack: PropTypes.func,
@@ -244,8 +245,11 @@ class TransferDomainStep extends React.Component {
 
 		return (
 			<TransferRestrictionMessage
+				basePath={ this.props.basePath }
 				creationDate={ creationDate }
 				domain={ domain }
+				goBack={ this.goBack }
+				mapDomainUrl={ this.getMapDomainUrl() }
 				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
 				termMaximumInYears={ termMaximumInYears }
 				transferEligibleDate={ transferEligibleDate }

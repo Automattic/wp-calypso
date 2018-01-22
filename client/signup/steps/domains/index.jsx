@@ -282,15 +282,15 @@ class DomainsStep extends React.Component {
 		return (
 			<div className="domains__step-section-wrapper">
 				<TransferDomainStep
-					path={ this.props.path }
+					analyticsSection="signup"
+					basePath={ this.props.path }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					initialQuery={ initialQuery }
+					isSignupStep
 					onRegisterDomain={ this.handleAddDomain }
 					onTransferDomain={ this.handleAddTransfer }
 					onSave={ this.onTransferSave }
 					products={ productsList.get() }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					initialQuery={ initialQuery }
-					analyticsSection="signup"
-					isSignupStep
 				/>
 			</div>
 		);
