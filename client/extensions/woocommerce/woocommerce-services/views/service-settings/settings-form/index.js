@@ -46,7 +46,7 @@ function mapStateToProps( state, props ) {
 	const { storeOptions, formSchema, formLayout } = getShippingMethodSchema( state, props.method.methodType, props.siteId );
 	return {
 		formData: getCurrentlyOpenShippingZoneMethod( state, props.siteId ),
-		errors: getFormErrors( state, props.siteId, props.method.methodType ),
+		errors: getFormErrors( state, props.siteId ),
 		storeOptions,
 		schema: formSchema,
 		layout: formLayout,
