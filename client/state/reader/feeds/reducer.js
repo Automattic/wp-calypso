@@ -45,7 +45,7 @@ function handleDeserialize( state ) {
 }
 
 function handleRequestFailure( state, action ) {
-	// new object proceeds current state to prevent new errors from overwriting existing values
+	// new object precedes current state to prevent new errors from overwriting existing values
 	return assign(
 		{
 			[ action.payload.feed_ID ]: {
