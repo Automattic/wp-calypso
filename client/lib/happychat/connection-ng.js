@@ -5,6 +5,7 @@
  */
 import IO from 'socket.io-client';
 import { isString } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -23,7 +24,7 @@ import {
 	requestTranscript,
 } from 'state/happychat/connection/actions';
 
-const debug = require( 'debug' )( 'calypso:happychat:connection' );
+const debug = debugFactory()( 'calypso:happychat:connection' );
 
 const buildConnection = socket =>
 	isString( socket )

@@ -89,7 +89,9 @@ export const finishUserSettingsSave = ( { dispatch }, { settingsOverride }, data
 	// Refetch the user data after saving user settings
 	// The require() trick is used to avoid excessive mocking in unit tests.
 	// TODO: Replace it with standard 'import' when the `lib/user` module is Reduxized
-	require( 'lib/user' )().fetch();
+	require( 'lib/user' )
+		.default()
+		.fetch();
 };
 
 export default mergeHandlers(
