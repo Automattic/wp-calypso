@@ -29,13 +29,18 @@ export function getInvitesForSite( state, siteId ) {
 }
 
 /**
- * Returns true if currently requesting invites for the given site, or false
+ * Returns true if currently requesting an invite resend for the given site, or false
  * otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
+ * @param  {String}  inviteId Invite ID
  * @return {Boolean}        Whether invites are being requested
  */
-export function isRequestingInviteResend( state, siteId ) {
-	return !! state.invites.requestingInviteResend[ siteId ];
+export function isRequestingInviteResend( state, siteId, inviteId ) {
+	const siteResendRequests = state.invites.requestingInviteResend[ siteId ];
+	if ( ! siteResendRequests ) {
+		return null;
+	}
+	return !! siteResendRequests[ inviteId ];
 }
