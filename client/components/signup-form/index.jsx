@@ -604,7 +604,7 @@ class SignupForm extends Component {
 								socialServiceResponse={ this.props.socialServiceResponse }
 							/>
 							<p>
-								{ preventWidows( this.props.translate( 'Or register with your e-mail address.' ) ) }
+								{ preventWidows( this.props.translate( 'Or sign up with your email address.' ) ) }
 							</p>
 						</Card>
 					) }
