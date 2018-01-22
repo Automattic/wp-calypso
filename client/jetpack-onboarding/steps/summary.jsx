@@ -7,7 +7,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { compact, get, map, without } from 'lodash';
+import { get, map, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -118,14 +118,9 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 }
 
 export default connect( ( state, { siteId, steps } ) => {
-	const tasks = compact( [] );
-	const stepsCompleted = getJetpackOnboardingCompletedSteps( state, siteId, steps );
-	const stepsPending = getJetpackOnboardingPendingSteps( state, siteId, steps );
-
 	return {
 		siteUrl: getUnconnectedSiteUrl( state, siteId ),
-		stepsCompleted,
-		stepsPending,
-		tasks,
+		stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
+		stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
 	};
 } )( localize( JetpackOnboardingSummaryStep ) );
