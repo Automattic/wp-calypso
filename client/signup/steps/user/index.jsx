@@ -4,6 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, isEmpty, omit } from 'lodash';
@@ -16,6 +17,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
+import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -73,7 +75,13 @@ export class UserStep extends Component {
 	}
 
 	componentWillMount() {
+		let { oauth2Signup, oauth2Client } = this.props;
+
 		this.setSubHeaderText( this.props );
+
+		if ( oauth2Signup && oauth2Client.id ) {
+			this.props.fetchOAuth2ClientData( oauth2Client.id );
+		}
 	}
 
 	setSubHeaderText( props ) {
@@ -299,5 +307,6 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
+		fetchOAuth2ClientData,
 	}
 )( localize( UserStep ) );
