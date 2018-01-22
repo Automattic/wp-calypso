@@ -276,7 +276,6 @@ class AboutStep extends Component {
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 			field: 'Site topic',
 			value: englishSiteTopicInput || 'N/A',
-			value: englishSiteTopicInput,
 		} );
 
 		this.props.setSurvey( {
