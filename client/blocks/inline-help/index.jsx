@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity } from 'lodash';
+import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -17,6 +17,8 @@ import Gridicon from 'gridicons';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import SearchCard from 'components/search-card';
+import HelpSearchStore from 'lib/help-search/store';
+import HelpSearchActions from 'lib/help-search/actions';
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -28,7 +30,21 @@ class InlineHelp extends Component {
 	};
 
 	state = {
+		helpLinks: [],
+		searchQuery: '',
 		showInlineHelp: false,
+	};
+
+	componentDidMount() {
+		HelpSearchStore.on( 'change', this.refreshHelpLinks );
+	}
+
+	componentWillUnmount() {
+		HelpSearchStore.removeListener( 'change', this.refreshHelpLinks );
+	}
+
+	refreshHelpLinks = () => {
+		this.setState( { helpLinks: HelpSearchStore.getHelpLinks() } );
 	};
 
 	toggleInlineHelp = () => {
@@ -36,6 +52,10 @@ class InlineHelp extends Component {
 		this.setState( {
 			showInlineHelp: ! showInlineHelp,
 		} );
+	};
+
+	showInlineHelp = () => {
+		this.setState( { showInlineHelp: true } );
 	};
 
 	closeInlineHelp = () => {
@@ -46,11 +66,100 @@ class InlineHelp extends Component {
 		this.toggleInlineHelp();
 	};
 
-	onSearch = () => {};
+	onSearch = searchQuery => {
+		this.setState( { helpLinks: [], searchQuery: searchQuery } );
+		HelpSearchActions.fetch( searchQuery );
+	};
 
 	inlineHelpToggleRef = node => {
 		this.inlineHelpToggle = node;
 	};
+
+	renderSearchResults() {
+		if ( isEmpty( this.state.searchQuery ) ) {
+			// not searching
+			return this.renderContextHelp();
+		}
+
+		if ( isEmpty( this.state.helpLinks ) ) {
+			// search, but no results so far
+			return (
+				<ul className="inline-help__results-placeholder">
+					<li className="inline-help__results-placeholder-item" />
+					<li className="inline-help__results-placeholder-item" />
+					<li className="inline-help__results-placeholder-item" />
+				</ul>
+			);
+		}
+
+		if ( isEmpty( this.state.helpLinks.wordpress_support_links ) ) {
+			// search done, but nothing found
+			return (
+				<div>
+					<p>Nothing found.</p>
+					{ this.renderContextHelp() }
+				</div>
+			);
+		}
+
+		// found something in helpLinks.wordpress_support_links!
+		const links = this.state.helpLinks.wordpress_support_links;
+		return (
+			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+		);
+	}
+
+	renderContextHelp() {
+		// going without context for now -- let's just provide the top x recommended links
+		// copied from client/me/help/main for now
+
+		const helpfulResults = [
+			{
+				link: 'https://en.support.wordpress.com/com-vs-org/',
+				title: this.props.translate( 'Uploading custom plugins and themes' ),
+				description: this.props.translate(
+					'Learn more about installing a custom theme or plugin using the Business plan.'
+				),
+			},
+			{
+				link: 'https://en.support.wordpress.com/all-about-domains/',
+				title: this.props.translate( 'All About Domains' ),
+				description: this.props.translate(
+					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
+				),
+			},
+			{
+				link: 'https://en.support.wordpress.com/start/',
+				title: this.props.translate( 'Get Started' ),
+				description: this.props.translate(
+					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
+				),
+			},
+			{
+				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
+				title: this.props.translate( 'Privacy Settings' ),
+				description: this.props.translate(
+					'Limit your site’s visibility or make it completely private.'
+				),
+			},
+		];
+
+		return (
+			<ul className="inline-help__results-list">
+				{ helpfulResults && helpfulResults.map( this.renderHelpLink ) }
+			</ul>
+		);
+	}
+
+	renderHelpLink( link ) {
+		return (
+			<li key={ link.link } className="inline-help__results-item">
+				<a target="_blank" href={ link.link }>
+					{ link.title }
+				</a>
+			</li>
+		);
+	}
 
 	render() {
 		const { translate } = this.props;
@@ -78,11 +187,7 @@ class InlineHelp extends Component {
 							delaySearch={ true }
 						/>
 
-						<ul className="inline-help__results-placeholder">
-							<li className="inline-help__results-placeholder-item" />
-							<li className="inline-help__results-placeholder-item" />
-							<li className="inline-help__results-placeholder-item" />
-						</ul>
+						{ this.renderSearchResults() }
 
 						<Button borderless href="/help">
 							<Gridicon icon="help" /> More help

@@ -41,6 +41,30 @@
 		padding: 3px 8px 8px 8px;
 	}
 
+	.inline-help__heading {
+		.search-card {
+			border-radius: 4px 4px 0 0;
+
+			.search {
+				border-radius: 4px 4px 0 0;
+			}
+		}
+
+		.button {
+			vertical-align: middle;
+		}
+	}
+
+	.inline-help__results-list {
+		list-style: none;
+		text-align: left;
+		margin: 1em 2em;
+
+		.inline-help__results-item {
+			font-size: 14px;
+		}
+	}
+
 	.inline-help__results-placeholder {
 		margin: 0 1em;
 		margin-bottom: 1em;
