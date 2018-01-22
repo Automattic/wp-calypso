@@ -7,7 +7,12 @@ There is an alternative implementaion called [InfiniteList](../../../components/
 
 ### How to use
 
-First, require the component with `var infiniteScroll = require( 'lib/mixins/infinite-scroll' )` and in your `React.createClass` add it as a mixin, passing a name of method that fetches next page.
+First, require the component with 
+```js
+import infiniteScroll from 'lib/mixins/infinite-scroll'; 
+```
+
+and in your `createReactClass` add it as a mixin, passing a name of method that fetches next page.
 
 If there are conditions when next page should not be loaded (e.g. next page is already loading, or last page was reached, it must be checked in that method.
 

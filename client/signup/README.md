@@ -49,7 +49,7 @@ The React component for a step should be implemented in `/signup/steps/`, in its
 Steps must use the `SignupActions` module, by requiring it as an internal dependency:
 
 ```javascript
-var SignupActions = require( 'lib/signup/actions' )
+import SignupActions from 'lib/signup/actions';
 ```
 
 `SignupActions` allows the Modular Framework to handle the data collected by a step. This means your step must include a UI element that allows users to move to the next step in the flow, and that the function handling this element must use the method `submitSignupStep` from `SignupActions`.
@@ -118,12 +118,12 @@ The steps below guide you through creating a new flow and step:
 3 - add a simple React component to `index.jsx`:
 
 ```javascript
-var React = require( 'react' );
+import React from 'react';
 
-module.exports = React.createClass( {
-	displayName: 'HelloWorld',
+export default class extends React.Component { 
+	static displayName = 'HelloWorld';
 
-	render: function() {
+	render() {
 		return <span>Hello world</span>;
 	}
 } );
@@ -131,7 +131,7 @@ module.exports = React.createClass( {
 
 4 - add the new step to `/client/signup/config/step-components.js`. Include the component:
 ```javascript
-var helloWorldComponent = require( 'signup/steps/hello-world' );
+import helloWorldComponent from 'signup/steps/hello-world';
 ```
 
 ... and then create a new property for it:
@@ -162,7 +162,7 @@ hello: { // This will be the slug for the flow, i.e.: wordpress.com/start/hello
 8 - now we need a way for users to move to the next step of the flow. Let's add a button and a form to the step's `render` method:
 
 ```javascript
-render: function() {
+render() {
 	return (
 		<form onSubmit={ this.handleSubmit }>
 			<p>This is the step named { this.props.stepName }</p>
@@ -174,13 +174,13 @@ render: function() {
 
 Make sure to require `SignupActions`:
 ```javascript
-var SignupActions = require( 'lib/signup/actions' );
+import SignupActions from 'lib/signup/actions';
 ```
 
 ... and to create a function to handle what happens when the form is submitted:
 
 ```javascript
-handleSubmit: function( event ) {
+handleSubmit = ( event ) => {
 	event.preventDefault();
 
 	SignupActions.submitSignupStep( {
