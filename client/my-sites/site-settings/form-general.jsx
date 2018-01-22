@@ -173,23 +173,17 @@ class SiteSettingsFormGeneral extends Component {
 
 	renderLanguagePickerNotice = () => {
 		const { fields, translate } = this.props;
-
 		const langId = get( fields, 'lang_id', '' );
-		const matches = /^error_(\w+)$/.exec( langId );
+		const errors = {
+			error_cap: translate(
+				'The Site Language setting is disabled due to insufficient permissions.'
+			),
+			error_const: translate(
+				'The Site Language setting is disabled because your site has the WPLANG constant set.'
+			),
+		};
 
-		let noticeText;
-		switch ( matches && matches[ 1 ] ) {
-			case 'cap':
-				noticeText = translate(
-					'The Site Language setting is disabled due to insufficient permissions.'
-				);
-			case 'const':
-				noticeText = translate(
-					'The Site Language setting is disabled because your site has the WPLANG constant set.'
-				);
-		}
-
-		return noticeText && <Notice text={ noticeText } isCompact />;
+		return errors[ langId ] && <Notice text={ errors[ langId ] } isCompact />;
 	};
 
 	languageOptions() {
