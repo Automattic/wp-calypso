@@ -65,7 +65,7 @@ const InternalNotification = ( {
 					name={ item.field }
 					onChange={ change }
 					value={ recipient }
-					placeholder={ isPlaceholder ? '' : translate( 'Enter recipients. Comma separated.' ) }
+					placeholder={ isPlaceholder ? '' : translate( 'Recipient email address.' ) }
 				/>
 				{ emailValidationError && (
 					<FormTextValidation isError text={ checkedEmails.messages[ 0 ].msg } />
