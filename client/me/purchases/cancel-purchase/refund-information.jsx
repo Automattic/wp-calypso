@@ -100,6 +100,8 @@ const CancelPurchaseRefundInformation = ( {
 
 				showSupportLink = false;
 			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
+				const planCostText =
+					purchase.currencySymbol + ( purchase.refundAmount + includedDomainPurchase.amount );
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(
@@ -163,7 +165,7 @@ const CancelPurchaseRefundInformation = ( {
 										"you'll lose it permanently.",
 									{
 										args: {
-											planCost: purchase.priceText,
+											planCost: planCostText,
 										},
 									}
 								) }
@@ -221,7 +223,7 @@ const CancelPurchaseRefundInformation = ( {
 							{
 								args: {
 									domainCost: includedDomainPurchase.priceText,
-									planCost: purchase.priceText,
+									planCost: planCostText,
 									refundAmount: purchase.refundText,
 								},
 							}

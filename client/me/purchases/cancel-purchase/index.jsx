@@ -116,12 +116,14 @@ class CancelPurchase extends React.Component {
 
 	renderFooterText = () => {
 		const purchase = getPurchase( this.props );
-		const { refundText, renewDate, priceText } = purchase;
+		const { refundText, renewDate, refundAmount, currencySymbol } = purchase;
 
 		if ( isRefundable( purchase ) ) {
-			if ( this.state.cancelBundledDomain ) {
+			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
+				const fullRefundText =
+					currencySymbol + ( refundAmount + this.props.includedDomainPurchase.amount );
 				return this.props.translate( '%(refundText)s to be refunded', {
-					args: { refundText: priceText },
+					args: { refundText: fullRefundText },
 					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 				} );
 			}
