@@ -73,6 +73,12 @@ class Popover extends Component {
 		onShow: noop,
 	};
 
+	/**
+	 * Flag to determine if we're currently repositioning the Popover
+	 * @type {boolean} True if the Popover is being repositioned.
+	 */
+	isUpdatingPosition = false;
+
 	constructor( props ) {
 		super( props );
 
@@ -129,13 +135,18 @@ class Popover extends Component {
 			return null;
 		}
 
-		if ( ! isVisible || isVisible === prevProps.isVisible ) {
+		if ( ! isVisible ) {
 			return null;
 		}
 
-		this.debug( 'Update position after render completes' );
-
-		setTimeout( () => this.setPosition(), 0 );
+		if ( ! this.isUpdatingPosition ) {
+			this.debug( 'requesting to update position after render completes' );
+			requestAnimationFrame( () => {
+				this.setPosition();
+				this.isUpdatingPosition = false;
+			} );
+			this.isUpdatingPosition = true;
+		}
 	}
 
 	componentWillUnmount() {
@@ -366,6 +377,7 @@ class Popover extends Component {
 	}
 
 	setPosition() {
+		this.debug( 'updating position' );
 		const position = this.computePosition();
 		if ( ! position ) {
 			return null;
