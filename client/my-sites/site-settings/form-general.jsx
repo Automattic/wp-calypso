@@ -177,19 +177,19 @@ class SiteSettingsFormGeneral extends Component {
 		const langId = get( fields, 'lang_id', '' );
 		const matches = /^error_(\w+)$/.exec( langId );
 
-		let notice;
+		let noticeText;
 		switch ( matches && matches[ 1 ] ) {
 			case 'cap':
-				notice = translate(
+				noticeText = translate(
 					'The Site Language setting is disabled due to insufficient permissions.'
 				);
 			case 'const':
-				notice = translate(
+				noticeText = translate(
 					'The Site Language setting is disabled because your site has the WPLANG constant set.'
 				);
 		}
 
-		return notice && <Notice text={ notice } isCompact />;
+		return noticeText && <Notice text={ noticeText } isCompact />;
 	};
 
 	languageOptions() {
