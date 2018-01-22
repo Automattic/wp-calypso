@@ -13,7 +13,6 @@ import qs from 'qs';
  */
 import wpcom from 'lib/wp';
 import config from 'config';
-import store from 'store';
 import localforage from 'lib/localforage';
 import {
 	supportUserTokenFetch,
@@ -69,6 +68,14 @@ reduxStoreReady.then( reduxStore => {
 	}
 } );
 
+const getStorageItem = () => {
+	try {
+		return JSON.parse( window.sessionStorage.getItem( STORAGE_KEY ) );
+	} catch ( error ) {
+		return {};
+	}
+};
+
 // Evaluate isSupportUserSession at module startup time, then freeze it
 // for the remainder of the session. This is needed because the User
 // module clears the store on change; it could return false if called
@@ -78,15 +85,24 @@ const _isSupportUserSession = ( () => {
 		return false;
 	}
 
-	const supportUser = store.get( STORAGE_KEY );
-	if ( supportUser && supportUser.user && supportUser.token ) {
-		return true;
-	}
+	const supportUser = getStorageItem();
 
-	return false;
+	return supportUser && supportUser.user && supportUser.token;
 } )();
 
 export const isSupportUserSession = () => _isSupportUserSession;
+
+let onBeforeUnload;
+
+const storeUserAndToken = ( user, token ) => () => {
+	if ( ! isEnabled() ) {
+		return;
+	}
+
+	if ( user && token ) {
+		window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
+	}
+};
 
 /**
  * Reboot normally as the main user
@@ -98,7 +114,8 @@ export const rebootNormally = () => {
 
 	debug( 'Rebooting Calypso normally' );
 
-	store.remove( STORAGE_KEY );
+	window.sessionStorage.removeItem( STORAGE_KEY );
+	window.removeEventListener( 'beforeunload', onBeforeUnload );
 	window.location.search = '';
 };
 
@@ -114,7 +131,7 @@ export const rebootWithToken = ( user, token ) => {
 
 	debug( 'Rebooting Calypso with support user' );
 
-	store.set( STORAGE_KEY, { user, token } );
+	window.sessionStorage.setItem( STORAGE_KEY, JSON.stringify( { user, token } ) );
 	window.location.search = '';
 };
 
@@ -132,20 +149,22 @@ export const boot = () => {
 		return;
 	}
 
-	localforage.bypass();
-
-	const { user, token } = store.get( STORAGE_KEY );
+	const { user, token } = getStorageItem();
 	debug( 'Booting Calypso with support user', user );
-	store.remove( STORAGE_KEY );
+
+	window.sessionStorage.removeItem( STORAGE_KEY );
+
+	onBeforeUnload = storeUserAndToken( user, token );
+	window.addEventListener( 'beforeunload', onBeforeUnload );
+
+	localforage.bypass();
 
 	// The following keys will not be bypassed as
 	// they are safe to share across user sessions.
 	const allowedKeys = [ STORAGE_KEY, 'debug' ];
 	localStorageBypass( allowedKeys );
 
-	const errorHandler = error => onTokenError( error );
-
-	wpcom.setSupportUserToken( user, token, errorHandler );
+	wpcom.setSupportUserToken( user, token, onTokenError );
 
 	// boot() is called before the redux store is ready, so we need to
 	// wait for it to become available
@@ -164,12 +183,12 @@ export const fetchToken = ( user, password ) => {
 	return reduxStoreReady.then( reduxStore => {
 		reduxStore.dispatch( supportUserTokenFetch( user ) );
 
-		const setToken = response => {
-			rebootWithToken( response.username, response.token );
+		const setToken = ( { username, token } ) => {
+			rebootWithToken( username, token );
 		};
 
-		const errorFetchingToken = error => {
-			reduxStore.dispatch( supportUserError( error.message ) );
+		const errorFetchingToken = ( { message } ) => {
+			reduxStore.dispatch( supportUserError( message ) );
 		};
 
 		return wpcom
