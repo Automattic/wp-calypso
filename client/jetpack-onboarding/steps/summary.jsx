@@ -55,24 +55,17 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 
 	renderTodo = () => {
 		const { siteUrl } = this.props;
-		const stepsTodo = [
-			SUMMARY_STEPS.JETPACK_CONNECTION,
-			SUMMARY_STEPS.THEME,
-			SUMMARY_STEPS.PAGES,
-			SUMMARY_STEPS.BLOG,
-		];
-		// If we're not connected, we cannot use selectors from `sites/selectors`.
-		const stepLinks = [
-			'/jetpack/connect?url=' + siteUrl,
-			// TODO: update the following with relevant links
-			siteUrl + '/wp-admin/themes.php',
-			siteUrl + '/wp-admin/post-new.php?post_type=page',
-			siteUrl + '/wp-admin/post-new.php',
-		];
 
-		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (
-			<div key={ fieldIndex } className="steps__summary-entry todo">
-				<a href={ stepLinks[ fieldIndex ] }>{ fieldLabel }</a>
+		const stepsTodo = {
+			[ SUMMARY_STEPS.JETPACK_CONNECTION ]: '/jetpack/connect?url=' + siteUrl,
+			[ SUMMARY_STEPS.THEME ]: siteUrl + '/wp-admin/themes.php',
+			[ SUMMARY_STEPS.PAGES ]: siteUrl + '/wp-admin/post-new.php?post_type=page',
+			[ SUMMARY_STEPS.BLOG ]: siteUrl + '/wp-admin/post-new.php',
+		};
+
+		return map( stepsTodo, ( stepUrl, fieldLabel ) => (
+			<div key={ stepUrl } className="steps__summary-entry todo">
+				<a href={ stepUrl }>{ fieldLabel }</a>
 			</div>
 		) );
 	};
@@ -117,10 +110,8 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, { siteId, steps } ) => {
-	return {
-		siteUrl: getUnconnectedSiteUrl( state, siteId ),
-		stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
-		stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
-	};
-} )( localize( JetpackOnboardingSummaryStep ) );
+export default connect( ( state, { siteId, steps } ) => ( {
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingSummaryStep ) );
