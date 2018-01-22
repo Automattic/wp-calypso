@@ -263,9 +263,9 @@ class TransferDomainStep extends React.Component {
 
 	render() {
 		let content;
-		const { domain, precheck, submittingAvailability, submittingWhois } = this.state;
+		const { precheck } = this.state;
 
-		if ( precheck || ( domain && ! submittingAvailability && ! submittingWhois ) ) {
+		if ( precheck ) {
 			if ( this.transferIsRestricted() ) {
 				content = this.getTransferRestrictionMessage();
 			} else {
