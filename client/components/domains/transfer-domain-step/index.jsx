@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import async from 'async';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -338,73 +339,89 @@ class TransferDomainStep extends React.Component {
 			this.props.analyticsSection
 		);
 
-		this.getInboundTransferStatus();
+		async.parallel(
+			[
+				callback => {
+					this.getInboundTransferStatus();
+					callback();
+				},
+				callback => {
+					checkDomainAvailability(
+						{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+						( error, result ) => {
+							const status = get( result, 'status', error );
+							switch ( status ) {
+								case domainAvailability.AVAILABLE:
+									this.setState( { suggestion: result } );
+									break;
+								case domainAvailability.TRANSFERRABLE:
+								case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
+									this.setState( {
+										domain,
+										supportsPrivacy: get( result, 'supports_privacy', false ),
+									} );
+									break;
+								case domainAvailability.MAPPABLE:
+								case domainAvailability.TLD_NOT_SUPPORTED:
+									const tld = getTld( domain );
 
-		checkDomainAvailability(
-			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
-			( error, result ) => {
-				const status = get( result, 'status', error );
-				switch ( status ) {
-					case domainAvailability.AVAILABLE:
-						this.setState( { suggestion: result } );
-						break;
-					case domainAvailability.TRANSFERRABLE:
-					case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
-						this.setState( {
-							domain,
-							supportsPrivacy: get( result, 'supports_privacy', false ),
-						} );
-						break;
-					case domainAvailability.MAPPABLE:
-					case domainAvailability.TLD_NOT_SUPPORTED:
-						const tld = getTld( domain );
+									this.setState( {
+										notice: this.props.translate(
+											"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+												'but you can {{a}}map it{{/a}} instead.',
+											{
+												args: { tld },
+												components: {
+													strong: <strong />,
+													a: <a href="#" onClick={ this.goToMapDomainStep } />,
+												},
+											}
+										),
+										noticeSeverity: 'info',
+									} );
+									break;
+								case domainAvailability.UNKNOWN:
+									const mappableStatus = get( result, 'mappable', error );
 
-						this.setState( {
-							notice: this.props.translate(
-								"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
-									'but you can {{a}}map it{{/a}} instead.',
-								{
-									args: { tld },
-									components: {
-										strong: <strong />,
-										a: <a href="#" onClick={ this.goToMapDomainStep } />,
-									},
-								}
-							),
-							noticeSeverity: 'info',
-						} );
-						break;
-					case domainAvailability.UNKNOWN:
-						const mappableStatus = get( result, 'mappable', error );
-
-						if ( domainAvailability.MAPPABLE === mappableStatus ) {
-							this.setState( {
-								notice: this.props.translate(
-									"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
-										'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
-									{
-										args: { domain },
-										components: {
-											strong: <strong />,
-											a: <a href="#" onClick={ this.goToMapDomainStep } />,
-										},
+									if ( domainAvailability.MAPPABLE === mappableStatus ) {
+										this.setState( {
+											notice: this.props.translate(
+												"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
+													'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
+												{
+													args: { domain },
+													components: {
+														strong: <strong />,
+														a: <a href="#" onClick={ this.goToMapDomainStep } />,
+													},
+												}
+											),
+											noticeSeverity: 'info',
+										} );
+										break;
 									}
-								),
-								noticeSeverity: 'info',
-							} );
-							break;
-						}
-					default:
-						let site = get( result, 'other_site_domain', null );
-						if ( ! site ) {
-							site = get( this.props, 'selectedSite.slug', null );
-						}
+								default:
+									let site = get( result, 'other_site_domain', null );
+									if ( ! site ) {
+										site = get( this.props, 'selectedSite.slug', null );
+									}
 
-						const { message, severity } = getAvailabilityNotice( domain, status, site );
-						this.setState( { notice: message, noticeSeverity: severity } );
-				}
+									const { message, severity } = getAvailabilityNotice( domain, status, site );
+									this.setState( { notice: message, noticeSeverity: severity } );
+							}
 
-				this.setState( { submittingAvailability: false } );
+							this.setState( { submittingAvailability: false } );
+							callback();
+						}
+					);
+				},
+			],
+			() => {
+				this.setState( prevState => {
+					const { submittingAvailability, submittingWhois } = prevState;
+
+					return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
+				} );
 			}
 		);
 	};
