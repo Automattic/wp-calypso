@@ -5,20 +5,14 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	bookConciergeAppointment,
-	cancelConciergeAppointment,
-	handleBookingError,
-	markSlotAsBooked,
-	rescheduleConciergeAppointment,
-	toApi,
+	fetchAppointmentDetails,
+	storeFetchedAppointmentDetails,
+	showAppointmentDetailsFetchError,
 } from '../';
-import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import {
-	CONCIERGE_APPOINTMENT_CANCEL,
-	CONCIERGE_APPOINTMENT_CREATE,
-	CONCIERGE_APPOINTMENT_RESCHEDULE,
-} from 'state/action-types';
-import { CONCIERGE_STATUS_BOOKING_ERROR } from 'me/concierge/constants';
+import { errorNotice } from 'state/notices/actions';
+import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { updateConciergeAppointmentDetails } from 'state/concierge/actions';
+import { CONCIERGE_APPOINTMENT_DETAILS_REQUEST } from 'state/action-types';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {
@@ -27,100 +21,55 @@ jest.mock( 'lib/impure-lodash', () => ( {
 
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
-		test( 'cancelConciergeAppointment()', () => {
+		test( 'fetchAppointmentDetails()', () => {
 			const dispatch = jest.fn();
 			const action = {
-				type: CONCIERGE_APPOINTMENT_CANCEL,
+				type: CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 				scheduleId: 123,
-				appointmentId: 1,
+				appointmentId: 321,
 			};
 
-			cancelConciergeAppointment( { dispatch }, action );
+			fetchAppointmentDetails( { dispatch }, action );
 
 			expect( dispatch ).toHaveBeenCalledWith(
 				http(
 					{
-						method: 'POST',
+						method: 'GET',
 						path: `/concierge/schedules/${ action.scheduleId }/appointments/${
 							action.appointmentId
-						}/cancel`,
+						}/detail`,
 						apiNamespace: 'wpcom/v2',
-						body: {},
+						retryPolicy: noRetry(),
 					},
 					action
 				)
 			);
 		} );
 
-		test( 'bookConciergeAppointment()', () => {
+		test( 'storeFetchedAppointmentDetails()', () => {
 			const dispatch = jest.fn();
-			const action = {
-				type: CONCIERGE_APPOINTMENT_CREATE,
-				scheduleId: 123,
-				beginTimestamp: 1234567890,
-				customerId: 1,
-				siteId: 2,
-				meta: { test: 'json' },
+			const mockAppointmentDetails = {
+				id: 1,
+				begin_timestamp: 123,
+				options: {
+					retryPolicy: { name: 'NO_RETRY' },
+				},
 			};
 
-			bookConciergeAppointment( { dispatch }, action );
+			storeFetchedAppointmentDetails( { dispatch }, {}, mockAppointmentDetails );
 
 			expect( dispatch ).toHaveBeenCalledWith(
-				http(
-					{
-						method: 'POST',
-						path: `/concierge/schedules/${ action.scheduleId }/appointments`,
-						apiNamespace: 'wpcom/v2',
-						body: toApi( action ),
-					},
-					action
-				)
+				updateConciergeAppointmentDetails( mockAppointmentDetails )
 			);
 		} );
 
-		test( 'rescheduleConciergeAppointment()', () => {
+		test( 'showAppointmentDetailsFetchError()', () => {
 			const dispatch = jest.fn();
-			const action = {
-				type: CONCIERGE_APPOINTMENT_RESCHEDULE,
-				scheduleId: 123,
-				appointmentId: 1,
-				beginTimestamp: 1234567890,
-			};
 
-			rescheduleConciergeAppointment( { dispatch }, action );
+			showAppointmentDetailsFetchError( { dispatch } );
 
 			expect( dispatch ).toHaveBeenCalledWith(
-				http(
-					{
-						method: 'POST',
-						path: `/concierge/schedules/${ action.scheduleId }/appointments/${
-							action.appointmentId
-						}/reschedule`,
-						apiNamespace: 'wpcom/v2',
-						body: {
-							begin_timestamp: action.beginTimestamp / 1000,
-						},
-					},
-					action
-				)
-			);
-		} );
-
-		test( 'markSlotAsBooked()', () => {
-			const dispatch = jest.fn();
-
-			markSlotAsBooked( { dispatch }, {}, true );
-
-			expect( dispatch ).toHaveBeenCalledWith( updateConciergeBookingStatus( 'booked' ) );
-		} );
-
-		test( 'handleBookingError()', () => {
-			const dispatch = jest.fn();
-
-			handleBookingError( { dispatch }, {}, { code: 'error' } );
-
-			expect( dispatch ).toHaveBeenCalledWith(
-				updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
+				errorNotice( 'We could not find your appointment. Please try again later.' )
 			);
 		} );
 	} );

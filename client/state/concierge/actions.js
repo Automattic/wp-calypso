@@ -8,10 +8,23 @@ import {
 	CONCIERGE_AVAILABLE_TIMES_UPDATE,
 	CONCIERGE_APPOINTMENT_CANCEL,
 	CONCIERGE_APPOINTMENT_CREATE,
+	CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
+	CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
 	CONCIERGE_APPOINTMENT_RESCHEDULE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
 } from 'state/action-types';
+
+export const requestConciergeAppointmentDetails = ( scheduleId, appointmentId ) => ( {
+	type: CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
+	scheduleId,
+	appointmentId,
+} );
+
+export const updateConciergeAppointmentDetails = appointmentDetails => ( {
+	type: CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
+	appointmentDetails,
+} );
 
 export const requestConciergeAvailableTimes = scheduleId => ( {
 	type: CONCIERGE_AVAILABLE_TIMES_REQUEST,
