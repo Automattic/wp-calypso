@@ -28,7 +28,7 @@ const ShippingServiceEntry = ( props ) => {
 		adjustment_type,
 	} = service;
 
-	const hasError = errors[ service.id ];
+	const hasError = Boolean( errors[ service.id ] );
 
 	const onToggleEnabled = ( event ) => updateValue( 'enabled', event.target.checked );
 	const onUpdateAdjustment = ( event ) => updateValue( 'adjustment', event.target.value );
