@@ -34,10 +34,39 @@ const ShippingUnits = ( {
 	changeSetting,
 	onChange,
 } ) => {
-	const renderOption = option => {
+	const weightLabels = unit => {
+		const labels = {
+			oz: translate( 'Ounces' ),
+			lbs: translate( 'Pounds' ),
+			kg: translate( 'Kilograms' ),
+			g: translate( 'Grams' ),
+		};
+		return labels[ unit ] || '';
+	};
+
+	const renderWeightOption = option => {
 		return (
 			<option key={ option } value={ option }>
-				{ option }
+				{ `${ option } - ${ weightLabels( option ) }` }
+			</option>
+		);
+	};
+
+	const dimensionsLabels = unit => {
+		const labels = {
+			m: translate( 'Meters' ),
+			cm: translate( 'Centimetres' ),
+			mm: translate( 'Milimetres' ),
+			in: translate( 'Grams' ),
+			yd: translate( 'Yards' ),
+		};
+		return labels[ unit ] || '';
+	};
+
+	const renderDimensionsOption = option => {
+		return (
+			<option key={ option } value={ option }>
+				{ `${ option } - ${ dimensionsLabels( option ) }` }
 			</option>
 		);
 	};
@@ -60,7 +89,7 @@ const ShippingUnits = ( {
 			<div className="shipping__weight-select">
 				<FormLabel>{ translate( 'Weight unit' ) }</FormLabel>
 				<FormSelect onChange={ onChangeWeight } value={ weight.value } disabled={ ! loaded }>
-					{ loaded && map( weight.options, renderOption ) }
+					{ loaded && map( weight.options, renderWeightOption ) }
 				</FormSelect>
 			</div>
 			<div className="shipping__dimension-select">
@@ -70,7 +99,7 @@ const ShippingUnits = ( {
 					value={ dimensions.value }
 					disabled={ ! loaded }
 				>
-					{ loaded && map( dimensions.options, renderOption ) }
+					{ loaded && map( dimensions.options, renderDimensionsOption ) }
 				</FormSelect>
 			</div>
 		</div>
