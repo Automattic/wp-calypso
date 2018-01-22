@@ -43,11 +43,6 @@ describe( 'requestFollow', () => {
 				onFailure: action,
 			} )
 		);
-
-		expect( dispatch ).to.be.calledWithMatch( {
-			type: NOTICE_CREATE,
-			notice: { status: 'is-success' },
-		} );
 	} );
 } );
 
