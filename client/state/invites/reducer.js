@@ -8,6 +8,9 @@ import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_FAILURE,
 	INVITES_REQUEST_SUCCESS,
+	INVITE_RESEND_REQUEST,
+	INVITE_RESEND_REQUEST_FAILURE,
+	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -52,4 +55,26 @@ export const items = createReducer(
 	}
 );
 
-export default combineReducers( { requesting, items } );
+/**
+ * Returns the updated site invites resend requests state after an action has been
+ * dispatched. The state reflects a mapping of site ID to a boolean reflecting
+ * whether a resend request for the invite is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function requestingInviteResend( state = {}, action ) {
+	switch ( action.type ) {
+		case INVITE_RESEND_REQUEST:
+		case INVITE_RESEND_REQUEST_SUCCESS:
+		case INVITE_RESEND_REQUEST_FAILURE:
+			return Object.assign( {}, state, {
+				[ action.siteId ]: INVITE_RESEND_REQUEST === action.type,
+			} );
+	}
+
+	return state;
+}
+
+export default combineReducers( { requesting, items, requestingInviteResend } );
