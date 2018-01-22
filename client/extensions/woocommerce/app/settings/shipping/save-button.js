@@ -30,6 +30,10 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 class ShippingSettingsSaveButton extends Component {
 	static propTypes = {
 		onSaveSuccess: PropTypes.func.isRequired,
+		toSave: PropTypes.shape( {
+			units: PropTypes.bool,
+			shippingSettings: PropTypes.bool,
+		} ),
 	};
 
 	onSaveSuccess = dispatch => {
@@ -44,21 +48,8 @@ class ShippingSettingsSaveButton extends Component {
 		);
 	};
 
-	save = () => {
-		const { translate, wcsEnabled, site } = this.props;
-		if ( ! wcsEnabled ) {
-			return;
-		}
-		const failureAction = errorNotice(
-			translate( 'There was a problem saving the shipping settings. Please try again.' )
-		);
-
-		const noLabelsPaymentAction = errorNotice(
-			translate( 'A payment method is required to print shipping labels.' ),
-			{
-				duration: 4000,
-			}
-		);
+	saveUnits = () => {
+		const { translate, site } = this.props;
 
 		const unitsSaveSuccessNotice = successNotice( translate( 'Units settings saved' ), {
 			duration: 4000,
@@ -73,12 +64,42 @@ class ShippingSettingsSaveButton extends Component {
 			unitsSaveSuccessNotice,
 			unitsSaveFailureNotice
 		);
+	};
+
+	saveShippingSettings = () => {
+		const { translate, wcsEnabled } = this.props;
+		if ( ! wcsEnabled ) {
+			return;
+		}
+
+		const failureAction = errorNotice(
+			translate( 'There was a problem saving the shipping settings. Please try again.' )
+		);
+
+		const noLabelsPaymentAction = errorNotice(
+			translate( 'A payment method is required to print shipping labels.' ),
+			{
+				duration: 4000,
+			}
+		);
 
 		this.props.createWcsShippingSaveActionList(
 			this.onSaveSuccess,
 			failureAction,
 			noLabelsPaymentAction
 		);
+	};
+
+	save = () => {
+		const { toSave } = this.props;
+
+		if ( toSave.shippingSettings ) {
+			this.saveShippingSettings();
+		}
+
+		if ( toSave.units ) {
+			this.saveUnits();
+		}
 	};
 
 	redirect = () => {

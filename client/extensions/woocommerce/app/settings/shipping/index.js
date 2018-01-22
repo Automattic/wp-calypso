@@ -24,28 +24,39 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class Shipping extends Component {
 	state = {
-		pristine: true,
+		pristineUnits: true,
+		pristineShippingSettings: true,
 	};
 
-	onChange = () => {
-		this.setState( { pristine: false } );
+	onChangeUnits = () => {
+		this.setState( { pristineUnits: false } );
+	};
+
+	onChangeShippingSettings = () => {
+		this.setState( { pristineShippingSettings: false } );
 	};
 
 	onSaveSuccess = () => {
-		this.setState( { pristine: true } );
+		this.setState( { pristineUnits: true, pristineShippingSettings: false } );
 	};
 
 	render = () => {
 		const { className, wcsEnabled } = this.props;
+		const toSave = {
+			units: this.state.pristineUnits,
+			shippingSettings: this.state.pristineShippingSettings,
+		};
 
 		return (
 			<Main className={ classNames( 'shipping', className ) } wideLayout>
-				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } />
-				<ShippingOrigin onChange={ this.onChange } />
+				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } toSave={ toSave } />
+				<ShippingOrigin onChange={ this.onChangeUnits } />
 				<ShippingZoneList />
-				{ wcsEnabled && <LabelSettings onChange={ this.onChange } /> }
-				{ wcsEnabled && <Packages onChange={ this.onChange } /> }
-				<ProtectFormGuard isChanged={ ! this.state.pristine } />
+				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShippingSettings } /> }
+				{ wcsEnabled && <Packages onChange={ this.onChangeShippingSettings } /> }
+				<ProtectFormGuard
+					isChanged={ ! ( this.state.pristineUnits || this.state.pristineShippingSettings ) }
+				/>
 			</Main>
 		);
 	};
