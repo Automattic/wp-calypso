@@ -59,11 +59,13 @@
 			margin-right: 12px;
 		}
 
-		&.completed {
+		&.completed,
+		&.completed a {
 			color: $gray;
 		}
 
-		&.todo {
+		&.todo,
+		&.todo a {
 			color: $blue-medium;
 		}
 	}

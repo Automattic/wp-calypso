@@ -31,7 +31,7 @@ import {
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
-		const { steps, stepsCompleted, stepsPending } = this.props;
+		const { siteSlug, steps, stepsCompleted, stepsPending } = this.props;
 
 		return map( without( steps, STEPS.SUMMARY ), stepName => {
 			const isCompleted = get( stepsCompleted, stepName ) === true;
@@ -45,7 +45,9 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					) : (
 						<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
 					) }
-					{ STEP_TITLES[ stepName ] }
+					<a href={ `/jetpack/onboarding/${ stepName }/${ siteSlug }` }>
+						{ STEP_TITLES[ stepName ] }
+					</a>
 				</div>
 			);
 		} );
