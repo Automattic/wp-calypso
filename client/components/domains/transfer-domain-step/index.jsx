@@ -201,12 +201,11 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
-	transferDomainPrecheck() {
+	getTransferDomainPrecheck() {
 		const { inboundTransferStatus, submittingWhois } = this.state;
 
 		return (
 			<TransferDomainPrecheck
-				creationDate={ inboundTransferStatus.creationDate }
 				domain={ this.state.domain }
 				email={ inboundTransferStatus.email }
 				loading={ submittingWhois }
@@ -214,13 +213,10 @@ class TransferDomainStep extends React.Component {
 				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
 				privacy={ inboundTransferStatus.privacy }
 				refreshStatus={ this.getInboundTransferStatus }
-				termMaximumInYears={ inboundTransferStatus.termMaximumInYears }
-				transferEligibleDate={ inboundTransferStatus.transferEligibleDate }
-				transferRestrictionStatus={ inboundTransferStatus.transferRestrictionStatus }
-				unlocked={ inboundTransferStatus.unlocked }
 				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
 				setValid={ this.props.onTransferDomain }
 				supportsPrivacy={ this.state.supportsPrivacy }
+				unlocked={ inboundTransferStatus.unlocked }
 			/>
 		);
 	}
@@ -269,14 +265,10 @@ class TransferDomainStep extends React.Component {
 		const { domain, precheck, submittingAvailability, submittingWhois } = this.state;
 
 		if ( precheck || ( domain && ! submittingAvailability && ! submittingWhois ) ) {
-			if ( ! precheck ) {
-				this.setState( { precheck: true } );
-			}
-
 			if ( this.transferIsRestricted() ) {
 				content = this.getTransferRestrictionMessage();
 			} else {
-				content = this.transferDomainPrecheck();
+				content = this.getTransferDomainPrecheck();
 			}
 		} else {
 			content = this.addTransfer();

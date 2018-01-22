@@ -25,17 +25,17 @@ import {
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from 'lib/url/support';
 
-class TransferDomainPrecheck extends React.PureComponent {
+class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string,
-		selectedSiteSlug: PropTypes.string,
-		setValid: PropTypes.func,
-		supportsPrivacy: PropTypes.bool,
 		email: PropTypes.string,
 		loading: PropTypes.bool,
 		losingRegistrar: PropTypes.string,
 		losingRegistrarIanaId: PropTypes.string,
 		privacy: PropTypes.bool,
+		selectedSiteSlug: PropTypes.string,
+		setValid: PropTypes.func,
+		supportsPrivacy: PropTypes.bool,
 		unlocked: PropTypes.bool,
 	};
 
