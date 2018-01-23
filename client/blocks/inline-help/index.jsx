@@ -19,6 +19,7 @@ import Popover from 'components/popover';
 import SearchCard from 'components/search-card';
 import HelpSearchStore from 'lib/help-search/store';
 import HelpSearchActions from 'lib/help-search/actions';
+import { preventWidows } from 'lib/formatting';
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -153,10 +154,11 @@ class InlineHelp extends Component {
 	}
 
 	renderHelpLink( link ) {
+		const title = preventWidows( link.title );
 		return (
 			<li key={ link.link } className="inline-help__results-item">
 				<a target="_blank" href={ link.link }>
-					{ link.title }
+					{ title }
 				</a>
 			</li>
 		);
