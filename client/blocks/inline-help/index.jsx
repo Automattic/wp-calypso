@@ -184,7 +184,7 @@ class InlineHelp extends Component {
 				>
 					<div className="inline-help__heading">
 						<SearchCard
-							placeholder={ translate( 'Search for help...' ) }
+							placeholder={ translate( 'Search for help…' ) }
 							onSearch={ this.onSearch }
 							autoFocus
 							delaySearch={ true }
