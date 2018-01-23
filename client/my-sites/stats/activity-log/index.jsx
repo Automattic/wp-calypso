@@ -53,7 +53,6 @@ import {
 	getRequestedBackup,
 	getRequestedRewind,
 	getRestoreProgress,
-	getRewindStartDate,
 	getRewindState,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
@@ -437,7 +436,6 @@ class ActivityLog extends Component {
 	render() {
 		const {
 			canViewActivityLog,
-			hasFirstBackup,
 			logRequestQuery,
 			logs,
 			moment,
@@ -518,7 +516,7 @@ class ActivityLog extends Component {
 					/>
 				) }
 				{ this.renderErrorMessage() }
-				{ hasFirstBackup && this.renderMonthNavigation() }
+				{ 'active' === rewindState.state && this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
 				{ isEmpty( logs ) ? (
 					noLogsContent
@@ -580,7 +578,7 @@ class ActivityLog extends Component {
 						) }
 					</section>
 				) }
-				{ hasFirstBackup && this.renderMonthNavigation( 'bottom' ) }
+				{ 'active' === rewindState.state && this.renderMonthNavigation( 'bottom' ) }
 				<JetpackColophon />
 			</Main>
 		);
@@ -599,7 +597,6 @@ export default connect(
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
-			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
 			logRequestQuery,
 			logs: getActivityLogs(
 				state,
