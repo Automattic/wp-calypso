@@ -133,7 +133,7 @@ class ConversationCaterpillarComponent extends React.Component {
 				>
 					{ commentCount > 1 &&
 						uniqueAuthorsCount > 1 &&
-						translate( 'Load %(count)d previous comments from %(commenterName)s and others', {
+						translate( 'Load previous comments from %(commenterName)s and others', {
 							args: {
 								commenterName: lastAuthorName,
 								count: commentCount,
