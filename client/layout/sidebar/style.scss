@@ -23,6 +23,7 @@
 	@include breakpoint( "<660px" ) {
 		left: -100%;
 		width: 100%;
+		overflow-x: hidden;
 		max-height: calc( 100% - 47px );
 		pointer-events: none;
 		transform: translateX( 0 );
