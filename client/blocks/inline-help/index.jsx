@@ -20,7 +20,7 @@ import Popover from 'components/popover';
 import SearchCard from 'components/search-card';
 import HelpSearchStore from 'lib/help-search/store';
 import HelpSearchActions from 'lib/help-search/actions';
-import { preventWidows } from 'lib/formatting';
+import { decodeEntities, preventWidows } from 'lib/formatting';
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -99,7 +99,7 @@ class InlineHelp extends Component {
 			// search done, but nothing found
 			return (
 				<div>
-					<p className="inline-help__empty-results">No results&hellip;</p>
+					<p className="inline-help__empty-results">No results…</p>
 					{ this.renderContextHelp() }
 				</div>
 			);
@@ -155,11 +155,10 @@ class InlineHelp extends Component {
 	}
 
 	renderHelpLink( link ) {
-		const title = preventWidows( link.title );
 		return (
 			<li key={ link.link } className="inline-help__results-item">
-				<a target="_blank" href={ link.link }>
-					{ title }
+				<a href={ link.link } title={ decodeEntities( link.description ) }>
+					{ preventWidows( decodeEntities( link.title ) ) }
 				</a>
 			</li>
 		);
