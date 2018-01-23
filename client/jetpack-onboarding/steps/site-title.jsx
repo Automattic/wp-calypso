@@ -78,6 +78,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							blogname={ this.state.blogname }
 							blogdescription={ this.state.blogdescription }
 							disabled={ isRequestingSettings }
+							isTitleRequired={ true }
 							onChange={ this.handleChange }
 						/>
 
