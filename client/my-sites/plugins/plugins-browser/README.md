@@ -6,9 +6,9 @@ This component renders the main plugins browser page.
 #### How to use:
 
 ```js
-var BrowserMainView = require( 'my-sites/plugins/plugins-browser' );
+import BrowserMainView from 'my-sites/plugins/plugins-browser';
 
-render: function() {
+render() {
 	return (
 		<div>
 			<BrowserMainView

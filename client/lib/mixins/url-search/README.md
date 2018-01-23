@@ -27,11 +27,9 @@ Then in the component, apply the mixin:
 /**
  * Internal dependencies
  */
+import URLSearch from 'lib/mixins/url-search';
 
-var URLSearch = require( 'lib/mixins/url-search' );
-
-module.exports = React.createClass({
-
+export default createReactClass({
 	displayName: 'Posts',
 
 	mixins: [ URLSearch ],

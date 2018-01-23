@@ -31,7 +31,7 @@ import {
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
-		const { steps, stepsCompleted, stepsPending } = this.props;
+		const { siteSlug, steps, stepsCompleted, stepsPending } = this.props;
 
 		return map( without( steps, STEPS.SUMMARY ), stepName => {
 			const isCompleted = get( stepsCompleted, stepName ) === true;
@@ -45,27 +45,29 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					) : (
 						<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
 					) }
-					{ STEP_TITLES[ stepName ] }
+					<a href={ `/jetpack/onboarding/${ stepName }/${ siteSlug }` }>
+						{ STEP_TITLES[ stepName ] }
+					</a>
 				</div>
 			);
 		} );
 	};
 
 	renderTodo = () => {
+		const { siteUrl } = this.props;
 		const stepsTodo = [
 			SUMMARY_STEPS.JETPACK_CONNECTION,
 			SUMMARY_STEPS.THEME,
-			SUMMARY_STEPS.SITE_ADDRESS,
-			SUMMARY_STEPS.STORE,
+			SUMMARY_STEPS.PAGES,
 			SUMMARY_STEPS.BLOG,
 		];
+		// If we're not connected, we cannot use selectors from `sites/selectors`.
 		const stepLinks = [
-			'/jetpack/connect?url=' + this.props.siteUrl,
+			'/jetpack/connect?url=' + siteUrl,
 			// TODO: update the following with relevant links
-			'#',
-			'#',
-			'#',
-			'#',
+			siteUrl + '/wp-admin/themes.php',
+			siteUrl + '/wp-admin/post-new.php?post_type=page',
+			siteUrl + '/wp-admin/post-new.php',
 		];
 
 		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (

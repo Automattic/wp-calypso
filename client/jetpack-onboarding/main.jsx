@@ -4,7 +4,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import sha1 from 'hash.js/lib/hash/sha/1';
 import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -22,7 +21,7 @@ import {
 import {
 	getJetpackOnboardingSettings,
 	getRequest,
-	getUnconnectedSite,
+	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
 import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
@@ -58,6 +57,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					isRequestingSettings={ isRequestingSettings }
 					recordJpoEvent={ recordJpoEvent }
 					siteId={ siteId }
+					siteSlug={ siteSlug }
 					settings={ settings }
 					stepName={ stepName }
 					steps={ steps }
@@ -74,11 +74,7 @@ export default connect(
 		const isRequestingSettings = getRequest( state, requestJetpackOnboardingSettings( siteId ) )
 			.isLoading;
 
-		const site = getUnconnectedSite( state, siteId );
-		const userId = site ? get( site, 'userEmail', null ) : '';
-		const hash = sha1();
-		hash.update( userId );
-		const userIdHashed = hash.digest( 'hex' );
+		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
 		// Note: here we can select which steps to display, based on user's input
 		const steps = compact( [
 			STEPS.SITE_TITLE,

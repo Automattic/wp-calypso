@@ -6,9 +6,9 @@ This component is used to display a box that can be clicked to expand a hidden s
 #### How to use:
 
 ```js
-var FoldableCard = require( 'components/foldable-card' );
+import FoldableCard from 'components/foldable-card';
 
-render: function() {
+render() {
 	return (
 		<div>
 			 <FoldableCard

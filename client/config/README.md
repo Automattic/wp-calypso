@@ -20,7 +20,7 @@ in-progress features without launching them to production.
 Is a feature enabled?
 
 ``` js
-var config = require( 'config' );
+import config from 'config';
 
 if ( config.isEnabled( 'myFeature') ) {
 	// do something only when myFeature is enabled

@@ -13,7 +13,7 @@ In case no option is selected, the `fallback` value will be shown in the dropdow
 If no `icon` is provided, `star` will be used by default.
 
 ```js
-const SubMasterbarNav = require( 'components/sub-masterbar-nav' );
+import SubMasterbarNav from 'components/sub-masterbar-nav';
 
 const options = [
     {
@@ -24,14 +24,16 @@ const options = [
     ...
 ];
 
-render: function() {
-    return {
-        <Main>
-            <SubMasterbarNav
-                options={ options }
-                fallback={ options[ 0 ] }
-                uri={ '/foo/bar' } />
-        </Main>
-    };
+export default class extends React.Component {
+	render() {
+		return {
+			<Main>
+				<SubMasterbarNav
+					options={ options }
+					fallback={ options[ 0 ] }
+					uri={ '/foo/bar' } />
+			</Main>
+		};
+	}
 }
 ```

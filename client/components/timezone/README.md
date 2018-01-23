@@ -6,15 +6,14 @@ Select timezone react component.
 ---
 
 ```jsx
-var Timezone = require( 'components/timezone' );
+import Timezone from 'components/timezone';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 	
-	onTimezoneSelect( zone ) {
+	onTimezoneSelect = ( zone ) => {
 		console.log( `timezone selected: %s`, zone.value );
-	},
+	}
 
 	render() {
 		return (
@@ -25,7 +24,7 @@ module.exports = React.createClass( {
 		);
 	}
 
-} );
+}
 ```
 ## Timezone
 

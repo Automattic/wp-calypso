@@ -9,9 +9,9 @@ Once this component is mounted, it will always progress forward, never backward:
 #### How to use:
 
 ```js
-var ProgressBar = require( 'components/progress-bar' );
+import ProgressBar from 'components/progress-bar';
 
-render: function() {
+render() {
 	return <ProgressBar
 		value={ amount }
 		total={ total }

@@ -2,22 +2,33 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import urlModule from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import CompactCard from 'components/card/compact';
 import FormattedHeader from 'components/formatted-header';
-import SiteCard from './site-card';
+import safeImageUrl from 'lib/safe-image-url';
+import Site from 'blocks/site';
 import versionCompare from 'lib/version-compare';
+import { authQueryPropTypes } from './utils';
+import { decodeEntities } from 'lib/formatting';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-class AuthFormHeader extends Component {
-	static propTypes = { authQuery: PropTypes.object.isRequired };
+export class AuthFormHeader extends Component {
+	static propTypes = {
+		authQuery: authQueryPropTypes.isRequired,
+
+		// Connected props
+		translate: PropTypes.func.isRequired,
+		user: PropTypes.object,
+	};
 
 	getState() {
 		const { user, authorize } = this.props;
@@ -126,7 +137,27 @@ class AuthFormHeader extends Component {
 			return null;
 		}
 
-		return <SiteCard authQuery={ this.props.authQuery } />;
+		const { blogname, homeUrl, siteIcon, siteUrl } = this.props.authQuery;
+		const safeIconUrl = siteIcon ? safeImageUrl( siteIcon ) : false;
+		const icon = safeIconUrl ? { img: safeIconUrl } : false;
+		const url = decodeEntities( homeUrl );
+		const parsedUrl = urlModule.parse( url );
+		const path = parsedUrl.path === '/' ? '' : parsedUrl.path;
+		const site = {
+			admin_url: decodeEntities( siteUrl + '/wp-admin' ),
+			domain: parsedUrl.host + path,
+			icon,
+			ID: null,
+			is_vip: false,
+			title: decodeEntities( blogname ),
+			url: url,
+		};
+
+		return (
+			<CompactCard className="jetpack-connect__site">
+				<Site site={ site } />
+			</CompactCard>
+		);
 	}
 
 	render() {

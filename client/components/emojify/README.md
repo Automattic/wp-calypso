@@ -8,8 +8,9 @@ This is desirable since implementations are inconsistent or non-existant.
 ## Usage
 ```js
 // require the module
-var Emojify = require( 'components/emojify' ),
-	textToEmojify = 'This will be converted 🙈🙉🙊';
+import Emojify from 'components/emojify';
+
+const textToEmojify = 'This will be converted 🙈🙉🙊';
 
 	// more component stuff
 	// ...

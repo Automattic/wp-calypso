@@ -62,6 +62,7 @@ export const markSlotAsCancelled = ( { dispatch } ) => {
 export const handleCancellingError = ( { dispatch } ) => {
 	analytics.tracks.recordEvent( 'calypso_concierge_appointment_cancellation_error' );
 	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR ) );
+	dispatch( errorNotice( "We couldn't cancel your session, please try again later." ) );
 };
 
 export const bookConciergeAppointment = ( { dispatch }, action ) => {

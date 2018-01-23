@@ -14,8 +14,9 @@ import { find, noop } from 'lodash';
  * Internal dependencies
  */
 import LanguagePickerModal from './modal';
+import QueryLanguageNames from 'components/data/query-language-names';
 
-class LanguagePicker extends PureComponent {
+export class LanguagePicker extends PureComponent {
 	static propTypes = {
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
@@ -132,6 +133,7 @@ class LanguagePicker extends PureComponent {
 					onSelected={ this.selectLanguage }
 					selected={ language.langSlug }
 				/>
+				<QueryLanguageNames />
 			</div>
 		);
 	}
