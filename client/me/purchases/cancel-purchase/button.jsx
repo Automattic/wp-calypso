@@ -45,6 +45,9 @@ class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
+		cancelBundledDomain: PropTypes.bool.isRequired,
+		includedDomainPurchase: PropTypes.object,
+		disabled: PropTypes.bool,
 	};
 
 	state = {
@@ -191,7 +194,7 @@ class CancelPurchaseButton extends Component {
 	cancelPurchase = () => {
 		const { purchase, translate } = this.props;
 
-		this.toggleDisabled();
+		this.setDisabled( true );
 
 		cancelPurchase( purchase.id, success => {
 			const purchaseName = getName( purchase ),
@@ -240,10 +243,8 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
-	toggleDisabled = () => {
-		this.setState( {
-			disabled: ! this.state.disabled,
-		} );
+	setDisabled = disabled => {
+		this.setState( { disabled } );
 	};
 
 	handleSubmit = ( error, response ) => {
@@ -269,7 +270,7 @@ class CancelPurchaseButton extends Component {
 	submitCancelAndRefundPurchase = () => {
 		const { purchase, selectedSite } = this.props;
 		const refundable = isRefundable( purchase );
-
+		const cancelBundledDomain = this.props.cancelBundledDomain;
 		this.setState( {
 			submitting: true,
 		} );
@@ -296,19 +297,33 @@ class CancelPurchaseButton extends Component {
 		}
 
 		if ( refundable ) {
-			cancelAndRefundPurchase( purchase.id, { product_id: purchase.productId }, this.handleSubmit );
+			cancelAndRefundPurchase(
+				purchase.id,
+				{ product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 },
+				this.handleSubmit
+			);
 		} else {
 			this.cancelPurchase();
 		}
 	};
 
 	renderCancellationEffect = () => {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, includedDomainPurchase, cancelBundledDomain } = this.props;
+		const overrides = {};
+
+		if (
+			cancelBundledDomain &&
+			includedDomainPurchase &&
+			isDomainRegistration( includedDomainPurchase )
+		) {
+			overrides.refundText =
+				purchase.currencySymbol + ( purchase.refundAmount + includedDomainPurchase.amount );
+		}
 
 		return (
 			<p>
 				{ cancellationEffectHeadline( purchase, translate ) }
-				{ cancellationEffectDetail( purchase, translate ) }
+				{ cancellationEffectDetail( purchase, translate, overrides ) }
 			</p>
 		);
 	};
@@ -326,7 +341,7 @@ class CancelPurchaseButton extends Component {
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription and Refund' );
+				text = translate( 'Cancel Subscription' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
@@ -349,7 +364,7 @@ class CancelPurchaseButton extends Component {
 			<div>
 				<Button
 					className="cancel-purchase__button"
-					disabled={ this.state.disabled }
+					disabled={ this.state.disabled || this.props.disabled }
 					onClick={ onClick }
 					primary
 				>
