@@ -158,12 +158,6 @@ export function connect( context, next ) {
 
 	debug( 'entered connect flow with params %o', params );
 
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
-	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
-		// Force login for mobile app flow. App will intercept and prompt native login.
-		return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
-	}
-
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 	planSlug && storePlan( planSlug );
 
@@ -183,6 +177,12 @@ export function connect( context, next ) {
 
 export function signupForm( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
+		// Force login for mobile app flow. App will intercept this request and prompt native login.
+		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
+	}
 
 	removeSidebar( context );
 
