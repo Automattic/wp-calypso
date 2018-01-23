@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, isEmpty, omit } from 'lodash';
@@ -75,12 +74,16 @@ export class UserStep extends Component {
 	}
 
 	componentWillMount() {
-		let { oauth2Signup, oauth2Client } = this.props;
+		const { oauth2Signup, initialContext } = this.props,
+			clientId =
+				initialContext && initialContext.query && initialContext.query.oauth2_client_id
+					? initialContext.query.oauth2_client_id
+					: null;
 
 		this.setSubHeaderText( this.props );
 
-		if ( oauth2Signup && oauth2Client.id ) {
-			this.props.fetchOAuth2ClientData( oauth2Client.id );
+		if ( oauth2Signup && clientId ) {
+			this.props.fetchOAuth2ClientData( clientId );
 		}
 	}
 
