@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,13 +27,7 @@ class PeopleInvites extends React.PureComponent {
 	};
 
 	renderInvite = invite => {
-		// If an invite was sent to a WP.com user, the invite object will have
-		// either a display name (if set) or the WP.com username.  Invites can
-		// also be sent to any email address, in which case the other details
-		// will not be set (but the server will still set `avatar_URL` based on
-		// the email).
 		const user = invite.user;
-		const gravatarUser = pick( user, 'ID', 'display_name', 'avatar_URL' );
 
 		const { site } = this.props;
 
@@ -42,7 +35,6 @@ class PeopleInvites extends React.PureComponent {
 			<PeopleListItem
 				key={ invite.invite_key }
 				invite={ invite }
-				gravatarUser={ gravatarUser }
 				user={ user }
 				site={ site }
 				type="invite"

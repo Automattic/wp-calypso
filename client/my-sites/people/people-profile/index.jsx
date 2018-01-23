@@ -119,6 +119,10 @@ class PeopleProfile extends React.PureComponent {
 		} else if ( user.label ) {
 			name = user.label;
 		} else if ( 'invite' === type && user.email ) {
+			// If an invite was sent to a WP.com user, the invite object will have
+			// either a display name (if set) or the WP.com username. Invites can
+			// also be sent to any email address, in which case the other details
+			// will not be set and we therefore display the user's email.
 			name = user.email;
 		}
 
@@ -212,7 +216,8 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	render() {
-		const { gravatarUser, user } = this.props;
+		const { user } = this.props;
+
 		const classes = classNames( 'people-profile', {
 			'is-placeholder': ! user,
 		} );
@@ -224,7 +229,6 @@ class PeopleProfile extends React.PureComponent {
 					'className',
 					'invite',
 					'type',
-					'gravatarUser',
 					'user',
 					'moment',
 					'numberFormat',
@@ -233,7 +237,7 @@ class PeopleProfile extends React.PureComponent {
 				className={ classes }
 			>
 				<div className="people-profile__gravatar">
-					<Gravatar user={ gravatarUser || user } size={ 72 } />
+					<Gravatar user={ user } size={ 72 } />
 				</div>
 				<div className="people-profile__detail">
 					{ this.renderNameOrEmail() }

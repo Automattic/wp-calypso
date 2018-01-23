@@ -53,7 +53,7 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, gravatarUser, invite, onRemove, translate, type, user } = this.props;
+		const { className, invite, onRemove, translate, type, user } = this.props;
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
 
@@ -62,7 +62,6 @@ class PeopleListItem extends React.PureComponent {
 				{ ...omit(
 					this.props,
 					'className',
-					'gravatarUser',
 					'invite',
 					'user',
 					'site',
@@ -79,12 +78,7 @@ class PeopleListItem extends React.PureComponent {
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile
-						invite={ invite }
-						gravatarUser={ gravatarUser }
-						type={ type }
-						user={ user }
-					/>
+					<PeopleProfile invite={ invite } type={ type } user={ user } />
 				</div>
 				{ onRemove && (
 					<div className="people-list-item__actions">
