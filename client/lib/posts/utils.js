@@ -7,7 +7,7 @@
 import url from 'url';
 import i18n from 'i18n-calypso';
 import moment from 'moment-timezone';
-import { includes } from 'lodash';
+import { includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -205,7 +205,8 @@ export const getPagePath = function( post ) {
 		getPermalinkBasePath( post );
 	}
 
-	return removeSlug( post.URL );
+	const postUrl = get( post, [ 'other_URLs', 'permalink_URL' ] ) || post.URL;
+	return removeSlug( postUrl );
 };
 
 /**
