@@ -2515,6 +2515,25 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 };
 
 /**
- * Expose `Undocumented` module
+ * Request a new .wordpress.com subdomain change with the option to discard the current.
+ *
+ * @param {int} [siteId]
+ * @param {object} [newBlogName]	The desired new subdomain
+ * @param {bool} [discard]			Should the old blog name be discarded?
+ * @returns {Promise}  A promise
  */
+Undocumented.prototype.updateSiteName = function( siteId, newBlogName, discard ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/site-rename`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		{
+			blogdomain: newBlogName,
+			discard,
+		}
+	);
+};
+
 export default Undocumented;
