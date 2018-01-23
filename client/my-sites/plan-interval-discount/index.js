@@ -41,8 +41,9 @@ class PlanIntervalDiscount extends Component {
 
 		const price = this.getDiscountPriceObject();
 		const { translate } = this.props;
-		return translate( 'Save %(symbol)s%(integer)s%(fraction)s over monthly.', {
+		return translate( 'Save {{b}}%(symbol)s%(integer)s%(fraction)s{{/b}} over monthly.', {
 			args: price,
+			components: { b: <b /> },
 		} );
 	}
 
@@ -57,11 +58,12 @@ class PlanIntervalDiscount extends Component {
 		const price = this.getDiscountPriceObject();
 		const { site, translate } = this.props;
 		return translate(
-			'Save %(symbol)s%(integer)s%(fraction)s when you {{Link}}buy yearly{{/Link}}.',
+			'Save {{b}}%(symbol)s%(integer)s%(fraction)s{{/b}} when you {{Link}}buy yearly{{/Link}}.',
 			{
 				args: price,
 				components: {
 					Link: <a href={ plansLink( '/jetpack/connect/plans', site, 'yearly' ) } />,
+					b: <b />,
 				},
 			}
 		);
