@@ -131,7 +131,7 @@ export const saveWeightAndDimensionsUnits = ( siteId, successAction, failureActi
 	const state = getState();
 	if (
 		! areSettingsProductsLoaded( state, siteId ) ||
-		areSettingsProductsLoading( getState(), siteId )
+		areSettingsProductsLoading( state, siteId )
 	) {
 		return;
 	}

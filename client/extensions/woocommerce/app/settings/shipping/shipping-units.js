@@ -39,7 +39,7 @@ const ShippingUnits = ( {
 			oz: translate( 'Ounces' ),
 			lbs: translate( 'Pounds' ),
 			kg: translate( 'Kilograms' ),
-			g: translate( 'Grams' ),
+			g: translate( 'Inches' ),
 		};
 		return labels[ unit ] || '';
 	};

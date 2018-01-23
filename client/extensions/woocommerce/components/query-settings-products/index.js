@@ -27,7 +27,6 @@ class QuerySettingsProducts extends Component {
 		if ( this.props.siteId === nextProps.siteId ) {
 			return;
 		}
-		this.request( nextProps );
 		nextProps.fetchSettingsProducts( nextProps.siteId );
 	}
 
