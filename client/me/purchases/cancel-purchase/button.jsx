@@ -270,7 +270,7 @@ class CancelPurchaseButton extends Component {
 	submitCancelAndRefundPurchase = () => {
 		const { purchase, selectedSite } = this.props;
 		const refundable = isRefundable( purchase );
-		const cancel_bundled_domain = this.props.cancelBundledDomain;
+		const cancelBundledDomain = this.props.cancelBundledDomain;
 		this.setState( {
 			submitting: true,
 		} );
@@ -299,7 +299,7 @@ class CancelPurchaseButton extends Component {
 		if ( refundable ) {
 			cancelAndRefundPurchase(
 				purchase.id,
-				{ product_id: purchase.productId, cancel_bundled_domain: cancel_bundled_domain ? 1 : 0 },
+				{ product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 },
 				this.handleSubmit
 			);
 		} else {
