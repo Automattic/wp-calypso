@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -72,7 +71,7 @@ class PlanIntervalDiscount extends Component {
 	render() {
 		const { isYearly } = this.props;
 		return (
-			<div className="my-sites__plan-interval-discount">
+			<div className="plan-interval-discount">
 				{ isYearly ? this.renderYearlyViewDiscountInfo() : this.renderMonthlyViewDiscountInfo() }
 			</div>
 		);
