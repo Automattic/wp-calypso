@@ -24,7 +24,7 @@ import {
 	requestTranscript,
 } from 'state/happychat/connection/actions';
 
-const debug = debugFactory()( 'calypso:happychat:connection' );
+const debug = debugFactory( 'calypso:happychat:connection' );
 
 const buildConnection = socket =>
 	isString( socket )
