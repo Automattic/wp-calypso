@@ -14,7 +14,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
@@ -52,6 +51,7 @@ import {
 import { getStatsPathForTab } from 'lib/route';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Module variables
@@ -82,17 +82,17 @@ export class MySitesSidebar extends Component {
 		const { isPreviewable, siteSuffix } = this.props;
 
 		if ( ! isPreviewable ) {
-			analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
+			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
 			return;
 		}
 
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
-			analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
+			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
 			return;
 		}
 
 		event.preventDefault();
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked View Site | Calypso' );
+		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
 		page( '/view' + siteSuffix );
 	};
 
@@ -353,7 +353,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackStoreClick = () => {
-		analytics.tracks.recordEvent( 'calypso_woocommerce_store_nav_item_click' );
+		this.props.recordTracksEvent( 'calypso_woocommerce_store_nav_item_click' );
 		this.onNavigate();
 	};
 
@@ -396,7 +396,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackUpgradeClick = () => {
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
 			cta_name: 'sidebar_upgrade_default',
 		} );
 		this.onNavigate();
@@ -539,7 +539,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackWpadminClick = () => {
-		analytics.ga.recordEvent( 'Sidebar', 'Clicked WP Admin' );
+		this.props.recordGoogleEvent( 'Sidebar', 'Clicked WP Admin' );
 	};
 
 	focusContent = () => {
@@ -687,6 +687,9 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
-	localize( MySitesSidebar )
-);
+export default connect( mapStateToProps, {
+	setNextLayoutFocus,
+	setLayoutFocus,
+	recordGoogleEvent,
+	recordTracksEvent,
+} )( localize( MySitesSidebar ) );
