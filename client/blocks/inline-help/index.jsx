@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { identity, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
 /**
@@ -166,9 +167,12 @@ class InlineHelp extends Component {
 
 	render() {
 		const { translate } = this.props;
+		const buttonClasses = [ 'inline-help', this.state.showInlineHelp && 'is-active' ].filter(
+			Boolean
+		);
 		return (
 			<Button
-				className="inline-help is-active"
+				className={ classNames( ...buttonClasses ) }
 				onClick={ this.handleHelpButtonClicked }
 				borderless
 				title={ translate( 'Help' ) }
