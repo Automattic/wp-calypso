@@ -19,26 +19,26 @@ import { getRewindState } from 'state/selectors';
 
 class JetpackCredentials extends Component {
 	render() {
-		const { rewindState, siteId, translate } = this.props;
-		const hasAuthorized = rewindState.state === 'provisioning' || rewindState.state === 'active';
-		const hasCredentials = rewindState.credentials && rewindState.credentials.length > 0;
+		const { credentials, rewindState, siteId, translate } = this.props;
+		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
+		const hasCredentials = credentials && credentials.length > 0;
 
 		return (
 			<div className="jetpack-credentials">
 				<QueryRewindState siteId={ siteId } />
-					<CompactCard className="jetpack-credentials__header">
-						<span>{ translate( 'Backups and security scans' ) }</span>
+				<CompactCard className="jetpack-credentials__header">
+					<span>{ translate( 'Backups and security scans' ) }</span>
 					{ hasAuthorized && (
-							<span className="jetpack-credentials__connected">
-								<Gridicon
-									icon="checkmark"
-									size={ 18 }
-									className="jetpack-credentials__connected-checkmark"
-								/>
-								{ translate( 'Connected' ) }
-							</span>
-						) }
-					</CompactCard>
+						<span className="jetpack-credentials__connected">
+							<Gridicon
+								icon="checkmark"
+								size={ 18 }
+								className="jetpack-credentials__connected-checkmark"
+							/>
+							{ translate( 'Connected' ) }
+						</span>
+					) }
+				</CompactCard>
 				{ hasCredentials ? (
 					<CredentialsConfigured siteId={ siteId } />
 				) : (
@@ -51,9 +51,11 @@ class JetpackCredentials extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const { credentials, state: rewindState } = getRewindState( state, siteId );
 
 	return {
-		rewindState: getRewindState( state, siteId ),
+		credentials,
+		rewindState,
 		siteId,
 	};
 } )( localize( JetpackCredentials ) );
