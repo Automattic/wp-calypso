@@ -29,6 +29,7 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
+import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -506,6 +507,7 @@ class ActivityLog extends Component {
 				<QueryRewindState siteId={ siteId } />
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
+				{ siteId && isRewindActive && <QueryRewindRestoreStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
 				{ isRewindActive && <QueryJetpackCredentials siteId={ siteId } /> }
 				<StatsFirstView />
