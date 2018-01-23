@@ -81,7 +81,11 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							onChange={ this.handleChange }
 						/>
 
-						<Button disabled={ isRequestingSettings } primary type="submit">
+						<Button
+							disabled={ isRequestingSettings || ! this.state.blogname }
+							primary
+							type="submit"
+						>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>
