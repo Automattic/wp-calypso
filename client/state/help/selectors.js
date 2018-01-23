@@ -29,13 +29,8 @@ export const getHelpSelectedSite = state => {
 		return helpSite;
 	}
 	// Are sites loaded but the help site is not available? We may have a bad site or primary.
-	const sites = get( state, 'sites.items' );
-	const siteKeys = sites && Object.keys( sites );
-	if ( siteKeys && siteKeys.length > 0 ) {
-		const firstSiteId = siteKeys[ 0 ];
-		return getSite( state, firstSiteId );
-	}
-	return null;
+	const siteKeys = Object.keys( get( state, 'sites.items' ) || {} );
+	return siteKeys.length > 0 ? getSite( state, siteKeys[ 0 ] ) : null;
 };
 
 /*
