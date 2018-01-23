@@ -7,10 +7,12 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
@@ -51,10 +53,32 @@ class PeopleListItem extends React.PureComponent {
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
+	renderInviteStatus = () => {
+		const { invite, translate } = this.props;
+		const { is_pending: isPending } = invite;
+		const statusClasses = {
+			'is-pending': isPending,
+		};
+		const className = classNames( 'people-list-item__invite-status', statusClasses );
+
+		return (
+			<div className={ className }>
+				{ ! isPending && <Gridicon icon="checkmark" size={ 18 } /> }
+				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
+				{ isPending && (
+					<Button className="people-list-item__invite-resend" compact>
+						{ translate( 'Resend Invite' ) }
+					</Button>
+				) }
+			</div>
+		);
+	};
+
 	render() {
 		const { className, invite, onRemove, translate, type, user } = this.props;
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
+		const isInvite = invite && 'invite' === type;
 
 		return (
 			<CompactCard
@@ -66,6 +90,9 @@ class PeopleListItem extends React.PureComponent {
 				<div className="people-list-item__profile-container">
 					<PeopleProfile invite={ invite } type={ type } user={ user } />
 				</div>
+
+				{ isInvite && this.renderInviteStatus() }
+
 				{ onRemove && (
 					<div className="people-list-item__actions">
 						<button className="button is-link people-list-item__remove-button" onClick={ onRemove }>
