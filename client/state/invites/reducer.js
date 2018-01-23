@@ -64,7 +64,7 @@ export const items = createReducer(
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requestingInviteResend( state = {}, action ) {
+export function requestingResend( state = {}, action ) {
 	switch ( action.type ) {
 		case INVITE_RESEND_REQUEST:
 		case INVITE_RESEND_REQUEST_SUCCESS:
@@ -80,4 +80,4 @@ export function requestingInviteResend( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( { requesting, items, requestingInviteResend } );
+export default combineReducers( { requesting, items, requestingResend } );

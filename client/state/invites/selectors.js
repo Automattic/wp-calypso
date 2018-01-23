@@ -34,8 +34,8 @@ export function getInvitesForSite( state, siteId ) {
 }
 
 /**
- * Returns true if currently requesting an invite resend for the given site, or false
- * otherwise.
+ * Returns true if currently requesting an invite resend for the given site and
+ * invite ID, or false otherwise.
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId Site ID
