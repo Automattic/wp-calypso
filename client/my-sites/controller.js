@@ -12,7 +12,7 @@ import { noop, some, startsWith, uniq } from 'lodash';
  */
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 import userFactory from 'lib/user';
-import { receiveSite, requestSites, requestSite } from 'state/sites/actions';
+import { receiveSite, requestSite } from 'state/sites/actions';
 import {
 	getSite,
 	getSiteSlug,
@@ -36,7 +36,6 @@ import {
 	getPrimarySiteId,
 	getSiteId,
 	getSites,
-	getVisibleSites,
 	isDomainOnlySite,
 } from 'state/selectors';
 import {
@@ -382,16 +381,20 @@ export function siteSelection( context, next ) {
 			return;
 		}
 	} else {
-		// Fetch the site from siteFragment.
-		dispatch( requestSite( siteFragment ) ).then( () => {
-			const initialSiteId = getSiteId( getState(), siteFragment );
+		const selectOnSitesChange = () => {
+			const freshSiteId = getSiteId( getState(), siteFragment );
+			dispatch( setSelectedSiteId( freshSiteId ) );
 
-			dispatch( setSelectedSiteId( initialSiteId ) );
-
-			if ( getSite( getState(), initialSiteId ) ) {
+			if ( getSite( getState(), freshSiteId ) ) {
 				onSelectedSiteAvailable( context );
+			} else {
+				// if sites have loaded, but siteId is invalid, redirect to allSitesPath
+				page.redirect( allSitesPath );
 			}
-		} );
+		};
+
+		// Fetch the site from siteFragment.
+		dispatch( requestSite( siteFragment ) ).then( selectOnSitesChange );
 
 		// if sites has fresh data and siteId is invalid
 		// redirect to allSitesPath
@@ -399,30 +402,6 @@ export function siteSelection( context, next ) {
 			return page.redirect( allSitesPath );
 		}
 
-		let waitingNotice;
-		let freshSiteId;
-		const selectOnSitesChange = () => {
-			// if sites have loaded, but siteId is invalid, redirect to allSitesPath
-			freshSiteId = getSiteId( getState(), siteFragment );
-			dispatch( setSelectedSiteId( freshSiteId ) );
-			if ( getSite( getState(), freshSiteId ) ) {
-				onSelectedSiteAvailable( context );
-				if ( waitingNotice ) {
-					notices.removeNotice( waitingNotice );
-				}
-			} else if ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) {
-				waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), {
-					showDismiss: false,
-				} );
-				dispatch( {
-					type: SITES_ONCE_CHANGED,
-					listener: selectOnSitesChange,
-				} );
-				dispatch( requestSites() );
-			} else {
-				page.redirect( allSitesPath );
-			}
-		};
 		// Otherwise, check when sites has loaded
 		dispatch( {
 			type: SITES_ONCE_CHANGED,
