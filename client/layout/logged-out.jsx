@@ -32,6 +32,7 @@ const LayoutLoggedOut = ( {
 	masterbarIsHidden,
 	oauth2Client,
 	primary,
+	secondary,
 	section,
 	redirectUri,
 	useOAuth2Layout,
@@ -71,7 +72,9 @@ const LayoutLoggedOut = ( {
 					{ primary }
 				</div>
 
-				<div id="secondary" className="layout__secondary" />
+				<div id="secondary" className="layout__secondary">
+					{ secondary }
+				</div>
 			</div>
 		</div>
 	);

@@ -6,9 +6,22 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, includes, map, noop, partial, startsWith, isEmpty } from 'lodash';
+import {
+	capitalize,
+	deburr,
+	find,
+	get,
+	includes,
+	isEmpty,
+	map,
+	noop,
+	partial,
+	some,
+	startsWith,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,11 +31,13 @@ import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
+import { getLocalizedLanguageNames } from 'state/selectors';
 
 export class LanguagePickerModal extends PureComponent {
 	static propTypes = {
 		onSelected: PropTypes.func,
 		onClose: PropTypes.func,
+		localizedLanguageNames: PropTypes.object,
 		isVisible: PropTypes.bool,
 		languages: PropTypes.array.isRequired,
 		selected: PropTypes.string,
@@ -31,6 +46,7 @@ export class LanguagePickerModal extends PureComponent {
 	static defaultProps = {
 		onSelected: noop,
 		onClose: noop,
+		localizedLanguageNames: {},
 		isVisible: false,
 		selected: 'en',
 	};
@@ -60,6 +76,16 @@ export class LanguagePickerModal extends PureComponent {
 		}
 	}
 
+	getLocalizedLanguageTitle( languageSlug ) {
+		const { localizedLanguageNames } = this.props;
+		return get( localizedLanguageNames[ languageSlug ], 'localized' ) || languageSlug;
+	}
+
+	getEnglishLanguageTitle( languageSlug ) {
+		const { localizedLanguageNames } = this.props;
+		return get( localizedLanguageNames[ languageSlug ], 'en' ) || languageSlug;
+	}
+
 	getFilterLabel( filter ) {
 		const { translate } = this.props;
 
@@ -76,9 +102,21 @@ export class LanguagePickerModal extends PureComponent {
 		const { search, filter } = this.state;
 
 		if ( search ) {
-			const searchString = search.toLowerCase();
+			const searchString = deburr( search ).toLowerCase();
 			return languages.filter( language => {
-				return includes( language.name.toLowerCase(), searchString );
+				// Assuming set language is Italian and we're searching for German,
+				// we search against:
+				// 1. language autonym (e.g., Deutsch)
+				// 2. language code (de).
+				// 3. localized name (e.g., Tedesco) or
+				// 4. English name (German).
+				const names = [
+					deburr( language.name ).toLowerCase(),
+					language.langSlug.toLowerCase(),
+					deburr( this.getLocalizedLanguageTitle( language.langSlug ) ).toLowerCase(),
+					this.getEnglishLanguageTitle( language.langSlug ).toLowerCase(),
+				];
+				return some( names, name => includes( name, searchString ) );
 			} );
 		}
 
@@ -171,6 +209,7 @@ export class LanguagePickerModal extends PureComponent {
 				className="language-picker__modal-item"
 				key={ language.langSlug }
 				onClick={ partial( this.handleClick, language.langSlug ) }
+				title={ capitalize( this.getLocalizedLanguageTitle( language.langSlug ) ) }
 			>
 				<span className={ classes }>{ language.name }</span>
 			</div>
@@ -202,6 +241,7 @@ export class LanguagePickerModal extends PureComponent {
 
 	render() {
 		const { isVisible, translate } = this.props;
+		const { filter } = this.state;
 
 		if ( ! isVisible ) {
 			return null;
@@ -227,7 +267,7 @@ export class LanguagePickerModal extends PureComponent {
 				onClose={ this.handleClose }
 				additionalClassNames="language-picker__modal"
 			>
-				<SectionNav selectedText={ this.getFilterLabel( this.state.filter ) }>
+				<SectionNav selectedText={ this.getFilterLabel( filter ) }>
 					<SectionNavTabs>{ this.renderTabItems() }</SectionNavTabs>
 					<Search
 						pinned
@@ -243,4 +283,8 @@ export class LanguagePickerModal extends PureComponent {
 	}
 }
 
-export default localize( LanguagePickerModal );
+export default connect( state => {
+	return {
+		localizedLanguageNames: getLocalizedLanguageNames( state ),
+	};
+}, null )( localize( LanguagePickerModal ) );

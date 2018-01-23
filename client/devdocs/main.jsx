@@ -85,8 +85,8 @@ export default class Devdocs extends React.Component {
 		this.onSearch( this.state.term );
 	}
 
-	componentDidUpdate() {
-		if ( isFunction( this.props.onSearchChange ) ) {
+	componentDidUpdate( prevProps, prevState ) {
+		if ( isFunction( this.props.onSearchChange ) && prevState.term !== this.state.term ) {
 			this.props.onSearchChange( this.state.term );
 		}
 	}

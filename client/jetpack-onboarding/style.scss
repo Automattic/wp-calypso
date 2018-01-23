@@ -59,12 +59,14 @@
 			margin-right: 12px;
 		}
 
-		&.completed {
-			color: $gray;
+		&.completed,
+		&.completed a {
+			color: darken($gray, 20%);
 		}
 
-		&.todo {
-			color: $blue-medium;
+		&.todo,
+		&.todo a {
+			color: $blue-wordpress;
 		}
 	}
 

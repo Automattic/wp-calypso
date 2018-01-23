@@ -9,19 +9,18 @@ Usage
 This module can be used outside of React, but this is a typical use within React:
 
 ```js
-var KeyboardShortcuts = require( 'lib/keyboard-shortcuts' );
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
-MyComponent = React.createClass( {
-
-	componentWillMount: function() {
+class MyComponent extends React.Component {
+	componentWillMount() {
 		KeyboardShortcuts.on( 'open-selection', this.openSelectedPost )
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		KeyboardShortcuts.off( 'open-selection', this.openSelectedPost );
 	}
 
-	openSelectedPost: function() {
+	openSelectedPost() {
 	...
 ```
 

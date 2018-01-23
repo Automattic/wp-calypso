@@ -117,14 +117,4 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
-	paymentMethodsOnPlans: {
-		datestamp: '20180115',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 };

@@ -17,7 +17,7 @@ import React, { Component } from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, pick } from 'lodash';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -59,14 +59,19 @@ export class JetpackSignup extends Component {
 	};
 
 	componentWillMount() {
-		this.props.recordTracksEvent(
-			'calypso_jpc_authorize_form_view',
-			pick( this.props.authQuery, 'from' )
-		);
+		const { from, clientId } = this.props.authQuery;
+		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
+			from,
+			site: clientId,
+		} );
 	}
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_signup_view', pick( this.props.authQuery, 'from' ) );
+		const { from, clientId } = this.props.authQuery;
+		this.props.recordTracksEvent( 'calypso_jpc_signup_view', {
+			from,
+			site: clientId,
+		} );
 	}
 
 	handleSubmitSignup = ( form, userData ) => {

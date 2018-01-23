@@ -14,6 +14,10 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { LanguagePickerModal } from '../modal';
+import {
+	LOCALIZED_LANGUAGE_NAMES_DATA_DE,
+	LOCALIZED_LANGUAGE_NAMES_DATA_IT,
+} from 'state/i18n/language-names/test/fixture';
 
 describe( 'LanguagePickerModal', () => {
 	const defaultProps = {
@@ -50,12 +54,151 @@ describe( 'LanguagePickerModal', () => {
 		],
 		selected: 'en',
 		translate: identity,
+		loadLanguageNames: noop,
+		localizedLanguageNames: LOCALIZED_LANGUAGE_NAMES_DATA_DE,
 	};
 
 	test( 'should render', () => {
 		const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
 
 		expect( wrapper ).toMatchSnapshot();
+	} );
+
+	describe( 'getLocalizedLanguageTitle()', () => {
+		test( 'should return slug when no localized language available', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			expect( wrapper.instance().getLocalizedLanguageTitle( 'oops' ) ).toEqual( 'oops' );
+		} );
+
+		test( 'should return localized language', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			expect( wrapper.instance().getLocalizedLanguageTitle( 'it' ) ).toEqual( 'Italienisch' );
+		} );
+	} );
+
+	describe( 'getEnglishLanguageTitle()', () => {
+		test( 'should return slug when no English language translation available', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			expect( wrapper.instance().getEnglishLanguageTitle( 'oops' ) ).toEqual( 'oops' );
+		} );
+
+		test( 'should return localized language', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			expect( wrapper.instance().getEnglishLanguageTitle( 'it' ) ).toEqual( 'Italian' );
+		} );
+	} );
+
+	describe( 'getDisplayedLanguages()', () => {
+		test( 'should return results by slug and autonym if localized language names not loaded', () => {
+			const props = Object.assign( {}, defaultProps, {
+				localizedLanguageNames: {},
+			} );
+			const wrapper = shallow( <LanguagePickerModal { ...props } /> );
+			wrapper.setState( {
+				search: 'en', // for [en]glish
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 0 ],
+				defaultProps.languages[ 3 ],
+			] );
+
+			wrapper.setState( {
+				search: 'english',
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 0 ],
+				defaultProps.languages[ 3 ],
+			] );
+
+			wrapper.setState( {
+				search: 'inglese', // for [inglese] (English)
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [] );
+		} );
+
+		test( 'should return list of popular languages', () => {
+			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+			wrapper.setState( {
+				filter: 'popular',
+				search: null,
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 0 ],
+				defaultProps.languages[ 2 ],
+			] );
+		} );
+
+		test( 'should return list of languages based on search query (with user locale set to Italian)', () => {
+			const props = Object.assign( {}, defaultProps, {
+				localizedLanguageNames: LOCALIZED_LANGUAGE_NAMES_DATA_IT,
+			} );
+			const wrapper = shallow( <LanguagePickerModal { ...props } /> );
+
+			wrapper.setState( {
+				search: 'en', // for [en]glish
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 0 ],
+				defaultProps.languages[ 3 ],
+			] );
+
+			wrapper.setState( {
+				search: 'english',
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 0 ],
+				defaultProps.languages[ 3 ],
+			] );
+
+			wrapper.setState( {
+				search: 'in', // for [in]glese (English)
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 0 ],
+				defaultProps.languages[ 1 ], // Češt[in]a
+				defaultProps.languages[ 3 ],
+			] );
+
+			wrapper.setState( {
+				search: 'cs', // slug for Čeština
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 1 ],
+			] );
+
+			wrapper.setState( {
+				search: 'ceco', // slug for Čeština
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 1 ],
+			] );
+
+			wrapper.setState( {
+				search: 'Czech', // en for Čeština
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 1 ],
+			] );
+		} );
+
+		test( 'should return list of languages based on search query containing accénts', () => {
+			const props = Object.assign( {}, defaultProps, {
+				localizedLanguageNames: LOCALIZED_LANGUAGE_NAMES_DATA_IT,
+			} );
+			const wrapper = shallow( <LanguagePickerModal { ...props } /> );
+
+			wrapper.setState( {
+				search: 'éñglîsh', // for [en]glish
+			} );
+			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+				defaultProps.languages[ 0 ],
+				defaultProps.languages[ 3 ],
+			] );
+		} );
 	} );
 
 	describe( 'suggested languages', () => {

@@ -6,9 +6,9 @@ This component displays the All Sites item. It's used in the Sidebar as the curr
 #### How to use:
 
 ```js
-var AllSites = require( 'my-sites/all-sites' );
+import AllSites from 'my-sites/all-sites';
 
-render: function() {
+render() {
 	return (
 		<AllSites sites={ sitesArray } />
 	);

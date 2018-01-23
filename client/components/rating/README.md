@@ -7,9 +7,9 @@ that represents a rating in a scale between 0 and 5.
 #### How to use:
 
 ```js
-var Rating = require( 'components/rating' );
+import Rating from 'components/rating';
 
-render: function() {
+render() {
 	return (
 		<Rating
 			rating={ 65 }

@@ -23,7 +23,7 @@ Setup
 First require the module:
 
 ```es6
-LocalList = require( 'local-list' )
+import LocalList from 'local-list';
 ```
 
 Then create an instance of LocalList:
