@@ -6,9 +6,9 @@ This component is used to display a plugin card in a list of plugins.
 #### How to use:
 
 ```js
-var  = require( 'my-sites/plugins/plugin-item/plugin-item' );
+import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
-render: function() {
+render() {
     return (
         <div className="your-plugins-list">
             <PluginItem 

@@ -6,9 +6,9 @@ This component is used to display the meta information of a single plugin. Inclu
 #### How to use:
 
 ```js
-var PluginMeta = require( 'my-sites/plugins/plugin-meta' );
+import PluginMeta 'my-sites/plugins/plugin-meta';
 
-render: function() {
+render() {
 	return
 		<PluginMeta
 		    plugin={ plugin }

@@ -73,6 +73,7 @@ exports[`LanguagePickerModal should render 1`] = `
       className="language-picker__modal-item"
       key="en"
       onClick={[Function]}
+      title="En"
     >
       <span
         className="language-picker__modal-text is-selected"
@@ -84,6 +85,7 @@ exports[`LanguagePickerModal should render 1`] = `
       className="language-picker__modal-item"
       key="it"
       onClick={[Function]}
+      title="Italienisch"
     >
       <span
         className="language-picker__modal-text"
@@ -113,6 +115,7 @@ exports[`LanguagePickerModal should render 1`] = `
             className="language-picker__modal-item"
             key="en"
             onClick={[Function]}
+            title="En"
           >
             <span
               className="language-picker__modal-text is-selected"

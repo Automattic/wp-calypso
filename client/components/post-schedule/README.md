@@ -8,17 +8,16 @@ This React component implements a small calendar (shown by month) which allows u
 ## Example Usage
 
 ```js
-var PostSchedule = require( 'components/post-schedule' );
+import PostSchedule from 'components/post-schedule';
 
-module.exports = React.createClass( {
-
+export default class extends React.Component {
 	// ...
 
 	onDateChange: function( date ) {
 		console.log( 'current date: ', date );
 	},
 
-	render: function() {
+	render() {
 		var events = [
 			{
 				id: 1,
@@ -44,7 +43,7 @@ module.exports = React.createClass( {
 	
 	// ...
 
-} );
+}
 ```
 
 ---

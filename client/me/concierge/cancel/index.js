@@ -58,7 +58,7 @@ class ConciergeCancel extends Component {
 				return (
 					<Confirmation
 						description={ translate(
-							'You can also reschedule your session. What would you like to?'
+							'You can also reschedule your session. What would you like to do?'
 						) }
 						title={ translate( 'Cancel your Concierge session' ) }
 					>

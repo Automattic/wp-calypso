@@ -1903,7 +1903,7 @@
         "move-concurrently": "1.0.1",
         "promise-inflight": "1.0.1",
         "rimraf": "2.6.2",
-        "ssri": "5.0.0",
+        "ssri": "5.1.0",
         "unique-filename": "1.1.0",
         "y18n": "3.2.1"
       },
@@ -2749,7 +2749,7 @@
         "cipher-base": "1.0.4",
         "inherits": "2.0.1",
         "ripemd160": "2.0.1",
-        "sha.js": "2.4.9"
+        "sha.js": "2.4.10"
       }
     },
     "create-hmac": {
@@ -2761,7 +2761,7 @@
         "inherits": "2.0.1",
         "ripemd160": "2.0.1",
         "safe-buffer": "5.1.1",
-        "sha.js": "2.4.9"
+        "sha.js": "2.4.10"
       }
     },
     "create-react-class": {
@@ -3349,9 +3349,12 @@
       "integrity": "sha1-sXrtguirWeUt2cGbF1bg/BhyBMI="
     },
     "domexception": {
-      "version": "1.0.0",
-      "integrity": "sha512-WpwuBlZ2lQRFa4H/4w49deb9rJLot9KmqrKKjMc9qBl7CID+DdC2swoa34ccRl+anL2B6bLp6TjFdIdnzekMBQ==",
-      "dev": true
+      "version": "1.0.1",
+      "integrity": "sha512-raigMkn7CJNNo6Ihro1fzG7wr3fHuYVytzquZKX5n0yizGsTcYgzdIUwj1X9pK0VvjeihV+XiclP+DjwbsSKug==",
+      "dev": true,
+      "requires": {
+        "webidl-conversions": "4.0.2"
+      }
     },
     "domhandler": {
       "version": "2.4.1",
@@ -3530,8 +3533,8 @@
       "integrity": "sha1-TapNnbAPmBmIDHn6RXrlsJof04k="
     },
     "encodeurl": {
-      "version": "1.0.1",
-      "integrity": "sha1-eePVhlU0aQn+bw9Fpd5oEDspTSA=",
+      "version": "1.0.2",
+      "integrity": "sha1-rT/0yG7C0CkyL1oCw6mmBslbP1k=",
       "dev": true
     },
     "encoding": {
@@ -4110,7 +4113,7 @@
         "imurmurhash": "0.1.4",
         "inquirer": "0.12.0",
         "is-my-json-valid": "2.17.1",
-        "is-resolvable": "1.0.1",
+        "is-resolvable": "1.1.0",
         "js-yaml": "3.10.0",
         "json-stable-stringify": "1.0.1",
         "levn": "0.3.0",
@@ -6089,8 +6092,8 @@
       }
     },
     "gridicons": {
-      "version": "2.1.1",
-      "integrity": "sha1-dGETKidgO6i80L3mtDUZdo3MCNs=",
+      "version": "2.1.2",
+      "integrity": "sha512-IDfjWa7QIla6KMRUUiv4TrOZsqjZWDvG0xfjw+a6/rgEaqxlPTJDRvTUXh96/TekXM440h+Mks1JGBwO9AD3zA==",
       "requires": {
         "prop-types": "15.5.10"
       }
@@ -7031,8 +7034,8 @@
       "dev": true
     },
     "is-resolvable": {
-      "version": "1.0.1",
-      "integrity": "sha512-y5CXYbzvB3jTnWAZH1Nl7ykUWb6T3BcTs56HUruwBf8MhF56n1HWqhDWnVFo8GHrUPDgvUUNVhrc2U8W7iqz5g==",
+      "version": "1.1.0",
+      "integrity": "sha512-qgDYXFSR5WvEfuS5dMj6oTMEbrrSaM0CrFk2Yiq/gXnBvD9pMa2jGXxyhGLfvhZpuMZe18CJpFxAt3CRs42NMg==",
       "dev": true
     },
     "is-stream": {
@@ -7329,7 +7332,7 @@
       "integrity": "sha512-90H1wLqiNR3tLhQUgwhC6GWHfRCG+Da14m7vxD608Mt/QTKR0TA751D+QH09x5bvcrLfvxLtxArtA0VEC0ORow==",
       "dev": true,
       "requires": {
-        "jest-cli": "22.1.2"
+        "jest-cli": "22.1.4"
       },
       "dependencies": {
         "ansi-escapes": {
@@ -7404,8 +7407,8 @@
           "dev": true
         },
         "jest-cli": {
-          "version": "22.1.2",
-          "integrity": "sha512-t0W04YJBK5pLjp9AroUVTWE46ERh2pNLTVqJzS6nOwq6pn1/wAjCBNeE+HmK1uKVjNPGmDMhoqxxV9FFBFEjyA==",
+          "version": "22.1.4",
+          "integrity": "sha512-p7yOu0Q5uuXb3Q93qEg3LE6eNGgAGueakifxXNEqQx4b0lOl2YlC9t6BLQWNOJ+z42VWK/BIdFjf6lxKcTkjFA==",
           "dev": true,
           "requires": {
             "ansi-escapes": "3.0.0",
@@ -7419,18 +7422,18 @@
             "istanbul-lib-coverage": "1.1.1",
             "istanbul-lib-instrument": "1.9.1",
             "istanbul-lib-source-maps": "1.2.2",
-            "jest-changed-files": "22.1.0",
-            "jest-config": "22.1.2",
-            "jest-environment-jsdom": "22.1.2",
+            "jest-changed-files": "22.1.4",
+            "jest-config": "22.1.4",
+            "jest-environment-jsdom": "22.1.4",
             "jest-get-type": "22.1.0",
             "jest-haste-map": "22.1.0",
             "jest-message-util": "22.1.0",
             "jest-regex-util": "22.1.0",
             "jest-resolve-dependencies": "22.1.0",
-            "jest-runner": "22.1.2",
-            "jest-runtime": "22.1.2",
+            "jest-runner": "22.1.4",
+            "jest-runtime": "22.1.4",
             "jest-snapshot": "22.1.2",
-            "jest-util": "22.1.2",
+            "jest-util": "22.1.4",
             "jest-worker": "22.1.0",
             "micromatch": "2.3.11",
             "node-notifier": "5.2.1",
@@ -7513,27 +7516,27 @@
       }
     },
     "jest-changed-files": {
-      "version": "22.1.0",
-      "integrity": "sha512-NGc5HF3zXaMMph1L3HwPw7zVu0uAad2CZ+5QYQaP9QzB9jBioukulg2vcy7gdJRfWAr3D8EGlu4jfUHOtLNVmQ==",
+      "version": "22.1.4",
+      "integrity": "sha512-EpqJhwt+N/wEHRT+5KrjagVrunduOfMgAb7fjjHkXHFCPRZoVZwl896S7krx7txf5hrMNUkpECnOnO2wBgzJCw==",
       "dev": true,
       "requires": {
         "throat": "4.1.0"
       }
     },
     "jest-config": {
-      "version": "22.1.2",
-      "integrity": "sha512-nhE4OZn+PvB4zyogvN5zK2+h+FIAgO7uEzH7eHwuJtBpRSBci6DLeMEIMC9ztJTOvg/wLySAm4WRqdyAehRCzw==",
+      "version": "22.1.4",
+      "integrity": "sha512-ZImFp7STrUDOgQLW5I5UloCiCRMh6HmMIYIoWqaQkxnR5ws7MuZFG/Ns9sZFyfrnyWCvcW91e+XcEfNeoa4Jew==",
       "dev": true,
       "requires": {
         "chalk": "2.3.0",
         "glob": "7.1.2",
-        "jest-environment-jsdom": "22.1.2",
-        "jest-environment-node": "22.1.2",
+        "jest-environment-jsdom": "22.1.4",
+        "jest-environment-node": "22.1.4",
         "jest-get-type": "22.1.0",
-        "jest-jasmine2": "22.1.2",
+        "jest-jasmine2": "22.1.4",
         "jest-regex-util": "22.1.0",
-        "jest-resolve": "22.1.0",
-        "jest-util": "22.1.2",
+        "jest-resolve": "22.1.4",
+        "jest-util": "22.1.4",
         "jest-validate": "22.1.2",
         "pretty-format": "22.1.0"
       },
@@ -7647,22 +7650,22 @@
       }
     },
     "jest-environment-jsdom": {
-      "version": "22.1.2",
-      "integrity": "sha512-mGcuJPJ4+F+GJaWw+YZVMcTWFXxB+FR2E1CztnC85kTbVbLv2wWKCn91KgxstYf2E3/OQ26WICngnOBISZiEXQ==",
+      "version": "22.1.4",
+      "integrity": "sha512-YGqFJzei/kq5BgQ8su7igLoCl34ytUffr5ZoqwLrDzCmXUKyIiuwBFbWe3xFMG/crlDb1emhBXdzWM1yDEDw5Q==",
       "dev": true,
       "requires": {
         "jest-mock": "22.1.0",
-        "jest-util": "22.1.2",
-        "jsdom": "11.5.1"
+        "jest-util": "22.1.4",
+        "jsdom": "11.6.0"
       }
     },
     "jest-environment-node": {
-      "version": "22.1.2",
-      "integrity": "sha512-khr801nOSK380J97T2T0kMABJbSMOl8Mn3xwP0PiaCoaAaYlQ4XB+x+aXsVNPUH4FOOZq9ojytu84EdWChR+Hg==",
+      "version": "22.1.4",
+      "integrity": "sha512-rQmtzgZVdyCzeXsE8i7Alw2483KSd2PYjssZWZYeNzonN/lBeUjjaOCgLWp6FspBzSTnYF7x6cN4umGZxYAhow==",
       "dev": true,
       "requires": {
         "jest-mock": "22.1.0",
-        "jest-util": "22.1.2"
+        "jest-util": "22.1.4"
       }
     },
     "jest-file-exists": {
@@ -7685,7 +7688,7 @@
         "jest-docblock": "22.1.0",
         "jest-worker": "22.1.0",
         "micromatch": "2.3.11",
-        "sane": "2.2.0"
+        "sane": "2.3.0"
       },
       "dependencies": {
         "jest-docblock": {
@@ -7699,8 +7702,8 @@
       }
     },
     "jest-jasmine2": {
-      "version": "22.1.2",
-      "integrity": "sha512-z8X41QkqJovovpeO0e6+wutZnJmjUC0G0ZopKhPQ5JIobxbU9AqOc402vdKhEYnrjaw8WszR5+HU3EL08Arguw==",
+      "version": "22.1.4",
+      "integrity": "sha512-+KoRiG4PUwURB7UXei2jzxvbCebhXgTYS+xWl3FsSYUn3flcxdcOgAsFolx31Dkk/B1bVf1HIKt/B6Ubucp9aQ==",
       "dev": true,
       "requires": {
         "callsites": "2.0.0",
@@ -7713,7 +7716,7 @@
         "jest-matcher-utils": "22.1.0",
         "jest-message-util": "22.1.0",
         "jest-snapshot": "22.1.2",
-        "source-map-support": "0.5.1"
+        "source-map-support": "0.5.2"
       },
       "dependencies": {
         "ansi-styles": {
@@ -7755,8 +7758,8 @@
           "dev": true
         },
         "source-map-support": {
-          "version": "0.5.1",
-          "integrity": "sha512-EZNecLNrsdRk9fcdOcjjy+Z/id7cr68sdmsYtR1gA45oQ81Ccea0UvM7DdSRblO0Ie5zWX31bvJTC7Y3QZVujg==",
+          "version": "0.5.2",
+          "integrity": "sha512-9zHceZbQwERaMK1MiFguvx1dL9GQPLXInr2D/wUxAsuV6ZKc9F0DHYWeloMcalkYRbtanwqUakoDjvj55cL/4A==",
           "dev": true,
           "requires": {
             "source-map": "0.6.1"
@@ -7969,8 +7972,8 @@
       "dev": true
     },
     "jest-resolve": {
-      "version": "22.1.0",
-      "integrity": "sha512-hp4Od9YNEv3A/xNN5pPlNjMuisdZyg3u+XAZOqnGxWPVqnbjvEZ25U2HmYM0eLhOzVTHAAsNnAA8HWDzY1Cwjw==",
+      "version": "22.1.4",
+      "integrity": "sha512-/HuCMeiTD6YJ+NF15bU1mal1r7Gov0GJozA7232XiYve7cOOnU2JwXBx3EQmcIuG38uNrRPjtgpiXkBqfnk4Og==",
       "dev": true,
       "requires": {
         "browser-resolve": "1.11.2",
@@ -8024,19 +8027,19 @@
       }
     },
     "jest-runner": {
-      "version": "22.1.2",
-      "integrity": "sha512-ib7Rld/2wjNWs3voI8nxx1wSyB6/UFplEW6c3faWCqhPrC01UUIHLUgSOpUKdhj+LOlB1EOS9r4+r99xJHJS4g==",
+      "version": "22.1.4",
+      "integrity": "sha512-HAyZ0Q2Fyk7mlbtbSKP75hNs9IP0Md7kzPUN1uNKbvQfZkXA/e7P0ttzAIGQtEbRx656tYwkfWNW+hXvs1i4/g==",
       "dev": true,
       "requires": {
         "exit": "0.1.2",
-        "jest-config": "22.1.2",
+        "jest-config": "22.1.4",
         "jest-docblock": "22.1.0",
         "jest-haste-map": "22.1.0",
-        "jest-jasmine2": "22.1.2",
+        "jest-jasmine2": "22.1.4",
         "jest-leak-detector": "22.1.0",
         "jest-message-util": "22.1.0",
-        "jest-runtime": "22.1.2",
-        "jest-util": "22.1.2",
+        "jest-runtime": "22.1.4",
+        "jest-util": "22.1.4",
         "jest-worker": "22.1.0",
         "throat": "4.1.0"
       },
@@ -8052,8 +8055,8 @@
       }
     },
     "jest-runtime": {
-      "version": "22.1.2",
-      "integrity": "sha512-wlYWwpI0loqdrp+h0bBB1Rpn2UqLgKMgYZqQBVxg9Dx0OqPNtVkqSGkINlYv5Jkf1eNCXDbv5JEvdlhiy9fh7Q==",
+      "version": "22.1.4",
+      "integrity": "sha512-r/UjVuQppDRwbUprDlLYdd8MTYY+H8H6BCqRujGjo5/QyIt3b0hppNoOQHF+0bHNtuz/sR9chJ9HJ3A1fiv9Pw==",
       "dev": true,
       "requires": {
         "babel-core": "6.25.0",
@@ -8063,11 +8066,11 @@
         "convert-source-map": "1.5.1",
         "exit": "0.1.2",
         "graceful-fs": "4.1.11",
-        "jest-config": "22.1.2",
+        "jest-config": "22.1.4",
         "jest-haste-map": "22.1.0",
         "jest-regex-util": "22.1.0",
-        "jest-resolve": "22.1.0",
-        "jest-util": "22.1.2",
+        "jest-resolve": "22.1.4",
+        "jest-util": "22.1.4",
         "json-stable-stringify": "1.0.1",
         "micromatch": "2.3.11",
         "realpath-native": "1.0.0",
@@ -8266,8 +8269,8 @@
       }
     },
     "jest-util": {
-      "version": "22.1.2",
-      "integrity": "sha512-z/7pZG4b+uXWRLWJnJ8iZKfiMBONB3KBWJQlximgRBBsFM7bX3sLd09Dzy6lgwyUUTa286XSJP59d8ux5V3D1g==",
+      "version": "22.1.4",
+      "integrity": "sha512-zM29idoVBPvmpsGubS7YmywVyPe4/m1wE2YhmKp0vVmrQmuby7ObuMqabp82EYlM0Rdp4GNEtaDamW9jg8lgTg==",
       "dev": true,
       "requires": {
         "callsites": "2.0.0",
@@ -8621,8 +8624,8 @@
       }
     },
     "jsdom": {
-      "version": "11.5.1",
-      "integrity": "sha512-89ztIZ03aYK9f1uUrLXLsZndRge/JnZjzjpaN+lrse3coqz+8PR/dX4WLHpbF5fIKTXhDjFODOJw2328lPJ90g==",
+      "version": "11.6.0",
+      "integrity": "sha512-4lMxDCiQYK7qfVi9fKhDf2PpvXXeH/KAmcH6o0Ga7fApi8+lTBxRqGHWZ9B11SsK/pxQKOtsw413utw0M+hUrg==",
       "dev": true,
       "requires": {
         "abab": "1.0.4",
@@ -8633,22 +8636,24 @@
         "content-type-parser": "1.0.2",
         "cssom": "0.3.2",
         "cssstyle": "0.2.37",
-        "domexception": "1.0.0",
+        "domexception": "1.0.1",
         "escodegen": "1.9.0",
         "html-encoding-sniffer": "1.0.2",
         "left-pad": "1.2.0",
         "nwmatcher": "1.4.3",
-        "parse5": "3.0.3",
+        "parse5": "4.0.0",
         "pn": "1.1.0",
         "request": "2.83.0",
         "request-promise-native": "1.0.5",
         "sax": "1.2.4",
         "symbol-tree": "3.2.2",
         "tough-cookie": "2.3.3",
+        "w3c-hr-time": "1.0.1",
         "webidl-conversions": "4.0.2",
         "whatwg-encoding": "1.0.3",
         "whatwg-url": "6.4.0",
-        "xml-name-validator": "2.0.1"
+        "ws": "4.0.0",
+        "xml-name-validator": "3.0.0"
       },
       "dependencies": {
         "acorn": {
@@ -8662,6 +8667,26 @@
           "dev": true,
           "requires": {
             "acorn": "5.3.0"
+          }
+        },
+        "parse5": {
+          "version": "4.0.0",
+          "integrity": "sha512-VrZ7eOd3T1Fk4XWNXMgiGBK/z0MG48BWG2uQNU4I72fkQuKUTZpl+u9k+CxEG0twMVzSmXEEz12z5Fnw1jIQFA==",
+          "dev": true
+        },
+        "ultron": {
+          "version": "1.1.1",
+          "integrity": "sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==",
+          "dev": true
+        },
+        "ws": {
+          "version": "4.0.0",
+          "integrity": "sha512-QYslsH44bH8O7/W2815u5DpnCpXWpEK44FmaHffNwgJI4JMaSZONgPBTOfrxJ29mXKbXak+LsJ2uAkDTYq2ptQ==",
+          "dev": true,
+          "requires": {
+            "async-limiter": "1.0.0",
+            "safe-buffer": "5.1.1",
+            "ultron": "1.1.1"
           }
         }
       }
@@ -10869,7 +10894,7 @@
         "create-hmac": "1.1.6",
         "ripemd160": "2.0.1",
         "safe-buffer": "5.1.1",
-        "sha.js": "2.4.9"
+        "sha.js": "2.4.10"
       }
     },
     "percentage-regex": {
@@ -11732,7 +11757,7 @@
       "requires": {
         "duplexify": "3.5.3",
         "inherits": "2.0.3",
-        "pump": "2.0.0"
+        "pump": "2.0.1"
       },
       "dependencies": {
         "inherits": {
@@ -11740,8 +11765,8 @@
           "integrity": "sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4="
         },
         "pump": {
-          "version": "2.0.0",
-          "integrity": "sha512-6MYypjOvtiXhBSTOD0Zs5eNjCGfnqi5mPsCsW+dgKTxrZzQMZQNpBo3XRkLx7id753f3EeyHLBqzqqUymIolgw==",
+          "version": "2.0.1",
+          "integrity": "sha512-ruPMNRkN3MHP1cWJc9OWr+T/xDP0jhXYCLfJcBuX54hhfIBnaQmAUMfDcG4DM5UMWByBbJY69QSphm3jtDKIkA==",
           "requires": {
             "end-of-stream": "1.4.1",
             "once": "1.4.0"
@@ -11922,7 +11947,7 @@
       }
     },
     "react-codemod": {
-      "version": "github:reactjs/react-codemod#f5a1282b80ab2280571a542e2ae98b91ca90a447",
+      "version": "github:reactjs/react-codemod#b69f98231088ad2f9a29608580f81873474c132e",
       "dev": true,
       "requires": {
         "babel-eslint": "6.1.2",
@@ -12050,7 +12075,7 @@
             "imurmurhash": "0.1.4",
             "inquirer": "0.12.0",
             "is-my-json-valid": "2.17.1",
-            "is-resolvable": "1.0.1",
+            "is-resolvable": "1.1.0",
             "js-yaml": "3.10.0",
             "json-stable-stringify": "1.0.1",
             "levn": "0.3.0",
@@ -12486,6 +12511,11 @@
               "dev": true
             }
           }
+        },
+        "xml-name-validator": {
+          "version": "2.0.1",
+          "integrity": "sha1-TYuPHszTQZqjYgYb7O9RXh5VljU=",
+          "dev": true
         },
         "yargs": {
           "version": "6.6.0",
@@ -13463,8 +13493,8 @@
       "dev": true
     },
     "sane": {
-      "version": "2.2.0",
-      "integrity": "sha512-OSJxhHO0CgPUw3lUm3GhfREAfza45smvEI9ozuFrxKG10GHVo0ryW9FK5VYlLvxj0SV7HVKHW0voYJIRu27GWg==",
+      "version": "2.3.0",
+      "integrity": "sha512-6GB9zPCsqJqQPAGcvEkUPijM1ZUFI+A/DrscL++dXO3Ltt5q5mPDayGxZtr3cBRkrbb4akbwszVVkTIFefEkcg==",
       "dev": true,
       "requires": {
         "anymatch": "1.3.2",
@@ -13710,8 +13740,8 @@
       "integrity": "sha1-ZlZ+NwQ+608E2RvWWMDL77VbjgQ="
     },
     "sha.js": {
-      "version": "2.4.9",
-      "integrity": "sha512-G8zektVqbiPHrylgew9Zg1VRB1L/DtXNUVAM6q4QLy8NE3qtHlFXTf8VLL4k1Yl6c7NMjtZUTdXV+X44nFaT6A==",
+      "version": "2.4.10",
+      "integrity": "sha512-vnwmrFDlOExK4Nm16J2KMWHLrp14lBrjxMxBJpu++EnsuBmpiYaM/MEs46Vxxm/4FvdP5yTwuCTO9it5FSjrqA==",
       "requires": {
         "inherits": "2.0.1",
         "safe-buffer": "5.1.1"
@@ -14007,8 +14037,8 @@
       }
     },
     "ssri": {
-      "version": "5.0.0",
-      "integrity": "sha512-728D4yoQcQm1ooZvSbywLkV1RjfITZXh0oWrhM/lnsx3nAHx7LsRGJWB/YyvoceAYRq98xqbstiN4JBv1/wNHg==",
+      "version": "5.1.0",
+      "integrity": "sha512-TevC8fgxQKTfQ1nWtM9GNzr3q5rrHNntG9CDMH1k3QhSZI6Kb+NbjLRs8oPFZa2Hgo7zoekL+UTvoEk7tsbjQg==",
       "requires": {
         "safe-buffer": "5.1.1"
       }
@@ -15042,7 +15072,7 @@
         "find-cache-dir": "1.0.0",
         "schema-utils": "0.3.0",
         "source-map": "0.5.7",
-        "uglify-es": "3.3.7",
+        "uglify-es": "3.3.8",
         "webpack-sources": "1.1.0",
         "worker-farm": "1.5.2"
       },
@@ -15060,8 +15090,8 @@
           "integrity": "sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w="
         },
         "uglify-es": {
-          "version": "3.3.7",
-          "integrity": "sha512-fGMnE6SsDRsCjxm78C+lv7MuXsse/dtF7QuTUT43BYf4jlxPjd+XTnGB8YjaCQJ3sv2LT4zk0mwpp9+QJocU6g==",
+          "version": "3.3.8",
+          "integrity": "sha512-j8li0jWcAN6yBuAVYFZEFyYINZAm4WEdMwkA6qXFi4TLrze3Mp0Le7QjW6LR9HQjQJ2zRa9VgnFLs3PatijWOw==",
           "requires": {
             "commander": "2.13.0",
             "source-map": "0.6.1"
@@ -15471,6 +15501,14 @@
           "integrity": "sha1-U10EXOa2Nj+kARcIRimZXp3zJMc=",
           "dev": true
         }
+      }
+    },
+    "w3c-hr-time": {
+      "version": "1.0.1",
+      "integrity": "sha1-gqwr/2PZUOqeMYmlimViX+3xkEU=",
+      "dev": true,
+      "requires": {
+        "browser-process-hrtime": "0.1.2"
       }
     },
     "walk": {
@@ -15899,7 +15937,7 @@
             "cookie-signature": "1.0.6",
             "debug": "2.6.9",
             "depd": "1.1.2",
-            "encodeurl": "1.0.1",
+            "encodeurl": "1.0.2",
             "escape-html": "1.0.3",
             "etag": "1.8.1",
             "finalhandler": "1.1.0",
@@ -15933,7 +15971,7 @@
           "dev": true,
           "requires": {
             "debug": "2.6.9",
-            "encodeurl": "1.0.1",
+            "encodeurl": "1.0.2",
             "escape-html": "1.0.3",
             "on-finished": "2.3.0",
             "parseurl": "1.3.2",
@@ -16019,7 +16057,7 @@
             "debug": "2.6.9",
             "depd": "1.1.2",
             "destroy": "1.0.4",
-            "encodeurl": "1.0.1",
+            "encodeurl": "1.0.2",
             "escape-html": "1.0.3",
             "etag": "1.8.1",
             "fresh": "0.5.2",
@@ -16036,7 +16074,7 @@
           "integrity": "sha512-hSMUZrsPa/I09VYFJwa627JJkNs0NrfL1Uzuup+GqHfToR2KcsXFymXSV90hoyw3M+msjFuQly+YzIH/q0MGlQ==",
           "dev": true,
           "requires": {
-            "encodeurl": "1.0.1",
+            "encodeurl": "1.0.2",
             "escape-html": "1.0.3",
             "parseurl": "1.3.2",
             "send": "0.16.1"
@@ -16415,8 +16453,8 @@
       "integrity": "sha1-ZGV4SKIP/F31g6Qq2KJ3tFErvE0="
     },
     "xml-name-validator": {
-      "version": "2.0.1",
-      "integrity": "sha1-TYuPHszTQZqjYgYb7O9RXh5VljU=",
+      "version": "3.0.0",
+      "integrity": "sha512-A5CUptxDsvxKJEU3yO6DuWBSJz/qizqzJKOMIfUJHETbBw/sFaDxgd6fxm1ewUaM0jZ444Fc5vC5ROYurg/4Pw==",
       "dev": true
     },
     "xmlhttprequest-ssl": {

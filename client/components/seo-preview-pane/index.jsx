@@ -20,7 +20,7 @@ import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
 import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import { isBusiness, isEnterprise } from 'lib/products-values';
+import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -30,7 +30,7 @@ import { getSectionName, getSelectedSite } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 const PREVIEW_IMAGE_WIDTH = 512;
-const hasBusinessPlan = overSome( isBusiness, isEnterprise );
+const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
 
 const largeBlavatar = site => {
 	const siteIcon = get( site, 'icon.img' );
@@ -264,7 +264,7 @@ const mapStateToProps = state => {
 			...post,
 			seoTitle: getSeoTitle( state, 'posts', { site, post } ),
 		},
-		showNudge: site && site.plan && ! hasBusinessPlan( site.plan ),
+		showNudge: site && site.plan && ! hasSupportingPlan( site.plan ),
 	};
 };
 
