@@ -23,6 +23,7 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
+import versionCompare from 'lib/version-compare';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -106,6 +107,10 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 
 export function maybeOnboard( { query, store }, next ) {
 	if ( ! isEmpty( query ) && query.onboarding ) {
+		if ( versionCompare( query.jp_version, '5.8-alpha', '>=' ) ) {
+			// Do something!
+		}
+
 		const siteId = parseInt( query.client_id, 10 );
 		const siteSlug = urlToSlug( query.site_url );
 		const credentials = {
