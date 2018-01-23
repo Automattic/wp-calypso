@@ -312,7 +312,7 @@ export class HelpContactForm extends React.PureComponent {
 					<div className="help-contact-form__site-selection">
 						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SitesDropdown
-							selectedSiteId={ this.props.helpSiteID }
+							selectedSiteId={ this.props.helpSiteId }
 							onSiteSelect={ this.props.onChangeSite }
 						/>
 					</div>
