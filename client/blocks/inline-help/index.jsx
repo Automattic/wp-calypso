@@ -272,7 +272,7 @@ class InlineHelp extends Component {
 
 						{ this.renderSearchResults() }
 
-						<Button borderless href="/help">
+						<Button className="inline-help__button" borderless href="/help">
 							<Gridicon icon="help" /> More help
 						</Button>
 					</div>
