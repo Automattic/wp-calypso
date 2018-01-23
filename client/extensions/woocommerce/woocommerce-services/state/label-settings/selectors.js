@@ -67,3 +67,32 @@ export const getEmailReceipts = ( state, siteId = getSelectedSiteId( state ) ) =
 	const data = getLabelSettingsFormData( state, siteId );
 	return data && data.email_receipts;
 };
+
+export const userCanManagePayments = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.can_manage_payments;
+};
+
+export const userCanEditSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.can_edit_settings;
+};
+
+export const getPaperSize = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const data = getLabelSettingsFormData( state, siteId );
+	return data && data.paper_size;
+};
+
+export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.payment_methods;
+};
+
+export const getMasterUserInfo = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return {
+		masterUserName: meta && meta.master_user_name,
+		masterUserLogin: meta && meta.master_user_login,
+		masterUserEmail: meta && meta.master_user_email,
+	};
+};

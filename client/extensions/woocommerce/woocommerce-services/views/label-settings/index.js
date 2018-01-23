@@ -23,9 +23,11 @@ import QueryLabelSettings from 'woocommerce/woocommerce-services/components/quer
 import { setFormDataValue, restorePristineSettings } from '../../state/label-settings/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	getLabelSettingsFormData,
+	areLabelsEnabled,
+	areSettingsErrored,
+	userCanEditSettings,
+	userCanManagePayments,
 	getLabelSettingsFormMeta,
-	getLabelSettingsStoreOptions,
 } from '../../state/label-settings/selectors';
 
 class AccountSettingsRootView extends Component {
@@ -33,54 +35,45 @@ class AccountSettingsRootView extends Component {
 		this.props.restorePristineSettings( this.props.siteId );
 	}
 
+	setValue = ( key, value ) => {
+		this.props.onChange();
+		this.props.setFormDataValue( this.props.siteId, key, value );
+	};
+
+	onEnabledToggle = () => {
+		this.props.onChange();
+		this.props.setFormDataValue( this.props.siteId, 'enabled', ! this.props.labelsEnabled );
+	};
+
+	renderContent = () => {
+		const { isFetchError, siteId, translate } = this.props;
+
+		if ( isFetchError ) {
+			return (
+				<p>{ translate( 'Unable to get your settings. Please refresh the page to try again.' ) }</p>
+			);
+		}
+
+		return <LabelSettings siteId={ siteId } />;
+	};
+
 	render() {
-		const { formData, formMeta, storeOptions, siteId, translate } = this.props;
+		const {
+			formMeta,
+			canManagePayments,
+			canEditSettings,
+			labelsEnabled,
+			siteId,
+			translate,
+		} = this.props;
 
 		if ( ! formMeta ) {
 			return <QueryLabelSettings siteId={ siteId } />;
 		}
 
-		const setValue = ( key, value ) => {
-			this.props.onChange();
-			this.props.setFormDataValue( siteId, key, value );
-		};
-
-		const onEnabledToggle = () => {
-			this.props.onChange();
-			this.props.setFormDataValue( siteId, 'enabled', ! formData.enabled );
-		};
-
-		const renderContent = () => {
-			if ( ! formData && ! formMeta.isFetching ) {
-				return (
-					<p>
-						{ translate( 'Unable to get your settings. Please refresh the page to try again.' ) }
-					</p>
-				);
-			}
-
-			return (
-				<LabelSettings
-					isLoading={ formMeta.isFetching }
-					pristine={ formMeta.pristine }
-					paymentMethods={ formMeta.payment_methods || [] }
-					setFormDataValue={ setValue }
-					selectedPaymentMethod={ ( formData || {} ).selected_payment_method_id }
-					paperSize={ ( formData || {} ).paper_size }
-					emailReceipts={ ( formData || {} ).email_receipts }
-					storeOptions={ storeOptions }
-					canEditPayments={ formMeta.can_manage_payments }
-					canEditSettings={ Boolean( formMeta.can_manage_payments || formMeta.can_edit_settings ) }
-					masterUserName={ formMeta.master_user_name }
-					masterUserLogin={ formMeta.master_user_login }
-					masterUserEmail={ formMeta.master_user_email }
-				/>
-			);
-		};
-
 		//hide the toggle when the enabled flag is not present (older version of WCS) and respect the setting otherwise.
-		const renderToggle = formData && isBoolean( formData.enabled );
-		const hidden = formData && isBoolean( formData.enabled ) && ! formData.enabled;
+		const renderToggle = isBoolean( labelsEnabled );
+		const hidden = isBoolean( labelsEnabled ) && ! labelsEnabled;
 
 		return (
 			<div>
@@ -93,14 +86,14 @@ class AccountSettingsRootView extends Component {
 				>
 					{ renderToggle && (
 						<FormToggle
-							checked={ formData.enabled }
-							onChange={ onEnabledToggle }
-							disabled={ Boolean( ! formMeta.can_manage_payments && ! formMeta.can_edit_settings ) }
+							checked={ labelsEnabled }
+							onChange={ this.onEnabledToggle }
+							disabled={ Boolean( ! canManagePayments && ! canEditSettings ) }
 						/>
 					) }
 				</ExtendedHeader>
 				<Card className={ classNames( 'label-settings__labels-container', { hidden } ) }>
-					{ renderContent() }
+					{ this.renderContent() }
 				</Card>
 			</div>
 		);
@@ -115,9 +108,11 @@ AccountSettingsRootView.propTypes = {
 function mapStateToProps( state ) {
 	return {
 		siteId: getSelectedSiteId( state ),
-		storeOptions: getLabelSettingsStoreOptions( state ),
-		formData: getLabelSettingsFormData( state ),
 		formMeta: getLabelSettingsFormMeta( state ),
+		labelsEnabled: areLabelsEnabled( state ),
+		isFetchError: areSettingsErrored( state ),
+		canManagePayments: userCanManagePayments( state ),
+		canEditSettings: userCanEditSettings( state ),
 	};
 }
 
