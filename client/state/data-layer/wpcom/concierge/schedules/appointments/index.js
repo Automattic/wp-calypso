@@ -56,8 +56,10 @@ export const cancelConciergeAppointment = ( { dispatch }, action ) => {
 export const markSlotAsCancelled = ( { dispatch } ) =>
 	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED ) );
 
-export const handleCancellingError = ( { dispatch } ) =>
+export const handleCancellingError = ( { dispatch } ) => {
 	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR ) );
+	dispatch( errorNotice( "We couldn't cancel your session, please try again later." ) );
+};
 
 export const bookConciergeAppointment = ( { dispatch }, action ) => {
 	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ) );
