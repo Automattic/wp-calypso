@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { flowRight, get } from 'lodash';
+import { flowRight, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
 import SectionHeader from 'components/section-header';
 import config from 'config';
@@ -175,21 +176,35 @@ class SiteSettingsFormGeneral extends Component {
 		const { fields, translate } = this.props;
 		const langId = get( fields, 'lang_id', '' );
 		const errors = {
-			error_cap: translate(
-				'The Site Language setting is disabled due to insufficient permissions.'
-			),
-			error_const: translate(
-				'The Site Language setting is disabled because your site has the WPLANG constant set.'
-			),
+			error_cap: {
+				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
+				link: 'https://codex.wordpress.org/Roles_and_Capabilities',
+				linkText: translate( 'More info' ),
+			},
+			error_const: {
+				text: translate(
+					'The Site Language setting is disabled because your site has the WPLANG constant set.'
+				),
+				link:
+					'https://codex.wordpress.org/Installing_WordPress_in_Your_Language#Setting_the_language_for_your_site',
+				linkText: translate( 'More info' ),
+			},
 		};
+		const noticeContent = errors[ langId ];
 
 		return (
-			errors[ langId ] && (
+			has( noticeContent, 'text' ) && (
 				<Notice
-					text={ errors[ langId ] }
+					text={ noticeContent.text }
 					className="site-settings__language-picker-notice"
 					isCompact
-				/>
+				>
+					{ has( noticeContent, 'link' ) && (
+						<NoticeAction href={ noticeContent.link } external>
+							{ noticeContent.linkText }
+						</NoticeAction>
+					) }
+				</Notice>
 			)
 		);
 	};
