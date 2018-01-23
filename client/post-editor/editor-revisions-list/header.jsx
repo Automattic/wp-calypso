@@ -13,6 +13,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Button from 'components/button';
+import ButtonGroup from 'components/button-group';
 
 const EditorRevisionsListHeader = ( {
 	numRevisions,
@@ -29,7 +30,7 @@ const EditorRevisionsListHeader = ( {
 						args: { revisions: numRevisions },
 					} ) }
 			</div>
-			<div className="editor-revisions-list__navigation">
+			<ButtonGroup className="editor-revisions-list__navigation">
 				<Button
 					compact
 					borderless
@@ -48,7 +49,7 @@ const EditorRevisionsListHeader = ( {
 				>
 					<Gridicon icon="chevron-up" />
 				</Button>
-			</div>
+			</ButtonGroup>
 		</div>
 	);
 };
