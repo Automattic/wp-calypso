@@ -110,7 +110,7 @@ class Search extends Component {
 					siteId={ siteId }
 					moduleSlug="search"
 					label={ translate(
-						'Replace WordPress built-in search with an improved search experience (Beta)'
+						'Replace WordPress built-in search with an improved search experience'
 					) }
 					disabled={ isRequestingSettings || isSavingSettings }
 				/>
