@@ -207,6 +207,7 @@ class ShippingLabels extends Component {
 			translate,
 			masterUserName,
 			masterUserLogin,
+			masterUserEmail,
 			canEditSettings,
 			canEditPayments,
 			setFormDataValue,
@@ -230,12 +231,16 @@ class ShippingLabels extends Component {
 						disabled={ ! canEditPayments && ! canEditSettings }
 					/>
 					<span className="label-settings__credit-card-description">
-						{ translate( 'Email the label purchase receipts to %(ownerName)s (%(ownerLogin)s)', {
-							args: {
-								ownerName: masterUserName,
-								ownerLogin: masterUserLogin,
-							},
-						} ) }
+						{ translate(
+							'Email the label purchase receipts to %(ownerName)s (%(ownerLogin)s) at %(ownerEmail)s',
+							{
+								args: {
+									ownerName: masterUserName,
+									ownerLogin: masterUserLogin,
+									ownerEmail: masterUserEmail,
+								},
+							}
+						) }
 					</span>
 				</FormLabel>
 			</FormFieldSet>
@@ -304,6 +309,7 @@ ShippingLabels.propTypes = {
 	canEditSettings: PropTypes.bool,
 	masterUserName: PropTypes.string,
 	masterUserLogin: PropTypes.string,
+	masterUserEmail: PropTypes.string,
 	emailReceipts: PropTypes.bool,
 };
 

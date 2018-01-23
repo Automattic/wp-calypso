@@ -73,6 +73,7 @@ class AccountSettingsRootView extends Component {
 					canEditSettings={ Boolean( formMeta.can_manage_payments || formMeta.can_edit_settings ) }
 					masterUserName={ formMeta.master_user_name }
 					masterUserLogin={ formMeta.master_user_login }
+					masterUserEmail={ formMeta.master_user_email }
 				/>
 			);
 		};
