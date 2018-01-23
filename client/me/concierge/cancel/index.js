@@ -22,7 +22,7 @@ import {
 	CONCIERGE_STATUS_CANCELLING,
 } from '../constants';
 import { getConciergeSignupForm } from 'state/selectors';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ConciergeCancel extends Component {
 	static propTypes = {
@@ -31,7 +31,7 @@ class ConciergeCancel extends Component {
 	};
 
 	componentDidMount() {
-		analytics.tracks.recordEvent( 'calypso_concierge_cancel_step' );
+		this.props.recordTracksEvent( 'calypso_concierge_cancel_step' );
 	}
 	cancelAppointment = () => {
 		const { appointmentId } = this.props;
@@ -100,5 +100,5 @@ export default connect(
 	state => ( {
 		signupForm: getConciergeSignupForm( state ),
 	} ),
-	{ cancelConciergeAppointment }
+	{ cancelConciergeAppointment, recordTracksEvent }
 )( localize( ConciergeCancel ) );

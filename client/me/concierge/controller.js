@@ -18,7 +18,7 @@ import RescheduleCalendarStep from './reschedule/calendar-step';
 import RescheduleConfirmationStep from './reschedule/confirmation-step';
 import RescheduleSkeleton from './reschedule/skeleton';
 import i18n from 'i18n-calypso';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 const book = ( context, next ) => {
 	context.primary = (
@@ -54,7 +54,7 @@ const reschedule = ( context, next ) => {
 };
 
 const siteSelector = ( context, next ) => {
-	analytics.tracks.recordEvent( 'calypso_concierge_site_selection_step' );
+	context.store.dispatch( recordTracksEvent( 'calypso_concierge_site_selection_step' ) );
 
 	context.getSiteSelectionHeaderText = () =>
 		i18n.translate(

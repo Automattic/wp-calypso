@@ -20,7 +20,7 @@ import {
 	CONCIERGE_STATUS_BOOKED,
 	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from '../constants';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -43,7 +43,7 @@ class CalendarStep extends Component {
 	};
 
 	componentDidMount() {
-		analytics.tracks.recordEvent( 'calypso_concierge_reschedule_calendar_step' );
+		this.props.recordTracksEvent( 'calypso_concierge_reschedule_calendar_step' );
 	}
 
 	componentWillUpdate( nextProps ) {
@@ -77,5 +77,5 @@ export default connect(
 		signupForm: getConciergeSignupForm( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 	} ),
-	{ rescheduleConciergeAppointment }
+	{ recordTracksEvent, rescheduleConciergeAppointment }
 )( localize( CalendarStep ) );
