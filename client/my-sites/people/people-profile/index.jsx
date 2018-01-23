@@ -7,7 +7,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { omit, get } from 'lodash';
+import { get } from 'lodash';
 import { recordTrack } from 'reader/stats';
 import page from 'page';
 
@@ -223,19 +223,7 @@ class PeopleProfile extends React.PureComponent {
 		} );
 
 		return (
-			<div
-				{ ...omit(
-					this.props,
-					'className',
-					'invite',
-					'type',
-					'user',
-					'moment',
-					'numberFormat',
-					'translate'
-				) }
-				className={ classes }
-			>
+			<div className={ classes }>
 				<div className="people-profile__gravatar">
 					<Gravatar user={ user } size={ 72 } />
 				</div>
