@@ -7,7 +7,6 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -59,19 +58,6 @@ class PeopleListItem extends React.PureComponent {
 
 		return (
 			<CompactCard
-				{ ...omit(
-					this.props,
-					'className',
-					'invite',
-					'user',
-					'site',
-					'isSelectable',
-					'onRemove',
-					'moment',
-					'numberFormat',
-					'translate',
-					'type'
-				) }
 				className={ classNames( 'people-list-item', className ) }
 				tagName={ tagName }
 				href={ this.getCardLink() }
