@@ -20,7 +20,7 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
 import Button from 'components/button';
-import { isRequestingInviteResend } from 'state/invites/selectors';
+import { isRequestingResend } from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
 
 class PeopleListItem extends React.PureComponent {
@@ -113,7 +113,7 @@ class PeopleListItem extends React.PureComponent {
 						</button>
 					</div>
 				) }
-				<Button onClick={ this.onResend } busy={ requestingInviteResend } compact={ true }>
+				<Button onClick={ this.onResend } busy={ requestingResend } compact={ true }>
 					Resend Invite
 				</Button>
 			</CompactCard>
@@ -131,7 +131,7 @@ export default connect(
 		}
 
 		return {
-			requestingInviteResend: isRequestingInviteResend( state, siteId, inviteKey ),
+			requestingResend: isRequestingResend( state, siteId, inviteKey ),
 		};
 	},
 	{ resendInvite }
