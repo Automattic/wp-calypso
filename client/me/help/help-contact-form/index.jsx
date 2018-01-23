@@ -307,15 +307,16 @@ export class HelpContactForm extends React.PureComponent {
 					</div>
 				) }
 
-				{ showSiteField && (
-					<div className="help-contact-form__site-selection">
-						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
-						<SitesDropdown
-							selectedSiteId={ this.props.selectedSite.ID }
-							onSiteSelect={ this.props.onChangeSite }
-						/>
-					</div>
-				) }
+				{ showSiteField &&
+					this.props.selectedSite && (
+						<div className="help-contact-form__site-selection">
+							<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
+							<SitesDropdown
+								selectedSiteId={ this.props.selectedSite.ID }
+								onSiteSelect={ this.props.onChangeSite }
+							/>
+						</div>
+					) }
 
 				{ showSubjectField && (
 					<div className="help-contact-form__subject">
