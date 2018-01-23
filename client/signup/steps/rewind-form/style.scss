@@ -1,0 +1,62 @@
+.rewind-form__container {
+	text-align: center;
+}
+
+.rewind-form__section-title,
+.rewind-form__help-link {
+	max-width: 640px;
+	padding: 0;
+	margin-bottom: 0;
+	text-align: left;
+}
+
+.rewind-form__help-icon {
+	margin-right: 5px;
+}
+
+.rewind-form__help-icon,
+.rewind-form__help-link {
+	color: $blue-wordpress;
+}
+
+.rewind-form__card {
+	text-align: center;
+	max-width: 640px;
+	padding: 4rem;
+	margin-top: 1px;
+	padding-bottom: 3rem;
+	margin-bottom: 0;
+}
+
+.rewind-form__title {
+	display: inline-block;
+	font-size: 2.5rem;
+	font-weight: 300;
+	letter-spacing: .15rem;
+	color: $gray-text;
+}
+
+.rewind-form__description {
+	color: $gray-text-min;
+	font-size: 1.35rem;
+	font-weight: 100;
+	line-height: 2.5rem;
+}
+
+.rewind-form__image {
+	max-width: 200px;
+	display: block;
+	margin: 2rem auto;
+}
+
+.rewind-form .button {
+	font-weight: 100;
+}
+
+.rewind-form__form {
+	text-align: left;
+}
+
+.rewind-form__form .form-fieldset:last-child {
+	text-align: right;
+}

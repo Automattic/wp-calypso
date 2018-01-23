@@ -14,6 +14,10 @@ import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
 import PlansStepComponent from 'signup/steps/plans';
 import SiteComponent from 'signup/steps/site';
 import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
+import RewindAddStep from 'signup/steps/rewind-add';
+import RewindCompleteStep from 'signup/steps/rewind-complete';
+import RewindConfirmStep from 'signup/steps/rewind-confirm';
+import RewindFormStep from 'signup/steps/rewind-form';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
@@ -42,6 +46,10 @@ export default {
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
 	'rebrand-cities-welcome': RebrandCitiesWelcomeComponent,
+	'rewind-add': RewindAddStep,
+	'rewind-complete': RewindCompleteStep,
+	'rewind-confirm': RewindConfirmStep,
+	'rewind-form': RewindFormStep,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,

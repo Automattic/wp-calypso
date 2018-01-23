@@ -251,6 +251,18 @@ const flows = {
 		allowContinue: false,
 		hideFlowProgress: true,
 	},
+
+	'rewind-credentials': {
+		steps: [ 'rewind-add', 'rewind-confirm', 'rewind-form', 'rewind-complete' ],
+		destination: () => {
+			return '/stats/activity';
+		},
+		description: 'Allows new Jetpack users to provide server credentials',
+		lastModified: '2018-01-22',
+		disallowResume: true,
+		allowContinue: false,
+		hideFlowProgress: true,
+	},
 };
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
