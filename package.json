@@ -158,7 +158,7 @@
     "webpack-hot-middleware": "2.15.0",
     "wpcom": "5.4.0",
     "wpcom-oauth": "0.3.3",
-    "wpcom-proxy-request": "4.0.5",
+    "wpcom-proxy-request": "5.0.0",
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
