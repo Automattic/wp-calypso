@@ -574,9 +574,7 @@ const connectComponent = connect(
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsLanguageSelection:
-				! siteIsJetpack ||
-				( isJetpackMinimumVersion( state, siteId, '5.8-alpha' ) &&
-					config.isEnabled( 'jetpack/site-settings-language-selection' ) ),
+				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},
