@@ -42,6 +42,6 @@ export function getInvitesForSite( state, siteId ) {
  * @param  {String}  inviteId Invite ID
  * @return {Boolean}        Whether invites are being requested
  */
-export function isRequestingInviteResend( state, siteId, inviteId ) {
-	return get( state, [ 'invites', 'requestingInviteResend', siteId, inviteId ], false );
+export function isRequestingResend( state, siteId, inviteId ) {
+	return get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
 }
