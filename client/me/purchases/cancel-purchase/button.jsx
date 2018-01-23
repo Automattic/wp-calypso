@@ -308,12 +308,22 @@ class CancelPurchaseButton extends Component {
 	};
 
 	renderCancellationEffect = () => {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, includedDomainPurchase, cancelBundledDomain } = this.props;
+		const overrides = {};
+
+		if (
+			cancelBundledDomain &&
+			includedDomainPurchase &&
+			isDomainRegistration( includedDomainPurchase )
+		) {
+			overrides.refundText =
+				purchase.currencySymbol + ( purchase.refundAmount + includedDomainPurchase.amount );
+		}
 
 		return (
 			<p>
 				{ cancellationEffectHeadline( purchase, translate ) }
-				{ cancellationEffectDetail( purchase, translate ) }
+				{ cancellationEffectDetail( purchase, translate, overrides ) }
 			</p>
 		);
 	};

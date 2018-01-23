@@ -192,7 +192,7 @@ class CancelPurchase extends React.Component {
 
 					<CancelPurchaseRefundInformation
 						purchase={ purchase }
-						includedDomainPurchase={ this.props.incudedDomainPurchase }
+						includedDomainPurchase={ this.props.includedDomainPurchase }
 						confirmBundledDomain={ this.state.confirmCancelBundledDomain }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
@@ -210,7 +210,7 @@ class CancelPurchase extends React.Component {
 					</div>
 					<CancelPurchaseButton
 						purchase={ purchase }
-						includedDomainPurchase={ this.props.incudedDomainPurchase }
+						includedDomainPurchase={ this.props.includedDomainPurchase }
 						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
 						selectedSite={ this.props.selectedSite }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
