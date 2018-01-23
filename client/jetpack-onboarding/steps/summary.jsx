@@ -26,7 +26,6 @@ import {
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
-	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
 } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
@@ -54,18 +53,30 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	};
 
 	renderTodo = () => {
-		const { siteUrl } = this.props;
+		const { siteUrl, translate } = this.props;
 
 		const stepsTodo = {
-			[ SUMMARY_STEPS.JETPACK_CONNECTION ]: '/jetpack/connect?url=' + siteUrl,
-			[ SUMMARY_STEPS.THEME ]: siteUrl + '/wp-admin/themes.php',
-			[ SUMMARY_STEPS.PAGES ]: siteUrl + '/wp-admin/post-new.php?post_type=page',
-			[ SUMMARY_STEPS.BLOG ]: siteUrl + '/wp-admin/post-new.php',
+			JETPACK_CONNECTION: {
+				label: translate( 'Connect to WordPress.com' ),
+				url: '/jetpack/connect?url=' + siteUrl,
+			},
+			THEME: {
+				label: translate( 'Choose a Theme' ),
+				url: siteUrl + '/wp-admin/themes.php',
+			},
+			PAGES: {
+				label: translate( 'Add additional pages' ),
+				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
+			},
+			BLOG: {
+				label: translate( 'Write your first blog post' ),
+				url: siteUrl + '/wp-admin/post-new.php',
+			},
 		};
 
-		return map( stepsTodo, ( stepUrl, fieldLabel ) => (
-			<div key={ stepUrl } className="steps__summary-entry todo">
-				<a href={ stepUrl }>{ fieldLabel }</a>
+		return map( stepsTodo, ( { label, url }, stepName ) => (
+			<div key={ stepName } className="steps__summary-entry todo">
+				<a href={ url }>{ label }</a>
 			</div>
 		) );
 	};
