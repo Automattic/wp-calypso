@@ -71,10 +71,18 @@ export const userCan = function( capability, post ) {
 	return hasCap;
 };
 
+export const isBackDatedPublished = function( post ) {
+	if ( ! post || post.status !== 'future' ) {
+		return false;
+	}
+
+	return moment( post.date ).isBefore( moment() );
+};
+
 export const isPublished = function( post ) {
 	return (
 		post &&
-		( post.status === 'publish' || post.status === 'private' || this.isBackDatedPublished( post ) )
+		( post.status === 'publish' || post.status === 'private' || isBackDatedPublished( post ) )
 	);
 };
 
@@ -96,14 +104,6 @@ export const getEditedTime = function( post ) {
 	}
 
 	return post.modified;
-};
-
-export const isBackDatedPublished = function( post ) {
-	if ( ! post || post.status !== 'future' ) {
-		return false;
-	}
-
-	return moment( post.date ).isBefore( moment() );
 };
 
 export const isFutureDated = function( post ) {
@@ -171,32 +171,6 @@ export const normalizeAsync = function( post, callback ) {
 	postNormalizer( post, [ postNormalizer.keepValidImages( 72, 72 ) ], callback );
 };
 
-export const getPermalinkBasePath = function( post ) {
-	if ( ! post ) {
-		return;
-	}
-
-	let path = post.URL;
-
-	// if we have a permalink_URL, utlize that
-	if ( ! this.isPublished( post ) && post.other_URLs && post.other_URLs.permalink_URL ) {
-		path = post.other_URLs.permalink_URL;
-	}
-
-	return this.removeSlug( path );
-};
-
-export const getPagePath = function( post ) {
-	if ( ! post ) {
-		return;
-	}
-	if ( ! this.isPublished( post ) ) {
-		return this.getPermalinkBasePath( post );
-	}
-
-	return this.removeSlug( post.URL );
-};
-
 export const removeSlug = function( path ) {
 	if ( ! path ) {
 		return;
@@ -206,6 +180,32 @@ export const removeSlug = function( path ) {
 	pathParts[ pathParts.length - 1 ] = '';
 
 	return pathParts.join( '/' );
+};
+
+export const getPermalinkBasePath = function( post ) {
+	if ( ! post ) {
+		return;
+	}
+
+	let path = post.URL;
+
+	// if we have a permalink_URL, utlize that
+	if ( ! isPublished( post ) && post.other_URLs && post.other_URLs.permalink_URL ) {
+		path = post.other_URLs.permalink_URL;
+	}
+
+	return removeSlug( path );
+};
+
+export const getPagePath = function( post ) {
+	if ( ! post ) {
+		return;
+	}
+	if ( ! isPublished( post ) ) {
+		getPermalinkBasePath( post );
+	}
+
+	return removeSlug( post.URL );
 };
 
 /**
