@@ -180,7 +180,7 @@ export function signupForm( context, next ) {
 
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
-		// Force login for mobile app flow. App will this request and prompt native login.
+		// Force login for mobile app flow. App will intercept this request and prompt native login.
 		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
 	}
 
