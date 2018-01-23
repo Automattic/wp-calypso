@@ -43,10 +43,10 @@ import {
 	editProductVariation,
 } from 'woocommerce/state/ui/products/variations/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
-import { createProduct } from 'woocommerce/state/sites/products/actions';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -241,8 +241,11 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			createProduct,
-			createProductActionList,
+			createProductActionList: ( ...args ) =>
+				withAnalytics(
+					recordTracksEvent( 'calypso_woocommerce_ui_product_create' ),
+					createProductActionList( ...args )
+				),
 			editProduct,
 			editProductCategory,
 			editProductAttribute,

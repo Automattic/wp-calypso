@@ -37,6 +37,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
+import { bumpStat } from 'woocommerce/lib/analytics';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],
@@ -215,7 +216,11 @@ const variationSuccess = ( actionList, productId ) => dispatch => {
 	dispatch( actionListStepSuccess( newActionList ) );
 };
 
-const productSuccess = actionList => ( dispatch, getState, { sentData, receivedData } ) => {
+const productSuccess = ( actionList, type ) => (
+	dispatch,
+	getState,
+	{ sentData, receivedData }
+) => {
 	const productIdMapping = {
 		...actionList.productIdMapping,
 		[ sentData.id.placeholder || receivedData.id ]: receivedData.id,
@@ -231,6 +236,7 @@ const productSuccess = actionList => ( dispatch, getState, { sentData, receivedD
 		updatedProductIds,
 	};
 
+	dispatch( bumpStat( 'wpcom-store-products', type ) );
 	dispatch( actionListStepSuccess( newActionList ) );
 };
 
@@ -254,7 +260,7 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 						createProduct(
 							siteId,
 							getCorrectedProduct( product, categoryIdMapping ),
-							productSuccess( actionList ),
+							productSuccess( actionList, 'create' ),
 							actionListStepFailure( actionList )
 						)
 					);
@@ -281,7 +287,7 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 							updateProduct(
 								siteId,
 								getCorrectedProduct( product, categoryIdMapping ),
-								productSuccess( actionList ),
+								productSuccess( actionList, 'update' ),
 								actionListStepFailure( actionList )
 							)
 						);
