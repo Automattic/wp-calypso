@@ -7,12 +7,8 @@
 import phone from 'phone';
 import i18n from 'i18n-calypso';
 
-export default function( phoneNumber, options ) {
+export default function( phoneNumber ) {
 	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
-	options = {
-		ignoreSpecialCharacters: false,
-		...options,
-	};
 
 	if ( phoneNumberWithoutPlus.length === 0 ) {
 		return {
@@ -35,7 +31,7 @@ export default function( phoneNumber, options ) {
 		};
 	}
 
-	if ( ! options.ignoreSpecialCharacters && phoneNumber.search( /[^0-9,\+]/ ) > -1 ) {
+	if ( phoneNumber.search( /[^0-9,\+]/ ) > -1 ) {
 		return {
 			error: 'phone_number_contains_special_characters',
 			message: i18n.translate( 'Phone numbers cannot contain special characters' ),
