@@ -142,6 +142,9 @@
 	display: inline-block;
 	white-space: nowrap;
 	overflow: hidden;
+	&:focus {
+		outline: solid $gray 1px;
+	}
 }
 
 .language-picker__modal-list {

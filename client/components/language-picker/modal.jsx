@@ -227,13 +227,17 @@ export class LanguagePickerModal extends PureComponent {
 		const classes = classNames( 'language-picker__modal-text', {
 			'is-selected': isSelected,
 		} );
-
+		const titleText = capitalize( this.getLocalizedLanguageTitle( language.langSlug ) );
 		return (
 			<div
 				className="language-picker__modal-item"
 				key={ language.langSlug }
 				onClick={ partial( this.handleClick, language.langSlug ) }
-				title={ capitalize( this.getLocalizedLanguageTitle( language.langSlug ) ) }
+				title={ titleText }
+				tabindex="0"
+				role="button"
+				aria-label={ titleText }
+				onKeyPress={ partial( this.handleClick, language.langSlug ) }
 			>
 				<span className={ classes }>{ language.name }</span>
 			</div>
