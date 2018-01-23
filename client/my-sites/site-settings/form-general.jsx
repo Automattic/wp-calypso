@@ -185,7 +185,11 @@ class SiteSettingsFormGeneral extends Component {
 
 		return (
 			errors[ langId ] && (
-				<Notice text={ errors[ langId ] } className="language-picker-notice" isCompact />
+				<Notice
+					text={ errors[ langId ] }
+					className="site-settings__language-picker-notice"
+					isCompact
+				/>
 			)
 		);
 	};
