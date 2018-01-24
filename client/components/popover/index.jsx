@@ -448,10 +448,12 @@ class Popover extends Component {
 
 		return (
 			<RootChild className={ this.props.rootClassName }>
-				<div style={ this.getStylePosition() } className={ classes } ref={ this.setDOMBehavior }>
+				<div style={ this.getStylePosition() } className={ classes }>
 					<div className="popover__arrow" />
 
-					<div className="popover__inner">{ this.props.children }</div>
+					<div ref={ this.setDOMBehavior } className="popover__inner">
+						{ this.props.children }
+					</div>
 				</div>
 			</RootChild>
 		);
