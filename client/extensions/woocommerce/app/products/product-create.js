@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { head } from 'lodash';
+import { head, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -70,12 +70,10 @@ class ProductCreate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { product, site } = this.props;
+		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			if ( ! product ) {
-				this.props.editProduct( site.ID, null, {} );
-			}
+			this.props.editProduct( site.ID, null, {} );
 			this.props.fetchProductCategories( site.ID );
 		}
 	}
@@ -189,6 +187,10 @@ class ProductCreate extends React.Component {
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
 		const saveEnabled = isValid && ! isBusy && 0 === this.state.isUploading.length;
+
+		if ( ! product || isNumber( product.id ) ) {
+			return null;
+		}
 
 		return (
 			<Main className={ className } wideLayout>
