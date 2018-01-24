@@ -18,7 +18,7 @@ const debug = debugFactory( 'calypso:i18n' );
 function languageFileUrl( localeSlug ) {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
 
-	return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
+	return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.utf8.json`;
 }
 
 function setLocaleInDOM( localeSlug, isRTL ) {

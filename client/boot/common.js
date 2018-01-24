@@ -140,14 +140,13 @@ const unsavedFormsMiddleware = () => {
 export const locales = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso locales.' );
 
-	if ( window.i18nLocaleStrings ) {
-		const i18nLocaleStringsObject = JSON.parse( window.i18nLocaleStrings );
-		reduxStore.dispatch( setLocaleRawData( i18nLocaleStringsObject ) );
+	if ( window.i18nLocaleObject ) {
+		reduxStore.dispatch( setLocaleRawData( window.i18nLocaleObject ) );
 	}
 
 	// Use current user's locale if it was not bootstrapped (non-ssr pages)
 	if (
-		! window.i18nLocaleStrings &&
+		! window.i18nLocaleObject &&
 		! config.isEnabled( 'wpcom-user-bootstrap' ) &&
 		currentUser.get()
 	) {
