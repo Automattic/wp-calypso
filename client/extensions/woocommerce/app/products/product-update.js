@@ -22,7 +22,6 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import {
-	createProduct,
 	fetchProduct,
 	deleteProduct as deleteProductAction,
 } from 'woocommerce/state/sites/products/actions';
@@ -52,6 +51,7 @@ import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product
 import page from 'page';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
+import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 class ProductUpdate extends React.Component {
 	static propTypes = {
@@ -256,8 +256,11 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			createProduct,
-			createProductActionList,
+			createProductActionList: ( ...args ) =>
+				withAnalytics(
+					recordTracksEvent( 'calypso_woocommerce_ui_product_update' ),
+					createProductActionList( ...args )
+				),
 			deleteProduct: deleteProductAction,
 			editProduct,
 			editProductCategory,
