@@ -16,16 +16,16 @@
 }
 
 .shipping__origin-settings {
+	.store-address {
+		margin: 0 0 16px;
+		padding: 0;
+		box-shadow: none;
+		flex-shrink: 1;
+	}
+
 	@include breakpoint( '>960px' ) {
 		display: flex;
 	}
-}
-
-.store-address {
-	margin: 0 0 16px;
-	padding: 0;
-	box-shadow: none;
-	flex-shrink: 1;
 }
 
 .shipping__units {
