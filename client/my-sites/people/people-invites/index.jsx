@@ -37,14 +37,7 @@ class PeopleInvites extends React.PureComponent {
 
 		return (
 			<Card key={ invite.invite_key }>
-				Invited
-				{ ' ' }
-				<Gravatar user={ gravatarUser } />
-				{ ' ' }
-				<strong>{ userNameOrEmail }</strong>
-				{ ' ' }
-				as
-				{ ' ' }
+				Invited <Gravatar user={ gravatarUser } /> <strong>{ userNameOrEmail }</strong> as{' '}
 				<strong>{ invite.role }</strong>
 			</Card>
 		);

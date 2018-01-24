@@ -6,9 +6,11 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { bookConciergeAppointment, handleBookingError, markSlotAsBooked } from '../';
 import toApi from '../to-api';
+import { errorNotice } from 'state/notices/actions';
 import { updateConciergeBookingStatus } from 'state/concierge/actions';
 import { CONCIERGE_APPOINTMENT_CREATE } from 'state/action-types';
-import { CONCIERGE_STATUS_BOOKING_ERROR } from 'me/concierge/constants';
+import { CONCIERGE_STATUS_BOOKED } from 'me/concierge/constants';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {
@@ -46,9 +48,14 @@ describe( 'wpcom-api', () => {
 		test( 'markSlotAsBooked()', () => {
 			const dispatch = jest.fn();
 
-			markSlotAsBooked( { dispatch }, {}, true );
+			markSlotAsBooked( { dispatch }, { type: CONCIERGE_APPOINTMENT_CREATE } );
 
-			expect( dispatch ).toHaveBeenCalledWith( updateConciergeBookingStatus( 'booked' ) );
+			expect( dispatch ).toHaveBeenCalledWith(
+				withAnalytics(
+					recordTracksEvent( 'calypso_concierge_appointment_booking_successful' ),
+					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKED )
+				)
+			);
 		} );
 
 		test( 'handleBookingError()', () => {
@@ -57,7 +64,7 @@ describe( 'wpcom-api', () => {
 			handleBookingError( { dispatch }, {}, { code: 'error' } );
 
 			expect( dispatch ).toHaveBeenCalledWith(
-				updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
+				errorNotice( 'We could not book your appointment. Please try again later.' )
 			);
 		} );
 	} );

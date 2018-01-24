@@ -18,6 +18,7 @@ import formatCurrency from 'lib/format-currency';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
+import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import Ribbon from 'components/ribbon';
 import PlanIcon from 'components/plans/plan-icon';
 import {
@@ -34,8 +35,11 @@ import {
 	PLAN_PERSONAL,
 	getPlanClass,
 } from 'lib/plans/constants';
+import { abtest } from 'lib/abtest';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getYearlyPlanByMonthly } from 'lib/plans';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
@@ -96,6 +100,8 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ 'promoteYearly' === abtest( 'promoteYearlyJetpackPlanSavings' ) &&
+						this.getIntervalDiscount() }
 				</div>
 			</div>
 		);
@@ -235,6 +241,33 @@ class PlanFeaturesHeader extends Component {
 			<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } isInSignup={ isInSignup } />
 		);
 	}
+
+	getIntervalDiscount() {
+		const {
+			currencyCode,
+			isYearly,
+			rawPrice,
+			relatedMonthlyPlan,
+			site,
+			relatedYearlyPlan,
+		} = this.props;
+		if ( site.jetpack ) {
+			const [ discountPrice, originalPrice ] = isYearly
+				? [ relatedMonthlyPlan.raw_price * 12, rawPrice ]
+				: [ rawPrice * 12, relatedYearlyPlan.raw_price ];
+
+			return (
+				<PlanIntervalDiscount
+					currencyCode={ currencyCode }
+					discountPrice={ discountPrice }
+					isYearly={ isYearly }
+					originalPrice={ originalPrice }
+					site={ site }
+				/>
+			);
+		}
+		return null;
+	}
 }
 
 PlanFeaturesHeader.propTypes = {
@@ -264,9 +297,12 @@ PlanFeaturesHeader.propTypes = {
 	translate: PropTypes.func,
 	site: PropTypes.object,
 	isInJetpackConnect: PropTypes.bool,
-	currentSitePlan: PropTypes.object,
 	relatedMonthlyPlan: PropTypes.object,
+
+	// Connected props
+	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
+	relatedYearlyPlan: PropTypes.object,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -285,8 +321,13 @@ export default connect( ( state, ownProps ) => {
 	const { isInSignup } = ownProps;
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
+	const isYearly = !! ownProps.relatedMonthlyPlan;
 	return Object.assign( {}, ownProps, {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
+		isYearly,
+		relatedYearlyPlan: isYearly
+			? null
+			: getPlanBySlug( state, getYearlyPlanByMonthly( ownProps.planType ) ),
 	} );
 } )( localize( PlanFeaturesHeader ) );

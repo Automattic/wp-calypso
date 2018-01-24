@@ -19,11 +19,11 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
-import ShareButton from 'components/share-button';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getSiteChecklist } from 'state/selectors';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
+import ChecklistShowShare from 'my-sites/checklist/checklist-show/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 
@@ -127,23 +127,12 @@ export class ChecklistBanner extends Component {
 	}
 
 	renderShareButtons() {
-		const { siteSlug, translate } = this.props;
-		const socialMedia = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
-
 		return (
-			<div className="checklist-banner__actions">
-				{ socialMedia.map( medium => (
-					<ShareButton
-						key={ medium }
-						url={ `https://${ siteSlug }` }
-						title={ translate(
-							'Delighted to announce my new website is live today — please take a look.'
-						) }
-						siteSlug={ siteSlug }
-						service={ medium }
-					/>
-				) ) }
-			</div>
+			<ChecklistShowShare
+				className="checklist-banner__actions"
+				siteSlug={ this.props.siteSlug }
+				recordTracksEvent={ this.props.track }
+			/>
 		);
 	}
 

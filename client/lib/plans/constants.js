@@ -134,6 +134,7 @@ export const FEATURE_VIDEO_CDN_UNLIMITED = 'video-cdn-unlimited';
 export const FEATURE_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const FEATURE_CONCIERGE_SETUP = 'concierge-setup-jetpack';
 export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
+export const FEATURE_SEARCH = 'search';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
@@ -631,6 +632,7 @@ export const PLANS_LIST = {
 				FEATURE_SPAM_AKISMET_PLUS,
 				FEATURE_EASY_SITE_MIGRATION,
 				FEATURE_PREMIUM_SUPPORT,
+				FEATURE_SEARCH,
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
@@ -647,6 +649,7 @@ export const PLANS_LIST = {
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 				FEATURE_SEO_PREVIEW_TOOLS,
 				FEATURE_CONCIERGE_SETUP,
+				FEATURE_SEARCH,
 				FEATURE_ALL_PREMIUM_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -1361,6 +1364,15 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Re-share previously published content on social media, or schedule new shares in advance.'
+			),
+	},
+
+	[ FEATURE_SEARCH ]: {
+		getSlug: () => FEATURE_SEARCH,
+		getTitle: () => i18n.translate( 'Enhanced site-wide search' ),
+		getDescription: () =>
+			i18n.translate(
+				'Fast, high-quality search results with custom filtering, powered by Elasticsearch.'
 			),
 	},
 };

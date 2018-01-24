@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import phoneValidation from 'lib/phone-validation';
 import { areSettingsLoaded, areSettingsErrored } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import {
 	isLoaded as arePackagesLoaded,
@@ -121,7 +120,7 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 			address: translate( 'This address is not recognized. Please try another.' ),
 		};
 	}
-	const { phone, postcode, state, country } = ( isNormalized && selectNormalized ) ? normalized : values;
+	const { postcode, state, country } = ( isNormalized && selectNormalized ) ? normalized : values;
 	const requiredFields = [ 'name', 'address', 'city', 'postcode', 'country' ];
 	const errors = {};
 	requiredFields.forEach( ( field ) => {
@@ -131,11 +130,6 @@ const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized,
 	} );
 
 	if ( countriesData[ country ] ) {
-		const phoneValidationResult = phone && phoneValidation( phone );
-		if ( phoneValidationResult.error ) {
-			errors.phone = phoneValidationResult.message;
-		}
-
 		switch ( country ) {
 			case 'US':
 				if ( ! /^\d{5}(?:-\d{4})?$/.test( postcode ) ) {

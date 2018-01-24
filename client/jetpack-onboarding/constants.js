@@ -27,13 +27,6 @@ export const JETPACK_ONBOARDING_STEPS = {
 	SUMMARY: 'summary',
 };
 
-export const JETPACK_ONBOARDING_SUMMARY_STEPS = {
-	JETPACK_CONNECTION: translate( 'Connect to WordPress.com' ),
-	THEME: translate( 'Choose a Theme' ),
-	PAGES: translate( 'Add additional pages' ),
-	BLOG: translate( 'Write your first blog post' ),
-};
-
 export const JETPACK_ONBOARDING_STEP_TITLES = {
 	[ JETPACK_ONBOARDING_STEPS.SITE_TITLE ]: translate( 'Site Title & Description' ),
 	[ JETPACK_ONBOARDING_STEPS.SITE_TYPE ]: translate( 'Type of Site' ),

@@ -7,7 +7,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { compact, get, map, without } from 'lodash';
+import { get, map, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -26,7 +26,6 @@ import {
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
-	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
 } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
@@ -54,25 +53,30 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	};
 
 	renderTodo = () => {
-		const { siteUrl } = this.props;
-		const stepsTodo = [
-			SUMMARY_STEPS.JETPACK_CONNECTION,
-			SUMMARY_STEPS.THEME,
-			SUMMARY_STEPS.PAGES,
-			SUMMARY_STEPS.BLOG,
-		];
-		// If we're not connected, we cannot use selectors from `sites/selectors`.
-		const stepLinks = [
-			'/jetpack/connect?url=' + siteUrl,
-			// TODO: update the following with relevant links
-			siteUrl + '/wp-admin/themes.php',
-			siteUrl + '/wp-admin/post-new.php?post_type=page',
-			siteUrl + '/wp-admin/post-new.php',
-		];
+		const { siteUrl, translate } = this.props;
 
-		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (
-			<div key={ fieldIndex } className="steps__summary-entry todo">
-				<a href={ stepLinks[ fieldIndex ] }>{ fieldLabel }</a>
+		const stepsTodo = {
+			JETPACK_CONNECTION: {
+				label: translate( 'Connect to WordPress.com' ),
+				url: '/jetpack/connect?url=' + siteUrl,
+			},
+			THEME: {
+				label: translate( 'Choose a Theme' ),
+				url: siteUrl + '/wp-admin/themes.php',
+			},
+			PAGES: {
+				label: translate( 'Add additional pages' ),
+				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
+			},
+			BLOG: {
+				label: translate( 'Write your first blog post' ),
+				url: siteUrl + '/wp-admin/post-new.php',
+			},
+		};
+
+		return map( stepsTodo, ( { label, url }, stepName ) => (
+			<div key={ stepName } className="steps__summary-entry todo">
+				<a href={ url }>{ label }</a>
 			</div>
 		) );
 	};
@@ -117,15 +121,8 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, { siteId, steps } ) => {
-	const tasks = compact( [] );
-	const stepsCompleted = getJetpackOnboardingCompletedSteps( state, siteId, steps );
-	const stepsPending = getJetpackOnboardingPendingSteps( state, siteId, steps );
-
-	return {
-		siteUrl: getUnconnectedSiteUrl( state, siteId ),
-		stepsCompleted,
-		stepsPending,
-		tasks,
-	};
-} )( localize( JetpackOnboardingSummaryStep ) );
+export default connect( ( state, { siteId, steps } ) => ( {
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingSummaryStep ) );

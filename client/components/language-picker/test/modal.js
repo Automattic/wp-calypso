@@ -71,6 +71,13 @@ describe( 'LanguagePickerModal', () => {
 			expect( wrapper.instance().getLocalizedLanguageTitle( 'oops' ) ).toEqual( 'oops' );
 		} );
 
+		test( 'should return slug when localized language names are unavailable', () => {
+			const newProps = { ...defaultProps, localizedLanguageNames: undefined };
+			const wrapper = shallow( <LanguagePickerModal { ...newProps } /> );
+
+			expect( wrapper.instance().getLocalizedLanguageTitle( 'oops' ) ).toEqual( 'oops' );
+		} );
+
 		test( 'should return localized language', () => {
 			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
 
@@ -81,6 +88,13 @@ describe( 'LanguagePickerModal', () => {
 	describe( 'getEnglishLanguageTitle()', () => {
 		test( 'should return slug when no English language translation available', () => {
 			const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+
+			expect( wrapper.instance().getEnglishLanguageTitle( 'oops' ) ).toEqual( 'oops' );
+		} );
+
+		test( 'should return slug when localized language names are unavailable', () => {
+			const newProps = { ...defaultProps, localizedLanguageNames: undefined };
+			const wrapper = shallow( <LanguagePickerModal { ...newProps } /> );
 
 			expect( wrapper.instance().getEnglishLanguageTitle( 'oops' ) ).toEqual( 'oops' );
 		} );
