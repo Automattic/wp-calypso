@@ -77,9 +77,9 @@ class Zone extends Component {
 	saveZoneFeed = ( form, data ) =>
 		this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
 
-	locked = () =>
-		! this.props.lockBlocked &&
-		( this.props.lockExpires === 0 || this.props.lockExpires > new Date().getTime() );
+	disabled = () =>
+		this.props.lockBlocked ||
+		( this.props.lockExpires !== 0 && this.props.lockExpires < new Date().getTime() );
 
 	renderContent = () => {
 		const { feed, requestingFeed, requestingZones, siteSlug, translate, zone } = this.props;
@@ -100,7 +100,7 @@ class Zone extends Component {
 				) }
 
 				<ZoneDetailsForm
-					disabled={ ! this.locked() }
+					disabled={ this.disabled() }
 					label={ translate( 'Zone label' ) }
 					requesting={ requestingZones }
 					onSubmit={ this.saveZoneDetails }
@@ -108,7 +108,7 @@ class Zone extends Component {
 				/>
 
 				<ZoneContentForm
-					disabled={ ! this.locked() }
+					disabled={ this.disabled() }
 					label={ translate( 'Zone content' ) }
 					requesting={ requestingFeed }
 					onSubmit={ this.saveZoneFeed }
@@ -122,7 +122,7 @@ class Zone extends Component {
 		const { requestingZones, siteId, siteSlug, translate, zone, zoneId } = this.props;
 
 		const deleteButton = (
-			<Button compact primary scary onClick={ this.showDeleteDialog } disabled={ ! this.locked() }>
+			<Button compact primary scary onClick={ this.showDeleteDialog } disabled={ this.disabled() }>
 				{ translate( 'Delete' ) }
 			</Button>
 		);
@@ -139,7 +139,7 @@ class Zone extends Component {
 					{ translate( 'Edit zone' ) }
 				</HeaderCake>
 
-				{ zone && ! this.locked() && <ZoneLockWarningNotice siteId={ siteId } zoneId={ zoneId } /> }
+				{ zone && this.disabled() && <ZoneLockWarningNotice siteId={ siteId } zoneId={ zoneId } /> }
 				{ zone && ! requestingZones && this.renderContent() }
 			</div>
 		);
