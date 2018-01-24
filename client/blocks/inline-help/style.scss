@@ -65,6 +65,10 @@
 
 	@include breakpoint( ">660px" ) {
 		width: 320px;
+
+		position: fixed;
+			top: auto !important;
+			bottom: 35px !important;
 	}
 
 	&.is-top .popover__arrow:before,
