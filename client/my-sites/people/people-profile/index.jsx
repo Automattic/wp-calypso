@@ -118,7 +118,7 @@ class PeopleProfile extends React.PureComponent {
 			name = user.name;
 		} else if ( user.label ) {
 			name = user.label;
-		} else if ( 'invite' === type && user.email ) {
+		} else if ( 'invite' === type ) {
 			// If an invite was sent to a WP.com user, the invite object will have
 			// either a display name (if set) or the WP.com username. Invites can
 			// also be sent to any email address, in which case the other details
