@@ -30,7 +30,6 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 class ShippingSettingsSaveButton extends Component {
 	static propTypes = {
 		onSaveSuccess: PropTypes.func.isRequired,
-		onSaveSuccessUnits: PropTypes.func.isRequired,
 		toSave: PropTypes.shape( {
 			units: PropTypes.bool,
 			shipping: PropTypes.bool,
