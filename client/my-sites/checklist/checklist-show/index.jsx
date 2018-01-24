@@ -3,7 +3,6 @@
  *
  * @format
  */
-
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
@@ -11,12 +10,10 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import FormattedHeader from 'components/formatted-header';
 import Checklist from 'components/checklist';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import ShareButton from 'components/share-button';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
@@ -26,6 +23,7 @@ import { launchTask, launchCompletedTask, onboardingTasks } from '../onboardingC
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import ChecklistShowShare from './share';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
@@ -59,8 +57,6 @@ class ChecklistShow extends PureComponent {
 	};
 
 	renderHeader( completed, displayMode ) {
-		const shareTo = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
-
 		if ( ! completed ) {
 			if ( displayMode ) {
 				const title =
@@ -103,17 +99,11 @@ class ChecklistShow extends PureComponent {
 					headerText="Congratulations!"
 					subHeaderText="You have completed all your tasks. Now let's tell people about it. Share your site."
 				/>
-				<div className="checklist-show__share">
-					{ shareTo.map( option => (
-						<ShareButton
-							key={ option }
-							url={ `https://${ this.props.siteSlug }` }
-							title="Delighted to announce my new website is live today - please take a look."
-							siteSlug={ this.props.siteSlug }
-							service={ option }
-						/>
-					) ) }
-				</div>
+				<ChecklistShowShare
+					className="checklist-show__share"
+					siteSlug={ this.props.siteSlug }
+					recordTracksEvent={ this.props.track }
+				/>
 			</Fragment>
 		);
 	}
