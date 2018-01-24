@@ -22,7 +22,7 @@ class SiteTitleControl extends React.Component {
 		blogname: PropTypes.string,
 		blogdescription: PropTypes.string,
 		disabled: PropTypes.bool,
-		isTitleRequired: PropTypes.bool,
+		isBlognameRequired: PropTypes.bool,
 		onChange: PropTypes.func.isRequired,
 	};
 
@@ -30,7 +30,7 @@ class SiteTitleControl extends React.Component {
 		autoFocusBlogname: false,
 		blogname: '',
 		blogdescription: '',
-		isTitleRequired: false,
+		isBlognameRequired: false,
 		disabled: false,
 	};
 
@@ -46,19 +46,13 @@ class SiteTitleControl extends React.Component {
 		this.props.onChange( { blogname, blogdescription } );
 	};
 
-	renderValidation = blogname => {
-		const isError = blogname ? false : true;
-
-		return <FormInputValidation isError={ isError } text="Required field." />;
-	};
-
 	render() {
 		const {
 			autoFocusBlogname,
 			blogname,
 			blogdescription,
 			disabled,
-			isTitleRequired,
+			isBlognameRequired,
 			translate,
 		} = this.props;
 		return (
@@ -72,7 +66,9 @@ class SiteTitleControl extends React.Component {
 						onChange={ this.onChangeSiteTitle }
 						value={ blogname }
 					/>
-					{ isTitleRequired ? this.renderValidation( blogname ) : null }
+					{ isBlognameRequired && (
+						<FormInputValidation isError={ ! blogname } text={ translate( 'Required field.' ) } />
+					) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>
