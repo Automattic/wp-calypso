@@ -165,6 +165,7 @@ export class JetpackAuthorize extends Component {
 		this.props.authorize( {
 			_wp_nonce: this.props.authQuery.nonce,
 			client_id: this.props.authQuery.clientId,
+			from: this.props.authQuery.from,
 			jp_version: this.props.authQuery.jpVersion,
 			redirect_uri: this.props.authQuery.redirectUri,
 			scope: this.props.authQuery.scope,

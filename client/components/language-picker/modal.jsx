@@ -78,12 +78,12 @@ export class LanguagePickerModal extends PureComponent {
 
 	getLocalizedLanguageTitle( languageSlug ) {
 		const { localizedLanguageNames } = this.props;
-		return get( localizedLanguageNames[ languageSlug ], 'localized' ) || languageSlug;
+		return get( localizedLanguageNames, `${ languageSlug }.localized`, languageSlug );
 	}
 
 	getEnglishLanguageTitle( languageSlug ) {
 		const { localizedLanguageNames } = this.props;
-		return get( localizedLanguageNames[ languageSlug ], 'en' ) || languageSlug;
+		return get( localizedLanguageNames, `${ languageSlug }.en`, languageSlug );
 	}
 
 	getFilterLabel( filter ) {
