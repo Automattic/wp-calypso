@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -254,16 +254,19 @@ class PlanFeaturesHeader extends Component {
 		if ( site.jetpack ) {
 			const [ discountPrice, originalPrice ] = isYearly
 				? [ relatedMonthlyPlan.raw_price * 12, rawPrice ]
-				: [ rawPrice * 12, relatedYearlyPlan.raw_price ];
+				: [ rawPrice * 12, get( relatedYearlyPlan, 'raw_price' ) ];
 
 			return (
-				<PlanIntervalDiscount
-					currencyCode={ currencyCode }
-					discountPrice={ discountPrice }
-					isYearly={ isYearly }
-					originalPrice={ originalPrice }
-					site={ site }
-				/>
+				!! discountPrice &&
+				!! originalPrice && (
+					<PlanIntervalDiscount
+						currencyCode={ currencyCode }
+						discountPrice={ discountPrice }
+						isYearly={ isYearly }
+						originalPrice={ originalPrice }
+						site={ site }
+					/>
+				)
 			);
 		}
 		return null;
