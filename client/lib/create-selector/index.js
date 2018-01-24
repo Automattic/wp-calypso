@@ -3,13 +3,9 @@
 /**
  * External dependencies
  */
-import { memoize, includes } from 'lodash';
-import shallowEqual from 'react-pure-render/shallowEqual';
 
-/**
- * Internal dependencies
- */
-import warn from 'lib/warn';
+import { memoize } from 'lodash';
+import shallowEqual from 'react-pure-render/shallowEqual';
 
 /**
  * Constants
@@ -43,7 +39,14 @@ const DEFAULT_GET_DEPENDANTS = state => state;
  * @type {Function} Function returning cache key for memoized selector
  */
 const DEFAULT_GET_CACHE_KEY = ( () => {
-	if ( 'production' === process.env.NODE_ENV ) {
+	let warn, includes;
+	if ( 'production' !== process.env.NODE_ENV ) {
+		// Webpack can optimize bundles if it can detect that a block will
+		// never be reached. Since `NODE_ENV` is defined using DefinePlugin,
+		// these debugging modules will be excluded from the production build.
+		warn = require( 'lib/warn' );
+		includes = require( 'lodash/includes' );
+	} else {
 		return ( state, ...args ) => args.join();
 	}
 

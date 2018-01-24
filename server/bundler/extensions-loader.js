@@ -15,7 +15,7 @@ function generateReducerRequireString( extensionDir ) {
 }
 
 function generateExtensionsModuleString( reducerRequires ) {
-	return `export default {
+	return `module.exports = {
 		reducers: function() {
 			return {
 				${ reducerRequires.join( ',\n' ) }

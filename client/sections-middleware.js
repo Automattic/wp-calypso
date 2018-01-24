@@ -77,7 +77,7 @@ function createPageDefinition( path, sectionDefinition ) {
 		preload( sectionDefinition.name )
 			.then( requiredModules => {
 				if ( ! _loadedSections[ sectionDefinition.module ] ) {
-					requiredModules.forEach( mod => mod.default( controller.clientRouter ) );
+					requiredModules.forEach( mod => mod( controller.clientRouter ) ); // if we do array
 					_loadedSections[ sectionDefinition.module ] = true;
 				}
 				return activateSection( sectionDefinition, context, next );

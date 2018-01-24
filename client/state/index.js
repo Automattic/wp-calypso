@@ -7,7 +7,6 @@
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { reducer as form } from 'redux-form';
-import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -92,12 +91,7 @@ import config from 'config';
  */
 
 // Consolidate the extension reducers under 'extensions' for namespacing.
-const extensions = combineReducers(
-	mapValues(
-		extensionsModule.reducers(),
-		reducer => ( reducer.default ? reducer.default : reducer )
-	)
-);
+const extensions = combineReducers( extensionsModule.reducers() );
 
 const reducers = {
 	analyticsTracking,

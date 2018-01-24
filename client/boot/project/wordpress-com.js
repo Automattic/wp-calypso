@@ -32,15 +32,11 @@ import { pruneStaleRecords } from 'lib/wp/sync-handler';
 import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import Logger from 'lib/catch-js-errors';
-import setupMySitesRoute from 'my-sites';
-import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import * as controller from 'controller';
 
 const debug = debugFactory( 'calypso' );
 
 function renderLayout( reduxStore ) {
-	const Layout = controller.ReduxWrappedLayout;
+	const Layout = require( 'controller' ).ReduxWrappedLayout;
 
 	const layoutElement = React.createElement( Layout, {
 		store: reduxStore,
@@ -93,6 +89,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
+			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
 			//Save errorLogger to a singleton for use in arbitrary logging.
 			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
@@ -210,7 +207,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		} );
 	}
 
-	setupMySitesRoute();
+	require( 'my-sites' )();
 
 	const state = reduxStore.getState();
 	if ( config.isEnabled( 'happychat' ) ) {
@@ -221,11 +218,11 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		setupGlobalKeyboardShortcuts();
+		require( 'lib/keyboard-shortcuts/global' )();
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).default.init();
+		require( 'lib/desktop' ).init();
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {

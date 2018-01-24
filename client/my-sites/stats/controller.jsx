@@ -22,8 +22,6 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-import FollowList from 'lib/follow-list';
-
 const analyticsPageTitle = 'Stats';
 
 function rangeOfPeriod( period, date ) {
@@ -125,6 +123,7 @@ export default {
 	},
 
 	insights: function( context, next ) {
+		const FollowList = require( 'lib/follow-list' );
 		const basePath = sectionify( context.path );
 		const followList = new FollowList();
 
@@ -423,6 +422,7 @@ export default {
 
 	follows: function( context, next ) {
 		let siteId = context.params.site_id;
+		const FollowList = require( 'lib/follow-list' );
 		let pageNum = context.params.page_num;
 		const followList = new FollowList();
 		const basePath = sectionify( context.path );
