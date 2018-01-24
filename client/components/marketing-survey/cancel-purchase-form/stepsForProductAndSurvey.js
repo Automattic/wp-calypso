@@ -20,17 +20,12 @@ const JETPACK_PAID_PLANS = [
 	plans.PLAN_JETPACK_PREMIUM_MONTHLY,
 ];
 
-export default function stepsForProductAndSurvey( survey, product, canChat ) {
-	if ( survey && survey.questionOneRadio === 'tooHard' ) {
-		if ( includesProduct( BUSINESS_PLANS, product ) ) {
-			return [ steps.INITIAL_STEP, steps.CONCIERGE_STEP, steps.FINAL_STEP ];
-		}
-
-		if ( canChat && includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) {
-			return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
-		}
-	}
-
+export default function stepsForProductAndSurvey(
+	survey,
+	product,
+	canChat,
+	precancellationChatAvailable
+) {
 	if ( survey && survey.questionOneRadio === 'couldNotInstall' ) {
 		if ( includesProduct( BUSINESS_PLANS, product ) && abtest( 'ATPromptOnCancel' ) === 'show' ) {
 			return [ steps.INITIAL_STEP, steps.BUSINESS_AT_STEP, steps.FINAL_STEP ];
@@ -44,8 +39,17 @@ export default function stepsForProductAndSurvey( survey, product, canChat ) {
 		}
 	}
 
+	if (
+		canChat &&
+		( includesProduct( BUSINESS_PLANS, product ) ||
+			includesProduct( PERSONAL_PREMIUM_PLANS, product ) ) &&
+		precancellationChatAvailable
+	) {
+		return steps.DEFAULT_STEPS_WITH_HAPPYCHAT;
+	}
+
 	if ( canChat && includesProduct( JETPACK_PAID_PLANS, product ) ) {
-		return [ steps.INITIAL_STEP, steps.HAPPYCHAT_STEP, steps.FINAL_STEP ];
+		return steps.DEFAULT_STEPS_WITH_HAPPYCHAT;
 	}
 
 	return [ steps.INITIAL_STEP, steps.FINAL_STEP ];

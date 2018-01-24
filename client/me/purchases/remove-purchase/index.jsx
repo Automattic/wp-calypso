@@ -41,6 +41,7 @@ import { receiveDeletedSite } from 'state/sites/actions';
 import { setAllSitesSelected } from 'state/ui/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import HappychatButton from 'components/happychat/button';
+import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 
 const user = userFactory();
 
@@ -117,12 +118,18 @@ class RemovePurchase extends Component {
 	};
 
 	changeSurveyStep = stepFunction => {
-		const { selectedPurchase, isChatAvailable, isChatActive } = this.props;
+		const {
+			selectedPurchase,
+			isChatAvailable,
+			isChatActive,
+			precancellationChatAvailable,
+		} = this.props;
 		const { surveyStep, survey } = this.state;
 		const steps = stepsForProductAndSurvey(
 			survey,
 			selectedPurchase,
-			isChatAvailable || isChatActive
+			isChatAvailable || isChatActive,
+			precancellationChatAvailable
 		);
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
@@ -266,7 +273,10 @@ class RemovePurchase extends Component {
 		];
 		const productName = getName( getPurchase( this.props ) );
 
-		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+		if (
+			config.isEnabled( 'upgrades/precancellation-chat' ) &&
+			this.state.surveyStep !== 'happychat_step'
+		) {
 			buttons.unshift( this.getChatButton() );
 		}
 
@@ -343,7 +353,10 @@ class RemovePurchase extends Component {
 					: [ buttons.cancel, buttons.prev, buttons.next ];
 		}
 
-		if ( config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+		if (
+			config.isEnabled( 'upgrades/precancellation-chat' ) &&
+			this.state.surveyStep !== 'happychat_step'
+		) {
 			buttonsArr.unshift( this.getChatButton() );
 		}
 
@@ -431,6 +444,7 @@ export default connect(
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		purchasesError: getPurchasesError( state ),
+		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 	} ),
 	{
 		receiveDeletedSite,
