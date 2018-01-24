@@ -15,7 +15,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 
-const CustomerNotification = ( { item, checked, onChange, isPlaceholder } ) => {
+const CustomerNotification = ( { item, checked, onChange, loading } ) => {
 	//Add field name to returned value
 	const toggle = value => {
 		onChange( {
@@ -28,19 +28,19 @@ const CustomerNotification = ( { item, checked, onChange, isPlaceholder } ) => {
 	return (
 		<ListItem className="components__notification-component-item">
 			<ListItemField className="components__notification-component-title-long">
-				{ ! isPlaceholder ? (
+				{ ! loading ? (
 					<FormLabel>{ item.title }</FormLabel>
 				) : (
 					<p className="components__is-placeholder" />
 				) }
-				{ ! isPlaceholder ? (
+				{ ! loading ? (
 					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
 				) : (
 					<p className="components__is-placeholder" />
 				) }
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
-				{ ! isPlaceholder ? (
+				{ ! loading ? (
 					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
 				) : (
 					<p className="components__is-placeholder" />

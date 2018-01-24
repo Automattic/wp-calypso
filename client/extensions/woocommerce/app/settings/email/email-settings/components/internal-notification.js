@@ -19,14 +19,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextValidation from 'components/forms/form-input-validation';
 import { checkEmails } from './helpers';
 
-const InternalNotification = ( {
-	item,
-	recipient,
-	checked,
-	onChange,
-	isPlaceholder,
-	translate,
-} ) => {
+const InternalNotification = ( { item, recipient, checked, onChange, loading, translate } ) => {
 	//Add field name to returned value
 	const toggle = value => {
 		onChange( {
@@ -51,8 +44,8 @@ const InternalNotification = ( {
 	return (
 		<ListItem className="components__notification-component-item">
 			<ListItemField className="components__notification-component-title">
-				{ ! isPlaceholder ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
-				{ ! isPlaceholder ? (
+				{ ! loading ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
+				{ ! loading ? (
 					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
 				) : (
 					placeholderComponent
@@ -60,7 +53,7 @@ const InternalNotification = ( {
 			</ListItemField>
 			<ListItemField className="components__notification-component-input">
 				<FormTextInput
-					className={ isPlaceholder ? 'components__is-placeholder' : null }
+					className={ loading ? 'components__is-placeholder' : null }
 					isError={ checked && emailValidationError }
 					name={ item.field }
 					onChange={ change }
@@ -72,7 +65,7 @@ const InternalNotification = ( {
 				) }
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
-				{ ! isPlaceholder ? (
+				{ ! loading ? (
 					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
 				) : (
 					placeholderComponent

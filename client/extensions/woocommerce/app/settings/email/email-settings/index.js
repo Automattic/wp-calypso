@@ -168,7 +168,7 @@ class Settings extends React.Component {
 			<NotificationsOrigin
 				key={ index }
 				item={ item }
-				isPlaceholder={ loading }
+				loading={ loading }
 				recipient={ get( settings, [ item.field, item.option, 'value' ], '' ) }
 				placeholder={ get( settings, [ item.field, item.option, 'default' ], '' ) }
 				onChange={ this.onChange }
@@ -185,7 +185,7 @@ class Settings extends React.Component {
 				item={ item }
 				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				recipient={ get( settings, [ item.field, 'recipient', 'value' ], '' ) }
-				isPlaceholder={ loading }
+				loading={ loading }
 				onChange={ this.onChange }
 			/>
 		);
@@ -197,7 +197,7 @@ class Settings extends React.Component {
 			<CustomerNotification
 				key={ index }
 				item={ item }
-				isPlaceholder={ loading }
+				loading={ loading }
 				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				onChange={ this.onChange }
 			/>
