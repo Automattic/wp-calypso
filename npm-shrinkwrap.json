@@ -314,6 +314,14 @@
         "sprintf-js": "1.0.3"
       }
     },
+    "aria-query": {
+      "version": "0.7.0",
+      "integrity": "sha512-/r2lHl09V3o74+2MLKEdewoj37YZqiQZnfen1O4iNlrOjUgeKuu1U2yF3iKh6HJxqF+OXkLMfQv65Z/cvxD6vA==",
+      "dev": true,
+      "requires": {
+        "ast-types-flow": "0.0.7"
+      }
+    },
     "arity-n": {
       "version": "1.0.4",
       "integrity": "sha1-2edrEXM+CFacCEeuezmyhgswt0U="
@@ -350,6 +358,15 @@
     "array-flatten": {
       "version": "1.1.1",
       "integrity": "sha1-ml9pkFGx5wczKPKgCJaLZOopVdI="
+    },
+    "array-includes": {
+      "version": "3.0.3",
+      "integrity": "sha1-GEtI9i2S10UrsxsyMWXH+L0CJm0=",
+      "dev": true,
+      "requires": {
+        "define-properties": "1.1.2",
+        "es-abstract": "1.10.0"
+      }
     },
     "array-map": {
       "version": "0.0.0",
@@ -435,6 +452,11 @@
       "version": "0.9.6",
       "integrity": "sha1-ECyenpAF0+fjgpvwxPok7oYu6bk="
     },
+    "ast-types-flow": {
+      "version": "0.0.7",
+      "integrity": "sha1-9wtzXGvKGlycItmCw+Oef+ujva0=",
+      "dev": true
+    },
     "astral-regex": {
       "version": "1.0.0",
       "integrity": "sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==",
@@ -482,7 +504,7 @@
       "integrity": "sha1-a8vQOKM3xwYn5/zkQ4+lgYjwk3s=",
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000793",
+        "caniuse-db": "1.0.30000794",
         "normalize-range": "0.1.2",
         "num2fraction": "1.2.2",
         "postcss": "5.2.18",
@@ -500,6 +522,14 @@
     "aws4": {
       "version": "1.6.0",
       "integrity": "sha1-g+9cqGCysy5KDe7e6MdxudtXRx4="
+    },
+    "axobject-query": {
+      "version": "0.1.0",
+      "integrity": "sha1-YvWdvFnJ+SQnWco0mWDnov48NsA=",
+      "dev": true,
+      "requires": {
+        "ast-types-flow": "0.0.7"
+      }
     },
     "babel-code-frame": {
       "version": "6.26.0",
@@ -1853,7 +1883,7 @@
       "version": "1.3.6",
       "integrity": "sha1-lS/0jVZGPTtTj4XvL46t39KEsTM=",
       "requires": {
-        "caniuse-db": "1.0.30000793"
+        "caniuse-db": "1.0.30000794"
       }
     },
     "bser": {
@@ -1970,8 +2000,8 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000793",
-      "integrity": "sha1-PADGbkI6ehkHx92Wdpp4sq+opy4="
+      "version": "1.0.30000794",
+      "integrity": "sha1-u+cRBPonfOSzYjh9VJBei4jlLzU="
     },
     "caniuse-lite": {
       "version": "1.0.30000792",
@@ -2996,6 +3026,11 @@
         "d3-time": "1.0.8"
       }
     },
+    "damerau-levenshtein": {
+      "version": "1.0.4",
+      "integrity": "sha1-AxkcQyy27qFou3fzpV/9zLiXhRQ=",
+      "dev": true
+    },
     "dashdash": {
       "version": "1.14.1",
       "integrity": "sha1-hTz6D3y+L+1d4gMmuN1YEDX24vA=",
@@ -3222,6 +3257,10 @@
         "repeating": "2.0.1"
       }
     },
+    "detect-libc": {
+      "version": "1.0.3",
+      "integrity": "sha1-+hN8S9aY7fVc1c0CrFWfkaTEups="
+    },
     "detect-newline": {
       "version": "2.1.0",
       "integrity": "sha1-9B8cEL5LAOh7XxPaaAdZ8sW/0+I=",
@@ -3295,7 +3334,7 @@
       "dev": true,
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000793",
+        "caniuse-db": "1.0.30000794",
         "css-rule-stream": "1.1.0",
         "duplexer2": "0.0.2",
         "jsonfilter": "1.1.2",
@@ -4228,8 +4267,8 @@
       }
     },
     "eslint-config-wpcalypso": {
-      "version": "1.2.0",
-      "integrity": "sha1-l3XWQrSD/4e0bF9tlXC1Q5gK16E=",
+      "version": "2.0.0",
+      "integrity": "sha512-m/G31U8K2U5qV/u/BOHSTNtJGOBDR7Y84rH5hRBMhg/jWcXnJCEPy1sA0tFKfPL1GMJkJOosRVGTdMqMjiZJoQ==",
       "dev": true
     },
     "eslint-eslines": {
@@ -4242,6 +4281,20 @@
       "integrity": "sha512-pe7JWoZiXWHfVCBArxX5o3laRZp24tkBSeIHImJJyX2mDIqzlrXkUGkfbC6tPKER3WbcQ3YxKDMgp8uqt8fjfw==",
       "dev": true
     },
+    "eslint-plugin-jsx-a11y": {
+      "version": "6.0.3",
+      "integrity": "sha1-VFg9GuRCSDFi4EDhPMMYZUZRAOU=",
+      "dev": true,
+      "requires": {
+        "aria-query": "0.7.0",
+        "array-includes": "3.0.3",
+        "ast-types-flow": "0.0.7",
+        "axobject-query": "0.1.0",
+        "damerau-levenshtein": "1.0.4",
+        "emoji-regex": "6.5.1",
+        "jsx-ast-utils": "2.0.1"
+      }
+    },
     "eslint-plugin-react": {
       "version": "7.1.0",
       "integrity": "sha1-J3cKzzn1/UnNCvQIPOWBBOs5DUw=",
@@ -4250,6 +4303,13 @@
         "doctrine": "2.0.0",
         "has": "1.0.1",
         "jsx-ast-utils": "1.4.1"
+      },
+      "dependencies": {
+        "jsx-ast-utils": {
+          "version": "1.4.1",
+          "integrity": "sha1-OGchPo3Xm/Ho8jAMDPwe+xgsDfE=",
+          "dev": true
+        }
       }
     },
     "eslint-plugin-wpcalypso": {
@@ -4815,8 +4875,8 @@
       "dev": true
     },
     "flow-parser": {
-      "version": "0.63.1",
-      "integrity": "sha1-hP1ke1ijcML8BGKADiLtd8PN8kk=",
+      "version": "0.64.0",
+      "integrity": "sha1-hYZk7yJGiA+agbBeafvTCKG4Zck=",
       "dev": true
     },
     "flush-write-stream": {
@@ -6037,8 +6097,8 @@
       }
     },
     "glogg": {
-      "version": "1.0.0",
-      "integrity": "sha1-f+DxmfV6yQbPUS/urY+Q7kooT8U=",
+      "version": "1.0.1",
+      "integrity": "sha512-ynYqXLoluBKf9XGR1gA59yEJisIL7YHEH4xr3ZziHB5/yl4qWfaK8Js9jGe6gBGCSCKVqiyO30WnRZADvemUNw==",
       "dev": true,
       "requires": {
         "sparkles": "1.0.0"
@@ -6186,7 +6246,7 @@
       "integrity": "sha1-4oxNRdBey77YGDY86PnFkmIp/+U=",
       "dev": true,
       "requires": {
-        "glogg": "1.0.0"
+        "glogg": "1.0.1"
       }
     },
     "gzip-size": {
@@ -7443,7 +7503,7 @@
             "string-length": "2.0.0",
             "strip-ansi": "4.0.0",
             "which": "1.3.0",
-            "yargs": "10.1.1"
+            "yargs": "10.1.2"
           }
         },
         "os-locale": {
@@ -7487,8 +7547,8 @@
           "dev": true
         },
         "yargs": {
-          "version": "10.1.1",
-          "integrity": "sha512-7uRL1HZdCbc1QTP+X8mehOPuCYKC/XTaqAPj7gABLfTt6pgLyVRn3QVte4qhtilZouWCvqd1kipgMKl5tKsFiw==",
+          "version": "10.1.2",
+          "integrity": "sha512-ivSoxqBGYOqQVruxD35+EyCFDYNEFL/Uo6FcOnz+9xZdZzK0Zzw4r4KhbrME1Oo2gOggwJod2MnsdamSG7H9ig==",
           "dev": true,
           "requires": {
             "cliui": "4.0.0",
@@ -8077,7 +8137,7 @@
         "slash": "1.0.0",
         "strip-bom": "3.0.0",
         "write-file-atomic": "2.3.0",
-        "yargs": "10.1.1"
+        "yargs": "10.1.2"
       },
       "dependencies": {
         "ansi-regex": {
@@ -8189,8 +8249,8 @@
           }
         },
         "yargs": {
-          "version": "10.1.1",
-          "integrity": "sha512-7uRL1HZdCbc1QTP+X8mehOPuCYKC/XTaqAPj7gABLfTt6pgLyVRn3QVte4qhtilZouWCvqd1kipgMKl5tKsFiw==",
+          "version": "10.1.2",
+          "integrity": "sha512-ivSoxqBGYOqQVruxD35+EyCFDYNEFL/Uo6FcOnz+9xZdZzK0Zzw4r4KhbrME1Oo2gOggwJod2MnsdamSG7H9ig==",
           "dev": true,
           "requires": {
             "cliui": "4.0.0",
@@ -8397,8 +8457,8 @@
       "integrity": "sha1-3Yt0J4snEC0p32Pq4oMIqM+htYM="
     },
     "js-base64": {
-      "version": "2.4.1",
-      "integrity": "sha512-2h586r2I/CqU7z1aa1kBgWaVAXWAZK+zHnceGi/jFgn7+7VSluxYer/i3xOZVearCxxXvyDkLtTBo+OeJCA3kA=="
+      "version": "2.4.2",
+      "integrity": "sha512-lLkz3IRPTNeATsKQGeltbzRK/5+bWsXBHfpZrxJAi4N30RtCtNA+rJznp4uR2+4OgkBsoeeFwONVLr4gzIVErQ=="
     },
     "js-stringify": {
       "version": "1.0.2",
@@ -8443,7 +8503,7 @@
         "babylon": "6.18.0",
         "colors": "1.1.2",
         "es6-promise": "3.3.1",
-        "flow-parser": "0.63.1",
+        "flow-parser": "0.64.0",
         "lodash": "4.15.0",
         "micromatch": "2.3.11",
         "node-dir": "0.1.8",
@@ -8818,9 +8878,12 @@
       }
     },
     "jsx-ast-utils": {
-      "version": "1.4.1",
-      "integrity": "sha1-OGchPo3Xm/Ho8jAMDPwe+xgsDfE=",
-      "dev": true
+      "version": "2.0.1",
+      "integrity": "sha1-6AGxs5mF4g//yHtA43SAgOLcrH8=",
+      "dev": true,
+      "requires": {
+        "array-includes": "3.0.3"
+      }
     },
     "key-mirror": {
       "version": "1.0.1",
@@ -8921,7 +8984,7 @@
         "bindings": "1.2.1",
         "fast-future": "1.0.2",
         "nan": "2.6.2",
-        "prebuild-install": "2.4.1"
+        "prebuild-install": "2.5.0"
       },
       "dependencies": {
         "nan": {
@@ -10021,7 +10084,7 @@
         "stream-browserify": "2.0.1",
         "stream-http": "2.8.0",
         "string_decoder": "1.0.3",
-        "timers-browserify": "2.0.4",
+        "timers-browserify": "2.0.5",
         "tty-browserify": "0.0.0",
         "url": "0.11.0",
         "util": "0.10.3",
@@ -10989,7 +11052,7 @@
       "integrity": "sha512-zrUjRRe1bpXKsX1qAJNJjqZViErVuyEkMTRrwu4ud4sbTtIBRmtaYDrHmcGgmrbsW3MHfmtIf+vJumgQn+PrXg==",
       "requires": {
         "chalk": "1.1.3",
-        "js-base64": "2.4.1",
+        "js-base64": "2.4.2",
         "source-map": "0.5.7",
         "supports-color": "3.2.3"
       },
@@ -11258,9 +11321,10 @@
       }
     },
     "prebuild-install": {
-      "version": "2.4.1",
-      "integrity": "sha512-99TyEFYTTkBWANT+mwSptmLb9ZCLQ6qKIUE36fXSIOtShB0JNprL2hzBD8F1yIuT9btjFrFEwbRHXhqDi1HmRA==",
+      "version": "2.5.0",
+      "integrity": "sha512-3wlyZgmkeeyduOR8Ursu5gKr3yWAYObACa5aJOtt2farRRFV/+zXk/Y3wM6yQRMqmqHh+pHAwyKp5r82K699Rg==",
       "requires": {
+        "detect-libc": "1.0.3",
         "expand-template": "1.1.0",
         "github-from-package": "0.0.0",
         "minimist": "1.2.0",
@@ -13586,7 +13650,7 @@
       "version": "0.2.3",
       "integrity": "sha1-jrBtualyMzOCTT9VMGQRSYR85dE=",
       "requires": {
-        "js-base64": "2.4.1",
+        "js-base64": "2.4.2",
         "source-map": "0.4.4"
       },
       "dependencies": {
@@ -14815,8 +14879,8 @@
       "dev": true
     },
     "timers-browserify": {
-      "version": "2.0.4",
-      "integrity": "sha512-uZYhyU3EX8O7HQP+J9fTVYwsq90Vr68xPEFo7yrVImIxYvHgukBEgOB/SgGoorWVTzGM/3Z+wUNnboA4M8jWrg==",
+      "version": "2.0.5",
+      "integrity": "sha512-BMeI1W6E2/mSaPVLUnH9rjEY1Ys2FEC/GKmE/101wusU3byZO5g68BJ5hpJEP8iD1qAJ6SzYAShGA+urHMxOzQ==",
       "requires": {
         "setimmediate": "1.0.5"
       }

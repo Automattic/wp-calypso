@@ -29,14 +29,9 @@ import {
 	isJetpackModuleActive,
 } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import {
-	// isBusiness,
-	// isEnterprise,
-	isVipPlan,
-	isJetpackBusiness,
-} from 'lib/products-values';
+import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
 
-const hasBusinessPlan = overSome( isJetpackBusiness ); // isBusiness, isEnterprise, // uncomment for Atomic
+const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise );
 
 class Search extends Component {
 	static defaultProps = {
@@ -70,22 +65,14 @@ class Search extends Component {
 
 		return (
 			<FormSettingExplanation>
-				{ translate( 'Add the Jetpack Search widget to your sidebar to add search filters.' ) }
+				{ translate(
+					'Add the Search widget to your sidebar to configure advanced search filters.'
+				) }
 			</FormSettingExplanation>
 		);
 	}
 
-	renderWpcomSettings() {
-		return (
-			<div>
-				{ this.renderInfoLink( 'https://support.wordpress.com/search/' ) }
-
-				<div>{ this.renderSearchExplanation() }</div>
-			</div>
-		);
-	}
-
-	renderJetpackSettingsContent() {
+	renderSettingsContent() {
 		const { activatingSearchModule, searchModuleActive, translate } = this.props;
 
 		return (
@@ -99,7 +86,7 @@ class Search extends Component {
 		);
 	}
 
-	renderJetpackSettings() {
+	renderSettings() {
 		const { isRequestingSettings, isSavingSettings, siteId, translate } = this.props;
 
 		return (
@@ -110,12 +97,12 @@ class Search extends Component {
 					siteId={ siteId }
 					moduleSlug="search"
 					label={ translate(
-						'Replace WordPress built-in search with an improved search experience (Beta)'
+						'Replace WordPress built-in search with an improved search experience'
 					) }
 					disabled={ isRequestingSettings || isSavingSettings }
 				/>
 
-				{ this.renderJetpackSettingsContent() }
+				{ this.renderSettingsContent() }
 			</FormFieldset>
 		);
 	}
@@ -135,7 +122,7 @@ class Search extends Component {
 			return null;
 		}
 
-		// don't show for WPCOM, for now
+		// don't show for regular WPCOM sites, for now
 		if ( ! siteIsJetpack ) {
 			return null;
 		}
@@ -152,10 +139,10 @@ class Search extends Component {
 				<SectionHeader label={ translate( 'Search' ) } />
 
 				<CompactCard className="search__card site-settings__traffic-settings">
-					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
+					{ this.renderSettings() }
 				</CompactCard>
 				{ searchModuleActive && (
-					<CompactCard href={ widgetURL }>{ translate( 'Add Jetpack Search Widget' ) }</CompactCard>
+					<CompactCard href={ widgetURL }>{ translate( 'Add Search Widget' ) }</CompactCard>
 				) }
 			</div>
 		);

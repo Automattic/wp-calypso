@@ -23,6 +23,7 @@ import {
 	CONCIERGE_STATUS_CANCELLING,
 } from '../constants';
 import { getConciergeAppointmentDetails, getConciergeSignupForm } from 'state/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ConciergeCancel extends Component {
 	static propTypes = {
@@ -30,6 +31,9 @@ class ConciergeCancel extends Component {
 		siteSlug: PropTypes.string.isRequired,
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_concierge_cancel_step' );
+	}
 	cancelAppointment = () => {
 		const { appointmentId } = this.props;
 		this.props.cancelConciergeAppointment( WPCOM_CONCIERGE_SCHEDULE_ID, appointmentId );
@@ -111,5 +115,5 @@ export default connect(
 		appointmentDetails: getConciergeAppointmentDetails( state ),
 		signupForm: getConciergeSignupForm( state ),
 	} ),
-	{ cancelConciergeAppointment }
+	{ cancelConciergeAppointment, recordTracksEvent }
 )( localize( ConciergeCancel ) );

@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,8 +12,13 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Confirmation from '../shared/confirmation';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ConfirmationStep extends Component {
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_concierge_reschedule_confirmation_step' );
+	}
+
 	render() {
 		const { site, translate } = this.props;
 
@@ -35,4 +41,4 @@ class ConfirmationStep extends Component {
 	}
 }
 
-export default localize( ConfirmationStep );
+export default connect( null, { recordTracksEvent } )( localize( ConfirmationStep ) );

@@ -117,4 +117,16 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
+
+	// Must run at least 1 full week from commit time
+	// 2018-01-24 to 2018-01-31
+	promoteYearlyJetpackPlanSavings: {
+		datestamp: '20180124',
+		variations: {
+			original: 50,
+			promoteYearly: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
 };

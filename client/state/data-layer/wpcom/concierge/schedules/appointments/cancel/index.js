@@ -14,6 +14,7 @@ import {
 	CONCIERGE_STATUS_CANCELLING_ERROR,
 } from 'me/concierge/constants';
 import fromApi from './from-api';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export const cancelConciergeAppointment = ( { dispatch }, action ) => {
 	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING ) );
@@ -33,11 +34,22 @@ export const cancelConciergeAppointment = ( { dispatch }, action ) => {
 	);
 };
 
-export const markSlotAsCancelled = ( { dispatch } ) =>
-	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED ) );
+export const markSlotAsCancelled = ( { dispatch } ) => {
+	dispatch(
+		withAnalytics(
+			recordTracksEvent( 'calypso_concierge_appointment_cancellation_successful' ),
+			updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED )
+		)
+	);
+};
 
 export const handleCancellingError = ( { dispatch } ) => {
-	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR ) );
+	dispatch(
+		withAnalytics(
+			recordTracksEvent( 'calypso_concierge_appointment_cancellation_error' ),
+			updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR )
+		)
+	);
 	dispatch( errorNotice( "We couldn't cancel your session, please try again later." ) );
 };
 

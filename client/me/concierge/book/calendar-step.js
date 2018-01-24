@@ -22,6 +22,7 @@ import {
 	CONCIERGE_STATUS_BOOKING_ERROR,
 	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from '../constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -49,6 +50,10 @@ class CalendarStep extends Component {
 			meta
 		);
 	};
+
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_concierge_book_calendar_step' );
+	}
 
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
@@ -87,5 +92,5 @@ export default connect(
 		currentUserId: getCurrentUserId( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 	} ),
-	{ bookConciergeAppointment, requestConciergeAvailableTimes }
+	{ bookConciergeAppointment, recordTracksEvent, requestConciergeAvailableTimes }
 )( localize( CalendarStep ) );

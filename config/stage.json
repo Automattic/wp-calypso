@@ -139,7 +139,7 @@
 		"woocommerce/extension-orders-create": false,
 		"woocommerce/extension-orders-edit": true,
 		"woocommerce/extension-products": true,
-		"woocommerce/extension-product-categories": false,
+		"woocommerce/extension-product-categories": true,
 		"woocommerce/extension-promotions": true,
 		"woocommerce/extension-reviews": true,
 		"woocommerce/extension-settings": true,

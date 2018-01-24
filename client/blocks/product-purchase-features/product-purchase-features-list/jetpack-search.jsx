@@ -17,7 +17,7 @@ export default localize( ( { selectedSite, translate } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="search"
-				title={ translate( 'Search (Beta)' ) }
+				title={ translate( 'Search' ) }
 				description={ translate(
 					'Replace the default WordPress search with better results ' +
 						'and filtering that will help your users find what they are looking for.'
