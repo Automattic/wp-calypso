@@ -27,12 +27,20 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteId } from 'state/selectors';
 import { requestSites } from 'state/sites/actions';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
 export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 	const { siteId, siteSlug } = data;
 	const { cartItem, designType, domainItem, siteUrl, themeSlugWithRepo } = dependencies;
+	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
+	const tldLandingPageNonce = get( initialQueryArguments, 'tld_lp_nonce' );
+
+	domainItem.extra = Object.assign(
+		domainItem.extra || {},
+		tldLandingPageNonce && { tld_lp_nonce: tldLandingPageNonce }
+	);
 
 	if ( designType === 'domain' ) {
 		const cartKey = 'no-site';
@@ -110,6 +118,13 @@ export function createSiteWithCart(
 	const designType = getDesignType( reduxStore.getState() ).trim();
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
+	const initialQueryArguments = getInitialQueryArguments( reduxStore.getState() );
+	const tldLandingPageNonce = get( initialQueryArguments, 'tld_lp_nonce' );
+
+	domainItem.extra = Object.assign(
+		domainItem.extra || {},
+		tldLandingPageNonce && { tld_lp_nonce: tldLandingPageNonce }
+	);
 
 	wpcom.undocumented().sitesNew(
 		{

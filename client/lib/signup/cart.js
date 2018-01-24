@@ -16,9 +16,7 @@ import { cartItems, fillInAllCartItemAttributes } from 'lib/cart-values';
 
 function addProductsToCart( cart, newCartItems ) {
 	forEach( newCartItems, function( cartItem ) {
-		cartItem.extra = Object.assign( cartItem.extra || {}, {
-			context: 'signup',
-		} );
+		cartItem.extra = Object.assign( cartItem.extra || {}, { context: 'signup' } );
 		const addFunction = cartItems.add( cartItem );
 
 		cart = fillInAllCartItemAttributes( addFunction( cart ), productsList.get() );
