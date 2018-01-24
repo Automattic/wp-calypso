@@ -684,8 +684,13 @@ Undocumented.prototype.validateDomainContactInformation = function(
 		domainNames: domainNames,
 	};
 
+
+
 	debug( '/me/domain-contact-information/validate query' );
 	data = mapKeysRecursively( data, snakeCase );
+
+	// eslint-disable-next-line
+	console.log( 'data', JSON.stringify( data ) );
 
 	return this.wpcom.req.post( { path: '/me/domain-contact-information/validate' }, data, function(
 		error,

@@ -12,6 +12,8 @@ import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
 import { domainWhoisSchema } from './schema';
 import {
+	DOMAIN_CONTACT_INFORMATION_VALIDATE_REQUEST,
+	DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
@@ -105,11 +107,33 @@ export const items = createReducer(
 	domainWhoisSchema
 );
 
+export const contactDetailsValidation = ( state = null, action ) => {
+	switch ( action.type ) {
+		case DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE:
+			return action.data;
+		default:
+			return state;
+	}
+};
+
+export const isRequestingContactDetailsValidation = ( state = false, action ) => {
+	switch ( action.type ) {
+		case DOMAIN_CONTACT_INFORMATION_VALIDATE_REQUEST:
+			return true;
+		case DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE:
+			return false;
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	items,
 	isRequestingContactDetailsCache,
 	isRequestingWhois,
 	isSaving,
+	isRequestingContactDetailsValidation,
+	contactDetailsValidation,
 } );
 
 /**
