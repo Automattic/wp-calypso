@@ -202,7 +202,7 @@ export const getPagePath = function( post ) {
 		return;
 	}
 	if ( ! isPublished( post ) ) {
-		getPermalinkBasePath( post );
+		return getPermalinkBasePath( post );
 	}
 
 	const postUrl = get( post, [ 'other_URLs', 'permalink_URL' ] ) || post.URL;
