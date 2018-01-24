@@ -123,7 +123,7 @@ class PeopleProfile extends React.PureComponent {
 			// either a display name (if set) or the WP.com username. Invites can
 			// also be sent to any email address, in which case the other details
 			// will not be set and we therefore display the user's email.
-			name = user.email;
+			name = user.login || user.email;
 		}
 
 		const blogId = get( user, 'follow_data.params.blog_id', false );
