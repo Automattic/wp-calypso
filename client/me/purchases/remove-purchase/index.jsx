@@ -459,8 +459,11 @@ class RemovePurchase extends Component {
 				<FormSectionHeading />
 				<p>
 					{ translate(
-						'Unfortunately, you need to contact support to cancel your %(productName)s plan.',
-						{ args: { productName } }
+						'To cancel your %(productName)s plan, please contact our support team' +
+							'-- a Happiness Engineer will take care of it.',
+						{
+							args: { productName },
+						}
 					) }
 				</p>
 			</Dialog>
