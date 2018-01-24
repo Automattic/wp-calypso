@@ -1,3 +1,7 @@
+#### v2.0.0 (2018-01-24)
+
+- Breaking: Removed the `react-a11y` ruleset. Consumers can use upstream's `plugin:jsx-a11y/recommended` ruleset instead.
+
 #### v1.2.0 (2017-11-03)
 
 - Added: [`no-duplicate-imports`](https://eslint.org/docs/rules/no-duplicate-imports) as error
