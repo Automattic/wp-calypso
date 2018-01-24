@@ -6,7 +6,8 @@
 
 import Dispatcher from 'dispatcher';
 import { flowRight, includes, partial } from 'lodash';
-const wpcom = require( 'lib/wp' ).undocumented();
+import wpLib from 'lib/wp';
+const wpcom = wpLib.undocumented();
 
 /**
  * Internal dependencies
