@@ -4,6 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -63,6 +64,8 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
+
+import { http } from 'state/data-layer/wpcom-http/actions';
 
 export class DomainDetailsForm extends PureComponent {
 	constructor( props, context ) {
@@ -639,5 +642,8 @@ export default connect(
 			hasCountryStates,
 		};
 	},
-	{ updateContactDetailsCache }
+	dispatch => {
+		window.dispatch = dispatch;
+		return bindActionCreators( { updateContactDetailsCache }, dispatch );
+	}
 )( localize( DomainDetailsFormContainer ) );

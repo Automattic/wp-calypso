@@ -81,38 +81,10 @@ export function updateContactDetailsCache( data ) {
  * @returns {Object}   Action object
  */
 export function validateContactDetails( data ) {
-	return dispatch => {
-		const requestId = uniqueId();
-		dispatch( {
-			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_REQUEST,
-			data: {
-				requestId,
-				...data,
-			},
-		} );
-
-		wpcom.undocumented().getDomainContactInformation( ( error, data ) => {
-			if ( error ) {
-				dispatch( {
-					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_ERROR,
-					error,
-				} );
-				return;
-			}
-
-			dispatch(
-				receiveContactDetailsValidation( {
-					...data,
-				} )
-			);
-			dispatch( {
-				type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_SUCCESS,
-				data: { requestId },
-			} );
-		} );
+	return {
+		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_REQUEST,
+		data: data,
 	};
-
-	return {};
 }
 
 /**
