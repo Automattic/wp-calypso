@@ -340,7 +340,7 @@ class DeleteSite extends Component {
 						className="delete-site__confirm-dialog"
 					>
 						<h1 className="delete-site__confirm-header">{ strings.confirmDeleteSite }</h1>
-						<p className="delete-site__confirm-paragraph">
+						<label for="confirmDomainChangeInput" className="delete-site__confirm-paragraph">
 							{ translate(
 								'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
 									'Your site will then be gone forever.',
@@ -353,7 +353,7 @@ class DeleteSite extends Component {
 									},
 								}
 							) }
-						</p>
+						</label>
 
 						<input
 							autoCapitalize="off"
@@ -361,6 +361,9 @@ class DeleteSite extends Component {
 							type="text"
 							onChange={ this.onConfirmDomainChange }
 							value={ this.state.confirmDomain }
+							aria-required="true"
+							tabIndex="0"
+							id="confirmDomainChangeInput"
 						/>
 					</Dialog>
 				</ActionPanel>
