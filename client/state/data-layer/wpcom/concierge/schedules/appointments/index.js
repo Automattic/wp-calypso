@@ -27,6 +27,7 @@ import {
 	CONCIERGE_ERROR_NO_AVAILABLE_STAFF,
 } from 'me/concierge/constants';
 import fromApi from './from-api';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export const toApi = ( { beginTimestamp, customerId, siteId, meta } ) => ( {
 	begin_timestamp: beginTimestamp / 1000, // convert to UNIX timestamp.
@@ -53,11 +54,22 @@ export const cancelConciergeAppointment = ( { dispatch }, action ) => {
 	);
 };
 
-export const markSlotAsCancelled = ( { dispatch } ) =>
-	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED ) );
+export const markSlotAsCancelled = ( { dispatch } ) => {
+	dispatch(
+		withAnalytics(
+			recordTracksEvent( 'calypso_concierge_appointment_cancellation_successful' ),
+			updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED )
+		)
+	);
+};
 
 export const handleCancellingError = ( { dispatch } ) => {
-	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR ) );
+	dispatch(
+		withAnalytics(
+			recordTracksEvent( 'calypso_concierge_appointment_cancellation_error' ),
+			updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR )
+		)
+	);
 	dispatch( errorNotice( "We couldn't cancel your session, please try again later." ) );
 };
 
@@ -97,11 +109,48 @@ export const rescheduleConciergeAppointment = ( { dispatch }, action ) => {
 	);
 };
 
-export const markSlotAsBooked = ( { dispatch } ) =>
-	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKED ) );
+export const markSlotAsBooked = ( { dispatch }, action ) => {
+	switch ( action.type ) {
+		case CONCIERGE_APPOINTMENT_CREATE:
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_concierge_appointment_booking_successful' ),
+					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKED )
+				)
+			);
+			break;
+
+		case CONCIERGE_APPOINTMENT_RESCHEDULE:
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_concierge_appointment_rescheduling_successful' ),
+					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKED )
+				)
+			);
+			break;
+	}
+};
 
 export const handleBookingError = ( { dispatch }, action, error ) => {
-	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR ) );
+	switch ( action.type ) {
+		case CONCIERGE_APPOINTMENT_CREATE:
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_concierge_appointment_booking_error' ),
+					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
+				)
+			);
+			break;
+
+		case CONCIERGE_APPOINTMENT_RESCHEDULE:
+			dispatch(
+				withAnalytics(
+					recordTracksEvent( 'calypso_concierge_appointment_rescheduling_error' ),
+					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
+				)
+			);
+			break;
+	}
 
 	let errorMessage;
 	switch ( error.code ) {
