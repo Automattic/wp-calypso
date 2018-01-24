@@ -111,8 +111,8 @@ class ConciergeCancel extends Component {
 }
 
 export default connect(
-	state => ( {
-		appointmentDetails: getConciergeAppointmentDetails( state ),
+	( state, props ) => ( {
+		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
 		signupForm: getConciergeSignupForm( state ),
 	} ),
 	{ cancelConciergeAppointment, recordTracksEvent }

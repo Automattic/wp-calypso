@@ -89,8 +89,8 @@ class CalendarStep extends Component {
 }
 
 export default connect(
-	state => ( {
-		appointmentDetails: getConciergeAppointmentDetails( state ),
+	( state, props ) => ( {
+		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
 		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 	} ),

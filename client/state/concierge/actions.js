@@ -21,8 +21,9 @@ export const requestConciergeAppointmentDetails = ( scheduleId, appointmentId ) 
 	appointmentId,
 } );
 
-export const updateConciergeAppointmentDetails = appointmentDetails => ( {
+export const updateConciergeAppointmentDetails = ( appointmentId, appointmentDetails ) => ( {
 	type: CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
+	appointmentId,
 	appointmentDetails,
 } );
 

@@ -33,7 +33,8 @@ export const fetchAppointmentDetails = ( { dispatch }, action ) => {
 };
 
 export const storeFetchedAppointmentDetails = ( { dispatch }, action, appointmentDetails ) => {
-	dispatch( updateConciergeAppointmentDetails( appointmentDetails ) );
+	const { appointmentId } = action;
+	dispatch( updateConciergeAppointmentDetails( appointmentId, appointmentDetails ) );
 };
 
 export const showAppointmentDetailsFetchError = ( { dispatch } ) => {

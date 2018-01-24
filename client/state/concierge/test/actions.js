@@ -122,10 +122,12 @@ describe( 'state/concierge', () => {
 		} );
 
 		test( 'updateConciergeAppointmentDetails()', () => {
-			const appointmentDetails = { id: 1 };
+			const appointmentId = 1;
+			const appointmentDetails = { id: appointmentId };
 
-			expect( updateConciergeAppointmentDetails( appointmentDetails ) ).toEqual( {
+			expect( updateConciergeAppointmentDetails( appointmentId, appointmentDetails ) ).toEqual( {
 				type: CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
+				appointmentId,
 				appointmentDetails,
 			} );
 		} );

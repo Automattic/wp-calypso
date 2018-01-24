@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { createReducer } from 'state/utils';
+import { createReducer, keyedReducer } from 'state/utils';
 import {
 	CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 	CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
@@ -14,4 +14,4 @@ export const appointmentDetails = createReducer( null, {
 	[ CONCIERGE_APPOINTMENT_DETAILS_UPDATE ]: ( state, action ) => action.appointmentDetails,
 } );
 
-export default appointmentDetails;
+export default keyedReducer( 'appointmentId', appointmentDetails );

@@ -56,10 +56,16 @@ describe( 'wpcom-api', () => {
 				},
 			};
 
-			storeFetchedAppointmentDetails( { dispatch }, {}, mockAppointmentDetails );
+			storeFetchedAppointmentDetails(
+				{ dispatch },
+				{
+					appointmentId: mockAppointmentDetails.id,
+				},
+				mockAppointmentDetails
+			);
 
 			expect( dispatch ).toHaveBeenCalledWith(
-				updateConciergeAppointmentDetails( mockAppointmentDetails )
+				updateConciergeAppointmentDetails( mockAppointmentDetails.id, mockAppointmentDetails )
 			);
 		} );
 
