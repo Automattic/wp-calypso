@@ -122,7 +122,7 @@ class RemovePurchase extends Component {
 			selectedPurchase,
 			isChatAvailable,
 			isChatActive,
-			precancellationChatAvailable = false,
+			precancellationChatAvailable,
 		} = this.props;
 		const { surveyStep, survey } = this.state;
 		const steps = stepsForProductAndSurvey(

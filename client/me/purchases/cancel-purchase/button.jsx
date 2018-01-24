@@ -94,12 +94,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	changeSurveyStep = stepFunction => {
-		const {
-			purchase,
-			isChatAvailable,
-			isChatActive,
-			precancellationChatAvailable = false,
-		} = this.props;
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
 		const { surveyStep, survey } = this.state;
 		const steps = stepsForProductAndSurvey(
 			survey,
