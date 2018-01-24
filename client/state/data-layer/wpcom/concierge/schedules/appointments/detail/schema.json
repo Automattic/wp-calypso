@@ -1,0 +1,9 @@
+{
+	"type": "object",
+	"properties": {
+		"begin_timestamp": { "type": "number" },
+		"end_timestamp": { "type": "number" },
+		"id": { "type": "number" },
+		"schedule_id": { "type": "number" }
+	}
+}
