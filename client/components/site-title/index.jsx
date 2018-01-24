@@ -46,6 +46,12 @@ class SiteTitleControl extends React.Component {
 		this.props.onChange( { blogname, blogdescription } );
 	};
 
+	renderValidation = blogname => {
+		const isError = blogname ? false : true;
+
+		return <FormInputValidation isError={ isError } text="Required field." />;
+	};
+
 	render() {
 		const {
 			autoFocusBlogname,
@@ -66,11 +72,7 @@ class SiteTitleControl extends React.Component {
 						onChange={ this.onChangeSiteTitle }
 						value={ blogname }
 					/>
-					{ blogname && isTitleRequired ? (
-						<FormInputValidation isError={ false } text="Required field." />
-					) : (
-						<FormInputValidation isError={ true } text="Required field." />
-					) }
+					{ isTitleRequired ? this.renderValidation( blogname ) : null }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>
