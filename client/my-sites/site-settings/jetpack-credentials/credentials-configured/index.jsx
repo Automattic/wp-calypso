@@ -135,11 +135,11 @@ class CredentialsConfigured extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const rewindState = getRewindState( state, siteId );
+	const { canAutoconfigure, credentials = [] } = getRewindState( state, siteId );
 
 	return {
-		canAutoconfigure: rewindState.canAutoconfigure,
-		mainCredentials: get( rewindState, [ 'credentials', 0 ], {} ),
+		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors,max-len
+		mainCredentials: credentials[ 0 ],
 	};
 };
 
