@@ -14,20 +14,14 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import notices from 'notices';
 import userSettings from 'lib/user-settings';
-import PasswordComponent from 'me/security/main';
-import accountPasswordData from 'lib/account-password-data';
-import SocialLoginComponent from 'me/social-login';
-import ConnectedAppsComponent from 'me/connected-applications';
-import connectedAppsData from 'lib/connected-applications-data';
-import appPasswordsData from 'lib/application-passwords-data';
-import TwoStepComponent from 'me/two-step';
-import AccountRecoveryComponent from 'me/security-account-recovery';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 
 export default {
 	password( context, next ) {
+		const PasswordComponent = require( 'me/security/main' );
 		const basePath = context.path;
+		const accountPasswordData = require( 'lib/account-password-data' );
 
 		if ( context.query && context.query.updated === 'password' ) {
 			notices.success( i18n.translate( 'Your password was saved successfully.' ), {
@@ -48,7 +42,9 @@ export default {
 	},
 
 	twoStep( context, next ) {
-		const basePath = context.path;
+		const TwoStepComponent = require( 'me/two-step' ),
+			basePath = context.path,
+			appPasswordsData = require( 'lib/application-passwords-data' );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
@@ -61,7 +57,9 @@ export default {
 	},
 
 	connectedApplications( context, next ) {
-		const basePath = context.path;
+		const ConnectedAppsComponent = require( 'me/connected-applications' ),
+			basePath = context.path,
+			connectedAppsData = require( 'lib/connected-applications-data' );
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
@@ -74,7 +72,8 @@ export default {
 	},
 
 	accountRecovery( context, next ) {
-		const basePath = context.path;
+		const AccountRecoveryComponent = require( 'me/security-account-recovery' ),
+			basePath = context.path;
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Recovery' );
 
@@ -86,6 +85,7 @@ export default {
 	},
 
 	socialLogin( context, next ) {
+		const SocialLoginComponent = require( 'me/social-login' );
 		const basePath = context.path;
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Social Login' );

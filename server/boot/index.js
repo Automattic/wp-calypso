@@ -13,8 +13,6 @@ const path = require( 'path' ),
 	morgan = require( 'morgan' ),
 	pages = require( 'pages' );
 
-const analytics = require( '../lib/analytics' ).default;
-
 /**
  * Returns the server HTTP request handler "app".
  * @returns {object} The express app
@@ -82,6 +80,7 @@ function setup() {
 
 	// loaded when we detect stats blockers - see lib/analytics/index.js
 	app.get( '/nostats.js', function( request, response ) {
+		const analytics = require( '../lib/analytics' );
 		analytics.tracks.recordEvent(
 			'calypso_stats_blocked',
 			{

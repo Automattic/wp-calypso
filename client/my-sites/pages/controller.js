@@ -15,16 +15,16 @@ import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import Pages from 'my-sites/pages/main';
 
 const controller = {
 	pages: function( context, next ) {
-		const siteID = getSiteFragment( context.path );
-		let status = context.params.status;
-		const search = context.query.s;
-		const basePath = sectionify( context.path );
-		let analyticsPageTitle = 'Pages';
-		let baseAnalyticsPath;
+		var Pages = require( 'my-sites/pages/main' ),
+			siteID = getSiteFragment( context.path ),
+			status = context.params.status,
+			search = context.query.s,
+			basePath = sectionify( context.path ),
+			analyticsPageTitle = 'Pages',
+			baseAnalyticsPath;
 
 		status = ! status || status === siteID ? '' : status;
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.

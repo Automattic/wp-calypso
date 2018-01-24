@@ -35,14 +35,6 @@ const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
 	: ! isDevelopment;
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
-// load in the babel config from babelrc and disable commonjs transform
-// this enables static analysis from webpack including treeshaking
-// also disable add-module-exports. TODO: remove add-module-exports from babelrc. requires fixing tests
-const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
-const babelPresetEnv = _.find( babelConfig.presets, preset => preset[ 0 ] === 'env' );
-babelPresetEnv[ 1 ].modules = false;
-_.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
-
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -70,12 +62,10 @@ function getAliasesForExtensions() {
 
 const babelLoader = {
 	loader: 'babel-loader',
-	options: Object.assign( {}, babelConfig, {
-		babelrc: false,
+	options: {
 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 		cacheIdentifier: cacheIdentifier,
 		plugins: [
-			...babelConfig.plugins,
 			[
 				path.join(
 					__dirname,
@@ -86,9 +76,8 @@ const babelLoader = {
 				),
 				{ async: config.isEnabled( 'code-splitting' ) },
 			],
-			'inline-imports.js',
 		],
-	} ),
+	},
 };
 
 const webpackConfig = {

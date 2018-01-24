@@ -7,13 +7,11 @@
 import wpcomUndocumented from 'lib/wpcom-undocumented';
 import config from 'config';
 import { injectLocalization } from './localization';
-import wpSupportWrapper from 'lib/wp/support';
-import wpcomXhrRequest from 'wpcom-xhr-request';
 
-let wpcom = wpcomUndocumented( wpcomXhrRequest );
+let wpcom = wpcomUndocumented( require( 'wpcom-xhr-request' ) );
 
 if ( config.isEnabled( 'support-user' ) ) {
-	wpcom = wpSupportWrapper( wpcom );
+	wpcom = require( 'lib/wp/support' )( wpcom );
 }
 
 // Inject localization helpers to `wpcom` instance

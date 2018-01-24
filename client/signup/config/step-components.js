@@ -47,10 +47,7 @@ export default {
 	'site-title': SiteTitleComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
-	test:
-		process.env.NODE_ENV === 'development'
-			? require( 'signup/steps/test-step' ).default
-			: undefined,
+	test: process.env.NODE_ENV === 'development' ? require( 'signup/steps/test-step' ) : undefined,
 	themes: ThemeSelectionComponent,
 	'website-themes': ThemeSelectionComponent,
 	'blog-themes': ThemeSelectionComponent,
