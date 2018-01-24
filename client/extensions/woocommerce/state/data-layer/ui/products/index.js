@@ -236,7 +236,7 @@ const productSuccess = ( actionList, type ) => (
 		updatedProductIds,
 	};
 
-	dispatch( bumpStat( 'wpcom-store-products', type ) );
+	dispatch( bumpStat( 'wpcom-store-products', type + '-calypso' ) );
 	dispatch( actionListStepSuccess( newActionList ) );
 };
 
