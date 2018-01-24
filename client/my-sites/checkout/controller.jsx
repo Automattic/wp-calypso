@@ -18,6 +18,11 @@ import productsFactory from 'lib/products-list';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GsuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import Checkout from './checkout';
+import CheckoutData from 'components/data/checkout';
+import CartData from 'components/data/cart';
+import SecondaryCart from './cart/secondary-cart';
+import CheckoutThankYouComponent from './checkout-thank-you';
 
 /**
  * Module variables
@@ -34,13 +39,9 @@ const checkoutRoutes = [
 
 export default {
 	checkout: function( context, next ) {
-		const Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' ),
-			{ routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes ),
-			product = context.params.product,
-			selectedFeature = context.params.feature;
+		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
+		const product = context.params.product;
+		const selectedFeature = context.params.feature;
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
@@ -75,11 +76,6 @@ export default {
 	},
 
 	sitelessCheckout: function( context, next ) {
-		const Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' );
-
 		analytics.pageView.record( '/checkout/no-site', 'Checkout' );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -100,10 +96,9 @@ export default {
 	},
 
 	checkoutThankYou: function( context, next ) {
-		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
-			{ routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes ),
-			receiptId = Number( context.params.receiptId ),
-			gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
+		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
+		const receiptId = Number( context.params.receiptId );
+		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
 		analytics.pageView.record( routePath, 'Checkout Thank You', routeParams );
 
@@ -130,7 +125,6 @@ export default {
 	},
 
 	gsuiteNudge( context, next ) {
-		const CartData = require( 'components/data/cart' );
 		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
