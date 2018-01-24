@@ -31,11 +31,11 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		zip: '',
 	};
 
-	state = get( this.props.settings, 'businessAddress', this.constructor.emptyState );
+	state = get( this.props.settings, 'businessAddress' ) || this.constructor.emptyState;
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
-			this.setState( get( nextProps.settings, 'businessAddress', this.constructor.emptyState ) );
+			this.setState( get( nextProps.settings, 'businessAddress' ) || this.constructor.emptyState );
 		}
 	}
 
