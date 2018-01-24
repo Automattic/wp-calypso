@@ -266,7 +266,7 @@ class InlineHelp extends Component {
 							placeholder={ translate( 'Search for help…' ) }
 							onSearch={ this.onSearch }
 							onKeyDown={ this.onKeyDown }
-							autoFocus
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							delaySearch={ true }
 						/>
 
