@@ -179,8 +179,17 @@ export class LanguagePickerModal extends PureComponent {
 		this.setState( { search } );
 	};
 
-	handleClick = selectedLanguageSlug => {
+	handleLanguageItemClick = ( selectedLanguageSlug, event ) => {
+		event.preventDefault();
 		this.setState( { selectedLanguageSlug } );
+	};
+
+	handleLanguageItemKeyPress = ( selectedLanguageSlug, event ) => {
+		event.preventDefault();
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.setState( { selectedLanguageSlug } );
+		}
 	};
 
 	handleSelectLanguage = () => {
@@ -232,12 +241,12 @@ export class LanguagePickerModal extends PureComponent {
 			<div
 				className="language-picker__modal-item"
 				key={ language.langSlug }
-				onClick={ partial( this.handleClick, language.langSlug ) }
+				onClick={ partial( this.handleLanguageItemClick, language.langSlug ) }
 				title={ titleText }
-				tabindex="0"
+				tabIndex="0"
 				role="button"
 				aria-label={ titleText }
-				onKeyPress={ partial( this.handleClick, language.langSlug ) }
+				onKeyPress={ partial( this.handleLanguageItemKeyPress, language.langSlug ) }
 			>
 				<span className={ classes }>{ language.name }</span>
 			</div>
