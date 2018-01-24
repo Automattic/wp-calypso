@@ -4267,8 +4267,8 @@
       }
     },
     "eslint-config-wpcalypso": {
-      "version": "1.2.0",
-      "integrity": "sha1-l3XWQrSD/4e0bF9tlXC1Q5gK16E=",
+      "version": "2.0.0",
+      "integrity": "sha512-m/G31U8K2U5qV/u/BOHSTNtJGOBDR7Y84rH5hRBMhg/jWcXnJCEPy1sA0tFKfPL1GMJkJOosRVGTdMqMjiZJoQ==",
       "dev": true
     },
     "eslint-eslines": {
@@ -6097,8 +6097,8 @@
       }
     },
     "glogg": {
-      "version": "1.0.0",
-      "integrity": "sha1-f+DxmfV6yQbPUS/urY+Q7kooT8U=",
+      "version": "1.0.1",
+      "integrity": "sha512-ynYqXLoluBKf9XGR1gA59yEJisIL7YHEH4xr3ZziHB5/yl4qWfaK8Js9jGe6gBGCSCKVqiyO30WnRZADvemUNw==",
       "dev": true,
       "requires": {
         "sparkles": "1.0.0"
@@ -6246,7 +6246,7 @@
       "integrity": "sha1-4oxNRdBey77YGDY86PnFkmIp/+U=",
       "dev": true,
       "requires": {
-        "glogg": "1.0.0"
+        "glogg": "1.0.1"
       }
     },
     "gzip-size": {
@@ -10084,7 +10084,7 @@
         "stream-browserify": "2.0.1",
         "stream-http": "2.8.0",
         "string_decoder": "1.0.3",
-        "timers-browserify": "2.0.4",
+        "timers-browserify": "2.0.5",
         "tty-browserify": "0.0.0",
         "url": "0.11.0",
         "util": "0.10.3",
@@ -14879,8 +14879,8 @@
       "dev": true
     },
     "timers-browserify": {
-      "version": "2.0.4",
-      "integrity": "sha512-uZYhyU3EX8O7HQP+J9fTVYwsq90Vr68xPEFo7yrVImIxYvHgukBEgOB/SgGoorWVTzGM/3Z+wUNnboA4M8jWrg==",
+      "version": "2.0.5",
+      "integrity": "sha512-BMeI1W6E2/mSaPVLUnH9rjEY1Ys2FEC/GKmE/101wusU3byZO5g68BJ5hpJEP8iD1qAJ6SzYAShGA+urHMxOzQ==",
       "requires": {
         "setimmediate": "1.0.5"
       }
