@@ -333,7 +333,7 @@ export function createAccount(
 				if ( errors ) {
 					callback( errors );
 				} else {
-					callback( undefined, response );
+					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 				}
 			}
 		);
