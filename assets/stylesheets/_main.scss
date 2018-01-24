@@ -54,6 +54,12 @@ body,
 body {
 	background: $gray-light;
 	-ms-overflow-style: scrollbar;
+
+	// This fixes an issue with the `click-outside` package not working on mobile.
+	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
+	@include breakpoint( "<660px" ) {
+		cursor: pointer;
+	}
 }
 
 ::selection {

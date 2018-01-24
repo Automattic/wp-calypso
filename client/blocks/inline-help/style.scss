@@ -167,7 +167,10 @@
 			line-height: 1.4;
 			display: block;
 			padding: 14px 16px;
-			cursor: pointer;
+			
+			&:hover {
+				cursor: pointer;
+			}
 		}
 
 		&.is-selected {
