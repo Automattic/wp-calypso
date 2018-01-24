@@ -10,7 +10,15 @@ const transformCredential = data =>
 		{
 			type: data.type,
 		},
-		data.host && { host: data.host, port: data.port }
+		data.role && { role: data.role },
+		data.host && { host: data.host },
+		data.port && { port: data.port },
+		data.user && { user: data.user },
+		'undefined' !== typeof data.password && { password: data.password },
+		data.abspath && { abspath: data.abspath },
+		'undefined' !== typeof data.kpri && { kpri: data.kpri },
+		data.baseUrl && { baseUrl: data.baseUrl },
+		data.maxConcurrent && { maxConcurrent: data.maxConcurrent }
 	);
 
 const transformDownload = data =>
