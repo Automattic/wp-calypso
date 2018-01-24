@@ -13,7 +13,6 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
-import { abtest } from 'lib/abtest';
 const user = userFactory();
 
 function getCheckoutUrl( dependencies ) {
@@ -60,50 +59,43 @@ const flows = {
 	},
 
 	business: {
-		steps: [ 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'about', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/business/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
-		lastModified: '2016-06-02',
+		lastModified: '2018-01-24',
 		meta: {
 			skipBundlingPlan: true,
 		},
 	},
 
-	segment: {
-		steps: [ 'about', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'A new signup flow for segmenting our users',
-		lastModified: '2017-11-11',
-	},
-
 	premium: {
-		steps: [ 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'about', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/premium/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the premium plan to the users cart.',
-		lastModified: '2016-06-02',
+		lastModified: '2018-01-24',
 		meta: {
 			skipBundlingPlan: true,
 		},
 	},
 
 	personal: {
-		steps: [ 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'about', 'themes', 'domains', 'user' ],
 		destination: function( dependencies ) {
 			return '/plans/select/personal/' + dependencies.siteSlug;
 		},
 		description: 'Create an account and a blog and then add the personal plan to the users cart.',
-		lastModified: '2016-01-21',
+		lastModified: '2018-01-24',
 	},
 
 	free: {
-		steps: [ 'design-type', 'themes', 'domains', 'user' ],
+		steps: [ 'about', 'themes', 'domains', 'user' ],
 		destination: getSiteDestination,
 		description: 'Create an account and a blog and default to the free plan.',
-		lastModified: '2016-06-02',
+		lastModified: '2018-01-24',
 	},
 
 	blog: {
@@ -128,10 +120,10 @@ const flows = {
 	},
 
 	store: {
-		steps: [ 'design-type-with-store', 'domains', 'plans', 'user' ],
+		steps: [ 'about', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Signup flow for creating an online store',
-		lastModified: '2016-06-27',
+		lastModified: '2018-01-24',
 	},
 
 	'rebrand-cities': {
@@ -168,10 +160,10 @@ const flows = {
 	},
 
 	main: {
-		steps: [ 'design-type', 'domains', 'plans', 'user' ],
+		steps: [ 'about', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
-		lastModified: '2016-05-23',
+		lastModified: '2018-01-24',
 	},
 
 	surveystep: {
@@ -198,28 +190,28 @@ const flows = {
 	},
 
 	'delta-blog': {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description:
 			'A copy of the `blog` flow for the Delta email campaigns. Half of users who go ' +
 			'through this flow receive a blogging-specific drip email series.',
-		lastModified: '2016-03-09',
+		lastModified: '2018-01-24',
 	},
 
 	'delta-site': {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description:
 			'A copy of the `website` flow for the Delta email campaigns. Half of users who go ' +
 			'through this flow receive a website-specific drip email series.',
-		lastModified: '2016-03-09',
+		lastModified: '2018-01-24',
 	},
 
 	desktop: {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'about', 'themes', 'domains', 'plans', 'user' ],
 		destination: getPostsDestination,
 		description: 'Signup flow for desktop app',
-		lastModified: '2016-05-30',
+		lastModified: '2018-01-24',
 	},
 
 	developer: {
@@ -263,18 +255,10 @@ const flows = {
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
 	flows[ 'store-nux' ] = {
-		steps: [ 'design-type-with-store-nux', 'themes', 'domains', 'plans-store-nux', 'user' ],
-		destination: getSiteDestination,
-		description: 'Signup flow for creating an online store with an Atomic site',
-		lastModified: '2017-09-27',
-	};
-
-	flows[ 'segmented-store-nux' ] = {
 		steps: [ 'about', 'themes', 'domains', 'plans-store-nux', 'user' ],
 		destination: getSiteDestination,
-		description:
-			'Signup flow for creating an online store with an Atomic site from the new site segementing step',
-		lastModified: '2017-12-15',
+		description: 'Signup flow for creating an online store with an Atomic site',
+		lastModified: '2018-01-24',
 	};
 }
 
@@ -342,14 +326,6 @@ function replaceStepInFlow( flow, oldStepName, newStepName ) {
 function filterDesignTypeInFlow( flowName, flow ) {
 	if ( ! flow ) {
 		return;
-	}
-
-	if (
-		includes( flow.steps, 'design-type' ) &&
-		abtest( 'signupSiteSegmentStep' ) === 'variant' &&
-		flowName !== 'subdomain'
-	) {
-		return replaceStepInFlow( flow, 'design-type', 'about' );
 	}
 
 	if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
