@@ -62,7 +62,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			},
 			THEME: {
 				label: translate( 'Choose a Theme' ),
-				url: siteUrl + '/wp-admin/themes.php',
+				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
 			},
 			PAGES: {
 				label: translate( 'Add additional pages' ),
