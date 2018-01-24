@@ -8,8 +8,12 @@ const transformCredential = data =>
 	Object.assign(
 		{
 			type: data.type,
+			role: data.role,
 		},
-		data.host && { host: data.host, port: data.port }
+		data.host && { host: data.host },
+		data.path && { path: data.path },
+		data.port && { port: data.port },
+		data.user && { user: data.user }
 	);
 
 const transformDownload = data =>

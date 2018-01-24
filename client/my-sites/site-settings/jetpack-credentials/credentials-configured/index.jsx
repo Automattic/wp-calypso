@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -139,7 +139,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors,max-len
-		mainCredentials: credentials[ 0 ],
+		mainCredentials: find( credentials, { role: 'main' } ),
 	};
 };
 
