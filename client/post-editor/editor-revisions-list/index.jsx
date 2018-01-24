@@ -14,6 +14,7 @@ import { get, head, isEmpty, map } from 'lodash';
  * Internal dependencies
  */
 import EditorRevisionsListHeader from './header';
+import EditorRevisionsListNavigation from './navigation';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
@@ -114,8 +115,8 @@ class EditorRevisionsList extends PureComponent {
 
 		return (
 			<div className={ classes }>
-				<EditorRevisionsListHeader
-					numRevisions={ revisions.length }
+				<EditorRevisionsListHeader numRevisions={ revisions.length } />
+				<EditorRevisionsListNavigation
 					selectNextRevision={ this.selectNextRevision }
 					selectPreviousRevision={ this.selectPreviousRevision }
 				/>
