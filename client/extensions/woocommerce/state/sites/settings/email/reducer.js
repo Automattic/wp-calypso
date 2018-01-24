@@ -43,17 +43,14 @@ const process_data = data => {
 	} );
 
 	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], key => {
-		const option = get( options, [ key ], {} );
-		const def = get( option, [ 'recipient', 'default' ], false ) || defaultEmail;
-		const value = get( option, [ 'recipient', 'value' ], '' );
-		const noValue = value === '';
-		const updatedValue = noValue ? def : value;
-		const enabled = get( option, [ 'enabled', 'value' ], false ) === 'yes';
-		options[ key ] && ( options[ key ].recipient.default = def );
-
-		if ( enabled && noValue ) {
-			options[ key ].recipient.value = updatedValue;
+		if ( get( options, [ key, 'enabled', 'value' ] ) !== 'yes' ) {
+			return;
 		}
+		const _default = get( options, [ key, 'recipient', 'default' ] ) || defaultEmail;
+		options[ key ].recipient = {
+			default: _default,
+			value: get( options, [ key, 'recipient', 'value' ] ) || _default,
+		};
 	} );
 
 	// Decode1: &, <, > entities.
