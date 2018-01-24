@@ -8,12 +8,14 @@ import { identity, includes, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import debugFactory from 'debug';
 import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
 import config from 'config';
+import { tracks } from 'lib/analytics';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import SearchCard from 'components/search-card';
@@ -26,6 +28,7 @@ import { decodeEntities, preventWidows } from 'lib/formatting';
  */
 const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
 const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled ? require( 'lib/keyboard-shortcuts/global' )() : null;
+const debug = debugFactory( 'calypso:inline-help' );
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -90,6 +93,7 @@ class InlineHelp extends Component {
 
 	refreshHelpLinks = () => {
 		const helpLinks = HelpSearchStore.getHelpLinks().wordpress_support_links;
+		debug( 'refreshing help links:', helpLinks );
 		this.setState( {
 			helpLinks: helpLinks,
 			selectedResult: -1,
@@ -111,16 +115,22 @@ class InlineHelp extends Component {
 
 	toggleInlineHelp = () => {
 		const { showInlineHelp } = this.state;
-		this.setState( {
-			showInlineHelp: ! showInlineHelp,
-		} );
+		if ( showInlineHelp ) {
+			this.closeInlineHelp();
+		} else {
+			this.showInlineHelp();
+		}
 	};
 
 	showInlineHelp = () => {
+		debug( 'showing inline help.' );
+		tracks.recordEvent( 'calypso_inline-help_show' );
 		this.setState( { showInlineHelp: true } );
 	};
 
 	closeInlineHelp = () => {
+		debug( 'hiding inline help.' );
+		tracks.recordEvent( 'calypso_inline-help_close' );
 		this.setState( { showInlineHelp: false } );
 	};
 
@@ -129,6 +139,8 @@ class InlineHelp extends Component {
 	};
 
 	onSearch = searchQuery => {
+		debug( 'search query received: ', searchQuery );
+		tracks.recordEvent( 'calypso_inline-help_search', { searchQuery } );
 		this.setState( { helpLinks: [], searchQuery: searchQuery } );
 		HelpSearchActions.fetch( searchQuery );
 	};
@@ -224,19 +236,39 @@ class InlineHelp extends Component {
 		);
 	}
 
+	followHelpLink = ( url, payload ) => {
+		return () => {
+			tracks.recordEvent( 'calypso_inline-help_follow-link', payload );
+			window.location = url;
+		};
+	}
+
 	renderHelpLink = ( link, index ) => {
 		const { selectedResult } = this.state;
 		const classes = [
 			'inline-help__results-item',
 			selectedResult === index && 'is-selected',
 		].filter( Boolean );
+		const eventPayload = {
+			searchQuery: this.state.searchQuery,
+			currentUrl: window.location.href,
+			resultUrl: link.link,
+		};
 		return (
 			<li key={ link.link } className={ classNames( ...classes ) }>
-				<a href={ link.link } title={ decodeEntities( link.description ) }>
+				<Button
+					onClick={ this.followHelpLink( link.link, eventPayload ) }
+					title={ decodeEntities( link.description ) }
+					borderless
+				>
 					{ preventWidows( decodeEntities( link.title ) ) }
-				</a>
+				</Button>
 			</li>
 		);
+	}
+
+	moreHelpClicked() {
+		tracks.recordEvent( 'calypso_inline-help_more_help_clicked' );
 	}
 
 	render() {
@@ -272,7 +304,7 @@ class InlineHelp extends Component {
 
 						{ this.renderSearchResults() }
 
-						<Button className="inline-help__button" borderless href="/help">
+						<Button onClick={ this.moreHelpClicked } className="inline-help__button" borderless href="/help">
 							<Gridicon icon="help" /> More help
 						</Button>
 					</div>

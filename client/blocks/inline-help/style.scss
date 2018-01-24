@@ -138,7 +138,6 @@
 	.inline-help__results-item {
 		margin: 0;
 		font-size: 18px;
-		line-height: 1.4;
 		border-top: 1px solid $border-ultra-light-gray;
 
 		@include breakpoint( ">660px" ) {
@@ -146,7 +145,11 @@
 			line-height: 1.3;
 		}
 
-		a {
+		button {
+			color: $blue-wordpress;
+			text-decoration: underline;
+			font-weight: normal;
+			line-height: 1.4;
 			display: block;
 			padding: 14px 16px;
 		}
@@ -156,7 +159,7 @@
 			cursor: pointer;
 			color: $white;
 
-			a {
+			button {
 				color: $white;
 			}
 		}
