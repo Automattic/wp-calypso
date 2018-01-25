@@ -59,12 +59,11 @@
 				display: inline-block;
 				height: 32px;
 				width: 32px;
-				overflow: hidden;
 				position: relative;
 				margin: 0 12px 0 15px;
 
-				&.is-thumb-placeholder {
-					background: $gray-light;
+				&.image {
+					overflow: hidden;
 				}
 
 				img {

@@ -52,16 +52,20 @@
 		align-items: center;
 	}
 
+	.products__list-image-placeholder {
+		margin-right: 16px;
+	}
+
+	.products__list-image-placeholder::after {
+		display: none;
+	}
+
 	.products__list-image {
 		height: 40px;
 		width: 40px;
 		overflow: hidden;
 		position: relative;
 		margin-right: 16px;
-
-		&.is-thumb-placeholder {
-			background: $gray-light;
-		}
 
 		img {
 			position: absolute;

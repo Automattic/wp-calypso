@@ -50,14 +50,6 @@
 			transform: translate( -50%,-50% );
 		}
 	}
-
-	&.is-thumb-placeholder {
-		height: 40px;
-		min-width: 40px;
-		overflow: hidden;
-		position: relative;
-		background: $gray-light;
-	}
 }
 
 .product-categories__list-item-wrapper {

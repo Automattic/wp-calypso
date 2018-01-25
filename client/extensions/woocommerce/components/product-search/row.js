@@ -26,6 +26,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 import { areVariationsSelected, isProductSelected, isVariableProduct } from './utils';
 import ProductVariations from './variations';
+import ImagePlaceholder from 'woocommerce/components/image-placeholder';
 
 class ProductSearchRow extends Component {
 	static propTypes = {
@@ -209,10 +210,15 @@ class ProductSearchRow extends Component {
 			imageSrc = get( product.image, 'src', imageSrc );
 		}
 		const imageClasses = classNames( 'product-search__list-image', {
-			'is-thumb-placeholder': ! imageSrc,
+			image: imageSrc,
 		} );
-
-		return <span className={ imageClasses }>{ imageSrc && <img src={ imageSrc } /> }</span>;
+		return (
+			<span className={ imageClasses }>
+				{ ( imageSrc && <img src={ imageSrc } alt="" /> ) || (
+					<ImagePlaceholder width={ 32 } height={ 32 } />
+				) }
+			</span>
+		);
 	}
 
 	renderRow = product => {
