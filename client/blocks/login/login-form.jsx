@@ -87,6 +87,8 @@ export class LoginForm extends Component {
 					elapsedMs: Date.now() - window.calypsoLoadStartTime[ 'log-in' ].startTimestamp,
 					path: '/log-in',
 				} );
+
+				delete window.calypsoLoadStartTime[ 'log-in' ];
 			}
 		}
 
