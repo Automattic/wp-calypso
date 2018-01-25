@@ -11,7 +11,6 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import AvailableTimeCard from './available-time-card';
-import CompactCard from 'components/card/compact';
 import { isDefaultLocale } from 'lib/i18n-utils';
 
 const NUMBER_OF_DAYS_TO_SHOW = 7;
@@ -50,9 +49,9 @@ class AvailableTimePicker extends Component {
 	static propTypes = {
 		actionText: PropTypes.string.isRequired,
 		availableTimes: PropTypes.array.isRequired,
-		description: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
+		timezone: PropTypes.string.isRequired,
 	};
 
 	render() {
@@ -60,17 +59,14 @@ class AvailableTimePicker extends Component {
 			actionText,
 			availableTimes,
 			currentUserLocale,
-			description,
 			disabled,
 			onSubmit,
-			signupForm,
+			timezone,
 		} = this.props;
-		const availability = groupAvailableTimesByDate( availableTimes, signupForm.timezone );
+		const availability = groupAvailableTimesByDate( availableTimes, timezone );
 
 		return (
 			<div>
-				<CompactCard> { description } </CompactCard>
-
 				{ availability.map( ( { date, times } ) => (
 					<AvailableTimeCard
 						actionText={ actionText }
@@ -80,7 +76,7 @@ class AvailableTimePicker extends Component {
 						key={ date }
 						onSubmit={ onSubmit }
 						times={ times }
-						timezone={ signupForm.timezone }
+						timezone={ timezone }
 					/>
 				) ) }
 			</div>

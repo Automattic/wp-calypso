@@ -63,15 +63,22 @@ describe( 'state/concierge', () => {
 			const scheduleId = 123;
 			const beginTimestamp = 1234567890;
 			const appointmentId = 1;
+			const appointmentDetails = { meta: { timezone: 'UTC' } };
 
-			expect( rescheduleConciergeAppointment( scheduleId, appointmentId, beginTimestamp ) ).toEqual(
-				{
-					type: CONCIERGE_APPOINTMENT_RESCHEDULE,
+			expect(
+				rescheduleConciergeAppointment(
 					scheduleId,
 					appointmentId,
 					beginTimestamp,
-				}
-			);
+					appointmentDetails
+				)
+			).toEqual( {
+				type: CONCIERGE_APPOINTMENT_RESCHEDULE,
+				scheduleId,
+				appointmentId,
+				beginTimestamp,
+				appointmentDetails,
+			} );
 		} );
 
 		test( 'requestConciergeAvailableTimes()', () => {
