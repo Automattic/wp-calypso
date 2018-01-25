@@ -125,6 +125,7 @@ describe( 'reducer', () => {
 				12345: { '123456asdf789': true },
 			} );
 		} );
+
 		test( 'should accumulate invites', () => {
 			const original = deepFreeze( { 12345: { '123456asdf789': false } } );
 			const state = requestingResend( original, {
@@ -136,6 +137,7 @@ describe( 'reducer', () => {
 				12345: { '123456asdf789': false, '789lkjh123456': true },
 			} );
 		} );
+
 		test( 'should accumulate sites', () => {
 			const original = deepFreeze( { 12345: { '123456asdf789': false } } );
 			const state = requestingResend( original, {

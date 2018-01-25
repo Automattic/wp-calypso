@@ -22,6 +22,7 @@ describe( 'selectors', () => {
 			};
 			expect( isRequestingResend( state, 67890, '789lkjh123456' ) ).to.equal( true );
 		} );
+
 		test( 'should return false when resend request is complete', () => {
 			const state = {
 				invites: {
@@ -33,6 +34,7 @@ describe( 'selectors', () => {
 			};
 			expect( isRequestingResend( state, 12345, '123456asdf789' ) ).to.equal( false );
 		} );
+
 		test( 'should return false when resend has not been requested', () => {
 			const state = {
 				invites: {
