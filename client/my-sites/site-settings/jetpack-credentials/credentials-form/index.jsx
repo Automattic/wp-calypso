@@ -21,7 +21,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import Gridicon from 'gridicons';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { isUpdatingJetpackCredentials } from 'state/selectors';
 
 export class CredentialsForm extends Component {
@@ -239,9 +239,11 @@ export class CredentialsForm extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	formIsSubmitting: isUpdatingJetpackCredentials( state, getSelectedSiteId( state ) ),
-} );
+const mapStateToProps = ( state, { host } ) =>
+	Object.assign(
+		{ formIsSubmitting: isUpdatingJetpackCredentials( state, getSelectedSiteId( state ) ) },
+		! host && { host: getSelectedSiteSlug( state, getSelectedSiteId( state ) ) }
+	);
 
 export default connect( mapStateToProps, { deleteCredentials, updateCredentials } )(
 	localize( CredentialsForm )
