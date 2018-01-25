@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +16,8 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import CredentialsForm from 'my-sites/site-settings/jetpack-credentials/credentials-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SignupActions from 'lib/signup/actions';
+import { getJetpackCredentials } from 'state/selectors';
 
 class RewindFormStep extends Component {
 	static propTypes = {
@@ -29,6 +31,15 @@ class RewindFormStep extends Component {
 	skipStep = () => this.props.goToNextStep();
 
 	onCancel = () => this.props.goToStep( 'rewind-confirm' );
+
+	goToComplete = () => {
+		SignupActions.submitSignupStep( {
+			processingMessage: this.props.translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+		} );
+
+		this.props.goToNextStep();
+	};
 
 	renderStepContent = () => {
 		const { siteId, translate } = this.props;
@@ -86,10 +97,12 @@ class RewindFormStep extends Component {
 	}
 }
 
-export default connect( state => {
-	const siteId = getSelectedSiteId( state );
+export default connect( ( state, ownProps ) => {
+	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 ) );
+	const mainCredentials = getJetpackCredentials( state, siteId, 'main' );
 
 	return {
 		siteId,
+		mainCredentials,
 	};
 }, null )( localize( RewindFormStep ) );

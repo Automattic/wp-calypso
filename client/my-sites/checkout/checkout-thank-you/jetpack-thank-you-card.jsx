@@ -540,7 +540,6 @@ class JetpackThankYouCard extends Component {
 
 	renderAction( progress = 0 ) {
 		const { jetpackAdminPageUrl, selectedSite: site, translate } = this.props;
-		const buttonUrl = site && jetpackAdminPageUrl;
 		// We return instructions for setting up manually
 		// when we finish if something errored
 		if ( this.isErrored() && ! this.props.isInstalling ) {
@@ -562,12 +561,10 @@ class JetpackThankYouCard extends Component {
 			return (
 				<div className="checkout-thank-you__jetpack-action-buttons">
 					<a
-						className={ classNames( 'button', 'thank-you-card__button', {
-							'is-placeholder': ! buttonUrl,
-						} ) }
-						href={ buttonUrl }
+						className={ classNames( 'button', 'thank-you-card__button' ) }
+						href={ '/start/rewind-credentials?blogid=' + this.props.siteId }
 					>
-						{ translate( 'Explore your plan' ) }
+						{ translate( 'Set up backups' ) }
 					</a>
 					{ this.renderLiveChatButton() }
 				</div>
@@ -584,7 +581,9 @@ class JetpackThankYouCard extends Component {
 		);
 		if ( 100 === progress ) {
 			this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
-			return translate( "You are powered up, it's time to see your site." );
+			return translate(
+				"You are powered up. Now it's time to " + 'configure your backups settings.'
+			);
 		}
 
 		if ( this.isErrored() ) {

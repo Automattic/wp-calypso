@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
+import SignupActions from 'lib/signup/actions';
 
 class RewindConfirmStep extends Component {
 	static propTypes = {
@@ -22,11 +23,25 @@ class RewindConfirmStep extends Component {
 		stepName: PropTypes.string,
 	};
 
-	addCredentials = () => this.props.goToNextStep();
+	addCredentials = () => {
+		SignupActions.submitSignupStep( {
+			processingMessage: this.props.translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+		} );
+
+		this.props.goToNextStep();
+	};
+
+	skipStep = () => {
+		SignupActions.submitSignupStep( {
+			processingMessage: this.props.translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+		} );
+
+		this.props.goToStep( 'rewind-complete' );
+	};
 
 	contactSupport = () => alert( 'Not yet implemented' );
-
-	skipStep = () => this.props.goToStep( 'rewind-complete' );
 
 	renderStepContent = () => {
 		const { translate } = this.props;

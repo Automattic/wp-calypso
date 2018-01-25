@@ -12,6 +12,8 @@ import { localize } from 'i18n-calypso';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
+import SignupActions from 'lib/signup/actions';
+import QueryRewindState from 'components/data/query-rewind-state';
 
 class RewindAddStep extends Component {
 	static propTypes = {
@@ -22,7 +24,14 @@ class RewindAddStep extends Component {
 		stepName: PropTypes.string,
 	};
 
-	addCredentials = () => this.props.goToStep( 'rewind-form' );
+	addCredentials = () => {
+		SignupActions.submitSignupStep( {
+			processingMessage: this.props.translate( 'Setting up your site' ),
+			stepName: this.props.stepName,
+		} );
+
+		this.props.goToStep( 'rewind-form' );
+	};
 
 	skipStep = () => this.props.goToNextStep();
 
@@ -31,6 +40,7 @@ class RewindAddStep extends Component {
 
 		return (
 			<Card className="rewind-add__card">
+				<QueryRewindState siteId={ this.props.siteId } />
 				<h3 className="rewind-add__title">{ translate( 'Add credentials' ) }</h3>
 				<img className="rewind-add__image" src="/calypso/images/illustrations/security.svg" />
 				<p className="rewind-add__description">
