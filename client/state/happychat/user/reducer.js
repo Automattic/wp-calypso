@@ -12,7 +12,7 @@ import { combineReducers, createReducer } from 'state/utils';
 import {
 	geoLocationSchema,
 	isEligibleSchema,
-	isPresalesPrecancellationEligibleSchema,
+	isPresalesPrecancellationEligible as isPresalesPrecancellationEligibleSchema,
 } from './schema';
 
 /**
