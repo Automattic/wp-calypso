@@ -121,7 +121,7 @@ class CredentialsConfigured extends Component {
 						port: get( mainCredentials, 'port', '' ),
 						user: get( mainCredentials, 'user', '' ),
 						pass: get( mainCredentials, 'pass', '' ),
-						abspath: get( mainCredentials, 'abspath', '' ),
+						path: get( mainCredentials, 'path', '' ),
 						kpri: get( mainCredentials, 'kpri', '' ),
 						role: 'main',
 						siteId,
