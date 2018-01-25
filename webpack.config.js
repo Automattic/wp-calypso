@@ -134,6 +134,12 @@ const webpackConfig = {
 				use: 'imports-loader?this=>window',
 			},
 			{
+				test: /\.worker\.js$/,
+				use: {
+					loader: 'worker-loader',
+				},
+			},
+			{
 				test: /README\.md$/,
 				use: [
 					{ loader: 'html-loader' },

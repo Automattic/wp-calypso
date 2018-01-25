@@ -8,6 +8,9 @@ const debug = debugFactory( 'calypso:post-normalizer' );
 /**
  * Internal dependencies
  */
+const PostNormalizerWorker = require( 'workers/post-normalizer.worker.js' );
+const worker = new PostNormalizerWorker();
+worker.postMessage( { hi: 'there' } );
 
 function debugForPost( post ) {
 	return function( msg ) {
