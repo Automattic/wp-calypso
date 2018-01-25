@@ -130,24 +130,9 @@ User.prototype.fetch = function() {
 		{ meta: 'flags' },
 		function( error, data ) {
 			if ( error ) {
-				if (
-					! config.isEnabled( 'wpcom-user-bootstrap' ) &&
-					error.error === 'authorization_required'
-				) {
-					/**
-					 * if the user bootstrap is disabled (in development), we need to rely on a request to
-					 * /me to determine if the user is logged in.
-					 */
-					debug( 'The user is not logged in.' );
-
-					this.initialized = true;
-					this.emit( 'change' );
-				} else {
-					debug( 'Something went wrong trying to get the user.' );
-				}
+				this.handleFetchFailure( error );
 				return;
 			}
-
 
 			// Release lock from subsequent fetches
 			this.fetching = false;
@@ -169,6 +154,27 @@ User.prototype.fetch = function() {
 			debug( 'User successfully retrieved' );
 		}.bind( this )
 	);
+};
+
+/**
+ * Handles user fetch failure from WordPress.com REST API by updating User's state
+ * and emitting a change event.
+ *
+ * @param {Error} error network response error
+ */
+User.prototype.handleFetchFailure = function( error ) {
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
+		/**
+		 * if the user bootstrap is disabled (in development), we need to rely on a request to
+		 * /me to determine if the user is logged in.
+		 */
+		debug( 'The user is not logged in.' );
+
+		this.initialized = true;
+		this.emit( 'change' );
+	} else {
+		debug( 'Something went wrong trying to get the user.' );
+	}
 };
 
 User.prototype.getLanguage = function() {
