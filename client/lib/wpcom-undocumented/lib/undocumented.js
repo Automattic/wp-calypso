@@ -406,6 +406,11 @@ Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, 
 	);
 };
 
+Undocumented.prototype.resendInvite = function( siteId, inviteId, fn ) {
+	debug( '/sites/:site_id:/invites/:invite_id:/resend query' );
+	return this.wpcom.req.post( '/sites/' + siteId + '/invites/' + inviteId + '/resend', {}, {}, fn );
+};
+
 Undocumented.prototype.createInviteValidation = function( siteId, usernamesOrEmails, role, fn ) {
 	debug( '/sites/:site_id:/invites/validate query' );
 	return this.wpcom.req.post(
