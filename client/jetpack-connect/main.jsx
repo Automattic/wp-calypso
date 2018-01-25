@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { concat, flowRight, includes } from 'lodash';
+import { concat, endsWith, flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -221,6 +221,7 @@ export class JetpackConnectMain extends Component {
 	handleUrlSubmit = () => {
 		this.props.recordTracksEvent( 'calypso_jpc_url_submit', {
 			jetpack_url: this.state.currentUrl,
+			url_ends_with_wpadmin: endsWith( this.state.currentUrl, '/wp-admin' ),
 		} );
 		if ( this.props.isRequestingSites ) {
 			this.setState( { waitingForSites: true } );
