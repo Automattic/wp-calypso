@@ -33,7 +33,7 @@
     "lru": "^3.1.0",
     "moment-timezone": "0.5.11",
     "react": "0.14.8 || ^15.5.0 || ^16.0.0",
-    "xgettext-js": "1.0.0"
+    "xgettext-js": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
