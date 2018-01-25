@@ -48,6 +48,7 @@ import {
 	clearProductCategoryEdits,
 } from 'woocommerce/state/ui/product-categories/actions';
 import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
+import { getSaveErrorMessage } from './save-error-message';
 import page from 'page';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
@@ -174,11 +175,13 @@ class ProductUpdate extends React.Component {
 			);
 		};
 
-		const failureAction = errorNotice(
-			translate( 'There was a problem saving %(product)s. Please try again.', {
-				args: { product: product.name },
-			} )
-		);
+		const failureAction = error => {
+			const errorSlug = ( error && error.error ) || undefined;
+
+			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {
+				duration: 8000,
+			} );
+		};
 
 		this.props.createProductActionList( successAction, failureAction );
 	};

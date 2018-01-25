@@ -18,6 +18,7 @@ import {
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,
 	WOOCOMMERCE_PRODUCT_UPDATED,
 } from 'woocommerce/state/action-types';
+import { decodeEntities } from 'lib/formatting';
 
 export default createReducer(
 	{},
@@ -39,16 +40,17 @@ export default createReducer(
  */
 function updateCachedProduct( products, product ) {
 	let found = false;
+	const updatedProduct = { ...product, name: decodeEntities( product.name ) };
 	const newProducts = products.map( p => {
 		if ( p.id === product.id ) {
 			found = true;
-			return product;
+			return updatedProduct;
 		}
 		return p;
 	} );
 
 	if ( ! found ) {
-		newProducts.push( product );
+		newProducts.push( updatedProduct );
 	}
 
 	return newProducts;
