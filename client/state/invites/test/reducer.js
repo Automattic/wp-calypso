@@ -27,7 +27,7 @@ describe( 'reducer', () => {
 							email: false,
 							name: 'Pollo',
 							avatar_URL:
-								'https://0.gravatar.com/avatar/0c4d46844039ba935f69208615e9010c?s=96&d=identicon&r=G',
+								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 						},
 					},
 				],
@@ -49,7 +49,7 @@ describe( 'reducer', () => {
 							email: false,
 							name: 'Pollo',
 							avatar_URL:
-								'https://0.gravatar.com/avatar/0c4d46844039ba935f69208615e9010c?s=96&d=identicon&r=G',
+								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 						},
 					},
 				],
@@ -76,7 +76,7 @@ describe( 'reducer', () => {
 								email: false,
 								name: 'Pollo',
 								avatar_URL:
-									'https://0.gravatar.com/avatar/0c4d46844039ba935f69208615e9010c?s=96&d=identicon&r=G',
+									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 							},
 							hasExtraInvalidProperty: true,
 						},
@@ -99,7 +99,7 @@ describe( 'reducer', () => {
 								email: false,
 								name: 'Pollo',
 								avatar_URL:
-									'https://0.gravatar.com/avatar/0c4d46844039ba935f69208615e9010c?s=96&d=identicon&r=G',
+									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 							},
 						},
 					],
