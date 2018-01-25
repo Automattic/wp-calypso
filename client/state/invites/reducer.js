@@ -17,6 +17,7 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { inviteItemsSchema } from './schema';
 
 /**
  * Returns the updated site invites requests state after an action has been
@@ -67,7 +68,8 @@ export const items = createReducer(
 				} ),
 			};
 		},
-	}
+	},
+	inviteItemsSchema
 );
 
 /**
