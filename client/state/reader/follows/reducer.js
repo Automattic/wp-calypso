@@ -172,9 +172,15 @@ export const items = createReducer(
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
 				return state;
 			}
+
 			return {
 				...state,
-				[ urlKey ]: merge( {}, currentFollow, { is_following: false } ),
+				[ urlKey ]: merge( {}, currentFollow, {
+					is_following: false,
+					delivery_methods: {
+						notification: { send_posts: false },
+					},
+				} ),
 			};
 		},
 		[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
