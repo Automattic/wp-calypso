@@ -27,13 +27,16 @@ export const request = ( { dispatch }, action ) => {
 
 	dispatch( notice );
 
+	const { path, ...otherCredentials } = action.credentials;
+	const credentials = { ...otherCredentials, abspath: path };
+
 	dispatch(
 		http(
 			{
 				apiVersion: '1.1',
 				method: 'POST',
 				path: `/activity-log/${ action.siteId }/update-credentials`,
-				body: { credentials: action.credentials },
+				body: credentials,
 			},
 			{ ...action, noticeId }
 		)
