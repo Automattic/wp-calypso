@@ -24,13 +24,16 @@ export const download = {
 	required: [ 'downloadId', 'rewindId', 'backupPoint', 'startedAt' ],
 };
 
-export const restore = {
+export const rewind = {
 	type: 'object',
 	properties: {
-		status: { type: 'string', enum: [ 'finished', 'inactive', 'queued', 'running' ] },
-		percent: { type: 'integer' },
+		rewindId: { type: 'number' },
+		status: { type: 'string', enum: [ 'failed', 'finished', 'running' ] },
+		startedAt: { type: 'string' },
+		progress: { type: 'integer' },
+		reason: { type: 'string' },
 	},
-	required: [ 'status' ],
+	required: [ 'restoreId', 'status' ],
 };
 
 export const unavailable = {
@@ -107,12 +110,12 @@ export const active = {
 			type: 'array',
 			items: download,
 		},
-		rewinds: { type: 'array', items: restore },
+		rewind,
 		last_updated: { type: 'integer' },
 	},
 	required: [ 'state', 'last_updated' ],
 };
 
-export const rewind = {
+export const rewindStatus = {
 	oneOf: [ unavailable, inactive, awaitingCredentials, provisioning, active ],
 };
