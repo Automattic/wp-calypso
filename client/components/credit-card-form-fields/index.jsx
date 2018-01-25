@@ -64,9 +64,7 @@ export class CreditCardFormFields extends React.Component {
 		);
 	};
 
-	getFieldValue = fieldName => {
-		return this.props.card[ fieldName ] || '';
-	};
+	getFieldValue = fieldName => this.props.card[ fieldName ] || '';
 
 	updateFieldValues( fieldName, nextValue ) {
 		const { onFieldChange } = this.props;

@@ -93,8 +93,7 @@ class CreditCardForm extends Component {
 	validate = ( formValues, onComplete ) =>
 		this.formElem && onComplete( null, this.getValidationErrors() );
 
-	setFormState = form =>
-		this.formElem && this.setState( { form } );
+	setFormState = form => this.formElem && this.setState( { form } );
 
 	endFormSubmitting = () => this.formElem && this.setState( { formSubmitting: false } );
 
@@ -108,9 +107,7 @@ class CreditCardForm extends Component {
 		} );
 	};
 
-	getErrorMessage = fieldName => {
-		return formState.getFieldErrorMessages( this.state.form, fieldName );
-	};
+	getErrorMessage = fieldName => formState.getFieldErrorMessages( this.state.form, fieldName );
 
 	onSubmit = event => {
 		event.preventDefault();
@@ -214,8 +211,6 @@ class CreditCardForm extends Component {
 			cardToken,
 		};
 	}
-
-	isFieldInvalid = name => formState.isFieldInvalid( this.state.form, name );
 
 	getValidationErrors() {
 		const validationResult = validateCardDetails( this.getCardDetails() );
