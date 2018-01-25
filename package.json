@@ -127,7 +127,7 @@
     "react-day-picker": "6.2.1",
     "react-dom": "16.2.0",
     "react-hot-loader": "1.3.1",
-    "react-modal": "3.1.0",
+    "react-modal": "3.1.11",
     "react-pure-render": "1.0.2",
     "react-redux": "5.0.6",
     "react-transition-group": "1.2.1",
