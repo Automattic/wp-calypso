@@ -11,6 +11,7 @@ const debug = debugFactory( 'calypso:follow-list:site' );
 /**
  * Internal dependencies
  */
+import config from 'config';
 import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
 
@@ -46,7 +47,7 @@ FollowListSite.prototype.follow = function() {
 		wpcom
 			.site( this.site_id )
 			.follow()
-			.add( function( resp ) {
+			.add( { source: config( 'readerFollowingSource' ) }, function( resp ) {
 				debug( 'follow success', resp );
 			} );
 	}
@@ -63,7 +64,7 @@ FollowListSite.prototype.unfollow = function() {
 		wpcom
 			.site( this.site_id )
 			.follow()
-			.del( function( resp ) {
+			.del( { source: config( 'readerFollowingSource' ) }, function( resp ) {
 				debug( 'unfollow success', resp );
 			} );
 	}

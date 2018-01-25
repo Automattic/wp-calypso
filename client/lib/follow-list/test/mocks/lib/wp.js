@@ -8,7 +8,7 @@ const endpoints = [ 'add', 'del' ];
  **/
 const successRequestStub = function() {
 	const args = Array.prototype.slice.call( arguments );
-	args[ 0 ].apply( undefined, [ null, { some: 'data' } ] );
+	args[ 1 ].apply( undefined, [ null, { some: 'data' } ] );
 };
 
 export default {
