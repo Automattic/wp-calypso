@@ -152,18 +152,15 @@ export class ChecklistBanner extends Component {
 	render() {
 		const { completed, total, translate, siteId } = this.props;
 		const task = this.getNextTask();
-		const percentage = Math.round( completed / total * 100 );
+		const percentage = Math.round( completed / total * 100 ) || 0;
 
 		if ( ! this.canShow() ) {
 			return null;
 		}
 
-		if ( ! task ) {
-			return siteId && <QuerySiteChecklist siteId={ siteId } />;
-		}
-
 		return (
 			<Card className="checklist-banner">
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<div className="checklist-banner__gauge">
 					<span className="checklist-banner__gauge-additional-text">{ translate( 'setup' ) }</span>
 					<Gauge
@@ -193,13 +190,14 @@ export class ChecklistBanner extends Component {
 					<ProgressBar value={ completed } total={ total } color="#47b766" />
 				</div>
 				<div className="checklist-banner__content">
-					<h3 className="checklist-banner__title">{ task.title }</h3>
-					<p className="checklist-banner__description">{ task.description }</p>
+					<h3 className="checklist-banner__title">{ task && task.title }</h3>
+					<p className="checklist-banner__description">{ task && task.description }</p>
 					{ completed === total ? this.renderShareButtons() : this.renderTaskButton() }
 				</div>
-				{ task.image && (
-					<img src={ task.image } aria-hidden="true" className="checklist-banner__image" />
-				) }
+				{ task &&
+					task.image && (
+						<img src={ task.image } aria-hidden="true" alt="" className="checklist-banner__image" />
+					) }
 				{ completed === total && (
 					<Button borderless className="checklist-banner__close" onClick={ this.handleClose }>
 						<Gridicon size={ 24 } icon="cross" color="#87a6bc" />
