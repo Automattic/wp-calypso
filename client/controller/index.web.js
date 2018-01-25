@@ -12,33 +12,22 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import Layout from 'layout';
-import LayoutLoggedOut from 'layout/logged-out';
-import nuxWelcome from 'layout/nux-welcome';
-import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
-import userFactory from 'lib/user';
+import LoggedInLayout from 'layout-wrapper/logged-in';
+import LoggedOutLayout from 'layout-wrapper/logged-out';
 
 /**
  * Re-export
  */
 export { setSection, setUpLocale } from './shared.js';
 
-const user = userFactory();
-
-export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
-	<ReduxProvider store={ store }>
-		{ getCurrentUser( store.getState() ) ? (
-			<Layout
-				primary={ primary }
-				secondary={ secondary }
-				user={ user }
-				nuxWelcome={ nuxWelcome }
-				translatorInvitation={ translatorInvitation }
-			/>
+export const ReduxWrappedLayout = props => (
+	<ReduxProvider store={ props.store }>
+		{ getCurrentUser( props.store.getState() ) ? (
+			<LoggedInLayout { ...props } />
 		) : (
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			<LoggedOutLayout { ...props } />
 		) }
 	</ReduxProvider>
 );
