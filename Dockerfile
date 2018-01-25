@@ -1,24 +1,15 @@
-FROM       node:8.9.3
+FROM       node:8.9.3-alpine
 LABEL maintainer="Automattic"
 
-WORKDIR    /calypso
+RUN apk add --no-cache git
 
+WORKDIR    /calypso
 
 ENV        CONTAINER 'docker'
 ENV        NODE_PATH=/calypso/server:/calypso/client
 
-# Build a "base" layer
-#
-# This layer should never change unless env-config.sh
-# changes. For local development this should always
-# be an empty file and therefore this layer should
-# cache well.
-#
-# env-config.sh
-#   used by systems to overwrite some defaults
-#   such as the apt and npm mirrors
-COPY       ./env-config.sh /tmp/env-config.sh
-RUN        bash /tmp/env-config.sh
+ARG        npm_registry
+ENV        NPM_CONFIG_REGISTRY=$npm_registry
 
 # Build a "dependencies" layer
 #
