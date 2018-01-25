@@ -526,10 +526,10 @@ class ActivityLog extends Component {
 					<Banner
 						icon="history"
 						disableHref
-						title={ translate( 'Site configuration underway' ) }
+						title={ translate( 'Your backup is underway' ) }
 						description={ translate(
-							"There's nothing more you need to do right now. " +
-								"You'll be able to restore backups soon."
+							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+								"After this initial backup, we'll save future changes in real time."
 						) }
 					/>
 				) }
