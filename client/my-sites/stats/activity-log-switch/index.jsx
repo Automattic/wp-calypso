@@ -61,6 +61,16 @@ class ActivityLogSwitch extends Component {
 					/>
 				);
 
+			case 'missing_plan':
+				return (
+					<Button
+						primary
+						href={ `/plans/${ siteSlug }` }
+					>
+						{ translate( 'Upgrade now' ) }
+					</Button>
+				);
+
 			default:
 				return (
 					<Button
