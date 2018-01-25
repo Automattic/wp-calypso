@@ -55,26 +55,8 @@
 				position: relative;
 			}
 
-			.product-search__list-image {
-				display: inline-block;
-				height: 32px;
-				width: 32px;
-				position: relative;
+			.image-thumb {
 				margin: 0 12px 0 15px;
-
-				&.image {
-					overflow: hidden;
-				}
-
-				img {
-					position: absolute;
-					left: 50%;
-					top: 50%;
-					height: 100%;
-					width: auto;
-					-webkit-transform: translate( -50%, -50% );
-					transform: translate( -50%, -50% );
-				}
 			}
 
 			.count {

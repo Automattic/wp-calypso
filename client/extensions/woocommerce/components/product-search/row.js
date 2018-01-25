@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, find, get, intersection, noop, reduce, uniqBy, values } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -26,7 +25,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 import { areVariationsSelected, isProductSelected, isVariableProduct } from './utils';
 import ProductVariations from './variations';
-import ImagePlaceholder from 'woocommerce/components/image-placeholder';
+import ImageThumb from 'woocommerce/components/image-thumb';
 
 class ProductSearchRow extends Component {
 	static propTypes = {
@@ -204,21 +203,12 @@ class ProductSearchRow extends Component {
 	};
 
 	renderInputImage( product ) {
-		let imageSrc = get( product, 'images[0].src', false );
+		let imageSrc = get( product, 'images[0].src', '' );
 		// Check for a variation image
 		if ( product.isVariation ) {
 			imageSrc = get( product.image, 'src', imageSrc );
 		}
-		const imageClasses = classNames( 'product-search__list-image', {
-			image: imageSrc,
-		} );
-		return (
-			<span className={ imageClasses }>
-				{ ( imageSrc && <img src={ imageSrc } alt="" /> ) || (
-					<ImagePlaceholder width={ 32 } height={ 32 } />
-				) }
-			</span>
-		);
+		return <ImageThumb width={ 32 } height={ 32 } src={ imageSrc } alt="" />;
 	}
 
 	renderRow = product => {

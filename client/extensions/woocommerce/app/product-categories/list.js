@@ -29,7 +29,7 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import VirtualList from 'components/virtual-list';
 import { stripHTML, decodeEntities } from 'lib/formatting';
-import ImagePlaceholder from 'woocommerce/components/image-placeholder';
+import ImageThumb from 'woocommerce/components/image-thumb';
 
 const ITEM_HEIGHT = 70;
 
@@ -79,22 +79,6 @@ class ProductCategories extends Component {
 		}
 	}
 
-	renderImage( item ) {
-		const image = item.image && item.image.src;
-
-		if ( ! image ) {
-			return <ImagePlaceholder />;
-		}
-
-		return (
-			<div className="product-categories__list-item-icon">
-				<figure>
-					{ item.image && <img src={ item.image.src } alt="" /> }
-				</figure>
-			</div>
-		);
-	}
-
 	renderItem( item, _recurse = false ) {
 		const { site } = this.props;
 
@@ -117,7 +101,7 @@ class ProductCategories extends Component {
 				<CompactCard key={ itemId } className="product-categories__list-item-card" onClick={ goToLink }>
 					<div className="product-categories__list-item-wrapper">
 						<div className="product-categories__list-thumb">
-							{ this.renderImage( item ) }
+							<ImageThumb src={ item.image && item.image.src || '' } alt="" />
 						</div>
 						<span className="product-categories__list-item-info">
 							<a href={ link }>{ item.name }</a>
