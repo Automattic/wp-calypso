@@ -33,6 +33,8 @@ export default function() {
 		);
 
 		if ( isEnabled( 'manage/people/invites' ) ) {
+			page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
+
 			page(
 				'/people/invites/:site_id',
 				peopleController.enforceSiteEnding,
