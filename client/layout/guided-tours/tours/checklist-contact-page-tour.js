@@ -73,6 +73,11 @@ export const ChecklistContactPageTour = makeTour(
 				) }
 			</p>
 			<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
+
+			<Next step="click-update" isButton={ false }>
+				{ translate( 'Skip this step' ) }
+			</Next>
+
 			<Continue target="editor-featured-image-current-image" step="choose-image" click hidden />
 		</Step>
 

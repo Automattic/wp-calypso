@@ -17,6 +17,11 @@ import contextTypes from '../context-types';
 export default class Next extends Component {
 	static propTypes = {
 		step: PropTypes.string.isRequired,
+		isButton: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		isButton: true,
 	};
 
 	static contextTypes = contextTypes;
@@ -32,9 +37,11 @@ export default class Next extends Component {
 	};
 
 	render() {
-		const { children } = this.props;
+		const { children, isButton } = this.props;
+		const buttonClass = ! isButton ? 'config-elements__text-button' : '';
+
 		return (
-			<Button primary onClick={ this.onClick }>
+			<Button primary onClick={ this.onClick } className={ buttonClass }>
 				{ children || translate( 'Next' ) }
 			</Button>
 		);
