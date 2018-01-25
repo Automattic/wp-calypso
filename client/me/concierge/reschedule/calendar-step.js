@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,6 +62,12 @@ class CalendarStep extends Component {
 		} );
 	};
 
+	getFilteredTimeSlots = () => {
+		// filter out current timeslot
+		const { appointmentDetails, availableTimes } = this.props;
+		return without( availableTimes, appointmentDetails.beginTimestamp );
+	};
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_concierge_reschedule_calendar_step' );
 	}
@@ -76,7 +83,6 @@ class CalendarStep extends Component {
 		const {
 			appointmentDetails,
 			appointmentId,
-			availableTimes,
 			currentUserLocale,
 			signupForm,
 			site,
@@ -115,7 +121,7 @@ class CalendarStep extends Component {
 
 						<AvailableTimePicker
 							actionText={ translate( 'Reschedule to this date' ) }
-							availableTimes={ availableTimes }
+							availableTimes={ this.getFilteredTimeSlots() }
 							currentUserLocale={ currentUserLocale }
 							disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING || ! appointmentDetails }
 							onBack={ null }
