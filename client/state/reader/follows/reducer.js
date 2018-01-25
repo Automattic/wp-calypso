@@ -157,6 +157,13 @@ export const items = createReducer(
 				newValues.error = null;
 			}
 
+			// Respect the existing state of the new post notification toggle.
+			// User may have toggled it on immediately after subscribing and
+			// action.payload.follow may overwrite it with the old value
+			newValues.delivery_methods = {
+				notification: get( state[ urlKey ], 'delivery_methods.notification' ),
+			};
+
 			return Object.assign( newState, {
 				[ urlKey ]: merge(
 					{ feed_URL: actualFeedUrl },
