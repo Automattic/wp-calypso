@@ -379,6 +379,32 @@ form.sidebar__button input {
 	line-height: 2.1;
 	margin-right: auto;
 
+	&.inline-help {
+		border-radius: 0;
+		border-left: 1px solid #c8d7e1;
+		flex: 0 1 40px;
+		margin-right: 0;
+		margin-left: auto;
+		outline: 0;
+
+		@include breakpoint( "<660px" ) {
+			flex: 0 1 56px;
+		}
+
+		.gridicon {
+			margin: 0 auto;
+			float: none;
+		}
+	}
+
+	&.is-active {
+		background: $blue-medium;
+
+		.gridicon {
+			fill: $white;
+		}
+	}
+
 	&.sidebar__footer-chat {
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		flex: 0 1 40px;

@@ -19,6 +19,7 @@ import { tracks } from 'lib/analytics';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import SearchCard from 'components/search-card';
+import PlaceholderLines from './placeholder-lines';
 import HelpSearchStore from 'lib/help-search/store';
 import HelpSearchActions from 'lib/help-search/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';
@@ -92,7 +93,7 @@ class InlineHelp extends Component {
 	}
 
 	refreshHelpLinks = () => {
-		const helpLinks = HelpSearchStore.getHelpLinks().wordpress_support_links;
+		const helpLinks = HelpSearchStore.getHelpLinks();
 		debug( 'refreshing help links:', helpLinks );
 		this.setState( {
 			helpLinks: helpLinks,
@@ -202,27 +203,22 @@ class InlineHelp extends Component {
 		if ( isEmpty( this.state.helpLinks ) ) {
 			// search, but no results so far
 			return (
-				<ul className="inline-help__results-placeholder">
-					<li className="inline-help__results-placeholder-item" />
-					<li className="inline-help__results-placeholder-item" />
-					<li className="inline-help__results-placeholder-item" />
-					<li className="inline-help__results-placeholder-item" />
-				</ul>
+				<PlaceholderLines />
 			);
 		}
 
-		if ( isEmpty( this.state.helpLinks ) ) {
+		if ( isEmpty( this.state.helpLinks.wordpress_support_links ) ) {
 			// search done, but nothing found
 			return (
 				<div>
-					<p className="inline-help__empty-results">No results…</p>
+					<p className="inline-help__empty-results">No results.</p>
 					{ this.renderContextHelp() }
 				</div>
 			);
 		}
 
 		// found something in helpLinks.wordpress_support_links!
-		const links = this.state.helpLinks;
+		const links = this.state.helpLinks.wordpress_support_links;
 		return (
 			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
 		);
@@ -239,7 +235,6 @@ class InlineHelp extends Component {
 	followHelpLink = ( url, payload ) => {
 		return () => {
 			tracks.recordEvent( 'calypso_inline-help_follow-link', payload );
-			window.location = url;
 		};
 	}
 
@@ -256,13 +251,13 @@ class InlineHelp extends Component {
 		};
 		return (
 			<li key={ link.link } className={ classNames( ...classes ) }>
-				<Button
+				<a
+					href={ link.link }
 					onClick={ this.followHelpLink( link.link, eventPayload ) }
 					title={ decodeEntities( link.description ) }
-					borderless
 				>
 					{ preventWidows( decodeEntities( link.title ) ) }
-				</Button>
+				</a>
 			</li>
 		);
 	}
@@ -295,6 +290,8 @@ class InlineHelp extends Component {
 				>
 					<div className="inline-help__heading">
 						<SearchCard
+							searching={ ! isEmpty( this.state.searchQuery ) && isEmpty( this.state.helpLinks ) }
+							initialValue={ this.state.searchQuery }
 							placeholder={ translate( 'Search for help…' ) }
 							onSearch={ this.onSearch }
 							onKeyDown={ this.onKeyDown }
