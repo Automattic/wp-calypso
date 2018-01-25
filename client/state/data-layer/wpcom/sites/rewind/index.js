@@ -25,25 +25,31 @@ const fetchRewindState = action =>
 		action
 	);
 
-const updateRewindState = ( { siteId }, data ) =>
-	[
-		{
-			type: REWIND_STATE_UPDATE,
-			siteId,
-			data,
-		},
-		data.rewind &&
-			data.rewind.status === 'running' &&
-			( dispatch =>
-				setTimeout(
-					() =>
-						dispatch( {
-							type: REWIND_STATE_REQUEST,
-							siteId,
-						} ),
-					3000
-				) ),
-	].filter( Boolean );
+const updateRewindState = ( { siteId }, data ) => {
+	const stateUpdate = {
+		type: REWIND_STATE_UPDATE,
+		siteId,
+		data,
+	};
+
+	const hasRunningRewind = data.rewind && data.rewind.status === 'running';
+
+	if ( ! hasRunningRewind ) {
+		return stateUpdate;
+	}
+
+	const delayedStateRequest = dispatch =>
+		setTimeout(
+			() =>
+				dispatch( {
+					type: REWIND_STATE_REQUEST,
+					siteId,
+				} ),
+			3000
+		);
+
+	return [ stateUpdate, delayedStateRequest ];
+};
 
 const setUnknownState = ( { siteId }, error ) =>
 	withAnalytics(
