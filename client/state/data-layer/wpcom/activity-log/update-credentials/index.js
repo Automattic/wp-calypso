@@ -36,7 +36,7 @@ export const request = ( { dispatch }, action ) => {
 				apiVersion: '1.1',
 				method: 'POST',
 				path: `/activity-log/${ action.siteId }/update-credentials`,
-				body: credentials,
+				body: { credentials },
 			},
 			{ ...action, noticeId }
 		)
