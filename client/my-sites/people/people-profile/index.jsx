@@ -72,6 +72,9 @@ class PeopleProfile extends React.PureComponent {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
+			case 'follower':
+				text = this.props.translate( 'Follower' );
+				break;
 			default:
 				text = role;
 		}
