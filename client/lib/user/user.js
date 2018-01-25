@@ -134,25 +134,9 @@ User.prototype.fetch = function() {
 				return;
 			}
 
-			// Release lock from subsequent fetches
-			this.fetching = false;
 			const userData = filterUserObject( data );
-
-			this.clearStoreIfChanged( userData.ID );
-
-			// Store user info in `this.data` and localstorage as `wpcom_user`
-			store.set( 'wpcom_user', userData );
-			this.data = userData;
-			if ( this.settings ) {
-				debug( 'Retaining fetched settings data in new user data' );
-				this.data.settings = this.settings;
-			}
-			this.initialized = true;
-
-			this.emit( 'change' );
-
-			debug( 'User successfully retrieved' );
-		}.bind( this )
+			this.handleFetchSuccess( userData );
+		}
 	);
 };
 
@@ -175,6 +159,30 @@ User.prototype.handleFetchFailure = function( error ) {
 	} else {
 		debug( 'Something went wrong trying to get the user.' );
 	}
+};
+
+/**
+ * Handles user fetch success from WordPress.com REST API by persisting the user data
+ * in the browser's localStorage. It also changes the User's fetching and initialized states
+ * and emits a change event.
+ *
+ * @param {Object} userData an object containing the user's information.
+ */
+User.prototype.handleFetchSuccess = function( userData ) {
+	// Release lock from subsequent fetches
+	this.fetching = false;
+	this.clearStoreIfChanged( userData.ID );
+
+	// Store user info in `this.data` and localstorage as `wpcom_user`
+	store.set( 'wpcom_user', userData );
+	this.data = userData;
+	if ( this.settings ) {
+		debug( 'Retaining fetched settings data in new user data' );
+		this.data.settings = this.settings;
+	}
+	this.initialized = true;
+	this.emit( 'change' );
+	debug( 'User successfully retrieved' );
 };
 
 User.prototype.getLanguage = function() {
