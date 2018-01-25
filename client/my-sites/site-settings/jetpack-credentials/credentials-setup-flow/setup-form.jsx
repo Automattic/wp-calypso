@@ -21,7 +21,7 @@ const SetupForm = ( { reset, siteId } ) => (
 				port: '22',
 				user: '',
 				pass: '',
-				abspath: '',
+				path: '',
 				kpri: '',
 				onCancel: reset,
 				role: 'main',
