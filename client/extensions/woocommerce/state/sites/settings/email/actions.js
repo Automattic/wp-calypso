@@ -23,6 +23,12 @@ import {
 } from 'woocommerce/state/action-types';
 import { areEmailSettingsLoaded, areEmailSettingsLoading } from './selectors';
 
+export const fetchEmailSettingsWithDataLayer = siteId => ( {
+	type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
+	siteId,
+} );
+
+//Obsolete with data layer
 export const fetchEmailSettings = siteId => ( dispatch, getState ) => {
 	if (
 		areEmailSettingsLoaded( getState(), siteId ) ||

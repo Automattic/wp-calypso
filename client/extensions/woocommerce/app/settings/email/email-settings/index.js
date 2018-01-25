@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import {
-	fetchEmailSettings,
+	fetchEmailSettingsWithDataLayer,
 	emailSettingChange,
 	emailSettingsSubmitSettings,
 	emailSettingsInvalidValue,
@@ -275,7 +275,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			onChange: emailSettingChange,
-			fetchSettings: fetchEmailSettings,
+			fetchSettings: fetchEmailSettingsWithDataLayer,
 			submit: emailSettingsSubmitSettings,
 			emailSettingsInvalidValue,
 			errorNotice,

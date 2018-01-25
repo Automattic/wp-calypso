@@ -10,11 +10,11 @@ import { filter, omit, isEmpty, setWith, get, forEach } from 'lodash';
  * Internal dependencies
  */
 import { createReducer } from 'state/utils';
-import { LOADING } from 'woocommerce/state/constants';
+import { ERROR, LOADING } from 'woocommerce/state/constants';
 import { decodeEntities } from 'lib/formatting';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
-	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
+	WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
 	WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
 	WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
@@ -67,7 +67,12 @@ export default createReducer( null, {
 		return LOADING;
 	},
 
-	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS ]: ( state, { data } ) => process_data( data ),
+	[ WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE ]: ( state, { data, error } ) => {
+		if ( error ) {
+			return ERROR;
+		}
+		return data;
+	},
 
 	[ WOOCOMMERCE_EMAIL_SETTINGS_CHANGE ]: ( state, { setting } ) => {
 		if ( ! setting && ! setting.setting && ! setting.option ) {
