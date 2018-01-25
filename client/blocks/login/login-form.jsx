@@ -84,7 +84,7 @@ export class LoginForm extends Component {
 			if ( window && window.calypsoLoadStartTime && window.calypsoLoadStartTime[ 'log-in' ] ) {
 				this.props.recordTracksEvent( 'calypso_load_end', {
 					...window.calypsoLoadStartTime[ 'log-in' ],
-					elapsedMs: Date.now() - window.calypsoLoadStartTime[ 'log-in' ].startTimestamp,
+					elapsedMs: window.performance.now() - window.calypsoLoadStartTime[ 'log-in' ].startTimestamp,
 					path: '/log-in',
 				} );
 

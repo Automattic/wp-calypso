@@ -269,7 +269,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 							window.calypsoLoadStartTime = {};
 						}
 						window.calypsoLoadStartTime[ pathName ] = {
-							startTimestamp: stats['_ts'],
+							startTimestamp: window.performance.now(),
 						};
 
 					}
