@@ -29,6 +29,7 @@ import QueryActivityLog from 'components/data/query-activity-log';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
+import RewindProgressBanner from './rewind-progress-banner';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
@@ -53,7 +54,6 @@ import {
 	getRequest,
 	getRequestedBackup,
 	getRequestedRewind,
-	getRestoreProgress,
 	getRewindState,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
@@ -186,26 +186,6 @@ const intoVisualGroups = ( ...args ) => visualGroups( logsByDay( ...args ) ).rev
 
 class ActivityLog extends Component {
 	static propTypes = {
-		restoreProgress: PropTypes.shape( {
-			errorCode: PropTypes.string.isRequired,
-			failureReason: PropTypes.string.isRequired,
-			message: PropTypes.string.isRequired,
-			percent: PropTypes.number.isRequired,
-			restoreId: PropTypes.number,
-			status: PropTypes.oneOf( [
-				'finished',
-				'queued',
-				'running',
-
-				// These are other VP restore statuses.
-				// We should _never_ see them for Activity Log rewinds
-				// 'aborted',
-				// 'fail',
-				// 'success',
-				// 'success-with-errors',
-			] ).isRequired,
-			rewindId: PropTypes.string.isRequired,
-		} ),
 		backupProgress: PropTypes.object,
 		changePeriod: PropTypes.func,
 		requestedRestore: PropTypes.shape( {
@@ -276,69 +256,36 @@ class ActivityLog extends Component {
 	 *
 	 * @returns {object} Component showing progress.
 	 */
-	renderActionProgress() {
-		const { siteId, restoreProgress, backupProgress } = this.props;
+	renderBackupDialogs() {
+		const { siteId, backupProgress } = this.props;
 
-		if ( ! restoreProgress && ! backupProgress ) {
+		if ( ! backupProgress ) {
 			return null;
 		}
 
-		const cards = [];
-
-		if ( !! restoreProgress ) {
-			cards.push(
-				'finished' === restoreProgress.status
-					? this.getEndBanner( siteId, restoreProgress )
-					: this.getProgressBanner( siteId, restoreProgress, 'restore' )
+		if ( 0 <= backupProgress.progress ) {
+			return (
+				<ProgressBanner
+					key={ `progress-${ backupProgress.downloadId }` }
+					applySiteOffset={ this.applySiteOffset }
+					percent={ backupProgress.percent || backupProgress.progress }
+					downloadId={ backupProgress.downloadId }
+					siteId={ siteId }
+					timestamp={ backupProgress.timestamp }
+				/>
 			);
 		}
 
-		if ( !! backupProgress ) {
-			if ( 0 <= backupProgress.progress ) {
-				cards.push( this.getProgressBanner( siteId, backupProgress, 'backup' ) );
-			} else if (
-				! isEmpty( backupProgress.url ) &&
-				Date.now() < Date.parse( backupProgress.validUntil )
-			) {
-				cards.push( this.getEndBanner( siteId, backupProgress ) );
-			} else if ( ! isEmpty( backupProgress.backupError ) ) {
-				cards.push( this.getEndBanner( siteId, backupProgress ) );
-			}
+		const now = Date.now();
+		const backupExpiration = Date.parse( backupProgress.validUntil );
+
+		if ( ! isEmpty( backupProgress.url ) && now < backupExpiration ) {
+			return this.getEndBanner( siteId, backupProgress );
 		}
 
-		return cards;
-	}
-
-	/**
-	 * Display the status of the operation currently being performed.
-	 * @param   {integer} siteId         Id of the site where the operation is performed.
-	 * @param   {object}  actionProgress Current status of operation performed.
-	 * @param   {string}  action         Action type. Allows to set the right text without waiting for data.
-	 * @returns {object}                 Card showing progress.
-	 */
-	getProgressBanner( siteId, actionProgress, action ) {
-		const {
-			percent,
-			progress,
-			restoreId,
-			downloadId,
-			status,
-			timestamp,
-			rewindId,
-		} = actionProgress;
-		return (
-			<ProgressBanner
-				key={ `progress-${ restoreId || downloadId }` }
-				applySiteOffset={ this.applySiteOffset }
-				percent={ percent || progress }
-				restoreId={ restoreId }
-				downloadId={ downloadId }
-				siteId={ siteId }
-				status={ status }
-				timestamp={ timestamp || rewindId }
-				action={ action }
-			/>
-		);
+		if ( ! isEmpty( backupProgress.backupError ) ) {
+			return this.getEndBanner( siteId, backupProgress );
+		}
 	}
 
 	/**
@@ -445,13 +392,18 @@ class ActivityLog extends Component {
 			requestData,
 			rewindState,
 			siteId,
+			siteTitle,
 			slug,
 			translate,
 		} = this.props;
 
+		const { rewind: currentRewind = {} } = rewindState;
+
 		const disableRestore =
-			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
-			'active' !== rewindState.state;
+			'active' !== rewindState.state ||
+			currentRewind.status === 'running' ||
+			currentRewind.status === 'queued';
+
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
 		const today = moment()
@@ -512,7 +464,36 @@ class ActivityLog extends Component {
 				) }
 				{ this.renderErrorMessage() }
 				{ this.renderMonthNavigation() }
-				{ this.renderActionProgress() }
+				{ ( currentRewind.status === 'queued' || currentRewind.status === 'running' ) && (
+					<RewindProgressBanner
+						key="current-running-rewind"
+						applySiteOffset={ this.applySiteOffset }
+						restoreId={ currentRewind.rewindId }
+						siteId={ siteId }
+						timestamp={ currentRewind.startedAt.toISOString() }
+					/>
+				) }
+				{ currentRewind.status === 'failed' && (
+					<ErrorBanner
+						key="last-rewind-failed"
+						requestedRestoreId={ currentRewind.rewindId }
+						failureReason={ currentRewind.reason }
+						rewindRestore={ this.props.rewindRestore }
+						closeDialog={ this.dismissRewind }
+						siteId={ siteId }
+						siteTitle={ siteTitle }
+						timestamp={ currentRewind.startedAt.toISOString() }
+					/>
+				) }
+				{ currentRewind.status === 'finished' && (
+					<SuccessBanner
+						key="last-rewind-finished"
+						applySiteOffset={ this.applySiteOffset }
+						siteId={ siteId }
+						timestamp={ currentRewind.rewindId }
+					/>
+				) }
+				{ this.renderBackupDialogs() }
 				{ isEmpty( logs ) ? (
 					noLogsContent
 				) : (
@@ -634,7 +615,6 @@ export default connect(
 			requestedRestoreId,
 			requestedBackup: getActivityLog( state, siteId, requestedBackupId ),
 			requestedBackupId,
-			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
 			rewindState: getRewindState( state, siteId ),

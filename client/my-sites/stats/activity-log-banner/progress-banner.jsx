@@ -10,8 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityLogBanner from './index';
-import ProgressBar from 'components/progress-bar';
-import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 
 /**
@@ -37,11 +35,9 @@ function ProgressBanner( {
 	applySiteOffset,
 	moment,
 	percent,
-	status,
 	siteId,
 	timestamp,
 	translate,
-	restoreId,
 	downloadId,
 	action,
 } ) {
@@ -54,43 +50,21 @@ function ProgressBanner( {
 					: translate( 'Currently creating a downloadable backup of your site' )
 			}
 		>
-			{ 'restore' === action && (
-				<div>
-					<QueryRewindRestoreStatus restoreId={ restoreId } siteId={ siteId } />
-					<p>
-						{ translate(
-							"We're in the process of restoring your site back to %s. " +
-								"You'll be notified once it's complete.",
-							{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
-						) }
-					</p>
-					<em>
-						{ 'queued' === status
-							? translate( 'Your restore will start in a moment.' )
-							: translate( "We're on it! Your site is being restored." ) }
-					</em>
-				</div>
-			) }
-			{ 'backup' === action && (
-				<div>
-					<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
-					<p>
-						{ translate(
-							"We're in the process of creating a downloadable backup of your site at %s. " +
-								"You'll be notified once it's complete.",
-							{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
-						) }
-					</p>
-					<em>
-						{ 0 < percent
-							? translate( "We're on it! Your download is being created." )
-							: translate( 'The creation of your backup will start in a moment.' ) }
-					</em>
-				</div>
-			) }
-			{ ( 'running' === status || ( 0 <= percent && percent <= 100 ) ) && (
-				<ProgressBar isPulsing value={ percent || 0 } />
-			) }
+			<div>
+				<QueryRewindBackupStatus downloadId={ downloadId } siteId={ siteId } />
+				<p>
+					{ translate(
+						"We're in the process of creating a downloadable backup of your site at %s. " +
+							"You'll be notified once it's complete.",
+						{ args: applySiteOffset( moment.utc( ms( timestamp ) ) ).format( 'LLLL' ) }
+					) }
+				</p>
+				<em>
+					{ 0 < percent
+						? translate( "We're on it! Your download is being created." )
+						: translate( 'The creation of your backup will start in a moment.' ) }
+				</em>
+			</div>
 		</ActivityLogBanner>
 	);
 }
@@ -99,9 +73,7 @@ ProgressBanner.propTypes = {
 	applySiteOffset: PropTypes.func.isRequired,
 	percent: PropTypes.number,
 	siteId: PropTypes.number,
-	status: PropTypes.oneOf( [ 'queued', 'running' ] ),
 	timestamp: PropTypes.string,
-	action: PropTypes.oneOf( [ 'restore', 'backup' ] ),
 };
 
 export default localize( ProgressBanner );

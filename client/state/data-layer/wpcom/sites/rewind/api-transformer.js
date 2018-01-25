@@ -39,6 +39,7 @@ const makeRewindDismisser = data =>
 		apiVersion: data.apiVersion,
 		method: data.method,
 		path: data.path,
+		body: data.requestBody,
 		onSuccess: requestRewindState( data.site_id ),
 		onFailure: requestRewindState( data.site_id ),
 	} );
