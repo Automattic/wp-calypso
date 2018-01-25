@@ -16,7 +16,7 @@ import { isEmpty, noop } from 'lodash';
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
 import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import { maskField, unmaskField } from 'lib/credit-card-details';
+import { maskField, unmaskField, getCreditCardType } from 'lib/credit-card-details';
 import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
 
 export class CreditCardFormFields extends React.Component {
@@ -78,6 +78,10 @@ export class CreditCardFormFields extends React.Component {
 		const maskedDetails = {
 			[ fieldName ]: maskField( fieldName, previousValue, nextValue ),
 		};
+
+		if ( fieldName === 'number' ) {
+			rawDetails.brand = getCreditCardType( rawDetails[ fieldName ] );
+		}
 
 		onFieldChange( rawDetails, maskedDetails );
 	}

@@ -66,6 +66,7 @@ class CreditCardForm extends Component {
 		'city',
 		'state',
 		'document',
+		'brand',
 	];
 
 	componentWillMount() {
