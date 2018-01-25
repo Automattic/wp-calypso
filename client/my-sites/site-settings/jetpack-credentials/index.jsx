@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +22,7 @@ class JetpackCredentials extends Component {
 	render() {
 		const { credentials, rewindState, siteId, translate } = this.props;
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
-		const hasCredentials = credentials && credentials.length > 0;
+		const hasCredentials = some( credentials, { role: 'main' } );
 
 		return (
 			<div className="jetpack-credentials">
