@@ -20,6 +20,7 @@ import {
 	isJetpackSite,
 	isRequestingSites,
 	isRequestingSite,
+	hasAllSitesList,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
@@ -383,12 +384,12 @@ export function siteSelection( context, next ) {
 	} else {
 		const selectOnSitesChange = () => {
 			const freshSiteId = getSiteId( getState(), siteFragment );
-			dispatch( setSelectedSiteId( freshSiteId ) );
 
 			if ( getSite( getState(), freshSiteId ) ) {
+				dispatch( setSelectedSiteId( freshSiteId ) );
 				onSelectedSiteAvailable( context );
-			} else {
-				// if sites have loaded, but siteId is invalid, redirect to allSitesPath
+			} else if ( hasAllSitesList( getState() ) ) {
+				// If all sites have loaded, but siteId is still invalid, redirect to allSitesPath.
 				page.redirect( allSitesPath );
 			}
 		};
