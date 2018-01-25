@@ -2,29 +2,9 @@ const path = require( 'path' );
 const UglifyJSPlugin = require( 'uglifyjs-webpack-plugin' );
 const webpack = require( 'webpack' );
 
-// const babelLoader = {
-// 	loader: 'babel-loader',
-// 	options: {
-// 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
-// 		cacheIdentifier: cacheIdentifier,
-// 		plugins: [
-// 			[
-// 				path.join(
-// 					__dirname,
-// 					'server',
-// 					'bundler',
-// 					'babel',
-// 					'babel-plugin-transform-wpcalypso-async'
-// 				),
-// 				{ async: true },
-// 			],
-// 		],
-// 	},
-// };
-
 const config = {
 	entry: {
-		build: path.join( path.resolve( __dirname ), 'client', 'login' ),
+		build: path.join( path.resolve( __dirname ), 'client', 'boot', 'loggedout-app' ),
 		vendor: [
 			'classnames',
 			'create-react-class',
