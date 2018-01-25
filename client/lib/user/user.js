@@ -91,7 +91,7 @@ User.prototype.initialize = function() {
  * of the user stored in localStorage and the current user ID
  **/
 User.prototype.clearStoreIfChanged = function( userId ) {
-	var storedUser = store.get( 'wpcom_user' );
+	const storedUser = store.get( 'wpcom_user' );
 
 	if ( storedUser && storedUser.ID !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
@@ -120,7 +120,7 @@ User.prototype.fetch = function() {
 		return;
 	}
 
-	var me = wpcom.me();
+	const me = wpcom.me();
 
 	// Request current user info
 	this.fetching = true;
@@ -148,10 +148,10 @@ User.prototype.fetch = function() {
 				return;
 			}
 
-			var userData = filterUserObject( data );
 
 			// Release lock from subsequent fetches
 			this.fetching = false;
+			const userData = filterUserObject( data );
 
 			this.clearStoreIfChanged( userData.ID );
 
@@ -172,10 +172,9 @@ User.prototype.fetch = function() {
 };
 
 User.prototype.getLanguage = function() {
-	var languages = config( 'languages' ),
-		len = languages.length,
-		language,
-		index;
+	const languages = config( 'languages' );
+	const len = languages.length;
+	let language, index;
 
 	if ( ! this.data.localeSlug ) {
 		return;
@@ -197,13 +196,13 @@ User.prototype.getLanguage = function() {
  * @param {Object} options Options per https://secure.gravatar.com/site/implement/images/
  */
 User.prototype.getAvatarUrl = function( options ) {
-	var default_options = {
-			s: 80,
-			d: 'mm',
-			r: 'G',
-		},
-		avatar_URL = this.get().avatar_URL,
-		avatar = typeof avatar_URL === 'string' ? avatar_URL.split( '?' )[ 0 ] : '';
+	const default_options = {
+		s: 80,
+		d: 'mm',
+		r: 'G',
+	};
+	const avatar_URL = this.get().avatar_URL;
+	const avatar = typeof avatar_URL === 'string' ? avatar_URL.split( '?' )[ 0 ] : '';
 
 	options = options || {};
 	options = Object.assign( {}, options, default_options );
@@ -212,14 +211,8 @@ User.prototype.getAvatarUrl = function( options ) {
 };
 
 User.prototype.isRTL = function() {
-	var isRTL = false,
-		language = this.getLanguage();
-
-	if ( language && language.rtl ) {
-		isRTL = true;
-	}
-
-	return isRTL;
+	const language = this.getLanguage();
+	return language && language.rtl;
 };
 
 /**
