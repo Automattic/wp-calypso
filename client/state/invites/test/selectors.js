@@ -7,7 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingResend } from './selectors';
+import { isRequestingResend } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingResend()', () => {
