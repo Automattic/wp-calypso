@@ -52,9 +52,9 @@ export const ChecklistContactPageTour = makeTour(
 		<Step name="contact-page" placement="right">
 			<p>
 				{ translate(
-					'Your contact page makes it easy for people to reach out and get in touch. ' +
-						'Let’s personalize this page by editing the default text so that people ' +
-						'know how and when they can contact you.'
+					'Your contact page makes it easy for people to get in touch. Let’s personalize ' +
+						'this page by adding some explaining when and how people can contact you. ' +
+						'Click in the text area below to get started.'
 				) }
 			</p>
 			<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
@@ -69,7 +69,7 @@ export const ChecklistContactPageTour = makeTour(
 			<p>
 				{ translate(
 					'Featured images are a great way to add more personality to your pages. ' +
-						'Let’s add something a little more relevant to your contact page text.'
+						'Let’s add something a little more relevant to you and your site.'
 				) }
 			</p>
 			<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
