@@ -75,8 +75,8 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					<form onSubmit={ this.handleSubmit }>
 						<SiteTitle
 							autoFocusBlogname
-							blogname={ this.state.blogname }
-							blogdescription={ this.state.blogdescription }
+							blogname={ this.state.blogname ? this.state.blogname : '' }
+							blogdescription={ this.state.blogdescription ? this.state.blogdescription : '' }
 							disabled={ isRequestingSettings }
 							isBlognameRequired
 							onChange={ this.handleChange }
