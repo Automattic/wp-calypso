@@ -171,7 +171,7 @@ export function updateWhois( domain, whoisData ) {
  * @param   {Array}   domainNames an array of domains linked to contactInformation
  * @returns {Object}   Action object
  */
-export function fetchDomainContactValidationM( contactInformation, domainNames ) {
+export function fetchDomainContactValidation( contactInformation, domainNames ) {
 	return {
 		type: DOMAIN_CONTACT_INFORMATION_VALIDATE_REQUEST,
 		contactInformation,

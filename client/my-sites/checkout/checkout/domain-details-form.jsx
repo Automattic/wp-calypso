@@ -28,9 +28,9 @@ import {
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
+import { getContactDetailsCache, getDomainContactValidationMessages } from 'state/selectors';
 import { getCountryStates } from 'state/country-states/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
+import { updateContactDetailsCache, fetchDomainContactValidation } from 'state/domains/management/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import PrivacyProtection from './privacy-protection';
@@ -129,6 +129,11 @@ export class DomainDetailsForm extends PureComponent {
 		if ( ! isEqual( prevProps.cart, this.props.cart ) ) {
 			this.validateSteps();
 		}
+
+		if ( ! isEqual( prevProps.contactDetailsValidation, this.props.contactDetailsValidation ) ) {
+			// eslint-disable-next-line
+			console.log( 'prevProps.contactDetailsValidation', prevProps.contactDetailsValidation );
+		}
 	}
 
 	loadFormStateFromRedux = fn => {
@@ -191,10 +196,16 @@ export class DomainDetailsForm extends PureComponent {
 		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' ).concat(
 			map( cartItems.getDomainTransfers( this.props.cart ), 'meta' )
 		);
-		wpcom.validateDomainContactInformation(
+
+/*		wpcom.validateDomainContactInformation(
 			allFieldValues,
 			domainNames,
 			this.generateValidationHandler( onComplete )
+		);*/
+
+		this.props.fetchDomainContactValidation(
+			allFieldValues,
+			domainNames,
 		);
 	};
 
@@ -637,7 +648,8 @@ export default connect(
 		return {
 			contactDetails,
 			hasCountryStates,
+			contactDetailsValidation: getDomainContactValidationMessages( state ),
 		};
 	},
-	{ updateContactDetailsCache }
+	{ updateContactDetailsCache, fetchDomainContactValidation }
 )( localize( DomainDetailsFormContainer ) );
