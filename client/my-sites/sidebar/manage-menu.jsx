@@ -30,10 +30,11 @@ import {
 	isSingleUserSite,
 } from 'state/sites/selectors';
 import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
+import { itemLinkMatches } from './utils';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
-		itemLinkClass: PropTypes.func,
+		path: PropTypes.string,
 		onNavigate: PropTypes.func,
 		siteId: PropTypes.number,
 		// connected props
@@ -187,13 +188,11 @@ class ManageMenu extends PureComponent {
 				icon = 'custom-post-type';
 		}
 
-		const className = this.props.itemLinkClass( menuItem.paths ? menuItem.paths : menuItem.link );
-
 		return (
 			<SidebarItem
 				key={ menuItem.name }
 				label={ menuItem.label }
-				className={ className }
+				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
 				icon={ icon }
