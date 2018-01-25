@@ -27,13 +27,13 @@ export const download = {
 export const rewind = {
 	type: 'object',
 	properties: {
-		rewindId: { type: 'number' },
+		rewind_id: { type: 'integer' },
 		status: { type: 'string', enum: [ 'failed', 'finished', 'running' ] },
-		startedAt: { type: 'string' },
+		started_at: { type: 'string' },
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
 	},
-	required: [ 'restoreId', 'status' ],
+	required: [ 'restore_id', 'status' ],
 };
 
 export const unavailable = {
