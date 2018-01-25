@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
  */
 import config from 'config';
 import { tracks } from 'lib/analytics';
+import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
 import Popover from 'components/popover';
 import SearchCard from 'components/search-card';
@@ -28,7 +29,7 @@ import { decodeEntities, preventWidows } from 'lib/formatting';
  * Module variables
  */
 const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled ? require( 'lib/keyboard-shortcuts/global' )() : null;
+const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled ? getGlobalKeyboardShortcuts() : null;
 const debug = debugFactory( 'calypso:inline-help' );
 
 class InlineHelp extends Component {
