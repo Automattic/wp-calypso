@@ -84,10 +84,14 @@ class ActivityLogSwitch extends Component {
 	}
 
 	render() {
-		const { rewindState } = this.props;
+		const { rewindState, failureReason } = this.props;
 		const isDismissed = this.state.dismissed;
 
-		if ( isDismissed || includes( [ 'uninitialized', 'active', 'awaitingCredentials', 'provisioning' ], rewindState ) ) {
+		if (
+			isDismissed ||
+			'vp_active_on_site' === failureReason ||
+			includes( [ 'uninitialized', 'active', 'awaitingCredentials', 'provisioning' ], rewindState )
+		) {
 			return false;
 		}
 
