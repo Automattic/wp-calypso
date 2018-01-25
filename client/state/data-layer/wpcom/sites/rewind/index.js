@@ -8,7 +8,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
 import { transformApi } from './api-transformer';
-import { rewind } from './schema';
+import { rewindStatus } from './schema';
 
 import downloads from './downloads';
 
@@ -52,7 +52,7 @@ export default mergeHandlers( downloads, {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
 			onError: setUnknownState,
-			fromApi: makeParser( rewind, {}, transformApi ),
+			fromApi: makeParser( rewindStatus, {}, transformApi ),
 		} ),
 	],
 } );

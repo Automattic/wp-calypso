@@ -25,8 +25,16 @@ const transformDownload = data =>
 		data.validUntil && { validUntil: new Date( data.validUntil * 1000 ) }
 	);
 
-const transformRestore = data =>
-	Object.assign( { status: data.status }, data.percent && { percent: data.percent } );
+const transformRewind = data =>
+	Object.assign(
+		{
+			restoreId: data.restore_id,
+			startedAt: new Date( data.started_at ),
+			status: data.status,
+		},
+		data.percent && { percent: data.percent },
+		data.reason && { reason: data.reason }
+	);
 
 export const transformApi = data =>
 	Object.assign(
@@ -37,5 +45,5 @@ export const transformApi = data =>
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
 		data.downloads && { downloads: data.downloads.map( transformDownload ) },
 		data.reason && { failureReason: data.reason },
-		data.rewinds && { rewinds: data.rewinds.map( transformRestore ) }
+		data.rewind && { rewind: transformRewind( data.rewind ) }
 	);
