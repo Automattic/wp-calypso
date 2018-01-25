@@ -6,6 +6,7 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { rescheduleConciergeAppointment } from '../';
 import { CONCIERGE_APPOINTMENT_RESCHEDULE } from 'state/action-types';
+import toApi from '../to-api';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {
@@ -33,9 +34,7 @@ describe( 'wpcom-api', () => {
 							action.appointmentId
 						}/reschedule`,
 						apiNamespace: 'wpcom/v2',
-						body: {
-							begin_timestamp: action.beginTimestamp / 1000,
-						},
+						body: toApi( action ),
 					},
 					action
 				)
