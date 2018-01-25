@@ -73,8 +73,7 @@ class CalendarStep extends Component {
 			<div>
 				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
 				<CompactCard>
-					{' '}
-					{ translate( 'Please select a day to have your Concierge session.' ) }{' '}
+					{ translate( 'Please select a day to have your Concierge session.' ) }
 				</CompactCard>
 
 				<AvailableTimePicker
