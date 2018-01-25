@@ -1,11 +1,11 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
+import reduxFormActions from 'redux-form/es/actions';
+
+const { initialize, startSubmit, stopSubmit } = reduxFormActions;
 
 /**
  * Internal dependencies

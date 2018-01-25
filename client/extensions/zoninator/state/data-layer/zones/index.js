@@ -5,8 +5,10 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
+import reduxFormActions from 'redux-form/es/actions';
 import { reduce } from 'lodash';
+
+const { initialize, startSubmit, stopSubmit } = reduxFormActions;
 
 /**
  * Internal dependencies

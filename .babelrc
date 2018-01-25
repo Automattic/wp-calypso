@@ -22,6 +22,10 @@
 		[
 			"transform-imports",
 			{
+				"redux-form": {
+					"transform": "redux-form/es/${member}",
+					"preventFullImport": true
+				},
 				"state/selectors": {
 					"transform": "state/selectors/${member}",
 					"kebabCase": true

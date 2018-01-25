@@ -1,15 +1,16 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { change, formValueSelector, FormSection, isDirty, reduxForm } from 'redux-form';
+import reduxFormActions from 'redux-form/es/actions';
+import { formValueSelector, FormSection, isDirty, reduxForm } from 'redux-form';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
+
+const { change } = reduxFormActions;
 
 /**
  * Internal dependencies

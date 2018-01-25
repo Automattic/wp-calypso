@@ -1,12 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
 import { expect } from 'chai';
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit as startSave, stopSubmit as stopSave } from 'redux-form';
+import reduxFormActions from 'redux-form/es/actions';
 import sinon from 'sinon';
+
+const { initialize, startSubmit: startSave, stopSubmit: stopSave } = reduxFormActions;
 
 /**
  * Internal dependencies
