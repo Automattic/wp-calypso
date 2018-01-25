@@ -25,11 +25,25 @@ const fetchRewindState = action =>
 		action
 	);
 
-const updateRewindState = ( { siteId }, data ) => ( {
-	type: REWIND_STATE_UPDATE,
-	siteId,
-	data,
-} );
+const updateRewindState = ( { siteId }, data ) =>
+	[
+		{
+			type: REWIND_STATE_UPDATE,
+			siteId,
+			data,
+		},
+		data.rewind &&
+			data.rewind.status === 'running' &&
+			( dispatch =>
+				setTimeout(
+					() =>
+						dispatch( {
+							type: REWIND_STATE_REQUEST,
+							siteId,
+						} ),
+					3000
+				) ),
+	].filter( Boolean );
 
 const setUnknownState = ( { siteId }, error ) =>
 	withAnalytics(
