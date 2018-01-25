@@ -196,19 +196,20 @@ export function validateCardDetails( cardDetails ) {
  * Retrieves the type of credit card from the specified number.
  *
  * @param {string} number - credit card number
- * @returns {string} the type of the credit card
+ * @returns {string|null} the type of the credit card
  * @see {@link http://en.wikipedia.org/wiki/Bank_card_number} for more information
  */
 export function getCreditCardType( number ) {
 	if ( number ) {
 		number = number.replace( / /g, '' );
 
-		const cardType = creditcards.card.type( number, true ).toLowerCase();
-		if ( cardType === '' ) {
+		const cardType = creditcards.card.type( number, false );
+
+		if ( typeof cardType === 'undefined' ) {
 			return null;
 		}
 
-		return cardType;
+		return cardType.toLowerCase();
 	}
 
 	return null;
