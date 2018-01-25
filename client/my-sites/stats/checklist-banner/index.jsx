@@ -58,7 +58,7 @@ export class ChecklistBanner extends Component {
 		const { requestTour, task, track, siteSlug } = this.props;
 
 		launchTask( {
-			id: task.id,
+			task,
 			location: 'checklist_banner',
 			requestTour,
 			siteSlug,
@@ -211,9 +211,8 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const siteChecklist = getSiteChecklist( state, siteId );
-	const tasks = siteChecklist && siteChecklist.tasks && onboardingTasks( siteChecklist.tasks );
-	const task = find( tasks, [ 'completed', false ] );
+	const tasks = onboardingTasks( getSiteChecklist( state, siteId ) );
+	const task = find( tasks, { completed: false } );
 	const { true: completed } = countBy( tasks, 'completed' );
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteDesignType = get( getSite( state, siteId ), 'options.design_type' );

@@ -19,7 +19,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { launchTask, launchCompletedTask, onboardingTasks } from '../onboardingChecklist';
+import { launchTask, onboardingTasks } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
@@ -27,32 +27,25 @@ import ChecklistShowShare from './share';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
-		const { requestTour, siteSlug, siteChecklist, track } = this.props;
+		const { requestTour, siteSlug, tasks, track } = this.props;
+		const task = find( tasks, { id } );
 
-		if ( siteChecklist && siteChecklist.tasks ) {
-			if ( siteChecklist.tasks[ id ] ) {
-				launchCompletedTask( {
-					id,
-					siteSlug,
-				} );
-			} else {
-				launchTask( {
-					id,
-					location: 'checklist_show',
-					requestTour,
-					siteSlug,
-					track,
-				} );
-			}
-		}
+		launchTask( {
+			task,
+			location: 'checklist_show',
+			requestTour,
+			siteSlug,
+			track,
+		} );
 	};
 
-	onToggle = taskId => {
-		const { notify, siteId, siteChecklist, update } = this.props;
+	onToggle = id => {
+		const { notify, siteId, tasks, update } = this.props;
+		const task = find( tasks, { id } );
 
-		if ( siteChecklist && siteChecklist.tasks && ! siteChecklist.tasks[ taskId ] ) {
+		if ( task && ! task.completed ) {
 			notify( 'is-success', 'You completed a task!' );
-			update( siteId, taskId );
+			update( siteId, id );
 		}
 	};
 
@@ -109,12 +102,7 @@ class ChecklistShow extends PureComponent {
 	}
 
 	render() {
-		const { displayMode, siteId, siteChecklist } = this.props;
-		let tasks = null;
-
-		if ( siteChecklist && siteChecklist.tasks ) {
-			tasks = onboardingTasks( siteChecklist.tasks );
-		}
+		const { displayMode, siteId, tasks } = this.props;
 
 		const completed = tasks && ! find( tasks, { completed: false } );
 
@@ -141,9 +129,10 @@ class ChecklistShow extends PureComponent {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSlug = getSiteSlug( state, siteId );
-	return { siteId, siteSlug, siteChecklist };
+	const siteChecklist = getSiteChecklist( state, siteId );
+	const tasks = onboardingTasks( siteChecklist );
+	return { siteId, siteSlug, tasks };
 };
 
 const mapDispatchToProps = {
