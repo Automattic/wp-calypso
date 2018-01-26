@@ -35,7 +35,7 @@ const transformRewind = data =>
 			startedAt: new Date( data.started_at ),
 			status: data.status,
 		},
-		data.percent && { percent: data.percent },
+		data.progress && { progress: data.progress },
 		data.reason && { reason: data.reason }
 	);
 
