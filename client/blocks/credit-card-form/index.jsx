@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop, camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
+import { camelCase, forOwn, kebabCase, mapKeys, values } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -41,7 +41,7 @@ class CreditCardForm extends Component {
 	static defaultProps = {
 		apiParams: {},
 		initialValues: {},
-		saveStoredCard: noop,
+		saveStoredCard: null,
 		showUsedForExistingPurchasesInfo: false,
 	};
 
