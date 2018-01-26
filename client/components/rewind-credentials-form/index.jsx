@@ -94,24 +94,24 @@ export class RewindCredentialsForm extends Component {
 			: this.setState( { formErrors: errors } );
 	};
 
-	handleDelete = () => 
-		this.props.deleteCredentials( this.props.siteId, this.props.role );
+	handleDelete = () => this.props.deleteCredentials( this.props.siteId, this.props.role );
 
 	toggleAdvancedSettings = () =>
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
 	componentWillReceiveProps( nextProps ) {
 		const { rewindState, role, siteSlug } = nextProps;
-		const credentials = find( rewindState.credentials, { 'role': role } );
+		const credentials = find( rewindState.credentials, { role: role } );
 		const nextForm = this.state.form;
 
 		// Populate the fields with data from state if credentials are already saved
-		nextForm.protocol = isEmpty( nextForm.protocol ) && credentials ? credentials.protocol : nextForm.protocol;
+		nextForm.protocol =
+			isEmpty( nextForm.protocol ) && credentials ? credentials.protocol : nextForm.protocol;
 		nextForm.host = isEmpty( nextForm.host ) && credentials ? credentials.host : nextForm.host;
 		nextForm.port = isEmpty( nextForm.port ) && credentials ? credentials.port : nextForm.port;
 		nextForm.user = isEmpty( nextForm.user ) && credentials ? credentials.user : nextForm.user;
 		nextForm.path = isEmpty( nextForm.path ) && credentials ? credentials.path : nextForm.path;
-			
+
 		// Populate the host field with the site slug if needed
 		nextForm.host = isEmpty( nextForm.host ) && siteSlug ? siteSlug : nextForm.host;
 
@@ -141,8 +141,8 @@ export class RewindCredentialsForm extends Component {
 					</FormSelect>
 				</FormFieldset>
 
-				<div className="credentials-form__row">
-					<FormFieldset className="credentials-form__server-address">
+				<div className="rewind-credentials-form__row">
+					<FormFieldset className="rewind-credentials-form__server-address">
 						<FormLabel htmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
 						<FormTextInput
 							name="host"
@@ -156,7 +156,7 @@ export class RewindCredentialsForm extends Component {
 						{ formErrors.host && <FormInputValidation isError={ true } text={ formErrors.host } /> }
 					</FormFieldset>
 
-					<FormFieldset className="credentials-form__port-number">
+					<FormFieldset className="rewind-credentials-form__port-number">
 						<FormLabel htmlFor="server-port">{ translate( 'Port Number' ) }</FormLabel>
 						<FormTextInput
 							name="port"
@@ -171,8 +171,8 @@ export class RewindCredentialsForm extends Component {
 					</FormFieldset>
 				</div>
 
-				<div className="credentials-form__row">
-					<FormFieldset className="credentials-form__username">
+				<div className="rewind-credentials-form__row">
+					<FormFieldset className="rewind-credentials-form__username">
 						<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
 						<FormTextInput
 							name="user"
@@ -186,7 +186,7 @@ export class RewindCredentialsForm extends Component {
 						{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
 					</FormFieldset>
 
-					<FormFieldset className="credentials-form__password">
+					<FormFieldset className="rewind-credentials-form__password">
 						<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
 						<FormPasswordInput
 							name="pass"
@@ -202,7 +202,12 @@ export class RewindCredentialsForm extends Component {
 				</div>
 
 				<FormFieldset>
-					<Button disabled={ formIsSubmitting } onClick={ this.toggleAdvancedSettings }>
+					<Button
+						disabled={ formIsSubmitting }
+						onClick={ this.toggleAdvancedSettings }
+						borderless={ true }
+						className="rewind-credentials-form__advanced-button"
+					>
 						{ translate( 'Advanced settings' ) }
 					</Button>
 					{ showAdvancedSettings && (
@@ -214,7 +219,7 @@ export class RewindCredentialsForm extends Component {
 								value={ get( this.state.form, 'kpri', '' ) }
 								onChange={ this.handleFieldChange }
 								disabled={ formIsSubmitting }
-								className="credentials-form__private-key"
+								className="rewind-credentials-form__private-key"
 							/>
 
 							<FormLabel htmlFor="wordpress-path">{ translate( 'Upload Path' ) }</FormLabel>
@@ -239,7 +244,7 @@ export class RewindCredentialsForm extends Component {
 						<Button
 							disabled={ formIsSubmitting }
 							onClick={ onCancel }
-							className="credentials-form__cancel-button"
+							className="rewind-credentials-form__cancel-button"
 						>
 							{ translate( 'Cancel' ) }
 						</Button>
@@ -249,7 +254,7 @@ export class RewindCredentialsForm extends Component {
 							borderless={ true }
 							disabled={ formIsSubmitting }
 							onClick={ this.handleDelete }
-							className="credentials-form__delete-button"
+							className="rewind-credentials-form__delete-button"
 						>
 							<Gridicon icon="trash" size={ 18 } />
 							{ translate( 'Delete' ) }
