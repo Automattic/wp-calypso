@@ -4,7 +4,7 @@
  * @format
  */
 
-import { forEach, reduce, omit, get } from 'lodash';
+import { forEach, reduce, omit, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -106,7 +106,9 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 	// disable if user has emptied the input field
 	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], option => {
 		if ( get( settings, [ option, 'recipient', 'value' ], '' ).trim() === '' ) {
-			settings[ option ].enabled.value = 'no';
+			if ( has( settings[ option ], 'enabled ' ) ) {
+				settings[ option ].enabled.value = 'no';
+			}
 		}
 	} );
 
