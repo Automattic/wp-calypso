@@ -190,7 +190,6 @@ export default {
 		apiRequestFunction: createAccount,
 		props: {
 			oauth2Signup: true,
-			isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 		},
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],

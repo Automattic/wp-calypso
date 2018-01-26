@@ -174,12 +174,7 @@ export class UserStep extends Component {
 	 *                              So our server doesn't have to request the user profile on its end.
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null ) => {
-		this.submit( {
-			service,
-			access_token,
-			id_token,
-			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
-		} );
+		this.submit( { service, access_token, id_token } );
 	};
 
 	userCreationComplete() {
@@ -257,16 +252,6 @@ export class UserStep extends Component {
 				socialServiceResponse = hashObject;
 			}
 		}
-		const isSocialSignupFirst =
-			this.props.initialContext && !! this.props.initialContext.query.social_first;
-
-		// Temporary HACK to hide the Log In button on signup when oauth2_client_id is not given
-		if ( isSocialSignupFirst ) {
-			const loginButtonMasterbar = document.querySelector( '.masterbar__login-links > a' );
-			if ( loginButtonMasterbar ) {
-				loginButtonMasterbar.style.display = 'none';
-			}
-		}
 
 		return (
 			<SignupForm
@@ -280,7 +265,6 @@ export class UserStep extends Component {
 				suggestedUsername={ this.props.suggestedUsername }
 				handleSocialResponse={ this.handleSocialResponse }
 				isSocialSignupEnabled={ this.props.isSocialSignupEnabled }
-				isSocialSignupFirst={ isSocialSignupFirst }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 			/>

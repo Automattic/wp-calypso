@@ -338,7 +338,7 @@ export function createAccount(
 				if ( errors ) {
 					callback( errors );
 				} else {
-					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
+					callback( undefined, response );
 				}
 			}
 		);

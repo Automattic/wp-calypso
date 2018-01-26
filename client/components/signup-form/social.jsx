@@ -12,7 +12,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import config from 'config';
+import { preventWidows } from 'lib/formatting';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -46,14 +48,22 @@ class SocialSignupForm extends Component {
 		const redirectUri = uxMode === 'redirect' ? `https://${ window.location.host }/start` : null;
 
 		return (
-			<div className="signup-form__social-buttons">
-				<GoogleLoginButton
-					clientId={ config( 'google_oauth_client_id' ) }
-					responseHandler={ this.handleGoogleResponse }
-					redirectUri={ redirectUri }
-					uxMode={ uxMode }
-				/>
-			</div>
+			<Card className="signup-form__social">
+				<p>
+					{ preventWidows(
+						this.props.translate( 'Or connect your existing profile to get started faster.' )
+					) }
+				</p>
+
+				<div className="signup-form__social-buttons">
+					<GoogleLoginButton
+						clientId={ config( 'google_oauth_client_id' ) }
+						responseHandler={ this.handleGoogleResponse }
+						redirectUri={ redirectUri }
+						uxMode={ uxMode }
+					/>
+				</div>
+			</Card>
 		);
 	}
 }
