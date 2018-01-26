@@ -87,14 +87,12 @@ class ActivityLogSwitch extends Component {
 		} = this.props;
 
 		return (
-			<Card
-				className="activity-log-switch"
-				>
+			<Card className="activity-log-switch">
 				<h2 className="activity-log-switch__heading">
 					{ translate( "Welcome to Jetpack's new backups and security" ) }
 				</h2>
 				<img src="/calypso/images/illustrations/security.svg" alt="" />
-				<p>
+				<p className="activity-log-switch__intro">
 					{ translate(
 						'Backing up and securing your site should be a breeze. ' +
 						"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
@@ -109,55 +107,49 @@ class ActivityLogSwitch extends Component {
 				<h3 className="activity-log-switch__heading-more">
 					{ translate( 'What else can it do?' ) }
 				</h3>
-				<Card>
-					<div className="activity-log-switch__feature">
-						<div className="activity-log-switch__feature-content">
-							<h4 className="activity-log-switch__feature-heading">
-								{ translate( 'Rewind to any event' ) }
-							</h4>
-							<p>
-								{ translate(
-									'As soon as you switch over, we will start tracking every change made ' +
-									'to your site and allow you to rewind to any past event. ' +
-									'If you lose a file, get hacked, or just liked your site better before some changes, ' +
-									'you can rewind with a click of a button.'
-								) }
-							</p>
-						</div>
-						<img src="/calypso/images/illustrations/backup.svg" alt="" />
+				<Card className="activity-log-switch__feature">
+					<div className="activity-log-switch__feature-content">
+						<h4 className="activity-log-switch__feature-heading">
+							{ translate( 'Rewind to any event' ) }
+						</h4>
+						<p>
+							{ translate(
+								'As soon as you switch over, we will start tracking every change made ' +
+								'to your site and allow you to rewind to any past event. ' +
+								'If you lose a file, get hacked, or just liked your site better before some changes, ' +
+								'you can rewind with a click of a button.'
+							) }
+						</p>
 					</div>
+					<img src="/calypso/images/illustrations/backup.svg" alt="" />
 				</Card>
-				<Card>
-					<div className="activity-log-switch__feature">
-						<div className="activity-log-switch__feature-content">
-							<h4 className="activity-log-switch__feature-heading">
-								{ translate( "Stay on top of your site's security" ) }
-							</h4>
-							<p>
-								{ translate(
-									'When something happens to your website you want to know it immediately. ' +
-									"And you will—we'll send you instant alerts based on our 24/7 monitoring of advanced threats."
-								) }
-							</p>
-						</div>
-						<img src="/calypso/images/illustrations/security-issue.svg" alt="" />
+				<Card className="activity-log-switch__feature">
+					<div className="activity-log-switch__feature-content">
+						<h4 className="activity-log-switch__feature-heading">
+							{ translate( "Stay on top of your site's security" ) }
+						</h4>
+						<p>
+							{ translate(
+								'When something happens to your website you want to know it immediately. ' +
+								"And you will—we'll send you instant alerts based on our 24/7 monitoring of advanced threats."
+							) }
+						</p>
 					</div>
+					<img src="/calypso/images/illustrations/security-issue.svg" alt="" />
 				</Card>
-				<Card>
-					<div className="activity-log-switch__feature">
-						<div className="activity-log-switch__feature-content">
-							<h4 className="activity-log-switch__feature-heading">
-								{ translate( 'Log all events on your site' ) }
-							</h4>
-							<p>
-								{ translate(
-									'Access a new, streamlined history of events on your site—from published posts to user-role changes. ' +
-									'If you ever need to figure out what happened when, now you can get the answer in seconds.'
-								) }
-							</p>
-						</div>
-						<img src="/calypso/images/illustrations/stats.svg" alt="" />
+				<Card className="activity-log-switch__feature">
+					<div className="activity-log-switch__feature-content">
+						<h4 className="activity-log-switch__feature-heading">
+							{ translate( 'Log all events on your site' ) }
+						</h4>
+						<p>
+							{ translate(
+								'Access a new, streamlined history of events on your site—from published posts to user-role changes. ' +
+								'If you ever need to figure out what happened when, now you can get the answer in seconds.'
+							) }
+						</p>
 					</div>
+					<img src="/calypso/images/illustrations/stats.svg" alt="" />
 				</Card>
 			</Card>
 		);

@@ -3,8 +3,47 @@
 	text-align: center;
 }
 
+.activity-log-switch__intro {
+	margin: 24px 64px 32px;
+}
+
 .activity-log-switch__heading {
 	font-size: 24px;
 	font-weight: 400;
-	margin: 24px 0 8px 0;
+	margin: 24px 0 48px;
+
+	& ~ img {
+		max-width: 200px;
+	}
+}
+
+.activity-log-switch__heading-more {
+	font-size: 24px;
+	color: darken( $gray, 10% );
+	font-weight: 600;
+	margin: 48px 0 24px;
+}
+
+.activity-log-switch__feature {
+	display: flex;
+
+	img {
+		max-width: 100px;
+	}
+}
+
+.activity-log-switch__feature-content {
+	text-align: left;
+	margin-right: 16px;
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.activity-log-switch__feature-heading {
+	color: $gray;
+	font-size: 18px;
+	font-weight: 600;
+	margin-bottom: 16px;
 }
