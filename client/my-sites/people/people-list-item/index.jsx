@@ -63,7 +63,6 @@ class PeopleListItem extends React.PureComponent {
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
-<<<<<<< HEAD
 	renderInviteStatus = () => {
 		const { invite, translate } = this.props;
 		const { isPending } = invite;
