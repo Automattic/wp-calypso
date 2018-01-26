@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-const ImageThumb = ( { width, height, src, alt, ...props } ) => {
+const ImageThumb = ( { width, height, src, alt, placeholder, ...props } ) => {
 	const style = {
 		width,
 		height,
@@ -17,13 +17,15 @@ const ImageThumb = ( { width, height, src, alt, ...props } ) => {
 	const imageClasses = classNames( 'image-thumb', {
 		hasImage: src,
 	} );
-	const placeholderClasses = classNames( 'image-thumb__placeholder' );
 
 	if ( ! src ) {
+		if ( placeholder ) {
+			style.backgroundImage = `url( ${ placeholder } )`;
+		}
+
 		return (
 			<div className={ imageClasses }>
-				{' '}
-				<div className={ placeholderClasses } style={ style } />{' '}
+				<div className="image-thumb__placeholder" style={ style } />
 			</div>
 		);
 	}
@@ -40,6 +42,7 @@ ImageThumb.propTypes = {
 	height: PropTypes.number,
 	className: PropTypes.string,
 	src: PropTypes.string,
+	placeholder: PropTypes.string,
 	alt: PropTypes.string.isRequired,
 };
 
