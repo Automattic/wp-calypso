@@ -73,6 +73,26 @@ export const items = createReducer(
 );
 
 /**
+ * Tracks the total number of invites the API says a given siteId has.
+ * This count can be greater than the number of invites queried.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export const counts = createReducer(
+	{},
+	{
+		[ INVITES_REQUEST_SUCCESS ]: ( state, action ) => {
+			return {
+				...state,
+				[ action.siteId ]: action.found,
+			};
+		},
+	}
+);
+
+/**
  * Returns the updated site invites resend requests state after an action has been
  * dispatched. The state reflects an object keyed by site ID, consisting of requested
  * resend invite IDs, with a boolean representing request status.
@@ -97,4 +117,4 @@ export function requestingResend( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( { requesting, items, requestingResend } );
+export default combineReducers( { requesting, items, counts, requestingResend } );
