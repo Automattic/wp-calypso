@@ -46,7 +46,7 @@ class ActivityLogItem extends Component {
 		const {
 			activityDescription,
 			activityTitle,
-			actorActivityUrl,
+			actorAvatarUrl,
 			actorName,
 			actorRole,
 			actorType,
@@ -54,7 +54,7 @@ class ActivityLogItem extends Component {
 
 		return (
 			<div className="activity-log-item__card-header">
-				<ActivityActor { ...{ actorActivityUrl, actorName, actorRole, actorType } } />
+				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
 				<div className="activity-log-item__description">
 					<div className="activity-log-item__description-content">
 						{ /* There is no great way to generate a more valid React key here
