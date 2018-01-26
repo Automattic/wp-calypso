@@ -37,8 +37,6 @@ import QueryPreferences from 'components/data/query-preferences';
 /**
  * Internal dependencies
  */
-let KeyboardShortcutsMenu, SupportUser;
-
 import PropTypes from 'prop-types';
 import QuerySites from 'components/data/query-sites';
 import { isOffline } from 'state/application/selectors';
@@ -51,14 +49,9 @@ import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
+import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
+import SupportUser from 'support/support-user';
 
-if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
-}
-
-if ( config.isEnabled( 'support-user' ) ) {
-	SupportUser = require( 'support/support-user' );
-}
 /* eslint-disable react/no-deprecated */
 const Layout = createReactClass( {
 	/* eslint-enable react/no-deprecated */

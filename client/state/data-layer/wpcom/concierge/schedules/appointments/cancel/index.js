@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { updateConciergeBookingStatus } from 'state/concierge/actions';
 import { errorNotice } from 'state/notices/actions';
 import { CONCIERGE_APPOINTMENT_CANCEL } from 'state/action-types';
@@ -16,10 +16,9 @@ import {
 import fromApi from './from-api';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
-export const cancelConciergeAppointment = ( { dispatch }, action ) => {
-	dispatch( updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING ) );
-
-	dispatch(
+export const cancelConciergeAppointment = action => {
+	return [
+		updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING ),
 		http(
 			{
 				method: 'POST',
@@ -30,33 +29,28 @@ export const cancelConciergeAppointment = ( { dispatch }, action ) => {
 				body: {},
 			},
 			action
-		)
-	);
+		),
+	];
 };
 
-export const markSlotAsCancelled = ( { dispatch } ) => {
-	dispatch(
-		withAnalytics(
-			recordTracksEvent( 'calypso_concierge_appointment_cancellation_successful' ),
-			updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED )
-		)
+export const onSuccess = () =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_concierge_appointment_cancellation_successful' ),
+		updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLED )
 	);
-};
 
-export const handleCancellingError = ( { dispatch } ) => {
-	dispatch(
+export const onError = () => {
+	return [
+		errorNotice( "We couldn't cancel your session, please try again later." ),
 		withAnalytics(
 			recordTracksEvent( 'calypso_concierge_appointment_cancellation_error' ),
 			updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING_ERROR )
-		)
-	);
-	dispatch( errorNotice( "We couldn't cancel your session, please try again later." ) );
+		),
+	];
 };
 
 export default {
 	[ CONCIERGE_APPOINTMENT_CANCEL ]: [
-		dispatchRequest( cancelConciergeAppointment, markSlotAsCancelled, handleCancellingError, {
-			fromApi,
-		} ),
+		dispatchRequestEx( { fetch: cancelConciergeAppointment, onSuccess, onError, fromApi } ),
 	],
 };

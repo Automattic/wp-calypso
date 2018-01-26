@@ -5,7 +5,9 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { rescheduleConciergeAppointment } from '../';
+import { updateConciergeBookingStatus } from 'state/concierge/actions';
 import { CONCIERGE_APPOINTMENT_RESCHEDULE } from 'state/action-types';
+import { CONCIERGE_STATUS_BOOKING } from 'me/concierge/constants';
 import toApi from '../to-api';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
@@ -16,7 +18,6 @@ jest.mock( 'lib/impure-lodash', () => ( {
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
 		test( 'rescheduleConciergeAppointment()', () => {
-			const dispatch = jest.fn();
 			const action = {
 				type: CONCIERGE_APPOINTMENT_RESCHEDULE,
 				scheduleId: 123,
@@ -25,9 +26,8 @@ describe( 'wpcom-api', () => {
 				appointmentDetails: { meta: { timezoe: 'UTC' } },
 			};
 
-			rescheduleConciergeAppointment( { dispatch }, action );
-
-			expect( dispatch ).toHaveBeenCalledWith(
+			expect( rescheduleConciergeAppointment( action ) ).toEqual( [
+				updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING ),
 				http(
 					{
 						method: 'POST',
@@ -38,8 +38,8 @@ describe( 'wpcom-api', () => {
 						body: toApi( action ),
 					},
 					action
-				)
-			);
+				),
+			] );
 		} );
 	} );
 } );

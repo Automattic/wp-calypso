@@ -18,7 +18,7 @@ import { withoutHttp } from 'lib/url';
  */
 const languages = config( 'languages' );
 
-function getLanguage( slug ) {
+export function getLanguage( slug ) {
 	var len = languages.length,
 		language,
 		index;
@@ -38,49 +38,47 @@ function getSiteSlug( url ) {
 	return slug.replace( /\//g, '::' );
 }
 
-export default {
-	filterUserObject: function( obj ) {
-		var user = {},
-			allowedKeys = [
-				'ID',
-				'display_name',
-				'username',
-				'avatar_URL',
-				'site_count',
-				'visible_site_count',
-				'date',
-				'has_unseen_notes',
-				'newest_note_type',
-				'phone_account',
-				'email',
-				'email_verified',
-				'is_valid_google_apps_country',
-				'user_ip_country_code',
-				'logout_URL',
-				'primary_blog',
-				'primary_blog_is_jetpack',
-				'primary_blog_url',
-				'meta',
-				'is_new_reader',
-				'social_signup_service',
-			],
-			decodeWhitelist = [ 'display_name', 'description', 'user_URL' ];
+export function filterUserObject( obj ) {
+	var user = {},
+		allowedKeys = [
+			'ID',
+			'display_name',
+			'username',
+			'avatar_URL',
+			'site_count',
+			'visible_site_count',
+			'date',
+			'has_unseen_notes',
+			'newest_note_type',
+			'phone_account',
+			'email',
+			'email_verified',
+			'is_valid_google_apps_country',
+			'user_ip_country_code',
+			'logout_URL',
+			'primary_blog',
+			'primary_blog_is_jetpack',
+			'primary_blog_url',
+			'meta',
+			'is_new_reader',
+			'social_signup_service',
+		],
+		decodeWhitelist = [ 'display_name', 'description', 'user_URL' ];
 
-		allowedKeys.forEach( function( key ) {
-			user[ key ] =
-				obj[ key ] && includes( decodeWhitelist, key ) ? decodeEntities( obj[ key ] ) : obj[ key ];
-		} );
+	allowedKeys.forEach( function( key ) {
+		user[ key ] =
+			obj[ key ] && includes( decodeWhitelist, key ) ? decodeEntities( obj[ key ] ) : obj[ key ];
+	} );
 
-		return assign( user, this.getComputedAttributes( obj ) );
-	},
+	return assign( user, getComputedAttributes( obj ) );
+}
 
-	getComputedAttributes: function( attributes ) {
-		var language = getLanguage( attributes.language ),
-			primayBlogUrl = attributes.primary_blog_url || '';
-		return {
-			primarySiteSlug: getSiteSlug( primayBlogUrl ),
-			localeSlug: attributes.language,
-			isRTL: !! ( language && language.rtl ),
-		};
-	},
-};
+export function getComputedAttributes( attributes ) {
+	var language = getLanguage( attributes.language ),
+		primayBlogUrl = attributes.primary_blog_url || '';
+	return {
+		primarySiteSlug: getSiteSlug( primayBlogUrl ),
+		localeSlug: attributes.language,
+		isRTL: !! ( language && language.rtl ),
+	};
+}

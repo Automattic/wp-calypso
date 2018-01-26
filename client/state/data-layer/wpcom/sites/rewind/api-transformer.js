@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -9,8 +8,12 @@ const transformCredential = data =>
 	Object.assign(
 		{
 			type: data.type,
+			role: data.role,
 		},
-		data.host && { host: data.host, port: data.port }
+		data.host && { host: data.host },
+		data.path && { path: data.path },
+		data.port && { port: data.port },
+		data.user && { user: data.user }
 	);
 
 const transformDownload = data =>
@@ -25,8 +28,16 @@ const transformDownload = data =>
 		data.validUntil && { validUntil: new Date( data.validUntil * 1000 ) }
 	);
 
-const transformRestore = data =>
-	Object.assign( { status: data.status }, data.percent && { percent: data.percent } );
+const transformRewind = data =>
+	Object.assign(
+		{
+			restoreId: data.restore_id,
+			startedAt: new Date( data.started_at ),
+			status: data.status,
+		},
+		data.percent && { percent: data.percent },
+		data.reason && { reason: data.reason }
+	);
 
 export const transformApi = data =>
 	Object.assign(
@@ -34,8 +45,9 @@ export const transformApi = data =>
 			state: camelCase( data.state ),
 			lastUpdated: new Date( data.last_updated * 1000 ),
 		},
+		data.can_autoconfigure && { canAutoconfigure: !! data.can_autoconfigure },
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
 		data.downloads && { downloads: data.downloads.map( transformDownload ) },
 		data.reason && { failureReason: data.reason },
-		data.rewinds && { rewinds: data.rewinds.map( transformRestore ) }
+		data.rewind && { rewind: transformRewind( data.rewind ) }
 	);

@@ -507,7 +507,9 @@ module.exports = function() {
 			} );
 
 			if ( section.isomorphic ) {
-				section.load()( serverRouter( app, setUpRoute, section ) );
+				// section.load() uses require on the server side so we also need to access the
+				// default export of it. See webpack/bundler/sections-loader.js
+				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
 

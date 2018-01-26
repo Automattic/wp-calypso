@@ -14,13 +14,13 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import AccountComponent from 'me/account/main';
+import username from 'lib/username';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 
 export default {
 	account( context, next ) {
-		const AccountComponent = require( 'me/account/main' );
-		const username = require( 'lib/username' );
 		const basePath = context.path;
 		let showNoticeInitially = false;
 

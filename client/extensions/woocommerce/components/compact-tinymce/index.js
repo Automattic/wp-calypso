@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { assign, noop, uniqueId } from 'lodash';
+import { assign, noop, uniqueId, forEach } from 'lodash';
 import classNames from 'classnames';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/themes/modern/theme.js';
@@ -61,9 +61,12 @@ class CompactTinyMCE extends Component {
 			}
 
 			const { initialValue, onContentsChange } = this.props;
+
 			editor.on( 'init', () => {
+				this.editorContainer = this.editor.getContainer();
 				this.editor.setContent( wpautop( initialValue ) );
 			} );
+
 			if ( onContentsChange ) {
 				editor.on( 'change', () => {
 					onContentsChange( this.editor.getContent() );
@@ -92,7 +95,7 @@ class CompactTinyMCE extends Component {
 			browser_spellcheck: true,
 			fix_list_elements: true,
 			keep_styles: false,
-			textarea: this.refs.text,
+			textarea: this.textarea,
 			preview_styles: 'font-family font-size font-weight font-style text-decoration text-transform',
 			end_container_on_empty_block: true,
 			statusbar: false,
@@ -121,15 +124,27 @@ class CompactTinyMCE extends Component {
 
 	componentWillUnmount() {
 		this.mounted = false;
-		if ( this.editor ) {
-			this.destroyEditor();
-		}
+		this.destroyEditor();
 	}
 
 	destroyEditor() {
-		tinymce.remove( this.editor );
+		if ( this.editor ) {
+			forEach(
+				[ 'change', 'keyup', 'setcontent', 'init' ],
+				function( eventName ) {
+					this.editor.off( eventName );
+				}.bind( this )
+			);
+		}
+
+		this.editorContainer && tinymce.remove( this.editorContainer );
 		this.editor = null;
+		this.editorContainer = null;
 	}
+
+	setTextAreaRef = ref => {
+		this.textarea = ref;
+	};
 
 	localize() {
 		const user = userFactory();
@@ -155,7 +170,7 @@ class CompactTinyMCE extends Component {
 		const className = classNames( 'compact-tinymce', this.props.className );
 		return (
 			<div className={ className }>
-				<textarea ref="text" className={ tinyMCEClassName } id={ this._id } />
+				<textarea ref={ this.setTextAreaRef } className={ tinyMCEClassName } id={ this._id } />
 			</div>
 		);
 	}

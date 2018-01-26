@@ -157,6 +157,19 @@ export const items = createReducer(
 				newValues.error = null;
 			}
 
+			// Respect the existing state of the new post notification toggle.
+			// User may have toggled it on immediately after subscribing and
+			// action.payload.follow may overwrite it with the old value
+			const existingNotificationState = get( state[ urlKey ], [
+				'delivery_methods',
+				'notification',
+			] );
+			if ( existingNotificationState ) {
+				newValues.delivery_methods = {
+					notification: existingNotificationState,
+				};
+			}
+
 			return Object.assign( newState, {
 				[ urlKey ]: merge(
 					{ feed_URL: actualFeedUrl },
@@ -172,9 +185,15 @@ export const items = createReducer(
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
 				return state;
 			}
+
 			return {
 				...state,
-				[ urlKey ]: merge( {}, currentFollow, { is_following: false } ),
+				[ urlKey ]: merge( {}, currentFollow, {
+					is_following: false,
+					delivery_methods: {
+						notification: { send_posts: false },
+					},
+				} ),
 			};
 		},
 		[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {

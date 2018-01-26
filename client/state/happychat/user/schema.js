@@ -13,3 +13,11 @@ export const geoLocationSchema = {
 export const isEligibleSchema = {
 	type: [ 'boolean', 'null' ],
 };
+
+export const isPresalesPrecancellationEligible = {
+	type: [ 'object', 'null' ],
+	properties: {
+		precancellation: { type: 'boolean' },
+		presale: { type: 'boolean' },
+	},
+};

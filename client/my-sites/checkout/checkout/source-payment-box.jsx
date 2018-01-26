@@ -9,10 +9,8 @@ import { assign, some, map } from 'lodash';
  * Internal dependencies
  */
 import { localize, translate } from 'i18n-calypso';
-import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
@@ -199,10 +197,7 @@ class SourcePaymentBox extends PureComponent {
 
 	render() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
-		const showPaymentChatButton =
-			config.isEnabled( 'upgrades/presale-chat' ) &&
-			abtest( 'presaleChatButton' ) === 'showChatButton' &&
-			hasBusinessPlanInCart;
+		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
 			<form onSubmit={ this.redirectToPayment }>
