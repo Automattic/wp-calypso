@@ -197,9 +197,9 @@ describe( 'reducer', () => {
 
 	describe( 'closeShippingZoneMethod', () => {
 		// The real closeShippingZoneMethod is a thunk now, but this test is only concerned with the reducer
-		const closeShippingZoneMethod = siteId => ( {
+		const closeShippingZoneMethod = _siteId => ( {
 			type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE,
-			siteId,
+			siteId: _siteId,
 		} );
 
 		test( 'should mark the method as closed', () => {

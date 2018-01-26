@@ -218,13 +218,13 @@ const getZoneMethodDeleteSteps = ( siteId, zoneId, method, state ) => {
 };
 
 const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
-	let { id, methodType, enabled, ...extraMethodProps } = method;
-	methodType = methodType || getShippingZoneMethod( state, id, siteId ).methodType;
+	const { id, methodType, enabled, ...extraMethodProps } = method;
+	const realMethodType = methodType || getShippingZoneMethod( state, id, siteId ).methodType;
 
 	const isNew = 'number' !== typeof id;
 	const wasEnabled = ! isNew && getShippingZoneMethod( state, id, siteId ).enabled;
 	const enabledChanged = ! isNil( enabled ) && wasEnabled !== enabled;
-	const isWcsMethod = startsWith( methodType, 'wc_services' );
+	const isWcsMethod = startsWith( realMethodType, 'wc_services' );
 	// The WCS method needs to be updated in 2 steps: "enable/disable" toggle uses the normal endpoint, rest of the props use a custom one
 	const methodPropsToUpdate = isWcsMethod ? {} : { ...extraMethodProps };
 	if ( enabledChanged ) {
@@ -241,7 +241,7 @@ const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
 						false !== enabled
 							? 'calypso_woocommerce_shipping_method_enabled'
 							: 'calypso_woocommerce_shipping_method_disabled';
-					recordTrack( event, { shipping_method: methodType } );
+					recordTrack( event, { shipping_method: realMethodType } );
 				}
 
 				dispatch(
@@ -266,7 +266,7 @@ const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
 					updateWcsShippingZoneMethod(
 						siteId,
 						getMethodId( id, actionList ),
-						methodType,
+						realMethodType,
 						extraMethodProps,
 						actionListStepSuccess( actionList ),
 						actionListStepFailure( actionList )

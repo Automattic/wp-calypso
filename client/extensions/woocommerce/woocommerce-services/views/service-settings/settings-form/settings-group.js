@@ -62,7 +62,6 @@ SettingsGroup.propTypes = {
 	} ),
 	schema: PropTypes.object.isRequired,
 	storeOptions: PropTypes.object.isRequired,
-	formActions: PropTypes.object.isRequired,
 	errors: PropTypes.object,
 	site: PropTypes.object.isRequired,
 };
