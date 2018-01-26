@@ -1,14 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-
 import createReactClass from 'create-react-class';
-
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import { flow } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,41 +16,18 @@ import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card';
 import Header from './card/header';
 import Property from './card/property';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestSiteRename } from 'state/site-rename/actions';
+import SiteRenamer from 'blocks/simple-site-rename-form';
 
 const WpcomDomain = createReactClass( {
 	displayName: 'WpcomDomain',
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
 
-	handleEditSiteAddressClick() {
-		this.recordEvent( 'navigationClick', 'Edit Site Address', this.props.domain );
-	},
-
-	getEditSiteAddressBlock() {
-		/**
-		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
-		 */
-		if ( this.props.domain.name.match( /\.\w+\.blog$/ ) ) {
-			return null;
-		}
-
-		return (
-			<VerticalNav>
-				<VerticalNavItem
-					path={ `https://${ this.props.domain.name }/wp-admin/index.php?page=my-blogs#blog_row_${
-						this.props.selectedSite.ID
-					}` }
-					external={ true }
-					onClick={ this.handleEditSiteAddressClick }
-				>
-					{ this.props.translate( 'Edit Site Address' ) }
-				</VerticalNavItem>
-			</VerticalNav>
-		);
-	},
-
 	render() {
+		const { domain } = this.props;
+		const isDotBlogDomain = domain.name.match( /\.\w+\.blog$/ );
+
 		return (
 			<div>
 				<div className="domain-details-card">
@@ -72,10 +48,18 @@ const WpcomDomain = createReactClass( {
 						</Property>
 					</Card>
 				</div>
-				{ this.getEditSiteAddressBlock() }
+				{ ! isDotBlogDomain && <SiteRenamer currentDomain={ domain } /> }
 			</div>
 		);
 	},
 } );
 
-export default localize( WpcomDomain );
+export default flow(
+	localize,
+	connect(
+		state => ( {
+			siteId: getSelectedSiteId( state ),
+		} ),
+		dispatch => bindActionCreators( { requestSiteRename }, dispatch )
+	)
+)( WpcomDomain );
