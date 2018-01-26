@@ -48,14 +48,14 @@ class PeopleListItem extends React.PureComponent {
 	getCardLink = () => {
 		const { invite, site, type, user } = this.props;
 		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
-		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.invite_key }`;
+		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
 
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
 	renderInviteStatus = () => {
 		const { invite, translate } = this.props;
-		const { is_pending: isPending } = invite;
+		const { isPending } = invite;
 		const statusClasses = {
 			'is-pending': isPending,
 		};

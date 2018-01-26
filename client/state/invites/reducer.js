@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { pick } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
@@ -12,6 +17,7 @@ import {
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'state/action-types';
+import { inviteItemsSchema } from './schema';
 
 /**
  * Returns the updated site invites requests state after an action has been
@@ -49,10 +55,21 @@ export const items = createReducer(
 		[ INVITES_REQUEST_SUCCESS ]: ( state, action ) => {
 			return {
 				...state,
-				[ action.siteId ]: action.invites,
+				[ action.siteId ]: action.invites.map( invite => {
+					// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
+					const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
+
+					return {
+						key: invite.invite_key,
+						role: invite.role,
+						isPending: invite.is_pending,
+						user,
+					};
+				} ),
 			};
 		},
-	}
+	},
+	inviteItemsSchema
 );
 
 /**
