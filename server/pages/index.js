@@ -173,6 +173,7 @@ function getDefaultContext( request ) {
 		config.isEnabled( 'try/single-cdn' ) && !! request.query.enableSingleCDN;
 
 	const context = Object.assign( {}, request.context, {
+		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
 		urls: generateStaticUrls(),
 		user: false,
