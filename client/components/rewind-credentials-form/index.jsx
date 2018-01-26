@@ -124,7 +124,7 @@ export class RewindCredentialsForm extends Component {
 		const { showAdvancedSettings, formErrors } = this.state;
 
 		return (
-			<div>
+			<div className="rewind-credentials-form">
 				<QueryRewindState siteId={ siteId } />
 				<FormFieldset>
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
