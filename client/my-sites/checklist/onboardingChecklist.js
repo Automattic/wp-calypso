@@ -3,14 +3,11 @@
  *
  * @format
  */
-
-import { assign, map } from 'lodash';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-
 const tasks = {
 	about_page_updated: {
 		title: 'Create your About page',
@@ -85,7 +82,7 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You published your first blog post',
 		completedButtonText: 'Edit',
-		url: '/post/$siteSlug/4',
+		url: '/post/$siteSlug/3',
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
@@ -144,17 +141,17 @@ export const tourForTask = id => {
 	}
 };
 
-export const onboardingTasks = currentState =>
-	map( sequence, id => {
-		const completed = currentState[ id ];
-		const task = tasks[ id ];
-		return assign( { id, completed }, task );
-	} );
-
-export const launchTask = ( { id, location, requestTour, siteSlug, track } ) => {
+export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
-	const tour = tourForTask( id );
-	const url = urlForTask( id, siteSlug );
+	const url = urlForTask( task.id, siteSlug );
+	const tour = tourForTask( task.id );
+
+	if ( task.completed ) {
+		if ( url ) {
+			page( url );
+		}
+		return;
+	}
 
 	if ( ! tour && ! url ) {
 		return;
@@ -162,21 +159,28 @@ export const launchTask = ( { id, location, requestTour, siteSlug, track } ) => 
 
 	track( 'calypso_checklist_task_start', {
 		checklist_name,
-		step_name: id,
+		step_name: task.id,
 		location,
 	} );
 
 	if ( url ) {
 		page( url );
 	}
+
 	if ( tour ) {
 		requestTour( tour );
 	}
-};
+}
 
-export const launchCompletedTask = ( { id, siteSlug } ) => {
-	const url = urlForTask( id, siteSlug );
-	if ( url ) {
-		page( url );
+export function onboardingTasks( checklist ) {
+	if ( ! checklist || ! checklist.tasks ) {
+		return null;
 	}
-};
+
+	return sequence.map( id => {
+		const task = tasks[ id ];
+		const taskFromServer = checklist.tasks[ id ];
+
+		return { id, ...task, ...taskFromServer };
+	} );
+}

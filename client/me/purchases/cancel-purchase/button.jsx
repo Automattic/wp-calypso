@@ -40,6 +40,7 @@ import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
+import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -96,9 +97,14 @@ class CancelPurchaseButton extends Component {
 	};
 
 	changeSurveyStep = stepFunction => {
-		const { purchase, isChatAvailable, isChatActive } = this.props;
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
 		const { surveyStep, survey } = this.state;
-		const steps = stepsForProductAndSurvey( survey, purchase, isChatAvailable || isChatActive );
+		const steps = stepsForProductAndSurvey(
+			survey,
+			purchase,
+			isChatAvailable || isChatActive,
+			precancellationChatAvailable
+		);
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 		this.setState( { surveyStep: newStep } );
@@ -380,6 +386,7 @@ export default connect(
 	state => ( {
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
+		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 	} ),
 	{
 		clearPurchases,

@@ -27,24 +27,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	presaleChatButton: {
-		datestamp: '20170328',
-		variations: {
-			showChatButton: 20,
-			original: 80,
-		},
-		defaultVariation: 'original',
-		localeTargets: 'any',
-	},
-	chatOfferOnCancel: {
-		datestamp: '20170421',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
 		variations: {

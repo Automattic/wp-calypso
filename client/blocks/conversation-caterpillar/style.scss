@@ -10,7 +10,7 @@
 
 .conversation-caterpillar__count {
 	cursor: pointer;
-	color: $gray;
+	color: $blue-medium;
 	display: flex;
 	margin-left: 8px;
 	flex: 1 1 auto;
@@ -21,7 +21,7 @@
 	white-space: nowrap;
 
 	&:hover {
-		color: $blue-medium;
+		color: $blue-light;
 	}
 
 	&::after {
@@ -40,9 +40,10 @@
 .conversation-caterpillar__gravatar {
 	cursor: pointer;
 	border: 2px solid $white;
-	height: 32px;
+	height: 24px;
 	margin-left: -8px;
 	vertical-align: middle;
+	width: 24px;
 
 	&:first-child {
 		margin-left: -2px;

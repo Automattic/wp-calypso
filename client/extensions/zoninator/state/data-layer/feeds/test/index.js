@@ -6,6 +6,7 @@
 import { expect } from 'chai';
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
+import { omit } from 'lodash';
 import sinon from 'sinon';
 
 /**
@@ -23,6 +24,7 @@ import { fromApi, toApi } from '../util';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { updateFeed } from 'zoninator/state/feeds/actions';
+import { resetLock } from 'zoninator/state/locks/actions';
 
 const dummyAction = {
 	type: 'DUMMY_ACTION',
@@ -149,6 +151,14 @@ describe( '#saveZoneFeed()', () => {
 		saveZoneFeed( { dispatch }, dummyAction );
 
 		expect( dispatch ).to.have.been.calledWith( startSubmit( dummyAction.form ) );
+	} );
+
+	test( 'should dispatch `resetLock`', () => {
+		const dispatch = sinon.spy();
+
+		saveZoneFeed( { dispatch }, dummyAction );
+
+		expect( dispatch ).to.have.been.calledWithMatch( omit( resetLock( 123, 456 ), [ 'time' ] ) );
 	} );
 } );
 

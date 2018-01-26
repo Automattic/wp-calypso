@@ -84,3 +84,26 @@
 	right: 0px;
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
 }
+
+.people-list-item__invite-status {
+	align-self: center;
+	display: block;
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin-right: 30px;
+
+	color: $alert-green;
+
+	&.is-pending {
+		color: $gray;
+	}
+
+	.gridicon {
+		vertical-align: text-bottom;
+		margin-right: 4px;
+	}
+}
+
+.people-list-item__invite-resend {
+	margin-left: 12px;
+}

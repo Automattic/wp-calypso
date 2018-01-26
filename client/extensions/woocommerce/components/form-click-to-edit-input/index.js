@@ -107,11 +107,7 @@ class FormClickToEditInput extends Component {
 				</span>
 
 				{ ! disabled && (
-					<Button
-						borderless
-						onClick={ this.editStart ? this.ediStart : undefined }
-						aria-label={ editAriaLabel }
-					>
+					<Button borderless onClick={ this.editStart } aria-label={ editAriaLabel }>
 						<Gridicon icon="pencil" />
 					</Button>
 				) }

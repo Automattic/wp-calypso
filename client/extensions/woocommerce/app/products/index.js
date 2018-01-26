@@ -8,7 +8,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import config from 'config';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { trim } from 'lodash';
@@ -32,7 +31,6 @@ import NavItem from 'components/section-nav/item';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import SearchCard from 'components/search-card';
 import SectionNav from 'components/section-nav';
 import Search from 'components/search';
 
@@ -86,54 +84,31 @@ class Products extends Component {
 		this.props.fetchProducts( site.ID, { search: query } );
 	};
 
-	// TODO When this launches, we can reduce this to just the `SectionNav` code.
-	renderSearchCardOrSectionNav() {
-		const { site, translate, productsLoading, productsLoaded, totalProducts } = this.props;
+	renderSectionNav() {
+		const { site, translate } = this.props;
 
-		if ( config.isEnabled( 'woocommerce/extension-product-categories' ) ) {
-			const productsLabel = translate( 'Products' );
+		const productsLabel = translate( 'Products' );
+		return (
+			<SectionNav selectedText={ productsLabel }>
+				<NavTabs label={ productsLabel } selectedText={ productsLabel }>
+					<NavItem path={ getLink( '/store/products/:site/', site ) } selected>
+						{ productsLabel }
+					</NavItem>
+					<NavItem path={ getLink( '/store/products/categories/:site/', site ) }>
+						{ translate( 'Categories' ) }
+					</NavItem>
+				</NavTabs>
 
-			return (
-				<SectionNav selectedText={ productsLabel }>
-					<NavTabs label={ productsLabel } selectedText={ productsLabel }>
-						<NavItem path={ getLink( '/store/products/:site/', site ) } selected>
-							{ productsLabel }
-						</NavItem>
-						<NavItem path={ getLink( '/store/products/categories/:site/', site ) }>
-							{ translate( 'Categories' ) }
-						</NavItem>
-					</NavTabs>
-
-					<Search
-						pinned
-						fitsContainer
-						onSearch={ this.onSearch }
-						placeholder={ translate( 'Search products…' ) }
-						delaySearch
-						delayTimeout={ 400 }
-					/>
-				</SectionNav>
-			);
-		}
-
-		let output = null;
-		// Show the search card if we actually have products, or during the loading process as part of the placeholder UI
-		if (
-			( productsLoaded === true && totalProducts > 0 ) ||
-			( ! site || productsLoading === true )
-		) {
-			output = (
-				<SearchCard
+				<Search
+					pinned
+					fitsContainer
 					onSearch={ this.onSearch }
+					placeholder={ translate( 'Search products…' ) }
 					delaySearch
 					delayTimeout={ 400 }
-					disabled={ ! site }
-					placeholder={ translate( 'Search products…' ) }
 				/>
-			);
-		}
-
-		return output;
+			</SectionNav>
+		);
 	}
 
 	render() {
@@ -155,7 +130,7 @@ class Products extends Component {
 						{ translate( 'Add a product' ) }
 					</Button>
 				</ActionHeader>
-				{ this.renderSearchCardOrSectionNav() }
+				{ this.renderSectionNav() }
 				{ productsDisplay }
 			</Main>
 		);

@@ -17,27 +17,35 @@ import {
 
 describe( 'isOrderEditable', () => {
 	test( 'should be true for a pending order', () => {
-		expect( isOrderEditable( 'pending' ) ).to.be.true;
+		expect( isOrderEditable( { id: 1, status: 'pending' } ) ).to.be.true;
 	} );
 
 	test( 'should be true for an on-hold order', () => {
-		expect( isOrderEditable( 'on-hold' ) ).to.be.true;
+		expect( isOrderEditable( { id: 1, status: 'on-hold' } ) ).to.be.true;
 	} );
 
 	test( 'should be false for a processing order', () => {
-		expect( isOrderEditable( 'processing' ) ).to.be.false;
+		expect( isOrderEditable( { id: 1, status: 'processing' } ) ).to.be.false;
 	} );
 
 	test( 'should be false for a completed order', () => {
-		expect( isOrderEditable( 'completed' ) ).to.be.false;
+		expect( isOrderEditable( { id: 1, status: 'completed' } ) ).to.be.false;
 	} );
 
 	test( 'should be false for a failed order', () => {
-		expect( isOrderEditable( 'failed' ) ).to.be.false;
+		expect( isOrderEditable( { id: 1, status: 'failed' } ) ).to.be.false;
+	} );
+
+	test( 'should be true for an unsaved pending order', () => {
+		expect( isOrderEditable( { id: { placeholder: 'order_1' }, status: 'pending' } ) ).to.be.true;
+	} );
+
+	test( 'should be true for an unsaved completed order', () => {
+		expect( isOrderEditable( { id: { placeholder: 'order_1' }, status: 'completed' } ) ).to.be.true;
 	} );
 
 	test( 'should be false for a fake order status', () => {
-		expect( isOrderEditable( 'fake' ) ).to.be.false;
+		expect( isOrderEditable( { id: 1, status: 'fake' } ) ).to.be.false;
 	} );
 } );
 
