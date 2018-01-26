@@ -75,7 +75,7 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	renderInviteStatus = () => {
-		const { invite, translate } = this.props;
+		const { invite, translate, requestingResend } = this.props;
 		const { isPending } = invite;
 		const statusClasses = {
 			'is-pending': isPending,
@@ -87,26 +87,16 @@ class PeopleListItem extends React.PureComponent {
 				{ ! isPending && <Gridicon icon="checkmark" size={ 18 } /> }
 				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
 				{ isPending && (
-					<Button className="people-list-item__invite-resend" compact>
+					<Button
+						className="people-list-item__invite-resend"
+						onClick={ this.onResend }
+						busy={ requestingResend }
+						compact
+					>
 						{ translate( 'Resend Invite' ) }
 					</Button>
 				) }
 			</div>
-		);
-	};
-
-	renderInviteResend = () => {
-		const { requestingResend } = this.props;
-
-		return (
-			<Button
-				className="people-list-item__invite-resend"
-				onClick={ this.onResend }
-				busy={ requestingResend }
-				compact={ true }
-			>
-				Resend Invite
-			</Button>
 		);
 	};
 
@@ -138,8 +128,6 @@ class PeopleListItem extends React.PureComponent {
 						</Button>
 					</div>
 				) }
-
-				{ isInvite && this.renderInviteResend() }
 			</CompactCard>
 		);
 	}
