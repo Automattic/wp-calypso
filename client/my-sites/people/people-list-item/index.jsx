@@ -19,7 +19,6 @@ import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
-import Button from 'components/button';
 import { isRequestingResend } from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
 
@@ -27,8 +26,8 @@ class PeopleListItem extends React.PureComponent {
 	static displayName = 'PeopleListItem';
 
 	static propTypes = {
-		site: PropTypes.object.isRequired,
-		invite: PropTypes.object.isRequired,
+		site: PropTypes.object,
+		invite: PropTypes.object,
 	};
 
 	navigateToUser = () => {
@@ -63,6 +62,18 @@ class PeopleListItem extends React.PureComponent {
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
+	onResend = () => {
+		const { requestingResend, site, invite } = this.props;
+		const siteId = site && site.ID;
+		const inviteKey = invite && invite.invite_key;
+
+		if ( requestingResend ) {
+			return null;
+		}
+
+		this.props.resendInvite( siteId, inviteKey );
+	};
+
 	renderInviteStatus = () => {
 		const { invite, translate } = this.props;
 		const { isPending } = invite;
@@ -81,6 +92,21 @@ class PeopleListItem extends React.PureComponent {
 					</Button>
 				) }
 			</div>
+		);
+	};
+
+	renderInviteResend = () => {
+		const { requestingResend } = this.props;
+
+		return (
+			<Button
+				className="people-list-item__invite-resend"
+				onClick={ this.onResend }
+				busy={ requestingResend }
+				compact={ true }
+			>
+				Resend Invite
+			</Button>
 		);
 	};
 
@@ -105,16 +131,15 @@ class PeopleListItem extends React.PureComponent {
 
 				{ onRemove && (
 					<div className="people-list-item__actions">
-						<button className="button is-link people-list-item__remove-button" onClick={ onRemove }>
+						<Button className="button is-link people-list-item__remove-button" onClick={ onRemove }>
 							{ translate( 'Remove', {
 								context: 'Verb: Remove a user or follower from the blog.',
 							} ) }
-						</button>
+						</Button>
 					</div>
 				) }
-				<Button onClick={ this.onResend } busy={ requestingResend } compact={ true }>
-					Resend Invite
-				</Button>
+
+				{ isInvite && this.renderInviteResend() }
 			</CompactCard>
 		);
 	}
@@ -124,10 +149,6 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = ownProps.site && ownProps.site.ID;
 		const inviteKey = ownProps.invite && ownProps.invite.invite_key;
-
-		if ( ! siteId ) {
-			return null;
-		}
 
 		return {
 			requestingResend: isRequestingResend( state, siteId, inviteKey ),
