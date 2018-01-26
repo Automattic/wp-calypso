@@ -35,7 +35,7 @@ export const rewind = {
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
 	},
-	required: [ 'restore_id', 'status' ],
+	required: [ 'rewind_id', 'status' ],
 };
 
 export const unavailable = {
