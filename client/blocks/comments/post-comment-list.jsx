@@ -98,6 +98,13 @@ class PostCommentList extends React.Component {
 		! this.alreadyLoadedInitialSet;
 
 	shouldNormalFetchAfterPropsChange = nextProps => {
+		if (
+			nextProps.commentsFetchingStatus.haveEarlierCommentsToFetch &&
+			nextProps.commentsFetchingStatus.haveLaterCommentsToFetch
+		) {
+			return true;
+		}
+
 		const currentSiteId = get( this.props, 'post.site_ID' );
 		const currentPostId = get( this.props, 'post.ID' );
 		const currentCommentsFilter = this.props.commentsFilter;
@@ -138,14 +145,14 @@ class PostCommentList extends React.Component {
 			if ( this.props.commentsTree ) {
 				this.viewEarlierCommentsHandler();
 			} else {
-				this.props.requestComment( { siteId, commentId: props.startingCommentId } );
+				props.requestComment( { siteId, commentId: props.startingCommentId } );
 			}
 		} else if ( this.shouldFetchInitialPages( props ) ) {
 			this.viewEarlierCommentsHandler();
 			this.viewLaterCommentsHandler();
 			this.alreadyLoadedInitialSet = true;
-		} else {
-			this.props.requestPostComments( { siteId, postId, status } );
+		} else if ( this.shouldNormalFetchAfterPropsChange( props ) ) {
+			props.requestPostComments( { siteId, postId, status } );
 		}
 	};
 
