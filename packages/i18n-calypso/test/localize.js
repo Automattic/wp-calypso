@@ -2,8 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	setupEnzymeAdapter = require( 'enzyme-adapter-react-helper' ),
 	expect = require( 'chai' ).expect,
-	mount = require( 'enzyme' ).mount,
+	shallow = require( 'enzyme' ).shallow,
 	useFakeDom = require( 'react-test-env' ).useFakeDom;
 
 /**
@@ -14,6 +15,7 @@ var localize = require( '..' ).localize,
 
 describe( 'localize()', function() {
 	useFakeDom();
+	setupEnzymeAdapter();
 
 	it( 'should be named using the variable name of the composed component', function() {
 		class MyComponent extends React.Component {
@@ -48,7 +50,7 @@ describe( 'localize()', function() {
 		var MyComponent = () => emptyRender();
 		var LocalizedComponent = localize( MyComponent );
 
-		var mounted = mount( React.createElement( LocalizedComponent ) );
+		var mounted = shallow( React.createElement( LocalizedComponent ) );
 		var props = mounted.find( MyComponent ).props();
 
 		expect( props.translate ).to.be.a( 'function' );
