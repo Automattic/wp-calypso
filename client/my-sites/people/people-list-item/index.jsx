@@ -120,8 +120,8 @@ class PeopleListItem extends React.PureComponent {
 			<CompactCard
 				className={ classNames( 'people-list-item', className ) }
 				tagName={ tagName }
-				//href={ this.getCardLink() }
-				//onClick={ canLinkToProfile && this.navigateToUser }
+				href={ this.getCardLink() }
+				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
 					<PeopleProfile invite={ invite } type={ type } user={ user } />
