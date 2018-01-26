@@ -10,7 +10,13 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { requesting, items, requestingResend } from '../reducer';
-import { INVITES_REQUEST, INVITE_RESEND_REQUEST, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import {
+	INVITES_REQUEST,
+	INVITES_REQUEST_SUCCESS,
+	INVITE_RESEND_REQUEST,
+	SERIALIZE,
+	DESERIALIZE,
+} from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -42,6 +48,113 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
+		test( 'should key invites by site ID', () => {
+			const state = items(
+				{},
+				{
+					type: INVITES_REQUEST_SUCCESS,
+					siteId: 12345,
+					invites: [
+						{
+							invite_key: '123456asdf789',
+							role: 'follower',
+							is_pending: true,
+							user: {
+								login: 'chicken',
+								email: false,
+								name: 'Pollo',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+							},
+						},
+					],
+				}
+			);
+			expect( state ).to.eql( {
+				12345: [
+					{
+						key: '123456asdf789',
+						role: 'follower',
+						isPending: true,
+						user: {
+							login: 'chicken',
+							email: false,
+							name: 'Pollo',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						},
+					},
+				],
+			} );
+		} );
+
+		test( 'should accumulate sites', () => {
+			const original = {
+				12345: [
+					{
+						key: '123456asdf789',
+						role: 'follower',
+						isPending: true,
+						user: {
+							login: 'chicken',
+							email: false,
+							name: 'Pollo',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						},
+					},
+				],
+			};
+			const state = items( original, {
+				type: INVITES_REQUEST_SUCCESS,
+				siteId: 67890,
+				invites: [
+					{
+						invite_key: '9876fdas54321',
+						role: 'follower',
+						is_pending: true,
+						user: {
+							login: 'celery',
+							email: false,
+							name: 'Apio',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+						},
+					},
+				],
+			} );
+			expect( state ).to.eql( {
+				12345: [
+					{
+						key: '123456asdf789',
+						role: 'follower',
+						isPending: true,
+						user: {
+							login: 'chicken',
+							email: false,
+							name: 'Pollo',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						},
+					},
+				],
+				67890: [
+					{
+						key: '9876fdas54321',
+						role: 'follower',
+						isPending: true,
+						user: {
+							login: 'celery',
+							email: false,
+							name: 'Apio',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+						},
+					},
+				],
+			} );
+		} );
+
 		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				12345: [
