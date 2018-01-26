@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, findIndex, isEmpty, isEqual, isNil, reject } from 'lodash';
+import { find, findIndex, isEmpty, isEqual, isNil, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -281,7 +281,7 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED ] = ( state, { methodId
 
 reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = (
 	state,
-	{ data, originatingAction: { methodId } }
+	{ data, originatingAction: { methodId, method } }
 ) => {
 	const bucket = getBucket( { id: methodId } );
 	const newState = {
@@ -300,9 +300,22 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = (
 				},
 			];
 		}
+		newState.creates = reject( state[ bucket ], { id: methodId } );
+	} else {
+		// WCS does partial updates, so only remove the method from the "updates" bucket if it all its fields were updated
+		const edit = find( state.updates, { id: methodId } );
+		const newEditFields = omit( edit, Object.keys( method ) );
+		if ( isEmpty( omit( newEditFields, [ 'id', 'methodType' ] ) ) ) {
+			newState.updates = reject( state.updates, { id: methodId } );
+		} else {
+			const index = findIndex( state.updates, { id: methodId } );
+			newState.updates = [
+				...state[ bucket ].slice( 0, index ),
+				newEditFields,
+				...state[ bucket ].slice( index + 1 ),
+			];
+		}
 	}
-
-	newState[ bucket ] = reject( state[ bucket ], { id: methodId } );
 	return newState;
 };
 

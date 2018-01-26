@@ -5,7 +5,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { find, flatten, isEmpty, isNil, map, omit, some, xor } from 'lodash';
+import { find, flatten, isEmpty, isNil, map, omit, some, startsWith, xor } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import {
 	updateShippingZoneMethod,
 	deleteShippingZoneMethod,
 } from 'woocommerce/state/sites/shipping-zone-methods/actions';
+import { updateWcsShippingZoneMethod } from 'woocommerce/woocommerce-services/state/service-settings/actions';
 import { updateShippingZoneLocations } from 'woocommerce/state/sites/shipping-zone-locations/actions';
 import {
 	actionListStepNext,
@@ -217,25 +218,27 @@ const getZoneMethodDeleteSteps = ( siteId, zoneId, method, state ) => {
 };
 
 const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
-	const { id, ...methodProps } = method;
-	const methodType =
-		methodProps.methodType || getShippingZoneMethod( state, id, siteId ).methodType;
-	delete methodProps.methodType;
-	if ( isEmpty( methodProps ) ) {
-		return [];
-	}
+	let { id, methodType, enabled, ...extraMethodProps } = method;
+	methodType = methodType || getShippingZoneMethod( state, id, siteId ).methodType;
 
 	const isNew = 'number' !== typeof id;
 	const wasEnabled = ! isNew && getShippingZoneMethod( state, id, siteId ).enabled;
-	const enabledChanged = ! isNil( methodProps.enabled ) && wasEnabled !== methodProps.enabled;
+	const enabledChanged = ! isNil( enabled ) && wasEnabled !== enabled;
+	const isWcsMethod = startsWith( methodType, 'wc_services' );
+	// The WCS method needs to be updated in 2 steps: "enable/disable" toggle uses the normal endpoint, rest of the props use a custom one
+	const methodPropsToUpdate = isWcsMethod ? {} : { ...extraMethodProps };
+	if ( enabledChanged ) {
+		methodPropsToUpdate.enabled = enabled;
+	}
+	const steps = [];
 
-	return [
-		{
+	if ( ! isEmpty( methodPropsToUpdate ) ) {
+		steps.push( {
 			description: translate( 'Updating Shipping Method' ),
 			onStep: ( dispatch, actionList ) => {
 				if ( isNew || enabledChanged ) {
 					const event =
-						false !== methodProps.enabled
+						false !== enabled
 							? 'calypso_woocommerce_shipping_method_enabled'
 							: 'calypso_woocommerce_shipping_method_disabled';
 					recordTrack( event, { shipping_method: methodType } );
@@ -246,14 +249,34 @@ const getZoneMethodUpdateSteps = ( siteId, zoneId, method, state ) => {
 						siteId,
 						getZoneId( zoneId, actionList ),
 						getMethodId( id, actionList ),
-						methodProps,
+						methodPropsToUpdate,
 						actionListStepSuccess( actionList ),
 						actionListStepFailure( actionList )
 					)
 				);
 			},
-		},
-	];
+		} );
+	}
+
+	if ( isWcsMethod && ! isEmpty( extraMethodProps ) ) {
+		steps.push( {
+			description: translate( 'Updating Shipping Method (extra settings)' ),
+			onStep: ( dispatch, actionList ) => {
+				dispatch(
+					updateWcsShippingZoneMethod(
+						siteId,
+						getMethodId( id, actionList ),
+						methodType,
+						extraMethodProps,
+						actionListStepSuccess( actionList ),
+						actionListStepFailure( actionList )
+					)
+				);
+			},
+		} );
+	}
+
+	return steps;
 };
 
 const getZoneMethodCreateSteps = ( siteId, zoneId, method, defaultOrder, state ) => {
