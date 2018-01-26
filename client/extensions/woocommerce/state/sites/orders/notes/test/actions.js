@@ -9,8 +9,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import { fetchNotes, createNote } from '../actions';
-import notes from './fixtures/notes';
+import { fetchNotes, fetchNotesSuccess, fetchNotesFailure, createNote } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import {
 	WOOCOMMERCE_ORDER_NOTE_CREATE,
@@ -23,88 +22,51 @@ import {
 
 describe( 'actions', () => {
 	describe( '#fetchNotes()', () => {
-		const siteId = '123';
-		const orderId = 45;
-
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wc/v3/orders/45/notes&_method=get', json: true } )
-				.reply( 200, {
-					data: notes,
-				} )
-				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
-				.query( { path: '/wc/v3/orders/0/notes&_method=get', json: true } )
-				.reply( 404, {
-					data: {
-						message: 'Invalid order ID.',
-						error: 'woocommerce_rest_shop_order_invalid_id',
-						status: 404,
-					},
-				} );
-		} );
-
-		test( 'should dispatch an action', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			fetchNotes( siteId, orderId )( dispatch, getState );
-			expect( dispatch ).to.have.been.calledWith( {
+		test( 'should return an action', () => {
+			const onSuccess = { type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS };
+			const onFailure = { type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE };
+			const action = fetchNotes( 123, 38, onSuccess, onFailure );
+			expect( action ).to.eql( {
 				type: WOOCOMMERCE_ORDER_NOTES_REQUEST,
-				siteId,
-				orderId,
+				siteId: 123,
+				orderId: 38,
+				onSuccess,
+				onFailure,
 			} );
 		} );
+	} );
 
-		test( 'should dispatch a success action with the notes list when request completes', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = fetchNotes( siteId, orderId )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWith( {
-					type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
-					siteId,
-					orderId,
-					notes,
-				} );
-			} );
-		} );
-
-		test( 'should dispatch a failure action with the error when a the request fails', () => {
-			const getState = () => ( {} );
-			const dispatch = spy();
-			const response = fetchNotes( siteId, 0 )( dispatch, getState );
-
-			return response.then( () => {
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
-					siteId,
-				} );
-			} );
-		} );
-
-		test( 'should not dispatch if notes are already loading for this site/order', () => {
-			const getState = () => ( {
-				extensions: {
-					woocommerce: {
-						sites: {
-							[ siteId ]: {
-								orders: {
-									notes: {
-										isLoading: {
-											[ orderId ]: true,
-										},
-									},
-								},
-							},
-						},
-					},
+	describe( '#fetchNotesSuccess', () => {
+		test( 'should return a success action with the customer list when request completes', () => {
+			const notes = [
+				{
+					id: 16,
+					note: 'Order details manually sent to customer.',
 				},
+			];
+			const action = fetchNotesSuccess( 123, 38, notes );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
+				siteId: 123,
+				orderId: 38,
+				notes,
 			} );
-			const dispatch = spy();
-			fetchNotes( siteId, orderId )( dispatch, getState );
-			expect( dispatch ).to.not.have.been.called;
+		} );
+	} );
+
+	describe( '#fetchNotesFailure', () => {
+		test( 'should return a failure action with the error when a the request fails', () => {
+			const error = new Error( 'Unable to send invoice', {
+				code: 'woocommerce_api_cannot_create_order_note',
+				message: 'Cannot create order note, please try again.',
+			} );
+			const action = fetchNotesFailure( 234, 21, error );
+			expect( action ).to.eql( {
+				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
+				siteId: 234,
+				orderId: 21,
+				error,
+			} );
 		} );
 	} );
 

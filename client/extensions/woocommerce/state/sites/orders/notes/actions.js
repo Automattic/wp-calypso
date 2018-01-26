@@ -3,8 +3,6 @@
 /**
  * Internal dependencies
  */
-
-import { areOrderNotesLoaded, areOrderNotesLoading } from './selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
 import {
@@ -16,43 +14,32 @@ import {
 	WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 
-export const fetchNotes = ( siteId, orderId, refresh = false ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
-	}
-	if ( areOrderNotesLoading( state, orderId, siteId ) ) {
-		return;
-	}
-	// Bail if the order notes are loaded, and we don't want to force a refresh
-	if ( ! refresh && areOrderNotesLoaded( state, orderId, siteId ) ) {
-		return;
-	}
-
-	dispatch( {
+export const fetchNotes = ( siteId, orderId, onSuccess = false, onFailure = false ) => {
+	return {
 		type: WOOCOMMERCE_ORDER_NOTES_REQUEST,
 		siteId,
 		orderId,
-	} );
+		onSuccess,
+		onFailure,
+	};
+};
 
-	return request( siteId )
-		.get( `orders/${ orderId }/notes` )
-		.then( data => {
-			dispatch( {
-				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
-				siteId,
-				orderId,
-				notes: data,
-			} );
-		} )
-		.catch( error => {
-			dispatch( {
-				type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
-				siteId,
-				orderId,
-				error,
-			} );
-		} );
+export const fetchNotesFailure = ( siteId, orderId, error = {} ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_NOTES_REQUEST_FAILURE,
+		siteId,
+		orderId,
+		error,
+	};
+};
+
+export const fetchNotesSuccess = ( siteId, orderId, notes ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_NOTES_REQUEST_SUCCESS,
+		siteId,
+		orderId,
+		notes,
+	};
 };
 
 export const createNoteSuccess = ( siteId, orderId, note ) => {
