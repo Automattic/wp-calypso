@@ -50,8 +50,8 @@ describe( 'wpcom-api', () => {
 		test( 'onSuccess()', () => {
 			expect( onSuccess( { type: CONCIERGE_APPOINTMENT_CREATE } ) ).toEqual(
 				withAnalytics(
-					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKED ),
-					recordTracksEvent( 'calypso_concierge_appointment_booking_successful' )
+					recordTracksEvent( 'calypso_concierge_appointment_booking_successful' ),
+					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKED )
 				)
 			);
 		} );
@@ -59,8 +59,8 @@ describe( 'wpcom-api', () => {
 		test( 'onError()', () => {
 			expect( onError( {}, { code: 'error' } ) ).toEqual( [
 				withAnalytics(
-					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR ),
-					recordTracksEvent( 'calypso_concierge_appointment_booking_error' )
+					recordTracksEvent( 'calypso_concierge_appointment_booking_error' ),
+					updateConciergeBookingStatus( CONCIERGE_STATUS_BOOKING_ERROR )
 				),
 				errorNotice( 'We could not book your appointment. Please try again later.' ),
 			] );
