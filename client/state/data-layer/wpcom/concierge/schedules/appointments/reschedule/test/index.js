@@ -23,7 +23,7 @@ describe( 'wpcom-api', () => {
 				scheduleId: 123,
 				appointmentId: 1,
 				beginTimestamp: 1234567890,
-				appointmentDetails: { meta: { timezoe: 'UTC' } },
+				appointmentDetails: { meta: { timezone: 'UTC' } },
 			};
 
 			expect( rescheduleConciergeAppointment( action ) ).toEqual( [
