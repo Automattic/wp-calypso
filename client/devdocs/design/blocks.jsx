@@ -177,7 +177,7 @@ export default class AppComponents extends React.Component {
 					<ConversationCaterpillar />
 					<ConversationFollowButton />
 					<ColorSchemePicker />
-					<SiteRenamer />
+					{ isEnabled( 'site-renamer/devdocs' ) && <SiteRenamer /> }
 				</Collection>
 			</Main>
 		);

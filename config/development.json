@@ -160,6 +160,8 @@
 		"signup/atomic-store-flow": true,
 		"signup/wpcc": true,
 		"simple-payments": true,
+		"site-renamer": true,
+		"site-renamer/devdocs": true,
 		"support-user": true,
 		"sync-handler": true,
 		"try/preconnect": true,
