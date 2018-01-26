@@ -29,7 +29,7 @@ export const download = {
 export const rewind = {
 	type: 'object',
 	properties: {
-		rewind_id: { type: 'integer' },
+		rewind_id: { type: 'string' },
 		status: { type: 'string', enum: [ 'failed', 'finished', 'running' ] },
 		started_at: { type: 'string' },
 		progress: { type: 'integer' },

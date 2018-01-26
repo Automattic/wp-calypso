@@ -31,7 +31,7 @@ const transformDownload = data =>
 const transformRewind = data =>
 	Object.assign(
 		{
-			restoreId: data.restore_id,
+			rewindId: data.rewind_id,
 			startedAt: new Date( data.started_at ),
 			status: data.status,
 		},
