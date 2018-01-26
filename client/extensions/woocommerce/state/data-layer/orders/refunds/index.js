@@ -7,6 +7,7 @@ import {
 	createRefundFailure,
 	createRefundSuccess,
 } from 'woocommerce/state/sites/orders/refunds/actions';
+import { fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { fetchOrder } from 'woocommerce/state/sites/orders/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_ORDER_REFUND_CREATE } from 'woocommerce/state/action-types';
@@ -28,7 +29,9 @@ const onCreateError = ( action, error ) => dispatch => {
 const onCreateSuccess = ( action, { data } ) => dispatch => {
 	const { siteId, orderId } = action;
 	dispatch( createRefundSuccess( siteId, orderId, data ) );
+	// Success! Re-fetch order & notes
 	dispatch( fetchOrder( siteId, orderId ) );
+	dispatch( fetchNotes( siteId, orderId ) );
 	if ( action.onSuccess ) {
 		dispatch( action.onSuccess );
 	}
