@@ -62,7 +62,7 @@ export const handleRequest = ( { dispatch }, action ) => {
 	dispatch( request( siteId, action ).get( 'settings_email_groups' ) );
 };
 
-export const handleSuccess = ( { dispatch }, action, { data } ) => {
+export const handleRequestSuccess = ( { dispatch }, action, { data } ) => {
 	const { siteId } = action;
 	dispatch( {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
@@ -71,7 +71,7 @@ export const handleSuccess = ( { dispatch }, action, { data } ) => {
 	} );
 };
 
-export const handleFailure = ( { dispatch }, action, error ) => {
+export const handleRequestFailure = ( { dispatch }, action, error ) => {
 	const { siteId } = action;
 	dispatch( {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
@@ -82,6 +82,6 @@ export const handleFailure = ( { dispatch }, action, error ) => {
 
 export default {
 	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST ]: [
-		dispatchRequest( handleRequest, handleSuccess, handleFailure ),
+		dispatchRequest( handleRequest, handleRequestSuccess, handleRequestFailure ),
 	],
 };
