@@ -26,3 +26,4 @@ export const tracksStore = {
 };
 
 export const recordTrack = tracksUtils.recordTrack( analytics.tracks, debug, tracksStore );
+export const bumpStat = tracksUtils.bumpMCStat( debug, tracksStore );

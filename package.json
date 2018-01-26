@@ -90,7 +90,7 @@
     "imports-loader": "0.6.5",
     "inherits": "2.0.1",
     "is-my-json-valid": "2.17.1",
-    "jquery": "1.11.3",
+    "jquery": "1.12.3",
     "json-loader": "0.5.4",
     "json-stable-stringify": "1.0.1",
     "key-mirror": "1.0.1",

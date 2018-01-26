@@ -11,10 +11,10 @@ import React from 'react';
 import { sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import CustomizeComponent from 'my-sites/customize/main';
 
 export function customize( context, next ) {
-	const CustomizeComponent = require( 'my-sites/customize/main' ),
-		basePath = sectionify( context.path );
+	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Customizer' );
 

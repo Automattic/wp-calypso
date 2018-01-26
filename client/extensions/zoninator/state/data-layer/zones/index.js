@@ -15,6 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { navigate } from 'state/ui/actions';
+import { resetLock } from '../../locks/actions';
 import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
 import { fromApi } from './utils';
 import {
@@ -90,6 +91,7 @@ export const saveZone = ( { dispatch }, action ) => {
 
 	dispatch( startSubmit( form ) );
 	dispatch( removeNotice( saveZoneNotice ) );
+	dispatch( resetLock( siteId, zoneId ) );
 	dispatch(
 		http(
 			{
