@@ -13,13 +13,18 @@ import { connect } from 'react-redux';
 import ListEnd from 'components/list-end';
 import { bumpStat } from 'state/analytics/actions';
 
+/**
+ * Constants
+ */
+const MAX_INVITES_DISPLAYED = 100;
+
 class InvitesListEnd extends React.PureComponent {
 	static propTypes = {
 		found: PropTypes.number,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.found !== this.props.found && nextProps.found > 100 ) {
+		if ( nextProps.found !== this.props.found && nextProps.found > MAX_INVITES_DISPLAYED ) {
 			this.props.bumpStat( 'calypso_people_invite_list', 'displayed_max' );
 		}
 	}
