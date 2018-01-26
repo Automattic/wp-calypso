@@ -9,11 +9,38 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { items, requestingResend } from '../reducer';
-import { INVITE_RESEND_REQUEST, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { requesting, items, requestingResend } from '../reducer';
+import { INVITES_REQUEST, INVITE_RESEND_REQUEST, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
+	describe( '#requesting()', () => {
+		test( 'should key requests by site ID', () => {
+			const state = requesting(
+				{},
+				{
+					type: INVITES_REQUEST,
+					siteId: 12345,
+				}
+			);
+			expect( state ).to.eql( {
+				12345: true,
+			} );
+		} );
+
+		test( 'should accumulate sites', () => {
+			const original = deepFreeze( { 12345: false } );
+			const state = requesting( original, {
+				type: INVITES_REQUEST,
+				siteId: 67890,
+			} );
+			expect( state ).to.eql( {
+				12345: false,
+				67890: true,
+			} );
+		} );
+	} );
+
 	describe( '#items()', () => {
 		test( 'should persist state', () => {
 			const original = deepFreeze( {
