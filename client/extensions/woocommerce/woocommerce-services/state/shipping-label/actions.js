@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, fill, find, first, flatten, includes, isEqual, map, noop, pick } from 'lodash';
+import { every, fill, find, first, flatten, includes, isBoolean, isEqual, map, noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +21,7 @@ import { getFirstErroneousStep, getShippingLabel, getFormErrors, shouldFulfillOr
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { getEmailReceipts } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -675,6 +676,12 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 				};
 			} ),
 		};
+
+		//compatibility - only add the email_receipt if the plugin and the server support it
+		const emailReceipt = getEmailReceipts( getState(), siteId );
+		if ( isBoolean( emailReceipt ) ) {
+			formData.email_receipt = emailReceipt;
+		}
 
 		setIsSaving( true );
 		api.post( siteId, api.url.orderLabels( orderId ), formData )
