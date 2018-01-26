@@ -30,6 +30,8 @@ export const ChecklistContactPageTour = makeTour(
 			target="side-menu-page"
 			style={ {
 				animationDelay: '0s',
+				marginLeft: '-60px',
+				marginTop: '-4px',
 			} }
 		>
 			<p>
@@ -81,6 +83,7 @@ export const ChecklistContactPageTour = makeTour(
 			target="media-library-upload-more"
 			placement="beside"
 			arrow="left-top"
+			style={ { marginTop: '-10px' } }
 		>
 			<p>{ translate( 'Either pick an image below or add a new one from your computer.' ) }</p>
 			<Next step="click-set-featured-image">{ translate( 'All done, continue' ) }</Next>
@@ -91,6 +94,7 @@ export const ChecklistContactPageTour = makeTour(
 			target="dialog-base-action-confirm"
 			arrow="right-top"
 			placement="beside"
+			style={ { marginTop: '-10px' } }
 		>
 			<Continue target="dialog-base-action-confirm" step="click-update" click>
 				{ translate(
@@ -102,7 +106,13 @@ export const ChecklistContactPageTour = makeTour(
 			</Continue>
 		</Step>
 
-		<Step name="click-update" target="editor-publish-button" arrow="right-top" placement="beside">
+		<Step
+			name="click-update"
+			target="editor-publish-button"
+			arrow="right-top"
+			placement="beside"
+			style={ { marginTop: '-10px' } }
+		>
 			<Continue target="editor-publish-button" step="finish" click>
 				{ translate( 'Almost done, press the {{b}}Update{{/b}} button to save your changes.', {
 					components: { b: <strong /> },
