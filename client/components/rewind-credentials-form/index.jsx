@@ -212,26 +212,30 @@ export class RewindCredentialsForm extends Component {
 					</Button>
 					{ showAdvancedSettings && (
 						<div>
-							<FormLabel htmlFor="private-key">{ translate( 'Private Key' ) }</FormLabel>
-							<FormTextArea
-								name="kpri"
-								id="private-key"
-								value={ get( this.state.form, 'kpri', '' ) }
-								onChange={ this.handleFieldChange }
-								disabled={ formIsSubmitting }
-								className="rewind-credentials-form__private-key"
-							/>
+							<FormFieldset className="rewind-credentials-form__path">
+								<FormLabel htmlFor="wordpress-path">{ translate( 'Upload Path' ) }</FormLabel>
+								<FormTextInput
+									name="path"
+									id="wordpress-path"
+									placeholder="/public_html/wordpress-site/"
+									value={ get( this.state.form, 'path', '' ) }
+									onChange={ this.handleFieldChange }
+									disabled={ formIsSubmitting }
+									isError={ !! formErrors.path }
+								/>
+							</FormFieldset>
 
-							<FormLabel htmlFor="wordpress-path">{ translate( 'Upload Path' ) }</FormLabel>
-							<FormTextInput
-								name="path"
-								id="wordpress-path"
-								placeholder="/public_html/wordpress-site/"
-								value={ get( this.state.form, 'path', '' ) }
-								onChange={ this.handleFieldChange }
-								disabled={ formIsSubmitting }
-								isError={ !! formErrors.path }
-							/>
+							<FormFieldset className="rewind-credentials-form__kpri">
+								<FormLabel htmlFor="private-key">{ translate( 'Private Key' ) }</FormLabel>
+								<FormTextArea
+									name="kpri"
+									id="private-key"
+									value={ get( this.state.form, 'kpri', '' ) }
+									onChange={ this.handleFieldChange }
+									disabled={ formIsSubmitting }
+									className="rewind-credentials-form__private-key"
+								/>
+							</FormFieldset>
 						</div>
 					) }
 				</FormFieldset>
