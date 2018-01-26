@@ -19,6 +19,7 @@ import { getRewindState } from 'state/selectors';
 class ActivityLogSwitch extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
+		redirect: PropTypes.string.isRequired,
 
 		// Connected props
 		siteSlug: PropTypes.string.isRequired,
@@ -28,18 +29,6 @@ class ActivityLogSwitch extends Component {
 		// localize
 		translate: PropTypes.func.isRequired,
 	};
-
-	state = {
-		dismissed: false,
-	};
-
-	/**
-	 * Dismiss the dialog forever.
-	 *
-	 * @returns {undefined}
-	 */
-	// ToDo: replace with real method to dismiss and store in server
-	noThanksDismissIt = () => this.setState( { dismissed: true } );
 
 	/**
 	 * Renders the main button whose functionality and label varies depending on why Rewind is unavailable.
@@ -84,44 +73,92 @@ class ActivityLogSwitch extends Component {
 	}
 
 	render() {
-		const { rewindState, failureReason } = this.props;
-		const isDismissed = this.state.dismissed;
-
 		if (
-			isDismissed ||
-			'vp_active_on_site' === failureReason ||
-			includes( [ 'uninitialized', 'active', 'awaitingCredentials', 'provisioning' ], rewindState )
+			'vp_active_on_site' === this.props.failureReason ||
+			includes( [ 'uninitialized', 'active', 'awaitingCredentials', 'provisioning' ], this.props.rewindState )
 		) {
 			return false;
 		}
 
-		const { translate } = this.props;
+		const {
+			translate,
+			redirect,
+			siteSlug,
+		} = this.props;
 
 		return (
 			<Card
 				className="activity-log-switch"
 				>
 				<h2 className="activity-log-switch__heading">
-					{ translate( 'Welcome to the new Jetpack backups and security system' ) }
+					{ translate( "Welcome to Jetpack's new backups and security" ) }
 				</h2>
+				<img src="/calypso/images/illustrations/security.svg" alt="" />
 				<p>
 					{ translate(
-						'Our team has been hard at work building a system to backup and secure your site seamlessly.'
-					) }
-					<br />
-					{ translate(
-						"Now you will be able to see all your site's activity right from WordPress.com's dashboard."
+						'Backing up and securing your site should be a breeze. ' +
+						"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
 					) }
 				</p>
 				{ this.getMainButton() }
 				<div>
-					<Button
-						borderless
-						onClick={ this.noThanksDismissIt }
-						>
+					<a href={ `//${ siteSlug }/wp-admin/${ redirect }` }>
 						{ translate( 'No thanks' ) }
-					</Button>
+					</a>
 				</div>
+				<h3 className="activity-log-switch__heading-more">
+					{ translate( 'What else can it do?' ) }
+				</h3>
+				<Card>
+					<div className="activity-log-switch__feature">
+						<div className="activity-log-switch__feature-content">
+							<h4 className="activity-log-switch__feature-heading">
+								{ translate( 'Rewind to any event' ) }
+							</h4>
+							<p>
+								{ translate(
+									'As soon as you switch over, we will start tracking every change made ' +
+									'to your site and allow you to rewind to any past event. ' +
+									'If you lose a file, get hacked, or just liked your site better before some changes, ' +
+									'you can rewind with a click of a button.'
+								) }
+							</p>
+						</div>
+						<img src="/calypso/images/illustrations/backup.svg" alt="" />
+					</div>
+				</Card>
+				<Card>
+					<div className="activity-log-switch__feature">
+						<div className="activity-log-switch__feature-content">
+							<h4 className="activity-log-switch__feature-heading">
+								{ translate( "Stay on top of your site's security" ) }
+							</h4>
+							<p>
+								{ translate(
+									'When something happens to your website you want to know it immediately. ' +
+									"And you will—we'll send you instant alerts based on our 24/7 monitoring of advanced threats."
+								) }
+							</p>
+						</div>
+						<img src="/calypso/images/illustrations/security-issue.svg" alt="" />
+					</div>
+				</Card>
+				<Card>
+					<div className="activity-log-switch__feature">
+						<div className="activity-log-switch__feature-content">
+							<h4 className="activity-log-switch__feature-heading">
+								{ translate( 'Log all events on your site' ) }
+							</h4>
+							<p>
+								{ translate(
+									'Access a new, streamlined history of events on your site—from published posts to user-role changes. ' +
+									'If you ever need to figure out what happened when, now you can get the answer in seconds.'
+								) }
+							</p>
+						</div>
+						<img src="/calypso/images/illustrations/stats.svg" alt="" />
+					</div>
+				</Card>
 			</Card>
 		);
 	}
