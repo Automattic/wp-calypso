@@ -95,6 +95,7 @@
 		bottom: 0;
 	display: flex;
 	justify-content: space-between;
+	z-index: z-index( 'root', '.site-indicator__button' );
 
 	.is-warning &,
 	.is-update & {
