@@ -31,7 +31,7 @@ class SetupFooter extends Component {
 	hidePopover = () => this.setState( { isPopoverVisible: false } );
 
 	render() {
-		const { happychatAvailable, translate } = this.props;
+		const { happychatIsAvailable, translate } = this.props;
 		const { isPopoverVisible, popoverContext } = this.state;
 
 		return (
@@ -61,7 +61,7 @@ class SetupFooter extends Component {
 					}
 				</Popover>
 
-				{ happychatAvailable && (
+				{ happychatIsAvailable && (
 					<HappychatButton
 						onClick={ this.props.happychatEvent }
 					>
@@ -76,12 +76,11 @@ class SetupFooter extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	isHappychatAvailable: isHappychatAvailable( state ),
-} );
-
-const mapDispatchToProps = () => ( {
-	happychatEvent: () => recordTracksEvent( 'rewind_credentials_get_help' ),
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupFooter ) );
+export default connect(
+	state => ( {
+		happychatIsAvailable: isHappychatAvailable( state ),
+	} ),
+	{
+		happychatEvent: () => recordTracksEvent( 'rewind_credentials_get_help' ),
+	}
+)( localize( SetupFooter ) );
