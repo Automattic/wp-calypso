@@ -30,7 +30,7 @@ class Upsell extends Component {
 				</CompactCard>
 				<CompactCard>
 					<p>
-						{ translate( 'Only sites on a Business Plan are eligible for a site setup chat.' ) }
+						{ translate( 'Only sites on a Business plan are eligible for a Concierge session.' ) }
 					</p>
 					<Button href={ `/plans/${ this.props.site.slug }` } primary>
 						{ translate( 'Upgrade to Business' ) }
