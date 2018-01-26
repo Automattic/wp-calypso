@@ -221,7 +221,7 @@ describe( 'I18n', function() {
 
 		describe( 'with mixed components', function() {
 			it( 'should handle sprintf and component interpolation together', function() {
-				var input = React.DOM.input(),
+				var input = React.createElement( 'input' ),
 					expectedResultString = '<span>foo <input/> bar</span>',
 					placeholder = 'bar',
 					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {

@@ -1,3 +1,7 @@
+1.8.5
+------
+Allow newer versions of xgettext-js [#46](https://github.com/Automattic/i18n-calypso/pull/46).
+
 1.8.4
 ------
 Bump `interpolate-components` to 1.1.1 (for React 16 compat).
