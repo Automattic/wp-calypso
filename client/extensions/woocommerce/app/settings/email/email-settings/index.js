@@ -163,12 +163,12 @@ class Settings extends React.Component {
 	};
 
 	renderOriginNotification = ( item, index ) => {
-		const { settings, loading } = this.props;
+		const { settings, loaded } = this.props;
 		return (
 			<NotificationsOrigin
 				key={ index }
 				item={ item }
-				loading={ loading }
+				loaded={ loaded }
 				recipient={ get( settings, [ item.field, item.option, 'value' ], '' ) }
 				placeholder={ get( settings, [ item.field, item.option, 'default' ], '' ) }
 				onChange={ this.onChange }
@@ -178,26 +178,26 @@ class Settings extends React.Component {
 	};
 
 	renderInternalNotification = ( item, index ) => {
-		const { settings, loading } = this.props;
+		const { settings, loaded } = this.props;
 		return (
 			<InternalNotification
 				key={ index }
 				item={ item }
 				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				recipient={ get( settings, [ item.field, 'recipient', 'value' ], '' ) }
-				loading={ loading }
+				loaded={ loaded }
 				onChange={ this.onChange }
 			/>
 		);
 	};
 
 	renderCustomerNotification = ( item, index ) => {
-		const { settings, loading } = this.props;
+		const { settings, loaded } = this.props;
 		return (
 			<CustomerNotification
 				key={ index }
 				item={ item }
-				loading={ loading }
+				loaded={ loaded }
 				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				onChange={ this.onChange }
 			/>

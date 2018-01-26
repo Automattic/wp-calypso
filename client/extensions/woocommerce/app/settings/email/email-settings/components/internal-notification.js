@@ -19,7 +19,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextValidation from 'components/forms/form-input-validation';
 import { checkEmails } from './helpers';
 
-const InternalNotification = ( { item, recipient, checked, onChange, loading, translate } ) => {
+const InternalNotification = ( { item, recipient, checked, onChange, loaded, translate } ) => {
 	//Add field name to returned value
 	const toggle = value => {
 		onChange( {
@@ -44,8 +44,8 @@ const InternalNotification = ( { item, recipient, checked, onChange, loading, tr
 	return (
 		<ListItem className="components__notification-component-item">
 			<ListItemField className="components__notification-component-title">
-				{ ! loading ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
-				{ ! loading ? (
+				{ loaded ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
+				{ loaded ? (
 					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
 				) : (
 					placeholderComponent
@@ -53,7 +53,7 @@ const InternalNotification = ( { item, recipient, checked, onChange, loading, tr
 			</ListItemField>
 			<ListItemField className="components__notification-component-input">
 				<FormTextInput
-					className={ loading ? 'components__is-placeholder' : null }
+					className={ ! loaded ? 'components__is-placeholder' : null }
 					isError={ checked && emailValidationError }
 					name={ item.field }
 					onChange={ change }
@@ -65,7 +65,7 @@ const InternalNotification = ( { item, recipient, checked, onChange, loading, tr
 				) }
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
-				{ ! loading ? (
+				{ loaded ? (
 					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
 				) : (
 					placeholderComponent
@@ -79,6 +79,7 @@ InternalNotification.propTypes = {
 	checked: PropTypes.bool,
 	recipient: PropTypes.string,
 	item: PropTypes.object,
+	loaded: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
 };
 
