@@ -98,6 +98,7 @@ class PostCommentList extends React.Component {
 		! this.alreadyLoadedInitialSet;
 
 	shouldNormalFetchAfterPropsChange = nextProps => {
+		// this next check essentially looks out for whether we've ever requested comments for the post
 		if (
 			nextProps.commentsFetchingStatus.haveEarlierCommentsToFetch &&
 			nextProps.commentsFetchingStatus.haveLaterCommentsToFetch
