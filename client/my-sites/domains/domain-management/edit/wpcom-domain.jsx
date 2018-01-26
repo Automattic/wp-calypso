@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
+import Card from 'components/card';
 import Header from './card/header';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
