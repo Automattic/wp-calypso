@@ -17,41 +17,45 @@ import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'state/stats/lists/utils';
 
 class QuerySiteStats extends Component {
-	componentDidMount() {
-		this.request();
+	componentWillMount() {
+		this.request( this.props );
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if (
-			this.props.siteId === prevProps.siteId &&
-			this.props.statType === prevProps.statType &&
-			shallowEqual( this.props.query, prevProps.query )
+			this.props.siteId === nextProps.siteId &&
+			this.props.statType === nextProps.statType &&
+			shallowEqual( this.props.query, nextProps.query )
 		) {
 			return;
 		}
-		this.request();
+
+		this.request( nextProps );
 	}
 
 	componentWillUnmount() {
 		this.clearInterval();
 	}
 
-	request() {
-		const { requesting, siteId, statType, query, heartbeat } = this.props;
+	request( props ) {
+		const { requesting, siteId, statType, query, heartbeat } = props;
 		if ( requesting ) {
 			return;
 		}
 
-		this.props.requestSiteStats( siteId, statType, query );
+		props.requestSiteStats( siteId, statType, query );
 		this.clearInterval();
 		if ( heartbeat && isAutoRefreshAllowedForQuery( query ) ) {
-			this.interval = setInterval( () => {
-				if ( ! this.props.requesting ) {
-					this.props.requestSiteStats( siteId, statType, query );
-				}
-			}, heartbeat );
+			this.interval = setInterval( this.heartbeatRequest, heartbeat );
 		}
 	}
+
+	heartbeatRequest = () => {
+		const { requesting, siteId, statType, query } = this.props;
+		if ( ! requesting ) {
+			this.props.requestSiteStats( siteId, statType, query );
+		}
+	};
 
 	clearInterval() {
 		if ( this.interval ) {
@@ -79,17 +83,8 @@ QuerySiteStats.defaultProps = {
 };
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requesting: isRequestingSiteStatsForQuery(
-				state,
-				ownProps.siteId,
-				ownProps.statType,
-				ownProps.query
-			),
-		};
-	},
-	{
-		requestSiteStats,
-	}
+	( state, { siteId, statType, query } ) => ( {
+		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
+	} ),
+	{ requestSiteStats }
 )( QuerySiteStats );
