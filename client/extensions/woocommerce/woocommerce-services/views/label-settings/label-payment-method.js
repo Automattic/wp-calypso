@@ -53,7 +53,7 @@ const PaymentMethod = ( {
 	const renderPlaceholder = () => (
 		<CompactCard className="label-settings__card">
 			<FormCheckbox className="label-settings__card-checkbox" />
-			<PaymentLogo className="label-settings__card-logo" type="placeholder" />
+			<PaymentLogo className="label-settings__card-logo" type="placeholder" altText={ '' } />
 			<div className="label-settings__card-details">
 				<p className="label-settings__card-number" />
 				<p className="label-settings__card-name" />
@@ -79,7 +79,7 @@ const PaymentMethod = ( {
 				checked={ selected }
 				onChange={ onSelect }
 			/>
-			<PaymentLogo className="label-settings__card-logo" type={ typeId } />
+			<PaymentLogo className="label-settings__card-logo" type={ typeId } altText={ typeTitle } />
 			<div className="label-settings__card-details">
 				<p className="label-settings__card-number">{ typeName }</p>
 				<p className="label-settings__card-name">{ name }</p>

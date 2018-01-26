@@ -6,6 +6,7 @@
 import { expect } from 'chai';
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
+import { omit } from 'lodash';
 import sinon from 'sinon';
 
 /**
@@ -28,6 +29,7 @@ import { fromApi } from '../utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { navigate } from 'state/ui/actions';
+import { resetLock } from 'zoninator/state/locks/actions';
 import { requestError, requestZones, updateZone, updateZones } from 'zoninator/state/zones/actions';
 
 const apiResponse = {
@@ -192,6 +194,21 @@ describe( '#saveZone()', () => {
 		saveZone( { dispatch }, action );
 
 		expect( dispatch ).to.have.been.calledWith( removeNotice( 'zoninator-zone-create' ) );
+	} );
+
+	test( 'should dispatch `resetLock`', () => {
+		const dispatch = sinon.spy();
+		const action = {
+			type: 'DUMMY_ACTION',
+			siteId: 123,
+			zoneId: 456,
+			form: 'form',
+			data: zone,
+		};
+
+		saveZone( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledWithMatch( omit( resetLock( 123, 456 ), [ 'time' ] ) );
 	} );
 
 	test( 'should dispatch a HTTP request to save the zone properties', () => {

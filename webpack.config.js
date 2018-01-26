@@ -201,6 +201,7 @@ const webpackConfig = {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
 		} ),
+		process.env.NODE_ENV === 'production' && new webpack.optimize.ModuleConcatenationPlugin(),
 	] ),
 	externals: [ 'electron' ],
 };

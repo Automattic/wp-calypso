@@ -90,8 +90,12 @@ export function handleProductActionListCreate( store, action ) {
 		}
 		return dispatch( successAction );
 	};
-	const onFailure = dispatch => {
-		dispatch( failureAction );
+	const onFailure = ( dispatch, { productError } ) => {
+		if ( isFunction( failureAction ) ) {
+			dispatch( failureAction( productError ) );
+		} else {
+			dispatch( failureAction );
+		}
 		dispatch( actionListClear() );
 	};
 	const actionList = makeProductActionList(
@@ -240,6 +244,15 @@ const productSuccess = ( actionList, type ) => (
 	dispatch( actionListStepSuccess( newActionList ) );
 };
 
+const productFailure = actionList => ( dispatch, getState, { error } ) => {
+	const newActionList = {
+		...actionList,
+		productError: error,
+	};
+
+	dispatch( actionListStepFailure( newActionList ) );
+};
+
 export function makeProductSteps( rootState, siteId, productEdits ) {
 	if ( ! productEdits ) {
 		return [];
@@ -261,7 +274,7 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 							siteId,
 							getCorrectedProduct( product, categoryIdMapping ),
 							productSuccess( actionList, 'create' ),
-							actionListStepFailure( actionList )
+							productFailure( actionList )
 						)
 					);
 				},
@@ -288,7 +301,7 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 								siteId,
 								getCorrectedProduct( product, categoryIdMapping ),
 								productSuccess( actionList, 'update' ),
-								actionListStepFailure( actionList )
+								productFailure( actionList )
 							)
 						);
 					},

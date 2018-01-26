@@ -6,9 +6,11 @@ export const credential = {
 		still_valid: { type: 'boolean' },
 		type: { type: 'string', enum: [ 'auto', 'ftp', 'sftp', 'ssh' ] },
 		host: { type: 'string' },
+		path: { type: 'string' },
 		port: { type: 'integer' },
+		role: { type: 'string' },
 	},
-	required: [ 'still_valid', 'type' ],
+	required: [ 'role', 'still_valid', 'type' ],
 };
 
 export const download = {

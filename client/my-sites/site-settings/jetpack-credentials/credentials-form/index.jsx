@@ -33,7 +33,7 @@ export class CredentialsForm extends Component {
 			port: this.props.port,
 			user: this.props.user,
 			pass: this.props.pass,
-			abspath: this.props.abspath,
+			path: this.props.path,
 			kpri: this.props.kpri,
 		},
 		formErrors: {
@@ -41,7 +41,7 @@ export class CredentialsForm extends Component {
 			port: false,
 			user: false,
 			pass: false,
-			abspath: false,
+			path: false,
 		},
 	};
 
@@ -75,7 +75,7 @@ export class CredentialsForm extends Component {
 			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
 			! payload.user && { user: translate( 'Please enter your server username.' ) },
 			! payload.pass && { pass: translate( 'Please enter your server password.' ) },
-			! payload.abspath && { abspath: translate( 'Please enter a valid upload path.' ) }
+			! payload.path && { path: translate( 'Please enter a valid upload path.' ) }
 		);
 
 		return isEmpty( errors )
@@ -173,17 +173,15 @@ export class CredentialsForm extends Component {
 				<FormFieldset>
 					<FormLabel htmlFor="wordpress-path">{ translate( 'Upload Path' ) }</FormLabel>
 					<FormTextInput
-						name="abspath"
+						name="path"
 						id="wordpress-path"
 						placeholder="/public_html/wordpress-site/"
-						value={ get( this.state.form, 'abspath', '' ) }
+						value={ get( this.state.form, 'path', '' ) }
 						onChange={ this.handleFieldChange }
 						disabled={ formIsSubmitting }
-						isError={ !! formErrors.abspath }
+						isError={ !! formErrors.path }
 					/>
-					{ formErrors.abspath && (
-						<FormInputValidation isError={ true } text={ formErrors.abspath } />
-					) }
+					{ formErrors.path && <FormInputValidation isError={ true } text={ formErrors.path } /> }
 				</FormFieldset>
 
 				<FormFieldset>

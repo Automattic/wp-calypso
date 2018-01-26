@@ -167,6 +167,7 @@ export class MySitesSidebar extends Component {
 					link={ adsLink }
 					onNavigate={ this.onNavigate }
 					icon="speaker"
+					tipTarget="wordads"
 				/>
 			)
 		);
@@ -239,6 +240,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onNavigate }
 				icon="plugins"
 				preloadSectionName="plugins"
+				tipTarget="plugins"
 			>
 				{ manageButton }
 			</SidebarItem>
@@ -270,6 +272,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onNavigate }
 				icon="domains"
 				preloadSectionName="domains"
+				tipTarget="domains"
 			>
 				<SidebarButton href={ addDomainLink }>{ translate( 'Add' ) }</SidebarButton>
 			</SidebarItem>
@@ -298,6 +301,8 @@ export class MySitesSidebar extends Component {
 			selected: itemLinkMatches( [ '/plans' ], path ),
 		} );
 
+		const tipTarget = 'plan';
+
 		let planName = site && site.plan.product_name_short;
 
 		if ( site && isFreeTrial( site.plan ) ) {
@@ -307,7 +312,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		return (
-			<li className={ linkClass }>
+			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackUpgradeClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
 					<span className="menu-link-text">{ translate( 'Plan', { context: 'noun' } ) }</span>
@@ -391,6 +396,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onNavigate }
 				icon="share"
 				preloadSectionName="sharing"
+				tipTarget="sharing"
 			/>
 		);
 	}
@@ -420,6 +426,7 @@ export class MySitesSidebar extends Component {
 				onNavigate={ this.onNavigate }
 				icon="user"
 				preloadSectionName="people"
+				tipTarget="people"
 			>
 				<SidebarButton href={ addPeopleLink }>{ translate( 'Add' ) }</SidebarButton>
 			</SidebarItem>
@@ -543,6 +550,7 @@ export class MySitesSidebar extends Component {
 							label={ this.props.translate( 'Settings' ) }
 							link={ '/domains/manage' + this.props.siteSuffix }
 							onNavigate={ this.onNavigate }
+							tipTarget="settings"
 						/>
 					</ul>
 				</SidebarMenu>
