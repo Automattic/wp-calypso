@@ -34,6 +34,7 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import keyboardShortcuts from 'lib/keyboard-shortcuts';
+import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
 
 const debug = debugFactory( 'calypso:state:middleware' );
@@ -46,13 +47,13 @@ const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
 let globalKeyboardShortcuts;
 
 if ( globalKeyBoardShortcutsEnabled ) {
-	globalKeyboardShortcuts = require( 'lib/keyboard-shortcuts/global' )();
+	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
 const desktopEnabled = config.isEnabled( 'desktop' );
 let desktop;
 if ( desktopEnabled ) {
-	desktop = require( 'lib/desktop' );
+	desktop = require( 'lib/desktop' ).default;
 }
 
 /*

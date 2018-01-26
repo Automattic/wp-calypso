@@ -22,6 +22,7 @@ const form = 'extensions.zoninator.zoneContent';
 
 class ZoneContentForm extends PureComponent {
 	static propTypes = {
+		disabled: PropTypes.bool,
 		handleSubmit: PropTypes.func.isRequired,
 		label: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -33,8 +34,8 @@ class ZoneContentForm extends PureComponent {
 	save = data => this.props.onSubmit( form, data );
 
 	render() {
-		const { handleSubmit, label, requesting, submitting, translate } = this.props;
-		const isDisabled = requesting || submitting;
+		const { disabled, handleSubmit, label, requesting, submitting, translate } = this.props;
+		const isDisabled = disabled || requesting || submitting;
 
 		return (
 			<form onSubmit={ handleSubmit( this.save ) }>

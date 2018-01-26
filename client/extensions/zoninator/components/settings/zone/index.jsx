@@ -21,10 +21,12 @@ import QueryFeed from '../../data/query-feed';
 import ZoneContentForm from '../../forms/zone-content-form';
 import ZoneDetailsForm from '../../forms/zone-details-form';
 import ZoneLock from '../../data/zone-lock';
+import ZoneLockWarningNotice from './zone-lock-warning-notice';
 import ZoneNotFound from './zone-not-found';
 import { saveFeed } from '../../../state/feeds/actions';
 import { deleteZone, saveZone } from '../../../state/zones/actions';
 import { getFeed, isRequestingFeed } from '../../../state/feeds/selectors';
+import { blocked, expires } from '../../../state/locks/selectors';
 import { getZone, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
 
@@ -32,6 +34,8 @@ class Zone extends Component {
 	static propTypes = {
 		deleteZone: PropTypes.func.isRequired,
 		feed: PropTypes.array,
+		lockBlocked: PropTypes.bool,
+		lockExpires: PropTypes.number,
 		requestingFeed: PropTypes.bool,
 		requestingZones: PropTypes.bool,
 		saveFeed: PropTypes.func.isRequired,
@@ -47,6 +51,19 @@ class Zone extends Component {
 		showDeleteDialog: false,
 	};
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.lockExpires || nextProps.lockExpires === this.props.lockExpires ) {
+			return;
+		}
+
+		// Add 2 seconds to the refresh clock to prevent race conditions
+		this._refresh && clearTimeout( this._refresh );
+		this._refresh = setTimeout(
+			() => this.forceUpdate(),
+			nextProps.lockExpires - new Date().getTime() + 2000
+		);
+	}
+
 	showDeleteDialog = () => this.setState( { showDeleteDialog: true } );
 
 	hideDeleteDialog = () => this.setState( { showDeleteDialog: false } );
@@ -60,7 +77,11 @@ class Zone extends Component {
 	saveZoneFeed = ( form, data ) =>
 		this.props.saveFeed( this.props.siteId, this.props.zoneId, form, data.posts );
 
-	renderContent() {
+	disabled = () =>
+		this.props.lockBlocked ||
+		( this.props.lockExpires !== 0 && this.props.lockExpires < new Date().getTime() );
+
+	renderContent = () => {
 		const { feed, requestingFeed, requestingZones, siteSlug, translate, zone } = this.props;
 		const { showDeleteDialog } = this.state;
 
@@ -79,6 +100,7 @@ class Zone extends Component {
 				) }
 
 				<ZoneDetailsForm
+					disabled={ this.disabled() }
 					label={ translate( 'Zone label' ) }
 					requesting={ requestingZones }
 					onSubmit={ this.saveZoneDetails }
@@ -86,6 +108,7 @@ class Zone extends Component {
 				/>
 
 				<ZoneContentForm
+					disabled={ this.disabled() }
 					label={ translate( 'Zone content' ) }
 					requesting={ requestingFeed }
 					onSubmit={ this.saveZoneFeed }
@@ -93,13 +116,13 @@ class Zone extends Component {
 				/>
 			</div>
 		);
-	}
+	};
 
 	render() {
 		const { requestingZones, siteId, siteSlug, translate, zone, zoneId } = this.props;
 
 		const deleteButton = (
-			<Button compact primary scary onClick={ this.showDeleteDialog }>
+			<Button compact primary scary onClick={ this.showDeleteDialog } disabled={ this.disabled() }>
 				{ translate( 'Delete' ) }
 			</Button>
 		);
@@ -116,7 +139,8 @@ class Zone extends Component {
 					{ translate( 'Edit zone' ) }
 				</HeaderCake>
 
-				{ ! requestingZones && this.renderContent() }
+				{ zone && this.disabled() && <ZoneLockWarningNotice siteId={ siteId } zoneId={ zoneId } /> }
+				{ zone && ! requestingZones && this.renderContent() }
 			</div>
 		);
 	}
@@ -127,6 +151,8 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			lockBlocked: blocked( state, siteId, zoneId ),
+			lockExpires: expires( state, siteId, zoneId ),
 			requestingFeed: isRequestingFeed( state, siteId, zoneId ),
 			requestingZones: isRequestingZones( state, siteId ),
 			siteId,

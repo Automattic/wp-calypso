@@ -15,6 +15,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
 import { fromApi, toApi } from './util';
 import { updateFeed } from '../../feeds/actions';
+import { resetLock } from '../../locks/actions';
 import { getZone } from '../../zones/selectors';
 import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED } from 'zoninator/state/action-types';
 
@@ -60,6 +61,7 @@ export const saveZoneFeed = ( { dispatch }, action ) => {
 
 	dispatch( startSubmit( form ) );
 	dispatch( removeNotice( saveFeedNotice ) );
+	dispatch( resetLock( siteId, zoneId ) );
 	dispatch(
 		http(
 			{

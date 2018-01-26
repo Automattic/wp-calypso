@@ -37,6 +37,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_EDIT,
 	WOOCOMMERCE_PRODUCT_ACTION_LIST_CREATE,
 } from 'woocommerce/state/action-types';
+import { bumpStat } from 'woocommerce/lib/analytics';
 
 export default {
 	[ WOOCOMMERCE_PRODUCT_EDIT ]: [ actionAppendProductVariations ],
@@ -89,8 +90,12 @@ export function handleProductActionListCreate( store, action ) {
 		}
 		return dispatch( successAction );
 	};
-	const onFailure = dispatch => {
-		dispatch( failureAction );
+	const onFailure = ( dispatch, { productError } ) => {
+		if ( isFunction( failureAction ) ) {
+			dispatch( failureAction( productError ) );
+		} else {
+			dispatch( failureAction );
+		}
 		dispatch( actionListClear() );
 	};
 	const actionList = makeProductActionList(
@@ -215,7 +220,11 @@ const variationSuccess = ( actionList, productId ) => dispatch => {
 	dispatch( actionListStepSuccess( newActionList ) );
 };
 
-const productSuccess = actionList => ( dispatch, getState, { sentData, receivedData } ) => {
+const productSuccess = ( actionList, type ) => (
+	dispatch,
+	getState,
+	{ sentData, receivedData }
+) => {
 	const productIdMapping = {
 		...actionList.productIdMapping,
 		[ sentData.id.placeholder || receivedData.id ]: receivedData.id,
@@ -231,7 +240,17 @@ const productSuccess = actionList => ( dispatch, getState, { sentData, receivedD
 		updatedProductIds,
 	};
 
+	dispatch( bumpStat( 'wpcom-store-products', type + '-calypso' ) );
 	dispatch( actionListStepSuccess( newActionList ) );
+};
+
+const productFailure = actionList => ( dispatch, getState, { error } ) => {
+	const newActionList = {
+		...actionList,
+		productError: error,
+	};
+
+	dispatch( actionListStepFailure( newActionList ) );
 };
 
 export function makeProductSteps( rootState, siteId, productEdits ) {
@@ -254,8 +273,8 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 						createProduct(
 							siteId,
 							getCorrectedProduct( product, categoryIdMapping ),
-							productSuccess( actionList ),
-							actionListStepFailure( actionList )
+							productSuccess( actionList, 'create' ),
+							productFailure( actionList )
 						)
 					);
 				},
@@ -281,8 +300,8 @@ export function makeProductSteps( rootState, siteId, productEdits ) {
 							updateProduct(
 								siteId,
 								getCorrectedProduct( product, categoryIdMapping ),
-								productSuccess( actionList ),
-								actionListStepFailure( actionList )
+								productSuccess( actionList, 'update' ),
+								productFailure( actionList )
 							)
 						);
 					},

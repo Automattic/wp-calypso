@@ -3,7 +3,7 @@
 import './polyfills';
 
 if ( process.env.NODE_ENV === 'development' ) {
-	require( 'lib/wrap-es6-functions' )();
+	require( 'lib/wrap-es6-functions' ).default();
 }
 
 /**

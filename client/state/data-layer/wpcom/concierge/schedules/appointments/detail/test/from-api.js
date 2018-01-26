@@ -14,7 +14,7 @@ describe( 'fromApi()', () => {
 		expect( fromApi( validResponse ) ).toEqual( expectedResult );
 	} );
 
-	test( 'should keep not transformed fields.', () => {
+	test( 'should persist fields that were not altered.', () => {
 		const validResponse = { id: 1, begin_timestamp: 1, end_timestamp: 2, schedule_id: 3 };
 		const expectedResult = { id: 1, beginTimestamp: 1000, endTimestamp: 2000, scheduleId: 3 };
 

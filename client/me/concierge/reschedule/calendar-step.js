@@ -98,7 +98,7 @@ class CalendarStep extends Component {
 
 				<CompactCard>
 					{ translate(
-						'Please select the desired timezone and day to reschedule your Concierge session.'
+						'To reschedule your Concierge session, let us know your timezone and preferred day.'
 					) }
 				</CompactCard>
 

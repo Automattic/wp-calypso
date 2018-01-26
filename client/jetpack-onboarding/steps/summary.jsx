@@ -82,15 +82,12 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { siteUrl, translate } = this.props;
 
 		const headerText = translate( 'Congratulations! Your site is on its way.' );
 		const subHeaderText = translate(
 			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
 		);
-
-		// TODO: adapt when we have more info
-		const buttonRedirectHref = '#';
 
 		return (
 			<div className="steps__main">
@@ -112,7 +109,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 				</div>
 				<div className="steps__button-group">
-					<Button href={ buttonRedirectHref } primary>
+					<Button href={ siteUrl } primary>
 						{ translate( 'Visit your site' ) }
 					</Button>
 				</div>
