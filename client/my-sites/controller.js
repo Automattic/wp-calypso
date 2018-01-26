@@ -20,6 +20,7 @@ import {
 	isJetpackSite,
 	isRequestingSites,
 	isRequestingSite,
+	hasAllSitesList,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
@@ -201,12 +202,18 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 
 function onSelectedSiteAvailable( context ) {
 	const { getState } = getStore( context );
-	const selectedSite = getSelectedSite( getState() );
+	const state = getState();
+	const selectedSite = getSelectedSite( state );
+
+	//temporary check when SU'ing
+	if ( ! selectedSite.capabilities ) {
+		return false;
+	}
 
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
-	if ( ! getSite( getState(), selectedSite.ID ) ) {
+	if ( ! getSite( state, selectedSite.ID ) ) {
 		context.store.dispatch( receiveSite( selectedSite ) );
 	}
 
@@ -215,7 +222,7 @@ function onSelectedSiteAvailable( context ) {
 	const primaryDomain = getPrimaryDomainBySiteId( getState(), selectedSite.ID );
 
 	if (
-		isDomainOnlySite( getState(), selectedSite.ID ) &&
+		isDomainOnlySite( state, selectedSite.ID ) &&
 		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug, primaryDomain )
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
@@ -223,12 +230,17 @@ function onSelectedSiteAvailable( context ) {
 	}
 
 	// Update recent sites preference
-	if ( hasReceivedRemotePreferences( getState() ) ) {
-		const recentSites = getPreference( getState(), 'recentSites' );
+	if ( hasReceivedRemotePreferences( state ) ) {
+		const recentSites = getPreference( state, 'recentSites' );
 		if ( selectedSite.ID !== recentSites[ 0 ] ) {
-			context.store.dispatch(
-				savePreference( 'recentSites', uniq( [ selectedSite.ID, ...recentSites ] ).slice( 0, 5 ) )
-			);
+			//also filter recent sites if not available locally
+			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
+				.slice( 0, 5 )
+				.filter( recentId => {
+					const site = getSite( state, recentId );
+					return site && site.capabilities;
+				} );
+			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
 	}
 
@@ -383,12 +395,12 @@ export function siteSelection( context, next ) {
 	} else {
 		const selectOnSitesChange = () => {
 			const freshSiteId = getSiteId( getState(), siteFragment );
-			dispatch( setSelectedSiteId( freshSiteId ) );
 
 			if ( getSite( getState(), freshSiteId ) ) {
+				dispatch( setSelectedSiteId( freshSiteId ) );
 				onSelectedSiteAvailable( context );
-			} else {
-				// if sites have loaded, but siteId is invalid, redirect to allSitesPath
+			} else if ( hasAllSitesList( getState() ) ) {
+				// If all sites have loaded, but siteId is still invalid, redirect to allSitesPath.
 				page.redirect( allSitesPath );
 			}
 		};

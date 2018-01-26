@@ -5,21 +5,37 @@
  */
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, isBoolean } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Button from 'components/button';
+import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
+import { setFormDataValue } from '../../state/label-settings/actions';
+import {
+	areSettingsFetching,
+	getEmailReceipts,
+	getLabelSettingsStoreOptions,
+	getMasterUserInfo,
+	getPaperSize,
+	getPaymentMethods,
+	getSelectedPaymentMethodId,
+	isPristine,
+	userCanEditSettings,
+	userCanManagePayments,
+} from '../../state/label-settings/selectors';
 
 class ShippingLabels extends Component {
 	componentWillMount() {
@@ -112,9 +128,9 @@ class ShippingLabels extends Component {
 
 	renderPaymentsSection = () => {
 		const {
+			siteId,
 			canEditPayments,
 			paymentMethods,
-			setFormDataValue,
 			selectedPaymentMethod,
 			translate,
 		} = this.props;
@@ -160,7 +176,8 @@ class ShippingLabels extends Component {
 			);
 		}
 
-		const onPaymentMethodChange = value => setFormDataValue( 'selected_payment_method_id', value );
+		const onPaymentMethodChange = value =>
+			this.props.setFormDataValue( siteId, 'selected_payment_method_id', value );
 
 		let description, buttonLabel;
 		if ( paymentMethods.length ) {
@@ -200,21 +217,61 @@ class ShippingLabels extends Component {
 		);
 	};
 
-	renderContent = () => {
+	renderEmailReceiptsSection = () => {
 		const {
-			canEditSettings,
-			isLoading,
-			setFormDataValue,
-			paperSize,
-			storeOptions,
+			siteId,
+			emailReceipts,
 			translate,
+			masterUserName,
+			masterUserLogin,
+			masterUserEmail,
+			canEditSettings,
+			canEditPayments,
 		} = this.props;
+
+		if ( ! isBoolean( emailReceipts ) ) {
+			return null;
+		}
+
+		const onChange = () => this.props.setFormDataValue( siteId, 'email_receipts', ! emailReceipts );
+
+		return (
+			<FormFieldSet>
+				<FormLabel className="label-settings__cards-label">
+					{ translate( 'Email Receipts' ) }
+				</FormLabel>
+				<FormLabel>
+					<FormCheckbox
+						checked={ emailReceipts }
+						onChange={ onChange }
+						disabled={ ! canEditPayments && ! canEditSettings }
+					/>
+					<span className="label-settings__credit-card-description">
+						{ translate(
+							'Email the label purchase receipts to %(ownerName)s (%(ownerLogin)s) at %(ownerEmail)s',
+							{
+								args: {
+									ownerName: masterUserName,
+									ownerLogin: masterUserLogin,
+									ownerEmail: masterUserEmail,
+								},
+							}
+						) }
+					</span>
+				</FormLabel>
+			</FormFieldSet>
+		);
+	};
+
+	renderContent = () => {
+		const { siteId, canEditSettings, isLoading, paperSize, storeOptions, translate } = this.props;
 
 		if ( isLoading ) {
 			return this.renderPlaceholder();
 		}
 
-		const onPaperSizeChange = event => setFormDataValue( 'paper_size', event.target.value );
+		const onPaperSizeChange = event =>
+			this.props.setFormDataValue( siteId, 'paper_size', event.target.value );
 		const paperSizes = getPaperSizes( storeOptions.origin_country );
 
 		return (
@@ -240,6 +297,7 @@ class ShippingLabels extends Component {
 					<FormLabel className="label-settings__cards-label">{ translate( 'Payment' ) }</FormLabel>
 					{ this.renderPaymentsSection() }
 				</FormFieldSet>
+				{ this.renderEmailReceiptsSection() }
 			</div>
 		);
 	};
@@ -250,17 +308,30 @@ class ShippingLabels extends Component {
 }
 
 ShippingLabels.propTypes = {
-	isLoading: PropTypes.bool,
-	pristine: PropTypes.bool,
-	paymentMethods: PropTypes.array,
-	setFormDataValue: PropTypes.func,
-	selectedPaymentMethod: PropTypes.number,
-	paperSize: PropTypes.string,
-	storeOptions: PropTypes.object,
-	canEditPayments: PropTypes.bool,
-	canEditSettings: PropTypes.bool,
-	masterUserName: PropTypes.string,
-	masterUserLogin: PropTypes.string,
+	siteId: PropTypes.number.isRequired,
 };
 
-export default localize( ShippingLabels );
+export default connect(
+	( state, { siteId } ) => {
+		return {
+			isLoading: areSettingsFetching( state, siteId ),
+			pristine: isPristine( state, siteId ),
+			paymentMethods: getPaymentMethods( state, siteId ),
+			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
+			paperSize: getPaperSize( state, siteId ),
+			storeOptions: getLabelSettingsStoreOptions( state, siteId ),
+			canEditPayments: userCanManagePayments( state, siteId ),
+			canEditSettings:
+				userCanManagePayments( state, siteId ) || userCanEditSettings( state, siteId ),
+			emailReceipts: getEmailReceipts( state, siteId ),
+			...getMasterUserInfo( state, siteId ),
+		};
+	},
+	dispatch =>
+		bindActionCreators(
+			{
+				setFormDataValue,
+			},
+			dispatch
+		)
+)( localize( ShippingLabels ) );

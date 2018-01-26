@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { head } from 'lodash';
+import { head, isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
@@ -47,6 +47,7 @@ import ProductForm from './product-form';
 import ProductHeader from './product-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { getSaveErrorMessage } from './save-error-message';
 
 class ProductCreate extends React.Component {
 	static propTypes = {
@@ -70,12 +71,10 @@ class ProductCreate extends React.Component {
 	};
 
 	componentDidMount() {
-		const { product, site } = this.props;
+		const { site } = this.props;
 
 		if ( site && site.ID ) {
-			if ( ! product ) {
-				this.props.editProduct( site.ID, null, {} );
-			}
+			this.props.editProduct( site.ID, null, {} );
 			this.props.fetchProductCategories( site.ID );
 		}
 	}
@@ -158,11 +157,13 @@ class ProductCreate extends React.Component {
 			return getSuccessNotice( newProduct );
 		};
 
-		const failureAction = errorNotice(
-			translate( 'There was a problem saving %(product)s. Please try again.', {
-				args: { product: product.name },
-			} )
-		);
+		const failureAction = error => {
+			const errorSlug = ( error && error.error ) || undefined;
+
+			return errorNotice( getSaveErrorMessage( errorSlug, product.name, translate ), {
+				duration: 8000,
+			} );
+		};
 
 		if ( ! product.type ) {
 			// Product type was never switched, so set it before we save.
@@ -189,6 +190,10 @@ class ProductCreate extends React.Component {
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
 		const saveEnabled = isValid && ! isBusy && 0 === this.state.isUploading.length;
+
+		if ( ! product || isNumber( product.id ) ) {
+			return null;
+		}
 
 		return (
 			<Main className={ className } wideLayout>

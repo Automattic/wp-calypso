@@ -13,13 +13,13 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Button from 'components/button';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
-import { isSitePressable } from 'state/selectors';
+import { getRewindState } from 'state/selectors';
 
-const SetupTos = ( { autoConfigure, isPressable, reset, translate, goToNextStep } ) => (
+const SetupTos = ( { autoConfigure, canAutoconfigure, reset, translate, goToNextStep } ) => (
 	<CompactCard className="credentials-setup-flow__tos" highlight="info">
 		<Gridicon icon="info" size={ 48 } className="credentials-setup-flow__tos-gridicon" />
 		<div className="credentials-setup-flow__tos-text">
-			{ isPressable
+			{ canAutoconfigure
 				? translate(
 						'WordPress.com can obtain the credentials from your ' +
 							'current host which are necessary to perform site backups and ' +
@@ -37,7 +37,7 @@ const SetupTos = ( { autoConfigure, isPressable, reset, translate, goToNextStep 
 			<Button borderless={ true } onClick={ reset }>
 				{ translate( 'Cancel' ) }
 			</Button>
-			{ isPressable ? (
+			{ canAutoconfigure ? (
 				<Button primary onClick={ autoConfigure }>
 					{ translate( 'Auto Configure' ) }
 				</Button>
@@ -51,7 +51,7 @@ const SetupTos = ( { autoConfigure, isPressable, reset, translate, goToNextStep 
 );
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	isPressable: isSitePressable( state, siteId ),
+	canAutoconfigure: getRewindState( state, siteId ).canAutoconfigure,
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
