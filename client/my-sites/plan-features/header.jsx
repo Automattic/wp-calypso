@@ -56,7 +56,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { newPlan, planType, popular, selectedPlan, title, translate } = this.props;
+		const { newPlan, bestValue, planType, popular, selectedPlan, title, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -67,6 +67,7 @@ class PlanFeaturesHeader extends Component {
 				) }
 				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
 				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
+				{ bestValue && ! selectedPlan && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
 				<div className="plan-features__header-figure">
 					<PlanIcon plan={ planType } />
@@ -81,7 +82,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderSignupHeader() {
-		const { planType, popular, newPlan, title, audience, translate } = this.props;
+		const { planType, popular, newPlan, bestValue, title, audience, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -90,6 +91,7 @@ class PlanFeaturesHeader extends Component {
 				<header className={ headerClasses } onClick={ this.props.onClick }>
 					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
 					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
+					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
 						{ audience }
@@ -292,6 +294,7 @@ PlanFeaturesHeader.propTypes = {
 	] ).isRequired,
 	popular: PropTypes.bool,
 	newPlan: PropTypes.bool,
+	bestValue: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	discountPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
@@ -313,6 +316,7 @@ PlanFeaturesHeader.defaultProps = {
 	onClick: noop,
 	popular: false,
 	newPlan: false,
+	bestValue: false,
 	isPlaceholder: false,
 	site: {},
 	basePlansPath: null,
