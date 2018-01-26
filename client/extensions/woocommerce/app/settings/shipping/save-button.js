@@ -122,11 +122,11 @@ class ShippingSettingsSaveButton extends Component {
 		}
 
 		if ( finishedInitialSetup ) {
-			return wcsEnabled ? (
+			return (
 				<Button onClick={ this.save } primary busy={ isSaving } disabled={ isSaving }>
 					{ translate( 'Save' ) }
 				</Button>
-			) : null;
+			);
 		}
 		const label = wcsEnabled ? translate( 'Save & finish' ) : translate( "I'm Finished" );
 		return (
