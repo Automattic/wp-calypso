@@ -7,7 +7,12 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRequestingInvitesForSite, getInvitesForSite, isRequestingResend } from '../selectors';
+import {
+	isRequestingInvitesForSite,
+	getInvitesForSite,
+	isRequestingResend,
+	getNumberOfInvitesFoundForSite,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#isRequestingInvitesForSite()', () => {
@@ -112,6 +117,28 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( isRequestingResend( state, 12345, '9876asdf54321' ) ).to.equal( false );
+		} );
+	} );
+
+	describe( '#getNumberOfInvitesFoundForSite()', () => {
+		test( 'should return null when count is unknown', () => {
+			const state = {
+				invites: {
+					counts: {},
+				},
+			};
+			expect( getNumberOfInvitesFoundForSite( state, 12345 ) ).to.equal( null );
+		} );
+
+		test( 'should return the number found when count is known', () => {
+			const state = {
+				invites: {
+					counts: {
+						12345: 678,
+					},
+				},
+			};
+			expect( getNumberOfInvitesFoundForSite( state, 12345 ) ).to.equal( 678 );
 		} );
 	} );
 } );

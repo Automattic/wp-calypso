@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { requesting, items, requestingResend } from '../reducer';
+import { requesting, items, counts, requestingResend } from '../reducer';
 import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_SUCCESS,
@@ -247,6 +247,35 @@ describe( 'reducer', () => {
 				const state = items( original, { type: DESERIALIZE } );
 
 				expect( state ).to.eql( {} );
+			} );
+		} );
+	} );
+
+	describe( '#counts()', () => {
+		test( 'should key requests by site ID', () => {
+			const state = counts(
+				{},
+				{
+					type: INVITES_REQUEST_SUCCESS,
+					siteId: 12345,
+					found: 678,
+				}
+			);
+			expect( state ).to.eql( {
+				12345: 678,
+			} );
+		} );
+
+		test( 'should accumulate sites', () => {
+			const original = deepFreeze( { 12345: 678 } );
+			const state = counts( original, {
+				type: INVITES_REQUEST_SUCCESS,
+				siteId: 67890,
+				found: 12,
+			} );
+			expect( state ).to.eql( {
+				12345: 678,
+				67890: 12,
 			} );
 		} );
 	} );
