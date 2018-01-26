@@ -484,6 +484,9 @@ class ActivityLog extends Component {
 			</section>
 		);
 
+		const showRewindWelcome =
+			siteId && '1' === get( this.props, 'context.query.rewind-welcome', '' );
+
 		return (
 			<Main wideLayout>
 				<QueryRewindState siteId={ siteId } />
@@ -495,7 +498,7 @@ class ActivityLog extends Component {
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
-				{ siteId && <ActivityLogSwitch siteId={ siteId } /> }
+				{ showRewindWelcome && <ActivityLogSwitch siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						icon="history"
