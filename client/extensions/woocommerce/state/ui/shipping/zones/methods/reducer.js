@@ -27,7 +27,7 @@ import { getBucket } from 'woocommerce/state/ui/helpers';
 import flatRate from './flat-rate/reducer';
 import freeShipping from './free-shipping/reducer';
 import localPickup from './local-pickup/reducer';
-import wcsServiceSettings from 'woocommerce/woocommerce-services/state/service-settings/values/reducer';
+import wcsServiceSettings from 'woocommerce/woocommerce-services/state/service-settings/reducer';
 
 export const builtInShippingMethods = {
 	flat_rate: flatRate,
