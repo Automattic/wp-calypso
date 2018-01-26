@@ -22,7 +22,6 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ] = ( state, { data 
 	const newState = { ...state };
 	data.forEach( method => {
 		newState[ method.id ] = {
-			...state[ method.id ],
 			id: method.id,
 			order: method.order,
 			enabled: method.enabled,
@@ -39,10 +38,14 @@ reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ] = ( state, { data 
 reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_UPDATED ] = ( state, { data, originatingAction } ) => {
 	if ( ! data.id ) {
 		// WCS endpoints don't return the data on success, get that info from the originatingAction
-		data = {
-			id: originatingAction.methodId,
-			method_id: originatingAction.methodType,
-			settings: mapValues( originatingAction.method, value => ( { value } ) ),
+		return {
+			...state,
+			[ originatingAction.methodId ]: {
+				...state[ originatingAction.methodId ], // Preserve the previous method data
+				id: originatingAction.methodId,
+				methodType: originatingAction.methodType,
+				...originatingAction.method,
+			},
 		};
 	}
 	return reducers[ WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS ]( state, { data: [ data ] } );
