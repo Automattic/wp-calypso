@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -14,17 +13,11 @@ import classNames from 'classnames';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
+import ImageThumb from 'woocommerce/components/image-thumb';
 
 const ProductsListRow = ( { site, product } ) => {
 	// The first returned image from the API is the featured image.
 	const featuredImage = product.images && product.images[ 0 ];
-	const imageClasses = classNames( 'products__list-image', {
-		'is-thumb-placeholder': ! featuredImage,
-	} );
-
-	const renderImage = () => (
-		<div className={ imageClasses }>{ featuredImage && <img src={ featuredImage.src } /> }</div>
-	);
 
 	const categoryNames =
 		product.categories &&
@@ -48,7 +41,7 @@ const ProductsListRow = ( { site, product } ) => {
 	return (
 		<TableRow href={ getLink( '/store/product/:site/' + product.id, site ) }>
 			<TableItem isTitle className="products__list-product">
-				{ renderImage() }
+				<ImageThumb src={ ( featuredImage && featuredImage.src ) || '' } alt="" />
 				<span className="products__list-name">{ product.name }</span>
 			</TableItem>
 			<TableItem>{ renderStock() }</TableItem>
