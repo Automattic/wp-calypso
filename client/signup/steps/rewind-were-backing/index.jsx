@@ -14,7 +14,6 @@ import { get } from 'lodash';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class RewindWereBacking extends Component {
 	static propTypes = {
@@ -66,11 +65,9 @@ class RewindWereBacking extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		siteSlug: getSelectedSiteSlug(
-			state,
-			get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 )
-		),
-	};
-}, null )( localize( RewindWereBacking ) );
+export default connect(
+	( state, ownProps ) => ( {
+		siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], 0 ),
+	} ),
+	null
+)( localize( RewindWereBacking ) );

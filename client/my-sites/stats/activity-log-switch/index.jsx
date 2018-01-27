@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -14,7 +13,7 @@ import page from 'page';
 import Card from 'components/card';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRewindState, isRewindActive } from 'state/selectors';
+import { getRewindState } from 'state/selectors';
 
 class ActivityLogSwitch extends Component {
 	static propTypes = {
@@ -71,18 +70,6 @@ class ActivityLogSwitch extends Component {
 						{ translate( 'Continue setup' ) }
 					</Button>
 				);
-		}
-	}
-
-	/**
-	 * Before component updates, check if we have to go somewhere else.
-	 * If Rewind was activated, user clicked the Switch now button so let's go to migrate creds.
-	 *
-	 * @param {object} nextProps Props received by component for next update.
-	 */
-	componentWillUpdate( nextProps ) {
-		if ( this.props.rewindIsActive !== nextProps.rewindIsActive ) {
-			page( `/start/rewind-migrate/${ this.props.siteSlug }` );
 		}
 	}
 
@@ -177,7 +164,6 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state, siteId ),
 			rewindState: rewindState.state,
 			failureReason: rewindState.failureReason || '',
-			rewindIsActive: isRewindActive( state, siteId ),
 		};
 	}
 )( localize( ActivityLogSwitch ) );
