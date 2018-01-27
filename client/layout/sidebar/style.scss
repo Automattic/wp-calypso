@@ -20,7 +20,7 @@
 		width: $sidebar-width-max;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@media ( max-width: 710px ) {
 		left: -100%;
 		width: 100%;
 		max-height: calc( 100% - 47px );
@@ -39,7 +39,7 @@
 		}
 	}
 
-	@include breakpoint( ">660px" ) {
+	@media ( min-width: 710px ) {
 		&.has-regions {
 			overflow: hidden;
 		}
@@ -81,14 +81,14 @@
 .sidebar__menu {
 	display: block;
 
-	@include breakpoint( "<660px" ) {
+	@media ( max-width: 710px ) {
 		margin-top: 24px;
 	}
 
 	li {
 		display: flex;
 
-		@include breakpoint( "<660px" ) {
+		@media ( max-width: 710px ) {
 			background-color: $gray-light;
 			border-bottom: 1px solid rgba( lighten( $gray, 20% ), 0.5 );
 
@@ -118,7 +118,7 @@
 
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
 
-			@include breakpoint( "<660px" ) {
+			@media ( max-width: 710px ) {
 
 				background: linear-gradient(
 					to right,
@@ -167,7 +167,7 @@
 		margin-right: 6px;
 		flex-shrink: 0;
 
-		@include breakpoint( "<660px" ) {
+		@media ( max-width: 710px ) {
 				top: 15px;
 				left: 16px;
 			height: 24px;
@@ -206,7 +206,7 @@ a.sidebar__button, form.sidebar__button {
 	border-radius: 3px;
 	border: 1px solid darken( $sidebar-bg-color, 10% );
 
-	@include breakpoint( "<660px" ) {
+	@media ( max-width: 710px ) {
 		font-size: 14px;
 		height: 30px;
 		line-height: 23px;
@@ -226,7 +226,7 @@ form.sidebar__button input {
 }
 
 // Selected Menu
-@include breakpoint( ">660px" ) {
+@media ( min-width: 710px ) {
 	.sidebar__menu .selected {
 		background-color: var( --sidebar-menu-selected-background-color );
 
@@ -289,7 +289,7 @@ form.sidebar__button input {
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@media ( max-width: 710px ) {
 		background-color: $gray-light;
 
 		a,
@@ -354,7 +354,7 @@ form.sidebar__button input {
 	flex-direction: row;
 	padding-left: 10px;
 
-	@include breakpoint( "<660px" ) {
+	@media ( max-width: 710px ) {
 		margin-top: 16px;
 	}
 
@@ -379,7 +379,7 @@ form.sidebar__button input {
 		margin-left: 0;
 		outline: 0;
 
-		@include breakpoint( "<660px" ) {
+		@media ( max-width: 710px ) {
 			flex: 0 1 56px;
 		}
 
@@ -406,7 +406,7 @@ form.sidebar__button input {
 			border-radius: 50%;
 			background: $orange-jazzy;
 
-			@include breakpoint( "<660px" ) {
+			@media ( max-width: 710px ) {
 				top: 14px;
 				left: 11px;
 			}
@@ -419,7 +419,7 @@ form.sidebar__button input {
 		color: $gray-dark;
 	}
 
-	@include breakpoint( "<660px" ) {
+	@media ( max-width: 710px ) {
 		padding: 16px;
 	}
 
@@ -440,7 +440,7 @@ form.sidebar__button input {
 
 .sidebar__region {
 	flex-shrink: 0;
-	@include breakpoint( ">660px" ) {
+	@media ( min-width: 710px ) {
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;

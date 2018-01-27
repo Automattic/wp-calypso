@@ -56,7 +56,7 @@
 }
 
 // Mobile (Full Width)
-@include breakpoint( "<660px" ) {
+@media ( max-width: 710px ) {
 	.layout__content {
 		margin-left: 0;
 		padding: 0;
@@ -114,7 +114,7 @@
 		transform: translateX( 272px );
 		pointer-events: auto;
 
-		@include breakpoint( "<660px" ) {
+		@media ( max-width: 710px ) {
 			transform: translateX( 100% );
 		}
 	}
@@ -162,7 +162,7 @@
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
+	@media ( max-width: 710px ) {
 		width: 100%;
 		left: -100%;
 		-webkit-overflow-scrolling: touch;

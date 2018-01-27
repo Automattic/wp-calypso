@@ -2,7 +2,7 @@
 	max-width: 100%;
 
 	.media-library__list {
-		@include breakpoint( ">660px" ) {
+		@media ( min-width: 710px ) {
 			padding: 0;
 		}
 	}
