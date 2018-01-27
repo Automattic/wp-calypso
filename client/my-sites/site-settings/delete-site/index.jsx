@@ -32,6 +32,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { deleteSite } from 'state/sites/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 import { isSiteAutomatedTransfer } from 'state/selectors';
+import FormLabel from 'components/forms/form-label';
 
 class DeleteSite extends Component {
 	static propTypes = {
@@ -340,7 +341,7 @@ class DeleteSite extends Component {
 						className="delete-site__confirm-dialog"
 					>
 						<h1 className="delete-site__confirm-header">{ strings.confirmDeleteSite }</h1>
-						<label for="confirmDomainChangeInput" className="delete-site__confirm-paragraph">
+						<FormLabel htmlFor="confirmDomainChangeInput" className="delete-site__confirm-label">
 							{ translate(
 								'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
 									'Your site will then be gone forever.',
@@ -353,7 +354,7 @@ class DeleteSite extends Component {
 									},
 								}
 							) }
-						</label>
+						</FormLabel>
 
 						<input
 							autoCapitalize="off"
@@ -362,7 +363,6 @@ class DeleteSite extends Component {
 							onChange={ this.onConfirmDomainChange }
 							value={ this.state.confirmDomain }
 							aria-required="true"
-							tabIndex="0"
 							id="confirmDomainChangeInput"
 						/>
 					</Dialog>

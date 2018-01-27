@@ -49,12 +49,11 @@ h1.delete-site__confirm-header {
 	color: $gray-dark;
 }
 
-.delete-site__confirm-paragraph {
+.delete-site__confirm-label {
 	margin-bottom: 8px;
-	font-size: 14px;
 	line-height: 24px;
 	color: $gray-text-min;
-	display: block;
+	font-weight: normal;
 }
 
 .delete-site__target-domain {
