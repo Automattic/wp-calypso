@@ -13,7 +13,6 @@ import page from 'page';
  */
 import Card from 'components/card';
 import Button from 'components/button';
-import ActivityLogRewindToggle from 'my-sites/stats/activity-log/activity-log-rewind-toggle';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getRewindState, isRewindActive } from 'state/selectors';
 
@@ -45,10 +44,12 @@ class ActivityLogSwitch extends Component {
 		switch ( this.props.failureReason ) {
 			case 'vp_can_transfer':
 				return (
-					<ActivityLogRewindToggle
-						siteId={ siteId }
-						label={ translate( 'Switch now' ) }
-					/>
+					<Button
+						primary
+						href={ `/start/rewind-switch/?siteId=${ siteId }&siteSlug=${ siteSlug }` }
+					>
+						{ translate( 'Switch now' ) }
+					</Button>
 				);
 
 			case 'missing_plan':
@@ -81,8 +82,7 @@ class ActivityLogSwitch extends Component {
 	 */
 	componentWillUpdate( nextProps ) {
 		if ( this.props.rewindIsActive !== nextProps.rewindIsActive ) {
-			// ToDo: update with real URL
-			page( '/start/' + this.props.siteSlug );
+			page( `/start/rewind-migrate/${ this.props.siteSlug }` );
 		}
 	}
 
