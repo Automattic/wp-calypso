@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, isEmpty, map } from 'lodash';
+import { get, head, isEmpty, last, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,6 +107,28 @@ class EditorRevisionsList extends PureComponent {
 		prevRevisionId && this.selectRevision( prevRevisionId );
 	};
 
+	selectedRevisionIsLatest = () => {
+		const { selectedRevisionId, revisions } = this.props;
+		const firstRevision = head( revisions );
+		return firstRevision && selectedRevisionId === firstRevision.id;
+	};
+
+	selectedRevisionIsEarliest = () => {
+		const { selectedRevisionId, revisions } = this.props;
+		const lastRevision = last( revisions );
+		return lastRevision && selectedRevisionId === lastRevision.id;
+	};
+
+	selectedRevisionOrder = () => {
+		if ( this.selectedRevisionIsLatest() ) {
+			return 'latest';
+		}
+		if ( this.selectedRevisionIsEarliest() ) {
+			return 'earliest';
+		}
+		return '';
+	};
+
 	render() {
 		const { comparisons, postId, revisions, selectedRevisionId, siteId } = this.props;
 		const classes = classNames( 'editor-revisions-list', {
@@ -119,6 +141,7 @@ class EditorRevisionsList extends PureComponent {
 				<EditorRevisionsListNavigation
 					selectNextRevision={ this.selectNextRevision }
 					selectPreviousRevision={ this.selectPreviousRevision }
+					selectedRevisionOrder={ this.selectedRevisionOrder() }
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
