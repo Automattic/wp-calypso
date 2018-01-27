@@ -22,7 +22,6 @@ const EditorRevisionsListNavigation = ( {
 		<ButtonGroup className="editor-revisions-list__navigation">
 			<Button
 				compact
-				borderless
 				className="editor-revisions-list__prev-button"
 				type="button"
 				onClick={ selectPreviousRevision }
@@ -32,7 +31,6 @@ const EditorRevisionsListNavigation = ( {
 			</Button>
 			<Button
 				compact
-				borderless
 				className="editor-revisions-list__next-button"
 				type="button"
 				onClick={ selectNextRevision }
