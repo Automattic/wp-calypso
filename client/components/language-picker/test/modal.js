@@ -18,6 +18,7 @@ import {
 	LOCALIZED_LANGUAGE_NAMES_DATA_DE,
 	LOCALIZED_LANGUAGE_NAMES_DATA_IT,
 } from 'state/i18n/language-names/test/fixture';
+import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from '../constants';
 
 describe( 'LanguagePickerModal', () => {
 	const defaultProps = {
@@ -31,12 +32,14 @@ describe( 'LanguagePickerModal', () => {
 				popular: 1,
 				value: 1,
 				wpLocale: 'en_US',
+				territories: [ '019' ],
 			},
 			{
 				langSlug: 'cs',
 				name: 'Čeština',
 				value: 11,
 				wpLocale: 'cs_CZ',
+				territories: [ '151' ],
 			},
 			{
 				langSlug: 'it',
@@ -44,16 +47,19 @@ describe( 'LanguagePickerModal', () => {
 				popular: 8,
 				value: 35,
 				wpLocale: 'it_IT',
+				territories: [ '039' ],
 			},
 			{
 				langSlug: 'en-gb',
 				name: 'English (UK)',
 				value: 482,
 				wpLocale: 'en_GB',
+				territories: [ '154' ],
 			},
 		],
 		selected: 'en',
 		translate: identity,
+		countryCode: '',
 		loadLanguageNames: noop,
 		localizedLanguageNames: LOCALIZED_LANGUAGE_NAMES_DATA_DE,
 	};
@@ -106,7 +112,7 @@ describe( 'LanguagePickerModal', () => {
 		} );
 	} );
 
-	describe( 'getDisplayedLanguages()', () => {
+	describe( 'getFilteredLanguages()', () => {
 		test( 'should return results by slug and autonym if localized language names not loaded', () => {
 			const props = Object.assign( {}, defaultProps, {
 				localizedLanguageNames: {},
@@ -115,7 +121,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'en', // for [en]glish
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 0 ],
 				defaultProps.languages[ 3 ],
 			] );
@@ -123,7 +129,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'english',
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 0 ],
 				defaultProps.languages[ 3 ],
 			] );
@@ -131,7 +137,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'inglese', // for [inglese] (English)
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [] );
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [] );
 		} );
 
 		test( 'should return list of popular languages', () => {
@@ -140,7 +146,7 @@ describe( 'LanguagePickerModal', () => {
 				filter: 'popular',
 				search: null,
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 0 ],
 				defaultProps.languages[ 2 ],
 			] );
@@ -155,7 +161,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'en', // for [en]glish
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 0 ],
 				defaultProps.languages[ 3 ],
 			] );
@@ -163,7 +169,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'english',
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 0 ],
 				defaultProps.languages[ 3 ],
 			] );
@@ -171,7 +177,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'in', // for [in]glese (English)
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 0 ],
 				defaultProps.languages[ 1 ], // Češt[in]a
 				defaultProps.languages[ 3 ],
@@ -180,21 +186,21 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'cs', // slug for Čeština
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 1 ],
 			] );
 
 			wrapper.setState( {
 				search: 'ceco', // slug for Čeština
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 1 ],
 			] );
 
 			wrapper.setState( {
 				search: 'Czech', // en for Čeština
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 1 ],
 			] );
 		} );
@@ -208,7 +214,7 @@ describe( 'LanguagePickerModal', () => {
 			wrapper.setState( {
 				search: 'éñglîsh', // for [en]glish
 			} );
-			expect( wrapper.instance().getDisplayedLanguages() ).toEqual( [
+			expect( wrapper.instance().getFilteredLanguages() ).toEqual( [
 				defaultProps.languages[ 0 ],
 				defaultProps.languages[ 3 ],
 			] );
@@ -300,6 +306,28 @@ describe( 'LanguagePickerModal', () => {
 				expect( wrapper.instance().getSuggestedLanguages() ).toEqual(
 					item.expectedSuggestedLanguages
 				);
+			} );
+		} );
+
+		describe( 'language groups', () => {
+			test( 'should set default language group filter when geolocation country code not available', () => {
+				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+				expect( wrapper.state().filter ).toEqual( DEFAULT_LANGUAGE_GROUP );
+			} );
+
+			test( 'should load correct language group  when geolocation country code available', () => {
+				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } countryCode="IT" /> );
+				expect( wrapper.state().filter ).toEqual( 'western-europe' );
+			} );
+
+			test( 'should switch country lists when user clicks a language group tab', () => {
+				const wrapper = shallow( <LanguagePickerModal { ...defaultProps } /> );
+				expect( wrapper.state().filter ).toEqual( DEFAULT_LANGUAGE_GROUP );
+				wrapper
+					.find( 'NavItem' )
+					.at( 1 )
+					.simulate( 'click' );
+				expect( wrapper.state().filter ).toEqual( LANGUAGE_GROUPS[ 1 ].id );
 			} );
 		} );
 	} );
