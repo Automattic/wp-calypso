@@ -73,7 +73,15 @@ export function items( state = null, action ) {
 		case SITE_RECEIVE:
 		case SITES_RECEIVE:
 			// Normalize incoming site(s) to array
-			const sites = action.site ? [ action.site ] : action.sites;
+			const maybeUnmanageableSites = action.site ? [ action.site ] : action.sites;
+			// filter out anything the current user can't manage
+			const sites = maybeUnmanageableSites.filter( site => {
+				return site && site.capabilities;
+			} );
+
+			if ( sites.length === 0 ) {
+				return state;
+			}
 
 			// SITES_RECEIVE occurs when we receive the entire set of user
 			// sites (replace existing state). Otherwise merge into state.

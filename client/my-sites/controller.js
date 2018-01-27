@@ -205,11 +205,6 @@ function onSelectedSiteAvailable( context ) {
 	const state = getState();
 	const selectedSite = getSelectedSite( state );
 
-	//temporary check when SU'ing
-	if ( ! selectedSite.capabilities ) {
-		return false;
-	}
-
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
@@ -238,7 +233,7 @@ function onSelectedSiteAvailable( context ) {
 				.slice( 0, 5 )
 				.filter( recentId => {
 					const site = getSite( state, recentId );
-					return site && site.capabilities;
+					return !! site;
 				} );
 			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
