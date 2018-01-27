@@ -105,10 +105,20 @@
 	}
 }
 
-.editor-revisions-list__prev-button,
-.editor-revisions-list__prev-button:hover,
-.editor-revisions-list__prev-button:active {
-	border-right: 1px solid darken($sidebar-bg-color, 5%);
+@include breakpoint( '<660px' ) {
+	.editor-revisions-list__next-button,
+	.editor-revisions-list__next-button:hover,
+	.editor-revisions-list__next-button:active {
+		border-right: 1px solid darken($sidebar-bg-color, 5%);
+	}
+}
+
+@include breakpoint( '>660px' ) {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:hover,
+	.editor-revisions-list__prev-button:active {
+		border-right: 1px solid darken($sidebar-bg-color, 5%);
+	}
 }
 
 // Scrollable Box for Revisions List
