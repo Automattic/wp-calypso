@@ -19,6 +19,7 @@ import { displayError, clear } from 'lib/upgrades/notices';
 import { submitTransaction } from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
+import { REDIRECTING_FOR_AUTHORIZATION } from '../../../lib/store-transactions/step-types';
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
@@ -75,6 +76,11 @@ const TransactionStepsMixin = {
 						payment_method: this.props.transaction.payment.paymentMethod,
 					} );
 				}
+				break;
+
+			case REDIRECTING_FOR_AUTHORIZATION:
+				// TODO: wire in payment method
+				analytics.tracks.recordEvent( 'calypso_checkout_form_redirect' );
 				break;
 
 			case 'received-wpcom-response':
@@ -142,10 +148,14 @@ const TransactionStepsMixin = {
 			return;
 		}
 
-		defer( () => {
-			// The Thank You page throws a rendering error if this is not in a defer.
-			this.props.handleCheckoutCompleteRedirect();
-		} );
+		if ( step.data.redirect_url ) {
+			this.props.handleCheckoutExternalRedirect( step.data.redirect_url );
+		} else {
+			defer( () => {
+				// The Thank You page throws a rendering error if this is not in a defer.
+				this.props.handleCheckoutCompleteRedirect();
+			} );
+		}
 	},
 
 	_formatError: function( error ) {

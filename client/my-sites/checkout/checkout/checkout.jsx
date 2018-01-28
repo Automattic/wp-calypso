@@ -357,7 +357,11 @@ class Checkout extends React.Component {
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	};
 
-	handleCheckoutCompleteRedirect = () => {
+	handleCheckoutExternalRedirect: function( redirectUrl ) {
+		window.location.href = redirectUrl;
+	},
+
+	handleCheckoutCompleteRedirect: function() {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -487,6 +491,7 @@ class Checkout extends React.Component {
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
+				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
 			>
 				{ config.isEnabled( 'upgrades/2-year-plans' ) && this.renderSubscriptionLengthPicker() }
 			</SecurePaymentForm>
