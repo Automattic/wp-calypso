@@ -105,6 +105,27 @@
 	}
 }
 
+.button-group {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:first-child,
+	.editor-revisions-list__next-button {
+		&:focus {
+			box-shadow: none;
+		}
+	}
+}
+
+.accessible-focus {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:first-child,
+	.editor-revisions-list__next-button {
+		&:focus {
+			outline: solid 2px $blue-light;
+			outline-offset: -2px;
+		}
+	}
+}
+
 @include breakpoint( '<660px' ) {
 	.editor-revisions-list__next-button,
 	.editor-revisions-list__next-button:hover,
@@ -115,9 +136,13 @@
 
 @include breakpoint( '>660px' ) {
 	.editor-revisions-list__prev-button,
-	.editor-revisions-list__prev-button:hover,
-	.editor-revisions-list__prev-button:active {
+	.editor-revisions-list__prev-button:hover {
 		border-right: 1px solid darken($sidebar-bg-color, 5%);
+	}
+	.button-group {
+		.editor-revisions-list__prev-button:first-child:active {
+			border-right: 1px solid darken($sidebar-bg-color, 5%);
+		}
 	}
 }
 
