@@ -21,7 +21,7 @@ import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions'
 class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	handleSiteTypeSelection = siteType => () => {
 		this.props.recordJpoEvent( 'calypso_jpo_site_type_clicked', {
-			siteType,
+			site_type: siteType,
 		} );
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteType,
