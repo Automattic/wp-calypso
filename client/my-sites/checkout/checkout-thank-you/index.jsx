@@ -37,6 +37,7 @@ import JetpackThankYouCard from './jetpack-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
 	isChargeback,
+	isDelayedDomainTransfer,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
@@ -295,7 +296,10 @@ class CheckoutThankYou extends React.Component {
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
-		} else if ( this.isNewUser() && wasDotcomPlanPurchased ) {
+		} else if (
+			wasDotcomPlanPurchased &&
+			( purchases.some( isDelayedDomainTransfer ) || this.isNewUser() )
+		) {
 			// streamlined paid NUX thanks page
 			return (
 				<Main className="checkout-thank-you">

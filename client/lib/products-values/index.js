@@ -265,6 +265,10 @@ export function isDomainTransferPrivacy( product ) {
 	return product.product_slug === domainProductSlugs.TRANSFER_IN_PRIVACY;
 }
 
+export function isDelayedDomainTransfer( product ) {
+	return isDomainTransfer( product ) && product.delayedProvisioning;
+}
+
 export function isBundled( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
@@ -408,6 +412,7 @@ export default {
 	isCredits,
 	isCustomDesign,
 	isDependentProduct,
+	isDelayedDomainTransfer,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
