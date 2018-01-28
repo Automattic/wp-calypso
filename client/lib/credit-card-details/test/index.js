@@ -90,11 +90,11 @@ describe( 'index', () => {
 			} );
 
 			test( 'should return `diners` for 30569309025904', () => {
-				assert.equal( getCreditCardType( '30569309025904' ), 'diners-club' );
+				assert.equal( getCreditCardType( '30569309025904' ), 'diners' );
 			} );
 
 			test( 'should return `diners` for 38520000023237', () => {
-				assert.equal( getCreditCardType( '38520000023237' ), 'diners-club' );
+				assert.equal( getCreditCardType( '38520000023237' ), 'diners' );
 			} );
 
 			test( 'should return `unionpay` for 6240008631401148', () => {

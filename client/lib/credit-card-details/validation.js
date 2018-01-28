@@ -8,7 +8,6 @@ import compact from 'lodash/compact';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
-import kebabCase from 'lodash/kebabCase';
 import i18n from 'i18n-calypso';
 
 /**
@@ -215,7 +214,12 @@ export function getCreditCardType( number ) {
 			cardType = 'amex';
 		}
 
-		return kebabCase( cardType.toLowerCase() );
+		// Normalize diners as wee
+		if ( cardType === 'Diners Club' ) {
+			cardType = 'diners';
+		}
+
+		return cardType.toLowerCase();
 	}
 
 	return null;
