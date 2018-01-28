@@ -30,6 +30,8 @@ export class CommentList extends Component {
 	static propTypes = {
 		changePage: PropTypes.func,
 		comments: PropTypes.array,
+		commentsCount: PropTypes.number,
+		counts: PropTypes.object,
 		order: PropTypes.string,
 		recordChangePage: PropTypes.func,
 		replyComment: PropTypes.func,
@@ -127,6 +129,7 @@ export class CommentList extends Component {
 		const {
 			comments,
 			commentsCount,
+			counts,
 			isLoading,
 			isPostView,
 			order,
@@ -168,6 +171,7 @@ export class CommentList extends Component {
 				<CommentNavigation
 					commentsListQuery={ commentsListQuery }
 					commentsPage={ comments }
+					counts={ counts }
 					isBulkMode={ isBulkMode }
 					isSelectedAll={ this.isSelectedAll() }
 					order={ order }
@@ -230,16 +234,15 @@ export class CommentList extends Component {
 
 const mapStateToProps = ( state, { order, page, postId, siteId, status } ) => {
 	const comments = getCommentsPage( state, siteId, { order, page, postId, status } );
-	const commentsCount = get(
-		getSiteCommentCounts( state, siteId, postId ),
-		'unapproved' === status ? 'pending' : status
-	);
+	const counts = getSiteCommentCounts( state, siteId, postId );
+	const commentsCount = get( counts, 'unapproved' === status ? 'pending' : status );
 	const isLoading = isUndefined( comments );
 	const isPostView = !! postId;
 
 	return {
 		comments: comments || [],
 		commentsCount,
+		counts,
 		isLoading,
 		isPostView,
 	};

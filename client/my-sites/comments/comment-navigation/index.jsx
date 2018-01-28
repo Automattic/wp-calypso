@@ -81,22 +81,27 @@ export class CommentNavigation extends Component {
 	changeFilter = status => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
-		const { translate } = this.props;
+		const { translate, counts } = this.props;
 		const navItems = {
 			all: {
 				label: translate( 'All' ),
+				count: get( counts, 'all' ),
 			},
 			unapproved: {
 				label: translate( 'Pending' ),
+				count: get( counts, 'pending' ),
 			},
 			approved: {
 				label: translate( 'Approved' ),
+				count: get( counts, 'approved' ),
 			},
 			spam: {
 				label: translate( 'Spam' ),
+				count: get( counts, 'spam' ),
 			},
 			trash: {
 				label: translate( 'Trash' ),
+				count: get( counts, 'trash' ),
 			},
 		};
 
@@ -276,9 +281,10 @@ export class CommentNavigation extends Component {
 		return (
 			<SectionNav className="comment-navigation" selectedText={ navItems[ queryStatus ].label }>
 				<NavTabs selectedText={ navItems[ queryStatus ].label }>
-					{ map( navItems, ( { label }, status ) => (
+					{ map( navItems, ( { label, count }, status ) => (
 						<NavItem
 							key={ status }
+							count={ count }
 							onClick={ this.changeFilter( status ) }
 							path={ this.getStatusPath( status ) }
 							selected={ queryStatus === status }
