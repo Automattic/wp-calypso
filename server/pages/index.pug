@@ -239,7 +239,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		script(type='text/javascript').
 			(function () {
 				// Mini tracks
-				function recordTracksEvent( eventName ) {
+				function recordTracksEvent( eventName, pathName ) {
 					var statsPixel = '//pixel.wp.com/t.gif';
 					var stats = {
 						_pf: navigator.platform,
@@ -251,7 +251,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 						_dl: document.location.origin + document.location.pathname,
 						_ts: Date.now(),
 						_tz: new Date().getTimezoneOffset() / 60,
-						rand: Math.random()
+						_rt: Date.now(),
+						path: pathName,
 					};
 
 					if ( window.currentUser ) {
@@ -273,7 +274,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					var pathName = window.location.pathname.split( "/" ).slice( 1, 2 )[ 0 ];
 					if ( pathName === 'log-in' && 'production' === window.configData.env ) {
 
-						var stats = recordTracksEvent( 'calypso_load_start' );
+						var stats = recordTracksEvent( 'calypso_load_start', '/' + pathName );
 						if ( ! window.calypsoLoadStartTime ) {
 							window.calypsoLoadStartTime = {};
 						}
