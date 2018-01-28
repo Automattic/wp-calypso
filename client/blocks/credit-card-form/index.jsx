@@ -93,24 +93,7 @@ class CreditCardForm extends Component {
 	validate = ( formValues, onComplete ) =>
 		this.formElem && onComplete( null, this.getValidationErrors() );
 
-	setFormState = form => {
-		if ( ! this.formElem ) {
-			return;
-		}
-
-		const messages = formState.getErrorMessages( form );
-		const notice =
-			messages.length > 0 ? notices.error( <ValidationErrorList messages={ messages } /> ) : null;
-
-		if ( ! notice && this.state.notice ) {
-			notices.removeNotice( this.state.notice );
-		}
-
-		this.setState( {
-			form,
-			notice,
-		} );
-	};
+	setFormState = form => this.formElem && this.setState( { form } );
 
 	endFormSubmitting = () => this.formElem && this.setState( { formSubmitting: false } );
 
@@ -123,6 +106,8 @@ class CreditCardForm extends Component {
 			} );
 		} );
 	};
+
+	getErrorMessage = fieldName => formState.getFieldErrorMessages( this.state.form, fieldName );
 
 	onSubmit = event => {
 		event.preventDefault();
@@ -227,8 +212,6 @@ class CreditCardForm extends Component {
 		};
 	}
 
-	isFieldInvalid = name => formState.isFieldInvalid( this.state.form, name );
-
 	getValidationErrors() {
 		const validationResult = validateCardDetails( this.getCardDetails() );
 
@@ -254,8 +237,8 @@ class CreditCardForm extends Component {
 						card={ this.getCardDetails() }
 						countriesList={ countriesList }
 						eventFormName="Edit Card Details Form"
-						isFieldInvalid={ this.isFieldInvalid }
 						onFieldChange={ this.onFieldChange }
+						getErrorMessage={ this.getErrorMessage }
 					/>
 					<div className="credit-card-form__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />

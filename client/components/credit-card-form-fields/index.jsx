@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import isEqual from 'lodash/isEqual';
+import { isEmpty, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,9 +23,15 @@ export class CreditCardFormFields extends React.Component {
 	static propTypes = {
 		card: PropTypes.object.isRequired,
 		countriesList: PropTypes.object.isRequired,
-		eventFormName: PropTypes.string.isRequired,
-		isFieldInvalid: PropTypes.func.isRequired,
-		onFieldChange: PropTypes.func.isRequired,
+		eventFormName: PropTypes.string,
+		onFieldChange: PropTypes.func,
+		getErrorMessage: PropTypes.func,
+	};
+
+	static defaultProps = {
+		eventFormName: 'Credit card input',
+		onFieldChange: noop,
+		getErrorMessage: noop,
 	};
 
 	constructor( props ) {
@@ -36,14 +42,8 @@ export class CreditCardFormFields extends React.Component {
 		};
 	}
 
-	shouldComponentUpdate( nextProps ) {
-		if ( ! isEqual( nextProps.card, this.props.card ) ) {
-			return true;
-		}
-		return false;
-	}
-
 	createField = ( fieldName, componentClass, props ) => {
+		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		return React.createElement(
 			componentClass,
 			Object.assign(
@@ -51,10 +51,12 @@ export class CreditCardFormFields extends React.Component {
 				{
 					additionalClasses: 'credit-card-form-fields__field',
 					eventFormName: this.props.eventFormName,
-					isError: this.props.isFieldInvalid( fieldName ),
+					isError: ! isEmpty( errorMessage ),
+					errorMessage: errorMessage[ 0 ],
 					name: fieldName,
+					onBlur: this.handleFieldChange,
 					onChange: this.handleFieldChange,
-					value: this.getFieldValue( fieldName ) || '',
+					value: this.getFieldValue( fieldName ),
 					autoComplete: 'off',
 				},
 				props
@@ -62,9 +64,7 @@ export class CreditCardFormFields extends React.Component {
 		);
 	};
 
-	getFieldValue = fieldName => {
-		return this.props.card[ fieldName ] || '';
-	};
+	getFieldValue = fieldName => this.props.card[ fieldName ] || '';
 
 	updateFieldValues( fieldName, nextValue ) {
 		const { onFieldChange } = this.props;
