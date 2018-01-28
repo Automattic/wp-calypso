@@ -107,23 +107,15 @@ class EditorRevisionsList extends PureComponent {
 		prevRevisionId && this.selectRevision( prevRevisionId );
 	};
 
-	selectedRevisionIsLatest = () => {
+	selectedRevisionOrder = () => {
 		const { selectedRevisionId, revisions } = this.props;
 		const firstRevision = head( revisions );
-		return firstRevision && selectedRevisionId === firstRevision.id;
-	};
-
-	selectedRevisionIsEarliest = () => {
-		const { selectedRevisionId, revisions } = this.props;
 		const lastRevision = last( revisions );
-		return lastRevision && selectedRevisionId === lastRevision.id;
-	};
 
-	selectedRevisionOrder = () => {
-		if ( this.selectedRevisionIsLatest() ) {
+		if ( firstRevision && selectedRevisionId === firstRevision.id ) {
 			return 'latest';
 		}
-		if ( this.selectedRevisionIsEarliest() ) {
+		if ( lastRevision && selectedRevisionId === lastRevision.id ) {
 			return 'earliest';
 		}
 		return '';
