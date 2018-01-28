@@ -302,9 +302,7 @@ export const handlers = {
 	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
 	[ INVITE_RESEND_REQUEST_FAILURE ]: dispatchError( translate( 'Invitation failed to resend.' ) ),
-	[ INVITE_RESEND_REQUEST_SUCCESS ]: dispatchSuccess(
-		translate( 'Invitation resent successfully.' )
-	),
+	[ INVITE_RESEND_REQUEST_SUCCESS ]: dispatchSuccess( translate( 'Invitation resent.' ) ),
 	[ KEYRING_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ KEYRING_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,
