@@ -27,6 +27,8 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+	INVITE_RESEND_REQUEST_FAILURE,
+	INVITE_RESEND_REQUEST_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -299,6 +301,10 @@ export const handlers = {
 	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,
+	[ INVITE_RESEND_REQUEST_FAILURE ]: dispatchError( translate( 'Invitation failed to resend.' ) ),
+	[ INVITE_RESEND_REQUEST_SUCCESS ]: dispatchSuccess(
+		translate( 'Invitation resent successfully.' )
+	),
 	[ KEYRING_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
 	[ KEYRING_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ POST_DELETE_FAILURE ]: onPostDeleteFailure,
