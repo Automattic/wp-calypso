@@ -248,7 +248,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 						_ht: window.screen.height,
 						_wd: window.screen.width,
 						_ut: 'anon',
-						_dl: document.location.origin + '/' + document.location.pathname,
+						_dl: document.location.origin + document.location.pathname,
 						_ts: Date.now(),
 						_tz: new Date().getTimezoneOffset() / 60,
 						rand: Math.random()
@@ -263,8 +263,8 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					var pixel = document.createElement( 'img' );
 					pixel.src = statsPixel + '?' + Object.keys( stats ).map( key => encodeURIComponent( key ) + '=' + encodeURIComponent( stats[ key ] ) ).join( '& ' );
 
-					var head = document.getElementsByTagName( 'body' )[ 0 ];
-					head.appendChild( pixel );
+					var body = document.getElementsByTagName( 'body' )[ 0 ];
+					body.appendChild( pixel );
 
 					return stats;
 				}
