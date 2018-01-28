@@ -8,6 +8,7 @@ import compact from 'lodash/compact';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
+import kebabCase from 'lodash/kebabCase';
 import i18n from 'i18n-calypso';
 
 /**
@@ -203,7 +204,7 @@ export function getCreditCardType( number ) {
 	if ( number ) {
 		number = number.replace( / /g, '' );
 
-		let cardType = creditcards.card.type( number, false );
+		let cardType = creditcards.card.type( number, true );
 
 		if ( typeof cardType === 'undefined' ) {
 			return null;
@@ -214,7 +215,7 @@ export function getCreditCardType( number ) {
 			cardType = 'amex';
 		}
 
-		return cardType.toLowerCase();
+		return kebabCase( cardType.toLowerCase() );
 	}
 
 	return null;

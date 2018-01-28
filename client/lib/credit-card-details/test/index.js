@@ -33,10 +33,6 @@ describe( 'index', () => {
 		} );
 
 		describe( 'Mastercard: range 2221-2720', () => {
-			test( 'should return null for 2000990000000000', () => {
-				assert.equal( getCreditCardType( '2000990000000000' ), null );
-			} );
-
 			test( 'should return `mastercard` for 2221000000000000', () => {
 				assert.equal( getCreditCardType( '2221000000000000' ), 'mastercard' );
 			} );
@@ -76,9 +72,33 @@ describe( 'index', () => {
 			test( 'should return `amex` for 378282246310005', () => {
 				assert.equal( getCreditCardType( '378282246310005' ), 'amex' );
 			} );
+		} );
 
-			test( 'should NOT return `amex` for 34343434343434', () => {
-				assert.notEqual( getCreditCardType( '34343434343434' ), 'amex' );
+		describe( 'Visa', () => {
+			test( 'should return `visa` for 4242424242424242', () => {
+				assert.equal( getCreditCardType( '4242424242424242' ), 'visa' );
+			} );
+
+			test( 'should return `visa` for 4000000400000008', () => {
+				assert.equal( getCreditCardType( '4000000400000008' ), 'visa' );
+			} );
+		} );
+
+		describe( 'Other Brands', () => {
+			test( 'should return `jcb` for 3530111333300000', () => {
+				assert.equal( getCreditCardType( '3530111333300000' ), 'jcb' );
+			} );
+
+			test( 'should return `diners` for 30569309025904', () => {
+				assert.equal( getCreditCardType( '30569309025904' ), 'diners-club' );
+			} );
+
+			test( 'should return `diners` for 38520000023237', () => {
+				assert.equal( getCreditCardType( '38520000023237' ), 'diners-club' );
+			} );
+
+			test( 'should return `unionpay` for 6240008631401148', () => {
+				assert.equal( getCreditCardType( '6240008631401148' ), 'unionpay' );
 			} );
 		} );
 	} );
