@@ -105,7 +105,13 @@
 }
 
 .people-list-item__invite-resend {
-	margin-right: 48px;
+	display: none;
 	height: 30px;
+	margin-left: 12px;
 	align-self: center;
+	vertical-align: baseline;
+
+	@include breakpoint( '>480px' ) {
+		display: inline-block;
+	}
 }
