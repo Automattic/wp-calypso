@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -12,19 +13,25 @@ import { getLocaleSlug } from 'i18n-calypso';
  */
 import { addLocaleToPath, getLanguage } from 'lib/i18n-utils';
 import LocaleSuggestionsListItem from './list-item';
-import LocaleSuggestionStore from 'lib/locale-suggestions';
+import QueryLocaleSuggestions from 'components/data/query-locale-suggestions';
 import Notice from 'components/notice';
+import { getLocaleSuggestions } from 'state/selectors';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 
-class LocaleSuggestions extends Component {
+export class LocaleSuggestions extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
+		localeSuggestions: PropTypes.array,
+	};
+
+	static defaultProps = {
+		locale: '',
+		localeSuggestions: [],
 	};
 
 	state = {
 		dismissed: false,
-		locales: null,
 	};
 
 	componentWillMount() {
@@ -43,40 +50,28 @@ class LocaleSuggestions extends Component {
 		switchLocale( locale );
 	}
 
-	componentDidMount() {
-		LocaleSuggestionStore.on( 'change', this.updateLocales );
-
-		this.updateLocales();
-	}
-
-	componentWillUnmount() {
-		LocaleSuggestionStore.off( 'change', this.updateLocales );
-	}
-
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.locale !== nextProps.locale ) {
 			switchLocale( nextProps.locale );
 		}
 	}
 
-	dismiss = () => {
-		this.setState( { dismissed: true } );
-	};
+	dismiss = () => this.setState( { dismissed: true } );
 
-	getPathWithLocale = locale => {
-		return addLocaleToPath( this.props.path, locale );
-	};
-
-	updateLocales = () => {
-		this.setState( { locales: LocaleSuggestionStore.get() } );
-	};
+	getPathWithLocale = locale => addLocaleToPath( this.props.path, locale );
 
 	render() {
-		if ( ! this.state.locales || this.state.dismissed ) {
+		if ( this.state.dismissed ) {
 			return null;
 		}
 
-		const usersOtherLocales = this.state.locales.filter( function( locale ) {
+		const { localeSuggestions } = this.props;
+
+		if ( ! localeSuggestions ) {
+			return <QueryLocaleSuggestions />;
+		}
+
+		const usersOtherLocales = localeSuggestions.filter( function( locale ) {
 			return locale.locale !== getLocaleSlug();
 		} );
 
@@ -105,4 +100,6 @@ class LocaleSuggestions extends Component {
 	}
 }
 
-export default LocaleSuggestions;
+export default connect( state => ( {
+	localeSuggestions: getLocaleSuggestions( state ),
+} ) )( LocaleSuggestions );
