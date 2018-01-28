@@ -203,10 +203,15 @@ export function getCreditCardType( number ) {
 	if ( number ) {
 		number = number.replace( / /g, '' );
 
-		const cardType = creditcards.card.type( number, false );
+		let cardType = creditcards.card.type( number, false );
 
 		if ( typeof cardType === 'undefined' ) {
 			return null;
+		}
+
+		// We already use 'amex' for American Express everywhere else
+		if ( cardType === 'American Express' ) {
+			cardType = 'amex';
 		}
 
 		return cardType.toLowerCase();

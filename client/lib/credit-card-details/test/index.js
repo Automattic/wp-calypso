@@ -67,5 +67,19 @@ describe( 'index', () => {
 				assert.notEqual( getCreditCardType( '5600000000000000' ), 'mastercard' );
 			} );
 		} );
+
+		describe( 'American Express', () => {
+			test( 'should return `amex` for 370000000000002', () => {
+				assert.equal( getCreditCardType( '370000000000002' ), 'amex' );
+			} );
+
+			test( 'should return `amex` for 378282246310005', () => {
+				assert.equal( getCreditCardType( '378282246310005' ), 'amex' );
+			} );
+
+			test( 'should NOT return `amex` for 34343434343434', () => {
+				assert.notEqual( getCreditCardType( '34343434343434' ), 'amex' );
+			} );
+		} );
 	} );
 } );
