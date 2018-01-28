@@ -15,7 +15,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import SignupActions from 'lib/signup/actions';
 import ActivityLogRewindToggle from 'my-sites/stats/activity-log/activity-log-rewind-toggle';
-import { isRewindActive } from 'state/selectors';
+import { getRewindState } from 'state/selectors';
 
 class RewindMigrate extends Component {
 	static propTypes = {
@@ -27,7 +27,7 @@ class RewindMigrate extends Component {
 
 		// Connected props
 		siteId: PropTypes.number.isRequired,
-		rewindIsActive: PropTypes.bool.isRequired,
+		rewindIsNowActive: PropTypes.bool.isRequired,
 	};
 
 	/**
@@ -37,7 +37,7 @@ class RewindMigrate extends Component {
 	 * @param {object} nextProps Props received by component for next update.
 	 */
 	componentWillUpdate( nextProps ) {
-		if ( this.props.rewindIsActive !== nextProps.rewindIsActive ) {
+		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
 			SignupActions.submitSignupStep( {
 				processingMessage: this.props.translate( 'Migrating your credentials' ),
 				stepName: this.props.stepName,
@@ -45,18 +45,6 @@ class RewindMigrate extends Component {
 			this.props.goToNextStep();
 		}
 	}
-
-	/**
-	 * Hits the endpoint to migrate the VP site to a Rewind site
-	 *
-	 * @returns {undefined}
-	 */
-	/*migrateCredentials = () => {
-		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Migrating your credentials' ),
-			stepName: this.props.stepName,
-		} );
-	};*/
 
 	stepContent = () => {
 		const { translate, siteId } = this.props;
@@ -105,8 +93,9 @@ class RewindMigrate extends Component {
 
 export default connect( ( state, ownProps ) => {
 	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
+	const rewindState = getRewindState( state, siteId );
 	return {
-		rewindIsActive: isRewindActive( state, siteId ),
 		siteId,
+		rewindIsNowActive: 'provisioning' === rewindState.state,
 	};
 }, null )( localize( RewindMigrate ) );
