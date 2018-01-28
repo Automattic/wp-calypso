@@ -63,9 +63,7 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	onResend = event => {
-		const { requestingResend, site, invite } = this.props;
-		const siteId = site && site.ID;
-		const inviteKey = invite && invite.invite_key;
+		const { requestingResend, siteId, inviteKey } = this.props;
 
 		event.preventDefault();
 
@@ -138,10 +136,12 @@ class PeopleListItem extends React.PureComponent {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = ownProps.site && ownProps.site.ID;
-		const inviteKey = ownProps.invite && ownProps.invite.invite_key;
+		const inviteKey = ownProps.invite && ownProps.invite.key;
 
 		return {
 			requestingResend: isRequestingResend( state, siteId, inviteKey ),
+			siteId,
+			inviteKey,
 		};
 	},
 	{ resendInvite }
