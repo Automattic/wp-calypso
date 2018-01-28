@@ -4,24 +4,18 @@
  */
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { defer } from 'lodash';
 
 /**
  * internal dependencies
  */
 
 export class Transitioner extends Component {
-
 	static defaultProps = {
-		direction: 'right',
-	}
+		direction: null,
+	};
 
 	render() {
-		const {
-			direction,
-			children,
-			IncomingComponent,
-		} = this.props;
+		const { direction, children, IncomingComponent } = this.props;
 
 		const wrapperClasses = classNames( 'transitioner', {
 			'transitioner__transition-right': direction === 'right',
@@ -30,9 +24,7 @@ export class Transitioner extends Component {
 
 		return (
 			<div className={ wrapperClasses }>
-				<span className="transitioner__main">
-					{ children }
-				</span>
+				<span className="transitioner__main">{ children }</span>
 				{ IncomingComponent && (
 					<span className="transitioner__incoming">
 						<IncomingComponent />

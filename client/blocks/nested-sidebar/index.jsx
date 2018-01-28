@@ -11,7 +11,7 @@ import { get } from 'lodash';
  */
 import { getRouteData, getRouteComponent } from './docs/access';
 import NestedSidebarLink from './nested-sidebar-link';
-import Transitioner from './transition';
+import Transitioner from 'components/transitioner';
 
 export class NestedSidebar extends Component {
 	render() {
@@ -28,21 +28,24 @@ export class NestedSidebar extends Component {
 			<div>
 				<div style={ { border: '1px solid black', padding: '10px 15px' } }>
 					{ parentRoute ? (
-						<NestedSidebarLink route={ parentRoute } direction="left">Back</NestedSidebarLink>
+						<NestedSidebarLink route={ parentRoute } direction="left">
+							Back
+						</NestedSidebarLink>
 					) : (
 						<p>No Parent Route</p>
 					) }
 					<div className="nested-sidebar__content-container">
-						{  (
+						{
 							<Transitioner
 								direction={ transitionDirection }
 								Comp={ SidebarComponent }
-								TComp={ TransitioningComponent }
-
+								IncomingComponent={ TransitioningComponent }
 							>
-								{ SidebarComponent && <SidebarComponent style={ { background: 'rgba(190,0,0,0.1)' } }/> }
+								{ SidebarComponent && (
+									<SidebarComponent style={ { background: 'rgba(190,0,0,0.1)' } } />
+								) }
 							</Transitioner>
-						) }
+						}
 					</div>
 				</div>
 			</div>
@@ -50,9 +53,7 @@ export class NestedSidebar extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		route: get( state, 'sidebar.route' ),
-		transition: get( state, 'sidebar.transition' ) || {},
-	} )
-)( NestedSidebar );
+export default connect( state => ( {
+	route: get( state, 'sidebar.route' ),
+	transition: get( state, 'sidebar.transition' ) || {},
+} ) )( NestedSidebar );

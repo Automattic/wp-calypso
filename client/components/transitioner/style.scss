@@ -1,5 +1,5 @@
 .transitioner {
-	.transition__incoming {
+	.transitioner__incoming {
 		position: absolute;
 			top: 0;
 			left: 0;
@@ -12,7 +12,7 @@
 		transform: translate( -100% ); // start position, trans component is off to the right
 		position: relative;
 
-		.transition__incoming {
+		.transitioner__incoming {
 			background: rgba(150,150,0,0.1);
 			transform: translate( 100% );
 		}
@@ -22,7 +22,7 @@
 		transition: all 0.2s ease-in-out;
 		transform: translate( 100% ); // start position, trans component is off to the left
 
-		.transition__incoming {
+		.transitioner__incoming {
 			background: rgba(190,0,0,0.1);
 			transform: translate( -100% );
 		}
