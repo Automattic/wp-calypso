@@ -33,17 +33,14 @@ export class NestedSidebar extends Component {
 						<p>No Parent Route</p>
 					) }
 					<div className="nested-sidebar__content-container">
-						{ SidebarComponent && false && <SidebarComponent /> }
 						{  (
 							<Transitioner
 								direction={ transitionDirection }
 								Comp={ SidebarComponent }
-								Tcomp={ TransitioningComponent }
+								TComp={ TransitioningComponent }
 
 							>
-								{ SidebarComponent && <SidebarComponent /> }
-								{ SidebarComponent && false && <SidebarComponent /> }
-								{ TransitioningComponent && false && <TransitioningComponent /> }
+								{ SidebarComponent && <SidebarComponent style={ { background: 'rgba(190,0,0,0.1)' } }/> }
 							</Transitioner>
 						) }
 					</div>

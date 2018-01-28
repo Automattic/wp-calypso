@@ -25,12 +25,9 @@ export class NestedSidebarLink extends Component {
 		this.props.startSidebarTransition( this.props.route, this.props.direction );
 
 		setTimeout( () => {
-			// const newRoute = get( this.props, 'sidebar.transition.route' );
-
 			this.props.endSidebarTransition();
-			// newRoute && this.props.setSidebarRoute( this.props.route )
 			this.props.setSidebarRoute( this.props.route );
-		}, 1200 );
+		}, 800 );
 	};
 
 	render() {
@@ -41,8 +38,6 @@ export class NestedSidebarLink extends Component {
 export default connect(
 	state => ( {
 		parentRoute: get( state, 'sidebar.parentRoute' ),
-		// route: get( state, 'sidebar.route' ),
-		// transition: get( state, 'sidebar.transition' ) || {},
 	} ),
 	dispatch =>
 		bindActionCreators(
