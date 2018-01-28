@@ -40,10 +40,12 @@ import TransferRestrictionMessage from 'components/domains/transfer-domain-step/
 class TransferDomainStep extends React.Component {
 	static propTypes = {
 		analyticsSection: PropTypes.string.isRequired,
+		basePath: PropTypes.string,
 		cart: PropTypes.object,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		goBack: PropTypes.func,
 		initialQuery: PropTypes.string,
+		isSignupStep: PropTypes.bool,
 		onRegisterDomain: PropTypes.func.isRequired,
 		onTransferDomain: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
@@ -243,8 +245,11 @@ class TransferDomainStep extends React.Component {
 
 		return (
 			<TransferRestrictionMessage
+				basePath={ this.props.basePath }
 				creationDate={ creationDate }
 				domain={ domain }
+				goBack={ this.goBack }
+				mapDomainUrl={ this.getMapDomainUrl() }
 				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
 				termMaximumInYears={ termMaximumInYears }
 				transferEligibleDate={ transferEligibleDate }
@@ -275,11 +280,15 @@ class TransferDomainStep extends React.Component {
 			content = this.addTransfer();
 		}
 
+		const header = ! this.props.isSignupStep && (
+			<HeaderCake onClick={ this.goBack }>
+				{ this.props.translate( 'Use My Own Domain' ) }
+			</HeaderCake>
+		);
+
 		return (
 			<div className="transfer-domain-step">
-				<HeaderCake onClick={ this.goBack }>
-					{ this.props.translate( 'Use My Own Domain' ) }
-				</HeaderCake>
+				{ header }
 				<div>{ content }</div>
 			</div>
 		);
@@ -330,6 +339,7 @@ class TransferDomainStep extends React.Component {
 	handleFormSubmit = event => {
 		event.preventDefault();
 
+		const domain = getFixedDomainSearch( this.state.searchQuery );
 		this.props.recordFormSubmitInTransferDomain( this.state.searchQuery );
 		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
 
@@ -353,6 +363,10 @@ class TransferDomainStep extends React.Component {
 
 					return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
 				} );
+
+				if ( this.props.isSignupStep && ! this.transferIsRestricted() ) {
+					this.props.onTransferDomain( domain );
+				}
 			}
 		);
 	};
