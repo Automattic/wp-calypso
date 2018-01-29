@@ -843,6 +843,25 @@ export class DomainWarnings extends React.PureComponent {
 					}
 				);
 				break;
+			case transferStatus.PENDING_START:
+				compactMessage = translate( 'Domain transfer waiting' );
+				message = translate(
+					'Your domain {{strong}}%(domain)s{{/strong}} is witing for you to start the transfer. {{a}}More info{{/a}}',
+					{
+						components: {
+							strong: <strong />,
+							a: (
+								<a
+									href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+									rel="noopener noreferrer"
+									target="_blank"
+								/>
+							),
+						},
+						args: { domain: domainInTransfer.name },
+					}
+				);
+				break;
 			case transferStatus.CANCELLED:
 				status = 'is-error';
 				compactMessage = translate( 'Domain transfer failed' );

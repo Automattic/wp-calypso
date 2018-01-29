@@ -521,6 +521,24 @@ Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
 };
 
 /**
+ * Starts an inbound domain transfer that is in the pending_start state.
+ *
+ * @param {int|string} siteId The site ID
+ * @param {string} domain The domain name
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.startInboundTransfer = function( siteId, domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
+		},
+		fn
+	);
+};
+
+/**
  * Initiates a resend of the inbound transfer verification email.
  * @param {string} domain - The domain name to check.
  * @param {Function} fn The callback function

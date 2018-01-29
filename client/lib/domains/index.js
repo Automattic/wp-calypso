@@ -83,6 +83,22 @@ function restartInboundTransfer( siteId, domainName, onComplete ) {
 	} );
 }
 
+function startInboundTransfer( siteId, domainName, onComplete ) {
+	if ( ! domainName || ! siteId ) {
+		onComplete( null );
+		return;
+	}
+
+	wpcom.undocumented().startInboundTransfer( siteId, domainName, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function resendInboundTransferEmail( domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( null );
@@ -252,10 +268,10 @@ export {
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
-	getPrimaryDomain,
-	getSelectedDomain,
-	getRegisteredDomains,
 	getMappedDomains,
+	getPrimaryDomain,
+	getRegisteredDomains,
+	getSelectedDomain,
 	getTld,
 	hasGoogleApps,
 	hasGoogleAppsSupportedDomain,
@@ -265,6 +281,7 @@ export {
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,
-	restartInboundTransfer,
 	resendInboundTransferEmail,
+	restartInboundTransfer,
+	startInboundTransfer,
 };
