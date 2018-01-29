@@ -115,7 +115,8 @@ export class RewindCredentialsForm extends Component {
 		nextForm.path = isEmpty( nextForm.path ) && credentials ? credentials.path : nextForm.path;
 
 		// Populate the host field with the site slug if needed
-		nextForm.host = isEmpty( nextForm.host ) && siteSlug ? siteSlug : nextForm.host;
+		nextForm.host =
+			isEmpty( nextForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : nextForm.host;
 
 		this.setState( { form: nextForm } );
 	}
