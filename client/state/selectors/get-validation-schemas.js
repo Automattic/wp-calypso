@@ -5,11 +5,11 @@
 import { get } from 'lodash';
 
 /**
- * Returns an object of localized language names
+ * Returns an object with domain validation schemas keyed by tld
  *
  * @param  {Object}  state Global state tree
- * @returns {Array|Null} an array of guessed locales for the user
+ * @returns {Object|Null} Validation JSON Schemas by tld
  */
-export default function getLocaleSuggestions( state ) {
+export default function getValidationSchemas( state ) {
 	return get( state, 'domains.management.validationSchemas', {} );
 }
