@@ -17,6 +17,7 @@ import PeopleLogStore from 'lib/people/log-store';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
 import PeopleInvites from './people-invites';
+import PeopleInviteDetails from './people-invite-details';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -49,6 +50,10 @@ export default {
 
 	peopleInvites( context, next ) {
 		renderPeopleInvites( context, next );
+	},
+
+	renderPeopleInviteDetails( context, next ) {
+		renderPeopleInviteDetails( context, next );
 	},
 };
 
@@ -96,6 +101,19 @@ function renderPeopleInvites( context, next ) {
 
 	context.primary = React.createElement( PeopleInvites, {
 		site,
+	} );
+	next();
+}
+
+function renderPeopleInviteDetails( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	context.store.dispatch( setTitle( i18n.translate( 'Invites', { textOnly: true } ) ) );
+
+	context.primary = React.createElement( PeopleInviteDetails, {
+		site,
+		inviteKey: context.params.invite_key,
 	} );
 	next();
 }

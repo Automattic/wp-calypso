@@ -44,6 +44,16 @@ export default function() {
 				makeLayout,
 				clientRender
 			);
+
+			page(
+				'/people/invites/:site_id/:invite_key',
+				peopleController.enforceSiteEnding,
+				siteSelection,
+				navigation,
+				peopleController.renderPeopleInviteDetails,
+				makeLayout,
+				clientRender
+			);
 		}
 
 		page(
