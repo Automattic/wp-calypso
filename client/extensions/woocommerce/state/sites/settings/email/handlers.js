@@ -4,7 +4,7 @@
  * @format
  */
 
-import { filter, isEmpty, setWith, get, forEach } from 'lodash';
+import { filter, isEmpty, setWith, get, forEach, omit, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +15,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
+	WOOCOMMERCE_EMAIL_SETTINGS_UPDATE,
 } from 'woocommerce/state/action-types';
 import request from 'woocommerce/state/sites/http-request';
 
@@ -57,6 +58,32 @@ const fromApi = data => {
 	return options;
 };
 
+const toApi = settings => {
+	// disable if user has emptied the input field
+	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], option => {
+		if ( get( settings, [ option, 'recipient', 'value' ] ) === '' ) {
+			settings[ option ].enabled.value = 'no';
+		}
+	} );
+
+	const update = reduce(
+		omit( settings, [ 'save', 'isSaving', 'error' ] ),
+		( result, options, group_id ) => {
+			forEach( options, ( option, id ) => {
+				result.push( {
+					group_id,
+					id,
+					value: option.value,
+				} );
+			} );
+			return result;
+		},
+		[]
+	);
+
+	return update;
+};
+
 export const handleRequest = ( { dispatch }, action ) => {
 	const { siteId } = action;
 	dispatch( request( siteId, action ).get( 'settings_email_groups' ) );
@@ -80,8 +107,34 @@ export const handleRequestFailure = ( { dispatch }, action, error ) => {
 	} );
 };
 
+export const handleUpdate = ( { dispatch }, action ) => {
+	const { siteId } = action;
+	dispatch( request( siteId, action ).get( 'settings_email_groups' ) );
+};
+
+export const handleUpdateSuccess = ( { dispatch }, action, { data } ) => {
+	const { siteId } = action;
+	dispatch( {
+		type: WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
+		siteId,
+		data: fromApi( data ),
+	} );
+};
+
+export const handleUpdateFailure = ( { dispatch }, action, error ) => {
+	const { siteId } = action;
+	dispatch( {
+		type: WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
+		siteId,
+		error,
+	} );
+};
+
 export default {
 	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST ]: [
+		dispatchRequest( handleRequest, handleRequestSuccess, handleRequestFailure ),
+	],
+	[ WOOCOMMERCE_EMAIL_SETTINGS_UPDATE ]: [
 		dispatchRequest( handleRequest, handleRequestSuccess, handleRequestFailure ),
 	],
 };

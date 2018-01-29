@@ -13,6 +13,7 @@ import request from 'woocommerce/state/sites/request';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_CHANGE,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
+	WOOCOMMERCE_EMAIL_SETTINGS_UPDATE,
 	WOOCOMMERCE_EMAIL_SETTINGS_SAVE_SETTINGS,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT,
 	WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
@@ -67,6 +68,11 @@ const settingsSubmitFailure = ( siteId, { error } ) => ( {
 	type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_FAILURE,
 	siteId,
 	error,
+} );
+
+export const emailSettingsUpdate = siteId => ( {
+	type: WOOCOMMERCE_EMAIL_SETTINGS_UPDATE,
+	siteId,
 } );
 
 export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
