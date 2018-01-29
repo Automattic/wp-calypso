@@ -231,10 +231,7 @@ function onSelectedSiteAvailable( context ) {
 			//also filter recent sites if not available locally
 			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
 				.slice( 0, 5 )
-				.filter( recentId => {
-					const site = getSite( state, recentId );
-					return !! site;
-				} );
+				.filter( recentId => !! getSite( state, recentId ) );
 			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
 	}

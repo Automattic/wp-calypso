@@ -75,9 +75,7 @@ export function items( state = null, action ) {
 			// Normalize incoming site(s) to array
 			const maybeUnmanageableSites = action.site ? [ action.site ] : action.sites;
 			// filter out anything the current user can't manage
-			const sites = maybeUnmanageableSites.filter( site => {
-				return site && site.capabilities;
-			} );
+			const sites = maybeUnmanageableSites.filter( site => site && site.capabilities );
 
 			if ( sites.length === 0 ) {
 				return state;
