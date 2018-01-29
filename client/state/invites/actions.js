@@ -34,7 +34,7 @@ export function requestSiteInvites( siteId ) {
 
 		wpcom
 			.undocumented()
-			.invitesList( siteId, { force: 'wpcom', status: 'all', number: 100 } )
+			.invitesList( siteId, { status: 'all', number: 100 } )
 			.then( ( { found, invites } ) => {
 				dispatch( {
 					type: INVITES_REQUEST_SUCCESS,
