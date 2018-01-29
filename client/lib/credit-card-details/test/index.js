@@ -100,6 +100,10 @@ describe( 'index', () => {
 			test( 'should return `unionpay` for 6240008631401148', () => {
 				assert.equal( getCreditCardType( '6240008631401148' ), 'unionpay' );
 			} );
+
+			test( 'should return `elo` for 5090004243572015', () => {
+				assert.equal( getCreditCardType( '5090004243572015' ), 'elo' );
+			} );
 		} );
 	} );
 } );

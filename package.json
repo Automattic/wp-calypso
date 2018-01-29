@@ -52,7 +52,7 @@
     "copy-webpack-plugin": "4.0.1",
     "cpf": "1.0.0",
     "create-react-class": "15.6.2",
-    "creditcards": "2.1.2",
+    "creditcards": "3.0.0",
     "cross-env": "5.1.1",
     "d3-array": "1.2.0",
     "d3-scale": "1.0.6",
