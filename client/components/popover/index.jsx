@@ -140,6 +140,8 @@ class Popover extends Component {
 		}
 
 		if ( ! this.isUpdatingPosition ) {
+			// update our position even when only our children change, use `isUpdatingPosition` to guard against a loop
+			// see https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
 			this.debug( 'requesting to update position after render completes' );
 			requestAnimationFrame( () => {
 				this.setPosition();

@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, includes, isEmpty } from 'lodash';
+import { identity, includes } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -19,11 +19,10 @@ import { tracks } from 'lib/analytics';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
 import Popover from 'components/popover';
-import SearchCard from 'components/search-card';
-import PlaceholderLines from './placeholder-lines';
-import HelpSearchStore from 'lib/help-search/store';
-import HelpSearchActions from 'lib/help-search/actions';
-import { decodeEntities, preventWidows } from 'lib/formatting';
+import InlineHelpSearchResults from './inline-help-search-results';
+import InlineHelpSearchCard from './inline-help-search-card';
+import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
+import { openResult, requestInlineHelpSearchResults, selectNextResult, selectPreviousResult } from 'state/inline-help/actions';
 
 /**
  * Module variables
@@ -41,78 +40,14 @@ class InlineHelp extends Component {
 		translate: identity,
 	};
 
-	// going without context for now -- let's just provide the top x recommended links
-	// copied from client/me/help/main for now
-	helpfulResults = [
-		{
-			link: 'https://en.support.wordpress.com/com-vs-org/',
-			title: this.props.translate( 'Uploading custom plugins and themes' ),
-			description: this.props.translate(
-				'Learn more about installing a custom theme or plugin using the Business plan.'
-			),
-		},
-		{
-			link: 'https://en.support.wordpress.com/all-about-domains/',
-			title: this.props.translate( 'All About Domains' ),
-			description: this.props.translate(
-				'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
-			),
-		},
-		{
-			link: 'https://en.support.wordpress.com/start/',
-			title: this.props.translate( 'Get Started' ),
-			description: this.props.translate(
-				'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
-			),
-		},
-		{
-			link: 'https://en.support.wordpress.com/settings/privacy-settings/',
-			title: this.props.translate( 'Privacy Settings' ),
-			description: this.props.translate(
-				'Limit your site’s visibility or make it completely private.'
-			),
-		},
-	];
-
 	state = {
-		helpLinks: [],
-		resultCount: this.helpfulResults.length,
-		selectedResult: -1,
-		searchQuery: '',
 		showInlineHelp: false,
 	};
 
 	componentDidMount() {
-		HelpSearchStore.on( 'change', this.refreshHelpLinks );
 		if ( globalKeyboardShortcuts ) {
 			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp.bind( this );
 		}
-	}
-
-	componentWillUnmount() {
-		HelpSearchStore.removeListener( 'change', this.refreshHelpLinks );
-	}
-
-	refreshHelpLinks = () => {
-		const helpLinks = HelpSearchStore.getHelpLinks();
-		debug( 'refreshing help links:', helpLinks );
-		this.setState( {
-			helpLinks: helpLinks,
-			selectedResult: -1,
-			resultCount: helpLinks ? helpLinks.length : this.helpfulResults.length,
-		} );
-	};
-
-	selectedUrl = () => {
-		if ( this.state.selectedResult === -1 ) {
-			return false;
-		}
-		const links = this.state.helpLinks && this.state.helpLinks.length > 0 ? this.state.helpLinks : this.helpfulResults;
-		const selectedLink = links[ this.state.selectedResult ];
-		if ( ! selectedLink || ! selectedLink.link ) {
-			return false;
-		}
-		return selectedLink.link;
 	}
 
 	toggleInlineHelp = () => {
@@ -143,8 +78,7 @@ class InlineHelp extends Component {
 	onSearch = searchQuery => {
 		debug( 'search query received: ', searchQuery );
 		tracks.recordEvent( 'calypso_inline-help_search', { searchQuery } );
-		this.setState( { helpLinks: [], searchQuery: searchQuery } );
-		HelpSearchActions.fetch( searchQuery );
+		this.props.requestInlineHelpSearchResults( searchQuery );
 	};
 
 	onKeyDown = event => {
@@ -159,109 +93,22 @@ class InlineHelp extends Component {
 			return;
 		}
 
-		const { resultCount, selectedResult } = this.state;
-		let nextIndex = null;
-
 		switch ( event.key ) {
 			case 'ArrowUp':
-				nextIndex = selectedResult - 1;
-				if ( nextIndex < -1 ) {
-					nextIndex = resultCount - 1;
-				}
+				this.props.selectPreviousResult();
 				break;
 			case 'ArrowDown':
-				nextIndex = selectedResult + 1;
-				if ( nextIndex >= resultCount ) {
-					nextIndex = -1;
-				}
+				this.props.selectNextResult();
 				break;
 			case 'Enter':
-				const selectedUrl = this.selectedUrl();
-				if ( selectedUrl ) {
-					window.location = selectedUrl;
-					return;
-				}
+				this.props.openResult();
 				break;
-		}
-
-		if ( nextIndex !== null ) {
-			this.setState( {
-				selectedResult: nextIndex,
-			} );
 		}
 	};
 
 	inlineHelpToggleRef = node => {
 		this.inlineHelpToggle = node;
 	};
-
-	renderSearchResults() {
-		if ( isEmpty( this.state.searchQuery ) ) {
-			// not searching
-			return this.renderContextHelp();
-		}
-
-		if ( isEmpty( this.state.helpLinks ) ) {
-			// search, but no results so far
-			return (
-				<PlaceholderLines />
-			);
-		}
-
-		if ( isEmpty( this.state.helpLinks.wordpress_support_links ) ) {
-			// search done, but nothing found
-			return (
-				<div>
-					<p className="inline-help__empty-results">No results.</p>
-					{ this.renderContextHelp() }
-				</div>
-			);
-		}
-
-		// found something in helpLinks.wordpress_support_links!
-		const links = this.state.helpLinks.wordpress_support_links;
-		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-		);
-	}
-
-	renderContextHelp() {
-		return (
-			<ul className="inline-help__results-list">
-				{ this.helpfulResults && this.helpfulResults.map( this.renderHelpLink ) }
-			</ul>
-		);
-	}
-
-	followHelpLink = ( url, payload ) => {
-		return () => {
-			tracks.recordEvent( 'calypso_inline-help_follow-link', payload );
-		};
-	}
-
-	renderHelpLink = ( link, index ) => {
-		const { selectedResult } = this.state;
-		const classes = [
-			'inline-help__results-item',
-			selectedResult === index && 'is-selected',
-		].filter( Boolean );
-		const eventPayload = {
-			searchQuery: this.state.searchQuery,
-			currentUrl: window.location.href,
-			resultUrl: link.link,
-		};
-		return (
-			<li key={ link.link } className={ classNames( ...classes ) }>
-				<a
-					href={ link.link }
-					onClick={ this.followHelpLink( link.link, eventPayload ) }
-					title={ decodeEntities( link.description ) }
-				>
-					{ preventWidows( decodeEntities( link.title ) ) }
-				</a>
-			</li>
-		);
-	}
 
 	moreHelpClicked() {
 		tracks.recordEvent( 'calypso_inline-help_more_help_clicked' );
@@ -290,17 +137,15 @@ class InlineHelp extends Component {
 					className="inline-help__popover"
 				>
 					<div className="inline-help__heading">
-						<SearchCard
-							searching={ ! isEmpty( this.state.searchQuery ) && isEmpty( this.state.helpLinks ) }
-							initialValue={ this.state.searchQuery }
-							placeholder={ translate( 'Search for help…' ) }
+
+						<InlineHelpSearchCard
+							query={ this.props.searchQuery }
 							onSearch={ this.onSearch }
 							onKeyDown={ this.onKeyDown }
-							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-							delaySearch={ true }
 						/>
-
-						{ this.renderSearchResults() }
+						<InlineHelpSearchResults
+							searchQuery={ this.props.searchQuery }
+						/>
 
 						<Button onClick={ this.moreHelpClicked } className="inline-help__button" borderless href="/help">
 							<Gridicon icon="help" /> More help
@@ -312,7 +157,17 @@ class InlineHelp extends Component {
 	}
 }
 
-const mapStateToProps = null;
-const mapDispatchToProps = null;
+const mapStateToProps = ( state, ownProps ) => {
+	return {
+		searchQuery: getSearchQuery( state ),
+		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+	};
+};
+const mapDispatchToProps = {
+	requestInlineHelpSearchResults,
+	selectNextResult,
+	selectPreviousResult,
+	openResult,
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );

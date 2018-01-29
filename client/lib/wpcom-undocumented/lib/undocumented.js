@@ -2069,14 +2069,7 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
  */
 Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	debug( 'help-search/ searchQuery' );
-
-	return this.wpcom.req.get(
-		'/help/search',
-		{
-			query: searchQuery,
-		},
-		fn
-	);
+	return this.wpcom.req.get( '/help/search', { query: searchQuery }, fn );
 };
 
 Undocumented.prototype.getQandA = function( query, site, fn ) {
