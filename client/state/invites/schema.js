@@ -12,6 +12,8 @@ export const inviteItemsSchema = {
 					key: { type: 'string' },
 					role: { type: 'string' },
 					isPending: { type: 'boolean' },
+					inviteDate: { type: 'string' },
+					acceptedDate: { anyOf: [ { type: 'string' }, { enum: [ null ] } ] },
 					user: {
 						type: 'object',
 						properties: {
