@@ -9,7 +9,7 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
-const getSAllhippingZoneMethodSettings = ( state, siteId = getSelectedSiteId( state ) ) => {
+const getAllShippingZoneMethodSettingsLoadState = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'woocommerceServices', siteId, 'shippingZoneMethodSettings' ], {} );
 };
 
@@ -20,7 +20,7 @@ const getSAllhippingZoneMethodSettings = ( state, siteId = getSelectedSiteId( st
  * @return {boolean} Whether the settings for the giving shipping zone method have been successfully loaded from the server
  */
 export const isShippingZoneMethodSettingsLoaded = ( state, instanceId, siteId = getSelectedSiteId( state ) ) => {
-	return true === getSAllhippingZoneMethodSettings( state, siteId )[ instanceId ];
+	return true === getAllShippingZoneMethodSettingsLoadState( state, siteId )[ instanceId ];
 };
 
 /**
@@ -30,5 +30,5 @@ export const isShippingZoneMethodSettingsLoaded = ( state, instanceId, siteId = 
  * @return {boolean} Whether the shipping zone method settings currently being retrieved from the server
  */
 export const isShippingZoneMethodSettingsLoading = ( state, instanceId, siteId = getSelectedSiteId( state ) ) => {
-	return LOADING === getSAllhippingZoneMethodSettings( state, siteId )[ instanceId ];
+	return LOADING === getAllShippingZoneMethodSettingsLoadState( state, siteId )[ instanceId ];
 };
