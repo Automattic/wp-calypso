@@ -412,6 +412,10 @@ export const isEditedPostDirty = createSelector(
 				if ( key === 'parent' ) {
 					return get( post, 'parent.ID', null ) !== value;
 				}
+				if ( key === 'date' ) {
+					return ! moment( value ).isSame( post.date );
+				}
+
 				return post[ key ] !== value;
 			}
 
