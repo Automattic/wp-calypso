@@ -18,7 +18,7 @@ export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state
 	const siteIds = [ siteId ];
 
 	if ( isRequestingForSites( state, siteIds ) ) {
-		return false;
+		return null;
 	}
 
 	const plugins = getPlugins( state, siteIds, 'active' );
