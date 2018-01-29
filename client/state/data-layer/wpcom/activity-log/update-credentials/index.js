@@ -1,10 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import i18n from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +21,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
 export const request = ( { dispatch }, action ) => {
-	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 4000 } );
+	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
 	const { notice: { noticeId } } = notice;
 
 	dispatch( notice );
@@ -83,12 +82,46 @@ export const failure = ( { dispatch }, action, error ) => {
 		siteId: action.siteId,
 	} );
 
-	dispatch(
-		errorNotice( i18n.translate( 'Error saving. Please check your credentials and try again.' ), {
-			duration: 4000,
-			id: action.noticeId,
-		} )
-	);
+	const { translate } = i18n;
+	const errorMessage = get(
+		{
+			service_unavailable: () =>
+				translate( 'Our service is temporarily unavailable. Please try again soon.' ),
+			missing_args: () =>
+				translate(
+					'Oops! It looks like some credentials fields were missing. ' +
+						'Please fill out all required fields and try again.'
+				),
+			invalid_args: () =>
+				translate(
+					'Oops! It looks like something was wrong with the supplied credentials. ' +
+						'Please confirm and try again.'
+				),
+			invalid_credentials: () =>
+				translate(
+					'We could not login with the supplied credentials. Please confirm and try again.'
+				),
+			invalid_wordpress_path: () =>
+				translate(
+					'We could not find `wp-config.php` on the remote server with the given installation path. ' +
+						'Please confirm and try again.'
+				),
+			read_only_install: () =>
+				translate(
+					'We were unable to write on the remote server. We cannot proceed with read-only credentials. ' +
+						'Please confirm and try again.'
+				),
+			unreachable_path: () =>
+				translate(
+					'We were unable to confirm the mapping between the WordPress installation path and a ' +
+						'publicly-available URL. Please make sure the directory is accessible and try again.'
+				),
+		},
+		error.error,
+		() => translate( 'Error saving. Please check your credentials and try again.' )
+	)();
+
+	dispatch( errorNotice( errorMessage, { duration: 4000, id: action.noticeId } ) );
 };
 
 export default {
