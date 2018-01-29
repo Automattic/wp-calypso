@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
+import CompactCard from 'components/card/compact';
 import { getConciergeSignupForm } from 'state/selectors';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
 import { bookConciergeAppointment, requestConciergeAvailableTimes } from 'state/concierge/actions';
@@ -71,15 +72,18 @@ class CalendarStep extends Component {
 		return (
 			<div>
 				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
+				<CompactCard>
+					{ translate( 'Please select a day to have your Concierge session.' ) }
+				</CompactCard>
+
 				<AvailableTimePicker
 					actionText={ translate( 'Book this session' ) }
 					availableTimes={ availableTimes }
 					currentUserLocale={ currentUserLocale }
 					disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
-					description={ translate( 'Please select a day to have your Concierge session.' ) }
 					onSubmit={ this.onSubmit }
 					site={ site }
-					signupForm={ signupForm }
+					timezone={ signupForm.timezone }
 				/>
 			</div>
 		);

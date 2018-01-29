@@ -11,6 +11,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
 import Button from 'components/button';
 import Main from 'components/main';
 import { localize } from 'i18n-calypso';
@@ -21,7 +22,7 @@ import {
 	CONCIERGE_STATUS_CANCELLED,
 	CONCIERGE_STATUS_CANCELLING,
 } from '../constants';
-import { getConciergeSignupForm } from 'state/selectors';
+import { getConciergeAppointmentDetails, getConciergeSignupForm } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class ConciergeCancel extends Component {
@@ -39,7 +40,7 @@ class ConciergeCancel extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { appointmentId, siteSlug, signupForm, translate } = this.props;
+		const { appointmentId, appointmentDetails, siteSlug, signupForm, translate } = this.props;
 
 		switch ( signupForm.status ) {
 			case CONCIERGE_STATUS_CANCELLED:
@@ -59,34 +60,47 @@ class ConciergeCancel extends Component {
 				);
 
 			default:
-				return (
-					<Confirmation
-						description={ translate(
-							'You can also reschedule your session. What would you like to do?'
-						) }
-						title={ translate( 'Cancel your Concierge session' ) }
-					>
-						<Button
-							className="cancel__reschedule-button"
-							disabled={ signupForm.status === CONCIERGE_STATUS_CANCELLING }
-							href={ `/me/concierge/${ siteSlug }/${ appointmentId }/reschedule` }
-						>
-							{ translate( 'Reschedule session' ) }
-						</Button>
+				const disabledCancelling =
+					includes(
+						[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ],
+						signupForm.status
+					) || ! appointmentDetails;
 
-						<Button
-							className="cancel__confirmation-button"
-							disabled={ includes(
-								[ CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING ],
-								signupForm.status
+				const disabledRescheduling =
+					signupForm.status === CONCIERGE_STATUS_CANCELLING || ! appointmentDetails;
+
+				return (
+					<div>
+						<QueryConciergeAppointmentDetails
+							appointmentId={ appointmentId }
+							scheduleId={ WPCOM_CONCIERGE_SCHEDULE_ID }
+						/>
+
+						<Confirmation
+							description={ translate(
+								'You can also reschedule your session. What would you like to do?'
 							) }
-							onClick={ this.cancelAppointment }
-							primary={ true }
-							scary={ true }
+							title={ translate( 'Cancel your Concierge session' ) }
 						>
-							{ translate( 'Cancel session' ) }
-						</Button>
-					</Confirmation>
+							<Button
+								className="cancel__reschedule-button"
+								disabled={ disabledRescheduling }
+								href={ `/me/concierge/${ siteSlug }/${ appointmentId }/reschedule` }
+							>
+								{ translate( 'Reschedule session' ) }
+							</Button>
+
+							<Button
+								className="cancel__confirmation-button"
+								disabled={ disabledCancelling }
+								onClick={ this.cancelAppointment }
+								primary={ true }
+								scary={ true }
+							>
+								{ translate( 'Cancel session' ) }
+							</Button>
+						</Confirmation>
+					</div>
 				);
 		}
 	};
@@ -97,7 +111,8 @@ class ConciergeCancel extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state, props ) => ( {
+		appointmentDetails: getConciergeAppointmentDetails( state, props.appointmentId ),
 		signupForm: getConciergeSignupForm( state ),
 	} ),
 	{ cancelConciergeAppointment, recordTracksEvent }
