@@ -61,6 +61,8 @@ describe( 'selectors', () => {
 								key: '123456asdf789',
 								role: 'follower',
 								isPending: null,
+								inviteDate: '2018-01-28T17:22:16+00:00',
+								acceptedDate: '2018-01-28T17:22:20+00:00',
 								user: {
 									login: 'chicken',
 									email: false,
