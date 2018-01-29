@@ -24,6 +24,7 @@ import analytics from 'lib/analytics';
 import Gridicon from 'gridicons';
 import { get } from 'lodash';
 import { recordTrack } from 'reader/stats';
+import { decodeEntities } from 'lib/formatting';
 
 class StatsListItem extends React.Component {
 	static displayName = 'StatsListItem';
@@ -259,7 +260,7 @@ class StatsListItem extends React.Component {
 					</a>
 				);
 			} else {
-				itemLabel = <Emojify>{ labelItem.label }</Emojify>;
+				itemLabel = <Emojify>{ decodeEntities( labelItem.label ) }</Emojify>;
 			}
 
 			return (
