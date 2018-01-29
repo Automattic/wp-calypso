@@ -61,11 +61,12 @@ class ActivityLogSwitch extends Component {
 					</Button>
 				);
 
+			case 'awaitingCredentials':
 			default:
 				return (
 					<Button
 						primary
-						href={ `/settings/security/${ siteSlug }` }
+						href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }` }
 						>
 						{ translate( 'Continue setup' ) }
 					</Button>
@@ -76,7 +77,7 @@ class ActivityLogSwitch extends Component {
 	render() {
 		if (
 			'vp_active_on_site' === this.props.failureReason ||
-			includes( [ 'uninitialized', 'active', 'awaitingCredentials', 'provisioning' ], this.props.rewindState )
+			includes( [ 'uninitialized', 'active', 'provisioning' ], this.props.rewindState )
 		) {
 			return false;
 		}
@@ -101,7 +102,9 @@ class ActivityLogSwitch extends Component {
 				</p>
 				{ this.getMainButton() }
 				<div>
-					<a href={ `//${ siteSlug }/wp-admin/${ redirect }` }>
+					<a
+						className="activity-log-switch__no-thanks"
+						href={ `//${ siteSlug }/wp-admin/${ redirect }` }>
 						{ translate( 'No thanks' ) }
 					</a>
 				</div>

@@ -16,6 +16,8 @@ import SiteComponent from 'signup/steps/site';
 import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
 import RewindMigrate from 'signup/steps/rewind-migrate';
 import RewindWereBacking from 'signup/steps/rewind-were-backing';
+import RewindAddCreds from 'signup/steps/rewind-add-creds';
+import RewindFormCreds from 'signup/steps/rewind-form-creds';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
@@ -46,6 +48,8 @@ export default {
 	'rebrand-cities-welcome': RebrandCitiesWelcomeComponent,
 	'rewind-migrate': RewindMigrate,
 	'rewind-were-backing': RewindWereBacking,
+	'rewind-add-creds': RewindAddCreds,
+	'rewind-form-creds': RewindFormCreds,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,

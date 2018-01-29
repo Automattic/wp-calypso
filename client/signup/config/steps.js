@@ -279,4 +279,14 @@ export default {
 		stepName: 'rewind-were-backing',
 		providesDependencies: [],
 	},
+
+	'rewind-add-creds': {
+		stepName: 'rewind-add-creds',
+		providesDependencies: [],
+	},
+
+	'rewind-form-creds': {
+		stepName: 'rewind-form-creds',
+		providesDependencies: [],
+	},
 };
