@@ -74,22 +74,47 @@ class EditorRevisionsList extends PureComponent {
 		if ( ! ( scrollerNode && selectedNode && listNode ) ) {
 			return;
 		}
-		const { bottom: selectedBottom, top: selectedTop } = selectedNode.getBoundingClientRect();
-		const { top: listTop } = listNode.getBoundingClientRect();
 		const {
+			top: selectedTop,
+			right: selectedRight,
+			bottom: selectedBottom,
+			left: selectedLeft,
+		} = selectedNode.getBoundingClientRect();
+		const {
+			top: listTop,
+			left: listLeft,
+			width: listWidth,
+			height: listHeight,
+		} = listNode.getBoundingClientRect();
+		const {
+			top: scrollerTop,
 			bottom: scrollerBottom,
 			height: scrollerHeight,
-			top: scrollerTop,
+			left: scrollerLeft,
+			right: scrollerRight,
+			width: scrollerWidth,
 		} = scrollerNode.getBoundingClientRect();
 
-		const isAboveBounds = selectedTop < scrollerTop;
-		const isBelowBounds = selectedBottom > scrollerBottom;
+		if ( listWidth > listHeight ) {
+			const isLeftOfBounds = selectedLeft < scrollerLeft;
+			const isRightOfBounds = selectedRight > scrollerRight;
 
-		const targetWhenAbove = selectedTop - listTop;
-		const targetWhenBelow = Math.abs( scrollerHeight - ( selectedBottom - listTop ) );
+			const targetWhenLeft = selectedLeft - listLeft;
+			const targetWhenRight = Math.abs( scrollerWidth - ( selectedRight - listLeft ) );
 
-		if ( isAboveBounds || isBelowBounds ) {
-			scrollerNode.scrollTop = isAboveBounds ? targetWhenAbove : targetWhenBelow;
+			if ( isLeftOfBounds || isRightOfBounds ) {
+				scrollerNode.scrollLeft = isLeftOfBounds ? targetWhenLeft : targetWhenRight;
+			}
+		} else {
+			const isAboveBounds = selectedTop < scrollerTop;
+			const isBelowBounds = selectedBottom > scrollerBottom;
+
+			const targetWhenAbove = selectedTop - listTop;
+			const targetWhenBelow = Math.abs( scrollerHeight - ( selectedBottom - listTop ) );
+
+			if ( isAboveBounds || isBelowBounds ) {
+				scrollerNode.scrollTop = isAboveBounds ? targetWhenAbove : targetWhenBelow;
+			}
 		}
 	}
 
