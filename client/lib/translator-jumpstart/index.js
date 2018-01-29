@@ -91,6 +91,12 @@ const communityTranslatorJumpstart = {
 			return displayedTranslationFromPage;
 		}
 
+		if ( 'boolean' === typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
+			debug( 'respecting textOnly for string "' + originalFromPage + '"' );
+			return displayedTranslationFromPage;
+		}
+
+		const original_string = {};
 		const props = {
 			className: 'translatable',
 			'data-singular': originalFromPage,
