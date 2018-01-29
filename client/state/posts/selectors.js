@@ -409,6 +409,9 @@ export const isEditedPostDirty = createSelector(
 			}
 
 			if ( post ) {
+				if ( key === 'parent' ) {
+					return get( post, 'parent.ID', null ) !== value;
+				}
 				return post[ key ] !== value;
 			}
 
