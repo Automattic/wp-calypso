@@ -5,7 +5,6 @@
 import creditcards from 'creditcards';
 import capitalize from 'lodash/capitalize';
 import compact from 'lodash/compact';
-import inRange from 'lodash/inRange';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import pick from 'lodash/pick';
@@ -197,31 +196,30 @@ export function validateCardDetails( cardDetails ) {
  * Retrieves the type of credit card from the specified number.
  *
  * @param {string} number - credit card number
- * @returns {string} the type of the credit card
+ * @returns {string|null} the type of the credit card
  * @see {@link http://en.wikipedia.org/wiki/Bank_card_number} for more information
  */
 export function getCreditCardType( number ) {
 	if ( number ) {
 		number = number.replace( / /g, '' );
 
-		if ( number.match( /^3[47]\d{0,13}$/ ) ) {
-			return 'amex';
-		} else if ( number.match( /^4\d{0,12}$/ ) || number.match( /^4\d{15}$/ ) ) {
-			return 'visa';
-		} else if (
-			number.match( /^5[1-5]\d{0,14}|^2(?:2(?:2[1-9]|[3-9]\d)|[3-6]\d\d|7(?:[01]\d|20))\d{0,12}$/ )
-		) {
-			//valid 2-series range: 2221 - 2720
-			//valid 5-series range: 51 - 55
-			return 'mastercard';
-		} else if (
-			number.match( /^6011\d{0,12}$/ ) ||
-			inRange( parseInt( number, 10 ), 622126, 622926 ) || // valid range is 622126-622925
-			number.match( /^64[4-9]\d{0,13}$/ ) ||
-			number.match( /^65\d{0,14}$/ )
-		) {
-			return 'discover';
+		let cardType = creditcards.card.type( number, true );
+
+		if ( typeof cardType === 'undefined' ) {
+			return null;
 		}
+
+		// We already use 'amex' for American Express everywhere else
+		if ( cardType === 'American Express' ) {
+			cardType = 'amex';
+		}
+
+		// Normalize Diners as well
+		if ( cardType === 'Diners Club' ) {
+			cardType = 'diners';
+		}
+
+		return cardType.toLowerCase();
 	}
 
 	return null;
