@@ -86,7 +86,8 @@ export class RewindCredentialsForm extends Component {
 			! payload.port && { port: translate( 'Please enter a valid server port.' ) },
 			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
 			! payload.user && { user: translate( 'Please enter your server username.' ) },
-			! payload.pass && { pass: translate( 'Please enter your server password.' ) }
+			! payload.pass &&
+				! payload.kpri && { pass: translate( 'Please enter your server password.' ) }
 		);
 
 		return isEmpty( errors )
