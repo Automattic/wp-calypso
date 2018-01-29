@@ -231,50 +231,6 @@ class Transfer extends React.PureComponent {
 		);
 	}
 
-	getStartPendingContent() {
-		const { domain, translate } = this.props;
-		const { isSumitting } = this.state;
-
-		return (
-			<Card>
-				<div>
-					<h2 className="edit__transfer-text-fail">
-						{ translate( 'Important: Start Your Domain Transfer' ) }
-					</h2>
-					<p>
-						{ translate(
-							'We need you to complete a few steps to initiate and authorize the transfer of ' +
-								'{{strong}}%(domain)s{{/strong}} from your current domain provider to WordPress.com. Your domain will ' +
-								'stay at your current provider until the transfer is started.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: { domain: domain.name },
-							}
-						) }
-					</p>
-				</div>
-				<div>
-					<Button
-						className="edit__transfer-button-fail"
-						onClick={ this.startTransfer }
-						busy={ isSumitting }
-						disabled={ isSumitting }
-					>
-						{ isSumitting ? translate( 'Starting Transfer…' ) : translate( 'Start Transfer' ) }
-					</Button>
-					<Button
-						className="edit__transfer-button-fail edit__transfer-button-fail-margin"
-						href={ CALYPSO_CONTACT }
-					>
-						{ this.props.translate( 'Contact Support' ) }
-					</Button>
-				</div>
-			</Card>
-		);
-	}
-
 	getDomainDetailsCard() {
 		const { domain, selectedSite, translate } = this.props;
 
