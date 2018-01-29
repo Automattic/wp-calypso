@@ -4,8 +4,9 @@
  * External dependendies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, isEmpty } from 'lodash';
+import { find, get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,28 +21,37 @@ import FormTextArea from 'components/forms/form-textarea';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import Gridicon from 'gridicons';
+import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isUpdatingJetpackCredentials } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getRewindState, isUpdatingJetpackCredentials } from 'state/selectors';
 
-export class CredentialsForm extends Component {
+export class RewindCredentialsForm extends Component {
+	static propTypes = {
+		role: PropTypes.string.isRequired,
+		siteId: PropTypes.number,
+		allowCancel: PropTypes.bool,
+		allowDelete: PropTypes.bool,
+		onCancel: PropTypes.func,
+		onComplete: PropTypes.func,
+	};
+
 	state = {
 		showPrivateKeyField: false,
 		form: {
-			protocol: this.props.protocol,
-			host: this.props.host,
-			port: this.props.port,
-			user: this.props.user,
-			pass: this.props.pass,
-			path: this.props.path,
-			kpri: this.props.kpri,
+			protocol: 'ssh',
+			host: '',
+			port: 22,
+			user: '',
+			pass: '',
+			path: '',
+			kpri: '',
 		},
 		formErrors: {
 			host: false,
 			port: false,
 			user: false,
 			pass: false,
-			path: false,
 		},
 	};
 
@@ -62,20 +72,22 @@ export class CredentialsForm extends Component {
 	};
 
 	handleSubmit = () => {
-		const { siteId, updateCredentials, translate } = this.props;
+		const { role, siteId, translate, updateCredentials } = this.props;
 
 		const payload = {
+			role,
 			...this.state.form,
-			role: 'main',
 		};
+
+		payload.path = isEmpty( payload.path ) ? '/' : payload.path;
 
 		const errors = Object.assign(
 			! payload.host && { host: translate( 'Please enter a valid server address.' ) },
 			! payload.port && { port: translate( 'Please enter a valid server port.' ) },
 			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
 			! payload.user && { user: translate( 'Please enter your server username.' ) },
-			! payload.pass && { pass: translate( 'Please enter your server password.' ) },
-			! payload.path && { path: translate( 'Please enter a valid upload path.' ) }
+			! payload.pass &&
+				! payload.kpri && { pass: translate( 'Please enter your server password.' ) }
 		);
 
 		return isEmpty( errors )
@@ -85,16 +97,37 @@ export class CredentialsForm extends Component {
 
 	handleDelete = () => this.props.deleteCredentials( this.props.siteId, this.props.role );
 
-	togglePrivateKeyField = () =>
-		this.setState( { showPrivateKeyField: ! this.state.showPrivateKeyField } );
+	toggleAdvancedSettings = () =>
+		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
+
+	componentWillReceiveProps( nextProps ) {
+		const { rewindState, role, siteSlug } = nextProps;
+		const credentials = find( rewindState.credentials, { role: role } );
+
+		const nextForm = Object.assign( {}, this.state.form );
+
+		// Populate the fields with data from state if credentials are already saved
+		nextForm.protocol =
+			isEmpty( nextForm.protocol ) && credentials ? credentials.protocol : nextForm.protocol;
+		nextForm.host = isEmpty( nextForm.host ) && credentials ? credentials.host : nextForm.host;
+		nextForm.port = isEmpty( nextForm.port ) && credentials ? credentials.port : nextForm.port;
+		nextForm.user = isEmpty( nextForm.user ) && credentials ? credentials.user : nextForm.user;
+		nextForm.path = isEmpty( nextForm.path ) && credentials ? credentials.path : nextForm.path;
+
+		// Populate the host field with the site slug if needed
+		nextForm.host = isEmpty( nextForm.host ) && siteSlug ? siteSlug : nextForm.host;
+
+		this.setState( { form: nextForm } );
+	}
 
 	render() {
-		const { formIsSubmitting, onCancel, translate } = this.props;
+		const { formIsSubmitting, onCancel, siteId, translate } = this.props;
 
-		const { showPrivateKeyField, formErrors } = this.state;
+		const { showAdvancedSettings, formErrors } = this.state;
 
 		return (
-			<div>
+			<div className="rewind-credentials-form">
+				<QueryRewindState siteId={ siteId } />
 				<FormFieldset>
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
 					<FormSelect
@@ -110,8 +143,8 @@ export class CredentialsForm extends Component {
 					</FormSelect>
 				</FormFieldset>
 
-				<div className="credentials-form__row">
-					<FormFieldset className="credentials-form__server-address">
+				<div className="rewind-credentials-form__row">
+					<FormFieldset className="rewind-credentials-form__server-address">
 						<FormLabel htmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
 						<FormTextInput
 							name="host"
@@ -125,7 +158,7 @@ export class CredentialsForm extends Component {
 						{ formErrors.host && <FormInputValidation isError={ true } text={ formErrors.host } /> }
 					</FormFieldset>
 
-					<FormFieldset className="credentials-form__port-number">
+					<FormFieldset className="rewind-credentials-form__port-number">
 						<FormLabel htmlFor="server-port">{ translate( 'Port Number' ) }</FormLabel>
 						<FormTextInput
 							name="port"
@@ -140,8 +173,8 @@ export class CredentialsForm extends Component {
 					</FormFieldset>
 				</div>
 
-				<div className="credentials-form__row">
-					<FormFieldset className="credentials-form__username">
+				<div className="rewind-credentials-form__row">
+					<FormFieldset className="rewind-credentials-form__username">
 						<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
 						<FormTextInput
 							name="user"
@@ -155,7 +188,7 @@ export class CredentialsForm extends Component {
 						{ formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> }
 					</FormFieldset>
 
-					<FormFieldset className="credentials-form__password">
+					<FormFieldset className="rewind-credentials-form__password">
 						<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
 						<FormPasswordInput
 							name="pass"
@@ -171,40 +204,40 @@ export class CredentialsForm extends Component {
 				</div>
 
 				<FormFieldset>
-					<FormLabel htmlFor="wordpress-path">{ translate( 'Upload Path' ) }</FormLabel>
-					<FormTextInput
-						name="path"
-						id="wordpress-path"
-						placeholder="/public_html/wordpress-site/"
-						value={ get( this.state.form, 'path', '' ) }
-						onChange={ this.handleFieldChange }
+					<Button
 						disabled={ formIsSubmitting }
-						isError={ !! formErrors.path }
-					/>
-					{ formErrors.path && <FormInputValidation isError={ true } text={ formErrors.path } /> }
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLabel>{ translate( 'Private Key' ) }</FormLabel>
-					<Button disabled={ formIsSubmitting } onClick={ this.togglePrivateKeyField }>
-						{ showPrivateKeyField
-							? translate( 'Hide Private Key' )
-							: translate( 'Show Private Key' ) }
+						onClick={ this.toggleAdvancedSettings }
+						borderless={ true }
+						className="rewind-credentials-form__advanced-button"
+					>
+						{ translate( 'Advanced settings' ) }
 					</Button>
-					{ showPrivateKeyField && (
+					{ showAdvancedSettings && (
 						<div>
-							<FormTextArea
-								name="kpri"
-								value={ get( this.state.form, 'kpri', '' ) }
-								onChange={ this.handleFieldChange }
-								disabled={ formIsSubmitting }
-								className="credentials-form__private-key"
-							/>
-							<p className="form-setting-explanation">
-								{ translate(
-									'This field is only required if your host uses key based authentication.'
-								) }
-							</p>
+							<FormFieldset className="rewind-credentials-form__path">
+								<FormLabel htmlFor="wordpress-path">{ translate( 'Upload Path' ) }</FormLabel>
+								<FormTextInput
+									name="path"
+									id="wordpress-path"
+									placeholder="/public_html/wordpress-site/"
+									value={ get( this.state.form, 'path', '' ) }
+									onChange={ this.handleFieldChange }
+									disabled={ formIsSubmitting }
+									isError={ !! formErrors.path }
+								/>
+							</FormFieldset>
+
+							<FormFieldset className="rewind-credentials-form__kpri">
+								<FormLabel htmlFor="private-key">{ translate( 'Private Key' ) }</FormLabel>
+								<FormTextArea
+									name="kpri"
+									id="private-key"
+									value={ get( this.state.form, 'kpri', '' ) }
+									onChange={ this.handleFieldChange }
+									disabled={ formIsSubmitting }
+									className="rewind-credentials-form__private-key"
+								/>
+							</FormFieldset>
 						</div>
 					) }
 				</FormFieldset>
@@ -213,21 +246,21 @@ export class CredentialsForm extends Component {
 					<Button primary disabled={ formIsSubmitting } onClick={ this.handleSubmit }>
 						{ translate( 'Save' ) }
 					</Button>
-					{ this.props.showCancelButton && (
+					{ this.props.allowCancel && (
 						<Button
 							disabled={ formIsSubmitting }
 							onClick={ onCancel }
-							className="credentials-form__cancel-button"
+							className="rewind-credentials-form__cancel-button"
 						>
 							{ translate( 'Cancel' ) }
 						</Button>
 					) }
-					{ this.props.showDeleteButton && (
+					{ this.props.allowDelete && (
 						<Button
 							borderless={ true }
 							disabled={ formIsSubmitting }
 							onClick={ this.handleDelete }
-							className="credentials-form__delete-button"
+							className="rewind-credentials-form__delete-button"
 						>
 							<Gridicon icon="trash" size={ 18 } />
 							{ translate( 'Delete' ) }
@@ -239,10 +272,12 @@ export class CredentialsForm extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	formIsSubmitting: isUpdatingJetpackCredentials( state, getSelectedSiteId( state ) ),
+const mapStateToProps = ( state, { siteId } ) => ( {
+	formIsSubmitting: isUpdatingJetpackCredentials( state, siteId ),
+	siteSlug: getSiteSlug( state, siteId ),
+	rewindState: getRewindState( state, siteId ),
 } );
 
 export default connect( mapStateToProps, { deleteCredentials, updateCredentials } )(
-	localize( CredentialsForm )
+	localize( RewindCredentialsForm )
 );
