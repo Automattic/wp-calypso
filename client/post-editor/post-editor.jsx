@@ -69,6 +69,7 @@ import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
+import { regexp as ShortCodeRegexp } from 'lib/shortcode';
 
 export const PostEditor = createReactClass( {
 	displayName: 'PostEditor',
@@ -1058,32 +1059,185 @@ export const PostEditor = createReactClass( {
 		return editorMode;
 	},
 
+	/**
+	 * Checks if a cursor is inside an HTML tag.
+	 *
+	 * In order to prevent breaking HTML tags when selecting text, the cursor
+	 * must be moved to either the start or end of the tag.
+	 *
+	 * This will prevent the selection marker to be inserted in the middle of an HTML tag.
+	 *
+	 * This function gives information whether the cursor is inside a tag or not, as well as
+	 * the tag type, if it is a closing tag and check if the HTML tag is inside a shortcode tag,
+	 * e.g. `[caption]<img.../>..`.
+	 *
+	 * @param {string} content The test content where the cursor is.
+	 * @param {number} cursorPosition The cursor position inside the content.
+	 *
+	 * @returns {(null|Object)} Null if cursor is not in a tag, Object if the cursor is inside a tag.
+	 */
 	getContainingTagInfo: function( content, cursorPosition ) {
-		const lastLtPos = content.lastIndexOf( '<', cursorPosition );
+		const lastLtPos = content.lastIndexOf( '<', cursorPosition - 1 );
 		const lastGtPos = content.lastIndexOf( '>', cursorPosition );
 
-		if ( lastLtPos > lastGtPos ) {
-			// inside a tag that was opened, but not closed
-
+		if ( lastLtPos > lastGtPos || content.substr( cursorPosition, 1 ) === '>' ) {
 			// find what the tag is
 			const tagContent = content.substr( lastLtPos );
 			const tagMatch = tagContent.match( /<\s*(\/)?(\w+)/ );
+
 			if ( ! tagMatch ) {
 				return null;
 			}
 
 			const tagType = tagMatch[ 2 ];
 			const closingGt = tagContent.indexOf( '>' );
-			const isClosingTag = !! tagMatch[ 1 ];
 
 			return {
 				ltPos: lastLtPos,
 				gtPos: lastLtPos + closingGt + 1, // offset by one to get the position _after_ the character,
-				tagType,
-				isClosingTag,
+				tagType: tagType,
+				isClosingTag: !! tagMatch[ 1 ],
 			};
 		}
 		return null;
+	},
+
+	/**
+	 * Checks if the cursor is inside a shortcode
+	 *
+	 * If the cursor is inside a shortcode wrapping tag, e.g. `[caption]` it's better to
+	 * move the selection marker to before or after the shortcode.
+	 *
+	 * For example `[caption]` rewrites/removes anything that's between the `[caption]` tag and the
+	 * `<img/>` tag inside.
+	 *
+	 * `[caption]<span>ThisIsGone</span><img .../>[caption]`
+	 *
+	 * Moving the selection to before or after the short code is better, since it allows to select
+	 * something, instead of just losing focus and going to the start of the content.
+	 *
+	 * @param {string} content The text content to check against.
+	 * @param {number} cursorPosition    The cursor position to check.
+	 *
+	 * @return {(undefined|Object)} Undefined if the cursor is not wrapped in a shortcode tag.
+	 *                                Information about the wrapping shortcode tag if it's wrapped in one.
+	 */
+	getShortcodeWrapperInfo: function( content, cursorPosition ) {
+		const contentShortcodes = this.getShortCodePositionsInText( content );
+
+		for ( let i = 0; i < contentShortcodes.length; i++ ) {
+			const element = contentShortcodes[ i ];
+
+			if ( cursorPosition >= element.startIndex && cursorPosition <= element.endIndex ) {
+				return element;
+			}
+		}
+	},
+
+	/**
+	 * Gets a list of unique shortcodes or shortcode-look-alikes in the content.
+	 *
+	 * @param {string} content The content we want to scan for shortcodes.
+	 *
+	 * @returns {array} List of shortcode look-alikes
+	 */
+	getShortcodesInText: function( content ) {
+		const shortcodes = content.match( /\[+([\w_-])+/g );
+		const result = [];
+
+		if ( shortcodes ) {
+			for ( let i = 0; i < shortcodes.length; i++ ) {
+				const shortcode = shortcodes[ i ].replace( /^\[+/g, '' );
+
+				if ( result.indexOf( shortcode ) === -1 ) {
+					result.push( shortcode );
+				}
+			}
+		}
+
+		return result;
+	},
+
+	/**
+	 * Gets all shortcodes and their positions in the content
+	 *
+	 * This function returns all the shortcodes that could be found in the textarea content
+	 * along with their character positions and boundaries.
+	 *
+	 * This is used to check if the selection cursor is inside the boundaries of a shortcode
+	 * and move it accordingly, to avoid breakage.
+	 *
+	 * @link adjustTextAreaSelectionCursors
+	 *
+	 * The information can also be used in other cases when we need to lookup shortcode data,
+	 * as it's already structured!
+	 *
+	 * @param {string} content The content we want to scan for shortcodes
+	 *
+	 * @returns {array} Matched shortcodes and their positions in the text
+	 */
+	getShortCodePositionsInText: function( content ) {
+		const allShortcodes = this.getShortcodesInText( content );
+
+		if ( allShortcodes.length === 0 ) {
+			return [];
+		}
+
+		const shortcodeDetailsRegexp = ShortCodeRegexp( allShortcodes.join( '|' ) );
+		const shortcodesDetails = [];
+
+		let shortcodeInfo;
+		let shortcodeMatch; // Define local scope for the variable to be used in the loop below.
+
+		while ( ( shortcodeMatch = shortcodeDetailsRegexp.exec( content ) ) ) {
+			/**
+			 * Check if the shortcode should be shown as plain text.
+			 *
+			 * This corresponds to the [[shortcode]] syntax, which doesn't parse the shortcode
+			 * and just shows it as text.
+			 */
+			const showAsPlainText = shortcodeMatch[ 1 ] === '[';
+
+			shortcodeInfo = {
+				shortcodeName: shortcodeMatch[ 2 ],
+				showAsPlainText: showAsPlainText,
+				startIndex: shortcodeMatch.index,
+				endIndex: shortcodeMatch.index + shortcodeMatch[ 0 ].length,
+				length: shortcodeMatch[ 0 ].length,
+			};
+
+			shortcodesDetails.push( shortcodeInfo );
+		}
+
+		/**
+		 * Get all URL matches, and treat them as embeds.
+		 *
+		 * Since there isn't a good way to detect if a URL by itself on a line is a previewable
+		 * object, it's best to treat all of them as such.
+		 *
+		 * This means that the selection will capture the whole URL, in a similar way shrotcodes
+		 * are treated.
+		 */
+		const urlRegexp = new RegExp(
+			'(^|[\\n\\r][\\n\\r]|<p>)(https?:\\/\\/[^s"]+?)(<\\/p>s*|[\\n\\r][\\n\\r]|$)',
+			'gi'
+		);
+
+		while ( ( shortcodeMatch = urlRegexp.exec( content ) ) ) {
+			shortcodeInfo = {
+				shortcodeName: 'url',
+				showAsPlainText: false,
+				startIndex: shortcodeMatch.index,
+				endIndex: shortcodeMatch.index + shortcodeMatch[ 0 ].length,
+				length: shortcodeMatch[ 0 ].length,
+				urlAtStartOfContent: shortcodeMatch[ 1 ] === '',
+				urlAtEndOfContent: shortcodeMatch[ 3 ] === '',
+			};
+
+			shortcodesDetails.push( shortcodeInfo );
+		}
+
+		return shortcodesDetails;
 	},
 
 	getCursorMarkerSpan: function( type ) {
@@ -1097,25 +1251,111 @@ export const PostEditor = createReactClass( {
 			>&#65279;</span>`;
 	},
 
+	/**
+	 * Gets adjusted selection cursor positions according to HTML tags/shortcodes
+	 *
+	 * Shortcodes and HTML codes are a bit of a special case when selecting, since they may render
+	 * content in Visual mode. If we insert selection markers somewhere inside them, it's really possible
+	 * to break the syntax and render the HTML tag or shortcode broken.
+	 *
+	 * @link getShortcodeWrapperInfo
+	 *
+	 * @param {string} content Textarea content that the cursors are in
+	 * @param {{cursorStart: number, cursorEnd: number}} cursorPositions Cursor start and end positions
+	 *
+	 * @return {{cursorStart: number, cursorEnd: number}} The adjusted start and end positions of the cursor
+	 */
+	adjustTextAreaSelectionCursors: function( content, cursorPositions ) {
+		const voidElements = [
+			'area',
+			'base',
+			'br',
+			'col',
+			'embed',
+			'hr',
+			'img',
+			'input',
+			'keygen',
+			'link',
+			'meta',
+			'param',
+			'source',
+			'track',
+			'wbr',
+		];
+
+		let cursorStart = cursorPositions.cursorStart;
+		let cursorEnd = cursorPositions.cursorEnd;
+		// check if the cursor is in a tag and if so, adjust it
+		const isCursorStartInTag = this.getContainingTagInfo( content, cursorStart );
+
+		if ( isCursorStartInTag ) {
+			/**
+			 * Only move to the start of the HTML tag (to select the whole element) if the tag
+			 * is part of the voidElements list above.
+			 *
+			 * This list includes tags that are self-contained and don't need a closing tag, according to the
+			 * HTML5 specification.
+			 *
+			 * This is done in order to make selection of text a bit more consistent when selecting text in
+			 * `<p>` tags or such.
+			 *
+			 * In cases where the tag is not a void element, the cursor is put to the end of the tag,
+			 * so it's either between the opening and closing tag elements or after the closing tag.
+			 */
+			if ( voidElements.indexOf( isCursorStartInTag.tagType ) !== -1 ) {
+				cursorStart = isCursorStartInTag.ltPos;
+			} else {
+				cursorStart = isCursorStartInTag.gtPos;
+			}
+		}
+
+		const isCursorEndInTag = this.getContainingTagInfo( content, cursorEnd );
+		if ( isCursorEndInTag ) {
+			cursorEnd = isCursorEndInTag.gtPos;
+		}
+
+		const isCursorStartInShortcode = this.getShortcodeWrapperInfo( content, cursorStart );
+		if ( isCursorStartInShortcode && ! isCursorStartInShortcode.showAsPlainText ) {
+			/**
+			 * If a URL is at the start or the end of the content,
+			 * the selection doesn't work, because it inserts a marker in the text,
+			 * which breaks the embedURL detection.
+			 *
+			 * The best way to avoid that and not modify the user content is to
+			 * adjust the cursor to either after or before URL.
+			 */
+			if ( isCursorStartInShortcode.urlAtStartOfContent ) {
+				cursorStart = isCursorStartInShortcode.endIndex;
+			} else {
+				cursorStart = isCursorStartInShortcode.startIndex;
+			}
+		}
+
+		const isCursorEndInShortcode = this.getShortcodeWrapperInfo( content, cursorEnd );
+		if ( isCursorEndInShortcode && ! isCursorEndInShortcode.showAsPlainText ) {
+			if ( isCursorEndInShortcode.urlAtEndOfContent ) {
+				cursorEnd = isCursorEndInShortcode.startIndex;
+			} else {
+				cursorEnd = isCursorEndInShortcode.endIndex;
+			}
+		}
+
+		return {
+			cursorStart: cursorStart,
+			cursorEnd: cursorEnd,
+		};
+	},
+
 	addHTMLBookmarkInTextAreaContent: function() {
 		const textArea = this.editor._editor.getElement();
 
-		let htmlModeCursorStartPosition = textArea.selectionStart;
-		let htmlModeCursorEndPosition = textArea.selectionEnd;
-
-		// check if the cursor is in a tag and if so, adjust it
-		const isCursorStartInTag = this.getContainingTagInfo(
-			textArea.value,
-			htmlModeCursorStartPosition
-		);
-		if ( isCursorStartInTag ) {
-			htmlModeCursorStartPosition = isCursorStartInTag.ltPos;
-		}
-
-		const isCursorEndInTag = this.getContainingTagInfo( textArea.value, htmlModeCursorEndPosition );
-		if ( isCursorEndInTag ) {
-			htmlModeCursorEndPosition = isCursorEndInTag.gtPos;
-		}
+		const adjustedCursorPositions = this.adjustTextAreaSelectionCursors( textArea.value, {
+			cursorStart: textArea.selectionStart,
+			cursorEnd: textArea.selectionEnd,
+		} );
+		const htmlModeCursorStartPosition = adjustedCursorPositions.cursorStart;
+		const htmlModeCursorEndPosition = adjustedCursorPositions.cursorEnd;
 
 		const mode = htmlModeCursorStartPosition !== htmlModeCursorEndPosition ? 'range' : 'single';
 
