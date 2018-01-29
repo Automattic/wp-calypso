@@ -31,12 +31,12 @@ import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-manage
 
 class Transfer extends React.PureComponent {
 	state = {
-		isSumitting: false,
+		isSubmitting: false,
 	};
 
 	render() {
 		const { domain, selectedSite, translate } = this.props;
-		const { isSumitting } = this.state;
+		const { isSubmitting } = this.state;
 		let content = this.getDomainDetailsCard();
 
 		if ( domain.transferStatus === transferStatus.CANCELLED ) {
@@ -89,10 +89,10 @@ class Transfer extends React.PureComponent {
 						<Button
 							className="edit__transfer-button-fail"
 							onClick={ this.startTransfer }
-							busy={ isSumitting }
-							disabled={ isSumitting }
+							busy={ isSubmitting }
+							disabled={ isSubmitting }
 						>
-							{ isSumitting ? translate( 'Starting Transfer…' ) : translate( 'Start Transfer' ) }
+							{ isSubmitting ? translate( 'Starting Transfer…' ) : translate( 'Start Transfer' ) }
 						</Button>
 					</div>
 				</Card>
@@ -176,12 +176,12 @@ class Transfer extends React.PureComponent {
 	};
 
 	toggleSubmittingState() {
-		this.setState( { isSumitting: ! this.state.isSumitting } );
+		this.setState( { isSubmitting: ! this.state.isSubmitting } );
 	}
 
 	getCancelledContent() {
 		const { domain, translate } = this.props;
-		const { isSumitting } = this.state;
+		const { isSubmitting } = this.state;
 
 		return (
 			<Card>
@@ -213,10 +213,10 @@ class Transfer extends React.PureComponent {
 					<Button
 						className="edit__transfer-button-fail"
 						onClick={ this.restartTransfer }
-						busy={ isSumitting }
-						disabled={ isSumitting }
+						busy={ isSubmitting }
+						disabled={ isSubmitting }
 					>
-						{ isSumitting
+						{ isSubmitting
 							? translate( 'Restarting Transfer…' )
 							: translate( 'Start Transfer Again' ) }
 					</Button>
