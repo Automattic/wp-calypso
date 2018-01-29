@@ -144,13 +144,15 @@ ShippingZoneMethodList.propTypes = {
 };
 
 export default connect(
-	state => ( {
-		methods: getCurrentlyEditingShippingZoneMethods( state ),
-		methodNamesMap: getShippingMethodNameMap( state ),
-		newMethodTypeOptions: getNewMethodTypeOptions( state ),
-		currency: getCurrencyWithEdits( state ),
-		loaded: areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state ),
-		fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
+	( state, ownProps ) => ( {
+		methods: getCurrentlyEditingShippingZoneMethods( state, ownProps.siteId ),
+		methodNamesMap: getShippingMethodNameMap( state, ownProps.siteId ),
+		newMethodTypeOptions: getNewMethodTypeOptions( state, ownProps.siteId ),
+		currency: getCurrencyWithEdits( state, ownProps.siteId ),
+		loaded:
+			areShippingZonesFullyLoaded( state, ownProps.siteId ) &&
+			areSettingsGeneralLoaded( state, ownProps.siteId ),
+		fetchError: areSettingsGeneralLoadError( state, ownProps.siteId ), // TODO: add shipping zones/methods fetch errors too
 	} ),
 	( dispatch, ownProps ) => ( {
 		actions: bindActionCreatorsWithSiteId(
