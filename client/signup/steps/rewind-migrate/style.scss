@@ -1,0 +1,38 @@
+.rewind-switch__card {
+	text-align: center;
+}
+
+.rewind-migrate__card {
+	img {
+		max-width: 260px;
+		margin-bottom: 24px;
+	}
+}
+
+.rewind-switch__content {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+
+.rewind-switch__heading {
+	font-size: 24px;
+	margin: 8px 0 32px;
+}
+
+.rewind-switch__description {
+	max-width: 600px;
+}
+
+.rewind-migrate__warning {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	p {
+		max-width: 600px;
+		font-style: italic;
+		font-size: 12px;
+		color: $gray;
+	}
+}

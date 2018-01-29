@@ -49,30 +49,36 @@ class RewindMigrate extends Component {
 	stepContent = () => {
 		const { translate, siteId } = this.props;
 
-		return [
-			<Card key="rewind-migrate-main" className="rewind-migrate__card">
-				<h3 className="rewind-migrate__title">{ translate( 'Migrate credentials' ) }</h3>
-				<img src="/calypso/images/illustrations/almost-there.svg" alt="" />
-				<p className="rewind-migrate__description">
-					{ translate(
-						"You've already configured VaultPress correctly, " +
-							"so we're ready to migrate your credentials over to Jetpack with just one click." +
-							"Are you ready to switch to our faster, more powerful system? Let's go!"
-					) }
-				</p>
-				<ActivityLogRewindToggle
-					siteId={ siteId }
-					label={ translate( 'Migrate your credentials' ) }
-				/>
-			</Card>,
-			<p key="rewind-migrate-warning">
-				{ translate(
-					'Note: Moving to Jetpack backups and security is final, ' +
-						'and the VaultPress backups previously generated will not be migrated to the new system.' +
-						'We will retain the data in case you need to restore to a backup made before you switched.'
-				) }
-			</p>,
-		];
+		return (
+			<div className="rewind-migrate__card rewind-switch__card">
+				<Card className="rewind-migrate__content rewind-switch__content">
+					<h3 className="rewind-migrate__title rewind-switch__heading">
+						{ translate( 'Migrate credentials' ) }
+					</h3>
+					<img src="/calypso/images/illustrations/almost-there.svg" alt="" />
+					<p className="rewind-migrate__description rewind-switch__description">
+						{ translate(
+							"You've already configured VaultPress correctly, " +
+								"so we're ready to migrate your credentials over to Jetpack with just one click." +
+								"Are you ready to switch to our faster, more powerful system? Let's go!"
+						) }
+					</p>
+					<ActivityLogRewindToggle
+						siteId={ siteId }
+						label={ translate( 'Migrate your credentials' ) }
+					/>
+				</Card>
+				<div className="rewind-migrate__warning">
+					<p>
+						{ translate(
+							'Note: Moving to Jetpack backups and security is final, ' +
+								'and the VaultPress backups previously generated will not be migrated to the new system.' +
+								'We will retain the data in case you need to restore to a backup made before you switched.'
+						) }
+					</p>
+				</div>
+			</div>
+		);
 	};
 
 	render() {

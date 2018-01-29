@@ -31,12 +31,12 @@ class RewindWereBacking extends Component {
 		const { translate, siteSlug } = this.props;
 
 		return (
-			<Card className="rewind-were-backing__card">
-				<h3 className="rewind-were-backing__title">
+			<Card className="rewind-were-backing__card rewind-switch__card rewind-switch__content">
+				<h3 className="rewind-were-backing__title rewind-switch__heading">
 					{ translate( "We're backing up your site!" ) }
 				</h3>
 				<img src="/calypso/images/illustrations/thankYou.svg" alt="" />
-				<p className="rewind-were-backing__description">
+				<p className="rewind-were-backing__description rewind-switch__description">
 					{ translate(
 						'Welcome to your Jetpack Premium plan! ' +
 							"That sound you're hearing? It's your website doing backflips with excitement!"
