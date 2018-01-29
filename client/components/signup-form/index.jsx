@@ -322,7 +322,7 @@ class SignupForm extends Component {
 		} );
 	};
 
-	loginLink() {
+	getLoginLink() {
 		return login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
@@ -332,7 +332,7 @@ class SignupForm extends Component {
 	}
 
 	getNoticeMessageWithLogin( notice ) {
-		const link = this.loginLink();
+		const link = this.getLoginLink();
 
 		if ( notice.error === '2FA_enabled' ) {
 			return (
@@ -376,7 +376,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		let link = this.loginLink();
+		let link = this.getLoginLink();
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
@@ -570,7 +570,7 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? this.loginLink()
+			? this.getLoginLink()
 			: addLocaleToWpcomUrl( config( 'login_url' ), this.props.locale );
 
 		return (
