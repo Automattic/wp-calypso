@@ -4,6 +4,7 @@
  * @format
  */
 import page from 'page';
+import { isDesktop } from 'lib/viewport';
 
 /**
  * Internal dependencies
@@ -164,7 +165,7 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 		page( url );
 	}
 
-	if ( tour ) {
+	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
 }
