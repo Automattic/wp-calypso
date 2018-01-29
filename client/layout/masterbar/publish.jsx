@@ -19,13 +19,14 @@ import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
 import MasterbarDrafts from './drafts';
 import { isRtl as isRtlSelector } from 'state/selectors';
+import TranslatableString from 'components/translatable/proptype';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
 		user: PropTypes.object,
 		isActive: PropTypes.bool,
 		className: PropTypes.string,
-		tooltip: PropTypes.string,
+		tooltip: TranslatableString,
 		// connected props
 		selectedSite: PropTypes.object,
 	};
