@@ -52,7 +52,7 @@ export function login( {
 		url = addQueryArgs( { email_address: emailAddress }, url );
 	}
 
-	if ( oauth2ClientId ) {
+	if ( oauth2ClientId && ! isNaN( oauth2ClientId ) ) {
 		url = addQueryArgs( { client_id: oauth2ClientId }, url );
 	}
 
