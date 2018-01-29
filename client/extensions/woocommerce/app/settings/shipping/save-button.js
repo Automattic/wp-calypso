@@ -24,17 +24,22 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { createWcsShippingSaveActionList } from 'woocommerce/woocommerce-services/state/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { saveWeightAndDimensionsUnits } from 'woocommerce/state/sites/settings/products/actions';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class ShippingSettingsSaveButton extends Component {
 	static propTypes = {
 		onSaveSuccess: PropTypes.func.isRequired,
+		toSave: PropTypes.shape( {
+			units: PropTypes.bool,
+			shipping: PropTypes.bool,
+		} ),
 	};
 
 	onSaveSuccess = dispatch => {
 		const { translate } = this.props;
 
-		this.props.onSaveSuccess();
+		this.props.onSaveSuccess( 'shipping' );
 
 		dispatch(
 			successNotice( translate( 'Shipping settings saved' ), {
@@ -43,7 +48,31 @@ class ShippingSettingsSaveButton extends Component {
 		);
 	};
 
-	save = () => {
+	saveUnits = () => {
+		const { translate, site } = this.props;
+
+		const unitsSaveSuccessNotice = dispatch => {
+			this.props.onSaveSuccess( 'units' );
+
+			dispatch(
+				successNotice( translate( 'Units settings saved' ), {
+					duration: 4000,
+				} )
+			);
+		};
+
+		const unitsSaveFailureNotice = errorNotice(
+			translate( 'There was a problem saving units settings. Please try again.' )
+		);
+
+		this.props.saveWeightAndDimensionsUnits(
+			site.ID,
+			unitsSaveSuccessNotice,
+			unitsSaveFailureNotice
+		);
+	};
+
+	saveShippingSettings = () => {
 		const { translate, wcsEnabled } = this.props;
 		if ( ! wcsEnabled ) {
 			return;
@@ -67,6 +96,18 @@ class ShippingSettingsSaveButton extends Component {
 		);
 	};
 
+	save = () => {
+		const { toSave } = this.props;
+
+		if ( toSave.shipping ) {
+			this.saveShippingSettings();
+		}
+
+		if ( toSave.units ) {
+			this.saveUnits();
+		}
+	};
+
 	redirect = () => {
 		const { site } = this.props;
 		this.save();
@@ -81,11 +122,11 @@ class ShippingSettingsSaveButton extends Component {
 		}
 
 		if ( finishedInitialSetup ) {
-			return wcsEnabled ? (
+			return (
 				<Button onClick={ this.save } primary busy={ isSaving } disabled={ isSaving }>
 					{ translate( 'Save' ) }
 				</Button>
-			) : null;
+			);
 		}
 		const label = wcsEnabled ? translate( 'Save & finish' ) : translate( "I'm Finished" );
 		return (
@@ -114,6 +155,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			createWcsShippingSaveActionList,
+			saveWeightAndDimensionsUnits,
 		},
 		dispatch
 	);
