@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { isPlainObject, noop, snakeCase } from 'lodash';
+import { noop, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,34 +23,20 @@ import { receiveDomainContactValidation } from 'state/domains/management/actions
  * @param {Object} action Redux action
  * @returns {Object} WordPress.com API HTTP Request action object
  */
-
-// TODO: this is temp: normalize the data for the contact details check here
-// but it's a util in: data = mapKeysRecursively( data, snakeCase ). See: client/lib/wpcom-undocumented/lib/undocumented.js
-
-function mapKeysRecursively( object, fn ) {
-	return Object.keys( object ).reduce( function( mapped, key ) {
-		var value = object[ key ];
-		if ( isPlainObject( value ) ) {
-			value = mapKeysRecursively( value, fn );
-		}
-
-		mapped[ fn( key ) ] = value;
-		return mapped;
-	}, {} );
-}
-
 export const fetchDomainContactValidation = action => {
-	const body = mapKeysRecursively( {
-		contactInformation: action.contactInformation,
-		domainNames: action.domainNames,
-	}, snakeCase );
-
+	const contactInformation = {};
+	action.contactInformation.each( ( value, key ) => {
+		contactInformation[ snakeCase[ key ] ] = value;
+	} );
 	return 	http(
 		{
 			apiVersion: '1.1',
 			method: 'POST',
 			path: '/me/domain-contact-information/validate',
-			body,
+			body: {
+				contact_information: contactInformation,
+				domain_names: action.domainNames,
+			},
 		},
 		action
 	);
