@@ -34,6 +34,17 @@ export function getInvitesForSite( state, siteId ) {
 }
 
 /**
+ * Returns the total number of invites found for the given site, or `null`.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?Number}        The number of invites found for the given site
+ */
+export function getNumberOfInvitesFoundForSite( state, siteId ) {
+	return state.invites.counts[ siteId ] || null;
+}
+
+/**
  * Returns true if currently requesting an invite resend for the given site and
  * invite ID, or false otherwise.
  *

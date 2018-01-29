@@ -19,7 +19,12 @@ import PeopleSectionNav from 'my-sites/people/people-section-nav';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
 import QuerySiteInvites from 'components/data/query-site-invites';
-import { isRequestingInvitesForSite, getInvitesForSite } from 'state/invites/selectors';
+import InvitesListEnd from './invites-list-end';
+import {
+	isRequestingInvitesForSite,
+	getInvitesForSite,
+	getNumberOfInvitesFoundForSite,
+} from 'state/invites/selectors';
 
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
@@ -64,7 +69,7 @@ class PeopleInvites extends React.PureComponent {
 	}
 
 	render() {
-		const { invites, requesting, site, translate } = this.props;
+		const { invites, invitesFound, requesting, site, translate } = this.props;
 
 		if ( ! site || ! site.ID ) {
 			return null;
@@ -94,6 +99,7 @@ class PeopleInvites extends React.PureComponent {
 					{ showPlaceholder && this.renderPlaceholder() }
 					{ showEmptyContent && this.renderEmptyContent() }
 					{ hasInvites && <Card>{ invites.map( this.renderInvite ) }</Card> }
+					{ hasInvites && <InvitesListEnd found={ invitesFound } /> }
 				</div>
 			</Main>
 		);
@@ -106,5 +112,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		requesting: isRequestingInvitesForSite( state, siteId ),
 		invites: getInvitesForSite( state, siteId ),
+		invitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
 	};
 } )( localize( PeopleInvites ) );
