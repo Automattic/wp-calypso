@@ -214,7 +214,7 @@ export function getCreditCardType( number ) {
 			cardType = 'amex';
 		}
 
-		// Normalize diners as wee
+		// Normalize Diners as well
 		if ( cardType === 'Diners Club' ) {
 			cardType = 'diners';
 		}
