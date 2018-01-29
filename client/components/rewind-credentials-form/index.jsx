@@ -205,15 +205,16 @@ export class RewindCredentialsForm extends Component {
 						disabled={ formIsSubmitting }
 						onClick={ this.toggleAdvancedSettings }
 						borderless={ true }
+						primary={ true }
 						className="rewind-credentials-form__advanced-button"
 					>
 						{ translate( 'Advanced settings' ) }
 					</Button>
 					{ showAdvancedSettings && (
-						<div>
+						<div className="rewind-credentials-form__advanced-settings">
 							<FormFieldset className="rewind-credentials-form__path">
 								<FormLabel htmlFor="wordpress-path">
-									{ translate( 'WordPress Installation Path' ) }
+									{ translate( 'WordPress installation path' ) }
 								</FormLabel>
 								<FormTextInput
 									name="path"
@@ -224,6 +225,9 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									isError={ !! formErrors.path }
 								/>
+								<p className="form-setting-explanation">
+									{ translate( 'Only non-encrypted private keys are supported.' ) }
+								</p>
 							</FormFieldset>
 
 							<FormFieldset className="rewind-credentials-form__kpri">

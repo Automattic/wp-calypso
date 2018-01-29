@@ -40,7 +40,11 @@
 	float: left;
 }
 
-.rewind-credentials-form__advanced-button.button.is-borderless {
-	margin-top: -10px;
-	color: $blue-wordpress;
+.rewind-credentials-form__advanced-button.button.button {
+	float: none;
+	margin-top: -8px;
+}
+
+.rewind-credentials-form__advanced-settings {
+	margin-top: 24px;
 }
