@@ -102,7 +102,8 @@ export class RewindCredentialsForm extends Component {
 	componentWillReceiveProps( nextProps ) {
 		const { rewindState, role, siteSlug } = nextProps;
 		const credentials = find( rewindState.credentials, { role: role } );
-		const nextForm = this.state.form;
+
+		const nextForm = Object.assign( {}, this.state.form );
 
 		// Populate the fields with data from state if credentials are already saved
 		nextForm.protocol =
