@@ -28,7 +28,7 @@ export function authAttempts( state = undefined, { type, attemptNumber } ) {
 	return state;
 }
 
-const reducer = keyedReducer( 'slug', authAttempts );
+export const reducer = keyedReducer( 'slug', authAttempts );
 reducer.schema = jetpackAuthAttemptsSchema;
 
 export default reducer;
