@@ -30,8 +30,8 @@ export const fetchAppointmentDetails = action => {
 	);
 };
 
-export const onSuccess = ( action, appointmentDetails ) =>
-	updateConciergeAppointmentDetails( appointmentDetails );
+export const onSuccess = ( { appointmentId }, appointmentDetails ) =>
+	updateConciergeAppointmentDetails( appointmentId, appointmentDetails );
 
 export const onError = () =>
 	errorNotice( translate( 'We could not find your appointment. Please try again later.' ) );

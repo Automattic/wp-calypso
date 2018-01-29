@@ -21,8 +21,9 @@ export const requestConciergeAppointmentDetails = ( scheduleId, appointmentId ) 
 	appointmentId,
 } );
 
-export const updateConciergeAppointmentDetails = appointmentDetails => ( {
+export const updateConciergeAppointmentDetails = ( appointmentId, appointmentDetails ) => ( {
 	type: CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
+	appointmentId,
 	appointmentDetails,
 } );
 
@@ -61,11 +62,17 @@ export const bookConciergeAppointment = (
 	meta,
 } );
 
-export const rescheduleConciergeAppointment = ( scheduleId, appointmentId, beginTimestamp ) => ( {
+export const rescheduleConciergeAppointment = (
+	scheduleId,
+	appointmentId,
+	beginTimestamp,
+	appointmentDetails
+) => ( {
 	type: CONCIERGE_APPOINTMENT_RESCHEDULE,
 	scheduleId,
 	appointmentId,
 	beginTimestamp,
+	appointmentDetails,
 } );
 
 export const cancelConciergeAppointment = ( scheduleId, appointmentId ) => ( {

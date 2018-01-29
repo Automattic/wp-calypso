@@ -48,8 +48,10 @@ describe( 'wpcom-api', () => {
 				},
 			};
 
-			expect( onSuccess( {}, mockAppointmentDetails ) ).toEqual(
-				updateConciergeAppointmentDetails( mockAppointmentDetails )
+			expect(
+				onSuccess( { appointmentId: mockAppointmentDetails.id }, mockAppointmentDetails )
+			).toEqual(
+				updateConciergeAppointmentDetails( mockAppointmentDetails.id, mockAppointmentDetails )
 			);
 		} );
 

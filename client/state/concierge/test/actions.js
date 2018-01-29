@@ -63,15 +63,22 @@ describe( 'state/concierge', () => {
 			const scheduleId = 123;
 			const beginTimestamp = 1234567890;
 			const appointmentId = 1;
+			const appointmentDetails = { meta: { timezone: 'UTC' } };
 
-			expect( rescheduleConciergeAppointment( scheduleId, appointmentId, beginTimestamp ) ).toEqual(
-				{
-					type: CONCIERGE_APPOINTMENT_RESCHEDULE,
+			expect(
+				rescheduleConciergeAppointment(
 					scheduleId,
 					appointmentId,
 					beginTimestamp,
-				}
-			);
+					appointmentDetails
+				)
+			).toEqual( {
+				type: CONCIERGE_APPOINTMENT_RESCHEDULE,
+				scheduleId,
+				appointmentId,
+				beginTimestamp,
+				appointmentDetails,
+			} );
 		} );
 
 		test( 'requestConciergeAvailableTimes()', () => {
@@ -122,10 +129,12 @@ describe( 'state/concierge', () => {
 		} );
 
 		test( 'updateConciergeAppointmentDetails()', () => {
-			const appointmentDetails = { id: 1 };
+			const appointmentId = 1;
+			const appointmentDetails = { id: appointmentId };
 
-			expect( updateConciergeAppointmentDetails( appointmentDetails ) ).toEqual( {
+			expect( updateConciergeAppointmentDetails( appointmentId, appointmentDetails ) ).toEqual( {
 				type: CONCIERGE_APPOINTMENT_DETAILS_UPDATE,
+				appointmentId,
 				appointmentDetails,
 			} );
 		} );
