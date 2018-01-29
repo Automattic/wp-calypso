@@ -211,6 +211,20 @@ button {
 		}
 	}
 
+	&.is-primary {
+		color: $blue-wordpress;
+
+		&:focus,
+		&:hover,
+		&:active {
+			color: $link-highlight;
+		}
+
+		&[disabled] {
+			color: lighten( $gray, 30% );
+		}
+	}
+
 	&.is-compact {
 		.gridicon {
 			width: 18px;
