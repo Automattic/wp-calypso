@@ -61,6 +61,8 @@ describe( 'reducer', () => {
 							invite_key: '123456asdf789',
 							role: 'follower',
 							is_pending: true,
+							invite_date: '2018-01-28T17:22:16+00:00',
+							accepted_date: '2018-01-28T17:22:20+00:00',
 							user: {
 								login: 'chicken',
 								email: false,
@@ -78,6 +80,8 @@ describe( 'reducer', () => {
 						key: '123456asdf789',
 						role: 'follower',
 						isPending: true,
+						inviteDate: '2018-01-28T17:22:16+00:00',
+						acceptedDate: '2018-01-28T17:22:20+00:00',
 						user: {
 							login: 'chicken',
 							email: false,
@@ -97,6 +101,8 @@ describe( 'reducer', () => {
 						key: '123456asdf789',
 						role: 'follower',
 						isPending: true,
+						inviteDate: '2018-01-28T17:22:16+00:00',
+						acceptedDate: '2018-01-28T17:22:20+00:00',
 						user: {
 							login: 'chicken',
 							email: false,
@@ -115,6 +121,8 @@ describe( 'reducer', () => {
 						invite_key: '9876fdas54321',
 						role: 'follower',
 						is_pending: true,
+						invite_date: '2018-01-28T17:22:16+00:00',
+						accepted_date: '2018-01-28T17:22:20+00:00',
 						user: {
 							login: 'celery',
 							email: false,
@@ -131,6 +139,8 @@ describe( 'reducer', () => {
 						key: '123456asdf789',
 						role: 'follower',
 						isPending: true,
+						inviteDate: '2018-01-28T17:22:16+00:00',
+						acceptedDate: '2018-01-28T17:22:20+00:00',
 						user: {
 							login: 'chicken',
 							email: false,
@@ -145,6 +155,8 @@ describe( 'reducer', () => {
 						key: '9876fdas54321',
 						role: 'follower',
 						isPending: true,
+						inviteDate: '2018-01-28T17:22:16+00:00',
+						acceptedDate: '2018-01-28T17:22:20+00:00',
 						user: {
 							login: 'celery',
 							email: false,
@@ -164,6 +176,8 @@ describe( 'reducer', () => {
 						key: '123456asdf789',
 						role: 'follower',
 						isPending: true,
+						inviteDate: '2018-01-28T17:22:16+00:00',
+						acceptedDate: '2018-01-28T17:22:20+00:00',
 						user: {
 							login: 'chicken',
 							email: false,
@@ -186,6 +200,8 @@ describe( 'reducer', () => {
 						key: '123456asdf789',
 						role: 'follower',
 						isPending: true,
+						inviteDate: '2018-01-28T17:22:16+00:00',
+						acceptedDate: '2018-01-28T17:22:20+00:00',
 						user: {
 							login: 'chicken',
 							email: false,
@@ -213,6 +229,8 @@ describe( 'reducer', () => {
 							key: '123456asdf789',
 							role: 'follower',
 							isPending: true,
+							inviteDate: '2018-01-28T17:22:16+00:00',
+							acceptedDate: '2018-01-28T17:22:20+00:00',
 							user: {
 								login: 'chicken',
 								email: false,
@@ -236,6 +254,8 @@ describe( 'reducer', () => {
 							key: '123456asdf789',
 							role: 'follower',
 							isPending: null,
+							inviteDate: '2018-01-28T17:22:16+00:00',
+							acceptedDate: '2018-01-28T17:22:20+00:00',
 							user: {
 								login: 'chicken',
 								email: false,

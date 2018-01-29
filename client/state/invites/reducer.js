@@ -63,6 +63,8 @@ export const items = createReducer(
 						key: invite.invite_key,
 						role: invite.role,
 						isPending: invite.is_pending,
+						inviteDate: invite.invite_date,
+						acceptedDate: invite.accepted_date,
 						user,
 					};
 				} ),
