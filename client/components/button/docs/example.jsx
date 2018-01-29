@@ -122,6 +122,23 @@ class Buttons extends React.PureComponent {
 						</Button>
 					</div>
 					<div className="docs__design-button-row">
+						<Button borderless primary>
+							<Gridicon icon="cross" /> Remove
+						</Button>
+						<Button borderless primary>
+							<Gridicon icon="trash" /> Trash
+						</Button>
+						<Button borderless primary>
+							<Gridicon icon="link-break" /> Disconnect
+						</Button>
+						<Button borderless primary>
+							<Gridicon icon="trash" />
+						</Button>
+						<Button borderless primary disabled>
+							<Gridicon icon="cross" /> Remove
+						</Button>
+					</div>
+					<div className="docs__design-button-row">
 						<Button borderless scary>
 							<Gridicon icon="cross" /> Remove
 						</Button>
