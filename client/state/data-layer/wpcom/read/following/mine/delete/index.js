@@ -50,11 +50,12 @@ export function unfollowError( { dispatch, getState }, action ) {
 	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
 	dispatch(
 		errorNotice(
-			translate( 'Sorry, there was a problem unfollowing that %(siteTitle)s. Please try again.', {
+			translate( 'Sorry, there was a problem unfollowing %(siteTitle)s. Please try again.', {
 				args: {
 					siteTitle,
 				},
-			} )
+			} ),
+			{ duration: 5000 }
 		)
 	);
 	dispatch( bypassDataLayer( follow( action.payload.feedUrl ) ) );
