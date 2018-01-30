@@ -12,8 +12,10 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { getSectionName } from 'state/ui/selectors';
 import {
 	Continue,
+	ButtonRow,
 	makeTour,
 	Next,
 	SiteLink,
@@ -21,37 +23,21 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
+function isPostEditorSection( state ) {
+	return getSectionName( state ) === 'post-editor';
+}
+
 export const ChecklistContactPageTour = makeTour(
 	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route" when={ noop }>
 		<Step
 			name="init"
-			placement="beside"
-			arrow="left-top"
-			target="side-menu-page"
+			placement="right"
 			style={ {
-				animationDelay: '0s',
-				marginLeft: '-60px',
-				marginTop: '-4px',
+				animationDelay: '0.7s',
 			} }
+			when={ isPostEditorSection }
+			canSkip={ false }
 		>
-			<p>
-				{ translate( 'Click on {{b}}Site Pages{{/b}} to see all the pages on your site.', {
-					components: { b: <strong /> },
-				} ) }
-			</p>
-			<Continue target="side-menu-page" step="choose-page" click hidden />
-		</Step>
-
-		<Step name="choose-page" target="page-contact" arrow="top-left" placement="below">
-			<p>
-				{ translate( 'Click {{b}}Contact{{/b}} to edit this page.', {
-					components: { b: <strong /> },
-				} ) }
-			</p>
-			<Continue target="page-contact" step="contact-page" click hidden />
-		</Step>
-
-		<Step name="contact-page" placement="right">
 			<p>
 				{ translate(
 					'Your contact page makes it easy for people to get in touch. Let’s personalize ' +
@@ -59,7 +45,11 @@ export const ChecklistContactPageTour = makeTour(
 						'Click in the text area below to get started.'
 				) }
 			</p>
-			<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
+			<ButtonRow>
+				<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
+				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
+				<Continue step="featured-images" hidden />
+			</ButtonRow>
 		</Step>
 
 		<Step

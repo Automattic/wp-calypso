@@ -23,24 +23,7 @@ import {
 
 export const ChecklistAboutPageTour = makeTour(
 	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route" when={ noop }>
-		<Step
-			name="init"
-			placement="beside"
-			arrow="left-top"
-			target="side-menu-page"
-			style={ {
-				animationDelay: '0s',
-			} }
-		>
-			<p>
-				{ translate( 'Click on {{b}}Site Pages{{/b}} to see all the pages on our site.', {
-					components: { b: <strong /> },
-				} ) }
-			</p>
-			<Continue target="side-menu-page" step="choose-page" click hidden />
-		</Step>
-
-		<Step name="choose-page" target="page-about" arrow="top-left" placement="below">
+		<Step name="init" target="page-about" arrow="top-left" placement="below">
 			<p>
 				{ translate( 'Click {{b}}About{{/b}} to edit this page.', {
 					components: { b: <strong /> },
