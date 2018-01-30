@@ -22,7 +22,6 @@ import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
-import { requestInlineHelpSearchResults } from 'state/inline-help/actions';
 
 /**
  * Module variables
@@ -75,12 +74,6 @@ class InlineHelp extends Component {
 		this.toggleInlineHelp();
 	};
 
-	onSearch = searchQuery => {
-		debug( 'search query received: ', searchQuery );
-		tracks.recordEvent( 'calypso_inline-help_search', { searchQuery } );
-		this.props.requestInlineHelpSearchResults( searchQuery );
-	};
-
 	inlineHelpToggleRef = node => {
 		this.inlineHelpToggle = node;
 	};
@@ -115,7 +108,6 @@ class InlineHelp extends Component {
 
 						<InlineHelpSearchCard
 							query={ this.props.searchQuery }
-							onSearch={ this.onSearch }
 						/>
 						<InlineHelpSearchResults
 							searchQuery={ this.props.searchQuery }
@@ -137,8 +129,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	};
 };
-const mapDispatchToProps = {
-	requestInlineHelpSearchResults,
-};
+const mapDispatchToProps = null;
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );

@@ -6,13 +6,20 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
  */
+import { tracks } from 'lib/analytics';
 import SearchCard from 'components/search-card';
 import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
-import { openResult, selectNextResult, selectPreviousResult } from 'state/inline-help/actions';
+import { openResult, requestInlineHelpSearchResults, selectNextResult, selectPreviousResult } from 'state/inline-help/actions';
+
+/**
+ * Module variables
+ */
+const debug = debugFactory( 'calypso:inline-help' );
 
 class InlineHelpSearchCard extends Component {
 	static propTypes = {
@@ -50,12 +57,18 @@ class InlineHelpSearchCard extends Component {
 		}
 	};
 
+	onSearch = searchQuery => {
+		debug( 'search query received: ', searchQuery );
+		tracks.recordEvent( 'calypso_inline-help_search', { searchQuery } );
+		this.props.requestInlineHelpSearchResults( searchQuery );
+	};
+
 	render() {
 		return (
 			<SearchCard
 				searching={ this.props.isSearching }
 				initialValue={ this.props.query }
-				onSearch={ this.props.onSearch }
+				onSearch={ this.onSearch }
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				autoFocus // eslint-disable-line jsx-a11y/no-autofocus
@@ -70,9 +83,10 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 const mapDispatchToProps = {
+	openResult,
+	requestInlineHelpSearchResults,
 	selectNextResult,
 	selectPreviousResult,
-	openResult,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );
