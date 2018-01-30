@@ -13,7 +13,9 @@ import { get } from 'lodash';
  */
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
-import Button from 'components/button';
+import SignupActions from 'lib/signup/actions';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
+import { getRewindState } from 'state/selectors';
 
 class RewindFormCreds extends Component {
 	static propTypes = {
@@ -24,11 +26,27 @@ class RewindFormCreds extends Component {
 		stepName: PropTypes.string,
 
 		// Connected props
-		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.number.isRequired,
+		rewindIsNowActive: PropTypes.bool.isRequired,
 	};
 
+	/**
+	 * Before component updates, check if credentials were correctly saved and go to next step.
+	 *
+	 * @param {object} nextProps Props received by component for next update.
+	 */
+	componentWillUpdate( nextProps ) {
+		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
+			SignupActions.submitSignupStep( {
+				processingMessage: this.props.translate( 'Migrating your credentials' ),
+				stepName: this.props.stepName,
+			} );
+			this.props.goToNextStep();
+		}
+	}
+
 	stepContent = () => {
-		const { translate, siteSlug } = this.props;
+		const { translate, siteId } = this.props;
 
 		return (
 			<Card className="rewind-form-creds__card rewind-switch__card rewind-switch__content">
@@ -40,9 +58,7 @@ class RewindFormCreds extends Component {
 						"We'll guide you through the process of finding and entering your site's credentials."
 					) }
 				</p>
-				<Button primary href={ `/stats/activity/${ siteSlug }` }>
-					{ translate( 'Creds form should be here' ) }
-				</Button>
+				<RewindCredentialsForm role="main" siteId={ siteId } allowCancel={ false } />
 			</Card>
 		);
 	};
@@ -63,9 +79,11 @@ class RewindFormCreds extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => ( {
-		siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], 0 ),
-	} ),
-	null
-)( localize( RewindFormCreds ) );
+export default connect( ( state, ownProps ) => {
+	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'siteId' ], 0 ) );
+	const rewindState = getRewindState( state, siteId );
+	return {
+		siteId,
+		rewindIsNowActive: 'active' === rewindState.state,
+	};
+}, null )( localize( RewindFormCreds ) );

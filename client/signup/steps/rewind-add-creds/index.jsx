@@ -29,7 +29,7 @@ class RewindAddCreds extends Component {
 			stepName: this.props.stepName,
 		} );
 
-		this.props.goToStep( 'rewind-form-creds' );
+		this.props.goToNextStep();
 	};
 
 	stepContent = () => {
