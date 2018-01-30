@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { identity, includes } from 'lodash';
+import { identity } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -22,7 +22,7 @@ import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
-import { openResult, requestInlineHelpSearchResults, selectNextResult, selectPreviousResult } from 'state/inline-help/actions';
+import { requestInlineHelpSearchResults } from 'state/inline-help/actions';
 
 /**
  * Module variables
@@ -81,31 +81,6 @@ class InlineHelp extends Component {
 		this.props.requestInlineHelpSearchResults( searchQuery );
 	};
 
-	onKeyDown = event => {
-		// ignore keyboard access when manipulating a text selection in input
-		if ( event.getModifierState() ) {
-			return;
-		}
-		// take over control if and only if it's one of our keys
-		if ( includes( [ 'ArrowUp', 'ArrowDown', 'Enter' ], event.key ) ) {
-			event.preventDefault();
-		} else {
-			return;
-		}
-
-		switch ( event.key ) {
-			case 'ArrowUp':
-				this.props.selectPreviousResult();
-				break;
-			case 'ArrowDown':
-				this.props.selectNextResult();
-				break;
-			case 'Enter':
-				this.props.openResult();
-				break;
-		}
-	};
-
 	inlineHelpToggleRef = node => {
 		this.inlineHelpToggle = node;
 	};
@@ -141,7 +116,6 @@ class InlineHelp extends Component {
 						<InlineHelpSearchCard
 							query={ this.props.searchQuery }
 							onSearch={ this.onSearch }
-							onKeyDown={ this.onKeyDown }
 						/>
 						<InlineHelpSearchResults
 							searchQuery={ this.props.searchQuery }
@@ -165,9 +139,6 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 const mapDispatchToProps = {
 	requestInlineHelpSearchResults,
-	selectNextResult,
-	selectPreviousResult,
-	openResult,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );
