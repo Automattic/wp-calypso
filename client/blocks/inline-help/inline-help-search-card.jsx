@@ -77,11 +77,9 @@ class InlineHelpSearchCard extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	return {
-		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
-	};
-};
+const mapStateToProps = ( state, ownProps ) => ( {
+	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
+} );
 const mapDispatchToProps = {
 	openResult,
 	recordTracksEvent,

@@ -85,13 +85,10 @@ class InlineHelp extends Component {
 
 	render() {
 		const { translate } = this.props;
-		const buttonClasses = [
-			'inline-help',
-			this.state.showInlineHelp && 'is-active',
-		].filter( Boolean );
+		const classes = { 'is-active': this.state.showInlineHelp };
 		return (
 			<Button
-				className={ classNames( ...buttonClasses ) }
+				className={ classNames( 'inline-help', classes ) }
 				onClick={ this.handleHelpButtonClicked }
 				borderless
 				title={ translate( 'Help' ) }
@@ -118,12 +115,10 @@ class InlineHelp extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	return {
-		searchQuery: getSearchQuery( state ),
-		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	};
-};
+const mapStateToProps = ( state, ownProps ) => ( {
+	searchQuery: getSearchQuery( state ),
+	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+} );
 const mapDispatchToProps = {
 	recordTracksEvent,
 };
