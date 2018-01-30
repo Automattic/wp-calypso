@@ -9,7 +9,7 @@ import { filter, isEmpty, setWith, get, forEach, omit, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-
+import { getEmailSettings } from './selectors';
 import { decodeEntities } from 'lib/formatting';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
@@ -81,7 +81,7 @@ const toApi = settings => {
 		[]
 	);
 
-	return update;
+	return { update };
 };
 
 export const handleRequest = ( { dispatch }, action ) => {
@@ -98,7 +98,7 @@ export const handleRequestSuccess = ( { dispatch }, action, { data } ) => {
 	} );
 };
 
-export const handleRequestFailure = ( { dispatch }, action, error ) => {
+export const handleFailure = ( { dispatch }, action, error ) => {
 	const { siteId } = action;
 	dispatch( {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
@@ -107,9 +107,11 @@ export const handleRequestFailure = ( { dispatch }, action, error ) => {
 	} );
 };
 
-export const handleUpdate = ( { dispatch }, action ) => {
+export const handleUpdate = ( { dispatch, getState }, action ) => {
 	const { siteId } = action;
-	dispatch( request( siteId, action ).get( 'settings_email_groups' ) );
+	const settings = getEmailSettings( getState(), siteId );
+	const update = toApi( settings );
+	dispatch( request( siteId, action ).post( 'settings/batch', update ) );
 };
 
 export const handleUpdateSuccess = ( { dispatch }, action, { data } ) => {
@@ -117,24 +119,15 @@ export const handleUpdateSuccess = ( { dispatch }, action, { data } ) => {
 	dispatch( {
 		type: WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
 		siteId,
-		data: fromApi( data ),
-	} );
-};
-
-export const handleUpdateFailure = ( { dispatch }, action, error ) => {
-	const { siteId } = action;
-	dispatch( {
-		type: WOOCOMMERCE_EMAIL_SETTINGS_RECEIVE,
-		siteId,
-		error,
+		data: fromApi( data.update ),
 	} );
 };
 
 export default {
 	[ WOOCOMMERCE_EMAIL_SETTINGS_REQUEST ]: [
-		dispatchRequest( handleRequest, handleRequestSuccess, handleRequestFailure ),
+		dispatchRequest( handleRequest, handleRequestSuccess, handleFailure ),
 	],
 	[ WOOCOMMERCE_EMAIL_SETTINGS_UPDATE ]: [
-		dispatchRequest( handleRequest, handleRequestSuccess, handleRequestFailure ),
+		dispatchRequest( handleUpdate, handleUpdateSuccess, handleFailure ),
 	],
 };

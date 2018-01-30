@@ -17,8 +17,8 @@ import { connect } from 'react-redux';
 import {
 	fetchEmailSettingsWithDataLayer,
 	emailSettingChange,
-	emailSettingsSubmitSettings,
 	emailSettingsInvalidValue,
+	emailSettingsUpdate,
 } from 'woocommerce/state/sites/settings/email/actions';
 import {
 	getEmailSettings,
@@ -134,7 +134,7 @@ class Settings extends React.Component {
 					);
 					nextProps.errorNotice( translate( 'Please correct your Email settings and try again.' ) );
 				} else {
-					nextProps.submit( nextProps.siteId, nextProps.settings );
+					nextProps.submit( nextProps.siteId );
 				}
 			} else {
 				nextProps.emailSettingsInvalidValue(
@@ -276,7 +276,7 @@ function mapDispatchToProps( dispatch ) {
 		{
 			onChange: emailSettingChange,
 			fetchSettings: fetchEmailSettingsWithDataLayer,
-			submit: emailSettingsSubmitSettings,
+			submit: emailSettingsUpdate,
 			emailSettingsInvalidValue,
 			errorNotice,
 			successNotice,
