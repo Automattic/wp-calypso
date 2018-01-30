@@ -129,20 +129,7 @@ class InlineHelpSearchResults extends Component {
 			window.location = url;
 			return;
 		}
-		if ( isEmpty( nextProps.searchResults ) ) {
-			this.setContextResults();
-		}
 	}
-
-	componentDidMount() {
-		if ( isEmpty( this.props.searchResults ) ) {
-			this.setContextResults();
-		}
-	}
-
-	setContextResults = () => {
-		this.props.setSearchResults( this.props.searchQuery, this.getContextResults() );
-	};
 
 	followHelpLink = ( url ) => {
 		const payload = {
