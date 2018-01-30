@@ -121,7 +121,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 				.gridicon {
 					fill: $white;
 					position: absolute;
-						left: 95%;
+						left: calc(100% - 30px);
 						top: 10px;
 					z-index: z-index( '.reader-post-card__post', '.reader-post-card__photo-expand-controls .gridicon' );
 				}
