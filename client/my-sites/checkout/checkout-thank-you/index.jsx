@@ -76,6 +76,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
+import { domainManagementTransferIn } from '../../domains/paths';
 
 function getPurchases( props ) {
 	return [
@@ -258,20 +259,28 @@ class CheckoutThankYou extends React.Component {
 	};
 
 	render() {
-		let purchases = [],
-			failedPurchases = [],
-			wasJetpackPlanPurchased = false,
-			wasDotcomPlanPurchased = false;
+		const { translate } = this.props;
+		let purchases = [];
+		let failedPurchases = [];
+		let wasJetpackPlanPurchased = false;
+		let wasDotcomPlanPurchased = false;
+		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
+			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
-		if ( ! purchases.length && ! failedPurchases.length && ! this.isGenericReceipt() ) {
+		if (
+			! purchases.length &&
+			! failedPurchases.length &&
+			! this.isGenericReceipt() &&
+			! this.props.selectedSite
+		) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return <WordPressLogo className="wpcom-site__logo" />;
@@ -296,15 +305,26 @@ class CheckoutThankYou extends React.Component {
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
-		} else if (
-			wasDotcomPlanPurchased &&
-			( purchases.some( isDelayedDomainTransfer ) || this.isNewUser() )
-		) {
+		} else if ( wasDotcomPlanPurchased && ( delayedTransferPurchase || this.isNewUser() ) ) {
+			let planProps = {};
+			if ( delayedTransferPurchase ) {
+				planProps = {
+					buttonText: translate( 'Start Domain Transfer' ),
+					description: translate(
+						"Now that we've taken care of the plan, " + "let's get your domain transferred."
+					),
+					buttonUrl: domainManagementTransferIn(
+						this.props.selectedSite.slug,
+						delayedTransferPurchase.meta
+					),
+				};
+			}
+
 			// streamlined paid NUX thanks page
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
-					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
+					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
 		} else if ( wasJetpackPlanPurchased && config.isEnabled( 'plans/jetpack-config-v2' ) ) {
@@ -326,20 +346,20 @@ class CheckoutThankYou extends React.Component {
 					<ThankYouCard
 						name={ domainName }
 						price={ this.props.receipt.data.displayPrice }
-						heading={ this.props.translate( 'Thank you for your purchase!' ) }
-						description={ this.props.translate(
+						heading={ translate( 'Thank you for your purchase!' ) }
+						description={ translate(
 							"That looks like a great domain. Now it's time to get it all set up."
 						) }
 						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ this.props.translate( 'Go To Your Domain' ) }
+						buttonText={ translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
 			);
 		}
 
 		const goBackText = this.props.selectedSite
-			? this.props.translate( 'Back to my site' )
-			: this.props.translate( 'Register Domain' );
+			? translate( 'Back to my site' )
+			: translate( 'Register Domain' );
 
 		// standard thanks page
 		return (
