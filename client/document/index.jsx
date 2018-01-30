@@ -13,7 +13,6 @@ import { get } from 'lodash';
  */
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
-import Masterbar from '../layout/masterbar/masterbar.jsx';
 import getStylesheet from './utils/stylesheet';
 
 class Document extends React.Component {
@@ -92,7 +91,7 @@ class Document extends React.Component {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 								} ) }
 							>
-								<Masterbar />
+								<div className="masterbar" />
 								<div className="layout__content">
 									<div className="wpcom-site__logo noticon noticon-wordpress" />
 									{ hasSecondary && (
@@ -264,7 +263,25 @@ class Document extends React.Component {
 					<script src={ urls.vendor } />
 					<script src={ urls[ jsFile ] } />
 					{ chunk && <script src={ urls[ chunk ] } /> }
-					<script>window.AppBoot();</script>
+					<script type="text/javascript">window.AppBoot();</script>
+					<script
+						dangerouslySetInnerHTML={ {
+							__html: `
+						 (function() {
+							if ( window.console && window.configData && 'development' !== window.configData.env ) {
+								console.log( "%cSTOP!", "color:#f00;font-size:xx-large" );
+								console.log(
+									"%cWait! This browser feature runs code that can alter your website or its security, " +
+									"and is intended for developers. If you've been told to copy and paste something here " +
+									"to enable a feature, someone may be trying to compromise your account. Please make " +
+									"sure you understand the code and trust the source before adding anything here.",
+									"font-size:large;"
+								);
+							}
+						})();
+						 `,
+						} }
+					/>
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>
