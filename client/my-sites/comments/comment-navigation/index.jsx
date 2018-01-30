@@ -285,6 +285,7 @@ export class CommentNavigation extends Component {
 						<NavItem
 							key={ status }
 							count={ count }
+							compactCount={ true }
 							onClick={ this.changeFilter( status ) }
 							path={ this.getStatusPath( status ) }
 							selected={ queryStatus === status }
