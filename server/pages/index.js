@@ -528,6 +528,49 @@ module.exports = function() {
 		} );
 	} );
 
+	app.get( '/support-user', function( req, res ) {
+		//Do not iframe
+		res.set( {
+			'X-Frame-Options': 'DENY',
+		} );
+
+		//Not logged in, 404!
+		if ( ! req.cookies.wordpress_logged_in ) {
+			return render404( req, res );
+		}
+
+		//Maybe not logged in, note that you need docker to test this properly
+		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+			const user = require( 'user-bootstrap' );
+
+			debug( 'Issuing API call to fetch user object' );
+			const geoCountry = req.get( 'x-geoip-country-code' ) || '';
+			user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
+				if ( error ) {
+					res.clearCookie( 'wordpress_logged_in', {
+						path: '/',
+						httpOnly: true,
+						domain: '.wordpress.com',
+					} );
+					//Also, 404
+					return render404( req, res );
+				}
+
+				debug( 'Rendering with bootstrapped user object.' );
+				req.context.user = data;
+
+				//TODO try and verify a8c
+				console.log( data );
+			} );
+		}
+
+		//TODO change to support-user
+		res.render( 'test', {
+			supportUser: req.query.support_user,
+			supportToken: req.query._support_token,
+		} );
+	} );
+
 	// catchall to render 404 for all routes not whitelisted in client/sections
 	app.use( render404 );
 

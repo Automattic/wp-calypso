@@ -1,0 +1,19 @@
+doctype html
+
+html
+	head
+		script.
+			const user="#{supportUser}";
+			const token="#{supportToken}";
+
+			const url = window.location.toString();
+
+			if ( url.indexOf( '?' ) > 0 ) {
+				const cleanUrl = url.substring( 0, url.indexOf( '?' ) );
+				window.history.replaceState( {}, document.title, cleanUrl );
+			}
+
+			window.sessionStorage.setItem( 'boot_support_user', JSON.stringify( { user, token } ) );
+			window.location.replace( '/' );
+
+body
