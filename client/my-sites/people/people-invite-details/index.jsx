@@ -72,6 +72,7 @@ class PeopleInviteDetails extends React.PureComponent {
 					type="invite-details"
 					isSelectable={ false }
 				/>
+
 				{ this.renderInviteDetails() }
 			</Card>
 		);
