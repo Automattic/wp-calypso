@@ -5,24 +5,49 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import cssSafeUrl from 'lib/css-safe-url';
 import Button from 'components/button';
+import safeImageUrl from 'lib/safe-image-url';
 
 export class ThemesBanner extends PureComponent {
 	static propTypes = {
-		title: PropTypes.string.isRequired,
-		description: PropTypes.string.isRequired,
+		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] )
+			.isRequired,
+		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] )
+			.isRequired,
 		action: PropTypes.func,
 		actionLabel: PropTypes.string.isRequired,
-		backgroundImage: PropTypes.string,
+		backgroundColor: PropTypes.string,
+		image: PropTypes.string,
+		imageAttrs: PropTypes.shape( {
+			width: PropTypes.number,
+			height: PropTypes.number,
+			alt: PropTypes.string,
+		} ),
+		imageTransform: PropTypes.string,
 		href: PropTypes.string,
 	};
 
 	render() {
-		const { title, description, actionLabel, action, backgroundImage, href } = this.props;
-		const backgroundStyle = backgroundImage
-			? { backgroundImage: `url( ${ cssSafeUrl( backgroundImage ) } )` }
-			: null;
+		const {
+			title,
+			description,
+			actionLabel,
+			action,
+			backgroundColor,
+			image,
+			imageAttrs = {},
+			imageTransform = 'auto',
+			href,
+		} = this.props;
+		const backgroundStyle = backgroundColor ? { backgroundColor } : {};
+		const imageNode = image ? (
+			<img
+				alt=""
+				{ ...imageAttrs }
+				src={ safeImageUrl( image ) }
+				style={ { transform: imageTransform } }
+			/>
+		) : null;
 		return (
 			<div className="themes-banner" style={ backgroundStyle }>
 				<h1>{ title }</h1>
@@ -30,6 +55,7 @@ export class ThemesBanner extends PureComponent {
 				<Button compact primary onClick={ action } href={ href }>
 					{ actionLabel }
 				</Button>
+				{ imageNode }
 			</div>
 		);
 	}

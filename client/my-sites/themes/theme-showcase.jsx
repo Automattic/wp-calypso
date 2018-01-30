@@ -7,9 +7,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import page from 'page';
-import { compact, pickBy } from 'lodash';
+import { compact, pickBy, sample } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -38,6 +38,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 
+import { ThemesBanner } from './themes-banner';
+
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
 	portfolio: { icon: 'custom-post-type', order: 2 },
@@ -57,6 +59,47 @@ const optionShape = PropTypes.shape( {
 	getUrl: PropTypes.func,
 	action: PropTypes.func,
 } );
+
+const bannerProps = sample( [
+	{
+		title: translate( 'Are you a photographer? An artist?' ),
+		description: translate(
+			'Explore {{b}}PHOTO BLOG{{/b}}, an elegant theme designed to showcase your visual masterpieces.',
+			{
+				components: {
+					b: <strong />,
+				},
+			}
+		),
+		actionLabel: translate( 'See the theme' ),
+		backgroundColor: '#3FE6AF',
+		image: '/calypso/images/themes-banner/banner-1.png',
+		imageTransform: 'translateY(-4.4%) translateX(17%)',
+		imageAttrs: {
+			alt: translate( 'Photo Blog Theme' ),
+			width: 390,
+		},
+	},
+	{
+		title: translate( 'Do you run a small business?' ),
+		description: translate(
+			'We know you’re crunched for time. We created the quick-setup {{b}}SMALL BUSINESS{{/b}} theme just for you.',
+			{
+				components: {
+					b: <strong />,
+				},
+			}
+		),
+		actionLabel: translate( 'See the theme' ),
+		backgroundColor: '#3d596d',
+		image: '/calypso/images/themes-banner/banner-2.png',
+		imageTransform: 'translateY(-19%) translateX(17%)',
+		imageAttrs: {
+			alt: translate( 'Small Business Theme' ),
+			width: 410,
+		},
+	},
+] );
 
 class ThemeShowcase extends React.Component {
 	static propTypes = {
@@ -198,6 +241,8 @@ class ThemeShowcase extends React.Component {
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
+		const Banner = () => <ThemesBanner { ...bannerProps } />;
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
@@ -215,6 +260,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
+					<Banner />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }

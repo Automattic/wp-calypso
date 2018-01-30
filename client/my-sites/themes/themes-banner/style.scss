@@ -1,9 +1,9 @@
 .themes-banner {
 	position: relative;
 	background: no-repeat $blue-medium;
-	background-size: cover;
 	color: white;
 	padding: 0.8em;
+	overflow: hidden;
 	
 	&:before {
 		position: absolute;
@@ -39,6 +39,14 @@
 	p {
 		margin: 0;
 		text-shadow: 0 1px 1px rgba(black, 0.4);
+	}
+	
+	img {
+		position: absolute;
+		transform-origin: top right;
+		user-select: none;
+		top: 0;
+		right: 0;
 	}
 	
 	.button {
