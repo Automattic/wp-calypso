@@ -106,5 +106,6 @@ export function getStripeConnectAccount( state, siteId = getSelectedSiteId( stat
 		'isOAuthInitializing',
 		'isRequesting',
 		'oauthUrl',
+		'notifyCompleted',
 	] );
 }
