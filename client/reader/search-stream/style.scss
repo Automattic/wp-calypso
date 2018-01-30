@@ -21,6 +21,8 @@
 	padding-top: 30px;
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
+	border: 5px solid blue;
+
 }
 
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
