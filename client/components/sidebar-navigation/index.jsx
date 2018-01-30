@@ -46,7 +46,7 @@ class SidebarNavigation extends React.Component {
 }
 
 SidebarNavigation.propTypes = {
-	title: PropTypes.string,
+	title: TranslatableString,
 	linkClassName: PropTypes.string,
 	sectionTitle: TranslatableString,
 	sectionName: PropTypes.string.isRequired,
