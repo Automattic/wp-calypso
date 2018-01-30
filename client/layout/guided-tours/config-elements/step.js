@@ -33,6 +33,8 @@ const anyFrom = obj => {
 };
 
 export default class Step extends Component {
+	static displayName = 'Step';
+
 	static propTypes = {
 		name: PropTypes.string.isRequired,
 		placement: PropTypes.oneOf( [ 'below', 'above', 'beside', 'center', 'middle', 'right' ] ),
