@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import { get } from 'lodash';
 import { recordTrack } from 'reader/stats';
 import page from 'page';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Internal dependencies
@@ -135,12 +136,12 @@ class PeopleProfile extends React.PureComponent {
 			name = (
 				<div className="people-profile__username">
 					<a href={ user.url } onClick={ this.handleLinkToReaderSiteStream }>
-						{ name }
+						{ decodeEntities( name ) }
 					</a>
 				</div>
 			);
 		} else if ( name ) {
-			name = <div className="people-profile__username">{ name }</div>;
+			name = <div className="people-profile__username">{ decodeEntities( name ) }</div>;
 		}
 		return name;
 	};
