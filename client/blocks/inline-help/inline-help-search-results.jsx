@@ -138,7 +138,7 @@ class InlineHelpSearchResults extends Component {
 			resultUrl: url,
 		};
 		return () => {
-			tracks.recordEvent( 'calypso_inline-help_follow-link', payload );
+			tracks.recordEvent( 'calypso_inlinehelp_link_open', payload );
 		};
 	}
 

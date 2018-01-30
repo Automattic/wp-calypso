@@ -60,13 +60,13 @@ class InlineHelp extends Component {
 
 	showInlineHelp = () => {
 		debug( 'showing inline help.' );
-		tracks.recordEvent( 'calypso_inline-help_show' );
+		tracks.recordEvent( 'calypso_inlinehelp_show' );
 		this.setState( { showInlineHelp: true } );
 	};
 
 	closeInlineHelp = () => {
 		debug( 'hiding inline help.' );
-		tracks.recordEvent( 'calypso_inline-help_close' );
+		tracks.recordEvent( 'calypso_inlinehelp_close' );
 		this.setState( { showInlineHelp: false } );
 	};
 
@@ -80,7 +80,7 @@ class InlineHelp extends Component {
 
 	moreHelpClicked = () => {
 		this.closeInlineHelp();
-		tracks.recordEvent( 'calypso_inline-help_more_help_clicked' );
+		tracks.recordEvent( 'calypso_inlinehelp_morehelp_click' );
 	}
 
 	render() {

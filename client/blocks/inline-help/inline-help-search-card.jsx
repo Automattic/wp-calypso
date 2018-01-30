@@ -59,7 +59,7 @@ class InlineHelpSearchCard extends Component {
 
 	onSearch = searchQuery => {
 		debug( 'search query received: ', searchQuery );
-		tracks.recordEvent( 'calypso_inline-help_search', { searchQuery } );
+		tracks.recordEvent( 'calypso_inlinehelp_search', { searchQuery } );
 		this.props.requestInlineHelpSearchResults( searchQuery );
 	};
 
