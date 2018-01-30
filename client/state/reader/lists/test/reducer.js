@@ -220,14 +220,14 @@ describe( 'reducer', () => {
 			).to.eql( [ 1, 2 ] );
 		} );
 
-		test( 'should overwrite existing subs', () => {
+		test( 'should not overwrite existing subs', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
 			expect(
 				subscribedLists( initial, {
 					type: READER_LISTS_RECEIVE,
 					lists: [ { ID: 3 }, { ID: 1 } ],
 				} )
-			).to.eql( [ 3, 1 ] );
+			).to.eql( [ 1, 2, 3 ] );
 		} );
 
 		test( 'should remove an item on unfollow', () => {
