@@ -23,6 +23,7 @@
 	@include breakpoint( "<660px" ) {
 		left: -100%;
 		width: 100%;
+		overflow-x: hidden;
 		max-height: calc( 100% - 47px );
 		pointer-events: none;
 		transform: translateX( 0 );
@@ -378,7 +379,32 @@ form.sidebar__button input {
 	line-height: 2.1;
 	margin-right: auto;
 
-	&.sidebar__footer-help,
+	&.inline-help {
+		border-radius: 0;
+		border-left: 1px solid #c8d7e1;
+		flex: 0 1 40px;
+		margin-right: 0;
+		margin-left: auto;
+		outline: 0;
+
+		@include breakpoint( "<660px" ) {
+			flex: 0 1 56px;
+		}
+
+		.gridicon {
+			margin: 0 auto;
+			float: none;
+		}
+	}
+
+	&.is-active {
+		background: $blue-medium;
+
+		.gridicon {
+			fill: $white;
+		}
+	}
+
 	&.sidebar__footer-chat {
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		flex: 0 1 40px;
@@ -390,11 +416,6 @@ form.sidebar__button input {
 			flex: 0 1 56px;
 		}
 
-	}
-
-	&.sidebar__footer-help {
-		margin-left: auto;
-		border-radius: 0;
 	}
 
 	&.sidebar__footer-chat.has-unread {
@@ -438,11 +459,6 @@ form.sidebar__button input {
 		margin-top: auto;
 	}
 
-}
-
-.layout.is-section-help .sidebar .sidebar__footer-help {
-	background-color: $sidebar-selected-color;
-	color: $white;
 }
 
 .sidebar__region {

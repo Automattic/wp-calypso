@@ -73,6 +73,12 @@ class Popover extends Component {
 		onShow: noop,
 	};
 
+	/**
+	 * Flag to determine if we're currently repositioning the Popover
+	 * @type {boolean} True if the Popover is being repositioned.
+	 */
+	isUpdatingPosition = false;
+
 	constructor( props ) {
 		super( props );
 
@@ -129,13 +135,20 @@ class Popover extends Component {
 			return null;
 		}
 
-		if ( ! isVisible || isVisible === prevProps.isVisible ) {
+		if ( ! isVisible ) {
 			return null;
 		}
 
-		this.debug( 'Update position after render completes' );
-
-		setTimeout( () => this.setPosition(), 0 );
+		if ( ! this.isUpdatingPosition ) {
+			// update our position even when only our children change, use `isUpdatingPosition` to guard against a loop
+			// see https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
+			this.debug( 'requesting to update position after render completes' );
+			requestAnimationFrame( () => {
+				this.setPosition();
+				this.isUpdatingPosition = false;
+			} );
+			this.isUpdatingPosition = true;
+		}
 	}
 
 	componentWillUnmount() {
@@ -366,6 +379,7 @@ class Popover extends Component {
 	}
 
 	setPosition() {
+		this.debug( 'updating position' );
 		const position = this.computePosition();
 		if ( ! position ) {
 			return null;
@@ -436,10 +450,12 @@ class Popover extends Component {
 
 		return (
 			<RootChild className={ this.props.rootClassName }>
-				<div style={ this.getStylePosition() } className={ classes } ref={ this.setDOMBehavior }>
+				<div style={ this.getStylePosition() } className={ classes }>
 					<div className="popover__arrow" />
 
-					<div className="popover__inner">{ this.props.children }</div>
+					<div ref={ this.setDOMBehavior } className="popover__inner">
+						{ this.props.children }
+					</div>
 				</div>
 			</RootChild>
 		);
