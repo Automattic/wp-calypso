@@ -218,7 +218,6 @@ const defaultOptions = {
  + @param {Function} [options.fromApi] maps between API data and Calypso data
  + @param {Function} [options.onProgress] called on progress events when uploading
  * @param {Function} [options.middleware] runs before the dispatch itself
- * @param {Function} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
 export const requestDispatcher = middleware => ( initiator, onSuccess, onError, options = {} ) => {
