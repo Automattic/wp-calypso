@@ -121,6 +121,10 @@ class InlineHelpSearchResults extends Component {
 		return selectedLink.link;
 	}
 
+	componentDidMount() {
+		this.props.setSearchResults( '', this.getContextResults() );
+	}
+
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.shouldOpenSelectedResult ) {
 			const url = this.getSelectedUrl();

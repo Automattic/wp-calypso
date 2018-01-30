@@ -58,8 +58,8 @@ export const search = createReducer(
 			} );
 		},
 		[ INLINE_HELP_SELECT_PREVIOUS_RESULT ]: state => {
-			const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
 			if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
+				const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
 				return Object.assign( {}, state, {
 					selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
 				} );
