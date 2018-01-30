@@ -13,9 +13,11 @@ import { get } from 'lodash';
  */
 import Gridicon from 'gridicons';
 import StepWrapper from 'signup/step-wrapper';
+import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import CredentialsForm from 'my-sites/site-settings/jetpack-credentials/credentials-form';
+import HappychatButton from 'components/happychat/button';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
 import SignupActions from 'lib/signup/actions';
 import { getJetpackCredentials } from 'state/selectors';
 
@@ -26,6 +28,10 @@ class RewindFormStep extends Component {
 		positionInFlow: PropTypes.number,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+	};
+
+	state = {
+		showPopover: false,
 	};
 
 	skipStep = () => this.props.goToNextStep();
@@ -39,6 +45,10 @@ class RewindFormStep extends Component {
 		} );
 
 		this.props.goToNextStep();
+	};
+
+	togglePopover = () => {
+		this.setState( { showPopover: ! this.state.showPopover } );
 	};
 
 	renderStepContent = () => {
@@ -57,7 +67,7 @@ class RewindFormStep extends Component {
 				</CompactCard>
 				<Card className="rewind-form__card">
 					<div className="rewind-form__form">
-						<CredentialsForm
+						<RewindCredentialsForm
 							{ ...{
 								role: 'main',
 								protocol: 'ssh',
@@ -66,14 +76,20 @@ class RewindFormStep extends Component {
 								showCancelButton: true,
 								showDeleteButton: false,
 								onCancel: this.onCancel,
-								onSubmitComplete: this.props.goToNextStep,
+								onComplete: this.props.goToNextStep,
 							} }
 						/>
 					</div>
 				</Card>
-				<CompactCard className="rewind-form__help-link">
-					<Gridicon className="rewind-form__help-icon" icon="help" size="16" />
-					{ translate( "Need help finding your site's server credentials?" ) }
+				<CompactCard className="rewind-form__help">
+					<Button className="rewind-form__help-button">
+						<Gridicon icon="help" size={ 18 } />
+						{ translate( "Need help finding your site's server credentials?" ) }
+					</Button>
+					<HappychatButton className="rewind-form__happychat-button">
+						<Gridicon icon="chat" size={ 24 } />
+						{ translate( 'Get help' ) }
+					</HappychatButton>
 				</CompactCard>
 			</div>
 		);

@@ -13,6 +13,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
+import HappychatButton from 'components/happychat/button';
 
 class RewindConfirmStep extends Component {
 	static propTypes = {
@@ -56,7 +57,9 @@ class RewindConfirmStep extends Component {
 							'support staff is available to answer any questions you might have.'
 					) }
 				</p>
-				<Button onClick={ this.contactSupport }>{ translate( 'Contact support' ) }</Button>
+				<HappychatButton className="rewind-confirm__happychat-button" borderless={ false }>
+					{ translate( 'Contact support' ) }
+				</HappychatButton>
 				<Button primary onClick={ this.addCredentials }>
 					{ translate( 'Share credentials' ) }
 				</Button>

@@ -5,6 +5,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,7 +36,7 @@ class RewindCompleteStep extends Component {
 							'backflips with excitement!'
 					) }
 				</p>
-				<a className="rewind-complete__button" href={ wpAdminUrl }>
+				<a className="rewind-complete__button button is-primary" href={ wpAdminUrl }>
 					{ translate( 'Return to site' ) }
 				</a>
 			</Card>
@@ -58,4 +60,11 @@ class RewindCompleteStep extends Component {
 	}
 }
 
-export default localize( RewindCompleteStep );
+export default connect( ( state, ownProps ) => {
+	const blogId = get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 );
+	const blogUrl = get( state, [ 'sites', 'items', blogId, 'URL' ], false );
+
+	return {
+		wpAdminUrl: blogUrl ? blogUrl + '/wp-admin/' : false,
+	};
+}, null )( localize( RewindCompleteStep ) );

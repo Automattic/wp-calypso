@@ -3,14 +3,15 @@
 }
 
 .rewind-form__section-title,
-.rewind-form__help-link {
+.rewind-form__help {
 	max-width: 640px;
 	padding: 0;
 	margin-bottom: 0;
 	text-align: left;
 }
 
-.rewind-form__help-icon {
+.rewind-form__help-icon,
+.rewind-form__happychat-icon {
 	margin-right: 5px;
 }
 
@@ -57,6 +58,28 @@
 	text-align: left;
 }
 
-.rewind-form__form .form-fieldset:last-child {
+.rewind-form__form .rewind-credentials-form__actions {
 	text-align: right;
+}
+
+.rewind-form__help-button,
+.rewind-form__happychat-button {
+	padding: 0;
+	margin-right: 20px;
+	color: $blue-wordpress;
+	cursor: pointer;
+}
+
+.rewind-form__help-button:hover,
+.rewind-form__happychat-button:hover {
+	color: $link-highlight;
+}
+
+.rewind-form__help-button .gridicon,
+.rewind-form__happychat-button .gridicon {
+	margin-right: 5px;
+}
+
+.rewind-form__happychat-button {
+	margin-top: -5px;
 }
