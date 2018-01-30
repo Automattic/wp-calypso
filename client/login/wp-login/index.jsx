@@ -175,7 +175,7 @@ export class Login extends React.Component {
 					{ this.renderLocaleSuggestions() }
 
 					<DocumentHead
-						title={ translate( 'Log In', { textOnly: true } ) }
+						title={ translate( 'Log In' ) }
 						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
 					/>
 

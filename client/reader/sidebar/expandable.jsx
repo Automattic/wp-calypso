@@ -12,6 +12,7 @@ import React from 'react';
 import ExpandableSidebarAddForm from './expandable-add-form';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'layout/sidebar/menu';
+import TranslatableString from 'components/translatable/proptype';
 
 export const ExpandableSidebarMenu = props => {
 	const {
@@ -48,8 +49,8 @@ export const ExpandableSidebarMenu = props => {
 ExpandableSidebarMenu.propTypes = {
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
-	addLabel: PropTypes.string,
-	addPlaceholder: PropTypes.string,
+	addLabel: TranslatableString,
+	addPlaceholder: TranslatableString,
 	onAddSubmit: PropTypes.func,
 	onAddClick: PropTypes.func,
 	onClick: PropTypes.func,

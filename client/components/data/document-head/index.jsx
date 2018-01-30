@@ -23,6 +23,7 @@ import {
 	setDocumentHeadMeta as setMeta,
 	setDocumentHeadUnreadCount as setUnreadCount,
 } from 'state/document-head/actions';
+import TranslatableString from 'components/translatable/proptype';
 
 class DocumentHead extends Component {
 	componentWillMount() {
@@ -117,7 +118,7 @@ class DocumentHead extends Component {
 }
 
 DocumentHead.propTypes = {
-	title: PropTypes.string,
+	title: TranslatableString,
 	unreadCount: PropTypes.number,
 	link: PropTypes.array,
 	meta: PropTypes.array,

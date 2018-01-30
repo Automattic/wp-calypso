@@ -13,11 +13,12 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import Button from 'components/button';
+import TranslatableString from 'components/translatable/proptype';
 
 export class ExpandableSidebarAddForm extends Component {
 	static propTypes = {
-		addLabel: PropTypes.string,
-		addPlaceholder: PropTypes.string,
+		addLabel: TranslatableString,
+		addPlaceholder: TranslatableString,
 		onAddSubmit: PropTypes.func,
 		onAddClick: PropTypes.func,
 		hideAddButton: PropTypes.bool,
