@@ -11,6 +11,7 @@ import { spy } from 'sinon';
  */
 import useNock from 'test/helpers/use-nock';
 import {
+	clearCompletedNotification,
 	clearError,
 	createAccount,
 	deauthorizeAccount,
@@ -19,6 +20,7 @@ import {
 	oauthConnect,
 } from '../actions';
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
@@ -33,6 +35,20 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'actions', () => {
+	describe( '#clearCompletedNotification()', () => {
+		const siteId = '123';
+
+		test( 'should dispatch an action', () => {
+			const getState = () => ( {} );
+			const dispatch = spy();
+			clearCompletedNotification( siteId )( dispatch, getState );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
+				siteId,
+			} );
+		} );
+	} );
+
 	describe( '#clearError()', () => {
 		const siteId = '123';
 

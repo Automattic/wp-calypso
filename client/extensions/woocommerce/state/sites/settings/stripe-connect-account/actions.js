@@ -8,6 +8,7 @@
  * Internal dependencies
  */
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
@@ -22,6 +23,26 @@ import {
 } from 'woocommerce/state/action-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
+
+/**
+ * Action Creator: Clear any account connection completed notification.
+ *
+ * @param {Number} siteId The id of the site for which to clear.
+ * @return {Object} Action object
+ */
+export const clearCompletedNotification = siteId => ( dispatch, getState ) => {
+	const state = getState();
+	if ( ! siteId ) {
+		siteId = getSelectedSiteId( state );
+	}
+
+	const clearAction = {
+		type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
+		siteId,
+	};
+
+	dispatch( clearAction );
+};
 
 /**
  * Action Creator: Clear any error from a previous action.
