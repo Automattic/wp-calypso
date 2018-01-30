@@ -11,7 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
 import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
 import { openResult, requestInlineHelpSearchResults, selectNextResult, selectPreviousResult } from 'state/inline-help/actions';
@@ -59,7 +59,7 @@ class InlineHelpSearchCard extends Component {
 
 	onSearch = searchQuery => {
 		debug( 'search query received: ', searchQuery );
-		tracks.recordEvent( 'calypso_inlinehelp_search', { searchQuery } );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_search', { searchQuery } );
 		this.props.requestInlineHelpSearchResults( searchQuery );
 	};
 
@@ -84,6 +84,7 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 const mapDispatchToProps = {
 	openResult,
+	recordTracksEvent,
 	requestInlineHelpSearchResults,
 	selectNextResult,
 	selectPreviousResult,

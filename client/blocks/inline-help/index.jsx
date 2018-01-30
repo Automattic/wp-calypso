@@ -15,7 +15,7 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import config from 'config';
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
 import Popover from 'components/popover';
@@ -60,13 +60,13 @@ class InlineHelp extends Component {
 
 	showInlineHelp = () => {
 		debug( 'showing inline help.' );
-		tracks.recordEvent( 'calypso_inlinehelp_show' );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_show' );
 		this.setState( { showInlineHelp: true } );
 	};
 
 	closeInlineHelp = () => {
 		debug( 'hiding inline help.' );
-		tracks.recordEvent( 'calypso_inlinehelp_close' );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_close' );
 		this.setState( { showInlineHelp: false } );
 	};
 
@@ -80,7 +80,7 @@ class InlineHelp extends Component {
 
 	moreHelpClicked = () => {
 		this.closeInlineHelp();
-		tracks.recordEvent( 'calypso_inlinehelp_morehelp_click' );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	}
 
 	render() {
@@ -124,5 +124,8 @@ const mapStateToProps = ( state, ownProps ) => {
 		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	};
 };
+const mapDispatchToProps = {
+	recordTracksEvent,
+};
 
-export default connect( mapStateToProps, null )( localize( InlineHelp ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );

@@ -12,7 +12,7 @@ import classNames from 'classnames';
 /**
  * Internal Dependencies
  */
-import { tracks } from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
@@ -138,7 +138,7 @@ class InlineHelpSearchResults extends Component {
 			resultUrl: url,
 		};
 		return () => {
-			tracks.recordEvent( 'calypso_inlinehelp_link_open', payload );
+			this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', payload );
 		};
 	}
 
@@ -175,6 +175,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	didOpenResult,
+	recordTracksEvent,
 	setSearchResults,
 };
 
