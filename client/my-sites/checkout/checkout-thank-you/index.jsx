@@ -66,7 +66,11 @@ import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import ThankYouCard from 'components/thank-you-card';
-import { domainManagementEmail, domainManagementList } from 'my-sites/domains/paths';
+import {
+	domainManagementEmail,
+	domainManagementList,
+	domainManagementTransferIn,
+} from 'my-sites/domains/paths';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
@@ -76,7 +80,6 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
-import { domainManagementTransferIn } from '../../domains/paths';
 
 function getPurchases( props ) {
 	return [
@@ -311,7 +314,7 @@ class CheckoutThankYou extends React.Component {
 				planProps = {
 					buttonText: translate( 'Start Domain Transfer' ),
 					description: translate(
-						"Now that we've taken care of the plan, " + "let's get your domain transferred."
+						"Now that we've taken care of the plan, let's get your domain transferred."
 					),
 					buttonUrl: domainManagementTransferIn(
 						this.props.selectedSite.slug,
