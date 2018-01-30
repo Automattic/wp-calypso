@@ -18,7 +18,6 @@ import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
 import MasterbarDrafts from './drafts';
-import AsyncLoad from 'components/async-load';
 import TranslatableString from 'components/translatable/proptype';
 
 class MasterbarItemNew extends React.Component {
