@@ -16,6 +16,8 @@ import { targetForSlug } from '../positioning';
 import contextTypes from '../context-types';
 
 export default class Continue extends Component {
+	static displayName = 'Continue';
+
 	static contextTypes = contextTypes;
 
 	static propTypes = {

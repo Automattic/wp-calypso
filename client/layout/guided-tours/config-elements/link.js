@@ -12,6 +12,8 @@ import React, { Component } from 'react';
 import ExternalLink from 'components/external-link';
 
 class Link extends Component {
+	static displayName = 'Link';
+
 	constructor( props ) {
 		super( props );
 	}

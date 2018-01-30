@@ -12,6 +12,7 @@ import { get, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
+import CommentLink from 'my-sites/comments/comment/comment-link';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import Emojify from 'components/emojify';
 import ExternalLink from 'components/external-link';
@@ -104,9 +105,14 @@ export class CommentAuthor extends Component {
 
 					<div className="comment__author-info-element">
 						<span className="comment__date">
-							<a href={ commentUrl } tabIndex={ isBulkMode ? -1 : 0 } title={ formattedDate }>
+							<CommentLink
+								commentId={ commentId }
+								href={ commentUrl }
+								tabIndex={ isBulkMode ? -1 : 0 }
+								title={ formattedDate }
+							>
 								{ relativeDate }
-							</a>
+							</CommentLink>
 						</span>
 						{ authorUrl && (
 							<span className="comment__author-url">

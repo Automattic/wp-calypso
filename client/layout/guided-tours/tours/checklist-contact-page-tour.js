@@ -30,6 +30,8 @@ export const ChecklistContactPageTour = makeTour(
 			target="side-menu-page"
 			style={ {
 				animationDelay: '0s',
+				marginLeft: '-60px',
+				marginTop: '-4px',
 			} }
 		>
 			<p>
@@ -52,9 +54,9 @@ export const ChecklistContactPageTour = makeTour(
 		<Step name="contact-page" placement="right">
 			<p>
 				{ translate(
-					'Your contact page makes it easy for people to reach out and get in touch. ' +
-						'Let’s personalize this page by editing the default text so that people ' +
-						'know how and when they can contact you.'
+					'Your contact page makes it easy for people to get in touch. Let’s personalize ' +
+						'this page by adding some explaining when and how people can contact you. ' +
+						'Click in the text area below to get started.'
 				) }
 			</p>
 			<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
@@ -69,7 +71,7 @@ export const ChecklistContactPageTour = makeTour(
 			<p>
 				{ translate(
 					'Featured images are a great way to add more personality to your pages. ' +
-						'Let’s add something a little more relevant to your contact page text.'
+						'Let’s add something a little more relevant to you and your site.'
 				) }
 			</p>
 			<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
@@ -81,6 +83,7 @@ export const ChecklistContactPageTour = makeTour(
 			target="media-library-upload-more"
 			placement="beside"
 			arrow="left-top"
+			style={ { marginTop: '-10px' } }
 		>
 			<p>{ translate( 'Either pick an image below or add a new one from your computer.' ) }</p>
 			<Next step="click-set-featured-image">{ translate( 'All done, continue' ) }</Next>
@@ -91,6 +94,7 @@ export const ChecklistContactPageTour = makeTour(
 			target="dialog-base-action-confirm"
 			arrow="right-top"
 			placement="beside"
+			style={ { marginTop: '-10px' } }
 		>
 			<Continue target="dialog-base-action-confirm" step="click-update" click>
 				{ translate(
@@ -102,7 +106,13 @@ export const ChecklistContactPageTour = makeTour(
 			</Continue>
 		</Step>
 
-		<Step name="click-update" target="editor-publish-button" arrow="right-top" placement="beside">
+		<Step
+			name="click-update"
+			target="editor-publish-button"
+			arrow="right-top"
+			placement="beside"
+			style={ { marginTop: '-10px' } }
+		>
 			<Continue target="editor-publish-button" step="finish" click>
 				{ translate( 'Almost done, press the {{b}}Update{{/b}} button to save your changes.', {
 					components: { b: <strong /> },
