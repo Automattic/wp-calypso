@@ -124,7 +124,7 @@ class InlineHelpSearchResults extends Component {
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.shouldOpenSelectedResult ) {
 			const url = this.getSelectedUrl();
-			this.followHelpLink( url );
+			this.followHelpLink( url )();
 			this.props.didOpenResult();
 			window.location = url;
 			return;
@@ -143,12 +143,9 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	renderHelpLink = ( link, index ) => {
-		const classes = [
-			'inline-help__results-item',
-			this.props.selectedResult === index && 'is-selected',
-		].filter( Boolean );
+		const classes = { 'is-selected': this.props.selectedResult === index };
 		return (
-			<li key={ link.link } className={ classNames( ...classes ) }>
+			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
 				<a
 					href={ link.link }
 					onClick={ this.followHelpLink( link.link ) }
@@ -170,14 +167,12 @@ class InlineHelpSearchResults extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	return {
-		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-		shouldOpenSelectedResult: shouldOpenSelectedResult( state ),
-		selectedResult: getSelectedResult( state ),
-	};
-};
+const mapStateToProps = ( state, ownProps ) => ( {
+	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+	shouldOpenSelectedResult: shouldOpenSelectedResult( state ),
+	selectedResult: getSelectedResult( state ),
+} );
 const mapDispatchToProps = {
 	didOpenResult,
 	setSearchResults,

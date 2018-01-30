@@ -39,8 +39,7 @@ class QueryInlineHelpSearch extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const { query } = ownProps;
+	( state, { query } ) => {
 		return {
 			requesting: isRequestingInlineHelpSearchResultsForQuery( state, query ),
 		};

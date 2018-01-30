@@ -130,6 +130,5 @@ const mapStateToProps = ( state, ownProps ) => {
 		searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	};
 };
-const mapDispatchToProps = null;
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );
+export default connect( mapStateToProps, null )( localize( InlineHelp ) );
