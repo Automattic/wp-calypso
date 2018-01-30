@@ -3,11 +3,18 @@
  * External dependencies
  */
 import i18n from 'i18n-calypso';
+import page from 'page';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getHappychatAuth } from 'state/happychat/utils';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import isHappychatConnectionUninitialized from 'state/happychat/selectors/is-happychat-connection-uninitialized';
+import { initConnection } from 'state/happychat/connection/actions';
+import { openChat } from 'state/happychat/ui/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import {
@@ -75,53 +82,83 @@ export const success = ( { dispatch }, action, { rewind_state } ) => {
 	} catch ( e ) {}
 };
 
-export const failure = ( { dispatch }, action, error ) => {
+export const failure = ( { dispatch, getState }, action, error ) => {
 	dispatch( {
 		type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
 		error,
 		siteId: action.siteId,
 	} );
 
+	const state = getState();
+	const getAuth = getHappychatAuth( state );
+
+	if ( isHappychatConnectionUninitialized( state ) ) {
+		dispatch( initConnection( getAuth() ) );
+	}
+
+	const getHelp = () => {
+		const clickState = getState();
+		const canChat = isHappychatAvailable( clickState ) || hasActiveHappychatSession( clickState );
+
+		return canChat ? dispatch( openChat() ) : page( '/help' );
+	};
+
 	const { translate } = i18n;
-	const errorMessage = get(
+	const [ errorMessage, extraOptions ] = get(
 		{
-			service_unavailable: () =>
-				translate( 'Our service is temporarily unavailable. Please try again soon.' ),
-			missing_args: () =>
+			service_unavailable: () => [
 				translate(
-					'Oops! It looks like some credentials fields were missing. ' +
-						'Please fill out all required fields and try again.'
+					"Our service is down. We're working to get things up and running. Please try again later."
 				),
-			invalid_args: () =>
+				{
+					button: translate( 'Try again' ),
+					onClick: () => dispatch( action ),
+				},
+			],
+			missing_args: () => [ translate( 'Please fill out the required fields.' ), null ],
+			invalid_args: () => [
 				translate(
-					'Oops! It looks like something was wrong with the supplied credentials. ' +
-						'Please confirm and try again.'
+					'Something is wrong with the credentials. Please make sure each field is correct.'
 				),
-			invalid_credentials: () =>
+				null,
+			],
+			invalid_credentials: () => [
+				translate( 'We could not connect to your site with these credentials. Please try again.' ),
+				null,
+			],
+			invalid_wordpress_path: () => [
+				translate( 'We could not find wp-config.php in the supplied WordPress installation path.' ),
+				{
+					button: translate( 'Get help' ),
+					onClick: getHelp,
+				},
+			],
+			read_only_install: () => [
 				translate(
-					'We could not login with the supplied credentials. Please confirm and try again.'
+					'The server is read-only. Without permission to write to the server, ' +
+						'we cannot perform backups and rewinds.'
 				),
-			invalid_wordpress_path: () =>
+				{
+					button: translate( 'Get help' ),
+					onClick: getHelp,
+				},
+			],
+			unreachable_path: () => [
 				translate(
-					'We could not find `wp-config.php` on the remote server with the given installation path. ' +
-						'Please confirm and try again.'
+					'We were unable to access the WordPress installation path with its publicly-available URL. ' +
+						'Please make sure the directory is accessible and try again.'
 				),
-			read_only_install: () =>
-				translate(
-					'We were unable to write on the remote server. We cannot proceed with read-only credentials. ' +
-						'Please confirm and try again.'
-				),
-			unreachable_path: () =>
-				translate(
-					'We were unable to confirm the mapping between the WordPress installation path and a ' +
-						'publicly-available URL. Please make sure the directory is accessible and try again.'
-				),
+				null,
+			],
 		},
 		error.error,
-		() => translate( 'Error saving. Please check your credentials and try again.' )
+		() => [ translate( 'Error saving. Please check your credentials and try again.' ), null ]
 	)();
 
-	dispatch( errorNotice( errorMessage, { duration: 4000, id: action.noticeId } ) );
+	const baseOptions = { duration: 4000, id: action.noticeId };
+	dispatch(
+		errorNotice( errorMessage, extraOptions ? { ...baseOptions, ...extraOptions } : baseOptions )
+	);
 };
 
 export default {
