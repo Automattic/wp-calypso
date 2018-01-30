@@ -28,7 +28,10 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
 
-const hasActiveImports = imports => !! find( imports, i => i.importerState !== appStates.INACTIVE );
+const hasActiveImports = imports =>
+	!! find( imports, ( { importerState } ) => {
+		return importerState !== appStates.INACTIVE && importerState !== appStates.READY_FOR_UPLOAD;
+	} );
 
 class SiteSettingsImport extends Component {
 	static propTypes = {
