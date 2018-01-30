@@ -111,7 +111,17 @@
 	align-self: center;
 	vertical-align: baseline;
 
+	min-width: 100px; // So success notice matches width of the button
+
 	@include breakpoint( '>480px' ) {
 		display: inline-block;
 	}
+
+	&.is-success {
+		background-color: lighten( $gray, 33% );
+		border: 0;
+		color: darken( $gray, 38% );
+		cursor: default;
+	}
 }
+

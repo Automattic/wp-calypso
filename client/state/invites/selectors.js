@@ -54,5 +54,18 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  * @return {Boolean}          Whether invites resend is being requested
  */
 export function isRequestingResend( state, siteId, inviteId ) {
-	return get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
+	return 'requesting' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
+}
+
+/**
+ * Returns true if request to resend invite for the given site and
+ * invite ID was successful, or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {Boolean}          Whether invite resend was a success
+ */
+export function didResendSucceed( state, siteId, inviteId ) {
+	return 'success' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
 }

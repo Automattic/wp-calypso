@@ -19,7 +19,7 @@ import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
-import { isRequestingResend } from 'state/invites/selectors';
+import { isRequestingResend, didResendSucceed, didResendFail } from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
 
 class PeopleListItem extends React.PureComponent {
@@ -63,11 +63,11 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	onResend = event => {
-		const { requestingResend, siteId, inviteKey } = this.props;
+		const { requestingResend, resendSuccess, siteId, inviteKey } = this.props;
 
 		event.preventDefault();
 
-		if ( requestingResend ) {
+		if ( requestingResend || resendSuccess ) {
 			return null;
 		}
 
@@ -75,12 +75,14 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	renderInviteStatus = () => {
-		const { invite, translate, requestingResend } = this.props;
+		const { invite, translate, requestingResend, resendSuccess } = this.props;
 		const { isPending } = invite;
-		const statusClasses = {
+		const className = classNames( 'people-list-item__invite-status', {
 			'is-pending': isPending,
-		};
-		const className = classNames( 'people-list-item__invite-status', statusClasses );
+		} );
+		const buttonClassName = classNames( 'people-list-item__invite-resend', {
+			'is-success': resendSuccess,
+		} );
 
 		return (
 			<div className={ className }>
@@ -88,12 +90,12 @@ class PeopleListItem extends React.PureComponent {
 				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
 				{ isPending && (
 					<Button
-						className="people-list-item__invite-resend"
+						className={ buttonClassName }
 						onClick={ this.onResend }
 						busy={ requestingResend }
 						compact
 					>
-						{ translate( 'Resend Invite' ) }
+						{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
 					</Button>
 				) }
 			</div>
@@ -140,6 +142,8 @@ export default connect(
 
 		return {
 			requestingResend: isRequestingResend( state, siteId, inviteKey ),
+			resendSuccess: didResendSucceed( state, siteId, inviteKey ),
+			resendFailure: didResendFail( state, siteId, inviteKey ),
 			siteId,
 			inviteKey,
 		};
