@@ -39,7 +39,7 @@ const user = new User(),
  * Local variables
  */
 
-var injectUrl,
+let injectUrl,
 	initialized,
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
@@ -96,7 +96,6 @@ const communityTranslatorJumpstart = {
 			return displayedTranslationFromPage;
 		}
 
-		const original_string = {};
 		const props = {
 			className: 'translatable',
 			'data-singular': originalFromPage,
