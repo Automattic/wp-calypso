@@ -69,7 +69,7 @@ import { isSitePreviewable } from 'state/sites/selectors';
 import { removep } from 'lib/formatting';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
-import { regexp as ShortCodeRegexp } from 'lib/shortcode';
+import { regexp as shortCodeRegexp } from 'lib/shortcode';
 
 export const PostEditor = createReactClass( {
 	displayName: 'PostEditor',
@@ -1183,7 +1183,7 @@ export const PostEditor = createReactClass( {
 			return [];
 		}
 
-		const shortcodeDetailsRegexp = ShortCodeRegexp( allShortcodes.join( '|' ) );
+		const shortcodeDetailsRegexp = shortCodeRegexp( allShortcodes.join( '|' ) );
 		const shortcodesDetails = [];
 
 		let shortcodeInfo;
