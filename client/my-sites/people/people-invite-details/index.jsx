@@ -18,6 +18,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
+import Gravatar from 'components/gravatar';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import { getSelectedInvite, isRequestingInvitesForSite } from 'state/invites/selectors';
 
@@ -45,10 +46,45 @@ class PeopleInviteDetails extends React.PureComponent {
 					invite={ invite }
 					user={ invite.user }
 					site={ site }
-					type="invite"
+					type="invite-details"
 					isSelectable={ false }
 				/>
+				{ invite && this.renderInviteDetails() }
 			</Card>
+		);
+	};
+
+	renderInviteDetails = () => {
+		const { invite, translate, moment } = this.props;
+		const showName = invite.invitedBy.login !== invite.invitedBy.name;
+
+		if ( ! invite ) {
+			return null;
+		}
+
+		return (
+			<div className="people-invite-details__meta">
+				<div className="people-invite-details__meta-item">
+					<span className="people-invite-details__meta-item-label">
+						{ translate( 'Invited By:' ) }
+					</span>
+					{ invite.invitedBy && <Gravatar user={ invite.invitedBy } size={ 24 } /> }
+					{ showName && (
+						<span className="people-invite-details__meta-item-user">invite.invitedBy.name</span>
+					) }
+					<span className="people-invite-details__meta-item-user">
+						{ '@' + invite.invitedBy.login }
+					</span>
+				</div>
+				<div className="people-invite-details__meta-item">
+					<span className="people-invite-details__meta-item-label">
+						{ translate( 'Last Sent:' ) }
+					</span>
+					<span className="people-invite-details__meta-item-date">
+						{ moment( invite.inviteDate ).format( 'LLL' ) }
+					</span>
+				</div>
+			</div>
 		);
 	};
 
