@@ -14,7 +14,10 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
-import { deauthorizeAccount } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
+import {
+	clearCompletedNotification,
+	deauthorizeAccount,
+} from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -83,6 +86,11 @@ class PaymentMethodStripeConnectedDialog extends Component {
 		this.props.deauthorizeAccount( siteId );
 	};
 
+	onDismissNotice = () => {
+		const { siteId } = this.props;
+		this.props.clearCompletedNotification( siteId );
+	};
+
 	notifyConnectionCompleted = () => {
 		const { stripeConnectAccount, translate } = this.props;
 		const { email, isActivated } = stripeConnectAccount;
@@ -98,7 +106,14 @@ class PaymentMethodStripeConnectedDialog extends Component {
 			);
 		}
 
-		return <Notice status="is-success" text={ text } />;
+		return (
+			<Notice
+				onDismissClick={ this.onDismissNotice }
+				showDismiss
+				status="is-success"
+				text={ text }
+			/>
+		);
 	};
 
 	renderMoreSettings = () => {
@@ -225,6 +240,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			clearCompletedNotification,
 			deauthorizeAccount,
 		},
 		dispatch
