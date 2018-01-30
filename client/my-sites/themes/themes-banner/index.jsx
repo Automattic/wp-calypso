@@ -19,9 +19,8 @@ export class ThemesBanner extends PureComponent {
 		backgroundColor: PropTypes.string,
 		image: PropTypes.string,
 		imageAttrs: PropTypes.shape( {
-			width: PropTypes.number,
-			height: PropTypes.number,
 			alt: PropTypes.string,
+			width: PropTypes.number,
 		} ),
 		imageTransform: PropTypes.string,
 		href: PropTypes.string,
