@@ -1,4 +1,6 @@
 .themes-banner {
+	$image_max_width: 410px;
+	
 	position: relative;
 	background: no-repeat $blue-medium;
 	color: white;
@@ -44,9 +46,15 @@
 	img {
 		position: absolute;
 		transform-origin: top right;
+		max-width: $image_max_width;
+		transition: opacity 400ms ease-in-out;
 		user-select: none;
 		top: 0;
 		right: 0;
+		
+		@media (max-width: 1440px) {
+			opacity: 0.5;
+		}
 	}
 	
 	.button {

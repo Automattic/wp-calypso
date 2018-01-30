@@ -71,6 +71,9 @@ const bannerProps = sample( [
 				},
 			}
 		),
+		action: () => {
+			alert( 'Photo Blog banner button clicked!' );
+		},
 		actionLabel: translate( 'See the theme' ),
 		backgroundColor: '#3FE6AF',
 		image: '/calypso/images/themes-banner/banner-1.png',
@@ -90,6 +93,9 @@ const bannerProps = sample( [
 				},
 			}
 		),
+		action: () => {
+			alert( 'Small Business banner button clicked!' );
+		},
 		actionLabel: translate( 'See the theme' ),
 		backgroundColor: '#3d596d',
 		image: '/calypso/images/themes-banner/banner-2.png',
