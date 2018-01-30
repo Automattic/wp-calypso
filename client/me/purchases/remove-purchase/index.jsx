@@ -90,9 +90,10 @@ class RemovePurchase extends Component {
 	recordEvent = ( name, properties = {} ) => {
 		const product_slug = get( this.props, 'selectedPurchase.productSlug' );
 		const cancellation_flow = 'remove';
+		const isAtomic = this.props.isAutomatedTransferSite;
 		this.props.recordTracksEvent(
 			name,
-			Object.assign( { cancellation_flow, product_slug }, properties )
+			Object.assign( { cancellation_flow, product_slug, isAtomic }, properties )
 		);
 	};
 
