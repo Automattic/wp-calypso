@@ -275,7 +275,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					var pixel = document.createElement( 'img' );
 					pixel.src = statsPixel + '?' + Object.keys( stats ).map( function (key) {
 						return encodeURIComponent( key ) + '=' + encodeURIComponent( stats[ key ] );
-					} ).join( '& ' );
+					} ).join( '&' );
 
 					var body = document.getElementsByTagName( 'body' )[ 0 ];
 					body.appendChild( pixel );
