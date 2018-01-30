@@ -94,7 +94,10 @@ export default connect( state => {
 	const rewindState = getRewindState( state, siteId ).state;
 
 	return {
-		showRewindCredentials: rewindState.state !== 'unavailable',
+		showRewindCredentials:
+			rewindState === 'awaitingCredentials' ||
+			rewindState === 'provisioning' ||
+			rewindState === 'active',
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),
