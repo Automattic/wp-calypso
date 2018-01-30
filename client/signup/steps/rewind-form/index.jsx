@@ -82,7 +82,7 @@ class RewindFormStep extends Component {
 					</div>
 				</Card>
 				<CompactCard className="rewind-form__help">
-					<Button className="rewind-form__help-button">
+					<Button className="rewind-form__help-button" borderless={ true }>
 						<Gridicon icon="help" size={ 18 } />
 						{ translate( "Need help finding your site's server credentials?" ) }
 					</Button>

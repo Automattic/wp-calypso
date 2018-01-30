@@ -45,9 +45,9 @@ class RewindAddStep extends Component {
 				<img className="rewind-add__image" src="/calypso/images/illustrations/security.svg" />
 				<p className="rewind-add__description">
 					{ translate(
-						'By adding your site credentials, you are giving WordPress.com access to perform' +
-							'automatic actions on your server including backing up your site, restoring your' +
-							'site, as well as manually accessing your site in case of an emergency.'
+						'By adding your site credentials, you are giving WordPress.com access to perform ' +
+							'automatic actions on your server including backing up your site, restoring your site, ' +
+							'as well as manually accessing your site in case of an emergency.'
 					) }
 				</p>
 				<Button primary onClick={ this.addCredentials }>
