@@ -76,7 +76,7 @@ const bannerProps = sample( [
 		},
 		actionLabel: translate( 'See the theme' ),
 		backgroundColor: '#3FE6AF',
-		image: '/calypso/images/themes-banner/banner-1.png',
+		image: '/calypso/images/themes-banner/photo-blog.png',
 		imageTransform: 'translateY(-4.4%) translateX(17%)',
 		imageAttrs: {
 			alt: translate( 'Photo Blog Theme' ),
@@ -98,7 +98,7 @@ const bannerProps = sample( [
 		},
 		actionLabel: translate( 'See the theme' ),
 		backgroundColor: '#3d596d',
-		image: '/calypso/images/themes-banner/banner-2.png',
+		image: '/calypso/images/themes-banner/small-business.png',
 		imageTransform: 'translateY(-19%) translateX(17%)',
 		imageAttrs: {
 			alt: translate( 'Small Business Theme' ),
