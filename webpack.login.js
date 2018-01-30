@@ -23,6 +23,7 @@ const config = {
 			'social-logos',
 			'store',
 			'wpcom',
+			'debug',
 		],
 	},
 	output: {
@@ -63,6 +64,7 @@ const config = {
 		} ),
 		new UglifyJSPlugin(),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
+		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } ),
 		new webpack.NormalModuleReplacementPlugin(
 			/layout-wrapper\/logged-in/,
 			'lodash/noop'
