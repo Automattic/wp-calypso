@@ -238,8 +238,18 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 		script(type='text/javascript').
 			(function () {
+				function getUUID() {
+					var d = new Date().getTime();
+					var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( char ) {
+						var r = (d + Math.random() * 16) % 16 | 0;
+						d = Math.floor(d / 16);
+						return (char == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+					} );
+					return uuid;
+				}
+
 				// Mini tracks
-				function recordTracksEvent( eventName, pathName ) {
+				function recordTracksEvent( eventName, pathName, loadId ) {
 					var statsPixel = '//pixel.wp.com/t.gif';
 					var stats = {
 						_pf: navigator.platform,
@@ -253,6 +263,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 						_tz: new Date().getTimezoneOffset() / 60,
 						_rt: Date.now(),
 						path: pathName,
+						load_id: loadId
 					};
 
 					if ( window.currentUser ) {
@@ -262,7 +273,9 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 					}
 
 					var pixel = document.createElement( 'img' );
-					pixel.src = statsPixel + '?' + Object.keys( stats ).map( key => encodeURIComponent( key ) + '=' + encodeURIComponent( stats[ key ] ) ).join( '& ' );
+					pixel.src = statsPixel + '?' + Object.keys( stats ).map( function (key) {
+						return encodeURIComponent( key ) + '=' + encodeURIComponent( stats[ key ] );
+					} ).join( '&' );
 
 					var body = document.getElementsByTagName( 'body' )[ 0 ];
 					body.appendChild( pixel );
@@ -271,15 +284,24 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 				}
 
 				try {
+					// exclude e2e tests
+					if ( navigator.userAgent.indexOf( 'wp-e2e-test' ) !== -1 ) {
+						return;
+					}
+
 					var pathName = window.location.pathname.split( "/" ).slice( 1, 2 )[ 0 ];
 					if ( pathName === 'log-in' && 'production' === window.configData.env ) {
+						var loadId = getUUID();
+						
+						var stats = recordTracksEvent( 'calypso_load_start', '/' + pathName, loadId );
 
-						var stats = recordTracksEvent( 'calypso_load_start', '/' + pathName );
 						if ( ! window.calypsoLoadStartTime ) {
 							window.calypsoLoadStartTime = {};
 						}
+
 						window.calypsoLoadStartTime[ pathName ] = {
 							startTimestamp: window.performance.now(),
+							loadId: loadId,
 						};
 
 					}
