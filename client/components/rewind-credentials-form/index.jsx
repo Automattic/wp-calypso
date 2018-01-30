@@ -225,9 +225,6 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									isError={ !! formErrors.path }
 								/>
-								<p className="form-setting-explanation">
-									{ translate( 'Only non-encrypted private keys are supported.' ) }
-								</p>
 							</FormFieldset>
 
 							<FormFieldset className="rewind-credentials-form__kpri">
@@ -240,6 +237,9 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									className="rewind-credentials-form__private-key"
 								/>
+								<p className="form-setting-explanation">
+									{ translate( 'Only non-encrypted private keys are supported.' ) }
+								</p>
 							</FormFieldset>
 						</div>
 					) }
