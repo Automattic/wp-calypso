@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import translator from 'lib/translator-jumpstart';
+import translator from 'lib/translator';
 import localStorageHelper from 'store';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';

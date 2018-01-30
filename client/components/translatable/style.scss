@@ -1,31 +1,11 @@
-.translatable__community-translator {
+.translatable__element {
 	display: inline-block;
-	position: relative;
-
-	.translatable__globe {
-		background-color: #dd3d36; // #ffba00 #4cb420
-		display: inline-block;
-		color: white;
-		margin: 0 2px;
-		cursor: alias;
+	cursor: pointer;
+	// TODO: create mixin in assets/stylesheets/shared/mixins
+	text-shadow: 0 0 10px #0f0, 0 0 2px #4cb420 !important;
+	&.is-untranslated {
+		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
 	}
 }
 
-.translatable__popover-content {
-	margin: 10px;
-	text-align: left;
-}
 
-
-/*
-.icons-globe {
-	height: 12px ! important;
-	width: 12px ! important;
-	position: absolute ! important;
-	fill: white ! important;
-	top: auto ! important;
-	left: 0 ! important;
-	right: auto ! important;
-	margin: 0 ! important;
-	padding: 0 ! important;
-}*/
