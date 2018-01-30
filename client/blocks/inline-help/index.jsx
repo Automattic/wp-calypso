@@ -78,7 +78,8 @@ class InlineHelp extends Component {
 		this.inlineHelpToggle = node;
 	};
 
-	moreHelpClicked() {
+	moreHelpClicked = () => {
+		this.closeInlineHelp();
 		tracks.recordEvent( 'calypso_inline-help_more_help_clicked' );
 	}
 
