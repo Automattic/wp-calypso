@@ -40,8 +40,10 @@ export const ChecklistPublishPostTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'It’s time to get your blog rolling with your first post. Let’s replace the default copy ' +
-						'with a brief introduction describing what your blog is about and how often you intend on posting.'
+					'It’s time to get your blog rolling with your first post. Let’s replace the copy ' +
+						'below with a brief introduction. Here are some questions that can help you out: ' +
+						'Who are you and where are you based? Why did you start this site? What can ' +
+						'visitors expect to get out of it?'
 				) }
 			</p>
 			<ButtonRow>
@@ -59,19 +61,17 @@ export const ChecklistPublishPostTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'Categories and Tags not only help organize your content but also bring people to' +
-						' your site via the Reader. Click on the {{b}}Categories and Tags{{/b}} section' +
-						' to expand it and pick one or two descriptive tags about your post for it to' +
-						' start showing up to other users in the Reader.',
+					'Categories and Tags not only help organize your content but also bring people to ' +
+						'your site via the Reader. Click on the {{b}}Categories and Tags{{/b}} section ' +
+						'to expand it and pick one or two descriptive tags like "blogging" or "welcome" ' +
+						'for it to start showing up to other users in the Reader.',
 					{
 						components: { b: <strong /> },
 					}
 				) }
 			</p>
-			<ButtonRow>
-				<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
-				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
-			</ButtonRow>
+
+			<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
 		</Step>
 
 		<Step
