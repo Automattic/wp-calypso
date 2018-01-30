@@ -70,6 +70,12 @@ describe( 'reducer', () => {
 								avatar_URL:
 									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 							},
+							invited_by: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+							},
 						},
 					],
 				}
@@ -88,6 +94,12 @@ describe( 'reducer', () => {
 							name: 'Pollo',
 							avatar_URL:
 								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						},
+						invitedBy: {
+							login: 'cow',
+							name: 'Vaca',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
 						},
 					},
 				],
@@ -110,6 +122,12 @@ describe( 'reducer', () => {
 							avatar_URL:
 								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 						},
+						invitedBy: {
+							login: 'cow',
+							name: 'Vaca',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+						},
 					},
 				],
 			};
@@ -127,6 +145,12 @@ describe( 'reducer', () => {
 							login: 'celery',
 							email: false,
 							name: 'Apio',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+						},
+						invited_by: {
+							login: 'cow',
+							name: 'Vaca',
 							avatar_URL:
 								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
 						},
@@ -148,6 +172,12 @@ describe( 'reducer', () => {
 							avatar_URL:
 								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 						},
+						invitedBy: {
+							login: 'cow',
+							name: 'Vaca',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+						},
 					},
 				],
 				67890: [
@@ -161,6 +191,12 @@ describe( 'reducer', () => {
 							login: 'celery',
 							email: false,
 							name: 'Apio',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+						},
+						invitedBy: {
+							login: 'cow',
+							name: 'Vaca',
 							avatar_URL:
 								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
 						},
@@ -185,6 +221,12 @@ describe( 'reducer', () => {
 							avatar_URL:
 								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 						},
+						invitedBy: {
+							login: 'cow',
+							name: 'Vaca',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+						},
 					},
 				],
 			} );
@@ -208,6 +250,12 @@ describe( 'reducer', () => {
 							name: 'Pollo',
 							avatar_URL:
 								'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						},
+						invitedBy: {
+							login: 'cow',
+							name: 'Vaca',
+							avatar_URL:
+								'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
 						},
 					},
 				],
@@ -238,6 +286,12 @@ describe( 'reducer', () => {
 								avatar_URL:
 									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 							},
+							invitedBy: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+							},
 							hasExtraInvalidProperty: true,
 						},
 					],
@@ -262,6 +316,12 @@ describe( 'reducer', () => {
 								name: 'Pollo',
 								avatar_URL:
 									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+							},
+							invitedBy: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
 							},
 						},
 					],

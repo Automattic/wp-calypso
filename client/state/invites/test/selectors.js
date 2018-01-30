@@ -13,6 +13,7 @@ import {
 	isRequestingResend,
 	getNumberOfInvitesFoundForSite,
 	didResendSucceed,
+	getSelectedInvite,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -70,6 +71,12 @@ describe( 'selectors', () => {
 									avatar_URL:
 										'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
 								},
+								invitedBy: {
+									login: 'cow',
+									name: 'Vaca',
+									avatar_URL:
+										'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+								},
 							},
 						],
 					},
@@ -85,6 +92,51 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( getInvitesForSite( state, 12345 ) ).to.equal( null );
+		} );
+	} );
+
+	describe( '#getSelectedInvite()', () => {
+		test( 'should return invite', () => {
+			const state = {
+				invites: {
+					items: {
+						12345: [
+							{
+								key: '123456asdf789',
+								role: 'follower',
+								isPending: null,
+								inviteDate: '2018-01-28T17:22:16+00:00',
+								acceptedDate: '2018-01-28T17:22:20+00:00',
+								user: {
+									login: 'chicken',
+									email: false,
+									name: 'Pollo',
+									avatar_URL:
+										'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+								},
+								invitedBy: {
+									login: 'cow',
+									name: 'Vaca',
+									avatar_URL:
+										'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+								},
+							},
+						],
+					},
+				},
+			};
+			expect( getSelectedInvite( state, 12345, '123456asdf789' ) ).to.eql(
+				state.invites.items[ 12345 ][ 0 ]
+			);
+		} );
+
+		test( 'should return null when invites do not exist for site', () => {
+			const state = {
+				invites: {
+					items: {},
+				},
+			};
+			expect( getSelectedInvite( state, 12345, '123456asdf789' ) ).to.equal( null );
 		} );
 	} );
 

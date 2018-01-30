@@ -24,6 +24,15 @@ export const inviteItemsSchema = {
 						},
 						additionalProperties: false,
 					},
+					invitedBy: {
+						type: 'object',
+						properties: {
+							login: { type: 'string' },
+							name: { type: 'string' },
+							avatar_URL: { type: 'string' },
+						},
+						additionalProperties: false,
+					},
 				},
 				additionalProperties: false,
 			},

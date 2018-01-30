@@ -55,9 +55,9 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  * @return {Object}           Invite object
  */
 export function getSelectedInvite( state, siteId, inviteId ) {
-	const items = get( state, [ 'invites', 'items', siteId ], false );
-	const selectedIndex = findIndex( items, [ 'key', inviteId ] );
-	return get( state, [ 'invites', 'items', siteId, selectedIndex ], false );
+	const siteInvites = getInvitesForSite( state, siteId );
+	const selectedIndex = findIndex( siteInvites, [ 'key', inviteId ] );
+	return get( state, [ 'invites', 'items', siteId, selectedIndex ], null );
 }
 
 /**
