@@ -52,7 +52,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
 			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
-				return preventWidows( translate( 'Some other message provided by Dan. :P' ) );
+				return preventWidows( translate( 'Congratulations! Your site is live.' ) );
 			}
 
 			return preventWidows(
@@ -152,7 +152,14 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		if ( isDomainTransfer( primaryPurchase ) ) {
 			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
-				return translate( 'also by dan' );
+				return translate(
+					"Your new site is all set up. There's just a few things left to do to get your domain " +
+						'{{strong}}%(domainName)s{{/strong}} moved to WordPress.com.',
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				);
 			}
 
 			return translate(
@@ -230,7 +237,7 @@ class CheckoutThankYouHeader extends PureComponent {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.startTransfer }>
-						{ translate( 'Start the transfer' ) }
+						{ translate( 'Start the domain transfer' ) }
 					</button>
 				</div>
 			);
