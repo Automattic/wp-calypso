@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { noop } from 'lodash';
 import classnames from 'classnames';
 
@@ -61,12 +61,9 @@ class PostPhotoImage extends React.Component {
 		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and
 		// complicate things
 		const linkTitle = title || '\xa0';
-		const divStyle = this.props.isExpanded
-			? { height: newHeight, width: newWidth, margin: '0 auto' }
-			: {};
 
 		return (
-			<div style={ divStyle }>
+			<Fragment>
 				<a
 					className={ classes }
 					href={ post.URL }
@@ -80,7 +77,7 @@ class PostPhotoImage extends React.Component {
 						</a>
 					</h1>
 				</AutoDirection>
-			</div>
+			</Fragment>
 		);
 	}
 }
