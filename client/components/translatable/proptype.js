@@ -9,11 +9,16 @@ function translatableStringChecker( props, propName, componentName ) {
 			return null;
 		}
 
+		// Translator Jumpstart old-style
+		if ( 'object' === typeof value && 'data' === value.type ) {
+			return null;
+		}
+
+		// Translator Jumpstart after #21591
 		if (
 			'object' === typeof value &&
-			'data' === value.type
-			// 'function' === typeof value.type &&
-			// 'Translatable' === value.type.name
+			'function' === typeof value.type &&
+			'Translatable' === value.type.name
 		) {
 			return null;
 		}
