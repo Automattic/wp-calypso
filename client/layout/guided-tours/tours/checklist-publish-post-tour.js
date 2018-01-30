@@ -80,15 +80,18 @@ export const ChecklistPublishPostTour = makeTour(
 			arrow="top-left"
 			placement="below"
 		>
-			<Continue target="editor-featured-image-current-image" step="choose-image" click>
-				<p>
-					{ translate(
-						'Featured images are a great way to add more personality to your pages. ' +
-							'Let’s add something a little more relevant to your blog post.'
-					) }
-				</p>
-				<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
-			</Continue>
+			<p>
+				{ translate(
+					'Featured images are a great way to add more personality to your pages. ' +
+						'Let’s add something a little more relevant to your blog post.'
+				) }
+			</p>
+			<p>{ translate( 'Press anywhere on this image so we can change it.' ) }</p>
+
+			<Next step="click-update" isButton={ false }>
+				{ translate( 'Skip this step' ) }
+			</Next>
+			<Continue target="editor-featured-image-current-image" step="choose-image" click hidden />
 		</Step>
 
 		<Step

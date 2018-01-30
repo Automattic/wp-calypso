@@ -141,6 +141,21 @@ a.config-elements__text-link,
 	}
 }
 
+.config-elements__text-button,
+button.config-elements__text-button,
+.is-primary.config-elements__text-button {
+	color: $white;
+	background: none;
+	text-decoration: underline;
+	padding: 0;
+	border: 0;
+	font-weight: normal;
+
+	&:hover {
+		text-decoration: none;
+	}
+}
+
 .guided-tours__single-button-row {
 	.button {
 		width: 100%;
