@@ -238,14 +238,19 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 		script(type='text/javascript').
 			(function () {
-				function getUUID() {
-					var d = new Date().getTime();
-					var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function ( char ) {
-						var r = (d + Math.random() * 16) % 16 | 0;
-						d = Math.floor(d / 16);
-						return (char == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-					} );
-					return uuid;
+				function generateRandomToken( randomBytesLength ) {
+					var randomBytes = [];
+
+					if ( window.crypto && window.crypto.getRandomValues ) {
+						randomBytes = new Uint8Array( randomBytesLength );
+						window.crypto.getRandomValues( randomBytes );
+					} else {
+						for ( var i = 0; i < randomBytesLength; ++i ) {
+							randomBytes[ i ] = Math.floor( Math.random() * 256 );
+						}
+					}
+
+					return btoa( String.fromCharCode.apply( String, randomBytes ) );
 				}
 
 				// Mini tracks
@@ -291,7 +296,7 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 
 					var pathName = window.location.pathname.split( "/" ).slice( 1, 2 )[ 0 ];
 					if ( pathName === 'log-in' && 'production' === window.configData.env ) {
-						var loadId = getUUID();
+						var loadId = generateRandomToken( 18 );
 						
 						var stats = recordTracksEvent( 'calypso_load_start', '/' + pathName, loadId );
 
