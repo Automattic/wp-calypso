@@ -504,7 +504,7 @@
       "integrity": "sha1-a8vQOKM3xwYn5/zkQ4+lgYjwk3s=",
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000798",
+        "caniuse-db": "1.0.30000799",
         "normalize-range": "0.1.2",
         "num2fraction": "1.2.2",
         "postcss": "5.2.18",
@@ -1883,7 +1883,7 @@
       "version": "1.3.6",
       "integrity": "sha1-lS/0jVZGPTtTj4XvL46t39KEsTM=",
       "requires": {
-        "caniuse-db": "1.0.30000798"
+        "caniuse-db": "1.0.30000799"
       }
     },
     "bser": {
@@ -2000,8 +2000,8 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000798",
-      "integrity": "sha1-kvJvd/icwqTWBIf0Hgs9Kmw/40E="
+      "version": "1.0.30000799",
+      "integrity": "sha1-CQSVPek/P0kmR+WMGhvaenOgyws="
     },
     "caniuse-lite": {
       "version": "1.0.30000792",
@@ -3334,7 +3334,7 @@
       "dev": true,
       "requires": {
         "browserslist": "1.3.6",
-        "caniuse-db": "1.0.30000798",
+        "caniuse-db": "1.0.30000799",
         "css-rule-stream": "1.1.0",
         "duplexer2": "0.0.2",
         "jsonfilter": "1.1.2",
@@ -7716,7 +7716,7 @@
       "requires": {
         "jest-mock": "22.1.0",
         "jest-util": "22.1.4",
-        "jsdom": "11.6.1"
+        "jsdom": "11.6.2"
       }
     },
     "jest-environment-node": {
@@ -8684,8 +8684,8 @@
       }
     },
     "jsdom": {
-      "version": "11.6.1",
-      "integrity": "sha512-x1vDo5CQuwsuP0w3kuU04vQdem9Q8apRV2PXp8GeSFQpgtYvSwbcypIbNgRrXu82O4TMroGYSAbu9wyVZHcehw==",
+      "version": "11.6.2",
+      "integrity": "sha512-pAeZhpbSlUp5yQcS6cBQJwkbzmv4tWFaYxHbFVSxzXefqjvtRA851Z5N2P+TguVG9YeUDcgb8pdeVQRJh0XR3Q==",
       "dev": true,
       "requires": {
         "abab": "1.0.4",
@@ -12673,11 +12673,12 @@
       }
     },
     "react-modal": {
-      "version": "3.1.0",
-      "integrity": "sha512-4sVW7Flm6sdaQeWr8OxXqMOuothdg+jnCA4MqloP65g2iWtOtho8VeI+z3SCsqunWefbuCHCnncxIBmDgPehQQ==",
+      "version": "3.1.11",
+      "integrity": "sha512-Pm4QAc+sWYrfRC+WRERV+JGeGZIfodZGdbvWmjPzeSWqP+EW5ATK4N1U/btNHZWFzKL1UOmkmNtozEQlEg7c+A==",
       "requires": {
         "exenv": "1.2.2",
-        "prop-types": "15.5.10"
+        "prop-types": "15.5.10",
+        "warning": "3.0.0"
       }
     },
     "react-pure-render": {
