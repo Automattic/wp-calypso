@@ -93,12 +93,6 @@ class Popover extends Component {
 		};
 	}
 
-	componentDidMount() {
-		this.bindEscKeyListener();
-		this.bindDebouncedReposition();
-		bindWindowListeners();
-	}
-
 	componentWillReceiveProps( nextProps ) {
 		// update context (target) reference into a property
 		if ( ! isDOMElement( nextProps.context ) ) {
@@ -140,6 +134,7 @@ class Popover extends Component {
 
 	componentWillUnmount() {
 		this.debug( 'unmounting .... ' );
+
 		this.unbindClickoutHandler();
 		this.unbindDebouncedReposition();
 		this.unbindEscKeyListener();
@@ -155,21 +150,12 @@ class Popover extends Component {
 			return null;
 		}
 
-		if ( this.escEventHandlerAdded ) {
-			return null;
-		}
-
 		this.debug( 'adding escKey listener ...' );
-		this.escEventHandlerAdded = true;
 		document.addEventListener( 'keydown', this.onKeydown, true );
 	}
 
 	unbindEscKeyListener() {
 		if ( ! this.props.closeOnEsc ) {
-			return null;
-		}
-
-		if ( ! this.escEventHandlerAdded ) {
 			return null;
 		}
 
@@ -381,6 +367,10 @@ class Popover extends Component {
 	}
 
 	show() {
+		this.bindEscKeyListener();
+		this.bindDebouncedReposition();
+		bindWindowListeners();
+
 		if ( ! this.props.showDelay ) {
 			this.setState( { show: true } );
 			return null;
@@ -397,6 +387,10 @@ class Popover extends Component {
 	hide() {
 		// unbind clickout-side event every time the component is hidden.
 		this.unbindClickoutHandler();
+		this.unbindDebouncedReposition();
+		this.unbindEscKeyListener();
+		unbindWindowListeners();
+
 		this.setState( { show: false } );
 		this.clearShowTimer();
 	}
