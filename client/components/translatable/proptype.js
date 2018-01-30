@@ -11,8 +11,9 @@ function translatableStringChecker( props, propName, componentName ) {
 
 		if (
 			'object' === typeof value &&
-			'function' === typeof value.type &&
-			'data' === value.type.name
+			'data' === value.type
+			// 'function' === typeof value.type &&
+			// 'Translatable' === value.type.name
 		) {
 			return null;
 		}

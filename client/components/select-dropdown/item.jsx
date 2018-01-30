@@ -13,10 +13,11 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import Count from 'components/count';
+import TranslatableString from 'components/translatable/proptype';
 
 class SelectDropdownItem extends Component {
 	static propTypes = {
-		children: PropTypes.string.isRequired,
+		children: TranslatableString.isRequired,
 		path: PropTypes.string,
 		isDropdownOpen: PropTypes.bool,
 		selected: PropTypes.bool,
