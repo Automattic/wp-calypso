@@ -13,6 +13,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import CommentLink from 'my-sites/comments/comment/comment-link';
 import CommentPostLink from 'my-sites/comments/comment/comment-post-link';
 import Emojify from 'components/emojify';
 import QueryComment from 'components/data/query-comment';
@@ -29,7 +30,7 @@ export class CommentContent extends Component {
 	};
 
 	renderInReplyTo = () => {
-		const { isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
+		const { commentId, isBulkMode, parentCommentContent, parentCommentUrl, translate } = this.props;
 
 		if ( ! parentCommentContent ) {
 			return null;
@@ -39,9 +40,13 @@ export class CommentContent extends Component {
 			<div className="comment__in-reply-to">
 				{ isBulkMode && <Gridicon icon="reply" size={ 18 } /> }
 				<span>{ translate( 'In reply to:' ) }</span>
-				<a href={ parentCommentUrl } tabIndex={ isBulkMode ? -1 : 0 }>
+				<CommentLink
+					commentId={ commentId }
+					href={ parentCommentUrl }
+					tabIndex={ isBulkMode ? -1 : 0 }
+				>
 					<Emojify>{ parentCommentContent }</Emojify>
-				</a>
+				</CommentLink>
 			</div>
 		);
 	};

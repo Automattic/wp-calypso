@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import CommentLink from 'my-sites/comments/comment/comment-link';
 import QueryPosts from 'components/data/query-posts';
 import { decodeEntities, stripHTML } from 'lib/formatting';
 import { getSiteComment } from 'state/selectors';
@@ -18,6 +19,7 @@ import { getSitePost } from 'state/posts/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 const CommentPostLink = ( {
+	commentId,
 	isBulkMode,
 	isPostTitleLoaded,
 	postId,
@@ -32,9 +34,13 @@ const CommentPostLink = ( {
 
 		<Gridicon icon={ isBulkMode ? 'chevron-right' : 'posts' } size={ 18 } />
 
-		<a href={ `/comments/${ status }/${ siteSlug }/${ postId }` } tabIndex={ isBulkMode ? -1 : 0 }>
+		<CommentLink
+			commentId={ commentId }
+			href={ `/comments/${ status }/${ siteSlug }/${ postId }` }
+			tabIndex={ isBulkMode ? -1 : 0 }
+		>
 			{ postTitle.trim() || translate( 'Untitled' ) }
-		</a>
+		</CommentLink>
 	</div>
 );
 
