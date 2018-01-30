@@ -59,7 +59,7 @@ const tasks = {
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
 		image: '/calypso/images/stats/tasks/contact.svg',
-		url: '/pages/$siteSlug',
+		url: '/post/$siteSlug/2',
 		tour: 'checklistContactPage',
 	},
 	custom_domain_registered: {
