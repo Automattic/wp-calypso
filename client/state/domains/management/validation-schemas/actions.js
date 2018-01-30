@@ -1,4 +1,8 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { castArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +15,7 @@ import {
 /**
  * Action creator function: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD
  *
- * @param  {Object} data   object of { tld: schema } pairs
+ * @param  {Object} data   object of { tld: schemaObject } pairs
  * @return {Object} action object
  */
 export const addValidationSchema = schemas => ( {
@@ -22,10 +26,10 @@ export const addValidationSchema = schemas => ( {
 /**
  * Action creator to request tld validation schemas: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST
  *
- * @param  {Array<String>} tlds List of tlds that we're requesting schemas for
+ * @param  {String|Array<String>} tlds List of tlds that we're requesting schemas for
  * @return {Object} action object
  */
 export const requestValidationSchema = tlds => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
-	data: tlds,
+	data: castArray( tlds ),
 } );
