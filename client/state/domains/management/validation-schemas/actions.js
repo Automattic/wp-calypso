@@ -14,9 +14,9 @@ import {
  * @param  {Object} data   object of { tld: schema } pairs
  * @return {Object} action object
  */
-export const addValidationSchema = data => ( {
+export const addValidationSchema = schemas => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD,
-	data,
+	schemas,
 } );
 
 /**

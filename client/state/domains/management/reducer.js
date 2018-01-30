@@ -10,6 +10,7 @@ import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
  * Internal dependencies
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
+import { validationSchemas } from './validation-schemas/reducer';
 import { domainWhoisSchema } from './schema';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
@@ -110,6 +111,7 @@ export default combineReducers( {
 	isRequestingContactDetailsCache,
 	isRequestingWhois,
 	isSaving,
+	validationSchemas,
 } );
 
 /**
