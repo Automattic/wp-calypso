@@ -3,6 +3,7 @@
  * External dependencies
  */
 import i18n from 'i18n-calypso';
+import page from 'page';
 import { get } from 'lodash';
 
 /**
@@ -25,6 +26,9 @@ import {
 } from 'state/action-types';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
+
+const navigateTo =
+	undefined !== typeof window ? path => window.open( path, '_blank' ) : path => page( path );
 
 /**
  * Makes sure that we can initialize a connection
@@ -108,9 +112,7 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		const state = getState();
 		const canChat = isHappychatAvailable( state ) || hasActiveHappychatSession( state );
 
-		return canChat
-			? dispatch( openChat() )
-			: undefined !== window && window.open( '/help', '_blank' );
+		return canChat ? dispatch( openChat() ) : navigateTo( '/help' );
 	};
 
 	const { translate } = i18n;
