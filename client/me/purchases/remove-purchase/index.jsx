@@ -28,13 +28,7 @@ import previousStep from 'components/marketing-survey/cancel-purchase-form/previ
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import {
-	isDomainRegistration,
-	isPlan,
-	isBusiness,
-	isGoogleApps,
-	isJetpackPlan,
-} from 'lib/products-values';
+import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -385,13 +379,12 @@ class RemovePurchase extends Component {
 			>
 				<CancelPurchaseForm
 					chatInitiated={ this.chatInitiated }
-					productName={ getName( selectedPurchase ) }
-					surveyStep={ this.state.surveyStep }
-					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
-					isJetpack={ isJetpackPlan( selectedPurchase ) }
+					purchase={ selectedPurchase }
 					selectedSite={ selectedSite }
+					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>
 		);
