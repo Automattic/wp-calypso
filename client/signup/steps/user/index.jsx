@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, isEmpty, omit } from 'lodash';
+import { identity, isEmpty, omit, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,7 +76,7 @@ export class UserStep extends Component {
 	componentWillMount() {
 		const { oauth2Signup, initialContext } = this.props,
 			clientId =
-				initialContext && initialContext.query && initialContext.query.oauth2_client_id
+				get( initialContext, [ 'query', 'oauth2_client_id' ] )
 					? initialContext.query.oauth2_client_id
 					: null;
 
