@@ -21,7 +21,7 @@ export class QueryTldValidationSchema extends Component {
 		tlds: PropTypes.array.isRequired,
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.fetchMissingSchemas( this.props.tlds );
 	}
 
