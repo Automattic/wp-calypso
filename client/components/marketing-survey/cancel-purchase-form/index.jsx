@@ -16,8 +16,6 @@ import { localize } from 'i18n-calypso';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -28,41 +26,7 @@ import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';
 import { getName } from 'lib/purchases';
 import { isJetpackPlan } from 'lib/products-values';
-
-const radioOption = (
-	key,
-	radioValue,
-	textValue,
-	onRadioChange,
-	onTextChange,
-	radioPrompt,
-	textPlaceholder
-) => {
-	const textInputKey = `${ key }Input`;
-
-	const textInput = textPlaceholder && (
-		<FormTextInput
-			className="cancel-purchase-form__reason-input"
-			name={ textInputKey }
-			id={ textInputKey }
-			value={ textValue }
-			onChange={ onTextChange }
-			placeholder={ textPlaceholder }
-		/>
-	);
-	return (
-		<FormLabel key={ key }>
-			<FormRadio
-				name={ key }
-				value={ key }
-				checked={ key === radioValue }
-				onChange={ onRadioChange }
-			/>
-			<span>{ radioPrompt }</span>
-			{ key === radioValue && textInput }
-		</FormLabel>
-	);
-};
+import { radioOption } from './radioOption';
 
 class CancelPurchaseForm extends React.Component {
 	static propTypes = {
@@ -78,6 +42,7 @@ class CancelPurchaseForm extends React.Component {
 
 	constructor( props ) {
 		super( props );
+
 		// shuffle reason order, but keep anotherReasonOne last
 		let questionOneOrder = shuffle( [
 			'couldNotInstall',
