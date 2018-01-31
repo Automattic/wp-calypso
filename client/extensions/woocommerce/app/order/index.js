@@ -64,7 +64,7 @@ class Order extends Component {
 
 		if ( this.props.isEditing && ! newProps.isEditing ) {
 			// Leaving edit state should re-fetch notes
-			this.props.fetchNotes( newSiteId, newOrderId, true );
+			this.props.fetchNotes( newSiteId, newOrderId );
 		}
 	}
 
