@@ -26,7 +26,7 @@ const EditorRevisionsListNavigation = ( {
 				className="editor-revisions-list__prev-button"
 				type="button"
 				onClick={ selectPreviousRevision }
-				disabled={ firstRevisionIsSelected }
+				disabled={ lastRevisionIsSelected }
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>
@@ -35,7 +35,7 @@ const EditorRevisionsListNavigation = ( {
 				className="editor-revisions-list__next-button"
 				type="button"
 				onClick={ selectNextRevision }
-				disabled={ lastRevisionIsSelected }
+				disabled={ firstRevisionIsSelected }
 			>
 				<Gridicon icon="chevron-up" />
 			</Button>
