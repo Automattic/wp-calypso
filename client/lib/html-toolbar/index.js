@@ -14,7 +14,7 @@ import { noop, reduce } from 'lodash';
  * @param {Element} textarea The editor textarea.
  * @returns {Object} The split textarea content.
  */
-const splitSelectedContent = textarea => {
+export const splitSelectedContent = textarea => {
 	const { selectionEnd, selectionStart, value } = textarea;
 	return {
 		before: value.substring( 0, selectionStart ),
@@ -27,11 +27,11 @@ const splitSelectedContent = textarea => {
  * Set the cursor position after the insertion of new content into a textarea.
  *
  * @param {Element} textarea The editor textarea.
- * @param {Number} previousSelectionEnd The previous textarea.selectionEnd value
  * @param {Number} insertedContentLength The length of the inserted content.
  */
-const setCursorPosition = ( textarea, previousSelectionEnd, insertedContentLength ) => {
-	textarea.selectionEnd = textarea.selectionStart = previousSelectionEnd + insertedContentLength;
+export const setCursorPosition = ( textarea, insertedContentLength ) => {
+	const { selectionEnd } = textarea;
+	textarea.selectionEnd = textarea.selectionStart = selectionEnd + insertedContentLength;
 };
 
 /**
@@ -44,7 +44,7 @@ const setCursorPosition = ( textarea, previousSelectionEnd, insertedContentLengt
  * @param {Function} onInsert A function to call after the insertion.
  */
 export const insertContent = ( textarea, before, content, after, onInsert = noop ) => {
-	const { selectionEnd, value } = textarea;
+	const { value } = textarea;
 	const newContent = before + content + after;
 
 	if ( Env.gecko ) {
@@ -55,13 +55,13 @@ export const insertContent = ( textarea, before, content, after, onInsert = noop
 		textarea.value = newContent;
 		textarea.focus();
 		document.execCommand( 'insertText', false, content );
-		setCursorPosition( textarea, selectionEnd, newContent.length - value.length );
+		setCursorPosition( textarea, newContent.length - value.length );
 		textarea.focus();
 	} else if ( 11 === Env.ie ) {
 		// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 		// Using the previous version of replacing the entire content value instead.
 		textarea.value = newContent;
-		setCursorPosition( textarea, selectionEnd, newContent.length - value.length );
+		setCursorPosition( textarea, newContent.length - value.length );
 	} else {
 		textarea.focus();
 		document.execCommand( 'insertText', false, content );

@@ -5,13 +5,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { map, noop, reduce } from 'lodash';
+import { map, reduce } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { closeHtmlTag, insertCustomContent, insertHtmlTag } from 'lib/html-toolbar';
+import AddImageDialog from 'post-editor/editor-html-toolbar/add-image-dialog';
+import AddLinkDialog from 'post-editor/editor-html-toolbar/add-link-dialog';
+import {
+	closeHtmlTag,
+	insertCustomContent,
+	insertHtmlTag,
+	insertHtmlTagOpenClose,
+	insertHtmlTagSelfClosed,
+	insertHtmlTagWithText,
+	setCursorPosition,
+	splitSelectedContent,
+} from 'lib/html-toolbar';
 
 export class CommentHtmlEditor extends Component {
 	static propTypes = {
@@ -22,6 +33,9 @@ export class CommentHtmlEditor extends Component {
 
 	state = {
 		openTags: [],
+		selectedText: '',
+		showImageDialog: false,
+		showLinkDialog: false,
 	};
 
 	componentWillMount() {
@@ -62,6 +76,19 @@ export class CommentHtmlEditor extends Component {
 			attributes: { datetime: this.props.moment().format() },
 		} );
 
+	onClickLink = ( attributes, text ) => {
+		if ( text ) {
+			insertHtmlTagWithText( this.textarea, { name: 'a', attributes, options: { text } } );
+		} else {
+			insertHtmlTagOpenClose( this.textarea, { name: 'a', attributes } );
+			// Move the cursor inside <a></a>
+			setCursorPosition( this.textarea, -4 );
+		}
+	};
+
+	onClickImage = attributes =>
+		insertHtmlTagSelfClosed( this.textarea, { name: 'img', attributes } );
+
 	onClickInsert = () =>
 		this.insertHtmlTag( {
 			name: 'ins',
@@ -82,9 +109,16 @@ export class CommentHtmlEditor extends Component {
 
 	onClickUnorderedList = () => this.insertHtmlTag( { name: 'ul', options: { paragraph: true } } );
 
-	openImageDialog = noop;
+	openImageDialog = () => this.setState( { showImageDialog: true } );
 
-	openLinkDialog = noop;
+	closeImageDialog = () => this.setState( { showImageDialog: false } );
+
+	openLinkDialog = () => {
+		const { inner } = splitSelectedContent( this.textarea );
+		this.setState( { selectedText: inner, showLinkDialog: true } );
+	};
+
+	closeLinkDialog = () => this.setState( { showLinkDialog: false } );
 
 	setCommentContentValue = event => this.setState( { commentContent: event.target.value } );
 
@@ -161,6 +195,19 @@ export class CommentHtmlEditor extends Component {
 					onChange={ onChange }
 					ref={ this.storeTextareaRef }
 					value={ commentContent }
+				/>
+
+				<AddImageDialog
+					onClose={ this.closeImageDialog }
+					onInsert={ this.onClickImage }
+					shouldDisplay={ this.state.showImageDialog }
+				/>
+
+				<AddLinkDialog
+					onClose={ this.closeLinkDialog }
+					onInsert={ this.onClickLink }
+					selectedText={ this.state.selectedText }
+					shouldDisplay={ this.state.showLinkDialog }
 				/>
 			</div>
 		);
