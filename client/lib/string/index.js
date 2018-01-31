@@ -1,13 +1,4 @@
 /** @format */
-
-/**
- * External dependencies
- */
-
-/**
- * Internal Dependencies
- */
-
 /**
  * Are two strings equal, when ignoring whitespace and case?
  *
@@ -17,6 +8,10 @@
  * @returns
  */
 export function areEqualIgnoringWhitespaceAndCase( a, b ) {
+	if ( ! a || ! b ) {
+		return false;
+	}
+
 	a = a.replace( /[\s'.\-_"]/g, '' );
 	b = b.replace( /[\s'.\-_"]/g, '' );
 	return a.toLowerCase() === b.toLowerCase();
