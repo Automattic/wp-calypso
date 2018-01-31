@@ -31,5 +31,5 @@ export const addValidationSchema = schemas => ( {
  */
 export const requestValidationSchemas = tlds => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
-	data: castArray( tlds ),
+	tlds: castArray( tlds ),
 } );
