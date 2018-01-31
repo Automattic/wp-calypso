@@ -140,9 +140,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
 				<LoggedOutFormBackLink
-					locale={ this.props.locale }
 					oauth2Client={ this.props.oauth2Client }
-					translate={ this.props.translate }
 					recordClick={ this.recordBackToWpcomLinkClick }
 					classes={ { 'logged-out-form__link-item': false } }
 				/>

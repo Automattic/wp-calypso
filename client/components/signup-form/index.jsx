@@ -585,9 +585,7 @@ class SignupForm extends Component {
 				</LoggedOutFormLinkItem>
 				{ this.props.oauth2Client && (
 					<LoggedOutFormBackLink
-						locale={ this.props.locale }
 						oauth2Client={ this.props.oauth2Client }
-						translate={ this.props.translate }
 						recordClick={ this.recordBackLinkClick }
 					/>
 				) }

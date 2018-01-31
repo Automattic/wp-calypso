@@ -6,6 +6,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import Gridicon from 'gridicons';
 
-export default function LoggedOutFormBackLink( props ) {
+function LoggedOutFormBackLink( props ) {
 	const { locale, oauth2Client, translate, recordClick } = props;
 
 	let url = addLocaleToWpcomUrl( 'https://wordpress.com', locale );
@@ -56,8 +57,10 @@ export default function LoggedOutFormBackLink( props ) {
 }
 LoggedOutFormBackLink.propTypes = {
 	classes: PropTypes.object,
-	locale: PropTypes.string.isRequired,
+	locale: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	recordClick: PropTypes.func.isRequired,
 	oauth2Client: PropTypes.object,
 };
+
+export default localize( LoggedOutFormBackLink );
