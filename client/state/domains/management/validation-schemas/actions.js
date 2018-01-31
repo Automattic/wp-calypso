@@ -29,7 +29,7 @@ export const addValidationSchema = schemas => ( {
  * @param  {String|Array<String>} tlds List of tlds that we're requesting schemas for
  * @return {Object} action object
  */
-export const requestValidationSchema = tlds => ( {
+export const requestValidationSchemas = tlds => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
 	data: castArray( tlds ),
 } );

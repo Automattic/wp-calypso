@@ -12,12 +12,12 @@ import { difference, isEmpty, isEqual, keys } from 'lodash';
  * Internal dependencies
  */
 import { getValidationSchemas } from 'state/selectors';
-import { requestValidationSchema } from 'state/domains/management/validation-schemas/actions';
+import { requestValidationSchemas } from 'state/domains/management/validation-schemas/actions';
 
 export class QueryTldValidationSchema extends Component {
 	static propTypes = {
 		validationSchemas: PropTypes.object.isRequired,
-		requestValidationSchema: PropTypes.func.isRequired,
+		requestValidationSchemas: PropTypes.func.isRequired,
 		tlds: PropTypes.array.isRequired,
 	};
 
@@ -35,7 +35,7 @@ export class QueryTldValidationSchema extends Component {
 	fetchMissingSchemas( tlds ) {
 		const missingSchemas = difference( tlds, keys( this.props.validationSchemas ) );
 		if ( ! isEmpty( missingSchemas ) ) {
-			this.props.requestValidationSchema( missingSchemas );
+			this.props.requestValidationSchemas( missingSchemas );
 		}
 	}
 
@@ -48,5 +48,5 @@ export default connect(
 	state => ( {
 		validationSchemas: getValidationSchemas( state ),
 	} ),
-	{ requestValidationSchema }
+	{ requestValidationSchemas }
 )( QueryTldValidationSchema );
