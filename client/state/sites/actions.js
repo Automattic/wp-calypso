@@ -124,11 +124,15 @@ export function requestSite( siteFragment ) {
 			.site( siteFragment )
 			.get()
 			.then( site => {
-				dispatch( receiveSite( omit( site, '_headers' ) ) );
-				dispatch( {
-					type: SITE_REQUEST_SUCCESS,
-					siteId: siteFragment,
-				} );
+				// If we can't manage the site, don't add it to state.
+				if ( site && site.capabilities ) {
+					dispatch( receiveSite( omit( site, '_headers' ) ) );
+
+					dispatch( {
+						type: SITE_REQUEST_SUCCESS,
+						siteId: siteFragment,
+					} );
+				}
 			} )
 			.catch( error => {
 				dispatch( {
