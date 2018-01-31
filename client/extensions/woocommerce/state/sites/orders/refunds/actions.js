@@ -3,11 +3,6 @@
 /**
  * Internal dependencies
  */
-
-import { fetchOrder } from '../actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isOrderRefunding } from './selectors';
-import request from 'woocommerce/state/sites/request';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import {
@@ -16,39 +11,38 @@ import {
 	WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
 } from 'woocommerce/state/action-types';
 
-export const sendRefund = ( siteId, orderId, refund ) => ( dispatch, getState ) => {
-	const state = getState();
-	if ( ! siteId ) {
-		siteId = getSelectedSiteId( state );
+export const sendRefund = ( siteId, orderId, refund, onSuccess = false, onFailure = false ) => {
+	if ( ! onFailure ) {
+		onFailure = errorNotice( translate( 'Unable to grant refund.' ), { duration: 5000 } );
 	}
-	if ( isOrderRefunding( state, orderId, siteId ) ) {
-		return;
+	if ( ! onSuccess ) {
+		onSuccess = successNotice( translate( 'Refund granted.' ), { duration: 5000 } );
 	}
 
-	dispatch( {
+	return {
 		type: WOOCOMMERCE_ORDER_REFUND_CREATE,
 		siteId,
 		orderId,
-	} );
+		refund,
+		onSuccess,
+		onFailure,
+	};
+};
 
-	return request( siteId )
-		.post( `orders/${ orderId }/refunds`, refund )
-		.then( () => {
-			dispatch( successNotice( translate( 'Refund granted.' ), { duration: 5000 } ) );
-			dispatch( fetchOrder( siteId, orderId, true ) );
-			dispatch( {
-				type: WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
-				siteId,
-				orderId,
-			} );
-		} )
-		.catch( error => {
-			dispatch( errorNotice( translate( 'Unable to grant refund.' ), { duration: 5000 } ) );
-			dispatch( {
-				type: WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
-				siteId,
-				orderId,
-				error,
-			} );
-		} );
+export const createRefundFailure = ( siteId, orderId, error = {} ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_REFUND_CREATE_FAILURE,
+		siteId,
+		orderId,
+		error,
+	};
+};
+
+export const createRefundSuccess = ( siteId, orderId, refund ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_REFUND_CREATE_SUCCESS,
+		siteId,
+		orderId,
+		refund,
+	};
 };
