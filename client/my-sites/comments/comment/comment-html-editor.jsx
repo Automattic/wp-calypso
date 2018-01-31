@@ -5,13 +5,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { map, noop } from 'lodash';
+import { map, noop, reduce } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { insertHtmlTag } from 'lib/html-toolbar';
+import { closeHtmlTag, insertCustomContent, insertHtmlTag } from 'lib/html-toolbar';
 
 export class CommentHtmlEditor extends Component {
 	static propTypes = {
@@ -44,23 +44,43 @@ export class CommentHtmlEditor extends Component {
 
 	onClickBold = () => this.insertHtmlTag( { name: 'strong' } );
 
-	onClickCloseTags = noop;
+	onClickCloseTags = () => {
+		const closedTags = reduce(
+			this.state.openTags,
+			( tags, openTag ) => closeHtmlTag( { name: openTag } ) + tags,
+			''
+		);
+		insertCustomContent( this.textarea, closedTags );
+		this.setState( { openTags: [] } );
+	};
 
-	onClickCode = noop;
+	onClickCode = () => this.insertHtmlTag( { name: 'code' } );
 
-	onClickDelete = noop;
+	onClickDelete = () =>
+		this.insertHtmlTag( {
+			name: 'del',
+			attributes: { datetime: this.props.moment().format() },
+		} );
 
-	onClickInsert = noop;
+	onClickInsert = () =>
+		this.insertHtmlTag( {
+			name: 'ins',
+			attributes: { datetime: this.props.moment().format() },
+		} );
 
-	onClickItalic = noop;
+	onClickItalic = () => this.insertHtmlTag( { name: 'em' } );
 
-	onClickListItem = noop;
+	onClickListItem = () =>
+		this.insertHtmlTag( {
+			name: 'li',
+			options: { indent: true, newLineAfter: true },
+		} );
 
-	onClickOrderedList = noop;
+	onClickOrderedList = () => this.insertHtmlTag( { name: 'ol', options: { paragraph: true } } );
 
-	onClickQuote = noop;
+	onClickQuote = () => this.insertHtmlTag( { name: 'blockquote', options: { paragraph: true } } );
 
-	onClickUnorderedList = noop;
+	onClickUnorderedList = () => this.insertHtmlTag( { name: 'ul', options: { paragraph: true } } );
 
 	openImageDialog = noop;
 

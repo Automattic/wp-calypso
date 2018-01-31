@@ -106,7 +106,7 @@ const openHtmlTag = ( { name, attributes = {}, options = {} } ) =>
  * @param {Object} tag The tag to close.
  * @returns {String} The closed tag.
  */
-const closeHtmlTag = ( { name, options = {} } ) =>
+export const closeHtmlTag = ( { name, options = {} } ) =>
 	`</${ name }>` + ( options.newLineAfter ? '\n' : '' ) + ( options.paragraph ? '\n\n' : '' );
 
 /**
