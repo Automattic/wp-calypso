@@ -33,15 +33,11 @@ class EditorRevisionsList extends PureComponent {
 	};
 
 	trySelectingFirstRevision = () => {
-		const { revisions } = this.props;
-		if ( ! revisions.length ) {
+		const { firstRevisionId } = this.props;
+		if ( ! firstRevisionId ) {
 			return;
 		}
-		const firstRevision = head( revisions );
-		if ( ! firstRevision.id ) {
-			return;
-		}
-		this.selectRevision( firstRevision.id );
+		this.selectRevision( firstRevisionId );
 	};
 
 	componentDidMount() {
@@ -107,22 +103,16 @@ class EditorRevisionsList extends PureComponent {
 		prevRevisionId && this.selectRevision( prevRevisionId );
 	};
 
-	selectedRevisionOrder = () => {
-		const { selectedRevisionId, revisions } = this.props;
-		const firstRevision = head( revisions );
-		const lastRevision = last( revisions );
-
-		if ( firstRevision && selectedRevisionId === firstRevision.id ) {
-			return 'latest';
-		}
-		if ( lastRevision && selectedRevisionId === lastRevision.id ) {
-			return 'earliest';
-		}
-		return '';
-	};
-
 	render() {
-		const { comparisons, postId, revisions, selectedRevisionId, siteId } = this.props;
+		const {
+			comparisons,
+			firstRevisionIsSelected,
+			lastRevisionIsSelected,
+			postId,
+			revisions,
+			selectedRevisionId,
+			siteId,
+		} = this.props;
 		const classes = classNames( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
 		} );
@@ -131,9 +121,10 @@ class EditorRevisionsList extends PureComponent {
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
 				<EditorRevisionsListNavigation
+					firstRevisionIsSelected={ firstRevisionIsSelected }
+					lastRevisionIsSelected={ lastRevisionIsSelected }
 					selectNextRevision={ this.selectNextRevision }
 					selectPreviousRevision={ this.selectPreviousRevision }
-					selectedRevisionOrder={ this.selectedRevisionOrder() }
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
@@ -161,9 +152,17 @@ class EditorRevisionsList extends PureComponent {
 }
 
 export default connect(
-	( state, { comparisons, selectedRevisionId } ) => {
+	( state, { comparisons, revisions, selectedRevisionId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
+		const firstRevisionId = get( head( revisions ), 'id' );
+		const firstRevisionIsSelected = firstRevisionId === selectedRevisionId;
+		const lastRevisionIsSelected =
+			! firstRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
+
 		return {
+			firstRevisionId,
+			firstRevisionIsSelected,
+			lastRevisionIsSelected,
 			nextRevisionId,
 			prevRevisionId,
 		};
