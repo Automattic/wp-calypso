@@ -111,37 +111,37 @@ describe( 'reducer', () => {
 			const state = items( undefined, {
 				type: SITES_RECEIVE,
 				sites: [
-					{ ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
-					{ ID: 77203074, name: 'Another test site', capabilities: {} },
+					{ ID: 2916284, name: 'WordPress.com Example Blog' },
+					{ ID: 77203074, name: 'Another test site' },
 				],
 			} );
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
-				77203074: { ID: 77203074, name: 'Another test site', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Another test site' },
 			} );
 		} );
 
 		test( 'overwrites sites when all sites are received', () => {
 			const original = deepFreeze( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
-				77203074: { ID: 77203074, name: 'Another test site', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Another test site' },
 			} );
 			const state = items( original, {
 				type: SITES_RECEIVE,
-				sites: [ { ID: 77203074, name: 'A Bowl of Pho', capabilities: {} } ],
+				sites: [ { ID: 77203074, name: 'A Bowl of Pho' } ],
 			} );
 			expect( state ).to.eql( {
-				77203074: { ID: 77203074, name: 'A Bowl of Pho', capabilities: {} },
+				77203074: { ID: 77203074, name: 'A Bowl of Pho' },
 			} );
 		} );
 
 		test( 'should return same state if received site matches existing', () => {
 			const original = deepFreeze( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				sites: [ { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} } ],
+				sites: [ { ID: 2916284, name: 'WordPress.com Example Blog' } ],
 			} );
 
 			expect( state ).to.equal( original );
@@ -150,26 +150,26 @@ describe( 'reducer', () => {
 		test( 'should index sites by ID', () => {
 			const state = items( undefined, {
 				type: SITE_RECEIVE,
-				site: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
+				site: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 		} );
 
 		test( 'should accumulate sites', () => {
 			const original = deepFreeze( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				site: { ID: 77203074, name: 'Just You Wait', capabilities: {} },
+				site: { ID: 77203074, name: 'Just You Wait' },
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
-				77203074: { ID: 77203074, name: 'Just You Wait', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Just You Wait' },
 			} );
 		} );
 
@@ -208,8 +208,8 @@ describe( 'reducer', () => {
 
 		test( 'should return the original state when deleting a site that is not present', () => {
 			const original = deepFreeze( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
-				77203074: { ID: 77203074, name: 'Just You Wait', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
+				77203074: { ID: 77203074, name: 'Just You Wait' },
 			} );
 
 			const state = items( original, {
@@ -222,15 +222,15 @@ describe( 'reducer', () => {
 
 		test( 'should override previous site of same ID', () => {
 			const original = deepFreeze( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 			const state = items( original, {
 				type: SITE_RECEIVE,
-				site: { ID: 2916284, name: 'Just You Wait', capabilities: {} },
+				site: { ID: 2916284, name: 'Just You Wait' },
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'Just You Wait', capabilities: {} },
+				2916284: { ID: 2916284, name: 'Just You Wait' },
 			} );
 		} );
 
@@ -241,13 +241,12 @@ describe( 'reducer', () => {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
 					slug: 'example.wordpress.com',
-					capabilities: {},
 					updateComputedAttributes() {},
 				},
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 		} );
 
@@ -259,14 +258,13 @@ describe( 'reducer', () => {
 						ID: 2916284,
 						name: 'WordPress.com Example Blog',
 						slug: 'example.wordpress.com',
-						capabilities: {},
 						updateComputedAttributes() {},
 					},
 				],
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 		} );
 
@@ -617,30 +615,6 @@ describe( 'reducer', () => {
 			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.be.null;
-		} );
-
-		test( 'should not store sites we cannot manage', () => {
-			const state = items( undefined, {
-				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
-					{ ID: 77203074, name: 'A Site I do not own' },
-				],
-			} );
-			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', capabilities: {} },
-			} );
-		} );
-
-		test( 'ignores all sites if we cannot manage them', () => {
-			const state = items( undefined, {
-				type: SITES_RECEIVE,
-				sites: [
-					{ ID: 2916284, name: 'WordPress.com Example Blog' },
-					{ ID: 77203074, name: 'A Site I do not own' },
-				],
-			} );
-			expect( state ).to.eql( null );
 		} );
 	} );
 
