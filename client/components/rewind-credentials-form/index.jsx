@@ -79,11 +79,22 @@ export class RewindCredentialsForm extends Component {
 			...this.state.form,
 		};
 
+		let userError = '';
+
+		if ( ! payload.user ) {
+			userError = translate( 'Please enter your server username.' );
+		} else if ( 'root' === payload.user ) {
+			userError = translate(
+				"We can't accept credentials for the root user. " +
+					'Please acquire or create credentials for another user with access to your server.'
+			);
+		}
+
 		const errors = Object.assign(
 			! payload.host && { host: translate( 'Please enter a valid server address.' ) },
 			! payload.port && { port: translate( 'Please enter a valid server port.' ) },
 			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
-			! payload.user && { user: translate( 'Please enter your server username.' ) },
+			userError && { user: userError },
 			! payload.pass &&
 				! payload.kpri && { pass: translate( 'Please enter your server password.' ) }
 		);
