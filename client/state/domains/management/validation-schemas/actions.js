@@ -15,8 +15,8 @@ import {
 /**
  * Action creator function: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD
  *
- * @param  {Object} data   object of { tld: schemaObject } pairs
- * @return {Object} action object
+ * @param  {Object} schemas object of { tld: schemaObject } pairs
+ * @return {Object} action
  */
 export const addValidationSchema = schemas => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD,
@@ -27,7 +27,7 @@ export const addValidationSchema = schemas => ( {
  * Action creator to request tld validation schemas: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST
  *
  * @param  {String|Array<String>} tlds List of tlds that we're requesting schemas for
- * @return {Object} action object
+ * @return {Object} action
  */
 export const requestValidationSchemas = tlds => ( {
 	type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
