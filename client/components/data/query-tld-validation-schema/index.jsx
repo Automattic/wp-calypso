@@ -6,26 +6,36 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { difference, isEmpty, keys } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getValidationSchemas } from 'state/selectors';
-import { requestValidationSchema } from 'state/domains/validation-schemas/actions';
+import { requestValidationSchema } from 'state/domains/management/validation-schemas/actions';
 
-class QueryTldValidationSchema extends Component {
+export class QueryTldValidationSchema extends Component {
 	static propTypes = {
-		validationSchemas: PropTypes.object,
-		requestValidationSchema: PropTypes.func,
+		validationSchemas: PropTypes.object.isRequired,
+		requestValidationSchema: PropTypes.func.isRequired,
+		tlds: PropTypes.array.isRequired,
 	};
 
-	static defaultProps = {
-		requestValidationSchema: () => {},
-	};
+	componentWillMount() {
+		this.fetchMissingSchemas( this.props.tlds );
+	}
 
-	componentDidMount() {
-		if ( ! this.props.validationSchemas ) {
-			this.props.requestValidationSchema();
+	componentWillReceiveProps( nextProps ) {
+		const newTlds = nextProps.tlds;
+		if ( this.props.tlds !== newTlds ) {
+			this.fetchMissingSchemas( newTlds );
+		}
+	}
+
+	fetchMissingSchemas( tlds ) {
+		const missingSchemas = difference( tlds, keys( this.props.validationSchemas ) );
+		if ( ! isEmpty( missingSchemas ) ) {
+			this.props.requestValidationSchema( missingSchemas );
 		}
 	}
 
