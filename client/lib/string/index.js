@@ -14,7 +14,7 @@ export function areEqualIgnoringWhitespaceAndCase( a, b ) {
 	}
 
 	// If we don't have strings for this part, bail out
-	if ( a === null || b === null ) {
+	if ( ! a || ! b ) {
 		return false;
 	}
 
