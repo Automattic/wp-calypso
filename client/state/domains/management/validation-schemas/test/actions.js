@@ -13,14 +13,14 @@ describe( 'Domain Validation Schema Actions', () => {
 	test( '#requestValidationSchemas()', () => {
 		expect( requestValidationSchemas( [ 'uk' ] ) ).toEqual( {
 			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
-			data: [ 'uk' ],
+			tlds: [ 'uk' ],
 		} );
 	} );
 
 	test( '#addValidationSchema()', () => {
 		expect( addValidationSchema( { uk: {} } ) ).toEqual( {
 			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD,
-			data: { uk: {} },
+			schemas: { uk: {} },
 		} );
 	} );
 } );
