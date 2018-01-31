@@ -51,7 +51,10 @@ class CancelPurchaseForm extends React.Component {
 		const questionTwoOrder = shuffle( nextAdventureOptionsForPurchase( purchase ) );
 
 		questionOneOrder.push( 'anotherReasonOne' );
-		questionTwoOrder.push( 'anotherReasonTwo' );
+
+		if ( questionTwoOrder.length > 0 ) {
+			questionTwoOrder.push( 'anotherReasonTwo' );
+		}
 
 		this.state = {
 			questionOneRadio: null,
@@ -160,6 +163,21 @@ class CancelPurchaseForm extends React.Component {
 		);
 
 		appendRadioOption(
+			'noLongerWantToTransfer',
+			translate( 'I no longer want to transfer my domain.' )
+		);
+
+		appendRadioOption(
+			'couldNotCompleteTransfer',
+			translate( 'Something went wrong and I could not complete the transfer.' )
+		);
+
+		appendRadioOption(
+			'useDomainWithoutTransferring',
+			translate( 'I’m going to use my domain with WordPress.com without transferring it.' )
+		);
+
+		appendRadioOption(
 			'anotherReasonOne',
 			translate( 'Another reason…' ),
 			translate( 'How can we improve?' )
@@ -177,6 +195,10 @@ class CancelPurchaseForm extends React.Component {
 		const reasons = {};
 		const { translate } = this.props;
 		const { questionTwoOrder, questionTwoRadio, questionTwoText } = this.state;
+
+		if ( questionTwoOrder.length === 0 ) {
+			return null;
+		}
 
 		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
 			( reasons[ key ] = radioOption(
