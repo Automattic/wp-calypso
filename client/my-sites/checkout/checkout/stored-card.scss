@@ -45,6 +45,18 @@
 	background-image: url('/calypso/images/upgrades/cc-discover-disabled.svg');
 }
 
+.stored-card.diners {
+	background-image: url('/calypso/images/upgrades/cc-diners-disabled.svg');
+}
+
+.stored-card.jcb {
+	background-image: url('/calypso/images/upgrades/cc-jcb-disabled.svg');
+}
+
+.stored-card.unionpay {
+	background-image: url('/calypso/images/upgrades/cc-unionpay-disabled.svg');
+}
+
 .selected > .payment-box-section-inner {
 	.stored-card.visa {
 		background-image: url('/calypso/images/upgrades/cc-visa.svg');
@@ -60,5 +72,18 @@
 
 	.stored-card.discover {
 		background-image: url('/calypso/images/upgrades/cc-discover.svg');
+	}
+
+
+	.stored-card.diners {
+		background-image: url('/calypso/images/upgrades/cc-diners.svg');
+	}
+
+	.stored-card.jcb {
+		background-image: url('/calypso/images/upgrades/cc-jcb.svg');
+	}
+
+	.stored-card.unionpay {
+		background-image: url('/calypso/images/upgrades/cc-unionpay.svg');
 	}
 }
