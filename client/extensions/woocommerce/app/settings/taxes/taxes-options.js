@@ -16,16 +16,37 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 class TaxesOptions extends Component {
 	static propTypes = {
 		onCheckboxChange: PropTypes.func.isRequired,
 		pricesIncludeTaxes: PropTypes.bool,
 		shippingIsTaxable: PropTypes.bool,
+		shipToCountry: PropTypes.shape( {
+			value: PropTypes.string,
+		} ),
 	};
 
 	render = () => {
-		const { onCheckboxChange, pricesIncludeTaxes, shippingIsTaxable, translate } = this.props;
+		const {
+			onCheckboxChange,
+			pricesIncludeTaxes,
+			shippingIsTaxable,
+			shipToCountry,
+			translate,
+		} = this.props;
+
+		let shippingDisabled = false;
+		let shippingDisabledMessage = null;
+		if ( shipToCountry && shipToCountry.value && 'disabled' === shipToCountry.value ) {
+			shippingDisabled = true;
+			shippingDisabledMessage = (
+				<FormSettingExplanation>
+					{ translate( 'Shipping has been disabled for this site.' ) }
+				</FormSettingExplanation>
+			);
+		}
 
 		return (
 			<div className="taxes__taxes-options">
@@ -48,8 +69,10 @@ class TaxesOptions extends Component {
 								checked={ shippingIsTaxable || false }
 								name="shippingIsTaxable"
 								onChange={ onCheckboxChange }
+								disabled={ shippingDisabled }
 							/>
 							<span>{ translate( 'Charge taxes on shipping costs' ) }</span>
+							{ shippingDisabledMessage }
 						</FormLabel>
 					</FormFieldset>
 				</Card>
