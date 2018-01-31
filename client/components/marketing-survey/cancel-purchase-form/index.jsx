@@ -27,6 +27,41 @@ import * as steps from './steps';
 import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';
 
+const radioOption = (
+	key,
+	radioValue,
+	textValue,
+	onRadioChange,
+	onTextChange,
+	radioPrompt,
+	textPlaceholder
+) => {
+	const textInputKey = `${ key }Input`;
+
+	const textInput = textPlaceholder && (
+		<FormTextInput
+			className="cancel-purchase-form__reason-input"
+			name={ textInputKey }
+			id={ textInputKey }
+			value={ textValue }
+			onChange={ onTextChange }
+			placeholder={ textPlaceholder }
+		/>
+	);
+	return (
+		<FormLabel key={ key }>
+			<FormRadio
+				name={ key }
+				value={ key }
+				checked={ key === radioValue }
+				onChange={ onRadioChange }
+			/>
+			<span>{ radioPrompt }</span>
+			{ key === radioValue && textInput }
+		</FormLabel>
+	);
+};
+
 class CancelPurchaseForm extends React.Component {
 	static propTypes = {
 		productName: PropTypes.string.isRequired,
@@ -132,43 +167,8 @@ class CancelPurchaseForm extends React.Component {
 		const { translate } = this.props;
 		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
 
-		const radioOption = (
-			key,
-			radioValue,
-			textValue,
-			onRadioChange,
-			onTextChange,
-			radioPrompt,
-			textPlaceholder
-		) => {
-			const textInputKey = `${ key }Input`;
-
-			const textInput = (
-				<FormTextInput
-					className="cancel-purchase-form__reason-input"
-					name={ textInputKey }
-					id={ textInputKey }
-					value={ textValue }
-					onChange={ onTextChange }
-					placeholder={ textPlaceholder }
-				/>
-			);
-			return (
-				<FormLabel key={ key }>
-					<FormRadio
-						name={ key }
-						value={ key }
-						checked={ key === radioValue }
-						onChange={ onRadioChange }
-					/>
-					<span>{ radioPrompt }</span>
-					{ key === radioValue && textInput }
-				</FormLabel>
-			);
-		};
-
-		const radioOptionOne = ( key, radioPrompt, textPlaceholder ) =>
-			radioOption(
+		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+			( reasons[ key ] = radioOption(
 				key,
 				questionOneRadio,
 				questionOneText,
@@ -176,38 +176,42 @@ class CancelPurchaseForm extends React.Component {
 				this.onTextOneChange,
 				radioPrompt,
 				textPlaceholder
-			);
+			) );
 
-		reasons.couldNotInstall = radioOptionOne(
+		appendRadioOption(
 			'couldNotInstall',
 			translate( "I couldn't install a plugin/theme I wanted." ),
 			translate( 'What plugin/theme were you trying to install?' )
 		);
 
-		reasons.tooHard = radioOptionOne(
+		appendRadioOption(
 			'tooHard',
 			translate( 'It was too hard to set up my site.' ),
 			translate( 'Where did you run into problems?' )
 		);
 
-		reasons.didNotInclude = radioOptionOne(
+		appendRadioOption(
 			'didNotInclude',
 			translate( "This upgrade didn't include what I needed." ),
 			translate( 'What are we missing that you need?' )
 		);
 
-		reasons.onlyNeedFreeInput = radioOptionOne(
+		appendRadioOption(
 			'onlyNeedFree',
 			translate( 'The plan was too expensive.' ),
 			translate( 'How can we improve our upgrades?' )
 		);
 
-		reasons.anotherReasonOne = radioOptionOne( 'anotherReasonOne', translate( 'Another reason…' ) );
-
-		reasons.couldNotActivate = radioOption(
+		appendRadioOption(
 			'couldNotActivate',
 			translate( 'I was unable to activate or use the product.' ),
 			translate( 'Where did you run into problems?' )
+		);
+
+		appendRadioOption(
+			'anotherReasonOne',
+			translate( 'Another reason…' ),
+			translate( 'How can we improve?' )
 		);
 
 		return (
@@ -221,164 +225,61 @@ class CancelPurchaseForm extends React.Component {
 	renderQuestionTwo = () => {
 		const reasons = {};
 		const { translate } = this.props;
+		const { questionTwoOrder, questionTwoRadio, questionTwoText } = this.state;
 
-		reasons.stayingHere = (
-			<FormLabel key="stayingHere">
-				<FormRadio
-					name="stayingHere"
-					value="stayingHere"
-					checked={ 'stayingHere' === this.state.questionTwoRadio }
-					onChange={ this.onRadioTwoChange }
-				/>
-				<span>{ translate( "I'm staying here and using the free plan." ) }</span>
-			</FormLabel>
-		);
+		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
+			( reasons[ key ] = radioOption(
+				key,
+				questionTwoRadio,
+				questionTwoText,
+				this.onRadioTwoChange,
+				this.onTextTwoChange,
+				radioPrompt,
+				textPlaceholder
+			) );
 
-		const otherWordPressInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="otherWordPressInput"
-				id="otherWordPressInput"
-				value={ this.state.questionTwoText }
-				onChange={ this.onTextTwoChange }
-				placeholder={ translate( 'Mind telling us where?' ) }
-			/>
-		);
-		reasons.otherWordPress = (
-			<FormLabel key="otherWordPress">
-				<FormRadio
-					name="otherWordPress"
-					value="otherWordPress"
-					checked={ 'otherWordPress' === this.state.questionTwoRadio }
-					onChange={ this.onRadioTwoChange }
-				/>
-				<span>{ translate( "I'm going to use WordPress somewhere else." ) }</span>
-				{ 'otherWordPress' === this.state.questionTwoRadio && otherWordPressInput }
-			</FormLabel>
+		appendRadioOption( 'stayingHere', translate( "I'm staying here and using the free plan." ) );
+
+		appendRadioOption(
+			'otherWordPress',
+			translate( "I'm going to use WordPress somewhere else." ),
+			translate( 'Mind telling us where?' )
 		);
 
-		const differentServiceInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="differentServiceInput"
-				id="differentServiceInput"
-				value={ this.state.questionTwoText }
-				onChange={ this.onTextTwoChange }
-				placeholder={ translate( 'Mind telling us which one?' ) }
-			/>
-		);
-		reasons.differentService = (
-			<FormLabel key="differentService">
-				<FormRadio
-					name="differentService"
-					value="differentService"
-					checked={ 'differentService' === this.state.questionTwoRadio }
-					onChange={ this.onRadioTwoChange }
-				/>
-				<span>{ translate( "I'm going to use a different service for my website or blog." ) }</span>
-				{ 'differentService' === this.state.questionTwoRadio && differentServiceInput }
-			</FormLabel>
+		appendRadioOption(
+			'differentService',
+			translate( "I'm going to use a different service for my website or blog." ),
+			translate( 'Mind telling us which one?' )
 		);
 
-		const noNeedInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="noNeedInput"
-				id="noNeedInput"
-				value={ this.state.questionTwoText }
-				onChange={ this.onTextTwoChange }
-				placeholder={ translate( 'What will you do instead?' ) }
-			/>
-		);
-		reasons.noNeed = (
-			<FormLabel key="noNeed">
-				<FormRadio
-					name="noNeed"
-					value="noNeed"
-					checked={ 'noNeed' === this.state.questionTwoRadio }
-					onChange={ this.onRadioTwoChange }
-				/>
-				<span>{ translate( 'I no longer need a website or blog.' ) }</span>
-				{ 'noNeed' === this.state.questionTwoRadio && noNeedInput }
-			</FormLabel>
+		appendRadioOption(
+			'noNeed',
+			translate( 'I no longer need a website or blog.' ),
+			translate( 'What will you do instead?' )
 		);
 
-		const anotherReasonTwoInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="anotherReasonTwoInput"
-				value={ this.state.questionTwoText }
-				onChange={ this.onTextTwoChange }
-				id="anotherReasonTwoInput"
-			/>
-		);
-		reasons.anotherReasonTwo = (
-			<FormLabel key="anotherReasonTwo">
-				<FormRadio
-					name="anotherReasonTwo"
-					value="anotherReasonTwo"
-					checked={ 'anotherReasonTwo' === this.state.questionTwoRadio }
-					onChange={ this.onRadioTwoChange }
-				/>
-				<span>{ translate( 'Another reason…' ) }</span>
-				{ 'anotherReasonTwo' === this.state.questionTwoRadio && anotherReasonTwoInput }
-			</FormLabel>
+		appendRadioOption(
+			'otherPlugin',
+			translate( 'I found a better plugin or service.' ),
+			translate( 'Mind telling us which one(s)?' )
 		);
 
-		// Survey questions only for Jetpack subscriptions
-		const otherPluginInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="otherPluginInput"
-				id="otherPluginInput"
-				value={ this.state.questionTwoText }
-				onChange={ this.onTextTwoChange }
-				placeholder={ translate( 'Mind telling us which one(s)?' ) }
-			/>
-		);
-		reasons.otherPlugin = (
-			<FormLabel key="otherPlugin">
-				<FormRadio
-					name="otherPlugin"
-					value="otherPlugin"
-					checked={ 'otherPlugin' === this.state.questionTwoRadio }
-					onChange={ this.onRadioTwoChange }
-				/>
-				<span>{ translate( 'I found a better plugin or service.' ) }</span>
-				{ 'otherPlugin' === this.state.questionTwoRadio && otherPluginInput }
-			</FormLabel>
+		appendRadioOption(
+			'leavingWP',
+			translate( "I'm moving my site off of WordPress." ),
+			translate( 'Any particular reason(s)?' )
 		);
 
-		const leavingWPInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="leavingWPInput"
-				id="leavingWPInput"
-				value={ this.state.questionTwoText }
-				onChange={ this.onTextTwoChange }
-				placeholder={ translate( 'Any particular reason(s)?' ) }
-			/>
+		appendRadioOption(
+			'anotherReasonTwo',
+			translate( 'Another reason…' ),
+			translate( 'How can we improve?' )
 		);
-		reasons.leavingWP = (
-			<FormLabel key="leavingWP">
-				<FormRadio
-					name="leavingWP"
-					value="leavingWP"
-					checked={ 'leavingWP' === this.state.questionTwoRadio }
-					onChange={ this.onRadioTwoChange }
-				/>
-				<span>{ translate( "I'm moving my site off of WordPress." ) }</span>
-				{ 'leavingWP' === this.state.questionTwoRadio && leavingWPInput }
-			</FormLabel>
-		);
-
-		const { questionTwoOrder } = this.state,
-			orderedReasons = questionTwoOrder.map( question => reasons[ question ] );
 
 		return (
 			<div>
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
-				{ orderedReasons }
+				{ questionTwoOrder.map( question => reasons[ question ] ) }
 			</div>
 		);
 	};
@@ -461,7 +362,6 @@ class CancelPurchaseForm extends React.Component {
 				);
 			}
 
-			// Render concierge offer if appropriate
 			if ( surveyStep === steps.CONCIERGE_STEP ) {
 				return (
 					<div>
@@ -490,7 +390,6 @@ class CancelPurchaseForm extends React.Component {
 				return <UpgradeATStep />;
 			}
 
-			// Render cancellation step
 			return (
 				<div>
 					<FormSectionHeading>
