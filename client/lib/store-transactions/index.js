@@ -221,6 +221,7 @@ function createPaygateToken( requestType, cardDetails, callback ) {
 		{
 			request_type: requestType,
 			country: cardDetails.country,
+			card_brand: cardDetails.brand,
 		},
 		function( configError, configuration ) {
 			if ( configError ) {
