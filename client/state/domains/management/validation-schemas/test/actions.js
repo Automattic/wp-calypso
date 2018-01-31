@@ -3,15 +3,15 @@
 /**
  * Internal dependencies
  */
-import { addValidationSchema, requestValidationSchema } from '../actions';
+import { addValidationSchema, requestValidationSchemas } from '../actions';
 import {
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
 	DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD,
 } from 'state/action-types';
 
 describe( 'Domain Validation Schema Actions', () => {
-	test( '#requestValidationSchema()', () => {
-		expect( requestValidationSchema( [ 'uk' ] ) ).toEqual( {
+	test( '#requestValidationSchemas()', () => {
+		expect( requestValidationSchemas( [ 'uk' ] ) ).toEqual( {
 			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
 			data: [ 'uk' ],
 		} );

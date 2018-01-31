@@ -6,7 +6,7 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { difference, isEmpty, keys } from 'lodash';
+import { difference, isEmpty, isEqual, keys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +27,7 @@ export class QueryTldValidationSchema extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		const newTlds = nextProps.tlds;
-		if ( this.props.tlds !== newTlds ) {
+		if ( ! isEqual( this.props.tlds, newTlds ) ) {
 			this.fetchMissingSchemas( newTlds );
 		}
 	}
