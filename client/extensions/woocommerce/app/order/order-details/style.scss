@@ -189,6 +189,11 @@
 
 		.form-text-input-with-affixes {
 			max-width: 13em;
+
+			.form-currency-input {
+				// Fixed width fixes layout issue in Firefox
+				width: 7em;
+			}
 		}
 
 		.order-details__totals-tax {
