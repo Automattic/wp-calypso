@@ -32,16 +32,12 @@ class EditorRevisionsList extends PureComponent {
 		this.props.selectPostRevision( revisionId );
 	};
 
-	trySelectingFirstRevision = () => {
-		const { revisions } = this.props;
-		if ( ! revisions.length ) {
+	trySelectingLatestRevision = () => {
+		const { latestRevisionId } = this.props;
+		if ( ! latestRevisionId ) {
 			return;
 		}
-		const firstRevision = head( revisions );
-		if ( ! firstRevision.id ) {
-			return;
-		}
-		this.selectRevision( firstRevision.id );
+		this.selectRevision( latestRevisionId );
 	};
 
 	componentDidMount() {
@@ -52,7 +48,7 @@ class EditorRevisionsList extends PureComponent {
 		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
 
 		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingFirstRevision();
+			this.trySelectingLatestRevision();
 		}
 	}
 
@@ -63,7 +59,7 @@ class EditorRevisionsList extends PureComponent {
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingFirstRevision();
+			this.trySelectingLatestRevision();
 		}
 		if ( this.props.selectedRevisionId !== prevProps.selectedRevisionId ) {
 			this.scrollToSelectedItem();
@@ -107,22 +103,16 @@ class EditorRevisionsList extends PureComponent {
 		prevRevisionId && this.selectRevision( prevRevisionId );
 	};
 
-	selectedRevisionOrder = () => {
-		const { selectedRevisionId, revisions } = this.props;
-		const firstRevision = head( revisions );
-		const lastRevision = last( revisions );
-
-		if ( firstRevision && selectedRevisionId === firstRevision.id ) {
-			return 'latest';
-		}
-		if ( lastRevision && selectedRevisionId === lastRevision.id ) {
-			return 'earliest';
-		}
-		return '';
-	};
-
 	render() {
-		const { comparisons, postId, revisions, selectedRevisionId, siteId } = this.props;
+		const {
+			comparisons,
+			latestRevisionIsSelected,
+			earliestRevisionIsSelected,
+			postId,
+			revisions,
+			selectedRevisionId,
+			siteId,
+		} = this.props;
 		const classes = classNames( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
 		} );
@@ -131,9 +121,10 @@ class EditorRevisionsList extends PureComponent {
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
 				<EditorRevisionsListNavigation
+					latestRevisionIsSelected={ latestRevisionIsSelected }
+					earliestRevisionIsSelected={ earliestRevisionIsSelected }
 					selectNextRevision={ this.selectNextRevision }
 					selectPreviousRevision={ this.selectPreviousRevision }
-					selectedRevisionOrder={ this.selectedRevisionOrder() }
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
@@ -161,9 +152,17 @@ class EditorRevisionsList extends PureComponent {
 }
 
 export default connect(
-	( state, { comparisons, selectedRevisionId } ) => {
+	( state, { comparisons, revisions, selectedRevisionId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
+		const latestRevisionId = get( head( revisions ), 'id' );
+		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
+		const earliestRevisionIsSelected =
+			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
+
 		return {
+			latestRevisionId,
+			latestRevisionIsSelected,
+			earliestRevisionIsSelected,
 			nextRevisionId,
 			prevRevisionId,
 		};
