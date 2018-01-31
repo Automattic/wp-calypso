@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { concat, filter, find, get, includes, keyBy, map, omit, union } from 'lodash';
+import { filter, find, get, includes, keyBy, map, omit, union } from 'lodash';
 
 /**
  * Internal dependencies
@@ -75,7 +75,7 @@ export function subscribedLists( state = [], action ) {
 			if ( ! newListId || includes( state, newListId ) ) {
 				return state;
 			}
-			return concat( state, newListId );
+			return [ ...state, newListId ];
 		case READER_LISTS_UNFOLLOW_SUCCESS:
 			// Remove the unfollowed list ID from subscribedLists
 			return filter( state, listId => {
