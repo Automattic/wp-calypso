@@ -27,6 +27,22 @@ import {
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
+/**
+ * Makes sure that we can initialize a connection
+ * to HappyChat. We'll need this on the API response
+ *
+ * @param {function} dispatch Redux dispatcher
+ * @param {function} getState Redux getState
+ */
+export const primeHappychat = ( { dispatch, getState } ) => {
+	const state = getState();
+	const getAuth = getHappychatAuth( state );
+
+	if ( isHappychatConnectionUninitialized( state ) ) {
+		dispatch( initConnection( getAuth() ) );
+	}
+};
+
 export const request = ( { dispatch }, action ) => {
 	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
 	const { notice: { noticeId } } = notice;
@@ -89,16 +105,9 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		siteId: action.siteId,
 	} );
 
-	const state = getState();
-	const getAuth = getHappychatAuth( state );
-
-	if ( isHappychatConnectionUninitialized( state ) ) {
-		dispatch( initConnection( getAuth() ) );
-	}
-
 	const getHelp = () => {
-		const clickState = getState();
-		const canChat = isHappychatAvailable( clickState ) || hasActiveHappychatSession( clickState );
+		const state = getState();
+		const canChat = isHappychatAvailable( state ) || hasActiveHappychatSession( state );
 
 		return canChat ? dispatch( openChat() ) : page( '/help' );
 	};
@@ -173,5 +182,5 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 };
 
 export default {
-	[ JETPACK_CREDENTIALS_UPDATE ]: [ dispatchRequest( request, success, failure ) ],
+	[ JETPACK_CREDENTIALS_UPDATE ]: [ primeHappychat, dispatchRequest( request, success, failure ) ],
 };
