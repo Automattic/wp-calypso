@@ -12,6 +12,7 @@ import { get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import CommentHtmlToolbar from 'my-sites/comments/comment/comment-html-toolbar';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -135,6 +136,8 @@ export class CommentEdit extends Component {
 							value={ authorUrl }
 						/>
 					</FormFieldset>
+
+					<CommentHtmlToolbar />
 
 					<FormTextarea
 						disabled={ ! isEditCommentSupported }

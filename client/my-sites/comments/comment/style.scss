@@ -485,6 +485,19 @@
 	width: 100%;
 }
 
+.comment__html-toolbar {
+	padding: 0 8px 8px 8px;
+
+	.button {
+		border-right: 1px solid lighten($gray, 30%);
+		border-radius: 0px;
+		padding: 4px 8px;
+		&:last-child {
+			border-right: none;
+		}
+	}
+}
+
 // Bulk Mode View
 
 .card.comment.is-bulk-mode {
