@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { concat, filter, find, get, includes, keyBy, map, omit, union, uniq } from 'lodash';
+import { concat, filter, find, get, includes, keyBy, map, omit, union } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ import {
 	READER_LISTS_REQUEST,
 	READER_LISTS_REQUEST_SUCCESS,
 	READER_LISTS_REQUEST_FAILURE,
+	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
@@ -68,8 +69,13 @@ items.schema = itemsSchema;
 export function subscribedLists( state = [], action ) {
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
-			const newListIds = map( action.lists, 'ID' );
-			return uniq( concat( state, newListIds ) );
+			return map( action.lists, 'ID' );
+		case READER_LISTS_FOLLOW_SUCCESS:
+			const newListId = get( action, [ 'data', 'list', 'ID' ] );
+			if ( ! newListId || includes( state, newListId ) ) {
+				return state;
+			}
+			return concat( state, newListId );
 		case READER_LISTS_UNFOLLOW_SUCCESS:
 			// Remove the unfollowed list ID from subscribedLists
 			return filter( state, listId => {
