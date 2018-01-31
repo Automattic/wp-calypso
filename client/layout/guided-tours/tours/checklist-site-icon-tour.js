@@ -51,7 +51,10 @@ export const ChecklistSiteIconTour = makeTour(
 			target="media-library-upload-more"
 			placement="beside"
 			arrow="left-top"
-			style={ { marginTop: '-10px' } }
+			style={ {
+				marginTop: '-10px',
+				marginLeft: '-40px',
+			} }
 		>
 			<p>
 				{ translate( 'Pick or drag a file from your computer to add it to your media library.' ) }

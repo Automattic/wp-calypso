@@ -73,7 +73,10 @@ export const ChecklistContactPageTour = makeTour(
 			target="media-library-upload-more"
 			placement="beside"
 			arrow="left-top"
-			style={ { marginTop: '-10px' } }
+			style={ {
+				marginTop: '-10px',
+				marginLeft: '-40px',
+			} }
 		>
 			<p>{ translate( 'Either pick an image below or add a new one from your computer.' ) }</p>
 			<Next step="click-set-featured-image">{ translate( 'All done, continue' ) }</Next>
