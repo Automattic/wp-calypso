@@ -275,7 +275,6 @@ export class RewindCredentialsForm extends Component {
 
 const mapStateToProps = ( state, { siteId } ) => ( {
 	formIsSubmitting: 'pending' === getJetpackCredentialsUpdateStatus( state, siteId ),
-	requestStatus: getJetpackCredentialsUpdateStatus( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	rewindState: getRewindState( state, siteId ),
 } );
