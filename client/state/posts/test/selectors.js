@@ -1857,6 +1857,40 @@ describe( 'selectors', () => {
 			expect( isDirty ).to.be.true;
 		} );
 
+		test( "should return false if saved post parent attr doesn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										parent: {
+											ID: 10,
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									parent: 10,
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
+		} );
+
 		test( 'should return true if saved post date changes', () => {
 			const isDirty = isEditedPostDirty(
 				{
@@ -1887,6 +1921,38 @@ describe( 'selectors', () => {
 			);
 
 			expect( isDirty ).to.be.true;
+		} );
+
+		test( "should return false if saved post date doesn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										date: moment( '2016-09-14T15:47:33-04:00' ),
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									date: moment( '2016-09-14T15:47:33-04:00' ),
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
 		} );
 	} );
 
