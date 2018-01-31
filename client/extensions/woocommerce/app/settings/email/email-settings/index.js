@@ -15,16 +15,14 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import {
-	fetchEmailSettingsWithDataLayer,
+	requestEmailSettings,
 	emailSettingChange,
 	emailSettingsInvalidValue,
 	emailSettingsUpdate,
 } from 'woocommerce/state/sites/settings/email/actions';
 import {
 	getEmailSettings,
-	areEmailSettingsLoading,
 	areEmailSettingsLoaded,
-	emailSettingsSaveRequest,
 	isSavingEmailSettings,
 	emailSettingsSubmitSettingsError,
 } from 'woocommerce/state/sites/settings/email/selectors';
@@ -118,7 +116,7 @@ class Settings extends React.Component {
 		}
 
 		// Save settings request
-		if ( ! this.props.saveSettingsRequest && nextProps.saveSettingsRequest ) {
+		if ( ! this.props.isSaving && nextProps.isSaving ) {
 			if ( nextProps.loaded ) {
 				const settingsClean = omit( nextProps.settings, [
 					'save',
@@ -255,7 +253,6 @@ Settings.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	onSettingsChange: PropTypes.func.isRequired,
 	settings: PropTypes.object,
-	loading: PropTypes.bool,
 };
 
 function mapStateToProps( state, props ) {
@@ -263,9 +260,7 @@ function mapStateToProps( state, props ) {
 		settings: areEmailSettingsLoaded( state, props.siteId )
 			? getEmailSettings( state, props.siteId )
 			: {},
-		loading: areEmailSettingsLoading( state, props.siteId ),
 		loaded: areEmailSettingsLoaded( state, props.siteId ),
-		saveSettingsRequest: emailSettingsSaveRequest( state, props.siteId ),
 		isSaving: isSavingEmailSettings( state, props.siteId ),
 		submitError: emailSettingsSubmitSettingsError( state, props.siteId ),
 	};
@@ -275,7 +270,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			onChange: emailSettingChange,
-			fetchSettings: fetchEmailSettingsWithDataLayer,
+			fetchSettings: requestEmailSettings,
 			submit: emailSettingsUpdate,
 			emailSettingsInvalidValue,
 			errorNotice,

@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_EMAIL_SETTINGS_INVALID_VALUE,
 } from 'woocommerce/state/action-types';
 
-export const fetchEmailSettingsWithDataLayer = siteId => ( {
+export const requestEmailSettings = siteId => ( {
 	type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	siteId,
 } );
