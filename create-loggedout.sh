@@ -13,6 +13,6 @@ ls ./public/vendor.*
 ls ./public/manifest.*
 
 
-cp ./login-build/build.* `ls ./public/build.*`
-cp ./login-build/vendor.* `ls ./public/vendor.*`
-cp ./login-build/manifest.* `ls ./public/manifest.*`
+cp ./login-build/build.* `ls ./public/build.*.js`
+cp ./login-build/vendor.* `ls ./public/vendor.*.js`
+cp ./login-build/manifest.* `ls ./public/manifest.*.js`
