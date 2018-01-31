@@ -93,6 +93,14 @@ class Popover extends Component {
 		};
 	}
 
+	componentDidMount() {
+		if ( this.state.show ) {
+			this.bindEscKeyListener();
+			this.bindDebouncedReposition();
+			bindWindowListeners();
+		}
+	}
+
 	componentWillReceiveProps( nextProps ) {
 		// update context (target) reference into a property
 		if ( ! isDOMElement( nextProps.context ) ) {
@@ -108,8 +116,14 @@ class Popover extends Component {
 		this.setPosition();
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps, prevState ) {
 		const { isVisible } = this.props;
+
+		if ( ! prevState.show && this.state.show ) {
+			this.bindEscKeyListener();
+			this.bindDebouncedReposition();
+			bindWindowListeners();
+		}
 
 		if ( isVisible !== prevProps.isVisible ) {
 			if ( isVisible ) {
@@ -367,10 +381,6 @@ class Popover extends Component {
 	}
 
 	show() {
-		this.bindEscKeyListener();
-		this.bindDebouncedReposition();
-		bindWindowListeners();
-
 		if ( ! this.props.showDelay ) {
 			this.setState( { show: true } );
 			return null;
