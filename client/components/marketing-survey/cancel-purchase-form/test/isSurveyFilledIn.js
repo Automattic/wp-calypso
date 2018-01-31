@@ -24,6 +24,15 @@ describe( 'isSurveyFilledIn', () => {
 		).to.equal( true );
 	} );
 
+	test( 'should return true when question one is answered and there are no options for question two', () => {
+		expect(
+			isSurveyFilledIn( {
+				questionOneRadio: 'tooHard',
+				questionTwoOrder: [],
+			} )
+		).to.equal( true );
+	} );
+
 	test( 'should return false when question one is another reason and there is no text', () => {
 		expect(
 			isSurveyFilledIn( {
