@@ -1,6 +1,7 @@
 &.payments__dialog {
+	min-width: 90%;
 	@include breakpoint( ">660px" ) {
-		width: 660px;
+		min-width: 660px;
 	}
 
 	.dialog__content {
