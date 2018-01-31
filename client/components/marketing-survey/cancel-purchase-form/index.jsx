@@ -25,8 +25,11 @@ import * as steps from './steps';
 import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';
 import { getName } from 'lib/purchases';
-import { isJetpackPlan } from 'lib/products-values';
 import { radioOption } from './radioOption';
+import {
+	cancellationOptionsForPurchase,
+	nextAdventureOptionsForPurchase,
+} from './optionsForProduct';
 
 class CancelPurchaseForm extends React.Component {
 	static propTypes = {
@@ -43,27 +46,9 @@ class CancelPurchaseForm extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		// shuffle reason order, but keep anotherReasonOne last
-		let questionOneOrder = shuffle( [
-			'couldNotInstall',
-			'tooHard',
-			'didNotInclude',
-			'onlyNeedFree',
-		] );
-
-		let questionTwoOrder = shuffle( [
-			'stayingHere',
-			'otherWordPress',
-			'differentService',
-			'noNeed',
-		] );
-
-		// set different reason groupings for Jetpack subscribers
-		if ( isJetpackPlan( props.purchase ) ) {
-			questionOneOrder = shuffle( [ 'couldNotActivate', 'didNotInclude', 'onlyNeedFree' ] );
-
-			questionTwoOrder = shuffle( [ 'stayingHere', 'otherPlugin', 'leavingWP', 'noNeed' ] );
-		}
+		const { purchase } = props;
+		const questionOneOrder = shuffle( cancellationOptionsForPurchase( purchase ) );
+		const questionTwoOrder = shuffle( nextAdventureOptionsForPurchase( purchase ) );
 
 		questionOneOrder.push( 'anotherReasonOne' );
 		questionTwoOrder.push( 'anotherReasonTwo' );
