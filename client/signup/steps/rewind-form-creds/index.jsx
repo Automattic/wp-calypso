@@ -36,13 +36,23 @@ class RewindFormCreds extends Component {
 	 * @param {object} nextProps Props received by component for next update.
 	 */
 	componentWillUpdate( nextProps ) {
-		if ( this.props.rewindIsNowActive !== nextProps.rewindIsNowActive ) {
+		if ( nextProps.rewindIsNowActive ) {
 			SignupActions.submitSignupStep( {
 				processingMessage: this.props.translate( 'Migrating your credentials' ),
 				stepName: this.props.stepName,
 			} );
 			this.props.goToNextStep();
 		}
+	}
+
+	/**
+	 * Don't update the component if the Rewind state is the same.
+	 *
+	 * @param {object} nextProps Props received by component for next update.
+	 * @returns {boolean} False if the Rewind state is the same.
+	 */
+	shouldComponentUpdate( nextProps ) {
+		return this.props.rewindIsNowActive !== nextProps.rewindIsNowActive;
 	}
 
 	stepContent = () => {
