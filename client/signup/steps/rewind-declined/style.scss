@@ -1,4 +1,4 @@
-.rewind-add__card {
+.rewind-declined__card {
 	text-align: center;
 	max-width: 640px;
 	padding: 4rem;
@@ -6,7 +6,7 @@
 	padding-bottom: 3rem;
 }
 
-.rewind-add__title {
+.rewind-declined__title {
 	display: inline-block;
 	font-size: 2.5rem;
 	font-weight: 300;
@@ -14,20 +14,15 @@
 	color: $gray-text;
 }
 
-.rewind-add__description {
-	color: $gray-text-min;
-	font-size: 1.35rem;
-	font-weight: 100;
-	line-height: 2.5rem;
-}
-
-.rewind-add__image {
-	max-width: 200px;
+.rewind-declined__image {
+	max-width: 140px;
 	display: block;
 	margin: 2rem auto;
 }
 
-.rewind-add__card .button {
+.rewind-declined__description {
+	color: $gray-text-min;
+	font-size: 1.4rem;
 	font-weight: 100;
-	margin-top: 1.5rem;
+	line-height: 2.5rem;
 }

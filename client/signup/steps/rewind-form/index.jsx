@@ -18,8 +18,10 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import HappychatButton from 'components/happychat/button';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
+import Popover from 'components/popover';
 import SignupActions from 'lib/signup/actions';
-import { getJetpackCredentials } from 'state/selectors';
+import { getJetpackCredentials, getJetpackCredentialsUpdateStatus } from 'state/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class RewindFormStep extends Component {
 	static propTypes = {
@@ -47,12 +49,11 @@ class RewindFormStep extends Component {
 		this.props.goToNextStep();
 	};
 
-	togglePopover = () => {
-		this.setState( { showPopover: ! this.state.showPopover } );
-	};
+	togglePopover = () => this.setState( { showPopover: ! this.state.showPopover } );
+	storePopoverLink = ref => ( this.popoverLink = ref );
 
 	renderStepContent = () => {
-		const { siteId, translate } = this.props;
+		const { happychatEvent, siteId, translate } = this.props;
 
 		return (
 			<div className="rewind-form__container">
@@ -73,8 +74,7 @@ class RewindFormStep extends Component {
 								protocol: 'ssh',
 								port: 22,
 								siteId: siteId,
-								showCancelButton: true,
-								showDeleteButton: false,
+								allowCancel: true,
 								onCancel: this.onCancel,
 								onComplete: this.props.goToNextStep,
 							} }
@@ -82,11 +82,29 @@ class RewindFormStep extends Component {
 					</div>
 				</Card>
 				<CompactCard className="rewind-form__help">
-					<Button className="rewind-form__help-button" borderless={ true }>
+					<Button
+						className="rewind-form__help-button"
+						borderless={ true }
+						onClick={ this.togglePopover }
+						ref={ this.storePopoverLink }
+					>
 						<Gridicon icon="help" size={ 18 } />
 						{ translate( "Need help finding your site's server credentials?" ) }
 					</Button>
-					<HappychatButton className="rewind-form__happychat-button">
+					<Popover
+						context={ this.popoverLink }
+						isVisible={ this.state.showPopover }
+						onClose={ this.togglePopover }
+						className="rewind-form__help-popover"
+						position="top"
+					>
+						<div>{ translate( 'You can normally get your' ) }</div>
+						<div>{ translate( 'credentials from your hosting' ) }</div>
+						<div>{ translate( 'provider. Their website should' ) }</div>
+						<div>{ translate( 'explain how to get or create the' ) }</div>
+						<div>{ translate( 'credentials you need.' ) }</div>
+					</Popover>
+					<HappychatButton className="rewind-form__happychat-button" onClick={ happychatEvent }>
 						<Gridicon icon="chat" size={ 24 } />
 						{ translate( 'Get help' ) }
 					</HappychatButton>
@@ -94,6 +112,12 @@ class RewindFormStep extends Component {
 			</div>
 		);
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( 'pending' === this.props.updateStatus && 'success' === nextProps.updateStatus ) {
+			this.goToComplete();
+		}
+	}
 
 	render() {
 		return (
@@ -113,12 +137,19 @@ class RewindFormStep extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
+const mapStateToProps = ( state, ownProps ) => {
 	const siteId = parseInt( get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 ) );
 	const mainCredentials = getJetpackCredentials( state, siteId, 'main' );
 
 	return {
 		siteId,
 		mainCredentials,
+		updateStatus: getJetpackCredentialsUpdateStatus( state, siteId ),
 	};
-}, null )( localize( RewindFormStep ) );
+};
+
+const mapDispatchToProps = () => ( {
+	happychatEvent: () => recordTracksEvent( 'calypso_signup_rewindcreds_form_get_help' ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( RewindFormStep ) );

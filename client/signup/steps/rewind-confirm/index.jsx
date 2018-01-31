@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import HappychatButton from 'components/happychat/button';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class RewindConfirmStep extends Component {
 	static propTypes = {
@@ -30,7 +32,7 @@ class RewindConfirmStep extends Component {
 			stepName: this.props.stepName,
 		} );
 
-		this.props.goToNextStep();
+		this.props.goToStep( 'rewind-form' );
 	};
 
 	skipStep = () => {
@@ -39,13 +41,13 @@ class RewindConfirmStep extends Component {
 			stepName: this.props.stepName,
 		} );
 
-		this.props.goToStep( 'rewind-complete' );
+		this.props.goToStep( 'rewind-declined' );
 	};
 
 	contactSupport = () => alert( 'Not yet implemented' );
 
 	renderStepContent = () => {
-		const { translate } = this.props;
+		const { happychatEvent, translate } = this.props;
 
 		return (
 			<Card className="rewind-confirm__card">
@@ -57,7 +59,11 @@ class RewindConfirmStep extends Component {
 							'support staff is available to answer any questions you might have.'
 					) }
 				</p>
-				<HappychatButton className="rewind-confirm__happychat-button" borderless={ false }>
+				<HappychatButton
+					className="rewind-confirm__happychat-button"
+					borderless={ false }
+					onClick={ happychatEvent }
+				>
 					{ translate( 'Contact support' ) }
 				</HappychatButton>
 				<Button primary onClick={ this.addCredentials }>
@@ -84,4 +90,8 @@ class RewindConfirmStep extends Component {
 	}
 }
 
-export default localize( RewindConfirmStep );
+const mapDispatchToProps = () => ( {
+	happychatEvent: () => recordTracksEvent( 'calypso_signup_rewindcreds_confirm_get_help' ),
+} );
+
+export default connect( null, mapDispatchToProps )( localize( RewindConfirmStep ) );

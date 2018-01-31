@@ -253,7 +253,7 @@ const flows = {
 	},
 
 	'rewind-credentials': {
-		steps: [ 'rewind-add', 'rewind-confirm', 'rewind-form', 'rewind-complete' ],
+		steps: [ 'rewind-add', 'rewind-confirm', 'rewind-declined', 'rewind-form', 'rewind-complete' ],
 		destination: () => {
 			return '/stats/activity';
 		},

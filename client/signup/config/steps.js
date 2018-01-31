@@ -289,4 +289,9 @@ export default {
 		stepName: 'rewind-confirm',
 		providesDependencies: [],
 	},
+
+	'rewind-declined': {
+		stepName: 'rewind-declined',
+		providesDependencies: [],
+	},
 };
