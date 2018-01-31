@@ -160,8 +160,8 @@ class Translator {
 			return displayedTranslationFromPage;
 		}
 
-		if ( optionsFromPage.translatable === false ) {
-			debug( `author defined ${ displayedTranslationFromPage } as not translatable.` );
+		if ( 'boolean' === typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
+			debug( `respecting textOnly for string "${ originalFromPage }"` );
 			return displayedTranslationFromPage;
 		}
 
