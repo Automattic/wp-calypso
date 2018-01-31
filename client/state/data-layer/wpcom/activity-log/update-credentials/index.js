@@ -108,26 +108,37 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		{
 			service_unavailable: () => [
 				translate(
-					"Our service is down. We're working to get things up and running. Please try again later."
+					"Our service isn't working at the moment. " +
+						"We'll get it up and running as fast as we can, so please try again later."
 				),
 				{
 					button: translate( 'Try again' ),
 					onClick: () => dispatch( action ),
 				},
 			],
-			missing_args: () => [ translate( 'Please fill out the required fields.' ), null ],
+			missing_args: () => [
+				translate( 'Something seems to be missing — please fill out all the required fields.' ),
+				null,
+			],
 			invalid_args: () => [
 				translate(
-					'Something is wrong with the credentials. Please make sure each field is correct.'
+					'The information you entered seems to be incorrect. ' +
+						"Let's take another look to ensure everything is in the right place."
 				),
 				null,
 			],
 			invalid_credentials: () => [
-				translate( 'We could not connect to your site with these credentials. Please try again.' ),
+				translate(
+					"Oops! We couldn't connect to your site with these credentials " +
+						"— let's give it another try."
+				),
 				null,
 			],
 			invalid_wordpress_path: () => [
-				translate( 'We could not find wp-config.php in the supplied WordPress installation path.' ),
+				translate(
+					'We looked for `wp-config.php` in the WordPress installation path you provided ' +
+						"but couldn't find it."
+				),
 				{
 					button: translate( 'Get help' ),
 					onClick: getHelp,
@@ -135,8 +146,8 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 			],
 			read_only_install: () => [
 				translate(
-					'The server is read-only. Without permission to write to the server, ' +
-						'we cannot perform backups and rewinds.'
+					'It looks like your server is read-only. ' +
+						'To create backups and rewind your site, we need permission to write to your server.'
 				),
 				{
 					button: translate( 'Get help' ),
@@ -145,8 +156,8 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 			],
 			unreachable_path: () => [
 				translate(
-					'We were unable to access the WordPress installation path with its publicly-available URL. ' +
-						'Please make sure the directory is accessible and try again.'
+					'We tried to access your WordPress installation through its publicly available URL, ' +
+						"but it didn't work. Please make sure the directory is accessible and try again."
 				),
 				null,
 			],
