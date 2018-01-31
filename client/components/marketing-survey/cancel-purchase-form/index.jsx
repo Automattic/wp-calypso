@@ -130,152 +130,90 @@ class CancelPurchaseForm extends React.Component {
 	renderQuestionOne = () => {
 		const reasons = {};
 		const { translate } = this.props;
+		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
 
-		const couldNotInstallInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="couldNotInstallInput"
-				id="couldNotInstallInput"
-				value={ this.state.questionOneText }
-				onChange={ this.onTextOneChange }
-				placeholder={ translate( 'What plugin/theme were you trying to install?' ) }
-			/>
-		);
-		reasons.couldNotInstall = (
-			<FormLabel key="couldNotInstall">
-				<FormRadio
-					name="couldNotInstall"
-					value="couldNotInstall"
-					checked={ 'couldNotInstall' === this.state.questionOneRadio }
-					onChange={ this.onRadioOneChange }
+		const radioOption = (
+			key,
+			radioValue,
+			textValue,
+			onRadioChange,
+			onTextChange,
+			radioPrompt,
+			textPlaceholder
+		) => {
+			const textInputKey = `${ key }Input`;
+
+			const textInput = (
+				<FormTextInput
+					className="cancel-purchase-form__reason-input"
+					name={ textInputKey }
+					id={ textInputKey }
+					value={ textValue }
+					onChange={ onTextChange }
+					placeholder={ textPlaceholder }
 				/>
-				<span>{ translate( "I couldn't install a plugin/theme I wanted." ) }</span>
-				{ 'couldNotInstall' === this.state.questionOneRadio && couldNotInstallInput }
-			</FormLabel>
+			);
+			return (
+				<FormLabel key={ key }>
+					<FormRadio
+						name={ key }
+						value={ key }
+						checked={ key === radioValue }
+						onChange={ onRadioChange }
+					/>
+					<span>{ radioPrompt }</span>
+					{ key === radioValue && textInput }
+				</FormLabel>
+			);
+		};
+
+		const radioOptionOne = ( key, radioPrompt, textPlaceholder ) =>
+			radioOption(
+				key,
+				questionOneRadio,
+				questionOneText,
+				this.onRadioOneChange,
+				this.onTextOneChange,
+				radioPrompt,
+				textPlaceholder
+			);
+
+		reasons.couldNotInstall = radioOptionOne(
+			'couldNotInstall',
+			translate( "I couldn't install a plugin/theme I wanted." ),
+			translate( 'What plugin/theme were you trying to install?' )
 		);
 
-		const tooHardInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="tooHardInput"
-				id="tooHardInput"
-				value={ this.state.questionOneText }
-				onChange={ this.onTextOneChange }
-				placeholder={ translate( 'Where did you run into problems?' ) }
-			/>
-		);
-		reasons.tooHard = (
-			<FormLabel key="tooHard">
-				<FormRadio
-					name="tooHard"
-					value="tooHard"
-					checked={ 'tooHard' === this.state.questionOneRadio }
-					onChange={ this.onRadioOneChange }
-				/>
-				<span>{ translate( 'It was too hard to set up my site.' ) }</span>
-				{ 'tooHard' === this.state.questionOneRadio && tooHardInput }
-			</FormLabel>
+		reasons.tooHard = radioOptionOne(
+			'tooHard',
+			translate( 'It was too hard to set up my site.' ),
+			translate( 'Where did you run into problems?' )
 		);
 
-		const didNotIncludeInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="didNotIncludeInput"
-				id="didNotIncludeInput"
-				value={ this.state.questionOneText }
-				onChange={ this.onTextOneChange }
-				placeholder={ translate( 'What are we missing that you need?' ) }
-			/>
-		);
-		reasons.didNotInclude = (
-			<FormLabel key="didNotInclude">
-				<FormRadio
-					name="didNotInclude"
-					value="didNotInclude"
-					checked={ 'didNotInclude' === this.state.questionOneRadio }
-					onChange={ this.onRadioOneChange }
-				/>
-				<span>{ translate( "This upgrade didn't include what I needed." ) }</span>
-				{ 'didNotInclude' === this.state.questionOneRadio && didNotIncludeInput }
-			</FormLabel>
+		reasons.didNotInclude = radioOptionOne(
+			'didNotInclude',
+			translate( "This upgrade didn't include what I needed." ),
+			translate( 'What are we missing that you need?' )
 		);
 
-		const onlyNeedFreeInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="onlyNeedFreeInput"
-				id="onlyNeedFreeInput"
-				value={ this.state.questionOneText }
-				onChange={ this.onTextOneChange }
-				placeholder={ translate( 'How can we improve our upgrades?' ) }
-			/>
-		);
-		reasons.onlyNeedFree = (
-			<FormLabel key="onlyNeedFree">
-				<FormRadio
-					name="onlyNeedFree"
-					value="onlyNeedFree"
-					checked={ 'onlyNeedFree' === this.state.questionOneRadio }
-					onChange={ this.onRadioOneChange }
-				/>
-				<span>{ translate( 'The plan was too expensive.' ) }</span>
-				{ 'onlyNeedFree' === this.state.questionOneRadio && onlyNeedFreeInput }
-			</FormLabel>
+		reasons.onlyNeedFreeInput = radioOptionOne(
+			'onlyNeedFree',
+			translate( 'The plan was too expensive.' ),
+			translate( 'How can we improve our upgrades?' )
 		);
 
-		const anotherReasonOneInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="anotherReasonOneInput"
-				value={ this.state.questionOneText }
-				onChange={ this.onTextOneChange }
-				id="anotherReasonOneInput"
-			/>
-		);
-		reasons.anotherReasonOne = (
-			<FormLabel key="anotherReasonOne">
-				<FormRadio
-					name="anotherReasonOne"
-					value="anotherReasonOne"
-					checked={ 'anotherReasonOne' === this.state.questionOneRadio }
-					onChange={ this.onRadioOneChange }
-				/>
-				<span>{ translate( 'Another reason…' ) }</span>
-				{ 'anotherReasonOne' === this.state.questionOneRadio && anotherReasonOneInput }
-			</FormLabel>
-		);
+		reasons.anotherReasonOne = radioOptionOne( 'anotherReasonOne', translate( 'Another reason…' ) );
 
-		// Survey questions only for Jetpack subscriptions
-		const couldNotActivateInput = (
-			<FormTextInput
-				className="cancel-purchase-form__reason-input"
-				name="couldNotActivateInput"
-				id="couldNotActivateInput"
-				value={ this.state.questionOneText }
-				onChange={ this.onTextOneChange }
-				placeholder={ translate( 'Where did you run into problems?' ) }
-			/>
+		reasons.couldNotActivate = radioOption(
+			'couldNotActivate',
+			translate( 'I was unable to activate or use the product.' ),
+			translate( 'Where did you run into problems?' )
 		);
-		reasons.couldNotActivate = (
-			<FormLabel key="couldNotActivate">
-				<FormRadio
-					name="couldNotActivate"
-					value="couldNotActivate"
-					checked={ 'couldNotActivate' === this.state.questionOneRadio }
-					onChange={ this.onRadioOneChange }
-				/>
-				<span>{ translate( 'I was unable to activate or use the product.' ) }</span>
-				{ 'couldNotActivate' === this.state.questionOneRadio && couldNotActivateInput }
-			</FormLabel>
-		);
-
-		const { questionOneOrder } = this.state,
-			orderedReasons = questionOneOrder.map( question => reasons[ question ] );
 
 		return (
 			<div>
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ orderedReasons }
+				{ questionOneOrder.map( question => reasons[ question ] ) }
 			</div>
 		);
 	};
