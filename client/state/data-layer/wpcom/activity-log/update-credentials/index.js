@@ -3,7 +3,6 @@
  * External dependencies
  */
 import i18n from 'i18n-calypso';
-import page from 'page';
 import { get } from 'lodash';
 
 /**
@@ -109,7 +108,9 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		const state = getState();
 		const canChat = isHappychatAvailable( state ) || hasActiveHappychatSession( state );
 
-		return canChat ? dispatch( openChat() ) : page( '/help' );
+		return canChat
+			? dispatch( openChat() )
+			: undefined !== window && window.open( '/help', '_blank' );
 	};
 
 	const { translate } = i18n;
