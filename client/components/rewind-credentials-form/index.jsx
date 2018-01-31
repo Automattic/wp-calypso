@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, get, isEmpty } from 'lodash';
+import { find, get, isEmpty, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -34,6 +34,11 @@ export class RewindCredentialsForm extends Component {
 		allowDelete: PropTypes.bool,
 		onCancel: PropTypes.func,
 		onComplete: PropTypes.func,
+	};
+
+	static defaultProps = {
+		onCancel: noop,
+		onComplete: noop,
 	};
 
 	state = {
@@ -99,7 +104,7 @@ export class RewindCredentialsForm extends Component {
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
 	componentWillReceiveProps( nextProps ) {
-		const { rewindState, role, siteSlug } = nextProps;
+		const { rewindState, role, siteSlug, updateStatus } = nextProps;
 		const credentials = find( rewindState.credentials, { role: role } );
 
 		const nextForm = Object.assign( {}, this.state.form );
@@ -117,6 +122,10 @@ export class RewindCredentialsForm extends Component {
 			isEmpty( nextForm.host ) && siteSlug ? siteSlug.split( '::' )[ 0 ] : nextForm.host;
 
 		this.setState( { form: nextForm } );
+
+		if ( 'pending' === this.props.updateStatus && 'success' === updateStatus ) {
+			this.props.onComplete();
+		}
 	}
 
 	render() {
@@ -275,6 +284,7 @@ export class RewindCredentialsForm extends Component {
 
 const mapStateToProps = ( state, { siteId } ) => ( {
 	formIsSubmitting: 'pending' === getJetpackCredentialsUpdateStatus( state, siteId ),
+	updateStatus: getJetpackCredentialsUpdateStatus( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	rewindState: getRewindState( state, siteId ),
 } );
