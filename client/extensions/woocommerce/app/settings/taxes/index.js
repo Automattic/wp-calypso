@@ -22,6 +22,11 @@ import Main from 'components/main';
 import SettingsTaxesPlaceholder from './taxes-placeholder';
 import SettingsTaxesTaxJar from './taxes-taxjar';
 import SettingsTaxesWooCommerceServices from './taxes-wcs';
+import {
+	areSetupChoicesLoaded,
+	getCheckedTaxSetup,
+} from 'woocommerce/state/sites/setup-choices/selectors';
+import { setCheckedTaxSetup } from 'woocommerce/state/sites/setup-choices/actions';
 
 class SettingsTaxes extends Component {
 	static propTypes = {
@@ -31,6 +36,9 @@ class SettingsTaxes extends Component {
 		sitePluginsLoaded: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		taxJarPluginActive: PropTypes.bool,
+		setupChoicesLoaded: PropTypes.bool,
+		taxesAreSetUp: PropTypes.bool,
+		setCheckedTaxSetup: PropTypes.func,
 	};
 
 	maybeFetchPlugins = ( props, force = false ) => {
@@ -45,10 +53,28 @@ class SettingsTaxes extends Component {
 
 	componentDidMount = () => {
 		this.maybeFetchPlugins( this.props, true );
+
+		if ( true === this.props.setupChoicesLoaded ) {
+			this.maybeSetCheckedTaxSetup();
+		}
 	};
 
 	componentWillReceiveProps = newProps => {
 		this.maybeFetchPlugins( newProps );
+	};
+
+	componentDidUpdate = prevProps => {
+		if ( true === this.props.setupChoicesLoaded && false === prevProps.setupChoicesLoaded ) {
+			this.maybeSetCheckedTaxSetup();
+		}
+	};
+
+	maybeSetCheckedTaxSetup = () => {
+		const { taxesAreSetUp, site } = this.props;
+		if ( taxesAreSetUp ) {
+			return;
+		}
+		this.props.setCheckedTaxSetup( site.ID, true );
 	};
 
 	render = () => {
@@ -83,6 +109,9 @@ function mapStateToProps( state ) {
 		active: true,
 	} );
 
+	const setupChoicesLoaded = areSetupChoicesLoaded( state, siteId );
+	const taxesAreSetUp = getCheckedTaxSetup( state, siteId );
+
 	return {
 		isRequestingSitePlugins,
 		site,
@@ -90,6 +119,8 @@ function mapStateToProps( state ) {
 		sitePluginsLoaded,
 		siteSlug,
 		taxJarPluginActive,
+		setupChoicesLoaded,
+		taxesAreSetUp,
 	};
 }
 
@@ -97,6 +128,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchPlugins,
+			setCheckedTaxSetup,
 		},
 		dispatch
 	);
