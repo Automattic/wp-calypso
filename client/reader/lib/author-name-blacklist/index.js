@@ -13,5 +13,9 @@ const authorNameBlacklist = [ 'admin' ];
  * @returns {boolean} True if blacklisted
  */
 export const isAuthorNameBlacklisted = authorName => {
+	if ( ! authorName ) {
+		return false;
+	}
+
 	return includes( authorNameBlacklist, authorName.toLowerCase() );
 };
