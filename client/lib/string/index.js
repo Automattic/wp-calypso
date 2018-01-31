@@ -8,7 +8,13 @@
  * @returns
  */
 export function areEqualIgnoringWhitespaceAndCase( a, b ) {
-	if ( ! a || ! b ) {
+	// Are they equal without any manipulation?
+	if ( a === b ) {
+		return true;
+	}
+
+	// If we don't have strings for this part, bail out
+	if ( a === null || b === null ) {
 		return false;
 	}
 
