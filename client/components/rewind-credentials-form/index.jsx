@@ -79,8 +79,6 @@ export class RewindCredentialsForm extends Component {
 			...this.state.form,
 		};
 
-		payload.path = isEmpty( payload.path ) ? '/' : payload.path;
-
 		const errors = Object.assign(
 			! payload.host && { host: translate( 'Please enter a valid server address.' ) },
 			! payload.port && { port: translate( 'Please enter a valid server port.' ) },
@@ -216,7 +214,9 @@ export class RewindCredentialsForm extends Component {
 					{ showAdvancedSettings && (
 						<div>
 							<FormFieldset className="rewind-credentials-form__path">
-								<FormLabel htmlFor="wordpress-path">{ translate( 'WordPress Installation Path' ) }</FormLabel>
+								<FormLabel htmlFor="wordpress-path">
+									{ translate( 'WordPress Installation Path' ) }
+								</FormLabel>
 								<FormTextInput
 									name="path"
 									id="wordpress-path"
