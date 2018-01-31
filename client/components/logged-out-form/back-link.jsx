@@ -40,15 +40,11 @@ function LoggedOutFormBackLink( props ) {
 			key="return-to-wpcom-link"
 			onClick={ recordClick }
 			rel="external"
-			className={ classnames(
-				Object.assign(
-					{
-						'logged-out-form__link-item': true,
-						'logged-out-form__back-link': true,
-					},
-					props.classes
-				)
-			) }
+			className={ classnames( {
+				'logged-out-form__link-item': true,
+				'logged-out-form__back-link': true,
+				...props.classes,
+			} ) }
 		>
 			<Gridicon icon="arrow-left" size={ 18 } />
 			{ message }
