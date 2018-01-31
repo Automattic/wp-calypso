@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { localeSlug } from '../reducer';
+import { localeSlug, isRtl } from '../reducer';
 import { LOCALE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -34,6 +34,38 @@ describe( 'reducer', () => {
 			const action = { type: LOCALE_SET, localeSlug: 'he' };
 
 			expect( localeSlug( state, action ) ).to.eql( 'he' );
+		} );
+	} );
+
+	describe( 'isRtl', () => {
+		test( 'returns default state with undefined state and empty action', () => {
+			expect( isRtl( undefined, {} ) ).to.be.false;
+		} );
+
+		test( 'returns previous state with empty action', () => {
+			expect( isRtl( true, {} ) ).to.be.true;
+		} );
+
+		test( 'returns default state with undefined state and invalid action type', () => {
+			expect( isRtl( undefined, { type: 'foobar' } ) ).to.be.false;
+		} );
+
+		test( 'returns true when localeSlug is a RTL language', () => {
+			const action = { type: LOCALE_SET, localeSlug: 'ar' };
+
+			expect( isRtl( false, action ) ).to.be.true;
+		} );
+
+		test( 'returns false when localeSlug is a LTR language', () => {
+			const action = { type: LOCALE_SET, localeSlug: 'fr' };
+
+			expect( isRtl( true, action ) ).to.be.false;
+		} );
+
+		test( 'returns default state when localeSlug is unknown language', () => {
+			const action = { type: LOCALE_SET, localeSlug: 'language' };
+
+			expect( isRtl( undefined, action ) ).to.be.false;
 		} );
 	} );
 } );
