@@ -14,7 +14,6 @@ import debugFactory from 'debug';
 import page from 'page';
 import url from 'url';
 import qs from 'querystring';
-import { createStore } from 'redux';
 
 /**
  * Internal dependencies
@@ -25,12 +24,23 @@ import { createStore } from 'redux';
 // import userFactory from 'lib/user';
 import * as controller from 'controller/index.web';
 import login from 'login';
+
+// Store stuff:
 import { combineReducers } from 'state/utils';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import { default as wpcomApiMiddleware } from 'state/data-layer/wpcom-api-middleware';
+import { analyticsMiddleware } from 'state/analytics/middleware';
+
+// Reducers:
+import analyticsTracking from 'state/analytics/reducer';
 import oauth2Clients from 'state/oauth2-clients/reducer';
+import { default as loginReducer } from 'state/login/reducer';
 import ui from 'state/ui/reducer';
+import documentHead from 'state/document-head/reducer';
+import notices from 'state/notices/reducer';
 
 const debug = debugFactory( 'calypso' );
-
 
 const setupContextMiddleware = reduxStore => {
 	page( '*', ( context, next ) => {
@@ -76,11 +86,19 @@ const setupContextMiddleware = reduxStore => {
 const boot = () => {
 	debug( "Starting Calypso. Let's do this." );
 
-	const store = createStore( combineReducers( [ oauth2Clients, ui ] ), {} );
+	const rootReducer = combineReducers( {
+		analyticsTracking,
+		oauth2Clients,
+		login: loginReducer,
+		ui,
+		documentHead,
+		notices,
+	} );
+	const store = applyMiddleware( thunkMiddleware, wpcomApiMiddleware, analyticsMiddleware )( createStore )( rootReducer, {} );
 	setupContextMiddleware( store );
 	login( controller.clientRouter );
 	page.start( { decodeURLComponents: false } );
-	
+
 	// const project = require( `./project/${ PROJECT_NAME }` );
 	// utils();
 	// invoke( project, 'utils' );
