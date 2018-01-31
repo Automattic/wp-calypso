@@ -434,9 +434,8 @@ class ActivityLog extends Component {
 		);
 	}
 
-	render() {
+	getActivityLog() {
 		const {
-			canViewActivityLog,
 			logRequestQuery,
 			logs,
 			moment,
@@ -445,20 +444,7 @@ class ActivityLog extends Component {
 			siteId,
 			slug,
 			translate,
-			context,
 		} = this.props;
-
-		if ( false === canViewActivityLog ) {
-			return (
-				<Main>
-					<SidebarNavigation />
-					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					/>
-				</Main>
-			);
-		}
 
 		const disableRestore =
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
@@ -485,11 +471,8 @@ class ActivityLog extends Component {
 			</section>
 		);
 
-		const showWelcome = siteId && '1' === get( context, 'query.rewind-welcome', '' );
-
 		return (
-			<Main wideLayout>
-				<QueryRewindState siteId={ siteId } />
+			<div>
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId &&
 					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
@@ -498,12 +481,6 @@ class ActivityLog extends Component {
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
-				{ showWelcome && (
-					<ActivityLogSwitch
-						siteId={ siteId }
-						redirect={ get( context, 'query.rewind-redirect', '' ) }
-					/>
-				) }
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						icon="history"
@@ -589,6 +566,37 @@ class ActivityLog extends Component {
 					</section>
 				) }
 				{ this.renderMonthNavigation( 'bottom' ) }
+			</div>
+		);
+	}
+
+	render() {
+		const { canViewActivityLog, translate } = this.props;
+
+		if ( false === canViewActivityLog ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
+
+		const { siteId, context } = this.props;
+
+		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
+
+		return (
+			<Main wideLayout>
+				<QueryRewindState siteId={ siteId } />
+				{ siteId && '' !== rewindNoThanks ? (
+					<ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
+				) : (
+					this.getActivityLog()
+				) }
 				<JetpackColophon />
 			</Main>
 		);
