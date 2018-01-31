@@ -26,7 +26,7 @@ export const localeSlug = createReducer(
 );
 
 /**
- * Tracks the state of the ui locale
+ * Tracks the state of the ui language isRtl.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -34,7 +34,7 @@ export const localeSlug = createReducer(
  *
  */
 export const isRtl = createReducer(
-	false,
+	null,
 	{
 		[ LOCALE_SET ]: ( state, action ) => {
 			const localeSlugFromAction = action.localeSlug;

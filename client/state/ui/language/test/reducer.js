@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 
 	describe( 'isRtl', () => {
 		test( 'returns default state with undefined state and empty action', () => {
-			expect( isRtl( undefined, {} ) ).to.be.false;
+			expect( isRtl( undefined, {} ) ).to.be.null;
 		} );
 
 		test( 'returns previous state with empty action', () => {
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'returns default state with undefined state and invalid action type', () => {
-			expect( isRtl( undefined, { type: 'foobar' } ) ).to.be.false;
+			expect( isRtl( undefined, { type: 'foobar' } ) ).to.be.null;
 		} );
 
 		test( 'returns true when localeSlug is a RTL language', () => {
@@ -65,7 +65,7 @@ describe( 'reducer', () => {
 		test( 'returns default state when localeSlug is unknown language', () => {
 			const action = { type: LOCALE_SET, localeSlug: 'language' };
 
-			expect( isRtl( undefined, action ) ).to.be.false;
+			expect( isRtl( undefined, action ) ).to.be.null;
 		} );
 	} );
 } );
