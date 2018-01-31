@@ -77,7 +77,7 @@ class PostByline extends React.Component {
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const siteName = getSiteName( { site, feed, post } );
-		const hasAuthorName = get( post, 'author.name', null ) !== null;
+		const hasAuthorName = !! get( post, 'author.name', null );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor =
