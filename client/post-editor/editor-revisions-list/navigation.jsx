@@ -14,8 +14,8 @@ import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 
 const EditorRevisionsListNavigation = ( {
-	firstRevisionIsSelected,
-	lastRevisionIsSelected,
+	latestRevisionIsSelected,
+	earliestRevisionIsSelected,
 	selectNextRevision,
 	selectPreviousRevision,
 } ) => {
@@ -26,7 +26,7 @@ const EditorRevisionsListNavigation = ( {
 				className="editor-revisions-list__prev-button"
 				type="button"
 				onClick={ selectPreviousRevision }
-				disabled={ lastRevisionIsSelected }
+				disabled={ earliestRevisionIsSelected }
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>
@@ -35,7 +35,7 @@ const EditorRevisionsListNavigation = ( {
 				className="editor-revisions-list__next-button"
 				type="button"
 				onClick={ selectNextRevision }
-				disabled={ firstRevisionIsSelected }
+				disabled={ latestRevisionIsSelected }
 			>
 				<Gridicon icon="chevron-up" />
 			</Button>

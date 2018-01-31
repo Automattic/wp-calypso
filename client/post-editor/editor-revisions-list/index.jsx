@@ -32,12 +32,12 @@ class EditorRevisionsList extends PureComponent {
 		this.props.selectPostRevision( revisionId );
 	};
 
-	trySelectingFirstRevision = () => {
-		const { firstRevisionId } = this.props;
-		if ( ! firstRevisionId ) {
+	trySelectingLatestRevision = () => {
+		const { latestRevisionId } = this.props;
+		if ( ! latestRevisionId ) {
 			return;
 		}
-		this.selectRevision( firstRevisionId );
+		this.selectRevision( latestRevisionId );
 	};
 
 	componentDidMount() {
@@ -48,7 +48,7 @@ class EditorRevisionsList extends PureComponent {
 		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
 
 		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingFirstRevision();
+			this.trySelectingLatestRevision();
 		}
 	}
 
@@ -59,7 +59,7 @@ class EditorRevisionsList extends PureComponent {
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingFirstRevision();
+			this.trySelectingLatestRevision();
 		}
 		if ( this.props.selectedRevisionId !== prevProps.selectedRevisionId ) {
 			this.scrollToSelectedItem();
@@ -106,8 +106,8 @@ class EditorRevisionsList extends PureComponent {
 	render() {
 		const {
 			comparisons,
-			firstRevisionIsSelected,
-			lastRevisionIsSelected,
+			latestRevisionIsSelected,
+			earliestRevisionIsSelected,
 			postId,
 			revisions,
 			selectedRevisionId,
@@ -121,8 +121,8 @@ class EditorRevisionsList extends PureComponent {
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
 				<EditorRevisionsListNavigation
-					firstRevisionIsSelected={ firstRevisionIsSelected }
-					lastRevisionIsSelected={ lastRevisionIsSelected }
+					latestRevisionIsSelected={ latestRevisionIsSelected }
+					earliestRevisionIsSelected={ earliestRevisionIsSelected }
 					selectNextRevision={ this.selectNextRevision }
 					selectPreviousRevision={ this.selectPreviousRevision }
 				/>
@@ -154,15 +154,15 @@ class EditorRevisionsList extends PureComponent {
 export default connect(
 	( state, { comparisons, revisions, selectedRevisionId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
-		const firstRevisionId = get( head( revisions ), 'id' );
-		const firstRevisionIsSelected = firstRevisionId === selectedRevisionId;
-		const lastRevisionIsSelected =
-			! firstRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
+		const latestRevisionId = get( head( revisions ), 'id' );
+		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
+		const earliestRevisionIsSelected =
+			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
 
 		return {
-			firstRevisionId,
-			firstRevisionIsSelected,
-			lastRevisionIsSelected,
+			latestRevisionId,
+			latestRevisionIsSelected,
+			earliestRevisionIsSelected,
 			nextRevisionId,
 			prevRevisionId,
 		};
