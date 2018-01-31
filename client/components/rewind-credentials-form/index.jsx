@@ -24,7 +24,7 @@ import Gridicon from 'gridicons';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getRewindState, isUpdatingJetpackCredentials } from 'state/selectors';
+import { getRewindState, getJetpackCredentialsUpdateStatus } from 'state/selectors';
 
 export class RewindCredentialsForm extends Component {
 	static propTypes = {
@@ -274,7 +274,7 @@ export class RewindCredentialsForm extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	formIsSubmitting: isUpdatingJetpackCredentials( state, siteId ),
+	formIsSubmitting: 'pending' === getJetpackCredentialsUpdateStatus( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	rewindState: getRewindState( state, siteId ),
 } );
