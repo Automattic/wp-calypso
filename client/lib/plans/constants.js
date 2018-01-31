@@ -784,7 +784,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
-		getTitle: () => i18n.translate( '100+ Free Themes' ),
+		getTitle: () => i18n.translate( 'Dozens of Free Themes' ),
 	},
 
 	[ FEATURE_WP_SUBDOMAIN_SIGNUP ]: {
@@ -1059,7 +1059,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_THEMES ]: {
 		getSlug: () => FEATURE_FREE_THEMES,
-		getTitle: () => i18n.translate( '100+ Free Themes' ),
+		getTitle: () => i18n.translate( 'Dozens of Free Themes' ),
 		getDescription: () =>
 			i18n.translate(
 				'Access to a wide range of professional theme templates ' +
