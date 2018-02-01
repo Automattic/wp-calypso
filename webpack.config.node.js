@@ -171,10 +171,6 @@ const webpackConfig = {
 			/^my-sites[\/\\]themes[\/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
-			/^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/,
-			'components/empty-component'
-		), // should never be required server side
 	] ),
 	externals: getExternals(),
 };
