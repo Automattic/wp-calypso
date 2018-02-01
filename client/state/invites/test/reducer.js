@@ -14,6 +14,8 @@ import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_SUCCESS,
 	INVITE_RESEND_REQUEST,
+	INVITE_RESEND_REQUEST_SUCCESS,
+	INVITE_RESEND_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -280,7 +282,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( '#resendRequests()', () => {
+	describe( '#requestingResend()', () => {
 		test( 'should key requests by site ID and invite ID', () => {
 			const state = requestingResend(
 				{},
@@ -291,32 +293,60 @@ describe( 'reducer', () => {
 				}
 			);
 			expect( state ).to.eql( {
-				12345: { '123456asdf789': true },
+				12345: { '123456asdf789': 'requesting' },
+			} );
+		} );
+
+		test( 'should use value success for successful resends', () => {
+			const state = requestingResend(
+				{},
+				{
+					type: INVITE_RESEND_REQUEST_SUCCESS,
+					siteId: 12345,
+					inviteId: '123456asdf789',
+				}
+			);
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'success' },
+			} );
+		} );
+
+		test( 'should use value failure for failed resends', () => {
+			const state = requestingResend(
+				{},
+				{
+					type: INVITE_RESEND_REQUEST_FAILURE,
+					siteId: 12345,
+					inviteId: '123456asdf789',
+				}
+			);
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'failure' },
 			} );
 		} );
 
 		test( 'should accumulate invites', () => {
-			const original = deepFreeze( { 12345: { '123456asdf789': false } } );
+			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
 			const state = requestingResend( original, {
 				type: INVITE_RESEND_REQUEST,
 				siteId: 12345,
 				inviteId: '789lkjh123456',
 			} );
 			expect( state ).to.eql( {
-				12345: { '123456asdf789': false, '789lkjh123456': true },
+				12345: { '123456asdf789': 'success', '789lkjh123456': 'requesting' },
 			} );
 		} );
 
 		test( 'should accumulate sites', () => {
-			const original = deepFreeze( { 12345: { '123456asdf789': false } } );
+			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
 			const state = requestingResend( original, {
 				type: INVITE_RESEND_REQUEST,
 				siteId: 67890,
 				inviteId: '789lkjh123456',
 			} );
 			expect( state ).to.eql( {
-				12345: { '123456asdf789': false },
-				67890: { '789lkjh123456': true },
+				12345: { '123456asdf789': 'success' },
+				67890: { '789lkjh123456': 'requesting' },
 			} );
 		} );
 	} );

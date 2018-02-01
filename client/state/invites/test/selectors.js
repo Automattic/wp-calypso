@@ -12,6 +12,7 @@ import {
 	getInvitesForSite,
 	isRequestingResend,
 	getNumberOfInvitesFoundForSite,
+	didResendSucceed,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -90,8 +91,8 @@ describe( 'selectors', () => {
 			const state = {
 				invites: {
 					requestingResend: {
-						12345: { '123456asdf789': false },
-						67890: { '789lkjh123456': true },
+						12345: { '123456asdf789': 'success' },
+						67890: { '789lkjh123456': 'requesting' },
 					},
 				},
 			};
@@ -102,8 +103,8 @@ describe( 'selectors', () => {
 			const state = {
 				invites: {
 					requestingResend: {
-						12345: { '123456asdf789': false },
-						67890: { '789lkjh123456': true },
+						12345: { '123456asdf789': 'success' },
+						67890: { '789lkjh123456': 'requesting' },
 					},
 				},
 			};
@@ -139,6 +140,56 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( getNumberOfInvitesFoundForSite( state, 12345 ) ).to.equal( 678 );
+		} );
+	} );
+
+	describe( '#didResendSucceed()', () => {
+		test( 'should return true for successful resends', () => {
+			const state = {
+				invites: {
+					requestingResend: {
+						12345: { '123456asdf789': 'success' },
+						67890: { '789lkjh123456': 'requesting' },
+						34567: { asdf987654321: 'failure' },
+					},
+				},
+			};
+			expect( didResendSucceed( state, 12345, '123456asdf789' ) ).to.equal( true );
+		} );
+
+		test( 'should return false when a resend is pending', () => {
+			const state = {
+				invites: {
+					requestingResend: {
+						12345: { '123456asdf789': 'success' },
+						67890: { '789lkjh123456': 'requesting' },
+						34567: { asdf987654321: 'failure' },
+					},
+				},
+			};
+			expect( didResendSucceed( state, 67890, '789lkjh123456' ) ).to.equal( false );
+		} );
+
+		test( 'should return false when a resend is failure', () => {
+			const state = {
+				invites: {
+					requestingResend: {
+						12345: { '123456asdf789': 'success' },
+						67890: { '789lkjh123456': 'requesting' },
+						34567: { asdf987654321: 'failure' },
+					},
+				},
+			};
+			expect( didResendSucceed( state, 34567, 'asdf987654321' ) ).to.equal( false );
+		} );
+
+		test( 'should return false when resend has not been requested', () => {
+			const state = {
+				invites: {
+					requestingResend: {},
+				},
+			};
+			expect( didResendSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
 		} );
 	} );
 } );

@@ -1,5 +1,5 @@
 .people-list-item.card.is-compact {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-light;
 	box-shadow: none;
 	display: flex;
 	overflow: hidden;
@@ -105,5 +105,23 @@
 }
 
 .people-list-item__invite-resend {
+	display: none;
+	height: 30px;
 	margin-left: 12px;
+	align-self: center;
+	vertical-align: baseline;
+
+	min-width: 100px; // So success notice matches width of the button
+
+	@include breakpoint( '>480px' ) {
+		display: inline-block;
+	}
+
+	&.is-success {
+		background-color: $gray-light;
+		border: 0;
+		color: $gray-dark;
+		cursor: default;
+	}
 }
+
