@@ -1,13 +1,11 @@
-/** @format */
-
 .editor-html-toolbar {
 	height: 39px;
 	position: relative;
-	z-index: z-index('root', '.editor-html-toolbar');
+	z-index: z-index( 'root', '.editor-html-toolbar' );
 
 	.editor-html-toolbar__wrapper {
-		background-color: rgba($white, 0.92);
-		border-color: lighten($gray, 20%);
+		background-color: rgba( $white, 0.92 );
+		border-color: lighten( $gray, 20% );
 		border-style: solid;
 		border-left-width: 1px;
 		border-right-width: 1px;
@@ -18,17 +16,17 @@
 		position: relative;
 		width: 100%;
 
-		@media (max-width: 700px) {
+		@media ( max-width: 700px ) {
 			border-left-width: 0;
 			border-right-width: 0;
 		}
 
 		.focus-sidebar & {
-			@media screen and (max-width: ( 700px + $sidebar-width-max )) {
+			@media screen and ( max-width: ( 700px + $sidebar-width-max ) ) {
 				border-left-width: 0;
 				border-right-width: 0;
 			}
-		}
+  		}
 	}
 
 	&.is-pinned .editor-html-toolbar__wrapper {
@@ -43,22 +41,22 @@
 
 		.focus-sidebar &,
 		.has-chat & {
-			width: calc(100% - (#{ $sidebar-width-max + 1 }));
+			width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
 		}
 
 		.focus-sidebar.has-chat & {
-			width: calc(100% - (#{ ($sidebar-width-max * 2) + 1 }));
+			width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
 			left: 0;
 		}
 
-		@include breakpoint( '660px-960px' ) {
+		@include breakpoint( "660px-960px" ) {
 			.focus-sidebar &,
 			.has-chat & {
-				width: calc(100% - (#{ $sidebar-width-max + 1 }));
+				width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
 			}
 
 			.focus-sidebar.has-chat & {
-				width: calc(100% - (#{ ($sidebar-width-max * 2) + 1 }));
+				width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
 			}
 		}
 	}
@@ -103,8 +101,8 @@
 	}
 
 	.button {
-		border-right: 1px solid lighten($gray, 30%);
-		color: darken($gray, 20%);
+		border-right: 1px solid lighten( $gray, 30% );
+		color: darken( $gray, 20% );
 		height: 26px;
 		margin: 6px 0;
 		padding: 4px 12px;
@@ -137,7 +135,7 @@
 	height: 38px;
 
 	.editor-html-toolbar__button-insert-content-dropdown.button {
-		border-right: 1px solid lighten($gray, 30%);
+		border-right: 1px solid lighten( $gray, 30% );
 		height: 38px;
 		margin: 0;
 		min-width: auto;
@@ -156,7 +154,7 @@
 			font-weight: 400;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint( "<660px" ) {
 			padding: 6px 12px 8px 12px;
 			.gridicon {
 				margin-right: 0;
@@ -170,7 +168,7 @@
 
 .editor-html-toolbar__insert-content-dropdown {
 	background-color: $white;
-	border: 1px solid lighten($gray, 20%);
+	border: 1px solid lighten( $gray, 20% );
 	border-radius: 0 0 4px 4px;
 	display: none;
 	left: 0;
@@ -200,8 +198,7 @@
 		}
 
 		&:hover {
-			.gridicon,
-			span {
+			.gridicon, span {
 				color: $blue-medium;
 			}
 		}
@@ -228,5 +225,5 @@
 	font-family: $code;
 }
 .editor-html-toolbar__button-close-tags.button[disabled]:hover {
-	color: lighten($gray, 30%);
+	color: lighten( $gray, 30% );
 }
