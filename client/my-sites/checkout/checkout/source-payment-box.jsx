@@ -62,18 +62,7 @@ class SourcePaymentBox extends PureComponent {
 	}
 
 	paymentMethodByType( paymentType ) {
-		if ( paymentType === 'ideal' ) {
-			return 'WPCOM_Billing_Stripe_Source_Ideal';
-		} else if ( paymentType === 'giropay' ) {
-			return 'WPCOM_Billing_Stripe_Source_Giropay';
-		} else if ( paymentType === 'bancontact' ) {
-			return 'WPCOM_Billing_Stripe_Source_Bancontact';
-		} else if ( paymentType === 'p24' ) {
-			return 'WPCOM_Billing_Stripe_Source_P24';
-		} else if ( paymentType === 'alipay' ) {
-			return 'WPCOM_Billing_Stripe_Source_Alipay';
-		}
-		return 'WPCOM_Billing_Stripe_Source';
+		return cartValues.paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
 	redirectToPayment( event ) {

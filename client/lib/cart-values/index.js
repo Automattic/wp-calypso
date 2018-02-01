@@ -204,4 +204,5 @@ export default {
 	isFree,
 	isPaidForFullyInCredits,
 	isPaymentMethodEnabled,
+	paymentMethodClassName,
 };
