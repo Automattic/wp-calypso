@@ -23,7 +23,7 @@ import { default as loginRouteSetter } from 'login';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { combineReducers } from 'state/utils';
-import { setupContextMiddleware } from './page-context-middleware';
+import { default as setupContextMiddleware } from './page-context-middleware';
 
 // Middlewares:
 import { default as wpcomApiMiddleware } from 'state/data-layer/wpcom-api-middleware';
