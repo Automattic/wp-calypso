@@ -8,8 +8,7 @@
 					"iOS >= 10",
 					"not ie <= 10"
 				]
-			},
-			"modules": false
+			}
 		} ],
 		"stage-2"
 	],

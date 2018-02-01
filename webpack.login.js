@@ -1,8 +1,34 @@
+const _ = require( 'lodash' );
+const fs = require( 'fs' );
 const path = require( 'path' );
 const UglifyJSPlugin = require( 'uglifyjs-webpack-plugin' );
 const webpack = require( 'webpack' );
 
+// load in the babel config from babelrc and disable commonjs transform
+// this enables static analysis from webpack including treeshaking
+// also disable add-module-exports. TODO: remove add-module-exports from babelrc. requires fixing tests
+const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
+const babelPresetEnv = _.find( babelConfig.presets, preset => preset[ 0 ] === 'env' );
+babelPresetEnv[ 1 ].modules = false;
+_.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
+
+const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+
+const babelLoader = {
+	loader: 'babel-loader',
+	options: Object.assign( {}, babelConfig, {
+		babelrc: false,
+		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
+		cacheIdentifier: cacheIdentifier,
+		plugins: [
+			...babelConfig.plugins,
+			'/Users/yury/Automattic/wp-calypso/inline-imports.js',
+		],
+	} ),
+};
+
 const config = {
+	devtool: 'source-map',
 	entry: {
 		build: path.join( path.resolve( __dirname ), 'client', 'boot', 'loggedout-app' ),
 		vendor: [
@@ -33,8 +59,8 @@ const config = {
 	},
 	module: {
 		loaders: [
-				{ test: /\.js$/, loader: 'babel-loader', exclude: /node_modules[\/\\](?!notifications-panel)/ },
-				{ test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules[\/\\](?!notifications-panel)/ },
+				{ test: /\.js$/, loader: babelLoader, exclude: /node_modules[\/\\](?!notifications-panel)/ },
+				{ test: /\.jsx$/, loader: babelLoader, exclude: /node_modules[\/\\](?!notifications-panel)/ },
 		],
 	},
 	resolve: {
@@ -58,7 +84,7 @@ const config = {
 	},
 	plugins: [
 		new webpack.DefinePlugin( {
-			'process.env.NODE_ENV': JSON.stringify( 'production' ),
+			'process.env.NODE_ENV': JSON.stringify( 'development' ),
 			PROJECT_NAME: JSON.stringify( 'wordpress-com' ),
 			COMMIT_SHA: JSON.stringify( '123fffeee' ),
 		} ),
