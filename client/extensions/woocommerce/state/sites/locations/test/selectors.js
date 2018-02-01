@@ -12,7 +12,7 @@ import {
 	areLocationsLoaded,
 	areLocationsLoading,
 	getContinents,
-	getCountries,
+	getCountriesByContinent,
 	getCountryName,
 	getCountriesWithStates,
 	getStates,
@@ -178,21 +178,21 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getCountries', () => {
+	describe( '#getCountriesByContinent', () => {
 		test( 'should return an empty list if the locations are not loaded', () => {
-			expect( getCountries( emptyState, 'NA' ) ).to.deep.equal( [] );
+			expect( getCountriesByContinent( emptyState, 'NA' ) ).to.deep.equal( [] );
 		} );
 
 		test( 'should return an empty list if the locations are being loaded', () => {
-			expect( getCountries( loadingState, 'NA' ) ).to.deep.equal( [] );
+			expect( getCountriesByContinent( loadingState, 'NA' ) ).to.deep.equal( [] );
 		} );
 
 		test( 'should return an empty list if the continent does not exist', () => {
-			expect( getCountries( loadedState, 'XX' ) ).to.deep.equal( [] );
+			expect( getCountriesByContinent( loadedState, 'XX' ) ).to.deep.equal( [] );
 		} );
 
 		test( 'should return the countries from a continent, sorted by name', () => {
-			expect( getCountries( loadedState, 'NA' ) ).to.deep.equal( [
+			expect( getCountriesByContinent( loadedState, 'NA' ) ).to.deep.equal( [
 				{ code: 'CA', name: 'Canada' },
 				{ code: 'US', name: 'United States' },
 			] );

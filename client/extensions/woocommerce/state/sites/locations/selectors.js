@@ -68,7 +68,7 @@ export const getContinents = createSelector(
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
  * @return {Array} A list of countries in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
  */
-export const getCountries = createSelector(
+export const getCountriesByContinent = createSelector(
 	( state, continentCode, siteId = getSelectedSiteId( state ) ) => {
 		if ( ! areLocationsLoaded( state, siteId ) ) {
 			return [];
