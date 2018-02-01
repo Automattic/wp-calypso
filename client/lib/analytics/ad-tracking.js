@@ -15,15 +15,14 @@ import { v4 as uuid } from 'uuid';
  */
 import config from 'config';
 import productsValues from 'lib/products-values';
-import userModule from 'lib/user';
 import { loadScript } from 'lib/load-script';
-import { shouldSkipAds } from 'lib/analytics/utils';
+import { shouldSkipAds, getUserIdMd5, getUserEmailMd5 } from 'lib/analytics/utils';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:analytics:ad-tracking' );
-const user = userModule();
+
 let hasStartedFetchingScripts = false,
 	hasFinishedFetchingScripts = false;
 
@@ -640,9 +639,6 @@ function recordProduct( product, orderId ) {
 		debug( 'Recording purchase', product );
 	}
 
-	const currentUser = user.get();
-	const userId = currentUser ? currentUser.ID : 0;
-
 	try {
 		// Google Analytics
 		window.ga( 'ecommerce:addItem', {
@@ -666,7 +662,7 @@ function recordProduct( product, orderId ) {
 					google_conversion_currency: product.currency,
 					google_custom_params: {
 						product_slug: product.product_slug,
-						user_id: userId,
+						user_id: getUserIdMd5(),
 						order_id: orderId,
 					},
 					google_remarketing_only: false,
@@ -680,7 +676,7 @@ function recordProduct( product, orderId ) {
 				currency: product.currency,
 				product_slug: product.product_slug,
 				value: product.cost,
-				user_id: userId,
+				user_id: getUserIdMd5(),
 				order_id: orderId,
 			} );
 		}
@@ -776,15 +772,13 @@ function recordOrderInAtlas( cart, orderId ) {
 		return;
 	}
 
-	const currentUser = user.get();
-
 	const params = {
 		event: 'Purchase',
 		products: cart.products.map( product => product.product_name ).join( ', ' ),
 		product_slugs: cart.products.map( product => product.product_slug ).join( ', ' ),
 		revenue: cart.total_cost,
 		currency_code: cart.currency,
-		user_id: currentUser ? currentUser.ID : 0,
+		user_id: getUserIdMd5(),
 		order_id: orderId,
 	};
 
@@ -963,9 +957,8 @@ function floodlightSessionId() {
 function floodlightUserParams() {
 	const params = {};
 
-	const currentUser = user.get();
-	if ( currentUser ) {
-		params.u4 = currentUser.ID;
+	if ( 0 !== getUserIdMd5() ) {
+		params.u4 = getUserIdMd5();
 	}
 
 	const anonymousUserId = tracksAnonymousUserId();
@@ -1134,8 +1127,8 @@ function recordInCriteo( eventName, eventProps ) {
 	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
 	events.push( { event: 'setSiteType', type: criteoSiteType() } );
 
-	if ( user.get() ) {
-		events.push( { event: 'setEmail', email: [ user.get().email ] } );
+	if ( null !== getUserEmailMd5() ) {
+		events.push( { event: 'setEmail', email: [ getUserEmailMd5() ] } );
 	}
 
 	const conversionEvent = clone( eventProps );

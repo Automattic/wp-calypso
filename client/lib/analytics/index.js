@@ -16,7 +16,7 @@ import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } fr
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { doNotTrack, isPiiUrl, getUserIdMd5 } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
 	retarget,
@@ -402,8 +402,8 @@ const analytics = {
 		initialize: function() {
 			const parameters = {};
 			if ( ! analytics.ga.initialized ) {
-				if ( _user && _user.get() ) {
-					parameters.userId = 'u-' + _user.get().ID;
+				if ( 0 !== getUserIdMd5() ) {
+					parameters.userId = getUserIdMd5();
 				}
 
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
