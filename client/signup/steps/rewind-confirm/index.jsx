@@ -52,7 +52,11 @@ class RewindConfirmStep extends Component {
 		return (
 			<Card className="rewind-confirm__card">
 				<h3 className="rewind-confirm__title">{ translate( 'Are you sure?' ) }</h3>
-				<img className="rewind-confirm__image" src="/calypso/images/illustrations/security.svg" />
+				<img
+					className="rewind-confirm__image"
+					alt="Security"
+					src="/calypso/images/illustrations/security.svg"
+				/>
 				<p className="rewind-confirm__description">
 					{ translate(
 						"If you don't share credentials with Jetpack, your site won't be backed up. Our " +
