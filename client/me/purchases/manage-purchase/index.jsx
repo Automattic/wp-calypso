@@ -50,6 +50,7 @@ import {
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
+import { isSiteAutomatedTransfer as isSiteAtomic } from 'state/selectors';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
 import {
@@ -224,11 +225,19 @@ class ManagePurchase extends Component {
 	renderCancelPurchaseNavItem() {
 		const purchase = getPurchase( this.props ),
 			{ id } = purchase;
-		const { translate } = this.props;
+		const { translate, isAtomicSite } = this.props;
 
 		if ( ! isCancelable( purchase ) || ! getSelectedSite( this.props ) ) {
 			return null;
 		}
+
+		const trackNavItemClick = linkText => () => {
+			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
+				product_slug: purchase.productSlug,
+				is_atomic: isAtomicSite,
+				link_text: linkText,
+			} );
+		};
 
 		let text,
 			link = cancelPurchase( this.props.selectedSite.slug, id );
@@ -242,13 +251,17 @@ class ManagePurchase extends Component {
 					text = translate( 'Cancel Domain and Refund' );
 				}
 			}
+			if ( isAtomicSite ) {
+				text = translate( 'Contact Support to Cancel Subscription and Refund' );
+				link = CALYPSO_CONTACT;
+			} else {
+				if ( isSubscription( purchase ) ) {
+					text = translate( 'Cancel Subscription and Refund' );
+				}
 
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription and Refund' );
-			}
-
-			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
+				if ( isOneTimePurchase( purchase ) ) {
+					text = translate( 'Cancel and Refund' );
+				}
 			}
 		} else {
 			if ( isDomainTransfer( purchase ) ) {
@@ -264,7 +277,11 @@ class ManagePurchase extends Component {
 			}
 		}
 
-		return <CompactCard href={ link }>{ text }</CompactCard>;
+		return (
+			<CompactCard href={ link } onClick={ trackNavItemClick( text ) }>
+				{ text }
+			</CompactCard>
+		);
 	}
 
 	renderCancelPrivacyProtection() {
@@ -474,14 +491,16 @@ export default connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
 	const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
+	const selectedSite = getSelectedSiteSelector( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase,
 		selectedSiteId,
-		selectedSite: getSelectedSiteSelector( state ),
+		selectedSite,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, selectedPurchase.meta ),
+		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
 	};
 } )( localize( ManagePurchase ) );
