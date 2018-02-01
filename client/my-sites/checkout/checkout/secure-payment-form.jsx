@@ -243,6 +243,7 @@ const SecurePaymentForm = createReactClass( {
 					selectedSite={ this.props.selectedSite }
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
+					handleCheckoutCompleteRedirect={ this.props.handleCheckoutCompleteRedirect }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
 				/>
 			</PaymentBox>

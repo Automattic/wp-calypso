@@ -29,11 +29,12 @@ class SourcePaymentBox extends PureComponent {
 		cart: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 	}
 
 	constructor() {
 		super();
-		this.redirectToPayment = this.redirectToPayment.bind( this );
+		this.makePayment = this.makePayment.bind( this );
 		this.handleChange = this.handleChange.bind( this );
 	}
 
@@ -65,7 +66,7 @@ class SourcePaymentBox extends PureComponent {
 		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
-	redirectToPayment( event ) {
+	makePayment( event ) {
 		const origin = this.getLocationOrigin( location );
 		event.preventDefault();
 
@@ -75,6 +76,7 @@ class SourcePaymentBox extends PureComponent {
 			disabled: true
 		} );
 
+		const successUrl = origin + this.props.redirectTo();
 		let cancelUrl = origin + '/checkout/';
 
 		if ( this.props.selectedSite ) {
@@ -86,7 +88,7 @@ class SourcePaymentBox extends PureComponent {
 		const dataForApi = {
 			payment: assign( {}, this.state, {
 				paymentMethod: this.paymentMethodByType( this.props.paymentType ),
-				successUrl: origin + this.props.redirectTo(),
+				successUrl,
 				cancelUrl,
 			} ),
 			cart: this.props.cart,
@@ -115,6 +117,9 @@ class SourcePaymentBox extends PureComponent {
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
 				analytics.tracks.recordEvent( 'calypso_checkout_with_source_' + this.props.paymentType );
 				location.href = result.redirect_url;
+			} else {
+				// SUCCESS
+				this.props.handleCheckoutCompleteRedirect();
 			}
 		}.bind( this ) );
 	}
@@ -200,7 +205,7 @@ class SourcePaymentBox extends PureComponent {
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
-			<form onSubmit={ this.redirectToPayment }>
+			<form onSubmit={ this.makePayment }>
 
 				<div className="checkout__payment-box-section">
 					<Input
