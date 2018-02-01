@@ -45,10 +45,10 @@ export class CommentHtmlEditor extends Component {
 
 	storeTextareaRef = textarea => ( this.textarea = textarea );
 
-	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag.name );
+	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	insertHtmlTag = tag => {
-		const isTagOpen = insertHtmlTag( this.textarea, tag, this.isTagOpen( tag ) );
+		const isTagOpen = insertHtmlTag( this.textarea, tag, this.isTagOpen( tag.name ) );
 		this.setState( ( { openTags } ) => ( {
 			openTags: isTagOpen
 				? openTags.concat( tag.name )
@@ -171,7 +171,7 @@ export class CommentHtmlEditor extends Component {
 		};
 
 		return (
-			<div>
+			<div className="comment__html-editor">
 				<div className="comment__html-toolbar">
 					{ map( buttons, ( { disabled, label, onClick }, tag ) => (
 						<Button
