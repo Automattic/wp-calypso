@@ -14,6 +14,17 @@ import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
 } from 'state/action-types';
+import { validateContactDetails } from '../actions';
+
+jest.mock( 'lib/wp', () => {
+	const { stub } = require( 'sinon' );
+	const validateDomainContactInformation = stub();
+	return {
+		undocumented: () => ( {
+			validateDomainContactInformation,
+		} ),
+	};
+} );
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
@@ -209,6 +220,23 @@ describe( 'reducer', () => {
 					.that.is.not.an( 'array' );
 
 				expect( result._contactDetailsCache ).to.have.deep.property( 'extra.newData', 'exists' );
+			} );
+		} );
+
+		describe( 'validation', () => {
+			const validateDomainContactInformationStub = undocumented().validateDomainContactInformation;
+			const dispatchSpy = sinon.spy();
+
+			afterEach( () => {
+				validateDomainContactInformationStub.reset();
+			} );
+
+			test( 'should call out to the server when dispatched', () => {
+				const action = validateContactDetail( { name: 'The Flash' } );
+				expect( validateDomainContactInformationStub ).to.have.not.been.called();
+				expect( action ).to.be.a( 'function' );
+				action( dispatchSpy );
+				expect( validateDomainContactInformationStub ).to.have.been.called();
 			} );
 		} );
 	} );

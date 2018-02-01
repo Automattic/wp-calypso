@@ -25,6 +25,9 @@ import {
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_FAILURE,
 	DOMAIN_MANAGEMENT_WHOIS_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_WHOIS_UPDATE,
+	DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_REQUEST,
+	DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_ERROR,
+	DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -101,9 +104,23 @@ export const items = createReducer(
 		[ DOMAIN_MANAGEMENT_WHOIS_UPDATE ]: ( state, { domain, whoisData } ) => {
 			return merge( {}, state, { [ domain ]: { ...state[ domain ], ...whoisData } } );
 		},
+		[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE ]: ( state, { requestId, ...data } ) => {
+			console.log( 'requestId:', requestId );
+			console.log( 'data:', data );
+			return {
+				...state,
+				_contactDetailsCacheValidation: data,
+			};
+		},
 	},
 	domainWhoisSchema
 );
+
+export const isRequestingContactDetailsValidation = createReducer( false, {
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_VALIDATE_REQUEST ]: stubTrue,
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS ]: stubFalse,
+	[ DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE ]: stubFalse,
+} );
 
 export default combineReducers( {
 	items,
