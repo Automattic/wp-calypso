@@ -80,7 +80,7 @@ export const ChecklistSiteIconTour = makeTour(
 			placement="above"
 			style={ { marginTop: '30px', marginLeft: '90px' } }
 		>
-			<Continue target="image_editor_button_done" step="finish" click>
+			<Continue target="image-editor-button-done" step="finish" click>
 				{ translate(
 					'Let’s make sure it looks right before you press {{b}}Done{{/b}} to save your changes.',
 					{ components: { b: <strong /> } }
