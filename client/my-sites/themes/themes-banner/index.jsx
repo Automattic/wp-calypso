@@ -10,10 +10,8 @@ import safeImageUrl from 'lib/safe-image-url';
 
 export class ThemesBanner extends PureComponent {
 	static propTypes = {
-		title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] )
-			.isRequired,
-		description: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object, PropTypes.array ] )
-			.isRequired,
+		title: PropTypes.node.isRequired,
+		description: PropTypes.node.isRequired,
 		action: PropTypes.func,
 		actionLabel: PropTypes.string.isRequired,
 		backgroundColor: PropTypes.string,
