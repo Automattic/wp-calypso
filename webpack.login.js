@@ -22,7 +22,7 @@ const babelLoader = {
 		cacheIdentifier: cacheIdentifier,
 		plugins: [
 			...babelConfig.plugins,
-			'/Users/yury/Automattic/wp-calypso/inline-imports.js',
+			path.resolve( 'inline-imports.js' ),
 		],
 	} ),
 };
