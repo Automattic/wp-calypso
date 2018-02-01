@@ -20,7 +20,7 @@ import Card from 'components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Gravatar from 'components/gravatar';
 import QuerySiteInvites from 'components/data/query-site-invites';
-import { getSelectedInvite, isRequestingInvitesForSite } from 'state/invites/selectors';
+import { getSelectedInvite } from 'state/invites/selectors';
 
 class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
@@ -66,18 +66,18 @@ class PeopleInviteDetails extends React.PureComponent {
 			<div className="people-invite-details__meta">
 				<div className="people-invite-details__meta-item">
 					<span className="people-invite-details__meta-item-label">
-						{ translate( 'Invited By:' ) }
+						{ translate( 'Invited By' ) }
 					</span>
 					{ invite.invitedBy && <Gravatar user={ invite.invitedBy } size={ 24 } /> }
 					{ showName && (
 						<span className="people-invite-details__meta-item-user">{ invite.invitedBy.name }</span>
 					) }
-					<span className="people-invite-details__meta-item-user">
+					<span className="people-invite-details__meta-item-username">
 						{ '@' + invite.invitedBy.login }
 					</span>
 				</div>
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">{ translate( 'Sent:' ) }</span>
+					<span className="people-invite-details__meta-item-label">{ translate( 'Sent' ) }</span>
 					<span className="people-invite-details__meta-item-date">
 						{ moment( invite.inviteDate ).format( 'LLL' ) }
 					</span>
@@ -85,7 +85,7 @@ class PeopleInviteDetails extends React.PureComponent {
 				{ invite.acceptedDate && (
 					<div className="people-invite-details__meta-item">
 						<span className="people-invite-details__meta-item-label">
-							{ translate( 'Accepted:' ) }
+							{ translate( 'Accepted' ) }
 						</span>
 						<span className="people-invite-details__meta-item-date">
 							{ moment( invite.acceptedDate ).format( 'LLL' ) }
@@ -123,6 +123,5 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		invite: getSelectedInvite( state, siteId, ownProps.inviteKey ),
-		requesting: isRequestingInvitesForSite( state, siteId ),
 	};
 } )( localize( PeopleInviteDetails ) );
