@@ -56,7 +56,10 @@ export class AddImageDialog extends Component {
 	};
 
 	render() {
-		const { isVisible, translate } = this.props;
+		if ( ! this.props.isVisible ) {
+			return null;
+		}
+		const { translate } = this.props;
 		const { imageAlt, imageTitle, imageUrl } = this.state;
 
 		const buttons = [
@@ -74,10 +77,10 @@ export class AddImageDialog extends Component {
 
 		return (
 			<Dialog
-				isVisible={ isVisible }
-				buttons={ buttons }
-				onClose={ this.onCloseDialog }
 				additionalClassNames="html-toolbar__dialog"
+				buttons={ buttons }
+				isVisible
+				onClose={ this.onCloseDialog }
 			>
 				<FormFieldset>
 					<FormLabel htmlFor="image_url">{ translate( 'URL' ) }</FormLabel>

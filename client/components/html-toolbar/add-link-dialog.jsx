@@ -117,7 +117,10 @@ export class AddLinkDialog extends Component {
 	};
 
 	render() {
-		const { isVisible, siteId, translate } = this.props;
+		if ( ! this.props.isVisible ) {
+			return null;
+		}
+		const { siteId, translate } = this.props;
 		const { linkNewTab, linkText, linkUrl, selectedPost } = this.state;
 
 		const buttons = [
@@ -135,10 +138,10 @@ export class AddLinkDialog extends Component {
 
 		return (
 			<Dialog
-				isVisible={ isVisible }
-				buttons={ buttons }
-				onClose={ this.onCloseDialog }
 				additionalClassNames="html-toolbar__dialog"
+				buttons={ buttons }
+				isVisible
+				onClose={ this.onCloseDialog }
 			>
 				<FormFieldset>
 					<FormLabel htmlFor="link_url">{ translate( 'URL' ) }</FormLabel>
