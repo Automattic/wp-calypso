@@ -100,7 +100,7 @@
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
-		"upgrades/paypal": false,
+		"upgrades/redirect-payments": false,
 		"upgrades/premium-themes": true,
 		"upgrades/presale-chat": true,
 		"upgrades/removal-survey": true,

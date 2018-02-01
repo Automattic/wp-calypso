@@ -10,7 +10,7 @@ import { isValid } from 'cpf';
  * Internal dependencies
  */
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
-import { isEbanxEnabled } from 'lib/cart-values';
+import { isPaymentMethodEnabled } from 'lib/cart-values';
 import CartStore from 'lib/cart/store';
 
 /**
@@ -21,7 +21,7 @@ import CartStore from 'lib/cart/store';
 export function isEbanxEnabledForCountry( countryCode = '' ) {
 	return (
 		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
-		isEbanxEnabled( CartStore.get() )
+		isPaymentMethodEnabled( CartStore.get(), 'ebanx' )
 	);
 }
 
