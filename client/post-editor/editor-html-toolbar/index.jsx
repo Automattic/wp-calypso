@@ -32,8 +32,8 @@ import {
 	fieldUpdate,
 	settingsUpdate,
 } from 'state/ui/editor/contact-form/actions';
-import AddImageDialog from './add-image-dialog';
-import AddLinkDialog from './add-link-dialog';
+import AddImageDialog from 'components/html-toolbar/add-image-dialog';
+import AddLinkDialog from 'components/html-toolbar/add-link-dialog';
 import Button from 'components/button';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
@@ -645,16 +645,16 @@ export class EditorHtmlToolbar extends Component {
 				</div>
 
 				<AddImageDialog
+					isVisible={ this.state.showImageDialog }
 					onClose={ this.closeImageDialog }
 					onInsert={ this.onClickImage }
-					shouldDisplay={ this.state.showImageDialog }
 				/>
 
 				<AddLinkDialog
+					isVisible={ this.state.showLinkDialog }
 					onClose={ this.closeLinkDialog }
 					onInsert={ this.onClickLink }
 					selectedText={ this.state.selectedText }
-					shouldDisplay={ this.state.showLinkDialog }
 				/>
 
 				<ContactFormDialog
