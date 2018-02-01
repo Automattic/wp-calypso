@@ -74,11 +74,8 @@ export class UserStep extends Component {
 	}
 
 	componentWillMount() {
-		const { oauth2Signup, initialContext } = this.props,
-			clientId =
-				get( initialContext, 'query.oauth2_client_id', null )
-					? initialContext.query.oauth2_client_id
-					: null;
+		const { oauth2Signup, initialContext } = this.props;
+		const clientId = get( initialContext, 'query.oauth2_client_id', null );
 
 		this.setSubHeaderText( this.props );
 
