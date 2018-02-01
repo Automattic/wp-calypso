@@ -182,6 +182,17 @@ class SourcePaymentBox extends PureComponent {
 					eventFormName="Checkout Form" />
 			);
 		}
+
+		if ( 'sepa-debit' === this.props.paymentType ) {
+			return (
+				<Input
+					additionalClasses="checkout-field"
+					name="iban"
+					onChange={ this.handleChange }
+					label={ translate( 'IBAN (International Bank Account Number)' ) }
+					eventFormName="Checkout Form" />
+			);
+		}
 	}
 
 	render() {

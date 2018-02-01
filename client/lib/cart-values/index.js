@@ -155,7 +155,7 @@ function paymentMethodClassName( method ) {
 		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
 		paypal: 'WPCOM_Billing_PayPal_Express',
 		p24: 'WPCOM_Billing_Stripe_Source_P24',
-		'sepa-debit': 'WPCOM_Billing_Stripe_Sepa_Debit',
+		'sepa-debit': 'WPCOM_Billing_Stripe_Source_Sepa_Debit',
 	};
 
 	return paymentMethodsClassNames[ method ] || '';
