@@ -85,7 +85,7 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You published your first blog post',
 		completedButtonText: 'Edit',
-		url: '/post/$siteSlug/3',
+		url: '/post/$siteSlug',
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
@@ -127,24 +127,10 @@ const sequence = [
 	'post_published',
 ];
 
-export const urlForTask = ( id, siteSlug ) => {
-	const task = tasks[ id ];
-	if ( task && task.url ) {
-		return task.url.replace( '$siteSlug', siteSlug );
-	}
-};
-
-export const tourForTask = id => {
-	const task = tasks[ id ];
-	if ( task ) {
-		return task.tour;
-	}
-};
-
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
-	const url = urlForTask( task.id, siteSlug );
-	const tour = tourForTask( task.id );
+	const url = task.url && task.url.replace( '$siteSlug', siteSlug );
+	const tour = task.tour;
 
 	if ( task.completed ) {
 		if ( url ) {
