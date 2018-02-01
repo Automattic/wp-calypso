@@ -18,7 +18,7 @@ import { inSection } from 'state/ui/guided-tours/contexts';
 import { query } from 'layout/guided-tours/positioning';
 import {
 	ButtonRow,
-	ConditionalContent,
+	ConditionalBlock,
 	Continue,
 	makeTour,
 	Next,
@@ -138,14 +138,14 @@ export const ChecklistPublishPostTour = makeTour(
 			style={ { marginTop: '-10px' } }
 			wait={ openFeatureImageUploadDialog }
 		>
-			<ConditionalContent when={ not( isFeaturedImageSet ) }>
+			<ConditionalBlock when={ not( isFeaturedImageSet ) }>
 				<p>
 					{ translate(
 						'Featured images are a great way to add more personality to your pages. ' +
 							'Let’s add something a little more relevant to your blog post.'
 					) }
 				</p>
-			</ConditionalContent>
+			</ConditionalBlock>
 			<p>{ translate( 'Either pick an image below or add a new one from your computer.' ) }</p>
 			<Next step="click-set-featured-image">{ translate( 'All done, continue' ) }</Next>
 		</Step>

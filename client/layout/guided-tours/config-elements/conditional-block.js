@@ -1,6 +1,6 @@
-/** @format */
-
 /**
+ * @format
+ *
  * External dependencies
  */
 import React, { PureComponent } from 'react';
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
  */
 import contextTypes from '../context-types';
 
-export default class ConditionalContent extends PureComponent {
+export default class ConditionalBlock extends PureComponent {
 	static propTypes = {
 		when: PropTypes.func.isRequired,
 	};
