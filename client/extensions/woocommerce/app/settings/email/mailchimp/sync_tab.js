@@ -55,9 +55,9 @@ const SyncTab = localize( ( { siteId, translate, syncState, resync, isRequesting
 	const { account_name, store_syncing, product_count, mailchimp_total_products,
 		mailchimp_total_orders, order_count } = syncState;
 	const hasProductInfo = ( undefined !== product_count ) && ( undefined !== mailchimp_total_products );
-	const products = hasProductInfo ? ( product_count + '/' + mailchimp_total_products ) : '';
+	const products = hasProductInfo ? ( mailchimp_total_products + '/' + product_count ) : '';
 	const hasOrdersInfo = ( undefined !== order_count ) && ( undefined !== mailchimp_total_orders );
-	const orders = hasOrdersInfo ? ( order_count + '/' + mailchimp_total_orders ) : '';
+	const orders = hasOrdersInfo ? ( mailchimp_total_orders + '/' + order_count ) : '';
 
 	const synced = () => (
 		<Notice
