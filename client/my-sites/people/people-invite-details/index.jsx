@@ -70,7 +70,7 @@ class PeopleInviteDetails extends React.PureComponent {
 					</span>
 					{ invite.invitedBy && <Gravatar user={ invite.invitedBy } size={ 24 } /> }
 					{ showName && (
-						<span className="people-invite-details__meta-item-user">invite.invitedBy.name</span>
+						<span className="people-invite-details__meta-item-user">{ invite.invitedBy.name }</span>
 					) }
 					<span className="people-invite-details__meta-item-user">
 						{ '@' + invite.invitedBy.login }
