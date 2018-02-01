@@ -5,6 +5,7 @@
  */
 
 import { omit } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -131,6 +132,12 @@ export function requestSite( siteFragment ) {
 					dispatch( {
 						type: SITE_REQUEST_SUCCESS,
 						siteId: siteFragment,
+					} );
+				} else {
+					dispatch( {
+						type: SITE_REQUEST_FAILURE,
+						siteId: siteFragment,
+						error: i18n.translate( 'No access to manage the site' ),
 					} );
 				}
 			} )
