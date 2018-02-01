@@ -41,7 +41,7 @@ export function getInvitesForSite( state, siteId ) {
  * @return {?Number}        The number of invites found for the given site
  */
 export function getNumberOfInvitesFoundForSite( state, siteId ) {
-	return state.invites.counts[siteId] || null;
+	return state.invites.counts[ siteId ] || null;
 }
 
 /*
