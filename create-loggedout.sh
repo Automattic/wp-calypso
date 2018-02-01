@@ -1,5 +1,5 @@
 #!/bin/sh
-mkdir ./login-build
+mkdir -p ./login-build
 rm -rf ./login-build/*
 #rm -rf ./public/build.*.js
 #rm -rf ./public/vendor.*.js
