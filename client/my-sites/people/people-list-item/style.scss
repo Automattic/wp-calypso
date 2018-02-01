@@ -1,5 +1,5 @@
 .people-list-item.card.is-compact {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-light;
 	box-shadow: none;
 	display: flex;
 	overflow: hidden;
@@ -118,9 +118,9 @@
 	}
 
 	&.is-success {
-		background-color: lighten( $gray, 33% );
+		background-color: $gray-light;
 		border: 0;
-		color: darken( $gray, 38% );
+		color: $gray-dark;
 		cursor: default;
 	}
 }

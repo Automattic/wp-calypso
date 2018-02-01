@@ -65,7 +65,9 @@ class PeopleListItem extends React.PureComponent {
 	onResend = event => {
 		const { requestingResend, resendSuccess, siteId, inviteKey } = this.props;
 
+		// Prevents navigation to invite-details screen and onClick event.
 		event.preventDefault();
+		event.stopPropagation();
 
 		if ( requestingResend || resendSuccess ) {
 			return null;
