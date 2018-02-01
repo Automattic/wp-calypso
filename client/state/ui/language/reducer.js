@@ -40,13 +40,13 @@ export const isRtl = createReducer(
 			const localeSlugFromAction = action.localeSlug;
 
 			if ( ! localeSlugFromAction ) {
-				return state;
+				return null;
 			}
 
 			const language = getLanguage( localeSlugFromAction );
 
 			if ( ! language ) {
-				return state;
+				return null;
 			}
 
 			return Boolean( language.rtl );

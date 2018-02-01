@@ -38,7 +38,7 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'isRtl', () => {
-		test( 'returns default state with undefined state and empty action', () => {
+		test( 'returns null with undefined state and empty action', () => {
 			expect( isRtl( undefined, {} ) ).to.be.null;
 		} );
 
@@ -46,7 +46,7 @@ describe( 'reducer', () => {
 			expect( isRtl( true, {} ) ).to.be.true;
 		} );
 
-		test( 'returns default state with undefined state and invalid action type', () => {
+		test( 'returns null with undefined state and invalid action type', () => {
 			expect( isRtl( undefined, { type: 'foobar' } ) ).to.be.null;
 		} );
 
@@ -62,7 +62,7 @@ describe( 'reducer', () => {
 			expect( isRtl( true, action ) ).to.be.false;
 		} );
 
-		test( 'returns default state when localeSlug is unknown language', () => {
+		test( 'returns null when localeSlug is unknown language', () => {
 			const action = { type: LOCALE_SET, localeSlug: 'language' };
 
 			expect( isRtl( undefined, action ) ).to.be.null;
