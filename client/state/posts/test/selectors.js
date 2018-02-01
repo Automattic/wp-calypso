@@ -1844,7 +1844,9 @@ describe( 'selectors', () => {
 						edits: {
 							2916284: {
 								841: {
-									parent: 10,
+									parent: {
+										ID: 66,
+									},
 								},
 							},
 						},
@@ -1878,7 +1880,9 @@ describe( 'selectors', () => {
 						edits: {
 							2916284: {
 								841: {
-									parent: 10,
+									parent: {
+										ID: 10,
+									},
 								},
 							},
 						},
@@ -1902,7 +1906,7 @@ describe( 'selectors', () => {
 										ID: 841,
 										site_ID: 2916284,
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										date: moment( '2016-09-14T15:47:33-04:00' ),
+										date: '2016-09-14T15:47:33Z',
 									},
 								},
 							} ),
@@ -1910,7 +1914,7 @@ describe( 'selectors', () => {
 						edits: {
 							2916284: {
 								841: {
-									date: moment( '2017-09-14T15:47:33-04:00' ),
+									date: '2018-01-31T00:00:00Z',
 								},
 							},
 						},
@@ -1934,7 +1938,7 @@ describe( 'selectors', () => {
 										ID: 841,
 										site_ID: 2916284,
 										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										date: moment( '2016-09-14T15:47:33-04:00' ),
+										date: '2016-09-14T15:47:33Z',
 									},
 								},
 							} ),
@@ -1942,7 +1946,7 @@ describe( 'selectors', () => {
 						edits: {
 							2916284: {
 								841: {
-									date: moment( '2016-09-14T15:47:33-04:00' ),
+									date: '2016-09-14T15:47:33Z',
 								},
 							},
 						},
@@ -2259,7 +2263,9 @@ describe( 'selectors', () => {
 
 		test( 'should return false if the post status is future and date is in future', () => {
 			const tenMinutes = 1000 * 60;
-			const postDate = Date.now() + tenMinutes;
+			const postDate = moment( Date.now() + tenMinutes )
+				.utc()
+				.format();
 			const isPublished = isPostPublished(
 				{
 					posts: {
@@ -2287,7 +2293,9 @@ describe( 'selectors', () => {
 
 		test( 'should return true if the post status is future and date is in past', () => {
 			const tenMinutes = 1000 * 60;
-			const postDate = Date.now() - tenMinutes;
+			const postDate = moment( Date.now() - tenMinutes )
+				.utc()
+				.format();
 			const isPublished = isPostPublished(
 				{
 					posts: {
