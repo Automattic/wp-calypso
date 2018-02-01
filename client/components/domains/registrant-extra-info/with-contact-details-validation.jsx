@@ -5,6 +5,8 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
 import { castArray, get, isEmpty, map, reduce, replace, set } from 'lodash';
 import debugFactory from 'debug';
@@ -13,7 +15,7 @@ const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import getValidationSchemas from 'state/selectors/get-validation-schemas';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
@@ -27,8 +29,6 @@ export function disableSubmitButton( children ) {
 		} )
 	);
 }
-
-const wpcom = wp.undocumented();
 
 export function interpretIMJVError( error, schema ) {
 	let explicitPath, errorCode;
@@ -76,34 +76,60 @@ export function formatIMJVErrors( errors, schema ) {
 	);
 }
 
-const WithContactDetailsValidation = ( tld, WrappedComponent ) => {
-	return class FormWithValidation extends Component {
-		state = {};
+export default function WithContactDetailsValidation( tld, WrappedComponent ) {
+	const wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || '';
 
-		receiveSchema = schema => {
-			debug( 'received', schema );
-			this.setState( {
-				schema,
-				validate: validatorFactory( schema, { greedy: true, verbose: true } ),
-			} );
+	class ComponentWithValidation extends Component {
+		static propTypes = {
+			validationSchema: PropTypes.object.isRequired,
 		};
 
+		displayName = 'WithContactDetailsValidation(' + tld + ', ' + wrappedComponentName + ')';
+
+		validate = () => {};
+
 		componentWillMount() {
-			wpcom.getDomainContactInformationValidationSchema( tld, ( error, data ) => {
-				// TODO: handle errors
-				this.receiveSchema( data[ tld ] );
+			this.compileValidator();
+		}
+
+		componentWillReceiveProps( nextProps ) {
+			if ( nextProps.validationSchema !== this.props.validationSchema ) {
+				this.compileValidator();
+			}
+		}
+
+		compileValidator() {
+			// The schema object we compile is available at this.validate.toJSON()
+			// but we already check it's different in componentWillReceiveProps
+			debug( `compiling validation schema for ${ tld }`, this.props.validationSchema );
+			this.validate = validatorFactory( this.props.validationSchema, {
+				greedy: true,
+				verbose: true,
 			} );
 		}
 
 		validateContactDetails() {
-			const { validate, schema } = this.state;
-
-			if ( typeof validate !== 'function' ) {
+			if ( typeof this.validate !== 'function' ) {
 				return {};
 			}
 
-			// TODO: memoize
-			const isValid = validate( this.props.contactDetails );
+			// This is pretty fast, but is a candidate for memoization
+			debug( 'validating contactDetails' );
+			let isValid = false;
+			try {
+				isValid = this.validate( this.props.contactDetails );
+			} catch ( error ) {
+				// An exception here usually indicates a problem with the schema
+				// but could result from malformed contactDetails.
+				// We console.error here so it gets logged and we can track it.
+				// eslint-disable-next-line no-console
+				console.error( 'Error thrown during validation:', {
+					error,
+					tld: tld,
+					contactDetails: this.props.contactDetails,
+				} );
+				return { '': [ 'There was an unexpected error validating these details' ] };
+			}
 
 			if ( isValid ) {
 				debug( 'data is valid' );
@@ -111,20 +137,22 @@ const WithContactDetailsValidation = ( tld, WrappedComponent ) => {
 			}
 
 			// TODO: error codes => localized strings
-			const result = formatIMJVErrors( validate.errors, schema );
+			const result = formatIMJVErrors( this.validate.errors, this.props.validationSchema );
 
 			return result;
 		}
 
 		render() {
-			return (
-				<WrappedComponent
-					{ ...this.props }
-					validationErrors={ this.validateContactDetails() }
-				/>
-			);
-		}
-	};
-};
+			const validationErrors = this.validateContactDetails();
 
-export default WithContactDetailsValidation;
+			return <WrappedComponent { ...this.props } validationErrors={ validationErrors } />;
+		}
+	}
+
+	return connect(
+		state => ( {
+			validationSchema: get( getValidationSchemas( state ), tld, { not: {} } ),
+		} ),
+		null
+	)( ComponentWithValidation );
+}
