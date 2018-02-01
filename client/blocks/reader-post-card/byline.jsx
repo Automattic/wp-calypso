@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, has, map, take, values } from 'lodash';
+import { get, map, take, values } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -77,7 +77,7 @@ class PostByline extends React.Component {
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const siteName = getSiteName( { site, feed, post } );
-		const hasAuthorName = has( post, 'author.name' );
+		const hasAuthorName = !! get( post, 'author.name', null );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor =

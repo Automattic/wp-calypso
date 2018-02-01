@@ -139,7 +139,6 @@ export function followList( owner, slug ) {
 			} );
 		} )
 			.then( data => {
-				dispatch( receiveLists( [ data.list ] ) );
 				dispatch( {
 					type: READER_LISTS_FOLLOW_SUCCESS,
 					data,

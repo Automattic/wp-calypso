@@ -64,14 +64,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	signupSiteSegmentStep: {
-		datestamp: '20170329',
-		variations: {
-			control: 0,
-			variant: 100,
-		},
-		defaultVariation: 'control',
-	},
 	checklistThankYouForFreeUser: {
 		datestamp: '20171204',
 		variations: {

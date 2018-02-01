@@ -6,7 +6,11 @@
 
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
-import { reducer as form } from 'redux-form';
+// import the reducer directly from a submodule to prevent bundling the whole Redux Form
+// library into the `build` chunk.
+// TODO: change this back to `from 'redux-form'` after upgrade to Webpack 4.0 and a version
+//       of Redux Form that uses the `sideEffects: false` flag
+import form from 'redux-form/es/reducer';
 import { mapValues } from 'lodash';
 
 /**
@@ -39,6 +43,7 @@ import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
+import inlineHelpSearchResults from './inline-help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
@@ -124,6 +129,7 @@ const reducers = {
 	happychat,
 	help,
 	i18n,
+	inlineHelpSearchResults,
 	invites,
 	jetpackConnect,
 	jetpackOnboarding,

@@ -157,7 +157,7 @@
 		"woocommerce/extension-reviews": true,
 		"woocommerce/extension-settings": true,
 		"woocommerce/extension-settings-email": true,
-		"woocommerce/extension-settings-email-generic": false,
+		"woocommerce/extension-settings-email-generic": true,
 		"woocommerce/extension-settings-payments": true,
 		"woocommerce/extension-settings-shipping": true,
 		"woocommerce/extension-settings-stripe-connect-flows": true,

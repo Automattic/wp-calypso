@@ -4,6 +4,7 @@
  * @format
  */
 import page from 'page';
+import { isDesktop } from 'lib/viewport';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ const tasks = {
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
 		image: '/calypso/images/stats/tasks/about.svg',
+		url: '/pages/$siteSlug',
 		tour: 'checklistAboutPage',
 	},
 	avatar_uploaded: {
@@ -57,6 +59,7 @@ const tasks = {
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
 		image: '/calypso/images/stats/tasks/contact.svg',
+		url: '/post/$siteSlug/2',
 		tour: 'checklistContactPage',
 	},
 	custom_domain_registered: {
@@ -164,7 +167,7 @@ export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 		page( url );
 	}
 
-	if ( tour ) {
+	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
 }

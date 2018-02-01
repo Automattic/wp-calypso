@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
@@ -40,6 +41,28 @@ function bumpStat( group, name ) {
 	if ( process.env.NODE_ENV === 'production' ) {
 		superagent.get( statUrl ).end();
 	}
+}
+
+/**
+ * Render JSX template to a markup string.
+ *
+ * @param {string} view - JSX template to render (basename)
+ * @param {object} props - Properties which got passed to the JSX template
+ * @return {string} Rendered markup
+ */
+export function renderJsx( view, props ) {
+	const requireComponent = require.context( '../../client/document', true, /\.jsx$/ );
+	const component = requireComponent( './' + view + '.jsx' ).default;
+	const doctype = `<!DOCTYPE html><!--
+	<3
+	             _
+	    ___ __ _| |_   _ _ __  ___  ___
+	   / __/ _\` | | | | | '_ \\/ __|/ _ \\
+	  | (_| (_| | | |_| | |_) \\__ \\ (_) |
+	   \\___\\__,_|_|\\__, | .__/|___/\\___/
+	               |___/|_|
+-->`;
+	return doctype + ReactDomServer.renderToStaticMarkup( React.createElement( component, props ) );
 }
 
 /**
@@ -138,9 +161,10 @@ export function serverRender( req, res ) {
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.render( 'desktop', context );
-	} else {
-		res.render( 'index', context );
+		return;
 	}
+
+	res.send( renderJsx( 'index', context ) );
 }
 
 export function serverRenderError( err, req, res, next ) {

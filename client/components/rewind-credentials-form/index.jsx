@@ -24,7 +24,7 @@ import Gridicon from 'gridicons';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getRewindState, isUpdatingJetpackCredentials } from 'state/selectors';
+import { getRewindState, getJetpackCredentialsUpdateStatus } from 'state/selectors';
 
 export class RewindCredentialsForm extends Component {
 	static propTypes = {
@@ -78,8 +78,6 @@ export class RewindCredentialsForm extends Component {
 			role,
 			...this.state.form,
 		};
-
-		payload.path = isEmpty( payload.path ) ? '/' : payload.path;
 
 		const errors = Object.assign(
 			! payload.host && { host: translate( 'Please enter a valid server address.' ) },
@@ -216,7 +214,9 @@ export class RewindCredentialsForm extends Component {
 					{ showAdvancedSettings && (
 						<div>
 							<FormFieldset className="rewind-credentials-form__path">
-								<FormLabel htmlFor="wordpress-path">{ translate( 'WordPress Installation Path' ) }</FormLabel>
+								<FormLabel htmlFor="wordpress-path">
+									{ translate( 'WordPress Installation Path' ) }
+								</FormLabel>
 								<FormTextInput
 									name="path"
 									id="wordpress-path"
@@ -274,7 +274,7 @@ export class RewindCredentialsForm extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	formIsSubmitting: isUpdatingJetpackCredentials( state, siteId ),
+	formIsSubmitting: 'pending' === getJetpackCredentialsUpdateStatus( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
 	rewindState: getRewindState( state, siteId ),
 } );

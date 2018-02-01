@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -11,6 +11,7 @@ import deepFreeze from 'deep-freeze';
 import { items, updatedLists, missingLists, subscribedLists } from '../reducer';
 import {
 	READER_LISTS_RECEIVE,
+	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_DISMISS_NOTICE,
@@ -24,7 +25,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			chaiExpect( state ).to.eql( {} );
 		} );
 
 		test( 'should index lists by ID', () => {
@@ -33,7 +34,7 @@ describe( 'reducer', () => {
 				lists: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Mangos and feijoas' } ],
 			} );
 
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				841: { ID: 841, title: 'Hello World' },
 				413: { ID: 413, title: 'Mangos and feijoas' },
 			} );
@@ -48,7 +49,7 @@ describe( 'reducer', () => {
 				lists: [ { ID: 413, title: 'Mangos and feijoas' } ],
 			} );
 
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				841: { ID: 841, title: 'Hello World' },
 				413: { ID: 413, title: 'Mangos and feijoas' },
 			} );
@@ -64,7 +65,7 @@ describe( 'reducer', () => {
 				title: 'Bananas',
 			} );
 
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				841: { ID: 841, title: 'Bananas' },
 			} );
 		} );
@@ -80,7 +81,7 @@ describe( 'reducer', () => {
 				description: 'This is a list about fruit',
 			} );
 
-			expect( state ).to.eql( {
+			chaiExpect( state ).to.eql( {
 				841: { ID: 841, title: 'Bananas', description: 'This is a list about fruit' },
 			} );
 		} );
@@ -89,7 +90,7 @@ describe( 'reducer', () => {
 	describe( '#updatedLists()', () => {
 		test( 'should default to an empty array', () => {
 			const state = updatedLists( undefined, {} );
-			expect( state ).to.eql( [] );
+			chaiExpect( state ).to.eql( [] );
 		} );
 
 		test( 'should add a list ID when a list is updated', () => {
@@ -103,7 +104,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( [ 841 ] );
+			chaiExpect( state ).to.eql( [ 841 ] );
 		} );
 
 		test( 'should remove a list ID when a notice is dismissed', () => {
@@ -117,21 +118,21 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( [ 841 ] );
+			chaiExpect( state ).to.eql( [ 841 ] );
 
 			state = updatedLists( null, {
 				type: READER_LIST_DISMISS_NOTICE,
 				listId: 841,
 			} );
 
-			expect( state ).to.eql( [] );
+			chaiExpect( state ).to.eql( [] );
 		} );
 	} );
 
 	describe( '#missingLists()', () => {
 		test( 'should default to an empty array', () => {
 			const state = missingLists( undefined, {} );
-			expect( state ).to.eql( [] );
+			chaiExpect( state ).to.eql( [] );
 		} );
 
 		test( 'should store new missing lists in the case of a 404', () => {
@@ -144,7 +145,7 @@ describe( 'reducer', () => {
 				slug: 'banana',
 			} );
 
-			expect( state ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
+			chaiExpect( state ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
 		} );
 
 		test( 'should not store new missing lists in the case of a different error', () => {
@@ -157,7 +158,7 @@ describe( 'reducer', () => {
 				slug: 'banana',
 			} );
 
-			expect( state ).to.eql( [] );
+			chaiExpect( state ).to.eql( [] );
 		} );
 
 		test( 'should remove a missing list if a successful lists response is received', () => {
@@ -170,7 +171,7 @@ describe( 'reducer', () => {
 				slug: 'banana',
 			} );
 
-			expect( initialState ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
+			chaiExpect( initialState ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
 
 			const state = missingLists( initialState, {
 				type: READER_LISTS_RECEIVE,
@@ -180,7 +181,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( [] );
+			chaiExpect( state ).to.eql( [] );
 		} );
 
 		test( 'should remove a missing list if a successful single list response is received', () => {
@@ -193,7 +194,7 @@ describe( 'reducer', () => {
 				slug: 'banana',
 			} );
 
-			expect( initialState ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
+			chaiExpect( initialState ).to.eql( [ { owner: 'lister', slug: 'banana' } ] );
 
 			const state = missingLists( initialState, {
 				type: READER_LIST_REQUEST_SUCCESS,
@@ -202,13 +203,13 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( [] );
+			chaiExpect( state ).to.eql( [] );
 		} );
 	} );
 
 	describe( '#subscribedLists', () => {
 		test( 'should default to empty', () => {
-			expect( subscribedLists( undefined, { type: '@@BAD' } ) ).to.eql( [] );
+			chaiExpect( subscribedLists( undefined, { type: '@@BAD' } ) ).to.eql( [] );
 		} );
 
 		test( 'should pick up the ids of the subscribed lists', () => {
@@ -217,7 +218,7 @@ describe( 'reducer', () => {
 					type: READER_LISTS_RECEIVE,
 					lists: [ { ID: 1 }, { ID: 2 } ],
 				} )
-			).to.eql( [ 1, 2 ] );
+			).toEqual( expect.arrayContaining( [ 1, 2 ] ) );
 		} );
 
 		test( 'should overwrite existing subs', () => {
@@ -227,7 +228,19 @@ describe( 'reducer', () => {
 					type: READER_LISTS_RECEIVE,
 					lists: [ { ID: 3 }, { ID: 1 } ],
 				} )
-			).to.eql( [ 3, 1 ] );
+			).toEqual( expect.arrayContaining( [ 1, 3 ] ) );
+		} );
+
+		test( 'should add an item on follow', () => {
+			const initial = deepFreeze( [ 1, 2 ] );
+			expect(
+				subscribedLists( initial, {
+					type: READER_LISTS_FOLLOW_SUCCESS,
+					data: {
+						list: { ID: 5 },
+					},
+				} )
+			).toEqual( expect.arrayContaining( [ 1, 2, 5 ] ) );
 		} );
 
 		test( 'should remove an item on unfollow', () => {
@@ -239,7 +252,7 @@ describe( 'reducer', () => {
 						list: { ID: 1 },
 					},
 				} )
-			).to.eql( [ 2 ] );
+			).toEqual( [ 2 ] );
 		} );
 	} );
 } );
