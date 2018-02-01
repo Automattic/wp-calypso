@@ -127,24 +127,10 @@ const sequence = [
 	'post_published',
 ];
 
-export const urlForTask = ( id, siteSlug ) => {
-	const task = tasks[ id ];
-	if ( task && task.url ) {
-		return task.url.replace( '$siteSlug', siteSlug );
-	}
-};
-
-export const tourForTask = id => {
-	const task = tasks[ id ];
-	if ( task ) {
-		return task.tour;
-	}
-};
-
 export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
-	const url = urlForTask( task.id, siteSlug );
-	const tour = tourForTask( task.id );
+	const url = task.url && task.url.replace( '$siteSlug', siteSlug );
+	const tour = task.tour;
 
 	if ( task.completed ) {
 		if ( url ) {
