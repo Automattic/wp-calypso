@@ -137,7 +137,6 @@ export class RewindCredentialsForm extends Component {
 						disabled={ formIsSubmitting }
 					>
 						<option value="ssh">{ translate( 'SSH' ) }</option>
-						<option value="sftp">{ translate( 'SFTP' ) }</option>
 						<option value="ftp">{ translate( 'FTP' ) }</option>
 					</FormSelect>
 				</FormFieldset>
