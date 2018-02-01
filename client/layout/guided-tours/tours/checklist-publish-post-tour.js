@@ -6,13 +6,16 @@
 
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { delay, noop } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { getSectionName } from 'state/ui/selectors';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { inSection } from 'state/ui/guided-tours/contexts';
+import { query } from 'layout/guided-tours/positioning';
 import {
 	ButtonRow,
 	Continue,
@@ -23,8 +26,37 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
-function isPostEditorSection( state ) {
-	return getSectionName( state ) === 'post-editor';
+function isSidebarOpen( state ) {
+	return getCurrentLayoutFocus( state ) === 'sidebar';
+}
+
+function isFeaturedImageSet() {
+	return !! query( '.editor-featured-image.is-assigned' ).length;
+}
+
+function openSidebar( props, context ) {
+	const store = context.store;
+	if ( store && getCurrentLayoutFocus( store.getState() ) !== 'sidebar' ) {
+		store.dispatch( setLayoutFocus( 'sidebar' ) );
+	}
+
+	return new Promise( function( resolve, reject ) {
+		getCurrentLayoutFocus( store.getState() ) === 'sidebar' ? delay( resolve, 200 ) : reject();
+	} );
+}
+
+function openFeatureImageUploadDialog() {
+	if ( ! query( '.editor-media-modal' ).length ) {
+		const buttons = query(
+			'[data-tip-target="accordion-featured-image"] .editor-drawer-well__placeholder, ' +
+				'[data-tip-target="accordion-featured-image"] .editor-featured-image__preview .image-preloader'
+		);
+		if ( buttons.length ) {
+			buttons[ 0 ].click();
+		}
+	}
+
+	return true;
 }
 
 export const ChecklistPublishPostTour = makeTour(
@@ -35,7 +67,7 @@ export const ChecklistPublishPostTour = makeTour(
 			style={ {
 				animationDelay: '0.7s',
 			} }
-			when={ isPostEditorSection }
+			when={ inSection( 'post-editor' ) }
 			canSkip={ false }
 		>
 			<p>
@@ -62,7 +94,8 @@ export const ChecklistPublishPostTour = makeTour(
 				marginTop: '-10px',
 				marginLeft: '-40px',
 			} }
-		>
+			wait={ openSidebar }
+			>
 			<p>
 				{ translate(
 					'Categories and Tags not only help organize your content but also bring people to ' +
@@ -83,6 +116,7 @@ export const ChecklistPublishPostTour = makeTour(
 			target="editor-featured-image-current-image"
 			arrow="top-left"
 			placement="below"
+			when={ isFeaturedImageSet }
 		>
 			<Continue target="editor-featured-image-current-image" step="choose-image" click>
 				<p>
@@ -101,6 +135,7 @@ export const ChecklistPublishPostTour = makeTour(
 			placement="beside"
 			arrow="left-top"
 			style={ { marginTop: '-10px' } }
+			wait={ openFeatureImageUploadDialog }
 		>
 			<p>{ translate( 'Either pick an image below or add a new one from your computer.' ) }</p>
 			<Next step="click-set-featured-image">{ translate( 'All done, continue' ) }</Next>
@@ -112,6 +147,7 @@ export const ChecklistPublishPostTour = makeTour(
 			arrow="right-top"
 			placement="beside"
 			style={ { marginTop: '-10px' } }
+			when={ isSidebarOpen }
 		>
 			<Continue target="dialog-base-action-confirm" step="click-update" click>
 				{ translate(

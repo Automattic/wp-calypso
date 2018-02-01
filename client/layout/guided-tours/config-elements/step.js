@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { defer } from 'lodash';
+import { defer, get, isFunction } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -59,6 +59,7 @@ export default class Step extends Component {
 		shouldScrollTo: PropTypes.bool,
 		style: PropTypes.object,
 		canSkip: PropTypes.bool,
+		wait: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -67,6 +68,8 @@ export default class Step extends Component {
 
 	static contextTypes = contextTypes;
 
+	state = { initialized: false };
+
 	/**
 	 * Flag to determine if we're repositioning the Step dialog
 	 * @type {boolean} True if the Step dialog is being repositioned.
@@ -74,32 +77,45 @@ export default class Step extends Component {
 	isUpdatingPosition = false;
 
 	componentWillMount() {
-		this.start();
-		this.setStepSection( this.context, { init: true } );
-		debug( 'Step#componentWillMount: stepSection:', this.stepSection );
-		this.skipIfInvalidContext( this.props, this.context );
-		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
-		this.setStepPosition( this.props );
+		this.wait( this.props, this.context ).then( () => {
+			this.start();
+			this.setStepSection( this.context, { init: true } );
+			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
+			this.skipIfInvalidContext( this.props, this.context );
+			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
+			this.setStepPosition( this.props );
+			this.safeSetState( { initialized: true } );
+		} );
 	}
 
 	componentDidMount() {
-		global.window.addEventListener( 'resize', this.onScrollOrResize );
+		this.mounted = true;
+		this.wait( this.props, this.context ).then( () => {
+			global.window.addEventListener( 'resize', this.onScrollOrResize );
+		} );
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
-		this.setStepSection( nextContext );
-		this.quitIfInvalidRoute( nextProps, nextContext );
-		this.skipIfInvalidContext( nextProps, nextContext );
-		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
-		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
-		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
-		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
-		this.setStepPosition( nextProps, shouldScrollTo );
+		this.wait( nextProps, nextContext ).then( () => {
+			this.setStepSection( nextContext );
+			this.quitIfInvalidRoute( nextProps, nextContext );
+			this.skipIfInvalidContext( nextProps, nextContext );
+			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
+			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
+			const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
+			this.setStepPosition( nextProps, shouldScrollTo );
+		} );
 	}
 
 	componentWillUnmount() {
+		this.mounted = false;
+		this.safeSetState( { initialized: false } );
+
 		global.window.removeEventListener( 'resize', this.onScrollOrResize );
-		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+		if ( this.scrollContainer ) {
+			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+		}
 	}
 
 	/*
@@ -108,6 +124,25 @@ export default class Step extends Component {
 	start() {
 		const { start, step, tour, tourVersion } = this.context;
 		start( { step, tour, tourVersion } );
+	}
+
+	wait( props, context ) {
+		if ( isFunction( props.wait ) ) {
+			const ret = props.wait( props, context );
+			if ( isFunction( get( ret, 'then' ) ) ) {
+				return ret;
+			}
+		}
+
+		return Promise.resolve();
+	}
+
+	safeSetState( state ) {
+		if ( this.mounted ) {
+			this.setState( state );
+		} else {
+			this.state = { ...this.state, ...state };
+		}
 	}
 
 	/*
@@ -201,7 +236,7 @@ export default class Step extends Component {
 	}
 
 	skipIfInvalidContext( props, context ) {
-		const { when, canSkip } = props;
+		const { canSkip, when } = props;
 		const { branching, isValid, next, step, tour, tourVersion } = context;
 
 		this.setAnalyticsTimestamp( context );
@@ -248,6 +283,10 @@ export default class Step extends Component {
 	render() {
 		const { when, children } = this.props;
 		const { isLastStep } = this.context;
+
+		if ( ! this.state.initialized ) {
+			return null;
+		}
 
 		debug( 'Step#render' );
 		if ( this.context.shouldPause ) {
