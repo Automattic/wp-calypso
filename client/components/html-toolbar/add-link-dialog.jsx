@@ -1,11 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,10 +24,10 @@ const REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
 export class AddLinkDialog extends Component {
 	static propTypes = {
+		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
 		onInsert: PropTypes.func,
 		selectedText: PropTypes.string,
-		shouldDisplay: PropTypes.bool,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
@@ -119,7 +117,7 @@ export class AddLinkDialog extends Component {
 	};
 
 	render() {
-		const { shouldDisplay, siteId, translate } = this.props;
+		const { isVisible, siteId, translate } = this.props;
 		const { linkNewTab, linkText, linkUrl, selectedPost } = this.state;
 
 		const buttons = [
@@ -137,11 +135,10 @@ export class AddLinkDialog extends Component {
 
 		return (
 			<Dialog
-				autoFocus={ false }
-				isVisible={ shouldDisplay }
+				isVisible={ isVisible }
 				buttons={ buttons }
 				onClose={ this.onCloseDialog }
-				additionalClassNames="editor-html-toolbar__dialog"
+				additionalClassNames="html-toolbar__dialog"
 			>
 				<FormFieldset>
 					<FormLabel htmlFor="link_url">{ translate( 'URL' ) }</FormLabel>
