@@ -516,7 +516,7 @@ class ActivityLog extends Component {
 					/>
 				) }
 				{ this.renderErrorMessage() }
-				{ 'active' === rewindState.state && this.renderMonthNavigation() }
+				{ this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
 				{ isEmpty( logs ) ? (
 					noLogsContent
@@ -578,7 +578,7 @@ class ActivityLog extends Component {
 						) }
 					</section>
 				) }
-				{ 'active' === rewindState.state && this.renderMonthNavigation( 'bottom' ) }
+				{ this.renderMonthNavigation( 'bottom' ) }
 				<JetpackColophon />
 			</Main>
 		);
