@@ -78,6 +78,7 @@ class SiteSettingsFormWriting extends Component {
 			siteIsJetpack,
 			translate,
 			updateFields,
+			jetpackVersionSupportsLazyImages,
 		} = this.props;
 
 		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
@@ -130,23 +131,26 @@ class SiteSettingsFormWriting extends Component {
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
+							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
 						/>
 					</div>
 				) }
 
-				{ jetpackSettingsUI && (
-					<div>
-						{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
-						<SpeedUpYourSite
-							siteId={ siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</div>
-				) }
+				{ jetpackSettingsUI &&
+					jetpackVersionSupportsLazyImages && (
+						<div>
+							{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
+							<SpeedUpYourSite
+								siteId={ siteId }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								onChangeField={ onChangeField }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+								jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+							/>
+						</div>
+					) }
 
 				{ this.renderSectionHeader( translate( 'Content types' ) ) }
 
@@ -217,6 +221,7 @@ const connectComponent = connect(
 			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 			siteId,
+			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 		};
 	},
 	{ requestPostTypes },

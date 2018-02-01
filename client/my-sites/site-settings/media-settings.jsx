@@ -30,14 +30,21 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
+import {
+	isJetpackModuleActive,
+	isJetpackModuleUnavailableInDevelopmentMode,
+	isJetpackSiteInDevelopmentMode,
+	getMediaStorageLimit,
+	getMediaStorageUsed,
+} from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMediaStorageLimit, getMediaStorageUsed, isJetpackModuleActive } from 'state/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import classNames from 'classnames';
 
 class MediaSettings extends Component {
 	static propTypes = {
@@ -47,6 +54,7 @@ class MediaSettings extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
+		jetpackVersionSupportsLazyImages: PropTypes.bool,
 
 		// Connected props
 		carouselActive: PropTypes.bool.isRequired,
@@ -54,6 +62,7 @@ class MediaSettings extends Component {
 		isVideoPressAvailable: PropTypes.bool,
 		mediaStorageLimit: PropTypes.number,
 		mediaStorageUsed: PropTypes.number,
+		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		sitePlanSlug: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -163,18 +172,47 @@ class MediaSettings extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
+			photonModuleUnavailable,
 			selectedSiteId,
 			siteId,
 			translate,
+			jetpackVersionSupportsLazyImages,
 		} = this.props;
 		const labelClassName = isSavingSettings || ! carouselActive ? 'is-disabled' : null;
 		const isRequestingOrSaving = isRequestingSettings || isSavingSettings;
+		const carouselFieldsetClasses = classNames( 'site-settings__formfieldset', {
+			'has-divider': ! jetpackVersionSupportsLazyImages,
+			'is-top-only': ! jetpackVersionSupportsLazyImages,
+		} );
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
 				<Card>
 					<QueryJetpackConnection siteId={ selectedSiteId } />
-					<FormFieldset className="site-settings__formfieldset">
+					{ /**
+					 * In Jetpack 5.8-alpha, we introduced Lazy Images, created a new "Speed up your site" section,
+					 * and moved the photon setting there. To minimize confusion, if this Jetpack site doesn't have 5.8-alpha,
+					 * let's show the Photon setting here instead of in the "Speed up your site" section.
+					 */ }
+					{ ! jetpackVersionSupportsLazyImages && (
+						<FormFieldset>
+							<div className="site-settings__info-link-container">
+								<InfoPopover position="left">
+									<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon">
+										{ translate( 'Learn more' ) }
+									</ExternalLink>
+								</InfoPopover>
+							</div>
+							<JetpackModuleToggle
+								siteId={ siteId }
+								moduleSlug="photon"
+								label={ translate( 'Speed up images and photos' ) }
+								description={ translate( 'Must be enabled to use tiled galleries.' ) }
+								disabled={ isRequestingOrSaving || photonModuleUnavailable }
+							/>
+						</FormFieldset>
+					) }
+					<FormFieldset className={ carouselFieldsetClasses }>
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
 								<ExternalLink target="_blank" icon href="https://jetpack.com/support/carousel">
@@ -228,7 +266,13 @@ class MediaSettings extends Component {
 export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+			state,
+			selectedSiteId,
+			'photon'
+		);
 		const isVideoPressAvailable =
 			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
 			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
@@ -240,6 +284,7 @@ export default connect(
 			isVideoPressAvailable,
 			mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 			mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
+			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			selectedSiteId,
 			sitePlanSlug,
 			siteSlug: getSiteSlug( state, selectedSiteId ),

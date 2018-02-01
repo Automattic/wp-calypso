@@ -21,7 +21,7 @@ import {
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updateSettings } from 'state/jetpack/settings/actions';
-import { getSiteSlug, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import InfoPopover from 'components/info-popover';
 
 class SpeedUpSiteSettings extends Component {
@@ -32,12 +32,12 @@ class SpeedUpSiteSettings extends Component {
 		isSavingSettings: PropTypes.bool,
 		onChangeField: PropTypes.func.isRequired,
 		siteId: PropTypes.number.isRequired,
+		jetpackVersionSupportsLazyImages: PropTypes.bool,
 
 		// Connected props
 		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		siteSlug: PropTypes.string,
-		jetpackVersionSupportsLazyImages: PropTypes.bool,
 	};
 
 	render() {
@@ -117,11 +117,6 @@ export default connect(
 			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			selectedSiteId,
 			siteSlug: getSiteSlug( state, selectedSiteId ),
-			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion(
-				state,
-				selectedSiteId,
-				'5.8-alpha'
-			),
 		};
 	},
 	{
