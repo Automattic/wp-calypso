@@ -69,7 +69,7 @@ class PeopleInviteDetails extends React.PureComponent {
 					invite={ invite }
 					user={ invite.user }
 					site={ site }
-					type="invite"
+					type="invite-details"
 					isSelectable={ false }
 				/>
 
