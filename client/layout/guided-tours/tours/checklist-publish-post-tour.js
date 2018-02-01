@@ -58,7 +58,10 @@ export const ChecklistPublishPostTour = makeTour(
 			target="accordion-categories-tags"
 			arrow="right-top"
 			placement="beside"
-			style={ { marginTop: '-10px' } }
+			style={ {
+				marginTop: '-10px',
+				marginLeft: '-40px',
+			} }
 		>
 			<p>
 				{ translate(
