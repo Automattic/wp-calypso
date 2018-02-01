@@ -85,7 +85,7 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You published your first blog post',
 		completedButtonText: 'Edit',
-		url: '/post/$siteSlug/3',
+		url: '/post/$siteSlug',
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
