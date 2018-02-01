@@ -11,4 +11,4 @@ import { get } from 'lodash';
  * @param  {Object}   state      Global state tree
  * @return {Boolean}             Current user is rtl
  */
-export default state => get( state, 'ui.language.isRtl', false );
+export default state => get( state, 'ui.language.isRtl', null );

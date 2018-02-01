@@ -11,10 +11,10 @@ import { expect } from 'chai';
 import { isRtl } from 'state/selectors';
 
 describe( 'isRtl()', () => {
-	test( 'should return false if the value is not known', () => {
+	test( 'should return null if the value is not known', () => {
 		const result = isRtl( { ui: { language: {} } } );
 
-		expect( result ).to.be.false;
+		expect( result ).to.be.null;
 	} );
 
 	test( 'should return false if the isRtl reducer is false', () => {
