@@ -156,10 +156,6 @@ const webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
-			/^lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/,
-			'lodash/noop'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
 			/^components[\/\\]popover$/,
 			'components/null-component'
 		), // Depends on BOM and interactions don't work without JS
