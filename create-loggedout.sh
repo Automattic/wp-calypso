@@ -1,17 +1,16 @@
 #!/bin/sh
 mkdir ./login-build
 rm -rf ./login-build/*
-#rm -rf ./public/build.*
-#rm -rf ./public/vendor.*
-#rm -rf ./public/manifest.*
+#rm -rf ./public/build.*.js
+#rm -rf ./public/vendor.*.js
+#rm -rf ./public/manifest.*.js
 
-echo Creating:
+echo Creating loggedout build
 ./node_modules/.bin/webpack --config webpack.login.js --json | jq -r '.assets[] | .name'
 
-ls ./public/build.*
-ls ./public/vendor.*
-ls ./public/manifest.*
-
+ls ./public/build.*.js
+ls ./public/vendor.*.js
+ls ./public/manifest.*.js
 
 cp ./login-build/build.* `ls ./public/build.*.js`
 cp ./login-build/vendor.* `ls ./public/vendor.*.js`
