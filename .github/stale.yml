@@ -29,8 +29,8 @@ markComment: >
   `[Pri] High`, `[Status] Keep Open`, or `OSS Citizen`.
   
   You can keep the issue open by adding a comment. If you do, please 
-  provide additional context and explain why you’d like for it to remain open. 
+  provide additional context and explain why you’d like it to remain open. 
   You can also close the issue yourself — if you do, please add a brief 
-  explanation as well and remove the `[Status] Stale` label.
+  explanation.
 # Comment to post when closing a stale issue. Set to `false` to disable
 closeComment: false
