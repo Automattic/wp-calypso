@@ -26,6 +26,7 @@ import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingCheckl
 import ChecklistShowShare from 'my-sites/checklist/checklist-show/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
@@ -110,7 +111,7 @@ export class ChecklistBanner extends Component {
 			return false;
 		}
 
-		const abtests = store.get( 'ABTests' );
+		const abtests = store.get( ABTEST_LOCALSTORAGE_KEY );
 		if (
 			get( abtests, 'checklistThankYouForPaidUser_20171204' ) !== 'show' &&
 			get( abtests, 'checklistThankYouForFreeUser_20171204' ) !== 'show'

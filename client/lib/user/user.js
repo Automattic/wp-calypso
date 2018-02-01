@@ -19,7 +19,7 @@ import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import localforage from 'lib/localforage';
-import { getActiveTestNames } from 'lib/abtest/utility';
+import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 /**
  * User component
@@ -71,7 +71,7 @@ User.prototype.initialize = function() {
 			this.clearStoreIfChanged( this.data.ID );
 			store.set( 'wpcom_user', this.data );
 			if ( this.data.abtests ) {
-				store.set( 'ABTests', this.data.abtests );
+				store.set( ABTEST_LOCALSTORAGE_KEY, this.data.abtests );
 			}
 		} else {
 			// The user is logged out
@@ -180,7 +180,7 @@ User.prototype.handleFetchSuccess = function( userData ) {
 	// Store user info in `this.data` and localstorage as `wpcom_user`
 	store.set( 'wpcom_user', userData );
 	if ( userData.abtests ) {
-		store.set( 'ABTests', userData.abtests );
+		store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
 	}
 	this.data = userData;
 	if ( this.settings ) {
