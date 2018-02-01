@@ -16,6 +16,7 @@ import StepWrapper from 'signup/step-wrapper';
 import Button from 'components/button';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import SectionHeader from 'components/section-header';
 import HappychatButton from 'components/happychat/button';
 import RewindCredentialsForm from 'components/rewind-credentials-form';
 import Popover from 'components/popover';
@@ -63,9 +64,10 @@ class RewindFormStep extends Component {
 						"We'll guide you through the process of getting and entering your site's credentials."
 					) }
 				</p>
-				<CompactCard className="rewind-form__section-title">
-					{ translate( 'Enter your credentials' ) }
-				</CompactCard>
+				<SectionHeader
+					className="rewind-form__section-title"
+					label={ translate( 'Enter your credentials' ) }
+				/>
 				<Card className="rewind-form__card">
 					<div className="rewind-form__form">
 						<RewindCredentialsForm

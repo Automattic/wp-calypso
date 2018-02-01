@@ -2,7 +2,11 @@
 	text-align: center;
 }
 
-.rewind-form__section-title,
+.rewind-form__section-title {
+	max-width: 640px;
+	margin-bottom: 0;
+}
+
 .rewind-form__help {
 	max-width: 640px;
 	padding: 0;
