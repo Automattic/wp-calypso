@@ -23,6 +23,18 @@
 		background-image: url( '/calypso/images/upgrades/cc-visa.svg' );
 	}
 
+	&.is-diners {
+		background-image: url( '/calypso/images/upgrades/cc-diners.svg' );
+	}
+
+	&.is-jcb {
+		background-image: url( '/calypso/images/upgrades/cc-jcb.svg' );
+	}
+
+	&.is-unionpay {
+		background-image: url( '/calypso/images/upgrades/cc-unionpay.svg' );
+	}
+
 	&.is-placeholder {
 		background-image: url( '/calypso/images/upgrades/cc-placeholder.svg' );
 	}
