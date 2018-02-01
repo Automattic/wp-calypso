@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { every, find, findIndex, get, noop, isNaN } from 'lodash';
+import { every, find, findIndex, get, isNaN, noop } from 'lodash';
 
 /**
  * Internal dependencies
