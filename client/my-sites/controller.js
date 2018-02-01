@@ -208,7 +208,8 @@ function onSelectedSiteAvailable( context ) {
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
-	if ( ! getSite( state, selectedSite.ID ) ) {
+	// Also, if we can't manage the site, don't add it to state.
+	if ( ! getSite( state, selectedSite.ID ) && selectedSite.capabilities ) {
 		context.store.dispatch( receiveSite( selectedSite ) );
 	}
 

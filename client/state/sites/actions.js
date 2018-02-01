@@ -5,6 +5,7 @@
  */
 
 import { omit } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -124,7 +125,17 @@ export function requestSite( siteFragment ) {
 			.site( siteFragment )
 			.get()
 			.then( site => {
+				// If we can't manage the site, don't add it to state.
+				if ( ! ( site && site.capabilities ) ) {
+					return dispatch( {
+						type: SITE_REQUEST_FAILURE,
+						siteId: siteFragment,
+						error: i18n.translate( 'No access to manage the site' ),
+					} );
+				}
+
 				dispatch( receiveSite( omit( site, '_headers' ) ) );
+
 				dispatch( {
 					type: SITE_REQUEST_SUCCESS,
 					siteId: siteFragment,
