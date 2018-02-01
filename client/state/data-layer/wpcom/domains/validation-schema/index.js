@@ -3,67 +3,65 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, forEach } from 'lodash';
+import { get, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST } from 'state/action-types';
 import { addValidationSchema } from 'state/domains/management/validation-schemas/actions';
 import { errorNotice } from 'state/notices/actions';
 
 /**
- * Request domain contact information validation schemas from the WordPress.com API
+ * Convert an application level request action for domain contact information
+ * validation schemas into an HTTP request actions for the data-layer
  *
- * @param   {Function} dispatch Redux dispatcher (from the the Redux store)
- * @param 	{String} action The action to dispatch next
+ * @param 	{Object}        action      the schema request action
+ * @param   {Array<String>} action.tlds the tlds to be fetched from the API
+ * @returns {Object}                    The HTTP action for the data
  */
-export const fetchValidationSchema = ( { dispatch }, action ) => {
-	const tlds = get( action, 'tlds', [] );
-	forEach( tlds, tld =>
-		dispatch(
-			http(
-				{
-					apiVersion: '1',
-					method: 'GET',
-					path: `/domains/validation-schema/${ tld }`,
-				},
-				action
-			)
+export const fetch = action =>
+	map( get( action, 'tlds', [] ), tld =>
+		http(
+			{
+				apiVersion: '1',
+				method: 'GET',
+				path: `/domains/validation-schema/${ tld }`,
+			},
+			action
 		)
 	);
-};
 
 /**
- * Dispatches actions to add validation schemas to the store (one for each schema)
+ * Pop a HTTP request result into (an action to put it into) the state
  *
- * @param   {Function} dispatch Redux dispatcher
- * @param   {Object}   action   Redux action
- * @param   {Object}   schemas  object of { tld: schema } pairs
+ * @param   {Object} action   Originating action (unused).
+ * @param   {Object} schemas  Request result shaped like { tld: schema }
+ * @returns {Object}          An action to add the schema to the state
  */
-export const addValidationSchemas = ( { dispatch }, action, schemas ) => {
-	forEach( schemas, ( schema, tld ) => {
-		dispatch( addValidationSchema( { [ tld ]: schema } ) );
-	} );
-};
+export const onSuccess = ( action, schemas ) =>
+	map( schemas, ( schema, tld ) => addValidationSchema( { [ tld ]: schema } ) );
 
 /**
- * Dispatches an error notice action when the request for the validation schemas fails.
+ * Create an error notice action when the request fails
  *
- * @param   {Function} dispatch Redux dispatcher
- * @returns {Object}            dispatched error notice action
+ * @param   {Object} action   Originating action (unused).
+ * @param   {Object} error    Error information (unused).
+ * @returns {Object}          error notice action
  */
-export const validationSchemaFailure = ( { dispatch } ) =>
-	dispatch(
-		errorNotice(
-			translate( "We couldn't load the data for validating ccTLD specific requirements." )
-		)
+export const onError = () =>
+	errorNotice(
+		translate( "We couldn't load the data for validating ccTLD specific requirements." )
 	);
 
 export default {
 	[ DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST ]: [
-		dispatchRequest( fetchValidationSchema, addValidationSchemas, validationSchemaFailure ),
+		dispatchRequestEx( {
+			fetch,
+			onSuccess,
+			onError,
+		} ),
 	],
 };
