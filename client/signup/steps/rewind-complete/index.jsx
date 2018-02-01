@@ -32,8 +32,8 @@ class RewindCompleteStep extends Component {
 				<img className="rewind-complete__image" src="/calypso/images/upgrades/thank-you.svg" />
 				<p className="rewind-complete__description">
 					{ translate(
-						"Your site is backing up now as part of your Jetpack Premium Plan. It's doing " +
-							'backflips with excitement!'
+						'Your site is backing up now as part of your Jetpack Premium Plan. ' +
+							"It's doing backflips with excitement!"
 					) }
 				</p>
 				<a className="rewind-complete__button button is-primary" href={ wpAdminUrl }>
