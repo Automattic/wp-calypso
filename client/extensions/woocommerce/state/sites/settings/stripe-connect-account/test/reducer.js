@@ -10,6 +10,7 @@ import { expect } from 'chai';
  */
 import stripeConnectAccountReducer from '../reducer';
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
@@ -29,6 +30,17 @@ describe( 'reducer', () => {
 		test( 'should have no change by default', () => {
 			const newState = stripeConnectAccountReducer( {}, {} );
 			expect( newState ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'clearCompletedNotification', () => {
+		test( 'should reset flag in state', () => {
+			const action = {
+				type: WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
+				siteId: 123,
+			};
+			const newState = stripeConnectAccountReducer( { notifyCompleted: true }, action );
+			expect( newState.notifyCompleted ).to.eql( false );
 		} );
 	} );
 
@@ -102,6 +114,7 @@ describe( 'reducer', () => {
 				isRequesting: false,
 				lastName: '',
 				logo: '',
+				notifyCompleted: true,
 			} );
 		} );
 
@@ -759,6 +772,7 @@ describe( 'reducer', () => {
 				isRequesting: false,
 				lastName: '',
 				logo: '',
+				notifyCompleted: true,
 			} );
 		} );
 
