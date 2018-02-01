@@ -11,12 +11,12 @@
  * Internal dependencies
  */
 import { isEbanxEnabledForCountry, isValidCPF } from '../ebanx';
-import { isEbanxEnabled } from 'lib/cart-values';
+import { isPaymentMethodEnabled } from 'lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {
 	const cartValues = {};
 
-	cartValues.isEbanxEnabled = jest.fn( false );
+	cartValues.isPaymentMethodEnabled = jest.fn( false, false );
 
 	return cartValues;
 } );
@@ -24,10 +24,10 @@ jest.mock( 'lib/cart-values', () => {
 describe( 'Ebanx payment processing methods', () => {
 	describe( 'isEbanxEnabledForCountry', () => {
 		beforeAll( () => {
-			isEbanxEnabled.mockReturnValue( true );
+			isPaymentMethodEnabled.mockReturnValue( true );
 		} );
 		afterAll( () => {
-			isEbanxEnabled.mockReturnValue( false );
+			isPaymentMethodEnabled.mockReturnValue( false );
 		} );
 
 		test( 'should return false for non-ebanx country', () => {
