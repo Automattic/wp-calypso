@@ -297,40 +297,22 @@ function monthsUntilCardExpires( purchase ) {
 	return purchase.payment.creditCard.expiryMoment.diff( moment(), 'months' );
 }
 
+/**
+ * Returns the payment logo to display based on the payment method
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {string|null} the payment logo type, or null if no payment type is set.
+ */
 function paymentLogoType( purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		return purchase.payment.creditCard.type;
-	}
-
-	if ( isPaidWithPaypal( purchase ) ) {
-		return 'paypal';
-	}
-
-	if ( isPaidWithIdeal( purchase ) ) {
-		return 'ideal';
-	}
-
-	if ( isPaidWithGiropay( purchase ) ) {
-		return 'giropay';
-	}
-
-	if ( isPaidWithBancontact( purchase ) ) {
-		return 'bancontact';
-	}
-
-	if ( isPaidWithP24( purchase ) ) {
-		return 'p24';
-	}
-
-	if ( isPaidWithAlipay( purchase ) ) {
-		return 'alipay';
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {
 		return 'placeholder';
 	}
 
-	return null;
+	return purchase.payment.type || null;
 }
 
 function purchaseType( purchase ) {
