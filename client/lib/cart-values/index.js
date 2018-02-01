@@ -159,6 +159,26 @@ function paymentMethodClassName( method ) {
 	return paymentMethodsClassNames[ method ] || '';
 }
 
+/**
+ * Return a string that represents the User facing name for payment method
+ *
+ * @param {string} method - payment method
+ * @returns {string} the title
+ */
+function paymentMethodName( method ) {
+	const paymentMethodsNames = {
+		alipay: 'Alipay',
+		bancontact: 'Bancontact',
+		'credit-card': i18n.translate( 'Credit or debit card' ),
+		giropay: 'Giropay',
+		ideal: 'iDEAL',
+		paypal: 'PayPal',
+		p24: 'Przelewy24',
+	};
+
+	return paymentMethodsNames[ method ] || method;
+}
+
 function isPaymentMethodEnabled( cart, method ) {
 	const redirectPaymentMethods = [ 'alipay', 'bancontact', 'giropay', 'ideal', 'paypal', 'p24' ];
 	const methodClassName = paymentMethodClassName( method );
@@ -190,19 +210,13 @@ export {
 	isFree,
 	isPaidForFullyInCredits,
 	isPaymentMethodEnabled,
+	paymentMethodClassName,
+	paymentMethodName,
 };
 
 export default {
 	applyCoupon,
-	canRemoveFromCart,
 	cartItems,
 	emptyCart,
-	fillInAllCartItemAttributes,
-	fillInSingleCartItemAttributes,
-	getNewMessages,
-	getRefundPolicy,
-	isFree,
-	isPaidForFullyInCredits,
 	isPaymentMethodEnabled,
-	paymentMethodClassName,
 };

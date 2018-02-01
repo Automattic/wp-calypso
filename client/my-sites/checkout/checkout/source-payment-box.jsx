@@ -15,7 +15,7 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
 import Input from 'my-sites/domains/components/form/input';
-import cartValues from 'lib/cart-values';
+import cartValues, { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
@@ -62,7 +62,7 @@ class SourcePaymentBox extends PureComponent {
 	}
 
 	paymentMethodByType( paymentType ) {
-		return cartValues.paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
+		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
 	redirectToPayment( event ) {
@@ -229,20 +229,7 @@ class SourcePaymentBox extends PureComponent {
 	}
 
 	getPaymentProviderName() {
-		switch ( this.props.paymentType ) {
-			case 'ideal':
-				return 'iDEAL';
-			case 'giropay':
-				return 'Giropay';
-			case 'bancontact':
-				return 'Bancontact';
-			case 'p24':
-				return 'Przelewy24';
-			case 'alipay':
-				return 'Alipay';
-		}
-
-		return this.props.paymentType;
+		return paymentMethodName( this.props.paymentType );
 	}
 }
 SourcePaymentBox.displayName = 'SourcePaymentBox';

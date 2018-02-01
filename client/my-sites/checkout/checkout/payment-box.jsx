@@ -18,7 +18,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
-import cartValues from 'lib/cart-values';
+import cartValues, { paymentMethodName } from 'lib/cart-values';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -35,32 +35,11 @@ export class PaymentBox extends PureComponent {
 		};
 	}
 
-	getPaymentProviderName( method ) {
-		switch ( method ) {
-			case 'ideal':
-				return 'iDEAL';
-			case 'giropay':
-				return 'Giropay';
-			case 'bancontact':
-				return 'Bancontact';
-			case 'p24':
-				return 'Przelewy24';
-			case 'alipay':
-				return 'Alipay';
-			case 'credit-card':
-				return translate( 'Credit or debit card' );
-			case 'paypal':
-				return 'PayPal';
-		}
-
-		return method;
-	}
-
 	getPaymentProviderLabel( method ) {
 		let labelLogo = (
 			<img
 				src={ `/calypso/images/upgrades/${ method }.svg` }
-				alt={ this.getPaymentProviderName( method ) }
+				alt={ paymentMethodName( method ) }
 				className={ `checkout__${ method }` }
 			/>
 		);
@@ -70,10 +49,10 @@ export class PaymentBox extends PureComponent {
 		switch ( method ) {
 			case 'credit-card':
 				labelLogo = <Gridicon icon="credit-card" className="checkout__credit-card" />;
-				labelAdditionalText = this.getPaymentProviderName( method );
+				labelAdditionalText = paymentMethodName( method );
 				break;
 			case 'ideal':
-				labelAdditionalText = this.getPaymentProviderName( method );
+				labelAdditionalText = paymentMethodName( method );
 				break;
 		}
 
@@ -119,7 +98,7 @@ export class PaymentBox extends PureComponent {
 		const titleText = this.props.currentPaymentMethod
 			? translate( 'Pay with %(paymentMethod)s', {
 					args: {
-						paymentMethod: this.getPaymentProviderName( this.props.currentPaymentMethod ),
+						paymentMethod: paymentMethodName( this.props.currentPaymentMethod ),
 					},
 				} )
 			: translate( 'Loading…' );
