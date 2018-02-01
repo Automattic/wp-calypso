@@ -269,4 +269,29 @@ export default {
 		stepName: 'creds-permission',
 		providesDependencies: [],
 	},
+
+	'rewind-add': {
+		stepName: 'rewind-add',
+		providesDependencies: [],
+	},
+
+	'rewind-form': {
+		stepName: 'rewind-form',
+		providesDependencies: [],
+	},
+
+	'rewind-complete': {
+		stepName: 'rewind-complete',
+		providesDependencies: [],
+	},
+
+	'rewind-confirm': {
+		stepName: 'rewind-confirm',
+		providesDependencies: [],
+	},
+
+	'rewind-declined': {
+		stepName: 'rewind-declined',
+		providesDependencies: [],
+	},
 };

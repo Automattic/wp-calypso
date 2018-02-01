@@ -510,7 +510,10 @@ class Signup extends React.Component {
 		}
 
 		const flow = flows.getFlow( this.props.flowName );
-		const showProgressIndicator = 'pressable-nux' === this.props.flowName ? false : true;
+		const showProgressIndicator =
+			'pressable-nux' === this.props.flowName || 'rewind-credentials' === this.props.flowName
+				? false
+				: true;
 
 		return (
 			<span>

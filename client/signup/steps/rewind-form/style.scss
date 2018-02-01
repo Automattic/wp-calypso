@@ -1,0 +1,82 @@
+.rewind-form__container {
+	text-align: center;
+}
+
+.rewind-form__section-title {
+	max-width: 640px;
+	margin-bottom: 0;
+}
+
+.rewind-form__help {
+	max-width: 640px;
+	padding: 0;
+	margin-bottom: 0;
+	text-align: left;
+}
+
+.rewind-form__card {
+	text-align: center;
+	max-width: 640px;
+	margin-top: 1px;
+	margin-bottom: 0;
+	padding-bottom: 0;
+}
+
+.rewind-form__title {
+	display: inline-block;
+	font-size: 2.5rem;
+	font-weight: 300;
+	letter-spacing: .15rem;
+	color: $gray-text;
+}
+
+.rewind-form__description {
+	color: $gray-text-min;
+	font-size: 1.35rem;
+	font-weight: 100;
+	line-height: 2.5rem;
+}
+
+.rewind-form__form {
+	text-align: left;
+}
+
+.rewind-form__form .form-fieldset .button.is-primary {
+	float: right;
+}
+
+.rewind-form__help.card.is-compact {
+	padding-top: 8px;
+}
+
+.rewind-form__help-icon,
+.rewind-form__happychat-icon,
+.rewind-form__help-button .gridicon,
+.rewind-form__happychat-button .gridicon {
+	margin-right: 5px;
+}
+
+.rewind-form__help .button.is-borderless {
+	color: $blue-medium;
+}
+
+.rewind-form__help .button.is-borderless:hover {
+	color: $link-highlight;
+}
+
+.rewind-form__happychat-button {
+	margin-top: -5px;
+}
+
+.rewind-form__help-button,
+.rewind-form__happychat-button {
+	margin: 0;
+	margin-right: 15px;
+	padding: 0;
+}
+
+.rewind-form__help-popover .popover__inner {
+	font-size: 1.5rem;
+	padding: 2rem;
+	color: $gray;
+}
