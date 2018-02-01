@@ -30,13 +30,8 @@ import {
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
-import {
-	isJetpackModuleActive,
-	isJetpackModuleUnavailableInDevelopmentMode,
-	isJetpackSiteInDevelopmentMode,
-} from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getMediaStorageLimit, getMediaStorageUsed } from 'state/selectors';
+import { getMediaStorageLimit, getMediaStorageUsed, isJetpackModuleActive } from 'state/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
 import { updateSettings } from 'state/jetpack/settings/actions';
 import QueryMediaStorage from 'components/data/query-media-storage';
@@ -59,7 +54,6 @@ class MediaSettings extends Component {
 		isVideoPressAvailable: PropTypes.bool,
 		mediaStorageLimit: PropTypes.number,
 		mediaStorageUsed: PropTypes.number,
-		photonModuleUnavailable: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		sitePlanSlug: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -169,7 +163,6 @@ class MediaSettings extends Component {
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
-			photonModuleUnavailable,
 			selectedSiteId,
 			siteId,
 			translate,
@@ -181,23 +174,7 @@ class MediaSettings extends Component {
 			<div className="site-settings__module-settings site-settings__media-settings">
 				<Card>
 					<QueryJetpackConnection siteId={ selectedSiteId } />
-					<FormFieldset>
-						<div className="site-settings__info-link-container">
-							<InfoPopover position="left">
-								<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon">
-									{ translate( 'Learn more' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
-						<JetpackModuleToggle
-							siteId={ siteId }
-							moduleSlug="photon"
-							label={ translate( 'Speed up images and photos' ) }
-							description={ translate( 'Must be enabled to use tiled galleries.' ) }
-							disabled={ isRequestingOrSaving || photonModuleUnavailable }
-						/>
-					</FormFieldset>
-					<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
+					<FormFieldset className="site-settings__formfieldset">
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
 								<ExternalLink target="_blank" icon href="https://jetpack.com/support/carousel">
@@ -251,13 +228,7 @@ class MediaSettings extends Component {
 export default connect(
 	state => {
 		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
 		const isVideoPressAvailable =
 			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
 			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
@@ -269,7 +240,6 @@ export default connect(
 			isVideoPressAvailable,
 			mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
 			mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			selectedSiteId,
 			sitePlanSlug,
 			siteSlug: getSiteSlug( state, selectedSiteId ),

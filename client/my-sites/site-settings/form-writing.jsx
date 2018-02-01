@@ -33,6 +33,7 @@ import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import SpeedUpYourSite from './speed-up-site-settings';
 
 class SiteSettingsFormWriting extends Component {
 	renderSectionHeader( title, showButton = true ) {
@@ -123,6 +124,20 @@ class SiteSettingsFormWriting extends Component {
 					<div>
 						{ this.renderSectionHeader( translate( 'Media' ) ) }
 						<MediaSettings
+							siteId={ siteId }
+							handleAutosavingToggle={ handleAutosavingToggle }
+							onChangeField={ onChangeField }
+							isSavingSettings={ isSavingSettings }
+							isRequestingSettings={ isRequestingSettings }
+							fields={ fields }
+						/>
+					</div>
+				) }
+
+				{ jetpackSettingsUI && (
+					<div>
+						{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
+						<SpeedUpYourSite
 							siteId={ siteId }
 							handleAutosavingToggle={ handleAutosavingToggle }
 							onChangeField={ onChangeField }
@@ -251,6 +266,7 @@ const getFormSettings = settings => {
 		'start_of_week',
 		'time_format',
 		'timezone_string',
+		'lazy-images',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
