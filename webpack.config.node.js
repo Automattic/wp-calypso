@@ -176,10 +176,6 @@ const webpackConfig = {
 			/^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/,
 			'components/empty-component'
 		), // should never be required server side
-		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]site-selector$/,
-			'components/null-component'
-		), // Depends on BOM
 	] ),
 	externals: getExternals(),
 };
