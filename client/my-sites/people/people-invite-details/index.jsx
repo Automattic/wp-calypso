@@ -77,13 +77,21 @@ class PeopleInviteDetails extends React.PureComponent {
 					</span>
 				</div>
 				<div className="people-invite-details__meta-item">
-					<span className="people-invite-details__meta-item-label">
-						{ translate( 'Last Sent:' ) }
-					</span>
+					<span className="people-invite-details__meta-item-label">{ translate( 'Sent:' ) }</span>
 					<span className="people-invite-details__meta-item-date">
 						{ moment( invite.inviteDate ).format( 'LLL' ) }
 					</span>
 				</div>
+				{ invite.acceptedDate && (
+					<div className="people-invite-details__meta-item">
+						<span className="people-invite-details__meta-item-label">
+							{ translate( 'Accepted:' ) }
+						</span>
+						<span className="people-invite-details__meta-item-date">
+							{ moment( invite.acceptedDate ).format( 'LLL' ) }
+						</span>
+					</div>
+				) }
 			</div>
 		);
 	};
