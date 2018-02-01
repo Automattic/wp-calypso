@@ -19,3 +19,14 @@ export function removeEmptySpacesInParagraphs( content ) {
 		return tag;
 	} );
 }
+
+/**
+ * Checks content to see if it contains Gutenberg paragraphs.
+ *
+ * @format
+ * @param {String}   content Editor content
+ * @return {Boolean}         True if contains Gutenberg paragraph
+ */
+export function hasGutenPs( content ) {
+	return content.includes( '<!-- wp:paragraph -->' );
+}
