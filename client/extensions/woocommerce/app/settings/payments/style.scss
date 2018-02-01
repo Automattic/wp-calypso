@@ -52,6 +52,7 @@
 		margin: 0;
 		padding: 0;
 		box-shadow: none;
+		padding-right: 24px;
 	}
 }
 
@@ -62,7 +63,6 @@
 	padding-top: 24px;
 
 	@include breakpoint( ">960px" ) {
-		padding-left: 24px;
 		padding-top: 0;
 	}
 }
