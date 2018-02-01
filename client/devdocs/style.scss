@@ -5,13 +5,7 @@
 	line-height: 1.618;
 	color: $gray-dark;
 	margin: 0 auto;
-	max-width: 960px;
-	padding: 1.777em 8.184em;
-
-	@include breakpoint( "<960px" ) {
-		padding: 24px;
-		max-width: 100%;
-	}
+	padding: 0;
 }
 
 .is-section-devdocs-start .layout__primary {
