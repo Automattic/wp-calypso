@@ -27,11 +27,55 @@ import { didOpenResult, setSearchResults } from 'state/inline-help/actions';
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		searchQuery: PropTypes.string,
 	};
 
 	static defaultProps = {
 		translate: identity,
+		searchQuery: '',
 	};
+
+	state = {
+		railcarSeed: this.getNewRailcarSeed(),
+	};
+
+	eventQueue = [];
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.searchQuery !== nextProps.searchQuery ) {
+			this.setState( {
+				railcarSeed: this.getNewRailcarSeed(),
+			} );
+		}
+	}
+
+	componentWillUpdate( nextProps ) {
+		if ( nextProps.shouldOpenSelectedResult ) {
+			const url = this.getSelectedUrl();
+			this.followHelpLink( url )();
+			this.props.didOpenResult();
+			window.location = url;
+			return;
+		}
+	}
+
+	componentDidMount() {
+		this.props.setSearchResults( '', this.getContextResults() );
+		this.sendRenderEvents();
+	}
+
+	componentDidUpdate() {
+		this.sendRenderEvents();
+	}
+
+	sendRenderEvents() {
+		this.eventQueue.map( event => event() );
+		this.eventQueue = [];
+	}
+
+	addRenderEvent( event ) {
+		this.eventQueue.push( event );
+	}
 
 	getContextResults = () => {
 		// going without context for now -- let's just provide the top x recommended links
@@ -69,6 +113,10 @@ class InlineHelpSearchResults extends Component {
 		return helpfulResults;
 	}
 
+	isShowingSuggestions = () => {
+		return isEmpty( this.props.searchQuery ) || ( ! isEmpty( this.props.searchQuery ) && isEmpty( this.props.searchResults ) );
+	}
+
 	renderSearchResults() {
 		if ( isEmpty( this.props.searchQuery ) ) {
 			// not searching
@@ -82,7 +130,7 @@ class InlineHelpSearchResults extends Component {
 			);
 		}
 
-		if ( isEmpty( this.props.searchResults ) ) {
+		if ( ! isEmpty( this.props.searchQuery ) && isEmpty( this.props.searchResults ) ) {
 			// search done, but nothing found
 			return (
 				<div>
@@ -94,9 +142,12 @@ class InlineHelpSearchResults extends Component {
 
 		// found something
 		const links = this.props.searchResults;
-		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-		);
+		if ( links && links.length > 0 ) {
+			return (
+				<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+			);
+		}
+		return null;
 	}
 
 	renderContextHelp() {
@@ -121,22 +172,15 @@ class InlineHelpSearchResults extends Component {
 		return selectedLink.link;
 	}
 
-	componentDidMount() {
-		this.props.setSearchResults( '', this.getContextResults() );
-	}
-
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.shouldOpenSelectedResult ) {
-			const url = this.getSelectedUrl();
-			this.followHelpLink( url )();
-			this.props.didOpenResult();
-			window.location = url;
-			return;
-		}
-	}
-
-	followHelpLink = ( url ) => {
+	followHelpLink = ( url, index ) => {
+		const railcar = this.getRailcarForIndex( index );
 		return () => {
+			// TrainTracks interact event
+			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
+				action: 'calypso_inlinehelp_link_open',
+				railcar: railcar,
+			} );
+			// regular Tracks event
 			this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', {
 				search_query: this.props.searchQuery,
 				current_url: window.location.href,
@@ -146,18 +190,46 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	renderHelpLink = ( link, index ) => {
+		// TrainTracks render event
+		const railcar = this.getRailcarForIndex( index );
+		const isShowingSuggestions = this.isShowingSuggestions();
+		const event = () => {
+			this.props.recordTracksEvent( 'calypso_traintracks_render', {
+				railcar: railcar,
+				fetch_algo: isShowingSuggestions ? 'suggest_top4_static' : 'search_top4_classic',
+				fetch_position: index,
+				ui_algo: 'as_fetched',
+				ui_position: index,
+				fetch_query: this.props.searchQuery,
+			} );
+		};
+		// send `calypso_traintracks_render` events asynchronously since recordTracksEvent
+		// seems to change some state (doing this during render makes React complain)
+		this.addRenderEvent( event );
+
 		const classes = { 'is-selected': this.props.selectedResult === index };
 		return (
 			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
 				<a
 					href={ link.link }
-					onClick={ this.followHelpLink( link.link ) }
+					onClick={ this.followHelpLink( link.link, index ) }
 					title={ decodeEntities( link.description ) }
 				>
 					{ preventWidows( decodeEntities( link.title ) ) }
 				</a>
 			</li>
 		);
+	}
+
+	getNewRailcarSeed() {
+		// Generate a 7 character random hash on base16. E.g. ac618a3
+		return Math.floor( ( 1 + Math.random() ) * 0x10000000 )
+			.toString( 16 )
+			.substring( 1 );
+	}
+
+	getRailcarForIndex( index ) {
+		return this.state.railcarSeed + '-inlinehelp-search-' + index;
 	}
 
 	render() {
