@@ -42,7 +42,11 @@ class RewindAddStep extends Component {
 			<Card className="rewind-add__card">
 				<QueryRewindState siteId={ this.props.siteId } />
 				<h3 className="rewind-add__title">{ translate( 'Add credentials' ) }</h3>
-				<img className="rewind-add__image" src="/calypso/images/illustrations/security.svg" />
+				<img
+					className="rewind-add__image"
+					alt="Security"
+					src="/calypso/images/illustrations/security.svg"
+				/>
 				<p className="rewind-add__description">
 					{ translate(
 						'By adding your site credentials, you are giving WordPress.com access to perform ' +

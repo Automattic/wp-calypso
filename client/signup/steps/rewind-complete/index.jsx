@@ -29,7 +29,11 @@ class RewindCompleteStep extends Component {
 		return (
 			<Card className="rewind-complete__card">
 				<h3 className="rewind-complete__title">{ translate( 'Your site is backing up!' ) }</h3>
-				<img className="rewind-complete__image" src="/calypso/images/upgrades/thank-you.svg" />
+				<img
+					className="rewind-complete__image"
+					alt="Thank you"
+					src="/calypso/images/upgrades/thank-you.svg"
+				/>
 				<p className="rewind-complete__description">
 					{ translate(
 						'Your site is backing up now as part of your Jetpack Premium Plan. ' +
