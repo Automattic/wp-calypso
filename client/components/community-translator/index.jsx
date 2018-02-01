@@ -1,23 +1,22 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import debugModule from 'debug';
-import React from 'react';
+//import PropTypes from 'prop-types';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
+import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
-
 /**
  * Internal dependencies
  */
+import Translatable from './translatable';
 import config from 'config';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
-import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
-import Translatable from 'components/translatable';
+import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 
 /**
  * Local variables
@@ -26,21 +25,15 @@ const debug = debugModule( 'calypso:community-translator' );
 const languages = config( 'languages' );
 const user = new User();
 
-// TODO: rename parent dir to translate and this file to index.js (update README)
-class Translator {
-	static instance;
+class CommunityTranslator extends Component {
 
 	languageJson = null;
 	currentLocale = null;
-	shouldWrapTranslations = false;
 	initialized = false;
 	previousUserSettingsEnabledValue = null;
 
-	constructor() {
-		if ( this.instance ) {
-			return this.instance;
-		}
-		this.instance = this;
+	componentDidMount() {
+		this.setLanguage();
 
 		// wrap translations from i18n
 		i18n.registerTranslateHook( ( translation, options ) =>
@@ -56,16 +49,24 @@ class Translator {
 		userSettings.on( 'change', this.refresh );
 	}
 
-	refresh = () => {
+	componentWillUnmount() {
+		i18n.off( 'change', this.refresh );
+		user.removeListener( 'change', this.refresh );
+		userSettings.removeListener( 'change', this.trackTranslatorStatus );
+		userSettings.removeListener( 'change', this.refresh );
+	}
+
+	setLanguage() {
 		this.languageJson = i18n.getLocale() || { '': {} };
-		const localeCode = this.languageJson[ '' ].localeSlug;
-		this.currentLocale = find( languages, lang => lang.langSlug === localeCode );
+		this.localeCode = this.languageJson[ '' ].localeSlug;
+		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
+	}
 
-		if ( ! localeCode || ! this.languageJson ) {
-			debug( 'trying to initialize translator without loaded language' );
-			return;
-		}
-
+	/**
+	 * TODO: expand jsdoc comment
+	 *
+	 */
+	refresh = () => {
 		if ( this.initialized ) {
 			return;
 		}
@@ -75,8 +76,15 @@ class Translator {
 			return;
 		}
 
-		if ( ! this.isEnabled() ) {
+		if ( ! isCommunityTranslatorEnabled() ) {
 			debug( 'not initializing, not enabled' );
+			return;
+		}
+
+		this.setLanguage();
+
+		if ( ! this.localeCode || ! this.languageJson ) {
+			debug( 'trying to initialize translator without loaded language' );
 			return;
 		}
 
@@ -86,68 +94,11 @@ class Translator {
 
 	/**
 	 * TODO: expand jsdoc comment
-	 * "Activated" means that the translator is toggled on, and wrapTranslate()
-	 *     will add the data tags that the translator needs.
-	 *
-	 * @returns {Boolean}
-	 */
-	isActivated = () => this.shouldWrapTranslations;
-
-	/**
-	 * TODO: expand jsdoc comment
-	 * "Enabled" means that the user has opted in on the settings page
-	 *     ( but it's false until userSettings has loaded)
-	 *
-	 * @returns {Boolean}
-	 */
-	isEnabled() {
-		const currentUser = user.get();
-
-		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
-			return false;
-		}
-
-		if ( ! userSettings.getSettings() ) {
-			return false;
-		}
-
-		if ( ! userSettings.getOriginalSetting( 'enable_translator' ) ) {
-			return false;
-		}
-
-		// restrict mobile devices from translator for now while we refine touch interactions
-		if ( isMobile() ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * TODO: expand jsdoc comment
-	 *
-	 * @returns {Boolean}
-	 */
-	toggle() {
-		if ( ! this.isActivated() ) {
-			// Wrap DOM elements and then activate the translator
-			this.shouldWrapTranslations = true;
-			debug( 'Translator activated' );
-		} else {
-			this.shouldWrapTranslations = false;
-			debug( 'Translator deactivated' );
-		}
-
-		i18n.reRenderTranslations();
-	}
-
-	/**
-	 * TODO: expand jsdoc comment
 	 *
 	 * @returns {String|Object}
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		if ( ! this.isEnabled() || ! this.isActivated() ) {
+		if ( ! isCommunityTranslatorEnabled() ) {
 			return displayedTranslationFromPage;
 		}
 
@@ -170,9 +121,12 @@ class Translator {
 			locale: this.currentLocale,
 		};
 
+		let key = originalFromPage;
+
 		// Has Context
 		if ( 'string' === typeof optionsFromPage.context ) {
 			props.context = optionsFromPage.context;
+			key = `${ optionsFromPage.context }\u0004${ originalFromPage }`;
 		}
 
 		// Has Plural
@@ -181,23 +135,26 @@ class Translator {
 		}
 
 		// Has no translation in current locale
-		if ( isEmpty( this.languageJson[ originalFromPage ] ) ) {
+		if ( isEmpty( this.languageJson[ key ] ) ) {
 			props.untranslated = 'true';
 		}
 
-		// <data> returns a frozen object, therefore we make a copy so that we can modify it below
-		const dataElement = Object.assign(
+		// <Translatable> returns a frozen object, therefore we make a copy so that we can modify it below
+		const translatableElement = Object.assign(
 			{},
 			<Translatable { ...props }>{ displayedTranslationFromPage }</Translatable>
 		);
 
 		// now we can override the toString function which would otherwise return [object Object]
-		dataElement.toString = () => displayedTranslationFromPage;
+		translatableElement.toString = () => {
+			// do something with displayedTranslationFromPage
+			return displayedTranslationFromPage;
+		};
 
 		// freeze the object again to certify the same behavior as the original ReactElement object
-		Object.freeze( dataElement );
+		Object.freeze( translatableElement );
 
-		return dataElement;
+		return translatableElement;
 	}
 
 	/**
@@ -219,8 +176,12 @@ class Translator {
 
 		this.previousUserSettingsEnabledValue = newSetting;
 	};
+
+	render() {
+		return null;
+	}
 }
 
-const TranslatorInstance = new Translator();
-
-export default TranslatorInstance;
+export default connect( ( state, props ) => {
+	return {};
+} )( CommunityTranslator );

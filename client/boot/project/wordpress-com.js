@@ -23,7 +23,6 @@ import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
 import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
-import translator from 'lib/translator';
 import emailVerification from 'components/email-verification';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { pruneStaleRecords } from 'lib/wp/sync-handler';
@@ -54,8 +53,6 @@ export function utils() {
 
 	// prune sync-handler records more than two days old
 	pruneStaleRecords( '2 days' );
-
-	translator.refresh();
 }
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {

@@ -12,23 +12,27 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import translator from 'lib/translator';
 import localStorageHelper from 'store';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
+import CommunityTranslator from 'components/community-translator';
 
 class TranslatorLauncher extends React.PureComponent {
 	static displayName = 'TranslatorLauncher';
 
 	static propTypes = {
-		isActive: PropTypes.bool.isRequired,
-		isEnabled: PropTypes.bool.isRequired,
+		isActive: PropTypes.bool,
+		isEnabled: PropTypes.bool,
 	};
 
 	state = {
 		infoDialogVisible: false,
 		firstActivation: true,
 	};
+
+	constructor() {
+		super();
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.isActive && nextProps.isActive ) {
@@ -54,17 +58,12 @@ class TranslatorLauncher extends React.PureComponent {
 
 	toggle = event => {
 		event.preventDefault();
-		analytics.mc.bumpStat( 'calypso_translator_toggle', this.props.isActive ? 'off' : 'on' );
-		translator.toggle();
+		//analytics.mc.bumpStat( 'calypso_translator_toggle', this.props.isActive ? 'off' : 'on' );
 	};
 
 	render() {
 		let launcherClasses = 'community-translator';
 		let toggleString;
-
-		if ( ! this.props.isEnabled ) {
-			return null;
-		}
 
 		if ( this.props.isActive ) {
 			toggleString = this.props.translate( 'Disable Translator' );
@@ -97,15 +96,16 @@ class TranslatorLauncher extends React.PureComponent {
 					</p>
 				</Dialog>
 				<div className={ launcherClasses }>
-					<a
+					<button
 						className="community-translator__button"
 						onClick={ this.toggle }
 						title={ this.props.translate( 'Community Translator' ) }
 					>
 						<Gridicon icon="globe" />
 						<div className="community-translator__text">{ toggleString }</div>
-					</a>
+					</button>
 				</div>
+				<CommunityTranslator />
 			</div>
 		);
 	}

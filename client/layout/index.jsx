@@ -21,7 +21,6 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
-import translator from 'lib/translator';
 import TranslatorLauncher from './community-translator/launcher';
 import GuidedTours from 'layout/guided-tours';
 import config from 'config';
@@ -47,6 +46,7 @@ import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
+import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 
 /* eslint-disable react/no-deprecated */
 const Layout = createReactClass( {
@@ -142,10 +142,7 @@ const Layout = createReactClass( {
 						{ this.props.primary }
 					</div>
 				</div>
-				<TranslatorLauncher
-					isEnabled={ translator.isEnabled() }
-					isActive={ translator.isActivated() }
-				/>
+				{ isCommunityTranslatorEnabled() && <TranslatorLauncher /> }
 				{ this.renderPreview() }
 				{ config.isEnabled( 'happychat' ) &&
 					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
