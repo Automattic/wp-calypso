@@ -12,114 +12,54 @@ if ( process.env.NODE_ENV === 'development' ) {
 // import { invoke } from 'lodash';
 import debugFactory from 'debug';
 import page from 'page';
-import url from 'url';
-import qs from 'querystring';
 
 /**
  * Internal dependencies
  */
-// import { configureReduxStore, locales, setupMiddlewares, utils } from './common';
-// import createReduxStoreFromPersistedInitialState from 'state/initial-state';
-// import detectHistoryNavigation from 'lib/detect-history-navigation';
-// import userFactory from 'lib/user';
 import * as controller from 'controller/index.web';
-import login from 'login';
+import { default as loginRouteSetter } from 'login';
 
 // Store stuff:
-import { combineReducers } from 'state/utils';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import { combineReducers } from 'state/utils';
+import { setupContextMiddleware } from './page-context-middleware';
+
+// Middlewares:
 import { default as wpcomApiMiddleware } from 'state/data-layer/wpcom-api-middleware';
 import { analyticsMiddleware } from 'state/analytics/middleware';
 
 // Reducers:
 import analyticsTracking from 'state/analytics/reducer';
 import oauth2Clients from 'state/oauth2-clients/reducer';
-import { default as loginReducer } from 'state/login/reducer';
+import login from 'state/login/reducer';
 import ui from 'state/ui/reducer';
 import documentHead from 'state/document-head/reducer';
 import notices from 'state/notices/reducer';
 
 const debug = debugFactory( 'calypso' );
 
-const setupContextMiddleware = reduxStore => {
-	page( '*', ( context, next ) => {
-		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
-		const parsed = url.parse( context.canonicalPath, true );
-		context.prevPath = parsed.path === context.path ? false : parsed.path;
-		context.query = parsed.query;
-
-		context.hashstring = ( parsed.hash && parsed.hash.substring( 1 ) ) || '';
-		// set `context.hash` (we have to parse manually)
-		if ( context.hashstring ) {
-			try {
-				context.hash = qs.parse( context.hashstring );
-			} catch ( e ) {
-				debug( 'failed to query-string parse `location.hash`', e );
-				context.hash = {};
-			}
-		} else {
-			context.hash = {};
-		}
-
-		context.store = reduxStore;
-
-		// client version of the isomorphic method for redirecting to another page
-		context.redirect = ( httpCode, newUrl = null ) => {
-			if ( isNaN( httpCode ) && ! newUrl ) {
-				newUrl = httpCode;
-			}
-
-			return page.replace( newUrl, context.state, false, false );
-		};
-
-		// Break routing and do full load for logout link in /me
-		if ( context.pathname === '/wp-login.php' ) {
-			window.location.href = context.path;
-			return;
-		}
-
-		next();
-	} );
-};
-
-const boot = () => {
-	debug( "Starting Calypso. Let's do this." );
-
+const createCalypsoMinimalStore = () => {
 	const rootReducer = combineReducers( {
 		analyticsTracking,
 		oauth2Clients,
-		login: loginReducer,
+		login,
 		ui,
 		documentHead,
 		notices,
 	} );
 	const store = applyMiddleware( thunkMiddleware, wpcomApiMiddleware, analyticsMiddleware )( createStore )( rootReducer, {} );
-	setupContextMiddleware( store );
-	login( controller.clientRouter );
+
+	return store;
+};
+
+const boot = () => {
+	debug( 'Starting logged out calypso build' );
+
+	// setup routing:
+	setupContextMiddleware( createCalypsoMinimalStore() ); // sets store to page's context
+	loginRouteSetter( controller.clientRouter ); // sets login routes on the actual router ( page for client )
 	page.start( { decodeURLComponents: false } );
-
-	// const project = require( `./project/${ PROJECT_NAME }` );
-	// utils();
-	// invoke( project, 'utils' );
-	//createReduxStoreFromPersistedInitialState( reduxStore => {
-		// locales( currentUser, reduxStore );
-		// invoke( project, 'locales', currentUser, reduxStore );
-		// configureReduxStore( currentUser, reduxStore );
-		// invoke( project, 'configureReduxStore', currentUser, reduxStore );
-		// setupMiddlewares( currentUser, reduxStore );
-		// invoke( project, 'setupMiddlewares', currentUser, reduxStore );
-		// detectHistoryNavigation.start();
-		// page.start( { decodeURLComponents: false } );
-	//} );
 };
 
-window.AppBoot = () => {
-	boot();
-	// const user = userFactory();
-	// if ( user.initialized ) {
-	// 	boot( user );
-	// } else {
-	// 	user.once( 'change', () => boot( user ) );
-	// }
-};
+window.AppBoot = boot;
