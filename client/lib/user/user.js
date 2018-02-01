@@ -131,7 +131,7 @@ User.prototype.fetch = function() {
 	debug( 'Getting user from api' );
 
 	me.get(
-		{ meta: 'flags', abtests: getActiveTestNames() },
+		{ meta: 'flags', abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ) },
 		( error, data ) => {
 			if ( error ) {
 				this.handleFetchFailure( error );
