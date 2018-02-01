@@ -3,9 +3,10 @@
 /**
  * External dependencies
  */
-
+import moment from 'moment-timezone';
 import {
 	isEmpty,
+	isInteger,
 	isPlainObject,
 	flow,
 	map,
@@ -182,6 +183,19 @@ export function normalizePostForEditing( post ) {
  */
 export function normalizePostForState( post ) {
 	const normalizedPost = cloneDeep( post );
+
+	if ( ! isEmpty( normalizedPost.date ) ) {
+		normalizedPost.date = moment( post.date )
+			.utc()
+			.format();
+	}
+
+	if ( isInteger( normalizedPost.parent ) ) {
+		normalizedPost.parent = {
+			ID: normalizedPost.parent,
+		};
+	}
+
 	return reduce(
 		[
 			[],

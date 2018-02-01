@@ -250,6 +250,30 @@ describe( 'utils', () => {
 				},
 			} );
 		} );
+
+		test( 'should store post date as UTC', () => {
+			const original = deepFreeze( {
+				date: '2018-01-01T00:00:00-04:00',
+			} );
+			const revised = normalizePostForState( original );
+
+			expect( revised ).to.not.equal( original );
+			expect( revised ).to.eql( {
+				date: '2018-01-01T04:00:00Z',
+			} );
+		} );
+
+		test( 'should store post parent as object', () => {
+			const original = deepFreeze( {
+				parent: 1492,
+			} );
+			const revised = normalizePostForState( original );
+
+			expect( revised ).to.not.equal( original );
+			expect( revised ).to.eql( {
+				parent: { ID: 1492 },
+			} );
+		} );
 	} );
 
 	describe( '#getNormalizedPostsQuery()', () => {

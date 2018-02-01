@@ -409,15 +409,7 @@ export const isEditedPostDirty = createSelector(
 			}
 
 			if ( post ) {
-				switch ( key ) {
-					case 'date': {
-						return ! moment( value ).isSame( post.date );
-					}
-					case 'parent': {
-						return get( post, 'parent.ID', 0 ) !== value;
-					}
-				}
-				return post[ key ] !== value;
+				return ! isEqual( post[ key ], value );
 			}
 
 			return (
