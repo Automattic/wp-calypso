@@ -12,11 +12,6 @@ export const updateCredentials = ( siteId, credentials ) => ( {
 	type: JETPACK_CREDENTIALS_UPDATE,
 	siteId,
 	credentials,
-	meta: {
-		dataLayer: {
-			trackRequest: true,
-		},
-	},
 } );
 
 export const autoConfigCredentials = siteId => ( {
