@@ -242,7 +242,10 @@ class ManagePurchase extends Component {
 		let text,
 			link = cancelPurchase( this.props.selectedSite.slug, id );
 
-		if ( isRefundable( purchase ) ) {
+		if ( isAtomicSite && isSubscription( purchase ) ) {
+			text = translate( 'Contact Support to Cancel your Subscription' );
+			link = CALYPSO_CONTACT;
+		} else if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				if ( isRenewal( purchase ) ) {
 					text = translate( 'Contact Support to Cancel Domain and Refund' );
@@ -251,17 +254,13 @@ class ManagePurchase extends Component {
 					text = translate( 'Cancel Domain and Refund' );
 				}
 			}
-			if ( isAtomicSite ) {
-				text = translate( 'Contact Support to Cancel Subscription and Refund' );
-				link = CALYPSO_CONTACT;
-			} else {
-				if ( isSubscription( purchase ) ) {
-					text = translate( 'Cancel Subscription and Refund' );
-				}
 
-				if ( isOneTimePurchase( purchase ) ) {
-					text = translate( 'Cancel and Refund' );
-				}
+			if ( isSubscription( purchase ) ) {
+				text = translate( 'Cancel Subscription and Refund' );
+			}
+
+			if ( isOneTimePurchase( purchase ) ) {
+				text = translate( 'Cancel and Refund' );
 			}
 		} else {
 			if ( isDomainTransfer( purchase ) ) {
