@@ -233,18 +233,21 @@ export function isJetpackMinimumVersion( state, siteId, version ) {
  * @param  {Number}  siteId Site ID
  * @return {?String}        Site slug
  */
-export function getSiteSlug( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
+export const getSiteSlug = createSelector(
+	( state, siteId ) => {
+		const site = getRawSite( state, siteId );
+		if ( ! site ) {
+			return null;
+		}
 
-	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-		return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-	}
+		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		}
 
-	return urlToSlug( site.URL );
-}
+		return urlToSlug( site.URL );
+	},
+	[ getSitesItems ]
+);
 
 /**
  * Returns the domain for a site, or null if the site is unknown.
