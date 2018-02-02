@@ -3,13 +3,16 @@
 /**
  * External dependencies
  */
-import { pick } from 'lodash';
+import { map, pick, zipObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
 import {
+	INVITES_DELETE_REQUEST,
+	INVITES_DELETE_REQUEST_FAILURE,
+	INVITES_DELETE_REQUEST_SUCCESS,
 	INVITES_REQUEST,
 	INVITES_REQUEST_FAILURE,
 	INVITES_REQUEST_SUCCESS,
@@ -139,4 +142,19 @@ export function requestingResend( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( { requesting, items, counts, requestingResend } );
+export function deleting( state = {}, action ) {
+	switch ( action.type ) {
+		case INVITES_DELETE_REQUEST:
+		case INVITES_DELETE_REQUEST_FAILURE:
+		case INVITES_DELETE_REQUEST_SUCCESS:
+			const inviteMap = zipObject(
+				action.inviteIds,
+				map( action.inviteIds, () => INVITES_DELETE_REQUEST === action.type )
+			);
+			return Object.assign( {}, state, { [ action.siteId ]: inviteMap } );
+	}
+
+	return state;
+}
+
+export default combineReducers( { requesting, items, counts, requestingResend, deleting } );
