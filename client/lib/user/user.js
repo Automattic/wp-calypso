@@ -63,31 +63,26 @@ User.prototype.initialize = function() {
 	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		this.data = window.currentUser || false;
+		const bootstrappedData = window.currentUser || false;
 
 		// Store the current user in localStorage so that we can use it to determine
 		// if the logged in user has changed when initializing in the future
-		if ( this.data ) {
-			this.clearStoreIfChanged( this.data.ID );
-			store.set( 'wpcom_user', this.data );
-			if ( this.data.abtests ) {
-				store.set( ABTEST_LOCALSTORAGE_KEY, this.data.abtests );
-			}
-		} else {
-			// The user is logged out
-			this.initialized = true;
+		if ( bootstrappedData ) {
+			this.handleFetchSuccess( bootstrappedData );
 		}
-	} else {
-		this.data = store.get( 'wpcom_user' ) || false;
-
-		// Make sure that the user stored in localStorage matches the logged-in user
-		this.fetch();
+		this.initialized = true;
+		return;
 	}
+
+	this.data = store.get( 'wpcom_user' ) || false;
 
 	if ( this.data ) {
 		this.initialized = true;
 		this.emit( 'change' );
 	}
+
+	// Make sure that the user stored in localStorage matches the logged-in user
+	this.fetch();
 };
 
 /**
@@ -140,6 +135,7 @@ User.prototype.fetch = function() {
 
 			const userData = filterUserObject( data );
 			this.handleFetchSuccess( userData );
+			debug( 'User successfully retrieved' );
 		}
 	);
 };
@@ -189,7 +185,6 @@ User.prototype.handleFetchSuccess = function( userData ) {
 	}
 	this.initialized = true;
 	this.emit( 'change' );
-	debug( 'User successfully retrieved' );
 };
 
 User.prototype.getLanguage = function() {
