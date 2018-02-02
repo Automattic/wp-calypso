@@ -12,6 +12,7 @@ import {
 	areLocationsLoaded,
 	areLocationsLoading,
 	getContinents,
+	getAllCountries,
 	getCountriesByContinent,
 	getCountryName,
 	getCountriesWithStates,
@@ -174,6 +175,53 @@ describe( 'selectors', () => {
 			expect( getContinents( loadedState ) ).to.deep.equal( [
 				{ code: 'AF', name: 'Africa' },
 				{ code: 'NA', name: 'North America' },
+			] );
+		} );
+	} );
+
+	describe( '#getAllCountries', () => {
+		test( 'should return an empty list if the locations are not loaded', () => {
+			expect( getAllCountries( emptyState ) ).to.deep.equal( [] );
+		} );
+		test( 'should return an empty list if the locations are being loaded', () => {
+			expect( getAllCountries( loadingState ) ).to.deep.equal( [] );
+		} );
+		test( 'should return all countries, sorted by name', () => {
+			expect( getAllCountries( loadedState ) ).to.deep.equal( [
+				{
+					code: 'CA',
+					name: 'Canada',
+					states: [
+						{
+							code: 'BC',
+							name: 'British Columbia',
+						},
+						{
+							code: 'ON',
+							name: 'Ontario',
+						},
+					],
+				},
+				{ code: 'EG', name: 'Egypt', states: [] },
+				{ code: 'SA', name: 'South Africa', states: [] },
+				{
+					code: 'US',
+					name: 'United States',
+					states: [
+						{
+							code: 'UT',
+							name: 'Utah',
+						},
+						{
+							code: 'AL',
+							name: 'Alabama',
+						},
+						{
+							code: 'CA',
+							name: 'California',
+						},
+					],
+				},
 			] );
 		} );
 	} );
