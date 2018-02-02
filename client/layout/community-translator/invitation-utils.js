@@ -44,6 +44,15 @@ const debug = Debug( 'calypso:community-translator-invitation' ),
 		'ar',
 		'sv',
 	];
+const visibileSectionWhitelist = [
+	'comments',
+	'people',
+	'plugins',
+	'posts-pages',
+	'settings',
+	'sharing',
+	'stats',
+];
 let invitationPending = store.get( 'calypsoTranslatorInvitationIsPending' );
 
 function maybeInvite() {
@@ -68,7 +77,7 @@ function maybeInvite() {
 		return;
 	}
 
-	if ( includes( excludedLocales, locale ) ) {
+	if ( ! locale || includes( excludedLocales, locale ) ) {
 		debug( 'Not inviting because of user locale', locale );
 		return;
 	}
@@ -89,10 +98,8 @@ const invitationUtils = {
 		return invitationPending;
 	},
 
-	// The calypso editor is styled flush to the top, and makes the invitation
-	// look bad, so don't show it there
 	isValidSection: function( section ) {
-		return section !== 'post';
+		return includes( visibileSectionWhitelist, section );
 	},
 
 	dismiss: function() {
