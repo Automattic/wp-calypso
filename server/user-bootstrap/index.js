@@ -2,12 +2,17 @@
 /**
  * External dependencies
  */
-import { filterUserObject } from 'lib/user/shared-utils';
-var superagent = require( 'superagent' ),
-	debug = require( 'debug' )( 'calypso:bootstrap' ),
-	crypto = require( 'crypto' );
+import superagent from 'superagent';
+import debugFactory from 'debug';
+import crypto from 'crypto';
 
-var config = require( 'config' ),
+/**
+ * Internal dependencies
+ */
+import { filterUserObject } from 'lib/user/shared-utils';
+import config from 'config';
+
+const debug = debugFactory( 'calypso:bootstrap' ),
 	API_KEY = config( 'wpcom_calypso_rest_api_key' ),
 	AUTH_COOKIE_NAME = 'wordpress_logged_in',
 	/**
