@@ -231,6 +231,9 @@ class CustomerAddressDialog extends Component {
 			</Button>,
 		];
 
+		// TODO
+		const countries = [];
+
 		return (
 			<Dialog
 				isVisible={ isVisible }
@@ -263,8 +266,8 @@ class CustomerAddressDialog extends Component {
 						</div>
 					</div>
 					<AddressView
+						countries={ countries }
 						isEditable
-						showAllLocations
 						onChange={ this.onChange }
 						address={ getAddressViewFormat( address ) }
 					/>

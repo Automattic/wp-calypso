@@ -91,6 +91,9 @@ class OrderCustomerInfo extends Component {
 		const { billing, shipping } = order;
 		const isEditable = isEditing && ! isOrderFinished( order.status );
 
+		// TODO
+		const countries = [];
+
 		return (
 			<div className="order-customer">
 				<SectionHeader label={ translate( 'Customer Information' ) } />
@@ -113,7 +116,7 @@ class OrderCustomerInfo extends Component {
 							<h4>{ translate( 'Address' ) }</h4>
 							<div className="order-customer__billing-address">
 								<p>{ `${ billing.first_name } ${ billing.last_name }` }</p>
-								<AddressView address={ getAddressViewFormat( billing ) } />
+								<AddressView address={ getAddressViewFormat( billing ) } countries={ countries } />
 							</div>
 
 							<h4>{ translate( 'Email' ) }</h4>
@@ -140,7 +143,7 @@ class OrderCustomerInfo extends Component {
 							<h4>{ translate( 'Address' ) }</h4>
 							<div className="order-customer__shipping-address">
 								<p>{ `${ shipping.first_name } ${ shipping.last_name }` }</p>
-								<AddressView address={ getAddressViewFormat( shipping ) } />
+								<AddressView address={ getAddressViewFormat( shipping ) } countries={ countries } />
 							</div>
 						</div>
 					</div>

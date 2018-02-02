@@ -18,7 +18,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { getCountryData } from 'woocommerce/lib/countries';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getStoreLocation,
@@ -53,7 +52,7 @@ class StoreAddress extends Component {
 		addressEdits[ addressKey ] = newValue;
 		// Did they change the country? Force an appropriate state default
 		if ( 'country' === addressKey ) {
-			const countryData = getCountryData( newValue );
+			const countryData = false; // TODO
 			addressEdits.state = countryData ? countryData.defaultState : '';
 		}
 
@@ -112,6 +111,10 @@ class StoreAddress extends Component {
 			{ action: 'save', label: translate( 'Save' ), isPrimary: true },
 		];
 
+		// TODO
+		// filter to only show countries we allow calypso to manage
+		const countries = [];
+
 		let display;
 		if ( ! site || loading || fetchError ) {
 			display = (
@@ -126,7 +129,7 @@ class StoreAddress extends Component {
 			display = (
 				<div>
 					{ showLabel && <FormLabel>{ translate( 'Store location' ) }</FormLabel> }
-					<AddressView address={ this.state.address } />
+					<AddressView address={ this.state.address } countries={ countries } />
 					<Button compact onClick={ this.onShowDialog }>
 						{ translate( 'Edit address' ) }
 					</Button>

@@ -221,14 +221,19 @@ class StoreLocationSetupView extends Component {
 			);
 		}
 
+		// TODO
+		// Note: It is OK to show all countries here and not just the ones calypso supports
+		// If the location doesn't support calypso we will take them to wp-admin next
+		const countries = [];
+
 		return (
 			<div>
 				<AddressView
 					address={ this.state.address }
 					className="dashboard__pre-setup-address"
+					countries={ countries }
 					isEditable
 					onChange={ this.onChange }
-					showAllLocations
 				/>
 				<SetupFooter
 					busy={ this.state.isSaving }
