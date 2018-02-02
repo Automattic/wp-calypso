@@ -13,6 +13,7 @@ import classNames from 'classnames';
  * Internal Dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getNewRailcarSeed } from 'state/analytics/utils';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -37,13 +38,13 @@ class InlineHelpSearchResults extends Component {
 	};
 
 	state = {
-		railcarSeed: this.getNewRailcarSeed(),
+		railcarSeed: getNewRailcarSeed(),
 	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.searchQuery !== nextProps.searchQuery ) {
 			this.setState( {
-				railcarSeed: this.getNewRailcarSeed(),
+				railcarSeed: getNewRailcarSeed(),
 			} );
 		}
 	}
@@ -198,13 +199,6 @@ class InlineHelpSearchResults extends Component {
 				</a>
 			</li>
 		);
-	}
-
-	getNewRailcarSeed() {
-		// Generate a 7 character random hash on base16. E.g. ac618a3
-		return Math.floor( ( 1 + Math.random() ) * 0x10000000 )
-			.toString( 16 )
-			.substring( 1 );
 	}
 
 	getRailcarForIndex( index ) {
