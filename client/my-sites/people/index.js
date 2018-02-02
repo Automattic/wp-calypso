@@ -50,7 +50,7 @@ export default function() {
 				peopleController.enforceSiteEnding,
 				siteSelection,
 				navigation,
-				peopleController.renderPeopleInviteDetails,
+				peopleController.peopleInviteDetails,
 				makeLayout,
 				clientRender
 			);

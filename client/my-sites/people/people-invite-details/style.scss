@@ -10,13 +10,13 @@
 
 .people-invite-details__meta-item {
 	margin-bottom: 12px;
-	color: $gray;
+	color: $gray-text-min;
 
 	.people-invite-details__meta-item-label {
 		display: inline-block;
 		width: 130px;
 		margin-right: 16px;
-		color: $gray-dark;
+		color: $gray-text;
 		font-weight: 600;
 		text-align: right;
 	}
@@ -26,7 +26,7 @@
 		font-family: $serif;
 		font-size: 16px;
 		font-weight: 700;
-		color: $gray-dark;
+		color: $gray-text;
 	}
 
 	.gravatar {

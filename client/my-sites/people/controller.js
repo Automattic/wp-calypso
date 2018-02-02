@@ -52,7 +52,7 @@ export default {
 		renderPeopleInvites( context, next );
 	},
 
-	renderPeopleInviteDetails( context, next ) {
+	peopleInviteDetails( context, next ) {
 		renderPeopleInviteDetails( context, next );
 	},
 };
