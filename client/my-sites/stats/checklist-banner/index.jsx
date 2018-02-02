@@ -111,6 +111,8 @@ export class ChecklistBanner extends Component {
 			return false;
 		}
 
+		// NOTE: Accessing localStorage directly for checking A/B variation assignment
+		//       is an anti-pattern. Please use lib/abtest instead.
 		const abtests = store.get( ABTEST_LOCALSTORAGE_KEY );
 		if (
 			get( abtests, 'checklistThankYouForPaidUser_20171204' ) !== 'show' &&
