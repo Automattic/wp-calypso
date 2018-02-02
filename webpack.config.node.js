@@ -154,16 +154,7 @@ const webpackConfig = {
 		new HappyPack( { loaders: [ babelLoader ] } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
-			/^lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/,
-			'lodash/noop'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]seo[\/\\]reader-preview$/,
-			'components/empty-component'
-		), // Conflicts with component-closest module
 		new webpack.NormalModuleReplacementPlugin(
 			/^components[\/\\]popover$/,
 			'components/null-component'
@@ -171,14 +162,6 @@ const webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[\/\\]themes[\/\\]theme-upload$/,
 			'components/empty-component'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
-			/^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/,
-			'components/empty-component'
-		), // should never be required server side
-		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]site-selector$/,
-			'components/null-component'
 		), // Depends on BOM
 	] ),
 	externals: getExternals(),
