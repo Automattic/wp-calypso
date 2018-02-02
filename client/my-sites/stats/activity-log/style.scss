@@ -13,7 +13,7 @@
 		background: lighten( $gray, 20% );
 
 		@include breakpoint( "<480px" ) {
-			left: 29px;
+			left: 25px;
 		}
 	}
 }

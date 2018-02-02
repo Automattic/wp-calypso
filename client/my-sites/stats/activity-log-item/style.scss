@@ -6,70 +6,71 @@
 	@include breakpoint( '<480px' ) {
 		margin-left: 8px;
 	}
+}
 
-	.card {
-		flex: 1;
-		margin-top: 8px;
-		margin-bottom: 16px;
+.activity-log-item .card {
+	flex: 1;
+	margin-top: 8px;
+	margin-bottom: 16px;
+}
+
+.activity-log-item .foldable-card {
+	.foldable-card__expand .gridicon {
+		transform: none;
 	}
 
-	.foldable-card {
+	&.is-expanded {
+		margin-bottom: 24px;
+
 		.foldable-card__expand .gridicon {
-			transform: none;
-		}
-
-		&.is-expanded {
-			margin-bottom: 24px;
-
-			.foldable-card__expand .gridicon {
-				transform: rotate(180deg);
-			}
+			transform: rotate(180deg);
 		}
 	}
+}
 
-	.foldable-card__header {
+.activity-log-item .foldable-card__header {
+	@include breakpoint( '<480px' ) {
+		padding: 12px;
+		display: block;
+	}
+
+	// TODO: Remove when foldable cards become "expandable"
+	.is-clickable {
+		cursor: default;
+	}
+}
+
+.activity-log-item .foldable-card__secondary {
+	flex-grow: 0;
+
+	.foldable-card__summary-expanded {
+		margin-right: 0;
+	}
+}
+
+.activity-log-item .is-discarded {
+	margin-left: 80px;
+
+	@include breakpoint( '<480px' ) {
+		margin-left: 60px;
+	}
+
+	&:before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 33px;
+		height: 100%;
+		border-left: 2px dotted lighten($gray, 20%);
+
 		@include breakpoint( '<480px' ) {
-			padding: 12px;
-		}
-
-		// TODO: Remove when foldable cards become "expandable"
-		.is-clickable {
-			cursor: default;
+			left: 22px;
 		}
 	}
 
-	.foldable-card__secondary {
-		flex-grow: 0;
-
-		.foldable-card__summary-expanded {
-			margin-right: 0;
-		}
-	}
-
-	&.is-discarded {
-		margin-left: 80px;
-
-		@include breakpoint( '<480px' ) {
-			margin-left: 60px;
-		}
-
+	&:last-of-type {
 		&:before {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 33px;
-			height: 100%;
-			border-left: 2px dotted lighten($gray, 20%);
-
-			@include breakpoint( '<480px' ) {
-				left: 22px;
-			}
-		}
-
-		&:last-of-type {
-			&:before {
-				display: none;
-			}
+			display: none;
 		}
 	}
 }
@@ -108,7 +109,16 @@
 	margin-top: 2px;
 
 	@include breakpoint( '<480px' ) {
-		padding: 10px;
+		padding: 7px;
+		box-sizing: border-box;
+		width: 32px;
+		height: 32px;
+		display: inline-block;
+
+		.gridicon {
+			width: 18px;
+			height: 18px;
+		}
 	}
 
 	// Success
@@ -138,6 +148,11 @@
 
 	.foldable-card__main {
 		min-width: 0;
+
+		@include breakpoint( '<480px' ) {
+			max-width: none;
+			margin: 0;
+		}
 	}
 
 	.foldable-card__content {
@@ -164,7 +179,11 @@
 	@include breakpoint( '<960px' ) {
 		flex-direction: column;
 		align-items: flex-start;
-		padding-left: 40px;
+		padding-left: 0;
+	}
+
+	@include breakpoint( '<480px' ) {
+		margin-right: 0;
 	}
 }
 
@@ -174,7 +193,6 @@
 	min-width: 180px;
 	max-width: 100%;
 	margin-right: 32px;
-	margin-left: -40px;
 	align-items: center;
 
 	@include breakpoint( '>960px' ) {
@@ -192,6 +210,11 @@
 		@include breakpoint( '<960px' ) {
 			width: 32px;
 			height: 32px;
+			margin-right: 8px;
+		}
+		@include breakpoint( '<480px' ) {
+			width: 24px;
+			height: 24px;
 			margin-right: 8px;
 		}
 	}
@@ -222,6 +245,17 @@
 		margin-top: 2px;
 		line-height: 1;
 	}
+
+	@include breakpoint( '<480px' ) {
+		display: inline-block;
+	}
+}
+
+.activity-log-item__actor-role {
+	@include breakpoint( '<480px' ) {
+		display: inline-block;
+		margin-left: 8px;
+	}
 }
 
 .activity-log-item__actor-role,
@@ -229,6 +263,10 @@
 	text-transform: capitalize;
 	font-size: 12px;
 	color: $gray-text-min;
+
+	@include breakpoint( '<480px' ) {
+		font-size: 14px;
+	}
 }
 
 .activity-log-item__description {
@@ -241,9 +279,16 @@
 	}
 }
 
+.activity-log-item__description-content {
+	margin-bottom: 8px;
+}
+
 .activity-log-item__action {
-	.split-button {
-		/* 8 x 15 so split button doesn't break */
-		min-width: 128px;
+	// Mild hack so split button doesn't break
+	white-space: pre;
+
+	@include breakpoint( '<480px' ) {
+		margin-top: 16px;
+		text-align: left;
 	}
 }
