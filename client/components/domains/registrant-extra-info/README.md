@@ -12,7 +12,7 @@ things:
 
 ### Validation
 
-The `WithContactDetailsValidation()` higher order component facilitates
-client-side validation of tld-specific requirements for these forms by
-validating the user's contact details against the appropriate JSON schema and
-passing any validation errors on to the form for display.
+The `WithContactDetailsValidation` higher order component helps validate
+tld-specific requirements for these forms by running the the appropriate JSON
+schema against the user's contact details and passing any errors on to the form
+for display.
