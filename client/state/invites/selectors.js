@@ -23,19 +23,35 @@ export function isRequestingInvitesForSite( state, siteId ) {
 }
 
 /**
- * Returns an array of all invite objects known for the given site, or `null`
- * if there is no data for that site.
+ * Returns an array of all pending invite objects known for the given site, or
+ * `null` if there is no data for that site.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?Array}         The list of invite objects for the given site
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @return {?Array}        The list of pending invites for the given site
  */
-export function getInvitesForSite( state, siteId ) {
+export function getPendingInvitesForSite( state, siteId ) {
 	const invites = state.invites.items[ siteId ];
 	if ( ! invites ) {
 		return null;
 	}
-	return invites;
+	return invites.pending;
+}
+
+/**
+ * Returns an array of all accepted invite objects known for the given site, or
+ * `null` if there is no data for that site.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @return {?Array}        The list of accepted invites for the given site
+ */
+export function getAcceptedInvitesForSite( state, siteId ) {
+	const invites = state.invites.items[ siteId ];
+	if ( ! invites ) {
+		return null;
+	}
+	return invites.accepted;
 }
 
 /**
