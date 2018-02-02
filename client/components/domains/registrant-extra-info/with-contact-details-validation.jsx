@@ -143,9 +143,9 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 		}
 
 		render() {
-			const validationErrors = this.validateContactDetails();
-
-			return <WrappedComponent { ...this.props } validationErrors={ validationErrors } />;
+			return (
+				<WrappedComponent { ...this.props } validationErrors={ this.validateContactDetails() } />
+			);
 		}
 	}
 
