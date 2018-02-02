@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import {
 	getInlineHelpSearchResultsForQuery,
@@ -39,8 +40,6 @@ class InlineHelpSearchResults extends Component {
 		railcarSeed: this.getNewRailcarSeed(),
 	};
 
-	eventQueue = [];
-
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.searchQuery !== nextProps.searchQuery ) {
 			this.setState( {
@@ -61,20 +60,6 @@ class InlineHelpSearchResults extends Component {
 
 	componentDidMount() {
 		this.props.setSearchResults( '', this.getContextResults() );
-		this.sendRenderEvents();
-	}
-
-	componentDidUpdate() {
-		this.sendRenderEvents();
-	}
-
-	sendRenderEvents() {
-		this.eventQueue.map( event => event() );
-		this.eventQueue = [];
-	}
-
-	addRenderEvent( event ) {
-		this.eventQueue.push( event );
 	}
 
 	getContextResults = () => {
@@ -191,21 +176,14 @@ class InlineHelpSearchResults extends Component {
 
 	renderHelpLink = ( link, index ) => {
 		// TrainTracks render event
-		const railcar = this.getRailcarForIndex( index );
-		const isShowingSuggestions = this.isShowingSuggestions();
-		const event = () => {
-			this.props.recordTracksEvent( 'calypso_traintracks_render', {
-				railcar: railcar,
-				fetch_algo: isShowingSuggestions ? 'suggest_top4_static' : 'search_top4_classic',
-				fetch_position: index,
-				ui_algo: 'as_fetched',
-				ui_position: index,
-				fetch_query: this.props.searchQuery,
-			} );
+		const eventProperties = {
+			railcar: this.getRailcarForIndex( index ),
+			fetch_algo: this.isShowingSuggestions() ? 'suggest_top4_static' : 'search_top4_classic',
+			fetch_position: index,
+			ui_algo: 'as_fetched',
+			ui_position: index,
+			fetch_query: this.props.searchQuery,
 		};
-		// send `calypso_traintracks_render` events asynchronously since recordTracksEvent
-		// seems to change some state (doing this during render makes React complain)
-		this.addRenderEvent( event );
 
 		const classes = { 'is-selected': this.props.selectedResult === index };
 		return (
@@ -216,6 +194,7 @@ class InlineHelpSearchResults extends Component {
 					title={ decodeEntities( link.description ) }
 				>
 					{ preventWidows( decodeEntities( link.title ) ) }
+					<TrackComponentView eventName="calypso_traintracks_render" eventProperties={ eventProperties } />
 				</a>
 			</li>
 		);
