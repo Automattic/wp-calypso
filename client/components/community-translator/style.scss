@@ -1,11 +1,10 @@
-.translatable__element {
+.community-translator__element {
 	display: inline-block;
 	cursor: pointer;
+	z-index: 100;
 	// TODO: create mixin in assets/stylesheets/shared/mixins
 	text-shadow: 0 0 10px #0f0, 0 0 2px #4cb420 !important;
 	&.is-untranslated {
 		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
 	}
 }
-
-

@@ -5,7 +5,7 @@
 //import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
 /**
@@ -184,4 +184,4 @@ class CommunityTranslator extends Component {
 
 export default connect( ( state, props ) => {
 	return {};
-} )( CommunityTranslator );
+} )( localize( CommunityTranslator ) );
