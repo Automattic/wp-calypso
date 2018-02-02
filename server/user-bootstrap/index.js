@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import qs from 'qs';
 import superagent from 'superagent';
 import debugFactory from 'debug';
 import crypto from 'crypto';
@@ -10,6 +11,7 @@ import crypto from 'crypto';
  * Internal dependencies
  */
 import { filterUserObject } from 'lib/user/shared-utils';
+import { getActiveTestNames } from 'lib/abtest/utility';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:bootstrap' ),
@@ -18,7 +20,12 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 	/**
 	 * WordPress.com REST API /me endpoint.
 	 */
-	url = 'https://public-api.wordpress.com/rest/v1/me?meta=flags';
+	API_PATH = 'https://public-api.wordpress.com/rest/v1/me',
+	apiQuery = {
+		meta: 'flags',
+		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
+	},
+	url = `${ API_PATH }?${ qs.stringify( apiQuery ) }`;
 
 module.exports = function( authCookieValue, geoCountry, callback ) {
 	// create HTTP Request object
