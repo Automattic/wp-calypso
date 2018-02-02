@@ -86,25 +86,27 @@ class ActivityLogSwitch extends Component {
 
 		return (
 			<Card className="activity-log-switch">
-				<h2 className="activity-log-switch__heading">
-					{ translate( "Welcome to Jetpack's new backups and security" ) }
-				</h2>
-				<img src="/calypso/images/illustrations/security.svg" alt="" />
-				<p className="activity-log-switch__intro">
-					{ translate(
-						'Backing up and securing your site should be a breeze. ' +
-						"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
-					) }
-				</p>
-				{ this.getMainButton() }
-				<div>
-					<a
-						className="activity-log-switch__no-thanks"
-						href={ `//${ siteSlug }${ redirect }` }>
-						{ translate( 'No thanks' ) }
-					</a>
+				<div className="activity-log-switch__header">
+					<h2 className="activity-log-switch__header-header">
+						{ translate( "Welcome to Jetpack's new backups and security" ) }
+					</h2>
+					<img src="/calypso/images/illustrations/security.svg" alt="" />
+					<p className="activity-log-switch__header-text">
+						{ translate(
+							'Backing up and securing your site should be a breeze. ' +
+							"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
+						) }
+					</p>
+					{ this.getMainButton() }
+					<div>
+						<a
+							className="activity-log-switch__no-thanks"
+							href={ `//${ siteSlug }${ redirect }` }>
+							{ translate( 'No thanks' ) }
+						</a>
+					</div>
 				</div>
-				<h3 className="activity-log-switch__heading-more">
+				<h3 className="activity-log-switch__features-header">
 					{ translate( 'What else can it do?' ) }
 				</h3>
 				<Card className="activity-log-switch__feature">
