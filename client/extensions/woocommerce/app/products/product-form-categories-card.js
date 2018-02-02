@@ -7,91 +7,67 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { find, pick, compact, escape, unescape } from 'lodash';
+import { compact } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FoldableCard from 'components/foldable-card';
 import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import TokenField from 'components/token-field';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { generateProductCategoryId } from 'woocommerce/state/ui/product-categories/actions';
+import TermSelector from 'woocommerce/components/term-selector';
 
-// TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
-const ProductFormCategoriesCard = ( {
-	siteId,
-	product,
-	productCategories,
-	editProduct,
-	editProductCategory,
-	translate,
-} ) => {
-	const handleChange = categoryNames => {
+const ProductFormCategoriesCard = ( { siteId, product, editProduct, translate } ) => {
+	const handleChange = category => {
+		const selectedCategories = product.categories || [];
+		let found = false;
 		const newCategories = compact(
-			categoryNames.map( name => {
-				const escapedCategoryName = escape( name );
-				const category = find( productCategories, cat => {
-					return escape( cat.name ) === escapedCategoryName;
-				} );
-
-				if ( ! category ) {
-					// Add a new product category to the creates list.
-					const newCategoryId = generateProductCategoryId();
-					editProductCategory( siteId, { id: newCategoryId }, { name } );
-					return { id: newCategoryId };
+			selectedCategories.map( c => {
+				if ( c.id === category.ID ) {
+					found = true;
+					return null;
 				}
-
-				return pick( category, 'id' );
+				return c;
 			} )
 		);
 
-		// Update the categories list.
-		const data = { id: product.id, categories: newCategories };
-		editProduct( siteId, product, data );
-	};
+		if ( ! found ) {
+			newCategories.push( { id: category.ID } );
+		}
 
-	const toggleFeatured = () => {
-		editProduct( siteId, product, { featured: ! product.featured } );
+		editProduct( siteId, product, { categories: newCategories } );
 	};
 
 	const selectedCategories = product.categories || [];
-	const selectedCategoryNames = compact(
+	const selectedCategoryIds = compact(
 		selectedCategories.map( c => {
-			const category = find( productCategories, { id: c.id } );
-			return ( category && unescape( category.name ) ) || undefined;
+			return c.id;
 		} )
 	);
-	const productCategoryNames = productCategories.map( c => unescape( c.name ) );
 
 	return (
-		<Card className="products__categories-card">
+		<FoldableCard
+			className="products__categories-card"
+			header={ translate( 'Categories' ) }
+			clickableHeader
+		>
+			<p>
+				{ translate(
+					'Categories let you group similar products so customers can find them more easily.'
+				) }
+			</p>
+
 			<FormFieldSet>
-				<FormLabel htmlFor="categories">{ translate( 'Category' ) }</FormLabel>
-				<TokenField
-					name="categories"
-					placeholder={ translate( 'Enter category names' ) }
-					value={ selectedCategoryNames }
-					suggestions={ productCategoryNames }
+				<TermSelector
+					siteId={ siteId }
+					taxonomy="product_cat"
+					selected={ selectedCategoryIds }
 					onChange={ handleChange }
+					multiple
+					emptyMessage={ translate( 'No categories found.' ) }
+					searchThreshold={ 0 }
 				/>
-				<FormSettingExplanation>
-					{ translate(
-						'Categories let you group similar products so customers can find them more easily.'
-					) }
-				</FormSettingExplanation>
 			</FormFieldSet>
-			<div className="products__product-form-featured">
-				<FormLabel htmlFor="featured">
-					{ translate( 'Featured' ) }
-					<CompactFormToggle onChange={ toggleFeatured } checked={ product.featured }>
-						{ translate( 'Promote this product across the store' ) }
-					</CompactFormToggle>
-				</FormLabel>
-			</div>
-		</Card>
+		</FoldableCard>
 	);
 };
 
@@ -101,8 +77,6 @@ ProductFormCategoriesCard.propTypes = {
 		id: PropTypes.isRequired,
 		type: PropTypes.string,
 	} ),
-	productCategories: PropTypes.array.isRequired,
-	editProduct: PropTypes.func.isRequired,
 };
 
 export default localize( ProductFormCategoriesCard );

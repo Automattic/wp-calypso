@@ -25,10 +25,6 @@ import {
 	editProductAttribute,
 	createProductActionList,
 } from 'woocommerce/state/ui/products/actions';
-import {
-	clearProductCategoryEdits,
-	editProductCategory,
-} from 'woocommerce/state/ui/product-categories/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import {
 	getCurrentlyEditingId,
@@ -37,12 +33,10 @@ import {
 } from 'woocommerce/state/ui/products/selectors';
 import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getProductVariationsWithLocalEdits } from 'woocommerce/state/ui/products/variations/selectors';
-import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import {
 	clearProductVariationEdits,
 	editProductVariation,
 } from 'woocommerce/state/ui/products/variations/actions';
-import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -59,9 +53,7 @@ class ProductCreate extends React.Component {
 		product: PropTypes.shape( {
 			id: PropTypes.isRequired,
 		} ),
-		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
-		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
 	};
@@ -75,7 +67,6 @@ class ProductCreate extends React.Component {
 
 		if ( site && site.ID ) {
 			this.props.editProduct( site.ID, null, {} );
-			this.props.fetchProductCategories( site.ID );
 		}
 	}
 
@@ -85,7 +76,6 @@ class ProductCreate extends React.Component {
 		const oldSiteId = ( site && site.ID ) || null;
 		if ( oldSiteId !== newSiteId ) {
 			this.props.editProduct( newSiteId, null, {} );
-			this.props.fetchProductCategories( newSiteId );
 		}
 	}
 
@@ -94,7 +84,6 @@ class ProductCreate extends React.Component {
 
 		if ( site ) {
 			this.props.clearProductEdits( site.ID );
-			this.props.clearProductCategoryEdits( site.ID );
 			this.props.clearProductVariationEdits( site.ID );
 		}
 	}
@@ -182,15 +171,7 @@ class ProductCreate extends React.Component {
 	}
 
 	render() {
-		const {
-			site,
-			product,
-			hasEdits,
-			className,
-			variations,
-			productCategories,
-			actionList,
-		} = this.props;
+		const { site, product, hasEdits, className, variations, actionList } = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
@@ -213,9 +194,7 @@ class ProductCreate extends React.Component {
 					siteId={ site && site.ID }
 					product={ product || { type: 'simple' } }
 					variations={ variations }
-					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
-					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
 					onUploadStart={ this.onUploadStart }
@@ -233,7 +212,6 @@ function mapStateToProps( state ) {
 	const product = combinedProduct || ( productId && { id: productId } );
 	const hasEdits = Boolean( getProductEdits( state, productId ) );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
-	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
 
@@ -242,7 +220,6 @@ function mapStateToProps( state ) {
 		product,
 		hasEdits,
 		variations,
-		productCategories,
 		actionList,
 		finishedInitialSetup,
 	};
@@ -257,12 +234,9 @@ function mapDispatchToProps( dispatch ) {
 					createProductActionList( ...args )
 				),
 			editProduct,
-			editProductCategory,
 			editProductAttribute,
 			editProductVariation,
-			fetchProductCategories,
 			clearProductEdits,
-			clearProductCategoryEdits,
 			clearProductVariationEdits,
 		},
 		dispatch

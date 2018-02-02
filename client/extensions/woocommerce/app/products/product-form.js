@@ -27,9 +27,7 @@ export default class ProductForm extends Component {
 			name: PropTypes.string,
 		} ),
 		variations: PropTypes.array,
-		productCategories: PropTypes.array.isRequired,
 		editProduct: PropTypes.func.isRequired,
-		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
 		onUploadStart: PropTypes.func.isRequired,
@@ -48,13 +46,8 @@ export default class ProductForm extends Component {
 	}
 
 	render() {
-		const { siteId, product, productCategories, variations } = this.props;
-		const {
-			editProduct,
-			editProductCategory,
-			editProductVariation,
-			editProductAttribute,
-		} = this.props;
+		const { siteId, product, variations } = this.props;
+		const { editProduct, editProductVariation, editProductAttribute } = this.props;
 		const type = product.type || 'simple';
 
 		if ( ! siteId ) {
@@ -79,16 +72,13 @@ export default class ProductForm extends Component {
 				<ProductFormCategoriesCard
 					siteId={ siteId }
 					product={ product }
-					productCategories={ productCategories }
 					editProduct={ editProduct }
-					editProductCategory={ editProductCategory }
 				/>
 				<ProductFormVariationsCard
 					siteId={ siteId }
 					product={ product }
 					variations={ variations }
 					editProduct={ editProduct }
-					editProductCategory={ editProductCategory }
 					editProductAttribute={ editProductAttribute }
 					editProductVariation={ editProductVariation }
 					onUploadStart={ this.props.onUploadStart }

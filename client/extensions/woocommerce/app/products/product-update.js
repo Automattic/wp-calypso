@@ -25,7 +25,6 @@ import {
 	fetchProduct,
 	deleteProduct as deleteProductAction,
 } from 'woocommerce/state/sites/products/actions';
-import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { fetchProductVariations } from 'woocommerce/state/sites/product-variations/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
@@ -43,11 +42,6 @@ import {
 	getProductVariationsWithLocalEdits,
 	getVariationEditsStateForProduct,
 } from 'woocommerce/state/ui/products/variations/selectors';
-import {
-	editProductCategory,
-	clearProductCategoryEdits,
-} from 'woocommerce/state/ui/product-categories/actions';
-import { getProductCategoriesWithLocalEdits } from 'woocommerce/state/ui/product-categories/selectors';
 import { getSaveErrorMessage } from './save-error-message';
 import page from 'page';
 import ProductForm from './product-form';
@@ -63,9 +57,7 @@ class ProductUpdate extends React.Component {
 		} ),
 		fetchProduct: PropTypes.func.isRequired,
 		fetchProductVariations: PropTypes.func.isRequired,
-		fetchProductCategories: PropTypes.func.isRequired,
 		editProduct: PropTypes.func.isRequired,
-		editProductCategory: PropTypes.func.isRequired,
 		editProductAttribute: PropTypes.func.isRequired,
 		editProductVariation: PropTypes.func.isRequired,
 	};
@@ -86,7 +78,6 @@ class ProductUpdate extends React.Component {
 			if ( ! variations ) {
 				this.props.fetchProductVariations( site.ID, productId );
 			}
-			this.props.fetchProductCategories( site.ID );
 		}
 	}
 
@@ -99,7 +90,6 @@ class ProductUpdate extends React.Component {
 			this.props.fetchProduct( newSiteId, productId );
 			this.props.fetchProductVariations( newSiteId, productId );
 			this.props.editProduct( newSiteId, { id: productId }, {} );
-			this.props.fetchProductCategories( newSiteId );
 		}
 	}
 
@@ -108,7 +98,6 @@ class ProductUpdate extends React.Component {
 
 		if ( site ) {
 			this.props.clearProductEdits( site.ID );
-			this.props.clearProductCategoryEdits( site.ID );
 			this.props.clearProductVariationEdits( site.ID );
 		}
 	}
@@ -158,9 +147,8 @@ class ProductUpdate extends React.Component {
 	};
 
 	onSave = () => {
-		const { product, translate, site, fetchProductCategories: fetch } = this.props;
+		const { product, translate } = this.props;
 		const successAction = () => {
-			fetch( site.ID );
 			return successNotice(
 				translate( '%(product)s successfully updated.', {
 					args: { product: product.name },
@@ -191,15 +179,7 @@ class ProductUpdate extends React.Component {
 	}
 
 	render() {
-		const {
-			site,
-			product,
-			hasEdits,
-			className,
-			variations,
-			productCategories,
-			actionList,
-		} = this.props;
+		const { site, product, hasEdits, className, variations, actionList } = this.props;
 
 		const isValid = 'undefined' !== site && this.isProductValid();
 		const isBusy = Boolean( actionList ); // If there's an action list present, we're trying to save.
@@ -221,9 +201,7 @@ class ProductUpdate extends React.Component {
 					siteId={ site && site.ID }
 					product={ product || { type: 'simple' } }
 					variations={ variations }
-					productCategories={ productCategories }
 					editProduct={ this.props.editProduct }
-					editProductCategory={ this.props.editProductCategory }
 					editProductAttribute={ this.props.editProductAttribute }
 					editProductVariation={ this.props.editProductVariation }
 					onUploadStart={ this.onUploadStart }
@@ -243,7 +221,6 @@ function mapStateToProps( state, ownProps ) {
 		Boolean( getProductEdits( state, productId ) ) ||
 		Boolean( getVariationEditsStateForProduct( state, productId ) );
 	const variations = product && getProductVariationsWithLocalEdits( state, product.id );
-	const productCategories = getProductCategoriesWithLocalEdits( state );
 	const actionList = getActionList( state );
 
 	return {
@@ -251,7 +228,6 @@ function mapStateToProps( state, ownProps ) {
 		product,
 		hasEdits,
 		variations,
-		productCategories,
 		actionList,
 	};
 }
@@ -266,14 +242,11 @@ function mapDispatchToProps( dispatch ) {
 				),
 			deleteProduct: deleteProductAction,
 			editProduct,
-			editProductCategory,
 			editProductAttribute,
 			editProductVariation,
 			fetchProduct,
 			fetchProductVariations,
-			fetchProductCategories,
 			clearProductEdits,
-			clearProductCategoryEdits,
 			clearProductVariationEdits,
 		},
 		dispatch
