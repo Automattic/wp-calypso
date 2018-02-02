@@ -44,9 +44,6 @@ class ContactsPrivacy extends React.PureComponent {
 			? findPrivacyServiceWhois( whois.data )
 			: findRegistrantWhois( whois.data );
 
-		// eslint-disable-next-line
-		console.log( contactInformation );
-
 		return (
 			<Main className="contacts-privacy">
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
