@@ -303,13 +303,6 @@ const Checkout = createReactClass( {
 			return '/checkout/thank-you/features';
 		}
 
-		if (
-			this.props.isEligibleForCheckoutToChecklist &&
-			'show' === abtest( 'checklistThankYouForPaidUser' )
-		) {
-			return `/checklist/${ selectedSiteSlug }/paid`;
-		}
-
 		if ( domainReceiptId && receiptId && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
 			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
 		}
@@ -329,6 +322,13 @@ const Checkout = createReactClass( {
 					domainsForGsuite[ 0 ].meta
 				}/${ receiptId }`;
 			}
+		}
+
+		if (
+			this.props.isEligibleForCheckoutToChecklist &&
+			'show' === abtest( 'checklistThankYouForPaidUser' )
+		) {
+			return `/checklist/${ selectedSiteSlug }/paid`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
