@@ -67,6 +67,7 @@ export const ChecklistPublishPostTour = makeTour(
 			placement="right"
 			style={ {
 				animationDelay: '0.7s',
+				zIndex: 2,
 			} }
 			when={ inSection( 'post-editor' ) }
 			canSkip={ false }
@@ -96,7 +97,7 @@ export const ChecklistPublishPostTour = makeTour(
 				marginLeft: '-40px',
 			} }
 			wait={ openSidebar }
-			>
+		>
 			<p>
 				{ translate(
 					'Categories and Tags not only help organize your content but also bring people to ' +
