@@ -78,6 +78,10 @@ class OrderCustomerInfo extends Component {
 
 	renderBilling = ( address = {} ) => {
 		const { translate } = this.props;
+
+		// TODO
+		const countries = [];
+
 		if ( every( address, isEmpty ) ) {
 			return (
 				<Button
@@ -94,7 +98,7 @@ class OrderCustomerInfo extends Component {
 				<h4>{ translate( 'Address' ) }</h4>
 				<div className="order-customer__billing-address">
 					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
-					<AddressView address={ getAddressViewFormat( address ) } />
+					<AddressView address={ getAddressViewFormat( address ) } countries={ countries } />
 				</div>
 
 				<h4>{ translate( 'Email' ) }</h4>
@@ -111,6 +115,10 @@ class OrderCustomerInfo extends Component {
 
 	renderShipping = ( address = {} ) => {
 		const { translate } = this.props;
+
+		// TODO
+		const countries = [];
+
 		if ( every( address, isEmpty ) ) {
 			return (
 				<Button
@@ -127,7 +135,7 @@ class OrderCustomerInfo extends Component {
 				<h4>{ translate( 'Address' ) }</h4>
 				<div className="order-customer__shipping-address">
 					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
-					<AddressView address={ getAddressViewFormat( address ) } />
+					<AddressView address={ getAddressViewFormat( address ) } countries={ countries } />
 				</div>
 				<Button className="order-customer__add-link" onClick={ this.toggleDialog( 'shipping' ) }>
 					{ translate( 'Edit Address' ) }

@@ -22,12 +22,6 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
 import Card from 'components/card';
-import {
-	DESTINATION_BASED_SALES_TAX,
-	NO_SALES_TAX,
-	ORIGIN_BASED_SALES_TAX,
-} from 'woocommerce/lib/countries/constants';
-import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
@@ -60,142 +54,23 @@ class TaxesRates extends Component {
 		this.maybeFetchRates( nextProps );
 	};
 
-	renderInfo = () => {
-		const { address, translate } = this.props;
-		const countryData = getCountryData( address.country );
-		if ( ! countryData ) {
-			return (
-				<p>
-					{ translate( 'Error: Your country ( %(country)s ) is not recognized', {
-						args: { country: address.country },
-					} ) }
-				</p>
-			);
-		}
-
-		const countryName = countryData.name;
-		const stateData = getStateData( address.country, address.state );
-		if ( ! stateData ) {
-			return (
-				<p>
-					{ translate(
-						'Error: Your country ( %(countryName)s ) was recognized, but ' +
-							'your state ( %(state)s ) was not. ',
-						{ args: { countryName, state: address.state } }
-					) }
-				</p>
-			);
-		}
-
-		const stateName = stateData.name;
-
-		if ( NO_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<p>
-					{ translate(
-						'Since your store is located in {{strong}}%(stateName)s, ' +
-							"%(countryName)s{{/strong}} you're not required to collect sales tax.",
-						{
-							args: { stateName, countryName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
-			);
-		}
-
-		if ( ORIGIN_BASED_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<p>
-					{ translate(
-						"Since your store is located in {{strong}}%(stateName)s, %(countryName)s{{/strong}} you're " +
-							'required to charge sales tax based on your business address.',
-						{
-							args: { stateName, countryName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
-			);
-		}
-
-		// Default - DESTINATION_BASED_SALES_TAX
-		return (
-			<p>
-				{ translate(
-					"Since your store is located in {{strong}}%(stateName)s, %(countryName)s{{/strong}} you're " +
-						"required to charge sales tax based on the customer's shipping address.",
-					{
-						args: { stateName, countryName },
-						components: { strong: <strong /> },
-					}
-				) }
-			</p>
-		);
-	};
-
 	renderCalculationStatus = () => {
-		const { address, areTaxesEnabled, translate } = this.props;
-		const stateData = getStateData( address.country, address.state );
-
-		if ( ! stateData ) {
-			return null;
-		}
-
-		if ( NO_SALES_TAX === stateData.salesTaxBasis ) {
-			return null;
-		}
-
-		if ( ! areTaxesEnabled ) {
-			return (
-				<Notice showDismiss={ false } status="is-error">
-					{ translate(
-						'Sales taxes are not currently being charged. Unless ' +
-							'your products are exempt from sales tax we recommend that you ' +
-							'{{strong}}enable automatic tax calculation and charging{{/strong}}',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-				</Notice>
-			);
-		}
-
-		if ( DESTINATION_BASED_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<div className="taxes__taxes-calculate">
-					<Gridicon icon="checkmark" />
-					{ translate(
-						"We'll automatically calculate and charge the " +
-							'correct rate of tax for you each time a customer checks out.'
-					) }
-				</div>
-			);
-		}
+		const { translate } = this.props;
 
 		return (
 			<div className="taxes__taxes-calculate">
 				<Gridicon icon="checkmark" />
 				{ translate(
-					"We'll automatically calculate and charge sales tax " +
-						'at the following rate each time a customer checks out.'
+					"We'll automatically calculate and charge the appropriate sales tax each time a customer checks out. " +
+						'For example, the following taxes would be collected for a sale at your location.'
 				) }
 			</div>
 		);
 	};
 
 	possiblyRenderRates = () => {
-		const { address, areTaxesEnabled, taxRates, translate } = this.props;
+		const { areTaxesEnabled, taxRates, translate } = this.props;
 		if ( ! areTaxesEnabled ) {
-			return null;
-		}
-
-		const stateData = getStateData( address.country, address.state );
-		if ( ! stateData ) {
-			return null;
-		}
-
-		if ( ORIGIN_BASED_SALES_TAX !== stateData.salesTaxBasis ) {
 			return null;
 		}
 
@@ -203,7 +78,7 @@ class TaxesRates extends Component {
 			return (
 				<Notice showDismiss={ false } status="is-error">
 					{ translate(
-						'The WordPress.com sales tax rate service is not ' + 'available for this site.'
+						'The WordPress.com sales tax rate service is not available for this site.'
 					) }
 				</Notice>
 			);
@@ -302,7 +177,6 @@ class TaxesRates extends Component {
 					</FormToggle>
 				</ExtendedHeader>
 				<Card>
-					{ this.renderInfo() }
 					{ this.renderCalculationStatus() }
 					{ this.possiblyRenderRates() }
 					{ this.renderPolicyNotice() }
