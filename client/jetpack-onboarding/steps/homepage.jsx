@@ -26,11 +26,9 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 			homepageFormat,
 		} );
 
-		return () => {
-			this.props.saveJetpackOnboardingSettings( siteId, {
-				homepageFormat,
-			} );
-		};
+		this.props.saveJetpackOnboardingSettings( siteId, {
+			homepageFormat,
+		} );
 	};
 
 	render() {
