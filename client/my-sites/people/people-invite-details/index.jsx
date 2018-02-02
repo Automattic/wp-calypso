@@ -49,7 +49,7 @@ class PeopleInviteDetails extends React.PureComponent {
 					type="invite-details"
 					isSelectable={ false }
 				/>
-				{ invite && this.renderInviteDetails() }
+				{ this.renderInviteDetails() }
 			</Card>
 		);
 	};
@@ -58,17 +58,13 @@ class PeopleInviteDetails extends React.PureComponent {
 		const { invite, translate, moment } = this.props;
 		const showName = invite.invitedBy.login !== invite.invitedBy.name;
 
-		if ( ! invite ) {
-			return null;
-		}
-
 		return (
 			<div className="people-invite-details__meta">
 				<div className="people-invite-details__meta-item">
 					<span className="people-invite-details__meta-item-label">
 						{ translate( 'Invited By' ) }
 					</span>
-					{ invite.invitedBy && <Gravatar user={ invite.invitedBy } size={ 24 } /> }
+					<Gravatar user={ invite.invitedBy } size={ 24 } />
 					{ showName && (
 						<span className="people-invite-details__meta-item-user">{ invite.invitedBy.name }</span>
 					) }
