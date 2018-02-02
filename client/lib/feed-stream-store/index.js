@@ -16,12 +16,11 @@ import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 
-// returns a feed key for feeds, and blog key for blogs
 function mixedKeyMaker( post ) {
-	if ( post.feed_ID && post.feed_item_ID ) {
+	if ( post.feed_ID && ( post.feed_item_ID || post.ID ) ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.feed_item_ID,
+			postId: post.feed_item_ID || post.ID,
 			date: new Date( post.date ),
 		};
 	}
@@ -356,7 +355,6 @@ export default function feedStoreFactory( storeId ) {
 			keyMaker: mixedKeyMaker,
 			onGapFetch: limitSiteParams,
 			onUpdateFetch: limitSiteParams,
-			onNextPageFetch: addMetaToNextPageFetch,
 		} );
 	} else if ( storeId === 'likes' ) {
 		store = new FeedStream( {
