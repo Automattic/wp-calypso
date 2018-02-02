@@ -29,8 +29,15 @@
 	}
 }
 
-.current-site .site {
+.current-site .site,
+.current-site .all-sites {
 	transition: opacity 0.15s ease-in-out;
+
+	.site-icon,
+	.site__title,
+	.site__domain {
+		transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);//cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+	}
 
 	.site__info {
 		animation: appear .3s ease-in-out;
@@ -94,30 +101,73 @@
 }
 
 .current-site__switch-sites {
-	background: var( --current-site-switch-sites-background );
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	display: block;
 	box-sizing: border-box;
 	cursor: pointer;
-	position: relative;
+	z-index: z-index( 'root', '.current-site__switch-sites' );
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
 
 	.button {
+		font-size: 14px;
+		line-height: 1.5;
 		text-align: left;
-		padding: 16px;
+		padding: 0 8px;
 		width: 100%;
-		height: 46px;
+		height: 100%;
 	}
 
-	@include breakpoint( "<660px" ) {
-		background-color: $gray-light;
+	.button.is-borderless.is-compact .gridicon {
+		height: auto;
+		width: auto;
+		top: 7px;
+		fill: $gray-text-min;
+		transform: translateX( -10px ) scale( 0.8 );
+		transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);//cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
-	&:hover {
-		background-color: lighten( $sidebar-bg-color, 3% );
+	.current-site_switch-sites-label {
+		font-size: 14px;
+		font-weight: 400;
+		position: relative;
+			left: -6px;
+		display: inline-block;
+		transform: translateX( -20px ); 
+		color: $blue-wordpress;
+		opacity: 0;
+		transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);//cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+	}
+}
 
-		.button.is-borderless:hover,
-		.button.is-borderless:focus {
-			color: $sidebar-text-color;
+.current-site:hover {
+	.site .site-icon,
+	.site .site__title,
+	.site .site__domain,
+	.current-site__switch-sites .button.is-borderless.is-compact .gridicon,
+	.current-site_switch-sites-label {
+		transition-delay: 0.75s;
+	}
+
+
+	.site .site-icon,
+	.site .site__title,
+	.site .site__domain {
+		opacity: 0.5;
+		transform: translateX( 75px );
+	}
+
+	.current-site__switch-sites {
+		.button.is-borderless.is-compact .gridicon {
+			fill: $blue-wordpress;
+			transform: translateX( 0 );
+		}
+
+		.current-site_switch-sites-label {
+			opacity: 1;
+			transform: translateX( 0 ); 
 		}
 	}
 }
@@ -126,7 +176,7 @@
 	margin: 0 8px 8px;
 }
 
-.current-site .notice.is-compact {
+.sidebar .notice.is-compact {
 	display: flex;
 	margin: 0;
 	border-radius: 0;
