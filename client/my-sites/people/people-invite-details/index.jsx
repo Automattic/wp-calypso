@@ -19,11 +19,11 @@ import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Gravatar from 'components/gravatar';
+import Button from 'components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import EmptyContent from 'components/empty-content';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isRequestingInvitesForSite, getInviteForSite } from 'state/invites/selectors';
-import Button from 'components/button';
+import { isRequestingInvitesForSite, getInviteForSite, isDeleting } from 'state/invites/selectors';
 import { deleteInvite } from 'state/invites/actions';
 
 class PeopleInviteDetails extends React.PureComponent {
@@ -41,12 +41,15 @@ class PeopleInviteDetails extends React.PureComponent {
 	};
 
 	handleDelete = () => {
-		const { deleteInvite: _deleteInvite, invite, site } = this.props;
+		const { deleteInvite: _deleteInvite, deleting, invite, site } = this.props;
+		if ( deleting ) {
+			return;
+		}
 		_deleteInvite( site.ID, invite.key );
 	};
 
 	renderClearOrRevoke = () => {
-		const { invite, translate } = this.props;
+		const { deleting, invite, translate } = this.props;
 		const { isPending } = invite;
 		const revokeMessage = translate(
 			'Revoking an invite will no longer allow this person to join your site. ' +
@@ -60,7 +63,12 @@ class PeopleInviteDetails extends React.PureComponent {
 		return (
 			<div className="people-invite-details__clear-revoke">
 				<div>{ isPending ? revokeMessage : clearMessage }</div>
-				<Button primary={ isPending } scary={ isPending } onClick={ this.handleDelete }>
+				<Button
+					busy={ deleting }
+					primary={ isPending }
+					scary={ isPending }
+					onClick={ this.handleDelete }
+				>
 					{ isPending ? translate( 'Revoke Invite' ) : translate( 'Clear Invite' ) }
 				</Button>
 			</div>
@@ -173,6 +181,7 @@ export default connect(
 		return {
 			site,
 			requesting: isRequestingInvitesForSite( state, siteId ),
+			deleting: isDeleting( state, siteId, ownProps.inviteKey ),
 			invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
 		};
 	}, { deleteInvite }

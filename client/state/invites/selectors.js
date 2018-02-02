@@ -113,3 +113,16 @@ export function isRequestingResend( state, siteId, inviteId ) {
 export function didResendSucceed( state, siteId, inviteId ) {
 	return 'success' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
 }
+
+/**
+ * Returns true if currently deleting an invite for the given site and
+ * invite ID, or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {Boolean}          Whether invites resend is being requested
+ */
+export function isDeleting( state, siteId, inviteId ) {
+	return get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
+}
