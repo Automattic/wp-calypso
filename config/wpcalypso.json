@@ -115,7 +115,6 @@
 		"reader/related-posts": true,
 		"reader/search": true,
 		"reader/high-watermark": true,
-		"reader/tags-with-elasticsearch": false,
 		"resume-editing": true,
 		"republicize": true,
 		"restore-last-location": false,

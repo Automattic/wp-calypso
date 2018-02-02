@@ -6,7 +6,6 @@ import { filter, find, forEach, isEqual, map, random, startsWith } from 'lodash'
 /**
  * Internal dependencies
  */
-import config from 'config';
 import Dispatcher from 'dispatcher';
 import FeedStream from './feed-stream';
 import PagedStream from './paged-stream';
@@ -17,14 +16,6 @@ import { keyToString, keysAreEqual } from './post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 
-function feedKeyMaker( post ) {
-	return {
-		feedId: post.feed_ID,
-		postId: post.ID,
-		date: new Date( post.date ),
-	};
-}
-
 function siteKeyMaker( post ) {
 	return {
 		blogId: post.site_ID,
@@ -34,10 +25,10 @@ function siteKeyMaker( post ) {
 }
 
 function mixedKeyMaker( post ) {
-	if ( post.feed_ID && post.feed_item_ID ) {
+	if ( post.feed_ID && ( post.feed_item_ID || post.ID ) ) {
 		return {
 			feedId: post.feed_ID,
-			postId: post.feed_item_ID,
+			postId: post.feed_item_ID || post.ID,
 			date: new Date( post.date ),
 		};
 	}
@@ -157,14 +148,6 @@ function getStoreForTag( storeId ) {
 		wpcomUndoc.readTagPosts( query, callback );
 	};
 
-	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
-		return new PagedStream( {
-			id: storeId,
-			fetcher: fetcher,
-			keyMaker: siteKeyMaker,
-			perPage: 5,
-		} );
-	}
 	return new FeedStream( {
 		id: storeId,
 		fetcher: fetcher,
@@ -338,7 +321,7 @@ export default function feedStoreFactory( storeId ) {
 		store = new FeedStream( {
 			id: storeId,
 			fetcher: wpcomUndoc.readFollowing.bind( wpcomUndoc ),
-			keyMaker: feedKeyMaker,
+			keyMaker: mixedKeyMaker,
 			onNextPageFetch: addMetaToNextPageFetch,
 		} );
 	} else if ( storeId === 'conversations' ) {
@@ -370,7 +353,7 @@ export default function feedStoreFactory( storeId ) {
 		store = new FeedStream( {
 			id: storeId,
 			fetcher: wpcomUndoc.readA8C.bind( wpcomUndoc ),
-			keyMaker: feedKeyMaker,
+			keyMaker: mixedKeyMaker,
 			onNextPageFetch: addMetaToNextPageFetch,
 		} );
 	} else if ( storeId === 'likes' ) {

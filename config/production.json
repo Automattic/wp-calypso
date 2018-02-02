@@ -101,7 +101,6 @@
 		"reader/full-errors": false,
 		"reader/nesting-arrow": true,
 		"reader/new-post-notifications": true,
-		"reader/tags-with-elasticsearch": false,
 		"reader/related-posts": true,
 		"reader/search": true,
 		"resume-editing": true,
