@@ -11,6 +11,9 @@ const debug = debugFactory( 'calypso:invites-actions' );
  */
 import wpcom from 'lib/wp';
 import {
+	INVITES_DELETE_REQUEST,
+	INVITES_DELETE_REQUEST_FAILURE,
+	INVITES_DELETE_REQUEST_SUCCESS,
 	INVITES_REQUEST,
 	INVITES_REQUEST_FAILURE,
 	INVITES_REQUEST_SUCCESS,
@@ -78,6 +81,42 @@ export function resendInvite( siteId, inviteId ) {
 					type: INVITE_RESEND_REQUEST_FAILURE,
 					siteId,
 					inviteId,
+					error,
+				} );
+			} );
+	};
+}
+
+export function deleteInvite( siteId, inviteId ) {
+	return deleteInvites( siteId, [ inviteId ] );
+}
+
+export function deleteInvites( siteId, inviteIds ) {
+	return dispatch => {
+		debug( 'deleteInvites Action', siteId, inviteIds );
+		dispatch( {
+			type: INVITES_DELETE_REQUEST,
+			siteId: siteId,
+			inviteIds: inviteIds,
+		} );
+
+		wpcom
+			.undocumented()
+			.site( siteId )
+			.deleteInvites( inviteIds )
+			.then( data => {
+				dispatch( {
+					type: INVITES_DELETE_REQUEST_SUCCESS,
+					siteId,
+					inviteIds,
+					data,
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: INVITES_DELETE_REQUEST_FAILURE,
+					siteId,
+					inviteIds,
 					error,
 				} );
 			} );

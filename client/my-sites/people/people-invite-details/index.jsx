@@ -24,6 +24,7 @@ import EmptyContent from 'components/empty-content';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isRequestingInvitesForSite, getInviteForSite } from 'state/invites/selectors';
 import Button from 'components/button';
+import { deleteInvite } from 'state/invites/actions';
 
 class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
@@ -37,6 +38,11 @@ class PeopleInviteDetails extends React.PureComponent {
 
 		// Go back to last route with /people/invites as the fallback
 		page.back( fallback );
+	};
+
+	handleDelete = () => {
+		const { deleteInvite: _deleteInvite, invite, site } = this.props;
+		_deleteInvite( site.ID, invite.key );
 	};
 
 	renderClearOrRevoke = () => {
@@ -54,7 +60,7 @@ class PeopleInviteDetails extends React.PureComponent {
 		return (
 			<div className="people-invite-details__clear-revoke">
 				<div>{ isPending ? revokeMessage : clearMessage }</div>
-				<Button primary={ isPending } scary={ isPending }>
+				<Button primary={ isPending } scary={ isPending } onClick={ this.handleDelete }>
 					{ isPending ? translate( 'Revoke Invite' ) : translate( 'Clear Invite' ) }
 				</Button>
 			</div>
@@ -159,13 +165,15 @@ class PeopleInviteDetails extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const site = getSelectedSite( state );
-	const siteId = site && site.ID;
+export default connect(
+	( state, ownProps ) => {
+		const site = getSelectedSite( state );
+		const siteId = site && site.ID;
 
-	return {
-		site,
-		requesting: isRequestingInvitesForSite( state, siteId ),
-		invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
-	};
-} )( localize( PeopleInviteDetails ) );
+		return {
+			site,
+			requesting: isRequestingInvitesForSite( state, siteId ),
+			invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
+		};
+	}, { deleteInvite }
+)( localize( PeopleInviteDetails ) );
