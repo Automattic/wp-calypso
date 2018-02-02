@@ -17,7 +17,7 @@ import { newPost } from 'lib/paths';
 import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
-import AsyncLoad from 'components/async-load';
+import MasterbarDrafts from './drafts';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -94,7 +94,7 @@ class MasterbarItemNew extends React.Component {
 						position={ this.getPopoverPosition() }
 					/>
 				</MasterbarItem>
-				<AsyncLoad require="layout/masterbar/drafts" placeholder={ null } />
+				<MasterbarDrafts />
 			</div>
 		);
 	}

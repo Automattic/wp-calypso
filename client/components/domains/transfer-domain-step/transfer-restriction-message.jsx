@@ -15,12 +15,13 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import { MAP_EXISTING_DOMAIN } from 'lib/url/support';
-import { domainMapping } from 'my-sites/domains/paths';
 
 class TransferRestrictionMessage extends React.PureComponent {
 	static propTypes = {
 		creationDate: PropTypes.string,
 		domain: PropTypes.string,
+		goBack: PropTypes.func,
+		mapDomainUrl: PropTypes.string,
 		selectedSiteSlug: PropTypes.string,
 		termMaximumInYears: PropTypes.number,
 		transferEligibleDate: PropTypes.string,
@@ -29,13 +30,14 @@ class TransferRestrictionMessage extends React.PureComponent {
 
 	goToMapDomainStep = event => {
 		event.preventDefault();
-		page( domainMapping( this.props.selectedSiteSlug, this.props.domain ) );
+		page( this.props.mapDomainUrl );
 	};
 
 	render() {
 		const {
 			creationDate,
 			domain,
+			goBack,
 			termMaximumInYears,
 			transferEligibleDate,
 			transferRestrictionStatus,
@@ -112,8 +114,19 @@ class TransferRestrictionMessage extends React.PureComponent {
 								{ reason }
 							</div>
 							<div className="transfer-domain-step__section-action">
-								<Button compact onClick={ this.goToMapDomainStep }>
+								<Button
+									className="transfer-domain-step__section-action-button"
+									compact
+									onClick={ this.goToMapDomainStep }
+								>
 									{ translate( 'Connect domain without transferring' ) }
+								</Button>
+								<Button
+									className="transfer-domain-step__section-action-button"
+									compact
+									onClick={ goBack }
+								>
+									{ translate( 'Transfer different domain' ) }
 								</Button>
 							</div>
 						</div>

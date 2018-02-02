@@ -60,7 +60,8 @@ const branching = element => {
 	}
 
 	if ( element.props.step ) {
-		return [ element.type.name.toLowerCase(), element.props.step ];
+		const typeName = element.type.displayName || element.type.name;
+		return [ typeName.toLowerCase(), element.props.step ];
 	}
 
 	return flatMap( Children.toArray( element.props.children ), c => branching( c ) || [] );

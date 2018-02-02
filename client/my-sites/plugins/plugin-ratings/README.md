@@ -6,9 +6,9 @@ This component is used to display the detail of how the ratings of a plugin are 
 #### How to use:
 
 ```js
-var PluginRatings = require( 'my-sites/plugins/plugin-ratings' );
+import PluginRatings from 'my-sites/plugins/plugin-ratings';
 
-render: function() {
+render() {
 	return <PluginRatings
 			plugin={ this.props.plugin }
 			barWidth={ 100 }

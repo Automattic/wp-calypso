@@ -27,6 +27,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
+	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
@@ -64,6 +65,14 @@ export function dismissUrl( url ) {
 	return {
 		type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 		url: url,
+	};
+}
+
+export function startAuthorizeStep( clientId ) {
+	return {
+		type: JETPACK_CONNECT_QUERY_SET,
+		clientId,
+		timestamp: Date.now(),
 	};
 }
 
@@ -271,9 +280,18 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 
 export function authorize( queryObject ) {
 	return dispatch => {
-		const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
+		const {
+			_wp_nonce,
+			client_id,
+			from,
+			jp_version,
+			redirect_uri,
+			scope,
+			secret,
+			state,
+		} = queryObject;
 		debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
-		dispatch( recordTracksEvent( 'calypso_jpc_authorize' ) );
+		dispatch( recordTracksEvent( 'calypso_jpc_authorize', { from, site: client_id } ) );
 		dispatch( {
 			type: JETPACK_CONNECT_AUTHORIZE,
 			queryObject: queryObject,
@@ -330,7 +348,7 @@ export function authorize( queryObject ) {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_authorize_success', {
 						site: client_id,
-						from: queryObject && queryObject.from,
+						from,
 					} )
 				);
 			} )
@@ -344,6 +362,7 @@ export function authorize( queryObject ) {
 						status: error.status,
 						error: JSON.stringify( error ),
 						site: client_id,
+						from,
 					} )
 				);
 				dispatch( {

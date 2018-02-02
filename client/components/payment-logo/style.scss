@@ -7,28 +7,15 @@
 	vertical-align: middle;
 	width: 35px;
 
-	&.is-amex {
-		background-image: url( '/calypso/images/upgrades/cc-amex.svg' );
-	}
+	$payment-types: 'alipay', 'amex', 'bancontact', 'diners', 'discover', 'giropay', 'ideal', 'jcb', 'mastercard', 'paypal', 'p24', 'unionpay', 'visa' ;
 
-	&.is-discover {
-		background-image: url( '/calypso/images/upgrades/cc-discover.svg' );
-	}
-
-	&.is-mastercard {
-		background-image: url( '/calypso/images/upgrades/cc-mastercard.svg' );
-	}
-
-	&.is-visa {
-		background-image: url( '/calypso/images/upgrades/cc-visa.svg' );
-	}
-
-	&.is-placeholder {
-		background-image: url( '/calypso/images/upgrades/cc-placeholder.svg' );
+	@each $type in $payment-types {
+		&.is-#{$type} {
+			background-image: url('/calypso/images/upgrades/cc-#{$type}.svg');
+		}
 	}
 
 	&.is-paypal {
-		background-image: url( '/calypso/images/upgrades/paypal.svg' );
 		background-size: 70px;
 		width: 70px;
 
@@ -38,33 +25,28 @@
 	}
 
 	&.is-ideal {
-		background-image: url( '/calypso/images/upgrades/ideal.svg' );
 		height: 30px;
 	}
 
 	&.is-giropay {
-		background-image: url( '/calypso/images/upgrades/giropay.svg' );
 		background-size: 60px auto;
 		width: 60px;
 		height: 20px;
 	}
 
 	&.is-bancontact {
-		background-image: url( '/calypso/images/upgrades/bancontact.svg' );
 		height: 20px;
 		background-size: 100px auto;
 		width: 100px;
 	}
 
 	&.is-p24 {
-		background-image: url( '/calypso/images/upgrades/p24.svg' );
 		height: 20px;
 		background-size: 70px auto;
 		width: 70px;
 	}
 
 	&.is-alipay {
-		background-image: url( '/calypso/images/upgrades/alipay.svg' );
 		height: 20px;
 		background-size: 70px auto;
 		width: 70px;

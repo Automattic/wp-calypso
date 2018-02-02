@@ -29,7 +29,6 @@ RUN        bash /tmp/env-config.sh
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
 RUN        true \
            && npm install --production \
-           && chown -R nobody node_modules \
            && rm -rf /root/.npm \
            && true
 
@@ -54,11 +53,10 @@ RUN        touch node_modules
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
-ARG        commit_sha=(unknown)
-RUN        true \
-           && CALYPSO_ENV=production COMMIT_SHA=$commit_sha npm run build \
-           && find . -not -path './node_modules/*' -print0 | xargs -0 chown nobody \
-           && true
+ARG        commit_sha="(unknown)"
+ENV        COMMIT_SHA $commit_sha
+
+RUN        CALYPSO_ENV=production npm run build
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js

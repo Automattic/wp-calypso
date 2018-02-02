@@ -64,7 +64,7 @@ class Order extends Component {
 
 		if ( this.props.isEditing && ! newProps.isEditing ) {
 			// Leaving edit state should re-fetch notes
-			this.props.fetchNotes( newSiteId, newOrderId, true );
+			this.props.fetchNotes( newSiteId, newOrderId );
 		}
 	}
 
@@ -115,6 +115,8 @@ class Order extends Component {
 			const onFailure = errorNotice( translate( 'Unable to send order invoice.' ), {
 				duration: 8000,
 			} );
+
+			recordTrack( 'calypso_woocommerce_order_manual_invoice' );
 			this.props.sendOrderInvoice( siteId, orderId, onSuccess, onFailure );
 		}
 	};

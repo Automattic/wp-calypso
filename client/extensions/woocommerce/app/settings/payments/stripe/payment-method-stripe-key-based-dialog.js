@@ -30,7 +30,7 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 		domain: PropTypes.string.isRequired,
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
-				apple_pay: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
+				payment_request: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
 				capture: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
 				secret_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
 				publishable_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
@@ -169,10 +169,14 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 					</FormSettingExplanation>
 				</FormFieldset>
 				<FormFieldset className="stripe__method-edit-field-container">
-					<FormLabel>{ translate( 'Use Apple Pay' ) }</FormLabel>
+					<FormLabel>{ translate( 'Use Apple Pay & Chrome Payment Request API' ) }</FormLabel>
 					<PaymentMethodEditFormToggle
-						checked={ method.settings.apple_pay.value === 'yes' ? true : false }
-						name="apple_pay"
+						checked={
+							method.settings.payment_request && method.settings.payment_request.value === 'yes'
+								? true
+								: false
+						}
+						name="payment_request"
 						onChange={ this.props.onEditField }
 					/>
 					<span>
@@ -180,6 +184,9 @@ class PaymentMethodStripeKeyBasedDialog extends Component {
 							'By using Apple Pay you agree to Stripe and ' + "Apple's terms of service"
 						) }
 					</span>
+					<FormSettingExplanation>
+						{ translate( 'Enables Apple Pay and Chrome Payment Request buttons.' ) }
+					</FormSettingExplanation>
 				</FormFieldset>
 			</div>
 		);

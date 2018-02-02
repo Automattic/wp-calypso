@@ -9,11 +9,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getSiteStatsMaxPostsByDay,
 	getSiteStatsForQuery,
 	getSiteStatsPostStreakData,
-	getSiteStatsPostsCountByDay,
-	getSiteStatsTotalPostsForStreakQuery,
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
 	getSiteStatsCSVData,
@@ -23,10 +20,8 @@ import { userState } from 'state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {
-		getSiteStatsPostStreakData.memoizedSelector.cache.clear();
-		getSiteStatsMaxPostsByDay.memoizedSelector.cache.clear();
-		getSiteStatsTotalPostsForStreakQuery.memoizedSelector.cache.clear();
-		getSiteStatsNormalizedData.memoizedSelector.cache.clear();
+		getSiteStatsPostStreakData.clearCache();
+		getSiteStatsNormalizedData.clearCache();
 	} );
 
 	describe( 'isRequestingSiteStatsForQuery()', () => {
@@ -361,173 +356,6 @@ describe( 'selectors', () => {
 				'2016-04-30': 1,
 				'2016-05-01': 1,
 			} );
-		} );
-	} );
-
-	describe( 'getSiteStatsTotalPostsForStreakQuery()', () => {
-		test( 'should return null if no matching query results exist', () => {
-			const stats = getSiteStatsTotalPostsForStreakQuery(
-				{
-					stats: {
-						lists: {
-							items: {},
-						},
-					},
-				},
-				2916284,
-				{}
-			);
-
-			expect( stats ).to.eql( 0 );
-		} );
-
-		test( 'should properly correct number of total posts', () => {
-			const stats = getSiteStatsTotalPostsForStreakQuery(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461961382: 1,
-												1464110402: 1,
-												1464110448: 1,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' }
-			);
-
-			expect( stats ).to.eql( 3 );
-		} );
-	} );
-
-	describe( 'getSiteStatsMaxPostsByDay()', () => {
-		test( 'should return null if no matching query results exist', () => {
-			const stats = getSiteStatsMaxPostsByDay(
-				{
-					stats: {
-						lists: {
-							items: {},
-						},
-					},
-				},
-				2916284,
-				{}
-			);
-
-			expect( stats ).to.be.null;
-		} );
-
-		test( 'should properly correct number of max posts grouped by day', () => {
-			const stats = getSiteStatsMaxPostsByDay(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461889800: 1, // 2016-04-29 00:30:00 (UTC)
-												1461972600: 1, // 2016-04-29 23:30:00 (UTC)
-												1462059000: 1, // 2016-04-30 23:30:00 (UTC)
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' }
-			);
-
-			expect( stats ).to.eql( 2 );
-		} );
-
-		test( 'should compare numerically rather than lexically', () => {
-			const stats = getSiteStatsMaxPostsByDay(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461889800: 12, // 2016-04-29 00:30:00 (UTC)
-												1462059000: 2, // 2016-04-30 23:30:00 (UTC)
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' }
-			);
-
-			expect( stats ).to.eql( 12 );
-		} );
-	} );
-
-	describe( 'getSiteStatsPostsCountByDay()', () => {
-		test( 'should return null if no matching query results exist', () => {
-			const stats = getSiteStatsPostsCountByDay(
-				{
-					stats: {
-						lists: {
-							items: {},
-						},
-					},
-				},
-				2916284,
-				{},
-				'2016-06-01'
-			);
-
-			expect( stats ).to.be.null;
-		} );
-
-		test( 'should properly correct number of max posts for a day', () => {
-			const stats = getSiteStatsPostsCountByDay(
-				{
-					stats: {
-						lists: {
-							items: {
-								2916284: {
-									statsStreak: {
-										'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-											data: {
-												1461889800: 1, // 2016-04-29 00:30:00 (UTC)
-												1461972600: 1, // 2016-04-29 23:30:00 (UTC)
-												1462059000: 1, // 2016-04-30 23:30:00 (UTC)
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				2916284,
-				{ startDate: '2015-06-01', endDate: '2016-06-01' },
-				'2016-04-29'
-			);
-
-			expect( stats ).to.eql( 2 );
 		} );
 	} );
 

@@ -3,8 +3,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,8 +13,10 @@ import { get } from 'lodash';
 import Gridicon from 'gridicons';
 import FoldableCard from 'components/foldable-card';
 import CompactCard from 'components/card/compact';
-import CredentialsForm from '../credentials-form/index';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
 import Button from 'components/button';
+import { deleteCredentials } from 'state/jetpack/credentials/actions';
+import { getRewindState } from 'state/selectors';
 
 class CredentialsConfigured extends Component {
 	componentWillMount() {
@@ -42,19 +45,10 @@ class CredentialsConfigured extends Component {
 	toggleRevoking = () => this.setState( { isRevoking: ! this.state.isRevoking } );
 
 	render() {
-		const {
-			isPressable,
-			credentialsUpdating,
-			mainCredentials,
-			formIsSubmitting,
-			siteId,
-			updateCredentials,
-			deleteCredentials,
-			translate,
-		} = this.props;
+		const { canAutoconfigure, mainCredentials, siteId, translate } = this.props;
 
 		const isRevoking = this.state.isRevoking;
-		const protocol = get( this.props.mainCredentials, 'protocol', 'SSH' ).toUpperCase();
+		const protocol = get( mainCredentials, 'protocol', 'SSH' ).toUpperCase();
 		const protocolDescription = this.getProtocolDescription( protocol );
 
 		if ( isRevoking ) {
@@ -89,7 +83,7 @@ class CredentialsConfigured extends Component {
 			);
 		}
 
-		if ( isPressable ) {
+		if ( canAutoconfigure ) {
 			return (
 				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking } href="#">
 					<Gridicon
@@ -120,23 +114,12 @@ class CredentialsConfigured extends Component {
 
 		return (
 			<FoldableCard header={ header } className="credentials-configured">
-				<CredentialsForm
+				<RewindCredentialsForm
 					{ ...{
-						credentialsUpdating,
-						protocol: get( mainCredentials, 'protocol', 'ssh' ),
-						host: get( mainCredentials, 'host', '' ),
-						port: get( mainCredentials, 'port', '' ),
-						user: get( mainCredentials, 'user', '' ),
-						pass: get( mainCredentials, 'pass', '' ),
-						abspath: get( mainCredentials, 'abspath', '' ),
-						kpri: get( mainCredentials, 'kpri', '' ),
 						role: 'main',
-						formIsSubmitting,
 						siteId,
-						updateCredentials,
-						showCancelButton: false,
-						showDeleteButton: true,
-						deleteCredentials,
+						allowCancel: false,
+						allowDelete: true,
 					} }
 				/>
 			</FoldableCard>
@@ -144,4 +127,15 @@ class CredentialsConfigured extends Component {
 	}
 }
 
-export default localize( CredentialsConfigured );
+const mapStateToProps = ( state, { siteId } ) => {
+	const { canAutoconfigure, credentials = [] } = getRewindState( state, siteId );
+
+	return {
+		canAutoconfigure: canAutoconfigure || credentials.some( c => c.type === 'auto' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors,max-len
+		mainCredentials: find( credentials, { role: 'main' } ),
+	};
+};
+
+export default connect( mapStateToProps, { deleteCredentials } )(
+	localize( CredentialsConfigured )
+);

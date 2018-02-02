@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import compareProps from 'lib/compare-props';
 import ElementChart from 'components/chart';
 import Legend from 'components/chart/legend';
 import StatTabs from '../stats-tabs';
@@ -329,7 +330,11 @@ const connectComponent = connect(
 			siteId,
 		};
 	},
-	{ recordGoogleEvent }
+	{ recordGoogleEvent },
+	null,
+	{
+		areStatePropsEqual: compareProps( { deep: [ 'quickQuery', 'fullQuery' ] } ),
+	}
 );
 
 export default flowRight( localize, connectComponent )( StatModuleChartTabs );

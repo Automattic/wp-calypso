@@ -56,9 +56,11 @@
 
 .domain-search-results__transfer-card-link {
 	flex-shrink: 0;
+	flex-grow: 1;
 	width: 100%;
 
 	a {
+		text-align: right;
 		display: block;
 		padding: 15px 0 0;
 	}

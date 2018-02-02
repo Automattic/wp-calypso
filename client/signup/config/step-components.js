@@ -14,6 +14,10 @@ import GetDotBlogPlansStepComponent from 'signup/steps/get-dot-blog-plans';
 import PlansStepComponent from 'signup/steps/plans';
 import SiteComponent from 'signup/steps/site';
 import RebrandCitiesWelcomeComponent from 'signup/steps/rebrand-cities-welcome';
+import RewindMigrate from 'signup/steps/rewind-migrate';
+import RewindWereBacking from 'signup/steps/rewind-were-backing';
+import RewindAddCreds from 'signup/steps/rewind-add-creds';
+import RewindFormCreds from 'signup/steps/rewind-form-creds';
 import SiteOrDomainComponent from 'signup/steps/site-or-domain';
 import SitePicker from 'signup/steps/site-picker';
 import SiteTitleComponent from 'signup/steps/site-title';
@@ -42,12 +46,19 @@ export default {
 	'plans-site-selected': PlansStepWithoutFreePlan,
 	site: SiteComponent,
 	'rebrand-cities-welcome': RebrandCitiesWelcomeComponent,
+	'rewind-migrate': RewindMigrate,
+	'rewind-were-backing': RewindWereBacking,
+	'rewind-add-creds': RewindAddCreds,
+	'rewind-form-creds': RewindFormCreds,
 	'site-or-domain': SiteOrDomainComponent,
 	'site-picker': SitePicker,
 	'site-title': SiteTitleComponent,
 	survey: SurveyStepComponent,
 	'survey-user': UserSignupComponent,
-	test: process.env.NODE_ENV === 'development' ? require( 'signup/steps/test-step' ) : undefined,
+	test:
+		process.env.NODE_ENV === 'development'
+			? require( 'signup/steps/test-step' ).default
+			: undefined,
 	themes: ThemeSelectionComponent,
 	'website-themes': ThemeSelectionComponent,
 	'blog-themes': ThemeSelectionComponent,

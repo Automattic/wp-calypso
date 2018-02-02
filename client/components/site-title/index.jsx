@@ -12,6 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -20,6 +21,8 @@ class SiteTitleControl extends React.Component {
 		autoFocusBlogname: PropTypes.bool,
 		blogname: PropTypes.string,
 		blogdescription: PropTypes.string,
+		disabled: PropTypes.bool,
+		isBlognameRequired: PropTypes.bool,
 		onChange: PropTypes.func.isRequired,
 	};
 
@@ -27,6 +30,8 @@ class SiteTitleControl extends React.Component {
 		autoFocusBlogname: false,
 		blogname: '',
 		blogdescription: '',
+		isBlognameRequired: false,
+		disabled: false,
 	};
 
 	onChangeSiteTitle = event => {
@@ -42,24 +47,36 @@ class SiteTitleControl extends React.Component {
 	};
 
 	render() {
+		const {
+			autoFocusBlogname,
+			blogname,
+			blogdescription,
+			disabled,
+			isBlognameRequired,
+			translate,
+		} = this.props;
 		return (
 			<div className="site-title">
 				<FormFieldset>
-					<FormLabel htmlFor="blogname">{ this.props.translate( 'Site Title' ) }</FormLabel>
+					<FormLabel htmlFor="blogname">{ translate( 'Site Title' ) }</FormLabel>
 					<FormTextInput
-						autoFocus={ this.props.autoFocusBlogname }
+						autoFocus={ autoFocusBlogname }
+						disabled={ disabled }
 						id="blogname"
 						onChange={ this.onChangeSiteTitle }
-						required
-						value={ this.props.blogname }
+						value={ blogname }
 					/>
+					{ isBlognameRequired && (
+						<FormInputValidation isError={ ! blogname } text={ translate( 'Required field.' ) } />
+					) }
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="blogdescription">{ this.props.translate( 'Tagline' ) }</FormLabel>
+					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>
 					<FormTextInput
+						disabled={ disabled }
 						id="blogdescription"
 						onChange={ this.onChangeDescription }
-						value={ this.props.blogdescription }
+						value={ blogdescription }
 					/>
 				</FormFieldset>
 			</div>

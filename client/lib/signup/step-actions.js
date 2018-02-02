@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
 import async from 'async';
@@ -22,10 +21,13 @@ import SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
+import { isDomainTransfer } from 'lib/products-values';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
 import { getSiteId } from 'state/selectors';
+import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -110,6 +112,7 @@ export function createSiteWithCart(
 	const designType = getDesignType( reduxStore.getState() ).trim();
 	const siteTitle = getSiteTitle( reduxStore.getState() ).trim();
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
+	const siteGoals = getSiteGoals( reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew(
 		{
@@ -122,6 +125,7 @@ export function createSiteWithCart(
 				// query. See `getThemeSlug` in `DomainsStep`.
 				theme: dependencies.themeSlugWithRepo || themeSlugWithRepo,
 				vertical: surveyVertical || undefined,
+				siteGoals: siteGoals || undefined,
 			},
 			validate: false,
 			find_available_url: isPurchasingItem,
@@ -147,10 +151,17 @@ export function createSiteWithCart(
 			const addToCartAndProceed = () => {
 				let privacyItem = null;
 				if ( domainItem ) {
-					privacyItem = cartItems.domainPrivacyProtection( {
-						domain: domainItem.meta,
-						source: 'signup',
-					} );
+					if ( isDomainTransfer( domainItem ) ) {
+						privacyItem = cartItems.domainTransferPrivacy( {
+							domain: domainItem.meta,
+							source: 'signup',
+						} );
+					} else {
+						privacyItem = cartItems.domainPrivacyProtection( {
+							domain: domainItem.meta,
+							source: 'signup',
+						} );
+					}
 				}
 
 				const newCartItems = [
@@ -314,6 +325,7 @@ export function createAccount(
 ) {
 	const surveyVertical = getSurveyVertical( reduxStore.getState() ).trim();
 	const surveySiteType = getSurveySiteType( reduxStore.getState() ).trim();
+	const userExperience = getUserExperience( reduxStore.getState() );
 
 	if ( service ) {
 		// We're creating a new social account
@@ -333,7 +345,7 @@ export function createAccount(
 				if ( errors ) {
 					callback( errors );
 				} else {
-					callback( undefined, response );
+					callback( undefined, pick( response, [ 'username', 'bearer_token' ] ) );
 				}
 			}
 		);
@@ -348,6 +360,7 @@ export function createAccount(
 					signup_flow_name: flowName,
 					nux_q_site_type: surveySiteType,
 					nux_q_question_primary: surveyVertical,
+					nux_q_question_experience: userExperience || undefined,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 				},

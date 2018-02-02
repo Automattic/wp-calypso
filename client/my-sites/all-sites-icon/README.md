@@ -6,9 +6,9 @@ This component is used to display a composite grid of site icons from the user's
 #### How to use:
 
 ```js
-var AllSitesIcon = require( 'my-sites/all-sites-icon' );
+import AllSitesIcon from 'my-sites/all-sites-icon';
 
-render: function() {
+render() {
 	return (
 		<div className="your-stuff">
 			<AllSitesIcon sites={ sitesList } />

@@ -430,6 +430,28 @@ ul.module-header-actions {
 		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
 	}
 
+	&.is-fixed-row-header {
+		/**
+		Use of .is-fixed-row-header requires the first cell in each row to be `th` element
+		 */
+		th:first-child {
+			width: 34px; // 24 (margin-left) + 12 (margin-right) + 1 (border) + 34 = 70
+			transform: translateX(-70px);
+			background: $white;
+			position: fixed;
+			z-index: z-index('root', '.module-content-table tbody th:first-child');
+		}
+
+		.module-content-table-scroll {
+			margin-left: 70px;
+		}
+
+		th,
+		td {
+			vertical-align: bottom; // Doesn't work in FireFox without this bit
+		}
+	}
+
 	// Left this modifier as-is because these tables are likely going to change
 	// a lot or otherwise be removed, and at least it's directly dependent on
 	// being associated with a td in this structure

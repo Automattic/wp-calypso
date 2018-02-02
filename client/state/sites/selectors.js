@@ -58,12 +58,7 @@ export const getRawSite = ( state, siteId ) => {
  */
 export const getSiteBySlug = createSelector(
 	( state, siteSlug ) =>
-		find(
-			getSitesItems( state ),
-			( item, siteId ) =>
-				// find always passes the siteId as a string. We need it as a integer
-				getSiteSlug( state, parseInt( siteId, 10 ) ) === siteSlug
-		) || null,
+		find( getSitesItems( state ), site => getSiteSlug( state, site.ID ) === siteSlug ) || null,
 	getSitesItems
 );
 
@@ -1103,4 +1098,13 @@ export function isNewSite( state, siteId ) {
 
 	// less than 30 minutes
 	return moment().diff( createdAt, 'minutes' ) < 30;
+}
+
+/**
+ * Returns whether all sites have been fetched.
+ * @param {Object}    state  Global state tree
+ * @return {Boolean}        Request State
+ */
+export function hasAllSitesList( state ) {
+	return !! state.sites.hasAllSitesList;
 }

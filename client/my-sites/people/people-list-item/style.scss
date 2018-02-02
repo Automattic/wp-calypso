@@ -1,5 +1,5 @@
 .people-list-item.card.is-compact {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-light;
 	box-shadow: none;
 	display: flex;
 	overflow: hidden;
@@ -84,3 +84,44 @@
 	right: 0px;
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
 }
+
+.people-list-item__invite-status {
+	align-self: center;
+	display: block;
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin-right: 30px;
+
+	color: $alert-green;
+
+	&.is-pending {
+		color: $gray;
+	}
+
+	.gridicon {
+		vertical-align: text-bottom;
+		margin-right: 4px;
+	}
+}
+
+.people-list-item__invite-resend {
+	display: none;
+	height: 30px;
+	margin-left: 12px;
+	align-self: center;
+	vertical-align: baseline;
+
+	min-width: 100px; // So success notice matches width of the button
+
+	@include breakpoint( '>480px' ) {
+		display: inline-block;
+	}
+
+	&.is-success {
+		background-color: $gray-light;
+		border: 0;
+		color: $gray-dark;
+		cursor: default;
+	}
+}
+

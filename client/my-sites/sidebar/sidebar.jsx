@@ -28,7 +28,7 @@ import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import StatsSparkline from 'blocks/stats-sparkline';
 import JetpackLogo from 'components/jetpack-logo';
-import { isPlan, isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { isFreeTrial, isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -52,7 +52,7 @@ import {
 import { getStatsPathForTab } from 'lib/route';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
-
+import { itemLinkMatches } from './utils';
 /**
  * Module variables
  */
@@ -96,50 +96,18 @@ export class MySitesSidebar extends Component {
 		page( '/view' + siteSuffix );
 	};
 
-	itemLinkClass = ( paths, existingClasses ) => {
-		const classSet = {};
-
-		if ( typeof existingClasses !== 'undefined' ) {
-			if ( ! Array.isArray( existingClasses ) ) {
-				existingClasses = [ existingClasses ];
-			}
-
-			existingClasses.forEach( function( className ) {
-				classSet[ className ] = true;
-			} );
-		}
-
-		classSet.selected = this.isItemLinkSelected( paths );
-
-		return classNames( classSet );
-	};
-
-	isItemLinkSelected( paths ) {
-		if ( ! Array.isArray( paths ) ) {
-			paths = [ paths ];
-		}
-
-		return paths.some( function( path ) {
-			return (
-				path === this.props.path ||
-				0 === this.props.path.indexOf( path + '/' ) ||
-				0 === this.props.path.indexOf( path + '?' )
-			);
-		}, this );
-	}
-
 	manage() {
 		return (
 			<ManageMenu
 				siteId={ this.props.siteId }
-				itemLinkClass={ this.itemLinkClass }
+				path={ this.props.path }
 				onNavigate={ this.onNavigate }
 			/>
 		);
 	}
 
 	stats() {
-		const { siteId, canUserViewStats } = this.props;
+		const { siteId, canUserViewStats, path, translate } = this.props;
 
 		if ( siteId && ! canUserViewStats ) {
 			return null;
@@ -149,8 +117,9 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				tipTarget="menus"
-				label={ this.props.translate( 'Stats' ) }
-				className={ this.itemLinkClass( [ '/stats', '/store/stats' ], 'stats' ) }
+				label={ translate( 'Stats' ) }
+				className="stats"
+				selected={ itemLinkMatches( [ '/stats', '/store/stats' ], path ) }
 				link={ statsLink }
 				onNavigate={ this.onNavigate }
 				icon="stats-alt"
@@ -163,7 +132,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	preview() {
-		const { isPreviewable, site, siteId, translate } = this.props;
+		const { isPreviewable, path, site, siteId, translate } = this.props;
 
 		if ( ! siteId ) {
 			return null;
@@ -175,7 +144,7 @@ export class MySitesSidebar extends Component {
 			<SidebarItem
 				tipTarget="sitePreview"
 				label={ translate( 'View Site' ) }
-				className={ this.itemLinkClass( [ '/view' ], 'preview' ) }
+				selected={ itemLinkMatches( [ '/view' ], path ) }
 				link={ siteUrl }
 				onNavigate={ this.onViewSiteClick }
 				icon="computer"
@@ -186,7 +155,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	ads() {
-		const { site, canUserManageOptions } = this.props;
+		const { path, site, canUserManageOptions } = this.props;
 		const adsLink = '/ads/earnings' + this.props.siteSuffix;
 		const canManageAds = site && site.options.wordads && canUserManageOptions;
 
@@ -194,17 +163,18 @@ export class MySitesSidebar extends Component {
 			canManageAds && (
 				<SidebarItem
 					label={ this.props.isJetpack ? 'Ads' : 'WordAds' }
-					className={ this.itemLinkClass( '/ads', 'rads' ) }
+					selected={ itemLinkMatches( '/ads', path ) }
 					link={ adsLink }
 					onNavigate={ this.onNavigate }
 					icon="speaker"
+					tipTarget="wordads"
 				/>
 			)
 		);
 	}
 
 	themes() {
-		const { site, canUserEditThemeOptions } = this.props,
+		const { path, site, translate, canUserEditThemeOptions } = this.props,
 			jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
@@ -226,9 +196,9 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ this.props.translate( 'Themes' ) }
+				label={ translate( 'Themes' ) }
 				tipTarget="themes"
-				className={ this.itemLinkClass( '/themes', 'themes' ) }
+				selected={ itemLinkMatches( '/themes', path ) }
 				link={ themesLink }
 				onNavigate={ this.onNavigate }
 				icon="themes"
@@ -265,11 +235,12 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Plugins' ) }
-				className={ this.itemLinkClass( [ '/extensions', '/plugins' ], 'plugins' ) }
+				selected={ itemLinkMatches( [ '/extensions', '/plugins' ], this.props.path ) }
 				link={ pluginsLink }
 				onNavigate={ this.onNavigate }
 				icon="plugins"
 				preloadSectionName="plugins"
+				tipTarget="plugins"
 			>
 				{ manageButton }
 			</SidebarItem>
@@ -277,7 +248,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	upgrades() {
-		const { canUserManageOptions } = this.props;
+		const { path, translate, canUserManageOptions } = this.props;
 		const domainsLink = '/domains/manage' + this.props.siteSuffix;
 		const addDomainLink = '/domains/add' + this.props.siteSuffix;
 
@@ -295,20 +266,21 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ this.props.translate( 'Domains' ) }
-				className={ this.itemLinkClass( [ '/domains' ], 'domains' ) }
+				label={ translate( 'Domains' ) }
+				selected={ itemLinkMatches( [ '/domains' ], path ) }
 				link={ domainsLink }
 				onNavigate={ this.onNavigate }
 				icon="domains"
 				preloadSectionName="domains"
+				tipTarget="domains"
 			>
-				<SidebarButton href={ addDomainLink }>{ this.props.translate( 'Add' ) }</SidebarButton>
+				<SidebarButton href={ addDomainLink }>{ translate( 'Add' ) }</SidebarButton>
 			</SidebarItem>
 		);
 	}
 
 	plan() {
-		const { site, canUserManageOptions } = this.props;
+		const { path, site, translate, canUserManageOptions } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -325,27 +297,25 @@ export class MySitesSidebar extends Component {
 			planLink = '/plans/my-plan' + this.props.siteSuffix;
 		}
 
-		let linkClass = 'upgrades-nudge';
+		const linkClass = classNames( {
+			selected: itemLinkMatches( [ '/plans' ], path ),
+		} );
 
-		if ( site && isPlan( site.plan ) ) {
-			linkClass += ' is-paid-plan';
-		}
+		const tipTarget = 'plan';
 
 		let planName = site && site.plan.product_name_short;
 
 		if ( site && isFreeTrial( site.plan ) ) {
-			planName = this.props.translate( 'Trial', {
+			planName = translate( 'Trial', {
 				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.',
 			} );
 		}
 
 		return (
-			<li className={ this.itemLinkClass( [ '/plans' ], linkClass ) }>
+			<li className={ linkClass } data-tip-target={ tipTarget }>
 				<a onClick={ this.trackUpgradeClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
-					<span className="menu-link-text">
-						{ this.props.translate( 'Plan', { context: 'noun' } ) }
-					</span>
+					<span className="menu-link-text">{ translate( 'Plan', { context: 'noun' } ) }</span>
 					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
 				</a>
 			</li>
@@ -403,7 +373,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	sharing() {
-		const { isJetpack, isSharingEnabledOnJetpackSite, site } = this.props;
+		const { isJetpack, isSharingEnabledOnJetpackSite, path, site } = this.props;
 		const sharingLink = '/sharing' + this.props.siteSuffix;
 
 		if ( site && ! this.props.canUserPublishPosts ) {
@@ -421,17 +391,18 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Sharing' ) }
-				className={ this.itemLinkClass( '/sharing', 'sharing' ) }
+				selected={ itemLinkMatches( '/sharing', path ) }
 				link={ sharingLink }
 				onNavigate={ this.onNavigate }
 				icon="share"
 				preloadSectionName="sharing"
+				tipTarget="sharing"
 			/>
 		);
 	}
 
 	users() {
-		const { site, canUserListUsers } = this.props;
+		const { translate, path, site, canUserListUsers } = this.props;
 		let usersLink = '/people/team' + this.props.siteSuffix;
 		const addPeopleLink = '/people/new' + this.props.siteSuffix;
 
@@ -449,20 +420,21 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<SidebarItem
-				label={ this.props.translate( 'People' ) }
-				className={ this.itemLinkClass( '/people', 'users' ) }
+				label={ translate( 'People' ) }
+				selected={ itemLinkMatches( '/people', path ) }
 				link={ usersLink }
 				onNavigate={ this.onNavigate }
 				icon="user"
 				preloadSectionName="people"
+				tipTarget="people"
 			>
-				<SidebarButton href={ addPeopleLink }>{ this.props.translate( 'Add' ) }</SidebarButton>
+				<SidebarButton href={ addPeopleLink }>{ translate( 'Add' ) }</SidebarButton>
 			</SidebarItem>
 		);
 	}
 
 	siteSettings() {
-		const { site, canUserManageOptions } = this.props;
+		const { path, site, canUserManageOptions } = this.props;
 		const siteSettingsLink = '/settings/general' + this.props.siteSuffix;
 
 		if ( site && ! canUserManageOptions ) {
@@ -476,7 +448,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Settings' ) }
-				className={ this.itemLinkClass( '/settings', 'settings' ) }
+				selected={ itemLinkMatches( '/settings', path ) }
 				link={ siteSettingsLink }
 				onNavigate={ this.onNavigate }
 				icon="cog"
@@ -573,11 +545,12 @@ export class MySitesSidebar extends Component {
 				<SidebarMenu>
 					<ul>
 						<SidebarItem
-							className={ this.itemLinkClass( '/domains', 'settings' ) }
+							selected={ itemLinkMatches( '/domains', this.props.path ) }
 							icon="cog"
 							label={ this.props.translate( 'Settings' ) }
 							link={ '/domains/manage' + this.props.siteSuffix }
 							onNavigate={ this.onNavigate }
+							tipTarget="settings"
 						/>
 					</ul>
 				</SidebarMenu>

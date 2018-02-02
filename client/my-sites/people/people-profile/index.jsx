@@ -7,9 +7,10 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { omit, get } from 'lodash';
+import { get } from 'lodash';
 import { recordTrack } from 'reader/stats';
 import page from 'page';
+import { decodeEntities } from 'lib/formatting';
 
 /**
  * Internal dependencies
@@ -20,13 +21,18 @@ class PeopleProfile extends React.PureComponent {
 	static displayName = 'PeopleProfile';
 
 	getRole = () => {
-		const user = this.props.user;
+		const { invite, user } = this.props;
+
+		if ( invite && invite.role ) {
+			return invite.role;
+		}
+
 		if ( ! user ) {
 			return 'subscriber';
 		}
 
 		if ( user && user.roles && user.roles[ 0 ] ) {
-			return this.props.user.roles[ 0 ];
+			return user.roles[ 0 ];
 		}
 
 		return;
@@ -67,6 +73,9 @@ class PeopleProfile extends React.PureComponent {
 					context: 'Noun: A user role displayed in a badge',
 				} );
 				break;
+			case 'follower':
+				text = this.props.translate( 'Follower' );
+				break;
 			default:
 				text = role;
 		}
@@ -101,17 +110,24 @@ class PeopleProfile extends React.PureComponent {
 		page( `/read/blogs/${ blogId }` );
 	};
 
-	renderName = () => {
-		const user = this.props.user;
+	renderNameOrEmail = () => {
+		const { translate, type, user } = this.props;
+
 		let name;
 		if ( ! user ) {
-			name = this.props.translate( 'Loading Users', {
+			name = translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
 			} );
 		} else if ( user.name ) {
 			name = user.name;
 		} else if ( user.label ) {
 			name = user.label;
+		} else if ( 'invite' === type ) {
+			// If an invite was sent to a WP.com user, the invite object will have
+			// either a display name (if set) or the WP.com username. Invites can
+			// also be sent to any email address, in which case the other details
+			// will not be set and we therefore display the user's email.
+			name = user.login || user.email;
 		}
 
 		const blogId = get( user, 'follow_data.params.blog_id', false );
@@ -120,12 +136,12 @@ class PeopleProfile extends React.PureComponent {
 			name = (
 				<div className="people-profile__username">
 					<a href={ user.url } onClick={ this.handleLinkToReaderSiteStream }>
-						{ name }
+						{ decodeEntities( name ) }
 					</a>
 				</div>
 			);
 		} else if ( name ) {
-			name = <div className="people-profile__username">{ name }</div>;
+			name = <div className="people-profile__username">{ decodeEntities( name ) }</div>;
 		}
 		return name;
 	};
@@ -204,21 +220,19 @@ class PeopleProfile extends React.PureComponent {
 	};
 
 	render() {
-		const user = this.props.user,
-			classes = classNames( 'people-profile', {
-				'is-placeholder': ! user,
-			} );
+		const { user } = this.props;
+
+		const classes = classNames( 'people-profile', {
+			'is-placeholder': ! user,
+		} );
 
 		return (
-			<div
-				{ ...omit( this.props, 'className', 'user', 'moment', 'numberFormat', 'translate' ) }
-				className={ classes }
-			>
+			<div className={ classes }>
 				<div className="people-profile__gravatar">
 					<Gravatar user={ user } size={ 72 } />
 				</div>
 				<div className="people-profile__detail">
-					{ this.renderName() }
+					{ this.renderNameOrEmail() }
 					{ this.renderLogin() }
 					{ this.isFollowerType() ? this.renderSubscribedDate() : this.renderRole() }
 				</div>

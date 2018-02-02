@@ -35,8 +35,10 @@ import {
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSaveErrorMessage } from './utils';
+import { withAnalytics } from 'state/analytics/actions';
 
 class ProductCategoryUpdate extends React.Component {
 	static propTypes = {
@@ -99,7 +101,13 @@ class ProductCategoryUpdate extends React.Component {
 	};
 
 	onDelete = () => {
-		const { translate, site, category, deleteProductCategory: dispatchDelete } = this.props;
+		const {
+			translate,
+			site,
+			category,
+			deleteProductCategory: dispatchDelete,
+			clearProductCategoryEdits: clearEdits,
+		} = this.props;
 		const areYouSure = translate( "Are you sure you want to permanently delete '%(name)s'?", {
 			args: { name: category.name },
 		} );
@@ -107,6 +115,9 @@ class ProductCategoryUpdate extends React.Component {
 			if ( ! accepted ) {
 				return;
 			}
+
+			clearEdits( site.ID );
+
 			const successAction = () => {
 				debounce( () => {
 					page.redirect( getLink( '/store/products/categories/:site/', site ) );
@@ -207,8 +218,16 @@ function mapDispatchToProps( dispatch ) {
 			editProductCategory,
 			fetchProductCategories,
 			clearProductCategoryEdits,
-			updateProductCategory,
-			deleteProductCategory,
+			updateProductCategory: ( siteId, category, ...args ) =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_product_category_update', { id: category.id } ),
+					updateProductCategory( siteId, category, ...args )
+				),
+			deleteProductCategory: ( siteId, category, ...args ) =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_product_category_delete', { id: category.id } ),
+					deleteProductCategory( siteId, category, ...args )
+				),
 		},
 		dispatch
 	);

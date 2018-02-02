@@ -19,7 +19,7 @@ import debugFactory from 'debug';
 import { getPreference } from 'state/preferences/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite, hasAllSitesList } from 'state/sites/selectors';
 import { areAllSitesSingleUser, getSites, getVisibleSites, hasLoadedSites } from 'state/selectors';
 import AllSites from 'my-sites/all-sites';
 import Site from 'blocks/site';
@@ -34,6 +34,7 @@ const debug = debugFactory( 'calypso:site-selector' );
 
 class SiteSelector extends Component {
 	static propTypes = {
+		isPlaceholder: PropTypes.bool,
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		showAddNewSite: PropTypes.bool,
@@ -267,7 +268,7 @@ class SiteSelector extends Component {
 	renderSites() {
 		let sites;
 
-		if ( ! this.props.hasLoadedSites ) {
+		if ( ! this.props.hasAllSitesList ) {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
@@ -368,6 +369,12 @@ class SiteSelector extends Component {
 	}
 
 	render() {
+		// Render an empty div.site-selector element as a placeholder. It's useful for lazy
+		// rendering of the selector in sidebar while keeping the on-appear animation work.
+		if ( this.props.isPlaceholder ) {
+			return <div className="site-selector" />;
+		}
+
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
 		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
@@ -497,6 +504,7 @@ const mapState = state => {
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		allSitesSingleUser: areAllSitesSingleUser( state ),
+		hasAllSitesList: hasAllSitesList( state ),
 	};
 };
 

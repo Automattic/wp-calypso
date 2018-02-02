@@ -5,6 +5,7 @@
  */
 
 import { omit } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -82,6 +83,7 @@ export function requestSites() {
 		return wpcom
 			.me()
 			.sites( {
+				apiVersion: '1.2',
 				site_visibility: 'all',
 				include_domain_only: true,
 				site_activity: 'active',
@@ -109,30 +111,40 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {Number}   siteFragment Site ID or slug
+ * @return {Function}              Action thunk
  */
-export function requestSite( siteId ) {
+export function requestSite( siteFragment ) {
 	return dispatch => {
 		dispatch( {
 			type: SITE_REQUEST,
-			siteId,
+			siteId: siteFragment,
 		} );
 
 		return wpcom
-			.site( siteId )
+			.site( siteFragment )
 			.get()
 			.then( site => {
+				// If we can't manage the site, don't add it to state.
+				if ( ! ( site && site.capabilities ) ) {
+					return dispatch( {
+						type: SITE_REQUEST_FAILURE,
+						siteId: siteFragment,
+						error: i18n.translate( 'No access to manage the site' ),
+					} );
+				}
+
 				dispatch( receiveSite( omit( site, '_headers' ) ) );
+
 				dispatch( {
 					type: SITE_REQUEST_SUCCESS,
-					siteId,
+					siteId: siteFragment,
 				} );
 			} )
 			.catch( error => {
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
-					siteId,
+					siteId: siteFragment,
 					error,
 				} );
 			} );

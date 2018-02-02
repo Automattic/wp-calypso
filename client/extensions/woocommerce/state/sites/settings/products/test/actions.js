@@ -4,14 +4,20 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import { spy } from 'sinon';
+import { spy, stub } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { fetchSettingsProducts, updateSettingsProducts } from '../actions';
+import {
+	fetchSettingsProducts,
+	updateSettingsProducts,
+	changeSettingsProductsSetting,
+	saveWeightAndDimensionsUnits,
+} from '../actions';
 import useNock from 'test/helpers/use-nock';
 import {
+	WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
@@ -165,6 +171,133 @@ describe( 'actions', () => {
 			const dispatch = spy();
 			fetchSettingsProducts( siteId )( dispatch, getState );
 			expect( dispatch ).to.not.have.beenCalled;
+		} );
+	} );
+
+	describe( '#changeSettingsProductsSetting()', () => {
+		const siteId = '123';
+
+		test( 'should dispatch an action', () => {
+			const dispatch = spy();
+			const setting = { woocommerce: true };
+			changeSettingsProductsSetting( siteId, setting )( dispatch );
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
+				siteId,
+				data: {
+					update: [ { woocommerce: true } ],
+				},
+			} );
+		} );
+	} );
+
+	describe( '#saveWeightAndDimensionsUnits()', () => {
+		const siteId = '123';
+
+		const weight = {
+			id: 'woocommerce_weight_unit',
+			label: 'Weight unit',
+			type: 'select',
+			default: 'kg',
+			value: 'lbs',
+		};
+
+		const dimensions = {
+			id: 'woocommerce_dimension_unit',
+			label: 'Dimensions unit',
+			type: 'select',
+			default: 'cm',
+			value: 'in',
+		};
+
+		const settingsPayload = [ weight, dimensions ];
+
+		useNock( nock => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
+				.query( {
+					path: '/wc/v3/settings/products/batch&_method=post',
+					json: true,
+					body: { update: settingsPayload },
+				} )
+				.reply( 200, {
+					data: {
+						update: settingsPayload,
+					},
+				} );
+		} );
+
+		test( 'should not dispatch if settings are loading for this site', () => {
+			const getState = () => ( {
+				extensions: {
+					woocommerce: {
+						sites: {
+							[ siteId ]: {
+								settings: {
+									products: LOADING,
+								},
+							},
+						},
+					},
+				},
+			} );
+			const dispatch = spy();
+			saveWeightAndDimensionsUnits( siteId )( dispatch, getState );
+			expect( dispatch ).to.not.have.beenCalled;
+		} );
+
+		const getState = () => ( {
+			extensions: {
+				woocommerce: {
+					sites: {
+						123: {
+							settings: {
+								products: [ weight, dimensions ],
+							},
+						},
+					},
+				},
+			},
+		} );
+
+		test( 'should dispatch update action with proper values', () => {
+			const dispatch = spy();
+			const testStub = stub();
+			const innerActionExtract = testStub.returnsArg( 0 );
+			const innerAction = saveWeightAndDimensionsUnits( siteId )( innerActionExtract, getState );
+
+			innerAction( dispatch );
+
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
+				data: [ weight, dimensions ],
+				siteId,
+			} );
+		} );
+
+		test( 'should dispatch update success action with proper values', () => {
+			const dispatch = spy();
+			const testStub = stub();
+			const innerActionExtract = testStub.returnsArg( 0 );
+			const innerAction = saveWeightAndDimensionsUnits( siteId )( innerActionExtract, getState );
+			const response = innerAction( dispatch );
+
+			expect( dispatch ).to.have.been.calledWith( {
+				type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,
+				data: [ weight, dimensions ],
+				siteId,
+			} );
+
+			return response.then( () => {
+				expect( dispatch ).to.have.been.calledWith( {
+					type: WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
+					siteId,
+					data: {
+						update: [ weight, dimensions ],
+					},
+				} );
+			} );
 		} );
 	} );
 } );

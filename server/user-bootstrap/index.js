@@ -1,11 +1,14 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { filterUserObject } from 'lib/user/shared-utils';
 var superagent = require( 'superagent' ),
 	debug = require( 'debug' )( 'calypso:bootstrap' ),
 	crypto = require( 'crypto' );
 
 var config = require( 'config' ),
 	API_KEY = config( 'wpcom_calypso_rest_api_key' ),
-	userUtils = require( './shared-utils' ),
 	AUTH_COOKIE_NAME = 'wordpress_logged_in',
 	/**
 	 * WordPress.com REST API /me endpoint.
@@ -59,7 +62,7 @@ module.exports = function( authCookieValue, geoCountry, callback ) {
 			return callback( error );
 		}
 
-		user = userUtils.filterUserObject( body );
+		user = filterUserObject( body );
 		callback( null, user );
 	} );
 };

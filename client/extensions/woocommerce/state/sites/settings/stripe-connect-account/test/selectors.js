@@ -15,6 +15,7 @@ import {
 	getIsOAuthConnecting,
 	getIsOAuthInitializing,
 	getIsRequesting,
+	getNotifyCompleted,
 	getOAuthURL,
 	getStripeConnectAccount,
 } from '../selectors';
@@ -40,6 +41,7 @@ const creatingState = {
 				123: {
 					settings: {
 						stripeConnectAccount: {
+							notifyCompleted: false,
 							isCreating: true,
 						},
 					},
@@ -59,6 +61,7 @@ const createdState = {
 							connectedUserID: 'acct_14qyt6Alijdnw0EA',
 							email: 'foo@bar.com',
 							isCreating: false,
+							notifyCompleted: true,
 						},
 					},
 				},
@@ -224,6 +227,7 @@ const oauthConnectingState = {
 							logo: '',
 							lastName: '',
 							oauthUrl: '',
+							notifyCompleted: false,
 						},
 					},
 				},
@@ -251,6 +255,7 @@ const oauthConnectedState = {
 							logo: '',
 							lastName: '',
 							oauthUrl: '',
+							notifyCompleted: true,
 						},
 					},
 				},
@@ -307,6 +312,24 @@ describe( 'selectors', () => {
 
 		test( 'should return empty string when not.', () => {
 			expect( getError( createdState, 123 ) ).to.eql( '' );
+		} );
+	} );
+
+	describe( '#getNotifyCompleted', () => {
+		test( 'should return false when account is being created.', () => {
+			expect( getNotifyCompleted( creatingState, 123 ) ).to.eql( false );
+		} );
+
+		test( 'should return true after account has been created.', () => {
+			expect( getNotifyCompleted( createdState, 123 ) ).to.eql( true );
+		} );
+
+		test( 'should return false when oauth is connecting.', () => {
+			expect( getNotifyCompleted( oauthConnectingState, 123 ) ).to.eql( false );
+		} );
+
+		test( 'should return true when oauth has connected.', () => {
+			expect( getNotifyCompleted( oauthConnectedState, 123 ) ).to.eql( true );
 		} );
 	} );
 

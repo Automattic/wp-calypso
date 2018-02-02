@@ -7,42 +7,43 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { first } from 'lodash';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { first } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
+import {
+	areLabelsEnabled,
+	getSelectedPaymentMethodId,
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import {
+	areLabelsFullyLoaded,
+	getCountriesData,
+	getLabels,
+	isLabelDataFetchError,
+} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
+import {
+	areSettingsGeneralLoaded,
+	getStoreLocation,
+} from 'woocommerce/state/sites/settings/general/selectors';
 import Button from 'components/button';
+import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormTextInput from 'components/forms/form-text-input';
 import { isOrderFinished } from 'woocommerce/lib/order-status';
+import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
+import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import LabelPurchaseDialog from 'woocommerce/woocommerce-services/views/shipping-label/label-purchase-modal';
 import Notice from 'components/notice';
-import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
-import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { openPrintingFlow } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
-import {
-	getLabels,
-	areLabelsFullyLoaded,
-	getCountriesData,
-	isLabelDataFetchError,
-} from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
-import {
-	areLabelsEnabled,
-	getSelectedPaymentMethodId,
-} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import QueryLabels from 'woocommerce/woocommerce-services/components/query-labels';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import {
-	getStoreLocation,
-	areSettingsGeneralLoaded,
-} from 'woocommerce/state/sites/settings/general/selectors';
-import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 
 class OrderFulfillment extends Component {
 	static propTypes = {
@@ -180,7 +181,7 @@ class OrderFulfillment extends Component {
 	}
 
 	renderFulfillmentAction() {
-		const { wcsEnabled, labelsLoaded, labelsError, order, site, translate } = this.props;
+		const { wcsEnabled, isSaving, labelsLoaded, labelsError, order, site, translate } = this.props;
 		const orderFinished = isOrderFinished( order.status );
 		const labelsLoading = wcsEnabled && ! labelsLoaded;
 
@@ -195,7 +196,7 @@ class OrderFulfillment extends Component {
 
 		if ( ! this.shouldShowLabels() ) {
 			return (
-				<Button primary onClick={ this.toggleDialog }>
+				<Button primary onClick={ this.toggleDialog } busy={ isSaving } disabled={ isSaving }>
 					{ translate( 'Fulfill' ) }
 				</Button>
 			);
@@ -203,16 +204,17 @@ class OrderFulfillment extends Component {
 
 		const onLabelPrint = () => this.props.openPrintingFlow( order.id, site.ID );
 
-		if ( orderFinished ) {
-			return <Button onClick={ onLabelPrint }>{ translate( 'Print new label' ) }</Button>;
-		}
-
 		return (
 			<div className="order-fulfillment__print-container">
-				<a href="#" onClick={ this.toggleDialog }>
+				<Button borderless onClick={ this.toggleDialog } busy={ isSaving } disabled={ isSaving }>
 					{ translate( 'Fulfill without printing a label' ) }
-				</a>
-				<Button primary={ labelsLoaded } onClick={ onLabelPrint }>
+				</Button>
+				<Button
+					primary={ labelsLoaded }
+					onClick={ onLabelPrint }
+					busy={ isSaving }
+					disabled={ isSaving }
+				>
 					{ translate( 'Print label & fulfill' ) }
 				</Button>
 			</div>
@@ -300,9 +302,11 @@ export default connect(
 			wcsEnabled && labelsLoaded && getSelectedPaymentMethodId( state, site.ID );
 		const storeAddress = labelsLoaded && getStoreLocation( state );
 		const labelCountriesData = getCountriesData( state, order.id, site.ID );
+		const isSaving = isOrderUpdating( state, order.id );
 
 		return {
 			wcsEnabled,
+			isSaving,
 			labelsLoaded,
 			labelsError: isLabelDataFetchError( state, order.id, site.ID ),
 			labelsEnabled: areLabelsEnabled( state, site.ID ),

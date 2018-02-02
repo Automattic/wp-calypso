@@ -59,7 +59,7 @@ export default function() {
 		} );
 
 		if ( config.isEnabled( 'manage/plugins/upload' ) ) {
-			page( '/plugins/upload', sites, makeLayout, clientRender );
+			page( '/plugins/upload', siteSelection, sites, makeLayout, clientRender );
 			page(
 				'/plugins/upload/:site_id',
 				siteSelection,

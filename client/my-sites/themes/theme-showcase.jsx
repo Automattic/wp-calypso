@@ -226,7 +226,6 @@ class ThemeShowcase extends React.Component {
 						<Button
 							className="themes__upload-button"
 							compact
-							icon
 							onClick={ this.onUploadClick }
 							href={ siteSlug ? `/themes/upload/${ siteSlug }` : '/themes/upload' }
 						>

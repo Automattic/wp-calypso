@@ -24,6 +24,7 @@ import {
 } from 'lodash';
 import { connect } from 'react-redux';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -200,9 +201,6 @@ class Signup extends React.Component {
 	}
 
 	componentWillReceiveProps( { signupDependencies, stepName, flowName } ) {
-		const urlPath = location.href;
-		const query = url.parse( urlPath, true ).query;
-
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName );
 		}
@@ -211,7 +209,7 @@ class Signup extends React.Component {
 			this.setState( { resumingStep: undefined } );
 		}
 
-		if ( query.plans ) {
+		if ( cookie.parse( document.cookie )[ 'wp-affiliate-tracker' ] ) {
 			this.setState( { plans: true } );
 		}
 
@@ -475,6 +473,7 @@ class Signup extends React.Component {
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
+						flowName={ this.props.flowName }
 						flowSteps={ flow.steps }
 					/>
 				) : (

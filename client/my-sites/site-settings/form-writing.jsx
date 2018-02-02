@@ -33,6 +33,7 @@ import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
 import PublishingTools from './publishing-tools';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import SpeedUpYourSite from './speed-up-site-settings';
 
 class SiteSettingsFormWriting extends Component {
 	renderSectionHeader( title, showButton = true ) {
@@ -77,6 +78,7 @@ class SiteSettingsFormWriting extends Component {
 			siteIsJetpack,
 			translate,
 			updateFields,
+			jetpackVersionSupportsLazyImages,
 		} = this.props;
 
 		const jetpackSettingsUI = siteIsJetpack && jetpackSettingsUISupported;
@@ -129,9 +131,26 @@ class SiteSettingsFormWriting extends Component {
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
+							jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
 						/>
 					</div>
 				) }
+
+				{ jetpackSettingsUI &&
+					jetpackVersionSupportsLazyImages && (
+						<div>
+							{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
+							<SpeedUpYourSite
+								siteId={ siteId }
+								handleAutosavingToggle={ handleAutosavingToggle }
+								onChangeField={ onChangeField }
+								isSavingSettings={ isSavingSettings }
+								isRequestingSettings={ isRequestingSettings }
+								fields={ fields }
+								jetpackVersionSupportsLazyImages={ jetpackVersionSupportsLazyImages }
+							/>
+						</div>
+					) }
 
 				{ this.renderSectionHeader( translate( 'Content types' ) ) }
 
@@ -202,6 +221,7 @@ const connectComponent = connect(
 			jetpackMasterbarSupported: isJetpackMinimumVersion( state, siteId, '4.8' ),
 			siteIsJetpack: isJetpackSite( state, siteId ),
 			siteId,
+			jetpackVersionSupportsLazyImages: isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 		};
 	},
 	{ requestPostTypes },
@@ -251,6 +271,7 @@ const getFormSettings = settings => {
 		'start_of_week',
 		'time_format',
 		'timezone_string',
+		'lazy-images',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values

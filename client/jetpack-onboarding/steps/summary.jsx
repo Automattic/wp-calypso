@@ -7,7 +7,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { compact, get, map, mapValues, without } from 'lodash';
+import { get, map, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,17 +18,19 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Spinner from 'components/spinner';
-import { getJetpackOnboardingProgress, getRequest, getUnconnectedSiteUrl } from 'state/selectors';
+import {
+	getJetpackOnboardingPendingSteps,
+	getJetpackOnboardingCompletedSteps,
+	getUnconnectedSiteUrl,
+} from 'state/selectors';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
-	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
 } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderCompleted = () => {
-		const { steps, stepsCompleted, stepsPending } = this.props;
+		const { siteSlug, steps, stepsCompleted, stepsPending } = this.props;
 
 		return map( without( steps, STEPS.SUMMARY ), stepName => {
 			const isCompleted = get( stepsCompleted, stepName ) === true;
@@ -42,46 +44,50 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					) : (
 						<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
 					) }
-					{ STEP_TITLES[ stepName ] }
+					<a href={ `/jetpack/onboarding/${ stepName }/${ siteSlug }` }>
+						{ STEP_TITLES[ stepName ] }
+					</a>
 				</div>
 			);
 		} );
 	};
 
 	renderTodo = () => {
-		const stepsTodo = [
-			SUMMARY_STEPS.JETPACK_CONNECTION,
-			SUMMARY_STEPS.THEME,
-			SUMMARY_STEPS.SITE_ADDRESS,
-			SUMMARY_STEPS.STORE,
-			SUMMARY_STEPS.BLOG,
-		];
-		const stepLinks = [
-			'/jetpack/connect?url=' + this.props.siteUrl,
-			// TODO: update the following with relevant links
-			'#',
-			'#',
-			'#',
-			'#',
-		];
+		const { siteUrl, translate } = this.props;
 
-		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (
-			<div key={ fieldIndex } className="steps__summary-entry todo">
-				<a href={ stepLinks[ fieldIndex ] }>{ fieldLabel }</a>
+		const stepsTodo = {
+			JETPACK_CONNECTION: {
+				label: translate( 'Connect to WordPress.com' ),
+				url: '/jetpack/connect?url=' + siteUrl,
+			},
+			THEME: {
+				label: translate( 'Choose a Theme' ),
+				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
+			},
+			PAGES: {
+				label: translate( 'Add additional pages' ),
+				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
+			},
+			BLOG: {
+				label: translate( 'Write your first blog post' ),
+				url: siteUrl + '/wp-admin/post-new.php',
+			},
+		};
+
+		return map( stepsTodo, ( { label, url }, stepName ) => (
+			<div key={ stepName } className="steps__summary-entry todo">
+				<a href={ url }>{ label }</a>
 			</div>
 		) );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { siteUrl, translate } = this.props;
 
 		const headerText = translate( 'Congratulations! Your site is on its way.' );
 		const subHeaderText = translate(
 			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
 		);
-
-		// TODO: adapt when we have more info
-		const buttonRedirectHref = '#';
 
 		return (
 			<div className="steps__main">
@@ -103,7 +109,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 				</div>
 				<div className="steps__button-group">
-					<Button href={ buttonRedirectHref } primary>
+					<Button href={ siteUrl } primary>
 						{ translate( 'Visit your site' ) }
 					</Button>
 				</div>
@@ -112,26 +118,8 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, { siteId, steps } ) => {
-	const tasks = compact( [] );
-	const stepsCompleted = getJetpackOnboardingProgress( state, siteId, steps );
-
-	const stepActionsMap = {
-		[ STEPS.WOOCOMMERCE ]: {
-			installWooCommerce: true,
-		},
-	};
-
-	const stepsPending = mapValues(
-		stepActionsMap,
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		action => getRequest( state, saveJetpackOnboardingSettings( siteId, action ) ).isLoading
-	);
-
-	return {
-		siteUrl: getUnconnectedSiteUrl( state, siteId ),
-		stepsCompleted,
-		stepsPending,
-		tasks,
-	};
-} )( localize( JetpackOnboardingSummaryStep ) );
+export default connect( ( state, { siteId, steps } ) => ( {
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingSummaryStep ) );

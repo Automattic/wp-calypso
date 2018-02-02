@@ -61,7 +61,10 @@ export const httpHandler = ( { dispatch }, action ) => {
 	}
 
 	const queryString = queryParams
-		.map( ( [ queryKey, queryValue ] ) => queryKey + '=' + encodeURIComponent( queryValue ) )
+		.map(
+			( [ queryKey, queryValue ] ) =>
+				encodeURIComponent( queryKey ) + '=' + encodeURIComponent( queryValue )
+		)
 		.join( '&' );
 
 	if ( queryString.length > 0 ) {

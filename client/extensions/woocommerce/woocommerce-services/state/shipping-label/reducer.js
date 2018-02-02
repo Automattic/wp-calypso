@@ -594,11 +594,12 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE ] = ( state, { r
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION ] = ( state, { fileData } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION ] = ( state, { fileData, labels } ) => {
 	return { ...state,
 		form: { ...state.form,
 			needsPrintConfirmation: true,
 			fileData,
+			labelsToPrint: labels,
 		},
 	};
 };

@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs, externalRedirect } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -34,6 +33,7 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -42,6 +42,15 @@ import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
+import {
+	ALREADY_CONNECTED,
+	ALREADY_CONNECTED_BY_OTHER_USER,
+	DEFAULT_AUTHORIZE_ERROR,
+	RETRY_AUTH,
+	RETRYING_AUTH,
+	SECRET_EXPIRED,
+	USER_IS_ALREADY_CONNECTED_TO_SITE,
+} from './connection-notice-types';
 import {
 	isCalypsoStartedConnection,
 	isSsoApproved,
@@ -88,7 +97,6 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
 		userAlreadyConnected: PropTypes.bool.isRequired,
@@ -98,9 +106,17 @@ export class JetpackAuthorize extends Component {
 	retryingAuth = false;
 
 	componentWillMount() {
-		const { recordTracksEvent } = this.props;
-		recordTracksEvent( 'calypso_jpc_authorize_form_view' );
-		recordTracksEvent( 'calypso_jpc_auth_view' );
+		const { recordTracksEvent, isMobileAppFlow } = this.props;
+
+		const { from, clientId } = this.props.authQuery;
+		const tracksProperties = {
+			from,
+			is_mobile_app_flow: isMobileAppFlow,
+			site: clientId,
+		};
+
+		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
+		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
 
 		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
@@ -148,6 +164,7 @@ export class JetpackAuthorize extends Component {
 		this.props.authorize( {
 			_wp_nonce: this.props.authQuery.nonce,
 			client_id: this.props.authQuery.clientId,
+			from: this.props.authQuery.from,
 			jp_version: this.props.authQuery.jpVersion,
 			redirect_uri: this.props.authQuery.redirectUri,
 			scope: this.props.authQuery.scope,
@@ -159,6 +176,7 @@ export class JetpackAuthorize extends Component {
 	externalRedirectOnce( url ) {
 		if ( ! this.redirecting ) {
 			this.redirecting = true;
+			debug( `Redirecting to ${ url }` );
 			externalRedirect( url );
 		}
 	}
@@ -226,8 +244,8 @@ export class JetpackAuthorize extends Component {
 	 * Check whether this a valid authorized SSO request
 	 *
 	 * @param  {Object}  props          Props to test
-	 * @param  {?string} props.from     Where is the request from
-	 * @param  {?number} props.clientId Remote site ID
+	 * @param  {?string} props.authQuery.from     Where is the request from
+	 * @param  {?number} props.authQuery.clientId Remote site ID
 	 * @return {boolean}                True if it's a valid SSO request otherwise false
 	 */
 	isSso( props = this.props ) {
@@ -375,22 +393,46 @@ export class JetpackAuthorize extends Component {
 			userAlreadyConnected,
 		} = this.props.authorizationData;
 		const { alreadyAuthorized, site } = this.props.authQuery;
+
+		let redirectToMobileApp = null;
+		if ( this.props.isMobileAppFlow ) {
+			redirectToMobileApp = reason => {
+				const url = addQueryArgs( { reason }, this.props.mobileAppRedirect );
+				this.externalRedirectOnce( url );
+			};
+		}
+
 		if ( alreadyAuthorized && ! this.props.isFetchingSites && ! this.props.isAlreadyOnSitesList ) {
 			// For users who start their journey at `wordpress.com/jetpack/connect` or similar flows, we will discourage
 			// additional users from linking. Although it is possible to link multiple users with Jetpack, the `jetpack/connect`
 			// flows will be reserved for brand new connections.
-			return <JetpackConnectNotices noticeType="alreadyConnectedByOtherUser" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ ALREADY_CONNECTED_BY_OTHER_USER }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if ( userAlreadyConnected ) {
 			// Via wp-admin it is possible to connect additional users after the initial connection is made. But if we
 			// are trying to connect an additional user, and we are logged into a wordpress.com account that is already
 			// connected, we need to show an error.
-			return <JetpackConnectNotices noticeType="userIsAlreadyConnectedToSite" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ USER_IS_ALREADY_CONNECTED_TO_SITE }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if ( this.retryingAuth ) {
-			return <JetpackConnectNotices noticeType="retryingAuth" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ RETRYING_AUTH }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 
 		if (
@@ -399,7 +441,9 @@ export class JetpackAuthorize extends Component {
 			! isAuthorizing &&
 			! authorizeSuccess
 		) {
-			return <JetpackConnectNotices noticeType="retryAuth" />;
+			return (
+				<JetpackConnectNotices noticeType={ RETRY_AUTH } onTerminalError={ redirectToMobileApp } />
+			);
 		}
 
 		if ( ! authorizeError ) {
@@ -407,17 +451,31 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( includes( get( authorizeError, 'message' ), 'already_connected' ) ) {
-			return <JetpackConnectNotices noticeType="alreadyConnected" />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ ALREADY_CONNECTED }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 		if ( this.props.hasExpiredSecretError ) {
-			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ site } />;
+			return (
+				<JetpackConnectNotices
+					noticeType={ SECRET_EXPIRED }
+					siteUrl={ site }
+					onTerminalError={ redirectToMobileApp }
+				/>
+			);
 		}
 		if ( this.props.hasXmlrpcError ) {
 			return this.renderXmlrpcFeedback();
 		}
 		return (
 			<div>
-				<JetpackConnectNotices noticeType="defaultAuthorizeError" />
+				<JetpackConnectNotices
+					noticeType={ DEFAULT_AUTHORIZE_ERROR }
+					onTerminalError={ redirectToMobileApp }
+				/>
 				{ this.renderErrorDetails() }
 			</div>
 		);
@@ -516,8 +574,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { siteSlug } = this.props;
-		const { clientId, partnerId, redirectAfterAuth } = this.props.authQuery;
+		const { clientId, homeUrl, partnerId, redirectAfterAuth } = this.props.authQuery;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -527,7 +584,10 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		return addQueryArgs( { redirect: redirectAfterAuth }, `${ JPC_PATH_PLANS }/${ siteSlug }` );
+		return addQueryArgs(
+			{ redirect: redirectAfterAuth },
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+		);
 	}
 
 	renderFooterLinks() {
@@ -628,15 +688,13 @@ export class JetpackAuthorize extends Component {
 
 export default connect(
 	( state, { authQuery } ) => {
-		const siteSlug = urlToSlug( authQuery.site );
-
 		// Note: reading from a cookie here rather than redux state,
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
 
 		return {
-			authAttempts: getAuthAttempts( state, siteSlug ),
+			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( authQuery.site ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
@@ -646,7 +704,6 @@ export default connect(
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
 			mobileAppRedirect,
-			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};

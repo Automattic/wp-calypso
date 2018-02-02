@@ -11,8 +11,8 @@ const path = require( 'path' );
  * Internal dependencies
  */
 const config = require( 'config' );
-const sections = require( config( 'project' ) );
-const extensions = require( 'extensions' );
+const sections = config( 'project' ) === 'wordpress-com' ? require( 'wordpress-com' ) : [];
+const extensions = require( './extensions' );
 
 const extensionSections = extensions.map( extension => {
 	try {

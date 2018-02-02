@@ -38,7 +38,6 @@ export const sitesSchema = {
 						product_id: { type: [ 'number', 'string' ] },
 						product_slug: { type: 'string' },
 						product_name_short: { type: [ 'string', 'null' ] },
-						free_trial: { type: 'boolean' },
 						expired: { type: 'boolean' },
 						user_is_owner: { type: 'boolean' },
 						is_free: { type: 'boolean' },
@@ -49,4 +48,8 @@ export const sitesSchema = {
 		},
 	},
 	additionalProperties: false,
+};
+
+export const hasAllSitesListSchema = {
+	type: [ 'boolean', 'null' ],
 };

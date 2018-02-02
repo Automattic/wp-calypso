@@ -1,7 +1,6 @@
+/** @format */
 /**
- * **** WARNING: No ES6 modules here. Not transpiled! ****
- *
- * @format
+ **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
 /**
@@ -34,7 +33,14 @@ const isDevelopment = bundleEnv === 'development';
 const shouldMinify = process.env.hasOwnProperty( 'MINIFY_JS' )
 	? process.env.MINIFY_JS === 'true'
 	: ! isDevelopment;
-const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
+
+// load in the babel config from babelrc and disable commonjs transform
+// this enables static analysis from webpack including treeshaking
+// also disable add-module-exports. TODO: remove add-module-exports from babelrc. requires fixing tests
+const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
+const babelPresetEnv = _.find( babelConfig.presets, preset => preset[ 0 ] === 'env' );
+babelPresetEnv[ 1 ].modules = false;
+_.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
 
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
@@ -63,10 +69,12 @@ function getAliasesForExtensions() {
 
 const babelLoader = {
 	loader: 'babel-loader',
-	options: {
+	options: Object.assign( {}, babelConfig, {
+		babelrc: false,
 		cacheDirectory: path.join( __dirname, 'build', '.babel-client-cache' ),
 		cacheIdentifier: cacheIdentifier,
 		plugins: [
+			...babelConfig.plugins,
 			[
 				path.join(
 					__dirname,
@@ -77,8 +85,9 @@ const babelLoader = {
 				),
 				{ async: config.isEnabled( 'code-splitting' ) },
 			],
+			'inline-imports.js',
 		],
-	},
+	} ),
 };
 
 const webpackConfig = {
@@ -108,9 +117,8 @@ const webpackConfig = {
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
 			},
 			{
-				test: /sections.js$/,
-				exclude: path.join( __dirname, 'node_modules' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'loader' ),
+				include: path.join( __dirname, 'client/sections.js' ),
+				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
 			},
 			{
 				test: /\.html$/,
@@ -167,7 +175,6 @@ const webpackConfig = {
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
-			COMMIT_SHA: JSON.stringify( commitSha ),
 		} ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [
@@ -184,6 +191,7 @@ const webpackConfig = {
 			if ( chunk.name ) {
 				return chunk.name;
 			}
+
 			return chunk.modules.map( m => path.relative( m.context, m.request ) ).join( '_' );
 		} ),
 		new NameAllModulesPlugin(),
@@ -191,6 +199,7 @@ const webpackConfig = {
 			filename: 'assets.json',
 			path: path.join( __dirname, 'server', 'bundler' ),
 		} ),
+		process.env.NODE_ENV === 'production' && new webpack.optimize.ModuleConcatenationPlugin(),
 	] ),
 	externals: [ 'electron' ],
 };

@@ -29,6 +29,10 @@ The number to be displayed. Make sure it's a number, not a string containing a n
 
 Boolean. Applies `is-primary` class and related styles.
 
+### `compact`
+
+Boolean. Displays counts with a localized compact variant. For example instead of 1234, we see 1.2K for `en` or 1.2 mil for `es`
+
 ## Custom Styling
 
 In some cases, it may be necessary to increase the font size or remove the border. In your component's style file, specify rules for the `.count` within your component's selector. For an example, see the `select-dropdown` component's style file.

@@ -219,9 +219,10 @@ class AdsFormEarnings extends Component {
 		return (
 			<div className="ads__module-content-text module-content-text module-content-text-info">
 				<p>
-					<strong>{ translate( 'Ads Served' ) } </strong>
 					{ translate(
-						'is the number of ads we attempted to display on your site (page impressions x available ad slots).'
+						'{{strong}}Ads Served{{/strong}} is the number of ads we attempted to display on your site ' +
+							'(page impressions x available ad slots).',
+						{ components: { strong: <strong /> } }
 					) }
 				</p>
 
@@ -315,7 +316,9 @@ class AdsFormEarnings extends Component {
 						<td className="ads__earnings-history-value">
 							${ numberFormat( earnings[ period ].amount, 2 ) }
 						</td>
-						<td className="ads__earnings-history-value">{ earnings[ period ].pageviews }</td>
+						<td className="ads__earnings-history-value">
+							{ numberFormat( earnings[ period ].pageviews ) }
+						</td>
 						<td className="ads__earnings-history-value">
 							{ this.getStatus( earnings[ period ].status ) }
 						</td>

@@ -27,14 +27,6 @@ export const JETPACK_ONBOARDING_STEPS = {
 	SUMMARY: 'summary',
 };
 
-export const JETPACK_ONBOARDING_SUMMARY_STEPS = {
-	JETPACK_CONNECTION: translate( 'Jetpack Connection' ),
-	THEME: translate( 'Choose a Theme' ),
-	SITE_ADDRESS: translate( 'Add a Site Address' ),
-	STORE: translate( 'Add a Store' ),
-	BLOG: translate( 'Start a Blog' ),
-};
-
 export const JETPACK_ONBOARDING_STEP_TITLES = {
 	[ JETPACK_ONBOARDING_STEPS.SITE_TITLE ]: translate( 'Site Title & Description' ),
 	[ JETPACK_ONBOARDING_STEPS.SITE_TYPE ]: translate( 'Type of Site' ),

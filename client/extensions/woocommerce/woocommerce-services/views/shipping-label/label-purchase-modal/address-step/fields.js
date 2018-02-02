@@ -90,8 +90,7 @@ const AddressFields = ( props ) => {
 					title={ translate( 'Phone' ) }
 					value={ getValue( 'phone' ) }
 					updateValue={ updateValue( 'phone' ) }
-					className="address-step__phone"
-					error={ fieldErrors.phone } />
+					className="address-step__phone" />
 			</div>
 			<TextField
 				id={ getId( 'address' ) }

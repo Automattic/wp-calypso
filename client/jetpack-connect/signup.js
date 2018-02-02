@@ -59,11 +59,19 @@ export class JetpackSignup extends Component {
 	};
 
 	componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
+		const { from, clientId } = this.props.authQuery;
+		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
+			from,
+			site: clientId,
+		} );
 	}
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
+		const { from, clientId } = this.props.authQuery;
+		this.props.recordTracksEvent( 'calypso_jpc_signup_view', {
+			from,
+			site: clientId,
+		} );
 	}
 
 	handleSubmitSignup = ( form, userData ) => {

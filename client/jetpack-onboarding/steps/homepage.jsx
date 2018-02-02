@@ -22,6 +22,10 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 	handleHomepageSelection = homepageFormat => {
 		const { siteId } = this.props;
 
+		this.props.recordJpoEvent( 'calypso_jpo_homepage_format_clicked', {
+			homepageFormat,
+		} );
+
 		return () => {
 			this.props.saveJetpackOnboardingSettings( siteId, {
 				homepageFormat,

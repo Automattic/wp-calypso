@@ -44,7 +44,7 @@ class PaymentMethodStripe extends Component {
 		} ),
 		method: PropTypes.shape( {
 			settings: PropTypes.shape( {
-				apple_pay: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
+				payment_request: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
 				capture: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
 				secret_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,
 				publishable_key: PropTypes.shape( { value: PropTypes.string.isRequired } ).isRequired,

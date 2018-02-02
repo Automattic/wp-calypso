@@ -42,43 +42,35 @@ Actions get triggered by views and stores.
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var UsersStore = require( 'lib/users/store' );
+import UsersStore from 'lib/users/store';
 
-module.exports = React.createClass( { 
-
-	displayName: 'yourComponent',
+export default class extends React.Component {
+	static displayName = 'yourComponent';
+	state = this.getUsers();
 	
-	componentDidMount: function() {
+	componentDidMount() {
 		UsersStore.on( 'change', this.refreshUsers );
-	},
+	}
 	
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		UsersStore.removeListener( 'change', this.refreshUsers );
-	},
-
-	getInitialState: function() {
-		return this.getUsers();
-	},
+	} 
 	
-	getUsers: function() {
+	getUsers = () => {
 		return {
 			users: UsersStore.fetch( { siteId: this.props.site.ID } )
 		};
 	},
 
-	refreshUsers: function() {
-		this.setState( this.getUsers() );
-	},
+	refreshUsers = () => this.setState( this.getUsers() );
 	
-	render: function() {
+	render() {
 		
-	}
-	
-} );
-
+	} 
+} 
 ```

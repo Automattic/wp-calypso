@@ -38,7 +38,7 @@ import {
 	COMMENTS_WRITE_ERROR,
 	READER_EXPAND_COMMENTS,
 	COMMENTS_SET_ACTIVE_REPLY,
-} from '../action-types';
+} from 'state/action-types';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
 	PLACEHOLDER_STATE,

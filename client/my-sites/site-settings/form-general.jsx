@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
+import { flowRight, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,8 @@ import wrapSettingsForm from './wrap-settings-form';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import LanguagePicker from 'components/language-picker';
 import SectionHeader from 'components/section-header';
 import config from 'config';
@@ -170,6 +172,43 @@ class SiteSettingsFormGeneral extends Component {
 		} );
 	};
 
+	renderLanguagePickerNotice = () => {
+		const { fields, translate } = this.props;
+		const langId = get( fields, 'lang_id', '' );
+		const errors = {
+			error_cap: {
+				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
+				link: 'https://codex.wordpress.org/Roles_and_Capabilities',
+				linkText: translate( 'More info' ),
+			},
+			error_const: {
+				text: translate(
+					'The Site Language setting is disabled because your site has the WPLANG constant set.'
+				),
+				link:
+					'https://codex.wordpress.org/Installing_WordPress_in_Your_Language#Setting_the_language_for_your_site',
+				linkText: translate( 'More info' ),
+			},
+		};
+		const noticeContent = errors[ langId ];
+
+		return (
+			has( noticeContent, 'text' ) && (
+				<Notice
+					text={ noticeContent.text }
+					className="site-settings__language-picker-notice"
+					isCompact
+				>
+					{ has( noticeContent, 'link' ) && (
+						<NoticeAction href={ noticeContent.link } external>
+							{ noticeContent.linkText }
+						</NoticeAction>
+					) }
+				</Notice>
+			)
+		);
+	};
+
 	languageOptions() {
 		const {
 			eventTracker,
@@ -177,19 +216,25 @@ class SiteSettingsFormGeneral extends Component {
 			isRequestingSettings,
 			onChangeField,
 			siteIsJetpack,
+			supportsLanguageSelection,
 			translate,
 		} = this.props;
-		if ( siteIsJetpack ) {
+		const errorNotice = this.renderLanguagePickerNotice();
+
+		if ( ! supportsLanguageSelection ) {
 			return null;
 		}
+
 		return (
-			<FormFieldset>
+			<FormFieldset className={ siteIsJetpack && 'site-settings__has-divider is-top-only' }>
 				<FormLabel htmlFor="lang_id">{ translate( 'Language' ) }</FormLabel>
+				{ errorNotice }
 				<LanguagePicker
 					languages={ config( 'languages' ) }
-					value={ fields.lang_id }
+					valueKey={ siteIsJetpack ? 'wpLocale' : 'value' }
+					value={ errorNotice ? 'en_US' : fields.lang_id }
 					onChange={ onChangeField( 'lang_id' ) }
-					disabled={ isRequestingSettings }
+					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 				/>
 				<FormSettingExplanation>
@@ -379,13 +424,12 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, siteIsJetpack, translate } = this.props;
-		if ( siteIsJetpack ) {
-			return;
-		}
+		const { fields, isRequestingSettings, translate, supportsLanguageSelection } = this.props;
 
 		return (
-			<FormFieldset>
+			<FormFieldset
+				className={ ! supportsLanguageSelection && 'site-settings__has-divider is-top-only' }
+			>
 				<FormLabel htmlFor="blogtimezone">{ translate( 'Site Timezone' ) }</FormLabel>
 
 				<Timezone
@@ -529,6 +573,8 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
+			supportsLanguageSelection:
+				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.8-alpha' ),
 			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},

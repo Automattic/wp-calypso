@@ -22,6 +22,7 @@ import FormSelect from 'components/forms/form-select';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { Input } from 'my-sites/domains/components/form';
+import { disableSubmitButton } from './with-contact-details-validation';
 
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
@@ -30,10 +31,12 @@ const defaultValues = {
 	ciraAgreementAccepted: false,
 };
 
-class RegistrantExtraInfoCaForm extends React.PureComponent {
+export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		contactDetailsExtra: PropTypes.object.isRequired,
+		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		getFieldProps: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -178,10 +181,9 @@ class RegistrantExtraInfoCaForm extends React.PureComponent {
 			doesntNeedOrganizationField || ! organizationFieldProps.isError;
 
 		const formIsValid = ciraAgreementAccepted && organizationFieldIsValid;
-
 		const validatingSubmitButton = formIsValid
 			? this.props.children
-			: React.cloneElement( this.props.children, { disabled: true } );
+			: disableSubmitButton( this.props.children );
 
 		return (
 			<form className="registrant-extra-info__form">

@@ -11,12 +11,12 @@
  * Internal dependencies
  */
 import { isEbanxEnabledForCountry, isValidCPF } from '../ebanx';
-import { isEbanxEnabled } from 'lib/cart-values';
+import { isPaymentMethodEnabled } from 'lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {
 	const cartValues = {};
 
-	cartValues.isEbanxEnabled = jest.fn( false );
+	cartValues.isPaymentMethodEnabled = jest.fn( false, false );
 
 	return cartValues;
 } );
@@ -24,10 +24,10 @@ jest.mock( 'lib/cart-values', () => {
 describe( 'Ebanx payment processing methods', () => {
 	describe( 'isEbanxEnabledForCountry', () => {
 		beforeAll( () => {
-			isEbanxEnabled.mockReturnValue( true );
+			isPaymentMethodEnabled.mockReturnValue( true );
 		} );
 		afterAll( () => {
-			isEbanxEnabled.mockReturnValue( false );
+			isPaymentMethodEnabled.mockReturnValue( false );
 		} );
 
 		test( 'should return false for non-ebanx country', () => {
@@ -40,11 +40,12 @@ describe( 'Ebanx payment processing methods', () => {
 
 	describe( 'isValidCPF', () => {
 		test( 'should return true for valid CPF (Brazilian tax identification number)', () => {
+			expect( isValidCPF( '85384484632' ) ).toEqual( true );
 			expect( isValidCPF( '853.513.468-93' ) ).toEqual( true );
 		} );
 		test( 'should return false for invalid CPF', () => {
-			expect( isValidCPF( '85384484632' ) ).toEqual( false );
-			expect( isValidCPF( '853.844.846.32' ) ).toEqual( false );
+			expect( isValidCPF( '85384484612' ) ).toEqual( false );
+			expect( isValidCPF( '853.844.846.12' ) ).toEqual( false );
 		} );
 	} );
 } );

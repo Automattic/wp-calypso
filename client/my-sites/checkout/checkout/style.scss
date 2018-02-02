@@ -324,23 +324,23 @@
 			.payment-box-section-inner {
 				border-left: 3px solid $alert-green;
 			}
-			.new-card-fields {
+			.checkout__new-card-fields {
 				background-color: #fafdf6;
 			}
 		}
 
-		.no-stored-cards .new-card-fields > .checkout-field:first-child {
+		.no-stored-cards .checkout__new-card-fields > .checkout-field:first-child {
 			margin-top: 0;
 		}
 
-		.payment-box-section .new-card-toggle {
+		.payment-box-section .checkout__new-card-toggle {
 			box-shadow: none;
 			cursor: pointer;
 			font-size: 13px;
 			position: absolute;
 		}
 
-		.payment-box-section .new-card-fields {
+		.payment-box-section .checkout__new-card-fields {
 			background-color: $white;
 			max-height: 0;
 			overflow: hidden;
@@ -349,13 +349,13 @@
 			transition: all 500ms ease-in-out;
 		}
 
-		.payment-box-section.selected .new-card-fields {
+		.payment-box-section.selected .checkout__new-card-fields {
 			max-height: 100%;
 			margin-bottom: 0;
 			padding-top: 15px;
 		}
 
-		.new-card-toggle {
+		.checkout__new-card-toggle {
 			color: $blue-wordpress;
 			padding: 15px 15px 15px 12px;
 			border: 0;

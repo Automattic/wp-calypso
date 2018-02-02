@@ -4,13 +4,7 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
-import {
-	POST_TYPES_RECEIVE,
-	POST_TYPES_REQUEST,
-	POST_TYPES_REQUEST_SUCCESS,
-	POST_TYPES_REQUEST_FAILURE,
-} from 'state/action-types';
+import { POST_TYPES_RECEIVE, POST_TYPES_REQUEST } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that post types for a site
@@ -29,35 +23,14 @@ export function receivePostTypes( siteId, types ) {
 }
 
 /**
- * Returns an action thunk which, when invoked, triggers a network request to
- * retrieve post types for a site.
+ * Triggers a network request to retrieve post types for a site.
  *
- * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @param  {Number} siteId Site ID
+ * @return {Object}        Action object
  */
 export function requestPostTypes( siteId ) {
-	return dispatch => {
-		dispatch( {
-			type: POST_TYPES_REQUEST,
-			siteId,
-		} );
-
-		return wpcom
-			.site( siteId )
-			.postTypesList()
-			.then( ( { post_types: types } ) => {
-				dispatch( receivePostTypes( siteId, types ) );
-				dispatch( {
-					type: POST_TYPES_REQUEST_SUCCESS,
-					siteId,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: POST_TYPES_REQUEST_FAILURE,
-					siteId,
-					error,
-				} );
-			} );
+	return {
+		type: POST_TYPES_REQUEST,
+		siteId,
 	};
 }

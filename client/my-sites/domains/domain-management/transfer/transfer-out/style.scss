@@ -25,3 +25,20 @@
 		color: darken( $gray, 20% );
 	}
 }
+
+.transfer__ips_tag_set_dialog {
+	@extend .dialog.card;
+	max-width: 50%;
+}
+
+.transfer__ips_tag_set_dialog__backdrop {
+	@extend .dialog__backdrop;
+}
+
+.transfer__ips_tag_set_dialog__content {
+	@extend .dialog__content;
+}
+
+.transfer__ips_tag_set_dialog__action-buttons {
+	@extend .dialog__action-buttons;
+}

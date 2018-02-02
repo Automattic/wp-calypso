@@ -37,12 +37,12 @@ class ContactsPrivacy extends React.PureComponent {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { translate } = this.props;
+		const { translate, whois } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
 		const contactInformation = privateDomain
-			? findPrivacyServiceWhois( this.props.whois.data )
-			: findRegistrantWhois( this.props.whois.data );
+			? findPrivacyServiceWhois( whois.data )
+			: findRegistrantWhois( whois.data );
 
 		return (
 			<Main className="contacts-privacy">

@@ -165,6 +165,10 @@
 	align-items: center;
 	display: flex;
 	margin-top: 20px;
+
+	.transfer-domain-step__section-action-button {
+		margin-right: 15px;
+	}
 }
 
 .transfer-domain-step__lock-status {
