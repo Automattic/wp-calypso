@@ -475,6 +475,7 @@ class Signup extends React.Component {
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
+						flowName={ this.props.flowName }
 						flowSteps={ flow.steps }
 					/>
 				) : (
