@@ -292,7 +292,11 @@ export class HelpContactForm extends React.PureComponent {
 			<div className="help-contact-form">
 				{ formDescription && <p>{ formDescription }</p> }
 
-				<ChatBusinessConciergeNotice from="2017-07-19T00:00:00Z" to="2017-07-21T00:00:00Z" />
+				<ChatBusinessConciergeNotice
+					from="2017-07-19T00:00:00Z"
+					to="2017-07-21T00:00:00Z"
+					selectedSite={ this.props.selectedSite }
+				/>
 
 				{ showHowCanWeHelpField && (
 					<div>

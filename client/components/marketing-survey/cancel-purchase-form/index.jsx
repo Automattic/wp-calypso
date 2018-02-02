@@ -33,6 +33,7 @@ class CancelPurchaseForm extends React.Component {
 		translate: PropTypes.func,
 		surveyStep: PropTypes.string.isRequired,
 		showSurvey: PropTypes.bool.isRequired,
+		selectedSite: PropTypes.object.isRequired,
 		defaultContent: PropTypes.node.isRequired,
 		onInputChange: PropTypes.func.isRequired,
 		isJetpack: PropTypes.bool.isRequired,
@@ -461,9 +462,9 @@ class CancelPurchaseForm extends React.Component {
 		);
 	};
 
-	openCalendly = () => {
-		this.props.clickCalendly();
-		return window.open( 'https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/' );
+	openConcierge = () => {
+		this.props.clickConcierge();
+		return window.open( `/me/concierge/${ this.props.selectedSite.slug }/book` );
 	};
 
 	renderConciergeOffer = () => {
@@ -476,7 +477,7 @@ class CancelPurchaseForm extends React.Component {
 							"We'll help you to setup your site and answer any questions you have!"
 					) }
 				</p>
-				<Button onClick={ this.openCalendly } primary>
+				<Button onClick={ this.openConcierge } primary>
 					{ translate( 'Schedule a session' ) }
 				</Button>
 			</FormFieldset>
@@ -576,6 +577,6 @@ export default connect( null, dispatch => ( {
 				value: value,
 			} )
 		),
-	clickCalendly: () =>
+	clickConcierge: () =>
 		dispatch( recordTracksEvent( 'calypso_purchases_cancel_form_concierge_click' ) ),
 } ) )( localize( CancelPurchaseForm ) );

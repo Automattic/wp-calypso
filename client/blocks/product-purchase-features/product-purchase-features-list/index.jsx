@@ -81,7 +81,7 @@ class ProductPurchaseFeaturesList extends Component {
 			<BusinessOnboarding
 				key="businessOnboarding"
 				onClick={ this.props.recordBusinessOnboardingClick }
-				link="https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/"
+				link={ `/me/concierge/${ selectedSite.slug }/book` }
 			/>,
 			isEnabled( 'manage/plugins/upload' ) ? (
 				<UploadPlugins selectedSite={ selectedSite } key="uploadPluginsFeature" />
