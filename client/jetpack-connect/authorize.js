@@ -8,13 +8,12 @@ import debugModule from 'debug';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
-import { get, includes, pick, startsWith } from 'lodash';
+import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs, externalRedirect } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import Button from 'components/button';
 import Card from 'components/card';
@@ -34,6 +33,7 @@ import NoticeAction from 'components/notice/notice-action';
 import QueryUserConnection from 'components/data/query-user-connection';
 import Spinner from 'components/spinner';
 import userUtilities from 'lib/user/utils';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -97,7 +97,6 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		retryAuth: PropTypes.func.isRequired,
-		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		user: PropTypes.object.isRequired,
 		userAlreadyConnected: PropTypes.bool.isRequired,
@@ -107,10 +106,14 @@ export class JetpackAuthorize extends Component {
 	retryingAuth = false;
 
 	componentWillMount() {
-		const { recordTracksEvent } = this.props;
+		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
-		const tracksProperties = pick( this.props.authQuery, 'from' );
-		tracksProperties.is_mobile_app_flow = this.props.isMobileAppFlow;
+		const { from, clientId } = this.props.authQuery;
+		const tracksProperties = {
+			from,
+			is_mobile_app_flow: isMobileAppFlow,
+			site: clientId,
+		};
 
 		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
 		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
@@ -161,6 +164,7 @@ export class JetpackAuthorize extends Component {
 		this.props.authorize( {
 			_wp_nonce: this.props.authQuery.nonce,
 			client_id: this.props.authQuery.clientId,
+			from: this.props.authQuery.from,
 			jp_version: this.props.authQuery.jpVersion,
 			redirect_uri: this.props.authQuery.redirectUri,
 			scope: this.props.authQuery.scope,
@@ -570,8 +574,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	getRedirectionTarget() {
-		const { siteSlug } = this.props;
-		const { clientId, partnerId, redirectAfterAuth } = this.props.authQuery;
+		const { clientId, homeUrl, partnerId, redirectAfterAuth } = this.props.authQuery;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -581,7 +584,10 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		return addQueryArgs( { redirect: redirectAfterAuth }, `${ JPC_PATH_PLANS }/${ siteSlug }` );
+		return addQueryArgs(
+			{ redirect: redirectAfterAuth },
+			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
+		);
 	}
 
 	renderFooterLinks() {
@@ -682,15 +688,13 @@ export class JetpackAuthorize extends Component {
 
 export default connect(
 	( state, { authQuery } ) => {
-		const siteSlug = urlToSlug( authQuery.site );
-
 		// Note: reading from a cookie here rather than redux state,
 		// so any change in value will not execute connect().
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
 
 		return {
-			authAttempts: getAuthAttempts( state, siteSlug ),
+			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( authQuery.site ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
@@ -700,7 +704,6 @@ export default connect(
 			isFetchingSites: isRequestingSites( state ),
 			isMobileAppFlow,
 			mobileAppRedirect,
-			siteSlug,
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};

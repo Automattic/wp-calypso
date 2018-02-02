@@ -15,6 +15,8 @@ import Button from 'components/button';
 import contextTypes from '../context-types';
 
 export default class Next extends Component {
+	static displayName = 'Next';
+
 	static propTypes = {
 		step: PropTypes.string.isRequired,
 	};

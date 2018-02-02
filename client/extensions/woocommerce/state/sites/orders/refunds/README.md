@@ -5,9 +5,9 @@ This module is used to manage refunds for orders on a site.
 
 ## Actions
 
-### `sendRefund( siteId: number, orderId: number, refund: object )`
+### `sendRefund( siteId: number, orderId: number, refund: object, onSuccess: object, onFailure: object )`
 
-Create a refund for the given order. Refund should have `amount` & an optional `reason`, both strings. Does not run if there's already a refund request for this order.
+Create a refund for the given order. Refund should have `amount` & an optional `reason`, both strings. Does not run if there's already a refund request for this order. `onSuccess` & `onFailure` are optional; if not set, they default to triggering a success or error notice.
 
 ## Reducer
 

@@ -22,6 +22,7 @@ import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
 import { getConciergeSignupForm } from 'state/selectors';
 import PrimaryHeader from '../shared/primary-header';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -48,6 +49,10 @@ class InfoStep extends Component {
 		}
 		return !! signupForm.message.trim();
 	};
+
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
+	}
 
 	render() {
 		const { signupForm: { message, timezone }, translate } = this.props;
@@ -105,5 +110,6 @@ export default connect(
 	} ),
 	{
 		updateConciergeSignupForm,
+		recordTracksEvent,
 	}
 )( localize( InfoStep ) );

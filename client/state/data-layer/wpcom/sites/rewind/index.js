@@ -8,7 +8,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
 import { transformApi } from './api-transformer';
-import { rewind } from './schema';
+import { rewindStatus } from './schema';
 
 import downloads from './downloads';
 
@@ -25,11 +25,31 @@ const fetchRewindState = action =>
 		action
 	);
 
-const updateRewindState = ( { siteId }, data ) => ( {
-	type: REWIND_STATE_UPDATE,
-	siteId,
-	data,
-} );
+const updateRewindState = ( { siteId }, data ) => {
+	const stateUpdate = {
+		type: REWIND_STATE_UPDATE,
+		siteId,
+		data,
+	};
+
+	const hasRunningRewind = data.rewind && data.rewind.status === 'running';
+
+	if ( ! hasRunningRewind ) {
+		return stateUpdate;
+	}
+
+	const delayedStateRequest = dispatch =>
+		setTimeout(
+			() =>
+				dispatch( {
+					type: REWIND_STATE_REQUEST,
+					siteId,
+				} ),
+			3000
+		);
+
+	return [ stateUpdate, delayedStateRequest ];
+};
 
 const setUnknownState = ( { siteId }, error ) =>
 	withAnalytics(
@@ -52,7 +72,7 @@ export default mergeHandlers( downloads, {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
 			onError: setUnknownState,
-			fromApi: makeParser( rewind, {}, transformApi ),
+			fromApi: makeParser( rewindStatus, {}, transformApi ),
 		} ),
 	],
 } );

@@ -58,7 +58,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 
 	addAttribute = () => {
 		const { siteId, product, editProductAttribute } = this.props;
-		editProductAttribute( siteId, product, null, { name: '', options: [] } );
+		editProductAttribute( siteId, product, null, { name: '', options: [], visible: true } );
 	};
 
 	cardOpen = () => {
@@ -94,7 +94,7 @@ class ProductFormAdditionalDetailsCard extends Component {
 
 	updateValues = ( values, attribute ) => {
 		const { siteId, product, editProductAttribute } = this.props;
-		editProductAttribute( siteId, product, attribute, { options: values } );
+		editProductAttribute( siteId, product, attribute, { options: values, visible: true } );
 	};
 
 	updateNameHandler = e => {

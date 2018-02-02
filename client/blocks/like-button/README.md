@@ -8,7 +8,7 @@ For most usage, the container is the easiest route.
 #### How to use the container:
 
 ```js
-var LikeButtonContainer = require( 'blocks/like-button' );
+import LikeButtonContainer from 'blocks/like-button';
 
 render: function() {
 	return (
@@ -27,7 +27,7 @@ render: function() {
 
 #### How to use the button directly:
 ```js
-var LikeButton = require( 'blocks/like-button/button' );
+import LikeButton from 'blocks/like-button/button';
 
 render: function() {
 	return (

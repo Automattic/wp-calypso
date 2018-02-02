@@ -24,10 +24,8 @@ import {
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import ProgressBar from 'components/progress-bar';
 import CartToggle from './cart-toggle';
@@ -130,12 +128,9 @@ export class CreditCardPaymentBox extends React.Component {
 	};
 
 	paymentButtons = () => {
-		const { cart, transactionStep, translate } = this.props,
+		const { cart, transactionStep, translate, presaleChatAvailable } = this.props,
 			hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } ),
-			showPaymentChatButton =
-				config.isEnabled( 'upgrades/presale-chat' ) &&
-				abtest( 'presaleChatButton' ) === 'showChatButton' &&
-				hasBusinessPlanInCart,
+			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
 		return (

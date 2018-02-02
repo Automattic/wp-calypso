@@ -134,6 +134,7 @@ export const FEATURE_VIDEO_CDN_UNLIMITED = 'video-cdn-unlimited';
 export const FEATURE_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const FEATURE_CONCIERGE_SETUP = 'concierge-setup-jetpack';
 export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
+export const FEATURE_SEARCH = 'search';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
@@ -457,15 +458,20 @@ export const PLANS_LIST = {
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
+				FEATURE_SEO_PREVIEW_TOOLS,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
 				FEATURE_MARKETING_AUTOMATION,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_CDN_LIMITED,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_SEO_PREVIEW_TOOLS,
+				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -502,15 +508,20 @@ export const PLANS_LIST = {
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
+				FEATURE_SEO_PREVIEW_TOOLS,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
 				FEATURE_MARKETING_AUTOMATION,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_CDN_LIMITED,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_SEO_PREVIEW_TOOLS,
+				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
@@ -627,12 +638,14 @@ export const PLANS_LIST = {
 				FEATURE_SPAM_AKISMET_PLUS,
 				FEATURE_EASY_SITE_MIGRATION,
 				FEATURE_PREMIUM_SUPPORT,
+				FEATURE_SEARCH,
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+				FEATURE_SEO_PREVIEW_TOOLS,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_GOOGLE_ANALYTICS,
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -641,8 +654,7 @@ export const PLANS_LIST = {
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_SEO_PREVIEW_TOOLS,
-				FEATURE_CONCIERGE_SETUP,
+				FEATURE_SEARCH,
 				FEATURE_ALL_PREMIUM_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -691,6 +703,7 @@ export const PLANS_LIST = {
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 				FEATURE_ONE_CLICK_THREAT_RESOLUTION,
+				FEATURE_SEO_PREVIEW_TOOLS,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_GOOGLE_ANALYTICS,
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -699,8 +712,7 @@ export const PLANS_LIST = {
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_SEO_PREVIEW_TOOLS,
-				FEATURE_CONCIERGE_SETUP,
+				FEATURE_SEARCH,
 				FEATURE_ALL_PREMIUM_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
@@ -917,7 +929,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getTitle: () => i18n.translate( 'Unlimited Video Hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'The easiest way to upload videos to your website and display them ' +
@@ -1357,6 +1369,15 @@ export const FEATURES_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'Re-share previously published content on social media, or schedule new shares in advance.'
+			),
+	},
+
+	[ FEATURE_SEARCH ]: {
+		getSlug: () => FEATURE_SEARCH,
+		getTitle: () => i18n.translate( 'Enhanced site-wide search' ),
+		getDescription: () =>
+			i18n.translate(
+				'Fast, high-quality search results with custom filtering, powered by Elasticsearch.'
 			),
 	},
 };

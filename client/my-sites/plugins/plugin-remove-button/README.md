@@ -6,14 +6,14 @@ This component is used to display a button that launch a remove action when clic
 #### How to use:
 
 ```js
-var PluginRemoveButton = require( 'my-sites/plugins/plugin-remove-button' );
+import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
 
-render: function() {
-    return <PluginRemoveButton
-            plugin={ plugin }
-            site={ site }
-            notices={ notices }
-        />;
+render() {
+	return <PluginRemoveButton
+				plugin={ plugin }
+				site={ site }
+				notices={ notices }
+			/>;
 }
 ```
 

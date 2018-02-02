@@ -3,11 +3,12 @@
 /**
  * External dependencies
  */
+import async from 'async';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, noop } from 'lodash';
+import { endsWith, get, isEmpty, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import qs from 'qs';
@@ -15,7 +16,12 @@ import qs from 'qs';
 /**
  * Internal dependencies
  */
-import { checkDomainAvailability, getFixedDomainSearch, getTld } from 'lib/domains';
+import {
+	checkDomainAvailability,
+	checkInboundTransferStatus,
+	getFixedDomainSearch,
+	getTld,
+} from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
@@ -29,33 +35,39 @@ import TransferDomainPrecheck from './transfer-domain-precheck';
 import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
+import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
-		products: PropTypes.object.isRequired,
-		cart: PropTypes.object,
-		goBack: PropTypes.func,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
-		initialQuery: PropTypes.string,
 		analyticsSection: PropTypes.string.isRequired,
+		basePath: PropTypes.string,
+		cart: PropTypes.object,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		goBack: PropTypes.func,
+		initialQuery: PropTypes.string,
+		isSignupStep: PropTypes.bool,
 		onRegisterDomain: PropTypes.func.isRequired,
 		onTransferDomain: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
+		products: PropTypes.object.isRequired,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	static defaultProps = {
-		onSave: noop,
 		analyticsSection: 'domains',
+		onSave: noop,
 	};
 
 	state = this.getDefaultState();
 
 	getDefaultState() {
 		return {
-			searchQuery: this.props.initialQuery || '',
 			domain: null,
-			submitting: false,
+			inboundTransferStatus: {},
+			precheck: false,
+			searchQuery: this.props.initialQuery || '',
+			submittingAvailability: false,
+			submittingWhois: false,
 			supportsPrivacy: false,
 		};
 	}
@@ -109,7 +121,8 @@ class TransferDomainStep extends React.Component {
 
 	addTransfer() {
 		const { translate } = this.props;
-		const { searchQuery, submitting } = this.state;
+		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
+		const submitting = submittingAvailability || submittingWhois;
 
 		return (
 			<div>
@@ -191,20 +204,63 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
-	transferDomainPrecheck() {
+	getTransferDomainPrecheck() {
+		const { inboundTransferStatus, submittingWhois } = this.state;
+
 		return (
 			<TransferDomainPrecheck
 				domain={ this.state.domain }
+				email={ inboundTransferStatus.email }
+				loading={ submittingWhois }
+				losingRegistrar={ inboundTransferStatus.losingRegistrar }
+				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
+				privacy={ inboundTransferStatus.privacy }
+				refreshStatus={ this.getInboundTransferStatus }
 				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
 				setValid={ this.props.onTransferDomain }
 				supportsPrivacy={ this.state.supportsPrivacy }
+				unlocked={ inboundTransferStatus.unlocked }
+			/>
+		);
+	}
+
+	transferIsRestricted = () => {
+		const { submittingAvailability, submittingWhois } = this.state;
+		const submitting = submittingAvailability || submittingWhois;
+
+		return (
+			! submitting &&
+			'not_restricted' !== this.state.inboundTransferStatus.transferRestrictionStatus
+		);
+	};
+
+	getTransferRestrictionMessage() {
+		const { domain, inboundTransferStatus } = this.state;
+		const {
+			creationDate,
+			termMaximumInYears,
+			transferEligibleDate,
+			transferRestrictionStatus,
+		} = inboundTransferStatus;
+
+		return (
+			<TransferRestrictionMessage
+				basePath={ this.props.basePath }
+				creationDate={ creationDate }
+				domain={ domain }
+				goBack={ this.goBack }
+				mapDomainUrl={ this.getMapDomainUrl() }
+				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
+				termMaximumInYears={ termMaximumInYears }
+				transferEligibleDate={ transferEligibleDate }
+				transferRestrictionStatus={ transferRestrictionStatus }
 			/>
 		);
 	}
 
 	goBack = () => {
 		if ( this.state.domain ) {
-			this.setState( { domain: null, supportsPrivacy: false } );
+			this.setState( { domain: null, precheck: false, supportsPrivacy: false } );
 		} else {
 			this.props.goBack();
 		}
@@ -212,19 +268,27 @@ class TransferDomainStep extends React.Component {
 
 	render() {
 		let content;
-		const { domain } = this.state;
+		const { precheck } = this.state;
 
-		if ( domain ) {
-			content = this.transferDomainPrecheck();
+		if ( precheck ) {
+			if ( this.transferIsRestricted() ) {
+				content = this.getTransferRestrictionMessage();
+			} else {
+				content = this.getTransferDomainPrecheck();
+			}
 		} else {
 			content = this.addTransfer();
 		}
 
+		const header = ! this.props.isSignupStep && (
+			<HeaderCake onClick={ this.goBack }>
+				{ this.props.translate( 'Use My Own Domain' ) }
+			</HeaderCake>
+		);
+
 		return (
 			<div className="transfer-domain-step">
-				<HeaderCake onClick={ this.goBack }>
-					{ this.props.translate( 'Use My Own Domain' ) }
-				</HeaderCake>
+				{ header }
 				<div>{ content }</div>
 			</div>
 		);
@@ -244,12 +308,12 @@ class TransferDomainStep extends React.Component {
 					} ) }
 				</Notice>
 				<DomainRegistrationSuggestion
-					suggestion={ suggestion }
-					selectedSite={ this.props.selectedSite }
+					cart={ this.props.cart }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					key={ suggestion.domain_name }
-					cart={ this.props.cart }
 					onButtonClick={ this.registerSuggestedDomain }
+					selectedSite={ this.props.selectedSite }
+					suggestion={ suggestion }
 				/>
 			</div>
 		);
@@ -277,12 +341,38 @@ class TransferDomainStep extends React.Component {
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 		this.props.recordFormSubmitInTransferDomain( this.state.searchQuery );
-		this.setState( { suggestion: null, notice: null, submitting: true } );
+		this.setState( { notice: null, suggestion: null, submittingAvailability: true } );
 
 		this.props.recordGoButtonClickInTransferDomain(
 			this.state.searchQuery,
 			this.props.analyticsSection
 		);
+
+		async.parallel(
+			[
+				callback => {
+					this.getInboundTransferStatus( callback );
+				},
+				callback => {
+					this.getAvailability( callback );
+				},
+			],
+			() => {
+				this.setState( prevState => {
+					const { submittingAvailability, submittingWhois } = prevState;
+
+					return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
+				} );
+
+				if ( this.props.isSignupStep && ! this.transferIsRestricted() ) {
+					this.props.onTransferDomain( domain );
+				}
+			}
+		);
+	};
+
+	getAvailability = callback => {
+		const domain = getFixedDomainSearch( this.state.searchQuery );
 
 		checkDomainAvailability(
 			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
@@ -348,7 +438,42 @@ class TransferDomainStep extends React.Component {
 						this.setState( { notice: message, noticeSeverity: severity } );
 				}
 
-				this.setState( { submitting: false } );
+				this.setState( { submittingAvailability: false } );
+				callback();
+			}
+		);
+	};
+
+	getInboundTransferStatus = ( callback = null ) => {
+		this.setState( { submittingWhois: true } );
+
+		checkInboundTransferStatus(
+			getFixedDomainSearch( this.state.searchQuery ),
+			( error, result ) => {
+				this.setState( { submittingWhois: false } );
+
+				if ( ! isEmpty( error ) ) {
+					return;
+				}
+
+				this.setState( {
+					inboundTransferStatus: {
+						creationDate: result.creation_date,
+						email: result.admin_email,
+						loading: false,
+						losingRegistrar: result.registrar,
+						losingRegistrarIanaId: result.registrar_iana_id,
+						privacy: result.privacy,
+						termMaximumInYears: result.term_maximum_in_years,
+						transferEligibleDate: result.transfer_eligible_date,
+						transferRestrictionStatus: result.transfer_restriction_status,
+						unlocked: result.unlocked,
+					},
+				} );
+
+				if ( callback ) {
+					callback();
+				}
 			}
 		);
 	};

@@ -406,6 +406,11 @@ Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, 
 	);
 };
 
+Undocumented.prototype.resendInvite = function( siteId, inviteId, fn ) {
+	debug( '/sites/:site_id:/invites/:invite_id:/resend query' );
+	return this.wpcom.req.post( '/sites/' + siteId + '/invites/' + inviteId + '/resend', {}, {}, fn );
+};
+
 Undocumented.prototype.createInviteValidation = function( siteId, usernamesOrEmails, role, fn ) {
 	debug( '/sites/:site_id:/invites/validate query' );
 	return this.wpcom.req.post(
@@ -1408,12 +1413,6 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readSite = function( query, fn ) {
-	var params = omit( query, 'site' );
-	debug( '/read/sites/:site' );
-	return this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
-};
-
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
 	var params = omit( query, [ 'before', 'after' ] );
 	debug( '/read/sites/:site/featured' );
@@ -2070,14 +2069,7 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
  */
 Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	debug( 'help-search/ searchQuery' );
-
-	return this.wpcom.req.get(
-		'/help/search',
-		{
-			query: searchQuery,
-		},
-		fn
-	);
+	return this.wpcom.req.get( '/help/search', { query: searchQuery }, fn );
 };
 
 Undocumented.prototype.getQandA = function( query, site, fn ) {

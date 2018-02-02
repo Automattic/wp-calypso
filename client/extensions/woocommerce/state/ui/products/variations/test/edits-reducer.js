@@ -22,6 +22,8 @@ import { createProduct, productUpdated } from 'woocommerce/state/sites/products/
 
 const siteId = 123;
 
+jest.mock( 'lib/analytics', () => ( {} ) );
+
 describe( 'edits-reducer', () => {
 	const newVariableProduct1 = {
 		id: { placeholder: 'product_1' },

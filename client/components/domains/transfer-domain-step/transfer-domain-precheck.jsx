@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -19,93 +18,52 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
-import { checkInboundTransferStatus } from 'lib/domains';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
 } from 'lib/url/support';
-import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
 
-class TransferDomainPrecheck extends React.PureComponent {
+class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string,
+		email: PropTypes.string,
+		loading: PropTypes.bool,
+		losingRegistrar: PropTypes.string,
+		losingRegistrarIanaId: PropTypes.string,
+		privacy: PropTypes.bool,
 		selectedSiteSlug: PropTypes.string,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
+		unlocked: PropTypes.bool,
 	};
 
 	state = {
-		creationDate: '',
 		currentStep: 1,
-		email: '',
-		loading: true,
-		losingRegistrar: '',
-		losingRegistrarIanaId: '',
-		privacy: false,
-		termMaximumInYears: 10,
-		transferEligibleDate: '',
-		transferRestrictionStatus: '',
-		unlocked: false,
 	};
 
 	componentWillMount() {
-		this.refreshStatus();
+		this.componentWillReceiveProps( this.props );
 	}
 
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.domain !== this.props.domain ) {
-			this.refreshStatus();
+	componentWillReceiveProps( nextProps ) {
+		// Reset steps if domain became locked again
+		if ( false === nextProps.unlocked ) {
+			this.resetSteps();
+		}
+
+		if ( nextProps.unlocked && 1 === this.state.currentStep ) {
+			this.showNextStep();
 		}
 	}
 
 	onClick = () => {
-		const { domain, supportsPrivacy } = this.props;
-		const { losingRegistrar, losingRegistrarIanaId } = this.state;
+		const { losingRegistrar, losingRegistrarIanaId, domain, supportsPrivacy } = this.props;
 
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
 		this.props.setValid( domain, supportsPrivacy );
-	};
-
-	transferIsRestricted = () =>
-		! this.state.loading && 'not_restricted' !== this.state.transferRestrictionStatus;
-
-	refreshStatus = ( proceedToNextStep = true ) => {
-		this.setState( { loading: true } );
-
-		checkInboundTransferStatus( this.props.domain, ( error, result ) => {
-			if ( ! isEmpty( error ) ) {
-				return;
-			}
-
-			if ( proceedToNextStep && result.unlocked ) {
-				this.showNextStep();
-			}
-
-			// Reset steps if domain became locked again
-			if ( false === result.unlocked ) {
-				this.resetSteps();
-			}
-
-			this.setState( {
-				creationDate: result.creation_date,
-				email: result.admin_email,
-				loading: false,
-				losingRegistrar: result.registrar,
-				losingRegistrarIanaId: result.registrar_iana_id,
-				privacy: result.privacy,
-				termMaximumInYears: result.term_maximum_in_years,
-				transferEligibleDate: result.transfer_eligible_date,
-				transferRestrictionStatus: result.transfer_restriction_status,
-				unlocked: result.unlocked,
-			} );
-		} );
-	};
-
-	refreshStatusOnly = () => {
-		this.refreshStatus( false );
 	};
 
 	resetSteps = () => {
@@ -120,7 +78,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 	};
 
 	getSection( heading, message, buttonText, step, stepStatus ) {
-		const { currentStep, loading, unlocked } = this.state;
+		const { currentStep } = this.state;
+		const { loading, unlocked } = this.props;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
@@ -130,7 +89,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
 		const onButtonClick =
-			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
+			true === unlocked || null === unlocked ? this.showNextStep : this.props.refreshStatus;
 
 		return (
 			<Card compact>
@@ -158,30 +117,9 @@ class TransferDomainPrecheck extends React.PureComponent {
 		);
 	}
 
-	getTransferRestrictionMessage() {
-		const { domain, selectedSiteSlug } = this.props;
-		const {
-			creationDate,
-			termMaximumInYears,
-			transferEligibleDate,
-			transferRestrictionStatus,
-		} = this.state;
-
-		return (
-			<TransferRestrictionMessage
-				creationDate={ creationDate }
-				domain={ domain }
-				selectedSiteSlug={ selectedSiteSlug }
-				termMaximumInYears={ termMaximumInYears }
-				transferEligibleDate={ transferEligibleDate }
-				transferRestrictionStatus={ transferRestrictionStatus }
-			/>
-		);
-	}
-
 	getStatusMessage() {
-		const { translate } = this.props;
-		const { currentStep, unlocked, loading } = this.state;
+		const { loading, translate, unlocked } = this.props;
+		const { currentStep } = this.state;
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
@@ -272,8 +210,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getPrivacyMessage() {
-		const { translate } = this.props;
-		const { currentStep, email, loading, privacy } = this.state;
+		const { email, loading, privacy, translate } = this.props;
+		const { currentStep } = this.state;
 		const step = 2;
 		const isStepFinished = currentStep > step;
 
@@ -371,7 +309,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const statusText = loading ? translate( 'Checking…' ) : translate( 'Refresh email address' );
 
 		const stepStatus = ! isStepFinished && (
-			<a className={ statusClasses } onClick={ this.refreshStatusOnly }>
+			<a className={ statusClasses } onClick={ this.props.refreshStatus }>
 				<Gridicon icon={ statusIcon } size={ 12 } />
 				<span>{ statusText }</span>
 			</a>
@@ -429,12 +367,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const { unlocked, currentStep } = this.state;
-
-		if ( this.transferIsRestricted() ) {
-			return this.getTransferRestrictionMessage();
-		}
+		const { translate, unlocked } = this.props;
+		const { currentStep } = this.state;
 
 		return (
 			<div className="transfer-domain-step__precheck">

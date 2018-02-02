@@ -109,6 +109,7 @@ describe( 'selectors', () => {
 				productSlug: undefined,
 				pendingTransfer: false,
 				refundPeriodInDays: undefined,
+				refundAmount: NaN,
 				refundText: 'undefinedundefined',
 				renewDate: undefined,
 				renewMoment: null,

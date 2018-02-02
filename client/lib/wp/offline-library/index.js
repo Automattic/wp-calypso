@@ -3,6 +3,7 @@
  * External dependencies
  */
 import stringify from 'json-stable-stringify';
+import qs from 'qs';
 
 const readCache = () => {
 	try {
@@ -36,9 +37,9 @@ const saveRequests = requests => {
 
 export const makeOffline = wpcom => {
 	// search part includes the leading `?`
-	const queryParams = new URLSearchParams( window.location.search.substring( 1 ) );
-	const offlineRequested = queryParams.has( 'wpcom_offline' );
-	const primingRequested = queryParams.has( 'wpcom_priming' );
+	const queryParams = qs.parse( window.location.search.substring( 1 ) );
+	const offlineRequested = queryParams.wpcom_offline;
+	const primingRequested = queryParams.wpcom_priming;
 
 	if ( ! offlineRequested && ! primingRequested ) {
 		return wpcom;

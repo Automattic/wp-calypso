@@ -7,11 +7,12 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { omit } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
@@ -44,40 +45,58 @@ class PeopleListItem extends React.PureComponent {
 		);
 	};
 
+	getCardLink = () => {
+		const { invite, site, type, user } = this.props;
+		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
+		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
+
+		return type === 'invite' ? inviteLink : editLink;
+	};
+
+	renderInviteStatus = () => {
+		const { invite, translate } = this.props;
+		const { isPending } = invite;
+		const statusClasses = {
+			'is-pending': isPending,
+		};
+		const className = classNames( 'people-list-item__invite-status', statusClasses );
+
+		return (
+			<div className={ className }>
+				{ ! isPending && <Gridicon icon="checkmark" size={ 18 } /> }
+				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
+				{ isPending && (
+					<Button className="people-list-item__invite-resend" compact>
+						{ translate( 'Resend Invite' ) }
+					</Button>
+				) }
+			</div>
+		);
+	};
+
 	render() {
+		const { className, invite, onRemove, translate, type, user } = this.props;
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
+		const isInvite = invite && 'invite' === type;
 
 		return (
 			<CompactCard
-				{ ...omit(
-					this.props,
-					'className',
-					'user',
-					'site',
-					'isSelectable',
-					'onRemove',
-					'moment',
-					'numberFormat',
-					'translate'
-				) }
-				className={ classNames( 'people-list-item', this.props.className ) }
+				className={ classNames( 'people-list-item', className ) }
 				tagName={ tagName }
-				href={
-					canLinkToProfile && '/people/edit/' + this.props.site.slug + '/' + this.props.user.login
-				}
+				href={ this.getCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
-					<PeopleProfile user={ this.props.user } />
+					<PeopleProfile invite={ invite } type={ type } user={ user } />
 				</div>
-				{ this.props.onRemove && (
+
+				{ isInvite && this.renderInviteStatus() }
+
+				{ onRemove && (
 					<div className="people-list-item__actions">
-						<button
-							className="button is-link people-list-item__remove-button"
-							onClick={ this.props.onRemove }
-						>
-							{ this.props.translate( 'Remove', {
+						<button className="button is-link people-list-item__remove-button" onClick={ onRemove }>
+							{ translate( 'Remove', {
 								context: 'Verb: Remove a user or follower from the blog.',
 							} ) }
 						</button>

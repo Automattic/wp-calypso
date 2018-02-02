@@ -45,8 +45,8 @@ export function cancellationEffectHeadline( purchase, translate ) {
 	);
 }
 
-function refundableCancellationEffectDetail( purchase, translate ) {
-	const { refundText } = purchase;
+function refundableCancellationEffectDetail( purchase, translate, overrides ) {
+	const refundText = overrides.refundText || purchase.refundText;
 
 	if ( isTheme( purchase ) ) {
 		return translate(
@@ -128,9 +128,9 @@ function nonrefundableCancellationEffectDetail( purchase, translate ) {
 	);
 }
 
-export function cancellationEffectDetail( purchase, translate ) {
+export function cancellationEffectDetail( purchase, translate, overrides = {} ) {
 	if ( isRefundable( purchase ) ) {
-		return refundableCancellationEffectDetail( purchase, translate );
+		return refundableCancellationEffectDetail( purchase, translate, overrides );
 	}
 	return nonrefundableCancellationEffectDetail( purchase, translate );
 }

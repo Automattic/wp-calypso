@@ -3,6 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { isObject } from 'lodash';
 
 /**
  * Custom statuses for Calypso
@@ -96,8 +97,8 @@ export function isOrderWaitingPayment( status ) {
  * @param {String} status Order status
  * @return {Boolean} true if the status is editable
  */
-export function isOrderEditable( status ) {
-	return -1 !== statusEditable.indexOf( status );
+export function isOrderEditable( { id, status } ) {
+	return isObject( id ) || -1 !== statusEditable.indexOf( status );
 }
 
 /**

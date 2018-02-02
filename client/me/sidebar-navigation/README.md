@@ -8,9 +8,9 @@ This component is used to display the mobile sidebar navigation header at the to
 Put the component in your `Main` component. It handles detecting the selected site.
 
 ```js
-var SidebarNavigation = require( './sidebar-navigation' );
+import SidebarNavigation from './sidebar-navigation';
 
-render: function() {
+render() {
     return (
         <Main>
 		<SidebarNavigation />

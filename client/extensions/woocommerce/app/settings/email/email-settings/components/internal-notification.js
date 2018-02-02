@@ -3,9 +3,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,14 +19,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextValidation from 'components/forms/form-input-validation';
 import { checkEmails } from './helpers';
 
-const InternalNotification = ( {
-	item,
-	recipient,
-	checked,
-	onChange,
-	isPlaceholder,
-	placeholder,
-} ) => {
+const InternalNotification = ( { item, recipient, checked, onChange, loaded, translate } ) => {
 	//Add field name to returned value
 	const toggle = value => {
 		onChange( {
@@ -51,8 +44,8 @@ const InternalNotification = ( {
 	return (
 		<ListItem className="components__notification-component-item">
 			<ListItemField className="components__notification-component-title">
-				{ ! isPlaceholder ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
-				{ ! isPlaceholder ? (
+				{ loaded ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
+				{ loaded ? (
 					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
 				) : (
 					placeholderComponent
@@ -60,19 +53,19 @@ const InternalNotification = ( {
 			</ListItemField>
 			<ListItemField className="components__notification-component-input">
 				<FormTextInput
-					className={ isPlaceholder ? 'components__is-placeholder' : null }
-					isError={ emailValidationError }
+					className={ ! loaded ? 'components__is-placeholder' : null }
+					isError={ checked && emailValidationError }
 					name={ item.field }
 					onChange={ change }
 					value={ recipient }
-					placeholder={ placeholder }
+					placeholder={ translate( 'Recipient email address(es).' ) }
 				/>
 				{ emailValidationError && (
-					<FormTextValidation isError={ true } text={ checkedEmails.messages[ 0 ].msg } />
+					<FormTextValidation isError text={ checkedEmails.messages[ 0 ].msg } />
 				) }
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
-				{ ! isPlaceholder ? (
+				{ loaded ? (
 					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
 				) : (
 					placeholderComponent
@@ -86,7 +79,8 @@ InternalNotification.propTypes = {
 	checked: PropTypes.bool,
 	recipient: PropTypes.string,
 	item: PropTypes.object,
+	loaded: PropTypes.bool,
 	onChange: PropTypes.func.isRequired,
 };
 
-export default InternalNotification;
+export default localize( InternalNotification );

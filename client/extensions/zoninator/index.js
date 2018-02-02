@@ -18,9 +18,9 @@ import installActionHandlers from './state/data-layer';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
-	page( '/extensions/zoninator', sites, makeLayout, clientRender );
-	page( '/extensions/zoninator/new', sites, makeLayout, clientRender );
-	page( '/extensions/zoninator/zone', sites, makeLayout, clientRender );
+	page( '/extensions/zoninator', siteSelection, sites, makeLayout, clientRender );
+	page( '/extensions/zoninator/new', siteSelection, sites, makeLayout, clientRender );
+	page( '/extensions/zoninator/zone', siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/extensions/zoninator/:site',

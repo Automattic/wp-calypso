@@ -6,9 +6,9 @@ This component is used to display a plugin autupdate toggle.
 #### How to use:
 
 ```js
-var PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' );
+import PluginAutoupdateToggle 'my-sites/plugins/plugin-autoupdate-toggle';
 
-render: function() {
+render() {
 	return (
 		<div className="your-plugins-list">
 			<PluginAutoupdateToggle

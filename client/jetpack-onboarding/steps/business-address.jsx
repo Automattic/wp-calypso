@@ -7,7 +7,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { map } from 'lodash';
+import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -23,13 +23,21 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
-	state = {
+	static emptyState = {
 		city: '',
 		name: '',
 		state: '',
 		street: '',
 		zip: '',
 	};
+
+	state = get( this.props.settings, 'businessAddress' ) || this.constructor.emptyState;
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
+			this.setState( get( nextProps.settings, 'businessAddress' ) || this.constructor.emptyState );
+		}
+	}
 
 	getChangeHandler = field => event => {
 		this.setState( { [ field ]: event.target.value } );
@@ -51,13 +59,17 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 	handleSubmit = event => {
 		event.preventDefault();
+		if ( this.props.isRequestingSettings ) {
+			return;
+		}
+
 		const { siteId } = this.props;
 		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
 		page( this.props.getForwardUrl() );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { isRequestingSettings, translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
 		const subHeaderText = translate(
 			'Enter your business address to have a map added to your website.'
@@ -80,6 +92,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 								<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
 								<FormTextInput
 									autoFocus={ fieldName === 'name' }
+									disabled={ isRequestingSettings }
 									id={ fieldName }
 									onChange={ this.getChangeHandler( fieldName ) }
 									required={ fieldName !== 'state' }
@@ -87,7 +100,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 								/>
 							</FormFieldset>
 						) ) }
-						<Button primary type="submit">
+						<Button disabled={ isRequestingSettings } primary type="submit">
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>

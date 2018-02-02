@@ -74,6 +74,15 @@ KeyBindings.prototype.get = function() {
 				},
 			},
 			{
+				eventName: 'open-help',
+				keys: [ 'g', 'h' ],
+				type: 'sequence',
+				description: {
+					keys: [ 'g', 'h' ],
+					text: i18n.translate( 'Open Help' ),
+				},
+			},
+			{
 				eventName: 'go-to-reader',
 				keys: [ 'g', 'r' ],
 				type: 'sequence',

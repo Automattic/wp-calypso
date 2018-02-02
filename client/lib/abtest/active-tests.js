@@ -27,24 +27,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	presaleChatButton: {
-		datestamp: '20170328',
-		variations: {
-			showChatButton: 20,
-			original: 80,
-		},
-		defaultVariation: 'original',
-		localeTargets: 'any',
-	},
-	chatOfferOnCancel: {
-		datestamp: '20170421',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
 		variations: {
@@ -82,14 +64,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	signupSiteSegmentStep: {
-		datestamp: '20170329',
-		variations: {
-			control: 0,
-			variant: 100,
-		},
-		defaultVariation: 'control',
-	},
 	checklistThankYouForFreeUser: {
 		datestamp: '20171204',
 		variations: {
@@ -117,14 +91,16 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
-	paymentMethodsOnPlans: {
-		datestamp: '20180115',
+
+	// Must run at least 1 full week from commit time
+	// 2018-01-24 to 2018-01-31
+	promoteYearlyJetpackPlanSavings: {
+		datestamp: '20180124',
 		variations: {
-			hide: 50,
-			show: 50,
+			original: 50,
+			promoteYearly: 50,
 		},
-		defaultVariation: 'hide',
+		defaultVariation: 'original',
 		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 };

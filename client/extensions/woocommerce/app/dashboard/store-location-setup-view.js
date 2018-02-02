@@ -20,7 +20,7 @@ import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import BasicWidget from 'woocommerce/components/basic-widget';
-import { bumpStat } from 'state/analytics/actions';
+import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
 import {

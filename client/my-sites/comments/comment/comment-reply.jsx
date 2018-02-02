@@ -114,6 +114,13 @@ export class CommentReply extends Component {
 		if ( alsoApprove ) {
 			approveComment( siteId, postId, { previousStatus: commentStatus } );
 		}
+
+		// Back navigation scrolling fix
+		if ( window ) {
+			const path = get( window, 'history.state.path' );
+			const newPath = path.replace( /[#].*/, '' );
+			window.history.replaceState( window.history.state, '', newPath );
+		}
 	};
 
 	updateTextarea = event => {

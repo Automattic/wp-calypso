@@ -16,6 +16,8 @@ import Button from 'components/button';
 import contextTypes from '../context-types';
 
 export default class LinkQuit extends Component {
+	static displayName = 'LinkQuit';
+
 	static propTypes = {
 		primary: PropTypes.bool,
 		subtle: PropTypes.bool,

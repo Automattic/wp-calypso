@@ -23,9 +23,9 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
@@ -49,7 +49,6 @@ import {
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
-const userModule = userFactory();
 const analyticsPageTitleByType = {
 	install: 'Jetpack Install',
 	personal: 'Jetpack Connect Personal',
@@ -95,7 +94,8 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	if ( userModule.get() && getLocaleFromPath( context.path ) ) {
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
@@ -158,11 +158,6 @@ export function connect( context, next ) {
 
 	debug( 'entered connect flow with params %o', params );
 
-	if ( retrieveMobileRedirect() && ! userModule.get() ) {
-		// Force login for mobile app flow. App will intercept and prompt native login.
-		return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
-	}
-
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 	planSlug && storePlan( planSlug );
 
@@ -170,21 +165,24 @@ export function connect( context, next ) {
 
 	removeSidebar( context );
 
-	userModule.fetch();
-
 	context.primary = React.createElement( JetpackConnect, {
 		context,
 		locale: params.locale,
 		path,
 		type,
 		url: query.url,
-		userModule,
 	} );
 	next();
 }
 
 export function signupForm( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
+		// Force login for mobile app flow. App will intercept this request and prompt native login.
+		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
+	}
 
 	removeSidebar( context );
 
@@ -242,14 +240,11 @@ export function sso( context, next ) {
 
 	removeSidebar( context );
 
-	userModule.fetch();
-
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = React.createElement( JetpackSsoForm, {
 		path: context.path,
 		locale: context.params.locale,
-		userModule: userModule,
 		siteId: context.params.siteId,
 		ssoNonce: context.params.ssoNonce,
 	} );

@@ -9,17 +9,17 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { debounce, isNumber, head, isNull } from 'lodash';
+import { isNumber, head, isNull } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import CompactTinyMCE from 'woocommerce/components/compact-tinymce';
 import FormFieldSet from 'components/forms/form-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import ImagePreloader from 'components/image-preloader';
 import ProductImageUploader from 'woocommerce/components/product-image-uploader';
@@ -56,8 +56,6 @@ class ProductCategoryForm extends Component {
 			selectedParent,
 			isTopLevel,
 		};
-
-		this.debouncedSetDescription = debounce( this.setDescription, 200 );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -92,9 +90,9 @@ class ProductCategoryForm extends Component {
 		editProductCategory( siteId, category, { name } );
 	};
 
-	setDescription = description => {
+	setDescription = event => {
 		const { siteId, category, editProductCategory } = this.props;
-		editProductCategory( siteId, category, { description } );
+		editProductCategory( siteId, category, { description: event.target.value } );
 	};
 
 	setParent = parent => {
@@ -229,24 +227,6 @@ class ProductCategoryForm extends Component {
 		);
 	}
 
-	renderTinyMCE() {
-		const { category } = this.props;
-
-		if (
-			( isNumber( category.id ) && 'undefined' === typeof category.description ) ||
-			'undefined' === typeof category.id
-		) {
-			return <div className="product-categories__form-tinymce-placeholder" />;
-		}
-
-		return (
-			<CompactTinyMCE
-				initialValue={ category.description || '' }
-				onContentsChange={ this.debouncedSetDescription }
-			/>
-		);
-	}
-
 	render() {
 		const { siteId, category, translate } = this.props;
 		const { search, selectedParent, isTopLevel } = this.state;
@@ -274,7 +254,11 @@ class ProductCategoryForm extends Component {
 							</FormFieldSet>
 							<FormFieldSet>
 								<FormLabel htmlFor="description">{ translate( 'Description' ) }</FormLabel>
-								{ this.renderTinyMCE() }
+								<FormTextarea
+									id="description"
+									value={ category.description || '' }
+									onChange={ this.setDescription }
+								/>
 							</FormFieldSet>
 							<FormFieldSet>
 								<FormLabel>
