@@ -387,7 +387,7 @@ describe( 'handlers', () => {
 
 	describe( '#del', () => {
 		test( 'should dispatch a delete action to the API via the jetpack proxy for this site & orderId', () => {
-			const action = deleteOrder( { id: 123, slug: 'my-site.com' }, 74 );
+			const action = deleteOrder( { ID: 123, slug: 'my-site.com' }, 74 );
 			const result = del( action );
 
 			expect( result ).to.eql(
