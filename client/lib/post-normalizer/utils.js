@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { find, forEach, some, endsWith, findIndex } from 'lodash';
+import qs from 'qs';
 import url from 'url';
 
 /**
@@ -248,6 +249,22 @@ export function deduceImageWidthAndHeight( image ) {
 			height,
 		};
 	}
+
+	let parsed;
+	try {
+		parsed = url.parse( image.src );
+	} catch ( e ) {
+		return null;
+	}
+
+	if ( isPhotonHost( parsed.host ) ) {
+		const queryArgs = qs.parse( parsed.query );
+		return {
+			width: queryArgs.w,
+			height: queryArgs.h,
+		};
+	}
+
 	return null;
 }
 
