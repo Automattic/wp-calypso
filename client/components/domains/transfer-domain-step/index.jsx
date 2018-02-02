@@ -378,6 +378,8 @@ class TransferDomainStep extends React.Component {
 			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 			( error, result ) => {
 				const status = get( result, 'status', error );
+				const rootDomain = get( result, 'root_domain', null );
+				const isSubDomain = rootDomain && rootDomain !== domain;
 				switch ( status ) {
 					case domainAvailability.AVAILABLE:
 						this.setState( { suggestion: result } );
@@ -393,20 +395,37 @@ class TransferDomainStep extends React.Component {
 					case domainAvailability.TLD_NOT_SUPPORTED:
 						const tld = getTld( domain );
 
-						this.setState( {
-							notice: this.props.translate(
-								"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
-									'but you can {{a}}map it{{/a}} instead.',
-								{
-									args: { tld },
-									components: {
-										strong: <strong />,
-										a: <a href="#" onClick={ this.goToMapDomainStep } />,
-									},
-								}
-							),
-							noticeSeverity: 'info',
-						} );
+						if ( isSubDomain ) {
+							this.setState( {
+								notice: this.props.translate(
+									'Transferring a subdomain is not possible. You can try to {{a}}map it{{/a}} instead ' +
+										'or transfer {{strong}}the root domain{{/strong}}.',
+									{
+										args: { rootDomain },
+										components: {
+											strong: <strong />,
+											a: <button onClick={ this.goToMapDomainStep } />,
+										},
+									}
+								),
+								noticeSeverity: 'error',
+							} );
+						} else {
+							this.setState( {
+								notice: this.props.translate(
+									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+										'but you can {{a}}map it{{/a}} instead.',
+									{
+										args: { tld },
+										components: {
+											strong: <strong />,
+											a: <button onClick={ this.goToMapDomainStep } />,
+										},
+									}
+								),
+								noticeSeverity: 'info',
+							} );
+						}
 						break;
 					case domainAvailability.UNKNOWN:
 						const mappableStatus = get( result, 'mappable', error );
@@ -420,7 +439,7 @@ class TransferDomainStep extends React.Component {
 										args: { domain },
 										components: {
 											strong: <strong />,
-											a: <a href="#" onClick={ this.goToMapDomainStep } />,
+											a: <button onClick={ this.goToMapDomainStep } />,
 										},
 									}
 								),

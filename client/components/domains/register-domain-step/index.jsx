@@ -165,6 +165,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainSearched: null,
 			lastDomainStatus: null,
 			lastDomainIsTransferrable: false,
+			rootDomain: null,
 			loadingResults: loadingResults,
 			loadingSubdomainResults: this.props.includeWordPressDotCom && loadingResults,
 			notice: null,
@@ -397,6 +398,7 @@ class RegisterDomainStep extends React.Component {
 							const timeDiff = Date.now() - timestamp;
 							const status = get( result, 'status', error );
 							const domainChecked = get( result, 'domain_name', domain );
+							const rootDomain = get( result, 'root_domain', null );
 
 							const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
@@ -406,6 +408,7 @@ class RegisterDomainStep extends React.Component {
 								exactMatchDomain: domainChecked,
 								lastDomainStatus: status,
 								lastDomainIsTransferrable: isDomainTransferrable,
+								rootDomain: rootDomain,
 							} );
 							if ( isDomainAvailable ) {
 								this.setState( { notice: null } );
@@ -674,6 +677,7 @@ class RegisterDomainStep extends React.Component {
 			exactMatchDomain,
 			lastDomainIsTransferrable,
 			lastDomainSearched,
+			rootDomain,
 			lastDomainStatus,
 		} = this.state;
 		const matchesSearchedDomain = suggestion => suggestion.domain_name === exactMatchDomain;
@@ -714,6 +718,7 @@ class RegisterDomainStep extends React.Component {
 				availableDomain={ availableDomain }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				lastDomainSearched={ lastDomainSearched }
+				rootDomain={ rootDomain }
 				lastDomainStatus={ lastDomainStatus }
 				lastDomainIsTransferrable={ lastDomainIsTransferrable }
 				onAddMapping={ onAddMapping }
