@@ -16,6 +16,7 @@ import { first, get, groupBy, includes, isEmpty, isNull, last, range, sortBy } f
 import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
+import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogUpgradeNotice from '../activity-log-upgrade-notice';
 import Banner from 'components/banner';
 import DatePicker from 'my-sites/stats/stats-date-picker';
@@ -433,9 +434,8 @@ class ActivityLog extends Component {
 		);
 	}
 
-	render() {
+	getActivityLog() {
 		const {
-			canViewActivityLog,
 			logRequestQuery,
 			logs,
 			moment,
@@ -445,18 +445,6 @@ class ActivityLog extends Component {
 			slug,
 			translate,
 		} = this.props;
-
-		if ( false === canViewActivityLog ) {
-			return (
-				<Main>
-					<SidebarNavigation />
-					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					/>
-				</Main>
-			);
-		}
 
 		const disableRestore =
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
@@ -484,8 +472,7 @@ class ActivityLog extends Component {
 		);
 
 		return (
-			<Main wideLayout>
-				<QueryRewindState siteId={ siteId } />
+			<div>
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
 				{ siteId &&
 					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
@@ -579,6 +566,37 @@ class ActivityLog extends Component {
 					</section>
 				) }
 				{ this.renderMonthNavigation( 'bottom' ) }
+			</div>
+		);
+	}
+
+	render() {
+		const { canViewActivityLog, translate } = this.props;
+
+		if ( false === canViewActivityLog ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
+
+		const { siteId, context } = this.props;
+
+		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
+
+		return (
+			<Main wideLayout>
+				<QueryRewindState siteId={ siteId } />
+				{ siteId && '' !== rewindNoThanks ? (
+					<ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
+				) : (
+					this.getActivityLog()
+				) }
 				<JetpackColophon />
 			</Main>
 		);

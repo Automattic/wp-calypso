@@ -269,4 +269,24 @@ export default {
 		stepName: 'creds-permission',
 		providesDependencies: [],
 	},
+
+	'rewind-migrate': {
+		stepName: 'rewind-migrate',
+		providesDependencies: [],
+	},
+
+	'rewind-were-backing': {
+		stepName: 'rewind-were-backing',
+		providesDependencies: [],
+	},
+
+	'rewind-add-creds': {
+		stepName: 'rewind-add-creds',
+		providesDependencies: [],
+	},
+
+	'rewind-form-creds': {
+		stepName: 'rewind-form-creds',
+		providesDependencies: [],
+	},
 };

@@ -251,6 +251,31 @@ const flows = {
 		allowContinue: false,
 		hideFlowProgress: true,
 	},
+
+	'rewind-switch': {
+		steps: [ 'rewind-migrate', 'rewind-were-backing' ],
+		destination: () => {
+			return '/stats/activity';
+		},
+		description:
+			'Allows users with Jetpack plan with VaultPress credentials to migrate credentials',
+		lastModified: '2018-01-27',
+		disallowResume: true,
+		allowContinue: false,
+		hideFlowProgress: true,
+	},
+
+	'rewind-setup': {
+		steps: [ 'rewind-add-creds', 'rewind-form-creds', 'rewind-were-backing' ],
+		destination: () => {
+			return '/stats/activity';
+		},
+		description: 'Allows users with Jetpack plan to setup credentials',
+		lastModified: '2018-01-27',
+		disallowResume: true,
+		allowContinue: false,
+		hideFlowProgress: true,
+	},
 };
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {
