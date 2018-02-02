@@ -462,7 +462,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate(
 						'To cancel your %(productName)s plan, please contact our support team' +
-							'-- a Happiness Engineer will take care of it.',
+							' — a Happiness Engineer will take care of it.',
 						{
 							args: { productName },
 						}
