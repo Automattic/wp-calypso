@@ -18,19 +18,14 @@ import { pageViewForPost } from 'reader/stats';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
+import { READER_POSTS_RECEIVE } from 'state/action-types';
+import { getPost, getPostByFeedAndId, getPostBySiteAndId } from 'state/reader/posts/selectors';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:feed-post-store' );
-
-let _posts = {},
-	_postsForBlogs = {};
-
-function blogKey( postKey ) {
-	return postKey.blogId + '-' + postKey.postId;
-}
 
 const FeedPostStore = {
 	get: function( postKey ) {
@@ -38,27 +33,9 @@ const FeedPostStore = {
 			return;
 		}
 
-		if ( postKey.blogId ) {
-			return _postsForBlogs[ blogKey( postKey ) ];
-		} else if ( postKey.feedId && postKey.postId ) {
-			return _posts[ postKey.postId ];
-		}
+		return getPostByFeedAndId( reduxGetState(), postKey.feedId, postKey.postId );
 	},
 };
-
-if ( process.env.NODE_ENV === 'test' ) {
-	assign( FeedPostStore, {
-		// These bedlumps are for testing.
-		// Ideally, we'd pull these out with envify for prod
-		_all: function() {
-			return _posts;
-		},
-		_reset: function() {
-			_posts = {};
-			_postsForBlogs = {};
-		},
-	} );
-}
 
 emitter( FeedPostStore );
 
@@ -113,40 +90,18 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 FeedPostStore.setMaxListeners( 100 );
 
-function _setFeedPost( id, post ) {
-	if ( ! id ) {
+function setPost( post ) {
+	if ( ! post || ! post.feed_ID || ! post.ID ) {
 		return false;
 	}
 
-	const cachedPost = _posts[ id ];
-
-	post.feed_item_ID = id;
+	const cachedPost = getPost( reduxGetState(), post.global_ID );
 
 	if ( cachedPost && isEqual( post, cachedPost ) ) {
 		return false;
 	}
 
-	_posts[ id ] = post;
-	return true;
-}
-
-function _setBlogPost( post ) {
-	if ( ! post || ! post.site_ID || post.is_external ) {
-		return false;
-	}
-
-	const key = blogKey( {
-		blogId: post.site_ID,
-		postId: post.ID,
-	} );
-
-	const cachedPost = _postsForBlogs[ key ];
-
-	if ( cachedPost && isEqual( post, cachedPost ) ) {
-		return false;
-	}
-
-	_postsForBlogs[ key ] = post;
+	reduxDispatch( { type: READER_POSTS_RECEIVE, posts: [ post ] } );
 
 	// Send conversation follow status over to Redux
 	if ( post.hasOwnProperty( 'is_following_conversation' ) ) {
@@ -163,43 +118,20 @@ function _setBlogPost( post ) {
 			)
 		);
 	}
-
-	return true;
-}
-
-function setPost( id, post ) {
-	const changedFeed = _setFeedPost( id, post ),
-		changedBlog = _setBlogPost( post ),
-		changed = changedFeed || changedBlog;
-	if ( changed ) {
-		FeedPostStore.emit( 'change' );
-	}
 }
 
 function receivePending( action ) {
-	if ( action.blogId ) {
-		let post = {
-			site_ID: action.blogId,
-			ID: action.postId,
-		};
-		const currentPost =
-			_postsForBlogs[
-				blogKey( {
-					blogId: action.blogId,
-					postId: action.postId,
-				} )
-			];
-		post = assign( post, currentPost, { _state: 'pending' } );
-		setPost( null, post );
+	let post;
+	let currentPost;
+	if ( action.feedId ) {
+		post = { ID: action.postId, feed_ID: action.feedId };
+		currentPost = getPostByFeedAndId( reduxGetState(), post.feed_ID, post.ID );
 	} else {
-		let post = {
-			feed_ID: action.feedId,
-			feed_item_ID: action.postId,
-		};
-		const currentPost = _posts[ action.postId ];
-		post = assign( post, currentPost, { _state: 'pending' } );
-		setPost( action.postId, post );
+		post = { ID: action.postId, site_ID: action.siteId };
+		currentPost = getPostBySiteAndId( reduxGetState(), post.site_ID, post.ID );
 	}
+
+	setPost( { ...post, ...currentPost, state: 'pending' } );
 }
 
 function receivePostFromPage( newPost ) {
@@ -207,19 +139,9 @@ function receivePostFromPage( newPost ) {
 		return;
 	}
 
-	if ( newPost.feed_ID && ! newPost.site_ID && newPost.ID && ! _posts[ newPost.ID ] ) {
-		// 1.3 style
-		setPost( newPost.ID, assign( {}, newPost, { _state: 'minimal' } ) );
-	} else if (
-		newPost.site_ID &&
-		! _postsForBlogs[
-			blogKey( {
-				blogId: newPost.site_ID,
-				postId: newPost.ID,
-			} )
-		]
-	) {
-		setPost( null, assign( {}, newPost, { _state: 'minimal' } ) );
+	console.error( 'postId', newPost );
+	if ( ! getPost( reduxGetState(), newPost.ID ) ) {
+		setPost( { ...newPost, _state: 'minimal' } );
 	}
 }
 
@@ -268,7 +190,7 @@ function receiveError( feedId, postId, error ) {
 		}
 	}
 
-	setPost( postId, {
+	setPost( {
 		feed_ID: feedId,
 		feed_item_ID: postId,
 		site_ID: error.site_ID,
@@ -295,10 +217,10 @@ function normalizePost( feedId, postId, post ) {
 	}
 
 	const normalizedPost = runFastRules( post );
-	setPost( postId, normalizedPost );
+	setPost( normalizedPost );
 
 	defer( function() {
-		runSlowRules( normalizedPost ).then( setPost.bind( null, postId ) );
+		runSlowRules( normalizedPost ).then( setPost );
 	} );
 }
 
@@ -325,7 +247,7 @@ function markPostSeen( post, site ) {
 	}
 
 	if ( originalPost !== post ) {
-		setPost( post.feed_item_ID, post );
+		setPost( post );
 	}
 }
 
