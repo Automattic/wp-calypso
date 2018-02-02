@@ -51,51 +51,14 @@ const Head = ( { title = 'WordPress.com', faviconURL, children, cdn } ) => {
 				href={ cdn + '/i/favicons/android-chrome-192x192.png' }
 				sizes="192x192"
 			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="57x57"
-				href={ cdn + '/i/favicons/apple-touch-icon-57x57.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="60x60"
-				href={ cdn + '/i/favicons/apple-touch-icon-60x60.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="72x72"
-				href={ cdn + '/i/favicons/apple-touch-icon-72x72.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="76x76"
-				href={ cdn + '/i/favicons/apple-touch-icon-76x76.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="114x114"
-				href={ cdn + '/i/favicons/apple-touch-icon-114x114.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="120x120"
-				href={ cdn + '/i/favicons/apple-touch-icon-120x120.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="144x144"
-				href={ cdn + '/i/favicons/apple-touch-icon-144x144.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="152x152"
-				href={ cdn + '/i/favicons/apple-touch-icon-152x152.png' }
-			/>
-			<link
-				rel="apple-touch-icon"
-				sizes="180x180"
-				href={ cdn + '/i/favicons/apple-touch-icon-180x180.png' }
-			/>
+			{ [ 57, 60, 72, 76, 114, 120, 144, 152, 180 ].map( size => (
+				<link
+					key={ size }
+					rel="apple-touch-icon"
+					sizes={ `${ size }x${ size }` }
+					href={ cdn + `/i/favicons/apple-touch-icon-${ size }x${ size }.png` }
+				/>
+			) ) }
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 			<link rel="manifest" href="/calypso/manifest.json" />

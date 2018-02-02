@@ -70,46 +70,55 @@ exports[`Head should render custom title 1`] = `
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-57x57.png"
+    key="57"
     rel="apple-touch-icon"
     sizes="57x57"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-60x60.png"
+    key="60"
     rel="apple-touch-icon"
     sizes="60x60"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-72x72.png"
+    key="72"
     rel="apple-touch-icon"
     sizes="72x72"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-76x76.png"
+    key="76"
     rel="apple-touch-icon"
     sizes="76x76"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-114x114.png"
+    key="114"
     rel="apple-touch-icon"
     sizes="114x114"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-120x120.png"
+    key="120"
     rel="apple-touch-icon"
     sizes="120x120"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-144x144.png"
+    key="144"
     rel="apple-touch-icon"
     sizes="144x144"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-152x152.png"
+    key="152"
     rel="apple-touch-icon"
     sizes="152x152"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-180x180.png"
+    key="180"
     rel="apple-touch-icon"
     sizes="180x180"
   />
@@ -203,46 +212,55 @@ exports[`Head should render default title 1`] = `
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-57x57.png"
+    key="57"
     rel="apple-touch-icon"
     sizes="57x57"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-60x60.png"
+    key="60"
     rel="apple-touch-icon"
     sizes="60x60"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-72x72.png"
+    key="72"
     rel="apple-touch-icon"
     sizes="72x72"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-76x76.png"
+    key="76"
     rel="apple-touch-icon"
     sizes="76x76"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-114x114.png"
+    key="114"
     rel="apple-touch-icon"
     sizes="114x114"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-120x120.png"
+    key="120"
     rel="apple-touch-icon"
     sizes="120x120"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-144x144.png"
+    key="144"
     rel="apple-touch-icon"
     sizes="144x144"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-152x152.png"
+    key="152"
     rel="apple-touch-icon"
     sizes="152x152"
   />
   <link
     href="//arbitrary-cdn/i/favicons/apple-touch-icon-180x180.png"
+    key="180"
     rel="apple-touch-icon"
     sizes="180x180"
   />
