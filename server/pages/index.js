@@ -9,7 +9,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick, forEach, intersection } from 'lodash';
+import { get, includes, pick, forEach, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -510,6 +510,54 @@ module.exports = function() {
 		res.render( 'browsehappy', {
 			...req.context,
 			dashboardUrl,
+		} );
+	} );
+
+	app.get( '/support-user', function( req, res ) {
+		// Do not iframe
+		res.set( {
+			'X-Frame-Options': 'DENY',
+		} );
+
+		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
+			return res.render( 'support-user', {
+				authorized: false,
+			} );
+		}
+
+		// Maybe not logged in, note that you need docker to test this properly
+		const user = require( 'user-bootstrap' );
+
+		debug( 'Issuing API call to fetch user object' );
+		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
+		user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
+			if ( error ) {
+				res.clearCookie( 'wordpress_logged_in', {
+					path: '/',
+					httpOnly: true,
+					domain: '.wordpress.com',
+				} );
+
+				return res.render( 'support-user', {
+					authorized: false,
+				} );
+			}
+
+			const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+
+			// A8C check
+			if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+				return res.render( 'support-user', {
+					authorized: false,
+				} );
+			}
+
+			// Passed all checks, prepare support user session
+			return res.render( 'support-user', {
+				authorized: true,
+				supportUser: req.query.support_user,
+				supportToken: req.query._support_token,
+			} );
 		} );
 	} );
 
