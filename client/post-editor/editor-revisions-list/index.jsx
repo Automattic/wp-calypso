@@ -26,6 +26,8 @@ class EditorRevisionsList extends PureComponent {
 		siteId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
 		selectedRevisionId: PropTypes.number,
+		nextIsDisabled: PropTypes.bool,
+		prevIsDisabled: PropTypes.bool,
 	};
 
 	selectRevision = revisionId => {
@@ -131,8 +133,8 @@ class EditorRevisionsList extends PureComponent {
 	render() {
 		const {
 			comparisons,
-			latestRevisionIsSelected,
-			earliestRevisionIsSelected,
+			nextIsDisabled,
+			prevIsDisabled,
 			postId,
 			revisions,
 			selectedRevisionId,
@@ -146,8 +148,8 @@ class EditorRevisionsList extends PureComponent {
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
 				<EditorRevisionsListNavigation
-					latestRevisionIsSelected={ latestRevisionIsSelected }
-					earliestRevisionIsSelected={ earliestRevisionIsSelected }
+					nextIsDisabled={ nextIsDisabled }
+					prevIsDisabled={ prevIsDisabled }
 					selectNextRevision={ this.selectNextRevision }
 					selectPreviousRevision={ this.selectPreviousRevision }
 				/>
@@ -183,11 +185,13 @@ export default connect(
 		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
 		const earliestRevisionIsSelected =
 			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
+		const nextIsDisabled = latestRevisionIsSelected || revisions.length === 1;
+		const prevIsDisabled = earliestRevisionIsSelected || revisions.length === 1;
 
 		return {
 			latestRevisionId,
-			latestRevisionIsSelected,
-			earliestRevisionIsSelected,
+			prevIsDisabled,
+			nextIsDisabled,
 			nextRevisionId,
 			prevRevisionId,
 		};
