@@ -130,6 +130,40 @@ describe( 'selectors', () => {
 			);
 		} );
 
+		test( 'should return the same object given the same input', () => {
+			const state = {
+				invites: {
+					items: {
+						12345: [
+							{
+								key: '123456asdf789',
+								role: 'follower',
+								isPending: null,
+								inviteDate: '2018-01-28T17:22:16+00:00',
+								acceptedDate: '2018-01-28T17:22:20+00:00',
+								user: {
+									login: 'chicken',
+									email: false,
+									name: 'Pollo',
+									avatar_URL:
+										'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+								},
+								invitedBy: {
+									login: 'cow',
+									name: 'Vaca',
+									avatar_URL:
+										'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+								},
+							},
+						],
+					},
+				},
+			};
+			const call1 = getSelectedInvite( state, 12345, '123456asdf789' );
+			const call2 = getSelectedInvite( state, 12345, '123456asdf789' );
+			expect( call1 ).equal( call2 );
+		} );
+
 		test( 'should return undefined when invites do not exist for site', () => {
 			const state = {
 				invites: {
