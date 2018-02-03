@@ -846,7 +846,7 @@ export class DomainWarnings extends React.PureComponent {
 			case transferStatus.PENDING_START:
 				compactMessage = translate( 'Domain transfer waiting' );
 				message = translate(
-					'Your domain {{strong}}%(domain)s{{/strong}} is witing for you to start the transfer. {{a}}More info{{/a}}',
+					'Your domain {{strong}}%(domain)s{{/strong}} is waiting for you to start the transfer. {{a}}More info{{/a}}',
 					{
 						components: {
 							strong: <strong />,
