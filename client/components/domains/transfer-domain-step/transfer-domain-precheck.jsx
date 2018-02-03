@@ -33,7 +33,7 @@ class TransferDomainPrecheck extends React.Component {
 		losingRegistrar: PropTypes.string,
 		losingRegistrarIanaId: PropTypes.string,
 		privacy: PropTypes.bool,
-		selectedSiteSlug: PropTypes.string,
+		selectedSiteId: PropTypes.number,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
 		unlocked: PropTypes.bool,
@@ -59,11 +59,17 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	onClick = () => {
-		const { losingRegistrar, losingRegistrarIanaId, domain, supportsPrivacy } = this.props;
+		const {
+			losingRegistrar,
+			losingRegistrarIanaId,
+			domain,
+			supportsPrivacy,
+			selectedSiteId,
+		} = this.props;
 
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
-		this.props.setValid( domain, supportsPrivacy );
+		this.props.setValid( { domain, selectedSiteId, supportsPrivacy } );
 	};
 
 	resetSteps = () => {
@@ -129,6 +135,9 @@ class TransferDomainPrecheck extends React.Component {
 		} else if ( false === unlocked ) {
 			heading = translate( 'Unlock the domain.' );
 		}
+		if ( loading ) {
+			heading = translate( 'Checking domain lock status.' );
+		}
 
 		let message = translate(
 			"{{notice}}We couldn't get the lock status of your domain from your current registrar.{{/notice}} If you're sure your " +
@@ -168,6 +177,10 @@ class TransferDomainPrecheck extends React.Component {
 					},
 				}
 			);
+		}
+
+		if ( loading ) {
+			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 
 		const buttonText = translate( "I've unlocked my domain" );

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, noop } from 'lodash';
+import { endsWith, get, isEmpty, isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import qs from 'qs';
@@ -42,15 +42,15 @@ class TransferDomainStep extends React.Component {
 		analyticsSection: PropTypes.string.isRequired,
 		basePath: PropTypes.string,
 		cart: PropTypes.object,
-		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		domainsWithPlansOnly: PropTypes.bool,
 		goBack: PropTypes.func,
 		initialQuery: PropTypes.string,
 		isSignupStep: PropTypes.bool,
-		onRegisterDomain: PropTypes.func.isRequired,
+		onRegisterDomain: PropTypes.func,
 		onTransferDomain: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
-		products: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		forcePrecheck: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -64,17 +64,22 @@ class TransferDomainStep extends React.Component {
 		return {
 			domain: null,
 			inboundTransferStatus: {},
-			precheck: false,
+			precheck: get( this.props, 'forcePrecheck', false ),
 			searchQuery: this.props.initialQuery || '',
 			submittingAvailability: false,
-			submittingWhois: false,
+			submittingWhois: get( this.props, 'forcePrecheck', false ),
 			supportsPrivacy: false,
+			domainsWithPlansOnly: false,
 		};
 	}
 
 	componentWillMount() {
 		if ( this.props.initialState ) {
 			this.setState( Object.assign( {}, this.props.initialState, this.getDefaultState() ) );
+		}
+
+		if ( this.props.forcePrecheck && isEmpty( this.inboundTransferStatus ) ) {
+			this.getInboundTransferStatus();
 		}
 	}
 
@@ -205,18 +210,18 @@ class TransferDomainStep extends React.Component {
 	}
 
 	getTransferDomainPrecheck() {
-		const { inboundTransferStatus, submittingWhois } = this.state;
+		const { domain, inboundTransferStatus, submittingWhois, searchQuery } = this.state;
 
 		return (
 			<TransferDomainPrecheck
-				domain={ this.state.domain }
+				domain={ domain || searchQuery }
 				email={ inboundTransferStatus.email }
 				loading={ submittingWhois }
 				losingRegistrar={ inboundTransferStatus.losingRegistrar }
 				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
 				privacy={ inboundTransferStatus.privacy }
 				refreshStatus={ this.getInboundTransferStatus }
-				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
+				selectedSiteId={ get( this.props, 'selectedSite.ID', null ) }
 				setValid={ this.props.onTransferDomain }
 				supportsPrivacy={ this.state.supportsPrivacy }
 				unlocked={ inboundTransferStatus.unlocked }
@@ -296,7 +301,8 @@ class TransferDomainStep extends React.Component {
 
 	domainRegistrationUpsell() {
 		const { suggestion } = this.state;
-		if ( ! suggestion ) {
+		const { onRegisterDomain } = this.props;
+		if ( ! suggestion || ! onRegisterDomain ) {
 			return;
 		}
 
@@ -365,7 +371,7 @@ class TransferDomainStep extends React.Component {
 				} );
 
 				if ( this.props.isSignupStep && ! this.transferIsRestricted() ) {
-					this.props.onTransferDomain( domain );
+					this.props.onTransferDomain( { domain } );
 				}
 			}
 		);
@@ -471,7 +477,7 @@ class TransferDomainStep extends React.Component {
 					},
 				} );
 
-				if ( callback ) {
+				if ( isFunction( callback ) ) {
 					callback();
 				}
 			}
