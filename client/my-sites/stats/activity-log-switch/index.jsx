@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -75,10 +74,7 @@ class ActivityLogSwitch extends Component {
 	}
 
 	render() {
-		if (
-			'vp_active_on_site' === this.props.failureReason ||
-			includes( [ 'uninitialized', 'active', 'provisioning' ], this.props.rewindState )
-		) {
+		if ( 'vp_active_on_site' === this.props.failureReason || 'uninitialized' === this.props.rewindState ) {
 			return false;
 		}
 
