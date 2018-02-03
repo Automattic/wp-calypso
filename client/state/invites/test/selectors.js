@@ -130,13 +130,13 @@ describe( 'selectors', () => {
 			);
 		} );
 
-		test( 'should return null when invites do not exist for site', () => {
+		test( 'should return undefined when invites do not exist for site', () => {
 			const state = {
 				invites: {
 					items: {},
 				},
 			};
-			expect( getSelectedInvite( state, 12345, '123456asdf789' ) ).to.equal( null );
+			expect( getSelectedInvite( state, 12345, '123456asdf789' ) ).to.equal( undefined );
 		} );
 	} );
 

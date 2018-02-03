@@ -3,7 +3,12 @@
 /**
  * External dependencies
  */
-import { get, findIndex } from 'lodash';
+import { get, find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import treeSelect from 'lib/tree-select';
 
 /**
  * Returns true if currently requesting invites for the given site, or false
@@ -54,11 +59,12 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  * @param  {String}  inviteId Invite ID
  * @return {Object}           Invite object
  */
-export function getSelectedInvite( state, siteId, inviteId ) {
-	const siteInvites = getInvitesForSite( state, siteId );
-	const selectedIndex = findIndex( siteInvites, [ 'key', inviteId ] );
-	return get( state, [ 'invites', 'items', siteId, selectedIndex ], null );
-}
+export const getSelectedInvite = treeSelect(
+	( state, siteId ) => [ state.invites.items[ siteId ] ],
+	( [ siteInvites ], siteId, inviteId ) => {
+		return find( siteInvites, { key: inviteId } );
+	}
+);
 
 /**
  * Returns true if currently requesting an invite resend for the given site and
