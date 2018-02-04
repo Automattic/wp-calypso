@@ -33,6 +33,7 @@ import { login } from 'lib/paths';
 import formState from 'lib/form-state';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
@@ -105,6 +106,10 @@ class SignupForm extends Component {
 			fieldValue: this.props.suggestedUsername || '',
 		} );
 	}
+
+	recordBackLinkClick = () => {
+		analytics.tracks.recordEvent( 'calypso_signup_back_link_click' );
+	};
 
 	componentWillMount() {
 		debug( 'Mounting the SignupForm React component.' );
@@ -578,6 +583,12 @@ class SignupForm extends Component {
 				<LoggedOutFormLinkItem href={ logInUrl }>
 					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
+				{ this.props.oauth2Client && (
+					<LoggedOutFormBackLink
+						oauth2Client={ this.props.oauth2Client }
+						recordClick={ this.recordBackLinkClick }
+					/>
+				) }
 			</LoggedOutFormLinks>
 		);
 	}
