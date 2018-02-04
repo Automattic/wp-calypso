@@ -189,7 +189,7 @@ class SourcePaymentBox extends PureComponent {
 			);
 		}
 
-		if ( 'sepa-debit' === this.props.paymentType ) {
+		if ( 'sepa_debit' === this.props.paymentType ) {
 			return (
 				<Input
 					additionalClasses="checkout-field"
@@ -202,7 +202,7 @@ class SourcePaymentBox extends PureComponent {
 	}
 
 	rederSepaMandate() {
-		if ( 'sepa-debit' === this.props.paymentType ) {
+		if ( 'sepa_debit' === this.props.paymentType ) {
 			return (
 				<div className="checkout__checkout-terms">
 					<Gridicon icon="info-outline" size={ 18 } />

@@ -147,7 +147,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'en-DE should return CC, Sepa, GiroPay, Paypal', () => {
 		expect( getCurrentUserPaymentMethods( enLangDeCountryState ) ).to.eql( [
 			'credit-card',
-			'sepa-debit',
+			'sepa_debit',
 			'giropay',
 			'paypal',
 		] );
@@ -156,7 +156,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'de-DE should return CC, Sepa, Giropay, Paypal', () => {
 		expect( getCurrentUserPaymentMethods( deLangDeCountryState ) ).to.eql( [
 			'credit-card',
-			'sepa-debit',
+			'sepa_debit',
 			'giropay',
 			'paypal',
 		] );
@@ -173,7 +173,7 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 	test( 'nl-NL should return credit card, iDEAL, Sepa, PayPal ', () => {
 		expect( getCurrentUserPaymentMethods( nlCountryState ) ).to.eql( [
 			'credit-card',
-			'sepa-debit',
+			'sepa_debit',
 			'ideal',
 			'paypal',
 		] );

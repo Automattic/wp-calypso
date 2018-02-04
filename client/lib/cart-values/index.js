@@ -155,7 +155,7 @@ function paymentMethodClassName( method ) {
 		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
 		paypal: 'WPCOM_Billing_PayPal_Express',
 		p24: 'WPCOM_Billing_Stripe_Source_P24',
-		'sepa-debit': 'WPCOM_Billing_Stripe_Source_Sepa_Debit',
+		sepa_debit: 'WPCOM_Billing_Stripe_Source_Sepa_Debit',
 	};
 
 	return paymentMethodsClassNames[ method ] || '';
@@ -177,7 +177,7 @@ function paymentMethodName( method ) {
 		ideal: 'iDEAL',
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
-		'sepa-debit': i18n.translate( 'SEPA Direct Debit' ),
+		sepa_debit: i18n.translate( 'SEPA Direct Debit' ),
 	};
 
 	return paymentMethodsNames[ method ] || method;

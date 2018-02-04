@@ -309,7 +309,7 @@ const SecurePaymentForm = createReactClass( {
 			case 'giropay':
 			case 'ideal':
 			case 'p24':
-			case 'sepa-debit':
+			case 'sepa_debit':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }
