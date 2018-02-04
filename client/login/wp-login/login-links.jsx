@@ -122,14 +122,13 @@ export class LoginLinks extends React.Component {
 		}
 
 		return (
-			<a
-				href="#"
+			<button
 				key="lost-phone-link"
 				data-e2e-link="lost-phone-link"
 				onClick={ this.handleLostPhoneLinkClick }
 			>
 				{ this.props.translate( "I can't access my phone" ) }
-			</a>
+			</button>
 		);
 	}
 

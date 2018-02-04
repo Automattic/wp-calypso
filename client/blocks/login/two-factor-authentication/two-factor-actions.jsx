@@ -64,17 +64,17 @@ class TwoFactorActions extends Component {
 
 				{ isSmsAvailable && (
 					<p>
-						<a href="#" data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
+						<button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
 							{ translate( 'Code via text message' ) }
-						</a>
+						</button>
 					</p>
 				) }
 
 				{ isAuthenticatorAvailable && (
 					<p>
-						<a href="#" data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
+						<button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
 							{ translate( 'Your authenticator app' ) }
-						</a>
+						</button>
 					</p>
 				) }
 			</Card>

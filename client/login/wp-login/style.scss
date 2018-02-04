@@ -23,19 +23,23 @@ $image-height: 47px;
 
 .wp-login__links,
 .wp-login__footer {
-	a {
+	a, button {
 		color: darken( $gray, 20% );
 		text-decoration: none;
 	}
 }
 
 .wp-login__links {
-	a {
+	a, button {
 		border-bottom: 1px solid lighten( $gray, 20% );
+		box-sizing: border-box;
+		cursor: pointer;
 		display: block;
 		font-weight: 500;
 		line-height: 4em;
 		padding: 0 24px;
+		text-align: left;
+		width: 100%;
 	}
 
 	a:last-of-type {
