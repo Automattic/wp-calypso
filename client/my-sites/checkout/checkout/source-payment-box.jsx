@@ -22,6 +22,7 @@ import wpcom from 'lib/wp';
 import notices from 'notices';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
+import Gridicon from 'gridicons';
 
 class SourcePaymentBox extends PureComponent {
 	static propTypes = {
@@ -200,6 +201,24 @@ class SourcePaymentBox extends PureComponent {
 		}
 	}
 
+	rederSepaMandate() {
+		if ( 'sepa-debit' === this.props.paymentType ) {
+			return (
+				<div className="checkout__checkout-terms">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>{ translate(
+						'By providing your IBAN and confirming this payment,' +
+						' you are authorizing WordPress.com and Stripe, our payment service provider,' +
+						' to send instructions to your bank to debit your account and your bank to debit' +
+						' your account in accordance with those instructions.' +
+						' You are entitled to a refund from your bank under the terms and conditions of your agreement with your bank.' +
+						' A refund must be claimed within 8 weeks starting from the date on which your account was debited.' ) }
+						</p>
+				</div>
+			);
+		}
+	}
+
 	render() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
@@ -217,6 +236,8 @@ class SourcePaymentBox extends PureComponent {
 
 					{ this.renderAdditionalFields() }
 				</div>
+
+				{ this.rederSepaMandate() }
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
