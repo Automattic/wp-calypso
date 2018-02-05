@@ -86,32 +86,34 @@ class ActivityLogSwitch extends Component {
 
 		return (
 			<Card className="activity-log-switch">
-				<h2 className="activity-log-switch__heading">
-					{ translate( "Welcome to Jetpack's new backups and security" ) }
-				</h2>
-				<img src="/calypso/images/illustrations/security.svg" alt="" />
-				<p className="activity-log-switch__intro">
-					{ translate(
-						'Backing up and securing your site should be a breeze. ' +
-						"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
-					) }
-				</p>
-				{ this.getMainButton() }
-				<div>
-					<a
-						className="activity-log-switch__no-thanks"
-						href={ `//${ siteSlug }${ redirect }` }>
-						{ translate( 'No thanks' ) }
-					</a>
+				<div className="activity-log-switch__header">
+					<h2 className="activity-log-switch__header-header">
+						{ translate( "Welcome to Jetpack's new backups and security" ) }
+					</h2>
+					<img src="/calypso/images/illustrations/security.svg" alt="" />
+					<p className="activity-log-switch__header-text">
+						{ translate(
+							'Backing up and securing your site should be a breeze. ' +
+							"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
+						) }
+					</p>
+					{ this.getMainButton() }
+					<div>
+						<a
+							className="activity-log-switch__no-thanks"
+							href={ `//${ siteSlug }${ redirect }` }>
+							{ translate( 'No thanks' ) }
+						</a>
+					</div>
 				</div>
-				<h3 className="activity-log-switch__heading-more">
+				<h3 className="activity-log-switch__features-header">
 					{ translate( 'What else can it do?' ) }
 				</h3>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( 'Rewind to any event' ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( 'Rewind to any event' ) }
-						</h4>
 						<p>
 							{ translate(
 								'As soon as you switch over, we will start tracking every change made ' +
@@ -121,13 +123,13 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/backup.svg" alt="" />
+					<img className="activity-log-switch__img is-backup" src="/calypso/images/illustrations/backup.svg" alt="" />
 				</Card>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( "Stay on top of your site's security" ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( "Stay on top of your site's security" ) }
-						</h4>
 						<p>
 							{ translate(
 								'When something happens to your website you want to know it immediately. ' +
@@ -135,13 +137,17 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/security-issue.svg" alt="" />
+
+					<img
+						className="activity-log-switch__img is-security-issue"
+						src="/calypso/images/illustrations/security-issue.svg"
+						alt="" />
 				</Card>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( 'Log all events on your site' ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( 'Log all events on your site' ) }
-						</h4>
 						<p>
 							{ translate(
 								'Access a new, streamlined history of events on your site—from published posts to user-role changes. ' +
@@ -149,7 +155,7 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/stats.svg" alt="" />
+					<img className="activity-log-switch__img is-stats" src="/calypso/images/illustrations/stats.svg" alt="" />
 				</Card>
 			</Card>
 		);
