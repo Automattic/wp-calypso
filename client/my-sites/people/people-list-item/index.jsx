@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -79,27 +80,31 @@ class PeopleListItem extends React.PureComponent {
 		this.props.resendInvite( siteId, inviteKey );
 	};
 
-	renderInviteActions = () => {
+	renderInviteStatus = () => {
 		const { invite, translate, requestingResend, resendSuccess } = this.props;
 		const { isPending } = invite;
-
-		if ( ! isPending ) {
-			return null;
-		}
-
+		const className = classNames( 'people-list-item__invite-status', {
+			'is-pending': isPending,
+		} );
 		const buttonClassName = classNames( 'people-list-item__invite-resend', {
 			'is-success': resendSuccess,
 		} );
 
 		return (
-			<Button
-				className={ buttonClassName }
-				onClick={ this.onResend }
-				busy={ requestingResend }
-				compact
-			>
-				{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
-			</Button>
+			<div className={ className }>
+				{ ! isPending && <Gridicon icon="checkmark" size={ 18 } /> }
+				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
+				{ isPending && (
+					<Button
+						className={ buttonClassName }
+						onClick={ this.onResend }
+						busy={ requestingResend }
+						compact
+					>
+						{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
+					</Button>
+				) }
+			</div>
 		);
 	};
 
@@ -120,7 +125,7 @@ class PeopleListItem extends React.PureComponent {
 					<PeopleProfile invite={ invite } type={ type } user={ user } />
 				</div>
 
-				{ isInvite && this.renderInviteActions() }
+				{ isInvite && this.renderInviteStatus() }
 
 				{ onRemove && (
 					<div className="people-list-item__actions">

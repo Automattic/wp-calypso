@@ -107,12 +107,12 @@
 
 .people-list-item__invite-resend {
 	display: none;
-	min-width: 95px;
 	height: 30px;
 	margin-left: 12px;
-	margin-right: 30px;
 	align-self: center;
 	vertical-align: baseline;
+
+	min-width: 100px; // So success notice matches width of the button
 
 	@include breakpoint( '>480px' ) {
 		display: inline-block;
