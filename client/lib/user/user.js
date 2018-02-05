@@ -63,18 +63,20 @@ User.prototype.initialize = function() {
 	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		const bootstrappedData = window.currentUser || false;
+		this.data = window.currentUser || false;
+		debug( 'Bootstrapping user data:', this.data );
 
 		// Store the current user in localStorage so that we can use it to determine
 		// if the logged in user has changed when initializing in the future
-		if ( bootstrappedData ) {
-			this.handleFetchSuccess( bootstrappedData );
+		if ( this.data ) {
+			this.handleFetchSuccess( this.data );
 		}
 		this.initialized = true;
 		return;
 	}
 
 	this.data = store.get( 'wpcom_user' ) || false;
+	debug( 'User bootstrap disabled, checking localStorage:', this.data );
 
 	if ( this.data ) {
 		this.initialized = true;
