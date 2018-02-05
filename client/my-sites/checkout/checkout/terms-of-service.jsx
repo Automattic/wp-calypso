@@ -38,7 +38,14 @@ class TermsOfService extends React.Component {
 				'By checking out, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
 				{
 					components: {
-						tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+						tosLink: (
+							<a
+								href="//wordpress.com/tos/"
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.recordTermsAndConditionsClick }
+							/>
+						),
 						autoRenewalSupportPage: (
 							<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
 						),
@@ -55,7 +62,7 @@ class TermsOfService extends React.Component {
 
 	render() {
 		return (
-			<div className="checkout-terms" onClick={ this.recordTermsAndConditionsClick }>
+			<div className="checkout__checkout-terms">
 				<Gridicon icon="info-outline" size={ 18 } />
 				<p>{ this.renderTerms() }</p>
 			</div>

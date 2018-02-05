@@ -22,6 +22,7 @@ import wpcom from 'lib/wp';
 import notices from 'notices';
 import FormSelect from 'components/forms/form-select';
 import FormLabel from 'components/forms/form-label';
+import Gridicon from 'gridicons';
 
 class SourcePaymentBox extends PureComponent {
 	static propTypes = {
@@ -29,11 +30,12 @@ class SourcePaymentBox extends PureComponent {
 		cart: PropTypes.object.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 	}
 
 	constructor() {
 		super();
-		this.redirectToPayment = this.redirectToPayment.bind( this );
+		this.makePayment = this.makePayment.bind( this );
 		this.handleChange = this.handleChange.bind( this );
 	}
 
@@ -65,7 +67,7 @@ class SourcePaymentBox extends PureComponent {
 		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
-	redirectToPayment( event ) {
+	makePayment( event ) {
 		const origin = this.getLocationOrigin( location );
 		event.preventDefault();
 
@@ -75,6 +77,7 @@ class SourcePaymentBox extends PureComponent {
 			disabled: true
 		} );
 
+		const successUrl = origin + this.props.redirectTo();
 		let cancelUrl = origin + '/checkout/';
 
 		if ( this.props.selectedSite ) {
@@ -86,7 +89,7 @@ class SourcePaymentBox extends PureComponent {
 		const dataForApi = {
 			payment: assign( {}, this.state, {
 				paymentMethod: this.paymentMethodByType( this.props.paymentType ),
-				successUrl: origin + this.props.redirectTo(),
+				successUrl,
 				cancelUrl,
 			} ),
 			cart: this.props.cart,
@@ -115,6 +118,9 @@ class SourcePaymentBox extends PureComponent {
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
 				analytics.tracks.recordEvent( 'calypso_checkout_with_source_' + this.props.paymentType );
 				location.href = result.redirect_url;
+			} else {
+				// SUCCESS
+				this.props.handleCheckoutCompleteRedirect();
 			}
 		}.bind( this ) );
 	}
@@ -182,6 +188,35 @@ class SourcePaymentBox extends PureComponent {
 					eventFormName="Checkout Form" />
 			);
 		}
+
+		if ( 'sepa_debit' === this.props.paymentType ) {
+			return (
+				<Input
+					additionalClasses="checkout-field"
+					name="iban"
+					onChange={ this.handleChange }
+					label={ translate( 'IBAN (International Bank Account Number)' ) }
+					eventFormName="Checkout Form" />
+			);
+		}
+	}
+
+	rederSepaMandate() {
+		if ( 'sepa_debit' === this.props.paymentType ) {
+			return (
+				<div className="checkout__checkout-terms">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>{ translate(
+						'By providing your IBAN and confirming this payment,' +
+						' you are authorizing WordPress.com and Stripe, our payment service provider,' +
+						' to send instructions to your bank to debit your account and your bank to debit' +
+						' your account in accordance with those instructions.' +
+						' You are entitled to a refund from your bank under the terms and conditions of your agreement with your bank.' +
+						' A refund must be claimed within 8 weeks starting from the date on which your account was debited.' ) }
+						</p>
+				</div>
+			);
+		}
 	}
 
 	render() {
@@ -189,7 +224,7 @@ class SourcePaymentBox extends PureComponent {
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
-			<form onSubmit={ this.redirectToPayment }>
+			<form onSubmit={ this.makePayment }>
 
 				<div className="checkout__payment-box-section">
 					<Input
@@ -201,6 +236,8 @@ class SourcePaymentBox extends PureComponent {
 
 					{ this.renderAdditionalFields() }
 				</div>
+
+				{ this.rederSepaMandate() }
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />

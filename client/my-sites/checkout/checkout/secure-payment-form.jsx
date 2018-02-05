@@ -243,6 +243,7 @@ const SecurePaymentForm = createReactClass( {
 					selectedSite={ this.props.selectedSite }
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
+					handleCheckoutCompleteRedirect={ this.props.handleCheckoutCompleteRedirect }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
 				/>
 			</PaymentBox>
@@ -308,6 +309,7 @@ const SecurePaymentForm = createReactClass( {
 			case 'giropay':
 			case 'ideal':
 			case 'p24':
+			case 'sepa_debit':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }

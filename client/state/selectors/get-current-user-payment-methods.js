@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { lowerCase, upperCase } from 'lodash';
+import { lowerCase, upperCase, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,27 @@ import { getGeoCountryShort } from 'state/geo/selectors';
  * two letter lang code really). Return value precedence is in that order.
  */
 const DEFAULT_PAYMENT_METHODS = [ 'credit-card', 'paypal' ];
+const SEPA_COUNTRIES = [
+	'AT',
+	'BE',
+	'CY',
+	'EE',
+	'FI',
+	'FR',
+	'DE',
+	'GR',
+	'IE',
+	'IT',
+	'LV',
+	'LT',
+	'LU',
+	'MT',
+	'NL',
+	'PT',
+	'SK',
+	'SI',
+	'ES',
+];
 
 const paymentMethods = {
 	byLocale: {},
@@ -48,9 +69,14 @@ export default function getCurrentUserPaymentMethods( state ) {
 	const wpcomLang = getCurrentUserLocale( state );
 	const generatedLocale = lowerCase( wpcomLang ) + '-' + upperCase( countryCode );
 
-	return (
-		paymentMethods.byLocale[ generatedLocale ] ||
+	const userPaymentMethods = paymentMethods.byLocale[ generatedLocale ] ||
 		paymentMethods.byCountry[ countryCode ] ||
-		paymentMethods.byWpcomLang[ wpcomLang ] || [ ...DEFAULT_PAYMENT_METHODS ]
-	);
+		paymentMethods.byWpcomLang[ wpcomLang ] || [ ...DEFAULT_PAYMENT_METHODS ];
+
+	// Inject sepa_debit into 2nd position for relevant countries
+	if ( includes( SEPA_COUNTRIES, countryCode ) && ! includes( userPaymentMethods, 'sepa_debit' ) ) {
+		userPaymentMethods.splice( 1, 0, 'sepa_debit' );
+	}
+
+	return userPaymentMethods;
 }

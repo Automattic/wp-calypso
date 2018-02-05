@@ -8,7 +8,7 @@
 	width: 35px;
 
 	$cc-payment-types: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
-	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24';
+	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24', 'sepa_debit';
 
 	@each $type in $cc-payment-types {
 		&.is-#{$type} {
@@ -57,5 +57,11 @@
 		height: 20px;
 		background-size: 70px auto;
 		width: 70px;
+	}
+
+	&.is-sepa_debit {
+		background-size: 60px auto;
+		width: 60px;
+		height: 20px;
 	}
 }

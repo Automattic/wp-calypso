@@ -230,7 +230,7 @@
 	// Payment Boxes
 	// =============================================
 
-	.checkout-terms {
+	.checkout__checkout-terms {
 		color: darken( $gray, 10% );
 		margin: 16px 0;
 		padding: 0;
@@ -946,7 +946,7 @@
 		width: 100px;
 	}
 
-	.checkout__eps{
+	.checkout__sepa_debit, .checkout__eps{
 		width: 70px;
 		margin: -10px 0;
 	}

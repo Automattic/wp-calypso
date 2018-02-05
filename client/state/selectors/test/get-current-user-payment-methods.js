@@ -144,33 +144,37 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		] );
 	} );
 
-	test( 'en-DE should return CC, GiroPay, Paypal', () => {
+	test( 'en-DE should return CC, Sepa, GiroPay, Paypal', () => {
 		expect( getCurrentUserPaymentMethods( enLangDeCountryState ) ).to.eql( [
 			'credit-card',
+			'sepa_debit',
 			'giropay',
 			'paypal',
 		] );
 	} );
 
-	test( 'de-DE should return CC, Giropay, Paypal', () => {
+	test( 'de-DE should return CC, Sepa, Giropay, Paypal', () => {
 		expect( getCurrentUserPaymentMethods( deLangDeCountryState ) ).to.eql( [
 			'credit-card',
+			'sepa_debit',
 			'giropay',
 			'paypal',
 		] );
 	} );
 
-	test( 'de-AT should return CC, EPS, Paypal', () => {
+	test( 'de-AT should return CC, Sepa, EPS, Paypal', () => {
 		expect( getCurrentUserPaymentMethods( deLangAtCountryState ) ).to.eql( [
 			'credit-card',
+			'sepa_debit',
 			'eps',
 			'paypal',
 		] );
 	} );
 
-	test( 'nl-NL should return credit card, iDEAL, PayPal ', () => {
+	test( 'nl-NL should return credit card, iDEAL, Sepa, PayPal ', () => {
 		expect( getCurrentUserPaymentMethods( nlCountryState ) ).to.eql( [
 			'credit-card',
+			'sepa_debit',
 			'ideal',
 			'paypal',
 		] );
@@ -184,9 +188,10 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		] );
 	} );
 
-	test( 'fr-FR should return credit card primary, PayPal secondary', () => {
+	test( 'fr-FR should return credit card, sepa, paypal', () => {
 		expect( getCurrentUserPaymentMethods( frLangFRCountryState ) ).to.eql( [
 			'credit-card',
+			'sepa_debit',
 			'paypal',
 		] );
 	} );
