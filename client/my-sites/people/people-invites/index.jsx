@@ -83,9 +83,7 @@ class PeopleInvites extends React.PureComponent {
 						<Card>{ pendingInvites.map( this.renderInvite ) }</Card>
 					</div>
 				) : (
-					<div className="people-invites__pending">
-						{ this.renderInviteUsersAction( false ) }
-					</div>
+					<div className="people-invites__pending">{ this.renderInviteUsersAction( false ) }</div>
 				) }
 
 				{ hasAcceptedInvites && (
@@ -107,9 +105,7 @@ class PeopleInvites extends React.PureComponent {
 	}
 
 	renderEmptyContent() {
-		return (
-			<EmptyContent title={ null } action={ this.renderInviteUsersAction() } />
-		);
+		return <EmptyContent title={ null } action={ this.renderInviteUsersAction() } />;
 	}
 
 	renderInviteUsersAction( isPrimary = true ) {
@@ -120,10 +116,7 @@ class PeopleInvites extends React.PureComponent {
 				<div className="people-invites__invite-users-message">
 					{ translate( 'Invite people to follow your site or help you manage it.' ) }
 				</div>
-				<Button
-					primary={ isPrimary }
-					href={ `/people/new/${ site.slug }` }
-				>
+				<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
 					<Gridicon icon="user-add" />
 					{ translate( 'Invite user', { context: 'button label' } ) }
 				</Button>
