@@ -11,7 +11,7 @@ import {
 	WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG,
 	WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG,
 } from '../action-types';
-import { getLabelSettingsForm, getLabelSettingsFormData } from './selectors';
+import { getLabelSettingsFormData } from './selectors';
 
 export const initForm = ( siteId, storeOptions, formData, formMeta ) => {
 	return {
@@ -39,12 +39,7 @@ export const setFormMetaProperty = ( siteId, key, value ) => {
 	};
 };
 
-export const fetchSettings = siteId => ( dispatch, getState ) => {
-	const form = getLabelSettingsForm( getState(), siteId );
-
-	if ( form && ( form.data || form.meta.isFetching ) ) {
-		return;
-	}
+export const fetchSettings = siteId => dispatch => {
 	dispatch( setFormMetaProperty( siteId, 'isFetching', true ) );
 
 	api

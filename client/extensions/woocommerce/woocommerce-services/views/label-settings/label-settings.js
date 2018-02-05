@@ -24,9 +24,10 @@ import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
-import { openAddCardDialog } from 'woocommerce/woocommerce-services/state/label-settings/actions';
+import { openAddCardDialog, fetchSettings } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import {
 	areSettingsFetching,
+	areSettingsLoaded,
 	getEmailReceipts,
 	getLabelSettingsStoreOptions,
 	getMasterUserInfo,
@@ -43,6 +44,7 @@ import AddCardDialog from './add-credit-card-modal';
 class ShippingLabels extends Component {
 	componentWillMount() {
 		this.setState( { expanded: this.isExpanded( this.props ) } );
+		this.onVisibilityChange = this.onVisibilityChange.bind( this );
 	}
 
 	componentWillReceiveProps( props ) {
@@ -129,12 +131,22 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	onVisibilityChange = () => {
+		if ( ! document.hidden ) {
+			this.props.fetchSettings( this.props.siteId );
+		}
+		if ( this.addCreditCardWindow && this.addCreditCardWindow.closed ) {
+			document.removeEventListener( 'visibilitychange', this.onVisibilityChange );
+		}
+	};
+
 	renderPaymentsSection = () => {
 		const {
 			siteId,
 			canEditPayments,
 			paymentMethods,
 			selectedPaymentMethod,
+			isReloading,
 			translate,
 		} = this.props;
 
@@ -210,6 +222,11 @@ class ShippingLabels extends Component {
 
 		const openDialog = () => {
 			this.props.openAddCardDialog( siteId );
+		}
+
+		const onAddCardExternal = () => {
+			this.addCreditCardWindow = window.open( getOrigin() + '/me/purchases/add-credit-card' );
+			document.addEventListener( 'visibilitychange', this.onVisibilityChange );
 		};
 
 		return (
@@ -217,21 +234,19 @@ class ShippingLabels extends Component {
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
 
+				{ ! isReloading ? null : (
+					<div className="label-settings__placeholder">
+						<PaymentMethod selected={ false } isLoading={ true } />
+					</div>
+				) }
 				<QueryStoredCards />
 				{ paymentMethods.map( renderPaymentMethod ) }
 
 				<AddCardDialog siteId={ siteId } />
-				<Button onClick={ openDialog } compact>
-					{ buttonLabel }
-				</Button>
+				<Button onClick={ openDialog } compact>{ buttonLabel }</Button>
 
 				{ /* Render hidden button with external href to be shown with CSS in wp-admin only. */ }
-				<Button
-					className="label-settings__external"
-					href={ getOrigin() + '/me/purchases/add-credit-card' }
-					target="_blank"
-					compact
-				>
+				<Button className="label-settings__external" onClick={ onAddCardExternal } compact>
 					{ buttonLabel } <Gridicon icon="external" />
 				</Button>
 			</div>
@@ -334,7 +349,8 @@ ShippingLabels.propTypes = {
 export default connect(
 	( state, { siteId } ) => {
 		return {
-			isLoading: areSettingsFetching( state, siteId ),
+			isLoading: areSettingsFetching( state, siteId ) && ! areSettingsLoaded( state, siteId ),
+			isReloading: areSettingsFetching( state, siteId ) && areSettingsLoaded( state, siteId ),
 			pristine: isPristine( state, siteId ),
 			paymentMethods: getPaymentMethods( state, siteId ),
 			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
@@ -351,6 +367,7 @@ export default connect(
 		bindActionCreators(
 			{
 				openAddCardDialog,
+				fetchSettings,
 			},
 			dispatch
 		)
