@@ -224,6 +224,8 @@ class ShippingLabels extends Component {
 				<Button onClick={ openDialog } compact>
 					{ buttonLabel }
 				</Button>
+
+				{ /* Render hidden button with external href to be shown with CSS in wp-admin only. */ }
 				<Button
 					className="label-settings__external"
 					href={ getOrigin() + '/me/purchases/add-credit-card' }
