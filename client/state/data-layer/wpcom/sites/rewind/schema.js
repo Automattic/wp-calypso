@@ -4,7 +4,7 @@ export const credential = {
 	type: 'object',
 	properties: {
 		still_valid: { type: 'boolean' },
-		type: { type: 'string', enum: [ 'auto', 'ftp', 'sftp', 'ssh' ] },
+		type: { type: 'string', enum: [ 'auto', 'ftp', 'ssh' ] },
 		host: { type: 'string' },
 		path: { type: 'string' },
 		port: { type: 'integer' },
