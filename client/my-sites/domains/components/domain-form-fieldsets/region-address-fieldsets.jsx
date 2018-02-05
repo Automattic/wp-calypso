@@ -68,14 +68,14 @@ export class RegionAddressFieldsets extends Component {
 						ref={ shouldAutoFocusAddressField ? this.inputRefCallback : noop }
 						label={ translate( 'Address' ) }
 						maxLength={ 40 }
-						{ ...getFieldProps( 'address-1', true ) }
+						{ ...getFieldProps( 'address1', true ) }
 					/>
 
 					<HiddenInput
 						label={ translate( 'Address Line 2' ) }
 						text={ translate( '+ Add Address Line 2' ) }
 						maxLength={ 40 }
-						{ ...getFieldProps( 'address-2', true ) }
+						{ ...getFieldProps( 'address2', true ) }
 					/>
 				</div>
 				{ this.getRegionAddressFieldset() }

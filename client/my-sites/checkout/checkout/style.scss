@@ -427,7 +427,7 @@
 		}
 
 		.country,
-		.postal-code {
+		.postalCode {
 			margin-left: 15px;
 		}
 
@@ -441,7 +441,7 @@
 			}
 		}
 
-		.postal-code {
+		.postalCode {
 			flex-basis: 8em;
 			flex-grow: 2;
 			flex-shrink: 0;
@@ -541,12 +541,12 @@
 	//
 
 	.domain-details {
-		.first-name {
+		.firstName {
 			margin-top: 0;
 		}
 
 		@include breakpoint( '>660px' ) {
-			.last-name {
+			.lastName {
 				margin-top: 0;
 			}
 
@@ -556,21 +556,21 @@
 				width: 100%;
 			}
 
-			.last-name,
+			.lastName,
 			.phone,
-			.postal-code {
+			.postalCode {
 				float: right;
 			}
 
 			.email,
-			.first-name,
-			.last-name,
+			.firstName,
+			.lastName,
 			.phone {
 				width: calc( 50% - 7px );
 			}
 
 			.city,
-			.postal-code,
+			.postalCode,
 			.state {
 				width: calc( 33% - 8px );
 			}
@@ -590,7 +590,7 @@
 			}
 
 			.eu-address-fieldset {
-				.postal-code {
+				.postalCode {
 					 float: left;
 					 width: calc( 33% - 7px );
 				 }
@@ -602,7 +602,7 @@
 			}
 
 			.uk-address-fieldset {
-				.postal-code {
+				.postalCode {
 					width: calc( 33% - 7px );
 				}
 

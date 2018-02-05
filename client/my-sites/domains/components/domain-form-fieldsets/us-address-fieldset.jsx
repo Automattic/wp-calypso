@@ -23,7 +23,7 @@ const UsAddressFieldset = props => {
 				countryCode={ countryCode }
 				{ ...getFieldProps( 'state', true ) }
 			/>
-			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
+			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postalCode', true ) } />
 		</div>
 	);
 };
