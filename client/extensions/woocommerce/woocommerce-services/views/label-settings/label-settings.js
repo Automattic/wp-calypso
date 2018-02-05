@@ -130,7 +130,13 @@ class ShippingLabels extends Component {
 	};
 
 	renderPaymentsSection = () => {
-		const { canEditPayments, paymentMethods, selectedPaymentMethod, translate } = this.props;
+		const {
+			siteId,
+			canEditPayments,
+			paymentMethods,
+			selectedPaymentMethod,
+			translate,
+		} = this.props;
 
 		if ( ! this.state.expanded ) {
 			const expand = event => {
