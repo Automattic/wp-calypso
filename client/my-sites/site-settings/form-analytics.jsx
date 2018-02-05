@@ -60,7 +60,7 @@ class GoogleAnalyticsForm extends Component {
 	};
 
 	handleCodeChange = event => {
-		const code = event.target.value;
+		const code = event.target.value.trim();
 
 		this.setState( {
 			isCodeValid: validateGoogleAnalyticsCode( code ),
