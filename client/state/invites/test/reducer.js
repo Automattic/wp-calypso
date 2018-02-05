@@ -62,7 +62,7 @@ describe( 'reducer', () => {
 							role: 'follower',
 							is_pending: true,
 							invite_date: '2018-01-28T17:22:16+00:00',
-							accepted_date: '2018-01-28T17:22:20+00:00',
+							accepted_date: null,
 							user: {
 								login: 'chicken',
 								email: false,
@@ -81,12 +81,20 @@ describe( 'reducer', () => {
 							invite_key: 'jkl789asd12345',
 							role: 'subscriber',
 							is_pending: false,
+							invite_date: '2018-01-28T17:22:16+00:00',
+							accepted_date: '2018-01-28T17:22:20+00:00',
 							user: {
 								login: 'grilledchicken',
 								email: false,
 								name: 'Pollo Asado',
 								avatar_URL:
 									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+							},
+							invited_by: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
 							},
 						},
 					],
@@ -121,12 +129,20 @@ describe( 'reducer', () => {
 							key: 'jkl789asd12345',
 							role: 'subscriber',
 							isPending: false,
+							inviteDate: '2018-01-28T17:22:16+00:00',
+							acceptedDate: '2018-01-28T17:22:20+00:00',
 							user: {
 								login: 'grilledchicken',
 								email: false,
 								name: 'Pollo Asado',
 								avatar_URL:
 									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+							},
+							invitedBy: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
 							},
 						},
 					],
@@ -171,7 +187,7 @@ describe( 'reducer', () => {
 						role: 'follower',
 						is_pending: true,
 						invite_date: '2018-01-28T17:22:16+00:00',
-						accepted_date: '2018-01-28T17:22:20+00:00',
+						accepted_date: null,
 						user: {
 							login: 'celery',
 							email: false,
