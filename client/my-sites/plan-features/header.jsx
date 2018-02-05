@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { get, noop } from 'lodash';
@@ -35,7 +33,6 @@ import {
 	PLAN_PERSONAL,
 	getPlanClass,
 } from 'lib/plans/constants';
-import { abtest } from 'lib/abtest';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -102,8 +99,7 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ 'promoteYearly' === abtest( 'promoteYearlyJetpackPlanSavings' ) &&
-						this.getIntervalDiscount() }
+					{ this.getIntervalDiscount() }
 				</div>
 			</div>
 		);
