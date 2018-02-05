@@ -23,7 +23,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 		const { siteId } = this.props;
 
 		this.props.recordJpoEvent( 'calypso_jpo_homepage_format_clicked', {
-			homepageFormat,
+			homepage_format: homepageFormat,
 		} );
 
 		return () => {
