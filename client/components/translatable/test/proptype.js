@@ -44,8 +44,7 @@ describe( 'translatable proptype', () => {
 	} );
 
 	test( 'should fail on numbers', () => {
-		// should it fail on '0'?
-		// assertFails( translatableString, <legend translatableString={ 0 } /> );
+		assertFails( translatableString, <legend translatableString={ 0 } /> );
 		assertFails( translatableString, <legend translatableString={ 2 } /> );
 	} );
 
@@ -55,11 +54,16 @@ describe( 'translatable proptype', () => {
 	test( 'should fail on unexpected objects', () =>
 		assertFails( translatableString, <legend translatableString={ {} } /> ) );
 
-	it( 'should pass with valid value when required', () =>
+	it( 'should pass with valid value when required', () => {
 		assertPasses(
 			translatableString.isRequired,
 			<legend translatableString={ <Translatable /> } />
-		) );
+		);
+		assertPasses(
+			translatableString.isRequired,
+			<legend translatableString={ 'Los pollos hermanos' } />
+		);
+	} );
 
 	it( 'should fail when required', () => assertFails( translatableString.isRequired, <legend /> ) );
 } );

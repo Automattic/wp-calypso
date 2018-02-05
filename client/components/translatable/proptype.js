@@ -3,9 +3,9 @@
 function translatableStringChecker( props, propName, componentName ) {
 	componentName = componentName || 'ANONYMOUS';
 
-	if ( props[ propName ] ) {
-		const value = props[ propName ];
-		if ( 'string' === typeof props[ propName ] ) {
+	const value = props[ propName ];
+	if ( value !== undefined && value !== null ) {
+		if ( 'string' === typeof value ) {
 			return null;
 		}
 
@@ -37,7 +37,7 @@ function translatableStringChecker( props, propName, componentName ) {
 function createChainableTypeChecker( validate ) {
 	function checkType( isRequired, props, propName, componentName, location ) {
 		componentName = componentName || 'ANONYMOUS';
-		if ( props[ propName ] == null ) {
+		if ( props[ propName ] === undefined ) {
 			if ( isRequired ) {
 				return new Error(
 					'Required ' +
