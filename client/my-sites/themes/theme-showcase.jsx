@@ -5,11 +5,11 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize, translate } from 'i18n-calypso';
 import page from 'page';
-import { compact, pickBy, sample } from 'lodash';
+import { compact, pickBy, sample, curry } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -37,8 +37,8 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
-
 import { ThemesBanner } from './themes-banner';
+import { getThemeDetailsUrl } from 'state/themes/selectors';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -60,63 +60,87 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
-const PhotoBlogBanner = () => {
-	const onClick = () => {
-		alert( 'Photo Blog banner button clicked!' );
+class PhotoBlogBanner extends PureComponent {
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
 	};
-	return (
-		<ThemesBanner
-			title={ translate( 'Are you a photographer? An artist?' ) }
-			description={ translate(
-				'Explore {{b}}PHOTO BLOG{{/b}}, an elegant theme designed to showcase your visual masterpieces.',
-				{
-					components: {
-						b: <strong />,
-					},
-				}
-			) }
-			action={ onClick }
-			actionLabel={ translate( 'See the theme' ) }
-			backgroundColor={ '#3FE6AF' }
-			image={ '/calypso/images/themes-banner/photo-blog.png' }
-			imageTransform={ 'translateY(-4.4%) translateX(17%)' }
-			imageAttrs={ {
-				alt: translate( 'Photo Blog Theme' ),
-				width: 390,
-			} }
-		/>
-	);
-};
 
-const SmallBusinessBanner = () => {
-	const onClick = () => {
-		alert( 'Small Business banner button clicked!' );
+	onClick = () => {
+		const url = this.props.getBannerUrl( 'photo-blog', this.props.siteId );
+		recordTracksEvent( 'calypso_showcase_banner_photo_blog_click' );
+		page( url );
 	};
-	return (
-		<ThemesBanner
-			title={ translate( 'Do you run a small business?' ) }
-			description={ translate(
-				'We know you’re crunched for time. We created the quick-setup {{b}}SMALL BUSINESS{{/b}} theme just for you.',
-				{
-					components: {
-						b: <strong />,
-					},
-				}
-			) }
-			action={ onClick }
-			actionLabel={ translate( 'See the theme' ) }
-			backgroundColor={ '#3d596d' }
-			image={ '/calypso/images/themes-banner/small-business.png' }
-			imageTransform={ 'translateY(-19%) translateX(17%)' }
-			imageAttrs={ {
-				alt: translate( 'Small Business Theme' ),
-				width: 410,
-			} }
-		/>
-	);
-};
 
-const ShowcaseBanner = sample( [ PhotoBlogBanner, SmallBusinessBanner ] );
+	render() {
+		return (
+			<ThemesBanner
+				title={ translate( 'Are you a photographer? An artist?' ) }
+				description={ translate(
+					'Explore {{b}}PHOTO BLOG{{/b}}, an elegant theme designed to showcase your visual masterpieces.',
+					{
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+				action={ this.onClick }
+				actionLabel={ translate( 'See the theme' ) }
+				backgroundColor={ '#3FE6AF' }
+				image={ '/calypso/images/themes-banner/photo-blog.png' }
+				imageTransform={ 'translateY(-4.4%) translateX(17%)' }
+				imageAttrs={ {
+					alt: translate( 'Photo Blog Theme' ),
+					width: 390,
+				} }
+			/>
+		);
+	}
+}
+
+class SmallBusinessBanner extends PureComponent {
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+	};
+
+	onClick = () => {
+		const url = this.props.getBannerUrl( 'small-business', this.props.siteId );
+		recordTracksEvent( 'calypso_showcase_banner_small_business_click' );
+		page( url );
+	};
+
+	render() {
+		return (
+			<ThemesBanner
+				title={ translate( 'Do you run a small business?' ) }
+				description={ translate(
+					'We know you’re crunched for time. We created the quick-setup {{b}}SMALL BUSINESS{{/b}} theme just for you.',
+					{
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+				action={ this.onClick }
+				actionLabel={ translate( 'See the theme' ) }
+				backgroundColor={ '#3d596d' }
+				image={ '/calypso/images/themes-banner/small-business.png' }
+				imageTransform={ 'translateY(-19%) translateX(17%)' }
+				imageAttrs={ {
+					alt: translate( 'Small Business Theme' ),
+					width: 410,
+				} }
+			/>
+		);
+	}
+}
+
+const ShowcaseBanner = sample(
+	[ PhotoBlogBanner, SmallBusinessBanner ].map( component =>
+		connect( state => ( {
+			getBannerUrl: curry( getThemeDetailsUrl )( state ),
+		} ) )( component )
+	)
+);
 
 class ThemeShowcase extends React.Component {
 	static propTypes = {
@@ -275,7 +299,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<ShowcaseBanner />
+					<ShowcaseBanner siteId={ siteId } />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
