@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,7 @@ export class CommentView extends Component {
 		commentId: PropTypes.number.isRequired,
 		action: PropTypes.string,
 		canModerateComments: PropTypes.bool.isRequired,
+		hasPermalink: PropTypes.bool,
 		redirectToPostView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -43,6 +44,7 @@ export class CommentView extends Component {
 			commentId,
 			action,
 			canModerateComments,
+			hasPermalink,
 			redirectToPostView,
 			translate,
 		} = this.props;
@@ -82,7 +84,7 @@ export class CommentView extends Component {
 						isEditMode={ canModerateComments && 'edit' === action }
 					/>
 				) }
-				{ canModerateComments && <CommentPermalink { ...{ siteId, commentId } } /> }
+				{ canModerateComments && hasPermalink && <CommentPermalink { ...{ siteId, commentId } } /> }
 			</Main>
 		);
 	}
@@ -96,11 +98,13 @@ const mapStateToProps = ( state, ownProps ) => {
 	const postId = get( comment, 'post.ID' );
 
 	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' ) !== false;
+	const hasPermalink = includes( [ 'approved', 'unapproved' ], get( comment, 'status' ) );
 
 	return {
 		siteId,
 		postId,
 		canModerateComments,
+		hasPermalink,
 		redirectToPostView: redirectToPostView( postId ),
 	};
 };
