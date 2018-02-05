@@ -3,6 +3,8 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
+import lodash from 'lodash';
 
 /**
  * Internal dependencies
@@ -96,6 +98,14 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSelectedInvite()', () => {
+		beforeAll( () => {
+			sinon.spy( lodash, 'find' );
+		} );
+
+		afterEach( () => {
+			lodash.find.reset();
+		} );
+
 		test( 'should return invite', () => {
 			const state = {
 				invites: {
@@ -130,7 +140,7 @@ describe( 'selectors', () => {
 			);
 		} );
 
-		test( 'should return the same object given the same input', () => {
+		test( 'should memoize return values given the same input', () => {
 			const state = {
 				invites: {
 					items: {
@@ -159,9 +169,16 @@ describe( 'selectors', () => {
 					},
 				},
 			};
+			expect( lodash.find.callCount ).to.equal( 0 );
 			const call1 = getSelectedInvite( state, 12345, '123456asdf789' );
+			expect( lodash.find.callCount ).to.equal( 1 );
 			const call2 = getSelectedInvite( state, 12345, '123456asdf789' );
-			expect( call1 ).equal( call2 );
+			expect( lodash.find.callCount ).to.equal( 1 );
+			expect( call1 ).to.equal( call2 );
+			const newState = lodash.cloneDeep( state );
+			const call3 = getSelectedInvite( newState, 12345, '123456asdf789' );
+			expect( lodash.find.callCount ).to.equal( 2 );
+			expect( call3 ).not.to.equal( call2 );
 		} );
 
 		test( 'should return undefined when invites do not exist for site', () => {
