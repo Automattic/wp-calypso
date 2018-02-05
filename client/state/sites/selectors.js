@@ -293,6 +293,27 @@ export function getSiteTitle( state, siteId ) {
 }
 
 /**
+ * Returns the URL for a site, or null if the site is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}        Site Url
+ */
+export function getSiteUrl( state, siteId ) {
+	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+		return getSiteSlug( state, siteId );
+	}
+
+	const site = getRawSite( state, siteId );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	return site.URL;
+}
+
+/**
  * Returns true if the site can be previewed, false if the site cannot be
  * previewed, or null if preview ability cannot be determined. This indicates
  * whether it is safe to embed iframe previews for the site.
