@@ -150,6 +150,7 @@ function paymentMethodClassName( method ) {
 		bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
 		'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
 		ebanx: 'WPCOM_Billing_Ebanx',
+		eps: 'WPCOM_Billing_Stripe_Source_Eps',
 		giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
 		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
 		paypal: 'WPCOM_Billing_PayPal_Express',
@@ -170,6 +171,7 @@ function paymentMethodName( method ) {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
 		'credit-card': i18n.translate( 'Credit or debit card' ),
+		eps: 'EPS',
 		giropay: 'Giropay',
 		ideal: 'iDEAL',
 		paypal: 'PayPal',
@@ -180,7 +182,15 @@ function paymentMethodName( method ) {
 }
 
 function isPaymentMethodEnabled( cart, method ) {
-	const redirectPaymentMethods = [ 'alipay', 'bancontact', 'giropay', 'ideal', 'paypal', 'p24' ];
+	const redirectPaymentMethods = [
+		'alipay',
+		'bancontact',
+		'eps',
+		'giropay',
+		'ideal',
+		'paypal',
+		'p24',
+	];
 	const methodClassName = paymentMethodClassName( method );
 
 	if ( '' === methodClassName ) {
