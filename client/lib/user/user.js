@@ -19,6 +19,7 @@ import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import localforage from 'lib/localforage';
+import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 /**
  * User component
@@ -62,28 +63,26 @@ User.prototype.initialize = function() {
 	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-		this.data = window.currentUser || false;
+		const bootstrappedData = window.currentUser || false;
 
 		// Store the current user in localStorage so that we can use it to determine
 		// if the logged in user has changed when initializing in the future
-		if ( this.data ) {
-			this.clearStoreIfChanged( this.data.ID );
-			store.set( 'wpcom_user', this.data );
-		} else {
-			// The user is logged out
-			this.initialized = true;
+		if ( bootstrappedData ) {
+			this.handleFetchSuccess( bootstrappedData );
 		}
-	} else {
-		this.data = store.get( 'wpcom_user' ) || false;
-
-		// Make sure that the user stored in localStorage matches the logged-in user
-		this.fetch();
+		this.initialized = true;
+		return;
 	}
+
+	this.data = store.get( 'wpcom_user' ) || false;
 
 	if ( this.data ) {
 		this.initialized = true;
 		this.emit( 'change' );
 	}
+
+	// Make sure that the user stored in localStorage matches the logged-in user
+	this.fetch();
 };
 
 /**
@@ -91,7 +90,7 @@ User.prototype.initialize = function() {
  * of the user stored in localStorage and the current user ID
  **/
 User.prototype.clearStoreIfChanged = function( userId ) {
-	var storedUser = store.get( 'wpcom_user' );
+	const storedUser = store.get( 'wpcom_user' );
 
 	if ( storedUser && storedUser.ID !== userId ) {
 		debug( 'Clearing localStorage because user changed' );
@@ -120,62 +119,78 @@ User.prototype.fetch = function() {
 		return;
 	}
 
-	var me = wpcom.me();
+	const me = wpcom.me();
 
 	// Request current user info
 	this.fetching = true;
 	debug( 'Getting user from api' );
 
 	me.get(
-		{ meta: 'flags' },
-		function( error, data ) {
+		{ meta: 'flags', abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ) },
+		( error, data ) => {
 			if ( error ) {
-				if (
-					! config.isEnabled( 'wpcom-user-bootstrap' ) &&
-					error.error === 'authorization_required'
-				) {
-					/**
-					 * if the user bootstrap is disabled (in development), we need to rely on a request to
-					 * /me to determine if the user is logged in.
-					 */
-					debug( 'The user is not logged in.' );
-
-					this.initialized = true;
-					this.emit( 'change' );
-				} else {
-					debug( 'Something went wrong trying to get the user.' );
-				}
+				this.handleFetchFailure( error );
 				return;
 			}
 
-			var userData = filterUserObject( data );
-
-			// Release lock from subsequent fetches
-			this.fetching = false;
-
-			this.clearStoreIfChanged( userData.ID );
-
-			// Store user info in `this.data` and localstorage as `wpcom_user`
-			store.set( 'wpcom_user', userData );
-			this.data = userData;
-			if ( this.settings ) {
-				debug( 'Retaining fetched settings data in new user data' );
-				this.data.settings = this.settings;
-			}
-			this.initialized = true;
-
-			this.emit( 'change' );
-
+			const userData = filterUserObject( data );
+			this.handleFetchSuccess( userData );
 			debug( 'User successfully retrieved' );
-		}.bind( this )
+		}
 	);
 };
 
+/**
+ * Handles user fetch failure from WordPress.com REST API by updating User's state
+ * and emitting a change event.
+ *
+ * @param {Error} error network response error
+ */
+User.prototype.handleFetchFailure = function( error ) {
+	if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) && error.error === 'authorization_required' ) {
+		/**
+		 * if the user bootstrap is disabled (in development), we need to rely on a request to
+		 * /me to determine if the user is logged in.
+		 */
+		debug( 'The user is not logged in.' );
+
+		this.initialized = true;
+		this.emit( 'change' );
+	} else {
+		debug( 'Something went wrong trying to get the user.' );
+	}
+};
+
+/**
+ * Handles user fetch success from WordPress.com REST API by persisting the user data
+ * in the browser's localStorage. It also changes the User's fetching and initialized states
+ * and emits a change event.
+ *
+ * @param {Object} userData an object containing the user's information.
+ */
+User.prototype.handleFetchSuccess = function( userData ) {
+	// Release lock from subsequent fetches
+	this.fetching = false;
+	this.clearStoreIfChanged( userData.ID );
+
+	// Store user info in `this.data` and localstorage as `wpcom_user`
+	store.set( 'wpcom_user', userData );
+	if ( userData.abtests ) {
+		store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
+	}
+	this.data = userData;
+	if ( this.settings ) {
+		debug( 'Retaining fetched settings data in new user data' );
+		this.data.settings = this.settings;
+	}
+	this.initialized = true;
+	this.emit( 'change' );
+};
+
 User.prototype.getLanguage = function() {
-	var languages = config( 'languages' ),
-		len = languages.length,
-		language,
-		index;
+	const languages = config( 'languages' );
+	const len = languages.length;
+	let language, index;
 
 	if ( ! this.data.localeSlug ) {
 		return;
@@ -197,13 +212,13 @@ User.prototype.getLanguage = function() {
  * @param {Object} options Options per https://secure.gravatar.com/site/implement/images/
  */
 User.prototype.getAvatarUrl = function( options ) {
-	var default_options = {
-			s: 80,
-			d: 'mm',
-			r: 'G',
-		},
-		avatar_URL = this.get().avatar_URL,
-		avatar = typeof avatar_URL === 'string' ? avatar_URL.split( '?' )[ 0 ] : '';
+	const default_options = {
+		s: 80,
+		d: 'mm',
+		r: 'G',
+	};
+	const avatar_URL = this.get().avatar_URL;
+	const avatar = typeof avatar_URL === 'string' ? avatar_URL.split( '?' )[ 0 ] : '';
 
 	options = options || {};
 	options = Object.assign( {}, options, default_options );
@@ -212,14 +227,8 @@ User.prototype.getAvatarUrl = function( options ) {
 };
 
 User.prototype.isRTL = function() {
-	var isRTL = false,
-		language = this.getLanguage();
-
-	if ( language && language.rtl ) {
-		isRTL = true;
-	}
-
-	return isRTL;
+	const language = this.getLanguage();
+	return language && language.rtl;
 };
 
 /**
