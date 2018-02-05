@@ -19,18 +19,14 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingHomepageStep extends React.PureComponent {
-	handleHomepageSelection = homepageFormat => {
-		const { siteId } = this.props;
-
+	handleHomepageSelection = homepageFormat => () => {
 		this.props.recordJpoEvent( 'calypso_jpo_homepage_format_clicked', {
 			homepage_format: homepageFormat,
 		} );
 
-		return () => {
-			this.props.saveJetpackOnboardingSettings( siteId, {
-				homepageFormat,
-			} );
-		};
+		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+			homepageFormat,
+		} );
 	};
 
 	render() {
