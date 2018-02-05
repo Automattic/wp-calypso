@@ -27,7 +27,6 @@ import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import GoogleApps from 'components/upgrades/google-apps';
-import { startInboundTransfer } from 'lib/domains';
 
 /**
  * Module variables
@@ -121,32 +120,12 @@ const transferDomain = ( context, next ) => {
 const transferDomainPrecheck = ( context, next ) => {
 	const basePath = sectionify( context.path );
 
-	const goBack = () => {
-		// TODO: Add goBack functionality
-	};
-
-	const onTransferDomain = transferInfo => {
-		const { domain, selectedSiteId } = transferInfo;
-		startInboundTransfer( selectedSiteId, domain, ( error, result ) => {
-			if ( result ) {
-				// TODO: Load next steps page page
-			} else {
-				// TODO: Show error notice
-			}
-		} );
-	};
-
 	analytics.pageView.record( basePath, 'My Sites > Domains > Selected Domain' );
 	context.primary = (
 		<Main>
 			<CartData>
 				<div>
-					<TransferDomainStep
-						forcePrecheck={ true }
-						goBack={ goBack }
-						initialQuery={ context.params.domain }
-						onTransferDomain={ onTransferDomain }
-					/>
+					<TransferDomainStep forcePrecheck={ true } initialQuery={ context.params.domain } />
 				</div>
 			</CartData>
 		</Main>

@@ -21,6 +21,7 @@ import {
 	checkInboundTransferStatus,
 	getFixedDomainSearch,
 	getTld,
+	startInboundTransfer,
 } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
@@ -36,6 +37,8 @@ import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'lib/url/support';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
+import { fetchDomains } from 'lib/upgrades/actions';
+import { domainManagementTransferIn as domainManagementTransferInLink } from 'my-sites/domains/paths';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -63,13 +66,14 @@ class TransferDomainStep extends React.Component {
 	getDefaultState() {
 		return {
 			domain: null,
+			domainsWithPlansOnly: false,
+			inboundTransferStartError: null,
 			inboundTransferStatus: {},
 			precheck: get( this.props, 'forcePrecheck', false ),
 			searchQuery: this.props.initialQuery || '',
 			submittingAvailability: false,
 			submittingWhois: get( this.props, 'forcePrecheck', false ),
 			supportsPrivacy: false,
-			domainsWithPlansOnly: false,
 		};
 	}
 
@@ -209,23 +213,52 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
+	startPendingInboundTransfer() {
+		const { searchQuery, selectedSite, translate } = this.props;
+		startInboundTransfer( selectedSite.ID, searchQuery, ( error, result ) => {
+			if ( result ) {
+				fetchDomains( selectedSite.ID );
+				page( domainManagementTransferInLink( selectedSite.slug, searchQuery ) );
+			} else {
+				const errorMessage = error.message || translate( 'We were unable to start the transfer.' );
+				this.setState( { inboundTransferStartError: errorMessage } );
+			}
+		} );
+	}
+
+	startTransferErrorNotice() {
+		const { inboundTransferStartError } = this.state;
+		if ( inboundTransferStartError ) {
+			return <Notice text={ inboundTransferStartError } status="is-error" showDismiss={ false } />;
+		}
+	}
+
 	getTransferDomainPrecheck() {
-		const { domain, inboundTransferStatus, submittingWhois, searchQuery } = this.state;
+		const {
+			domain,
+			inboundTransferStartError,
+			inboundTransferStatus,
+			submittingWhois,
+			searchQuery,
+		} = this.state;
 
 		return (
-			<TransferDomainPrecheck
-				domain={ domain || searchQuery }
-				email={ inboundTransferStatus.email }
-				loading={ submittingWhois }
-				losingRegistrar={ inboundTransferStatus.losingRegistrar }
-				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
-				privacy={ inboundTransferStatus.privacy }
-				refreshStatus={ this.getInboundTransferStatus }
-				selectedSiteId={ get( this.props, 'selectedSite.ID', null ) }
-				setValid={ this.props.onTransferDomain }
-				supportsPrivacy={ this.state.supportsPrivacy }
-				unlocked={ inboundTransferStatus.unlocked }
-			/>
+			<div>
+				{ inboundTransferStartError && this.startTransferErrorNotice() }
+				<TransferDomainPrecheck
+					domain={ domain || searchQuery }
+					email={ inboundTransferStatus.email }
+					loading={ submittingWhois }
+					losingRegistrar={ inboundTransferStatus.losingRegistrar }
+					losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
+					privacy={ inboundTransferStatus.privacy }
+					refreshStatus={ this.getInboundTransferStatus }
+					selectedSiteId={ get( this.props, 'selectedSite.ID', null ) }
+					setValid={ this.startPendingInboundTransfer }
+					supportsPrivacy={ this.state.supportsPrivacy }
+					unlocked={ inboundTransferStatus.unlocked }
+				/>
+			</div>
 		);
 	}
 
