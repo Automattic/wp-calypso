@@ -302,11 +302,12 @@ const SecurePaymentForm = createReactClass( {
 					</div>
 				);
 
-			case 'ideal':
-			case 'giropay':
-			case 'bancontact':
-			case 'p24':
 			case 'alipay':
+			case 'bancontact':
+			case 'eps':
+			case 'giropay':
+			case 'ideal':
+			case 'p24':
 				return (
 					<div>
 						{ this.renderGreatChoiceHeader() }

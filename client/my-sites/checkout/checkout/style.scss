@@ -715,7 +715,7 @@
 		margin-left:8px;
 	}
 
-	&.ideal, &.giropay, &.bancontact, &.p24, &.alipay {
+	&.ideal, &.giropay, &.bancontact, &.p24, &.alipay, &.eps {
 		margin-left: 1em;
 	}
 
@@ -944,6 +944,11 @@
 
 	.checkout__alipay {
 		width: 100px;
+	}
+
+	.checkout__eps{
+		width: 70px;
+		margin: -10px 0;
 	}
 
 	.checkout__credit-card {

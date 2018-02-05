@@ -142,6 +142,14 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		] );
 	} );
 
+	test( 'de-AT should return CC, EPS, Paypal', () => {
+		expect( getCurrentUserPaymentMethods( deLangDeCountryState ) ).to.eql( [
+			'credit-card',
+			'eps',
+			'paypal',
+		] );
+	} );
+
 	test( 'nl-NL should return credit card, iDEAL, PayPal ', () => {
 		expect( getCurrentUserPaymentMethods( nlCountryState ) ).to.eql( [
 			'credit-card',
