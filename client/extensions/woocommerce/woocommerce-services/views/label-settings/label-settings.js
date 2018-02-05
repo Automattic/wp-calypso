@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, isBoolean } from 'lodash';
@@ -23,7 +22,6 @@ import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
-import { setFormDataValue } from '../../state/label-settings/actions';
 import {
 	areSettingsFetching,
 	getEmailReceipts,
@@ -127,13 +125,7 @@ class ShippingLabels extends Component {
 	};
 
 	renderPaymentsSection = () => {
-		const {
-			siteId,
-			canEditPayments,
-			paymentMethods,
-			selectedPaymentMethod,
-			translate,
-		} = this.props;
+		const { canEditPayments, paymentMethods, selectedPaymentMethod, translate } = this.props;
 
 		if ( ! this.state.expanded ) {
 			const expand = event => {
@@ -177,7 +169,7 @@ class ShippingLabels extends Component {
 		}
 
 		const onPaymentMethodChange = value =>
-			this.props.setFormDataValue( siteId, 'selected_payment_method_id', value );
+			this.props.setValue( 'selected_payment_method_id', value );
 
 		let description, buttonLabel;
 		if ( paymentMethods.length ) {
@@ -219,7 +211,6 @@ class ShippingLabels extends Component {
 
 	renderEmailReceiptsSection = () => {
 		const {
-			siteId,
 			emailReceipts,
 			translate,
 			masterUserName,
@@ -233,7 +224,7 @@ class ShippingLabels extends Component {
 			return null;
 		}
 
-		const onChange = () => this.props.setFormDataValue( siteId, 'email_receipts', ! emailReceipts );
+		const onChange = () => this.props.setValue( 'email_receipts', ! emailReceipts );
 
 		return (
 			<FormFieldSet>
@@ -264,14 +255,13 @@ class ShippingLabels extends Component {
 	};
 
 	renderContent = () => {
-		const { siteId, canEditSettings, isLoading, paperSize, storeOptions, translate } = this.props;
+		const { canEditSettings, isLoading, paperSize, storeOptions, translate } = this.props;
 
 		if ( isLoading ) {
 			return this.renderPlaceholder();
 		}
 
-		const onPaperSizeChange = event =>
-			this.props.setFormDataValue( siteId, 'paper_size', event.target.value );
+		const onPaperSizeChange = event => this.props.setValue( 'paper_size', event.target.value );
 		const paperSizes = getPaperSizes( storeOptions.origin_country );
 
 		return (
@@ -309,29 +299,20 @@ class ShippingLabels extends Component {
 
 ShippingLabels.propTypes = {
 	siteId: PropTypes.number.isRequired,
+	setValue: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state, { siteId } ) => {
-		return {
-			isLoading: areSettingsFetching( state, siteId ),
-			pristine: isPristine( state, siteId ),
-			paymentMethods: getPaymentMethods( state, siteId ),
-			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
-			paperSize: getPaperSize( state, siteId ),
-			storeOptions: getLabelSettingsStoreOptions( state, siteId ),
-			canEditPayments: userCanManagePayments( state, siteId ),
-			canEditSettings:
-				userCanManagePayments( state, siteId ) || userCanEditSettings( state, siteId ),
-			emailReceipts: getEmailReceipts( state, siteId ),
-			...getMasterUserInfo( state, siteId ),
-		};
-	},
-	dispatch =>
-		bindActionCreators(
-			{
-				setFormDataValue,
-			},
-			dispatch
-		)
-)( localize( ShippingLabels ) );
+export default connect( ( state, { siteId } ) => {
+	return {
+		isLoading: areSettingsFetching( state, siteId ),
+		pristine: isPristine( state, siteId ),
+		paymentMethods: getPaymentMethods( state, siteId ),
+		selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
+		paperSize: getPaperSize( state, siteId ),
+		storeOptions: getLabelSettingsStoreOptions( state, siteId ),
+		canEditPayments: userCanManagePayments( state, siteId ),
+		canEditSettings: userCanManagePayments( state, siteId ) || userCanEditSettings( state, siteId ),
+		emailReceipts: getEmailReceipts( state, siteId ),
+		...getMasterUserInfo( state, siteId ),
+	};
+} )( localize( ShippingLabels ) );
