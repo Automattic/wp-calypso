@@ -56,7 +56,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	renderTodo = () => {
 		const { siteUrl, translate } = this.props;
 
-		const stepsTodo = {
+		const stepsTodoUnconnected = {
 			JETPACK_CONNECTION: {
 				label: translate( 'Connect to WordPress.com' ),
 				url: '/jetpack/connect?url=' + siteUrl,
@@ -75,7 +75,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			},
 		};
 
-		return map( stepsTodo, ( { label, url }, stepName ) => (
+		return map( stepsTodoUnconnected, ( { label, url }, stepName ) => (
 			<div key={ stepName } className="steps__summary-entry todo">
 				<a href={ url }>{ label }</a>
 			</div>
