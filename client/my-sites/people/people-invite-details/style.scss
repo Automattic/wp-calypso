@@ -1,0 +1,36 @@
+.people-invite-details .people-list-item__invite-status {
+	margin-right: 0;
+}
+
+.people-invite-details__meta {
+	border-top: 1px solid lighten( $gray, 30% );
+	padding-top: 24px;
+	margin-top: 24px;
+}
+
+.people-invite-details__meta-item {
+	margin-bottom: 12px;
+	color: $gray-text-min;
+
+	.people-invite-details__meta-item-label {
+		display: inline-block;
+		width: 130px;
+		margin-right: 16px;
+		color: $gray-text;
+		font-weight: 600;
+		text-align: right;
+	}
+
+	.people-invite-details__meta-item-user {
+		margin-right: 6px;
+		font-family: $serif;
+		font-size: 16px;
+		font-weight: 700;
+		color: $gray-text;
+	}
+
+	.gravatar {
+		vertical-align: middle;
+		margin-right: 6px;
+	}
+}

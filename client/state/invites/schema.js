@@ -12,11 +12,22 @@ export const inviteItemsSchema = {
 					key: { type: 'string' },
 					role: { type: 'string' },
 					isPending: { type: 'boolean' },
+					inviteDate: { type: 'string' },
+					acceptedDate: { anyOf: [ { type: 'string' }, { enum: [ null ] } ] },
 					user: {
 						type: 'object',
 						properties: {
 							login: { type: 'string' },
 							email: { anyOf: [ { type: 'string' }, { enum: [ false ] } ] },
+							name: { type: 'string' },
+							avatar_URL: { type: 'string' },
+						},
+						additionalProperties: false,
+					},
+					invitedBy: {
+						type: 'object',
+						properties: {
+							login: { type: 'string' },
 							name: { type: 'string' },
 							avatar_URL: { type: 'string' },
 						},

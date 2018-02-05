@@ -58,12 +58,16 @@ export const items = createReducer(
 				[ action.siteId ]: action.invites.map( invite => {
 					// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
 					const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
+					const invitedBy = pick( invite.invited_by, 'name', 'login', 'avatar_URL' );
 
 					return {
 						key: invite.invite_key,
 						role: invite.role,
 						isPending: invite.is_pending,
+						inviteDate: invite.invite_date,
+						acceptedDate: invite.accepted_date,
 						user,
+						invitedBy,
 					};
 				} ),
 			};

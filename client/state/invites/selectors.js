@@ -3,7 +3,12 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import treeSelect from 'lib/tree-select';
 
 /**
  * Returns true if currently requesting invites for the given site, or false
@@ -43,6 +48,23 @@ export function getInvitesForSite( state, siteId ) {
 export function getNumberOfInvitesFoundForSite( state, siteId ) {
 	return state.invites.counts[ siteId ] || null;
 }
+
+/*
+ * Returns an invite object for the given site and invite ID, or false otherwise.
+ *
+ * TODO: searching the object can probably be done in a cleaner manner.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {Object}           Invite object
+ */
+export const getSelectedInvite = treeSelect(
+	( state, siteId ) => [ state.invites.items[ siteId ] ],
+	( [ siteInvites ], siteId, inviteId ) => {
+		return find( siteInvites, { key: inviteId } );
+	}
+);
 
 /**
  * Returns true if currently requesting an invite resend for the given site and

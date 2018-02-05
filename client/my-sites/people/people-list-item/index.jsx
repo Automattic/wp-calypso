@@ -54,8 +54,13 @@ class PeopleListItem extends React.PureComponent {
 		);
 	};
 
-	getCardLink = () => {
+	maybeGetCardLink = () => {
 		const { invite, site, type, user } = this.props;
+
+		if ( 'invite-details' === type ) {
+			return null;
+		}
+
 		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
 		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
 
@@ -108,13 +113,13 @@ class PeopleListItem extends React.PureComponent {
 		const { className, invite, onRemove, translate, type, user } = this.props;
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
-		const isInvite = invite && 'invite' === type;
+		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
 		return (
 			<CompactCard
 				className={ classNames( 'people-list-item', className ) }
 				tagName={ tagName }
-				href={ this.getCardLink() }
+				href={ this.maybeGetCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
