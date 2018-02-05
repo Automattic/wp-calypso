@@ -57,6 +57,7 @@ export const fetchStoredCards = () => dispatch => {
 export const deleteStoredCard = card => dispatch => {
 	dispatch( {
 		type: STORED_CARDS_DELETE,
+		card,
 	} );
 
 	return new Promise( ( resolve, reject ) => {

@@ -56,9 +56,9 @@ class CreditCardDelete extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state, props ) => {
 		return {
-			isDeleting: isDeletingStoredCard( state ),
+			isDeleting: isDeletingStoredCard( state, props.card.stored_details_id ),
 		};
 	},
 	{
