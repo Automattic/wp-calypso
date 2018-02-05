@@ -7,7 +7,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
-	storeJetpackOnboardingSettings,
 	announceSaveFailure,
 	fromApi,
 } from '../';
@@ -146,6 +145,7 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 				action
 			)
 		);
+		expect( dispatch ).toHaveBeenCalledWith( updateJetpackOnboardingSettings( siteId, settings ) );
 	} );
 
 	test( 'should pass null token and user email in save request when site credentials are unknown', () => {
@@ -178,21 +178,6 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 				action
 			)
 		);
-	} );
-} );
-
-describe( 'storeJetpackOnboardingSettings()', () => {
-	test( 'should dispatch action that updates Redux state upon successful save request', () => {
-		const dispatch = jest.fn();
-		const siteId = 12345678;
-		const settings = {
-			siteTitle: 'My Awesome Site',
-			siteDescription: 'Not just another WordPress Site',
-		};
-
-		storeJetpackOnboardingSettings( { dispatch }, { siteId, settings } );
-
-		expect( dispatch ).toHaveBeenCalledWith( updateJetpackOnboardingSettings( siteId, settings ) );
 	} );
 } );
 

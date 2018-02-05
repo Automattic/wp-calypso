@@ -81,6 +81,8 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 	const token = get( state.jetpackOnboarding.credentials, [ siteId, 'token' ], null );
 	const jpUser = get( state.jetpackOnboarding.credentials, [ siteId, 'userEmail' ], null );
 
+	dispatch( updateJetpackOnboardingSettings( siteId, action.settings ) );
+
 	return dispatch(
 		http(
 			{
@@ -104,11 +106,6 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 	);
 };
 
-/* Store onboarding settings in Redux state */
-export const storeJetpackOnboardingSettings = ( { dispatch }, { settings, siteId } ) => {
-	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
-};
-
 export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(
 		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
@@ -124,10 +121,6 @@ export default {
 		} ),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest(
-			saveJetpackOnboardingSettings,
-			storeJetpackOnboardingSettings,
-			announceSaveFailure
-		),
+		dispatchRequest( saveJetpackOnboardingSettings, noop, announceSaveFailure ),
 	],
 };
