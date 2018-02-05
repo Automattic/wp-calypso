@@ -19,7 +19,7 @@ import { getRawShippingZoneLocations } from 'woocommerce/state/sites/shipping-zo
 import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
 import {
 	getContinents,
-	getCountries,
+	getCountriesByContinent,
 	getCountryName,
 	getStates,
 	hasStates,
@@ -219,12 +219,12 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 			switch ( action ) {
 				case JOURNAL_ACTIONS.ADD_CONTINENT:
 					// When selecting a whole continent, remove all its countries from the selection
-					getCountries( state, code, siteId ).forEach( country =>
+					getCountriesByContinent( state, code, siteId ).forEach( country =>
 						countries.delete( country.code )
 					);
 					if ( countries.size ) {
 						// If the zone has countries selected, then instead of selecting the continent we select all its countries
-						getCountries( state, code, siteId ).forEach( country => {
+						getCountriesByContinent( state, code, siteId ).forEach( country => {
 							if ( ! forbiddenCountries.has( country.code ) ) {
 								countries.add( country.code );
 							}
@@ -235,7 +235,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 					break;
 				case JOURNAL_ACTIONS.REMOVE_CONTINENT:
 					continents.delete( code );
-					getCountries( state, code, siteId ).forEach( country =>
+					getCountriesByContinent( state, code, siteId ).forEach( country =>
 						countries.delete( country.code )
 					);
 					break;
@@ -246,7 +246,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 					countries.add( code );
 					// If the zone has continents selected, then we need to replace them with their respective countries
 					continents.forEach( continentCode => {
-						getCountries( state, continentCode, siteId ).forEach( country => {
+						getCountriesByContinent( state, continentCode, siteId ).forEach( country => {
 							if ( ! forbiddenCountries.has( country.code ) ) {
 								countries.add( country.code );
 							}
@@ -261,7 +261,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 						if ( insideSelectedContinent ) {
 							break;
 						}
-						for ( const country of getCountries( state, continentCode, siteId ) ) {
+						for ( const country of getCountriesByContinent( state, continentCode, siteId ) ) {
 							if ( country.code === code ) {
 								insideSelectedContinent = true;
 								break;
@@ -271,7 +271,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 					// If the user unselected a country that was inside a selected continent, replace the continent for its countries
 					if ( insideSelectedContinent ) {
 						continents.forEach( continentCode => {
-							getCountries( state, continentCode, siteId ).forEach( country => {
+							getCountriesByContinent( state, continentCode, siteId ).forEach( country => {
 								if ( ! forbiddenCountries.has( country.code ) ) {
 									countries.add( country.code );
 								}
@@ -554,7 +554,7 @@ const getShippingZoneLocationsListFromLocations = (
 	//if there are more than maxCountries per continent, group them into a continent
 	let result = [];
 	getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
-		const continentCountries = getCountries( state, continentCode, siteId );
+		const continentCountries = getCountriesByContinent( state, continentCode, siteId );
 		const selectedContinentCountries = continentCountries
 			.filter( ( { code } ) => selectedCountries.has( code ) )
 			.map( ( { code, name } ) => ( {
@@ -651,7 +651,7 @@ export const getCurrentlyEditingShippingZoneCountries = createSelector(
 
 		getContinents( state, siteId ).forEach( ( { code: continentCode, name: continentName } ) => {
 			const continentSelected = selectedContinents.has( continentCode );
-			const continentCountries = getCountries( state, continentCode, siteId );
+			const continentCountries = getCountriesByContinent( state, continentCode, siteId );
 			let selectedCount = 0;
 			const continentI = locationsList.push( {
 				code: continentCode,
