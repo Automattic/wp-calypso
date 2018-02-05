@@ -54,7 +54,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	};
 
 	renderTodo = () => {
-		const { siteUrl, translate } = this.props;
+		const { isConnected, siteUrl, translate } = this.props;
 
 		const stepsTodoUnconnected = {
 			JETPACK_CONNECTION: {
@@ -75,7 +75,25 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			},
 		};
 
-		return map( stepsTodoUnconnected, ( { label, url }, stepName ) => (
+		// TODO: Point to Calypso
+		const stepsTodoConnected = {
+			THEME: {
+				label: translate( 'Choose a Theme' ),
+				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
+			},
+			PAGES: {
+				label: translate( 'Add additional pages' ),
+				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
+			},
+			BLOG: {
+				label: translate( 'Write your first blog post' ),
+				url: siteUrl + '/wp-admin/post-new.php',
+			},
+		};
+
+		const stepsTodo = isConnected ? stepsTodoConnected : stepsTodoUnconnected;
+
+		return map( stepsTodo, ( { label, url }, stepName ) => (
 			<div key={ stepName } className="steps__summary-entry todo">
 				<a href={ url }>{ label }</a>
 			</div>
