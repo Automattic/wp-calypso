@@ -55,15 +55,19 @@
 
 .activity-log-switch__feature {
 	display: flex;
+	border-radius: 3px;
+	max-width: 700px;
+	margin: 16px auto;
+	padding: 32px;
 
 	img {
-		max-width: 100px;
+		max-width: 150px;
 	}
 }
 
 .activity-log-switch__feature-content {
 	text-align: left;
-	margin-right: 16px;
+	margin-right: 32px;
 
 	p {
 		margin-bottom: 0;
