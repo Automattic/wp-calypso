@@ -181,6 +181,7 @@ export function retryAuth( url, attemptNumber ) {
 			type: JETPACK_CONNECT_RETRY_AUTH,
 			attemptNumber: attemptNumber,
 			slug: urlToSlug( url ),
+			timestamp: Date.now(),
 		} );
 		dispatch(
 			recordTracksEvent( 'calypso_jpc_retry_auth', {

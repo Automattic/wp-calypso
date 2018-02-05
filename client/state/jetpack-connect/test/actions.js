@@ -64,8 +64,9 @@ describe( 'actions', () => {
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_CONNECT_RETRY_AUTH,
-				slug: 'example.com',
 				attemptNumber: 0,
+				slug: 'example.com',
+				timestamp: expect.any( Number ),
 			} );
 		} );
 	} );
