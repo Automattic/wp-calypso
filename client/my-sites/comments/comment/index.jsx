@@ -61,10 +61,15 @@ export class Comment extends Component {
 		const { isBulkMode: wasBulkMode, isPostView: wasPostView } = this.props;
 		const { isBulkMode, isPostView } = nextProps;
 
+		const offsetTop =
+			wasPostView !== isPostView || `#comment-${ this.props.commentId }` !== window.location.hash
+				? 0
+				: this.getCommentOffsetTop();
+
 		this.setState( ( { isEditMode, isReplyVisible } ) => ( {
 			isEditMode: wasBulkMode !== isBulkMode ? false : isEditMode,
 			isReplyVisible: wasBulkMode !== isBulkMode ? false : isReplyVisible,
-			offsetTop: wasPostView !== isPostView ? 0 : this.getCommentOffsetTop(),
+			offsetTop,
 		} ) );
 	}
 
@@ -99,7 +104,7 @@ export class Comment extends Component {
 	};
 
 	getCommentOffsetTop = () => {
-		if ( ! window || `#comment-${ this.props.commentId }` !== window.location.hash ) {
+		if ( ! window ) {
 			return 0;
 		}
 
@@ -185,6 +190,7 @@ export class Comment extends Component {
 						{ ! isBulkMode && (
 							<CommentActions
 								{ ...{ siteId, postId, commentId, commentsListQuery, redirect, updateLastUndo } }
+								getCommentOffsetTop={ this.getCommentOffsetTop }
 								toggleEditMode={ this.toggleEditMode }
 								toggleReply={ this.toggleReply }
 							/>
