@@ -15,7 +15,7 @@ import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
  */
 import { getContactDetailsCache, getContactDetailsExtraCache } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { updateContactDetailsCache, fetchDomainContactValidation } from 'state/domains/management/actions';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
@@ -152,7 +152,9 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 					isError={ isError }
 					label={ translate( 'Organization' ) }
 					onChange={ this.handleChangeEvent }
-					errorMessage={ isError && translate( 'An organization name is required for Canadian corporations' ) }
+					errorMessage={
+						isError && translate( 'An organization name is required for Canadian corporations' )
+					}
 				/>
 			</FormFieldset>
 		);
