@@ -13,7 +13,6 @@ import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-	SITE_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import useNock from 'test/helpers/use-nock';
 
@@ -42,7 +41,8 @@ describe( 'actions', () => {
 
 	describe( 'receiveSiteStats()', () => {
 		test( 'should return an action object', () => {
-			const action = receiveSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY, STREAK_RESPONSE );
+			const today = Date.now();
+			const action = receiveSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY, STREAK_RESPONSE, today );
 
 			expect( action ).to.eql( {
 				type: SITE_STATS_RECEIVE,
@@ -50,6 +50,7 @@ describe( 'actions', () => {
 				statType: STAT_TYPE,
 				data: STREAK_RESPONSE,
 				query: STREAK_QUERY,
+				date: today,
 			} );
 		} );
 	} );
@@ -81,7 +82,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch a SITE_STATS_RECEIVE event on success', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).to.have.been.calledWithMatch( {
 					type: SITE_STATS_RECEIVE,
 					siteId: SITE_ID,
 					statType: STAT_TYPE,
@@ -91,20 +92,9 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when request succeeds', () => {
-			return requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: SITE_STATS_REQUEST_SUCCESS,
-					siteId: SITE_ID,
-					statType: STAT_TYPE,
-					query: STREAK_QUERY,
-				} );
-			} );
-		} );
-
-		test( 'should dispatch SITE_STATS_REQUEST_SUCCESS action when video stats request succeeds', () => {
+		test( 'should dispatch SITE_STATS_RECEIVE action when video stats request succeeds', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE_VIDEO, { postId: 31533 } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).to.have.been.calledWithMatch( {
 					type: SITE_STATS_RECEIVE,
 					siteId: SITE_ID,
 					statType: STAT_TYPE_VIDEO,
