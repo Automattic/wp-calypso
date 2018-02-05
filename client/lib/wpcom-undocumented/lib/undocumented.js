@@ -1450,22 +1450,20 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
  *
  * @param {string} name - The name of the A/B test. No leading 'abtest_' needed
  * @param {string} variation - The variation the user is assigned to
- * @param {Function} callback - Function to invoke when request is complete
+ * @param {Function} fn - Function to invoke when request is complete
  * @api public
- * @returns {Object} wpcomRequest
  */
-Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
-	const body = {
-		name,
-		variation,
+Undocumented.prototype.saveABTestData = function( name, variation, fn ) {
+	var data = {
+		name: name,
+		variation: variation,
 	};
-	debug( `POST /me/abtests with ${ JSON.stringify( body ) }` );
 	return this.wpcom.req.post(
 		{
 			path: '/me/abtests',
-			body,
+			body: data,
 		},
-		callback
+		fn
 	);
 };
 
