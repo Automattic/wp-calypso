@@ -194,12 +194,19 @@
 	}
 
 	.comment__status-label {
-		background: lighten($alert-yellow, 18%);
 		border-radius: 9px;
 		float: right;
 		font-size: 12px;
 		margin-left: 8px;
 		padding: 0 10px;
+
+		&.is-pending {
+			background: lighten($alert-yellow, 18%);
+		}
+		&.is-spam,
+		&.is-trash {
+			background: lighten($alert-red, 18%);
+		}
 	}
 
 	.comment__in-reply-to {
