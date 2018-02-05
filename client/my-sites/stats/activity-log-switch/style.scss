@@ -55,19 +55,21 @@
 
 .activity-log-switch__feature {
 	display: flex;
+	flex-wrap: wrap;
 	border-radius: 3px;
 	max-width: 700px;
 	margin: 16px auto;
 	padding: 32px;
-
-	img {
-		max-width: 150px;
-	}
 }
 
 .activity-log-switch__feature-content {
-	text-align: left;
-	margin-right: 32px;
+	@include breakpoint( ">960px" ) {
+		flex-basis: 66%;
+	}
+
+	@include breakpoint( "<960px" ) {
+		order: 2;
+	}
 
 	p {
 		margin-bottom: 0;
@@ -78,4 +80,30 @@
 	color: darken( $gray, 10% );
 	font-size: 21px;
 	margin-bottom: 8px;
+	width: 100%;
+
+	@include breakpoint( "<960px" ) {
+		order: 1;
+	}
+}
+
+.activity-log-switch__img {
+	max-width: 33%;
+	box-sizing: border-box;
+
+	@include breakpoint( "<960px" ) {
+		order: 0;
+		max-width: none;
+		height: 90px;
+		width: 100%;
+		margin-bottom: 16px;
+	}
+
+	&.is-backup {
+		padding: 8%;
+	}
+
+	&.is-security-issue {
+		padding: 4%;
+	}
 }

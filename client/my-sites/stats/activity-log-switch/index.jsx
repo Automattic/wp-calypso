@@ -110,10 +110,10 @@ class ActivityLogSwitch extends Component {
 					{ translate( 'What else can it do?' ) }
 				</h3>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( 'Rewind to any event' ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( 'Rewind to any event' ) }
-						</h4>
 						<p>
 							{ translate(
 								'As soon as you switch over, we will start tracking every change made ' +
@@ -123,13 +123,13 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/backup.svg" alt="" />
+					<img className="activity-log-switch__img is-backup" src="/calypso/images/illustrations/backup.svg" alt="" />
 				</Card>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( "Stay on top of your site's security" ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( "Stay on top of your site's security" ) }
-						</h4>
 						<p>
 							{ translate(
 								'When something happens to your website you want to know it immediately. ' +
@@ -137,13 +137,17 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/security-issue.svg" alt="" />
+
+					<img
+						className="activity-log-switch__img is-security-issue"
+						src="/calypso/images/illustrations/security-issue.svg"
+						alt="" />
 				</Card>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( 'Log all events on your site' ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( 'Log all events on your site' ) }
-						</h4>
 						<p>
 							{ translate(
 								'Access a new, streamlined history of events on your site—from published posts to user-role changes. ' +
@@ -151,7 +155,7 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/stats.svg" alt="" />
+					<img className="activity-log-switch__img is-stats" src="/calypso/images/illustrations/stats.svg" alt="" />
 				</Card>
 			</Card>
 		);
