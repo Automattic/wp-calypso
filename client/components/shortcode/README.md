@@ -13,15 +13,15 @@ Simply pass a site ID and a shortcode string child. The component will automatic
 import React from 'react';
 import Shortcode from 'components/shortcode';
 
-export default React.createClass( {
-	displayName: 'MyComponent',
+export default class extends React.Component {
+	static displayName = 'MyComponent';
 
 	render() {
 		return (
 			<Shortcode siteId={ 6393289 }>[gallery ids="31860,31856"]</Shortcode>
 		);
 	}
-} );
+}
 ```
 
 ## Props

@@ -11,7 +11,7 @@ import React from 'react';
 import ExternalLink from 'components/feature-example';
 import EmptyContent from 'components/empty-content';
 
-React.createClass( {
+class MyComponent extends React.Component {
 	render() {
 		return (
 			<FeatureExample>
@@ -19,5 +19,5 @@ React.createClass( {
 			</FeatureExample>
 		);
 	}
-} );
+}
 ```

@@ -15,8 +15,8 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import i18n from 'i18n-calypso';
 
-export default React.createClass( {
-	displayName: 'MyFAQ',
+export default class MyFaq extends React.Component {
+	static displayName = 'MyFaq';
 
 	render() {
 		return (
@@ -32,7 +32,7 @@ export default React.createClass( {
 			</FAQ>
 		);
 	}
-} );
+}
 
 ```
 

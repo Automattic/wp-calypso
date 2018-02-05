@@ -10,9 +10,9 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 ```es6
 import QuerySiteDomains from 'components/data/query-site-domains';
 
-const MyReactComponent = React.createClass( {
+class MyComponent extends React.Component {
 	render() {
-	const { site, domains } = this.props;
+		const { site, domains } = this.props;
 
 		return (
 			<div>
@@ -27,6 +27,6 @@ const MyReactComponent = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 ```
 
