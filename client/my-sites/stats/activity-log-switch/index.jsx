@@ -100,7 +100,7 @@ class ActivityLogSwitch extends Component {
 				<div>
 					<a
 						className="activity-log-switch__no-thanks"
-						href={ `//${ siteSlug }/wp-admin/${ redirect }` }>
+						href={ `//${ siteSlug }${ redirect }` }>
 						{ translate( 'No thanks' ) }
 					</a>
 				</div>
