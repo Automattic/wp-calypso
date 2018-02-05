@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, isBoolean } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
+import { openAddCardDialog } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import {
 	areSettingsFetching,
 	getEmailReceipts,
@@ -33,7 +35,9 @@ import {
 	isPristine,
 	userCanEditSettings,
 	userCanManagePayments,
-} from '../../state/label-settings/selectors';
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import AddCardDialog from './add-credit-card-modal';
 
 class ShippingLabels extends Component {
 	componentWillMount() {
@@ -197,13 +201,29 @@ class ShippingLabels extends Component {
 			);
 		};
 
+		const openDialog = () => {
+			this.props.openAddCardDialog( siteId );
+		};
+
 		return (
 			<div>
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
+
+				<QueryStoredCards />
 				{ paymentMethods.map( renderPaymentMethod ) }
-				<Button href={ getOrigin() + '/me/purchases/add-credit-card' } target="_blank" compact>
+
+				<AddCardDialog siteId={ siteId } />
+				<Button onClick={ openDialog } compact>
 					{ buttonLabel }
+				</Button>
+				<Button
+					className="label-settings__external"
+					href={ getOrigin() + '/me/purchases/add-credit-card' }
+					target="_blank"
+					compact
+				>
+					{ buttonLabel } <Gridicon icon="external" />
 				</Button>
 			</div>
 		);
@@ -302,17 +322,27 @@ ShippingLabels.propTypes = {
 	setValue: PropTypes.func.isRequired,
 };
 
-export default connect( ( state, { siteId } ) => {
-	return {
-		isLoading: areSettingsFetching( state, siteId ),
-		pristine: isPristine( state, siteId ),
-		paymentMethods: getPaymentMethods( state, siteId ),
-		selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
-		paperSize: getPaperSize( state, siteId ),
-		storeOptions: getLabelSettingsStoreOptions( state, siteId ),
-		canEditPayments: userCanManagePayments( state, siteId ),
-		canEditSettings: userCanManagePayments( state, siteId ) || userCanEditSettings( state, siteId ),
-		emailReceipts: getEmailReceipts( state, siteId ),
-		...getMasterUserInfo( state, siteId ),
-	};
-} )( localize( ShippingLabels ) );
+export default connect(
+	( state, { siteId } ) => {
+		return {
+			isLoading: areSettingsFetching( state, siteId ),
+			pristine: isPristine( state, siteId ),
+			paymentMethods: getPaymentMethods( state, siteId ),
+			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
+			paperSize: getPaperSize( state, siteId ),
+			storeOptions: getLabelSettingsStoreOptions( state, siteId ),
+			canEditPayments: userCanManagePayments( state, siteId ),
+			canEditSettings:
+				userCanManagePayments( state, siteId ) || userCanEditSettings( state, siteId ),
+			emailReceipts: getEmailReceipts( state, siteId ),
+			...getMasterUserInfo( state, siteId ),
+		};
+	},
+	dispatch =>
+		bindActionCreators(
+			{
+				openAddCardDialog,
+			},
+			dispatch
+		)
+)( localize( ShippingLabels ) );
