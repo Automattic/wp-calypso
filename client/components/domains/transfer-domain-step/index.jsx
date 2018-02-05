@@ -50,7 +50,7 @@ class TransferDomainStep extends React.Component {
 		initialQuery: PropTypes.string,
 		isSignupStep: PropTypes.bool,
 		onRegisterDomain: PropTypes.func,
-		onTransferDomain: PropTypes.func.isRequired,
+		onTransferDomain: PropTypes.func,
 		onSave: PropTypes.func,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		forcePrecheck: PropTypes.bool,
@@ -242,6 +242,10 @@ class TransferDomainStep extends React.Component {
 			searchQuery,
 		} = this.state;
 
+		const onSetValid = this.props.forcePrecheck
+			? this.startPendingInboundTransfer
+			: this.props.onTransferDomain;
+
 		return (
 			<div>
 				{ inboundTransferStartError && this.startTransferErrorNotice() }
@@ -254,7 +258,7 @@ class TransferDomainStep extends React.Component {
 					privacy={ inboundTransferStatus.privacy }
 					refreshStatus={ this.getInboundTransferStatus }
 					selectedSiteId={ get( this.props, 'selectedSite.ID', null ) }
-					setValid={ this.startPendingInboundTransfer }
+					setValid={ onSetValid }
 					supportsPrivacy={ this.state.supportsPrivacy }
 					unlocked={ inboundTransferStatus.unlocked }
 				/>
