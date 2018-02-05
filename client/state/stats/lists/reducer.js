@@ -16,7 +16,6 @@ import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-	SITE_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -40,7 +39,7 @@ export const requests = createReducer(
 				},
 			} );
 		},
-		[ SITE_STATS_REQUEST_SUCCESS ]: ( state, { siteId, statType, query, date } ) => {
+		[ SITE_STATS_RECEIVE ]: ( state, { siteId, statType, query, date } ) => {
 			const queryKey = getSerializedStatsQuery( query );
 			return merge( {}, state, {
 				[ siteId ]: {
