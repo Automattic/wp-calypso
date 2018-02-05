@@ -27,8 +27,7 @@ import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import GoogleApps from 'components/upgrades/google-apps';
-// TODO: Uncomment this after merging in other PR
-// import { startInboundTransfer } from 'lib/domains';
+import { startInboundTransfer } from 'lib/domains';
 
 /**
  * Module variables
@@ -128,13 +127,13 @@ const transferDomainPrecheck = ( context, next ) => {
 
 	const onTransferDomain = transferInfo => {
 		const { domain, selectedSiteId } = transferInfo;
-		// startInboundTransfer( selectedSiteId, domain, ( error, result ) => {
-		// 	if ( result ) {
-		// 		// TODO: Load next steps page page
-		// 	} else {
-		// 		// TODO: Show error notice
-		// 	}
-		// } );
+		startInboundTransfer( selectedSiteId, domain, ( error, result ) => {
+			if ( result ) {
+				// TODO: Load next steps page page
+			} else {
+				// TODO: Show error notice
+			}
+		} );
 	};
 
 	analytics.pageView.record( basePath, 'My Sites > Domains > Selected Domain' );
