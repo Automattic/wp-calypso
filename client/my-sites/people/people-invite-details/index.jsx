@@ -20,7 +20,7 @@ import Card from 'components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Gravatar from 'components/gravatar';
 import QuerySiteInvites from 'components/data/query-site-invites';
-import { getSelectedInvite } from 'state/invites/selectors';
+import { getInviteForSite } from 'state/invites/selectors';
 
 class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
@@ -118,6 +118,6 @@ export default connect( ( state, ownProps ) => {
 	const siteId = ownProps.site && ownProps.site.ID;
 
 	return {
-		invite: getSelectedInvite( state, siteId, ownProps.inviteKey ),
+		invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
 	};
 } )( localize( PeopleInviteDetails ) );
