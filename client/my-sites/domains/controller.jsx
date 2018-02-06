@@ -25,7 +25,9 @@ import DomainSearch from './domain-search';
 import SiteRedirect from './domain-search/site-redirect';
 import MapDomain from 'my-sites/domains/map-domain';
 import TransferDomain from 'my-sites/domains/transfer-domain';
+import TransferDomainStep from 'components/domains/transfer-domain-step';
 import GoogleApps from 'components/upgrades/google-apps';
+import { domainManagementTransferIn } from 'my-sites/domains/paths';
 
 /**
  * Module variables
@@ -110,6 +112,33 @@ const transferDomain = ( context, next ) => {
 			<DocumentHead title={ translate( 'Transfer a Domain' ) } />
 			<CartData>
 				<TransferDomain basePath={ basePath } initialQuery={ context.query.initialQuery } />
+			</CartData>
+		</Main>
+	);
+	next();
+};
+
+const transferDomainPrecheck = ( context, next ) => {
+	const basePath = sectionify( context.path );
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state ) || '';
+	const domain = get( context, 'params.domain', '' );
+
+	const handleGoBack = () => {
+		page( domainManagementTransferIn( siteSlug, domain ) );
+	};
+
+	analytics.pageView.record( basePath, 'My Sites > Domains > Selected Domain' );
+	context.primary = (
+		<Main>
+			<CartData>
+				<div>
+					<TransferDomainStep
+						forcePrecheck={ true }
+						initialQuery={ domain }
+						goBack={ handleGoBack }
+					/>
+				</div>
 			</CartData>
 		</Main>
 	);
@@ -201,4 +230,5 @@ export default {
 	redirectIfNoSite,
 	redirectToAddMappingIfVipSite,
 	transferDomain,
+	transferDomainPrecheck,
 };

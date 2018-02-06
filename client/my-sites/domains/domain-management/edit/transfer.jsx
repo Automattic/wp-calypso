@@ -7,6 +7,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ import SubscriptionSettings from './card/subscription-settings';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { transferStatus } from 'lib/domains/constants';
 import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED } from 'lib/url/support';
-import { restartInboundTransfer, startInboundTransfer } from 'lib/domains';
+import { restartInboundTransfer } from 'lib/domains';
 import { fetchDomains } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import VerticalNav from 'components/vertical-nav';
@@ -28,6 +29,7 @@ import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
 import { Notice } from 'components/notice';
 import { get } from 'lodash';
 import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
+import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 
 class Transfer extends React.PureComponent {
 	state = {
@@ -131,26 +133,8 @@ class Transfer extends React.PureComponent {
 	};
 
 	startTransfer = () => {
-		const { domain, selectedSite, translate } = this.props;
-		this.toggleSubmittingState();
-
-		startInboundTransfer( selectedSite.ID, domain.name, ( error, result ) => {
-			if ( result ) {
-				this.props.successNotice( translate( 'The transfer has been successfully started.' ), {
-					duration: 5000,
-				} );
-				fetchDomains( selectedSite.ID );
-				this.toggleSubmittingState();
-			} else {
-				this.props.errorNotice(
-					error.message || translate( 'We were unable to start the transfer.' ),
-					{
-						duration: 5000,
-					}
-				);
-				this.toggleSubmittingState();
-			}
-		} );
+		const { domain, selectedSite } = this.props;
+		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
 	};
 
 	restartTransfer = () => {

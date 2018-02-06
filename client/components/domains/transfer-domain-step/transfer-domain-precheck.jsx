@@ -129,6 +129,9 @@ class TransferDomainPrecheck extends React.Component {
 		} else if ( false === unlocked ) {
 			heading = translate( 'Unlock the domain.' );
 		}
+		if ( loading && ! isStepFinished ) {
+			heading = translate( 'Checking domain lock status.' );
+		}
 
 		let message = translate(
 			"{{notice}}We couldn't get the lock status of your domain from your current registrar.{{/notice}} If you're sure your " +
@@ -168,6 +171,10 @@ class TransferDomainPrecheck extends React.Component {
 					},
 				}
 			);
+		}
+
+		if ( loading && ! isStepFinished ) {
+			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 
 		const buttonText = translate( "I've unlocked my domain" );
