@@ -27,7 +27,8 @@ export const updateField = ( siteId, methodId, path, value ) => ( {
 	type: WOOCOMMERCE_SERVICES_SERVICE_SETTINGS_UPDATE_FIELD,
 	siteId,
 	methodId,
-	methodType: 'wc_services_usps', // Will work for the other methods too since they share the same reducer
+	// Since all the WCS shipping methods have the same reducer, methodType just needs to be a valid WCS method identifier. This works for Canada Post and FedEx too.
+	methodType: 'wc_services_usps',
 	path,
 	value,
 } );
