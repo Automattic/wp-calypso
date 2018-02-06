@@ -38,7 +38,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
 import { ThemesBanner } from './themes-banner';
-import { getThemeDetailsUrl } from 'state/themes/selectors';
+import { getThemeDetailsUrl, getActiveTheme } from 'state/themes/selectors';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -60,18 +60,28 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
-class PhotoBlogBanner extends PureComponent {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-	};
+const bannerShape = {
+	siteId: PropTypes.number,
+};
 
-	onClick = () => {
-		const url = this.props.getBannerUrl( 'photo-blog', this.props.siteId );
-		recordTracksEvent( 'calypso_showcase_banner_photo_blog_click' );
-		page( url );
+const bannerClickHandler = ( themeId, tracksEvent, { siteId, getBannerUrl, getCurrentTheme } ) => {
+	const url = getBannerUrl( themeId, siteId );
+	const tracksData = {
+		site_id: siteId,
+		current_theme: getCurrentTheme( siteId ),
+		timestamp: new Date().toGMTString(),
 	};
+	recordTracksEvent( tracksEvent, tracksData );
+	page( url );
+};
+
+class PhotoBlogBanner extends PureComponent {
+	static propTypes = bannerShape;
 
 	render() {
+		const onClick = () => {
+			bannerClickHandler( 'photo-blog', 'calypso_showcase_banner_photo_blog_click', this.props );
+		};
 		return (
 			<ThemesBanner
 				title={ translate( 'Are you a photographer? An artist?' ) }
@@ -83,7 +93,7 @@ class PhotoBlogBanner extends PureComponent {
 						},
 					}
 				) }
-				action={ this.onClick }
+				action={ onClick }
 				actionLabel={ translate( 'See the theme' ) }
 				backgroundColor={ '#3FE6AF' }
 				image={ '/calypso/images/themes-banner/photo-blog.png' }
@@ -98,17 +108,16 @@ class PhotoBlogBanner extends PureComponent {
 }
 
 class SmallBusinessBanner extends PureComponent {
-	static propTypes = {
-		siteId: PropTypes.number.isRequired,
-	};
-
-	onClick = () => {
-		const url = this.props.getBannerUrl( 'small-business', this.props.siteId );
-		recordTracksEvent( 'calypso_showcase_banner_small_business_click' );
-		page( url );
-	};
+	static propTypes = bannerShape;
 
 	render() {
+		const onClick = () => {
+			bannerClickHandler(
+				'small-business',
+				'calypso_showcase_banner_small_business_click',
+				this.props
+			);
+		};
 		return (
 			<ThemesBanner
 				title={ translate( 'Do you run a small business?' ) }
@@ -120,7 +129,7 @@ class SmallBusinessBanner extends PureComponent {
 						},
 					}
 				) }
-				action={ this.onClick }
+				action={ onClick }
 				actionLabel={ translate( 'See the theme' ) }
 				backgroundColor={ '#3d596d' }
 				image={ '/calypso/images/themes-banner/small-business.png' }
@@ -138,6 +147,7 @@ const ShowcaseBanner = sample(
 	[ PhotoBlogBanner, SmallBusinessBanner ].map( component =>
 		connect( state => ( {
 			getBannerUrl: curry( getThemeDetailsUrl )( state ),
+			getCurrentTheme: curry( getActiveTheme )( state ),
 		} ) )( component )
 	)
 );
