@@ -25,7 +25,7 @@ const JetpackConnectMainWrapper = ( { isWide, className, children } ) => {
 		<Main className={ classNames( className, wrapperClassName ) }>
 			{ jetpackBranded && (
 				<div className="jetpack-connect__main-logo">
-					<JetpackLogo full size={ 100 /* @todo get real size from designs */ } />
+					<JetpackLogo full size={ 45 } />
 				</div>
 			) }
 			{ children }
