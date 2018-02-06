@@ -27,10 +27,12 @@ import { didOpenResult, setSearchResults } from 'state/inline-help/actions';
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		searchQuery: PropTypes.string,
 	};
 
 	static defaultProps = {
 		translate: identity,
+		searchQuery: '',
 	};
 
 	getContextResults = () => {
