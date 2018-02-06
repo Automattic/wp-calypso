@@ -635,12 +635,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	renderStateAction() {
-		const { authorizeSuccess, siteReceived } = this.props.authorizationData;
+		const { authorizeSuccess } = this.props.authorizationData;
 		if (
 			this.props.isFetchingAuthorizationSite ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
-			( authorizeSuccess && ! siteReceived )
+			authorizeSuccess
 		) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
