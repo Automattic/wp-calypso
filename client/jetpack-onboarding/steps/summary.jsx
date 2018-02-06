@@ -19,13 +19,12 @@ import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
 import Spinner from 'components/spinner';
-import { TodoLinksConnected, TodoLinksUnconnected } from './summary-todo-links';
+import TodoLinks from './summary-todo-links';
 import {
 	getJetpackOnboardingPendingSteps,
 	getJetpackOnboardingCompletedSteps,
 	getUnconnectedSiteUrl,
 } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
@@ -56,8 +55,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	};
 
 	render() {
-		const { isConnected, siteId, siteSlug, siteUrl, translate } = this.props;
-		const TodoLinksComponent = isConnected ? TodoLinksConnected : TodoLinksUnconnected;
+		const { siteId, siteSlug, siteUrl, translate } = this.props;
 
 		const headerText = translate( "You're ready to go!" );
 		const subHeaderText = translate(
@@ -82,7 +80,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						<TodoLinksComponent
+						<TodoLinks
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 							siteUrl={ siteUrl }
@@ -101,7 +99,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 }
 
 export default connect( ( state, { siteId, steps } ) => ( {
-	isConnected: isJetpackSite( state, siteId ), // Will only return true if it's connected to WP.com
 	siteUrl: getUnconnectedSiteUrl( state, siteId ),
 	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
 	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
