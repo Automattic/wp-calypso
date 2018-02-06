@@ -11,6 +11,9 @@
 .people-invite-details__meta-item {
 	margin-bottom: 12px;
 	color: $gray-text-min;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 
 	.people-invite-details__meta-item-label {
 		display: inline-block;
