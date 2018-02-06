@@ -106,10 +106,10 @@
 		}
 	}
 
-	color: $alert-green;
+	color: darken( $alert-green, 10% );
 
 	&.is-pending {
-		color: $gray;
+		color: darken( $gray, 20% );
 	}
 
 	.gridicon {
