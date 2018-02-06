@@ -221,7 +221,7 @@ class TransferDomainStep extends React.Component {
 				fetchDomains( domain );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
 			} else {
-				this.props.errorNotice( error || translate( 'We were unable to start the transfer.' ) );
+				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
 			}
 		} );
 	};
