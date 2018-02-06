@@ -12,7 +12,7 @@ export class ThemesBanner extends PureComponent {
 	static propTypes = {
 		title: PropTypes.node.isRequired,
 		description: PropTypes.node.isRequired,
-		action: PropTypes.func,
+		action: PropTypes.func.isRequired,
 		actionLabel: PropTypes.string.isRequired,
 		backgroundColor: PropTypes.string,
 		image: PropTypes.string,
@@ -21,7 +21,6 @@ export class ThemesBanner extends PureComponent {
 			width: PropTypes.number,
 		} ),
 		imageTransform: PropTypes.string,
-		href: PropTypes.string,
 	};
 
 	render() {
@@ -34,22 +33,25 @@ export class ThemesBanner extends PureComponent {
 			image,
 			imageAttrs = {},
 			imageTransform = 'auto',
-			href,
 		} = this.props;
 		const backgroundStyle = backgroundColor ? { backgroundColor } : {};
 		const imageNode = image ? (
 			<img
 				alt=""
 				{ ...imageAttrs }
+				className="themes-banner__image"
 				src={ safeImageUrl( image ) }
 				style={ { transform: imageTransform } }
 			/>
 		) : null;
 		return (
 			<div className="themes-banner" style={ backgroundStyle }>
-				<h1>{ title }</h1>
-				<p>{ description }</p>
-				<Button compact primary onClick={ action } href={ href }>
+				<h1 className="themes-banner__title">{ title }</h1>
+				<p className="themes-banner__description">{ description }</p>
+				<Button className="themes-banner__cta" compact primary onClick={ action }>
+					{ actionLabel }
+				</Button>
+				<Button className="themes-banner__click-placeholder" primary onClick={ action }>
 					{ actionLabel }
 				</Button>
 				{ imageNode }
