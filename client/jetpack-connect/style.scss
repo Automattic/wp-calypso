@@ -19,6 +19,21 @@
 			display: none;
 		}
 	}
+
+	&.jetpack-branded {
+		.button.is-primary {
+			background-color: $green-jetpack;
+			border-color: #00a523;
+		}
+	}
+}
+
+.jetpack-connect__main-logo {
+	text-align: center;
+
+	.jetpack-logo__icon {
+		fill: $green-jetpack;
+	}
 }
 
 .jetpack-connect__main.is-wide {
