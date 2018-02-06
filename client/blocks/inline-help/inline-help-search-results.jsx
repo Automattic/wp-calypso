@@ -84,7 +84,7 @@ class InlineHelpSearchResults extends Component {
 			);
 		}
 
-		if ( isEmpty( this.props.searchResults ) ) {
+		if ( isEmpty( this.props.searchResults ) && ! isEmpty( this.props.searchQuery ) ) {
 			// search done, but nothing found
 			return (
 				<div>
@@ -94,11 +94,14 @@ class InlineHelpSearchResults extends Component {
 			);
 		}
 
-		// found something
 		const links = this.props.searchResults;
-		return (
-			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-		);
+		if ( links && links.length > 0 ) {
+			// found something
+			return (
+				<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+			);
+		}
+		return null;
 	}
 
 	renderContextHelp() {
