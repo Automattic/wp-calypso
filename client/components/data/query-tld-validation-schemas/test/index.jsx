@@ -8,9 +8,9 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { QueryTldValidationSchema } from '../';
+import { QueryTldValidationSchemas } from '../';
 
-describe( 'QueryTldValidationSchema', () => {
+describe( 'QueryTldValidationSchemas', () => {
 	const defaultMocks = {
 		validationSchemas: {},
 		tlds: [],
@@ -24,7 +24,7 @@ describe( 'QueryTldValidationSchema', () => {
 			tlds: [ 'uk', 'fr', 'notreal' ],
 		};
 
-		shallow( <QueryTldValidationSchema { ...testProps } /> );
+		shallow( <QueryTldValidationSchemas { ...testProps } /> );
 
 		expect( requestValidationSchemas.mock.calls.length ).toBe( 1 );
 		expect( requestValidationSchemas.mock.calls[ 0 ][ 0 ] ).toEqual( [ 'uk', 'fr', 'notreal' ] );
@@ -39,7 +39,7 @@ describe( 'QueryTldValidationSchema', () => {
 			validationSchemas: { fr: { what: 'ever' } },
 		};
 
-		shallow( <QueryTldValidationSchema { ...testProps } /> );
+		shallow( <QueryTldValidationSchemas { ...testProps } /> );
 
 		expect( requestValidationSchemas.mock.calls.length ).toBe( 1 );
 		expect( requestValidationSchemas.mock.calls[ 0 ][ 0 ] ).toEqual( [ 'uk', 'notreal' ] );
@@ -56,7 +56,7 @@ describe( 'QueryTldValidationSchema', () => {
 			},
 		};
 
-		shallow( <QueryTldValidationSchema { ...testProps } /> );
+		shallow( <QueryTldValidationSchemas { ...testProps } /> );
 
 		expect( requestValidationSchemas.mock.calls.length ).toBe( 0 );
 	} );

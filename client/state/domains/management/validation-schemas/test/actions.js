@@ -3,23 +3,23 @@
 /**
  * Internal dependencies
  */
-import { addValidationSchema, requestValidationSchemas } from '../actions';
+import { addValidationSchemas, requestValidationSchemas } from '../actions';
 import {
-	DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
-	DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD,
+	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
+	DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 } from 'state/action-types';
 
-describe( 'Domain Validation Schema Actions', () => {
+describe( 'Domain Validation Schemas Actions', () => {
 	test( '#requestValidationSchemas()', () => {
 		expect( requestValidationSchemas( [ 'uk' ] ) ).toEqual( {
-			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_REQUEST,
+			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST,
 			tlds: [ 'uk' ],
 		} );
 	} );
 
-	test( '#addValidationSchema()', () => {
-		expect( addValidationSchema( { uk: {} } ) ).toEqual( {
-			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMA_ADD,
+	test( '#addValidationSchemas()', () => {
+		expect( addValidationSchemas( { uk: {} } ) ).toEqual( {
+			type: DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_ADD,
 			schemas: { uk: {} },
 		} );
 	} );

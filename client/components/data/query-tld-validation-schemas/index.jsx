@@ -14,7 +14,7 @@ import { difference, isEmpty, keys } from 'lodash';
 import { getValidationSchemas } from 'state/selectors';
 import { requestValidationSchemas } from 'state/domains/management/validation-schemas/actions';
 
-export class QueryTldValidationSchema extends Component {
+export class QueryTldValidationSchemas extends Component {
 	static propTypes = {
 		validationSchemas: PropTypes.object.isRequired,
 		requestValidationSchemas: PropTypes.func.isRequired,
@@ -46,4 +46,4 @@ export default connect(
 		validationSchemas: getValidationSchemas( state ),
 	} ),
 	{ requestValidationSchemas }
-)( QueryTldValidationSchema );
+)( QueryTldValidationSchemas );
