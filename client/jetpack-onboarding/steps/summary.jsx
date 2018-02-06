@@ -84,9 +84,10 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	render() {
 		const { siteUrl, translate } = this.props;
 
-		const headerText = translate( 'Congratulations! Your site is on its way.' );
+		const headerText = translate( "You're ready to go!" );
 		const subHeaderText = translate(
-			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
+			"You've enabled Jetpack and unlocked powerful website tools that are ready for you to use. " +
+				"Let's continue getting your site set up:"
 		);
 
 		return (
