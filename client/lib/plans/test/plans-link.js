@@ -26,4 +26,10 @@ describe( 'plansLink', () => {
 	test( 'should append site slug if provided and yearly', () => {
 		expect( plansLink( '/plans', { slug: 'example.com' }, 'yearly' ) ).toBe( '/plans/example.com' );
 	} );
+
+	test( 'should leave query string untouched when modifying url', () => {
+		expect( plansLink( '/plans?query-key=query-value', { slug: 'example.com' }, 'monthly' ) ).toBe(
+			'/plans/monthly/example.com?query-key=query-value'
+		);
+	} );
 } );
