@@ -573,7 +573,8 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
-			supportsLanguageSelection: ! siteIsJetpack,
+			supportsLanguageSelection:
+				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.8.1' ),
 			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},
