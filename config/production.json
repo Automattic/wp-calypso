@@ -82,7 +82,7 @@
 		"nps-survey/dev-trigger": false,
 		"nps-survey/notice": true,
 		"onboarding-checklist": true,
-		"perfmon": false,
+		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"plans/jetpack-config-v2": true,
