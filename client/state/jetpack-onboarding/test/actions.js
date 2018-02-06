@@ -7,12 +7,14 @@ import {
 	receiveJetpackOnboardingCredentials,
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
+	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
 } from '../actions';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
@@ -70,6 +72,23 @@ describe( 'actions', () => {
 						trackRequest: true,
 					},
 				},
+			} );
+		} );
+	} );
+
+	describe( 'saveJetpackOnboardingSettingsSuccess()', () => {
+		test( 'should return a jetpack onboarding settings save action success object', () => {
+			const settings = {
+				siteTitle: 'My awesome site title',
+				siteDescription: 'Not just another WordPress site',
+			};
+			const siteId = 12345678;
+			const action = saveJetpackOnboardingSettingsSuccess( siteId, settings );
+
+			expect( action ).toEqual( {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+				siteId,
+				settings,
 			} );
 		} );
 	} );

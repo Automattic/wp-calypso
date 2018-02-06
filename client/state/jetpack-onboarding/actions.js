@@ -7,6 +7,7 @@ import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
@@ -35,6 +36,12 @@ export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
 			trackRequest: true,
 		},
 	},
+} );
+
+export const saveJetpackOnboardingSettingsSuccess = ( siteId, settings ) => ( {
+	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+	siteId,
+	settings,
 } );
 
 export const updateJetpackOnboardingSettings = ( siteId, settings ) => ( {
