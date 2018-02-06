@@ -77,6 +77,7 @@ export const deleteStoredCard = card => dispatch => {
 		.catch( error => {
 			dispatch( {
 				type: STORED_CARDS_DELETE_FAILED,
+				card,
 				error: error.message || i18n.translate( 'There was a problem deleting the stored card.' ),
 			} );
 		} );
