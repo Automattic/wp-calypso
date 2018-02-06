@@ -57,17 +57,17 @@ export const insertContent = ( textarea, before, content, after, onInsert = noop
 		document.execCommand( 'insertText', false, content );
 		setCursorPosition( textarea, newContent.length - value.length );
 		textarea.focus();
+		onInsert( newContent );
 	} else if ( 11 === Env.ie ) {
 		// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 		// Using the previous version of replacing the entire content value instead.
 		textarea.value = newContent;
 		setCursorPosition( textarea, newContent.length - value.length );
+		onInsert( newContent );
 	} else {
 		textarea.focus();
 		document.execCommand( 'insertText', false, content );
 	}
-
-	onInsert( newContent );
 };
 
 /**
@@ -114,10 +114,11 @@ export const closeHtmlTag = ( { name, options = {} } ) =>
  *
  * @param {Element} textarea The editor textarea.
  * @param {Object} tag The tag to insert.
+ * @param {Function} onInsert A function to call after the insertion.
  */
-export const insertHtmlTagOpen = ( textarea, tag ) => {
+export const insertHtmlTagOpen = ( textarea, tag, onInsert ) => {
 	const { before, after } = splitSelectedContent( textarea );
-	insertContent( textarea, before, openHtmlTag( tag ), after );
+	insertContent( textarea, before, openHtmlTag( tag ), after, onInsert );
 };
 
 /**
@@ -125,10 +126,11 @@ export const insertHtmlTagOpen = ( textarea, tag ) => {
  *
  * @param {Element} textarea The editor textarea.
  * @param {Object} tag The tag to insert.
+ * @param {Function} onInsert A function to call after the insertion.
  */
-export const insertHtmlTagClose = ( textarea, tag ) => {
+export const insertHtmlTagClose = ( textarea, tag, onInsert ) => {
 	const { before, after } = splitSelectedContent( textarea );
-	insertContent( textarea, before, closeHtmlTag( tag ), after );
+	insertContent( textarea, before, closeHtmlTag( tag ), after, onInsert );
 };
 
 /**
@@ -136,10 +138,17 @@ export const insertHtmlTagClose = ( textarea, tag ) => {
  *
  * @param {Element} textarea The editor textarea.
  * @param {Object} tag The tag to insert.
+ * @param {Function} onInsert A function to call after the insertion.
  */
-export const insertHtmlTagOpenClose = ( textarea, tag ) => {
+export const insertHtmlTagOpenClose = ( textarea, tag, onInsert ) => {
 	const { before, inner, after } = splitSelectedContent( textarea );
-	insertContent( textarea, before, openHtmlTag( tag ) + inner + closeHtmlTag( tag ), after );
+	insertContent(
+		textarea,
+		before,
+		openHtmlTag( tag ) + inner + closeHtmlTag( tag ),
+		after,
+		onInsert
+	);
 };
 
 /**
@@ -147,13 +156,14 @@ export const insertHtmlTagOpenClose = ( textarea, tag ) => {
  *
  * @param {Element} textarea The editor textarea.
  * @param {Object} tag The tag to insert.
+ * @param {Function} onInsert A function to call after the insertion.
  */
-export const insertHtmlTagSelfClosed = ( textarea, tag ) => {
+export const insertHtmlTagSelfClosed = ( textarea, tag, onInsert ) => {
 	const { before, inner, after } = splitSelectedContent( textarea );
 	const selfClosedTag = `<${ tag.name }${ attributesToString( tag.attributes ) } />`;
 	const content =
 		tag.options && tag.options.paragraph ? '\n' + selfClosedTag + '\n\n' : selfClosedTag;
-	insertContent( textarea, before, inner + content, after );
+	insertContent( textarea, before, inner + content, after, onInsert );
 };
 
 /**
@@ -161,14 +171,16 @@ export const insertHtmlTagSelfClosed = ( textarea, tag ) => {
  *
  * @param {Element} textarea The editor textarea.
  * @param {Object} tag The tag to insert.
+ * @param {Function} onInsert A function to call after the insertion.
  */
-export const insertHtmlTagWithText = ( textarea, tag ) => {
+export const insertHtmlTagWithText = ( textarea, tag, onInsert ) => {
 	const { before, after } = splitSelectedContent( textarea );
 	insertContent(
 		textarea,
 		before,
 		openHtmlTag( tag ) + tag.options.text + closeHtmlTag( tag ),
-		after
+		after,
+		onInsert
 	);
 };
 
@@ -178,11 +190,18 @@ export const insertHtmlTagWithText = ( textarea, tag ) => {
  * @param {Element} textarea The editor textarea.
  * @param {String} content The custom content to insert.
  * @param {Object} options An options object.
+ * @param {Function} onInsert A function to call after the insertion.
  */
-export const insertCustomContent = ( textarea, content, options = {} ) => {
+export const insertCustomContent = ( textarea, content, options = {}, onInsert ) => {
 	const { before, inner, after } = splitSelectedContent( textarea );
 	const paragraph = options.paragraph ? '\n' : '';
-	insertContent( textarea, before, inner + paragraph + content + paragraph + paragraph, after );
+	insertContent(
+		textarea,
+		before,
+		inner + paragraph + content + paragraph + paragraph,
+		after,
+		onInsert
+	);
 };
 
 /**
@@ -191,18 +210,19 @@ export const insertCustomContent = ( textarea, content, options = {} ) => {
  * @param {Element} textarea The editor textarea.
  * @param {Object} tag The tag to insert.
  * @param {Boolean} isTagOpen Check if the inserted tag was open.
+ * @param {Function} onInsert A function to call after the insertion.
  * @returns {Boolean} If the inserted tag is now open.
  */
-export const insertHtmlTag = ( textarea, tag, isTagOpen ) => {
+export const insertHtmlTag = ( textarea, tag, isTagOpen, onInsert ) => {
 	const { selectionEnd, selectionStart } = textarea;
 	if ( selectionEnd === selectionStart ) {
 		if ( isTagOpen ) {
-			insertHtmlTagClose( textarea, tag );
+			insertHtmlTagClose( textarea, tag, onInsert );
 			return false;
 		}
-		insertHtmlTagOpen( textarea, tag );
+		insertHtmlTagOpen( textarea, tag, onInsert );
 		return true;
 	}
-	insertHtmlTagOpenClose( textarea, tag );
+	insertHtmlTagOpenClose( textarea, tag, onInsert );
 	return false;
 };

@@ -38,17 +38,17 @@ export class CommentHtmlEditor extends Component {
 		showLinkDialog: false,
 	};
 
-	componentWillMount() {
-		const { commentContent } = this.props;
-		this.setState( { commentContent } );
-	}
-
 	storeTextareaRef = textarea => ( this.textarea = textarea );
 
 	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	insertHtmlTag = tag => {
-		const isTagOpen = insertHtmlTag( this.textarea, tag, this.isTagOpen( tag.name ) );
+		const isTagOpen = insertHtmlTag(
+			this.textarea,
+			tag,
+			this.isTagOpen( tag.name ),
+			this.setCommentContentValue
+		);
 		this.setState( ( { openTags } ) => ( {
 			openTags: isTagOpen
 				? openTags.concat( tag.name )
@@ -64,7 +64,7 @@ export class CommentHtmlEditor extends Component {
 			( tags, openTag ) => closeHtmlTag( { name: openTag } ) + tags,
 			''
 		);
-		insertCustomContent( this.textarea, closedTags );
+		insertCustomContent( this.textarea, closedTags, {}, this.setCommentContentValue );
 		this.setState( { openTags: [] } );
 	};
 
@@ -78,16 +78,28 @@ export class CommentHtmlEditor extends Component {
 
 	onClickLink = ( attributes, text ) => {
 		if ( text ) {
-			insertHtmlTagWithText( this.textarea, { name: 'a', attributes, options: { text } } );
+			insertHtmlTagWithText(
+				this.textarea,
+				{ name: 'a', attributes, options: { text } },
+				this.setCommentContentValue
+			);
 		} else {
-			insertHtmlTagOpenClose( this.textarea, { name: 'a', attributes } );
+			insertHtmlTagOpenClose(
+				this.textarea,
+				{ name: 'a', attributes },
+				this.setCommentContentValue
+			);
 			// Move the cursor inside <a></a>
 			setCursorPosition( this.textarea, -4 );
 		}
 	};
 
 	onClickImage = attributes =>
-		insertHtmlTagSelfClosed( this.textarea, { name: 'img', attributes } );
+		insertHtmlTagSelfClosed(
+			this.textarea,
+			{ name: 'img', attributes },
+			this.setCommentContentValue
+		);
 
 	onClickInsert = () =>
 		this.insertHtmlTag( {
@@ -120,7 +132,7 @@ export class CommentHtmlEditor extends Component {
 
 	closeLinkDialog = () => this.setState( { showLinkDialog: false } );
 
-	setCommentContentValue = event => this.setState( { commentContent: event.target.value } );
+	setCommentContentValue = content => this.props.onChange( { target: { value: content } } );
 
 	render() {
 		const { commentContent, onChange, translate } = this.props;
