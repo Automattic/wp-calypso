@@ -3,7 +3,7 @@
 exports[`AuthFormHeader renders as expected 1`] = `
 <div>
   <FormattedHeader
-    headerText="Create your account"
+    headerText="Create an account to set up Jetpack"
     subHeaderText="You are moments away from connecting your site."
   />
   <CompactCard
