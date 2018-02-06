@@ -86,7 +86,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		) );
 
 		this.legalTypeOptions = legalTypeOptions;
-		this.isValidating = false;
 		this.state = {
 			errorMessages: {},
 		};
@@ -115,21 +114,15 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		} );
 	}
 
-	setErrorMessages = ( error, data ) => {
-		this.setState(
-			{
-				errorMessages: ( data && data.messages ) || {},
-			},
-			() => ( this.isValidating = false )
-		);
-	};
-
 	validateContactDetails = contactDetails => {
-		this.isValidating = true;
 		wpcom.validateDomainContactInformation(
 			contactDetails,
 			this.props.getDomainNames(),
-			this.setErrorMessages
+			( error, data ) => {
+				this.setState( {
+					errorMessages: ( data && data.messages ) || {},
+				} );
+			}
 		);
 	};
 
@@ -199,17 +192,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			...defaultValues,
 			...this.props.contactDetailsExtra,
 		};
-		const formIsValid =
-			ciraAgreementAccepted && this.isValidating === false && this.organizationFieldIsValid();
-		if ( formIsValid === true ) {
-			// eslint-disable-next-line
-			console.log(
-				'formIsValid',
-				ciraAgreementAccepted,
-				this.state.isValidating,
-				this.organizationFieldIsValid()
-			);
-		}
+		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
 		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
 
 		return (

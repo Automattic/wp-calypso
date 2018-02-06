@@ -26,6 +26,7 @@ describe( 'ca-form', () => {
 		const testProps = {
 			...mockProps,
 			contactDetailsExtra: {},
+			contactDetails: {},
 		};
 
 		shallow( <RegistrantExtraInfoCaForm { ...testProps } /> );
