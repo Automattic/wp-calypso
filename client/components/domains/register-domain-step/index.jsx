@@ -313,10 +313,15 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
+			const alreadyOwnUrl =
+				! this.props.isSignupStep || this.props.transferInNuxAllowed
+					? this.getTransferDomainUrl()
+					: this.getMapDomainUrl();
+
 			return (
 				<ExampleDomainSuggestions
 					onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-					mapDomainUrl={ this.getMapDomainUrl() }
+					domainUrl={ alreadyOwnUrl }
 					path={ this.props.path }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					products={ this.props.products }
@@ -695,9 +700,14 @@ class RegisterDomainStep extends React.Component {
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
 			if ( this.props.showExampleSuggestions ) {
+				const alreadyOwnUrl =
+					! this.props.isSignupStep || this.props.transferInNuxAllowed
+						? this.getTransferDomainUrl()
+						: this.getMapDomainUrl();
+
 				return (
 					<ExampleDomainSuggestions
-						mapDomainUrl={ this.getMapDomainUrl() }
+						domainUrl={ alreadyOwnUrl }
 						path={ this.props.path }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						products={ this.props.products }
