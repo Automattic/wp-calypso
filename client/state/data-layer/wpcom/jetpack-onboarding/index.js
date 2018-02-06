@@ -17,7 +17,10 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
 import { getUnconnectedSite } from 'state/selectors';
-import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import {
+	saveJetpackOnboardingSettingsSuccess,
+	updateJetpackOnboardingSettings,
+} from 'state/jetpack-onboarding/actions';
 
 export const fromApi = response => {
 	if ( ! response.data || ! response.data.onboarding ) {
@@ -106,6 +109,9 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 	);
 };
 
+export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
+	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
+
 export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(
 		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
@@ -121,6 +127,6 @@ export default {
 		} ),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackOnboardingSettings, noop, announceSaveFailure ),
+		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, announceSaveFailure ),
 	],
 };

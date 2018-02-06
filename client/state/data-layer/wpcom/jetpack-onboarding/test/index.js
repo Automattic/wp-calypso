@@ -7,6 +7,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
+	handleSaveSuccess,
 	announceSaveFailure,
 	fromApi,
 } from '../';
@@ -14,7 +15,10 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
-import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import {
+	saveJetpackOnboardingSettingsSuccess,
+	updateJetpackOnboardingSettings,
+} from 'state/jetpack-onboarding/actions';
 
 describe( 'requestJetpackOnboardingSettings()', () => {
 	const dispatch = jest.fn();
@@ -177,6 +181,23 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 				},
 				action
 			)
+		);
+	} );
+} );
+
+describe( 'handleSaveSuccess()', () => {
+	const dispatch = jest.fn();
+	const siteId = 12345678;
+	const settings = {
+		siteTitle: 'My Awesome Site',
+		siteDescription: 'Not just another WordPress Site',
+	};
+
+	test( 'should dispatch a save success action upon successful save request', () => {
+		handleSaveSuccess( { dispatch }, { siteId, settings } );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( saveJetpackOnboardingSettingsSuccess( siteId, settings ) )
 		);
 	} );
 } );
