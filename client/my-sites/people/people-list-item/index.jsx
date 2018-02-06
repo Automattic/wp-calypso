@@ -125,6 +125,7 @@ class PeopleListItem extends React.PureComponent {
 			'people-list-item',
 			{
 				'is-invite': isInvite,
+				'is-invite-details': type === 'invite-details',
 			},
 			className
 		);
