@@ -33,7 +33,7 @@ class TransferDomainPrecheck extends React.Component {
 		losingRegistrar: PropTypes.string,
 		losingRegistrarIanaId: PropTypes.string,
 		privacy: PropTypes.bool,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedSiteSlug: PropTypes.string,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
 		unlocked: PropTypes.bool,
@@ -59,17 +59,11 @@ class TransferDomainPrecheck extends React.Component {
 	}
 
 	onClick = () => {
-		const {
-			losingRegistrar,
-			losingRegistrarIanaId,
-			domain,
-			supportsPrivacy,
-			selectedSite,
-		} = this.props;
+		const { losingRegistrar, losingRegistrarIanaId, domain, supportsPrivacy } = this.props;
 
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
-		this.props.setValid( { domain, selectedSite, supportsPrivacy } );
+		this.props.setValid( domain, supportsPrivacy );
 	};
 
 	resetSteps = () => {

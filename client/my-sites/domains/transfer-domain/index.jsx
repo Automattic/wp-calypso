@@ -62,8 +62,8 @@ export class TransferDomain extends Component {
 		page( '/checkout/' + selectedSiteSlug );
 	};
 
-	handleTransferDomain = transferInfo => {
-		const { domain, selectedSite, supportsPrivacy } = transferInfo;
+	handleTransferDomain = ( domain, supportsPrivacy ) => {
+		const { selectedSiteSlug } = this.props;
 
 		this.setState( { errorMessage: null } );
 
@@ -86,7 +86,7 @@ export class TransferDomain extends Component {
 
 		addItems( transferItems );
 
-		page( '/checkout/' + selectedSite.slug );
+		page( '/checkout/' + selectedSiteSlug );
 	};
 
 	componentWillMount() {

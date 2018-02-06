@@ -213,9 +213,8 @@ class TransferDomainStep extends React.Component {
 		);
 	}
 
-	startPendingInboundTransfer = transferInfo => {
-		const { domain, selectedSite } = transferInfo;
-		const { translate } = this.props;
+	startPendingInboundTransfer = domain => {
+		const { selectedSite, translate } = this.props;
 
 		startInboundTransfer( selectedSite.ID, domain, ( error, result ) => {
 			if ( result ) {
@@ -235,21 +234,19 @@ class TransferDomainStep extends React.Component {
 			: this.props.onTransferDomain;
 
 		return (
-			<div>
-				<TransferDomainPrecheck
-					domain={ domain || searchQuery }
-					email={ inboundTransferStatus.email }
-					loading={ submittingWhois }
-					losingRegistrar={ inboundTransferStatus.losingRegistrar }
-					losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
-					privacy={ inboundTransferStatus.privacy }
-					refreshStatus={ this.getInboundTransferStatus }
-					selectedSite={ this.props.selectedSite }
-					setValid={ onSetValid }
-					supportsPrivacy={ this.state.supportsPrivacy }
-					unlocked={ inboundTransferStatus.unlocked }
-				/>
-			</div>
+			<TransferDomainPrecheck
+				domain={ domain || searchQuery }
+				email={ inboundTransferStatus.email }
+				loading={ submittingWhois }
+				losingRegistrar={ inboundTransferStatus.losingRegistrar }
+				losingRegistrarIanaId={ inboundTransferStatus.losingRegistrarIanaId }
+				privacy={ inboundTransferStatus.privacy }
+				refreshStatus={ this.getInboundTransferStatus }
+				selectedSiteSlug={ get( this.props, 'selectedSite.slug', null ) }
+				setValid={ onSetValid }
+				supportsPrivacy={ this.state.supportsPrivacy }
+				unlocked={ inboundTransferStatus.unlocked }
+			/>
 		);
 	}
 
