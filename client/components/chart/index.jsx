@@ -13,7 +13,7 @@ import { noop, throttle } from 'lodash';
 import BarContainer from './bar-container';
 import { hasTouch } from 'lib/touch-detect';
 
-class Chart extends React.Component {
+class Chart extends React.PureComponent {
 	state = {
 		data: [],
 		isEmptyChart: false,
@@ -120,8 +120,9 @@ class Chart extends React.Component {
 					barClick={ barClick }
 					data={ data }
 					yAxisMax={ yMax }
-					chartWidth={ width }
 					isTouch={ hasTouch() }
+					chartWidth={ width }
+					setTooltip={ this.props.setTooltip }
 				/>
 				{ isEmptyChart && (
 					<div className="chart__empty">

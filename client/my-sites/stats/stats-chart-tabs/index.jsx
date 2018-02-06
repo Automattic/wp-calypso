@@ -28,6 +28,7 @@ import {
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { rangeOfPeriod } from 'state/stats/lists/utils';
 import { getSiteOption } from 'state/sites/selectors';
+import Tooltip from 'components/tooltip';
 
 class StatModuleChartTabs extends Component {
 	constructor( props ) {
@@ -37,6 +38,9 @@ class StatModuleChartTabs extends Component {
 		this.state = {
 			activeLegendCharts: activeCharts,
 			activeTab: activeTab,
+			tooltipContext: null,
+			tooltipPosition: 'bottom left',
+			tooltipData: null,
 		};
 	}
 
@@ -219,6 +223,10 @@ class StatModuleChartTabs extends Component {
 		} );
 	}
 
+	setTooltip = ( tooltipContext, tooltipPosition, tooltipData ) => {
+		this.setState( { tooltipContext, tooltipPosition, tooltipData } );
+	};
+
 	render() {
 		const { fullQuery, quickQuery, quickQueryRequesting, fullQueryRequesting, siteId } = this.props;
 		const chartData = this.buildChartData();
@@ -259,6 +267,7 @@ class StatModuleChartTabs extends Component {
 						loading={ activeTabLoading }
 						data={ chartData }
 						barClick={ this.props.barClick }
+						setTooltip={ this.setTooltip }
 					/>
 					<StatTabs
 						data={ data }
@@ -268,6 +277,15 @@ class StatModuleChartTabs extends Component {
 						activeIndex={ this.props.queryDate }
 						activeKey="period"
 					/>
+					<Tooltip
+						className="stats-chart-tabs__tooltip chart__tooltip"
+						id="popover__chart-bar"
+						context={ this.state.tooltipContext }
+						isVisible={ !! this.state.tooltipContext }
+						position={ this.state.tooltipPosition }
+					>
+						<ul>{ this.state.tooltipData }</ul>
+					</Tooltip>
 				</Card>
 			</div>
 		);

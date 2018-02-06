@@ -12,7 +12,12 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import userModule from 'lib/user';
+
+/**
+ * Module variables
+ */
+const user = userModule();
 
 export default class extends React.Component {
 	static displayName = 'ModuleChartBar';
@@ -69,7 +74,12 @@ export default class extends React.Component {
 		}
 
 		sections.push(
-			<div ref="valueBar" key="value" className="chart__bar-section is-bar" style={ valueStyle }>
+			<div
+				ref={ this.setRef }
+				key="value"
+				className="chart__bar-section is-bar"
+				style={ valueStyle }
+			>
 				{ nestedBar }
 			</div>
 		);
@@ -89,15 +99,22 @@ export default class extends React.Component {
 		}
 	};
 
+	computeTooltipPosition() {
+		const { chartWidth, index, count } = this.props;
+
+		const barWidth = chartWidth / count;
+		const barOffset = barWidth * ( index + 1 );
+
+		let tooltipPosition = user.isRTL() ? 'bottom left' : 'bottom right';
+
+		if ( barOffset + 230 > chartWidth && barOffset + barWidth - 230 > 0 ) {
+			tooltipPosition = user.isRTL() ? 'bottom right' : 'bottom left';
+		}
+
+		return tooltipPosition;
+	}
+
 	mouseEnter = () => {
-		this.setState( { showPopover: true } );
-	};
-
-	mouseLeave = () => {
-		this.setState( { showPopover: false } );
-	};
-
-	renderTooltip = () => {
 		if (
 			! this.props.data.tooltipData ||
 			! this.props.data.tooltipData.length ||
@@ -106,9 +123,17 @@ export default class extends React.Component {
 			return null;
 		}
 
+		this.props.setTooltip( this.bar, this.computeTooltipPosition(), this.getTooltipData() );
+	};
+
+	mouseLeave = () => {
+		this.props.setTooltip( null );
+	};
+
+	getTooltipData() {
 		const { tooltipData } = this.props.data;
 
-		const listItemElements = tooltipData.map( function( options, i ) {
+		return tooltipData.map( function( options, i ) {
 			const wrapperClasses = [ 'module-content-list-item' ];
 			let gridiconSpan;
 
@@ -130,20 +155,9 @@ export default class extends React.Component {
 				</li>
 			);
 		} );
+	}
 
-		return (
-			<Tooltip
-				className="chart__tooltip"
-				id="popover__chart-bar"
-				showDelay={ 200 }
-				context={ this.refs && this.refs.valueBar }
-				isVisible={ this.state.showPopover }
-				position={ this.props.tooltipPosition }
-			>
-				<ul>{ listItemElements }</ul>
-			</Tooltip>
-		);
-	};
+	setRef = ref => ( this.bar = ref );
 
 	render() {
 		const barClass = classNames( 'chart__bar', this.props.className );
@@ -164,7 +178,6 @@ export default class extends React.Component {
 				<div className="chart__bar-marker is-hundred" />
 				<div className="chart__bar-marker is-fifty" />
 				<div className="chart__bar-marker is-zero" />
-				{ this.renderTooltip() }
 			</div>
 		);
 	}
