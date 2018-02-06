@@ -95,9 +95,9 @@ export default {
 		datestamp: '20180204',
 		variations: {
 			group_0: 1, // Default group
-			group_1: 1000, // Domainsbot control
-			group_2: 1000, // Domainsbot test
-			group_3: 1000, // Verisign
+			group_1: 1000,
+			group_2: 1000,
+			group_3: 1000,
 		},
 		defaultVariation: 'group_0',
 		allowExistingUsers: true,

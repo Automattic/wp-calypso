@@ -66,14 +66,14 @@ let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
 
+const testGroup = abtest( 'domainSuggestionTestV5' );
+if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
+	searchVendor = testGroup;
+}
+
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
-	}
-
-	const testGroup = abtest( 'domainSuggestionTestV5' );
-	if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
-		searchVendor = testGroup;
 	}
 
 	return {

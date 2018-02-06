@@ -262,7 +262,7 @@ class DomainSearchResults extends React.Component {
 
 	shouldShowAvailability() {
 		const testGroup = abtest( 'domainSuggestionTestV5' );
-		if ( 'group_2' !== testGroup && 'group_3' !== testGroup ) {
+		if ( 'group_1' !== testGroup && 'group_2' !== testGroup && 'group_3' !== testGroup ) {
 			return this.renderDomainAvailability();
 		} else {
 			return null;
