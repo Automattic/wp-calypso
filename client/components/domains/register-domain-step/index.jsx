@@ -670,7 +670,7 @@ class RegisterDomainStep extends React.Component {
 		return (
 			<ExampleDomainSuggestions
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				domainUrl={ alreadyOwnUrl }
+				url={ alreadyOwnUrl }
 				path={ this.props.path }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				products={ this.props.products }

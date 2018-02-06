@@ -18,7 +18,7 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
-		domainUrl: PropTypes.string.isRequired,
+		url: PropTypes.string.isRequired,
 	};
 
 	render() {
@@ -36,7 +36,7 @@ class DomainSuggestionsExample extends React.Component {
 				</p>
 				{ showDomainOption && (
 					<p className="example-domain-suggestions__mapping-information">
-						<a onClick={ this.props.recordClick } href={ this.props.domainUrl }>
+						<a onClick={ this.props.recordClick } href={ this.props.url }>
 							{ translate( 'Already own a domain?' ) }
 						</a>
 					</p>
