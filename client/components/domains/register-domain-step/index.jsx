@@ -48,6 +48,7 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { getNewRailcarSeed } from 'state/analytics/utils';
 import { TRANSFER_IN_NUX } from 'state/current-user/constants';
 
 const domains = wpcom.domains();
@@ -173,13 +174,6 @@ class RegisterDomainStep extends React.Component {
 		};
 	}
 
-	getNewRailcarSeed() {
-		// Generate a 7 character random hash on base16. E.g. ac618a3
-		return Math.floor( ( 1 + Math.random() ) * 0x10000000 )
-			.toString( 16 )
-			.substring( 1 );
-	}
-
 	componentWillReceiveProps( nextProps ) {
 		// Reset state on site change
 		if (
@@ -218,7 +212,7 @@ class RegisterDomainStep extends React.Component {
 		searchCount = 0; // reset the counter
 
 		if ( this.props.initialState ) {
-			const state = { ...this.props.initialState, railcarSeed: this.getNewRailcarSeed() };
+			const state = { ...this.props.initialState, railcarSeed: getNewRailcarSeed() };
 
 			if ( state.lastSurveyVertical && state.lastSurveyVertical !== this.props.surveyVertical ) {
 				state.loadingResults = true;
@@ -371,7 +365,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainSearched: domain,
 			searchResults: [],
 			subdomainSearchResults: [],
-			railcarSeed: this.getNewRailcarSeed(),
+			railcarSeed: getNewRailcarSeed(),
 		} );
 
 		const timestamp = Date.now();
