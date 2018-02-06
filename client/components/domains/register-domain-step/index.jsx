@@ -690,7 +690,6 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		const searchResults = this.state.searchResults || [];
-		const testGroup = abtest( 'domainSuggestionTestV5' );
 		let suggestions =
 			'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup
 				? [ ...searchResults ]
