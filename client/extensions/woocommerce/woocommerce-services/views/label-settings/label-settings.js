@@ -44,7 +44,6 @@ import AddCardDialog from './add-credit-card-modal';
 class ShippingLabels extends Component {
 	componentWillMount() {
 		this.setState( { expanded: this.isExpanded( this.props ) } );
-		this.onVisibilityChange = this.onVisibilityChange.bind( this );
 	}
 
 	componentWillReceiveProps( props ) {
