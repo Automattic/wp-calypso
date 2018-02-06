@@ -22,7 +22,6 @@ import {
 	unbindWindowListeners,
 	suggested as suggestPosition,
 	constrainLeft,
-	isElement as isDOMElement,
 	offset,
 } from './util';
 import { isRtl as isRtlSelector } from 'state/selectors';
@@ -109,11 +108,7 @@ class Popover extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		// update context (target) reference into a property
-		if ( ! isDOMElement( nextProps.context ) ) {
-			this.domContext = ReactDom.findDOMNode( nextProps.context );
-		} else {
-			this.domContext = nextProps.context;
-		}
+		this.domContext = ReactDom.findDOMNode( nextProps.context );
 
 		if ( ! nextProps.isVisible ) {
 			return null;
@@ -283,11 +278,7 @@ class Popover extends Component {
 		this.domContainer = domContainer;
 
 		// store context (target) reference into a property
-		if ( ! isDOMElement( this.props.context ) ) {
-			this.domContext = ReactDom.findDOMNode( this.props.context );
-		} else {
-			this.domContext = this.props.context;
-		}
+		this.domContext = ReactDom.findDOMNode( this.props.context );
 
 		this.setPosition();
 	}
