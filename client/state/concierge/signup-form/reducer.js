@@ -19,12 +19,12 @@ export const timezone = createReducer( moment.tz.guess(), {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.timezone,
 } );
 
-export const firstName = createReducer( '', {
-	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.firstName,
+export const firstname = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.firstname,
 } );
 
-export const lastName = createReducer( '', {
-	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.lastName,
+export const lastname = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.lastname,
 } );
 
 export const status = createReducer( null, {
@@ -32,6 +32,8 @@ export const status = createReducer( null, {
 } );
 
 export default combineReducers( {
+	firstname,
+	lastname,
 	message,
 	timezone,
 	status,
