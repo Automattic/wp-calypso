@@ -160,7 +160,7 @@ export function serverRender( req, res ) {
 	context.config = config.ssrConfig;
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop', context );
+		res.send( renderJsx( 'desktop', context ) );
 		return;
 	}
 
