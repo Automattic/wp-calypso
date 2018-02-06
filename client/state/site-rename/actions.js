@@ -17,6 +17,7 @@ import {
 } from 'state/action-types';
 import { successNotice } from 'state/notices/actions';
 import { domainManagementEdit } from 'my-sites/domains/paths';
+import { requestSite } from 'state/sites/actions';
 
 export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch => {
 	dispatch( {
@@ -32,15 +33,18 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 
 			if ( newSlug ) {
 				const newAddress = newSlug + '.wordpress.com';
-				page( domainManagementEdit( newAddress, newAddress ) );
-				dispatch(
-					successNotice( translate( 'Your new site name is ready to go!' ), {
-						id: 'siteRenameSuccessful',
-						duration: 5000,
-						showDismiss: true,
-						isPersistent: true,
-					} )
-				);
+				dispatch( requestSite( siteId ) ).then( () => {
+					page( domainManagementEdit( newAddress, newAddress ) );
+
+					dispatch(
+						successNotice( translate( 'Your new domain name is ready to go!' ), {
+							id: 'siteRenameSuccessful',
+							duration: 5000,
+							showDismiss: true,
+							isPersistent: true,
+						} )
+					);
+				} );
 			}
 
 			dispatch( {
