@@ -14,29 +14,20 @@ import classNames from 'classnames';
 import Dialog from 'components/dialog';
 import config from 'config';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
+import KEY_BINDINGS from 'lib/keyboard-shortcuts/key-bindings';
 
 class KeyboardShortcutsMenu extends React.Component {
-	static displayName = 'KeyboardShortcutsMenu';
-
 	state = {
 		showDialog: false,
 	};
 
 	componentDidMount() {
-		KeyBindings.on( 'language-change', this.handleLanguageChange );
 		KeyboardShortcuts.on( 'open-keyboard-shortcuts-menu', this.toggleShowDialog );
 	}
 
 	componentWillUnmount() {
-		KeyBindings.off( 'language-change', this.handleLanguageChange );
 		KeyboardShortcuts.off( 'open-keyboard-shortcuts-menu', this.toggleShowDialog );
 	}
-
-	handleLanguageChange = () => {
-		// if the language changes, force a re-render to get the translated key-binding descriptions
-		this.forceUpdate();
-	};
 
 	closeDialog = () => {
 		this.setState( { showDialog: false } );
@@ -47,7 +38,7 @@ class KeyboardShortcutsMenu extends React.Component {
 	};
 
 	getShortcutsByCategory() {
-		const allShortcuts = KeyBindings.get();
+		const allShortcuts = KEY_BINDINGS;
 		const shortcutsByCategory = [
 			{
 				name: this.props.translate( 'List Navigation' ),
@@ -82,7 +73,7 @@ class KeyboardShortcutsMenu extends React.Component {
 			} );
 		}
 
-		return shortcutsByCategory.map( function( category ) {
+		return shortcutsByCategory.map( category => {
 			const className = classNames( 'keyboard-shortcuts__category', category.className, {
 				'keyboard-shortcuts__category-disabled': category.disabled,
 			} );
@@ -95,11 +86,16 @@ class KeyboardShortcutsMenu extends React.Component {
 					</ul>
 				</li>
 			);
-		}, this );
+		} );
 	}
 
 	getShortcutList( shortcuts ) {
 		return shortcuts.map( shortcut => {
+			// some shortcuts, like 'open-support-user', don't have a description
+			if ( ! shortcut.description ) {
+				return null;
+			}
+
 			// process the list of keys in this shortcut into individual elements
 			const keys = shortcut.description.keys.map( ( key, index ) => (
 				<div className="keyboard-shortcuts__key" key={ shortcut.eventName + index }>
@@ -107,10 +103,14 @@ class KeyboardShortcutsMenu extends React.Component {
 				</div>
 			) );
 
+			// `description.text` is a function that takes a `translate` function as argument
+			// and returns a translated string.
+			const text = shortcut.description.text( this.props.translate );
+
 			return (
 				<li key={ shortcut.eventName }>
 					<div className="keyboard-shortcuts__keys">{ keys }</div>
-					<div className="keyboard-shortcuts__description">{ shortcut.description.text }</div>
+					<div className="keyboard-shortcuts__description">{ text }</div>
 				</li>
 			);
 		} );
