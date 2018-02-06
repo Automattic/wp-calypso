@@ -27,10 +27,12 @@ import { didOpenResult, setSearchResults } from 'state/inline-help/actions';
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
 		translate: PropTypes.func,
+		searchQuery: PropTypes.string,
 	};
 
 	static defaultProps = {
 		translate: identity,
+		searchQuery: '',
 	};
 
 	getContextResults = () => {
@@ -137,9 +139,8 @@ class InlineHelpSearchResults extends Component {
 
 	followHelpLink = ( url ) => {
 		const payload = {
-			searchQuery: this.props.searchQuery,
-			currentUrl: window.location.href,
-			resultUrl: url,
+			search_query: this.props.searchQuery,
+			result_url: url,
 		};
 		return () => {
 			this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', payload );
