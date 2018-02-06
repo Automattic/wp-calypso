@@ -109,6 +109,10 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 	);
 };
 
+// Although we don't use the save success action in any of the reducers,
+// we need to dispatch some action in order to signal to the data layer that
+// the save request has finished. Tracking those requests is necessary for
+// displaying an up to date progress for some steps.
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
 	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
 
