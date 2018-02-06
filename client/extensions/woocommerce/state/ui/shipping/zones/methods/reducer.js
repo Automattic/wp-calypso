@@ -65,8 +65,8 @@ reducer[ WOOCOMMERCE_SHIPPING_ZONE_METHOD_ADD ] = ( state, action ) => {
 	if ( builtInShippingMethods[ methodType ] ) {
 		method = {
 			...method,
-			...builtInShippingMethods[ methodType ]( undefined, action ),
 			title,
+			...builtInShippingMethods[ methodType ]( undefined, action ),
 		};
 	}
 	return {
