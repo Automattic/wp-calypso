@@ -592,7 +592,7 @@ export class JetpackAuthorize extends Component {
 
 	renderFooterLinks() {
 		const { translate } = this.props;
-		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
+		const { isAuthorizing } = this.props.authorizationData;
 		const { blogname, redirectAfterAuth } = this.props.authQuery;
 		const backToWpAdminLink = (
 			<LoggedOutFormLinkItem href={ redirectAfterAuth }>
@@ -605,17 +605,6 @@ export class JetpackAuthorize extends Component {
 
 		if ( this.retryingAuth || isAuthorizing || this.redirecting ) {
 			return null;
-		}
-
-		if ( authorizeSuccess ) {
-			return (
-				<LoggedOutFormLinks>
-					{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
-						{ translate( "I'm not interested in upgrades" ) }
-					</LoggedOutFormLinkItem>
-				</LoggedOutFormLinks>
-			);
 		}
 
 		return (
