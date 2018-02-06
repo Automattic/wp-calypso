@@ -461,7 +461,6 @@ class RegisterDomainStep extends React.Component {
 								this.props.analyticsSection
 							);
 
-							console.log( domainSuggestions );
 							callback( null, domainSuggestions );
 						} )
 						.catch( error => {
