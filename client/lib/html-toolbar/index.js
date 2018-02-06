@@ -58,7 +58,7 @@ export const insertContent = ( textarea, before, content, after, onInsert = noop
 		setCursorPosition( textarea, newContent.length - value.length );
 		textarea.focus();
 		onInsert( newContent );
-	} else if ( 11 === Env.ie ) {
+	} else if ( !! Env.ie && Env.ie >= 11 ) {
 		// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 		// Using the previous version of replacing the entire content value instead.
 		textarea.value = newContent;
