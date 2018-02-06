@@ -85,6 +85,12 @@
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
 }
 
+.people-list-item.is-invite .people-profile__username {
+	@include breakpoint( '>480px' ) {
+		font-size: 18px;
+	}
+}
+
 .people-list-item__invite-status {
 	align-self: center;
 	flex-shrink: 0;

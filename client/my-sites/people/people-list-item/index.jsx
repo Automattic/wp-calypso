@@ -118,13 +118,22 @@ class PeopleListItem extends React.PureComponent {
 
 	render() {
 		const { className, invite, onRemove, translate, type, user } = this.props;
+
+		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
+
+		const classes = classNames(
+			'people-list-item',
+			{
+				'is-invite': isInvite,
+			},
+			className
+		);
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
-		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
 		return (
 			<CompactCard
-				className={ classNames( 'people-list-item', className ) }
+				className={ classes }
 				tagName={ tagName }
 				href={ this.maybeGetCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }
