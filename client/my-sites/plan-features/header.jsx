@@ -278,12 +278,13 @@ class PlanFeaturesHeader extends Component {
 
 	getIntervalDiscount() {
 		const {
+			basePlansPath,
 			currencyCode,
 			isYearly,
 			rawPrice,
 			relatedMonthlyPlan,
-			site,
 			relatedYearlyPlan,
+			site,
 		} = this.props;
 		if ( site.jetpack ) {
 			const [ discountPrice, originalPrice ] = isYearly
@@ -294,6 +295,7 @@ class PlanFeaturesHeader extends Component {
 				!! discountPrice &&
 				!! originalPrice && (
 					<PlanIntervalDiscount
+						basePlansPath={ basePlansPath }
 						currencyCode={ currencyCode }
 						discountPrice={ discountPrice }
 						isYearly={ isYearly }
