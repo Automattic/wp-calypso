@@ -88,7 +88,7 @@ function createPageDefinition( path, sectionDefinition ) {
 					LoadingError.retry( sectionDefinition.name );
 				} else {
 					dispatch( { type: 'SECTION_SET', isLoading: false } );
-					LoadingError.show( sectionDefinition.name );
+					LoadingError.show( context, sectionDefinition.name );
 				}
 			} );
 	} );
