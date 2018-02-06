@@ -57,7 +57,7 @@
 
 // Clickable Card
 .card__link-indicator {
-	color: lighten( $gray, 20% );
+	color: $gray-text-min;
 	display: block;
 	height: 100%;
 	position: absolute;
@@ -74,7 +74,7 @@
 
 a.card:hover {
 	.card__link-indicator {
-		color: lighten( $gray, 10% );
+		color: $gray-text;
 	}
 }
 

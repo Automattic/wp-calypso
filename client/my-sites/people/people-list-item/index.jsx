@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -82,10 +81,11 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	renderInviteStatus = () => {
-		const { invite, translate, requestingResend, resendSuccess } = this.props;
+		const { type, invite, translate, requestingResend, resendSuccess } = this.props;
 		const { isPending } = invite;
 		const className = classNames( 'people-list-item__invite-status', {
 			'is-pending': isPending,
+			'is-invite-details': type === 'invite-details',
 		} );
 		const buttonClassName = classNames( 'people-list-item__invite-resend', {
 			'is-success': resendSuccess,
@@ -93,8 +93,15 @@ class PeopleListItem extends React.PureComponent {
 
 		return (
 			<div className={ className }>
-				{ ! isPending && <Gridicon icon="checkmark" size={ 18 } /> }
-				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
+				{ type === 'invite-details' &&
+					( isPending ? (
+						translate( 'Pending' )
+					) : (
+						<React.Fragment>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ translate( 'Accepted' ) }
+						</React.Fragment>
+					) ) }
 				{ isPending && (
 					<Button
 						className={ buttonClassName }
@@ -111,13 +118,23 @@ class PeopleListItem extends React.PureComponent {
 
 	render() {
 		const { className, invite, onRemove, translate, type, user } = this.props;
+
+		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
+
+		const classes = classNames(
+			'people-list-item',
+			{
+				'is-invite': isInvite,
+				'is-invite-details': type === 'invite-details',
+			},
+			className
+		);
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
-		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 
 		return (
 			<CompactCard
-				className={ classNames( 'people-list-item', className ) }
+				className={ classes }
 				tagName={ tagName }
 				href={ this.maybeGetCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }

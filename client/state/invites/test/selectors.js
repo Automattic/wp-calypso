@@ -11,11 +11,12 @@ import lodash from 'lodash';
  */
 import {
 	isRequestingInvitesForSite,
-	getInvitesForSite,
+	getPendingInvitesForSite,
+	getAcceptedInvitesForSite,
 	isRequestingResend,
 	getNumberOfInvitesFoundForSite,
 	didResendSucceed,
-	getSelectedInvite,
+	getInviteForSite,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -54,50 +55,149 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getInvitesForSite()', () => {
-		test( 'should return invites when invites exist for site', () => {
+	describe( '#getPendingInvitesForSite()', () => {
+		test( 'should return invites when pending invites exist for site', () => {
 			const state = {
 				invites: {
 					items: {
-						12345: [
-							{
-								key: '123456asdf789',
-								role: 'follower',
-								isPending: null,
-								inviteDate: '2018-01-28T17:22:16+00:00',
-								acceptedDate: '2018-01-28T17:22:20+00:00',
-								user: {
-									login: 'chicken',
-									email: false,
-									name: 'Pollo',
-									avatar_URL:
-										'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						12345: {
+							pending: [
+								{
+									key: '123456asdf789',
+									role: 'follower',
+									isPending: true,
+									inviteDate: '2018-01-28T17:22:16+00:00',
+									acceptedDate: null,
+									user: {
+										login: 'chicken',
+										email: false,
+										name: 'Pollo',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+									invitedBy: {
+										login: 'cow',
+										name: 'Vaca',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+									},
 								},
-								invitedBy: {
-									login: 'cow',
-									name: 'Vaca',
-									avatar_URL:
-										'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
-								},
-							},
-						],
+							],
+							accepted: [],
+						},
 					},
 				},
 			};
-			expect( getInvitesForSite( state, 12345 ) ).to.eql( state.invites.items[ 12345 ] );
+			expect( getPendingInvitesForSite( state, 12345 ) ).to.eql(
+				state.invites.items[ 12345 ].pending
+			);
 		} );
 
-		test( 'should return null when invites do not exist for site', () => {
+		test( 'should return an empty array if no pending invites for site', () => {
+			const state = {
+				invites: {
+					items: {
+						12345: {
+							pending: [],
+							accepted: [
+								{
+									key: 'jkl789asd12345',
+									role: 'subscriber',
+									isPending: false,
+									user: {
+										login: 'grilledchicken',
+										email: false,
+										name: 'Pollo Asado',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+								},
+							],
+						},
+					},
+				},
+			};
+			expect( getPendingInvitesForSite( state, 12345 ) ).to.eql( [] );
+		} );
+
+		test( 'should return null if no invites for site', () => {
 			const state = {
 				invites: {
 					items: {},
 				},
 			};
-			expect( getInvitesForSite( state, 12345 ) ).to.equal( null );
+			expect( getPendingInvitesForSite( state, 12345 ) ).to.equal( null );
 		} );
 	} );
 
-	describe( '#getSelectedInvite()', () => {
+	describe( '#getAcceptedInvitesForSite()', () => {
+		test( 'should return invites when accepted invites exist for site', () => {
+			const state = {
+				invites: {
+					items: {
+						12345: {
+							pending: [],
+							accepted: [
+								{
+									key: 'jkl789asd12345',
+									role: 'subscriber',
+									isPending: false,
+									user: {
+										login: 'grilledchicken',
+										email: false,
+										name: 'Pollo Asado',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+								},
+							],
+						},
+					},
+				},
+			};
+			expect( getAcceptedInvitesForSite( state, 12345 ) ).to.eql(
+				state.invites.items[ 12345 ].accepted
+			);
+		} );
+
+		test( 'should return an empty array if no accepted invites for site', () => {
+			const state = {
+				invites: {
+					items: {
+						12345: {
+							pending: [
+								{
+									key: '123456asdf789',
+									role: 'follower',
+									isPending: true,
+									user: {
+										login: 'chicken',
+										email: false,
+										name: 'Pollo',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+								},
+							],
+							accepted: [],
+						},
+					},
+				},
+			};
+			expect( getAcceptedInvitesForSite( state, 12345 ) ).to.eql( [] );
+		} );
+
+		test( 'should return null if no invites for site', () => {
+			const state = {
+				invites: {
+					items: {},
+				},
+			};
+			expect( getAcceptedInvitesForSite( state, 12345 ) ).to.equal( null );
+		} );
+	} );
+
+	describe( '#getInviteForSite()', () => {
 		beforeAll( () => {
 			sinon.spy( lodash, 'find' );
 		} );
@@ -110,33 +210,36 @@ describe( 'selectors', () => {
 			const state = {
 				invites: {
 					items: {
-						12345: [
-							{
-								key: '123456asdf789',
-								role: 'follower',
-								isPending: null,
-								inviteDate: '2018-01-28T17:22:16+00:00',
-								acceptedDate: '2018-01-28T17:22:20+00:00',
-								user: {
-									login: 'chicken',
-									email: false,
-									name: 'Pollo',
-									avatar_URL:
-										'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						12345: {
+							pending: [
+								{
+									key: '123456asdf789',
+									role: 'follower',
+									isPending: true,
+									inviteDate: '2018-01-28T17:22:16+00:00',
+									acceptedDate: null,
+									user: {
+										login: 'chicken',
+										email: false,
+										name: 'Pollo',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+									invitedBy: {
+										login: 'cow',
+										name: 'Vaca',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+									},
 								},
-								invitedBy: {
-									login: 'cow',
-									name: 'Vaca',
-									avatar_URL:
-										'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
-								},
-							},
-						],
+							],
+							accepted: [],
+						},
 					},
 				},
 			};
-			expect( getSelectedInvite( state, 12345, '123456asdf789' ) ).to.eql(
-				state.invites.items[ 12345 ][ 0 ]
+			expect( getInviteForSite( state, 12345, '123456asdf789' ) ).to.equal(
+				state.invites.items[ 12345 ].pending[ 0 ]
 			);
 		} );
 
@@ -144,50 +247,94 @@ describe( 'selectors', () => {
 			const state = {
 				invites: {
 					items: {
-						12345: [
-							{
-								key: '123456asdf789',
-								role: 'follower',
-								isPending: null,
-								inviteDate: '2018-01-28T17:22:16+00:00',
-								acceptedDate: '2018-01-28T17:22:20+00:00',
-								user: {
-									login: 'chicken',
-									email: false,
-									name: 'Pollo',
-									avatar_URL:
-										'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+						12345: {
+							pending: [],
+							accepted: [
+								{
+									key: '123456asdf789',
+									role: 'follower',
+									isPending: false,
+									inviteDate: '2018-01-28T17:22:16+00:00',
+									acceptedDate: '2018-01-28T17:22:20+00:00',
+									user: {
+										login: 'chicken',
+										email: false,
+										name: 'Pollo',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+									invitedBy: {
+										login: 'cow',
+										name: 'Vaca',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+									},
 								},
-								invitedBy: {
-									login: 'cow',
-									name: 'Vaca',
-									avatar_URL:
-										'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
-								},
-							},
-						],
+							],
+						},
 					},
 				},
 			};
+
 			expect( lodash.find.callCount ).to.equal( 0 );
-			const call1 = getSelectedInvite( state, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).to.equal( 1 );
-			const call2 = getSelectedInvite( state, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).to.equal( 1 );
-			expect( call1 ).to.equal( call2 );
-			const newState = lodash.cloneDeep( state );
-			const call3 = getSelectedInvite( newState, 12345, '123456asdf789' );
+
+			const call1 = getInviteForSite( state, 12345, '123456asdf789' );
 			expect( lodash.find.callCount ).to.equal( 2 );
+			expect( call1 ).to.equal( state.invites.items[ 12345 ].accepted[ 0 ] );
+
+			const call2 = getInviteForSite( state, 12345, '123456asdf789' );
+			expect( lodash.find.callCount ).to.equal( 2 );
+			expect( call1 ).to.equal( call2 );
+
+			const newState = lodash.cloneDeep( state );
+			const call3 = getInviteForSite( newState, 12345, '123456asdf789' );
+			expect( lodash.find.callCount ).to.equal( 4 );
+			expect( call3 ).to.equal( newState.invites.items[ 12345 ].accepted[ 0 ] );
 			expect( call3 ).not.to.equal( call2 );
 		} );
 
-		test( 'should return undefined when invites do not exist for site', () => {
+		test( 'should return null when invites do not exist for site', () => {
 			const state = {
 				invites: {
 					items: {},
 				},
 			};
-			expect( getSelectedInvite( state, 12345, '123456asdf789' ) ).to.equal( undefined );
+			expect( getInviteForSite( state, 12345, '123456asdf789' ) ).to.equal( null );
+		} );
+
+		test( 'should return null if the given invite key is not valid for site', () => {
+			const state = {
+				invites: {
+					items: {
+						12345: {
+							pending: [
+								{
+									key: '123456asdf789',
+									role: 'follower',
+									isPending: true,
+									inviteDate: '2018-01-28T17:22:16+00:00',
+									acceptedDate: null,
+									user: {
+										login: 'chicken',
+										email: false,
+										name: 'Pollo',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+									invitedBy: {
+										login: 'cow',
+										name: 'Vaca',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+									},
+								},
+							],
+							accepted: [],
+						},
+					},
+				},
+			};
+			expect( getInviteForSite( state, 12345, '123456asdf000' ) ).to.equal( null );
 		} );
 	} );
 

@@ -114,6 +114,7 @@ class PeopleProfile extends React.PureComponent {
 		const { translate, type, user } = this.props;
 
 		let name;
+		let userTitle = null;
 		if ( ! user ) {
 			name = translate( 'Loading Users', {
 				context: 'Placeholder text while fetching users.',
@@ -128,22 +129,29 @@ class PeopleProfile extends React.PureComponent {
 			// also be sent to any email address, in which case the other details
 			// will not be set and we therefore display the user's email.
 			name = user.login || user.email;
+			if ( ! user.login ) {
+				// Long email addresses may not show fully in the space provided.
+				userTitle = user.email;
+			}
+		}
+
+		if ( ! name ) {
+			return null;
 		}
 
 		const blogId = get( user, 'follow_data.params.blog_id', false );
 
-		if ( name && blogId ) {
-			name = (
-				<div className="people-profile__username">
+		return (
+			<div className="people-profile__username" title={ userTitle }>
+				{ blogId ? (
 					<a href={ user.url } onClick={ this.handleLinkToReaderSiteStream }>
 						{ decodeEntities( name ) }
 					</a>
-				</div>
-			);
-		} else if ( name ) {
-			name = <div className="people-profile__username">{ decodeEntities( name ) }</div>;
-		}
-		return name;
+				) : (
+					decodeEntities( name )
+				) }
+			</div>
+		);
 	};
 
 	renderLogin = () => {

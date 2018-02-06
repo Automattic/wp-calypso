@@ -1,0 +1,28 @@
+.people-invites__invite-users-action {
+	.people-invites__invite-users-message {
+		margin-bottom: 16px;
+
+		.empty-content & {
+			font-size: 22px;
+		}
+	}
+
+	.button {
+		padding: 6px 16px 6px 12px;
+
+		.gridicon {
+			margin-right: 8px;
+		}
+	}
+
+	.people-invites__pending & {
+		text-align: center;
+		margin: 50px 0;
+		@include breakpoint( "<960px" ) {
+			margin: 40px 0;
+		}
+		@include breakpoint( "<480px" ) {
+			margin: 30px 0;
+		}
+	}
+}
