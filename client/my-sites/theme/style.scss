@@ -224,7 +224,7 @@
 	}
 
 	.wp-caption-text {
-		color: $gray;
+		color: darken( $gray, 20% );
 		font-size: 12px;
 		padding: 3px 8px 6px;
 	}
