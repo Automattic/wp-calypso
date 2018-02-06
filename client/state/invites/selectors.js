@@ -82,7 +82,8 @@ export const getInviteForSite = treeSelect(
 		}
 		return (
 			find( siteInvites.pending, { key: inviteId } ) ||
-			find( siteInvites.accepted, { key: inviteId } )
+			find( siteInvites.accepted, { key: inviteId } ) ||
+			null
 		);
 	}
 );

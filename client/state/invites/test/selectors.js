@@ -301,6 +301,41 @@ describe( 'selectors', () => {
 			};
 			expect( getInviteForSite( state, 12345, '123456asdf789' ) ).to.equal( null );
 		} );
+
+		test( 'should return null if the given invite key is not valid for site', () => {
+			const state = {
+				invites: {
+					items: {
+						12345: {
+							pending: [
+								{
+									key: '123456asdf789',
+									role: 'follower',
+									isPending: true,
+									inviteDate: '2018-01-28T17:22:16+00:00',
+									acceptedDate: null,
+									user: {
+										login: 'chicken',
+										email: false,
+										name: 'Pollo',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+									},
+									invitedBy: {
+										login: 'cow',
+										name: 'Vaca',
+										avatar_URL:
+											'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+									},
+								},
+							],
+							accepted: [],
+						},
+					},
+				},
+			};
+			expect( getInviteForSite( state, 12345, '123456asdf000' ) ).to.equal( null );
+		} );
 	} );
 
 	describe( '#isRequestingResend()', () => {
