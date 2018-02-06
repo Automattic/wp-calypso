@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`babel-lodash-es should report error on a non-default import from a submodule 1`] = `"unknown: babel-lodash-es: Could not transform a non-default import from lodash-es/submodule"`;
+
+exports[`babel-lodash-es should transform aliased default import from a submodule 1`] = `"import { get as theGet } from 'lodash';"`;
+
+exports[`babel-lodash-es should transform default import from a submodule 1`] = `"import { get } from 'lodash';"`;
+
+exports[`babel-lodash-es should transform default import from top-level package 1`] = `"import _ from 'lodash';"`;
+
+exports[`babel-lodash-es should transform named import from top-level package 1`] = `"import { get } from 'lodash';"`;

@@ -112,6 +112,14 @@ const webpackConfig = {
 				loader: [ 'happypack/loader' ],
 			},
 			{
+				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+				loader: 'babel-loader',
+				options: {
+					babelrc: false,
+					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
+				},
+			},
+			{
 				test: /extensions[\/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
