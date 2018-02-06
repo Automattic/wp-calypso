@@ -49,6 +49,7 @@ import {
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { TRANSFER_IN_NUX } from 'state/current-user/constants';
+import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
 
@@ -69,10 +70,16 @@ function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
 	}
+
+	const testGroup = abtest( 'domain_suggestions_test_v5' );
+	if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
+		vendor = testGroup;
+	}
+
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
-		vendor: searchVendor,
+		vendor: vendor,
 		includeSubdomain: props.includeWordPressDotCom,
 		surveyVertical: props.surveyVertical,
 	};
@@ -435,13 +442,19 @@ class RegisterDomainStep extends React.Component {
 							? SUGGESTION_QUANTITY - 1
 							: SUGGESTION_QUANTITY;
 
+					var vendor = 'domainsbot';
+					const testGroup = abtest( 'domainSuggestionTestV5' );
+					if ( 'group_1' === testGroup || 'group_2' === testGroup ) {
+						vendor = testGroup;
+					}
+
 					const query = {
 						query: domain,
 						quantity: suggestionQuantity,
 						include_wordpressdotcom: false,
 						include_dotblogsubdomain: false,
 						tld_weight_overrides: this.getTldWeightOverrides(),
-						vendor: searchVendor,
+						vendor: vendor,
 						vertical: this.props.surveyVertical,
 					};
 
@@ -462,6 +475,7 @@ class RegisterDomainStep extends React.Component {
 								this.props.analyticsSection
 							);
 
+							console.log( domainSuggestions );
 							callback( null, domainSuggestions );
 						} )
 						.catch( error => {
@@ -682,7 +696,15 @@ class RegisterDomainStep extends React.Component {
 			find( this.state.searchResults, matchesSearchedDomain );
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
-		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
+		const searchResults = get( this.state, 'searchResults', [] );
+		console.log( searchResults );
+		const testGroup = abtest( 'domainSuggestionTestV5' );
+		let suggestions =
+			'group_1' === testGroup || 'group_2' === testGroup
+				? reject( searchResults, alwaysFalse )
+				: reject( searchResults, matchesSearchedDomain );
+		//let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
+		console.log( suggestions );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {

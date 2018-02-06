@@ -91,6 +91,17 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
+	domainSuggestionTestV5: {
+		datestamp: '20180105',
+		variations: {
+			group_0: 1, // Default group
+			group_1: 1000, // Domainsbot control
+			group_2: 1000, // Domainsbot test
+			group_3: 1000, // Verisign
+		},
+		defaultVariation: 'group_0',
+		allowExistingUsers: true,
+	},
 
 	// Must run at least 1 full week from commit time
 	// 2018-01-24 to 2018-01-31
