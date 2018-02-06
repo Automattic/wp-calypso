@@ -392,7 +392,7 @@ class TransferDomainStep extends React.Component {
 				} );
 
 				if ( this.props.isSignupStep && ! this.transferIsRestricted() ) {
-					this.props.onTransferDomain( { domain } );
+					this.props.onTransferDomain( domain );
 				}
 			}
 		);
