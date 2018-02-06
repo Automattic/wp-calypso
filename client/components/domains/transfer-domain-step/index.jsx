@@ -222,19 +222,10 @@ class TransferDomainStep extends React.Component {
 				fetchDomains( domain );
 				page( domainManagementTransferIn( selectedSite.slug, domain ) );
 			} else {
-				this.props.errorNotice(
-					error.message || translate( 'We were unable to start the transfer.' )
-				);
+				this.props.errorNotice( error || translate( 'We were unable to start the transfer.' ) );
 			}
 		} );
 	};
-
-	startTransferErrorNotice() {
-		const { inboundTransferStartError } = this.state;
-		if ( inboundTransferStartError ) {
-			return <Notice text={ inboundTransferStartError } status="is-error" showDismiss={ false } />;
-		}
-	}
 
 	getTransferDomainPrecheck() {
 		const { domain, inboundTransferStatus, submittingWhois, searchQuery } = this.state;

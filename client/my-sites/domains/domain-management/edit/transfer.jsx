@@ -29,7 +29,7 @@ import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
 import { Notice } from 'components/notice';
 import { get } from 'lodash';
 import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
-import { domainManagementTransferInPrecheck as transferInPrecheckLink } from 'my-sites/domains/paths';
+import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 
 class Transfer extends React.PureComponent {
 	state = {
@@ -134,7 +134,7 @@ class Transfer extends React.PureComponent {
 
 	startTransfer = () => {
 		const { domain, selectedSite } = this.props;
-		page( transferInPrecheckLink( selectedSite.slug, domain.name ) );
+		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
 	};
 
 	restartTransfer = () => {
