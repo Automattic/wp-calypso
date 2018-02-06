@@ -6,6 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,41 +21,43 @@ const TodoLinks = steps =>
 		</div>
 	) );
 
-export default connect( ( state, { siteId, siteSlug, siteUrl, translate } ) => {
-	const isConnected = isJetpackSite( state, siteId ); // Will only return true if it's connected to WP.com
-	if ( isConnected ) {
+export default localize(
+	connect( ( state, { siteId, siteSlug, siteUrl, translate } ) => {
+		const isConnected = isJetpackSite( state, siteId ); // Will only return true if it's connected to WP.com
+		if ( isConnected ) {
+			return {
+				THEME: {
+					label: translate( 'Choose a Theme' ),
+					url: '/themes/' + siteSlug,
+				},
+				PAGES: {
+					label: translate( 'Add additional pages' ),
+					url: getEditorNewPostPath( state, siteId, 'page' ),
+				},
+				BLOG: {
+					label: translate( 'Write your first blog post' ),
+					url: getEditorNewPostPath( state, siteId, 'post' ),
+				},
+			};
+		}
+
 		return {
+			JETPACK_CONNECTION: {
+				label: translate( 'Connect to WordPress.com' ),
+				url: '/jetpack/connect?url=' + siteUrl,
+			},
 			THEME: {
 				label: translate( 'Choose a Theme' ),
-				url: '/themes/' + siteSlug,
+				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
 			},
 			PAGES: {
 				label: translate( 'Add additional pages' ),
-				url: getEditorNewPostPath( state, siteId, 'page' ),
+				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
 			},
 			BLOG: {
 				label: translate( 'Write your first blog post' ),
-				url: getEditorNewPostPath( state, siteId, 'post' ),
+				url: siteUrl + '/wp-admin/post-new.php',
 			},
 		};
-	}
-
-	return {
-		JETPACK_CONNECTION: {
-			label: translate( 'Connect to WordPress.com' ),
-			url: '/jetpack/connect?url=' + siteUrl,
-		},
-		THEME: {
-			label: translate( 'Choose a Theme' ),
-			url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
-		},
-		PAGES: {
-			label: translate( 'Add additional pages' ),
-			url: siteUrl + '/wp-admin/post-new.php?post_type=page',
-		},
-		BLOG: {
-			label: translate( 'Write your first blog post' ),
-			url: siteUrl + '/wp-admin/post-new.php',
-		},
-	};
-} )( TodoLinks );
+	} )( TodoLinks )
+);

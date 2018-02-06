@@ -80,12 +80,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						<TodoLinks
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							siteUrl={ siteUrl }
-							translate={ translate }
-						/>
+						<TodoLinks siteId={ siteId } siteSlug={ siteSlug } siteUrl={ siteUrl } />
 					</div>
 				</div>
 				<div className="steps__button-group">
