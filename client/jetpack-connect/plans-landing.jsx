@@ -28,7 +28,6 @@ const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';
 
 class PlansLanding extends Component {
 	static propTypes = {
-		basePlansPath: PropTypes.string,
 		interval: PropTypes.string,
 		url: PropTypes.string,
 	};
@@ -87,7 +86,7 @@ class PlansLanding extends Component {
 	};
 
 	render() {
-		const { basePlansPath, interval, requestingSites, site, url } = this.props;
+		const { interval, requestingSites, site, url } = this.props;
 
 		// We're redirecting in componentDidMount if the site is already connected
 		// so don't bother rendering any markup if this is the case
@@ -100,7 +99,7 @@ class PlansLanding extends Component {
 				<QueryPlans />
 
 				<PlansGrid
-					basePlansPath={ basePlansPath }
+					basePlansPath={ '/jetpack/connect/store' }
 					calypsoStartedConnection={ true }
 					hideFreePlan={ true }
 					interval={ interval }
