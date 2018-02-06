@@ -19,6 +19,14 @@ export const timezone = createReducer( moment.tz.guess(), {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.timezone,
 } );
 
+export const firstName = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.firstName,
+} );
+
+export const lastName = createReducer( '', {
+	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.lastName,
+} );
+
 export const status = createReducer( null, {
 	[ CONCIERGE_UPDATE_BOOKING_STATUS ]: ( state, action ) => action.status,
 } );

@@ -16,11 +16,12 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
 import Timezone from 'components/timezone';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
-import { getConciergeSignupForm } from 'state/selectors';
+import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -55,7 +56,11 @@ class InfoStep extends Component {
 	}
 
 	render() {
-		const { signupForm: { message, timezone }, translate } = this.props;
+		const {
+			signupForm: { firstname, lastname, message, timezone },
+			userSettings,
+			translate,
+		} = this.props;
 
 		return (
 			<div>
@@ -65,6 +70,24 @@ class InfoStep extends Component {
 				</CompactCard>
 
 				<CompactCard>
+					<FormFieldset>
+						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
+						<FormTextInput
+							name="firstname"
+							placeholder={ userSettings.first_name }
+							onChange={ this.setFieldValue }
+							value={ firstname }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="lastname">{ translate( 'Last Name' ) }</FormLabel>
+						<FormTextInput
+							name="lastname"
+							placeholder={ userSettings.last_name }
+							onChange={ this.setFieldValue }
+							value={ lastname }
+						/>
+					</FormFieldset>
 					<FormFieldset>
 						<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
 						<Timezone
@@ -107,6 +130,7 @@ class InfoStep extends Component {
 export default connect(
 	state => ( {
 		signupForm: getConciergeSignupForm( state ),
+		userSettings: getUserSettings( state ),
 	} ),
 	{
 		updateConciergeSignupForm,
