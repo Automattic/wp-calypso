@@ -8,13 +8,13 @@ import { JETPACK_CONNECT_COMPLETE_FLOW, JETPACK_CONNECT_RETRY_AUTH } from 'state
 import { jetpackAuthAttemptsSchema } from './schema';
 import { keyedReducer } from 'state/utils';
 
-export function authAttempts( state = undefined, { type, attemptNumber } ) {
+export function authAttempts( state = undefined, { type, attemptNumber, timestamp } ) {
 	switch ( type ) {
 		case JETPACK_CONNECT_RETRY_AUTH:
 			if ( ! state || isStale( state.timestamp, AUTH_ATTEMPS_TTL ) ) {
 				return {
 					attempt: 0,
-					timestamp: Date.now(),
+					timestamp,
 				};
 			}
 			return {
