@@ -140,7 +140,6 @@ class InlineHelpSearchResults extends Component {
 	followHelpLink = ( url ) => {
 		const payload = {
 			search_query: this.props.searchQuery,
-			current_url: window.location.href,
 			result_url: url,
 		};
 		return () => {
