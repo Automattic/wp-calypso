@@ -178,6 +178,11 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( { currentStep: newStep } );
 	}
 
+	getDomainNames = () =>
+		map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' ).concat(
+			map( cartItems.getDomainTransfers( this.props.cart ), 'meta' )
+		);
+
 	validate = ( fieldValues, onComplete ) => {
 		if ( this.needsOnlyGoogleAppsDetails() ) {
 			wpcom.validateGoogleAppsContactInformation(
@@ -188,12 +193,10 @@ export class DomainDetailsForm extends PureComponent {
 		}
 
 		const allFieldValues = this.getMainFieldValues();
-		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' ).concat(
-			map( cartItems.getDomainTransfers( this.props.cart ), 'meta' )
-		);
+
 		wpcom.validateDomainContactInformation(
 			allFieldValues,
-			domainNames,
+			this.getDomainNames(),
 			this.generateValidationHandler( onComplete )
 		);
 	};
@@ -460,7 +463,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	renderExtraDetailsForm( tld ) {
 		return (
-			<ExtraInfoForm tld={ tld } getFieldProps={ this.getFieldProps }>
+			<ExtraInfoForm tld={ tld } getDomainNames={ this.getDomainNames }>
 				{ this.renderSubmitButton() }
 			</ExtraInfoForm>
 		);
