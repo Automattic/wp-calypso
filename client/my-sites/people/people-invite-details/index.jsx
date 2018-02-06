@@ -105,7 +105,7 @@ class PeopleInviteDetails extends React.PureComponent {
 				<SidebarNavigation />
 
 				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Invite' ) }
+					{ translate( 'Invite Details' ) }
 				</HeaderCake>
 
 				{ invite && this.renderInvite() }
