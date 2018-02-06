@@ -19,6 +19,7 @@ import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
 import Spinner from 'components/spinner';
+import { TodoLinksConnected, TodoLinksUnconnected } from './summary-todo-links';
 import {
 	getJetpackOnboardingPendingSteps,
 	getJetpackOnboardingCompletedSteps,
@@ -54,55 +55,9 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 		} );
 	};
 
-	renderTodo = () => {
-		const { isConnected, siteUrl, translate } = this.props;
-
-		const stepsTodoUnconnected = {
-			JETPACK_CONNECTION: {
-				label: translate( 'Connect to WordPress.com' ),
-				url: '/jetpack/connect?url=' + siteUrl,
-			},
-			THEME: {
-				label: translate( 'Choose a Theme' ),
-				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
-			},
-			PAGES: {
-				label: translate( 'Add additional pages' ),
-				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
-			},
-			BLOG: {
-				label: translate( 'Write your first blog post' ),
-				url: siteUrl + '/wp-admin/post-new.php',
-			},
-		};
-
-		// TODO: Point to Calypso
-		const stepsTodoConnected = {
-			THEME: {
-				label: translate( 'Choose a Theme' ),
-				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
-			},
-			PAGES: {
-				label: translate( 'Add additional pages' ),
-				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
-			},
-			BLOG: {
-				label: translate( 'Write your first blog post' ),
-				url: siteUrl + '/wp-admin/post-new.php',
-			},
-		};
-
-		const stepsTodo = isConnected ? stepsTodoConnected : stepsTodoUnconnected;
-
-		return map( stepsTodo, ( { label, url }, stepName ) => (
-			<div key={ stepName } className="steps__summary-entry todo">
-				<a href={ url }>{ label }</a>
-			</div>
-		) );
-	};
-
 	render() {
-		const { siteId, siteUrl, translate } = this.props;
+		const { isConnected, siteId, siteSlug, siteUrl, translate } = this.props;
+		const TodoLinksComponent = isConnected ? TodoLinksConnected : TodoLinksUnconnected;
 
 		const headerText = translate( "You're ready to go!" );
 		const subHeaderText = translate(
@@ -127,7 +82,12 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						{ this.renderTodo() }
+						<TodoLinksComponent
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							siteUrl={ siteUrl }
+							translate={ translate }
+						/>
 					</div>
 				</div>
 				<div className="steps__button-group">
