@@ -23,7 +23,7 @@
 	&.jetpack-branded {
 		.button.is-primary {
 			background-color: $green-jetpack;
-			border-color: #00a523;
+			border-color: darken($green-jetpack, 5%);
 		}
 	}
 }
