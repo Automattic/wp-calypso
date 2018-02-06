@@ -88,7 +88,7 @@ function addMetaToNextPageFetch( params ) {
 }
 
 function limitSiteParams( params ) {
-	params.fields = 'ID,site_ID,date';
+	params.fields = 'ID,site_ID,date,feed_ID,feed_item_ID';
 }
 
 function limitSiteParamsForLikes( params ) {
