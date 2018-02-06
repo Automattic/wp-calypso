@@ -49,6 +49,7 @@ import {
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { TRANSFER_IN_NUX } from 'state/current-user/constants';
+import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
 
@@ -56,7 +57,7 @@ const domains = wpcom.domains();
 const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
-const searchVendor = 'domainsbot';
+let searchVendor = 'domainsbot';
 const fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [];
@@ -65,10 +66,16 @@ let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
 
+const testGroup = abtest( 'domainSuggestionTestV5' );
+if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
+	searchVendor = testGroup;
+}
+
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
 	}
+
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
@@ -691,7 +698,11 @@ class RegisterDomainStep extends React.Component {
 			find( this.state.searchResults, matchesSearchedDomain );
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
-		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
+		const searchResults = this.state.searchResults || [];
+		let suggestions =
+			'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup
+				? [ ...searchResults ]
+				: reject( searchResults, matchesSearchedDomain );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
