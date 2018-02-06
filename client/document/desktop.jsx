@@ -40,7 +40,7 @@ class Desktop extends React.Component {
 			<html
 				lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
+				className={ classNames( 'is-desktop', { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title="WordPress.com" faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
 					<link
