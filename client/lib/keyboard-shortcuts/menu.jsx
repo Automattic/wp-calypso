@@ -46,36 +46,36 @@ class KeyboardShortcutsMenu extends React.Component {
 		this.setState( { showDialog: ! this.state.showDialog } );
 	};
 
-	getShortcutsByCategory = () => {
-		var allShortcuts = KeyBindings.get(),
-			shortcutsByCategory = [
-				{
-					name: this.props.translate( 'List Navigation' ),
-					shortcuts: allShortcuts.listNavigation,
-					className: 'keyboard-shortcuts__list-navigation',
-					disabled: true,
-				},
-				{
-					name: this.props.translate( 'Site Navigation' ),
-					shortcuts: allShortcuts.siteNavigation,
-					className: 'keyboard-shortcuts__site-navigation',
-				},
-				{
-					name: this.props.translate( 'Reader' ),
-					shortcuts: allShortcuts.reader,
-					className: 'keyboard-shortcuts__reader',
-					disabled: true,
-				},
-				{
-					name: this.props.translate( 'Blog Posts and Pages' ),
-					shortcuts: allShortcuts.blogPostsAndPages,
-					className: 'keyboard-shortcuts__blog-posts-and-pages',
-					disabled: true,
-				},
-			];
+	getShortcutsByCategory() {
+		const allShortcuts = KeyBindings.get();
+		const shortcutsByCategory = [
+			{
+				name: this.props.translate( 'List Navigation' ),
+				shortcuts: allShortcuts.listNavigation,
+				className: 'keyboard-shortcuts__list-navigation',
+				disabled: true,
+			},
+			{
+				name: this.props.translate( 'Site Navigation' ),
+				shortcuts: allShortcuts.siteNavigation,
+				className: 'keyboard-shortcuts__site-navigation',
+			},
+			{
+				name: this.props.translate( 'Reader' ),
+				shortcuts: allShortcuts.reader,
+				className: 'keyboard-shortcuts__reader',
+				disabled: true,
+			},
+			{
+				name: this.props.translate( 'Blog Posts and Pages' ),
+				shortcuts: allShortcuts.blogPostsAndPages,
+				className: 'keyboard-shortcuts__blog-posts-and-pages',
+				disabled: true,
+			},
+		];
 
 		if ( config.isEnabled( 'devdocs' ) ) {
-			shortcutsByCategory = shortcutsByCategory.concat( {
+			shortcutsByCategory.push( {
 				name: this.props.translate( 'Developer' ),
 				shortcuts: allShortcuts.developer,
 				className: 'keyboard-shortcuts__developer',
@@ -83,13 +83,12 @@ class KeyboardShortcutsMenu extends React.Component {
 		}
 
 		return shortcutsByCategory.map( function( category ) {
-			var classes = {};
-			classes[ 'keyboard-shortcuts__category' ] = true;
-			classes[ category.className ] = true;
-			classes[ 'keyboard-shortcuts__category-disabled' ] = category.disabled;
+			const className = classNames( 'keyboard-shortcuts__category', category.className, {
+				'keyboard-shortcuts__category-disabled': category.disabled,
+			} );
 
 			return (
-				<li className={ classNames( classes ) } key={ category.name }>
+				<li className={ className } key={ category.name }>
 					<h3>{ category.name }</h3>
 					<ul className="keyboard-shortcuts__list">
 						{ this.getShortcutList( category.shortcuts ) }
@@ -97,18 +96,16 @@ class KeyboardShortcutsMenu extends React.Component {
 				</li>
 			);
 		}, this );
-	};
+	}
 
-	getShortcutList = shortcuts => {
-		return shortcuts.map( function( shortcut ) {
+	getShortcutList( shortcuts ) {
+		return shortcuts.map( shortcut => {
 			// process the list of keys in this shortcut into individual elements
-			var keys = shortcut.description.keys.map( function( key, index ) {
-				return (
-					<div className="keyboard-shortcuts__key" key={ shortcut.eventName + index }>
-						{ key }
-					</div>
-				);
-			} );
+			const keys = shortcut.description.keys.map( ( key, index ) => (
+				<div className="keyboard-shortcuts__key" key={ shortcut.eventName + index }>
+					{ key }
+				</div>
+			) );
 
 			return (
 				<li key={ shortcut.eventName }>
@@ -116,16 +113,16 @@ class KeyboardShortcutsMenu extends React.Component {
 					<div className="keyboard-shortcuts__description">{ shortcut.description.text }</div>
 				</li>
 			);
-		}, this );
-	};
+		} );
+	}
 
 	render() {
+		if ( ! this.state.showDialog ) {
+			return null;
+		}
+
 		return (
-			<Dialog
-				additionalClassNames="keyboard-shortcuts"
-				isVisible={ this.state.showDialog }
-				onClose={ this.closeDialog }
-			>
+			<Dialog isVisible additionalClassNames="keyboard-shortcuts" onClose={ this.closeDialog }>
 				<h1 className="keyboard-shortcuts__title">
 					{ this.props.translate( 'Keyboard Shortcuts' ) }
 				</h1>
