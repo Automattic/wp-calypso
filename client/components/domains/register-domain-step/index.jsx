@@ -57,7 +57,7 @@ const domains = wpcom.domains();
 const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
-const searchVendor = 'domainsbot';
+let searchVendor = 'domainsbot';
 const fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [];
@@ -71,15 +71,15 @@ function getQueryObject( props ) {
 		return null;
 	}
 
-	const testGroup = abtest( 'domain_suggestions_test_v5' );
+	const testGroup = abtest( 'domainSuggestionTestV5' );
 	if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
-		vendor = testGroup;
+		searchVendor = testGroup;
 	}
 
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
-		vendor: vendor,
+		vendor: searchVendor,
 		includeSubdomain: props.includeWordPressDotCom,
 		surveyVertical: props.surveyVertical,
 	};
@@ -434,19 +434,13 @@ class RegisterDomainStep extends React.Component {
 							? SUGGESTION_QUANTITY - 1
 							: SUGGESTION_QUANTITY;
 
-					var vendor = 'domainsbot';
-					const testGroup = abtest( 'domainSuggestionTestV5' );
-					if ( 'group_1' === testGroup || 'group_2' === testGroup ) {
-						vendor = testGroup;
-					}
-
 					const query = {
 						query: domain,
 						quantity: suggestionQuantity,
 						include_wordpressdotcom: false,
 						include_dotblogsubdomain: false,
 						tld_weight_overrides: this.getTldWeightOverrides(),
-						vendor: vendor,
+						vendor: searchVendor,
 						vertical: this.props.surveyVertical,
 					};
 
@@ -705,15 +699,12 @@ class RegisterDomainStep extends React.Component {
 			find( this.state.searchResults, matchesSearchedDomain );
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
-		const searchResults = get( this.state, 'searchResults', [] );
-		console.log( searchResults );
+		const searchResults = this.state.searchResults || [];
 		const testGroup = abtest( 'domainSuggestionTestV5' );
 		let suggestions =
-			'group_1' === testGroup || 'group_2' === testGroup
-				? reject( searchResults, alwaysFalse )
+			'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup
+				? [ ...searchResults ]
 				: reject( searchResults, matchesSearchedDomain );
-		//let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
-		console.log( suggestions );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
