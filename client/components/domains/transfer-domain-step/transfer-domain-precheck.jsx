@@ -33,7 +33,7 @@ class TransferDomainPrecheck extends React.Component {
 		losingRegistrar: PropTypes.string,
 		losingRegistrarIanaId: PropTypes.string,
 		privacy: PropTypes.bool,
-		selectedSiteId: PropTypes.number,
+		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
 		unlocked: PropTypes.bool,
@@ -64,12 +64,12 @@ class TransferDomainPrecheck extends React.Component {
 			losingRegistrarIanaId,
 			domain,
 			supportsPrivacy,
-			selectedSiteId,
+			selectedSite,
 		} = this.props;
 
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
-		this.props.setValid( { domain, selectedSiteId, supportsPrivacy } );
+		this.props.setValid( { domain, selectedSite, supportsPrivacy } );
 	};
 
 	resetSteps = () => {
@@ -135,7 +135,7 @@ class TransferDomainPrecheck extends React.Component {
 		} else if ( false === unlocked ) {
 			heading = translate( 'Unlock the domain.' );
 		}
-		if ( loading ) {
+		if ( loading && ! isStepFinished ) {
 			heading = translate( 'Checking domain lock status.' );
 		}
 
@@ -179,7 +179,7 @@ class TransferDomainPrecheck extends React.Component {
 			);
 		}
 
-		if ( loading ) {
+		if ( loading && ! isStepFinished ) {
 			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 

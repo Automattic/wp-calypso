@@ -134,7 +134,7 @@ class Transfer extends React.PureComponent {
 
 	startTransfer = () => {
 		const { domain, selectedSite } = this.props;
-		page( transferInPrecheckLink( selectedSite.slug, domain ) );
+		page( transferInPrecheckLink( selectedSite.slug, domain.name ) );
 	};
 
 	restartTransfer = () => {
