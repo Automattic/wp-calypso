@@ -139,9 +139,9 @@ class InlineHelpSearchResults extends Component {
 
 	followHelpLink = ( url ) => {
 		const payload = {
-			searchQuery: this.props.searchQuery,
-			currentUrl: window.location.href,
-			resultUrl: url,
+			search_query: this.props.searchQuery,
+			current_url: window.location.href,
+			result_url: url,
 		};
 		return () => {
 			this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', payload );
