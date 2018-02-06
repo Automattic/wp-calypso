@@ -269,8 +269,9 @@ class TransferDomainStep extends React.Component {
 	render() {
 		let content;
 		const { precheck } = this.state;
+		const { isSignupStep } = this.props;
 
-		if ( precheck ) {
+		if ( precheck && ! isSignupStep ) {
 			if ( this.transferIsRestricted() ) {
 				content = this.getTransferRestrictionMessage();
 			} else {
@@ -280,7 +281,7 @@ class TransferDomainStep extends React.Component {
 			content = this.addTransfer();
 		}
 
-		const header = ! this.props.isSignupStep && (
+		const header = ! isSignupStep && (
 			<HeaderCake onClick={ this.goBack }>
 				{ this.props.translate( 'Use My Own Domain' ) }
 			</HeaderCake>
