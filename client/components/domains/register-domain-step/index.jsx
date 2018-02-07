@@ -66,11 +66,6 @@ let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
 
-const testGroup = abtest( 'domainSuggestionTestV5' );
-if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
-	searchVendor = testGroup;
-}
-
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
@@ -374,6 +369,10 @@ class RegisterDomainStep extends React.Component {
 		} );
 
 		const timestamp = Date.now();
+		const testGroup = abtest( 'domainSuggestionTestV5' );
+		if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
+			searchVendor = testGroup;
+		}
 
 		async.parallel(
 			[
@@ -699,6 +698,7 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		const searchResults = this.state.searchResults || [];
+		const testGroup = abtest( 'domainSuggestionTestV5' );
 		let suggestions =
 			'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup
 				? [ ...searchResults ]
