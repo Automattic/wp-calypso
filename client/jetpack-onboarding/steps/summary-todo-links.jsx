@@ -25,7 +25,7 @@ const TodoLinks = steps =>
 export default localize(
 	connect(
 		( state, { siteId, siteSlug, siteUrl, translate } ) => {
-			const isConnected = isJetpackSite( state, siteId ); // Will only return true if it's connected to WP.com
+			const isConnected = isJetpackSite( state, siteId ); // Will only return true if the site is connected to WP.com
 			if ( isConnected ) {
 				return {
 					THEME: {
