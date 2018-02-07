@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { debounce, camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,6 +36,7 @@ const defaultValues = {
 export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
+		ccTldDetails: PropTypes.object.isRequired,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
@@ -95,7 +96,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.contactDetails.extra )
+			keys( this.props.ccTldDetails )
 		);
 
 		// Bail early as we already have the details from a previous purchase.
@@ -109,7 +110,9 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( {
-			extra: pick( defaultValues, neededRequiredDetails ),
+			extra: {
+				ca: pick( defaultValues, neededRequiredDetails ),
+			},
 		} );
 	}
 
@@ -136,16 +139,16 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 				[ name ]: value,
 			} );
 		} else {
-			newContactDetails.extra = { [ camelCase( id ) ]: type === 'checkbox' ? checked : value };
+			newContactDetails.extra = {
+				ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
+			};
 		}
 
-		this.props.updateContactDetailsCache( {
-			...newContactDetails,
-		} );
+		this.props.updateContactDetailsCache( { ...newContactDetails } );
 	};
 
 	shouldRenderOrganizationField() {
-		return this.props.contactDetails.extra && this.props.contactDetails.extra.legalType === 'CCO';
+		return this.props.ccTldDetails && this.props.ccTldDetails.legalType === 'CCO';
 	}
 
 	organizationFieldIsValid() {
@@ -189,7 +192,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const { translate, children } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
-			...this.props.contactDetails.extra,
+			...this.props.ccTldDetails,
 		};
 		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
 		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
@@ -242,9 +245,13 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
-		contactDetails: getContactDetailsCache( state ),
-		userWpcomLang: getCurrentUserLocale( state ),
-	} ),
+	state => {
+		const contactDetails = getContactDetailsCache( state );
+		return {
+			contactDetails,
+			ccTldDetails: get( contactDetails, 'extra.ca', {} ),
+			userWpcomLang: getCurrentUserLocale( state ),
+		};
+	},
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );

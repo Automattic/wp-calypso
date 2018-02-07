@@ -86,7 +86,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 		this.props.updateContactDetailsCache( {
 			extra: {
-				registrantType: defaultRegistrantType,
+				fr: { registrantType: defaultRegistrantType },
 			},
 		} );
 	}
@@ -102,7 +102,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	};
 
 	handleChangeContactExtraEvent = event => {
-		this.updateContactDetails( `extra.${ event.target.id }`, event.target.value );
+		this.updateContactDetails( `extra.fr.${ event.target.id }`, event.target.value );
 	};
 
 	render() {
@@ -301,6 +301,7 @@ export default connect(
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,
+			ccTldDetails: get( contactDetails, 'extra.fr', {} ),
 			contactDetailsValidationErrors: validateContactDetails( contactDetails ),
 		};
 	},
