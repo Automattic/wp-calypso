@@ -1,12 +1,12 @@
 .taxonomy-manager {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 }
 
 .taxonomy-manager__header {
 	display: flex;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 	background: $white;
 }
 
@@ -70,7 +70,7 @@
 
 		.taxonomy-manager__list-item.is-placeholder & {
 			color: transparent;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 

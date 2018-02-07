@@ -1,6 +1,6 @@
 .reader-popover.popover .popover__inner {
 	background-color: $gray-light;
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 }
 
 // Popover arrows
@@ -60,7 +60,7 @@
 }
 
 .reader-popover__header {
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 	color: $gray-dark;
 	display: flex;
 	font-size: 14px;

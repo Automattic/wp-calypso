@@ -194,7 +194,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2__blocks {
-	border-top: 1px solid lighten( $gray, 20% );
+	border-top: 1px solid $gray-lighten-20;
 	padding-top: 11px;
 
 	.reader-related-card-v2__post {
@@ -395,7 +395,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 // Wrapper for entire recommended block
 .reader-related-card-v2__blocks {
-	border-top: 1px solid lighten( $gray, 20% );
+	border-top: 1px solid $gray-lighten-20;
 	padding-top: 11px;
 
 	// Wrapper for site title and excerpt
@@ -476,7 +476,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2__featured-image {
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	min-height: 153px;
 
 	@media #{$reader-related-card-v2-breakpoint-small} {

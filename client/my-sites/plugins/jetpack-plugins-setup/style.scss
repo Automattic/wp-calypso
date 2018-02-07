@@ -5,8 +5,8 @@
 	h1.is-placeholder,
 	p.is-placeholder {
 		width: inherit;
-		background-color: lighten( $gray, 30% );
-		color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
+		color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 
 		&:before {
@@ -28,7 +28,7 @@
 
 .jetpack-plugins-setup__description {
 	margin-bottom: 3em;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	text-align: center;
 }
 

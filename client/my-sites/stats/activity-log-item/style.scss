@@ -61,7 +61,7 @@
 		top: 0;
 		left: 33px;
 		height: 100%;
-		border-left: 2px dotted lighten($gray, 20%);
+		border-left: 2px dotted $gray-lighten-20;
 
 		@include breakpoint( '<480px' ) {
 			left: 22px;
@@ -139,7 +139,7 @@
 	.is-discarded & {
 		color: $gray-text;
 		background: none;
-		border: 1px solid transparentize(lighten($gray, 20%), 0.5);
+		border: 1px solid transparentize($gray-lighten-20, 0.5);
 	}
 }
 
@@ -158,12 +158,12 @@
 	.foldable-card__content {
 		padding: 16px;
 		font-size: 14px;
-		color: darken($gray, 20%);
+		color: $gray-darken-20;
 	}
 
 	.is-discarded & {
 		background: none;
-		box-shadow: 0 0 0 1px transparentize(lighten($gray, 20%), 0.5);
+		box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5);
 	}
 }
 
@@ -205,7 +205,7 @@
 		width: 40px;
 		height: 40px;
 		margin-right: 16px;
-		fill: darken($gray, 10%);
+		fill: $gray-darken-10;
 
 		@include breakpoint( '<960px' ) {
 			width: 32px;

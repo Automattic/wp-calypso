@@ -24,7 +24,7 @@
 .video-editor__preview-wrapper {
 	flex: 2 0 0%;
 	position: relative;
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 
 	@include breakpoint( ">660px" ) {
 		margin: 16px 24px;

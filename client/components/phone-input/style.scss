@@ -3,11 +3,11 @@
 	max-width: 24px;
 	max-height: 18px;
 	align-self: center;
-	box-shadow: 0 0 1px lighten( $gray, 20% );
+	box-shadow: 0 0 1px $gray-lighten-20;
 }
 
 .phone-input__flag-selector-icon {
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 	margin-left: 3px;
 	align-self: center;
 }
@@ -33,7 +33,7 @@
 
 .phone-input__select-inner-container {
 	margin-top: 4px;
-	border-right: 1px solid lighten( $gray, 20% );
+	border-right: 1px solid $gray-lighten-20;
 	height: 32px;
 	display: flex;
 }

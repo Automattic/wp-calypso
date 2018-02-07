@@ -61,7 +61,7 @@
 
 		&.completed,
 		&.completed a {
-			color: darken($gray, 20%);
+			color: $gray-darken-20;
 		}
 
 		&.todo,

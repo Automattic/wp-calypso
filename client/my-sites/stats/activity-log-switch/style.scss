@@ -46,7 +46,7 @@
 }
 
 .activity-log-switch__features-header {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 24px;
 	font-weight: 300;
 	line-height: 32px;
@@ -77,7 +77,7 @@
 }
 
 .activity-log-switch__feature-heading {
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	font-size: 21px;
 	margin-bottom: 8px;
 	width: 100%;

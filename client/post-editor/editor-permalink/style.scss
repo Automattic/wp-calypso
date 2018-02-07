@@ -26,7 +26,7 @@
 
 .editor-permalink__popover .editor-slug .form-text-input {
 	border: none;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	font-size: 13px;
 	padding: 4px 0;
 	min-width: 100px;
@@ -38,7 +38,7 @@
 }
 
 .editor-permalink__url-path {
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 	font-size: 13px;
 	margin-right: 0;
 }

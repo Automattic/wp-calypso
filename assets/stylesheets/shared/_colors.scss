@@ -51,7 +51,7 @@ $green-text-min:          darken( $alert-green, 14% ); // #358649
 
 // Layout
 $masterbar-color:          $blue-wordpress;
-$sidebar-bg-color:         lighten( $gray, 30% );
+$sidebar-bg-color:         $gray-lighten-30;
 $sidebar-text-color:       $gray-dark;
 $sidebar-selected-color:   $gray-text-min;
 

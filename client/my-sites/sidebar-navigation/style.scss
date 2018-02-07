@@ -16,12 +16,12 @@
 		padding: 8px 0;
 		color: $gray-dark;
 		background: $white;
-		border-bottom: 1px solid lighten( $gray, 20% );
+		border-bottom: 1px solid $gray-lighten-20;
 	}
 
 	.current-section__site-title {
 		font-size: 10px;
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 		margin: 2px 0 -3px;
 	}
 

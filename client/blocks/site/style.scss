@@ -20,7 +20,7 @@
 		.site__title,
 		.site__domain {
 			animation: pulse-light 0.8s ease-in-out infinite;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			color: transparent;
 			width: 95%;
 

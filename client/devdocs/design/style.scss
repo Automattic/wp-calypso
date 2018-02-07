@@ -120,7 +120,7 @@
 }
 
 .state-value {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 13px;
 	background-color: $white;
 	padding: 5px;

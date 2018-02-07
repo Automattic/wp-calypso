@@ -70,7 +70,7 @@
 	align-items: center;
 
 	&:not(:last-child) {
-		border-bottom: 1px solid lighten($gray, 20%);
+		border-bottom: 1px solid $gray-lighten-20;
 	}
 }
 
