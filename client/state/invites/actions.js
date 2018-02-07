@@ -105,12 +105,24 @@ export function deleteInvites( siteId, inviteIds ) {
 			.site( siteId )
 			.deleteInvites( inviteIds )
 			.then( data => {
-				dispatch( {
-					type: INVITES_DELETE_REQUEST_SUCCESS,
-					siteId,
-					inviteIds,
-					data,
-				} );
+				if ( data.deleted.length > 0 ) {
+					dispatch( {
+						type: INVITES_DELETE_REQUEST_SUCCESS,
+						siteId,
+						inviteIds: data.deleted,
+						data,
+					} );
+				}
+
+				// It's possible for the request to succeed, but the deletion to fail.
+				if ( data.invalid.length > 0 ) {
+					dispatch( {
+						type: INVITES_DELETE_REQUEST_FAILURE,
+						siteId,
+						inviteIds: data.invalid,
+						data,
+					} );
+				}
 			} )
 			.catch( error => {
 				dispatch( {
