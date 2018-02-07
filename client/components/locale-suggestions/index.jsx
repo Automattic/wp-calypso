@@ -5,21 +5,23 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { addLocaleToPath } from 'lib/i18n-utils';
+import { addLocaleToPath, getLanguage } from 'lib/i18n-utils';
 import LocaleSuggestionsListItem from './list-item';
 import LocaleSuggestionStore from 'lib/locale-suggestions';
 import Notice from 'components/notice';
-import switchLocale from 'lib/i18n-utils/switch-locale';
+import { setLocale } from 'state/ui/language/actions';
 
 class LocaleSuggestions extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
+		setLocale: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -28,9 +30,19 @@ class LocaleSuggestions extends Component {
 	};
 
 	componentWillMount() {
-		if ( this.props.locale ) {
-			switchLocale( this.props.locale );
+		let { locale } = this.props;
+
+		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
+			for ( const langSlug of navigator.languages ) {
+				const language = getLanguage( langSlug.toLowerCase() );
+				if ( language ) {
+					locale = language.langSlug;
+					break;
+				}
+			}
 		}
+
+		this.props.setLocale( locale );
 	}
 
 	componentDidMount() {
@@ -45,7 +57,7 @@ class LocaleSuggestions extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.locale !== nextProps.locale ) {
-			switchLocale( nextProps.locale );
+			this.props.setLocale( nextProps.locale );
 		}
 	}
 
@@ -95,4 +107,6 @@ class LocaleSuggestions extends Component {
 	}
 }
 
-export default LocaleSuggestions;
+export default connect( null, {
+	setLocale,
+} )( LocaleSuggestions );
