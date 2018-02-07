@@ -17,7 +17,7 @@ import { recordAction, recordTrackForPost } from 'reader/stats';
 import Button from 'components/button';
 import { dismissPost } from 'lib/feed-stream-store/actions';
 import QueryReaderPost from 'components/data/query-reader-post';
-import { getPostByKey } from 'state/reader/posts/selectors';
+import { getPostsByKeys } from 'state/reader/posts/selectors';
 
 function dismissRecommendation( uiIndex, storeId, post ) {
 	recordTrackForPost( 'calypso_reader_recommended_post_dismissed', post, {
@@ -93,10 +93,6 @@ export class RecommendedPosts extends React.PureComponent {
 			</div>
 		);
 	}
-}
-
-function getPostsByKeys( state, postKeys ) {
-	return postKeys.map( postKey => getPostByKey( state, postKey ) );
 }
 
 export default connect( ( state, ownProps ) => ( {

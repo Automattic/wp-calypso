@@ -22,7 +22,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import { recordTrack } from 'reader/stats';
 import { getSiteName } from 'reader/get-helpers';
 import FollowButton from 'reader/follow-button';
-import { getPostByKey } from 'state/reader/posts/selectors';
+import { getPostsByKeys } from 'state/reader/posts/selectors';
 
 class ReaderCombinedCard extends React.Component {
 	static propTypes = {
@@ -148,9 +148,6 @@ function combinedCardPostKeyToKeys( postKey ) {
 	const blogId = postKey.blogId;
 	return postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
 }
-
-const getPostsByKeys = ( state, postKeys ) =>
-	postKeys.map( postKey => getPostByKey( state, postKey ) );
 
 export default connect( ( state, ownProps ) => {
 	const postKeys = combinedCardPostKeyToKeys( ownProps.postKey );

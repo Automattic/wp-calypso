@@ -33,3 +33,14 @@ export const getPostByKey = ( state, postKey ) => {
 	const postMap = getPostMapByPostKey( state );
 	return postMap[ keyToString( postKey ) ];
 };
+
+export const getPostsByKeys = treeSelect(
+	state => [ getPostMapByPostKey( state ) ],
+	( [ postMap ], postKeys ) => {
+		if ( ! postKeys ) {
+			return null;
+		}
+		return postKeys.map( keyToString ).map( key => postMap[ key ] );
+	},
+	{ getCacheKey: postKeys => postKeys.map( keyToString ).join() }
+);
