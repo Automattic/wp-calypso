@@ -49,6 +49,7 @@ const trackSupportAfterSibylClick = () =>
 
 export class HelpContactForm extends React.PureComponent {
 	static propTypes = {
+		additionalSupportOption: PropTypes.object,
 		formDescription: PropTypes.node,
 		buttonLabel: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -231,6 +232,11 @@ export class HelpContactForm extends React.PureComponent {
 	 */
 	submitForm = () => {
 		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
+		const { additionalSupportOption } = this.props;
+
+		if ( additionalSupportOption && additionalSupportOption.enabled ) {
+			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected' );
+		}
 
 		if ( this.state.sibylClicked ) {
 			// track that the user had clicked a Sibyl result, but still contacted support
@@ -248,11 +254,30 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
+	 * Submit additional support option
+	 * @param  {object} event Event object
+	 */
+	submitAdditionalForm = () => {
+		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
+
+		this.props.recordTracksEvent( 'calypso_happychat_a_b_native_ticket_selected' );
+
+		this.props.additionalSupportOption.onSubmit( {
+			howCanWeHelp,
+			howYouFeel,
+			message,
+			subject,
+			site: this.props.helpSite,
+		} );
+	};
+
+	/**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
 	 */
 	render() {
 		const {
+			additionalSupportOption,
 			formDescription,
 			buttonLabel,
 			showHowCanWeHelpField,
@@ -322,7 +347,8 @@ export class HelpContactForm extends React.PureComponent {
 					</div>
 				) }
 
-				{ showSubjectField && (
+				{ ( showSubjectField ||
+					( additionalSupportOption && additionalSupportOption.enabled ) ) && (
 					<div className="help-contact-form__subject">
 						<FormLabel>{ translate( 'Subject' ) }</FormLabel>
 						<FormTextInput
@@ -357,6 +383,17 @@ export class HelpContactForm extends React.PureComponent {
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 					{ buttonLabel }
 				</FormButton>
+
+				{ additionalSupportOption &&
+					additionalSupportOption.enabled && (
+						<FormButton
+							disabled={ ! this.canSubmitForm() }
+							type="button"
+							onClick={ this.submitAdditionalForm }
+						>
+							{ additionalSupportOption.label }
+						</FormButton>
+					) }
 			</div>
 		);
 	}
@@ -374,6 +411,7 @@ const mapStateToProps = state => ( {
 
 const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
+	recordTracksEvent,
 	trackSibylClick,
 	trackSupportAfterSibylClick,
 };

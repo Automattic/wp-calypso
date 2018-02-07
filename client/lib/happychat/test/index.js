@@ -14,6 +14,7 @@ import {
 	receiveDisconnect,
 	receiveError,
 	receiveInit,
+	receiveLocalizedSupport,
 	receiveMessage,
 	receiveReconnecting,
 	receiveStatus,
@@ -115,6 +116,13 @@ describe( 'connection', () => {
 				socket.emit( 'accept', isAvailable );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
 				expect( dispatch ).toHaveBeenCalledWith( receiveAccept( isAvailable ) );
+			} );
+
+			test( 'localized-support event', () => {
+				const isAvailable = true;
+				socket.emit( 'localized-support', isAvailable );
+				expect( dispatch ).toHaveBeenCalledTimes( 1 );
+				expect( dispatch ).toHaveBeenCalledWith( receiveLocalizedSupport( isAvailable ) );
 			} );
 
 			test( 'message event', () => {
