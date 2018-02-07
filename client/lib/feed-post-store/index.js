@@ -21,7 +21,7 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { READER_POSTS_RECEIVE } from 'state/action-types';
-import { getPostByFeedAndId, getPostBySiteAndId, getPostById } from 'state/reader/posts/selectors';
+import { getPostByKey, getPostById } from 'state/reader/posts/selectors';
 
 /**
  * Module variables
@@ -117,15 +117,10 @@ function setPost( post ) {
 }
 
 function receivePending( action ) {
-	let post;
-	let currentPost;
-	if ( action.feedId ) {
-		post = { ID: action.postId, feed_ID: action.feedId };
-		currentPost = getPostByFeedAndId( reduxGetState(), post.feed_ID, post.ID );
-	} else {
-		post = { ID: action.postId, site_ID: action.siteId };
-		currentPost = getPostBySiteAndId( reduxGetState(), post.site_ID, post.ID );
-	}
+	const currentPost = getPostByKey( reduxGetState(), action );
+	const post = !! action.feedId
+		? { ID: action.postId, feed_ID: action.feedId }
+		: { ID: action.postId, site_ID: action.siteId };
 
 	setPost( { ...post, ...currentPost, state: 'pending' } );
 }
