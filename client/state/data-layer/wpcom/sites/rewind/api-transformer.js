@@ -43,7 +43,11 @@ export const transformApi = data =>
 	Object.assign(
 		{
 			state: camelCase( data.state ),
-			lastUpdated: new Date( data.last_updated * 1000 ),
+			lastUpdated: new Date(
+				'string' === typeof data.last_updated
+					? Date.parse( data.last_updated )
+					: data.last_updated * 1000
+			),
 		},
 		data.can_autoconfigure && { canAutoconfigure: !! data.can_autoconfigure },
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
