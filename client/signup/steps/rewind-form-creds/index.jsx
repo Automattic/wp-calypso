@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -94,6 +94,6 @@ export default connect( ( state, ownProps ) => {
 	const rewindState = getRewindState( state, siteId );
 	return {
 		siteId,
-		rewindIsNowActive: 'active' === rewindState.state,
+		rewindIsNowActive: includes( [ 'active', 'provisioning' ], rewindState.state ),
 	};
 }, null )( localize( RewindFormCreds ) );
