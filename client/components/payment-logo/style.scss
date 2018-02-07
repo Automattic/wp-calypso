@@ -7,7 +7,7 @@
 	vertical-align: middle;
 	width: 35px;
 
-	$cc-payment-types: 'amex', 'diners', 'discover', 'jcb', 'mastercard', 'unionpay', 'visa';
+	$cc-payment-types: 'amex', 'diners', 'discover', 'elo', 'jcb', 'mastercard', 'unionpay', 'visa';
 	$payment-types: 'alipay', 'bancontact', 'giropay', 'eps', 'ideal', 'paypal', 'p24';
 
 	@each $type in $cc-payment-types {
