@@ -13,6 +13,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import './creditcards-polyfills';
 import { isEbanxEnabledForCountry, isValidCPF } from 'lib/credit-card-details/ebanx';
 import { PAYMENT_PROCESSOR_EBANX_COUNTRIES } from './constants';
 
