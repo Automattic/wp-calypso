@@ -53,7 +53,7 @@ const updateRewindState = ( { siteId }, data ) => {
 
 const setUnknownState = ( { siteId }, error ) =>
 	withAnalytics(
-		recordTracksEvent( 'rewind_state_parse_error', {
+		recordTracksEvent( 'calypso_rewind_state_parse_error', {
 			error: JSON.stringify( error, null, 2 ),
 		} ),
 		{
