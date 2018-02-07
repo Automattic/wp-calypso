@@ -27,7 +27,7 @@
 }
 
 .icann-verification__sent-to {
-	color: 	darken( $gray, 20% );
+	color: 	$gray-darken-20;
 	font-size: 14px;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .icann-verification__status-container {
-	border-top: 1px solid lighten( $gray, 20% );
+	border-top: 1px solid $gray-lighten-20;
 	margin: 25px -24px -16px -21px;
 	padding: 24px 24px 24px 21px;
 	position: relative;
@@ -53,7 +53,7 @@
 			margin-right: 0;
 		}
 		&.is-busy:disabled {
-			color: 	darken( $gray, 20% );
+			color: 	$gray-darken-20;
 		}
 	}
 

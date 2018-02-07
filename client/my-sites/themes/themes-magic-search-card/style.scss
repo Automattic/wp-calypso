@@ -10,7 +10,7 @@
 	display: flex;
 	align-items: center;
 	background: white;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ), 0 1px 2px $gray-lighten-30;
 	transition: all 0.15s ease-in-out;
 
 	&.has-highlight {
@@ -35,7 +35,7 @@
 	}
 
 	.search .search-open__icon {
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 	}
 
 	.themes-magic-search-card__icon {
@@ -51,7 +51,7 @@
 
 		.themes-magic-search-card__icon-close {
 			flex: 0 0 auto;
-			color: darken( $gray, 30% );
+			color: $gray-darken-30;
 			align-items: center;
 		}
 	}
@@ -164,7 +164,7 @@
 .themes-magic-search-card__welcome {
 	color: $gray;
 	background-color: $white;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ), 0 1px 2px $gray-lighten-30;
 	display: flex;
 	flex-direction: column;
 }

@@ -2,7 +2,7 @@
 .order-details__table {
 	margin: 0 -24px;
 	box-shadow: none;
-	border-bottom: 1px solid lighten($gray, 30%);
+	border-bottom: 1px solid $gray-lighten-30;
 
 	.order-details__item-sku {
 		display: block;
@@ -22,7 +22,7 @@
 	}
 
 	thead .table-heading {
-		border-bottom: 1px solid lighten($gray, 30%);
+		border-bottom: 1px solid $gray-lighten-30;
 	}
 
 	.table-row {
@@ -70,7 +70,7 @@
 .order-details__actions {
 	margin: 0 -24px;
 	padding: 16px 80px 16px 24px;
-	border-bottom: 1px solid lighten($gray, 30%);
+	border-bottom: 1px solid $gray-lighten-30;
 
 	.button + .button {
 		margin-left: 24px;
@@ -111,12 +111,12 @@
 	.order-details__coupon-list {
 		.table-item {
 			padding-left: 24px;
-			border-bottom: 1px solid lighten($gray, 30%);
+			border-bottom: 1px solid $gray-lighten-30;
 			padding-bottom: 16px;
 		}
 
 		.table-item:not(.is-row-heading) {
-			border-bottom: 1px solid lighten($gray, 30%);
+			border-bottom: 1px solid $gray-lighten-30;
 			padding-top: 0;
 			vertical-align: top;
 		}
@@ -141,7 +141,7 @@
 		color: $alert-red;
 
 		.table-item {
-			border-bottom: 1px solid lighten($gray, 30%);
+			border-bottom: 1px solid $gray-lighten-30;
 			padding-bottom: 16px;
 		}
 

@@ -7,7 +7,7 @@
 
 .editor-publish-date__wrapper {
 	background: $white;
-	border: 1px solid lighten($gray, 20%);
+	border: 1px solid $gray-lighten-20;
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
 	box-sizing: border-box;
@@ -131,7 +131,7 @@
 .editor-publish-date__schedule {
 	overflow-y: auto;
 	position: static;
-	border-top: 1px solid lighten($gray, 20%);
+	border-top: 1px solid $gray-lighten-20;
 	padding: 0 10px;
 
 	&.is-scheduled {

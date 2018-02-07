@@ -18,10 +18,10 @@
 		user-select: none;
 
 		.gridicon {
-			fill: lighten( $gray, 10% );
+			fill: $gray-lighten-10;
 
 			&:hover {
-				fill: darken( $gray, 10% );
+				fill: $gray-darken-10;
 			}
 		}
 	}

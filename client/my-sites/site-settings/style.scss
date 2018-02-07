@@ -359,7 +359,7 @@
 .has-divider, .site-settings__has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px 24px;
-	border: 1px lighten( $gray, 30% ) solid;
+	border: 1px $gray-lighten-30 solid;
 	border-width: 1px 0;
 
 	&.is-top-only {
@@ -406,7 +406,7 @@
 
 	&.is-expanded .foldable-card__content {
 		padding: 8px 24px 24px;
-		border-top: 1px lighten( $gray, 20% ) solid;
+		border-top: 1px $gray-lighten-20 solid;
 	}
 
 	&.is-expanded.is-top-level .foldable-card__content {

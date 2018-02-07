@@ -39,7 +39,7 @@
 		font-weight: 400;
 		width: 100%;
 		background: $gray-light;
-		border-top: 1px solid lighten( $gray, 20% );
+		border-top: 1px solid $gray-lighten-20;
 		padding: 16px 16px 16px 48px;
 		font-size: 16px;
 		line-height: 1;

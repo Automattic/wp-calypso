@@ -8,7 +8,7 @@
 		.people-profile__role-badge,
 		.gravatar.is-placeholder {
 			color: transparent;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 

@@ -86,7 +86,7 @@
 	padding: 0 24px;
 	box-sizing: border-box;
 	background: $white;
-	box-shadow: 0 0 0 1px transparentize(lighten($gray, 20%), 0.5), 0 1px 2px lighten($gray, 30%);
+	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
 }
 
 .editor-confirmation-sidebar__close {

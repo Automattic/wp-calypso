@@ -27,7 +27,7 @@
 }
 
 .docs-example__stats {
-	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	border-bottom: 1px solid transparentize( $gray-lighten-20, .5 );
 	font-size: 14px;
 	padding-bottom: 16px;
 }
@@ -94,7 +94,7 @@
 		border-spacing: 0;
 
 		th, td {
-			border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+			border-bottom: 1px solid transparentize( $gray-lighten-20, .5 );
 			text-align: left;
 		}
 

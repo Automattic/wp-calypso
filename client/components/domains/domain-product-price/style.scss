@@ -1,5 +1,5 @@
 .domain-product-price {
-	color: darken( $gray, 30% );
+	color: $gray-darken-30;
 	display: inline-block;
 	font-size: 17px;
 	font-weight: 600;
@@ -80,7 +80,7 @@
 
 		@include breakpoint( "<660px" ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			color: transparent;
 		}
 	}

@@ -32,7 +32,7 @@
 	text-align: center;
 	font-size: 10px;
 	font-weight: bold;
-	color: darken($gray, 20%);
+	color: $gray-darken-20;
 }
 
 .checklist-banner__progress {

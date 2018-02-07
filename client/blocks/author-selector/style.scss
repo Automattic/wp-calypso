@@ -4,7 +4,7 @@
 	.gridicon {
 		display: inline;
 		vertical-align: middle;
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 	}
 
 	&.is-open .gridicon {
@@ -15,7 +15,7 @@
 	&.is-open {
 		.gridicon,
 		.editor-author__name {
-			color: darken( $gray, 30% );
+			color: $gray-darken-30;
 		}
 	}
 }

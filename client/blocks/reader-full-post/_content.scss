@@ -47,14 +47,14 @@
 	blockquote {
 		padding: 0 24px 0 32px;
 		margin: 16px 0 32px;
-		border-left: 3px solid lighten( $gray, 30% );
-		color: darken( $gray, 20% );
+		border-left: 3px solid $gray-lighten-30;
+		color: $gray-darken-20;
 		font-weight: normal;
 		background: transparent;
 	}
 
 	hr {
-		background: lighten( $gray, 30% );
+		background: $gray-lighten-30;
 		margin: 24px 0;
 	}
 
@@ -168,7 +168,7 @@
 		margin: 0;
 		font-size: 13px;
 		text-align: center;
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 	}
 
 	// placeholder for videopress videos

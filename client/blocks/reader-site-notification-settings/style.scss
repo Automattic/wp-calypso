@@ -34,7 +34,7 @@
 }
 
 .reader-site-notification-settings__popout-toggle {
-	border-top: 1px solid lighten( $gray, 20% );
+	border-top: 1px solid $gray-lighten-20;
 	color: $gray-dark;
 	font-size: 14px;
 	padding: 10px 0 10px 15px;
@@ -53,7 +53,7 @@
 }
 
 .reader-site-notification-settings .gridicons-cog {
-	fill: lighten( $gray, 10% );
+	fill: $gray-lighten-10;
 	height: 18px;
 	position: relative;
 		left: -4px;

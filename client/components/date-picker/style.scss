@@ -36,7 +36,7 @@ $date-picker_nav_button_size: 20px;
 	width: 100%;
 
 	&:after {
-		@include long-content-fade( $color: darken( $gray, 30% ) );
+		@include long-content-fade( $color: $gray-darken-30 );
 	}
 }
 
@@ -141,7 +141,7 @@ $date-picker_nav_button_size: 20px;
 	font-size: 11px;
 	text-align: center;
 	font-weight: 600;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	text-transform: uppercase;
 
 	abbr {
@@ -206,7 +206,7 @@ $date-picker_nav_button_size: 20px;
 	background-color: $gray-dark;
 
 	&:hover {
-		background-color: darken( $gray, 20% );
+		background-color: $gray-darken-20;
 	}
 }
 
@@ -218,7 +218,7 @@ $date-picker_nav_button_size: 20px;
 
 // `disabled` day
 .DayPicker-Day--disabled:not(.DayPicker-Day--outside) .date-picker__day {
-	color: lighten( $gray, 20% );
+	color: $gray-lighten-20;
 	cursor: default;
 }
 
@@ -247,7 +247,7 @@ $date-picker_nav_button_size: 20px;
 }
 
 .DayPicker-Day--events.DayPicker-Day--disabled:not(.DayPicker-Day--is-selected) .date-picker__day {
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 }
 
 @keyframes isSelectedDay {

@@ -250,7 +250,7 @@ html {
 }
 
 @keyframes pulse-light {
-	50% { background-color: lighten( $gray, 30% ); }
+	50% { background-color: $gray-lighten-30; }
 }
 
 @keyframes loading-dot-pulse {

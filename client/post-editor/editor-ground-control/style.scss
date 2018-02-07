@@ -193,12 +193,12 @@
 
 .editor-ground-control__save-status {
 	text-decoration: none;
-	color: lighten( $gray, 20% );
+	color: $gray-lighten-20;
 }
 
 .editor-ground-control .edit-post-status {
-	border-top: 1px solid lighten( $gray, 30% );
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
+	border-bottom: 1px solid $gray-lighten-30;
 	margin: 0 -16px 16px;
 	padding: 16px;
 }
@@ -213,7 +213,7 @@
 	background: white;
 	position: relative;
 	color: $blue-wordpress;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	cursor: pointer;
 	fill: $blue-wordpress;
 	position: absolute;
@@ -235,8 +235,8 @@
 		top: -6px;
 		right: 48px;
 		transform: translate(-50%) rotate(45deg);
-		border-top: 1px solid lighten( $gray, 20% );
-		border-left: 1px solid lighten( $gray, 20% );
+		border-top: 1px solid $gray-lighten-20;
+		border-left: 1px solid $gray-lighten-20;
 	}
 
 	&:focus:not(:active) {

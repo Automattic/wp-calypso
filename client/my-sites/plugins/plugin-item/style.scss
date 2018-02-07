@@ -203,5 +203,5 @@
 
 .plugin-item {
 	box-sizing: border-box;
-	border: 0 solid lighten( $gray, 30% );
+	border: 0 solid $gray-lighten-30;
 }

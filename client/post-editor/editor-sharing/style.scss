@@ -7,7 +7,7 @@
 }
 
 .editor-sharing__shortlink {
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 	color: $gray;
 	font-size: 11px;
 	margin: 16px -16px 0;
@@ -28,7 +28,7 @@
 }
 
 input[type="text"].editor-sharing__shortlink-field {
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	color: $gray-dark;
 	flex-grow: 1;
 	font-size: 12px;

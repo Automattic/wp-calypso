@@ -18,7 +18,7 @@
 @include breakpoint( "<660px" ) {
 	.is-group-editor.focus-sidebar::before,
 	.is-group-editor.focus-editor-confirmation-sidebar::before {
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 	}
 
 	.is-group-editor .sidebar {
@@ -69,7 +69,7 @@
 .post-editor__site {
 	display:  flex;
 	margin-bottom: 16px;
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 
 	@include breakpoint( ">660px" ) {
 		display: none;
@@ -83,7 +83,7 @@
 	.site__title,
 	.site__domain {
 		&::after {
-			@include long-content-fade( $color: lighten( $gray, 30% ) );
+			@include long-content-fade( $color: $gray-lighten-30 );
 		}
 	}
 
@@ -169,7 +169,7 @@
 	}
 
 	&:focus {
-		border-color: lighten( $gray, 20% );
+		border-color: $gray-lighten-20;
 		box-shadow: none;
 	}
 }
@@ -203,25 +203,25 @@
 
 	&:last-of-type {
 		.segmented-control__link {
-			border-right-color: lighten( $gray, 20% );
+			border-right-color: $gray-lighten-20;
 			border-bottom-right-radius: 0;
 		}
 	}
 
 	&.is-selected {
 		+ .segmented-control__item .segmented-control__link {
-			border-left-color: lighten( $gray, 20% );
+			border-left-color: $gray-lighten-20;
 		}
 	}
 }
 
 .post-editor__switch-mode .segmented-control__link {
 	background: $gray-light;
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 }
 
 .post-editor__switch-mode .segmented-control__item.is-selected .segmented-control__link {
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 	border-bottom-color: $white;
 	background-color: $white;
 }
@@ -237,7 +237,7 @@
 }
 
 .post-editor .drafts__list + .list-end::after {
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-lighten-30;
 }
 
 .post-editor .draft {
