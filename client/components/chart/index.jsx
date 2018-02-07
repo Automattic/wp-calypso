@@ -86,7 +86,7 @@ class Chart extends React.Component {
 
 	storeChart = ref => ( this.chart = ref );
 
-	updateData = ( { data } ) => {
+	updateData = ( { data = [] } = {} ) => {
 		const { maxBars } = this.state;
 
 		const nextData = data.length <= maxBars ? data : data.slice( 0 - maxBars );

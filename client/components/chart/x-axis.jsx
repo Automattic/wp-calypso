@@ -1,11 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
+import * as React from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 import { throttle } from 'lodash';
 
 /**
@@ -13,9 +11,7 @@ import { throttle } from 'lodash';
  */
 import Label from './label';
 
-export default class extends React.Component {
-	static displayName = 'ModuleChartXAxis';
-
+export class XAxis extends React.PureComponent {
 	static propTypes = {
 		labelWidth: PropTypes.number.isRequired,
 		data: PropTypes.array.isRequired,
@@ -26,18 +22,13 @@ export default class extends React.Component {
 		spacing: this.props.labelWidth,
 	};
 
-	// Add listener for window resize
 	componentDidMount() {
 		this.resizeThrottled = throttle( this.resize, 400 );
 		window.addEventListener( 'resize', this.resizeThrottled );
 		this.resize();
 	}
 
-	// Remove listener
 	componentWillUnmount() {
-		if ( this.resizeThrottled.cancel ) {
-			this.resizeThrottled.cancel();
-		}
 		window.removeEventListener( 'resize', this.resizeThrottled );
 	}
 
@@ -46,18 +37,17 @@ export default class extends React.Component {
 	}
 
 	resize = nextProps => {
-		let props = this.props;
-		if ( nextProps && ! ( nextProps instanceof Event ) ) {
-			props = nextProps;
+		const node = this.axis;
+		if ( ! node ) {
+			return;
 		}
 
-		const node = this.refs.axis;
+		const props = nextProps && ! ( nextProps instanceof Event ) ? nextProps : this.props;
 
 		/**
 		 * Overflow needs to be hidden to calculate the desired width,
 		 * but visible to display each labels' overflow :/
 		 */
-
 		node.style.overflow = 'hidden';
 		const width = node.clientWidth;
 		node.style.overflow = 'visible';
@@ -67,33 +57,29 @@ export default class extends React.Component {
 		const labelWidth = props.labelWidth;
 		const divisor = Math.ceil( labelWidth / spacing );
 
-		this.setState( {
-			divisor: divisor,
-			spacing: spacing,
-		} );
+		this.setState( { divisor, spacing } );
 	};
 
+	storeAxis = ref => ( this.axis = ref );
+
 	render() {
-		const data = this.props.data;
-
-		const labels = data.map( function( item, index ) {
-			const x = index * this.state.spacing + ( this.state.spacing - this.props.labelWidth ) / 2,
-				rightIndex = data.length - index - 1;
-			let label;
-
-			if ( rightIndex % this.state.divisor === 0 ) {
-				label = (
-					<Label key={ index } label={ item.label } width={ this.props.labelWidth } x={ x } />
-				);
-			}
-
-			return label;
-		}, this );
+		const { data, labelWidth } = this.props;
+		const { divisor, spacing } = this.state;
 
 		return (
-			<div ref="axis" className="chart__x-axis">
-				{ labels }
+			<div ref={ this.storeAxis } className="chart__x-axis">
+				{ data.map( ( item, index ) => {
+					const x = index * spacing + ( spacing - labelWidth ) / 2;
+					const rightIndex = data.length - index - 1;
+					const hasLabel = rightIndex % divisor === 0;
+
+					return (
+						hasLabel && <Label key={ index } label={ item.label } width={ labelWidth } x={ x } />
+					);
+				} ) }
 			</div>
 		);
 	}
 }
+
+export default XAxis;
