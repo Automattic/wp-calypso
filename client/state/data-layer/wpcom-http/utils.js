@@ -122,6 +122,24 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 			try {
 				return transformer( data );
 			} catch ( e ) {
+				if ( 'development' === process.env.NODE_ENV ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'Data Transformation Failure' );
+
+					// eslint-disable-next-line no-console
+					console.warn( {
+						inputData: data,
+						error: e,
+					} );
+
+					if ( undefined !== window ) {
+						// eslint-disable-next-line no-console
+						console.log( 'updated `lastTransformer` and `lastTransformed` in console' );
+						window.lastTransformer = transformer;
+						window.lastTransformed = data;
+					}
+				}
+
 				throw new TransformerError( e, data, transformer );
 			}
 		};
