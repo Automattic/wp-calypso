@@ -115,8 +115,8 @@ export class JetpackAuthorize extends Component {
 			site: clientId,
 		};
 
-		recordTracksEvent( 'calypso_jpc_authorize_form_view', tracksProperties );
-		recordTracksEvent( 'calypso_jpc_auth_view', tracksProperties );
+		recordTracksEvent( 'jpc_authorize_form_view', tracksProperties );
+		recordTracksEvent( 'jpc_auth_view', tracksProperties );
 
 		if ( this.shouldAutoAuthorize() ) {
 			debug( 'Authorizing automatically on component mount' );
@@ -271,16 +271,16 @@ export class JetpackAuthorize extends Component {
 	}
 
 	handleClickDisclaimer = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+		this.props.recordTracksEvent( 'jpc_disclaimer_link_click' );
 	};
 
 	handleClickHelp = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
+		this.props.recordTracksEvent( 'jpc_help_link_click' );
 	};
 
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
-		recordTracksEvent( 'calypso_jpc_signout_click' );
+		recordTracksEvent( 'jpc_signout_click' );
 		userUtilities.logout( window.location.href );
 	};
 
@@ -290,14 +290,14 @@ export class JetpackAuthorize extends Component {
 		if ( this.props.hasExpiredSecretError ) {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
-			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
+			recordTracksEvent( 'jpc_resolve_expired_secret_error_click' );
 			this.externalRedirectOnce( site + REMOTE_PATH_AUTH );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
 		// To resolve, we redirect to the Jetpack Client, and attempt to complete the connection with
 		// legacy functions on the client.
-		recordTracksEvent( 'calypso_jpc_resolve_xmlrpc_error_click' );
+		recordTracksEvent( 'jpc_resolve_xmlrpc_error_click' );
 		this.redirectToXmlRpcErrorFallbackUrl();
 	};
 
@@ -307,29 +307,29 @@ export class JetpackAuthorize extends Component {
 		const { alreadyAuthorized, redirectAfterAuth } = this.props.authQuery;
 
 		if ( ! this.props.isAlreadyOnSitesList && ! this.props.isFetchingSites && alreadyAuthorized ) {
-			recordTracksEvent( 'calypso_jpc_back_wpadmin_click' );
+			recordTracksEvent( 'jpc_back_wpadmin_click' );
 			return this.externalRedirectOnce( redirectAfterAuth );
 		}
 
 		if ( this.props.isAlreadyOnSitesList && alreadyAuthorized ) {
-			recordTracksEvent( 'calypso_jpc_already_authorized_click' );
+			recordTracksEvent( 'jpc_already_authorized_click' );
 			return this.redirect();
 		}
 
 		if ( authorizeSuccess && ! alreadyAuthorized ) {
-			recordTracksEvent( 'calypso_jpc_activate_click' );
+			recordTracksEvent( 'jpc_activate_click' );
 			return this.redirect();
 		}
 		if ( authorizeError ) {
-			recordTracksEvent( 'calypso_jpc_try_again_click' );
+			recordTracksEvent( 'jpc_try_again_click' );
 			return this.handleResolve();
 		}
 		if ( this.props.isAlreadyOnSitesList ) {
-			recordTracksEvent( 'calypso_jpc_return_site_click' );
+			recordTracksEvent( 'jpc_return_site_click' );
 			return this.redirect();
 		}
 
-		recordTracksEvent( 'calypso_jpc_approve_click' );
+		recordTracksEvent( 'jpc_approve_click' );
 		return this.authorize();
 	};
 

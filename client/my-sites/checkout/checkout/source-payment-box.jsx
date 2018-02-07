@@ -113,7 +113,7 @@ class SourcePaymentBox extends PureComponent {
 					disabled: true
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
-				analytics.tracks.recordEvent( 'calypso_checkout_with_source_' + this.props.paymentType );
+				analytics.tracks.recordEvent( 'checkout_with_source_' + this.props.paymentType );
 				location.href = result.redirect_url;
 			}
 		}.bind( this ) );

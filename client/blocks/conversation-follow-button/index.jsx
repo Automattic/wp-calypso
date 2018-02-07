@@ -41,13 +41,10 @@ class ConversationFollowButtonContainer extends Component {
 		} );
 
 		if ( isRequestingFollow ) {
-			this.props.recordTracksEvent(
-				'calypso_reader_conversations_post_followed',
-				tracksProperties
-			);
+			this.props.recordTracksEvent( 'reader_conversations_post_followed', tracksProperties );
 			this.props.followConversation( { siteId, postId } );
 		} else {
-			this.props.recordTracksEvent( 'calypso_reader_conversations_post_muted', tracksProperties );
+			this.props.recordTracksEvent( 'reader_conversations_post_muted', tracksProperties );
 			this.props.muteConversation( { siteId, postId } );
 		}
 

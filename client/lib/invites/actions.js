@@ -43,7 +43,7 @@ export function fetchInvite( siteId, inviteKey ) {
 		} );
 
 		if ( error ) {
-			analytics.tracks.recordEvent( 'calypso_invite_validation_failure', {
+			analytics.tracks.recordEvent( 'invite_validation_failure', {
 				error: error.error,
 			} );
 		}
@@ -64,11 +64,11 @@ export function createAccount( userData, invite, callback ) {
 						if ( error.message ) {
 							dispatch( errorNotice( error.message ) );
 						}
-						analytics.tracks.recordEvent( 'calypso_invite_account_creation_failed', {
+						analytics.tracks.recordEvent( 'invite_account_creation_failed', {
 							error: error.error,
 						} );
 					} else {
-						analytics.tracks.recordEvent( 'calypso_invite_account_created' );
+						analytics.tracks.recordEvent( 'invite_account_created' );
 					}
 					callback( error, bearerToken );
 				}
@@ -95,7 +95,7 @@ export function acceptInvite( invite, callback ) {
 				if ( error.message ) {
 					dispatch( errorNotice( error.message, { displayOnNextPage: true } ) );
 				}
-				analytics.tracks.recordEvent( 'calypso_invite_accept_failed', {
+				analytics.tracks.recordEvent( 'invite_accept_failed', {
 					error: error.error,
 				} );
 			} else {
@@ -107,7 +107,7 @@ export function acceptInvite( invite, callback ) {
 					dispatch( successNotice( ...acceptedNotice( invite ) ) );
 				}
 
-				analytics.tracks.recordEvent( 'calypso_invite_accepted' );
+				analytics.tracks.recordEvent( 'invite_accepted' );
 			}
 			dispatch( requestSites() );
 			if ( typeof callback === 'function' ) {
@@ -167,7 +167,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 				}
 
 				dispatch( errorNotice( message ) );
-				analytics.tracks.recordEvent( 'calypso_invite_send_failed' );
+				analytics.tracks.recordEvent( 'invite_send_failed' );
 			} else {
 				dispatch(
 					successNotice(
@@ -176,7 +176,7 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId ) 
 						} )
 					)
 				);
-				analytics.tracks.recordEvent( 'calypso_invite_send_success' );
+				analytics.tracks.recordEvent( 'invite_send_success' );
 			}
 		} );
 	};
@@ -201,9 +201,9 @@ export function createInviteValidation( siteId, usernamesOrEmails, role ) {
 			data,
 		} );
 		if ( error ) {
-			analytics.tracks.recordEvent( 'calypso_invite_create_validation_failed' );
+			analytics.tracks.recordEvent( 'invite_create_validation_failed' );
 		} else {
-			analytics.tracks.recordEvent( 'calypso_invite_create_validation_success' );
+			analytics.tracks.recordEvent( 'invite_create_validation_success' );
 		}
 	} );
 }

@@ -113,7 +113,7 @@ class PaypalPaymentBox extends React.Component {
 						disabled: true,
 					} );
 					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
-					analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
+					analytics.tracks.recordEvent( 'checkout_with_paypal' );
 					window.location = paypalExpressURL;
 				}
 			}.bind( this )

@@ -83,7 +83,7 @@ describe( 'BusinessATStep', () => {
 				.simulate( 'click' );
 
 			expect( recordTracksEvent ).to.have.been.calledWith(
-				'calypso_cancellation_business_at_plugin_support_click'
+				'cancellation_business_at_plugin_support_click'
 			);
 		} );
 
@@ -94,7 +94,7 @@ describe( 'BusinessATStep', () => {
 				.simulate( 'click' );
 
 			expect( recordTracksEvent ).to.have.been.calledWith(
-				'calypso_cancellation_business_at_theme_support_click'
+				'cancellation_business_at_theme_support_click'
 			);
 		} );
 	} );

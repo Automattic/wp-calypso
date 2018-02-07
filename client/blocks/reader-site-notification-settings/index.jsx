@@ -62,7 +62,7 @@ class ReaderSiteNotificationSettings extends Component {
 		this.props.updateNewPostEmailSubscription( siteId, text );
 
 		const tracksProperties = { site_id: siteId, delivery_frequency: text };
-		this.props.recordTracksEvent( 'calypso_reader_post_emails_set_frequency', tracksProperties );
+		this.props.recordTracksEvent( 'reader_post_emails_set_frequency', tracksProperties );
 	};
 
 	toggleNewPostEmail = () => {
@@ -71,10 +71,10 @@ class ReaderSiteNotificationSettings extends Component {
 
 		if ( this.props.sendNewPostsByEmail ) {
 			this.props.unsubscribeToNewPostEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_off', tracksProperties );
+			this.props.recordTracksEvent( 'reader_post_emails_toggle_off', tracksProperties );
 		} else {
 			this.props.subscribeToNewPostEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_on', tracksProperties );
+			this.props.recordTracksEvent( 'reader_post_emails_toggle_on', tracksProperties );
 		}
 	};
 
@@ -84,10 +84,10 @@ class ReaderSiteNotificationSettings extends Component {
 
 		if ( this.props.sendNewCommentsByEmail ) {
 			this.props.unsubscribeToNewCommentEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_off', tracksProperties );
+			this.props.recordTracksEvent( 'reader_comment_emails_toggle_off', tracksProperties );
 		} else {
 			this.props.subscribeToNewCommentEmail( siteId );
-			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_on', tracksProperties );
+			this.props.recordTracksEvent( 'reader_comment_emails_toggle_on', tracksProperties );
 		}
 	};
 
@@ -97,16 +97,10 @@ class ReaderSiteNotificationSettings extends Component {
 
 		if ( this.props.sendNewPostsByNotification ) {
 			this.props.unsubscribeToNewPostNotifications( siteId );
-			this.props.recordTracksEvent(
-				'calypso_reader_post_notifications_toggle_off',
-				tracksProperties
-			);
+			this.props.recordTracksEvent( 'reader_post_notifications_toggle_off', tracksProperties );
 		} else {
 			this.props.subscribeToNewPostNotifications( siteId );
-			this.props.recordTracksEvent(
-				'calypso_reader_post_notifications_toggle_on',
-				tracksProperties
-			);
+			this.props.recordTracksEvent( 'reader_post_notifications_toggle_on', tracksProperties );
 		}
 	};
 

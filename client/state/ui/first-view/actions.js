@@ -37,8 +37,8 @@ export function hideView( { enabled } ) {
 			time_spent: timeBucket,
 		} );
 
-		dispatch( bumpStat( 'calypso_first_view_dismissed', enabled ? 'show_again' : 'dont_show' ) );
-		dispatch( bumpStat( 'calypso_first_view_duration', timeBucket ) );
+		dispatch( bumpStat( 'first_view_dismissed', enabled ? 'show_again' : 'dont_show' ) );
+		dispatch( bumpStat( 'first_view_duration', timeBucket ) );
 		dispatch( tracksEvent );
 		dispatch( hideAction );
 		dispatch( persistToPreferences( { getState, view: config.name, disabled: ! enabled } ) );

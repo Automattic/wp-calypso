@@ -22,12 +22,12 @@ export class Suggestion extends Component {
 
 	componentWillMount() {
 		const { railcar } = this.props;
-		analytics.tracks.recordEvent( 'calypso_traintracks_render', railcar );
+		analytics.tracks.recordEvent( 'traintracks_render', railcar );
 	}
 
 	handleSuggestionClick = () => {
 		const { suggestion, source, railcar } = this.props;
-		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion, source } );
+		recordTrack( 'reader_search_suggestion_click', { suggestion, source } );
 		recordTracksRailcarInteract( 'search_suggestion_click', railcar );
 	};
 

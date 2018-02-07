@@ -23,7 +23,7 @@ class Course extends Component {
 	componentDidMount() {
 		const { isBusinessPlanUser } = this.props;
 
-		analytics.tracks.recordEvent( 'calypso_help_course_pageview', {
+		analytics.tracks.recordEvent( 'help_course_pageview', {
 			is_business_plan_user: isBusinessPlanUser,
 		} );
 	}

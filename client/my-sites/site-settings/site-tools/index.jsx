@@ -28,7 +28,7 @@ import {
 import notices from 'notices';
 
 const trackDeleteSiteOption = option => {
-	tracks.recordEvent( 'calypso_settings_delete_site_options', {
+	tracks.recordEvent( 'settings_delete_site_options', {
 		option: option,
 	} );
 };

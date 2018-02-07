@@ -15,7 +15,7 @@ import { action } from 'lib/feed-post-store/constants';
 import wpcom from 'lib/wp';
 
 function trackRailcarRender( post ) {
-	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );
+	analytics.tracks.recordEvent( 'traintracks_render', post.railcar );
 }
 
 export function postToKey( post ) {

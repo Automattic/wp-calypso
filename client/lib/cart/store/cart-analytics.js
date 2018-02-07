@@ -26,10 +26,10 @@ export function removeNestedProperties( cartItem ) {
 }
 
 function recordAddEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_add', removeNestedProperties( cartItem ) );
+	analytics.tracks.recordEvent( 'cart_product_add', removeNestedProperties( cartItem ) );
 	recordAddToCart( cartItem );
 }
 
 function recordRemoveEvent( cartItem ) {
-	analytics.tracks.recordEvent( 'calypso_cart_product_remove', removeNestedProperties( cartItem ) );
+	analytics.tracks.recordEvent( 'cart_product_remove', removeNestedProperties( cartItem ) );
 }

@@ -105,7 +105,7 @@ describe( 'middleware', () => {
 	describe( 'withClientId', () => {
 		test( 'should create track event with client id', () => {
 			const props = [
-				'calypso_login_success',
+				'login_success',
 				{
 					hello: 'world',
 				},
@@ -131,7 +131,7 @@ describe( 'middleware', () => {
 
 		test( 'should create page view event with client id', () => {
 			const props = [
-				'calypso_login_success',
+				'login_success',
 				{
 					hello: 'world',
 				},

@@ -41,7 +41,7 @@ class HelpSearch extends React.PureComponent {
 
 	onSearch = searchQuery => {
 		this.setState( { helpLinks: [], searchQuery: searchQuery } );
-		analytics.tracks.recordEvent( 'calypso_help_search', { query: searchQuery } );
+		analytics.tracks.recordEvent( 'help_search', { query: searchQuery } );
 		HelpSearchActions.fetch( searchQuery );
 	};
 

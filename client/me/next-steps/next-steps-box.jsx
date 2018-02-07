@@ -16,7 +16,7 @@ export default class extends React.Component {
 
 	recordEvent = () => {
 		analytics.ga.recordEvent( 'Me > Next > Box', this.props.stepName );
-		analytics.tracks.recordEvent( 'calypso_me_next_click', {
+		analytics.tracks.recordEvent( 'me_next_click', {
 			module: this.props.stepName,
 			is_welcome: this.props.isWelcome,
 		} );

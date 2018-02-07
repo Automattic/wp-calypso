@@ -40,7 +40,7 @@ class GuidedTours extends Component {
 	start = ( { step, tour, tourVersion: tour_version } ) => {
 		if ( tour && tour_version ) {
 			this.props.nextGuidedTourStep( { step, tour } );
-			tracks.recordEvent( 'calypso_guided_tours_start', {
+			tracks.recordEvent( 'guided_tours_start', {
 				tour,
 				tour_version,
 			} );
@@ -49,7 +49,7 @@ class GuidedTours extends Component {
 
 	next = ( { step, tour, tourVersion, nextStepName, skipping = false } ) => {
 		if ( ! skipping && step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+			tracks.recordEvent( 'guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version: tourVersion,
@@ -66,7 +66,7 @@ class GuidedTours extends Component {
 
 	quit = ( { step, tour, tourVersion: tour_version, isLastStep } ) => {
 		if ( step ) {
-			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+			tracks.recordEvent( 'guided_tours_seen_step', {
 				tour,
 				step,
 				tour_version,

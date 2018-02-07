@@ -47,7 +47,7 @@ class PublicizeActionsList extends PureComponent {
 	};
 
 	setFooterSection = selectedShareTab => () => {
-		analytics.tracks.recordEvent( 'calypso_publicize_action_tab_click', { tab: selectedShareTab } );
+		analytics.tracks.recordEvent( 'publicize_action_tab_click', { tab: selectedShareTab } );
 		this.setState( { selectedShareTab } );
 	};
 
@@ -150,7 +150,7 @@ class PublicizeActionsList extends PureComponent {
 	closeDeleteDialog = dialogAction => {
 		if ( dialogAction === 'delete' ) {
 			const { siteId, postId } = this.props;
-			analytics.tracks.recordEvent( 'calypso_publicize_scheduled_delete' );
+			analytics.tracks.recordEvent( 'publicize_scheduled_delete' );
 			this.props.deletePostShareAction( siteId, postId, this.state.selectedScheduledShareId );
 		}
 

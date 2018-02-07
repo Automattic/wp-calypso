@@ -74,7 +74,7 @@ For more information and examples about how and when to provide the optional `op
 Record an event with optional properties:
 
 ```js
-analytics.tracks.recordEvent( 'calypso_checkout_coupon_apply', {
+analytics.tracks.recordEvent( 'checkout_coupon_apply', {
 	'coupon_code': 'abc123'
 } );
 ```

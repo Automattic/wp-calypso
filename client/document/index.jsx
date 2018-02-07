@@ -239,7 +239,7 @@ class Document extends React.Component {
 		if ( pathName === 'log-in' && 'production' === window.configData.env ) {
 			var loadId = generateRandomToken( 18 );
 
-			var stats = recordTracksEvent( 'calypso_load_start', '/' + pathName, loadId );
+			var stats = recordTracksEvent( 'load_start', '/' + pathName, loadId );
 
 			if ( ! window.calypsoLoadStartTime ) {
 				window.calypsoLoadStartTime = {};

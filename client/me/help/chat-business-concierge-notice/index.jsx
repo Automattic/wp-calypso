@@ -31,7 +31,7 @@ class ChatBusinessConciergeNotice extends Component {
 	};
 
 	trackConciergeOfferClick = () => {
-		analytics.tracks.recordEvent( 'calypso_help_concierge_offer_click' );
+		analytics.tracks.recordEvent( 'help_concierge_offer_click' );
 	};
 
 	render = () => {

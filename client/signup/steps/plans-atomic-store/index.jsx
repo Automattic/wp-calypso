@@ -56,7 +56,7 @@ class PlansAtomicStoreStep extends Component {
 				cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
 
 		if ( cartItem ) {
-			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			analytics.tracks.recordEvent( 'signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
 				from_section: stepSectionName ? stepSectionName : 'default',
@@ -71,7 +71,7 @@ class PlansAtomicStoreStep extends Component {
 				} );
 			}
 		} else {
-			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
+			analytics.tracks.recordEvent( 'signup_free_plan_select', {
 				from_section: stepSectionName ? stepSectionName : 'default',
 			} );
 		}

@@ -140,7 +140,7 @@ export class Notifications extends Component {
 				return refreshNotes();
 
 			case 'trackClick':
-				analytics.tracks.recordEvent( 'calypso_web_push_notification_clicked', {
+				analytics.tracks.recordEvent( 'web_push_notification_clicked', {
 					push_notification_note_id: event.data.notification.note_id,
 					push_notification_type: event.data.notification.type,
 				} );
@@ -169,7 +169,7 @@ export class Notifications extends Component {
 				( store, { siteId, postId, href } ) => {
 					if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 						this.props.checkToggle();
-						this.props.recordTracksEvent( 'calypso_notifications_open_post', {
+						this.props.recordTracksEvent( 'notifications_open_post', {
 							site_id: siteId,
 							post_id: postId,
 						} );
@@ -183,7 +183,7 @@ export class Notifications extends Component {
 				( store, { siteId, postId, href, commentId } ) => {
 					if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 						this.props.checkToggle();
-						this.props.recordTracksEvent( 'calypso_notifications_open_comment', {
+						this.props.recordTracksEvent( 'notifications_open_comment', {
 							site_id: siteId,
 							post_id: postId,
 							comment_id: commentId,
@@ -198,7 +198,7 @@ export class Notifications extends Component {
 				( store, { siteId, href } ) => {
 					if ( config.isEnabled( 'notifications/link-to-reader' ) ) {
 						this.props.checkToggle();
-						this.props.recordTracksEvent( 'calypso_notifications_open_site', {
+						this.props.recordTracksEvent( 'notifications_open_site', {
 							site_id: siteId,
 						} );
 						page( `/read/blogs/${ siteId }` );
@@ -216,7 +216,7 @@ export class Notifications extends Component {
 			EDIT_COMMENT: [
 				( store, { siteId, postId, commentId } ) => {
 					this.props.checkToggle();
-					this.props.recordTracksEvent( 'calypso_notifications_edit_comment', {
+					this.props.recordTracksEvent( 'notifications_edit_comment', {
 						site_id: siteId,
 						post_id: postId,
 						comment_id: commentId,

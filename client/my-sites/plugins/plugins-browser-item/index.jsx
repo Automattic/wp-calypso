@@ -46,7 +46,7 @@ class PluginsBrowserListElement extends Component {
 	}
 
 	trackPluginLinkClick = () => {
-		analytics.tracks.recordEvent( 'calypso_plugin_browser_item_click', {
+		analytics.tracks.recordEvent( 'plugin_browser_item_click', {
 			site: this.props.site,
 			plugin: this.props.plugin.slug,
 		} );

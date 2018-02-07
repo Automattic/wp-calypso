@@ -120,7 +120,7 @@ function limitSiteParamsForConversations( params ) {
 
 function trainTracksProxyForStream( stream, callback ) {
 	return function( err, response ) {
-		const eventName = 'calypso_traintracks_render';
+		const eventName = 'traintracks_render';
 		if ( response && response.algorithm ) {
 			stream.algorithm = response.algorithm;
 		}

@@ -84,7 +84,7 @@ class MediaLibraryListPlanPromo extends React.Component {
 	viewPlansPage = () => {
 		const { slug = '' } = this.props.site;
 
-		analytics.tracks.recordEvent( 'calypso_media_plans_button_click' );
+		analytics.tracks.recordEvent( 'media_plans_button_click' );
 
 		page( `/plans/${ slug }` );
 	};

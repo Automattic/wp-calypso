@@ -44,7 +44,7 @@ const EVENTS = {
 				);
 
 				analytics.tracks.recordEvent(
-					'calypso_domain_management_add_google_apps_add_another_email_address_click',
+					'domain_management_add_google_apps_add_another_email_address_click',
 					{ domain_name: domainName }
 				);
 			},
@@ -57,7 +57,7 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_add_google_apps_cancel_click', {
+				analytics.tracks.recordEvent( 'domain_management_add_google_apps_cancel_click', {
 					domain_name: domainName,
 				} );
 			},
@@ -70,7 +70,7 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_add_google_apps_continue_click', {
+				analytics.tracks.recordEvent( 'domain_management_add_google_apps_continue_click', {
 					domain_name: domainName,
 					number_of_licenses: numberOfLicenses,
 					success,
@@ -84,7 +84,7 @@ const EVENTS = {
 					'Domain Name'
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_add_google_apps_domain_change', {
+				analytics.tracks.recordEvent( 'domain_management_add_google_apps_domain_change', {
 					user_index: userIndex,
 					value,
 				} );
@@ -119,7 +119,7 @@ const EVENTS = {
 					domain.name
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_edit_make_primary_click', {
+				analytics.tracks.recordEvent( 'domain_management_edit_make_primary_click', {
 					section: snakeCase( domainType ),
 				} );
 			},
@@ -134,7 +134,7 @@ const EVENTS = {
 					domain.name
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_edit_navigation_click', {
+				analytics.tracks.recordEvent( 'domain_management_edit_navigation_click', {
 					action: snakeCase( action ),
 					section: snakeCase( domainType ),
 				} );
@@ -148,7 +148,7 @@ const EVENTS = {
 					domain.name
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_edit_none_click' );
+				analytics.tracks.recordEvent( 'domain_management_edit_none_click' );
 			},
 
 			paymentSettingsClick( domain ) {
@@ -161,7 +161,7 @@ const EVENTS = {
 					domain.name
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_edit_payment_settings_click', {
+				analytics.tracks.recordEvent( 'domain_management_edit_payment_settings_click', {
 					section: snakeCase( domainType ),
 				} );
 			},
@@ -176,7 +176,7 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_and_more_click', {
+				analytics.tracks.recordEvent( 'domain_management_email_and_more_click', {
 					domain_name: domainName,
 				} );
 			},
@@ -189,7 +189,7 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_learn_more_click', {
+				analytics.tracks.recordEvent( 'domain_management_email_learn_more_click', {
 					domain_name: domainName,
 				} );
 			},
@@ -205,7 +205,7 @@ const EVENTS = {
 				);
 
 				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_add_new_email_forward_click',
+					'domain_management_email_forwarding_add_new_email_forward_click',
 					{
 						destination,
 						domain_name: domainName,
@@ -223,7 +223,7 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_forwarding_cancel_click', {
+				analytics.tracks.recordEvent( 'domain_management_email_forwarding_cancel_click', {
 					domain_name: domainName,
 				} );
 			},
@@ -236,7 +236,7 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_email_forwarding_delete_click', {
+				analytics.tracks.recordEvent( 'domain_management_email_forwarding_delete_click', {
 					destination,
 					domain_name: domainName,
 					mailbox,
@@ -253,7 +253,7 @@ const EVENTS = {
 				);
 
 				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_resend_verification_email_click',
+					'domain_management_email_forwarding_resend_verification_email_click',
 					{
 						destination,
 						domain_name: domainName,
@@ -285,10 +285,9 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_email_forwarding_learn_more_click',
-					{ domain_name: domainName }
-				);
+				analytics.tracks.recordEvent( 'domain_management_email_forwarding_learn_more_click', {
+					domain_name: domainName,
+				} );
 			},
 		},
 
@@ -301,10 +300,9 @@ const EVENTS = {
 					domainName
 				);
 
-				analytics.tracks.recordEvent(
-					'calypso_domain_management_google_apps_add_google_apps_user_click',
-					{ domain_name: domainName }
-				);
+				analytics.tracks.recordEvent( 'domain_management_google_apps_add_google_apps_user_click', {
+					domain_name: domainName,
+				} );
 			},
 
 			manageClick( domainName, email ) {
@@ -315,7 +313,7 @@ const EVENTS = {
 					email
 				);
 
-				analytics.tracks.recordEvent( 'calypso_domain_management_google_apps_manage_click', {
+				analytics.tracks.recordEvent( 'domain_management_google_apps_manage_click', {
 					domain_name: domainName,
 					email,
 				} );

@@ -38,18 +38,18 @@ class InviteAcceptLoggedIn extends React.Component {
 				page( this.props.redirectTo );
 			}
 		} );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_join_button_click' );
+		analytics.tracks.recordEvent( 'invite_accept_logged_in_join_button_click' );
 	};
 
 	decline = () => {
 		if ( this.props.decline && 'function' === typeof this.props.decline ) {
 			this.props.decline();
-			analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_decline_button_click' );
+			analytics.tracks.recordEvent( 'invite_accept_logged_in_decline_button_click' );
 		}
 	};
 
 	signInLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_in_sign_in_link_click' );
+		analytics.tracks.recordEvent( 'invite_accept_logged_in_sign_in_link_click' );
 	};
 
 	getButtonText = () => {

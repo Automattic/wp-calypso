@@ -17,7 +17,7 @@ class InviteFormHeader extends React.Component {
 	static displayName = 'InviteFormHeader';
 
 	clickedSiteLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_form_header_site_link_click' );
+		analytics.tracks.recordEvent( 'invite_accept_form_header_site_link_click' );
 	};
 
 	getSiteLink = () => {

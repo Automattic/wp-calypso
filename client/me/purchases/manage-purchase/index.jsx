@@ -127,7 +127,7 @@ class ManagePurchase extends Component {
 			renewItems = [ renewItem ];
 
 		// Track the renew now submit
-		analytics.tracks.recordEvent( 'calypso_purchases_renew_now_click', {
+		analytics.tracks.recordEvent( 'purchases_renew_now_click', {
 			product_slug: purchase.productSlug,
 		} );
 

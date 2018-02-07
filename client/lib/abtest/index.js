@@ -296,7 +296,7 @@ ABTest.prototype.assignVariation = function() {
 };
 
 ABTest.prototype.recordVariation = function( variation ) {
-	analytics.tracks.recordEvent( 'calypso_abtest_start', {
+	analytics.tracks.recordEvent( 'abtest_start', {
 		abtest_name: this.experimentId,
 		abtest_variation: variation,
 	} );

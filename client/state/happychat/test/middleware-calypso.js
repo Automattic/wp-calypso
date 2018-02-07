@@ -175,14 +175,14 @@ describe( 'middleware', () => {
 			const analyticsMeta = [
 				{
 					type: ANALYTICS_EVENT_RECORD,
-					payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' },
+					payload: { service: 'tracks', name: 'add_new_wordpress_click' },
 				},
 				{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
 				{
 					type: ANALYTICS_EVENT_RECORD,
 					payload: {
 						service: 'tracks',
-						name: 'calypso_themeshowcase_theme_activate',
+						name: 'themeshowcase_theme_activate',
 						properties: {},
 					},
 				},
@@ -264,14 +264,14 @@ describe( 'middleware', () => {
 					analytics: [
 						{
 							type: ANALYTICS_EVENT_RECORD,
-							payload: { service: 'tracks', name: 'calypso_add_new_wordpress_click' },
+							payload: { service: 'tracks', name: 'add_new_wordpress_click' },
 						},
 						{ type: ANALYTICS_EVENT_RECORD, payload: { service: 'tracks', name: 'abc' } },
 						{
 							type: ANALYTICS_EVENT_RECORD,
 							payload: {
 								service: 'tracks',
-								name: 'calypso_themeshowcase_theme_activate',
+								name: 'themeshowcase_theme_activate',
 								properties: {},
 							},
 						},

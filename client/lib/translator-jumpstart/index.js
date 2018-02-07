@@ -300,9 +300,7 @@ i18n.registerComponentUpdateHook( () => {
 function trackTranslatorStatus() {
 	const newSetting = userSettings.getOriginalSetting( 'enable_translator' ),
 		changed = previousEnabledSetting !== newSetting,
-		tracksEvent = newSetting
-			? 'calypso_community_translator_enabled'
-			: 'calypso_community_translator_disabled';
+		tracksEvent = newSetting ? 'community_translator_enabled' : 'community_translator_disabled';
 
 	if ( changed && previousEnabledSetting !== undefined ) {
 		debug( tracksEvent );

@@ -42,7 +42,7 @@ class ThemeSelectionStep extends Component {
 		const theme = find( themes, { slug: themeId } );
 		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
-		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
+		analytics.tracks.recordEvent( 'signup_theme_select', {
 			theme: repoSlug,
 			headstart: true,
 		} );

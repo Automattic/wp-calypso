@@ -552,7 +552,7 @@ export class DomainDetailsForm extends PureComponent {
 			}
 		);
 
-		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', tracksEventObject );
+		analytics.tracks.recordEvent( 'contact_information_form_submit', tracksEventObject );
 		this.setState( { submissionCount: this.state.submissionCount + 1 } );
 	}
 

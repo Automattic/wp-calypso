@@ -51,7 +51,7 @@ class PurchaseCardDetails extends Component {
 	}
 
 	recordFormSubmitEvent() {
-		analytics.tracks.recordEvent( 'calypso_purchases_credit_card_form_submit', {
+		analytics.tracks.recordEvent( 'purchases_credit_card_form_submit', {
 			product_slug: getPurchase( this.props ).productSlug,
 		} );
 	}

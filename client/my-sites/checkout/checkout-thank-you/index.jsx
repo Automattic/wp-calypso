@@ -140,7 +140,7 @@ class CheckoutThankYou extends React.Component {
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
+		analytics.tracks.recordEvent( 'checkout_thank_you_view' );
 
 		window.scrollTo( 0, 0 );
 

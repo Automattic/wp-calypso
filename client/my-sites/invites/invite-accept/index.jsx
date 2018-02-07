@@ -88,7 +88,7 @@ class InviteAccept extends React.Component {
 	};
 
 	clickedNoticeSiteLink = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_accept_notice_site_link_click' );
+		analytics.tracks.recordEvent( 'invite_accept_notice_site_link_click' );
 	};
 
 	decline = () => {

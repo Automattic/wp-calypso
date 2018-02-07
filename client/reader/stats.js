@@ -28,7 +28,7 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 		reader_permalink_source: source,
 	} );
 	recordGaEvent( 'Clicked Post Permalink', source );
-	const trackEvent = 'calypso_reader_permalink_click';
+	const trackEvent = 'reader_permalink_click';
 
 	// Add source as Tracks event property
 	eventProperties = Object.assign( { source }, eventProperties );
@@ -131,39 +131,33 @@ export function recordTrack( eventName, eventProperties, { pathnameOverride } = 
 
 const tracksRailcarEventWhitelist = new Set();
 tracksRailcarEventWhitelist
-	.add( 'calypso_reader_related_post_from_same_site_clicked' )
-	.add( 'calypso_reader_related_post_from_other_site_clicked' )
-	.add( 'calypso_reader_related_post_site_clicked' )
-	.add( 'calypso_reader_article_liked' )
-	.add( 'calypso_reader_article_commented_on' )
-	.add( 'calypso_reader_article_opened' )
-	.add( 'calypso_reader_searchcard_clicked' )
-	.add( 'calypso_reader_author_link_clicked' )
-	.add( 'calypso_reader_permalink_click' )
-	.add( 'calypso_reader_recommended_post_clicked' )
-	.add( 'calypso_reader_recommended_site_clicked' )
-	.add( 'calypso_reader_recommended_post_dismissed' );
+	.add( 'reader_related_post_from_same_site_clicked' )
+	.add( 'reader_related_post_from_other_site_clicked' )
+	.add( 'reader_related_post_site_clicked' )
+	.add( 'reader_article_liked' )
+	.add( 'reader_article_commented_on' )
+	.add( 'reader_article_opened' )
+	.add( 'reader_searchcard_clicked' )
+	.add( 'reader_author_link_clicked' )
+	.add( 'reader_permalink_click' )
+	.add( 'reader_recommended_post_clicked' )
+	.add( 'reader_recommended_site_clicked' )
+	.add( 'reader_recommended_post_dismissed' );
 
 export function recordTracksRailcar( action, eventName, railcar, overrides = {} ) {
 	// flatten the railcar down into the event props
 	recordTrack(
 		action,
 		Object.assign(
-			eventName ? { action: eventName.replace( 'calypso_reader_', '' ) } : {},
+			eventName ? { action: eventName.replace( 'reader_', '' ) } : {},
 			railcar,
 			overrides
 		)
 	);
 }
 
-export const recordTracksRailcarRender = partial(
-	recordTracksRailcar,
-	'calypso_traintracks_render'
-);
-export const recordTracksRailcarInteract = partial(
-	recordTracksRailcar,
-	'calypso_traintracks_interact'
-);
+export const recordTracksRailcarRender = partial( recordTracksRailcar, 'traintracks_render' );
+export const recordTracksRailcarInteract = partial( recordTracksRailcar, 'traintracks_interact' );
 
 export function recordTrackForPost( eventName, post = {}, additionalProps = {}, options ) {
 	recordTrack( eventName, assign( getTracksPropertiesForPost( post ), additionalProps ), options );
@@ -218,7 +212,7 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 	mc.bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
-	recordTrack( 'calypso_reader_site_followed', {
+	recordTrack( 'reader_site_followed', {
 		url,
 		source,
 		...additionalProps,
@@ -233,7 +227,7 @@ export function recordUnfollow( url, railcar, additionalProps = {} ) {
 	mc.bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );
-	recordTrack( 'calypso_reader_site_unfollowed', {
+	recordTrack( 'reader_site_unfollowed', {
 		url,
 		source,
 		...additionalProps,

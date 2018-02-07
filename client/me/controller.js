@@ -71,7 +71,7 @@ export default {
 			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
+		analytics.tracks.recordEvent( 'me_next_view', { is_welcome: isWelcome } );
 		analytics.pageView.record( analyticsBasePath, ANALYTICS_PAGE_TITLE + ' > Next' );
 
 		context.primary = React.createElement( NextSteps, {

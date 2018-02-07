@@ -35,7 +35,7 @@ describe( 'selectors', () => {
 	let hasUserClicked;
 
 	beforeAll( () => {
-		hasUserClicked = hasAnalyticsEventFired( 'calypso_themeshowcase_theme_click' );
+		hasUserClicked = hasAnalyticsEventFired( 'themeshowcase_theme_click' );
 	} );
 
 	describe( '#isUserNewerThan', () => {
@@ -173,7 +173,7 @@ describe( 'selectors', () => {
 										type: 'ANALYTICS_EVENT_RECORD',
 										payload: {
 											service: 'tracks',
-											name: 'calypso_themeshowcase_theme_click',
+											name: 'themeshowcase_theme_click',
 											properties: {},
 										},
 									},

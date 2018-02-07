@@ -60,8 +60,8 @@ class NpsSurvey extends Component {
 	};
 
 	componentWillMount() {
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
+		analytics.mc.bumpStat( 'nps_survey', 'survey_displayed' );
+		analytics.tracks.recordEvent( 'nps_survey_displayed' );
 	}
 
 	render() {

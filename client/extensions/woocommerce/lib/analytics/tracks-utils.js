@@ -12,8 +12,8 @@ import { WOOCOMMERCE_STAT_DISCARDED } from 'woocommerce/state/action-types';
 import { startsWith } from 'lodash';
 
 export const recordTrack = ( tracks, debug, tracksStore ) => ( eventName, eventProperties ) => {
-	if ( ! startsWith( eventName, 'calypso_woocommerce_' ) ) {
-		debug( `invalid store track name: '${ eventName }', must start with 'calypso_woocommerce_'` );
+	if ( ! startsWith( eventName, 'woocommerce_' ) ) {
+		debug( `invalid store track name: '${ eventName }', must start with 'woocommerce_'` );
 		return;
 	}
 

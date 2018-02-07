@@ -176,7 +176,7 @@ export class SignupProcessingScreen extends Component {
 			return;
 		}
 
-		analytics.tracks.recordEvent( 'calypso_signup_landing_cta_click', {
+		analytics.tracks.recordEvent( 'signup_landing_cta_click', {
 			cta_name: ctaName,
 		} );
 

@@ -148,7 +148,7 @@ class ConfirmCancelDomain extends React.Component {
 
 			this.props.clearPurchases();
 
-			analytics.tracks.recordEvent( 'calypso_domain_cancel_form_submit', {
+			analytics.tracks.recordEvent( 'domain_cancel_form_submit', {
 				product_slug: purchase.productSlug,
 			} );
 

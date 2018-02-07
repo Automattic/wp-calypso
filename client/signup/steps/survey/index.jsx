@@ -155,8 +155,8 @@ class SurveyStep extends React.Component {
 	};
 
 	submitStep = ( label, value, otherWriteIn = '' ) => {
-		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
-		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
+		analytics.tracks.recordEvent( 'survey_site_type', { type: this.props.surveySiteType } );
+		analytics.tracks.recordEvent( 'survey_category_chosen', {
 			category_id: value,
 			category_label: label,
 			category_write_in: otherWriteIn,

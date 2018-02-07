@@ -57,7 +57,7 @@ class PluginRemoveButton extends React.Component {
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_sites_list', {
+				analytics.tracks.recordEvent( 'plugin_remove_click_from_sites_list', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );
@@ -68,7 +68,7 @@ class PluginRemoveButton extends React.Component {
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_plugin_info', {
+				analytics.tracks.recordEvent( 'plugin_remove_click_from_plugin_info', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );
