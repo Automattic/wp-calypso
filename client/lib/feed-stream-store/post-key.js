@@ -44,10 +44,6 @@ export function keysAreEqual( a, b ) {
 	return a.blogId === b.blogId;
 }
 
-export function isFeedItem( postKey ) {
-	return postKey && postKey.feedId && postKey.postId;
-}
-
 export function keyToString( postKey ) {
 	if ( ! postKey || postKey.isGap ) {
 		return null;
@@ -60,7 +56,11 @@ export function keyToString( postKey ) {
 		return `postId=${ postKey.postIds[ 0 ] }${ feedId }${ blogId } `;
 	} else if ( postKey.isRecommendationBlock ) {
 		return `rec-${ postKey.index }`;
+	} else if ( postKey.feedId ) {
+		return `${ postKey.postId }-${ postKey.feedId }`;
+	} else if ( postKey.blogId ) {
+		return `${ postKey.postId }-${ postKey.blogId }`;
 	}
 
-	return `postId=${ postKey.postId }${ feedId }${ blogId } `;
+	return null; // should never happen!
 }
