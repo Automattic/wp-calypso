@@ -14,7 +14,7 @@ import BarContainer from './bar-container';
 import { hasTouch } from 'lib/touch-detect';
 import Tooltip from 'components/tooltip';
 
-class Chart extends React.PureComponent {
+class Chart extends React.Component {
 	state = {
 		data: [],
 		isEmptyChart: false,
