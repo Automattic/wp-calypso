@@ -389,6 +389,21 @@ class AboutStep extends Component {
 					</span>
 				</FormLabel>
 
+				<FormLabel htmlFor="promote" className="about__checkbox-option">
+					<FormInputCheckbox
+						name="siteGoals"
+						id="promote"
+						onChange={ this.checkBoxHandleChange }
+						defaultChecked={ this.isCheckBoxChecked( 'promote_local_business' ) }
+						value="promote_local_business"
+						className="about__checkbox"
+						onKeyDown={ this.handleCheckboxKeyDown }
+					/>
+					<span className="about__checkbox-label">
+						{ translate( 'Promote your local business' ) }
+					</span>
+				</FormLabel>
+
 				<FormLabel htmlFor="educate" className="about__checkbox-option">
 					<FormInputCheckbox
 						name="siteGoals"
