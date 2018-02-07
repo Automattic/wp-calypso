@@ -118,9 +118,9 @@ class ReaderCombinedCard extends React.Component {
 						) }
 				</header>
 				<ul className="reader-combined-card__post-list">
-					{ posts.map( ( post, i ) => (
+					{ posts.map( post => (
 						<ReaderCombinedCardPost
-							key={ `post-${ i }-${ post && post.ID }` }
+							key={ `post-${ postKey.feedId || postKey.blogId }-${ postKey.postId }` }
 							post={ post }
 							streamUrl={ streamUrl }
 							onClick={ onClick }
