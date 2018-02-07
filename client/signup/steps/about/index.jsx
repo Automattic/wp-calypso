@@ -400,7 +400,7 @@ class AboutStep extends Component {
 						onKeyDown={ this.handleCheckboxKeyDown }
 					/>
 					<span className="about__checkbox-label">
-						{ translate( 'Promote your local business' ) }
+						{ translate( 'Advertise your local business' ) }
 					</span>
 				</FormLabel>
 
