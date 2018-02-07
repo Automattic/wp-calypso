@@ -394,8 +394,8 @@ class AboutStep extends Component {
 						name="siteGoals"
 						id="promoteLocalBusiness"
 						onChange={ this.checkBoxHandleChange }
-						defaultChecked={ this.isCheckBoxChecked( 'promote_local_business' ) }
-						value="promote_local_business"
+						defaultChecked={ this.isCheckBoxChecked( 'promote-local-business' ) }
+						value="promote-local-business"
 						className="about__checkbox"
 						onKeyDown={ this.handleCheckboxKeyDown }
 					/>

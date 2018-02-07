@@ -151,6 +151,10 @@ export function getThemeForSiteGoals( siteGoals ) {
 		return 'pub/dara';
 	}
 
+	if ( siteGoalsValue.indexof( 'promote-local-business' ) ) {
+		return 'pub/radcliffe-2';
+	}
+
 	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
 		return 'pub/dara';
 	}
@@ -178,7 +182,7 @@ export function getSiteTypeForSiteGoals( siteGoals, flow ) {
 		return 'page';
 	}
 
-	if ( siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
+	if ( siteGoalsValue.indexOf( 'promote-local-business' ) !== -1 || siteGoalsValue.indexOf( 'promote' ) !== -1 ) {
 		return 'page';
 	}
 
