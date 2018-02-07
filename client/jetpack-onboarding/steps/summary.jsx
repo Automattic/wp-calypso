@@ -56,10 +56,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 		const { siteUrl, translate } = this.props;
 
 		const stepsTodo = {
-			JETPACK_CONNECTION: {
-				label: translate( 'Connect to WordPress.com' ),
-				url: '/jetpack/connect?url=' + siteUrl,
-			},
 			THEME: {
 				label: translate( 'Choose a Theme' ),
 				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
@@ -71,6 +67,10 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			BLOG: {
 				label: translate( 'Write your first blog post' ),
 				url: siteUrl + '/wp-admin/post-new.php',
+			},
+			VISIT_SITE: {
+				label: translate( 'Visit your site' ),
+				url: siteUrl,
 			},
 		};
 
@@ -110,8 +110,8 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 				</div>
 				<div className="steps__button-group">
-					<Button href={ siteUrl } primary>
-						{ translate( 'Visit your site' ) }
+					<Button href={ '/jetpack/connect?url=' + siteUrl } primary>
+						{ translate( 'Connect to WordPress.com' ) }
 					</Button>
 				</div>
 			</div>
