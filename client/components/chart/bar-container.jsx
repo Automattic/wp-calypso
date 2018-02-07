@@ -25,8 +25,6 @@ export default class extends React.Component {
 	};
 
 	buildBars = max => {
-		const numberBars = this.props.data.length;
-
 		return this.props.data.map( function( item, index ) {
 			return (
 				<Bar
@@ -37,7 +35,7 @@ export default class extends React.Component {
 					clickHandler={ this.props.barClick }
 					data={ item }
 					max={ max }
-					count={ numberBars }
+					count={ this.props.data.length }
 					chartWidth={ this.props.chartWidth }
 					setTooltip={ this.props.setTooltip }
 				/>
