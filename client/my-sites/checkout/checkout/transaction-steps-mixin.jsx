@@ -4,7 +4,7 @@
  */
 import React from 'react'; // eslint-disable-line no-unused-vars
 import debugFactory from 'debug';
-import { defer, isEqual, pick, map } from 'lodash';
+import { defer, isEqual, pick } from 'lodash';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' );
 
@@ -80,7 +80,7 @@ const TransactionStepsMixin = {
 			case 'received-wpcom-response':
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						reason: this._formatError( step.error.message ),
+						reason: this._formatError( step.error ),
 					} );
 
 					this._recordDomainRegistrationAnalytics( {
@@ -118,7 +118,7 @@ const TransactionStepsMixin = {
 			default:
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						reason: this._formatError( step.error.message ),
+						reason: this._formatError( step.error ),
 					} );
 				}
 		}
@@ -147,14 +147,17 @@ const TransactionStepsMixin = {
 		} );
 	},
 
-	_formatError: function( errorMessage ) {
-		let formatedMessage = errorMessage;
+	_formatError: function( error ) {
+		let formatedMessage = '';
 
-		if ( typeof errorMessage === 'object' ) {
-			formatedMessage = map( errorMessage, function( error, key ) {
-				return key + ': ' + error;
-			} );
-			formatedMessage = formatedMessage.join( ', ' );
+		if ( typeof error.message === 'object' ) {
+			formatedMessage += Object.keys( error.message ).join( ', ' );
+		} else if ( typeof error.message === 'string' ) {
+			formatedMessage += error.message;
+		}
+
+		if ( error.error ) {
+			formatedMessage = error.error + ': ' + formatedMessage;
 		}
 
 		return formatedMessage;
