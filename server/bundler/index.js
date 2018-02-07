@@ -2,7 +2,6 @@
 /**
  * External dependecies
  */
-
 const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
 const chalk = require( 'chalk' );
@@ -19,7 +18,12 @@ function middleware( app ) {
 	let built = false;
 	let beforeFirstCompile = true;
 
-	app.use( hotMiddleware( compiler ) );
+	app.use(
+		hotMiddleware( compiler, {
+			log: ( ...args ) =>
+				global.wbmChannel ? global.wbmChannel.emit( 'message', args ) : console.log( ...args ),
+		} )
+	);
 
 	app.set( 'compiler', compiler );
 
