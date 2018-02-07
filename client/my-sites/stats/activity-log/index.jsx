@@ -588,7 +588,10 @@ class ActivityLog extends Component {
 		const { siteId, context, rewindState } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
-		const rewindIsNotReady = ! includes( [ 'active', 'provisioning' ], rewindState.state );
+		const rewindIsNotReady = includes(
+			[ 'unavailable', 'awaitingCredentials' ],
+			rewindState.state
+		);
 
 		return (
 			<Main wideLayout>
