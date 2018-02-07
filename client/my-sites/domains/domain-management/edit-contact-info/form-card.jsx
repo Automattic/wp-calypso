@@ -99,9 +99,7 @@ class EditContactInfoFormCard extends React.Component {
 		return isWwdDomain && primaryFieldsChanged;
 	}
 
-	handleDialogClose = () => {
-		this.setState( { showNonDaConfirmationDialog: false } );
-	};
+	handleDialogClose = () => this.setState( { showNonDaConfirmationDialog: false } );
 
 	renderTransferLockOptOut() {
 		const { translate } = this.props;
@@ -210,22 +208,17 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
-	onTransferLockOptOutChange = event => {
-		this.setState( { transferLock: ! event.target.checked } );
-	};
+	onTransferLockOptOutChange = event => this.setState( { transferLock: ! event.target.checked } );
 
-	goToContactsPrivacy = () => {
+	goToContactsPrivacy = () =>
 		page(
 			domainManagementContactsPrivacy(
 				this.props.selectedSite.slug,
 				this.props.selectedDomain.name
 			)
 		);
-	};
 
-	showNonDaConfirmationDialog = () => {
-		this.setState( { showNonDaConfirmationDialog: true } );
-	};
+	showNonDaConfirmationDialog = () => this.setState( { showNonDaConfirmationDialog: true } );
 
 	handleContactDetailsChange = newContactDetails => {
 		const { email } = newContactDetails;
@@ -250,12 +243,7 @@ class EditContactInfoFormCard extends React.Component {
 				showNonDaConfirmationDialog: false,
 			},
 			() => {
-				updateWhois(
-					selectedDomain.name,
-					newContactDetails,
-					transferLock,
-					this.onWhoisUpdate
-				);
+				updateWhois( selectedDomain.name, newContactDetails, transferLock, this.onWhoisUpdate );
 			}
 		);
 	};

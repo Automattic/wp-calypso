@@ -12,29 +12,28 @@ import { first, includes, indexOf, intersection, isEqual, last, map } from 'loda
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache } from 'state/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
-import { cartItems } from 'lib/cart-values';
 import analytics from 'lib/analytics';
-
+import FormButton from 'components/forms/form-button';
+import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
+import wp from 'lib/wp';
+import config from 'config';
+import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import ExtraInfoForm, {
+	tldsWithAdditionalDetailsForms,
+} from 'components/domains/registrant-extra-info';
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
 	setDomainDetails,
 	addGoogleAppsRegistrationData,
 } from 'lib/upgrades/actions';
-import FormButton from 'components/forms/form-button';
-import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
-import wp from 'lib/wp';
-import ExtraInfoForm, {
-	tldsWithAdditionalDetailsForms,
-} from 'components/domains/registrant-extra-info';
-import config from 'config';
-import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import { cartItems } from 'lib/cart-values';
+import { getContactDetailsCache } from 'state/selectors';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();
@@ -42,10 +41,10 @@ const wpcom = wp.undocumented();
 export class DomainDetailsForm extends PureComponent {
 	constructor( props ) {
 		super( props );
+		const steps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
 
 		const steps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
 		debug( 'steps:', steps );
-
 		this.state = {
 			steps,
 			currentStep: first( steps ),

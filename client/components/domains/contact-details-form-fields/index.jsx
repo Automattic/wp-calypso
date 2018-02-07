@@ -98,9 +98,8 @@ export class ContactDetailsFormFields extends Component {
 		translate: identity,
 	};
 
-	constructor( props ) {
-		super( props );
-
+	constructor() {
+		super();
 		this.state = {
 			phoneCountryCode: 'US',
 			form: null,
@@ -135,12 +134,11 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	}
 
-	loadFormState = loadFieldValuesIntoState => {
+	loadFormState = loadFieldValuesIntoState =>
 		loadFieldValuesIntoState(
 			null,
 			pick( this.props.contactDetails, CONTACT_DETAILS_FORM_FIELDS )
 		);
-	};
 
 	getMainFieldValues() {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
@@ -150,11 +148,8 @@ export class ContactDetailsFormFields extends Component {
 		};
 	}
 
-	setFormState = form => {
-		this.setState( { form }, () => {
-			this.props.onContactDetailsChange( this.getMainFieldValues() );
-		} );
-	};
+	setFormState = form =>
+		this.setState( { form }, () => this.props.onContactDetailsChange( this.getMainFieldValues() ) );
 
 	handleFormControllerError = error => {
 		throw error;
@@ -181,10 +176,8 @@ export class ContactDetailsFormFields extends Component {
 		}
 	};
 
-	validate = ( fieldValues, onComplete ) => {
-		const { onValidate } = this.props;
-		onValidate && onValidate( this.getMainFieldValues(), onComplete );
-	};
+	validate = ( fieldValues, onComplete ) =>
+		this.props.onValidate && this.props.onValidate( this.getMainFieldValues(), onComplete );
 
 	getRefCallback( name ) {
 		if ( ! this.inputRefCallbacks[ name ] ) {
@@ -239,14 +232,14 @@ export class ContactDetailsFormFields extends Component {
 		const inputRef = this.inputRefs[ 'address-1' ] || null;
 		if ( inputRef ) {
 			inputRef.focus();
-		} else {
-			// The preference is to fire an inputRef callback
-			// when the previous and next countryCodes don't match,
-			// rather than set a flag.
-			// Multiple renders triggered by formState via `this.setFormState`
-			// prevent it.
-			this.shouldAutoFocusAddressField = true;
+			return;
 		}
+		// The preference is to fire an inputRef callback
+		// when the previous and next countryCodes don't match,
+		// rather than set a flag.
+		// Multiple renders triggered by formState via `this.setFormState`
+		// prevent it.
+		this.shouldAutoFocusAddressField = true;
 	}
 
 	handleSubmitButtonClick = event => {
@@ -263,7 +256,7 @@ export class ContactDetailsFormFields extends Component {
 
 	handleFieldChange = event => {
 		const { name, value } = event.target;
-		const { contactDetails } = this.props;
+		const { phone = {} } = this.state.form;
 
 		if ( name === 'country-code' ) {
 			this.formStateController.handleFieldChange( {
@@ -272,7 +265,7 @@ export class ContactDetailsFormFields extends Component {
 				hideError: true,
 			} );
 
-			if ( value && ! contactDetails.phone ) {
+			if ( value && ! phone.value ) {
 				this.setState( {
 					phoneCountryCode: value,
 				} );
@@ -324,30 +317,26 @@ export class ContactDetailsFormFields extends Component {
 		};
 	};
 
-	createField = ( name, componentClass, additionalProps, needsChildRef ) => {
-		return (
-			<div className={ `contact-details-form-fields__container ${ kebabCase( name ) }` }>
-				{ createElement(
-					componentClass,
-					Object.assign(
-						{},
-						{ ...this.getFieldProps( name, needsChildRef ) },
-						{ ...additionalProps }
-					)
-				) }
-			</div>
-		);
-	};
+	createField = ( name, componentClass, additionalProps, needsChildRef ) => (
+		<div className={ `contact-details-form-fields__container ${ kebabCase( name ) }` }>
+			{ createElement(
+				componentClass,
+				Object.assign(
+					{},
+					{ ...this.getFieldProps( name, needsChildRef ) },
+					{ ...additionalProps }
+				)
+			) }
+		</div>
+	);
 
 	getCountryCode() {
-		const { form } = this.state;
-		return get( form, 'countryCode.value', '' );
+		return get( this.state.form, 'countryCode.value', '' );
 	}
 
 	renderContactDetailsFields() {
 		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
-		const { phoneCountryCode } = this.state;
 
 		return (
 			<div className="contact-details-form-fields__contact-details">
@@ -369,7 +358,7 @@ export class ContactDetailsFormFields extends Component {
 					label: translate( 'Phone' ),
 					onChange: this.handlePhoneChange,
 					countriesList,
-					countryCode: phoneCountryCode,
+					countryCode: this.state.phoneCountryCode,
 				} ) }
 
 				{ needsFax &&
