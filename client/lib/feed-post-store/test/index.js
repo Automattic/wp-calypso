@@ -94,7 +94,7 @@ describe( 'feed-post-store', () => {
 		expect( reduxDispatch.mock.calls.length ).toBe( 0 );
 	} );
 
-	test( 'should normalize a received post', () => {
+	test( 'should normalize a received post and send it across the redux bridge', () => {
 		const post = {
 			global_ID: 1000,
 			feed_ID: 1,
@@ -139,7 +139,7 @@ describe( 'feed-post-store', () => {
 		} );
 	} );
 
-	test( 'should accept a post without a feed ID', () => {
+	test( 'should send a post without a feed_ID across the bridge', () => {
 		const post = {
 			ID: 3, // notice this can and will be different for wpcom posts
 			site_ID: 4,
