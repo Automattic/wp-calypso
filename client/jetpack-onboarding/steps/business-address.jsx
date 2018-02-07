@@ -69,8 +69,8 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		page( this.props.getForwardUrl() );
 	};
 
-	checkForEmptyFields = () => {
-		some( omit( this.state, 'state' ), val => val === '' );
+	hasEmptyFields = () => {
+		return some( omit( this.state, 'state' ), val => val === '' );
 	};
 
 	render() {
@@ -99,7 +99,6 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 									disabled={ isRequestingSettings }
 									id={ fieldName }
 									onChange={ this.getChangeHandler( fieldName ) }
-									required={ fieldName !== 'state' }
 									value={ this.state[ fieldName ] || '' }
 								/>
 								{ fieldName !== 'state' && (
@@ -111,7 +110,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 							</FormFieldset>
 						) ) }
 						<Button
-							disabled={ isRequestingSettings || this.checkForEmptyFields() }
+							disabled={ isRequestingSettings || this.hasEmptyFields() }
 							primary
 							type="submit"
 						>
