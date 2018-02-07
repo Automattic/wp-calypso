@@ -34,7 +34,7 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
-import { isDomainRegistration, isJetpackPlan } from 'lib/products-values';
+import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
 import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
@@ -179,13 +179,12 @@ class CancelPurchaseButton extends Component {
 			>
 				<CancelPurchaseForm
 					chatInitiated={ this.chatInitiated }
-					productName={ getName( purchase ) }
-					surveyStep={ this.state.surveyStep }
-					selectedSite={ selectedSite }
-					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }
-					isJetpack={ isJetpackPlan( purchase ) }
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>
 		);
