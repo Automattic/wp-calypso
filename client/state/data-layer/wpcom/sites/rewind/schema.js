@@ -1,5 +1,20 @@
 /** @format */
 
+/**
+ * Rewind state schemas in this file are wrapped in an odd way with the
+ * `stateSchema()` helper so that the validation errors are more useful
+ *
+ * For example, the expected way we might write this is to use `oneOf`
+ * and list the various available state schemas. However, a failure
+ * deep down in the list of schemas is cascading up through is-my-json-valid
+ * and showing as "no (or more than one) schemas match" and there's
+ * no further information about the failure.
+ *
+ * By providing the `allOf: [ { not, schema }, … ]` pattern instead
+ * we can get validation failure message that show which state it was
+ * trying to validate when it failed.
+ */
+
 export const credential = {
 	type: 'object',
 	properties: {
@@ -38,7 +53,7 @@ export const rewind = {
 	required: [ 'rewind_id', 'status' ],
 };
 
-export const unavailable = {
+export const unavailable = stateSchema( 'unavailable', {
 	type: 'object',
 	properties: {
 		state: {
@@ -51,9 +66,9 @@ export const unavailable = {
 		last_updated: { type: 'integer' },
 	},
 	required: [ 'state', 'last_updated' ],
-};
+} );
 
-export const inactive = {
+export const inactive = stateSchema( 'inactive', {
 	type: 'object',
 	properties: {
 		state: {
@@ -67,9 +82,9 @@ export const inactive = {
 		last_updated: { type: 'integer' },
 	},
 	required: [ 'state', 'last_updated' ],
-};
+} );
 
-export const awaitingCredentials = {
+export const awaitingCredentials = stateSchema( 'awaiting_credentials', {
 	type: 'object',
 	properties: {
 		state: {
@@ -79,9 +94,9 @@ export const awaitingCredentials = {
 		last_updated: { type: 'integer' },
 	},
 	required: [ 'state', 'last_updated' ],
-};
+} );
 
-export const provisioning = {
+export const provisioning = stateSchema( 'provisioning', {
 	type: 'object',
 	properties: {
 		state: {
@@ -95,9 +110,9 @@ export const provisioning = {
 		last_updated: { type: 'integer' },
 	},
 	required: [ 'state', 'last_updated' ],
-};
+} );
 
-export const active = {
+export const active = stateSchema( 'active', {
 	type: 'object',
 	properties: {
 		state: {
@@ -116,8 +131,23 @@ export const active = {
 		last_updated: { type: 'integer' },
 	},
 	required: [ 'state', 'last_updated' ],
-};
+} );
 
 export const rewindStatus = {
-	oneOf: [ unavailable, inactive, awaitingCredentials, provisioning, active ],
+	allOf: [ unavailable, inactive, awaitingCredentials, provisioning, active ],
 };
+
+function stateSchema( stateName, schema ) {
+	return {
+		oneOf: [
+			{
+				not: {
+					type: 'object',
+					properties: { state: { type: 'string', pattern: `^${ stateName }$` } },
+					required: [ 'state' ],
+				},
+			},
+			schema,
+		],
+	};
+}
