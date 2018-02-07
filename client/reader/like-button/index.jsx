@@ -7,16 +7,17 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import postStore from 'lib/feed-post-store';
+import { reduxGetState } from 'lib/redux-bridge';
 import LikeButtonContainer from 'blocks/like-button';
 import { markSeen } from 'lib/feed-post-store/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
 class ReaderLikeButton extends React.Component {
 	recordLikeToggle = liked => {
 		const post =
 			this.props.post ||
-			postStore.get( {
+			getPostByKey( reduxGetState(), {
 				blogId: this.props.siteId,
 				postId: this.props.postId,
 			} );

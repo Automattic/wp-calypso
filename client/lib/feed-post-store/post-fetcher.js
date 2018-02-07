@@ -9,7 +9,8 @@ import { assign, noop, pick, pickBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import FeedPostStore from 'lib/feed-post-store';
+import { reduxGetState } from 'lib/redux-bridge';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
 function PostFetcher( options ) {
 	assign(
@@ -66,7 +67,7 @@ assign( PostFetcher.prototype, {
 
 		toFetch.forEach( function( key ) {
 			const postKey = fromKey( key );
-			const post = FeedPostStore.get( postKey );
+			const post = getPostByKey( reduxGetState(), postKey );
 
 			if ( post && post._state !== 'minimal' ) {
 				return;

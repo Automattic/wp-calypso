@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { get, assign, forEach, isEqual, defer } from 'lodash';
+import { get, forEach, isEqual, defer } from 'lodash';
 import debugModule from 'debug';
 
 /**
@@ -20,22 +20,14 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 import { CONVERSATION_FOLLOW_STATUS } from 'state/reader/conversations/follow-status';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { READER_POSTS_RECEIVE } from 'state/action-types';
-import { getPost, getPostByFeedAndId, getPostBySiteAndId } from 'state/reader/posts/selectors';
+import { getPostByFeedAndId, getPostBySiteAndId, getPostById } from 'state/reader/posts/selectors';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:feed-post-store' );
 
-const FeedPostStore = {
-	get: function( postKey ) {
-		if ( ! postKey ) {
-			return;
-		}
-
-		return getPostByFeedAndId( reduxGetState(), postKey.feedId, postKey.postId );
-	},
-};
+const FeedPostStore = {};
 
 emitter( FeedPostStore );
 
@@ -95,7 +87,7 @@ function setPost( post ) {
 		return false;
 	}
 
-	const cachedPost = getPost( reduxGetState(), post.global_ID );
+	const cachedPost = getPostById( reduxGetState(), post.global_ID );
 
 	if ( cachedPost && isEqual( post, cachedPost ) ) {
 		return false;
@@ -135,12 +127,11 @@ function receivePending( action ) {
 }
 
 function receivePostFromPage( newPost ) {
-	if ( ! ( newPost && newPost.ID ) ) {
+	if ( ! ( newPost && newPost.global_ID ) ) {
 		return;
 	}
 
-	console.error( 'postId', newPost );
-	if ( ! getPost( reduxGetState(), newPost.ID ) ) {
+	if ( ! getPostById( reduxGetState(), newPost.global_ID ) ) {
 		setPost( { ...newPost, _state: 'minimal' } );
 	}
 }

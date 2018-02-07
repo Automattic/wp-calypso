@@ -4,13 +4,12 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { defer, omit, includes } from 'lodash';
+import { connect } from 'react-redux';
+import { omit, includes } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import PostStore from 'lib/feed-post-store';
-import { fetchPost } from 'lib/feed-post-store/actions';
 import PostPlaceholder from './post-placeholder';
 import PostUnavailable from './post-unavailable';
 import ListGap from 'reader/list-gap';
@@ -22,12 +21,10 @@ import PostBlocked from 'blocks/reader-post-card/blocked';
 import Post from './post';
 import { IN_STREAM_RECOMMENDATION } from 'reader/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
-import fluxPostAdapter from 'lib/reader-post-flux-adapter';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
-const ConnectedCombinedCard = fluxPostAdapter( CombinedCard );
-
-export default class PostLifecycle extends React.Component {
+class PostLifecycle extends React.Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
 		isDiscoverStream: PropTypes.bool,
@@ -35,58 +32,15 @@ export default class PostLifecycle extends React.Component {
 		recStoreId: PropTypes.string,
 	};
 
-	state = {
-		post: this.getPostFromStore(),
-	};
-
-	getPostFromStore( props = this.props ) {
-		if (
-			props.postKey.isRecommendationBlock ||
-			props.postKey.isCombination ||
-			props.postKey.isGap
-		) {
-			return null;
-		}
-
-		const post = PostStore.get( props.postKey );
-		if ( ! post || post._state === 'minimal' ) {
-			defer( () => fetchPost( props.postKey ) );
-		}
-		return post;
-	}
-
-	updatePost = ( props = this.props ) => {
-		const post = this.getPostFromStore( props );
-		if ( post !== this.state.post ) {
-			this.setState( { post } );
-		}
-	};
-
-	componentWillMount() {
-		PostStore.on( 'change', this.updatePost );
-	}
-
-	componentWillUnmount() {
-		PostStore.off( 'change', this.updatePost );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.updatePost( nextProps );
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
+	shouldComponentUpdate( nextProps ) {
 		const currentPropsToCompare = omit( this.props, 'handleClick' );
 		const nextPropsToCompare = omit( nextProps, 'handleClick' );
-		const shouldUpdate =
-			this.state.post !== nextState.post ||
-			! shallowEquals( currentPropsToCompare, nextPropsToCompare );
 
-		return shouldUpdate;
+		return ! shallowEquals( currentPropsToCompare, nextPropsToCompare );
 	}
 
 	render() {
-		const post = this.state.post;
-		const { postKey, selectedPostKey, recStoreId, followSource } = this.props;
+		const { post, postKey, selectedPostKey, recStoreId, followSource } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -99,7 +53,7 @@ export default class PostLifecycle extends React.Component {
 			);
 		} else if ( postKey.isCombination ) {
 			return (
-				<ConnectedCombinedCard
+				<CombinedCard
 					postKey={ postKey }
 					index={ this.props.index }
 					onClick={ this.props.handleClick }
@@ -127,7 +81,7 @@ export default class PostLifecycle extends React.Component {
 			return <PostBlocked post={ post } />;
 		} else if ( isXPost( post ) ) {
 			const xMetadata = XPostHelper.getXPostMetadata( post );
-			const xPostedTo = this.props.store.getSitesCrossPostedTo(
+			const xPostedTo = this.props.postsStore.getSitesCrossPostedTo(
 				xMetadata.commentURL || xMetadata.postURL
 			);
 			return (
@@ -141,7 +95,11 @@ export default class PostLifecycle extends React.Component {
 			);
 		}
 
-		const xPostedTo = this.props.store.getSitesCrossPostedTo( post.URL );
-		return <Post { ...omit( this.props, 'store' ) } post={ post } xPostedTo={ xPostedTo } />;
+		const xPostedTo = this.props.postsStore.getSitesCrossPostedTo( post.URL );
+		return <Post { ...this.props } xPostedTo={ xPostedTo } />;
 	}
 }
+
+export default connect( ( state, ownProps ) => ( {
+	post: getPostByKey( state, ownProps.postKey ),
+} ) )( PostLifecycle );

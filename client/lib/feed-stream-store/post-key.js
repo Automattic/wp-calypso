@@ -44,6 +44,10 @@ export function keysAreEqual( a, b ) {
 	return a.blogId === b.blogId;
 }
 
+export function isFeedItem( postKey ) {
+	return postKey && postKey.feedId && postKey.postId;
+}
+
 export function keyToString( postKey ) {
 	if ( ! postKey || postKey.isGap ) {
 		return null;
