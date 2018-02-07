@@ -14,7 +14,10 @@ import url from 'url';
  * Internal dependencies
  */
 import config from 'config';
-import AsyncLoad from './async-load';
+// This is a custom AsyncLoad component for devdocs that includes a
+// `props.component`-aware placeholder. It still needs to be imported as
+// `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/master/index.js#L12
+import AsyncLoad from './devdocs-async-load';
 import DocsComponent from './main';
 import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
