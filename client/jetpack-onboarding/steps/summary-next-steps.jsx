@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -11,15 +11,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import QuerySites from 'components/data/query-sites';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const NextSteps = ( { steps } ) =>
-	map( steps, ( { label, url }, stepName ) => (
-		<div key={ stepName } className="steps__summary-entry todo">
-			<a href={ url }>{ label }</a>
-		</div>
-	) );
+const NextSteps = ( { siteId, steps } ) => (
+	<Fragment>
+		<QuerySites siteId={ siteId } />
+		{ map( steps, ( { label, url }, stepName ) => (
+			<div key={ stepName } className="steps__summary-entry todo">
+				<a href={ url }>{ label }</a>
+			</div>
+		) ) }
+	</Fragment>
+);
 
 export default localize(
 	connect( ( state, { siteId, siteSlug, siteUrl, translate } ) => {

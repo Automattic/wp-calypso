@@ -17,7 +17,6 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QuerySites from 'components/data/query-sites';
 import Spinner from 'components/spinner';
 import NextSteps from './summary-next-steps';
 import {
@@ -71,7 +70,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					title="Summary ‹ Jetpack Onboarding"
 				/>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
-				<QuerySites siteId={ siteId } />
 
 				<div className="steps__summary-columns">
 					<div className="steps__summary-column">
