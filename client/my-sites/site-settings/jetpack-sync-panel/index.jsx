@@ -52,14 +52,14 @@ class JetpackSyncPanel extends React.Component {
 	onSyncRequestButtonClick = event => {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
+		analytics.tracks.recordEvent( 'jetpack_sync_panel_request_button_clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	};
 
 	onTryAgainClick = event => {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
+		analytics.tracks.recordEvent( 'jetpack_sync_panel_try_again_button_clicked', {
 			errorCode: get( this.props, 'fullSyncRequest.error.error', '' ),
 			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' ),
 		} );
@@ -68,7 +68,7 @@ class JetpackSyncPanel extends React.Component {
 
 	onClickDebug = () => {
 		debug( 'Clicked check connection button' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
+		analytics.tracks.recordEvent( 'jetpack_sync_panel_check_connection_button_clicked', {
 			errorCode: get( this.props, 'syncStatus.error.error', '' ),
 			errorMsg: get( this.props, 'syncStatus.error.message', '' ),
 		} );

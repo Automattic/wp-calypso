@@ -48,7 +48,7 @@ class InviteAcceptLoggedOut extends React.Component {
 
 	clickSignInLink = () => {
 		const signInLink = login( { redirectTo: window.location.href } );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_sign_in_link_click' );
+		analytics.tracks.recordEvent( 'invite_accept_logged_out_sign_in_link_click' );
 		window.location = signInLink;
 	};
 
@@ -101,7 +101,7 @@ class InviteAcceptLoggedOut extends React.Component {
 					invite.authKey;
 			}
 		} );
-		analytics.tracks.recordEvent( 'calypso_invite_accept_logged_out_follow_by_email_click' );
+		analytics.tracks.recordEvent( 'invite_accept_logged_out_follow_by_email_click' );
 	};
 
 	renderFooterLink = () => {

@@ -167,7 +167,7 @@ class MediaLibraryContent extends React.Component {
 		if ( ! upgradeNudgeName ) {
 			return null;
 		}
-		const eventName = 'calypso_upgrade_nudge_impression';
+		const eventName = 'upgrade_nudge_impression';
 		const eventProperties = {
 			cta_name: upgradeNudgeName,
 			cta_feature: upgradeNudgeFeature,
@@ -182,7 +182,7 @@ class MediaLibraryContent extends React.Component {
 				}
 				onClick={ this.recordPlansNavigation.bind(
 					this,
-					'calypso_upgrade_nudge_cta_click',
+					'upgrade_nudge_cta_click',
 					eventProperties
 				) }
 			>

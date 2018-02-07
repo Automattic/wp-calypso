@@ -67,7 +67,7 @@ describe( 'reducer', () => {
 							type: 'ANALYTICS_EVENT_RECORD',
 							payload: {
 								service: 'tracks',
-								name: 'calypso_themeshowcase_theme_click',
+								name: 'themeshowcase_theme_click',
 								properties: {},
 							},
 						},
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 							type: 'ANALYTICS_EVENT_RECORD',
 							payload: {
 								service: 'tracks',
-								name: 'calypso_themeshowcase_theme_click',
+								name: 'themeshowcase_theme_click',
 								properties: {},
 							},
 						},
@@ -110,7 +110,7 @@ describe( 'reducer', () => {
 							type: 'ANALYTICS_EVENT_RECORD',
 							payload: {
 								service: 'tracks',
-								name: 'calypso_all_your_base_are_belong_to_us',
+								name: 'all_your_base_are_belong_to_us',
 								properties: {},
 							},
 						},
@@ -126,7 +126,7 @@ describe( 'reducer', () => {
 							type: 'ANALYTICS_EVENT_RECORD',
 							payload: {
 								service: 'tracks',
-								name: 'calypso_all_your_base_are_belong_to_us',
+								name: 'all_your_base_are_belong_to_us',
 								properties: {},
 							},
 						},

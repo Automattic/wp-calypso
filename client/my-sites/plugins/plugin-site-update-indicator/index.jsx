@@ -43,7 +43,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 			'Plugin Name',
 			this.props.plugin.slug
 		);
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
+		analytics.tracks.recordEvent( 'plugins_actions_update_plugin', {
 			site: this.props.site.ID,
 			plugin: this.props.plugin.slug,
 		} );

@@ -75,7 +75,7 @@ class Help extends React.PureComponent {
 				{ helpfulResults.map( ( result, index ) => {
 					const trackClick = () => {
 						debug( 'Suggested result click: ', result.link );
-						analytics.tracks.recordEvent( 'calypso_help_suggested_result_click', {
+						analytics.tracks.recordEvent( 'help_suggested_result_click', {
 							link: result.link,
 							position: index,
 						} );
@@ -200,7 +200,7 @@ class Help extends React.PureComponent {
 
 	trackCoursesButtonClick = () => {
 		const { isBusinessPlanUser } = this.props;
-		analytics.tracks.recordEvent( 'calypso_help_courses_click', {
+		analytics.tracks.recordEvent( 'help_courses_click', {
 			is_business_plan_user: isBusinessPlanUser,
 		} );
 	};

@@ -107,7 +107,7 @@ class HelpContact extends React.Component {
 		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
 
-		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+		analytics.tracks.recordEvent( 'help_live_chat_begin', {
 			site_plan_product_id: site ? site.plan.product_id : null,
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
@@ -174,7 +174,7 @@ class HelpContact extends React.Component {
 					},
 				} );
 
-				analytics.tracks.recordEvent( 'calypso_help_contact_submit', {
+				analytics.tracks.recordEvent( 'help_contact_submit', {
 					ticket_type: 'kayako',
 					site_plan_product_id: site ? site.plan.product_id : null,
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
@@ -220,7 +220,7 @@ class HelpContact extends React.Component {
 					},
 				} );
 
-				analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
+				analytics.tracks.recordEvent( 'help_contact_submit', { ticket_type: 'forum' } );
 			}
 		);
 

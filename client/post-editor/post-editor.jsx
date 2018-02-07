@@ -139,7 +139,7 @@ export const PostEditor = createReactClass( {
 		this.onPreviewClick = this.onPreview.bind( this, 'preview' );
 		this.onViewClick = this.onPreview.bind( this, 'view' );
 		this.useDefaultSidebarFocus();
-		analytics.mc.bumpStat( 'calypso_default_sidebar_mode', this.props.editorSidebarPreference );
+		analytics.mc.bumpStat( 'default_sidebar_mode', this.props.editorSidebarPreference );
 
 		this.setState( {
 			isEditorInitialized: false,
@@ -234,11 +234,11 @@ export const PostEditor = createReactClass( {
 		switch ( confirmationSidebar ) {
 			case 'closed':
 				this.props.setLayoutFocus( editorSidebarPreference );
-				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_close', { context } );
+				analytics.tracks.recordEvent( 'editor_confirmation_sidebar_close', { context } );
 				break;
 			case 'open':
 				this.props.setLayoutFocus( 'editor-confirmation-sidebar' );
-				analytics.tracks.recordEvent( 'calypso_editor_confirmation_sidebar_open' );
+				analytics.tracks.recordEvent( 'editor_confirmation_sidebar_open' );
 				break;
 		}
 	},
@@ -957,7 +957,7 @@ export const PostEditor = createReactClass( {
 			this.props.editPost( siteId, postId, { date: dateValue } );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
+		analytics.tracks.recordEvent( 'editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
 		} );
 
@@ -1051,7 +1051,7 @@ export const PostEditor = createReactClass( {
 			editorMode = this.props.editorModePreference;
 
 			if ( ! this.recordedDefaultEditorMode ) {
-				analytics.mc.bumpStat( 'calypso_default_editor_mode', editorMode );
+				analytics.mc.bumpStat( 'default_editor_mode', editorMode );
 				this.recordedDefaultEditorMode = true;
 			}
 		}

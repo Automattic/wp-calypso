@@ -98,7 +98,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				resultSuffix = '#best-alternative';
 			}
 
-			this.props.recordTracksEvent( 'calypso_traintracks_render', {
+			this.props.recordTracksEvent( 'traintracks_render', {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: this.props.fetchAlgo,
@@ -110,7 +110,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 	onButtonClick = () => {
 		if ( this.props.railcarId ) {
-			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
+			this.props.recordTracksEvent( 'traintracks_interact', {
 				railcar: this.props.railcarId,
 				action: 'domain_added_to_cart',
 			} );

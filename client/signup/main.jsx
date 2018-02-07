@@ -130,7 +130,7 @@ class Signup extends React.Component {
 	};
 
 	componentWillMount() {
-		analytics.tracks.recordEvent( 'calypso_signup_start', {
+		analytics.tracks.recordEvent( 'signup_start', {
 			flow: this.props.flowName,
 			ref: this.props.refParameter,
 		} );
@@ -234,7 +234,7 @@ class Signup extends React.Component {
 	};
 
 	recordStep = ( stepName = this.props.stepName ) => {
-		analytics.tracks.recordEvent( 'calypso_signup_step_start', {
+		analytics.tracks.recordEvent( 'signup_step_start', {
 			flow: this.props.flowName,
 			step: stepName,
 		} );
@@ -243,7 +243,7 @@ class Signup extends React.Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Logging you in...' );
 
-		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
+		analytics.tracks.recordEvent( 'signup_complete', { flow: this.props.flowName } );
 		recordSignupCompletion();
 
 		this.signupFlowController.reset();
@@ -398,7 +398,7 @@ class Signup extends React.Component {
 		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
-			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
+			analytics.tracks.recordEvent( 'signup_goto_invalid_step', {
 				step: firstInvalidStep.stepName,
 				flow: this.props.flowName,
 			} );

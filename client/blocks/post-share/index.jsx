@@ -149,7 +149,7 @@ class PostShare extends Component {
 			document.documentElement.classList.remove( 'no-scroll', 'is-previewing' );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_publicize_share_preview_toggle', {
+		analytics.tracks.recordEvent( 'publicize_share_preview_toggle', {
 			show: showSharingPreview,
 		} );
 		this.setState( { showSharingPreview } );
@@ -182,7 +182,7 @@ class PostShare extends Component {
 		const eventProperties = { ...numberOfAccountsPerService, ...additionalProperties };
 
 		if ( this.state.scheduledDate ) {
-			analytics.tracks.recordEvent( 'calypso_publicize_share_schedule', eventProperties );
+			analytics.tracks.recordEvent( 'publicize_share_schedule', eventProperties );
 
 			this.props.schedulePostShareAction(
 				siteId,
@@ -192,7 +192,7 @@ class PostShare extends Component {
 				servicesToPublish.map( connection => connection.ID )
 			);
 		} else {
-			analytics.tracks.recordEvent( 'calypso_publicize_share_instantly', eventProperties );
+			analytics.tracks.recordEvent( 'publicize_share_instantly', eventProperties );
 			this.props.sharePost( siteId, postId, this.state.skipped, this.state.message );
 		}
 	};

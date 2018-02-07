@@ -39,13 +39,13 @@ const wpcom = wpcomLib.undocumented();
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
 		bumpStat( 'sibyl_question_clicks', helpLink.id ),
-		recordTracksEvent( 'calypso_sibyl_question_click', {
+		recordTracksEvent( 'sibyl_question_click', {
 			question_id: helpLink.id,
 		} )
 	);
 
 const trackSupportAfterSibylClick = () =>
-	composeAnalytics( recordTracksEvent( 'calypso_sibyl_support_after_question_click' ) );
+	composeAnalytics( recordTracksEvent( 'sibyl_support_after_question_click' ) );
 
 export class HelpContactForm extends React.PureComponent {
 	static propTypes = {
@@ -116,8 +116,8 @@ export class HelpContactForm extends React.PureComponent {
 
 	trackClickStats = ( selectionName, selectedOption ) => {
 		const tracksEvent = {
-			howCanWeHelp: 'calypso_help_how_can_we_help_click',
-			howYouFeel: 'calypso_help_how_you_feel_click',
+			howCanWeHelp: 'help_how_can_we_help_click',
+			howYouFeel: 'help_how_you_feel_click',
 		}[ selectionName ];
 
 		if ( tracksEvent ) {

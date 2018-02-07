@@ -124,7 +124,7 @@ class JetpackThankYouCard extends Component {
 	componentDidMount() {
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
 		this.props.requestSites();
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_start' );
+		analytics.tracks.recordEvent( 'plans_autoconfig_start' );
 
 		page.exit( '/checkout/thank-you/*', ( context, next ) => {
 			const confirmText = this.warnIfNotFinished( {} );
@@ -200,7 +200,7 @@ class JetpackThankYouCard extends Component {
 		) {
 			return;
 		}
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
+		analytics.tracks.recordEvent( 'plans_autoconfig_user_interrupt' );
 		const beforeUnloadText = this.props.translate( "We haven't finished installing your plugins." );
 		( event || window.event ).returnValue = beforeUnloadText;
 		return beforeUnloadText;
@@ -308,7 +308,7 @@ class JetpackThankYouCard extends Component {
 	}
 
 	onHappyChatButtonClick = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_chat_initiated' );
+		analytics.tracks.recordEvent( 'plans_autoconfig_chat_initiated' );
 	};
 
 	isEligibleForLiveChat() {
@@ -351,13 +351,13 @@ class JetpackThankYouCard extends Component {
 		let reason;
 		if ( reasons && reasons.length > 0 ) {
 			reason = translate( "We can't modify files on your site." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
+			this.trackConfigFinished( 'plans_autoconfig_error_filemod', { error: reason } );
 		} else if ( selectedSite.hasMinimumJetpackVersion === false ) {
 			reason = translate(
 				'We are unable to set up your plan because your site has an older version of Jetpack. ' +
 					'Please upgrade Jetpack.'
 			);
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
+			this.trackConfigFinished( 'plans_autoconfig_error_jpversion', {
 				jetpack_version: selectedSite.options.jetpack_version,
 			} );
 		} else if ( isSiteMultiSite && ! isSiteMainNetworkSite ) {
@@ -365,10 +365,10 @@ class JetpackThankYouCard extends Component {
 				'Your site is part of a multi-site network, but is not the main network site.'
 			);
 
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
+			this.trackConfigFinished( 'plans_autoconfig_error_multisite' );
 		} else if ( selectedSite.options.is_multi_network ) {
 			reason = translate( 'Your site is part of a multi-network.' );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
+			this.trackConfigFinished( 'plans_autoconfig_error_multinetwork' );
 		} else {
 			const erroredPlugins = reduce(
 				this.props.plugins,
@@ -390,7 +390,7 @@ class JetpackThankYouCard extends Component {
 					"We can't automatically configure the Akismet and VaultPress plugins."
 				);
 			}
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error' );
+			this.trackConfigFinished( 'plans_autoconfig_error' );
 		}
 		return reason;
 	}
@@ -583,7 +583,7 @@ class JetpackThankYouCard extends Component {
 			"Now that we've taken care of the plan, it's time to power up your site."
 		);
 		if ( 100 === progress ) {
-			this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
+			this.trackConfigFinished( 'plans_autoconfig_success' );
 			return translate( "You are powered up, it's time to see your site." );
 		}
 

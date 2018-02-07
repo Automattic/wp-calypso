@@ -79,10 +79,7 @@ function maybeInvite() {
 	// most of the content, so we'll show the invitation on next load to avoid
 	// an ugly visual jump
 	debug( 'Translator invitation queued up for next load' );
-	analytics.tracks.recordEvent(
-		'calypso_community_translator_invitation_queued',
-		analyticsProperties()
-	);
+	analytics.tracks.recordEvent( 'community_translator_invitation_queued', analyticsProperties() );
 	store.set( 'calypsoTranslatorInvitationIsPending', true );
 }
 
@@ -101,7 +98,7 @@ const invitationUtils = {
 		debug( 'dismissed' );
 		permanentlyDisableInvitation();
 		analytics.tracks.recordEvent(
-			'calypso_community_translator_invitation_dismissed',
+			'community_translator_invitation_dismissed',
 			analyticsProperties()
 		);
 	},
@@ -109,7 +106,7 @@ const invitationUtils = {
 	activate: function() {
 		debug( 'activated' );
 		analytics.tracks.recordEvent(
-			'calypso_community_translator_invitation_accepted',
+			'community_translator_invitation_accepted',
 			analyticsProperties()
 		);
 		userSettings.saveSettings(
@@ -135,7 +132,7 @@ const invitationUtils = {
 	recordInvitationDisplayed: once( function() {
 		debug( 'displayed' );
 		analytics.tracks.recordEvent(
-			'calypso_community_translator_invitation_displayed',
+			'community_translator_invitation_displayed',
 			analyticsProperties()
 		);
 	} ),

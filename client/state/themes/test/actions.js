@@ -405,7 +405,7 @@ describe( 'actions', () => {
 					analytics: [
 						{
 							payload: {
-								name: 'calypso_themeshowcase_theme_activate',
+								name: 'themeshowcase_theme_activate',
 								properties: {
 									previous_theme: 'twentyfifteen',
 									purchased: false,

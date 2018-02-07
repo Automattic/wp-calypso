@@ -45,9 +45,9 @@ function bumpStats( error, data ) {
 
 	if ( errorType === errorTypes.ERROR_REQUIRES_2FA ) {
 		analytics.tracks.recordEvent( 'calypso_oauth_login_needs2fa' );
-		analytics.mc.bumpStat( 'calypso_oauth_login', 'success-needs-2fa' );
+		analytics.mc.bumpStat( 'oauth_login', 'success-needs-2fa' );
 	} else if ( errorType ) {
-		analytics.tracks.recordEvent( 'calypso_oauth_login_fail', {
+		analytics.tracks.recordEvent( 'oauth_login_fail', {
 			error: error.error,
 		} );
 
@@ -56,7 +56,7 @@ function bumpStats( error, data ) {
 			calypso_oauth_login: 'error',
 		} );
 	} else {
-		analytics.tracks.recordEvent( 'calypso_oauth_login_success' );
-		analytics.mc.bumpStat( 'calypso_oauth_login', 'success' );
+		analytics.tracks.recordEvent( 'oauth_login_success' );
+		analytics.mc.bumpStat( 'oauth_login', 'success' );
 	}
 }

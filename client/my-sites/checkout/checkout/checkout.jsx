@@ -151,7 +151,7 @@ const Checkout = createReactClass( {
 	trackPageView: function( props ) {
 		props = props || this.props;
 
-		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
+		analytics.tracks.recordEvent( 'checkout_page_view', {
 			saved_cards: props.cards.length,
 			is_renewal: cartItems.hasRenewalItem( props.cart ),
 		} );

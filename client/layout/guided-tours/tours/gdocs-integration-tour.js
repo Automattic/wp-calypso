@@ -22,7 +22,7 @@ import { hasUserPastedFromGoogleDocs } from 'state/ui/guided-tours/contexts';
 import analytics from 'lib/analytics';
 
 const trackUserInterest = () => {
-	analytics.tracks.recordEvent( 'calypso_editor_gdocs_tour_success' );
+	analytics.tracks.recordEvent( 'editor_gdocs_tour_success' );
 };
 
 export const GDocsIntegrationTour = makeTour(

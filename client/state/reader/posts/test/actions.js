@@ -106,7 +106,7 @@ describe( 'actions', () => {
 				},
 			];
 			actions.receivePosts( posts )( dispatchSpy );
-			expect( trackingSpy ).to.have.been.calledWith( 'calypso_traintracks_render', 'foo' );
+			expect( trackingSpy ).to.have.been.calledWith( 'traintracks_render', 'foo' );
 		} );
 
 		test( 'should try to reload posts marked with should_reload', () => {

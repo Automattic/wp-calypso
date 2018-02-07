@@ -260,7 +260,7 @@ export function plansLanding( context, next ) {
 
 	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
+	analytics.tracks.recordEvent( 'plans_view' );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
@@ -285,7 +285,7 @@ export function plansSelection( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
+	analytics.tracks.recordEvent( 'plans_view' );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (

@@ -108,7 +108,7 @@ class SignupForm extends Component {
 	}
 
 	recordBackLinkClick = () => {
-		analytics.tracks.recordEvent( 'calypso_signup_back_link_click' );
+		analytics.tracks.recordEvent( 'signup_back_link_click' );
 	};
 
 	componentWillMount() {
@@ -216,7 +216,7 @@ class SignupForm extends Component {
 					}
 
 					if ( field === 'username' && ! includes( usernamesSearched, fields.username ) ) {
-						analytics.tracks.recordEvent( 'calypso_signup_username_validation_failed', {
+						analytics.tracks.recordEvent( 'signup_username_validation_failed', {
 							error: head( keys( fieldError ) ),
 							username: fields.username,
 						} );
@@ -225,7 +225,7 @@ class SignupForm extends Component {
 					}
 
 					if ( field === 'password' ) {
-						analytics.tracks.recordEvent( 'calypso_signup_password_validation_failed', {
+						analytics.tracks.recordEvent( 'signup_password_validation_failed', {
 							error: head( keys( fieldError ) ),
 						} );
 
@@ -473,7 +473,7 @@ class SignupForm extends Component {
 	}
 
 	handleOnClickTos = () => {
-		analytics.tracks.recordEvent.bind( analytics, 'calypso_signup_tos_link_click' );
+		analytics.tracks.recordEvent.bind( analytics, 'signup_tos_link_click' );
 	};
 
 	getTermsOfServiceUrl() {
@@ -631,7 +631,7 @@ export default connect(
 		oauth2Client: getCurrentOAuth2Client( state ),
 	} ),
 	{
-		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
+		trackLoginMidFlow: () => recordTracksEvent( 'signup_login_midflow' ),
 		createSocialUserFailed,
 	}
 )( localize( SignupForm ) );

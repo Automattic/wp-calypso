@@ -72,7 +72,7 @@ describe( 'UpgradeATStep', () => {
 		wrapper.find( 'Button' ).simulate( 'click' );
 
 		expect( recordTracksEvent ).to.have.been.calledWith(
-			'calypso_cancellation_upgrade_at_step_upgrade_click'
+			'cancellation_upgrade_at_step_upgrade_click'
 		);
 	} );
 } );

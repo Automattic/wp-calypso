@@ -281,12 +281,9 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 				href: `${ currentUser.primary_blog_url }/wp-admin`,
 			} )
 		);
-		analytics.tracks.recordEvent(
-			'calypso_mysites_single_site_jetpack_connection_error',
-			tracksPayload
-		);
+		analytics.tracks.recordEvent( 'mysites_single_site_jetpack_connection_error', tracksPayload );
 	} else {
-		analytics.tracks.recordEvent( 'calypso_mysites_single_site_error', tracksPayload );
+		analytics.tracks.recordEvent( 'mysites_single_site_error', tracksPayload );
 	}
 }
 

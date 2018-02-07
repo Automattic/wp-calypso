@@ -331,7 +331,7 @@ const analytics = {
 				eventProperties = assign( eventProperties, utmParams );
 			}
 
-			analytics.tracks.recordEvent( 'calypso_page_view', eventProperties );
+			analytics.tracks.recordEvent( 'page_view', eventProperties );
 
 			// Ensure every Calypso user is added to our retargeting audience via the AdWords retargeting tag
 			retarget();

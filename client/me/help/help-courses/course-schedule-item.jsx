@@ -19,7 +19,7 @@ export default localize( props => {
 	const { date, registrationUrl, isBusinessPlanUser, translate } = props;
 
 	const trackRegistrationClick = () => {
-		analytics.tracks.recordEvent( 'calypso_help_course_registration_click', {
+		analytics.tracks.recordEvent( 'help_course_registration_click', {
 			registration_url: registrationUrl,
 			is_business_plan_user: isBusinessPlanUser,
 		} );

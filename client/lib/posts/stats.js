@@ -50,7 +50,7 @@ export function recordSaveEvent( site, context ) {
 
 	const currentStatus = savedPost.status;
 	const nextStatus = post.status;
-	let tracksEventName = 'calypso_editor_' + post.type + '_';
+	let tracksEventName = 'editor_' + post.type + '_';
 	let statName = false;
 	let statEvent = false;
 	let usageAction = false;

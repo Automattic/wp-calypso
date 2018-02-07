@@ -22,7 +22,7 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
-const getHappyChatButtonClickHandler = ( eventName = 'calypso_jpc_chat_initiated' ) => () =>
+const getHappyChatButtonClickHandler = ( eventName = 'jpc_chat_initiated' ) => () =>
 	analytics.tracks.recordEvent( eventName );
 
 const JetpackConnectHappychatButton = ( {

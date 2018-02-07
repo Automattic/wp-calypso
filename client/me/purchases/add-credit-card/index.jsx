@@ -37,7 +37,7 @@ class AddCreditCard extends Component {
 	}
 
 	recordFormSubmitEvent() {
-		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
+		analytics.tracks.recordEvent( 'add_credit_card_form_submit' );
 	}
 
 	render() {

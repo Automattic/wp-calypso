@@ -85,7 +85,7 @@ class InvitePeople extends React.Component {
 
 		if ( sendInvitesSuccess ) {
 			this.setState( this.resetState() );
-			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_initial' );
+			analytics.tracks.recordEvent( 'invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
 		} else {
 			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId ),
@@ -103,7 +103,7 @@ class InvitePeople extends React.Component {
 			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
 
 			this.setState( updatedState );
-			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_retry' );
+			analytics.tracks.recordEvent( 'invite_people_form_refresh_retry' );
 		}
 	};
 
@@ -133,9 +133,9 @@ class InvitePeople extends React.Component {
 		createInviteValidation( this.props.siteId, filteredTokens, role );
 
 		if ( filteredTokens.length > usernamesOrEmails.length ) {
-			analytics.tracks.recordEvent( 'calypso_invite_people_token_added' );
+			analytics.tracks.recordEvent( 'invite_people_token_added' );
 		} else {
-			analytics.tracks.recordEvent( 'calypso_invite_people_token_removed' );
+			analytics.tracks.recordEvent( 'invite_people_token_removed' );
 		}
 	};
 
@@ -150,23 +150,23 @@ class InvitePeople extends React.Component {
 	};
 
 	onFocusTokenField = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_people_token_field_focus' );
+		analytics.tracks.recordEvent( 'invite_people_token_field_focus' );
 	};
 
 	onFocusRoleSelect = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_people_role_select_focus' );
+		analytics.tracks.recordEvent( 'invite_people_role_select_focus' );
 	};
 
 	onFocusCustomMessage = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_people_custom_message_focus' );
+		analytics.tracks.recordEvent( 'invite_people_custom_message_focus' );
 	};
 
 	onClickSendInvites = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_people_send_invite_button_click' );
+		analytics.tracks.recordEvent( 'invite_people_send_invite_button_click' );
 	};
 
 	onClickRoleExplanation = () => {
-		analytics.tracks.recordEvent( 'calypso_invite_people_role_explanation_link_click' );
+		analytics.tracks.recordEvent( 'invite_people_role_explanation_link_click' );
 	};
 
 	refreshValidation = () => {
@@ -183,7 +183,7 @@ class InvitePeople extends React.Component {
 		} );
 
 		if ( errorsKeys.length ) {
-			analytics.tracks.recordEvent( 'calypso_invite_people_validation_refreshed_with_error' );
+			analytics.tracks.recordEvent( 'invite_people_validation_refreshed_with_error' );
 		}
 	};
 
@@ -238,7 +238,7 @@ class InvitePeople extends React.Component {
 			return includes( invitee, '@' ) ? 'email' : 'username';
 		} );
 
-		analytics.tracks.recordEvent( 'calypso_invite_people_form_submit', {
+		analytics.tracks.recordEvent( 'invite_people_form_submit', {
 			role,
 			number_invitees: usernamesOrEmails.length,
 			number_username_invitees: groupedInvitees.username ? groupedInvitees.username.length : 0,

@@ -20,7 +20,7 @@ import { isBusiness, isGoogleApps } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
 
 function trackOnboardingButtonClick() {
-	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_onboarding_click' );
+	analytics.tracks.recordEvent( 'checkout_thank_you_onboarding_click' );
 }
 
 const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purchases } ) => {

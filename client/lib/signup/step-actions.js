@@ -380,8 +380,8 @@ export function createAccount(
 
 				if ( ! errors ) {
 					// Fire after a new user registers.
-					analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
-					analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+					analytics.tracks.recordEvent( 'user_registration_complete' );
+					analytics.ga.recordEvent( 'Signup', 'user_registration_complete' );
 				}
 
 				const providedDependencies = assign( {}, { username: userData.username }, bearerToken );

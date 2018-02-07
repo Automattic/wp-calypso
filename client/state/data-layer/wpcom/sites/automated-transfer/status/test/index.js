@@ -61,7 +61,7 @@ describe( 'receiveStatus', () => {
 		receiveStatus( { dispatch }, { siteId }, COMPLETE_RESPONSE );
 		expect( dispatch ).to.have.callCount( 3 );
 		expect( dispatch ).to.have.been.calledWith(
-			recordTracksEvent( 'calypso_automated_transfer_complete', {
+			recordTracksEvent( 'automated_transfer_complete', {
 				context: 'plugin_upload',
 				transfer_id: 1,
 				uploaded_plugin_slug: 'hello-dolly',

@@ -51,7 +51,7 @@ class CartCoupon extends React.Component {
 	applyCoupon = event => {
 		event.preventDefault();
 
-		analytics.tracks.recordEvent( 'calypso_checkout_coupon_submit', {
+		analytics.tracks.recordEvent( 'checkout_coupon_submit', {
 			coupon_code: this.state.couponInputValue,
 		} );
 

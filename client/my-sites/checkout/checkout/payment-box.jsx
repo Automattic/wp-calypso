@@ -30,7 +30,7 @@ export class PaymentBox extends PureComponent {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
 		return function() {
 			analytics.ga.recordEvent( 'Upgrades', 'Switch Payment Method' );
-			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + paymentMethod );
+			analytics.tracks.recordEvent( 'checkout_switch_to_' + paymentMethod );
 			onSelectPaymentMethod( paymentMethod );
 		};
 	}

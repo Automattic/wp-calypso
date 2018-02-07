@@ -443,7 +443,7 @@ class PluginMeta extends Component {
 			'Plugin Name',
 			this.props.pluginSlug
 		);
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
+		analytics.tracks.recordEvent( 'plugins_actions_update_plugin', {
 			site: this.props.sites[ 0 ].ID,
 			plugin: this.props.sites[ 0 ].plugin.slug,
 			selected_site: this.props.sites[ 0 ].ID,
@@ -465,7 +465,7 @@ class PluginMeta extends Component {
 					this.props.notices.completed.concat( this.props.notices.errors )
 				);
 
-				analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
+				analytics.tracks.recordEvent( 'plugins_actions_update_plugin_all_sites', {
 					site: site,
 					plugin: plugin.slug,
 				} );
@@ -555,7 +555,7 @@ class PluginMeta extends Component {
 						<div className="plugin-meta__upgrade_nudge">
 							<Banner
 								feature={ FEATURE_UPLOAD_PLUGINS }
-								event={ 'calypso_plugin_detail_page_upgrade_nudge' }
+								event={ 'plugin_detail_page_upgrade_nudge' }
 								plan={ PLAN_BUSINESS }
 								title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 							/>

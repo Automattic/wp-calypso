@@ -71,15 +71,15 @@ class PlansSetup extends React.Component {
 	};
 
 	trackManualInstall = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manual_error' );
+		analytics.tracks.recordEvent( 'plans_autoconfig_click_manual_error' );
 	};
 
 	trackManagePlans = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_manage_plans' );
+		analytics.tracks.recordEvent( 'plans_autoconfig_click_manage_plans' );
 	};
 
 	trackContactSupport = () => {
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_click_contact_support' );
+		analytics.tracks.recordEvent( 'plans_autoconfig_click_contact_support' );
 	};
 
 	// plugins for Jetpack sites require additional data from the wporg-data store
@@ -150,7 +150,7 @@ class PlansSetup extends React.Component {
 		) {
 			return;
 		}
-		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_user_interrupt' );
+		analytics.tracks.recordEvent( 'plans_autoconfig_user_interrupt' );
 		const beforeUnloadText = this.props.translate( "We haven't finished installing your plugins." );
 		( event || window.event ).returnValue = beforeUnloadText;
 		return beforeUnloadText;
@@ -184,7 +184,7 @@ class PlansSetup extends React.Component {
 	};
 
 	renderNoJetpackSiteSelected = () => {
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_wordpresscom', {
+		this.trackConfigFinished( 'plans_autoconfig_error_wordpresscom', {
 			referrer: document.referrer,
 		} );
 		return (
@@ -206,18 +206,18 @@ class PlansSetup extends React.Component {
 
 		if ( reasons && reasons.length > 0 ) {
 			reason = reasons[ 0 ];
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_filemod', { error: reason } );
+			this.trackConfigFinished( 'plans_autoconfig_error_filemod', { error: reason } );
 		} else if ( ! site.hasMinimumJetpackVersion ) {
 			reason = translate( 'You need to update your version of Jetpack.' );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_jpversion', {
+			this.trackConfigFinished( 'plans_autoconfig_error_jpversion', {
 				jetpack_version: site.options.jetpack_version,
 			} );
 		} else if ( ! site.isMainNetworkSite ) {
 			reason = translate( "We can't install plugins on multisite sites." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multisite' );
+			this.trackConfigFinished( 'plans_autoconfig_error_multisite' );
 		} else if ( site.options.is_multi_network ) {
 			reason = translate( "We can't install plugins on multi-network sites." );
-			this.trackConfigFinished( 'calypso_plans_autoconfig_error_multinetwork' );
+			this.trackConfigFinished( 'plans_autoconfig_error_multinetwork' );
 		}
 
 		return (
@@ -416,7 +416,7 @@ class PlansSetup extends React.Component {
 			tracksData[ item.slug ] = item.error.name + ': ' + item.error.message;
 		} );
 
-		this.trackConfigFinished( 'calypso_plans_autoconfig_error_plugin', tracksData );
+		this.trackConfigFinished( 'plans_autoconfig_error_plugin', tracksData );
 
 		if ( pluginsWithErrors.length === 1 ) {
 			noticeText = translate(
@@ -467,7 +467,7 @@ class PlansSetup extends React.Component {
 			return this.renderErrorMessage( pluginsWithErrors );
 		}
 
-		this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
+		this.trackConfigFinished( 'plans_autoconfig_success' );
 
 		const noticeText = translate(
 			"We've set up your plugin, your site is powered up!",

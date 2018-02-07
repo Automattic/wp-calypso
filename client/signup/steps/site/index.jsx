@@ -112,7 +112,7 @@ class Site extends React.Component {
 					if ( fields.site && ! includes( siteUrlsSearched, fields.site ) ) {
 						siteUrlsSearched.push( fields.site );
 
-						analytics.tracks.recordEvent( 'calypso_signup_site_url_validation_failed', {
+						analytics.tracks.recordEvent( 'signup_site_url_validation_failed', {
 							error: error.error,
 							site_url: fields.site,
 						} );
@@ -155,7 +155,7 @@ class Site extends React.Component {
 					return;
 				}
 
-				analytics.tracks.recordEvent( 'calypso_signup_site_step_submit', {
+				analytics.tracks.recordEvent( 'signup_site_step_submit', {
 					unique_site_urls_searched: siteUrlsSearched.length,
 					times_validation_failed: timesValidationFailed,
 				} );

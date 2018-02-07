@@ -104,7 +104,7 @@ class EditorVisibility extends React.Component {
 		if ( this.getVisibility() !== newVisibility ) {
 			recordStat( 'visibility-set-' + newVisibility );
 			recordEvent( 'Changed visibility', newVisibility );
-			tracks.recordEvent( 'calypso_editor_visibility_set', {
+			tracks.recordEvent( 'editor_visibility_set', {
 				context: this.props.context,
 				visibility: newVisibility,
 			} );

@@ -373,7 +373,7 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 			'Domain Name',
 			suggestion.domain_name
 		),
-		recordTracksEvent( 'calypso_domain_search_submit_step', tracksObjects )
+		recordTracksEvent( 'domain_search_submit_step', tracksObjects )
 	);
 };
 

@@ -53,7 +53,7 @@ describe( 'initiateTransferWithPluginZip', () => {
 		const dispatch = sinon.spy();
 		initiateTransferWithPluginZip( { dispatch }, { siteId, pluginZip: 'foo' } );
 		expect( dispatch ).to.have.been.calledWith(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_transfer', {
+			recordTracksEvent( 'automated_transfer_inititate_transfer', {
 				context: 'plugin_upload',
 			} )
 		);
@@ -71,7 +71,7 @@ describe( 'receiveResponse', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_SUCCESS_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
+			recordTracksEvent( 'automated_transfer_inititate_success', {
 				context: 'plugin_upload',
 			} )
 		);
@@ -89,7 +89,7 @@ describe( 'receiveResponse', () => {
 		const dispatch = sinon.spy();
 		receiveResponse( { dispatch }, { siteId }, INITIATE_FAILURE_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+			recordTracksEvent( 'automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'api_success_false',
 			} )
@@ -116,7 +116,7 @@ describe( 'receiveError', () => {
 		const dispatch = sinon.spy();
 		receiveError( { dispatch }, { siteId }, ERROR_RESPONSE );
 		expect( dispatch ).to.have.been.calledWith(
-			recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+			recordTracksEvent( 'automated_transfer_inititate_failure', {
 				context: 'plugin_upload',
 				error: 'invalid_input',
 			} )

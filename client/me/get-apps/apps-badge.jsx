@@ -22,7 +22,7 @@ const APP_STORE_BADGE_URLS = {
 	ios: {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
-		tracksEvent: 'calypso_app_download_ios_click',
+		tracksEvent: 'app_download_ios_click',
 		getLocaleSlug: function() {
 			const localeSlug = getLocaleSlug();
 			const localeSlugPrefix = localeSlug.split( '-' )[ 0 ];
@@ -33,7 +33,7 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-google-play.png',
 		src:
 			'http://play.google.com/intl/en_us/badges/images/generic/{localeSlug}_badge_web_generic.png',
-		tracksEvent: 'calypso_app_download_android_click',
+		tracksEvent: 'app_download_android_click',
 		getLocaleSlug,
 	},
 };

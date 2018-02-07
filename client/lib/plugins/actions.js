@@ -194,7 +194,7 @@ const PluginsActions = {
 				data: data,
 				error: error,
 			} );
-			recordEvent( 'calypso_plugin_updated', plugin, site, error );
+			recordEvent( 'plugin_updated', plugin, site, error );
 		} );
 	},
 
@@ -245,7 +245,7 @@ const PluginsActions = {
 			}
 
 			Dispatcher.handleServerAction( message );
-			recordEvent( 'calypso_plugin_installed', plugin, site, error );
+			recordEvent( 'plugin_installed', plugin, site, error );
 		};
 
 		const manageSuccess = responseData => {
@@ -317,7 +317,7 @@ const PluginsActions = {
 			};
 
 			Dispatcher.handleServerAction( message );
-			recordEvent( 'calypso_plugin_removed', plugin, site, error );
+			recordEvent( 'plugin_removed', plugin, site, error );
 		};
 
 		const remove = pluginData => {
@@ -380,8 +380,8 @@ const PluginsActions = {
 				( error && error.error !== 'activation_error' ) ||
 				( ! ( data && data.active ) && ! error )
 			) {
-				analytics.mc.bumpStat( 'calypso_plugin_activated', 'failed' );
-				analytics.tracks.recordEvent( 'calypso_plugin_activated_error', {
+				analytics.mc.bumpStat( 'plugin_activated', 'failed' );
+				analytics.tracks.recordEvent( 'plugin_activated_error', {
 					error: error && error.error ? error.error : 'Undefined activation error',
 					site: site.ID,
 					plugin: plugin.slug,
@@ -390,8 +390,8 @@ const PluginsActions = {
 				return;
 			}
 
-			analytics.mc.bumpStat( 'calypso_plugin_activated', 'succeeded' );
-			analytics.tracks.recordEvent( 'calypso_plugin_activated_success', {
+			analytics.mc.bumpStat( 'plugin_activated', 'succeeded' );
+			analytics.tracks.recordEvent( 'plugin_activated_success', {
 				site: site.ID,
 				plugin: plugin.slug,
 			} );
@@ -425,8 +425,8 @@ const PluginsActions = {
 			// return the active state even when the error is empty.
 			// Activation error is ok, because it means the plugin is already active
 			if ( error && error.error !== 'deactivation_error' ) {
-				analytics.mc.bumpStat( 'calypso_plugin_deactivated', 'failed' );
-				analytics.tracks.recordEvent( 'calypso_plugin_deactivated_error', {
+				analytics.mc.bumpStat( 'plugin_deactivated', 'failed' );
+				analytics.tracks.recordEvent( 'plugin_deactivated_error', {
 					error: error.error ? error.error : 'Undefined deactivation error',
 					site: site.ID,
 					plugin: plugin.slug,
@@ -434,8 +434,8 @@ const PluginsActions = {
 
 				return;
 			}
-			analytics.mc.bumpStat( 'calypso_plugin_deactivated', 'succeeded' );
-			analytics.tracks.recordEvent( 'calypso_plugin_deactivated_success', {
+			analytics.mc.bumpStat( 'plugin_deactivated', 'succeeded' );
+			analytics.tracks.recordEvent( 'plugin_deactivated_success', {
 				site: site.ID,
 				plugin: plugin.slug,
 			} );
@@ -476,7 +476,7 @@ const PluginsActions = {
 				data: data,
 				error: error,
 			} );
-			recordEvent( 'calypso_plugin_autoupdate_enabled', plugin, site, error );
+			recordEvent( 'plugin_autoupdate_enabled', plugin, site, error );
 
 			if ( plugin.update && ! error ) {
 				PluginsActions.updatePlugin( site, plugin );
@@ -507,7 +507,7 @@ const PluginsActions = {
 				data: data,
 				error: error,
 			} );
-			recordEvent( 'calypso_plugin_autoupdate_disabled', plugin, site, error );
+			recordEvent( 'plugin_autoupdate_disabled', plugin, site, error );
 		} );
 	},
 

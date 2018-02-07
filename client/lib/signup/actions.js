@@ -29,7 +29,7 @@ const SignupActions = {
 	},
 
 	submitSignupStep( step, errors, providedDependencies ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_submit_step', { step: step.stepName } );
+		analytics.tracks.recordEvent( 'signup_actions_submit_step', { step: step.stepName } );
 
 		Dispatcher.handleViewAction( {
 			type: 'SUBMIT_SIGNUP_STEP',
@@ -52,7 +52,7 @@ const SignupActions = {
 	},
 
 	processedSignupStep( step, errors, providedDependencies ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_complete_step', { step: step.stepName } );
+		analytics.tracks.recordEvent( 'signup_actions_complete_step', { step: step.stepName } );
 
 		Dispatcher.handleViewAction( {
 			type: 'PROCESSED_SIGNUP_STEP',

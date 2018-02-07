@@ -66,11 +66,11 @@ const TransactionStepsMixin = {
 		switch ( step.name ) {
 			case 'input-validation':
 				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+					analytics.tracks.recordEvent( 'checkout_payment_error', {
 						reason: step.error.code,
 					} );
 				} else {
-					analytics.tracks.recordEvent( 'calypso_checkout_form_submit', {
+					analytics.tracks.recordEvent( 'checkout_form_submit', {
 						credits: cartValue.credits,
 						payment_method: this.props.transaction.payment.paymentMethod,
 					} );
@@ -79,7 +79,7 @@ const TransactionStepsMixin = {
 
 			case 'received-wpcom-response':
 				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+					analytics.tracks.recordEvent( 'checkout_payment_error', {
 						reason: step.error.message,
 					} );
 
@@ -94,7 +94,7 @@ const TransactionStepsMixin = {
 						recordOrder( cartValue, step.data.receipt_id );
 					}
 
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
+					analytics.tracks.recordEvent( 'checkout_payment_success', {
 						coupon_code: cartValue.coupon,
 						currency: cartValue.currency,
 						payment_method: this.props.transaction.payment.paymentMethod,
@@ -103,7 +103,7 @@ const TransactionStepsMixin = {
 
 					cartValue.products.forEach( function( cartItem ) {
 						analytics.tracks.recordEvent(
-							'calypso_checkout_product_purchase',
+							'checkout_product_purchase',
 							removeNestedProperties( cartItem )
 						);
 					} );
@@ -117,7 +117,7 @@ const TransactionStepsMixin = {
 
 			default:
 				if ( step.error ) {
-					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
+					analytics.tracks.recordEvent( 'checkout_payment_error', {
 						reason: step.error.message,
 					} );
 				}
@@ -129,7 +129,7 @@ const TransactionStepsMixin = {
 			success = parameters.success;
 
 		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
-			analytics.tracks.recordEvent( 'calypso_domain_registration', {
+			analytics.tracks.recordEvent( 'domain_registration', {
 				domain_tld: getTld( cartItem.meta ),
 				success: success,
 			} );

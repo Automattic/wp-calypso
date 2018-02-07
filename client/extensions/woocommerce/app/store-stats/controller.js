@@ -55,16 +55,16 @@ export default function StatsController( context, next ) {
 	let tracksEvent;
 	switch ( props.type ) {
 		case 'orders':
-			tracksEvent = 'calypso_woocommerce_stats_orders_page';
+			tracksEvent = 'woocommerce_stats_orders_page';
 			break;
 		case 'products':
-			tracksEvent = 'calypso_woocommerce_stats_products_page';
+			tracksEvent = 'woocommerce_stats_products_page';
 			break;
 		case 'categories':
-			tracksEvent = 'calypso_woocommerce_stats_categories_page';
+			tracksEvent = 'woocommerce_stats_categories_page';
 			break;
 		case 'coupons':
-			tracksEvent = 'calypso_woocommerce_stats_coupons_page';
+			tracksEvent = 'woocommerce_stats_coupons_page';
 			break;
 	}
 	if ( tracksEvent ) {

@@ -28,7 +28,7 @@ class NextSteps extends React.Component {
 		const { isWelcome, recordGoogleEvent, recordTracksEvent } = this.props;
 
 		recordGoogleEvent( 'Me > Next > Welcome Message', event.action );
-		recordTracksEvent( 'calypso_me_next_welcome_click', {
+		recordTracksEvent( 'me_next_welcome_click', {
 			link: event.tracks,
 			is_welcome: isWelcome,
 		} );
