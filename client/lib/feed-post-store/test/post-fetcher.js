@@ -1,13 +1,23 @@
 /** @format */
 
-jest.mock( 'lib/feed-post-store', () => ( {
-	get: postKey => ( postKey.postId === 1 ? {} : null ),
-} ) );
 jest.useFakeTimers();
+jest.mock( 'lib/redux-bridge', () => ( {
+	reduxGetState: function() {
+		return {
+			reader: {
+				posts: {
+					items: { [ 1 ]: { ID: 1, feed_ID: 1, feed_item_ID: 1 } },
+				},
+			},
+		};
+	},
+	reduxDispatch: jest.fn(),
+} ) );
+
 /**
  * Internal dependencies
  */
-import PostFetcher from '../post-fetcher';
+const PostFetcher = require( '../post-fetcher' );
 
 describe( 'PostFetcher', () => {
 	let myFetcher, onFetch, onPostReceived, onError, makeRequest;

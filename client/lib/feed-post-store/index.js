@@ -4,6 +4,7 @@
  */
 import { get, forEach, isEqual, defer } from 'lodash';
 import debugModule from 'debug';
+import { v4 as uuid } from 'uuid';
 
 /**
  * Internal dependencies
@@ -83,7 +84,10 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 FeedPostStore.setMaxListeners( 100 );
 
 function setPost( post ) {
-	if ( ! post || ! post.feed_ID || ! post.ID ) {
+	if (
+		! post ||
+		( ( ! post.ID || ! post.site_ID ) && ( ! post.feed_ID || ! post.feed_item_ID ) )
+	) {
 		return false;
 	}
 
@@ -182,6 +186,7 @@ function receiveError( feedId, postId, error ) {
 	}
 
 	setPost( {
+		global_ID: uuid(),
 		feed_ID: feedId,
 		feed_item_ID: postId,
 		site_ID: error.site_ID,
