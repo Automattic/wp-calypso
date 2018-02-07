@@ -14,8 +14,7 @@ import { localize } from 'i18n-calypso';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-// We discard all other props in connect() to make sure the component only receives step objects.
-const NextSteps = steps =>
+const NextSteps = ( { steps } ) =>
 	map( steps, ( { label, url }, stepName ) => (
 		<div key={ stepName } className="steps__summary-entry todo">
 			<a href={ url }>{ label }</a>
@@ -23,11 +22,11 @@ const NextSteps = steps =>
 	) );
 
 export default localize(
-	connect(
-		( state, { siteId, siteSlug, siteUrl, translate } ) => {
-			const isConnected = isJetpackSite( state, siteId ); // Will only return true if the site is connected to WP.com
-			if ( isConnected ) {
-				return {
+	connect( ( state, { siteId, siteSlug, siteUrl, translate } ) => {
+		const isConnected = isJetpackSite( state, siteId ); // Will only return true if the site is connected to WP.com
+		if ( isConnected ) {
+			return {
+				steps: {
 					THEME: {
 						label: translate( 'Choose a Theme' ),
 						url: '/themes/' + siteSlug,
@@ -40,10 +39,12 @@ export default localize(
 						label: translate( 'Write your first blog post' ),
 						url: getEditorNewPostPath( state, siteId, 'post' ),
 					},
-				};
-			}
+				},
+			};
+		}
 
-			return {
+		return {
+			steps: {
 				JETPACK_CONNECTION: {
 					label: translate( 'Connect to WordPress.com' ),
 					url: '/jetpack/connect?url=' + siteUrl,
@@ -60,9 +61,7 @@ export default localize(
 					label: translate( 'Write your first blog post' ),
 					url: siteUrl + '/wp-admin/post-new.php',
 				},
-			};
-		},
-		null,
-		stateProps => stateProps // Discard ownProps
-	)( NextSteps )
+			},
+		};
+	} )( NextSteps )
 );
