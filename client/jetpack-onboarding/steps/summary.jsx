@@ -4,10 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
-import { get, map, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,44 +14,14 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Spinner from 'components/spinner';
+import CompletedSteps from './summary-completed-steps';
 import NextSteps from './summary-next-steps';
-import {
-	getJetpackOnboardingPendingSteps,
-	getJetpackOnboardingCompletedSteps,
-	getUnconnectedSiteUrl,
-} from 'state/selectors';
-import {
-	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
-	JETPACK_ONBOARDING_STEPS as STEPS,
-} from '../constants';
+import { getUnconnectedSiteUrl } from 'state/selectors';
+import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
-	renderCompleted = () => {
-		const { siteSlug, steps, stepsCompleted, stepsPending } = this.props;
-
-		return map( without( steps, STEPS.SUMMARY ), stepName => {
-			const isCompleted = get( stepsCompleted, stepName ) === true;
-			const isPending = get( stepsPending, stepName );
-			const className = classNames( 'steps__summary-entry', isCompleted ? 'completed' : 'todo' );
-
-			return (
-				<div key={ stepName } className={ className }>
-					{ isPending ? (
-						<Spinner size={ 18 } />
-					) : (
-						<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
-					) }
-					<a href={ `/jetpack/onboarding/${ stepName }/${ siteSlug }` }>
-						{ STEP_TITLES[ stepName ] }
-					</a>
-				</div>
-			);
-		} );
-	};
-
 	render() {
-		const { siteId, siteSlug, siteUrl, translate } = this.props;
+		const { siteId, siteSlug, siteUrl, steps, translate } = this.props;
 
 		const headerText = translate( "You're ready to go!" );
 		const subHeaderText = translate(
@@ -74,7 +41,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 				<div className="steps__summary-columns">
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
-						{ this.renderCompleted() }
+						<CompletedSteps siteId={ siteId } siteSlug={ siteSlug } steps={ steps } />
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
@@ -91,8 +58,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, { siteId, steps } ) => ( {
+export default connect( ( state, { siteId } ) => ( {
 	siteUrl: getUnconnectedSiteUrl( state, siteId ),
-	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
-	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
 } ) )( localize( JetpackOnboardingSummaryStep ) );
