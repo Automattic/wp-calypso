@@ -141,9 +141,6 @@ class SiteSettingsFormWriting extends Component {
 						<div>
 							{ this.renderSectionHeader( translate( 'Speed up your site' ), false ) }
 							<SpeedUpYourSite
-								siteId={ siteId }
-								handleAutosavingToggle={ handleAutosavingToggle }
-								onChangeField={ onChangeField }
 								isSavingSettings={ isSavingSettings }
 								isRequestingSettings={ isRequestingSettings }
 								fields={ fields }
