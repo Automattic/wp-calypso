@@ -4,7 +4,7 @@
  */
 import React from 'react'; // eslint-disable-line no-unused-vars
 import debugFactory from 'debug';
-import { defer, isEqual, pick } from 'lodash';
+import { defer, isEqual, pick, map } from 'lodash';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-steps-mixin' );
 
@@ -80,7 +80,7 @@ const TransactionStepsMixin = {
 			case 'received-wpcom-response':
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						reason: step.error.message,
+						reason: this._formatError( step.error.message ),
 					} );
 
 					this._recordDomainRegistrationAnalytics( {
@@ -118,7 +118,7 @@ const TransactionStepsMixin = {
 			default:
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						reason: step.error.message,
+						reason: this._formatError( step.error.message ),
 					} );
 				}
 		}
@@ -145,6 +145,19 @@ const TransactionStepsMixin = {
 			// The Thank You page throws a rendering error if this is not in a defer.
 			this.props.handleCheckoutCompleteRedirect();
 		} );
+	},
+
+	_formatError: function( errorMessage ) {
+		let formatedMessage = errorMessage;
+
+		if ( typeof errorMessage === 'object' ) {
+			formatedMessage = map( errorMessage, function( error, key ) {
+				return key + ': ' + error;
+			} );
+			formatedMessage = formatedMessage.join( ', ' );
+		}
+
+		return formatedMessage;
 	},
 };
 
