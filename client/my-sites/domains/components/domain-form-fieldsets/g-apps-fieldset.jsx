@@ -31,9 +31,9 @@ export class GAppsFieldset extends Component {
 				<CountrySelect
 					label={ translate( 'Country' ) }
 					countriesList={ countriesList }
-					{ ...getFieldProps( 'country-code', true ) }
+					{ ...getFieldProps( 'countryCode', true ) }
 				/>
-				<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
+				<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postalCode', true ) } />
 			</div>
 		);
 	}

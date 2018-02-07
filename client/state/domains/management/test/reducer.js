@@ -9,10 +9,11 @@ import { get, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import reducer, { items } from '../reducer';
+import reducer, { items, contactDetailsValidation } from '../reducer';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
+	DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -22,6 +23,7 @@ describe( 'reducer', () => {
 			'isRequestingContactDetailsCache',
 			'isRequestingWhois',
 			'isSaving',
+			'contactDetailsValidation',
 		] );
 	} );
 
@@ -210,6 +212,37 @@ describe( 'reducer', () => {
 
 				expect( result._contactDetailsCache ).to.have.deep.property( 'extra.newData', 'exists' );
 			} );
+		} );
+	} );
+	describe( 'contactDetailsValidation()', () => {
+		test( 'should default to empty object', () => {
+			const state = contactDetailsValidation( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		test( 'should return data.messages property', () => {
+			const state = contactDetailsValidation( undefined, {
+				type: DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE,
+				data: {
+					messages: {
+						toon: 'town',
+					},
+				},
+			} );
+
+			expect( state ).to.eql( {
+				toon: 'town',
+			} );
+		} );
+
+		test( 'should default to empty object when data.messages undefined', () => {
+			const state = contactDetailsValidation( undefined, {
+				type: DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE,
+				data: {},
+			} );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );

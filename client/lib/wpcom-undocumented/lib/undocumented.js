@@ -702,8 +702,13 @@ Undocumented.prototype.validateDomainContactInformation = function(
 		domainNames: domainNames,
 	};
 
+
+
 	debug( '/me/domain-contact-information/validate query' );
 	data = mapKeysRecursively( data, snakeCase );
+
+	// eslint-disable-next-line
+	console.log( 'data', JSON.stringify( data ) );
 
 	return this.wpcom.req.post( { path: '/me/domain-contact-information/validate' }, data, function(
 		error,
@@ -721,37 +726,6 @@ Undocumented.prototype.validateDomainContactInformation = function(
 
 		fn( null, newData );
 	} );
-};
-
-/**
- * Validates the specified Google Apps contact information
- *
- * @param {Object} contactInformation - user's contact information
- * @param {Function} callback The callback function
- * @returns {Promise} A promise that resolves when the request completes
- * @api public
- */
-Undocumented.prototype.validateGoogleAppsContactInformation = function(
-	contactInformation,
-	callback
-) {
-	const data = mapKeysRecursively( { contactInformation }, snakeCase );
-
-	return this.wpcom.req.post(
-		{ path: '/me/google-apps/validate' },
-		data,
-		( error, successData ) => {
-			if ( error ) {
-				return callback( error );
-			}
-
-			const newData = mapKeysRecursively( successData, key => {
-				return key === '_headers' ? key : camelCase( key );
-			} );
-
-			callback( null, newData );
-		}
-	);
 };
 
 /**

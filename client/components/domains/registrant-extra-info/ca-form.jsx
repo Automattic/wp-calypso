@@ -13,7 +13,7 @@ import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getContactDetailsExtraCache } from 'state/selectors';
+import { getContactDetailsCache, getContactDetailsExtraCache } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -34,9 +34,15 @@ const defaultValues = {
 export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
 		contactDetailsExtra: PropTypes.object.isRequired,
+		contactDetails: PropTypes.object.isRequired,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		getFieldProps: PropTypes.func.isRequired,
+		getCartDomains: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		contactDetailsExtra: {},
+		contactDetails: {},
 	};
 
 	constructor( props ) {
@@ -87,7 +93,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		this.legalTypeOptions = legalTypeOptions;
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
@@ -117,26 +123,38 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			value = target.checked;
 		}
 
-		this.props.updateContactDetailsCache( {
-			extra: { [ camelCase( event.target.id ) ]: value },
-		} );
+		if ( target.name === 'organization' ) {
+			this.props.updateContactDetailsCache( {
+				[ target.name ]: target.value,
+			} );
+		} else {
+			this.props.updateContactDetailsCache( {
+				extra: { [ camelCase( event.target.id ) ]: value },
+			} );
+		}
 	};
 
-	renderOrganizationField( organizationFieldProps ) {
+	renderOrganizationField() {
 		// These props include all the values and callbacks we need to
 		// have this organization field behave the same as the field in the
 		// parent (domain-details-form), particularly around the
 		// formState and back end validation
 
-		const { translate } = this.props;
+		const { translate, contactDetails } = this.props;
 		const className = 'registrant-extra-info';
-
+		const isError = isEmpty( contactDetails.organization );
 		return (
 			<FormFieldset>
 				<Input
+					name="organization"
 					className={ className }
+					value={ contactDetails.organization || '' }
+					isError={ isError }
 					label={ translate( 'Organization' ) }
-					{ ...organizationFieldProps }
+					onChange={ this.handleChangeEvent }
+					errorMessage={
+						isError && translate( 'An organization name is required for Canadian corporations' )
+					}
 				/>
 			</FormFieldset>
 		);
@@ -163,22 +181,15 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	}
 
 	render() {
-		const { getFieldProps, translate } = this.props;
+		const { contactDetails, translate } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
 			...this.props.contactDetailsExtra,
 		};
 
-		const rawFieldProps = getFieldProps( 'organization', true );
-
-		// We have to validate the organization name for the CCO legal
-		// type to avoid OpenSRS rejecting them and causing errors during
-		// payments
-		const organizationFieldProps = this.validateOrganizationIsNotEmpty( rawFieldProps );
-
 		const doesntNeedOrganizationField = legalType !== 'CCO';
 		const organizationFieldIsValid =
-			doesntNeedOrganizationField || ! organizationFieldProps.isError;
+			doesntNeedOrganizationField || ! isEmpty( contactDetails.organization );
 
 		const formIsValid = ciraAgreementAccepted && organizationFieldIsValid;
 		const validatingSubmitButton = formIsValid
@@ -225,7 +236,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ doesntNeedOrganizationField || this.renderOrganizationField( organizationFieldProps ) }
+				{ doesntNeedOrganizationField || this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);
@@ -234,6 +245,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 export default connect(
 	state => ( {
+		contactDetails: getContactDetailsCache( state ),
 		contactDetailsExtra: getContactDetailsExtraCache( state ),
 		userWpcomLang: getCurrentUserLocale( state ),
 	} ),

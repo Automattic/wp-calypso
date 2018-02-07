@@ -4,7 +4,14 @@
  * External dependencies
  */
 
-import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
+import {
+	get,
+	isArray,
+	merge,
+	omit,
+	stubFalse,
+	stubTrue,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +19,7 @@ import { get, isArray, merge, omit, stubFalse, stubTrue } from 'lodash';
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
 import { domainWhoisSchema } from './schema';
 import {
+	DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
@@ -105,11 +113,21 @@ export const items = createReducer(
 	domainWhoisSchema
 );
 
+export const contactDetailsValidation = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE:
+			return merge( {}, action.data.messages );
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	items,
 	isRequestingContactDetailsCache,
 	isRequestingWhois,
 	isSaving,
+	contactDetailsValidation,
 } );
 
 /**

@@ -6,11 +6,14 @@
 
 import wpcom from 'lib/wp';
 import {
+	DOMAIN_CONTACT_INFORMATION_VALIDATE_REQUEST,
+	DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,
+	DOMAIN_CONTACT_GAPPS_VALIDATE_REQUEST,
 	DOMAIN_MANAGEMENT_WHOIS_RECEIVE,
 	DOMAIN_MANAGEMENT_WHOIS_REQUEST,
 	DOMAIN_MANAGEMENT_WHOIS_REQUEST_FAILURE,
@@ -159,5 +162,46 @@ export function updateWhois( domain, whoisData ) {
 		type: DOMAIN_MANAGEMENT_WHOIS_UPDATE,
 		domain,
 		whoisData,
+	};
+}
+
+/**
+ * Returns an action object used to trigger a domain contact validation request
+ *
+ * @param   {Object}  contactInformation key/pair domain contact field values
+ * @param   {Array}   domainNames an array of domains linked to contactInformation
+ * @returns {Object}   Action object
+ */
+export function fetchDomainContactValidation( contactInformation, domainNames ) {
+	return {
+		type: DOMAIN_CONTACT_INFORMATION_VALIDATE_REQUEST,
+		contactInformation,
+		domainNames,
+	};
+}
+
+/**
+ * Returns an action object with updated domain contact validation messages
+ *
+ * @param   {Object}   data  domain contact validation messages
+ * @returns {Object}   Action object
+ */
+export function receiveDomainContactValidation( data ) {
+	return {
+		type: DOMAIN_CONTACT_INFORMATION_VALIDATE_RECEIVE,
+		data,
+	};
+}
+
+/**
+ * Returns an action object used to trigger a google apps contact validation request
+ *
+ * @param   {Object}  contactInformation key/pair domain contact field values
+ * @returns {Object}   Action object
+ */
+export function fetchGAppsValidation( contactInformation ) {
+	return {
+		type: DOMAIN_CONTACT_GAPPS_VALIDATE_REQUEST,
+		contactInformation,
 	};
 }
