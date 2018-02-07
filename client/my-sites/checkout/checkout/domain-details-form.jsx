@@ -179,8 +179,12 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	getDomainNames = () =>
-		map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' ).concat(
-			map( cartItems.getDomainTransfers( this.props.cart ), 'meta' )
+		map(
+			[
+				...cartItems.getDomainRegistrations( this.props.cart ),
+				...cartItems.getDomainTransfers( this.props.cart ),
+			],
+			'meta'
 		);
 
 	validate = ( fieldValues, onComplete ) => {

@@ -13,7 +13,7 @@ import { debounce, camelCase, difference, isEmpty, keys, map, pick } from 'lodas
 /**
  * Internal dependencies
  */
-import { getContactDetailsCache, getContactDetailsExtraCache } from 'state/selectors';
+import { getContactDetailsCache } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -35,7 +35,6 @@ const defaultValues = {
 
 export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
-		contactDetailsExtra: PropTypes.object.isRequired,
 		contactDetails: PropTypes.object.isRequired,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -96,7 +95,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.contactDetailsExtra )
+			keys( this.props.contactDetails.extra )
 		);
 
 		// Bail early as we already have the details from a previous purchase.
@@ -146,7 +145,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	};
 
 	shouldRenderOrganizationField() {
-		return this.props.contactDetailsExtra && this.props.contactDetailsExtra.legalType === 'CCO';
+		return this.props.contactDetails.extra && this.props.contactDetails.extra.legalType === 'CCO';
 	}
 
 	organizationFieldIsValid() {
@@ -190,7 +189,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const { translate, children } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
-			...this.props.contactDetailsExtra,
+			...this.props.contactDetails.extra,
 		};
 		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
 		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
@@ -245,7 +244,6 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 export default connect(
 	state => ( {
 		contactDetails: getContactDetailsCache( state ),
-		contactDetailsExtra: getContactDetailsExtraCache( state ),
 		userWpcomLang: getCurrentUserLocale( state ),
 	} ),
 	{ updateContactDetailsCache }
