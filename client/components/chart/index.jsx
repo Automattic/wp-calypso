@@ -133,7 +133,7 @@ class Chart extends React.PureComponent {
 					setTooltip={ this.setTooltip }
 				/>
 				<Tooltip
-					className="stats-chart-tabs__tooltip chart__tooltip"
+					className="chart__tooltip"
 					id="popover__chart-bar"
 					context={ this.state.tooltipContext }
 					isVisible={ !! this.state.tooltipContext }
