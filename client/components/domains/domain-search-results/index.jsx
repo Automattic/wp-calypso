@@ -29,7 +29,6 @@ import { currentUserHasFlag } from 'state/current-user/selectors';
 import { TRANSFER_IN_NUX } from 'state/current-user/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
-import { abtest } from 'lib/abtest';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
@@ -260,19 +259,10 @@ class DomainSearchResults extends React.Component {
 		);
 	}
 
-	shouldShowAvailability() {
-		const testGroup = abtest( 'domainSuggestionTestV5' );
-		if ( 'group_1' !== testGroup && 'group_2' !== testGroup && 'group_3' !== testGroup ) {
-			return this.renderDomainAvailability();
-		}
-
-		return null;
-	}
-
 	render() {
 		return (
 			<div className="domain-search-results">
-				{ this.shouldShowAvailability() }
+				{ this.renderDomainAvailability() }
 				{ this.renderDomainSuggestions() }
 			</div>
 		);
