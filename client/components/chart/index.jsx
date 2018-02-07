@@ -21,9 +21,7 @@ class Chart extends React.PureComponent {
 		maxBars: 100, // arbitrarily high number. This will be calculated by resize method
 		width: 650,
 		yMax: 0,
-		tooltipContext: null,
-		tooltipPosition: 'bottom left',
-		tooltipData: null,
+		isTooltipVisible: false,
 	};
 
 	static propTypes = {
@@ -104,12 +102,25 @@ class Chart extends React.PureComponent {
 	};
 
 	setTooltip = ( tooltipContext, tooltipPosition, tooltipData ) => {
-		this.setState( { tooltipContext, tooltipPosition, tooltipData } );
+		if ( ! tooltipContext || ! tooltipPosition || ! tooltipData ) {
+			return this.setState( { isTooltipVisible: false } );
+		}
+
+		this.setState( { tooltipContext, tooltipPosition, tooltipData, isTooltipVisible: true } );
 	};
 
 	render() {
 		const { barClick, translate, numberFormat } = this.props;
-		const { data, isEmptyChart, width, yMax } = this.state;
+		const {
+			data,
+			isEmptyChart,
+			width,
+			yMax,
+			isTooltipVisible,
+			tooltipContext,
+			tooltipPosition,
+			tooltipData,
+		} = this.state;
 
 		return (
 			<div ref={ this.storeChart } className="chart">
@@ -132,15 +143,17 @@ class Chart extends React.PureComponent {
 					chartWidth={ width }
 					setTooltip={ this.setTooltip }
 				/>
-				<Tooltip
-					className="chart__tooltip"
-					id="popover__chart-bar"
-					context={ this.state.tooltipContext }
-					isVisible={ !! this.state.tooltipContext }
-					position={ this.state.tooltipPosition }
-				>
-					<ul>{ this.state.tooltipData }</ul>
-				</Tooltip>
+				{ isTooltipVisible && (
+					<Tooltip
+						className="chart__tooltip"
+						id="popover__chart-bar"
+						context={ tooltipContext }
+						isVisible={ isTooltipVisible }
+						position={ tooltipPosition }
+					>
+						<ul>{ tooltipData }</ul>
+					</Tooltip>
+				) }
 				{ isEmptyChart && (
 					<div className="chart__empty">
 						{ /* @todo this message needs to either use a <Notice> or make a custom "chart__notice" class */ }
