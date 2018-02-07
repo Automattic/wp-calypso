@@ -3,25 +3,18 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Component } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import userModule from 'lib/user';
+import { isRtl as isRtlSelector } from 'state/selectors';
 
-/**
- * Module variables
- */
-const user = userModule();
-
-export default class extends React.Component {
-	static displayName = 'ModuleChartBar';
-
+class ModuleChartBar extends Component {
 	static propTypes = {
 		isTouch: PropTypes.bool,
 		tooltipPosition: PropTypes.string,
@@ -100,15 +93,15 @@ export default class extends React.Component {
 	};
 
 	computeTooltipPosition() {
-		const { chartWidth, index, count } = this.props;
+		const { chartWidth, index, count, isRtl } = this.props;
 
 		const barWidth = chartWidth / count;
 		const barOffset = barWidth * ( index + 1 );
 
-		let tooltipPosition = user.isRTL() ? 'bottom left' : 'bottom right';
+		let tooltipPosition = isRtl ? 'bottom left' : 'bottom right';
 
 		if ( barOffset + 230 > chartWidth && barOffset + barWidth - 230 > 0 ) {
-			tooltipPosition = user.isRTL() ? 'bottom right' : 'bottom left';
+			tooltipPosition = isRtl ? 'bottom right' : 'bottom left';
 		}
 
 		return tooltipPosition;
@@ -182,3 +175,7 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect( state => ( {
+	isRtl: isRtlSelector( state ),
+} ) )( ModuleChartBar );
