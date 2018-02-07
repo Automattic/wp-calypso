@@ -25,7 +25,7 @@ describe( 'ca-form', () => {
 	test( 'should render without errors when extra is empty', () => {
 		const testProps = {
 			...mockProps,
-			contactDetailsExtra: {},
+			contactDetails: {},
 		};
 
 		shallow( <RegistrantExtraInfoCaForm { ...testProps } /> );
