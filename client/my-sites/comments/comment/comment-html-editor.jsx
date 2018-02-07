@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { map, reduce } from 'lodash';
+import { delay, map, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -90,7 +90,7 @@ export class CommentHtmlEditor extends Component {
 				this.setCommentContentValue
 			);
 			// Move the cursor inside <a></a>
-			setCursorPosition( this.textarea, -4 );
+			setCursorPosition( this.textarea, this.textarea.selectionEnd, -4 );
 		}
 	};
 
@@ -123,14 +123,20 @@ export class CommentHtmlEditor extends Component {
 
 	openImageDialog = () => this.setState( { showImageDialog: true } );
 
-	closeImageDialog = () => this.setState( { showImageDialog: false } );
+	closeImageDialog = () => {
+		this.setState( { showImageDialog: false } );
+		delay( () => this.textarea.focus(), 500 );
+	};
 
 	openLinkDialog = () => {
 		const { inner } = splitSelectedContent( this.textarea );
 		this.setState( { selectedText: inner, showLinkDialog: true } );
 	};
 
-	closeLinkDialog = () => this.setState( { showLinkDialog: false } );
+	closeLinkDialog = () => {
+		this.setState( { showLinkDialog: false } );
+		delay( () => this.textarea.focus(), 500 );
+	};
 
 	setCommentContentValue = content => this.props.onChange( { target: { value: content } } );
 

@@ -27,10 +27,10 @@ export const splitSelectedContent = textarea => {
  * Set the cursor position after the insertion of new content into a textarea.
  *
  * @param {Element} textarea The editor textarea.
+ * @param {Number} selectionEnd The textarea.selectionEnd value BEFORE the content insertion.
  * @param {Number} insertedContentLength The length of the inserted content.
  */
-export const setCursorPosition = ( textarea, insertedContentLength ) => {
-	const { selectionEnd } = textarea;
+export const setCursorPosition = ( textarea, selectionEnd, insertedContentLength ) => {
 	textarea.selectionEnd = textarea.selectionStart = selectionEnd + insertedContentLength;
 };
 
@@ -44,7 +44,7 @@ export const setCursorPosition = ( textarea, insertedContentLength ) => {
  * @param {Function} onInsert A function to call after the insertion.
  */
 export const insertContent = ( textarea, before, content, after, onInsert = noop ) => {
-	const { value } = textarea;
+	const { selectionEnd, value } = textarea;
 	const newContent = before + content + after;
 
 	if ( Env.gecko ) {
@@ -55,14 +55,14 @@ export const insertContent = ( textarea, before, content, after, onInsert = noop
 		textarea.value = newContent;
 		textarea.focus();
 		document.execCommand( 'insertText', false, content );
-		setCursorPosition( textarea, newContent.length - value.length );
+		setCursorPosition( textarea, selectionEnd, newContent.length - value.length );
 		textarea.focus();
 		onInsert( newContent );
 	} else if ( !! Env.ie && Env.ie >= 11 ) {
 		// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
 		// Using the previous version of replacing the entire content value instead.
 		textarea.value = newContent;
-		setCursorPosition( textarea, newContent.length - value.length );
+		setCursorPosition( textarea, selectionEnd, newContent.length - value.length );
 		onInsert( newContent );
 	} else {
 		textarea.focus();
