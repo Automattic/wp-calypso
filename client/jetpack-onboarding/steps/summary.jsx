@@ -19,7 +19,7 @@ import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
 import Spinner from 'components/spinner';
-import TodoLinks from './summary-todo-links';
+import NextSteps from './summary-next-steps';
 import {
 	getJetpackOnboardingPendingSteps,
 	getJetpackOnboardingCompletedSteps,
@@ -80,7 +80,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						<TodoLinks siteId={ siteId } siteSlug={ siteSlug } siteUrl={ siteUrl } />
+						<NextSteps siteId={ siteId } siteSlug={ siteSlug } siteUrl={ siteUrl } />
 					</div>
 				</div>
 				<div className="steps__button-group">

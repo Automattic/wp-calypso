@@ -15,7 +15,7 @@ import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
 // We discard all other props in connect() to make sure the component only receives step objects.
-const TodoLinks = steps =>
+const NextSteps = steps =>
 	map( steps, ( { label, url }, stepName ) => (
 		<div key={ stepName } className="steps__summary-entry todo">
 			<a href={ url }>{ label }</a>
@@ -64,5 +64,5 @@ export default localize(
 		},
 		null,
 		stateProps => stateProps // Discard ownProps
-	)( TodoLinks )
+	)( NextSteps )
 );
