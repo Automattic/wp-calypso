@@ -197,7 +197,7 @@
 			max-width: 100%;
 			display: block;
 			margin: 20px auto;
-			border: 1px solid $gray-light;
+			border: 1px solid lighten( $gray, 30% );
 		}
 
 		&.alignright,
@@ -218,12 +218,15 @@
 	}
 
 	.wp-caption {
+		border: 1px solid lighten( $gray, 30% );
+		background-color: $gray-light;
 		margin-bottom: 20px;
 	}
 
 	.wp-caption-text {
-		color: $gray;
+		color: darken( $gray, 20% );
 		font-size: 12px;
+		padding: 3px 8px 6px;
 	}
 
 	h2 {
