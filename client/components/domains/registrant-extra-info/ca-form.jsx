@@ -129,7 +129,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		const { value, name, checked, type, id } = event.target;
 		const newContactDetails = {};
 
-		if ( this.props.contactDetails.hasOwnProperty( name ) ) {
+		if ( name === 'organization' ) {
 			newContactDetails[ name ] = value;
 			this.validateContactDetails( {
 				...this.props.contactDetails,
