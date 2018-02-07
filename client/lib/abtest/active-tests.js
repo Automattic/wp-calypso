@@ -101,5 +101,5 @@ export default {
 		},
 		defaultVariation: 'group_0',
 		allowExistingUsers: true,
-	}
+	},
 };
