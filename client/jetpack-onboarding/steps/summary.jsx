@@ -18,6 +18,7 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Spinner from 'components/spinner';
+import NextSteps from './summary-next-steps';
 import {
 	getJetpackOnboardingPendingSteps,
 	getJetpackOnboardingCompletedSteps,
@@ -52,37 +53,8 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 		} );
 	};
 
-	renderTodo = () => {
-		const { siteUrl, translate } = this.props;
-
-		const stepsTodo = {
-			JETPACK_CONNECTION: {
-				label: translate( 'Connect to WordPress.com' ),
-				url: '/jetpack/connect?url=' + siteUrl,
-			},
-			THEME: {
-				label: translate( 'Choose a Theme' ),
-				url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
-			},
-			PAGES: {
-				label: translate( 'Add additional pages' ),
-				url: siteUrl + '/wp-admin/post-new.php?post_type=page',
-			},
-			BLOG: {
-				label: translate( 'Write your first blog post' ),
-				url: siteUrl + '/wp-admin/post-new.php',
-			},
-		};
-
-		return map( stepsTodo, ( { label, url }, stepName ) => (
-			<div key={ stepName } className="steps__summary-entry todo">
-				<a href={ url }>{ label }</a>
-			</div>
-		) );
-	};
-
 	render() {
-		const { siteUrl, translate } = this.props;
+		const { siteId, siteSlug, siteUrl, translate } = this.props;
 
 		const headerText = translate( "You're ready to go!" );
 		const subHeaderText = translate(
@@ -106,7 +78,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						{ this.renderTodo() }
+						<NextSteps siteId={ siteId } siteSlug={ siteSlug } siteUrl={ siteUrl } />
 					</div>
 				</div>
 				<div className="steps__button-group">
