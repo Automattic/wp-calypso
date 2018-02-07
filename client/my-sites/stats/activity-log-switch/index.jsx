@@ -13,6 +13,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getRewindState } from 'state/selectors';
+import { getSiteUrl } from 'state/sites/selectors';
 
 class ActivityLogSwitch extends Component {
 	static propTypes = {
@@ -81,7 +82,7 @@ class ActivityLogSwitch extends Component {
 		const {
 			translate,
 			redirect,
-			siteSlug,
+			siteUrl,
 		} = this.props;
 
 		return (
@@ -101,7 +102,7 @@ class ActivityLogSwitch extends Component {
 					<div>
 						<a
 							className="activity-log-switch__no-thanks"
-							href={ `//${ siteSlug }${ redirect }` }>
+							href={ `${ siteUrl }${ redirect }` }>
 							{ translate( 'No thanks' ) }
 						</a>
 					</div>
@@ -167,6 +168,7 @@ export default connect(
 		const rewindState = getRewindState( state, siteId );
 		return {
 			siteSlug: getSelectedSiteSlug( state, siteId ),
+			siteUrl: getSiteUrl( state, siteId ),
 			rewindState: rewindState.state,
 			failureReason: rewindState.failureReason || '',
 		};
