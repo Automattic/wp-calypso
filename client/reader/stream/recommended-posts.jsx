@@ -51,6 +51,7 @@ export class RecommendedPosts extends React.PureComponent {
 		recommendations: PropTypes.array,
 	};
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const { posts, recommendations } = this.props;
 		return (
