@@ -109,8 +109,7 @@ export class CreditCardFormFields extends React.Component {
 		const { translate, countriesList } = this.props;
 		const { userSelectedPhoneCountryCode } = this.state;
 		const countryCode = this.getFieldValue( 'country' );
-		const countryData = find( countriesList.get(), { code: countryCode } );
-		const countryName = countryData ? countryData.name : translate( 'this country' );
+		const countryName = find( countriesList.get(), { code: countryCode } ).name;
 
 		return [
 			<span key="ebanx-required-fields" className="credit-card-form-fields__info-text">

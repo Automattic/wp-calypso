@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { isFunction, noop, omit } from 'lodash';
+import { filter, isFunction, noop, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ import { setPaymentCountryCode } from 'state/ui/payment/actions';
 class PaymentCountrySelect extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
+		countriesList: PropTypes.object.isRequired,
 		onCountrySelected: PropTypes.func,
 		countryCode: PropTypes.string,
 		updateGlobalCountryCode: PropTypes.func,
@@ -34,7 +35,17 @@ class PaymentCountrySelect extends Component {
 	componentDidMount = () => {
 		// Notify the callback function about the country (or lack thereof)
 		// that is pre-selected at the time the component is first displayed.
-		this.props.onCountrySelected( this.props.name, this.props.countryCode );
+		let countryCode = this.props.countryCode;
+		if ( ! filter( this.props.countriesList.get(), { code: countryCode } ).length ) {
+			// If the stored payment country isn't one of the allowed countries
+			// for this component, pass along the default value instead (so
+			// that the value the callback function receives never represents a
+			// country that it considers to be an invalid choice, and so that
+			// it always matches what the user actually sees pre-selected in
+			// the form field).
+			countryCode = '';
+		}
+		this.props.onCountrySelected( this.props.name, countryCode );
 	};
 
 	handleFieldChange = event => {
