@@ -132,7 +132,7 @@ export class CreditCardFormFields extends React.Component {
 			this.createField( 'phone-number', FormPhoneMediaInput, {
 				onChange: this.handlePhoneFieldChange,
 				countriesList: countriesList,
-				// If the user has manally selected a country for the phone
+				// If the user has manually selected a country for the phone
 				// number, use that, but otherwise default this to the same
 				// country as the billing address.
 				countryCode: userSelectedPhoneCountryCode || countryCode,

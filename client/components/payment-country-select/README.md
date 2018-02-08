@@ -9,8 +9,8 @@ It is a wrapper around the more generic `CountrySelect` component, with the prim
 
 This component accepts all the standard properties of the `CountrySelect` component, with the exception of `value` (since the default value of the country selector is controlled internally, as described in the previous section).
 
-In addition, there is one new component, which is optional:
+In addition, there is one new property, which is optional:
 
 ### `onCountrySelected`
 
-A function that is invoked when a country is selected in the component. The function is passed the field name and new field value (i.e., the country code) as parameters. This function can be used by code which needs to react to all instances in which a country is selected (or unselected) in the component, regardless of whether the selection happened via user interaction with the country dropdown or due to the country being the default selected option when the component was rendered. (Note that if your code only needs to track changes due to user interaction, the standard `onChange` property supported by the `CountrySelect` component can be used with this component too.)
+A function that is invoked when a country is selected in the component. The function is passed the field name and field value (i.e., the country code) as parameters. This function can be used by code which needs to react to all instances in which a country is selected (or unselected) in the component, regardless of whether the selection happened via user interaction with the country dropdown or due to the country being the default selected option when the component was rendered. (Note that if your code only needs to track changes due to user interaction, the standard `onChange` property supported by the `CountrySelect` component can be used with this component too.)
