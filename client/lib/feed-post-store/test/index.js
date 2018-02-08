@@ -124,6 +124,7 @@ describe( 'feed-post-store', () => {
 			ID: 3, // notice this can and will be different for wpcom posts
 			site_ID: 4,
 			title: 'a sample post',
+			global_ID: 1,
 		};
 		Dispatcher.handleServerAction( {
 			type: FeedPostActionType.RECEIVE_FEED_POST,
@@ -141,6 +142,7 @@ describe( 'feed-post-store', () => {
 
 	test( 'should send a post without a feed_ID across the bridge', () => {
 		const post = {
+			global_ID: 1,
 			ID: 3, // notice this can and will be different for wpcom posts
 			site_ID: 4,
 			title: 'a sample post',

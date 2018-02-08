@@ -138,7 +138,7 @@ describe( 'actions', () => {
 							is_error: true,
 							error: { status: 'oh no' },
 							feed_ID: undefined,
-							global_ID: 'na-1-2',
+							global_ID: sinon.match.any,
 						},
 					],
 				} );
@@ -165,7 +165,7 @@ describe( 'actions', () => {
 							is_error: true,
 							error: { status: 'oh no' },
 							feed_ID: 1,
-							global_ID: '1-na-2',
+							global_ID: sinon.match.any,
 						},
 					],
 				} );

@@ -141,6 +141,10 @@ export default class PagedStream {
 	}
 
 	isValidPostOrGap( postKey ) {
+		if ( postKey.isGap ) {
+			return true;
+		}
+
 		const post = getPostByKey( reduxGetState(), postKey );
 		return (
 			post && post._state !== 'error' && post._state !== 'pending' && post._state !== 'minimal'

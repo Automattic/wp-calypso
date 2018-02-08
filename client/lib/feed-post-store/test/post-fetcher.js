@@ -13,6 +13,7 @@ jest.mock( 'lib/redux-bridge', () => ( {
 	},
 	reduxDispatch: jest.fn(),
 } ) );
+jest.mock( 'lib/feed-post-store', () => ( { on: jest.fn() } ) );
 
 /**
  * Internal dependencies

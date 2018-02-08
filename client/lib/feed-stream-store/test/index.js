@@ -22,7 +22,16 @@ jest.mock( 'reader/stats', () => ( {
 jest.mock( 'lib/redux-bridge', () => ( {
 	reduxGetState: function() {
 		return {
-			reader: { posts: { items: { [ 1 ]: { feed_ID: 1, ID: 1 }, [ 4 ]: { feed_ID: 1, ID: 4 } } } },
+			reader: {
+				posts: {
+					items: {
+						[ 1 ]: { feed_ID: 1, feed_item_ID: 1 },
+						[ 2 ]: { feed_ID: 1, feed_item_ID: 2 },
+						[ 3 ]: { feed_ID: 1, feed_item_ID: 3, _state: 'error' },
+						[ 4 ]: { feed_ID: 1, feed_item_ID: 4 },
+					},
+				},
+			},
 		};
 	},
 } ) );
@@ -143,10 +152,10 @@ describe( 'FeedPostList', () => {
 				},
 			} );
 			fakePosts = [
-				{ feed_ID: 1, ID: 1 },
-				{ feed_ID: 1, ID: 2 },
-				{ feed_ID: 1, ID: 3 },
-				{ feed_ID: 1, ID: 4 },
+				{ feedId: 1, postId: 1 },
+				{ feedId: 1, postId: 2 },
+				{ feedId: 1, postId: 3 },
+				{ feedId: 1, postId: 4 },
 			];
 			store.receivePage( 'test', null, { posts: fakePosts } );
 		} );
@@ -156,29 +165,29 @@ describe( 'FeedPostList', () => {
 		} );
 
 		test( 'should select the next item', () => {
-			store.selectItem( { feed_ID: 1, ID: 1 } );
+			store.selectItem( fakePosts[ 0 ] );
 			store.selectNextItem();
 			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 		} );
 
 		test( 'should select the next valid post', () => {
-			store.selectItem( { feed_ID: 1, ID: 1 } );
+			store.selectItem( fakePosts[ 1 ] );
 			store.selectNextItem();
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 2 } );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 3 ] );
 		} );
 
 		test( 'should select the prev item', () => {
-			store.selectItem( { feed_ID: 1, ID: 3 } );
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
+			store.selectItem( fakePosts[ 1 ] );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 			store.selectPrevItem();
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 2 } );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 0 ] );
 		} );
 
 		test( 'should select the prev valid post', () => {
-			store.selectItem( { feed_ID: 1, ID: 3 } );
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
+			store.selectItem( fakePosts[ 3 ] );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 3 ] );
 			store.selectPrevItem();
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 2 } );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 		} );
 	} );
 
