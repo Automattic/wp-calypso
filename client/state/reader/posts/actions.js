@@ -27,6 +27,11 @@ function fetchForKey( postKey ) {
 	return wpcom.undocumented().readFeedPost( postKey );
 }
 
+// helper that hides promise rejections so they return successfully with null instead of rejecting
+// this is so that a failure within a slow run of normalization doesn't stop successful posts
+// from being dispatched
+const hideRejections = promise => promise.catch( () => null );
+
 /**
  * Returns an action object to signal that post objects have been received.
  *
@@ -47,12 +52,12 @@ export const receivePosts = posts => dispatch => {
 	} );
 
 	// also save them after running the slow rules
-	Promise.all( normalizedPosts.map( runSlowRules ) ).then( processedPosts => {
+	Promise.all( normalizedPosts.map( runSlowRules ).map( hideRejections ) ).then( processedPosts =>
 		dispatch( {
 			type: READER_POSTS_RECEIVE,
-			posts: [ processedPosts ],
-		} );
-	} );
+			posts: compact( processedPosts ), // prune out the "null" rejections
+		} )
+	);
 
 	forEach( filter( normalizedPosts, 'railcar' ), trackRailcarRender );
 
