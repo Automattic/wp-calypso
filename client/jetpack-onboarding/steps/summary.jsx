@@ -14,8 +14,8 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import CompletedSteps from './summary-completed-steps';
-import NextSteps from './summary-next-steps';
+import CompletedSteps from '../summary-completed-steps';
+import NextSteps from '../summary-next-steps';
 import { getUnconnectedSiteUrl } from 'state/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 

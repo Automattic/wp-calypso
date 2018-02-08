@@ -21,7 +21,7 @@ import {
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 	JETPACK_ONBOARDING_STEPS as STEPS,
-} from '../constants';
+} from './constants';
 
 const CompletedSteps = ( { siteSlug, steps, stepsCompleted, stepsPending } ) =>
 	map( without( steps, STEPS.SUMMARY ), stepName => {
