@@ -91,8 +91,8 @@
       }
     },
     "@types/node": {
-      "version": "9.4.2",
-      "integrity": "sha512-ubLY/uq8AQR+N1vUoa5Uf2zDg4yg/bysc3o4AAZzaMRS564R+vIRYqBxwfNlmRxRDJt/c5gn/X8O9mX8Oowugw==",
+      "version": "8.9.1",
+      "integrity": "sha512-4JFGIC1RSoFngVsT5EZcL793/uRi/OJ3ilsp9DQUr4LZOaMhNM1pPrt9TqlXOnXj3h73hl6NF31v87eQAPXYTg==",
       "dev": true
     },
     "JSONStream": {
@@ -3078,23 +3078,6 @@
         "strip-bom": "2.0.0"
       }
     },
-    "defaults-deep": {
-      "version": "0.2.4",
-      "integrity": "sha512-V6BtqzcMvn0EPOy7f+SfMhfmTawq+7UQdt9yZH0EBK89+IHo5f+Hse/qzTorAXOBrQpxpwb6cB/8OgtaMrT+Fg==",
-      "dev": true,
-      "requires": {
-        "for-own": "0.1.5",
-        "is-extendable": "0.1.1",
-        "lazy-cache": "0.2.7"
-      },
-      "dependencies": {
-        "lazy-cache": {
-          "version": "0.2.7",
-          "integrity": "sha1-f+3fLctu23fRHvHRF6tf/fCrG2U=",
-          "dev": true
-        }
-      }
-    },
     "deferred-leveldown": {
       "version": "1.2.2",
       "integrity": "sha512-uukrWD2bguRtXilKt6cAWKyoXrTSMo5m7crUdLfWQmu8kIm88w3QZoUL+6nhpfKVmhHANER6Re3sKoNoZ3IKMA==",
@@ -3268,22 +3251,6 @@
       "version": "1.0.0",
       "integrity": "sha1-44Mx8IRLukm5qctxx3FYWqsbxlo=",
       "dev": true
-    },
-    "disparity": {
-      "version": "2.0.0",
-      "integrity": "sha1-V92stHMkrl9Y0swNqIbbTOnutxg=",
-      "dev": true,
-      "requires": {
-        "ansi-styles": "2.2.1",
-        "diff": "1.4.0"
-      },
-      "dependencies": {
-        "diff": {
-          "version": "1.4.0",
-          "integrity": "sha1-fyjS657nsVqX79ic5j3P2qPMur8=",
-          "dev": true
-        }
-      }
     },
     "doctrine": {
       "version": "2.0.0",
@@ -3905,160 +3872,6 @@
         "es6-weak-map": "2.0.2",
         "esrecurse": "4.2.0",
         "estraverse": "4.2.0"
-      }
-    },
-    "esformatter": {
-      "version": "0.7.3",
-      "integrity": "sha1-p0NztHLt6PNVkgsj391vnV7g6Ko=",
-      "dev": true,
-      "requires": {
-        "debug": "0.7.4",
-        "disparity": "2.0.0",
-        "espree": "1.12.3",
-        "glob": "5.0.15",
-        "minimist": "1.2.0",
-        "mout": "1.1.0",
-        "npm-run": "1.1.1",
-        "resolve": "1.5.0",
-        "rocambole": "0.7.0",
-        "rocambole-indent": "2.0.4",
-        "rocambole-linebreak": "1.0.2",
-        "rocambole-node": "1.0.0",
-        "rocambole-token": "1.2.1",
-        "rocambole-whitespace": "1.0.0",
-        "semver": "2.2.1",
-        "stdin": "0.0.1",
-        "strip-json-comments": "0.1.3",
-        "supports-color": "1.3.1",
-        "user-home": "2.0.0"
-      },
-      "dependencies": {
-        "debug": {
-          "version": "0.7.4",
-          "integrity": "sha1-BuHqgILCyxTjmAbiLi9vdX+Srzk=",
-          "dev": true
-        },
-        "espree": {
-          "version": "1.12.3",
-          "integrity": "sha1-BM7q2pG9oHejjAQMEluhhrE7s8w=",
-          "dev": true
-        },
-        "glob": {
-          "version": "5.0.15",
-          "integrity": "sha1-G8k2ueAvSmA/zCIuz3Yz0wuLk7E=",
-          "dev": true,
-          "requires": {
-            "inflight": "1.0.6",
-            "inherits": "2.0.1",
-            "minimatch": "3.0.4",
-            "once": "1.4.0",
-            "path-is-absolute": "1.0.1"
-          }
-        },
-        "minimist": {
-          "version": "1.2.0",
-          "integrity": "sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=",
-          "dev": true
-        },
-        "semver": {
-          "version": "2.2.1",
-          "integrity": "sha1-eUEYKz/8xYC/8cF5QqzfeVHA0hM=",
-          "dev": true
-        },
-        "strip-json-comments": {
-          "version": "0.1.3",
-          "integrity": "sha1-Fkxk43Coo8wAyeAbU55WmCPw7lQ=",
-          "dev": true
-        },
-        "supports-color": {
-          "version": "1.3.1",
-          "integrity": "sha1-FXWN8J2P87SswwdTn6vicJXhBC0=",
-          "dev": true
-        },
-        "user-home": {
-          "version": "2.0.0",
-          "integrity": "sha1-nHC/2Babwdy/SGBODwS4tJzenp8=",
-          "dev": true,
-          "requires": {
-            "os-homedir": "1.0.2"
-          }
-        }
-      }
-    },
-    "esformatter-braces": {
-      "version": "1.2.1",
-      "integrity": "sha1-c+BxdEat5LsmnO7OtGw3AujB6Cc=",
-      "dev": true,
-      "requires": {
-        "rocambole-token": "1.2.1"
-      }
-    },
-    "esformatter-collapse-objects-a8c": {
-      "version": "0.1.0",
-      "integrity": "sha1-vFUbXqZL6bzWgf8DoUHqGOod5rI=",
-      "dev": true,
-      "requires": {
-        "defaults-deep": "0.2.4",
-        "rocambole": "0.5.1",
-        "rocambole-token": "1.2.1"
-      },
-      "dependencies": {
-        "esprima": {
-          "version": "2.7.3",
-          "integrity": "sha1-luO3DVd59q1JzQMmc9HDEnZ7pYE=",
-          "dev": true
-        },
-        "rocambole": {
-          "version": "0.5.1",
-          "integrity": "sha1-MEj2SyOIuN2Okz+a1EPws4mrYI8=",
-          "dev": true,
-          "requires": {
-            "esprima": "2.7.3"
-          }
-        }
-      }
-    },
-    "esformatter-dot-notation": {
-      "version": "1.3.1",
-      "integrity": "sha1-21uqJBQyFOVA+jJ9JV7rBPWxV+A=",
-      "dev": true,
-      "requires": {
-        "rocambole": "0.6.0",
-        "rocambole-token": "1.2.1",
-        "unquoted-property-validator": "1.0.2"
-      },
-      "dependencies": {
-        "esprima": {
-          "version": "2.7.3",
-          "integrity": "sha1-luO3DVd59q1JzQMmc9HDEnZ7pYE=",
-          "dev": true
-        },
-        "rocambole": {
-          "version": "0.6.0",
-          "integrity": "sha1-U08jWih8wX+bBXuVvRHQ8Nw1RSw=",
-          "dev": true,
-          "requires": {
-            "esprima": "2.7.3"
-          }
-        }
-      }
-    },
-    "esformatter-quotes": {
-      "version": "1.0.3",
-      "integrity": "sha1-B0Cv5G30B8jj3heaqZKNs9hZqiA=",
-      "dev": true
-    },
-    "esformatter-semicolons": {
-      "version": "1.1.1",
-      "integrity": "sha1-CauHaUwRn67f1a+HM4kz0aFrKSs=",
-      "dev": true
-    },
-    "esformatter-special-bangs": {
-      "version": "1.0.1",
-      "integrity": "sha1-JNyzG58DuRJk+xbMbr9bqQjP4tk=",
-      "dev": true,
-      "requires": {
-        "rocambole-token": "1.2.1"
       }
     },
     "eslines": {
@@ -7689,7 +7502,7 @@
         "jest-docblock": "22.2.0",
         "jest-worker": "22.2.0",
         "micromatch": "2.3.11",
-        "sane": "2.3.0"
+        "sane": "2.4.1"
       },
       "dependencies": {
         "jest-docblock": {
@@ -9754,11 +9567,6 @@
         }
       }
     },
-    "mout": {
-      "version": "1.1.0",
-      "integrity": "sha512-XsP0vf4As6BfqglxZqbqQ8SR6KQot2AgxvR0gG+WtUkf90vUXchMOZQtPf/Hml1rEffJupqL/tIrU6EYhsUQjw==",
-      "dev": true
-    },
     "move-concurrently": {
       "version": "1.0.1",
       "integrity": "sha1-viwAX9oy4LKa8fBdfEszIUxwH5I=",
@@ -10285,32 +10093,6 @@
       "version": "2.1.5",
       "integrity": "sha512-Djz+vI+090wNzhoqVdWYd21NOooMXCYwhkWFp+sS+K1chkXzVuMC2wl3BfBNSfJ+X6sTvkD7x/J8U4uertuexg=="
     },
-    "npm-path": {
-      "version": "1.1.0",
-      "integrity": "sha1-BHSuAEGcMn1UcBt88s0F3Ii+EUA=",
-      "dev": true,
-      "requires": {
-        "which": "1.3.0"
-      }
-    },
-    "npm-run": {
-      "version": "1.1.1",
-      "integrity": "sha1-xDEkUfOCt67npIWOYCg6vz26yOw=",
-      "dev": true,
-      "requires": {
-        "minimist": "1.2.0",
-        "npm-path": "1.1.0",
-        "serializerr": "1.0.3",
-        "sync-exec": "0.5.0"
-      },
-      "dependencies": {
-        "minimist": {
-          "version": "1.2.0",
-          "integrity": "sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=",
-          "dev": true
-        }
-      }
-    },
     "npm-run-all": {
       "version": "4.0.2",
       "integrity": "sha1-qEZpNI5ttsy+BSIAtM22v+A0pP4=",
@@ -10774,7 +10556,7 @@
       "integrity": "sha512-rgO9Zg5LLLkfJF9E6CCmXlSE4UVceloys8JrFqCcHloC3usd/kJCyPDwH2SOlzix2j3xaP9sUX3e8+kvkuleAA==",
       "dev": true,
       "requires": {
-        "@types/node": "9.4.2"
+        "@types/node": "8.9.1"
       }
     },
     "parsejson": {
@@ -11591,11 +11373,6 @@
     "propagate": {
       "version": "0.4.0",
       "integrity": "sha1-8/zKCm/gZzanulcpZgaWF8EwtIE=",
-      "dev": true
-    },
-    "protochain": {
-      "version": "1.0.5",
-      "integrity": "sha1-mRxAfpneJkqt+PgVBLXn+ve/omA=",
       "dev": true
     },
     "proxy-addr": {
@@ -13317,75 +13094,6 @@
         "inherits": "2.0.1"
       }
     },
-    "rocambole": {
-      "version": "0.7.0",
-      "integrity": "sha1-9seVBVF9xCtvuECEK4uVOw+WhYU=",
-      "dev": true,
-      "requires": {
-        "esprima": "2.7.3"
-      },
-      "dependencies": {
-        "esprima": {
-          "version": "2.7.3",
-          "integrity": "sha1-luO3DVd59q1JzQMmc9HDEnZ7pYE=",
-          "dev": true
-        }
-      }
-    },
-    "rocambole-indent": {
-      "version": "2.0.4",
-      "integrity": "sha1-oYokl3ygQAuGHapGMehh3LUtCFw=",
-      "dev": true,
-      "requires": {
-        "debug": "2.2.0",
-        "mout": "0.11.1",
-        "rocambole-token": "1.2.1"
-      },
-      "dependencies": {
-        "mout": {
-          "version": "0.11.1",
-          "integrity": "sha1-ujYR318OWx/7/QEWa48C0fX6K5k=",
-          "dev": true
-        }
-      }
-    },
-    "rocambole-linebreak": {
-      "version": "1.0.2",
-      "integrity": "sha1-A2IVFbQ7RyHJflocG8paA2Y2jy8=",
-      "dev": true,
-      "requires": {
-        "debug": "2.2.0",
-        "rocambole-token": "1.2.1",
-        "semver": "4.3.6"
-      },
-      "dependencies": {
-        "semver": {
-          "version": "4.3.6",
-          "integrity": "sha1-MAvG4OhjdPe6YQaLWx7NV/xlMto=",
-          "dev": true
-        }
-      }
-    },
-    "rocambole-node": {
-      "version": "1.0.0",
-      "integrity": "sha1-21tJ3nQHsAgN1RSHLyjjk9D3/z8=",
-      "dev": true
-    },
-    "rocambole-token": {
-      "version": "1.2.1",
-      "integrity": "sha1-x4XfdCjcPLJ614lwR71SOMwHDTU=",
-      "dev": true
-    },
-    "rocambole-whitespace": {
-      "version": "1.0.0",
-      "integrity": "sha1-YzMJSSVrKZQfWbGQRZ+ZnGsdO/k=",
-      "dev": true,
-      "requires": {
-        "debug": "2.2.0",
-        "repeat-string": "1.6.1",
-        "rocambole-token": "1.2.1"
-      }
-    },
     "rst-selector-parser": {
       "version": "2.2.3",
       "integrity": "sha1-gbIw6i/MYGbInjRy3nlChdmwPZE=",
@@ -13495,8 +13203,8 @@
       "dev": true
     },
     "sane": {
-      "version": "2.3.0",
-      "integrity": "sha512-6GB9zPCsqJqQPAGcvEkUPijM1ZUFI+A/DrscL++dXO3Ltt5q5mPDayGxZtr3cBRkrbb4akbwszVVkTIFefEkcg==",
+      "version": "2.4.1",
+      "integrity": "sha512-fW9svvNd81XzHDZyis9/tEY1bZikDGryy8Hi1BErPyNPYv47CdLseUN+tI5FBHWXEENRtj1SWtX/jBnggLaP0w==",
       "dev": true,
       "requires": {
         "anymatch": "1.3.2",
@@ -13667,14 +13375,6 @@
     "serialize-error": {
       "version": "2.1.0",
       "integrity": "sha1-ULZ51WNc34Rme9yOWa9OW4HV9go="
-    },
-    "serializerr": {
-      "version": "1.0.3",
-      "integrity": "sha1-EtTFqhw/+49tHcXzlaqUVVacP5E=",
-      "dev": true,
-      "requires": {
-        "protochain": "1.0.5"
-      }
     },
     "serve-static": {
       "version": "1.10.3",
@@ -14063,11 +13763,6 @@
     "statuses": {
       "version": "1.4.0",
       "integrity": "sha512-zhSCtt8v2NDrRlPQpCNtw/heZLtfUDqxBM1udqikb/Hbk52LK4nQSwr10u77iopCW5LsyHpuXS0GnEc48mLeew=="
-    },
-    "stdin": {
-      "version": "0.0.1",
-      "integrity": "sha1-0wQZgarsPf28d6GzjWNy449ftx4=",
-      "dev": true
     },
     "stdout-stream": {
       "version": "1.4.0",
@@ -14580,11 +14275,6 @@
       "integrity": "sha1-rifbOPZgp64uHDt9G8KQgZuFGeY=",
       "dev": true
     },
-    "sync-exec": {
-      "version": "0.5.0",
-      "integrity": "sha1-P3JY5KW6FyRTgZCfpqb2z1BuFmE=",
-      "dev": true
-    },
     "synesthesia": {
       "version": "1.0.1",
       "integrity": "sha1-XvlepUjA1cbm+btLDQcx3/hkp3c=",
@@ -15074,14 +14764,14 @@
         "find-cache-dir": "1.0.0",
         "schema-utils": "0.3.0",
         "source-map": "0.5.7",
-        "uglify-es": "3.3.9",
+        "uglify-es": "3.3.10",
         "webpack-sources": "1.1.0",
         "worker-farm": "1.5.2"
       },
       "dependencies": {
         "commander": {
-          "version": "2.13.0",
-          "integrity": "sha512-MVuS359B+YzaWqjCL/c+22gfryv+mCBPHAv3zyVI2GN8EY6IRP8VwtasXn8jyyhvvq84R4ImN1OKRtcbIasjYA=="
+          "version": "2.14.1",
+          "integrity": "sha512-+YR16o3rK53SmWHU3rEM3tPAh2rwb1yPcQX5irVn7mb0gXbwuCCrnkbV5+PBfETdfg1vui07nM6PCG1zndcjQw=="
         },
         "source-list-map": {
           "version": "2.0.0",
@@ -15092,10 +14782,10 @@
           "integrity": "sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w="
         },
         "uglify-es": {
-          "version": "3.3.9",
-          "integrity": "sha512-r+MU0rfv4L/0eeW3xZrd16t4NZfK8Ld4SWVglYBb7ez5uXFWHuVRs6xCTrf1yirs9a4j4Y27nn7SRfO6v67XsQ==",
+          "version": "3.3.10",
+          "integrity": "sha512-rPzPisCzW68Okj1zNrfa2dR9uEm43SevDmpR6FChoZABFk9dANGnzzBMgHYUXI3609//63fnVkyQ1SQmAMyjww==",
           "requires": {
-            "commander": "2.13.0",
+            "commander": "2.14.1",
             "source-map": "0.6.1"
           },
           "dependencies": {
@@ -15224,11 +14914,6 @@
     "unpipe": {
       "version": "1.0.0",
       "integrity": "sha1-sr9O6FFKrmFltIF4KdIbLvSZBOw="
-    },
-    "unquoted-property-validator": {
-      "version": "1.0.2",
-      "integrity": "sha512-LokWcfN2q9UnQTTIpRkTZNsLVVO2KaXeO3oUMQ7JShGhMdO8P+zN1MfrPMf1IwR/Cyh283lGaxbRcNGyq2IXYQ==",
-      "dev": true
     },
     "unreachable-branch-transform": {
       "version": "0.3.0",
