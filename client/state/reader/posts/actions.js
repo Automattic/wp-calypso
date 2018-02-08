@@ -2,6 +2,7 @@
 /**
  * External Dependencies
  */
+import { v4 as uuid } from 'uuid';
 import { filter, forEach, compact, partition } from 'lodash';
 
 /**
@@ -83,7 +84,7 @@ function receiveErrorForPostKey( error, postKey ) {
 				ID: postKey.postId,
 				site_ID: postKey.blogId,
 				is_external: ! postKey.blogId,
-				global_ID: `${ postKey.feedId || 'na' }-${ postKey.blogId || 'na' }-${ postKey.postId }`,
+				global_ID: uuid(),
 				is_error: true,
 				error,
 			},
