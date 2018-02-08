@@ -1,0 +1,35 @@
+.card.google-my-business__stats-nudge {
+	padding-left: 48px;
+	position: relative;
+}
+
+.google-my-business__stats-nudge-heading {
+	font-weight: 600;
+	position: relative;
+	margin-bottom: 8px;
+}
+
+.google-my-business__stats-nudge-description {
+	margin-bottom: 0;
+}
+
+.google-my-business__stats-nudge-button {
+	margin-top: 8px;
+
+	background: $blue-medium;
+	border-color: $blue-wordpress;
+	color: $white;
+
+	&:hover,
+	&:focus {
+		border-color: $blue-dark;
+		color: $white;
+	}
+	&[disabled],
+	&:disabled {
+		background: tint( $blue-light, 50% );
+		border-color: tint( $blue-wordpress, 55% );
+		color: $white;
+	}
+	
+}
