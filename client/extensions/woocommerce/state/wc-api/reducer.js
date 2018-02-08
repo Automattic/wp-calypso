@@ -11,4 +11,4 @@ const reducers = {
 };
 
 const reducer = combineReducers( reducers );
-export default keyedReducer( 'wcApiSite', reducer );
+export default keyedReducer( 'siteId', reducer );
