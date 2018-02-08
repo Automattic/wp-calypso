@@ -460,7 +460,9 @@ class Signup extends React.Component {
 				( this.props.signupDependencies &&
 					this.props.signupDependencies.domainItem &&
 					this.props.signupDependencies.domainItem.is_domain_registration &&
-					this.props.domainsWithPlansOnly )
+					this.props.domainsWithPlansOnly ) ||
+				( this.props.domainsWithPlansOnly &&
+					find( this.state.progress, { domainItem: { product_slug: 'domain_transfer' } } ) )
 			);
 
 		return (
