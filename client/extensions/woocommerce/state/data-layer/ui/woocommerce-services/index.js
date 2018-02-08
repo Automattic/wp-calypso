@@ -25,6 +25,10 @@ import { getPackagesForm } from 'woocommerce/woocommerce-services/state/packages
 import { submit as submitLabels } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { submit as submitPackages } from 'woocommerce/woocommerce-services/state/packages/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE } from 'woocommerce/woocommerce-services/state/action-types';
+import { shippingZoneMethodUpdated } from 'woocommerce/state/sites/shipping-zone-methods/actions';
+import * as api from 'woocommerce/woocommerce-services/api';
+import { dispatchWithProps } from 'woocommerce/state/helpers';
 
 const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
 	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );
@@ -116,6 +120,23 @@ export default {
 			store.dispatch(
 				isEmpty( nextSteps ) ? onSuccess : actionListStepNext( { nextSteps, onSuccess, onFailure } )
 			);
+		},
+	],
+
+	[ WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE ]: [
+		( { dispatch, getState }, action ) => {
+			const { siteId, methodId, methodType, method, successAction, failureAction } = action;
+			const updatedAction = data => {
+				dispatch( shippingZoneMethodUpdated( siteId, data, action ) );
+
+				const props = { sentData: method, receivedData: data };
+				dispatchWithProps( dispatch, getState, successAction, props );
+			};
+
+			api
+				.post( siteId, api.url.serviceSettings( methodType, methodId ), method )
+				.then( updatedAction )
+				.catch( error => dispatchWithProps( dispatch, getState, failureAction, { error } ) );
 		},
 	],
 };
