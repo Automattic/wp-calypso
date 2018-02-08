@@ -1236,14 +1236,14 @@ function addReaderContentWidth( params ) {
 
 Undocumented.prototype.readFollowing = function( query, fn ) {
 	debug( '/read/following' );
-	query.apiVersion = '1.3';
+	query.apiVersion = '1.2';
 	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/following', query, fn );
 };
 
 Undocumented.prototype.readA8C = function( query, fn ) {
 	debug( '/read/a8c' );
-	query.apiVersion = '1.3';
+	query.apiVersion = '1.2';
 	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/a8c', query, fn );
 };
@@ -1317,11 +1317,7 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
-	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
-		params.apiVersion = '1.3';
-	} else {
-		params.apiVersion = '1.2';
-	}
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(

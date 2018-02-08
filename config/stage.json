@@ -106,7 +106,6 @@
 		"reader/new-post-notifications": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
-		"reader/tags-with-elasticsearch": false,
 		"reader/search": true,
 		"resume-editing": true,
 		"republicize": true,
