@@ -27,7 +27,10 @@ const CompletedSteps = ( { siteSlug, steps, stepsCompleted, stepsPending } ) =>
 	map( without( steps, STEPS.SUMMARY ), stepName => {
 		const isCompleted = get( stepsCompleted, stepName ) === true;
 		const isPending = get( stepsPending, stepName );
-		const className = classNames( 'steps__summary-entry', isCompleted ? 'completed' : 'todo' );
+		const className = classNames(
+			'jetpack-onboarding__summary-entry',
+			isCompleted ? 'completed' : 'todo'
+		);
 
 		return (
 			<div key={ stepName } className={ className }>

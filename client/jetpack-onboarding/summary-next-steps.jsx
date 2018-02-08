@@ -19,7 +19,7 @@ const NextSteps = ( { siteId, steps } ) => (
 	<Fragment>
 		<QuerySites siteId={ siteId } />
 		{ map( steps, ( { label, url }, stepName ) => (
-			<div key={ stepName } className="steps__summary-entry todo">
+			<div key={ stepName } className="jetpack-onboarding__summary-entry todo">
 				<a href={ url }>{ label }</a>
 			</div>
 		) ) }
