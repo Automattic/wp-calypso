@@ -117,25 +117,28 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 
 	const { translate } = i18n;
 	const baseOptions = { duration: 4000, id: action.noticeId };
+
 	const announce = ( message, options ) =>
 		dispatch( errorNotice( message, options ? { ...baseOptions, ...options } : baseOptions ) );
+
 	const spreadHappiness = message => {
+		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
+			siteId: action.siteId,
+			error: error.error,
+			statusCode: error.statusCode,
+			host: action.host,
+			kpri: action.krpi ? 'provided but [omitted here]' : 'not provided',
+			pass: action.pass ? 'provided but [omitted here]' : 'not provided',
+			path: action.path,
+			port: action.port,
+			protocol: action.protocol,
+			user: action.user,
+		} );
+
 		dispatch(
-			withAnalytics(
-				recordTracksEvent( 'calypso_rewind_creds_update_failure', {
-					siteId: action.siteId,
-					error: error.error,
-					statusCode: error.statusCode,
-					host: action.host,
-					kpri: action.krpi ? 'provided but [omitted here]' : 'not provided',
-					pass: action.pass ? 'provided but [omitted here]' : 'not provided',
-					path: action.path,
-					port: action.port,
-					protocol: action.protocol,
-					user: action.user,
-				} ),
-				sendEvent( message )
-			)
+			isHappychatAvailable( getState() )
+				? withAnalytics( tracksEvent, sendEvent( message ) )
+				: tracksEvent
 		);
 	};
 
