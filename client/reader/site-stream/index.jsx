@@ -57,7 +57,7 @@ class SiteStream extends React.Component {
 			return <FeedError sidebarTitle={ title } />;
 		}
 
-		const featuredContent = featuredStore && <FeedFeatured store={ featuredStore } />;
+		const featuredContent = featuredStore && <FeedFeatured postsStore={ featuredStore } />;
 
 		return (
 			<Stream

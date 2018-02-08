@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { keyBy } from 'lodash';
+import { keyBy, some } from 'lodash';
 
 /**
  * Internal depedencies
@@ -27,9 +27,10 @@ const getPostMapByPostKey = treeSelect(
 );
 
 export const getPostByKey = ( state, postKey ) => {
-	if ( ! postKey ) {
+	if ( ! postKey || ! keyToString( postKey ) ) {
 		return null;
 	}
+
 	const postMap = getPostMapByPostKey( state );
 	return postMap[ keyToString( postKey ) ];
 };
@@ -37,7 +38,7 @@ export const getPostByKey = ( state, postKey ) => {
 export const getPostsByKeys = treeSelect(
 	state => [ getPostMapByPostKey( state ) ],
 	( [ postMap ], postKeys ) => {
-		if ( ! postKeys ) {
+		if ( ! postKeys || some( postKeys, postKey => ! keyToString( postKey ) ) ) {
 			return null;
 		}
 		return postKeys.map( keyToString ).map( key => postMap[ key ] );

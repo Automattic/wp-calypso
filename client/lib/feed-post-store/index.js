@@ -71,10 +71,6 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			break;
 
-		case FeedPostActionType.RECEIVE_NORMALIZED_FEED_POST:
-			setPost( action.data.feed_item_ID, action.data );
-			break;
-
 		case FeedPostActionType.MARK_FEED_POST_SEEN:
 			markPostSeen( action.data.post, action.data.site );
 			break;
@@ -83,11 +79,10 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 
 FeedPostStore.setMaxListeners( 100 );
 
+const isValidPost = post => post && post.global_ID;
+
 function setPost( post ) {
-	if (
-		! post ||
-		( ( ! post.ID || ! post.site_ID ) && ( ! post.feed_ID || ! post.feed_item_ID ) )
-	) {
+	if ( ! isValidPost( post ) ) {
 		return false;
 	}
 
@@ -126,7 +121,7 @@ function receivePending( action ) {
 }
 
 function receivePostFromPage( newPost ) {
-	if ( ! ( newPost && newPost.global_ID ) ) {
+	if ( ! isValidPost( newPost ) ) {
 		return;
 	}
 

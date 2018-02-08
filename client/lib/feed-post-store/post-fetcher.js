@@ -12,6 +12,12 @@ import { assign, noop, pick, pickBy } from 'lodash';
 import { reduxGetState } from 'lib/redux-bridge';
 import { getPostByKey } from 'state/reader/posts/selectors';
 
+// @TODO: remove this when FeedPostStore is removed
+// flux stores need at least one listener or else they won't listen to dispatched actions
+// this make a nooop listener
+import FeedPostStore from 'lib/feed-post-store';
+FeedPostStore.on( 'change', () => {} );
+
 function PostFetcher( options ) {
 	assign(
 		this,

@@ -49,11 +49,11 @@ export function keyToString( postKey ) {
 		return null;
 	}
 
-	const feedId = postKey.feedId ? `&feedId=${ postKey.feedId }` : '';
-	const blogId = postKey.blogId ? `&feedId=${ postKey.blogId }` : '';
-
 	if ( postKey.isCombination ) {
-		return `postId=${ postKey.postIds[ 0 ] }${ feedId }${ blogId } `;
+		const feedId = postKey.feedId ? `&feedId=${ postKey.feedId }` : '';
+		const blogId = postKey.blogId ? `&feedId=${ postKey.blogId }` : '';
+		const postIds = postKey.postIds.join( ',' );
+		return `postIds=[${ postIds }, ]${ feedId }${ blogId } `;
 	} else if ( postKey.isRecommendationBlock ) {
 		return `rec-${ postKey.index }`;
 	} else if ( postKey.feedId ) {
