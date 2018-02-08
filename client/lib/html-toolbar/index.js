@@ -45,7 +45,7 @@ export const setCursorPosition = ( textarea, selectionEnd, insertedContentLength
 export const insertContent = ( textarea, before, content, after, onInsert = noop ) => {
 	const { selectionEnd, value } = textarea;
 	const newContent = before + content + after;
-	const userAgent = get( window.navigator.userAgent, '' );
+	const userAgent = get( window, 'navigator.userAgent', '' );
 
 	if ( /(?:firefox|fxios)/i.test( userAgent ) ) {
 		// In Firefox, execCommand( 'insertText' ), needed to preserve the undo stack,
