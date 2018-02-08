@@ -23,7 +23,7 @@ import {
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
 import { errorNotice } from 'state/notices/actions';
 import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
-import { updateField } from 'woocommerce/woocommerce-services/state/service-settings/values/actions';
+import { updateField } from 'woocommerce/woocommerce-services/state/service-settings/actions';
 
 /**
  * Adds a new shipping method to the shipping zone currently being edited.
