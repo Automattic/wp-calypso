@@ -1,7 +1,7 @@
 /** @format */
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 export function recordAuthorClick( author ) {

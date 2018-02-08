@@ -1,7 +1,7 @@
 /**
  * Returns an array of states objects for the specified country code, or null
  * if there are not states for the country.
- * 
+ *
  *
  * @format
  * @param {String} countryCode Country code to check.

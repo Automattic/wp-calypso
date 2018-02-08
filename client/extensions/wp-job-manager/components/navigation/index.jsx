@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,8 +15,8 @@ import HeaderCake from 'components/header-cake';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
-import { addSiteFragment } from 'lib/route/path';
-import sectionsModule from 'sections';
+import { addSiteFragment } from 'lib/route';
+import { getSections } from 'sections-middleware';
 import { Tabs } from '../../constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -34,7 +32,7 @@ class Navigation extends Component {
 	};
 
 	getSettingsPath() {
-		const sections = sectionsModule.get();
+		const sections = getSections();
 		const section = find( sections, value => value.name === 'wp-job-manager' );
 
 		return get( section, 'settings_path' );

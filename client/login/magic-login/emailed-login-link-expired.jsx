@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { login } from 'lib/paths';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import EmptyContent from 'components/empty-content';
 import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
 import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';

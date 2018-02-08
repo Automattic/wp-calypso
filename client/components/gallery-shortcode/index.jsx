@@ -15,7 +15,7 @@ import { assign, omit, pick } from 'lodash';
  */
 import Shortcode from 'components/shortcode';
 import { parse as parseShortcode } from 'lib/shortcode';
-import MediaUtils from 'lib/media/utils';
+import { generateGalleryShortcode } from 'lib/media/utils';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
 
 /**
@@ -97,7 +97,7 @@ export default class GalleryShortcode extends React.Component {
 			return this.props.children;
 		}
 
-		return MediaUtils.generateGalleryShortcode( this.getAttributes() );
+		return generateGalleryShortcode( this.getAttributes() );
 	};
 
 	render() {

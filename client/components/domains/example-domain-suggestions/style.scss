@@ -7,7 +7,7 @@
 	margin: 0 auto 60px auto;
 
 	p {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 		text-align: right;
 		margin-bottom: 8px;
 	}

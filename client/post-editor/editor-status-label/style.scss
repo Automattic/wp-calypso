@@ -10,13 +10,13 @@
 
 	.gridicon {
 		display: inline-block;
-		fill: lighten( $gray, 10% );
+		fill: $gray-lighten-10;
 		position: absolute;
 			left: 14px;
 	}
 
 	strong {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 	}
 
 	&.is-publish strong {

@@ -3,16 +3,15 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { cartItems, isPaidForFullyInCredits } from 'lib/cart-values';
-import SubscriptionText from './subscription-text';
+import Button from 'components/button';
+import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -24,7 +23,7 @@ import {
 
 class PayButton extends React.Component {
 	buttonState = () => {
-		var state;
+		let state;
 
 		switch ( this.props.transactionStep.name ) {
 			case BEFORE_SUBMIT:
@@ -40,8 +39,15 @@ class PayButton extends React.Component {
 				break;
 
 			case SUBMITTING_PAYMENT_KEY_REQUEST:
-			case RECEIVED_PAYMENT_KEY_RESPONSE:
 				state = this.sending();
+				break;
+
+			case RECEIVED_PAYMENT_KEY_RESPONSE:
+				if ( this.props.transactionStep.error ) {
+					state = this.beforeSubmit();
+				} else {
+					state = this.sending();
+				}
 				break;
 
 			case SUBMITTING_WPCOM_REQUEST:
@@ -64,7 +70,7 @@ class PayButton extends React.Component {
 	};
 
 	beforeSubmitText = () => {
-		var cart = this.props.cart;
+		const cart = this.props.cart;
 
 		if ( this.props.beforeSubmitText ) {
 			return this.props.beforeSubmitText;
@@ -125,7 +131,7 @@ class PayButton extends React.Component {
 	};
 
 	completing = () => {
-		var text;
+		let text;
 		if ( cartItems.hasFreeTrial( this.props.cart ) ) {
 			text = this.props.translate( 'Starting your free trial…', {
 				context: 'Loading state on /checkout',
@@ -142,17 +148,18 @@ class PayButton extends React.Component {
 	};
 
 	render() {
-		var buttonState = this.buttonState();
+		const buttonState = this.buttonState();
 
 		return (
 			<span className="pay-button">
-				<button
+				<Button
 					type="submit"
 					className="button is-primary button-pay pay-button__button"
+					busy={ buttonState.disabled }
 					disabled={ buttonState.disabled }
 				>
 					{ buttonState.text }
-				</button>
+				</Button>
 				<SubscriptionText cart={ this.props.cart } />
 			</span>
 		);

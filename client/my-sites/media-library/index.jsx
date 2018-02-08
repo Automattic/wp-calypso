@@ -17,7 +17,7 @@ import Content from './content';
 import MediaActions from 'lib/media/actions';
 import MediaLibraryDropZone from './drop-zone';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaUtils from 'lib/media/utils';
+import { filterItemsByMimePrefix } from 'lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
 import MediaValidationData from 'components/data/media-validation-data';
@@ -103,7 +103,7 @@ class MediaLibrary extends Component {
 		if ( this.props.filter ) {
 			// Ensure that items selected as a consequence of this upload match
 			// the current filter
-			filteredItems = MediaUtils.filterItemsByMimePrefix(
+			filteredItems = filterItemsByMimePrefix(
 				filteredItems,
 				filterToMimePrefix( this.props.filter )
 			);

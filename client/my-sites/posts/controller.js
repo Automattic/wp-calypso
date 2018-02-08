@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
+import { getSiteFragment, sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
@@ -22,22 +22,22 @@ import { areAllSitesSingleUser } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import Posts from 'my-sites/posts/main';
 
 export default {
 	posts: function( context, next ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 
-		var Posts = require( 'my-sites/posts/main' ),
-			siteID = route.getSiteFragment( context.path ),
-			author = context.params.author === 'my' ? getCurrentUserId( state ) : null,
-			statusSlug = author ? context.params.status : context.params.author,
-			search = context.query.s,
-			category = context.query.category,
-			tag = context.query.tag,
-			basePath = route.sectionify( context.path ),
-			analyticsPageTitle = 'Blog Posts',
-			baseAnalyticsPath;
+		const siteID = getSiteFragment( context.path );
+		const author = context.params.author === 'my' ? getCurrentUserId( state ) : null;
+		let statusSlug = author ? context.params.status : context.params.author;
+		let search = context.query.s;
+		const category = context.query.category;
+		const tag = context.query.tag;
+		const basePath = sectionify( context.path );
+		let analyticsPageTitle = 'Blog Posts';
+		let baseAnalyticsPath;
 
 		function shouldRedirectMyPosts() {
 			if ( ! author ) {

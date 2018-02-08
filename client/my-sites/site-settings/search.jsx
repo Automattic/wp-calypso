@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { overSome } from 'lodash';
+import { overSome, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import SectionHeader from 'components/section-header';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -22,20 +22,16 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import untrailingslashit from 'lib/route/untrailingslashit';
 import {
 	getJetpackModule,
 	isActivatingJetpackModule,
 	isJetpackModuleActive,
 } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import {
-	// isBusiness,
-	// isEnterprise,
-	isVipPlan,
-	isJetpackBusiness,
-} from 'lib/products-values';
+import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
 
-const hasBusinessPlan = overSome( isJetpackBusiness ); // isBusiness, isEnterprise, // uncomment for Atomic
+const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise );
 
 class Search extends Component {
 	static defaultProps = {
@@ -69,22 +65,14 @@ class Search extends Component {
 
 		return (
 			<FormSettingExplanation>
-				{ translate( 'Your site is using enhanced search powered by Elasticsearch.' ) }
+				{ translate(
+					'Add the Search widget to your sidebar to configure advanced search filters.'
+				) }
 			</FormSettingExplanation>
 		);
 	}
 
-	renderWpcomSettings() {
-		return (
-			<div>
-				{ this.renderInfoLink( 'https://support.wordpress.com/search/' ) }
-
-				<div>{ this.renderSearchExplanation() }</div>
-			</div>
-		);
-	}
-
-	renderJetpackSettingsContent() {
+	renderSettingsContent() {
 		const { activatingSearchModule, searchModuleActive, translate } = this.props;
 
 		return (
@@ -98,7 +86,7 @@ class Search extends Component {
 		);
 	}
 
-	renderJetpackSettings() {
+	renderSettings() {
 		const { isRequestingSettings, isSavingSettings, siteId, translate } = this.props;
 
 		return (
@@ -108,26 +96,40 @@ class Search extends Component {
 				<JetpackModuleToggle
 					siteId={ siteId }
 					moduleSlug="search"
-					label={ translate( 'Enable site-wide search powered by Elasticsearch' ) }
+					label={ translate(
+						'Replace WordPress built-in search with an improved search experience'
+					) }
 					disabled={ isRequestingSettings || isSavingSettings }
 				/>
 
-				{ this.renderJetpackSettingsContent() }
+				{ this.renderSettingsContent() }
 			</FormFieldset>
 		);
 	}
 
 	render() {
-		const { siteId, siteIsJetpack, enableFeature, translate } = this.props;
+		const {
+			siteId,
+			site,
+			siteIsJetpack,
+			enableFeature,
+			searchModuleActive,
+			translate,
+		} = this.props;
 
 		// for now, don't even show upgrade nudge
 		if ( ! enableFeature ) {
 			return null;
 		}
 
-		// don't show for WPCOM, for now
+		// don't show for regular WPCOM sites, for now
 		if ( ! siteIsJetpack ) {
 			return null;
+		}
+
+		let widgetURL = get( site, 'options.admin_url', '' );
+		if ( widgetURL ) {
+			widgetURL = untrailingslashit( widgetURL ) + '/widgets.php';
 		}
 
 		return (
@@ -136,9 +138,12 @@ class Search extends Component {
 
 				<SectionHeader label={ translate( 'Search' ) } />
 
-				<Card className="search__card site-settings__traffic-settings">
-					{ siteIsJetpack ? this.renderJetpackSettings() : this.renderWpcomSettings() }
-				</Card>
+				<CompactCard className="search__card site-settings__traffic-settings">
+					{ this.renderSettings() }
+				</CompactCard>
+				{ searchModuleActive && (
+					<CompactCard href={ widgetURL }>{ translate( 'Add Search Widget' ) }</CompactCard>
+				) }
 			</div>
 		);
 	}

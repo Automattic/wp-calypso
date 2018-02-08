@@ -248,6 +248,11 @@ export const announceDeleteFailure = ( { dispatch }, action ) => {
 			postId,
 			comments: [ comment ],
 			skipSort: !! get( comment, 'parent.ID' ),
+			meta: {
+				comment: {
+					context: 'add', //adds a hint for the counts reducer.
+				},
+			},
 		} );
 	}
 };

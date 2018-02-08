@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
 
@@ -11,7 +9,7 @@ import page from 'page';
  * Internal Dependencies
  */
 import Types from './main';
-import { mapPostStatus } from 'lib/route/path';
+import { mapPostStatus } from 'lib/route';
 
 export function redirect() {
 	page.redirect( '/posts' );

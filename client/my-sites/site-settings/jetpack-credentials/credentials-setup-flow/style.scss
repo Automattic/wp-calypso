@@ -61,7 +61,7 @@
 }
 
 .credentials-setup-flow__popover .popover__inner {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 13px;
 	max-width: 220px;
 	padding: 16px;

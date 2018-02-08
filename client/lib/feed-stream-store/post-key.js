@@ -1,5 +1,9 @@
 /** @format */
 export function keyForPost( post ) {
+	if ( ! post ) {
+		return;
+	}
+
 	if ( post.feed_ID && post.feed_item_ID ) {
 		return {
 			feedId: post.feed_ID,
@@ -22,7 +26,7 @@ export function keysAreEqual( a, b ) {
 	if ( a === b ) {
 		return true;
 	}
-	if ( ( ! a && b ) || ( a && ! b ) ) {
+	if ( ( ! a && b ) || ( a && ! b ) || ( ! a && ! b && a !== b ) ) {
 		return false;
 	}
 	if ( ( a.isGap && ! b.isGap ) || ( ! a.isGap && b.isGap ) ) {

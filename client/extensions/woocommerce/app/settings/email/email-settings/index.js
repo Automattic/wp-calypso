@@ -30,6 +30,7 @@ import {
 } from 'woocommerce/state/sites/settings/email/selectors';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import CustomerNotification from './components/customer-notification';
+import Card from 'components/card';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import InternalNotification from './components/internal-notification';
 import NotificationsOrigin from './components/notifications-origin';
@@ -156,17 +157,18 @@ class Settings extends React.Component {
 	}
 
 	onChange = event => {
-		const { onChange, siteId } = this.props;
+		const { onChange, onSettingsChange, siteId } = this.props;
 		onChange( siteId, event );
+		onSettingsChange();
 	};
 
 	renderOriginNotification = ( item, index ) => {
-		const { settings, loading } = this.props;
+		const { settings, loaded } = this.props;
 		return (
 			<NotificationsOrigin
 				key={ index }
 				item={ item }
-				isPlaceholder={ loading }
+				loaded={ loaded }
 				recipient={ get( settings, [ item.field, item.option, 'value' ], '' ) }
 				placeholder={ get( settings, [ item.field, item.option, 'default' ], '' ) }
 				onChange={ this.onChange }
@@ -176,27 +178,26 @@ class Settings extends React.Component {
 	};
 
 	renderInternalNotification = ( item, index ) => {
-		const { settings, loading } = this.props;
+		const { settings, loaded } = this.props;
 		return (
 			<InternalNotification
 				key={ index }
 				item={ item }
 				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				recipient={ get( settings, [ item.field, 'recipient', 'value' ], '' ) }
-				placeholder={ get( settings, [ item.field, 'recipient', 'default' ], '' ) }
-				isPlaceholder={ loading }
+				loaded={ loaded }
 				onChange={ this.onChange }
 			/>
 		);
 	};
 
 	renderCustomerNotification = ( item, index ) => {
-		const { settings, loading } = this.props;
+		const { settings, loaded } = this.props;
 		return (
 			<CustomerNotification
 				key={ index }
 				item={ item }
-				isPlaceholder={ loading }
+				loaded={ loaded }
 				checked={ 'yes' === get( settings, [ item.field, 'enabled', 'value' ], '' ) }
 				onChange={ this.onChange }
 			/>
@@ -208,7 +209,7 @@ class Settings extends React.Component {
 		return (
 			<div className="email-settings__container">
 				<ExtendedHeader label={ translate( 'Origin' ) } />
-				<List>{ originNotifications.map( this.renderOriginNotification ) }</List>
+				<Card>{ originNotifications.map( this.renderOriginNotification ) }</Card>
 				<div>
 					<ExtendedHeader
 						label={ translate( 'Internal notifications' ) }
@@ -252,6 +253,7 @@ Settings.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	fetchSettings: PropTypes.func.isRequired,
 	onChange: PropTypes.func.isRequired,
+	onSettingsChange: PropTypes.func.isRequired,
 	settings: PropTypes.object,
 	loading: PropTypes.bool,
 };

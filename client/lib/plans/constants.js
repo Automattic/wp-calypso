@@ -30,7 +30,8 @@ export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
 export const POPULAR_PLANS = [ PLAN_PREMIUM ];
-export const NEW_PLANS = [ PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
+export const NEW_PLANS = [];
+export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
 export const JETPACK_PLANS = [
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -134,6 +135,7 @@ export const FEATURE_VIDEO_CDN_UNLIMITED = 'video-cdn-unlimited';
 export const FEATURE_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
 export const FEATURE_CONCIERGE_SETUP = 'concierge-setup-jetpack';
 export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
+export const FEATURE_SEARCH = 'search';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
@@ -457,15 +459,19 @@ export const PLANS_LIST = {
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
 				FEATURE_MARKETING_AUTOMATION,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_CDN_LIMITED,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -502,15 +508,19 @@ export const PLANS_LIST = {
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_MALWARE_SCANNING_DAILY,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_GOOGLE_ANALYTICS,
 			] ),
 		getSignupFeatures: () =>
 			compact( [
 				FEATURE_MALWARE_SCANNING_DAILY,
 				FEATURE_MARKETING_AUTOMATION,
 				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_CDN_LIMITED,
+				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+				FEATURE_ADVANCED_SEO,
+				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
@@ -526,7 +536,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for every WordPress site including ' +
+				'Security essentials for your WordPress site including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
@@ -563,7 +573,7 @@ export const PLANS_LIST = {
 		availableFor: plan => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for every WordPress site including ' +
+				'Security essentials for your WordPress site including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
@@ -627,6 +637,7 @@ export const PLANS_LIST = {
 				FEATURE_SPAM_AKISMET_PLUS,
 				FEATURE_EASY_SITE_MIGRATION,
 				FEATURE_PREMIUM_SUPPORT,
+				FEATURE_SEARCH,
 				isEnabled( 'republicize' ) && FEATURE_REPUBLICIZE,
 				isEnabled( 'simple-payments' ) && FEATURE_SIMPLE_PAYMENTS,
 				FEATURE_WORDADS_INSTANT,
@@ -641,8 +652,7 @@ export const PLANS_LIST = {
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_SEO_PREVIEW_TOOLS,
-				FEATURE_CONCIERGE_SETUP,
+				FEATURE_SEARCH,
 				FEATURE_ALL_PREMIUM_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -699,8 +709,7 @@ export const PLANS_LIST = {
 			compact( [
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
-				FEATURE_SEO_PREVIEW_TOOLS,
-				FEATURE_CONCIERGE_SETUP,
+				FEATURE_SEARCH,
 				FEATURE_ALL_PREMIUM_FEATURES,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
@@ -917,7 +926,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-		getTitle: () => i18n.translate( 'VideoPress Support' ),
+		getTitle: () => i18n.translate( 'Unlimited Video Hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'The easiest way to upload videos to your website and display them ' +
@@ -1359,6 +1368,15 @@ export const FEATURES_LIST = {
 				'Re-share previously published content on social media, or schedule new shares in advance.'
 			),
 	},
+
+	[ FEATURE_SEARCH ]: {
+		getSlug: () => FEATURE_SEARCH,
+		getTitle: () => i18n.translate( 'Enhanced site-wide search' ),
+		getDescription: () =>
+			i18n.translate(
+				'Fast, high-quality search results with custom filtering, powered by Elasticsearch.'
+			),
+	},
 };
 
 export const getPlanObject = planName => {
@@ -1390,6 +1408,10 @@ export function isPopular( plan ) {
 
 export function isNew( plan ) {
 	return includes( NEW_PLANS, plan );
+}
+
+export function isBestValue( plan ) {
+	return includes( BEST_VALUE_PLANS, plan );
 }
 
 export function getPlanClass( plan ) {

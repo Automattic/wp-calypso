@@ -11,7 +11,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import { canAccessWordads } from 'lib/ads/utils';
@@ -22,7 +22,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import Ads from 'my-sites/ads/main';
 
 function _recordPageView( context, analyticsPageTitle ) {
-	var basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	if ( 'undefined' !== typeof context.params.section ) {
 		analyticsPageTitle += ' > ' + titlecase( context.params.section );
 	}

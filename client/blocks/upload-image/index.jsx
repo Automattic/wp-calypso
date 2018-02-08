@@ -34,7 +34,7 @@ import ImageEditor from 'blocks/image-editor';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
-import MediaUtils from 'lib/media/utils';
+import { isItemBeingUploaded } from 'lib/media/utils';
 import MediaValidationStore from 'lib/media/validation-store';
 import { ValidationErrors } from 'lib/media/constants';
 import Button from 'components/button';
@@ -184,7 +184,7 @@ class UploadImage extends Component {
 		const { errors } = this.state;
 
 		const uploadedImage = MediaStore.get( siteId, this.uploadingImageTransientId );
-		const isUploadInProgress = uploadedImage && MediaUtils.isItemBeingUploaded( uploadedImage );
+		const isUploadInProgress = uploadedImage && isItemBeingUploaded( uploadedImage );
 
 		if ( isUploadInProgress ) {
 			return;

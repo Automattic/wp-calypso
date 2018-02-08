@@ -34,56 +34,7 @@ describe( 'getSiteOptions()', () => {
 		};
 
 		const siteOptions = getSiteOptions( state, 2916288 );
-		expect( siteOptions ).to.eql( {
-			default_post_format: 'standard',
-		} );
-	} );
-
-	test( 'should return the options of the site if they exist with default_post_format added if it was not set', () => {
-		const state = {
-			...userState,
-			sites: {
-				items: {
-					2916288: {
-						ID: 2916288,
-						name: 'WordPress.com Example Blog',
-						options: {
-							option1: 'ok',
-						},
-					},
-				},
-			},
-		};
-
-		const siteOptions = getSiteOptions( state, 2916288 );
-		expect( siteOptions ).to.eql( {
-			default_post_format: 'standard',
-			option1: 'ok',
-		} );
-	} );
-
-	test( 'should return the options of the site with correct default_post_format added if it was set to 0', () => {
-		const state = {
-			...userState,
-			sites: {
-				items: {
-					2916288: {
-						ID: 2916288,
-						name: 'WordPress.com Example Blog',
-						options: {
-							option1: 'ok',
-							default_post_format: '0',
-						},
-					},
-				},
-			},
-		};
-
-		const siteOptions = getSiteOptions( state, 2916288 );
-		expect( siteOptions ).to.eql( {
-			default_post_format: 'standard',
-			option1: 'ok',
-		} );
+		expect( siteOptions ).to.eql( {} );
 	} );
 
 	test( 'should return the options of the site if they exist', () => {

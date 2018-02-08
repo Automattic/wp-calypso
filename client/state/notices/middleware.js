@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 import { truncate, includes } from 'lodash';
 
@@ -29,6 +27,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+	INVITE_RESEND_REQUEST_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
@@ -55,7 +54,7 @@ import {
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
 } from 'state/action-types';
-import purchasesPaths from 'me/purchases/paths';
+import { purchasesRoot } from 'me/purchases/paths';
 import { dispatchSuccess, dispatchError } from './utils';
 
 import {
@@ -258,7 +257,7 @@ const onSiteDeleteFailure = ( dispatch, { error } ) => {
 					id: 'site-delete',
 					showDismiss: false,
 					button: translate( 'Manage Purchases' ),
-					href: purchasesPaths.purchasesRoot(),
+					href: purchasesRoot,
 				}
 			)
 		);
@@ -297,6 +296,7 @@ export const handlers = {
 	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: dispatchSuccess(
 		translate( 'You successfully uploaded a new Gravatar — looking sharp!' )
 	),
+	[ INVITE_RESEND_REQUEST_FAILURE ]: dispatchError( translate( 'Invitation failed to resend.' ) ),
 	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: onJetpackModuleActivationActionMessage,
 	[ JETPACK_MODULE_ACTIVATE_FAILURE ]: onJetpackModuleActivationActionMessage,

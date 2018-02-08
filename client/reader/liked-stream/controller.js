@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import {
 	ensureStoreLoading,
@@ -21,7 +21,7 @@ const analyticsPageTitle = 'Reader';
 
 const exported = {
 	likes( context, next ) {
-		const basePath = route.sectionify( context.path ),
+		const basePath = sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > My Likes',
 			likedPostsStore = feedStreamFactory( 'likes' ),
 			mcKey = 'postlike';

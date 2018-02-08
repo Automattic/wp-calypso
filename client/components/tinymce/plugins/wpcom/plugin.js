@@ -1,12 +1,10 @@
+/** @format **/
 /**
  * Adapted from the WordPress wp TinyMCE plugin.
- * 
  *
- * @format
  * @copyright 2015 by the WordPress contributors.
  * @license See CREDITS.md.
  */
-
 /**
  * External dependencies
  */
@@ -16,7 +14,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import formatting from 'lib/formatting';
+import { removep, wpautop } from 'lib/formatting';
 import { removeEmptySpacesInParagraphs } from './wpcom-utils';
 
 /* eslint-disable */
@@ -66,7 +64,7 @@ function wpcomPlugin( editor ) {
 			}
 
 			if ( event.load && event.format !== 'raw' ) {
-				event.content = formatting.wpautop( event.content );
+				event.content = wpautop( event.content );
 			}
 		}
 	} );
@@ -339,7 +337,7 @@ function wpcomPlugin( editor ) {
 		// Keep empty paragraphs :(
 		e.content = e.content.replace( /<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>' );
 
-		e.content = formatting.removep( e.content );
+		e.content = removep( e.content );
 	} );
 
 	// Remove spaces from empty paragraphs.
@@ -399,7 +397,9 @@ function wpcomPlugin( editor ) {
 				mceIframe = document.getElementById( editor.id + '_ifr' ),
 				mceToolbar,
 				mceStatusbar,
-				wpStatusbar;
+				wpStatusbar,
+				isChromeRtl =
+					editor.getParam( 'directionality' ) === 'rtl' && /Chrome/.test( navigator.userAgent );
 
 			if ( container ) {
 				mceToolbar = tinymce.$( '.mce-toolbar-grp', container )[ 0 ];
@@ -652,6 +652,9 @@ function wpcomPlugin( editor ) {
 
 				toolbar.on( 'show', function() {
 					this.reposition();
+					if ( isChromeRtl ) {
+						editor.$( '.mce-widget.mce-tooltip', document.body ).addClass( 'wp-hide-mce-tooltip' );
+					}
 				} );
 
 				toolbar.on( 'keydown', function( event ) {

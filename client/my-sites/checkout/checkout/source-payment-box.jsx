@@ -9,15 +9,13 @@ import { assign, some, map } from 'lodash';
  * Internal dependencies
  */
 import { localize, translate } from 'i18n-calypso';
-import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import TermsOfService from './terms-of-service';
 import Input from 'my-sites/domains/components/form/input';
-import cartValues from 'lib/cart-values';
+import cartValues, { paymentMethodName, paymentMethodClassName } from 'lib/cart-values';
 import SubscriptionText from './subscription-text';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
@@ -64,14 +62,7 @@ class SourcePaymentBox extends PureComponent {
 	}
 
 	paymentMethodByType( paymentType ) {
-		if ( paymentType === 'ideal' ) {
-			return 'WPCOM_Billing_Stripe_Source_Ideal';
-		} else if ( paymentType === 'giropay' ) {
-			return 'WPCOM_Billing_Stripe_Source_Giropay';
-		} else if ( paymentType === 'bancontact' ) {
-			return 'WPCOM_Billing_Stripe_Source_Bancontact';
-		}
-		return 'WPCOM_Billing_Stripe_Source';
+		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
 	redirectToPayment( event ) {
@@ -118,7 +109,7 @@ class SourcePaymentBox extends PureComponent {
 				} );
 			} else if ( result.redirect_url ) {
 				this.setSubmitState( {
-					info: translate( 'Redirecting you to your bank to complete the payment.' ),
+					info: translate( 'Redirecting you to the payment partner to complete the payment.' ),
 					disabled: true
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Source Payment Button' );
@@ -181,14 +172,21 @@ class SourcePaymentBox extends PureComponent {
 				</div>
 			);
 		}
+		if ( 'p24' === this.props.paymentType ) {
+			return (
+				<Input
+					additionalClasses="checkout-field"
+					name="email"
+					onChange={ this.handleChange }
+					label={ translate( 'Email Address' ) }
+					eventFormName="Checkout Form" />
+			);
+		}
 	}
 
 	render() {
 		const hasBusinessPlanInCart = some( this.props.cart.products, { product_slug: PLAN_BUSINESS } );
-		const showPaymentChatButton =
-			config.isEnabled( 'upgrades/presale-chat' ) &&
-			abtest( 'presaleChatButton' ) === 'showChatButton' &&
-			hasBusinessPlanInCart;
+		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
 			<form onSubmit={ this.redirectToPayment }>
@@ -231,16 +229,7 @@ class SourcePaymentBox extends PureComponent {
 	}
 
 	getPaymentProviderName() {
-		switch ( this.props.paymentType ) {
-			case 'ideal':
-				return 'iDEAL';
-			case 'giropay':
-				return 'Giropay';
-			case 'bancontact':
-				return 'Bancontact';
-		}
-
-		return this.props.paymentType;
+		return paymentMethodName( this.props.paymentType );
 	}
 }
 SourcePaymentBox.displayName = 'SourcePaymentBox';

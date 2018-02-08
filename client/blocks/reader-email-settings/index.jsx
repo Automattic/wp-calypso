@@ -147,12 +147,11 @@ class ReaderEmailSettings extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const follow = find( getReaderFollows( state ), { blog_ID: ownProps.siteId } );
 	const deliveryMethods = get( follow, [ 'delivery_methods', 'email' ], {} );
-	const { send_posts, post_delivery_frequency, send_comments } = deliveryMethods;
 
 	return {
-		notifyOnNewComments: !! send_comments,
-		notifyOnNewPosts: !! send_posts,
-		deliveryFrequency: post_delivery_frequency,
+		notifyOnNewComments: deliveryMethods && !! deliveryMethods.send_comments,
+		notifyOnNewPosts: deliveryMethods && !! deliveryMethods.send_posts,
+		deliveryFrequency: deliveryMethods && deliveryMethods.post_delivery_frequency,
 	};
 };
 

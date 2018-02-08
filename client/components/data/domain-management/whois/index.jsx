@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +12,7 @@ import { connect } from 'react-redux';
 import { getSelectedSite } from 'state/ui/selectors';
 import DomainsStore from 'lib/domains/store';
 import StoreConnection from 'components/data/store-connection';
-import upgradesActions from 'lib/upgrades/actions';
+import { fetchDomains, fetchWhois } from 'lib/upgrades/actions';
 import WhoisStore from 'lib/domains/whois/store';
 
 const stores = [ DomainsStore, WhoisStore ];
@@ -56,14 +54,14 @@ class WhoisData extends Component {
 		const selectedSite = this.props.selectedSite;
 
 		if ( this.prevSelectedSite !== selectedSite ) {
-			upgradesActions.fetchDomains( selectedSite.ID );
+			fetchDomains( selectedSite.ID );
 
 			this.prevSelectedSite = selectedSite;
 		}
 	}
 
 	loadWhois() {
-		upgradesActions.fetchWhois( this.props.selectedDomainName );
+		fetchWhois( this.props.selectedDomainName );
 	}
 
 	render() {

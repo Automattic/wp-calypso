@@ -1,7 +1,7 @@
 .next-steps-box {
 	background: white;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 	box-sizing: border-box;
 	position: relative;
 	margin: 0 0 20px 0;

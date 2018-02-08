@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import Gridicon from 'gridicons';
 import i18n from 'i18n-calypso';
@@ -11,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
+import { newPage, newPost } from 'lib/paths';
 import config from 'config';
 
 function buildCustomizeButtonURL( site ) {
@@ -46,7 +44,7 @@ export default {
 					}
 				),
 				buttonText: i18n.translate( 'Start a Post' ),
-				buttonURL: paths.newPost( site ),
+				buttonURL: newPost( site ),
 			},
 
 			theme: {
@@ -109,7 +107,7 @@ export default {
 					}
 				),
 				buttonText: i18n.translate( 'Create a Page' ),
-				buttonURL: paths.newPage( site ),
+				buttonURL: newPage( site ),
 			},
 			site: {
 				title: i18n.translate( 'Create a Site' ),

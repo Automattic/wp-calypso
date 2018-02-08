@@ -14,7 +14,7 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
-import { getSection } from 'state/ui/selectors';
+import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
 
@@ -28,12 +28,21 @@ const hasSidebar = section => {
 	return false;
 };
 
-const LayoutLoggedOut = ( { oauth2Client, primary, section, redirectUri, useOAuth2Layout } ) => {
+const LayoutLoggedOut = ( {
+	masterbarIsHidden,
+	oauth2Client,
+	primary,
+	secondary,
+	section,
+	redirectUri,
+	useOAuth2Layout,
+} ) => {
 	const classes = {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
+		'has-no-masterbar': masterbarIsHidden,
 	};
 
 	let masterbar = null;
@@ -63,7 +72,9 @@ const LayoutLoggedOut = ( { oauth2Client, primary, section, redirectUri, useOAut
 					{ primary }
 				</div>
 
-				<div id="secondary" className="layout__secondary" />
+				<div id="secondary" className="layout__secondary">
+					{ secondary }
+				</div>
 			</div>
 		</div>
 	);
@@ -73,12 +84,15 @@ LayoutLoggedOut.displayName = 'LayoutLoggedOut';
 LayoutLoggedOut.propTypes = {
 	primary: PropTypes.element,
 	secondary: PropTypes.element,
+	// Connected props
+	masterbarIsHidden: PropTypes.bool,
 	section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	redirectUri: PropTypes.string,
 	showOAuth2Layout: PropTypes.bool,
 };
 
 export default connect( state => ( {
+	masterbarIsHidden: ! masterbarIsVisible( state ),
 	section: getSection( state ),
 	oauth2Client: getCurrentOAuth2Client( state ),
 	useOAuth2Layout: showOAuth2Layout( state ),

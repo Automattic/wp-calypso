@@ -9,6 +9,8 @@ import { get, values } from 'lodash';
  */
 import { getRewinds } from 'state/activity-log/log/is-discarded';
 
+const cache = new WeakMap();
+
 /**
  * Returns all events which represent rewind operations
  * from the activity log for a given site
@@ -24,7 +26,15 @@ export const getRewindEvents = ( state, siteId ) => {
 		return null;
 	}
 
-	return getRewinds( values( siteEvents ) );
+	if ( cache.has( siteEvents ) ) {
+		return cache.get( siteEvents );
+	}
+
+	const rewinds = getRewinds( values( siteEvents ) );
+
+	cache.set( siteEvents, rewinds );
+
+	return rewinds;
 };
 
 export default getRewindEvents;

@@ -1,12 +1,12 @@
 /**
  * Loads the notifications client into Calypso and
  * connects the messaging and interactive elements
- * 
+ *
  *  - messages through iframe
  *  - keyboard hotkeys
  *  - window/pane scrolling
  *  - service worker
- * 
+ *
  *
  * @format
  * @module notifications
@@ -211,6 +211,17 @@ export class Notifications extends Component {
 				() => {
 					this.props.checkToggle();
 					page( '/me/notifications' );
+				},
+			],
+			EDIT_COMMENT: [
+				( store, { siteId, postId, commentId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_edit_comment', {
+						site_id: siteId,
+						post_id: postId,
+						comment_id: commentId,
+					} );
+					page( `/comments/${ siteId }/${ commentId }?action=edit` );
 				},
 			],
 		};

@@ -48,7 +48,7 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { TRANSFER_IN } from 'state/current-user/constants';
+import { TRANSFER_IN_NUX } from 'state/current-user/constants';
 
 const domains = wpcom.domains();
 
@@ -313,15 +313,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return (
-				<ExampleDomainSuggestions
-					onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-					mapDomainUrl={ this.getMapDomainUrl() }
-					path={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					products={ this.props.products }
-				/>
-			);
+			return this.getExampleSuggestions();
 		}
 
 		return this.initialSuggestions();
@@ -335,6 +327,7 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
 
 		this.setState( {
+			exactMatchDomain: null,
 			lastQuery: searchQuery,
 			lastDomainSearched: null,
 			loadingResults: loadingResults,
@@ -395,12 +388,14 @@ class RegisterDomainStep extends React.Component {
 						( error, result ) => {
 							const timeDiff = Date.now() - timestamp;
 							const status = get( result, 'status', error );
+							const domainChecked = get( result, 'domain_name', domain );
 
 							const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 							const isDomainTransferrable = TRANSFERRABLE === status;
 
 							this.setState( {
+								exactMatchDomain: domainChecked,
 								lastDomainStatus: status,
 								lastDomainIsTransferrable: isDomainTransferrable,
 							} );
@@ -503,6 +498,7 @@ class RegisterDomainStep extends React.Component {
 					suggestion.is_free === true || suggestion.status === domainAvailability.UNKNOWN;
 				const strippedDomainBase = this.getStrippedDomainBase( domain );
 				const exactMatchBeforeTld = suggestion =>
+					suggestion.domain_name === this.state.exactMatchDomain ||
 					startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
 				const bestAlternative = suggestion =>
 					! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
@@ -644,7 +640,7 @@ class RegisterDomainStep extends React.Component {
 				/>
 			);
 
-			if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+			if ( ! this.props.isSignupStep || this.props.transferInNuxAllowed ) {
 				domainUnavailableSuggestion = (
 					<DomainTransferSuggestion
 						onButtonClick={ this.goToTransferDomainStep }
@@ -665,9 +661,31 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	getExampleSuggestions() {
+		const alreadyOwnUrl =
+			! this.props.isSignupStep || this.props.transferInNuxAllowed
+				? this.getTransferDomainUrl()
+				: this.getMapDomainUrl();
+
+		return (
+			<ExampleDomainSuggestions
+				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
+				url={ alreadyOwnUrl }
+				path={ this.props.path }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				products={ this.props.products }
+			/>
+		);
+	}
+
 	allSearchResults() {
-		const { lastDomainIsTransferrable, lastDomainSearched, lastDomainStatus } = this.state;
-		const matchesSearchedDomain = suggestion => suggestion.domain_name === lastDomainSearched;
+		const {
+			exactMatchDomain,
+			lastDomainIsTransferrable,
+			lastDomainSearched,
+			lastDomainStatus,
+		} = this.state;
+		const matchesSearchedDomain = suggestion => suggestion.domain_name === exactMatchDomain;
 		const availableDomain =
 			lastDomainStatus === domainAvailability.AVAILABLE &&
 			find( this.state.searchResults, matchesSearchedDomain );
@@ -686,14 +704,7 @@ class RegisterDomainStep extends React.Component {
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
 			if ( this.props.showExampleSuggestions ) {
-				return (
-					<ExampleDomainSuggestions
-						mapDomainUrl={ this.getMapDomainUrl() }
-						path={ this.props.path }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						products={ this.props.products }
-					/>
-				);
+				return this.getExampleSuggestions();
 			}
 
 			suggestions = this.props.defaultSuggestions || [];
@@ -873,7 +884,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
-			transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
+			transferInNuxAllowed: currentUserHasFlag( state, TRANSFER_IN_NUX ),
 		};
 	},
 	{

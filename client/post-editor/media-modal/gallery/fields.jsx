@@ -111,7 +111,8 @@ export class EditorMediaModalGalleryFields extends React.Component {
 								key={ 'value-' + value }
 								selected={ value === settings[ settingName ] }
 								onClick={ () =>
-									onUpdateSetting( settingName, isFinite( parseInt( value ) ) ? +value : value ) }
+									onUpdateSetting( settingName, isFinite( parseInt( value ) ) ? +value : value )
+								}
 							>
 								{ label }
 							</SelectDropdownItem>

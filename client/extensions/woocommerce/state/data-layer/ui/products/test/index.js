@@ -15,7 +15,6 @@ import {
 	handleProductCategoryEdit,
 	makeProductActionList,
 } from '../';
-import { actionListStepFailure } from 'woocommerce/state/action-list/actions';
 import {
 	WOOCOMMERCE_PRODUCT_CREATE,
 	WOOCOMMERCE_PRODUCT_UPDATE,
@@ -30,6 +29,8 @@ import {
 	editProductAttribute,
 	editProductRemoveCategory,
 } from 'woocommerce/state/ui/products/actions';
+
+jest.mock( 'lib/analytics', () => ( {} ) );
 
 describe( 'handlers', () => {
 	describe( '#actionAppendProductVariations', () => {
@@ -265,8 +266,9 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_PRODUCT_CREATE,
 					siteId: 123,
 					product: product1,
-					failureAction: actionListStepFailure( actionList ),
-				} ).and( match.has( 'successAction' ) )
+				} )
+					.and( match.has( 'successAction' ) )
+					.and( match.has( 'failureAction' ) )
 			);
 		} );
 
@@ -290,8 +292,9 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_PRODUCT_CREATE,
 					siteId: 123,
 					product: product1,
-					failureAction: actionListStepFailure( actionList ),
-				} ).and( match.has( 'successAction' ) )
+				} )
+					.and( match.has( 'successAction' ) )
+					.and( match.has( 'failureAction' ) )
 			);
 
 			expect( dispatch ).to.have.been.calledWith(
@@ -299,8 +302,9 @@ describe( 'handlers', () => {
 					type: WOOCOMMERCE_PRODUCT_CREATE,
 					siteId: 123,
 					product: product2,
-					failureAction: actionListStepFailure( actionList ),
-				} ).and( match.has( 'successAction' ) )
+				} )
+					.and( match.has( 'successAction' ) )
+					.and( match.has( 'failureAction' ) )
 			);
 		} );
 

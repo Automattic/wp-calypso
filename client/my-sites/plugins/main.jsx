@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
@@ -25,7 +23,7 @@ import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import { getPlugin } from 'state/plugins/wporg/selectors';
 import PluginsList from './plugins-list';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -87,7 +85,7 @@ const PluginsMain = createReactClass( {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
-			const pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
+			const pluginData = getPlugin( this.props.wporgPlugins, plugin.slug );
 			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}

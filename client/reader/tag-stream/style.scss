@@ -27,7 +27,7 @@
 }
 
 .tag-stream__header-image {
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: right center;

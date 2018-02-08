@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, noop } from 'lodash';
@@ -13,15 +14,19 @@ import { find, noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getGeoCountryShort } from 'state/geo/selectors';
+import QueryGeo from 'components/data/query-geo';
 import LanguagePickerModal from './modal';
+import QueryLanguageNames from 'components/data/query-language-names';
 
-class LanguagePicker extends PureComponent {
+export class LanguagePicker extends PureComponent {
 	static propTypes = {
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
 		value: PropTypes.any,
 		onChange: PropTypes.func,
 		onClick: PropTypes.func,
+		countryCode: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -29,6 +34,7 @@ class LanguagePicker extends PureComponent {
 		valueKey: 'value',
 		onChange: noop,
 		onClick: noop,
+		countryCode: '',
 	};
 
 	constructor( props ) {
@@ -100,6 +106,23 @@ class LanguagePicker extends PureComponent {
 		);
 	}
 
+	renderModal( selectedLanguageSlug ) {
+		if ( ! this.state.open ) {
+			return null;
+		}
+		const { countryCode, languages } = this.props;
+		return (
+			<LanguagePickerModal
+				isVisible
+				languages={ languages }
+				onClose={ this.handleClose }
+				onSelected={ this.selectLanguage }
+				selected={ selectedLanguageSlug }
+				countryCode={ countryCode }
+			/>
+		);
+	}
+
 	render() {
 		const language = this.state.selectedLanguage;
 		if ( ! language ) {
@@ -125,16 +148,14 @@ class LanguagePicker extends PureComponent {
 						<div className="language-picker__name-change">{ translate( 'Change' ) }</div>
 					</div>
 				</div>
-				<LanguagePickerModal
-					isVisible={ this.state.open }
-					languages={ this.props.languages }
-					onClose={ this.handleClose }
-					onSelected={ this.selectLanguage }
-					selected={ language.langSlug }
-				/>
+				{ this.renderModal( language.langSlug ) }
+				<QueryGeo />
+				<QueryLanguageNames />
 			</div>
 		);
 	}
 }
 
-export default localize( LanguagePicker );
+export default connect( state => ( {
+	countryCode: getGeoCountryShort( state ),
+} ) )( localize( LanguagePicker ) );

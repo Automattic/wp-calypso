@@ -26,7 +26,7 @@ import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
+import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
 import { activateModule } from 'state/jetpack/modules/actions';
 import {
 	getSiteOption,
@@ -60,7 +60,7 @@ class GoogleAnalyticsForm extends Component {
 	};
 
 	handleCodeChange = event => {
-		const code = event.target.value;
+		const code = event.target.value.trim();
 
 		this.setState( {
 			isCodeValid: validateGoogleAnalyticsCode( code ),
@@ -300,7 +300,8 @@ const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const isGoogleAnalyticsEligible = site && site.plan && hasBusinessPlan( site.plan );
+	const isGoogleAnalyticsEligible =
+		site && site.plan && ( hasBusinessPlan( site.plan ) || isJetpackPremium( site.plan ) );
 	const jetpackManagementUrl = getSiteOption( state, siteId, 'admin_url' );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const jetpackVersionSupportsModule = isJetpackMinimumVersion( state, siteId, '4.6-alpha' );

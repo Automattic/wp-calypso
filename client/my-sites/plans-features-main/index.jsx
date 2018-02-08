@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -33,10 +31,11 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
-import purchasesPaths from 'me/purchases/paths';
+import { purchasesRoot } from 'me/purchases/paths';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import PaymentMethods from 'blocks/payment-methods';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
@@ -322,7 +321,7 @@ class PlansFeaturesMain extends Component {
 						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day' +
 							' refund on all of our plans. {{a}}Manage purchases{{/a}}.',
 						{
-							components: { a: <a href={ purchasesPaths.purchasesRoot() } /> },
+							components: { a: <a href={ purchasesRoot } /> },
 						}
 					) }
 				/>
@@ -401,6 +400,7 @@ class PlansFeaturesMain extends Component {
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
+				<PaymentMethods />
 				{ faqs }
 			</div>
 		);

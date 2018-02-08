@@ -20,6 +20,7 @@ import { isRewindActivating } from 'state/selectors';
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
+		label: PropTypes.string,
 
 		// mappedSelectors
 		isActivating: PropTypes.bool.isRequired,
@@ -33,6 +34,7 @@ class ActivityLogRewindToggle extends Component {
 
 	static defaultProps = {
 		isActivating: false,
+		label: '',
 	};
 
 	activateRewind = () => {
@@ -42,7 +44,7 @@ class ActivityLogRewindToggle extends Component {
 	};
 
 	render() {
-		const { isActivating, siteId, translate } = this.props;
+		const { isActivating, siteId, translate, label } = this.props;
 
 		const isSiteKnown = !! siteId;
 
@@ -51,12 +53,11 @@ class ActivityLogRewindToggle extends Component {
 				className={ classNames( 'activity-log__rewind-toggle', {
 					'is-busy': isSiteKnown && isActivating,
 				} ) }
-				compact={ true }
+				primary
 				disabled={ ! isSiteKnown || isActivating }
 				onClick={ this.activateRewind }
-				primary
 			>
-				{ translate( 'Activate Rewind' ) }
+				{ label ? label : translate( 'Activate Rewind' ) }
 			</Button>
 		);
 	}

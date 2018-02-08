@@ -24,10 +24,9 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
-import ChatClosureNotice from '../chat-closure-notice';
 import ChatBusinessConciergeNotice from '../chat-business-concierge-notice';
 import { selectSiteId } from 'state/help/actions';
-import { getHelpSelectedSite } from 'state/help/selectors';
+import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors';
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
@@ -58,7 +57,8 @@ export class HelpContactForm extends React.PureComponent {
 		showSubjectField: PropTypes.bool,
 		showSiteField: PropTypes.bool,
 		showHelpLanguagePrompt: PropTypes.bool,
-		selectedSite: PropTypes.object,
+		helpSite: PropTypes.object,
+		helpSiteId: PropTypes.number,
 		siteFilter: PropTypes.func,
 		siteList: PropTypes.object,
 		disabled: PropTypes.bool,
@@ -243,7 +243,7 @@ export class HelpContactForm extends React.PureComponent {
 			howYouFeel,
 			message,
 			subject,
-			site: this.props.selectedSite,
+			site: this.props.helpSite,
 		} );
 	};
 
@@ -290,15 +290,13 @@ export class HelpContactForm extends React.PureComponent {
 
 		return (
 			<div className="help-contact-form">
-				<ChatClosureNotice
-					reason="eoy-holidays"
-					from="2016-12-24T00:00:00Z"
-					to="2017-01-02T00:00:00Z"
-				/>
-
 				{ formDescription && <p>{ formDescription }</p> }
 
-				<ChatBusinessConciergeNotice from="2017-07-19T00:00:00Z" to="2017-07-21T00:00:00Z" />
+				<ChatBusinessConciergeNotice
+					from="2017-07-19T00:00:00Z"
+					to="2017-07-21T00:00:00Z"
+					selectedSite={ this.props.selectedSite }
+				/>
 
 				{ showHowCanWeHelpField && (
 					<div>
@@ -318,7 +316,7 @@ export class HelpContactForm extends React.PureComponent {
 					<div className="help-contact-form__site-selection">
 						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SitesDropdown
-							selectedSiteId={ this.props.selectedSite.ID }
+							selectedSiteId={ this.props.helpSiteId }
 							onSiteSelect={ this.props.onChangeSite }
 						/>
 					</div>
@@ -370,7 +368,8 @@ export class HelpContactForm extends React.PureComponent {
 }
 
 const mapStateToProps = state => ( {
-	selectedSite: getHelpSelectedSite( state ),
+	helpSite: getHelpSelectedSite( state ),
+	helpSiteId: getHelpSelectedSiteId( state ),
 } );
 
 const mapDispatchToProps = {

@@ -1,7 +1,7 @@
 /**
  * Tells whether the user has asked a question through the Directly RTM widget.
- * 
- * 
+ *
+ *
  *
  * @format
  * @see lib/directly for more about Directly

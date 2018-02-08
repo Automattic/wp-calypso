@@ -9,18 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import {
-	castArray,
-	defaults,
-	get,
-	identity,
-	isEmpty,
-	isString,
-	map,
-	noop,
-	set,
-	toUpper,
-} from 'lodash';
+import { defaults, get, identity, isEmpty, isString, map, noop, set, toUpper } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +23,7 @@ import FormRadio from 'components/forms/form-radio';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import validateContactDetails from './fr-validate-contact-details';
+import { disableSubmitButton } from './with-contact-details-validation';
 
 const debug = debugFactory( 'calypso:domains:registrant-extra-info' );
 let defaultRegistrantType;
@@ -152,17 +142,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 				{ 'organization' === registrantType && this.renderOrganizationFields() }
 
-				{ formIsValid
-					? this.props.children
-					: map(
-							castArray( this.props.children ),
-							( child, index ) =>
-									React.cloneElement( child, {
-										disabled: child.props.className.match( /submit-button/ ) ||
-											child.props.disabled,
-										key: index,
-									} )
-						) }
+				{ formIsValid ? this.props.children : disableSubmitButton( this.props.children ) }
 			</form>
 		);
 	}

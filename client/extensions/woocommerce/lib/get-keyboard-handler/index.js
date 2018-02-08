@@ -3,7 +3,7 @@
  * This triggers a callback on a keydown event, only if the key pressed is space or enter
  * to mirror button functionality. It will also focus the next/previous sibling (if one
  * exists) if the down/up arrows are pressed.
- * 
+ *
  *
  * @format
  * @param {Function} callback A callback function

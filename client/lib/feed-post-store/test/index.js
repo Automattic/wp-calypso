@@ -12,7 +12,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { action as FeedStreamActionType } from 'lib/feed-stream-store/constants';
-import { action as FeedPostActionType } from '../constants';
+import { action as FeedPostActionType } from 'lib/feed-post-store/constants';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );

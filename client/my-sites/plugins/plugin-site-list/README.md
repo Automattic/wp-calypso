@@ -6,13 +6,14 @@ This component is used to represent a list of `Plugin-Site`, with a `Section-Hea
 #### How to use:
 
 ```jsx
-var PluginSiteList = require( 'my-sites/plugins/plugin-site-list' );
+import PluginSiteList from 'my-sites/plugins/plugin-site-list';
 
 return <PluginSiteList
-        sites={ sites }
-        plugin={ this.state.plugin }
-        notices={ this.state.notices }
-        title={ title } />;
+			sites={ sites }
+			plugin={ this.state.plugin }
+			notices={ this.state.notices }
+			title={ title }
+		/>;
 ```
 
 #### Props

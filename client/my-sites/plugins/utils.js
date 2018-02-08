@@ -10,11 +10,11 @@ import { find, get, includes } from 'lodash';
  * Internal dependencies
  */
 import config from 'config';
-import sectionsModule from 'sections';
+import { getSections } from 'sections-middleware';
 
 export function getExtensionSettingsPath( plugin ) {
 	const pluginSlug = get( plugin, 'slug', '' );
-	const sections = sectionsModule.get();
+	const sections = getSections();
 	const section = find( sections, value => value.name === pluginSlug );
 	const env = get( section, 'envId', [] );
 

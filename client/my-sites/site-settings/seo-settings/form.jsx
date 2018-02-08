@@ -4,17 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-	get,
-	includes,
-	isArray,
-	isEqual,
-	mapValues,
-	omit,
-	overSome,
-	pickBy,
-	partial,
-} from 'lodash';
+import { get, isArray, isEqual, mapValues, omit, overSome, pickBy, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -50,7 +40,7 @@ import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mapping
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
 import { activateModule } from 'state/jetpack/modules/actions';
-import { isBusiness, isEnterprise, isJetpackBusiness } from 'lib/products-values';
+import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import {
@@ -64,12 +54,13 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
 import WebPreview from 'components/web-preview';
+import { getFirstConflictingPlugin } from 'lib/seo';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
-const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
+const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -268,21 +259,9 @@ export class SeoForm extends React.Component {
 		this.setState( { showPreview: false } );
 	};
 
-	getConflictingSeoPlugins = activePlugins => {
-		const conflictingSeoPlugins = [
-			'Yoast SEO',
-			'Yoast SEO Premium',
-			'All In One SEO Pack',
-			'All in One SEO Pack Pro',
-		];
-
-		return activePlugins
-			.filter( ( { name } ) => includes( conflictingSeoPlugins, name ) )
-			.map( ( { name, slug } ) => ( { name, slug } ) );
-	};
-
 	render() {
 		const {
+			conflictedSeoPlugin,
 			siteId,
 			siteIsJetpack,
 			jetpackVersionSupportsSeo,
@@ -293,7 +272,6 @@ export class SeoForm extends React.Component {
 			isSeoToolsActive,
 			isSitePrivate,
 			isSiteHidden,
-			activePlugins,
 			translate,
 		} = this.props;
 		const { slug = '', URL: siteUrl = '' } = site;
@@ -334,11 +312,6 @@ export class SeoForm extends React.Component {
 			</Button>
 		);
 
-		const conflictedSeoPlugin = siteIsJetpack
-			? // Let's just pick the first one to keep the notice short.
-				this.getConflictingSeoPlugins( activePlugins )[ 0 ]
-			: null;
-
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
@@ -347,7 +320,7 @@ export class SeoForm extends React.Component {
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ ( isSitePrivate || isSiteHidden ) &&
-					hasBusinessPlan( site.plan ) && (
+					hasSupportingPlan( site.plan ) && (
 						<Notice
 							status="is-warning"
 							showDismiss={ false }
@@ -390,7 +363,7 @@ export class SeoForm extends React.Component {
 					</Notice>
 				) }
 				{ siteIsJetpack &&
-					hasBusinessPlan( site.plan ) &&
+					hasSupportingPlan( site.plan ) &&
 					isSeoToolsActive === false && (
 						<Notice
 							status="is-warning"
@@ -509,14 +482,20 @@ export class SeoForm extends React.Component {
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
-	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
+	const isAdvancedSeoEligible = site && site.plan && hasSupportingPlan( site.plan );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const jetpackVersionSupportsSeo = isJetpackMinimumVersion( state, siteId, '4.4-beta1' );
 	const isAdvancedSeoSupported =
 		site && ( ! siteIsJetpack || ( siteIsJetpack && jetpackVersionSupportsSeo ) );
 
+	const activePlugins = getPlugins( state, [ siteId ], 'active' );
+	const conflictedSeoPlugin = siteIsJetpack
+		? getFirstConflictingPlugin( activePlugins ) // Pick first one to keep the notice short.
+		: null;
+
 	return {
+		conflictedSeoPlugin,
 		siteId,
 		siteIsJetpack,
 		selectedSite: getSelectedSite( state ),
@@ -528,7 +507,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
-		activePlugins: getPlugins( state, [ siteId ], 'active' ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),

@@ -176,7 +176,6 @@ describe( 'selectors', () => {
 				isSiteUpgradeable: null,
 				options: {
 					jetpack_version: jetpackMinVersion,
-					default_post_format: 'standard',
 					unmapped_url: 'https://example.wordpress.com',
 				},
 			};
@@ -240,7 +239,6 @@ describe( 'selectors', () => {
 				is_customizable: false,
 				is_previewable: true,
 				options: {
-					default_post_format: 'standard',
 					unmapped_url: 'https://example.wordpress.com',
 				},
 			} );

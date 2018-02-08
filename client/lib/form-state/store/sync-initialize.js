@@ -9,7 +9,9 @@ import { mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { initializeFields, createInitialFormState, createNullFieldValues } from '../';
+import FormStateStore from '../';
+
+const { createInitialFormState, createNullFieldValues, initializeFields } = FormStateStore;
 
 function syncInitialize( { fieldNames } ) {
 	return {

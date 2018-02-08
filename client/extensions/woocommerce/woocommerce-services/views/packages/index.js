@@ -144,10 +144,10 @@ Packages.propTypes = {
 export default connect(
 	state => {
 		const siteId = getSelectedSiteId( state );
-		const form = getPackagesForm( state, siteId );
+		const form = getPackagesForm( state, siteId ) || {};
 		return {
 			siteId,
-			isFetching: ! form || ! form.packages || form.isFetching,
+			isFetching: ! form.packages || form.isFetching,
 			fetchError: isFetchError( state, siteId ),
 			form,
 			allSelectedPackages: getAllSelectedPackages( state, siteId ) || [],

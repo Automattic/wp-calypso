@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -19,75 +18,52 @@ import Card from 'components/card';
 import Notice from 'components/notice';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormattedHeader from 'components/formatted-header';
-import { checkInboundTransferStatus } from 'lib/domains';
-import support from 'lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY,
+	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
+} from 'lib/url/support';
 
-class TransferDomainPrecheck extends React.PureComponent {
+class TransferDomainPrecheck extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string,
+		email: PropTypes.string,
+		loading: PropTypes.bool,
+		losingRegistrar: PropTypes.string,
+		losingRegistrarIanaId: PropTypes.string,
+		privacy: PropTypes.bool,
+		selectedSiteSlug: PropTypes.string,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
+		unlocked: PropTypes.bool,
 	};
 
 	state = {
-		unlocked: false,
-		privacy: false,
-		email: '',
-		loading: true,
-		losingRegistrar: '',
-		losingRegistrarIanaId: '',
 		currentStep: 1,
 	};
 
 	componentWillMount() {
-		this.refreshStatus();
+		this.componentWillReceiveProps( this.props );
 	}
 
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.domain !== this.props.domain ) {
-			this.refreshStatus();
+	componentWillReceiveProps( nextProps ) {
+		// Reset steps if domain became locked again
+		if ( false === nextProps.unlocked ) {
+			this.resetSteps();
+		}
+
+		if ( nextProps.unlocked && 1 === this.state.currentStep ) {
+			this.showNextStep();
 		}
 	}
 
 	onClick = () => {
-		const { domain, supportsPrivacy } = this.props;
-		const { losingRegistrar, losingRegistrarIanaId } = this.state;
+		const { losingRegistrar, losingRegistrarIanaId, domain, supportsPrivacy } = this.props;
 
 		this.props.recordContinueButtonClick( domain, losingRegistrar, losingRegistrarIanaId );
 
 		this.props.setValid( domain, supportsPrivacy );
-	};
-
-	refreshStatus = ( proceedToNextStep = true ) => {
-		this.setState( { loading: true } );
-
-		checkInboundTransferStatus( this.props.domain, ( error, result ) => {
-			if ( ! isEmpty( error ) ) {
-				return;
-			}
-
-			if ( proceedToNextStep && result.unlocked ) {
-				this.showNextStep();
-			}
-
-			// Reset steps if domain became locked again
-			if ( false === result.unlocked ) {
-				this.resetSteps();
-			}
-
-			this.setState( {
-				email: result.admin_email,
-				privacy: result.privacy,
-				unlocked: result.unlocked,
-				loading: false,
-				losingRegistrar: result.registrar,
-				losingRegistrarIanaId: result.registrar_iana_id,
-			} );
-		} );
-	};
-
-	refreshStatusOnly = () => {
-		this.refreshStatus( false );
 	};
 
 	resetSteps = () => {
@@ -102,7 +78,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 	};
 
 	getSection( heading, message, buttonText, step, stepStatus ) {
-		const { currentStep, loading, unlocked } = this.state;
+		const { currentStep } = this.state;
+		const { loading, unlocked } = this.props;
 		const isAtCurrentStep = step === currentStep;
 		const isStepFinished = currentStep > step;
 		const sectionClasses = classNames( 'transfer-domain-step__section', {
@@ -112,7 +89,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 
 		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
 		const onButtonClick =
-			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
+			true === unlocked || null === unlocked ? this.showNextStep : this.props.refreshStatus;
 
 		return (
 			<Card compact>
@@ -141,16 +118,19 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getStatusMessage() {
-		const { translate } = this.props;
-		const { currentStep, unlocked, loading } = this.state;
+		const { loading, translate, unlocked } = this.props;
+		const { currentStep } = this.state;
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
-		let heading = translate( 'Lock status unavailable.' );
+		let heading = translate( "Can't get the domain's lock status." );
 		if ( true === unlocked ) {
 			heading = translate( 'Domain is unlocked.' );
 		} else if ( false === unlocked ) {
 			heading = translate( 'Unlock the domain.' );
+		}
+		if ( loading && ! isStepFinished ) {
+			heading = translate( 'Checking domain lock status.' );
 		}
 
 		let message = translate(
@@ -163,7 +143,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					br: <br />,
 					a: (
 						<a
-							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -171,6 +151,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 				},
 			}
 		);
+
 		if ( true === unlocked ) {
 			message = translate( 'Your domain is unlocked at your current registrar.' );
 		} else if ( false === unlocked ) {
@@ -182,7 +163,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					components: {
 						a: (
 							<a
-								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
@@ -190,6 +171,10 @@ class TransferDomainPrecheck extends React.PureComponent {
 					},
 				}
 			);
+		}
+
+		if ( loading && ! isStepFinished ) {
+			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 
 		const buttonText = translate( "I've unlocked my domain" );
@@ -208,7 +193,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 			lockStatusIcon = 'cross';
 		}
 
-		let lockStatusText = 'Status unavailable';
+		let lockStatusText = translate( 'Status unavailable' );
 		if ( true === unlocked ) {
 			lockStatusText = translate( 'Unlocked' );
 		} else if ( false === unlocked ) {
@@ -232,8 +217,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	getPrivacyMessage() {
-		const { translate } = this.props;
-		const { currentStep, email, loading } = this.state;
+		const { email, loading, privacy, translate } = this.props;
+		const { currentStep } = this.state;
 		const step = 2;
 		const isStepFinished = currentStep > step;
 
@@ -253,7 +238,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 					br: <br />,
 					a: (
 						<a
-							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -283,7 +268,36 @@ class TransferDomainPrecheck extends React.PureComponent {
 						strong: <strong className="transfer-domain-step__admin-email" />,
 						a: (
 							<a
-								href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
+								rel="noopener noreferrer"
+								target="_blank"
+							/>
+						),
+					},
+				}
+			);
+
+			buttonText = translate( 'I can access the email address listed' );
+		}
+
+		if ( privacy && email ) {
+			message = translate(
+				'{{notice}}It looks like you may have privacy protection enabled. It must be turned off to ' +
+					'transfer your domain.{{/notice}}' +
+					"{{card}}You must be able to access the email address listed for this domain's owner below. " +
+					"We'll send a link to start the process to the following email address: {{strong}}%(email)s{{/strong}}{{/card}}" +
+					'It looks like you have privacy protection enabled, which may prevent you from successfully ' +
+					'transferring your domain. Please contact your current domain provider or log into your ' +
+					"account to disable privacy protection. {{a}}Here's how to do that{{/a}}.",
+				{
+					args: { email },
+					components: {
+						notice: <Notice showDismiss={ false } status="is-error" />,
+						card: <Card className="transfer-domain-step__section-callout" compact={ true } />,
+						strong: <strong className="transfer-domain-step__admin-email" />,
+						a: (
+							<a
+								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_PRIVACY }
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
@@ -302,7 +316,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 		const statusText = loading ? translate( 'Checking…' ) : translate( 'Refresh email address' );
 
 		const stepStatus = ! isStepFinished && (
-			<a className={ statusClasses } onClick={ this.refreshStatusOnly }>
+			<a className={ statusClasses } onClick={ this.props.refreshStatus }>
 				<Gridicon icon={ statusIcon } size={ 12 } />
 				<span>{ statusText }</span>
 			</a>
@@ -324,7 +338,7 @@ class TransferDomainPrecheck extends React.PureComponent {
 				components: {
 					a: (
 						<a
-							href={ support.INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE }
+							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -360,8 +374,8 @@ class TransferDomainPrecheck extends React.PureComponent {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const { unlocked, currentStep } = this.state;
+		const { translate, unlocked } = this.props;
+		const { currentStep } = this.state;
 
 		return (
 			<div className="transfer-domain-step__precheck">
@@ -377,20 +391,14 @@ class TransferDomainPrecheck extends React.PureComponent {
 									'Need help? {{a}}Get in touch with one of our Happiness Engineers{{/a}}.',
 								{
 									components: {
-										a: (
-											<a
-												href={ support.CALYPSO_CONTACT }
-												rel="noopener noreferrer"
-												target="_blank"
-											/>
-										),
+										a: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" target="_blank" />,
 									},
 								}
 							) }
 						</p>
 					</div>
 					<Button
-						disabled={ ! unlocked || currentStep < 4 }
+						disabled={ false === unlocked || currentStep < 4 }
 						onClick={ this.onClick }
 						primary={ true }
 					>

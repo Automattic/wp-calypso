@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import Notice from 'components/notice';
 import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
 import Security2faProgress from 'me/security-2fa-progress';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -66,7 +66,7 @@ class Security2faSetupBackupCodes extends React.Component {
 				components: {
 					supportLink: (
 						<a
-							href={ support.CALYPSO_CONTACT }
+							href={ CALYPSO_CONTACT }
 							onClick={ this.getClickHandler( 'No Backup Codes Contact Support Link' ) }
 						/>
 					),

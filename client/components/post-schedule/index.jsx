@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { moment } from 'i18n-calypso';
@@ -23,7 +21,7 @@ import EventsTooltip from 'components/date-picker/events-tooltip';
  */
 import Clock from './clock';
 import Header from './header';
-import utils from './utils';
+import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
 
 const user = new User();
 const noop = () => {};
@@ -112,7 +110,7 @@ class PostSchedule extends Component {
 	}
 
 	getDateToUserLocation( date ) {
-		return utils.convertDateToUserLocation(
+		return convertDateToUserLocation(
 			date || new Date(),
 			this.props.timezone,
 			this.props.gmtOffset
@@ -134,7 +132,7 @@ class PostSchedule extends Component {
 	}
 
 	updateDate = date => {
-		const convertedDate = utils.convertDateToGivenOffset(
+		const convertedDate = convertDateToGivenOffset(
 			date,
 			this.props.timezone,
 			this.props.gmtOffset

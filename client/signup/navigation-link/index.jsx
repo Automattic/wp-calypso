@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -15,8 +13,10 @@ import Gridicon from 'gridicons';
  */
 import analytics from 'lib/analytics';
 import Button from 'components/button';
-import { submitSignupStep } from 'lib/signup/actions';
-import signupUtils from 'signup/utils';
+import SignupActions from 'lib/signup/actions';
+import { getStepUrl } from 'signup/utils';
+
+const { submitSignupStep } = SignupActions;
 
 export class NavigationLink extends Component {
 	static propTypes = {
@@ -70,12 +70,7 @@ export class NavigationLink extends Component {
 			''
 		);
 
-		return signupUtils.getStepUrl(
-			this.props.flowName,
-			previousStepName,
-			stepSectionName,
-			getLocaleSlug()
-		);
+		return getStepUrl( this.props.flowName, previousStepName, stepSectionName, getLocaleSlug() );
 	}
 
 	handleClick = () => {

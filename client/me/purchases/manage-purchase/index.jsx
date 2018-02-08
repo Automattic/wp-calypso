@@ -36,6 +36,7 @@ import {
 	isRenewing,
 	isSubscription,
 	purchaseType,
+	cardProcessorSupportsUpdates,
 } from 'lib/purchases';
 import {
 	canEditPaymentDetails,
@@ -49,6 +50,7 @@ import {
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
+import { isSiteAutomatedTransfer as isSiteAtomic } from 'state/selectors';
 import Gridicon from 'gridicons';
 import HeaderCake from 'components/header-cake';
 import {
@@ -75,11 +77,11 @@ import QueryCanonicalTheme from 'components/data/query-canonical-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from '../paths';
-import support from 'lib/url/support';
+import { cancelPurchase, cancelPrivacyProtection, purchasesRoot } from '../paths';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addItems } from 'lib/upgrades/actions';
 
 const user = userFactory();
 
@@ -94,7 +96,7 @@ class ManagePurchase extends Component {
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 			return;
 		}
 
@@ -103,7 +105,7 @@ class ManagePurchase extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 			return;
 		}
 
@@ -158,7 +160,7 @@ class ManagePurchase extends Component {
 			renewItems.push( redemptionItem );
 		}
 
-		upgradesActions.addItems( renewItems );
+		addItems( renewItems );
 
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
@@ -206,10 +208,13 @@ class ManagePurchase extends Component {
 
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getEditCardDetailsPath( this.props.selectedSite, purchase );
+			const renewing = isRenewing( purchase );
 
-			const text = isRenewing( purchase )
-				? translate( 'Edit Payment Method' )
-				: translate( 'Add Credit Card' );
+			if ( renewing && ! cardProcessorSupportsUpdates( purchase ) ) {
+				return null;
+			}
+
+			const text = renewing ? translate( 'Edit Payment Method' ) : translate( 'Add Credit Card' );
 
 			return <CompactCard href={ path }>{ text }</CompactCard>;
 		}
@@ -220,20 +225,31 @@ class ManagePurchase extends Component {
 	renderCancelPurchaseNavItem() {
 		const purchase = getPurchase( this.props ),
 			{ id } = purchase;
-		const { translate } = this.props;
+		const { translate, isAtomicSite } = this.props;
 
 		if ( ! isCancelable( purchase ) || ! getSelectedSite( this.props ) ) {
 			return null;
 		}
 
-		let text,
-			link = paths.cancelPurchase( this.props.selectedSite.slug, id );
+		const trackNavItemClick = linkText => () => {
+			analytics.tracks.recordEvent( 'calypso_purchases_manage_purchase_cancel_click', {
+				product_slug: purchase.productSlug,
+				is_atomic: isAtomicSite,
+				link_text: linkText,
+			} );
+		};
 
-		if ( isRefundable( purchase ) ) {
+		let text,
+			link = cancelPurchase( this.props.selectedSite.slug, id );
+
+		if ( isAtomicSite && isSubscription( purchase ) ) {
+			text = translate( 'Contact Support to Cancel your Subscription' );
+			link = CALYPSO_CONTACT;
+		} else if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
 				if ( isRenewal( purchase ) ) {
 					text = translate( 'Contact Support to Cancel Domain and Refund' );
-					link = support.CALYPSO_CONTACT;
+					link = CALYPSO_CONTACT;
 				} else {
 					text = translate( 'Cancel Domain and Refund' );
 				}
@@ -260,7 +276,11 @@ class ManagePurchase extends Component {
 			}
 		}
 
-		return <CompactCard href={ link }>{ text }</CompactCard>;
+		return (
+			<CompactCard href={ link } onClick={ trackNavItemClick( text ) }>
+				{ text }
+			</CompactCard>
+		);
 	}
 
 	renderCancelPrivacyProtection() {
@@ -277,7 +297,7 @@ class ManagePurchase extends Component {
 		}
 
 		return (
-			<CompactCard href={ paths.cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ cancelPrivacyProtection( this.props.selectedSite.slug, id ) }>
 				{ translate( 'Cancel Privacy Protection' ) }
 			</CompactCard>
 		);
@@ -470,14 +490,16 @@ export default connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPurchasePlan = selectedPurchase && isPlan( selectedPurchase );
 	const isPurchaseTheme = selectedPurchase && isTheme( selectedPurchase );
+	const selectedSite = getSelectedSiteSelector( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase,
 		selectedSiteId,
-		selectedSite: getSelectedSiteSelector( state ),
+		selectedSite,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( selectedPurchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, selectedSiteId, selectedPurchase.meta ),
+		isAtomicSite: selectedSite && isSiteAtomic( state, selectedSiteId ),
 	};
 } )( localize( ManagePurchase ) );

@@ -1,80 +1,88 @@
 /** @format */
+
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
-import { localize } from 'i18n-calypso';
+import React, { Component } from 'react';
 import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import AuthCodeButton from './auth-code-button';
+import AuthStore from 'lib/oauth-store';
 import config from 'config';
-import Main from 'components/main';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'components/notice';
-import AuthStore from 'lib/oauth-store';
-import * as AuthActions from 'lib/oauth-store/actions';
-import eventRecorder from 'me/event-recorder';
-import WordPressLogo from 'components/wordpress-logo';
-import AuthCodeButton from './auth-code-button';
-import SelfHostedInstructions from './self-hosted-instructions';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormPasswordInput from 'components/forms/form-password-input';
+import FormTextInput from 'components/forms/form-text-input';
 import LostPassword from './lost-password';
+import Main from 'components/main';
+import Notice from 'components/notice';
+import SelfHostedInstructions from './self-hosted-instructions';
+import WordPressLogo from 'components/wordpress-logo';
+import { login } from 'lib/oauth-store/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
-export const Login = createReactClass( {
-	displayName: 'Auth',
-	mixins: [ eventRecorder ],
+export class Auth extends Component {
+	state = {
+		login: '',
+		password: '',
+		auth_code: '',
+		...AuthStore.get(),
+	};
 
-	componentDidMount: function() {
+	componentDidMount() {
 		AuthStore.on( 'change', this.refreshData );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		AuthStore.off( 'change', this.refreshData );
-	},
+	}
 
-	refreshData: function() {
+	getClickHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+
+	getFocusHandler = action => () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+
+	refreshData = () => {
 		this.setState( AuthStore.get() );
-	},
+	};
 
-	focusInput( input ) {
+	focusInput = input => {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
 			input.focus();
 		}
-	},
+	};
 
-	getInitialState: function() {
-		return Object.assign(
-			{
-				login: '',
-				password: '',
-				auth_code: '',
-			},
-			AuthStore.get()
-		);
-	},
-
-	submitForm: function( event ) {
+	submitForm = event => {
 		event.preventDefault();
 		event.stopPropagation();
 
-		AuthActions.login( this.state.login, this.state.password, this.state.auth_code );
-	},
+		login( this.state.login, this.state.password, this.state.auth_code );
+	};
 
-	hasLoginDetails: function() {
+	toggleSelfHostedInstructions = () => {
+		const isShowing = ! this.state.showInstructions;
+		this.setState( { showInstructions: isShowing } );
+	};
+
+	handleChange = e => {
+		const { name, value } = e.currentTarget;
+		this.setState( { [ name ]: value } );
+	};
+
+	hasLoginDetails() {
 		if ( this.state.login === '' || this.state.password === '' ) {
 			return false;
 		}
 
 		return true;
-	},
+	}
 
-	canSubmitForm: function() {
+	canSubmitForm() {
 		// No submission until the ajax has finished
 		if ( this.state.inProgress ) {
 			return false;
@@ -87,14 +95,9 @@ export const Login = createReactClass( {
 
 		// Don't allow submission until username+password is entered
 		return this.hasLoginDetails();
-	},
+	}
 
-	toggleSelfHostedInstructions: function() {
-		const isShowing = ! this.state.showInstructions;
-		this.setState( { showInstructions: isShowing } );
-	},
-
-	render: function() {
+	render() {
 		const { translate } = this.props;
 		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
@@ -110,7 +113,7 @@ export const Login = createReactClass( {
 									name="login"
 									disabled={ requires2fa || inProgress }
 									placeholder={ translate( 'Email address or username' ) }
-									onFocus={ this.recordFocusEvent( 'Username or email address' ) }
+									onFocus={ this.getFocusHandler( 'Username or email address' ) }
 									value={ this.state.login }
 									onChange={ this.handleChange }
 								/>
@@ -121,7 +124,7 @@ export const Login = createReactClass( {
 									name="password"
 									disabled={ requires2fa || inProgress }
 									placeholder={ translate( 'Password' ) }
-									onFocus={ this.recordFocusEvent( 'Password' ) }
+									onFocus={ this.getFocusHandler( 'Password' ) }
 									hideToggle={ requires2fa }
 									submitting={ inProgress }
 									value={ this.state.password }
@@ -136,7 +139,7 @@ export const Login = createReactClass( {
 										ref={ this.focusInput }
 										disabled={ inProgress }
 										placeholder={ translate( 'Verification code' ) }
-										onFocus={ this.recordFocusEvent( 'Verification code' ) }
+										onFocus={ this.getFocusHandler( 'Verification code' ) }
 										value={ this.state.auth_code }
 										onChange={ this.handleChange }
 									/>
@@ -146,7 +149,7 @@ export const Login = createReactClass( {
 						<FormButtonsBar>
 							<FormButton
 								disabled={ ! this.canSubmitForm() }
-								onClick={ this.recordClickEvent( 'Sign in' ) }
+								onClick={ this.getClickHandler( 'Sign in' ) }
 							>
 								{ requires2fa ? translate( 'Verify' ) : translate( 'Sign in' ) }
 							</FormButton>
@@ -180,12 +183,9 @@ export const Login = createReactClass( {
 				</div>
 			</Main>
 		);
-	},
+	}
+}
 
-	handleChange( e ) {
-		const { name, value } = e.currentTarget;
-		this.setState( { [ name ]: value } );
-	},
-} );
-
-export default localize( Login );
+export default connect( null, {
+	recordGoogleEvent,
+} )( localize( Auth ) );

@@ -30,7 +30,7 @@ class Month extends PureComponent {
 		showPopover: false,
 	};
 
-	defaultProps = {
+	static defaultProps = {
 		position: 'top',
 	};
 

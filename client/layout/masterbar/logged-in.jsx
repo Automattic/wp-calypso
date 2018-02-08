@@ -1,11 +1,8 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -22,21 +19,17 @@ import Gravatar from 'components/gravatar';
 import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
-import { isNotificationsOpen } from 'state/selectors';
+import { getPrimarySiteId, isDomainOnlySite, isNotificationsOpen } from 'state/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { getStatsPathForTab } from 'lib/route/path';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
-import { getSite } from 'state/sites/selectors';
-import { getPrimarySiteId } from 'state/selectors';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
 		domainOnlySite: PropTypes.bool,
 		user: PropTypes.object,
-		sites: PropTypes.object,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		siteSlug: PropTypes.string,
@@ -54,6 +47,18 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
+	};
+
+	preloadMySites = () => {
+		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
+	};
+
+	preloadReader = () => {
+		preload( 'reader' );
+	};
+
+	preloadMe = () => {
+		preload( 'me' );
 	};
 
 	isActive = section => {
@@ -86,7 +91,7 @@ class MasterbarLoggedIn extends React.Component {
 					tooltip={ translate( 'View a list of your sites and access their dashboards', {
 						textOnly: true,
 					} ) }
-					preloadSection={ () => preload( domainOnlySite ? 'domains' : 'stats' ) }
+					preloadSection={ this.preloadMySites }
 				>
 					{ this.props.user.get().site_count > 1
 						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
@@ -100,7 +105,7 @@ class MasterbarLoggedIn extends React.Component {
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
 					tooltip={ translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
-					preloadSection={ () => preload( 'reader' ) }
+					preloadSection={ this.preloadReader }
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
@@ -125,7 +130,7 @@ class MasterbarLoggedIn extends React.Component {
 					tooltip={ translate( 'Update your profile, personal settings, and more', {
 						textOnly: true,
 					} ) }
-					preloadSection={ () => preload( 'me' ) }
+					preloadSection={ this.preloadMe }
 				>
 					<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
 					<span className="masterbar__item-me-label">
@@ -154,25 +159,10 @@ export default connect(
 		// by the user yet
 		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
 
-		let siteSlug = getSiteSlug( state, siteId );
-		let domainOnlySite = false;
-
-		if ( siteSlug ) {
-			domainOnlySite = isDomainOnlySite( state, siteId );
-		} else {
-			// Retrieves the site from the Sites store when the global state tree doesn't contain the list of sites yet
-			const site = getSite( state, siteId );
-
-			if ( site ) {
-				siteSlug = site.slug;
-				domainOnlySite = get( site, 'options.is_domain_only', false );
-			}
-		}
-
 		return {
 			isNotificationsShowing: isNotificationsOpen( state ),
-			siteSlug,
-			domainOnlySite,
+			siteSlug: getSiteSlug( state, siteId ),
+			domainOnlySite: isDomainOnlySite( state, siteId ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent }

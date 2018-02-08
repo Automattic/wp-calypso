@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import store from 'store';
 import page from 'page';
@@ -20,7 +18,7 @@ import { setSection } from 'state/ui/actions';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
 import _user from 'lib/user';
-import i18nUtils from 'lib/i18n-utils';
+import { getLanguage, getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 
 /**
  * Module variables
@@ -34,20 +32,20 @@ function getLocale( parameters ) {
 }
 
 function isLocale( pathFragment ) {
-	return ! isEmpty( i18nUtils.getLanguage( pathFragment ) );
+	return ! isEmpty( getLanguage( pathFragment ) );
 }
 
 export function redirectWithoutLocaleifLoggedIn( context, next ) {
-	if ( user.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-		let urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
-		return page.redirect( urlWithoutLocale );
+	if ( user.get() && getLocaleFromPath( context.path ) ) {
+		return page.redirect( removeLocaleFromPath( context.path ) );
 	}
 
 	next();
 }
 
 export function acceptInvite( context, next ) {
-	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) );
 
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 

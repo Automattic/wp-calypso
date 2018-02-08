@@ -76,6 +76,7 @@ import SectionNav from 'components/section-nav/docs/example';
 import SegmentedControl from 'components/segmented-control/docs/example';
 import SelectDropdown from 'components/select-dropdown/docs/example';
 import ShareButton from 'components/share-button/docs/example';
+import SiteTitleControl from 'components/site-title/docs/example';
 import SocialLogos from 'social-logos/example';
 import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
@@ -133,7 +134,10 @@ class DesignAssets extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
-					<Accordions componentUsageStats={ componentsUsageStats.accordion } readmeFilePath="accordion" />
+					<Accordions
+						componentUsageStats={ componentsUsageStats.accordion }
+						readmeFilePath="accordion"
+					/>
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
@@ -187,6 +191,7 @@ class DesignAssets extends React.Component {
 					<SegmentedControl readmeFilePath="segmented-control" />
 					<SelectDropdown searchKeywords="menu" readmeFilePath="select-dropdown" />
 					<ShareButton />
+					<SiteTitleControl readmeFilePath="site-title" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" readmeFilePath="spinner" />
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />

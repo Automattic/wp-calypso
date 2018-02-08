@@ -11,6 +11,7 @@ export const readerSitesSchema = {
 			properties: {
 				...sitesSchema.patternProperties[ '^\\d+$' ].properties,
 				feed_ID: { type: 'number' },
+				subscription: { type: 'object' },
 			},
 		},
 	},

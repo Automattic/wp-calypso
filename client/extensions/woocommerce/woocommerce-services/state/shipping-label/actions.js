@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
+/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 /**
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { every, fill, find, first, flatten, includes, isEqual, map, noop, pick } from 'lodash';
+import { every, fill, find, first, flatten, includes, isBoolean, isEqual, map, noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import { getFirstErroneousStep, getShippingLabel, getFormErrors, shouldFulfillOr
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
+import { getEmailReceipts } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -502,6 +504,60 @@ const labelStatusTask = ( orderId, siteId, labelId, retryCount ) => {
 		} );
 };
 
+const handlePrintFinished = ( orderId, siteId, dispatch, getState, hasError, labels ) => {
+	dispatch( exitPrintingFlow( orderId, siteId, true ) );
+	dispatch( clearAvailableRates( orderId, siteId ) );
+
+	if ( hasError ) {
+		return;
+	}
+
+	if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
+		const trackingNumbers = labels.map( ( label ) => label.tracking );
+		const carrierId = first( labels ).carrier_id;
+		let note = '';
+		if ( 'usps' === carrierId ) {
+			note = translate(
+				'Your order has been shipped with USPS. The tracking number is %(trackingNumbers)s.',
+				'Your order consisting of %(packageNum)d packages has been shipped with USPS. ' +
+					'The tracking numbers are %(trackingNumbers)s.',
+				{
+					args: {
+						packageNum: trackingNumbers.length,
+						trackingNumbers: trackingNumbers.join( ', ' ),
+					},
+					count: trackingNumbers.length,
+				},
+			);
+		} else {
+			note = translate(
+				'Your order has been shipped. The tracking number is %(trackingNumbers)s.',
+				'Your order consisting of %(packageNum)d packages has been shipped. ' +
+					'The tracking numbers are %(trackingNumbers)s.',
+				{
+					args: {
+						packageNum: trackingNumbers.length,
+						trackingNumbers: trackingNumbers.join( ', ' ),
+					},
+					count: trackingNumbers.length,
+				},
+			);
+		}
+
+		dispatch( createNote( siteId, orderId, {
+			note,
+			customer_note: true,
+		} ) );
+	}
+
+	if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
+		dispatch( saveOrder( siteId, {
+			id: orderId,
+			status: 'completed',
+		} ) );
+	}
+};
+
 const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) => {
 	const errorLabel = find( labels, { status: 'PURCHASE_ERROR' } );
 	if ( errorLabel ) {
@@ -532,25 +588,29 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 		labelId: label.label_id,
 	} ) );
 	const state = getShippingLabel( getState(), orderId, siteId );
-	const printUrl = getPrintURL( siteId, state.paperSize, labelsToPrint );
+	const printUrl = getPrintURL( state.paperSize, labelsToPrint );
+	const showSuccessNotice = () => {
+		dispatch( NoticeActions.successNotice( translate(
+			'Your shipping label was purchased successfully',
+			'Your %(count)d shipping labels were purchased successfully',
+			{
+				count: labels.length,
+				args: { count: labels.length },
+			}
+		) ) );
+	};
 	let hasError = false;
 
 	api.get( siteId, printUrl )
 		.then( ( fileData ) => {
 			if ( 'addon' === getPDFSupport() ) {
+				showSuccessNotice();
 				// If the browser has a PDF "addon", we need another user click to trigger opening it in a new tab
-				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, orderId, siteId, fileData } );
+				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION, orderId, siteId, fileData, labels } );
 			} else {
 				printDocument( fileData, getPDFFileName( orderId ) )
 					.then( () => {
-						dispatch( NoticeActions.successNotice( translate(
-							'Your %(count)d shipping label was purchased successfully',
-							'Your %(count)d shipping labels were purchased successfully',
-							{
-								count: labels.length,
-								args: { count: labels.length },
-							}
-						) ) );
+						showSuccessNotice();
 					} )
 					.catch( ( err ) => {
 						console.error( err );
@@ -558,44 +618,7 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 						hasError = true;
 					} )
 					.then( () => {
-						dispatch( exitPrintingFlow( orderId, siteId, true ) );
-						dispatch( clearAvailableRates( orderId, siteId ) );
-
-						if ( hasError ) {
-							return;
-						}
-
-						if ( shouldEmailDetails( getState(), orderId, siteId ) ) {
-							const trackingNumbers = labels.map( ( label ) => label.tracking );
-							const carrierId = first( labels ).carrier_id;
-							const carrierName = 'usps' === carrierId ? translate( 'USPS' ) : translate( 'an unknown carrier' );
-
-							const note = {
-								note: translate(
-									'Your order consisting of %(packageNum)d package has been shipped with %(carrierName)s. ' +
-										'The tracking number is %(trackingNumbers)s.',
-									'Your order consisting of %(packageNum)d packages has been shipped with %(carrierName)s. ' +
-										'The tracking numbers are %(trackingNumbers)s.',
-									{
-										args: {
-											packageNum: trackingNumbers.length,
-											carrierName,
-											trackingNumbers: trackingNumbers.join( ', ' ),
-										},
-										count: trackingNumbers.length,
-									}
-								),
-								customer_note: true,
-							};
-							dispatch( createNote( siteId, orderId, note ) );
-						}
-
-						if ( shouldFulfillOrder( getState(), orderId, siteId ) ) {
-							dispatch( saveOrder( siteId, {
-								id: orderId,
-								status: 'completed',
-							} ) );
-						}
+						handlePrintFinished( orderId, siteId, dispatch, getState, hasError, labels );
 					} );
 			}
 		} );
@@ -654,6 +677,12 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 			} ),
 		};
 
+		//compatibility - only add the email_receipt if the plugin and the server support it
+		const emailReceipt = getEmailReceipts( getState(), siteId );
+		if ( isBoolean( emailReceipt ) ) {
+			formData.email_receipt = emailReceipt;
+		}
+
 		setIsSaving( true );
 		api.post( siteId, api.url.orderLabels( orderId ), formData )
 			.then( setSuccess )
@@ -671,6 +700,7 @@ export const confirmPrintLabel = ( orderId, siteId ) => ( dispatch, getState ) =
 		.then( () => {
 			dispatch( exitPrintingFlow( orderId, siteId, true ) );
 			dispatch( clearAvailableRates( orderId, siteId ) );
+			handlePrintFinished( orderId, siteId, dispatch, getState, false, shippingLabel.form.labelsToPrint );
 		} )
 		.catch( ( error ) => dispatch( NoticeActions.errorNotice( error.toString() ) ) );
 };
@@ -755,7 +785,7 @@ export const confirmRefund = ( orderId, siteId ) => ( dispatch, getState ) => {
 export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, getState ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG, labelId, orderId, siteId } );
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
-	const printUrl = getPrintURL( siteId, shippingLabel.paperSize, [ { labelId } ] );
+	const printUrl = getPrintURL( shippingLabel.paperSize, [ { labelId } ] );
 
 	api.get( siteId, printUrl )
 		.then( ( fileData ) => {

@@ -3,69 +3,76 @@
  *
  * @format
  */
-
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { find } from 'lodash';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-
 import FormattedHeader from 'components/formatted-header';
 import Checklist from 'components/checklist';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
-import ShareButton from 'components/share-button';
 import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteChecklist } from 'state/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
-import { onboardingTasks, tourForTask, urlForTask } from '../onboardingChecklist';
+import { launchTask, onboardingTasks } from '../onboardingChecklist';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import ChecklistShowShare from './share';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
-		const { requestTour, siteSlug, siteChecklist, track } = this.props;
+		const { requestTour, siteSlug, tasks, track } = this.props;
+		const task = find( tasks, { id } );
 
-		const tour = tourForTask( id );
-		const url = urlForTask( id, siteSlug );
-
-		if ( siteChecklist && siteChecklist.tasks && ( url || tour ) ) {
-			const status = siteChecklist.tasks[ id ] ? 'complete' : 'incomplete';
-
-			track( 'calypso_checklist_task_start', {
-				checklist_name: 'new_blog',
-				step_name: id,
-				status,
-			} );
-
-			if ( url ) {
-				page( url );
-			}
-			if ( tour ) {
-				requestTour( tour );
-			}
-		}
+		launchTask( {
+			task,
+			location: 'checklist_show',
+			requestTour,
+			siteSlug,
+			track,
+		} );
 	};
 
-	onToggle = taskId => {
-		const { notify, siteId, siteChecklist, update } = this.props;
+	onToggle = id => {
+		const { notify, siteId, tasks, update } = this.props;
+		const task = find( tasks, { id } );
 
-		if ( siteChecklist && siteChecklist.tasks && ! siteChecklist.tasks[ taskId ] ) {
+		if ( task && ! task.completed ) {
 			notify( 'is-success', 'You completed a task!' );
-			update( siteId, taskId );
+			update( siteId, id );
 		}
 	};
 
-	renderHeader( completed ) {
-		const shareTo = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
-
+	renderHeader( completed, displayMode ) {
 		if ( ! completed ) {
+			if ( displayMode ) {
+				const title =
+					displayMode === 'free' ? 'Your site has been created!' : 'Thank you for your purchase!';
+
+				return (
+					<Fragment>
+						<img
+							src="/calypso/images/signup/confetti.svg"
+							aria-hidden="true"
+							className="checklist-show__confetti"
+						/>
+						<FormattedHeader
+							headerText={ title }
+							subHeaderText={
+								"Now that your site has been created, it's time to get it ready for you to share. " +
+								"We've prepared a list of things that will help you get there quickly."
+							}
+						/>
+					</Fragment>
+				);
+			}
+
 			return (
 				<FormattedHeader
 					headerText="Welcome back!"
@@ -85,36 +92,30 @@ class ChecklistShow extends PureComponent {
 					headerText="Congratulations!"
 					subHeaderText="You have completed all your tasks. Now let's tell people about it. Share your site."
 				/>
-				<div className="checklist-show__share">
-					{ shareTo.map( option => (
-						<ShareButton
-							key={ option }
-							url={ `https://${ this.props.siteSlug }` }
-							title="Delighted to announce my new website is live today - please take a look."
-							siteSlug={ this.props.siteSlug }
-							service={ option }
-						/>
-					) ) }
-				</div>
+				<ChecklistShowShare
+					className="checklist-show__share"
+					siteSlug={ this.props.siteSlug }
+					recordTracksEvent={ this.props.track }
+				/>
 			</Fragment>
 		);
 	}
 
 	render() {
-		const { siteId, siteChecklist } = this.props;
-		let tasks = null;
-
-		if ( siteChecklist && siteChecklist.tasks ) {
-			tasks = onboardingTasks( siteChecklist.tasks );
-		}
+		const { displayMode, siteId, tasks } = this.props;
 
 		const completed = tasks && ! find( tasks, { completed: false } );
 
+		let title = 'Site Checklist';
+		if ( displayMode ) {
+			title = 'Thank You';
+		}
+
 		return (
 			<Main className="checklist-show">
-				<DocumentHead title="Site Checklist" />
+				<DocumentHead title={ title } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
-				{ this.renderHeader( completed ) }
+				{ this.renderHeader( completed, displayMode ) }
 				<Checklist
 					isLoading={ ! tasks }
 					tasks={ tasks }
@@ -128,9 +129,10 @@ class ChecklistShow extends PureComponent {
 
 const mapStateToProps = state => {
 	const siteId = getSelectedSiteId( state );
-	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSlug = getSiteSlug( state, siteId );
-	return { siteId, siteSlug, siteChecklist };
+	const siteChecklist = getSiteChecklist( state, siteId );
+	const tasks = onboardingTasks( siteChecklist );
+	return { siteId, siteSlug, tasks };
 };
 
 const mapDispatchToProps = {

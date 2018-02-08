@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -29,7 +27,7 @@ import {
 } from 'state/preview/selectors';
 import { closePreview } from 'state/ui/preview/actions';
 import DesignMenu from 'blocks/design-menu';
-import { getSiteFragment } from 'lib/route/path';
+import { getSiteFragment } from 'lib/route';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import WebPreview from 'components/web-preview';

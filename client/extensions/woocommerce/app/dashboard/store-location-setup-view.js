@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { every, find, includes, isEmpty, keys, pick, trim } from 'lodash';
+import { every, includes, isEmpty, keys, pick, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,16 +20,22 @@ import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import BasicWidget from 'woocommerce/components/basic-widget';
+import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
-import { getCountryData, getCountries } from 'woocommerce/lib/countries';
+import {
+	areLocationsLoaded,
+	getCountriesWithStates,
+} from 'woocommerce/state/sites/locations/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './setup-footer';
 import SetupHeader from './setup-header';
 import SetupNotices from './setup-notices';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryLocations from 'woocommerce/components/query-locations';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import userFactory from 'lib/user';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
@@ -58,6 +64,8 @@ class StoreLocationSetupView extends Component {
 			postalCode: PropTypes.string,
 			countryCode: PropTypes.string,
 		} ),
+		adminURL: PropTypes.string.isRequired,
+		onRequestRedirect: PropTypes.func.isRequired,
 		pushDefaultsForCountry: PropTypes.bool.isRequired,
 		settingsGeneralLoaded: PropTypes.bool,
 		storeLocation: PropTypes.shape( {
@@ -84,19 +92,15 @@ class StoreLocationSetupView extends Component {
 					postcode: '',
 					country: 'US',
 				};
-				// If the settings general country is US or CA and it has a street address, use it
-				// Otherwise, if the contact details country is US or CA and it has a street address, use it
-				if (
-					includes( [ 'US', 'CA' ], storeLocation.country ) &&
-					! isEmpty( storeLocation.street )
-				) {
+
+				// If settings general has an address, use it
+				// Otherwise, if the contact details has an address, use it
+				if ( ! isEmpty( storeLocation.street ) ) {
 					address = pick( storeLocation, keys( address ) );
-				} else if (
-					includes( [ 'US', 'CA' ], contactDetails.countryCode ) &&
-					! isEmpty( contactDetails.address1 )
-				) {
+				} else if ( ! isEmpty( contactDetails.address1 ) ) {
 					address = this.getAddressFromContactDetails( contactDetails );
 				}
+
 				this.setState( { address } );
 			}
 		}
@@ -121,18 +125,17 @@ class StoreLocationSetupView extends Component {
 		const address = this.state.address;
 		address[ addressKey ] = newValue;
 
-		// Did they change the country? Force an appropriate state default
-		if ( 'country' === addressKey ) {
-			const countryData = getCountryData( newValue );
-			address.state = countryData ? countryData.defaultState : '';
-		}
-
 		this.setState( { address, userBeganEditing: true } );
 	};
 
 	onNext = event => {
-		const { currentUserEmailVerified, siteId, translate } = this.props;
+		const { adminURL, currentUserEmailVerified, onRequestRedirect, siteId, translate } = this.props;
 		event.preventDefault();
+
+		// Already saving? Bail.
+		if ( this.state.isSaving ) {
+			return;
+		}
 
 		if ( ! currentUserEmailVerified ) {
 			this.setState( { showEmailVerificationDialog: true } );
@@ -148,6 +151,18 @@ class StoreLocationSetupView extends Component {
 			// No need to set isSaving to false here - we're navigating away from here
 			// and setting isSaving to false will just light the button up again right
 			// before the next step's dialog displays
+
+			// mc stat 32 char max :P
+			this.props.bumpStat( 'calypso_woo_store_setup_country', this.state.address.country );
+
+			// If we don't support a calypso experience yet for this country, let
+			// them complete setup with the wp-admin WooCommerce wizard
+			if ( ! isStoreManagementSupportedInCalypsoForCountry( this.state.address.country ) ) {
+				const storeSetupURL =
+					adminURL + 'admin.php?page=wc-setup&step=store_setup&activate_error=false&from=calypso';
+				onRequestRedirect( storeSetupURL );
+			}
+
 			return setSetStoreAddressDuringInitialSetup( siteId, true );
 		};
 
@@ -158,30 +173,14 @@ class StoreLocationSetupView extends Component {
 			);
 		};
 
-		// Provides fallbacks if the country & state options were never changed/toggled,
-		// or if an unsupported country was set in state (like WC's default GB country)
-		let country = null;
-		let state = null;
-		if (
-			! this.state.address.country ||
-			! find( getCountries(), { code: this.state.address.country } )
-		) {
-			country = 'US';
-			const countryData = getCountryData( country );
-			state = this.state.address.state ? this.state.address.state : countryData.defaultState;
-		} else {
-			country = this.state.address.country;
-			state = this.state.address.state;
-		}
-
 		this.props.doInitialSetup(
 			siteId,
 			this.state.address.street,
 			this.state.address.street2,
 			this.state.address.city,
-			state,
+			this.state.address.state,
 			this.state.address.postcode,
-			country,
+			this.state.address.country,
 			this.props.pushDefaultsForCountry,
 			onSuccess,
 			onFailure
@@ -189,16 +188,30 @@ class StoreLocationSetupView extends Component {
 	};
 
 	renderForm = () => {
-		const { contactDetails, settingsGeneralLoaded, translate } = this.props;
-		const showForm = contactDetails && settingsGeneralLoaded;
+		const {
+			contactDetails,
+			countriesWithStates,
+			locationsLoaded,
+			settingsGeneralLoaded,
+			translate,
+		} = this.props;
+		const showForm =
+			contactDetails && settingsGeneralLoaded && locationsLoaded && ! this.state.isFetchingUser;
 
 		// Note: We will have to revisit this if/when we support countries that lack post codes
-		const requiredAddressFields = pick( this.state.address, [ 'street', 'city', 'postcode' ] );
+		const requiredKeys = [ 'country', 'city', 'postcode', 'street' ];
+
+		// See if this country has states
+		// TODO - refactor AddressView to do this for us
+		if ( includes( countriesWithStates, this.state.address.country ) ) {
+			requiredKeys.push( 'state' );
+		}
+
+		const requiredAddressFields = pick( this.state.address, requiredKeys );
 		const everyRequiredFieldHasAValue = every( requiredAddressFields, field => {
 			return ! isEmpty( trim( field ) );
 		} );
-		const submitDisabled =
-			this.state.isSaving || this.state.isFetchingUser || ! everyRequiredFieldHasAValue;
+		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;
 
 		if ( ! showForm ) {
 			return (
@@ -215,11 +228,13 @@ class StoreLocationSetupView extends Component {
 					className="dashboard__pre-setup-address"
 					isEditable
 					onChange={ this.onChange }
+					showAllLocations
 				/>
 				<SetupFooter
+					busy={ this.state.isSaving }
 					disabled={ submitDisabled }
 					onClick={ this.onNext }
-					label={ translate( "Let's Go!" ) }
+					label={ translate( 'Next', { context: 'Label for button that submits a form' } ) }
 					primary
 				/>
 			</div>
@@ -251,6 +266,7 @@ class StoreLocationSetupView extends Component {
 						subtitle={ translate( 'First we need to know where you are in the world.' ) }
 					/>
 					{ this.renderForm() }
+					<QueryLocations siteId={ siteId } />
 					<QuerySettingsGeneral siteId={ siteId } />
 					<QueryContactDetailsCache />
 				</div>
@@ -261,15 +277,18 @@ class StoreLocationSetupView extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const { siteId } = ownProps;
-
 	const contactDetails = getContactDetailsCache( state );
 	const currentUserEmailVerified = isCurrentUserEmailVerified( state );
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
+	const locationsLoaded = areLocationsLoaded( state, siteId );
+	const countriesWithStates = getCountriesWithStates( state, siteId );
 
 	return {
 		contactDetails,
+		countriesWithStates,
 		currentUserEmailVerified,
+		locationsLoaded,
 		settingsGeneralLoaded,
 		storeLocation,
 	};
@@ -278,6 +297,7 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			bumpStat,
 			doInitialSetup,
 		},
 		dispatch

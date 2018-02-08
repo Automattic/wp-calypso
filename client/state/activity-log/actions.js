@@ -19,9 +19,6 @@ import {
 	REWIND_RESTORE_REQUEST,
 	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
-	REWIND_STATUS_ERROR,
-	REWIND_STATUS_REQUEST,
-	REWIND_STATUS_UPDATE,
 	REWIND_BACKUP,
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
@@ -128,36 +125,6 @@ export function rewindDeactivateFailure( siteId ) {
 	return {
 		type: REWIND_DEACTIVATE_FAILURE,
 		siteId,
-	};
-}
-
-/**
- * Fetch the general status of the 'rewind' feature
- * for a site.
- *
- * @param {String|number} siteId site ID
- * @return {Object} action object
- */
-export function getRewindStatus( siteId ) {
-	return {
-		type: REWIND_STATUS_REQUEST,
-		siteId,
-	};
-}
-
-export function updateRewindStatus( siteId, status ) {
-	return {
-		type: REWIND_STATUS_UPDATE,
-		siteId,
-		status,
-	};
-}
-
-export function rewindStatusError( siteId, error ) {
-	return {
-		type: REWIND_STATUS_ERROR,
-		siteId,
-		error,
 	};
 }
 

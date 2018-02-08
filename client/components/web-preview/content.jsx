@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,7 +10,7 @@ import debugModule from 'debug';
 import { noop, isFunction } from 'lodash';
 import page from 'page';
 import { v4 as uuid } from 'uuid';
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 
 /**
  * Internal dependencies

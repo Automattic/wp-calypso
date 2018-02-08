@@ -4,9 +4,10 @@
  * Internal dependencies
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
+import { jetpackOnboardingCredentialsSchema, jetpackOnboardingSettingsSchema } from './schema';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
 export const credentialsReducer = keyedReducer(
@@ -15,22 +16,26 @@ export const credentialsReducer = keyedReducer(
 		{},
 		{
 			[ JETPACK_ONBOARDING_CREDENTIALS_RECEIVE ]: ( state, { credentials } ) => credentials,
-		}
+		},
+		jetpackOnboardingCredentialsSchema
 	)
 );
+credentialsReducer.hasCustomPersistence = true;
 
 export const settingsReducer = keyedReducer(
 	'siteId',
 	createReducer(
 		{},
 		{
-			[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: ( state, { settings } ) => ( {
+			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) => ( {
 				...state,
 				...settings,
 			} ),
-		}
+		},
+		jetpackOnboardingSettingsSchema
 	)
 );
+settingsReducer.hasCustomPersistence = true;
 
 export default combineReducers( {
 	credentials: credentialsReducer,

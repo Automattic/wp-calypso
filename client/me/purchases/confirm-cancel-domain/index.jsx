@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -34,7 +32,7 @@ import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
 import notices from 'notices';
-import paths from 'me/purchases/paths';
+import { purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { receiveDeletedSite } from 'state/sites/actions';
 import { refreshSitePlans } from 'state/sites/plans/actions';
@@ -83,7 +81,7 @@ class ConfirmCancelDomain extends React.Component {
 		const purchase = getPurchase( props );
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 		}
 	};
 
@@ -154,7 +152,7 @@ class ConfirmCancelDomain extends React.Component {
 				product_slug: purchase.productSlug,
 			} );
 
-			page.redirect( paths.purchasesRoot() );
+			page.redirect( purchasesRoot );
 		} );
 	};
 

@@ -112,8 +112,8 @@ export default class extends React.Component {
 				<div
 					className="devdocs__doc-content"
 					ref="body"
-					dangerouslySetInnerHTML={ //eslint-disable-line react/no-danger
-					{ __html: highlight( this.props.term, this.state.body ) } }
+					//eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, this.state.body ) } }
 				/>
 			</div>
 		);

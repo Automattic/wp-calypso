@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';
+import { find, filter, flatMap, get, isArray, isEmpty, omit, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -64,11 +64,25 @@ export const getContinents = createSelector(
 
 /**
  * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} An array of all countries represented by { code, name, states } objects. Sorted alphabetically by name.
+ */
+export const getAllCountries = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areLocationsLoaded( state, siteId ) ) {
+		return [];
+	}
+
+	const allCountries = flatMap( getRawLocations( state, siteId ), 'countries' );
+	return sortBy( allCountries, 'name' );
+};
+
+/**
+ * @param {Object} state Whole Redux state tree
  * @param {String} continentCode 2-letter continent code
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {Array} A list of countries in the given country, represented by { code, name } pairs. Sorted alphabetically by name.
+ * @return {Array} A list of countries in the given continent, represented by { code, name } pairs. Sorted alphabetically by name.
  */
-export const getCountries = createSelector(
+export const getCountriesByContinent = createSelector(
 	( state, continentCode, siteId = getSelectedSiteId( state ) ) => {
 		if ( ! areLocationsLoaded( state, siteId ) ) {
 			return [];
@@ -110,6 +124,24 @@ export const getCountryName = createSelector(
 		return [ loaded, loaded && getRawLocations( state, siteId ) ];
 	}
 );
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {Array} A list of countries (codes) that have states
+ */
+export const getCountriesWithStates = ( state, siteId = getSelectedSiteId( state ) ) => {
+	if ( ! areLocationsLoaded( state, siteId ) ) {
+		return [];
+	}
+
+	const allCountries = getAllCountries( state, siteId );
+	const countriesWithStates = filter( allCountries, country => {
+		return ! isEmpty( country.states );
+	} );
+
+	return countriesWithStates.map( country => country.code ).sort();
+};
 
 /**
  * @param {Object} state Whole Redux state tree

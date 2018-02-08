@@ -81,7 +81,7 @@ class SettingsEmail extends Component {
 				</ActionHeader>
 				<SettingsNavigation activeSection="email" />
 				{ config.isEnabled( 'woocommerce/extension-settings-email-generic' ) && (
-					<EmailSettings siteId={ site.ID } />
+					<EmailSettings siteId={ site.ID } onSettingsChange={ this.onChange } />
 				) }
 				<MailChimp
 					onChange={ this.onChange }

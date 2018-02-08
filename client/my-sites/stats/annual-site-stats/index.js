@@ -17,8 +17,10 @@ import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
 import ErrorPanel from 'my-sites/stats/stats-error';
+import QuerySiteStats from 'components/data/query-site-stats';
 
 class AnnualSiteStats extends Component {
 	static propTypes = {
@@ -27,58 +29,115 @@ class AnnualSiteStats extends Component {
 		translate: PropTypes.func,
 		numberFormat: PropTypes.func,
 		moment: PropTypes.func,
+		isWidget: PropTypes.bool,
+		siteId: PropTypes.number,
+		siteSlug: PropTypes.string,
 	};
 
-	renderContent( data ) {
-		const { translate, numberFormat } = this.props;
+	static defaultProps = {
+		isWidget: false,
+	};
+
+	renderWidgetContent( data, strings ) {
+		const { numberFormat } = this.props;
 		return (
 			<div className="annual-site-stats__content">
 				<div className="annual-site-stats__stat is-year">
-					<div className="annual-site-stats__stat-title">{ translate( 'year' ) }</div>
+					<div className="annual-site-stats__stat-title">{ strings.year }</div>
 					<div className="annual-site-stats__stat-figure is-large">{ data.year }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">{ translate( 'total posts' ) }</div>
+					<div className="annual-site-stats__stat-title">{ strings.total_posts }</div>
 					<div className="annual-site-stats__stat-figure is-large">
 						{ numberFormat( data.total_posts ) }
 					</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">{ translate( 'total comments' ) }</div>
+					<div className="annual-site-stats__stat-title">{ strings.total_comments }</div>
 					<div className="annual-site-stats__stat-figure">
 						{ numberFormat( data.total_comments ) }
 					</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">
-						{ translate( 'avg comments per post' ) }
-					</div>
+					<div className="annual-site-stats__stat-title">{ strings.avg_comments }</div>
 					<div className="annual-site-stats__stat-figure">
 						{ numberFormat( data.avg_comments ) }
 					</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">{ translate( 'total likes' ) }</div>
+					<div className="annual-site-stats__stat-title">{ strings.total_likes }</div>
 					<div className="annual-site-stats__stat-figure">{ numberFormat( data.total_likes ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">{ translate( 'avg likes per post' ) }</div>
+					<div className="annual-site-stats__stat-title">{ strings.avg_likes }</div>
 					<div className="annual-site-stats__stat-figure">{ numberFormat( data.avg_likes ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">{ translate( 'total words' ) }</div>
+					<div className="annual-site-stats__stat-title">{ strings.total_words }</div>
 					<div className="annual-site-stats__stat-figure">{ numberFormat( data.total_words ) }</div>
 				</div>
 				<div className="annual-site-stats__stat">
-					<div className="annual-site-stats__stat-title">{ translate( 'avg words per post' ) }</div>
+					<div className="annual-site-stats__stat-title">{ strings.avg_words }</div>
 					<div className="annual-site-stats__stat-figure">{ numberFormat( data.avg_words ) }</div>
 				</div>
 			</div>
 		);
 	}
 
+	renderTable( data, strings ) {
+		const keys = Object.keys( strings );
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<div className="module-content-table is-fixed-row-header">
+				<div className="module-content-table-scroll">
+					<table cellPadding="0" cellSpacing="0">
+						<thead>
+							<tr>
+								{ keys.map( key => (
+									<th scope="col" key={ key }>
+										{ strings[ key ] }
+									</th>
+								) ) }
+							</tr>
+						</thead>
+						<tbody>
+							{ data.map( ( row, i ) => (
+								<tr key={ i }>
+									{ keys.map( ( key, j ) => {
+										const Cell = j === 0 ? 'th' : 'td';
+										return (
+											<Cell scope={ j === 0 ? 'row' : null } key={ j }>
+												{ row[ key ] }
+											</Cell>
+										);
+									} ) }
+								</tr>
+							) ) }
+						</tbody>
+					</table>
+				</div>
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
+	getStrings() {
+		const { translate } = this.props;
+		return {
+			year: translate( 'Year' ),
+			total_posts: translate( 'Total Posts' ),
+			total_comments: translate( 'Total Comments' ),
+			avg_comments: translate( 'Avg Comments per Post' ),
+			total_likes: translate( 'Total Likes' ),
+			avg_likes: translate( 'Avg Likes per Post' ),
+			total_words: translate( 'Total Words' ),
+			avg_words: translate( 'Avg Words per Post' ),
+		};
+	}
+
 	render() {
-		const { years, translate, moment } = this.props;
+		const { years, translate, moment, isWidget, siteId, siteSlug } = this.props;
+		const strings = this.getStrings();
 		const now = moment();
 		const currentYear = now.format( 'YYYY' );
 		let previousYear = null;
@@ -89,19 +148,39 @@ class AnnualSiteStats extends Component {
 		const previousYearData = previousYear && years && find( years, y => y.year === previousYear );
 		const isLoading = ! years;
 		const isError = ! isLoading && years.errors;
-		const noData = ! isLoading && ! isError && ! ( currentYearData || previousYearData );
+		const hasData = isWidget ? currentYearData || previousYearData : years;
+		const noData = ! isLoading && ! isError && ! hasData;
+		const noDataMsg = isWidget
+			? translate( 'No annual stats recorded for this year' )
+			: translate( 'No annual stats recorded' );
+		const viewAllLink = `/stats/annualstats/${ siteSlug }`;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<SectionHeader label={ translate( 'Annual Site Stats', { args: [ currentYear ] } ) } />
+				{ ! isWidget && siteId && <QuerySiteStats siteId={ siteId } statType="statsInsights" /> }
+				{ isWidget && (
+					<SectionHeader
+						href={ viewAllLink }
+						label={ translate( 'Annual Site Stats', { args: [ currentYear ] } ) }
+					/>
+				) }
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
 					{ isError && <ErrorPanel message={ translate( 'Oops! Something went wrong.' ) } /> }
-					{ noData && (
-						<ErrorPanel message={ translate( 'No annual stats recorded for this year' ) } />
-					) }
-					{ currentYearData && this.renderContent( currentYearData ) }
-					{ previousYearData && this.renderContent( previousYearData ) }
+					{ noData && <ErrorPanel message={ noDataMsg } /> }
+					{ isWidget && currentYearData && this.renderWidgetContent( currentYearData, strings ) }
+					{ isWidget && previousYearData && this.renderWidgetContent( previousYearData, strings ) }
+					{ ! isWidget && years && this.renderTable( years, strings ) }
+					{ isWidget &&
+						years &&
+						years.length && (
+							<div className="module-expand">
+								<a href={ viewAllLink }>
+									{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }
+									<span className="right" />
+								</a>
+							</div>
+						) }
 				</Card>
 			</div>
 		);
@@ -112,9 +191,12 @@ class AnnualSiteStats extends Component {
 export default connect( state => {
 	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSiteSlug( state, siteId );
 	const insights = getSiteStatsNormalizedData( state, siteId, statType, {} );
 
 	return {
 		years: insights.years,
+		siteId,
+		siteSlug,
 	};
 } )( localize( AnnualSiteStats ) );

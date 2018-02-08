@@ -12,8 +12,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ListItem from 'woocommerce/components/list/list-item';
-import ListItemField from 'woocommerce/components/list/list-item-field';
 import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -22,7 +20,7 @@ const NotificationsOrigin = ( {
 	item,
 	recipient,
 	onChange,
-	isPlaceholder,
+	loaded,
 	checkEmail,
 	translate,
 	placeholder,
@@ -41,32 +39,30 @@ const NotificationsOrigin = ( {
 	const placeholderComponent = <p className="components__is-placeholder" />;
 
 	return (
-		<ListItem>
-			<ListItemField className="components__notification-origin">
-				{ ! isPlaceholder ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
-				<FormTextInput
-					className={ isPlaceholder ? 'components__is-placeholder' : null }
-					isError={ emailValidationError }
-					name={ item.field }
-					onChange={ change }
-					value={ recipient }
-					placeholder={ placeholder }
+		<div className="components__notification-origin">
+			{ loaded ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
+			<FormTextInput
+				className={ ! loaded ? 'components__is-placeholder' : null }
+				isError={ emailValidationError }
+				name={ item.field }
+				onChange={ change }
+				value={ recipient }
+				placeholder={ placeholder }
+			/>
+			{ emailValidationError && (
+				<FormTextValidation
+					isError={ true }
+					text={ translate( '%(recipient)s is not a valid email address.', {
+						args: { recipient },
+					} ) }
 				/>
-				{ emailValidationError && (
-					<FormTextValidation
-						isError={ true }
-						text={ translate( '%(recipient)s is not a valid email address.', {
-							args: { recipient },
-						} ) }
-					/>
-				) }
-				{ ! isPlaceholder ? (
-					<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
-				) : (
-					placeholderComponent
-				) }
-			</ListItemField>
-		</ListItem>
+			) }
+			{ loaded ? (
+				<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
+			) : (
+				placeholderComponent
+			) }
+		</div>
 	);
 };
 
@@ -75,7 +71,7 @@ NotificationsOrigin.propTypes = {
 	item: PropTypes.object,
 	onChange: PropTypes.func.isRequired,
 	placeholder: PropTypes.string,
-	isPlaceholder: PropTypes.bool,
+	loaded: PropTypes.bool,
 	checkEmail: PropTypes.bool,
 };
 

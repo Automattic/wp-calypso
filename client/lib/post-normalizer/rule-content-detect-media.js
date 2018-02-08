@@ -14,9 +14,9 @@ import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } 
 import { READER_CONTENT_WIDTH } from 'state/reader/posts/normalization-rules';
 
 /** Checks whether or not an image is a tracking pixel
-* @param {Node} image - DOM node for an img
-* @returns {boolean} isTrackingPixel - returns true if image is probably a tracking pixel
-*/
+ * @param {Node} image - DOM node for an img
+ * @returns {boolean} isTrackingPixel - returns true if image is probably a tracking pixel
+ */
 function isTrackingPixel( image ) {
 	if ( ! image || ! image.src ) {
 		return false;
@@ -47,9 +47,9 @@ function isCandidateForContentImage( image ) {
 }
 
 /** Detects and returns metadata if it should be considered as a content image
-* @param {image} image - the image
-* @returns {object} metadata - regarding the image or null
-*/
+ * @param {image} image - the image
+ * @returns {object} metadata - regarding the image or null
+ */
 const detectImage = image => {
 	if ( isCandidateForContentImage( image ) ) {
 		const { width, height } = deduceImageWidthAndHeight( image ) || { width: 0, height: 0 };

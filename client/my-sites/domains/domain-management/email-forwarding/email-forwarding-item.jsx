@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -18,8 +16,8 @@ import analyticsMixin from 'lib/mixins/analytics';
 import Button from 'components/button';
 import notices from 'notices';
 import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { CALYPSO_CONTACT } from 'lib/url/support';
+import { deleteEmailForwarding, resendVerificationEmailForwarding } from 'lib/upgrades/actions';
 
 const EmailForwardingItem = createReactClass( {
 	displayName: 'EmailForwardingItem',
@@ -32,7 +30,7 @@ const EmailForwardingItem = createReactClass( {
 			return;
 		}
 
-		upgradesActions.deleteEmailForwarding( domain, mailbox, error => {
+		deleteEmailForwarding( domain, mailbox, error => {
 			this.recordEvent( 'deleteClick', domain, mailbox, forward_address, ! error );
 
 			if ( error ) {
@@ -42,7 +40,7 @@ const EmailForwardingItem = createReactClass( {
 							'Failed to delete email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 							{
 								components: {
-									contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+									contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 								},
 							}
 						)
@@ -72,7 +70,7 @@ const EmailForwardingItem = createReactClass( {
 			return;
 		}
 
-		upgradesActions.resendVerificationEmailForwarding( domain, mailbox, ( error, response ) => {
+		resendVerificationEmailForwarding( domain, mailbox, ( error, response ) => {
 			this.recordEvent( 'resendVerificationClick', domain, mailbox, forward_address, ! error );
 
 			if ( error || ! response.sent ) {
@@ -81,7 +79,7 @@ const EmailForwardingItem = createReactClass( {
 						'Failed to resend verification email for email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 						{
 							components: {
-								contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+								contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 							},
 						}
 					)

@@ -1,6 +1,8 @@
+/** @format */
+
 .jetpack-onboarding {
 	.steps__main {
-		animation: appearWithScaling .3s ease-in-out;
+		animation: appearWithScaling 0.3s ease-in-out;
 	}
 
 	.steps__form {
@@ -52,12 +54,19 @@
 			margin-right: 12px;
 		}
 
-		&.completed {
-			color: $gray;
+		.spinner {
+			float: left;
+			margin-right: 12px;
 		}
 
-		&.todo {
-			color: $blue-medium;
+		&.completed,
+		&.completed a {
+			color: $gray-darken-20;
+		}
+
+		&.todo,
+		&.todo a {
+			color: $blue-wordpress;
 		}
 	}
 

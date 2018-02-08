@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -21,7 +19,11 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import { getProductDisplayCost } from 'state/products-list/selectors';
 import { getSelectedDomain } from 'lib/domains';
 import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementContactsPrivacy,
+	getSectionName,
+} from 'my-sites/domains/paths';
 import QueryProductsList from 'components/data/query-products-list';
 import { type as domainTypes } from 'lib/domains/constants';
 
@@ -50,7 +52,7 @@ class PrivacyProtection extends Component {
 
 		if ( ! this.canAddPrivacyProtection() ) {
 			page(
-				paths.domainManagementContactsPrivacy(
+				domainManagementContactsPrivacy(
 					this.props.selectedSite.slug,
 					this.props.selectedDomainName
 				)
@@ -96,13 +98,13 @@ class PrivacyProtection extends Component {
 
 	goToPreviousSection = () => {
 		const { prevPath } = this.props.context;
-		const previousSection = paths.getSectionName( prevPath );
+		const previousSection = getSectionName( prevPath );
 		let path;
 
 		if ( previousSection === 'contacts-privacy' ) {
-			path = paths.domainManagementContactsPrivacy;
+			path = domainManagementContactsPrivacy;
 		} else {
-			path = paths.domainManagementEdit;
+			path = domainManagementEdit;
 		}
 
 		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );

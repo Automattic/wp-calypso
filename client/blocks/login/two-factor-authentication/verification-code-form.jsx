@@ -22,7 +22,11 @@ import Card from 'components/card';
 import { localize } from 'i18n-calypso';
 import { getTwoFactorAuthRequestError } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { formUpdate, loginUserWithTwoFactorVerificationCode, sendSmsCode } from 'state/login/actions';
+import {
+	formUpdate,
+	loginUserWithTwoFactorVerificationCode,
+	sendSmsCode,
+} from 'state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
 class VerificationCodeForm extends Component {

@@ -15,7 +15,6 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
-import i18nUtils from 'lib/i18n-utils';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
@@ -24,31 +23,32 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import route from 'lib/route';
-import userFactory from 'lib/user';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
-import { JETPACK_CONNECT_QUERY_SET } from 'state/action-types';
-import { MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
+import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
+import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
+import { login } from 'lib/paths';
+import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
+import { sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
-import { persistMobileRedirect, storePlan } from './persistence-utils';
+import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
 import {
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 
 /**
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
-const userModule = userFactory();
 const analyticsPageTitleByType = {
 	install: 'Jetpack Install',
 	personal: 'Jetpack Connect Personal',
@@ -94,8 +94,9 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
-		const urlWithoutLocale = i18nUtils.removeLocaleFromPath( context.path );
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
+		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
 	}
@@ -127,16 +128,8 @@ export function newSite( context, next ) {
 	next();
 }
 
-export function connect( context, next ) {
-	const { path, pathname, params, query } = context;
-	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-
-	debug( 'entered connect flow with params %o', params );
-
-	const planSlug = getPlanSlugFromFlowType( type, interval );
-	planSlug && storePlan( planSlug );
-
+export function persistMobileAppFlow( context, next ) {
+	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
 			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
@@ -147,12 +140,30 @@ export function connect( context, next ) {
 			persistMobileRedirect( '' );
 		}
 	}
+	next();
+}
+
+export function setMasterbar( context, next ) {
+	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
+		const masterbarToggle = retrieveMobileRedirect() ? hideMasterbar() : showMasterbar();
+		context.store.dispatch( masterbarToggle );
+	}
+	next();
+}
+
+export function connect( context, next ) {
+	const { path, pathname, params, query } = context;
+	const { type = false, interval } = params;
+	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+
+	debug( 'entered connect flow with params %o', params );
+
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+	planSlug && storePlan( planSlug );
 
 	analytics.pageView.record( pathname, analyticsPageTitle );
 
 	removeSidebar( context );
-
-	userModule.fetch();
 
 	context.primary = React.createElement( JetpackConnect, {
 		context,
@@ -160,13 +171,18 @@ export function connect( context, next ) {
 		path,
 		type,
 		url: query.url,
-		userModule,
 	} );
 	next();
 }
 
 export function signupForm( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
+		// Force login for mobile app flow. App will intercept this request and prompt native login.
+		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
+	}
 
 	removeSidebar( context );
 
@@ -175,21 +191,7 @@ export function signupForm( context, next ) {
 
 	if ( validQueryObject ) {
 		const transformedQuery = authQueryTransformer( query );
-
-		// No longer setting/persisting query
-		//
-		// FIXME
-		//
-		// However, from and clientId are required for some reducer logic :(
-		//
-		// Hopefully when actions move to data-layer, this will become clearer and
-		// we won't need to store clientId in state
-		//
-		context.store.dispatch( {
-			type: JETPACK_CONNECT_QUERY_SET,
-			from: transformedQuery.from,
-			clientId: transformedQuery.clientId,
-		} );
+		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
 		let interval = context.params.interval;
 		let locale = context.params.locale;
@@ -224,22 +226,7 @@ export function authorizeForm( context, next ) {
 
 	if ( validQueryObject ) {
 		const transformedQuery = authQueryTransformer( query );
-
-		// No longer setting/persisting query
-		//
-		// FIXME
-		//
-		// However, from and clientId are required for some reducer logic :(
-		//
-		// Hopefully when actions move to data-layer, this will become clearer and
-		// we won't need to store clientId in state
-		//
-		context.store.dispatch( {
-			type: JETPACK_CONNECT_QUERY_SET,
-			from: transformedQuery.from,
-			clientId: transformedQuery.clientId,
-		} );
-
+		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
 	} else {
 		context.primary = <NoDirectAccessError />;
@@ -253,14 +240,11 @@ export function sso( context, next ) {
 
 	removeSidebar( context );
 
-	userModule.fetch();
-
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = React.createElement( JetpackSsoForm, {
 		path: context.path,
 		locale: context.params.locale,
-		userModule: userModule,
 		siteId: context.params.siteId,
 		ssoNonce: context.params.ssoNonce,
 	} );
@@ -269,7 +253,7 @@ export function sso( context, next ) {
 
 export function plansLanding( context, next ) {
 	const analyticsPageTitle = 'Plans';
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const analyticsBasePath = basePath + '/:site';
 
 	removeSidebar( context );
@@ -293,7 +277,7 @@ export function plansLanding( context, next ) {
 
 export function plansSelection( context, next ) {
 	const analyticsPageTitle = 'Plans';
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const analyticsBasePath = basePath + '/:site';
 
 	removeSidebar( context );
@@ -307,7 +291,7 @@ export function plansSelection( context, next ) {
 	context.primary = (
 		<CheckoutData>
 			<Plans
-				basePlansPath={ '/jetpack/connect/plans' }
+				basePlansPath={ JPC_PATH_PLANS }
 				context={ context }
 				destinationType={ context.params.destinationType }
 				interval={ context.params.interval }

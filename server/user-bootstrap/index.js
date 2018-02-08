@@ -1,18 +1,21 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { filterUserObject } from 'lib/user/shared-utils';
 var superagent = require( 'superagent' ),
 	debug = require( 'debug' )( 'calypso:bootstrap' ),
 	crypto = require( 'crypto' );
 
 var config = require( 'config' ),
 	API_KEY = config( 'wpcom_calypso_rest_api_key' ),
-	userUtils = require( './shared-utils' ),
 	AUTH_COOKIE_NAME = 'wordpress_logged_in',
 	/**
-	* WordPress.com REST API /me endpoint.
-	*/
+	 * WordPress.com REST API /me endpoint.
+	 */
 	url = 'https://public-api.wordpress.com/rest/v1/me?meta=flags';
 
-module.exports = function( authCookieValue, callback ) {
+module.exports = function( authCookieValue, geoCountry, callback ) {
 	// create HTTP Request object
 	var req = superagent.get( url ),
 		hmac,
@@ -30,6 +33,7 @@ module.exports = function( authCookieValue, callback ) {
 		hmac.update( authCookieValue );
 		hash = hmac.digest( 'hex' );
 
+		req.set( 'X-Forwarded-GeoIP-Country-Code', geoCountry );
 		req.set( 'Authorization', 'X-WPCALYPSO ' + hash );
 		req.set( 'Cookie', AUTH_COOKIE_NAME + '=' + authCookieValue );
 		req.set( 'User-Agent', 'WordPress.com Calypso' );
@@ -58,7 +62,7 @@ module.exports = function( authCookieValue, callback ) {
 			return callback( error );
 		}
 
-		user = userUtils.filterUserObject( body );
+		user = filterUserObject( body );
 		callback( null, user );
 	} );
 };

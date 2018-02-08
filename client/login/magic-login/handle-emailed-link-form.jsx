@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -101,10 +99,7 @@ class HandleEmailedLinkForm extends React.Component {
 				login( {
 					isNative: true,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: twoFactorNotificationSent.replace(
-						'none',
-						'authenticator'
-					),
+					twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
 					redirectTo: redirectToSanitized,
 				} )
 			);

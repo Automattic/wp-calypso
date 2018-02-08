@@ -115,7 +115,7 @@ describe( 'middleware', () => {
 			const thunk = recordTracksEventWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
+			const dispatch = createdAction => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {
@@ -141,7 +141,7 @@ describe( 'middleware', () => {
 			const thunk = recordPageViewWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = ( createdAction ) => dispatchedEvent = createdAction;
+			const dispatch = createdAction => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {

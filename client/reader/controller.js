@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import { abtest } from 'lib/abtest';
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import feedLookup from 'lib/feed-lookup';
 import feedStreamFactory from 'lib/feed-stream-store';
 import {
@@ -127,7 +127,7 @@ const exported = {
 	},
 
 	following( context, next ) {
-		const basePath = route.sectionify( context.path ),
+		const basePath = sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
 			mcKey = 'following';
@@ -246,7 +246,7 @@ const exported = {
 	},
 
 	readA8C( context, next ) {
-		const basePath = route.sectionify( context.path ),
+		const basePath = sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
 			feedStore = feedStreamFactory( 'a8c' ),
 			mcKey = 'a8c';

@@ -10,7 +10,7 @@
 		.profile-link__url,
 		.profile-link__remove {
 			color: transparent;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -40,7 +40,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 }
 
 .profile-link__link {

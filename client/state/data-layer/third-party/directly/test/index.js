@@ -120,11 +120,12 @@ describe( 'Directly data layer', () => {
 		test( 'should dispatch an analytics event if initialization fails', done => {
 			initialize( store )
 				.then( () =>
-					expect(
-						analytics.recordTracksEvent
-					).to.have.been.calledWith( 'calypso_directly_initialization_error', {
-						error: 'Error: Something went wrong',
-					} )
+					expect( analytics.recordTracksEvent ).to.have.been.calledWith(
+						'calypso_directly_initialization_error',
+						{
+							error: 'Error: Something went wrong',
+						}
+					)
 				)
 				.then( () => done() );
 

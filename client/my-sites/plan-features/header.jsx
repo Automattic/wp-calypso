@@ -1,12 +1,10 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop } from 'lodash';
+import { get, noop } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -18,6 +16,7 @@ import formatCurrency from 'lib/format-currency';
 import InfoPopover from 'components/info-popover';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import PlanPrice from 'my-sites/plan-price';
+import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import Ribbon from 'components/ribbon';
 import PlanIcon from 'components/plans/plan-icon';
 import {
@@ -35,7 +34,9 @@ import {
 	getPlanClass,
 } from 'lib/plans/constants';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getYearlyPlanByMonthly } from 'lib/plans';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
@@ -52,7 +53,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { newPlan, planType, popular, selectedPlan, title, translate } = this.props;
+		const { newPlan, bestValue, planType, popular, selectedPlan, title, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -63,6 +64,7 @@ class PlanFeaturesHeader extends Component {
 				) }
 				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
 				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
+				{ bestValue && ! selectedPlan && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
 				<div className="plan-features__header-figure">
 					<PlanIcon plan={ planType } />
@@ -77,7 +79,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderSignupHeader() {
-		const { planType, popular, newPlan, title, audience, translate } = this.props;
+		const { planType, popular, newPlan, bestValue, title, audience, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -86,6 +88,7 @@ class PlanFeaturesHeader extends Component {
 				<header className={ headerClasses } onClick={ this.props.onClick }>
 					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
 					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
+					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
 						{ audience }
@@ -96,6 +99,7 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getIntervalDiscount() }
 				</div>
 			</div>
 		);
@@ -235,6 +239,36 @@ class PlanFeaturesHeader extends Component {
 			<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } isInSignup={ isInSignup } />
 		);
 	}
+
+	getIntervalDiscount() {
+		const {
+			currencyCode,
+			isYearly,
+			rawPrice,
+			relatedMonthlyPlan,
+			site,
+			relatedYearlyPlan,
+		} = this.props;
+		if ( site.jetpack ) {
+			const [ discountPrice, originalPrice ] = isYearly
+				? [ relatedMonthlyPlan.raw_price * 12, rawPrice ]
+				: [ rawPrice * 12, get( relatedYearlyPlan, 'raw_price' ) ];
+
+			return (
+				!! discountPrice &&
+				!! originalPrice && (
+					<PlanIntervalDiscount
+						currencyCode={ currencyCode }
+						discountPrice={ discountPrice }
+						isYearly={ isYearly }
+						originalPrice={ originalPrice }
+						site={ site }
+					/>
+				)
+			);
+		}
+		return null;
+	}
 }
 
 PlanFeaturesHeader.propTypes = {
@@ -256,6 +290,7 @@ PlanFeaturesHeader.propTypes = {
 	] ).isRequired,
 	popular: PropTypes.bool,
 	newPlan: PropTypes.bool,
+	bestValue: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	discountPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
@@ -264,9 +299,12 @@ PlanFeaturesHeader.propTypes = {
 	translate: PropTypes.func,
 	site: PropTypes.object,
 	isInJetpackConnect: PropTypes.bool,
-	currentSitePlan: PropTypes.object,
 	relatedMonthlyPlan: PropTypes.object,
+
+	// Connected props
+	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
+	relatedYearlyPlan: PropTypes.object,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -274,6 +312,7 @@ PlanFeaturesHeader.defaultProps = {
 	onClick: noop,
 	popular: false,
 	newPlan: false,
+	bestValue: false,
 	isPlaceholder: false,
 	site: {},
 	basePlansPath: null,
@@ -285,8 +324,13 @@ export default connect( ( state, ownProps ) => {
 	const { isInSignup } = ownProps;
 	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
 	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
+	const isYearly = !! ownProps.relatedMonthlyPlan;
 	return Object.assign( {}, ownProps, {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
+		isYearly,
+		relatedYearlyPlan: isYearly
+			? null
+			: getPlanBySlug( state, getYearlyPlanByMonthly( ownProps.planType ) ),
 	} );
 } )( localize( PlanFeaturesHeader ) );

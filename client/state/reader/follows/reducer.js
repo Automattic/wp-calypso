@@ -16,18 +16,21 @@ import {
 	READER_FOLLOWS_SYNC_START,
 	READER_FOLLOWS_SYNC_COMPLETE,
 	READER_FOLLOWS_RECEIVE,
+	READER_SITE_REQUEST_SUCCESS,
 	READER_SUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION,
 	READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL,
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
+	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
+	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	SERIALIZE,
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { prepareComparableUrl } from './utils';
 import { items as itemsSchema } from './schema';
 
-function updatePostSubscription( state, { payload, type } ) {
+function updateEmailSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
 	if ( ! follow ) {
 		return state;
@@ -66,6 +69,39 @@ function updatePostSubscription( state, { payload, type } ) {
 			...follow,
 			delivery_methods: {
 				email: newFollowState,
+				notification: get( follow, [ 'delivery_methods', 'notification' ], {} ),
+			},
+		},
+	};
+}
+
+function updateNotificationSubscription( state, { payload, type } ) {
+	const follow = find( state, { blog_ID: +payload.blogId } );
+	if ( ! follow ) {
+		return state;
+	}
+
+	const currentFollowState = get(
+		follow,
+		[ 'delivery_methods', 'notification', 'send_posts' ],
+		false
+	);
+
+	const newFollowState = ! ( type === READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS );
+
+	if ( currentFollowState === newFollowState ) {
+		return state;
+	}
+
+	return {
+		...state,
+		[ prepareComparableUrl( follow.URL ) ]: {
+			...follow,
+			delivery_methods: {
+				email: get( follow, [ 'delivery_methods', 'email' ], {} ),
+				notification: {
+					send_posts: newFollowState,
+				},
 			},
 		},
 	};
@@ -121,6 +157,19 @@ export const items = createReducer(
 				newValues.error = null;
 			}
 
+			// Respect the existing state of the new post notification toggle.
+			// User may have toggled it on immediately after subscribing and
+			// action.payload.follow may overwrite it with the old value
+			const existingNotificationState = get( state[ urlKey ], [
+				'delivery_methods',
+				'notification',
+			] );
+			if ( existingNotificationState ) {
+				newValues.delivery_methods = {
+					notification: existingNotificationState,
+				};
+			}
+
 			return Object.assign( newState, {
 				[ urlKey ]: merge(
 					{ feed_URL: actualFeedUrl },
@@ -136,9 +185,15 @@ export const items = createReducer(
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
 				return state;
 			}
+
 			return {
 				...state,
-				[ urlKey ]: merge( {}, currentFollow, { is_following: false } ),
+				[ urlKey ]: merge( {}, currentFollow, {
+					is_following: false,
+					delivery_methods: {
+						notification: { send_posts: false },
+					},
+				} ),
 			};
 		},
 		[ READER_FOLLOWS_RECEIVE ]: ( state, action ) => {
@@ -158,16 +213,32 @@ export const items = createReducer(
 			);
 			return merge( {}, state, keyedNewFollows );
 		},
-		[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
-		[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
-		[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
-		[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
-		[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: ( state, action ) =>
-			updatePostSubscription( state, action ),
+		[ READER_SITE_REQUEST_SUCCESS ]: ( state, action ) => {
+			const incomingSite = action.payload;
+			if ( ! incomingSite || ! incomingSite.feed_URL || ! incomingSite.is_following ) {
+				return state;
+			}
+			const urlKey = prepareComparableUrl( incomingSite.feed_URL );
+			const currentFollow = state[ urlKey ];
+			const newFollow = {
+				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
+				is_following: true,
+				URL: incomingSite.URL,
+				feed_URL: incomingSite.feed_URL,
+				blog_ID: incomingSite.ID,
+			};
+			return {
+				...state,
+				[ urlKey ]: merge( {}, currentFollow, newFollow ),
+			};
+		},
+		[ READER_SUBSCRIBE_TO_NEW_POST_EMAIL ]: updateEmailSubscription,
+		[ READER_UPDATE_NEW_POST_EMAIL_SUBSCRIPTION ]: updateEmailSubscription,
+		[ READER_UNSUBSCRIBE_TO_NEW_POST_EMAIL ]: updateEmailSubscription,
+		[ READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: updateEmailSubscription,
+		[ READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL ]: updateEmailSubscription,
+		[ READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: updateNotificationSubscription,
+		[ READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS ]: updateNotificationSubscription,
 		[ READER_FOLLOWS_SYNC_COMPLETE ]: ( state, action ) => {
 			const seenSubscriptions = new Set( action.payload );
 

@@ -1,6 +1,6 @@
 /**
  * Returns true if a site is known to be blocked
- * 
+ *
  *
  * @format
  * @param {Number}  siteId Site ID

@@ -39,7 +39,7 @@ import {
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { sitesSchema } from './schema';
+import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 
 /**
@@ -268,6 +268,21 @@ export const deleting = keyedReducer(
 	)
 );
 
+/**
+ * Tracks whether all sites have been fetched.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export const hasAllSitesList = createReducer(
+	false,
+	{
+		[ SITES_RECEIVE ]: () => true,
+	},
+	hasAllSitesListSchema
+);
+
 export default combineReducers( {
 	connection,
 	deleting,
@@ -283,4 +298,5 @@ export default combineReducers( {
 	requesting,
 	sharingButtons,
 	blogStickers,
+	hasAllSitesList,
 } );

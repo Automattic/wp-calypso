@@ -17,7 +17,7 @@ import qs from 'qs';
 import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
 import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
-import userUtils from './shared-utils';
+import { getComputedAttributes, filterUserObject } from './shared-utils';
 import localforage from 'lib/localforage';
 
 /**
@@ -135,9 +135,9 @@ User.prototype.fetch = function() {
 					error.error === 'authorization_required'
 				) {
 					/**
-				 * if the user bootstrap is disabled (in development), we need to rely on a request to
-				 * /me to determine if the user is logged in.
-				 */
+					 * if the user bootstrap is disabled (in development), we need to rely on a request to
+					 * /me to determine if the user is logged in.
+					 */
 					debug( 'The user is not logged in.' );
 
 					this.initialized = true;
@@ -148,7 +148,7 @@ User.prototype.fetch = function() {
 				return;
 			}
 
-			var userData = userUtils.filterUserObject( data );
+			var userData = filterUserObject( data );
 
 			// Release lock from subsequent fetches
 			this.fetching = false;
@@ -264,7 +264,7 @@ User.prototype.set = function( attributes ) {
 	}
 
 	if ( changed ) {
-		Object.assign( this.data, userUtils.getComputedAttributes( this.data ) );
+		Object.assign( this.data, getComputedAttributes( this.data ) );
 		store.set( 'wpcom_user', this.data );
 		this.emit( 'change' );
 	}

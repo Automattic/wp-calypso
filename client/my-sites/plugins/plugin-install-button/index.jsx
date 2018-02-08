@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
@@ -18,7 +16,7 @@ import PluginsActions from 'lib/plugins/actions';
 import Button from 'components/button';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
-import utils from 'lib/site/utils';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import { getSiteConnectionStatus } from 'state/selectors';
@@ -104,14 +102,14 @@ export class PluginInstallButton extends Component {
 			);
 		}
 
-		if ( ! utils.isMainNetworkSite( selectedSite ) ) {
+		if ( ! isMainNetworkSite( selectedSite ) ) {
 			return translate( 'Only the main site on a multi-site installation can install plugins.', {
 				args: { site: selectedSite.title },
 			} );
 		}
 
 		if ( ! selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled ) {
-			const reasons = utils.getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
+			const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 			const html = [];
 
 			if ( reasons.length > 1 ) {

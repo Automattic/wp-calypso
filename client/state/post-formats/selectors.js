@@ -1,7 +1,7 @@
 /**
  * Returns true if currently requesting post formats for the specified site ID, or
  * false otherwise.
- * 
+ *
  *
  * @format
  * @param {Number}  siteId Site ID

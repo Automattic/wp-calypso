@@ -7,7 +7,7 @@
 
 	// Globe icon for sites without an icon
 	&.is-blank {
-		background: lighten( $gray, 20% );
+		background: $gray-lighten-20;
 		.gridicon {
 			color: $white;
 			z-index: z-index( 'root', '.site-icon.is-blank .gridicon' );

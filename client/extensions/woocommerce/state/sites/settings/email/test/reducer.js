@@ -92,7 +92,7 @@ describe( 'reducer', () => {
 		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
 	} );
 
-	test( 'should use default value from woocommerce_email_from_address for settings with no value or default.', () => {
+	test( 'should not use default value for settings with no value or default if option is disabled', () => {
 		const siteId = 123;
 		const settings = [
 			{
@@ -119,7 +119,93 @@ describe( 'reducer', () => {
 			email_new_order: {
 				recipient: {
 					value: '',
+					default: '',
+				},
+			},
+		};
+
+		const action = {
+			type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
+			siteId,
+			data: settings,
+		};
+
+		const newState = reducer( {}, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].settings ).to.exist;
+		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
+	} );
+
+	test( 'should use default value for settings with no value or default if option is enabled', () => {
+		const siteId = 123;
+		const settings = [
+			{
+				id: 'woocommerce_email_from_address',
+				value: 'test@test.com',
+				group_id: 'email',
+				default: 'd@e.f',
+			},
+			{
+				id: 'recipient',
+				value: '',
+				group_id: 'email_new_order',
+				default: '',
+			},
+			{
+				id: 'enabled',
+				value: 'yes',
+				group_id: 'email_new_order',
+				default: 'yes',
+			},
+		];
+
+		const expectedResult = {
+			email: {
+				woocommerce_email_from_address: {
+					value: 'test@test.com',
 					default: 'd@e.f',
+				},
+			},
+			email_new_order: {
+				recipient: {
+					value: 'd@e.f',
+					default: 'd@e.f',
+				},
+				enabled: {
+					value: 'yes',
+					default: 'yes',
+				},
+			},
+		};
+
+		const action = {
+			type: WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,
+			siteId,
+			data: settings,
+		};
+
+		const newState = reducer( {}, action );
+		expect( newState[ siteId ] ).to.exist;
+		expect( newState[ siteId ].settings ).to.exist;
+		expect( newState[ siteId ].settings.email ).to.deep.equal( expectedResult );
+	} );
+
+	test( 'should decode entities in woocommerce_email_from_name', () => {
+		const siteId = 123;
+		const settings = [
+			{
+				id: 'woocommerce_email_from_name',
+				value: 'Tom&ampJerry',
+				group_id: 'email',
+				default: '',
+			},
+		];
+
+		const expectedResult = {
+			email: {
+				woocommerce_email_from_name: {
+					value: 'Tom&Jerry',
+					default: '',
 				},
 			},
 		};

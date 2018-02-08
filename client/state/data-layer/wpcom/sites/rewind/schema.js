@@ -4,11 +4,13 @@ export const credential = {
 	type: 'object',
 	properties: {
 		still_valid: { type: 'boolean' },
-		type: { type: 'string', enum: [ 'auto', 'ftp', 'sftp', 'ssh' ] },
+		type: { type: 'string', enum: [ 'auto', 'ftp', 'managed', 'ssh' ] },
 		host: { type: 'string' },
+		path: { type: 'string' },
 		port: { type: 'integer' },
+		role: { type: 'string' },
 	},
-	required: [ 'still_valid', 'type' ],
+	required: [ 'role', 'still_valid', 'type' ],
 };
 
 export const download = {
@@ -24,13 +26,16 @@ export const download = {
 	required: [ 'downloadId', 'rewindId', 'backupPoint', 'startedAt' ],
 };
 
-export const restore = {
+export const rewind = {
 	type: 'object',
 	properties: {
-		status: { type: 'string', enum: [ 'finished', 'inactive', 'queued', 'running' ] },
-		percent: { type: 'integer' },
+		rewind_id: { type: 'string' },
+		status: { type: 'string', enum: [ 'failed', 'finished', 'running' ] },
+		started_at: { type: 'string' },
+		progress: { type: 'integer' },
+		reason: { type: 'string' },
 	},
-	required: [ 'status' ],
+	required: [ 'rewind_id', 'status' ],
 };
 
 export const unavailable = {
@@ -56,7 +61,7 @@ export const inactive = {
 			pattern: '^inactive$',
 		},
 		credentials: {
-			type: [ 'array', null ],
+			type: 'array',
 			items: credential,
 		},
 		last_updated: { type: 'integer' },
@@ -76,6 +81,22 @@ export const awaitingCredentials = {
 	required: [ 'state', 'last_updated' ],
 };
 
+export const provisioning = {
+	type: 'object',
+	properties: {
+		state: {
+			type: 'string',
+			pattern: '^provisioning$',
+		},
+		credentials: {
+			type: 'array',
+			items: credential,
+		},
+		last_updated: { type: 'integer' },
+	},
+	required: [ 'state', 'last_updated' ],
+};
+
 export const active = {
 	type: 'object',
 	properties: {
@@ -84,19 +105,19 @@ export const active = {
 			pattern: '^active$',
 		},
 		credentials: {
-			type: [ 'array', null ],
+			type: 'array',
 			items: credential,
 		},
 		downloads: {
-			type: [ 'array', null ],
+			type: 'array',
 			items: download,
 		},
-		rewinds: { type: 'array', items: restore },
+		rewind,
 		last_updated: { type: 'integer' },
 	},
 	required: [ 'state', 'last_updated' ],
 };
 
-export const rewind = {
-	oneOf: [ unavailable, inactive, awaitingCredentials, active ],
+export const rewindStatus = {
+	oneOf: [ unavailable, inactive, awaitingCredentials, provisioning, active ],
 };

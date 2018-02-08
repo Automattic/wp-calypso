@@ -1,6 +1,6 @@
 /**
  * Returns a list of pairs of email and sms number that can be used for resetting a user's password.
- * 
+ *
  *
  * @format
  * @param {Object} state Global state tree

@@ -8,10 +8,12 @@ export const itemsSchema = {
 			patternProperties: {
 				'^\\d+$': {
 					type: 'object',
-					id: { type: 'integer' },
-					name: { type: 'string' },
-					slug: { type: 'string' },
-					description: { type: 'string' },
+					properties: {
+						id: { type: 'integer' },
+						name: { type: 'string' },
+						slug: { type: 'string' },
+						description: { type: 'string' },
+					},
 				},
 			},
 		},

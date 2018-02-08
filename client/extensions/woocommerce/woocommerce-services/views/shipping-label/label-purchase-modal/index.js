@@ -76,7 +76,7 @@ const PurchaseDialog = ( props ) => {
 			disabled={ ! props.form.needsPrintConfirmation && ( ! props.canPurchase || props.form.isSubmitting ) }
 			onClick={ getPurchaseButtonAction() }
 			primary
-			busy={ props.form.isSubmitting }>
+			busy={ props.form.isSubmitting && ! props.form.needsPrintConfirmation }>
 			{ getPurchaseButtonLabel() }
 		</Button> ),
 	];

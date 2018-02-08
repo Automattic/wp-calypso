@@ -72,13 +72,13 @@ class JetpackNewSite extends Component {
 						<Card className="jetpack-new-site__wpcom-site">
 							<WordPressLogo />
 							<h3 className="jetpack-new-site__card-title">
-								{ this.props.translate( 'Create a new shiny WordPress.com site' ) }
+								{ this.props.translate( 'Create a shiny new WordPress.com site' ) }
 							</h3>
 							<div className="jetpack-new-site__card-description">
 								<p>
 									{ this.props.translate(
-										'Start telling your story in just 2 minutes. Pick a visual theme and a domain — ' +
-											'we’ll take care of the entire setup. If you need help we’ve got you covered with 24/7 support.'
+										"Tell us what type of site you need and we'll get you setup. " +
+											'If you need help we’ve got you covered with 24/7 support.'
 									) }
 								</p>
 							</div>

@@ -23,7 +23,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getProductDisplayCost } from 'state/products-list/selectors';
 import InfoPopover from 'components/info-popover';
-import SUPPORT_URLS from 'lib/url/support';
+import { GUIDED_TRANSFER } from 'lib/url/support';
 
 const Feature = ( { children } ) => (
 	<li className="guided-transfer-card__feature-list-item">
@@ -97,7 +97,7 @@ class GuidedTransferCard extends Component {
 								{ components: { strong: <strong /> } }
 							) }
 							<br />
-							<a href={ SUPPORT_URLS.GUIDED_TRANSFER }>{ translate( 'Learn more.' ) }</a>
+							<a href={ GUIDED_TRANSFER }>{ translate( 'Learn more.' ) }</a>
 						</div>
 						<ul className="guided-transfer-card__feature-list">
 							<Feature>{ translate( 'Seamless content transfer' ) }</Feature>
@@ -107,7 +107,7 @@ class GuidedTransferCard extends Component {
 							<Feature>
 								{ translate( 'Switch your domain over {{link}}and more!{{/link}}', {
 									components: {
-										link: <a href={ SUPPORT_URLS.GUIDED_TRANSFER } />,
+										link: <a href={ GUIDED_TRANSFER } />,
 									},
 								} ) }
 							</Feature>

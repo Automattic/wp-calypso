@@ -1,6 +1,6 @@
 .info-popover .gridicon {
 	cursor: pointer;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 
 	&:hover {
 		color: $gray-dark;
@@ -13,7 +13,7 @@
 
 .popover.info-popover__tooltip {
 	.popover__inner {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 		font-size: 13px;
 		max-width: 220px;
 		padding: 16px;

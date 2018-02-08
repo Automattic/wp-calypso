@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import support from 'lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from 'lib/url/support';
 
 export default [
 	{
@@ -30,7 +30,7 @@ export default [
 				'you’ll want to {{a}}update your name servers{{/a}} instead.',
 			{
 				components: {
-					a: <a href={ support.UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" />,
+					a: <a href={ UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" />,
 				},
 			}
 		),
@@ -44,13 +44,7 @@ export default [
 				'please {{a}}use our transfer out feature{{/a}} if you want to use this domain again in the future.',
 			{
 				components: {
-					a: (
-						<a
-							href={ support.TRANSFER_DOMAIN_REGISTRATION }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
+					a: <a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer" />,
 				},
 			}
 		),

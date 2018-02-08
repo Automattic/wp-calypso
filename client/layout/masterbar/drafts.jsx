@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,38 +10,43 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import Popover from 'components/popover';
-import Count from 'components/count';
-import { getMyPostCounts } from 'state/posts/counts/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostsForQueryIgnoringPage, isRequestingPostsForQuery } from 'state/posts/selectors';
-import paths from 'lib/paths';
-import Draft from 'my-sites/draft';
-import QueryPosts from 'components/data/query-posts';
+import AsyncLoad from 'components/async-load';
 import QueryPostCounts from 'components/data/query-post-counts';
 import Button from 'components/button';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import Count from 'components/count';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getMyPostCount } from 'state/posts/counts/selectors';
+
+const MasterbarDraftsPopover = props => (
+	<AsyncLoad { ...props } require="layout/masterbar/drafts-popover" placeholder={ null } />
+);
 
 class MasterbarDrafts extends Component {
 	static propTypes = {
-		user: PropTypes.object,
-		isActive: PropTypes.bool,
-		className: PropTypes.string,
-		tooltip: PropTypes.string,
-		selectedSite: PropTypes.object,
+		selectedSiteId: PropTypes.number,
 	};
 
 	state = {
 		showDrafts: false,
 	};
 
+	preloaded = false;
+
+	// Preload the async chunk on mouse hover or touch start
+	preload = () => {
+		if ( this.preloaded ) {
+			return;
+		}
+
+		asyncRequire( 'layout/masterbar/drafts-popover' );
+		this.preloaded = true;
+	};
+
 	toggleDrafts = () => {
-		const { showDrafts } = this.state;
-		this.setState( {
-			showDrafts: ! showDrafts,
-		} );
+		this.setState( state => ( {
+			showDrafts: ! state.showDrafts,
+		} ) );
 	};
 
 	closeDrafts = () => {
@@ -51,138 +54,87 @@ class MasterbarDrafts extends Component {
 	};
 
 	draftClicked = () => {
-		this.props.recordDraftSelected();
+		this.props.recordTracksEvent( 'calypso_masterbar_draft_selected' );
 		this.closeDrafts();
 	};
 
 	newDraftClicked = () => {
-		this.props.recordNewDraftClicked();
+		this.props.recordTracksEvent( 'calypso_masterbar_drafts_new_draft_clicked' );
 		this.closeDrafts();
 	};
 
 	seeAllDraftsClicked = () => {
-		this.props.recordSeeAllDraftsClicked();
+		this.props.recordTracksEvent( 'calypso_masterbar_drafts_see_all_drafts_clicked' );
 		this.closeDrafts();
 	};
 
-	render() {
-		const { selectedSite, draftCount, loadingDrafts, translate } = this.props;
-		const isLoading = draftCount === 0 && loadingDrafts;
+	setDraftsRef = el => {
+		this.draftsRef = el;
+	};
 
-		if ( ! selectedSite ) {
+	renderButton() {
+		if ( ! this.props.selectedSiteId || ! this.props.draftCount ) {
+			return null;
+		}
+
+		return (
+			<Button
+				compact
+				borderless
+				className="masterbar__toggle-drafts"
+				title={ this.props.translate( 'Latest Drafts' ) }
+				onClick={ this.toggleDrafts }
+				onTouchStart={ this.preload }
+				onMouseEnter={ this.preload }
+				ref={ this.setDraftsRef }
+			>
+				<Count count={ this.props.draftCount } />
+			</Button>
+		);
+	}
+
+	renderPopover() {
+		if ( ! this.state.showDrafts ) {
+			return null;
+		}
+
+		return (
+			<MasterbarDraftsPopover
+				siteId={ this.props.selectedSiteId }
+				draftCount={ this.props.draftCount }
+				context={ this.draftsRef }
+				closeDrafts={ this.closeDrafts }
+				draftClicked={ this.draftClicked }
+				newDraftClicked={ this.newDraftClicked }
+				seeAllDraftsClicked={ this.seeAllDraftsClicked }
+			/>
+		);
+	}
+
+	render() {
+		if ( ! this.props.selectedSiteId ) {
 			return null;
 		}
 
 		return (
 			<div>
-				<QueryPostCounts siteId={ selectedSite.ID } type="post" />
-				{ this.props.draftCount > 0 && (
-					<Button
-						compact
-						borderless
-						className="masterbar__toggle-drafts"
-						onClick={ this.toggleDrafts }
-						ref="drafts"
-						title={ translate( 'Latest Drafts' ) }
-					>
-						<Count count={ this.props.draftCount } />
-					</Button>
-				) }
-				<Popover
-					isVisible={ this.state.showDrafts }
-					onClose={ this.closeDrafts }
-					position="bottom left"
-					context={ this.refs && this.refs.drafts }
-					className="masterbar__recent-drafts"
-				>
-					<QueryPosts siteId={ selectedSite.ID } query={ this.props.draftsQuery } />
-
-					<div className="masterbar__recent-drafts-heading">
-						<h3>{ translate( 'Recent Drafts' ) }</h3>
-
-						<Button
-							compact
-							className="masterbar__recent-drafts-add-new"
-							href={ paths.newPost( selectedSite ) }
-							onClick={ this.newDraftClicked }
-						>
-							{ translate( 'New Draft' ) }
-						</Button>
-					</div>
-
-					<div className="masterbar__recent-drafts-list">
-						{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
-
-						{ isLoading && <Draft isPlaceholder /> }
-
-						<Button
-							compact
-							borderless
-							className="masterbar__recent-drafts-see-all"
-							href={ `/posts/drafts/${ selectedSite.slug }` }
-							onClick={ this.seeAllDraftsClicked }
-						>
-							{ translate( 'See All' ) }
-							{ this.props.draftCount ? <Count count={ this.props.draftCount } /> : null }
-						</Button>
-					</div>
-				</Popover>
+				<QueryPostCounts siteId={ this.props.selectedSiteId } type="post" />
+				{ this.renderButton() }
+				{ this.renderPopover() }
 			</div>
-		);
-	}
-
-	renderDraft( draft ) {
-		if ( ! draft ) {
-			return null;
-		}
-
-		const site = this.props.selectedSite;
-
-		return (
-			<Draft
-				key={ draft.global_ID }
-				post={ draft }
-				siteId={ site && site.ID }
-				showAuthor={ site && ! site.single_user_site && ! this.props.userId }
-				onTitleClick={ this.draftClicked }
-			/>
 		);
 	}
 }
 
-const mapStateToProps = state => {
-	const siteId = getSelectedSiteId( state );
-	const userId = getCurrentUserId( state );
-	const site = getSelectedSite( state );
-	const draftsQuery = {
-		type: 'post',
-		status: 'draft',
-		number: 5,
-		order_by: 'modified',
-		author: site && ! site.jetpack && ! site.single_user_site ? userId : null,
-	};
+export default connect(
+	state => {
+		const selectedSiteId = getSelectedSiteId( state );
+		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
 
-	const myPostCounts = getMyPostCounts( state, siteId, 'post' );
-
-	return {
-		drafts: getPostsForQueryIgnoringPage( state, siteId, draftsQuery ),
-		loadingDrafts: isRequestingPostsForQuery( state, siteId, draftsQuery ),
-		draftsQuery: draftsQuery,
-		draftCount: myPostCounts && myPostCounts.draft,
-		selectedSite: site,
-	};
-};
-
-const mapDispatchToProps = dispatch => ( {
-	recordDraftSelected: () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_draft_selected' ) );
+		return {
+			selectedSiteId,
+			draftCount,
+		};
 	},
-	recordNewDraftClicked: () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_drafts_new_draft_clicked' ) );
-	},
-	recordSeeAllDraftsClicked: () => {
-		dispatch( recordTracksEvent( 'calypso_masterbar_drafts_see_all_drafts_clicked' ) );
-	},
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( MasterbarDrafts ) );
+	{ recordTracksEvent }
+)( localize( MasterbarDrafts ) );

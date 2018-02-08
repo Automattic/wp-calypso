@@ -39,7 +39,7 @@
 	&:hover {
 		transition: all 100ms ease-in-out;
 		&.is-card-link {
-			box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+			box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 		}
 		.card__link-indicator {
 			color: $blue-dark;

@@ -11,8 +11,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isFieldDisabled } from '../';
+import FormStateStore from '../';
 import createFormStore from '../store';
+
+const { isFieldDisabled } = FormStateStore;
 
 const debug = debugModule( 'calypso:lib:form-state:examples:async-initialize' );
 

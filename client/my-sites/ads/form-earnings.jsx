@@ -150,14 +150,38 @@ class AdsFormEarnings extends Component {
 	getStatus( status ) {
 		const { translate } = this.props;
 		const statuses = {
-			0: translate( 'Unpaid' ),
-			1: translate( 'Paid' ),
-			2: translate( 'a8c-only' ),
-			3: translate( 'Pending (Missing Tax Info)' ),
-			4: translate( 'Pending (Invalid PayPal)' ),
+			0: {
+				name: translate( 'Unpaid' ),
+				tooltip: translate( 'Payment is on hold until the end of the current month.' ),
+			},
+			1: {
+				name: translate( 'Paid' ),
+				tooltip: translate( 'Payment has been processed through PayPal.' ),
+			},
+			2: {
+				name: translate( 'a8c-only' ),
+			},
+			3: {
+				name: translate( 'Pending (Missing Tax Info)' ),
+				tooltip: translate(
+					'Payment is pending due to missing information. ' +
+						'You can provide tax information in the settings screen.'
+				),
+			},
+			4: {
+				name: translate( 'Pending (Invalid PayPal)' ),
+				tooltip: translate(
+					'Payment processing has failed due to invalid PayPal address. ' +
+						'You can correct the PayPal address in the settings screen.'
+				),
+			},
 		};
 
-		return statuses[ status ] ? statuses[ status ] : '?';
+		return (
+			<span title={ statuses[ status ].tooltip ? statuses[ status ].tooltip : '' }>
+				{ statuses[ status ] ? statuses[ status ].name : '?' }
+			</span>
+		);
 	}
 
 	payoutNotice() {
@@ -194,31 +218,43 @@ class AdsFormEarnings extends Component {
 
 		return (
 			<div className="ads__module-content-text module-content-text module-content-text-info">
-				<p>{ translate( 'Payments can have the following statuses:' ) }</p>
-				<ul className="ads__earnings-history-statuses-list">
-					<li className="ads__earnings-history-status">
-						<strong>{ translate( 'Unpaid:' ) } </strong>
-						{ translate( 'Payment is on hold until the end of the current month.' ) }
+				<p>
+					{ translate(
+						'{{strong}}Ads Served{{/strong}} is the number of ads we attempted to display on your site ' +
+							'(page impressions x available ad slots).',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
+
+				<p>
+					{ translate(
+						'Not every ad served will result in a paid impression. This can happen when:'
+					) }
+				</p>
+
+				<ul className="ads__earnings-history-info-list">
+					<li className="ads__earnings-history-info">
+						{ translate( 'A visitor is using an ad blocker, preventing ads from showing.' ) }
 					</li>
-					<li className="ads__earnings-history-status">
-						<strong>{ translate( 'Paid:' ) } </strong>
-						{ translate( 'Payment has been processed through PayPal.' ) }
-					</li>
-					<li className="ads__earnings-history-status">
-						<strong>{ translate( 'Pending (Missing Tax Info):' ) } </strong>
+					<li className="ads__earnings-history-info">
 						{ translate(
-							'Payment is pending due to missing information. ' +
-								'You can provide tax information in the settings screen.'
+							'A visitor leaves your site before ads can fully load in their browser.'
 						) }
 					</li>
-					<li className="ads__earnings-history-status">
-						<strong>{ translate( 'Pending (Invalid PayPal):' ) } </strong>
+					<li className="ads__earnings-history-info">
 						{ translate(
-							'Payment processing has failed due to invalid PayPal address. ' +
-								'You can correct the PayPal address in the settings screen.'
+							'There were no advertisers who bid higher than the minimum price required to display their ad.'
 						) }
 					</li>
 				</ul>
+
+				<hr />
+
+				<p>
+					<em>
+						{ translate( 'Earnings fluctuate based on real-time bidding from advertisers.' ) }
+					</em>
+				</p>
 			</div>
 		);
 	}
@@ -280,7 +316,9 @@ class AdsFormEarnings extends Component {
 						<td className="ads__earnings-history-value">
 							${ numberFormat( earnings[ period ].amount, 2 ) }
 						</td>
-						<td className="ads__earnings-history-value">{ earnings[ period ].pageviews }</td>
+						<td className="ads__earnings-history-value">
+							{ numberFormat( earnings[ period ].pageviews ) }
+						</td>
 						<td className="ads__earnings-history-value">
 							{ this.getStatus( earnings[ period ].status ) }
 						</td>
@@ -314,9 +352,7 @@ class AdsFormEarnings extends Component {
 							<tr>
 								<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
 								<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
-								<th className="ads__earnings-history-header">
-									{ translate( 'Attempted Impressions' ) }
-								</th>
+								<th className="ads__earnings-history-header">{ translate( 'Ads Served' ) }</th>
 								<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
 							</tr>
 						</thead>

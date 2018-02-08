@@ -43,9 +43,9 @@ export const StatsModuleSummaryLinks = props => {
 	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format(
 		'YYYY-MM-DD'
 	) }&summarize=1&num=`;
-	const summaryPeriodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.endOf.format(
-		'YYYY-MM-DD'
-	) }`;
+	const summaryPeriodPath = `/stats/${
+		period.period
+	}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
 	const options = [
 		{ value: '0', label: getSummaryPeriodLabel(), path: summaryPeriodPath, stat: 'Period Summary' },
 		{ value: '7', label: translate( '7 days' ), path: `${ summaryPath }7`, stat: '7 Days' },

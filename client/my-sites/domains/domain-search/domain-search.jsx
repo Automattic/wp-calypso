@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -20,7 +18,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import UpgradesNavigation from 'my-sites/domains/navigation';
 import Main from 'components/main';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem, addItems, goToDomainCheckout, removeDomainFromCart } from 'lib/upgrades/actions';
 import cartItems from 'lib/cart-values/cart-items';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { isSiteUpgradeable } from 'state/selectors';
@@ -59,12 +57,12 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = domain => {
-		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
+		addItem( cartItems.domainMapping( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
 	handleAddTransfer = domain => {
-		upgradesActions.addItem( cartItems.domainTransfer( { domain } ) );
+		addItem( cartItems.domainTransfer( { domain } ) );
 		page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
@@ -103,13 +101,13 @@ class DomainSearch extends Component {
 			);
 		}
 
-		upgradesActions.addItems( items );
-		upgradesActions.goToDomainCheckout( suggestion, this.props.selectedSiteSlug );
+		addItems( items );
+		goToDomainCheckout( suggestion, this.props.selectedSiteSlug );
 	}
 
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
-		upgradesActions.removeDomainFromCart( suggestion );
+		removeDomainFromCart( suggestion );
 	}
 
 	render() {

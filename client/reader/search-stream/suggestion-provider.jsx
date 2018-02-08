@@ -9,7 +9,7 @@ import { map, sampleSize } from 'lodash';
 /**
  * Internal Dependencies
  */
-import i18nUtils from 'lib/i18n-utils';
+import { getLocaleSlug } from 'lib/i18n-utils';
 import { suggestions } from 'reader/search-stream/suggestions';
 import { getReaderFollowedTags } from 'state/selectors';
 import analytics from 'lib/analytics';
@@ -35,7 +35,7 @@ function suggestionsFromTags( count, tags ) {
 }
 
 function suggestionsFromPicks( count ) {
-	const lang = i18nUtils.getLocaleSlug().split( '-' )[ 0 ];
+	const lang = getLocaleSlug().split( '-' )[ 0 ];
 	if ( suggestions[ lang ] ) {
 		return map( sampleSize( suggestions[ lang ], count ), ( tag, i ) => {
 			const ui_algo = 'read:search-suggestions:picks/1';

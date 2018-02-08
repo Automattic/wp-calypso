@@ -22,7 +22,16 @@ const getRawSettings = ( state, siteId ) => {
 /**
  * @param {Object} state Whole Redux state tree
  * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
- * @return {boolean} Whether we are presently attempting to create an account
+ * @return {boolean} Whether we need to notify the user that account creation or connection completed
+ */
+export function getNotifyCompleted( state, siteId = getSelectedSiteId( state ) ) {
+	return get( getRawSettings( state, siteId ), [ 'notifyCompleted' ], false );
+}
+
+/**
+ * @param {Object} state Whole Redux state tree
+ * @param {Number} [siteId] Site ID to check. If not provided, the Site ID selected in the UI will be used
+ * @return {String} Error to present to the user, if any
  */
 export function getError( state, siteId = getSelectedSiteId( state ) ) {
 	return get( getRawSettings( state, siteId ), [ 'error' ], '' );
@@ -97,5 +106,6 @@ export function getStripeConnectAccount( state, siteId = getSelectedSiteId( stat
 		'isOAuthInitializing',
 		'isRequesting',
 		'oauthUrl',
+		'notifyCompleted',
 	] );
 }

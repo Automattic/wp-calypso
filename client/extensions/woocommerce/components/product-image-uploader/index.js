@@ -20,7 +20,7 @@ import { errorNotice as errorNoticeAction } from 'state/notices/actions';
 import DropZone from 'components/drop-zone';
 import FilePicker from 'components/file-picker';
 import MediaActions from 'lib/media/actions';
-import MediaUtils from 'lib/media/utils';
+import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
 import MediaStore from 'lib/media/store';
 import MediaValidationStore from 'lib/media/validation-store';
 
@@ -50,6 +50,13 @@ class ProductImageUploader extends Component {
 	state = {
 		errors: [],
 	};
+
+	componentWillMount() {
+		this._isMounted = true;
+	}
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
 
 	showError = ( media, transientId ) => {
 		const { onError, errorNotice, translate } = this.props;
@@ -129,9 +136,7 @@ class ProductImageUploader extends Component {
 		const { onSelect, onUpload, onFinish } = this.props;
 
 		// DropZone supplies an array, FilePicker supplies a FileList
-		let images = Array.isArray( files )
-			? MediaUtils.filterItemsByMimePrefix( files, 'image' )
-			: [ ...files ];
+		let images = Array.isArray( files ) ? filterItemsByMimePrefix( files, 'image' ) : [ ...files ];
 		if ( ! images ) {
 			return false;
 		}
@@ -155,10 +160,16 @@ class ProductImageUploader extends Component {
 		const handleUpload = () => {
 			const transientId = head( transientIds );
 			const media = MediaStore.get( site.ID, transientId );
-			const isUploadInProgress = media && MediaUtils.isItemBeingUploaded( media );
+			const isUploadInProgress = media && isItemBeingUploaded( media );
 
 			// File has finished uploading or failed.
 			if ( ! isUploadInProgress ) {
+				// Stop uploading and don't push events if they navigated away
+				if ( ! this._isMounted ) {
+					MediaStore.off( 'change', handleUpload );
+					return;
+				}
+
 				if ( media ) {
 					const file = find( filesToUpload, f => f.ID === transientId );
 					if ( media.URL ) {
@@ -202,13 +213,16 @@ class ProductImageUploader extends Component {
 
 	renderUploader() {
 		const { translate, multiple } = this.props;
+
+		const addString = multiple ? translate( 'Add images' ) : translate( 'Add image' );
+
 		return (
 			<div className="product-image-uploader__wrapper">
 				<div className="product-image-uploader__picker">
 					<FilePicker multiple={ multiple } accept="image/*" onPick={ this.onPick }>
 						<div>
 							<Gridicon icon="add-image" size={ 36 } />
-							<p>{ translate( 'Add images' ) }</p>
+							<p>{ addString }</p>
 						</div>
 					</FilePicker>
 				</div>

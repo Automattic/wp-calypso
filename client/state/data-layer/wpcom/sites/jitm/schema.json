@@ -1,79 +1,59 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "definitions": {},
-  "id": "http://example.com/example.json",
   "properties": {
     "data": {
-      "id": "/properties/data",
       "items": {
-        "id": "/properties/data/items",
         "properties": {
           "CTA": {
-            "id": "/properties/data/items/properties/CTA",
             "properties": {
               "hook": {
-                "id": "/properties/data/items/properties/CTA/properties/hook",
                 "type": "string"
               },
               "message": {
-                "id": "/properties/data/items/properties/CTA/properties/message",
                 "type": "string"
               },
               "primary": {
-                "id": "/properties/data/items/properties/CTA/properties/primary",
                 "type": "boolean"
               }
             },
             "type": "object"
           },
           "content": {
-            "id": "/properties/data/items/properties/content",
             "properties": {
               "classes": {
-                "id": "/properties/data/items/properties/content/properties/classes",
                 "type": "string"
               },
               "description": {
-                "id": "/properties/data/items/properties/content/properties/description",
                 "type": "string"
               },
               "emblem": {
-                "id": "/properties/data/items/properties/content/properties/emblem",
                 "type": "null"
               },
               "icon": {
-                "id": "/properties/data/items/properties/content/properties/icon",
                 "type": "string"
               },
               "message": {
-                "id": "/properties/data/items/properties/content/properties/message",
                 "type": "string"
               }
             },
             "type": "object"
           },
           "feature_class": {
-            "id": "/properties/data/items/properties/feature_class",
             "type": "string"
           },
           "id": {
-            "id": "/properties/data/items/properties/id",
             "type": "string"
           },
           "jitm_stats_url": {
-            "id": "/properties/data/items/properties/jitm_stats_url",
             "type": "string"
           },
           "template": {
-            "id": "/properties/data/items/properties/template",
             "type": "string"
           },
           "ttl": {
-            "id": "/properties/data/items/properties/ttl",
             "type": "integer"
           },
           "url": {
-            "id": "/properties/data/items/properties/url",
             "type": "string"
           }
         },

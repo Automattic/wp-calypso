@@ -29,39 +29,6 @@
 	}
 }
 
-.post-type-list__post-thumbnail-wrapper {
-	display: none;
-	position: relative;
-	width: 80px;
-	align-self: stretch;
-	overflow: hidden;
-
-	margin: 8px 0 8px 8px;
-	.post-item__card.is-mini & {
-		margin: 0;
-	}
-
-	&.has-image,
-	.post-item__card.is-placeholder & {
-		display: block;
-	}
-
-	.post-item__card.is-placeholder & {
-		@include placeholder;
-	}
-}
-
-.post-type-list__post-thumbnail {
-	position: absolute;
-		top: 50%;
-		left: 50%;
-	transform: translate( -50%, -50% );
-	height: 100%;
-	max-height: 80px;
-	max-width: none;
-}
-
-
 .post-type-list__max-pages-notice {
 	text-align: center;
 	margin: 16px 0;

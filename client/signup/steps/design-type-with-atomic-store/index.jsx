@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { includes, invoke } from 'lodash';
+import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,15 +20,11 @@ import SignupActions from 'lib/signup/actions';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
-import QueryGeo from 'components/data/query-geo';
-import { getGeoCountryShort } from 'state/geo/selectors';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { getThemeForDesignType } from 'signup/utils';
 
 class DesignTypeWithAtomicStoreStep extends Component {
 	state = {
 		showStore: false,
-		pendingStoreClick: false,
 	};
 	setPressableStore = ref => ( this.pressableStore = ref );
 
@@ -89,26 +85,15 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	handleNextStep = designType => {
-		if ( designType === DESIGN_TYPE_STORE && ! this.props.countryCode ) {
-			// if we don't know the country code, we can't proceed. Continue after the code arrives
-			this.setState( { pendingStoreClick: true } );
-			return;
-		}
-
-		this.setState( { pendingStoreClick: false } );
-
 		const themeSlugWithRepo = getThemeForDesignType( designType );
 
 		this.props.setDesignType( designType );
 
 		this.props.recordTracksEvent( 'calypso_triforce_select_design', { category: designType } );
 
-		const isCountryAllowed =
-			includes( [ 'US', 'CA' ], this.props.countryCode ) || process.env.NODE_ENV === 'development';
-
 		if (
 			designType === DESIGN_TYPE_STORE &&
-			( abtest( 'signupAtomicStoreVsPressable' ) === 'pressable' || ! isCountryAllowed )
+			abtest( 'signupAtomicStoreVsPressable' ) === 'pressable'
 		) {
 			this.scrollUp();
 
@@ -133,13 +118,8 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	renderChoice = choice => {
-		const buttonClassName = classNames( {
-			'is-busy': choice.type === DESIGN_TYPE_STORE && this.state.pendingStoreClick,
-		} );
-
 		return (
 			<Tile
-				buttonClassName={ buttonClassName }
 				buttonLabel={ choice.label }
 				description={ choice.description }
 				href="#"
@@ -151,7 +131,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	};
 
 	renderChoices() {
-		const { countryCode, translate } = this.props;
+		const { translate } = this.props;
 		const disclaimerText = translate(
 			'Not sure? Pick the closest option. You can always change your settings later.'
 		); // eslint-disable-line max-len
@@ -166,12 +146,12 @@ class DesignTypeWithAtomicStoreStep extends Component {
 
 		return (
 			<div className="design-type-with-atomic-store__substep-wrapper design-type-with-store__substep-wrapper">
-				{ this.state.pendingStoreClick && ! countryCode && <QueryGeo /> }
 				<div className={ storeWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }
 						onBackClick={ this.handleStoreBackClick }
 						setRef={ this.setPressableStore }
+						isVisible={ this.state.showStore }
 					/>
 				</div>
 				<div className={ designTypeListClassName }>
@@ -201,14 +181,6 @@ class DesignTypeWithAtomicStoreStep extends Component {
 		return translate( 'What kind of site do you need? Choose an option below:' );
 	}
 
-	componentDidUpdate( prevProps ) {
-		// If geoip data arrived, check if there is a pending click on a "store" choice and
-		// process it -- all data are available now to proceed.
-		if ( this.state.pendingStoreClick && ! prevProps.countryCode && this.props.countryCode ) {
-			this.handleNextStep( DESIGN_TYPE_STORE );
-		}
-	}
-
 	render() {
 		const headerText = this.getHeaderText();
 		const subHeaderText = this.getSubHeaderText();
@@ -230,12 +202,7 @@ class DesignTypeWithAtomicStoreStep extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		countryCode: getCurrentUserCountryCode( state ) || getGeoCountryShort( state ),
-	} ),
-	{
-		recordTracksEvent,
-		setDesignType,
-	}
-)( localize( DesignTypeWithAtomicStoreStep ) );
+export default connect( null, {
+	recordTracksEvent,
+	setDesignType,
+} )( localize( DesignTypeWithAtomicStoreStep ) );

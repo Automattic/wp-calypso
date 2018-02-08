@@ -7,14 +7,14 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import { recordTrack } from 'reader/stats';
 import AsyncLoad from 'components/async-load';
 import { trackPageLoad, trackScrollPage, ensureStoreLoading } from 'reader/controller-helper';
 import feedStreamStore from 'lib/feed-stream-store';
 
 export function conversations( context, next ) {
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const mcKey = 'conversations';
 	const title = 'Reader > Conversations';
 
@@ -39,7 +39,7 @@ export function conversations( context, next ) {
 }
 
 export function conversationsA8c( context, next ) {
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const mcKey = 'conversations-a8c';
 	const title = 'Reader > Conversations > Automattic';
 

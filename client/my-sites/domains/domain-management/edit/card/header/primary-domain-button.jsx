@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -14,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import analyticsMixin from 'lib/mixins/analytics';
-import paths from 'my-sites/domains/paths';
+import { domainManagementPrimaryDomain } from 'my-sites/domains/paths';
 import Button from 'components/button';
 
 const PrimaryDomainButton = createReactClass( {
@@ -30,14 +28,12 @@ const PrimaryDomainButton = createReactClass( {
 	handleClick() {
 		this.recordEvent( 'makePrimaryClick', this.props.domain );
 
-		page(
-			paths.domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name )
-		);
+		page( domainManagementPrimaryDomain( this.props.selectedSite.slug, this.props.domain.name ) );
 	},
 
 	render() {
 		const domain = this.props.domain;
-		var label;
+		let label;
 
 		if ( domain && ! domain.isPrimary ) {
 			if ( this.props.settingPrimaryDomain ) {

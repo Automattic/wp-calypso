@@ -24,7 +24,7 @@ import {
 	getFeedUrl,
 	getSiteUrl,
 } from 'reader/get-helpers';
-import untrailingslashit from 'lib/route/untrailingslashit';
+import { untrailingslashit } from 'lib/route';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 
@@ -45,7 +45,7 @@ function ReaderSubscriptionListItem( {
 	className = '',
 	translate,
 	followSource,
-	showEmailSettings, // @todo rename to showNotificationSettings
+	showNotificationSettings,
 	showLastUpdatedDate,
 	isFollowing,
 	railcar,
@@ -92,11 +92,7 @@ function ReaderSubscriptionListItem( {
 	);
 
 	return (
-		<div
-			className={ classnames( 'reader-subscription-list-item', className, {
-				'has-email-settings': showEmailSettings && isFollowing,
-			} ) }
-		>
+		<div className={ classnames( 'reader-subscription-list-item', className ) }>
 			<div className="reader-subscription-list-item__avatar">
 				<ReaderAvatar
 					siteIcon={ siteIcon }
@@ -167,7 +163,7 @@ function ReaderSubscriptionListItem( {
 					siteId={ siteId }
 					railcar={ railcar }
 				/>
-				{ isFollowing && showEmailSettings && notificationSettings }
+				{ isFollowing && showNotificationSettings && notificationSettings }
 			</div>
 		</div>
 	);

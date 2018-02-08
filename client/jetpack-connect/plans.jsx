@@ -22,11 +22,13 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { addItem } from 'lib/upgrades/actions';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
-import { completeFlow, goBackToWpAdmin } from 'state/jetpack-connect/actions';
+import { completeFlow } from 'state/jetpack-connect/actions';
+import { externalRedirect } from 'lib/route/path';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import { JPC_PATH_PLANS } from './constants';
 import { mc } from 'lib/analytics';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -69,7 +71,7 @@ class Plans extends Component {
 
 	maybeRedirect() {
 		if ( this.props.isAutomatedTransfer ) {
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 		if ( this.props.selectedPlan ) {
 			this.selectPlan( this.props.selectedPlan );
@@ -79,7 +81,7 @@ class Plans extends Component {
 		}
 		if ( ! this.props.selectedSite && this.props.isSitesInitialized ) {
 			// Invalid site
-			this.redirect( '/jetpack/connect/plans' );
+			this.redirect( JPC_PATH_PLANS );
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.calypsoStartedConnection ) {
@@ -103,11 +105,11 @@ class Plans extends Component {
 	redirectToWpAdmin() {
 		const { queryRedirect } = this.props;
 		if ( queryRedirect ) {
-			this.props.goBackToWpAdmin( queryRedirect );
+			externalRedirect( queryRedirect );
 			this.redirecting = true;
 			this.props.completeFlow();
 		} else if ( this.props.selectedSite ) {
-			this.props.goBackToWpAdmin( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
+			externalRedirect( this.props.selectedSite.URL + JETPACK_ADMIN_PATH );
 			this.redirecting = true;
 			this.props.completeFlow();
 		}
@@ -237,7 +239,6 @@ export default connect(
 	},
 	{
 		completeFlow,
-		goBackToWpAdmin,
 		recordTracksEvent,
 	}
 )( localize( Plans ) );

@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
  */
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import paths from '../../paths.js';
+import { billingHistory, purchasesRoot } from '../../paths.js';
 import SectionNav from 'components/section-nav';
 
 const PurchasesHeader = ( { section } ) => {
@@ -26,11 +26,11 @@ const PurchasesHeader = ( { section } ) => {
 	return (
 		<SectionNav selectedText={ text }>
 			<NavTabs>
-				<NavItem path={ paths.purchasesRoot() } selected={ section === 'purchases' }>
+				<NavItem path={ purchasesRoot } selected={ section === 'purchases' }>
 					{ i18n.translate( 'Purchases' ) }
 				</NavItem>
 
-				<NavItem path={ paths.billingHistory() } selected={ section === 'billing' }>
+				<NavItem path={ billingHistory } selected={ section === 'billing' }>
 					{ i18n.translate( 'Billing History' ) }
 				</NavItem>
 			</NavTabs>

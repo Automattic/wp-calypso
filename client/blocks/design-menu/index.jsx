@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -29,7 +27,7 @@ import DesignMenuPanel from './design-menu-panel';
 import DesignMenuHeader from './design-menu-header';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSiteFragment } from 'lib/route/path';
+import { getSiteFragment } from 'lib/route';
 
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
 

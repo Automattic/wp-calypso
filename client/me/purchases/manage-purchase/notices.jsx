@@ -184,7 +184,7 @@ class PurchaseNotice extends Component {
 						{
 							args: {
 								cardType: creditCard.type.toUpperCase(),
-								cardNumber: creditCard.number,
+								cardNumber: parseInt( creditCard.number, 10 ),
 								cardExpiry: creditCard.expiryMoment.format( 'MMMM YYYY' ),
 							},
 							components: {

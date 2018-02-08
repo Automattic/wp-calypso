@@ -86,12 +86,14 @@ describe( 'actions', () => {
 	describe( '#receivePosts()', () => {
 		test( 'should return an action object and dispatch posts receive', () => {
 			const posts = [];
-			return actions.receivePosts( posts )( dispatchSpy ).then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
-					type: READER_POSTS_RECEIVE,
-					posts,
+			return actions
+				.receivePosts( posts )( dispatchSpy )
+				.then( () => {
+					expect( dispatchSpy ).to.have.been.calledWith( {
+						type: READER_POSTS_RECEIVE,
+						posts,
+					} );
 				} );
-			} );
 		} );
 
 		test( 'should fire tracks events for posts with railcars', () => {

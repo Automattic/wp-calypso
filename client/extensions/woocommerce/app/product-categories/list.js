@@ -28,6 +28,8 @@ import { fetchProductCategories } from 'woocommerce/state/sites/product-categori
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import VirtualList from 'components/virtual-list';
+import { stripHTML, decodeEntities } from 'lib/formatting';
+import ImageThumb from 'woocommerce/components/image-thumb';
 
 const ITEM_HEIGHT = 70;
 
@@ -86,31 +88,25 @@ class ProductCategories extends Component {
 		}
 		const children = this.getChildren( item.id );
 		const itemId = item.id;
-		const image = item.image && item.image.src;
-		const imageClasses = classNames( 'product-categories__list-item-icon', {
-			'is-thumb-placeholder': ! image,
-		} );
 		const link = getLink( '/store/products/category/:site/' + itemId, site );
 
 		const goToLink = () => {
 			page( link );
 		};
 
+		const description = decodeEntities( stripHTML( item.description ) );
+
 		return (
 			<div key={ 'product-category-' + itemId } className="product-categories__list-item">
 				<CompactCard key={ itemId } className="product-categories__list-item-card" onClick={ goToLink }>
 					<div className="product-categories__list-item-wrapper">
 						<div className="product-categories__list-thumb">
-							<div className={ imageClasses }>
-								<figure>
-									{ item.image && <img src={ item.image.src } /> }
-								</figure>
-							</div>
+							<ImageThumb src={ item.image && item.image.src || '' } alt="" />
 						</div>
 						<span className="product-categories__list-item-info">
 							<a href={ link }>{ item.name }</a>
 							<Count count={ item.count } />
-							<span className="product-categories__list-item-description">{ item.description }</span>
+							<span className="product-categories__list-item-description">{ description }</span>
 						</span>
 					</div>
 				</CompactCard>

@@ -56,7 +56,7 @@ function Searchable( prototype, searchNodes ) {
 
 	/**
 	 * Public method added to a collection to return a filtered set of matching items
-	 * 
+	 *
 	 * @param {string} keyword The string we are searching for on the collection
 	 * @return {array} The filtered set of items in the collection that match the search term
 	 */

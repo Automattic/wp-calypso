@@ -4,7 +4,7 @@
 }
 
 .reader-subscription-list-item__byline {
-	color: darken( $gray, 30% );
+	color: $gray-darken-30;
 	margin-right: 16px;
 	flex: 1 1 0px;
 }
@@ -45,7 +45,7 @@
 }
 
 .reader-subscription-list-item__by-text .reader-subscription-list-item__link {
-	color: darken( $gray, 30% );
+	color: $gray-darken-30;
 }
 
 .reader-subscription-list-item .gravatar {
@@ -73,7 +73,7 @@
 .reader-subscription-list-item__site-url,
 .reader-subscription-list-item__site-url:visited,
 .reader-subscription-list-item__timestamp {
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 }
 
 .reader-subscription-list-item__site-title,

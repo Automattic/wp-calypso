@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -14,19 +12,22 @@ import { noop, some, startsWith, uniq } from 'lodash';
  */
 import { SITES_ONCE_CHANGED } from 'state/action-types';
 import userFactory from 'lib/user';
-import { receiveSite, requestSites } from 'state/sites/actions';
+import { receiveSite, requestSite } from 'state/sites/actions';
 import {
 	getSite,
+	getSiteSlug,
 	isJetpackModuleActive,
 	isJetpackSite,
 	isRequestingSites,
+	isRequestingSite,
+	hasAllSitesList,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
 import { savePreference } from 'state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
 import NavigationComponent from 'my-sites/navigation';
-import route from 'lib/route';
+import { getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import config from 'config';
 import analytics from 'lib/analytics';
@@ -36,7 +37,6 @@ import {
 	getPrimarySiteId,
 	getSiteId,
 	getSites,
-	getVisibleSites,
 	isDomainOnlySite,
 } from 'state/selectors';
 import {
@@ -59,6 +59,11 @@ import SitesComponent from 'my-sites/sites';
 import { isATEnabled } from 'lib/automated-transfer';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
+import NoSitesMessage from 'components/empty-content/no-sites-message';
+import EmptyContentComponent from 'components/empty-content';
+import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
+import Main from 'components/main';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -81,11 +86,11 @@ const sitesPageTitleForAnalytics = 'Sites';
  * @returns { object } React element containing the site selector and sidebar
  */
 function createNavigation( context ) {
-	const siteFragment = route.getSiteFragment( context.pathname );
+	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
 
 	if ( siteFragment ) {
-		basePath = route.sectionify( context.pathname );
+		basePath = sectionify( context.pathname );
 	}
 
 	return (
@@ -108,8 +113,6 @@ function removeSidebar( context ) {
 }
 
 function renderEmptySites( context ) {
-	const NoSitesMessage = require( 'components/empty-content/no-sites-message' );
-
 	removeSidebar( context );
 
 	context.primary = React.createElement( NoSitesMessage );
@@ -119,7 +122,6 @@ function renderEmptySites( context ) {
 }
 
 function renderNoVisibleSites( context ) {
-	const EmptyContentComponent = require( 'components/empty-content' );
 	const currentUser = user.get();
 	const hiddenSites = currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
@@ -155,8 +157,6 @@ function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	const DomainOnly = require( 'my-sites/domains/domain-management/list/domain-only' );
-
 	reactContext.primary = <DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />;
 
 	reactContext.secondary = createNavigation( reactContext );
@@ -202,12 +202,14 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain ) {
 
 function onSelectedSiteAvailable( context ) {
 	const { getState } = getStore( context );
-	const selectedSite = getSelectedSite( getState() );
+	const state = getState();
+	const selectedSite = getSelectedSite( state );
 
 	// Currently, sites are only made available in Redux state by the receive
 	// here (i.e. only selected sites). If a site is already known in state,
 	// avoid receiving since we risk overriding changes made more recently.
-	if ( ! getSite( getState(), selectedSite.ID ) ) {
+	// Also, if we can't manage the site, don't add it to state.
+	if ( ! getSite( state, selectedSite.ID ) && selectedSite.capabilities ) {
 		context.store.dispatch( receiveSite( selectedSite ) );
 	}
 
@@ -216,7 +218,7 @@ function onSelectedSiteAvailable( context ) {
 	const primaryDomain = getPrimaryDomainBySiteId( getState(), selectedSite.ID );
 
 	if (
-		isDomainOnlySite( getState(), selectedSite.ID ) &&
+		isDomainOnlySite( state, selectedSite.ID ) &&
 		! isPathAllowedForDomainOnlySite( context.pathname, selectedSite.slug, primaryDomain )
 	) {
 		renderSelectedSiteIsDomainOnly( context, selectedSite );
@@ -224,12 +226,14 @@ function onSelectedSiteAvailable( context ) {
 	}
 
 	// Update recent sites preference
-	if ( hasReceivedRemotePreferences( getState() ) ) {
-		const recentSites = getPreference( getState(), 'recentSites' );
+	if ( hasReceivedRemotePreferences( state ) ) {
+		const recentSites = getPreference( state, 'recentSites' );
 		if ( selectedSite.ID !== recentSites[ 0 ] ) {
-			context.store.dispatch(
-				savePreference( 'recentSites', uniq( [ selectedSite.ID, ...recentSites ] ).slice( 0, 5 ) )
-			);
+			//also filter recent sites if not available locally
+			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
+				.slice( 0, 5 )
+				.filter( recentId => !! getSite( state, recentId ) );
+			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
 	}
 
@@ -243,8 +247,8 @@ function onSelectedSiteAvailable( context ) {
  * @returns {object} A site-picker React element
  */
 function createSitesComponent( context ) {
-	const basePath = route.sectionify( context.path );
-	const path = context.prevPath ? route.sectionify( context.prevPath ) : '/stats';
+	const basePath = sectionify( context.path );
+	const path = context.prevPath ? sectionify( context.prevPath ) : '/stats';
 
 	// This path sets the URL to be visited once a site is selected
 	const sourcePath = basePath === '/sites' ? path : basePath;
@@ -292,28 +296,22 @@ export function noSite( context, next ) {
 	return next();
 }
 
+// Helper selector to retrieve the primary site slug
+function getPrimarySiteSlug( state ) {
+	const primarySiteId = getPrimarySiteId( state );
+	return getSiteSlug( state, primarySiteId );
+}
+
 /*
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
 export function siteSelection( context, next ) {
 	const { getState, dispatch } = getStore( context );
-	const siteFragment = context.params.site || route.getSiteFragment( context.path );
-	const basePath = route.sectionify( context.path, siteFragment );
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = user.get();
 	const hasOneSite = currentUser.visible_site_count === 1;
-	const allSitesPath = route.sectionify( context.path, siteFragment );
-	const primaryId = getPrimarySiteId( getState() );
-	const primary = getSite( getState(), primaryId ) || '';
-
-	const redirectToPrimary = () => {
-		let redirectPath = `${ context.pathname }/${ primary.slug }`;
-
-		redirectPath = context.querystring
-			? `${ redirectPath }?${ context.querystring }`
-			: redirectPath;
-
-		page.redirect( redirectPath );
-	};
+	const allSitesPath = sectionify( context.path, siteFragment );
 
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
@@ -337,26 +335,38 @@ export function siteSelection( context, next ) {
 	 * If the user has only one site, redirect to the single site
 	 * context instead of rendering the all-site views.
 	 *
-	 * Note: The redirectToPrimary function will be continually executed
-	 * by repeatedly querying /stats/day/undefined until the /sites
-	 * endpoint has returned.
+	 * If the /me/sites API endpoint hasn't returned yet, postpone the redirect until
+	 * after the sites data are available by scheduling a `SITES_ONCE_CHANGED` callback.
 	 */
 	if ( hasOneSite && ! siteFragment ) {
+		const redirectToPrimary = () => {
+			const primarySiteSlug = getPrimarySiteSlug( getState() );
+			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
+
+			redirectPath = context.querystring
+				? `${ redirectPath }?${ context.querystring }`
+				: redirectPath;
+
+			page.redirect( redirectPath );
+		};
+
 		const hasInitialized = getSites( getState() ).length;
 		if ( hasInitialized ) {
-			if ( primary ) {
+			if ( getPrimarySiteSlug( getState() ) ) {
 				redirectToPrimary();
 			} else {
 				// If the primary site does not exist, skip redirect
 				// and display a useful error notification
 				showMissingPrimaryError( currentUser, dispatch );
 			}
-			return;
+		} else {
+			dispatch( {
+				type: SITES_ONCE_CHANGED,
+				listener: redirectToPrimary,
+			} );
 		}
-		dispatch( {
-			type: SITES_ONCE_CHANGED,
-			listener: redirectToPrimary,
-		} );
+
+		return;
 	}
 
 	// If the path fragment does not resemble a site, set all sites to visible
@@ -376,36 +386,27 @@ export function siteSelection( context, next ) {
 			return;
 		}
 	} else {
-		// if sites has fresh data and siteId is invalid
-		// redirect to allSitesPath
-		if ( ! isRequestingSites( getState() ) ) {
-			return page.redirect( allSitesPath );
-		}
-
-		let waitingNotice;
-		let freshSiteId;
 		const selectOnSitesChange = () => {
-			// if sites have loaded, but siteId is invalid, redirect to allSitesPath
-			freshSiteId = getSiteId( getState(), siteFragment );
-			dispatch( setSelectedSiteId( freshSiteId ) );
+			const freshSiteId = getSiteId( getState(), siteFragment );
+
 			if ( getSite( getState(), freshSiteId ) ) {
+				dispatch( setSelectedSiteId( freshSiteId ) );
 				onSelectedSiteAvailable( context );
-				if ( waitingNotice ) {
-					notices.removeNotice( waitingNotice );
-				}
-			} else if ( currentUser.visible_site_count !== getVisibleSites( getState() ).length ) {
-				waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), {
-					showDismiss: false,
-				} );
-				dispatch( {
-					type: SITES_ONCE_CHANGED,
-					listener: selectOnSitesChange,
-				} );
-				dispatch( requestSites() );
-			} else {
+			} else if ( hasAllSitesList( getState() ) ) {
+				// If all sites have loaded, but siteId is still invalid, redirect to allSitesPath.
 				page.redirect( allSitesPath );
 			}
 		};
+
+		// Fetch the site from siteFragment.
+		dispatch( requestSite( siteFragment ) ).then( selectOnSitesChange );
+
+		// if sites has fresh data and siteId is invalid
+		// redirect to allSitesPath
+		if ( ! isRequestingSites( getState() ) && ! isRequestingSite( getState(), siteFragment ) ) {
+			return page.redirect( allSitesPath );
+		}
+
 		// Otherwise, check when sites has loaded
 		dispatch( {
 			type: SITES_ONCE_CHANGED,
@@ -442,9 +443,7 @@ export function navigation( context, next ) {
 
 export function jetPackWarning( context, next ) {
 	const { getState } = getStore( context );
-	const Main = require( 'components/main' );
-	const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
-	const basePath = route.sectionify( context.path );
+	const basePath = sectionify( context.path );
 	const selectedSite = getSelectedSite( getState() );
 
 	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {

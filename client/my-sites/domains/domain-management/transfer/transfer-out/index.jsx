@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -17,11 +15,12 @@ import DomainMainPlaceholder from 'my-sites/domains/domain-management/components
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import paths from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
+import { domainManagementTransfer } from 'my-sites/domains/paths';
+import { getSelectedDomain, getTopLevelOfTld } from 'lib/domains';
 import IcannVerification from './icann-verification.jsx';
 import Locked from './locked.jsx';
 import Unlocked from './unlocked.jsx';
+import SelectIpsTag from './select-ips-tag.jsx';
 import TransferProhibited from './transfer-prohibited.jsx';
 
 class Transfer extends React.Component {
@@ -33,6 +32,7 @@ class Transfer extends React.Component {
 	};
 
 	renderSection() {
+		const topLevelOfTld = getTopLevelOfTld( this.props.selectedDomainName );
 		const { locked, transferProhibited } = this.props.wapiDomainInfo.data;
 		const { isPendingIcannVerification, currentUserCanManage } = getSelectedDomain( this.props );
 		let section = null;
@@ -41,6 +41,8 @@ class Transfer extends React.Component {
 			section = NonOwnerCard;
 		} else if ( transferProhibited ) {
 			section = TransferProhibited;
+		} else if ( 'uk' === topLevelOfTld ) {
+			section = SelectIpsTag;
 		} else if ( isPendingIcannVerification ) {
 			section = IcannVerification;
 		} else if ( locked ) {
@@ -68,9 +70,7 @@ class Transfer extends React.Component {
 	}
 
 	goToEdit = () => {
-		page(
-			paths.domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName )
-		);
+		page( domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 
 	isDataLoading() {

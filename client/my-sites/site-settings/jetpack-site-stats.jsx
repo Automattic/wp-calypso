@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -27,7 +25,7 @@ import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
-import { getStatsPathForTab } from 'lib/route/path';
+import { getStatsPathForTab } from 'lib/route';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';

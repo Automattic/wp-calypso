@@ -7,15 +7,16 @@
 import validator from 'is-my-json-valid';
 import {
 	flow,
+	forEach,
 	get,
 	includes,
+	isEmpty,
 	isEqual,
 	mapValues,
 	merge,
-	partialRight,
 	omit,
 	omitBy,
-	reduce,
+	partialRight,
 } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import LRU from 'lru-cache';
@@ -23,29 +24,42 @@ import LRU from 'lru-cache';
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from './action-types';
+import { DESERIALIZE, SERIALIZE } from 'state/action-types';
 import warn from 'lib/warn';
 
 export function isValidStateWithSchema( state, schema, debugInfo ) {
-	const validate = validator( schema );
+	const validate = validator( schema, {
+		greedy: process.env.NODE_ENV !== 'production',
+		verbose: process.env.NODE_ENV !== 'production',
+	} );
 	const valid = validate( state );
 	if ( ! valid && process.env.NODE_ENV !== 'production' ) {
-		function prettifyArgument( obj ) {
-			if ( Array.isArray( obj ) && obj.length === 1 ) {
-				return obj[ 0 ];
+		const msgLines = [ 'State validation failed.', 'State: %o', '' ];
+		const substitutions = [ state ];
+
+		forEach( validate.errors, ( { field, message, schemaPath, value } ) => {
+			// data.myField is required
+			msgLines.push( '%s %s' );
+			substitutions.push( field, message );
+
+			// Found: { my: 'state' }
+			msgLines.push( 'Found: %o' );
+			substitutions.push( value );
+
+			// Violates rule: { type: 'boolean' }
+			if ( ! isEmpty( schemaPath ) ) {
+				msgLines.push( 'Violates rule: %o' );
+				substitutions.push( get( schema, schemaPath ) );
 			}
-			return obj;
+			msgLines.push( '' );
+		} );
+
+		if ( ! isEmpty( debugInfo ) ) {
+			msgLines.push( 'Source: %o' );
+			substitutions.push( debugInfo );
 		}
-		warn(
-			'state validation failed\nfor state:',
-			state,
-			'\nagainst schema:',
-			schema,
-			'\nwith reason:',
-			prettifyArgument( validate.errors ),
-			'\nsource:',
-			prettifyArgument( debugInfo ) || '(none given)'
-		);
+
+		warn( msgLines.join( '\n' ), ...substitutions );
 	}
 	return valid;
 }
@@ -414,16 +428,9 @@ export const withSchemaValidation = ( schema, reducer ) => {
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	const validatedReducers = reduce(
+	const validatedReducers = mapValues(
 		reducers,
-		( validated, next, key ) => {
-			const { schema, hasCustomPersistence } = next;
-			return {
-				...validated,
-				[ key ]: hasCustomPersistence ? next : withSchemaValidation( schema, next ),
-			};
-		},
-		{}
+		next => ( next.hasCustomPersistence ? next : withSchemaValidation( next.schema, next ) )
 	);
 	const combined = combine( validatedReducers );
 	combined.hasCustomPersistence = true;

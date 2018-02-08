@@ -8,10 +8,17 @@ import { current } from 'page';
 import i18n from 'i18n-calypso';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import config from 'config';
-import stepActions from 'lib/signup/step-actions';
+import {
+	addPlanToCart,
+	createAccount,
+	createSite,
+	createSiteOrDomain,
+	createSiteWithCart,
+	setThemeOnSite,
+} from 'lib/signup/step-actions';
 
 export default {
 	survey: {
@@ -63,7 +70,7 @@ export default {
 		stepName: 'themes-site-selected',
 		dependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		providesDependencies: [ 'themeSlugWithRepo' ],
-		apiRequestFunction: stepActions.setThemeOnSite,
+		apiRequestFunction: setThemeOnSite,
 		props: {
 			headerText: i18n.translate( 'Choose a theme for your new site.' ),
 		},
@@ -71,7 +78,7 @@ export default {
 
 	'plans-site-selected': {
 		stepName: 'plans-site-selected',
-		apiRequestFunction: stepActions.addPlanToCart,
+		apiRequestFunction: addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId' ],
 		providesDependencies: [ 'cartItem', 'privacyItem' ],
 	},
@@ -93,13 +100,13 @@ export default {
 
 	site: {
 		stepName: 'site',
-		apiRequestFunction: stepActions.createSite,
+		apiRequestFunction: createSite,
 		providesDependencies: [ 'siteSlug' ],
 	},
 
 	'rebrand-cities-welcome': {
 		stepName: 'rebrand-cities-welcome',
-		apiRequestFunction: stepActions.createSiteWithCart,
+		apiRequestFunction: createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		props: {
 			isDomainOnly: false,
@@ -114,7 +121,7 @@ export default {
 
 	user: {
 		stepName: 'user',
-		apiRequestFunction: stepActions.createAccount,
+		apiRequestFunction: createAccount,
 		providesToken: true,
 		providesDependencies: [ 'bearer_token', 'username' ],
 		unstorableDependencies: [ 'bearer_token' ],
@@ -134,21 +141,21 @@ export default {
 
 	plans: {
 		stepName: 'plans',
-		apiRequestFunction: stepActions.addPlanToCart,
+		apiRequestFunction: addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
 		providesDependencies: [ 'cartItem', 'privacyItem' ],
 	},
 
 	'plans-store-nux': {
 		stepName: 'plans-store-nux',
-		apiRequestFunction: stepActions.addPlanToCart,
+		apiRequestFunction: addPlanToCart,
 		dependencies: [ 'siteSlug', 'siteId', 'domainItem' ],
 		providesDependencies: [ 'cartItem', 'privacyItem' ],
 	},
 
 	domains: {
 		stepName: 'domains',
-		apiRequestFunction: stepActions.createSiteWithCart,
+		apiRequestFunction: createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		props: {
 			isDomainOnly: false,
@@ -159,7 +166,7 @@ export default {
 
 	'domains-theme-preselected': {
 		stepName: 'domains-theme-preselected',
-		apiRequestFunction: stepActions.createSiteWithCart,
+		apiRequestFunction: createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		props: {
 			isDomainOnly: false,
@@ -169,7 +176,7 @@ export default {
 
 	'jetpack-user': {
 		stepName: 'jetpack-user',
-		apiRequestFunction: stepActions.createAccount,
+		apiRequestFunction: createAccount,
 		providesToken: true,
 		props: {
 			headerText: i18n.translate( 'Create an account for Jetpack' ),
@@ -180,7 +187,7 @@ export default {
 
 	'oauth2-user': {
 		stepName: 'oauth2-user',
-		apiRequestFunction: stepActions.createAccount,
+		apiRequestFunction: createAccount,
 		props: {
 			oauth2Signup: true,
 		},
@@ -189,7 +196,7 @@ export default {
 	},
 
 	'get-dot-blog-plans': {
-		apiRequestFunction: stepActions.createSiteWithCart,
+		apiRequestFunction: createSiteWithCart,
 		stepName: 'get-dot-blog-plans',
 		dependencies: [ 'cartItem' ],
 		providesDependencies: [
@@ -232,7 +239,7 @@ export default {
 	},
 	'site-picker': {
 		stepName: 'site-picker',
-		apiRequestFunction: stepActions.createSiteOrDomain,
+		apiRequestFunction: createSiteOrDomain,
 		props: {
 			headerText: i18n.translate( 'Choose your site?' ),
 		},
@@ -260,6 +267,26 @@ export default {
 
 	'creds-permission': {
 		stepName: 'creds-permission',
+		providesDependencies: [],
+	},
+
+	'rewind-migrate': {
+		stepName: 'rewind-migrate',
+		providesDependencies: [],
+	},
+
+	'rewind-were-backing': {
+		stepName: 'rewind-were-backing',
+		providesDependencies: [],
+	},
+
+	'rewind-add-creds': {
+		stepName: 'rewind-add-creds',
+		providesDependencies: [],
+	},
+
+	'rewind-form-creds': {
+		stepName: 'rewind-form-creds',
 		providesDependencies: [],
 	},
 };

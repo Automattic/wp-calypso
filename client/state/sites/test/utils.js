@@ -46,9 +46,7 @@ describe( 'utils', () => {
 				hasConflict: false,
 				domain: 'example.wordpress.com',
 				slug: 'example.wordpress.com',
-				options: {
-					default_post_format: 'standard',
-				},
+				options: {},
 			} );
 		} );
 

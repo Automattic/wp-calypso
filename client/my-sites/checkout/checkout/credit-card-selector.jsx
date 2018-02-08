@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
 import { find } from 'lodash';
@@ -15,17 +13,15 @@ import analytics from 'lib/analytics';
 import StoredCard from './stored-card';
 import NewCardForm from './new-card-form';
 import { newCardPayment, storedCardPayment } from 'lib/store-transactions';
-import upgradesActions from 'lib/upgrades/actions';
+import { setPayment } from 'lib/upgrades/actions';
 
 class CreditCardSelector extends React.Component {
 	constructor( props ) {
 		super( props );
 		if ( props.initialCard ) {
 			this.state = { section: props.initialCard.stored_details_id };
-			return;
 		} else {
 			this.state = { section: 'new-card' };
-			return;
 		}
 	}
 
@@ -40,13 +36,13 @@ class CreditCardSelector extends React.Component {
 
 	storedCards = () => {
 		return this.props.cards.map( function( card ) {
-			var storedCard = <StoredCard card={ card } />;
+			const storedCard = <StoredCard card={ card } />;
 			return this.section( card.stored_details_id, storedCard );
 		}, this );
 	};
 
 	newCardForm = () => {
-		var cardForm = (
+		const cardForm = (
 			<NewCardForm
 				countriesList={ this.props.countriesList }
 				transaction={ this.props.transaction }
@@ -58,7 +54,7 @@ class CreditCardSelector extends React.Component {
 	};
 
 	section = ( name, content ) => {
-		var classes = classNames( 'payment-box-section', {
+		const classes = classNames( 'payment-box-section', {
 			selected: this.state.section === name,
 			'no-stored-cards': name === 'new-card' && this.props.cards.length === 0,
 		} );
@@ -75,7 +71,7 @@ class CreditCardSelector extends React.Component {
 	};
 
 	handleClickedSection = section => {
-		var newPayment;
+		let newPayment;
 
 		if ( section === this.state.section ) {
 			return;
@@ -88,7 +84,7 @@ class CreditCardSelector extends React.Component {
 			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
 		}
 
-		upgradesActions.setPayment( newPayment );
+		setPayment( newPayment );
 		this.setState( { section: section } );
 	};
 

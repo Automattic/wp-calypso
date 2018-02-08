@@ -7,13 +7,10 @@
 import React from 'react';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
-import {
-	camelCaseToSlug,
-	getComponentName,
-} from 'devdocs/docs-example/util';
+import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
 import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
 
 const shouldShowInstance = ( example, filter, component ) => {

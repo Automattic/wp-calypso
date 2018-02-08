@@ -65,7 +65,6 @@ describe( 'getVisibleSites()', () => {
 				is_customizable: false,
 				is_previewable: false,
 				options: {
-					default_post_format: 'standard',
 					unmapped_url: 'http://example.com',
 				},
 			},

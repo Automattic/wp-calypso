@@ -73,14 +73,14 @@
 		left: calc( 50% + 310px);
 		height: 70px;
 		width: 70px;
-		animation-delay: random(10) + s;
+		animation-delay: 6s;
 	}
 	.gridicons-attachment {
 		height: 60px;
 		width: 60px;
 		top: 70px;
 		left: calc(50% + 220px);
-		animation-delay: random(10) + s;
+		animation-delay: 7s;
 	}
 	.gridicons-audio {
 		height: 80px;
@@ -88,21 +88,21 @@
 		top: 170px;
 		left: calc(50% - 220px );
 		transform: rotate( -30deg );
-		animation-delay: random(10) + s;
+		animation-delay: 6s;
 	}
 	.gridicons-bell {
 		height: 120px;
 		width: 120px;
 		top: 10px;
 		left: calc( 50% + 290px);
-		animation-delay: random(10) + s;
+		animation-delay: 10s;
 	}
 	.gridicons-book {
 		top: 340px;
 		left: calc(50% - 300px);
 		height: 100px;
 		width: 100px;
-		animation-delay: random(10) + s;
+		animation-delay: 1s;
 	}
 	.gridicons-camera {
 		top: 300px;
@@ -110,7 +110,7 @@
 		height: 160px;
 		width: 160px;
 		transform: rotate( -10deg );
-		animation-delay: random(10) + s;
+		animation-delay: 3s;
 	}
 	.gridicons-comment {
 		left: calc( 50% + 130px );
@@ -124,21 +124,21 @@
 		width: 100px;
 		top: 220px;
 		left: calc(50% - 330px );
-		animation-delay: random(10) + s;
+		animation-delay: 3s;
 	}
 	.gridicons-pencil {
 		height: 220px;
 		width: 220px;
 		top: -110px;
 		left: calc(50% + 110px );
-		animation-delay: random(10) + s;
+		animation-delay: 1s;
 	}
 	.gridicons-phone {
 		height: 80px;
 		width: 80px;
 		top: 130px;
 		left: calc(50% - 390px);
-		animation-delay: random(10) + s;
+		animation-delay: 6s;
 	}
 	.gridicons-reader {
 		height: 130px;
@@ -146,7 +146,7 @@
 		top: 360px;
 		left: calc(50% - 170px );
 		transform: rotate( 12deg );
-		animation-delay: random(10) + s;
+		animation-delay: 8s;
 	}
 	.gridicons-star {
 		height: 90px;
@@ -157,67 +157,67 @@
 	.gridicons-video {
 		top: 245px;
 		left: calc(50% - 160px);
-		animation-delay: random(10) + s;
+		animation-delay: 3s;
 	}
 	.gridicons-align-image-right {
 		top: 280px;
 		left: calc(50% + 90px);
-		animation-delay: random(10) + s;
+		animation-delay: 7s;
 	}
 	.gridicons-bookmark {
 		top: 460px;
 		height: 110px;
 		width: 110px;
 		left: calc(50% - 440px);
-		animation-delay: random(10) + s;
+		animation-delay: 5s;
 	}
 	.gridicons-briefcase {
 		top: 320px;
 		height: 80px;
 		width: 80px;
 		left: calc(50% - 450px);
-		animation-delay: random(10) + s;
+		animation-delay: 1s;
 	}
 	.gridicons-calendar {
 		top: 460px;
 		left: calc(50% + 300px);
 		height: 80px;
 		width: 80px;
-		animation-delay: random(10) + s;
+		animation-delay: 2s;
 	}
 	.gridicons-clipboard {
 		top: 240px;
 		left: calc(50% + 290px);
 		height: 50px;
-		animation-delay: random(10) + s;
+		animation-delay: 6s;
 	}
 	.gridicons-cloud-upload {
 		top: 180px;
 		left: calc(50% - 280px);
 		height: 40px;
 		width: 40px;
-		animation-delay: random(10) + s;
+		animation-delay: 5s;
 	}
 	.gridicons-cog {
 		top: 110px;
 		left: calc(50% + 160px);
 		height: 40px;
 		width: 40px;
-		animation-delay: random(10) + s;
+		animation-delay: 1s;
 	}
 	.gridicons-customize {
 		top: 240px;
 		height: 40px;
 		width: 40px;
 		left: calc(50% - 400px);
-		animation-delay: random(10) + s;
+		animation-delay: 1s;
 	}
 	.gridicons-help {
 		top: 460px;
 		left: calc(50% + 160px );
 		height: 90px;
 		width: 90px;
-		animation-delay: random(10) + s;
+		animation-delay: 1s;
 	}
 	.gridicons-link {
 		top: 60px;
@@ -225,33 +225,33 @@
 		height: 50px;
 		width: 50px;
 		transform: rotate(-45deg);
-		animation-delay: random(10) + s;
+		animation-delay: 5s;
 	}
 	.gridicons-lock {
 		top: 60px;
 		left: calc(50% - 400px);
 		height: 50px;
 		width: 50px;
-		animation-delay: random(10) + s;
+		animation-delay: 6s;
 	}
 	.gridicons-pages {
 		top: 70px;
 		left: calc(50% + 70px);
 		height: 50px;
 		width: 50px;
-		animation-delay: random(10) + s;
+		animation-delay: 8s;
 	}
 	.gridicons-share {
 		top: 280px;
 		left: calc(50% + 360px);
-		animation-delay: random(10) + s;
+		animation-delay: 2s;
 	}
 	.gridicons-stats {
 		top: 470px;
 		left: calc(50% - 270px);
 		height: 80px;
 		width: 80px;
-		animation-delay: random(10) + s;
+		animation-delay: 9s;
 	}
 }
 
@@ -354,7 +354,7 @@
 }
 .signup-pricessing__title-subdomain {
 	text-transform: uppercase;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 0.7em;
 	margin: 3px;
 	text-align: left;
@@ -365,7 +365,7 @@
 }
 .signup-pricessing__address-bar {
 	display: flex;
-	background: darken( $gray, 10% );
+	background: $gray-darken-10;
 	border-radius: 8px;
 	flex-direction: row;
 	padding: 10px;
@@ -393,7 +393,7 @@
 .signup-pricessing__address-field.is-placeholder:after {
 	content: 'placeholder.wordpress.com';
 	color: transparent;
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-lighten-30;
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 .signup-pricessing__bubble {
@@ -433,7 +433,7 @@
 .signup-pricessing__nudge-message {
 	width: 400px;
 	max-width: 96%;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	margin: 1.5em auto;
 	box-sizing: border-box;
 }

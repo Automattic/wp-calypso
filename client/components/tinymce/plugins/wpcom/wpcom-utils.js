@@ -1,8 +1,8 @@
 /**
  * Removes empty spaces from empty paragraphs
  * This logic is borrowed from core's TinyMCE Plugin
- * 
- * 
+ *
+ *
  *
  * @format
  * @see https:

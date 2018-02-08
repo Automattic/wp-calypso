@@ -10,6 +10,7 @@ import { last } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import { ROUTE_SET } from 'state/action-types';
 
 /**
  * Returns a log of actions from certain types that have previously been
@@ -24,6 +25,18 @@ import createSelector from 'lib/create-selector';
  */
 export function getActionLog( state ) {
 	return state.ui.actionLog;
+}
+
+/**
+ * Returns a log of ROUTE_SET actions that have previously been
+ * dispatched for the current user.
+ *
+ * @param  {Object}   state      Global state tree
+ * @return {Array}               Array of Redux actions of with a type of
+ *                               ROUTE_SET, each with timestamp
+ */
+export function getRouteHistory( state ) {
+	return getActionLog( state ).filter( action => action.type === ROUTE_SET );
 }
 
 /**

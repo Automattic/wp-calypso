@@ -117,8 +117,8 @@ class ImportingPane extends React.PureComponent {
 
 	getHeadingText = () => {
 		return translate(
-			'Importing takes 15 minutes or a while longer if your site has a lot of media. ' +
-				"You can safely navigate away from this page if you need to: we'll send you a notification when it's done."
+			'Importing may take a while if your site has a lot of media, but ' +
+				"you can safely navigate away from this page if you need to: we'll send you a notification when it's done."
 		);
 	};
 

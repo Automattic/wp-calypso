@@ -20,13 +20,11 @@ describe( 'safeImageUrl()', () => {
 		} );
 
 		test( 'should make a non-whitelisted protocol safe', () => {
-			[
-				'javascript:alert("foo")',
-				'data:application/json;base64,',
-				'about:config',
-			].forEach( url => {
-				expect( safeImageUrl( url ) ).to.match( /^https:\/\/i[0-2]\.wp.com\// );
-			} );
+			[ 'javascript:alert("foo")', 'data:application/json;base64,', 'about:config' ].forEach(
+				url => {
+					expect( safeImageUrl( url ) ).to.match( /^https:\/\/i[0-2]\.wp.com\// );
+				}
+			);
 		} );
 
 		test( 'should make a non-wpcom http url safe', () => {

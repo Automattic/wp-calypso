@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import page from 'page';
 import { capitalize, includes, some } from 'lodash';
@@ -11,7 +9,7 @@ import { capitalize, includes, some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import route from 'lib/route';
+import { getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import PlanSetup from './jetpack-plugins-setup';
@@ -51,7 +49,7 @@ function renderSinglePlugin( context, siteUrl ) {
 	if ( lastPluginsListVisited ) {
 		prevPath = lastPluginsListVisited;
 	} else if ( context.prevPath ) {
-		prevPath = route.sectionify( context.prevPath );
+		prevPath = sectionify( context.prevPath );
 	}
 
 	// Render single plugin component
@@ -165,7 +163,7 @@ function renderProvisionPlugins( context ) {
 const controller = {
 	plugins( context, next ) {
 		const { pluginFilter: filter = 'all' } = context.params;
-		const basePath = route.sectionify( context.path ).replace( '/' + filter, '' );
+		const basePath = sectionify( context.path ).replace( '/' + filter, '' );
 
 		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );
@@ -174,7 +172,7 @@ const controller = {
 	},
 
 	plugin( context, next ) {
-		const siteUrl = route.getSiteFragment( context.path );
+		const siteUrl = getSiteFragment( context.path );
 
 		notices.clearNotices( 'notices' );
 		renderSinglePlugin( context, siteUrl );
@@ -185,7 +183,7 @@ const controller = {
 	// If the "plugin" part of the route is actually a site,
 	// render the plugin browser for that site. Otherwise render plugin.
 	browsePluginsOrPlugin( context, next ) {
-		const siteUrl = route.getSiteFragment( context.path );
+		const siteUrl = getSiteFragment( context.path );
 		const { plugin } = context.params;
 
 		if (

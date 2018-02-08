@@ -18,6 +18,7 @@ import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import CommentList from './comment-list';
+import CommentTree from './comment-tree';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { canCurrentUser } from 'state/selectors';
 import { preventWidows } from 'lib/formatting';
@@ -25,6 +26,8 @@ import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { updatePlugin } from 'state/plugins/installed/actions';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import { infoNotice } from 'state/notices/actions';
+import { isEnabled } from 'config';
+import { NEWEST_FIRST } from './constants';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
@@ -43,6 +46,12 @@ export class CommentsManagement extends Component {
 		status: 'all',
 	};
 
+	state = {
+		order: NEWEST_FIRST,
+	};
+
+	setOrder = order => () => this.setState( { order } );
+
 	updateJetpackHandler = () => {
 		const { siteId, translate, jetpackPlugin } = this.props;
 
@@ -53,15 +62,18 @@ export class CommentsManagement extends Component {
 	render() {
 		const {
 			changePage,
-			showJetpackUpdateScreen,
 			page,
 			postId,
+			showCommentList,
+			showCommentTree,
+			showJetpackUpdateScreen,
 			showPermissionError,
 			siteId,
 			siteFragment,
 			status,
 			translate,
 		} = this.props;
+		const { order } = this.state;
 
 		return (
 			<Main className="comments" wideLayout>
@@ -92,37 +104,61 @@ export class CommentsManagement extends Component {
 							illustration="/calypso/images/illustrations/illustration-500.svg"
 						/>
 					) }
-				{ ! showJetpackUpdateScreen &&
-					! showPermissionError && (
-						<CommentList
-							changePage={ changePage }
-							order={ 'desc' }
-							page={ page }
-							postId={ postId }
-							siteId={ siteId }
-							siteFragment={ siteFragment }
-							status={ status }
-						/>
-					) }
+				{ showCommentList && (
+					<CommentList
+						changePage={ changePage }
+						order={ order }
+						page={ page }
+						postId={ postId }
+						setOrder={ this.setOrder }
+						siteId={ siteId }
+						siteFragment={ siteFragment }
+						status={ status }
+					/>
+				) }
+				{ showCommentTree && (
+					<CommentTree
+						changePage={ changePage }
+						order={ order }
+						page={ page }
+						postId={ postId }
+						setOrder={ this.setOrder }
+						siteId={ siteId }
+						siteFragment={ siteFragment }
+						status={ status }
+					/>
+				) }
 			</Main>
 		);
 	}
 }
 
-const mapStateToProps = ( state, { siteFragment } ) => {
+const mapStateToProps = ( state, { postId, siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isPostView = !! postId;
 	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
-	const showJetpackUpdateScreen = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.5' );
+	const showPermissionError = false === canModerateComments;
+	const showJetpackUpdateScreen = isJetpack && ! isJetpackMinimumVersion( state, siteId, '5.6' );
 
 	const sitePlugins = getPlugins( state, [ siteId ] );
 	const jetpackPlugin = find( sitePlugins, { slug: 'jetpack' } );
 
+	const showCommentTree =
+		! showJetpackUpdateScreen &&
+		! showPermissionError &&
+		isPostView &&
+		isEnabled( 'comments/management/threaded-view' );
+
+	const showCommentList = ! showCommentTree && ! showJetpackUpdateScreen && ! showPermissionError;
+
 	return {
 		siteId,
 		jetpackPlugin,
+		showCommentList,
+		showCommentTree,
 		showJetpackUpdateScreen,
-		showPermissionError: canModerateComments === false,
+		showPermissionError,
 	};
 };
 

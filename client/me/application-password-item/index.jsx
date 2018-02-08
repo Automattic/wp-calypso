@@ -49,7 +49,7 @@ class ApplicationPasswordsItem extends React.Component {
 					<h2 className="application-password-item__name">{ password.name }</h2>
 					<p className="application-password-item__generated">
 						{ this.props.translate( 'Generated on %s', {
-							args: this.props.moment( password.generated ).format( 'MMM DD, YYYY @ h:mm a' ),
+							args: this.props.moment( password.generated ).format( 'lll' ),
 						} ) }
 					</p>
 				</div>

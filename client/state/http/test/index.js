@@ -107,9 +107,15 @@ describe( '#httpHandler', () => {
 	} );
 
 	test( 'should set appropriate query string', () => {
-		const queryParams = [ [ 'statement', 'hello world' ], [ 'regex', '/.$/' ] ];
+		const queryParams = [
+			[ 'statement', 'hello world' ],
+			[ 'regex', '/.$/' ],
+			[ 'spaced key', 'spaced value' ],
+			[ 'plus+', 'plus+' ],
+		];
 
-		const queryString = 'statement=hello%20world&regex=%2F.%24%2F';
+		const queryString =
+			'statement=hello%20world&regex=%2F.%24%2F&spaced%20key=spaced%20value&plus%2B=plus%2B';
 
 		superagentMock.setResponse( true, {} );
 

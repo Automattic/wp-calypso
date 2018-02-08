@@ -93,6 +93,7 @@ class Wizard extends Component {
 				{ React.cloneElement( component, {
 					getBackUrl: this.getBackUrl,
 					getForwardUrl: this.getForwardUrl,
+					steps,
 					...omit( otherProps, [ 'basePath', 'baseSuffix' ] ),
 				} ) }
 

@@ -1,7 +1,7 @@
 /**
  * Tells whether the Directly RTM widget is ready to be used
- * 
- * 
+ *
+ *
  *
  * @format
  * @see lib/directly for more about Directly

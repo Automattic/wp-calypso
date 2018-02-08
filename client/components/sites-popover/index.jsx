@@ -16,9 +16,7 @@ import Popover from 'components/popover';
 import { hasTouch } from 'lib/touch-detect';
 import SiteSelector from 'components/site-selector';
 
-export default class extends React.Component {
-	static displayName = 'SitesPopover';
-
+class SitesPopover extends React.Component {
 	static propTypes = {
 		showDelay: PropTypes.number,
 		context: PropTypes.object,
@@ -39,31 +37,11 @@ export default class extends React.Component {
 		className: '',
 	};
 
-	state = {
-		popoverVisible: false,
-	};
-
-	componentDidMount() {
-		this.updatePopoverVisibilityState();
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.visible !== prevProps.visible ) {
-			this.updatePopoverVisibilityState();
-		}
-	}
-
-	updatePopoverVisibilityState = () => {
-		this.setState( {
-			popoverVisible: this.props.visible,
-		} );
-	};
-
-	renderHeader = () => {
+	renderHeader() {
 		return <div className="sites-popover__header">{ this.props.header }</div>;
-	};
+	}
 
-	renderSiteSelector = () => {
+	renderSiteSelector() {
 		return (
 			<SiteSelector
 				siteBasePath="/post"
@@ -75,10 +53,10 @@ export default class extends React.Component {
 				onClose={ this.props.onClose }
 			/>
 		);
-	};
+	}
 
 	render() {
-		let classes = classnames(
+		const classes = classnames(
 			this.props.className,
 			'popover sites-popover',
 			this.props.header && 'has-header'
@@ -100,3 +78,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default SitesPopover;

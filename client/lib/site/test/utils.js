@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * External dependencies
  */
@@ -8,26 +7,26 @@ import chai from 'chai';
 /**
  * Internal dependencies
  */
-import SiteUtils from 'lib/site/utils';
+import { canUpdateFiles, isMainNetworkSite } from 'lib/site/utils';
 
 const assert = chai.assert;
 
 describe( 'Site Utils', () => {
 	describe( 'canUpdateFiles', () => {
 		test( 'Should have a method canUpdateFiles.', () => {
-			assert.isFunction( SiteUtils.canUpdateFiles );
+			assert.isFunction( canUpdateFiles );
 		} );
 
 		test( 'Should return false when no site object is passed in.', () => {
-			assert.isFalse( SiteUtils.canUpdateFiles() );
+			assert.isFalse( canUpdateFiles() );
 		} );
 
 		test( 'Should return false when passed an empty object.', () => {
-			assert.isFalse( SiteUtils.canUpdateFiles( {} ) );
+			assert.isFalse( canUpdateFiles( {} ) );
 		} );
 
 		test( 'Should return false when passed an object without options.', () => {
-			assert.isFalse( SiteUtils.canUpdateFiles( { hello: 'not important' } ) );
+			assert.isFalse( canUpdateFiles( { hello: 'not important' } ) );
 		} );
 
 		test( 'Should return false when passed an site object that has something value in the file_mod_option.', () => {
@@ -40,7 +39,7 @@ describe( 'Site Utils', () => {
 					file_mod_disabled: [ 'something else' ],
 				},
 			};
-			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
+			assert.isFalse( canUpdateFiles( site ) );
 		} );
 
 		test( 'Should return false when passed a multi site when unmapped_url and main_network_site are not equal.', () => {
@@ -54,7 +53,7 @@ describe( 'Site Utils', () => {
 					file_mod_disabled: false,
 				},
 			};
-			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
+			assert.isFalse( canUpdateFiles( site ) );
 		} );
 
 		test( 'Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', () => {
@@ -68,7 +67,7 @@ describe( 'Site Utils', () => {
 					file_mod_disabled: false,
 				},
 			};
-			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
+			assert.isTrue( canUpdateFiles( site ) );
 		} );
 
 		test( 'Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.', () => {
@@ -82,7 +81,7 @@ describe( 'Site Utils', () => {
 					file_mod_disabled: false,
 				},
 			};
-			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
+			assert.isTrue( canUpdateFiles( site ) );
 		} );
 
 		test( 'Should return false when passed a site  that has compares ftp to http protocolls for unmapped_url and main_network_site.', () => {
@@ -96,7 +95,7 @@ describe( 'Site Utils', () => {
 					file_mod_disabled: false,
 				},
 			};
-			assert.isFalse( SiteUtils.canUpdateFiles( site ) );
+			assert.isFalse( canUpdateFiles( site ) );
 		} );
 
 		test( 'Should return true when passed a site that has all the right settings permissions to be able to update files.', () => {
@@ -110,25 +109,25 @@ describe( 'Site Utils', () => {
 					file_mod_disabled: false,
 				},
 			};
-			assert.isTrue( SiteUtils.canUpdateFiles( site ) );
+			assert.isTrue( canUpdateFiles( site ) );
 		} );
 	} );
 
 	describe( 'isMainNetworkSite', () => {
 		test( 'Should have a method isMainNetworkSite.', () => {
-			assert.isFunction( SiteUtils.isMainNetworkSite );
+			assert.isFunction( isMainNetworkSite );
 		} );
 
 		test( 'Should return false when no site object is passed in.', () => {
-			assert.isFalse( SiteUtils.isMainNetworkSite() );
+			assert.isFalse( isMainNetworkSite() );
 		} );
 
 		test( 'Should return false when passed an empty object.', () => {
-			assert.isFalse( SiteUtils.isMainNetworkSite( {} ) );
+			assert.isFalse( isMainNetworkSite( {} ) );
 		} );
 
 		test( 'Should return false when passed an object without options.', () => {
-			assert.isFalse( SiteUtils.isMainNetworkSite( { hello: 'not important' } ) );
+			assert.isFalse( isMainNetworkSite( { hello: 'not important' } ) );
 		} );
 
 		test( 'Should return false when passed a multi site when unmapped_url and main_network_site are not equal.', () => {
@@ -139,7 +138,7 @@ describe( 'Site Utils', () => {
 					main_network_site: 'someurl-different',
 				},
 			};
-			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
+			assert.isFalse( isMainNetworkSite( site ) );
 		} );
 
 		test( 'Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.', () => {
@@ -150,7 +149,7 @@ describe( 'Site Utils', () => {
 					main_network_site: 'someurl-different',
 				},
 			};
-			assert.isTrue( SiteUtils.isMainNetworkSite( site ) );
+			assert.isTrue( isMainNetworkSite( site ) );
 		} );
 
 		test( 'Should return false when passed a site that a part of a multi network.', () => {
@@ -159,7 +158,7 @@ describe( 'Site Utils', () => {
 					is_multi_network: true,
 				},
 			};
-			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
+			assert.isFalse( isMainNetworkSite( site ) );
 		} );
 
 		test( 'Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.', () => {
@@ -170,7 +169,7 @@ describe( 'Site Utils', () => {
 					main_network_site: 'https://someurl',
 				},
 			};
-			assert.isTrue( SiteUtils.isMainNetworkSite( site ) );
+			assert.isTrue( isMainNetworkSite( site ) );
 		} );
 
 		test( 'Should return false when passed a site that has compares ftp to http protocolls for unmapped_url and main_network_site.', () => {
@@ -181,7 +180,7 @@ describe( 'Site Utils', () => {
 					main_network_site: 'ftp://someurl',
 				},
 			};
-			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
+			assert.isFalse( isMainNetworkSite( site ) );
 		} );
 
 		test( 'Does not explode when unmapped_url is not defined', () => {
@@ -189,7 +188,7 @@ describe( 'Site Utils', () => {
 				is_multisite: true,
 				options: {},
 			};
-			assert.isFalse( SiteUtils.isMainNetworkSite( site ) );
+			assert.isFalse( isMainNetworkSite( site ) );
 		} );
 	} );
 } );

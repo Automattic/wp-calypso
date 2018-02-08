@@ -15,4 +15,5 @@ export const getMinimumComment = comment => ( {
 	isLiked: get( comment, 'i_like' ),
 	postId: get( comment, 'post.ID' ),
 	status: get( comment, 'status' ),
+	can_moderate: get( comment, 'can_moderate' ),
 } );

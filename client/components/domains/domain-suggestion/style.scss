@@ -69,7 +69,7 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		color: transparent;
 		min-height: 44px;
 	}
@@ -112,7 +112,7 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		border: none;
 		border-radius: 0;
 		color: transparent;
@@ -129,6 +129,6 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 	}
 }

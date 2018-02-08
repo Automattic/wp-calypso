@@ -29,9 +29,23 @@ export default function wpcomSupport( wpcom ) {
 		} );
 	};
 
+	/**
+	 * Add the supportUser and supportToken to the query.
+	 * @param {Object}  params The original request params object
+	 * @return {Object}        The new query object with support data injected
+	 */
+	const addSupportParams = function( params ) {
+		return {
+			...params,
+			support_user: supportUser,
+			_support_token: supportToken,
+		};
+	};
+
 	const request = wpcom.request.bind( wpcom );
 
 	return Object.assign( wpcom, {
+		addSupportParams,
 		fetchSupportUserToken: function( username, password ) {
 			return wpcom.req.post(
 				{

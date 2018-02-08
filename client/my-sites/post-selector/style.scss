@@ -1,7 +1,7 @@
 .post-selector {
 	position: relative;
 	background-color: $white;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 
 	&.is-compact {
 		background-color: transparent;
@@ -96,7 +96,7 @@ input[type=checkbox].post-selector__input {
 
 	.post-selector__list-item.is-placeholder & {
 		color: transparent;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

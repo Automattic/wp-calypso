@@ -7,18 +7,19 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card/compact';
+import Card from 'components/card';
 import Header from './card/header';
 import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { transferStatus } from 'lib/domains/constants';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED } from 'lib/url/support';
 import { restartInboundTransfer } from 'lib/domains';
 import { fetchDomains } from 'lib/upgrades/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
@@ -28,27 +29,29 @@ import { cancelPurchase as cancelPurchaseLink } from 'me/purchases/paths';
 import { Notice } from 'components/notice';
 import { get } from 'lodash';
 import InboundTransferEmailVerificationCard from 'my-sites/domains/domain-management/components/inbound-transfer-verification';
+import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 
 class Transfer extends React.PureComponent {
 	state = {
-		isRestartingTransfer: false,
+		isSubmitting: false,
 	};
 
 	render() {
 		const { domain, selectedSite, translate } = this.props;
+		const { isSubmitting } = this.state;
 		let content = this.getDomainDetailsCard();
 
 		if ( domain.transferStatus === transferStatus.CANCELLED ) {
 			content = this.getCancelledContent();
 		}
 
-		let noCancelNotice;
+		let transferNotice;
 		let cancelNavItem;
 		if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
-			noCancelNotice = (
+			transferNotice = (
 				<Notice status={ 'is-info' } showDismiss={ false }>
 					{ translate(
-						'This transfer has been started is waiting authorization from your current provider. ' +
+						'This transfer has been started and is waiting for authorization from your current provider. ' +
 							'If you need to cancel the transfer, please contact them for assistance.'
 					) }
 				</Notice>
@@ -63,10 +66,45 @@ class Transfer extends React.PureComponent {
 			);
 		}
 
+		if ( domain.transferStatus === transferStatus.PENDING_START ) {
+			transferNotice = (
+				<Card compact={ false } highlight={ 'warning' }>
+					<div>
+						<h2 className="edit__transfer-text-fail">
+							{ translate( 'Important: Start Your Domain Transfer' ) }
+						</h2>
+						<p>
+							{ translate(
+								'We need you to complete a few steps to initiate and authorize the transfer of ' +
+									'{{strong}}%(domain)s{{/strong}} from your current domain provider to WordPress.com. Your domain ' +
+									'will stay at your current provider until the transfer is started.',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { domain: domain.name },
+								}
+							) }
+						</p>
+					</div>
+					<div>
+						<Button
+							className="edit__transfer-button-fail"
+							onClick={ this.startTransfer }
+							busy={ isSubmitting }
+							disabled={ isSubmitting }
+						>
+							{ isSubmitting ? translate( 'Starting Transfer…' ) : translate( 'Start Transfer' ) }
+						</Button>
+					</div>
+				</Card>
+			);
+		}
+
 		return (
 			<div className="edit__domain-details-card">
 				{ this.renderInboundTransferEmailNotice() }
-				{ noCancelNotice }
+				{ transferNotice }
 				<Header domain={ domain } />
 				{ content }
 				{ cancelNavItem }
@@ -94,9 +132,14 @@ class Transfer extends React.PureComponent {
 		this.props.paymentSettingsClick( this.props.domain );
 	};
 
+	startTransfer = () => {
+		const { domain, selectedSite } = this.props;
+		page( domainManagementTransferInPrecheck( selectedSite.slug, domain.name ) );
+	};
+
 	restartTransfer = () => {
 		const { domain, selectedSite, translate } = this.props;
-		this.toggleRestartState();
+		this.toggleSubmittingState();
 
 		restartInboundTransfer( selectedSite.ID, domain.name, ( error, result ) => {
 			if ( result ) {
@@ -111,18 +154,18 @@ class Transfer extends React.PureComponent {
 						duration: 5000,
 					}
 				);
-				this.toggleRestartState();
+				this.toggleSubmittingState();
 			}
 		} );
 	};
 
-	toggleRestartState() {
-		this.setState( { isRestartingTransfer: ! this.state.isRestartingTransfer } );
+	toggleSubmittingState() {
+		this.setState( { isSubmitting: ! this.state.isSubmitting } );
 	}
 
 	getCancelledContent() {
 		const { domain, translate } = this.props;
-		const { isRestartingTransfer } = this.state;
+		const { isSubmitting } = this.state;
 
 		return (
 			<Card>
@@ -139,7 +182,7 @@ class Transfer extends React.PureComponent {
 									strong: <strong />,
 									a: (
 										<a
-											href={ support.INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED }
+											href={ INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED }
 											rel="noopener noreferrer"
 											target="_blank"
 										/>
@@ -154,16 +197,16 @@ class Transfer extends React.PureComponent {
 					<Button
 						className="edit__transfer-button-fail"
 						onClick={ this.restartTransfer }
-						busy={ isRestartingTransfer }
-						disabled={ isRestartingTransfer }
+						busy={ isSubmitting }
+						disabled={ isSubmitting }
 					>
-						{ isRestartingTransfer
+						{ isSubmitting
 							? translate( 'Restarting Transfer…' )
 							: translate( 'Start Transfer Again' ) }
 					</Button>
 					<Button
 						className="edit__transfer-button-fail edit__transfer-button-fail-margin"
-						href={ support.CALYPSO_CONTACT }
+						href={ CALYPSO_CONTACT }
 					>
 						{ this.props.translate( 'Contact Support' ) }
 					</Button>

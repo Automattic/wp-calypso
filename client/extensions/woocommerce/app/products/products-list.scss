@@ -45,6 +45,10 @@
 	.is-requesting td div {
 		@include placeholder();
 		background: transparent;
+		
+		.image-thumb::after {
+			display: none;
+		}
 	}
 
 	.products__list-product .table-item__cell-title {
@@ -52,26 +56,8 @@
 		align-items: center;
 	}
 
-	.products__list-image {
-		height: 40px;
-		width: 40px;
-		overflow: hidden;
-		position: relative;
+	.products__list-product .image-thumb {
 		margin-right: 16px;
-
-		&.is-thumb-placeholder {
-			background: $gray-light;
-		}
-
-		img {
-			position: absolute;
-			left: 50%;
-			top: 50%;
-			height: 100%;
-			width: auto;
-			-webkit-transform: translate( -50%, -50% );
-			transform: translate( -50%, -50% );
-		}
 	}
 
 	.is-header th {

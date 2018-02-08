@@ -18,7 +18,7 @@ import { v4 as uuid } from 'uuid';
  * Internal dependencies
  */
 import actions from 'lib/posts/actions';
-import route from 'lib/route';
+import { addSiteFragment } from 'lib/route';
 import PostEditStore from 'lib/posts/post-edit-store';
 import EditorActionBar from 'post-editor/editor-action-bar';
 import FeaturedImage from 'post-editor/editor-featured-image';
@@ -30,7 +30,7 @@ import SegmentedControlItem from 'components/segmented-control/item';
 import InvalidURLDialog from 'post-editor/invalid-url-dialog';
 import RestorePostDialog from 'post-editor/restore-post-dialog';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import utils from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 import EditorPreview from './editor-preview';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import analytics from 'lib/analytics';
@@ -661,7 +661,7 @@ export const PostEditor = createReactClass( {
 		}
 
 		if ( site ) {
-			path = route.addSiteFragment( path, site.slug );
+			path = addSiteFragment( path, site.slug );
 		}
 
 		return path;

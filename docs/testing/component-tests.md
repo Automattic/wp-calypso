@@ -139,3 +139,25 @@ assert( this.themesList.props.children.length === this.props.themes.length, 'chi
 ```
 
 So here we avoid having to actually draw the `Theme` components when testing `ThemesList`.
+
+## Troubleshooting
+
+* Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not its children. The best practice is to test the raw component directly, with external dependencies mocked, so that the results aren't influenced by anything outside the component being tested:
+
+	```js
+	// Bad
+	export default localize( class SomeComponent extends React.Component {
+		// ...
+	} );
+	```
+
+	```js
+	// Good
+	export class SomeComponent extends React.Component {
+		// ...
+	}
+
+	export default localize( SomeComponent );
+	```
+
+	See [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examples of using ES6 classes.

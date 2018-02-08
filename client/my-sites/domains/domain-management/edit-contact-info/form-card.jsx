@@ -25,11 +25,11 @@ import ValidationErrorList from 'notices/validation-error-list';
 import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
 import notices from 'notices';
-import paths from 'my-sites/domains/paths';
-import upgradesActions from 'lib/upgrades/actions';
+import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
+import { updateWhois } from 'lib/upgrades/actions';
 import wp from 'lib/wp';
 import { successNotice } from 'state/notices/actions';
-import support from 'lib/url/support';
+import { UPDATE_CONTACT_INFORMATION } from 'lib/url/support';
 import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import Dialog from 'components/dialog';
@@ -196,7 +196,7 @@ class EditContactInfoFormCard extends React.Component {
 							components: {
 								link: (
 									<a
-										href={ support.UPDATE_CONTACT_INFORMATION }
+										href={ UPDATE_CONTACT_INFORMATION }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -476,7 +476,7 @@ class EditContactInfoFormCard extends React.Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			paths.domainManagementContactsPrivacy(
+			domainManagementContactsPrivacy(
 				this.props.selectedSite.slug,
 				this.props.selectedDomain.name
 			)
@@ -500,7 +500,7 @@ class EditContactInfoFormCard extends React.Component {
 				this.setState( { formSubmitting: false } );
 				return;
 			}
-			upgradesActions.updateWhois(
+			updateWhois(
 				this.props.selectedDomain.name,
 				formState.getAllFieldValues( this.state.form ),
 				this.state.transferLock,

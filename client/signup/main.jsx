@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import url from 'url';
 import debugModule from 'debug';
@@ -26,6 +24,7 @@ import {
 } from 'lodash';
 import { connect } from 'react-redux';
 import { setSurvey } from 'state/signup/steps/survey/actions';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -44,7 +43,7 @@ import WpcomLoginForm from './wpcom-login-form';
 import userModule from 'lib/user';
 import analytics from 'lib/analytics';
 import SignupProcessingScreen from 'signup/processing-screen';
-import utils from './utils';
+import { getDestination, canResumeFlow, getStepUrl } from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
@@ -161,7 +160,7 @@ class Signup extends React.Component {
 				const timeSinceLoading = this.state.loadingScreenStartTime
 					? Date.now() - this.state.loadingScreenStartTime
 					: undefined;
-				const filteredDestination = utils.getDestination(
+				const filteredDestination = getDestination(
 					destination,
 					dependencies,
 					this.props.flowName
@@ -179,7 +178,7 @@ class Signup extends React.Component {
 
 		this.loadProgressFromStore();
 
-		if ( utils.canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
+		if ( canResumeFlow( this.props.flowName, SignupProgressStore.get() ) ) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
@@ -188,7 +187,7 @@ class Signup extends React.Component {
 			// no progress was resumed and we're on a non-zero step
 			// redirect to the beginning of the flow
 			return page.redirect(
-				utils.getStepUrl(
+				getStepUrl(
 					this.props.flowName,
 					flows.getFlow( this.props.flowName ).steps[ 0 ],
 					this.props.locale
@@ -202,9 +201,6 @@ class Signup extends React.Component {
 	}
 
 	componentWillReceiveProps( { signupDependencies, stepName, flowName } ) {
-		const urlPath = location.href;
-		const query = url.parse( urlPath, true ).query;
-
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName );
 		}
@@ -213,7 +209,7 @@ class Signup extends React.Component {
 			this.setState( { resumingStep: undefined } );
 		}
 
-		if ( query.plans ) {
+		if ( cookie.parse( document.cookie )[ 'wp-affiliate-tracker' ] ) {
 			this.setState( { plans: true } );
 		}
 
@@ -351,12 +347,7 @@ class Signup extends React.Component {
 		this.setState( { firstUnsubmittedStep } );
 
 		return page.redirect(
-			utils.getStepUrl(
-				this.props.flowName,
-				firstUnsubmittedStep,
-				stepSectionName,
-				this.props.locale
-			)
+			getStepUrl( this.props.flowName, firstUnsubmittedStep, stepSectionName, this.props.locale )
 		);
 	};
 
@@ -384,7 +375,7 @@ class Signup extends React.Component {
 		// redirect the user to the next step
 		scrollPromise.then( () => {
 			if ( ! this.isEveryStepSubmitted() ) {
-				page( utils.getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
+				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
 			} else if ( this.isEveryStepSubmitted() ) {
 				this.goToFirstInvalidStep();
 			}
@@ -417,7 +408,7 @@ class Signup extends React.Component {
 				return;
 			}
 
-			page( utils.getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
+			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	};
 
@@ -482,6 +473,7 @@ class Signup extends React.Component {
 						user={ this.state.user }
 						loginHandler={ this.state.loginHandler }
 						signupDependencies={ this.props.signupDependencies }
+						flowName={ this.props.flowName }
 						flowSteps={ flow.steps }
 					/>
 				) : (

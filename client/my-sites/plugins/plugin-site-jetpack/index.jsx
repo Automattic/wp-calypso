@@ -155,11 +155,7 @@ class PluginSiteJetpack extends React.Component {
 			return null;
 		}
 
-		if (
-			! ( typeof this.props.site.canManage === 'function'
-				? this.props.site.canManage()
-				: this.props.site.canManage )
-		) {
+		if ( ! this.props.site.canManage ) {
 			return this.renderManageWarning();
 		}
 

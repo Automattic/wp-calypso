@@ -21,10 +21,10 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	cardProcessorSupportsUpdates,
 	isPaidWithPayPalDirect,
 	isRenewing,
 	isSubscription,
-	hasPaymentMethod,
 	paymentLogoType,
 } from 'lib/purchases';
 import { isMonthly } from 'lib/plans/constants';
@@ -33,9 +33,9 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { isRequestingSites } from 'state/sites/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
-import paths from '../paths';
+import { managePurchase } from '../paths';
 import PaymentLogo from 'components/payment-logo';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 import UserItem from 'components/user';
 import {
 	canEditPaymentDetails,
@@ -151,7 +151,7 @@ class PurchaseMeta extends Component {
 		const { translate, moment } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = paths.managePurchase(
+			const attachedPlanUrl = managePurchase(
 				this.props.selectedSite.slug,
 				purchase.attachedToPurchaseId
 			);
@@ -188,7 +188,7 @@ class PurchaseMeta extends Component {
 			return <span className="manage-purchase__detail">{ translate( 'Included with plan' ) }</span>;
 		}
 
-		if ( hasPaymentMethod( purchase ) ) {
+		if ( typeof purchase.payment.type !== 'undefined' ) {
 			let paymentInfo = null;
 
 			if ( isPaidWithCreditCard( purchase ) ) {
@@ -230,6 +230,7 @@ class PurchaseMeta extends Component {
 		if (
 			! canEditPaymentDetails( purchase ) ||
 			! isPaidWithCreditCard( purchase ) ||
+			! cardProcessorSupportsUpdates( purchase ) ||
 			! getSelectedSite( this.props )
 		) {
 			return <li>{ paymentDetails }</li>;
@@ -264,7 +265,7 @@ class PurchaseMeta extends Component {
 							siteSlug: this.props.selectedPurchase.domain,
 						},
 						components: {
-							contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 						},
 					}
 				) }

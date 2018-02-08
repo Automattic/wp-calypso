@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { find, findIndex, get, noop } from 'lodash';
+import { every, find, findIndex, get, isNaN, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,7 +21,6 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import {
 	getOrderDiscountTax,
 	getOrderFeeTax,
-	getOrderLineItemTax,
 	getOrderShippingTax,
 	getOrderTotalTax,
 } from 'woocommerce/lib/order-values';
@@ -32,6 +31,7 @@ import {
 	getOrderTotal,
 } from 'woocommerce/lib/order-values/totals';
 import OrderAddItems from './add-items';
+import OrderLineItem from './line-item';
 import OrderTotalRow from './row-total';
 import ScreenReaderText from 'components/screen-reader-text';
 import Table from 'woocommerce/components/table';
@@ -114,7 +114,7 @@ class OrderDetailsTable extends Component {
 		// A zero quantity does strange things with the price, so we'll force 1
 		const quantity = Math.abs( event.target.value ) || 1;
 		const subtotal = getOrderItemCost( order, id ) * quantity;
-		const total = subtotal;
+		const total = parseFloat( item.price ) * quantity;
 		const newItem = { ...item, quantity, subtotal, total };
 		this.props.onChange( { line_items: { [ index ]: newItem } } );
 	};
@@ -147,16 +147,25 @@ class OrderDetailsTable extends Component {
 	};
 
 	renderQuantity = item => {
-		const { isEditing } = this.props;
+		const { isEditing, translate } = this.props;
+		const inputId = `quantity-${ item.id }`;
 		if ( isEditing ) {
 			return (
-				<FormTextInput
-					type="number"
-					min={ 1 }
-					name={ `quantity-${ item.id }` }
-					onChange={ this.onChange }
-					value={ item.quantity }
-				/>
+				<Fragment>
+					<ScreenReaderText>
+						<label htmlFor={ inputId }>
+							{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
+						</label>
+					</ScreenReaderText>
+					<FormTextInput
+						type="number"
+						id={ inputId }
+						min={ 1 }
+						name={ `quantity-${ item.id }` }
+						onChange={ this.onChange }
+						value={ item.quantity }
+					/>
+				</Fragment>
 			);
 		}
 		return item.quantity;
@@ -198,32 +207,20 @@ class OrderDetailsTable extends Component {
 		);
 	};
 
-	renderOrderItem = ( item, i ) => {
-		const { order } = this.props;
-		const tax = getOrderLineItemTax( order, item.id );
-		if ( item.quantity <= 0 ) {
-			return null;
-		}
+	renderOrderItem = item => {
+		const { isEditing, order, site } = this.props;
+		const deleteButton = this.renderDeleteButton( item, 'line_items' );
 		return (
-			<TableRow key={ item.id } className="order-details__items">
-				<TableItem isRowHeader className="order-details__item-product">
-					{ this.renderName( item ) }
-					<span className="order-details__item-sku">{ item.sku }</span>
-				</TableItem>
-				<TableItem className="order-details__item-cost">
-					{ formatCurrency( item.price, order.currency ) }
-				</TableItem>
-				<TableItem className="order-details__item-quantity">
-					{ this.renderQuantity( item, i ) }
-				</TableItem>
-				<TableItem className="order-details__item-tax">
-					{ formatCurrency( tax, order.currency ) }
-				</TableItem>
-				<TableItem className="order-details__item-total">
-					{ formatCurrency( item.total, order.currency ) }
-				</TableItem>
-				{ this.renderDeleteButton( item, 'line_items' ) }
-			</TableRow>
+			<OrderLineItem
+				key={ item.id }
+				deleteButton={ deleteButton }
+				isEditing={ isEditing }
+				item={ item }
+				order={ order }
+				site={ site }
+			>
+				{ this.renderQuantity( item ) }
+			</OrderLineItem>
 		);
 	};
 
@@ -347,6 +344,7 @@ class OrderDetailsTable extends Component {
 
 		const showTax = this.shouldShowTax();
 		const initialShippingValue = getCurrencyFormatDecimal( order.shipping_total, order.currency );
+		const currentShippingValue = getOrderShippingTotal( order );
 		const refundValue = getOrderRefundTotal( order );
 		const totalTaxValue = getOrderTotalTax( order );
 		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
@@ -364,13 +362,24 @@ class OrderDetailsTable extends Component {
 			'is-editing': isEditing,
 		} );
 
+		const emptyLines = (
+			<TableRow>
+				<TableItem colSpan={ isEditing ? 6 : 5 }>
+					{ translate( 'There are no products on this order.' ) }
+				</TableItem>
+			</TableRow>
+		);
+
+		// There are line_items, and they're not all quantity: 0
+		const hasLineItems = order.line_items.length && ! every( order.line_items, { quantity: 0 } );
+
 		return (
 			<div>
 				<Table className={ tableClasses } header={ this.renderTableHeader() }>
-					{ order.line_items.map( this.renderOrderItem ) }
+					{ hasLineItems ? order.line_items.map( this.renderOrderItem ) : emptyLines }
 					{ order.fee_lines.map( this.renderOrderFee ) }
 				</Table>
-				{ isEditing && <OrderAddItems /> }
+				{ isEditing && <OrderAddItems orderId={ order.id } /> }
 
 				<Table className={ totalsClasses } compact>
 					{ this.renderCoupons() }
@@ -378,7 +387,7 @@ class OrderDetailsTable extends Component {
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
 						initialValue={ initialShippingValue }
-						value={ getOrderShippingTotal( order ) }
+						value={ isNaN( currentShippingValue ) ? '' : currentShippingValue }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }
 						isEditable={ isEditing }

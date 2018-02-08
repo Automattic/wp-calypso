@@ -149,7 +149,7 @@
 		align-content: center;
 		justify-content: center;
 		height: 62px;
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 	}
 }
 
@@ -173,7 +173,7 @@
 	position: absolute;
 		top: 10px;
 		right: 15px;
-	color: lighten( $gray, 30% );
+	color: $gray-lighten-30;
 	cursor: pointer;
 	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 

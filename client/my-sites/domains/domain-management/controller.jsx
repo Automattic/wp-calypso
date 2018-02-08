@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { includes } from 'lodash';
 import page from 'page';
 import React from 'react';
@@ -18,7 +16,20 @@ import DomainManagementData from 'components/data/domain-management';
 import EmailData from 'components/data/domain-management/email';
 import EmailForwardingData from 'components/data/domain-management/email-forwarding';
 import NameserversData from 'components/data/domain-management/nameservers';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementAddGoogleApps,
+	domainManagementContactsPrivacy,
+	domainManagementDns,
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementEmail,
+	domainManagementEmailForwarding,
+	domainManagementList,
+	domainManagementNameServers,
+	domainManagementPrimaryDomain,
+	domainManagementPrivacyProtection,
+	domainManagementRedirectSettings,
+} from 'my-sites/domains/paths';
 import ProductsList from 'lib/products-list';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -31,7 +42,7 @@ const productsList = new ProductsList();
 
 export default {
 	domainManagementList( pageContext, next ) {
-		analytics.pageView.record( paths.domainManagementList( ':site' ), 'Domain Management' );
+		analytics.pageView.record( domainManagementList( ':site' ), 'Domain Management' );
 
 		pageContext.primary = (
 			<DomainManagementData
@@ -45,7 +56,7 @@ export default {
 
 	domainManagementEdit( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementEdit( ':site', ':domain' ),
+			domainManagementEdit( ':site', ':domain' ),
 			'Domain Management › Edit'
 		);
 
@@ -65,7 +76,7 @@ export default {
 
 	domainManagementPrimaryDomain: function( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
+			domainManagementPrimaryDomain( ':site', ':domain' ),
 			'Domain Management › Set Primary Domain'
 		);
 
@@ -77,7 +88,7 @@ export default {
 
 	domainManagementContactsPrivacy( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
+			domainManagementContactsPrivacy( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy'
 		);
 
@@ -93,7 +104,7 @@ export default {
 
 	domainManagementEditContactInfo( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementEditContactInfo( ':site', ':domain' ),
+			domainManagementEditContactInfo( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy › Edit Contact Info'
 		);
 
@@ -109,7 +120,7 @@ export default {
 
 	domainManagementEmail( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementEmail( ':site', pageContext.params.domain ? ':domain' : undefined ),
+			domainManagementEmail( ':site', pageContext.params.domain ? ':domain' : undefined ),
 			'Domain Management › Email'
 		);
 
@@ -126,7 +137,7 @@ export default {
 
 	domainManagementEmailForwarding( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementEmailForwarding( ':site', ':domain' ),
+			domainManagementEmailForwarding( ':site', ':domain' ),
 			'Domain Management › Email › Email Forwarding'
 		);
 
@@ -141,7 +152,7 @@ export default {
 
 	domainManagementDns( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementDns( ':site', ':domain' ),
+			domainManagementDns( ':site', ':domain' ),
 			'Domain Management › Name Servers and DNS › DNS Records'
 		);
 
@@ -155,7 +166,7 @@ export default {
 	},
 	domainManagementNameServers( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementNameServers( ':site', ':domain' ),
+			domainManagementNameServers( ':site', ':domain' ),
 			'Domain Management › Name Servers and DNS'
 		);
 
@@ -170,7 +181,7 @@ export default {
 
 	domainManagementPrivacyProtection( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
+			domainManagementPrivacyProtection( ':site', ':domain' ),
 			'Domain Management › Contacts and Privacy › Privacy Protection'
 		);
 
@@ -186,10 +197,7 @@ export default {
 
 	domainManagementAddGoogleApps( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementAddGoogleApps(
-				':site',
-				pageContext.params.domain ? ':domain' : undefined
-			),
+			domainManagementAddGoogleApps( ':site', pageContext.params.domain ? ':domain' : undefined ),
 			'Domain Management › Add Google Apps'
 		);
 
@@ -206,7 +214,7 @@ export default {
 
 	domainManagementRedirectSettings( pageContext, next ) {
 		analytics.pageView.record(
-			paths.domainManagementRedirectSettings( ':site', ':domain' ),
+			domainManagementRedirectSettings( ':site', ':domain' ),
 			'Domain Management › Redirect Settings'
 		);
 

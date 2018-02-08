@@ -12,7 +12,7 @@ import { Route } from 'page';
 /**
  * Internal dependencies
  */
-import route from '../';
+import * as route from '../';
 
 const checkoutRoutes = [
 	new Route( '/checkout/thank-you' ),
@@ -459,12 +459,12 @@ describe( 'route', function() {
 	describe( 'sectionifyWithRoutes', function() {
 		describe( 'for checkout paths', function() {
 			test( 'should parameterize checkout thank you paths', function() {
-				expect(
-					route.sectionifyWithRoutes( '/checkout/thank-you', checkoutRoutes )
-				).to.deep.equal( {
-					routePath: '/checkout/thank-you',
-					routeParams: {},
-				} );
+				expect( route.sectionifyWithRoutes( '/checkout/thank-you', checkoutRoutes ) ).to.deep.equal(
+					{
+						routePath: '/checkout/thank-you',
+						routeParams: {},
+					}
+				);
 				expect(
 					route.sectionifyWithRoutes( '/checkout/thank-you/25222194', checkoutRoutes )
 				).to.deep.equal( {
@@ -543,12 +543,12 @@ describe( 'route', function() {
 				} );
 			} );
 			test( 'should parameterize comment paths', function() {
-				expect(
-					route.sectionifyWithRoutes( '/comments/approved', commentsRoutes )
-				).to.deep.equal( {
-					routePath: '/comments/approved',
-					routeParams: {},
-				} );
+				expect( route.sectionifyWithRoutes( '/comments/approved', commentsRoutes ) ).to.deep.equal(
+					{
+						routePath: '/comments/approved',
+						routeParams: {},
+					}
+				);
 				expect( route.sectionifyWithRoutes( '/comments/pending', commentsRoutes ) ).to.deep.equal( {
 					routePath: '/comments/pending',
 					routeParams: {},

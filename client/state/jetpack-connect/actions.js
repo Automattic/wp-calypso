@@ -16,36 +16,34 @@ import wpcom from 'lib/wp';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import {
-	JETPACK_CONNECT_CHECK_URL,
-	JETPACK_CONNECT_CHECK_URL_RECEIVE,
-	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
-	JETPACK_CONNECT_COMPLETE_FLOW,
-	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+	JETPACK_CONNECT_CHECK_URL,
+	JETPACK_CONNECT_CHECK_URL_RECEIVE,
+	JETPACK_CONNECT_COMPLETE_FLOW,
+	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+	JETPACK_CONNECT_DISMISS_URL_STATUS,
+	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_RETRY_AUTH,
+	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-	SITES_RECEIVE,
 	SITE_REQUEST,
-	SITE_REQUEST_SUCCESS,
 	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
+	SITES_RECEIVE,
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
-import addQueryArgs from 'lib/route/add-query-args';
-import { externalRedirect } from 'lib/route/path';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { urlToSlug } from 'lib/url';
 import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
@@ -67,6 +65,14 @@ export function dismissUrl( url ) {
 	return {
 		type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 		url: url,
+	};
+}
+
+export function startAuthorizeStep( clientId ) {
+	return {
+		type: JETPACK_CONNECT_QUERY_SET,
+		clientId,
+		timestamp: Date.now(),
 	};
 }
 
@@ -107,17 +113,11 @@ export function checkUrl( url, isUrlOnSites ) {
 				url: url,
 			} );
 		}, 1 );
-		Promise.all( [
-			wpcom.undocumented().getSiteConnectInfo( url, 'exists' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isWordPress' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'hasJetpack' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackActive' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isWordPressDotCom' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackConnected' ),
-		] )
+		wpcom
+			.undocumented()
+			.getSiteConnectInfo( url )
 			.then( data => {
 				_fetching[ url ] = null;
-				data = data ? Object.assign.apply( Object, data ) : null;
 				debug( 'jetpack-connect state checked for url', url, data );
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -193,31 +193,6 @@ export function retryAuth( url, attemptNumber ) {
 				url + REMOTE_PATH_AUTH
 			)
 		);
-	};
-}
-
-export function goBackToWpAdmin( url ) {
-	return dispatch => {
-		dispatch( {
-			type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-		} );
-		debug( 'goBackToWpAdmin', url );
-		externalRedirect( url );
-	};
-}
-
-export function goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
-	return dispatch => {
-		const url = addQueryArgs(
-			{ code: authorizationCode, state: queryObject.state },
-			queryObject.redirect_uri
-		);
-		dispatch( {
-			type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
-			url,
-		} );
-		debug( 'goToXmlrpcErrorFallbackUrl', queryObject, authorizationCode );
-		externalRedirect( url );
 	};
 }
 
@@ -299,9 +274,18 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 
 export function authorize( queryObject ) {
 	return dispatch => {
-		const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
+		const {
+			_wp_nonce,
+			client_id,
+			from,
+			jp_version,
+			redirect_uri,
+			scope,
+			secret,
+			state,
+		} = queryObject;
 		debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
-		dispatch( recordTracksEvent( 'calypso_jpc_authorize' ) );
+		dispatch( recordTracksEvent( 'calypso_jpc_authorize', { from, site: client_id } ) );
 		dispatch( {
 			type: JETPACK_CONNECT_AUTHORIZE,
 			queryObject: queryObject,
@@ -358,7 +342,7 @@ export function authorize( queryObject ) {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_authorize_success', {
 						site: client_id,
-						from: queryObject && queryObject.from,
+						from,
 					} )
 				);
 			} )
@@ -372,6 +356,7 @@ export function authorize( queryObject ) {
 						status: error.status,
 						error: JSON.stringify( error ),
 						site: client_id,
+						from,
 					} )
 				);
 				dispatch( {

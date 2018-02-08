@@ -12,7 +12,7 @@
 
 	.popover__inner {
 		background-color: $white;
-		border: 1px solid lighten( $gray, 20% );
+		border: 1px solid $gray-lighten-20;
 		border-radius: 4px;
 		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
 			0 0 56px rgba( 0, 0, 0, 0.075 );
@@ -21,7 +21,7 @@
 	}
 
 	.popover__arrow {
-		border: 10px dashed lighten( $gray, 20% );
+		border: 10px dashed $gray-lighten-20;
 		height: 0;
 		line-height: 0;
 		position: absolute;
@@ -180,9 +180,9 @@
 	}
 
 	&[ disabled ] {
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 		.gridicon {
-			color: lighten( $gray, 30% );
+			color: $gray-lighten-30;
 		}
 	}
 

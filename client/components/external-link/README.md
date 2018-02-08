@@ -10,11 +10,11 @@ External Link is a React component for rendering an external link.
 import React from 'react';
 import ExternalLink from 'components/external-link';
 
-React.createClass( {
+class MyComponent extends React.Component {
 	render() {
 		return <ExternalLink icon={ true } href="https://wordpress.org" onClick="somefunction()">WordPress.org</ExternalLink>;
 	}
-} );
+}
 ```
 
 ## Props

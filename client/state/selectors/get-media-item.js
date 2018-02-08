@@ -1,6 +1,6 @@
 /**
  * Returns a media object by site ID, media ID, or null if not known
- * 
+ *
  *
  * @format
  * @param {Number}  mediaId Media ID

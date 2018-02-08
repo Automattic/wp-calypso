@@ -16,7 +16,7 @@ import { localize } from 'i18n-calypso';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { blockSite } from 'state/reader/site-blocks/actions';
-import PostUtils from 'lib/posts/utils';
+import * as PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
 import * as stats from 'reader/stats';

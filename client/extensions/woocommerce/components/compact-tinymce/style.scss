@@ -1,11 +1,11 @@
 .compact-tinymce {
 	.mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover {
 		border-left-color: transparent;
-		border-right-color: lighten( $gray, 20% );
+		border-right-color: $gray-lighten-20;
 	}
 
 	.mce-edit-area {
-		border: 1px solid lighten( $gray, 20% ) !important;
+		border: 1px solid $gray-lighten-20 !important;
 		margin-bottom: 4px;
 		padding-top: 36px;
 		padding-left: 8px;
@@ -13,7 +13,7 @@
 
 	div.mce-toolbar-grp {
 		background-color: rgba( $white, 0.92 );
-		border-color: lighten( $gray, 20% );
+		border-color: $gray-lighten-20;
 		border-style: solid;
 		border-width: 1px;
 		padding: 0;
@@ -25,7 +25,7 @@
 		margin: 0 2px 0 0;
 		padding: 0 8px;
 		vertical-align: top;
-		border-right: 1px solid lighten( $gray, 20% );
+		border-right: 1px solid $gray-lighten-20;
 		height: 36px;
 
 		@include breakpoint( "<660px" ) {
@@ -59,11 +59,11 @@
 	}
 
 	.mce-toolbar .mce-btn-group .mce-ico {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn .gridicon {
-		fill: darken( $gray, 20% );
+		fill: $gray-darken-20;
 	}
 
 	.mce-toolbar .mce-btn-group .mce-btn:hover .mce-ico,

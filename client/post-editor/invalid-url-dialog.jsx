@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -15,7 +13,7 @@ import page from 'page';
  */
 import Dialog from 'components/dialog';
 import FormButton from 'components/forms/form-button';
-import { getSiteFragment } from 'lib/route/path';
+import { getSiteFragment } from 'lib/route';
 
 class EditorTrashedDialog extends React.Component {
 	static displayName = 'EditorTrashedDialog';

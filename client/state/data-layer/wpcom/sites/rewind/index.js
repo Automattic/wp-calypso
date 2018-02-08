@@ -8,14 +8,14 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
 import { transformApi } from './api-transformer';
-import { rewind } from './schema';
+import { rewindStatus } from './schema';
 
 import downloads from './downloads';
 
 const fetchRewindState = action =>
 	http(
 		{
-			apiVersion: '1.1',
+			apiNamespace: 'wpcom/v2',
 			method: 'GET',
 			path: `/sites/${ action.siteId }/rewind`,
 			query: {
@@ -25,29 +25,46 @@ const fetchRewindState = action =>
 		action
 	);
 
-const updateRewindState = ( { siteId }, data ) => ( {
-	type: REWIND_STATE_UPDATE,
-	siteId,
-	data,
-} );
+const updateRewindState = ( { siteId }, data ) => {
+	const stateUpdate = {
+		type: REWIND_STATE_UPDATE,
+		siteId,
+		data,
+	};
 
-const setUnknownState = ( { siteId }, { schemaErrors } ) => {
-	if ( schemaErrors ) {
-		return withAnalytics(
-			recordTracksEvent( 'rewind_state_parse_error', {
-				schemaErrors: JSON.stringify( schemaErrors, null, 2 ),
-			} ),
-			{
-				type: REWIND_STATE_UPDATE,
-				siteId,
-				data: {
-					state: 'unknown',
-					lastUpdated: new Date(),
-				},
-			}
-		);
+	const hasRunningRewind = data.rewind && data.rewind.status === 'running';
+
+	if ( ! hasRunningRewind ) {
+		return stateUpdate;
 	}
+
+	const delayedStateRequest = dispatch =>
+		setTimeout(
+			() =>
+				dispatch( {
+					type: REWIND_STATE_REQUEST,
+					siteId,
+				} ),
+			3000
+		);
+
+	return [ stateUpdate, delayedStateRequest ];
 };
+
+const setUnknownState = ( { siteId }, error ) =>
+	withAnalytics(
+		recordTracksEvent( 'calypso_rewind_state_parse_error', {
+			error: JSON.stringify( error, null, 2 ),
+		} ),
+		{
+			type: REWIND_STATE_UPDATE,
+			siteId,
+			data: {
+				state: 'unknown',
+				lastUpdated: new Date(),
+			},
+		}
+	);
 
 export default mergeHandlers( downloads, {
 	[ REWIND_STATE_REQUEST ]: [
@@ -55,7 +72,7 @@ export default mergeHandlers( downloads, {
 			fetch: fetchRewindState,
 			onSuccess: updateRewindState,
 			onError: setUnknownState,
-			fromApi: makeParser( rewind, {}, transformApi ),
+			fromApi: makeParser( rewindStatus, {}, transformApi ),
 		} ),
 	],
 } );

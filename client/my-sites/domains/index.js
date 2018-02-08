@@ -12,16 +12,17 @@ import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
 import SiftScience from 'lib/siftscience';
 import config from 'config';
-import paths from './paths';
+import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( path => page( path, ...handlers ) );
 }
 
-function getCommonHandlers(
-	{ noSitePath = paths.domainManagementRoot(), warnIfJetpack = true } = {}
-) {
+function getCommonHandlers( {
+	noSitePath = paths.domainManagementRoot(),
+	warnIfJetpack = true,
+} = {} ) {
 	const handlers = [ siteSelection, navigation ];
 
 	if ( noSitePath ) {
@@ -291,6 +292,17 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
 			jetPackWarning,
 			domainsController.transferDomain,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/manage' ),
+			jetPackWarning,
+			domainsController.transferDomainPrecheck,
 			makeLayout,
 			clientRender
 		);

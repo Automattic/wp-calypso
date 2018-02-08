@@ -20,6 +20,7 @@ import {
 	startsWith,
 } from 'lodash';
 import i18n from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -57,12 +58,7 @@ export const getRawSite = ( state, siteId ) => {
  */
 export const getSiteBySlug = createSelector(
 	( state, siteSlug ) =>
-		find(
-			getSitesItems( state ),
-			( item, siteId ) =>
-				// find always passes the siteId as a string. We need it as a integer
-				getSiteSlug( state, parseInt( siteId, 10 ) ) === siteSlug
-		) || null,
+		find( getSitesItems( state ), site => getSiteSlug( state, site.ID ) === siteSlug ) || null,
 	getSitesItems
 );
 
@@ -237,18 +233,21 @@ export function isJetpackMinimumVersion( state, siteId, version ) {
  * @param  {Number}  siteId Site ID
  * @return {?String}        Site slug
  */
-export function getSiteSlug( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
+export const getSiteSlug = createSelector(
+	( state, siteId ) => {
+		const site = getRawSite( state, siteId );
+		if ( ! site ) {
+			return null;
+		}
 
-	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-		return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-	}
+		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		}
 
-	return urlToSlug( site.URL );
-}
+		return urlToSlug( site.URL );
+	},
+	[ getSitesItems ]
+);
 
 /**
  * Returns the domain for a site, or null if the site is unknown.
@@ -291,6 +290,27 @@ export function getSiteTitle( state, siteId ) {
 	}
 
 	return getSiteDomain( state, siteId );
+}
+
+/**
+ * Returns the URL for a site, or null if the site is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}        Site Url
+ */
+export function getSiteUrl( state, siteId ) {
+	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+		return getSiteSlug( state, siteId );
+	}
+
+	const site = getRawSite( state, siteId );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	return site.URL;
 }
 
 /**
@@ -1084,3 +1104,31 @@ export const siteSupportsGoogleAnalyticsBasicEcommerceTracking = ( state, siteId
 export const siteSupportsGoogleAnalyticsEnhancedEcommerceTracking = ( state, siteId ) => {
 	return isJetpackMinimumVersion( state, siteId, '5.6-beta2' );
 };
+
+/**
+ * Returns true if the site is created less than 30 mins ago.
+ * False otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether site is newly created.
+ */
+export function isNewSite( state, siteId ) {
+	const createdAt = getSiteOption( state, siteId, 'created_at' );
+
+	if ( ! createdAt ) {
+		return false;
+	}
+
+	// less than 30 minutes
+	return moment().diff( createdAt, 'minutes' ) < 30;
+}
+
+/**
+ * Returns whether all sites have been fetched.
+ * @param {Object}    state  Global state tree
+ * @return {Boolean}        Request State
+ */
+export function hasAllSitesList( state ) {
+	return !! state.sites.hasAllSitesList;
+}

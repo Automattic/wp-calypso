@@ -4,7 +4,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { get, isEmpty, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import page from 'page';
@@ -25,10 +25,13 @@ import {
 	getOrderWithEdits,
 } from 'woocommerce/state/ui/orders/selectors';
 import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
+import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import Main from 'components/main';
 import OrderCustomerCreate from './order-customer/create';
 import OrderDetails from './order-details';
 import { ProtectFormGuard } from 'lib/protect-form';
+import { recordTrack } from 'woocommerce/lib/analytics';
+import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
 class Order extends Component {
 	componentDidMount() {
@@ -50,19 +53,40 @@ class Order extends Component {
 		this.props.clearOrderEdits( this.props.siteId );
 	}
 
+	triggerInvoice = ( siteId, orderId ) => {
+		const { translate } = this.props;
+		const onSuccess = dispatch => {
+			dispatch(
+				successNotice( translate( 'An invoice has been sent to the customer.' ), {
+					duration: 8000,
+				} )
+			);
+		};
+
+		this.props.sendOrderInvoice( siteId, orderId, onSuccess, noop );
+	};
+
 	// Saves changes to the remote site via API
 	saveOrder = () => {
 		const { site, siteId, order, translate } = this.props;
 		const onSuccess = ( dispatch, orderId ) => {
 			dispatch(
-				successNotice( translate( 'Order created.' ), { duration: 5000, displayOnNextPage: true } )
+				successNotice( translate( 'Order successfully created.' ), {
+					duration: 8000,
+					displayOnNextPage: true,
+				} )
 			);
+			// Send invoice if the order is awaiting payment and there is an email
+			if ( isOrderWaitingPayment( order.status ) && get( order, 'billing.email', false ) ) {
+				this.triggerInvoice( siteId, orderId );
+			}
 			page.redirect( getLink( `/store/order/:site/${ orderId }`, site ) );
 		};
 		const onFailure = dispatch => {
-			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 5000 } ) );
+			dispatch( errorNotice( translate( 'Unable to create order.' ), { duration: 8000 } ) );
 		};
 
+		recordTrack( 'calypso_woocommerce_order_create' );
 		this.props.saveOrder( siteId, order, onSuccess, onFailure );
 	};
 
@@ -119,5 +143,6 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { clearOrderEdits, editOrder, saveOrder }, dispatch )
+	dispatch =>
+		bindActionCreators( { clearOrderEdits, editOrder, saveOrder, sendOrderInvoice }, dispatch )
 )( localize( Order ) );

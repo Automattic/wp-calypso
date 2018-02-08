@@ -16,7 +16,7 @@ import { map, pick, reduce, startsWith } from 'lodash';
  * Internal dependencies
  */
 import actions from 'lib/posts/actions';
-import route from 'lib/route';
+import { addSiteFragment } from 'lib/route';
 import User from 'lib/user';
 import userUtils from 'lib/user/utils';
 import analytics from 'lib/analytics';
@@ -143,14 +143,14 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 			postAttributes.featured_image = getFeaturedImageId( postToCopy );
 
 			/**
-		 * A post attributes whitelist for Redux's `editPost()` action.
-		 *
-		 * This is needed because blindly passing all post attributes to `editPost()`
-		 * caused some of them (notably the featured image) to revert to their original value
-		 * when modified right after the copy.
-		 *
-		 * @see https://github.com/Automattic/wp-calypso/pull/13933
-		 */
+			 * A post attributes whitelist for Redux's `editPost()` action.
+			 *
+			 * This is needed because blindly passing all post attributes to `editPost()`
+			 * caused some of them (notably the featured image) to revert to their original value
+			 * when modified right after the copy.
+			 *
+			 * @see https://github.com/Automattic/wp-calypso/pull/13933
+			 */
 			const reduxPostAttributes = {
 				terms: postAttributes.terms,
 				title: postAttributes.title,
@@ -165,13 +165,13 @@ function startEditingPostCopy( site, postToCopyId, context ) {
 			actions.edit( postAttributes );
 
 			/**
-		 * A post metadata whitelist for Flux's `updateMetadata()` action.
-		 *
-		 * This is needed because blindly passing all post metadata to `updateMetadata()`
-		 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
-		 *
-		 * @see https://github.com/Automattic/wp-calypso/issues/14840
-		 */
+			 * A post metadata whitelist for Flux's `updateMetadata()` action.
+			 *
+			 * This is needed because blindly passing all post metadata to `updateMetadata()`
+			 * causes unforeseeable issues, such as Publicize not triggering on the copied post.
+			 *
+			 * @see https://github.com/Automattic/wp-calypso/issues/14840
+			 */
 			const metadataWhitelist = [ 'geo_latitude', 'geo_longitude' ];
 
 			// Convert the metadata array into a metadata object, needed because `updateMetadata()` expects an object.
@@ -308,7 +308,7 @@ export default {
 			return next();
 		}
 
-		const redirectPath = route.addSiteFragment( context.pathname, currentUser.primarySiteSlug );
+		const redirectPath = addSiteFragment( context.pathname, currentUser.primarySiteSlug );
 		const queryString = qs.stringify( context.query );
 		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
 

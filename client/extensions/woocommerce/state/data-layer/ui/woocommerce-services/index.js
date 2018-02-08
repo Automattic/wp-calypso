@@ -32,7 +32,11 @@ import { dispatchWithProps } from 'woocommerce/state/helpers';
 
 const getSaveLabelSettingsActionListSteps = ( state, siteId ) => {
 	const labelFormMeta = getLabelSettingsFormMeta( state, siteId );
-	if ( ! labelFormMeta || labelFormMeta.pristine || ! labelFormMeta.can_manage_payments ) {
+	if (
+		! labelFormMeta ||
+		labelFormMeta.pristine ||
+		( ! labelFormMeta.can_edit_settings && labelFormMeta.can_manage_payments )
+	) {
 		return [];
 	}
 

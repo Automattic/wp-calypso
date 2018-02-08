@@ -26,7 +26,7 @@ import actions from 'lib/posts/actions';
 import photon from 'photon';
 import { hasTouch } from 'lib/touch-detect';
 import updatePostStatus from 'components/update-post-status';
-import utils from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';

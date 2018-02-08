@@ -18,9 +18,9 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const hasRegions = React.Children
-			.toArray( this.props.children )
-			.some( el => el.type === SidebarRegion );
+		const hasRegions = React.Children.toArray( this.props.children ).some(
+			el => el.type === SidebarRegion
+		);
 
 		return (
 			<ul

@@ -26,6 +26,7 @@
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
+		"domains/cctlds/uk": true,
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
@@ -71,7 +72,6 @@
 		"me/notifications": true,
 		"me/trophies": false,
 		"oauth": true,
-		"olark": true,
 		"onboarding-checklist": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
@@ -85,6 +85,7 @@
 		"reader/full-errors": false,
 		"reader/search": true,
 		"reader/conversations": false,
+		"reader/new-post-notifications": true,
 		"resume-editing": true,
 		"republicize": false,
 		"rubberband-scroll-disable": false,
@@ -99,7 +100,7 @@
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
-		"upgrades/paypal": false,
+		"upgrades/redirect-payments": false,
 		"upgrades/premium-themes": true,
 		"upgrades/presale-chat": true,
 		"upgrades/removal-survey": true,
@@ -136,9 +137,5 @@
 	"google_analytics_key": "UA-10673494-10",
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
-	"hotjar_enabled": true,
-	"olark": {
-		"business_account_id": "3146-815-10-9343",
-		"business_group_id": "3033aa025c1a9648c703eb70132ff220"
-	}
+	"hotjar_enabled": true
 }

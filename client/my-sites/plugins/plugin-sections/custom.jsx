@@ -14,7 +14,7 @@ import Card from 'components/card';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
-import { sanitizeSectionContent } from 'lib/plugins/utils';
+import { sanitizeSectionContent } from 'lib/plugins/sanitize-section-content';
 
 const PluginSectionsCustom = ( { plugin, translate } ) => {
 	const description = sanitizeSectionContent( plugin.description );

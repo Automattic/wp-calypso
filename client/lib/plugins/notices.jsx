@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 import notices from 'notices';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginsActions from 'lib/plugins/actions';
-import PluginsUtil from 'lib/plugins/utils';
+import { filterNotices } from 'lib/plugins/utils';
 import versionCompare from 'lib/version-compare';
 
 function getCombination( translateArg ) {
@@ -82,17 +82,9 @@ export default {
 	refreshPluginNotices() {
 		const site = this.props.selectedSite;
 		return {
-			errors: PluginsUtil.filterNotices( PluginsLog.getErrors(), site, this.props.pluginSlug ),
-			inProgress: PluginsUtil.filterNotices(
-				PluginsLog.getInProgress(),
-				site,
-				this.props.pluginSlug
-			),
-			completed: PluginsUtil.filterNotices(
-				PluginsLog.getCompleted(),
-				site,
-				this.props.pluginSlug
-			),
+			errors: filterNotices( PluginsLog.getErrors(), site, this.props.pluginSlug ),
+			inProgress: filterNotices( PluginsLog.getInProgress(), site, this.props.pluginSlug ),
+			completed: filterNotices( PluginsLog.getCompleted(), site, this.props.pluginSlug ),
 		};
 	},
 

@@ -22,13 +22,12 @@ import { recordPermalinkClick } from 'reader/stats';
 import TimeSince from 'components/time-since';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import * as stats from 'reader/stats';
 import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
-		post: PropTypes.object.isRequired,
+		post: PropTypes.object,
 		streamUrl: PropTypes.string,
 		onClick: PropTypes.func,
 		showFeaturedAsset: PropTypes.bool,
@@ -45,7 +44,7 @@ class ReaderCombinedCardPost extends React.Component {
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			if ( closest( event.target, '.reader-combined-card__post-title-link', true, rootNode ) ) {
-				stats.recordPermalinkClick( 'card_title_with_modifier', this.props.post );
+				recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}

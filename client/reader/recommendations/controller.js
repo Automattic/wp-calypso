@@ -15,7 +15,7 @@ import {
 	userHasHistory,
 } from 'reader/controller-helper';
 import RecommendedPostsStream from 'reader/recommendations/posts';
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
@@ -23,7 +23,7 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 const exported = {
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
 	recommendedPosts( context, next ) {
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 
 		let fullAnalyticsPageTitle = '';
 		let RecommendedPostsStore = null;

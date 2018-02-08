@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
@@ -20,7 +18,7 @@ import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/select
 import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
 import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
-import { mapPostStatus } from 'lib/route/path';
+import { mapPostStatus } from 'lib/route';
 import { isEnabled } from 'config';
 import UrlSearch from 'lib/mixins/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';

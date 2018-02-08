@@ -17,8 +17,6 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT,
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
-	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	SERIALIZE,
 	SITE_REQUEST_FAILURE,
 } from 'state/action-types';
@@ -44,7 +42,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 			isAuthorizing: true,
 			authorizeSuccess: false,
 			authorizeError: false,
-			isRedirectingToWpAdmin: false,
 		} );
 	} );
 
@@ -128,9 +125,11 @@ describe( '#jetpackConnectAuthorize()', () => {
 
 	test( 'should populate state with provided values', () => {
 		const clientId = 12345;
+		const timestamp = 1410647400000;
 		const state = jetpackConnectAuthorize( undefined, {
 			type: JETPACK_CONNECT_QUERY_SET,
 			clientId,
+			timestamp,
 		} );
 
 		expect( state ).toMatchObject( {
@@ -138,7 +137,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 			authorizeError: false,
 			authorizeSuccess: false,
 			isAuthorizing: false,
-			timestamp: expect.any( Number ),
+			timestamp,
 		} );
 	} );
 
@@ -191,22 +190,6 @@ describe( '#jetpackConnectAuthorize()', () => {
 		} );
 	} );
 
-	test( 'should set isRedirectingToWpAdmin to true when an xmlrpc error occurs', () => {
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
-		} );
-
-		expect( state ).toEqual( { isRedirectingToWpAdmin: true } );
-	} );
-
-	test( 'should set isRedirectingToWpAdmin to true when a redirect to wp-admin is triggered', () => {
-		const state = jetpackConnectAuthorize( undefined, {
-			type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
-		} );
-
-		expect( state ).toEqual( { isRedirectingToWpAdmin: true } );
-	} );
-
 	test( 'should set clientNotResponding when a site request to current client fails', () => {
 		const state = jetpackConnectAuthorize(
 			{ clientId: 123 },
@@ -245,7 +228,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 	test( 'should persist state', () => {
 		const originalState = deepFreeze( {
 			clientId: 1234,
-			timestamp: Date.now(),
+			timestamp: 1410647400000,
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
 			type: SERIALIZE,
@@ -257,7 +240,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 	test( 'should load valid persisted state', () => {
 		const originalState = deepFreeze( {
 			clientId: 1234,
-			timestamp: Date.now(),
+			timestamp: Infinity, // Ensure timestamp is not expired
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
 			type: DESERIALIZE,
@@ -269,7 +252,7 @@ describe( '#jetpackConnectAuthorize()', () => {
 	test( 'should not load stale state', () => {
 		const originalState = deepFreeze( {
 			clientId: 1234,
-			timestamp: 1,
+			timestamp: -Infinity, // Ensure timestamp is expired
 		} );
 		const state = jetpackConnectAuthorize( originalState, {
 			type: DESERIALIZE,

@@ -13,7 +13,7 @@ touch ./bin/codemods/src/your-transformation-name.js
 
 Here's a stub to begin with:
 ```js
-const config = require( './config' );
+import config from 'config';
 
 export default function transformer( file, api ) {
 	const j = api.jscodeshift;

@@ -242,7 +242,7 @@
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;

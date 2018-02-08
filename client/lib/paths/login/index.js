@@ -8,17 +8,16 @@ import { addQueryArgs } from 'lib/url';
 import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
-export function login(
-	{
-		isNative,
-		locale,
-		redirectTo,
-		twoFactorAuthType,
-		socialConnect,
-		emailAddress,
-		socialService,
-	} = {}
-) {
+export function login( {
+	isNative,
+	locale,
+	redirectTo,
+	twoFactorAuthType,
+	socialConnect,
+	emailAddress,
+	socialService,
+	oauth2ClientId,
+} = {} ) {
 	let url = config( 'login_url' );
 
 	if ( isNative && isEnabled( 'login/wp-login' ) ) {
@@ -51,6 +50,10 @@ export function login(
 
 	if ( emailAddress ) {
 		url = addQueryArgs( { email_address: emailAddress }, url );
+	}
+
+	if ( oauth2ClientId && ! isNaN( oauth2ClientId ) ) {
+		url = addQueryArgs( { client_id: oauth2ClientId }, url );
 	}
 
 	return url;

@@ -22,7 +22,7 @@
 	position: relative;
 
 	&::before {
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 		content: " • ";
 		position: absolute;
 			left: 0;

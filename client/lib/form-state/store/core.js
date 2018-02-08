@@ -4,7 +4,9 @@
  * Internal dependencies
  */
 
-import { changeFieldValue } from '../';
+import formState from '../';
+
+const { changeFieldValue } = formState;
 
 function core() {
 	return {

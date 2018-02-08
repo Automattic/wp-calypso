@@ -1,6 +1,6 @@
 /**
  * Adapted from the WordPress wplink TinyMCE plugin.
- * 
+ *
  *
  * @format
  * @copyright 2015 by the WordPress contributors.

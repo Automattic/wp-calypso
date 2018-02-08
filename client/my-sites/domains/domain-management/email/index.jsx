@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
@@ -22,7 +20,11 @@ import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 import UpgradesNavigation from 'my-sites/domains/navigation';
 import EmptyContent from 'components/empty-content';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementList,
+	domainManagementEmailForwarding,
+} from 'my-sites/domains/paths';
 import { hasGoogleApps, hasGoogleAppsSupportedDomain, getSelectedDomain } from 'lib/domains';
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
@@ -100,7 +102,7 @@ class Email extends React.Component {
 				title: translate( 'G Suite is not supported on this domain' ),
 				line: translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				secondaryAction: translate( 'Add Email Forwarding' ),
-				secondaryActionURL: paths.domainManagementEmailForwarding(
+				secondaryActionURL: domainManagementEmailForwarding(
 					selectedSite.slug,
 					selectedDomainName
 				),
@@ -140,7 +142,7 @@ class Email extends React.Component {
 				{ this.props.selectedDomainName && (
 					<VerticalNav>
 						<VerticalNavItem
-							path={ paths.domainManagementEmailForwarding(
+							path={ domainManagementEmailForwarding(
 								this.props.selectedSite.slug,
 								this.props.selectedDomainName
 							) }
@@ -155,11 +157,9 @@ class Email extends React.Component {
 
 	goToEditOrList = () => {
 		if ( this.props.selectedDomainName ) {
-			page(
-				paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
-			);
+			page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 		} else {
-			page( paths.domainManagementList( this.props.selectedSite.slug ) );
+			page( domainManagementList( this.props.selectedSite.slug ) );
 		}
 	};
 }

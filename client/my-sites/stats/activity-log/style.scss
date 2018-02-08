@@ -10,10 +10,10 @@
 			left: 33px;
 		height: 100%;
 		width: 2px;
-		background: lighten( $gray, 20% );
+		background: $gray-lighten-20;
 
 		@include breakpoint( "<480px" ) {
-			left: 29px;
+			left: 25px;
 		}
 	}
 }

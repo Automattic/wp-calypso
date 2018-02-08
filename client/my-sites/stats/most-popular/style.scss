@@ -73,12 +73,15 @@
 	font-size: 14px;
 	line-height: 1.4285;
 	animation: appear .3s ease-in-out;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 
 	@include breakpoint( ">660px" ) {
 		padding: 13px 48px;
 		font-size: inherit;
+		display: inline-flex;
+		top: 10px;
+		margin: 0 5px;
 
 		&::before {
 			@include noticon-style;

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { keyBy, omit } from 'lodash';
+import { keyBy, omit, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import { combineReducers } from 'state/utils';
 import { getSerializedProductCategoriesQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,
+	WOOCOMMERCE_PRODUCT_CATEGORY_DELETED,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
@@ -75,6 +76,10 @@ export function items( state = {}, action ) {
 		};
 	}
 
+	if ( WOOCOMMERCE_PRODUCT_CATEGORY_DELETED === action.type && action.category ) {
+		return keyBy( reject( state, { id: action.category.id } ), 'id' );
+	}
+
 	return state;
 }
 
@@ -92,6 +97,7 @@ export function queries( state = {}, action ) {
 		const query = getSerializedProductCategoriesQuery( action.query );
 		return Object.assign( {}, state, { [ query ]: idList } );
 	}
+
 	return state;
 }
 

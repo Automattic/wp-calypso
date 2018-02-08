@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import Notice from 'components/notice';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 function PendingWhoisUpdateCard( { translate } ) {
 	return (
@@ -28,7 +28,7 @@ function PendingWhoisUpdateCard( { translate } ) {
 						'{{supporta}}support page{{/supporta}} or {{a}}contact support{{/a}}.',
 					{
 						components: {
-							a: <a href={ support.CALYPSO_CONTACT } rel="noopener noreferrer" />,
+							a: <a href={ CALYPSO_CONTACT } rel="noopener noreferrer" />,
 							supporta: (
 								<a
 									href="https://en.support.wordpress.com/update-contact-information/#email-or-name-changes"

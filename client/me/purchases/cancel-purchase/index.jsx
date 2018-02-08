@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -29,16 +27,20 @@ import {
 	getPurchase,
 	getSelectedSite,
 	goToManagePurchase,
+	isDataLoading,
 	recordPageView,
 } from 'me/purchases/utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+	getIncludedDomainPurchase,
+} from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
-import { isDataLoading } from 'me/purchases/utils';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
-import paths from '../paths';
+import { managePurchase, purchasesRoot } from '../paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
@@ -51,7 +53,13 @@ class CancelPurchase extends React.Component {
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		selectedPurchase: PropTypes.object,
+		includedDomainPurchase: PropTypes.object,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
+	};
+
+	state = {
+		cancelBundledDomain: false,
+		confirmCancelBundledDomain: false,
 	};
 
 	componentWillMount() {
@@ -89,24 +97,36 @@ class CancelPurchase extends React.Component {
 	redirect = props => {
 		const purchase = getPurchase( props );
 		const selectedSite = getSelectedSite( props );
-		let redirectPath = paths.purchasesRoot();
+		let redirectPath = purchasesRoot;
 
 		if (
 			selectedSite &&
 			purchase &&
 			( ! isCancelable( purchase ) || isDomainTransfer( purchase ) )
 		) {
-			redirectPath = paths.managePurchase( selectedSite.slug, purchase.id );
+			redirectPath = managePurchase( selectedSite.slug, purchase.id );
 		}
 
 		page.redirect( redirectPath );
 	};
 
+	onCancelConfirmationStateChange = newState => {
+		this.setState( newState );
+	};
+
 	renderFooterText = () => {
 		const purchase = getPurchase( this.props );
-		const { refundText, renewDate } = purchase;
+		const { refundText, renewDate, refundAmount, currencySymbol } = purchase;
 
 		if ( isRefundable( purchase ) ) {
+			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
+				const fullRefundText =
+					currencySymbol + ( refundAmount + this.props.includedDomainPurchase.amount );
+				return this.props.translate( '%(refundText)s to be refunded', {
+					args: { refundText: fullRefundText },
+					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+				} );
+			}
 			return this.props.translate( '%(refundText)s to be refunded', {
 				args: { refundText },
 				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
@@ -170,7 +190,13 @@ class CancelPurchase extends React.Component {
 				<Card className="cancel-purchase__card">
 					<h2>{ heading }</h2>
 
-					<CancelPurchaseRefundInformation purchase={ purchase } />
+					<CancelPurchaseRefundInformation
+						purchase={ purchase }
+						includedDomainPurchase={ this.props.includedDomainPurchase }
+						confirmBundledDomain={ this.state.confirmCancelBundledDomain }
+						cancelBundledDomain={ this.state.cancelBundledDomain }
+						onCancelConfirmationStateChange={ this.onCancelConfirmationStateChange }
+					/>
 				</Card>
 
 				<CompactCard className="cancel-purchase__product-information">
@@ -182,16 +208,26 @@ class CancelPurchase extends React.Component {
 					<div className="cancel-purchase__refund-amount">
 						{ this.renderFooterText( this.props ) }
 					</div>
-					<CancelPurchaseButton purchase={ purchase } selectedSite={ this.props.selectedSite } />
+					<CancelPurchaseButton
+						purchase={ purchase }
+						includedDomainPurchase={ this.props.includedDomainPurchase }
+						disabled={ this.state.cancelBundledDomain && ! this.state.confirmCancelBundledDomain }
+						selectedSite={ this.props.selectedSite }
+						cancelBundledDomain={ this.state.cancelBundledDomain }
+					/>
 				</CompactCard>
 			</Main>
 		);
 	}
 }
 
-export default connect( ( state, props ) => ( {
-	hasLoadedSites: ! isRequestingSites( state ),
-	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-	selectedPurchase: getByPurchaseId( state, props.purchaseId ),
-	selectedSite: getSelectedSiteSelector( state ),
-} ) )( localize( CancelPurchase ) );
+export default connect( ( state, props ) => {
+	const purchase = getByPurchaseId( state, props.purchaseId );
+	return {
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase: purchase,
+		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
+		selectedSite: getSelectedSiteSelector( state ),
+	};
+} )( localize( CancelPurchase ) );

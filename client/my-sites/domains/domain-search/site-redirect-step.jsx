@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -17,7 +15,7 @@ import { cartItems } from 'lib/cart-values';
 import { errorNotice } from 'state/notices/actions';
 import { canRedirect } from 'lib/domains';
 import DomainProductPrice from 'components/domains/domain-product-price';
-import upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { withoutHttp } from 'lib/url';
 
@@ -114,7 +112,7 @@ class SiteRedirectStep extends React.Component {
 	};
 
 	addSiteRedirectToCart = domain => {
-		upgradesActions.addItem( cartItems.siteRedirect( { domain: domain } ) );
+		addItem( cartItems.siteRedirect( { domain: domain } ) );
 		page( '/checkout/' + this.props.selectedSite.slug );
 	};
 

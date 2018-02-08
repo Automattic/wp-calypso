@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -18,7 +16,7 @@ import Gridicon from 'gridicons';
 import QueryPostTypes from 'components/data/query-post-types';
 import PublicizeMessage from './publicize-message';
 import PublicizeServices from './publicize-services';
-import * as paths from 'lib/paths';
+import { publicizeConnections } from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
 import PopupMonitor from 'lib/popup-monitor';
 import Button from 'components/button';
@@ -58,7 +56,7 @@ class EditorSharingPublicizeOptions extends React.Component {
 			return;
 		}
 
-		const href = paths.publicizeConnections( this.props.site );
+		const href = publicizeConnections( this.props.site );
 
 		if ( ! this.connectionPopupMonitor ) {
 			this.connectionPopupMonitor = new PopupMonitor();
@@ -91,12 +89,12 @@ class EditorSharingPublicizeOptions extends React.Component {
 	renderMessage = () => {
 		const skipped = this.hasConnections() ? PostMetadata.publicizeSkipped( this.props.post ) : [],
 			targeted = this.hasConnections()
-				? this.props.connections.filter( function( connection ) {
-						return skipped && -1 === skipped.indexOf( connection.keyring_connection_ID );
-					} )
+				? this.props.connections.filter(
+						connection => skipped && -1 === skipped.indexOf( connection.keyring_connection_ID )
+					)
 				: [],
 			requireCount = includes( map( targeted, 'service' ), 'twitter' ),
-			acceptableLength = requireCount ? 140 - 23 - 23 : null;
+			acceptableLength = requireCount ? 280 - 23 - 23 : null;
 
 		if ( ! this.hasConnections() ) {
 			return;

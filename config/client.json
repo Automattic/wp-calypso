@@ -28,7 +28,6 @@
   "oauth_client_id",
   "oauth_response_type",
   "oauth_url",
-  "olark",
   "project",
   "readerFollowingSource",
   "rebrand_cities_prefix",
@@ -38,6 +37,7 @@
   "support-user",
   "sync-handler-defaults",
   "twemoji_cdn_url",
+  "wpcom_concierge_schedule_id",
   "wpcom_signup_id",
   "wpcom_signup_key"
 ]

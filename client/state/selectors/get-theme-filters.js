@@ -1,6 +1,6 @@
 /**
  * Returns the list of available theme filters
- * 
+ *
  *
  * @format
  * @param {Object}  state Global state tree

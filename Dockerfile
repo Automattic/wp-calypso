@@ -4,6 +4,7 @@ LABEL maintainer="Automattic"
 WORKDIR    /calypso
 
 
+ENV        CONTAINER 'docker'
 ENV        NODE_PATH=/calypso/server:/calypso/client
 
 # Build a "base" layer
@@ -52,11 +53,10 @@ RUN        touch node_modules
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
-ARG        commit_sha=(unknown)
-RUN        true \
-           && CALYPSO_ENV=production COMMIT_SHA=$commit_sha npm run build \
-           && chown -R nobody /calypso \
-           && true
+ARG        commit_sha="(unknown)"
+ENV        COMMIT_SHA $commit_sha
+
+RUN        CALYPSO_ENV=production npm run build
 
 USER       nobody
 CMD        NODE_ENV=production node build/bundle.js

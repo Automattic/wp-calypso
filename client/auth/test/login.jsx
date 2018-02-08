@@ -15,7 +15,7 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { login as loginStub } from 'lib/oauth-store/actions';
-import { Login } from '../login.jsx';
+import { Auth } from '../login';
 import FormButton from 'components/forms/form-button';
 
 jest.mock( 'lib/oauth-store/actions', () => ( {
@@ -28,7 +28,7 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 
 describe( 'LoginTest', () => {
-	const page = shallow( <Login translate={ identity } /> );
+	const page = shallow( <Auth translate={ identity } /> );
 
 	test( 'OTP is not present on first render', done => {
 		page.setState( { requires2fa: false }, function() {

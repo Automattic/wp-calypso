@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -24,19 +22,16 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import Button from 'components/button';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
-import { getPostShareScheduledActions, getPostSharePublishedActions } from 'state/selectors';
 import {
+	getPostSharePublishedActions,
+	getPostShareScheduledActions,
+	getScheduledPublicizeShareActionTime,
 	isPublicizeEnabled,
 	isSchedulingPublicizeShareAction,
-	getScheduledPublicizeShareActionTime,
 	isSchedulingPublicizeShareActionError,
 } from 'state/selectors';
 import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'state/sites/selectors';
 import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import {
-	getSiteUserConnections,
-	hasFetchedConnections as siteHasFetchedConnections,
-} from 'state/sharing/publicize/selectors';
 
 import {
 	fetchConnections as requestConnections,
@@ -45,6 +40,8 @@ import {
 } from 'state/sharing/publicize/actions';
 import { schedulePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
 import {
+	getSiteUserConnections,
+	hasFetchedConnections as siteHasFetchedConnections,
 	isRequestingSharePost,
 	sharePostFailure,
 	sharePostSuccessMessage,
@@ -67,7 +64,7 @@ import CalendarButton from 'blocks/calendar-button';
 import EventsTooltip from 'components/date-picker/events-tooltip';
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { sectionify } from 'lib/route/path';
+import { sectionify } from 'lib/route';
 
 class PostShare extends Component {
 	static propTypes = {
@@ -217,7 +214,7 @@ class PostShare extends Component {
 			? this.props.connections.filter( this.isConnectionActive )
 			: [];
 		const requireCount = includes( map( targeted, 'service' ), 'twitter' );
-		const acceptableLength = requireCount ? 140 - 23 - 23 : null;
+		const acceptableLength = requireCount ? 280 - 23 - 23 : null;
 
 		return (
 			<PublicizeMessage
@@ -391,7 +388,7 @@ class PostShare extends Component {
 			return (
 				<Notice status="is-success" onDismissClick={ this.dismiss }>
 					{ translate( "We'll share your post on %s.", {
-						args: this.props.scheduledAt.format( 'ddd, MMMM Do YYYY, h:mm:ss a' ),
+						args: this.props.scheduledAt.format( 'LLLL' ),
 					} ) }
 				</Notice>
 			);

@@ -18,7 +18,7 @@ import DnsList from './dns-list';
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
-import paths from 'my-sites/domains/paths';
+import { domainManagementEdit, domainManagementNameServers } from 'my-sites/domains/paths';
 import { getSelectedDomain, isMappedDomain, isRegisteredDomain } from 'lib/domains';
 import Card from 'components/card/compact';
 import SectionHeader from 'components/section-header';
@@ -88,9 +88,9 @@ class Dns extends React.Component {
 		let path;
 
 		if ( isRegisteredDomain( getSelectedDomain( this.props ) ) ) {
-			path = paths.domainManagementNameServers;
+			path = domainManagementNameServers;
 		} else {
-			path = paths.domainManagementEdit;
+			path = domainManagementEdit;
 		}
 
 		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );

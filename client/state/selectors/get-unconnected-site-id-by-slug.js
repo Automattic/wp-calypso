@@ -9,6 +9,14 @@ import { findKey } from 'lodash';
  */
 import { urlToSlug } from 'lib/url';
 
+/**
+ * Returns the ID of particular Jetpack onboarding site by the site slug.
+ * Returns null if site is not known.
+ *
+ * @param  {Object}   state     Global state tree.
+ * @param  {String}   siteSlug  Slug of the unconnected site.
+ * @return {?Integer}           ID of the unconnected site.
+ */
 export default function getUnconnectedSiteIdBySlug( state, siteSlug ) {
 	const siteId = findKey(
 		state.jetpackOnboarding.credentials,

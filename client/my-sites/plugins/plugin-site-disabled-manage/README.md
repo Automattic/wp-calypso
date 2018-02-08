@@ -6,9 +6,9 @@ This component is used to display a warning when a site has not enabled jetpack 
 #### How to use:
 
 ```js
-var PluginSiteDisabledManage = require( 'my-sites/plugins/plugin-site-disabled-manage' );
+import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 
-render: function() {
+render() {
     return ( <PluginSiteDisabledManage
                 site={ this.props.site }
                 plugin={ this.props.plugin }

@@ -1,15 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { moment } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import { get } from 'lodash';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -37,17 +34,21 @@ import {
 	isRefundable,
 	isSubscription,
 } from 'lib/purchases';
-import { isDomainRegistration, isJetpackPlan } from 'lib/products-values';
+import { isDomainRegistration } from 'lib/products-values';
 import notices from 'notices';
-import paths from 'me/purchases/paths';
+import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
+import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
+		cancelBundledDomain: PropTypes.bool.isRequired,
+		includedDomainPurchase: PropTypes.object,
+		disabled: PropTypes.bool,
 	};
 
 	state = {
@@ -96,9 +97,14 @@ class CancelPurchaseButton extends Component {
 	};
 
 	changeSurveyStep = stepFunction => {
-		const { purchase, isChatAvailable, isChatActive } = this.props;
+		const { purchase, isChatAvailable, isChatActive, precancellationChatAvailable } = this.props;
 		const { surveyStep, survey } = this.state;
-		const steps = stepsForProductAndSurvey( survey, purchase, isChatAvailable || isChatActive );
+		const steps = stepsForProductAndSurvey(
+			survey,
+			purchase,
+			isChatAvailable || isChatActive,
+			precancellationChatAvailable
+		);
 		const newStep = stepFunction( surveyStep, steps );
 		this.recordEvent( 'calypso_purchases_cancel_survey_step', { new_step: newStep } );
 		this.setState( { surveyStep: newStep } );
@@ -125,7 +131,7 @@ class CancelPurchaseButton extends Component {
 	};
 
 	renderCancelConfirmationDialog = () => {
-		const { purchase, translate } = this.props;
+		const { purchase, selectedSite, translate } = this.props;
 		const buttons = {
 			close: {
 				action: 'close',
@@ -173,12 +179,12 @@ class CancelPurchaseButton extends Component {
 			>
 				<CancelPurchaseForm
 					chatInitiated={ this.chatInitiated }
-					productName={ getName( purchase ) }
-					surveyStep={ this.state.surveyStep }
-					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					defaultContent={ this.renderCancellationEffect() }
 					onInputChange={ this.onSurveyChange }
-					isJetpack={ isJetpackPlan( purchase ) }
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>
 		);
@@ -188,13 +194,13 @@ class CancelPurchaseButton extends Component {
 		const { id } = this.props.purchase,
 			{ slug } = this.props.selectedSite;
 
-		page( paths.confirmCancelDomain( slug, id ) );
+		page( confirmCancelDomain( slug, id ) );
 	};
 
 	cancelPurchase = () => {
 		const { purchase, translate } = this.props;
 
-		this.toggleDisabled();
+		this.setDisabled( true );
 
 		cancelPurchase( purchase.id, success => {
 			const purchaseName = getName( purchase ),
@@ -219,7 +225,7 @@ class CancelPurchaseButton extends Component {
 					{ persistent: true }
 				);
 
-				page( paths.purchasesRoot() );
+				page( purchasesRoot );
 			} else {
 				notices.error(
 					translate(
@@ -243,10 +249,8 @@ class CancelPurchaseButton extends Component {
 		} );
 	};
 
-	toggleDisabled = () => {
-		this.setState( {
-			disabled: ! this.state.disabled,
-		} );
+	setDisabled = disabled => {
+		this.setState( { disabled } );
 	};
 
 	handleSubmit = ( error, response ) => {
@@ -266,13 +270,13 @@ class CancelPurchaseButton extends Component {
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
-		page.redirect( paths.purchasesRoot() );
+		page.redirect( purchasesRoot );
 	};
 
 	submitCancelAndRefundPurchase = () => {
 		const { purchase, selectedSite } = this.props;
 		const refundable = isRefundable( purchase );
-
+		const cancelBundledDomain = this.props.cancelBundledDomain;
 		this.setState( {
 			submitting: true,
 		} );
@@ -299,19 +303,33 @@ class CancelPurchaseButton extends Component {
 		}
 
 		if ( refundable ) {
-			cancelAndRefundPurchase( purchase.id, { product_id: purchase.productId }, this.handleSubmit );
+			cancelAndRefundPurchase(
+				purchase.id,
+				{ product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 },
+				this.handleSubmit
+			);
 		} else {
 			this.cancelPurchase();
 		}
 	};
 
 	renderCancellationEffect = () => {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, includedDomainPurchase, cancelBundledDomain } = this.props;
+		const overrides = {};
+
+		if (
+			cancelBundledDomain &&
+			includedDomainPurchase &&
+			isDomainRegistration( includedDomainPurchase )
+		) {
+			overrides.refundText =
+				purchase.currencySymbol + ( purchase.refundAmount + includedDomainPurchase.amount );
+		}
 
 		return (
 			<p>
 				{ cancellationEffectHeadline( purchase, translate ) }
-				{ cancellationEffectDetail( purchase, translate ) }
+				{ cancellationEffectDetail( purchase, translate, overrides ) }
 			</p>
 		);
 	};
@@ -329,7 +347,7 @@ class CancelPurchaseButton extends Component {
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription and Refund' );
+				text = translate( 'Cancel Subscription' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
@@ -352,7 +370,7 @@ class CancelPurchaseButton extends Component {
 			<div>
 				<Button
 					className="cancel-purchase__button"
-					disabled={ this.state.disabled }
+					disabled={ this.state.disabled || this.props.disabled }
 					onClick={ onClick }
 					primary
 				>
@@ -368,6 +386,7 @@ export default connect(
 	state => ( {
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
+		precancellationChatAvailable: isPrecancellationChatAvailable( state ),
 	} ),
 	{
 		clearPurchases,

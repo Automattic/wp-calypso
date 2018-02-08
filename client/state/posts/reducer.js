@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import {
 	get,
 	set,
@@ -53,12 +52,6 @@ import {
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-
-/**
- * Module constants
- */
-const debug = debugFactory( 'calypso:posts:reducer' );
-const mc = global.document && global.document.documentElement && require( 'lib/analytics' ).mc;
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -165,11 +158,6 @@ export function queryRequests( state = {}, action ) {
 export const queries = ( () => {
 	function applyToManager( state, siteId, method, createDefault, ...args ) {
 		if ( ! siteId ) {
-			debug(
-				'state.posts.queries#applyToManager called without siteId',
-				{ siteId, method, args }
-			);
-			mc && mc.bumpStat( 'calypso_missing_site_id', 'state.posts.queries' );
 			return state;
 		}
 
@@ -199,7 +187,8 @@ export const queries = ( () => {
 		{},
 		{
 			[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
-				if ( ! siteId ) { // Handle site-specific queries only
+				if ( ! siteId ) {
+					// Handle site-specific queries only
 					return state;
 				}
 				const normalizedPosts = posts.map( normalizePostForState );
@@ -323,94 +312,91 @@ export const queries = ( () => {
  */
 export const allSitesQueries = ( () => {
 	function findItemKey( state, siteId, postId ) {
-		return findKey( state.data.items, post => {
-			return post.site_ID === siteId && post.ID === postId;
-		} ) || null;
+		return (
+			findKey( state.data.items, post => {
+				return post.site_ID === siteId && post.ID === postId;
+			} ) || null
+		);
 	}
 
-	return createReducer(
-		new PostQueryManager( {}, { itemKey: 'global_ID' } ),
-		{
-			[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
-				if ( siteId ) { // Handle all-sites queries only.
-					return state;
-				}
-				return state.receive(
-					posts.map( normalizePostForState ),
-					{ query, found }
-				);
-			},
-			[ POSTS_RECEIVE ]: ( state, { posts } ) => {
-				return state.receive( posts );
-			},
-			[ POST_RESTORE ]: ( state, { siteId, postId } ) => {
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: '__RESTORE_PENDING',
-					},
-					{ patch: true }
-				);
-			},
-			[ POST_RESTORE_FAILURE ]: ( state, { siteId, postId } ) => {
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: 'trash',
-					},
-					{ patch: true }
-				);
-			},
-			[ POST_SAVE ]: ( state, { siteId, postId, post } ) => {
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						...post,
-					},
-					{ patch: true }
-				);
-			},
-			[ POST_DELETE ]: ( state, { siteId, postId } ) => {
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: '__DELETE_PENDING',
-					},
-					{ patch: true }
-				);
-			},
-			[ POST_DELETE_FAILURE ]: ( state, { siteId, postId } ) => {
-				const globalId = findItemKey( state, siteId, postId );
-				return state.receive(
-					{
-						global_ID: globalId,
-						status: 'trash',
-					},
-					{ patch: true }
-				);
-			},
-			[ POST_DELETE_SUCCESS ]: ( state, { siteId, postId } ) => {
-				const globalId = findItemKey( state, siteId, postId );
-				return state.removeItem( globalId );
-			},
-			[ SERIALIZE ]: state => {
-				return {
-					data: state.data,
-					options: state.options,
-				};
-			},
-			[ DESERIALIZE ]: state => {
-				if ( ! isValidStateWithSchema( state, allSitesQueriesSchema ) ) {
-					return new PostQueryManager( {}, { itemKey: 'global_ID' } );
-				}
-				return new PostQueryManager( state.data, state.options );
-			},
-		}
-	);
+	return createReducer( new PostQueryManager( {}, { itemKey: 'global_ID' } ), {
+		[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
+			if ( siteId ) {
+				// Handle all-sites queries only.
+				return state;
+			}
+			return state.receive( posts.map( normalizePostForState ), { query, found } );
+		},
+		[ POSTS_RECEIVE ]: ( state, { posts } ) => {
+			return state.receive( posts );
+		},
+		[ POST_RESTORE ]: ( state, { siteId, postId } ) => {
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive(
+				{
+					global_ID: globalId,
+					status: '__RESTORE_PENDING',
+				},
+				{ patch: true }
+			);
+		},
+		[ POST_RESTORE_FAILURE ]: ( state, { siteId, postId } ) => {
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive(
+				{
+					global_ID: globalId,
+					status: 'trash',
+				},
+				{ patch: true }
+			);
+		},
+		[ POST_SAVE ]: ( state, { siteId, postId, post } ) => {
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive(
+				{
+					global_ID: globalId,
+					...post,
+				},
+				{ patch: true }
+			);
+		},
+		[ POST_DELETE ]: ( state, { siteId, postId } ) => {
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive(
+				{
+					global_ID: globalId,
+					status: '__DELETE_PENDING',
+				},
+				{ patch: true }
+			);
+		},
+		[ POST_DELETE_FAILURE ]: ( state, { siteId, postId } ) => {
+			const globalId = findItemKey( state, siteId, postId );
+			return state.receive(
+				{
+					global_ID: globalId,
+					status: 'trash',
+				},
+				{ patch: true }
+			);
+		},
+		[ POST_DELETE_SUCCESS ]: ( state, { siteId, postId } ) => {
+			const globalId = findItemKey( state, siteId, postId );
+			return state.removeItem( globalId );
+		},
+		[ SERIALIZE ]: state => {
+			return {
+				data: state.data,
+				options: state.options,
+			};
+		},
+		[ DESERIALIZE ]: state => {
+			if ( ! isValidStateWithSchema( state, allSitesQueriesSchema ) ) {
+				return new PostQueryManager( {}, { itemKey: 'global_ID' } );
+			}
+			return new PostQueryManager( state.data, state.options );
+		},
+	} );
 } )();
 
 /**

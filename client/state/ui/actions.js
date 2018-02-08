@@ -5,6 +5,7 @@
  */
 
 import {
+	MASTERBAR_TOGGLE_VISIBILITY,
 	SELECTED_SITE_SET,
 	ROUTE_SET,
 	SECTION_SET,
@@ -89,3 +90,17 @@ export const toggleNotificationsPanel = () => {
  * @return {Object}      Action object
  */
 export const navigate = path => ( { type: NAVIGATE, path } );
+
+/**
+ * Hide the masterbar.
+ *
+ * @return {Object} Action object
+ */
+export const hideMasterbar = () => ( { type: MASTERBAR_TOGGLE_VISIBILITY, isVisible: false } );
+
+/**
+ * Show the masterbar.
+ *
+ * @return {Object} Action object
+ */
+export const showMasterbar = () => ( { type: MASTERBAR_TOGGLE_VISIBILITY, isVisible: true } );

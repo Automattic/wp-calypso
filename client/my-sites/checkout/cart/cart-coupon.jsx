@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import upgradesActions from 'lib/upgrades/actions';
+import { applyCoupon } from 'lib/upgrades/actions';
 
 class CartCoupon extends React.Component {
 	static displayName = 'CartCoupon';
@@ -59,7 +59,7 @@ class CartCoupon extends React.Component {
 			userChangedCoupon: false,
 			hasSubmittedCoupon: true,
 		} );
-		upgradesActions.applyCoupon( this.state.couponInputValue );
+		applyCoupon( this.state.couponInputValue );
 	};
 
 	handleCouponInput = event => {

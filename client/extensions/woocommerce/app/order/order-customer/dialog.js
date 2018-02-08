@@ -183,7 +183,7 @@ class CustomerAddressDialog extends Component {
 			return null;
 		}
 		return (
-			<div>
+			<div className="order-customer__billing-fields">
 				<FormFieldset>
 					<FormPhoneMediaInput
 						label={ translate( 'Phone Number' ) }

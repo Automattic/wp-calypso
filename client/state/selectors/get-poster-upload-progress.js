@@ -1,6 +1,6 @@
 /**
  * Returns the poster upload progress.
- * 
+ *
  *
  * @format
  * @param {Object}  state  Global state tree

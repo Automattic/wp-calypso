@@ -1,5 +1,4 @@
 /** @format */
-
 /**
  * Handle log in and sign up as part of the Jetpack Connect flow
  *
@@ -24,7 +23,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import addQueryArgs from 'lib/route/add-query-args';
+import { addQueryArgs } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
@@ -60,11 +59,19 @@ export class JetpackSignup extends Component {
 	};
 
 	componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view' );
+		const { from, clientId } = this.props.authQuery;
+		this.props.recordTracksEvent( 'calypso_jpc_authorize_form_view', {
+			from,
+			site: clientId,
+		} );
 	}
 
 	componentDidMount() {
-		this.props.recordTracksEvent( 'calypso_jpc_signup_view' );
+		const { from, clientId } = this.props.authQuery;
+		this.props.recordTracksEvent( 'calypso_jpc_signup_view', {
+			from,
+			site: clientId,
+		} );
 	}
 
 	handleSubmitSignup = ( form, userData ) => {

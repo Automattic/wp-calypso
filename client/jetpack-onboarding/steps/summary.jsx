@@ -4,9 +4,8 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'gridicons';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,55 +14,20 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import CompletedSteps from './summary-completed-steps';
+import NextSteps from './summary-next-steps';
+import { getUnconnectedSiteUrl } from 'state/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
-	renderCompleted = () => {
-		const { translate } = this.props;
-		const stepsCompleted = [
-			translate( 'Site Title & Description' ),
-			translate( 'Type of Site' ),
-			translate( 'Type of Homepage' ),
-			translate( 'Contact Us Form' ),
-			translate( 'Jetpack Connection' ),
-		];
-
-		return map( stepsCompleted, ( fieldLabel, fieldIndex ) => (
-			<div key={ fieldIndex } className="steps__summary-entry completed">
-				<Gridicon icon="checkmark" size={ 18 } />
-				{ fieldLabel }
-			</div>
-		) );
-	};
-
-	renderTodo = () => {
-		const { translate } = this.props;
-		const stepsTodo = [
-			translate( 'Choose a Theme' ),
-			translate( 'Add a Site Address' ),
-			translate( 'Add a Store' ),
-			translate( 'Start a Blog' ),
-		];
-
-		// TODO: adapt when we have more info + it will differ for different steps
-		const siteRedirectHref = '#';
-
-		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (
-			<div key={ fieldIndex } className="steps__summary-entry todo">
-				<a href={ siteRedirectHref }>{ fieldLabel }</a>
-			</div>
-		) );
-	};
-
 	render() {
-		const { translate } = this.props;
-		const headerText = translate( 'Congratulations! Your site is on its way.' );
-		const subHeaderText = translate(
-			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
-		);
+		const { siteId, siteSlug, siteUrl, steps, translate } = this.props;
 
-		// TODO: adapt when we have more info
-		const buttonRedirectHref = '#';
+		const headerText = translate( "You're ready to go!" );
+		const subHeaderText = translate(
+			"You've enabled Jetpack and unlocked powerful website tools that are ready for you to use. " +
+				"Let's continue getting your site set up:"
+		);
 
 		return (
 			<div className="steps__main">
@@ -77,15 +41,15 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 				<div className="steps__summary-columns">
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
-						{ this.renderCompleted() }
+						<CompletedSteps siteId={ siteId } siteSlug={ siteSlug } steps={ steps } />
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						{ this.renderTodo() }
+						<NextSteps siteId={ siteId } siteSlug={ siteSlug } siteUrl={ siteUrl } />
 					</div>
 				</div>
 				<div className="steps__button-group">
-					<Button href={ buttonRedirectHref } primary>
+					<Button href={ siteUrl } primary>
 						{ translate( 'Visit your site' ) }
 					</Button>
 				</div>
@@ -94,4 +58,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default localize( JetpackOnboardingSummaryStep );
+export default connect( ( state, { siteId } ) => ( {
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+} ) )( localize( JetpackOnboardingSummaryStep ) );

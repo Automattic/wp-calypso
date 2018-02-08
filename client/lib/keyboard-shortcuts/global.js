@@ -1,16 +1,14 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import route from 'lib/route';
+import { getStatsDefaultSitePage } from 'lib/route';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 let singleton;
@@ -32,6 +30,7 @@ function GlobalShortcuts() {
 }
 
 GlobalShortcuts.prototype.bindShortcuts = function() {
+	KeyboardShortcuts.on( 'open-help', this.openHelp.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-reader', this.goToReader.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-my-likes', this.goToMyLikes.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-stats', this.goToStats.bind( this ) );
@@ -45,6 +44,12 @@ GlobalShortcuts.prototype.bindShortcuts = function() {
 
 GlobalShortcuts.prototype.setSelectedSite = function( site ) {
 	this.selectedSite = site;
+};
+
+GlobalShortcuts.prototype.openHelp = function() {
+	if ( this.showInlineHelp ) {
+		this.showInlineHelp();
+	}
 };
 
 GlobalShortcuts.prototype.goToReader = function() {
@@ -61,7 +66,7 @@ GlobalShortcuts.prototype.goToStats = function() {
 	if ( site && site.capabilities && ! site.capabilities.view_stats ) {
 		return null;
 	} else if ( site && site.slug ) {
-		page( route.getStatsDefaultSitePage( site.slug ) );
+		page( getStatsDefaultSitePage( site.slug ) );
 	} else {
 		page( '/stats' );
 	}

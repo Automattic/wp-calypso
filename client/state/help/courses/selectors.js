@@ -1,6 +1,6 @@
 /**
  * Returns an array of course objects.
- * 
+ *
  *
  * @format
  * @param {Object} state  Global state tree

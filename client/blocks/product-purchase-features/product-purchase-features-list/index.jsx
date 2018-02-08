@@ -39,6 +39,7 @@ import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
 import JetpackBackupSecurity from './jetpack-backup-security';
+import JetpackSearch from './jetpack-search';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import { isEnabled } from 'config';
@@ -77,23 +78,28 @@ class ProductPurchaseFeaturesList extends Component {
 				hasDomainCredit={ planHasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
-			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
-			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
 			<BusinessOnboarding
 				key="businessOnboarding"
 				onClick={ this.props.recordBusinessOnboardingClick }
-				link="https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/"
+				link={ `/me/concierge/${ selectedSite.slug }/book` }
 			/>,
-			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" />,
-			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
-			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
 			isEnabled( 'manage/plugins/upload' ) ? (
 				<UploadPlugins selectedSite={ selectedSite } key="uploadPluginsFeature" />
 			) : null,
 			isWordadsInstantActivationEligible( selectedSite ) ? (
 				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
 			) : null,
+			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
+			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
+			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
+			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
+			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
+			<VideoAudioPosts
+				selectedSite={ selectedSite }
+				key="videoAudioPostsFeature"
+				plan={ PLAN_BUSINESS }
+			/>,
+			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
 		];
 	}
 
@@ -109,7 +115,11 @@ class ProductPurchaseFeaturesList extends Component {
 			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
 			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
 			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" />,
+			<VideoAudioPosts
+				selectedSite={ selectedSite }
+				key="videoAudioPostsFeature"
+				plan={ PLAN_PREMIUM }
+			/>,
 			isWordadsInstantActivationEligible( selectedSite ) ? (
 				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
 			) : null,
@@ -143,11 +153,11 @@ class ProductPurchaseFeaturesList extends Component {
 
 		return [
 			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
 			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
 			<JetpackAntiSpam key="jetpackAntiSpam" />,
 			<JetpackPublicize key="jetpackPublicize" />,
 			<JetpackVideo key="jetpackVideo" />,
-			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
 			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
 		];
 	}
@@ -156,9 +166,9 @@ class ProductPurchaseFeaturesList extends Component {
 		const { selectedSite } = this.props;
 
 		return [
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
 			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
 			<JetpackAntiSpam key="jetpackAntiSpam" />,
-			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
 			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
 		];
 	}
@@ -172,14 +182,15 @@ class ProductPurchaseFeaturesList extends Component {
 				onClick={ this.props.recordBusinessOnboardingClick }
 				link="https://calendly.com/jetpack/concierge"
 			/>,
-			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
-			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
 			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
-			<JetpackAntiSpam key="jetpackAntiSpam" />,
-			<JetpackPublicize key="jetpackPublicize" />,
-			<JetpackVideo key="jetpackVideo" />,
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
+			<JetpackVideo key="jetpackVideo" />,
+			<JetpackPublicize key="jetpackPublicize" />,
+			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackAntiSpam key="jetpackAntiSpam" />,
 			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
 		];
 	}

@@ -88,14 +88,14 @@
 
 	&:after {
 		background: $gray-light;
-		border: 1px solid lighten( $gray, 20% );
+		border: 1px solid $gray-lighten-20;
 		border-radius: 3px;
 		display: inline-block;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		font: normal 18px/1 Noticons;
 		content: '\f445';
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 		position: absolute;
 			top: 0;
 			left: 0;
@@ -108,7 +108,7 @@
 	}
 
 	&:hover:after {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 	}
 
 	&.gear-open {

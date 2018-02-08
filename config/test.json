@@ -19,10 +19,6 @@
 	"google_adwords_conversion_id": 1067250390,
 	"google_adwords_conversion_id_jetpack": 937115306,
 	"hotjar_enabled": true,
-	"olark": {
-		"business_account_id": "3146-815-10-9343",
-		"business_group_id": false
-	},
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
@@ -41,6 +37,7 @@
 		"devdocs/components-usage-stats": false,
 		"help": true,
 		"jetpack/happychat": true,
+		"jetpack/onboarding": true,
 		"jetpack_core_inline_update": true,
 		"jitms": true,
 		"login/wp-login": true,
@@ -76,7 +73,6 @@
 		"me/trophies": false,
 		"network-connection": true,
 		"notifications2beta": true,
-		"olark": true,
 		"onboarding-checklist": false,
 		"perfmon": false,
 		"persist-redux": true,
@@ -105,7 +101,7 @@
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
 		"upgrades/in-app-purchase": false,
-		"upgrades/paypal": true,
+		"upgrades/redirect-payments": true,
 		"upgrades/premium-themes": true,
 		"wpcom-user-bootstrap": false,
 		"woocommerce/extension-wcservices": true

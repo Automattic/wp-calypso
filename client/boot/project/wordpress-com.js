@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { startsWith } from 'lodash';
 import React from 'react';
 import ReactDom from 'react-dom';
@@ -17,12 +15,12 @@ import debugFactory from 'debug';
 import config from 'config';
 import { getSavedVariations } from 'lib/abtest'; // used by error logger
 import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
+import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
 import analytics from 'lib/analytics';
 import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
-import route from 'lib/route';
-import normalize from 'lib/route/normalize';
+import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
 import translatorJumpstart from 'lib/translator-jumpstart';
@@ -34,11 +32,15 @@ import { pruneStaleRecords } from 'lib/wp/sync-handler';
 import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import Logger from 'lib/catch-js-errors';
+import setupMySitesRoute from 'my-sites';
+import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
+import * as controller from 'controller';
 
 const debug = debugFactory( 'calypso' );
 
 function renderLayout( reduxStore ) {
-	const Layout = require( 'controller' ).ReduxWrappedLayout;
+	const Layout = controller.ReduxWrappedLayout;
 
 	const layoutElement = React.createElement( Layout, {
 		store: reduxStore,
@@ -91,7 +93,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
-			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
 			//Save errorLogger to a singleton for use in arbitrary logging.
 			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
@@ -113,7 +114,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			);
 			page( '*', function( context, next ) {
 				errorLogger.saveNewPath(
-					context.canonicalPath.replace( route.getSiteFragment( context.canonicalPath ), ':siteId' )
+					context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
 				);
 				next();
 			} );
@@ -209,23 +210,22 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		} );
 	}
 
-	require( 'my-sites' )();
-
-	if ( currentUser.get() && config.isEnabled( 'olark' ) ) {
-		asyncRequire( 'lib/olark', olark => olark.initialize( reduxStore.dispatch ) );
-	}
+	setupMySitesRoute();
 
 	const state = reduxStore.getState();
+	if ( config.isEnabled( 'happychat' ) ) {
+		reduxStore.dispatch( requestHappychatEligibility() );
+	}
 	if ( wasHappychatRecentlyActive( state ) ) {
 		reduxStore.dispatch( initHappychatConnection( getHappychatAuth( state )() ) );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
-		require( 'lib/keyboard-shortcuts/global' )();
+		setupGlobalKeyboardShortcuts();
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).init();
+		require( 'lib/desktop' ).default.init();
 	}
 
 	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {

@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { assign, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
+import { assign, includes, keyBy, map, omit, omitBy, reduce, trim } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -45,12 +45,13 @@ function handleDeserialize( state ) {
 }
 
 function handleRequestFailure( state, action ) {
-	// 410 means site moved. site used to be wpcom but is no longer
-	if ( action.error && action.error.statusCode !== 410 ) {
+	// 410 means site moved - site used to be on wpcom but is no longer
+	const handledStatusCodes = [ 403, 410 ];
+
+	if ( action.error && ! includes( handledStatusCodes, action.error.statusCode ) ) {
 		return state;
 	}
 
-	// new object proceeds current state to prevent new errors from overwriting existing values
 	return assign( {}, state, {
 		[ action.payload.ID ]: {
 			ID: action.payload.ID,
@@ -62,7 +63,7 @@ function handleRequestFailure( state, action ) {
 
 function adaptSite( attributes ) {
 	// this also ends up cloning attributes, which is important since we mutate it
-	attributes = omit( attributes, [ 'meta' ] );
+	attributes = omit( attributes, [ 'meta', 'subscription' ] );
 
 	if ( attributes.URL ) {
 		attributes.domain = withoutHttp( attributes.URL );

@@ -41,6 +41,12 @@
 			margin-right: 4px;
 		}
 	}
+
+	html[dir="rtl"] & {
+		.gridicons-arrow-left {
+			transform: scaleX( -1 );
+		}
+	}
 }
 
 .header-cake__title {

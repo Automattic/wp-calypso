@@ -83,6 +83,22 @@ function restartInboundTransfer( siteId, domainName, onComplete ) {
 	} );
 }
 
+function startInboundTransfer( siteId, domainName, onComplete ) {
+	if ( ! domainName || ! siteId ) {
+		onComplete( null );
+		return;
+	}
+
+	wpcom.undocumented().startInboundTransfer( siteId, domainName, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function resendInboundTransferEmail( domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( null );
@@ -233,6 +249,10 @@ function getTld( domainName ) {
 	return tld;
 }
 
+function getTopLevelOfTld( domainName ) {
+	return domainName.substring( domainName.lastIndexOf( '.' ) + 1 );
+}
+
 function getDomainProductSlug( domain ) {
 	const tld = getTld( domain );
 	const tldSlug = replace( tld, /\./g, 'dot' );
@@ -252,11 +272,12 @@ export {
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
-	getPrimaryDomain,
-	getSelectedDomain,
-	getRegisteredDomains,
 	getMappedDomains,
+	getPrimaryDomain,
+	getRegisteredDomains,
+	getSelectedDomain,
 	getTld,
+	getTopLevelOfTld,
 	hasGoogleApps,
 	hasGoogleAppsSupportedDomain,
 	hasMappedDomain,
@@ -265,6 +286,7 @@ export {
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,
-	restartInboundTransfer,
 	resendInboundTransferEmail,
+	restartInboundTransfer,
+	startInboundTransfer,
 };

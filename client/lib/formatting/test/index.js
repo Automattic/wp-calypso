@@ -12,16 +12,13 @@ import chai from 'chai';
  * Internal dependencies
  */
 import decodeEntitiesNode from '../decode-entities/node';
+import { capitalPDangit, parseHtml, preventWidows } from '../index';
 
 describe( 'formatting', () => {
-	let formatting, capitalPDangit, parseHtml, decodeEntitiesBrowser, preventWidows;
+	let decodeEntitiesBrowser;
 
 	beforeAll( () => {
-		formatting = require( '../' );
-		capitalPDangit = formatting.capitalPDangit;
-		parseHtml = formatting.parseHtml;
 		decodeEntitiesBrowser = require( '../decode-entities/browser' );
-		preventWidows = formatting.preventWidows;
 	} );
 
 	describe( '#capitalPDangtest()', function() {

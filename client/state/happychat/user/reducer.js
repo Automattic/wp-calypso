@@ -3,9 +3,17 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_IO_RECEIVE_INIT } from 'state/action-types';
+import {
+	HAPPYCHAT_IO_RECEIVE_INIT,
+	HAPPYCHAT_ELIGIBILITY_SET,
+	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
+} from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
-import { geoLocationSchema } from './schema';
+import {
+	geoLocationSchema,
+	isEligibleSchema,
+	isPresalesPrecancellationEligible as isPresalesPrecancellationEligibleSchema,
+} from './schema';
 
 /**
  * Tracks the current user geo location.
@@ -29,4 +37,20 @@ export const geoLocation = createReducer(
 	geoLocationSchema
 );
 
-export default combineReducers( { geoLocation } );
+export const isEligible = createReducer(
+	null,
+	{
+		[ HAPPYCHAT_ELIGIBILITY_SET ]: ( state, action ) => action.isEligible,
+	},
+	isEligibleSchema
+);
+
+export const isPresalesPrecancellationEligible = createReducer(
+	null,
+	{
+		[ PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET ]: ( state, action ) => action.availability,
+	},
+	isPresalesPrecancellationEligibleSchema
+);
+
+export default combineReducers( { geoLocation, isEligible, isPresalesPrecancellationEligible } );

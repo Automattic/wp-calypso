@@ -47,7 +47,7 @@
 }
 
 .plugin-list-header__section-actions-close {
-	color: darken( $gray, 30% );
+	color: $gray-darken-30;
 	cursor: pointer;
 	display: flex;
 		align-items: center;

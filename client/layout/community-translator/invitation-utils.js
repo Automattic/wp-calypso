@@ -45,8 +45,10 @@ const debug = Debug( 'calypso:community-translator-invitation' ),
 		'sv',
 	];
 let invitationPending = store.get( 'calypsoTranslatorInvitationIsPending' );
+invitationPending = false;
 
 function maybeInvite() {
+	return false;
 	const preferences = preferencesStore.getAll(),
 		locale = user.get().localeSlug;
 

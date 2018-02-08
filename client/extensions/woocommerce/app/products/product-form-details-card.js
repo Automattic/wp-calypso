@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import config from 'config';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { trim, debounce, isNumber } from 'lodash';
+import { trim, isNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,8 @@ export default class ProductFormDetailsCard extends Component {
 			name: PropTypes.string,
 		} ),
 		editProduct: PropTypes.func.isRequired,
+		onUploadStart: PropTypes.func,
+		onUploadFinish: PropTypes.func,
 	};
 
 	constructor( props ) {
@@ -43,7 +45,6 @@ export default class ProductFormDetailsCard extends Component {
 
 		this.setName = this.setName.bind( this );
 		this.setDescription = this.setDescription.bind( this );
-		this.debouncedSetDescription = debounce( this.setDescription, 200 );
 	}
 
 	// TODO: Consider consolidating the following set functions
@@ -106,7 +107,7 @@ export default class ProductFormDetailsCard extends Component {
 		return (
 			<CompactTinyMCE
 				initialValue={ product.description || '' }
-				onContentsChange={ this.debouncedSetDescription }
+				onContentsChange={ this.setDescription }
 			/>
 		);
 	};
@@ -130,6 +131,8 @@ export default class ProductFormDetailsCard extends Component {
 						images={ images }
 						onUpload={ this.onImageUpload }
 						onRemove={ this.onImageRemove }
+						onUploadStart={ this.props.onUploadStart }
+						onUploadFinish={ this.props.onUploadFinish }
 					/>
 					<div className="products__product-form-details-basic">
 						<FormFieldSet className="products__product-form-details-basic-name">

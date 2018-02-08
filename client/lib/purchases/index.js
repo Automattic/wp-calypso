@@ -78,17 +78,6 @@ function hasIncludedDomain( purchase ) {
 	return Boolean( purchase.includedDomain );
 }
 
-function hasPaymentMethod( purchase ) {
-	return (
-		isPaidWithPaypal( purchase ) ||
-		isPaidWithCreditCard( purchase ) ||
-		isPaidWithPayPalDirect( purchase ) ||
-		isPaidWithIdeal( purchase ) ||
-		isPaidWithGiropay( purchase ) ||
-		isPaidWithBancontact( purchase )
-	);
-}
-
 function hasPrivacyProtection( purchase ) {
 	return purchase.hasPrivacyProtection;
 }
@@ -145,24 +134,27 @@ function isPaidWithPaypal( purchase ) {
 	return 'paypal' === purchase.payment.type;
 }
 
-function isPaidWithIdeal( purchase ) {
-	return 'iDEAL' === purchase.payment.type;
-}
-
-function isPaidWithGiropay( purchase ) {
-	return 'Giropay' === purchase.payment.type;
-}
-
-function isPaidWithBancontact( purchase ) {
-	return 'Bancontact' === purchase.payment.type;
-}
-
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
 }
 
 function isRedeemable( purchase ) {
 	return purchase.isRedeemable;
+}
+
+/**
+ * Checks if a purchase credit card number can be updated
+ * Payments done via CC & Paygate can have their CC updated, but this
+ * is not currently true for other providers such as EBANX.
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {boolean} if the purchase card can be updated
+ */
+function cardProcessorSupportsUpdates( purchase ) {
+	return (
+		isPaidWithCreditCard( purchase ) &&
+		purchase.payment.creditCard.processor !== 'WPCOM_Billing_Ebanx'
+	);
 }
 
 /**
@@ -272,32 +264,22 @@ function monthsUntilCardExpires( purchase ) {
 	return purchase.payment.creditCard.expiryMoment.diff( moment(), 'months' );
 }
 
+/**
+ * Returns the payment logo to display based on the payment method
+ *
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @return {string|null} the payment logo type, or null if no payment type is set.
+ */
 function paymentLogoType( purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		return purchase.payment.creditCard.type;
-	}
-
-	if ( isPaidWithPaypal( purchase ) ) {
-		return 'paypal';
-	}
-
-	if ( isPaidWithIdeal( purchase ) ) {
-		return 'ideal';
-	}
-
-	if ( isPaidWithGiropay( purchase ) ) {
-		return 'giropay';
-	}
-
-	if ( isPaidWithBancontact( purchase ) ) {
-		return 'bancontact';
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {
 		return 'placeholder';
 	}
 
-	return null;
+	return purchase.payment.type || null;
 }
 
 function purchaseType( purchase ) {
@@ -337,7 +319,6 @@ export {
 	getPurchasesBySite,
 	getSubscriptionEndDate,
 	hasIncludedDomain,
-	hasPaymentMethod,
 	hasPrivacyProtection,
 	isCancelable,
 	isPaidWithCreditCard,
@@ -356,5 +337,6 @@ export {
 	isSubscription,
 	paymentLogoType,
 	purchaseType,
+	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
 };

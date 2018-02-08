@@ -17,12 +17,12 @@ import CompactCard from 'components/card/compact';
 import Notice from 'components/notice';
 import Button from 'components/button';
 import PendingGappsTosNotice from 'my-sites/domains/components/domain-warnings/pending-gapps-tos-notice';
-import paths from 'my-sites/domains/paths';
+import { domainManagementAddGoogleApps } from 'my-sites/domains/paths';
 import analyticsMixin from 'lib/mixins/analytics';
 import SectionHeader from 'components/section-header';
 import GoogleAppsUserItem from './google-apps-user-item';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const GoogleAppsUsers = createReactClass( {
 	displayName: 'GoogleAppsUsers',
@@ -75,7 +75,7 @@ const GoogleAppsUsers = createReactClass( {
 						<Button
 							primary
 							compact
-							href={ paths.domainManagementAddGoogleApps( this.props.selectedSite.slug, domain ) }
+							href={ domainManagementAddGoogleApps( this.props.selectedSite.slug, domain ) }
 							onClick={ this.goToAddGoogleApps }
 						>
 							{ this.props.translate( 'Add G Suite User' ) }
@@ -96,7 +96,7 @@ const GoogleAppsUsers = createReactClass( {
 			let status = 'is-warning',
 				text = user.error,
 				supportLink = (
-					<a href={ support.CALYPSO_CONTACT }>
+					<a href={ CALYPSO_CONTACT }>
 						<strong>{ this.props.translate( 'Please contact support' ) }</strong>
 					</a>
 				);

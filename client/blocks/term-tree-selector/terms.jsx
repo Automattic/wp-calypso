@@ -59,6 +59,7 @@ class TermTreeSelectorList extends Component {
 		onChange: PropTypes.func,
 		isError: PropTypes.bool,
 		height: PropTypes.number,
+		width: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -402,7 +403,7 @@ class TermTreeSelectorList extends Component {
 		const showSearch =
 			( searchLength > 0 || ! isSmall ) &&
 			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
-		const { className, isError, loading, siteId, taxonomy, query, height } = this.props;
+		const { className, isError, loading, siteId, taxonomy, query, height, width } = this.props;
 		const classes = classNames( 'term-tree-selector', className, {
 			'is-loading': loading,
 			'is-small': isSmall,
@@ -423,7 +424,7 @@ class TermTreeSelectorList extends Component {
 				{ showSearch && <Search searchTerm={ this.state.searchTerm } onSearch={ this.onSearch } /> }
 				<List
 					ref={ this.setListRef }
-					width={ this.getResultsWidth() }
+					width={ width || this.getResultsWidth() }
 					height={ isSmall ? this.getCompactContainerHeight() : height }
 					onRowsRendered={ this.setRequestedPages }
 					rowCount={ rowCount }

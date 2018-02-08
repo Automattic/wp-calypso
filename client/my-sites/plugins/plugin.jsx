@@ -18,7 +18,7 @@ import HeaderCake from 'components/header-cake';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import { getPlugin, isFetched, isFetching } from 'state/plugins/wporg/selectors';
 import PluginsActions from 'lib/plugins/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';
@@ -175,7 +175,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	isFetched() {
-		return WporgPluginsSelectors.isFetched( this.props.wporgPlugins, this.props.pluginSlug );
+		return isFetched( this.props.wporgPlugins, this.props.pluginSlug );
 	},
 
 	isFetchingSites() {
@@ -185,10 +185,7 @@ const SinglePlugin = createReactClass( {
 	getPlugin() {
 		let plugin = Object.assign( {}, this.state.plugin );
 		// assign it .org details
-		plugin = Object.assign(
-			plugin,
-			WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, this.props.pluginSlug )
-		);
+		plugin = Object.assign( plugin, getPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
 
 		return plugin;
 	},
@@ -342,11 +339,7 @@ const SinglePlugin = createReactClass( {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
-		if (
-			selectedSite &&
-			this.props.isJetpackSite( selectedSite.ID ) &&
-			! this.props.canJetpackSiteManage( selectedSite.ID )
-		) {
+		if ( selectedSite && this.props.isJetpackSite && ! this.props.canJetpackSiteManage ) {
 			return (
 				<MainComponent>
 					{ this.renderDocumentHead() }
@@ -366,7 +359,7 @@ const SinglePlugin = createReactClass( {
 			selectedSite &&
 			PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
 
-		const isWpcom = selectedSite && ! this.props.isJetpackSite( selectedSite.ID );
+		const isWpcom = selectedSite && ! this.props.isJetpackSite;
 
 		return (
 			<MainComponent>
@@ -407,13 +400,10 @@ export default connect(
 
 		return {
 			wporgPlugins: state.plugins.wporg.items,
-			wporgFetching: WporgPluginsSelectors.isFetching(
-				state.plugins.wporg.fetchingItems,
-				props.pluginSlug
-			),
+			wporgFetching: isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
 			selectedSite: getSelectedSite( state ),
-			isJetpackSite: siteId => isJetpackSite( state, siteId ),
-			canJetpackSiteManage: siteId => canJetpackSiteManage( state, siteId ),
+			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
+			canJetpackSiteManage: selectedSiteId && canJetpackSiteManage( state, selectedSiteId ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			userCanManagePlugins: selectedSiteId

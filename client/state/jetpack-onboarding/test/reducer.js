@@ -10,11 +10,18 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer, { credentialsReducer, settingsReducer } from '../reducer';
 import {
+	DESERIALIZE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_UPDATE,
+	SERIALIZE,
 } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
+	useSandbox( sandbox => {
+		sandbox.stub( console, 'warn' );
+	} );
+
 	test( 'should export expected reducer keys', () => {
 		const state = reducer( undefined, {} );
 
@@ -86,6 +93,37 @@ describe( 'reducer', () => {
 				[ siteId ]: newCredentials,
 			} );
 		} );
+
+		test( 'should persist state', () => {
+			const original = deepFreeze( {
+				[ 12345678 ]: siteCredentials,
+			} );
+			const state = credentialsReducer( original, { type: SERIALIZE } );
+
+			expect( state ).toEqual( original );
+		} );
+
+		test( 'should load valid persisted state', () => {
+			const original = deepFreeze( {
+				[ 12345678 ]: siteCredentials,
+			} );
+
+			const state = credentialsReducer( original, { type: DESERIALIZE } );
+
+			expect( state ).toEqual( original );
+		} );
+
+		test( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				[ 12345678 ]: {
+					...siteCredentials,
+					token: {},
+				},
+			} );
+			const state = credentialsReducer( original, { type: DESERIALIZE } );
+
+			expect( state ).toEqual( {} );
+		} );
 	} );
 
 	describe( 'settings', () => {
@@ -103,7 +141,7 @@ describe( 'reducer', () => {
 			const siteId = 12345678;
 			const initialState = deepFreeze( {} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings,
 			} );
@@ -119,7 +157,7 @@ describe( 'reducer', () => {
 				[ 12345678 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings,
 			} );
@@ -141,7 +179,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
 			} );
@@ -163,7 +201,7 @@ describe( 'reducer', () => {
 				[ 87654321 ]: settings,
 			} );
 			const state = settingsReducer( initialState, {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 				siteId,
 				settings: newSettings,
 			} );
@@ -172,6 +210,37 @@ describe( 'reducer', () => {
 				...initialState,
 				[ siteId ]: newSettings,
 			} );
+		} );
+
+		test( 'should persist state', () => {
+			const original = deepFreeze( {
+				[ 12345678 ]: settings,
+			} );
+			const state = settingsReducer( original, { type: SERIALIZE } );
+
+			expect( state ).toEqual( original );
+		} );
+
+		test( 'should load valid persisted state', () => {
+			const original = deepFreeze( {
+				[ 12345678 ]: settings,
+			} );
+
+			const state = settingsReducer( original, { type: DESERIALIZE } );
+
+			expect( state ).toEqual( original );
+		} );
+
+		test( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				[ 12345678 ]: {
+					...settings,
+					siteTitle: {},
+				},
+			} );
+			const state = settingsReducer( original, { type: DESERIALIZE } );
+
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

@@ -13,11 +13,12 @@ import { first, get, groupBy, includes, isEmpty, isNull, last, range, sortBy } f
 /**
  * Internal dependencies
  */
-import ActivityLogBanner from '../activity-log-banner';
-import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
-import ActivityLogCredentialsNotice from '../activity-log-credentials-notice';
+import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
+import ActivityLogSwitch from '../activity-log-switch';
+import ActivityLogUpgradeNotice from '../activity-log-upgrade-notice';
+import Banner from 'components/banner';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
@@ -25,9 +26,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
-import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
 import QueryRewindState from 'components/data/query-rewind-state';
-import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -42,9 +41,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import {
 	activityLogRequest,
 	rewindRequestDismiss,
-	rewindRequestRestore,
 	rewindRestore,
-	rewindRequestBackup,
 	rewindBackupDismiss,
 	rewindBackup,
 } from 'state/activity-log/actions';
@@ -52,17 +49,14 @@ import {
 	canCurrentUser,
 	getActivityLog,
 	getActivityLogs,
+	getBackupProgress,
 	getRequest,
+	getRequestedBackup,
 	getRequestedRewind,
 	getRestoreProgress,
-	getRewindStatusError,
+	getRewindState,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
-	getRewindStartDate,
-	isRewindActive as isRewindActiveSelector,
-	getRequestedBackup,
-	getBackupProgress,
-	getRewindState,
 } from 'state/selectors';
 
 const flushEmptyDays = days => [
@@ -167,7 +161,7 @@ const daysInMonth = ( moment, startMoment, today ) => {
 };
 
 const logsByDay = ( moment, logs, startMoment, applyOffset ) => {
-	const dayGroups = groupBy( sortBy( logs, [ 'activityDate' ] ).reverse(), log =>
+	const dayGroups = groupBy( sortBy( logs, [ 'activityDate', 'activityTs' ] ).reverse(), log =>
 		applyOffset( moment.utc( log.activityTs ) )
 			.endOf( 'day' )
 			.valueOf()
@@ -219,20 +213,11 @@ class ActivityLog extends Component {
 		} ),
 		requestedRestoreId: PropTypes.string,
 		rewindRequestDismiss: PropTypes.func.isRequired,
-		rewindRequestRestore: PropTypes.func.isRequired,
 		rewindRestore: PropTypes.func.isRequired,
-		rewindStatusError: PropTypes.shape( {
-			error: PropTypes.string.isRequired,
-			message: PropTypes.string.isRequired,
-		} ),
-		requestBackup: PropTypes.func.isRequired,
 		createBackup: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteTitle: PropTypes.string,
 		slug: PropTypes.string,
-
-		// FIXME: Testing only
-		isPressable: PropTypes.bool,
 
 		// localize
 		moment: PropTypes.func.isRequired,
@@ -258,26 +243,6 @@ class ActivityLog extends Component {
 	};
 
 	/**
-	 * The link to download a backup in ellipsis menu in ActivityLogDay > ActivityLogItem,
-	 * or the rewind buttons and links use this method display a certain dialog.
-	 *
-	 * @param {string} activityId Id of the activity up to the one we're downloading.
-	 * @param {string} from       Context for tracking.
-	 * @param {string} type       Type of dialog to show.
-	 */
-	handleRequestDialog = ( activityId, from, type ) => {
-		const { siteId } = this.props;
-		switch ( type ) {
-			case 'restore':
-				this.props.rewindRequestRestore( siteId, activityId, from );
-				break;
-			case 'backup':
-				this.props.requestBackup( siteId, activityId, from );
-				break;
-		}
-	};
-
-	/**
 	 * Close Restore, Backup, or Transfer confirmation dialog.
 	 * @param {string} type Type of dialog to close.
 	 */
@@ -292,24 +257,6 @@ class ActivityLog extends Component {
 				break;
 		}
 	};
-
-	confirmDownload = () => {
-		const { requestedBackup: { rewindId }, siteId } = this.props;
-
-		this.props.createBackup( siteId, rewindId );
-		scrollTo( { x: 0, y: 0, duration: 250 } );
-	};
-
-	confirmRestore = () => {
-		const { requestedRestore: { rewindId }, siteId } = this.props;
-
-		this.props.rewindRestore( siteId, rewindId );
-		scrollTo( { x: 0, y: 0, duration: 250 } );
-	};
-
-	dismissBackup = () => this.props.dismissBackup( this.props.siteId );
-
-	dismissRestore = () => this.props.rewindRequestDismiss( this.props.siteId );
 
 	/**
 	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
@@ -446,23 +393,19 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
-		const { isRewindActive } = this.props;
+		const { rewindState, translate } = this.props;
 
-		if ( ! isRewindActive ) {
+		if ( ! rewindState.rewind || rewindState.rewind.status !== 'failed' ) {
 			return null;
 		}
 
-		const { rewindStatusError, translate } = this.props;
-
-		if ( isRewindActive && rewindStatusError ) {
-			return (
-				<ActivityLogBanner status="error" icon={ null }>
-					{ translate( 'Rewind error: %s', { args: rewindStatusError.message } ) }
-					<br />
-					{ translate( 'Do you have an appropriate plan?' ) }
-				</ActivityLogBanner>
-			);
-		}
+		return (
+			<ActivityLogBanner status="error" icon={ null }>
+				{ translate( 'Something happened and we were unable to restore your site.' ) }
+				<br />
+				{ translate( 'Please try again or contact support.' ) }
+			</ActivityLogBanner>
+		);
 	}
 
 	renderMonthNavigation( position ) {
@@ -491,24 +434,144 @@ class ActivityLog extends Component {
 		);
 	}
 
-	render() {
+	getActivityLog() {
 		const {
-			canViewActivityLog,
-			hasFirstBackup,
-			isRewindActive,
 			logRequestQuery,
 			logs,
 			moment,
 			requestData,
-			requestedRestore,
-			requestedRestoreId,
-			requestedBackup,
-			requestedBackupId,
 			rewindState,
 			siteId,
 			slug,
 			translate,
 		} = this.props;
+
+		const disableRestore =
+			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
+			'active' !== rewindState.state;
+		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
+
+		const today = moment()
+			.utc()
+			.startOf( 'day' );
+
+		// Content shown when there are no logs.
+		// The network request either finished with no events or is still ongoing.
+		const noLogsContent = requestData.logs.hasLoaded ? (
+			<EmptyContent
+				title={ translate( 'No activity for %s', {
+					args: this.getStartMoment().format( 'MMMM YYYY' ),
+				} ) }
+			/>
+		) : (
+			<section className="activity-log__wrapper">
+				<ActivityLogDayPlaceholder />
+				<ActivityLogDayPlaceholder />
+				<ActivityLogDayPlaceholder />
+			</section>
+		);
+
+		return (
+			<div>
+				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
+				{ siteId &&
+					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
+				<QuerySiteSettings siteId={ siteId } />
+				<StatsFirstView />
+				<SidebarNavigation />
+				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
+				{ 'awaitingCredentials' === rewindState.state && (
+					<Banner
+						icon="history"
+						href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }` }
+						title={ translate( 'Add site credentials' ) }
+						description={ translate(
+							'Backups and security scans require access to your site to work properly.'
+						) }
+					/>
+				) }
+				{ 'provisioning' === rewindState.state && (
+					<Banner
+						icon="history"
+						disableHref
+						title={ translate( 'Your backup is underway' ) }
+						description={ translate(
+							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+								"After this initial backup, we'll save future changes in real time."
+						) }
+					/>
+				) }
+				{ this.renderErrorMessage() }
+				{ this.renderMonthNavigation() }
+				{ this.renderActionProgress() }
+				{ isEmpty( logs ) ? (
+					noLogsContent
+				) : (
+					<section className="activity-log__wrapper">
+						{ intoVisualGroups( moment, logs, this.getStartMoment(), this.applySiteOffset ).map(
+							( [ type, [ start, end ], events ] ) => {
+								const isToday = today.isSame(
+									end
+										.clone()
+										.utc()
+										.startOf( 'day' )
+								);
+
+								switch ( type ) {
+									case 'empty-day':
+										return (
+											<div key={ start.format() } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
+													{ start.format( 'LL' ) }
+													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+												</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
+											</div>
+										);
+
+									case 'empty-range':
+										return (
+											<div key={ start.format( 'LL' ) } className="activity-log__empty-day">
+												<div className="activity-log__empty-day-title">
+													{ `${ start.format( 'LL' ) } - ${ end.format( 'LL' ) }` }
+													{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
+												</div>
+												<div className="activity-log__empty-day-events">
+													{ translate( 'No activity' ) }
+												</div>
+											</div>
+										);
+
+									case 'non-empty-day':
+										return (
+											<ActivityLogDay
+												key={ start.format() }
+												applySiteOffset={ this.applySiteOffset }
+												disableRestore={ disableRestore }
+												disableBackup={ disableBackup }
+												isRewindActive={ 'active' === rewindState.state }
+												logs={ events }
+												closeDialog={ this.handleCloseDialog }
+												siteId={ siteId }
+												tsEndOfSiteDay={ start.valueOf() }
+												isToday={ isToday }
+											/>
+										);
+								}
+							}
+						) }
+					</section>
+				) }
+				{ this.renderMonthNavigation( 'bottom' ) }
+			</div>
+		);
+	}
+
+	render() {
+		const { canViewActivityLog, translate } = this.props;
 
 		if ( false === canViewActivityLog ) {
 			return (
@@ -522,175 +585,22 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const disableRestore =
-			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
-			'active' !== rewindState.state;
-		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
+		const { siteId, context, rewindState } = this.props;
 
-		const restoreConfirmDialog = requestedRestore && (
-			<ActivityLogConfirmDialog
-				key="activity-rewind-dialog"
-				confirmTitle={ translate( 'Confirm Rewind' ) }
-				notice={
-					<span className="activity-log-confirm-dialog__notice-content">
-						{ translate(
-							'This will remove all content and options created or changed since then.'
-						) }
-					</span>
-				}
-				onClose={ this.dismissRestore }
-				onConfirm={ this.confirmRestore }
-				supportLink="https://jetpack.com/support/how-to-rewind"
-				title={ translate( 'Rewind Site' ) }
-			>
-				{ translate(
-					'This is the selected point for your site Rewind. ' +
-						'Are you sure you want to rewind your site back to {{time/}}?',
-					{
-						components: {
-							time: (
-								<b>
-									{ this.applySiteOffset( moment.utc( requestedRestore.activityTs ) ).format(
-										'LLL'
-									) }
-								</b>
-							),
-						},
-					}
-				) }
-			</ActivityLogConfirmDialog>
+		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
+		const rewindIsNotReady = includes(
+			[ 'unavailable', 'awaitingCredentials' ],
+			rewindState.state
 		);
-
-		const backupConfirmDialog = requestedBackup && (
-			<ActivityLogConfirmDialog
-				key="activity-backup-dialog"
-				confirmTitle={ translate( 'Create download' ) }
-				onClose={ this.dismissBackup }
-				onConfirm={ this.confirmDownload }
-				supportLink="https://jetpack.com/support/backups"
-				title={ translate( 'Create downloadable backup' ) }
-				type={ 'backup' }
-				icon={ 'cloud-download' }
-			>
-				{ translate(
-					'We will build a downloadable backup of your site at {{time/}}. ' +
-						'You will get a notification when the backup is ready to download.',
-					{
-						components: {
-							time: (
-								<b>
-									{ this.applySiteOffset( moment.utc( requestedBackup.activityTs ) ).format(
-										'LLL'
-									) }
-								</b>
-							),
-						},
-					}
-				) }
-			</ActivityLogConfirmDialog>
-		);
-
-		const today = moment()
-			.utc()
-			.startOf( 'day' );
 
 		return (
 			<Main wideLayout>
-				<QueryRewindStatus siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
-				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
-				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
-				<QuerySiteSettings siteId={ siteId } />
-				{ isRewindActive && <QueryJetpackCredentials siteId={ siteId } /> }
-				<StatsFirstView />
-				<SidebarNavigation />
-				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ 'awaitingCredentials' === rewindState.state && <ActivityLogCredentialsNotice /> }
-				{ this.renderErrorMessage() }
-				{ hasFirstBackup && this.renderMonthNavigation() }
-				{ this.renderActionProgress() }
-				{ ! requestData.logs.hasLoaded && (
-					<section className="activity-log__wrapper">
-						<ActivityLogDayPlaceholder />
-						<ActivityLogDayPlaceholder />
-						<ActivityLogDayPlaceholder />
-					</section>
+				{ siteId && '' !== rewindNoThanks && rewindIsNotReady ? (
+					<ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
+				) : (
+					this.getActivityLog()
 				) }
-				{ requestData.logs.hasLoaded &&
-					isEmpty( logs ) && (
-						<EmptyContent
-							title={ translate( 'No activity for %s', {
-								args: this.getStartMoment().format( 'MMMM YYYY' ),
-							} ) }
-						/>
-					) }
-				{ ! isEmpty( logs ) && (
-					<section className="activity-log__wrapper">
-						{ intoVisualGroups(
-							moment,
-							logs,
-							this.getStartMoment(),
-							this.applySiteOffset
-						).map( ( [ type, [ start, end ], events ] ) => {
-							const isToday = today.isSame(
-								end
-									.clone()
-									.utc()
-									.startOf( 'day' )
-							);
-
-							switch ( type ) {
-								case 'empty-day':
-									return (
-										<div key={ start.format() } className="activity-log__empty-day">
-											<div className="activity-log__empty-day-title">
-												{ start.format( 'LL' ) }
-												{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
-											</div>
-											<div className="activity-log__empty-day-events">
-												{ translate( 'No activity' ) }
-											</div>
-										</div>
-									);
-
-								case 'empty-range':
-									return (
-										<div key={ start.format( 'LL' ) } className="activity-log__empty-day">
-											<div className="activity-log__empty-day-title">
-												{ `${ start.format( 'LL' ) } - ${ end.format( 'LL' ) }` }
-												{ isToday && ` \u2014 ${ translate( 'Today' ) }` }
-											</div>
-											<div className="activity-log__empty-day-events">
-												{ translate( 'No activity' ) }
-											</div>
-										</div>
-									);
-
-								case 'non-empty-day':
-									return (
-										<ActivityLogDay
-											key={ start.format() }
-											applySiteOffset={ this.applySiteOffset }
-											requestedRestoreId={ requestedRestoreId }
-											requestedBackupId={ requestedBackupId }
-											restoreConfirmDialog={ restoreConfirmDialog }
-											backupConfirmDialog={ backupConfirmDialog }
-											disableRestore={ disableRestore }
-											disableBackup={ disableBackup }
-											isRewindActive={ isRewindActive }
-											logs={ events }
-											requestDialog={ this.handleRequestDialog }
-											closeDialog={ this.handleCloseDialog }
-											siteId={ siteId }
-											tsEndOfSiteDay={ start.valueOf() }
-											isToday={ isToday }
-										/>
-									);
-							}
-						} ) }
-					</section>
-				) }
-				{ hasFirstBackup && this.renderMonthNavigation( 'bottom' ) }
 				<JetpackColophon />
 			</Main>
 		);
@@ -709,8 +619,6 @@ export default connect(
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
-			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
-			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logRequestQuery,
 			logs: getActivityLogs(
 				state,
@@ -725,14 +633,10 @@ export default connect(
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
 			rewindState: getRewindState( state, siteId ),
-			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
-
-			// FIXME: Testing only
-			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
 		};
 	},
 	{
@@ -756,20 +660,10 @@ export default connect(
 				recordTracksEvent( 'calypso_activitylog_restore_cancel' ),
 				rewindRequestDismiss( siteId )
 			),
-		rewindRequestRestore: ( siteId, activityId, from ) =>
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_request', { from } ),
-				rewindRequestRestore( siteId, activityId )
-			),
 		rewindRestore: ( siteId, actionId ) =>
 			withAnalytics(
 				recordTracksEvent( 'calypso_activitylog_restore_confirm', { actionId } ),
 				rewindRestore( siteId, actionId )
-			),
-		requestBackup: ( siteId, activityId, from ) =>
-			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_request', { from } ),
-				rewindRequestBackup( siteId, activityId )
 			),
 	}
 )( localize( ActivityLog ) );

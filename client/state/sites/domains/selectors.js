@@ -6,6 +6,15 @@
 import { moment } from 'i18n-calypso';
 
 /**
+ * Internal dependencies
+ */
+import treeSelect from 'lib/tree-select';
+
+// static empty array to ensure that empty return values from selectors are
+// identical to each other ( rv1 === rv2 )
+const EMPTY_SITE_DOMAINS = Object.freeze( [] );
+
+/**
  * Return site domains getting from state object and
  * the given siteId
  *
@@ -15,11 +24,10 @@ import { moment } from 'i18n-calypso';
  */
 export const getDomainsBySiteId = ( state, siteId ) => {
 	if ( ! siteId ) {
-		return [];
+		return EMPTY_SITE_DOMAINS;
 	}
 
-	const { items } = state.sites.domains;
-	return items[ siteId ] || [];
+	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
 };
 
 /**
@@ -32,8 +40,9 @@ export const getDomainsBySiteId = ( state, siteId ) => {
  */
 export const getDomainsBySite = ( state, site ) => {
 	if ( ! site ) {
-		return [];
+		return EMPTY_SITE_DOMAINS;
 	}
+
 	return getDomainsBySiteId( state, site.ID );
 };
 
@@ -45,8 +54,7 @@ export const getDomainsBySite = ( state, site ) => {
  * @return {Boolean} is site-domains requesting?
  */
 export const isRequestingSiteDomains = ( state, siteId ) => {
-	const { requesting } = state.sites.domains;
-	return requesting[ siteId ] || false;
+	return state.sites.domains.requesting[ siteId ] || false;
 };
 
 /**
@@ -56,22 +64,18 @@ export const isRequestingSiteDomains = ( state, siteId ) => {
  * @param  {Number}  siteId the site id
  * @return {?Object}        decorated site domains
  */
-export function getDecoratedSiteDomains( state, siteId ) {
-	const domains = getDomainsBySiteId( state, siteId );
+export const getDecoratedSiteDomains = treeSelect(
+	( state, siteId ) => [ getDomainsBySiteId( state, siteId ) ],
+	( [ domains ] ) => {
+		if ( ! domains ) {
+			return null;
+		}
 
-	if ( ! domains ) {
-		return null;
-	}
-
-	return domains.map( domain => {
-		return {
+		return domains.map( domain => ( {
 			...domain,
-
 			autoRenewalMoment: domain.autoRenewalDate ? moment( domain.autoRenewalDate ) : null,
-
 			registrationMoment: domain.registrationDate ? moment( domain.registrationDate ) : null,
-
 			expirationMoment: domain.expiry ? moment( domain.expiry ) : null,
-		};
-	} );
-}
+		} ) );
+	}
+);

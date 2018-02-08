@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:desktop' );
@@ -12,7 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import paths from 'lib/paths';
+import { newPost } from 'lib/paths';
 import userFactory from 'lib/user';
 const user = userFactory();
 import { ipcRenderer as ipc } from 'electron'; // From Electron
@@ -20,7 +18,7 @@ import store from 'store';
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import location from 'lib/route/page-notifier';
-import { getStatsPathForTab } from 'lib/route/path';
+import { getStatsPathForTab } from 'lib/route';
 
 /**
  * Module variables
@@ -157,7 +155,7 @@ var Desktop = {
 		debug( 'New post' );
 
 		this.clearNotificationBar();
-		page( paths.newPost( this.selectedSite ) );
+		page( newPost( this.selectedSite ) );
 	},
 
 	// now that our browser session has a valid wordpress.com cookie, let's force

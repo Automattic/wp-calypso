@@ -43,12 +43,20 @@ const checkAndConvertNumber = value => {
 };
 
 const preProcessPackageData = ( data, boxNames ) => {
+	const boxWeight = checkAndConvertNumber( data.box_weight );
+	let maxWeight = checkAndConvertNumber( data.max_weight );
+
+	// Ensure that max weight exceeds the weight of the empty package.
+	if ( boxWeight && maxWeight && maxWeight <= boxWeight ) {
+		maxWeight = null;
+	}
+
 	const result = {
 		name: checkDuplicateName( data.name, boxNames ),
 		inner_dimensions: data.inner_dimensions,
 		outer_dimensions: checkNullOrWhitespace( data.outer_dimensions ),
-		box_weight: checkAndConvertNumber( data.box_weight ),
-		max_weight: checkAndConvertNumber( data.max_weight ),
+		box_weight: boxWeight,
+		max_weight: maxWeight,
 	};
 
 	return omitBy( result, value => null === value );

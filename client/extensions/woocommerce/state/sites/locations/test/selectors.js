@@ -12,8 +12,10 @@ import {
 	areLocationsLoaded,
 	areLocationsLoading,
 	getContinents,
-	getCountries,
+	getAllCountries,
+	getCountriesByContinent,
 	getCountryName,
+	getCountriesWithStates,
 	getStates,
 	hasStates,
 } from '../selectors';
@@ -177,21 +179,68 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getCountries', () => {
+	describe( '#getAllCountries', () => {
 		test( 'should return an empty list if the locations are not loaded', () => {
-			expect( getCountries( emptyState, 'NA' ) ).to.deep.equal( [] );
+			expect( getAllCountries( emptyState ) ).to.deep.equal( [] );
+		} );
+		test( 'should return an empty list if the locations are being loaded', () => {
+			expect( getAllCountries( loadingState ) ).to.deep.equal( [] );
+		} );
+		test( 'should return all countries, sorted by name', () => {
+			expect( getAllCountries( loadedState ) ).to.deep.equal( [
+				{
+					code: 'CA',
+					name: 'Canada',
+					states: [
+						{
+							code: 'BC',
+							name: 'British Columbia',
+						},
+						{
+							code: 'ON',
+							name: 'Ontario',
+						},
+					],
+				},
+				{ code: 'EG', name: 'Egypt', states: [] },
+				{ code: 'SA', name: 'South Africa', states: [] },
+				{
+					code: 'US',
+					name: 'United States',
+					states: [
+						{
+							code: 'UT',
+							name: 'Utah',
+						},
+						{
+							code: 'AL',
+							name: 'Alabama',
+						},
+						{
+							code: 'CA',
+							name: 'California',
+						},
+					],
+				},
+			] );
+		} );
+	} );
+
+	describe( '#getCountriesByContinent', () => {
+		test( 'should return an empty list if the locations are not loaded', () => {
+			expect( getCountriesByContinent( emptyState, 'NA' ) ).to.deep.equal( [] );
 		} );
 
 		test( 'should return an empty list if the locations are being loaded', () => {
-			expect( getCountries( loadingState, 'NA' ) ).to.deep.equal( [] );
+			expect( getCountriesByContinent( loadingState, 'NA' ) ).to.deep.equal( [] );
 		} );
 
 		test( 'should return an empty list if the continent does not exist', () => {
-			expect( getCountries( loadedState, 'XX' ) ).to.deep.equal( [] );
+			expect( getCountriesByContinent( loadedState, 'XX' ) ).to.deep.equal( [] );
 		} );
 
 		test( 'should return the countries from a continent, sorted by name', () => {
-			expect( getCountries( loadedState, 'NA' ) ).to.deep.equal( [
+			expect( getCountriesByContinent( loadedState, 'NA' ) ).to.deep.equal( [
 				{ code: 'CA', name: 'Canada' },
 				{ code: 'US', name: 'United States' },
 			] );
@@ -257,6 +306,20 @@ describe( 'selectors', () => {
 
 		test( 'should return true if the country has states', () => {
 			expect( hasStates( loadedState, 'US' ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#getCountriesWithStates', () => {
+		test( 'should return an empty list if the locations are not loaded', () => {
+			expect( getCountriesWithStates( emptyState ) ).to.deep.equal( [] );
+		} );
+
+		test( 'should return an empty list if the locations are being loaded', () => {
+			expect( getCountriesWithStates( loadingState ) ).to.deep.equal( [] );
+		} );
+
+		test( 'should return the countries with states, sorted', () => {
+			expect( getCountriesWithStates( loadedState ) ).to.deep.equal( [ 'CA', 'US' ] );
 		} );
 	} );
 } );

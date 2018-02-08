@@ -17,10 +17,10 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-function renderTrashButton( onTrash, category, translate ) {
+function renderDeleteButton( onDelete, category, translate ) {
 	return (
-		onTrash && (
-			<Button borderless scary onClick={ onTrash ? onTrash : undefined }>
+		onDelete && (
+			<Button borderless scary onClick={ onDelete ? onDelete : undefined }>
 				<Gridicon icon="trash" />
 				<span>{ translate( 'Delete' ) } </span>
 			</Button>
@@ -28,7 +28,7 @@ function renderTrashButton( onTrash, category, translate ) {
 	);
 }
 
-function renderSaveButton( onSave, category, translate ) {
+function renderSaveButton( onSave, isBusy, category, translate ) {
 	const saveExists = 'undefined' !== typeof onSave;
 	const saveDisabled = false === onSave;
 
@@ -37,18 +37,23 @@ function renderSaveButton( onSave, category, translate ) {
 
 	return (
 		saveExists && (
-			<Button primary onClick={ onSave ? onSave : undefined } disabled={ saveDisabled }>
+			<Button
+				primary
+				onClick={ onSave ? onSave : undefined }
+				disabled={ saveDisabled }
+				busy={ isBusy }
+			>
 				{ saveLabel }
 			</Button>
 		)
 	);
 }
 
-const ProductCategoryHeader = ( { onTrash, onSave, translate, site, category } ) => {
+const ProductCategoryHeader = ( { onDelete, onSave, translate, site, category, isBusy } ) => {
 	const existing = category && ! isObject( category.id );
 
-	const trashButton = renderTrashButton( onTrash, category, translate );
-	const saveButton = renderSaveButton( onSave, category, translate );
+	const deleteButton = renderDeleteButton( onDelete, category, translate );
+	const saveButton = renderSaveButton( onSave, isBusy, category, translate );
 
 	const currentCrumb =
 		category && existing ? (
@@ -68,7 +73,7 @@ const ProductCategoryHeader = ( { onTrash, onSave, translate, site, category } )
 
 	return (
 		<ActionHeader breadcrumbs={ breadcrumbs }>
-			{ trashButton }
+			{ deleteButton }
 			{ saveButton }
 		</ActionHeader>
 	);
@@ -81,7 +86,7 @@ ProductCategoryHeader.propTypes = {
 	category: PropTypes.shape( {
 		id: PropTypes.oneOfType( [ PropTypes.number, PropTypes.object ] ),
 	} ),
-	onTrash: PropTypes.func,
+	onDelete: PropTypes.func,
 	onSave: PropTypes.oneOfType( [ PropTypes.func, PropTypes.bool ] ),
 };
 

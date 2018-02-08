@@ -38,10 +38,39 @@ exports[`LanguagePickerModal should render 1`] = `
         Popular languages
       </NavItem>
       <NavItem
+        key="africa-middle-east"
         onClick={[Function]}
         selected={false}
       >
-        All languages
+        Africa and Middle East
+      </NavItem>
+      <NavItem
+        key="americas"
+        onClick={[Function]}
+        selected={false}
+      >
+        Americas
+      </NavItem>
+      <NavItem
+        key="asia-pacific"
+        onClick={[Function]}
+        selected={false}
+      >
+        Asia-Pacific
+      </NavItem>
+      <NavItem
+        key="eastern-europe"
+        onClick={[Function]}
+        selected={false}
+      >
+        Eastern Europe
+      </NavItem>
+      <NavItem
+        key="western-europe"
+        onClick={[Function]}
+        selected={false}
+      >
+        Western Europe
       </NavItem>
     </NavTabs>
     <Search
@@ -73,6 +102,7 @@ exports[`LanguagePickerModal should render 1`] = `
       className="language-picker__modal-item"
       key="en"
       onClick={[Function]}
+      title="En"
     >
       <span
         className="language-picker__modal-text is-selected"
@@ -84,6 +114,7 @@ exports[`LanguagePickerModal should render 1`] = `
       className="language-picker__modal-item"
       key="it"
       onClick={[Function]}
+      title="Italienisch"
     >
       <span
         className="language-picker__modal-text"
@@ -113,6 +144,7 @@ exports[`LanguagePickerModal should render 1`] = `
             className="language-picker__modal-item"
             key="en"
             onClick={[Function]}
+            title="En"
           >
             <span
               className="language-picker__modal-text is-selected"

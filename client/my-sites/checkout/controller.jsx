@@ -1,26 +1,28 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import i18n from 'i18n-calypso';
 import React from 'react';
 import { isEmpty } from 'lodash';
-import page, { Route } from 'page';
+import { Route } from 'page';
 
 /**
  * Internal Dependencies
  */
 import analytics from 'lib/analytics';
-import route from 'lib/route';
+import { sectionifyWithRoutes } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import productsFactory from 'lib/products-list';
-import upgradesActions from 'lib/upgrades/actions';
 import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GsuiteNudge from 'my-sites/checkout/gsuite-nudge';
+import Checkout from './checkout';
+import CheckoutData from 'components/data/checkout';
+import CartData from 'components/data/cart';
+import SecondaryCart from './cart/secondary-cart';
+import CheckoutThankYouComponent from './checkout-thank-you';
 
 /**
  * Module variables
@@ -32,17 +34,14 @@ const checkoutRoutes = [
 	new Route( '/checkout/thank-you/:receipt' ),
 	new Route( '/checkout/:product' ),
 	new Route( '/checkout/:product/renew/:receipt' ),
+	new Route( '/checkout/:site/with-gsuite/:domain/:receipt' ),
 ];
 
 export default {
 	checkout: function( context, next ) {
-		const Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' ),
-			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
-			product = context.params.product,
-			selectedFeature = context.params.feature;
+		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
+		const product = context.params.product;
+		const selectedFeature = context.params.feature;
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
@@ -77,11 +76,6 @@ export default {
 	},
 
 	sitelessCheckout: function( context, next ) {
-		const Checkout = require( './checkout' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			CartData = require( 'components/data/cart' ),
-			SecondaryCart = require( './cart/secondary-cart' );
-
 		analytics.pageView.record( '/checkout/no-site', 'Checkout' );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -102,10 +96,9 @@ export default {
 	},
 
 	checkoutThankYou: function( context, next ) {
-		const CheckoutThankYouComponent = require( './checkout-thank-you' ),
-			{ routePath, routeParams } = route.sectionifyWithRoutes( context.path, checkoutRoutes ),
-			receiptId = Number( context.params.receiptId ),
-			gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
+		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
+		const receiptId = Number( context.params.receiptId );
+		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
 		analytics.pageView.record( routePath, 'Checkout Thank You', routeParams );
 
@@ -132,6 +125,7 @@ export default {
 	},
 
 	gsuiteNudge( context, next ) {
+		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
 
@@ -143,29 +137,17 @@ export default {
 			return null;
 		}
 
-		const handleAddGoogleApps = ( googleAppsCartItem, siteSlug ) => {
-			googleAppsCartItem.extra = {
-				...googleAppsCartItem.extra,
-				receipt_for_domain: receiptId,
-			};
-
-			upgradesActions.addItem( googleAppsCartItem );
-			page( `/checkout/${ siteSlug }` );
-		};
-
-		const handleClickSkip = siteSlug => {
-			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
-		};
+		analytics.pageView.record( routePath, 'G Suite Upsell', routeParams );
 
 		context.primary = (
-			<GsuiteNudge
-				domain={ domain }
-				productsList={ productsList }
-				receiptId={ Number( receiptId ) }
-				selectedSiteId={ selectedSite.ID }
-				onAddGoogleApps={ handleAddGoogleApps }
-				onClickSkip={ handleClickSkip }
-			/>
+			<CartData>
+				<GsuiteNudge
+					domain={ domain }
+					productsList={ productsList }
+					receiptId={ Number( receiptId ) }
+					selectedSiteId={ selectedSite.ID }
+				/>
+			</CartData>
 		);
 
 		next();

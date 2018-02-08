@@ -1,20 +1,17 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-
 import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
+import { emailForwardingPlanLimit, validateAllFields } from 'lib/domains/email-forwarding';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
@@ -25,9 +22,8 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import formState from 'lib/form-state';
 import analyticsMixin from 'lib/mixins/analytics';
 import notices from 'notices';
-import * as upgradesActions from 'lib/upgrades/actions';
-import { validateAllFields } from 'lib/domains/email-forwarding';
-import support from 'lib/url/support';
+import { addEmailForwarding } from 'lib/upgrades/actions';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const EmailForwardingAddNew = createReactClass( {
 	displayName: 'EmailForwardingAddNew',
@@ -86,52 +82,51 @@ const EmailForwardingAddNew = createReactClass( {
 
 			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
-			upgradesActions.addEmailForwarding(
-				this.props.selectedDomainName,
-				mailbox,
-				destination,
-				error => {
-					this.recordEvent(
-						'addNewEmailForwardClick',
-						this.props.selectedDomainName,
-						mailbox,
-						destination,
-						! Boolean( error )
-					);
+			addEmailForwarding( this.props.selectedDomainName, mailbox, destination, error => {
+				this.recordEvent(
+					'addNewEmailForwardClick',
+					this.props.selectedDomainName,
+					mailbox,
+					destination,
+					! Boolean( error )
+				);
 
-					if ( error ) {
-						notices.error(
-							error.message ||
-								this.props.translate(
-									'Failed to add email forwarding record. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-									{
-										components: {
-											contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
-										},
-									}
-								)
-						);
-					} else {
-						this.formStateController.resetFields( this.getInitialState().fields );
-
-						notices.success(
+				if ( error ) {
+					notices.error(
+						error.message ||
 							this.props.translate(
-								'%(email)s has been successfully added! You must confirm your email before it starts working. Please check your inbox for %(destination)s.',
+								'Failed to add email forwarding record. ' +
+									'Please try again or ' +
+									'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
 								{
-									args: {
-										email: mailbox + '@' + this.props.selectedDomainName,
-										destination: destination,
+									components: {
+										contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 									},
 								}
-							),
+							)
+					);
+				} else {
+					this.formStateController.resetFields( this.getInitialState().fields );
+
+					notices.success(
+						this.props.translate(
+							'%(email)s has been successfully added! ' +
+								'You must confirm your email before it starts working. ' +
+								'Please check your inbox for %(destination)s.',
 							{
-								duration: 5000,
+								args: {
+									email: mailbox + '@' + this.props.selectedDomainName,
+									destination: destination,
+								},
 							}
-						);
-					}
-					this.setState( { formSubmitting: false, showForm: ! error } );
+						),
+						{
+							duration: 5000,
+						}
+					);
 				}
-			);
+				this.setState( { formSubmitting: false, showForm: ! error } );
+			} );
 		} );
 	},
 

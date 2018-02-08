@@ -4,8 +4,10 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import page from 'page';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,38 +16,46 @@ import Button from 'components/button';
 import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
 import JetpackOnboardingDisclaimer from '../disclaimer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SiteTitle from 'components/site-title';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
-		description: '',
-		title: '',
+		blogname: get( this.props.settings, 'siteTitle' ),
+		blogdescription: get( this.props.settings, 'siteDescription' ),
 	};
 
-	setDescription = event => {
-		this.setState( { description: event.target.value } );
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
+			this.setState( {
+				blogname: nextProps.settings.siteTitle,
+				blogdescription: nextProps.settings.siteDescription,
+			} );
+		}
+	}
+
+	handleChange = ( { blogname, blogdescription } ) => {
+		this.setState( { blogname, blogdescription } );
 	};
 
-	setTitle = event => {
-		this.setState( { title: event.target.value } );
-	};
+	handleSubmit = event => {
+		event.preventDefault();
+		if ( this.props.isRequestingSettings ) {
+			return;
+		}
 
-	submit = () => {
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
-			siteTitle: this.state.title,
-			siteDescription: this.state.description,
+			siteTitle: this.state.blogname,
+			siteDescription: this.state.blogdescription,
 		} );
+		page( this.props.getForwardUrl() );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { isRequestingSettings, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -62,27 +72,21 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">
-					<form>
-						<FormFieldset>
-							<FormLabel htmlFor="title">{ translate( 'Site Title' ) }</FormLabel>
-							<FormTextInput
-								autoFocus
-								id="title"
-								onChange={ this.setTitle }
-								value={ this.state.title }
-							/>
-						</FormFieldset>
+					<form onSubmit={ this.handleSubmit }>
+						<SiteTitle
+							autoFocusBlogname
+							blogname={ this.state.blogname || '' }
+							blogdescription={ this.state.blogdescription || '' }
+							disabled={ isRequestingSettings }
+							isBlognameRequired
+							onChange={ this.handleChange }
+						/>
 
-						<FormFieldset>
-							<FormLabel htmlFor="description">{ translate( 'Site Description' ) }</FormLabel>
-							<FormTextarea
-								id="description"
-								onChange={ this.setDescription }
-								value={ this.state.description }
-							/>
-						</FormFieldset>
-
-						<Button href={ this.props.getForwardUrl() } onClick={ this.submit } primary>
+						<Button
+							disabled={ isRequestingSettings || ! this.state.blogname }
+							primary
+							type="submit"
+						>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>

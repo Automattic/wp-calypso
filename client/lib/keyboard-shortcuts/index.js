@@ -4,6 +4,8 @@
  * External dependencies
  */
 
+import { flatMap } from 'lodash';
+
 // only require keymaster if this is a browser environment
 const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' ),
 	defaultFilter = keymaster ? keymaster.filter : undefined;
@@ -12,18 +14,12 @@ const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaste
  * Internal dependencies
  */
 import Emitter from 'lib/mixins/emitter';
-import KeyBindings from 'lib/keyboard-shortcuts/key-bindings';
+import KEY_BINDINGS from './key-bindings';
 
-/**
- * Module variables
- */
-let flatKeyBindings = [];
-const keyBindings = KeyBindings.get();
-
-// flatten the key-bindings object to create an array of key-bindings
-Object.keys( keyBindings ).forEach( function( category ) {
-	flatKeyBindings = flatKeyBindings.concat( keyBindings[ category ] );
-} );
+// Flatten the key-bindings object to create an array of key-bindings. `_.flatMap` converts
+// object in shape `{ c1: [ k1, k2 ], c2: [ k3, k4 ] }` to `[ k1, k2, k3, k4 ]`, i.e., flat-maps
+// over the object property values.
+const flatKeyBindings = flatMap( KEY_BINDINGS );
 
 // filter for `keymaster` that also ignores `contenteditable` nodes
 function ignoreDefaultAndContentEditableFilter( event ) {
@@ -61,7 +57,7 @@ function KeyboardShortcuts( keyBindings ) {
 	if ( typeof window !== 'undefined' ) {
 		keymaster.filter = ignoreDefaultAndContentEditableFilter;
 
-		this.bindShortcuts( flatKeyBindings );
+		this.bindShortcuts( keyBindings );
 	}
 }
 

@@ -166,7 +166,7 @@
 .manage-purchase__meta,
 .manage-purchase__contact-support {
 	padding: 0 24px;
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 
 	@include breakpoint( "<660px" ) {
 		padding: 0 16px;
@@ -185,7 +185,7 @@
 	}
 
 	li {
-		color: darken( $gray, 30% );
+		color: $gray-darken-30;
 		font-size: 13px;
 
 		@include breakpoint( "<660px" ) {
@@ -211,12 +211,12 @@
 
 		+ li {
 			@include breakpoint( ">660px" ) {
-				border-left: 1px solid lighten( $gray, 30% );
+				border-left: 1px solid $gray-lighten-30;
 			}
 		}
 
 		> a {
-			color: darken( $gray, 30% );
+			color: $gray-darken-30;
 			display: block;
 			text-decoration: none;
 		}
@@ -286,7 +286,7 @@
 }
 
 .manage-purchase__contact-support {
-	border-top: solid 1px lighten( $gray, 30% );
+	border-top: solid 1px $gray-lighten-30;
 	color: $gray;
 	margin-top: 15px;
 	padding-top: 10px;

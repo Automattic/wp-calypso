@@ -65,6 +65,24 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		},
 	};
 
+	const deLangAtCountryState = {
+		geo: {
+			geo: {
+				country_short: 'AT',
+			},
+		},
+
+		users: {
+			items: {
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' },
+			},
+		},
+
+		currentUser: {
+			id: 73705554,
+		},
+	};
+
 	const nlCountryState = {
 		geo: {
 			geo: {
@@ -75,6 +93,24 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		users: {
 			items: {
 				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'nl' },
+			},
+		},
+
+		currentUser: {
+			id: 73705554,
+		},
+	};
+
+	const PlCountryState = {
+		geo: {
+			geo: {
+				country_short: 'PL',
+			},
+		},
+
+		users: {
+			items: {
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'pl' },
 			},
 		},
 
@@ -124,10 +160,26 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		] );
 	} );
 
+	test( 'de-AT should return CC, EPS, Paypal', () => {
+		expect( getCurrentUserPaymentMethods( deLangAtCountryState ) ).to.eql( [
+			'credit-card',
+			'eps',
+			'paypal',
+		] );
+	} );
+
 	test( 'nl-NL should return credit card, iDEAL, PayPal ', () => {
 		expect( getCurrentUserPaymentMethods( nlCountryState ) ).to.eql( [
 			'credit-card',
 			'ideal',
+			'paypal',
+		] );
+	} );
+
+	test( 'pl-PL should return credit card, p24, PayPal ', () => {
+		expect( getCurrentUserPaymentMethods( PlCountryState ) ).to.eql( [
+			'credit-card',
+			'p24',
 			'paypal',
 		] );
 	} );

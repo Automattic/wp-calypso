@@ -13,7 +13,7 @@ import emitter from 'lib/mixins/emitter';
  */
 import Dispatcher from 'dispatcher';
 import { decodeEntities } from 'lib/formatting';
-import utils from './utils';
+import * as utils from './utils';
 
 /**
  * Module variables

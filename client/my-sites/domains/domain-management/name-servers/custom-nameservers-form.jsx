@@ -19,7 +19,7 @@ import FormFooter from 'my-sites/domains/domain-management/components/form-foote
 import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'lib/domains/nameservers';
 import Notice from 'components/notice';
-import support from 'lib/url/support';
+import { CHANGE_NAME_SERVERS, CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
 const MIN_NAMESERVER_LENGTH = 2;
@@ -44,7 +44,7 @@ class CustomNameserversForm extends React.PureComponent {
 						'WordPress.com site to load & other features to be available.'
 				) }{' '}
 				<a
-					href={ support.CHANGE_NAME_SERVERS }
+					href={ CHANGE_NAME_SERVERS }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ this.handleLearnMoreClick }
@@ -66,7 +66,7 @@ class CustomNameserversForm extends React.PureComponent {
 			<div className="custom-nameservers-form__explanation">
 				{ translate( 'Not sure what name servers to use?' ) }{' '}
 				<a
-					href={ support.CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+					href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ this.handleLookUpClick }

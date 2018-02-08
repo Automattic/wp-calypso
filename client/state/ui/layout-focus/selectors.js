@@ -1,6 +1,6 @@
 /**
  * Returns the current layout focus area
- * 
+ *
  *
  * @format
  * @param {Object}  state Global state tree

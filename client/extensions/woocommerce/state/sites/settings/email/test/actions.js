@@ -253,7 +253,7 @@ describe( 'actions', () => {
 				expect( dispatch ).to.have.been.calledWith( {
 					type: WOOCOMMERCE_EMAIL_SETTINGS_SUBMIT_SUCCESS,
 					siteId,
-					settings: data,
+					update: data,
 				} );
 			} );
 		} );

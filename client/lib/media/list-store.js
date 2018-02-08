@@ -11,7 +11,7 @@ import { assign, isEqual, map, omit } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import MediaStore from './store';
-import MediaUtils from './utils';
+import { sortItemsByDate as utilSortItemsByDate } from './utils';
 import emitter from 'lib/mixins/emitter';
 
 /**
@@ -26,13 +26,11 @@ const MediaListStore = {
 	SAME_QUERY_IGNORE_PARAMS = Object.freeze( [ 'number', 'page_handle' ] );
 
 function sortItemsByDate( siteId ) {
-	var sortedItems;
-
 	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;
 	}
 
-	sortedItems = MediaUtils.sortItemsByDate( MediaListStore.getAll( siteId ) );
+	const sortedItems = utilSortItemsByDate( MediaListStore.getAll( siteId ) );
 	MediaListStore._media[ siteId ] = map( sortedItems, 'ID' );
 }
 
@@ -43,7 +41,7 @@ function ensureMediaForSiteId( siteId ) {
 }
 
 function receiveSingle( siteId, item, itemId ) {
-	var existingIndex;
+	let existingIndex;
 
 	ensureMediaForSiteId( siteId );
 
@@ -63,7 +61,7 @@ function receiveSingle( siteId, item, itemId ) {
 }
 
 function removeSingle( siteId, item ) {
-	var index;
+	let index;
 
 	if ( ! ( siteId in MediaListStore._media ) ) {
 		return;

@@ -29,7 +29,7 @@ Tests can be run in 3 different modes:
 
 Those tests are executed on every push on continuous integration (we use CircleCi). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
-_Check also how to write [unit components](unit-tests.md)._
+_Check also how to write [unit tests](unit-tests.md)._
 
 ### Client side tests
 
@@ -48,6 +48,9 @@ Tests can be run in 3 different modes:
 ```
 
 They are executed on every push on continuous integration (CircleCI). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
+
+Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
+
 
 _Check also how to write [unit tests](unit-tests.md) and [component tests](component-tests.md)._
 
@@ -84,16 +87,6 @@ We use [Jest](https://facebook.github.io/jest/) testing tool to execute all test
 Historically we have been using [Mocha](https://mochajs.org/) with [Chai assertions](http://chaijs.com/) and [Sinon mocks](http://sinonjs.org/). We still support Chai and Sinon for backward compatibility reasons, but Jest equivalents should be used whenever new tests are added.
 
 End-to-end tests are still using Mocha to run tests.
- 
-##### How to add a new test file?
-
-We should use the same file names as the implementation files for the tests.
-Example: if we want to write unit tests covering the file `hello-world/index.jsx`, we should name a test file `hello-world/test/index.jsx`.
-
-If we ever need to add non-test files to a `test` folder, we should put them in a deeper level. Common choices are:
-
-* `test/mocks/name.js` for test mocks
-* `test/fixtures/name.js` for test data
 
 ##### How to run all tests?
 
@@ -121,40 +114,18 @@ Example for client:
 The exclusivity feature allows you to run only the specified suite or test-case by appending `.only()` to the function.
 It works with `describe` and `it` functions. More details in [Jest documentation](https://facebook.github.io/jest/docs/api.html).
 
-Using `only` is a little bit dangerous, as you may end up committing the `only`, which would cause the test suite to only run your test on the build server. So be sure to look for stray only calls when reviewing a test. We have an `eslint` rule in the works that should catch them for you.
+Using `only` is a little bit dangerous, as you may end up committing the `only`, which would cause the test suite to only run your test on the build server. So be sure to look for stray only calls when reviewing a test. We have [eslint rules](https://github.com/jest-community/eslint-plugin-jest) that should catch them for you.
 
 Example:
 
 ```js
 describe.only( 'just run this suite', function() {
-	it( 'should run these tests', function() {
+	test( 'should run these tests', function() {
 		// your test
 	} );
 
-	it.only( 'should only run this one test', function() {
+	test.only( 'should only run this one test', function() {
 		// just run this test if the only is present
 	} );
 } );
 ```
-
-## Troubleshooting
-
-* Valid tests can fail if a component is wrapped in a higher order component, like `localize()` or `connect()`. This is because a shallow render only results in the higher component being rendered, not it's children. The best practice is to test the raw component directly, with external dependencies mocked, so that the results aren't influenced by anything outside the component being tested:
-
-	```js
-	// Bad
-	export default localize( class SomeComponent extends React.Component {
-		// ...
-	} );
-	```
-
-	```js
-	// Good
-	export class SomeComponent extends React.Component {
-		// ...
-	}
-
-	export default localize( SomeComponent );
-	```
-
-	See [#5221](https://github.com/Automattic/wp-calypso/pull/5221) and [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examples using `React.createClass()` and ES6 classes, respectively.

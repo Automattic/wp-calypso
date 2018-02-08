@@ -20,7 +20,7 @@ import {
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 	READER_EXPAND_COMMENTS,
-} from '../action-types';
+} from 'state/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 /**
@@ -159,6 +159,11 @@ export const deleteComment = (
 	commentId,
 	options,
 	refreshCommentListQuery,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 /***
@@ -249,6 +254,11 @@ export const changeCommentStatus = (
 	commentId,
 	status,
 	refreshCommentListQuery,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 /**

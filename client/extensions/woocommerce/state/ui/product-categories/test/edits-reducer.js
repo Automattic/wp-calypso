@@ -12,6 +12,7 @@ import { editProductCategory, clearProductCategoryEdits } from '../actions';
 import reducer from '../edits-reducer';
 import {
 	createProductCategory,
+	updateProductCategory,
 	productCategoryUpdated,
 } from 'woocommerce/state/sites/product-categories/actions';
 
@@ -227,6 +228,30 @@ describe( 'edits-reducer', () => {
 
 		expect( edits1.creates[ 0 ] ).to.eql( category1 );
 		expect( edits2.creates ).to.not.exist;
+	} );
+
+	test( 'should clear category from updates upon successful save', () => {
+		const category = {
+			id: 22,
+			name: 'Category 1',
+		};
+
+		const updatedCategory = {
+			id: 22,
+			name: 'Category 1',
+		};
+
+		const edits1 = {
+			updates: [ category ],
+		};
+
+		const originatingAction = updateProductCategory( siteId, category );
+		const action = productCategoryUpdated( siteId, updatedCategory, originatingAction );
+
+		const edits2 = reducer( edits1, action );
+
+		expect( edits1.updates[ 0 ] ).to.eql( category );
+		expect( edits2.updates ).to.not.exist;
 	} );
 
 	test( 'should clear all product category edit data', () => {

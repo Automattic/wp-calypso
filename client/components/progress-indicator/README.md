@@ -8,9 +8,9 @@ has completed or has failed.
 #### How to use:
 
 ```js
-var ProgressIndicator = require( 'components/progress-indicator' );
+import ProgressIndicator from 'components/progress-indicator';
 
-render: function() {
+render() {
     return (
 		<ProgressIndicator state='inactive' key='unique-key' />
     );

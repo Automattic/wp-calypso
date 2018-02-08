@@ -93,11 +93,11 @@
 	}
 
 	.mce-toolbar .mce-ico {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 	}
 
 	.mce-toolbar .mce-btn .gridicon {
-		fill: darken( $gray, 20% );
+		fill: $gray-darken-20;
 	}
 
 	.mce-colorbutton .mce-preview {
@@ -108,8 +108,8 @@
 		margin: 0 2px 0 0;
 		padding: 0 8px;
 		vertical-align: top;
-		border-left: 1px solid lighten( $gray, 30% );
-		border-right: 1px solid lighten( $gray, 30% );
+		border-left: 1px solid $gray-lighten-30;
+		border-right: 1px solid $gray-lighten-30;
 		height: 36px;
 
 		@include breakpoint( "<660px" ) {
@@ -145,7 +145,7 @@
 		top: -6px;
 		bottom: -6px;
 	width: 1px;
-	background-color: lighten( $gray, 20% );
+	background-color: $gray-lighten-20;
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-hidden {
@@ -193,6 +193,11 @@
 	opacity: 1 !important;
 }
 
+/* Don't show the tooltip. Used in Chrome RTL, see https://github.com/Automattic/wp-calypso/issues/19189 */
+.mce-tooltip.wp-hide-mce-tooltip {
+	display: none !important;
+}
+
 .mce-tooltip-inner {
 	box-shadow: none !important;
 	background: $gray-dark !important;
@@ -216,7 +221,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button button {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	height: 38px;
 	padding: 0 8px;
 	margin-top: 0px;
@@ -226,7 +231,7 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-wpcom-icon-button .gridicon {
-	fill: darken( $gray, 20% );
+	fill: $gray-darken-20;
 
 	&:hover {
 		fill: $gray-dark;
@@ -350,7 +355,7 @@
 .mce-container .mce-floatpanel.mce-popover {
 	z-index: auto !important;
 	background-color: $white;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	border-radius: 0 0 4px 4px;
 	box-shadow: none;
 	padding: 0;
@@ -387,7 +392,7 @@ div.mce-panel {
 }
 
 .mce-container .mce-panel.mce-menu {
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 }
 .mce-container .mce-menu-item .mce-text {
 	color: $gray-dark;
@@ -410,7 +415,7 @@ div.mce-toolbar-grp {
 
 div.mce-inline-toolbar-grp {
 	background-color: $white;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	border-radius: 4px;
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
 		0 0 56px rgba( 0, 0, 0, 0.075 );
@@ -456,14 +461,14 @@ div.mce-inline-toolbar-grp:after {
 
 div.mce-inline-toolbar-grp.mce-arrow-up:before {
 	top: -18px;
-	border-bottom-color: lighten( $gray, 20% );
+	border-bottom-color: $gray-lighten-20;
 	border-width: 9px;
 	margin-left: -9px;
 }
 
 div.mce-inline-toolbar-grp.mce-arrow-down:before {
 	bottom: -18px;
-	border-top-color: lighten( $gray, 20% );
+	border-top-color: $gray-lighten-20;
 	border-width: 9px;
 	margin-left: -9px;
 }
@@ -528,7 +533,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 
 .mce-tinymce .mce-stack-layout-item.mce-last {
 	@include breakpoint( ">960px" ) {
-		border-top: 1px solid lighten( $gray, 30% );
+		border-top: 1px solid $gray-lighten-30;
 	}
 }
 
@@ -550,7 +555,7 @@ div.mce-inline-toolbar-grp.mce-arrow-full > div {
 }
 
 div.mce-statusbar {
-	border-top: 1px solid lighten( $gray, 20% );
+	border-top: 1px solid $gray-lighten-20;
 }
 
 div.mce-path {
@@ -559,7 +564,7 @@ div.mce-path {
 }
 
 .post-editor .mce-path-item {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-family: $sans;
 }
 
@@ -623,13 +628,13 @@ div.mce-path {
 #wp-fullscreen-buttons .mce-btn:active,
 .qt-dfw.active {
 	color: $gray-dark;
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 	background: $white;
 	box-shadow: none;
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-active:hover {
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 	color: $gray-dark;
 }
 
@@ -639,7 +644,7 @@ div.mce-path {
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled i.mce-ico {
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled:hover,
@@ -707,7 +712,7 @@ div.mce-path {
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox.mce-active {
 	border-color: $white;
-	border-right: 1px solid lighten( $gray, 30% );
+	border-right: 1px solid $gray-lighten-30;
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox button {
@@ -725,7 +730,7 @@ div.mce-path {
 .mce-toolbar .mce-btn-group .mce-btn.mce-listbox button .mce-txt {
 	width: auto;
 	padding: 0;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-family: $sans;
 	font-size: 13px;
 	text-overflow: initial;
@@ -737,8 +742,8 @@ div.mce-path {
 
 .post-editor .mce-toolbar .mce-btn-group .mce-btn.mce-listbox:hover {
 	background-image: none;
-	border-left-color: lighten( $gray, 30% );
-	border-right-color: lighten( $gray, 30% );
+	border-left-color: $gray-lighten-30;
+	border-right-color: $gray-lighten-30;
 
 	@include breakpoint( "<660px" ) {
 		border-right-color: $white;
@@ -1010,7 +1015,7 @@ div.mce-menu .mce-menu-item-sep,
 .mce-toolbar .mce-btn:hover .mce-open,
 .mce-toolbar .mce-btn:focus .mce-open,
 .mce-toolbar .mce-btn.mce-active .mce-open {
-	border-left-color: lighten( $gray, 30% );
+	border-left-color: $gray-lighten-30;
 }
 
 i.mce-i-bold,

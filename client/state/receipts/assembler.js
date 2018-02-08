@@ -5,6 +5,7 @@ export function createReceiptObject( data ) {
 		displayPrice: data.display_price,
 		purchases: data.purchases.map( purchase => {
 			return {
+				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
 				freeTrial: purchase.free_trial,
 				isDomainRegistration: Boolean( purchase.is_domain_registration ),
 				meta: purchase.meta,

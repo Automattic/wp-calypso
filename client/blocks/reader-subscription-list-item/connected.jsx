@@ -25,7 +25,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 		siteId: PropTypes.number,
 		onShouldMeasure: PropTypes.func,
 		onComponentMountWithNewRailcar: PropTypes.func,
-		showEmailSettings: PropTypes.bool,
+		showNotificationSettings: PropTypes.bool,
 		showLastUpdatedDate: PropTypes.bool,
 		isFollowing: PropTypes.bool,
 		followSource: PropTypes.string,
@@ -35,7 +35,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 	static defaultProps = {
 		onShouldMeasure: noop,
 		onComponentMountWithNewRailcar: noop,
-		showEmailSettings: true,
+		showNotificationSettings: true,
 		showLastUpdatedDate: true,
 	};
 
@@ -63,7 +63,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 			url,
 			feedId,
 			siteId,
-			showEmailSettings,
+			showNotificationSettings,
 			showLastUpdatedDate,
 			isFollowing,
 			followSource,
@@ -79,7 +79,7 @@ class ConnectedSubscriptionListItem extends React.Component {
 				site={ site }
 				feed={ feed }
 				url={ url }
-				showEmailSettings={ showEmailSettings && ! isEmailBlocked }
+				showNotificationSettings={ showNotificationSettings && ! isEmailBlocked }
 				showLastUpdatedDate={ showLastUpdatedDate }
 				isFollowing={ isFollowing }
 				followSource={ followSource }

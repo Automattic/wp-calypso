@@ -1,16 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { flatten, filter, find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
 import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import createReactClass from 'create-react-class';
 
 /**
@@ -22,7 +19,11 @@ import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import { domainMapping } from 'lib/cart-values/cart-items';
+import {
+	domainMapping,
+	planItem as getCartItemForPlan,
+	themeItem,
+} from 'lib/cart-values/cart-items';
 import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
 import { hasDomainDetails } from 'lib/store-transactions';
@@ -30,27 +31,30 @@ import notices from 'notices';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import purchasePaths from 'me/purchases/paths';
+import { managePurchase } from 'me/purchases/paths';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
-import supportPaths from 'lib/url/support';
-import { themeItem } from 'lib/cart-values/cart-items';
+import { AUTO_RENEWAL } from 'lib/url/support';
 import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import upgradesActions from 'lib/upgrades/actions';
-import { getContactDetailsCache, isEligibleForCheckoutToChecklist } from 'state/selectors';
+import { addItem, applyCoupon, resetTransaction, setDomainDetails } from 'lib/upgrades/actions';
+import {
+	getContactDetailsCache,
+	getCurrentUserPaymentMethods,
+	isDomainOnlySite,
+	isEligibleForCheckoutToChecklist,
+} from 'state/selectors';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey, getUpgradePlanSlugFromPath } from 'lib/plans';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 import { recordApplePayStatus } from 'lib/apple-pay';
 import { requestSite } from 'state/sites/actions';
-import { isDomainOnlySite, getCurrentUserPaymentMethods } from 'state/selectors';
+import { isNewSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { canAddGoogleApps } from 'lib/domains';
@@ -75,7 +79,7 @@ const Checkout = createReactClass( {
 	},
 
 	componentWillMount: function() {
-		upgradesActions.resetTransaction();
+		resetTransaction();
 		this.props.recordApplePayStatus();
 	},
 
@@ -119,8 +123,10 @@ const Checkout = createReactClass( {
 			this.setState( { previousCart: nextCart } );
 		}
 
+		// Although this is a part of the gsuiteUpsellTake2 A/B test,
+		// the `abtest()` is not called here to make the data more accurate.
 		if (
-			abtest( 'gsuiteUpsell' ) === 'show' &&
+			this.props.isNewlyCreatedSite &&
 			this.props.contactDetails &&
 			cartItems.hasGoogleApps( this.props.cart ) &&
 			this.needsDomainDetails()
@@ -131,10 +137,14 @@ const Checkout = createReactClass( {
 
 	setDomainDetailsForGsuiteCart() {
 		const { contactDetails, cart } = this.props;
-		const domainReceiptId = get( cartItems.getGoogleApps( cart ), '0.extra.receipt_for_domain', 0 );
+		const domainReceiptId = get(
+			cartItems.getGoogleApps( cart ),
+			'[0].extra.receipt_for_domain',
+			0
+		);
 
 		if ( domainReceiptId ) {
-			upgradesActions.setDomainDetails( contactDetails );
+			setDomainDetails( contactDetails );
 		}
 	},
 
@@ -163,7 +173,7 @@ const Checkout = createReactClass( {
 			this.addNewItemToCart();
 		}
 		if ( this.props.couponCode ) {
-			upgradesActions.applyCoupon( this.props.couponCode );
+			applyCoupon( this.props.couponCode );
 		}
 	},
 
@@ -187,7 +197,7 @@ const Checkout = createReactClass( {
 			}
 		);
 
-		upgradesActions.addItem( cartItem );
+		addItem( cartItem );
 	},
 
 	addNewItemToCart() {
@@ -210,7 +220,7 @@ const Checkout = createReactClass( {
 		}
 
 		if ( cartItem ) {
-			upgradesActions.addItem( cartItem );
+			addItem( cartItem );
 		}
 	},
 
@@ -261,9 +271,24 @@ const Checkout = createReactClass( {
 		return flatten( Object.values( purchases ) );
 	},
 
+	cartHasEligibleDomain() {
+		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const domainsInSignupContext = filter( domainRegistrations, { context: 'signup' } );
+		const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
+			canAddGoogleApps( meta )
+		);
+
+		return !! domainsForGSuite.length;
+	},
+
 	getCheckoutCompleteRedirectPath() {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
+		const domainReceiptId = get(
+			cartItems.getGoogleApps( cart ),
+			'[0].extra.receipt_for_domain',
+			0
+		);
 
 		// The `:receiptId` string is filled in by our callback page after the PayPal checkout
 		const receiptId = receipt ? receipt.receipt_id : ':receiptId';
@@ -271,10 +296,7 @@ const Checkout = createReactClass( {
 		if ( cartItems.hasRenewalItem( cart ) ) {
 			renewalItem = cartItems.getRenewalItems( cart )[ 0 ];
 
-			return purchasePaths.managePurchase(
-				renewalItem.extra.purchaseDomain,
-				renewalItem.extra.purchaseId
-			);
+			return managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		}
 
 		if ( cartItems.hasFreeTrial( cart ) ) {
@@ -291,38 +313,34 @@ const Checkout = createReactClass( {
 			return '/checkout/thank-you/features';
 		}
 
+		if ( domainReceiptId && receiptId && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
+		}
+
+		if (
+			this.props.isNewlyCreatedSite &&
+			! cartItems.hasGoogleApps( cart ) &&
+			cartItems.hasDomainRegistration( cart ) &&
+			isEmpty( receipt.failed_purchases )
+		) {
+			if ( this.cartHasEligibleDomain() && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+				return `/checkout/${ selectedSiteSlug }/with-gsuite/${
+					domainsForGsuite[ 0 ].meta
+				}/${ receiptId }`;
+			}
+		}
+
 		if (
 			this.props.isEligibleForCheckoutToChecklist &&
 			'show' === abtest( 'checklistThankYouForPaidUser' )
 		) {
-			return `/checklist/thank-you/${ selectedSiteSlug }/${ receiptId }`;
-		}
-
-		if ( abtest( 'gsuiteUpsell' ) === 'show' ) {
-			const domainReceiptId = get(
-				cartItems.getGoogleApps( cart ),
-				'0.extra.receipt_for_domain',
-				0
-			);
-			if ( domainReceiptId ) {
-				return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
-			}
-
-			if ( ! cartItems.hasGoogleApps( cart ) && cartItems.hasDomainRegistration( cart ) ) {
-				const domainsForGsuite = filter( cartItems.getDomainRegistrations( cart ), ( { meta } ) =>
-					canAddGoogleApps( meta )
-				);
-
-				if ( domainsForGsuite.length ) {
-					return `/checkout/${ selectedSiteSlug }/with-gsuite/${ domainsForGsuite[ 0 ]
-						.meta }/${ receiptId }`;
-				}
-			}
+			return `/checklist/${ selectedSiteSlug }/paid`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${ this.props
-					.selectedFeature }/${ selectedSiteSlug }/${ receiptId }`
+			? `/checkout/thank-you/features/${
+					this.props.selectedFeature
+				}/${ selectedSiteSlug }/${ receiptId }`
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
 	},
 
@@ -368,9 +386,7 @@ const Checkout = createReactClass( {
 								productName: renewalItem.product_name,
 							},
 							components: {
-								a: (
-									<a href={ supportPaths.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
-								),
+								a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
 							},
 						}
 					),
@@ -476,7 +492,7 @@ const Checkout = createReactClass( {
 		return isLoadingCart || isLoadingProducts;
 	},
 
-	needsDomainDetails: function() {
+	needsDomainDetails() {
 		const cart = this.props.cart,
 			transaction = this.props.transaction;
 
@@ -493,7 +509,7 @@ const Checkout = createReactClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
@@ -519,6 +535,7 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
 			isEligibleForCheckoutToChecklist: isEligibleForCheckoutToChecklist(

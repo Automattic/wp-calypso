@@ -61,9 +61,7 @@ describe( 'selectors', () => {
 				hasConflict: false,
 				is_customizable: false,
 				is_previewable: false,
-				options: {
-					default_post_format: 'standard',
-				},
+				options: {},
 				slug: 'example.com',
 				title: 'WordPress.com Example Blog',
 			} );

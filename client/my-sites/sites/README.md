@@ -12,13 +12,11 @@ The sites-list view component and puts together the various filters.
 Handles the single site view. It can be used by any compoenent that needs to render a site card by passing a `site` property object of a single site from sites-list.
 
 ```javascript
-var Site = require( 'my-sites/sites/site' );
+import Site from 'my-sites/sites/site';
 
-const Component = React.createClass({
-  render: function() {
-    return (
-      <Site site={ site } />
-    );
-  }
-)};
+class Component extends React.Component {
+	render() {
+		return <Site site={ site } />
+	}
+}
 ```

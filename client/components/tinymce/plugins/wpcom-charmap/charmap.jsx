@@ -1,8 +1,8 @@
 /**
  * Reactified port of the TinyMCE charmap plugin.
- * 
+ *
  * Adapted from WordPress.
- * 
+ *
  *
  * @format
  * @copyright 2015 by the WordPress contributors.

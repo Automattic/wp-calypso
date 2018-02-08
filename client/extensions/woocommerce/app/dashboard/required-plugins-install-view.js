@@ -393,12 +393,7 @@ class RequiredPluginsInstallView extends Component {
 						imageWidth={ 160 }
 						title={ translate( 'Have something to sell?' ) }
 						subtitle={ translate(
-							"If you're in the {{strong}}United States{{/strong}} " +
-								'or {{strong}}Canada{{/strong}}, you can sell your products right on ' +
-								'your site and ship them to customers in a snap!',
-							{
-								components: { strong: <strong /> },
-							}
+							'You can sell your products right on your site and ship them to customers in a snap!'
 						) }
 					>
 						<Button onClick={ this.startSetup } primary>

@@ -8,7 +8,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import route from 'lib/route';
+import { sectionify } from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
 import AsyncLoad from 'components/async-load';
@@ -17,7 +17,7 @@ const analyticsPageTitle = 'Reader';
 
 const exported = {
 	followingManage( context, next ) {
-		const basePath = route.sectionify( context.path );
+		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage Followed Sites';
 		const mcKey = 'following_manage';
 		const { q: sitesQuery, s: subsQuery, sort: subsSortOrder, showMoreResults } = context.query;

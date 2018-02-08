@@ -10,7 +10,7 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { REWIND_RESTORE } from 'state/action-types';
+import { REWIND_RESTORE, REWIND_STATE_REQUEST } from 'state/action-types';
 import { rewindRestoreUpdateError, getRewindRestoreProgress } from 'state/activity-log/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -49,6 +49,11 @@ export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, apiD
 			} )
 		);
 	}
+
+	dispatch( {
+		type: REWIND_STATE_REQUEST,
+		siteId,
+	} );
 };
 
 export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, error ) => {

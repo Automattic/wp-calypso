@@ -17,8 +17,8 @@ const TRANSPARENT_GIF =
 	'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 /**
-* @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
-*/
+ * @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
+ */
 const removeUnwantedAttributes = node => {
 	if ( ! node || ! node.hasAttributes() ) {
 		return;

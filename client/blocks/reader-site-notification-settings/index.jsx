@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, get, noop } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,23 +23,25 @@ import {
 	unsubscribeToNewPostEmail,
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
+	subscribeToNewPostNotifications,
+	unsubscribeToNewPostNotifications,
 } from 'state/reader/follows/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
 	static propTypes = {
 		siteId: PropTypes.number,
-		deliveryFrequency: PropTypes.string,
 	};
 
 	state = {
 		showPopover: false,
-		selected: this.props.deliveryFrequency,
+		selected: this.props.emailDeliveryFrequency,
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.deliveryFrequency !== this.props.deliveryFrequency ) {
-			this.setState( { selected: nextProps.deliveryFrequency } );
+		if ( nextProps.emailDeliveryFrequency !== this.props.emailDeliveryFrequency ) {
+			this.setState( { selected: nextProps.emailDeliveryFrequency } );
 		}
 	}
 
@@ -58,26 +60,63 @@ class ReaderSiteNotificationSettings extends Component {
 		const { siteId } = this.props;
 		this.setState( { selected: text } );
 		this.props.updateNewPostEmailSubscription( siteId, text );
+
+		const tracksProperties = { site_id: siteId, delivery_frequency: text };
+		this.props.recordTracksEvent( 'calypso_reader_post_emails_set_frequency', tracksProperties );
 	};
 
 	toggleNewPostEmail = () => {
-		const toggleSubscription = this.props.notifyOnNewPosts
-			? this.props.unsubscribeToNewPostEmail
-			: this.props.subscribeToNewPostEmail;
+		const { siteId } = this.props;
+		const tracksProperties = { site_id: siteId };
 
-		toggleSubscription( this.props.siteId );
+		if ( this.props.sendNewPostsByEmail ) {
+			this.props.unsubscribeToNewPostEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_off', tracksProperties );
+		} else {
+			this.props.subscribeToNewPostEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_post_emails_toggle_on', tracksProperties );
+		}
 	};
 
 	toggleNewCommentEmail = () => {
-		const toggleSubscription = this.props.notifyOnNewComments
-			? this.props.unsubscribeToNewCommentEmail
-			: this.props.subscribeToNewCommentEmail;
+		const { siteId } = this.props;
+		const tracksProperties = { site_id: siteId };
 
-		toggleSubscription( this.props.siteId );
+		if ( this.props.sendNewCommentsByEmail ) {
+			this.props.unsubscribeToNewCommentEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_off', tracksProperties );
+		} else {
+			this.props.subscribeToNewCommentEmail( siteId );
+			this.props.recordTracksEvent( 'calypso_reader_comment_emails_toggle_on', tracksProperties );
+		}
+	};
+
+	toggleNewPostNotification = () => {
+		const { siteId } = this.props;
+		const tracksProperties = { site_id: siteId };
+
+		if ( this.props.sendNewPostsByNotification ) {
+			this.props.unsubscribeToNewPostNotifications( siteId );
+			this.props.recordTracksEvent(
+				'calypso_reader_post_notifications_toggle_off',
+				tracksProperties
+			);
+		} else {
+			this.props.subscribeToNewPostNotifications( siteId );
+			this.props.recordTracksEvent(
+				'calypso_reader_post_notifications_toggle_on',
+				tracksProperties
+			);
+		}
 	};
 
 	render() {
-		const { translate, notifyOnNewComments, notifyOnNewPosts } = this.props;
+		const {
+			translate,
+			sendNewCommentsByEmail,
+			sendNewPostsByEmail,
+			sendNewPostsByNotification,
+		} = this.props;
 
 		if ( ! this.props.siteId ) {
 			return null;
@@ -108,22 +147,23 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'New post notifications' ) }
+						{ translate( 'Notify me of new posts' ) }
+						<Gridicon icon="bell" size={ 18 } />
 						<FormToggle
-							onChange={ noop }
-							checked={ false }
+							onChange={ this.toggleNewPostNotification }
+							checked={ sendNewPostsByNotification }
 							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
 						/>
 						<p className="reader-site-notification-settings__popout-hint">
-							{ translate( 'Receive web and mobile notifications for new posts from this site' ) }
+							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
 					</div>
 
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'New post emails' ) }
-						<FormToggle onChange={ this.toggleNewPostEmail } checked={ notifyOnNewPosts } />
+						{ translate( 'Email me new posts' ) }
+						<FormToggle onChange={ this.toggleNewPostEmail } checked={ sendNewPostsByEmail } />
 					</div>
-					{ notifyOnNewPosts && (
+					{ sendNewPostsByEmail && (
 						<SegmentedControl>
 							<ControlItem
 								selected={ this.state.selected === 'instantly' }
@@ -146,8 +186,11 @@ class ReaderSiteNotificationSettings extends Component {
 						</SegmentedControl>
 					) }
 					<div className="reader-site-notification-settings__popout-toggle">
-						{ translate( 'New comment emails' ) }
-						<FormToggle onChange={ this.toggleNewCommentEmail } checked={ notifyOnNewComments } />
+						{ translate( 'Email me new comments' ) }
+						<FormToggle
+							onChange={ this.toggleNewCommentEmail }
+							checked={ sendNewCommentsByEmail }
+						/>
 					</div>
 				</ReaderPopover>
 			</div>
@@ -161,13 +204,17 @@ const mapStateToProps = ( state, ownProps ) => {
 	}
 
 	const follow = find( getReaderFollows( state ), { blog_ID: ownProps.siteId } );
-	const deliveryMethods = get( follow, [ 'delivery_methods', 'email' ], {} );
-	const { send_posts, post_delivery_frequency, send_comments } = deliveryMethods;
+	const deliveryMethodsEmail = get( follow, [ 'delivery_methods', 'email' ], {} );
 
 	return {
-		notifyOnNewComments: !! send_comments,
-		notifyOnNewPosts: !! send_posts,
-		deliveryFrequency: post_delivery_frequency,
+		sendNewCommentsByEmail: deliveryMethodsEmail && !! deliveryMethodsEmail.send_comments,
+		sendNewPostsByEmail: deliveryMethodsEmail && !! deliveryMethodsEmail.send_posts,
+		emailDeliveryFrequency: deliveryMethodsEmail && deliveryMethodsEmail.post_delivery_frequency,
+		sendNewPostsByNotification: get(
+			follow,
+			[ 'delivery_methods', 'notification', 'send_posts' ],
+			false
+		),
 	};
 };
 
@@ -177,4 +224,7 @@ export default connect( mapStateToProps, {
 	updateNewPostEmailSubscription,
 	subscribeToNewCommentEmail,
 	unsubscribeToNewCommentEmail,
+	subscribeToNewPostNotifications,
+	unsubscribeToNewPostNotifications,
+	recordTracksEvent,
 } )( localize( ReaderSiteNotificationSettings ) );

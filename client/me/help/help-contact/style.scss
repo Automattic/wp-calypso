@@ -3,63 +3,16 @@
 
 	.help-contact__header {
 		@include placeholder();
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		height: 18px;
 		margin-bottom: 2px;
 		width: 150px;
 	}
 	.help-contact__textarea {
 		@include placeholder();
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		height: 50px;
 		margin-bottom: 32px;
-	}
-}
-
-.help-contact__chat-form {
-	padding: 0px;
-
-	#habla_conversation_div {
-		// Use !important here because olark sets the height in the style attribute for this element
-		height: calc( 100vh - 220px ) !important;
-		min-height: 167px;
-
-		@include breakpoint( ">660px" ) {
-			max-height: 625px;
-		}
-	}
-
-	#habla_window_div {
-		#habla_expanded_div {
-			border: none;
-		}
-
-		#habla_chatform_form {
-			margin-top: 0px;
-			padding-left: 0px;
-		}
-
-		#habla_input_div {
-			/* Stretch the text area to the sides of the contact form */
-			margin-right: -8px;
-			margin-left: -8px;
-			margin-bottom: -6px;
-		}
-
-		#habla_wcsend_input {
-			border: none;
-			resize: none !important;
-		}
-
-		#habla_middle_div {
-			padding-bottom: 0px;
-		}
-
-		#habla_conversation_div .habla_conversation_p_item {
-			margin-left: 14px;
-			margin-right: 10px;
-			margin-top: 8px;
-		}
 	}
 }
 

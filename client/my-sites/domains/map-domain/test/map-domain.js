@@ -2,7 +2,6 @@
  * @format
  * @jest-environment jsdom
  */
-
 /**
  * External dependencies
  */
@@ -17,7 +16,7 @@ import React from 'react';
 import { MapDomain } from '..';
 import MapDomainStep from 'components/domains/map-domain-step';
 import HeaderCake from 'components/header-cake';
-import paths from 'my-sites/domains/paths';
+import { domainManagementList } from 'my-sites/domains/paths';
 
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => {
@@ -90,7 +89,7 @@ describe( 'MapDomain component', () => {
 			/>
 		);
 		wrapper.instance().goBack();
-		expect( pageSpy ).to.have.been.calledWith( paths.domainManagementList( 'baba' ) );
+		expect( pageSpy ).to.have.been.calledWith( domainManagementList( 'baba' ) );
 	} );
 
 	test( 'goes back to domain add page if non-VIP site', () => {

@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
  */
 import AsyncLoad from 'components/async-load';
 import EditorSticky from 'post-editor/editor-sticky';
-import utils from 'lib/posts/utils';
+import * as utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
 import Button from 'components/button';
 import EditorActionBarViewLabel from './view-label';

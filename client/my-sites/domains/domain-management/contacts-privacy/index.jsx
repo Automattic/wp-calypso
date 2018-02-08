@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
@@ -18,7 +16,11 @@ import Header from 'my-sites/domains/domain-management/components/header';
 import Main from 'components/main';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import paths from 'my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementEditContactInfo,
+	domainManagementPrivacyProtection,
+} from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import { findRegistrantWhois, findPrivacyServiceWhois } from 'lib/domains/whois/utils';
 
@@ -35,12 +37,12 @@ class ContactsPrivacy extends React.PureComponent {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { translate } = this.props;
+		const { translate, whois } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const { hasPrivacyProtection, privateDomain, privacyAvailable, currentUserCanManage } = domain;
 		const contactInformation = privateDomain
-			? findPrivacyServiceWhois( this.props.whois.data )
-			: findRegistrantWhois( this.props.whois.data );
+			? findPrivacyServiceWhois( whois.data )
+			: findRegistrantWhois( whois.data );
 
 		return (
 			<Main className="contacts-privacy">
@@ -60,7 +62,7 @@ class ContactsPrivacy extends React.PureComponent {
 					/>
 
 					<VerticalNavItem
-						path={ paths.domainManagementEditContactInfo(
+						path={ domainManagementEditContactInfo(
 							this.props.selectedSite.slug,
 							this.props.selectedDomainName
 						) }
@@ -71,7 +73,7 @@ class ContactsPrivacy extends React.PureComponent {
 					{ ! hasPrivacyProtection &&
 						privacyAvailable && (
 							<VerticalNavItem
-								path={ paths.domainManagementPrivacyProtection(
+								path={ domainManagementPrivacyProtection(
 									this.props.selectedSite.slug,
 									this.props.selectedDomainName
 								) }
@@ -89,9 +91,7 @@ class ContactsPrivacy extends React.PureComponent {
 	}
 
 	goToEdit = () => {
-		page(
-			paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
-		);
+		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	};
 }
 

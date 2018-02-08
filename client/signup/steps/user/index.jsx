@@ -1,14 +1,12 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, isEmpty, omit } from 'lodash';
+import { identity, isEmpty, omit, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,12 +14,13 @@ import { identity, isEmpty, omit } from 'lodash';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
-import signupUtils from 'signup/utils';
+import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
+import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import support from 'lib/url/support';
+import { WPCC } from 'lib/url/support';
 import config from 'config';
 
 function getSocialServiceFromClientId( clientId ) {
@@ -75,7 +74,14 @@ export class UserStep extends Component {
 	}
 
 	componentWillMount() {
+		const { oauth2Signup, initialContext } = this.props;
+		const clientId = get( initialContext, 'query.oauth2_client_id', null );
+
 		this.setSubHeaderText( this.props );
+
+		if ( oauth2Signup && clientId ) {
+			this.props.fetchOAuth2ClientData( clientId );
+		}
 	}
 
 	setSubHeaderText( props ) {
@@ -103,14 +109,14 @@ export class UserStep extends Component {
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
 					{
 						components: {
-							a: <a href={ support.WPCC } target="_blank" />,
+							a: <a href={ WPCC } target="_blank" />,
 						},
 						comment:
 							'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',
 					}
 				);
 			}
-		} else if ( 1 === signupUtils.getFlowSteps( flowName ).length ) {
+		} else if ( 1 === getFlowSteps( flowName ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the wonderful WordPress.com community' );
 		}
@@ -176,7 +182,12 @@ export class UserStep extends Component {
 	 *                              So our server doesn't have to request the user profile on its end.
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null ) => {
-		this.submit( { service, access_token, id_token } );
+		this.submit( {
+			service,
+			access_token,
+			id_token,
+			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+		} );
 	};
 
 	userCreationComplete() {
@@ -215,9 +226,9 @@ export class UserStep extends Component {
 		}
 
 		const stepAfterRedirect =
-			signupUtils.getNextStepName( this.props.flowName, this.props.stepName ) ||
-			signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
-		return this.originUrl() + signupUtils.getStepUrl( this.props.flowName, stepAfterRedirect );
+			getNextStepName( this.props.flowName, this.props.stepName ) ||
+			getPreviousStepName( this.props.flowName, this.props.stepName );
+		return this.originUrl() + getStepUrl( this.props.flowName, stepAfterRedirect );
 	}
 
 	originUrl() {
@@ -296,5 +307,6 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
+		fetchOAuth2ClientData,
 	}
 )( localize( UserStep ) );
