@@ -80,7 +80,7 @@ const ActivityLogConfirmDialog = ( {
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
 const mapDispatchToProps = {
-	happychatEvent: () => recordTracksEvent( 'calypso_activitylog_rewind_confirm_dialog' ),
+	happychatEvent: () => recordTracksEvent( 'calypso_activitylog_confirm_dialog' ),
 };
 
 export default connect( null, mapDispatchToProps )( localize( ActivityLogConfirmDialog ) );
