@@ -27,9 +27,9 @@ RUN        bash /tmp/env-config.sh
 # change. This layer should allow for final build times
 # to be limited only by the Calypso build speed.
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
-RUN        true \
+RUN        true                        \
            && npm install --production \
-           && rm -rf /root/.npm \
+           && rm -rf /root/.npm        \
            && true
 
 # Build a "source" layer
@@ -46,8 +46,38 @@ RUN        true \
 # Touch after copy to ensure that this layer will
 # not trigger additional install as part of the build
 # in the following step.
-COPY       . /calypso/
-RUN        touch node_modules
+#
+# Move repo root-level files into the image
+COPY CODE-OF-CONDUCT.md     \
+     CREDITS.md             \
+     index.js               \
+     inline-imports.js      \
+     jsconfig.json          \
+     LICENSE.md             \
+     postcss.config.json    \
+     README.md              \
+     webpack.config.js      \
+     webpack.config.node.js \
+     .babelrc               \
+     .env                   \
+     .esformatter           \
+     .jsfmtrc               \
+     .npmrc                 \
+     .nvmrc                 \
+     .rtlcssrc              \
+     .stylelintrc           \
+     /calypso/
+
+# Directories must be copied one-by-one because Docker copies
+# directory contents. Copy to matching directories in the image.
+COPY .github      /calypso/.github
+COPY bin          /calypso/bin
+COPY config       /calypso/config
+COPY public       /calypso/public
+COPY docs         /calypso/docs
+COPY assets       /calypso/assets
+COPY server       /calypso/server
+COPY client       /calypso/client
 
 # Build the final layer
 #
