@@ -2,8 +2,7 @@
 /**
  * External dependencies
  */
-import { Env } from 'tinymce/tinymce';
-import { noop, reduce } from 'lodash';
+import { get, noop, reduce } from 'lodash';
 
 /**
  * Return an object containing the textarea content split into:
@@ -46,8 +45,9 @@ export const setCursorPosition = ( textarea, selectionEnd, insertedContentLength
 export const insertContent = ( textarea, before, content, after, onInsert = noop ) => {
 	const { selectionEnd, value } = textarea;
 	const newContent = before + content + after;
+	const userAgent = get( window.navigator.userAgent, '' );
 
-	if ( Env.gecko ) {
+	if ( /(?:firefox|fxios)/i.test( userAgent ) ) {
 		// In Firefox, execCommand( 'insertText' ), needed to preserve the undo stack,
 		// always moves the cursor to the end of the content.
 		// A workaround involving manually setting the cursor position and inserting the editor content
@@ -58,16 +58,17 @@ export const insertContent = ( textarea, before, content, after, onInsert = noop
 		setCursorPosition( textarea, selectionEnd, newContent.length - value.length );
 		textarea.focus();
 		onInsert( newContent );
-	} else if ( !! Env.ie && Env.ie >= 11 ) {
-		// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
-		// Using the previous version of replacing the entire content value instead.
+		return;
+	} else if ( /(?:edge|msie |trident.+?; rv:)/i.test( userAgent ) ) {
+		// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11,
+		// and Edge has issues positioning the cursor after insertion.
 		textarea.value = newContent;
 		setCursorPosition( textarea, selectionEnd, newContent.length - value.length );
 		onInsert( newContent );
-	} else {
-		textarea.focus();
-		document.execCommand( 'insertText', false, content );
+		return;
 	}
+	textarea.focus();
+	document.execCommand( 'insertText', false, content );
 };
 
 /**
