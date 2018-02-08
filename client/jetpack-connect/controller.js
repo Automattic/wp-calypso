@@ -109,7 +109,9 @@ export function maybeOnboard( { query, store }, next ) {
 	if ( ! isEmpty( query ) && query.onboarding ) {
 		if ( versionCompare( query.jp_version, '5.8', '<' ) ) {
 			// page.redirect() doesn't work here because of the different domain
-			return window.location.replace( query.site_url + '/wp-admin/' );
+			return window.location.replace(
+				query.site_url + '/wp-admin/admin.php?page=jetpack#/dashboard'
+			);
 		}
 
 		const siteId = parseInt( query.client_id, 10 );
