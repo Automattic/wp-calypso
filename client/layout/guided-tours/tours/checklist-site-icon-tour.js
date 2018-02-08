@@ -31,6 +31,7 @@ export const ChecklistSiteIconTour = makeTour(
 			placement="below"
 			style={ {
 				animationDelay: '0.7s',
+				zIndex: 1,
 			} }
 		>
 			<p>
