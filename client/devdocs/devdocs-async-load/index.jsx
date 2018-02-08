@@ -19,14 +19,11 @@ export default class DevdocsAsyncLoad extends React.PureComponent {
 	};
 	static propTypes = {
 		placeholderCount: PropTypes.number,
-		require: PropTypes.oneOfType([
-			PropTypes.func,
-			PropTypes.string,
-		]).isRequired,
+		require: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ).isRequired,
 	};
 
 	render() {
-		const { placeholderCount, ...otherProps } = this.props;
+		const { placeholderCount, require, ...otherProps } = this.props;
 
 		// If `component` is truthy, we're only rendering one component
 		// (e.g. `/devdocs/blocks/login` not `/devdocs/blocks`), so we will
@@ -36,7 +33,7 @@ export default class DevdocsAsyncLoad extends React.PureComponent {
 		return (
 			<AsyncLoad
 				placeholder={ <Placeholder count={ placeholders } /> }
-				require={ this.props.require }
+				require={ require }
 				{ ...otherProps }
 			/>
 		);
