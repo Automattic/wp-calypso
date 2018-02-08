@@ -27,3 +27,13 @@ export const logItem = ( state = undefined, { type, data, found, query } ) => {
 
 export const logItems = keyedReducer( 'siteId', logItem, [ DESERIALIZE, SERIALIZE ] );
 logItems.hasCustomPersistence = true;
+
+export const oldestItemTs = keyedReducer( 'siteId', ( state = 0, action ) => {
+	switch ( action.type ) {
+		case ACTIVITY_LOG_UPDATE:
+			return 0 < action.oldestItemTs ? action.oldestItemTs : state;
+
+		default:
+			return state;
+	}
+} );

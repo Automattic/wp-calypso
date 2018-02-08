@@ -91,13 +91,14 @@ export function activityLogRequest( siteId, params ) {
 	};
 }
 
-export function activityLogUpdate( siteId, data, found, query ) {
+export function activityLogUpdate( siteId, data, found, query, oldestItemTs ) {
 	return {
 		type: ACTIVITY_LOG_UPDATE,
 		data,
 		query,
 		siteId,
 		found,
+		oldestItemTs,
 	};
 }
 
