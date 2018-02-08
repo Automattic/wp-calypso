@@ -11,6 +11,7 @@ import Gridicon from 'gridicons';
 import { includes, capitalize } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import classname from 'classnames';
 
 /**
  * Internal dependencies
@@ -35,6 +36,7 @@ import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
+import JetpackLogo from 'components/jetpack-logo';
 
 const user = userFactory();
 
@@ -129,17 +131,18 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
+			jetpack,
+			linkingSocialService,
 			oauth2Client,
 			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
-			linkingSocialService,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account.' ),
-			preHeader = null,
-			postHeader = null;
+		let headerText = translate( 'Log in to your account.' );
+		let preHeader = null;
+		let postHeader = null;
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
@@ -182,6 +185,13 @@ class Login extends Component {
 					</p>
 				);
 			}
+		} else if ( jetpack ) {
+			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
+			preHeader = (
+				<div>
+					<JetpackLogo full size={ 45 } />
+				</div>
+			);
 		}
 
 		return (
@@ -260,7 +270,7 @@ class Login extends Component {
 
 	render() {
 		return (
-			<div>
+			<div className={ classname( 'login', { 'login--jetpack': this.props.jetpack } ) }>
 				{ this.renderHeader() }
 
 				<ErrorNotice />
