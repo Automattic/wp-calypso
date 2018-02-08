@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import { startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -12,6 +12,10 @@ import { translate } from 'i18n-calypso';
 import formatCurrency from 'lib/format-currency';
 
 export const getMethodSummary = ( method, currency ) => {
+	if ( startsWith( method.methodType, 'wc_services' ) ) {
+		return translate( 'Live rates calculated at checkout' );
+	}
+
 	switch ( method.methodType ) {
 		case 'free_shipping':
 			if ( ! method.requires ) {

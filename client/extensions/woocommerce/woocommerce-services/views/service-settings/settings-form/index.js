@@ -10,9 +10,8 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import SettingsGroup from './settings-group';
-import * as FormActions from 'woocommerce/woocommerce-services/state/service-settings/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import * as FormValueActions from 'woocommerce/woocommerce-services/state/service-settings/values/actions';
+import * as FormValueActions from 'woocommerce/woocommerce-services/state/service-settings/actions';
 import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
@@ -24,7 +23,6 @@ const SettingsForm = ( props ) => {
 			<SettingsGroup
 				{ ...props }
 				group={ props.layout[ index ] }
-				saveForm={ props.formValueActions.submit }
 				key={ index }
 			/>
 		);
@@ -56,7 +54,6 @@ function mapStateToProps( state, props ) {
 
 function mapDispatchToProps( dispatch, ownProps ) {
 	return {
-		formActions: bindActionCreators( FormActions, dispatch ),
 		noticeActions: bindActionCreators( { successNotice, errorNotice }, dispatch ),
 		formValueActions: {
 			updateField: ( path, value ) => dispatch( FormValueActions.updateField( ownProps.siteId, ownProps.method.id, path, value ) ),
