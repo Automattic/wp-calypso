@@ -131,8 +131,17 @@ export const handleActivityLogRequest = action => {
 	);
 };
 
-export const receiveActivityLog = ( action, data ) =>
-	activityLogUpdate( action.siteId, data, data.totalItems, action.params );
+export const receiveActivityLog = ( action, data ) => {
+	const parsedData = fromApi( data );
+	const oldestItemTs = get( data, 'oldestItemTs', 0 );
+	activityLogUpdate(
+		action.siteId,
+		parsedData,
+		parsedData.totalItems,
+		action.params,
+		oldestItemTs
+	);
+};
 
 export const receiveActivityLogError = () =>
 	errorNotice( translate( 'Error receiving activity for site.' ) );
@@ -143,7 +152,6 @@ export default {
 			fetch: handleActivityLogRequest,
 			onSuccess: receiveActivityLog,
 			onError: receiveActivityLogError,
-			fromApi,
 		} ),
 		continuePolling,
 	],

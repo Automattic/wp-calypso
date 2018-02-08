@@ -12,6 +12,7 @@
 		"totalItems": { "type": "integer" },
 		"totalPages": { "type": "integer" },
 		"type": { "type": "string" },
+		"oldestItemTs": { "type": [ "null", "integer" ] },
 		"current": {
 			"type": "object",
 			"required": [ "totalItems" ],
