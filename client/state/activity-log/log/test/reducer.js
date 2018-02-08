@@ -4,7 +4,6 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,9 +34,7 @@ const ACTIVITY_ITEM = deepFreeze( {
 } );
 
 const populateQueryManager = ( data = [], query = {} ) =>
-	merge( new ActivityQueryManager().receive( data, { found: data.length, query } ), {
-		oldestItemTs: 1234567,
-	} );
+	new ActivityQueryManager().receive( data, { found: data.length, query } );
 
 describe( 'reducer', () => {
 	useSandbox( sandbox => {
@@ -59,7 +56,6 @@ describe( 'reducer', () => {
 				data,
 				found: data.length,
 				query: {},
-				oldestItemTs: 1234567,
 			} );
 
 			expect( state ).to.eql( {
@@ -71,7 +67,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( {
 				[ SITE_ID ]: populateQueryManager( [ ACTIVITY_ITEM ], {} ),
 			} );
-			const state = logItems( original, { type: SERIALIZE, oldestItemTs: 1234567 } );
+			const state = logItems( original, { type: SERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
@@ -88,11 +84,10 @@ describe( 'reducer', () => {
 					options: {
 						itemKey: 'activityId',
 					},
-					oldestItemTs: 1234567,
 				},
 			} );
 
-			const state = logItems( original, { type: DESERIALIZE, oldestItemTs: 1234567 } );
+			const state = logItems( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( original );
 		} );
@@ -112,10 +107,9 @@ describe( 'reducer', () => {
 					options: {
 						itemKey: 'activityId',
 					},
-					oldestItemTs: 1234567,
 				},
 			} );
-			const state = logItems( original, { type: DESERIALIZE, oldestItemTs: 1234567 } );
+			const state = logItems( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
 		} );
