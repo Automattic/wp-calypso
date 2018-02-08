@@ -28,6 +28,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 class InfoStep extends Component {
 	static propTypes = {
 		signupForm: PropTypes.object,
+		userSettings: PropTypes.object,
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
@@ -44,23 +45,26 @@ class InfoStep extends Component {
 	};
 
 	canSubmitForm = () => {
-		const { signupForm } = this.props;
-		if ( ! signupForm.message ) {
-			return false;
-		}
-		return !! signupForm.message.trim();
+		const { signupForm: { firstname, message } } = this.props;
+
+		return !! firstname.trim() && !! message.trim();
 	};
 
 	componentDidMount() {
+		const { userSettings } = this.props;
+
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
+
+		// Prefill the firstname & lastname fields by user settings.
+		this.props.updateConciergeSignupForm( {
+			...this.props.signupForm,
+			firstname: userSettings.first_name,
+			lastname: userSettings.last_name,
+		} );
 	}
 
 	render() {
-		const {
-			signupForm: { firstname, lastname, message, timezone },
-			userSettings,
-			translate,
-		} = this.props;
+		const { signupForm: { firstname, lastname, message, timezone }, translate } = this.props;
 
 		return (
 			<div>
@@ -74,7 +78,7 @@ class InfoStep extends Component {
 						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
 						<FormTextInput
 							name="firstname"
-							placeholder={ userSettings.first_name }
+							placeholder={ translate( 'Please tell us how you prefer us to call you.' ) }
 							onChange={ this.setFieldValue }
 							value={ firstname }
 						/>
@@ -83,7 +87,7 @@ class InfoStep extends Component {
 						<FormLabel htmlFor="lastname">{ translate( 'Last Name' ) }</FormLabel>
 						<FormTextInput
 							name="lastname"
-							placeholder={ userSettings.last_name }
+							placeholder={ translate( 'Optionally, please tell us your last name.' ) }
 							onChange={ this.setFieldValue }
 							value={ lastname }
 						/>
