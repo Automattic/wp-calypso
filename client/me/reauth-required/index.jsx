@@ -110,23 +110,7 @@ const ReauthRequired = createReactClass( {
 	},
 
 	renderSendSMSButton: function() {
-		var button;
-		// if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-		// 	button = (
-		// 		<FormButton
-		// 			disabled={ ! this.state.smsRequestsAllowed }
-		// 			isPrimary={ false }
-		// 			onClick={ this.recordClickEvent(
-		// 				'Resend SMS Code Button on Reauth Required',
-		// 				this.sendSMSCode
-		// 			) }
-		// 			type="button"
-		// 		>
-		// 			{ this.props.translate( 'Resend SMS Code' ) }
-		// 		</FormButton>
-		// 	);
-		// } else {
-		button = (
+		return (
 			<FormButton
 				disabled={ ! this.state.smsRequestsAllowed }
 				isPrimary={ false }
@@ -139,9 +123,6 @@ const ReauthRequired = createReactClass( {
 				{ this.props.translate( 'Send SMS Code' ) }
 			</FormButton>
 		);
-		// }
-
-		return button;
 	},
 
 	renderFailedValidationMsg: function() {
