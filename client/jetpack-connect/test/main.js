@@ -38,14 +38,14 @@ describe( 'JetpackConnectMain', () => {
 		test( 'should prepare entered urls for network access', () => {
 			const cleanUrl = new JetpackConnectMain( REQUIRED_PROPS ).cleanUrl;
 			const results = [
-				{ actual: cleanUrl( 'example.com' ), expected: 'http://example.com' },
-				{ actual: cleanUrl( '  example.com   ' ), expected: 'http://example.com' },
-				{ actual: cleanUrl( 'http://example.com/' ), expected: 'http://example.com' },
-				{ actual: cleanUrl( 'eXAmple.com' ), expected: 'http://example.com' },
-				{ actual: cleanUrl( 'example.com/wp-admin' ), expected: 'http://example.com' },
+				{ input: 'example.com', expected: 'http://example.com' },
+				{ input: '  example.com   ', expected: 'http://example.com' },
+				{ input: 'http://example.com/', expected: 'http://example.com' },
+				{ input: 'eXAmple.com', expected: 'http://example.com' },
+				{ input: 'example.com/wp-admin', expected: 'http://example.com' },
 			];
 
-			results.forEach( ( { actual, expected } ) => expect( actual ).toBe( expected ) );
+			results.forEach( ( { input, expected } ) => expect( cleanUrl( input ) ).toBe( expected ) );
 		} );
 	} );
 
