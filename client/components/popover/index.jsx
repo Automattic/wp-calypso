@@ -152,6 +152,16 @@ class Popover extends Component {
 			// see https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
 			this.debug( 'requesting to update position after render completes' );
 			requestAnimationFrame( () => {
+				// Prevent updating Popover position if it's already unmounted.
+				if (
+					! __popovers.has( this.id ) ||
+					! this.domContainer ||
+					! this.domContext ||
+					! isVisible
+				) {
+					return;
+				}
+
 				this.setPosition();
 				this.isUpdatingPosition = false;
 			} );
