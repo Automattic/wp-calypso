@@ -8,3 +8,58 @@
 		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
 	}
 }
+
+.community-translator__dialog {
+	width: 50%;
+}
+
+.community-translator__dialog-header {
+	border-bottom: 1px solid $gray-lighten-30;
+	padding-bottom: 7px;
+	margin-bottom: 12px;
+	font-weight: bold;
+	h2 {
+		font-weight: normal;
+		font-style: italic;
+		display: inline-block;
+		font-size: 18px;
+	}
+	nav {
+		text-align: right;
+		display: block;
+		float: right;
+	}
+}
+
+.community-translator__dialog-content {
+	font-size: 12px;
+	.placeholder {
+		animation: pulse-light 800ms ease-in-out infinite;
+		background: $gray-lighten-20;
+		width: 100%;
+		height: 100%;
+	}
+	label > span {
+		font-weight: bold;
+		margin-bottom: 7px;
+		display: block;
+	}
+	textarea {
+		min-height: auto;
+		padding: 7px;
+		line-height: 1;
+		font-size: 12px;
+	}
+}
+
+.community-translator__dialog-body {
+	label {
+		margin-bottom: 20px;
+		display: block;
+	}
+}
+
+.community-translator__nav-link {
+	display: inline-block;
+	margin-left: 7px;
+}
