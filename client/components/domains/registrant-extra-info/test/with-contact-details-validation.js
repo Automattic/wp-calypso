@@ -68,8 +68,10 @@ describe( 'uk-form validation', () => {
 		test( 'should be required for some values of registrantType', () => {
 			const testContactDetails = {
 				extra: {
-					registrantType: 'LLP',
-					tradingName: validTradingName,
+					uk: {
+						registrantType: 'LLP',
+						tradingName: validTradingName,
+					},
 				},
 			};
 
@@ -77,7 +79,8 @@ describe( 'uk-form validation', () => {
 				const wrapper = shallow(
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
-						contactDetails={ set( testContactDetails, 'extra.registrantType', registrantType ) }
+						contactDetails={ set( testContactDetails, 'extra.uk.registrantType', registrantType ) }
+						ccTldDetails={ { registrantType } }
 					/>
 				).dive();
 
@@ -90,8 +93,10 @@ describe( 'uk-form validation', () => {
 		test( 'should not be required for other values of registrantType', () => {
 			const testContactDetails = {
 				extra: {
-					registrantType: 'LLP',
-					tradingName: validTradingName,
+					uk: {
+						registrantType: 'LLP',
+						tradingName: validTradingName,
+					},
 				},
 			};
 
@@ -99,7 +104,8 @@ describe( 'uk-form validation', () => {
 				const wrapper = shallow(
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
-						contactDetails={ set( testContactDetails, 'extra.registrantType', registrantType ) }
+						contactDetails={ set( testContactDetails, 'extra.uk.registrantType', registrantType ) }
+						ccTldDetails={ { registrantType } }
 					/>
 				).dive();
 
@@ -110,8 +116,10 @@ describe( 'uk-form validation', () => {
 		test( 'should reject bad formats', () => {
 			const testContactDetails = {
 				extra: {
-					registrantType: 'LLP',
-					tradingName: validTradingName,
+					uk: {
+						registrantType: 'LLP',
+						tradingName: validTradingName,
+					},
 				},
 			};
 
@@ -123,13 +131,14 @@ describe( 'uk-form validation', () => {
 						{ ...mockProps }
 						contactDetails={ set(
 							testContactDetails,
-							'extra.registrationNumber',
+							'extra.uk.registrationNumber',
 							registrationNumber
 						) }
+						ccTldDetails={ { registrationNumber } }
 					/>
 				).dive();
 
-				expect( wrapper.props() ).toHaveProperty( 'validationErrors.extra.registrationNumber' );
+				expect( wrapper.props() ).toHaveProperty( 'validationErrors.extra.uk.registrationNumber' );
 			} );
 		} );
 	} );
@@ -138,9 +147,11 @@ describe( 'uk-form validation', () => {
 		test( 'should be required for some values of registrantType', () => {
 			const testContactDetails = {
 				extra: {
-					registrantType: 'LLP',
-					registrationNumber: validRegistrationNumber,
-					tradingName: '',
+					uk: {
+						registrantType: 'LLP',
+						registrationNumber: validRegistrationNumber,
+						tradingName: '',
+					},
 				},
 			};
 
@@ -148,7 +159,8 @@ describe( 'uk-form validation', () => {
 				const wrapper = shallow(
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
-						contactDetails={ set( testContactDetails, 'extra.registrantType', registrantType ) }
+						contactDetails={ set( testContactDetails, 'extra.uk.registrantType', registrantType ) }
+						ccTldDetails={ { registrantType } }
 					/>
 				).dive();
 
@@ -162,9 +174,11 @@ describe( 'uk-form validation', () => {
 			difference( allRegistrantTypes, needsTradingName ).forEach( registrantType => {
 				const testContactDetails = {
 					extra: {
-						registrantType,
-						registrationNumber: validRegistrationNumber,
-						tradingName: '',
+						uk: {
+							registrantType,
+							registrationNumber: validRegistrationNumber,
+							tradingName: '',
+						},
 					},
 				};
 
@@ -172,6 +186,7 @@ describe( 'uk-form validation', () => {
 					<ValidatedRegistrantExtraInfoUkForm
 						{ ...mockProps }
 						contactDetails={ testContactDetails }
+						ccTldDetails={ testContactDetails.extra.uk }
 					/>
 				).dive();
 

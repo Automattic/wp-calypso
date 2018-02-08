@@ -6,86 +6,91 @@
 	"properties": {
 		"extra": {
 			"type": "object",
-			"allOf": [
-				{
-					"errorCode": "dotukRegistrantTypeRequiresRegistrationNumber",
-					"errorField": "extra.registrationNumber",
-					"anyOf": [
+			"properties": {
+				"uk": {
+					"type": "object",
+					"allOf": [
+						{
+							"errorCode": "dotukRegistrantTypeRequiresRegistrationNumber",
+							"errorField": "extra.registrationNumber",
+							"anyOf": [
+								{
+									"properties": {
+										"registrationNumber": {
+											"minLength": 1
+										}
+									},
+									"required": [
+										"registrationNumber"
+									]
+								},
+								{
+									"not": {
+										"properties": {
+											"registrantType": {
+												"enum": [
+													"IP",
+													"LLP",
+													"LTD",
+													"PLC",
+													"RCHAR",
+													"SCH"
+												]
+											}
+										}
+									}
+								}
+							]
+						},
+						{
+							"errorCode": "dotukRegistrantTypeRequiresTradingName",
+							"errorField": "extra.tradingName",
+							"anyOf": [
+								{
+									"properties": {
+										"tradingName": {
+											"minLength": 1
+										}
+									},
+								"required": [
+										"tradingName"
+									]
+								},
+								{
+									"not": {
+										"properties": {
+											"registrantType": {
+												"enum": [
+													"LTD",
+													"PLC",
+													"LLP",
+													"IP",
+													"RCHAR",
+													"FCORP",
+													"OTHER",
+													"FOTHER",
+													"STRA"
+												]
+											}
+										}
+									}
+								}
+							]
+						},
 						{
 							"properties": {
 								"registrationNumber": {
-									"minLength": 1
-								}
-							},
-							"required": [
-								"registrationNumber"
-							]
-						},
-						{
-							"not": {
-								"properties": {
-									"registrantType": {
-										"enum": [
-											"IP",
-											"LLP",
-											"LTD",
-											"PLC",
-											"RCHAR",
-											"SCH"
-										]
-									}
+									"errorCode": "dotukRegistrationNumberFormat",
+									"pattern": "^[a-zA-Z0-9]{2}[0-9]{6}$"
 								}
 							}
 						}
+					],
+					"required": [
+						"registrantType"
 					]
-				},
-				{
-					"errorCode": "dotukRegistrantTypeRequiresTradingName",
-					"errorField": "extra.tradingName",
-					"anyOf": [
-						{
-							"properties": {
-								"tradingName": {
-									"minLength": 1
-								}
-							},
-						"required": [
-								"tradingName"
-							]
-						},
-						{
-							"not": {
-								"properties": {
-									"registrantType": {
-										"enum": [
-											"LTD",
-											"PLC",
-											"LLP",
-											"IP",
-											"RCHAR",
-											"FCORP",
-											"OTHER",
-											"FOTHER",
-											"STRA"
-										]
-									}
-								}
-							}
-						}
-					]
-				},
-				{
-					"properties": {
-						"registrationNumber": {
-							"errorCode": "dotukRegistrationNumberFormat",
-							"pattern": "^[a-zA-Z0-9]{2}[0-9]{6}$"
-						}
-					}
 				}
-			],
-			"required": [
-				"registrantType"
-			]
+			}
 		},
 		"organization": {
 			"minimumLength": 4

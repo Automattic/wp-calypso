@@ -59,7 +59,7 @@ function ruleNameFromMessage( message ) {
 }
 
 /*
- * @returns errors by field, like: { 'extra.field: name, errors: [ string ] }
+ * @returns errors by field, like: { 'extra.fr.field: name, errors: [ string ] }
  */
 export default function validateContactDetails( contactDetails ) {
 	// Populate validate.errors
@@ -75,7 +75,7 @@ export default function validateContactDetails( contactDetails ) {
 				.slice( 1 );
 
 			// In order to capture the relationship between the organization
-			// and extra.individualType fields, the rule ends up in the root
+			// and extra.fr.individualType fields, the rule ends up in the root
 			// path.
 			// We've only got one such case at the moment, so we can insert this
 			// hack, but if we need to tell multiple such rules apart, we're
