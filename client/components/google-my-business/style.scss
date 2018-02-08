@@ -1,35 +1,56 @@
-.card.google-my-business__stats-nudge {
+
+
+
+.google-my-business__stats-nudge {
 	padding-left: 48px;
 	position: relative;
+	overflow: hidden;
+	max-height: 300px;
+	display: flex;
+}
+
+.google-my-business__stats-nudge-info {
+	position: relative;
+	width: calc( 100% - 300px);
+	margin-left: auto;
+	padding: 24px;
 }
 
 .google-my-business__stats-nudge-heading {
-	font-weight: 600;
-	position: relative;
-	margin-bottom: 8px;
+	font-size: 24px;
+	font-weight: 400;
+	margin: 24px 0 8px 0;
 }
 
 .google-my-business__stats-nudge-description {
-	margin-bottom: 0;
+	font-size: 18px;
+	font-weight: 300;
+}
+.google-my-business__stats-nudge-button-row {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	.button {
+		margin-right: 16px;
+	}
 }
 
-.google-my-business__stats-nudge-button {
-	margin-top: 8px;
 
-	background: $blue-medium;
-	border-color: $blue-wordpress;
-	color: $white;
 
-	&:hover,
-	&:focus {
-		border-color: $blue-dark;
-		color: $white;
-	}
-	&[disabled],
-	&:disabled {
-		background: tint( $blue-light, 50% );
-		border-color: tint( $blue-wordpress, 55% );
-		color: $white;
-	}
+.google-my-business__stats-nudge-image-wrapper {
 	
+	position: relative;
+	max-height: 300px;
+	max-width: 300px;
 }
+
+// .google-my-business__stats-nudge-image {
+// 	// position: absolute;
+// 	// top: 50%;
+// 	// left: 50%;
+// 	// transform: translate( -50%, -50% );
+// 	// height: 100%;
+// 	// max-height: 80px;
+	
+// }
+
+
