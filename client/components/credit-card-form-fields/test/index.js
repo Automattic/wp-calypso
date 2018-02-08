@@ -15,6 +15,7 @@ import identity from 'lodash/identity';
  */
 import { CreditCardFormFields } from '../';
 import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import mockCountriesList from './mocks/mock-countries-list';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
@@ -28,7 +29,7 @@ jest.mock( 'lib/credit-card-details/ebanx', () => {
 
 const defaultProps = {
 	card: {},
-	countriesList: {},
+	countriesList: mockCountriesList,
 	eventFormName: 'A fine form',
 	translate: identity,
 	isFieldInvalid: identity,
