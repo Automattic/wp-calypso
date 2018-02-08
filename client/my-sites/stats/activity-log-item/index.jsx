@@ -14,6 +14,8 @@ import { localize } from 'i18n-calypso';
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import Gridicon from 'gridicons';
+import HappychatButton from 'components/happychat/button';
 import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
@@ -72,19 +74,19 @@ class ActivityLogItem extends Component {
 	}
 
 	renderItemAction() {
-		const {
-			createBackup,
-			createRewind,
-			disableRestore,
-			disableBackup,
-			hideRestore,
-			translate,
-			activity: { activityIsRewindable },
-		} = this.props;
+		const { hideRestore, activity: { activityIsRewindable, activityName } } = this.props;
 
-		if ( hideRestore || ! activityIsRewindable ) {
-			return null;
+		if ( ! hideRestore && activityIsRewindable ) {
+			return this.renderRewindAction();
 		}
+
+		if ( 'rewind__scan_result_found' === activityName ) {
+			return this.renderHelpAction();
+		}
+	}
+
+	renderRewindAction() {
+		const { createBackup, createRewind, disableRestore, disableBackup, translate } = this.props;
 
 		return (
 			<div className="activity-log-item__action">
@@ -106,6 +108,21 @@ class ActivityLogItem extends Component {
 					</PopoverMenuItem>
 				</SplitButton>
 			</div>
+		);
+	}
+
+	renderHelpAction() {
+		const { getHelpClick, translate } = this.props;
+
+		return (
+			<HappychatButton
+				className="activity-log-item__help-action"
+				borderless={ false }
+				onClick={ getHelpClick }
+			>
+				<Gridicon icon="chat" size={ 18 } />
+				{ translate( 'Get Help' ) }
+			</HappychatButton>
 		);
 	}
 
@@ -255,6 +272,7 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
+	getHelpClick: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );
