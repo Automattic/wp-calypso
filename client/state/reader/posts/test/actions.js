@@ -47,42 +47,6 @@ describe( 'actions', () => {
 		readSiteStub.reset();
 	} );
 
-	describe( '#postToKey', () => {
-		test( 'should return a feed key for an external post', () => {
-			expect(
-				actions.postToKey( {
-					feed_ID: 1,
-					site_ID: 1,
-					ID: 3,
-					feed_item_ID: 3,
-					is_external: true,
-				} )
-			).to.deep.equal( { feedId: 1, postId: 3 } );
-		} );
-
-		test( 'should return an blog id key for an internal post', () => {
-			expect(
-				actions.postToKey( {
-					site_ID: 2,
-					ID: 4,
-					is_external: false,
-				} )
-			).to.deep.equal( { blogId: 2, postId: 4 } );
-		} );
-
-		test( 'should return a feed key for a post with both a feed id and a site id', () => {
-			expect(
-				actions.postToKey( {
-					feed_ID: 1,
-					site_ID: 2,
-					ID: 4,
-					feed_item_ID: 3,
-					is_external: false,
-				} )
-			).to.deep.equal( { feedId: 1, postId: 3 } );
-		} );
-	} );
-
 	describe( '#receivePosts()', () => {
 		test( 'should return an action object and dispatch posts receive', () => {
 			const posts = [];
@@ -107,21 +71,6 @@ describe( 'actions', () => {
 			];
 			actions.receivePosts( posts )( dispatchSpy );
 			expect( trackingSpy ).to.have.been.calledWith( 'calypso_traintracks_render', 'foo' );
-		} );
-
-		test( 'should try to reload posts marked with should_reload', () => {
-			const posts = [
-				{
-					ID: 1,
-					site_ID: 1,
-					global_ID: 1,
-					railcar: '1234',
-					_should_reload: true,
-				},
-			];
-
-			actions.receivePosts( posts )( dispatchSpy );
-			expect( dispatchSpy ).to.have.been.calledWith( sinon.match.func );
 		} );
 	} );
 
