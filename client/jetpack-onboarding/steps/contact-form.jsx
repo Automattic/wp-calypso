@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -29,9 +30,20 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	};
 
 	render() {
-		const { getForwardUrl, translate } = this.props;
+		const { getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
+		const hasContactForm = !! get( settings, 'addContactForm' );
+		const tileProps = hasContactForm
+			? {
+					description: translate( 'Your contact form has been created.' ),
+				}
+			: {
+					buttonLabel: translate( 'Add a contact form' ),
+					description: translate(
+						'Not sure? You can skip this step and add a contact form later.'
+					),
+				};
 
 		return (
 			<div className="steps__main">
@@ -45,13 +57,10 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 
 				<TileGrid>
 					<Tile
-						buttonLabel={ translate( 'Add a contact form' ) }
-						description={ translate(
-							'Not sure? You can skip this step and add a contact form later.'
-						) }
 						image={ '/calypso/images/illustrations/contact-us.svg' }
 						onClick={ this.handleAddContactForm }
 						href={ getForwardUrl() }
+						{ ...tileProps }
 					/>
 				</TileGrid>
 			</div>
