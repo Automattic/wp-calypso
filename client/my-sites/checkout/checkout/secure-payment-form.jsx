@@ -136,7 +136,10 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		if ( newPayment ) {
-			// we need to defer this because this is mounted after `setDomainDetails` is called
+			// We need to defer this because this is mounted after `setDomainDetails`
+			// is called.
+			// Note: If this defer() is ever able to be removed, the corresponding
+			// defer() in NewCardForm::handleFieldChange() can likely be removed too.
 			defer( function() {
 				setPayment( newPayment );
 			} );
