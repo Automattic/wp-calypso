@@ -20,7 +20,7 @@ import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
-import { serverRender, serverRenderError } from 'render';
+import { serverRender, serverRenderError, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
@@ -506,11 +506,12 @@ module.exports = function() {
 		const dashboardUrl = isWpcom
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
-
-		res.render( 'browsehappy', {
+		const ctx = {
 			...req.context,
 			dashboardUrl,
-		} );
+		};
+
+		res.send( renderJsx( 'browsehappy', ctx ) );
 	} );
 
 	app.get( '/support-user', function( req, res ) {
