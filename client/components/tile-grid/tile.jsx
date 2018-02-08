@@ -19,6 +19,7 @@ export default class extends React.PureComponent {
 		buttonLabel: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.string,
+		highlighted: PropTypes.bool,
 		href: PropTypes.string,
 		image: PropTypes.string,
 		onClick: PropTypes.func,
@@ -30,11 +31,18 @@ export default class extends React.PureComponent {
 			buttonLabel,
 			className,
 			description,
+			highlighted,
 			href,
 			image,
 			onClick,
 		} = this.props;
-		const tileClassName = classNames( 'tile-grid__item', className );
+		const tileClassName = classNames(
+			'tile-grid__item',
+			{
+				'is-highlighted': highlighted,
+			},
+			className
+		);
 
 		return (
 			<Card className={ tileClassName } href={ href } onClick={ onClick } tabIndex="-1">
