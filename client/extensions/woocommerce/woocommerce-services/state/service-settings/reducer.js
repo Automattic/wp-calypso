@@ -1,49 +1,24 @@
 /**
  * External dependencies
  */
-import { mapValues } from 'lodash';
+import objectPath from 'object-path-immutable';
 
 /**
  * Internal dependencies
  */
-import { SET_FORM_PROPERTY, SET_ALL_PRISTINE } from './actions';
-import values from './values/reducer';
-import * as formValueActions from './values/actions';
+import { WOOCOMMERCE_SERVICES_SERVICE_SETTINGS_UPDATE_FIELD } from '../action-types';
 
 const reducers = {};
 
-reducers[ SET_FORM_PROPERTY ] = ( state, action ) => {
-	const newObj = {};
-	newObj[ action.field ] = action.value;
-	if ( 'success' === action.field && action.value ) {
-		newObj.pristine = mapValues( state.pristine, () => true );
-	}
-	return Object.assign( {}, state, newObj );
+reducers[ WOOCOMMERCE_SERVICES_SERVICE_SETTINGS_UPDATE_FIELD ] = ( state, action ) => {
+	return objectPath.set( state, action.path, action.value );
 };
 
-reducers[ SET_ALL_PRISTINE ] = ( state, action ) => ( {
-	...state,
-	pristine: mapValues( state.pristine, () => action.pristineValue ),
-} );
-
-export default function form( state = {}, action ) {
-	let newState = Object.assign( {}, state );
-
+const settings = ( state = {}, action ) => {
 	if ( 'function' === typeof reducers[ action.type ] ) {
-		newState = reducers[ action.type ]( state, action );
+		return reducers[ action.type ]( state, action );
 	}
+	return state;
+};
 
-	if ( formValueActions[ action.type ] ) {
-		newState.pristine = { ...state.pristine, [ action.path ]: false };
-
-		// Allow client-side form validation to take over error state when inputs change
-		delete newState.error;
-		delete newState.fieldsStatus;
-
-		newState = Object.assign( newState, {
-			values: values( state.values || {}, action ),
-		} );
-	}
-
-	return newState;
-}
+export default settings;

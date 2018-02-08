@@ -1,18 +1,35 @@
 /**
  * Internal dependencies
  */
-export const SET_FORM_PROPERTY = 'SET_FORM_PROPERTY';
-export const SET_ALL_PRISTINE = 'SET_ALL_PRISTINE';
+import {
+	WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE,
+	WOOCOMMERCE_SERVICES_SERVICE_SETTINGS_UPDATE_FIELD,
+} from '../action-types';
 
-export const setFormProperty = ( field, value ) => {
-	return {
-		type: SET_FORM_PROPERTY,
-		field,
-		value,
-	};
-};
+export const updateWcsShippingZoneMethod = (
+	siteId,
+	methodId,
+	methodType,
+	method,
+	successAction,
+	failureAction
+) => ( {
+	type: WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_UPDATE,
+	siteId,
+	methodId,
+	methodType,
+	method,
+	successAction,
+	failureAction,
+} );
 
-export const setAllPristine = ( pristineValue ) => ( {
-	type: SET_ALL_PRISTINE,
-	pristineValue,
+export const updateField = ( siteId, methodId, path, value ) => ( {
+	type: WOOCOMMERCE_SERVICES_SERVICE_SETTINGS_UPDATE_FIELD,
+	siteId,
+	methodId,
+	// Since all the WCS shipping methods use the same reducer, methodType just needs to be a valid WCS method identifier.
+	// This works for Canada Post and FedEx too.
+	methodType: 'wc_services_usps',
+	path,
+	value,
 } );
