@@ -2,7 +2,7 @@
 /**
  * External Dependencies
  */
-import { filter, forEach, compact } from 'lodash';
+import { filter, forEach, compact, partition } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,7 +43,10 @@ export const receivePosts = posts => dispatch => {
 		return Promise.resolve( [] );
 	}
 
-	const normalizedPosts = compact( posts ).map( runFastRules );
+	const [ toReload, toProcess ] = partition( posts, '_should_reload' );
+	toReload.forEach( post => dispatch( reloadPost( post ) ) );
+
+	const normalizedPosts = compact( toProcess ).map( runFastRules );
 
 	// save the posts after running the fast rules
 	dispatch( {
@@ -71,17 +74,6 @@ export const fetchPost = postKey => dispatch => {
 		.catch( error => dispatch( receiveErrorForPostKey( error, postKey ) ) );
 };
 
-export function reloadPost( post ) {
-	return dispatch => {
-		// keep track of any railcars we might have
-		const railcar = post.railcar;
-		return fetchForKey( keyForPost( post ) ).then( data => {
-			data.railcar = railcar;
-			return dispatch( receivePosts( [ data ] ) );
-		} );
-	};
-}
-
 function receiveErrorForPostKey( error, postKey ) {
 	return {
 		type: READER_POSTS_RECEIVE,
@@ -96,5 +88,17 @@ function receiveErrorForPostKey( error, postKey ) {
 				error,
 			},
 		],
+	};
+}
+
+export function reloadPost( post ) {
+	return function( dispatch ) {
+		// keep track of any railcars we might have
+		const railcar = post.railcar;
+		const postKey = keyForPost( post );
+		fetchForKey( postKey ).then( data => {
+			data.railcar = railcar;
+			dispatch( receivePosts( [ data ] ) );
+		} );
 	};
 }

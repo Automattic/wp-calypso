@@ -72,6 +72,21 @@ describe( 'actions', () => {
 			actions.receivePosts( posts )( dispatchSpy );
 			expect( trackingSpy ).to.have.been.calledWith( 'calypso_traintracks_render', 'foo' );
 		} );
+
+		test( 'should try to reload posts marked with should_reload', () => {
+			const posts = [
+				{
+					ID: 1,
+					site_ID: 1,
+					global_ID: 1,
+					railcar: '1234',
+					_should_reload: true,
+				},
+			];
+
+			actions.receivePosts( posts )( dispatchSpy );
+			expect( dispatchSpy ).to.have.been.calledWith( sinon.match.func );
+		} );
 	} );
 
 	describe( '#fetchPost', () => {
