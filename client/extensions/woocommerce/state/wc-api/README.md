@@ -57,19 +57,25 @@ class MyProductPage extends Component {
 }
 
 function mapSiteDataToProps( siteData, ownProps, state ) {
+	const {
+		getProduct,
+		getVariationsForProduct,
+		getProductCategories,
+	} = siteData;
 	const { productId } = ownProps;
 	const variationsExpanded = isVariationsExpanded( state );
 	const productEdits = getProductEdits( state, productId );
 
-	const product = siteData.products.single( productId, { freshness: 1.5 * MINUTES } );
+	const product = getProduct( productId, { freshness: 1.5 * MINUTES } );
 	const productWithEdits = { ...product, ...productEdits };
 
-	const variations = siteData.productVariations.forProduct(
+	const variations = getVariationsForProduct(
 		productId,
 		{ freshness: ( variationsExpanded ? 1.5 : 10 ) * MINUTES },
 	);
 
-	const productCategories = siteData.productCategories.all(
+	const productCategories = getProductCategories(
+		{ all: true },
 		{ freshness: 1.5 * HOURS },
 	);
 
@@ -91,7 +97,7 @@ export default withWooCommerceSite( mapSiteDataToProps, mappedSiteActions )( MyP
 And the wrapped component can be rendered as such:
 
 ```jsx
-<MyProductPage wcApiSite={ { siteId } } productId={ 125 } />
+<MyProductPage wcApiSite={ site && site.ID } productId={ productId } />
 ```
 
 #### Higher Order Component - Definitions
@@ -101,10 +107,13 @@ And the wrapped component can be rendered as such:
 - `mappedSiteActions` - Maps site actions to props (defined in more detail below).
 
 `mapSiteDataToProps()` - A function to be defined, which returns props to be rendered. Has the following parameters available when called by the HOC. This is similar to redux connect's `mapStateToProps()`.
-- `siteData` - A collection of functions that define the data needed from the WooCommerce API and return the current state of that data.
+- `siteData` - A collection of pre-curried selectors, which also track usage of API data when used.
 - `ownProps` - Props that are assigned to the implementation of this component and passed through here.
 - `state` - The redux state, made available for normal selectors.
 
 `mappedSiteActions` - An object that maps site actions to props. When passed into `withWooCommerceSite`, it maps pre-curried dispatch functions to the specified props. This is similar to redux connect's `mapDispatchToProps()`.
 
-`wcApiSite` - The site identifier that pertains to the environment in which `wc-api` is running. For Calypso on WordPress.com, this is `{ siteId: <number> }`.
+`wcApiSite` - The site identifier that pertains to the environment in which `wc-api` is running.
+- For Calypso on WordPress.com, this is just the numeric site.ID
+- For wp-admin, this could be the base URL of the site's REST API (for compatibility with multi-site)
+
