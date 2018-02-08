@@ -4,8 +4,8 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 import { get, map, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
