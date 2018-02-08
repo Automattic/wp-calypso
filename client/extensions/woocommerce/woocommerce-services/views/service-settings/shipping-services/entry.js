@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
 import classNames from 'classnames';
+import { snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,11 +34,13 @@ const ShippingServiceEntry = ( props ) => {
 	const onToggleEnabled = ( event ) => updateValue( 'enabled', event.target.checked );
 	const onUpdateAdjustment = ( event ) => updateValue( 'adjustment', event.target.value );
 	const onUpdateAdjustmentType = ( event ) => updateValue( 'adjustment_type', event.target.value );
+	const id = 'service_' + snakeCase( service.name );
 
 	return (
 		<div className={ classNames( 'shipping-services__entry', { 'wcc-error': hasError } ) } >
-			<label className="shipping-services__entry-title">
+			<label className="shipping-services__entry-title" htmlFor={ id }>
 				<Checkbox
+					id={ id }
 					checked={ enabled }
 					onChange={ onToggleEnabled }
 				/>
