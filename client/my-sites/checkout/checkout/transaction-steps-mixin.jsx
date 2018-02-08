@@ -14,7 +14,7 @@ const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:transaction-step
 import analytics from 'lib/analytics';
 import { recordOrder } from 'lib/analytics/ad-tracking';
 import { getTld } from 'lib/domains';
-import { cartItems } from 'lib/cart-values';
+import { cartItems, getLocationOrigin } from 'lib/cart-values';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { submitTransaction } from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
@@ -25,7 +25,19 @@ const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
 		event.preventDefault();
 
-		submitTransaction( pick( this.props, [ 'cart', 'transaction' ] ) );
+		const params = pick( this.props, [ 'cart', 'transaction' ] );
+		const origin = getLocationOrigin( window.location );
+
+		params.successUrl = origin + this.props.redirectTo();
+		params.cancelUrl = origin + '/checkout/';
+
+		if ( this.props.selectedSite ) {
+			params.cancelUrl += this.props.selectedSite.slug;
+		} else {
+			params.cancelUrl += 'no-site';
+		}
+
+		submitTransaction( params );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {

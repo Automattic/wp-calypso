@@ -90,6 +90,7 @@ TransactionFlow.prototype._paymentHandlers = {
 
 	WPCOM_Billing_MoneyPress_Paygate: function() {
 		const { newCardDetails } = this._initialData.payment,
+			{ successUrl, cancelUrl } = this._initialData,
 			validation = validateCardDetails( newCardDetails );
 
 		if ( ! isEmpty( validation.errors ) ) {
@@ -115,6 +116,8 @@ TransactionFlow.prototype._paymentHandlers = {
 					name,
 					zip,
 					country,
+					successUrl,
+					cancelUrl,
 				};
 
 				if ( isEbanxEnabledForCountry( country ) ) {
