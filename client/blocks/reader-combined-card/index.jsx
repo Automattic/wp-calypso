@@ -69,6 +69,7 @@ class ReaderCombinedCard extends React.Component {
 	render() {
 		const {
 			posts,
+			postKeys,
 			site,
 			feed,
 			postKey,
@@ -124,6 +125,7 @@ class ReaderCombinedCard extends React.Component {
 						<ReaderCombinedCardPost
 							key={ `post-${ postKey.feedId || postKey.blogId }-${ postKey.postIds[ i ] }` }
 							post={ post }
+							postKey={ postKeys[ i ] }
 							streamUrl={ streamUrl }
 							onClick={ onClick }
 							isDiscover={ isDiscover }
@@ -154,5 +156,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		posts: getPostsByKeys( state, postKeys ),
+		postKeys,
 	};
 } )( localize( ReaderCombinedCard ) );

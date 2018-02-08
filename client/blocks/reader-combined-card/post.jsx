@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { has } from 'lodash';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -24,6 +24,7 @@ import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
 import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import QueryReaderPost from 'components/data/query-reader-post';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
@@ -76,11 +77,16 @@ class ReaderCombinedCardPost extends React.Component {
 	};
 
 	render() {
-		const { post, streamUrl, isDiscover, isSelected } = this.props;
+		const { post, streamUrl, isDiscover, isSelected, postKey } = this.props;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
 		if ( isLoading ) {
-			return <ReaderCombinedCardPostPlaceholder />;
+			return (
+				<Fragment>
+					<QueryReaderPost postKey={ postKey } />
+					<ReaderCombinedCardPostPlaceholder />
+				</Fragment>
+			);
 		}
 
 		const hasAuthorName =

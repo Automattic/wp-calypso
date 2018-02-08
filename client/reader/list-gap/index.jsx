@@ -15,7 +15,7 @@ import { handleGapClicked } from 'reader/utils';
 class Gap extends React.Component {
 	static propTypes = {
 		gap: PropTypes.object.isRequired,
-		store: PropTypes.object.isRequired,
+		postsStore: PropTypes.object.isRequired,
 		selected: PropTypes.bool,
 	};
 
@@ -23,7 +23,7 @@ class Gap extends React.Component {
 
 	handleClick = () => {
 		this.setState( { isFilling: true } );
-		handleGapClicked( this.props.gap, this.props.store.id );
+		handleGapClicked( this.props.gap, this.props.postsStore.id );
 	};
 
 	render() {

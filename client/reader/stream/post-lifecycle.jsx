@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { omit, includes } from 'lodash';
 
@@ -23,6 +23,7 @@ import { IN_STREAM_RECOMMENDATION } from 'reader/follow-sources';
 import CombinedCard from 'blocks/reader-combined-card';
 import EmptySearchRecommendedPost from './empty-search-recommended-post';
 import { getPostByKey } from 'state/reader/posts/selectors';
+import QueryReaderPost from 'components/data/query-reader-post';
 
 class PostLifecycle extends React.Component {
 	static propTypes = {
@@ -68,13 +69,18 @@ class PostLifecycle extends React.Component {
 			return (
 				<ListGap
 					gap={ postKey }
-					store={ this.props.store }
+					postsStore={ this.props.postsStore }
 					selected={ this.props.isSelected }
 					handleClick={ this.props.handleClick }
 				/>
 			);
 		} else if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
-			return <PostPlaceholder />;
+			return (
+				<Fragment>
+					<QueryReaderPost postKey={ postKey } />
+					<PostPlaceholder />
+				</Fragment>
+			);
 		} else if ( post._state === 'error' ) {
 			return <PostUnavailable post={ post } />;
 		} else if ( ! post.is_external && includes( this.props.blockedSites, +post.site_ID ) ) {
