@@ -124,7 +124,6 @@ SettingsItem.propTypes = {
 	storeOptions: PropTypes.object.isRequired,
 	formValueActions: PropTypes.object.isRequired,
 	errors: PropTypes.object,
-	saveForm: PropTypes.func,
 };
 
 export default localize( SettingsItem );
