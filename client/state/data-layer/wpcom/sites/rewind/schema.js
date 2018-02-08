@@ -48,7 +48,7 @@ export const unavailable = {
 		reason: {
 			type: 'string',
 		},
-		last_updated: { type: 'integer' },
+		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
 	},
 	required: [ 'state', 'last_updated' ],
 };
@@ -64,7 +64,7 @@ export const inactive = {
 			type: 'array',
 			items: credential,
 		},
-		last_updated: { type: 'integer' },
+		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
 	},
 	required: [ 'state', 'last_updated' ],
 };
@@ -76,7 +76,7 @@ export const awaitingCredentials = {
 			type: 'string',
 			pattern: '^awaiting_credentials$',
 		},
-		last_updated: { type: 'integer' },
+		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
 	},
 	required: [ 'state', 'last_updated' ],
 };
@@ -92,7 +92,7 @@ export const provisioning = {
 			type: 'array',
 			items: credential,
 		},
-		last_updated: { type: 'integer' },
+		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
 	},
 	required: [ 'state', 'last_updated' ],
 };
@@ -113,7 +113,7 @@ export const active = {
 			items: download,
 		},
 		rewind,
-		last_updated: { type: 'integer' },
+		last_updated: { oneOf: [ { type: 'integer' }, { type: 'string', format: 'date-time' } ] },
 	},
 	required: [ 'state', 'last_updated' ],
 };
