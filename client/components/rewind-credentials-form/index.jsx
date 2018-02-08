@@ -86,7 +86,7 @@ export class RewindCredentialsForm extends Component {
 		} else if ( 'root' === payload.user ) {
 			userError = translate(
 				"We can't accept credentials for the root user. " +
-					'Please acquire or create credentials for another user with access to your server.'
+					'Please provide or create credentials for another user with access to your server.'
 			);
 		}
 
