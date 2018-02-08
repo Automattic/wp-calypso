@@ -15,8 +15,8 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import Spinner from 'components/spinner';
 import {
-	getJetpackOnboardingPendingSteps,
 	getJetpackOnboardingCompletedSteps,
+	getJetpackOnboardingPendingSteps,
 } from 'state/selectors';
 import {
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
