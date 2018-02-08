@@ -14,6 +14,7 @@ import classNames from 'classnames';
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
+import ContextHelpResults from './context-help-results';
 import PlaceholderLines from './placeholder-lines';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import {
@@ -35,99 +36,16 @@ class InlineHelpSearchResults extends Component {
 		searchQuery: '',
 	};
 
-	getContextResults = () => {
-		// going without context for now -- let's just provide the top x recommended links
-		// copied from client/me/help/main for now
-		const helpfulResults = [
-			{
-				link: 'https://en.support.wordpress.com/com-vs-org/',
-				title: this.props.translate( 'Uploading custom plugins and themes' ),
-				description: this.props.translate(
-					'Learn more about installing a custom theme or plugin using the Business plan.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/all-about-domains/',
-				title: this.props.translate( 'All About Domains' ),
-				description: this.props.translate(
-					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/start/',
-				title: this.props.translate( 'Get Started' ),
-				description: this.props.translate(
-					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
-				title: this.props.translate( 'Privacy Settings' ),
-				description: this.props.translate(
-					'Limit your site’s visibility or make it completely private.'
-				),
-			},
-		];
-		return helpfulResults;
-	}
-
-	renderSearchResults() {
-		if ( isEmpty( this.props.searchQuery ) ) {
-			// not searching
-			return this.renderContextHelp();
-		}
-
-		if ( this.props.isSearching ) {
-			// search, but no results so far
-			return (
-				<PlaceholderLines />
-			);
-		}
-
-		if ( isEmpty( this.props.searchResults ) && ! isEmpty( this.props.searchQuery ) ) {
-			// search done, but nothing found
-			return (
-				<div>
-					<p className="inline-help__empty-results">No results.</p>
-					{ this.renderContextHelp() }
-				</div>
-			);
-		}
-
-		const links = this.props.searchResults;
-		if ( links && links.length > 0 ) {
-			// found something
-			return (
-				<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
-			);
-		}
-		return null;
-	}
-
-	renderContextHelp() {
-		const links = this.getContextResults();
-		return (
-			<ul className="inline-help__results-list">
-				{ links && links.map( this.renderHelpLink ) }
-			</ul>
-		);
-	}
-
 	getSelectedUrl = () => {
 		if ( this.props.selectedResult === -1 ) {
 			return false;
 		}
 
-		const links = this.props.searchResults || this.getContextResults();
-		const selectedLink = links[ this.props.selectedResult ];
+		const selectedLink = this.props.searchResults[ this.props.selectedResult ];
 		if ( ! selectedLink || ! selectedLink.link ) {
 			return false;
 		}
 		return selectedLink.link;
-	}
-
-	componentDidMount() {
-		this.props.setSearchResults( '', this.getContextResults() );
 	}
 
 	componentWillUpdate( nextProps ) {
@@ -166,12 +84,50 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	render() {
-		return (
-			<div>
-				<QueryInlineHelpSearch query={ this.props.searchQuery } requesting={ this.props.isSearching } />
-				{ this.renderSearchResults() }
-			</div>
-		);
+		// TODO: do we need query here, everywhere? or just in a few places? or maybe in the parent component?
+		const query = <QueryInlineHelpSearch query={ this.props.searchQuery } requesting={ this.props.isSearching } />;
+		if ( isEmpty( this.props.searchQuery ) ) {
+			// not searching
+			return (
+				<div>
+					{ query }
+					<ContextHelpResults />
+				</div>
+			);
+		}
+
+		if ( this.props.isSearching ) {
+			// search, but no results so far
+			return (
+				<div>
+					{ query }
+					<PlaceholderLines />
+				</div>
+			);
+		}
+
+		if ( isEmpty( this.props.searchResults ) && ! isEmpty( this.props.searchQuery ) ) {
+			// search done, but nothing found
+			return (
+				<div>
+					{ query }
+					<p className="inline-help__empty-results">No results.</p>
+					<ContextHelpResults />
+				</div>
+			);
+		}
+
+		const links = this.props.searchResults;
+		if ( links && links.length > 0 ) {
+			// found something
+			return (
+				<div>
+					{ query }
+					<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
+				</div>
+			);
+		}
+		return null;
 	}
 }
 
