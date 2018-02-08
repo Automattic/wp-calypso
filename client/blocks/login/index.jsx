@@ -42,20 +42,23 @@ const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
+		isLinking: PropTypes.bool,
+		jetpack: PropTypes.bool.isRequired,
+		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		requestNotice: PropTypes.object,
+		socialConnect: PropTypes.bool,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-		socialConnect: PropTypes.bool,
-		isLinking: PropTypes.bool,
-		linkingSocialService: PropTypes.string,
-		socialService: PropTypes.string,
-		socialServiceResponse: PropTypes.object,
 	};
+
+	static defaultProps = { jetpack: false };
 
 	componentDidMount = () => {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
