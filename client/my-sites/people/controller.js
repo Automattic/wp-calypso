@@ -94,25 +94,16 @@ function renderInvitePeople( context, next ) {
 }
 
 function renderPeopleInvites( context, next ) {
-	const state = context.store.getState();
-	const site = getSelectedSite( state );
-
 	context.store.dispatch( setTitle( i18n.translate( 'Invites', { textOnly: true } ) ) );
 
-	context.primary = React.createElement( PeopleInvites, {
-		site,
-	} );
+	context.primary = React.createElement( PeopleInvites );
 	next();
 }
 
 function renderPeopleInviteDetails( context, next ) {
-	const state = context.store.getState();
-	const site = getSelectedSite( state );
-
-	context.store.dispatch( setTitle( i18n.translate( 'Invites', { textOnly: true } ) ) );
+	context.store.dispatch( setTitle( i18n.translate( 'Invite Details', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( PeopleInviteDetails, {
-		site,
 		inviteKey: context.params.invite_key,
 	} );
 	next();

@@ -20,11 +20,12 @@ import Card from 'components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Gravatar from 'components/gravatar';
 import QuerySiteInvites from 'components/data/query-site-invites';
+import { getSelectedSite } from 'state/ui/selectors';
 import { getInviteForSite } from 'state/invites/selectors';
 
 class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
-		site: PropTypes.object.isRequired,
+		site: PropTypes.object,
 		inviteKey: PropTypes.string.isRequired,
 	};
 
@@ -115,9 +116,11 @@ class PeopleInviteDetails extends React.PureComponent {
 }
 
 export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.site && ownProps.site.ID;
+	const site = getSelectedSite( state );
+	const siteId = site && site.ID;
 
 	return {
+		site,
 		invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
 	};
 } )( localize( PeopleInviteDetails ) );
