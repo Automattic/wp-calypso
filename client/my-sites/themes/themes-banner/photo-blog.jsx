@@ -29,7 +29,7 @@ class PhotoBlogBanner extends PureComponent {
 						},
 					}
 				) }
-				actionLabel={ translate( 'See the theme' ) }
+				buttonLabel={ translate( 'See the theme' ) }
 				backgroundColor={ '#3FE6AF' }
 				image={ '/calypso/images/themes-banner/photo-blog.png' }
 				imageTransform={ 'translateY(-4.4%) translateX(17%)' }

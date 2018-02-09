@@ -29,7 +29,7 @@ class SmallBusinessBanner extends PureComponent {
 						},
 					}
 				) }
-				actionLabel={ translate( 'See the theme' ) }
+				buttonLabel={ translate( 'See the theme' ) }
 				backgroundColor={ '#3d596d' }
 				image={ '/calypso/images/themes-banner/small-business.png' }
 				imageTransform={ 'translateY(-19%) translateX(17%)' }

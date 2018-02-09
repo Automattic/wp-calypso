@@ -25,7 +25,7 @@ class ThemesBanner extends PureComponent {
 		themeName: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		description: PropTypes.node.isRequired,
-		actionLabel: PropTypes.string.isRequired,
+		buttonLabel: PropTypes.string.isRequired,
 		backgroundColor: PropTypes.string,
 		image: PropTypes.string,
 		imageAttrs: PropTypes.shape( {
@@ -53,8 +53,7 @@ class ThemesBanner extends PureComponent {
 		const {
 			title,
 			description,
-			actionLabel,
-			action,
+			buttonLabel,
 			backgroundColor,
 			image,
 			imageAttrs = {},
@@ -85,8 +84,8 @@ class ThemesBanner extends PureComponent {
 			>
 				<h1 className="themes-banner__title">{ title }</h1>
 				<p className="themes-banner__description">{ description }</p>
-				<Button className="themes-banner__cta" compact primary onClick={ action }>
-					{ actionLabel }
+				<Button className="themes-banner__cta" compact primary>
+					{ buttonLabel }
 				</Button>
 				{ imageNode }
 			</a>
