@@ -9,7 +9,7 @@
 	overflow: hidden;
 	user-select: none;
 	
-	&:hover {
+	&:hover, &:focus {
 		color: white;
 	}
 	
