@@ -20,7 +20,7 @@ class SmallBusinessBanner extends PureComponent {
 				themeId={ 'small-business' }
 				themeName={ 'Small Business' }
 				title={ translate( 'Do you run a small business?' ) }
-				description={ 'An awesome description for this theme' }
+				description={ translate( 'An awesome description for this theme' ) }
 				buttonLabel={ translate( 'See the theme' ) }
 				backgroundColor={ '#3d596d' }
 				image={ '/calypso/images/themes-banner/small-business.png' }
