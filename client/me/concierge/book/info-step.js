@@ -78,7 +78,7 @@ class InfoStep extends Component {
 						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
 						<FormTextInput
 							name="firstname"
-							placeholder={ translate( 'Please tell us how you prefer us to call you.' ) }
+							placeholder={ translate( 'What may we call you?' ) }
 							onChange={ this.setFieldValue }
 							value={ firstname }
 						/>
