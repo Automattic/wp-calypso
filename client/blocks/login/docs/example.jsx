@@ -14,6 +14,7 @@ import LoginBlock from 'blocks/login';
 const LoginExample = () => (
 	<React.Fragment>
 		<LoginBlock />
+		<p />
 		<LoginBlock jetpack />
 	</React.Fragment>
 );
