@@ -56,10 +56,10 @@ class PeopleInviteDetails extends React.PureComponent {
 		if ( ! invite ) {
 			if ( requesting ) {
 				return this.renderPlaceholder();
-			} else {
-				const message = translate( 'The requested invite does not exist.' );
-				return <EmptyContent title={ message } />;
 			}
+
+			const message = translate( 'The requested invite does not exist.' );
+			return <EmptyContent title={ message } />;
 		}
 
 		return (
@@ -116,7 +116,7 @@ class PeopleInviteDetails extends React.PureComponent {
 	}
 
 	render() {
-		const { site, translate, invite } = this.props;
+		const { site, translate } = this.props;
 
 		return (
 			<Main className="people-invite-details">
