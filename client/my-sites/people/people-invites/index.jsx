@@ -22,6 +22,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import InvitesListEnd from './invites-list-end';
+import { getSelectedSite } from 'state/ui/selectors';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -31,19 +32,16 @@ import {
 
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
-		site: PropTypes.object.isRequired,
+		site: PropTypes.object,
 	};
 
 	render() {
 		const { site } = this.props;
-
-		if ( ! site || ! site.ID ) {
-			return null;
-		}
+		const siteId = site && site.ID;
 
 		return (
 			<Main className="people-invites">
-				<QuerySiteInvites siteId={ site.ID } />
+				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
 				<PeopleSectionNav filter="invites" site={ site } />
 				{ this.renderInvitesList() }
@@ -60,6 +58,10 @@ class PeopleInvites extends React.PureComponent {
 			site,
 			translate,
 		} = this.props;
+
+		if ( ! site || ! site.ID ) {
+			return this.renderPlaceholder();
+		}
 
 		const hasAcceptedInvites = acceptedInvites && acceptedInvites.length > 0;
 		const acceptedInviteCount = hasAcceptedInvites ? acceptedInvites.length : null;
@@ -150,10 +152,12 @@ class PeopleInvites extends React.PureComponent {
 	};
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.site && ownProps.site.ID;
+export default connect( state => {
+	const site = getSelectedSite( state );
+	const siteId = site && site.ID;
 
 	return {
+		site,
 		requesting: isRequestingInvitesForSite( state, siteId ),
 		pendingInvites: getPendingInvitesForSite( state, siteId ),
 		acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
