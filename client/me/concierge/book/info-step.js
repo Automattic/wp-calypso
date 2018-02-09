@@ -51,16 +51,18 @@ class InfoStep extends Component {
 	};
 
 	componentDidMount() {
-		const { userSettings } = this.props;
+		const { userSettings, signupForm: { firstname, lastname } } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
 
-		// Prefill the firstname & lastname fields by user settings.
-		this.props.updateConciergeSignupForm( {
-			...this.props.signupForm,
-			firstname: userSettings.first_name,
-			lastname: userSettings.last_name,
-		} );
+		if ( ! firstname && ! lastname ) {
+			// Prefill the firstname & lastname fields by user settings.
+			this.props.updateConciergeSignupForm( {
+				...this.props.signupForm,
+				firstname: userSettings.first_name,
+				lastname: userSettings.last_name,
+			} );
+		}
 	}
 
 	render() {
