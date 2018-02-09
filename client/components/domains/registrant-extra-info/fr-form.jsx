@@ -107,8 +107,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	};
 
 	render() {
-		const { contactDetails, contactDetailsValidationErrors, translate } = this.props;
-		const registrantType = get( contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const { ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
+		const registrantType = get( ccTldDetails, 'registrantType', defaultRegistrantType );
 		const formIsValid = isEmpty( contactDetailsValidationErrors );
 
 		return (
@@ -149,13 +149,13 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 
 	renderOrganizationFields() {
-		const { contactDetails, contactDetailsValidationErrors, translate } = this.props;
+		const { contactDetails, ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
 		const { registrantVatId, sirenSiret, trademarkNumber } = defaults(
 			{},
-			contactDetails.extra,
+			ccTldDetails,
 			emptyValues
 		);
-		const validationErrors = get( contactDetailsValidationErrors, 'extra', {} );
+		const validationErrors = get( contactDetailsValidationErrors, 'extra.fr', {} );
 		const registrantVatIdValidationMessage =
 			validationErrors.registrantVatId &&
 			renderValidationError(
