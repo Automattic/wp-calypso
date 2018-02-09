@@ -14,6 +14,7 @@ import {
 	delay,
 	filter,
 	find,
+	get,
 	indexOf,
 	isEmpty,
 	last,
@@ -54,6 +55,7 @@ import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-trac
 import { disableCart } from 'lib/upgrades/actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { affiliateReferral } from 'state/refer/actions';
+import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 
 /**
  * Constants
@@ -456,6 +458,7 @@ class Signup extends React.Component {
 	};
 
 	currentStep = () => {
+		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
@@ -463,9 +466,7 @@ class Signup extends React.Component {
 			flow = flows.getFlow( this.props.flowName ),
 			hideFreePlan = !! (
 				this.state.plans ||
-				( this.props.signupDependencies &&
-					this.props.signupDependencies.domainItem &&
-					this.props.signupDependencies.domainItem.is_domain_registration &&
+				( ( isDomainRegistration( domainItem ) || isDomainTransfer( domainItem ) ) &&
 					this.props.domainsWithPlansOnly )
 			);
 
