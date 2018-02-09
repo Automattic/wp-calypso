@@ -114,7 +114,7 @@ class InfoStep extends Component {
 						<FormTextarea
 							placeholder={ translate(
 								'Sell products and services? Generate leads? Something else entirely?' +
-									' The more specific, the more we can help you.'
+									" Be as specific as you can! It helps us provide the information you're looking for."
 							) }
 							name="message"
 							onChange={ this.setFieldValue }
