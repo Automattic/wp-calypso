@@ -23,7 +23,7 @@ import {
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
 
-const CompletedSteps = ( { siteSlug, steps, stepsCompleted, stepsPending } ) =>
+const CompletedSteps = ( { basePath, siteSlug, steps, stepsCompleted, stepsPending } ) =>
 	map( without( steps, STEPS.SUMMARY ), stepName => {
 		const isCompleted = get( stepsCompleted, stepName ) === true;
 		const isPending = get( stepsPending, stepName );
@@ -39,9 +39,7 @@ const CompletedSteps = ( { siteSlug, steps, stepsCompleted, stepsPending } ) =>
 				) : (
 					<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
 				) }
-				<a href={ `/jetpack/onboarding/${ stepName }/${ siteSlug }` }>
-					{ STEP_TITLES[ stepName ] }
-				</a>
+				<a href={ [ basePath, stepName, siteSlug ].join( '/' ) }>{ STEP_TITLES[ stepName ] }</a>
 			</div>
 		);
 	} );
