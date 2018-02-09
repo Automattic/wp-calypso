@@ -1,56 +1,84 @@
 
-
-
 .google-my-business__stats-nudge {
-	padding-left: 48px;
+	padding: 24px;
 	position: relative;
-	overflow: hidden;
 	max-height: 300px;
 	display: flex;
+
+	@include breakpoint( ">960px" ) {
+		overflow: hidden;
+		padding-left: 48px;
+	}
 }
 
 .google-my-business__stats-nudge-info {
 	position: relative;
-	width: calc( 100% - 300px);
+	width: calc( 100% - 150px);
 	margin-left: auto;
-	padding: 24px;
-}
+	padding: 12px;
 
-.google-my-business__stats-nudge-heading {
-	font-size: 24px;
-	font-weight: 400;
-	margin: 24px 0 8px 0;
-}
-
-.google-my-business__stats-nudge-description {
-	font-size: 18px;
-	font-weight: 300;
-}
-.google-my-business__stats-nudge-button-row {
-	margin-top: 20px;
-	margin-bottom: 20px;
-	.button {
-		margin-right: 16px;
+	@include breakpoint( ">960px" ) {
+		padding: 24px;
+		width: calc( 100% - 300px);
 	}
 }
 
-
-
-.google-my-business__stats-nudge-image-wrapper {
-	
-	position: relative;
-	max-height: 300px;
-	max-width: 300px;
+.google-my-business__stats-nudge-heading {
+	font-size: 16px;
+	font-weight: 400;
+	margin: 24px 0 8px 0;
+	@include breakpoint( ">660px" ) {
+		font-size: 18px;
+	}
+	@include breakpoint( ">960px" ) {
+		font-size: 24px;
+	}
 }
 
-// .google-my-business__stats-nudge-image {
-// 	// position: absolute;
-// 	// top: 50%;
-// 	// left: 50%;
-// 	// transform: translate( -50%, -50% );
-// 	// height: 100%;
-// 	// max-height: 80px;
-	
-// }
+.google-my-business__stats-nudge-description {
+	font-size: 12px;
+	font-weight: 300;
+	@include breakpoint( ">660px" ) {
+		font-size: 14px;
+	}
+	@include breakpoint( ">960px" ) {
+		font-size: 18px;
+	}
+}
+.google-my-business__stats-nudge-button-row {
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	justify-content: center;
+	@include breakpoint( ">960px") {
+		flex-direction: row;
+		justify-content: flex-start;
+	}
+
+	.button {
+		margin-bottom: 16px;
+		margin-right: 0;
+		width: 150px;
+		@include breakpoint( ">960px") {
+			width: auto;
+			margin-bottom: 0;
+			margin-right: 16px;
+		}
+	}
+}
+
+.google-my-business__stats-nudge-image-wrapper {
+	max-width: 150px;
+	@include breakpoint( ">960px" ) {
+		max-width: 300px;
+	}
+}
+
+.google-my-business__stats-nudge-image {
+	height: 100%;
+	@include breakpoint( ">960px" ) {
+		height: auto;
+	}
+}
 
 
