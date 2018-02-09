@@ -59,7 +59,7 @@ function Browsehappy( {
 											<a key="dashboard-link" href={ dashboardUrl }>
 												use the classic WordPress dashboard
 											</a>,
-											' or ',
+											', or ',
 											<a key="browsehappy-link" href="https://browsehappy.com">
 												upgrade your browser
 											</a>,
