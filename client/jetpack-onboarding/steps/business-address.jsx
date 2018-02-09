@@ -74,7 +74,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	};
 
 	render() {
-		const { isRequestingSettings, translate } = this.props;
+		const { basePath, isRequestingSettings, translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
 		const subHeaderText = translate(
 			'Enter your business address to have a map added to your website.'
@@ -83,7 +83,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			<div className="steps__main">
 				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.BUSINESS_ADDRESS + '/:site' }
+					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
 					title="Business Address ‹ Jetpack Onboarding"
 				/>
 
