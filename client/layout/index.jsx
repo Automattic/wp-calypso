@@ -85,14 +85,16 @@ const Layout = createReactClass( {
 	},
 
 	renderMasterbar: function() {
-		if ( ! this.props.user ) {
-			return <MasterbarLoggedOut sectionName={ this.props.section.name } />;
+		const { section } = this.props;
+
+		if ( ! this.props.user || section.name === 'jetpack-onboarding' ) {
+			return <MasterbarLoggedOut sectionName={ section.name } />;
 		}
 
 		return (
 			<MasterbarLoggedIn
 				user={ this.props.user }
-				section={ this.props.section.group }
+				section={ section.group }
 				sites={ this.props.sites }
 			/>
 		);
