@@ -25,7 +25,7 @@ export const UnavailabilityNotice = ( { adminUrl, reason, rewindState, slug, tra
 				<Banner
 					icon="history"
 					href={ adminUrl }
-					title={ translate( 'The site is not connected' ) }
+					title={ translate( 'The site is not connected.' ) }
 					description={ translate(
 						"We can't back up or rewind your site until it has been reconnected."
 					) }
@@ -37,7 +37,7 @@ export const UnavailabilityNotice = ( { adminUrl, reason, rewindState, slug, tra
 				<Banner
 					icon="history"
 					href={ `/settings/security/${ slug }` }
-					title={ translate( 'VaultPress is running' ) }
+					title={ translate( 'VaultPress is running.' ) }
 					description={ translate(
 						'We are unable to create backups and Rewind while VaultPress is running.'
 					) }
