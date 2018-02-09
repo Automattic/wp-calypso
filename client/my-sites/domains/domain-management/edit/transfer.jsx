@@ -71,13 +71,20 @@ class Transfer extends React.PureComponent {
 				<Card compact={ false } highlight={ 'warning' }>
 					<div>
 						<h2 className="edit__transfer-text-fail">
-							{ translate( 'Important: Start Your Domain Transfer' ) }
+							{ translate(
+								'Important: Finish Moving {{strong}}%(domain)s{{/strong}} to WordPress.com',
+								{
+									components: {
+										strong: <strong />,
+									},
+									args: { domain: domain.name },
+								}
+							) }
 						</h2>
 						<p>
 							{ translate(
-								'We need you to complete a few steps to initiate and authorize the transfer of ' +
-									'{{strong}}%(domain)s{{/strong}} from your current domain provider to WordPress.com. Your domain ' +
-									'will stay at your current provider until the transfer is started.',
+								'Start the transfer to get your domain {{strong}}%(domain)s{{/strong}} moved to WordPress.com. ' +
+									'Your domain will stay at your current provider until the transfer is complete.',
 								{
 									components: {
 										strong: <strong />,
