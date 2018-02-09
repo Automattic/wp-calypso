@@ -26,7 +26,7 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
-import { domainManagementTransferIn } from 'my-sites/domains/paths';
+import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -212,7 +212,7 @@ class CheckoutThankYouHeader extends PureComponent {
 			meta: primaryPurchase.meta,
 		} );
 
-		page( domainManagementTransferIn( selectedSite.slug, primaryPurchase.meta ) );
+		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
 
 	getButton() {
