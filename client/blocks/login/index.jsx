@@ -11,7 +11,7 @@ import Gridicon from 'gridicons';
 import { includes, capitalize } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import classname from 'classnames';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -273,7 +273,7 @@ class Login extends Component {
 
 	render() {
 		return (
-			<div className={ classname( 'login', { 'login--jetpack': this.props.jetpack } ) }>
+			<div className={ classNames( 'login', { 'login--jetpack': this.props.jetpack } ) }>
 				{ this.renderHeader() }
 
 				<ErrorNotice />
