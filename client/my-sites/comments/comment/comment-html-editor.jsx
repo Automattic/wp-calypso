@@ -11,6 +11,7 @@ import { delay, each, map } from 'lodash';
 /**
  * Internal dependencies
  */
+import AddImageDialog from 'post-editor/editor-html-toolbar/add-image-dialog';
 import AddLinkDialog from 'post-editor/editor-html-toolbar/add-link-dialog';
 import Button from 'components/button';
 
@@ -50,27 +51,36 @@ export class CommentHtmlEditor extends Component {
 		};
 	};
 
-	insertHtml = ( tag, attributes, options = { alsoClose: false, text: null } ) => {
+	insertHtmlTag = (
+		tag,
+		attributes,
+		options = {
+			alsoClose: false,
+			indent: false,
+			newLineAfter: false,
+			paragraph: false,
+			selfClosed: false,
+			text: null,
+		}
+	) => {
 		const element = document.createElement( tag );
-		const isTagOpen = this.isTagOpen( tag );
+		each( attributes, ( value, key ) => element.setAttribute( key, value ) );
+		element.innerHTML = '<!---->';
+		const fragments = element.outerHTML.split( '<!---->' );
+		const opener =
+			( options.paragraph ? '\n' : '' ) +
+			( options.indent ? '\t' : '' ) +
+			fragments[ 0 ] +
+			( options.paragraph ? '\n' : '' );
+		const closer =
+			fragments[ 1 ] + ( options.newLineAfter ? '\n' : '' ) + ( options.paragraph ? '\n\n' : '' );
 		const inner = options.text || this.splitSelectedContent().inner;
 
-		if ( ! isTagOpen ) {
-			each( attributes, ( value, key ) => element.setAttribute( key, value ) );
+		if ( inner.length || options.alsoClose ) {
+			return this.insertContent( opener + inner + closer );
 		}
 
-		if ( inner.length ) {
-			element.innerHTML = inner;
-			return this.insertContent( element.outerHTML );
-		}
-
-		element.innerHTML = '<!---->';
-		const [ opener, closer ] = element.outerHTML.split( '<!---->' );
-
-		if ( options.alsoClose ) {
-			return this.insertContent( opener + closer );
-		}
-		if ( isTagOpen ) {
+		if ( ! options.selfClosed && this.isTagOpen( tag ) ) {
 			return this.insertContent( closer );
 		}
 		return this.insertContent( opener );
@@ -81,16 +91,36 @@ export class CommentHtmlEditor extends Component {
 		document.execCommand( 'insertText', false, content );
 	};
 
-	insertStrongTag = () => this.insertHtml( 'strong', { foo: 'bar' } );
+	insertStrongTag = () => this.insertHtmlTag( 'strong' );
 
-	insertLinkTag = ( attributes, text ) => {
+	insertEmTag = () => this.insertHtmlTag( 'em' );
+
+	insertATag = ( attributes, text ) => {
 		if ( text ) {
-			return this.insertHtml( 'a', attributes, { text } );
+			return this.insertHtmlTag( 'a', attributes, { text } );
 		}
-		this.insertHtml( 'a', attributes, { alsoClose: true } );
+		this.insertHtmlTag( 'a', attributes, { alsoClose: true } );
 		// Move the cursor inside <a></a>
 		this.setCursorPosition( this.textarea.selectionEnd, -4 );
 	};
+
+	insertBlockquoteTag = () => this.insertHtmlTag( 'blockquote', {}, { paragraph: true } );
+
+	insertDelTag = () => this.insertHtmlTag( 'del', { datetime: this.props.moment().format() } );
+
+	insertInsTag = () => this.insertHtmlTag( 'ins', { datetime: this.props.moment().format() } );
+
+	insertImgTag = attributes => this.insertHtmlTag( 'img', attributes, { selfClosed: true } );
+
+	insertUlTag = () => this.insertHtmlTag( 'ul', {}, { paragraph: true } );
+
+	insertOlTag = () => this.insertHtmlTag( 'ol', {}, { paragraph: true } );
+
+	insertLiTag = () => this.insertHtmlTag( 'li', {}, { indent: true, newLineAfter: true } );
+
+	insertCodeTag = () => this.insertHtmlTag( 'code' );
+
+	insertClosingTags = () => {};
 
 	openLinkDialog = () => {
 		const { inner } = this.splitSelectedContent();
@@ -102,23 +132,39 @@ export class CommentHtmlEditor extends Component {
 		delay( () => this.textarea.focus(), 500 );
 	};
 
+	openImageDialog = () => this.setState( { showImageDialog: true } );
+
+	closeImageDialog = () => {
+		this.setState( { showImageDialog: false } );
+		delay( () => this.textarea.focus(), 500 );
+	};
+
 	render() {
 		const { commentContent, onChange } = this.props;
-		const { selectedText, showLinkDialog } = this.state;
+		const { selectedText, showImageDialog, showLinkDialog } = this.state;
 
 		const buttons = {
 			strong: { label: 'b', onClick: this.insertStrongTag },
+			em: { label: 'i', onClick: this.insertEmTag },
 			a: { label: 'link', onClick: this.openLinkDialog },
+			blockquote: { label: 'b-quote', onClick: this.insertBlockquoteTag },
+			del: { onClick: this.insertDelTag },
+			ins: { onClick: this.insertInsTag },
+			img: { onClick: this.openImageDialog, selfClosed: true },
+			ul: { onClick: this.insertUlTag },
+			ol: { onClick: this.insertOlTag },
+			li: { onClick: this.insertLiTag },
+			closeTags: { disabled: true, label: 'close tags', onClick: this.insertClosingTags },
 		};
 
 		return (
 			<div className="comment__html-editor">
 				<div className="comment__html-toolbar">
-					{ map( buttons, ( { disabled, label, onClick }, tag ) => (
+					{ map( buttons, ( { disabled, label, onClick, selfClosed }, tag ) => (
 						<Button
 							borderless
 							className={ classNames( `comment__html-toolbar-button-${ tag }`, {
-								'is-tag-open': this.isTagOpen( tag ),
+								'is-tag-open': ! selfClosed && this.isTagOpen( tag ),
 							} ) }
 							compact
 							disabled={ disabled }
@@ -138,9 +184,15 @@ export class CommentHtmlEditor extends Component {
 					value={ commentContent }
 				/>
 
+				<AddImageDialog
+					onClose={ this.closeImageDialog }
+					onInsert={ this.insertImgTag }
+					shouldDisplay={ showImageDialog }
+				/>
+
 				<AddLinkDialog
 					onClose={ this.closeLinkDialog }
-					onInsert={ this.insertLinkTag }
+					onInsert={ this.insertATag }
 					selectedText={ selectedText }
 					shouldDisplay={ showLinkDialog }
 				/>
