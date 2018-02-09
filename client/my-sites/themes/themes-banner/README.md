@@ -10,27 +10,31 @@ import { ThemesBanner } from './themes-banner';
 
 const SampleBanner = () => (
 	<ThemesBanner
-		title={ translate( 'Are you a small business?' ) }
-		description={ translate(
-			"We understand your time contraints, and that's why we created this easy-to-set-up Premium theme called Small Business."
-		) }
-		action={ this.buttonAction }
-		actionLabel={ translate( 'Learn about this theme' ) }
-		backgroundImage="/calypso/images/example/background.jpg"
-		href="https://wordpress.com"
+		themeId={ 'photo-blog' }
+		themeName={ 'Photo Blog' }
+		title={ translate( 'Are you a photographer? An artist?' ) }
+		description={ translate( 'An awesome theme description for the theme' ) }
+		buttonLabel={ translate( 'See the theme' ) }
+		backgroundColor={ '#3FE6AF' }
+		image={ '/calypso/images/themes-banner/photo-blog.png' }
+		imageTransform={ 'translateX(17%)' }
+		imageAttrs={ {
+			width: 390,
+		} }
 	/>
 );
 ```
 
-When both `action` and `href` are specified, the callback will run first, then the URL will be followed.
-
 #### Props
 
-The following props are used to control the display of the component. The presence of a `href` prop determines whether an anchor element is rendered instead of a button.
+The following props are used to control the display of the component.
 
-* `title`: (string) Title to use for the banner. 
-* `description`: (string) Description to use for the banner, displays below the title.
-* `action`: (function) Callback to run when the banner's button is clicked.
-* `actionLabel`: (string) Label to use for the button.
-* `backgroundImage`: (string) URL to use for the banner's background image.
-* `href`: (string) URL to visit when clicking the button.
+* `themeId`: (string) The ID of the theme
+* `themeName`: (string) Name of the theme
+* `title`: (string) Title to use for the banner
+* `description`: (string) Description to use for the banner
+* `buttonLabel`: (string) Label to use for the banner's button
+* `backgroundColor`: (string) Hex color to use for the banner background
+* `image`: (string) Image path to use for the banner image
+* `imageTransform`: (string) The CSS transform properties to be applied to the image
+* `imageAttrs`: (object) Additional attributes to pass to the image (width, height, etc)
