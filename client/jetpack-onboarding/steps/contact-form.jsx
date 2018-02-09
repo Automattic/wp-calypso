@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -32,7 +32,15 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	render() {
 		const { getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
-		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
+		const subHeaderText = (
+			<Fragment>
+				{ translate( 'Would you like to create a Contact Us page with a contact form on it?' ) }
+				<br />
+				{ translate(
+					'This form will allow visitors to contact you with their name, email, website, and a message.'
+				) }
+			</Fragment>
+		);
 		const hasContactForm = !! get( settings, 'addContactForm' );
 
 		return (
