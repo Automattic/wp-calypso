@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
-import { castArray, get, isEmpty, map, reduce, replace, set } from 'lodash';
+import { castArray, get, isEmpty, map, once, reduce, replace, set } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
@@ -16,6 +16,8 @@ const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
  * Internal dependencies
  */
 import getValidationSchemas from 'state/selectors/get-validation-schemas';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import warn from 'lib/warn';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
@@ -79,9 +81,16 @@ export function formatIMJVErrors( errors, schema ) {
 export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 	const wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || '';
 
+	// If we see an exception, chances are we'll get an identical copy every
+	// update, so just track the first one per form.
+	const recordTracksEventOnce = once( recordTracksEvent );
+	const bumpStatOnce = once( bumpStat );
+
 	class ComponentWithValidation extends Component {
 		static propTypes = {
 			validationSchema: PropTypes.object.isRequired,
+			bumpStat: PropTypes.func.isRequired,
+			recordTracksEvent: PropTypes.func.isRequired,
 		};
 
 		displayName = 'WithContactDetailsValidation(' + tld + ', ' + wrappedComponentName + ')';
@@ -119,17 +128,22 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 			try {
 				isValid = this.validate( this.props.contactDetails );
 			} catch ( error ) {
-				// An exception here usually indicates a problem with the schema
-				// but could result from malformed contactDetails.
-				// We console.error here so it gets logged and we can track it.
-				// eslint-disable-next-line no-console
-				console.error( 'Error thrown during validation:', {
+				warn( 'Error thrown during validation:', {
 					error,
 					tld: tld,
 					contactDetails: this.props.contactDetails,
 				} );
-				// Add an error at the top level so the form knows something went wrong
-				// We can't attribute it to a specific field, so we'll use the
+				// An exception here usually indicates a problem with the schema
+				// but could result from malformed contactDetails
+				this.props.bumpStat( 'form_validation_schema_exceptions', tld );
+				this.props.recordTracksEvent( 'calypso_domain_contact_validation_exception', {
+					tld,
+					contact_details: JSON.stringify( this.props.contactDetails ),
+					error: error.message,
+				} );
+
+				// We should let the recipient know something went wrong, but
+				// we can't attribute it to a specific field, so we'll use the
 				// empty string as a placeholder of the right type that should
 				// never appear as a field name.
 				return { '': [ 'There was an unexpected error validating these details' ] };
@@ -156,7 +170,11 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 	return connect(
 		state => ( {
 			validationSchema: get( getValidationSchemas( state ), tld, { not: {} } ),
+			recordTracksEvent,
 		} ),
-		null
+		{
+			bumpStat: bumpStatOnce,
+			recordTracksEvent: recordTracksEventOnce,
+		}
 	)( ComponentWithValidation );
 }
