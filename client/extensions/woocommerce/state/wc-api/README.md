@@ -40,7 +40,7 @@ The sample code below is simplistic in a few ways (editing variations, for examp
 After the sample code is a list of detailed explanations of the pieces involved.
 
 ```javascript
-import { withWooCommerceSite, siteActions } from 'woocommerce/state/wc-api';
+import { withWooCommerceSite } from 'woocommerce/state/wc-api';
 
 class MyProductPage extends Component {
 
@@ -86,12 +86,16 @@ function mapSiteDataToProps( siteData, ownProps, state ) {
 	};
 }
 
-const mappedSiteActions = {
-	updateProduct: siteActions.products.update,
-	updateVariation: siteActions.productVariations.update,
-};
+function mapSiteActionsToProps( siteActions ) {
+	const { updateProduct, updateVariation } = siteActions;
 
-export default withWooCommerceSite( mapSiteDataToProps, mappedSiteActions )( MyProductPage );
+	return {
+		updateProduct,
+		updateVariation,
+	};
+}
+
+export default withWooCommerceSite( mapSiteDataToProps, mapSiteActionsToProps )( MyProductPage );
 ```
 
 And the wrapped component can be rendered as such:
