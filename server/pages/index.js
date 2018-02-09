@@ -20,7 +20,7 @@ import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
-import { serverRender, serverRenderError } from 'render';
+import { serverRender, serverRenderError, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
@@ -352,9 +352,8 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404', {
-		urls: generateStaticUrls(),
-	} );
+	const ctx = getDefaultContext( request );
+	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
 module.exports = function() {
