@@ -138,14 +138,14 @@ export class CommentHtmlEditor extends Component {
 
 	closeLinkDialog = () => {
 		this.setState( { showLinkDialog: false } );
-		delay( () => this.textarea.focus(), 500 );
+		delay( () => this.textarea.focus(), 300 );
 	};
 
 	openImageDialog = () => this.setState( { showImageDialog: true } );
 
 	closeImageDialog = () => {
 		this.setState( { showImageDialog: false } );
-		delay( () => this.textarea.focus(), 500 );
+		delay( () => this.textarea.focus(), 300 );
 	};
 	render() {
 		const { commentContent, onChange } = this.props;
