@@ -8,16 +8,17 @@ import { get, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import productDescriptors from './products';
+import { createEndpoints } from './endpoints';
+import { createSelectors } from './selectors';
 
-export default function createSiteData( wcApiSite, state ) {
+export default function createSiteData( wcApiSite, wcApiState ) {
 	if ( ! isNumber( wcApiSite ) ) {
 		return null;
 	}
 
-	const siteData = get( state, 'extensions.woocommerce.wcApi', {} )[ wcApiSite ];
+	const endpointData = get( wcApiState, [ wcApiSite, 'endpoints' ], {} );
+	const endpoints = createEndpoints( endpointData );
+	const selectors = createSelectors( endpoints );
 
-	return {
-		products: productDescriptors( siteData ),
-	};
+	return { ...selectors };
 }

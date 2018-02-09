@@ -117,7 +117,7 @@ class ProductForm extends Component {
 function mapSiteDataToProps( siteData, ownProps, state ) {
 	const { wcApiSite, productId } = ownProps;
 
-	const apiProduct = siteData.products.single( productId );
+	const apiProduct = siteData.getProduct( productId );
 	const isProductLoaded = ! productId || Boolean( apiProduct );
 	const edits = getProductEdits( state, productId, wcApiSite );
 	const product = { ...( apiProduct || { id: productId, type: 'simple' } ), ...edits };

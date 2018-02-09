@@ -5,6 +5,7 @@
  */
 import { connect } from 'react-redux';
 import { PropTypes } from 'prop-types';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,23 +15,16 @@ import createSiteData from '../site-data';
 export function withWooCommerceSite( mapSiteDataToProps ) {
 	return function connectWithWooCommerceSite( WrappedComponent ) {
 		let lastWcApiSite = null;
-		let lastState = null;
+		let lastWcApiState = null;
 		let siteData = null;
 
 		function getSiteData( wcApiSite, state ) {
-			// TODO: Replace `lastState` with site-specific state tree.
-			//
-			// This will help performance by not re-creating siteData unless
-			// actual wc-api data has changed.
-			//
-			// Prerequisites for this to happen:
-			//   1. Update all site selectors to take relative state tree instead of global.
-			//   2. Move site state under `wc-api` state context.
-			//
-			if ( wcApiSite !== lastWcApiSite || state !== lastState ) {
+			const wcApiState = get( state, 'extensions.woocommerce.wcApi', {} );
+
+			if ( wcApiSite !== lastWcApiSite || wcApiState !== lastWcApiState ) {
 				lastWcApiSite = wcApiSite;
-				lastState = state;
-				siteData = createSiteData( wcApiSite, state );
+				lastWcApiState = wcApiState;
+				siteData = createSiteData( wcApiSite, wcApiState );
 			}
 			return siteData;
 		}

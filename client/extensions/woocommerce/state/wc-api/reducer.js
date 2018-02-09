@@ -5,11 +5,11 @@
  */
 import { combineReducers, keyedReducer } from 'state/utils';
 import status from './status/reducer';
-import products from './products/reducer';
+import endpoints from './endpoints/reducer';
 
 const reducers = {
 	status,
-	products,
+	endpoints,
 };
 
 const reducer = combineReducers( reducers );
