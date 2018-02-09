@@ -1,21 +1,21 @@
 
 .google-my-business__stats-nudge {
+	display: flex;
 	padding: 10px 24px;
 	position: relative;
-	display: flex;
 
 	@include breakpoint( ">960px" ) {
+		max-height: 300px;
 		overflow: hidden;
 		padding-left: 48px;
-		max-height: 300px;
 	}
 }
 
 .google-my-business__stats-nudge-info {
-	position: relative;
-	width: calc( 100% - 150px);
 	margin-left: auto;
 	padding: 12px;
+	position: relative;
+	width: calc( 100% - 150px);
 
 	@include breakpoint( ">1040px" ) {
 		padding: 24px;
@@ -46,9 +46,9 @@
 	}
 }
 .google-my-business__stats-nudge-button-row {
+	align-content: center;
 	display: flex;
 	flex-direction: column;
-	align-content: center;
 	justify-content: center;
 	margin: 16px 0;
 	@include breakpoint( ">960px") {
