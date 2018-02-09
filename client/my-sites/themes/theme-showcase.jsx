@@ -5,11 +5,11 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
-import { compact, pickBy, sample, curry } from 'lodash';
+import { compact, pickBy, sample } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -37,8 +37,8 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
-import { ThemesBanner } from './themes-banner';
-import { getThemeDetailsUrl, getActiveTheme } from 'state/themes/selectors';
+import PhotoBlogBanner from './themes-banner/photo-blog';
+import SmallBusinessBanner from './themes-banner/small-business';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -60,97 +60,7 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
-const bannerShape = {
-	siteId: PropTypes.number,
-};
-
-const bannerClickHandler = ( themeId, tracksEvent, { siteId, getBannerUrl, getCurrentTheme } ) => {
-	const url = getBannerUrl( themeId, siteId );
-	const tracksData = {
-		site_id: siteId,
-		current_theme: getCurrentTheme( siteId ),
-		timestamp: new Date().toGMTString(),
-	};
-	recordTracksEvent( tracksEvent, tracksData );
-	page( url );
-};
-
-class PhotoBlogBanner extends PureComponent {
-	static propTypes = bannerShape;
-
-	render() {
-		const onClick = () => {
-			bannerClickHandler( 'photo-blog', 'calypso_showcase_banner_photo_blog_click', this.props );
-		};
-		return (
-			<ThemesBanner
-				title={ translate( 'Are you a photographer? An artist?' ) }
-				description={ translate(
-					'Explore {{b}}PHOTO BLOG{{/b}}, an elegant theme designed to showcase your visual masterpieces.',
-					{
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
-				action={ onClick }
-				actionLabel={ translate( 'See the theme' ) }
-				backgroundColor={ '#3FE6AF' }
-				image={ '/calypso/images/themes-banner/photo-blog.png' }
-				imageTransform={ 'translateY(-4.4%) translateX(17%)' }
-				imageAttrs={ {
-					alt: translate( 'Photo Blog Theme' ),
-					width: 390,
-				} }
-			/>
-		);
-	}
-}
-
-class SmallBusinessBanner extends PureComponent {
-	static propTypes = bannerShape;
-
-	render() {
-		const onClick = () => {
-			bannerClickHandler(
-				'small-business',
-				'calypso_showcase_banner_small_business_click',
-				this.props
-			);
-		};
-		return (
-			<ThemesBanner
-				title={ translate( 'Do you run a small business?' ) }
-				description={ translate(
-					'We know you’re crunched for time. We created the quick-setup {{b}}SMALL BUSINESS{{/b}} theme just for you.',
-					{
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
-				action={ onClick }
-				actionLabel={ translate( 'See the theme' ) }
-				backgroundColor={ '#3d596d' }
-				image={ '/calypso/images/themes-banner/small-business.png' }
-				imageTransform={ 'translateY(-19%) translateX(17%)' }
-				imageAttrs={ {
-					alt: translate( 'Small Business Theme' ),
-					width: 410,
-				} }
-			/>
-		);
-	}
-}
-
-const ShowcaseBanner = sample(
-	[ PhotoBlogBanner, SmallBusinessBanner ].map( component =>
-		connect( state => ( {
-			getBannerUrl: curry( getThemeDetailsUrl )( state ),
-			getCurrentTheme: curry( getActiveTheme )( state ),
-		} ) )( component )
-	)
-);
+const ShowcaseBanner = sample( [ PhotoBlogBanner, SmallBusinessBanner ] );
 
 class ThemeShowcase extends React.Component {
 	static propTypes = {
@@ -309,7 +219,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<ShowcaseBanner siteId={ siteId } />
+					<ShowcaseBanner />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }

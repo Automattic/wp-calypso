@@ -1,12 +1,17 @@
 .themes-banner {
 	$image_max_width: 410px;
-	
+
+	display: block;
 	position: relative;
 	background: no-repeat $blue-medium;
 	color: white;
 	padding: 0.8em;
 	overflow: hidden;
 	user-select: none;
+	
+	&:hover {
+		color: white;
+	}
 	
 	&:before {
 		position: absolute;
@@ -20,21 +25,9 @@
 		z-index: 1;
 	}
 	
-	.themes-banner__click-placeholder {
-		position: absolute;
-		display: block;
-		opacity: 0;
-		z-index: 100;
-		margin: 0;
-		padding: 0;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-	}
-	
 	h1, p, .button.themes-banner__cta {
 		position: relative;
+		color: inherit;
 		z-index: 2;
 	}
 	
