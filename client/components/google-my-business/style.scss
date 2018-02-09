@@ -1,13 +1,13 @@
 
 .google-my-business__stats-nudge {
-	padding: 24px;
+	padding: 10px 24px;
 	position: relative;
-	max-height: 300px;
 	display: flex;
 
 	@include breakpoint( ">960px" ) {
 		overflow: hidden;
 		padding-left: 48px;
+		max-height: 300px;
 	}
 }
 
@@ -17,30 +17,30 @@
 	margin-left: auto;
 	padding: 12px;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( ">1040px" ) {
 		padding: 24px;
 		width: calc( 100% - 300px);
 	}
 }
 
 .google-my-business__stats-nudge-heading {
-	font-size: 16px;
-	font-weight: 400;
-	margin: 24px 0 8px 0;
-	@include breakpoint( ">660px" ) {
-		font-size: 18px;
+	font-size: 18px;
+	font-weight: 600;
+	margin: 0;
+	@include breakpoint( ">1040px" ) {
+		margin-top: 24px;
 	}
 	@include breakpoint( ">960px" ) {
+		margin-top: 12px;
+		font-weight: 400;
 		font-size: 24px;
 	}
 }
 
 .google-my-business__stats-nudge-description {
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: 300;
-	@include breakpoint( ">660px" ) {
-		font-size: 14px;
-	}
+	margin: 10px 0;
 	@include breakpoint( ">960px" ) {
 		font-size: 18px;
 	}
@@ -50,15 +50,15 @@
 	flex-direction: column;
 	align-content: center;
 	justify-content: center;
+	margin: 16px 0;
 	@include breakpoint( ">960px") {
 		flex-direction: row;
 		justify-content: flex-start;
 	}
 
 	.button {
-		margin-bottom: 16px;
-		margin-right: 0;
-		width: 150px;
+		margin-bottom: 12px;
+		width: 100%;
 		@include breakpoint( ">960px") {
 			width: auto;
 			margin-bottom: 0;
@@ -75,9 +75,10 @@
 }
 
 .google-my-business__stats-nudge-image {
-	height: 100%;
+	max-height: 300px;
 	@include breakpoint( ">960px" ) {
 		height: auto;
+		max-height: initial;
 	}
 }
 
