@@ -6,11 +6,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { each } from 'lodash';
+import { delay, each, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import AddLinkDialog from 'post-editor/editor-html-toolbar/add-link-dialog';
 import Button from 'components/button';
 
 export class CommentHtmlEditor extends Component {
@@ -49,12 +50,12 @@ export class CommentHtmlEditor extends Component {
 		};
 	};
 
-	insertHtml = ( tag, attributes ) => {
+	insertHtml = ( tag, attributes, options = { alsoClose: false, text: null } ) => {
 		const element = document.createElement( tag );
-		const isOpen = this.isTagOpen( tag );
-		const { inner } = this.splitSelectedContent();
+		const isTagOpen = this.isTagOpen( tag );
+		const inner = options.text || this.splitSelectedContent().inner;
 
-		if ( ! isOpen ) {
+		if ( ! isTagOpen ) {
 			each( attributes, ( value, key ) => element.setAttribute( key, value ) );
 		}
 
@@ -66,7 +67,10 @@ export class CommentHtmlEditor extends Component {
 		element.innerHTML = '<!---->';
 		const [ opener, closer ] = element.outerHTML.split( '<!---->' );
 
-		if ( isOpen ) {
+		if ( options.alsoClose ) {
+			return this.insertContent( opener + closer );
+		}
+		if ( isTagOpen ) {
 			return this.insertContent( closer );
 		}
 		return this.insertContent( opener );
@@ -77,34 +81,68 @@ export class CommentHtmlEditor extends Component {
 		document.execCommand( 'insertText', false, content );
 	};
 
-	insertStrongTag = () => this.insertHtml( 'strong' );
+	insertStrongTag = () => this.insertHtml( 'strong', { foo: 'bar' } );
+
+	insertLinkTag = ( attributes, text ) => {
+		if ( text ) {
+			return this.insertHtml( 'a', attributes, { text } );
+		}
+		this.insertHtml( 'a', attributes, { alsoClose: true } );
+		// Move the cursor inside <a></a>
+		this.setCursorPosition( this.textarea.selectionEnd, -4 );
+	};
+
+	openLinkDialog = () => {
+		const { inner } = this.splitSelectedContent();
+		this.setState( { selectedText: inner, showLinkDialog: true } );
+	};
+
+	closeLinkDialog = () => {
+		this.setState( { showLinkDialog: false } );
+		delay( () => this.textarea.focus(), 500 );
+	};
 
 	render() {
-		const { commentContent, disabled, onChange } = this.props;
+		const { commentContent, onChange } = this.props;
+		const { selectedText, showLinkDialog } = this.state;
+
+		const buttons = {
+			strong: { label: 'b', onClick: this.insertStrongTag },
+			a: { label: 'link', onClick: this.openLinkDialog },
+		};
 
 		return (
 			<div className="comment__html-editor">
 				<div className="comment__html-toolbar">
-					<Button
-						borderless
-						className={ classNames( 'comment__html-toolbar-button-strong', {
-							'is-tag-open': this.isTagOpen( 'strong' ),
-						} ) }
-						compact
-						disabled={ disabled }
-						key="strong"
-						onClick={ this.insertStrongTag }
-					>
-						b
-					</Button>
+					{ map( buttons, ( { disabled, label, onClick }, tag ) => (
+						<Button
+							borderless
+							className={ classNames( `comment__html-toolbar-button-${ tag }`, {
+								'is-tag-open': this.isTagOpen( tag ),
+							} ) }
+							compact
+							disabled={ disabled }
+							key={ tag }
+							onClick={ onClick }
+						>
+							{ label || tag }
+						</Button>
+					) ) }
 				</div>
 
 				<textarea
 					className="comment__edit-textarea form-textarea"
-					disabled={ disabled }
+					disabled={ this.props.disabled }
 					onChange={ onChange }
 					ref={ this.storeTextareaRef }
 					value={ commentContent }
+				/>
+
+				<AddLinkDialog
+					onClose={ this.closeLinkDialog }
+					onInsert={ this.insertLinkTag }
+					selectedText={ selectedText }
+					shouldDisplay={ showLinkDialog }
 				/>
 			</div>
 		);
