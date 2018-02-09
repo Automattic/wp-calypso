@@ -17,23 +17,23 @@ function SupportUser( { supportUser = '', supportToken = '', authorized = false 
 				<script
 					dangerouslySetInnerHTML={ {
 						__html: `
-            const user = "${ supportUser }";
-            const token = "${ supportToken }";
-            const authorized = ${ authorized };
+						const user = "${ supportUser }";
+						const token = "${ supportToken }";
+						const authorized = ${ authorized };
 
-            const url = window.location.toString();
+						const url = window.location.toString();
 
-            if ( url.indexOf('?') > 0 ) {
-              const cleanUrl = url.substring( 0, url.indexOf( '?' ) );
-              window.history.replaceState( {}, document.title, cleanUrl );
-            }
+						if ( url.indexOf('?') > 0 ) {
+							const cleanUrl = url.substring( 0, url.indexOf( '?' ) );
+							window.history.replaceState( {}, document.title, cleanUrl );
+						}
 
-            if ( authorized ) {
-              window.sessionStorage.setItem( 'boot_support_user', JSON.stringify( { user, token } ) );
-            }
+						if ( authorized ) {
+							window.sessionStorage.setItem( 'boot_support_user', JSON.stringify( { user, token } ) );
+						}
 
-            window.location.replace( '/' );
-            `,
+						window.location.replace( '/' );
+						`,
 					} }
 				/>
 			</head>
