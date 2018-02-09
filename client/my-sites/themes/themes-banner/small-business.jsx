@@ -34,7 +34,6 @@ class SmallBusinessBanner extends PureComponent {
 				image={ '/calypso/images/themes-banner/small-business.png' }
 				imageTransform={ 'translateY(-19%) translateX(17%)' }
 				imageAttrs={ {
-					alt: translate( 'Small Business Theme' ),
 					width: 410,
 				} }
 			/>

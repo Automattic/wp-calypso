@@ -34,7 +34,6 @@ class PhotoBlogBanner extends PureComponent {
 				image={ '/calypso/images/themes-banner/photo-blog.png' }
 				imageTransform={ 'translateY(-4.4%) translateX(17%)' }
 				imageAttrs={ {
-					alt: translate( 'Photo Blog Theme' ),
 					width: 390,
 				} }
 			/>
