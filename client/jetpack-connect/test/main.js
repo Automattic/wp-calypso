@@ -38,6 +38,8 @@ describe( 'JetpackConnectMain', () => {
 		test( 'should prepare entered urls for network access', () => {
 			const cleanUrl = new JetpackConnectMain( REQUIRED_PROPS ).cleanUrl;
 			const results = [
+				{ input: '', expected: '' },
+				{ input: 'a', expected: 'http://a' },
 				{ input: 'example.com', expected: 'http://example.com' },
 				{ input: '  example.com   ', expected: 'http://example.com' },
 				{ input: 'http://example.com/', expected: 'http://example.com' },
