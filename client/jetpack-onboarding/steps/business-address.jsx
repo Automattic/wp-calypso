@@ -81,10 +81,10 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		);
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
-					title="Business Address ‹ Jetpack Onboarding"
+					title="Business Address ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />

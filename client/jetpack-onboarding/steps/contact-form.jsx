@@ -37,10 +37,10 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
-					title="Contact Form ‹ Jetpack Onboarding"
+					title="Contact Form ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />

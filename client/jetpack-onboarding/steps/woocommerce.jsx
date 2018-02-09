@@ -41,10 +41,10 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'WooCommerce ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'WooCommerce ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.WOOCOMMERCE, ':site' ].join( '/' ) }
-					title="WooCommerce ‹ Jetpack Onboarding"
+					title="WooCommerce ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
