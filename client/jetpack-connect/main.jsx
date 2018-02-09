@@ -211,6 +211,7 @@ export class JetpackConnectMain extends Component {
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
+		url = url.replace( /wp-admin\/?$/, '' );
 		return untrailingslashit( url );
 	}
 

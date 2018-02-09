@@ -34,6 +34,23 @@ jest.mock( 'lib/route/path', () => ( {
 } ) );
 
 describe( 'JetpackConnectMain', () => {
+	describe( 'cleanUrl', () => {
+		test( 'should prepare entered urls for network access', () => {
+			const cleanUrl = new JetpackConnectMain( REQUIRED_PROPS ).cleanUrl;
+			const results = [
+				{ input: '', expected: '' },
+				{ input: 'a', expected: 'http://a' },
+				{ input: 'example.com', expected: 'http://example.com' },
+				{ input: '  example.com   ', expected: 'http://example.com' },
+				{ input: 'http://example.com/', expected: 'http://example.com' },
+				{ input: 'eXAmple.com', expected: 'http://example.com' },
+				{ input: 'example.com/wp-admin', expected: 'http://example.com' },
+			];
+
+			results.forEach( ( { input, expected } ) => expect( cleanUrl( input ) ).toBe( expected ) );
+		} );
+	} );
+
 	describe( 'makeSafeRedirectionFunction', () => {
 		const component = new JetpackConnectMain( REQUIRED_PROPS );
 
