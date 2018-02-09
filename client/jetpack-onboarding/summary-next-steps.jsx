@@ -37,7 +37,7 @@ export default localize(
 
 		if ( isBusiness && wantsWoo ) {
 			additionalSteps.STORE = {
-				label: translate( 'Setup your store' ),
+				label: translate( 'Set up your store' ),
 				url: siteUrl + '/wp-admin/index.php?page=wc-setup',
 			};
 		}
