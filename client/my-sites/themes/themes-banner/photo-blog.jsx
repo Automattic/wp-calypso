@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -13,32 +13,24 @@ import React, { PureComponent } from 'react';
 import { localize } from 'i18n-calypso';
 import ThemesBanner from './index';
 
-class PhotoBlogBanner extends PureComponent {
-	render() {
-		const { translate } = this.props;
-		return (
-			<ThemesBanner
-				themeId={ 'photo-blog' }
-				themeName={ 'Photo Blog' }
-				title={ translate( 'Are you a photographer? An artist?' ) }
-				description={ translate(
-					'Explore {{b}}PHOTO BLOG{{/b}}, an elegant theme designed to showcase your visual masterpieces.',
-					{
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
-				buttonLabel={ translate( 'See the theme' ) }
-				backgroundColor={ '#3FE6AF' }
-				image={ '/calypso/images/themes-banner/photo-blog.png' }
-				imageTransform={ 'translateY(-4.4%) translateX(17%)' }
-				imageAttrs={ {
-					width: 390,
-				} }
-			/>
-		);
-	}
-}
+const PhotoBlogBanner = ( { translate } ) => (
+	<ThemesBanner
+		themeId="photo-blog"
+		themeName="Photo Blog"
+		title={ translate( 'Are you a photographer? An artist?' ) }
+		description={ translate(
+			'Explore {{b}}PHOTO BLOG{{/b}}, an elegant theme designed to showcase your visual masterpieces.',
+			{
+				components: {
+					b: <strong />,
+				},
+			}
+		) }
+		backgroundColor="#3FE6AF"
+		image="/calypso/images/themes-banner/photo-blog.png"
+		imageTransform="translateY(-4.4%) translateX(17%)"
+		imageWidth={ 390 }
+	/>
+);
 
 export default localize( PhotoBlogBanner );

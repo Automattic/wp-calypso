@@ -25,12 +25,9 @@ class ThemesBanner extends PureComponent {
 		themeName: PropTypes.string,
 		title: PropTypes.node.isRequired,
 		description: PropTypes.node.isRequired,
-		buttonLabel: PropTypes.string.isRequired,
 		backgroundColor: PropTypes.string,
 		image: PropTypes.string,
-		imageAttrs: PropTypes.shape( {
-			width: PropTypes.number,
-		} ),
+		imageWidth: PropTypes.number,
 		imageTransform: PropTypes.string,
 
 		// Connected props
@@ -39,7 +36,7 @@ class ThemesBanner extends PureComponent {
 		activeThemeId: PropTypes.string,
 	};
 
-	onClick = () => {
+	recordEvent = () => {
 		const { siteId, themeId, activeThemeId } = this.props;
 		const tracksData = {
 			site_id: siteId,
@@ -53,41 +50,39 @@ class ThemesBanner extends PureComponent {
 		const {
 			title,
 			description,
-			buttonLabel,
 			backgroundColor,
 			image,
-			imageAttrs = {},
+			imageWidth,
 			imageTransform = 'auto',
 			themeName,
 			themeUrl,
 			translate,
 		} = this.props;
 		const backgroundStyle = backgroundColor ? { backgroundColor } : {};
-		const imageNode = image ? (
-			<img
-				{ ...imageAttrs }
-				alt={ translate( '%(themeName)s Theme', {
-					args: { themeName },
-				} ) }
-				className="themes-banner__image"
-				src={ safeImageUrl( image ) }
-				style={ { transform: imageTransform } }
-			/>
-		) : null;
 		return (
 			<a
 				className="themes-banner"
 				role="button"
 				style={ backgroundStyle }
-				onClick={ this.onClick }
+				onClick={ this.recordEvent }
 				href={ themeUrl }
 			>
 				<h1 className="themes-banner__title">{ title }</h1>
 				<p className="themes-banner__description">{ description }</p>
 				<Button className="themes-banner__cta" compact primary>
-					{ buttonLabel }
+					{ translate( 'See the theme' ) }
 				</Button>
-				{ imageNode }
+				{ image && (
+					<img
+						alt={ translate( '%(themeName)s Theme', {
+							args: { themeName },
+						} ) }
+						width={ imageWidth }
+						className="themes-banner__image"
+						src={ safeImageUrl( image ) }
+						style={ { transform: imageTransform } }
+					/>
+				) }
 			</a>
 		);
 	}
