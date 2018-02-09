@@ -23,7 +23,7 @@ import {
 	isRequestingInlineHelpSearchResultsForQuery,
 	shouldOpenSelectedResult,
 } from 'state/inline-help/selectors';
-import { didOpenResult, setSearchResults } from 'state/inline-help/actions';
+import { didOpenResult } from 'state/inline-help/actions';
 
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
@@ -140,7 +140,6 @@ const mapStateToProps = ( state, ownProps ) => ( {
 const mapDispatchToProps = {
 	didOpenResult,
 	recordTracksEvent,
-	setSearchResults,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchResults ) );
