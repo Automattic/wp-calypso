@@ -80,6 +80,11 @@
 	}
 }
 
+.layout:not(.is-section-post-editor) .layout__primary {
+	//in all sections except for the editor, create a z-index stacking context on primary, so elements don't bleed in mobile views.
+	transform: translate( 0, 0 );
+}
+
 .layout__content a {
 	text-decoration: none;
 }
