@@ -25,9 +25,9 @@ export const UnavailabilityNotice = ( { adminUrl, reason, rewindState, slug, tra
 				<Banner
 					icon="history"
 					href={ adminUrl }
-					title={ translate( 'The site cannot be accessed' ) }
+					title={ translate( 'The site is not connected' ) }
 					description={ translate(
-						'We are unable to create backups and Rewind because we cannot access your site.'
+						"We can't back up or rewind your site until it has been reconnected."
 					) }
 				/>
 			);
