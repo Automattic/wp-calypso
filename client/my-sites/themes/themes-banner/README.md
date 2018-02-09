@@ -5,24 +5,35 @@ This component is used to implement a banner with image, text, and button.
 
 #### How to use:
 
-```jsx
-import { ThemesBanner } from './themes-banner';
+Add the following code into the same directory of this README file.
 
-const SampleBanner = () => (
-	<ThemesBanner
-		themeId={ 'photo-blog' }
-		themeName={ 'Photo Blog' }
-		title={ translate( 'Are you a photographer? An artist?' ) }
-		description={ translate( 'An awesome theme description for the theme' ) }
-		buttonLabel={ translate( 'See the theme' ) }
-		backgroundColor={ '#3FE6AF' }
-		image={ '/calypso/images/themes-banner/photo-blog.png' }
-		imageTransform={ 'translateX(17%)' }
-		imageAttrs={ {
-			width: 390,
-		} }
-	/>
-);
+```jsx
+import React, { PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
+import ThemesBanner from './index';
+
+class SmallBusinessBanner extends PureComponent {
+	render() {
+		const { translate } = this.props;
+		return (
+			<ThemesBanner
+				themeId={ 'small-business' }
+				themeName={ 'Small Business' }
+				title={ translate( 'Do you run a small business?' ) }
+				description={ 'An awesome description for this theme' }
+				buttonLabel={ translate( 'See the theme' ) }
+				backgroundColor={ '#3d596d' }
+				image={ '/calypso/images/themes-banner/small-business.png' }
+				imageTransform={ 'translateY(-19%) translateX(17%)' }
+				imageAttrs={ {
+					width: 410,
+				} }
+			/>
+		);
+	}
+}
+
+export default localize( SmallBusinessBanner );
 ```
 
 #### Props
