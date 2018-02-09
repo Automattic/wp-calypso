@@ -34,16 +34,6 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
 		const hasContactForm = !! get( settings, 'addContactForm' );
-		const tileProps = hasContactForm
-			? {
-					description: translate( 'Your contact form has been created.' ),
-				}
-			: {
-					buttonLabel: translate( 'Add a contact form' ),
-					description: translate(
-						'Not sure? You can skip this step and add a contact form later.'
-					),
-				};
 
 		return (
 			<div className="steps__main">
@@ -57,10 +47,15 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 
 				<TileGrid>
 					<Tile
+						buttonLabel={ ! hasContactForm ? translate( 'Add a contact form' ) : undefined }
+						description={
+							hasContactForm
+								? translate( 'Your contact form has been created.' )
+								: translate( 'Not sure? You can skip this step and add a contact form later.' )
+						}
 						image={ '/calypso/images/illustrations/contact-us.svg' }
 						onClick={ this.handleAddContactForm }
 						href={ getForwardUrl() }
-						{ ...tileProps }
 					/>
 				</TileGrid>
 			</div>
