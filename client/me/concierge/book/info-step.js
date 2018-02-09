@@ -112,7 +112,10 @@ class InfoStep extends Component {
 							{ translate( 'What are you hoping to accomplish with your site?' ) }
 						</FormLabel>
 						<FormTextarea
-							placeholder={ translate( 'Please be descriptive' ) }
+							placeholder={ translate(
+								'Sell products and services? Generate leads? Something else entirely?' +
+									' The more specific, the more we can help you.'
+							) }
 							name="message"
 							onChange={ this.setFieldValue }
 							value={ message }
