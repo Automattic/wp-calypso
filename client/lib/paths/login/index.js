@@ -25,13 +25,9 @@ export function login( {
 
 		if ( socialService ) {
 			url += '/' + socialService + '/callback';
-		}
-
-		if ( twoFactorAuthType ) {
+		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
-		}
-
-		if ( socialConnect ) {
+		} else if ( socialConnect ) {
 			url += '/social-connect';
 		}
 	}
