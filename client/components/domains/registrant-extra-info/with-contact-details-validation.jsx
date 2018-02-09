@@ -128,6 +128,10 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 					tld: tld,
 					contactDetails: this.props.contactDetails,
 				} );
+				// Add an error at the top level so the form knows something went wrong
+				// We can't attribute it to a specific field, so we'll use the
+				// empty string as a placeholder of the right type that should
+				// never appear as a field name.
 				return { '': [ 'There was an unexpected error validating these details' ] };
 			}
 
