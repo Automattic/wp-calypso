@@ -505,11 +505,12 @@ module.exports = function() {
 		const dashboardUrl = isWpcom
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
-
-		res.render( 'browsehappy', {
+		const ctx = {
 			...req.context,
 			dashboardUrl,
-		} );
+		};
+
+		res.send( renderJsx( 'browsehappy', ctx ) );
 	} );
 
 	app.get( '/support-user', function( req, res ) {
