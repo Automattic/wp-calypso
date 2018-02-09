@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { delay, each, map } from 'lodash';
+import { delay, each, filter, map, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +23,7 @@ export class CommentHtmlEditor extends Component {
 	};
 
 	state = {
+		openTags: [],
 		selectedText: '',
 		showImageDialog: false,
 		showLinkDialog: false,
@@ -30,12 +31,7 @@ export class CommentHtmlEditor extends Component {
 
 	storeTextareaRef = textarea => ( this.textarea = textarea );
 
-	isTagOpen = tag => {
-		const { commentContent } = this.props;
-		const openers = commentContent.match( new RegExp( `<${ tag }.*?>`, 'gi' ) ) || [];
-		const closers = commentContent.match( new RegExp( `<\/${ tag }>`, 'gi' ) ) || [];
-		return openers.length > closers.length;
-	};
+	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
 
 	setCursorPosition = ( selectionEnd, insertedContentLength ) => {
 		this.textarea.selectionEnd = this.textarea.selectionStart =
@@ -81,7 +77,12 @@ export class CommentHtmlEditor extends Component {
 		}
 
 		if ( ! options.selfClosed && this.isTagOpen( tag ) ) {
+			this.setState( ( { openTags } ) => ( { openTags: filter( openTags, tag ) } ) );
 			return this.insertContent( closer );
+		}
+
+		if ( ! options.selfClosed ) {
+			this.setState( ( { openTags } ) => ( { openTags: openTags.concat( tag ) } ) );
 		}
 		return this.insertContent( opener );
 	};
@@ -120,7 +121,15 @@ export class CommentHtmlEditor extends Component {
 
 	insertCodeTag = () => this.insertHtmlTag( 'code' );
 
-	insertClosingTags = () => {};
+	insertClosingTags = () => {
+		const closedTags = reduce(
+			this.state.openTags,
+			( tags, openTag ) => `</${ openTag }>${ tags }`,
+			''
+		);
+		this.insertContent( closedTags );
+		this.setState( { openTags: [] } );
+	};
 
 	openLinkDialog = () => {
 		const { inner } = this.splitSelectedContent();
@@ -138,10 +147,9 @@ export class CommentHtmlEditor extends Component {
 		this.setState( { showImageDialog: false } );
 		delay( () => this.textarea.focus(), 500 );
 	};
-
 	render() {
 		const { commentContent, onChange } = this.props;
-		const { selectedText, showImageDialog, showLinkDialog } = this.state;
+		const { openTags, selectedText, showImageDialog, showLinkDialog } = this.state;
 
 		const buttons = {
 			strong: { label: 'b', onClick: this.insertStrongTag },
@@ -154,7 +162,11 @@ export class CommentHtmlEditor extends Component {
 			ul: { onClick: this.insertUlTag },
 			ol: { onClick: this.insertOlTag },
 			li: { onClick: this.insertLiTag },
-			closeTags: { disabled: true, label: 'close tags', onClick: this.insertClosingTags },
+			closeTags: {
+				disabled: ! openTags.length,
+				label: 'close tags',
+				onClick: this.insertClosingTags,
+			},
 		};
 
 		return (
