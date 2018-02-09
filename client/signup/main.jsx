@@ -296,10 +296,16 @@ class Signup extends React.Component {
 		SignupProgressStore.on( 'change', this.loadProgressFromStore );
 		this.props.loadTrackingTool( 'HotJar' );
 		const urlPath = location.href;
-		const query = url.parse( urlPath, true ).query;
-		const affiliateId = query.aff;
+		const parsedUrl = url.parse( urlPath, true );
+		const affiliateId = parsedUrl.query.aff;
 		if ( affiliateId && ! isNaN( affiliateId ) ) {
 			this.props.affiliateReferral( { urlPath, affiliateId } );
+			// Record the referral in Tracks
+			analytics.tracks.recordEvent( 'calypso_refer_visit', {
+				flow: this.props.flowName,
+				// The current page without any query params
+				page: parsedUrl.host + parsedUrl.pathname,
+			} );
 		}
 	}
 
