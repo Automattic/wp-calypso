@@ -45,7 +45,7 @@ export const rewind = {
 	type: 'object',
 	properties: {
 		rewind_id: { type: 'string' },
-		status: { type: 'string', enum: [ 'failed', 'finished', 'running' ] },
+		status: { type: 'string', enum: [ 'failed', 'finished', 'queued', 'running' ] },
 		started_at: { type: 'string' },
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
