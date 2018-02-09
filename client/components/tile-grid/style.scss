@@ -140,6 +140,10 @@
 
 	@include breakpoint( ">480px" ) {
 		margin-top: 10px;
+
+		&:first-child {
+			margin-bottom: 10px;
+		}
 	}
 }
 
