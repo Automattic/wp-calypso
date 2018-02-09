@@ -9,6 +9,7 @@ import {
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 	INLINE_HELP_OPEN_SELECTED_RESULT,
+	INLINE_HELP_DID_OPEN_CONTEXT_LINK,
 	INLINE_HELP_DID_OPEN_SELECTED_RESULT,
 } from 'state/action-types';
 
@@ -103,6 +104,19 @@ export function setSearchResults( searchQuery, searchResults ) {
 			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 			searchQuery,
 			searchResults,
+		} );
+	};
+}
+
+/**
+ * Opens the selected result in the inline help context links list.
+ *
+ * @return {Function}        Action thunk
+ */
+export function didOpenContextLink() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_DID_OPEN_CONTEXT_LINK,
 		} );
 	};
 }

@@ -9,6 +9,7 @@ import {
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 	INLINE_HELP_OPEN_SELECTED_RESULT,
+	INLINE_HELP_DID_OPEN_CONTEXT_LINK,
 	INLINE_HELP_DID_OPEN_SELECTED_RESULT,
 } from 'state/action-types';
 
@@ -81,4 +82,20 @@ export const search = createReducer(
 	}
 );
 
-export default combineReducers( { requesting, search } );
+export const contextLinks = createReducer(
+	{
+		context: {},
+		items: {},
+		selectedContextLink: -1,
+		shouldOpenSelectedContextLink: false,
+	},
+	{
+		[ INLINE_HELP_DID_OPEN_CONTEXT_LINK ]: state => {
+			return Object.assign( {}, state, {
+				shouldOpenSelectedContextLink: false,
+			} );
+		},
+	}
+);
+
+export default combineReducers( { requesting, search, contextLinks } );

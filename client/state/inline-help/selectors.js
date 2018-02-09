@@ -55,3 +55,13 @@ export function getInlineHelpSearchResultsForQuery( state, searchQuery ) {
 	}
 	return searchResults;
 }
+
+/**
+ * Returns whether we should open the currently selected context link.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {String}        The index of the currently selected context link
+ */
+export function shouldOpenSelectedContextLink( state ) {
+	return state.inlineHelpSearchResults.contextLinks.shouldOpenSelectedContextLink || false;
+}
