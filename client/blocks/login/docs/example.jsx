@@ -15,7 +15,7 @@ const LoginExample = () => (
 	<React.Fragment>
 		<LoginBlock />
 		<p />
-		<LoginBlock jetpack />
+		<LoginBlock isJetpack />
 	</React.Fragment>
 );
 

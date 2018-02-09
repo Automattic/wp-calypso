@@ -43,7 +43,7 @@ const user = userFactory();
 class Login extends Component {
 	static propTypes = {
 		isLinking: PropTypes.bool,
-		jetpack: PropTypes.bool.isRequired,
+		isJetpack: PropTypes.bool.isRequired,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
@@ -58,7 +58,7 @@ class Login extends Component {
 		twoFactorNotificationSent: PropTypes.string,
 	};
 
-	static defaultProps = { jetpack: false };
+	static defaultProps = { isJetpack: false };
 
 	componentDidMount = () => {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
@@ -134,7 +134,7 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
-			jetpack,
+			isJetpack,
 			linkingSocialService,
 			oauth2Client,
 			privateSite,
@@ -188,7 +188,7 @@ class Login extends Component {
 					</p>
 				);
 			}
-		} else if ( jetpack ) {
+		} else if ( isJetpack ) {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
 				<div>
@@ -273,7 +273,7 @@ class Login extends Component {
 
 	render() {
 		return (
-			<div className={ classNames( 'login', { 'is-jetpack': this.props.jetpack } ) }>
+			<div className={ classNames( 'login', { 'is-jetpack': this.props.isJetpack } ) }>
 				{ this.renderHeader() }
 
 				<ErrorNotice />
