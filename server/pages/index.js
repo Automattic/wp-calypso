@@ -30,6 +30,7 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
+import { getLanguage } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -233,6 +234,15 @@ function getDefaultContext( request ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
+	req.context = getDefaultContext( req );
+
+	const acceptedLanguages = getAcceptedLanguagesFromHeader( req.headers[ 'accept-language' ] );
+	// check if the browser's first language is in config.languages
+	const language = getLanguage( acceptedLanguages[ 0 ] );
+	if ( language ) {
+		req.context.lang = language.langSlug;
+	}
+
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
