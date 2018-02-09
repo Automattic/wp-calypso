@@ -12,10 +12,10 @@ import { get, pick } from 'lodash';
 /**
  * Internal dependencies
  */
+import CommentHtmlEditor from 'my-sites/comments/comment/comment-html-editor';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
 import { decodeEntities } from 'lib/formatting';
@@ -136,10 +136,10 @@ export class CommentEdit extends Component {
 						/>
 					</FormFieldset>
 
-					<FormTextarea
+					<CommentHtmlEditor
+						commentContent={ commentContent }
 						disabled={ ! isEditCommentSupported }
 						onChange={ this.setCommentContentValue }
-						value={ commentContent }
 					/>
 
 					{ ! isEditCommentSupported && (
