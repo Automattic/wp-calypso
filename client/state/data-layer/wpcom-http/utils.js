@@ -107,6 +107,8 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 					if ( undefined !== window ) {
 						// eslint-disable-next-line no-console
 						console.log( 'updated `lastValidator` and `lastValidated` in console' );
+						// eslint-disable-next-line no-console
+						console.log( 'run `lastValidator( lastValidated )` to reproduce failing validation' );
 						window.lastValidator = validator;
 						window.lastValidated = data;
 					}
@@ -135,6 +137,10 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 					if ( undefined !== window ) {
 						// eslint-disable-next-line no-console
 						console.log( 'updated `lastTransformer` and `lastTransformed` in console' );
+						// eslint-disable-next-line no-console
+						console.log(
+							'run `lastTransformer( lastTransformed )` to reproduce failing transform'
+						);
 						window.lastTransformer = transformer;
 						window.lastTransformed = data;
 					}
