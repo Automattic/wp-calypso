@@ -11,7 +11,13 @@ import React from 'react';
  */
 import LoginBlock from 'blocks/login';
 
-const LoginExample = () => <LoginBlock title={ 'Sign in to connect to WordPress.com' } />;
+const LoginExample = () => (
+	<React.Fragment>
+		<LoginBlock />
+		<p />
+		<LoginBlock jetpack />
+	</React.Fragment>
+);
 
 LoginExample.displayName = 'Login';
 
