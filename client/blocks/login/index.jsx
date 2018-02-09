@@ -273,7 +273,7 @@ class Login extends Component {
 
 	render() {
 		return (
-			<div className={ classNames( 'login', { 'login--jetpack': this.props.jetpack } ) }>
+			<div className={ classNames( 'login', { 'is-jetpack': this.props.jetpack } ) }>
 				{ this.renderHeader() }
 
 				<ErrorNotice />

@@ -1,8 +1,11 @@
-.login--jetpack {
+.login {
+
 	.jetpack-logo__icon { fill: $green-jetpack }
-	.button.is-primary {
-		background-color: $green-jetpack;
-		border-color: darken( $green-jetpack, 5% );
+	&.is-jetpack {
+		.button.is-primary {
+			background-color: $green-jetpack;
+			border-color: darken( $green-jetpack, 5% );
+		}
 	}
 }
 
