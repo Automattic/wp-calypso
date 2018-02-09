@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -29,10 +30,11 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	};
 
 	render() {
-		const { getForwardUrl, translate } = this.props;
+		const { getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'What kind of site do you need? Choose an option below:' );
 		const forwardUrl = getForwardUrl();
+		const siteType = get( settings, 'siteType' );
 
 		return (
 			<div className="steps__main">
@@ -51,6 +53,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 							'To share your ideas, stories, photographs, or creative projects with your followers.'
 						) }
 						image={ '/calypso/images/illustrations/type-personal.svg' }
+						highlighted={ siteType === 'personal' }
 						href={ forwardUrl }
 						onClick={ this.handleSiteTypeSelection( 'personal' ) }
 					/>
@@ -60,6 +63,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 							'To promote your business, organization, or brand, sell products or services, or connect with your audience.'
 						) }
 						image={ '/calypso/images/illustrations/type-business.svg' }
+						highlighted={ siteType === 'business' }
 						href={ forwardUrl }
 						onClick={ this.handleSiteTypeSelection( 'business' ) }
 					/>
