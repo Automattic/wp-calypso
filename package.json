@@ -213,7 +213,7 @@
     "prepush": "npm run -s install-if-no-packages && node bin/pre-push-hook.js",
     "rm": "node bin/rm.js",
     "postshrinkwrap": "node bin/trim-shrinkwrap.js && touch node_modules",
-    "prestart": "npm run -s install-if-deps-outdated && node bin/welcome.js && ( check-node-version --package || exit 0 )",
+    "prestart": "npm run -s install-if-deps-outdated && node bin/welcome.js && node bin/version-check.js",
     "start": "npm run -s build",
     "poststart": "npm run -s env -- cross-env-shell node $NODE_ARGS build/bundle.js",
     "reformat-files": "node bin/reformat-files.js",
