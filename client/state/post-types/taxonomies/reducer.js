@@ -53,11 +53,13 @@ export function requesting( state = {}, action ) {
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case POST_TYPES_TAXONOMIES_RECEIVE:
-			return Object.assign( {}, state, {
+			return {
+				...state,
 				[ action.siteId ]: {
+					...state[ action.siteId ],
 					[ action.postType ]: keyBy( action.taxonomies, 'name' ),
 				},
-			} );
+			};
 
 		default:
 			return state;
