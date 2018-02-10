@@ -2515,22 +2515,19 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 /**
  * Request a new .wordpress.com subdomain change with the option to discard the current.
  *
- * @param {int} [siteId]
- * @param {object} [newBlogName]	The desired new subdomain
+ * @param {int} [siteId] The siteId for which to rename
+ * @param {object} [blogname]	The desired new subdomain
  * @param {bool} [discard]			Should the old blog name be discarded?
  * @returns {Promise}  A promise
  */
-Undocumented.prototype.updateSiteName = function( siteId, newBlogName, discard ) {
+Undocumented.prototype.updateSiteName = function( siteId, blogname, discard ) {
 	return this.wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/site-rename`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{},
-		{
-			blogdomain: newBlogName,
-			discard,
-		}
+		{ blogname, discard }
 	);
 };
 
