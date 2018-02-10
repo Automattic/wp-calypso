@@ -52,6 +52,6 @@ export const transformApi = data =>
 		data.can_autoconfigure && { canAutoconfigure: !! data.can_autoconfigure },
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },
 		data.downloads && { downloads: data.downloads.map( transformDownload ) },
-		data.reason && { failureReason: data.reason },
+		data.reason && { reason: data.reason },
 		data.rewind && { rewind: transformRewind( data.rewind ) }
 	);

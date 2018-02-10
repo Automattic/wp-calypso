@@ -43,6 +43,9 @@ export const UnavailabilityNotice = ( { adminUrl, reason, rewindState, slug, tra
 					) }
 				/>
 			);
+
+		default:
+			return null;
 	}
 };
 
