@@ -83,6 +83,16 @@ class PostRevisionsDialog extends PureComponent {
 		];
 	};
 
+	focusModal = () => {
+		if ( get( this, 'dialog.focusModal', false ) ) {
+			this.dialog.focusModal();
+		}
+	};
+
+	dialogRef = dialog => {
+		this.dialog = dialog;
+	};
+
 	render() {
 		const { isVisible, closeDialog } = this.props;
 
@@ -92,8 +102,9 @@ class PostRevisionsDialog extends PureComponent {
 				className="editor-revisions__dialog"
 				isVisible={ isVisible }
 				onClose={ closeDialog }
+				ref={ this.dialogRef }
 			>
-				<EditorRevisions />
+				<EditorRevisions focusModal={ this.focusModal } />
 			</Dialog>
 		);
 	}
