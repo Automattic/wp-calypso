@@ -26,7 +26,7 @@ export const logItem = ( state = undefined, { type, data, found, query } ) => {
 	}
 };
 
-export const logItems = keyedReducer( 'siteId', logItem, [ DESERIALIZE, SERIALIZE ] );
+export const logItems = keyedReducer( 'siteId', logItem );
 logItems.hasCustomPersistence = true;
 
 export const oldestItemTs = keyedReducer( 'siteId', ( state = Infinity, action ) => {
