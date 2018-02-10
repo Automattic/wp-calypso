@@ -23,7 +23,7 @@ import {
 	getTld,
 } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
+import { getAvailabilityNoticeForTransfers } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Notice from 'components/notice';
@@ -378,8 +378,8 @@ class TransferDomainStep extends React.Component {
 			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 			( error, result ) => {
 				const status = get( result, 'status', error );
+				const mappableStatus = get( result, 'mappable', error );
 				const rootDomain = get( result, 'root_domain', null );
-				const isSubDomain = rootDomain && rootDomain !== domain;
 				switch ( status ) {
 					case domainAvailability.AVAILABLE:
 						this.setState( { suggestion: result } );
@@ -391,69 +391,20 @@ class TransferDomainStep extends React.Component {
 							supportsPrivacy: get( result, 'supports_privacy', false ),
 						} );
 						break;
-					case domainAvailability.MAPPABLE:
-					case domainAvailability.TLD_NOT_SUPPORTED:
-						const tld = getTld( domain );
-
-						if ( isSubDomain ) {
-							this.setState( {
-								notice: this.props.translate(
-									'Transferring a subdomain is not possible. You can try to {{a}}map it{{/a}} instead ' +
-										'or transfer {{strong}}the root domain{{/strong}}.',
-									{
-										args: { rootDomain },
-										components: {
-											strong: <strong />,
-											a: <button onClick={ this.goToMapDomainStep } />,
-										},
-									}
-								),
-								noticeSeverity: 'error',
-							} );
-						} else {
-							this.setState( {
-								notice: this.props.translate(
-									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
-										'but you can {{a}}map it{{/a}} instead.',
-									{
-										args: { tld },
-										components: {
-											strong: <strong />,
-											a: <button onClick={ this.goToMapDomainStep } />,
-										},
-									}
-								),
-								noticeSeverity: 'info',
-							} );
-						}
-						break;
-					case domainAvailability.UNKNOWN:
-						const mappableStatus = get( result, 'mappable', error );
-
-						if ( domainAvailability.MAPPABLE === mappableStatus ) {
-							this.setState( {
-								notice: this.props.translate(
-									"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
-										'You can {{a}}manually connect it{{/a}} if you still want to use it for your site.',
-									{
-										args: { domain },
-										components: {
-											strong: <strong />,
-											a: <button onClick={ this.goToMapDomainStep } />,
-										},
-									}
-								),
-								noticeSeverity: 'info',
-							} );
-							break;
-						}
 					default:
 						let site = get( result, 'other_site_domain', null );
 						if ( ! site ) {
 							site = get( this.props, 'selectedSite.slug', null );
 						}
 
-						const { message, severity } = getAvailabilityNotice( domain, status, site );
+						const { message, severity } = getAvailabilityNoticeForTransfers(
+							domain,
+							status,
+							site,
+							rootDomain,
+							mappableStatus,
+							this.goToMapDomainStep
+						);
 						this.setState( { notice: message, noticeSeverity: severity } );
 				}
 

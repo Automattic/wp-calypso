@@ -258,4 +258,149 @@ function getAvailabilityNotice( domain, error, site ) {
 	};
 }
 
-export { getAvailabilityNotice };
+function getAvailabilityNoticeForTransfers(
+	domain,
+	status,
+	site,
+	rootDomain,
+	mappableStatus,
+	goToMapDomainStep
+) {
+	let message,
+		severity = 'error';
+
+	const isSubDomain = rootDomain && rootDomain !== domain;
+
+	switch ( status ) {
+		case domainAvailability.MAPPABLE:
+		case domainAvailability.TLD_NOT_SUPPORTED:
+			if ( isSubDomain ) {
+				message = translate(
+					'Transferring a subdomain is not possible. You can try to {{button}}map it{{/button}} instead ' +
+						'or transfer {{strong}}the root domain{{/strong}}.',
+					{
+						args: { rootDomain },
+						components: {
+							strong: <strong />,
+							button: <button onClick={ goToMapDomainStep } />,
+						},
+					}
+				);
+			} else {
+				const tld = getTld( domain );
+				message = translate(
+					"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
+						'but you can {{button}}map it{{/button}} instead.',
+					{
+						args: { tld },
+						components: {
+							strong: <strong />,
+							button: <button onClick={ goToMapDomainStep } />,
+						},
+					}
+				);
+				severity = 'info';
+			}
+			break;
+		case domainAvailability.UNKNOWN:
+			if ( domainAvailability.MAPPABLE === mappableStatus ) {
+				message = translate(
+					"{{strong}}%(domain)s{{/strong}} can't be transferred. " +
+						'You can {{button}}manually connect it{{/button}} if you still want to use it for your site.',
+					{
+						args: { domain },
+						components: {
+							strong: <strong />,
+							button: <button onClick={ goToMapDomainStep } />,
+						},
+					}
+				);
+				severity = 'info';
+				// The break is here intentionally so we can fallback to the default
+				break;
+			}
+		default:
+			( { message, severity } = getAvailabilityNotice( domain, status, site ) );
+	}
+
+	return {
+		message,
+		severity,
+	};
+}
+
+function getOfferAvailabilityForSearchResults(
+	lastDomainSearched,
+	domain,
+	rootDomain,
+	isNextDomainFree,
+	handleAddMapping,
+	domainsWithPlansOnly,
+	isSiteOnPaidPlan,
+	domainMapCost,
+	tldNotSupported
+) {
+	let offer, domainUnavailableMessage;
+	const components = { button: <button onClick={ handleAddMapping } />, small: <small /> };
+	const isSubDomain = rootDomain && rootDomain !== lastDomainSearched;
+
+	if ( ! isSubDomain && isNextDomainFree ) {
+		offer = translate(
+			'{{small}}If you purchased %(domain)s elsewhere, you can {{button}}map it{{/button}} for free.{{/small}}',
+			{ args: { domain }, components }
+		);
+	} else if ( ! isSubDomain && ( ! domainsWithPlansOnly || isSiteOnPaidPlan ) ) {
+		offer = translate(
+			'{{small}}If you purchased %(domain)s elsewhere, you can {{button}}map it{{/button}} for %(cost)s.{{/small}}',
+			{ args: { domain, cost: domainMapCost }, components }
+		);
+	} else if ( ! isSubDomain ) {
+		offer = translate(
+			'{{small}}If you purchased %(domain)s elsewhere, you can {{button}}map it{{/button}} with WordPress.com Premium.{{/small}}',
+			{ args: { domain }, components }
+		);
+	} else if ( isSubDomain && isNextDomainFree ) {
+		offer = translate(
+			'{{small}}If you own %(rootDomain)s, you can {{button}}map %(domain)s{{/button}} for free.{{/small}}',
+			{ args: { rootDomain, domain }, components }
+		);
+	} else if ( isSubDomain && ( ! domainsWithPlansOnly || isSiteOnPaidPlan ) ) {
+		offer = translate(
+			'{{small}}If you own %(rootDomain)s, you can {{button}}map %(domain)s{{/button}} for %(cost)s.{{/small}}',
+			{ args: { rootDomain, domain, cost: domainMapCost }, components }
+		);
+	} else {
+		offer = translate(
+			'{{small}}If you own %(rootDomain)s, you can {{button}}map %(domain)s{{/button}} with WordPress.com Premium.{{/small}}',
+			{ args: { rootDomain, domain }, components }
+		);
+	}
+
+	if ( isSubDomain ) {
+		domainUnavailableMessage = translate( '{{strong}}%(domain)s{{/strong}} is a subdomain.', {
+			args: { domain },
+			components: { strong: <strong /> },
+		} );
+	} else if ( tldNotSupported ) {
+		domainUnavailableMessage = translate(
+			'{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.',
+			{
+				args: { tld: getTld( domain ) },
+				components: { strong: <strong /> },
+			}
+		);
+	} else {
+		domainUnavailableMessage = translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
+			args: { domain },
+			components: { strong: <strong /> },
+		} );
+	}
+
+	return { offer, domainUnavailableMessage };
+}
+
+export {
+	getAvailabilityNotice,
+	getAvailabilityNoticeForTransfers,
+	getOfferAvailabilityForSearchResults,
+};
