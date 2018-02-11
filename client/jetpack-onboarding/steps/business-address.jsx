@@ -101,12 +101,13 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 									onChange={ this.getChangeHandler( fieldName ) }
 									value={ this.state[ fieldName ] || '' }
 								/>
-								{ fieldName !== 'state' && (
-									<FormInputValidation
-										isError={ this.state[ fieldName ] === '' }
-										text={ translate( 'Required field.' ) }
-									/>
-								) }
+								{ fieldName !== 'state' &&
+									! isRequestingSettings && (
+										<FormInputValidation
+											isError={ this.state[ fieldName ] === '' }
+											text={ translate( 'Required field.' ) }
+										/>
+									) }
 							</FormFieldset>
 						) ) }
 						<Button
