@@ -20,6 +20,13 @@ import { getUnconnectedSiteUrl } from 'state/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
+	handleNextStepSelection = stepName => () => {
+		const { recordJpoEvent } = this.props;
+		recordJpoEvent( 'calypso_jpo_next_step_clicked', {
+			nextStep: stepName,
+		} );
+	};
+
 	render() {
 		const { basePath, siteId, siteSlug, siteUrl, steps, translate } = this.props;
 
@@ -50,7 +57,12 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						<NextSteps siteId={ siteId } siteSlug={ siteSlug } siteUrl={ siteUrl } />
+						<NextSteps
+							handleNextStepSelection={ this.handleNextStepSelection }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							siteUrl={ siteUrl }
+						/>
 					</div>
 				</div>
 				<div className="steps__button-group">

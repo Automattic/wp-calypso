@@ -23,7 +23,12 @@ import {
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
 
-const CompletedSteps = ( { basePath, siteSlug, steps, stepsCompleted, stepsPending } ) =>
+const CompletedSteps = ( {
+	siteSlug,
+	steps,
+	stepsCompleted,
+	stepsPending,
+} ) =>
 	map( without( steps, STEPS.SUMMARY ), stepName => {
 		const isCompleted = get( stepsCompleted, stepName ) === true;
 		const isPending = get( stepsPending, stepName );
@@ -31,7 +36,6 @@ const CompletedSteps = ( { basePath, siteSlug, steps, stepsCompleted, stepsPendi
 			'jetpack-onboarding__summary-entry',
 			isCompleted ? 'completed' : 'todo'
 		);
-
 		return (
 			<div key={ stepName } className={ className }>
 				{ isPending ? (

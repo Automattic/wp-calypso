@@ -16,12 +16,14 @@ import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getJetpackOnboardingSettings } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const NextSteps = ( { siteId, steps } ) => (
+const NextSteps = ( { handleNextStepSelection, siteId, steps } ) => (
 	<Fragment>
 		<QuerySites siteId={ siteId } />
 		{ map( steps, ( { label, url }, stepName ) => (
 			<div key={ stepName } className="jetpack-onboarding__summary-entry todo">
-				<a href={ url }>{ label }</a>
+				<a href={ url } onClick={ handleNextStepSelection( stepName ) }>
+					{ label }
+				</a>
 			</div>
 		) ) }
 	</Fragment>
