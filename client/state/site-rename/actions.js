@@ -4,7 +4,6 @@
  */
 import page from 'page';
 import { get } from 'lodash';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import {
 	SITE_RENAME_REQUEST_FAILURE,
 	SITE_RENAME_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { requestSite } from 'state/sites/actions';
 
@@ -24,6 +23,15 @@ function fetchNonce( siteId ) {
 	return wpcom.undocumented().getRequestSiteRenameNonce( siteId );
 }
 
+export const getErrorNotice = message =>
+	errorNotice( message, {
+		id: 'siteRenameUnsuccessful',
+		duration: 5000,
+		showDismiss: true,
+		isPersistent: true,
+	} );
+
+// @TODO translate copy throughout once copy is finalised
 export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch => {
 	dispatch( {
 		type: SITE_RENAME_REQUEST,
@@ -44,7 +52,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 							page( domainManagementEdit( newAddress, newAddress ) );
 
 							dispatch(
-								successNotice( translate( 'Your new domain name is ready to go!' ), {
+								successNotice( 'Your new domain name is ready to go!', {
 									id: 'siteRenameSuccessful',
 									duration: 5000,
 									showDismiss: true,
@@ -61,6 +69,13 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 					} );
 				} )
 				.catch( error => {
+					dispatch(
+						getErrorNotice(
+							error.message ||
+								"Sorry, we we're unable to complete your domain change. Please try again."
+						)
+					);
+
 					dispatch( {
 						type: SITE_RENAME_REQUEST_FAILURE,
 						error: error.message,
