@@ -22,7 +22,6 @@ import {
 	unbindWindowListeners,
 	suggested as suggestPosition,
 	constrainLeft,
-	isElement as isDOMElement,
 	offset,
 } from './util';
 import { isRtl as isRtlSelector } from 'state/selectors';
@@ -109,11 +108,7 @@ class Popover extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		// update context (target) reference into a property
-		if ( ! isDOMElement( nextProps.context ) ) {
-			this.domContext = ReactDom.findDOMNode( nextProps.context );
-		} else {
-			this.domContext = nextProps.context;
-		}
+		this.domContext = ReactDom.findDOMNode( nextProps.context );
 
 		if ( ! nextProps.isVisible ) {
 			return null;
@@ -152,6 +147,16 @@ class Popover extends Component {
 			// see https://github.com/Automattic/wp-calypso/commit/38e779cfebf6dd42bb30d8be7127951b0c531ae2
 			this.debug( 'requesting to update position after render completes' );
 			requestAnimationFrame( () => {
+				// Prevent updating Popover position if it's already unmounted.
+				if (
+					! __popovers.has( this.id ) ||
+					! this.domContainer ||
+					! this.domContext ||
+					! isVisible
+				) {
+					return;
+				}
+
 				this.setPosition();
 				this.isUpdatingPosition = false;
 			} );
@@ -273,11 +278,7 @@ class Popover extends Component {
 		this.domContainer = domContainer;
 
 		// store context (target) reference into a property
-		if ( ! isDOMElement( this.props.context ) ) {
-			this.domContext = ReactDom.findDOMNode( this.props.context );
-		} else {
-			this.domContext = this.props.context;
-		}
+		this.domContext = ReactDom.findDOMNode( this.props.context );
 
 		this.setPosition();
 	}

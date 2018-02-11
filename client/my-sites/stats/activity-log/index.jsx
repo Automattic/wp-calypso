@@ -589,18 +589,16 @@ class ActivityLog extends Component {
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady = includes(
-			[ 'unavailable', 'awaitingCredentials' ],
+			[ 'uninitialized', 'awaitingCredentials' ],
 			rewindState.state
 		);
 
 		return (
 			<Main wideLayout>
 				<QueryRewindState siteId={ siteId } />
-				{ siteId && '' !== rewindNoThanks && rewindIsNotReady ? (
-					<ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
-				) : (
-					this.getActivityLog()
-				) }
+				{ '' !== rewindNoThanks && rewindIsNotReady
+					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
+					: this.getActivityLog() }
 				<JetpackColophon />
 			</Main>
 		);

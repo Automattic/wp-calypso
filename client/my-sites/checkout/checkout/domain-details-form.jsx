@@ -32,6 +32,7 @@ import { getContactDetailsCache } from 'state/selectors';
 import { getCountryStates } from 'state/country-states/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
 import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
@@ -83,7 +84,7 @@ export class DomainDetailsForm extends PureComponent {
 			'fax',
 		];
 
-		const steps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
+		const steps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
 		debug( 'steps:', steps );
 
 		this.state = {
@@ -156,7 +157,7 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	validateSteps() {
-		const updatedSteps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
+		const updatedSteps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
 		const newState = {
 			steps: updatedSteps,
 		};
@@ -280,7 +281,7 @@ export class DomainDetailsForm extends PureComponent {
 		};
 	}
 
-	getRequiredExtraSteps() {
+	getTldsWithAdditionalForm() {
 		if ( ! config.isEnabled( 'domains/cctlds' ) ) {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
@@ -610,6 +611,7 @@ export class DomainDetailsForm extends PureComponent {
 
 		return (
 			<div>
+				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
 				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
 					{ this.renderCurrentForm() }

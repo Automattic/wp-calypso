@@ -1,3 +1,14 @@
+.login {
+
+	.jetpack-logo__icon { fill: $green-jetpack }
+	&.is-jetpack {
+		.button.is-primary {
+			background-color: $green-jetpack;
+			border-color: darken( $green-jetpack, 5% );
+		}
+	}
+}
+
 .card.login__form,
 .login__form-social .card {
 	margin-bottom: 0;

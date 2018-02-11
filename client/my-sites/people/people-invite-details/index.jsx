@@ -20,11 +20,13 @@ import Card from 'components/card';
 import PeopleListItem from 'my-sites/people/people-list-item';
 import Gravatar from 'components/gravatar';
 import QuerySiteInvites from 'components/data/query-site-invites';
-import { getInviteForSite } from 'state/invites/selectors';
+import EmptyContent from 'components/empty-content';
+import { getSelectedSite } from 'state/ui/selectors';
+import { isRequestingInvitesForSite, getInviteForSite } from 'state/invites/selectors';
 
 class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
-		site: PropTypes.object.isRequired,
+		site: PropTypes.object,
 		inviteKey: PropTypes.string.isRequired,
 	};
 
@@ -36,8 +38,29 @@ class PeopleInviteDetails extends React.PureComponent {
 		page.back( fallback );
 	};
 
-	renderInvite = () => {
-		const { site, invite } = this.props;
+	renderPlaceholder() {
+		return (
+			<Card>
+				<PeopleListItem key="people-list-item-placeholder" />
+			</Card>
+		);
+	}
+
+	renderInvite() {
+		const { site, requesting, invite, translate } = this.props;
+
+		if ( ! site || ! site.ID ) {
+			return this.renderPlaceholder();
+		}
+
+		if ( ! invite ) {
+			if ( requesting ) {
+				return this.renderPlaceholder();
+			}
+
+			const message = translate( 'The requested invite does not exist.' );
+			return <EmptyContent title={ message } />;
+		}
 
 		return (
 			<Card>
@@ -52,9 +75,9 @@ class PeopleInviteDetails extends React.PureComponent {
 				{ this.renderInviteDetails() }
 			</Card>
 		);
-	};
+	}
 
-	renderInviteDetails = () => {
+	renderInviteDetails() {
 		const { invite, translate, moment } = this.props;
 		const showName = invite.invitedBy.login !== invite.invitedBy.name;
 
@@ -90,34 +113,33 @@ class PeopleInviteDetails extends React.PureComponent {
 				) }
 			</div>
 		);
-	};
+	}
 
 	render() {
-		const { site, translate, invite } = this.props;
-
-		if ( ! site || ! site.ID ) {
-			return null;
-		}
+		const { site, translate } = this.props;
 
 		return (
 			<Main className="people-invite-details">
-				<QuerySiteInvites siteId={ site.ID } />
+				{ site && site.ID && <QuerySiteInvites siteId={ site.ID } /> }
 				<SidebarNavigation />
 
 				<HeaderCake isCompact onClick={ this.goBack }>
 					{ translate( 'Invite Details' ) }
 				</HeaderCake>
 
-				{ invite && this.renderInvite() }
+				{ this.renderInvite() }
 			</Main>
 		);
 	}
 }
 
 export default connect( ( state, ownProps ) => {
-	const siteId = ownProps.site && ownProps.site.ID;
+	const site = getSelectedSite( state );
+	const siteId = site && site.ID;
 
 	return {
+		site,
+		requesting: isRequestingInvitesForSite( state, siteId ),
 		invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
 	};
 } )( localize( PeopleInviteDetails ) );

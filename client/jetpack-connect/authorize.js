@@ -603,19 +603,8 @@ export class JetpackAuthorize extends Component {
 			</LoggedOutFormLinkItem>
 		);
 
-		if ( this.retryingAuth || isAuthorizing || this.redirecting ) {
+		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
-		}
-
-		if ( authorizeSuccess ) {
-			return (
-				<LoggedOutFormLinks>
-					{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
-						{ translate( "I'm not interested in upgrades" ) }
-					</LoggedOutFormLinkItem>
-				</LoggedOutFormLinks>
-			);
 		}
 
 		return (

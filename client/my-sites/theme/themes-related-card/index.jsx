@@ -27,11 +27,11 @@ class ThemesRelatedCard extends React.Component {
 	getRelatedThemes = () => {
 		let themes = new Set( [
 			'independent-publisher-2',
-			'hemingway-rewritten',
+			'libre-2',
 			'penscratch-2',
-			'cols',
+			'libretto',
 			'twentyfifteen',
-			'bushwick',
+			'intergalactic-2',
 			'radcliffe-2',
 			'karuna',
 			'dara',

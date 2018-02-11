@@ -42,6 +42,10 @@ const babelPresetEnv = _.find( babelConfig.presets, preset => preset[ 0 ] === 'e
 babelPresetEnv[ 1 ].modules = false;
 _.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
 
+// remove the babel-lodash-es plugin from env.test -- it's needed only for Jest tests.
+// The Webpack-using NODE_ENV=test build doesn't need it, as there is a special loader for that.
+_.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) );
+
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -110,6 +114,14 @@ const webpackConfig = {
 				test: /\.jsx?$/,
 				exclude: /node_modules[\/\\](?!notifications-panel)/,
 				loader: [ 'happypack/loader' ],
+			},
+			{
+				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+				loader: 'babel-loader',
+				options: {
+					babelrc: false,
+					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
+				},
 			},
 			{
 				test: /extensions[\/\\]index/,

@@ -55,15 +55,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	unlimitedThemeNudge: {
-		datestamp: '20171016',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	checklistThankYouForFreeUser: {
 		datestamp: '20171204',
 		variations: {
@@ -89,6 +80,17 @@ export default {
 			modified: 50,
 		},
 		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	domainSuggestionTestV5: {
+		datestamp: '20180204',
+		variations: {
+			group_0: 1, // Default group
+			group_1: 1000,
+			group_2: 1000,
+			group_3: 1000,
+		},
+		defaultVariation: 'group_0',
 		allowExistingUsers: true,
 	},
 };

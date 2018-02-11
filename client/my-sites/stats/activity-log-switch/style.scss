@@ -107,3 +107,21 @@
 		padding: 4%;
 	}
 }
+
+.activity-log-switch__placeholder {
+	.activity-log-switch__header-header {
+		padding-bottom: 0;
+		@include placeholder();
+	}
+
+	.activity-log-switch__header-text {
+		height: 100px;
+		@include placeholder();
+	}
+}
+.activity-log-switch__img-placeholder {
+	max-width: 150px;
+	height: 100px;
+	margin: 0 auto;
+	@include placeholder();
+}

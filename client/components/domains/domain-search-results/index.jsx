@@ -29,6 +29,7 @@ import { currentUserHasFlag } from 'state/current-user/selectors';
 import { TRANSFER_IN_NUX } from 'state/current-user/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { abtest } from 'lib/abtest';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
@@ -72,10 +73,12 @@ class DomainSearchResults extends React.Component {
 		const { MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
+		const testGroup = abtest( 'domainSuggestionTestV5' );
+		const showExactMatch = 'group_0' === testGroup;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
-		if ( availableDomain ) {
+		if ( availableDomain && showExactMatch ) {
 			// should use real notice component or custom class
 			availabilityElement = (
 				<Notice status="is-success" showDismiss={ false }>

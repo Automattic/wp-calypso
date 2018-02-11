@@ -75,8 +75,20 @@ class ActivityLogSwitch extends Component {
 	}
 
 	render() {
-		if ( 'vp_active_on_site' === this.props.failureReason || 'uninitialized' === this.props.rewindState ) {
+		if ( 'vp_active_on_site' === this.props.failureReason ) {
 			return false;
+		}
+
+		if ( 'uninitialized' === this.props.rewindState ) {
+			return (
+				<Card className="activity-log-switch activity-log-switch__placeholder">
+					<div className="activity-log-switch__header">
+						<div className="activity-log-switch__header-header" />
+					</div>
+					<div className="activity-log-switch__img-placeholder" />
+					<p className="activity-log-switch__header-text" />
+				</Card>
+			);
 		}
 
 		const {

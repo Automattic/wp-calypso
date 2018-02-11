@@ -84,7 +84,7 @@ class SpeedUpSiteSettings extends Component {
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }
 								moduleSlug="lazy-images"
-								label={ translate( '"Lazy-load" images' ) }
+								label={ translate( 'Lazy load images' ) }
 								description={ translate(
 									"Improve your site's speed by only loading images visible on the screen. New images will " +
 										'load just before they scroll into view. This prevents viewers from having to download ' +
