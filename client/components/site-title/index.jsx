@@ -66,9 +66,10 @@ class SiteTitleControl extends React.Component {
 						onChange={ this.onChangeSiteTitle }
 						value={ blogname }
 					/>
-					{ isBlognameRequired && (
-						<FormInputValidation isError={ ! blogname } text={ translate( 'Required field.' ) } />
-					) }
+					{ isBlognameRequired &&
+						! disabled && (
+							<FormInputValidation isError={ ! blogname } text={ translate( 'Required field.' ) } />
+						) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>
