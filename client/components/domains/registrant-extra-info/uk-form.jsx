@@ -63,7 +63,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			</option>
 		) );
 		this.errorMessages = {
-			dotUkRegistrationNumberFormat: translate(
+			dotukRegistrationNumberFormat: translate(
 				'A Company Registration Number is 8 numerals, or 2 letters followed by 6 numerals (e.g. AB123456 or 12345678).'
 			),
 			dotukRegistrantTypeRequiresRegistrationNumber: translate(
