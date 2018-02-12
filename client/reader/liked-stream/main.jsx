@@ -14,8 +14,8 @@ import DocumentHead from 'components/data/document-head';
 
 class LikedStream extends React.Component {
 	render() {
-		var title = this.props.translate( 'My Likes' ),
-			emptyContent = <EmptyContent />;
+		const title = this.props.translate( 'My Likes', { textOnly: true } );
+		const emptyContent = <EmptyContent />;
 
 		return (
 			<Stream
