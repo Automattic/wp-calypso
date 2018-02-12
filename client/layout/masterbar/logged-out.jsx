@@ -20,7 +20,6 @@ import WordPressLogo from 'components/wordpress-logo';
 
 function getLoginUrl( redirectUri ) {
 	const params = { locale: getLocaleSlug() };
-
 	if ( redirectUri ) {
 		params.redirectTo = redirectUri;
 	} else if ( typeof window !== 'undefined' ) {
@@ -28,6 +27,13 @@ function getLoginUrl( redirectUri ) {
 	}
 
 	return login( { ...params, isNative: config.isEnabled( 'login/native-login-links' ) } );
+}
+
+function getSignupUrl() {
+	const isJetpack =
+		typeof window !== 'undefined' &&
+		window.location.href.indexOf( 'jetpack%2Fconnect%2Fauthorize' ) >= 0;
+	return isJetpack ? '/jetpack/connect/authorize' : config( 'signup_url' );
 }
 
 const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) => (
@@ -39,7 +45,7 @@ const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) =>
 		<Item className="masterbar__item-title">{ title }</Item>
 		<div className="masterbar__login-links">
 			{ 'signup' !== sectionName ? (
-				<Item url={ config( 'signup_url' ) }>
+				<Item url={ getSignupUrl() }>
 					{ translate( 'Sign Up', {
 						context: 'Toolbar',
 						comment: 'Should be shorter than ~12 chars',
