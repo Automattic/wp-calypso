@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { delay, each, filter, map, reduce } from 'lodash';
+import { delay, each, filter, get, map, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -51,6 +51,7 @@ export class CommentHtmlEditor extends Component {
 		tag,
 		attributes,
 		options = {
+			adjustCursorPosition: 0,
 			alsoClose: false,
 			indent: false,
 			newLineAfter: false,
@@ -73,23 +74,49 @@ export class CommentHtmlEditor extends Component {
 		const inner = options.text || this.splitSelectedContent().inner;
 
 		if ( inner.length || options.alsoClose ) {
-			return this.insertContent( opener + inner + closer );
+			return this.insertContent( opener + inner + closer, options.adjustCursorPosition );
 		}
 
 		if ( ! options.selfClosed && this.isTagOpen( tag ) ) {
 			this.setState( ( { openTags } ) => ( { openTags: filter( openTags, tag ) } ) );
-			return this.insertContent( closer );
+			return this.insertContent( closer, options.adjustCursorPosition );
 		}
 
 		if ( ! options.selfClosed ) {
 			this.setState( ( { openTags } ) => ( { openTags: openTags.concat( tag ) } ) );
 		}
-		return this.insertContent( opener );
+		return this.insertContent( opener, options.adjustCursorPosition );
 	};
 
-	insertContent = content => {
+	insertContent = ( content, adjustCursorPosition = 0 ) => {
+		const userAgent = get( window, 'navigator.userAgent', '' );
+
+		// In Firefox, IE, and Edge, `document.execCommand( 'insertText' )` doesn't work.
+		// @see https://bugzilla.mozilla.org/show_bug.cgi?id=1220696
+		if (
+			/(?:firefox|fxios)/i.test( userAgent ) ||
+			/(?:edge|msie |trident.+?; rv:)/i.test( userAgent )
+		) {
+			const { selectionEnd, value } = this.textarea;
+			const { before, after } = this.splitSelectedContent();
+			const newContent = before + content + after;
+			const event = { target: { value: newContent } };
+			this.props.onChange( event, () => {
+				this.setCursorPosition(
+					selectionEnd,
+					newContent.length - value.length + adjustCursorPosition
+				);
+				this.textarea.focus();
+			} );
+			return;
+		}
+
 		this.textarea.focus();
 		document.execCommand( 'insertText', false, content );
+
+		if ( adjustCursorPosition ) {
+			this.setCursorPosition( this.textarea.selectionEnd, adjustCursorPosition );
+		}
 	};
 
 	insertStrongTag = () => this.insertHtmlTag( 'strong' );
@@ -100,9 +127,8 @@ export class CommentHtmlEditor extends Component {
 		if ( text ) {
 			return this.insertHtmlTag( 'a', attributes, { text } );
 		}
-		this.insertHtmlTag( 'a', attributes, { alsoClose: true } );
-		// Move the cursor inside <a></a>
-		this.setCursorPosition( this.textarea.selectionEnd, -4 );
+		// Also move the cursor inside <a></a>
+		this.insertHtmlTag( 'a', attributes, { adjustCursorPosition: -4, alsoClose: true } );
 	};
 
 	insertBlockquoteTag = () => this.insertHtmlTag( 'blockquote', {}, { paragraph: true } );

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import { get, pick } from 'lodash';
+import { get, noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,7 +52,8 @@ export class CommentEdit extends Component {
 
 	setAuthorUrlValue = event => this.setState( { authorUrl: event.target.value } );
 
-	setCommentContentValue = event => this.setState( { commentContent: event.target.value } );
+	setCommentContentValue = ( event, callback = noop ) =>
+		this.setState( { commentContent: event.target.value }, callback );
 
 	showNotice = () => {
 		const { translate } = this.props;
