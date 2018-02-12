@@ -21,16 +21,18 @@ exemptMilestones: true
 staleLabel: "[Status] Stale"
 # Comment to post when marking an issue as stale. Set to `false` to disable
 markComment: >
-  This issue has been marked as stale and will be closed in seven days. 
-  This happened because:
+  <p>This issue has been marked as stale and will be closed in seven days. 
+  This happened because:</p>
   
-  * It has been inactive in the past 9 months.
-  * It isn't a project or a milestone, and hasn’t been labeled `[Pri] Blocker`, 
-  `[Pri] High`, `[Status] Keep Open`, or `OSS Citizen`.
+  <ul>
+    <li>It has been inactive in the past 9 months.</li>
+    <li>It isn't a project or a milestone, and hasn’t been labeled `[Pri] Blocker`, 
+  `[Pri] High`, `[Status] Keep Open`, or `OSS Citizen`.</li>
+  </ul>
   
-  You can keep the issue open by adding a comment. If you do, please 
+  <p>You can keep the issue open by adding a comment. If you do, please 
   provide additional context and explain why you’d like it to remain open. 
   You can also close the issue yourself — if you do, please add a brief 
-  explanation.
+  explanation.</p>
 # Comment to post when closing a stale issue. Set to `false` to disable
 closeComment: false
