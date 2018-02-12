@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 
 /**
@@ -33,6 +34,22 @@ import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
 class OrderActionHeader extends Component {
+	static propTypes = {
+		clearOrderEdits: PropTypes.func.isRequired,
+		editOrder: PropTypes.func.isRequired,
+		hasOrderEdits: PropTypes.bool,
+		isEditing: PropTypes.bool,
+		isInvoiceSending: PropTypes.bool,
+		isSaving: PropTypes.bool,
+		order: PropTypes.object,
+		orderId: PropTypes.number.isRequired,
+		saveOrder: PropTypes.func.isRequired,
+		sendOrderInvoice: PropTypes.func.isRequired,
+		site: PropTypes.object,
+		siteId: PropTypes.number.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
 	// Put this order into the editing state
 	toggleEditing = () => {
 		const { siteId, orderId } = this.props;
