@@ -17,7 +17,6 @@ import {
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_REQUEST,
-	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
 	REWIND_BACKUP,
 	REWIND_BACKUP_REQUEST,
@@ -194,15 +193,6 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
 		restoreId,
 		siteId,
 		timestamp,
-	};
-}
-
-export function rewindRestoreUpdateError( siteId, timestamp, error ) {
-	return {
-		type: REWIND_RESTORE_UPDATE_ERROR,
-		siteId,
-		timestamp,
-		error,
 	};
 }
 

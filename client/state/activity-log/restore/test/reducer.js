@@ -14,7 +14,6 @@ import {
 	rewindRequestDismiss,
 	rewindRequestRestore,
 	rewindRestore,
-	rewindRestoreUpdateError,
 } from '../../actions';
 import { restoreProgress, restoreRequest } from '../reducer';
 
@@ -24,10 +23,6 @@ import { restoreProgress, restoreRequest } from '../reducer';
 const ACTIVITY_ID = 'fooBarbAz';
 const SITE_ID = 987;
 const TIMESTAMP = 1496926224;
-const ERROR = deepFreeze( {
-	error: 'vp_api_error',
-	message: 'Unable to find a valid site.',
-} );
 
 describe( 'restoreProgress', () => {
 	test( 'should start at 0% queued', () => {
@@ -68,7 +63,6 @@ describe( 'restoreProgress', () => {
 
 		[
 			restoreProgress( prevState, rewindRestore( SITE_ID, TIMESTAMP ) ),
-			restoreProgress( prevState, rewindRestoreUpdateError( SITE_ID, TIMESTAMP, ERROR ) ),
 			restoreProgress( prevState, dismissRewindRestoreProgress( SITE_ID ) ),
 		].forEach( state => expect( state[ otherSiteId ] ).to.deep.equal( prevState[ otherSiteId ] ) );
 	} );
