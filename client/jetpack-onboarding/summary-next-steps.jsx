@@ -4,8 +4,9 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, map } from 'lodash';
+import { get, map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,16 +17,26 @@ import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getJetpackOnboardingSettings } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const NextSteps = ( { siteId, steps } ) => (
+const NextSteps = ( { handleNextStepClick, siteId, steps } ) => (
 	<Fragment>
 		<QuerySites siteId={ siteId } />
 		{ map( steps, ( { label, url }, stepName ) => (
 			<div key={ stepName } className="jetpack-onboarding__summary-entry todo">
-				<a href={ url }>{ label }</a>
+				<a href={ url } onClick={ handleNextStepClick( stepName ) }>
+					{ label }
+				</a>
 			</div>
 		) ) }
 	</Fragment>
 );
+
+NextSteps.propTypes = {
+	handleNextStepClick: PropTypes.func,
+};
+
+NextSteps.defaultProps = {
+	handleNextStepClick: noop,
+};
 
 export default localize(
 	connect( ( state, { siteId, siteSlug, siteUrl, translate } ) => {
