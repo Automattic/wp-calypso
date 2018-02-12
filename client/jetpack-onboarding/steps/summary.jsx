@@ -31,10 +31,10 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Summary ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Summary ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.SUMMARY, ':site' ].join( '/' ) }
-					title="Summary ‹ Jetpack Onboarding"
+					title="Summary ‹ Jetpack Start"
 				/>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 

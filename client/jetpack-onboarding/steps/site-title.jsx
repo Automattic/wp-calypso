@@ -63,10 +63,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.SITE_TITLE, ':site' ].join( '/' ) }
-					title="Site Title ‹ Jetpack Onboarding"
+					title="Site Title ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />

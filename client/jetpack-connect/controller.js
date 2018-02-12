@@ -121,7 +121,7 @@ export function maybeOnboard( { query, store }, next ) {
 
 		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
 
-		return page.redirect( '/jetpack/onboarding/' + siteSlug );
+		return page.redirect( '/jetpack/start/' + siteSlug );
 	}
 
 	next();

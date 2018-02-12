@@ -71,7 +71,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 				<QueryJetpackOnboardingSettings siteId={ siteId } />
 				{ siteId ? (
 					<Wizard
-						basePath="/jetpack/onboarding"
+						basePath="/jetpack/start"
 						baseSuffix={ siteSlug }
 						components={ COMPONENTS }
 						hideNavigation={ stepName === STEPS.SUMMARY }
