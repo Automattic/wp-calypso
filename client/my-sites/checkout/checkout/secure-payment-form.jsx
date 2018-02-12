@@ -122,9 +122,15 @@ const SecurePaymentForm = createReactClass( {
 				break;
 
 			case 'credit-card':
+				// Set the payment information based on a stored card (if
+				// available) or for a new card otherwise. But for new cards,
+				// don't overwrite existing new card payment details (for
+				// example, if the user already has entered information on the
+				// new card form and is now switching back to it after visiting
+				// another payment method).
 				if ( this.getInitialCard() ) {
 					newPayment = storedCardPayment( this.getInitialCard() );
-				} else {
+				} else if ( ! get( this.props.transaction, 'payment.newCardDetails', null ) ) {
 					newPayment = newCardPayment();
 				}
 				break;
