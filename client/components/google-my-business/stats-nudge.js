@@ -23,7 +23,7 @@ const StatsNudge = ( { translate } ) => {
 		>
 			<SectionHeader
 				className="google-my-business__stats-nudge-header"
-				label={ translate( 'We recommend Google My Business' ) }
+				label={ translate( 'Recommendation from WordPress.com' ) }
 			/>
 			<div className="google-my-business__stats-nudge-body">
 				<div className="google-my-business__stats-nudge-image-wrapper">
@@ -35,16 +35,16 @@ const StatsNudge = ( { translate } ) => {
 				</div>
 				<div className="google-my-business__stats-nudge-info">
 					<h1 className="google-my-business__stats-nudge-heading">
-						{ translate( 'Is your business listed on Google?' ) }
+						{ translate( 'Reach more customers with Google My Business' ) }
 					</h1>
 					<h2 className="google-my-business__stats-nudge-description">
 						{ translate(
-							'Google My Business is a fast and free way to drive traffic to your local business.'
+							'Show up when customers search for businesses like yours on Google Search and Maps.'
 						) }
 					</h2>
 					<div className="google-my-business__stats-nudge-button-row">
-						<Button primary>{ translate( 'Drive More Traffic' ) }</Button>
-						<Button>{ translate( 'Not Now' ) }</Button>
+						<Button primary>{ translate( 'Start Now' ) }</Button>
+						<Button>{ translate( "I've Already Listed" ) }</Button>
 					</div>
 				</div>
 			</div>
