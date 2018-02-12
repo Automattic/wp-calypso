@@ -68,7 +68,10 @@ class SiteTitleControl extends React.Component {
 					/>
 					{ isBlognameRequired &&
 						! disabled && (
-							<FormInputValidation isError={ ! blogname } text={ translate( 'Required field.' ) } />
+							<FormInputValidation
+								isError={ ! blogname }
+								text={ translate( 'Please enter a site title' ) }
+							/>
 						) }
 				</FormFieldset>
 				<FormFieldset>
