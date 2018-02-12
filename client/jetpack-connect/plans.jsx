@@ -41,6 +41,7 @@ import {
 } from 'state/selectors';
 
 const CALYPSO_PLANS_PAGE = '/plans/';
+const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
@@ -97,7 +98,7 @@ class Plans extends Component {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
 		if ( selectedSiteSlug && canPurchasePlans ) {
-			return this.redirect( CALYPSO_PLANS_PAGE, { tour: 'main' } );
+			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'main' } );
 		}
 
 		return this.redirect( CALYPSO_REDIRECTION_PAGE );
