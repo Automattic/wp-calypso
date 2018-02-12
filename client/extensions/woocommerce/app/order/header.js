@@ -13,6 +13,7 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal dependencies
  */
+import accept from 'lib/accept';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
@@ -68,8 +69,21 @@ class OrderActionHeader extends Component {
 	};
 
 	deleteOrder = () => {
-		const { site, orderId } = this.props;
-		this.props.deleteOrder( site, orderId );
+		const { orderId, site, translate } = this.props;
+
+		const areYouSure = translate( 'Are you sure you want to delete this order?' );
+		accept(
+			areYouSure,
+			accepted => {
+				if ( ! accepted ) {
+					return;
+				}
+				this.props.deleteOrder( site, orderId );
+			},
+			translate( 'Delete' ),
+			translate( 'Cancel' ),
+			{ isScary: true }
+		);
 	};
 
 	// Saves changes to the remote site via API
