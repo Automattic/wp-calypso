@@ -3,42 +3,52 @@
  *
  * @format
  */
+
 import React from 'react';
 
 /**
  * Internal dependencies
  */
 
-function SupportUser( { supportUser = '', supportToken = '', authorized = false } ) {
+function supportUserFn( { user, token, authorized } ) {
+	const url = window.location.toString();
+
+	if ( url.indexOf( '?' ) > 0 ) {
+		const cleanUrl = url.substring( 0, url.indexOf( '?' ) );
+		window.history.replaceState( {}, document.title, cleanUrl );
+	}
+
+	if ( authorized ) {
+		window.sessionStorage.setItem( 'boot_support_user', JSON.stringify( { user, token } ) );
+	}
+
+	window.location.replace( '/' );
+}
+
+function SupportUser( { supportUser, supportToken, authorized = false, urls, jsFile, config } ) {
 	return (
 		<html lang="en">
-			{ /* eslint-disable react/no-danger */ }
-			<head>
+			<body>
+				{ /* eslint-disable react/no-danger */ }
+				{ config && <script type="text/javascript">{ config }</script> }
+				<script src={ urls.manifest } />
+				<script src={ urls.vendor } />
+				<script src={ urls[ jsFile ] } />
 				<script
 					dangerouslySetInnerHTML={ {
 						__html: `
-						const user = "${ supportUser }";
-						const token = "${ supportToken }";
-						const authorized = ${ authorized };
+						${ supportUserFn.toString() }
 
-						const url = window.location.toString();
-
-						if ( url.indexOf('?') > 0 ) {
-							const cleanUrl = url.substring( 0, url.indexOf( '?' ) );
-							window.history.replaceState( {}, document.title, cleanUrl );
-						}
-
-						if ( authorized ) {
-							window.sessionStorage.setItem( 'boot_support_user', JSON.stringify( { user, token } ) );
-						}
-
-						window.location.replace( '/' );
+						supportUserFn( {
+							user: ${ supportUser },
+							token: ${ supportToken },
+							authorized: ${ authorized }
+						} );
 						`,
 					} }
 				/>
-			</head>
-			<body />
-			{ /* eslint-enable react/no-danger */ }
+				{ /* eslint-enable react/no-danger */ }
+			</body>
 		</html>
 	);
 }
