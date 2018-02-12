@@ -29,10 +29,10 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = item => {
-		const { isStore, isJetpack } = this.props;
+		const { isStore, isJetpack, isPaidPlan } = this.props;
 		switch ( item ) {
 			case 'activity':
-				return isJetpack && this.props.isSiteOnPaidPlan;
+				return isJetpack && isPaidPlan;
 			case 'store':
 				return isStore;
 			default:
@@ -76,7 +76,7 @@ class StatsNavigation extends Component {
 export default connect( ( state, { siteId } ) => {
 	return {
 		isJetpack: isJetpackSite( state, siteId ),
-		isSiteOnPaidPlan: isSiteOnPaidPlan( state, siteId ),
+		isPaidPlan: isSiteOnPaidPlan( state, siteId ),
 		isStore: isSiteStore( state, siteId ),
 		siteId,
 	};
