@@ -46,17 +46,6 @@ export default function wpcomSupport( wpcom ) {
 
 	return Object.assign( wpcom, {
 		addSupportParams,
-		fetchSupportUserToken: function( username, password ) {
-			return wpcom.req.post(
-				{
-					apiVersion: '1.1',
-					path: `/internal/support/${ username }/grant`,
-				},
-				{
-					password: password,
-				}
-			);
-		},
 		/**
 		 * @param {String} supportUser  Support username
 		 * @param {String} supportToken Support token
