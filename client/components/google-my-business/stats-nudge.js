@@ -26,7 +26,7 @@ export const StatsNudge = ( { translate } ) => {
 					<img
 						className="google-my-business__stats-nudge-image"
 						src="/calypso/images/google-my-business/phone-screenshot.png"
-						alt="Your business with Google My Business"
+						alt={ translate( 'Your business with Google My Business' ) }
 					/>
 				</div>
 				<div className="google-my-business__stats-nudge-info">
