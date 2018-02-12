@@ -32,11 +32,10 @@ import getGroups from 'state/happychat/selectors/get-groups';
 import getSkills from 'state/happychat/selectors/get-skills';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 const getRouteSetMessage = ( state, action ) => {
-	const currentUser = getCurrentUser( state );
-	return `Looking at https://wordpress.com${ action.path }?support_user=${ currentUser.username }`;
+	return `Looking at https://wordpress.com${ action.path }`;
 };
 
 export const getEventMessageFromActionData = action => {
