@@ -4,6 +4,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,6 +16,7 @@ import React, { Component, Fragment } from 'react';
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
+import { deleteOrder, saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -30,7 +32,6 @@ import {
 } from 'woocommerce/state/sites/orders/selectors';
 import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
 class OrderActionHeader extends Component {
@@ -64,6 +65,11 @@ class OrderActionHeader extends Component {
 		const { siteId } = this.props;
 		recordTrack( 'calypso_woocommerce_order_edit_cancel' );
 		this.props.clearOrderEdits( siteId );
+	};
+
+	deleteOrder = () => {
+		const { site, orderId } = this.props;
+		this.props.deleteOrder( site, orderId );
 	};
 
 	// Saves changes to the remote site via API
@@ -119,6 +125,14 @@ class OrderActionHeader extends Component {
 				</Button>
 			);
 		}
+
+		// Unshifting so that the Delete is the first action in the row
+		buttons.unshift(
+			<Button key="delete" borderless scary onClick={ this.deleteOrder }>
+				<Gridicon icon="trash" />
+				{ translate( 'Delete' ) }
+			</Button>
+		);
 
 		return buttons;
 	};
@@ -183,5 +197,8 @@ export default connect(
 		};
 	},
 	dispatch =>
-		bindActionCreators( { clearOrderEdits, editOrder, saveOrder, sendOrderInvoice }, dispatch )
+		bindActionCreators(
+			{ clearOrderEdits, deleteOrder, editOrder, saveOrder, sendOrderInvoice },
+			dispatch
+		)
 )( localize( OrderActionHeader ) );
