@@ -17,6 +17,7 @@ import {
 	omit,
 	omitBy,
 	partialRight,
+	reduce,
 } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
 import LRU from 'lru-cache';
@@ -241,7 +242,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 		};
 	} else {
 		defaultHandlers = {
-			[ SERIALIZE ]: () => initialState,
+			[ SERIALIZE ]: () => undefined,
 			[ DESERIALIZE ]: () => initialState,
 		};
 	}
@@ -319,16 +320,16 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  * age( -5, { type: DESERIALIZE } ) === 0
  * age( 23, { type: DESERIALIZE } ) === 23
  *
- * If no schema is provided, the reducer will return initial state on SERIALIZE
- * and DESERIALIZE
+ * If no schema is provided, the reducer will return `undefined` on SERIALIZE (instructing
+ * the serialization engine to not persist any data for this reducer) and will return the
+ * initial state on DESERIALIZE (ignoring the persisted value).
  *
  * @example
- * const schema = { type: 'number', minimum: 0 }
  * export const age = withSchemaValidation( null, age )
  *
  * ageReducer( -5, { type: SERIALIZE } ) === -5
- * age( -5, { type: SERIALIZE } ) === 0
- * age( 23, { type: SERIALIZE } ) === 0
+ * age( -5, { type: SERIALIZE } ) === undefined
+ * age( 23, { type: SERIALIZE } ) === undefined
  * age( 23, { type: DESERIALIZE } ) === 0
  *
  * @param {object} schema JSON-schema description of state
@@ -339,7 +340,7 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 export const withSchemaValidation = ( schema, reducer ) => {
 	const wrappedReducer = ( state, action ) => {
 		if ( SERIALIZE === action.type ) {
-			return schema ? reducer( state, action ) : reducer( undefined, { type: '@@calypso/INIT' } );
+			return schema ? reducer( state, action ) : undefined;
 		}
 		if ( DESERIALIZE === action.type ) {
 			if ( ! schema ) {
@@ -433,8 +434,36 @@ export function combineReducers( reducers ) {
 		next => ( next.hasCustomPersistence ? next : withSchemaValidation( next.schema, next ) )
 	);
 	const combined = combine( validatedReducers );
-	combined.hasCustomPersistence = true;
-	return combined;
+	const combinedWithSerializer = ( state, action ) => {
+		// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
+		// - `undefined` is a valid value returned from SERIALIZE reducer, but `combineReducers`
+		//   would throw an exception when seeing it.
+		// - if a particular subreducer returns `undefined`, then that property won't be included
+		//   in the result object at all.
+		// - if none of the subreducers produced anything to persist, the combined result will be
+		//   `undefined` rather than an empty object.
+		if ( action.type === SERIALIZE ) {
+			return reduce(
+				validatedReducers,
+				( result, reducer, key ) => {
+					const serialized = reducer( state[ key ], action );
+					if ( serialized !== undefined ) {
+						if ( ! result ) {
+							// instantiate the result object only when it's going to have at least one property
+							result = {};
+						}
+						result[ key ] = serialized;
+					}
+					return result;
+				},
+				undefined
+			);
+		}
+
+		return combined( state, action );
+	};
+	combinedWithSerializer.hasCustomPersistence = true;
+	return combinedWithSerializer;
 }
 
 /**
@@ -463,7 +492,7 @@ export const withoutPersistence = reducer => ( state, action ) => {
 	}
 
 	if ( SERIALIZE === action.type ) {
-		return null;
+		return undefined;
 	}
 
 	return reducer( state, action );
