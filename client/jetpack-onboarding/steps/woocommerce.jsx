@@ -30,7 +30,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	};
 
 	render() {
-		const { getForwardUrl, stepsCompleted, stepsPending, translate } = this.props;
+		const { basePath, getForwardUrl, stepsCompleted, stepsPending, translate } = this.props;
 		const headerText = translate( 'Are you looking to sell online?' );
 		const subHeaderText = translate(
 			"We'll set you up with WooCommerce for all of your online selling needs."
@@ -43,7 +43,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 			<div className="steps__main">
 				<DocumentHead title={ translate( 'WooCommerce ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.WOOCOMMERCE + '/:site' }
+					path={ [ basePath, STEPS.WOOCOMMERCE, ':site' ].join( '/' ) }
 					title="WooCommerce ‹ Jetpack Onboarding"
 				/>
 

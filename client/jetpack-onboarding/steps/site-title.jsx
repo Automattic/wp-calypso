@@ -55,7 +55,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { isRequestingSettings, translate } = this.props;
+		const { basePath, isRequestingSettings, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -65,7 +65,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			<div className="steps__main">
 				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.SITE_TITLE + '/:site' }
+					path={ [ basePath, STEPS.SITE_TITLE, ':site' ].join( '/' ) }
 					title="Site Title ‹ Jetpack Onboarding"
 				/>
 

@@ -30,7 +30,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	};
 
 	render() {
-		const { getForwardUrl, settings, translate } = this.props;
+		const { basePath, getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
 		const hasContactForm = !! get( settings, 'addContactForm' );
@@ -39,7 +39,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 			<div className="steps__main">
 				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.CONTACT_FORM + '/:site' }
+					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
 					title="Contact Form ‹ Jetpack Onboarding"
 				/>
 

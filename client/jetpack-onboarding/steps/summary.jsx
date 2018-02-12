@@ -21,7 +21,7 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	render() {
-		const { siteId, siteSlug, siteUrl, steps, translate } = this.props;
+		const { basePath, siteId, siteSlug, siteUrl, steps, translate } = this.props;
 
 		const headerText = translate( "You're ready to go!" );
 		const subHeaderText = translate(
@@ -33,7 +33,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			<div className="steps__main">
 				<DocumentHead title={ translate( 'Summary ‹ Jetpack Onboarding' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.SUMMARY + '/:site' }
+					path={ [ basePath, STEPS.SUMMARY, ':site' ].join( '/' ) }
 					title="Summary ‹ Jetpack Onboarding"
 				/>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -41,7 +41,12 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 				<div className="steps__summary-columns">
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
-						<CompletedSteps siteId={ siteId } siteSlug={ siteSlug } steps={ steps } />
+						<CompletedSteps
+							basePath={ basePath }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							steps={ steps }
+						/>
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
