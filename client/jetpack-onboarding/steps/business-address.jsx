@@ -99,25 +99,27 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
-						{ map( this.fields, ( fieldLabel, fieldName ) => (
-							<FormFieldset key={ fieldName }>
-								<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
-								<FormTextInput
-									autoFocus={ fieldName === 'name' }
-									disabled={ isRequestingSettings }
-									id={ fieldName }
-									onChange={ this.getChangeHandler( fieldName ) }
-									value={ this.state[ fieldName ] || '' }
-								/>
-								{ fieldName !== 'state' &&
-									! isRequestingSettings && (
-										<FormInputValidation
-											isError={ this.state[ fieldName ] === '' }
-											text={ translate( 'Required field.' ) }
-										/>
-									) }
-							</FormFieldset>
-						) ) }
+						{ map( this.fields, ( fieldLabel, fieldName ) => {
+							const isValid = this.state[ fieldName ] !== '' || fieldName === 'state';
+							return (
+								<FormFieldset key={ fieldName }>
+									<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
+									<FormTextInput
+										autoFocus={ fieldName === 'name' }
+										disabled={ isRequestingSettings }
+										id={ fieldName }
+										isError={ ! isValid && ! isRequestingSettings }
+										isValid={ isValid && ! isRequestingSettings }
+										onChange={ this.getChangeHandler( fieldName ) }
+										value={ this.state[ fieldName ] || '' }
+									/>
+									{ ! isValid &&
+										! isRequestingSettings && (
+											<FormInputValidation isError text={ translate( 'Required field.' ) } />
+										) }
+								</FormFieldset>
+							);
+						} ) }
 						<Button
 							disabled={ isRequestingSettings || this.hasEmptyFields() }
 							primary
