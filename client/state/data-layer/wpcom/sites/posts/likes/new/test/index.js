@@ -6,7 +6,9 @@
 /**
  * Internal Dependencies
  */
-import { fromApi } from '../';
+import { fetch, fromApi, onSuccess, onError } from '../';
+import { unlike, updateLikeCount } from 'state/posts/likes/actions';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'fromApi', () => {
 	test( 'transforms to standard output', () => {
@@ -30,5 +32,28 @@ describe( 'fromApi', () => {
 			success: true,
 			likeCount: 45,
 		} );
+	} );
+} );
+
+describe( 'fetch', () => {
+	it( 'should return an http action', () => {
+		const action = fetch( { siteId: 1, postId: 1 } );
+		expect( action ).toHaveProperty( 'method', 'POST' );
+		expect( action ).toHaveProperty( 'path', '/sites/1/posts/1/likes/new' );
+		expect( action ).toHaveProperty( 'query.apiVersion', '1.1' );
+	} );
+} );
+
+describe( 'onSuccess', () => {
+	it( 'should generate an updateLikeCount action', () => {
+		expect( onSuccess( { siteId: 1, postId: 1 }, { likeCount: 25 } ) ).toEqual(
+			updateLikeCount( 1, 1, 25 )
+		);
+	} );
+} );
+
+describe( 'onError', () => {
+	it( 'should generate a like that bypasses the data layer', () => {
+		expect( onError( { siteId: 1, postId: 1 } ) ).toEqual( bypassDataLayer( unlike( 1, 1 ) ) );
 	} );
 } );

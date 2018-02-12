@@ -13,20 +13,21 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_LIKE } from 'state/action-types';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
-const fetch = action =>
+export const fetch = action =>
 	http(
 		{
 			method: 'POST',
 			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/new`,
 			body: {},
+			apiVersion: '1.1',
 		},
 		action
 	);
 
-const onSuccess = ( { siteId, postId }, { likeCount } ) =>
+export const onSuccess = ( { siteId, postId }, { likeCount } ) =>
 	updateLikeCount( siteId, postId, likeCount );
 
-const onError = ( { siteId, postId } ) => bypassDataLayer( unlike( siteId, postId ) );
+export const onError = ( { siteId, postId } ) => bypassDataLayer( unlike( siteId, postId ) );
 
 export function fromApi( response ) {
 	return {

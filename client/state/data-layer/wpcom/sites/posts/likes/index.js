@@ -20,6 +20,7 @@ export const fetch = action =>
 	http( {
 		method: 'GET',
 		path: `/sites/${ action.siteId }/posts/${ action.postId }/likes`,
+		apiVersion: '1.1',
 	} );
 
 export const fromApi = data => ( {

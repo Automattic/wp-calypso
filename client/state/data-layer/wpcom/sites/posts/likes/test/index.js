@@ -46,6 +46,7 @@ describe( 'fetch', () => {
 		} );
 		expect( action ).toHaveProperty( 'method', 'GET' );
 		expect( action ).toHaveProperty( 'path', '/sites/1/posts/1/likes' );
+		expect( action ).toHaveProperty( 'query.apiVersion', '1.1' );
 	} );
 } );
 

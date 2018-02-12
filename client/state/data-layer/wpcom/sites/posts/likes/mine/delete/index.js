@@ -20,21 +20,28 @@ export function fromApi( response ) {
 	};
 }
 
+export const fetch = action =>
+	http(
+		{
+			method: 'POST',
+			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/mine/delete`,
+			apiVersion: '1.1',
+			body: {},
+		},
+		action
+	);
+
+export const onSuccess = ( { siteId, postId }, { likeCount } ) =>
+	updateLikeCount( siteId, postId, likeCount );
+
+export const onError = ( { siteId, postId } ) => bypassDataLayer( like( siteId, postId ) );
+
 export default {
 	[ POST_UNLIKE ]: [
 		dispatchRequestEx( {
-			fetch: action =>
-				http(
-					{
-						method: 'POST',
-						path: `/sites/${ action.siteId }/posts/${ action.postId }/likes/new`,
-						body: {},
-					},
-					action
-				),
-			onSuccess: ( { siteId, postId }, { likeCount } ) =>
-				updateLikeCount( siteId, postId, likeCount ),
-			onError: ( { siteId, postId } ) => bypassDataLayer( like( siteId, postId ) ),
+			fetch,
+			onSuccess,
+			onError,
 			fromApi,
 		} ),
 	],
