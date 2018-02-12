@@ -313,9 +313,7 @@ class CheckoutThankYou extends React.Component {
 			if ( delayedTransferPurchase ) {
 				planProps = {
 					buttonText: translate( 'Start Domain Transfer' ),
-					description: translate(
-						"Now that we've taken care of the plan, let's get your domain transferred."
-					),
+					description: translate( "Now let's get your domain transferred." ),
 					buttonUrl: domainManagementTransferInPrecheck(
 						this.props.selectedSite.slug,
 						delayedTransferPurchase.meta
