@@ -24,6 +24,8 @@ import {
 } from './constants';
 
 const CompletedSteps = ( {
+	basePath,
+	handleCompletedStepClick,
 	siteSlug,
 	steps,
 	stepsCompleted,
@@ -43,7 +45,12 @@ const CompletedSteps = ( {
 				) : (
 					<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
 				) }
-				<a href={ [ basePath, stepName, siteSlug ].join( '/' ) }>{ STEP_TITLES[ stepName ] }</a>
+				<a
+					href={ [ basePath, stepName, siteSlug ].join( '/' ) }
+					onClick={ handleCompletedStepClick( stepName ) }
+				>
+					{ STEP_TITLES[ stepName ] }
+				</a>
 			</div>
 		);
 	} );

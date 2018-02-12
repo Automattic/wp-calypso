@@ -20,10 +20,16 @@ import { getUnconnectedSiteUrl } from 'state/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
-	handleNextStepSelection = stepName => () => {
+	handleNextStepClick = stepName => () => {
 		const { recordJpoEvent } = this.props;
 		recordJpoEvent( 'calypso_jpo_next_step_clicked', {
 			nextStep: stepName,
+		} );
+	};
+	handleCompletedStepClick = stepName => () => {
+		const { recordJpoEvent } = this.props;
+		recordJpoEvent( 'calypso_jpo_completed_step_clicked', {
+			completedStep: stepName,
 		} );
 	};
 
@@ -50,6 +56,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
 						<CompletedSteps
 							basePath={ basePath }
+							handleCompletedStepClick={ this.handleCompletedStepClick }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 							steps={ steps }
@@ -58,7 +65,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
 						<NextSteps
-							handleNextStepSelection={ this.handleNextStepSelection }
+							handleNextStepClick={ this.handleNextStepClick }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 							siteUrl={ siteUrl }
