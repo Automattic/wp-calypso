@@ -34,6 +34,7 @@ import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
 import {
 	canCurrentUser,
+	getUnconnectedSite,
 	hasInitializedSites,
 	isRtl,
 	isSiteAutomatedTransfer,
@@ -128,7 +129,9 @@ class Plans extends Component {
 		} );
 		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
 
-		if ( this.props.calypsoStartedConnection ) {
+		if ( this.props.jpoSiteCredentials ) {
+			this.redirect( CALYPSO_PLANS_PAGE );
+		} else if ( this.props.calypsoStartedConnection ) {
 			this.redirect( CALYPSO_REDIRECTION_PAGE );
 		} else {
 			this.redirectToWpAdmin();
@@ -225,6 +228,7 @@ export default connect(
 			canPurchasePlans: selectedSite
 				? canCurrentUser( state, selectedSite.ID, 'manage_options' )
 				: true,
+			jpoSiteCredentials: selectedSite && getUnconnectedSite( state, selectedSite.ID ),
 			hasPlan: selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null,
 			isAutomatedTransfer: selectedSite ? isSiteAutomatedTransfer( state, selectedSite.ID ) : null,
 			isRtlLayout: isRtl( state ),
