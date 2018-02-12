@@ -19,39 +19,54 @@ import { successNotice } from 'state/notices/actions';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { requestSite } from 'state/sites/actions';
 
+// @TODO proper redux data layer stuff for the nonce
+function fetchNonce( siteId ) {
+	return wpcom.undocumented().getRequestSiteRenameNonce( siteId );
+}
+
 export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch => {
 	dispatch( {
 		type: SITE_RENAME_REQUEST,
 		siteId,
 	} );
 
-	return wpcom
-		.undocumented()
-		.updateSiteName( siteId, newBlogName, discard )
-		.then( data => {
-			const newSlug = get( data, 'new_slug' );
+	return fetchNonce( siteId )
+		.then( nonce => {
+			wpcom
+				.undocumented()
+				.updateSiteName( siteId, newBlogName, discard, nonce )
+				.then( data => {
+					const newSlug = get( data, 'new_slug' );
 
-			if ( newSlug ) {
-				const newAddress = newSlug + '.wordpress.com';
-				dispatch( requestSite( siteId ) ).then( () => {
-					page( domainManagementEdit( newAddress, newAddress ) );
+					if ( newSlug ) {
+						const newAddress = newSlug + '.wordpress.com';
+						dispatch( requestSite( siteId ) ).then( () => {
+							page( domainManagementEdit( newAddress, newAddress ) );
 
-					dispatch(
-						successNotice( translate( 'Your new domain name is ready to go!' ), {
-							id: 'siteRenameSuccessful',
-							duration: 5000,
-							showDismiss: true,
-							isPersistent: true,
-						} )
-					);
+							dispatch(
+								successNotice( translate( 'Your new domain name is ready to go!' ), {
+									id: 'siteRenameSuccessful',
+									duration: 5000,
+									showDismiss: true,
+									isPersistent: true,
+								} )
+							);
+						} );
+					}
+
+					dispatch( {
+						type: SITE_RENAME_REQUEST_SUCCESS,
+						newSlug,
+						siteId,
+					} );
+				} )
+				.catch( error => {
+					dispatch( {
+						type: SITE_RENAME_REQUEST_FAILURE,
+						error: error.message,
+						siteId,
+					} );
 				} );
-			}
-
-			dispatch( {
-				type: SITE_RENAME_REQUEST_SUCCESS,
-				newSlug,
-				siteId,
-			} );
 		} )
 		.catch( error => {
 			dispatch( {
