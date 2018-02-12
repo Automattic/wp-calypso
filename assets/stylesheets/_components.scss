@@ -8,6 +8,7 @@
 // ==========================================================================
 
 @import 'layout/style';
+@import 'components/transitioner/style';
 
 @import 'account-recovery/components/account-recovery-error-message/style';
 @import 'account-recovery/forgot-username-form/style';
@@ -45,6 +46,7 @@
 @import 'blocks/nps-survey/style';
 @import 'blocks/plan-storage/style';
 @import 'blocks/login/style';
+@import 'blocks/nested-sidebar/style';
 @import 'blocks/payment-methods/style';
 @import 'blocks/plan-thank-you-card/style';
 @import 'blocks/post-edit-button/style';
