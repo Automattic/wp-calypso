@@ -9,13 +9,15 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { requesting, items, counts, requestingResend } from '../reducer';
+import { requesting, items, counts, requestingResend, deleting } from '../reducer';
 import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_SUCCESS,
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_SUCCESS,
 	INVITE_RESEND_REQUEST_FAILURE,
+	INVITES_DELETE_REQUEST,
+	INVITES_DELETE_REQUEST_FAILURE,
 	INVITES_DELETE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
@@ -648,6 +650,64 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				12345: { '123456asdf789': 'success' },
 				67890: { '789lkjh123456': 'requesting' },
+			} );
+		} );
+	} );
+
+	describe( '#deleting()', () => {
+		test( 'should key requests by site ID and invite ID', () => {
+			const state = deleting(
+				{},
+				{
+					type: INVITES_DELETE_REQUEST,
+					siteId: 12345,
+					inviteIds: [ '123456asdf789' ],
+				}
+			);
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'requesting' },
+			} );
+		} );
+
+		test( 'should use value success for successful deletes', () => {
+			const state = deleting(
+				{},
+				{
+					type: INVITES_DELETE_REQUEST_SUCCESS,
+					siteId: 12345,
+					inviteIds: [ '123456asdf789' ],
+				}
+			);
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'success' },
+			} );
+		} );
+
+		test( 'should use value failure for failed deletes', () => {
+			const state = deleting(
+				{},
+				{
+					type: INVITES_DELETE_REQUEST_FAILURE,
+					siteId: 12345,
+					inviteIds: [ '123456asdf789' ],
+				}
+			);
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'failure' },
+			} );
+		} );
+
+		test( 'should handle multiple invites per request', () => {
+			const state = deleting(
+				{},
+				{
+					type: INVITES_DELETE_REQUEST,
+					siteId: 12345,
+					inviteIds: [ '123456asdf789', '789lkjh123456' ],
+				}
+			);
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'requesting', '789lkjh123456': 'requesting' },
 			} );
 		} );
 	} );
