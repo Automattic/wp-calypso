@@ -57,6 +57,7 @@ import {
 	getRewindState,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
+	getOldestItemTs,
 } from 'state/selectors';
 
 const flushEmptyDays = days => [
@@ -409,25 +410,27 @@ class ActivityLog extends Component {
 	}
 
 	renderMonthNavigation( position ) {
-		const { logs, slug } = this.props;
-		const startOfMonth = this.getStartMoment().startOf( 'month' );
-		const query = {
-			period: 'month',
-			date: startOfMonth.format( 'YYYY-MM-DD' ),
-		};
+		const { logs } = this.props;
 
 		if ( position === 'bottom' && ( ! isNull( logs ) && isEmpty( logs ) ) ) {
 			return null;
 		}
 
+		const { slug, changePeriod, oldestItemTs } = this.props;
+		const startOfMonth = this.getStartMoment().startOf( 'month' );
+		const monthStartTs = startOfMonth.clone().valueOf();
+		const query = {
+			period: 'month',
+			date: startOfMonth.format( 'YYYY-MM-DD' ),
+		};
+
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }
-				onPeriodChange={
-					position === 'bottom' ? this.handlePeriodChangeBottom : this.props.changePeriod
-				}
+				onPeriodChange={ position === 'bottom' ? this.handlePeriodChangeBottom : changePeriod }
 				period="month"
 				url={ `/stats/activity/${ slug }` }
+				hidePreviousArrow={ monthStartTs <= oldestItemTs }
 			>
 				<DatePicker isActivity={ true } period="month" date={ startOfMonth } query={ query } />
 			</StatsPeriodNavigation>
@@ -635,6 +638,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
+			oldestItemTs: getOldestItemTs( state, siteId ),
 		};
 	},
 	{
