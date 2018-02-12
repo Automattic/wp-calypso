@@ -2515,21 +2515,34 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 };
 
 /**
+ * Fetch a nonce to use in the `updateSiteName` call
+ * @param {int}   siteId  The ID of the site for which to get a nonce.
+ * @returns {Promise}     A promise
+ */
+Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ siteId }/site-rename/nonce`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+/**
  * Request a new .wordpress.com subdomain change with the option to discard the current.
  *
  * @param {int} [siteId] The siteId for which to rename
  * @param {object} [blogname]	The desired new subdomain
  * @param {bool} [discard]			Should the old blog name be discarded?
+ * @param {string} [nonce]		A nonce provided by the API
  * @returns {Promise}  A promise
  */
-Undocumented.prototype.updateSiteName = function( siteId, blogname, discard ) {
+Undocumented.prototype.updateSiteName = function( siteId, blogname, discard, nonce ) {
 	return this.wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/site-rename`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{},
-		{ blogname, discard }
+		{ blogname, discard, nonce }
 	);
 };
 
