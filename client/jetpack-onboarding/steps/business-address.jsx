@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -76,8 +76,16 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	render() {
 		const { basePath, isRequestingSettings, translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
-		const subHeaderText = translate(
-			'Enter your business address to have a map added to your website.'
+		const subHeaderText = (
+			<Fragment>
+				{ translate(
+					'Enter your business address to add a widget containing your address to your website.'
+				) }
+				<br />
+				{ translate(
+					'You can add a map based on this information and change where this widget is located later on.'
+				) }
+			</Fragment>
 		);
 		return (
 			<div className="steps__main">
