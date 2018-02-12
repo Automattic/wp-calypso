@@ -67,9 +67,13 @@ export class CreditCardFormFields extends React.Component {
 	getFieldValue = fieldName => this.props.card[ fieldName ] || '';
 
 	updateFieldValues = ( fieldName, nextValue ) => {
-		const { onFieldChange } = this.props;
-
 		const previousValue = this.getFieldValue( fieldName );
+
+		if ( previousValue === nextValue ) {
+			return;
+		}
+
+		const { onFieldChange } = this.props;
 
 		const rawDetails = {
 			[ fieldName ]: unmaskField( fieldName, previousValue, nextValue ),
