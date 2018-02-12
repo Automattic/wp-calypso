@@ -26,6 +26,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 			nextStep: stepName,
 		} );
 	};
+
 	handleCompletedStepClick = stepName => () => {
 		const { recordJpoEvent } = this.props;
 		recordJpoEvent( 'calypso_jpo_completed_step_clicked', {

@@ -4,8 +4,9 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { get, map } from 'lodash';
+import { get, map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -28,6 +29,14 @@ const NextSteps = ( { handleNextStepClick, siteId, steps } ) => (
 		) ) }
 	</Fragment>
 );
+
+NextSteps.propTypes = {
+	handleNextStepClick: PropTypes.func,
+};
+
+NextSteps.defaultProps = {
+	handleNextStepClick: noop,
+};
 
 export default localize(
 	connect( ( state, { siteId, siteSlug, siteUrl, translate } ) => {

@@ -4,9 +4,10 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, map, without } from 'lodash';
+import { get, map, noop, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -54,6 +55,14 @@ const CompletedSteps = ( {
 			</div>
 		);
 	} );
+
+CompletedSteps.propTypes = {
+	handleCompletedStepClick: PropTypes.func,
+};
+
+CompletedSteps.defaultProps = {
+	handleCompletedStepClick: noop,
+};
 
 export default connect( ( state, { siteId, steps } ) => ( {
 	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
