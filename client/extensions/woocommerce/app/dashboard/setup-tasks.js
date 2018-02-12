@@ -25,7 +25,6 @@ import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/act
 import {
 	setOptedOutOfShippingSetup,
 	setTriedCustomizerDuringInitialSetup,
-	setCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/actions';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { arePaymentsSetup } from 'woocommerce/state/ui/payments/methods/selectors';
@@ -79,10 +78,6 @@ class SetupTasks extends Component {
 			showShippingTask: false,
 		} );
 		this.props.setOptedOutOfShippingSetup( this.props.site.ID, true );
-	};
-
-	onClickTaxSettings = () => {
-		this.props.setCheckedTaxSetup( this.props.site.ID, true );
 	};
 
 	onClickOpenCustomizer = () => {
@@ -165,7 +160,6 @@ class SetupTasks extends Component {
 					{
 						label: translate( 'Review taxes' ),
 						path: getLink( '/store/settings/taxes/:site', site ),
-						onClick: this.onClickTaxSettings,
 						analyticsProp: 'set-up-taxes',
 					},
 				],
@@ -234,7 +228,6 @@ function mapDispatchToProps( dispatch ) {
 			fetchPaymentMethods,
 			fetchProducts,
 			setOptedOutOfShippingSetup,
-			setCheckedTaxSetup,
 			setTriedCustomizerDuringInitialSetup,
 		},
 		dispatch
