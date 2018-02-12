@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import { find, groupBy } from 'lodash';
+import { find, get, groupBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,19 +42,19 @@ const GoogleAppsUsers = createReactClass( {
 			: this.props.domains.list;
 	},
 
-	canAddUsers() {
+	canAddUsers( domainName ) {
 		return this.getDomainsAsList().some(
-			domain => domain.googleAppsSubscription.ownedByUserId === this.props.user.ID
+			domain =>
+				domain.name === domainName &&
+				get( domain, 'googleAppsSubscription.ownedByUserId' ) === this.props.user.ID
 		);
 	},
 
-	isNewUser( user ) {
-		const domain = find( this.props.domains.list, { name: user.domain } );
-
+	isNewUser( user, subscribedDate ) {
 		return this.props
 			.moment()
 			.subtract( 1, 'day' )
-			.isBefore( domain.googleAppsSubscription.subscribedDate );
+			.isBefore( subscribedDate );
 	},
 
 	generateClickHandler( user ) {
@@ -71,7 +71,7 @@ const GoogleAppsUsers = createReactClass( {
 		return (
 			<div key={ `google-apps-user-${ domain }` } className="google-apps-users-card">
 				<SectionHeader label={ domain }>
-					{ this.canAddUsers() && (
+					{ this.canAddUsers( domain ) && (
 						<Button
 							primary
 							compact
@@ -101,13 +101,17 @@ const GoogleAppsUsers = createReactClass( {
 					</a>
 				);
 
-			if ( this.isNewUser( user ) ) {
-				status = null;
-				text = this.props.translate(
-					'We are setting up %(email)s for you. It should start working immediately, but may take up to 24 hours.',
-					{ args: { email: user.email } }
-				);
-				supportLink = null;
+			const domain = find( this.props.domains.list, { name: user.domain } );
+			const subscribedDate = get( domain, 'googleAppsSubscription.subscribedDate', false );
+			if ( subscribedDate ) {
+				if ( this.isNewUser( user, subscribedDate ) ) {
+					status = null;
+					text = this.props.translate(
+						'We are setting up %(email)s for you. It should start working immediately, but may take up to 24 hours.',
+						{ args: { email: user.email } }
+					);
+					supportLink = null;
+				}
 			}
 
 			return (
