@@ -17,8 +17,9 @@ import Gridicon from 'gridicons';
  */
 import Animate from 'components/animate';
 import ProgressIndicator from 'components/progress-indicator';
-import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
+import Button from 'components/button';
 import analytics from 'lib/analytics';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import { canCurrentUser } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -40,6 +41,8 @@ class SiteIndicator extends Component {
 		siteUpdates: PropTypes.object,
 		siteIsConnected: PropTypes.bool,
 		requestingConnectionStatus: PropTypes.bool,
+		recordTracksEvent: PropTypes.func,
+		withAnalytics: PropTypes.func,
 	};
 
 	state = { expand: false };
@@ -239,6 +242,8 @@ class SiteIndicator extends Component {
 		};
 	};
 
+	trackSiteDisconnect = () => this.props.trackSiteDisconnect( this.props.site.ID );
+
 	errorAccessing() {
 		const { site, translate } = this.props;
 		let accessFailedMessage;
@@ -248,11 +253,15 @@ class SiteIndicator extends Component {
 			accessFailedMessage = (
 				<span>
 					{ translate( 'This site cannot be accessed.' ) }
-					<DisconnectJetpackButton
-						site={ site }
-						text={ translate( 'Disconnect Site' ) }
-						redirect="/sites"
-					/>
+					<Button
+						borderless
+						compact
+						scary
+						href={ `/settings/disconnect-site/${ site.slug }` }
+						onClick={ this.trackSiteDisconnect }
+					>
+						{ translate( 'Delete Site' ) }
+					</Button>
 				</span>
 			);
 		} else {
@@ -408,5 +417,9 @@ export default connect(
 	},
 	{
 		updateWordPress,
+		trackSiteDisconnect: siteId => {
+			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' );
+			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start', { siteId } );
+		},
 	}
 )( localize( SiteIndicator ) );
