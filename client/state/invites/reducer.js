@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { map, pick, zipObject } from 'lodash';
+import { includes, map, pick, zipObject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,9 +86,29 @@ export const items = createReducer(
 				[ action.siteId ]: siteInvites,
 			};
 		},
+		[ INVITES_DELETE_REQUEST_SUCCESS ]: ( state, action ) => {
+			return {
+				...state,
+				[ action.siteId ]: {
+					accepted: deleteInvites( state[ action.siteId ].accepted, action.inviteIds ),
+					pending: deleteInvites( state[ action.siteId ].pending, action.inviteIds ),
+				},
+			};
+		},
 	},
 	inviteItemsSchema
 );
+
+/**
+ * Returns an array of site invites, without the deleted invite objects.
+ *
+ * @param  {Array} siteInvites      Array of invite objects.
+ * @param  {Array} invitesToDelete  Array of invite keys to remove.
+ * @return {Array}                  Updated array of invite objects.
+ */
+function deleteInvites( siteInvites, invitesToDelete ) {
+	return siteInvites.filter( siteInvite => ! includes( invitesToDelete, siteInvite.key ) );
+}
 
 /**
  * Tracks the total number of invites the API says a given siteId has.
