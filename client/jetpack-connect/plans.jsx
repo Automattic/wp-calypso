@@ -21,6 +21,7 @@ import PlansSkipButton from './plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { addItem } from 'lib/upgrades/actions';
+import { addQueryArgs } from 'lib/route';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
 import { completeFlow } from 'state/jetpack-connect/actions';
 import { externalRedirect } from 'lib/route/path';
@@ -85,11 +86,21 @@ class Plans extends Component {
 		}
 		if ( ! this.props.canPurchasePlans ) {
 			if ( this.props.calypsoStartedConnection ) {
-				this.redirect( CALYPSO_REDIRECTION_PAGE );
+				this.redirectToCalypso();
 			} else {
 				this.redirectToWpAdmin();
 			}
 		}
+	}
+
+	redirectToCalypso() {
+		const { canPurchasePlans, selectedSiteSlug } = this.props;
+
+		if ( selectedSiteSlug && canPurchasePlans ) {
+			return this.redirect( CALYPSO_PLANS_PAGE, { tour: 'main' } );
+		}
+
+		return this.redirect( CALYPSO_REDIRECTION_PAGE );
 	}
 
 	handleSkipButtonClick = () => {
@@ -115,8 +126,14 @@ class Plans extends Component {
 		}
 	}
 
-	redirect( path ) {
-		page.redirect( path + this.props.selectedSiteSlug );
+	redirect( path, args ) {
+		let redirectTo = path + this.props.selectedSiteSlug;
+
+		if ( args ) {
+			redirectTo = addQueryArgs( args, redirectTo );
+		}
+
+		page.redirect( redirectTo );
 		this.redirecting = true;
 		this.props.completeFlow();
 	}
@@ -129,7 +146,7 @@ class Plans extends Component {
 		mc.bumpStat( 'calypso_jpc_plan_selection', 'jetpack_free' );
 
 		if ( this.props.calypsoStartedConnection ) {
-			this.redirect( CALYPSO_REDIRECTION_PAGE );
+			this.redirectToCalypso();
 		} else {
 			this.redirectToWpAdmin();
 		}
