@@ -87,8 +87,8 @@ export function unlikePost( siteId, postId ) {
 		.site( siteId )
 		.post( postId )
 		.like()
-		.add( getQuery(), function( error, data ) {
-			receiveLikeResponse( error, siteId, postId, data );
+		.del( getQuery(), function( error, data ) {
+			receiveUnlikeResponse( error, siteId, postId, data );
 		} );
 }
 
