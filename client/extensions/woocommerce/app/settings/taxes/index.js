@@ -54,7 +54,7 @@ class SettingsTaxes extends Component {
 	componentDidMount = () => {
 		this.maybeFetchPlugins( this.props, true );
 
-		if ( true === this.props.setupChoicesLoaded ) {
+		if ( this.props.setupChoicesLoaded ) {
 			this.maybeSetCheckedTaxSetup();
 		}
 	};
@@ -64,17 +64,17 @@ class SettingsTaxes extends Component {
 	};
 
 	componentDidUpdate = prevProps => {
-		if ( true === this.props.setupChoicesLoaded && false === prevProps.setupChoicesLoaded ) {
+		if ( this.props.setupChoicesLoaded && ! prevProps.setupChoicesLoaded ) {
 			this.maybeSetCheckedTaxSetup();
 		}
 	};
 
 	maybeSetCheckedTaxSetup = () => {
-		const { taxesAreSetUp, site } = this.props;
+		const { taxesAreSetUp, siteId } = this.props;
 		if ( taxesAreSetUp ) {
 			return;
 		}
-		this.props.setCheckedTaxSetup( site.ID, true );
+		this.props.setCheckedTaxSetup( siteId, true );
 	};
 
 	render = () => {

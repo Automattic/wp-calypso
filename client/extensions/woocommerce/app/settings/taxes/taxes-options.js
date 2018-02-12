@@ -37,16 +37,15 @@ class TaxesOptions extends Component {
 			translate,
 		} = this.props;
 
-		let shippingDisabled = false;
-		let shippingDisabledMessage = null;
-		if ( shipToCountry && shipToCountry.value && 'disabled' === shipToCountry.value ) {
-			shippingDisabled = true;
-			shippingDisabledMessage = (
+		const shippingDisabled =
+			( shipToCountry && shipToCountry.value && 'disabled' === shipToCountry.value ) || false;
+		const shippingDisabledMessage =
+			( shippingDisabled && (
 				<FormSettingExplanation>
 					{ translate( 'Shipping has been disabled for this site.' ) }
 				</FormSettingExplanation>
-			);
-		}
+			) ) ||
+			null;
 
 		return (
 			<div className="taxes__taxes-options">
