@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { getSourceData as getDiscoverSourceData, discoverBlogId } from 'reader/discover/helper';
 import { getPostByKey } from 'state/reader/posts/selectors';
+import QueryReaderPost from 'components/data/query-reader-post';
 
 class ReaderPostCardAdapter extends React.Component {
 	static displayName = 'ReaderPostCardAdapter';
@@ -61,11 +62,8 @@ class ReaderPostCardAdapter extends React.Component {
 		} = this.props.post;
 
 		// if this is a discover pick query for the discover pick site
-		let discoverPickSiteId;
-		if ( isDiscover ) {
-			const { blogId } = getDiscoverSourceData( this.props.post );
-			discoverPickSiteId = blogId;
-		}
+		const discoverPostKey = getDiscoverSourceData( this.props.post );
+		console.error( discoverPostKey );
 
 		// only query the site if the feed id is missing. feed queries end up fetching site info
 		// via a meta query, so we don't need both.
@@ -87,9 +85,10 @@ class ReaderPostCardAdapter extends React.Component {
 			>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
-				{ discoverPickSiteId && (
-					<QueryReaderSite siteId={ discoverPickSiteId } includeMeta={ false } />
+				{ isDiscover && (
+					<QueryReaderSite siteId={ discoverPostKey.blogId } includeMeta={ false } />
 				) }
+				{ isDiscover && discoverPostKey && <QueryReaderPost postKey={ discoverPostKey } /> }
 			</ReaderPostCard>
 		);
 	}
@@ -105,13 +104,14 @@ export default connect( ( state, ownProps ) => {
 	let discoverPick = null;
 	if ( get( post, 'is_discover' ) ) {
 		// copy discoverPick from feed store
-		const discoverPickPost = getPostByKey( getDiscoverSourceData( post ) );
+		const discoverPostKey = getDiscoverSourceData( post );
+		const discoverPickPost = getPostByKey( discoverPostKey );
 
 		// limit discover pick site to discover stream
 		if ( ownProps.isDiscoverStream ) {
-			// add discoverPick site from state
-			const { blogId } = getDiscoverSourceData( ownProps.post );
-			const discoverPickSite = blogId ? getSite( state, blogId ) : null;
+			const discoverPickSite = discoverPostKey.blogId
+				? getSite( state, discoverPostKey.blogId )
+				: null;
 
 			if ( discoverPickPost || discoverPickSite ) {
 				discoverPick = {
