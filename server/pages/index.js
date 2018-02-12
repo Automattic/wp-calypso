@@ -6,10 +6,12 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import qs from 'qs';
+import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, forEach, intersection } from 'lodash';
+import { get, includes, pick, forEach, intersection, snakeCase } from 'lodash';
+import getRawBody from 'raw-body';
 
 /**
  * Internal dependencies
@@ -27,6 +29,7 @@ import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import analytics from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -229,7 +232,6 @@ function getDefaultContext( request ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
@@ -243,8 +245,6 @@ function setUpLoggedInRoute( req, res, next ) {
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
-
-	req.context = getDefaultContext( req );
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
@@ -342,13 +342,31 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 }
 
+// @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+function setUpCSP( req, res, next ) {
+	const inlineScripts = [
+		'sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ=',
+		'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=',
+	];
+
+	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
+
+	res.set( {
+		'Content-Security-Policy': `default-src 'self'; form-action 'self'; script-src 'self' stats.wp.com www.google-analytics.com ${ inlineScripts.map( hash => `'${ hash }'` ).join( ' ' ) } 'nonce-${ req.context.inlineScriptNonce }'; object-src 'none'; style-src 'self' *.wp.com https://fonts.googleapis.com; img-src 'self' *.wp.com; media-src 'self'; frame-src 'self' https://public-api.wordpress.com; font-src 'self' *.wp.com https://fonts.gstatic.com data:; connect-src 'self'; report-uri /cspreport`,
+	} );
+	next();
+}
+
 function setUpRoute( req, res, next ) {
-	if ( req.cookies.wordpress_logged_in ) {
-		// the user is probably logged in
-		setUpLoggedInRoute( req, res, next );
-	} else {
-		setUpLoggedOutRoute( req, res, next );
-	}
+	req.context = getDefaultContext( req );
+	setUpCSP( req, res, () => {
+		if ( req.cookies.wordpress_logged_in ) {
+			// the user is probably logged in
+			setUpLoggedInRoute( req, res, next );
+		} else {
+			setUpLoggedOutRoute( req, res, next );
+		}
+	} );
 }
 
 function render404( request, response ) {
@@ -497,6 +515,33 @@ module.exports = function() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	app.post( '/cspreport', function( req, res ) {
+		getRawBody( req, {
+			length: req.headers[ 'content-length' ],
+			limit: '1mb',
+			encoding: 'utf-8',
+		}, function( err, body ) {
+			if ( err ) {
+				res.status( 500 ).send( 'Bad report!' );
+				return;
+			}
+
+			const jsonBody = JSON.parse( body );
+			const cspReport = jsonBody[ 'csp-report' ];
+			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
+				report[ snakeCase( key ) ] = cspReport[ key ];
+				return report;
+			}, {} );
+
+			analytics.tracks.recordEvent(
+				'calypso_cspreport',
+				cspReportSnakeCase,
+				req
+			);
+			res.status( 200 ).send( 'Got it!' );
+		} );
+	} );
 
 	app.get( '/browsehappy', setUpRoute, function( req, res ) {
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;

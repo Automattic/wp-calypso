@@ -45,7 +45,26 @@ class Document extends React.Component {
 			devDocs,
 			devDocsURL,
 			feedbackURL,
+			inlineScriptNonce,
 		} = this.props;
+
+		let inlineScript = `COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };`;
+
+		if ( user ) {
+			inlineScript += `var currentUser = ${ jsonStringifyForHtml( user ) };`;
+		}
+
+		if ( app ) {
+			inlineScript += `var app = ${ jsonStringifyForHtml( app ) };`;
+		}
+
+		if ( initialReduxState ) {
+			inlineScript += `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };`;
+		}
+
+		if ( config ) {
+			inlineScript += config;
+		}
 
 		return (
 			<html
@@ -137,42 +156,11 @@ class Document extends React.Component {
 
 					<script
 						type="text/javascript"
+						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
-							__html: 'COMMIT_SHA = ' + jsonStringifyForHtml( commitSha ),
+							__html: inlineScript,
 						} }
 					/>
-					{ user && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var currentUser = ' + jsonStringifyForHtml( user ),
-							} }
-						/>
-					) }
-					{ app && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var app = ' + jsonStringifyForHtml( app ),
-							} }
-						/>
-					) }
-					{ initialReduxState && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var initialReduxState = ' + jsonStringifyForHtml( initialReduxState ),
-							} }
-						/>
-					) }
-					{ config && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: config,
-							} }
-						/>
-					) }
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script src={ urls.manifest } />
