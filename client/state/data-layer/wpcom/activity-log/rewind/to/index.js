@@ -38,7 +38,7 @@ export const receiveRestoreSuccess = ( { siteId, timestamp }, restoreId ) =>
 	getRewindRestoreProgress( siteId, restoreId );
 
 export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
-	error instanceof SchemaError
+	error.hasOwnProperty( 'schemaErrors' )
 		? withAnalytics(
 				recordTracksEvent( 'calypso_rewind_to_missing_restore_id', { siteId, timestamp } ),
 				errorNotice(
