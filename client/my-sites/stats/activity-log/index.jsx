@@ -490,7 +490,11 @@ class ActivityLog extends Component {
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						icon="history"
-						href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }` }
+						href={
+							rewindState.canAutoconfigure
+								? `/settings/security/${ slug }`
+								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
+						}
 						title={ translate( 'Add site credentials' ) }
 						description={ translate(
 							'Backups and security scans require access to your site to work properly.'
