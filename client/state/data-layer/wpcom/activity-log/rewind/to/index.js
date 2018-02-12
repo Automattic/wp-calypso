@@ -1,70 +1,68 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import debugFactory from 'debug';
-import { pick } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { REWIND_RESTORE, REWIND_STATE_REQUEST } from 'state/action-types';
-import { rewindRestoreUpdateError, getRewindRestoreProgress } from 'state/activity-log/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { REWIND_RESTORE } from 'state/action-types';
+import { getRewindRestoreProgress } from 'state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { errorNotice } from 'state/notices/actions';
+import { SchemaError, dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 
-const debug = debugFactory( 'calypso:data-layer:activity-log:rewind:to' );
+const fromApi = data => {
+	const restoreId = parseInt( data.restore_id, 10 );
 
-const fromApi = data => ( {
-	restoreId: +data.restore_id,
-} );
-
-const requestRestore = ( { dispatch }, action ) => {
-	dispatch(
-		http(
-			{
-				apiVersion: '1',
-				method: 'POST',
-				path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
-			},
-			action
-		)
-	);
-};
-
-export const receiveRestoreSuccess = ( { dispatch }, { siteId, timestamp }, apiData ) => {
-	const { restoreId } = fromApi( apiData );
-	if ( restoreId ) {
-		debug( 'Request restore success, restore id:', restoreId );
-		dispatch( getRewindRestoreProgress( siteId, restoreId ) );
-	} else {
-		debug( 'Request restore response missing restore_id' );
-		dispatch(
-			rewindRestoreUpdateError( siteId, timestamp, {
-				status: 'finished',
-				error: 'missing_restore_id',
-				message: 'Bad response. No restore ID provided.',
-			} )
-		);
+	if ( Number.isNaN( restoreId ) ) {
+		throw new SchemaError( 'missing numeric restore id - found `${ data.restore_id }`' );
 	}
 
-	dispatch( {
-		type: REWIND_STATE_REQUEST,
-		siteId,
-	} );
+	return restoreId;
 };
 
-export const receiveRestoreError = ( { dispatch }, { siteId, timestamp }, error ) => {
-	debug( 'Request restore fail', error );
-	dispatch(
-		rewindRestoreUpdateError( siteId, timestamp, pick( error, [ 'error', 'status', 'message' ] ) )
+const requestRestore = action =>
+	http(
+		{
+			apiVersion: '1',
+			method: 'POST',
+			path: `/activity-log/${ action.siteId }/rewind/to/${ action.timestamp }`,
+		},
+		action
 	);
-};
+
+export const receiveRestoreSuccess = ( { siteId, timestamp }, restoreId ) =>
+	getRewindRestoreProgress( siteId, restoreId );
+
+export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
+	error.hasOwnProperty( 'schemaErrors' )
+		? withAnalytics(
+				recordTracksEvent( 'calypso_rewind_to_missing_restore_id', { siteId, timestamp } ),
+				errorNotice(
+					translate(
+						"Oops, something went wrong. We've been notified and are working on resolving this issue."
+					)
+				)
+			)
+		: withAnalytics(
+				recordTracksEvent( 'calypso_rewind_to_unknown_error', error ),
+				errorNotice(
+					translate(
+						'Oops, something went wrong. Please try again soon or contact support for help.'
+					)
+				)
+			);
 
 export default {
 	[ REWIND_RESTORE ]: [
-		dispatchRequest( requestRestore, receiveRestoreSuccess, receiveRestoreError ),
+		dispatchRequestEx( {
+			fetch: requestRestore,
+			onSuccess: receiveRestoreSuccess,
+			onError: receiveRestoreError,
+			fromApi,
+		} ),
 	],
 };
