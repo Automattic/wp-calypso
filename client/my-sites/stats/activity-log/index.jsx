@@ -430,7 +430,7 @@ class ActivityLog extends Component {
 				onPeriodChange={ position === 'bottom' ? this.handlePeriodChangeBottom : changePeriod }
 				period="month"
 				url={ `/stats/activity/${ slug }` }
-				hidePreviousArrow={ Infinity === oldestItemTs || monthStartTs <= oldestItemTs }
+				hidePreviousArrow={ monthStartTs <= oldestItemTs }
 			>
 				<DatePicker isActivity={ true } period="month" date={ startOfMonth } query={ query } />
 			</StatsPeriodNavigation>

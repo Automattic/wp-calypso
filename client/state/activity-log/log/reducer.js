@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { isNull } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import ActivityQueryManager from 'lib/query-manager/activity';
@@ -37,7 +32,7 @@ logItems.hasCustomPersistence = true;
 export const oldestItemTs = keyedReducer( 'siteId', ( state = Infinity, action ) => {
 	switch ( action.type ) {
 		case ACTIVITY_LOG_UPDATE:
-			return isNull( action.oldestItemTs ) ? state : Math.min( action.oldestItemTs, state );
+			return null === action.oldestItemTs ? state : Math.min( action.oldestItemTs, state );
 
 		default:
 			return state;
