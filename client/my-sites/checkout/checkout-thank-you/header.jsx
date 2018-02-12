@@ -52,7 +52,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
 			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
-				return preventWidows( translate( 'Congratulations! Your site is live.' ) );
+				return preventWidows( translate( 'Almost done!' ) );
 			}
 
 			return preventWidows(
@@ -153,7 +153,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		if ( isDomainTransfer( primaryPurchase ) ) {
 			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
 				return translate(
-					"Your new site is all set up. There's just a few things left to do to get your domain " +
+					'Your new site is now live, with a temporary domain. Start the transfer to get your domain ' +
 						'{{strong}}%(domainName)s{{/strong}} moved to WordPress.com.',
 					{
 						args: { domainName: primaryPurchase.meta },
