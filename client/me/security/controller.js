@@ -51,7 +51,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
-		const TwoStepComponent = require( 'me/two-step' );
+		const TwoStepComponent = require( 'me/two-step' ).default;
 
 		context.primary = React.createElement( TwoStepComponent, {
 			userSettings: userSettings,

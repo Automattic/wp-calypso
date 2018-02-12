@@ -39,7 +39,7 @@ export default {
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
 
-		const ProfileComponent = require( 'me/profile' );
+		const ProfileComponent = require( 'me/profile' ).default;
 
 		context.primary = React.createElement( ProfileComponent, {
 			userSettings: userSettings,
