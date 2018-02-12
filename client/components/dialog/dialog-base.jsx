@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 import classnames from 'classnames';
+import { get } from 'lodash';
 
 class DialogBase extends Component {
 	static propTypes = {
@@ -49,6 +50,7 @@ class DialogBase extends Component {
 				className={ dialogClassName }
 				role="dialog"
 				shouldCloseOnEsc={ shouldCloseOnEsc }
+				ref={ this._modalRef }
 			>
 				<div
 					className={ classnames( this.props.className, contentClassName ) }
@@ -125,6 +127,16 @@ class DialogBase extends Component {
 	_close = action => {
 		if ( this.props.onDialogClose ) {
 			this.props.onDialogClose( action );
+		}
+	};
+
+	_modalRef = modal => {
+		this.modal = modal;
+	};
+
+	focusModal = () => {
+		if ( get( this, 'modal.portal.content', false ) ) {
+			this.modal.portal.content.focus();
 		}
 	};
 }

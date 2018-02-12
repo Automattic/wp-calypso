@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { defer, noop } from 'lodash';
+import { defer, get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,6 +32,7 @@ class Dialog extends Component {
 		if ( null === ref ) {
 			defer( this.props.onClosed );
 		}
+		this.dialogBase = ref;
 	};
 
 	render() {
@@ -50,6 +51,12 @@ class Dialog extends Component {
 	onDialogClose = action => {
 		if ( this.props.onClose ) {
 			this.props.onClose( action );
+		}
+	};
+
+	focusModal = () => {
+		if ( get( this, 'dialogBase.focusModal', false ) ) {
+			this.dialogBase.focusModal();
 		}
 	};
 }

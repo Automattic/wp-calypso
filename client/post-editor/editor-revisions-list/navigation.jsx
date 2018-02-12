@@ -18,6 +18,7 @@ const EditorRevisionsListNavigation = ( {
 	prevIsDisabled,
 	selectNextRevision,
 	selectPreviousRevision,
+	onNavButtonFocus,
 } ) => {
 	return (
 		<ButtonGroup className="editor-revisions-list__navigation">
@@ -27,6 +28,7 @@ const EditorRevisionsListNavigation = ( {
 				type="button"
 				onClick={ selectPreviousRevision }
 				disabled={ prevIsDisabled }
+				onFocus={ onNavButtonFocus( 'prev' ) }
 			>
 				<Gridicon icon="chevron-down" />
 			</Button>
@@ -36,6 +38,7 @@ const EditorRevisionsListNavigation = ( {
 				type="button"
 				onClick={ selectNextRevision }
 				disabled={ nextIsDisabled }
+				onFocus={ onNavButtonFocus( 'next' ) }
 			>
 				<Gridicon icon="chevron-up" />
 			</Button>
@@ -48,6 +51,7 @@ EditorRevisionsListNavigation.propTypes = {
 	selectPreviousRevision: PropTypes.func.isRequired,
 	nextIsDisabled: PropTypes.bool,
 	prevIsDisabled: PropTypes.bool,
+	onNavButtonFocus: PropTypes.func,
 };
 
 export default EditorRevisionsListNavigation;

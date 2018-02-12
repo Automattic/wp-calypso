@@ -39,6 +39,7 @@ class EditorRevisions extends Component {
 			selectedDiff,
 			selectedRevisionId,
 			siteId,
+			focusModal,
 		} = this.props;
 
 		return (
@@ -61,6 +62,7 @@ class EditorRevisions extends Component {
 					revisions={ revisions }
 					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
+					focusModal={ focusModal }
 				/>
 			</div>
 		);
@@ -82,6 +84,9 @@ EditorRevisions.propTypes = {
 
 	// localize
 	translate: PropTypes.func.isRequired,
+
+	// own prop
+	focusModal: PropTypes.func,
 };
 
 export default flow(

@@ -28,6 +28,7 @@ class EditorRevisionsList extends PureComponent {
 		selectedRevisionId: PropTypes.number,
 		nextIsDisabled: PropTypes.bool,
 		prevIsDisabled: PropTypes.bool,
+		focusModal: PropTypes.func,
 	};
 
 	selectRevision = revisionId => {
@@ -130,6 +131,22 @@ class EditorRevisionsList extends PureComponent {
 		prevRevisionId && this.selectRevision( prevRevisionId );
 	};
 
+	onNavButtonFocus = value => {
+		const { nextIsDisabled, prevIsDisabled, focusModal } = this.props;
+		switch ( value ) {
+			case 'next':
+				if ( nextIsDisabled ) {
+					focusModal();
+				}
+				break;
+			case 'prev':
+				if ( prevIsDisabled ) {
+					focusModal();
+				}
+				break;
+		}
+	};
+
 	render() {
 		const {
 			comparisons,
@@ -152,6 +169,7 @@ class EditorRevisionsList extends PureComponent {
 					prevIsDisabled={ prevIsDisabled }
 					selectNextRevision={ this.selectNextRevision }
 					selectPreviousRevision={ this.selectPreviousRevision }
+					onNavButtonFocus={ this.onNavButtonFocus }
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
