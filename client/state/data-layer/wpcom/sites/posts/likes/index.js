@@ -16,7 +16,7 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveLikes } from 'state/posts/likes/actions';
 
-const fetch = action =>
+export const fetch = action =>
 	http( {
 		method: 'GET',
 		path: `/sites/${ action.siteId }/posts/${ action.postId }/likes`,
@@ -28,7 +28,7 @@ export const fromApi = data => ( {
 	likes: data.likes,
 } );
 
-const onSuccess = ( { siteId, postId }, data ) => receiveLikes( siteId, postId, data );
+export const onSuccess = ( { siteId, postId }, data ) => receiveLikes( siteId, postId, data );
 
 export default mergeHandlers( newLike, mine, {
 	[ POST_LIKES_REQUEST ]: [
