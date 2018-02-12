@@ -100,7 +100,9 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
 						{ map( this.fields, ( fieldLabel, fieldName ) => {
-							const isValid = this.state[ fieldName ] !== '' || fieldName === 'state';
+							const isValidatingField = ! isRequestingSettings && fieldName !== 'state';
+							const isValidField = this.state[ fieldName ] !== '';
+
 							return (
 								<FormFieldset key={ fieldName }>
 									<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
@@ -108,13 +110,13 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 										autoFocus={ fieldName === 'name' }
 										disabled={ isRequestingSettings }
 										id={ fieldName }
-										isError={ ! isValid && ! isRequestingSettings }
-										isValid={ isValid && ! isRequestingSettings }
+										isError={ isValidatingField && ! isValidField }
+										isValid={ isValidatingField && isValidField }
 										onChange={ this.getChangeHandler( fieldName ) }
 										value={ this.state[ fieldName ] || '' }
 									/>
-									{ ! isValid &&
-										! isRequestingSettings && (
+									{ isValidatingField &&
+										! isValidField && (
 											<FormInputValidation
 												isError
 												text={ translate( 'Please enter a %(fieldLabel)s', {
