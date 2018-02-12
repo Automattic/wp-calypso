@@ -123,8 +123,6 @@ const Checkout = createReactClass( {
 			this.setState( { previousCart: nextCart } );
 		}
 
-		// Although this is a part of the gsuiteUpsellTake2 A/B test,
-		// the `abtest()` is not called here to make the data more accurate.
 		if (
 			this.props.isNewlyCreatedSite &&
 			this.props.contactDetails &&
@@ -271,14 +269,14 @@ const Checkout = createReactClass( {
 		return flatten( Object.values( purchases ) );
 	},
 
-	cartHasEligibleDomain() {
+	getEligibleDomainFromCart() {
 		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
-		const domainsInSignupContext = filter( domainRegistrations, { context: 'signup' } );
+		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
 		const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
 			canAddGoogleApps( meta )
 		);
 
-		return !! domainsForGSuite.length;
+		return domainsForGSuite;
 	},
 
 	getCheckoutCompleteRedirectPath() {
@@ -313,7 +311,7 @@ const Checkout = createReactClass( {
 			return '/checkout/thank-you/features';
 		}
 
-		if ( domainReceiptId && receiptId && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+		if ( domainReceiptId && receiptId ) {
 			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
 		}
 
@@ -323,9 +321,11 @@ const Checkout = createReactClass( {
 			cartItems.hasDomainRegistration( cart ) &&
 			isEmpty( receipt.failed_purchases )
 		) {
-			if ( this.cartHasEligibleDomain() && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+			const domainsForGSuite = this.getEligibleDomainFromCart();
+
+			if ( domainsForGSuite.length ) {
 				return `/checkout/${ selectedSiteSlug }/with-gsuite/${
-					domainsForGsuite[ 0 ].meta
+					domainsForGSuite[ 0 ].meta
 				}/${ receiptId }`;
 			}
 		}
