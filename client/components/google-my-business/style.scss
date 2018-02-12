@@ -1,5 +1,13 @@
 
 .google-my-business__stats-nudge {
+	padding: 0;
+
+	.dismissible-card__close-icon {
+		z-index: z-index( 'root', '.google-my-business__stats-nudge.dismissible-card__close-icon' );
+	}
+}
+
+.google-my-business__stats-nudge-body {
 	display: flex;
 	padding: 10px 24px;
 	position: relative;

@@ -10,18 +10,22 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import Button from 'components/button';
-import Card from 'components/card';
+// import Card from 'components/card';
+import DismissibleCard from 'blocks/dismissible-card';
 import SectionHeader from 'components/section-header';
 
-export const StatsNudge = ( { translate } ) => {
+const StatsNudge = ( { translate } ) => {
 	return (
-		<div>
+		<DismissibleCard
+			className="google-my-business__stats-nudge"
+			preferenceName="show-google-my-business-nudge"
+			temporary
+		>
 			<SectionHeader
 				className="google-my-business__stats-nudge-header"
 				label={ translate( 'We recommend Google My Business' ) }
-				href="#"
 			/>
-			<Card className="google-my-business__stats-nudge">
+			<div className="google-my-business__stats-nudge-body">
 				<div className="google-my-business__stats-nudge-image-wrapper">
 					<img
 						className="google-my-business__stats-nudge-image"
@@ -43,8 +47,8 @@ export const StatsNudge = ( { translate } ) => {
 						<Button>{ translate( 'Not Now' ) }</Button>
 					</div>
 				</div>
-			</Card>
-		</div>
+			</div>
+		</DismissibleCard>
 	);
 };
 
