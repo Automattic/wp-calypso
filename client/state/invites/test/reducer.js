@@ -16,6 +16,7 @@ import {
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_SUCCESS,
 	INVITE_RESEND_REQUEST_FAILURE,
+	INVITES_DELETE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -253,6 +254,109 @@ describe( 'reducer', () => {
 							},
 						},
 					],
+					accepted: [],
+				},
+			} );
+		} );
+
+		test( 'should delete invite', () => {
+			const original = {
+				12345: {
+					pending: [
+						{
+							key: '123456asdf789',
+							role: 'follower',
+							isPending: true,
+							inviteDate: '2018-01-28T17:22:16+00:00',
+							acceptedDate: null,
+							user: {
+								login: 'chicken',
+								email: false,
+								name: 'Pollo',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+							},
+							invitedBy: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+							},
+						},
+					],
+					accepted: [],
+				},
+			};
+			const state = items( original, {
+				type: INVITES_DELETE_REQUEST_SUCCESS,
+				siteId: 12345,
+				inviteIds: [ '123456asdf789' ],
+			} );
+			expect( state ).to.eql( {
+				12345: {
+					pending: [],
+					accepted: [],
+				},
+			} );
+		} );
+
+		test( 'should delete invites', () => {
+			const original = {
+				12345: {
+					pending: [
+						{
+							key: '123456asdf789',
+							role: 'follower',
+							isPending: true,
+							inviteDate: '2018-01-28T17:22:16+00:00',
+							acceptedDate: null,
+							user: {
+								login: 'chicken',
+								email: false,
+								name: 'Pollo',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
+							},
+							invitedBy: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+							},
+						},
+					],
+					accepted: [
+						{
+							key: '9876fdas54321',
+							role: 'follower',
+							isPending: true,
+							inviteDate: '2018-01-28T17:22:16+00:00',
+							acceptedDate: null,
+							user: {
+								login: 'celery',
+								email: false,
+								name: 'Apio',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+							},
+							invitedBy: {
+								login: 'cow',
+								name: 'Vaca',
+								avatar_URL:
+									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
+							},
+						},
+					],
+				},
+			};
+			const state = items( original, {
+				type: INVITES_DELETE_REQUEST_SUCCESS,
+				siteId: 12345,
+				inviteIds: [ '123456asdf789', '9876fdas54321' ],
+			} );
+			expect( state ).to.eql( {
+				12345: {
+					pending: [],
 					accepted: [],
 				},
 			} );
