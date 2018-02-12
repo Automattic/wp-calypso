@@ -28,14 +28,14 @@ export const installJetpackPlugin = ( { dispatch }, action ) => {
 	);
 };
 
-const handleResponse = ( { dispatch }, { url }, data ) => {
+export const handleResponse = ( { dispatch }, { url }, data ) => {
 	if ( data.status ) {
 		return dispatch( jetpackRemoteInstallComplete( url ) );
 	}
 	dispatch( updateJetpackRemoteInstallError( url, data.error ) );
 };
 
-const handleError = ( { dispatch }, { url } ) => {
+export const handleError = ( { dispatch }, { url } ) => {
 	dispatch( updateJetpackRemoteInstallError( url, 'API_ERROR' ) );
 };
 
