@@ -260,7 +260,7 @@ class SiteIndicator extends Component {
 						href={ `/settings/disconnect-site/${ site.slug }` }
 						onClick={ this.trackSiteDisconnect }
 					>
-						{ translate( 'Delete Site' ) }
+						{ translate( 'Remove Site' ) }
 					</Button>
 				</span>
 			);
