@@ -11,7 +11,7 @@ import {
 } from 'state/jetpack-remote-install/actions';
 import { JETPACK_REMOTE_INSTALL } from 'state/action-types';
 
-const requestRemoteInstall = ( { dispatch }, action ) => {
+export const installJetpackPlugin = ( { dispatch }, action ) => {
 	const { url, user, password } = action;
 	return dispatch(
 		http(
@@ -41,6 +41,6 @@ const handleError = ( { dispatch }, { url } ) => {
 
 export default {
 	[ JETPACK_REMOTE_INSTALL ]: [
-		dispatchRequest( requestRemoteInstall, handleResponse, handleError ),
+		dispatchRequest( installJetpackPlugin, handleResponse, handleError ),
 	],
 };
