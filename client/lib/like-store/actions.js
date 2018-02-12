@@ -82,6 +82,14 @@ export function unlikePost( siteId, postId ) {
 		siteId: siteId,
 		postId: postId,
 	} );
+
+	wpcom
+		.site( siteId )
+		.post( postId )
+		.like()
+		.add( getQuery(), function( error, data ) {
+			receiveLikeResponse( error, siteId, postId, data );
+		} );
 }
 
 export function receivePostLikes( error, siteId, postId, data ) {
