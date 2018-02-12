@@ -115,7 +115,12 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 									/>
 									{ ! isValid &&
 										! isRequestingSettings && (
-											<FormInputValidation isError text={ translate( 'Required field.' ) } />
+											<FormInputValidation
+												isError
+												text={ translate( 'Please enter a %(fieldLabel)s', {
+													args: { fieldLabel },
+												} ) }
+											/>
 										) }
 								</FormFieldset>
 							);
