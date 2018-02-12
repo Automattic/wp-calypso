@@ -17,6 +17,8 @@ import {
 	getNumberOfInvitesFoundForSite,
 	didResendSucceed,
 	getInviteForSite,
+	isDeleting,
+	didDeletionSucceed,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -442,6 +444,83 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( didResendSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
+		} );
+	} );
+
+	describe( '#didDeletionSucceed()', () => {
+		test( 'should return true for successful deletion', () => {
+			const state = {
+				invites: {
+					deleting: {
+						12345: { '123456asdf789': 'success' },
+					},
+				},
+			};
+			expect( didDeletionSucceed( state, 12345, '123456asdf789' ) ).to.equal( true );
+		} );
+
+		test( 'should return false when a deletion is pending', () => {
+			const state = {
+				invites: {
+					deleting: {
+						67890: { '789lkjh123456': 'requesting' },
+					},
+				},
+			};
+			expect( didDeletionSucceed( state, 67890, '789lkjh123456' ) ).to.equal( false );
+		} );
+
+		test( 'should return false when a deletion is failure', () => {
+			const state = {
+				invites: {
+					deleting: {
+						34567: { asdf987654321: 'failure' },
+					},
+				},
+			};
+			expect( didDeletionSucceed( state, 34567, 'asdf987654321' ) ).to.equal( false );
+		} );
+
+		test( 'should return false when deletion has not been requested', () => {
+			const state = {
+				invites: {
+					deleting: {},
+				},
+			};
+			expect( didDeletionSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
+		} );
+	} );
+
+	describe( '#isDeleting()', () => {
+		test( 'should return true when requesting deletion', () => {
+			const state = {
+				invites: {
+					deleting: {
+						67890: { '789lkjh123456': 'requesting' },
+					},
+				},
+			};
+			expect( isDeleting( state, 67890, '789lkjh123456' ) ).to.equal( true );
+		} );
+
+		test( 'should return false when deletion request is complete', () => {
+			const state = {
+				invites: {
+					deleting: {
+						12345: { '123456asdf789': 'success' },
+					},
+				},
+			};
+			expect( isDeleting( state, 12345, '123456asdf789' ) ).to.equal( false );
+		} );
+
+		test( 'should return false when deletion has not been requested', () => {
+			const state = {
+				invites: {
+					deleting: {},
+				},
+			};
+			expect( isDeleting( state, 12345, '9876asdf54321' ) ).to.equal( false );
 		} );
 	} );
 } );
