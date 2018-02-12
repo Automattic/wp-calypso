@@ -92,7 +92,10 @@ export const onDeleteInvitesFailure = ( dispatch, action, getState ) => {
 
 export const onDeleteInvitesSuccess = ( dispatch, { inviteIds } ) =>
 	dispatch(
-		successNotice( translate( 'Invite deleted.', 'Invites deleted.', { count: inviteIds.length } ) )
+		successNotice(
+			translate( 'Invite deleted.', 'Invites deleted.', { count: inviteIds.length } ),
+			{ displayOnNextPage: true }
+		)
 	);
 
 export function onPostDeleteFailure( dispatch, action, getState ) {
