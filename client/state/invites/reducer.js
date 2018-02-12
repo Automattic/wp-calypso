@@ -133,7 +133,7 @@ export const counts = createReducer(
 /**
  * Returns the updated site invites resend requests state after an action has been
  * dispatched. The state reflects an object keyed by site ID, consisting of requested
- * resend invite IDs, with a boolean representing request status.
+ * resend invite IDs, with a string representing request status.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -162,16 +162,35 @@ export function requestingResend( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Returns the updated site invites deletion requests state after an action has been
+ * dispatched. The state reflects an object keyed by site ID, consisting of requested
+ * invite IDs to delete, with a string representing request status.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
 export function deleting( state = {}, action ) {
 	switch ( action.type ) {
 		case INVITES_DELETE_REQUEST:
-		case INVITES_DELETE_REQUEST_FAILURE:
-		case INVITES_DELETE_REQUEST_SUCCESS:
-			const inviteMap = zipObject(
+			const inviteDeletionRequests = zipObject(
 				action.inviteIds,
-				map( action.inviteIds, () => INVITES_DELETE_REQUEST === action.type )
+				map( action.inviteIds, () => 'requesting' )
 			);
-			return Object.assign( {}, state, { [ action.siteId ]: inviteMap } );
+			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
+		case INVITES_DELETE_REQUEST_FAILURE:
+			const inviteDeletionFailures = zipObject(
+				action.inviteIds,
+				map( action.inviteIds, () => 'failure' )
+			);
+			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
+		case INVITES_DELETE_REQUEST_SUCCESS:
+			const inviteDeletionSuccesses = zipObject(
+				action.inviteIds,
+				map( action.inviteIds, () => 'success' )
+			);
+			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
 	}
 
 	return state;
