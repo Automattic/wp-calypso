@@ -34,7 +34,7 @@ const StatsNudge = ( { translate } ) => {
 					/>
 				</div>
 				<div className="google-my-business__stats-nudge-info">
-					<h1 className="google-my-business__stats-nudge-heading">
+					<h1 className="google-my-business__stats-nudge-title">
 						{ translate( 'Reach more customers with Google My Business' ) }
 					</h1>
 					<h2 className="google-my-business__stats-nudge-description">
