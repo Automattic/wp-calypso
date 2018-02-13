@@ -32,27 +32,27 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 	const authorAndSiteAreDifferent = ! areEqualIgnoringWhitespaceAndCase( siteName, authorName );
 
 	return (
-		<div className="reader-related-card-v2__meta">
+		<div className="reader-related-card__meta">
 			<a href={ siteUrl } onClick={ onSiteClick } aria-hidden="true">
 				<Gravatar user={ post.author } />
 			</a>
-			<div className="reader-related-card-v2__byline">
+			<div className="reader-related-card__byline">
 				{ authorName &&
 					authorAndSiteAreDifferent && (
-						<span className="reader-related-card-v2__byline-author">
+						<span className="reader-related-card__byline-author">
 							<ReaderAuthorLink
 								author={ post.author }
 								siteUrl={ siteUrl }
 								post={ post }
 								onClick={ onSiteClick }
-								className="reader-related-card-v2__link"
+								className="reader-related-card__link"
 							>
 								{ authorName }
 							</ReaderAuthorLink>
 						</span>
 					) }
-				<span className="reader-related-card-v2__byline-site">
-					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card-v2__link">
+				<span className="reader-related-card__byline-site">
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
 						{ siteName }
 					</a>
 				</span>
@@ -68,11 +68,11 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 
 function AuthorAndSiteFollowPlaceholder() {
 	return (
-		<div className="reader-related-card-v2__meta is-placeholder">
+		<div className="reader-related-card__meta is-placeholder">
 			<Gravatar user={ null } />
-			<div className="reader-related-card-v2__byline">
-				<span className="reader-related-card-v2__byline-author">Author name</span>
-				<span className="reader-related-card-v2__byline-site">Site title</span>
+			<div className="reader-related-card__byline">
+				<span className="reader-related-card__byline-author">Author name</span>
+				<span className="reader-related-card__byline-site">Site title</span>
 			</div>
 		</div>
 	);
@@ -80,13 +80,13 @@ function AuthorAndSiteFollowPlaceholder() {
 
 function RelatedPostCardPlaceholder() {
 	return (
-		<Card className="reader-related-card-v2 is-placeholder">
+		<Card className="reader-related-card is-placeholder">
 			<AuthorAndSiteFollowPlaceholder />
-			<a className="reader-related-card-v2__post reader-related-card-v2__link-block">
-				<div className="reader-related-card-v2__featured-image" />
-				<div className="reader-related-card-v2__site-info">
-					<h1 className="reader-related-card-v2__title">Title</h1>
-					<div className="reader-related-card-v2__excerpt post-excerpt">Excerpt</div>
+			<a className="reader-related-card__post reader-related-card__link-block">
+				<div className="reader-related-card__featured-image" />
+				<div className="reader-related-card__site-info">
+					<h1 className="reader-related-card__title">Title</h1>
+					<div className="reader-related-card__excerpt post-excerpt">Excerpt</div>
 				</div>
 			</a>
 		</Card>
@@ -106,7 +106,7 @@ export function RelatedPostCard( {
 	}
 
 	const postLink = getPostUrl( post );
-	const classes = classnames( 'reader-related-card-v2', {
+	const classes = classnames( 'reader-related-card', {
 		'has-thumbnail': !! post.canonical_media,
 		'has-excerpt': post.excerpt && post.excerpt.length > 1,
 	} );
@@ -122,7 +122,7 @@ export function RelatedPostCard( {
 			<ReaderFeaturedVideo
 				{ ...canonicalMedia }
 				videoEmbed={ canonicalMedia }
-				className={ 'reader-related-card-v2__featured-image' }
+				className={ 'reader-related-card__featured-image' }
 				href={ postLink }
 				onThumbnailClick={ postClickTracker }
 				allowPlaying={ false }
@@ -135,7 +135,7 @@ export function RelatedPostCard( {
 				imageWidth={ RELATED_IMAGE_WIDTH }
 				onClick={ postClickTracker }
 				href={ postLink }
-				className={ 'reader-related-card-v2__featured-image' }
+				className={ 'reader-related-card__featured-image' }
 			/>
 		);
 	}
@@ -152,12 +152,12 @@ export function RelatedPostCard( {
 			{ featuredAsset }
 			<a
 				href={ postLink }
-				className="reader-related-card-v2__post reader-related-card-v2__link-block"
+				className="reader-related-card__post reader-related-card__link-block"
 				onClick={ postClickTracker }
 			>
-				<div className="reader-related-card-v2__site-info">
-					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-					<div className="reader-related-card-v2__excerpt post-excerpt">
+				<div className="reader-related-card__site-info">
+					<h1 className="reader-related-card__title">{ post.title }</h1>
+					<div className="reader-related-card__excerpt post-excerpt">
 						{ !! post.canonical_media ? post.short_excerpt : post.better_excerpt_no_html }
 					</div>
 				</div>

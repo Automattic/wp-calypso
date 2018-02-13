@@ -14,7 +14,7 @@ import classnames from 'classnames';
  */
 import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
 import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
-import RelatedPost from 'blocks/reader-related-card-v2';
+import RelatedPost from 'blocks/reader-related-card';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
 
 function RelatedPosts( {
@@ -33,7 +33,7 @@ function RelatedPosts( {
 		// Placeholders
 		listItems = times( 2, i => {
 			return (
-				<li className="reader-related-card-v2__list-item" key={ 'related-post-placeholder-' + i }>
+				<li className="reader-related-card__list-item" key={ 'related-post-placeholder-' + i }>
 					<RelatedPost post={ null } />
 				</li>
 			);
@@ -43,7 +43,7 @@ function RelatedPosts( {
 	} else {
 		listItems = posts.map( post_id => {
 			return (
-				<li key={ post_id } className="reader-related-card-v2__list-item">
+				<li key={ post_id } className="reader-related-card__list-item">
 					<RelatedPost post={ post_id } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
 				</li>
 			);
@@ -51,10 +51,10 @@ function RelatedPosts( {
 	}
 
 	return (
-		<div className={ classnames( 'reader-related-card-v2__blocks', className ) }>
+		<div className={ classnames( 'reader-related-card__blocks', className ) }>
 			{ ! posts && <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } /> }
-			<h1 className="reader-related-card-v2__heading">{ title }</h1>
-			<ul className="reader-related-card-v2__list">{ listItems }</ul>
+			<h1 className="reader-related-card__heading">{ title }</h1>
+			<ul className="reader-related-card__list">{ listItems }</ul>
 		</div>
 	);
 }
