@@ -138,7 +138,10 @@ export class JetpackSignup extends Component {
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />
 					<SignupForm
-						redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
+						redirectToAfterLoginUrl={ addQueryArgs(
+							{ auth_approved: true },
+							window.location.href
+						) }
 						disabled={ isAuthorizing }
 						submitting={ isAuthorizing }
 						submitForm={ this.handleSubmitSignup }
