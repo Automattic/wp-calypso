@@ -21,7 +21,7 @@ import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
 	handleSummaryStepClick = ( stepName, stepType ) => () => {
-		this.props.recordJpoEvent( 'calypso_jpo_summary_step_clicked', {
+		this.props.recordJpoEvent( 'calypso_jpo_summary_step_link_clicked', {
 			step: stepName,
 			type: stepType,
 		} );
