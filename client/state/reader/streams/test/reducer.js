@@ -70,7 +70,7 @@ describe( 'streams combined reducer', () => {
 	const loadAction = { type: DESERIALIZE };
 
 	const validState = deepfreeze( {
-		items: { following: [], 'feed:123': [ {}, {} ] },
+		items: { following: [ {} ], 'feed:123': [ {}, {} ] },
 		selected: { following: 0, 'feed:123': 42, elmo: 'is red' },
 	} );
 
