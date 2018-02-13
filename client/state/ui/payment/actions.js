@@ -3,7 +3,6 @@
 /**
  * Internal dependencies
  */
-
 import { PAYMENT_COUNTRY_CODE_SET } from 'state/action-types';
 
 /**

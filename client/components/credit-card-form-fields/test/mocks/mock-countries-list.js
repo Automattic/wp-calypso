@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import emitter from 'lib/mixins/emitter';
 
 const countriesList = {

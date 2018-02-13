@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,7 +11,6 @@ import { filter, isFunction, noop, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import { getPaymentCountryCode } from 'state/selectors';
 import { setPaymentCountryCode } from 'state/ui/payment/actions';
