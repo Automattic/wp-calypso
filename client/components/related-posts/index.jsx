@@ -33,9 +33,11 @@ function RelatedPosts( {
 		// Placeholders
 		listItems = times( 2, i => {
 			return (
+				/* eslint-disable */
 				<li className="reader-related-card__list-item" key={ 'related-post-placeholder-' + i }>
 					<RelatedPost post={ null } />
 				</li>
+				/* eslint-enable */
 			);
 		} );
 	} else if ( posts.length === 0 ) {
@@ -43,19 +45,23 @@ function RelatedPosts( {
 	} else {
 		listItems = posts.map( post_id => {
 			return (
+				/* eslint-disable */
 				<li key={ post_id } className="reader-related-card__list-item">
 					<RelatedPost post={ post_id } onPostClick={ onPostClick } onSiteClick={ onSiteClick } />
 				</li>
+				/* eslint-enable */
 			);
 		} );
 	}
 
 	return (
+		/* eslint-disable */
 		<div className={ classnames( 'reader-related-card__blocks', className ) }>
 			{ ! posts && <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } /> }
 			<h1 className="reader-related-card__heading">{ title }</h1>
 			<ul className="reader-related-card__list">{ listItems }</ul>
 		</div>
+		/* eslint-enable */
 	);
 }
 

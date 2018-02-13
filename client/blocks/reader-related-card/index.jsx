@@ -80,6 +80,7 @@ function AuthorAndSiteFollowPlaceholder() {
 
 function RelatedPostCardPlaceholder() {
 	return (
+		/* eslint-disable */
 		<Card className="reader-related-card is-placeholder">
 			<AuthorAndSiteFollowPlaceholder />
 			<a className="reader-related-card__post reader-related-card__link-block">
@@ -90,6 +91,7 @@ function RelatedPostCardPlaceholder() {
 				</div>
 			</a>
 		</Card>
+		/* eslint-enable */
 	);
 }
 

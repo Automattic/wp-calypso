@@ -289,7 +289,9 @@ export class FullPostView extends React.Component {
 			'More on {{wpLink}}WordPress.com{{/wpLink}}',
 			{
 				components: {
+					/* eslint-disable */
 					wpLink: <a href="/" className="reader-related-card__link" />,
+					/* eslint-enable */
 				},
 			}
 		);
