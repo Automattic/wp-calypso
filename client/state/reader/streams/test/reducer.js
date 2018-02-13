@@ -93,8 +93,8 @@ describe( 'streams combined reducer', () => {
 	} );
 
 	it( 'should never serialize the selected data', () => {
-		expect( streamsReducer( validState, saveAction ).selected ).toEqual( {} );
-		expect( streamsReducer( invalidState, saveAction ).selected ).toEqual( {} );
+		expect( streamsReducer( validState, saveAction ).selected ).toBeUndefined();
+		expect( streamsReducer( invalidState, saveAction ).selected ).toBeUndefined();
 	} );
 
 	it( 'should never deserialize the selected data', () => {
