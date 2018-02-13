@@ -415,7 +415,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( ! config.isEnabled( 'manage/people' ) && site.options ) {
+		if ( site.options ) {
 			usersLink = site.options.admin_url + 'users.php';
 		}
 
