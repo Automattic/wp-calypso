@@ -9,10 +9,10 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
-import * as schema from './schema';
+import { combineReducers, withSchemaValidation } from 'state/utils';
+import { items as itemsSchema } from './schema';
 import taxonomies from './taxonomies/reducer';
-import { SERIALIZE, DESERIALIZE, POST_TYPES_RECEIVE } from 'state/action-types';
+import { POST_TYPES_RECEIVE } from 'state/action-types';
 
 /**
  * Returns the updated items state after an action has been dispatched. The
@@ -23,25 +23,17 @@ import { SERIALIZE, DESERIALIZE, POST_TYPES_RECEIVE } from 'state/action-types';
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case POST_TYPES_RECEIVE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: keyBy( action.types, 'name' ),
 			} );
 
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, schema.items ) ) {
-				return state;
-			}
-			return {};
-		case SERIALIZE:
+		default:
 			return state;
 	}
-
-	return state;
-}
-items.hasCustomPersistence = true;
+} );
 
 export default combineReducers( {
 	items,
