@@ -11,9 +11,19 @@ import { difference, identity, set } from 'lodash';
  */
 import { ValidatedRegistrantExtraInfoUkForm } from '../uk-form';
 
+jest.mock( 'state/selectors/get-validation-schemas', () => () => ( {
+	uk: require( './uk-schema.json' ),
+} ) );
+
 const mockProps = {
 	translate: identity,
 	updateContactDetailsCache: identity,
+	tld: 'uk',
+	store: {
+		getState: () => {},
+		subscribe: () => {},
+		dispatch: () => {},
+	},
 };
 
 describe( 'uk-form validation', () => {
@@ -69,7 +79,7 @@ describe( 'uk-form validation', () => {
 						{ ...mockProps }
 						contactDetails={ set( testContactDetails, 'extra.registrantType', registrantType ) }
 					/>
-				);
+				).dive();
 
 				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {
 					extra: { registrationNumber: [ 'dotukRegistrantTypeRequiresRegistrationNumber' ] },
@@ -91,7 +101,7 @@ describe( 'uk-form validation', () => {
 						{ ...mockProps }
 						contactDetails={ set( testContactDetails, 'extra.registrantType', registrantType ) }
 					/>
-				);
+				).dive();
 
 				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {} );
 			} );
@@ -117,7 +127,7 @@ describe( 'uk-form validation', () => {
 							registrationNumber
 						) }
 					/>
-				);
+				).dive();
 
 				expect( wrapper.props() ).toHaveProperty( 'validationErrors.extra.registrationNumber' );
 			} );
@@ -140,7 +150,7 @@ describe( 'uk-form validation', () => {
 						{ ...mockProps }
 						contactDetails={ set( testContactDetails, 'extra.registrantType', registrantType ) }
 					/>
-				);
+				).dive();
 
 				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {
 					extra: { tradingName: [ 'dotukRegistrantTypeRequiresTradingName' ] },
@@ -163,7 +173,7 @@ describe( 'uk-form validation', () => {
 						{ ...mockProps }
 						contactDetails={ testContactDetails }
 					/>
-				);
+				).dive();
 
 				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {} );
 			} );

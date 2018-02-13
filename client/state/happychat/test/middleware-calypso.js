@@ -127,7 +127,7 @@ describe( 'middleware', () => {
 			test( 'should dispatch a sendEvent action if client connected and chat assigned', () => {
 				actionMiddleware( action );
 				expect( store.dispatch.mock.calls[ 0 ][ 0 ].payload.text ).toBe(
-					'Looking at https://wordpress.com/me?support_user=Link'
+					'Looking at https://wordpress.com/me'
 				);
 			} );
 

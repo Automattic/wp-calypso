@@ -182,7 +182,7 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state, siteId ),
 			siteUrl: getSiteUrl( state, siteId ),
 			rewindState: rewindState.state,
-			failureReason: rewindState.failureReason || '',
+			failureReason: rewindState.reason || '',
 		};
 	}
 )( localize( ActivityLogSwitch ) );

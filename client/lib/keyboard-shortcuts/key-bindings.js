@@ -114,7 +114,7 @@ const KEY_BINDINGS = {
 			},
 		},
 		{
-			eventName: 'open-support-user',
+			eventName: 'exit-support-user',
 			keys: [ 's', 'u' ],
 			type: 'sequence',
 		},

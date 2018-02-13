@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -30,17 +30,25 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	};
 
 	render() {
-		const { getForwardUrl, settings, translate } = this.props;
+		const { basePath, getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
-		const subHeaderText = translate( 'Would you like to get started with a Contact Us page?' );
+		const subHeaderText = (
+			<Fragment>
+				{ translate( 'Would you like to create a Contact Us page with a contact form on it?' ) }
+				<br />
+				{ translate(
+					'This form will allow visitors to contact you with their name, email, website, and a message.'
+				) }
+			</Fragment>
+		);
 		const hasContactForm = !! get( settings, 'addContactForm' );
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Start' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.CONTACT_FORM + '/:site' }
-					title="Contact Form ‹ Jetpack Onboarding"
+					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
+					title="Contact Form ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />

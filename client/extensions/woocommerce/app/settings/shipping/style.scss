@@ -21,6 +21,7 @@
 		padding: 0;
 		box-shadow: none;
 		flex-shrink: 1;
+		padding-right: 24px;
 	}
 
 	@include breakpoint( '>960px' ) {

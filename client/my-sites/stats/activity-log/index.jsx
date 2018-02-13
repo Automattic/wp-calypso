@@ -34,6 +34,7 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
+import UnavailabilityNotice from './unavailability-notice';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -57,6 +58,7 @@ import {
 	getRewindState,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
+	getOldestItemTs,
 } from 'state/selectors';
 
 const flushEmptyDays = days => [
@@ -409,25 +411,27 @@ class ActivityLog extends Component {
 	}
 
 	renderMonthNavigation( position ) {
-		const { logs, slug } = this.props;
-		const startOfMonth = this.getStartMoment().startOf( 'month' );
-		const query = {
-			period: 'month',
-			date: startOfMonth.format( 'YYYY-MM-DD' ),
-		};
+		const { logs } = this.props;
 
 		if ( position === 'bottom' && ( ! isNull( logs ) && isEmpty( logs ) ) ) {
 			return null;
 		}
 
+		const { slug, changePeriod, oldestItemTs } = this.props;
+		const startOfMonth = this.getStartMoment().startOf( 'month' );
+		const monthStartTs = startOfMonth.clone().valueOf();
+		const query = {
+			period: 'month',
+			date: startOfMonth.format( 'YYYY-MM-DD' ),
+		};
+
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }
-				onPeriodChange={
-					position === 'bottom' ? this.handlePeriodChangeBottom : this.props.changePeriod
-				}
+				onPeriodChange={ position === 'bottom' ? this.handlePeriodChangeBottom : changePeriod }
 				period="month"
 				url={ `/stats/activity/${ slug }` }
+				hidePreviousArrow={ monthStartTs <= oldestItemTs }
 			>
 				<DatePicker isActivity={ true } period="month" date={ startOfMonth } query={ query } />
 			</StatsPeriodNavigation>
@@ -481,10 +485,16 @@ class ActivityLog extends Component {
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
+				{ siteId &&
+					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						icon="history"
-						href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }` }
+						href={
+							rewindState.canAutoconfigure
+								? `/settings/security/${ slug }`
+								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
+						}
 						title={ translate( 'Add site credentials' ) }
 						description={ translate(
 							'Backups and security scans require access to your site to work properly.'
@@ -635,6 +645,7 @@ export default connect(
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
+			oldestItemTs: getOldestItemTs( state, siteId ),
 		};
 	},
 	{

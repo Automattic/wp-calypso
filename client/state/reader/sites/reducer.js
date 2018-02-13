@@ -46,7 +46,7 @@ function handleDeserialize( state ) {
 
 function handleRequestFailure( state, action ) {
 	// 410 means site moved - site used to be on wpcom but is no longer
-	const handledStatusCodes = [ 403, 410 ];
+	const handledStatusCodes = [ 403, 404, 410 ];
 
 	if ( action.error && ! includes( handledStatusCodes, action.error.statusCode ) ) {
 		return state;

@@ -30,7 +30,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	};
 
 	render() {
-		const { getForwardUrl, settings, translate } = this.props;
+		const { basePath, getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'What kind of site do you need? Choose an option below:' );
 		const forwardUrl = getForwardUrl();
@@ -38,10 +38,10 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Site Type ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Site Type ‹ Jetpack Start' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.SITE_TYPE + '/:site' }
-					title="Site Type ‹ Jetpack Onboarding"
+					path={ [ basePath, STEPS.SITE_TYPE, ':site' ].join( '/' ) }
+					title="Site Type ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />

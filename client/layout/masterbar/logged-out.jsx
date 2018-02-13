@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Masterbar from './masterbar';
 import { getLocaleSlug, localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +39,7 @@ const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) =>
 		</Item>
 		<Item className="masterbar__item-title">{ title }</Item>
 		<div className="masterbar__login-links">
-			{ 'signup' !== sectionName ? (
+			{ ! includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ? (
 				<Item url={ config( 'signup_url' ) }>
 					{ translate( 'Sign Up', {
 						context: 'Toolbar',
@@ -47,7 +48,7 @@ const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) =>
 				</Item>
 			) : null }
 
-			{ 'login' !== sectionName ? (
+			{ ! includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ? (
 				<Item url={ getLoginUrl( redirectUri ) }>
 					{ translate( 'Log In', {
 						context: 'Toolbar',
