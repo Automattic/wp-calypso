@@ -33,6 +33,7 @@ class TransferDomainPrecheck extends React.Component {
 		losingRegistrar: PropTypes.string,
 		losingRegistrarIanaId: PropTypes.string,
 		privacy: PropTypes.bool,
+		refreshStatus: PropTypes.func,
 		selectedSiteSlug: PropTypes.string,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
@@ -41,6 +42,7 @@ class TransferDomainPrecheck extends React.Component {
 
 	state = {
 		currentStep: 1,
+		unlockCheckClicked: false,
 	};
 
 	componentWillMount() {
@@ -77,6 +79,14 @@ class TransferDomainPrecheck extends React.Component {
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
+	statusRefreshed = () => {
+		this.setState( { unlockCheckClicked: true } );
+	};
+
+	refreshStatus = () => {
+		this.props.refreshStatus( this.statusRefreshed );
+	};
+
 	getSection( heading, message, buttonText, step, stepStatus ) {
 		const { currentStep } = this.state;
 		const { loading, unlocked } = this.props;
@@ -89,7 +99,7 @@ class TransferDomainPrecheck extends React.Component {
 
 		const sectionIcon = isStepFinished ? <Gridicon icon="checkmark-circle" size={ 36 } /> : step;
 		const onButtonClick =
-			true === unlocked || null === unlocked ? this.showNextStep : this.props.refreshStatus;
+			true === unlocked || null === unlocked ? this.showNextStep : this.refreshStatus;
 
 		return (
 			<Card compact>
@@ -119,7 +129,7 @@ class TransferDomainPrecheck extends React.Component {
 
 	getStatusMessage() {
 		const { loading, translate, unlocked } = this.props;
-		const { currentStep } = this.state;
+		const { currentStep, unlockCheckClicked } = this.state;
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
@@ -172,12 +182,13 @@ class TransferDomainPrecheck extends React.Component {
 				}
 			);
 		}
-
 		if ( loading && ! isStepFinished ) {
 			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 
-		const buttonText = translate( "I've unlocked my domain" );
+		const buttonText = unlockCheckClicked
+			? translate( 'Check again' )
+			: translate( "I've unlocked my domain" );
 
 		let lockStatusClasses = 'transfer-domain-step__lock-status transfer-domain-step__unavailable';
 		if ( true === unlocked ) {
