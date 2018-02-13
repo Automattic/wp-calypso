@@ -42,7 +42,6 @@ class TransferDomainPrecheck extends React.Component {
 
 	state = {
 		currentStep: 1,
-		initialRefreshComplete: false,
 		unlockCheckClicked: false,
 	};
 
@@ -58,10 +57,6 @@ class TransferDomainPrecheck extends React.Component {
 
 		if ( nextProps.unlocked && 1 === this.state.currentStep ) {
 			this.showNextStep();
-		}
-
-		if ( ! this.props.loading && ! this.state.initialRefreshComplete ) {
-			this.setState( { initialRefreshComplete: true } );
 		}
 	}
 
@@ -134,7 +129,7 @@ class TransferDomainPrecheck extends React.Component {
 
 	getStatusMessage() {
 		const { loading, translate, unlocked } = this.props;
-		const { currentStep, initialRefreshComplete, unlockCheckClicked } = this.state;
+		const { currentStep, unlockCheckClicked } = this.state;
 		const step = 1;
 		const isStepFinished = currentStep > step;
 
@@ -144,7 +139,7 @@ class TransferDomainPrecheck extends React.Component {
 		} else if ( false === unlocked ) {
 			heading = translate( 'Unlock the domain.' );
 		}
-		if ( loading && ! isStepFinished && ! initialRefreshComplete ) {
+		if ( loading && ! isStepFinished ) {
 			heading = translate( 'Checking domain lock status.' );
 		}
 
@@ -187,7 +182,7 @@ class TransferDomainPrecheck extends React.Component {
 				}
 			);
 		}
-		if ( loading && ! isStepFinished && ! initialRefreshComplete ) {
+		if ( loading && ! isStepFinished ) {
 			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 
