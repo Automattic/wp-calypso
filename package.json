@@ -163,8 +163,8 @@
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
-    "node": "8.9.3",
-    "npm": "5.5.1"
+    "node": "8.9.4",
+    "npm": "5.6.0"
   },
   "scripts": {
     "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production npm run -s env -- node --max_old_space_size=8192 ./node_modules/.bin/webpack --config webpack.config.js --profile --json > stats.json",
