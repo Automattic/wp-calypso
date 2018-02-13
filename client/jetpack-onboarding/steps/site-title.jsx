@@ -54,6 +54,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 		page( this.props.getForwardUrl() );
 	};
 
+	handleTosClick = () => {
+		this.props.recordJpoEvent( 'calypso_jpo_tos_clicked' );
+	};
+
 	render() {
 		const { basePath, isRequestingSettings, translate } = this.props;
 		const headerText = translate( "Let's get started." );
@@ -92,7 +96,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					</form>
 				</Card>
 
-				<JetpackOnboardingDisclaimer />
+				<JetpackOnboardingDisclaimer handleTosClick={ this.handleTosClick } />
 			</div>
 		);
 	}
