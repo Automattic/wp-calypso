@@ -17,7 +17,7 @@ import CountrySelect from 'my-sites/domains/components/form/country-select';
 import { getPaymentCountryCode } from 'state/selectors';
 import { setPaymentCountryCode } from 'state/ui/payment/actions';
 
-class PaymentCountrySelect extends Component {
+export class PaymentCountrySelect extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
 		countriesList: PropTypes.object.isRequired,
