@@ -174,21 +174,24 @@ export function requestingResend( state = {}, action ) {
 export function deleting( state = {}, action ) {
 	switch ( action.type ) {
 		case INVITES_DELETE_REQUEST:
-			const inviteDeletionRequests = zipObject(
-				action.inviteIds,
-				map( action.inviteIds, () => 'requesting' )
+			const inviteDeletionRequests = Object.assign(
+				{},
+				state[ action.siteId ],
+				zipObject( action.inviteIds, map( action.inviteIds, () => 'requesting' ) )
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
 		case INVITES_DELETE_REQUEST_FAILURE:
-			const inviteDeletionFailures = zipObject(
-				action.inviteIds,
-				map( action.inviteIds, () => 'failure' )
+			const inviteDeletionFailures = Object.assign(
+				{},
+				state[ action.siteId ],
+				zipObject( action.inviteIds, map( action.inviteIds, () => 'failure' ) )
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
 		case INVITES_DELETE_REQUEST_SUCCESS:
-			const inviteDeletionSuccesses = zipObject(
-				action.inviteIds,
-				map( action.inviteIds, () => 'success' )
+			const inviteDeletionSuccesses = Object.assign(
+				{},
+				state[ action.siteId ],
+				zipObject( action.inviteIds, map( action.inviteIds, () => 'success' ) )
 			);
 			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
 	}
