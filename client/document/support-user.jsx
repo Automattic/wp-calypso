@@ -19,21 +19,17 @@ function supportUserFn( { user, token, authorized } ) {
 	}
 
 	if ( authorized ) {
-		window.sessionStorage.setItem( 'boot_support_user', JSON.stringify( { user, token } ) );
+		window.sessionStorage.setItem( 'boot_support_user', window.JSON.stringify( { user, token } ) );
 	}
 
 	window.location.replace( '/' );
 }
 
-function SupportUser( { supportUser, supportToken, authorized = false, urls, jsFile, config } ) {
+function SupportUser( { supportUser, supportToken, authorized = false } ) {
 	return (
 		<html lang="en">
 			<body>
 				{ /* eslint-disable react/no-danger */ }
-				{ config && <script type="text/javascript">{ config }</script> }
-				<script src={ urls.manifest } />
-				<script src={ urls.vendor } />
-				<script src={ urls[ jsFile ] } />
 				<script
 					dangerouslySetInnerHTML={ {
 						__html: `

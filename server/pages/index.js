@@ -514,14 +514,13 @@ module.exports = function() {
 	} );
 
 	app.get( '/support-user', function( req, res ) {
-		const ctx = Object.assign( getDefaultContext( req ), { config: config.ssrConfig } );
 		// Do not iframe
 		res.set( {
 			'X-Frame-Options': 'DENY',
 		} );
 
 		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
-			return res.send( renderJsx( 'support-user', ctx ) );
+			return res.send( renderJsx( 'support-user' ) );
 		}
 
 		// Maybe not logged in, note that you need docker to test this properly
@@ -537,26 +536,23 @@ module.exports = function() {
 					domain: '.wordpress.com',
 				} );
 
-				return res.send( renderJsx( 'support-user', ctx ) );
+				return res.send( renderJsx( 'support-user' ) );
 			}
 
 			const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
 			// A8C check
 			if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
-				return res.send( renderJsx( 'support-user', ctx ) );
+				return res.send( renderJsx( 'support-user' ) );
 			}
 
 			// Passed all checks, prepare support user session
 			return res.send(
-				renderJsx(
-					'support-user',
-					Object.assign( ctx, {
-						authorized: true,
-						supportUser: req.query.support_user,
-						supportToken: req.query._support_token,
-					} )
-				)
+				renderJsx( 'support-user', {
+					authorized: true,
+					supportUser: req.query.support_user,
+					supportToken: req.query._support_token,
+				} )
 			);
 		} );
 	} );
