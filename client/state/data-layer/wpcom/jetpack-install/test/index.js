@@ -6,7 +6,7 @@
 import { handleError, handleResponse, installJetpackPlugin } from '../';
 import {
 	jetpackRemoteInstallComplete,
-	updateJetpackRemoteInstallError,
+	jetpackRemoteInstallUpdateError,
 } from 'state/jetpack-remote-install/actions';
 
 const url = 'https://yourgroovydomain.com';
@@ -32,15 +32,15 @@ describe( 'handleResponse', () => {
 		expect( result ).toEqual( jetpackRemoteInstallComplete( url ) );
 	} );
 
-	test( 'should return updateRemoteInstallError on failure', () => {
+	test( 'should return JetpackRemoteInstallUpdateError on failure', () => {
 		const result = handleResponse( { url }, FAILURE_RESPONSE );
-		expect( result ).toEqual( updateJetpackRemoteInstallError( url, 'COULD_NOT_LOGIN' ) );
+		expect( result ).toEqual( jetpackRemoteInstallUpdateError( url, 'COULD_NOT_LOGIN' ) );
 	} );
 } );
 
 describe( 'handleError', () => {
-	test( 'should return updateJetpackRemoteInstallError', () => {
+	test( 'should return jetpackRemoteInstallUpdateError', () => {
 		const result = handleError( { url } );
-		expect( result ).toEqual( updateJetpackRemoteInstallError( url, 'API_ERROR' ) );
+		expect( result ).toEqual( jetpackRemoteInstallUpdateError( url, 'API_ERROR' ) );
 	} );
 } );
