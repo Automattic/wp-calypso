@@ -14,6 +14,7 @@ import { get } from 'lodash';
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
 import Button from 'components/button';
+import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 
 class RewindWereBacking extends Component {
 	static propTypes = {
@@ -25,21 +26,27 @@ class RewindWereBacking extends Component {
 
 		// Connected props
 		siteSlug: PropTypes.string.isRequired,
+		dependencyStore: PropTypes.object,
 	};
 
 	stepContent = () => {
-		const { translate, siteSlug } = this.props;
+		const { translate, siteSlug, dependencyStore } = this.props;
 
 		return (
 			<Card className="rewind-were-backing__card rewind-switch__card rewind-switch__content">
 				<h3 className="rewind-were-backing__title rewind-switch__heading">
-					{ translate( "We're backing up your site!" ) }
+					{ translate( 'Your site is set up and ready!' ) }
 				</h3>
 				<img src="/calypso/images/illustrations/thankYou.svg" alt="" />
 				<p className="rewind-were-backing__description rewind-switch__description">
+					{ get( dependencyStore, 'rewindconfig', false ) &&
+						translate(
+							'Your site is backing up because your site is set up with Jetpack Premium plan at ' +
+								'no additional cost to you.'
+						) }
 					{ translate(
-						'Welcome to your Jetpack Premium plan! ' +
-							"That sound you're hearing? It's your website doing backflips with excitement!"
+						'Finish setting up Jetpack and your site is ready to be ' +
+							'transformed into the site of your dreams.'
 					) }
 				</p>
 				<Button primary href={ `/stats/activity/${ siteSlug }` }>
@@ -68,6 +75,7 @@ class RewindWereBacking extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		siteSlug: get( ownProps, [ 'initialContext', 'query', 'siteSlug' ], 0 ),
+		dependencyStore: getSignupDependencyStore( state ),
 	} ),
 	null
 )( localize( RewindWereBacking ) );
