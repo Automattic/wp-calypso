@@ -304,6 +304,10 @@ class DomainsStep extends React.Component {
 		const backUrl = this.props.stepSectionName
 			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
 			: undefined;
+		let fallbackSubHeaderText = translate(
+			"Enter your site's name, or some key words that describe it - " +
+				"we'll use this to create your new site's address."
+		);
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -311,6 +315,9 @@ class DomainsStep extends React.Component {
 
 		if ( 'transfer' === this.props.stepSectionName ) {
 			content = this.transferForm();
+			fallbackSubHeaderText = translate(
+				'Use a domain you already own with your new WordPress.com site.'
+			);
 		}
 
 		if ( ! this.props.stepSectionName ) {
@@ -337,10 +344,7 @@ class DomainsStep extends React.Component {
 				signupProgress={ this.props.signupProgress }
 				subHeaderText={ translate( "First up, let's find a domain." ) }
 				fallbackHeaderText={ translate( "Let's give your site an address." ) }
-				fallbackSubHeaderText={ translate(
-					"Enter your site's name, or some key words that describe it - " +
-						"we'll use this to create your new site's address."
-				) }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={ content }
 			/>
 		);
