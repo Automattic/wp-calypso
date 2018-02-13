@@ -36,8 +36,8 @@ function SupportUser( { supportUser, supportToken, authorized = false } ) {
 						${ supportUserFn.toString() }
 
 						supportUserFn( {
-							user: ${ supportUser },
-							token: ${ supportToken },
+							user: ${ supportUser && `"${ encodeURIComponent( supportUser ) }"` },
+							token: ${ supportToken && `"${ encodeURIComponent( supportToken ) }"` },
 							authorized: ${ authorized }
 						} );
 						`,
