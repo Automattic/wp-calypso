@@ -735,5 +735,57 @@ describe( 'reducer', () => {
 				12345: { '123456asdf789': 'requesting', '789lkjh123456': 'requesting' },
 			} );
 		} );
+
+		test( 'should accumulate invites', () => {
+			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
+			const state1 = deleting( original, {
+				type: INVITES_DELETE_REQUEST,
+				siteId: 12345,
+				inviteIds: [ '123_requesting' ],
+			} );
+			expect( state1 ).to.eql( {
+				12345: { '123456asdf789': 'success', '123_requesting': 'requesting' },
+			} );
+			const state2 = deleting( state1, {
+				type: INVITES_DELETE_REQUEST_SUCCESS,
+				siteId: 12345,
+				inviteIds: [ '456_success', '457_success' ],
+			} );
+			expect( state2 ).to.eql( {
+				12345: {
+					'123456asdf789': 'success',
+					'123_requesting': 'requesting',
+					'456_success': 'success',
+					'457_success': 'success',
+				},
+			} );
+			const state3 = deleting( state2, {
+				type: INVITES_DELETE_REQUEST_FAILURE,
+				siteId: 12345,
+				inviteIds: [ '123_requesting', '789_failure' ],
+			} );
+			expect( state3 ).to.eql( {
+				12345: {
+					'123456asdf789': 'success',
+					'123_requesting': 'failure',
+					'456_success': 'success',
+					'457_success': 'success',
+					'789_failure': 'failure',
+				},
+			} );
+		} );
+
+		test( 'should accumulate sites', () => {
+			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
+			const state = deleting( original, {
+				type: INVITES_DELETE_REQUEST,
+				siteId: 67890,
+				inviteIds: [ '789lkjh123456' ],
+			} );
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'success' },
+				67890: { '789lkjh123456': 'requesting' },
+			} );
+		} );
 	} );
 } );
