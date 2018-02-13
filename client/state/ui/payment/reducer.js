@@ -15,7 +15,7 @@ import { paymentCountryCodeSchema } from './schema';
  * @param  {Object} action - The action object containing the new country code.
  * @return {Object} - The updated global state.
  */
-const countryCode = createReducer(
+export const countryCode = createReducer(
 	null,
 	{
 		[ PAYMENT_COUNTRY_CODE_SET ]: ( state, action ) => action.countryCode,
