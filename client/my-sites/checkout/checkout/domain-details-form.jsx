@@ -89,7 +89,6 @@ export class DomainDetailsForm extends PureComponent {
 
 		this.state = {
 			form: null,
-			hasAutoFilledContactDetails: !! this.props.contactDetails,
 			submissionCount: 0,
 			phoneCountryCode: 'US',
 			steps,
@@ -604,12 +603,10 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
-			message =
-				this.state.hasAutoFilledContactDetails &&
-				this.props.translate(
-					'For your convenience, we have pre-filled your WordPress.com contact information. Please ' +
-						"review this to be sure it's the correct information you want to use for this domain."
-				);
+			message = this.props.translate(
+				'For your convenience, we have pre-filled your WordPress.com contact information. Please ' +
+					"review this to be sure it's the correct information you want to use for this domain."
+			);
 		}
 
 		const renderPrivacy =
