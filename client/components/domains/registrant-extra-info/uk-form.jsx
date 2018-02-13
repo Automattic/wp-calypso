@@ -210,7 +210,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 			this.isTradingNameRequired( registrantType ) && 'tradingName',
 			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
 		] );
-		const relevantErrors = pick( ( validationErrors || {} ).extra.uk, relevantExtraFields );
+		const relevantErrors = pick( get( validationErrors, 'extra.uk', {} ), relevantExtraFields );
 		const isValid = isEmpty( relevantErrors );
 
 		return (
