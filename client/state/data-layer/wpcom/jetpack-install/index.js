@@ -6,8 +6,8 @@
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
-	updateJetpackRemoteInstallError,
 	jetpackRemoteInstallComplete,
+	updateJetpackRemoteInstallError,
 } from 'state/jetpack-remote-install/actions';
 import { JETPACK_REMOTE_INSTALL } from 'state/action-types';
 
