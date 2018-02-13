@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { PureComponent } from 'react';
 import Masterbar from './masterbar';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
@@ -33,61 +33,63 @@ function getLoginUrl( redirectUri ) {
 	return login( { ...params, isNative: config.isEnabled( 'login/native-login-links' ) } );
 }
 
-function getSignupUrl( currentRoute, query ) {
-	if ( '/log-in/jetpack' === currentRoute && query.redirect_to ) {
-		return query.redirect_to;
+function getSignupUrl( currentRoute, currentQuery ) {
+	if ( '/log-in/jetpack' === currentRoute && currentQuery.redirect_to ) {
+		return currentQuery.redirect_to;
 	}
 	return config( 'signup_url' );
 }
 
-const MasterbarLoggedOut = ( {
-	currentRoute,
-	query,
-	title,
-	sectionName,
-	translate,
-	redirectUri,
-} ) => (
-	<Masterbar>
-		<Item className="masterbar__item-logo">
-			<WordPressLogo className="masterbar__wpcom-logo" />
-			<WordPressWordmark className="masterbar__wpcom-wordmark" />
-		</Item>
-		<Item className="masterbar__item-title">{ title }</Item>
-		<div className="masterbar__login-links">
-			{ ! includes( [ 'signup', 'jetpack-onboarding', 'jetpack-connect' ], sectionName ) ? (
-				<Item url={ getSignupUrl( currentRoute, query ) }>
-					{ translate( 'Sign Up', {
-						context: 'Toolbar',
-						comment: 'Should be shorter than ~12 chars',
-					} ) }
+class MasterbarLoggedOut extends PureComponent {
+	static propTypes = {
+		redirectUri: PropTypes.string,
+		sectionName: PropTypes.string,
+		title: PropTypes.string,
+
+		// Connected props
+		currentQuery: PropTypes.object,
+		currentRoute: PropTypes.string,
+	};
+
+	static defaultProps = {
+		sectionName: '',
+		title: '',
+	};
+
+	render() {
+		const { currentQuery, currentRoute, title, sectionName, translate, redirectUri } = this.props;
+		return (
+			<Masterbar>
+				<Item className="masterbar__item-logo">
+					<WordPressLogo className="masterbar__wpcom-logo" />
+					<WordPressWordmark className="masterbar__wpcom-wordmark" />
 				</Item>
-			) : null }
+				<Item className="masterbar__item-title">{ title }</Item>
+				<div className="masterbar__login-links">
+					{ ! includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ? (
+						<Item url={ getSignupUrl( currentRoute, currentQuery ) }>
+							{ translate( 'Sign Up', {
+								context: 'Toolbar',
+								comment: 'Should be shorter than ~12 chars',
+							} ) }
+						</Item>
+					) : null }
 
-			{ ! includes( [ 'login', 'jetpack-onboarding', 'jetpack-connect' ], sectionName ) ? (
-				<Item url={ getLoginUrl( redirectUri ) }>
-					{ translate( 'Log In', {
-						context: 'Toolbar',
-						comment: 'Should be shorter than ~12 chars',
-					} ) }
-				</Item>
-			) : null }
-		</div>
-	</Masterbar>
-);
-
-MasterbarLoggedOut.propTypes = {
-	title: PropTypes.string,
-	sectionName: PropTypes.string,
-	redirectUri: PropTypes.string,
-};
-
-MasterbarLoggedOut.defaultProps = {
-	title: '',
-	sectionName: '',
-};
+					{ ! includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ? (
+						<Item url={ getLoginUrl( redirectUri ) }>
+							{ translate( 'Log In', {
+								context: 'Toolbar',
+								comment: 'Should be shorter than ~12 chars',
+							} ) }
+						</Item>
+					) : null }
+				</div>
+			</Masterbar>
+		);
+	}
+}
 
 export default connect( state => ( {
+	currentQuery: getCurrentQueryArguments( state ),
 	currentRoute: getCurrentRoute( state ),
-	query: getCurrentQueryArguments( state ),
 } ) )( localize( MasterbarLoggedOut ) );
