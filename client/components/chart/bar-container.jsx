@@ -12,12 +12,6 @@ import React from 'react';
  */
 import Bar from './bar';
 import XAxis from './x-axis';
-import userModule from 'lib/user';
-
-/**
- * Module variables
- */
-const user = userModule();
 
 export default class extends React.Component {
 	static displayName = 'ModuleChartBarContainer';
@@ -31,34 +25,22 @@ export default class extends React.Component {
 	};
 
 	buildBars = max => {
-		const numberBars = this.props.data.length,
-			width = this.props.chartWidth,
-			barWidth = width / numberBars;
-		let tooltipPosition = user.isRTL() ? 'bottom left' : 'bottom right';
-
-		const bars = this.props.data.map( function( item, index ) {
-			const barOffset = barWidth * ( index + 1 );
-
-			if ( barOffset + 230 > width && barOffset + barWidth - 230 > 0 ) {
-				tooltipPosition = user.isRTL() ? 'bottom right' : 'bottom left';
-			}
-
+		return this.props.data.map( function( item, index ) {
 			return (
 				<Bar
 					index={ index }
 					key={ index }
 					isTouch={ this.props.isTouch }
-					tooltipPosition={ tooltipPosition }
 					className={ item.className }
 					clickHandler={ this.props.barClick }
 					data={ item }
 					max={ max }
-					count={ numberBars }
+					count={ this.props.data.length }
+					chartWidth={ this.props.chartWidth }
+					setTooltip={ this.props.setTooltip }
 				/>
 			);
 		}, this );
-
-		return bars;
 	};
 
 	render() {

@@ -84,11 +84,11 @@ function createPageDefinition( path, sectionDefinition ) {
 			} )
 			.catch( error => {
 				console.error( error ); // eslint-disable-line
-				if ( ! LoadingError.isRetry() ) {
+				if ( ! LoadingError.isRetry() && process.env.NODE_ENV !== 'development' ) {
 					LoadingError.retry( sectionDefinition.name );
 				} else {
 					dispatch( { type: 'SECTION_SET', isLoading: false } );
-					LoadingError.show( sectionDefinition.name );
+					LoadingError.show( context, sectionDefinition.name );
 				}
 			} );
 	} );

@@ -69,7 +69,7 @@ import ThankYouCard from 'components/thank-you-card';
 import {
 	domainManagementEmail,
 	domainManagementList,
-	domainManagementTransferIn,
+	domainManagementTransferInPrecheck,
 } from 'my-sites/domains/paths';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -313,10 +313,8 @@ class CheckoutThankYou extends React.Component {
 			if ( delayedTransferPurchase ) {
 				planProps = {
 					buttonText: translate( 'Start Domain Transfer' ),
-					description: translate(
-						"Now that we've taken care of the plan, let's get your domain transferred."
-					),
-					buttonUrl: domainManagementTransferIn(
+					description: translate( "Now let's get your domain transferred." ),
+					buttonUrl: domainManagementTransferInPrecheck(
 						this.props.selectedSite.slug,
 						delayedTransferPurchase.meta
 					),

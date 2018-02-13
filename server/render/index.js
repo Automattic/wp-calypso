@@ -174,7 +174,7 @@ export function serverRenderError( err, req, res, next ) {
 		}
 		req.error = err;
 		res.status( err.status || 500 );
-		res.render( '500', req.context );
+		res.send( renderJsx( '500', req.context ) );
 		return;
 	}
 

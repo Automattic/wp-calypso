@@ -292,3 +292,21 @@
 		text-align: left;
 	}
 }
+
+.activity-log-item__help-action {
+	color: $gray;
+	width: 117px;
+	height: 29px;
+	font-weight: normal;
+	font-size: 1.3rem;
+	padding-top: 2px;
+
+	@include breakpoint( '<480px' ) {
+		display: block;
+		margin-top: 1.5rem;
+	}
+}
+
+.activity-log-item__help-action .gridicon {
+	margin-right: 5px;
+}

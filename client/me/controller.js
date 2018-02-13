@@ -18,7 +18,6 @@ import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
 import SidebarComponent from 'me/sidebar';
-import ProfileComponent from 'me/profile';
 import AppsComponent from 'me/get-apps';
 import NextSteps from './next-steps';
 
@@ -39,6 +38,8 @@ export default {
 		context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
+
+		const ProfileComponent = require( 'me/profile' ).default;
 
 		context.primary = React.createElement( ProfileComponent, {
 			userSettings: userSettings,

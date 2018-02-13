@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -74,41 +74,59 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	};
 
 	render() {
-		const { isRequestingSettings, translate } = this.props;
+		const { basePath, isRequestingSettings, translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
-		const subHeaderText = translate(
-			'Enter your business address to have a map added to your website.'
+		const subHeaderText = (
+			<Fragment>
+				{ translate(
+					'Enter your business address to add a widget containing your address to your website.'
+				) }
+				<br />
+				{ translate(
+					'You can add a map based on this information and change where this widget is located later on.'
+				) }
+			</Fragment>
 		);
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Start' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.BUSINESS_ADDRESS + '/:site' }
-					title="Business Address ‹ Jetpack Onboarding"
+					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
+					title="Business Address ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
-						{ map( this.fields, ( fieldLabel, fieldName ) => (
-							<FormFieldset key={ fieldName }>
-								<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
-								<FormTextInput
-									autoFocus={ fieldName === 'name' }
-									disabled={ isRequestingSettings }
-									id={ fieldName }
-									onChange={ this.getChangeHandler( fieldName ) }
-									value={ this.state[ fieldName ] || '' }
-								/>
-								{ fieldName !== 'state' && (
-									<FormInputValidation
-										isError={ this.state[ fieldName ] === '' }
-										text={ translate( 'Required field.' ) }
+						{ map( this.fields, ( fieldLabel, fieldName ) => {
+							const isValidatingField = ! isRequestingSettings && fieldName !== 'state';
+							const isValidField = this.state[ fieldName ] !== '';
+
+							return (
+								<FormFieldset key={ fieldName }>
+									<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
+									<FormTextInput
+										autoFocus={ fieldName === 'name' }
+										disabled={ isRequestingSettings }
+										id={ fieldName }
+										isError={ isValidatingField && ! isValidField }
+										isValid={ isValidatingField && isValidField }
+										onChange={ this.getChangeHandler( fieldName ) }
+										value={ this.state[ fieldName ] || '' }
 									/>
-								) }
-							</FormFieldset>
-						) ) }
+									{ isValidatingField &&
+										! isValidField && (
+											<FormInputValidation
+												isError
+												text={ translate( 'Please enter a %(fieldLabel)s', {
+													args: { fieldLabel },
+												} ) }
+											/>
+										) }
+								</FormFieldset>
+							);
+						} ) }
 						<Button
 							disabled={ isRequestingSettings || this.hasEmptyFields() }
 							primary

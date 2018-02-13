@@ -30,6 +30,10 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
 const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
 _.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
 
+// remove the babel-lodash-es plugin from env.test -- it's needed only for Jest tests.
+// The Webpack-using NODE_ENV=test build doesn't need it, as there is a special loader for that.
+_.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) );
+
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
@@ -120,6 +124,14 @@ const webpackConfig = {
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
 				loader: [ 'happypack/loader' ],
+			},
+			{
+				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+				loader: 'babel-loader',
+				options: {
+					babelrc: false,
+					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
+				},
 			},
 		],
 	},

@@ -17,10 +17,11 @@ import Gridicon from 'gridicons';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getRewindState } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class JetpackCredentials extends Component {
 	render() {
-		const { credentials, rewindState, siteId, translate } = this.props;
+		const { credentials, rewindState, siteId, translate, siteSlug } = this.props;
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
 		const hasCredentials = some( credentials, { role: 'main' } );
 
@@ -45,6 +46,11 @@ class JetpackCredentials extends Component {
 				) : (
 					<CredentialsSetupFlow siteId={ siteId } />
 				) }
+				{ hasCredentials && (
+					<CompactCard href={ `/stats/activity/${ siteSlug }` }>
+						{ translate( "View your site's backups and activity" ) }
+					</CompactCard>
+				) }
 			</div>
 		);
 	}
@@ -58,5 +64,6 @@ export default connect( state => {
 		credentials,
 		rewindState,
 		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 } )( localize( JetpackCredentials ) );

@@ -20,7 +20,6 @@ import SocialLoginComponent from 'me/social-login';
 import ConnectedAppsComponent from 'me/connected-applications';
 import connectedAppsData from 'lib/connected-applications-data';
 import appPasswordsData from 'lib/application-passwords-data';
-import TwoStepComponent from 'me/two-step';
 import AccountRecoveryComponent from 'me/security-account-recovery';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
@@ -51,6 +50,8 @@ export default {
 		const basePath = context.path;
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
+
+		const TwoStepComponent = require( 'me/two-step' ).default;
 
 		context.primary = React.createElement( TwoStepComponent, {
 			userSettings: userSettings,

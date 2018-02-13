@@ -55,15 +55,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	unlimitedThemeNudge: {
-		datestamp: '20171016',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	checklistThankYouForFreeUser: {
 		datestamp: '20171204',
 		variations: {
@@ -82,13 +73,15 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	gsuiteUpsellV2: {
-		datestamp: '20171225',
+	domainSuggestionTestV5: {
+		datestamp: '20180204',
 		variations: {
-			original: 50,
-			modified: 50,
+			group_0: 1, // Default group
+			group_1: 1000,
+			group_2: 1000,
+			group_3: 1000,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'group_0',
 		allowExistingUsers: true,
 	},
 };

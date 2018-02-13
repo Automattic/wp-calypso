@@ -11,6 +11,7 @@ import Gridicon from 'gridicons';
 import { includes, capitalize } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -35,25 +36,30 @@ import Notice from 'components/notice';
 import PushNotificationApprovalPoller from './two-factor-authentication/push-notification-approval-poller';
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
+import JetpackLogo from 'components/jetpack-logo';
+import { isEnabled } from 'config';
 
 const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
+		isLinking: PropTypes.bool,
+		isJetpack: PropTypes.bool.isRequired,
+		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		requestNotice: PropTypes.object,
+		socialConnect: PropTypes.bool,
+		socialService: PropTypes.string,
+		socialServiceResponse: PropTypes.object,
 		twoFactorAuthType: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
-		socialConnect: PropTypes.bool,
-		isLinking: PropTypes.bool,
-		linkingSocialService: PropTypes.string,
-		socialService: PropTypes.string,
-		socialServiceResponse: PropTypes.object,
 	};
+
+	static defaultProps = { isJetpack: false };
 
 	componentDidMount = () => {
 		if ( ! this.props.twoFactorEnabled && this.props.twoFactorAuthType ) {
@@ -129,17 +135,18 @@ class Login extends Component {
 
 	renderHeader() {
 		const {
+			isJetpack,
+			linkingSocialService,
 			oauth2Client,
 			privateSite,
 			socialConnect,
 			translate,
 			twoStepNonce,
-			linkingSocialService,
 		} = this.props;
 
-		let headerText = translate( 'Log in to your account.' ),
-			preHeader = null,
-			postHeader = null;
+		let headerText = translate( 'Log in to your account.' );
+		let preHeader = null;
+		let postHeader = null;
 
 		if ( twoStepNonce ) {
 			headerText = translate( 'Two-Step Authentication' );
@@ -182,6 +189,13 @@ class Login extends Component {
 					</p>
 				);
 			}
+		} else if ( isJetpack && isEnabled( 'jetpack/connection-rebranding' ) ) {
+			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
+			preHeader = (
+				<div>
+					<JetpackLogo full size={ 45 } />
+				</div>
+			);
 		}
 
 		return (
@@ -259,8 +273,13 @@ class Login extends Component {
 	}
 
 	render() {
+		const { isJetpack } = this.props;
 		return (
-			<div>
+			<div
+				className={ classNames( 'login', {
+					'is-jetpack': isJetpack && isEnabled( 'jetpack/connection-rebranding' ),
+				} ) }
+			>
 				{ this.renderHeader() }
 
 				<ErrorNotice />

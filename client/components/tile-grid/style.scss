@@ -77,6 +77,10 @@
 		}
 	}
 
+	&.is-highlighted {
+		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 3px $blue-light;
+	}
+
 	a, svg {
 		display: block;
 		width: 100%; // Safari fix
@@ -136,6 +140,10 @@
 
 	@include breakpoint( ">480px" ) {
 		margin-top: 10px;
+
+		&:first-child {
+			margin-bottom: 10px;
+		}
 	}
 }
 

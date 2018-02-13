@@ -56,6 +56,19 @@ export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( s
 	return currency || {};
 }
 
+/**
+ * Gets ship to country setting from API data.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId wpcom site id. If not provided, the Site ID selected in the UI will be used
+ * @return {Object} Value of the "Shipping location(s)" Setting
+ */
+export function getShipToCountrySetting( state, siteId = getSelectedSiteId( state ) ) {
+	const generalSettings = getRawGeneralSettings( state, siteId );
+	const setting = find( generalSettings, item => item.id === 'woocommerce_ship_to_countries' );
+	return setting || {};
+}
+
 export const getStoreLocation = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const defaultLocation = {
 		street: '',

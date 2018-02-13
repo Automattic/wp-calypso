@@ -9,14 +9,11 @@ import deepfreeze from 'deep-freeze';
  */
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { receivePage, selectItem } from '../actions';
-import { items, selected } from '../reducer';
-import { withSchemaValidation } from 'state/utils';
+import streamsReducer, { items, selected } from '../reducer';
 
 jest.mock( 'lib/warn', () => () => {} );
 
-const saveAction = { type: SERIALIZE };
-const loadAction = { type: DESERIALIZE };
-describe( 'stream items reducer', () => {
+describe( 'streams.items reducer', () => {
 	it( 'should return an empty object by default', () => {
 		expect( items( undefined, {} ) ).toEqual( {} );
 	} );
@@ -46,27 +43,9 @@ describe( 'stream items reducer', () => {
 			following: [ { global_ID: 42 }, { global_ID: 1234 } ],
 		} );
 	} );
-
-	describe( 'schema', () => {
-		const itemsWithValidation = withSchemaValidation( items.schema, items );
-		const validState = deepfreeze( { following: [], 'feed:123': [ {}, {} ] } );
-		const invalidState = deepfreeze( { chickens: Infinity } );
-
-		it( 'should serialize any data', () => {
-			expect( itemsWithValidation( validState, saveAction ) ).toEqual( validState );
-			expect( itemsWithValidation( invalidState, saveAction ) ).toEqual( invalidState );
-		} );
-
-		it( 'should deserialize valid data', () => {
-			expect( itemsWithValidation( validState, loadAction ) ).toEqual( validState );
-		} );
-		it( 'should not deserialize invalid data', () => {
-			expect( itemsWithValidation( invalidState, loadAction ) ).toEqual( {} );
-		} );
-	} );
 } );
 
-describe( 'stream selected', () => {
+describe( 'streams.selected reducer', () => {
 	it( 'should return an empty object by default', () => {
 		expect( selected( undefined, {} ) ).toEqual( {} );
 	} );
@@ -84,15 +63,42 @@ describe( 'stream selected', () => {
 			following: 7,
 		} );
 	} );
+} );
 
-	describe( 'schema', () => {
-		const selectedWithValidation = withSchemaValidation( selected.schema, selected );
-		const validState = deepfreeze( { following: 0, 'feed:123': 42, elmo: 'is red' } );
-		const invalidState = deepfreeze( { chickens: Infinity } );
+describe( 'streams combined reducer', () => {
+	const saveAction = { type: SERIALIZE };
+	const loadAction = { type: DESERIALIZE };
 
-		it( 'should never deserialize', () => {
-			expect( selectedWithValidation( validState, loadAction ) ).toEqual( {} );
-			expect( selectedWithValidation( invalidState, loadAction ) ).toEqual( {} );
-		} );
+	const validState = deepfreeze( {
+		items: { following: [], 'feed:123': [ {}, {} ] },
+		selected: { following: 0, 'feed:123': 42, elmo: 'is red' },
+	} );
+
+	const invalidState = deepfreeze( {
+		items: { chickens: Infinity },
+		selected: { chickens: Infinity },
+	} );
+
+	it( 'should serialize any items data', () => {
+		expect( streamsReducer( validState, saveAction ).items ).toEqual( validState.items );
+		expect( streamsReducer( invalidState, saveAction ).items ).toEqual( invalidState.items );
+	} );
+
+	it( 'should deserialize valid items data', () => {
+		expect( streamsReducer( validState, loadAction ).items ).toEqual( validState.items );
+	} );
+
+	it( 'should not deserialize invalid items data', () => {
+		expect( streamsReducer( invalidState, loadAction ).items ).toEqual( {} );
+	} );
+
+	it( 'should never serialize the selected data', () => {
+		expect( streamsReducer( validState, saveAction ).selected ).toEqual( {} );
+		expect( streamsReducer( invalidState, saveAction ).selected ).toEqual( {} );
+	} );
+
+	it( 'should never deserialize the selected data', () => {
+		expect( streamsReducer( validState, loadAction ).selected ).toEqual( {} );
+		expect( streamsReducer( invalidState, loadAction ).selected ).toEqual( {} );
 	} );
 } );

@@ -2,18 +2,30 @@
 /**
  * External dependencies
  */
-import { filterUserObject } from 'lib/user/shared-utils';
-var superagent = require( 'superagent' ),
-	debug = require( 'debug' )( 'calypso:bootstrap' ),
-	crypto = require( 'crypto' );
+import qs from 'qs';
+import superagent from 'superagent';
+import debugFactory from 'debug';
+import crypto from 'crypto';
 
-var config = require( 'config' ),
+/**
+ * Internal dependencies
+ */
+import { filterUserObject } from 'lib/user/shared-utils';
+import { getActiveTestNames } from 'lib/abtest/utility';
+import config from 'config';
+
+const debug = debugFactory( 'calypso:bootstrap' ),
 	API_KEY = config( 'wpcom_calypso_rest_api_key' ),
 	AUTH_COOKIE_NAME = 'wordpress_logged_in',
 	/**
 	 * WordPress.com REST API /me endpoint.
 	 */
-	url = 'https://public-api.wordpress.com/rest/v1/me?meta=flags';
+	API_PATH = 'https://public-api.wordpress.com/rest/v1/me',
+	apiQuery = {
+		meta: 'flags',
+		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
+	},
+	url = `${ API_PATH }?${ qs.stringify( apiQuery ) }`;
 
 module.exports = function( authCookieValue, geoCountry, callback ) {
 	// create HTTP Request object
