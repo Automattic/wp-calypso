@@ -98,6 +98,8 @@ class Plans extends Component {
 		const { canPurchasePlans, selectedSiteSlug } = this.props;
 
 		if ( selectedSiteSlug && canPurchasePlans ) {
+			// Redirect to "My Plan" page with the "Main Tour" guided tour enabled.
+			// For more details about guided tours, see layout/guided-tours/README.md
 			return this.redirect( CALYPSO_MY_PLAN_PAGE, { tour: 'main' } );
 		}
 
