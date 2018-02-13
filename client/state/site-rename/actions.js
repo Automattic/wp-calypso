@@ -31,7 +31,14 @@ export const getErrorNotice = message =>
 		isPersistent: true,
 	} );
 
-// @TODO translate copy throughout once copy is finalised
+const dispatchErrorNotice = ( dispatch, error ) =>
+	dispatch(
+		getErrorNotice(
+			// @TODO translate copy once finalised
+			error.message || "Sorry, we we're unable to complete your domain change. Please try again."
+		)
+	);
+
 export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch => {
 	dispatch( {
 		type: SITE_RENAME_REQUEST,
@@ -52,6 +59,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 							page( domainManagementEdit( newAddress, newAddress ) );
 
 							dispatch(
+								// @TODO translate copy once finalised
 								successNotice( 'Your new domain name is ready to go!', {
 									id: 'siteRenameSuccessful',
 									duration: 5000,
@@ -69,13 +77,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 					} );
 				} )
 				.catch( error => {
-					dispatch(
-						getErrorNotice(
-							error.message ||
-								"Sorry, we we're unable to complete your domain change. Please try again."
-						)
-					);
-
+					dispatchErrorNotice( dispatch, error );
 					dispatch( {
 						type: SITE_RENAME_REQUEST_FAILURE,
 						error: error.message,
@@ -84,6 +86,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 				} );
 		} )
 		.catch( error => {
+			dispatchErrorNotice( dispatch, error );
 			dispatch( {
 				type: SITE_RENAME_REQUEST_FAILURE,
 				error: error.message,
