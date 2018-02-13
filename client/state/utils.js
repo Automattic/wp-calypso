@@ -154,7 +154,7 @@ export const keyedReducer = ( keyPath, reducer, globalActions = [ SERIALIZE, DES
 		if ( globalActions && includes( globalActions, action.type ) ) {
 			return omitBy(
 				mapValues( state, item => reducer( item, action ) ),
-				a => a === undefined || a === initialState
+				a => a === undefined || isEqual( a, initialState )
 			);
 		}
 
@@ -348,7 +348,7 @@ export const withSchemaValidation = ( schema, reducer ) => {
 			}
 
 			return state && isValidStateWithSchema( state, schema )
-				? state
+				? reducer( state, action )
 				: reducer( undefined, { type: '@@calypso/INIT' } );
 		}
 
