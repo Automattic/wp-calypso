@@ -630,13 +630,38 @@ describe( 'reducer', () => {
 
 		test( 'should accumulate invites', () => {
 			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
-			const state = requestingResend( original, {
+			const state1 = requestingResend( original, {
 				type: INVITE_RESEND_REQUEST,
 				siteId: 12345,
-				inviteId: '789lkjh123456',
+				inviteId: '123_requesting',
 			} );
-			expect( state ).to.eql( {
-				12345: { '123456asdf789': 'success', '789lkjh123456': 'requesting' },
+			expect( state1 ).to.eql( {
+				12345: { '123456asdf789': 'success', '123_requesting': 'requesting' },
+			} );
+			const state2 = requestingResend( state1, {
+				type: INVITE_RESEND_REQUEST_SUCCESS,
+				siteId: 12345,
+				inviteId: '456_success',
+			} );
+			expect( state2 ).to.eql( {
+				12345: {
+					'123456asdf789': 'success',
+					'123_requesting': 'requesting',
+					'456_success': 'success',
+				},
+			} );
+			const state3 = requestingResend( state2, {
+				type: INVITE_RESEND_REQUEST_FAILURE,
+				siteId: 12345,
+				inviteId: '789_failure',
+			} );
+			expect( state3 ).to.eql( {
+				12345: {
+					'123456asdf789': 'success',
+					'123_requesting': 'requesting',
+					'456_success': 'success',
+					'789_failure': 'failure',
+				},
 			} );
 		} );
 

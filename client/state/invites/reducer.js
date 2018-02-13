@@ -142,20 +142,20 @@ export const counts = createReducer(
 export function requestingResend( state = {}, action ) {
 	switch ( action.type ) {
 		case INVITE_RESEND_REQUEST:
-			const requestingActions = Object.assign( {}, state[ action.siteId ], {
+			const inviteResendRequests = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'requesting',
 			} );
-			return Object.assign( {}, state, { [ action.siteId ]: requestingActions } );
+			return Object.assign( {}, state, { [ action.siteId ]: inviteResendRequests } );
 		case INVITE_RESEND_REQUEST_SUCCESS:
-			const successActions = Object.assign( {}, state[ action.siteId ], {
+			const inviteResendSuccesses = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'success',
 			} );
-			return Object.assign( {}, state, { [ action.siteId ]: successActions } );
+			return Object.assign( {}, state, { [ action.siteId ]: inviteResendSuccesses } );
 		case INVITE_RESEND_REQUEST_FAILURE: {
-			const failureActions = Object.assign( {}, state[ action.siteId ], {
+			const inviteResendFailures = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'failure',
 			} );
-			return Object.assign( {}, state, { [ action.siteId ]: failureActions } );
+			return Object.assign( {}, state, { [ action.siteId ]: inviteResendFailures } );
 		}
 	}
 
