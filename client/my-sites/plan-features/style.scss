@@ -536,3 +536,10 @@ $plan-features-sidebar-width: 272px;
 		border-bottom: solid 1px lighten( $gray, 27% );
 	}
 }
+
+.plans-features-main__bottom .plan-features__actions {
+	padding-bottom: 0;
+}
+.plans-features-main__bottom .plan-features__actions-button {
+	width: auto;
+}
