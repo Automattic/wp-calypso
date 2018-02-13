@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, has } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,7 +24,7 @@ class ReaderPostCardAdapter extends React.Component {
 
 	onClick = postToOpen => {
 		let referredPost;
-		if ( get( this.props, 'discoverPick.post' ) ) {
+		if ( get( this.props, 'discoverPost' ) ) {
 			referredPost = {
 				...postToOpen,
 				referral: {
@@ -63,14 +63,15 @@ class ReaderPostCardAdapter extends React.Component {
 
 		// if this is a discover pick query for the discover pick site
 		const discoverPostKey = getDiscoverSourceData( this.props.post );
-		console.error( discoverPostKey );
+		const hasDiscoverSourcePost = !! discoverPostKey.postId;
 
 		// only query the site if the feed id is missing. feed queries end up fetching site info
 		// via a meta query, so we don't need both.
 		return (
 			<ReaderPostCard
 				post={ this.props.post }
-				discoverPick={ this.props.discoverPick }
+				discoverPost={ this.props.discoverPost }
+				discoverSite={ this.props.discoverSite }
 				site={ this.props.site }
 				feed={ this.props.feed }
 				onClick={ this.onClick }
@@ -88,7 +89,7 @@ class ReaderPostCardAdapter extends React.Component {
 				{ isDiscover && (
 					<QueryReaderSite siteId={ discoverPostKey.blogId } includeMeta={ false } />
 				) }
-				{ isDiscover && discoverPostKey && <QueryReaderPost postKey={ discoverPostKey } /> }
+				{ hasDiscoverSourcePost && <QueryReaderPost postKey={ discoverPostKey } /> }
 			</ReaderPostCard>
 		);
 	}
@@ -99,35 +100,24 @@ export default connect( ( state, ownProps ) => {
 	const siteId = get( post, 'site_ID' );
 	const isExternal = get( post, 'is_external' );
 	const feedId = get( post, 'feed_ID' );
+	const isDiscover = get( post, 'is_discover' );
+	const isDiscoverStream = ownProps.isDiscoverStream;
 
-	// set up the discover pick
-	let discoverPick = null;
-	if ( get( post, 'is_discover' ) ) {
-		// copy discoverPick from feed store
+	let discoverPost = undefined;
+	let discoverSite = undefined;
+	if ( isDiscover ) {
 		const discoverPostKey = getDiscoverSourceData( post );
-		const discoverPickPost = getPostByKey( discoverPostKey );
+		discoverPost = getPostByKey( state, discoverPostKey );
 
-		// limit discover pick site to discover stream
-		if ( ownProps.isDiscoverStream ) {
-			const discoverPickSite = discoverPostKey.blogId
-				? getSite( state, discoverPostKey.blogId )
-				: null;
-
-			if ( discoverPickPost || discoverPickSite ) {
-				discoverPick = {
-					post: discoverPickPost,
-					site: discoverPickSite,
-				};
-			}
-		} else if ( discoverPickPost ) {
-			discoverPick = {
-				post: discoverPickPost,
-			};
+		if ( isDiscoverStream ) {
+			discoverSite = getSite( state, discoverPostKey.blogId );
 		}
 	}
+
 	return {
 		site: isExternal ? null : getSite( state, siteId ),
 		feed: getFeed( state, feedId ),
-		discoverPick,
+		discoverPost,
+		discoverSite,
 	};
 } )( ReaderPostCardAdapter );
