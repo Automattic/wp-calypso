@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { handleError, handleResponse, installJetpackPlugin } from '../';
+import { handleResponse, installJetpackPlugin } from '../';
 import {
 	jetpackRemoteInstallComplete,
 	jetpackRemoteInstallUpdateError,
@@ -35,12 +35,5 @@ describe( 'handleResponse', () => {
 	test( 'should return JetpackRemoteInstallUpdateError on failure', () => {
 		const result = handleResponse( { url }, FAILURE_RESPONSE );
 		expect( result ).toEqual( jetpackRemoteInstallUpdateError( url, 'COULD_NOT_LOGIN' ) );
-	} );
-} );
-
-describe( 'handleError', () => {
-	test( 'should return jetpackRemoteInstallUpdateError', () => {
-		const result = handleError( { url } );
-		expect( result ).toEqual( jetpackRemoteInstallUpdateError( url, 'API_ERROR' ) );
 	} );
 } );

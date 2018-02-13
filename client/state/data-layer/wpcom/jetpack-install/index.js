@@ -1,4 +1,8 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,16 +35,12 @@ export const handleResponse = ( { url }, data ) => {
 	return jetpackRemoteInstallUpdateError( url, data.error );
 };
 
-export const handleError = ( { url } ) => {
-	return jetpackRemoteInstallUpdateError( url, 'API_ERROR' );
-};
-
 export default {
 	[ JETPACK_REMOTE_INSTALL ]: [
 		dispatchRequestEx( {
 			fetch: installJetpackPlugin,
 			onSuccess: handleResponse,
-			onError: handleError,
+			onError: noop,
 		} ),
 	],
 };
