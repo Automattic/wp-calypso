@@ -56,8 +56,36 @@ class MasterbarLoggedOut extends PureComponent {
 		title: '',
 	};
 
+	renderLoginItem() {
+		const { sectionName, translate, redirectUri } = this.props;
+		return (
+			! includes( [ 'login', 'jetpack-onboarding' ], sectionName ) && (
+				<Item url={ getLoginUrl( redirectUri ) }>
+					{ translate( 'Log In', {
+						context: 'Toolbar',
+						comment: 'Should be shorter than ~12 chars',
+					} ) }
+				</Item>
+			)
+		);
+	}
+
+	renderSignupItem() {
+		const { currentQuery, currentRoute, sectionName, translate } = this.props;
+		return (
+			! includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) && (
+				<Item url={ getSignupUrl( currentRoute, currentQuery ) }>
+					{ translate( 'Sign Up', {
+						context: 'Toolbar',
+						comment: 'Should be shorter than ~12 chars',
+					} ) }
+				</Item>
+			)
+		);
+	}
+
 	render() {
-		const { currentQuery, currentRoute, title, sectionName, translate, redirectUri } = this.props;
+		const { title } = this.props;
 		return (
 			<Masterbar>
 				<Item className="masterbar__item-logo">
@@ -66,23 +94,8 @@ class MasterbarLoggedOut extends PureComponent {
 				</Item>
 				<Item className="masterbar__item-title">{ title }</Item>
 				<div className="masterbar__login-links">
-					{ ! includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ? (
-						<Item url={ getSignupUrl( currentRoute, currentQuery ) }>
-							{ translate( 'Sign Up', {
-								context: 'Toolbar',
-								comment: 'Should be shorter than ~12 chars',
-							} ) }
-						</Item>
-					) : null }
-
-					{ ! includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ? (
-						<Item url={ getLoginUrl( redirectUri ) }>
-							{ translate( 'Log In', {
-								context: 'Toolbar',
-								comment: 'Should be shorter than ~12 chars',
-							} ) }
-						</Item>
-					) : null }
+					{ this.renderSignupItem() }
+					{ this.renderLoginItem() }
 				</div>
 			</Masterbar>
 		);
