@@ -17,12 +17,12 @@ import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getJetpackOnboardingSettings } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 
-const NextSteps = ( { handleSummaryStepClick, siteId, steps } ) => (
+const NextSteps = ( { onClick, siteId, steps } ) => (
 	<Fragment>
 		<QuerySites siteId={ siteId } />
 		{ map( steps, ( { label, url }, stepName ) => (
 			<div key={ stepName } className="jetpack-onboarding__summary-entry todo">
-				<a href={ url } onClick={ handleSummaryStepClick( stepName, 'next' ) }>
+				<a href={ url } onClick={ onClick( stepName, 'next' ) }>
 					{ label }
 				</a>
 			</div>
@@ -31,11 +31,11 @@ const NextSteps = ( { handleSummaryStepClick, siteId, steps } ) => (
 );
 
 NextSteps.propTypes = {
-	handleSummaryStepClick: PropTypes.func,
+	onClick: PropTypes.func,
 };
 
 NextSteps.defaultProps = {
-	handleSummaryStepClick: noop,
+	onClick: noop,
 };
 
 export default localize(

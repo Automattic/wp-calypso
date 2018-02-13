@@ -50,7 +50,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
 						<CompletedSteps
 							basePath={ basePath }
-							handleSummaryStepClick={ this.handleSummaryStepClick }
+							onClick={ this.handleSummaryStepClick }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 							steps={ steps }
@@ -59,7 +59,7 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
 						<NextSteps
-							handleSummaryStepClick={ this.handleSummaryStepClick }
+							onClick={ this.handleSummaryStepClick }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
 							siteUrl={ siteUrl }
