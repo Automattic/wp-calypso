@@ -26,7 +26,7 @@ import {
 
 const CompletedSteps = ( {
 	basePath,
-	handleCompletedStepClick,
+	handleSummaryStepClick,
 	siteSlug,
 	steps,
 	stepsCompleted,
@@ -48,7 +48,7 @@ const CompletedSteps = ( {
 				) }
 				<a
 					href={ [ basePath, stepName, siteSlug ].join( '/' ) }
-					onClick={ handleCompletedStepClick( stepName ) }
+					onClick={ handleSummaryStepClick( stepName, 'completed' ) }
 				>
 					{ STEP_TITLES[ stepName ] }
 				</a>
@@ -57,11 +57,11 @@ const CompletedSteps = ( {
 	} );
 
 CompletedSteps.propTypes = {
-	handleCompletedStepClick: PropTypes.func,
+	handleSummaryStepClick: PropTypes.func,
 };
 
 CompletedSteps.defaultProps = {
-	handleCompletedStepClick: noop,
+	handleSummaryStepClick: noop,
 };
 
 export default connect( ( state, { siteId, steps } ) => ( {
