@@ -95,9 +95,9 @@ class PeopleInviteDetails extends React.PureComponent {
 	}
 
 	renderInvite() {
-		const { site, requesting, invite, translate } = this.props;
+		const { site, requesting, invite, translate, deleteSuccess } = this.props;
 
-		if ( ! site || ! site.ID ) {
+		if ( ! site || ! site.ID || deleteSuccess ) {
 			return this.renderPlaceholder();
 		}
 
