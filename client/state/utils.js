@@ -442,7 +442,12 @@ export function combineReducers( reducers ) {
 		//   in the result object at all.
 		// - if none of the subreducers produced anything to persist, the combined result will be
 		//   `undefined` rather than an empty object.
+		// - if the state to serialize is `undefined` (happens when some key in state is missing)
+		//   the serialized value is `undefined` and there's no need to reduce anything.
 		if ( action.type === SERIALIZE ) {
+			if ( state === undefined ) {
+				return undefined;
+			}
 			return reduce(
 				validatedReducers,
 				( result, reducer, key ) => {

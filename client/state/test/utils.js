@@ -614,6 +614,19 @@ describe( 'utils', () => {
 			expect( state ).to.eql( { age: 21, height: 172 } );
 		} );
 
+		test( 'undefined or missing state is not serialized and does not cause errors', () => {
+			const empty = reducers( undefined, write );
+			expect( empty ).to.be.undefined;
+
+			const nested = combineReducers( {
+				person: reducers,
+				date,
+			} );
+
+			const missingPerson = nested( { date: new Date( 100 ) }, write );
+			expect( missingPerson ).to.eql( { date: 100 } );
+		} );
+
 		test( 'nested reducers work on load', () => {
 			reducers = combineReducers( {
 				age,
