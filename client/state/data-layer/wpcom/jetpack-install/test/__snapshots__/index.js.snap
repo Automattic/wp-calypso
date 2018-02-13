@@ -1,38 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`installJetpackPlugin should dispatch an http request 1`] = `
-[MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "body": undefined,
-        "formData": undefined,
-        "method": "POST",
-        "onFailure": Object {
-          "password": "hGhrskf145kst",
-          "url": "https://example.com",
-          "user": "blah123",
-        },
-        "onProgress": Object {
-          "password": "hGhrskf145kst",
-          "url": "https://example.com",
-          "user": "blah123",
-        },
-        "onSuccess": Object {
-          "password": "hGhrskf145kst",
-          "url": "https://example.com",
-          "user": "blah123",
-        },
-        "options": Object {},
-        "path": "/jetpack-install/https://example.com",
-        "query": Object {
-          "apiVersion": undefined,
-          "password": "hGhrskf145kst",
-          "user": "blah123",
-        },
-        "type": "WPCOM_HTTP_REQUEST",
-      },
-    ],
-  ],
+exports[`installJetpackPlugin should return an http request 1`] = `
+Object {
+  "body": undefined,
+  "formData": undefined,
+  "method": "POST",
+  "onFailure": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://example.com",
+    "user": "blah123",
+  },
+  "onProgress": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://example.com",
+    "user": "blah123",
+  },
+  "onSuccess": Object {
+    "password": "hGhrskf145kst",
+    "url": "https://example.com",
+    "user": "blah123",
+  },
+  "options": Object {},
+  "path": "/jetpack-install/https://example.com",
+  "query": Object {
+    "apiVersion": undefined,
+    "password": "hGhrskf145kst",
+    "user": "blah123",
+  },
+  "type": "WPCOM_HTTP_REQUEST",
 }
 `;
