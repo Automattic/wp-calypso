@@ -10,11 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import Button from 'components/button';
-// import Card from 'components/card';
 import DismissibleCard from 'blocks/dismissible-card';
 import SectionHeader from 'components/section-header';
 
-const StatsNudge = ( { translate } ) => {
+const GMBStatsNudge = ( { translate } ) => {
 	return (
 		<DismissibleCard
 			className="google-my-business__stats-nudge"
@@ -52,4 +51,4 @@ const StatsNudge = ( { translate } ) => {
 	);
 };
 
-export default localize( StatsNudge );
+export default localize( GMBStatsNudge );
