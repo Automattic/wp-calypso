@@ -270,10 +270,9 @@ class HelpContact extends React.Component {
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
-				const isDev = process.env.NODE_ENV === 'development' || config( 'env_id' ) === 'stage';
 				return {
 					onSubmit: this.startHappychat,
-					buttonLabel: isDev ? 'Happychat' : translate( 'Chat with us' ),
+					buttonLabel: translate( 'Chat with us' ),
 					showSubjectField: false,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
