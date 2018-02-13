@@ -7,7 +7,7 @@
  * Internal Dependencies
  */
 import { fetch, fromApi, onSuccess, onError } from '../';
-import { unlike, updateLikeCount } from 'state/posts/likes/actions';
+import { unlike, addLiker } from 'state/posts/likes/actions';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
 describe( 'fromApi', () => {
@@ -18,7 +18,6 @@ describe( 'fromApi', () => {
 				like_count: 45,
 			} )
 		).toEqual( {
-			success: true,
 			likeCount: 45,
 		} );
 
@@ -29,14 +28,22 @@ describe( 'fromApi', () => {
 				like_count: '45',
 			} )
 		).toEqual( {
-			success: true,
 			likeCount: 45,
 		} );
+	} );
+
+	test( 'throws an error when success is falsey', () => {
+		expect( () =>
+			fromApi( {
+				success: false,
+				like_count: 100,
+			} )
+		).toThrow( 'Unsuccessful like API call' );
 	} );
 } );
 
 describe( 'fetch', () => {
-	it( 'should return an http action', () => {
+	test( 'should return an http action', () => {
 		const action = fetch( { siteId: 1, postId: 1 } );
 		expect( action ).toHaveProperty( 'method', 'POST' );
 		expect( action ).toHaveProperty( 'path', '/sites/1/posts/1/likes/new' );
@@ -45,9 +52,9 @@ describe( 'fetch', () => {
 } );
 
 describe( 'onSuccess', () => {
-	it( 'should generate an updateLikeCount action', () => {
-		expect( onSuccess( { siteId: 1, postId: 1 }, { likeCount: 25 } ) ).toEqual(
-			updateLikeCount( 1, 1, 25 )
+	test( 'should generate an addLiker action', () => {
+		expect( onSuccess( { siteId: 1, postId: 1 }, { likeCount: 25, liker: {} } ) ).toEqual(
+			addLiker( 1, 1, 25, {} )
 		);
 	} );
 } );

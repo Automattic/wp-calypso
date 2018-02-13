@@ -7,7 +7,7 @@
 /**
  * Internal Dependencies
  */
-import { unlike, updateLikeCount } from 'state/posts/likes/actions';
+import { unlike, addLiker } from 'state/posts/likes/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { POST_LIKE } from 'state/action-types';
@@ -24,15 +24,18 @@ export const fetch = action =>
 		action
 	);
 
-export const onSuccess = ( { siteId, postId }, { likeCount } ) =>
-	updateLikeCount( siteId, postId, likeCount );
+export const onSuccess = ( { siteId, postId }, { likeCount, liker } ) =>
+	addLiker( siteId, postId, likeCount, liker );
 
 export const onError = ( { siteId, postId } ) => bypassDataLayer( unlike( siteId, postId ) );
 
 export function fromApi( response ) {
+	if ( ! response.success ) {
+		throw new Error( 'Unsuccessful like API call' );
+	}
 	return {
-		success: !! response.success,
 		likeCount: +response.like_count,
+		liker: response.liker,
 	};
 }
 
