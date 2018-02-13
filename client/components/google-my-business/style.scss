@@ -1,46 +1,40 @@
 
 .google-my-business__stats-nudge {
+	// allow section header to perfectly sit over the top of the card
 	padding: 0;
-
 	.dismissible-card__close-icon {
 		z-index: z-index( 'root', '.google-my-business__stats-nudge.dismissible-card__close-icon' );
+		// center the `close icon` in header above it, not the corner of the card
+		transform: translateX(2px) translateY(-2px);
 	}
 }
 
 .google-my-business__stats-nudge-body {
 	display: flex;
-	padding: 10px 24px;
-	position: relative;
-
+	flex-direction: row;
+	// standard padding
+	padding: 11px 24px 11px 24px;
 	@include breakpoint( ">960px" ) {
+		// support image "flowing" off the edge of card
 		max-height: 300px;
 		overflow: hidden;
-		padding-left: 48px;
 	}
 }
 
 .google-my-business__stats-nudge-info {
-	margin-left: auto;
-	padding: 12px;
-	position: relative;
-	width: calc( 100% - 150px);
-
-	@include breakpoint( ">1040px" ) {
-		padding: 24px;
-		width: calc( 100% - 300px);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	@include breakpoint( ">960px" ) {
+		// the image has about 12 px of whitespace, this helps "balance" the block
+		padding-right: 12px;
 	}
 }
 
 .google-my-business__stats-nudge-heading {
 	font-size: 18px;
-	font-weight: 600;
-	margin: 0;
-	@include breakpoint( ">1040px" ) {
-		margin-top: 24px;
-	}
+	font-weight: 400;
 	@include breakpoint( ">960px" ) {
-		margin-top: 12px;
-		font-weight: 400;
 		font-size: 24px;
 	}
 }
@@ -53,41 +47,28 @@
 		font-size: 18px;
 	}
 }
+
 .google-my-business__stats-nudge-button-row {
 	align-content: center;
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
+	flex-direction: row;
 	margin: 16px 0;
-	@include breakpoint( ">960px") {
-		flex-direction: row;
-		justify-content: flex-start;
-	}
-
 	.button {
-		margin-bottom: 12px;
-		width: 100%;
-		@include breakpoint( ">960px") {
-			width: auto;
-			margin-bottom: 0;
-			margin-right: 16px;
-		}
+		// space out buttons
+		margin-right: 16px;
 	}
 }
 
 .google-my-business__stats-nudge-image-wrapper {
-	max-width: 150px;
+	display: none;
 	@include breakpoint( ">960px" ) {
-		max-width: 300px;
+		display: block;
+		margin-right: 24px;
 	}
 }
 
 .google-my-business__stats-nudge-image {
-	max-height: 300px;
-	@include breakpoint( ">960px" ) {
-		height: auto;
-		max-height: initial;
-	}
+	height: auto;
 }
 
 
