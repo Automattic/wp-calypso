@@ -90,27 +90,10 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 				padding-top: 8px;
 			}
 
-			.reader-post-card__title {
-				color: $white;
-				font-family: $sans;
-				position: relative;
-					bottom: 30px;
-					left: 20px;
-				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-				width: calc( 100% - 44px );
-				text-overflow: ellipsis;
-				overflow: hidden;
-				z-index: z-index( 'root', '.reader-post-card__title' );
-				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
-				height: 19px;
-				white-space: nowrap;
-			}
-
 			.reader-post-card__title .reader-post-card__title-link {
-				color: $white;
-				display: inline;
-				font-size: 12px;
-				letter-spacing: 0.01em;
+				color: $gray-dark;
+				font-family: $serif;
+				margin-top: 8px;
 			}
 
 			.reader-post-actions {
@@ -119,6 +102,33 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 
 			.reader-post-actions .reader-post-actions__visit {
 				margin-left: -3px;
+			}
+
+			.reader-post-card__photo-expand-controls {
+				position: relative;
+
+				&::before {
+					background: linear-gradient( to bottom, rgba( 0, 0, 0, .18 ) 0%, rgba( 0, 0, 0, .06 ) 50%, rgba( 0, 0, 0, 0 ) 100% );
+					content: '';
+					display: inline-block;
+					height: 220px;
+					pointer-events: none;
+					position: absolute;
+					width: 100%;
+					z-index: z-index( '.reader-post-card__post', '.reader-post-card__photo-expand-controls' );
+				}
+
+				.gridicon {
+					fill: $white;
+					position: absolute;
+						left: calc( 100% - 30px );
+						top: 10px;
+					z-index: z-index( '.reader-post-card__post', '.reader-post-card__photo-expand-controls .gridicon' );
+				}
+
+				.gridicons-zoom-in {
+					opacity: .8;
+				}
 			}
 		}
 	}
@@ -254,19 +264,11 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 	margin-bottom: 0;
 	max-width: 100%;
 
-	&:hover {
-		cursor: zoom-in;
-	}
-
 	&.is-expanded {
 		background-position: center !important;
 		min-width: 100%;
 		max-width: 100%;
 		background-size: cover;
-
-		&:hover {
-			cursor: pointer;
-		}
 	}
 
 	&::before {

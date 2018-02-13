@@ -30,7 +30,10 @@ import {
 	getSourceFollowUrl as getDiscoverFollowUrl,
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
-import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
+import {
+	expandCard as expandCardAction,
+	shrinkCard as shrinkCardAction,
+} from 'state/ui/reader/card-expansions/actions';
 import { isReaderCardExpanded } from 'state/selectors';
 
 class ReaderPostCard extends React.Component {
@@ -125,6 +128,7 @@ class ReaderPostCard extends React.Component {
 			postKey,
 			isExpanded,
 			expandCard,
+			shrinkCard,
 			compact,
 		} = this.props;
 
@@ -218,6 +222,7 @@ class ReaderPostCard extends React.Component {
 					onClick={ this.handleCardClick }
 					isExpanded={ isExpanded }
 					expandCard={ expandCard }
+					shrinkCard={ shrinkCard }
 					postKey={ postKey }
 				>
 					{ discoverFollowButton }
@@ -273,5 +278,8 @@ export default connect(
 	( state, ownProps ) => ( {
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
-	{ expandCard: expandCardAction }
+	{
+		expandCard: expandCardAction,
+		shrinkCard: shrinkCardAction,
+	}
 )( ReaderPostCard );
