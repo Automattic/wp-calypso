@@ -95,8 +95,6 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 
 		displayName = 'WithContactDetailsValidation(' + tld + ', ' + wrappedComponentName + ')';
 
-		validate = () => {};
-
 		componentWillMount() {
 			this.compileValidator();
 		}
