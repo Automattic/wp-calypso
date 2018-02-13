@@ -1,10 +1,11 @@
 {
-	"id": "https://public-api.wordpress.com/rest/v1/domains/validation-schema/uk",
+	"id": "https://public-api.wordpress.com/rest/v1/domains/validation-schemas/uk",
 	"errorCode": "dotukValidation",
 	"$comment": "See http://domains.opensrs.guide/docs/tld#section-uk",
 	"type": "object",
 	"properties": {
 		"extra": {
+			"type": "object",
 			"allOf": [
 				{
 					"errorCode": "dotukRegistrantTypeRequiresRegistrationNumber",
@@ -87,7 +88,23 @@
 			]
 		},
 		"organization": {
-			"minimumLength": 4
+			"type": "string",
+			"errorCode": "dotukOrganizationLength",
+			"anyOf": [
+				{
+					"minLength": 4
+				},
+				{
+					"maxLength": 0
+				}
+			]
+		},
+		"address1": {
+			"type": "string",
+			"errorCode": "dotukAddress1NonNumeric",
+			"not": {
+				"pattern": "^[0-9]*$"
+			}
 		}
 	},
 	"patternProperties": {
