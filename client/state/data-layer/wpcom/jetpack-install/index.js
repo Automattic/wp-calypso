@@ -15,7 +15,7 @@ export const installJetpackPlugin = action =>
 	http(
 		{
 			method: 'POST',
-			path: '/jetpack-install/' + action.url,
+			path: '/jetpack-install/' + encodeURIComponent( action.url ),
 			query: {
 				user: action.user,
 				password: action.password,

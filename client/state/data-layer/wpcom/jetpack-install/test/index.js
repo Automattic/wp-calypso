@@ -9,7 +9,7 @@ import {
 	jetpackRemoteInstallComplete,
 } from 'state/jetpack-remote-install/actions';
 
-const url = 'https://example.com';
+const url = 'https://yourgroovydomain.com';
 const user = 'blah123';
 const password = 'hGhrskf145kst';
 

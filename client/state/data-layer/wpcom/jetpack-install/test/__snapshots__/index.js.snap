@@ -7,21 +7,21 @@ Object {
   "method": "POST",
   "onFailure": Object {
     "password": "hGhrskf145kst",
-    "url": "https://example.com",
+    "url": "https://yourgroovydomain.com",
     "user": "blah123",
   },
   "onProgress": Object {
     "password": "hGhrskf145kst",
-    "url": "https://example.com",
+    "url": "https://yourgroovydomain.com",
     "user": "blah123",
   },
   "onSuccess": Object {
     "password": "hGhrskf145kst",
-    "url": "https://example.com",
+    "url": "https://yourgroovydomain.com",
     "user": "blah123",
   },
   "options": Object {},
-  "path": "/jetpack-install/https://example.com",
+  "path": "/jetpack-install/https%3A%2F%2Fyourgroovydomain.com",
   "query": Object {
     "apiVersion": undefined,
     "password": "hGhrskf145kst",
