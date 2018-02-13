@@ -99,7 +99,6 @@ exports[`LanguagePickerModal should render 1`] = `
     className="language-picker__modal-list"
   >
     <div
-      aria-label="En"
       className="language-picker__modal-item"
       key="en"
       onClick={[Function]}
@@ -110,12 +109,12 @@ exports[`LanguagePickerModal should render 1`] = `
     >
       <span
         className="language-picker__modal-text is-selected"
+        lang="en"
       >
         English
       </span>
     </div>
     <div
-      aria-label="Italienisch"
       className="language-picker__modal-item"
       key="it"
       onClick={[Function]}
@@ -126,6 +125,7 @@ exports[`LanguagePickerModal should render 1`] = `
     >
       <span
         className="language-picker__modal-text"
+        lang="it"
       >
         Italiano
       </span>
@@ -149,7 +149,6 @@ exports[`LanguagePickerModal should render 1`] = `
           className="language-picker__modal-suggested-list-inner"
         >
           <div
-            aria-label="En"
             className="language-picker__modal-item"
             key="en"
             onClick={[Function]}
@@ -160,6 +159,7 @@ exports[`LanguagePickerModal should render 1`] = `
           >
             <span
               className="language-picker__modal-text is-selected"
+              lang="en"
             >
               English
             </span>
