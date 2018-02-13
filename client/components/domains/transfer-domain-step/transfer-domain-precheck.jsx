@@ -79,8 +79,7 @@ class TransferDomainPrecheck extends React.Component {
 	};
 
 	refreshStatus = () => {
-		this.setState( { unlockCheckClicked: true } );
-		this.props.refreshStatus();
+		this.props.refreshStatus( () => this.setState( { unlockCheckClicked: true } ) );
 	};
 
 	getSection( heading, message, buttonText, step, stepStatus ) {
@@ -132,11 +131,8 @@ class TransferDomainPrecheck extends React.Component {
 		let heading = translate( "Can't get the domain's lock status." );
 		if ( true === unlocked ) {
 			heading = translate( 'Domain is unlocked.' );
-		} else if ( false === unlocked ) {
+		} else if ( false === unlocked || loading ) {
 			heading = translate( 'Unlock the domain.' );
-		}
-		if ( loading && ! isStepFinished && ! unlockCheckClicked ) {
-			heading = translate( 'Checking domain lock status.' );
 		}
 
 		let message = translate(
@@ -160,7 +156,7 @@ class TransferDomainPrecheck extends React.Component {
 
 		if ( true === unlocked ) {
 			message = translate( 'Your domain is unlocked at your current registrar.' );
-		} else if ( false === unlocked ) {
+		} else if ( false === unlocked || loading ) {
 			message = translate(
 				"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
 					'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
@@ -177,10 +173,6 @@ class TransferDomainPrecheck extends React.Component {
 					},
 				}
 			);
-		}
-
-		if ( loading && ! isStepFinished && ! unlockCheckClicked ) {
-			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 
 		const buttonText = unlockCheckClicked
