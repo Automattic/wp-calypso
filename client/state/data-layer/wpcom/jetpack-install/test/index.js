@@ -5,8 +5,8 @@
  */
 import { handleError, handleResponse, installJetpackPlugin } from '../';
 import {
-	updateJetpackRemoteInstallError,
 	jetpackRemoteInstallComplete,
+	updateJetpackRemoteInstallError,
 } from 'state/jetpack-remote-install/actions';
 
 const url = 'https://yourgroovydomain.com';
