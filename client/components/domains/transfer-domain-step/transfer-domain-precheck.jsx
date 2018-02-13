@@ -33,6 +33,7 @@ class TransferDomainPrecheck extends React.Component {
 		losingRegistrar: PropTypes.string,
 		losingRegistrarIanaId: PropTypes.string,
 		privacy: PropTypes.bool,
+		refreshStatus: PropTypes.func,
 		selectedSiteSlug: PropTypes.string,
 		setValid: PropTypes.func,
 		supportsPrivacy: PropTypes.bool,
@@ -41,6 +42,7 @@ class TransferDomainPrecheck extends React.Component {
 
 	state = {
 		currentStep: 1,
+		initialRefreshComplete: false,
 		unlockCheckClicked: false,
 	};
 
@@ -56,6 +58,10 @@ class TransferDomainPrecheck extends React.Component {
 
 		if ( nextProps.unlocked && 1 === this.state.currentStep ) {
 			this.showNextStep();
+		}
+
+		if ( ! this.props.loading && ! this.state.initialRefreshComplete ) {
+			this.setState( { initialRefreshComplete: true } );
 		}
 	}
 
@@ -78,8 +84,12 @@ class TransferDomainPrecheck extends React.Component {
 		this.setState( { currentStep: this.state.currentStep + 1 } );
 	};
 
+	statusRefreshed = () => {
+		this.setState( { unlockCheckClicked: true } );
+	};
+
 	refreshStatus = () => {
-		this.props.refreshStatus( () => this.setState( { unlockCheckClicked: true } ) );
+		this.props.refreshStatus( this.statusRefreshed );
 	};
 
 	getSection( heading, message, buttonText, step, stepStatus ) {
@@ -131,8 +141,11 @@ class TransferDomainPrecheck extends React.Component {
 		let heading = translate( "Can't get the domain's lock status." );
 		if ( true === unlocked ) {
 			heading = translate( 'Domain is unlocked.' );
-		} else if ( false === unlocked || loading ) {
+		} else if ( false === unlocked ) {
 			heading = translate( 'Unlock the domain.' );
+		}
+		if ( loading && ! isStepFinished && ! this.state.initialRefreshComplete ) {
+			heading = translate( 'Checking domain lock status.' );
 		}
 
 		let message = translate(
@@ -156,7 +169,7 @@ class TransferDomainPrecheck extends React.Component {
 
 		if ( true === unlocked ) {
 			message = translate( 'Your domain is unlocked at your current registrar.' );
-		} else if ( false === unlocked || loading ) {
+		} else if ( false === unlocked ) {
 			message = translate(
 				"Your domain is locked to prevent unauthorized transfers. You'll need to unlock " +
 					'it at your current domain provider before we can move it. {{a}}Here are instructions for unlocking it{{/a}}. ' +
@@ -173,6 +186,9 @@ class TransferDomainPrecheck extends React.Component {
 					},
 				}
 			);
+		}
+		if ( loading && ! isStepFinished && ! this.state.initialRefreshComplete ) {
+			message = translate( 'Please wait while we check the lock staus of your domain.' );
 		}
 
 		const buttonText = unlockCheckClicked
