@@ -595,6 +595,7 @@ export class DomainDetailsForm extends PureComponent {
 		} );
 
 		let title;
+		let message;
 		// TODO: gather up tld specific stuff
 		if ( this.state.currentStep === 'fr' ) {
 			title = this.props.translate( '.FR Registration' );
@@ -602,6 +603,10 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
+			message = this.props.translate(
+				'For your convenience, we have pre-filled your WordPress.com contact information. Please ' +
+					"review this to be sure it's the correct information you want to use for this domain."
+			);
 		}
 
 		const renderPrivacy =
@@ -614,6 +619,7 @@ export class DomainDetailsForm extends PureComponent {
 				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
 				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
+					{ message && <p>{ message }</p> }
 					{ this.renderCurrentForm() }
 				</PaymentBox>
 			</div>
