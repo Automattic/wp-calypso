@@ -87,9 +87,15 @@ export class LanguagePicker extends PureComponent {
 		}
 	};
 
-	handleClose = () => {
-		this.setState( { open: false } );
+	handleKeyPress = event => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.props.onClick( event );
+			this.toggleOpen();
+		}
 	};
+
+	handleClose = () => this.setState( { open: false } );
 
 	renderPlaceholder() {
 		const classes = classNames( 'language-picker', 'is-loading' );
@@ -134,7 +140,14 @@ export class LanguagePicker extends PureComponent {
 		const { disabled, translate } = this.props;
 
 		return (
-			<div className="language-picker" onClick={ this.handleClick } disabled={ disabled }>
+			<div
+				tabIndex="0"
+				role="button"
+				className="language-picker"
+				onKeyPress={ this.handleKeyPress }
+				onClick={ this.handleClick }
+				disabled={ disabled }
+			>
 				<div className="language-picker__icon">
 					<div className="language-picker__icon-inner">
 						{ langCode }

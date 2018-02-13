@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import {
 	capitalize,
 	deburr,
@@ -64,6 +64,7 @@ export class LanguagePickerModal extends PureComponent {
 			search: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
+			localeSlug: getLocaleSlug(),
 		};
 	}
 
@@ -245,10 +246,11 @@ export class LanguagePickerModal extends PureComponent {
 				title={ titleText }
 				tabIndex="0"
 				role="button"
-				aria-label={ titleText }
 				onKeyPress={ partial( this.handleLanguageItemKeyPress, language.langSlug ) }
 			>
-				<span className={ classes }>{ language.name }</span>
+				<span className={ classes } lang={ language.langSlug }>
+					{ language.name }
+				</span>
 			</div>
 		);
 	};
@@ -320,8 +322,6 @@ export class LanguagePickerModal extends PureComponent {
 	}
 }
 
-export default connect(
-	state => ( {
-		localizedLanguageNames: getLocalizedLanguageNames( state ),
-	} )
-)( localize( LanguagePickerModal ) );
+export default connect( state => ( {
+	localizedLanguageNames: getLocalizedLanguageNames( state ),
+} ) )( localize( LanguagePickerModal ) );
