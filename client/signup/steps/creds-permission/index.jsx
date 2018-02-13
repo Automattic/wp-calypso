@@ -42,7 +42,9 @@ class CredsPermissionStep extends Component {
 			stepName: this.props.stepName,
 		} );
 
-		this.props.goToStep( 'creds-complete' );
+		this.props.goToStep(
+			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
+		);
 	};
 
 	renderStepContent = () => {

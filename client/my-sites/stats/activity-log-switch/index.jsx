@@ -39,6 +39,7 @@ class ActivityLogSwitch extends Component {
 			siteId,
 			siteSlug,
 			translate,
+			canAutoconfigure,
 		} = this.props;
 		switch ( this.props.failureReason ) {
 			case 'vp_can_transfer':
@@ -66,7 +67,11 @@ class ActivityLogSwitch extends Component {
 				return (
 					<Button
 						primary
-						href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }` }
+						href={
+							canAutoconfigure
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
+						}
 						>
 						{ translate( 'Continue setup' ) }
 					</Button>
@@ -183,6 +188,7 @@ export default connect(
 			siteUrl: getSiteUrl( state, siteId ),
 			rewindState: rewindState.state,
 			failureReason: rewindState.reason || '',
+			canAutoconfigure: rewindState.canAutoconfigure,
 		};
 	}
 )( localize( ActivityLogSwitch ) );
