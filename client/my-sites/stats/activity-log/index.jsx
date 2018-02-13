@@ -492,7 +492,7 @@ class ActivityLog extends Component {
 						icon="history"
 						href={
 							rewindState.canAutoconfigure
-								? `/settings/security/${ slug }`
+								? `/start/rewind-setup/?blogid=${ siteId }&siteSlug=${ slug }`
 								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
 						}
 						title={ translate( 'Add site credentials' ) }
