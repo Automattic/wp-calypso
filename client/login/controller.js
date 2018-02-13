@@ -113,8 +113,8 @@ export function magicLoginUse( context, next ) {
 }
 
 export function redirectDefaultLocale( context, next ) {
-	// only redirect `/log-in/en` to `/log-in`
-	if ( context.pathname !== '/log-in/en' ) {
+	// Only handle simple routes
+	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
 		return next();
 	}
 
@@ -133,5 +133,9 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	context.redirect( '/log-in' );
+	if ( context.params.isJetpack === 'jetpack' ) {
+		context.redirect( '/log-in/jetpack' );
+	} else {
+		context.redirect( '/log-in' );
+	}
 }
