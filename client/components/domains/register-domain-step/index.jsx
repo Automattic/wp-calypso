@@ -35,12 +35,11 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import SearchCard from 'components/search-card';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import {
@@ -48,7 +47,6 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { TRANSFER_IN_NUX } from 'state/current-user/constants';
 import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
@@ -636,24 +634,11 @@ class RegisterDomainStep extends React.Component {
 			}, this );
 
 			domainUnavailableSuggestion = (
-				<DomainMappingSuggestion
-					isSignupStep={ this.props.isSignupStep }
-					onButtonClick={ this.goToMapDomainStep }
-					selectedSite={ this.props.selectedSite }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					cart={ this.props.cart }
-					products={ this.props.products }
+				<DomainTransferSuggestion
+					onButtonClick={ this.goToTransferDomainStep }
+					tracksButtonClickSource="initial-suggestions-bottom"
 				/>
 			);
-
-			if ( ! this.props.isSignupStep || this.props.transferInNuxAllowed ) {
-				domainUnavailableSuggestion = (
-					<DomainTransferSuggestion
-						onButtonClick={ this.goToTransferDomainStep }
-						tracksButtonClickSource="initial-suggestions-bottom"
-					/>
-				);
-			}
 		}
 
 		return (
@@ -668,15 +653,10 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	getExampleSuggestions() {
-		const alreadyOwnUrl =
-			! this.props.isSignupStep || this.props.transferInNuxAllowed
-				? this.getTransferDomainUrl()
-				: this.getMapDomainUrl();
-
 		return (
 			<ExampleDomainSuggestions
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				url={ alreadyOwnUrl }
+				url={ this.getTransferDomainUrl() }
 				path={ this.props.path }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				products={ this.props.products }
@@ -895,7 +875,6 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
-			transferInNuxAllowed: currentUserHasFlag( state, TRANSFER_IN_NUX ),
 		};
 	},
 	{
