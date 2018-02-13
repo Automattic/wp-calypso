@@ -351,9 +351,39 @@ function setUpCSP( req, res, next ) {
 
 	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
 
-	res.set( {
-		'Content-Security-Policy': `default-src 'self'; form-action 'self'; script-src 'self' stats.wp.com www.google-analytics.com ${ inlineScripts.map( hash => `'${ hash }'` ).join( ' ' ) } 'nonce-${ req.context.inlineScriptNonce }'; object-src 'none'; style-src 'self' *.wp.com https://fonts.googleapis.com; img-src 'self' *.wp.com; media-src 'self'; frame-src 'self' https://public-api.wordpress.com; font-src 'self' *.wp.com https://fonts.gstatic.com data:; connect-src 'self'; report-uri /cspreport`,
-	} );
+	const policy = {
+		'default-src': [ "'self'" ],
+		'script-src': [
+			"'self'",
+			"'unsafe-eval'",
+			'stats.wp.com',
+			'https://www.google-analytics.com',
+			'https://apis.google.com',
+			`'nonce-${ req.context.inlineScriptNonce }'`,
+			...inlineScripts.map( hash => `'${ hash }'` ),
+		],
+		'base-uri': [ "'none'" ],
+		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
+		'form-action': [ "'self'" ],
+		'object-src': [ "'none'" ],
+		'img-src': [ "'self'", '*.wp.com', 'https://www.google-analytics.com' ],
+		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
+		'font-src': [
+			"'self'",
+			'*.wp.com',
+			'https://fonts.gstatic.com',
+			'data:', // should remove 'data:' ASAP
+		],
+		'media-src': [ "'self'" ],
+		'connect-src': [ "'self'", 'https://wordpress.com/' ],
+		'report-uri': [ '/cspreport' ],
+	};
+
+	const policyString = Object.keys( policy )
+		.map( key => `${ key } ${ policy[ key ].join( ' ' ) }` )
+		.join( '; ' );
+
+	res.set( { 'Content-Security-Policy': policyString } );
 	next();
 }
 
@@ -517,30 +547,30 @@ module.exports = function() {
 		} );
 
 	app.post( '/cspreport', function( req, res ) {
-		getRawBody( req, {
-			length: req.headers[ 'content-length' ],
-			limit: '1mb',
-			encoding: 'utf-8',
-		}, function( err, body ) {
-			if ( err ) {
-				res.status( 500 ).send( 'Bad report!' );
-				return;
+		getRawBody(
+			req,
+			{
+				length: req.headers[ 'content-length' ],
+				limit: '1mb',
+				encoding: 'utf-8',
+			},
+			function( err, body ) {
+				if ( err ) {
+					res.status( 500 ).send( 'Bad report!' );
+					return;
+				}
+
+				const jsonBody = JSON.parse( body );
+				const cspReport = jsonBody[ 'csp-report' ];
+				const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
+					report[ snakeCase( key ) ] = cspReport[ key ];
+					return report;
+				}, {} );
+
+				analytics.tracks.recordEvent( 'calypso_cspreport', cspReportSnakeCase, req );
+				res.status( 200 ).send( 'Got it!' );
 			}
-
-			const jsonBody = JSON.parse( body );
-			const cspReport = jsonBody[ 'csp-report' ];
-			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
-				report[ snakeCase( key ) ] = cspReport[ key ];
-				return report;
-			}, {} );
-
-			analytics.tracks.recordEvent(
-				'calypso_cspreport',
-				cspReportSnakeCase,
-				req
-			);
-			res.status( 200 ).send( 'Got it!' );
-		} );
+		);
 	} );
 
 	app.get( '/browsehappy', setUpRoute, function( req, res ) {
