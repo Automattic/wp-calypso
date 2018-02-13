@@ -117,9 +117,10 @@ export class JetpackSignup extends Component {
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem
 					href={ login( {
+						emailAddress,
+						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						redirectTo: window.location.href,
-						emailAddress,
 					} ) }
 				>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
