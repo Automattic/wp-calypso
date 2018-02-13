@@ -111,14 +111,12 @@ class CurrentSite extends Component {
 		}
 
 		return (
-			<Card className="current-site">
+			<Card className={ this.props.siteCount > 1 ? 'current-site multisite' : 'current-site' }>
 				{ this.props.siteCount > 1 && (
-					<span className="current-site__switch-sites">
-						<Button compact borderless onClick={ this.switchSites }>
-							<Gridicon icon={ rtlOn ? 'arrow-right' : 'arrow-left' } size={ 18 } />
-							{ translate( 'Switch Site' ) }
-						</Button>
-					</span>
+					<Button className="current-site__switch-sites" borderless onClick={ this.switchSites }>
+						<Gridicon icon={ rtlOn ? 'chevron-right' : 'chevron-left' } size={ 24 } />
+						{ translate( 'Switch Site' ) }
+					</Button>
 				) }
 
 				{ selectedSite ? (

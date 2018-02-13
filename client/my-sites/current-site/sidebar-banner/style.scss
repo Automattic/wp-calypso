@@ -1,28 +1,39 @@
 .sidebar-banner {
-	font-size: 12px;
 
 	.sidebar-banner__link {
-		background-color: $alert-green;
-		color: $white;
+		background-color: $gray-light;
+		color: $gray-text;
+		border-left: 3px soild $alert-green;
 		display: flex;
-
-		@include breakpoint( "<660px" ) {
-			padding: 0 24px;
-		}
+		padding: 8px 8px 8px 16px;
+		font-size: 12px;
+		border-bottom: 1px solid darken( $sidebar-bg-color, 10% );
 
 		.sidebar-banner__icon-wrapper {
 			flex: 0 0 auto;
 			padding: 5px 5px 2px;
+			background: $alert-green;
+			border-radius: 3px 0 0 3px;
 		}
 
 		.sidebar-banner__content {
 			width: 100%;
-			padding: 6px 5px 5px;
+			line-height: 24px;
 		}
 
 		.sidebar-banner__cta {
-			padding: 6px 8px 2px 5px;
-			text-transform: uppercase;
+			align-self: center;
+			box-sizing: border-box;
+			overflow: visible;
+			padding: 2px 8px 3px 8px;
+			height: 24px;
+			line-height: 18px;
+			background-color: $alert-green;
+			color: $white;
+			font-size: 12px;
+			font-weight: 600;
+			border-radius: 3px;
+			border: 1px solid darken( $alert-green, 10 );
 		}
 	}
 }
