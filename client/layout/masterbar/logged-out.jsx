@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Masterbar from './masterbar';
+import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 
@@ -18,6 +19,7 @@ import config from 'config';
 import { login } from 'lib/paths';
 import WordPressWordmark from 'components/wordpress-wordmark';
 import WordPressLogo from 'components/wordpress-logo';
+import { getCurrentQueryArguments, getCurrentRoute } from 'state/selectors';
 
 function getLoginUrl( redirectUri ) {
 	const params = { locale: getLocaleSlug() };
@@ -31,7 +33,21 @@ function getLoginUrl( redirectUri ) {
 	return login( { ...params, isNative: config.isEnabled( 'login/native-login-links' ) } );
 }
 
-const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) => (
+function getSignupUrl( currentRoute, query ) {
+	if ( '/log-in/jetpack' === currentRoute && query.redirect_to ) {
+		return query.redirect_to;
+	}
+	return config( 'signup_url' );
+}
+
+const MasterbarLoggedOut = ( {
+	currentRoute,
+	query,
+	title,
+	sectionName,
+	translate,
+	redirectUri,
+} ) => (
 	<Masterbar>
 		<Item className="masterbar__item-logo">
 			<WordPressLogo className="masterbar__wpcom-logo" />
@@ -39,8 +55,8 @@ const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) =>
 		</Item>
 		<Item className="masterbar__item-title">{ title }</Item>
 		<div className="masterbar__login-links">
-			{ ! includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ? (
-				<Item url={ config( 'signup_url' ) }>
+			{ ! includes( [ 'signup', 'jetpack-onboarding', 'jetpack-connect' ], sectionName ) ? (
+				<Item url={ getSignupUrl( currentRoute, query ) }>
 					{ translate( 'Sign Up', {
 						context: 'Toolbar',
 						comment: 'Should be shorter than ~12 chars',
@@ -48,7 +64,7 @@ const MasterbarLoggedOut = ( { title, sectionName, translate, redirectUri } ) =>
 				</Item>
 			) : null }
 
-			{ ! includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ? (
+			{ ! includes( [ 'login', 'jetpack-onboarding', 'jetpack-connect' ], sectionName ) ? (
 				<Item url={ getLoginUrl( redirectUri ) }>
 					{ translate( 'Log In', {
 						context: 'Toolbar',
@@ -71,4 +87,7 @@ MasterbarLoggedOut.defaultProps = {
 	sectionName: '',
 };
 
-export default localize( MasterbarLoggedOut );
+export default connect( state => ( {
+	currentRoute: getCurrentRoute( state ),
+	query: getCurrentQueryArguments( state ),
+} ) )( localize( MasterbarLoggedOut ) );
