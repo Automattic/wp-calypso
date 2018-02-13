@@ -178,7 +178,19 @@ User.prototype.handleFetchSuccess = function( userData ) {
 	// Store user info in `this.data` and localstorage as `wpcom_user`
 	store.set( 'wpcom_user', userData );
 	if ( userData.abtests ) {
-		store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
+		if ( config.isEnabled( 'dev/test-helper' ) ) {
+			// Preserve existing localStorage A/B variation values for
+			// A/B test helper component.
+			const initialVariationsFromStore = store.get( ABTEST_LOCALSTORAGE_KEY );
+			const initialVariations =
+				typeof initialVariationsFromStore === 'object' ? initialVariationsFromStore : undefined;
+			store.set( ABTEST_LOCALSTORAGE_KEY, {
+				...userData.abtests,
+				...initialVariations,
+			} );
+		} else {
+			store.set( ABTEST_LOCALSTORAGE_KEY, userData.abtests );
+		}
 	}
 	this.data = userData;
 	if ( this.settings ) {
