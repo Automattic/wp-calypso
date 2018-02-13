@@ -26,8 +26,8 @@ import { getSelectedSite } from 'state/ui/selectors';
 import {
 	isRequestingInvitesForSite,
 	getInviteForSite,
-	isDeleting,
-	didDeletionSucceed,
+	isDeletingInvite,
+	didInviteDeletionSucceed,
 } from 'state/invites/selectors';
 import { deleteInvite } from 'state/invites/actions';
 
@@ -38,10 +38,7 @@ class PeopleInviteDetails extends React.PureComponent {
 	};
 
 	componentWillReceiveProps( nextProps ) {
-		if (
-			true === nextProps.deleteSuccess &&
-			nextProps.deleteSuccess !== this.props.deleteSuccess
-		) {
+		if ( nextProps.deleteSuccess && ! this.props.deleteSuccess ) {
 			this.goBack();
 		}
 	}
@@ -195,8 +192,8 @@ export default connect(
 		return {
 			site,
 			requesting: isRequestingInvitesForSite( state, siteId ),
-			deleting: isDeleting( state, siteId, ownProps.inviteKey ),
-			deleteSuccess: didDeletionSucceed( state, siteId, ownProps.inviteKey ),
+			deleting: isDeletingInvite( state, siteId, ownProps.inviteKey ),
+			deleteSuccess: didInviteDeletionSucceed( state, siteId, ownProps.inviteKey ),
 			invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
 		};
 	},
