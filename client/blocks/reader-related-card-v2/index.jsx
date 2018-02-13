@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { getPost } from 'state/reader/posts/selectors';
+import { getPostById } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import Card from 'components/card/compact';
@@ -170,7 +170,7 @@ export const LocalizedRelatedPostCard = localize( RelatedPostCard );
 
 export default connect( ( state, ownProps ) => {
 	const { post } = ownProps;
-	const actualPost = getPost( state, post );
+	const actualPost = getPostById( state, post );
 	const siteId = post && post.site_ID;
 	const site = siteId && getSite( state, siteId );
 	return {

@@ -356,7 +356,6 @@ export default function feedStoreFactory( storeId ) {
 			keyMaker: mixedKeyMaker,
 			onGapFetch: limitSiteParams,
 			onUpdateFetch: limitSiteParams,
-			onNextPageFetch: addMetaToNextPageFetch,
 		} );
 	} else if ( storeId === 'likes' ) {
 		store = new FeedStream( {

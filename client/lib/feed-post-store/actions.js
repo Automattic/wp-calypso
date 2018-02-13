@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { assign, defer } from 'lodash';
+import { defer } from 'lodash';
 
 // Internal dependencies
 import Dispatcher from 'dispatcher';
@@ -71,16 +71,12 @@ export function receivePost( error, data, postKey ) {
 		fetcher.remove( postKey );
 	}
 
-	Dispatcher.handleServerAction(
-		assign(
-			{
-				type: ACTION.RECEIVE_FEED_POST,
-				data: data,
-				error: error,
-			},
-			postKey
-		)
-	);
+	Dispatcher.handleServerAction( {
+		type: ACTION.RECEIVE_FEED_POST,
+		data: data,
+		error: error,
+		...postKey,
+	} );
 }
 
 export function markSeen( post, site, source ) {

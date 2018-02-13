@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, truncate, get, isEmpty } from 'lodash';
+import { noop, truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -42,10 +42,8 @@ class ReaderPostCard extends React.Component {
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
 		showPrimaryFollowButton: PropTypes.bool,
-		discoverPick: PropTypes.shape( {
-			post: PropTypes.object,
-			site: PropTypes.object,
-		} ),
+		discoverPost: PropTypes.object,
+		discoverSite: PropTypes.object,
 		showSiteName: PropTypes.bool,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
@@ -62,7 +60,7 @@ class ReaderPostCard extends React.Component {
 
 	propagateCardClick = () => {
 		// If we have an discover pick post available, send the discover pick to the full post view
-		const postToOpen = get( this.props, 'discoverPick.post' ) || this.props.post;
+		const postToOpen = get( this.props, 'discoverPost' ) || this.props.post;
 		this.props.onClick( postToOpen );
 	};
 
@@ -113,7 +111,8 @@ class ReaderPostCard extends React.Component {
 	render() {
 		const {
 			post,
-			discoverPick,
+			discoverPost,
+			discoverSite,
 			site,
 			feed,
 			onCommentClick,
@@ -157,7 +156,7 @@ class ReaderPostCard extends React.Component {
 
 		const readerPostActions = (
 			<ReaderPostActions
-				post={ get( discoverPick, 'post' ) || post }
+				post={ discoverPost || post }
 				site={ site }
 				visitUrl={ post.URL }
 				showVisit={ true }
@@ -174,15 +173,15 @@ class ReaderPostCard extends React.Component {
 		// Set up post byline
 		let postByline;
 
-		if ( isDiscoverStream && ! isEmpty( discoverPick ) ) {
+		if ( isDiscoverStream && discoverPost && discoverSite ) {
 			// create a post like object with some props from the discover post
-			const postForByline = Object.assign( {}, discoverPick.post || {}, {
+			const postForByline = Object.assign( {}, discoverPost || {}, {
 				date: post.date,
 				URL: post.URL,
 				primary_tag: post.primary_tag,
 			} );
 			postByline = (
-				<PostByline post={ postForByline } site={ discoverPick.site } showSiteName={ true } />
+				<PostByline post={ postForByline } site={ discoverSite } showSiteName={ true } />
 			);
 		} else {
 			postByline = (
