@@ -6,7 +6,7 @@ import React from 'react';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith } from 'lodash';
+import { defer, endsWith, get } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -32,6 +32,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
 const productsList = productsListFactory();
 
@@ -46,6 +47,7 @@ class DomainsStep extends React.Component {
 		positionInFlow: PropTypes.number.isRequired,
 		queryObject: PropTypes.object,
 		signupProgress: PropTypes.array.isRequired,
+		siteTitle: PropTypes.string,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
@@ -227,6 +229,9 @@ class DomainsStep extends React.Component {
 	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
+		const suggestion = this.props.siteTitle
+			? this.props.siteTitle
+			: get( this.props, 'queryObject.new', '' );
 
 		return (
 			<RegisterDomainStep
@@ -247,7 +252,7 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' }
+				suggestion={ suggestion }
 				designType={ this.props.signupDependencies && this.props.signupDependencies.designType }
 			/>
 		);
@@ -393,6 +398,7 @@ export default connect(
 			: true,
 		surveyVertical: getSurveyVertical( state ),
 		designType: getDesignType( state ),
+		siteTitle: getSiteTitle( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
