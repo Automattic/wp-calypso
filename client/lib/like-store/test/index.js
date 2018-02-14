@@ -7,7 +7,7 @@ jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 import { expect } from 'chai';
 
 describe( 'index', () => {
-	var Dispatcher, LikeStore;
+	let Dispatcher, LikeStore;
 
 	beforeAll( () => {
 		LikeStore = require( '../like-store' );

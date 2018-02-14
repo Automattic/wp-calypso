@@ -8,7 +8,7 @@ import { tracks } from 'lib/analytics';
 import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
 import wp from 'lib/wp';
 
-jest.mock( 'reader', () => ( { pageViewForPost: jest.fn() } ) );
+jest.mock( 'reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
 
 jest.mock( 'lib/analytics', () => ( {
 	tracks: { recordEvent: jest.fn() },
@@ -28,7 +28,7 @@ jest.mock( 'lib/wp', () => {
 } );
 
 const undocumented = wp.undocumented;
-const { pageViewForPost } = require( 'reader' );
+const { pageViewForPost } = require( 'reader/stats' );
 const { mc } = require( 'lib/analytics' );
 
 describe( 'actions', () => {

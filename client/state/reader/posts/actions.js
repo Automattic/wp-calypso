@@ -13,7 +13,7 @@ import analytics, { mc } from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import wpcom from 'lib/wp';
 import { keyForPost } from 'lib/feed-stream-store/post-key';
-import { pageViewForPost } from 'reader';
+import { pageViewForPost } from 'reader/stats';
 import { hasPostBeenSeen } from './selectors';
 
 function trackRailcarRender( post ) {
