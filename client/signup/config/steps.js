@@ -262,12 +262,12 @@ export default {
 
 	'creds-confirm': {
 		stepName: 'creds-confirm',
-		providesDependencies: [],
+		providesDependencies: [ 'rewindconfig' ],
 	},
 
 	'creds-permission': {
 		stepName: 'creds-permission',
-		providesDependencies: [],
+		providesDependencies: [ 'rewindconfig' ],
 	},
 
 	'rewind-migrate': {
