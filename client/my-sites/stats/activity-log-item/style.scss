@@ -319,3 +319,27 @@
 		margin-top: 1.5rem;
 	}
 }
+
+.activity-log-item__quick-action-progress {
+}
+
+.activity-log-item__quick-action-success {
+	color: $alert-green;
+	animation-name: fade-out-success;
+	animation-fill-mode: forwards;
+	animation-delay: 2s;
+	animation-duration: 2s;
+}
+
+.activity-log-item__quick-action-error {
+	color: $alert-red;
+}
+
+@keyframes fade-out-success {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
