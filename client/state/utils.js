@@ -468,10 +468,18 @@ export const withoutPersistence = reducer => {
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	const validatedReducers = mapValues(
-		reducers,
-		next => ( next.hasCustomPersistence ? next : withSchemaValidation( next.schema, next ) )
-	);
+	const validatedReducers = mapValues( reducers, next => {
+		if ( next.hasCustomPersistence ) {
+			return next;
+		}
+
+		if ( next.schema ) {
+			return withSchemaValidation( next.schema, next );
+		}
+
+		return withoutPersistence( next );
+	} );
+
 	const combined = combine( validatedReducers );
 	const combinedWithSerializer = ( state, action ) => {
 		// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
