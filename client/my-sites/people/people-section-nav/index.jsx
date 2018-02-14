@@ -122,20 +122,13 @@ class PeopleSectionNav extends Component {
 	}
 
 	getNavigableFilters() {
-		var allowedFilterIds = [ 'team' ];
-		if ( isEnabled( 'manage/people/readers' ) ) {
-			allowedFilterIds.push( 'followers' );
-			allowedFilterIds.push( 'email-followers' );
+		const allowedFilterIds = [ 'team', 'followers', 'email-followers' ];
 
-			if ( this.shouldDisplayViewers() ) {
-				allowedFilterIds.push( 'viewers' );
-			}
+		if ( this.shouldDisplayViewers() ) {
+			allowedFilterIds.push( 'viewers' );
 		}
 
 		if ( isEnabled( 'manage/people/invites' ) ) {
-			/*
-			 * @todo conditionally show invites filter when outstanding invites exist
-			 */
 			allowedFilterIds.push( 'invites' );
 		}
 
