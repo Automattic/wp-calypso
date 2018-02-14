@@ -472,7 +472,6 @@ describe( 'utils', () => {
 
 	describe( '#withSchemaValidation', () => {
 		const load = { type: DESERIALIZE };
-		const write = { type: SERIALIZE };
 		const normal = { type: 'NORMAL' };
 		const grow = { type: 'GROW' };
 		const schema = {
@@ -499,16 +498,6 @@ describe( 'utils', () => {
 		};
 		date.hasCustomPersistence = true;
 
-		test( 'should return undefined without a schema on SERIALIZE', () => {
-			const validated = withSchemaValidation( null, age );
-			expect( validated( 5, write ) ).to.be.undefined;
-		} );
-
-		test( 'should return initial state without a schema on DESERIALIZE', () => {
-			const validated = withSchemaValidation( null, age );
-			expect( validated( 5, load ) ).to.equal( 0 );
-		} );
-
 		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
 
@@ -529,11 +518,6 @@ describe( 'utils', () => {
 
 		test( 'actions work as expected with schema', () => {
 			const validated = withSchemaValidation( schema, age );
-			expect( validated( 5, grow ) ).to.equal( 6 );
-		} );
-
-		test( 'actions work as expected without schema', () => {
-			const validated = withSchemaValidation( null, age );
 			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
 	} );

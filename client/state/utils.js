@@ -211,6 +211,10 @@ export function extendAction( action, data ) {
 	};
 }
 
+function getInitialState( reducer ) {
+	return reducer( undefined, { type: '@@calypso/INIT' } );
+}
+
 /**
  * Returns a reducer function with state calculation determined by the result
  * of invoking the handler key corresponding with the dispatched action type,
@@ -314,48 +318,65 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  *
  * const schema = { type: 'number', minimum: 0 }
  *
- * export const age = withSchemaValidation( schema, age )
+ * export const age = withSchemaValidation( schema, ageReducer )
  *
  * ageReducer( -5, { type: DESERIALIZE } ) === -5
  * age( -5, { type: DESERIALIZE } ) === 0
  * age( 23, { type: DESERIALIZE } ) === 23
  *
- * If no schema is provided, the reducer will return `undefined` on SERIALIZE (instructing
- * the serialization engine to not persist any data for this reducer) and will return the
- * initial state on DESERIALIZE (ignoring the persisted value).
- *
- * @example
- * export const age = withSchemaValidation( null, age )
- *
- * ageReducer( -5, { type: SERIALIZE } ) === -5
- * age( -5, { type: SERIALIZE } ) === undefined
- * age( 23, { type: SERIALIZE } ) === undefined
- * age( 23, { type: DESERIALIZE } ) === 0
- *
  * @param {object} schema JSON-schema description of state
  * @param {function} reducer normal reducer from ( state, action ) to new state
- * @returns {function} wrapped reducer handling validation on DESERIALIZE and
- * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
+ * @returns {function} wrapped reducer handling validation on DESERIALIZE
  */
 export const withSchemaValidation = ( schema, reducer ) => {
-	const wrappedReducer = ( state, action ) => {
-		if ( SERIALIZE === action.type ) {
-			return schema ? reducer( state, action ) : undefined;
-		}
-		if ( DESERIALIZE === action.type ) {
-			if ( ! schema ) {
-				return reducer( undefined, { type: '@@calypso/INIT' } );
-			}
+	if ( process.env.NODE_ENV !== 'production' && ! schema ) {
+		throw new Error( 'null schema passed to withSchemaValidation' );
+	}
 
-			return state && isValidStateWithSchema( state, schema )
-				? reducer( state, action )
-				: reducer( undefined, { type: '@@calypso/INIT' } );
+	const wrappedReducer = ( state, action ) => {
+		if ( action.type === DESERIALIZE && ! ( state && isValidStateWithSchema( state, schema ) ) ) {
+			return getInitialState( reducer );
 		}
 
 		return reducer( state, action );
 	};
 
 	//used to propagate actions properly when combined in combineReducersWithPersistence
+	wrappedReducer.hasCustomPersistence = true;
+
+	return wrappedReducer;
+};
+
+/**
+ * Wraps a reducer such that it won't persist any state to the browser's local storage
+ *
+ * @example prevent a simple reducer from persisting
+ * const age = ( state = 0, { type } ) =>
+ *   GROW === type
+ *     ? state + 1
+ *     : state
+ *
+ * export default combineReducers( {
+ *   age: withoutPersistence( age )
+ * } )
+ *
+ * @example preventing a large reducer from persisting
+ * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
+ *
+ * @param {Function} reducer original reducer
+ * @returns {Function} wrapped reducer
+ */
+export const withoutPersistence = reducer => {
+	const wrappedReducer = ( state, action ) => {
+		switch ( action.type ) {
+			case SERIALIZE:
+				return undefined;
+			case DESERIALIZE:
+				return getInitialState( reducer );
+			default:
+				return reducer( state, action );
+		}
+	};
 	wrappedReducer.hasCustomPersistence = true;
 
 	return wrappedReducer;
@@ -429,10 +450,18 @@ export const withSchemaValidation = ( schema, reducer ) => {
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	const validatedReducers = mapValues(
-		reducers,
-		next => ( next.hasCustomPersistence ? next : withSchemaValidation( next.schema, next ) )
-	);
+	const validatedReducers = mapValues( reducers, next => {
+		if ( next.hasCustomPersistence ) {
+			return next;
+		}
+
+		if ( next.schema ) {
+			return withSchemaValidation( next.schema, next );
+		}
+
+		return withoutPersistence( next );
+	} );
+
 	const combined = combine( validatedReducers );
 	const combinedWithSerializer = ( state, action ) => {
 		// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
@@ -470,38 +499,6 @@ export function combineReducers( reducers ) {
 	combinedWithSerializer.hasCustomPersistence = true;
 	return combinedWithSerializer;
 }
-
-/**
- * Wraps a reducer such that it won't persist
- * any state to the browser's local cache
- *
- * @example revent a simple reducer from persisting
- * const age = ( state = 0, { type } ) =>
- *   GROW === type
- *     ? state + 1
- *     : state
- *
- * export default combineReducers( {
- *   age: withoutPersistence( age )
- * } )
- *
- * @example preventing a large reducer from persisting
- * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
- *
- * @param {Function} reducer original reducer
- * @returns {Function} wrapped reducer
- */
-export const withoutPersistence = reducer => ( state, action ) => {
-	if ( DESERIALIZE === action.type ) {
-		return reducer( undefined, { type: '@@calypso/INIT' } );
-	}
-
-	if ( SERIALIZE === action.type ) {
-		return undefined;
-	}
-
-	return reducer( state, action );
-};
 
 /**
  * Creates a caching action creator
