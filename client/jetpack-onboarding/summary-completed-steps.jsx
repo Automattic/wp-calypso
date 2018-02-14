@@ -24,14 +24,7 @@ import {
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
 
-const CompletedSteps = ( {
-	basePath,
-	handleCompletedStepClick,
-	siteSlug,
-	steps,
-	stepsCompleted,
-	stepsPending,
-} ) =>
+const CompletedSteps = ( { basePath, onClick, siteSlug, steps, stepsCompleted, stepsPending } ) =>
 	map( without( steps, STEPS.SUMMARY ), stepName => {
 		const isCompleted = get( stepsCompleted, stepName ) === true;
 		const isPending = get( stepsPending, stepName );
@@ -48,7 +41,7 @@ const CompletedSteps = ( {
 				) }
 				<a
 					href={ [ basePath, stepName, siteSlug ].join( '/' ) }
-					onClick={ handleCompletedStepClick( stepName ) }
+					onClick={ onClick( stepName, 'completed' ) }
 				>
 					{ STEP_TITLES[ stepName ] }
 				</a>
@@ -57,11 +50,11 @@ const CompletedSteps = ( {
 	} );
 
 CompletedSteps.propTypes = {
-	handleCompletedStepClick: PropTypes.func,
+	onClick: PropTypes.func,
 };
 
 CompletedSteps.defaultProps = {
-	handleCompletedStepClick: noop,
+	onClick: noop,
 };
 
 export default connect( ( state, { siteId, steps } ) => ( {
