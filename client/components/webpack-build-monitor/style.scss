@@ -23,8 +23,14 @@
 	}
 
 	&.is-busy {
-		animation: loading-fade 1.6s ease-in-out infinite;
+		animation: blink 1s linear infinite;
 	}
+}
+
+@keyframes blink {
+	0% { visibility: hidden; }
+	20% { visibility: hidden; }
+	100% { visibility: visible; }
 }
 
 .webpack-build-monitor__text {
