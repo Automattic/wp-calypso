@@ -318,42 +318,24 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
  *
  * const schema = { type: 'number', minimum: 0 }
  *
- * export const age = withSchemaValidation( schema, age )
+ * export const age = withSchemaValidation( schema, ageReducer )
  *
  * ageReducer( -5, { type: DESERIALIZE } ) === -5
  * age( -5, { type: DESERIALIZE } ) === 0
  * age( 23, { type: DESERIALIZE } ) === 23
  *
- * If no schema is provided, the reducer will return `undefined` on SERIALIZE (instructing
- * the serialization engine to not persist any data for this reducer) and will return the
- * initial state on DESERIALIZE (ignoring the persisted value).
- *
- * @example
- * export const age = withSchemaValidation( null, age )
- *
- * ageReducer( -5, { type: SERIALIZE } ) === -5
- * age( -5, { type: SERIALIZE } ) === undefined
- * age( 23, { type: SERIALIZE } ) === undefined
- * age( 23, { type: DESERIALIZE } ) === 0
- *
  * @param {object} schema JSON-schema description of state
  * @param {function} reducer normal reducer from ( state, action ) to new state
- * @returns {function} wrapped reducer handling validation on DESERIALIZE and
- * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
+ * @returns {function} wrapped reducer handling validation on DESERIALIZE
  */
 export const withSchemaValidation = ( schema, reducer ) => {
-	const wrappedReducer = ( state, action ) => {
-		if ( SERIALIZE === action.type ) {
-			return schema ? reducer( state, action ) : undefined;
-		}
-		if ( DESERIALIZE === action.type ) {
-			if ( ! schema ) {
-				return reducer( undefined, { type: '@@calypso/INIT' } );
-			}
+	if ( process.env.NODE_ENV !== 'production' && ! schema ) {
+		throw new Error( 'null schema passed to withSchemaValidation' );
+	}
 
-			return state && isValidStateWithSchema( state, schema )
-				? reducer( state, action )
-				: reducer( undefined, { type: '@@calypso/INIT' } );
+	const wrappedReducer = ( state, action ) => {
+		if ( action.type === DESERIALIZE && ! ( state && isValidStateWithSchema( state, schema ) ) ) {
+			return getInitialState( reducer );
 		}
 
 		return reducer( state, action );
