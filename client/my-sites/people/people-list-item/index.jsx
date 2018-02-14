@@ -18,7 +18,7 @@ import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
-import { isRequestingResend, didResendSucceed } from 'state/invites/selectors';
+import { isRequestingInviteResend, didInviteResendSucceed } from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
 
 class PeopleListItem extends React.PureComponent {
@@ -165,8 +165,8 @@ export default connect(
 		const inviteKey = ownProps.invite && ownProps.invite.key;
 
 		return {
-			requestingResend: isRequestingResend( state, siteId, inviteKey ),
-			resendSuccess: didResendSucceed( state, siteId, inviteKey ),
+			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
+			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
 			siteId,
 			inviteKey,
 		};
