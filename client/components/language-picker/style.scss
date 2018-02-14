@@ -51,6 +51,10 @@
 		}
 	}
 
+	&:focus {
+		border-color: $blue-medium;
+		box-shadow: 0 0 0 2px $blue-light;
+	}
 }
 
 .language-picker__icon {
