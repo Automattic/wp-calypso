@@ -25,7 +25,7 @@ import * as steps from './steps';
 import BusinessATStep from './stepComponents/business-at-step';
 import UpgradeATStep from './stepComponents/upgrade-at-step';
 import { getName } from 'lib/purchases';
-import { radioOption } from './radioOption';
+import { radioOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
 	nextAdventureOptionsForPurchase,
