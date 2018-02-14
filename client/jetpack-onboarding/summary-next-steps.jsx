@@ -75,7 +75,7 @@ export default localize(
 
 		return {
 			steps: {
-				jetpack_connection: {
+				'jetpack-connect': {
 					label: translate( 'Connect to WordPress.com' ),
 					url: '/jetpack/connect?url=' + siteUrl,
 				},
