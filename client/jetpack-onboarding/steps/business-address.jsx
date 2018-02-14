@@ -66,9 +66,9 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 		const { siteId } = this.props;
 
-		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
-
 		this.props.recordJpoEvent( 'calypso_jpo_business_address_submitted' );
+
+		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
 
 		page( this.props.getForwardUrl() );
 	};

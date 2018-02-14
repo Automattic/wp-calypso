@@ -47,12 +47,12 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			return;
 		}
 
+		this.props.recordJpoEvent( 'calypso_jpo_site_title_submitted' );
+
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.blogname,
 			siteDescription: this.state.blogdescription,
 		} );
-
-		this.props.recordJpoEvent( 'calypso_jpo_site_title_submitted' );
 
 		page( this.props.getForwardUrl() );
 	};
