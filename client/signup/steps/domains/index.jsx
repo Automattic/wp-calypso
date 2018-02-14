@@ -178,7 +178,9 @@ class DomainsStep extends React.Component {
 					stepSectionName: this.props.stepSectionName,
 				},
 				this.getThemeArgs()
-			)
+			),
+			[],
+			{ domainItem }
 		);
 
 		this.props.goToNextStep();
