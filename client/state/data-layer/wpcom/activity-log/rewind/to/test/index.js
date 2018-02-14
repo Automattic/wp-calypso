@@ -12,7 +12,7 @@ const restoreId = 12345;
 describe( 'receiveRestoreSuccess', () => {
 	test( 'should dispatch get restore progress on success', () => {
 		expect( receiveRestoreSuccess( { siteId, timestamp }, restoreId ) ).toEqual(
-			getRewindRestoreProgress( siteId, restoreId )
+			expect.arrayContaining( [ getRewindRestoreProgress( siteId, restoreId ) ] )
 		);
 	} );
 } );
