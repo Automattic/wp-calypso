@@ -396,6 +396,9 @@ function setUpCSP( req, res, next ) {
 		.map( key => `${ key } ${ policy[ key ].join( ' ' ) }` )
 		.join( '; ' );
 
+	// For now we're just logging policy violations and not blocking them
+	// so we won't actually break anything, later we'll remove the 'Report-Only'
+	// part so browsers will block violating content.
 	res.set( { 'Content-Security-Policy-Report-Only': policyString } );
 	next();
 }
@@ -555,6 +558,7 @@ module.exports = function() {
 			}
 		} );
 
+	// This used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post( '/cspreport', function( req, res ) {
 		getRawBody(
 			req,
