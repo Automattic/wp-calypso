@@ -57,16 +57,8 @@ const analyticsPageTitleByType = {
 	pro: 'Jetpack Install Pro',
 };
 
-const removeSidebar = context => {
-	context.store.dispatch(
-		setSection(
-			{ name: 'jetpackConnect' },
-			{
-				hasSidebar: false,
-			}
-		)
-	);
-};
+const removeSidebar = context =>
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 const jetpackNewSiteSelector = context => {
 	removeSidebar( context );
