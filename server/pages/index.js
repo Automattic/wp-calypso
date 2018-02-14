@@ -396,7 +396,7 @@ function setUpCSP( req, res, next ) {
 		.map( key => `${ key } ${ policy[ key ].join( ' ' ) }` )
 		.join( '; ' );
 
-	res.set( { 'Content-Security-Policy': policyString } );
+	res.set( { 'Content-Security-Policy-Report-Only': policyString } );
 	next();
 }
 
