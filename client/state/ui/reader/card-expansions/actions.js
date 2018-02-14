@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
-import { markSeen } from 'lib/feed-post-store/actions';
+// import { markSeen } from '';
 import DISPLAY_TYPES from 'state/reader/posts/display-types';
 import * as stats from 'reader/stats';
 
@@ -16,7 +16,7 @@ export const expandCard = ( { postKey, post, site } ) => {
 	stats.recordTrackForPost( 'calypso_reader_article_opened', post );
 
 	// Record page view
-	markSeen( post, site );
+	// markSeen( post, site );
 	return {
 		type: READER_EXPAND_CARD,
 		payload: { postKey },

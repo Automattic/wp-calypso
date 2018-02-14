@@ -18,7 +18,8 @@ import { translate } from 'i18n-calypso';
 import { preload } from 'sections-preload';
 import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
-import { markSeen as markPostSeen } from 'lib/feed-post-store/actions';
+// TODO implement
+// import { markSeen as markPostSeen } from ;
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';
 import { getPrimarySiteId } from 'state/selectors';
@@ -98,7 +99,7 @@ export class DailyPostButton extends React.Component {
 		recordGaEvent( 'Clicked on Daily Post challenge' );
 		recordTrackForPost( 'calypso_reader_daily_post_challenge_site_picked', this.props.post );
 
-		markPostSeen( this.props.post, this.props.site );
+		// markPostSeen( this.props.post, this.props.site );
 
 		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
 		return true;

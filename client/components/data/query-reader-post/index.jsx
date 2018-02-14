@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchPost } from 'lib/feed-post-store/actions';
+import { fetchPost } from 'state/reader/posts/actions';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { isPostKeyLike } from 'lib/feed-stream-store/post-key';
 
@@ -30,7 +30,7 @@ class QueryReaderPost extends Component {
 
 	maybeFetch = ( props = this.props ) => {
 		if ( isPostKeyLike( props.postKey ) && ( ! props.post || props.post._state === 'minimal' ) ) {
-			fetchPost( props.postKey );
+			this.props.fetchPost( props.postKey );
 		}
 	};
 
@@ -39,6 +39,9 @@ class QueryReaderPost extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => ( {
-	post: getPostByKey( state, ownProps.postKey ),
-} ) )( QueryReaderPost );
+export default connect(
+	( state, ownProps ) => ( {
+		post: getPostByKey( state, ownProps.postKey ),
+	} ),
+	{ fetchPost }
+)( QueryReaderPost );

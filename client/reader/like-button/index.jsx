@@ -9,7 +9,7 @@ import React from 'react';
  */
 import { reduxGetState } from 'lib/redux-bridge';
 import LikeButtonContainer from 'blocks/like-button';
-import { markSeen } from 'lib/feed-post-store/actions';
+// import { markSeen } from ;
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { getPostByKey } from 'state/reader/posts/selectors';
 
@@ -30,7 +30,7 @@ class ReaderLikeButton extends React.Component {
 			{ context: this.props.fullPost ? 'full-post' : 'card' }
 		);
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
-			markSeen( post, this.props.site );
+			// markSeen( post, this.props.site );
 		}
 	};
 
