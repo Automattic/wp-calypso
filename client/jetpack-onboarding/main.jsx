@@ -59,8 +59,9 @@ class JetpackOnboardingMain extends React.PureComponent {
 	getNavigationLinkClickHandler = direction => () => {
 		const { recordJpoEvent, stepName } = this.props;
 
-		recordJpoEvent( `calypso_jpo_navigation_${ direction }_clicked`, {
+		recordJpoEvent( 'calypso_jpo_navigation_link_clicked', {
 			current_step: stepName,
+			direction,
 		} );
 	};
 
