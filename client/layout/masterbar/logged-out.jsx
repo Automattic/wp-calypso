@@ -21,18 +21,6 @@ import WordPressWordmark from 'components/wordpress-wordmark';
 import WordPressLogo from 'components/wordpress-logo';
 import { getCurrentQueryArguments, getCurrentRoute } from 'state/selectors';
 
-function getLoginUrl( redirectUri ) {
-	const params = { locale: getLocaleSlug() };
-
-	if ( redirectUri ) {
-		params.redirectTo = redirectUri;
-	} else if ( typeof window !== 'undefined' ) {
-		params.redirectTo = window.location.href;
-	}
-
-	return login( { ...params, isNative: config.isEnabled( 'login/native-login-links' ) } );
-}
-
 class MasterbarLoggedOut extends PureComponent {
 	static propTypes = {
 		redirectUri: PropTypes.string,
@@ -51,15 +39,31 @@ class MasterbarLoggedOut extends PureComponent {
 
 	renderLoginItem() {
 		const { sectionName, translate, redirectUri } = this.props;
+
+		if ( includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ) {
+			return null;
+		}
+
+		const params = { locale: getLocaleSlug() };
+
+		if ( redirectUri ) {
+			params.redirectTo = redirectUri;
+		} else if ( typeof window !== 'undefined' ) {
+			params.redirectTo = window.location.href;
+		}
+
+		const loginUrl = login( {
+			...params,
+			isNative: config.isEnabled( 'login/native-login-links' ),
+		} );
+
 		return (
-			! includes( [ 'login', 'jetpack-onboarding' ], sectionName ) && (
-				<Item url={ getLoginUrl( redirectUri ) }>
-					{ translate( 'Log In', {
-						context: 'Toolbar',
-						comment: 'Should be shorter than ~12 chars',
-					} ) }
-				</Item>
-			)
+			<Item url={ loginUrl }>
+				{ translate( 'Log In', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
 		);
 	}
 
