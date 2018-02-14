@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isSurveyFilledIn from '../isSurveyFilledIn';
+import isSurveyFilledIn from '../is-survey-filled-in';
 
 describe( 'isSurveyFilledIn', () => {
 	test( 'should return false when no questions are answered', () => {

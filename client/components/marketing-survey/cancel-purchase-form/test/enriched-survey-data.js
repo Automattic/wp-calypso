@@ -8,7 +8,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import enrichedSurveyData from '../enrichedSurveyData';
+import enrichedSurveyData from '../enriched-survey-data';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 
@@ -19,14 +19,6 @@ describe( 'enrichedSurveyData', () => {
 			purchase: null,
 			purchaseId: null,
 		} );
-	} );
-
-	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
-		const site = null;
-		const purchase = { id: 'purchase id', productSlug: 'product slug' };
-		expect( enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase ).to.equal(
-			'product slug'
-		);
 	} );
 
 	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
