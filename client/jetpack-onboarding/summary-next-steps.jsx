@@ -56,15 +56,15 @@ export default localize(
 		if ( isConnected ) {
 			return {
 				steps: {
-					THEME: {
+					theme: {
 						label: translate( 'Choose a Theme' ),
 						url: '/themes/' + siteSlug,
 					},
-					PAGES: {
+					pages: {
 						label: translate( 'Add additional pages' ),
 						url: getEditorNewPostPath( state, siteId, 'page' ),
 					},
-					BLOG: {
+					blog: {
 						label: translate( 'Write your first blog post' ),
 						url: getEditorNewPostPath( state, siteId, 'post' ),
 					},
@@ -75,19 +75,19 @@ export default localize(
 
 		return {
 			steps: {
-				JETPACK_CONNECTION: {
+				'jetpack-connect': {
 					label: translate( 'Connect to WordPress.com' ),
 					url: '/jetpack/connect?url=' + siteUrl,
 				},
-				THEME: {
+				theme: {
 					label: translate( 'Choose a Theme' ),
 					url: siteUrl + '/wp-admin/theme-install.php?browse=featured',
 				},
-				PAGES: {
+				pages: {
 					label: translate( 'Add additional pages' ),
 					url: siteUrl + '/wp-admin/post-new.php?post_type=page',
 				},
-				BLOG: {
+				blog: {
 					label: translate( 'Write your first blog post' ),
 					url: siteUrl + '/wp-admin/post-new.php',
 				},
