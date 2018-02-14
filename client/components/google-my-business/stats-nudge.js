@@ -13,12 +13,14 @@ import Button from 'components/button';
 import DismissibleCard from 'blocks/dismissible-card';
 import SectionHeader from 'components/section-header';
 
+const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
+
 const GMBStatsNudge = ( { translate } ) => {
 	return (
 		<DismissibleCard
 			className="google-my-business__stats-nudge"
 			preferenceName="show-google-my-business-nudge"
-			temporary
+			dissmissSeconds={ TWO_WEEKS_IN_SECONDS }
 		>
 			<SectionHeader
 				className="google-my-business__stats-nudge-header"

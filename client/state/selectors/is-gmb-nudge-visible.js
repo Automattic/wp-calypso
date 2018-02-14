@@ -10,15 +10,30 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
 /**
  * Returns true if the Google My Business (GMB) nudge should be visible in stats
  *
+ * It should be visible if:
+ * - site is older than 2 weeks,
+ * - site has a business plan
+ * - site has a promote goal
  * @param  {Object}  state  Global state tree
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if we should show the nudge
  */
 export default createSelector(
 	( state, siteId ) => {
+		const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
+		const createdAt = getSiteOption( state, siteId, 'created_at' );
+
+		if ( Date.parse( createdAt ) + TWO_WEEKS_IN_SECONDS > Date.now() ) {
+			return false;
+		}
+
 		const siteGoals = ( getSiteOption( state, siteId, 'site_goals' ) || '' ).split( ',' );
 		const sitePlan = getSitePlanSlug( state, siteId );
 		return siteGoals.indexOf( 'promote' ) !== -1 && sitePlan === PLAN_BUSINESS;
 	},
-	( state, siteId ) => [ getSitePlanSlug( state ), getSiteOption( state, siteId, 'site_goals' ) ]
+	( state, siteId ) => [
+		getSitePlanSlug( state ),
+		getSiteOption( state, siteId, 'site_goals' ),
+		getSiteOption( state, siteId, 'created_at' ),
+	]
 );
