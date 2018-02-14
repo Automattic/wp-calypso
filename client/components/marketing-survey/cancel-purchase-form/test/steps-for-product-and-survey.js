@@ -8,7 +8,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import * as steps from '../steps';
-import stepsForProductAndSurvey from '../stepsForProductAndSurvey';
+import stepsForProductAndSurvey from '../steps-for-product-and-survey';
 import { abtest } from 'lib/abtest';
 import * as plans from 'lib/plans/constants';
 jest.mock( 'lib/abtest', () => ( { abtest: require( 'sinon' ).stub() } ) );
