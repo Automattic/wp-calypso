@@ -63,3 +63,14 @@ Note that we prefix this value with 'dismissible-card-' to avoid namespace colli
 </table>
 
 When true, clicking on the cross will dismiss the card for the current page load.
+
+
+### `dismissSeconds`
+
+<table>
+	<tr><td>Type</td><td>Number</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>undefined</code></td></tr>
+</table>
+
+When set, will dismiss the card for the amount of seconds
