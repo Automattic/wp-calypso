@@ -26,7 +26,7 @@ import PostLikes from 'blocks/post-likes';
 export const StatsPostLikes = props => {
 	const { countLikes, opened, postId, postType, siteId, toggle, translate } = props;
 	const infoIcon = opened ? 'info' : 'info-outline';
-	const isLoading = countLikes === undefined;
+	const isLoading = countLikes === null;
 	const classes = {
 		'is-showing-info': opened,
 		'is-loading': isLoading,
