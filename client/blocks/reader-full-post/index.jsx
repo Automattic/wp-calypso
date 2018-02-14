@@ -18,8 +18,7 @@ import ReaderMain from 'components/reader-main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
 import { setSection } from 'state/ui/actions';
-// TODO
-// import { markSeen } from '';
+import { markPostSeen } from 'state/reader/posts/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
 import LikeButton from 'reader/like-button';
@@ -237,7 +236,7 @@ export class FullPostView extends React.Component {
 		const { post, site } = this.props;
 
 		if ( post && post._state !== 'pending' && site && site.ID && ! this.hasSentPageView ) {
-			// markSeen( post, site );
+			this.props.markPostSeen( post, site );
 			this.hasSentPageView = true;
 		}
 
@@ -494,5 +493,5 @@ export default connect(
 
 		return props;
 	},
-	{ setSection }
+	{ setSection, markPostSeen }
 )( FullPostView );
