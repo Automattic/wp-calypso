@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import validatorFactory from 'is-my-json-valid';
 import { castArray, get, isEmpty, map, once, reduce, replace, set } from 'lodash';
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
 const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 
 /**
@@ -33,7 +34,7 @@ export function disableSubmitButton( children ) {
 }
 
 export function interpretIMJVError( error, schema ) {
-	let explicitPath, errorCode;
+	let explicitPath, errorCode, errorMessage;
 
 	if ( schema ) {
 		// Search up the schema for an explicit errorField & message
@@ -41,7 +42,10 @@ export function interpretIMJVError( error, schema ) {
 
 		do {
 			const node = get( schema, path, {} );
-			errorCode = errorCode || node.errorCode;
+			if ( ! errorCode && node.errorCode ) {
+				errorCode = node.errorCode;
+				errorMessage = node.errorMessage;
+			}
 			explicitPath = explicitPath || node.errorField;
 		} while ( path.pop() && ! ( explicitPath && errorCode ) );
 	}
@@ -50,6 +54,7 @@ export function interpretIMJVError( error, schema ) {
 	const inferredPath = replace( error.field, /^data\./, '' );
 
 	return {
+		errorMessage,
 		errorCode: errorCode || error.message,
 		path: explicitPath || inferredPath,
 	};
@@ -62,13 +67,13 @@ export function formatIMJVErrors( errors, schema ) {
 	return reduce(
 		errors,
 		( accumulatedErrors, error ) => {
-			// scan for errorField and errorCode at or above the failed rule
+			// Compare the error to the schema and try to find an appropriate
+			// error message
 			const details = interpretIMJVError( error, schema );
 
-			const { path, errorCode } = details;
+			const { path, errorMessage } = details;
 
-			// TODO: get localize user facing strings
-			const message = errorCode;
+			const message = errorMessage || translate( 'There was a problem with this field.' );
 
 			const previousErrorsForField = get( accumulatedErrors, path, [] );
 

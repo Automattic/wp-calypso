@@ -63,17 +63,6 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 				{ text }
 			</option>
 		) );
-		this.errorMessages = {
-			dotukRegistrationNumberFormat: translate(
-				'A Company Registration Number is 8 numerals, or 2 letters followed by 6 numerals (e.g. AB123456 or 12345678).'
-			),
-			dotukRegistrantTypeRequiresRegistrationNumber: translate(
-				'A registration number is required for this registrant type.'
-			),
-			dotukRegistrantTypeRequiresTradingName: translate(
-				'A trading name is required for this registrant type.'
-			),
-		};
 	}
 
 	componentWillMount() {
@@ -182,21 +171,8 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		);
 	}
 
-	errorMessageFromCode( errorCode ) {
-		return (
-			this.errorMessages[ errorCode ] ||
-			this.props.translate( 'There was a problem with this field.' )
-		);
-	}
-
-	renderValidationError = errorCode => {
-		return (
-			<FormInputValidation
-				isError
-				key={ errorCode }
-				text={ this.errorMessageFromCode( errorCode ) }
-			/>
-		);
+	renderValidationError = errorMessage => {
+		return <FormInputValidation isError key={ errorMessage } text={ errorMessage } />;
 	};
 
 	render() {
