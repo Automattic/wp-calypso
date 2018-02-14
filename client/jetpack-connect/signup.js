@@ -55,6 +55,8 @@ export class JetpackSignup extends Component {
 			userData: PropTypes.object,
 		} ).isRequired,
 		createAccount: PropTypes.func.isRequired,
+		currentQuery: PropTypes.object,
+		currentRoute: PropTypes.string,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};

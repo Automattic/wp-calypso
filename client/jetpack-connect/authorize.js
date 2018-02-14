@@ -91,6 +91,8 @@ export class JetpackAuthorize extends Component {
 		} ).isRequired,
 		authorize: PropTypes.func.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
+		currentQuery: PropTypes.object,
+		currentRoute: PropTypes.string,
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
 		isAlreadyOnSitesList: PropTypes.bool,
