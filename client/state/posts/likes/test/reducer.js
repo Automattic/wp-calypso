@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -19,14 +18,14 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [ 'items' ] );
 	} );
 
 	describe( 'items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index post likes by site ID, post Id', () => {
@@ -43,7 +42,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -77,7 +76,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -118,7 +117,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -157,7 +156,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes: likes2,
@@ -192,7 +191,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes: [
@@ -229,7 +228,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -257,7 +256,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -278,7 +277,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );
