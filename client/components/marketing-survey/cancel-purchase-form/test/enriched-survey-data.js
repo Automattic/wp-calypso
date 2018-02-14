@@ -29,14 +29,6 @@ describe( 'enrichedSurveyData', () => {
 		);
 	} );
 
-	test( 'should add purchase id and slug to survey data if purchase is provided', () => {
-		const site = null;
-		const purchase = { id: 'purchase id', productSlug: 'product slug' };
-		expect( enrichedSurveyData( { key: 'value' }, moment(), site, purchase ).purchase ).to.equal(
-			'product slug'
-		);
-	} );
-
 	test( 'should add daysSincePurchase to survey data when purchase.subscribedDate is provided', () => {
 		const site = null;
 		const purchase = { subscribedDate: '2017-01-09T03:00:00+00:00' };
