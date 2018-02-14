@@ -118,6 +118,7 @@ export class JetpackSignup extends Component {
 				<LoggedOutFormLinkItem
 					href={ login( {
 						isNative: config.isEnabled( 'login/native-login-links' ),
+						locale: this.props.locale,
 						redirectTo: window.location.href,
 						emailAddress,
 					} ) }
