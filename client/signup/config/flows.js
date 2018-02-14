@@ -276,6 +276,19 @@ const flows = {
 		allowContinue: false,
 		hideFlowProgress: true,
 	},
+
+	'rewind-auto-config': {
+		steps: [ 'creds-permission', 'creds-confirm', 'rewind-were-backing' ],
+		destination: () => {
+			return '/stats/activity';
+		},
+		description:
+			'Allow users of sites that can auto-config to grant permission to server credentials',
+		lastModified: '2018-02-13',
+		disallowResume: true,
+		allowContinue: false,
+		hideFlowProgress: true,
+	},
 };
 
 if ( config.isEnabled( 'signup/atomic-store-flow' ) ) {

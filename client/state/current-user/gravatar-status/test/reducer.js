@@ -58,7 +58,7 @@ describe( 'reducer', () => {
 				isUploading( true, {
 					type: SERIALIZE,
 				} )
-			).to.equal( false );
+			).to.be.undefined;
 
 			expect(
 				isUploading( true, {
@@ -90,7 +90,7 @@ describe( 'reducer', () => {
 			const state = {
 				src: imageSrc,
 			};
-			expect( tempImage( state, { type: SERIALIZE } ) ).to.eql( {} );
+			expect( tempImage( state, { type: SERIALIZE } ) ).to.be.undefined;
 			expect( tempImage( state, { type: DESERIALIZE } ) ).to.eql( {} );
 		} );
 	} );

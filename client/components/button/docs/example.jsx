@@ -158,13 +158,13 @@ class Buttons extends React.PureComponent {
 					<div className="docs__design-button-row">
 						<Button busy>Busy button</Button>
 						<Button primary busy>
-							<Gridicon icon="camera" /> Primary icon button
-						</Button>
-						<Button primary busy>
 							<Gridicon icon="time" />
 						</Button>
 						<Button primary busy>
 							Primary busy button
+						</Button>
+						<Button primary scary busy>
+							<Gridicon icon="trash" /> Primary scary busy button
 						</Button>
 					</div>
 				</Card>
@@ -282,13 +282,13 @@ class Buttons extends React.PureComponent {
 							Busy button
 						</Button>
 						<Button compact primary busy>
-							<Gridicon icon="camera" /> Primary icon button
-						</Button>
-						<Button compact primary busy>
 							<Gridicon icon="time" />
 						</Button>
 						<Button compact primary busy>
 							Primary busy button
+						</Button>
+						<Button compact primary scary busy>
+							<Gridicon icon="trash" /> Compact primary scary busy button
 						</Button>
 					</div>
 				</Card>

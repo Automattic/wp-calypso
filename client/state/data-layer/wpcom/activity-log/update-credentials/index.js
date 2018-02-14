@@ -136,7 +136,7 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 		} );
 
 		dispatch(
-			isHappychatAvailable( getState() )
+			hasActiveHappychatSession( getState() )
 				? withAnalytics( tracksEvent, sendEvent( message ) )
 				: tracksEvent
 		);

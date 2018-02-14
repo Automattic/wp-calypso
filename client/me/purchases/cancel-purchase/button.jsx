@@ -20,12 +20,12 @@ import isHappychatAvailable from 'state/happychat/selectors/is-happychat-availab
 import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
-import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
-import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
+import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
+import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
+import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import {
 	getName,

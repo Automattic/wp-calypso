@@ -56,6 +56,15 @@ class JetpackOnboardingMain extends React.PureComponent {
 		}
 	}
 
+	getNavigationLinkClickHandler = direction => () => {
+		const { recordJpoEvent, stepName } = this.props;
+
+		recordJpoEvent( 'calypso_jpo_navigation_link_clicked', {
+			current_step: stepName,
+			direction,
+		} );
+	};
+
 	render() {
 		const {
 			isRequestingSettings,
@@ -76,6 +85,8 @@ class JetpackOnboardingMain extends React.PureComponent {
 						components={ COMPONENTS }
 						hideNavigation={ stepName === STEPS.SUMMARY }
 						isRequestingSettings={ isRequestingSettings }
+						onBackClick={ this.getNavigationLinkClickHandler( 'back' ) }
+						onForwardClick={ this.getNavigationLinkClickHandler( 'forward' ) }
 						recordJpoEvent={ recordJpoEvent }
 						siteId={ siteId }
 						siteSlug={ siteSlug }

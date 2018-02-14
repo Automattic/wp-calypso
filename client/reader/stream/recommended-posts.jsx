@@ -12,7 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal Dependencies
  */
-import { RelatedPostCard } from 'blocks/reader-related-card-v2';
+import { RelatedPostCard } from 'blocks/reader-related-card';
 import { recordAction, recordTrackForPost } from 'reader/stats';
 import Button from 'components/button';
 import { dismissPost } from 'lib/feed-stream-store/actions';

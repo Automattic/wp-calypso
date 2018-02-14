@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import previousStep from '../previousStep';
+import previousStep from '../previous-step';
 
 describe( 'previousStep', () => {
 	const steps = [ 'a', 'b', 'c' ];
