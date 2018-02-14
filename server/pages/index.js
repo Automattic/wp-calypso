@@ -342,8 +342,19 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 }
 
-// @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+/**
+ * Sets up a Content Security Policy header
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+ * @param {Object} req Express request object
+ * @param {Object} res Express response object
+ * @param {Function} next a callback to call when done
+ */
 function setUpCSP( req, res, next ) {
+	if ( ! req.originalUrl.match( /^\/log-in\// ) ) {
+		next();
+		return;
+	}
+
 	const inlineScripts = [
 		'sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ=',
 		'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=',
@@ -356,6 +367,7 @@ function setUpCSP( req, res, next ) {
 		'default-src': [ "'self'" ],
 		'script-src': [
 			"'self'",
+			"'report-sample'",
 			"'unsafe-eval'",
 			'stats.wp.com',
 			'https://apis.google.com',
