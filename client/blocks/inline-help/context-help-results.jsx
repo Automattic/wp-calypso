@@ -12,42 +12,17 @@ import { localize } from 'i18n-calypso';
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import { decodeEntities, preventWidows } from 'lib/formatting';
+import {
+	getInlineHelpContextLinksForContext,
+	getSelectedContextLink,
+	isRequestingInlineHelpContextLinksForContext,
+	shouldOpenSelectedContextLink,
+} from 'state/inline-help/selectors';
+import { didOpenContextLink, requestInlineHelpContextLinks } from 'state/inline-help/actions';
 
 class ContextHelpResults extends React.Component {
-	getContextLinks = () => {
-		// going without context for now -- let's just provide the top x recommended links
-		// copied from client/me/help/main for now
-		const contextLinks = [
-			{
-				link: 'https://en.support.wordpress.com/com-vs-org/',
-				title: this.props.translate( 'Uploading custom plugins and themes' ),
-				description: this.props.translate(
-					'Learn more about installing a custom theme or plugin using the Business plan.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/all-about-domains/',
-				title: this.props.translate( 'All About Domains' ),
-				description: this.props.translate(
-					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/start/',
-				title: this.props.translate( 'Get Started' ),
-				description: this.props.translate(
-					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
-				),
-			},
-			{
-				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
-				title: this.props.translate( 'Privacy Settings' ),
-				description: this.props.translate(
-					'Limit your site’s visibility or make it completely private.'
-				),
-			},
-		];
-		return contextLinks;
+	componentDidMount() {
+		this.props.requestInlineHelpContextLinks();
 	}
 
 	followLink = ( url ) => {
@@ -59,9 +34,8 @@ class ContextHelpResults extends React.Component {
 		};
 	}
 
-	renderLink = ( link ) => {
-		// TODO: reintroduce keyboard navigation of context links
-		const classes = {};//{ 'is-selected': this.props.selectedResult === index };
+	renderLink = ( link, index ) => {
+		const classes = { 'is-selected': this.props.selectedContextLink === index };
 		return (
 			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
 				<a
@@ -76,7 +50,7 @@ class ContextHelpResults extends React.Component {
 	}
 
 	render() {
-		const links = this.getContextLinks();
+		const links = this.props.contextLinks;
 		return (
 			<ul className="inline-help__results-list">
 				{ links && links.map( this.renderLink ) }
@@ -85,8 +59,16 @@ class ContextHelpResults extends React.Component {
 	}
 }
 
+const mapStateToProps = ( state, ownProps ) => ( {
+	contextLinks: getInlineHelpContextLinksForContext( state, ownProps.context ),
+	isRequesting: isRequestingInlineHelpContextLinksForContext( state, ownProps.context ),
+	shouldOpenSelectedContextLink: shouldOpenSelectedContextLink( state ),
+	selectedContextLink: getSelectedContextLink( state ),
+} );
 const mapDispatchToProps = {
+	didOpenContextLink,
 	recordTracksEvent,
+	requestInlineHelpContextLinks,
 };
 
-export default connect( null, mapDispatchToProps )( localize( ContextHelpResults ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ContextHelpResults ) );

@@ -14,7 +14,14 @@ import debugFactory from 'debug';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
 import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
-import { openResult, requestInlineHelpSearchResults, selectNextResult, selectPreviousResult } from 'state/inline-help/actions';
+import {
+	openResult,
+	requestInlineHelpSearchResults,
+	selectNextResult,
+	selectPreviousResult,
+	selectNextContextLink,
+	selectPreviousContextLink,
+} from 'state/inline-help/actions';
 
 /**
  * Module variables
@@ -47,9 +54,11 @@ class InlineHelpSearchCard extends Component {
 		switch ( event.key ) {
 			case 'ArrowUp':
 				this.props.selectPreviousResult();
+				this.props.selectPreviousContextLink();
 				break;
 			case 'ArrowDown':
 				this.props.selectNextResult();
+				this.props.selectNextContextLink();
 				break;
 			case 'Enter':
 				this.props.openResult();
@@ -86,6 +95,8 @@ const mapDispatchToProps = {
 	requestInlineHelpSearchResults,
 	selectNextResult,
 	selectPreviousResult,
+	selectNextContextLink,
+	selectPreviousContextLink,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchCard ) );

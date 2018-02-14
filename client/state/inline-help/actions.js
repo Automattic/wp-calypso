@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -11,6 +16,10 @@ import {
 	INLINE_HELP_OPEN_SELECTED_RESULT,
 	INLINE_HELP_DID_OPEN_CONTEXT_LINK,
 	INLINE_HELP_DID_OPEN_SELECTED_RESULT,
+	INLINE_HELP_SELECT_NEXT_CONTEXT_LINK,
+	INLINE_HELP_SELECT_PREVIOUS_CONTEXT_LINK,
+	INLINE_HELP_CONTEXT_LINK_REQUEST,
+	INLINE_HELP_CONTEXT_LINK_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -104,6 +113,78 @@ export function setSearchResults( searchQuery, searchResults ) {
 			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 			searchQuery,
 			searchResults,
+		} );
+	};
+}
+
+function getDefaultContextLinks() {
+	// copied from client/me/help/main for now
+	const contextLinks = [
+		{
+			link: 'https://en.support.wordpress.com/com-vs-org/',
+			title: translate( 'Uploading custom plugins and themes' ),
+			description: translate( 'Learn more about installing a custom theme or plugin using the Business plan.' ),
+		},
+		{
+			link: 'https://en.support.wordpress.com/all-about-domains/',
+			title: translate( 'All About Domains' ),
+			description: translate( 'Set up your domain whether it’s registered with WordPress.com or elsewhere.' ),
+		},
+		{
+			link: 'https://en.support.wordpress.com/start/',
+			title: translate( 'Get Started' ),
+			description: translate( 'No matter what kind of site you want to build, ' +
+				'our five-step checklists will get you set up and ready to publish.' ),
+		},
+		{
+			link: 'https://en.support.wordpress.com/settings/privacy-settings/',
+			title: translate( 'Privacy Settings' ),
+			description: translate( 'Limit your site’s visibility or make it completely private.' ),
+		},
+	];
+	return contextLinks;
+}
+
+/**
+ * Triggers a network request to fetch context links for the provided context.
+ *
+ * @param  {Object}  context Context object
+ * @return {Function}        Action thunk
+ */
+export function requestInlineHelpContextLinks() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_CONTEXT_LINK_REQUEST,
+		} );
+		dispatch( {
+			type: INLINE_HELP_CONTEXT_LINK_REQUEST_SUCCESS,
+			items: getDefaultContextLinks(),
+		} );
+	};
+}
+
+/**
+ * Selects the next result in the inline help results list.
+ *
+ * @return {Function}        Action thunk
+ */
+export function selectNextContextLink() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_SELECT_NEXT_CONTEXT_LINK,
+		} );
+	};
+}
+
+/**
+ * Selects the previous result in the inline help results list.
+ *
+ * @return {Function}        Action thunk
+ */
+export function selectPreviousContextLink() {
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_SELECT_PREVIOUS_CONTEXT_LINK,
 		} );
 	};
 }

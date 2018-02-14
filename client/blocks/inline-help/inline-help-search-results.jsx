@@ -51,6 +51,9 @@ class InlineHelpSearchResults extends Component {
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.shouldOpenSelectedResult ) {
 			const url = this.getSelectedUrl();
+			if ( ! url ) {
+				return;
+			}
 			this.followHelpLink( url )();
 			this.props.didOpenResult();
 			window.location = url;
@@ -91,7 +94,7 @@ class InlineHelpSearchResults extends Component {
 			return (
 				<div>
 					{ query }
-					<ContextHelpResults />
+					<ContextHelpResults context={ { url: window.location } } />
 				</div>
 			);
 		}
