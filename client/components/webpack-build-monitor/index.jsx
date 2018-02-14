@@ -8,11 +8,6 @@ import React from 'react';
 import classNames from 'classnames';
 import { find, startsWith } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import Spinner from 'components/spinner';
-
 const MESSAGE_STATUS_MAP = {
 	'[HMR] connected': { isConnected: true },
 	'[WDS] Disconnected!': { isConnected: false },
@@ -53,23 +48,23 @@ const interceptConsole = ( consoleObject, updater ) => {
 
 const getMessage = ( { hasError, isBuildingCss, isBuildingJs, isConnected } ) => {
 	if ( ! isConnected ) {
-		return 'Dev Server disconnected';
+		return 'Dev Server disconnected!';
 	}
 
 	if ( hasError ) {
-		return 'Build error';
+		return 'Build error!';
 	}
 
 	if ( isBuildingCss && isBuildingJs ) {
-		return 'Rebuilding JS and CSS';
+		return 'Rebuilding JS and CSS…';
 	}
 
 	if ( isBuildingCss ) {
-		return 'Building CSS';
+		return 'Building CSS…';
 	}
 
 	if ( isBuildingJs ) {
-		return 'Rebuilding JavaScript';
+		return 'Rebuilding JavaScript…';
 	}
 
 	return '';
@@ -114,7 +109,6 @@ class WebpackBuildMonitor extends React.PureComponent {
 					'is-warning': needsReload,
 				} ) }
 			>
-				{ isBusy && <Spinner size={ 11 } className="webpack-build-monitor__spinner" /> }
 				{ getMessage( this.state ) }
 			</div>
 		);
