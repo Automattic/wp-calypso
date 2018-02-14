@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
 import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
 import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
