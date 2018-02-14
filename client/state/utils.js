@@ -211,6 +211,10 @@ export function extendAction( action, data ) {
 	};
 }
 
+function getInitialState( reducer ) {
+	return reducer( undefined, { type: '@@calypso/INIT' } );
+}
+
 /**
  * Returns a reducer function with state calculation determined by the result
  * of invoking the handler key corresponding with the dispatched action type,
@@ -362,6 +366,41 @@ export const withSchemaValidation = ( schema, reducer ) => {
 };
 
 /**
+ * Wraps a reducer such that it won't persist any state to the browser's local storage
+ *
+ * @example prevent a simple reducer from persisting
+ * const age = ( state = 0, { type } ) =>
+ *   GROW === type
+ *     ? state + 1
+ *     : state
+ *
+ * export default combineReducers( {
+ *   age: withoutPersistence( age )
+ * } )
+ *
+ * @example preventing a large reducer from persisting
+ * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
+ *
+ * @param {Function} reducer original reducer
+ * @returns {Function} wrapped reducer
+ */
+export const withoutPersistence = reducer => {
+	const wrappedReducer = ( state, action ) => {
+		switch ( action.type ) {
+			case SERIALIZE:
+				return undefined;
+			case DESERIALIZE:
+				return getInitialState( reducer );
+			default:
+				return reducer( state, action );
+		}
+	};
+	wrappedReducer.hasCustomPersistence = true;
+
+	return wrappedReducer;
+};
+
+/**
  * Returns a single reducing function that ensures that persistence is opt-in.
  * If you don't need state to be stored, simply use this method instead of
  * combineReducers from redux. This function uses the same interface.
@@ -470,38 +509,6 @@ export function combineReducers( reducers ) {
 	combinedWithSerializer.hasCustomPersistence = true;
 	return combinedWithSerializer;
 }
-
-/**
- * Wraps a reducer such that it won't persist
- * any state to the browser's local cache
- *
- * @example revent a simple reducer from persisting
- * const age = ( state = 0, { type } ) =>
- *   GROW === type
- *     ? state + 1
- *     : state
- *
- * export default combineReducers( {
- *   age: withoutPersistence( age )
- * } )
- *
- * @example preventing a large reducer from persisting
- * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
- *
- * @param {Function} reducer original reducer
- * @returns {Function} wrapped reducer
- */
-export const withoutPersistence = reducer => ( state, action ) => {
-	if ( DESERIALIZE === action.type ) {
-		return reducer( undefined, { type: '@@calypso/INIT' } );
-	}
-
-	if ( SERIALIZE === action.type ) {
-		return undefined;
-	}
-
-	return reducer( state, action );
-};
 
 /**
  * Creates a caching action creator
