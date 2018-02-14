@@ -544,11 +544,7 @@ module.exports = function() {
 				} );
 
 				if ( ! section.isomorphic ) {
-					app.get(
-						pathRegex,
-						section.enableLoggedOut ? setUpRoute : setUpLoggedInRoute,
-						serverRender
-					);
+					app.get( pathRegex, setUpRoute, serverRender );
 				}
 			} );
 
@@ -581,6 +577,7 @@ module.exports = function() {
 				}, {} );
 
 				analytics.tracks.recordEvent( 'calypso_cspreport', cspReportSnakeCase, req );
+
 				res.status( 200 ).send( 'Got it!' );
 			}
 		);
