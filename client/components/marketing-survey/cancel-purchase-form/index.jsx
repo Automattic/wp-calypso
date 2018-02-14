@@ -22,8 +22,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import HappychatButton from 'components/happychat/button';
 import * as steps from './steps';
-import BusinessATStep from './stepComponents/business-at-step';
-import UpgradeATStep from './stepComponents/upgrade-at-step';
+import BusinessATStep from './step-components/business-at-step';
+import UpgradeATStep from './step-components/upgrade-at-step';
 import { getName } from 'lib/purchases';
 import { radioOption } from './radio-option';
 import {
