@@ -23,6 +23,7 @@
 	@include breakpoint( "<660px" ) {
 		left: -100%;
 		width: 100%;
+		background: $gray-light;
 		overflow-x: hidden;
 		max-height: calc( 100% - 47px );
 		pointer-events: none;
@@ -72,10 +73,13 @@
 // Sidebar group headings
 .sidebar__heading {
 	color: var( --sidebar-heading-color );
-	font-weight: 600;
-	font-size: 12px;
-	margin: 16px 8px 6px 14px;
+	font-size: 14px;
+	margin: 16px 8px 6px 16px;
 	display: flex;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 13px;
+	}	
 }
 
 // Menu Links
@@ -90,15 +94,10 @@
 		display: flex;
 
 		@include breakpoint( "<660px" ) {
-			background-color: $gray-light;
-			border-bottom: 1px solid rgba( $gray-lighten-20, 0.5 );
+			border-bottom: 1px solid lighten( $gray, 25 );
 
 			&:first-child {
-				border-top: 1px solid $gray-lighten-20;
-			}
-
-			&:last-child {
-				border-bottom: 1px solid $gray-lighten-20;
+				border-top: 1px solid lighten( $gray, 25 );
 			}
 		}
 	}
@@ -118,14 +117,6 @@
 			width: 15%;
 
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
-
-			@include breakpoint( "<660px" ) {
-
-				background: linear-gradient(
-					to right,
-					rgba( $gray-light, 0 ),
-					rgba( $gray-light, 1 ) 50% );
-			}
 		}
 	}
 
@@ -175,13 +166,6 @@
 		margin-right: 6px;
 		flex-shrink: 0;
 
-		@include breakpoint( "<660px" ) {
-				top: 15px;
-				left: 16px;
-			height: 24px;
-			width: 24px;
-		}
-
 		// External indicator for sections that aren't available in Calypso
 		&.gridicons-external {
 			position: absolute;
@@ -207,12 +191,12 @@ a.sidebar__button, form.sidebar__button {
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
-	background-color: $gray-light;
+	background-color: $white;
 	color: $gray-darken-20;
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
-	border: 1px solid darken( $sidebar-bg-color, 10% );
+	border: 1px solid $gray-lighten-20;
 
 	@include breakpoint( "<660px" ) {
 		font-size: 14px;
@@ -252,7 +236,7 @@ form.sidebar__button input {
 
 		.sidebar__button {
 			color: $gray-dark;
-			border: 1px solid darken( $sidebar-selected-color, 10% );
+			border: 1px solid $gray-darken-30;
 
 			&:hover {
 				color: $blue-medium;
@@ -336,7 +320,7 @@ form.sidebar__button input {
 	}
 
 	a:hover, form:hover {
-		color: $blue-medium;
+		color: $blue-wordpress;
 
 		.sidebar__menu-link-secondary-text {
 			color: inherit;
