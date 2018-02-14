@@ -29,7 +29,7 @@ import { radioOption } from './radioOption';
 import {
 	cancellationOptionsForPurchase,
 	nextAdventureOptionsForPurchase,
-} from './optionsForProduct';
+} from './options-for-product';
 
 class CancelPurchaseForm extends React.Component {
 	static propTypes = {
