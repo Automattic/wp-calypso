@@ -32,6 +32,7 @@ jest.mock( 'lib/analytics', () => ( {
 } ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => require( 'sinon' ).spy() );
+const markPostSeen = jest.fn();
 
 describe( 'DailyPostButton', () => {
 	const [ sampleUserSite, sampleReadingSite ] = sites;
@@ -45,6 +46,7 @@ describe( 'DailyPostButton', () => {
 					canParticipate={ false }
 					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ false }
+					markPostSeen={ markPostSeen }
 				/>
 			);
 			assert.isNull( dailyPostPrompt.type() );
@@ -58,6 +60,7 @@ describe( 'DailyPostButton', () => {
 					canParticipate={ true }
 					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
+					markPostSeen={ markPostSeen }
 				/>
 			);
 			assert.equal( 'span', renderAsSpan.type() );
@@ -72,6 +75,7 @@ describe( 'DailyPostButton', () => {
 					canParticipate={ true }
 					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
+					markPostSeen={ markPostSeen }
 				/>
 			);
 			assert.equal( 'span', renderAsSpan.type() );
@@ -87,6 +91,7 @@ describe( 'DailyPostButton', () => {
 					canParticipate={ true }
 					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
+					markPostSeen={ markPostSeen }
 				/>
 			);
 			dailyPostButton.simulate( 'click', { preventDefault: noop } );
@@ -102,6 +107,7 @@ describe( 'DailyPostButton', () => {
 					canParticipate={ true }
 					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ false }
+					markPostSeen={ markPostSeen }
 				/>
 			);
 			dailyPostButton.instance().renderSitesPopover = done;
@@ -119,6 +125,7 @@ describe( 'DailyPostButton', () => {
 					canParticipate={ true }
 					primarySiteSlug={ sampleUserSite.slug }
 					onlyOneSite={ true }
+					markPostSeen={ markPostSeen }
 				/>
 			);
 			prompt.instance().openEditorWithSite( 'apps.wordpress.com' );
