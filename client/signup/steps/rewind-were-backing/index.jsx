@@ -41,9 +41,9 @@ class RewindWereBacking extends Component {
 				<p className="rewind-were-backing__description rewind-switch__description">
 					{ get( dependencyStore, 'rewindconfig', false ) &&
 						translate(
-							'Your site is backing up because your site is set up with Jetpack Premium plan at ' +
-								'no additional cost to you.'
-						) }
+							'Your site is being backed up because it is set up with ' +
+								'Jetpack Premium at no additional cost to you.'
+						) + ' ' }
 					{ translate(
 						'Finish setting up Jetpack and your site is ready to be ' +
 							'transformed into the site of your dreams.'
