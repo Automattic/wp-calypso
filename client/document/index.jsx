@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
@@ -46,6 +47,7 @@ class Document extends React.Component {
 			devDocsURL,
 			feedbackURL,
 			inlineScriptNonce,
+			analyticsScriptNonce,
 		} = this.props;
 
 		let inlineScript = `COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };`;
@@ -186,6 +188,16 @@ class Document extends React.Component {
 						 `,
 						} }
 					/>
+					{ // Load GA only if enabled in the config.
+					// Note that doNotTrack() and isPiiUrl() can change at any time so they shouldn't be stored in a variable.
+					appConfig( 'google_analytics_enabled' ) && (
+						<script
+							async={ true }
+							type="text/javascript"
+							src="https://www.google-analytics.com/analytics.js"
+							nonce={ analyticsScriptNonce }
+						/>
+					) }
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>
