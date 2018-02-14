@@ -20,10 +20,10 @@ import { PLAN_BUSINESS } from 'lib/plans/constants';
  */
 export default createSelector(
 	( state, siteId ) => {
-		const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
+		const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
-		if ( Date.parse( createdAt ) + TWO_WEEKS_IN_SECONDS > Date.now() ) {
+		if ( Date.parse( createdAt ) + WEEK_IN_SECONDS > Date.now() ) {
 			return false;
 		}
 
