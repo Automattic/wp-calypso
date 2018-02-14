@@ -80,7 +80,7 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
 	}
 
 	return dispatch(
-		errorNotice( translate( 'An unexpected error occurred.' ), {
+		errorNotice( translate( 'Something went wrong.' ), {
 			button: translate( 'Visit site admin' ),
 			href: trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack',
 			id: `jpo-communication-error-${ siteId }`,
