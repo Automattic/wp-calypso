@@ -95,7 +95,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					</form>
 				</Card>
 
-				<JetpackOnboardingDisclaimer />
+				<JetpackOnboardingDisclaimer recordJpoEvent={ this.props.recordJpoEvent } />
 			</div>
 		);
 	}
