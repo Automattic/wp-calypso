@@ -23,7 +23,7 @@ export default createSelector(
 		const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 		const createdAt = getSiteOption( state, siteId, 'created_at' );
 
-		if ( Date.parse( createdAt ) + WEEK_IN_SECONDS > Date.now() ) {
+		if ( Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 > Date.now() ) {
 			return false;
 		}
 
