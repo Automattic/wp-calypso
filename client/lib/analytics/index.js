@@ -105,6 +105,7 @@ loadScript( '//stats.wp.com/w.js?56', function( error ) {
 } ); // W_JS_VER
 
 // Google Analytics
+// Note that doNotTrack() and isPiiUrl() can change at any time so they shouldn't be stored in a variable.
 
 /**
  * Returns whether Google Analytics is allowed.

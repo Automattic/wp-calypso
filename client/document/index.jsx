@@ -189,7 +189,6 @@ class Document extends React.Component {
 						} }
 					/>
 					{ // Load GA only if enabled in the config.
-					// Note that doNotTrack() and isPiiUrl() can change at any time so they shouldn't be stored in a variable.
 					appConfig( 'google_analytics_enabled' ) && (
 						<script
 							async={ true }
