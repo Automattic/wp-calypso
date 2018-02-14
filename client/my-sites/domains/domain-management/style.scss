@@ -91,6 +91,11 @@
 	cursor: pointer;
 	display: block;
 	overflow: hidden;
+
+	.domain__primary-flag {
+		vertical-align: middle;
+		margin-left: 8px;
+	}
 }
 
 .domain-management-list-item__title {
