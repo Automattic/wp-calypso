@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import SitePicker from 'my-sites/picker';
-import Sidebar from 'my-sites/sidebar';
+import Sidebar from 'my-sites/sidebar/wrapper';
 
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';

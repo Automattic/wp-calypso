@@ -18,9 +18,9 @@ import Button from 'components/button';
 import config from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ManageMenu from './manage-menu';
-import Sidebar from 'layout/sidebar';
+// import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
-import SidebarFooter from 'layout/sidebar/footer';
+// import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
@@ -53,6 +53,9 @@ import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
 import { transferStates } from 'state/automated-transfer/constants';
 import { itemLinkMatches } from './utils';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+
+import NestedSidebarItem from 'blocks/nested-sidebar/nested-sidebar-item';
+import SettingsExample from 'blocks/nested-sidebar/docs/example-components/settings';
 
 /**
  * Module variables
@@ -447,14 +450,11 @@ export class MySitesSidebar extends Component {
 		}
 
 		return (
-			<SidebarItem
-				label={ this.props.translate( 'Settings' ) }
-				selected={ itemLinkMatches( '/settings', path ) }
-				link={ siteSettingsLink }
-				onNavigate={ this.onNavigate }
-				icon="cog"
-				preloadSectionName="settings"
-				tipTarget="settings"
+			<NestedSidebarItem
+				route="settings"
+				parent="root"
+				label="settings"
+				component={ SettingsExample }
 			/>
 		);
 	}
@@ -568,6 +568,20 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<div>
+				{ configuration ? (
+					<SidebarMenu>
+						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
+						<ul>
+							{ this.ads() }
+							{ this.sharing() }
+							{ this.users() }
+							{ this.plugins() }
+							{ this.upgrades() }
+							{ this.siteSettings() }
+							{ this.wpAdmin() }
+						</ul>
+					</SidebarMenu>
+				) : null }
 				<SidebarMenu>
 					<ul>
 						{ this.preview() }
@@ -590,35 +604,24 @@ export class MySitesSidebar extends Component {
 						<ul>{ this.themes() }</ul>
 					</SidebarMenu>
 				) : null }
-
-				{ configuration ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
-						<ul>
-							{ this.ads() }
-							{ this.sharing() }
-							{ this.users() }
-							{ this.plugins() }
-							{ this.upgrades() }
-							{ this.siteSettings() }
-							{ this.wpAdmin() }
-						</ul>
-					</SidebarMenu>
-				) : null }
 			</div>
 		);
 	}
 
 	render() {
 		return (
-			<Sidebar>
-				<SidebarRegion>
-					<CurrentSite allSitesPath={ this.props.allSitesPath } />
-					{ this.renderSidebarMenus() }
-				</SidebarRegion>
-				<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
-			</Sidebar>
+			<SidebarRegion>
+				<CurrentSite allSitesPath={ this.props.allSitesPath } />
+				{ this.renderSidebarMenus() }
+			</SidebarRegion>
 		);
+
+		// return (
+		// 	<Sidebar>
+		// 		<NestedSidebar />
+		// 		<SidebarFooter>{ this.addNewSite() }</SidebarFooter>
+		// 	</Sidebar>
+		// );
 	}
 }
 
@@ -656,6 +659,9 @@ function mapStateToProps( state ) {
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		siteId,
 		site,
+		path: 'something/something', // note this is hardcoded - it's given as an actual prop originally,
+		// but the component assigned to the sidebar route can't be given props...
+		// so this hardcoding is just until we figure out a better work around...
 		siteSuffix: site ? '/' + site.slug : '',
 		siteHasBackgroundTransfer: hasSitePendingAT && transferStatus !== transferStates.ERROR,
 	};

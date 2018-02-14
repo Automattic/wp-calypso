@@ -19,7 +19,7 @@ export default class SidebarItem extends React.Component {
 	static propTypes = {
 		label: PropTypes.string.isRequired,
 		className: PropTypes.string,
-		link: PropTypes.string.isRequired,
+		link: PropTypes.string,
 		onNavigate: PropTypes.func,
 		icon: PropTypes.string,
 		selected: PropTypes.bool,
