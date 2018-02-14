@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import Masterbar from './masterbar';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
-import { get, includes } from 'lodash';
+import { get, includes, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -79,7 +79,8 @@ class MasterbarLoggedOut extends PureComponent {
 
 		let signupUrl = config( 'signup_url' );
 		if (
-			'/log-in/jetpack' === currentRoute &&
+			// Match locales like `/log-in/jetpack/es`
+			startsWith( currentRoute, '/log-in/jetpack' ) &&
 			// Ensure our redirection is to Jetpack Connect
 			includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' )
 		) {
