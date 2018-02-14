@@ -8,7 +8,7 @@ import { moment } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import enrichedSurveyData from '../enrichedSurveyData';
+import enrichedSurveyData from '../enriched-survey-data';
 
 jest.mock( 'lib/analytics', () => ( {} ) );
 

@@ -19,7 +19,7 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
 import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
