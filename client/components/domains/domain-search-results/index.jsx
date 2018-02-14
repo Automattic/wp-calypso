@@ -73,7 +73,7 @@ class DomainSearchResults extends React.Component {
 		const { MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
-		const testGroup = abtest( 'domainSuggestionTestV5' );
+		const testGroup = abtest( 'domainSuggestionTestV6' );
 		const showExactMatch = 'group_0' === testGroup;
 
 		let availabilityElement, domainSuggestionElement, offer;

@@ -369,8 +369,13 @@ class RegisterDomainStep extends React.Component {
 		} );
 
 		const timestamp = Date.now();
-		const testGroup = abtest( 'domainSuggestionTestV5' );
-		if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
+		const testGroup = abtest( 'domainSuggestionTestV6' );
+		if (
+			'group_1' === testGroup ||
+			'group_2' === testGroup ||
+			'group_3' === testGroup ||
+			'group_4' === testGroup
+		) {
 			searchVendor = testGroup;
 		}
 
@@ -698,9 +703,12 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		const searchResults = this.state.searchResults || [];
-		const testGroup = abtest( 'domainSuggestionTestV5' );
+		const testGroup = abtest( 'domainSuggestionTestV6' );
 		let suggestions =
-			'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup
+			'group_1' === testGroup ||
+			'group_2' === testGroup ||
+			'group_3' === testGroup ||
+			'group_4' === testGroup
 				? [ ...searchResults ]
 				: reject( searchResults, matchesSearchedDomain );
 
