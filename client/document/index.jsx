@@ -50,18 +50,18 @@ class Document extends React.Component {
 			analyticsScriptNonce,
 		} = this.props;
 
-		let inlineScript = `COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };`;
+		let inlineScript = `COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n`;
 
 		if ( user ) {
-			inlineScript += `var currentUser = ${ jsonStringifyForHtml( user ) };`;
+			inlineScript += `var currentUser = ${ jsonStringifyForHtml( user ) };\n`;
 		}
 
 		if ( app ) {
-			inlineScript += `var app = ${ jsonStringifyForHtml( app ) };`;
+			inlineScript += `var app = ${ jsonStringifyForHtml( app ) };\n`;
 		}
 
 		if ( initialReduxState ) {
-			inlineScript += `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };`;
+			inlineScript += `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`;
 		}
 
 		if ( config ) {
