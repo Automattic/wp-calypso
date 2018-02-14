@@ -21,16 +21,6 @@
 	&.is-error {
 		background: $alert-red;
 	}
-
-	&.is-busy {
-		animation: blink 1s linear infinite;
-	}
-}
-
-@keyframes blink {
-	0% { visibility: hidden; }
-	20% { visibility: hidden; }
-	100% { visibility: visible; }
 }
 
 .webpack-build-monitor__text {

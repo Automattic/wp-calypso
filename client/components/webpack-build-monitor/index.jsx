@@ -107,7 +107,6 @@ class WebpackBuildMonitor extends React.PureComponent {
 				className={ classNames( 'webpack-build-monitor', {
 					'is-error': hasError || ! isConnected,
 					'is-warning': needsReload,
-					'is-busy': isBusy,
 				} ) }
 			>
 				{ getMessage( this.state ) }
