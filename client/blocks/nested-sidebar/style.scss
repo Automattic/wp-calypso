@@ -1,0 +1,98 @@
+.nested-sidebar {
+	position: relative;
+	// This is all copied from the original sidebar styles,
+	// would be better to attach rules to a class for items rather than inferring through nesting in sass
+
+	a {
+		font-size: 14px;
+		line-height: 1;
+		position: relative;
+		padding: 11px 16px 11px 18px;
+		color: var( --sidebar-color );
+		box-sizing: border-box;
+		white-space: nowrap;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+
+		&:focus {
+			outline: none;
+		}
+
+		-webkit-tap-highlight-color: rgba( $gray-dark, .2 );
+
+		.sidebar__menu-link-secondary-text {
+			padding: 3px 8px 4px 8px;
+			margin-right: 8px;
+			align-self: center;
+			font-weight: 600;
+			font-size: 12px;
+			position: absolute;
+			right: 0;
+			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
+			color: var( --sidebar-menu-link-secondary-text-color );
+		}
+	}
+
+	.gridicon,
+	.jetpack-logo {
+		fill: var( --sidebar-gridicon-fill );
+		height: 24px;
+		width: 24px;
+		margin-right: 6px;
+		flex-shrink: 0;
+
+		@include breakpoint( "<660px" ) {
+				top: 15px;
+				left: 16px;
+			height: 24px;
+			width: 24px;
+		}
+
+		// External indicator for sections that aren't available in Calypso
+		&.gridicons-external {
+			position: absolute;
+				top: 13px;
+				right: 8px;
+				left: auto;
+			z-index: z-index( 'icon-parent', '.sidebar__menu .gridicon.gridicons-external' );
+			height: 18px;
+			margin-right: 0;
+
+
+		}
+	}
+
+}
+
+.nested-sidebar__transitioner {
+
+	.transitioning-component {
+		position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+	}
+
+	&.nested-sidebar__transition-right {
+		transition: all 0.2s ease-in-out;
+		transform: translate( -100% ); // start position, trans component is off to the right
+		position: relative;
+
+		.transitioning-component {
+			// background: rgba(150,150,0,0.1);
+			transform: translate( 100% );
+		}
+	}
+
+	&.nested-sidebar__transition-left {
+		transition: all 0.2s ease-in-out;
+		transform: translate( 100% ); // start position, trans component is off to the left
+
+		.transitioning-component {
+			// background: rgba(190,0,0,0.1);
+			transform: translate( -100% );
+		}
+	}
+}
