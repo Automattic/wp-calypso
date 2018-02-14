@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import scrollTo from 'lib/scroll-to';
 import { localize } from 'i18n-calypso';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -76,12 +77,12 @@ class ActivityLogItem extends Component {
 	renderItemAction() {
 		const { hideRestore, activity: { activityIsRewindable, activityName } } = this.props;
 
-		if ( ! hideRestore && activityIsRewindable ) {
-			return this.renderRewindAction();
+		if ( includes( [ 'rewind__scan_result_found', 'rewind__backup_error' ], activityName ) ) {
+			return this.renderHelpAction();
 		}
 
-		if ( 'rewind__scan_result_found' === activityName ) {
-			return this.renderHelpAction();
+		if ( ! hideRestore && activityIsRewindable ) {
+			return this.renderRewindAction();
 		}
 	}
 
