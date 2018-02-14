@@ -34,7 +34,7 @@ export class SimpleSiteRenameForm extends Component {
 	onConfirm = () => {
 		const { selectedSiteId } = this.props;
 		// @TODO: Give ability to chose whether or not to discard the original domain name.
-		const discard = false;
+		const discard = true;
 
 		this.props.requestSiteRename( selectedSiteId, this.state.domainFieldValue, discard );
 	};
