@@ -4,6 +4,8 @@
 }
 
 &.tooltip.popover.info-tooltip__container {
+	z-index: z-index( 'root', '.popover.info-tooltip__container' );
+
 	.popover__inner {
 		background: $gray-dark;
 	}
