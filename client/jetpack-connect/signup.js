@@ -120,6 +120,7 @@ export class JetpackSignup extends Component {
 						emailAddress,
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
+						locale: this.props.locale,
 						redirectTo: window.location.href,
 					} ) }
 				>
