@@ -144,7 +144,7 @@ describe( 'announceRequestFailure()', () => {
 					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
 					noticeId: `jpo-communication-error-${ siteId }`,
 					status: 'is-error',
-					text: 'An unexpected error occurred.',
+					text: 'Something went wrong.',
 				} ),
 			} )
 		);
