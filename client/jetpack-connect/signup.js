@@ -23,7 +23,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
@@ -33,9 +32,11 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
+import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
 import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
+import { getCurrentQueryArguments, getCurrentRoute } from 'state/selectors';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
@@ -74,6 +75,16 @@ export class JetpackSignup extends Component {
 		} );
 	}
 
+	getLoginRedirect = () => {
+		return addQueryArgs(
+			{
+				...this.props.currentQuery,
+				auth_approved: true,
+			},
+			this.props.currentRoute
+		);
+	};
+
 	handleSubmitSignup = ( form, userData ) => {
 		debug( 'submiting new account', form, userData );
 		this.props.createAccount( userData );
@@ -99,7 +110,7 @@ export class JetpackSignup extends Component {
 				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
 				emailAddress={ this.props.authQuery.userEmail }
-				redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
+				redirectTo={ this.getLoginRedirect() }
 			/>
 		);
 	}
@@ -121,7 +132,7 @@ export class JetpackSignup extends Component {
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
 						locale: this.props.locale,
-						redirectTo: window.location.href,
+						redirectTo: this.getLoginRedirect(),
 					} ) }
 				>
 					{ this.props.translate( 'Already have an account? Sign in' ) }
@@ -144,10 +155,7 @@ export class JetpackSignup extends Component {
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						locale={ this.props.locale }
-						redirectToAfterLoginUrl={ addQueryArgs(
-							{ auth_approved: true },
-							window.location.href
-						) }
+						redirectToAfterLoginUrl={ this.getLoginRedirect() }
 						submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
 						submitForm={ this.handleSubmitSignup }
 						submitting={ isAuthorizing }
@@ -163,6 +171,8 @@ export class JetpackSignup extends Component {
 export default connect(
 	state => ( {
 		authorizationData: getAuthorizationData( state ),
+		currentQuery: getCurrentQueryArguments( state ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	{
 		recordTracksEvent: recordTracksEventAction,
