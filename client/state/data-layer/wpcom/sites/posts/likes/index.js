@@ -3,7 +3,6 @@
  *
  * @format
  */
-import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -17,11 +16,14 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveLikes } from 'state/posts/likes/actions';
 
 export const fetch = action =>
-	http( {
-		method: 'GET',
-		path: `/sites/${ action.siteId }/posts/${ action.postId }/likes`,
-		apiVersion: '1.1',
-	} );
+	http(
+		{
+			method: 'GET',
+			path: `/sites/${ action.siteId }/posts/${ action.postId }/likes`,
+			apiVersion: '1.1',
+		},
+		action
+	);
 
 export const fromApi = data => ( {
 	found: +data.found,
@@ -37,7 +39,7 @@ export default mergeHandlers( newLike, mine, {
 			fetch,
 			fromApi,
 			onSuccess,
-			onError: noop,
+			onError: () => {},
 		} ),
 	],
 } );
