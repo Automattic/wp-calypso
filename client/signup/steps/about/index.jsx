@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { invoke, noop, findKey } from 'lodash';
+import { invoke, noop, findKey, shuffle } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -19,6 +19,8 @@ import { setDesignType } from 'state/signup/steps/design-type/actions';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
+import { setSiteGoalsArray } from 'state/signup/steps/site-goals-array/actions';
+import { getSiteGoalsArray } from 'state/signup/steps/site-goals-array/selectors';
 import { setUserExperience } from 'state/signup/steps/user-experience/actions';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -75,6 +77,28 @@ class AboutStep extends Component {
 		} );
 
 		this.setFormState( this.formStateController.getInitialState() );
+	}
+
+	componentDidMount() {
+		if ( this.props.siteGoalsArray.length === 0 ) {
+			const localStorageOptions = localStorage.getItem( 'setSiteGoalsArray' );
+			let arrayValues = [
+				'shareOption',
+				'promoteOption',
+				'educateOption',
+				'sellOption',
+				'showcaseOption',
+			];
+
+			if ( abtest( 'siteGoalsShuffle' ) === 'variant' ) {
+				arrayValues = shuffle( arrayValues );
+			}
+
+			const optionsArray = localStorageOptions ? localStorageOptions.split( ',' ) : arrayValues;
+
+			localStorage.setItem( 'setSiteGoalsArray', optionsArray );
+			this.props.setSiteGoalsArray( optionsArray );
+		}
 	}
 
 	setFormState = state => {
@@ -315,8 +339,7 @@ class AboutStep extends Component {
 		}
 
 		//Store
-		const nextFlowName =
-			designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
+		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
 
 		//Pressable
 		if (
@@ -353,84 +376,91 @@ class AboutStep extends Component {
 	};
 
 	renderGoalCheckboxes() {
-		const { translate } = this.props;
+		const { translate, siteGoalsArray } = this.props;
+		const shareOption = ( // eslint-disable-line no-unused-vars
+			<FormLabel htmlFor="share" className="about__checkbox-option" key="share">
+				<FormInputCheckbox
+					name="siteGoals"
+					id="share"
+					onChange={ this.checkBoxHandleChange }
+					defaultChecked={ this.isCheckBoxChecked( 'share' ) }
+					value="share"
+					className="about__checkbox"
+					onKeyDown={ this.handleCheckboxKeyDown }
+				/>
+				<span className="about__checkbox-label">
+					{ translate( 'Share ideas, experiences, updates, reviews, stories, videos, or photos' ) }
+				</span>
+			</FormLabel>
+		);
+		const promoteOption = ( // eslint-disable-line no-unused-vars
+			<FormLabel htmlFor="promote" className="about__checkbox-option" key="promote">
+				<FormInputCheckbox
+					name="siteGoals"
+					id="promote"
+					onChange={ this.checkBoxHandleChange }
+					defaultChecked={ this.isCheckBoxChecked( 'promote' ) }
+					value="promote"
+					className="about__checkbox"
+					onKeyDown={ this.handleCheckboxKeyDown }
+				/>
+				<span className="about__checkbox-label">
+					{ translate( 'Promote your business, skills, organization, or events' ) }
+				</span>
+			</FormLabel>
+		);
+		const educateOption = ( // eslint-disable-line no-unused-vars
+			<FormLabel htmlFor="educate" className="about__checkbox-option" key="educate">
+				<FormInputCheckbox
+					name="siteGoals"
+					id="educate"
+					onChange={ this.checkBoxHandleChange }
+					defaultChecked={ this.isCheckBoxChecked( 'educate' ) }
+					value="educate"
+					className="about__checkbox"
+					onKeyDown={ this.handleCheckboxKeyDown }
+				/>
+				<span className="about__checkbox-label">
+					{ translate( 'Offer education, training, or mentoring' ) }
+				</span>
+			</FormLabel>
+		);
+		const sellOption = ( // eslint-disable-line no-unused-vars
+			<FormLabel htmlFor="sell" className="about__checkbox-option" key="sell">
+				<FormInputCheckbox
+					name="siteGoals"
+					id="sell"
+					onChange={ this.checkBoxHandleChange }
+					defaultChecked={ this.isCheckBoxChecked( 'sell' ) }
+					value="sell"
+					className="about__checkbox"
+					onKeyDown={ this.handleCheckboxKeyDown }
+				/>
+				<span className="about__checkbox-label">
+					{ translate( 'Sell products or collect payments' ) }
+				</span>
+			</FormLabel>
+		);
+		const showcaseOption = ( // eslint-disable-line no-unused-vars
+			<FormLabel htmlFor="showcase" className="about__checkbox-option" key="showcase">
+				<FormInputCheckbox
+					name="siteGoals"
+					id="showcase"
+					onChange={ this.checkBoxHandleChange }
+					defaultChecked={ this.isCheckBoxChecked( 'showcase' ) }
+					value="showcase"
+					className="about__checkbox"
+					onKeyDown={ this.handleCheckboxKeyDown }
+				/>
+				<span className="about__checkbox-label">{ translate( 'Showcase your portfolio' ) }</span>
+			</FormLabel>
+		);
 
 		return (
 			<div className="about__checkboxes">
-				<FormLabel htmlFor="share" className="about__checkbox-option">
-					<FormInputCheckbox
-						name="siteGoals"
-						id="share"
-						onChange={ this.checkBoxHandleChange }
-						defaultChecked={ this.isCheckBoxChecked( 'share' ) }
-						value="share"
-						className="about__checkbox"
-						onKeyDown={ this.handleCheckboxKeyDown }
-					/>
-					<span className="about__checkbox-label">
-						{ translate(
-							'Share ideas, experiences, updates, reviews, stories, videos, or photos'
-						) }
-					</span>
-				</FormLabel>
-
-				<FormLabel htmlFor="promote" className="about__checkbox-option">
-					<FormInputCheckbox
-						name="siteGoals"
-						id="promote"
-						onChange={ this.checkBoxHandleChange }
-						defaultChecked={ this.isCheckBoxChecked( 'promote' ) }
-						value="promote"
-						className="about__checkbox"
-						onKeyDown={ this.handleCheckboxKeyDown }
-					/>
-					<span className="about__checkbox-label">
-						{ translate( 'Promote your business, skills, organization, or events' ) }
-					</span>
-				</FormLabel>
-
-				<FormLabel htmlFor="educate" className="about__checkbox-option">
-					<FormInputCheckbox
-						name="siteGoals"
-						id="educate"
-						onChange={ this.checkBoxHandleChange }
-						defaultChecked={ this.isCheckBoxChecked( 'educate' ) }
-						value="educate"
-						className="about__checkbox"
-						onKeyDown={ this.handleCheckboxKeyDown }
-					/>
-					<span className="about__checkbox-label">
-						{ translate( 'Offer education, training, or mentoring' ) }
-					</span>
-				</FormLabel>
-
-				<FormLabel htmlFor="sell" className="about__checkbox-option">
-					<FormInputCheckbox
-						name="siteGoals"
-						id="sell"
-						onChange={ this.checkBoxHandleChange }
-						defaultChecked={ this.isCheckBoxChecked( 'sell' ) }
-						value="sell"
-						className="about__checkbox"
-						onKeyDown={ this.handleCheckboxKeyDown }
-					/>
-					<span className="about__checkbox-label">
-						{ translate( 'Sell products or collect payments' ) }
-					</span>
-				</FormLabel>
-
-				<FormLabel htmlFor="showcase" className="about__checkbox-option">
-					<FormInputCheckbox
-						name="siteGoals"
-						id="showcase"
-						onChange={ this.checkBoxHandleChange }
-						defaultChecked={ this.isCheckBoxChecked( 'showcase' ) }
-						value="showcase"
-						className="about__checkbox"
-						onKeyDown={ this.handleCheckboxKeyDown }
-					/>
-					<span className="about__checkbox-label">{ translate( 'Showcase your portfolio' ) }</span>
-				</FormLabel>
+				{ siteGoalsArray.map( function( element ) {
+					return eval( element );
+				} ) }
 			</div>
 		);
 	}
@@ -608,8 +638,17 @@ export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
 		siteGoals: getSiteGoals( state ),
+		siteGoalsArray: getSiteGoalsArray( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
 	} ),
-	{ setSiteTitle, setDesignType, setSiteGoals, setSurvey, setUserExperience, recordTracksEvent }
+	{
+		setSiteTitle,
+		setDesignType,
+		setSiteGoals,
+		setSiteGoalsArray,
+		setSurvey,
+		setUserExperience,
+		recordTracksEvent,
+	}
 )( localize( AboutStep ) );

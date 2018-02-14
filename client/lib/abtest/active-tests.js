@@ -111,4 +111,13 @@ export default {
 		},
 		defaultVariation: 'oldBanner',
 	},
+	siteGoalsShuffle: {
+		datestamp: '20180214',
+		variations: {
+			control: 50,
+			variant: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
