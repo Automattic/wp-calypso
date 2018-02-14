@@ -9,7 +9,7 @@ import React, { PureComponent } from 'react';
 import Masterbar from './masterbar';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
-import { includes } from 'lodash';
+import { get, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,13 +31,6 @@ function getLoginUrl( redirectUri ) {
 	}
 
 	return login( { ...params, isNative: config.isEnabled( 'login/native-login-links' ) } );
-}
-
-function getSignupUrl( currentRoute, currentQuery ) {
-	if ( '/log-in/jetpack' === currentRoute && currentQuery.redirect_to ) {
-		return currentQuery.redirect_to;
-	}
-	return config( 'signup_url' );
 }
 
 class MasterbarLoggedOut extends PureComponent {
@@ -72,15 +65,23 @@ class MasterbarLoggedOut extends PureComponent {
 
 	renderSignupItem() {
 		const { currentQuery, currentRoute, sectionName, translate } = this.props;
+
+		if ( includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ) {
+			return null;
+		}
+
+		let signupUrl = config( 'signup_url' );
+		if ( '/log-in/jetpack' === currentRoute && get( currentQuery, 'redirect_to', false ) ) {
+			signupUrl = currentQuery.redirect_to;
+		}
+
 		return (
-			! includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) && (
-				<Item url={ getSignupUrl( currentRoute, currentQuery ) }>
-					{ translate( 'Sign Up', {
-						context: 'Toolbar',
-						comment: 'Should be shorter than ~12 chars',
-					} ) }
-				</Item>
-			)
+			<Item url={ signupUrl }>
+				{ translate( 'Sign Up', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
 		);
 	}
 
