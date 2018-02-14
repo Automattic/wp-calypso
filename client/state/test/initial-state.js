@@ -190,7 +190,7 @@ describe( 'initial-state', () => {
 					expect( state._timestamp ).to.equal( undefined );
 				} );
 				test( 'server state shallowly overrides local forage state', () => {
-					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
+					expect( state.postTypes.items ).to.eql( serverState.postTypes.items );
 				} );
 			} );
 			describe( 'with stale persisted data and initial server data', () => {
@@ -240,7 +240,7 @@ describe( 'initial-state', () => {
 					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
 				test( 'builds using server state', () => {
-					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
+					expect( state.postTypes.items ).to.eql( serverState.postTypes.items );
 				} );
 				test( 'does not build using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( null );
@@ -290,7 +290,7 @@ describe( 'initial-state', () => {
 				} );
 				test( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
-					expect( state.postTypes.items ).to.equal( savedState.postTypes.items );
+					expect( state.postTypes.items ).to.eql( savedState.postTypes.items );
 				} );
 				test( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );
