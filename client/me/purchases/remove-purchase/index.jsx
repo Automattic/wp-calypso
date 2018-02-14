@@ -23,7 +23,7 @@ import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form
 import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
 import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
 import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
+import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
 import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
