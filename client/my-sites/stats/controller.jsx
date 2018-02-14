@@ -20,6 +20,7 @@ import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isSiteOnPaidPlan } from 'state/selectors';
 import AsyncLoad from 'components/async-load';
 import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import FollowList from 'lib/follow-list';
@@ -472,11 +473,12 @@ export default {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
+		const isPaidPlan = isSiteOnPaidPlan( state, siteId );
 		const startDate = i18n.moment( context.query.startDate, 'YYYY-MM-DD' ).isValid()
 			? context.query.startDate
 			: undefined;
 
-		if ( siteId && ! isJetpack ) {
+		if ( ( siteId && ! isJetpack ) || ! isPaidPlan ) {
 			page.redirect( '/stats' );
 		} else {
 			analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
