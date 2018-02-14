@@ -48,7 +48,8 @@ import {
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { TRANSFER_IN } from 'state/current-user/constants';
+import { TRANSFER_IN_NUX } from 'state/current-user/constants';
+import { abtest } from 'lib/abtest';
 
 const domains = wpcom.domains();
 
@@ -56,7 +57,7 @@ const domains = wpcom.domains();
 const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
-const searchVendor = 'domainsbot';
+let searchVendor = 'domainsbot';
 const fetchAlgo = searchVendor + '/v1';
 
 let searchQueue = [];
@@ -69,6 +70,7 @@ function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
 		return null;
 	}
+
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
@@ -313,15 +315,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return (
-				<ExampleDomainSuggestions
-					onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-					mapDomainUrl={ this.getMapDomainUrl() }
-					path={ this.props.path }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					products={ this.props.products }
-				/>
-			);
+			return this.getExampleSuggestions();
 		}
 
 		return this.initialSuggestions();
@@ -375,6 +369,10 @@ class RegisterDomainStep extends React.Component {
 		} );
 
 		const timestamp = Date.now();
+		const testGroup = abtest( 'domainSuggestionTestV5' );
+		if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
+			searchVendor = testGroup;
+		}
 
 		async.parallel(
 			[
@@ -648,7 +646,7 @@ class RegisterDomainStep extends React.Component {
 				/>
 			);
 
-			if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+			if ( ! this.props.isSignupStep || this.props.transferInNuxAllowed ) {
 				domainUnavailableSuggestion = (
 					<DomainTransferSuggestion
 						onButtonClick={ this.goToTransferDomainStep }
@@ -669,6 +667,23 @@ class RegisterDomainStep extends React.Component {
 		);
 	}
 
+	getExampleSuggestions() {
+		const alreadyOwnUrl =
+			! this.props.isSignupStep || this.props.transferInNuxAllowed
+				? this.getTransferDomainUrl()
+				: this.getMapDomainUrl();
+
+		return (
+			<ExampleDomainSuggestions
+				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
+				url={ alreadyOwnUrl }
+				path={ this.props.path }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				products={ this.props.products }
+			/>
+		);
+	}
+
 	allSearchResults() {
 		const {
 			exactMatchDomain,
@@ -682,7 +697,12 @@ class RegisterDomainStep extends React.Component {
 			find( this.state.searchResults, matchesSearchedDomain );
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
-		let suggestions = reject( this.state.searchResults, matchesSearchedDomain );
+		const searchResults = this.state.searchResults || [];
+		const testGroup = abtest( 'domainSuggestionTestV5' );
+		let suggestions =
+			'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup
+				? [ ...searchResults ]
+				: reject( searchResults, matchesSearchedDomain );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
@@ -695,14 +715,7 @@ class RegisterDomainStep extends React.Component {
 		if ( suggestions.length === 0 && ! this.state.loadingResults ) {
 			// the search returned no results
 			if ( this.props.showExampleSuggestions ) {
-				return (
-					<ExampleDomainSuggestions
-						mapDomainUrl={ this.getMapDomainUrl() }
-						path={ this.props.path }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						products={ this.props.products }
-					/>
-				);
+				return this.getExampleSuggestions();
 			}
 
 			suggestions = this.props.defaultSuggestions || [];
@@ -882,7 +895,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
-			transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
+			transferInNuxAllowed: currentUserHasFlag( state, TRANSFER_IN_NUX ),
 		};
 	},
 	{

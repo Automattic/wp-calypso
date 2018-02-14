@@ -9,7 +9,6 @@ import { keyBy } from 'lodash';
  */
 import { READER_POSTS_RECEIVE } from 'state/action-types';
 import { combineReducers } from 'state/utils';
-import { itemsSchema } from './schema';
 
 /**
  * Tracks all known post objects, indexed by post ID.
@@ -21,12 +20,14 @@ import { itemsSchema } from './schema';
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case READER_POSTS_RECEIVE: {
-			return Object.assign( {}, state, keyBy( action.posts, 'global_ID' ) );
+			return { ...state, ...keyBy( action.posts, 'global_ID' ) };
 		}
 	}
 	return state;
 }
-items.schema = itemsSchema;
+// @TODO: evaluate serialization later
+// import { itemsSchema } from './schema';
+// items.schema = itemsSchema;
 
 export default combineReducers( {
 	items,

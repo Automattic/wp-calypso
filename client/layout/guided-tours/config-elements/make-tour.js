@@ -33,7 +33,7 @@ const makeTour = tree => {
 		static meta = omit( tree.props, 'children' );
 
 		getChildContext() {
-			return this.tourMeta;
+			return { ...this.context, ...this.tourMeta };
 		}
 
 		constructor( props, context ) {

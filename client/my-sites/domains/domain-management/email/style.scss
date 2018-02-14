@@ -215,12 +215,12 @@
 }
 
 .domain-only-site__settings-notice {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	margin-top: 30px;
 	text-align: center;
 
 	&::before {
-		background: lighten( $gray, 20% );
+		background: $gray-lighten-20;
 		content: '';
 		display: block;
 		height: 1px;

@@ -12,15 +12,18 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
+import CompactCard from 'components/card/compact';
 import { getConciergeSignupForm } from 'state/selectors';
 import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment } from 'state/concierge/actions';
+import { bookConciergeAppointment, requestConciergeAvailableTimes } from 'state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
 import {
-	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKED,
+	CONCIERGE_STATUS_BOOKING,
+	CONCIERGE_STATUS_BOOKING_ERROR,
 	WPCOM_CONCIERGE_SCHEDULE_ID,
 } from '../constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -36,6 +39,8 @@ class CalendarStep extends Component {
 	onSubmit = timestamp => {
 		const { currentUserId, signupForm, site } = this.props;
 		const meta = {
+			firstname: signupForm.firstname,
+			lastname: signupForm.lastname,
 			message: signupForm.message,
 			timezone: signupForm.timezone,
 		};
@@ -49,10 +54,17 @@ class CalendarStep extends Component {
 		);
 	};
 
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_concierge_book_calendar_step' );
+	}
+
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKED ) {
 			// go to confirmation page if booking was successfull
 			this.props.onComplete();
+		} else if ( nextProps.signupForm.status === CONCIERGE_STATUS_BOOKING_ERROR ) {
+			// request new available times
+			this.props.requestConciergeAvailableTimes( WPCOM_CONCIERGE_SCHEDULE_ID );
 		}
 	}
 
@@ -62,15 +74,18 @@ class CalendarStep extends Component {
 		return (
 			<div>
 				<HeaderCake onClick={ onBack }>{ translate( 'Choose Concierge Session' ) }</HeaderCake>
+				<CompactCard>
+					{ translate( 'Please select a day to have your Concierge session.' ) }
+				</CompactCard>
+
 				<AvailableTimePicker
 					actionText={ translate( 'Book this session' ) }
 					availableTimes={ availableTimes }
 					currentUserLocale={ currentUserLocale }
 					disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING }
-					description={ translate( 'Please select a day to have your Concierge session.' ) }
 					onSubmit={ this.onSubmit }
 					site={ site }
-					signupForm={ signupForm }
+					timezone={ signupForm.timezone }
 				/>
 			</div>
 		);
@@ -83,5 +98,5 @@ export default connect(
 		currentUserId: getCurrentUserId( state ),
 		currentUserLocale: getCurrentUserLocale( state ),
 	} ),
-	{ bookConciergeAppointment }
+	{ bookConciergeAppointment, recordTracksEvent, requestConciergeAvailableTimes }
 )( localize( CalendarStep ) );

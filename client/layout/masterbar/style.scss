@@ -56,9 +56,16 @@ $autobar-height: 20px;
 			background: rgba( $blue-wordpress, 0.85 );
 		}
 
-		&:hover,
-		&:focus {
+		&:hover {
 			background: lighten( $masterbar-color, 5% );
+		}
+
+		&:focus {
+			outline: none;
+
+			.accessible-focus & {
+				box-shadow: inset 0 0 0 2px $blue-light;
+			}
 		}
 	}
 }
@@ -93,11 +100,19 @@ $autobar-height: 20px;
 		padding: 0 0 0 6px;
 	}
 
-	&:hover,
-	&:focus {
+	&:hover {
 		background: var( --masterbar-item-hover-background );
 		color: var( --masterbar-color );
-		outline: 0;
+	}
+
+	&:focus {
+		outline: none;
+
+		.accessible-focus & {
+			box-shadow: inset 0 0 0 2px $blue-light;
+			color: var( --masterbar-color );
+			box-shadow: inset 0 0 0 2px $blue-light;
+		}
 	}
 
 	&.is-active {
@@ -202,10 +217,20 @@ $autobar-height: 20px;
 		color: $white;
 	}
 
-	&:hover,
-	&:focus {
+	&:hover {
 		background: $gray-light;
 		color: var( --masterbar-item-new-color );
+	}
+
+	&:focus {
+		outline: none;
+
+		.accessible-focus & {
+			background: $white;
+			color: var( --masterbar-item-new-color );
+			box-shadow: 0 0 0 2px $blue-light;
+			z-index: 1;
+		}
 	}
 
 	.masterbar__item-content {
@@ -271,6 +296,10 @@ $autobar-height: 20px;
 
 	@include breakpoint( "<480px" ) {
 		margin-right: 0;
+	}
+
+	.gridicon {
+		fill: $white;
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -370,7 +399,7 @@ $autobar-height: 20px;
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;
-	border-radius: 0 3px 3px 0;
+	border-radius: 3px;
 	position: relative;
 	transition: all 0.2s ease-out;
 

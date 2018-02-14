@@ -295,6 +295,17 @@ export default function() {
 			makeLayout,
 			clientRender
 		);
+
+		page(
+			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/manage' ),
+			jetPackWarning,
+			domainsController.transferDomainPrecheck,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	page( '/domains', siteSelection, sites, makeLayout, clientRender );

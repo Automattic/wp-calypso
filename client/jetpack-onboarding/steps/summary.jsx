@@ -4,10 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
-import { compact, get, map, without } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,96 +14,67 @@ import Button from 'components/button';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Spinner from 'components/spinner';
-import {
-	getJetpackOnboardingPendingSteps,
-	getJetpackOnboardingCompletedSteps,
-	getUnconnectedSiteUrl,
-} from 'state/selectors';
-import {
-	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
-	JETPACK_ONBOARDING_STEPS as STEPS,
-	JETPACK_ONBOARDING_SUMMARY_STEPS as SUMMARY_STEPS,
-} from '../constants';
+import CompletedSteps from '../summary-completed-steps';
+import NextSteps from '../summary-next-steps';
+import { getUnconnectedSiteUrl } from 'state/selectors';
+import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSummaryStep extends React.PureComponent {
-	renderCompleted = () => {
-		const { steps, stepsCompleted, stepsPending } = this.props;
-
-		return map( without( steps, STEPS.SUMMARY ), stepName => {
-			const isCompleted = get( stepsCompleted, stepName ) === true;
-			const isPending = get( stepsPending, stepName );
-			const className = classNames( 'steps__summary-entry', isCompleted ? 'completed' : 'todo' );
-
-			return (
-				<div key={ stepName } className={ className }>
-					{ isPending ? (
-						<Spinner size={ 18 } />
-					) : (
-						<Gridicon icon={ isCompleted ? 'checkmark' : 'cross' } size={ 18 } />
-					) }
-					{ STEP_TITLES[ stepName ] }
-				</div>
-			);
+	handleNextStepClick = stepName => () => {
+		const { recordJpoEvent } = this.props;
+		recordJpoEvent( 'calypso_jpo_next_step_clicked', {
+			nextStep: stepName,
 		} );
 	};
 
-	renderTodo = () => {
-		const stepsTodo = [
-			SUMMARY_STEPS.JETPACK_CONNECTION,
-			SUMMARY_STEPS.THEME,
-			SUMMARY_STEPS.SITE_ADDRESS,
-			SUMMARY_STEPS.STORE,
-			SUMMARY_STEPS.BLOG,
-		];
-		const stepLinks = [
-			'/jetpack/connect?url=' + this.props.siteUrl,
-			// TODO: update the following with relevant links
-			'#',
-			'#',
-			'#',
-			'#',
-		];
-
-		return map( stepsTodo, ( fieldLabel, fieldIndex ) => (
-			<div key={ fieldIndex } className="steps__summary-entry todo">
-				<a href={ stepLinks[ fieldIndex ] }>{ fieldLabel }</a>
-			</div>
-		) );
+	handleCompletedStepClick = stepName => () => {
+		const { recordJpoEvent } = this.props;
+		recordJpoEvent( 'calypso_jpo_completed_step_clicked', {
+			completedStep: stepName,
+		} );
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { basePath, siteId, siteSlug, siteUrl, steps, translate } = this.props;
 
-		const headerText = translate( 'Congratulations! Your site is on its way.' );
+		const headerText = translate( "You're ready to go!" );
 		const subHeaderText = translate(
-			'You enabled Jetpack and unlocked dozens of website-bolstering features. Continue preparing your site below.'
+			"You've enabled Jetpack and unlocked powerful website tools that are ready for you to use. " +
+				"Let's continue getting your site set up:"
 		);
-
-		// TODO: adapt when we have more info
-		const buttonRedirectHref = '#';
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Summary ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Summary ‹ Jetpack Start' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.SUMMARY + '/:site' }
-					title="Summary ‹ Jetpack Onboarding"
+					path={ [ basePath, STEPS.SUMMARY, ':site' ].join( '/' ) }
+					title="Summary ‹ Jetpack Start"
 				/>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<div className="steps__summary-columns">
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
-						{ this.renderCompleted() }
+						<CompletedSteps
+							basePath={ basePath }
+							handleCompletedStepClick={ this.handleCompletedStepClick }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							steps={ steps }
+						/>
 					</div>
 					<div className="steps__summary-column">
 						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						{ this.renderTodo() }
+						<NextSteps
+							handleNextStepClick={ this.handleNextStepClick }
+							siteId={ siteId }
+							siteSlug={ siteSlug }
+							siteUrl={ siteUrl }
+						/>
 					</div>
 				</div>
 				<div className="steps__button-group">
-					<Button href={ buttonRedirectHref } primary>
+					<Button href={ siteUrl } primary>
 						{ translate( 'Visit your site' ) }
 					</Button>
 				</div>
@@ -115,15 +83,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 	}
 }
 
-export default connect( ( state, { siteId, steps } ) => {
-	const tasks = compact( [] );
-	const stepsCompleted = getJetpackOnboardingCompletedSteps( state, siteId, steps );
-	const stepsPending = getJetpackOnboardingPendingSteps( state, siteId, steps );
-
-	return {
-		siteUrl: getUnconnectedSiteUrl( state, siteId ),
-		stepsCompleted,
-		stepsPending,
-		tasks,
-	};
-} )( localize( JetpackOnboardingSummaryStep ) );
+export default connect( ( state, { siteId } ) => ( {
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+} ) )( localize( JetpackOnboardingSummaryStep ) );

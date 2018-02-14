@@ -40,6 +40,6 @@
 }
 
 .plugin-remove-button__remove-link.is-disabled .plugin-remove-button__remove-icon .gridicons-trash {
-	color: lighten( $gray, 30% );
+	color: $gray-lighten-30;
 	cursor: default;
 }

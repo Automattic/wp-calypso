@@ -8,18 +8,19 @@ http://codepen.io/aduth/pen/doqovP?editors=001
 ## Usage
 
 ```jsx
-var React = require( 'react' ),
-	ImagePreloader = require( 'components/image-preloader' );
+import React from 'react';
+import ImagePreloader from 'components/image-preloader';
 
-React.createClass( {
-	render: function() {
+export default class extends React.Component {
+	render() {
 		return (
 			<ImagePreloader
 				placeholder={ <div>Loading...</div> }
-				src="http://lorempixel.com/200/200" />
+				src="http://lorempixel.com/200/200" 
+			/>
 		);
 	}
-} );
+}
 ```
 
 ## Props

@@ -13,12 +13,11 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import { isValidFeatureKey } from 'lib/plans';
+import Plans from 'my-sites/plans/main';
+import CheckoutData from 'components/data/checkout';
 
 export default {
 	plans( context, next ) {
-		const Plans = require( 'my-sites/plans/main' ),
-			CheckoutData = require( 'components/data/checkout' );
-
 		context.primary = (
 			<CheckoutData>
 				<Plans

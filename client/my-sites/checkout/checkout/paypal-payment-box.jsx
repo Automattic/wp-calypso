@@ -19,10 +19,8 @@ import Input from 'my-sites/domains/components/form/input';
 import notices from 'notices';
 import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
-import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
@@ -140,10 +138,7 @@ class PaypalPaymentBox extends React.Component {
 		const hasBusinessPlanInCart = some( this.props.cart.products, {
 			product_slug: PLAN_BUSINESS,
 		} );
-		const showPaymentChatButton =
-				config.isEnabled( 'upgrades/presale-chat' ) &&
-				abtest( 'presaleChatButton' ) === 'showChatButton' &&
-				hasBusinessPlanInCart,
+		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
 		return (

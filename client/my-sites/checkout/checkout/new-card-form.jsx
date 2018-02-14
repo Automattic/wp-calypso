@@ -1,5 +1,4 @@
 /** @format */
-import { isEmpty } from 'lodash';
 
 /**
  * External dependencies
@@ -14,6 +13,7 @@ import classNames from 'classnames';
  */
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import { setNewCreditCardDetails } from 'lib/upgrades/actions';
+import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 
 class NewCardForm extends Component {
 	static displayName = 'NewCardForm';
@@ -24,36 +24,38 @@ class NewCardForm extends Component {
 		transaction: PropTypes.object.isRequired,
 	};
 
-	isFieldInvalid = fieldName => {
-		return ! isEmpty( this.props.transaction.errors[ fieldName ] );
+	getErrorMessage = fieldName => {
+		const { transaction } = this.props;
+		return transaction.step.name === INPUT_VALIDATION && transaction.errors[ fieldName ];
 	};
 
 	render() {
+		const { countriesList, hasStoredCards, translate, transaction } = this.props;
 		const classes = classNames( 'all-fields-required', {
 			'has-saved-cards': this.props.hasStoredCards,
 		} );
 
 		return (
-			<div className="new-card">
-				<button type="button" className="new-card-toggle">
-					{ this.props.translate( '+ Use a New Credit/Debit Card' ) }
+			<div className="checkout__new-card">
+				<button type="button" className="checkout__new-card-toggle">
+					{ translate( '+ Use a New Credit/Debit Card' ) }
 				</button>
 
-				<div className="new-card-fields">
-					{ this.props.hasStoredCards ? (
+				<div className="checkout__new-card-fields">
+					{ hasStoredCards ? (
 						<h6 className="checkout__new-card-header">
-							{ this.props.translate( 'Use New Credit/Debit Card' ) }:
+							{ translate( 'Use New Credit/Debit Card' ) }:
 						</h6>
 					) : null }
 
-					<span className={ classes }>{ this.props.translate( 'All fields required' ) }</span>
+					<span className={ classes }>{ translate( 'All fields required' ) }</span>
 
 					<CreditCardFormFields
-						card={ this.props.transaction.newCardFormFields }
-						countriesList={ this.props.countriesList }
+						card={ transaction.newCardFormFields }
+						countriesList={ countriesList }
 						eventFormName="Checkout Form"
-						isFieldInvalid={ this.isFieldInvalid }
 						onFieldChange={ this.handleFieldChange }
+						getErrorMessage={ this.getErrorMessage }
 					/>
 				</div>
 			</div>

@@ -35,27 +35,27 @@ If you need to track when user scrolls to another page, do it in `fetchNextPage`
 
 ```jsx
 
-const Listing = React.createClass( {
+class Listing extends React.Component {
 	...
-	fetchNextPage: funciton ( options ) {
+	fetchNextPage: ( options ) => {
 		if ( options.triggeredByScroll ) {
 			// track analytics events
 		}
 		actions.fetchNextPage();
-	},
+	}
 
-	getItemRef: function( item ) {
+	getItemRef: ( item ) => {
 		return 'item-' + item.id;
-	},
+	}
 
-	renderItem: function( item ) {
+	renderItem: ( item ) => {
 		var itemKey = this.getItemRef( item );
 		return (
 			<Item ref={ itemKey } key={ itemKey } ... />
 		);
-	},
+	}
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders: () => {
 		var count = this.props.list.get().length ? 2 : this.props.list.perPage,
 			placeholders = [];
 		times( count, function( i ) {
@@ -63,9 +63,9 @@ const Listing = React.createClass( {
 		});
 
 		return placeholders;
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<InfiniteList className="main main-column reader__content" role="main"
 				items={ this.state.items }
@@ -79,10 +79,8 @@ const Listing = React.createClass( {
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 			/>
 		);
-	}
-
-} );
-
+	} 
+} 
 ```
 
 If you need reset scroll state of `InfiniteList` component, e.g. because the using component received list with different content, assign it different `key`, so that React creates new instance for it.

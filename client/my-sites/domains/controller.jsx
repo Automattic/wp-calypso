@@ -20,6 +20,14 @@ import productsFactory from 'lib/products-list';
 import { canCurrentUser } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+import CartData from 'components/data/cart';
+import DomainSearch from './domain-search';
+import SiteRedirect from './domain-search/site-redirect';
+import MapDomain from 'my-sites/domains/map-domain';
+import TransferDomain from 'my-sites/domains/transfer-domain';
+import TransferDomainStep from 'components/domains/transfer-domain-step';
+import GoogleApps from 'components/upgrades/google-apps';
+import { domainManagementTransferIn } from 'my-sites/domains/paths';
 
 /**
  * Module variables
@@ -43,8 +51,6 @@ const domainsAddRedirectHeader = ( context, next ) => {
 };
 
 const domainSearch = ( context, next ) => {
-	const CartData = require( 'components/data/cart' );
-	const DomainSearch = require( './domain-search' );
 	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Registration' );
@@ -66,8 +72,6 @@ const domainSearch = ( context, next ) => {
 };
 
 const siteRedirect = ( context, next ) => {
-	const CartData = require( 'components/data/cart' );
-	const SiteRedirect = require( './domain-search/site-redirect' );
 	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
@@ -84,8 +88,6 @@ const siteRedirect = ( context, next ) => {
 };
 
 const mapDomain = ( context, next ) => {
-	const CartData = require( 'components/data/cart' );
-	const MapDomain = require( 'my-sites/domains/map-domain' ).default;
 	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
@@ -102,8 +104,6 @@ const mapDomain = ( context, next ) => {
 };
 
 const transferDomain = ( context, next ) => {
-	const CartData = require( 'components/data/cart' );
-	const TransferDomain = require( 'my-sites/domains/transfer-domain' ).default;
 	const basePath = sectionify( context.path );
 
 	analytics.pageView.record( basePath, 'Domain Search > Domain Transfer' );
@@ -118,10 +118,34 @@ const transferDomain = ( context, next ) => {
 	next();
 };
 
-const googleAppsWithRegistration = ( context, next ) => {
-	const CartData = require( 'components/data/cart' );
-	const GoogleApps = require( 'components/upgrades/google-apps' );
+const transferDomainPrecheck = ( context, next ) => {
+	const basePath = sectionify( context.path );
+	const state = context.store.getState();
+	const siteSlug = getSelectedSiteSlug( state ) || '';
+	const domain = get( context, 'params.domain', '' );
 
+	const handleGoBack = () => {
+		page( domainManagementTransferIn( siteSlug, domain ) );
+	};
+
+	analytics.pageView.record( basePath, 'My Sites > Domains > Selected Domain' );
+	context.primary = (
+		<Main>
+			<CartData>
+				<div>
+					<TransferDomainStep
+						forcePrecheck={ true }
+						initialQuery={ domain }
+						goBack={ handleGoBack }
+					/>
+				</div>
+			</CartData>
+		</Main>
+	);
+	next();
+};
+
+const googleAppsWithRegistration = ( context, next ) => {
 	const state = context.store.getState();
 	const siteSlug = getSelectedSiteSlug( state ) || '';
 
@@ -206,4 +230,5 @@ export default {
 	redirectIfNoSite,
 	redirectToAddMappingIfVipSite,
 	transferDomain,
+	transferDomainPrecheck,
 };

@@ -174,8 +174,10 @@ const ConnectedWebPreviewModal = connect( null, { setPreviewShowing } )(
 	localize( WebPreviewModal )
 );
 
-export default ( { isContentOnly, ...restProps } ) => {
+const WebPreviewInner = ( { isContentOnly, ...restProps } ) => {
 	const WebPreviewComponent = isContentOnly ? WebPreviewContent : ConnectedWebPreviewModal;
 
 	return <WebPreviewComponent { ...restProps } />;
 };
+
+export default WebPreviewInner;

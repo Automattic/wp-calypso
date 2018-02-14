@@ -25,6 +25,7 @@ import QueryMedia from 'components/data/query-media';
 import JetpackColophon from 'components/jetpack-colophon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getMediaItem } from 'state/selectors';
+import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
 
 const StatsStrings = statsStringsFactory();
 
@@ -211,6 +212,10 @@ class StatsSummary extends Component {
 						summary
 					/>
 				);
+				break;
+			case 'annualstats':
+				title = translate( 'Annual Site Stats' );
+				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
 		}
 

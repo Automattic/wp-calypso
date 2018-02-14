@@ -32,10 +32,11 @@ Add a new poller that fetches updates
 Example
 =======
 ```js
-var PollerPool = require( 'lib/data-poller' ),
-	SitesList = require( 'lib/sites-list/list' ),
-	sites = new SitesList(),
-	poller;
+import PollerPool from 'lib/data-poller' );
+import SitesList from 'lib/sites-list/list';
+
+const sites = new SitesList();
+let poller;
 
 // 'interval' is the time between polling requests and 'leading' is a flag that controls whether the `fetch` method
 // is called when the poller is started when it is added

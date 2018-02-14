@@ -41,7 +41,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 
 .post-share__wrapper.is-placeholder {
 	padding-bottom: 24px;
-	border-bottom: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+	border-bottom: 1px solid transparentize( $gray-lighten-20, .5 );
 }
 
 .post-share__placeholder {
@@ -123,7 +123,7 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 	align-items: center;
 	cursor: pointer;
 	display: flex;
-	color: lighten( $gray, 20% );
+	color: $gray-lighten-20;
 	margin-top: 16px;
 
 	&:first-of-type {
@@ -422,14 +422,14 @@ $section-border: solid 1px darken( $sidebar-bg-color, 5% );
 }
 
 .post-share__external-url {
-	color: lighten( $gray, 20% );
+	color: $gray-lighten-20;
 	transition: color 200ms;
 	height: 24px;
 	width: 24px;
 
 	&:hover,
 	&:focus {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 	}
 }
 

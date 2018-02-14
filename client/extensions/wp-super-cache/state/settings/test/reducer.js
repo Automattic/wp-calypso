@@ -97,7 +97,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state.requesting ).to.eql( {} );
+			expect( state.requesting ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -197,7 +197,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state.saveStatus ).to.eql( {} );
+			expect( state.saveStatus ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -270,7 +270,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {

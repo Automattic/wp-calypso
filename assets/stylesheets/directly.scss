@@ -125,7 +125,7 @@ textarea {
 /* HEADER */
 
 .header-container {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-lighten-30;
 	box-shadow: none;
 	flex: 0 0 32px;
 	height: 32px;
@@ -183,7 +183,7 @@ textarea {
 }
 
 .chat-list-view-item-container {
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	border-bottom: 1px solid lighten( $gray, 25% );
 	color: $gray-dark;
 	padding: 18px 10px 18px 24px;
@@ -311,7 +311,7 @@ textarea {
 		font-weight: 500;
 	}
 	.profile .reputation {
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 	}
 }
 .avatar {
@@ -320,7 +320,7 @@ textarea {
 
 .system-message {
 	border: 1px solid lighten( $gray, 25% );
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	font-size: 14px;
 	margin-right: 0;
 	border-radius: 8px;
@@ -399,7 +399,7 @@ textarea {
 
 // Reply box and other tools in the thread view footer
 .thread-view-footer {
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 	box-shadow: none;
 	background: $white;
 }
@@ -453,15 +453,15 @@ textarea {
 .toolbar-accepted-container,
 .toolbar-default-container,
 .toolbar-rate-container {
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 }
 .toolbar-container {
 	.tooltip-wrapper {
-		border-left: 1px solid lighten( $gray, 30% );
+		border-left: 1px solid $gray-lighten-30;
 	}
 	.toolbar-btn {
 		color: $gray;
-		border-left: 1px solid lighten( $gray, 30% );
+		border-left: 1px solid $gray-lighten-30;
 		.svg-icon {
 			color: $alert-green;
 		}

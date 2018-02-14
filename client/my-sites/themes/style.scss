@@ -30,7 +30,7 @@
 		+ span {
 			display: block;
 			text-align: center;
-			color: lighten( $gray, 10% );
+			color: $gray-lighten-10;
 			margin-top: 0.3em;
 		}
 
@@ -92,8 +92,8 @@
 }
 
 .sticky-panel.is-sticky .themes__search-card {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-	0 2px 4px lighten( $gray, 20% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+	0 2px 4px $gray-lighten-20;
 }
 
 .themes__upload-button {

@@ -17,13 +17,14 @@ import { sectionify } from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setSection } from 'state/ui/actions';
+import SidebarComponent from 'me/sidebar';
+import AppsComponent from 'me/get-apps';
+import NextSteps from './next-steps';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 
 export default {
 	sidebar( context, next ) {
-		const SidebarComponent = require( 'me/sidebar' );
-
 		context.secondary = React.createElement( SidebarComponent, {
 			context: context,
 		} );
@@ -32,12 +33,13 @@ export default {
 	},
 
 	profile( context, next ) {
-		const ProfileComponent = require( 'me/profile' ),
-			basePath = context.path;
+		const basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
+
+		const ProfileComponent = require( 'me/profile' ).default;
 
 		context.primary = React.createElement( ProfileComponent, {
 			userSettings: userSettings,
@@ -47,7 +49,6 @@ export default {
 	},
 
 	apps( context, next ) {
-		const AppsComponent = require( 'me/get-apps' ).default;
 		const basePath = context.path;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
@@ -62,9 +63,8 @@ export default {
 	},
 
 	nextSteps( context, next ) {
-		const analyticsBasePath = sectionify( context.path ),
-			NextSteps = require( './next-steps' ),
-			isWelcome = 'welcome' === context.params.welcome;
+		const analyticsBasePath = sectionify( context.path );
+		const isWelcome = 'welcome' === context.params.welcome;
 
 		context.store.dispatch( setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 

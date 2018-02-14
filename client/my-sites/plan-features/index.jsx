@@ -32,6 +32,7 @@ import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plan
 import {
 	isPopular,
 	isNew,
+	isBestValue,
 	isMonthly,
 	getPlanFeaturesObject,
 	getPlanClass,
@@ -150,6 +151,7 @@ class PlanFeatures extends Component {
 				planName,
 				popular,
 				newPlan,
+				bestValue,
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder,
@@ -163,6 +165,7 @@ class PlanFeatures extends Component {
 						currencyCode={ currencyCode }
 						popular={ popular }
 						newPlan={ newPlan }
+						bestValue={ bestValue }
 						title={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
@@ -226,6 +229,7 @@ class PlanFeatures extends Component {
 				planName,
 				popular,
 				newPlan,
+				bestValue,
 				relatedMonthlyPlan,
 				isPlaceholder,
 				hideMonthly,
@@ -268,6 +272,7 @@ class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
+						bestValue={ bestValue }
 						planType={ planName }
 						popular={ popular }
 						rawPrice={ rawPrice }
@@ -530,6 +535,7 @@ export default connect(
 					: null;
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
+				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
 				let planFeatures = getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) );
@@ -596,12 +602,14 @@ export default connect(
 					planObject: planObject,
 					popular: popular,
 					newPlan: newPlan,
+					bestValue: bestValue,
 					hideMonthly: false,
 					primaryUpgrade:
 						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
 						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||
 						popular ||
 						newPlan ||
+						bestValue ||
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
 					relatedMonthlyPlan: relatedMonthlyPlan,

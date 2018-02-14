@@ -1,5 +1,5 @@
 .people-list-item.card.is-compact {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-light;
 	box-shadow: none;
 	display: flex;
 	overflow: hidden;
@@ -83,4 +83,68 @@
 .people-list-item .card__link-indicator {
 	right: 0px;
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
+}
+
+.people-list-item.is-invite .people-profile__username {
+	@include breakpoint( '>480px' ) {
+		font-size: 18px;
+	}
+}
+
+.people-list-item.is-invite-details {
+	// Make extra space for invite status on small screens
+	@include breakpoint( '<480px' ) {
+		padding-bottom: 34px;
+	}
+}
+
+.people-list-item__invite-status {
+	align-self: center;
+	flex-shrink: 0;
+	margin-left: 12px;
+
+	&:not( .is-invite-details ) {
+		// Get out of the way of the link to the invite details page
+		margin-right: 30px;
+
+		// Hide on small screens
+		@include breakpoint( '<480px' ) {
+			display: none;
+		}
+	}
+
+	&.is-invite-details {
+		// Show below the name and role on small screens
+		@include breakpoint( '<480px' ) {
+			position: absolute;
+			bottom: 4px;
+			margin-left: 80px;
+		}
+	}
+
+	color: $green-text-min;
+
+	&.is-pending {
+		color: $gray-text-min;
+	}
+
+	.gridicon {
+		vertical-align: text-bottom;
+		margin-right: 4px;
+	}
+}
+
+.people-list-item__invite-resend {
+	display: inline-block;
+	min-width: 95px;
+	height: 30px;
+	margin-left: 12px;
+	vertical-align: baseline;
+
+	&.is-success {
+		background-color: $gray-light;
+		border: 0;
+		color: $gray-dark;
+		cursor: default;
+	}
 }

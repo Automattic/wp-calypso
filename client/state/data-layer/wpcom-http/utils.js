@@ -68,39 +68,96 @@ export class TransformerError extends Error {
 }
 
 export const makeParser = ( schema, schemaOptions = {}, transformer = identity ) => {
-	const options = Object.assign( { verbose: true }, schemaOptions );
-	const validator = schemaValidator( schema, options );
+	let transform;
+	let validate;
 
-	// filter out unwanted properties even though we may have let them slip past validation
-	// note: this property does not nest deeply into the data structure, that is, properties
-	// of a property that aren't in the schema could still come through since only the top
-	// level of properties are pruned
-	const filter = schemaValidator.filter(
-		Object.assign(
-			{},
-			schema,
-			schema.type && schema.type === 'object' && { additionalProperties: false }
-		)
-	);
+	const genParser = () => {
+		const options = Object.assign( { greedy: true, verbose: true }, schemaOptions );
+		const validator = schemaValidator( schema, options );
 
-	const validate = data => {
-		if ( ! validator( data ) ) {
-			throw new SchemaError( validator.errors );
-		}
+		// filter out unwanted properties even though we may have let them slip past validation
+		// note: this property does not nest deeply into the data structure, that is, properties
+		// of a property that aren't in the schema could still come through since only the top
+		// level of properties are pruned
+		const filter = schemaValidator.filter(
+			Object.assign(
+				{},
+				schema,
+				schema.type && schema.type === 'object' && { additionalProperties: false }
+			)
+		);
 
-		return filter( data );
+		validate = data => {
+			if ( ! validator( data ) ) {
+				if ( 'development' === process.env.NODE_ENV ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'JSON Validation Failure' );
+
+					validator.errors.forEach( error =>
+						// eslint-disable-next-line no-console
+						console.warn( {
+							field: error.field,
+							message: error.message,
+							value: error.value,
+							actualType: error.type,
+							expectedType: get( schema, error.schemaPath ),
+						} )
+					);
+
+					if ( undefined !== window ) {
+						// eslint-disable-next-line no-console
+						console.log( 'updated `lastValidator` and `lastValidated` in console' );
+						// eslint-disable-next-line no-console
+						console.log( 'run `lastValidator( lastValidated )` to reproduce failing validation' );
+						window.lastValidator = validator;
+						window.lastValidated = data;
+					}
+				}
+
+				throw new SchemaError( validator.errors );
+			}
+
+			return filter( data );
+		};
+
+		transform = data => {
+			try {
+				return transformer( data );
+			} catch ( e ) {
+				if ( 'development' === process.env.NODE_ENV ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'Data Transformation Failure' );
+
+					// eslint-disable-next-line no-console
+					console.warn( {
+						inputData: data,
+						error: e,
+					} );
+
+					if ( undefined !== window ) {
+						// eslint-disable-next-line no-console
+						console.log( 'updated `lastTransformer` and `lastTransformed` in console' );
+						// eslint-disable-next-line no-console
+						console.log(
+							'run `lastTransformer( lastTransformed )` to reproduce failing transform'
+						);
+						window.lastTransformer = transformer;
+						window.lastTransformed = data;
+					}
+				}
+
+				throw new TransformerError( e, data, transformer );
+			}
+		};
 	};
 
-	const transform = data => {
-		try {
-			return transformer( data );
-		} catch ( e ) {
-			throw new TransformerError( e, data, transformer );
+	return data => {
+		if ( ! transform ) {
+			genParser();
 		}
-	};
 
-	// the actual parser
-	return data => transform( validate( data ) );
+		return transform( validate( data ) );
+	};
 };
 
 const getRequestStatus = action => {
@@ -218,7 +275,6 @@ const defaultOptions = {
  + @param {Function} [options.fromApi] maps between API data and Calypso data
  + @param {Function} [options.onProgress] called on progress events when uploading
  * @param {Function} [options.middleware] runs before the dispatch itself
- * @param {Function} [options.onProgress] called on progress events when uploading
  * @returns {?*} please ignore return values, they are undefined
  */
 export const requestDispatcher = middleware => ( initiator, onSuccess, onError, options = {} ) => {

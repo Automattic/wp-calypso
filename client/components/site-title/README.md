@@ -17,4 +17,5 @@ For an example of how to use, have a look at [docs/example.jsx](docs/example.jsx
 - `blogname` - *optional* (string) Site title to be displayed in corresponding input field.
 - `blogdescription` - *optional* (string) Site tagline to be displayed in corresponding input field.
 - `disabled` - *optional* (bool) Whether input fields should be disabled (defaults to `false`).
+- `isBlognameRequired` - *optional* (bool) Whether set the blogname field as required 
 - `onChange` - *optional* (function) Called whenever user changes either the site title or tagline field. Invoked with an object with `blogname` and `blogdescription` attributes.

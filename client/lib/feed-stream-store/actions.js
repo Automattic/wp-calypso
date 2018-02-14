@@ -24,7 +24,7 @@ function getNextPageParams( store ) {
 		lastDate = store.getLastItemWithDate();
 
 	if ( lastDate ) {
-		params.before = lastDate;
+		params.before = lastDate instanceof Date ? lastDate.toISOString() : lastDate;
 	} else {
 		// only fetch four items for the initial page
 		// speeds up the initial fetch a fair bit

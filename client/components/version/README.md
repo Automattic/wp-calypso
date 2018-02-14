@@ -10,11 +10,11 @@ Version is a React component for rendering a version number
 import React from 'react';
 import Version from 'components/version';
 
-React.createClass( {
-	render: function() {
+class MyComponent extends React.Component {
+	render() {
 		return <Version version={ 123 } icon="plugins" />;
 	}
-} );
+}
 ```
 
 ## Props

@@ -26,7 +26,7 @@
 			background-color: $gray-light;
 
 			.gridicon {
-				fill: darken( $gray, 20% );
+				fill: $gray-darken-20;
 			}
 
 			.sidebar__menu-item-label, .menu-link-text {
@@ -34,7 +34,7 @@
 			}
 
 			.sidebar__button {
-				background-color: darken( $gray, 10% );
+				background-color: $gray-darken-10;
 				color: $white;
 			}
 		}
@@ -123,9 +123,9 @@
 
 				.add-new {
 					background: $white;
-					border: 1px solid lighten( $gray, 20% );
+					border: 1px solid $gray-lighten-20;
 					border-radius: 3px;
-					color: darken( $gray, 10% );
+					color: $gray-darken-10;
 					font-size: 11px;
 					padding: 6px 7px;
 					position: absolute;
@@ -197,14 +197,14 @@
 		padding: 8px 16px 8px 55px;
 
 		&::after {
-			@include long-content-fade( $color: lighten( $gray, 30% ), $size: 20px );
+			@include long-content-fade( $color: $gray-lighten-30, $size: 20px );
 			padding-right: 50px;
 		}
 
 		.sidebar__menu-item-tagname {
 
 			&::after {
-				@include long-content-fade( $color: lighten( $gray, 30% ), $size: 20px );
+				@include long-content-fade( $color: $gray-lighten-30, $size: 20px );
 				right: 60px;
 			}
 		}
@@ -222,7 +222,7 @@
 			top: 7px;
 			right: 8px;
 		border-width: 1px;
-		border-color: lighten( $gray, 20% );
+		border-color: $gray-lighten-20;
 		padding: 6px 7px;
 		border-radius: 3px;
 		text-transform: none;

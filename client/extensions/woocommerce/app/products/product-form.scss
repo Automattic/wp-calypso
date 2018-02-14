@@ -99,7 +99,7 @@
 		}
 
 		figure {
-			border: 1px solid lighten( $gray, 30% );
+			border: 1px solid $gray-lighten-30;
 		}
 
 		img {
@@ -188,13 +188,13 @@
 		width: 28px;
 		height: 28px;
 		transform: translate( 25%, -25% );
-		border: 1px solid lighten( $gray, 10% );
+		border: 1px solid $gray-lighten-10;
 		border-radius: 50%;
 		background-color: $gray-light;
 		cursor: pointer;
 
 		&:hover {
-			background: lighten( $gray, 30% );
+			background: $gray-lighten-30;
 		}
 	}
 
@@ -206,7 +206,7 @@
 		width: 24px;
 		height: 24px;
 		margin: 0;
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 
 		&:hover {
 			color: $gray;
@@ -263,7 +263,7 @@
 	@include placeholder();
 	background: lighten( $gray, 35% );
 	height: 225px;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 }
 
 .products__product-form-details-basic-description.form-fieldset {
@@ -379,7 +379,7 @@
 	border-collapse: collapse;
 
 	.products__product-form-variation-all-row {
-		background: lighten( $gray, 30% );
+		background: $gray-lighten-30;
 
 		.products__product-manage-stock-toggle {
 			display: inline;
@@ -513,7 +513,7 @@
 		width: 14px;
 		height: 14px;
 		transform: translate( 33%, -33% );
-		border: 1px solid lighten( $gray, 10% );
+		border: 1px solid $gray-lighten-10;
 		border-radius: 50%;
 		background-color: $gray-light;
 		cursor: pointer;
@@ -527,11 +527,11 @@
 		width: 12px;
 		height: 12px;
 		margin: 0;
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 	}
 
 	&:not(.uploader) {
-		border: 1px solid lighten( $gray, 30% );
+		border: 1px solid $gray-lighten-30;
 	}
 
 	figure {
@@ -738,7 +738,7 @@
 .products__additional-details-form-inputs {
 	background: $gray-light;
 	padding: 8px;
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	padding: 16px 0 0 0;
 	margin-bottom: 8px;
 	@include breakpoint( ">960px" ) {
@@ -776,23 +776,23 @@
 }
 
 .products__additional-details-preview-title {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-lighten-30;
 	padding-bottom: 10px;
 	margin-bottom: 1em;
 }
 
 .products__additional-details-preview {
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	padding: 16px 16px 4px 16px;
 	margin-top: 4px;
 	font-size: 13px;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 }
 
 .products__additional-details-preview-row {
 	display: flex;
 	flex-direction: row;
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-lighten-30;
 	padding-bottom: 10px;
 	margin-bottom: 1em;
 }

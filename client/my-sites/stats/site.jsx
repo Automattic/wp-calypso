@@ -31,6 +31,8 @@ import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
+import GMBStatsNudge from 'components/google-my-business/stats-nudge';
+import { isGmbNudgeVisible } from 'state/selectors';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -66,7 +68,7 @@ class StatsSite extends Component {
 	};
 
 	render() {
-		const { date, isJetpack, hasPodcasts, siteId, slug, translate } = this.props;
+		const { date, isGMBNudgeVisible, isJetpack, hasPodcasts, siteId, slug, translate } = this.props;
 		const charts = [
 			{
 				attr: 'views',
@@ -132,6 +134,7 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
+					{ config.isEnabled( 'google-my-business' ) && isGMBNudgeVisible && <GMBStatsNudge /> }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
@@ -226,6 +229,7 @@ export default connect(
 		return {
 			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
+			isGMBNudgeVisible: isGmbNudgeVisible( state, siteId ),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 		};

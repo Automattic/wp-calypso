@@ -55,7 +55,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { isRequestingSettings, translate } = this.props;
+		const { basePath, isRequestingSettings, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -63,10 +63,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Start' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.SITE_TITLE + '/:site' }
-					title="Site Title ‹ Jetpack Onboarding"
+					path={ [ basePath, STEPS.SITE_TITLE, ':site' ].join( '/' ) }
+					title="Site Title ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -75,13 +75,18 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					<form onSubmit={ this.handleSubmit }>
 						<SiteTitle
 							autoFocusBlogname
-							blogname={ this.state.blogname }
-							blogdescription={ this.state.blogdescription }
+							blogname={ this.state.blogname || '' }
+							blogdescription={ this.state.blogdescription || '' }
 							disabled={ isRequestingSettings }
+							isBlognameRequired
 							onChange={ this.handleChange }
 						/>
 
-						<Button disabled={ isRequestingSettings } primary type="submit">
+						<Button
+							disabled={ isRequestingSettings || ! this.state.blogname }
+							primary
+							type="submit"
+						>
 							{ translate( 'Next Step' ) }
 						</Button>
 					</form>

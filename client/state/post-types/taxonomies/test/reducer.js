@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { requesting, items } from '../reducer';
+import { receivePostTypeTaxonomies } from '../actions';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
@@ -200,6 +201,26 @@ describe( 'reducer', () => {
 
 			expect( updatedState ).to.eql( {
 				2916284: {
+					page: {},
+				},
+			} );
+		} );
+
+		test( 'should accumulate items for multiple sites and post types', () => {
+			const actions = [
+				receivePostTypeTaxonomies( 2916284, 'page', [] ),
+				receivePostTypeTaxonomies( 2916285, 'page', [] ),
+				receivePostTypeTaxonomies( 2916284, 'post', [] ),
+			];
+
+			const finalState = actions.reduce( items, undefined );
+
+			expect( finalState ).to.eql( {
+				2916284: {
+					page: {},
+					post: {},
+				},
+				2916285: {
 					page: {},
 				},
 			} );

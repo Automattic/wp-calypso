@@ -33,12 +33,24 @@ export default function() {
 		);
 
 		if ( isEnabled( 'manage/people/invites' ) ) {
+			page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
+
 			page(
 				'/people/invites/:site_id',
 				peopleController.enforceSiteEnding,
 				siteSelection,
 				navigation,
 				peopleController.peopleInvites,
+				makeLayout,
+				clientRender
+			);
+
+			page(
+				'/people/invites/:site_id/:invite_key',
+				peopleController.enforceSiteEnding,
+				siteSelection,
+				navigation,
+				peopleController.peopleInviteDetails,
 				makeLayout,
 				clientRender
 			);

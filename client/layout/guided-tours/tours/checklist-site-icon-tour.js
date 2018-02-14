@@ -51,6 +51,10 @@ export const ChecklistSiteIconTour = makeTour(
 			target="media-library-upload-more"
 			placement="beside"
 			arrow="left-top"
+			style={ {
+				marginTop: '-10px',
+				marginLeft: '-40px',
+			} }
 		>
 			<p>
 				{ translate( 'Pick or drag a file from your computer to add it to your media library.' ) }
@@ -63,6 +67,7 @@ export const ChecklistSiteIconTour = makeTour(
 			target="dialog-base-action-confirm"
 			arrow="bottom-center"
 			placement="above"
+			style={ { marginTop: '40px', marginLeft: '60px' } }
 		>
 			<Continue target="dialog-base-action-confirm" step="click-done" click>
 				{ translate( 'Good choice, press {{b}}Continue{{/b}} to use it as your Site Icon.', {
@@ -76,8 +81,9 @@ export const ChecklistSiteIconTour = makeTour(
 			target="image-editor-button-done"
 			arrow="bottom-center"
 			placement="above"
+			style={ { marginTop: '30px', marginLeft: '90px' } }
 		>
-			<Continue target="image_editor_button_done" step="finish" click>
+			<Continue target="image-editor-button-done" step="finish" click>
 				{ translate(
 					'Let’s make sure it looks right before you press {{b}}Done{{/b}} to save your changes.',
 					{ components: { b: <strong /> } }

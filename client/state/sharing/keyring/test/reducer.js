@@ -63,7 +63,7 @@ describe( 'reducers', () => {
 				const persistedState = isFetching( state, {
 					type: SERIALIZE,
 				} );
-				expect( persistedState ).to.eql( false );
+				expect( persistedState ).to.be.undefined;
 			} );
 		} );
 	} );

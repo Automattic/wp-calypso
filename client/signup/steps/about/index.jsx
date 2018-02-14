@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, invoke, noop } from 'lodash';
+import { invoke, noop, findKey } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -28,9 +28,6 @@ import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
 import { hints } from 'lib/signup/hint-data';
 import userFactory from 'lib/user';
 const user = userFactory();
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { getGeoCountryShort } from 'state/geo/selectors';
-import QueryGeo from 'components/data/query-geo';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import PressableStoreStep from '../design-type-with-store/pressable-store';
 import { abtest } from 'lib/abtest';
@@ -170,7 +167,7 @@ class AboutStep extends Component {
 	};
 
 	getSuggestions() {
-		return hints
+		return Object.values( hints )
 			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
 			.map( hint => ( { label: hint } ) );
 	}
@@ -270,13 +267,16 @@ class AboutStep extends Component {
 		} );
 
 		//Site Topic
+		const englishSiteTopicInput =
+			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
+
 		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
 			field: 'Site topic',
-			value: siteTopicInput || 'N/A',
+			value: englishSiteTopicInput || 'N/A',
 		} );
 
 		this.props.setSurvey( {
-			vertical: siteTopicInput,
+			vertical: englishSiteTopicInput,
 			otherText: '',
 			siteType: designType,
 		} );
@@ -284,7 +284,7 @@ class AboutStep extends Component {
 		//Site Goals
 		this.props.setSiteGoals( siteGoalsInput );
 		themeRepo = getThemeForSiteGoals( siteGoalsInput );
-		designType = getSiteTypeForSiteGoals( siteGoalsInput );
+		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
 
 		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
 			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
@@ -315,17 +315,13 @@ class AboutStep extends Component {
 		}
 
 		//Store
-		const isCountryAllowed =
-			includes( [ 'US', 'CA' ], this.props.countryCode ) || process.env.NODE_ENV === 'development';
 		const nextFlowName =
-			designType === DESIGN_TYPE_STORE && isCountryAllowed
-				? 'segmented-store-nux'
-				: this.props.flowName;
+			designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
 
 		//Pressable
 		if (
 			designType === DESIGN_TYPE_STORE &&
-			( abtest( 'signupAtomicStoreVsPressable' ) === 'pressable' || ! isCountryAllowed )
+			abtest( 'signupAtomicStoreVsPressable' ) === 'pressable'
 		) {
 			this.scrollUp();
 
@@ -524,7 +520,6 @@ class AboutStep extends Component {
 
 		return (
 			<div className="about__wrapper">
-				<QueryGeo />
 				<div className={ pressableWrapperClassName }>
 					<PressableStoreStep
 						{ ...this.props }
@@ -615,7 +610,6 @@ export default connect(
 		siteGoals: getSiteGoals( state ),
 		siteTopic: getSurveyVertical( state ),
 		userExperience: getUserExperience( state ),
-		countryCode: getCurrentUserCountryCode( state ) || getGeoCountryShort( state ),
 	} ),
 	{ setSiteTitle, setDesignType, setSiteGoals, setSurvey, setUserExperience, recordTracksEvent }
 )( localize( AboutStep ) );

@@ -33,11 +33,13 @@ import { login } from 'lib/paths';
 import formState from 'lib/form-state';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
+import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { mergeFormWithValue } from 'signup/utils';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { createSocialUserFailed } from 'state/login/actions';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -74,6 +76,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
+		oauth2Client: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -103,6 +106,10 @@ class SignupForm extends Component {
 			fieldValue: this.props.suggestedUsername || '',
 		} );
 	}
+
+	recordBackLinkClick = () => {
+		analytics.tracks.recordEvent( 'calypso_signup_back_link_click' );
+	};
 
 	componentWillMount() {
 		debug( 'Mounting the SignupForm React component.' );
@@ -320,11 +327,17 @@ class SignupForm extends Component {
 		} );
 	};
 
-	getNoticeMessageWithLogin( notice ) {
-		const link = login( {
+	getLoginLink() {
+		return login( {
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
+			locale: this.props.locale,
+			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 		} );
+	}
+
+	getNoticeMessageWithLogin( notice ) {
+		const link = this.getLoginLink();
 
 		if ( notice.error === '2FA_enabled' ) {
 			return (
@@ -368,11 +381,7 @@ class SignupForm extends Component {
 			return;
 		}
 
-		let link = login( {
-			isNative: config.isEnabled( 'login/native-login-links' ),
-			locale: this.props.locale,
-			redirectTo: this.props.redirectToAfterLoginUrl,
-		} );
+		let link = this.getLoginLink();
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
@@ -566,11 +575,7 @@ class SignupForm extends Component {
 		}
 
 		const logInUrl = config.isEnabled( 'login/native-login-links' )
-			? login( {
-					isNative: true,
-					locale: this.props.locale,
-					redirectTo: this.props.redirectToAfterLoginUrl,
-				} )
+			? this.getLoginLink()
 			: addLocaleToWpcomUrl( config( 'login_url' ), this.props.locale );
 
 		return (
@@ -578,6 +583,12 @@ class SignupForm extends Component {
 				<LoggedOutFormLinkItem href={ logInUrl }>
 					{ this.props.translate( 'Already have a WordPress.com account? Log in now.' ) }
 				</LoggedOutFormLinkItem>
+				{ this.props.oauth2Client && (
+					<LoggedOutFormBackLink
+						oauth2Client={ this.props.oauth2Client }
+						recordClick={ this.recordBackLinkClick }
+					/>
+				) }
 			</LoggedOutFormLinks>
 		);
 	}
@@ -615,7 +626,12 @@ class SignupForm extends Component {
 	}
 }
 
-export default connect( null, {
-	trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
-	createSocialUserFailed,
-} )( localize( SignupForm ) );
+export default connect(
+	state => ( {
+		oauth2Client: getCurrentOAuth2Client( state ),
+	} ),
+	{
+		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),
+		createSocialUserFailed,
+	}
+)( localize( SignupForm ) );

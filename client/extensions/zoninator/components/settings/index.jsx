@@ -16,6 +16,7 @@ import ExtensionRedirect from 'blocks/extension-redirect';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { ZONINATOR_MIN_VERSION } from '../../app/constants';
 import QueryZones from '../data/query-zones';
 
 const Settings = ( { children, siteId, translate } ) => {
@@ -23,7 +24,11 @@ const Settings = ( { children, siteId, translate } ) => {
 
 	return (
 		<Main className={ mainClassName }>
-			<ExtensionRedirect pluginId="zoninator" siteId={ siteId } />
+			<ExtensionRedirect
+				pluginId="zoninator"
+				siteId={ siteId }
+				minimumVersion={ ZONINATOR_MIN_VERSION }
+			/>
 			<QueryZones siteId={ siteId } />
 			<DocumentHead title={ translate( 'WP Zone Manager' ) } />
 			{ children }

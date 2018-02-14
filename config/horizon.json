@@ -114,7 +114,7 @@
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/in-app-purchase": false,
-		"upgrades/paypal": true,
+		"upgrades/redirect-payments": true,
 		"upgrades/premium-themes": true,
 		"upgrades/removal-survey": true,
 		"upgrades/precancellation-chat": true,

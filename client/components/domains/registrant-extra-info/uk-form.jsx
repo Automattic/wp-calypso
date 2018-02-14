@@ -23,7 +23,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import WithContactDetailsValidation, {
 	disableSubmitButton,
 } from './with-contact-details-validation';
-import contactDetailsUkSchema from './uk-schema';
 
 const defaultValues = {
 	registrantType: 'IND',
@@ -239,7 +238,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 }
 
 export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
-	contactDetailsUkSchema,
+	'uk',
 	RegistrantExtraInfoUkForm
 );
 

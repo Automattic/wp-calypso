@@ -27,15 +27,15 @@
 					"kebabCase": true
 				}
 			}
-		],
-		"./inline-imports.js"
+		]
 	],
 	"env": {
 		"test": {
 			"plugins": [
+				"./server/bundler/babel/babel-lodash-es",
 				[ "transform-builtin-extend", {
 					"globals": [ "Error" ]
-				} ],
+				} ]
 			]
 		}
 	}

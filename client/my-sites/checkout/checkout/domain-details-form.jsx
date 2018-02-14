@@ -32,6 +32,7 @@ import { getContactDetailsCache } from 'state/selectors';
 import { getCountryStates } from 'state/country-states/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
 import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
@@ -83,7 +84,7 @@ export class DomainDetailsForm extends PureComponent {
 			'fax',
 		];
 
-		const steps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
+		const steps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
 		debug( 'steps:', steps );
 
 		this.state = {
@@ -156,7 +157,7 @@ export class DomainDetailsForm extends PureComponent {
 	}
 
 	validateSteps() {
-		const updatedSteps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
+		const updatedSteps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
 		const newState = {
 			steps: updatedSteps,
 		};
@@ -178,6 +179,15 @@ export class DomainDetailsForm extends PureComponent {
 		this.setState( { currentStep: newStep } );
 	}
 
+	getDomainNames = () =>
+		map(
+			[
+				...cartItems.getDomainRegistrations( this.props.cart ),
+				...cartItems.getDomainTransfers( this.props.cart ),
+			],
+			'meta'
+		);
+
 	validate = ( fieldValues, onComplete ) => {
 		if ( this.needsOnlyGoogleAppsDetails() ) {
 			wpcom.validateGoogleAppsContactInformation(
@@ -188,12 +198,10 @@ export class DomainDetailsForm extends PureComponent {
 		}
 
 		const allFieldValues = this.getMainFieldValues();
-		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' ).concat(
-			map( cartItems.getDomainTransfers( this.props.cart ), 'meta' )
-		);
+
 		wpcom.validateDomainContactInformation(
 			allFieldValues,
-			domainNames,
+			this.getDomainNames(),
 			this.generateValidationHandler( onComplete )
 		);
 	};
@@ -273,7 +281,7 @@ export class DomainDetailsForm extends PureComponent {
 		};
 	}
 
-	getRequiredExtraSteps() {
+	getTldsWithAdditionalForm() {
 		if ( ! config.isEnabled( 'domains/cctlds' ) ) {
 			// All we need to do to disable everything is not show the .FR form
 			return [];
@@ -460,7 +468,7 @@ export class DomainDetailsForm extends PureComponent {
 
 	renderExtraDetailsForm( tld ) {
 		return (
-			<ExtraInfoForm tld={ tld } getFieldProps={ this.getFieldProps }>
+			<ExtraInfoForm tld={ tld } getDomainNames={ this.getDomainNames }>
 				{ this.renderSubmitButton() }
 			</ExtraInfoForm>
 		);
@@ -587,6 +595,7 @@ export class DomainDetailsForm extends PureComponent {
 		} );
 
 		let title;
+		let message;
 		// TODO: gather up tld specific stuff
 		if ( this.state.currentStep === 'fr' ) {
 			title = this.props.translate( '.FR Registration' );
@@ -594,6 +603,10 @@ export class DomainDetailsForm extends PureComponent {
 			title = this.props.translate( 'G Suite Account Information' );
 		} else {
 			title = this.props.translate( 'Domain Contact Information' );
+			message = this.props.translate(
+				'For your convenience, we have pre-filled your WordPress.com contact information. Please ' +
+					"review this to be sure it's the correct information you want to use for this domain."
+			);
 		}
 
 		const renderPrivacy =
@@ -603,8 +616,10 @@ export class DomainDetailsForm extends PureComponent {
 
 		return (
 			<div>
+				<QueryTldValidationSchemas tlds={ this.getTldsWithAdditionalForm() } />
 				{ renderPrivacy && this.renderPrivacySection() }
 				<PaymentBox currentPage={ this.state.currentStep } classSet={ classSet } title={ title }>
+					{ message && <p>{ message }</p> }
 					{ this.renderCurrentForm() }
 				</PaymentBox>
 			</div>

@@ -12,6 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -21,6 +22,7 @@ class SiteTitleControl extends React.Component {
 		blogname: PropTypes.string,
 		blogdescription: PropTypes.string,
 		disabled: PropTypes.bool,
+		isBlognameRequired: PropTypes.bool,
 		onChange: PropTypes.func.isRequired,
 	};
 
@@ -28,6 +30,7 @@ class SiteTitleControl extends React.Component {
 		autoFocusBlogname: false,
 		blogname: '',
 		blogdescription: '',
+		isBlognameRequired: false,
 		disabled: false,
 	};
 
@@ -44,7 +47,15 @@ class SiteTitleControl extends React.Component {
 	};
 
 	render() {
-		const { autoFocusBlogname, blogname, blogdescription, disabled, translate } = this.props;
+		const {
+			autoFocusBlogname,
+			blogname,
+			blogdescription,
+			disabled,
+			isBlognameRequired,
+			translate,
+		} = this.props;
+
 		return (
 			<div className="site-title">
 				<FormFieldset>
@@ -53,10 +64,16 @@ class SiteTitleControl extends React.Component {
 						autoFocus={ autoFocusBlogname }
 						disabled={ disabled }
 						id="blogname"
+						isError={ ! disabled && isBlognameRequired && ! blogname }
+						isValid={ ! disabled && isBlognameRequired && !! blogname }
 						onChange={ this.onChangeSiteTitle }
-						required
 						value={ blogname }
 					/>
+					{ ! disabled &&
+						isBlognameRequired &&
+						! blogname && (
+							<FormInputValidation isError text={ translate( 'Please enter a site title' ) } />
+						) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel htmlFor="blogdescription">{ translate( 'Tagline' ) }</FormLabel>

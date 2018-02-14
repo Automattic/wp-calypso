@@ -14,21 +14,16 @@ import { some } from 'lodash';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
-import { abtest } from 'lib/abtest';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import config from 'config';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 
 class CreditsPaymentBox extends React.Component {
 	content = () => {
-		const { cart, transactionStep } = this.props;
+		const { cart, transactionStep, presaleChatAvailable } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
-		const showPaymentChatButton =
-			config.isEnabled( 'upgrades/presale-chat' ) &&
-			abtest( 'presaleChatButton' ) === 'showChatButton' &&
-			hasBusinessPlanInCart;
+		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
 			<form onSubmit={ this.props.onSubmit }>

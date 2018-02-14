@@ -4,7 +4,6 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import sha1 from 'hash.js/lib/hash/sha/1';
 import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -12,9 +11,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
 import Wizard from 'components/wizard';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
@@ -22,7 +23,7 @@ import {
 import {
 	getJetpackOnboardingSettings,
 	getRequest,
-	getUnconnectedSite,
+	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
 import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
@@ -36,7 +37,25 @@ class JetpackOnboardingMain extends React.PureComponent {
 		stepName: STEPS.SITE_TITLE,
 	};
 
-	// TODO: Add lifecycle methods to redirect if no siteId
+	componentDidMount() {
+		const { siteId, siteSlug } = this.props;
+
+		// If we are missing the Jetpack onboarding credentials,
+		// redirect back to wp-admin so we can obtain them again.
+		if ( ! siteId && siteSlug ) {
+			const siteDomain = siteSlug.replace( '::', '/' );
+			const url = addQueryArgs(
+				{
+					page: 'jetpack',
+					action: 'onboard',
+					calypso_env: config( 'env_id' ),
+				},
+				`//${ siteDomain }/wp-admin/admin.php`
+			);
+			externalRedirect( url );
+		}
+	}
+
 	render() {
 		const {
 			isRequestingSettings,
@@ -50,18 +69,23 @@ class JetpackOnboardingMain extends React.PureComponent {
 		return (
 			<Main className="jetpack-onboarding">
 				<QueryJetpackOnboardingSettings siteId={ siteId } />
-				<Wizard
-					basePath="/jetpack/onboarding"
-					baseSuffix={ siteSlug }
-					components={ COMPONENTS }
-					hideNavigation={ stepName === STEPS.SUMMARY }
-					isRequestingSettings={ isRequestingSettings }
-					recordJpoEvent={ recordJpoEvent }
-					siteId={ siteId }
-					settings={ settings }
-					stepName={ stepName }
-					steps={ steps }
-				/>
+				{ siteId ? (
+					<Wizard
+						basePath="/jetpack/start"
+						baseSuffix={ siteSlug }
+						components={ COMPONENTS }
+						hideNavigation={ stepName === STEPS.SUMMARY }
+						isRequestingSettings={ isRequestingSettings }
+						recordJpoEvent={ recordJpoEvent }
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+						settings={ settings }
+						stepName={ stepName }
+						steps={ steps }
+					/>
+				) : (
+					<div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
+				) }
 			</Main>
 		);
 	}
@@ -74,11 +98,7 @@ export default connect(
 		const isRequestingSettings = getRequest( state, requestJetpackOnboardingSettings( siteId ) )
 			.isLoading;
 
-		const site = getUnconnectedSite( state, siteId );
-		const userId = site ? get( site, 'userEmail', null ) : '';
-		const hash = sha1();
-		hash.update( userId );
-		const userIdHashed = hash.digest( 'hex' );
+		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
 		// Note: here we can select which steps to display, based on user's input
 		const steps = compact( [
 			STEPS.SITE_TITLE,

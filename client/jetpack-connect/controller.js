@@ -23,16 +23,17 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
-import userFactory from 'lib/user';
+import versionCompare from 'lib/version-compare';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
+import { externalRedirect, sectionify } from 'lib/route';
+import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
-import { sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
@@ -49,7 +50,6 @@ import {
  * Module variables
  */
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
-const userModule = userFactory();
 const analyticsPageTitleByType = {
 	install: 'Jetpack Install',
 	personal: 'Jetpack Connect Personal',
@@ -95,7 +95,8 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
-	if ( userModule.get() && getLocaleFromPath( context.path ) ) {
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = removeLocaleFromPath( context.path );
 		debug( 'redirectWithoutLocaleIfLoggedIn to %s', urlWithoutLocale );
 		return page.redirect( urlWithoutLocale );
@@ -106,6 +107,10 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 
 export function maybeOnboard( { query, store }, next ) {
 	if ( ! isEmpty( query ) && query.onboarding ) {
+		if ( query.site_url && query.jp_version && versionCompare( query.jp_version, '5.8', '<' ) ) {
+			return externalRedirect( query.site_url + '/wp-admin/admin.php?page=jetpack#/dashboard' );
+		}
+
 		const siteId = parseInt( query.client_id, 10 );
 		const siteSlug = urlToSlug( query.site_url );
 		const credentials = {
@@ -116,7 +121,7 @@ export function maybeOnboard( { query, store }, next ) {
 
 		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
 
-		return page.redirect( '/jetpack/onboarding/' + siteSlug );
+		return page.redirect( '/jetpack/start/' + siteSlug );
 	}
 
 	next();
@@ -158,11 +163,6 @@ export function connect( context, next ) {
 
 	debug( 'entered connect flow with params %o', params );
 
-	if ( retrieveMobileRedirect() && ! userModule.get() ) {
-		// Force login for mobile app flow. App will intercept and prompt native login.
-		return page.redirect( login( { isNative: true, redirectTo: context.path } ) );
-	}
-
 	const planSlug = getPlanSlugFromFlowType( type, interval );
 	planSlug && storePlan( planSlug );
 
@@ -170,21 +170,24 @@ export function connect( context, next ) {
 
 	removeSidebar( context );
 
-	userModule.fetch();
-
 	context.primary = React.createElement( JetpackConnect, {
 		context,
 		locale: params.locale,
 		path,
 		type,
 		url: query.url,
-		userModule,
 	} );
 	next();
 }
 
 export function signupForm( context, next ) {
 	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+
+	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
+	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
+		// Force login for mobile app flow. App will intercept this request and prompt native login.
+		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
+	}
 
 	removeSidebar( context );
 
@@ -242,14 +245,11 @@ export function sso( context, next ) {
 
 	removeSidebar( context );
 
-	userModule.fetch();
-
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = React.createElement( JetpackSsoForm, {
 		path: context.path,
 		locale: context.params.locale,
-		userModule: userModule,
 		siteId: context.params.siteId,
 		ssoNonce: context.params.ssoNonce,
 	} );

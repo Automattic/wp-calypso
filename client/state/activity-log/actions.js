@@ -17,11 +17,7 @@ import {
 	REWIND_RESTORE_DISMISS_PROGRESS,
 	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_REQUEST,
-	REWIND_RESTORE_UPDATE_ERROR,
 	REWIND_RESTORE_UPDATE_PROGRESS,
-	REWIND_STATUS_ERROR,
-	REWIND_STATUS_REQUEST,
-	REWIND_STATUS_UPDATE,
 	REWIND_BACKUP,
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
@@ -94,13 +90,14 @@ export function activityLogRequest( siteId, params ) {
 	};
 }
 
-export function activityLogUpdate( siteId, data, found, query ) {
+export function activityLogUpdate( siteId, data, found, oldestItemTs, query ) {
 	return {
 		type: ACTIVITY_LOG_UPDATE,
-		data,
-		query,
 		siteId,
+		data,
 		found,
+		oldestItemTs,
+		query,
 	};
 }
 
@@ -128,36 +125,6 @@ export function rewindDeactivateFailure( siteId ) {
 	return {
 		type: REWIND_DEACTIVATE_FAILURE,
 		siteId,
-	};
-}
-
-/**
- * Fetch the general status of the 'rewind' feature
- * for a site.
- *
- * @param {String|number} siteId site ID
- * @return {Object} action object
- */
-export function getRewindStatus( siteId ) {
-	return {
-		type: REWIND_STATUS_REQUEST,
-		siteId,
-	};
-}
-
-export function updateRewindStatus( siteId, status ) {
-	return {
-		type: REWIND_STATUS_UPDATE,
-		siteId,
-		status,
-	};
-}
-
-export function rewindStatusError( siteId, error ) {
-	return {
-		type: REWIND_STATUS_ERROR,
-		siteId,
-		error,
 	};
 }
 
@@ -226,15 +193,6 @@ export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progr
 		restoreId,
 		siteId,
 		timestamp,
-	};
-}
-
-export function rewindRestoreUpdateError( siteId, timestamp, error ) {
-	return {
-		type: REWIND_RESTORE_UPDATE_ERROR,
-		siteId,
-		timestamp,
-		error,
 	};
 }
 

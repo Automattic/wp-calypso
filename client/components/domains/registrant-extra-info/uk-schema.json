@@ -5,6 +5,7 @@
 	"type": "object",
 	"properties": {
 		"extra": {
+			"type": "object",
 			"allOf": [
 				{
 					"errorCode": "dotukRegistrantTypeRequiresRegistrationNumber",

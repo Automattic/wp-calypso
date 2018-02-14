@@ -8,7 +8,7 @@ Provides some helper functions to render a notice on the UI. Types of notices ar
 Once you require the component you have access to .
 
 ```javascript
-var notices = require( 'notices' );
+import notices from 'notices';
 
 // Success notice when saving settings
 notices.success(

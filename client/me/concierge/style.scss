@@ -18,7 +18,7 @@
 
 .shared__available-time-card-header-icon {
 	color: $gray;
-	border: 1px solid lighten($gray, 20%);
+	border: 1px solid $gray-lighten-20;
 	border-radius: 100%;
 	padding: 6px;
 	margin-right: 12px;
@@ -47,6 +47,13 @@
 	max-width: 182px;
 }
 
-.shared__confirmation-button {
+.cancel__reschedule-button {
+	margin-right: 10px;
+}
+
+.book__schedule-button,
+.cancel__schedule-button,
+.reschedule__schedule-button,
+.cancel__confirmation-button {
 	margin-bottom: 40px;
 }

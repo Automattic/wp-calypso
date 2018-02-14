@@ -19,13 +19,14 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gauge from 'components/gauge';
 import ProgressBar from 'components/progress-bar';
-import ShareButton from 'components/share-button';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import { getSiteChecklist } from 'state/selectors';
 import { getSite, getSiteSlug } from 'state/sites/selectors';
 import { launchTask, onboardingTasks } from 'my-sites/checklist/onboardingChecklist';
+import ChecklistShowShare from 'my-sites/checklist/checklist-show/share';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 const storeKeyForNeverShow = 'sitesNeverShowChecklistBanner';
 
@@ -58,7 +59,7 @@ export class ChecklistBanner extends Component {
 		const { requestTour, task, track, siteSlug } = this.props;
 
 		launchTask( {
-			id: task.id,
+			task,
 			location: 'checklist_banner',
 			requestTour,
 			siteSlug,
@@ -110,7 +111,9 @@ export class ChecklistBanner extends Component {
 			return false;
 		}
 
-		const abtests = store.get( 'ABTests' );
+		// NOTE: Accessing localStorage directly for checking A/B variation assignment
+		//       is an anti-pattern. Please use lib/abtest instead.
+		const abtests = store.get( ABTEST_LOCALSTORAGE_KEY );
 		if (
 			get( abtests, 'checklistThankYouForPaidUser_20171204' ) !== 'show' &&
 			get( abtests, 'checklistThankYouForFreeUser_20171204' ) !== 'show'
@@ -127,23 +130,12 @@ export class ChecklistBanner extends Component {
 	}
 
 	renderShareButtons() {
-		const { siteSlug, translate } = this.props;
-		const socialMedia = [ 'facebook', 'twitter', 'linkedin', 'google-plus', 'pinterest' ];
-
 		return (
-			<div className="checklist-banner__actions">
-				{ socialMedia.map( medium => (
-					<ShareButton
-						key={ medium }
-						url={ `https://${ siteSlug }` }
-						title={ translate(
-							'Delighted to announce my new website is live today — please take a look.'
-						) }
-						siteSlug={ siteSlug }
-						service={ medium }
-					/>
-				) ) }
-			</div>
+			<ChecklistShowShare
+				className="checklist-banner__actions"
+				siteSlug={ this.props.siteSlug }
+				recordTracksEvent={ this.props.track }
+			/>
 		);
 	}
 
@@ -163,18 +155,15 @@ export class ChecklistBanner extends Component {
 	render() {
 		const { completed, total, translate, siteId } = this.props;
 		const task = this.getNextTask();
-		const percentage = Math.round( completed / total * 100 );
+		const percentage = Math.round( completed / total * 100 ) || 0;
 
 		if ( ! this.canShow() ) {
 			return null;
 		}
 
-		if ( ! task ) {
-			return siteId && <QuerySiteChecklist siteId={ siteId } />;
-		}
-
 		return (
 			<Card className="checklist-banner">
+				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				<div className="checklist-banner__gauge">
 					<span className="checklist-banner__gauge-additional-text">{ translate( 'setup' ) }</span>
 					<Gauge
@@ -204,13 +193,14 @@ export class ChecklistBanner extends Component {
 					<ProgressBar value={ completed } total={ total } color="#47b766" />
 				</div>
 				<div className="checklist-banner__content">
-					<h3 className="checklist-banner__title">{ task.title }</h3>
-					<p className="checklist-banner__description">{ task.description }</p>
+					<h3 className="checklist-banner__title">{ task && task.title }</h3>
+					<p className="checklist-banner__description">{ task && task.description }</p>
 					{ completed === total ? this.renderShareButtons() : this.renderTaskButton() }
 				</div>
-				{ task.image && (
-					<img src={ task.image } aria-hidden="true" className="checklist-banner__image" />
-				) }
+				{ task &&
+					task.image && (
+						<img src={ task.image } aria-hidden="true" alt="" className="checklist-banner__image" />
+					) }
 				{ completed === total && (
 					<Button borderless className="checklist-banner__close" onClick={ this.handleClose }>
 						<Gridicon size={ 24 } icon="cross" color="#87a6bc" />
@@ -222,9 +212,8 @@ export class ChecklistBanner extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => {
-	const siteChecklist = getSiteChecklist( state, siteId );
-	const tasks = siteChecklist && siteChecklist.tasks && onboardingTasks( siteChecklist.tasks );
-	const task = find( tasks, [ 'completed', false ] );
+	const tasks = onboardingTasks( getSiteChecklist( state, siteId ) );
+	const task = find( tasks, { completed: false } );
 	const { true: completed } = countBy( tasks, 'completed' );
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteDesignType = get( getSite( state, siteId ), 'options.design_type' );

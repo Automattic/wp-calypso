@@ -11,7 +11,6 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
 import CurrentTheme from 'my-sites/themes/current-theme';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThanksModal from 'my-sites/themes/thanks-modal';
@@ -27,7 +26,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 const ConnectedSingleSiteWpcom = connectOptions( props => {
 	const { siteId, siteSlug, currentPlanSlug, translate } = props;
 
-	const upsellUrl = abtest( 'unlimitedThemeNudge' ) === 'show' && `/plans/${ siteSlug }`;
+	const upsellUrl = `/plans/${ siteSlug }`;
 	return (
 		<div>
 			<SidebarNavigation />

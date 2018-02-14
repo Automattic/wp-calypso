@@ -20,7 +20,7 @@ const NotificationsOrigin = ( {
 	item,
 	recipient,
 	onChange,
-	isPlaceholder,
+	loaded,
 	checkEmail,
 	translate,
 	placeholder,
@@ -40,9 +40,9 @@ const NotificationsOrigin = ( {
 
 	return (
 		<div className="components__notification-origin">
-			{ ! isPlaceholder ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
+			{ loaded ? <FormLabel>{ item.title }</FormLabel> : placeholderComponent }
 			<FormTextInput
-				className={ isPlaceholder ? 'components__is-placeholder' : null }
+				className={ ! loaded ? 'components__is-placeholder' : null }
 				isError={ emailValidationError }
 				name={ item.field }
 				onChange={ change }
@@ -57,7 +57,7 @@ const NotificationsOrigin = ( {
 					} ) }
 				/>
 			) }
-			{ ! isPlaceholder ? (
+			{ loaded ? (
 				<FormSettingExplanation>{ item.subtitle }</FormSettingExplanation>
 			) : (
 				placeholderComponent
@@ -71,7 +71,7 @@ NotificationsOrigin.propTypes = {
 	item: PropTypes.object,
 	onChange: PropTypes.func.isRequired,
 	placeholder: PropTypes.string,
-	isPlaceholder: PropTypes.bool,
+	loaded: PropTypes.bool,
 	checkEmail: PropTypes.bool,
 };
 

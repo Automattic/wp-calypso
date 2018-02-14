@@ -27,24 +27,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	presaleChatButton: {
-		datestamp: '20170328',
-		variations: {
-			showChatButton: 20,
-			original: 80,
-		},
-		defaultVariation: 'original',
-		localeTargets: 'any',
-	},
-	chatOfferOnCancel: {
-		datestamp: '20170421',
-		variations: {
-			show: 50,
-			hide: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-	},
 	ATPromptOnCancel: {
 		datestamp: '20170515',
 		variations: {
@@ -73,23 +55,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	unlimitedThemeNudge: {
-		datestamp: '20171016',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	signupSiteSegmentStep: {
-		datestamp: '20170329',
-		variations: {
-			control: 0,
-			variant: 100,
-		},
-		defaultVariation: 'control',
-	},
 	checklistThankYouForFreeUser: {
 		datestamp: '20171204',
 		variations: {
@@ -108,23 +73,15 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	gsuiteUpsellV2: {
-		datestamp: '20171225',
+	domainSuggestionTestV5: {
+		datestamp: '20180204',
 		variations: {
-			original: 50,
-			modified: 50,
+			group_0: 1, // Default group
+			group_1: 1000,
+			group_2: 1000,
+			group_3: 1000,
 		},
-		defaultVariation: 'original',
+		defaultVariation: 'group_0',
 		allowExistingUsers: true,
-	},
-	paymentMethodsOnPlans: {
-		datestamp: '20180115',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-		localeTargets: 'any',
 	},
 };

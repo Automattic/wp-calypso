@@ -3,14 +3,12 @@
  *
  * @format
  */
-
-import { assign, map } from 'lodash';
 import page from 'page';
+import { isDesktop } from 'lib/viewport';
 
 /**
  * Internal dependencies
  */
-
 const tasks = {
 	about_page_updated: {
 		title: 'Create your About page',
@@ -20,6 +18,7 @@ const tasks = {
 		completedTitle: 'You updated your About page',
 		completedButtonText: 'Change',
 		image: '/calypso/images/stats/tasks/about.svg',
+		url: '/pages/$siteSlug',
 		tour: 'checklistAboutPage',
 	},
 	avatar_uploaded: {
@@ -60,6 +59,7 @@ const tasks = {
 		completedTitle: 'You updated your Contact page',
 		completedButtonText: 'Edit',
 		image: '/calypso/images/stats/tasks/contact.svg',
+		url: '/post/$siteSlug/2',
 		tour: 'checklistContactPage',
 	},
 	custom_domain_registered: {
@@ -85,7 +85,7 @@ const tasks = {
 		duration: '10 mins',
 		completedTitle: 'You published your first blog post',
 		completedButtonText: 'Edit',
-		url: '/post/$siteSlug/4',
+		url: '/post/$siteSlug',
 		image: '/calypso/images/stats/tasks/first-post.svg',
 		tour: 'checklistPublishPost',
 	},
@@ -123,38 +123,21 @@ const sequence = [
 	'site_icon_set',
 	'blogdescription_set',
 	'avatar_uploaded',
-	// 'social_links_set',
-	'about_page_updated',
 	'contact_page_updated',
 	'post_published',
-	// 'custom_domain_registered',
 ];
 
-export const urlForTask = ( id, siteSlug ) => {
-	const task = tasks[ id ];
-	if ( task && task.url ) {
-		return task.url.replace( '$siteSlug', siteSlug );
-	}
-};
-
-export const tourForTask = id => {
-	const task = tasks[ id ];
-	if ( task ) {
-		return task.tour;
-	}
-};
-
-export const onboardingTasks = currentState =>
-	map( sequence, id => {
-		const completed = currentState[ id ];
-		const task = tasks[ id ];
-		return assign( { id, completed }, task );
-	} );
-
-export const launchTask = ( { id, location, requestTour, siteSlug, track } ) => {
+export function launchTask( { task, location, requestTour, siteSlug, track } ) {
 	const checklist_name = 'new_blog';
-	const tour = tourForTask( id );
-	const url = urlForTask( id, siteSlug );
+	const url = task.url && task.url.replace( '$siteSlug', siteSlug );
+	const tour = task.tour;
+
+	if ( task.completed ) {
+		if ( url ) {
+			page( url );
+		}
+		return;
+	}
 
 	if ( ! tour && ! url ) {
 		return;
@@ -162,21 +145,28 @@ export const launchTask = ( { id, location, requestTour, siteSlug, track } ) => 
 
 	track( 'calypso_checklist_task_start', {
 		checklist_name,
-		step_name: id,
+		step_name: task.id,
 		location,
 	} );
 
 	if ( url ) {
 		page( url );
 	}
-	if ( tour ) {
+
+	if ( tour && isDesktop() ) {
 		requestTour( tour );
 	}
-};
+}
 
-export const launchCompletedTask = ( { id, siteSlug } ) => {
-	const url = urlForTask( id, siteSlug );
-	if ( url ) {
-		page( url );
+export function onboardingTasks( checklist ) {
+	if ( ! checklist || ! checklist.tasks ) {
+		return null;
 	}
-};
+
+	return sequence.map( id => {
+		const task = tasks[ id ];
+		const taskFromServer = checklist.tasks[ id ];
+
+		return { id, ...task, ...taskFromServer };
+	} );
+}

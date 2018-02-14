@@ -16,7 +16,6 @@ import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-	SITE_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { withSchemaValidation } from 'state/utils';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -117,10 +116,11 @@ describe( 'reducer', () => {
 		test( 'should track stats request success', () => {
 			const today = new Date();
 			const state = requests( undefined, {
-				type: SITE_STATS_REQUEST_SUCCESS,
+				type: SITE_STATS_RECEIVE,
 				siteId: 2916284,
 				statType: 'statsStreak',
 				query: streakQuery,
+				data: streakResponse,
 				date: today,
 			} );
 
@@ -172,7 +172,7 @@ describe( 'reducer', () => {
 
 			const state = requests( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {

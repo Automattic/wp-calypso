@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { identity, isEmpty, omit } from 'lodash';
+import { identity, isEmpty, omit, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupForm from 'components/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import SignupActions from 'lib/signup/actions';
+import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -73,7 +74,14 @@ export class UserStep extends Component {
 	}
 
 	componentWillMount() {
+		const { oauth2Signup, initialContext } = this.props;
+		const clientId = get( initialContext, 'query.oauth2_client_id', null );
+
 		this.setSubHeaderText( this.props );
+
+		if ( oauth2Signup && clientId ) {
+			this.props.fetchOAuth2ClientData( clientId );
+		}
 	}
 
 	setSubHeaderText( props ) {
@@ -174,7 +182,12 @@ export class UserStep extends Component {
 	 *                              So our server doesn't have to request the user profile on its end.
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null ) => {
-		this.submit( { service, access_token, id_token } );
+		this.submit( {
+			service,
+			access_token,
+			id_token,
+			queryArgs: ( this.props.initialContext && this.props.initialContext.query ) || {},
+		} );
 	};
 
 	userCreationComplete() {
@@ -294,5 +307,6 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
+		fetchOAuth2ClientData,
 	}
 )( localize( UserStep ) );

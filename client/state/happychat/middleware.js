@@ -21,7 +21,7 @@ import {
 	HAPPYCHAT_IO_SEND_TYPING,
 } from 'state/action-types';
 import { sendEvent } from 'state/happychat/connection/actions';
-import buildConnection from 'lib/happychat/connection';
+import buildConnection from 'lib/happychat/connection-async';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 

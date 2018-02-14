@@ -1,7 +1,7 @@
 .editor-sidebar {
 	@extend .sidebar;
 	z-index: z-index( 'root', '.editor-sidebar' );
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
@@ -41,9 +41,37 @@
 	}
 }
 
+.editor-sidebar .sidebar__footer .button {
+	&.inline-help {
+		border-radius: 0;
+		border-left: 1px solid #c8d7e1;
+		flex: 0 1 60px;
+		margin-right: 0;
+		margin-left: auto;
+		outline: 0;
+
+		@include breakpoint( "<660px" ) {
+			flex: 0 1 56px;
+		}
+
+		.gridicon {
+			margin: 0 auto;
+			float: none;
+		}
+	}
+
+	&.is-active {
+		background: $blue-medium;
+
+		.gridicon {
+			fill: $white;
+		}
+	}
+}
+
 .editor-sidebar__header {
 	align-items: center;
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	color: $gray-dark;
 	display: flex;
 	flex-shrink: 0;

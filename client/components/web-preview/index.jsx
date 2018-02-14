@@ -10,4 +10,12 @@ import React from 'react';
  */
 import AsyncLoad from 'components/async-load';
 
-export default props => <AsyncLoad { ...props } require="components/web-preview/component" />;
+const WebPreview = props => {
+	if ( ! props.showPreview ) {
+		return null;
+	}
+
+	return <AsyncLoad { ...props } require="components/web-preview/component" />;
+};
+
+export default WebPreview;

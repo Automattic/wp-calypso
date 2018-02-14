@@ -31,7 +31,7 @@
 
 		.is-empty {
 			.payment-box-section, .checkout__payment-box-section {
-				border: 1px solid lighten( $gray, 30% );
+				border: 1px solid $gray-lighten-30;
 				margin: 5px 0;
 				display: flex;
 				flex-flow: row wrap;
@@ -42,7 +42,7 @@
 
 			.placeholder {
 				animation: pulse-light 800ms ease-in-out infinite;
-				background: lighten( $gray, 20% );
+				background: $gray-lighten-20;
 				width: 100%;
 				height: 100%;
 			}
@@ -122,7 +122,7 @@
 				margin: 40px 0 20px;
 				width: 100%;
 				height: 0;
-				border-bottom: 1px solid lighten( $gray, 30% );
+				border-bottom: 1px solid $gray-lighten-30;
 
 				@include breakpoint( '<480px' ) {
 					display: none;
@@ -140,7 +140,7 @@
 	}
 
 	h5 {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 		font-size: 15px;
 		font-weight: 600;
 		opacity: 0.7;
@@ -231,7 +231,7 @@
 	// =============================================
 
 	.checkout-terms {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 		margin: 16px 0;
 		padding: 0;
 
@@ -296,10 +296,10 @@
 
 		.payment-box-section {
 			cursor: pointer;
-			border-bottom: 1px solid lighten( $gray, 30% );
+			border-bottom: 1px solid $gray-lighten-30;
 
 			&:first-of-type {
-				border-top: 1px solid lighten( $gray, 30% );
+				border-top: 1px solid $gray-lighten-30;
 			}
 
 			&.selected {
@@ -308,10 +308,10 @@
 		}
 
 		.payment-box-section-inner {
-			border-left: 1px solid lighten( $gray, 30% );
+			border-left: 1px solid $gray-lighten-30;
 			padding-left: 2px;
 			position: relative;
-			border-right: 1px solid lighten( $gray, 30% );
+			border-right: 1px solid $gray-lighten-30;
 			min-height: 50px;
 		}
 
@@ -324,23 +324,23 @@
 			.payment-box-section-inner {
 				border-left: 3px solid $alert-green;
 			}
-			.new-card-fields {
+			.checkout__new-card-fields {
 				background-color: #fafdf6;
 			}
 		}
 
-		.no-stored-cards .new-card-fields > .checkout-field:first-child {
+		.no-stored-cards .checkout__new-card-fields > .checkout-field:first-child {
 			margin-top: 0;
 		}
 
-		.payment-box-section .new-card-toggle {
+		.payment-box-section .checkout__new-card-toggle {
 			box-shadow: none;
 			cursor: pointer;
 			font-size: 13px;
 			position: absolute;
 		}
 
-		.payment-box-section .new-card-fields {
+		.payment-box-section .checkout__new-card-fields {
 			background-color: $white;
 			max-height: 0;
 			overflow: hidden;
@@ -349,13 +349,13 @@
 			transition: all 500ms ease-in-out;
 		}
 
-		.payment-box-section.selected .new-card-fields {
+		.payment-box-section.selected .checkout__new-card-fields {
 			max-height: 100%;
 			margin-bottom: 0;
 			padding-top: 15px;
 		}
 
-		.new-card-toggle {
+		.checkout__new-card-toggle {
 			color: $blue-wordpress;
 			padding: 15px 15px 15px 12px;
 			border: 0;
@@ -369,7 +369,7 @@
 		}
 
 		.all-fields-required {
-			color: lighten( $gray, 10% );
+			color: $gray-lighten-10;
 			display: block;
 			font-size: 12px;
 			font-style: italic;
@@ -411,7 +411,7 @@
 			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.075);
 
 			@include breakpoint( '>660px' ) {
-				border: 1px solid lighten( $gray, 30% );
+				border: 1px solid $gray-lighten-30;
 				box-shadow: none;
 			}
 		}
@@ -479,7 +479,7 @@
 				}
 
 				> span {
-					color: darken( $gray, 10% );
+					color: $gray-darken-10;
 					font-size: 15px;
 				}
 			}
@@ -489,7 +489,7 @@
 	// Supporting Text / Fine Print
 	// -----------------------------------
 	.supporting-text {
-		border-top: 1px solid lighten( $gray, 20% );
+		border-top: 1px solid $gray-lighten-20;
 		font-size: 13px;
 		list-style: none;
 		margin: 0;
@@ -497,12 +497,12 @@
 		@include clear-fix;
 
 		@include breakpoint( '>660px' ) {
-			border-bottom: 1px solid lighten( $gray, 20% );
+			border-bottom: 1px solid $gray-lighten-20;
 			margin: 30px 0;
 		}
 
 		li {
-			color: lighten( $gray, 10% );
+			color: $gray-lighten-10;
 			text-align: center;
 
 			@include breakpoint( '>660px' ) {
@@ -517,7 +517,7 @@
 			}
 
 			h6 {
-				color: darken( $gray, 20% );
+				color: $gray-darken-20;
 				font-size: 14px;
 				font-weight: 600;
 			}
@@ -532,7 +532,7 @@
 
 	.credit-card-supporting-text__refund-link {
 		white-space: nowrap;
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 		text-decoration: underline;
 	}
 
@@ -715,12 +715,12 @@
 		margin-left:8px;
 	}
 
-	&.ideal, &.giropay, &.bancontact, &.p24, &.alipay {
+	&.ideal, &.giropay, &.bancontact, &.p24, &.alipay, &.eps {
 		margin-left: 1em;
 	}
 
 	@include breakpoint( '<660px' ) {
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid $gray-lighten-30;
 		margin: 10px 0 0;
 		text-align: center;
 	}
@@ -747,7 +747,7 @@
 
 .checkout__secure-payment {
 	margin-top: 10px;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 
 	@include breakpoint( '>660px' ) {
 		margin-left: 10px;
@@ -778,7 +778,10 @@
 	}
 
 	@include breakpoint( '>960px' ) {
-		float: right;
+		display: flex;
+		flex-grow: 1;
+		align-items: center;
+		justify-content: right;
 	}
 }
 
@@ -848,7 +851,7 @@
 }
 
 .checkout__privacy-protection-radio-text-description {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 }
 
 .checkout__privacy-protection-radio-price-text {
@@ -944,6 +947,11 @@
 
 	.checkout__alipay {
 		width: 100px;
+	}
+
+	.checkout__eps{
+		width: 70px;
+		margin: -10px 0;
 	}
 
 	.checkout__credit-card {

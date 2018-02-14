@@ -38,7 +38,7 @@
 }
 
 .help-result__description {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font: 14px/20px $sans;
 	margin: 2px 0px 0px 32px;
 }

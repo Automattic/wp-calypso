@@ -21,6 +21,7 @@ import {
 } from '../actions';
 import { items, itemsCount } from '../reducer';
 import {
+	READER_UNFOLLOW,
 	READER_RECORD_FOLLOW,
 	READER_RECORD_UNFOLLOW,
 	READER_FOLLOWS_RECEIVE,
@@ -89,6 +90,20 @@ describe( 'reducer', () => {
 			expect( state[ 'discover.wordpress.com' ] ).toEqual( {
 				blog_ID: 123,
 				is_following: false,
+			} );
+		} );
+
+		test( 'should optimistically turn off new post notifications when unfollowed', () => {
+			const original = deepFreeze( {
+				'example.com': { is_following: true },
+			} );
+			const state = items( original, {
+				type: READER_UNFOLLOW,
+				payload: { feedUrl: 'http://example.com' },
+			} );
+			expect( state[ 'example.com' ] ).toMatchObject( {
+				is_following: false,
+				delivery_methods: { notification: { send_posts: false } },
 			} );
 		} );
 
@@ -842,7 +857,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = items( original, unfollow( 'http://example.com' ) );
-			expect( state ).toEqual( {
+			expect( state ).toMatchObject( {
 				'example.com': {
 					...exampleFollow,
 					is_following: false,

@@ -13,13 +13,13 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import Button from 'components/button';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
-import { isSitePressable } from 'state/selectors';
+import { getRewindState } from 'state/selectors';
 
-const SetupTos = ( { autoConfigure, isPressable, reset, translate, goToNextStep } ) => (
+const SetupTos = ( { autoConfigure, canAutoconfigure, reset, translate, goToNextStep } ) => (
 	<CompactCard className="credentials-setup-flow__tos" highlight="info">
 		<Gridicon icon="info" size={ 48 } className="credentials-setup-flow__tos-gridicon" />
 		<div className="credentials-setup-flow__tos-text">
-			{ isPressable
+			{ canAutoconfigure
 				? translate(
 						'WordPress.com can obtain the credentials from your ' +
 							'current host which are necessary to perform site backups and ' +
@@ -27,17 +27,16 @@ const SetupTos = ( { autoConfigure, isPressable, reset, translate, goToNextStep 
 							"host's server?"
 					)
 				: translate(
-						'By adding your site credentials, you are giving ' +
-							'WordPress.com access to perform automatic actions on your ' +
-							'server including backing up your site, restoring your site, ' +
-							'as well as manually accessing your site in case of an emergency.'
+						'By adding credentials, you are providing us with access to your server ' +
+							'to perform automatic actions (such as backing up or restoring your site) ' +
+							'or to manually access your site in case of an emergency.'
 					) }
 		</div>
 		<div className="credentials-setup-flow__tos-buttons">
 			<Button borderless={ true } onClick={ reset }>
 				{ translate( 'Cancel' ) }
 			</Button>
-			{ isPressable ? (
+			{ canAutoconfigure ? (
 				<Button primary onClick={ autoConfigure }>
 					{ translate( 'Auto Configure' ) }
 				</Button>
@@ -51,7 +50,7 @@ const SetupTos = ( { autoConfigure, isPressable, reset, translate, goToNextStep 
 );
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	isPressable: isSitePressable( state, siteId ),
+	canAutoconfigure: getRewindState( state, siteId ).canAutoconfigure,
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {

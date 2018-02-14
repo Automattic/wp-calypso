@@ -2,7 +2,7 @@
 	display: inline-flex;
 	padding: 0px 12px;
 	line-height: 32px;
-	background: lighten( $gray, 20% );
+	background: $gray-lighten-20;
 	border-radius: 4px;
 
 	&.is-processing {
@@ -30,7 +30,7 @@
 		color: $gray-dark;
 
 		span + span {
-			border-color: lighten( $gray, 20% );
+			border-color: $gray-lighten-20;
 		}
 	}
 

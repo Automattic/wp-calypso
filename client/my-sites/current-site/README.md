@@ -6,9 +6,9 @@ This component displays the currently selected site. It's used in the My Sites S
 #### How to use:
 
 ```js
-var CurrentSite = require( 'my-sites/current-site' );
+import CurrentSite from 'my-sites/current-site';
 
-render: function() {
+render() {
 	return (
 		<CurrentSite sites={ sitesListObject } />
 	);

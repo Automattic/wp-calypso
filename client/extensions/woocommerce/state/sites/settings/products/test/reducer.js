@@ -11,8 +11,9 @@ import { find } from 'lodash';
  */
 import {
 	WOOCOMMERCE_SETTINGS_BATCH_REQUEST_SUCCESS,
-	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
+	WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+	WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_FAILURE,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
@@ -123,6 +124,41 @@ describe( 'reducer', () => {
 		expect( ribs.value ).to.equal( '10' );
 		const bbq = find( newSettingsProducts, { id: 'yummy-bbq' } );
 		expect( bbq.value ).to.equal( 'YAS' );
+	} );
+
+	test( 'should change the settings in store', () => {
+		const siteId = 123;
+		const settings = [
+			{
+				id: 'some-setting',
+				value: 'yes',
+			},
+		];
+		const action = {
+			type: WOOCOMMERCE_SETTINGS_PRODUCTS_REQUEST_SUCCESS,
+			siteId,
+			data: settings,
+		};
+		const newState = reducer( {}, action );
+
+		const changeAction = {
+			type: WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
+			siteId,
+			data: {
+				update: [
+					{
+						id: 'some-setting',
+						value: 'no',
+					},
+				],
+			},
+		};
+
+		const updatedState = reducer( newState, changeAction );
+		const newSettingsProducts = updatedState[ siteId ].settings.products;
+		expect( newSettingsProducts.length ).to.equal( 1 );
+		const bbq = find( newSettingsProducts, { id: 'some-setting' } );
+		expect( bbq.value ).to.equal( 'no' );
 	} );
 
 	test( 'should mark the settings products tree as "loading"', () => {

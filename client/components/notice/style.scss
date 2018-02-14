@@ -143,7 +143,7 @@
 	}
 
 	.notice & {
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 
 		&:hover,
 		&:focus {
@@ -159,7 +159,7 @@ a.notice__action {
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 	padding: 13px;
 	display: flex;
 	align-items: center;

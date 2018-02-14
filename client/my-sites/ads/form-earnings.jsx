@@ -316,7 +316,9 @@ class AdsFormEarnings extends Component {
 						<td className="ads__earnings-history-value">
 							${ numberFormat( earnings[ period ].amount, 2 ) }
 						</td>
-						<td className="ads__earnings-history-value">{ earnings[ period ].pageviews }</td>
+						<td className="ads__earnings-history-value">
+							{ numberFormat( earnings[ period ].pageviews ) }
+						</td>
 						<td className="ads__earnings-history-value">
 							{ this.getStatus( earnings[ period ].status ) }
 						</td>

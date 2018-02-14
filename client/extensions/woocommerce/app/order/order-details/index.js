@@ -72,7 +72,7 @@ class OrderDetails extends Component {
 				<OrderDetailsTable
 					order={ order }
 					site={ site }
-					isEditing={ isOrderEditable( order.status ) }
+					isEditing={ isOrderEditable( order ) }
 					onChange={ this.updateOrder }
 				/>
 			);

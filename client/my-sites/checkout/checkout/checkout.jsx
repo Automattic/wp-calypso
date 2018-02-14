@@ -123,8 +123,6 @@ const Checkout = createReactClass( {
 			this.setState( { previousCart: nextCart } );
 		}
 
-		// Although this is a part of the gsuiteUpsellTake2 A/B test,
-		// the `abtest()` is not called here to make the data more accurate.
 		if (
 			this.props.isNewlyCreatedSite &&
 			this.props.contactDetails &&
@@ -271,6 +269,16 @@ const Checkout = createReactClass( {
 		return flatten( Object.values( purchases ) );
 	},
 
+	getEligibleDomainFromCart() {
+		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
+		const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
+			canAddGoogleApps( meta )
+		);
+
+		return domainsForGSuite;
+	},
+
 	getCheckoutCompleteRedirectPath() {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
@@ -303,14 +311,7 @@ const Checkout = createReactClass( {
 			return '/checkout/thank-you/features';
 		}
 
-		if (
-			this.props.isEligibleForCheckoutToChecklist &&
-			'show' === abtest( 'checklistThankYouForPaidUser' )
-		) {
-			return `/checklist/${ selectedSiteSlug }/paid`;
-		}
-
-		if ( domainReceiptId && receiptId && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+		if ( domainReceiptId && receiptId ) {
 			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
 		}
 
@@ -320,15 +321,20 @@ const Checkout = createReactClass( {
 			cartItems.hasDomainRegistration( cart ) &&
 			isEmpty( receipt.failed_purchases )
 		) {
-			const domainsForGsuite = filter( cartItems.getDomainRegistrations( cart ), ( { meta } ) =>
-				canAddGoogleApps( meta )
-			);
+			const domainsForGSuite = this.getEligibleDomainFromCart();
 
-			if ( domainsForGsuite.length && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+			if ( domainsForGSuite.length ) {
 				return `/checkout/${ selectedSiteSlug }/with-gsuite/${
-					domainsForGsuite[ 0 ].meta
+					domainsForGSuite[ 0 ].meta
 				}/${ receiptId }`;
 			}
+		}
+
+		if (
+			this.props.isEligibleForCheckoutToChecklist &&
+			'show' === abtest( 'checklistThankYouForPaidUser' )
+		) {
+			return `/checklist/${ selectedSiteSlug }/paid`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
@@ -486,7 +492,7 @@ const Checkout = createReactClass( {
 		return isLoadingCart || isLoadingProducts;
 	},
 
-	needsDomainDetails: function() {
+	needsDomainDetails() {
 		const cart = this.props.cart,
 			transaction = this.props.transaction;
 
@@ -503,7 +509,7 @@ const Checkout = createReactClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">

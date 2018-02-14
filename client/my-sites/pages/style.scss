@@ -6,14 +6,14 @@
 
 	.placeholder-text {
 		color: transparent;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 
 	.is-placeholder {
 		.noticon {
 			color: transparent;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			animation: loading-fade 1.6s ease-in-out infinite;
 			opacity: 0.3;
 		}
@@ -22,7 +22,7 @@
 
 .pages__page-list-header {
 	background: $gray-light;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ), 0 1px 2px $gray-lighten-30;
 	color: $gray;
 	font-size: 11px;
 	padding: 6px 11px;
@@ -90,8 +90,8 @@
 	top: 0;
 	left: 0;
 	height: 100%;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 
 	&.is-indented {
 		width: 112px;

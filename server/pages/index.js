@@ -9,7 +9,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, pick, forEach, intersection } from 'lodash';
+import { get, includes, pick, forEach, intersection } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
-import { serverRender, serverRenderError } from 'render';
+import { serverRender, serverRenderError, renderJsx } from 'render';
 import stateCache from 'state-cache';
 import { createReduxStore, reducer } from 'state';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
@@ -169,10 +169,8 @@ function getDefaultContext( request ) {
 		sectionCss = request.context.sectionCss;
 	}
 
-	const shouldUseSingleCDN =
-		config.isEnabled( 'try/single-cdn' ) && !! request.query.enableSingleCDN;
-
 	const context = Object.assign( {}, request.context, {
+		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
 		urls: generateStaticUrls(),
 		user: false,
@@ -183,23 +181,11 @@ function getDefaultContext( request ) {
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
-		faviconURL: shouldUseSingleCDN ? '//s0.wp.com/i/favicon.ico' : '//s1.wp.com/i/favicon.ico',
+		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
-		shouldUsePreconnect: config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnect,
-		shouldUsePreconnectGoogle:
-			config.isEnabled( 'try/preconnect' ) && !! request.query.enablePreconnectGoogle,
-		shouldUseScriptPreload:
-			config.isEnabled( 'try/preload' ) && !! request.query.enableScriptPreload,
-		shouldUseStylePreloadCommon:
-			config.isEnabled( 'try/preload' ) && !! request.query.enableStylePreloadCommon,
-		shouldUseStylePreloadExternal:
-			config.isEnabled( 'try/preload' ) && !! request.query.enableStylePreloadExternal,
-		shouldUseStylePreloadSection:
-			config.isEnabled( 'try/preload' ) && !! request.query.enableStylePreloadSection,
-		shouldUseSingleCDN,
 		bodyClasses,
 		sectionCss,
 	} );
@@ -366,9 +352,8 @@ function setUpRoute( req, res, next ) {
 }
 
 function render404( request, response ) {
-	response.status( 404 ).render( '404', {
-		urls: generateStaticUrls(),
-	} );
+	const ctx = getDefaultContext( request );
+	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
 module.exports = function() {
@@ -507,7 +492,9 @@ module.exports = function() {
 			} );
 
 			if ( section.isomorphic ) {
-				section.load()( serverRouter( app, setUpRoute, section ) );
+				// section.load() uses require on the server side so we also need to access the
+				// default export of it. See webpack/bundler/sections-loader.js
+				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
 
@@ -518,10 +505,59 @@ module.exports = function() {
 		const dashboardUrl = isWpcom
 			? primaryBlogUrl + '/wp-admin'
 			: 'https://dashboard.wordpress.com/wp-admin/';
-
-		res.render( 'browsehappy', {
+		const ctx = {
 			...req.context,
 			dashboardUrl,
+		};
+
+		res.send( renderJsx( 'browsehappy', ctx ) );
+	} );
+
+	app.get( '/support-user', function( req, res ) {
+		// Do not iframe
+		res.set( {
+			'X-Frame-Options': 'DENY',
+		} );
+
+		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
+			return res.render( 'support-user', {
+				authorized: false,
+			} );
+		}
+
+		// Maybe not logged in, note that you need docker to test this properly
+		const user = require( 'user-bootstrap' );
+
+		debug( 'Issuing API call to fetch user object' );
+		const geoCountry = req.get( 'x-geoip-country-code' ) || '';
+		user( req.cookies.wordpress_logged_in, geoCountry, function( error, data ) {
+			if ( error ) {
+				res.clearCookie( 'wordpress_logged_in', {
+					path: '/',
+					httpOnly: true,
+					domain: '.wordpress.com',
+				} );
+
+				return res.render( 'support-user', {
+					authorized: false,
+				} );
+			}
+
+			const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
+
+			// A8C check
+			if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
+				return res.render( 'support-user', {
+					authorized: false,
+				} );
+			}
+
+			// Passed all checks, prepare support user session
+			return res.render( 'support-user', {
+				authorized: true,
+				supportUser: req.query.support_user,
+				supportToken: req.query._support_token,
+			} );
 		} );
 	} );
 

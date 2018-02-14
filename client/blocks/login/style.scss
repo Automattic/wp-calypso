@@ -1,3 +1,14 @@
+.login {
+
+	.jetpack-logo__icon { fill: $green-jetpack }
+	&.is-jetpack {
+		.button.is-primary {
+			background-color: $green-jetpack;
+			border-color: darken( $green-jetpack, 5% );
+		}
+	}
+}
+
 .card.login__form,
 .login__form-social .card {
 	margin-bottom: 0;
@@ -109,7 +120,7 @@
 }
 
 .wp-login__links {
-	a {
+	a, button {
 		font-size: 14px;
 
 		&:hover {
@@ -133,6 +144,15 @@
 
 .card.two-factor-authentication__form-action {
 	background: $white;
+
+	button {
+		color: $link-highlight;
+		cursor: pointer;
+
+		&:hover {
+			color: $blue-medium;
+		}
+	}
 }
 
 .two-factor-authentication__small-print {

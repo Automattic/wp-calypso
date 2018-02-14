@@ -45,7 +45,11 @@ function canRemoveFromCart( cart, cartItem ) {
 		return false;
 	}
 
-	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivacyProtection( cartItem ) ) {
+	if (
+		cartItems.hasRenewalItem( cart ) &&
+		( productsValues.isPrivacyProtection( cartItem ) ||
+			productsValues.isDomainRedemption( cartItem ) )
+	) {
 		return false;
 	}
 
@@ -138,64 +142,74 @@ function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
+/**
+ * Return a string that represents the WPCOM class name for a payment method
+ *
+ * @param {string} method - payment method
+ * @returns {string} the wpcom class name
+ */
+function paymentMethodClassName( method ) {
+	const paymentMethodsClassNames = {
+		alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
+		bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
+		'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
+		ebanx: 'WPCOM_Billing_Ebanx',
+		eps: 'WPCOM_Billing_Stripe_Source_Eps',
+		giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
+		ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
+		paypal: 'WPCOM_Billing_PayPal_Express',
+		p24: 'WPCOM_Billing_Stripe_Source_P24',
+	};
+
+	return paymentMethodsClassNames[ method ] || '';
+}
+
+/**
+ * Return a string that represents the User facing name for payment method
+ *
+ * @param {string} method - payment method
+ * @returns {string} the title
+ */
+function paymentMethodName( method ) {
+	const paymentMethodsNames = {
+		alipay: 'Alipay',
+		bancontact: 'Bancontact',
+		'credit-card': i18n.translate( 'Credit or debit card' ),
+		eps: 'EPS',
+		giropay: 'Giropay',
+		ideal: 'iDEAL',
+		paypal: 'PayPal',
+		p24: 'Przelewy24',
+	};
+
+	return paymentMethodsNames[ method ] || method;
+}
+
 function isPaymentMethodEnabled( cart, method ) {
-	switch ( method ) {
-		case 'credit-card':
-			return isCreditCardPaymentsEnabled( cart );
-		case 'paypal':
-			return isPayPalExpressEnabled( cart );
-		case 'ideal':
-			return isNetherlandsIdealEnabled( cart );
-		case 'giropay':
-			return isGermanyGiropayEnabled( cart );
-		case 'bancontact':
-			return isBelgiumBancontactEnabled( cart );
-		case 'p24':
-			return isPolandP24Enabled( cart );
-		case 'alipay':
-			return isAlipayEnabled( cart );
+	const redirectPaymentMethods = [
+		'alipay',
+		'bancontact',
+		'eps',
+		'giropay',
+		'ideal',
+		'paypal',
+		'p24',
+	];
+	const methodClassName = paymentMethodClassName( method );
 
-		default:
-			return false;
+	if ( '' === methodClassName ) {
+		return false;
 	}
-}
 
-function isCreditCardPaymentsEnabled( cart ) {
-	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_MoneyPress_Paygate' ) >= 0;
-}
+	// Redirect payments might not be possible in some cases - for example in the desktop app
+	if (
+		redirectPaymentMethods.indexOf( method ) >= 0 &&
+		! config.isEnabled( 'upgrades/redirect-payments' )
+	) {
+		return false;
+	}
 
-function isPayPalExpressEnabled( cart ) {
-	return (
-		config.isEnabled( 'upgrades/paypal' ) &&
-		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' ) >= 0
-	);
-}
-
-function isNetherlandsIdealEnabled( cart ) {
-	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Ideal' ) >= 0;
-}
-
-function isGermanyGiropayEnabled( cart ) {
-	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Giropay' ) >= 0;
-}
-
-function isBelgiumBancontactEnabled( cart ) {
-	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Bancontact' ) >= 0;
-}
-
-function isEbanxEnabled( cart ) {
-	return (
-		config.isEnabled( 'upgrades/ebanx' ) &&
-		cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Ebanx' ) >= 0
-	);
-}
-
-function isPolandP24Enabled( cart ) {
-	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_P24' ) >= 0;
-}
-
-function isAlipayEnabled( cart ) {
-	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_Stripe_Source_Alipay' ) >= 0;
+	return cart.allowed_payment_methods.indexOf( methodClassName ) >= 0;
 }
 
 export {
@@ -210,27 +224,13 @@ export {
 	isFree,
 	isPaidForFullyInCredits,
 	isPaymentMethodEnabled,
-	isPayPalExpressEnabled,
-	isNetherlandsIdealEnabled,
-	isCreditCardPaymentsEnabled,
-	isEbanxEnabled,
-	isAlipayEnabled,
+	paymentMethodClassName,
+	paymentMethodName,
 };
 
 export default {
 	applyCoupon,
-	canRemoveFromCart,
 	cartItems,
 	emptyCart,
-	fillInAllCartItemAttributes,
-	fillInSingleCartItemAttributes,
-	getNewMessages,
-	getRefundPolicy,
-	isFree,
-	isPaidForFullyInCredits,
 	isPaymentMethodEnabled,
-	isPayPalExpressEnabled,
-	isNetherlandsIdealEnabled,
-	isCreditCardPaymentsEnabled,
-	isEbanxEnabled,
 };

@@ -77,18 +77,18 @@ function createPageDefinition( path, sectionDefinition ) {
 		preload( sectionDefinition.name )
 			.then( requiredModules => {
 				if ( ! _loadedSections[ sectionDefinition.module ] ) {
-					requiredModules.forEach( mod => mod( controller.clientRouter ) ); // if we do array
+					requiredModules.forEach( mod => mod.default( controller.clientRouter ) );
 					_loadedSections[ sectionDefinition.module ] = true;
 				}
 				return activateSection( sectionDefinition, context, next );
 			} )
 			.catch( error => {
 				console.error( error ); // eslint-disable-line
-				if ( ! LoadingError.isRetry() ) {
+				if ( ! LoadingError.isRetry() && process.env.NODE_ENV !== 'development' ) {
 					LoadingError.retry( sectionDefinition.name );
 				} else {
 					dispatch( { type: 'SECTION_SET', isLoading: false } );
-					LoadingError.show( sectionDefinition.name );
+					LoadingError.show( context, sectionDefinition.name );
 				}
 			} );
 	} );

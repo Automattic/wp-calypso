@@ -26,9 +26,10 @@ import Card from 'components/card';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { currentUserHasFlag } from 'state/current-user/selectors';
-import { TRANSFER_IN } from 'state/current-user/constants';
+import { TRANSFER_IN_NUX } from 'state/current-user/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { abtest } from 'lib/abtest';
 
 class DomainSearchResults extends React.Component {
 	static propTypes = {
@@ -72,10 +73,12 @@ class DomainSearchResults extends React.Component {
 		const { MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
+		const testGroup = abtest( 'domainSuggestionTestV5' );
+		const showExactMatch = 'group_0' === testGroup;
 
 		let availabilityElement, domainSuggestionElement, offer;
 
-		if ( availableDomain ) {
+		if ( availableDomain && showExactMatch ) {
 			// should use real notice component or custom class
 			availabilityElement = (
 				<Notice status="is-success" showDismiss={ false }>
@@ -139,8 +142,7 @@ class DomainSearchResults extends React.Component {
 			if ( this.props.offerUnavailableOption ) {
 				if (
 					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
-					this.props.transferInAllowed &&
-					! this.props.isSignupStep &&
+					( ! this.props.isSignupStep || this.props.transferInNuxAllowed ) &&
 					lastDomainIsTransferrable
 				) {
 					availabilityElement = (
@@ -192,10 +194,6 @@ class DomainSearchResults extends React.Component {
 		this.props.onAddMapping( this.props.lastDomainSearched );
 	};
 
-	handleAddTransfer = () => {
-		this.props.onAddTransfer( this.props.lastDomainSearched );
-	};
-
 	renderPlaceholders() {
 		return times( this.props.placeholderQuantity, function( n ) {
 			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
@@ -243,7 +241,7 @@ class DomainSearchResults extends React.Component {
 					/>
 				);
 
-				if ( this.props.transferInAllowed && ! this.props.isSignupStep ) {
+				if ( ! this.props.isSignupStep || this.props.transferInNuxAllowed ) {
 					unavailableOffer = (
 						<DomainTransferSuggestion
 							onButtonClick={ this.props.onClickTransfer }
@@ -278,7 +276,7 @@ const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
-		transferInAllowed: currentUserHasFlag( state, TRANSFER_IN ),
+		transferInNuxAllowed: currentUserHasFlag( state, TRANSFER_IN_NUX ),
 		siteDesignType: getDesignType( state ),
 	};
 };

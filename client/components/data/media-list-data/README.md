@@ -8,21 +8,21 @@ MediaListData is a React component intended to be used as a controller-view to s
 Wrap a child component with `<MediaListData />`, passing a `siteId` and optional `filter`, `postId` and `search` values. [As a controller-view](https://facebook.github.io/flux/docs/overview.html#views-and-controller-views), MediaListData does not render any content of its own; instead, it simply renders the child component.
 
 ```jsx
-var React = require( 'react' ),
-	MediaListData = require( 'components/data/media-list-data' ),
-	MyChildComponent = require( './my-child-component' );
+import React from 'react';
+import MediaListData from 'components/data/media-list-data';
+import MyChildComponent from './my-child-component';
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
+export default class extends React.Component {
+	static displayName = 'MyComponent';
 
-	render: function() {
+	render() {
 		return (
 			<MediaListData siteId={ this.props.siteId }>
 				<MyChildComponent />
 			</MediaListData>
 		);
 	}
-} );
+}
 ```
 
 The child component should expect to receive any props defined during the render, as well as the following additional props:

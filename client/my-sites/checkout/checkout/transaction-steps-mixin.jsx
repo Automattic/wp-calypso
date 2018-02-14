@@ -18,6 +18,7 @@ import { cartItems } from 'lib/cart-values';
 import { displayError, clear } from 'lib/upgrades/notices';
 import { submitTransaction } from 'lib/upgrades/actions';
 import { removeNestedProperties } from 'lib/cart/store/cart-analytics';
+import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
 
 const TransactionStepsMixin = {
 	submitTransaction: function( event ) {
@@ -48,7 +49,7 @@ const TransactionStepsMixin = {
 
 	_displayNotices: function( cart, step ) {
 		if ( step.error ) {
-			displayError( step.error );
+			step.name !== INPUT_VALIDATION && displayError( step.error );
 			return;
 		}
 
@@ -79,7 +80,7 @@ const TransactionStepsMixin = {
 			case 'received-wpcom-response':
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						reason: step.error.message,
+						reason: this._formatError( step.error ),
 					} );
 
 					this._recordDomainRegistrationAnalytics( {
@@ -117,7 +118,7 @@ const TransactionStepsMixin = {
 			default:
 				if ( step.error ) {
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_error', {
-						reason: step.error.message,
+						reason: this._formatError( step.error ),
 					} );
 				}
 		}
@@ -144,6 +145,22 @@ const TransactionStepsMixin = {
 			// The Thank You page throws a rendering error if this is not in a defer.
 			this.props.handleCheckoutCompleteRedirect();
 		} );
+	},
+
+	_formatError: function( error ) {
+		let formatedMessage = '';
+
+		if ( typeof error.message === 'object' ) {
+			formatedMessage += Object.keys( error.message ).join( ', ' );
+		} else if ( typeof error.message === 'string' ) {
+			formatedMessage += error.message;
+		}
+
+		if ( error.error ) {
+			formatedMessage = error.error + ': ' + formatedMessage;
+		}
+
+		return formatedMessage;
 	},
 };
 

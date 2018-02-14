@@ -3,13 +3,14 @@
 /**
  * External dependencies
  */
-
+import { isArray } from 'lodash';
 import update from 'immutability-helper';
 
 /**
  * Internal dependencies
  */
 import { action as ActionTypes } from 'lib/upgrades/constants';
+import { whoisType } from './constants';
 
 const initialDomainState = {
 	data: null,
@@ -34,6 +35,32 @@ function updateDomainState( state, domainName, data ) {
 	};
 
 	return update( state, command );
+}
+
+/**
+ * @desc Updates registrant contact details in state[ {domainName} ].data
+ *
+ * @param {Object} [domainState] Current state for {domainName}.
+ * @param {Object} [registrantContactDetails] New registrant contact details
+ * @return {Array} New data state.
+ */
+function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
+	return isArray( domainState.data )
+		? domainState.data.map( item => {
+				if ( item.type === whoisType.REGISTRANT ) {
+					return {
+						...item,
+						...registrantContactDetails,
+					};
+				}
+				return item;
+			} )
+		: [
+				{
+					...registrantContactDetails,
+					type: whoisType.REGISTRANT,
+				},
+			];
 }
 
 function reducer( state, payload ) {
@@ -63,6 +90,11 @@ function reducer( state, payload ) {
 		case ActionTypes.WHOIS_UPDATE_COMPLETED:
 			state = updateDomainState( state, action.domainName, {
 				needsUpdate: true,
+				// merge validated contact details from the form into whois data
+				data: mergeDomainRegistrantContactDetails(
+					state[ action.domainName ],
+					action.registrantContactDetails
+				),
 			} );
 			break;
 	}

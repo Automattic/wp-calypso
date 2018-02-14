@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { has } from 'lodash';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -22,13 +22,13 @@ import { recordPermalinkClick } from 'reader/stats';
 import TimeSince from 'components/time-since';
 import ReaderFeaturedImage from 'blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import * as stats from 'reader/stats';
 import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
 import { isAuthorNameBlacklisted } from 'reader/lib/author-name-blacklist';
+import QueryReaderPost from 'components/data/query-reader-post';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {
-		post: PropTypes.object.isRequired,
+		post: PropTypes.object,
 		streamUrl: PropTypes.string,
 		onClick: PropTypes.func,
 		showFeaturedAsset: PropTypes.bool,
@@ -45,7 +45,7 @@ class ReaderCombinedCardPost extends React.Component {
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			if ( closest( event.target, '.reader-combined-card__post-title-link', true, rootNode ) ) {
-				stats.recordPermalinkClick( 'card_title_with_modifier', this.props.post );
+				recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}
@@ -77,11 +77,16 @@ class ReaderCombinedCardPost extends React.Component {
 	};
 
 	render() {
-		const { post, streamUrl, isDiscover, isSelected } = this.props;
+		const { post, streamUrl, isDiscover, isSelected, postKey } = this.props;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
 		if ( isLoading ) {
-			return <ReaderCombinedCardPostPlaceholder />;
+			return (
+				<Fragment>
+					<QueryReaderPost postKey={ postKey } />
+					<ReaderCombinedCardPostPlaceholder />
+				</Fragment>
+			);
 		}
 
 		const hasAuthorName =

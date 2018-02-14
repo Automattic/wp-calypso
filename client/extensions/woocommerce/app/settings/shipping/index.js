@@ -4,6 +4,7 @@
  * External dependencies
  */
 
+import { every } from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -24,28 +25,34 @@ import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 
 class Shipping extends Component {
 	state = {
-		pristine: true,
+		pristine: { units: true, shipping: true },
 	};
 
-	onChange = () => {
-		this.setState( { pristine: false } );
+	onChangeUnits = () => {
+		this.setState( { pristine: Object.assign( {}, this.state.pristine, { units: false } ) } );
 	};
 
-	onSaveSuccess = () => {
-		this.setState( { pristine: true } );
+	onChangeShipping = () => {
+		this.setState( { pristine: Object.assign( {}, this.state.pristine, { shipping: false } ) } );
+	};
+
+	onSaveSuccess = option => {
+		this.setState( { pristine: Object.assign( {}, this.state.pristine, { [ option ]: true } ) } );
 	};
 
 	render = () => {
 		const { className, wcsEnabled } = this.props;
+		const { pristine } = this.state;
+		const toSave = { units: ! pristine.units, shipping: ! pristine.shipping };
 
 		return (
 			<Main className={ classNames( 'shipping', className ) } wideLayout>
-				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } />
-				<ShippingOrigin />
+				<ShippingHeader onSaveSuccess={ this.onSaveSuccess } toSave={ toSave } />
+				<ShippingOrigin onChange={ this.onChangeUnits } />
 				<ShippingZoneList />
-				{ wcsEnabled && <LabelSettings onChange={ this.onChange } /> }
-				{ wcsEnabled && <Packages onChange={ this.onChange } /> }
-				<ProtectFormGuard isChanged={ ! this.state.pristine } />
+				{ wcsEnabled && <LabelSettings onChange={ this.onChangeShipping } /> }
+				{ wcsEnabled && <Packages onChange={ this.onChangeShipping } /> }
+				<ProtectFormGuard isChanged={ ! every( this.state.pristine ) } />
 			</Main>
 		);
 	};

@@ -137,6 +137,7 @@ class PreviewMain extends React.Component {
 			<Main className="preview">
 				<DocumentHead title={ translate( 'Your Site' ) } />
 				<WebPreview
+					showPreview
 					isContentOnly
 					onLocationUpdate={ this.updateSiteLocation }
 					showUrl={ !! this.state.externalUrl }

@@ -113,17 +113,11 @@ export function checkUrl( url, isUrlOnSites ) {
 				url: url,
 			} );
 		}, 1 );
-		Promise.all( [
-			wpcom.undocumented().getSiteConnectInfo( url, 'exists' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isWordPress' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'hasJetpack' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackActive' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isWordPressDotCom' ),
-			wpcom.undocumented().getSiteConnectInfo( url, 'isJetpackConnected' ),
-		] )
+		wpcom
+			.undocumented()
+			.getSiteConnectInfo( url )
 			.then( data => {
 				_fetching[ url ] = null;
-				data = data ? Object.assign.apply( Object, data ) : null;
 				debug( 'jetpack-connect state checked for url', url, data );
 				dispatch( {
 					type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
@@ -280,9 +274,18 @@ export function isUserConnected( siteId, siteIsOnSitesList ) {
 
 export function authorize( queryObject ) {
 	return dispatch => {
-		const { _wp_nonce, client_id, redirect_uri, scope, secret, state, jp_version } = queryObject;
+		const {
+			_wp_nonce,
+			client_id,
+			from,
+			jp_version,
+			redirect_uri,
+			scope,
+			secret,
+			state,
+		} = queryObject;
 		debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
-		dispatch( recordTracksEvent( 'calypso_jpc_authorize' ) );
+		dispatch( recordTracksEvent( 'calypso_jpc_authorize', { from, site: client_id } ) );
 		dispatch( {
 			type: JETPACK_CONNECT_AUTHORIZE,
 			queryObject: queryObject,
@@ -339,7 +342,7 @@ export function authorize( queryObject ) {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_authorize_success', {
 						site: client_id,
-						from: queryObject && queryObject.from,
+						from,
 					} )
 				);
 			} )
@@ -353,6 +356,7 @@ export function authorize( queryObject ) {
 						status: error.status,
 						error: JSON.stringify( error ),
 						site: client_id,
+						from,
 					} )
 				);
 				dispatch( {

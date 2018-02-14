@@ -1,7 +1,7 @@
 .product-search {
 	.search {
 		margin-bottom: 0;
-		border: 1px solid lighten( $gray, 20% );
+		border: 1px solid $gray-lighten-20;
 		box-sizing: border-box;
 		z-index: 9;
 	}
@@ -16,7 +16,7 @@
 
 	.product-search__list {
 		position: relative;
-		border: 1px solid lighten( $gray, 20% );
+		border: 1px solid $gray-lighten-20;
 		border-top: 0;
 		overflow-y: auto;
 		max-height: 350px;
@@ -55,27 +55,8 @@
 				position: relative;
 			}
 
-			.product-search__list-image {
-				display: inline-block;
-				height: 32px;
-				width: 32px;
-				overflow: hidden;
-				position: relative;
+			.image-thumb {
 				margin: 0 12px 0 15px;
-
-				&.is-thumb-placeholder {
-					background: $gray-light;
-				}
-
-				img {
-					position: absolute;
-					left: 50%;
-					top: 50%;
-					height: 100%;
-					width: auto;
-					-webkit-transform: translate( -50%, -50% );
-					transform: translate( -50%, -50% );
-				}
 			}
 
 			.count {

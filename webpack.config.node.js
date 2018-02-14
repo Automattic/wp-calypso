@@ -26,6 +26,14 @@ const bundleEnv = config( 'env' );
  */
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
+// disable add-module-exports. TODO: remove add-module-exports from babelrc. requires fixing jest tests
+const babelConfig = JSON.parse( fs.readFileSync( './.babelrc', { encoding: 'utf8' } ) );
+_.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
+
+// remove the babel-lodash-es plugin from env.test -- it's needed only for Jest tests.
+// The Webpack-using NODE_ENV=test build doesn't need it, as there is a special loader for that.
+_.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) );
+
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
@@ -70,7 +78,10 @@ function getExternals() {
 const babelLoader = {
 	loader: 'babel-loader',
 	options: {
+		...babelConfig,
+		babelrc: false,
 		plugins: [
+			...babelConfig.plugins,
 			[
 				path.join(
 					__dirname,
@@ -114,6 +125,14 @@ const webpackConfig = {
 				exclude: /(node_modules|devdocs[\/\\]search-index)/,
 				loader: [ 'happypack/loader' ],
 			},
+			{
+				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+				loader: 'babel-loader',
+				options: {
+					babelrc: false,
+					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
+				},
+			},
 		],
 	},
 	resolve: {
@@ -147,16 +166,7 @@ const webpackConfig = {
 		new HappyPack( { loaders: [ babelLoader ] } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]sites-list$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]user$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
-			/^lib[\/\\]post-normalizer[\/\\]rule-create-better-excerpt$/,
-			'lodash/noop'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]seo[\/\\]reader-preview$/,
-			'components/empty-component'
-		), // Conflicts with component-closest module
 		new webpack.NormalModuleReplacementPlugin(
 			/^components[\/\\]popover$/,
 			'components/null-component'
@@ -164,14 +174,6 @@ const webpackConfig = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[\/\\]themes[\/\\]theme-upload$/,
 			'components/empty-component'
-		), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin(
-			/^client[\/\\]layout[\/\\]guided-tours[\/\\]config$/,
-			'components/empty-component'
-		), // should never be required server side
-		new webpack.NormalModuleReplacementPlugin(
-			/^components[\/\\]site-selector$/,
-			'components/null-component'
 		), // Depends on BOM
 	] ),
 	externals: getExternals(),

@@ -406,6 +406,11 @@ Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, 
 	);
 };
 
+Undocumented.prototype.resendInvite = function( siteId, inviteId, fn ) {
+	debug( '/sites/:site_id:/invites/:invite_id:/resend query' );
+	return this.wpcom.req.post( '/sites/' + siteId + '/invites/' + inviteId + '/resend', {}, {}, fn );
+};
+
 Undocumented.prototype.createInviteValidation = function( siteId, usernamesOrEmails, role, fn ) {
 	debug( '/sites/:site_id:/invites/validate query' );
 	return this.wpcom.req.post(
@@ -510,6 +515,24 @@ Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-restart/${ siteId }`,
+		},
+		fn
+	);
+};
+
+/**
+ * Starts an inbound domain transfer that is in the pending_start state.
+ *
+ * @param {int|string} siteId The site ID
+ * @param {string} domain The domain name
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.startInboundTransfer = function( siteId, domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
 		},
 		fn
 	);
@@ -1213,14 +1236,14 @@ function addReaderContentWidth( params ) {
 
 Undocumented.prototype.readFollowing = function( query, fn ) {
 	debug( '/read/following' );
-	query.apiVersion = '1.3';
+	query.apiVersion = '1.2';
 	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/following', query, fn );
 };
 
 Undocumented.prototype.readA8C = function( query, fn ) {
 	debug( '/read/a8c' );
-	query.apiVersion = '1.3';
+	query.apiVersion = '1.2';
 	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/a8c', query, fn );
 };
@@ -1258,7 +1281,7 @@ Undocumented.prototype.discoverFeed = function( query, fn ) {
 Undocumented.prototype.readFeedPosts = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed/' + query.ID + '/posts' );
-	params.apiVersion = '1.3';
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(
@@ -1271,7 +1294,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 Undocumented.prototype.readFeedPost = function( query, fn ) {
 	var params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
-	params.apiVersion = '1.3';
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(
@@ -1294,11 +1317,7 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
-	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
-		params.apiVersion = '1.3';
-	} else {
-		params.apiVersion = '1.2';
-	}
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(
@@ -1408,12 +1427,6 @@ Undocumented.prototype.unfollowList = function( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readSite = function( query, fn ) {
-	var params = omit( query, 'site' );
-	debug( '/read/sites/:site' );
-	return this.wpcom.req.get( '/read/sites/' + query.site, params, fn );
-};
-
 Undocumented.prototype.readSiteFeatured = function( siteId, query, fn ) {
 	var params = omit( query, [ 'before', 'after' ] );
 	debug( '/read/sites/:site/featured' );
@@ -1451,20 +1464,22 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
  *
  * @param {string} name - The name of the A/B test. No leading 'abtest_' needed
  * @param {string} variation - The variation the user is assigned to
- * @param {Function} fn - Function to invoke when request is complete
+ * @param {Function} callback - Function to invoke when request is complete
  * @api public
+ * @returns {Object} wpcomRequest
  */
-Undocumented.prototype.saveABTestData = function( name, variation, fn ) {
-	var data = {
-		name: name,
-		variation: variation,
+Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
+	const body = {
+		name,
+		variation,
 	};
+	debug( `POST /me/abtests with ${ JSON.stringify( body ) }` );
 	return this.wpcom.req.post(
 		{
 			path: '/me/abtests',
-			body: data,
+			body,
 		},
-		fn
+		callback
 	);
 };
 
@@ -2070,14 +2085,7 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
  */
 Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	debug( 'help-search/ searchQuery' );
-
-	return this.wpcom.req.get(
-		'/help/search',
-		{
-			query: searchQuery,
-		},
-		fn
-	);
+	return this.wpcom.req.get( '/help/search', { query: searchQuery }, fn );
 };
 
 Undocumented.prototype.getQandA = function( query, site, fn ) {

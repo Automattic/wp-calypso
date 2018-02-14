@@ -7,12 +7,12 @@
 
 	thead .table-heading,
 	thead .table-item {
-		border-bottom: 1px solid lighten( $gray, 20% );
+		border-bottom: 1px solid $gray-lighten-20;
 	}
 
 	tbody .table-heading,
 	tbody .table-item {
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid $gray-lighten-30;
 	}
 
 	// Remove the border from the last item in the body of the table.

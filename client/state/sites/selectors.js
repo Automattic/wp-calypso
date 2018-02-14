@@ -58,12 +58,7 @@ export const getRawSite = ( state, siteId ) => {
  */
 export const getSiteBySlug = createSelector(
 	( state, siteSlug ) =>
-		find(
-			getSitesItems( state ),
-			( item, siteId ) =>
-				// find always passes the siteId as a string. We need it as a integer
-				getSiteSlug( state, parseInt( siteId, 10 ) ) === siteSlug
-		) || null,
+		find( getSitesItems( state ), site => getSiteSlug( state, site.ID ) === siteSlug ) || null,
 	getSitesItems
 );
 
@@ -238,18 +233,21 @@ export function isJetpackMinimumVersion( state, siteId, version ) {
  * @param  {Number}  siteId Site ID
  * @return {?String}        Site slug
  */
-export function getSiteSlug( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
+export const getSiteSlug = createSelector(
+	( state, siteId ) => {
+		const site = getRawSite( state, siteId );
+		if ( ! site ) {
+			return null;
+		}
 
-	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-		return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
-	}
+		if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+			return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
+		}
 
-	return urlToSlug( site.URL );
-}
+		return urlToSlug( site.URL );
+	},
+	[ getSitesItems ]
+);
 
 /**
  * Returns the domain for a site, or null if the site is unknown.
@@ -292,6 +290,27 @@ export function getSiteTitle( state, siteId ) {
 	}
 
 	return getSiteDomain( state, siteId );
+}
+
+/**
+ * Returns the URL for a site, or null if the site is unknown.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}        Site Url
+ */
+export function getSiteUrl( state, siteId ) {
+	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
+		return getSiteSlug( state, siteId );
+	}
+
+	const site = getRawSite( state, siteId );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	return site.URL;
 }
 
 /**

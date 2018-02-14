@@ -10,23 +10,16 @@ import React from 'react';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import CredentialsForm from '../credentials-form';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
 
 const SetupForm = ( { reset, siteId } ) => (
 	<CompactCard>
-		<CredentialsForm
+		<RewindCredentialsForm
 			{ ...{
-				protocol: 'ssh',
-				host: '',
-				port: '22',
-				user: '',
-				pass: '',
-				abspath: '',
-				kpri: '',
+				allowCancel: true,
 				onCancel: reset,
 				role: 'main',
 				siteId,
-				showCancelButton: true,
 			} }
 		/>
 	</CompactCard>

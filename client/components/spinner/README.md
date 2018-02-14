@@ -10,14 +10,14 @@ __Please exercise caution in deciding to use a spinner in your component.__ A lo
 ## Usage
 
 ```jsx
-var React = require( 'react' ),
-	Spinner = require( 'components/spinner' );
+import React from 'react';
+import Spinner from 'components/spinner';
 
-React.createClass( {
-	render: function() {
+export default class extends React.Component {
+	render() {
 		return <Spinner />;
-	}
-} );
+	} 
+}
 ```
 
 ## Props

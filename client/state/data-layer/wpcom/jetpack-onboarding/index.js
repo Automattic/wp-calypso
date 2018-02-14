@@ -17,7 +17,10 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
 import { getUnconnectedSite } from 'state/selectors';
-import { updateJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import {
+	saveJetpackOnboardingSettingsSuccess,
+	updateJetpackOnboardingSettings,
+} from 'state/jetpack-onboarding/actions';
 
 export const fromApi = response => {
 	if ( ! response.data || ! response.data.onboarding ) {
@@ -81,6 +84,8 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 	const token = get( state.jetpackOnboarding.credentials, [ siteId, 'token' ], null );
 	const jpUser = get( state.jetpackOnboarding.credentials, [ siteId, 'userEmail' ], null );
 
+	dispatch( updateJetpackOnboardingSettings( siteId, action.settings ) );
+
 	return dispatch(
 		http(
 			{
@@ -104,10 +109,12 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 	);
 };
 
-/* Store onboarding settings in Redux state */
-export const storeJetpackOnboardingSettings = ( { dispatch }, { settings, siteId } ) => {
-	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
-};
+// Although we don't use the save success action in any of the reducers,
+// we need to dispatch some action in order to signal to the data layer that
+// the save request has finished. Tracking those requests is necessary for
+// displaying an up to date progress indicator for some steps.
+export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
+	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
 
 export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(
@@ -124,10 +131,6 @@ export default {
 		} ),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest(
-			saveJetpackOnboardingSettings,
-			storeJetpackOnboardingSettings,
-			announceSaveFailure
-		),
+		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, announceSaveFailure ),
 	],
 };

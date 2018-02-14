@@ -8,11 +8,13 @@ import moment from 'moment-timezone';
 /**
  * Internal dependencies
  */
-import signupForm, { timezone, message, status } from '../reducer';
+import signupForm, { firstname, lastname, timezone, message, status } from '../reducer';
 import { CONCIERGE_SIGNUP_FORM_UPDATE, CONCIERGE_UPDATE_BOOKING_STATUS } from 'state/action-types';
 
 describe( 'concierge/signupForm/reducer', () => {
 	const mockSignupForm = {
+		firstname: 'Foo',
+		lastname: 'Bar',
 		timezone: 'UTC',
 		message: 'hello',
 		status: 'booking',
@@ -28,6 +30,26 @@ describe( 'concierge/signupForm/reducer', () => {
 		type: CONCIERGE_UPDATE_BOOKING_STATUS,
 		status: mockStatus,
 	};
+
+	describe( 'firstname', () => {
+		test( 'should be default as empty string.', () => {
+			expect( firstname( undefined, {} ) ).toEqual( '' );
+		} );
+
+		test( 'should return the firstname of the update action.', () => {
+			expect( firstname( {}, updateForm ) ).toEqual( mockSignupForm.firstname );
+		} );
+	} );
+
+	describe( 'lastname', () => {
+		test( 'should be default as empty string.', () => {
+			expect( lastname( undefined, {} ) ).toEqual( '' );
+		} );
+
+		test( 'should return the lastname of the update action.', () => {
+			expect( lastname( {}, updateForm ) ).toEqual( mockSignupForm.lastname );
+		} );
+	} );
 
 	describe( 'timezone', () => {
 		test( 'should use the default detected timezone.', () => {
@@ -62,6 +84,8 @@ describe( 'concierge/signupForm/reducer', () => {
 	describe( 'signupForm', () => {
 		test( 'should combine all defaults as null.', () => {
 			expect( signupForm( undefined, {} ) ).toEqual( {
+				firstname: '',
+				lastname: '',
 				timezone: moment.tz.guess(),
 				message: '',
 				status: null,

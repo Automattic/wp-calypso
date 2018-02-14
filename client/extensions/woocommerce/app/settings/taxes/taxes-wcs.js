@@ -18,6 +18,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import {
 	areSettingsGeneralLoaded,
 	areTaxCalculationsEnabled,
+	getShipToCountrySetting,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import {
 	areTaxSettingsLoaded,
@@ -59,6 +60,9 @@ class SettingsTaxesWooCommerceServices extends Component {
 		siteSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
 		taxesEnabled: PropTypes.bool,
+		shipToCountry: PropTypes.shape( {
+			value: PropTypes.string,
+		} ),
 	};
 
 	componentDidMount = () => {
@@ -174,6 +178,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 				onCheckboxChange={ this.onCheckboxChange }
 				pricesIncludeTaxes={ this.state.pricesIncludeTaxes }
 				shippingIsTaxable={ this.state.shippingIsTaxable }
+				shipToCountry={ this.props.shipToCountry }
 			/>
 		);
 	};
@@ -207,12 +212,14 @@ class SettingsTaxesWooCommerceServices extends Component {
 function mapStateToProps( state ) {
 	const loaded = areTaxSettingsLoaded( state ) && areSettingsGeneralLoaded( state );
 	const pricesIncludeTaxes = getPricesIncludeTax( state );
+	const shipToCountry = getShipToCountrySetting( state );
 	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
 	const taxesEnabled = areTaxCalculationsEnabled( state );
 
 	return {
 		loaded,
 		pricesIncludeTaxes,
+		shipToCountry,
 		shippingIsTaxable,
 		taxesEnabled,
 	};

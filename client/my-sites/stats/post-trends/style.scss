@@ -9,7 +9,7 @@
 }
 
 .post-trends__title {
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	margin-left: 11px;
 	height: 40px;
 	font-weight: 600;
@@ -21,7 +21,7 @@
 	text-align: center;
 	font-size: 16px;
 	font-weight: 300;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	margin: 20px 0 30px;
 }
 
@@ -130,7 +130,7 @@
 	width: 7px;
 	height: 7px;
 	border: 1px solid $gray-light;
-	background-color: lighten( $gray, 20% );
+	background-color: $gray-lighten-20;
 	margin: 0;
 }
 
@@ -142,7 +142,7 @@
 	}
 
 	&.is-today {
-		background-color: lighten( $gray, 20% );
+		background-color: $gray-lighten-20;
 	}
 
 	&.is-after-today {

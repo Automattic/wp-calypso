@@ -71,6 +71,7 @@ class Wizard extends Component {
 	render() {
 		const {
 			backText,
+			basePath,
 			components,
 			forwardText,
 			hideNavigation,
@@ -91,6 +92,7 @@ class Wizard extends Component {
 				) }
 
 				{ React.cloneElement( component, {
+					basePath,
 					getBackUrl: this.getBackUrl,
 					getForwardUrl: this.getForwardUrl,
 					steps,

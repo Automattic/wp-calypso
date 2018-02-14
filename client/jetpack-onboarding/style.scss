@@ -45,7 +45,7 @@
 		margin-bottom: 20px;
 	}
 
-	.steps__summary-entry {
+	.jetpack-onboarding__summary-entry {
 		margin-bottom: 20px;
 
 		.gridicon {
@@ -59,12 +59,14 @@
 			margin-right: 12px;
 		}
 
-		&.completed {
-			color: $gray;
+		&.completed,
+		&.completed a {
+			color: $gray-darken-20;
 		}
 
-		&.todo {
-			color: $blue-medium;
+		&.todo,
+		&.todo a {
+			color: $blue-wordpress;
 		}
 	}
 

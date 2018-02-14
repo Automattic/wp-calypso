@@ -11,12 +11,9 @@ import config from 'config';
 import { READER_FOLLOW } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { errorNotice } from 'state/notices/actions';
 import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
 import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
-import { getFeedByFeedUrl } from 'state/reader/feeds/selectors';
-import { getSiteByFeedUrl } from 'state/reader/sites/selectors';
-import { getSiteName } from 'reader/get-helpers';
 import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function requestFollow( { dispatch, getState }, action ) {
@@ -33,16 +30,6 @@ export function requestFollow( { dispatch, getState }, action ) {
 			},
 			onSuccess: action,
 			onFailure: action,
-		} )
-	);
-
-	// build up a notice to show
-	const site = getSiteByFeedUrl( getState(), feedUrl );
-	const feed = getFeedByFeedUrl( getState(), feedUrl );
-	const siteTitle = getSiteName( { feed, site } ) || feedUrl;
-	dispatch(
-		successNotice( translate( "You're now following %(siteTitle)s", { args: { siteTitle } } ), {
-			duration: 5000,
 		} )
 	);
 }

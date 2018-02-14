@@ -31,7 +31,6 @@ import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import PostPlaceholder from './post-placeholder';
-import PostStore from 'lib/feed-post-store';
 import UpdateNotice from 'reader/update-notice';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import scrollTo from 'lib/scroll-to';
@@ -43,6 +42,8 @@ import { getReaderFollows } from 'state/selectors';
 import { keysAreEqual, keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
+import { reduxGetState } from 'lib/redux-bridge';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
 const GUESSED_POST_HEIGHT = 600;
 const HEADER_OFFSET_TOP = 46;
@@ -259,7 +260,7 @@ class ReaderStream extends React.Component {
 		let post;
 
 		if ( postKey && ! postKey.isGap ) {
-			post = PostStore.get( postKey );
+			post = getPostByKey( reduxGetState(), postKey );
 		}
 
 		// only toggle a like on a x-post if we have the appropriate metadata,
@@ -433,7 +434,7 @@ class ReaderStream extends React.Component {
 				isSelected={ isSelected }
 				handleClick={ showPost }
 				postKey={ postKey }
-				store={ this.props.postsStore }
+				postsStore={ this.props.postsStore }
 				suppressSiteNameLink={ this.props.suppressSiteNameLink }
 				showPostHeader={ this.props.showPostHeader }
 				showFollowInHeader={ this.props.showFollowInHeader }

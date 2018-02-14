@@ -50,7 +50,7 @@
 			}
 			span {
 				display: inline-block;
-				border-bottom: solid 1px lighten( $gray, 20% );
+				border-bottom: solid 1px $gray-lighten-20;
 			}
 		}
 		.pages-list & {

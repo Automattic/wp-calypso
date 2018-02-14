@@ -13,8 +13,11 @@ import { first, get, groupBy, includes, isEmpty, isNull, last, range, sortBy } f
 /**
  * Internal dependencies
  */
+import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
+import ActivityLogSwitch from '../activity-log-switch';
+import ActivityLogUpgradeNotice from '../activity-log-upgrade-notice';
 import Banner from 'components/banner';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
@@ -23,9 +26,7 @@ import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import QueryActivityLog from 'components/data/query-activity-log';
-import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
 import QueryRewindState from 'components/data/query-rewind-state';
-import QueryRewindStatus from 'components/data/query-rewind-status';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -33,6 +34,7 @@ import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
+import UnavailabilityNotice from './unavailability-notice';
 import { adjustMoment, getActivityLogQuery, getStartMoment } from './utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
@@ -48,17 +50,15 @@ import {
 	canCurrentUser,
 	getActivityLog,
 	getActivityLogs,
+	getBackupProgress,
 	getRequest,
+	getRequestedBackup,
 	getRequestedRewind,
 	getRestoreProgress,
-	getRewindStatusError,
+	getRewindState,
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
-	getRewindStartDate,
-	isRewindActive as isRewindActiveSelector,
-	getRequestedBackup,
-	getBackupProgress,
-	getRewindState,
+	getOldestItemTs,
 } from 'state/selectors';
 
 const flushEmptyDays = days => [
@@ -216,17 +216,10 @@ class ActivityLog extends Component {
 		requestedRestoreId: PropTypes.string,
 		rewindRequestDismiss: PropTypes.func.isRequired,
 		rewindRestore: PropTypes.func.isRequired,
-		rewindStatusError: PropTypes.shape( {
-			error: PropTypes.string.isRequired,
-			message: PropTypes.string.isRequired,
-		} ),
 		createBackup: PropTypes.func.isRequired,
 		siteId: PropTypes.number,
 		siteTitle: PropTypes.string,
 		slug: PropTypes.string,
-
-		// FIXME: Testing only
-		isPressable: PropTypes.bool,
 
 		// localize
 		moment: PropTypes.func.isRequired,
@@ -402,56 +395,51 @@ class ActivityLog extends Component {
 	}
 
 	renderErrorMessage() {
-		const { isRewindActive } = this.props;
+		const { rewindState, translate } = this.props;
 
-		if ( ! isRewindActive ) {
+		if ( ! rewindState.rewind || rewindState.rewind.status !== 'failed' ) {
 			return null;
 		}
 
-		const { rewindStatusError, translate } = this.props;
-
-		if ( isRewindActive && rewindStatusError ) {
-			return (
-				<ActivityLogBanner status="error" icon={ null }>
-					{ translate( 'Rewind error: %s', { args: rewindStatusError.message } ) }
-					<br />
-					{ translate( 'Do you have an appropriate plan?' ) }
-				</ActivityLogBanner>
-			);
-		}
+		return (
+			<ActivityLogBanner status="error" icon={ null }>
+				{ translate( 'Something happened and we were unable to restore your site.' ) }
+				<br />
+				{ translate( 'Please try again or contact support.' ) }
+			</ActivityLogBanner>
+		);
 	}
 
 	renderMonthNavigation( position ) {
-		const { logs, slug } = this.props;
-		const startOfMonth = this.getStartMoment().startOf( 'month' );
-		const query = {
-			period: 'month',
-			date: startOfMonth.format( 'YYYY-MM-DD' ),
-		};
+		const { logs } = this.props;
 
 		if ( position === 'bottom' && ( ! isNull( logs ) && isEmpty( logs ) ) ) {
 			return null;
 		}
 
+		const { slug, changePeriod, oldestItemTs } = this.props;
+		const startOfMonth = this.getStartMoment().startOf( 'month' );
+		const monthStartTs = startOfMonth.clone().valueOf();
+		const query = {
+			period: 'month',
+			date: startOfMonth.format( 'YYYY-MM-DD' ),
+		};
+
 		return (
 			<StatsPeriodNavigation
 				date={ startOfMonth }
-				onPeriodChange={
-					position === 'bottom' ? this.handlePeriodChangeBottom : this.props.changePeriod
-				}
+				onPeriodChange={ position === 'bottom' ? this.handlePeriodChangeBottom : changePeriod }
 				period="month"
 				url={ `/stats/activity/${ slug }` }
+				hidePreviousArrow={ monthStartTs <= oldestItemTs }
 			>
 				<DatePicker isActivity={ true } period="month" date={ startOfMonth } query={ query } />
 			</StatsPeriodNavigation>
 		);
 	}
 
-	render() {
+	getActivityLog() {
 		const {
-			canViewActivityLog,
-			hasFirstBackup,
-			isRewindActive,
 			logRequestQuery,
 			logs,
 			moment,
@@ -461,18 +449,6 @@ class ActivityLog extends Component {
 			slug,
 			translate,
 		} = this.props;
-
-		if ( false === canViewActivityLog ) {
-			return (
-				<Main>
-					<SidebarNavigation />
-					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					/>
-				</Main>
-			);
-		}
 
 		const disableRestore =
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
@@ -500,20 +476,25 @@ class ActivityLog extends Component {
 		);
 
 		return (
-			<Main wideLayout>
-				<QueryRewindStatus siteId={ siteId } />
-				<QueryRewindState siteId={ siteId } />
+			<div>
 				<QueryActivityLog siteId={ siteId } { ...logRequestQuery } />
-				{ siteId && isRewindActive && <QueryRewindBackupStatus siteId={ siteId } /> }
+				{ siteId &&
+					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
-				{ isRewindActive && <QueryJetpackCredentials siteId={ siteId } /> }
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
+				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
+				{ siteId &&
+					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						icon="history"
-						href={ `/settings/security/${ slug }` }
+						href={
+							rewindState.canAutoconfigure
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
+								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
+						}
 						title={ translate( 'Add site credentials' ) }
 						description={ translate(
 							'Backups and security scans require access to your site to work properly.'
@@ -524,15 +505,15 @@ class ActivityLog extends Component {
 					<Banner
 						icon="history"
 						disableHref
-						title={ translate( 'Site configuration underway' ) }
+						title={ translate( 'Your backup is underway' ) }
 						description={ translate(
-							"There's nothing more you need to do right now. " +
-								"You'll be able to restore backups soon."
+							"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
+								"After this initial backup, we'll save future changes in real time."
 						) }
 					/>
 				) }
 				{ this.renderErrorMessage() }
-				{ hasFirstBackup && this.renderMonthNavigation() }
+				{ this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
 				{ isEmpty( logs ) ? (
 					noLogsContent
@@ -581,7 +562,7 @@ class ActivityLog extends Component {
 												applySiteOffset={ this.applySiteOffset }
 												disableRestore={ disableRestore }
 												disableBackup={ disableBackup }
-												isRewindActive={ isRewindActive }
+												isRewindActive={ 'active' === rewindState.state }
 												logs={ events }
 												closeDialog={ this.handleCloseDialog }
 												siteId={ siteId }
@@ -594,7 +575,39 @@ class ActivityLog extends Component {
 						) }
 					</section>
 				) }
-				{ hasFirstBackup && this.renderMonthNavigation( 'bottom' ) }
+				{ this.renderMonthNavigation( 'bottom' ) }
+			</div>
+		);
+	}
+
+	render() {
+		const { canViewActivityLog, translate } = this.props;
+
+		if ( false === canViewActivityLog ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
+
+		const { siteId, context, rewindState } = this.props;
+
+		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
+		const rewindIsNotReady =
+			includes( [ 'uninitialized', 'awaitingCredentials' ], rewindState.state ) ||
+			'vp_can_transfer' === rewindState.reason;
+
+		return (
+			<Main wideLayout>
+				<QueryRewindState siteId={ siteId } />
+				{ '' !== rewindNoThanks && rewindIsNotReady
+					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
+					: this.getActivityLog() }
 				<JetpackColophon />
 			</Main>
 		);
@@ -613,8 +626,6 @@ export default connect(
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
-			hasFirstBackup: ! isEmpty( getRewindStartDate( state, siteId ) ),
-			isRewindActive: isRewindActiveSelector( state, siteId ),
 			logRequestQuery,
 			logs: getActivityLogs(
 				state,
@@ -629,14 +640,11 @@ export default connect(
 			backupProgress: getBackupProgress( state, siteId ),
 			requestData: { logs: getRequest( state, activityLogRequest( siteId, logRequestQuery ) ) },
 			rewindState: getRewindState( state, siteId ),
-			rewindStatusError: getRewindStatusError( state, siteId ),
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
-
-			// FIXME: Testing only
-			isPressable: get( state.activityLog.rewindStatus, [ siteId, 'isPressable' ], null ),
+			oldestItemTs: getOldestItemTs( state, siteId ),
 		};
 	},
 	{

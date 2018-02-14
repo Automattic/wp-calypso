@@ -3,9 +3,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,47 +14,43 @@ import CompactCard from 'components/card/compact';
 import CredentialsSetupFlow from './credentials-setup-flow';
 import CredentialsConfigured from './credentials-configured';
 import Gridicon from 'gridicons';
-import QueryRewindStatus from 'components/data/query-rewind-status';
-import QueryJetpackCredentials from 'components/data/query-jetpack-credentials';
+import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasMainCredentials, isRewindActive } from 'state/selectors';
+import { getRewindState } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
-class Backups extends Component {
-	static propTypes = {
-		hasMainCredentials: PropTypes.bool,
-		isRewindActive: PropTypes.bool,
-		siteId: PropTypes.number.isRequired,
-	};
-
+class JetpackCredentials extends Component {
 	render() {
-		const {
-			hasMainCredentials, // eslint-disable-line no-shadow
-			isRewindActive, // eslint-disable-line no-shadow
-			translate,
-			siteId,
-		} = this.props;
+		const { credentials, rewindState, siteId, translate, siteSlug } = this.props;
+		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
+		const hasCredentials = some( credentials, { role: 'main' } );
 
 		return (
 			<div className="jetpack-credentials">
-				<QueryRewindStatus siteId={ this.props.siteId } />
-				<QueryJetpackCredentials siteId={ this.props.siteId } />
-				{ isRewindActive && (
-					<CompactCard className="jetpack-credentials__header">
-						<span>{ translate( 'Backups and security scans' ) }</span>
-						{ hasMainCredentials && (
-							<span className="jetpack-credentials__connected">
-								<Gridicon
-									icon="checkmark"
-									size={ 18 }
-									className="jetpack-credentials__connected-checkmark"
-								/>
-								{ translate( 'Connected' ) }
-							</span>
-						) }
+				<QueryRewindState siteId={ siteId } />
+				<CompactCard className="jetpack-credentials__header">
+					<span>{ translate( 'Backups and security scans' ) }</span>
+					{ hasAuthorized && (
+						<span className="jetpack-credentials__connected">
+							<Gridicon
+								icon="checkmark"
+								size={ 18 }
+								className="jetpack-credentials__connected-checkmark"
+							/>
+							{ translate( 'Connected' ) }
+						</span>
+					) }
+				</CompactCard>
+				{ hasCredentials ? (
+					<CredentialsConfigured siteId={ siteId } />
+				) : (
+					<CredentialsSetupFlow siteId={ siteId } />
+				) }
+				{ hasCredentials && (
+					<CompactCard href={ `/stats/activity/${ siteSlug }` }>
+						{ translate( "View your site's backups and activity" ) }
 					</CompactCard>
 				) }
-				{ isRewindActive && ! hasMainCredentials && <CredentialsSetupFlow siteId={ siteId } /> }
-				{ isRewindActive && hasMainCredentials && <CredentialsConfigured siteId={ siteId } /> }
 			</div>
 		);
 	}
@@ -62,10 +58,12 @@ class Backups extends Component {
 
 export default connect( state => {
 	const siteId = getSelectedSiteId( state );
+	const { credentials, state: rewindState } = getRewindState( state, siteId );
 
 	return {
-		hasMainCredentials: hasMainCredentials( state, siteId ),
-		isRewindActive: isRewindActive( state, siteId ),
+		credentials,
+		rewindState,
 		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 	};
-} )( localize( Backups ) );
+} )( localize( JetpackCredentials ) );

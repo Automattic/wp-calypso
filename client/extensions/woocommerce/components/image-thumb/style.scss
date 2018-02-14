@@ -1,0 +1,24 @@
+.image-thumb__placeholder {
+	background-size: cover;
+	background-image: url( '/calypso/images/extensions/woocommerce/image-placeholder.png' );
+	border: 1px solid $gray-light;
+}
+
+.image-thumb {
+	display: inline-block;
+	position: relative;
+	
+	&.hasImage {
+		overflow: hidden;
+	}
+
+	img {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		height: 100%;
+		width: auto;
+		-webkit-transform: translate( -50%, -50% );
+		transform: translate( -50%, -50% );
+	}
+}

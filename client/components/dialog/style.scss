@@ -12,13 +12,13 @@
 
 	&.dialog-enter,
 	&.dialog-leave.dialog-leave-active {
-		background-color: rgba( lighten( $gray, 30% ), 0 );
+		background-color: rgba( $gray-lighten-30, 0 );
 	}
 
 	&,
 	&.dialog-enter.dialog-enter-active,
 	&.dialog-leave {
-		background-color: rgba( lighten( $gray, 30% ), 0.8 );
+		background-color: rgba( $gray-lighten-30, 0.8 );
 	}
 
 	// covers the masterbar as well
@@ -74,7 +74,7 @@
 
 .dialog__action-buttons {
 	position: relative;
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 	padding: 16px;
 	margin: 0;
 	text-align: right;

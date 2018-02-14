@@ -45,7 +45,7 @@
 .sortable-list__navigation-button {
 	padding: 8px;
 	background-color: lighten( $gray, 33% );
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	color: $gray;
 
 	&:not( :disabled ):hover {
