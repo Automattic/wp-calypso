@@ -11,18 +11,16 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingPostLikes } from 'state/selectors';
 import { requestPostLikes } from 'state/posts/likes/actions';
 
 class QueryPostLikes extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
-		isRequesting: PropTypes.bool,
 		requestPostLikes: PropTypes.func,
 	};
 
-	componentWillMount() {
+	componentDidMount() {
 		this.request( this.props );
 	}
 
@@ -32,13 +30,8 @@ class QueryPostLikes extends Component {
 		}
 	}
 
-	request( props ) {
-		const { isRequesting, postId, siteId } = props;
-		if ( isRequesting ) {
-			return;
-		}
-
-		props.requestPostLikes( siteId, postId );
+	request( { requestPostLikes: rpl, siteId, postId } ) {
+		rpl( siteId, postId );
 	}
 
 	render() {
@@ -46,11 +39,4 @@ class QueryPostLikes extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			isRequesting: isRequestingPostLikes( state, ownProps.siteId ),
-		};
-	},
-	{ requestPostLikes }
-)( QueryPostLikes );
+export default connect( null, { requestPostLikes } )( QueryPostLikes );
