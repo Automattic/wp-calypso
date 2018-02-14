@@ -228,7 +228,7 @@ function getInitialState( reducer ) {
  *                                   validation
  * @return {Function}                Reducer function
  */
-export function createReducer( initialState = null, customHandlers = {}, schema = null ) {
+export function createReducer( initialState, customHandlers, schema ) {
 	// Define default handlers for serialization actions. If no schema is
 	// provided, always return the initial state. Otherwise, allow for
 	// serialization and validate on deserialize.

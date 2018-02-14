@@ -121,27 +121,27 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#createReducer()', () => {
-		describe( 'only default behavior', () => {
+		describe( 'with null initial state and no handlers', () => {
 			beforeAll( () => {
-				reducer = createReducer();
+				reducer = createReducer( null, {} );
 			} );
 
 			test( 'should return a function', () => {
 				expect( reducer ).to.be.a.function;
 			} );
 
-			test( 'should return initial state when invalid action passed', () => {
-				const invalidAction = {};
+			test( 'should return initial state when hydration action passed', () => {
+				expect( reducer( undefined, { type: '@@calypso/INIT' } ) ).to.be.null;
+			} );
 
-				expect( reducer( currentState, invalidAction ) ).to.be.deep.equal( currentState );
+			test( 'should return identical state when invalid action passed', () => {
+				const invalidAction = {};
+				expect( reducer( currentState, invalidAction ) ).to.equal( currentState );
 			} );
 
 			test( 'should return initial state when unknown action type passed', () => {
-				const unknownAction = {
-					type: 'UNKNOWN',
-				};
-
-				expect( reducer( currentState, unknownAction ) ).to.be.deep.equal( currentState );
+				const unknownAction = { type: 'UNKNOWN' };
+				expect( reducer( currentState, unknownAction ) ).to.equal( currentState );
 			} );
 
 			test( 'should return undefined when serialize action type passed', () => {
