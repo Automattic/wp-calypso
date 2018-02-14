@@ -14,6 +14,9 @@ import { getSerializedOrdersQuery } from './utils';
 import invoice from './send-invoice/reducer';
 import notes from './notes/reducer';
 import {
+	WOOCOMMERCE_ORDER_DELETE,
+	WOOCOMMERCE_ORDER_DELETE_FAILURE,
+	WOOCOMMERCE_ORDER_DELETE_SUCCESS,
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -25,6 +28,28 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import refunds from './refunds/reducer';
+
+/**
+ * Returns the updated order requests state after an action has been
+ * dispatched. The state reflects a mapping of order ID to a
+ * boolean reflecting whether a request for that page is in progress.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function isDeleting( state = {}, action ) {
+	switch ( action.type ) {
+		case WOOCOMMERCE_ORDER_DELETE:
+		case WOOCOMMERCE_ORDER_DELETE_FAILURE:
+		case WOOCOMMERCE_ORDER_DELETE_SUCCESS:
+			return Object.assign( {}, state, {
+				[ action.orderId ]: WOOCOMMERCE_ORDER_DELETE === action.type,
+			} );
+		default:
+			return state;
+	}
+}
 
 /**
  * Returns the updated order requests state after an action has been
@@ -152,6 +177,7 @@ export function total( state = 1, action ) {
 
 export default combineReducers( {
 	invoice,
+	isDeleting,
 	isQueryLoading,
 	isLoading,
 	isUpdating,
