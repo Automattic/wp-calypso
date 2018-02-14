@@ -38,7 +38,7 @@ class MasterbarLoggedOut extends PureComponent {
 	};
 
 	renderLoginItem() {
-		const { sectionName, translate, redirectUri } = this.props;
+		const { currentQuery, sectionName, translate, redirectUri } = this.props;
 
 		if ( includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ) {
 			return null;
@@ -54,6 +54,8 @@ class MasterbarLoggedOut extends PureComponent {
 
 		const loginUrl = login( {
 			...params,
+			// We may know the email from Jetpack connection details
+			emailAddress: get( currentQuery, 'user_email' ),
 			isJetpack: 'jetpack-connect' === sectionName,
 			isNative: config.isEnabled( 'login/native-login-links' ),
 		} );
