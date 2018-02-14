@@ -128,8 +128,8 @@ export function isDeletingInvite( state, siteId, inviteId ) {
 }
 
 /**
- * Returns true if currently deleting an invite for the given site and
- * invite ID, or false otherwise.
+ * Returns true if the invite for the given site and invite ID was successfully
+ * deleted, or false otherwise.
  *
  * @param  {Object}  state    Global state tree
  * @param  {Number}  siteId   Site ID
