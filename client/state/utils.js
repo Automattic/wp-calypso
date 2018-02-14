@@ -308,54 +308,32 @@ export const withoutPersistence = reducer => {
  * serialization (persistence) handlers based on the presence of a schema.
  *
  * @param  {*}        initialState   Initial state
- * @param  {Object}   customHandlers Object mapping action types to state
- *                                   action handlers
- * @param  {?Object}  schema         JSON schema object for deserialization
- *                                   validation
+ * @param  {Object}   customHandlers Object mapping action types to state action handlers
+ * @param  {?Object}  schema         JSON schema object for deserialization validation
  * @return {Function}                Reducer function
  */
 export function createReducer( initialState, customHandlers, schema ) {
-	// Define default handlers for serialization actions. If no schema is
-	// provided, always return the initial state. Otherwise, allow for
-	// serialization and validate on deserialize.
-	let defaultHandlers;
-	if ( schema ) {
-		defaultHandlers = {
-			[ SERIALIZE ]: state => state,
-			[ DESERIALIZE ]: state => {
-				if ( isValidStateWithSchema( state, schema, customHandlers ) ) {
-					return state;
-				}
-
-				return initialState;
-			},
-		};
-	} else {
-		defaultHandlers = {
-			[ SERIALIZE ]: () => undefined,
-			[ DESERIALIZE ]: () => initialState,
-		};
-	}
-
-	const handlers = {
-		...defaultHandlers,
-		...customHandlers,
-	};
+	let handlers = customHandlers;
 
 	// When custom serialization behavior is provided, we assume that it may
 	// involve heavy logic (mapping, converting from Immutable instance), so
 	// we cache the result and only regenerate when state has changed.
-	if ( customHandlers[ SERIALIZE ] ) {
+	const customSerializeHandler = customHandlers[ SERIALIZE ];
+	if ( customSerializeHandler ) {
 		let lastState, lastSerialized;
-		handlers[ SERIALIZE ] = ( state, action ) => {
+		const cachedSerializeHandler = ( state, action ) => {
 			if ( state === lastState ) {
 				return lastSerialized;
 			}
 
-			const serialized = customHandlers[ SERIALIZE ]( state, action );
+			const serialized = customSerializeHandler( state, action );
 			lastState = state;
 			lastSerialized = serialized;
 			return serialized;
+		};
+		handlers = {
+			...handlers,
+			[ SERIALIZE ]: cachedSerializeHandler,
 		};
 	}
 
@@ -376,9 +354,17 @@ export function createReducer( initialState, customHandlers, schema ) {
 		return state;
 	};
 
-	//used to propagate actions properly when combined in combineReducersWithPersistence
-	reducer.hasCustomPersistence = true;
+	if ( schema ) {
+		return withSchemaValidation( schema, reducer );
+	}
 
+	if ( ! handlers[ SERIALIZE ] && ! handlers[ DESERIALIZE ] ) {
+		return withoutPersistence( reducer );
+	}
+
+	// if the reducer has at least one custom persistence handler (SERIALIZE or DESERIALIZE)
+	// it's treated as a reducer with custom persistence.
+	reducer.hasCustomPersistence = true;
 	return reducer;
 }
 
