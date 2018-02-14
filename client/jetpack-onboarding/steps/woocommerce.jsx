@@ -32,7 +32,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	};
 
 	handleWooCommerceInstallationSkip = () => {
-		this.props.recordJpoEvent( 'calypso_jpo_woocommerce_dont_install_clicked' );
+		this.props.recordJpoEvent( 'calypso_jpo_woocommerce_skip_install_clicked' );
 	};
 
 	render() {
