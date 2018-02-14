@@ -56,6 +56,16 @@ UndocumentedMe.prototype.getReceipt = function( receiptId, fn ) {
 	);
 };
 
+UndocumentedMe.prototype.getDetailedReceipt = function( receiptId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/me/billing-history/receipt/${ receiptId }`,
+		},
+		{ detailed: true },
+		fn
+	);
+};
+
 UndocumentedMe.prototype.purchases = function( callback ) {
 	return this.wpcom.req.get( '/me/purchases', callback );
 };

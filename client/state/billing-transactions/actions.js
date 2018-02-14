@@ -8,6 +8,9 @@ import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
+	BILLING_RECEIPT_REQUEST,
+	BILLING_RECEIPT_REQUEST_FAILURE,
+	BILLING_RECEIPT_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -42,6 +45,31 @@ export const requestBillingTransactions = () => {
 				} );
 			} );
 	};
+};
+
+export const requestBillingTransaction = receiptId => dispatch => {
+	dispatch( {
+		type: BILLING_RECEIPT_REQUEST,
+		receiptId,
+	} );
+
+	return wp
+		.undocumented()
+		.me()
+		.getDetailedReceipt( receiptId )
+		.then( receipt => {
+			dispatch( {
+				type: BILLING_RECEIPT_REQUEST_SUCCESS,
+				receiptId,
+				receipt,
+			} );
+		} )
+		.catch( () => {
+			dispatch( {
+				type: BILLING_RECEIPT_REQUEST_FAILURE,
+				receiptId,
+			} );
+		} );
 };
 
 export const sendBillingReceiptEmail = receiptId => {

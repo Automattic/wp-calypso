@@ -20,16 +20,22 @@ import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import tableRows from './table-rows';
 import { groupDomainProducts } from './utils';
-import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
+import {
+	getPastBillingTransaction,
+	getPastBillingTransactions,
+	isPastBillingTransactionError,
+	isRequestingBillingTransaction,
+} from 'state/selectors';
+import { requestBillingTransaction } from 'state/billing-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
-		this.redirectIfInvalidTransaction();
+		this.fetchTransactionOrRedirect();
 	}
 
 	componentDidUpdate() {
-		this.redirectIfInvalidTransaction();
+		this.fetchTransactionOrRedirect();
 	}
 
 	recordClickEvent = action => {
@@ -45,11 +51,22 @@ class BillingReceipt extends React.Component {
 		window.print();
 	};
 
-	redirectIfInvalidTransaction() {
-		const { totalTransactions, transaction } = this.props;
+	fetchTransactionOrRedirect() {
+		const {
+			requestingBillingTransaction,
+			totalTransactions,
+			transaction,
+			transactionFetchError,
+			transactionId,
+		} = this.props;
 
-		if ( ! transaction && totalTransactions !== null ) {
+		if ( transactionFetchError ) {
 			page.redirect( billingHistory );
+			return;
+		}
+
+		if ( ! transaction && totalTransactions !== null && ! requestingBillingTransaction ) {
+			this.props.requestBillingTransaction( transactionId );
 		}
 	}
 
@@ -204,7 +221,11 @@ class BillingReceipt extends React.Component {
 			<div>
 				<Card compact className="billing-history__receipt-card">
 					<div className="billing-history__app-overview">
-						<img src={ transaction.icon } title={ transaction.service } />
+						<img
+							src={ transaction.icon }
+							title={ transaction.service }
+							alt={ transaction.service }
+						/>
 						<h2>
 							{' '}
 							{ translate( '{{link}}%(service)s{{/link}} {{small}}by %(organization)s{{/small}}', {
@@ -243,7 +264,7 @@ class BillingReceipt extends React.Component {
 				<Card compact className="billing-history__receipt-links">
 					<a
 						href={ transaction.support }
-						className="button is-primary"
+						className="billing-history__support-button button is-primary"
 						onClick={ this.handleSupportLinkClick }
 					>
 						{ translate( 'Contact %(transactionService)s Support', {
@@ -285,10 +306,13 @@ export default connect(
 
 		return {
 			transaction: getPastBillingTransaction( state, ownProps.transactionId ),
+			transactionFetchError: isPastBillingTransactionError( state, ownProps.transactionId ),
+			requestingBillingTransaction: isRequestingBillingTransaction( state, ownProps.transactionId ),
 			totalTransactions: transactions ? transactions.length : null,
 		};
 	},
 	{
 		recordGoogleEvent,
+		requestBillingTransaction,
 	}
 )( localize( BillingReceipt ) );

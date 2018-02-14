@@ -8,11 +8,18 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
+import {
+	requestBillingTransaction,
+	requestBillingTransactions,
+	sendBillingReceiptEmail,
+} from '../actions';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
+	BILLING_RECEIPT_REQUEST,
+	BILLING_RECEIPT_REQUEST_FAILURE,
+	BILLING_RECEIPT_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
@@ -157,6 +164,58 @@ describe( 'actions', () => {
 						error: sinon.match( {
 							message,
 						} ),
+					} );
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#requestBillingTransaction', () => {
+		const receiptId = 12345678;
+
+		describe( 'success', () => {
+			useNock( nock => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '?detailed=true' )
+					.reply( 200, { data: 'receipt' } );
+			} );
+
+			test( 'should dispatch request action', () => {
+				requestBillingTransaction( receiptId )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: BILLING_RECEIPT_REQUEST,
+					receiptId,
+				} );
+			} );
+
+			test( 'should dispatch success action', () => {
+				return requestBillingTransaction( receiptId )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: BILLING_RECEIPT_REQUEST_SUCCESS,
+						receiptId,
+						receipt: { data: 'receipt' },
+					} );
+				} );
+			} );
+		} );
+
+		describe( 'failure', () => {
+			useNock( nock => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '?detailed=true' )
+					.reply( 403, {
+						error: 'authorization_required',
+					} );
+			} );
+
+			test( 'should dispatch failure action', () => {
+				return requestBillingTransaction( receiptId )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: BILLING_RECEIPT_REQUEST_FAILURE,
+						receiptId,
 					} );
 				} );
 			} );
