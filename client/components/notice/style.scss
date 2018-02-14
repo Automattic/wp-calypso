@@ -179,6 +179,10 @@ a.notice__action {
 		}
 	}
 
+	&:visited {
+		color: $gray-lighten-10;
+	}
+
 	&:hover {
 		color: $white;
 	}
