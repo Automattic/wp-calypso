@@ -8,7 +8,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { isEnabled } from 'config';
 import peopleController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -31,29 +30,27 @@ export default function() {
 		clientRender
 	);
 
-	if ( isEnabled( 'manage/people/invites' ) ) {
-		page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
+	page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
 
-		page(
-			'/people/invites/:site_id',
-			peopleController.enforceSiteEnding,
-			siteSelection,
-			navigation,
-			peopleController.peopleInvites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/people/invites/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peopleInvites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/people/invites/:site_id/:invite_key',
-			peopleController.enforceSiteEnding,
-			siteSelection,
-			navigation,
-			peopleController.peopleInviteDetails,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/people/invites/:site_id/:invite_key',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peopleInviteDetails,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/people/new/:site_id',
@@ -76,11 +73,5 @@ export default function() {
 	);
 
 	// Anything else is unexpected and should be redirected to the default people management URL: /people/team
-	page(
-		'/people/(.*)?',
-		siteSelection,
-		peopleController.redirectToTeam,
-		makeLayout,
-		clientRender
-	);
+	page( '/people/(.*)?', siteSelection, peopleController.redirectToTeam, makeLayout, clientRender );
 }

@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import createReactClass from 'create-react-class';
-import { isEnabled } from 'config';
 import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -122,14 +121,10 @@ class PeopleSectionNav extends Component {
 	}
 
 	getNavigableFilters() {
-		const allowedFilterIds = [ 'team', 'followers', 'email-followers' ];
+		const allowedFilterIds = [ 'team', 'followers', 'email-followers', 'invites' ];
 
 		if ( this.shouldDisplayViewers() ) {
 			allowedFilterIds.push( 'viewers' );
-		}
-
-		if ( isEnabled( 'manage/people/invites' ) ) {
-			allowedFilterIds.push( 'invites' );
 		}
 
 		return this.getFilters().filter(
