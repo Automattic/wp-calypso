@@ -36,6 +36,7 @@ import userUtilities from 'lib/user/utils';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import { decodeEntities } from 'lib/formatting';
+import { getCurrentQueryArguments, getCurrentRoute } from 'state/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
@@ -90,6 +91,8 @@ export class JetpackAuthorize extends Component {
 		} ).isRequired,
 		authorize: PropTypes.func.isRequired,
 		calypsoStartedConnection: PropTypes.bool,
+		currentQuery: PropTypes.object,
+		currentRoute: PropTypes.string,
 		hasExpiredSecretError: PropTypes.bool,
 		hasXmlrpcError: PropTypes.bool,
 		isAlreadyOnSitesList: PropTypes.bool,
@@ -180,6 +183,16 @@ export class JetpackAuthorize extends Component {
 			externalRedirect( url );
 		}
 	}
+
+	getLoginRedirect = () => {
+		return addQueryArgs(
+			{
+				...this.props.currentQuery,
+				auth_approved: true,
+			},
+			this.props.currentRoute
+		);
+	};
 
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
@@ -281,7 +294,7 @@ export class JetpackAuthorize extends Component {
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
-		userUtilities.logout( window.location.href );
+		userUtilities.logout( this.getLoginRedirect() );
 	};
 
 	handleResolve = () => {
@@ -610,7 +623,13 @@ export class JetpackAuthorize extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem href={ login( { redirectTo: window.location.href } ) }>
+				<LoggedOutFormLinkItem
+					href={ login( {
+						isJetpack: true,
+						isNative: config.isEnabled( 'login/native-login-links' ),
+						redirectTo: this.getLoginRedirect(),
+					} ) }
+				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
@@ -686,6 +705,8 @@ export default connect(
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
 			authorizationData: getAuthorizationData( state ),
 			calypsoStartedConnection: isCalypsoStartedConnection( authQuery.site ),
+			currentQuery: getCurrentQueryArguments( state ),
+			currentRoute: getCurrentRoute( state ),
 			hasExpiredSecretError: hasExpiredSecretErrorSelector( state ),
 			hasXmlrpcError: hasXmlrpcErrorSelector( state ),
 			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state, authQuery.site ),
