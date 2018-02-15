@@ -34,7 +34,7 @@ describe( 'reducer', () => {
 				},
 			};
 			const state = isComplete( initialState, jetpackRemoteInstall( url ) );
-			expect( state[ url ] ).toBeFalsy();
+			expect( state[ url ] ).not.toBeDefined();
 		} );
 	} );
 
@@ -47,12 +47,12 @@ describe( 'reducer', () => {
 
 		test( 'should be set on install request', () => {
 			const state = inProgress( undefined, jetpackRemoteInstall( url ) );
-			expect( state[ url ] ).toBeTruthy();
+			expect( state[ url ] ).toBe( true );
 		} );
 
 		test( 'should be cleared on install success', () => {
 			const state = inProgress( inProgressState, jetpackRemoteInstallComplete( url ) );
-			expect( state[ url ] ).toBeFalsy();
+			expect( state[ url ] ).not.toBeDefined();
 		} );
 
 		test( 'should be cleared on install error', () => {
@@ -60,7 +60,7 @@ describe( 'reducer', () => {
 				inProgressState,
 				jetpackRemoteInstallUpdateError( url, errorCode )
 			);
-			expect( state[ url ] ).toBeFalsy();
+			expect( state[ url ] ).not.toBeDefined();
 		} );
 	} );
 
@@ -78,12 +78,12 @@ describe( 'reducer', () => {
 
 		test( 'should be cleared on successful install', () => {
 			const state = error( errorState, jetpackRemoteInstallComplete( url ) );
-			expect( state[ url ] ).toBeFalsy();
+			expect( state[ url ] ).not.toBeDefined();
 		} );
 
 		test( 'should be cleared on install request', () => {
 			const state = error( errorState, jetpackRemoteInstall( url ) );
-			expect( state[ url ] ).toBeFalsy();
+			expect( state[ url ] ).not.toBeDefined();
 		} );
 	} );
 } );
