@@ -70,7 +70,7 @@ describe( 'index', () => {
 			expect( url ).to.equal( '/log-in?client_id=12345' );
 		} );
 
-		test( 'should return the login url for Jetpck specific login', () => {
+		test( 'should return the login url for Jetpack specific login', () => {
 			const url = login( { isNative: true, isJetpack: true } );
 
 			expect( url ).to.equal( '/log-in/jetpack' );
