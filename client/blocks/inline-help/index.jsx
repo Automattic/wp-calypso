@@ -98,6 +98,14 @@ class InlineHelp extends Component {
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
 	};
 
+	showContactForm = () => {
+		// console.log( 'showContactForm' );
+	}
+
+	hideContactForm = () => {
+		// console.log( 'hideContactForm' );
+	}
+
 	render() {
 		const { translate } = this.props;
 		const classes = { 'is-active': this.state.showInlineHelp };
@@ -123,6 +131,10 @@ class InlineHelp extends Component {
 							openResult={ this.openResult }
 							searchQuery={ this.props.searchQuery }
 						/>
+                        <Button onClick={ this.showContactForm } className="inline-help__button" borderless>
+                            <Gridicon icon="comment" /> { translate( 'Contact us' ) }
+                            <Gridicon icon="chevron-down" className="inline-help__button-icon-right" />
+                        </Button>
 						<Button
 							onClick={ this.moreHelpClicked }
 							className="inline-help__button"

@@ -59,6 +59,11 @@
 			@include breakpoint( ">660px" ) {
 				top: 8px;
 			}
+
+			&.inline-help__button-icon-right {
+				left: auto;
+				right: 13px;
+			}
 		}
 	}
 }
