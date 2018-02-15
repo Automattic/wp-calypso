@@ -182,6 +182,7 @@ const webpackConfig = {
 		__dirname: 'mock',
 		fs: 'empty',
 		crypto: false,
+		stream: false,
 	},
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
