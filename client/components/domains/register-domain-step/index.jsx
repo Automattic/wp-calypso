@@ -367,8 +367,8 @@ class RegisterDomainStep extends React.Component {
 		} );
 
 		const timestamp = Date.now();
-		const testGroup = abtest( 'domainSuggestionTestV5' );
-		if ( 'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup ) {
+		const testGroup = abtest( 'domainSuggestionTestV6' );
+		if ( includes( [ 'group_1', 'group_2', 'group_3', 'group_4' ], testGroup ) ) {
 			searchVendor = testGroup;
 		}
 
@@ -678,11 +678,10 @@ class RegisterDomainStep extends React.Component {
 		const onAddMapping = domain => this.props.onAddMapping( domain, this.state );
 
 		const searchResults = this.state.searchResults || [];
-		const testGroup = abtest( 'domainSuggestionTestV5' );
-		let suggestions =
-			'group_1' === testGroup || 'group_2' === testGroup || 'group_3' === testGroup
-				? [ ...searchResults ]
-				: reject( searchResults, matchesSearchedDomain );
+		const testGroup = abtest( 'domainSuggestionTestV6' );
+		let suggestions = includes( [ 'group_1', 'group_2', 'group_3', 'group_4' ], testGroup )
+			? [ ...searchResults ]
+			: reject( searchResults, matchesSearchedDomain );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
