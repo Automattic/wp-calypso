@@ -134,6 +134,11 @@
 	overflow: hidden;
 }
 
+.layout.focus-sidebar:not(.is-section-post-editor) .layout__primary {
+	//when sidebar is focused, create a z-index stacking context on primary, so elements don't bleed in mobile views.
+	transform: translate( 0, 0 );
+}
+
 // site selector in the sidebar
 .layout__secondary .site-selector {
 	background: $gray-lighten-30;
