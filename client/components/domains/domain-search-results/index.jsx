@@ -21,9 +21,9 @@ import DomainTransferSuggestion from 'components/domains/domain-transfer-suggest
 import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
+import { getOfferAvailabilityForSearchResults } from 'lib/domains/registration/availability-messages';
 import Notice from 'components/notice';
 import Card from 'components/card';
-import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { TRANSFER_IN_NUX } from 'state/current-user/constants';
@@ -37,6 +37,7 @@ class DomainSearchResults extends React.Component {
 		lastDomainIsTransferrable: PropTypes.bool,
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
+		rootDomain: PropTypes.string,
 		cart: PropTypes.object,
 		products: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object,
@@ -64,6 +65,7 @@ class DomainSearchResults extends React.Component {
 			lastDomainStatus,
 			lastDomainSearched,
 			translate,
+			rootDomain,
 		} = this.props;
 		const availabilityElementClasses = classNames( {
 			'domain-search-results__domain-is-available': availableDomain,
@@ -76,7 +78,7 @@ class DomainSearchResults extends React.Component {
 		const testGroup = abtest( 'domainSuggestionTestV5' );
 		const showExactMatch = 'group_0' === testGroup;
 
-		let availabilityElement, domainSuggestionElement, offer;
+		let availabilityElement, domainSuggestionElement, offer, domainUnavailableMessage;
 
 		if ( availableDomain && showExactMatch ) {
 			// should use real notice component or custom class
@@ -106,39 +108,23 @@ class DomainSearchResults extends React.Component {
 			) &&
 			this.props.products.domain_map
 		) {
-			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
-
-			if ( isNextDomainFree( this.props.cart ) ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
-					{ args: { domain }, components }
-				);
-			} else if ( ! this.props.domainsWithPlansOnly || this.props.isSiteOnPaidPlan ) {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}',
-					{ args: { domain, cost: this.props.products.domain_map.cost_display }, components }
-				);
-			} else {
-				offer = translate(
-					'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} with WordPress.com Premium.{{/small}}',
-					{ args: { domain }, components }
-				);
-			}
+			( { offer, domainUnavailableMessage } = getOfferAvailabilityForSearchResults(
+				lastDomainSearched,
+				domain,
+				rootDomain,
+				isNextDomainFree( this.props.cart ),
+				this.handleAddMapping,
+				this.props.domainsWithPlansOnly,
+				this.props.isSiteOnPaidPlan,
+				this.props.products.domain_map.cost_display,
+				includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
+			) );
 
 			// Domain Mapping not supported for Store NUX yet.
 			if ( this.props.siteDesignType === DESIGN_TYPE_STORE ) {
 				offer = null;
 			}
 
-			const domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
-				? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
-						args: { tld: getTld( domain ) },
-						components: { strong: <strong /> },
-					} )
-				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
-						args: { domain },
-						components: { strong: <strong /> },
-					} );
 			if ( this.props.offerUnavailableOption ) {
 				if (
 					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
