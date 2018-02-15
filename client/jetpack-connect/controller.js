@@ -19,6 +19,7 @@ import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
+import RewindCredentialsForm from 'components/rewind-credentials-form';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
@@ -225,6 +226,13 @@ export function signupForm( context, next ) {
 		context.primary = <NoDirectAccessError />;
 	}
 	next();
+}
+
+export function credsForm( context ) {
+	removeSidebar( context );
+	context.primary = (
+		<RewindCredentialsForm role="main" siteId={ context.params.siteId } allowCancel={ false } />
+	);
 }
 
 export function authorizeForm( context, next ) {

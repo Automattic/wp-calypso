@@ -45,6 +45,15 @@ export default function() {
 		clientRender
 	);
 
+	page(
+		'/jetpack/connect/install',
+		controller.persistMobileAppFlow,
+		controller.setMasterbar,
+		controller.credsForm,
+		makeLayout,
+		clientRender
+	);
+
 	if ( isLoggedOut ) {
 		page(
 			'/jetpack/connect/authorize/:localeOrInterval?',
