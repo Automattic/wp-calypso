@@ -47,7 +47,11 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			return;
 		}
 
-		this.props.recordJpoEvent( 'calypso_jpo_site_title_submitted' );
+		this.props.recordJpoEvent( 'calypso_jpo_site_title_submitted', {
+			title_changed: this.state.blogname !== get( this.props.settings, 'siteTitle' ),
+			description_changed:
+				this.state.blogdescription !== get( this.props.settings, 'siteDescription' ),
+		} );
 
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.blogname,
