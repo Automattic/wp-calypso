@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -75,17 +75,16 @@ export const requestJetpackOnboardingSettings = ( { dispatch, getState }, action
 
 export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => {
 	const url = getUnconnectedSiteUrl( getState(), siteId );
-	if ( ! url ) {
-		return noop;
+	const noticeOptions = {
+		id: `jpo-communication-error-${ siteId }`,
+	};
+
+	if ( url ) {
+		noticeOptions.button = translate( 'Visit site admin' );
+		noticeOptions.href = trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack';
 	}
 
-	return dispatch(
-		errorNotice( translate( 'Something went wrong.' ), {
-			button: translate( 'Visit site admin' ),
-			href: trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack',
-			id: `jpo-communication-error-${ siteId }`,
-		} )
-	);
+	return dispatch( errorNotice( translate( 'Something went wrong.' ), noticeOptions ) );
 };
 
 /**
