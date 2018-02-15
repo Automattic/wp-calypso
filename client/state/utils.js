@@ -216,87 +216,6 @@ function getInitialState( reducer ) {
 }
 
 /**
- * Returns a reducer function with state calculation determined by the result
- * of invoking the handler key corresponding with the dispatched action type,
- * passing both the current state and action object. Defines default
- * serialization (persistence) handlers based on the presence of a schema.
- *
- * @param  {*}        initialState   Initial state
- * @param  {Object}   customHandlers Object mapping action types to state
- *                                   action handlers
- * @param  {?Object}  schema         JSON schema object for deserialization
- *                                   validation
- * @return {Function}                Reducer function
- */
-export function createReducer( initialState = null, customHandlers = {}, schema = null ) {
-	// Define default handlers for serialization actions. If no schema is
-	// provided, always return the initial state. Otherwise, allow for
-	// serialization and validate on deserialize.
-	let defaultHandlers;
-	if ( schema ) {
-		defaultHandlers = {
-			[ SERIALIZE ]: state => state,
-			[ DESERIALIZE ]: state => {
-				if ( isValidStateWithSchema( state, schema, customHandlers ) ) {
-					return state;
-				}
-
-				return initialState;
-			},
-		};
-	} else {
-		defaultHandlers = {
-			[ SERIALIZE ]: () => undefined,
-			[ DESERIALIZE ]: () => initialState,
-		};
-	}
-
-	const handlers = {
-		...defaultHandlers,
-		...customHandlers,
-	};
-
-	// When custom serialization behavior is provided, we assume that it may
-	// involve heavy logic (mapping, converting from Immutable instance), so
-	// we cache the result and only regenerate when state has changed.
-	if ( customHandlers[ SERIALIZE ] ) {
-		let lastState, lastSerialized;
-		handlers[ SERIALIZE ] = ( state, action ) => {
-			if ( state === lastState ) {
-				return lastSerialized;
-			}
-
-			const serialized = customHandlers[ SERIALIZE ]( state, action );
-			lastState = state;
-			lastSerialized = serialized;
-			return serialized;
-		};
-	}
-
-	const reducer = ( state = initialState, action ) => {
-		const { type } = action;
-
-		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
-			throw new TypeError(
-				'Reducer called with undefined type.' +
-					' Verify that the action type is defined in state/action-types.js'
-			);
-		}
-
-		if ( handlers.hasOwnProperty( type ) ) {
-			return handlers[ type ]( state, action );
-		}
-
-		return state;
-	};
-
-	//used to propagate actions properly when combined in combineReducersWithPersistence
-	reducer.hasCustomPersistence = true;
-
-	return reducer;
-}
-
-/**
  * Creates a schema-validating reducer
  *
  * Use this to wrap simple reducers with a schema-based
@@ -381,6 +300,49 @@ export const withoutPersistence = reducer => {
 
 	return wrappedReducer;
 };
+
+/**
+ * Returns a reducer function with state calculation determined by the result
+ * of invoking the handler key corresponding with the dispatched action type,
+ * passing both the current state and action object. Defines default
+ * serialization (persistence) handlers based on the presence of a schema.
+ *
+ * @param  {*}        initialState   Initial state
+ * @param  {Object}   handlers       Object mapping action types to state action handlers
+ * @param  {?Object}  schema         JSON schema object for deserialization validation
+ * @return {Function}                Reducer function
+ */
+export function createReducer( initialState, handlers, schema ) {
+	const reducer = ( state = initialState, action ) => {
+		const { type } = action;
+
+		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
+			throw new TypeError(
+				'Reducer called with undefined type.' +
+					' Verify that the action type is defined in state/action-types.js'
+			);
+		}
+
+		if ( handlers.hasOwnProperty( type ) ) {
+			return handlers[ type ]( state, action );
+		}
+
+		return state;
+	};
+
+	if ( schema ) {
+		return withSchemaValidation( schema, reducer );
+	}
+
+	if ( ! handlers[ SERIALIZE ] && ! handlers[ DESERIALIZE ] ) {
+		return withoutPersistence( reducer );
+	}
+
+	// if the reducer has at least one custom persistence handler (SERIALIZE or DESERIALIZE)
+	// it's treated as a reducer with custom persistence.
+	reducer.hasCustomPersistence = true;
+	return reducer;
+}
 
 /**
  * Returns a single reducing function that ensures that persistence is opt-in.
