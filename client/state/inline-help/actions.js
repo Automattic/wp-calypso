@@ -14,6 +14,7 @@ import {
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 	INLINE_HELP_OPEN_SELECTED_RESULT,
+	INLINE_HELP_OPEN_SELECTED_CONTEXT_LINK,
 	INLINE_HELP_DID_OPEN_CONTEXT_LINK,
 	INLINE_HELP_DID_OPEN_SELECTED_RESULT,
 	INLINE_HELP_SELECT_NEXT_CONTEXT_LINK,
@@ -82,11 +83,12 @@ export function selectPreviousResult() {
 }
 
 /**
- * Opens the selected result in the inline help results list.
+ * Open the selected result in the inline help results list.
  *
  * @return {Function}        Action thunk
  */
 export function openResult() {
+	console.log( 'openResult' );
 	return dispatch => {
 		dispatch( {
 			type: INLINE_HELP_OPEN_SELECTED_RESULT,
@@ -95,11 +97,12 @@ export function openResult() {
 }
 
 /**
- * Opens the selected result in the inline help results list.
+ * We did open the selected result in the inline help results list.
  *
  * @return {Function}        Action thunk
  */
 export function didOpenResult() {
+	console.log( 'didOpenResult' );
 	return dispatch => {
 		dispatch( {
 			type: INLINE_HELP_DID_OPEN_SELECTED_RESULT,
@@ -118,7 +121,7 @@ export function setSearchResults( searchQuery, searchResults ) {
 }
 
 function getDefaultContextLinks() {
-	// copied from client/me/help/main for now
+	// default context links, copied from client/me/help/main for now
 	const contextLinks = [
 		{
 			link: 'https://en.support.wordpress.com/com-vs-org/',
@@ -156,6 +159,8 @@ export function requestInlineHelpContextLinks() {
 		dispatch( {
 			type: INLINE_HELP_CONTEXT_LINK_REQUEST,
 		} );
+		// no network request yet -- just return default links.
+		// actual network request will be added in a future PR.
 		dispatch( {
 			type: INLINE_HELP_CONTEXT_LINK_REQUEST_SUCCESS,
 			items: getDefaultContextLinks(),
@@ -164,7 +169,7 @@ export function requestInlineHelpContextLinks() {
 }
 
 /**
- * Selects the next result in the inline help results list.
+ * Selects the next result in the inline help context links list.
  *
  * @return {Function}        Action thunk
  */
@@ -177,7 +182,7 @@ export function selectNextContextLink() {
 }
 
 /**
- * Selects the previous result in the inline help results list.
+ * Selects the previous result in the inline help context links list.
  *
  * @return {Function}        Action thunk
  */
@@ -190,11 +195,26 @@ export function selectPreviousContextLink() {
 }
 
 /**
- * Opens the selected result in the inline help context links list.
+ * Open the selected result in the inline help results list.
+ *
+ * @return {Function}        Action thunk
+ */
+export function openContextLink() {
+	console.log( 'openContextLink' );
+	return dispatch => {
+		dispatch( {
+			type: INLINE_HELP_OPEN_SELECTED_CONTEXT_LINK,
+		} );
+	};
+}
+
+/**
+ * We did open the selected result in the inline help results list.
  *
  * @return {Function}        Action thunk
  */
 export function didOpenContextLink() {
+	console.log( 'didOpenContextLink' );
 	return dispatch => {
 		dispatch( {
 			type: INLINE_HELP_DID_OPEN_CONTEXT_LINK,

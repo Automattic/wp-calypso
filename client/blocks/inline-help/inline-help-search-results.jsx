@@ -22,8 +22,9 @@ import {
 	getSelectedResult,
 	isRequestingInlineHelpSearchResultsForQuery,
 	shouldOpenSelectedResult,
+	shouldOpenSelectedContextLink,
 } from 'state/inline-help/selectors';
-import { didOpenResult } from 'state/inline-help/actions';
+import { didOpenResult, didOpenContextLink } from 'state/inline-help/actions';
 
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
@@ -49,13 +50,26 @@ class InlineHelpSearchResults extends Component {
 	}
 
 	componentWillUpdate( nextProps ) {
+		console.log( 'componentWillUpdate' );
 		if ( nextProps.shouldOpenSelectedResult ) {
+			console.log( 'nextProps.shouldOpenSelectedResult' );
 			const url = this.getSelectedUrl();
 			if ( ! url ) {
 				return;
 			}
 			this.followHelpLink( url )();
 			this.props.didOpenResult();
+			window.location = url;
+			return;
+		}
+		if ( nextProps.shouldOpenSelectedContextLink ) {
+			console.log( 'nextProps.shouldOpenSelectedContextLink' );
+			const url = this.getSelectedUrl(); // make specific to context links
+			if ( ! url ) {
+				return;
+			}
+			this.followHelpLink( url )();
+			this.props.didOpenContextLink();
 			window.location = url;
 			return;
 		}
@@ -138,10 +152,12 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	shouldOpenSelectedResult: shouldOpenSelectedResult( state ),
+	shouldOpenSelectedContextLink: shouldOpenSelectedContextLink( state ),
 	selectedResult: getSelectedResult( state ),
 } );
 const mapDispatchToProps = {
 	didOpenResult,
+	didOpenContextLink,
 	recordTracksEvent,
 };
 

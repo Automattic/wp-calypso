@@ -16,6 +16,7 @@ import SearchCard from 'components/search-card';
 import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
 import {
 	openResult,
+	openContextLink,
 	requestInlineHelpSearchResults,
 	selectNextResult,
 	selectPreviousResult,
@@ -62,6 +63,7 @@ class InlineHelpSearchCard extends Component {
 				break;
 			case 'Enter':
 				this.props.openResult();
+				this.props.openContextLink();
 				break;
 		}
 	};
@@ -91,6 +93,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 } );
 const mapDispatchToProps = {
 	openResult,
+	openContextLink,
 	recordTracksEvent,
 	requestInlineHelpSearchResults,
 	selectNextResult,
