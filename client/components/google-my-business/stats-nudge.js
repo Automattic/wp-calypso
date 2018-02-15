@@ -4,25 +4,22 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import DismissibleCard from 'blocks/dismissible-card';
 import SectionHeader from 'components/section-header';
 
-class GMBStatsNudge extends Component {
+class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 	};
-
-	recordNudgeShown() {
-		analytics.tracks.recordEvent( 'calypso_test_google_my_business_stats_nudge_shown' );
-	}
 
 	render() {
 		return (
@@ -30,6 +27,7 @@ class GMBStatsNudge extends Component {
 				className="google-my-business__stats-nudge"
 				preferenceName="show-google-my-business-nudge"
 				temporary
+				onClick={ this.props.trackNudgeDismissed }
 			>
 				<SectionHeader
 					className="google-my-business__stats-nudge-header"
@@ -53,8 +51,12 @@ class GMBStatsNudge extends Component {
 							) }
 						</h2>
 						<div className="google-my-business__stats-nudge-button-row">
-							<Button primary>{ this.props.translate( 'Start Now' ) }</Button>
-							<Button>{ this.props.translate( "I've Already Listed" ) }</Button>
+							<Button primary onClick={ this.props.trackNudgeStartNowClicked }>
+								{ this.props.translate( 'Start Now' ) }
+							</Button>
+							<Button onClick={ this.props.trackNudgeAlreadyListedClicked }>
+								{ this.props.translate( "I've Already Listed" ) }
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -63,8 +65,16 @@ class GMBStatsNudge extends Component {
 	}
 
 	componentWillMount() {
-		this.recordNudgeShown();
+		this.props.trackNudgeShown();
 	}
 }
 
-export default localize( GMBStatsNudge );
+export default connect( () => ( {} ), {
+	trackNudgeShown: () => recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_shown' ),
+	trackNudgeDismissed: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismissed' ),
+	trackNudgeStartNowClicked: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_clicked' ),
+	trackNudgeAlreadyListedClicked: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_already_listed_clicked' ),
+} )( localize( GoogleMyBusinessStatsNudge ) );
