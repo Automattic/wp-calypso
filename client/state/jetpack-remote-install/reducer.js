@@ -29,10 +29,10 @@ export const inProgress = keyedReducer(
 
 export const error = keyedReducer(
 	'url',
-	createReducer( '', {
+	createReducer( null, {
 		[ JETPACK_REMOTE_INSTALL_FAILURE ]: ( state, { errorCode } ) => errorCode,
-		[ JETPACK_REMOTE_INSTALL_SUCCESS ]: () => '',
-		[ JETPACK_REMOTE_INSTALL ]: () => '',
+		[ JETPACK_REMOTE_INSTALL_SUCCESS ]: () => null,
+		[ JETPACK_REMOTE_INSTALL ]: () => null,
 	} )
 );
 
