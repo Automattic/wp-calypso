@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import createReactClass from 'create-react-class';
-import { isEnabled } from 'config';
 import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 

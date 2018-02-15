@@ -8,7 +8,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { isEnabled } from 'config';
 import peopleController from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -74,11 +73,5 @@ export default function() {
 	);
 
 	// Anything else is unexpected and should be redirected to the default people management URL: /people/team
-	page(
-		'/people/(.*)?',
-		siteSelection,
-		peopleController.redirectToTeam,
-		makeLayout,
-		clientRender
-	);
+	page( '/people/(.*)?', siteSelection, peopleController.redirectToTeam, makeLayout, clientRender );
 }
