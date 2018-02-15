@@ -16,6 +16,7 @@ import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadLink,
 	getDocumentHeadMeta,
+	getDocumentHeadTitle,
 } from 'state/document-head/selectors';
 import {
 	setDocumentHeadTitle as setTitle,
@@ -53,7 +54,7 @@ class DocumentHead extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.title !== undefined && this.props.title !== nextProps.title ) {
+		if ( nextProps.title !== undefined && nextProps.title !== nextProps.savedTitle ) {
 			this.props.setTitle( nextProps.title );
 		}
 
@@ -133,6 +134,7 @@ export default connect(
 		formattedTitle: getDocumentHeadFormattedTitle( state ),
 		allLinks: getDocumentHeadLink( state ),
 		allMeta: getDocumentHeadMeta( state ),
+		savedTitle: getDocumentHeadTitle( state ),
 	} ),
 	{
 		setTitle,
