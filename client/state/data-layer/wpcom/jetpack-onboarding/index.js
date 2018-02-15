@@ -18,6 +18,7 @@ import {
 } from 'state/action-types';
 import { getUnconnectedSite, getUnconnectedSiteUrl } from 'state/selectors';
 import {
+	saveJetpackOnboardingSettings as saveJetpackOnboardingSettingsAction,
 	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
@@ -131,13 +132,23 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
 	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
 
-export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
-	dispatch(
-		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-			id: `jpo-notice-error-${ siteId }`,
-			duration: 5000,
-		} )
-	);
+export const announceSaveFailure = ( { dispatch }, { siteId, settings, meta: { dataLayer } } ) => {
+	const { error, retryCount } = dataLayer;
+	if (
+		settings.installWooCommerce === true &&
+		error.error === 'http_request_failed' &&
+		retryCount > 0
+	) {
+		dispatch( saveJetpackOnboardingSettingsAction( siteId, settings, retryCount - 1 ) );
+	} else {
+		dispatch(
+			errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
+				id: `jpo-notice-error-${ siteId }`,
+				duration: 5000,
+			} )
+		);
+	}
+};
 
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
