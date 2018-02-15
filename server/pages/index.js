@@ -519,6 +519,14 @@ module.exports = function() {
 			'X-Frame-Options': 'DENY',
 		} );
 
+		if ( calypsoEnv === 'development' ) {
+			return res.render( 'support-user', {
+				authorized: true,
+				supportUser: req.query.support_user,
+				supportToken: req.query._support_token,
+			} );
+		}
+
 		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
 			return res.render( 'support-user', {
 				authorized: false,
