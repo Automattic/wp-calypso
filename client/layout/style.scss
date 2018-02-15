@@ -34,6 +34,10 @@
 	@include breakpoint( "<660px" ) {
 		width: 100%;
 	}
+
+	.is-section-post-editor & {
+		display: none;
+	}
 }
 
 .sidebar {}
@@ -55,8 +59,8 @@
 */
 
 // Adjust the content as needed when focused on the site selector or sidebar
-.layout.focus-sites,
-.layout.focus-sidebar {
+.layout.focus-sites:not(.is-section-post-editor),
+.layout.focus-sidebar:not(.is-section-post-editor) {
 	.layout__primary {
 		pointer-events: none;
 
