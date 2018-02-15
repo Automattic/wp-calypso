@@ -36,10 +36,10 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
+	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
-	SITES_RECEIVE,
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -313,14 +313,8 @@ export function authorize( queryObject ) {
 				} );
 				// Update the user now that we are fully connected.
 				userFactory().fetch();
-				return wpcom.me().sites( {
-					site_visibility: 'all',
-					include_domain_only: true,
-					fields:
-						'ID,URL,name,capabilities,jetpack,visible,is_private,is_vip,icon,plan,jetpack_modules,single_user_site,is_multisite,options', //eslint-disable-line max-len
-					options:
-						'is_mapped_domain,unmapped_url,admin_url,is_redirect,is_automated_transfer,allowed_file_types,show_on_front,main_network_site,jetpack_version,software_version,default_post_format,created_at,frame_nonce,publicize_permanently_disabled,page_on_front,page_for_posts,advanced_seo_front_page_description,advanced_seo_title_formats,verification_services_codes,podcasting_archive,is_domain_only,default_sharing_status,default_likes_enabled,wordads,upgraded_filetypes_enabled,videopress_enabled,permalink_structure,gmt_offset,design_type', //eslint-disable-line max-len
-				} );
+				// Site may not be accessible yet, so force fetch from wpcom
+				return wpcom.site( client_id ).get( { force: 'wpcom' } );
 			} )
 			.then( data => {
 				dispatch(
@@ -328,14 +322,13 @@ export function authorize( queryObject ) {
 						site: client_id,
 					} )
 				);
-				debug( 'Sites list updated!', data );
+				debug( 'Site updated', data );
 				dispatch( {
-					type: SITES_RECEIVE,
-					sites: data.sites,
+					type: SITE_RECEIVE,
+					site: data,
 				} );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-					data: data,
 				} );
 			} )
 			.then( () => {
