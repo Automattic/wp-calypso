@@ -43,6 +43,7 @@ const user = userFactory();
 
 class Login extends Component {
 	static propTypes = {
+		disableAutoFocus: PropTypes.bool,
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		linkingSocialService: PropTypes.string,
@@ -230,6 +231,7 @@ class Login extends Component {
 			socialConnect,
 			socialService,
 			socialServiceResponse,
+			disableAutoFocus,
 		} = this.props;
 
 		let poller;
@@ -264,6 +266,7 @@ class Login extends Component {
 
 		return (
 			<LoginForm
+				disableAutoFocus={ disableAutoFocus }
 				onSuccess={ this.handleValidLogin }
 				privateSite={ privateSite }
 				socialService={ socialService }
