@@ -14,10 +14,7 @@ import {
 	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
-	REWIND_RESTORE_DISMISS_PROGRESS,
-	REWIND_RESTORE_PROGRESS_REQUEST,
 	REWIND_RESTORE_REQUEST,
-	REWIND_RESTORE_UPDATE_PROGRESS,
 	REWIND_BACKUP,
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
@@ -166,31 +163,6 @@ export function rewindRequestDismiss( siteId ) {
 export function rewindRestore( siteId, timestamp ) {
 	return {
 		type: REWIND_RESTORE,
-		siteId,
-		timestamp,
-	};
-}
-
-export function dismissRewindRestoreProgress( siteId ) {
-	return {
-		type: REWIND_RESTORE_DISMISS_PROGRESS,
-		siteId,
-	};
-}
-
-export function getRewindRestoreProgress( siteId, restoreId ) {
-	return {
-		type: REWIND_RESTORE_PROGRESS_REQUEST,
-		siteId,
-		restoreId,
-	};
-}
-
-export function updateRewindRestoreProgress( siteId, timestamp, restoreId, progress ) {
-	return {
-		type: REWIND_RESTORE_UPDATE_PROGRESS,
-		...progress,
-		restoreId,
 		siteId,
 		timestamp,
 	};
