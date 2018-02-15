@@ -21,6 +21,7 @@ jest.mock( 'page', () => ( { back: mockGoBack } ) );
 describe( 'PeopleInviteDetails', () => {
 	let PeopleInviteDetails;
 
+	const mockTranslate = msg => msg;
 	const siteObject = { ID: 1337, slug: 'foo.wordpress.com' };
 
 	const pendingInviteObject = {
@@ -87,7 +88,7 @@ describe( 'PeopleInviteDetails', () => {
 				inviteKey={ pendingInviteObject.key }
 				invite={ pendingInviteObject }
 				deleteInvite={ mockDeleteInvite }
-				translate={ msg => msg }
+				translate={ mockTranslate }
 				moment={ moment }
 			/>
 		);
@@ -115,7 +116,7 @@ describe( 'PeopleInviteDetails', () => {
 				inviteKey={ acceptedInviteObject.key }
 				invite={ acceptedInviteObject }
 				deleteInvite={ mockDeleteInvite }
-				translate={ msg => msg }
+				translate={ mockTranslate }
 				moment={ moment }
 			/>
 		);
@@ -140,7 +141,7 @@ describe( 'PeopleInviteDetails', () => {
 				deleteSuccess={ false }
 				inviteKey={ acceptedInviteObject.key }
 				invite={ acceptedInviteObject }
-				translate={ msg => msg }
+				translate={ mockTranslate }
 				moment={ moment }
 			/>
 		);
@@ -151,7 +152,7 @@ describe( 'PeopleInviteDetails', () => {
 		inviteDetails.setProps( { deleting: false, deleteSuccess: true } );
 		expect( mockGoBack ).toHaveBeenCalledTimes( 1 );
 		expect( mockGoBack ).toHaveBeenCalledWith( '/people/invites/' + siteObject.slug );
-		
+
 		// Verify that a placeholder is rendered while waiting for `page.back`
 		// to take effect.
 		const placeholderContainer = inviteDetails.find( 'Card' );
