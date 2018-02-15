@@ -1,9 +1,106 @@
-.layout {
-	&.is-section-preview {
-		height: 100%;
-		overflow: hidden;
+/*
+	Layout Elements
+	.layout__loading - Displays when loading Claypso
+	.layout__content - Contains primary and secondary
+		.layout__primary - The main content area
+		.layout__secondary - Contains the site selector and sidebar
+			.sidebar
+			.site-selector
+*/
+
+.layout__primary,
+.layout__secondary,
+.sidebar,
+.site-selector {
+	transition: transform 0.2s cubic-bezier(0.770, 0.000, 0.175, 1.000),
+				opacity 0.2s ease-in-out;
+}
+
+.layout__secondary {
+	position: fixed;
+		top: 47px;
+		left: 0;
+		bottom: 0;
+	color: var( --sidebar-color );
+	background: var( --sidebar-background );
+	border-right: 1px solid darken( $sidebar-bg-color, 5% );
+	width: $sidebar-width-max;
+	overflow: hidden;
+
+	@include breakpoint( "<960px" ) {
+		width: $sidebar-width-min;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
 	}
 }
+
+.sidebar {}
+
+.site-selector {
+	transform: translateX( -$sidebar-width-max );
+	pointer-events: none;
+
+	@include breakpoint( "<660px" ) {
+		transform: translateX( -100% );
+	}
+}
+
+/*
+	Focus States
+	Sites - Site Selector for those with multiple sites
+	Sidebar - The sidebar is the current focus
+	Content - The content is the furrent focus
+*/
+
+// Adjust the content as needed when focused on the site selector or sidebar
+.layout.focus-sites,
+.layout.focus-sidebar {
+	.layout__primary {
+		pointer-events: none;
+
+		@include breakpoint( "<660px" ) {
+			transform: translateX( 100% );
+			overflow: hidden;
+			height: calc( 100% - 47px );
+		}
+	}
+}
+
+.layout.focus-sites {
+	.site-selector {
+		pointer-events: auto;
+		transform: translateX( 0 );
+	}
+
+	.sidebar {
+		pointer-events: none;
+		transform: translateX( $sidebar-width-max );
+
+		@include breakpoint( "<660px" ) {
+			transform: translateX( 100% );
+		}
+	}
+
+	.layout__primary {
+		@include breakpoint( ">660px" ) {
+			opacity: 0.25;
+		}
+	}
+}
+
+.layout.focus-content {
+	@include breakpoint( "<660px" ) {
+		.layout__secondary {
+			transform: translateX( -100% );
+		}
+	}
+}
+
+
+
+
 
 .layout__content {
 	@include clear-fix;
@@ -72,90 +169,30 @@
 	}
 }
 
-.layout__primary {
-	transition: all 0.15s ease-in-out;
+// Use all available space for the WebPreview component on /view
+.layout.is-section-preview {
+	height: 100%;
+	overflow: hidden;
 
-	.is-section-preview & {
+	.layout__primary {
 		height: 100%;
 	}
 }
+
 
 .layout__content a {
 	text-decoration: none;
 }
 
-.layout {
-	.sidebar,
-	.layout__secondary .site-selector,
-	.current-site,
-	.sidebar__menu {
-		transform: translateX( 0 );
-		transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
-	}
-}
-
-.layout {
-	.sidebar,
-	.masterbar {
-		@media print {
-			display: none;
-		}
-	}
-}
-
-.layout.focus-sites {
-	.layout__primary {
-		opacity: 0.2;
-		pointer-events: none;
-	}
-
-	.layout__secondary .site-selector {
-		opacity: 1;
-		transform: translateX( 272px );
-		pointer-events: auto;
-
-		@include breakpoint( "<660px" ) {
-			transform: translateX( 100% );
-		}
-	}
-
-	.sidebar {
-		pointer-events: none;
-	}
-
-	.current-site,
-	.sidebar__menu {
-		opacity: 0;
-		transform: translateX( 64px );
-	}
-}
-
-.layout.focus-sidebar {
-	overflow: hidden;
-}
-
-.layout.focus-sidebar:not(.is-section-post-editor) .layout__primary {
-	//when sidebar is focused, create a z-index stacking context on primary, so elements don't bleed in mobile views.
-	transform: translate( 0, 0 );
-}
 
 // site selector in the sidebar
 .layout__secondary .site-selector {
-	background: $gray-lighten-30;
-	border-right: 1px solid lighten( $gray, 25% );
-	position: fixed;
-		top: 47px;
+	position: absolute;
+		top: 0;
+		right: 0;
 		bottom: 0;
-		left: -272px;
-	width: 272px;
-	overflow: hidden;
-	z-index: z-index( 'root', '.layout__secondary .site-selector' );
-	opacity: 0;
+		left: 0;
 	pointer-events: none;
-
-	.search {
-		border-bottom: 1px solid $gray-lighten-20;
-	}
 
 	.site,
 	.all-sites {
@@ -168,16 +205,12 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		width: 100%;
-		left: -100%;
 		-webkit-overflow-scrolling: touch;
-	}
-
-	.site-selector__recent {
-		border-bottom-color: $gray-lighten-20;
 	}
 }
 
+
+// If things take a bit to load...
 .layout__loader {
 	border-bottom: 1px solid var( --masterbar-border-color );
 	height: 46px;
@@ -198,9 +231,20 @@
 	@include breakpoint( "<480px" ) {
 		background: var( --masterbar-background );
 	}
+
+	&.is-active {
+		visibility: visible;
+		opacity: 1;
+	}
 }
 
-.layout__loader.is-active {
-	visibility: visible;
-	opacity: 1;
+
+// Hide the sidebar and masterbar when printing
+.layout {
+	.sidebar,
+	.masterbar {
+		@media print {
+			display: none;
+		}
+	}
 }

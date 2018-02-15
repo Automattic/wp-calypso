@@ -5,7 +5,6 @@
 .site-selector {
 	overflow: visible;
 	position: static;
-	pointer-events: auto;
 	border: none;
 	z-index: z-index( 'root', '.site-selector' );
 
@@ -13,7 +12,6 @@
 		display: flex;
 		position: relative;
 		opacity: 1;
-		pointer-events: initial;
 	}
 
 	&.is-large .site-selector__sites {

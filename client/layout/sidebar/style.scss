@@ -1,52 +1,19 @@
 .sidebar {
-	color: var( --sidebar-color );
 	display: flex;
 	flex-direction: column;
 	overflow: auto;
 	padding: 0;
-	background: var( --sidebar-background );
-	position: fixed;
-		top: 47px;
+	overflow-x: hidden;
+	position: absolute;
+		top: 0;
+		right: 0;
 		bottom: 0;
 		left: 0;
 
-	@include breakpoint( "<960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
-		width: $sidebar-width-min;
-	}
-
-	@include breakpoint( ">960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
-		width: $sidebar-width-max;
-	}
-
 	@include breakpoint( "<660px" ) {
-		left: -100%;
-		width: 100%;
-		overflow-x: hidden;
-		max-height: calc( 100% - 47px );
-		pointer-events: none;
-		transform: translateX( 0 );
-		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
-
-		.focus-sidebar & {
-			pointer-events: auto;
-			-webkit-overflow-scrolling: touch;
-			transform: translateX( 100% );
-		}
-
-		.focus-sites & {
-			transform: translateX( 100% );
-		}
-	}
-
-	@include breakpoint( ">660px" ) {
-		&.has-regions {
-			overflow: hidden;
-		}
+		-webkit-overflow-scrolling: touch;
 	}
 }
-
 
 // Clearing out the sidebar list styles
 .sidebar {
@@ -185,7 +152,8 @@
 	}
 }
 
-a.sidebar__button, form.sidebar__button {
+a.sidebar__button,
+form.sidebar__button {
 	display: flex;
 	position: relative;
 	align-self: center;
@@ -353,7 +321,6 @@ form.sidebar__button input {
 	@include breakpoint( "<660px" ) {
 		margin-top: 16px;
 	}
-
 }
 
 .sidebar .sidebar__footer .button {
@@ -485,6 +452,7 @@ form.sidebar__button input {
 		}
 	}
 }
+
 .sidebar__chevron-right {
 	position: absolute;
 	right: 0;
