@@ -85,7 +85,7 @@ class TranslatorLauncher extends React.PureComponent {
 					<h1>{ this.props.translate( 'Community Translator' ) }</h1>
 					<p>
 						{ this.props.translate(
-							'You have now enabled the translator.  Right click highlighted text to translate it.'
+							'You have now enabled the translator. Right click highlighted text to translate it.'
 						) }
 					</p>
 					<p>

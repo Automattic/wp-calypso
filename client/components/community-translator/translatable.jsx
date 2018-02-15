@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
  */
 import Dialog from 'components/dialog';
 import Button from 'components/button';
+import TranslatableField from './translatable-field';
 import { getTranslationData, getTranslationGlotPressUrl } from './utils.js';
 
 class Translatable extends Component {
@@ -48,8 +49,9 @@ class Translatable extends Component {
 		! this.hasDataLoaded() &&
 			getTranslationData( locale.langSlug, { singular, context, plural } ).then( originalData =>
 				this.setState( {
+					error: originalData.error,
 					originalData,
-					translationUrl: getTranslationGlotPressUrl( locale.langSlug, originalData.originalId ),
+					translationUrl: getTranslationGlotPressUrl( originalData.originalId, locale.langSlug ),
 					formState: {
 						translatedSingular: originalData.translatedSingular,
 						translatedPlural: originalData.translatedPlural,
@@ -77,11 +79,29 @@ class Translatable extends Component {
 		];
 	};
 
-	renderDialogContent() {
-		const placeHolderClass = classNames( {
-			placeholder: ! this.hasDataLoaded(),
-		} );
+	renderTranslatableFields() {
+		if ( this.state.originalData.error ) {
+			return <p className="community-translator__string-container"> {this.state.originalData.error} </p>;
+		}
+		return [
+			<TranslatableField
+				originalString={ this.props.singular }
+				title="Singular"
+				fieldName="translatedSingular"
+				onChange={ this.handleTranslationChange }
+				value={ this.state.formState.translatedSingular } />,
 
+			this.state.formState.translatedPlural &&
+			<TranslatableField
+				originalString={ this.props.plural }
+				title="Plural"
+				fieldName="translatedPlural"
+				onChange={ this.handleTranslationChange }
+				value={ this.state.formState.translatedPlural } />
+		];
+	}
+
+	renderDialogContent() {
 		return (
 			<div className="community-translator__dialog-content">
 				<header className="community-translator__dialog-header">
@@ -103,28 +123,13 @@ class Translatable extends Component {
 				</header>
 				<section className="community-translator__dialog-body">
 					<fieldset>
-						<label htmlFor="community-translator__singular" className={ placeHolderClass }>
-							<span>{ this.props.singular }</span>
-							<textarea
-								className={ placeHolderClass }
-								id="community-translator__singular"
-								name="translatedSingular"
-								value={ this.state.formState.translatedSingular }
-								onChange={ this.handleTranslationChange }
-							/>
-						</label>
-						{ this.state.formState.translatedPlural && (
-							<label htmlFor="community-translator__plural" className={ placeHolderClass }>
-								<span>{ this.props.plural }</span>
-								<textarea
-									className={ placeHolderClass }
-									id="community-translator__plural"
-									name="translatedPlural"
-									value={ this.state.formState.translatedPlural }
-									onChange={ this.handleTranslationChange }
-								/>
-							</label>
-						) }
+						{ this.hasDataLoaded()
+							? this.renderTranslatableFields()
+							: (
+								<div className="community-translator__string-container placeholder">
+									<span className="community-translator__string-description" />
+									<span />
+								</div> ) }
 					</fieldset>
 				</section>
 			</div>
@@ -139,7 +144,7 @@ class Translatable extends Component {
 		} );
 
 		return (
-			<span className={ classes } onContextMenu={ this.openDialog }>
+			<data className={ classes } onContextMenu={ this.openDialog }>
 				{ children }
 
 				{ this.state.showDialog && (
@@ -151,7 +156,7 @@ class Translatable extends Component {
 						{ this.renderDialogContent() }
 					</Dialog>
 				) }
-			</span>
+			</data>
 		);
 	}
 }

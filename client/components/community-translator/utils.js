@@ -4,7 +4,7 @@
  * External dependencies
  */
 import request from 'superagent';
-import { head, find } from 'lodash';
+import { head, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,7 +62,8 @@ export function getTranslationData(
 		.post( glotPressUrl )
 		.withCredentials()
 		.send( postFormData )
-		.then( response => normalizeDetailsFromTranslationData( head( response.body ) ) );
+		.then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
+		.catch( error => normalizeDetailsFromTranslationData( error ) );
 }
 
 export function submitTranslation(
@@ -79,26 +80,28 @@ export function submitTranslation(
 		.post( glotPressUrl )
 		.withCredentials()
 		.send( postFormData )
-		.then( response => {
+		.then( ( response ) => {
 			// eslint-disable-next-line
 			console.log( 'response.body', response.body );
 		} );
 }
 
 export function normalizeDetailsFromTranslationData( glotPressData ) {
-	if ( glotPressData ) {
+	if ( glotPressData && ! glotPressData.originals_not_found ) {
 		const translationDetails = find( glotPressData.translations, {
 			original_id: glotPressData.original_id,
 		} );
 
 		return {
 			originalId: glotPressData.original_id,
-			translatedSingular: translationDetails.translation_0,
-			translatedPlural: translationDetails.translation_1,
-			lastModified: translationDetails.date_modified,
+			translatedSingular: get( translationDetails, 'translation_0', '' ),
+			translatedPlural: get( translationDetails, 'translation_1', '' ),
+			lastModified: get( translationDetails, 'date_modified', '' ),
 		};
 	}
-	return {};
+	return {
+		error: 'Sorry, we couldn\'t find the translation information for this string.',
+	};
 }
 
 export function getTranslationGlotPressUrl( originalId, locale, project = PROJECT ) {
