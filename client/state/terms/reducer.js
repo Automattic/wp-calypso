@@ -18,7 +18,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import TermQueryManager from 'lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
@@ -103,17 +103,14 @@ export const queries = createReducer(
 			} );
 		},
 		[ DESERIALIZE ]: state => {
-			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
-				return {};
-			}
-
 			return mapValues( state, taxonomies => {
 				return mapValues( taxonomies, ( { data, options } ) => {
 					return new TermQueryManager( data, options );
 				} );
 			} );
 		},
-	}
+	},
+	queriesSchema
 );
 
 export default combineReducers( {
