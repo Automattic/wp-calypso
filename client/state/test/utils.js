@@ -139,7 +139,7 @@ describe( 'utils', () => {
 				expect( reducer( currentState, invalidAction ) ).to.equal( currentState );
 			} );
 
-			test( 'should return initial state when unknown action type passed', () => {
+			test( 'should return identical state when unknown action type passed', () => {
 				const unknownAction = { type: 'UNKNOWN' };
 				expect( reducer( currentState, unknownAction ) ).to.equal( currentState );
 			} );
