@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormRadio from 'components/forms/form-radio';
 import CompactCard from 'components/card/compact';
-import PaymentLogo from 'components/payment-logo';
+import StoredCard from 'my-sites/checkout/checkout/stored-card';
 
 export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
 	const supportedTypes = {
@@ -40,27 +40,11 @@ export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
 	} );
 };
 
-const PaymentMethod = ( {
-	translate,
-	selected,
-	isLoading,
-	type,
-	digits,
-	name,
-	expiry,
-	onSelect,
-} ) => {
+const PaymentMethod = ( { selected, isLoading, id, card, onSelect } ) => {
 	const renderPlaceholder = () => (
 		<CompactCard className="label-settings__card">
-			<FormCheckbox className="label-settings__card-checkbox" />
-			<PaymentLogo className="label-settings__card-logo" type="placeholder" altText={ '' } />
-			<div className="label-settings__card-details">
-				<p className="label-settings__card-number" />
-				<p className="label-settings__card-name" />
-			</div>
-			<div className="label-settings__card-date">
-				<p />
-			</div>
+			<FormRadio className="label-settings__card-radio" />
+			<StoredCard card={ { card_type: '' } } />
 		</CompactCard>
 	);
 
@@ -68,39 +52,26 @@ const PaymentMethod = ( {
 		return renderPlaceholder();
 	}
 
-	const typeTitle = getPaymentMethodTitle( translate, type, digits );
-	const typeId = typeTitle ? type : 'placeholder';
-	const typeName = typeTitle || type;
-
+	const htmlId = `label-settings-payment-method-${ id }`;
 	return (
-		<CompactCard className="label-settings__card" onClick={ onSelect }>
-			<FormCheckbox
-				className="label-settings__card-checkbox"
-				checked={ selected }
-				onChange={ onSelect }
-			/>
-			<PaymentLogo className="label-settings__card-logo" type={ typeId } altText={ typeTitle } />
-			<div className="label-settings__card-details">
-				<p className="label-settings__card-number">{ typeName }</p>
-				<p className="label-settings__card-name">{ name }</p>
-			</div>
-			<div className="label-settings__card-date">
-				{ translate( 'Expires %(date)s', {
-					args: { date: expiry },
-					context: 'date is of the form MM/YY',
-				} ) }
-			</div>
-		</CompactCard>
+		<label htmlFor={ htmlId }>
+			<CompactCard className="label-settings__card is-clickable">
+				<FormRadio id={ htmlId } checked={ selected } onChange={ onSelect } />
+				<StoredCard card={ card } />
+			</CompactCard>
+		</label>
 	);
 };
 
 PaymentMethod.propTypes = {
 	selected: PropTypes.bool.isRequired,
 	isLoading: PropTypes.bool,
-	type: PropTypes.string,
-	digits: PropTypes.string,
-	name: PropTypes.string,
-	expiry: PropTypes.string,
+	card: PropTypes.shape( {
+		card_type: PropTypes.string,
+		card: PropTypes.string,
+		name: PropTypes.string,
+		expiry: PropTypes.string,
+	} ),
 	onSelect: PropTypes.func,
 };
 
