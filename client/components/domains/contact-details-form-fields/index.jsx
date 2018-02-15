@@ -38,7 +38,7 @@ import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message'
 import GAppsFieldset from './custom-form-fieldsets/g-apps-fieldset';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
 import notices from 'notices';
-import support from 'lib/url/support';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const CONTACT_DETAILS_FORM_FIELDS = [
 	'firstName',
@@ -215,7 +215,7 @@ export class ContactDetailsFormFields extends Component {
 					'Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				{
 					components: {
-						contactSupportLink: <a href={ support.CALYPSO_CONTACT } />,
+						contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 						firstErrorName: <NoticeErrorMessage message={ firstErrorName } />,
 					},
 					comment: 'Validation error when filling out domain checkout contact details form',

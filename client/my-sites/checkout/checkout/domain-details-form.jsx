@@ -41,8 +41,6 @@ const wpcom = wp.undocumented();
 export class DomainDetailsForm extends PureComponent {
 	constructor( props ) {
 		super( props );
-		const steps = [ 'mainForm', ...this.getRequiredExtraSteps() ];
-
 		const steps = [ 'mainForm', ...this.getTldsWithAdditionalForm() ];
 		debug( 'steps:', steps );
 		this.state = {
