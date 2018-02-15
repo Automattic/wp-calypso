@@ -442,7 +442,6 @@ export const PostEditor = createReactClass( {
 							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
-							defaultViewportDevice={ 'computer' }
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 					) : null }
