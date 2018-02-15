@@ -704,13 +704,9 @@ class RegisterDomainStep extends React.Component {
 
 		const searchResults = this.state.searchResults || [];
 		const testGroup = abtest( 'domainSuggestionTestV6' );
-		let suggestions =
-			'group_1' === testGroup ||
-			'group_2' === testGroup ||
-			'group_3' === testGroup ||
-			'group_4' === testGroup
-				? [ ...searchResults ]
-				: reject( searchResults, matchesSearchedDomain );
+		let suggestions = includes( [ 'group_1', 'group_2', 'group_3', 'group_4' ], testGroup )
+			? [ ...searchResults ]
+			: reject( searchResults, matchesSearchedDomain );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {

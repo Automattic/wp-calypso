@@ -74,7 +74,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	domainSuggestionTestV6: {
-		datestamp: '20180213',
+		datestamp: '20180215',
 		variations: {
 			group_0: 1, // Default group
 			group_1: 1000,
