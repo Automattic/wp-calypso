@@ -389,6 +389,7 @@ class HelpContact extends React.Component {
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
+			selectedSite: this.props.selectedSite,
 			disabled: isSubmitting,
 			showHelpLanguagePrompt: showHelpLanguagePrompt,
 			valueLink: {

@@ -21,8 +21,9 @@ import Button from 'components/button';
 import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
-import InlineHelpContactForm from './inline-help-contact-form';
+import HelpContact from 'me/help/help-contact';
 import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -136,7 +137,7 @@ class InlineHelp extends Component {
 							<Gridicon icon="comment" /> { translate( 'Contact us' ) }
 							<Gridicon icon={ showContactForm ? 'chevron-up' : 'chevron-down' } className="inline-help__button-icon-right" />
 						</Button>
-						{ showContactForm && <InlineHelpContactForm /> }
+						{ showContactForm && <HelpContact selectedSite={ this.props.selectedSite } /> }
 						<Button onClick={ this.moreHelpClicked } className="inline-help__button" borderless href="/help">
 							<Gridicon icon="help" /> { translate( 'More help' ) }
 						</Button>
@@ -150,6 +151,7 @@ class InlineHelp extends Component {
 const mapStateToProps = ( state, ownProps ) => ( {
 	searchQuery: getSearchQuery( state ),
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
+	selectedSite: getSelectedSite( state ),
 } );
 const mapDispatchToProps = {
 	recordTracksEvent,

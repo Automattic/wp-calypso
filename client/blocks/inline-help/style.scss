@@ -66,6 +66,20 @@
 			}
 		}
 	}
+	.help-contact {
+		.header-cake {
+			display: none;
+		}
+		.help-results {
+			display: none;
+		}
+		.help-contact__form {
+			margin: 0;
+			.sites-dropdown__wrapper {
+				max-width: 100%;
+			}
+		}
+	}
 }
 
 .inline-help__heading {
