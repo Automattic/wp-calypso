@@ -370,12 +370,7 @@ class RegisterDomainStep extends React.Component {
 
 		const timestamp = Date.now();
 		const testGroup = abtest( 'domainSuggestionTestV6' );
-		if (
-			'group_1' === testGroup ||
-			'group_2' === testGroup ||
-			'group_3' === testGroup ||
-			'group_4' === testGroup
-		) {
+		if ( includes( [ 'group_1', 'group_2', 'group_3', 'group_4' ], testGroup ) ) {
 			searchVendor = testGroup;
 		}
 
