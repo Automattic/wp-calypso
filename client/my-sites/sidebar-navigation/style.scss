@@ -5,7 +5,7 @@
 	position: relative;
 	margin: 0 0 8px 0;
 
-	@include breakpoint( ">660px" ) {
+	@media ( min-width: 710px ) {
 		display: none;
 	}
 
