@@ -17,6 +17,7 @@ import qs from 'qs';
 import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
 import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
+import { isE2ETest } from 'lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
 import localforage from 'lib/localforage';
 import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
@@ -178,9 +179,9 @@ User.prototype.handleFetchSuccess = function( userData ) {
 	// Store user info in `this.data` and localstorage as `wpcom_user`
 	store.set( 'wpcom_user', userData );
 	if ( userData.abtests ) {
-		if ( config.isEnabled( 'dev/test-helper' ) ) {
-			// Preserve existing localStorage A/B variation values for
-			// A/B test helper component.
+		if ( config.isEnabled( 'dev/test-helper' ) || isE2ETest() ) {
+			// This section will preserve the existing localStorage A/B variation values,
+			// This is necessary for the A/B test helper component and e2e tests..
 			const initialVariationsFromStore = store.get( ABTEST_LOCALSTORAGE_KEY );
 			const initialVariations =
 				typeof initialVariationsFromStore === 'object' ? initialVariationsFromStore : undefined;
