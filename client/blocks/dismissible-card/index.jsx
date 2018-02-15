@@ -61,6 +61,7 @@ export default connect(
 	( state, ownProps ) => {
 		const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
 		const dismissedPreference = getPreference( state, preference );
+
 		return {
 			isDismissed:
 				ownProps.dismissSeconds && dismissedPreference && dismissedPreference > 0
