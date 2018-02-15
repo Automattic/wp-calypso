@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { isEmpty, isEqual } from 'lodash';
+import { isEmpty, isEqual, compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import {
 	WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD,
 	WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED,
 	WOOCOMMERCE_PAYMENT_METHOD_OPEN,
+	WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS,
 } from '../../../action-types';
 import { getBucket } from '../../helpers';
 
@@ -113,10 +114,33 @@ function openAction( state, { id } ) {
 	};
 }
 
+function paymentMethodUpdatedAction( state, { data } ) {
+	const bucket = getBucket( { id: data.id } );
+
+	if ( bucket ) {
+		const prevEdits = state || {};
+		const prevBucketEdits = prevEdits[ bucket ] || [];
+
+		const newBucketEdits = compact(
+			prevBucketEdits.map( paymentEdit => {
+				return isEqual( data.id, paymentEdit.id ) ? undefined : paymentEdit;
+			} )
+		);
+
+		return {
+			...prevEdits,
+			[ bucket ]: newBucketEdits.length ? newBucketEdits : [],
+		};
+	}
+
+	return state;
+}
+
 export default createReducer( initialState, {
 	[ WOOCOMMERCE_PAYMENT_METHOD_CANCEL ]: cancelAction,
 	[ WOOCOMMERCE_PAYMENT_METHOD_CLOSE ]: closeAction,
 	[ WOOCOMMERCE_PAYMENT_METHOD_EDIT_FIELD ]: editFieldAction,
 	[ WOOCOMMERCE_PAYMENT_METHOD_EDIT_ENABLED ]: changeEnabledAction,
 	[ WOOCOMMERCE_PAYMENT_METHOD_OPEN ]: openAction,
+	[ WOOCOMMERCE_PAYMENT_METHOD_UPDATE_SUCCESS ]: paymentMethodUpdatedAction,
 } );
