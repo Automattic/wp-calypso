@@ -10,14 +10,27 @@
 		padding-left: 24px;
 		padding-right: 24px;
 	}
+
+	@include breakpoint( "<480px" ) {
+		&.has-multiple-actions {
+			.action-header__breadcrumbs {
+				display: none;
+			}
+
+			.action-header__actions {
+				width: 100%;
+			}
+		}
+
+		&.has-no-action {
+			display: none;
+		}
+	}
 }
 
 .action-header__breadcrumbs {
-	width: 60%;
+	flex: 1 0 60%;
 	font-size: 13px;
-	@include breakpoint( "<660px" ) {
-		padding-left: 24px;
-	}
 
 	&.is-loading {
 		@include placeholder();
@@ -30,21 +43,14 @@
 }
 
 .action-header__actions {
-	width: 52%;
 	display: flex;
+	flex: 1 0 40%;
 	justify-content: flex-end;
 	align-items: center;
-
-	.button.is-borderless span {
-		@include breakpoint( "<660px" ) {
-			display: none;
-		}
-	}
 
 	.button {
 		white-space: nowrap;
 		padding: 5px 14px 7px;
-		margin-left: 12px;
 
 		&.is-borderless {
 			padding: 0;
@@ -61,8 +67,8 @@
 	}
 }
 .action-header__notice {
-		margin: 0;
-		width: 100%;
+	margin: 0;
+	width: 100%;
 }
 
 .sticky-panel {

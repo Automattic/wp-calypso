@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { isArray } from 'lodash';
+import { filter, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,11 +36,16 @@ const ActionHeader = ( { children, breadcrumbs, isLoading } ) => {
 	}
 
 	const breadcrumbClasses = classNames( 'action-header__breadcrumbs', { 'is-loading': isLoading } );
+	const actions = isArray( children ) ? filter( children, Boolean ) : children;
+	const containerClasses = classNames( 'action-header__header', {
+		'has-no-action': ! actions,
+		'has-multiple-actions': actions && actions.length > 1,
+	} );
 
 	return (
 		<StickyPanel>
 			<SidebarNavigation />
-			<Card className="action-header__header">
+			<Card className={ containerClasses }>
 				<span className={ breadcrumbClasses }>{ breadcrumbsOutput }</span>
 				<div className="action-header__actions">{ children }</div>
 			</Card>
