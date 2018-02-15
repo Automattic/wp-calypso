@@ -26,6 +26,10 @@
 	padding: 16px 24px;
 }
 
+.taxonomy-manager .ReactVirtualized__List {
+	direction: ltr !important;
+}
+
 .taxonomy-manager__nested-list {
 	margin-left: 2em;
 }
