@@ -31,29 +31,27 @@ export default function() {
 		clientRender
 	);
 
-	if ( isEnabled( 'manage/people/invites' ) ) {
-		page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
+	page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
 
-		page(
-			'/people/invites/:site_id',
-			peopleController.enforceSiteEnding,
-			siteSelection,
-			navigation,
-			peopleController.peopleInvites,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/people/invites/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peopleInvites,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/people/invites/:site_id/:invite_key',
-			peopleController.enforceSiteEnding,
-			siteSelection,
-			navigation,
-			peopleController.peopleInviteDetails,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/people/invites/:site_id/:invite_key',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peopleInviteDetails,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/people/new/:site_id',

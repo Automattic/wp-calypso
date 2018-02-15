@@ -122,14 +122,10 @@ class PeopleSectionNav extends Component {
 	}
 
 	getNavigableFilters() {
-		const allowedFilterIds = [ 'team', 'followers', 'email-followers' ];
+		const allowedFilterIds = [ 'team', 'followers', 'email-followers', 'invites' ];
 
 		if ( this.shouldDisplayViewers() ) {
 			allowedFilterIds.push( 'viewers' );
-		}
-
-		if ( isEnabled( 'manage/people/invites' ) ) {
-			allowedFilterIds.push( 'invites' );
 		}
 
 		return this.getFilters().filter(
