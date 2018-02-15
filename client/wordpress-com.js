@@ -188,6 +188,13 @@ const sections = [
 		secondary: true,
 		group: 'checklist',
 	},
+	{
+		name: 'google-my-business',
+		paths: [ '/gmb' ],
+		module: 'my-sites/gmb',
+		secondary: true,
+		group: 'google-my-business',
+	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
 	{
