@@ -6,13 +6,11 @@
 
 import React from 'react';
 import Gridicon from 'gridicons';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import BlockButton from 'components/button/block';
 import Card from 'components/card';
 import config from 'config';
 import DocsExample from 'devdocs/docs-example';
@@ -38,22 +36,6 @@ class Buttons extends React.PureComponent {
 					{ toggleText }
 				</a>
 				{ this.renderButtons( toggleText ) }
-
-				<h3>Block-level Button Wrapper</h3>
-				<Card>
-					<div className="docs__design-button-row">
-						<BlockButton onClick={ noop }>
-							<p>
-								This "button" can contain other elements as children, including <code>p</code>s,{' '}
-								<code>div</code>s, or other components.
-							</p>
-							<p>
-								The container itself is focusable - try tabbing from the previous button example
-								into here.
-							</p>
-						</BlockButton>
-					</div>
-				</Card>
 			</div>
 		);
 	};
