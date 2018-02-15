@@ -93,7 +93,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
       footerLink={
         <LoggedOutFormLinks>
           <LoggedOutFormLinkItem
-            href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
+            href="https://es.wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
@@ -102,6 +102,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           />
         </LoggedOutFormLinks>
       }
+      locale="es"
       redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
       submitButtonText="Sign Up and Connect Jetpack"
       submitForm={[Function]}
