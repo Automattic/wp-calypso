@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal Dependencies
  */
+import analytics from 'lib/analytics';
 import Button from 'components/button';
 import DismissibleCard from 'blocks/dismissible-card';
 import SectionHeader from 'components/section-header';
@@ -18,6 +19,10 @@ class GMBStatsNudge extends Component {
 	static propTypes = {
 		translate: PropTypes.func.isRequired,
 	};
+
+	recordNudgeShown() {
+		analytics.tracks.recordEvent( 'calypso_test_google_my_business_stats_nudge_shown' );
+	}
 
 	render() {
 		return (
@@ -55,6 +60,10 @@ class GMBStatsNudge extends Component {
 				</div>
 			</DismissibleCard>
 		);
+	}
+
+	componentWillMount() {
+		this.recordNudgeShown();
 	}
 }
 
