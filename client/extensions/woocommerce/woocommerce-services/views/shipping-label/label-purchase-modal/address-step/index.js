@@ -36,7 +36,7 @@ const renderSummary = ( {
 		return translate( 'Validating address…' );
 	}
 	if ( hasNonEmptyLeaves( errors ) || ( isNormalized && ! normalized ) ) {
-		return translate( 'Invalid address' );
+		return errors && errors.general || translate( 'Invalid address' );
 	}
 	if ( ! isNormalized ) {
 		return translate( "You've edited the address, please revalidate it for accurate rates" );
@@ -71,12 +71,12 @@ const getNormalizationStatus = ( { normalizationInProgress, errors, isNormalized
 
 const AddressStep = ( props ) => {
 	const toggleStepHandler = () => props.toggleStep( props.orderId, props.siteId, props.type );
-	const { form, storeOptions, error, showCountryInSummary, translate } = props;
+	const { form, storeOptions, errors, showCountryInSummary, translate } = props;
 
 	return (
 		<StepContainer
 			title={ props.title }
-			summary={ renderSummary( { ...form, storeOptions, errors: error, translate }, showCountryInSummary ) }
+			summary={ renderSummary( { ...form, storeOptions, errors, translate }, showCountryInSummary ) }
 			expanded={ props.expanded }
 			toggleStep={ toggleStepHandler }
 			{ ...props.normalizationStatus } >

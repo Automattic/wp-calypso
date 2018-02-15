@@ -112,8 +112,10 @@ export const getTotalPriceBreakdown = ( state, orderId, siteId = getSelectedSite
 	} : null;
 };
 
-const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation }, countriesData ) => {
-	if ( isNormalized && ! normalized ) {
+const getAddressErrors = ( { values, isNormalized, normalized, selectNormalized, ignoreValidation, fieldErrors }, countriesData ) => {
+	if ( isNormalized && ! normalized && fieldErrors ) {
+		return fieldErrors;
+	} else if ( isNormalized && ! normalized ) {
 		// If the address is normalized but the server didn't return a normalized address, then it's
 		// invalid and must register as an error
 		return {

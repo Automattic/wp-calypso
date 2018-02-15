@@ -183,12 +183,13 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS ] = ( state
 	return newState;
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED ] = ( state, { group } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED ] = ( state, { group, completed, fieldErrors } ) => {
 	return { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
-				isNormalized: true,
+				isNormalized: completed,
 				normalizationInProgress: false,
+				fieldErrors,
 			},
 		},
 	};

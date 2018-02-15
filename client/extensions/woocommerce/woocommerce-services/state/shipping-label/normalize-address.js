@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import * as api from 'woocommerce/woocommerce-services/api';
@@ -7,13 +12,18 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 } from '../action-types';
+import * as NoticeActions from 'state/notices/actions';
 
 export default ( orderId, siteId, dispatch, address, group ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS, group, orderId, siteId } );
 	return new Promise( ( resolve ) => {
-		let error = null;
+		let error = null, fieldErrors = null;
 		const setError = ( err ) => error = err;
 		const setSuccess = ( json ) => {
+			if ( json.fieldErrors ) {
+				fieldErrors = json.fieldErrors;
+				return;
+			}
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_NORMALIZED_ADDRESS,
 				siteId,
@@ -30,10 +40,13 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 					siteId,
 					orderId,
 					group,
-					error,
+					completed: ! error,
+					fieldErrors,
 				} );
 				if ( error ) {
-					console.error( error ); // eslint-disable-line no-console
+					dispatch( NoticeActions.errorNotice(
+						translate( 'Error validating %(group)s address: %(error)s', { args: { group, error } } )
+					) );
 				}
 				setTimeout( () => resolve( ! error ), 0 );
 			}
