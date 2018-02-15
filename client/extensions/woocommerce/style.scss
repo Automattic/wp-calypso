@@ -88,10 +88,6 @@
 			margin: 0px;
 		}
 	}
-
-	.layout__content {
-		padding-top: 67px;
-	}
 }
 
 .store-sidebar__sidebar {
@@ -159,35 +155,6 @@
 		.products__form,
 		.current-section {
 			display: none;
-		}
-	}
-}
-
-.is-section-woocommerce.focus-content {
-	@include breakpoint( "<660px" ) {
-		.site-icon,
-		.current-section__site-title,
-		.current-section__section-title {
-			display: none;
-		}
-
-		.current-section {
-			margin: 0;
-
-			a {
-				position: fixed;
-				z-index: 1;
-				margin-top: 0;
-				background: transparent;
-				border: none;
-				padding-top: 11px;
-				padding-bottom: 11px;
-			}
-
-			.gridicons-chevron-left {
-				margin-left: 11px;
-				margin-right: 11px;
-			}
 		}
 	}
 }
