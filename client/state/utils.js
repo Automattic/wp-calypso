@@ -308,35 +308,11 @@ export const withoutPersistence = reducer => {
  * serialization (persistence) handlers based on the presence of a schema.
  *
  * @param  {*}        initialState   Initial state
- * @param  {Object}   customHandlers Object mapping action types to state action handlers
+ * @param  {Object}   handlers       Object mapping action types to state action handlers
  * @param  {?Object}  schema         JSON schema object for deserialization validation
  * @return {Function}                Reducer function
  */
-export function createReducer( initialState, customHandlers, schema ) {
-	let handlers = customHandlers;
-
-	// When custom serialization behavior is provided, we assume that it may
-	// involve heavy logic (mapping, converting from Immutable instance), so
-	// we cache the result and only regenerate when state has changed.
-	const customSerializeHandler = customHandlers[ SERIALIZE ];
-	if ( customSerializeHandler ) {
-		let lastState, lastSerialized;
-		const cachedSerializeHandler = ( state, action ) => {
-			if ( state === lastState ) {
-				return lastSerialized;
-			}
-
-			const serialized = customSerializeHandler( state, action );
-			lastState = state;
-			lastSerialized = serialized;
-			return serialized;
-		};
-		handlers = {
-			...handlers,
-			[ SERIALIZE ]: cachedSerializeHandler,
-		};
-	}
-
+export function createReducer( initialState, handlers, schema ) {
 	const reducer = ( state = initialState, action ) => {
 		const { type } = action;
 

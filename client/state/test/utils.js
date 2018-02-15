@@ -4,7 +4,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { stub, spy } from 'sinon';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -233,31 +233,6 @@ describe( 'utils', () => {
 			test( 'should return overridden state when deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( overriddenState );
 			} );
-		} );
-
-		test( 'should cache the serialize result on custom serialization behavior', () => {
-			const monitor = stub().returnsArg( 0 );
-
-			reducer = createReducer(
-				[],
-				{
-					[ SERIALIZE ]: monitor,
-					TEST_ADD: state => [ ...state, state.length ],
-				},
-				testSchema
-			);
-
-			let state;
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: 'TEST_ADD' } );
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: 'TEST_ADD' } );
-			state = reducer( state, { type: SERIALIZE } );
-
-			expect( monitor ).to.have.been.calledThrice;
-			expect( state ).to.eql( [ 0, 1 ] );
 		} );
 	} );
 	describe( '#keyedReducer', () => {
