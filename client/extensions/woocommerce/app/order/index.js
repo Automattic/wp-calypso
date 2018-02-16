@@ -76,8 +76,8 @@ class Order extends Component {
 					<LabelsSetupNotice />
 					{ isEditing && <ProtectFormGuard isChanged={ hasOrderEdits } /> }
 					<OrderDetails orderId={ orderId } />
-					<OrderActivityLog orderId={ orderId } siteId={ siteId } />
 					<OrderCustomer orderId={ orderId } />
+					<OrderActivityLog orderId={ orderId } siteId={ siteId } />
 				</div>
 			</Main>
 		);
