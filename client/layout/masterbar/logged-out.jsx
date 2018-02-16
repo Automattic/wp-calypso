@@ -14,12 +14,13 @@ import { get, includes, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import Item from './item';
 import config from 'config';
-import { login } from 'lib/paths';
-import WordPressWordmark from 'components/wordpress-wordmark';
+import Item from './item';
 import WordPressLogo from 'components/wordpress-logo';
+import WordPressWordmark from 'components/wordpress-wordmark';
+import { addQueryArgs } from 'lib/route';
 import { getCurrentQueryArguments, getCurrentRoute } from 'state/selectors';
+import { login } from 'lib/paths';
 
 class MasterbarLoggedOut extends PureComponent {
 	static propTypes = {
@@ -38,7 +39,7 @@ class MasterbarLoggedOut extends PureComponent {
 	};
 
 	renderLoginItem() {
-		const { currentQuery, sectionName, translate, redirectUri } = this.props;
+		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
 
 		if ( includes( [ 'login', 'jetpack-onboarding' ], sectionName ) ) {
 			return null;
@@ -48,8 +49,8 @@ class MasterbarLoggedOut extends PureComponent {
 
 		if ( redirectUri ) {
 			params.redirectTo = redirectUri;
-		} else if ( typeof window !== 'undefined' ) {
-			params.redirectTo = window.location.href;
+		} else {
+			params.redirectTo = addQueryArgs( currentQuery, currentRoute );
 		}
 
 		const loginUrl = login( {
