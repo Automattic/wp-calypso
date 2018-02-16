@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { flow, get, isEmpty, inRange } from 'lodash';
+import { get, flow, inRange, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -46,6 +46,10 @@ export class SimpleSiteRenameForm extends Component {
 
 	getDomainValidationMessage( domain ) {
 		const { translate } = this.props;
+
+		if ( isEmpty( domain ) ) {
+			return '';
+		}
 
 		if ( domain.match( /[^a-z0-9]/i ) ) {
 			return translate( 'Domain can only contain letters (a-z) and numbers.' );
