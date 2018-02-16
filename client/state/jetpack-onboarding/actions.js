@@ -27,14 +27,13 @@ export const requestJetpackOnboardingSettings = siteId => ( {
 	},
 } );
 
-export const saveJetpackOnboardingSettings = ( siteId, settings, attempt = 3 ) => ( {
+export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 	siteId,
 	settings,
 	meta: {
 		dataLayer: {
 			trackRequest: true,
-			retryCount: attempt,
 		},
 	},
 } );

@@ -18,7 +18,6 @@ import {
 } from 'state/action-types';
 import { getUnconnectedSite, getUnconnectedSiteUrl } from 'state/selectors';
 import {
-	saveJetpackOnboardingSettings as saveJetpackOnboardingSettingsAction,
 	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
@@ -132,22 +131,44 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
 	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
 
-export const announceSaveFailure = ( { dispatch }, { siteId, settings, meta: { dataLayer } } ) => {
-	const { error, retryCount } = dataLayer;
+export const announceSaveFailure = ( { dispatch }, action ) => {
+	const MAX_WOOCOMMERCE_INSTALL_RETRIES = 3;
+	const { settings, siteId, type, meta: { dataLayer } } = action;
+	const { error, retryCount = 0 } = dataLayer;
+
+	// If we got a timeout on WooCommerce installation, try again (up to 3 times),
+	// since it might just be a slow server that actually ends up installing it
+	// properly, in which case a subsequent request will return 'success'.
 	if (
-		settings.installWooCommerce === true &&
-		error.error === 'http_request_failed' &&
-		retryCount > 0
+		settings.installWooCommerce !== true ||
+		error.error !== 'http_request_failed' ||
+		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
-		dispatch( saveJetpackOnboardingSettingsAction( siteId, settings, retryCount - 1 ) );
-	} else {
-		dispatch(
+		return dispatch(
 			errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
 				id: `jpo-notice-error-${ siteId }`,
 				duration: 5000,
 			} )
 		);
 	}
+
+	// We cannot use `extendAction( action, ... )` here, since `meta.datayLayer` now includes error information,
+	// which we would propagate.
+	const updatedAction = {
+		settings,
+		siteId,
+		type,
+		meta: {
+			dataLayer: {
+				retryCount: retryCount + 1,
+				trackRequest: true,
+			},
+		},
+	};
+
+	console.log( 'updatedAction', updatedAction );
+
+	dispatch( updatedAction );
 };
 
 export default {
