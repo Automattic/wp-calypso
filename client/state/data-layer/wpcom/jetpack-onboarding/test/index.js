@@ -303,7 +303,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		},
 	};
 
-	test( 'should trigger saveJetpackOnboardingSettings action with retryCount === 1 upon WooCommerce install timeout', () => {
+	test( 'should trigger saveJetpackOnboardingSettings upon first WooCommerce install timeout', () => {
 		retryOrAnnounceSaveFailure( { dispatch }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -317,6 +317,32 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 						trackRequest: true,
 					},
 				},
+			} )
+		);
+	} );
+
+	test( 'should trigger announceSaveFailure upon third WooCommerce install timeout', () => {
+		const thirdAttemptAction = {
+			...action,
+			meta: {
+				...action.meta,
+				dataLayer: {
+					...action.meta.dataLayer,
+					retryCount: 4,
+				},
+			},
+		};
+
+		retryOrAnnounceSaveFailure( { dispatch }, thirdAttemptAction );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'An unexpected error occurred. Please try again later.',
+					noticeId: `jpo-notice-error-${ siteId }`,
+					duration: 5000,
+				} ),
 			} )
 		);
 	} );
