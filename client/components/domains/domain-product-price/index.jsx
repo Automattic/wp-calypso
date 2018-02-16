@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import PremiumPopover from 'components/plans/premium-popover';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
@@ -61,13 +62,13 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderIncludedInPremium() {
+		const textLabel = config.isEnabled( 'domains/kracken-ui' )
+			? this.props.translate( 'Included in Paid Plans' )
+			: this.props.translate( 'Included in WordPress.com Premium' );
 		return (
 			<div className="domain-product-price is-with-plans-only">
 				<small className="domain-product-price__premium-text" ref="subMessage">
-					<PremiumPopover
-						position="bottom left"
-						textLabel={ this.props.translate( 'Included in WordPress.com Premium' ) }
-					/>
+					<PremiumPopover position="bottom left" textLabel={ textLabel } />
 				</small>
 			</div>
 		);
