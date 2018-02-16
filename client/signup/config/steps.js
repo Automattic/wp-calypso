@@ -272,7 +272,7 @@ export default {
 
 	'rewind-migrate': {
 		stepName: 'rewind-migrate',
-		providesDependencies: [],
+		providesDependencies: [ 'rewindconfig' ],
 	},
 
 	'rewind-were-backing': {
@@ -287,6 +287,6 @@ export default {
 
 	'rewind-form-creds': {
 		stepName: 'rewind-form-creds',
-		providesDependencies: [],
+		providesDependencies: [ 'rewindconfig' ],
 	},
 };
