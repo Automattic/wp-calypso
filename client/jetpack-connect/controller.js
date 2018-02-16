@@ -228,11 +228,11 @@ export function signupForm( context, next ) {
 	next();
 }
 
-export function credsForm( context ) {
-	removeSidebar( context );
+export function credsForm( context, next ) {
 	context.primary = (
 		<RewindCredentialsForm role="main" siteId={ context.params.siteId } allowCancel={ false } />
 	);
+	next();
 }
 
 export function authorizeForm( context, next ) {
