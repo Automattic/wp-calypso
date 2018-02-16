@@ -21,6 +21,7 @@ import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
 import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -37,7 +38,8 @@ import {
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
 } from 'state/selectors';
-
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { openChat } from 'state/happychat/ui/actions';
 import { adjustMoment } from '../activity-log/utils';
 
 class ActivityLogItem extends Component {
@@ -87,7 +89,15 @@ class ActivityLogItem extends Component {
 	}
 
 	renderRewindAction() {
-		const { createBackup, createRewind, disableRestore, disableBackup, translate } = this.props;
+		const {
+			createBackup,
+			createRewind,
+			disableRestore,
+			disableBackup,
+			isChatAvailable,
+			translate,
+			triggerChat,
+		} = this.props;
 
 		return (
 			<div className="activity-log-item__action">
@@ -106,6 +116,14 @@ class ActivityLogItem extends Component {
 						onClick={ createBackup }
 					>
 						{ translate( 'Download backup' ) }
+					</PopoverMenuItem>
+					<PopoverMenuSeparator />
+					<PopoverMenuItem
+						icon="help"
+						onClick={ isChatAvailable ? triggerChat : null }
+						href={ isChatAvailable ? null : '/help' }
+					>
+						{ translate( 'Get help' ) }
 					</PopoverMenuItem>
 				</SplitButton>
 			</div>
@@ -224,6 +242,7 @@ const mapStateToProps = ( state, { activityId, siteId } ) => ( {
 	mightBackup: activityId && activityId === getRequestedBackup( state, siteId ),
 	mightRewind: activityId && activityId === getRequestedRewind( state, siteId ),
 	timezone: getSiteTimezoneValue( state, siteId ),
+	isChatAvailable: isHappychatAvailable( state ),
 } );
 
 const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
@@ -273,6 +292,10 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
+	triggerChat: () =>
+		dispatch(
+			withAnalytics( recordTracksEvent( 'calypso_activitylog_splitbutton_get_help' ), openChat() )
+		),
 	getHelpClick: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
 } );
 
