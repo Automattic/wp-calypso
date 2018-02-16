@@ -7,6 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import userFactory from 'lib/user';
 import * as controller from './controller';
 import { login } from 'lib/paths';
@@ -26,30 +27,32 @@ export default function() {
 		clientRender
 	);
 
-	page(
-		'/jetpack/connect/:type(install)/:locale?',
-		controller.redirectWithoutLocaleIfLoggedIn,
-		controller.persistMobileAppFlow,
-		controller.setMasterbar,
-		controller.connect,
-		makeLayout,
-		clientRender
-	);
+	if ( config.isEnabled( 'jetpack/connect/install' ) ) {
+		page(
+			'/jetpack/connect/install',
+			controller.persistMobileAppFlow,
+			controller.setMasterbar,
+			controller.credsForm,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		page(
+			'/jetpack/connect/:type(install)/:locale?',
+			controller.redirectWithoutLocaleIfLoggedIn,
+			controller.persistMobileAppFlow,
+			controller.setMasterbar,
+			controller.connect,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/jetpack/connect',
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/jetpack/connect/install',
-		controller.persistMobileAppFlow,
-		controller.setMasterbar,
-		controller.credsForm,
 		makeLayout,
 		clientRender
 	);
