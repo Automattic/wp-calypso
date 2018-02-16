@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 
-class BlockButton extends Component {
+class Focusable extends Component {
 	static propTypes = {
 		onClick: PropTypes.func.isRequired,
 		onKeyDown: PropTypes.func,
@@ -35,7 +35,7 @@ class BlockButton extends Component {
 		const props = omit( this.props, omitProps );
 		return (
 			<div
-				className={ classNames( 'button__block-button', className ) }
+				className={ classNames( 'focusable', className ) }
 				role="button"
 				tabIndex="0"
 				onClick={ this.onClick }
@@ -48,4 +48,4 @@ class BlockButton extends Component {
 	};
 }
 
-export default BlockButton;
+export default Focusable;
