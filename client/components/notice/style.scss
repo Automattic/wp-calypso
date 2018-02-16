@@ -93,6 +93,10 @@
 			color: $white;
 			text-decoration: none;
 		}
+
+		&:visited {
+			color: lighten( $gray, 10% );
+		}
 	}
 
 	ul {
