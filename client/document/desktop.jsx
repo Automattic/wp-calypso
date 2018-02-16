@@ -103,14 +103,7 @@ class Desktop extends React.Component {
 							} }
 						/>
 					) }
-					{ config && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: config,
-							} }
-						/>
-					) }
+					{ config && <script type="text/javascript">{ config }</script> }
 
 					<script src="/calypso/build.js" />
 					<script src="/desktop/desktop-app.js" />
