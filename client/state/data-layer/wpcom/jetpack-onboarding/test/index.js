@@ -10,6 +10,7 @@ import {
 	handleSaveSuccess,
 	announceRequestFailure,
 	announceSaveFailure,
+	retryOrAnnounceSaveFailure,
 	fromApi,
 } from '../';
 import {
@@ -277,6 +278,45 @@ describe( 'announceSaveFailure()', () => {
 					noticeId: `jpo-notice-error-${ siteId }`,
 					duration: 5000,
 				} ),
+			} )
+		);
+	} );
+} );
+
+describe( 'retryOrAnnounceSaveFailure()', () => {
+	const dispatch = jest.fn();
+	const siteId = 12345678;
+	const settings = {
+		installWooCommerce: true,
+	};
+	const action = {
+		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		siteId,
+		settings,
+		meta: {
+			dataLayer: {
+				error: {
+					error: 'http_request_failed',
+				},
+				trackRequest: true,
+			},
+		},
+	};
+
+	test( 'should trigger saveJetpackOnboardingSettings action with retryCount === 1 upon WooCommerce install timeout', () => {
+		retryOrAnnounceSaveFailure( { dispatch }, action );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				settings,
+				siteId,
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				meta: {
+					dataLayer: {
+						retryCount: 1,
+						trackRequest: true,
+					},
+				},
 			} )
 		);
 	} );
