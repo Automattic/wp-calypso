@@ -495,12 +495,12 @@
 
 // HTML Editor
 
-.comment__html-editor {
+.comment-html-editor {
 	margin: 0 8px;
 	width: 100%;
 }
 
-.comment__html-toolbar .button {
+.comment-html-editor__toolbar .button {
 	border-right: 1px solid lighten($gray, 30%);
 	border-radius: 0px;
 	color: darken($gray, 20%);
@@ -529,26 +529,26 @@
 	}
 }
 
-.comment__html-toolbar-button-strong {
+.comment-html-editor__toolbar-button-strong {
 	font-weight: bold;
 }
-.comment__html-toolbar-button-em {
+.comment-html-editor__toolbar-button-em {
 	font-style: italic;
 }
-.comment__html-toolbar-button-a.button {
+.comment-html-editor__toolbar-button-a.button {
 	color: $blue-wordpress;
 	text-decoration: underline;
 }
-.comment__html-toolbar-button-del {
+.comment-html-editor__toolbar-button-del {
 	text-decoration: line-through;
 }
-.comment__html-toolbar-button-ins {
+.comment-html-editor__toolbar-button-ins {
 	text-decoration: underline;
 }
-.comment__html-toolbar-button-code {
+.comment-html-editor__toolbar-button-code {
 	font-family: $code;
 }
-.comment__html-toolbar-button-close-tags.button[disabled]:hover {
+.comment-html-editor__toolbar-button-close-tags.button[disabled]:hover {
 	color: lighten($gray, 30%);
 }
 

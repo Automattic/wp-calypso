@@ -196,12 +196,12 @@ export class CommentHtmlEditor extends Component {
 		};
 
 		return (
-			<div className="comment__html-editor">
-				<div className="comment__html-toolbar">
+			<div className="comment-html-editor">
+				<div className="comment-html-editor__toolbar">
 					{ map( buttons, ( { disabled, label, onClick, selfClosed }, tag ) => (
 						<Button
 							borderless
-							className={ classNames( `comment__html-toolbar-button-${ tag }`, {
+							className={ classNames( `comment-html-editor__toolbar-button-${ tag }`, {
 								'is-tag-open': ! selfClosed && this.isTagOpen( tag ),
 							} ) }
 							compact
@@ -215,7 +215,7 @@ export class CommentHtmlEditor extends Component {
 				</div>
 
 				<textarea
-					className="comment__edit-textarea form-textarea"
+					className="comment-html-editor__textarea form-textarea"
 					disabled={ this.props.disabled }
 					onChange={ onChange }
 					ref={ this.storeTextareaRef }
