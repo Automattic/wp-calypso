@@ -117,6 +117,13 @@ const userNode = ( { id: userId, name, site_id: siteId } ) => ( {
 	userId,
 } );
 
+const pluginNode = ( { site_slug, slug, version } ) => ( {
+	type: 'plugin',
+	siteSlug: site_slug,
+	pluginSlug: slug,
+	version,
+} );
+
 const inferNode = range => {
 	const { type, url } = range;
 
@@ -154,6 +161,9 @@ const nodeMappings = type => {
 
 		case 'user':
 			return userNode;
+
+		case 'plugin':
+			return pluginNode;
 
 		default:
 			return inferNode;

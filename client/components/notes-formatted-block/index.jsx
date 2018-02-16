@@ -5,7 +5,18 @@
 import React from 'react';
 
 export const FormattedBlock = ( { content = {} } ) => {
-	const { siteId, children, commentId, isTrashed, name, postId, text = null, type } = content;
+	const {
+		siteId,
+		children,
+		commentId,
+		isTrashed,
+		name,
+		postId,
+		text = null,
+		type,
+		siteSlug,
+		pluginSlug,
+	} = content;
 
 	if ( 'string' === typeof content ) {
 		return content;
@@ -51,7 +62,7 @@ export const FormattedBlock = ( { content = {} } ) => {
 			);
 
 		case 'plugin':
-			return <a href={ `/plugins/${ name }/${ siteId }` }>{ descent }</a>;
+			return <a href={ `/plugins/${ pluginSlug }/${ siteSlug }` }>{ descent }</a>;
 
 		case 'post':
 			return isTrashed ? (
