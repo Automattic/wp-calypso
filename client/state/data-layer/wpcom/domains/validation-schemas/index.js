@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { flatten, get, join, map } from 'lodash';
+import { get, join, flatMap } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +11,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'state/action-types';
 import { addValidationSchemas } from 'state/domains/management/validation-schemas/actions';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Convert an application level request action for domain contact information
@@ -48,8 +48,8 @@ export const onSuccess = ( action, schemas ) => addValidationSchemas( schemas );
  * @returns {[Action]}      An array of mc and tracks analytics events, one each per tld
  */
 export const onError = ( { tlds }, error ) =>
-	flatten(
-		map( tlds, tld => [
+	composeAnalytics(
+		...flatMap( tlds, tld => [
 			bumpStat( 'form_validation_schema_exceptions', `load_${ tld }` ),
 			recordTracksEvent( 'calypso_domain_contact_validation_schema_load_failure', {
 				tld,
