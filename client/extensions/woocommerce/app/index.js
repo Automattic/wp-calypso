@@ -25,6 +25,7 @@ import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { getSiteFragment } from 'lib/route';
+import { setWcApiUpdate } from 'woocommerce/state/wc-api/actions';
 
 class App extends Component {
 	static propTypes = {
@@ -43,6 +44,7 @@ class App extends Component {
 		if ( siteId ) {
 			this.props.fetchSetupChoices( siteId );
 		}
+		this.props.setWcApiUpdate( 1000 );
 	};
 
 	componentWillReceiveProps( newProps ) {
@@ -135,6 +137,7 @@ function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
 			fetchSetupChoices,
+			setWcApiUpdate,
 		},
 		dispatch
 	);

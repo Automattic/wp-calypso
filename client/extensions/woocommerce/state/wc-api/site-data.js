@@ -17,7 +17,7 @@ export default function createSiteData( wcApiSite, wcApiState ) {
 	}
 
 	const endpointData = get( wcApiState, [ wcApiSite, 'endpoints' ], {} );
-	const endpoints = createEndpoints( endpointData );
+	const endpoints = createEndpoints( wcApiSite, endpointData );
 	const selectors = createSelectors( endpoints );
 
 	return { ...selectors };
