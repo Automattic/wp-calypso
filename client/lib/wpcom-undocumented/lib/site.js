@@ -385,6 +385,24 @@ UndocumentedSite.prototype.statsTopCoupons = function( query ) {
 };
 
 /**
+ * Delete site invites
+ *
+ * @param {array}     inviteIds  An array of inviteIds for deletion.
+ * @return {Promise}             A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.deleteInvites = function( inviteIds ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ this._id }/invites/delete`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			invite_ids: inviteIds,
+		}
+	);
+};
+
+/**
  * Expose `UndocumentedSite` module
  */
 export default UndocumentedSite;

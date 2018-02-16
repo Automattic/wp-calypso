@@ -100,7 +100,10 @@ class PeopleInvites extends React.PureComponent {
 				) }
 
 				{ ( hasPendingInvites || hasAcceptedInvites ) && (
-					<InvitesListEnd found={ totalInvitesFound } />
+					<InvitesListEnd
+						shown={ pendingInviteCount + acceptedInviteCount }
+						found={ totalInvitesFound }
+					/>
 				) }
 			</React.Fragment>
 		);

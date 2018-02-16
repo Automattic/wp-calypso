@@ -97,7 +97,7 @@ export const getInviteForSite = treeSelect(
  * @param  {String}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
-export function isRequestingResend( state, siteId, inviteId ) {
+export function isRequestingInviteResend( state, siteId, inviteId ) {
 	return 'requesting' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
 }
 
@@ -110,6 +110,32 @@ export function isRequestingResend( state, siteId, inviteId ) {
  * @param  {String}  inviteId Invite ID
  * @return {Boolean}          Whether invite resend was a success
  */
-export function didResendSucceed( state, siteId, inviteId ) {
+export function didInviteResendSucceed( state, siteId, inviteId ) {
 	return 'success' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
+}
+
+/**
+ * Returns true if currently deleting an invite for the given site and
+ * invite ID, or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {Boolean}          Whether invites resend is being requested
+ */
+export function isDeletingInvite( state, siteId, inviteId ) {
+	return 'requesting' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
+}
+
+/**
+ * Returns true if the invite for the given site and invite ID was successfully
+ * deleted, or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {Boolean}          Whether invites resend is being requested
+ */
+export function didInviteDeletionSucceed( state, siteId, inviteId ) {
+	return 'success' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
 }

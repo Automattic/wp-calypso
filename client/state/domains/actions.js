@@ -48,6 +48,11 @@ export const recordAddDomainButtonClickInTransferDomain = ( domainName, section 
 		} )
 	);
 
+export const recordStartTransferClickInThankYou = domainName =>
+	recordTracksEvent( 'calypso_thank_you_start_transfer', {
+		meta: domainName,
+	} );
+
 export const recordRemoveDomainButtonClick = domainName =>
 	composeAnalytics(
 		recordGoogleEvent(

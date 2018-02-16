@@ -8,6 +8,7 @@ import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 	handleSaveSuccess,
+	announceRequestFailure,
 	announceSaveFailure,
 	fromApi,
 } from '../';
@@ -95,6 +96,65 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 				},
 				action
 			)
+		);
+	} );
+} );
+
+describe( 'announceRequestFailure()', () => {
+	const dispatch = jest.fn();
+	const siteId = 12345678;
+	const siteUrl = 'http://yourgroovydomain.com';
+
+	test( 'should trigger an error notice with an action button when request fails', () => {
+		const getState = () => ( {
+			jetpackOnboarding: {
+				credentials: {
+					[ siteId ]: {
+						siteUrl,
+						token: 'abcd1234',
+						userEmail: 'example@yourgroovydomain.com',
+					},
+				},
+			},
+		} );
+
+		announceRequestFailure( { dispatch, getState }, { siteId } );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				notice: expect.objectContaining( {
+					button: 'Visit site admin',
+					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
+					noticeId: `jpo-communication-error-${ siteId }`,
+					status: 'is-error',
+					text: 'Something went wrong.',
+				} ),
+			} )
+		);
+	} );
+
+	test( 'should trigger an error notice without action button if url is missing', () => {
+		const getState = () => ( {
+			jetpackOnboarding: {
+				credentials: {
+					[ siteId ]: {
+						token: 'abcd1234',
+						userEmail: 'example@yourgroovydomain.com',
+					},
+				},
+			},
+		} );
+
+		announceRequestFailure( { dispatch, getState }, { siteId } );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				notice: expect.objectContaining( {
+					noticeId: `jpo-communication-error-${ siteId }`,
+					status: 'is-error',
+					text: 'Something went wrong.',
+				} ),
+			} )
 		);
 	} );
 } );

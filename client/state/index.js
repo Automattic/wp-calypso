@@ -47,6 +47,7 @@ import inlineHelpSearchResults from './inline-help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
+import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
@@ -134,6 +135,7 @@ const reducers = {
 	jetpackConnect,
 	jetpackOnboarding,
 	jetpack,
+	jetpackRemoteInstall,
 	jetpackSync,
 	jitm,
 	login,

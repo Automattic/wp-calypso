@@ -66,20 +66,13 @@ class MailChimp extends React.Component {
 		// Special case for store dashboard where we want to only show MailChimpGetingStarted in case
 		// when user has not finished settup. We show nothing in other cases.
 		if ( dashboardView ) {
-			return (
-				<div className="mailchimp">
-					{ ! isRequestingMailChimpSettings &&
-						( settings && settings.active_tab !== 'sync' ) && (
-							<MailChimpGettingStarted
-								siteId={ siteId }
-								site={ site }
-								isPlaceholder={ isRequestingData }
-								onClick={ this.startWizard }
-								redirectToSettings
-							/>
-						) }
-				</div>
-			);
+			// Disabling due to performance issues with the plugin.
+			return null;
+		}
+
+		// Disable setup view for now
+		if ( ! isRequestingData && gettingStarted ) {
+			return null;
 		}
 
 		return (

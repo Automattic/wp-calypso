@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { get, size, filter, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -21,6 +22,7 @@ import QueryReaderFeed from 'components/data/query-reader-feed';
 import { recordTrack } from 'reader/stats';
 import { getSiteName } from 'reader/get-helpers';
 import FollowButton from 'reader/follow-button';
+import { getPostsByKeys } from 'state/reader/posts/selectors';
 
 class ReaderCombinedCard extends React.Component {
 	static propTypes = {
@@ -67,6 +69,7 @@ class ReaderCombinedCard extends React.Component {
 	render() {
 		const {
 			posts,
+			postKeys,
 			site,
 			feed,
 			postKey,
@@ -122,6 +125,7 @@ class ReaderCombinedCard extends React.Component {
 						<ReaderCombinedCardPost
 							key={ `post-${ postKey.feedId || postKey.blogId }-${ postKey.postIds[ i ] }` }
 							post={ post }
+							postKey={ postKeys[ i ] }
 							streamUrl={ streamUrl }
 							onClick={ onClick }
 							isDiscover={ isDiscover }
@@ -137,4 +141,21 @@ class ReaderCombinedCard extends React.Component {
 	}
 }
 
-export default localize( ReaderCombinedCard );
+function combinedCardPostKeyToKeys( postKey ) {
+	if ( ! postKey || ! postKey.postIds ) {
+		return [];
+	}
+
+	const feedId = postKey.feedId;
+	const blogId = postKey.blogId;
+	return postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
+}
+
+export default connect( ( state, ownProps ) => {
+	const postKeys = combinedCardPostKeyToKeys( ownProps.postKey );
+
+	return {
+		posts: getPostsByKeys( state, postKeys ),
+		postKeys,
+	};
+} )( localize( ReaderCombinedCard ) );

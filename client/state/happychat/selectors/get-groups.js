@@ -20,7 +20,7 @@ export default ( state, siteId ) => {
 
 	// For Jetpack Connect we need to direct chat users to the JPOP group, to account for cases
 	// when the user does not have a site yet, or their primary site is not a Jetpack site.
-	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpackConnect' ) {
+	if ( isEnabled( 'jetpack/happychat' ) && getSectionName( state ) === 'jetpack-connect' ) {
 		groups.push( HAPPYCHAT_GROUP_JPOP );
 		return groups;
 	}

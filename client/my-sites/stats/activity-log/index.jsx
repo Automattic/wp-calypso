@@ -492,7 +492,7 @@ class ActivityLog extends Component {
 						icon="history"
 						href={
 							rewindState.canAutoconfigure
-								? `/settings/security/${ slug }`
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
 								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
 						}
 						title={ translate( 'Add site credentials' ) }
@@ -598,10 +598,9 @@ class ActivityLog extends Component {
 		const { siteId, context, rewindState } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
-		const rewindIsNotReady = includes(
-			[ 'uninitialized', 'awaitingCredentials' ],
-			rewindState.state
-		);
+		const rewindIsNotReady =
+			includes( [ 'uninitialized', 'awaitingCredentials' ], rewindState.state ) ||
+			'vp_can_transfer' === rewindState.reason;
 
 		return (
 			<Main wideLayout>

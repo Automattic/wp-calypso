@@ -22,6 +22,8 @@ class Wizard extends Component {
 		components: PropTypes.objectOf( PropTypes.element ).isRequired,
 		forwardText: PropTypes.string,
 		hideNavigation: PropTypes.bool,
+		onBackClick: PropTypes.func,
+		onForwardClick: PropTypes.func,
 		steps: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		stepName: PropTypes.string.isRequired,
 	};
@@ -75,6 +77,8 @@ class Wizard extends Component {
 			components,
 			forwardText,
 			hideNavigation,
+			onBackClick,
+			onForwardClick,
 			steps,
 			stepName,
 			...otherProps
@@ -103,11 +107,21 @@ class Wizard extends Component {
 					totalSteps > 1 && (
 						<div className="wizard__navigation-links">
 							{ stepIndex > 0 && (
-								<NavigationLink direction="back" href={ backUrl } text={ backText } />
+								<NavigationLink
+									direction="back"
+									href={ backUrl }
+									text={ backText }
+									onClick={ onBackClick }
+								/>
 							) }
 
 							{ stepIndex < totalSteps - 1 && (
-								<NavigationLink direction="forward" href={ forwardUrl } text={ forwardText } />
+								<NavigationLink
+									direction="forward"
+									href={ forwardUrl }
+									text={ forwardText }
+									onClick={ onForwardClick }
+								/>
 							) }
 						</div>
 					) }

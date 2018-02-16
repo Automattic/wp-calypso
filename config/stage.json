@@ -57,8 +57,6 @@
 		"manage/option_sync_non_public_post_stati": false,
 		"manage/pages": true,
 		"manage/payment-methods": true,
-		"manage/people": true,
-		"manage/people/readers": true,
 		"manage/plan-features": true,
 		"manage/plugins": true,
 		"manage/plugins/setup": true,

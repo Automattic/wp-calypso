@@ -53,7 +53,7 @@ describe( 'state', () => {
 						fetchingStatus( true, {
 							type: SERIALIZE,
 						} )
-					).to.be.null;
+					).to.be.undefined;
 
 					expect(
 						fetchingStatus( true, {
