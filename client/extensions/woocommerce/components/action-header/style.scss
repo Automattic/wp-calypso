@@ -52,6 +52,10 @@
 		white-space: nowrap;
 		padding: 5px 14px 7px;
 
+		& + .button {
+			margin-left: 12px;
+		}
+
 		&.is-borderless {
 			padding: 0;
 			margin-top: -6px;
