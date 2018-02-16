@@ -520,17 +520,17 @@ module.exports = function() {
 		} );
 
 		if ( calypsoEnv === 'development' ) {
-			return res.render( 'support-user', {
-				authorized: true,
-				supportUser: req.query.support_user,
-				supportToken: req.query._support_token,
-			} );
+			return res.send(
+				renderJsx( 'support-user', {
+					authorized: true,
+					supportUser: req.query.support_user,
+					supportToken: req.query._support_token,
+				} )
+			);
 		}
 
 		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
-			return res.render( 'support-user', {
-				authorized: false,
-			} );
+			return res.send( renderJsx( 'support-user' ) );
 		}
 
 		// Maybe not logged in, note that you need docker to test this properly
@@ -546,26 +546,24 @@ module.exports = function() {
 					domain: '.wordpress.com',
 				} );
 
-				return res.render( 'support-user', {
-					authorized: false,
-				} );
+				return res.send( renderJsx( 'support-user' ) );
 			}
 
 			const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
 			// A8C check
 			if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
-				return res.render( 'support-user', {
-					authorized: false,
-				} );
+				return res.send( renderJsx( 'support-user' ) );
 			}
 
 			// Passed all checks, prepare support user session
-			return res.render( 'support-user', {
-				authorized: true,
-				supportUser: req.query.support_user,
-				supportToken: req.query._support_token,
-			} );
+			return res.send(
+				renderJsx( 'support-user', {
+					authorized: true,
+					supportUser: req.query.support_user,
+					supportToken: req.query._support_token,
+				} )
+			);
 		} );
 	} );
 
