@@ -19,6 +19,7 @@ import { formatValue, getDelta } from '../utils';
 import { getPeriodFormat } from 'state/stats/lists/utils';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
 import Sparkline from 'woocommerce/components/sparkline';
+import BarChart from 'woocommerce/components/barchart';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';
 import TableRow from 'woocommerce/components/table/table-row';
@@ -90,11 +91,11 @@ class StoreStatsWidgetList extends Component {
 				title: widget.title,
 				value: formatValue( timeSeries[ selectedIndex ], widget.format, sincePeriod.currency ),
 				sparkline: (
-					<Sparkline
-						aspectRatio={ 3 }
+					<BarChart
+						// aspectRatio={ 3 }
 						data={ timeSeries }
-						highlightIndex={ selectedIndex }
-						maxHeight={ 50 }
+						// highlightIndex={ selectedIndex }
+						// maxHeight={ 50 }
 					/>
 				),
 				delta: (
