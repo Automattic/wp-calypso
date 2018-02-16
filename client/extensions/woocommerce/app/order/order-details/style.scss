@@ -57,6 +57,45 @@
 			color: $alert-red;
 		}
 	}
+
+	@include breakpoint( "<660px" ) {
+		table,
+		tbody,
+		thead {
+			display: block;
+		}
+		.table-row {
+			width: 100%;
+			display: flex;
+			justify-content: space-between;
+			flex-wrap: wrap;
+
+			* {
+				box-sizing: border-box;
+			}
+
+			.table-heading,
+			.table-item {
+				flex: 1 0;
+			}
+
+			.order-details__item-product {
+				flex: 1 0 100%;
+				padding-bottom: 0;
+				border-bottom: none;
+			}
+
+			.order-details__item-cost {
+				padding-left: 24px;
+				text-align: left;
+			}
+		}
+		.table-row.order-details__header {
+			.order-details__item-product {
+				display: none;
+			}
+		}
+	}
 }
 
 .order-details__item-cost,
