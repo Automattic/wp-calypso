@@ -4,7 +4,7 @@
  */
 import React from 'react';
 
-const TranslatableField = ( { originalString, title, fieldName, onChange, value } ) => (
+const TranslatableField = ( { originalString, title, fieldName, onChange, value, disabled } ) => (
 	<label className="community-translator__string-container" htmlFor={ fieldName }>
 		<span className="community-translator__string-description">{ title }</span>
 		<span>
@@ -13,6 +13,7 @@ const TranslatableField = ( { originalString, title, fieldName, onChange, value 
 				id={ fieldName }
 				name={ fieldName }
 				value={ value }
+				disabled={ disabled }
 				onChange={ onChange }
 			/>
 		</span>

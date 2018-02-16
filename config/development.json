@@ -59,7 +59,7 @@
 		"guided-tours/theme-sheet-welcome": true,
 		"help": true,
 		"help/courses": true,
-        "i18n/community_translator": true,
+        "i18n/community-translator": true,
         "jetpack/api-cache": true,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/remote-install": true,

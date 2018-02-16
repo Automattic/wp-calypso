@@ -2,9 +2,7 @@
 /**
  * External dependencies
  */
-//import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
@@ -15,7 +13,6 @@ import Translatable from './translatable';
 import config from 'config';
 import User from 'lib/user';
 import userSettings from 'lib/user-settings';
-import analytics from 'lib/analytics';
 import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
 
 /**
@@ -26,11 +23,9 @@ const languages = config( 'languages' );
 const user = new User();
 
 class CommunityTranslator extends Component {
-
 	languageJson = null;
 	currentLocale = null;
 	initialized = false;
-	previousUserSettingsEnabledValue = null;
 
 	componentDidMount() {
 		this.setLanguage();
@@ -45,14 +40,12 @@ class CommunityTranslator extends Component {
 		i18n.registerComponentUpdateHook( () => {} );
 		i18n.on( 'change', this.refresh );
 		user.on( 'change', this.refresh );
-		userSettings.on( 'change', this.trackTranslatorStatus );
 		userSettings.on( 'change', this.refresh );
 	}
 
 	componentWillUnmount() {
 		i18n.off( 'change', this.refresh );
 		user.removeListener( 'change', this.refresh );
-		userSettings.removeListener( 'change', this.trackTranslatorStatus );
 		userSettings.removeListener( 'change', this.refresh );
 	}
 
@@ -93,9 +86,11 @@ class CommunityTranslator extends Component {
 	};
 
 	/**
-	 * TODO: expand jsdoc comment
-	 *
-	 * @returns {String|Object}
+	 * Wraps translation in a DOM object and attaches `toString()` method in case in can't be rendered
+	 * @param { String } originalFromPage - original string
+	 * @param { String } displayedTranslationFromPage - translated string
+	 * @param  { Object } optionsFromPage - i18n.translate options
+	 * @returns {Object} DOM object
 	 */
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! isCommunityTranslatorEnabled() ) {
@@ -147,7 +142,7 @@ class CommunityTranslator extends Component {
 
 		// now we can override the toString function which would otherwise return [object Object]
 		translatableElement.toString = () => {
-			// do something with displayedTranslationFromPage
+			// here we can store the strings that cannot be rendered to the page
 			return displayedTranslationFromPage;
 		};
 
@@ -157,31 +152,9 @@ class CommunityTranslator extends Component {
 		return translatableElement;
 	}
 
-	/**
-	 * TODO: expand jsdoc comment
-	 *
-	 * @returns {Boolean}
-	 */
-	trackTranslatorStatus = () => {
-		const newSetting = userSettings.getOriginalSetting( 'enable_translator' );
-		const changed = this.previousUserSettingsEnabledValue !== newSetting;
-		const tracksEvent = newSetting
-			? 'calypso_community_translator_enabled'
-			: 'calypso_community_translator_disabled';
-
-		if ( changed && this.previousUserSettingsEnabledValue !== undefined ) {
-			debug( tracksEvent );
-			analytics.tracks.recordEvent( tracksEvent, { locale: user.data.localeSlug } );
-		}
-
-		this.previousUserSettingsEnabledValue = newSetting;
-	};
-
 	render() {
 		return null;
 	}
 }
 
-export default connect( ( state, props ) => {
-	return {};
-} )( localize( CommunityTranslator ) );
+export default localize( CommunityTranslator );

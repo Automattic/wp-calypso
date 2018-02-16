@@ -16,6 +16,8 @@
 .community-translator__dialog-header {
 	margin-bottom: 7px;
 	font-weight: bold;
+	border-bottom: 1px solid $gray-lighten-30;
+	padding-bottom: 7px;
 	h2 {
 		font-weight: normal;
 		display: inline-block;
@@ -25,6 +27,7 @@
 		text-align: right;
 		display: block;
 		float: right;
+		padding-top: 7px;
 	}
 }
 
@@ -37,6 +40,9 @@
 	display: flex;
 	border-top: 1px solid $gray-lighten-30;
 	padding-top: 10px;
+	&:first-child {
+		border-top : 0;
+	}
 	> span {
 		font-weight: bold;
 		display: block;

@@ -2,9 +2,8 @@
 /**
  * External dependencies
  */
-//import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { noop, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
@@ -15,7 +14,8 @@ import Gridicon from 'gridicons';
 import Dialog from 'components/dialog';
 import Button from 'components/button';
 import TranslatableField from './translatable-field';
-import { getTranslationData, getTranslationGlotPressUrl } from './utils.js';
+import TranslatedSuccess from './translated-success';
+import { getTranslationData, getTranslationGlotPressUrl, submitTranslation } from './utils.js';
 
 class Translatable extends Component {
 	state = {
@@ -35,6 +35,8 @@ class Translatable extends Component {
 				...this.state.formState,
 				[ name ]: value,
 			},
+			submitting: false,
+			submissionSuccess: false,
 		} );
 	};
 
@@ -60,6 +62,22 @@ class Translatable extends Component {
 			);
 	};
 
+	submitForm = () => {
+		this.setState( {
+			submitting: true,
+		} );
+		submitTranslation(
+			this.state.originalData.originalId,
+			this.state.formState,
+			this.props.locale.langSlug
+		).then( () => {
+			this.setState( {
+				submitting: false,
+				submissionSuccess: true,
+			} );
+		} );
+	};
+
 	getDialogButtons = () => {
 		const { translate } = this.props;
 		return [
@@ -68,10 +86,11 @@ class Translatable extends Component {
 			</Button>,
 			<Button
 				primary
-				onClick={ noop }
+				onClick={ this.submitForm }
 				disabled={
 					this.state.originalData.translatedSingular === this.state.formState.translatedSingular &&
-					this.state.originalData.translatedPlural === this.state.formState.translatedPlural
+					this.state.originalData.translatedPlural === this.state.formState.translatedPlural &&
+					! this.state.submitting
 				}
 			>
 				Submit a new translation
@@ -79,9 +98,18 @@ class Translatable extends Component {
 		];
 	};
 
-	renderTranslatableFields() {
+	renderTranslatableContent() {
+		if ( this.state.submissionSuccess ) {
+			return <TranslatedSuccess translationUrl={ this.state.translationUrl } />;
+		}
+
 		if ( this.state.originalData.error ) {
-			return <p className="community-translator__string-container"> {this.state.originalData.error} </p>;
+			return (
+				<p className="community-translator__string-container">
+					{' '}
+					{ this.state.originalData.error }{' '}
+				</p>
+			);
 		}
 		return [
 			<TranslatableField
@@ -89,15 +117,20 @@ class Translatable extends Component {
 				title="Singular"
 				fieldName="translatedSingular"
 				onChange={ this.handleTranslationChange }
-				value={ this.state.formState.translatedSingular } />,
+				disabled={ this.state.submitting }
+				value={ this.state.formState.translatedSingular }
+			/>,
 
-			this.state.formState.translatedPlural &&
-			<TranslatableField
-				originalString={ this.props.plural }
-				title="Plural"
-				fieldName="translatedPlural"
-				onChange={ this.handleTranslationChange }
-				value={ this.state.formState.translatedPlural } />
+			this.state.formState.translatedPlural && (
+				<TranslatableField
+					originalString={ this.props.plural }
+					title="Plural"
+					fieldName="translatedPlural"
+					onChange={ this.handleTranslationChange }
+					disabled={ this.state.submitting }
+					value={ this.state.formState.translatedPlural }
+				/>
+			),
 		];
 	}
 
@@ -123,13 +156,14 @@ class Translatable extends Component {
 				</header>
 				<section className="community-translator__dialog-body">
 					<fieldset>
-						{ this.hasDataLoaded()
-							? this.renderTranslatableFields()
-							: (
-								<div className="community-translator__string-container placeholder">
-									<span className="community-translator__string-description" />
-									<span />
-								</div> ) }
+						{ this.hasDataLoaded() ? (
+							this.renderTranslatableContent()
+						) : (
+							<div className="community-translator__string-container placeholder">
+								<span className="community-translator__string-description" />
+								<span />
+							</div>
+						) }
 					</fieldset>
 				</section>
 			</div>

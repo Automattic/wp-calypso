@@ -67,20 +67,27 @@ export function getTranslationData(
 }
 
 export function submitTranslation(
-	translation,
+	originalId,
+	translationObject,
 	locale,
 	apiBase = GP_API_BASE_URL,
 	project = PROJECT
 ) {
 	const glotPressUrl = `${ apiBase }/translations/-new`;
-	const postFormData = `project=${ project }&locale_slug=${ locale }&translation=${ encodeURIComponent(
-		JSON.stringify( translation )
-	) }`;
+	const newTranslations = Object.keys( translationObject )
+		.map(
+			key =>
+				translationObject[ key ] &&
+				`&translation[${ originalId }][]=${ encodeURIComponent( translationObject[ key ] ) }`
+		)
+		.join( '' );
+
+	const postFormData = `project=${ project }&locale_slug=${ locale }${ newTranslations }`;
 	return request
 		.post( glotPressUrl )
 		.withCredentials()
 		.send( postFormData )
-		.then( ( response ) => {
+		.then( response => {
 			// eslint-disable-next-line
 			console.log( 'response.body', response.body );
 		} );
@@ -100,7 +107,7 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 		};
 	}
 	return {
-		error: 'Sorry, we couldn\'t find the translation information for this string.',
+		error: "Sorry, we couldn't find the translation information for this string.",
 	};
 }
 
