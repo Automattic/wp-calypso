@@ -45,20 +45,15 @@ class MasterbarLoggedOut extends PureComponent {
 			return null;
 		}
 
-		const params = { locale: getLocaleSlug() };
-
-		if ( redirectUri ) {
-			params.redirectTo = redirectUri;
-		} else {
-			params.redirectTo = addQueryArgs( currentQuery, currentRoute );
-		}
+		const isJetpack = 'jetpack-connect' === sectionName;
 
 		const loginUrl = login( {
-			...params,
 			// We may know the email from Jetpack connection details
-			emailAddress: get( currentQuery, 'user_email' ),
-			isJetpack: 'jetpack-connect' === sectionName,
+			emailAddress: isJetpack && get( currentQuery, 'user_email', false ),
+			isJetpack,
 			isNative: config.isEnabled( 'login/native-login-links' ),
+			locale: getLocaleSlug(),
+			redirectTo: redirectUri || addQueryArgs( currentQuery, currentRoute ),
 		} );
 
 		return (
