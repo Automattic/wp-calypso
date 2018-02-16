@@ -98,18 +98,20 @@ class MasterbarLoggedOut extends PureComponent {
 		}
 
 		let signupUrl = config( 'signup_url' );
-		/**
-		 * log-in/jetpack/:locale is reached as part of the Jetpack connection flow. In this case,
-		 * the redirect_to will handle signups as part of the flow. Use the redirect_to parameter
-		 * directly for signup.
-		 */
 		if (
 			// Match locales like `/log-in/jetpack/es`
-			startsWith( currentRoute, '/log-in/jetpack' ) &&
-			// Ensure our redirection is to Jetpack Connect
-			includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' )
+			startsWith( currentRoute, '/log-in/jetpack' )
 		) {
-			signupUrl = currentQuery.redirect_to;
+			if ( includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) ) {
+				/**
+				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
+				 * this case, the redirect_to will handle signups as part of the flow. Use the
+				 * `redirect_to` parameter directly for signup.
+				 */
+				signupUrl = currentQuery.redirect_to;
+			} else {
+				signupUrl = '/jetpack/new';
+			}
 		} else if ( 'jetpack-connect' === sectionName ) {
 			signupUrl = '/jetpack/new';
 		}
