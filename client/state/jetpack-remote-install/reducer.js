@@ -18,15 +18,6 @@ export const isComplete = keyedReducer(
 	} )
 );
 
-export const inProgress = keyedReducer(
-	'url',
-	createReducer( false, {
-		[ JETPACK_REMOTE_INSTALL ]: () => true,
-		[ JETPACK_REMOTE_INSTALL_SUCCESS ]: () => false,
-		[ JETPACK_REMOTE_INSTALL_FAILURE ]: () => false,
-	} )
-);
-
 export const error = keyedReducer(
 	'url',
 	createReducer( null, {
@@ -38,6 +29,5 @@ export const error = keyedReducer(
 
 export default combineReducers( {
 	error,
-	inProgress,
 	isComplete,
 } );

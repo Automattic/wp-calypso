@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import reducer, { error, inProgress, isComplete } from '../reducer';
+import reducer, { error, isComplete } from '../reducer';
 import {
 	jetpackRemoteInstall,
 	jetpackRemoteInstallComplete,
@@ -17,7 +17,6 @@ describe( 'reducer', () => {
 		const state = reducer( undefined, {} );
 
 		expect( state ).toHaveProperty( 'isComplete' );
-		expect( state ).toHaveProperty( 'inProgress' );
 		expect( state ).toHaveProperty( 'error' );
 	} );
 
@@ -34,32 +33,6 @@ describe( 'reducer', () => {
 				},
 			};
 			const state = isComplete( initialState, jetpackRemoteInstall( url ) );
-			expect( state[ url ] ).not.toBeDefined();
-		} );
-	} );
-
-	describe( 'inProgress', () => {
-		const inProgressState = {
-			[ url ]: {
-				inProgress: true,
-			},
-		};
-
-		test( 'should be set on install request', () => {
-			const state = inProgress( undefined, jetpackRemoteInstall( url ) );
-			expect( state[ url ] ).toBe( true );
-		} );
-
-		test( 'should be cleared on install success', () => {
-			const state = inProgress( inProgressState, jetpackRemoteInstallComplete( url ) );
-			expect( state[ url ] ).not.toBeDefined();
-		} );
-
-		test( 'should be cleared on install error', () => {
-			const state = inProgress(
-				inProgressState,
-				jetpackRemoteInstallUpdateError( url, errorCode )
-			);
 			expect( state[ url ] ).not.toBeDefined();
 		} );
 	} );
