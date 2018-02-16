@@ -79,23 +79,27 @@ class Translatable extends Component {
 	};
 
 	getDialogButtons = () => {
-		const { translate } = this.props;
-		return [
+		const buttons = [
 			<Button primary onClick={ this.closeDialog }>
-				{ translate( 'Close', { textOnly: true } ) }
-			</Button>,
-			<Button
-				primary
-				onClick={ this.submitForm }
-				disabled={
-					this.state.originalData.translatedSingular === this.state.formState.translatedSingular &&
-					this.state.originalData.translatedPlural === this.state.formState.translatedPlural &&
-					! this.state.submitting
-				}
-			>
-				Submit a new translation
+				{ this.props.translate( 'Close', { textOnly: true } ) }
 			</Button>,
 		];
+		! this.state.submissionSuccess &&
+			buttons.push(
+				<Button
+					primary
+					onClick={ this.submitForm }
+					disabled={
+						this.state.originalData.translatedSingular ===
+							this.state.formState.translatedSingular &&
+						this.state.originalData.translatedPlural === this.state.formState.translatedPlural &&
+						! this.state.submitting
+					}
+				>
+					Submit a new translation
+				</Button>
+			);
+		return buttons;
 	};
 
 	renderTranslatableContent() {
