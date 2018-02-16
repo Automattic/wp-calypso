@@ -76,11 +76,33 @@ class MasterbarLoggedOut extends PureComponent {
 	renderSignupItem() {
 		const { currentQuery, currentRoute, sectionName, translate } = this.props;
 
-		if ( includes( [ 'signup', 'jetpack-onboarding', 'jetpack-connect' ], sectionName ) ) {
+		// Hide for some sections
+		if ( includes( [ 'signup', 'jetpack-onboarding' ], sectionName ) ) {
+			return null;
+		}
+
+		/**
+		 * Hide signup from Jetpack connect authorization step. This step handles signup as part of
+		 * the flow.
+		 */
+		if ( startsWith( currentRoute, '/jetpack/connect/authorize' ) ) {
+			return null;
+		}
+
+		/**
+		 * Hide signup from from New Site screen. This allows starting with a new Jetpack or
+		 * WordPress.com site.
+		 */
+		if ( startsWith( currentRoute, '/jetpack/new' ) ) {
 			return null;
 		}
 
 		let signupUrl = config( 'signup_url' );
+		/**
+		 * log-in/jetpack/:locale is reached as part of the Jetpack connection flow. In this case,
+		 * the redirect_to will handle signups as part of the flow. Use the redirect_to parameter
+		 * directly for signup.
+		 */
 		if (
 			// Match locales like `/log-in/jetpack/es`
 			startsWith( currentRoute, '/log-in/jetpack' ) &&
@@ -88,6 +110,8 @@ class MasterbarLoggedOut extends PureComponent {
 			includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' )
 		) {
 			signupUrl = currentQuery.redirect_to;
+		} else if ( 'jetpack-connect' === sectionName ) {
+			signupUrl = '/jetpack/new';
 		}
 
 		return (
