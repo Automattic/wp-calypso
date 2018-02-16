@@ -8,7 +8,7 @@ import Gridicon from 'gridicons';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
@@ -153,22 +153,20 @@ class OrderActionHeader extends Component {
 
 	renderEditingButtons = () => {
 		const { hasOrderEdits, isSaving, translate } = this.props;
-		return (
-			<Fragment>
-				<Button key="cancel" onClick={ this.cancelEditing }>
-					{ translate( 'Cancel' ) }
-				</Button>
-				<Button
-					key="save"
-					primary
-					onClick={ this.saveOrder }
-					busy={ isSaving }
-					disabled={ ! hasOrderEdits || isSaving }
-				>
-					{ translate( 'Update' ) }
-				</Button>
-			</Fragment>
-		);
+		return [
+			<Button key="cancel" onClick={ this.cancelEditing }>
+				{ translate( 'Cancel' ) }
+			</Button>,
+			<Button
+				key="save"
+				primary
+				onClick={ this.saveOrder }
+				busy={ isSaving }
+				disabled={ ! hasOrderEdits || isSaving }
+			>
+				{ translate( 'Update' ) }
+			</Button>,
+		];
 	};
 
 	render() {
