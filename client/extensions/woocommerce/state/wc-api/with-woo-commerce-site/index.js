@@ -12,6 +12,10 @@ import { get } from 'lodash';
  */
 import createSiteData from '../site-data';
 
+function getWcApiState( state ) {
+	return get( state, 'extensions.woocommerce.wcApi', {} );
+}
+
 export function withWooCommerceSite( mapSiteDataToProps ) {
 	return function connectWithWooCommerceSite( WrappedComponent ) {
 		let lastWcApiSite = null;
@@ -19,7 +23,7 @@ export function withWooCommerceSite( mapSiteDataToProps ) {
 		let siteData = null;
 
 		function getSiteData( wcApiSite, state ) {
-			const wcApiState = get( state, 'extensions.woocommerce.wcApi', {} );
+			const wcApiState = getWcApiState( state );
 
 			if ( wcApiSite !== lastWcApiSite || wcApiState !== lastWcApiState ) {
 				lastWcApiSite = wcApiSite;
@@ -37,6 +41,12 @@ export function withWooCommerceSite( mapSiteDataToProps ) {
 		const component = connect( mapStateToProps )( WrappedComponent );
 		component.propTypes = {
 			wcApiSite: PropTypes.number,
+		};
+		component.shouldComponentUpdate = ( nextProps, nextState ) => {
+			const { wcApiSite } = nextProps;
+			const wcApiState = getWcApiState( nextState );
+			const ret = wcApiSite !== lastWcApiState || wcApiState !== lastWcApiState;
+			return ret;
 		};
 
 		return component;

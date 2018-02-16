@@ -20,6 +20,7 @@ import ProductFormDetailsCard from './product-form-details-card';
 import ProductFormSimpleCard from './product-form-simple-card';
 import ProductFormVariationsCard from './product-form-variations-card';
 import { withWooCommerceSite } from 'woocommerce/state/wc-api';
+import { SECONDS } from 'woocommerce/state/wc-api/constants';
 
 class ProductForm extends Component {
 	static propTypes = {
@@ -117,7 +118,7 @@ class ProductForm extends Component {
 function mapSiteDataToProps( siteData, ownProps, state ) {
 	const { wcApiSite, productId } = ownProps;
 
-	const apiProduct = siteData.getProduct( productId );
+	const apiProduct = siteData.getProduct( productId, { freshness: 90 * SECONDS } );
 	const isProductLoaded = ! productId || Boolean( apiProduct );
 	const edits = getProductEdits( state, productId, wcApiSite );
 	const product = { ...( apiProduct || { id: productId, type: 'simple' } ), ...edits };

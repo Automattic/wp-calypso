@@ -3,8 +3,8 @@
  */
 import products from './products';
 
-export const createEndpoints = ( endpointData ) => {
+export const createEndpoints = ( wcApiSite, endpointData ) => {
 	return {
-		products: products( endpointData ),
+		products: products( wcApiSite, endpointData ),
 	};
 };

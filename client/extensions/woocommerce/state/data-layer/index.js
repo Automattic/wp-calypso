@@ -26,6 +26,7 @@ import shippingZoneLocations from './shipping-zone-locations';
 import shippingZoneMethods from './shipping-zone-methods';
 import shippingZones from './shipping-zones';
 import ui from './ui';
+import wcApi from '../wc-api/handlers';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'woocommerce:errors' );
@@ -50,7 +51,8 @@ const handlers = mergeHandlers(
 	shippingZoneLocations,
 	shippingZoneMethods,
 	shippingZones,
-	ui
+	ui,
+	wcApi
 );
 
 export default function installActionHandlers() {
