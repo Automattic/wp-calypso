@@ -110,6 +110,13 @@
 	text-align: center;
 	color: $blue-medium;
 
+	// NOTE: .is-kracken-ui can be removed once feature is deployed.
+	.is-kracken-ui &.is-primary {
+		color: $white;
+		padding-left: 3em;
+		padding-right: 3em;
+	}
+
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: $gray-lighten-30;
