@@ -1,0 +1,27 @@
+/** @format */
+
+.html-toolbar__dialog {
+	max-height: 90%;
+
+	.dialog__content {
+		min-width: 40vw;
+	}
+	.form-fieldset {
+		margin-bottom: 8px;
+	}
+	.post-selector {
+		margin-bottom: 16px;
+
+		.post-selector__results {
+			height: 24vh;
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		width: 90%;
+
+		.dialog__content {
+			min-width: none;
+		}
+	}
+}

@@ -11,7 +11,6 @@ import { get, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
-import { Env } from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
@@ -32,8 +31,8 @@ import {
 	fieldUpdate,
 	settingsUpdate,
 } from 'state/ui/editor/contact-form/actions';
-import AddImageDialog from './add-image-dialog';
-import AddLinkDialog from './add-link-dialog';
+import AddImageDialog from 'components/html-toolbar/add-image-dialog';
+import AddLinkDialog from 'components/html-toolbar/add-link-dialog';
 import Button from 'components/button';
 import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
@@ -41,6 +40,16 @@ import EditorMediaModal from 'post-editor/editor-media-modal';
 import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
 import config from 'config';
 import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
+import {
+	closeHtmlTag,
+	insertCustomContent,
+	insertHtmlTag,
+	insertHtmlTagOpenClose,
+	insertHtmlTagSelfClosed,
+	insertHtmlTagWithText,
+	setCursorPosition,
+	splitSelectedContent,
+} from 'components/html-toolbar/utils';
 
 /**
  * Module constant
@@ -162,147 +171,36 @@ export class EditorHtmlToolbar extends Component {
 		}
 	};
 
-	splitEditorContent() {
-		const { content: { selectionEnd, selectionStart, value } } = this.props;
-		return {
-			before: value.substring( 0, selectionStart ),
-			inner: value.substring( selectionStart, selectionEnd ),
-			after: value.substring( selectionEnd, value.length ),
-		};
-	}
+	insertCustomContent = ( content, options ) =>
+		insertCustomContent( this.props.content, content, options, this.props.onToolbarChangeContent );
 
-	setCursorPosition( previousSelectionEnd, insertedContentLength ) {
-		this.props.content.selectionEnd = this.props.content.selectionStart =
-			previousSelectionEnd + insertedContentLength;
-	}
-
-	updateEditorContent = ( before, newContent, after ) => {
-		// Browser is Firefox
-		if ( Env.gecko ) {
-			// In Firefox, execCommand( 'insertText' ), needed to preserve the undo stack,
-			// always moves the cursor to the end of the content.
-			// A workaround involving manually setting the cursor position and inserting the editor content
-			// is needed to put the cursor back to the correct position.
-			return this.updateEditorContentFirefox( before, newContent, after );
-		}
-
-		// Browser is Internet Explorer 11
-		if ( 11 === Env.ie ) {
-			// execCommand( 'insertText' ), needed to preserve the undo stack, does not exist in IE11.
-			// Using the previous version of replacing the entire content value instead.
-			return this.updateEditorContentIE11( before, newContent, after );
-		}
-
-		return this.insertEditorContent( before, newContent, after );
-	};
-
-	insertEditorContent( before, newContent, after ) {
+	insertHtmlTag = tag => {
 		const { content, onToolbarChangeContent } = this.props;
-		content.focus();
-		document.execCommand( 'insertText', false, newContent );
-		onToolbarChangeContent( before + newContent + after );
-	}
-
-	updateEditorContentFirefox( before, newContent, after ) {
-		const fullContent = before + newContent + after;
-		const { content, content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
-		this.props.content.value = fullContent;
-		content.focus();
-		document.execCommand( 'insertText', false, newContent );
-		onToolbarChangeContent( fullContent );
-		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
-		this.props.content.focus();
-	}
-
-	updateEditorContentIE11( before, newContent, after ) {
-		const fullContent = before + newContent + after;
-		const { content: { selectionEnd, value }, onToolbarChangeContent } = this.props;
-		this.props.content.value = fullContent;
-		onToolbarChangeContent( fullContent );
-		this.setCursorPosition( selectionEnd, fullContent.length - value.length );
-	}
-
-	attributesToString = ( attributes = {} ) =>
-		reduce(
-			attributes,
-			( attributesString, attributeValue, attributeName ) =>
-				attributeValue
-					? attributesString + ` ${ attributeName }="${ attributeValue }"`
-					: attributesString,
-			''
+		const isTagOpen = insertHtmlTag(
+			content,
+			tag,
+			this.isTagOpen( tag.name ),
+			onToolbarChangeContent
 		);
-
-	openHtmlTag = ( { name, attributes = {}, options = {} } ) =>
-		( options.paragraph ? '\n' : '' ) +
-		( options.indent ? '\t' : '' ) +
-		`<${ name }${ this.attributesToString( attributes ) }>` +
-		( options.paragraph ? '\n' : '' );
-
-	closeHtmlTag = ( { name, options = {} } ) =>
-		`</${ name }>` + ( options.newLineAfter ? '\n' : '' ) + ( options.paragraph ? '\n\n' : '' );
-
-	insertHtmlTagOpen( tag ) {
-		const { openTags } = this.state;
-		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before, this.openHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.concat( tag.name ) } );
-	}
-
-	insertHtmlTagClose( tag ) {
-		const { openTags } = this.state;
-		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent( before, this.closeHtmlTag( tag ), after );
-		this.setState( { openTags: openTags.filter( openTag => openTag !== tag.name ) } );
-	}
-
-	insertHtmlTagOpenClose( tag ) {
-		const { before, inner, after } = this.splitEditorContent();
-		this.updateEditorContent(
-			before,
-			this.openHtmlTag( tag ) + inner + this.closeHtmlTag( tag ),
-			after
-		);
-	}
-
-	insertHtmlTagSelfClosed( tag ) {
-		const { before, inner, after } = this.splitEditorContent();
-		const selfClosedTag = `<${ tag.name }${ this.attributesToString( tag.attributes ) } />`;
-		const content =
-			tag.options && tag.options.paragraph ? '\n' + selfClosedTag + '\n\n' : selfClosedTag;
-		this.updateEditorContent( before, inner + content, after );
-	}
-
-	insertHtmlTagWithText( tag ) {
-		const { before, after } = this.splitEditorContent();
-		this.updateEditorContent(
-			before,
-			this.openHtmlTag( tag ) + tag.options.text + this.closeHtmlTag( tag ),
-			after
-		);
-	}
-
-	insertCustomContent( content, options = {} ) {
-		const { before, inner, after } = this.splitEditorContent();
-		const paragraph = options.paragraph ? '\n' : '';
-		this.updateEditorContent( before, inner + paragraph + content + paragraph + paragraph, after );
-	}
-
-	insertHtmlTag( tag ) {
-		const { content: { selectionEnd, selectionStart } } = this.props;
-		if ( selectionEnd === selectionStart ) {
-			this.isTagOpen( tag.name ) ? this.insertHtmlTagClose( tag ) : this.insertHtmlTagOpen( tag );
-		} else {
-			this.insertHtmlTagOpenClose( tag );
-		}
-	}
-
-	onClickBold = () => {
-		this.insertHtmlTag( { name: 'strong' } );
+		this.setState( ( { openTags } ) => ( {
+			openTags: isTagOpen
+				? openTags.concat( tag.name )
+				: openTags.filter( openTag => openTag !== tag.name ),
+		} ) );
 	};
 
-	onClickItalic = () => {
-		this.insertHtmlTag( { name: 'em' } );
-	};
+	insertHtmlTagOpenClose = tag =>
+		insertHtmlTagOpenClose( this.props.content, tag, this.props.onToolbarChangeContent );
+
+	insertHtmlTagSelfClosed = tag =>
+		insertHtmlTagSelfClosed( this.props.content, tag, this.props.onToolbarChangeContent );
+
+	insertHtmlTagWithText = tag =>
+		insertHtmlTagWithText( this.props.content, tag, this.props.onToolbarChangeContent );
+
+	onClickBold = () => this.insertHtmlTag( { name: 'strong' } );
+
+	onClickItalic = () => this.insertHtmlTag( { name: 'em' } );
 
 	onClickLink = ( attributes, text ) => {
 		if ( text ) {
@@ -310,43 +208,34 @@ export class EditorHtmlToolbar extends Component {
 		} else {
 			this.insertHtmlTagOpenClose( { name: 'a', attributes } );
 			// Move the cursor inside <a></a>
-			this.setCursorPosition( this.props.content.selectionEnd, -4 );
+			setCursorPosition( this.props.content, -4 );
 		}
 	};
 
-	onClickQuote = () => {
-		this.insertHtmlTag( { name: 'blockquote', options: { paragraph: true } } );
-	};
+	onClickQuote = () => this.insertHtmlTag( { name: 'blockquote', options: { paragraph: true } } );
 
-	onClickDelete = () => {
-		const datetime = this.props.moment().format();
-		this.insertHtmlTag( { name: 'del', attributes: { datetime } } );
-	};
+	onClickDelete = () =>
+		this.insertHtmlTag( {
+			name: 'del',
+			attributes: { datetime: this.props.moment().format() },
+		} );
 
-	onClickInsert = () => {
-		const datetime = this.props.moment().format();
-		this.insertHtmlTag( { name: 'ins', attributes: { datetime } } );
-	};
+	onClickInsert = () =>
+		this.insertHtmlTag( {
+			name: 'ins',
+			attributes: { datetime: this.props.moment().format() },
+		} );
 
-	onClickImage = attributes => {
-		this.insertHtmlTagSelfClosed( { name: 'img', attributes } );
-	};
+	onClickImage = attributes => this.insertHtmlTagSelfClosed( { name: 'img', attributes } );
 
-	onClickUnorderedList = () => {
-		this.insertHtmlTag( { name: 'ul', options: { paragraph: true } } );
-	};
+	onClickUnorderedList = () => this.insertHtmlTag( { name: 'ul', options: { paragraph: true } } );
 
-	onClickOrderedList = () => {
-		this.insertHtmlTag( { name: 'ol', options: { paragraph: true } } );
-	};
+	onClickOrderedList = () => this.insertHtmlTag( { name: 'ol', options: { paragraph: true } } );
 
-	onClickListItem = () => {
+	onClickListItem = () =>
 		this.insertHtmlTag( { name: 'li', options: { indent: true, newLineAfter: true } } );
-	};
 
-	onClickCode = () => {
-		this.insertHtmlTag( { name: 'code' } );
-	};
+	onClickCode = () => this.insertHtmlTag( { name: 'code' } );
 
 	onClickMore = () => {
 		this.insertCustomContent( '<!--more-->', { paragraph: true } );
@@ -355,7 +244,7 @@ export class EditorHtmlToolbar extends Component {
 	onClickCloseTags = () => {
 		const closedTags = reduce(
 			this.state.openTags,
-			( tags, openTag ) => this.closeHtmlTag( { name: openTag } ) + tags,
+			( tags, openTag ) => closeHtmlTag( { name: openTag } ) + tags,
 			''
 		);
 		this.insertCustomContent( closedTags );
@@ -380,11 +269,8 @@ export class EditorHtmlToolbar extends Component {
 	};
 
 	openLinkDialog = () => {
-		const { inner: selectedText } = this.splitEditorContent();
-		this.setState( {
-			selectedText,
-			showLinkDialog: true,
-		} );
+		const { inner } = splitSelectedContent( this.props.content );
+		this.setState( { selectedText: inner, showLinkDialog: true } );
 	};
 
 	closeLinkDialog = () => {
@@ -645,16 +531,16 @@ export class EditorHtmlToolbar extends Component {
 				</div>
 
 				<AddImageDialog
+					isVisible={ this.state.showImageDialog }
 					onClose={ this.closeImageDialog }
 					onInsert={ this.onClickImage }
-					shouldDisplay={ this.state.showImageDialog }
 				/>
 
 				<AddLinkDialog
+					isVisible={ this.state.showLinkDialog }
 					onClose={ this.closeLinkDialog }
 					onInsert={ this.onClickLink }
 					selectedText={ this.state.selectedText }
-					shouldDisplay={ this.state.showLinkDialog }
 				/>
 
 				<ContactFormDialog

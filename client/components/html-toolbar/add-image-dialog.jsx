@@ -1,11 +1,9 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,9 +16,9 @@ import FormTextInput from 'components/forms/form-text-input';
 
 export class AddImageDialog extends Component {
 	static propTypes = {
+		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
 		onInsert: PropTypes.func,
-		shouldDisplay: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
@@ -58,7 +56,10 @@ export class AddImageDialog extends Component {
 	};
 
 	render() {
-		const { shouldDisplay, translate } = this.props;
+		if ( ! this.props.isVisible ) {
+			return null;
+		}
+		const { translate } = this.props;
 		const { imageAlt, imageTitle, imageUrl } = this.state;
 
 		const buttons = [
@@ -76,11 +77,10 @@ export class AddImageDialog extends Component {
 
 		return (
 			<Dialog
-				autoFocus={ false }
-				isVisible={ shouldDisplay }
+				additionalClassNames="html-toolbar__dialog"
 				buttons={ buttons }
+				isVisible
 				onClose={ this.onCloseDialog }
-				additionalClassNames="editor-html-toolbar__dialog"
 			>
 				<FormFieldset>
 					<FormLabel htmlFor="image_url">{ translate( 'URL' ) }</FormLabel>
