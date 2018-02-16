@@ -11,8 +11,8 @@ import { delay, each, filter, get, map, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import AddImageDialog from 'post-editor/editor-html-toolbar/add-image-dialog';
-import AddLinkDialog from 'post-editor/editor-html-toolbar/add-link-dialog';
+import AddImageDialog from 'my-sites/comments/comment/comment-html-editor/add-image-dialog';
+import AddLinkDialog from 'my-sites/comments/comment/comment-html-editor/add-link-dialog';
 import Button from 'components/button';
 
 export class CommentHtmlEditor extends Component {
