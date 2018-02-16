@@ -66,8 +66,7 @@ const refreshActivityLogAfterRewind = ( siteId, rewind ) => ( dispatch, getState
 		return;
 	}
 
-	const queries = logItems.data.queries;
-	Object.keys( queries ).forEach( query =>
+	Object.keys( logItems.data.queries ).forEach( query =>
 		dispatch( activityLogRequest( siteId, fromPairs( JSON.parse( query ) ) ) )
 	);
 };
