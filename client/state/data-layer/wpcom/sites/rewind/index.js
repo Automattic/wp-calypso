@@ -41,7 +41,7 @@ const fetchRewindState = action =>
  * of Activity Log and Rewind state!
  *
  * It will not grab events we haven't already
- * gotten. Instead it will reissue the same reqeusts
+ * gotten. Instead it will re-issue the same requests
  * as previously made so that we get updates on
  * things like the `isDiscarded` status of events.
  *
@@ -87,7 +87,7 @@ const updateRewindState = ( { siteId }, data ) => {
 			 * When we finish a Rewind operation we may have
 			 * changed the `isDiscarded` value for previous
 			 * events in the Activity Log. Thus, we'll need to
-			 * reissue the requests which pulld all of the
+			 * reissue the requests which pulled all of the
 			 * previous events into Calypso.
 			 *
 			 * This _must_ go before the state update because
@@ -96,7 +96,7 @@ const updateRewindState = ( { siteId }, data ) => {
 			 * operation running to a time when we no longer
 			 * have that.
 			 *
-			 * If we wait until after state is updatd then it
+			 * If we wait until after state is updated then it
 			 * will never look like we had on.
 			 */
 			refreshActivityLogAfterRewind( siteId, data.rewind ),
