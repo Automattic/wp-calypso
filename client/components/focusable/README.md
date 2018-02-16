@@ -1,6 +1,6 @@
 ## Focusable
 
-This component lets you wrap complex content in an accessible, clickable wrapper. `Focusable` should be in place of putting an `onClick` event on a div. It adds [the "button" ARIA role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role), for screen reader support, and enables keyboard support for keyboard-only accessibility.
+This component lets you wrap complex content in an accessible, clickable wrapper. `Focusable` should be used in place of putting an `onClick` event on a div. It adds [the "button" ARIA role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role), for screen reader support, and enables keyboard support for keyboard-only accessibility.
 
 **Think about your markup before using this component!** You probably don't need it, for example:
 
