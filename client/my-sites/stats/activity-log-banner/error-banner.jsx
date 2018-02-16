@@ -17,7 +17,6 @@ import HappychatButton from 'components/happychat/button';
 import Gridicon from 'gridicons';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { dismissRewindRestoreProgress as dismissRewindRestoreProgressAction } from 'state/activity-log/actions';
 
 class ErrorBanner extends PureComponent {
 	static propTypes = {
@@ -30,9 +29,6 @@ class ErrorBanner extends PureComponent {
 		requestedRestoreId: PropTypes.string,
 		createBackup: PropTypes.func,
 		rewindRestore: PropTypes.func,
-
-		// connect
-		dismissRewindRestoreProgress: PropTypes.func.isRequired,
 
 		// localize
 		translate: PropTypes.func.isRequired,
