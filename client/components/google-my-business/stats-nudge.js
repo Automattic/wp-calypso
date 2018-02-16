@@ -11,21 +11,29 @@ import PropTypes from 'prop-types';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 import DismissibleCard from 'blocks/dismissible-card';
+import { recordTracksEvent } from 'state/analytics/actions';
 import SectionHeader from 'components/section-header';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
+		trackNudgeShown: PropTypes.func.isRequired,
+		trackNudgeDismissed: PropTypes.func.isRequired,
+		trackNudgeStartNowClicked: PropTypes.func.isRequired,
+		trackNudgeAlreadyListedClicked: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
+	componentWillMount() {
+		this.props.trackNudgeShown();
+	}
 
 	render() {
 		return (
 			<DismissibleCard
 				className="google-my-business__stats-nudge"
-				preferenceName="show-google-my-business-nudge"
+				preferenceName="google-my-business-nudge"
 				temporary
 				onClick={ this.props.trackNudgeDismissed }
 			>
@@ -62,10 +70,6 @@ class GoogleMyBusinessStatsNudge extends Component {
 				</div>
 			</DismissibleCard>
 		);
-	}
-
-	componentWillMount() {
-		this.props.trackNudgeShown();
 	}
 }
 
