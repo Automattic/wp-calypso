@@ -3,7 +3,11 @@
  * External dependencies
  */
 import creditcards from 'creditcards';
-import { capitalize, compact, isArray, isEmpty, pick } from 'lodash';
+import capitalize from 'lodash/capitalize';
+import compact from 'lodash/compact';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
+import pick from 'lodash/pick';
 import i18n from 'i18n-calypso';
 
 /**

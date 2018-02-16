@@ -3,12 +3,11 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer } from 'state/utils';
-import status from './status/reducer';
+import { combineReducers } from 'state/utils';
+import siteData from './site-data/reducer';
 
 const reducers = {
-	status,
+	siteData,
 };
 
-const reducer = combineReducers( reducers );
-export default keyedReducer( 'siteId', reducer );
+export default combineReducers( reducers );

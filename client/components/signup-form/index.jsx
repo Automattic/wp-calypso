@@ -40,7 +40,6 @@ import SocialSignupForm from './social';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { createSocialUserFailed } from 'state/login/actions';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import { getSectionName } from 'state/ui/selectors';
 
 const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500,
 	debug = debugModule( 'calypso:signup-form:form' );
@@ -77,10 +76,7 @@ class SignupForm extends Component {
 		submitting: PropTypes.bool,
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-
-		// Connected props
 		oauth2Client: PropTypes.object,
-		sectionName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -333,7 +329,6 @@ class SignupForm extends Component {
 
 	getLoginLink() {
 		return login( {
-			isJetpack: 'jetpack-connect' === this.props.sectionName,
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
@@ -634,7 +629,6 @@ class SignupForm extends Component {
 export default connect(
 	state => ( {
 		oauth2Client: getCurrentOAuth2Client( state ),
-		sectionName: getSectionName( state ),
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEvent( 'calypso_signup_login_midflow' ),

@@ -143,6 +143,9 @@ class RequiredPluginsInstallView extends Component {
 			woocommerce: translate( 'WooCommerce' ),
 			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
 			'woocommerce-services': translate( 'WooCommerce Services' ),
+			'mailchimp-for-woocommerce': translate(
+				'MailChimp is the world’s largest marketing automation platform'
+			),
 		};
 	};
 

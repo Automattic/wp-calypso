@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import Gravatar from 'components/gravatar';
 import QueryPostLikes from 'components/data/query-post-likes';
-import { getPostLikes, countPostLikes } from 'state/selectors';
+import { isRequestingPostLikes, getPostLikes, countPostLikes } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class PostLikes extends React.PureComponent {
@@ -72,7 +72,16 @@ class PostLikes extends React.PureComponent {
 	}
 
 	render() {
-		const { likeCount, likes, postId, postType, siteId, translate, showDisplayNames } = this.props;
+		const {
+			likeCount,
+			isRequesting,
+			likes,
+			postId,
+			postType,
+			siteId,
+			translate,
+			showDisplayNames,
+		} = this.props;
 
 		let noLikesLabel;
 
@@ -96,7 +105,7 @@ class PostLikes extends React.PureComponent {
 				) }
 				{ likes && likes.map( this.renderLike ) }
 				{ this.renderExtraCount() }
-				{ likeCount === 0 && noLikesLabel }
+				{ likeCount === 0 && ! isRequesting && noLikesLabel }
 			</div>
 		);
 	}
@@ -104,10 +113,12 @@ class PostLikes extends React.PureComponent {
 
 export default connect(
 	( state, { siteId, postId } ) => {
+		const isRequesting = isRequestingPostLikes( state, siteId, postId );
 		const likeCount = countPostLikes( state, siteId, postId );
 		const likes = getPostLikes( state, siteId, postId );
 		return {
 			likeCount,
+			isRequesting,
 			likes,
 		};
 	},

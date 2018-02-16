@@ -9,7 +9,6 @@ import { spy, match } from 'sinon';
  * Internal dependencies
  */
 import {
-	deleteOrder,
 	failOrder,
 	failOrders,
 	fetchOrder,
@@ -21,7 +20,6 @@ import {
 	updateOrders,
 } from 'woocommerce/state/sites/orders/actions';
 import {
-	del,
 	apiError,
 	receivedOrder,
 	receivedOrders,
@@ -381,30 +379,6 @@ describe( 'handlers', () => {
 				match( {
 					type: NOTICE_CREATE,
 				} )
-			);
-		} );
-	} );
-
-	describe( '#del', () => {
-		test( 'should dispatch a delete action to the API via the jetpack proxy for this site & orderId', () => {
-			const action = deleteOrder( { ID: 123, slug: 'my-site.com' }, 74 );
-			const result = del( action );
-
-			expect( result ).to.eql(
-				http(
-					{
-						method: 'POST',
-						path: '/jetpack-blogs/123/rest-api/',
-						apiVersion: '1.1',
-						body: {
-							path: '/wc/v3/orders/74&_method=DELETE',
-						},
-						query: {
-							json: true,
-						},
-					},
-					action
-				)
 			);
 		} );
 	} );

@@ -34,7 +34,7 @@ export function apiSuccess( onSuccess, onFailure ) {
 			case 200:
 				store.dispatch( {
 					type: WOOCOMMERCE_WC_API_SUCCESS,
-					siteId: action.siteId,
+					wcApiSite: action.siteId,
 					action,
 				} );
 				onSuccess( store, action, response );
@@ -45,7 +45,7 @@ export function apiSuccess( onSuccess, onFailure ) {
 				// Most likely, the woocommerce plugin is disabled.
 				store.dispatch( {
 					type: WOOCOMMERCE_WC_API_UNAVAILABLE,
-					siteId: action.siteId,
+					wcApiSite: action.siteId,
 					action,
 				} );
 
@@ -58,7 +58,7 @@ export function apiSuccess( onSuccess, onFailure ) {
 
 				store.dispatch( {
 					type: WOOCOMMERCE_WC_API_UNKNOWN_ERROR,
-					siteId: action.siteId,
+					wcApiSite: action.siteId,
 					action,
 					error: {
 						status: data.status,
@@ -81,7 +81,7 @@ export function apiFailure( onFailure ) {
 
 		store.dispatch( {
 			type: WOOCOMMERCE_WC_API_UNKNOWN_ERROR,
-			siteId: action.siteId,
+			wcApiSite: action.siteId,
 			action,
 			error,
 		} );

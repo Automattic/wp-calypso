@@ -337,13 +337,7 @@ class SiteVerification extends Component {
 							{
 								components: {
 									b: <strong />,
-									support: (
-										<ExternalLink
-											icon={ true }
-											target="_blank"
-											href="https://en.support.wordpress.com/webmaster-tools/"
-										/>
-									),
+									support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
 									google: (
 										<ExternalLink
 											icon={ true }

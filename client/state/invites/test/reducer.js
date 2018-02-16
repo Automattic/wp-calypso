@@ -9,16 +9,13 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { requesting, items, counts, requestingResend, deleting } from '../reducer';
+import { requesting, items, counts, requestingResend } from '../reducer';
 import {
 	INVITES_REQUEST,
 	INVITES_REQUEST_SUCCESS,
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_SUCCESS,
 	INVITE_RESEND_REQUEST_FAILURE,
-	INVITES_DELETE_REQUEST,
-	INVITES_DELETE_REQUEST_FAILURE,
-	INVITES_DELETE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -256,109 +253,6 @@ describe( 'reducer', () => {
 							},
 						},
 					],
-					accepted: [],
-				},
-			} );
-		} );
-
-		test( 'should delete invite', () => {
-			const original = {
-				12345: {
-					pending: [
-						{
-							key: '123456asdf789',
-							role: 'follower',
-							isPending: true,
-							inviteDate: '2018-01-28T17:22:16+00:00',
-							acceptedDate: null,
-							user: {
-								login: 'chicken',
-								email: false,
-								name: 'Pollo',
-								avatar_URL:
-									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
-							},
-							invitedBy: {
-								login: 'cow',
-								name: 'Vaca',
-								avatar_URL:
-									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
-							},
-						},
-					],
-					accepted: [],
-				},
-			};
-			const state = items( original, {
-				type: INVITES_DELETE_REQUEST_SUCCESS,
-				siteId: 12345,
-				inviteIds: [ '123456asdf789' ],
-			} );
-			expect( state ).to.eql( {
-				12345: {
-					pending: [],
-					accepted: [],
-				},
-			} );
-		} );
-
-		test( 'should delete invites', () => {
-			const original = {
-				12345: {
-					pending: [
-						{
-							key: '123456asdf789',
-							role: 'follower',
-							isPending: true,
-							inviteDate: '2018-01-28T17:22:16+00:00',
-							acceptedDate: null,
-							user: {
-								login: 'chicken',
-								email: false,
-								name: 'Pollo',
-								avatar_URL:
-									'https://2.gravatar.com/avatar/eba3ff8480f481053bbd52b2a08c6136?s=96&d=identicon&r=G',
-							},
-							invitedBy: {
-								login: 'cow',
-								name: 'Vaca',
-								avatar_URL:
-									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
-							},
-						},
-					],
-					accepted: [
-						{
-							key: '9876fdas54321',
-							role: 'follower',
-							isPending: true,
-							inviteDate: '2018-01-28T17:22:16+00:00',
-							acceptedDate: null,
-							user: {
-								login: 'celery',
-								email: false,
-								name: 'Apio',
-								avatar_URL:
-									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
-							},
-							invitedBy: {
-								login: 'cow',
-								name: 'Vaca',
-								avatar_URL:
-									'https://2.gravatar.com/avatar/e2c5df270c7adcd0f6a70fa9cfde7d0f?s=96&d=identicon&r=G',
-							},
-						},
-					],
-				},
-			};
-			const state = items( original, {
-				type: INVITES_DELETE_REQUEST_SUCCESS,
-				siteId: 12345,
-				inviteIds: [ '123456asdf789', '9876fdas54321' ],
-			} );
-			expect( state ).to.eql( {
-				12345: {
-					pending: [],
 					accepted: [],
 				},
 			} );
@@ -630,38 +524,13 @@ describe( 'reducer', () => {
 
 		test( 'should accumulate invites', () => {
 			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
-			const state1 = requestingResend( original, {
+			const state = requestingResend( original, {
 				type: INVITE_RESEND_REQUEST,
 				siteId: 12345,
-				inviteId: '123_requesting',
+				inviteId: '789lkjh123456',
 			} );
-			expect( state1 ).to.eql( {
-				12345: { '123456asdf789': 'success', '123_requesting': 'requesting' },
-			} );
-			const state2 = requestingResend( state1, {
-				type: INVITE_RESEND_REQUEST_SUCCESS,
-				siteId: 12345,
-				inviteId: '456_success',
-			} );
-			expect( state2 ).to.eql( {
-				12345: {
-					'123456asdf789': 'success',
-					'123_requesting': 'requesting',
-					'456_success': 'success',
-				},
-			} );
-			const state3 = requestingResend( state2, {
-				type: INVITE_RESEND_REQUEST_FAILURE,
-				siteId: 12345,
-				inviteId: '789_failure',
-			} );
-			expect( state3 ).to.eql( {
-				12345: {
-					'123456asdf789': 'success',
-					'123_requesting': 'requesting',
-					'456_success': 'success',
-					'789_failure': 'failure',
-				},
+			expect( state ).to.eql( {
+				12345: { '123456asdf789': 'success', '789lkjh123456': 'requesting' },
 			} );
 		} );
 
@@ -671,116 +540,6 @@ describe( 'reducer', () => {
 				type: INVITE_RESEND_REQUEST,
 				siteId: 67890,
 				inviteId: '789lkjh123456',
-			} );
-			expect( state ).to.eql( {
-				12345: { '123456asdf789': 'success' },
-				67890: { '789lkjh123456': 'requesting' },
-			} );
-		} );
-	} );
-
-	describe( '#deleting()', () => {
-		test( 'should key requests by site ID and invite ID', () => {
-			const state = deleting(
-				{},
-				{
-					type: INVITES_DELETE_REQUEST,
-					siteId: 12345,
-					inviteIds: [ '123456asdf789' ],
-				}
-			);
-			expect( state ).to.eql( {
-				12345: { '123456asdf789': 'requesting' },
-			} );
-		} );
-
-		test( 'should use value success for successful deletes', () => {
-			const state = deleting(
-				{},
-				{
-					type: INVITES_DELETE_REQUEST_SUCCESS,
-					siteId: 12345,
-					inviteIds: [ '123456asdf789' ],
-				}
-			);
-			expect( state ).to.eql( {
-				12345: { '123456asdf789': 'success' },
-			} );
-		} );
-
-		test( 'should use value failure for failed deletes', () => {
-			const state = deleting(
-				{},
-				{
-					type: INVITES_DELETE_REQUEST_FAILURE,
-					siteId: 12345,
-					inviteIds: [ '123456asdf789' ],
-				}
-			);
-			expect( state ).to.eql( {
-				12345: { '123456asdf789': 'failure' },
-			} );
-		} );
-
-		test( 'should handle multiple invites per request', () => {
-			const state = deleting(
-				{},
-				{
-					type: INVITES_DELETE_REQUEST,
-					siteId: 12345,
-					inviteIds: [ '123456asdf789', '789lkjh123456' ],
-				}
-			);
-			expect( state ).to.eql( {
-				12345: { '123456asdf789': 'requesting', '789lkjh123456': 'requesting' },
-			} );
-		} );
-
-		test( 'should accumulate invites', () => {
-			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
-			const state1 = deleting( original, {
-				type: INVITES_DELETE_REQUEST,
-				siteId: 12345,
-				inviteIds: [ '123_requesting' ],
-			} );
-			expect( state1 ).to.eql( {
-				12345: { '123456asdf789': 'success', '123_requesting': 'requesting' },
-			} );
-			const state2 = deleting( state1, {
-				type: INVITES_DELETE_REQUEST_SUCCESS,
-				siteId: 12345,
-				inviteIds: [ '456_success', '457_success' ],
-			} );
-			expect( state2 ).to.eql( {
-				12345: {
-					'123456asdf789': 'success',
-					'123_requesting': 'requesting',
-					'456_success': 'success',
-					'457_success': 'success',
-				},
-			} );
-			const state3 = deleting( state2, {
-				type: INVITES_DELETE_REQUEST_FAILURE,
-				siteId: 12345,
-				inviteIds: [ '123_requesting', '789_failure' ],
-			} );
-			expect( state3 ).to.eql( {
-				12345: {
-					'123456asdf789': 'success',
-					'123_requesting': 'failure',
-					'456_success': 'success',
-					'457_success': 'success',
-					'789_failure': 'failure',
-				},
-			} );
-		} );
-
-		test( 'should accumulate sites', () => {
-			const original = deepFreeze( { 12345: { '123456asdf789': 'success' } } );
-			const state = deleting( original, {
-				type: INVITES_DELETE_REQUEST,
-				siteId: 67890,
-				inviteIds: [ '789lkjh123456' ],
 			} );
 			expect( state ).to.eql( {
 				12345: { '123456asdf789': 'success' },

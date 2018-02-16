@@ -42,7 +42,7 @@ import { getSiteName } from 'reader/get-helpers';
 import { keyForPost } from 'lib/feed-stream-store/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';
+import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 import { getStreamUrlFromPost } from 'reader/route';
 import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeStore from 'lib/like-store/like-store';
@@ -289,9 +289,7 @@ export class FullPostView extends React.Component {
 			'More on {{wpLink}}WordPress.com{{/wpLink}}',
 			{
 				components: {
-					/* eslint-disable */
-					wpLink: <a href="/" className="reader-related-card__link" />,
-					/* eslint-enable */
+					wpLink: <a href="/" className="reader-related-card-v2__link" />,
 				},
 			}
 		);
@@ -420,7 +418,7 @@ export class FullPostView extends React.Component {
 												<a
 													href={ getStreamUrlFromPost( post ) }
 													/* eslint-disable wpcalypso/jsx-classname-namespace */
-													className="reader-related-card__link"
+													className="reader-related-card-v2__link"
 													/* eslint-enable wpcalypso/jsx-classname-namespace */
 												>
 													{ siteName }

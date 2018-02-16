@@ -76,16 +76,12 @@ class ActivityLogItem extends Component {
 	renderItemAction() {
 		const { hideRestore, activity: { activityIsRewindable, activityName } } = this.props;
 
-		switch ( activityName ) {
-			case 'rewind__scan_result_found':
-				return this.renderHelpAction( this.props.trackHelpThreat );
-
-			case 'rewind__backup_error':
-				return this.renderHelpAction( this.props.trackHelpBackupFail );
-		}
-
 		if ( ! hideRestore && activityIsRewindable ) {
 			return this.renderRewindAction();
+		}
+
+		if ( 'rewind__scan_result_found' === activityName ) {
+			return this.renderHelpAction();
 		}
 	}
 
@@ -115,20 +111,14 @@ class ActivityLogItem extends Component {
 		);
 	}
 
-	/**
-	 * Displays a button for users to get help. Tracks button click based on the function passed.
-	 *
-	 * @param {function} trackHelp Method to call and track the button click.
-	 * @returns {Object} Get help button.
-	 */
-	renderHelpAction( trackHelp ) {
-		const { translate } = this.props;
+	renderHelpAction() {
+		const { getHelpClick, translate } = this.props;
 
 		return (
 			<HappychatButton
 				className="activity-log-item__help-action"
 				borderless={ false }
-				onClick={ trackHelp }
+				onClick={ getHelpClick }
 			>
 				<Gridicon icon="chat" size={ 18 } />
 				{ translate( 'Get Help' ) }
@@ -282,8 +272,7 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
-	trackHelpThreat: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
-	trackHelpBackupFail: () => recordTracksEvent( 'calypso_activitylog_backup_fail_get_help' ),
+	getHelpClick: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );

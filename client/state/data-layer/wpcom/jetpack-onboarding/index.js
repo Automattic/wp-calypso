@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -16,12 +16,11 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
-import { getUnconnectedSite, getUnconnectedSiteUrl } from 'state/selectors';
+import { getUnconnectedSite } from 'state/selectors';
 import {
 	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
-import { trailingslashit } from 'lib/route';
 
 export const fromApi = response => {
 	if ( ! response.data || ! response.data.onboarding ) {
@@ -71,20 +70,6 @@ export const requestJetpackOnboardingSettings = ( { dispatch, getState }, action
 			action
 		)
 	);
-};
-
-export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => {
-	const url = getUnconnectedSiteUrl( getState(), siteId );
-	const noticeOptions = {
-		id: `jpo-communication-error-${ siteId }`,
-	};
-
-	if ( url ) {
-		noticeOptions.button = translate( 'Visit site admin' );
-		noticeOptions.href = trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack';
-	}
-
-	return dispatch( errorNotice( translate( 'Something went wrong.' ), noticeOptions ) );
 };
 
 /**
@@ -141,14 +126,9 @@ export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
-		dispatchRequest(
-			requestJetpackOnboardingSettings,
-			receiveJetpackOnboardingSettings,
-			announceRequestFailure,
-			{
-				fromApi,
-			}
-		),
+		dispatchRequest( requestJetpackOnboardingSettings, receiveJetpackOnboardingSettings, noop, {
+			fromApi,
+		} ),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
 		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, announceSaveFailure ),

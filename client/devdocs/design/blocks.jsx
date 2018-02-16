@@ -50,7 +50,7 @@ import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
-import RelatedPostCard from 'blocks/reader-related-card/docs/example';
+import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
 import PostShare from 'blocks/post-share/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
@@ -142,7 +142,7 @@ export default class AppComponents extends React.Component {
 					<PlanCompareCard />
 					<FeatureComparison />
 					<DomainTip />
-					<RelatedPostCard />
+					<RelatedPostCardv2 />
 					<PostItem />
 					<PostStatus />
 					<PostTime />

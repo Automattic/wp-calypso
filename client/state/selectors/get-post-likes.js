@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+
 import { get } from 'lodash';
 
 /**

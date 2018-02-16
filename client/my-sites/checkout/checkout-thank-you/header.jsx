@@ -27,7 +27,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
-import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -209,7 +208,9 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		const { primaryPurchase, selectedSite } = this.props;
 
-		this.props.recordStartTransferClickInThankYou( primaryPurchase.meta );
+		this.props.recordTracksEvent( 'calypso_thank_you_start_transfer', {
+			meta: primaryPurchase.meta,
+		} );
 
 		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
 	};
@@ -280,6 +281,5 @@ class CheckoutThankYouHeader extends PureComponent {
 }
 
 export default connect( null, {
-	recordStartTransferClickInThankYou,
 	recordTracksEvent,
 } )( localize( CheckoutThankYouHeader ) );

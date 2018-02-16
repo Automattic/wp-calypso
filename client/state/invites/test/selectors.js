@@ -13,12 +13,10 @@ import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
 	getAcceptedInvitesForSite,
-	isRequestingInviteResend,
+	isRequestingResend,
 	getNumberOfInvitesFoundForSite,
-	didInviteResendSucceed,
+	didResendSucceed,
 	getInviteForSite,
-	isDeletingInvite,
-	didInviteDeletionSucceed,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -340,7 +338,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isRequestingInviteResend()', () => {
+	describe( '#isRequestingResend()', () => {
 		test( 'should return true when requesting resend', () => {
 			const state = {
 				invites: {
@@ -350,7 +348,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingInviteResend( state, 67890, '789lkjh123456' ) ).to.equal( true );
+			expect( isRequestingResend( state, 67890, '789lkjh123456' ) ).to.equal( true );
 		} );
 
 		test( 'should return false when resend request is complete', () => {
@@ -362,7 +360,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingInviteResend( state, 12345, '123456asdf789' ) ).to.equal( false );
+			expect( isRequestingResend( state, 12345, '123456asdf789' ) ).to.equal( false );
 		} );
 
 		test( 'should return false when resend has not been requested', () => {
@@ -371,7 +369,7 @@ describe( 'selectors', () => {
 					requestingResend: {},
 				},
 			};
-			expect( isRequestingInviteResend( state, 12345, '9876asdf54321' ) ).to.equal( false );
+			expect( isRequestingResend( state, 12345, '9876asdf54321' ) ).to.equal( false );
 		} );
 	} );
 
@@ -397,7 +395,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#didInviteResendSucceed()', () => {
+	describe( '#didResendSucceed()', () => {
 		test( 'should return true for successful resends', () => {
 			const state = {
 				invites: {
@@ -408,7 +406,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteResendSucceed( state, 12345, '123456asdf789' ) ).to.equal( true );
+			expect( didResendSucceed( state, 12345, '123456asdf789' ) ).to.equal( true );
 		} );
 
 		test( 'should return false when a resend is pending', () => {
@@ -421,7 +419,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteResendSucceed( state, 67890, '789lkjh123456' ) ).to.equal( false );
+			expect( didResendSucceed( state, 67890, '789lkjh123456' ) ).to.equal( false );
 		} );
 
 		test( 'should return false when a resend is failure', () => {
@@ -434,7 +432,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteResendSucceed( state, 34567, 'asdf987654321' ) ).to.equal( false );
+			expect( didResendSucceed( state, 34567, 'asdf987654321' ) ).to.equal( false );
 		} );
 
 		test( 'should return false when resend has not been requested', () => {
@@ -443,84 +441,7 @@ describe( 'selectors', () => {
 					requestingResend: {},
 				},
 			};
-			expect( didInviteResendSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
-		} );
-	} );
-
-	describe( '#didInviteDeletionSucceed()', () => {
-		test( 'should return true for successful deletion', () => {
-			const state = {
-				invites: {
-					deleting: {
-						12345: { '123456asdf789': 'success' },
-					},
-				},
-			};
-			expect( didInviteDeletionSucceed( state, 12345, '123456asdf789' ) ).to.equal( true );
-		} );
-
-		test( 'should return false when a deletion is pending', () => {
-			const state = {
-				invites: {
-					deleting: {
-						67890: { '789lkjh123456': 'requesting' },
-					},
-				},
-			};
-			expect( didInviteDeletionSucceed( state, 67890, '789lkjh123456' ) ).to.equal( false );
-		} );
-
-		test( 'should return false when a deletion is failure', () => {
-			const state = {
-				invites: {
-					deleting: {
-						34567: { asdf987654321: 'failure' },
-					},
-				},
-			};
-			expect( didInviteDeletionSucceed( state, 34567, 'asdf987654321' ) ).to.equal( false );
-		} );
-
-		test( 'should return false when deletion has not been requested', () => {
-			const state = {
-				invites: {
-					deleting: {},
-				},
-			};
-			expect( didInviteDeletionSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
-		} );
-	} );
-
-	describe( '#isDeletingInvite()', () => {
-		test( 'should return true when requesting deletion', () => {
-			const state = {
-				invites: {
-					deleting: {
-						67890: { '789lkjh123456': 'requesting' },
-					},
-				},
-			};
-			expect( isDeletingInvite( state, 67890, '789lkjh123456' ) ).to.equal( true );
-		} );
-
-		test( 'should return false when deletion request is complete', () => {
-			const state = {
-				invites: {
-					deleting: {
-						12345: { '123456asdf789': 'success' },
-					},
-				},
-			};
-			expect( isDeletingInvite( state, 12345, '123456asdf789' ) ).to.equal( false );
-		} );
-
-		test( 'should return false when deletion has not been requested', () => {
-			const state = {
-				invites: {
-					deleting: {},
-				},
-			};
-			expect( isDeletingInvite( state, 12345, '9876asdf54321' ) ).to.equal( false );
+			expect( didResendSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
 		} );
 	} );
 } );

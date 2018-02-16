@@ -64,7 +64,3 @@ export function keyToString( postKey ) {
 
 	return null; // should never happen!
 }
-
-export function isPostKeyLike( postKey ) {
-	return postKey && postKey.postId && ( postKey.blogId || postKey.feedId );
-}

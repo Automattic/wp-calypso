@@ -7,8 +7,6 @@ import {
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY,
 	WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE,
-	WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG,
-	WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG,
 } from '../action-types';
 
 export const initialState = {
@@ -87,20 +85,6 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE ] = state => {
 		},
 		data: state.pristineData,
 		pristineData: null,
-	};
-};
-
-reducers[ WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG ] = state => {
-	return {
-		...state,
-		addCardDialog: true,
-	};
-};
-
-reducers[ WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG ] = state => {
-	return {
-		...state,
-		addCardDialog: null,
 	};
 };
 

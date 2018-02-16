@@ -301,9 +301,7 @@ const PluginsMain = createReactClass( {
 		);
 
 		const morePluginsHeader = showInstalledPluginList &&
-			showSuggestedPluginsList && (
-				<h3 className="plugins__more-header">{ this.props.translate( 'More Plugins' ) }</h3>
-			);
+			showSuggestedPluginsList && <h3 className="plugins__more-header">More Plugins</h3>;
 
 		let searchTitle;
 		if ( search ) {

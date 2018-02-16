@@ -3,7 +3,7 @@
  *
  * @format
  */
-import { isUndefined } from 'lodash';
+import isUndefined from 'lodash/isUndefined';
 import { isValid } from 'cpf';
 
 /**

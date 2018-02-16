@@ -12,16 +12,36 @@ import {
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
+	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import { combineReducers, createReducer } from 'state/utils';
+import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
 import { decodeEntities } from 'lib/formatting';
 import { itemsSchema } from './schema';
 import { safeLink } from 'lib/post-normalizer/utils';
 
+const actionMap = {
+	[ SERIALIZE ]: handleSerialize,
+	[ DESERIALIZE ]: handleDeserialize,
+	[ READER_FEED_REQUEST_SUCCESS ]: handleRequestSuccess,
+	[ READER_FEED_REQUEST_FAILURE ]: handleRequestFailure,
+	[ READER_FEED_UPDATE ]: handleFeedUpdate,
+};
+
+function defaultHandler( state ) {
+	return state;
+}
+
 function handleSerialize( state ) {
 	// remove errors from the serialized state
 	return omitBy( state, 'is_error' );
+}
+
+function handleDeserialize( state ) {
+	if ( isValidStateWithSchema( state, itemsSchema ) ) {
+		return state;
+	}
+	return {};
 }
 
 function handleRequestFailure( state, action ) {
@@ -64,16 +84,10 @@ function handleFeedUpdate( state, action ) {
 	return assign( {}, state, keyBy( feeds, 'feed_ID' ) );
 }
 
-export const items = createReducer(
-	{},
-	{
-		[ SERIALIZE ]: handleSerialize,
-		[ READER_FEED_REQUEST_SUCCESS ]: handleRequestSuccess,
-		[ READER_FEED_REQUEST_FAILURE ]: handleRequestFailure,
-		[ READER_FEED_UPDATE ]: handleFeedUpdate,
-	},
-	itemsSchema
-);
+export function items( state = {}, action ) {
+	const handler = actionMap[ action.type ] || defaultHandler;
+	return handler( state, action );
+}
 
 export function queuedRequests( state = {}, action ) {
 	switch ( action.type ) {

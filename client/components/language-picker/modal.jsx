@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import {
 	capitalize,
 	deburr,
@@ -64,7 +64,6 @@ export class LanguagePickerModal extends PureComponent {
 			search: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
-			localeSlug: getLocaleSlug(),
 		};
 	}
 
@@ -180,17 +179,8 @@ export class LanguagePickerModal extends PureComponent {
 		this.setState( { search } );
 	};
 
-	handleLanguageItemClick = ( selectedLanguageSlug, event ) => {
-		event.preventDefault();
+	handleClick = selectedLanguageSlug => {
 		this.setState( { selectedLanguageSlug } );
-	};
-
-	handleLanguageItemKeyPress = ( selectedLanguageSlug, event ) => {
-		event.preventDefault();
-		if ( event.key === 'Enter' || event.key === ' ' ) {
-			event.preventDefault();
-			this.setState( { selectedLanguageSlug } );
-		}
 	};
 
 	handleSelectLanguage = () => {
@@ -237,20 +227,15 @@ export class LanguagePickerModal extends PureComponent {
 		const classes = classNames( 'language-picker__modal-text', {
 			'is-selected': isSelected,
 		} );
-		const titleText = capitalize( this.getLocalizedLanguageTitle( language.langSlug ) );
+
 		return (
 			<div
 				className="language-picker__modal-item"
 				key={ language.langSlug }
-				onClick={ partial( this.handleLanguageItemClick, language.langSlug ) }
-				title={ titleText }
-				tabIndex="0"
-				role="button"
-				onKeyPress={ partial( this.handleLanguageItemKeyPress, language.langSlug ) }
+				onClick={ partial( this.handleClick, language.langSlug ) }
+				title={ capitalize( this.getLocalizedLanguageTitle( language.langSlug ) ) }
 			>
-				<span className={ classes } lang={ language.langSlug }>
-					{ language.name }
-				</span>
+				<span className={ classes }>{ language.name }</span>
 			</div>
 		);
 	};
@@ -322,6 +307,8 @@ export class LanguagePickerModal extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
-	localizedLanguageNames: getLocalizedLanguageNames( state ),
-} ) )( localize( LanguagePickerModal ) );
+export default connect(
+	state => ( {
+		localizedLanguageNames: getLocalizedLanguageNames( state ),
+	} )
+)( localize( LanguagePickerModal ) );

@@ -8,8 +8,8 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { identity, noop } from 'lodash';
-
+import noop from 'lodash/noop';
+import identity from 'lodash/identity';
 /**
  * Internal dependencies
  */

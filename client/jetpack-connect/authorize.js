@@ -610,13 +610,7 @@ export class JetpackAuthorize extends Component {
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem
-					href={ login( {
-						isJetpack: true,
-						isNative: config.isEnabled( 'login/native-login-links' ),
-						redirectTo: window.location.href,
-					} ) }
-				>
+				<LoggedOutFormLinkItem href={ login( { redirectTo: window.location.href } ) }>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>

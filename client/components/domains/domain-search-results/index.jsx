@@ -18,12 +18,15 @@ import { endsWith, get, includes, times } from 'lodash';
  */
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
+import DomainMappingSuggestion from 'components/domains/domain-mapping-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
 import Card from 'components/card';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
+import { currentUserHasFlag } from 'state/current-user/selectors';
+import { TRANSFER_IN_NUX } from 'state/current-user/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { DESIGN_TYPE_STORE } from 'signup/constants';
 import { abtest } from 'lib/abtest';
@@ -70,7 +73,7 @@ class DomainSearchResults extends React.Component {
 		const { MAPPABLE, MAPPED, TLD_NOT_SUPPORTED, TRANSFERRABLE, UNKNOWN } = domainAvailability;
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
-		const testGroup = abtest( 'domainSuggestionTestV6' );
+		const testGroup = abtest( 'domainSuggestionTestV5' );
 		const showExactMatch = 'group_0' === testGroup;
 
 		let availabilityElement, domainSuggestionElement, offer;
@@ -136,9 +139,12 @@ class DomainSearchResults extends React.Component {
 						args: { domain },
 						components: { strong: <strong /> },
 					} );
-
 			if ( this.props.offerUnavailableOption ) {
-				if ( this.props.siteDesignType !== DESIGN_TYPE_STORE && lastDomainIsTransferrable ) {
+				if (
+					this.props.siteDesignType !== DESIGN_TYPE_STORE &&
+					( ! this.props.isSignupStep || this.props.transferInNuxAllowed ) &&
+					lastDomainIsTransferrable
+				) {
 					availabilityElement = (
 						<Card className="domain-search-results__transfer-card" highlight="info">
 							<div className="domain-search-results__transfer-card-copy">
@@ -225,11 +231,24 @@ class DomainSearchResults extends React.Component {
 
 			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
 				unavailableOffer = (
-					<DomainTransferSuggestion
-						onButtonClick={ this.props.onClickTransfer }
-						tracksButtonClickSource="search-suggestions-bottom"
+					<DomainMappingSuggestion
+						onButtonClick={ this.props.onClickMapping }
+						products={ this.props.products }
+						selectedSite={ this.props.selectedSite }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						isSignupStep={ this.props.isSignupStep }
+						cart={ this.props.cart }
 					/>
 				);
+
+				if ( ! this.props.isSignupStep || this.props.transferInNuxAllowed ) {
+					unavailableOffer = (
+						<DomainTransferSuggestion
+							onButtonClick={ this.props.onClickTransfer }
+							tracksButtonClickSource="search-suggestions-bottom"
+						/>
+					);
+				}
 			}
 		} else {
 			suggestionElements = this.renderPlaceholders();
@@ -257,6 +276,7 @@ const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isSiteOnPaidPlan: isSiteOnPaidPlan( state, selectedSiteId ),
+		transferInNuxAllowed: currentUserHasFlag( state, TRANSFER_IN_NUX ),
 		siteDesignType: getDesignType( state ),
 	};
 };

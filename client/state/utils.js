@@ -211,8 +211,85 @@ export function extendAction( action, data ) {
 	};
 }
 
-function getInitialState( reducer ) {
-	return reducer( undefined, { type: '@@calypso/INIT' } );
+/**
+ * Returns a reducer function with state calculation determined by the result
+ * of invoking the handler key corresponding with the dispatched action type,
+ * passing both the current state and action object. Defines default
+ * serialization (persistence) handlers based on the presence of a schema.
+ *
+ * @param  {*}        initialState   Initial state
+ * @param  {Object}   customHandlers Object mapping action types to state
+ *                                   action handlers
+ * @param  {?Object}  schema         JSON schema object for deserialization
+ *                                   validation
+ * @return {Function}                Reducer function
+ */
+export function createReducer( initialState = null, customHandlers = {}, schema = null ) {
+	// Define default handlers for serialization actions. If no schema is
+	// provided, always return the initial state. Otherwise, allow for
+	// serialization and validate on deserialize.
+	let defaultHandlers;
+	if ( schema ) {
+		defaultHandlers = {
+			[ SERIALIZE ]: state => state,
+			[ DESERIALIZE ]: state => {
+				if ( isValidStateWithSchema( state, schema, customHandlers ) ) {
+					return state;
+				}
+
+				return initialState;
+			},
+		};
+	} else {
+		defaultHandlers = {
+			[ SERIALIZE ]: () => undefined,
+			[ DESERIALIZE ]: () => initialState,
+		};
+	}
+
+	const handlers = {
+		...defaultHandlers,
+		...customHandlers,
+	};
+
+	// When custom serialization behavior is provided, we assume that it may
+	// involve heavy logic (mapping, converting from Immutable instance), so
+	// we cache the result and only regenerate when state has changed.
+	if ( customHandlers[ SERIALIZE ] ) {
+		let lastState, lastSerialized;
+		handlers[ SERIALIZE ] = ( state, action ) => {
+			if ( state === lastState ) {
+				return lastSerialized;
+			}
+
+			const serialized = customHandlers[ SERIALIZE ]( state, action );
+			lastState = state;
+			lastSerialized = serialized;
+			return serialized;
+		};
+	}
+
+	const reducer = ( state = initialState, action ) => {
+		const { type } = action;
+
+		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
+			throw new TypeError(
+				'Reducer called with undefined type.' +
+					' Verify that the action type is defined in state/action-types.js'
+			);
+		}
+
+		if ( handlers.hasOwnProperty( type ) ) {
+			return handlers[ type ]( state, action );
+		}
+
+		return state;
+	};
+
+	//used to propagate actions properly when combined in combineReducersWithPersistence
+	reducer.hasCustomPersistence = true;
+
+	return reducer;
 }
 
 /**
@@ -237,24 +314,42 @@ function getInitialState( reducer ) {
  *
  * const schema = { type: 'number', minimum: 0 }
  *
- * export const age = withSchemaValidation( schema, ageReducer )
+ * export const age = withSchemaValidation( schema, age )
  *
  * ageReducer( -5, { type: DESERIALIZE } ) === -5
  * age( -5, { type: DESERIALIZE } ) === 0
  * age( 23, { type: DESERIALIZE } ) === 23
  *
+ * If no schema is provided, the reducer will return `undefined` on SERIALIZE (instructing
+ * the serialization engine to not persist any data for this reducer) and will return the
+ * initial state on DESERIALIZE (ignoring the persisted value).
+ *
+ * @example
+ * export const age = withSchemaValidation( null, age )
+ *
+ * ageReducer( -5, { type: SERIALIZE } ) === -5
+ * age( -5, { type: SERIALIZE } ) === undefined
+ * age( 23, { type: SERIALIZE } ) === undefined
+ * age( 23, { type: DESERIALIZE } ) === 0
+ *
  * @param {object} schema JSON-schema description of state
  * @param {function} reducer normal reducer from ( state, action ) to new state
- * @returns {function} wrapped reducer handling validation on DESERIALIZE
+ * @returns {function} wrapped reducer handling validation on DESERIALIZE and
+ * returns initial state if no schema is provided on SERIALIZE and DESERIALIZE.
  */
 export const withSchemaValidation = ( schema, reducer ) => {
-	if ( process.env.NODE_ENV !== 'production' && ! schema ) {
-		throw new Error( 'null schema passed to withSchemaValidation' );
-	}
-
 	const wrappedReducer = ( state, action ) => {
-		if ( action.type === DESERIALIZE && ! ( state && isValidStateWithSchema( state, schema ) ) ) {
-			return getInitialState( reducer );
+		if ( SERIALIZE === action.type ) {
+			return schema ? reducer( state, action ) : undefined;
+		}
+		if ( DESERIALIZE === action.type ) {
+			if ( ! schema ) {
+				return reducer( undefined, { type: '@@calypso/INIT' } );
+			}
+
+			return state && isValidStateWithSchema( state, schema )
+				? reducer( state, action )
+				: reducer( undefined, { type: '@@calypso/INIT' } );
 		}
 
 		return reducer( state, action );
@@ -265,84 +360,6 @@ export const withSchemaValidation = ( schema, reducer ) => {
 
 	return wrappedReducer;
 };
-
-/**
- * Wraps a reducer such that it won't persist any state to the browser's local storage
- *
- * @example prevent a simple reducer from persisting
- * const age = ( state = 0, { type } ) =>
- *   GROW === type
- *     ? state + 1
- *     : state
- *
- * export default combineReducers( {
- *   age: withoutPersistence( age )
- * } )
- *
- * @example preventing a large reducer from persisting
- * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
- *
- * @param {Function} reducer original reducer
- * @returns {Function} wrapped reducer
- */
-export const withoutPersistence = reducer => {
-	const wrappedReducer = ( state, action ) => {
-		switch ( action.type ) {
-			case SERIALIZE:
-				return undefined;
-			case DESERIALIZE:
-				return getInitialState( reducer );
-			default:
-				return reducer( state, action );
-		}
-	};
-	wrappedReducer.hasCustomPersistence = true;
-
-	return wrappedReducer;
-};
-
-/**
- * Returns a reducer function with state calculation determined by the result
- * of invoking the handler key corresponding with the dispatched action type,
- * passing both the current state and action object. Defines default
- * serialization (persistence) handlers based on the presence of a schema.
- *
- * @param  {*}        initialState   Initial state
- * @param  {Object}   handlers       Object mapping action types to state action handlers
- * @param  {?Object}  schema         JSON schema object for deserialization validation
- * @return {Function}                Reducer function
- */
-export function createReducer( initialState, handlers, schema ) {
-	const reducer = ( state = initialState, action ) => {
-		const { type } = action;
-
-		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
-			throw new TypeError(
-				'Reducer called with undefined type.' +
-					' Verify that the action type is defined in state/action-types.js'
-			);
-		}
-
-		if ( handlers.hasOwnProperty( type ) ) {
-			return handlers[ type ]( state, action );
-		}
-
-		return state;
-	};
-
-	if ( schema ) {
-		return withSchemaValidation( schema, reducer );
-	}
-
-	if ( ! handlers[ SERIALIZE ] && ! handlers[ DESERIALIZE ] ) {
-		return withoutPersistence( reducer );
-	}
-
-	// if the reducer has at least one custom persistence handler (SERIALIZE or DESERIALIZE)
-	// it's treated as a reducer with custom persistence.
-	reducer.hasCustomPersistence = true;
-	return reducer;
-}
 
 /**
  * Returns a single reducing function that ensures that persistence is opt-in.
@@ -412,18 +429,10 @@ export function createReducer( initialState, handlers, schema ) {
  * @returns {function} - Returns the combined reducer function
  */
 export function combineReducers( reducers ) {
-	const validatedReducers = mapValues( reducers, next => {
-		if ( next.hasCustomPersistence ) {
-			return next;
-		}
-
-		if ( next.schema ) {
-			return withSchemaValidation( next.schema, next );
-		}
-
-		return withoutPersistence( next );
-	} );
-
+	const validatedReducers = mapValues(
+		reducers,
+		next => ( next.hasCustomPersistence ? next : withSchemaValidation( next.schema, next ) )
+	);
 	const combined = combine( validatedReducers );
 	const combinedWithSerializer = ( state, action ) => {
 		// SERIALIZE needs behavior that's slightly different from `combineReducers` from Redux:
@@ -461,6 +470,38 @@ export function combineReducers( reducers ) {
 	combinedWithSerializer.hasCustomPersistence = true;
 	return combinedWithSerializer;
 }
+
+/**
+ * Wraps a reducer such that it won't persist
+ * any state to the browser's local cache
+ *
+ * @example revent a simple reducer from persisting
+ * const age = ( state = 0, { type } ) =>
+ *   GROW === type
+ *     ? state + 1
+ *     : state
+ *
+ * export default combineReducers( {
+ *   age: withoutPersistence( age )
+ * } )
+ *
+ * @example preventing a large reducer from persisting
+ * const posts = withoutPersistence( keyedReducer( 'postId', post ) )
+ *
+ * @param {Function} reducer original reducer
+ * @returns {Function} wrapped reducer
+ */
+export const withoutPersistence = reducer => ( state, action ) => {
+	if ( DESERIALIZE === action.type ) {
+		return reducer( undefined, { type: '@@calypso/INIT' } );
+	}
+
+	if ( SERIALIZE === action.type ) {
+		return undefined;
+	}
+
+	return reducer( state, action );
+};
 
 /**
  * Creates a caching action creator

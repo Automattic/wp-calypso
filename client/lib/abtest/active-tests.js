@@ -73,14 +73,13 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	domainSuggestionTestV6: {
-		datestamp: '20180215',
+	domainSuggestionTestV5: {
+		datestamp: '20180204',
 		variations: {
 			group_0: 1, // Default group
 			group_1: 1000,
 			group_2: 1000,
 			group_3: 1000,
-			group_4: 1000,
 		},
 		defaultVariation: 'group_0',
 		allowExistingUsers: true,

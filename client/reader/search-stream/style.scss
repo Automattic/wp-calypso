@@ -88,7 +88,7 @@
 	margin-left: 15px;
 	padding: 18px 0 21px 0;
 
-	@media #{$reader-related-card-breakpoint-medium} {
+	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-basis: 100%;
 		margin: 0;
 	}
@@ -99,7 +99,7 @@
 		margin-right: 15px;
 	}
 
-	@media #{$reader-related-card-breakpoint-small}  {
+	@media #{$reader-related-card-v2-breakpoint-small}  {
 		flex-basis: 100%;
 		margin-left: 15px;
 		margin-right: 15px;
@@ -110,7 +110,7 @@
 		margin-left: 0;
 		margin-right: 15px;
 
-		@media #{$reader-related-card-breakpoint-medium} {
+		@media #{$reader-related-card-v2-breakpoint-medium} {
 			flex-basis: 100%;
 			margin-right: 0;
 		}
@@ -121,17 +121,17 @@
 			margin-right: 15px;
 		}
 
-		@media #{$reader-related-card-breakpoint-small} {
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			flex-basis: 100%;
 			margin-left: 15px;
 			margin-right: 15px;
 		}
 	}
 
-	.reader-related-card__post {
+	.reader-related-card-v2__post {
 		max-height: 208px;
 
-		@media #{$reader-related-card-breakpoint-medium} {
+		@media #{$reader-related-card-v2-breakpoint-medium} {
 			max-height: 105px;
 		}
 
@@ -139,49 +139,49 @@
 			max-height: 206px;
 		}
 
-		@media #{$reader-related-card-breakpoint-small} {
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			max-height: 103px;
 		}
 
-		.reader-related-card__excerpt {
+		.reader-related-card-v2__excerpt {
 			-webkit-line-clamp: initial;
 		}
 	}
 
 	 .has-thumbnail {
 
-		.reader-related-card__post {
+		.reader-related-card-v2__post {
 			max-height: 110px;
 
-			@media #{$reader-related-card-breakpoint-small} {
+			@media #{$reader-related-card-v2-breakpoint-small} {
 				max-height: 104px;
 			}
 
-			@media #{$reader-related-card-breakpoint-medium} {
+			@media #{$reader-related-card-v2-breakpoint-medium} {
 				max-height: 104px;
 			}
 		}
 
-		.reader-related-card__meta {
+		.reader-related-card-v2__meta {
 			margin-bottom: 18px;
 		}
 	}
 
-	.reader-related-card__featured-image {
+	.reader-related-card-v2__featured-image {
 		margin: 0 0 14px;
 	}
 
-	.reader-related-card__meta {
+	.reader-related-card-v2__meta {
 		align-items: flex-start;
 		margin-bottom: 12px;
 
-		.reader-related-card__byline,
-		.reader-related-card__byline-author,
-		.reader-related-card__byline-site {
+		.reader-related-card-v2__byline,
+		.reader-related-card-v2__byline-author,
+		.reader-related-card-v2__byline-site {
 			margin-top: 0;
 		}
 
-		.reader-related-card__byline-author {
+		.reader-related-card-v2__byline-author {
 			margin-bottom: -3px;
 		}
 

@@ -5,7 +5,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,9 +24,12 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { getCurrencyWithEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { saveCurrency } from 'woocommerce/state/sites/settings/general/actions';
-import { arePaymentMethodsLoaded } from 'woocommerce/state/sites/payment-methods/selectors';
+import {
+	getPaymentMethods,
+	arePaymentMethodsLoaded,
+} from 'woocommerce/state/sites/payment-methods/selectors';
 import { savePaymentMethod } from 'woocommerce/state/sites/payment-methods/actions';
-import { getPaymentMethodsEdits } from 'woocommerce/state/ui/payments/methods/selectors';
+import { getPaymentMethodsWithEdits } from 'woocommerce/state/ui/payments/methods/selectors';
 
 /**
  * Creates a list of actions required to save the currency settings.
@@ -78,23 +81,23 @@ const getSavePaymentMethodsSteps = ( state, siteId ) => {
 	}
 
 	const actions = [];
-	const edits = getPaymentMethodsEdits( state, siteId );
-	const { updates } = edits;
-	updates.forEach( update => {
-		const { id, ...settings } = update;
+	const serverMethods = getPaymentMethods( state, siteId );
+	const clientMethods = getPaymentMethodsWithEdits( state, siteId );
 
-		const method = {
-			id,
-			settings,
-		};
+	serverMethods.forEach( ( serverMethod, index ) => {
+		//todo: creates and deletes when we support them
+		const clientMethod = clientMethods[ index ];
+		if ( isEqual( serverMethod, clientMethod ) ) {
+			return;
+		}
 
 		actions.push( {
-			description: translate( 'Saving method: %s', { args: [ id ] } ),
+			description: translate( 'Saving method: %s', { args: [ serverMethod.id ] } ),
 			onStep: ( dispatch, actionList ) => {
 				dispatch(
 					savePaymentMethod(
 						siteId,
-						method,
+						clientMethod,
 						actionListStepSuccess( actionList ),
 						actionListStepFailure( actionList )
 					)

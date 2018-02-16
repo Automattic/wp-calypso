@@ -4,7 +4,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { spy } from 'sinon';
+import { stub, spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -121,27 +121,27 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#createReducer()', () => {
-		describe( 'with null initial state and no handlers', () => {
+		describe( 'only default behavior', () => {
 			beforeAll( () => {
-				reducer = createReducer( null, {} );
+				reducer = createReducer();
 			} );
 
 			test( 'should return a function', () => {
 				expect( reducer ).to.be.a.function;
 			} );
 
-			test( 'should return initial state when hydration action passed', () => {
-				expect( reducer( undefined, { type: '@@calypso/INIT' } ) ).to.be.null;
-			} );
-
-			test( 'should return identical state when invalid action passed', () => {
+			test( 'should return initial state when invalid action passed', () => {
 				const invalidAction = {};
-				expect( reducer( currentState, invalidAction ) ).to.equal( currentState );
+
+				expect( reducer( currentState, invalidAction ) ).to.be.deep.equal( currentState );
 			} );
 
-			test( 'should return identical state when unknown action type passed', () => {
-				const unknownAction = { type: 'UNKNOWN' };
-				expect( reducer( currentState, unknownAction ) ).to.equal( currentState );
+			test( 'should return initial state when unknown action type passed', () => {
+				const unknownAction = {
+					type: 'UNKNOWN',
+				};
+
+				expect( reducer( currentState, unknownAction ) ).to.be.deep.equal( currentState );
 			} );
 
 			test( 'should return undefined when serialize action type passed', () => {
@@ -233,6 +233,31 @@ describe( 'utils', () => {
 			test( 'should return overridden state when deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( overriddenState );
 			} );
+		} );
+
+		test( 'should cache the serialize result on custom serialization behavior', () => {
+			const monitor = stub().returnsArg( 0 );
+
+			reducer = createReducer(
+				[],
+				{
+					[ SERIALIZE ]: monitor,
+					TEST_ADD: state => [ ...state, state.length ],
+				},
+				testSchema
+			);
+
+			let state;
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: 'TEST_ADD' } );
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: SERIALIZE } );
+			state = reducer( state, { type: 'TEST_ADD' } );
+			state = reducer( state, { type: SERIALIZE } );
+
+			expect( monitor ).to.have.been.calledThrice;
+			expect( state ).to.eql( [ 0, 1 ] );
 		} );
 	} );
 	describe( '#keyedReducer', () => {
@@ -447,6 +472,7 @@ describe( 'utils', () => {
 
 	describe( '#withSchemaValidation', () => {
 		const load = { type: DESERIALIZE };
+		const write = { type: SERIALIZE };
 		const normal = { type: 'NORMAL' };
 		const grow = { type: 'GROW' };
 		const schema = {
@@ -473,6 +499,16 @@ describe( 'utils', () => {
 		};
 		date.hasCustomPersistence = true;
 
+		test( 'should return undefined without a schema on SERIALIZE', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, write ) ).to.be.undefined;
+		} );
+
+		test( 'should return initial state without a schema on DESERIALIZE', () => {
+			const validated = withSchemaValidation( null, age );
+			expect( validated( 5, load ) ).to.equal( 0 );
+		} );
+
 		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
 
@@ -493,6 +529,11 @@ describe( 'utils', () => {
 
 		test( 'actions work as expected with schema', () => {
 			const validated = withSchemaValidation( schema, age );
+			expect( validated( 5, grow ) ).to.equal( 6 );
+		} );
+
+		test( 'actions work as expected without schema', () => {
+			const validated = withSchemaValidation( null, age );
 			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
 	} );

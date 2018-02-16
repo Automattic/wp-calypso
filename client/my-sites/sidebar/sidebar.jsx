@@ -404,24 +404,32 @@ export class MySitesSidebar extends Component {
 
 	users() {
 		const { translate, path, site, canUserListUsers } = this.props;
+		let usersLink = '/people/team' + this.props.siteSuffix;
+		const addPeopleLink = '/people/new' + this.props.siteSuffix;
 
-		if ( ! site || ! canUserListUsers ) {
+		if ( ! site ) {
 			return null;
+		}
+
+		if ( ! canUserListUsers ) {
+			return null;
+		}
+
+		if ( ! config.isEnabled( 'manage/people' ) && site.options ) {
+			usersLink = site.options.admin_url + 'users.php';
 		}
 
 		return (
 			<SidebarItem
 				label={ translate( 'People' ) }
 				selected={ itemLinkMatches( '/people', path ) }
-				link={ '/people/team' + this.props.siteSuffix }
+				link={ usersLink }
 				onNavigate={ this.onNavigate }
 				icon="user"
 				preloadSectionName="people"
 				tipTarget="people"
 			>
-				<SidebarButton href={ '/people/new' + this.props.siteSuffix }>
-					{ translate( 'Add' ) }
-				</SidebarButton>
+				<SidebarButton href={ addPeopleLink }>{ translate( 'Add' ) }</SidebarButton>
 			</SidebarItem>
 		);
 	}

@@ -7,7 +7,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { get, map, omit, reduce, some } from 'lodash';
+import { get, map, omit, some } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -64,20 +64,9 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			return;
 		}
 
-		const { settings, siteId } = this.props;
+		const { siteId } = this.props;
 
-		this.props.recordJpoEvent(
-			'calypso_jpo_business_address_submitted',
-			reduce(
-				this.fields,
-				( eventProps, value, field ) => {
-					const changed = get( settings, [ 'businessAddress', field ] ) !== this.state[ field ];
-					eventProps[ `${ field }_changed` ] = changed;
-					return eventProps;
-				},
-				{}
-			)
-		);
+		this.props.recordJpoEvent( 'calypso_jpo_business_address_submitted' );
 
 		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
 

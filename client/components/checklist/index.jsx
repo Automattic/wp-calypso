@@ -16,7 +16,6 @@ import classNames from 'classnames';
 import ChecklistHeader from './checklist-header';
 import ChecklistTask from './checklist-task';
 import ChecklistPlaceholder from './checklist-placeholder';
-import { loadTrackingTool } from 'state/analytics/actions';
 
 export class Checklist extends Component {
 	static propTypes = {
@@ -38,10 +37,6 @@ export class Checklist extends Component {
 	state = {
 		hideCompleted: false,
 	};
-
-	componentDidMount() {
-		this.props.loadTrackingTool( 'HotJar' );
-	}
 
 	toggleCompleted = () => {
 		this.setState( { hideCompleted: ! this.state.hideCompleted } );
@@ -105,4 +100,4 @@ export class Checklist extends Component {
 	}
 }
 
-export default connect( null, { loadTrackingTool } )( Checklist );
+export default connect( null, null )( Checklist );

@@ -20,14 +20,9 @@ import { getSite, isJetpackSite, getSiteOption } from 'state/sites/selectors';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import AsyncLoad from 'components/async-load';
+import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
 import FollowList from 'lib/follow-list';
-import StatsInsights from './stats-insights';
-import StatsOverview from './overview';
-import StatsSite from './site';
-import StatsSummary from './summary';
-import StatsPostDetail from './stats-post-detail';
-import StatsCommentFollows from './comment-follows';
-import ActivityLog from './activity-log';
 
 const analyticsPageTitle = 'Stats';
 
@@ -131,13 +126,21 @@ export default {
 
 	insights: function( context, next ) {
 		const basePath = sectionify( context.path );
+		const followList = new FollowList();
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
-		context.primary = <StatsInsights followList={ new FollowList() } />;
+		const props = { followList };
+		context.primary = (
+			<AsyncLoad
+				require="my-sites/stats/stats-insights"
+				placeholder={ <StatsPagePlaceholder /> }
+				{ ...props }
+			/>
+		);
 		next();
 	},
 
@@ -189,7 +192,13 @@ export default {
 				period: activeFilter.period,
 				path: context.pathname,
 			};
-			context.primary = <StatsOverview { ...props } />;
+			context.primary = (
+				<AsyncLoad
+					placeholder={ <StatsPagePlaceholder /> }
+					require="my-sites/stats/overview"
+					{ ...props }
+				/>
+			);
 			next();
 		}
 	},
@@ -259,7 +268,7 @@ export default {
 			period = rangeOfPeriod( activeFilter.period, date );
 			chartTab = queryOptions.tab || 'views';
 
-			const props = {
+			const siteComponentChildren = {
 				path: context.pathname,
 				date,
 				chartTab,
@@ -267,7 +276,13 @@ export default {
 				period,
 			};
 
-			context.primary = <StatsSite { ...props } />;
+			context.primary = (
+				<AsyncLoad
+					placeholder={ <StatsPagePlaceholder /> }
+					require="my-sites/stats/site"
+					{ ...siteComponentChildren }
+				/>
+			);
 			next();
 		}
 	},
@@ -363,7 +378,13 @@ export default {
 				period,
 				...extraProps,
 			};
-			context.primary = <StatsSummary { ...props } />;
+			context.primary = (
+				<AsyncLoad
+					placeholder={ <StatsPagePlaceholder /> }
+					require="my-sites/stats/summary"
+					{ ...props }
+				/>
+			);
 			next();
 		}
 	},
@@ -390,7 +411,13 @@ export default {
 				postId,
 				context,
 			};
-			context.primary = <StatsPostDetail { ...props } />;
+			context.primary = (
+				<AsyncLoad
+					placeholder={ <StatsPagePlaceholder /> }
+					require="my-sites/stats/stats-post-detail"
+					{ ...props }
+				/>
+			);
 		}
 		next();
 	},
@@ -430,7 +457,13 @@ export default {
 				siteId,
 				followList,
 			};
-			context.primary = <StatsCommentFollows { ...props } />;
+			context.primary = (
+				<AsyncLoad
+					placeholder={ <StatsPagePlaceholder /> }
+					require="my-sites/stats/comment-follows"
+					{ ...props }
+				/>
+			);
 		}
 		next();
 	},
@@ -454,7 +487,13 @@ export default {
 				context,
 				startDate,
 			};
-			context.primary = <ActivityLog { ...props } />;
+			context.primary = (
+				<AsyncLoad
+					placeholder={ <StatsPagePlaceholder /> }
+					require="my-sites/stats/activity-log"
+					{ ...props }
+				/>
+			);
 		}
 		next();
 	},

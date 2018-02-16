@@ -9,7 +9,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getStoredCards, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
 
 export const getLabelSettingsForm = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(
@@ -85,20 +84,8 @@ export const getPaperSize = ( state, siteId = getSelectedSiteId( state ) ) => {
 };
 
 export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
-	if ( ! hasLoadedStoredCardsFromServer( state ) ) {
-		const meta = getLabelSettingsFormMeta( state, siteId );
-		return meta && meta.payment_methods;
-	}
-
-	return getStoredCards( state )
-		.map( card => ( {
-			payment_method_id: Number( card.stored_details_id ),
-			card_type: card.card_type,
-			name: card.name,
-			card_digits: card.card,
-			expiry: card.expiry,
-		} ) )
-		.sort( ( a, b ) => b.payment_method_id - a.payment_method_id );
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.payment_methods;
 };
 
 export const getMasterUserInfo = ( state, siteId = getSelectedSiteId( state ) ) => {

@@ -51,10 +51,6 @@
 		}
 	}
 
-	&:focus {
-		border-color: $blue-medium;
-		box-shadow: 0 0 0 2px $blue-light;
-	}
 }
 
 .language-picker__icon {
@@ -146,9 +142,6 @@
 	display: inline-block;
 	white-space: nowrap;
 	overflow: hidden;
-	&:focus {
-		outline: solid $gray 1px;
-	}
 }
 
 .language-picker__modal-list {
