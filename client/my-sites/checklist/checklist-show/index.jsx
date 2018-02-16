@@ -24,6 +24,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import ChecklistShowShare from './share';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
@@ -113,6 +114,7 @@ class ChecklistShow extends PureComponent {
 
 		return (
 			<Main className="checklist-show">
+				<SidebarNavigation />
 				<DocumentHead title={ title } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ this.renderHeader( completed, displayMode ) }
