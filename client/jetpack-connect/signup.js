@@ -120,6 +120,7 @@ export class JetpackSignup extends Component {
 						emailAddress,
 						isJetpack: true,
 						isNative: config.isEnabled( 'login/native-login-links' ),
+						locale: this.props.locale,
 						redirectTo: window.location.href,
 					} ) }
 				>
@@ -139,16 +140,17 @@ export class JetpackSignup extends Component {
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader authQuery={ this.props.authQuery } />
 					<SignupForm
+						disabled={ isAuthorizing }
+						email={ this.props.authQuery.userEmail }
+						footerLink={ this.renderFooterLink() }
+						locale={ this.props.locale }
 						redirectToAfterLoginUrl={ addQueryArgs(
 							{ auth_approved: true },
 							window.location.href
 						) }
-						disabled={ isAuthorizing }
-						submitting={ isAuthorizing }
-						submitForm={ this.handleSubmitSignup }
 						submitButtonText={ this.props.translate( 'Sign Up and Connect Jetpack' ) }
-						footerLink={ this.renderFooterLink() }
-						email={ this.props.authQuery.userEmail }
+						submitForm={ this.handleSubmitSignup }
+						submitting={ isAuthorizing }
 						suggestedUsername={ get( userData, 'username', '' ) }
 					/>
 					{ userData && this.renderLoginUser() }
