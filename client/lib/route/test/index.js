@@ -206,6 +206,13 @@ describe( 'route', function() {
 				expect( route.getSiteFragment( '/stats/day/1000000000000000000000' ) ).to.be.false;
 			} );
 		} );
+		describe( 'for domains paths', function() {
+			test( 'should return the site when second-to-last URL segment also contains a domain', function() {
+				expect(
+					route.getSiteFragment( '/domains/add/suggestion/example.com/example.wordpress.com' )
+				).to.equal( 'example.wordpress.com' );
+			} );
+		} );
 	} );
 
 	describe( 'addSiteFragment', function() {
