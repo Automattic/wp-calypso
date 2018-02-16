@@ -410,8 +410,8 @@
 
 // Custom breakpoints needed to match Related Posts
 
-$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
+$reader-related-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
+$reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 .reader-stream__recommended-posts {
 	border-bottom: 1px solid $gray-lighten-20;
@@ -446,7 +446,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin: 0 0 -30px;
 	padding: 0;
 
-	@media #{$reader-related-card-v2-breakpoint-medium} {
+	@media #{$reader-related-card-breakpoint-medium} {
 		flex-direction: column;
 		margin: 0 0 -10px;
 	}
@@ -456,7 +456,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin: 0 0 -30px;
 	}
 
-	@media #{$reader-related-card-v2-breakpoint-small} {
+	@media #{$reader-related-card-breakpoint-small} {
 		flex-direction: column;
 		margin: 0 0 -10px;
 	}
@@ -469,13 +469,13 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	position: relative;
 		top: -41px;
 
-	@media #{$reader-related-card-v2-breakpoint-medium} {
+	@media #{$reader-related-card-breakpoint-medium} {
 		flex-direction: row;
 		top: 0;
 		width: 100%;
 	}
 
-	@media #{$reader-related-card-v2-breakpoint-small} {
+	@media #{$reader-related-card-breakpoint-small} {
 		flex-direction: row;
 		top: 0;
 		width: 100%;
@@ -487,22 +487,22 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		.button {
 			float: right;
 
-			@media #{$reader-related-card-v2-breakpoint-medium} {
+			@media #{$reader-related-card-breakpoint-medium} {
 				float: none;
 			}
 
-			@media #{$reader-related-card-v2-breakpoint-small} {
+			@media #{$reader-related-card-breakpoint-small} {
 				float: none;
 			}
 		}
 
-		@media #{$reader-related-card-v2-breakpoint-medium} {
+		@media #{$reader-related-card-breakpoint-medium} {
 			float: left;
 			position: relative;
 			width: 20px;
 		}
 
-		@media #{$reader-related-card-v2-breakpoint-small} {
+		@media #{$reader-related-card-breakpoint-small} {
 			float: left;
 			position: relative;
 			width: 20px;
@@ -514,70 +514,70 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			height: 14px;
 			top: -3px;
 
-			@media #{$reader-related-card-v2-breakpoint-medium} {
+			@media #{$reader-related-card-breakpoint-medium} {
 				top: -10px;
 			}
 
-			@media #{$reader-related-card-v2-breakpoint-small} {
+			@media #{$reader-related-card-breakpoint-small} {
 				top: -10px;
 			}
 		}
 	}
 
-	.card.reader-related-card-v2 {
+	.card.reader-related-card {
 		margin: 0;
 		padding-top: 6px;
 
-		@media #{$reader-related-card-v2-breakpoint-medium} {
+		@media #{$reader-related-card-breakpoint-medium} {
 			padding-top: 0;
 		}
 
-		@media #{$reader-related-card-v2-breakpoint-small} {
+		@media #{$reader-related-card-breakpoint-small} {
 			padding-top: 0;
 		}
 
-		.reader-related-card-v2__meta .gravatar {
+		.reader-related-card__meta .gravatar {
 			margin: 3px 8px 0 0;
 		}
 
 		&.has-thumbnail {
 
-			.reader-related-card-v2__meta {
+			.reader-related-card__meta {
 				margin-bottom: 17px;
 
-				@media #{$reader-related-card-v2-breakpoint-medium} {
+				@media #{$reader-related-card-breakpoint-medium} {
 					margin-top: -2px;
 				}
 
-				@media #{$reader-related-card-v2-breakpoint-small} {
+				@media #{$reader-related-card-breakpoint-small} {
 					margin-top: -2px;
 				}
 			}
 
-			.reader-related-card-v2__meta .follow-button {
+			.reader-related-card__meta .follow-button {
 				margin-top: -9px;
 			}
 
-			.reader-related-card-v2__site-info {
+			.reader-related-card__site-info {
 
-				@media #{$reader-related-card-v2-breakpoint-small} {
+				@media #{$reader-related-card-breakpoint-small} {
 					margin-top: 20px;
 				}
 
-				@media #{$reader-related-card-v2-breakpoint-medium} {
+				@media #{$reader-related-card-breakpoint-medium} {
 					margin-top: 20px;
 				}
 			}
 
-			.reader-related-card-v2__post {
+			.reader-related-card__post {
 				margin-top: 0;
 				max-height: 108px;
 
-				@media #{$reader-related-card-v2-breakpoint-small} {
+				@media #{$reader-related-card-breakpoint-small} {
 					max-height: 128px;
 				}
 
-				@media #{$reader-related-card-v2-breakpoint-medium} {
+				@media #{$reader-related-card-breakpoint-medium} {
 					max-height: 128px;
 				}
 
@@ -607,11 +607,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	&:first-child,
 	&:last-child {
 
-		@media #{$reader-related-card-v2-breakpoint-medium} {
+		@media #{$reader-related-card-breakpoint-medium} {
 			margin: 0 0 20px 0;
 		}
 
-		@media #{$reader-related-card-v2-breakpoint-small} {
+		@media #{$reader-related-card-breakpoint-small} {
 			margin: 0 0 20px 0;
 		}
 
@@ -624,15 +624,15 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin: 0;
 	}
 
-	.reader-related-card-v2__meta .follow-button {
+	.reader-related-card__meta .follow-button {
 		margin-top: -8px;
 	}
 
-	.reader-related-card-v2__post {
+	.reader-related-card__post {
 		margin-top: -2px;
 		max-height: 208px;
 
-		@media #{$reader-related-card-v2-breakpoint-medium} {
+		@media #{$reader-related-card-breakpoint-medium} {
 			max-height: 107px;
 		}
 
@@ -640,24 +640,24 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			max-height: 207px;
 		}
 
-		@media #{$reader-related-card-v2-breakpoint-small} {
+		@media #{$reader-related-card-breakpoint-small} {
 			max-height: 104px;
 		}
 
-		.reader-related-card-v2__excerpt {
+		.reader-related-card__excerpt {
 			-webkit-line-clamp: initial;
 		}
 	}
 
-	.reader-related-card-v2__featured-image {
+	.reader-related-card__featured-image {
 		border: 1px solid $gray-lighten-30;
 		margin: 0 0 14px;
 
-		@media #{$reader-related-card-v2-breakpoint-medium} {
+		@media #{$reader-related-card-breakpoint-medium} {
 			margin: 0 15px 0 0;
 		}
 
-		@media #{$reader-related-card-v2-breakpoint-small} {
+		@media #{$reader-related-card-breakpoint-small} {
 			margin: 0 15px 0 0;
 		}
 	}

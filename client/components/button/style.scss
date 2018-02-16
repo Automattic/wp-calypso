@@ -169,6 +169,11 @@ button {
 		background: lighten( $alert-red, 20% );
 		border-color: tint( $alert-red, 30% );
 	}
+	&.is-busy {
+		background-size: 120px 100%;
+		background-image: linear-gradient( -45deg, $alert-red 28%, darken( $alert-red, 5% ) 28%, darken( $alert-red, 5% ) 72%, $alert-red 72%);
+		border-color: darken( $alert-red, 8% );
+	}
 }
 
 .button.is-borderless {

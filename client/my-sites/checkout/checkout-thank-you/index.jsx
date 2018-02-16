@@ -80,6 +80,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
+import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 
 function getPurchases( props ) {
 	return [
@@ -312,12 +313,12 @@ class CheckoutThankYou extends React.Component {
 			let planProps = {};
 			if ( delayedTransferPurchase ) {
 				planProps = {
-					buttonText: translate( 'Start Domain Transfer' ),
-					description: translate( "Now let's get your domain transferred." ),
-					buttonUrl: domainManagementTransferInPrecheck(
-						this.props.selectedSite.slug,
-						delayedTransferPurchase.meta
+					action: (
+						<a className="thank-you-card__button" onClick={ this.startTransfer }>
+							{ translate( 'Start Domain Transfer' ) }
+						</a>
 					),
+					description: translate( "Now let's get your domain transferred." ),
 				};
 			}
 
@@ -379,6 +380,18 @@ class CheckoutThankYou extends React.Component {
 			</Main>
 		);
 	}
+
+	startTransfer = event => {
+		event.preventDefault();
+
+		const { selectedSite } = this.props;
+		const purchases = getPurchases( this.props );
+		const delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
+
+		this.props.recordStartTransferClickInThankYou( delayedTransferPurchase.meta );
+
+		page( domainManagementTransferInPrecheck( selectedSite.slug, delayedTransferPurchase.meta ) );
+	};
 
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
@@ -520,6 +533,9 @@ export default connect(
 			},
 			loadTrackingTool( name ) {
 				dispatch( loadTrackingTool( name ) );
+			},
+			recordStartTransferClickInThankYou( domain ) {
+				dispatch( recordStartTransferClickInThankYou( domain ) );
 			},
 		};
 	}
