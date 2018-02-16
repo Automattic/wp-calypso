@@ -28,11 +28,7 @@ class FocusableExample extends React.PureComponent {
 
 	renderDocsExampleWithUsageStats = () => {
 		return (
-			<DocsExample
-				componentUsageStats={ this.props.componentUsageStats }
-				toggleHandler={ this.toggleButtons }
-				toggleText={ toggleText }
-			>
+			<DocsExample componentUsageStats={ this.props.componentUsageStats }>
 				{ this.renderFocusable() }
 			</DocsExample>
 		);
@@ -41,29 +37,27 @@ class FocusableExample extends React.PureComponent {
 	renderFocusable = () => {
 		return (
 			<Card>
-				<div className="docs__design-button-row">
-					<Focusable onClick={ noop }>
-						<p>
-							This keyboard-accessible component can contain other elements as children, including{' '}
-							<code>p</code>s, <code>div</code>s, or other components.
-						</p>
-					</Focusable>
+				<Focusable onClick={ noop }>
 					<p>
-						An example of real use is in the Language Picker, which can be considered a "complex
-						button."
+						This keyboard-accessible component can contain other elements as children, including{' '}
+						<code>p</code>s, <code>div</code>s, or other components.
 					</p>
-					<Focusable onClick={ noop } className="language-picker">
-						<div className="language-picker__icon" aria-hidden>
-							<div className="language-picker__icon-inner">en</div>
+				</Focusable>
+				<p>
+					An example of real use is in the Language Picker, which can be considered a "complex
+					button."
+				</p>
+				<Focusable onClick={ noop } className="language-picker">
+					<div className="language-picker__icon" aria-hidden>
+						<div className="language-picker__icon-inner">en</div>
+					</div>
+					<div className="language-picker__name">
+						<div className="language-picker__name-inner">
+							<div className="language-picker__name-label">English</div>
+							<div className="language-picker__name-change">Change</div>
 						</div>
-						<div className="language-picker__name">
-							<div className="language-picker__name-inner">
-								<div className="language-picker__name-label">English</div>
-								<div className="language-picker__name-change">Change</div>
-							</div>
-						</div>
-					</Focusable>
-				</div>
+					</div>
+				</Focusable>
 			</Card>
 		);
 	};
