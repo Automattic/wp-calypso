@@ -149,15 +149,18 @@ class SuccessBanner extends PureComponent {
 	}
 }
 
-export default connect(
-	( state, { siteId } ) => ( {
-		siteUrl: getSiteUrl( state, siteId ),
-	} ),
-	{
-		dismissRestoreProgress: dismissRewindRestoreProgress,
-		dismissBackupProgress: dismissRewindBackupProgress,
-		recordTracksEvent: recordTracksEvent,
-		trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_success_banner_backup' ),
-		trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_success_banner_restore' ),
-	}
-)( localize( SuccessBanner ) );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	siteUrl: getSiteUrl( state, siteId ),
+} );
+
+const mapDispatchToProps = dispatch => ( {
+	dismissRestoreProgress: dismissRewindRestoreProgress,
+	dismissBackupProgress: dismissRewindBackupProgress,
+	recordTracksEvent: recordTracksEvent,
+	trackHappyChatBackup: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_success_banner_backup' ) ),
+	trackHappyChatRestore: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_success_banner_restore' ) ),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SuccessBanner ) );
