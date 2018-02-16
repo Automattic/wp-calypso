@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
  */
 import { fetchPost } from 'lib/feed-post-store/actions';
 import { getPostByKey } from 'state/reader/posts/selectors';
+import { isPostKeyLike } from 'lib/feed-stream-store/post-key';
 
 class QueryReaderPost extends Component {
 	static propTypes = {
@@ -28,7 +29,7 @@ class QueryReaderPost extends Component {
 	}
 
 	maybeFetch = ( props = this.props ) => {
-		if ( ! props.post || props.post._state === 'minimal' ) {
+		if ( isPostKeyLike( props.postKey ) && ( ! props.post || props.post._state === 'minimal' ) ) {
 			fetchPost( props.postKey );
 		}
 	};

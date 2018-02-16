@@ -10,10 +10,21 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isLoading, isQueryLoading, isUpdating, items, queries, total } from '../reducer';
+import {
+	isDeleting,
+	isLoading,
+	isQueryLoading,
+	isUpdating,
+	items,
+	queries,
+	total,
+} from '../reducer';
 import order from './fixtures/order';
 import orders from './fixtures/orders';
 import {
+	WOOCOMMERCE_ORDER_DELETE,
+	WOOCOMMERCE_ORDER_DELETE_FAILURE,
+	WOOCOMMERCE_ORDER_DELETE_SUCCESS,
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -26,6 +37,44 @@ import {
 } from 'woocommerce/state/action-types';
 
 describe( 'reducer', () => {
+	describe( 'isDeleting', () => {
+		test( 'should have no change by default', () => {
+			const newState = isDeleting( undefined, {} );
+			expect( newState ).to.eql( {} );
+		} );
+
+		test( "should store order we're trying to delete", () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_DELETE,
+				siteId: 123,
+				orderId: 45,
+			};
+			const newState = isDeleting( undefined, action );
+			expect( newState ).to.eql( { 45: true } );
+		} );
+
+		test( 'should show that order has been successfully deleted', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_DELETE_SUCCESS,
+				siteId: 123,
+				orderId: 45,
+			};
+			const newState = isDeleting( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+
+		test( 'should show that order failed to delete', () => {
+			const action = {
+				type: WOOCOMMERCE_ORDER_DELETE_FAILURE,
+				siteId: 123,
+				orderId: 45,
+				error: {},
+			};
+			const newState = isDeleting( { 45: true }, action );
+			expect( newState ).to.eql( { 45: false } );
+		} );
+	} );
+
 	describe( 'isLoading', () => {
 		test( 'should have no change by default', () => {
 			const newState = isLoading( undefined, {} );

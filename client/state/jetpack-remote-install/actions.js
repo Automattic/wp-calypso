@@ -22,6 +22,11 @@ export const jetpackRemoteInstall = ( url, user, password ) => ( {
 	url,
 	user,
 	password,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
 } );
 
 /**

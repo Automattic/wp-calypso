@@ -15,6 +15,9 @@ import {
 } from './utils';
 import { getOrderStatusGroup } from 'woocommerce/lib/order-status';
 import {
+	WOOCOMMERCE_ORDER_DELETE,
+	WOOCOMMERCE_ORDER_DELETE_FAILURE,
+	WOOCOMMERCE_ORDER_DELETE_SUCCESS,
 	WOOCOMMERCE_ORDER_REQUEST,
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -25,6 +28,31 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
+
+export const deleteOrder = ( site, orderId ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_DELETE,
+		siteId: site.ID,
+		siteSlug: site.slug,
+		orderId,
+	};
+};
+
+export const deleteOrderError = ( siteId, orderId, error ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_DELETE_FAILURE,
+		siteId,
+		orderId,
+		error,
+	};
+};
+export const deleteOrderSuccess = ( siteId, orderId ) => {
+	return {
+		type: WOOCOMMERCE_ORDER_DELETE_SUCCESS,
+		siteId,
+		orderId,
+	};
+};
 
 export const fetchOrders = ( siteId, requestedQuery = {} ) => {
 	const query = { ...DEFAULT_QUERY, ...requestedQuery };

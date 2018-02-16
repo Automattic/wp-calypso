@@ -9,15 +9,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { requesting, items } from '../reducer';
-import {
-	POST_LIKES_RECEIVE,
-	POST_LIKES_REQUEST,
-	POST_LIKES_REQUEST_FAILURE,
-	POST_LIKES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+import reducer, { items } from '../reducer';
+import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -26,147 +19,7 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
-	} );
-
-	describe( 'requesting()', () => {
-		test( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should set site ID, post ID to true value if a request is initiated', () => {
-			const state = requesting( undefined, {
-				type: POST_LIKES_REQUEST,
-				siteId: 12345678,
-				postId: 50,
-			} );
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-				},
-			} );
-		} );
-
-		test( 'should accumulate the requested site IDs', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST,
-					siteId: 87654321,
-					postId: 10,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-				},
-				87654321: {
-					10: true,
-				},
-			} );
-		} );
-
-		test( 'should accumulate the requested post IDs', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST,
-					siteId: 12345678,
-					postId: 10,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-					10: true,
-				},
-			} );
-		} );
-
-		test( 'should set requesting to false if request finishes successfully', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST_SUCCESS,
-					siteId: 12345678,
-					postId: 50,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: false,
-				},
-			} );
-		} );
-
-		test( 'should set post ID to false if request finishes unsuccessfully', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST_FAILURE,
-					siteId: 12345678,
-					postId: 50,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: false,
-				},
-			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: SERIALIZE,
-				}
-			);
-
-			expect( state ).to.be.undefined;
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: DESERIALIZE,
-				}
-			);
-
-			expect( state ).to.eql( {} );
-		} );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items' ] );
 	} );
 
 	describe( 'items()', () => {

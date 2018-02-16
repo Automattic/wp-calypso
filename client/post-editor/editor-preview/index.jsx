@@ -135,7 +135,6 @@ class EditorPreview extends React.Component {
 						showEdit={ true }
 						showExternal={ true }
 						showUrl={ true }
-						defaultViewportDevice={ this.props.defaultViewportDevice }
 						onClose={ this.props.onClose }
 						onEdit={ this.props.onEdit }
 						previewUrl={ this.state.iframeUrl }
@@ -149,7 +148,6 @@ class EditorPreview extends React.Component {
 				) : (
 					<WebPreview
 						showPreview={ this.props.showPreview }
-						defaultViewportDevice={ this.props.defaultViewportDevice }
 						onClose={ this.props.onClose }
 						previewUrl={ this.state.iframeUrl }
 						externalUrl={ this.cleanExternalUrl( this.props.externalUrl ) }

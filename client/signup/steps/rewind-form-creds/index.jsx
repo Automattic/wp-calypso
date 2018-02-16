@@ -37,10 +37,14 @@ class RewindFormCreds extends Component {
 	 */
 	componentWillUpdate( nextProps ) {
 		if ( nextProps.rewindIsNowActive ) {
-			SignupActions.submitSignupStep( {
-				processingMessage: this.props.translate( 'Migrating your credentials' ),
-				stepName: this.props.stepName,
-			} );
+			SignupActions.submitSignupStep(
+				{
+					processingMessage: this.props.translate( 'Migrating your credentials' ),
+					stepName: this.props.stepName,
+				},
+				undefined,
+				{ rewindconfig: true }
+			);
 			this.props.goToNextStep();
 		}
 	}

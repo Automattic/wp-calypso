@@ -23,7 +23,6 @@
 	@include breakpoint( "<660px" ) {
 		left: -100%;
 		width: 100%;
-		background: $gray-light;
 		overflow-x: hidden;
 		max-height: calc( 100% - 47px );
 		pointer-events: none;
@@ -76,10 +75,6 @@
 	font-size: 14px;
 	margin: 16px 8px 6px 16px;
 	display: flex;
-
-	@include breakpoint( ">660px" ) {
-		font-size: 13px;
-	}	
 }
 
 // Menu Links
@@ -94,6 +89,7 @@
 		display: flex;
 
 		@include breakpoint( "<660px" ) {
+			background-color: $gray-light;
 			border-bottom: 1px solid lighten( $gray, 25 );
 
 			&:first-child {
@@ -117,6 +113,14 @@
 			width: 15%;
 
 			background: overflow-gradient( var( --sidebar-menu-a-first-child-after-background ) );
+
+			@include breakpoint( "<660px" ) {
+
+				background: linear-gradient(
+					to right,
+					rgba( $gray-light, 0 ),
+					rgba( $gray-light, 1 ) 50% );
+			}
 		}
 	}
 
@@ -320,7 +324,7 @@ form.sidebar__button input {
 	}
 
 	a:hover, form:hover {
-		color: $blue-wordpress;
+		color: $blue-medium;
 
 		.sidebar__menu-link-secondary-text {
 			color: inherit;

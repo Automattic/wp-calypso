@@ -24,8 +24,8 @@ import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions'
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
-		blogname: get( this.props.settings, 'siteTitle' ),
-		blogdescription: get( this.props.settings, 'siteDescription' ),
+		blogname: this.getFieldValue( 'siteTitle' ),
+		blogdescription: this.getFieldValue( 'siteDescription' ),
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -35,6 +35,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				blogdescription: nextProps.settings.siteDescription,
 			} );
 		}
+	}
+
+	getFieldValue( fieldName ) {
+		return get( this.props.settings, fieldName );
 	}
 
 	handleChange = ( { blogname, blogdescription } ) => {
@@ -47,7 +51,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			return;
 		}
 
-		this.props.recordJpoEvent( 'calypso_jpo_site_title_submitted' );
+		this.props.recordJpoEvent( 'calypso_jpo_site_title_submitted', {
+			title_changed: this.state.blogname !== this.getFieldValue( 'siteTitle' ),
+			description_changed: this.state.blogdescription !== this.getFieldValue( 'siteDescription' ),
+		} );
 
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.blogname,
