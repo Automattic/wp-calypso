@@ -80,7 +80,7 @@ Essential Git resources:
 	- [9 Awesome Git Tricks](http://www.tychoish.com/posts/9-awesome-git-tricks/)
 * Some operations are easier using a GUI. [GitX](http://rowanj.github.io/gitx/) is a simple one for OS X. [Fugitive](https://github.com/tpope/vim-fugitive) is a must for `vim`. The GitHub app doesn’t entirely fit our workflow, but you can use it for pulling and committing. One caveat is that you will have to do all rebasing manually.
 
-Key concepts checklist:
+Key Concepts Checklist:
 
 * How is Git different from Subversion?
 * How does branching work? Why are branches cheap?

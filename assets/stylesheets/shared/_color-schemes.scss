@@ -1,7 +1,7 @@
 //default color scheme
 :root {
 	--masterbar-color: $white;
-	--masterbar-background: $blue-wordpress;
+	--masterbar-background: pink;
 	--masterbar-border-color: darken( $blue-wordpress, 4% );
 	--masterbar-item-hover-background: lighten( $blue-wordpress, 5% );
 	--masterbar-item-active-background: darken( $blue-wordpress, 17% );
@@ -12,7 +12,7 @@
 	--masterbar-toggle-drafts-editor-border-color: darken( $blue-wordpress, 5% );
 	--masterbar-toggle-drafts-editor-hover-background: darken( $blue-wordpress, 17% );
 
-	--sidebar-color: $gray-dark;
+	--sidebar-color: pink;
 	--sidebar-background: $gray-lighten-30;
 	--sidebar-gridicon-fill: $gray;
 	--sidebar-heading-color: $gray-darken-10;
