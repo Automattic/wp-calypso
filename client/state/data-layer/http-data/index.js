@@ -26,16 +26,33 @@ const onFailure = ( action, error ) => {
 	return { type: HTTP_DATA_TICK };
 };
 
-const onSuccess = ( action, apiData ) => {
-	try {
-		const data = 'function' === typeof action.fromApi ? action.fromApi( apiData ) : apiData;
-
-		update( action.id, 'success', data );
-
-		return { type: HTTP_DATA_TICK };
-	} catch ( e ) {
-		return onFailure( action, e );
+const parseResponse = ( data, fromApi ) => {
+	if ( 'function' !== typeof fromApi ) {
+		return data;
 	}
+
+	// [ error, data ]
+	try {
+		return [ undefined, fromApi( data ) ];
+	} catch ( error ) {
+		return [ error, undefined ];
+	}
+};
+
+const onSuccess = ( action, apiData ) => {
+	const [ error, data ] = parseResponse( apiData, action.fromApi );
+
+	if ( undefined !== error ) {
+		return onFailure( action, error );
+	}
+
+	if ( 'multi-resource' === action.fromApiType ) {
+		data.forEach( ( [ id, resource ] ) => update( id, 'success', resource ) );
+	} else {
+		update( action.id, 'success', data );
+	}
+
+	return { type: HTTP_DATA_TICK };
 };
 
 export default {
