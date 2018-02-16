@@ -209,6 +209,10 @@
 	@include breakpoint( ">660px" ) {
 		width: 660px;
 	}
+
+	.dialog__content:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .shipping-zone__method-delete {
@@ -262,11 +266,6 @@
 	justify-content: space-between;
 
 	.form-fieldset {
-		margin-bottom: 0;
-	}
-
-	& + .form-fieldset,
-	& + .form-fieldset .form-fieldset:last-child {
 		margin-bottom: 0;
 	}
 }

@@ -160,18 +160,16 @@ const ShippingZoneMethodDialog = ( {
 				</FormFieldSet>
 			</div>
 			<FormFieldSet>
-				<FormFieldSet>
-					<FormLabel>{ translate( 'Method' ) }</FormLabel>
-					<FormSelect
-						className="shipping-zone__method-type-select"
-						value={ methodType }
-						onChange={ onMethodTypeChange }
-					>
-						{ renderMethodTypeOptions() }
-					</FormSelect>
-				</FormFieldSet>
-				{ renderMethodSettingsView() }
+				<FormLabel>{ translate( 'Method' ) }</FormLabel>
+				<FormSelect
+					className="shipping-zone__method-type-select"
+					value={ methodType }
+					onChange={ onMethodTypeChange }
+				>
+					{ renderMethodTypeOptions() }
+				</FormSelect>
 			</FormFieldSet>
+			{ renderMethodSettingsView() }
 		</Dialog>
 	);
 };

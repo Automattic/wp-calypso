@@ -35,12 +35,10 @@ const FreeShippingMethod = ( { id, cost, currency, translate, actions } ) => {
 	};
 
 	return (
-		<div>
-			<FormFieldSet>
-				<FormLabel>{ translate( 'Cost' ) }</FormLabel>
-				{ renderCostInput() }
-			</FormFieldSet>
-		</div>
+		<FormFieldSet>
+			<FormLabel>{ translate( 'Cost' ) }</FormLabel>
+			{ renderCostInput() }
+		</FormFieldSet>
 	);
 };
 
