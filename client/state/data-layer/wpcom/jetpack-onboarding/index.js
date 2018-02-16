@@ -131,7 +131,16 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
 	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
 
-export const announceSaveFailure = ( { dispatch }, action ) => {
+export const announceSaveFailure = ( { dispatch }, { siteId } ) => {
+	dispatch(
+		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
+			id: `jpo-notice-error-${ siteId }`,
+			duration: 5000,
+		} )
+	);
+};
+
+export const retryOrAnnounceFailure = ( { dispatch }, action ) => {
 	const MAX_WOOCOMMERCE_INSTALL_RETRIES = 3;
 	const { settings, siteId, type, meta: { dataLayer } } = action;
 	const { error, retryCount = 0 } = dataLayer;
@@ -144,12 +153,7 @@ export const announceSaveFailure = ( { dispatch }, action ) => {
 		error.error !== 'http_request_failed' ||
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
-		return dispatch(
-			errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-				id: `jpo-notice-error-${ siteId }`,
-				duration: 5000,
-			} )
-		);
+		return announceSaveFailure( { dispatch }, { siteId } );
 	}
 
 	// We cannot use `extendAction( action, ... )` here, since `meta.datayLayer` now includes error information,
@@ -180,6 +184,6 @@ export default {
 		),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, announceSaveFailure ),
+		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, retryOrAnnounceFailure ),
 	],
 };
