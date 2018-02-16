@@ -45,6 +45,13 @@ class MasterbarLoggedOut extends PureComponent {
 			return null;
 		}
 
+		let redirectTo = null;
+		if ( redirectUri ) {
+			redirectTo = redirectUri;
+		} else if ( currentRoute ) {
+			redirectTo = currentQuery ? addQueryArgs( currentQuery, currentRoute ) : currentRoute;
+		}
+
 		const isJetpack = 'jetpack-connect' === sectionName;
 
 		const loginUrl = login( {
@@ -53,7 +60,7 @@ class MasterbarLoggedOut extends PureComponent {
 			isJetpack,
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			locale: getLocaleSlug(),
-			redirectTo: redirectUri || addQueryArgs( currentQuery, currentRoute ),
+			redirectTo,
 		} );
 
 		return (
