@@ -141,7 +141,7 @@ export const announceSaveFailure = ( { dispatch }, { siteId } ) => {
 };
 
 export const retryOrAnnounceSaveFailure = ( { dispatch }, action ) => {
-	const MAX_WOOCOMMERCE_INSTALL_RETRIES = 3;
+	const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 	const { settings, siteId, type, meta: { dataLayer } } = action;
 	const { error, retryCount = 0 } = dataLayer;
 
