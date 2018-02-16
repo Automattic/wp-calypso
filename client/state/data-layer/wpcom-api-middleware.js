@@ -7,11 +7,13 @@
 import { bypassDataLayer } from './utils';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import wpcomHttpHandlers from './wpcom-http';
+import httpData from './http-data';
 import httpHandlers from 'state/http';
 import thirdPartyHandlers from './third-party';
 import wpcomHandlers from './wpcom';
 
 const mergedHandlers = mergeHandlers(
+	httpData,
 	httpHandlers,
 	wpcomHttpHandlers,
 	thirdPartyHandlers,
