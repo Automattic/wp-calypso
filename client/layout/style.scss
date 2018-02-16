@@ -1,218 +1,21 @@
 /*
 	Layout Elements
 	.layout__loading - Displays when loading Claypso
-	.layout__content - Contains primary and secondary
-		.layout__primary - The main content area
-		.layout__secondary - Contains the site selector and sidebar
+	.layout__content - Contains primary and secondary elements
+		.layout__primary - Where the main content lives
+		.layout__secondary - Contains the site selector and sidebar elements
 			.sidebar
 			.site-selector
 */
 
+// Set transitons for layout elements
 .layout__primary,
 .layout__secondary,
-.sidebar,
-.site-selector {
+.layout__secondary .sidebar,
+.layout__secondary .site-selector {
 	transition: transform 0.2s cubic-bezier(0.770, 0.000, 0.175, 1.000),
 				opacity 0.2s ease-in-out;
 }
-
-.layout__secondary {
-	position: fixed;
-		top: 47px;
-		left: 0;
-		bottom: 0;
-	color: var( --sidebar-color );
-	background: var( --sidebar-background );
-	border-right: 1px solid darken( $sidebar-bg-color, 5% );
-	width: $sidebar-width-max;
-	overflow: hidden;
-
-	@include breakpoint( "<960px" ) {
-		width: $sidebar-width-min;
-	}
-
-	@include breakpoint( "<660px" ) {
-		width: 100%;
-	}
-
-	.is-section-post-editor & {
-		display: none;
-	}
-}
-
-.sidebar {}
-
-.site-selector {
-	transform: translateX( -$sidebar-width-max );
-	pointer-events: none;
-
-	@include breakpoint( "<660px" ) {
-		transform: translateX( -100% );
-	}
-}
-
-/*
-	Focus States
-	Sites - Site Selector for those with multiple sites
-	Sidebar - The sidebar is the current focus
-	Content - The content is the furrent focus
-*/
-
-// Adjust the content as needed when focused on the site selector or sidebar
-.layout.focus-sites:not(.is-section-post-editor),
-.layout.focus-sidebar:not(.is-section-post-editor) {
-	.layout__primary {
-		pointer-events: none;
-
-		@include breakpoint( "<660px" ) {
-			transform: translateX( 100% );
-			overflow: hidden;
-			height: calc( 100% - 47px );
-		}
-	}
-}
-
-.layout.focus-sites {
-	.site-selector {
-		pointer-events: auto;
-		transform: translateX( 0 );
-	}
-
-	.sidebar {
-		pointer-events: none;
-		transform: translateX( $sidebar-width-max );
-
-		@include breakpoint( "<660px" ) {
-			transform: translateX( 100% );
-		}
-	}
-
-	.layout__primary {
-		@include breakpoint( ">660px" ) {
-			opacity: 0.25;
-		}
-	}
-}
-
-.layout.focus-content {
-	@include breakpoint( "<660px" ) {
-		.layout__secondary {
-			transform: translateX( -100% );
-		}
-	}
-}
-
-
-
-
-
-.layout__content {
-	@include clear-fix;
-	position: relative;
-	margin: 0;
-	padding: 79px 32px 32px ( $sidebar-width-max + 32px );
-	box-sizing: border-box;
-	overflow: hidden;
-	transition: opacity 0.3s;
-
-	.has-no-sidebar & {
-		padding-left: 32px;
-	}
-
-	.is-section-theme &,
-	.is-section-themes.has-no-sidebar & {
-		padding: 0;
-		margin: 0;
-	}
-
-	.is-section-preview & {
-		height: 100%;
-		padding: 47px 0 0 $sidebar-width-max;
-	}
-
-	@media print {
-		padding: 0;
-	}
-}
-
-// Tablets
-@include breakpoint( "<960px" ) {
-	.layout__content {
-		padding: 71px 24px 24px ( $sidebar-width-min + 24px );
-
-		.has-no-sidebar & {
-			padding-left: 24px;
-		}
-
-		.is-section-theme &,
-		.is-section-themes.has-no-sidebar & {
-			padding: 0;
-			margin: 0;
-		}
-
-		.is-section-preview & {
-			padding: 47px 0px 0px 228px;
-		}
-	}
-}
-
-// Mobile (Full Width)
-@include breakpoint( "<660px" ) {
-	.layout__content {
-		margin-left: 0;
-		padding: 0;
-		padding-top: 47px;
-
-		.has-no-sidebar & {
-			padding-left: 0;
-		}
-
-		.is-section-preview & {
-			padding: 47px 0 0 0;
-		}
-	}
-}
-
-// Use all available space for the WebPreview component on /view
-.layout.is-section-preview {
-	height: 100%;
-	overflow: hidden;
-
-	.layout__primary {
-		height: 100%;
-	}
-}
-
-
-.layout__content a {
-	text-decoration: none;
-}
-
-
-// site selector in the sidebar
-.layout__secondary .site-selector {
-	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-	pointer-events: none;
-
-	.site,
-	.all-sites {
-		.site__title,
-		.site__domain {
-			&::after {
-				@include long-content-fade( $color: $gray-lighten-30 );
-			}
-		}
-	}
-
-	@include breakpoint( "<660px" ) {
-		-webkit-overflow-scrolling: touch;
-	}
-}
-
 
 // If things take a bit to load...
 .layout__loader {
@@ -242,13 +45,210 @@
 	}
 }
 
+// Setup the content element to adapt to the sidebar,
+// lack of sidebar, or the WebPreview component.
+.layout__content {
+	@include clear-fix;
+	position: relative;
+	margin: 0;
+	padding: 79px 32px 32px ( $sidebar-width-max + 32px );
+	box-sizing: border-box;
+	overflow: hidden;
+	transition: opacity 0.3s;
 
-// Hide the sidebar and masterbar when printing
+	// I guess we dont want links to look like links.
+	a {
+		text-decoration: none;
+	}
+
+	// Various screens dont use a sidebar.
+	.has-no-sidebar & {
+		padding-left: 32px;
+	}
+
+	// Themes sets it own padding/margin
+	.is-section-theme &,
+	.is-section-themes.has-no-sidebar & {
+		padding: 0;
+		margin: 0;
+	}
+
+	// This is needed to ensure the WebPreview component
+	// displays at full height.
+	.is-section-preview & {
+		height: 100%;
+		padding: 47px 0 0 $sidebar-width-max;
+	}
+
+	// Tablets
+	@include breakpoint( "<960px" ) {
+		padding: 71px 24px 24px ( $sidebar-width-min + 24px );
+
+		.has-no-sidebar & {
+			padding-left: 24px;
+		}
+
+		.is-section-theme &,
+		.is-section-themes.has-no-sidebar & {
+			padding: 0;
+			margin: 0;
+		}
+
+		.is-section-preview & {
+			padding: 47px 0px 0px 228px;
+		}
+	}
+
+	// Mobile (Full Width)
+	@include breakpoint( "<660px" ) {
+		margin-left: 0;
+		padding: 0;
+		padding-top: 47px;
+
+		.has-no-sidebar & {
+			padding-left: 0;
+		}
+
+		.is-section-preview & {
+			padding: 47px 0 0 0;
+		}
+	}
+}
+
+// Setup the secondary element, which contains the sidebar and
+// the site-selector elements.
+.layout__secondary {
+	position: fixed;
+		top: 47px;
+		left: 0;
+		bottom: 0;
+	color: var( --sidebar-color );
+	background: var( --sidebar-background );
+	border-right: 1px solid darken( $sidebar-bg-color, 5% );
+	width: $sidebar-width-max;
+	overflow: hidden;
+
+	@include breakpoint( "<960px" ) {
+		width: $sidebar-width-min;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+	}
+
+	// The editor has its own sidebar which doesnt
+	// use the secondary element.
+	.is-section-post-editor & {
+		display: none;
+	}
+}
+
+// Setup the site-selector element. Its default
+// position is off screen.
+.layout__secondary .site-selector {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	pointer-events: none;
+	transform: translateX( -$sidebar-width-max );
+	pointer-events: none;
+
+	.site,
+	.all-sites {
+		.site__title,
+		.site__domain {
+			&::after {
+				@include long-content-fade( $color: $gray-lighten-30 );
+			}
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		-webkit-overflow-scrolling: touch;
+		transform: translateX( -100% );
+	}
+}
+
+
+/*
+	Focus States
+	Sites - Site Selector for those with multiple sites
+	Sidebar - The sidebar is the current focus
+	Content - The content is the furrent focus
+*/
+
+// Adjust the content as needed when focused on the site selector
+// or sidebar, but never in the editor.
+.layout.focus-sites:not(.is-section-post-editor),
+.layout.focus-sidebar:not(.is-section-post-editor) {
+	.layout__primary {
+		pointer-events: none;
+
+		@include breakpoint( "<660px" ) {
+			transform: translateX( 100% );
+			overflow: hidden;
+			height: calc( 100% - 47px );
+		}
+	}
+}
+
+// Adjust elements when the site-selector is visible.
+.layout.focus-sites {
+	.layout__secondary .site-selector {
+		pointer-events: auto;
+		transform: translateX( 0 );
+	}
+
+	.layout__secondary .sidebar {
+		pointer-events: none;
+		transform: translateX( $sidebar-width-max );
+
+		@include breakpoint( "<660px" ) {
+			transform: translateX( 100% );
+		}
+	}
+
+	.layout__primary {
+		@include breakpoint( ">660px" ) {
+			opacity: 0.25;
+		}
+	}
+}
+
+// Move the secondary element off screen when focused
+// on the content. This only applies to small screens.
+.layout.focus-content {
+	@include breakpoint( "<660px" ) {
+		.layout__secondary {
+			transform: translateX( -100% );
+		}
+	}
+}
+
+// Use all available space for the WebPreview component on /view
+.layout.is-section-preview {
+	height: 100%;
+	overflow: hidden;
+
+	.layout__primary {
+		height: 100%;
+	}
+}
+
+// Try to clean things up a bit when printing.
 .layout {
-	.sidebar,
-	.masterbar {
+	.masterbar,
+	.layout__secondary {
 		@media print {
 			display: none;
+		}
+	}
+
+	.layout__content {
+		@media print {
+			padding: 0;
 		}
 	}
 }
