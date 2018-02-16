@@ -102,7 +102,11 @@ class MasterbarLoggedOut extends PureComponent {
 			// Match locales like `/log-in/jetpack/es`
 			startsWith( currentRoute, '/log-in/jetpack' )
 		) {
-			if ( includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) ) {
+			// Basic validation that we're in a valid Jetpack Authorization flow
+			if (
+				includes( get( currentQuery, 'redirect_to' ), '/jetpack/connect/authorize' ) &&
+				includes( get( currentQuery, 'redirect_to' ), '_wp_nonce' )
+			) {
 				/**
 				 * `log-in/jetpack/:locale` is reached as part of the Jetpack connection flow. In
 				 * this case, the redirect_to will handle signups as part of the flow. Use the
