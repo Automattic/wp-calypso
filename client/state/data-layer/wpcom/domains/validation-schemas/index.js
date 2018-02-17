@@ -2,8 +2,7 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
-import { get, join } from 'lodash';
+import { get, join, flatMap } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,7 +11,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { DOMAIN_MANAGEMENT_VALIDATION_SCHEMAS_REQUEST } from 'state/action-types';
 import { addValidationSchemas } from 'state/domains/management/validation-schemas/actions';
-import { errorNotice } from 'state/notices/actions';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Convert an application level request action for domain contact information
@@ -44,13 +43,19 @@ export const onSuccess = ( action, schemas ) => addValidationSchemas( schemas );
 /**
  * Create an error notice action when the request fails
  *
- * @param   {Object} action   Originating action (unused).
- * @param   {Object} error    Error information (unused).
- * @returns {Object}          error notice action
+ * @param   {Object} tlds   Originating action with the original list of requested tlds
+ * @param   {Object} error  Error information (query path, error message etc).
+ * @returns {[Action]}      An array of mc and tracks analytics events, one each per tld
  */
-export const onError = () =>
-	errorNotice(
-		translate( "We couldn't load the data for validating ccTLD specific requirements." )
+export const onError = ( { tlds }, error ) =>
+	composeAnalytics(
+		...flatMap( tlds, tld => [
+			bumpStat( 'form_validation_schema_exceptions', `load_${ tld }` ),
+			recordTracksEvent( 'calypso_domain_contact_validation_schema_load_failure', {
+				tld,
+				error: JSON.stringify( error ),
+			} ),
+		] )
 	);
 
 export default {
