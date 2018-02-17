@@ -47,11 +47,6 @@ export const update = ( id, state, data ) => {
 	}
 };
 
-export const requestHttpData = ( id, action, { fromApi } ) =>
-	'function' === typeof fromApi
-		? { type: HTTP_DATA_REQUEST, id, fetch: action, fromApi }
-		: { type: HTTP_DATA_REQUEST, id, fetch: action };
-
 const empty = Object.freeze( {
 	state: 'uninitialized',
 	data: undefined,
@@ -61,6 +56,23 @@ const empty = Object.freeze( {
 } );
 
 export const getHttpData = id => httpData.get( id ) || empty;
+
+export const requestHttpData = ( id, action, { fromApi, freshness } ) => {
+	const request = { type: HTTP_DATA_REQUEST, id, fetch: action, fromApi };
+
+	if ( 'number' !== typeof freshness ) {
+		return request;
+	}
+
+	const { lastUpdated, state } = getHttpData( id );
+	const staleness = Date.now() - lastUpdated;
+	if ( 'pending' === state || staleness < freshness ) {
+		// an empty thunk performs no dispatch
+		return () => undefined;
+	}
+
+	return request;
+};
 
 window.httpData = httpData;
 window.getHttpData = getHttpData;
