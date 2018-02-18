@@ -369,7 +369,6 @@ export class DomainDetailsForm extends PureComponent {
 		return (
 			<div>
 				<Input
-					autoFocus
 					label={ this.props.translate( 'First Name' ) }
 					{ ...this.getFieldProps( 'first-name' ) }
 				/>
