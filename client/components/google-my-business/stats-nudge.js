@@ -36,9 +36,8 @@ class GoogleMyBusinessStatsNudge extends Component {
 			<DismissibleCard
 				className="google-my-business__stats-nudge"
 				preferenceName="google-my-business-nudge"
-				temporary
+				temporary={ TWO_WEEKS_IN_SECONDS }
 				onClick={ this.props.trackNudgeDismissed }
-        dissmissSeconds={ TWO_WEEKS_IN_SECONDS }
 			>
 				<SectionHeader
 					className="google-my-business__stats-nudge-header"
