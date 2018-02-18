@@ -565,7 +565,7 @@ module.exports = function() {
 			}
 		} );
 
-	// This used to log to tracks Content Security Policy violation reports sent by browsers
+	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post( '/cspreport', function( req, res ) {
 		getRawBody(
 			req,
@@ -574,14 +574,14 @@ module.exports = function() {
 				limit: '1mb',
 				encoding: 'utf-8',
 			},
-			function( err, body ) {
+			function( err, jsonBody ) {
 				if ( err ) {
 					res.status( 500 ).send( 'Bad report!' );
 					return;
 				}
 
-				const jsonBody = JSON.parse( body );
-				const cspReport = jsonBody[ 'csp-report' ];
+				const body = JSON.parse( jsonBody );
+				const cspReport = body[ 'csp-report' ];
 				const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
 					report[ snakeCase( key ) ] = cspReport[ key ];
 					return report;
