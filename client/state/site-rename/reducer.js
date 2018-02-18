@@ -41,7 +41,7 @@ export const requesting = createReducer(
  * @param  {Object} action 	Action object
  * @return {Object} 		Updated rename request state
  */
-const status = createReducer(
+export const status = createReducer(
 	{},
 	{
 		[ SITE_RENAME_REQUEST ]: ( state, { siteId } ) => ( {
