@@ -412,14 +412,14 @@ function setUpCSP( req, res, next ) {
 
 function setUpRoute( req, res, next ) {
 	req.context = getDefaultContext( req );
-	setUpCSP( req, res, () => {
-		if ( req.cookies.wordpress_logged_in ) {
-			// the user is probably logged in
-			setUpLoggedInRoute( req, res, next );
-		} else {
-			setUpLoggedOutRoute( req, res, next );
-		}
-	} );
+	setUpCSP(
+		req,
+		res,
+		() =>
+			req.cookies.wordpress_logged_in // a cookie probably indicates someone is logged-in
+				? setUpLoggedInRoute( req, res, next )
+				: setUpLoggedOutRoute( req, res, next )
+	);
 }
 
 function render404( request, response ) {
