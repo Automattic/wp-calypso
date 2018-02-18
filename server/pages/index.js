@@ -350,7 +350,10 @@ function setUpLoggedInRoute( req, res, next ) {
  * @param {Function} next a callback to call when done
  */
 function setUpCSP( req, res, next ) {
-	if ( ! req.originalUrl.match( /^\/log-in\// ) ) {
+	const originalUrlPathname = req.originalUrl.split( '?' )[ 0 ];
+
+	// We only setup CSP for /log-in* for now
+	if ( ! /^\/log-in/.test( originalUrlPathname ) ) {
 		next();
 		return;
 	}
