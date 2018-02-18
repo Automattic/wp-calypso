@@ -372,6 +372,7 @@ sections.push( {
 	name: 'login',
 	paths: [ '/log-in' ],
 	module: 'login',
+	allowFraming: true,
 	enableLoggedOut: true,
 	secondary: false,
 	isomorphic: true,
