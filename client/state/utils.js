@@ -215,6 +215,21 @@ function getInitialState( reducer ) {
 	return reducer( undefined, { type: '@@calypso/INIT' } );
 }
 
+function isValidSerializedState( schema, reducer, state ) {
+	// The stored state is often equal to initial state of the reducer. Because initial state
+	// is always valid, we can validate much faster by just comparing the two states. The full
+	// JSON schema check is much slower and we do it only on nontrivial states.
+	// Note that we need to serialize the initial state to make a correct check. For reducers
+	// with custom persistence, the initial state can be arbitrary non-serializable object. We
+	// need to compare two serialized objects.
+	const serializedInitialState = reducer( undefined, { type: SERIALIZE } );
+	if ( isEqual( state, serializedInitialState ) ) {
+		return true;
+	}
+
+	return isValidStateWithSchema( state, schema );
+}
+
 /**
  * Creates a schema-validating reducer
  *
@@ -253,8 +268,23 @@ export const withSchemaValidation = ( schema, reducer ) => {
 	}
 
 	const wrappedReducer = ( state, action ) => {
-		if ( action.type === DESERIALIZE && ! ( state && isValidStateWithSchema( state, schema ) ) ) {
-			return getInitialState( reducer );
+		if ( action.type === DESERIALIZE ) {
+			if ( state === undefined ) {
+				// If the state is not present in the stored data, initialize it with the
+				// initial state. Note that calling `reducer( undefined, DESERIALIZE )` here
+				// would be incorrect for reducers with custom deserialization. DESERIALIZE
+				// expects plain JS object on input, but in this case, it would be defaulted
+				// to the reducer's initial state. And that's a custom object, e.g.,
+				// `Immutable.Map` or `PostQueryManager`.
+				return getInitialState( reducer );
+			}
+
+			// If the stored state fails JSON schema validation, treat it as if it was
+			// `undefined`, i.e., ignore it and replace with initial state.
+			if ( ! isValidSerializedState( schema, reducer, state ) ) {
+				return getInitialState( reducer );
+			}
+			// Otherwise, fall through to calling the regular reducer
 		}
 
 		return reducer( state, action );
@@ -376,7 +406,7 @@ export function createReducer( initialState, handlers, schema ) {
  * combinedReducer( { age:  6, height: 123 } ), { type: SERIALIZE } ); // { age: 6, height: 150 };
  * combinedReducer( { age:  6, height: 123 } ), { type: GROW } ); // { age: 7, height: 124 };
  *
- * If the reducer explicitly handles the SERIALIZE and DESERIALZE actions, set
+ * If the reducer explicitly handles the SERIALIZE and DESERIALIZE actions, set
  * the hasCustomPersistence property to true on the reducer.
  *
  * @example
