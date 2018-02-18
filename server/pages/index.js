@@ -355,6 +355,10 @@ function setUpCSP( req, res, next ) {
 		return;
 	}
 
+	// This is calculated by taking the contents of the script text from between the tags,
+	// and calculating SHA256 hash on it, encoded in base64, example:
+	// `sha256-${ base64( sha256( 'window.AppBoot();' ) ) }` === sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ
+	// you can also just run it in Chrome, chrome will give you the hash of the violating scripts
 	const inlineScripts = [
 		'sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ=',
 		'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=',
