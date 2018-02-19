@@ -29,6 +29,7 @@ import { getSiteId } from 'state/selectors';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
+import { supportsPrivacyPurchase } from 'lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -46,7 +47,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ];
-		if ( domainItem ) {
+		if ( supportsPrivacyPurchase( domainItem ) ) {
 			domainChoiceCart.push(
 				cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
@@ -150,17 +151,19 @@ export function createSiteWithCart(
 			};
 			const addToCartAndProceed = () => {
 				let privacyItem = null;
-				if ( domainItem ) {
-					if ( isDomainTransfer( domainItem ) ) {
-						privacyItem = cartItems.domainTransferPrivacy( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
-					} else {
-						privacyItem = cartItems.domainPrivacyProtection( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
+				if ( supportsPrivacyPurchase( domainItem ) ) {
+					if ( domainItem ) {
+						if ( isDomainTransfer( domainItem ) ) {
+							privacyItem = cartItems.domainTransferPrivacy( {
+								domain: domainItem.meta,
+								source: 'signup',
+							} );
+						} else {
+							privacyItem = cartItems.domainPrivacyProtection( {
+								domain: domainItem.meta,
+								source: 'signup',
+							} );
+						}
 					}
 				}
 
