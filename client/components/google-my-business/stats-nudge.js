@@ -20,6 +20,7 @@ const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
+		siteSlug: PropTypes.string.isRequired,
 		trackNudgeShown: PropTypes.func.isRequired,
 		trackNudgeDismissed: PropTypes.func.isRequired,
 		trackNudgeStartNowClicked: PropTypes.func.isRequired,
@@ -61,10 +62,17 @@ class GoogleMyBusinessStatsNudge extends Component {
 							) }
 						</h2>
 						<div className="google-my-business__stats-nudge-button-row">
-							<Button primary onClick={ this.props.trackNudgeStartNowClicked }>
+							<Button
+								href={ `/google-my-business/${ this.props.siteSlug }` }
+								primary
+								onClick={ this.props.trackNudgeStartNowClicked }
+							>
 								{ this.props.translate( 'Start Now' ) }
 							</Button>
-							<Button onClick={ this.props.trackNudgeAlreadyListedClicked }>
+							<Button
+								href={ `/google-my-business/${ this.props.siteSlug }` }
+								onClick={ this.props.trackNudgeAlreadyListedClicked }
+							>
 								{ this.props.translate( "I've Already Listed" ) }
 							</Button>
 						</div>
