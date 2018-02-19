@@ -1,9 +1,8 @@
+/** @format */
+
 /**
  * External dependencies
- *
- * @format
  */
-
 import page from 'page';
 
 /**
@@ -17,6 +16,13 @@ import { makeLayout, render as clientRender } from 'controller';
 export default function() {
 	if ( config.isEnabled( 'google-my-business' ) ) {
 		page( '/google-my-business', siteSelection, sites, makeLayout, clientRender );
-		page( '/google-my-business/:site_id/', siteSelection, navigation, show, makeLayout, clientRender );
+		page(
+			'/google-my-business/:site_id/',
+			siteSelection,
+			navigation,
+			show,
+			makeLayout,
+			clientRender
+		);
 	}
 }
