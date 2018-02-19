@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
@@ -50,6 +51,8 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
 					title="Contact Form ‹ Jetpack Start"
 				/>
+
+				<JetpackLogo full size={ 45 } />
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 

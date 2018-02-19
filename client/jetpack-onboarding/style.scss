@@ -77,6 +77,15 @@
 			margin: 0 8px 20px;
 		}
 	}
+
+	.jetpack-logo {
+		display: block;
+		margin: 20px auto;
+
+		.jetpack-logo__icon {
+			fill: $green-jetpack;
+		}
+	}
 }
 
 .jetpack-onboarding__disclaimer {
