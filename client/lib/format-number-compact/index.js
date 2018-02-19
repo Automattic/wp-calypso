@@ -44,3 +44,24 @@ export default function formatNumberCompact( number, code = i18n.getLocaleSlug()
 
 	return `${ sign }${ value }${ symbol }`;
 }
+
+/*
+ * Format a number larger than 1000 by appending a metric unit (K, M, G) and rounding to
+ * one decimal point.
+ * TODO: merge with formatNumberCompact by adding support for metric units other than 'K'
+ */
+export function formatNumberMetric( number ) {
+	if ( number < 1000 ) {
+		return String( number );
+	}
+
+	if ( number < 1000 ** 2 ) {
+		return ( number / 1000 ).toFixed( 1 ) + 'K';
+	}
+
+	if ( number < 1000 ** 3 ) {
+		return ( number / 1000 ** 2 ).toFixed( 1 ) + 'M';
+	}
+
+	return ( number / 1000 ** 3 ).toFixed( 1 ) + 'G';
+}

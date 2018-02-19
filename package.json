@@ -109,7 +109,6 @@
     "node-sass": "4.5.3",
     "notifications-panel": "2.1.5",
     "npm-run-all": "4.0.2",
-    "numeral": "2.0.4",
     "page": "1.6.4",
     "percentage-regex": "3.0.0",
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
