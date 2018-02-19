@@ -1,60 +1,85 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import classNames from 'classnames';
-import { filter, isArray } from 'lodash';
+import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
+import { isArray } from 'lodash';
 
 /**
- * Internal dependencies
+ * Internal Dependencies
  */
-import Card from 'components/card';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StickyPanel from 'components/sticky-panel';
+import Button from 'components/button';
+import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import SiteIcon from 'blocks/site-icon';
 
-const ActionHeader = ( { children, breadcrumbs, isLoading } ) => {
-	// TODO: Implement proper breadcrumbs component.
-	// For v1, we will just pass in a prop from each page.
-	let breadcrumbsOutput = breadcrumbs;
-	if ( isArray( breadcrumbs ) ) {
-		breadcrumbsOutput = breadcrumbs.map( function( crumb, i ) {
-			return (
-				<span key={ i }>
-					{ crumb }
-					{ breadcrumbs.length - 1 === i ? (
-						''
-					) : (
-						<span className="action-header__breadcrumbs-separator"> / </span>
-					) }
-				</span>
-			);
+class ActionHeader extends React.Component {
+	toggleSidebar = event => {
+		event.preventDefault();
+		this.props.setLayoutFocus( 'sidebar' );
+	};
+
+	renderBreadcrumbs = () => {
+		const { breadcrumbs, isLoading = false } = this.props;
+		let breadcrumbsOutput = breadcrumbs;
+		if ( isArray( breadcrumbs ) ) {
+			breadcrumbsOutput = breadcrumbs.map( function( crumb, i ) {
+				return (
+					<span key={ i }>
+						{ crumb }
+						{ breadcrumbs.length - 1 === i ? (
+							''
+						) : (
+							<span className="action-header__breadcrumbs-separator"> / </span>
+						) }
+					</span>
+				);
+			} );
+		}
+		const breadcrumbClasses = classNames( 'action-header__breadcrumbs', {
+			'is-loading': isLoading,
 		} );
-	}
 
-	const breadcrumbClasses = classNames( 'action-header__breadcrumbs', { 'is-loading': isLoading } );
-	const actions = isArray( children ) ? filter( children, Boolean ) : children;
-	const containerClasses = classNames( 'action-header__header', {
-		'has-no-action': ! actions,
-		'has-multiple-actions': actions && actions.length > 1,
-	} );
+		return <div className={ breadcrumbClasses }>{ breadcrumbsOutput }</div>;
+	};
 
-	return (
-		<StickyPanel>
-			<SidebarNavigation />
-			<Card className={ containerClasses }>
-				<span className={ breadcrumbClasses }>{ breadcrumbsOutput }</span>
+	render() {
+		const { children, site } = this.props;
+
+		return (
+			<header className="action-header">
+				<Button
+					borderless
+					onClick={ this.toggleSidebar }
+					className="action-header__back-to-sidebar"
+				>
+					<Gridicon icon="chevron-left" />
+				</Button>
+				<div className="action-header__content">
+					<SiteIcon site={ site } />
+					<div className="action-header__details">
+						{ site && <p className="action-header__site-title">{ site.title }</p> }
+						{ this.renderBreadcrumbs() }
+					</div>
+				</div>
 				<div className="action-header__actions">{ children }</div>
-			</Card>
-		</StickyPanel>
-	);
-};
+			</header>
+		);
+	}
+}
 
 ActionHeader.propTypes = {
 	breadcrumbs: PropTypes.node,
+	setLayoutFocus: PropTypes.func.isRequired,
 };
 
-export default ActionHeader;
+export default connect(
+	state => ( {
+		site: getSelectedSiteWithFallback( state ),
+	} ),
+	{ setLayoutFocus }
+)( ActionHeader );
