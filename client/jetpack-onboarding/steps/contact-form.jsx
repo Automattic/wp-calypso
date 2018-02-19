@@ -60,9 +60,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 					<Tile
 						buttonLabel={ ! hasContactForm ? translate( 'Add a contact form' ) : undefined }
 						description={
-							hasContactForm
-								? translate( 'Your contact form has been created.' )
-								: translate( 'Not sure? You can skip this step and add a contact form later.' )
+							hasContactForm ? translate( 'Your contact form has been created.' ) : undefined
 						}
 						image={ '/calypso/images/illustrations/contact-us.svg' }
 						onClick={ this.handleAddContactForm }
