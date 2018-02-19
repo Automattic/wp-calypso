@@ -79,6 +79,12 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<FormattedHeader headerText={ headerText } />
 
 				<Card className="steps__form">
+					<img
+						className="steps__illustration"
+						src={ '/calypso/images/illustrations/illustration-start.svg' }
+						alt=""
+					/>
+
 					<form onSubmit={ this.handleSubmit }>
 						<SiteTitle
 							autoFocusBlogname
