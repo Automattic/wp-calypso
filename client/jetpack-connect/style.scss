@@ -24,6 +24,12 @@
 		.button.is-primary {
 			background-color: $green-jetpack;
 			border-color: darken($green-jetpack, 5%);
+
+			&[disabled],
+			&:disabled,
+			&.disabled {
+				@extend .button[disabled];
+			}
 		}
 	}
 }
