@@ -34,14 +34,15 @@ export class AddImageDialog extends Component {
 
 	setImageUrl = event => this.setState( { imageUrl: event.target.value } );
 
-	closeDialog = () => {
-		this.setState( {
-			imageAlt: '',
-			imageTitle: '',
-			imageUrl: '',
-		} );
-		this.props.onClose();
-	};
+	closeDialog = () =>
+		this.setState(
+			{
+				imageAlt: '',
+				imageTitle: '',
+				imageUrl: '',
+			},
+			this.props.onClose
+		);
 
 	insertImgTag = () => {
 		const { imageAlt: alt, imageTitle: title, imageUrl: src } = this.state;

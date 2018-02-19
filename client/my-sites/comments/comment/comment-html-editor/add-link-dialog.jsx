@@ -67,14 +67,15 @@ export class AddLinkDialog extends Component {
 
 	setLinkNewTab = event => this.setState( { linkNewTab: event.target.checked } );
 
-	closeDialog = () => {
-		this.setState( {
-			linkNewTab: false,
-			linkText: '',
-			linkUrl: '',
-		} );
-		this.props.onClose();
-	};
+	closeDialog = () =>
+		this.setState(
+			{
+				linkNewTab: false,
+				linkText: '',
+				linkUrl: '',
+			},
+			this.props.onClose
+		);
 
 	insertATag = () => {
 		const { linkNewTab, linkText } = this.state;
