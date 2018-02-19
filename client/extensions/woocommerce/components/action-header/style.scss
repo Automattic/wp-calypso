@@ -1,6 +1,6 @@
 .action-header {
 	width: 100%;
-	min-height: 46px;
+	min-height: 47px;
 	margin: 0 0 8px;
 	padding: 8px 16px 8px 0;
 	display: flex;
@@ -17,7 +17,7 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		padding: 1px 16px 2px 0;
+		padding: 5px 16px;
 		margin: 0;
 	}
 
@@ -39,6 +39,10 @@
 
 .action-header__back-to-sidebar {
 	flex: 1 0 10%;
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
 }
 
 .action-header__content {
