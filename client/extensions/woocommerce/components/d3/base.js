@@ -5,17 +5,21 @@
  */
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { select as d3Select } from 'd3-selection';
 
 export class D3Base extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = props.initialState;
-	}
+	static propTypes = {
+		className: PropTypes.string,
+		drawChart: PropTypes.func.isRequired,
+		getParams: PropTypes.func.isRequired,
+	};
+
+	state = {};
 
 	componentDidMount() {
 		window.addEventListener( 'resize', this.handleResize );
-		const { updateState } = this.props;
+		const { getParams } = this.props;
 		/**
 		 * Calling setState() in this method will trigger an extra rendering,
 		 * but it will happen before the browser updates the screen.
@@ -23,7 +27,7 @@ export class D3Base extends Component {
 		 * ~ https://reactjs.org/docs/react-component.html
 		 */
 		/* eslint-disable react/no-did-mount-set-state */
-		this.setState( updateState( this.node ), this.draw );
+		this.setState( getParams( this.node ), this.draw );
 		/* eslint-enable react/no-did-mount-set-state */
 	}
 
@@ -32,8 +36,8 @@ export class D3Base extends Component {
 	}
 
 	componentWillReceiveProps() {
-		const { updateState } = this.props;
-		this.setState( updateState( this.node ), this.draw );
+		const { getParams } = this.props;
+		this.setState( getParams( this.node ), this.draw );
 	}
 
 	componentWillUnmount() {

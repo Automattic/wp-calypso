@@ -25,15 +25,8 @@ const Sparkline = ( {
 	margin,
 	maxHeight,
 } ) => {
-	const initialState = {
-		width: 0,
-		height: 0,
-		xScale: {},
-		yScale: {},
-	};
-
-	function drawSparkline( svg, state ) {
-		const { xScale, yScale } = state;
+	function drawSparkline( svg, params ) {
+		const { xScale, yScale } = params;
 		const sparkline = d3Line()
 			.x( ( d, i ) => xScale( i ) )
 			.y( d => yScale( d ) );
@@ -43,8 +36,8 @@ const Sparkline = ( {
 			.attr( 'd', sparkline( data ) );
 	}
 
-	function drawHighlight( svg, state ) {
-		const { xScale, yScale } = state;
+	function drawHighlight( svg, params ) {
+		const { xScale, yScale } = params;
 		return svg
 			.append( 'circle' )
 			.attr( 'class', 'sparkline__highlight' )
@@ -53,12 +46,12 @@ const Sparkline = ( {
 			.attr( 'cy', yScale( data[ highlightIndex ] ) );
 	}
 
-	function drawChart( svg, state ) {
-		drawSparkline( svg, state );
-		drawHighlight( svg, state );
+	function drawChart( svg, params ) {
+		drawSparkline( svg, params );
+		drawHighlight( svg, params );
 	}
 
-	function updateState( node ) {
+	function getParams( node ) {
 		const newWidth = node.offsetWidth;
 		const newHeight =
 			maxHeight && maxHeight < newWidth / aspectRatio ? maxHeight : newWidth / aspectRatio;
@@ -79,8 +72,7 @@ const Sparkline = ( {
 		<D3Base
 			className={ classNames( 'sparkline', className ) }
 			drawChart={ drawChart }
-			updateState={ updateState }
-			initialState={ initialState }
+			getParams={ getParams }
 		/>
 	);
 };
