@@ -5,6 +5,8 @@
  */
 import { getCacheKey } from '..';
 
+jest.mock( 'redux-form/es/reducer', () => require( 'lodash' ).identity );
+
 describe( 'getCacheKey', () => {
 	test( 'should return pathname for routes with no query', () => {
 		const context = {
