@@ -123,7 +123,7 @@ export function serverRender( req, res ) {
 		! context.user &&
 		cacheKey &&
 		isDefaultLocale( context.lang ) &&
-		! context.query.email_address
+		! context.query.email_address // Don't do SSR when PIIs are present at the request
 	) {
 		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
 	}
