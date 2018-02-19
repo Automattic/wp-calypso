@@ -124,6 +124,14 @@ const pluginNode = ( { site_slug, slug, version } ) => ( {
 	version,
 } );
 
+const themeNode = ( { site_slug, slug, version, uri } ) => ( {
+	type: 'theme',
+	siteSlug: site_slug,
+	themeSlug: slug,
+	themeUri: uri,
+	version,
+} );
+
 const inferNode = range => {
 	const { type, url } = range;
 
@@ -164,6 +172,9 @@ const nodeMappings = type => {
 
 		case 'plugin':
 			return pluginNode;
+
+		case 'theme':
+			return themeNode;
 
 		default:
 			return inferNode;

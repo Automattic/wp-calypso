@@ -16,6 +16,8 @@ export const FormattedBlock = ( { content = {} } ) => {
 		type,
 		siteSlug,
 		pluginSlug,
+		themeSlug,
+		themeUri,
 	} = content;
 
 	if ( 'string' === typeof content ) {
@@ -77,13 +79,17 @@ export const FormattedBlock = ( { content = {} } ) => {
 			return <pre>{ descent }</pre>;
 
 		case 'theme':
-			return (
-				<a href={ content.url } target="_blank" rel="noopener noreferrer">
-					<strong>
-						<em>{ descent }</em>
-					</strong>
-				</a>
-			);
+			if ( themeUri ) {
+				if ( -1 !== themeUri.indexOf( 'wordpress.com' ) ) {
+					return <a href={ `/theme/${ themeSlug }/${ siteSlug }` }>{ descent }</a>;
+				}
+				return (
+					<a href={ themeUri } target="_blank" rel="noopener noreferrer">
+						{ descent }
+					</a>
+				);
+			}
+			return descent;
 
 		default:
 			return descent;
