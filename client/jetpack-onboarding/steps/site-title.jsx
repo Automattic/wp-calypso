@@ -89,7 +89,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						<p>{ translate( "Let's help you get set up." ) }</p>
 						<p>
 							{ translate(
-								'First, what would you like to name your site and have as its public description?'
+								'First up, what would you like to name your site and have as its public description?'
 							) }
 						</p>
 					</div>
