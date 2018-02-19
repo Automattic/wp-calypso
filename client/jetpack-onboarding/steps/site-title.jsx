@@ -85,6 +85,15 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						alt=""
 					/>
 
+					<div className="steps__description">
+						<p>{ translate( "Let's help you get set up." ) }</p>
+						<p>
+							{ translate(
+								'First, what would you like to name your site and have as its public description?'
+							) }
+						</p>
+					</div>
+
 					<form onSubmit={ this.handleSubmit }>
 						<SiteTitle
 							autoFocusBlogname
