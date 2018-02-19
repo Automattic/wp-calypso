@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-
 import { isEmpty, pick } from 'lodash';
 import { stringify } from 'qs';
 
@@ -93,7 +92,16 @@ function compose( ...functions ) {
 	return functions.reduceRight( ( composed, f ) => () => f( composed ), () => {} );
 }
 
-export function getCacheKey( context ) {
+/**
+ * Get a key used to cache SSR result for the request, or null to disable the cache.
+ *
+ * @param  {Object}        context                The request context
+ * @param  {Array<string>} context.cacheQueryKeys Query parameter keys that should be cached
+ * @param  {string}        context.pathname       Request path
+ * @param  {Object}        context.query          Query parameters
+ * @return {?string}                              The cache key or null to disable cache
+ */
+export function getCacheKey( { cacheQueryKeys, pathname, query } ) {
 	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
 		return context.pathname;
 	}
