@@ -104,6 +104,8 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							onChange={ this.handleChange }
 						/>
 
+						<JetpackOnboardingDisclaimer recordJpoEvent={ this.props.recordJpoEvent } />
+
 						<Button
 							disabled={ isRequestingSettings || ! this.state.blogname }
 							primary
@@ -113,8 +115,6 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 						</Button>
 					</form>
 				</Card>
-
-				<JetpackOnboardingDisclaimer recordJpoEvent={ this.props.recordJpoEvent } />
 			</div>
 		);
 	}
