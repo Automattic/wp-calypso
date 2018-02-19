@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { select as d3Select } from 'd3-selection';
 
 export class D3Base extends Component {
@@ -70,6 +71,8 @@ export class D3Base extends Component {
 	};
 
 	render() {
-		return <div className={ this.props.className } ref={ this.setNodeRef } />;
+		return (
+			<div className={ classNames( 'd3-base', this.props.className ) } ref={ this.setNodeRef } />
+		);
 	}
 }
