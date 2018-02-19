@@ -9,13 +9,22 @@ import PropTypes from 'prop-types';
 import { extent as d3Extent } from 'd3-array';
 import { scaleLinear as d3ScaleLinear } from 'd3-scale';
 import { line as d3Line } from 'd3-shape';
+import classNames from 'classnames';
 import { D3Base } from 'woocommerce/components/d3/base';
 
 /**
  * Internal dependencies
  */
 
-const Sparkline = ( { aspectRatio, data, highlightIndex, highlightRadius, margin, maxHeight } ) => {
+const Sparkline = ( {
+	aspectRatio,
+	className,
+	data,
+	highlightIndex,
+	highlightRadius,
+	margin,
+	maxHeight,
+} ) => {
 	const initialState = {
 		width: 0,
 		height: 0,
@@ -67,7 +76,12 @@ const Sparkline = ( { aspectRatio, data, highlightIndex, highlightRadius, margin
 	}
 
 	return (
-		<D3Base drawChart={ drawChart } updateState={ updateState } initialState={ initialState } />
+		<D3Base
+			className={ classNames( 'sparkline', className ) }
+			drawChart={ drawChart }
+			updateState={ updateState }
+			initialState={ initialState }
+		/>
 	);
 };
 
