@@ -13,12 +13,6 @@
 		margin-top: 16px;
 	}
 
-	.search-card {
-		@include breakpoint( ">660px" ) {
-			margin-top: 58px;
-		}
-	}
-
 	.products__list-placeholder {
 		@include placeholder();
 		background: $white;
@@ -45,7 +39,7 @@
 	.is-requesting td div {
 		@include placeholder();
 		background: transparent;
-		
+
 		.image-thumb::after {
 			display: none;
 		}

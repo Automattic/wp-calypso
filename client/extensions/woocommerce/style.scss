@@ -55,9 +55,9 @@
 
 	@import 'woocommerce-services/style';
 
-	.section-nav {
+	.main {
 		@include breakpoint( ">660px" ) {
-			margin-top: 35px;
+			padding-top: 35px;
 		}
 	}
 
@@ -151,9 +151,7 @@
 
 .is-section-woocommerce.focus-sidebar {
 	@include breakpoint( "<660px" ) {
-		.sticky-panel,
-		.products__form,
-		.current-section {
+		.products__form {
 			display: none;
 		}
 	}

@@ -59,10 +59,6 @@
 }
 
 .product-categories__form {
-	@include breakpoint( ">660px" ) {
-		margin-top: 58px;
-	}
-
 	&.is-placeholder div {
 		@include placeholder();
 		background: $white;
@@ -198,4 +194,3 @@
 		}
 	}
 }
-
