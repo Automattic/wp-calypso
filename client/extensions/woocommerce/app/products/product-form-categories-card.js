@@ -14,6 +14,7 @@ import { compact } from 'lodash';
  */
 import FoldableCard from 'components/foldable-card';
 import FormFieldSet from 'components/forms/form-fieldset';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import TermSelector from 'woocommerce/components/term-selector';
 
 const ProductFormCategoriesCard = ( { siteId, product, editProduct, translate } ) => {
@@ -49,24 +50,26 @@ const ProductFormCategoriesCard = ( { siteId, product, editProduct, translate } 
 			className="products__categories-card"
 			header={ translate( 'Categories' ) }
 			clickableHeader
+			expanded
 		>
-			<p>
-				{ translate(
-					'Categories let you group similar products so customers can find them more easily.'
-				) }
-			</p>
-
 			<FormFieldSet>
 				<TermSelector
 					siteId={ siteId }
+					postType="product"
 					taxonomy="product_cat"
 					selected={ selectedCategoryIds }
 					onChange={ handleChange }
 					multiple
+					showAddTerm
+					onAddTerm={ handleChange }
 					emptyMessage={ translate( 'No categories found.' ) }
-					searchThreshold={ 0 }
 				/>
 			</FormFieldSet>
+			<FormSettingExplanation>
+				{ translate(
+					'Categories let you group similar products so customers can find them more easily.'
+				) }
+			</FormSettingExplanation>
 		</FoldableCard>
 	);
 };

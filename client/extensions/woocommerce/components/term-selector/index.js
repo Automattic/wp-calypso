@@ -5,9 +5,12 @@
  */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { omit } from 'lodash';
+
 /**
  * Internal dependencies
  */
+import AddTerm from './add-term';
 import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
 import withDimensions from 'lib/with-dimensions';
 
@@ -32,21 +35,24 @@ class TermSelector extends Component {
 	};
 
 	render() {
+		const { taxonomy, postType, onAddTerm, setWithDimensionsRef } = this.props;
 		const { search } = this.state;
 		const query = {};
 		if ( search && search.length ) {
 			query.search = search;
 		}
-
 		return (
 			<Fragment>
-				<div className="term-selector__dimensions" ref={ this.props.setWithDimensionsRef } />
+				<div className="term-selector__dimensions" ref={ setWithDimensionsRef } />
 				<TermTreeSelectorTerms
-					{ ...this.props }
+					{ ...omit( this.props, 'setWithDimensionsRef', 'height', 'showAddTerm', 'onAddTerm' ) }
 					height={ 300 }
 					query={ query }
 					onSearch={ this.onSearch }
 				/>
+				{ this.props.showAddTerm && (
+					<AddTerm postType={ postType } taxonomy={ taxonomy } onSuccess={ onAddTerm } />
+				) }
 			</Fragment>
 		);
 	}
@@ -54,7 +60,10 @@ class TermSelector extends Component {
 
 TermSelector.propTypes = {
 	hideTermAndChildren: PropTypes.number,
+	showAddTerm: PropTypes.bool,
+	onAddTerm: PropTypes.func,
 	terms: PropTypes.array,
+	postType: PropTypes.string,
 	taxonomy: PropTypes.string,
 	multiple: PropTypes.bool,
 	selected: PropTypes.array,
