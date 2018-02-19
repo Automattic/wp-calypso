@@ -111,7 +111,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							primary
 							type="submit"
 						>
-							{ translate( 'Next Step' ) }
+							{ translate( 'Continue' ) }
 						</Button>
 					</form>
 				</Card>
