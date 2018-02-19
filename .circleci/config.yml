@@ -29,6 +29,7 @@ jobs:
             - "node_modules"
 
       - run: NODE_ENV=test npm run build-server
+
       - run:
           command: |
             npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
