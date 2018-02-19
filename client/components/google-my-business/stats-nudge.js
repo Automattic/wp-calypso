@@ -16,6 +16,8 @@ import DismissibleCard from 'blocks/dismissible-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SectionHeader from 'components/section-header';
 
+const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
+
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
 		trackNudgeShown: PropTypes.func.isRequired,
@@ -34,7 +36,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 			<DismissibleCard
 				className="google-my-business__stats-nudge"
 				preferenceName="google-my-business-nudge"
-				temporary
+				temporary={ TWO_WEEKS_IN_SECONDS }
 				onClick={ this.props.trackNudgeDismissed }
 			>
 				<SectionHeader

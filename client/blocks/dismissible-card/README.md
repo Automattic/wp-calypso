@@ -57,9 +57,10 @@ Note that we prefix this value with 'dismissible-card-' to avoid namespace colli
 ### `temporary`
 
 <table>
-	<tr><td>Type</td><td>Boolean</td></tr>
+	<tr><td>Type</td><td>Boolean or Number</td></tr>
 	<tr><td>Required</td><td>No</td></tr>
 	<tr><td>Default</td><td><code>undefined</code></td></tr>
 </table>
 
 When true, clicking on the cross will dismiss the card for the current page load.
+When number, will dismiss the card for the amount of seconds specified by the number.
