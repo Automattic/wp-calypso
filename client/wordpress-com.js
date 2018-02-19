@@ -190,8 +190,8 @@ const sections = [
 	},
 	{
 		name: 'google-my-business',
-		paths: [ '/gmb' ],
-		module: 'my-sites/gmb',
+		paths: [ '/google-my-business' ],
+		module: 'my-sites/google-my-business',
 		secondary: true,
 		group: 'google-my-business',
 	},

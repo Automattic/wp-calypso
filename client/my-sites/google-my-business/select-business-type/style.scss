@@ -1,0 +1,47 @@
+.select-business-type__cta-card {
+	display: flex;
+}
+
+.select-business-type__cta-card__main {
+	flex: 2 1;
+
+	h2 {
+		font-size: 21px;
+	}
+
+	p {
+		font-size: 14px;
+	}
+}
+
+.select-business-type__cta-card__button-container {
+	align-self: center;
+	text-align: right;
+	flex: 1;
+}
+
+.select-business-type {
+	.header-cake {
+		margin-bottom: 0px;
+	}
+
+	.select-business-type__explanation {
+		display: flex;
+
+		h1 {
+			font-size: 24px;
+		}
+
+		h2 {
+			font-size: 16px;
+		}
+	
+		.select-business-type__explanation__main {
+			flex: 2 1;
+		}
+	
+		svg {
+			flex: 1;
+		}
+	}
+}

@@ -16,7 +16,7 @@ import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	if ( config.isEnabled( 'google-my-business' ) ) {
-		page( '/gmb', siteSelection, sites, makeLayout, clientRender );
-		page( '/gmb/:site_id/', siteSelection, navigation, show, makeLayout, clientRender );
+		page( '/google-my-business', siteSelection, sites, makeLayout, clientRender );
+		page( '/google-my-business/:site_id/', siteSelection, navigation, show, makeLayout, clientRender );
 	}
 }
