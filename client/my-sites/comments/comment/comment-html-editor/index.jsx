@@ -56,7 +56,6 @@ export class CommentHtmlEditor extends Component {
 			indent: false,
 			newLineAfter: false,
 			paragraph: false,
-			selfClosed: false,
 			text: null,
 		}
 	) => {
@@ -77,12 +76,12 @@ export class CommentHtmlEditor extends Component {
 			return this.insertContent( opener + inner + closer, options.adjustCursorPosition );
 		}
 
-		if ( ! options.selfClosed && this.isTagOpen( tag ) ) {
+		if ( !! fragments[ 1 ] && this.isTagOpen( tag ) ) {
 			this.setState( ( { openTags } ) => ( { openTags: filter( openTags, tag ) } ) );
 			return this.insertContent( closer, options.adjustCursorPosition );
 		}
 
-		if ( ! options.selfClosed ) {
+		if ( !! fragments[ 1 ] ) {
 			this.setState( ( { openTags } ) => ( { openTags: openTags.concat( tag ) } ) );
 		}
 		return this.insertContent( opener, options.adjustCursorPosition );
@@ -137,7 +136,7 @@ export class CommentHtmlEditor extends Component {
 
 	insertInsTag = () => this.insertHtmlTag( 'ins', { datetime: this.props.moment().format() } );
 
-	insertImgTag = attributes => this.insertHtmlTag( 'img', attributes, { selfClosed: true } );
+	insertImgTag = attributes => this.insertHtmlTag( 'img', attributes );
 
 	insertUlTag = () => this.insertHtmlTag( 'ul', {}, { paragraph: true } );
 
@@ -184,7 +183,7 @@ export class CommentHtmlEditor extends Component {
 			blockquote: { label: 'b-quote', onClick: this.insertBlockquoteTag },
 			del: { onClick: this.insertDelTag },
 			ins: { onClick: this.insertInsTag },
-			img: { onClick: this.openImageDialog, selfClosed: true },
+			img: { onClick: this.openImageDialog },
 			ul: { onClick: this.insertUlTag },
 			ol: { onClick: this.insertOlTag },
 			li: { onClick: this.insertLiTag },
@@ -198,11 +197,11 @@ export class CommentHtmlEditor extends Component {
 		return (
 			<div className="comment-html-editor">
 				<div className="comment-html-editor__toolbar">
-					{ map( buttons, ( { disabled, label, onClick, selfClosed }, tag ) => (
+					{ map( buttons, ( { disabled, label, onClick }, tag ) => (
 						<Button
 							borderless
 							className={ classNames( `comment-html-editor__toolbar-button-${ tag }`, {
-								'is-tag-open': ! selfClosed && this.isTagOpen( tag ),
+								'is-tag-open': this.isTagOpen( tag ),
 							} ) }
 							compact
 							disabled={ disabled }
