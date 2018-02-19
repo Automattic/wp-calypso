@@ -34,9 +34,9 @@ If you want to temporarily enable/disable some feature flags for a given build, 
 ENABLE_FEATURES=manage/plugins/compatibility-warning DISABLE_FEATURES=code-splitting,reader npm start
 ```
 
-### Testing Feature Flags On Any Environments
+### Testing Feature Flags On Any Environment
 
-If you want to temporarily enable/disable some feature flags on a particular environment, calypso.live included, you can add a `?flags=` query parameter to the URL.
+If you want to temporarily enable/disable some feature flags on a particular environment (calypso.live included) you can add a `?flags=` query parameter to the URL.
 
 - `?flags=foo` enables feature *foo*.
 - `?flags=-bar` disables feature *bar*.
