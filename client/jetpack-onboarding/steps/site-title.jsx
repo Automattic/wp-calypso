@@ -66,10 +66,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 	render() {
 		const { basePath, isRequestingSettings, translate } = this.props;
-		const headerText = translate( "Let's get started." );
-		const subHeaderText = translate(
-			'First up, what would you like to name your site and have as its public description?'
-		);
+		const headerText = translate( 'Welcome to WordPress!' );
 
 		return (
 			<div className="steps__main">
@@ -79,7 +76,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					title="Site Title ‹ Jetpack Start"
 				/>
 
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				<FormattedHeader headerText={ headerText } />
 
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
