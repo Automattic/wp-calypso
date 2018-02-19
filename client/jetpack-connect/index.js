@@ -27,10 +27,9 @@ export default function() {
 		clientRender
 	);
 
-	if ( config.isEnabled( 'jetpack/connect/install' ) ) {
+	if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 		page(
 			'/jetpack/connect/install',
-			controller.persistMobileAppFlow,
 			controller.setMasterbar,
 			controller.credsForm,
 			makeLayout,
