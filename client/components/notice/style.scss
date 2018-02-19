@@ -85,17 +85,14 @@
 .notice__text {
 	max-width: 680px;
 
-	a {
+	a,
+	a:visited {
 		text-decoration: underline;
 		color: $white;
 
 		&:hover {
 			color: $white;
 			text-decoration: none;
-		}
-
-		&:visited {
-			color: lighten( $gray, 10% );
 		}
 	}
 
