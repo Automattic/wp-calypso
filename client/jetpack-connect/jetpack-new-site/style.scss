@@ -90,7 +90,7 @@
 }
 
 .jetpack-new-site__wpcom-site {
-	
+
 	.button {
 		align-self: flex-end;
 		width: 100%;
@@ -140,24 +140,8 @@
 	.button {
 		width: 100%;
 		margin-top: 16px;
-		background: $green-jetpack;
-		border-color: darken( $green-jetpack, 15% );
 
-		&:hover,
-		&:focus {
-			border-color: darken( $green-jetpack, 30% );
-		}
-
-		&:focus {
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
-		}
-
-		&[disabled],
-		&:disabled {
-			background: tint( $green-jetpack, 50% );
-			border-color: tint( $green-jetpack, 35% );
-			color: $white;
-		}
+		@extend .jetpack-connect__main.jetpack-branded .button.is-primary;
 	}
 }
 
