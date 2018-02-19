@@ -28,21 +28,18 @@ class JetpackOnboardingDisclaimer extends React.PureComponent {
 		return (
 			<p className="jetpack-onboarding__disclaimer">
 				<Gridicon icon="info-outline" size={ 18 } />
-				{ translate(
-					'By continuing, you agree to our {{link}}fascinating terms and conditions{{/link}}.',
-					{
-						components: {
-							link: (
-								<a
-									href="//wordpress.com/tos/"
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handleTosClick }
-								/>
-							),
-						},
-					}
-				) }
+				{ translate( 'By continuing, you agree to our {{link}}Terms of Service{{/link}}.', {
+					components: {
+						link: (
+							<a
+								href="//wordpress.com/tos/"
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.handleTosClick }
+							/>
+						),
+					},
+				} ) }
 			</p>
 		);
 	}
