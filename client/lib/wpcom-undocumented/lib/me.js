@@ -56,12 +56,12 @@ UndocumentedMe.prototype.getReceipt = function( receiptId, fn ) {
 	);
 };
 
-UndocumentedMe.prototype.getDetailedReceipt = function( receiptId, fn ) {
+UndocumentedMe.prototype.getReceiptForDisplay = function( receiptId, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/me/billing-history/receipt/${ receiptId }`,
 		},
-		{ detailed: true },
+		{ format: 'display' },
 		fn
 	);
 };

@@ -56,7 +56,7 @@ export const requestBillingTransaction = receiptId => dispatch => {
 	return wp
 		.undocumented()
 		.me()
-		.getDetailedReceipt( receiptId )
+		.getReceiptForDisplay( receiptId )
 		.then( receipt => {
 			dispatch( {
 				type: BILLING_RECEIPT_REQUEST_SUCCESS,

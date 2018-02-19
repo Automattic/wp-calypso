@@ -177,7 +177,7 @@ describe( 'actions', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '?detailed=true' )
+					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '?format=display' )
 					.reply( 200, { data: 'receipt' } );
 			} );
 
@@ -205,7 +205,7 @@ describe( 'actions', () => {
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '?detailed=true' )
+					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '?format=display' )
 					.reply( 403, {
 						error: 'authorization_required',
 					} );
