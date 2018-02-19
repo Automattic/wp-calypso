@@ -311,6 +311,10 @@ class JetpackThankYouCard extends Component {
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_chat_initiated' );
 	};
 
+	onBackToYourSiteClick = () => {
+		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_backtoyoursite' );
+	};
+
 	isEligibleForLiveChat() {
 		const { planSlug } = this.props;
 		return (
@@ -565,6 +569,7 @@ class JetpackThankYouCard extends Component {
 						className={ classNames( 'button', 'thank-you-card__button', {
 							'is-placeholder': ! buttonUrl,
 						} ) }
+						onclick={ this.onBackToYourSiteClick }
 						href={ buttonUrl }
 					>
 						{ translate( 'Back to your site' ) }
