@@ -53,7 +53,10 @@ export default class extends React.PureComponent {
 				) }
 				<div className="tile-grid__item-copy">
 					{ buttonLabel && (
-						<Button className={ classNames( 'tile-grid__cta', buttonClassName ) } compact>
+						<Button
+							className={ classNames( 'tile-grid__cta', buttonClassName ) }
+							compact={ !! description }
+						>
 							{ buttonLabel }
 						</Button>
 					) }
