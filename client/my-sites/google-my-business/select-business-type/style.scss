@@ -2,7 +2,7 @@
 	display: flex;
 }
 
-.select-business-type__cta-card__main {
+.select-business-type__cta-card-main {
 	flex: 2 1;
 
 	h2 {
@@ -17,7 +17,7 @@
 	}
 }
 
-.select-business-type__cta-card__button-container {
+.select-business-type__cta-card-button-container {
 	align-self: center;
 	text-align: right;
 	flex: 1;
@@ -42,11 +42,11 @@
 			font-size: 16px;
 			font-weight: 400;
 		}
-	
-		.select-business-type__explanation__main {
+
+		.select-business-type__explanation-main {
 			flex: 2 1;
 		}
-	
+
 		svg {
 			flex: 1;
 		}
