@@ -26,8 +26,20 @@ The config files contain a features object that can be used to determine whether
 }
 ```
 
+### Testing Feature Flags Locally
+
 If you want to temporarily enable/disable some feature flags for a given build, you can do so by setting the `ENABLE_FEATURES` and/or `DISABLE_FEATURES` environment variables. Set them to a comma separated list of features you want to enable/disable, respectively:
 
 ```bash
 ENABLE_FEATURES=manage/plugins/compatibility-warning DISABLE_FEATURES=code-splitting,reader npm start
 ```
+
+### Testing Feature Flags On Any Environment
+
+If you want to temporarily enable/disable some feature flags on a particular environment (calypso.live included) you can add a `?flags=` query parameter to the URL.
+
+- `?flags=foo` enables feature *foo*.
+- `?flags=-bar` disables feature *bar*.
+- `?flags=foo,-bar` enables feature *foo* and disables feature *bar*.
+
+E.g. https://wordpress.com/?flags=manage/plugins/compatibility-warning
