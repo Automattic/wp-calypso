@@ -2,8 +2,8 @@
 /**
  * External dependencies
  */
-import { isEmpty, pick } from 'lodash';
-import { stringify } from 'qs';
+import deterministicStringify from 'json-stable-stringify';
+import { every, has, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -102,14 +102,18 @@ function compose( ...functions ) {
  * @return {?string}                              The cache key or null to disable cache
  */
 export function getCacheKey( { cacheQueryKeys, pathname, query } ) {
-	if ( isEmpty( context.query ) || isEmpty( context.cacheQueryKeys ) ) {
-		return context.pathname;
+	// If we have a query, do not cache if any params are not in cacheQueryKeys
+	if ( ! isEmpty( query ) ) {
+		// Cache if our all of the query parameters are in cacheQueryKeys
+		if (
+			! isEmpty( cacheQueryKeys ) &&
+			Object.keys( query ).length === cacheQueryKeys.length &&
+			every( cacheQueryKeys, key => has( query, key ) )
+		) {
+			return pathname + '?' + deterministicStringify( query );
+		}
+		return null;
 	}
 
-	const cachedQueryParams = pick( context.query, context.cacheQueryKeys );
-	return (
-		context.pathname +
-		'?' +
-		stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
-	);
+	return pathname;
 }
