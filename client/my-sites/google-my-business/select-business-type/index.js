@@ -23,11 +23,11 @@ class SelectBusinessType extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
-	onCreateMyListingClick = () => {
+	trackMyListingClick = () => {
 		this.props.recordTracksEvent( 'calypso_google_my_business_create_my_listing_click' );
 	};
 
-	onOptimizeYourSEOClick = () => {
+	trackOptimizeYourSEOClicked = () => {
 		this.props.recordTracksEvent( 'calypso_google_my_business_optimize_your_seo_click' );
 	};
 
@@ -70,7 +70,7 @@ class SelectBusinessType extends Component {
 					buttonPrimary={ true }
 					buttonHref="https://www.google.com/business/"
 					buttonTarget="_blank"
-					buttonOnClick={ this.onCreateMyListingClick }
+					buttonOnClick={ this.trackMyListingClick }
 				/>
 
 				<CTACard
@@ -82,7 +82,7 @@ class SelectBusinessType extends Component {
 					buttonIcon="external"
 					buttonHref={ '/settings/traffic/' + siteId }
 					buttonTarget="_blank"
-					buttonOnClick={ this.onOptimizeYourSEOClick }
+					buttonOnClick={ this.trackOptimizeYourSEOClicked }
 				/>
 			</div>
 		);
