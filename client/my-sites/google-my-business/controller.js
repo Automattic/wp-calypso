@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import GMBSelectBusinessType from '../select-business-type';
+import GMBSelectBusinessType from './select-business-type';
 
 export function selectBusinessType( context, next ) {
 	const { params } = context;
