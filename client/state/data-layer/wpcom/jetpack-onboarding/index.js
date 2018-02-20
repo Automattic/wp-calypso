@@ -156,7 +156,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action ) => {
 		return announceSaveFailure( { dispatch }, { siteId } );
 	}
 
-	// We cannot use `extendAction( action, ... )` here, since `meta.datayLayer` now includes error information,
+	// We cannot use `extendAction( action, ... )` here, since `meta.dataLayer` now includes error information,
 	// which we would propagate, causing the data layer to think there's been an error on the subsequent attempt.
 	// Instead, we have to re-assemble our action.
 	dispatch( {
