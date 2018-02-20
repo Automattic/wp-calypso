@@ -1,0 +1,18 @@
+.follow-menu {
+	.gridicons-reader-follow {
+		display: inline;
+	}
+
+	.gridicons-reader-following {
+		display: none;
+	}
+
+	&.is-following {
+		.gridicons-reader-follow {
+			display: none;
+		}
+		.gridicons-reader-following {
+			display: inline;
+		}
+	}
+}

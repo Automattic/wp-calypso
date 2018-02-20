@@ -24,7 +24,7 @@ class FollowMenuButton extends React.Component {
 		disabled: PropTypes.bool,
 		followLabel: PropTypes.string,
 		followingLabel: PropTypes.string,
-		isCompact: PropTypes.bool,
+		compact: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -33,7 +33,7 @@ class FollowMenuButton extends React.Component {
 		iconSize: 20,
 		tagName: 'button',
 		disabled: false,
-		isCompact: false,
+		compact: false,
 	};
 
 	componentWillMount() {
@@ -59,7 +59,7 @@ class FollowMenuButton extends React.Component {
 
 	render() {
 		let label = this.props.followLabel ? this.props.followLabel : this.strings.FOLLOW;
-		const menuClasses = [ 'button', 'follow-menu', 'has-icon', this.props.className ];
+		const menuClasses = [ 'follow-menu', this.props.className ];
 		const iconSize = this.props.iconSize;
 
 		if ( this.props.following ) {
@@ -80,18 +80,21 @@ class FollowMenuButton extends React.Component {
 		);
 
 		return (
-			<ButtonGroup className="follow-menu">
+			<ButtonGroup className={ menuClasses.join( ' ' ) }>
 				<Button
 					primary
-					compact={ this.props.isCompact }
+					compact={ this.props.compact }
 					onClick={ this.toggleFollow }
 					title={ label }
+					className="follow-menu-follow-button"
 				>
 					{ [ followingIcon, followIcon, followLabelElement ] }
 				</Button>
-				<Button primary compact={ this.props.isCompact }>
-					<Gridicon icon="chevron-down" />
-				</Button>
+				{ this.props.following && (
+					<Button primary compact={ this.props.compact }>
+						<Gridicon icon="chevron-down" />
+					</Button>
+				) }
 			</ButtonGroup>
 		);
 	}
