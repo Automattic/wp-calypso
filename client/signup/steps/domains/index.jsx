@@ -33,6 +33,7 @@ import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+import { abtest } from 'lib/abtest';
 
 const productsList = productsListFactory();
 
@@ -229,9 +230,11 @@ class DomainsStep extends React.Component {
 	domainForm = () => {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
-		const suggestion = this.props.siteTitle
-			? this.props.siteTitle
-			: get( this.props, 'queryObject.new', '' );
+
+		const suggestion =
+			'withSiteTitle' === abtest( 'domainSearchPrefill' ) && !! this.props.siteTitle
+				? this.props.siteTitle
+				: get( this.props, 'queryObject.new', '' );
 
 		return (
 			<RegisterDomainStep
