@@ -23,8 +23,10 @@ import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
+import versionCompare from 'lib/version-compare';
 import { authorizeQueryDataSchema } from './schema';
 import { authQueryTransformer } from './utils';
+import { externalRedirect, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
@@ -32,7 +34,6 @@ import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
-import { sectionify } from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
 import { urlToSlug } from 'lib/url';
@@ -56,16 +57,8 @@ const analyticsPageTitleByType = {
 	pro: 'Jetpack Install Pro',
 };
 
-const removeSidebar = context => {
-	context.store.dispatch(
-		setSection(
-			{ name: 'jetpackConnect' },
-			{
-				hasSidebar: false,
-			}
-		)
-	);
-};
+const removeSidebar = context =>
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 const jetpackNewSiteSelector = context => {
 	removeSidebar( context );
@@ -106,6 +99,10 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 
 export function maybeOnboard( { query, store }, next ) {
 	if ( ! isEmpty( query ) && query.onboarding ) {
+		if ( query.site_url && query.jp_version && versionCompare( query.jp_version, '5.8', '<' ) ) {
+			return externalRedirect( query.site_url + '/wp-admin/admin.php?page=jetpack#/dashboard' );
+		}
+
 		const siteId = parseInt( query.client_id, 10 );
 		const siteSlug = urlToSlug( query.site_url );
 		const credentials = {
@@ -116,7 +113,7 @@ export function maybeOnboard( { query, store }, next ) {
 
 		store.dispatch( receiveJetpackOnboardingCredentials( siteId, credentials ) );
 
-		return page.redirect( '/jetpack/onboarding/' + siteSlug );
+		return page.redirect( '/jetpack/start/' + siteSlug );
 	}
 
 	next();

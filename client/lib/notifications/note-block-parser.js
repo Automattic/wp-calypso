@@ -117,6 +117,21 @@ const userNode = ( { id: userId, name, site_id: siteId } ) => ( {
 	userId,
 } );
 
+const pluginNode = ( { site_slug, slug, version } ) => ( {
+	type: 'plugin',
+	siteSlug: site_slug,
+	pluginSlug: slug,
+	version,
+} );
+
+const themeNode = ( { site_slug, slug, version, uri } ) => ( {
+	type: 'theme',
+	siteSlug: site_slug,
+	themeSlug: slug,
+	themeUri: uri,
+	version,
+} );
+
 const inferNode = range => {
 	const { type, url } = range;
 
@@ -154,6 +169,12 @@ const nodeMappings = type => {
 
 		case 'user':
 			return userNode;
+
+		case 'plugin':
+			return pluginNode;
+
+		case 'theme':
+			return themeNode;
 
 		default:
 			return inferNode;

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -91,13 +92,15 @@ SiteSettingsSecurity.propTypes = {
 export default connect( state => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const rewindState = getRewindState( state, siteId ).state;
+	const rewind = getRewindState( state, siteId );
+	const credentials = find( rewind.credentials, { role: 'main' } );
+	const isManaged = credentials && credentials.type && 'managed' === credentials.type;
 
 	return {
 		showRewindCredentials:
-			rewindState === 'awaitingCredentials' ||
-			rewindState === 'provisioning' ||
-			rewindState === 'active',
+			rewind.state === 'awaitingCredentials' ||
+			rewind.state === 'provisioning' ||
+			( rewind.state === 'active' && ! isManaged ),
 		site,
 		siteId,
 		siteIsJetpack: isJetpackSite( state, siteId ),

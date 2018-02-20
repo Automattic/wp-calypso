@@ -6,7 +6,7 @@
 	width: 28px;
 	height: 28px;
 	transform: translate( 25%, -25% ); /*rtl:ignore*/
-	border: 1px solid lighten( $gray, 10% );
+	border: 1px solid $gray-lighten-10;
 	border-radius: 50%;
 	background-color: $gray-light;
 	cursor: pointer;
@@ -20,5 +20,5 @@
 	width: 24px;
 	height: 24px;
 	margin: 0;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 }

@@ -6,7 +6,7 @@ $sidebar-width-max: 272px;
 $sidebar-width-min: 228px;
 
 .wpcom-site__logo {
-	color: lighten( $gray, 20% );
+	color: $gray-lighten-20;
 	font-size: 12vw;
 	position: fixed;
 		top: 50%;
@@ -148,7 +148,7 @@ h1,h2,h3,h4,h5,h6 {
 	clear: both;
 }
 hr {
-	background: lighten( $gray, 20% );
+	background: $gray-lighten-20;
 	border: 0;
 	height: 1px;
 	margin-bottom: 1.5em;
@@ -206,7 +206,7 @@ code, kbd, tt, var {
 	font: 15px $code;
 }
 abbr, acronym {
-	border-bottom: 1px dotted darken( $gray, 20% );
+	border-bottom: 1px dotted $gray-darken-20;
 	cursor: help;
 	// Prevent double underline in Chrome
 	text-decoration: none;

@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -30,17 +31,18 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 	};
 
 	render() {
-		const { getForwardUrl, translate } = this.props;
+		const { basePath, getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'What should visitors see on your homepage?' );
 		const forwardUrl = getForwardUrl();
+		const homepageFormat = get( settings, 'homepageFormat' );
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Homepage ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Homepage ‹ Jetpack Start' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.HOMEPAGE + '/:site' }
-					title="Homepage ‹ Jetpack Onboarding"
+					path={ [ basePath, STEPS.HOMEPAGE, ':site' ].join( '/' ) }
+					title="Homepage ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -52,6 +54,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 							'We can pull the latest information into your homepage for you.'
 						) }
 						image={ '/calypso/images/illustrations/homepage-news.svg' }
+						highlighted={ homepageFormat === 'posts' }
 						href={ forwardUrl }
 						onClick={ this.handleHomepageSelection( 'posts' ) }
 					/>
@@ -59,6 +62,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 						buttonLabel={ translate( 'A static welcome page' ) }
 						description={ translate( 'Have your homepage stay the same as time goes on.' ) }
 						image={ '/calypso/images/illustrations/homepage-static.svg' }
+						highlighted={ homepageFormat === 'page' }
 						href={ forwardUrl }
 						onClick={ this.handleHomepageSelection( 'page' ) }
 					/>

@@ -35,6 +35,9 @@ function TwoStepAuthorization() {
 	this.smsResendThrottled = false;
 	this.bumpMCStat = function( eventAction ) {
 		analytics.mc.bumpStat( '2fa', eventAction );
+		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', {
+			event_action: eventAction,
+		} );
 	};
 
 	this.fetch();
@@ -48,10 +51,6 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
 		function( error, data ) {
 			if ( ! error ) {
 				this.data = data;
-
-				if ( this.isReauthRequired() && this.isTwoStepSMSEnabled() && ! this.initialized ) {
-					this.sendSMSCode();
-				}
 
 				if ( this.isReauthRequired() && ! this.initialized ) {
 					this.bumpMCStat( 'reauth-required' );

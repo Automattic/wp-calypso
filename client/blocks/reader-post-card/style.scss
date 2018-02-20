@@ -9,7 +9,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 // Adds a top border to first card in the Site Stream
 .is-reader-page .is-site-stream .reader-post-card.card {
 	&:nth-child(2) {
-		border-top: 1px solid lighten( $gray, 20% );
+		border-top: 1px solid $gray-lighten-20;
 	}
 }
 
@@ -21,7 +21,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 }
 
 .reader-post-card.card {
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 20px;
@@ -239,7 +239,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 }
 
 .reader-post-card__photo {
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -702,7 +702,7 @@ $reader-post-card-breakpoint-small: '( max-width: 550px )';
 }
 
 .reader-post-card__gallery-item {
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	cursor: pointer;
 	flex: 1;
 	list-style-type: none;

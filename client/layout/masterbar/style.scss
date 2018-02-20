@@ -298,6 +298,10 @@ $autobar-height: 20px;
 		margin-right: 0;
 	}
 
+	.gridicon {
+		fill: $white;
+	}
+
 	.gridicon + .masterbar__item-content {
 		padding: 0;
 

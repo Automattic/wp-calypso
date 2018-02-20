@@ -6,6 +6,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,6 +18,7 @@ import Button from 'components/button';
 import SignupActions from 'lib/signup/actions';
 import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class CredsConfirmStep extends Component {
 	static propTypes = {
@@ -24,14 +27,25 @@ class CredsConfirmStep extends Component {
 		positionInFlow: PropTypes.number,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+
+		// Connected props
+		siteSlug: PropTypes.string.isRequired,
+
+		// localize
+		translate: PropTypes.func.isRequired,
 	};
 
-	autoConfigCredentials = () =>
-		this.props.autoConfigCredentials( this.props.initialContext.query.blogid );
+	autoConfigCredentials = () => this.props.autoConfigCredentials( this.props.siteId );
 
 	skipStep = () => {
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_skip', {} );
-		this.props.goToNextStep();
+
+		if ( 'pressable-nux' === this.props.flowName ) {
+			this.props.goToNextStep();
+		} else {
+			// The flow /start/rewind-auto-config exits back to AL on the second skip
+			return page.redirect( `/stats/activity/${ this.props.siteSlug }` );
+		}
 	};
 
 	shareCredentials = () => {
@@ -39,12 +53,18 @@ class CredsConfirmStep extends Component {
 
 		this.props.recordTracksEvent( 'calypso_pressable_nux_credentials_share', {} );
 
-		SignupActions.submitSignupStep( {
-			processingMessage: this.props.translate( 'Setting up your site' ),
-			stepName: this.props.stepName,
-		} );
+		SignupActions.submitSignupStep(
+			{
+				processingMessage: this.props.translate( 'Setting up your site' ),
+				stepName: this.props.stepName,
+			},
+			undefined,
+			{ rewindconfig: true }
+		);
 
-		this.props.goToStep( 'creds-complete' );
+		this.props.goToStep(
+			'pressable-nux' === this.props.flowName ? 'creds-complete' : 'rewind-were-backing'
+		);
 	};
 
 	renderStepContent = () => {
@@ -84,7 +104,16 @@ class CredsConfirmStep extends Component {
 	}
 }
 
-export default connect( null, {
-	autoConfigCredentials,
-	recordTracksEvent,
-} )( localize( CredsConfirmStep ) );
+export default connect(
+	( state, ownProps ) => {
+		const siteId = get( ownProps, [ 'initialContext', 'query', 'blogid' ], 0 );
+		return {
+			siteId,
+			siteSlug: getSelectedSiteSlug( state, siteId ),
+		};
+	},
+	{
+		autoConfigCredentials,
+		recordTracksEvent,
+	}
+)( localize( CredsConfirmStep ) );

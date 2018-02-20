@@ -35,6 +35,9 @@ export default class extends React.Component {
 	};
 
 	onClick = () => {
+		if ( this.props.onClick ) {
+			this.props.onClick();
+		}
 		if ( this.props.href ) {
 			page( this.props.href );
 		}

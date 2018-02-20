@@ -14,10 +14,8 @@ import {
 	POST_TYPES_TAXONOMIES_REQUEST,
 	POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 	POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -52,27 +50,21 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
+export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case POST_TYPES_TAXONOMIES_RECEIVE:
-			return Object.assign( {}, state, {
+			return {
+				...state,
 				[ action.siteId ]: {
+					...state[ action.siteId ],
 					[ action.postType ]: keyBy( action.taxonomies, 'name' ),
 				},
-			} );
+			};
 
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, itemsSchema ) ) {
-				return state;
-			}
-
-			return {};
-		case SERIALIZE:
+		default:
 			return state;
 	}
-
-	return state;
-}
+} );
 
 export default combineReducers( {
 	requesting,

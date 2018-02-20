@@ -207,8 +207,8 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	border: 1px solid lighten( $gray, 10% );
-	background-color: lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-10;
+	background-color: $gray-lighten-30;
 
 	&.is-placeholder {
 		@include placeholder();

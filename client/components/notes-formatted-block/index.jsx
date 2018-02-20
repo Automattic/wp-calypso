@@ -5,7 +5,20 @@
 import React from 'react';
 
 export const FormattedBlock = ( { content = {} } ) => {
-	const { siteId, children, commentId, isTrashed, name, postId, text = null, type } = content;
+	const {
+		siteId,
+		children,
+		commentId,
+		isTrashed,
+		name,
+		postId,
+		text = null,
+		type,
+		siteSlug,
+		pluginSlug,
+		themeSlug,
+		themeUri,
+	} = content;
 
 	if ( 'string' === typeof content ) {
 		return content;
@@ -51,7 +64,7 @@ export const FormattedBlock = ( { content = {} } ) => {
 			);
 
 		case 'plugin':
-			return <a href={ `/plugins/${ name }/${ siteId }` }>{ descent }</a>;
+			return <a href={ `/plugins/${ pluginSlug }/${ siteSlug }` }>{ descent }</a>;
 
 		case 'post':
 			return isTrashed ? (
@@ -66,11 +79,17 @@ export const FormattedBlock = ( { content = {} } ) => {
 			return <pre>{ descent }</pre>;
 
 		case 'theme':
+			if ( ! themeUri ) {
+				return descent;
+			}
+
+			if ( /wordpress\.com/.test( themeUri ) ) {
+				return <a href={ `/theme/${ themeSlug }/${ siteSlug }` }>{ descent }</a>;
+			}
+
 			return (
-				<a href={ content.url } target="_blank" rel="noopener noreferrer">
-					<strong>
-						<em>{ descent }</em>
-					</strong>
+				<a href={ themeUri } target="_blank" rel="noopener noreferrer">
+					{ descent }
 				</a>
 			);
 

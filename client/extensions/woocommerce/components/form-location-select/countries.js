@@ -16,7 +16,7 @@ import { bindActionCreators } from 'redux';
 import {
 	areLocationsLoaded,
 	getContinents,
-	getCountries,
+	getCountriesByContinent,
 } from 'woocommerce/state/sites/locations/selectors';
 import {
 	areSettingsGeneralLoaded,
@@ -104,7 +104,7 @@ export default connect(
 		const isLoaded = areLocationsLoaded( state, siteId );
 		const continents = getContinents( state, siteId );
 		continents.forEach( continent => {
-			const countries = getCountries( state, continent.code, siteId );
+			const countries = getCountriesByContinent( state, continent.code, siteId );
 			locationsList.push(
 				...countries.map( country => ( {
 					...country,

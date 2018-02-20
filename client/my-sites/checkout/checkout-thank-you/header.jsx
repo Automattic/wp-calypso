@@ -3,17 +3,18 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import {
 	isChargeback,
+	isDelayedDomainTransfer,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
@@ -25,6 +26,8 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'lib/formatting';
+import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
+import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 
 class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -49,6 +52,10 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
+			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
+				return preventWidows( translate( 'Almost done!' ) );
+			}
+
 			return preventWidows(
 				translate( 'Check your email! There are important next steps waiting in your inbox.' )
 			);
@@ -145,6 +152,17 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isDomainTransfer( primaryPurchase ) ) {
+			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
+				return translate(
+					'Your new site is now live, with a temporary domain. Start the transfer to get your domain ' +
+						'{{strong}}%(domainName)s{{/strong}} moved to WordPress.com.',
+					{
+						args: { domainName: primaryPurchase.meta },
+						components: { strong: <strong /> },
+					}
+				);
+			}
+
 			return translate(
 				'We sent an email with an important link. Please open the email and click the link to confirm ' +
 					'that you want to transfer {{strong}}%(domainName)s{{/strong}} to WordPress.com. ' +
@@ -186,21 +204,39 @@ class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = selectedSite.URL;
 	};
 
+	startTransfer = event => {
+		event.preventDefault();
+
+		const { primaryPurchase, selectedSite } = this.props;
+
+		this.props.recordStartTransferClickInThankYou( primaryPurchase.meta );
+
+		page( domainManagementTransferInPrecheck( selectedSite.slug, primaryPurchase.meta ) );
+	};
+
 	getButton() {
 		const { hasFailedPurchases, translate, primaryPurchase, selectedSite } = this.props;
 		const headerButtonClassName = 'button is-primary';
 
-		if (
-			! hasFailedPurchases &&
-			primaryPurchase &&
-			isPlan( primaryPurchase ) &&
-			selectedSite &&
-			! selectedSite.jetpack
-		) {
+		if ( hasFailedPurchases || ! primaryPurchase || ! selectedSite || selectedSite.jetpack ) {
+			return null;
+		}
+
+		if ( isPlan( primaryPurchase ) ) {
 			return (
 				<div className="checkout-thank-you__header-button">
 					<button className={ headerButtonClassName } onClick={ this.visitSite }>
 						{ translate( 'View your site' ) }
+					</button>
+				</div>
+			);
+		}
+
+		if ( isDelayedDomainTransfer( primaryPurchase ) ) {
+			return (
+				<div className="checkout-thank-you__header-button">
+					<button className={ headerButtonClassName } onClick={ this.startTransfer }>
+						{ translate( 'Start the domain transfer' ) }
 					</button>
 				</div>
 			);
@@ -216,7 +252,11 @@ class CheckoutThankYouHeader extends PureComponent {
 		let svg = 'thank-you.svg';
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
-		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
+		} else if (
+			primaryPurchase &&
+			isDomainTransfer( primaryPurchase ) &&
+			! isDelayedDomainTransfer( primaryPurchase )
+		) {
 			svg = 'check-emails-desktop.svg';
 		}
 
@@ -240,5 +280,6 @@ class CheckoutThankYouHeader extends PureComponent {
 }
 
 export default connect( null, {
+	recordStartTransferClickInThankYou,
 	recordTracksEvent,
 } )( localize( CheckoutThankYouHeader ) );

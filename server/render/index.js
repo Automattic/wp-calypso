@@ -122,7 +122,8 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user &&
 		cacheKey &&
-		isDefaultLocale( context.lang )
+		isDefaultLocale( context.lang ) &&
+		! context.query.email_address // Don't do SSR when PIIs are present at the request
 	) {
 		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
 	}
@@ -174,7 +175,7 @@ export function serverRenderError( err, req, res, next ) {
 		}
 		req.error = err;
 		res.status( err.status || 500 );
-		res.render( '500', req.context );
+		res.send( renderJsx( '500', req.context ) );
 		return;
 	}
 

@@ -66,12 +66,12 @@
 	}
 
 	& + .form-toggle__label .form-toggle__switch {
-		background: lighten( $gray, 10% );
+		background: $gray-lighten-10;
 	}
 
 	&:not( :disabled ) {
 		+ .form-toggle__label:hover .form-toggle__switch {
-			background: lighten( $gray, 20% );
+			background: $gray-lighten-20;
 		}
 	}
 
@@ -106,7 +106,7 @@
 	}
 	&:checked {
 		+ .form-toggle__label .form-toggle__switch {
-			background: lighten( $gray, 20% );
+			background: $gray-lighten-20;
 		}
 	}
 }

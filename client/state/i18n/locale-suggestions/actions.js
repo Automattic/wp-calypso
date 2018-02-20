@@ -17,7 +17,7 @@ export const receiveLocaleSuggestions = items => ( {
 } );
 
 /**
- * Action creator to request locale suggestions: I18N_LOCALE_SUGGESTIONS_ADD
+ * Action creator to request locale suggestions: I18N_LOCALE_SUGGESTIONS_REQUEST
  *
  * @return {Object} action object
  */

@@ -20,6 +20,7 @@ Component used to display a clickable tile with an image, call to action, and de
 * `buttonLabel`: Text of the button.
 * `className`: Add your own class to the tile.
 * `description`: Description text.
+* `highlighted`: Whether the tile should be highlighted.
 * `href`: URL that the item leads to upon click.
 * `image`: URL of the image.
 * `onClick`: Function, executed when the user clicks the tile.

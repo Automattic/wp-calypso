@@ -96,6 +96,10 @@ export function domainManagementTransferIn( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'in' );
 }
 
+export function domainManagementTransferInPrecheck( siteName, domainName ) {
+	return domainManagementTransfer( siteName, domainName, 'precheck' );
+}
+
 export function domainManagementTransferOut( siteName, domainName ) {
 	return domainManagementTransfer( siteName, domainName, 'out' );
 }

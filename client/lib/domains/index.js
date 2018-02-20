@@ -5,7 +5,7 @@
  */
 
 import inherits from 'inherits';
-import { includes, find, replace, some } from 'lodash';
+import { includes, find, get, replace, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -83,6 +83,22 @@ function restartInboundTransfer( siteId, domainName, onComplete ) {
 	} );
 }
 
+function startInboundTransfer( siteId, domainName, onComplete ) {
+	if ( ! domainName || ! siteId ) {
+		onComplete( null );
+		return;
+	}
+
+	wpcom.undocumented().startInboundTransfer( siteId, domainName, function( serverError, result ) {
+		if ( serverError ) {
+			onComplete( serverError.error );
+			return;
+		}
+
+		onComplete( null, result );
+	} );
+}
+
 function resendInboundTransferEmail( domainName, onComplete ) {
 	if ( ! domainName ) {
 		onComplete( null );
@@ -148,7 +164,7 @@ function isInitialized( state, siteId ) {
 }
 
 function hasGoogleApps( domain ) {
-	return domain.googleAppsSubscription.status !== 'no_subscription';
+	return 'no_subscription' !== get( domain, 'googleAppsSubscription.status', '' );
 }
 
 function isMappedDomain( domain ) {
@@ -169,11 +185,7 @@ function hasGoogleAppsSupportedDomain( domains ) {
 }
 
 function hasPendingGoogleAppsUsers( domain ) {
-	return (
-		domain.googleAppsSubscription &&
-		domain.googleAppsSubscription.pendingUsers &&
-		domain.googleAppsSubscription.pendingUsers.length !== 0
-	);
+	return get( domain, 'googleAppsSubscription.pendingUsers.length', 0 ) !== 0;
 }
 
 function getSelectedDomain( { domains, selectedDomainName, isTransfer } ) {
@@ -256,10 +268,10 @@ export {
 	getDomainProductSlug,
 	getFixedDomainSearch,
 	getGoogleAppsSupportedDomains,
-	getPrimaryDomain,
-	getSelectedDomain,
-	getRegisteredDomains,
 	getMappedDomains,
+	getPrimaryDomain,
+	getRegisteredDomains,
+	getSelectedDomain,
 	getTld,
 	getTopLevelOfTld,
 	hasGoogleApps,
@@ -270,6 +282,7 @@ export {
 	isMappedDomain,
 	isRegisteredDomain,
 	isSubdomain,
-	restartInboundTransfer,
 	resendInboundTransferEmail,
+	restartInboundTransfer,
+	startInboundTransfer,
 };

@@ -11,9 +11,11 @@ import { recordTracksEvent } from 'state/analytics/actions';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
 import Wizard from 'components/wizard';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
@@ -35,7 +37,34 @@ class JetpackOnboardingMain extends React.PureComponent {
 		stepName: STEPS.SITE_TITLE,
 	};
 
-	// TODO: Add lifecycle methods to redirect if no siteId
+	componentDidMount() {
+		const { siteId, siteSlug } = this.props;
+
+		// If we are missing the Jetpack onboarding credentials,
+		// redirect back to wp-admin so we can obtain them again.
+		if ( ! siteId && siteSlug ) {
+			const siteDomain = siteSlug.replace( '::', '/' );
+			const url = addQueryArgs(
+				{
+					page: 'jetpack',
+					action: 'onboard',
+					calypso_env: config( 'env_id' ),
+				},
+				`//${ siteDomain }/wp-admin/admin.php`
+			);
+			externalRedirect( url );
+		}
+	}
+
+	getNavigationLinkClickHandler = direction => () => {
+		const { recordJpoEvent, stepName } = this.props;
+
+		recordJpoEvent( 'calypso_jpo_navigation_link_clicked', {
+			current_step: stepName,
+			direction,
+		} );
+	};
+
 	render() {
 		const {
 			isRequestingSettings,
@@ -49,19 +78,25 @@ class JetpackOnboardingMain extends React.PureComponent {
 		return (
 			<Main className="jetpack-onboarding">
 				<QueryJetpackOnboardingSettings siteId={ siteId } />
-				<Wizard
-					basePath="/jetpack/onboarding"
-					baseSuffix={ siteSlug }
-					components={ COMPONENTS }
-					hideNavigation={ stepName === STEPS.SUMMARY }
-					isRequestingSettings={ isRequestingSettings }
-					recordJpoEvent={ recordJpoEvent }
-					siteId={ siteId }
-					siteSlug={ siteSlug }
-					settings={ settings }
-					stepName={ stepName }
-					steps={ steps }
-				/>
+				{ siteId ? (
+					<Wizard
+						basePath="/jetpack/start"
+						baseSuffix={ siteSlug }
+						components={ COMPONENTS }
+						hideNavigation={ stepName === STEPS.SUMMARY }
+						isRequestingSettings={ isRequestingSettings }
+						onBackClick={ this.getNavigationLinkClickHandler( 'back' ) }
+						onForwardClick={ this.getNavigationLinkClickHandler( 'forward' ) }
+						recordJpoEvent={ recordJpoEvent }
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+						settings={ settings }
+						stepName={ stepName }
+						steps={ steps }
+					/>
+				) : (
+					<div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
+				) }
 			</Main>
 		);
 	}

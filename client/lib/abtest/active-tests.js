@@ -55,15 +55,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	unlimitedThemeNudge: {
-		datestamp: '20171016',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	checklistThankYouForFreeUser: {
 		datestamp: '20171204',
 		variations: {
@@ -82,25 +73,16 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	gsuiteUpsellV2: {
-		datestamp: '20171225',
+	domainSuggestionTestV6: {
+		datestamp: '20180215',
 		variations: {
-			original: 50,
-			modified: 50,
+			group_0: 1, // Default group
+			group_1: 1000,
+			group_2: 1000,
+			group_3: 1000,
+			group_4: 1000,
 		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
-
-	// Must run at least 1 full week from commit time
-	// 2018-01-24 to 2018-01-31
-	promoteYearlyJetpackPlanSavings: {
-		datestamp: '20180124',
-		variations: {
-			original: 50,
-			promoteYearly: 50,
-		},
-		defaultVariation: 'original',
+		defaultVariation: 'group_0',
 		allowExistingUsers: true,
 	},
 };

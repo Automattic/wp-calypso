@@ -69,7 +69,7 @@
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: lighten($gray, 20%);
+			color: $gray-lighten-20;
 		}
 
 		.form-text-input {
@@ -159,13 +159,13 @@
 	width: 100%;
 
 	&:hover > div {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 	}
 }
 
 .example-components__browser-chrome {
 	padding: 8px;
-	background-color: lighten($gray, 30%);
+	background-color: $gray-lighten-30;
 	border-radius: 8px 8px 0 0;
 }
 
@@ -177,7 +177,7 @@
 .example-components__browser-chrome-dot {
 	display: inline-block;
 	margin-right: 8px;
-	background-color: lighten($gray, 10%);
+	background-color: $gray-lighten-10;
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
@@ -187,7 +187,7 @@
 	position: relative;
 	margin: 0;
 	line-height: 0;
-	box-shadow: 0 0 0 1px transparentize(lighten($gray, 20%), 0.5), 0 1px 2px lighten($gray, 30%);
+	box-shadow: 0 0 0 1px transparentize($gray-lighten-20, 0.5), 0 1px 2px $gray-lighten-30;
 }
 
 .example-components__install-plugin-header {
@@ -352,7 +352,7 @@
 }
 
 .jetpack-connect__sso-user-email {
-	color: lighten($gray, 10%);
+	color: $gray-lighten-10;
 	font-weight: 400;
 	text-align: center;
 }
@@ -389,7 +389,7 @@
 
 .jetpack-connect__connect-button-card {
 	background: lighten($gray, 34%);
-	border-top: 1px solid lighten($gray, 30%);
+	border-top: 1px solid $gray-lighten-30;
 	box-shadow: none;
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
@@ -488,7 +488,7 @@
 .jetpack-connect__happychat-button {
 	background: none;
 	border: none;
-	color: darken($gray, 20%);
+	color: $gray-darken-20;
 	font-weight: normal;
 	padding: 16px 24px;
 	text-align: left;

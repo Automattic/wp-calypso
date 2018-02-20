@@ -7,7 +7,7 @@
 	&.is-bottom-left,
 	&.is-bottom {
 		.popover__arrow {
-			border-bottom-color: darken( $gray, 30% );
+			border-bottom-color: $gray-darken-30;
 			top: 4px;
 			right: 10px;
 
@@ -39,7 +39,7 @@
 	&.is-top-left,
 	&.is-top-right {
 		.popover__arrow {
-			border-top-color: darken( $gray, 30% );
+			border-top-color: $gray-darken-30;
 			bottom: 4px;
 			right: 10px;
 
@@ -107,14 +107,14 @@
 	&.is-left {
 		.popover__arrow {
 			margin-right: 4px;
-			border-left-color: darken( $gray, 30% );
+			border-left-color: $gray-darken-30;
 		}
 	}
 
 	&.is-right {
 		.popover__arrow {
 			margin-left: 4px;
-			border-right-color: darken( $gray, 30% );
+			border-right-color: $gray-darken-30;
 		}
 	}
 
@@ -123,7 +123,7 @@
 		box-shadow: none;
 		border-radius: 2px;
 		color: $white;
-		background: darken( $gray, 30% );
+		background: $gray-darken-30;
 		font-size: 12px;
 		padding: 6px 10px;
 		text-align: left;

@@ -27,11 +27,8 @@ import InfoPopover from 'components/info-popover';
 class SpeedUpSiteSettings extends Component {
 	static propTypes = {
 		fields: PropTypes.object,
-		handleAutosavingToggle: PropTypes.func.isRequired,
 		isRequestingSettings: PropTypes.bool,
 		isSavingSettings: PropTypes.bool,
-		onChangeField: PropTypes.func.isRequired,
-		siteId: PropTypes.number.isRequired,
 		jetpackVersionSupportsLazyImages: PropTypes.bool,
 
 		// Connected props
@@ -42,7 +39,7 @@ class SpeedUpSiteSettings extends Component {
 
 	render() {
 		const {
-			siteId,
+			selectedSiteId,
 			photonModuleUnavailable,
 			isRequestingSettings,
 			isSavingSettings,
@@ -63,7 +60,7 @@ class SpeedUpSiteSettings extends Component {
 							</InfoPopover>
 						</div>
 						<JetpackModuleToggle
-							siteId={ siteId }
+							siteId={ selectedSiteId }
 							moduleSlug="photon"
 							label={ translate( 'Serve images from our servers' ) }
 							description={ translate(
@@ -85,9 +82,9 @@ class SpeedUpSiteSettings extends Component {
 								</InfoPopover>
 							</div>
 							<JetpackModuleToggle
-								siteId={ siteId }
+								siteId={ selectedSiteId }
 								moduleSlug="lazy-images"
-								label={ translate( '"Lazy-load" images' ) }
+								label={ translate( 'Lazy load images' ) }
 								description={ translate(
 									"Improve your site's speed by only loading images visible on the screen. New images will " +
 										'load just before they scroll into view. This prevents viewers from having to download ' +

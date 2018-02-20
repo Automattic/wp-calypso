@@ -14,8 +14,8 @@
 
 	&.is-pending {
 		background: mix($alert-yellow, $white, 8.5%);
-		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize(lighten($gray, 20%), 0.5),
-			0 1px 2px lighten($gray, 30%);
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px transparentize($gray-lighten-20, 0.5),
+			0 1px 2px $gray-lighten-30;
 	}
 
 	@include breakpoint( '>660px' ) {
@@ -194,16 +194,23 @@
 	}
 
 	.comment__status-label {
-		background: lighten($alert-yellow, 18%);
 		border-radius: 9px;
 		float: right;
 		font-size: 12px;
 		margin-left: 8px;
 		padding: 0 10px;
+
+		&.is-pending {
+			background: lighten($alert-yellow, 18%);
+		}
+		&.is-spam,
+		&.is-trash {
+			background: lighten($alert-red, 18%);
+		}
 	}
 
 	.comment__in-reply-to {
-		border-left: 4px solid lighten($gray, 30%);
+		border-left: 4px solid $gray-lighten-30;
 		color: $gray-text-min;
 		margin-bottom: 16px;
 		overflow: hidden;
@@ -231,6 +238,12 @@
 
 	.comment__content-body *:last-child {
 		margin-bottom: 0;
+	}
+
+	.comment__content-body blockquote {
+		padding: 8px 16px;
+		margin: 8px 0 16px;
+		border-left: 2px solid $gray-lighten-30;
 	}
 }
 
@@ -288,7 +301,7 @@
 
 .comment__actions {
 	align-items: center;
-	border-top: 1px solid lighten($gray, 30%);
+	border-top: 1px solid $gray-lighten-30;
 	display: flex;
 	flex-flow: row;
 	flex-wrap: nowrap;
@@ -358,11 +371,11 @@
 }
 
 .button[disabled].is-borderless.comment__action.is-approved {
-	color: lighten($gray, 30%);
+	color: $gray-lighten-30;
 }
 
 .button[disabled].is-borderless.comment__action:hover {
-	color: lighten($gray, 30%);
+	color: $gray-lighten-30;
 }
 
 // Comment Reply Block
@@ -470,7 +483,7 @@
 }
 
 .comment__edit-header {
-	border-bottom: 1px solid lighten($gray, 30%);
+	border-bottom: 1px solid $gray-lighten-30;
 	padding: 12px 16px;
 }
 
@@ -491,11 +504,11 @@
 	margin: 0 auto;
 
 	&:hover {
-		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 		z-index: z-index('root', '.card.comment.is-bulk-mode:hover');
 	}
 	&.is-pending:hover {
-		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px $gray, 0 2px 4px lighten($gray, 20%);
+		box-shadow: inset 4px 0 0 0 $alert-yellow, 0 0 0 1px $gray, 0 2px 4px $gray-lighten-20;
 	}
 
 	a {
@@ -543,7 +556,7 @@
 	}
 
 	.comment__author-gravatar-placeholder {
-		background-color: lighten($gray, 30%);
+		background-color: $gray-lighten-30;
 		border-radius: 50%;
 		display: block;
 		height: 32px;
@@ -555,7 +568,7 @@
 	}
 
 	.comment__author-info-element {
-		background-color: lighten($gray, 30%);
+		background-color: $gray-lighten-30;
 		color: transparent;
 		height: 16px;
 

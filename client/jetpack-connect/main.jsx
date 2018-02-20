@@ -211,6 +211,7 @@ export class JetpackConnectMain extends Component {
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
+		url = url.replace( /wp-admin\/?$/, '' );
 		return untrailingslashit( url );
 	}
 
@@ -390,9 +391,7 @@ export class JetpackConnectMain extends Component {
 				NOT_JETPACK === status
 					? translate( 'Ready for installation' )
 					: translate( 'Ready for activation' ),
-			headerSubtitle: translate(
-				"We'll need to send you to your site dashboard for a few manual steps."
-			),
+			headerSubtitle: translate( "We'll need you to complete a few manual steps." ),
 			steps:
 				NOT_JETPACK === status
 					? [ 'installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall' ]

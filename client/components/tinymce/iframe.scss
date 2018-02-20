@@ -103,7 +103,7 @@ a img {
 
 .wp-caption-dd {
 	background: $gray-light;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;
@@ -197,9 +197,9 @@ hr {
 	margin: 0;
 	border-radius: 2px;
 	color: $gray-dark;
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 }
 
 .mce-content-body code[data-mce-selected] {
-	background: lighten( $gray, 20% );
+	background: $gray-lighten-20;
 }

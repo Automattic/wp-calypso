@@ -8,7 +8,7 @@ import { get, isEmpty, omit } from 'lodash';
  * Internal dependencies
  */
 import { isStale } from '../utils';
-import { isValidStateWithSchema } from 'state/utils';
+import { withSchemaValidation } from 'state/utils';
 import { JETPACK_CONNECT_AUTHORIZE_TTL } from '../constants';
 import { jetpackConnectAuthorizeSchema } from './schema';
 import {
@@ -22,11 +22,10 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
-	SERIALIZE,
 	SITE_REQUEST_FAILURE,
 } from 'state/action-types';
 
-export default function jetpackConnectAuthorize( state = {}, action ) {
+function jetpackConnectAuthorize( state = {}, action ) {
 	switch ( action.type ) {
 		case JETPACK_CONNECT_AUTHORIZE:
 			return Object.assign( omit( state, 'userData', 'bearerToken' ), {
@@ -106,16 +105,14 @@ export default function jetpackConnectAuthorize( state = {}, action ) {
 			return {};
 
 		case DESERIALIZE:
-			return isValidStateWithSchema( state, jetpackConnectAuthorizeSchema ) &&
-				! isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL )
-				? state
-				: {};
+			if ( isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ) {
+				return {};
+			}
+			return state;
 
-		case SERIALIZE:
+		default:
 			return state;
 	}
-
-	return state;
 }
 
-jetpackConnectAuthorize.hasCustomPersistence = true;
+export default withSchemaValidation( jetpackConnectAuthorizeSchema, jetpackConnectAuthorize );

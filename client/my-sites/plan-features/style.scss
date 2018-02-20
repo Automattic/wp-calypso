@@ -178,7 +178,7 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	align-items: flex-start;
 	padding: 12px 24px 0 15px;
-	border-bottom: solid 2px lighten( $gray, 20% );
+	border-bottom: solid 2px $gray-lighten-20;
 	background-color: $white;
 
 	@include breakpoint( "<960px" ) {

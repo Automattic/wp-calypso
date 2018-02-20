@@ -79,11 +79,22 @@ export class RewindCredentialsForm extends Component {
 			...this.state.form,
 		};
 
+		let userError = '';
+
+		if ( ! payload.user ) {
+			userError = translate( 'Please enter your server username.' );
+		} else if ( 'root' === payload.user ) {
+			userError = translate(
+				"We can't accept credentials for the root user. " +
+					'Please provide or create credentials for another user with access to your server.'
+			);
+		}
+
 		const errors = Object.assign(
 			! payload.host && { host: translate( 'Please enter a valid server address.' ) },
 			! payload.port && { port: translate( 'Please enter a valid server port.' ) },
 			isNaN( payload.port ) && { port: translate( 'Port number must be numeric.' ) },
-			! payload.user && { user: translate( 'Please enter your server username.' ) },
+			userError && { user: userError },
 			! payload.pass &&
 				! payload.kpri && { pass: translate( 'Please enter your server password.' ) }
 		);
@@ -105,8 +116,7 @@ export class RewindCredentialsForm extends Component {
 		const nextForm = Object.assign( {}, this.state.form );
 
 		// Populate the fields with data from state if credentials are already saved
-		nextForm.protocol =
-			isEmpty( nextForm.protocol ) && credentials ? credentials.protocol : nextForm.protocol;
+		nextForm.protocol = credentials ? credentials.type : nextForm.protocol;
 		nextForm.host = isEmpty( nextForm.host ) && credentials ? credentials.host : nextForm.host;
 		nextForm.port = isEmpty( nextForm.port ) && credentials ? credentials.port : nextForm.port;
 		nextForm.user = isEmpty( nextForm.user ) && credentials ? credentials.user : nextForm.user;
@@ -136,8 +146,7 @@ export class RewindCredentialsForm extends Component {
 						onChange={ this.handleFieldChange }
 						disabled={ formIsSubmitting }
 					>
-						<option value="ssh">{ translate( 'SSH' ) }</option>
-						<option value="sftp">{ translate( 'SFTP' ) }</option>
+						<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
 						<option value="ftp">{ translate( 'FTP' ) }</option>
 					</FormSelect>
 				</FormFieldset>
@@ -207,15 +216,16 @@ export class RewindCredentialsForm extends Component {
 						disabled={ formIsSubmitting }
 						onClick={ this.toggleAdvancedSettings }
 						borderless={ true }
+						primary={ true }
 						className="rewind-credentials-form__advanced-button"
 					>
 						{ translate( 'Advanced settings' ) }
 					</Button>
 					{ showAdvancedSettings && (
-						<div>
+						<div className="rewind-credentials-form__advanced-settings">
 							<FormFieldset className="rewind-credentials-form__path">
 								<FormLabel htmlFor="wordpress-path">
-									{ translate( 'WordPress Installation Path' ) }
+									{ translate( 'WordPress installation path' ) }
 								</FormLabel>
 								<FormTextInput
 									name="path"
@@ -238,6 +248,9 @@ export class RewindCredentialsForm extends Component {
 									disabled={ formIsSubmitting }
 									className="rewind-credentials-form__private-key"
 								/>
+								<p className="form-setting-explanation">
+									{ translate( 'Only non-encrypted private keys are supported.' ) }
+								</p>
 							</FormFieldset>
 						</div>
 					) }

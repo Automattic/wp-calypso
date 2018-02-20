@@ -603,25 +603,20 @@ export class JetpackAuthorize extends Component {
 			</LoggedOutFormLinkItem>
 		);
 
-		if ( this.retryingAuth || isAuthorizing || this.redirecting ) {
+		if ( this.retryingAuth || isAuthorizing || authorizeSuccess || this.redirecting ) {
 			return null;
-		}
-
-		if ( authorizeSuccess ) {
-			return (
-				<LoggedOutFormLinks>
-					{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-					<LoggedOutFormLinkItem href={ this.getRedirectionTarget() }>
-						{ translate( "I'm not interested in upgrades" ) }
-					</LoggedOutFormLinkItem>
-				</LoggedOutFormLinks>
-			);
 		}
 
 		return (
 			<LoggedOutFormLinks>
 				{ this.isWaitingForConfirmation() ? backToWpAdminLink : null }
-				<LoggedOutFormLinkItem href={ login( { redirectTo: window.location.href } ) }>
+				<LoggedOutFormLinkItem
+					href={ login( {
+						isJetpack: true,
+						isNative: config.isEnabled( 'login/native-login-links' ),
+						redirectTo: window.location.href,
+					} ) }
+				>
 					{ translate( 'Sign in as a different user' ) }
 				</LoggedOutFormLinkItem>
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
@@ -635,12 +630,12 @@ export class JetpackAuthorize extends Component {
 	}
 
 	renderStateAction() {
-		const { authorizeSuccess, siteReceived } = this.props.authorizationData;
+		const { authorizeSuccess } = this.props.authorizationData;
 		if (
 			this.props.isFetchingAuthorizationSite ||
 			this.isAuthorizing() ||
 			this.retryingAuth ||
-			( authorizeSuccess && ! siteReceived )
+			authorizeSuccess
 		) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">

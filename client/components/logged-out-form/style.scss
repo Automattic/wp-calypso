@@ -6,7 +6,7 @@
 
 .logged-out-form__footer {
 	background: lighten( $gray, 34% );
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 	box-shadow: none;
 	margin: 0 -16px -16px -16px;
 	padding: 16px;
@@ -30,8 +30,8 @@
 }
 
 .logged-out-form__link-item {
-	border-bottom: 1px solid lighten( $gray, 20% );
-	color: darken( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
+	color: $gray-darken-20;
 	display: block;
 	font-family: $sans;
 	font-size: 14px;
@@ -44,7 +44,7 @@
 	}
 
 	&:visited {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 	}
 
 	&:hover {

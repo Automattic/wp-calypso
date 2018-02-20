@@ -172,6 +172,7 @@ class AnnualSiteStats extends Component {
 					{ isWidget && previousYearData && this.renderWidgetContent( previousYearData, strings ) }
 					{ ! isWidget && years && this.renderTable( years, strings ) }
 					{ isWidget &&
+						years &&
 						years.length && (
 							<div className="module-expand">
 								<a href={ viewAllLink }>

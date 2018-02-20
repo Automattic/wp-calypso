@@ -55,7 +55,7 @@ export class CommentContent extends Component {
 		const {
 			commentContent,
 			commentId,
-			commentIsPending,
+			commentStatus,
 			isBulkMode,
 			isParentCommentLoaded,
 			isPostView,
@@ -82,10 +82,16 @@ export class CommentContent extends Component {
 
 				{ ! isBulkMode && (
 					<div className="comment__content-full">
-						{ ( commentIsPending || parentCommentContent || ! isPostView ) && (
+						{ ( parentCommentContent || ! isPostView || 'approved' !== commentStatus ) && (
 							<div className="comment__content-info">
-								{ commentIsPending && (
-									<div className="comment__status-label">{ translate( 'Pending' ) }</div>
+								{ 'unapproved' === commentStatus && (
+									<div className="comment__status-label is-pending">{ translate( 'Pending' ) }</div>
+								) }
+								{ 'spam' === commentStatus && (
+									<div className="comment__status-label is-spam">{ translate( 'Spam' ) }</div>
+								) }
+								{ 'trash' === commentStatus && (
+									<div className="comment__status-label is-trash">{ translate( 'Trash' ) }</div>
 								) }
 
 								{ ! isPostView && <CommentPostLink { ...{ commentId, isBulkMode } } /> }
@@ -127,7 +133,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 
 	return {
 		commentContent: get( comment, 'content' ),
-		commentIsPending: 'unapproved' === get( comment, 'status' ),
+		commentStatus: get( comment, 'status' ),
 		isJetpack,
 		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,

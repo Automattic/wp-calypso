@@ -11,7 +11,13 @@ import React from 'react';
  */
 import LoginBlock from 'blocks/login';
 
-const LoginExample = () => <LoginBlock title={ 'Sign in to connect to WordPress.com' } />;
+const LoginExample = () => (
+	<React.Fragment>
+		<LoginBlock disableAutoFocus />
+		<p />
+		<LoginBlock disableAutoFocus isJetpack />
+	</React.Fragment>
+);
 
 LoginExample.displayName = 'Login';
 

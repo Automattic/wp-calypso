@@ -10,7 +10,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { settingsSchema, systemSchema } from './schema';
 
 import {
@@ -32,23 +32,11 @@ const UNPERSISTED_SYSTEM_NODES = [ 'apiReady', 'authorized', 'authorizationLoade
 function system( state = {}, action ) {
 	switch ( action.type ) {
 		// System state is not persisted
-		case DESERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
-			if ( isValidStateWithSchema( newState, systemSchema ) ) {
-				return newState;
-			}
-			debug( 'INVALID system state during DESERIALIZE', newState );
-			return {};
-		}
+		case DESERIALIZE:
+			return omit( state, UNPERSISTED_SYSTEM_NODES );
 
-		case SERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SYSTEM_NODES );
-			if ( isValidStateWithSchema( newState, systemSchema ) ) {
-				return newState;
-			}
-			debug( 'INVALID system state during SERIALIZE', newState );
-			return {};
-		}
+		case SERIALIZE:
+			return omit( state, UNPERSISTED_SYSTEM_NODES );
 
 		case PUSH_NOTIFICATIONS_API_READY: {
 			debug( 'API is ready' );
@@ -110,7 +98,7 @@ function system( state = {}, action ) {
 
 	return state;
 }
-system.hasCustomPersistence = true;
+system.schema = systemSchema;
 
 // If you change this, also change the corresponding test
 const UNPERSISTED_SETTINGS_NODES = [
@@ -118,28 +106,14 @@ const UNPERSISTED_SETTINGS_NODES = [
 	'showingUnblockInstructions',
 ];
 
-function settings( state = {}, action ) {
+function settings( state = { enabled: false }, action ) {
 	switch ( action.type ) {
 		case DESERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
-			if ( isValidStateWithSchema( newState, settingsSchema ) ) {
-				return newState;
-			}
-			debug( 'INVALID settings state during DESERIALIZE', newState );
-			return {
-				enabled: false,
-			};
+			return omit( state, UNPERSISTED_SETTINGS_NODES );
 		}
 
 		case SERIALIZE: {
-			const newState = omit( state, UNPERSISTED_SETTINGS_NODES );
-			if ( isValidStateWithSchema( newState, settingsSchema ) ) {
-				return newState;
-			}
-			debug( 'INVALID settings state during SERIALIZE', newState );
-			return {
-				enabled: false,
-			};
+			return omit( state, UNPERSISTED_SETTINGS_NODES );
 		}
 
 		case PUSH_NOTIFICATIONS_TOGGLE_ENABLED: {
@@ -163,7 +137,7 @@ function settings( state = {}, action ) {
 
 	return state;
 }
-settings.hasCustomPersistence = true;
+settings.schema = settingsSchema;
 
 export default combineReducers( {
 	settings,

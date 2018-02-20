@@ -9,6 +9,7 @@ import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
 export function login( {
+	isJetpack,
 	isNative,
 	locale,
 	redirectTo,
@@ -25,14 +26,12 @@ export function login( {
 
 		if ( socialService ) {
 			url += '/' + socialService + '/callback';
-		}
-
-		if ( twoFactorAuthType ) {
+		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
-		}
-
-		if ( socialConnect ) {
+		} else if ( socialConnect ) {
 			url += '/social-connect';
+		} else if ( isJetpack ) {
+			url += '/jetpack';
 		}
 	}
 

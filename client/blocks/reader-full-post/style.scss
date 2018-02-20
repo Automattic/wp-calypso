@@ -80,7 +80,7 @@
 	z-index: z-index( '.masterbar', '.reader-visit-site' );
 
 	.external-link .gridicons-external {
-		fill: darken( $gray, 10% );
+		fill: $gray-darken-10;
 		top: 5px;
 
 		@include breakpoint( ">660px" ) {
@@ -93,7 +93,7 @@
 	}
 
 	.external-link {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 		display: block;
 		padding: 10px 10px 15px 6px;
 

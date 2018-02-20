@@ -45,6 +45,7 @@ import ExternalLink from 'components/external-link/docs/example';
 import FAQ from 'components/faq/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
+import FocusableExample from 'components/focusable/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
 import FormFields from 'components/forms/docs/example';
@@ -159,6 +160,7 @@ class DesignAssets extends React.Component {
 					<FAQ readmeFilePath="faq" />
 					<FeatureGate readmeFilePath="feature-example" />
 					<FilePickers readmeFilePath="file-picker" />
+					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />

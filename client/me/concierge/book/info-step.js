@@ -16,17 +16,19 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
 import Timezone from 'components/timezone';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
-import { getConciergeSignupForm } from 'state/selectors';
+import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class InfoStep extends Component {
 	static propTypes = {
 		signupForm: PropTypes.object,
+		userSettings: PropTypes.object,
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
@@ -43,19 +45,28 @@ class InfoStep extends Component {
 	};
 
 	canSubmitForm = () => {
-		const { signupForm } = this.props;
-		if ( ! signupForm.message ) {
-			return false;
-		}
-		return !! signupForm.message.trim();
+		const { signupForm: { firstname, message } } = this.props;
+
+		return !! firstname.trim() && !! message.trim();
 	};
 
 	componentDidMount() {
+		const { userSettings, signupForm: { firstname, lastname } } = this.props;
+
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
+
+		if ( ! firstname && ! lastname ) {
+			// Prefill the firstname & lastname fields by user settings.
+			this.props.updateConciergeSignupForm( {
+				...this.props.signupForm,
+				firstname: userSettings.first_name,
+				lastname: userSettings.last_name,
+			} );
+		}
 	}
 
 	render() {
-		const { signupForm: { message, timezone }, translate } = this.props;
+		const { signupForm: { firstname, lastname, message, timezone }, translate } = this.props;
 
 		return (
 			<div>
@@ -65,6 +76,24 @@ class InfoStep extends Component {
 				</CompactCard>
 
 				<CompactCard>
+					<FormFieldset>
+						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
+						<FormTextInput
+							name="firstname"
+							placeholder={ translate( 'What may we call you?' ) }
+							onChange={ this.setFieldValue }
+							value={ firstname }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="lastname">{ translate( 'Last Name' ) }</FormLabel>
+						<FormTextInput
+							name="lastname"
+							placeholder={ translate( 'Optionally, please tell us your last name.' ) }
+							onChange={ this.setFieldValue }
+							value={ lastname }
+						/>
+					</FormFieldset>
 					<FormFieldset>
 						<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
 						<Timezone
@@ -83,7 +112,10 @@ class InfoStep extends Component {
 							{ translate( 'What are you hoping to accomplish with your site?' ) }
 						</FormLabel>
 						<FormTextarea
-							placeholder={ translate( 'Please be descriptive' ) }
+							placeholder={ translate(
+								'Sell products and services? Generate leads? Something else entirely?' +
+									" Be as specific as you can! It helps us provide the information you're looking for."
+							) }
 							name="message"
 							onChange={ this.setFieldValue }
 							value={ message }
@@ -107,6 +139,7 @@ class InfoStep extends Component {
 export default connect(
 	state => ( {
 		signupForm: getConciergeSignupForm( state ),
+		userSettings: getUserSettings( state ),
 	} ),
 	{
 		updateConciergeSignupForm,

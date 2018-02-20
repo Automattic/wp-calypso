@@ -37,7 +37,7 @@
 .spinner.is-fallback {
 	position: relative;
 	border-radius: 100%;
-	background-color: lighten( $gray, 20% );
+	background-color: $gray-lighten-20;
 
 	&::before,
 	&::after {
@@ -67,7 +67,7 @@
 }
 
 .spinner__border {
-	fill: lighten( $gray, 20% );
+	fill: $gray-lighten-20;
 }
 
 .spinner__progress {

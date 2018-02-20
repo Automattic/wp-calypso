@@ -3,7 +3,7 @@
 .disconnect-jetpack {
 	text-align: center;
 	max-width: 400px;
-	color: darken($gray, 20%);
+	color: $gray-darken-20;
 
 	.disconnect-jetpack__header {
 		color: $gray-dark;
@@ -17,7 +17,7 @@
 }
 
 .disconnect-jetpack__highlight {
-	color: darken($gray, 10%);
+	color: $gray-darken-10;
 	margin-bottom: 1.5em;
 	font-size: 16px;
 }
@@ -67,7 +67,7 @@
 
 .disconnect-jetpack-dialog__dialog__action-buttons {
 	overflow: hidden;
-	border-top: 1px solid lighten($gray, 30%);
+	border-top: 1px solid $gray-lighten-30;
 	padding: 16px;
 	margin: 0 -24px -24px;
 	text-align: right;

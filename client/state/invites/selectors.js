@@ -3,7 +3,12 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, find } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import treeSelect from 'lib/tree-select';
 
 /**
  * Returns true if currently requesting invites for the given site, or false
@@ -18,19 +23,35 @@ export function isRequestingInvitesForSite( state, siteId ) {
 }
 
 /**
- * Returns an array of all invite objects known for the given site, or `null`
- * if there is no data for that site.
+ * Returns an array of all pending invite objects known for the given site, or
+ * `null` if there is no data for that site.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?Array}         The list of invite objects for the given site
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @return {?Array}        The list of pending invites for the given site
  */
-export function getInvitesForSite( state, siteId ) {
+export function getPendingInvitesForSite( state, siteId ) {
 	const invites = state.invites.items[ siteId ];
 	if ( ! invites ) {
 		return null;
 	}
-	return invites;
+	return invites.pending;
+}
+
+/**
+ * Returns an array of all accepted invite objects known for the given site, or
+ * `null` if there is no data for that site.
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @return {?Array}        The list of accepted invites for the given site
+ */
+export function getAcceptedInvitesForSite( state, siteId ) {
+	const invites = state.invites.items[ siteId ];
+	if ( ! invites ) {
+		return null;
+	}
+	return invites.accepted;
 }
 
 /**
@@ -45,6 +66,29 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
 }
 
 /**
+ * Returns an invite object for the given site and invite ID, or `null` if no
+ * invite with the given ID exists for the site.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {?Object}          Invite object (if found)
+ */
+export const getInviteForSite = treeSelect(
+	( state, siteId ) => [ state.invites.items[ siteId ] ],
+	( [ siteInvites ], siteId, inviteId ) => {
+		if ( ! siteInvites ) {
+			return null;
+		}
+		return (
+			find( siteInvites.pending, { key: inviteId } ) ||
+			find( siteInvites.accepted, { key: inviteId } ) ||
+			null
+		);
+	}
+);
+
+/**
  * Returns true if currently requesting an invite resend for the given site and
  * invite ID, or false otherwise.
  *
@@ -53,7 +97,7 @@ export function getNumberOfInvitesFoundForSite( state, siteId ) {
  * @param  {String}  inviteId Invite ID
  * @return {Boolean}          Whether invites resend is being requested
  */
-export function isRequestingResend( state, siteId, inviteId ) {
+export function isRequestingInviteResend( state, siteId, inviteId ) {
 	return 'requesting' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
 }
 
@@ -66,6 +110,32 @@ export function isRequestingResend( state, siteId, inviteId ) {
  * @param  {String}  inviteId Invite ID
  * @return {Boolean}          Whether invite resend was a success
  */
-export function didResendSucceed( state, siteId, inviteId ) {
+export function didInviteResendSucceed( state, siteId, inviteId ) {
 	return 'success' === get( state, [ 'invites', 'requestingResend', siteId, inviteId ], false );
+}
+
+/**
+ * Returns true if currently deleting an invite for the given site and
+ * invite ID, or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {Boolean}          Whether invites resend is being requested
+ */
+export function isDeletingInvite( state, siteId, inviteId ) {
+	return 'requesting' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
+}
+
+/**
+ * Returns true if the invite for the given site and invite ID was successfully
+ * deleted, or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  inviteId Invite ID
+ * @return {Boolean}          Whether invites resend is being requested
+ */
+export function didInviteDeletionSucceed( state, siteId, inviteId ) {
+	return 'success' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
 }

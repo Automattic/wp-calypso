@@ -3,13 +3,16 @@
 /**
  * External dependencies
  */
-import { pick } from 'lodash';
+import { includes, map, pick, zipObject } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
 import {
+	INVITES_DELETE_REQUEST,
+	INVITES_DELETE_REQUEST_FAILURE,
+	INVITES_DELETE_REQUEST_SUCCESS,
 	INVITES_REQUEST,
 	INVITES_REQUEST_FAILURE,
 	INVITES_REQUEST_SUCCESS,
@@ -53,24 +56,59 @@ export const items = createReducer(
 	{},
 	{
 		[ INVITES_REQUEST_SUCCESS ]: ( state, action ) => {
+			// Invites are returned from the API in descending order by
+			// `invite_date`, which is what we want here.
+
+			const siteInvites = { pending: [], accepted: [] };
+			action.invites.forEach( invite => {
+				// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
+				const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
+				const invitedBy = pick( invite.invited_by, 'name', 'login', 'avatar_URL' );
+				const inviteForState = {
+					key: invite.invite_key,
+					role: invite.role,
+					isPending: invite.is_pending,
+					inviteDate: invite.invite_date,
+					acceptedDate: invite.accepted_date,
+					user,
+					invitedBy,
+				};
+
+				if ( inviteForState.isPending ) {
+					siteInvites.pending.push( inviteForState );
+				} else {
+					siteInvites.accepted.push( inviteForState );
+				}
+			} );
+
 			return {
 				...state,
-				[ action.siteId ]: action.invites.map( invite => {
-					// Not renaming `avatar_URL` because it is used as-is by <Gravatar>
-					const user = pick( invite.user, 'login', 'email', 'name', 'avatar_URL' );
-
-					return {
-						key: invite.invite_key,
-						role: invite.role,
-						isPending: invite.is_pending,
-						user,
-					};
-				} ),
+				[ action.siteId ]: siteInvites,
+			};
+		},
+		[ INVITES_DELETE_REQUEST_SUCCESS ]: ( state, action ) => {
+			return {
+				...state,
+				[ action.siteId ]: {
+					accepted: deleteInvites( state[ action.siteId ].accepted, action.inviteIds ),
+					pending: deleteInvites( state[ action.siteId ].pending, action.inviteIds ),
+				},
 			};
 		},
 	},
 	inviteItemsSchema
 );
+
+/**
+ * Returns an array of site invites, without the deleted invite objects.
+ *
+ * @param  {Array} siteInvites      Array of invite objects.
+ * @param  {Array} invitesToDelete  Array of invite keys to remove.
+ * @return {Array}                  Updated array of invite objects.
+ */
+function deleteInvites( siteInvites, invitesToDelete ) {
+	return siteInvites.filter( siteInvite => ! includes( invitesToDelete, siteInvite.key ) );
+}
 
 /**
  * Tracks the total number of invites the API says a given siteId has.
@@ -95,7 +133,7 @@ export const counts = createReducer(
 /**
  * Returns the updated site invites resend requests state after an action has been
  * dispatched. The state reflects an object keyed by site ID, consisting of requested
- * resend invite IDs, with a boolean representing request status.
+ * resend invite IDs, with a string representing request status.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -104,24 +142,61 @@ export const counts = createReducer(
 export function requestingResend( state = {}, action ) {
 	switch ( action.type ) {
 		case INVITE_RESEND_REQUEST:
-			const requestingActions = Object.assign( {}, state[ action.siteId ], {
+			const inviteResendRequests = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'requesting',
 			} );
-			return Object.assign( {}, state, { [ action.siteId ]: requestingActions } );
+			return Object.assign( {}, state, { [ action.siteId ]: inviteResendRequests } );
 		case INVITE_RESEND_REQUEST_SUCCESS:
-			const successActions = Object.assign( {}, state[ action.siteId ], {
+			const inviteResendSuccesses = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'success',
 			} );
-			return Object.assign( {}, state, { [ action.siteId ]: successActions } );
+			return Object.assign( {}, state, { [ action.siteId ]: inviteResendSuccesses } );
 		case INVITE_RESEND_REQUEST_FAILURE: {
-			const failureActions = Object.assign( {}, state[ action.siteId ], {
+			const inviteResendFailures = Object.assign( {}, state[ action.siteId ], {
 				[ action.inviteId ]: 'failure',
 			} );
-			return Object.assign( {}, state, { [ action.siteId ]: failureActions } );
+			return Object.assign( {}, state, { [ action.siteId ]: inviteResendFailures } );
 		}
 	}
 
 	return state;
 }
 
-export default combineReducers( { requesting, items, counts, requestingResend } );
+/**
+ * Returns the updated site invites deletion requests state after an action has been
+ * dispatched. The state reflects an object keyed by site ID, consisting of requested
+ * invite IDs to delete, with a string representing request status.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ */
+export function deleting( state = {}, action ) {
+	switch ( action.type ) {
+		case INVITES_DELETE_REQUEST:
+			const inviteDeletionRequests = Object.assign(
+				{},
+				state[ action.siteId ],
+				zipObject( action.inviteIds, map( action.inviteIds, () => 'requesting' ) )
+			);
+			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionRequests } );
+		case INVITES_DELETE_REQUEST_FAILURE:
+			const inviteDeletionFailures = Object.assign(
+				{},
+				state[ action.siteId ],
+				zipObject( action.inviteIds, map( action.inviteIds, () => 'failure' ) )
+			);
+			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionFailures } );
+		case INVITES_DELETE_REQUEST_SUCCESS:
+			const inviteDeletionSuccesses = Object.assign(
+				{},
+				state[ action.siteId ],
+				zipObject( action.inviteIds, map( action.inviteIds, () => 'success' ) )
+			);
+			return Object.assign( {}, state, { [ action.siteId ]: inviteDeletionSuccesses } );
+	}
+
+	return state;
+}
+
+export default combineReducers( { requesting, items, counts, requestingResend, deleting } );

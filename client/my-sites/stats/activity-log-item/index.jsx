@@ -14,6 +14,8 @@ import { localize } from 'i18n-calypso';
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import Gridicon from 'gridicons';
+import HappychatButton from 'components/happychat/button';
 import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
@@ -72,19 +74,23 @@ class ActivityLogItem extends Component {
 	}
 
 	renderItemAction() {
-		const {
-			createBackup,
-			createRewind,
-			disableRestore,
-			disableBackup,
-			hideRestore,
-			translate,
-			activity: { activityIsRewindable },
-		} = this.props;
+		const { hideRestore, activity: { activityIsRewindable, activityName } } = this.props;
 
-		if ( hideRestore || ! activityIsRewindable ) {
-			return null;
+		switch ( activityName ) {
+			case 'rewind__scan_result_found':
+				return this.renderHelpAction( this.props.trackHelpThreat );
+
+			case 'rewind__backup_error':
+				return this.renderHelpAction( this.props.trackHelpBackupFail );
 		}
+
+		if ( ! hideRestore && activityIsRewindable ) {
+			return this.renderRewindAction();
+		}
+	}
+
+	renderRewindAction() {
+		const { createBackup, createRewind, disableRestore, disableBackup, translate } = this.props;
 
 		return (
 			<div className="activity-log-item__action">
@@ -106,6 +112,27 @@ class ActivityLogItem extends Component {
 					</PopoverMenuItem>
 				</SplitButton>
 			</div>
+		);
+	}
+
+	/**
+	 * Displays a button for users to get help. Tracks button click based on the function passed.
+	 *
+	 * @param {function} trackHelp Method to call and track the button click.
+	 * @returns {Object} Get help button.
+	 */
+	renderHelpAction( trackHelp ) {
+		const { translate } = this.props;
+
+		return (
+			<HappychatButton
+				className="activity-log-item__help-action"
+				borderless={ false }
+				onClick={ trackHelp }
+			>
+				<Gridicon icon="chat" size={ 18 } />
+				{ translate( 'Get Help' ) }
+			</HappychatButton>
 		);
 	}
 
@@ -255,6 +282,8 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
+	trackHelpThreat: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
+	trackHelpBackupFail: () => recordTracksEvent( 'calypso_activitylog_backup_fail_get_help' ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );

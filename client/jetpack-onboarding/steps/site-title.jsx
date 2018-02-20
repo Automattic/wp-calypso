@@ -24,8 +24,8 @@ import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions'
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
-		blogname: get( this.props.settings, 'siteTitle' ),
-		blogdescription: get( this.props.settings, 'siteDescription' ),
+		blogname: this.getFieldValue( 'siteTitle' ),
+		blogdescription: this.getFieldValue( 'siteDescription' ),
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -35,6 +35,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				blogdescription: nextProps.settings.siteDescription,
 			} );
 		}
+	}
+
+	getFieldValue( fieldName ) {
+		return get( this.props.settings, fieldName );
 	}
 
 	handleChange = ( { blogname, blogdescription } ) => {
@@ -47,15 +51,21 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			return;
 		}
 
+		this.props.recordJpoEvent( 'calypso_jpo_site_title_submitted', {
+			title_changed: this.state.blogname !== this.getFieldValue( 'siteTitle' ),
+			description_changed: this.state.blogdescription !== this.getFieldValue( 'siteDescription' ),
+		} );
+
 		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
 			siteTitle: this.state.blogname,
 			siteDescription: this.state.blogdescription,
 		} );
+
 		page( this.props.getForwardUrl() );
 	};
 
 	render() {
-		const { isRequestingSettings, translate } = this.props;
+		const { basePath, isRequestingSettings, translate } = this.props;
 		const headerText = translate( "Let's get started." );
 		const subHeaderText = translate(
 			'First up, what would you like to name your site and have as its public description?'
@@ -63,10 +73,10 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Onboarding' ) } />
+				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Start' ) } />
 				<PageViewTracker
-					path={ '/jetpack/onboarding/' + STEPS.SITE_TITLE + '/:site' }
-					title="Site Title ‹ Jetpack Onboarding"
+					path={ [ basePath, STEPS.SITE_TITLE, ':site' ].join( '/' ) }
+					title="Site Title ‹ Jetpack Start"
 				/>
 
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
@@ -75,8 +85,8 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					<form onSubmit={ this.handleSubmit }>
 						<SiteTitle
 							autoFocusBlogname
-							blogname={ this.state.blogname }
-							blogdescription={ this.state.blogdescription }
+							blogname={ this.state.blogname || '' }
+							blogdescription={ this.state.blogdescription || '' }
 							disabled={ isRequestingSettings }
 							isBlognameRequired
 							onChange={ this.handleChange }
@@ -92,7 +102,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					</form>
 				</Card>
 
-				<JetpackOnboardingDisclaimer />
+				<JetpackOnboardingDisclaimer recordJpoEvent={ this.props.recordJpoEvent } />
 			</div>
 		);
 	}

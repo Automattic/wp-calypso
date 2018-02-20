@@ -1,7 +1,7 @@
 .editor-sidebar {
 	@extend .sidebar;
 	z-index: z-index( 'root', '.editor-sidebar' );
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
@@ -71,7 +71,7 @@
 
 .editor-sidebar__header {
 	align-items: center;
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	color: $gray-dark;
 	display: flex;
 	flex-shrink: 0;

@@ -35,7 +35,7 @@ exports[`JetpackSignup should render 1`] = `
       footerLink={
         <LoggedOutFormLinks>
           <LoggedOutFormLinkItem
-            href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
+            href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
@@ -44,7 +44,7 @@ exports[`JetpackSignup should render 1`] = `
           />
         </LoggedOutFormLinks>
       }
-      redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
+      redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
       submitButtonText="Sign Up and Connect Jetpack"
       submitForm={[Function]}
       submitting={false}
@@ -61,7 +61,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
   <div
     className="jetpack-connect__authorize-form"
   >
-    <LocaleSuggestions
+    <Connect(LocaleSuggestions)
       locale="es"
       path="/jetpack/connect/authorize/es"
     />
@@ -93,7 +93,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
       footerLink={
         <LoggedOutFormLinks>
           <LoggedOutFormLinkItem
-            href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
+            href="/log-in/jetpack/es?redirect_to=https%3A%2F%2Fexample.com%2F&email_address=email%40an.example.site"
           >
             Already have an account? Sign in
           </LoggedOutFormLinkItem>
@@ -102,7 +102,8 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
           />
         </LoggedOutFormLinks>
       }
-      redirectToAfterLoginUrl="!! THIS PROP IS REQUIRED BUT UNUSED !!"
+      locale="es"
+      redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
       submitButtonText="Sign Up and Connect Jetpack"
       submitForm={[Function]}
       submitting={false}

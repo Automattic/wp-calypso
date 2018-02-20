@@ -12,13 +12,28 @@ import sinon from 'sinon';
 import PostListFactory from '../';
 import PostListStore from '../feed-stream';
 import FeedStreamCache from '../feed-stream-cache';
-import FeedPostStore from 'lib/feed-post-store';
 jest.mock( 'lib/analytics', () => ( {} ) );
 jest.mock( 'lib/data-poller', () => require( './mocks/lib/data-poller' ) );
 jest.mock( 'lib/post-normalizer', () => require( './mocks/lib/post-normalizer' ) );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 jest.mock( 'reader/stats', () => ( {
 	recordTrack: require( 'sinon' ).spy(),
+} ) );
+jest.mock( 'lib/redux-bridge', () => ( {
+	reduxGetState: function() {
+		return {
+			reader: {
+				posts: {
+					items: {
+						[ 1 ]: { feed_ID: 1, feed_item_ID: 1 },
+						[ 2 ]: { feed_ID: 1, feed_item_ID: 2 },
+						[ 3 ]: { feed_ID: 1, feed_item_ID: 3, _state: 'error' },
+						[ 4 ]: { feed_ID: 1, feed_item_ID: 4 },
+					},
+				},
+			},
+		};
+	},
 } ) );
 
 describe( 'FeedPostList', () => {
@@ -75,8 +90,6 @@ describe( 'FeedPostList', () => {
 
 		describe( 'updates', () => {
 			beforeEach( () => {
-				const feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
-				feedPostStoreStub.returns( { date: '1999-12-31T23:58:00' } );
 				store.receiveUpdates( 'test', null, {
 					date_range: {
 						before: '1999-12-31T23:59:59',
@@ -84,10 +97,6 @@ describe( 'FeedPostList', () => {
 					},
 					posts: [ { feed_ID: 1, ID: 1 }, { feed_ID: 2, ID: 2 } ],
 				} );
-			} );
-
-			afterEach( () => {
-				FeedPostStore.get.restore();
 			} );
 
 			test( 'should receive updates', () => {
@@ -132,10 +141,9 @@ describe( 'FeedPostList', () => {
 	} );
 
 	describe( 'Selected index', () => {
-		let fetcherStub, store, feedPostStoreStub, fakePosts;
+		let fetcherStub, store, fakePosts;
 		beforeEach( () => {
 			fetcherStub = sinon.stub();
-			feedPostStoreStub = sinon.stub( FeedPostStore, 'get' );
 			store = new PostListStore( {
 				id: 'test',
 				fetcher: fetcherStub,
@@ -144,15 +152,12 @@ describe( 'FeedPostList', () => {
 				},
 			} );
 			fakePosts = [
-				{ feed_ID: 1, ID: 1 },
-				{ feed_ID: 1, ID: 2 },
-				{ feed_ID: 1, ID: 3 },
-				{ feed_ID: 1, ID: 4 },
+				{ feedId: 1, postId: 1 },
+				{ feedId: 1, postId: 2 },
+				{ feedId: 1, postId: 3 },
+				{ feedId: 1, postId: 4 },
 			];
 			store.receivePage( 'test', null, { posts: fakePosts } );
-		} );
-		afterEach( () => {
-			FeedPostStore.get.restore();
 		} );
 
 		test( 'should initially have nothing selected', () => {
@@ -160,49 +165,29 @@ describe( 'FeedPostList', () => {
 		} );
 
 		test( 'should select the next item', () => {
-			feedPostStoreStub.returns( {} );
-			store.selectItem( { feed_ID: 1, ID: 1 } );
+			store.selectItem( fakePosts[ 0 ] );
 			store.selectNextItem();
 			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 		} );
 
 		test( 'should select the next valid post', () => {
-			feedPostStoreStub
-				.onCall( 0 )
-				.returns( {} )
-				.onCall( 1 )
-				.returns( { _state: 'error' } )
-				.onCall( 2 )
-				.returns( { _state: 'minimal' } )
-				.onCall( 3 )
-				.returns( {} )
-				.onCall( 4 )
-				.returns( {} );
-			store.selectItem( { feed_ID: 1, ID: 1 } );
+			store.selectItem( fakePosts[ 1 ] );
 			store.selectNextItem();
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 4 } );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 3 ] );
 		} );
 
 		test( 'should select the prev item', () => {
-			feedPostStoreStub.returns( {} );
-			store.selectItem( { feed_ID: 1, ID: 3 } );
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
+			store.selectItem( fakePosts[ 1 ] );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 			store.selectPrevItem();
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 2 } );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 0 ] );
 		} );
 
 		test( 'should select the prev valid post', () => {
-			feedPostStoreStub
-				.onCall( 0 )
-				.returns( {} )
-				.onCall( 1 )
-				.returns( { _state: 'error' } )
-				.onCall( 2 )
-				.returns( {} );
-			store.selectItem( { feed_ID: 1, ID: 3 } );
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 3 } );
+			store.selectItem( fakePosts[ 3 ] );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 3 ] );
 			store.selectPrevItem();
-			expect( store.getSelectedPostKey() ).to.eql( { feed_ID: 1, ID: 1 } );
+			expect( store.getSelectedPostKey() ).to.eql( fakePosts[ 1 ] );
 		} );
 	} );
 
@@ -210,7 +195,6 @@ describe( 'FeedPostList', () => {
 		let fetcherStub, store, posts, filteredPosts, xPostedTo;
 		beforeEach( () => {
 			fetcherStub = sinon.stub();
-			sinon.stub( FeedPostStore, 'get' );
 			store = new PostListStore( {
 				id: 'test',
 				fetcher: fetcherStub,
@@ -284,9 +268,6 @@ describe( 'FeedPostList', () => {
 					site_URL: 'https://restapiusertests.wordpress.com/',
 				} ),
 			];
-		} );
-		afterEach( () => {
-			FeedPostStore.get.restore();
 		} );
 
 		test.skip( 'rolls up x-posts and matching x-comments', function() {

@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
  */
 import StepWrapper from 'signup/step-wrapper';
 import Card from 'components/card';
+import Button from 'components/button';
 
 class CredsCompleteStep extends Component {
 	static propTypes = {
@@ -21,25 +22,30 @@ class CredsCompleteStep extends Component {
 		positionInFlow: PropTypes.number,
 		signupProgress: PropTypes.array,
 		stepName: PropTypes.string,
+		signupDependencies: PropTypes.object,
 	};
 
 	renderStepContent = () => {
-		const { translate, wpAdminUrl } = this.props;
+		const { translate, wpAdminUrl, signupDependencies } = this.props;
 
 		return (
 			<Card className="creds-complete__card">
 				<h3 className="creds-complete__title">{ translate( 'Your site is set up and ready!' ) }</h3>
 				<img className="creds-complete__image" src="/calypso/images/upgrades/thank-you.svg" />
 				<p className="creds-complete__description">
+					{ get( signupDependencies, 'rewindconfig', false ) &&
+						translate(
+							'Your site is being backed up because it is set up with ' +
+								'Jetpack Premium at no additional cost to you.'
+						) + ' ' }
 					{ translate(
-						'Your site is backing up because your site is set up with Jetpack Premium plan at ' +
-							'no additional cost to you. Finish setting up Jetpack and your site is ready to be ' +
+						'Finish setting up Jetpack and your site is ready to be ' +
 							'transformed into the site of your dreams.'
 					) }
 				</p>
-				<a className="creds-complete__button" href={ wpAdminUrl }>
+				<Button primary className="creds-complete__button" href={ wpAdminUrl }>
 					{ translate( 'Continue' ) }
-				</a>
+				</Button>
 			</Card>
 		);
 	};

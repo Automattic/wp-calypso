@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -19,7 +18,11 @@ import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
-import { isRequestingResend, didResendSucceed } from 'state/invites/selectors';
+import {
+	isRequestingInviteResend,
+	didInviteResendSucceed,
+	didInviteDeletionSucceed,
+} from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
 
 class PeopleListItem extends React.PureComponent {
@@ -54,8 +57,13 @@ class PeopleListItem extends React.PureComponent {
 		);
 	};
 
-	getCardLink = () => {
+	maybeGetCardLink = () => {
 		const { invite, site, type, user } = this.props;
+
+		if ( 'invite-details' === type ) {
+			return null;
+		}
+
 		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
 		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
 
@@ -77,10 +85,11 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	renderInviteStatus = () => {
-		const { invite, translate, requestingResend, resendSuccess } = this.props;
+		const { type, invite, translate, requestingResend, resendSuccess } = this.props;
 		const { isPending } = invite;
 		const className = classNames( 'people-list-item__invite-status', {
 			'is-pending': isPending,
+			'is-invite-details': type === 'invite-details',
 		} );
 		const buttonClassName = classNames( 'people-list-item__invite-resend', {
 			'is-success': resendSuccess,
@@ -88,8 +97,15 @@ class PeopleListItem extends React.PureComponent {
 
 		return (
 			<div className={ className }>
-				{ ! isPending && <Gridicon icon="checkmark" size={ 18 } /> }
-				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
+				{ type === 'invite-details' &&
+					( isPending ? (
+						translate( 'Pending' )
+					) : (
+						<React.Fragment>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ translate( 'Accepted' ) }
+						</React.Fragment>
+					) ) }
 				{ isPending && (
 					<Button
 						className={ buttonClassName }
@@ -105,16 +121,34 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user } = this.props;
+		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
+
+		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
+
+		if ( isInvite && inviteWasDeleted ) {
+			// After an invite is deleted and the user is returned to the
+			// invites list, the invite can occasionally reappear in the next
+			// API call, so we need to check for this situation and avoid
+			// rendering an invite that we know is actually deleted.
+			return null;
+		}
+
+		const classes = classNames(
+			'people-list-item',
+			{
+				'is-invite': isInvite,
+				'is-invite-details': type === 'invite-details',
+			},
+			className
+		);
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
-		const isInvite = invite && 'invite' === type;
 
 		return (
 			<CompactCard
-				className={ classNames( 'people-list-item', className ) }
+				className={ classes }
 				tagName={ tagName }
-				href={ this.getCardLink() }
+				href={ this.maybeGetCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
@@ -139,14 +173,18 @@ class PeopleListItem extends React.PureComponent {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = ownProps.site && ownProps.site.ID;
-		const inviteKey = ownProps.invite && ownProps.invite.key;
+		const { site, invite } = ownProps;
+
+		const siteId = site && site.ID;
+		const inviteKey = invite && invite.key;
+		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
 
 		return {
-			requestingResend: isRequestingResend( state, siteId, inviteKey ),
-			resendSuccess: didResendSucceed( state, siteId, inviteKey ),
+			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
+			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
 			siteId,
 			inviteKey,
+			inviteWasDeleted,
 		};
 	},
 	{ resendInvite }

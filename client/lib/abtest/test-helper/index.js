@@ -12,6 +12,7 @@ import Debug from 'debug';
  */
 import TestList from './TestList';
 import { getAllTests } from 'lib/abtest';
+import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 const debug = Debug( 'calypso:abtests:helper' );
 
@@ -20,10 +21,10 @@ export default function injectTestHelper( element ) {
 		React.createElement( TestList, {
 			tests: getAllTests(),
 			onChangeVariant: function( test, variation ) {
-				const testSettings = JSON.parse( localStorage.getItem( 'ABTests' ) ) || {};
+				const testSettings = JSON.parse( localStorage.getItem( ABTEST_LOCALSTORAGE_KEY ) ) || {};
 				testSettings[ test.experimentId ] = variation;
 				debug( 'Switching test variant', test.experimentId, variation );
-				localStorage.setItem( 'ABTests', JSON.stringify( testSettings ) );
+				localStorage.setItem( ABTEST_LOCALSTORAGE_KEY, JSON.stringify( testSettings ) );
 				window.location.reload();
 			},
 		} ),

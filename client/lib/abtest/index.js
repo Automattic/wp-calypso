@@ -17,6 +17,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
+import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 
 const debug = debugFactory( 'calypso:abtests' );
 const user = userFactory();
@@ -52,7 +53,7 @@ export const getABTestVariation = name => new ABTest( name ).getVariation();
  *
  * @returns {Object} - The user's variations, or an empty object if the user is not a participant
  */
-export const getSavedVariations = () => store.get( 'ABTests' ) || {};
+export const getSavedVariations = () => store.get( ABTEST_LOCALSTORAGE_KEY ) || {};
 
 export const getAllTests = () => keys( activeTests ).map( ABTest );
 
@@ -330,5 +331,5 @@ ABTest.prototype.saveVariationOnBackend = function( variation ) {
 ABTest.prototype.saveVariationInLocalStorage = function( variation ) {
 	const savedVariations = getSavedVariations();
 	savedVariations[ this.experimentId ] = variation;
-	store.set( 'ABTests', savedVariations );
+	store.set( ABTEST_LOCALSTORAGE_KEY, savedVariations );
 };

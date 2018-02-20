@@ -19,22 +19,16 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
-import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
-import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
+import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
+import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
+import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import {
-	isDomainRegistration,
-	isPlan,
-	isBusiness,
-	isGoogleApps,
-	isJetpackPlan,
-} from 'lib/products-values';
+import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -385,13 +379,12 @@ class RemovePurchase extends Component {
 			>
 				<CancelPurchaseForm
 					chatInitiated={ this.chatInitiated }
-					productName={ getName( selectedPurchase ) }
-					surveyStep={ this.state.surveyStep }
-					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
-					isJetpack={ isJetpackPlan( selectedPurchase ) }
+					purchase={ selectedPurchase }
 					selectedSite={ selectedSite }
+					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>
 		);

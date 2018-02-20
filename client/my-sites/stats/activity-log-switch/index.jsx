@@ -13,6 +13,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getRewindState } from 'state/selectors';
+import { getSiteUrl } from 'state/sites/selectors';
 
 class ActivityLogSwitch extends Component {
 	static propTypes = {
@@ -38,6 +39,7 @@ class ActivityLogSwitch extends Component {
 			siteId,
 			siteSlug,
 			translate,
+			canAutoconfigure,
 		} = this.props;
 		switch ( this.props.failureReason ) {
 			case 'vp_can_transfer':
@@ -65,7 +67,11 @@ class ActivityLogSwitch extends Component {
 				return (
 					<Button
 						primary
-						href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }` }
+						href={
+							canAutoconfigure
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
+						}
 						>
 						{ translate( 'Continue setup' ) }
 					</Button>
@@ -74,44 +80,58 @@ class ActivityLogSwitch extends Component {
 	}
 
 	render() {
-		if ( 'vp_active_on_site' === this.props.failureReason || 'uninitialized' === this.props.rewindState ) {
+		if ( 'vp_active_on_site' === this.props.failureReason ) {
 			return false;
+		}
+
+		if ( 'uninitialized' === this.props.rewindState ) {
+			return (
+				<Card className="activity-log-switch activity-log-switch__placeholder">
+					<div className="activity-log-switch__header">
+						<div className="activity-log-switch__header-header" />
+					</div>
+					<div className="activity-log-switch__img-placeholder" />
+					<p className="activity-log-switch__header-text" />
+				</Card>
+			);
 		}
 
 		const {
 			translate,
 			redirect,
-			siteSlug,
+			siteUrl,
 		} = this.props;
 
 		return (
 			<Card className="activity-log-switch">
-				<h2 className="activity-log-switch__heading">
-					{ translate( "Welcome to Jetpack's new backups and security" ) }
-				</h2>
-				<img src="/calypso/images/illustrations/security.svg" alt="" />
-				<p className="activity-log-switch__intro">
-					{ translate(
-						'Backing up and securing your site should be a breeze. ' +
-						"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
-					) }
-				</p>
-				{ this.getMainButton() }
-				<div>
-					<a
-						className="activity-log-switch__no-thanks"
-						href={ `//${ siteSlug }/wp-admin/${ redirect }` }>
-						{ translate( 'No thanks' ) }
-					</a>
+				<div className="activity-log-switch__header">
+					<h2 className="activity-log-switch__header-header">
+						{ translate( "Welcome to Jetpack's new backups and security" ) }
+					</h2>
+					<img src="/calypso/images/illustrations/security.svg" alt="" />
+					<p className="activity-log-switch__header-text">
+						{ translate(
+							'Backing up and securing your site should be a breeze. ' +
+							"Our new seamless system makes it possible to see all your site's activity from one convenient dashboard."
+						) }
+					</p>
+					{ this.getMainButton() }
+					<div>
+						<a
+							className="activity-log-switch__no-thanks"
+							href={ `${ siteUrl }${ redirect }` }>
+							{ translate( 'No thanks' ) }
+						</a>
+					</div>
 				</div>
-				<h3 className="activity-log-switch__heading-more">
+				<h3 className="activity-log-switch__features-header">
 					{ translate( 'What else can it do?' ) }
 				</h3>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( 'Rewind to any event' ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( 'Rewind to any event' ) }
-						</h4>
 						<p>
 							{ translate(
 								'As soon as you switch over, we will start tracking every change made ' +
@@ -121,13 +141,13 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/backup.svg" alt="" />
+					<img className="activity-log-switch__img is-backup" src="/calypso/images/illustrations/backup.svg" alt="" />
 				</Card>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( "Stay on top of your site's security" ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( "Stay on top of your site's security" ) }
-						</h4>
 						<p>
 							{ translate(
 								'When something happens to your website you want to know it immediately. ' +
@@ -135,13 +155,17 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/security-issue.svg" alt="" />
+
+					<img
+						className="activity-log-switch__img is-security-issue"
+						src="/calypso/images/illustrations/security-issue.svg"
+						alt="" />
 				</Card>
 				<Card className="activity-log-switch__feature">
+					<h4 className="activity-log-switch__feature-heading">
+						{ translate( 'Log all events on your site' ) }
+					</h4>
 					<div className="activity-log-switch__feature-content">
-						<h4 className="activity-log-switch__feature-heading">
-							{ translate( 'Log all events on your site' ) }
-						</h4>
 						<p>
 							{ translate(
 								'Access a new, streamlined history of events on your site—from published posts to user-role changes. ' +
@@ -149,7 +173,7 @@ class ActivityLogSwitch extends Component {
 							) }
 						</p>
 					</div>
-					<img src="/calypso/images/illustrations/stats.svg" alt="" />
+					<img className="activity-log-switch__img is-stats" src="/calypso/images/illustrations/stats.svg" alt="" />
 				</Card>
 			</Card>
 		);
@@ -161,8 +185,10 @@ export default connect(
 		const rewindState = getRewindState( state, siteId );
 		return {
 			siteSlug: getSelectedSiteSlug( state, siteId ),
+			siteUrl: getSiteUrl( state, siteId ),
 			rewindState: rewindState.state,
-			failureReason: rewindState.failureReason || '',
+			failureReason: rewindState.reason || '',
+			canAutoconfigure: rewindState.canAutoconfigure,
 		};
 	}
 )( localize( ActivityLogSwitch ) );

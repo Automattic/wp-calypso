@@ -12,7 +12,7 @@
 	padding: 7px 0 9px;
 
 	&:hover {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 	}
 
 	.gridicon {

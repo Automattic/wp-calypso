@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 			const state = currentClientId( true, {
 				type: SERIALIZE,
 			} );
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {

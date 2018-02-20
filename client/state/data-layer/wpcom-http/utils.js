@@ -72,7 +72,7 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 	let validate;
 
 	const genParser = () => {
-		const options = Object.assign( { verbose: true }, schemaOptions );
+		const options = Object.assign( { greedy: true, verbose: true }, schemaOptions );
 		const validator = schemaValidator( schema, options );
 
 		// filter out unwanted properties even though we may have let them slip past validation
@@ -89,6 +89,31 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 
 		validate = data => {
 			if ( ! validator( data ) ) {
+				if ( 'development' === process.env.NODE_ENV ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'JSON Validation Failure' );
+
+					validator.errors.forEach( error =>
+						// eslint-disable-next-line no-console
+						console.warn( {
+							field: error.field,
+							message: error.message,
+							value: error.value,
+							actualType: error.type,
+							expectedType: get( schema, error.schemaPath ),
+						} )
+					);
+
+					if ( undefined !== window ) {
+						// eslint-disable-next-line no-console
+						console.log( 'updated `lastValidator` and `lastValidated` in console' );
+						// eslint-disable-next-line no-console
+						console.log( 'run `lastValidator( lastValidated )` to reproduce failing validation' );
+						window.lastValidator = validator;
+						window.lastValidated = data;
+					}
+				}
+
 				throw new SchemaError( validator.errors );
 			}
 
@@ -99,6 +124,28 @@ export const makeParser = ( schema, schemaOptions = {}, transformer = identity )
 			try {
 				return transformer( data );
 			} catch ( e ) {
+				if ( 'development' === process.env.NODE_ENV ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'Data Transformation Failure' );
+
+					// eslint-disable-next-line no-console
+					console.warn( {
+						inputData: data,
+						error: e,
+					} );
+
+					if ( undefined !== window ) {
+						// eslint-disable-next-line no-console
+						console.log( 'updated `lastTransformer` and `lastTransformed` in console' );
+						// eslint-disable-next-line no-console
+						console.log(
+							'run `lastTransformer( lastTransformed )` to reproduce failing transform'
+						);
+						window.lastTransformer = transformer;
+						window.lastTransformed = data;
+					}
+				}
+
 				throw new TransformerError( e, data, transformer );
 			}
 		};

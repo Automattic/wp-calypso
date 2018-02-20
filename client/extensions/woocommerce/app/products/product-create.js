@@ -169,6 +169,11 @@ class ProductCreate extends React.Component {
 			// Product type was never switched, so set it before we save.
 			this.props.editProduct( site.ID, product, { type: 'simple' } );
 		}
+
+		if ( ! product.regular_price ) {
+			this.props.editProduct( site.ID, product, { regular_price: '0' } );
+		}
+
 		this.props.createProductActionList( successAction, failureAction );
 	};
 
