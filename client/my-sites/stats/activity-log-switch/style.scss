@@ -65,6 +65,7 @@
 .activity-log-switch__feature-content {
 	@include breakpoint( ">960px" ) {
 		flex-basis: 66%;
+		text-align: left;
 	}
 
 	@include breakpoint( "<960px" ) {
@@ -89,6 +90,7 @@
 
 .activity-log-switch__img {
 	max-width: 33%;
+	max-height: 110px;
 	box-sizing: border-box;
 
 	@include breakpoint( "<960px" ) {
@@ -100,11 +102,11 @@
 	}
 
 	&.is-backup {
-		padding: 8%;
+		padding: 0 8%;
 	}
 
 	&.is-security-issue {
-		padding: 4%;
+		padding: 0 4%;
 	}
 }
 
