@@ -85,7 +85,8 @@
 .notice__text {
 	max-width: 680px;
 
-	a {
+	a,
+	a:visited {
 		text-decoration: underline;
 		color: $white;
 
