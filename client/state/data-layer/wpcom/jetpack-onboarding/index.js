@@ -23,6 +23,8 @@ import {
 } from 'state/jetpack-onboarding/actions';
 import { trailingslashit } from 'lib/route';
 
+export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
+
 export const fromApi = response => {
 	if ( ! response.data || ! response.data.onboarding ) {
 		throw new Error( 'missing onboarding settings' );
@@ -141,7 +143,6 @@ export const announceSaveFailure = ( { dispatch }, { siteId } ) => {
 };
 
 export const retryOrAnnounceSaveFailure = ( { dispatch }, action, error ) => {
-	const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 	const { settings, siteId, type, meta: { dataLayer } } = action;
 	const { retryCount = 0 } = dataLayer;
 

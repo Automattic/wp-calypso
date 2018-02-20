@@ -5,6 +5,7 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
+	MAX_WOOCOMMERCE_INSTALL_RETRIES,
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 	handleSaveSuccess,
@@ -321,14 +322,14 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		);
 	} );
 
-	test( 'should trigger announceSaveFailure upon third WooCommerce install timeout', () => {
+	test( 'should trigger announceSaveFailure upon max number of WooCommerce install timeout', () => {
 		const thirdAttemptAction = {
 			...action,
 			meta: {
 				...action.meta,
 				dataLayer: {
 					...action.meta.dataLayer,
-					retryCount: 3,
+					retryCount: MAX_WOOCOMMERCE_INSTALL_RETRIES + 1,
 				},
 			},
 		};
