@@ -1591,17 +1591,6 @@ Undocumented.prototype.sitesNew = function( query, fn ) {
 	);
 };
 
-/**
- * Fetch the locales relevant to the current user, based on their IP and browser setting
- *
- * @param {Function} fn - Function to invoke when the request is complete
- */
-Undocumented.prototype.getLocaleSuggestions = function( fn ) {
-	debug( '/locale-guess' );
-
-	return this.wpcom.req.get( { path: '/locale-guess' }, fn );
-};
-
 Undocumented.prototype.themes = function( siteId, query, fn ) {
 	var path = siteId ? '/sites/' + siteId + '/themes' : '/themes';
 	debug( path );

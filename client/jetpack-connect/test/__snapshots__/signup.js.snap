@@ -61,7 +61,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
   <div
     className="jetpack-connect__authorize-form"
   >
-    <LocaleSuggestions
+    <Connect(LocaleSuggestions)
       locale="es"
       path="/jetpack/connect/authorize/es"
     />
