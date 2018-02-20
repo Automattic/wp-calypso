@@ -150,7 +150,7 @@
     "tracekit": "0.4.3",
     "tween.js": "16.3.1",
     "twemoji": "2.3",
-    "uglifyjs-webpack-plugin": "1.0.1",
+    "uglifyjs-webpack-plugin": "1.2.0",
     "uuid": "2.0.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
@@ -167,8 +167,8 @@
     "npm": "5.6.0"
   },
   "scripts": {
-    "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production npm run -s env -- node --max_old_space_size=8192 ./node_modules/.bin/webpack --config webpack.config.js --profile --json > stats.json",
-    "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 0.0.0.0 -p 9898 -s gzip",
+    "preanalyze-bundles": "cross-env-shell CALYPSO_ENV=production npm run -s build-client -- --profile --json > stats.json",
+    "analyze-bundles": "webpack-bundle-analyzer stats.json public -h 127.0.0.1 -p 9898 -s gzip",
     "analyze-css": "node bin/analyze-css.js",
     "autoprefixer": "postcss -r --use autoprefixer",
     "postcss": "postcss -r -u postcss-custom-properties -u autoprefixer -c postcss.config.json",
@@ -190,7 +190,7 @@
     "build-docker": "node bin/build-docker.js",
     "prebuild-server": "mkdirp build",
     "build-server": "npm run -s env -- webpack --display-error-details --config webpack.config.node.js",
-    "build-client": "npm run -s env -- node --max_old_space_size=8192 ./node_modules/.bin/webpack --display-error-details --config webpack.config.js",
+    "build-client": "npm run -s env -- node --max_old_space_size=8192 ./node_modules/webpack/bin/webpack.js --display-error-details --config webpack.config.js",
     "build-client-if-prod": "node -e \"process.env.CALYPSO_ENV === 'production' && process.exit(1)\" || npm run build-client",
     "build-client-if-desktop": "node -e \"process.env.CALYPSO_ENV === 'desktop' && process.exit(1)\" || npm run build-client",
     "clean": "npm run -s clean:build && npm run -s clean:devdocs && npm run -s clean:public",
