@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -31,16 +32,16 @@ class SelectBusinessType extends Component {
 		this.props.recordTracksEvent( 'calypso_google_my_business_optimize_your_seo_click' );
 	};
 
+	goBack = () => {
+		page.back( `/stats/day/${ this.props.siteId }` );
+	};
+
 	render() {
 		const { translate, siteId } = this.props;
 
 		return (
 			<div className="select-business-type">
-				<HeaderCake
-					isCompact={ false }
-					alwaysShowActionText={ false }
-					backHref={ '/stats/day/' + siteId }
-				>
+				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 				<Card className="select-business-type__explanation">
