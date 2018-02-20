@@ -73,7 +73,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 								href={ `/google-my-business/${ this.props.siteSlug }` }
 								onClick={ this.props.trackNudgeAlreadyListedClicked }
 							>
-								{ this.props.translate( "I've Already Listed" ) }
+								{ this.props.translate( "I'm Already Listed" ) }
 							</Button>
 						</div>
 					</div>
