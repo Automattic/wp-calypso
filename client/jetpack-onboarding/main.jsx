@@ -120,6 +120,7 @@ export default connect(
 			STEPS.CONTACT_FORM,
 			isBusiness && STEPS.BUSINESS_ADDRESS,
 			isBusiness && STEPS.WOOCOMMERCE,
+			STEPS.STATS,
 			STEPS.SUMMARY,
 		] );
 		return {
