@@ -133,14 +133,13 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
 	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
 
-export const announceSaveFailure = ( { dispatch }, { siteId } ) => {
+export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(
 		errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
 			id: `jpo-notice-error-${ siteId }`,
 			duration: 5000,
 		} )
 	);
-};
 
 export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: errorMessage } ) => {
 	const { settings, siteId, type, meta: { dataLayer } } = action;
