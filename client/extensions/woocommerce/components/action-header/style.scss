@@ -38,7 +38,9 @@
 }
 
 .action-header__back-to-sidebar {
-	flex: 1 0 10%;
+	flex-grow: 0;
+	flex-shrink: 0;
+	min-width: 40px;
 
 	@include breakpoint( ">660px" ) {
 		display: none;
@@ -46,7 +48,8 @@
 }
 
 .action-header__content {
-	flex: 1 0 50%;
+	flex-grow: 2;
+	flex-shrink: 0;
 	display: flex;
 	justify-content: flex-start;
 
@@ -67,6 +70,10 @@
 			@include placeholder();
 		}
 
+		span {
+			display: inline-block;
+		}
+
 		span + span::before {
 			content: ' / ';
 			color: $gray;
@@ -76,13 +83,36 @@
 }
 
 .action-header__actions {
-	display: flex;
-	flex: 1 0 40%;
-	justify-content: flex-end;
-	align-items: center;
+	flex-grow: 1;
+	flex-shrink: 2;
+	// Triggers the width of the list, so ActionButtons correctly measures the space.
+	overflow: hidden;
+	text-align: right;
+
+	.action-header__actions-list {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		flex-wrap: nowrap;
+
+		.button {
+			flex-basis: auto;
+		}
+	}
+
+	&.is-dropdown .action-header__actions-list {
+		display: none;
+	}
+
+	.action-header__split-button {
+		.button + .button {
+			margin-left: 0;
+		}
+	}
 
 	.button {
 		white-space: nowrap;
+		overflow: visible;
 		padding: 5px 14px 7px;
 
 		& + .button {

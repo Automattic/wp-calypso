@@ -12,6 +12,7 @@ import { isArray } from 'lodash';
 /**
  * Internal Dependencies
  */
+import ActionButtons from './actions';
 import Button from 'components/button';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -55,7 +56,7 @@ class ActionHeader extends React.Component {
 						{ this.renderBreadcrumbs() }
 					</div>
 				</div>
-				<div className="action-header__actions">{ children }</div>
+				<ActionButtons>{ children }</ActionButtons>
 			</header>
 		);
 	}
@@ -63,6 +64,7 @@ class ActionHeader extends React.Component {
 
 ActionHeader.propTypes = {
 	breadcrumbs: PropTypes.node,
+	actions: PropTypes.node,
 	setLayoutFocus: PropTypes.func.isRequired,
 };
 
