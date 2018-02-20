@@ -9,7 +9,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { show } from './controller';
+import { selectBusinessType } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
@@ -20,7 +20,7 @@ export default function() {
 			'/google-my-business/:site_id/',
 			siteSelection,
 			navigation,
-			show,
+			selectBusinessType,
 			makeLayout,
 			clientRender
 		);

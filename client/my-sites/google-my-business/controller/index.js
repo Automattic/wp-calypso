@@ -1,18 +1,16 @@
-/**
- * External Dependencies
- *
- * @format
- */
+/** @format */
 
+/**
+ * External dependencies
+ */
 import React from 'react';
 
 /**
  * Internal Dependencies
  */
-
 import GMBSelectBusinessType from '../select-business-type';
 
-export function show( context, next ) {
+export function selectBusinessType( context, next ) {
 	const { params } = context;
 	context.primary = <GMBSelectBusinessType siteId={ params.site_id } />;
 	next();
