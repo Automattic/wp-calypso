@@ -295,16 +295,16 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		settings,
 		meta: {
 			dataLayer: {
-				error: {
-					error: 'http_request_failed',
-				},
 				trackRequest: true,
 			},
 		},
 	};
+	const error = {
+		error: 'http_request_failed',
+	};
 
 	test( 'should trigger saveJetpackOnboardingSettings upon first WooCommerce install timeout', () => {
-		retryOrAnnounceSaveFailure( { dispatch }, action );
+		retryOrAnnounceSaveFailure( { dispatch }, action, error );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -333,7 +333,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			},
 		};
 
-		retryOrAnnounceSaveFailure( { dispatch }, thirdAttemptAction );
+		retryOrAnnounceSaveFailure( { dispatch }, thirdAttemptAction, error );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {

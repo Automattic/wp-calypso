@@ -140,10 +140,10 @@ export const announceSaveFailure = ( { dispatch }, { siteId } ) => {
 	);
 };
 
-export const retryOrAnnounceSaveFailure = ( { dispatch }, action ) => {
+export const retryOrAnnounceSaveFailure = ( { dispatch }, action, error ) => {
 	const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 	const { settings, siteId, type, meta: { dataLayer } } = action;
-	const { error, retryCount = 0 } = dataLayer;
+	const { retryCount = 0 } = dataLayer;
 
 	// If we got a timeout on WooCommerce installation, try again (up to 3 times),
 	// since it might just be a slow server that actually ends up installing it
