@@ -30,7 +30,6 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
@@ -481,7 +480,6 @@ class ActivityLog extends Component {
 				{ siteId &&
 					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
-				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
