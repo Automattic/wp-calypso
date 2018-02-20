@@ -14,7 +14,7 @@ describe( 'getJetpackRemoteInstallError()', () => {
 				error: {},
 			},
 		};
-		expect( getJetpackRemoteInstallError( state, url ) ).toBe( null );
+		expect( getJetpackRemoteInstallError( state, url ) ).toBeNull();
 	} );
 	test( 'should return any existing error', () => {
 		const state = {
@@ -24,6 +24,6 @@ describe( 'getJetpackRemoteInstallError()', () => {
 				},
 			},
 		};
-		expect( getJetpackRemoteInstallError( state, url ) ).toEqual( 'SOME_ERROR' );
+		expect( getJetpackRemoteInstallError( state, url ) ).toBe( 'SOME_ERROR' );
 	} );
 } );
