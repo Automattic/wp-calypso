@@ -22,26 +22,11 @@ React components used on the server will be rendered to HTML by being passed to 
 
 ### Caching
 
-Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server: one to store the redux state, and one to store rendered layouts.
+Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server: one to [store the redux state](https://github.com/Automattic/wp-calypso/blob/master/server/state-cache/index.js), and one to [store rendered layouts](https://github.com/Automattic/wp-calypso/blob/7ded1642a5b95a30b64fe0a3e462ddd2317c0df2/server/render/index.js#L33).
 
-##### Data Cache
+Both caches use the same key, which is the pathname of the URL. URLs with query args are not cached unless the arg name is present in `context.queryCacheKeys`, in which case the argument or arguments are appended to the key.
 
-At render time, the Redux state is [serialized and cached](../server/render/index.js), using the current path as the cache key, unless there is a query string, in which case we don't cache.
-
-This means that all data that was fetched to render a given page is available the next time the corresponding route is hit. A section controller thus only needs to check if the required data is available (using selectors), and dispatch the corresponding fetching action if it isn't; see the [themes controller](../client/my-sites/themes/controller.jsx) for an example.
-
-##### Render Cache
-
-There is a [shared cache](../server/render/index.js) for rendered layouts. There are some requirements for using this cache:
-
-1. Cache entries need a way to expire
-2. Multiple paths resulting in the same rendered content should ideally map to one cache entry
-
-These requirements are met by allowing controllers to set a key for a request in `context.renderCacheKey`. For item (1) the timestamp from the data cache is added to the request path, so a path such as `/theme/mood/overview` results in a key of `/theme/mood/overview1485514728996`. When the associated data cache entry gets a new timestamp, the server cache entry will no longer get any hits and drop out of the cache.
-
-Item (2) is solved by using an error string for the render cache key. For example, any invalid path such as `/theme/invalid` or `/theme/invalid/support` results in setting `context.renderCacheKey` to `theme not found`, meaning that the 404 page is always ready to serve and takes up only one cache slot.
-
-If `context.renderCacheKey` is not set, stringified `context.layout` is used as the key.
+The render cache will also use error messages as the key, allowing pages such as "Not found" to be cached.
 
 When working with the SSR cache, turning on the [debug](#debugging) is very useful.
 
