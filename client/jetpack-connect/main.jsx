@@ -119,12 +119,12 @@ export class JetpackConnectMain extends Component {
 			from = 'ad';
 		}
 
-		const ctaProps = this.getCtaTrackingDetails();
+		const { cta_id, cta_from } = this.getCtaTrackingDetails();
 
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,
-			cta_id: ctaProps.cta_id,
-			cta_from: ctaProps.cta_from,
+			cta_id: cta_id,
+			cta_from: cta_from,
 		} );
 	}
 
