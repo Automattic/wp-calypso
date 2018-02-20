@@ -33,32 +33,33 @@
 	.header-cake {
 		margin-bottom: 0px;
 	}
+}
 
-	.select-business-type__explanation {
-		display: flex;
+.select-business-type__explanation {
+	display: flex;
 
-		@include breakpoint( "<960px" ) {
-			flex-direction: column-reverse;
-		}
-		
-		h1 {
-			color: $gray-dark;
-			font-size: 24px;
-			font-weight: 400;
-		}
-
-		h2 {
-			color: $gray-dark;
-			font-size: 16px;
-			font-weight: 400;
-		}
-
-		.select-business-type__explanation-main {
-			flex: 2 1;
-		}
-
-		svg {
-			flex: 1;
-		}
+	@include breakpoint( "<960px" ) {
+		flex-direction: column-reverse;
 	}
+	
+	h1 {
+		color: $gray-dark;
+		font-size: 24px;
+		font-weight: 400;
+	}
+
+	h2 {
+		color: $gray-dark;
+		font-size: 16px;
+		font-weight: 400;
+	}
+
+	img {
+		max-width: 300px;
+		align-self: center;
+	}
+}
+
+.select-business-type__explanation-main {
+	flex: 2 1;
 }
