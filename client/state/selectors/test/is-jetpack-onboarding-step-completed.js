@@ -325,4 +325,49 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 
 		expect( completed ).toBe( false );
 	} );
+
+	test( 'should return true for stats step if we have chosen to activate stats', () => {
+		const state = {
+			jetpackOnboarding: {
+				settings: {
+					2916284: {
+						stats: true,
+					},
+				},
+			},
+		};
+		const completed = isJetpackOnboardingStepCompleted( state, 2916284, STEPS.STATS );
+
+		expect( completed ).toBe( true );
+	} );
+
+	test( 'should return false for stats step if we have not activated stats', () => {
+		const state = {
+			jetpackOnboarding: {
+				settings: {
+					2916284: {
+						siteTitle: 'My awesome site',
+					},
+				},
+			},
+		};
+		const completed = isJetpackOnboardingStepCompleted( state, 2916284, STEPS.STATS );
+
+		expect( completed ).toBe( false );
+	} );
+
+	test( 'should return false for stats step if it is specified as not activated', () => {
+		const state = {
+			jetpackOnboarding: {
+				settings: {
+					2916284: {
+						stats: false,
+					},
+				},
+			},
+		};
+		const completed = isJetpackOnboardingStepCompleted( state, 2916284, STEPS.STATS );
+
+		expect( completed ).toBe( false );
+	} );
 } );
