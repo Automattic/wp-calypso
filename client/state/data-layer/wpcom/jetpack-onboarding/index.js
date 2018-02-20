@@ -149,7 +149,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action ) => {
 	// since it might just be a slow server that actually ends up installing it
 	// properly, in which case a subsequent request will return 'success'.
 	if (
-		settings.installWooCommerce !== true ||
+		get( settings, 'installWooCommerce' ) !== true ||
 		error.error !== 'http_request_failed' ||
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
