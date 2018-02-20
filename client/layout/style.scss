@@ -9,7 +9,7 @@
 */
 
 // Set transitons for layout elements
-.layout__primary,
+.layout__primary .main,
 .layout__secondary,
 .layout__secondary .sidebar,
 .layout__secondary .site-selector {
@@ -19,6 +19,7 @@
 
 // If things take a bit to load...
 .layout__loader {
+	background: var( --masterbar-background );
 	border-bottom: 1px solid var( --masterbar-border-color );
 	height: 46px;
 	margin-left: -10%;
@@ -28,19 +29,15 @@
 	width: 20%;
 	z-index: z-index( 'root', '.layout__loader' );
 
-	// set a delay threshold for opacity changes
-	// prevents showing loader on fast connections
-	visibility: hidden;
+	// The transition-delay avoids showing the loader
+	// too often on faster connections.
+	display: none;
 	opacity: 0;
 	transition: opacity 0.1s linear;
-	transition-delay: 0.4s;
-
-	@include breakpoint( "<480px" ) {
-		background: var( --masterbar-background );
-	}
+	transition-delay: 0.8s;
 
 	&.is-active {
-		visibility: visible;
+		display: block;
 		opacity: 1;
 	}
 }
@@ -54,7 +51,6 @@
 	padding: 79px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
 	overflow: hidden;
-	transition: opacity 0.3s;
 
 	// I guess we dont want links to look like links.
 	a {
@@ -138,7 +134,10 @@
 
 	// The editor has its own sidebar which doesnt
 	// use the secondary element.
-	.is-section-post-editor & {
+	.is-section-post-editor &,
+	// Some screens (like /theme/) simply dont have
+	// a sidebar.
+	.has-no-sidebar & {
 		display: none;
 	}
 }
@@ -153,7 +152,6 @@
 		left: 0;
 	pointer-events: none;
 	transform: translateX( -$sidebar-width-max );
-	pointer-events: none;
 
 	.site,
 	.all-sites {
@@ -183,13 +181,15 @@
 // or sidebar, but never in the editor.
 .layout.focus-sites:not(.is-section-post-editor),
 .layout.focus-sidebar:not(.is-section-post-editor) {
-	.layout__primary {
-		pointer-events: none;
-
+	.layout__primary .main {
 		@include breakpoint( "<660px" ) {
-			transform: translateX( 100% );
+			pointer-events: none;
 			overflow: hidden;
-			height: calc( 100% - 47px );
+			max-height: calc( 100vh - 47px );
+
+			// Removing this transform could have unintended side-affects
+			// related to z-index and elements showing through on mobile.
+			transform: translateX( 100% );
 		}
 	}
 }
