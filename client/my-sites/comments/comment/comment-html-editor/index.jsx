@@ -73,7 +73,10 @@ export class CommentHtmlEditor extends Component {
 		const inner = options.text || this.splitSelectedContent().inner;
 
 		if ( inner.length || options.alsoClose ) {
-			return this.insertContent( opener + inner + closer, options.adjustCursorPosition );
+			return this.insertContent(
+				fragments[ 1 ] ? opener + inner + closer : inner + opener,
+				options.adjustCursorPosition
+			);
 		}
 
 		if ( !! fragments[ 1 ] && this.isTagOpen( tag ) ) {
