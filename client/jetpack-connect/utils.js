@@ -22,7 +22,12 @@ export function authQueryTransformer( queryObject ) {
 		// Optional
 		// TODO: verify
 		authApproved: !! queryObject.auth_approved,
-		alreadyAuthorized: !! queryObject.already_authorized,
+
+		// TODO: disabled to mitigate https://github.com/Automattic/jetpack/issues/8783
+		// remove when fixed
+		// alreadyAuthorized: !! queryObject.already_authorized,
+		alreadyAuthorized: false,
+
 		blogname: queryObject.blogname || null,
 		from: queryObject.from || '[unknown]',
 		jpVersion: queryObject.jp_version || null,
