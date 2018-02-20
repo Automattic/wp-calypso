@@ -142,7 +142,7 @@ export const announceSaveFailure = ( { dispatch }, { siteId } ) => {
 	);
 };
 
-export const retryOrAnnounceSaveFailure = ( { dispatch }, action, error ) => {
+export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: errorMessage } ) => {
 	const { settings, siteId, type, meta: { dataLayer } } = action;
 	const { retryCount = 0 } = dataLayer;
 
@@ -151,7 +151,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, error ) => {
 	// properly, in which case a subsequent request will return 'success'.
 	if (
 		get( settings, 'installWooCommerce' ) !== true ||
-		! startsWith( error.message, 'cURL error 28' ) || // cURL timeout
+		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
 		return announceSaveFailure( { dispatch }, { siteId } );
