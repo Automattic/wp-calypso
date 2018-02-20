@@ -252,11 +252,9 @@ class CheckoutThankYouHeader extends PureComponent {
 		let svg = 'thank-you.svg';
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
-		} else if (
-			primaryPurchase &&
-			isDomainTransfer( primaryPurchase ) &&
-			! isDelayedDomainTransfer( primaryPurchase )
-		) {
+		} else if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
+			svg = 'publish-button.svg';
+		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
 			svg = 'check-emails-desktop.svg';
 		}
 
