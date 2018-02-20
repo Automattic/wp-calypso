@@ -13,8 +13,8 @@
 .layout__secondary,
 .layout__secondary .sidebar,
 .layout__secondary .site-selector {
-	transition: transform 0.2s cubic-bezier(0.770, 0.000, 0.175, 1.000),
-				opacity 0.2s ease-in-out;
+	transition: transform 0.15s ease-in-out,
+				opacity 0.15s ease-out;
 }
 
 // If things take a bit to load...
