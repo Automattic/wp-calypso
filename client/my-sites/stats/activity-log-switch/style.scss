@@ -65,6 +65,7 @@
 .activity-log-switch__feature-content {
 	@include breakpoint( ">960px" ) {
 		flex-basis: 66%;
+		text-align: left;
 	}
 
 	@include breakpoint( "<960px" ) {
