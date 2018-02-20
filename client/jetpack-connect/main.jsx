@@ -88,22 +88,6 @@ export class JetpackConnectMain extends Component {
 		}
 	}
 
-	getCtaTrackingDetails() {
-		const parts = window.location.search.substr( 1 ).split( '&' );
-		const params = {};
-		for ( let i = 0; i < parts.length; i++ ) {
-			const ctaProp = parts[ i ].split( '=' );
-			params[ decodeURIComponent( ctaProp[ 0 ] ) ] = decodeURIComponent( ctaProp[ 1 ] );
-		}
-
-		const ctaProps = {
-			cta_id: params.cta_id,
-			cta_from: params.cta_from,
-		};
-
-		return ctaProps;
-	}
-
 	componentDidMount() {
 		let from = 'direct';
 		if ( this.props.type === 'install' ) {
@@ -119,12 +103,10 @@ export class JetpackConnectMain extends Component {
 			from = 'ad';
 		}
 
-		const ctaProps = this.getCtaTrackingDetails();
-
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,
-			cta_id: ctaProps.cta_id,
-			cta_from: ctaProps.cta_from,
+			cta_id: this.props.ctaId,
+			cta_from: this.props.ctaFrom,
 		} );
 	}
 

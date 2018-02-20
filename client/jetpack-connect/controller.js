@@ -171,6 +171,8 @@ export function connect( context, next ) {
 		path,
 		type,
 		url: query.url,
+		ctaId: query.cta_id, // origin tracking params
+		ctaFrom: query.cta_from,
 	} );
 	next();
 }
