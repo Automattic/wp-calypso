@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get, flow, inRange } from 'lodash';
+import { get, flow, isEmpty, inRange } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -86,13 +86,13 @@ export class SimpleSiteRenameForm extends Component {
 
 	onFieldChange = event => {
 		const domainFieldValue = get( event, 'target.value' );
-		const maybeDomainFieldError = this.state.domainFieldError && {
-			domainFieldError: this.getDomainValidationMessage( domainFieldValue ),
-		};
+		const shouldUpdateError = ! isEmpty( this.state.domainFieldError );
 
 		this.setState( {
 			domainFieldValue,
-			...maybeDomainFieldError,
+			...( shouldUpdateError && {
+				domainFieldError: this.getDomainValidationMessage( domainFieldValue ),
+			} ),
 		} );
 	};
 
