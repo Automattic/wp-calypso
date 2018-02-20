@@ -2513,15 +2513,20 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 };
 
 /**
- * Fetch a nonce to use in the `updateSiteName` call
+ * Preflight check before renaming a site
+ * Responses a nonce to use in the `updateSiteName` call
  * @param {int}   siteId  The ID of the site for which to get a nonce.
+ * @param {string} blogName The value to pre-check (you'll be providing this to `updateSiteName`).
  * @returns {Promise}     A promise
  */
-Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
-	return this.wpcom.req.get( {
-		path: `/sites/${ siteId }/site-rename/nonce`,
-		apiNamespace: 'wpcom/v2',
-	} );
+Undocumented.prototype.getRequestSiteRenamePreflight = function( siteId, blogName ) {
+	return this.wpcom.req.get(
+		{
+			path: `/sites/${ siteId }/site-rename/preflight`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ blogname: blogName }
+	);
 };
 
 /**
