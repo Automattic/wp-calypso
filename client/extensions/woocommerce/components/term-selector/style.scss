@@ -1,0 +1,26 @@
+.term-selector__dimensions {
+    width: auto;
+    display: block;
+    max-width: 95%;
+    height: 90%;
+
+    @include breakpoint( '660px-960px' ) {
+		max-width: 80%;
+    }
+
+    @include breakpoint( '1040px-1280px' ) {
+        max-width: 90%;
+    }
+}
+
+.term-tree-selector input[type="search"]:focus {
+    border: 1px solid $blue-wordpress;
+	outline: initial;
+    box-shadow: 0 0 0 2px $blue-light;
+}
+
+.term-selector__add-term {
+    border: 1px solid $gray-lighten-20;
+    border-top: 0;
+    padding: 8px;
+}
