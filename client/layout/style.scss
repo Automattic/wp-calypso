@@ -210,8 +210,9 @@
 		}
 	}
 
-	.layout__primary {
+	.layout__primary .main {
 		@include breakpoint( ">660px" ) {
+			pointer-events: none;
 			opacity: 0.25;
 		}
 	}
