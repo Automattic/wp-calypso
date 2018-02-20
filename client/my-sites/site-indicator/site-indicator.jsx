@@ -18,7 +18,6 @@ import Gridicon from 'gridicons';
 import Animate from 'components/animate';
 import ProgressIndicator from 'components/progress-indicator';
 import Button from 'components/button';
-import analytics from 'lib/analytics';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -41,8 +40,8 @@ class SiteIndicator extends Component {
 		siteUpdates: PropTypes.object,
 		siteIsConnected: PropTypes.bool,
 		requestingConnectionStatus: PropTypes.bool,
+		recordGoogleEvent: PropTypes.func,
 		recordTracksEvent: PropTypes.func,
-		withAnalytics: PropTypes.func,
 	};
 
 	state = { expand: false };
@@ -90,7 +89,7 @@ class SiteIndicator extends Component {
 		} );
 
 		const action = ! this.state.expand ? 'Expand' : 'Collapse';
-		analytics.ga.recordEvent( 'Site-Indicator', `Clicked to ${ action } the Site Indicator` );
+		this.props.recordGoogleEvent( 'Site-Indicator', `Clicked to ${ action } the Site Indicator` );
 	};
 
 	updatesAvailable() {
@@ -138,17 +137,9 @@ class SiteIndicator extends Component {
 			);
 		}
 
-		const recordEvent = analytics.ga.recordEvent.bind(
-			analytics,
-			'Site-Indicator',
-			'Clicked updates available link to wp-admin updates',
-			'Total Updates',
-			siteUpdates && siteUpdates.total
-		);
-
 		return (
 			<span>
-				<a onClick={ recordEvent } href={ site.options.admin_url + 'update-core.php' }>
+				<a onClick={ this.handleGenericUpdate } href={ site.options.admin_url + 'update-core.php' }>
 					{ translate( 'There is an update available.', 'There are updates available.', {
 						count: siteUpdates.total,
 					} ) }
@@ -181,7 +172,7 @@ class SiteIndicator extends Component {
 		const { siteUpdates } = this.props;
 		window.scrollTo( 0, 0 );
 		this.setState( { expand: false } );
-		analytics.ga.recordEvent(
+		this.props.recordGoogleEvent(
 			'Site-Indicator',
 			'Clicked updates available link to plugins updates',
 			'Total Updates',
@@ -207,10 +198,25 @@ class SiteIndicator extends Component {
 			}
 		} );
 
-		analytics.ga.recordEvent(
-			'site-indicator',
+		this.props.recordGoogleEvent(
+			'Site-Indicator',
 			'Triggered Update WordPress Core Version From Calypso'
 		);
+	};
+
+	// General case with updates of multiple types (plugins, themes, translations, ...) available
+	handleGenericUpdate = () => {
+		const { siteUpdates } = this.props;
+		this.props.recordGoogleEvent(
+			'Site-Indicator',
+			'Clicked updates available link to wp-admin updates',
+			'Total Updates',
+			siteUpdates && siteUpdates.total
+		);
+	};
+
+	handleJetpackUpdate = () => {
+		this.props.recordGoogleEvent( 'Site-Indicator', 'Clicked Update Jetpack Now Link' );
 	};
 
 	unsupportedJetpackVersion() {
@@ -224,9 +230,7 @@ class SiteIndicator extends Component {
 					components: {
 						link: (
 							<a
-								onClick={ this.makeAnalyticsRecordEventHandler(
-									'Clicked Update Jetpack Now Link'
-								) }
+								onClick={ this.handleJetpackUpdate }
 								href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
 							/>
 						),
@@ -235,12 +239,6 @@ class SiteIndicator extends Component {
 			</span>
 		);
 	}
-
-	makeAnalyticsRecordEventHandler = action => {
-		return () => {
-			analytics.ga.recordEvent( 'Site-Indicator', action );
-		};
-	};
 
 	errorAccessing() {
 		const { site, translate } = this.props;
@@ -279,7 +277,7 @@ class SiteIndicator extends Component {
 						link: (
 							<a
 								href={ this.props.site.options.admin_url + 'update-core.php' }
-								onClick={ this.makeAnalyticsRecordEventHandler( 'Clicked Update On Site Link' ) }
+								onClick={ this.handleErrorUpdate }
 							/>
 						),
 					},
@@ -287,6 +285,10 @@ class SiteIndicator extends Component {
 			</span>
 		);
 	}
+
+	handleErrorUpdate = () => {
+		this.props.recordGoogleEvent( 'Site-Indicator', 'Clicked Update On Site Link' );
+	};
 
 	getText() {
 		if ( this.state.updateError ) {
@@ -415,6 +417,8 @@ export default connect(
 	},
 	{
 		updateWordPress,
+		recordGoogleEvent,
+		recordTracksEvent,
 		trackSiteDisconnect: () =>
 			composeAnalytics(
 				recordGoogleEvent(
