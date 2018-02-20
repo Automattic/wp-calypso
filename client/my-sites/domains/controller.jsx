@@ -50,6 +50,12 @@ const domainsAddRedirectHeader = ( context, next ) => {
 	next();
 };
 
+const redirectToDomainSearchWithSuggestionAsQuery = context => {
+	return page.redirect(
+		`/domains/add/${ context.params.domain }?s=${ context.params.suggestion }`
+	);
+};
+
 const domainSearch = ( context, next ) => {
 	const basePath = sectionify( context.path );
 
@@ -229,6 +235,7 @@ export default {
 	googleAppsWithRegistration,
 	redirectIfNoSite,
 	redirectToAddMappingIfVipSite,
+	redirectToDomainSearchWithSuggestionAsQuery,
 	transferDomain,
 	transferDomainPrecheck,
 };
