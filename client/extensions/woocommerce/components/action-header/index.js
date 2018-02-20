@@ -27,18 +27,7 @@ class ActionHeader extends React.Component {
 		const { breadcrumbs, isLoading = false } = this.props;
 		let breadcrumbsOutput = breadcrumbs;
 		if ( isArray( breadcrumbs ) ) {
-			breadcrumbsOutput = breadcrumbs.map( function( crumb, i ) {
-				return (
-					<span key={ i }>
-						{ crumb }
-						{ breadcrumbs.length - 1 === i ? (
-							''
-						) : (
-							<span className="action-header__breadcrumbs-separator"> / </span>
-						) }
-					</span>
-				);
-			} );
+			breadcrumbsOutput = breadcrumbs.map( ( crumb, i ) => <span key={ i }>{ crumb }</span> );
 		}
 		const breadcrumbClasses = classNames( 'action-header__breadcrumbs', {
 			'is-loading': isLoading,

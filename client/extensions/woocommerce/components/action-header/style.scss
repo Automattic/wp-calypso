@@ -66,11 +66,12 @@
 		&.is-loading {
 			@include placeholder();
 		}
-	}
 
-	.action-header__breadcrumbs-separator {
-		color: $gray;
-		margin: 0 2px;
+		span + span::before {
+			content: ' / ';
+			color: $gray;
+			margin: 0 2px;
+		}
 	}
 }
 
