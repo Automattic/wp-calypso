@@ -227,6 +227,25 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
+	 * Determine if the additional form is ready to submit
+	 * @return {bool} Return true if the additional support option can be used
+	 */
+	canSubmitAdditionalForm = () => {
+		const { disabled } = this.props;
+		const { subject, message } = this.state;
+
+		if ( disabled ) {
+			return false;
+		}
+
+		if ( ! subject.trim() ) {
+			return false;
+		}
+
+		return !! message.trim();
+	};
+
+	/**
 	 * Start a chat using the info set in state
 	 * @param  {object} event Event object
 	 */
@@ -387,7 +406,7 @@ export class HelpContactForm extends React.PureComponent {
 				{ additionalSupportOption &&
 					additionalSupportOption.enabled && (
 						<FormButton
-							disabled={ ! this.canSubmitForm() }
+							disabled={ ! this.canSubmitAdditionalForm() }
 							type="button"
 							onClick={ this.submitAdditionalForm }
 						>

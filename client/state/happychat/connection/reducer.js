@@ -74,7 +74,7 @@ const isAvailable = ( state = false, action ) => {
  * @param  {Object}  action Action playload
  * @return {Boolean}        Updated happychat status
  */
-const localizedSupport = ( state = false, action ) => {
+export const localizedSupport = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT:
 			return action.isAvailable;

@@ -60,12 +60,12 @@ import {
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { getLanguage, isDefaultLocale } from 'lib/i18n-utils';
-const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Module variables
  */
+const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
@@ -81,8 +81,9 @@ const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:0
 
 class HelpContact extends React.Component {
 	state = {
-		isSubmitting: false,
 		confirmation: null,
+		isSubmitting: false,
+		wasAdditionalSupportOptionShown: false,
 	};
 
 	componentDidMount() {
@@ -280,8 +281,12 @@ class HelpContact extends React.Component {
 				let additionalSupportOption = { enabled: false };
 
 				if ( ! isDefaultLocale( currentUserLocale ) && ! this.props.hasHappychatLocalizedSupport ) {
-					// track that additional support option is shown
-					this.props.recordTracksEvent( 'calypso_happychat_a_b_additional_support_option_shown' );
+					// make sure we only record the track once
+					if ( ! this.state.wasAdditionalSupportOptionShown ) {
+						// track that additional support option is shown
+						this.props.recordTracksEvent( 'calypso_happychat_a_b_additional_support_option_shown' );
+						this.setState( { wasAdditionalSupportOptionShown: true } );
+					}
 
 					// override chat buttons
 					buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {

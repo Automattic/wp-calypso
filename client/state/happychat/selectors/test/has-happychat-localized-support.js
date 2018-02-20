@@ -28,7 +28,7 @@ describe( '#hasHappychatLocalizedSupport', () => {
 		expect( hasHappychatLocalizedSupport( state ) ).to.be.false;
 	} );
 
-	it( "should be false if Happychat isn't accepting new connections", () => {
+	it( "should be false if Happychat isn't accepting new localized chat connections", () => {
 		const state = deepFreeze( {
 			happychat: {
 				connection: {
