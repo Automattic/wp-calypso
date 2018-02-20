@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get, flow, isEmpty, inRange } from 'lodash';
+import { flow, get, isEmpty, inRange } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -85,7 +85,7 @@ export class SimpleSiteRenameForm extends Component {
 	};
 
 	onFieldChange = event => {
-		const domainFieldValue = get( event, 'target.value' );
+		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
 		const shouldUpdateError = ! isEmpty( this.state.domainFieldError );
 
 		this.setState( {
@@ -100,19 +100,19 @@ export class SimpleSiteRenameForm extends Component {
 		const { currentDomain, currentDomainSuffix, isSiteRenameRequesting, translate } = this.props;
 		const currentDomainPrefix = get( currentDomain, 'name', '' ).replace( currentDomainSuffix, '' );
 		const isWPCOM = get( currentDomain, 'type' ) === 'WPCOM';
-		const { domainFieldError } = this.state;
+		const { domainFieldError, domainFieldValue } = this.state;
 		const isDisabled =
 			! isWPCOM ||
-			! this.state.domainFieldValue ||
+			! domainFieldValue ||
 			!! domainFieldError ||
-			this.state.domainFieldValue === currentDomainPrefix;
+			domainFieldValue === currentDomainPrefix;
 
 		return (
 			<div className="simple-site-rename-form">
 				<ConfirmationDialog
 					isVisible={ this.state.showDialog }
 					onClose={ this.onDialogClose }
-					newDomainName={ this.state.domainFieldValue }
+					newDomainName={ domainFieldValue }
 					currentDomainName={ currentDomainPrefix }
 					onConfirm={ this.onConfirm }
 				/>
