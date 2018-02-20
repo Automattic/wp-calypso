@@ -50,5 +50,6 @@ export const jetpackOnboardingSettingsSchema = {
 			],
 		},
 		installWooCommerce: { type: 'boolean' },
+		stats: { type: 'boolean' },
 	},
 };
