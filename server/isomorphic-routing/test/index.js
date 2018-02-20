@@ -59,7 +59,7 @@ describe( 'getCacheKey', () => {
 		expect( getCacheKey( context ) ).toEqual( getCacheKey( keysSwapped ) );
 	} );
 
-	test( 'should return null if unknown and cahceable query params are mixed', () => {
+	test( 'should return null if unknown and cacheable query params are mixed', () => {
 		const context = {
 			pathname: '/my/path',
 			query: { cache_me: 1, do_not_cache: 'abcd' },
