@@ -443,7 +443,8 @@
 	}
 
 	.form-textarea {
-		margin: 0px 8px 20px 8px;
+		height: 184px; // 8 lines
+		margin: 0 0 20px 0;
 		resize: vertical;
 		transition: none;
 		width: 100%;
@@ -496,6 +497,89 @@
 .comment__edit-buttons {
 	padding: 0 8px 16px 8px;
 	width: 100%;
+}
+
+// HTML Editor
+
+.comment-html-editor {
+	margin: 0 8px;
+	width: 100%;
+}
+
+.comment-html-editor__toolbar .button {
+	border-right: 1px solid lighten($gray, 30%);
+	border-radius: 0px;
+	color: darken($gray, 20%);
+	margin-bottom: 8px;
+	min-width: 30px;
+	padding: 4px 8px;
+	position: relative;
+	text-transform: lowercase;
+
+	&:hover {
+		color: $gray-dark;
+	}
+
+	&:last-child {
+		border-right: none;
+	}
+
+	&.is-tag-open {
+		padding-left: 12px;
+		padding-right: 4px;
+		&::before {
+			content: '/';
+			left: 8px;
+			position: absolute;
+		}
+	}
+}
+
+.comment-html-editor__toolbar-button-strong {
+	font-weight: bold;
+}
+.comment-html-editor__toolbar-button-em {
+	font-style: italic;
+}
+.comment-html-editor__toolbar-button-a.button {
+	color: $blue-wordpress;
+	text-decoration: underline;
+}
+.comment-html-editor__toolbar-button-del {
+	text-decoration: line-through;
+}
+.comment-html-editor__toolbar-button-ins {
+	text-decoration: underline;
+}
+.comment-html-editor__toolbar-button-code {
+	font-family: $code;
+}
+.comment-html-editor__toolbar-button-close-tags.button[disabled]:hover {
+	color: lighten($gray, 30%);
+}
+
+.comment-html-editor__dialog {
+	max-height: 90%;
+
+	.dialog__content {
+		min-width: 40vw;
+	}
+	.form-fieldset {
+		margin-bottom: 8px;
+	}
+	.post-selector {
+		margin-bottom: 16px;
+		.post-selector__results {
+			height: 24vh;
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		width: 90%;
+		.dialog__content {
+			min-width: none;
+		}
+	}
 }
 
 // Bulk Mode View
