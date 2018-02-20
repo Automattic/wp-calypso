@@ -2744,10 +2744,6 @@
         }
       }
     },
-    "cpf": {
-      "version": "1.0.0",
-      "integrity": "sha1-geCsZajzSfRuuHZYkFFzt3TuTJY="
-    },
     "crc32": {
       "version": "0.2.2",
       "integrity": "sha1-etIg1v/c0Rn5/BJ6d3LKzqOQpLo="
