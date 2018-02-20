@@ -17,6 +17,7 @@ import JetpackLogo from 'components/jetpack-logo';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
+import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
 
 export class OrgCredentialsForm extends Component {
 	getHeaderImage() {
@@ -88,11 +89,16 @@ export class OrgCredentialsForm extends Component {
 			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
 					{ this.formHeader() }
-					<CredentialsForm submitButtonText="Install Jetpack" footerLink={ this.footerLink() } />
+					<CredentialsForm
+						submitButtonText="Install Jetpack"
+						footerLink={ this.footerLink() }
+						actionOnSubmit={ this.props.jetpackRemoteInstall }
+						installJetpack= { true }
+					/>
 				</div>
 			</MainWrapper>
 		);
 	}
 }
 
-export default connect( null, {} )( localize( OrgCredentialsForm ) );
+export default connect( null, { jetpackRemoteInstall } )( localize( OrgCredentialsForm ) );
