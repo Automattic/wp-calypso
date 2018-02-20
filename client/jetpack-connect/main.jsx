@@ -123,8 +123,8 @@ export class JetpackConnectMain extends Component {
 
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,
-			cta_id: cta_id,
-			cta_from: cta_from,
+			cta_id,
+			cta_from,
 		} );
 	}
 
