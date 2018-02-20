@@ -14,13 +14,13 @@ import url from 'url';
  * Internal dependencies
  */
 import config from 'config';
+// This is a custom AsyncLoad component for devdocs that includes a
+// `props.component`-aware placeholder. It still needs to be imported as
+// `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/master/index.js#L12
+import AsyncLoad from './devdocs-async-load';
 import DocsComponent from './main';
 import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
-import DesignAssetsComponent from './design';
-import Blocks from './design/blocks';
-import DocsSelectors from './docs-selectors';
-import Typography from './design/typography';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
@@ -90,9 +90,7 @@ const devdocs = {
 
 	// UI components
 	design: function( context, next ) {
-		context.primary = React.createElement( DesignAssetsComponent, {
-			component: context.params.component,
-		} );
+		context.primary = <AsyncLoad component={ context.params.component } require="./design" />;
 		next();
 	},
 
@@ -103,24 +101,27 @@ const devdocs = {
 
 	// App Blocks
 	blocks: function( context, next ) {
-		context.primary = React.createElement( Blocks, {
-			component: context.params.component,
-		} );
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/blocks" />
+		);
 		next();
 	},
 
 	selectors: function( context, next ) {
-		context.primary = React.createElement( DocsSelectors, {
-			selector: context.params.selector,
-			search: context.query.search,
-		} );
+		context.primary = (
+			<AsyncLoad
+				require="./docs-selectors"
+				search={ context.query.search }
+				selector={ context.params.selector }
+			/>
+		);
 		next();
 	},
 
 	typography: function( context, next ) {
-		context.primary = React.createElement( Typography, {
-			component: context.params.component,
-		} );
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/typography" />
+		);
 		next();
 	},
 
