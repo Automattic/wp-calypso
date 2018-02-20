@@ -13,14 +13,28 @@ import PropTypes from 'prop-types';
 import Card from 'components/card';
 import Button from 'components/button';
 
-const CTACard = ( { headerText, mainText, buttonPrimary, buttonText, buttonIcon } ) => (
+const CTACard = ( {
+	headerText,
+	mainText,
+	buttonPrimary,
+	buttonText,
+	buttonIcon,
+	buttonTarget,
+	buttonHref,
+	buttonOnClick,
+} ) => (
 	<Card className="select-business-type__cta-card">
 		<div className="select-business-type__cta-card-main">
 			<h2>{ headerText }</h2>
 			<p>{ mainText }</p>
 		</div>
 		<div className="select-business-type__cta-card-button-container">
-			<Button primary={ buttonPrimary }>
+			<Button
+				primary={ buttonPrimary }
+				href={ buttonHref }
+				target={ buttonTarget }
+				onClick={ buttonOnClick }
+			>
 				{ buttonText } <Gridicon icon={ buttonIcon } />
 			</Button>
 		</div>
@@ -33,6 +47,9 @@ CTACard.propTypes = {
 	buttonPrimary: PropTypes.bool,
 	buttonText: PropTypes.string.isRequired,
 	buttonIcon: PropTypes.string.isRequired,
+	buttonOnClick: PropTypes.func,
+	buttonHref: PropTypes.string,
+	buttonTarget: PropTypes.string.isRequired,
 };
 
 export default CTACard;

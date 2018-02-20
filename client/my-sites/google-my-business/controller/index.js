@@ -14,6 +14,6 @@ import GMBSelectBusinessType from '../select-business-type';
 
 export function show( context, next ) {
 	const { params } = context;
-	context.primary = <GMBSelectBusinessType { ...params } />;
+	context.primary = <GMBSelectBusinessType siteId={ params.site_id } />;
 	next();
 }

@@ -4,7 +4,9 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,10 +14,25 @@ import { localize } from 'i18n-calypso';
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
 import CTACard from './cta-card';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class SelectBusinessType extends Component {
+	static propTypes = {
+		translate: PropTypes.func.isRequired,
+		siteId: PropTypes.string.isRequired,
+		recordTracksEvent: PropTypes.func.isRequired,
+	};
+
+	onCreateMyListingClick = () => {
+		this.props.recordTracksEvent( 'calypso_google_my_business_create_my_listing_click' );
+	};
+
+	onOptimizeYourSEOClick = () => {
+		this.props.recordTracksEvent( 'calypso_google_my_business_optimize_your_seo_click' );
+	};
+
 	render() {
-		const { translate } = this.props;
+		const { translate, siteId } = this.props;
 
 		return (
 			<div className="select-business-type">
@@ -47,6 +64,9 @@ class SelectBusinessType extends Component {
 					buttonText={ translate( 'Create My Listing' ) }
 					buttonIcon="external"
 					buttonPrimary={ true }
+					buttonHref="https://www.google.com/business/"
+					buttonTarget="_blank"
+					buttonOnClick={ this.onCreateMyListingClick }
 				/>
 
 				<CTACard
@@ -56,10 +76,13 @@ class SelectBusinessType extends Component {
 					) }
 					buttonText={ translate( 'Optimize Your SEO' ) }
 					buttonIcon="external"
+					buttonHref={ '/settings/traffic/' + siteId }
+					buttonTarget="_blank"
+					buttonOnClick={ this.onOptimizeYourSEOClick }
 				/>
 			</div>
 		);
 	}
 }
 
-export default localize( SelectBusinessType );
+export default connect( undefined, { recordTracksEvent } )( localize( SelectBusinessType ) );
