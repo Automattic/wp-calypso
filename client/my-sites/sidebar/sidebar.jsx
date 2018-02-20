@@ -83,16 +83,19 @@ export class MySitesSidebar extends Component {
 		const { isPreviewable, siteSuffix } = this.props;
 
 		if ( ! isPreviewable ) {
+			this.trackMenuItemClick( 'view_site_unpreviewable' );
 			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Unpreviewable' );
 			return;
 		}
 
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
+			this.trackMenuItemClick( 'view_site_modifier' );
 			this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Modifier Key' );
 			return;
 		}
 
 		event.preventDefault();
+		this.trackMenuItemClick( 'view_site' );
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked View Site | Calypso' );
 		page( '/view' + siteSuffix );
 	};
@@ -106,6 +109,11 @@ export class MySitesSidebar extends Component {
 			/>
 		);
 	}
+
+	trackStatsClick = () => {
+		this.trackMenuItemClick( 'stats' );
+		this.onNavigate();
+	};
 
 	stats() {
 		const { siteId, canUserViewStats, path, translate } = this.props;
@@ -122,7 +130,7 @@ export class MySitesSidebar extends Component {
 				className="stats"
 				selected={ itemLinkMatches( [ '/stats', '/store/stats' ], path ) }
 				link={ statsLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackStatsClick }
 				icon="stats-alt"
 			>
 				<a href={ statsLink }>
@@ -155,6 +163,11 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackAdsClick = () => {
+		this.trackMenuItemClick( 'ads' );
+		this.onNavigate();
+	};
+
 	ads() {
 		const { path, site, canUserManageOptions } = this.props;
 		const adsLink = '/ads/earnings' + this.props.siteSuffix;
@@ -166,13 +179,18 @@ export class MySitesSidebar extends Component {
 					label={ this.props.isJetpack ? 'Ads' : 'WordAds' }
 					selected={ itemLinkMatches( '/ads', path ) }
 					link={ adsLink }
-					onNavigate={ this.onNavigate }
+					onNavigate={ this.trackAdsClick }
 					icon="speaker"
 					tipTarget="wordads"
 				/>
 			)
 		);
 	}
+
+	trackThemesClick = () => {
+		this.trackMenuItemClick( 'themes' );
+		this.onNavigate();
+	};
 
 	themes() {
 		const { path, site, translate, canUserEditThemeOptions } = this.props,
@@ -201,16 +219,33 @@ export class MySitesSidebar extends Component {
 				tipTarget="themes"
 				selected={ itemLinkMatches( '/themes', path ) }
 				link={ themesLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackThemesClick }
 				icon="themes"
 				preloadSectionName="themes"
 			>
-				<SidebarButton href={ this.props.customizeUrl } preloadSectionName="customize">
+				<SidebarButton
+					onClick={ this.trackSidebarButtonClick( 'customize' ) }
+					href={ this.props.customizeUrl }
+					preloadSectionName="customize"
+				>
 					{ this.props.translate( 'Customize' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
 	}
+
+	trackSidebarButtonClick = name => {
+		return () => {
+			this.props.recordTracksEvent(
+				'calypso_mysites_sidebar_' + name.replace( /-/g, '_' ) + '_sidebar_button_clicked'
+			);
+		};
+	};
+
+	trackPluginsClick = () => {
+		this.trackMenuItemClick( 'plugins' );
+		this.onNavigate();
+	};
 
 	plugins() {
 		const pluginsLink = '/plugins' + this.props.siteSuffix;
@@ -228,7 +263,10 @@ export class MySitesSidebar extends Component {
 
 		const manageButton =
 			this.props.isJetpack || ( ! this.props.siteId && this.props.hasJetpackSites ) ? (
-				<SidebarButton href={ managePluginsLink }>
+				<SidebarButton
+					onClick={ this.trackSidebarButtonClick( 'manage_plugins' ) }
+					href={ managePluginsLink }
+				>
 					{ this.props.translate( 'Manage' ) }
 				</SidebarButton>
 			) : null;
@@ -238,7 +276,7 @@ export class MySitesSidebar extends Component {
 				label={ this.props.translate( 'Plugins' ) }
 				selected={ itemLinkMatches( [ '/extensions', '/plugins' ], this.props.path ) }
 				link={ pluginsLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackPluginsClick }
 				icon="plugins"
 				preloadSectionName="plugins"
 				tipTarget="plugins"
@@ -247,6 +285,11 @@ export class MySitesSidebar extends Component {
 			</SidebarItem>
 		);
 	}
+
+	trackDomainsClick = () => {
+		this.trackMenuItemClick( 'domains' );
+		this.onNavigate();
+	};
 
 	upgrades() {
 		const { path, translate, canUserManageOptions } = this.props;
@@ -270,12 +313,17 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'Domains' ) }
 				selected={ itemLinkMatches( [ '/domains' ], path ) }
 				link={ domainsLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackDomainsClick }
 				icon="domains"
 				preloadSectionName="domains"
 				tipTarget="domains"
 			>
-				<SidebarButton href={ addDomainLink }>{ translate( 'Add' ) }</SidebarButton>
+				<SidebarButton
+					onClick={ this.trackSidebarButtonClick( 'add_domain' ) }
+					href={ addDomainLink }
+				>
+					{ translate( 'Add' ) }
+				</SidebarButton>
 			</SidebarItem>
 		);
 	}
@@ -314,7 +362,7 @@ export class MySitesSidebar extends Component {
 
 		return (
 			<li className={ linkClass } data-tip-target={ tipTarget }>
-				<a onClick={ this.trackUpgradeClick } href={ planLink }>
+				<a onClick={ this.trackPlanClick } href={ planLink }>
 					<JetpackLogo size={ 24 } />
 					<span className="menu-link-text">{ translate( 'Plan', { context: 'noun' } ) }</span>
 					<span className="sidebar__menu-link-secondary-text">{ planName }</span>
@@ -324,6 +372,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackStoreClick = () => {
+		this.trackMenuItemClick( 'store' );
 		this.props.recordTracksEvent( 'calypso_woocommerce_store_nav_item_click' );
 		this.onNavigate();
 	};
@@ -366,10 +415,22 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	trackUpgradeClick = () => {
+	trackMenuItemClick = menuItemName => {
+		this.props.recordTracksEvent(
+			'calypso_mysites_sidebar_' + menuItemName.replace( /-/g, '_' ) + '_clicked'
+		);
+	};
+
+	trackPlanClick = () => {
+		this.trackMenuItemClick( 'plan' );
 		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
 			cta_name: 'sidebar_upgrade_default',
 		} );
+		this.onNavigate();
+	};
+
+	trackSharingClick = () => {
+		this.trackMenuItemClick( 'sharing' );
 		this.onNavigate();
 	};
 
@@ -394,13 +455,18 @@ export class MySitesSidebar extends Component {
 				label={ this.props.translate( 'Sharing' ) }
 				selected={ itemLinkMatches( '/sharing', path ) }
 				link={ sharingLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackSharingClick }
 				icon="share"
 				preloadSectionName="sharing"
 				tipTarget="sharing"
 			/>
 		);
 	}
+
+	trackPeopleClick = () => {
+		this.trackMenuItemClick( 'people' );
+		this.onNavigate();
+	};
 
 	users() {
 		const { translate, path, site, canUserListUsers } = this.props;
@@ -414,17 +480,25 @@ export class MySitesSidebar extends Component {
 				label={ translate( 'People' ) }
 				selected={ itemLinkMatches( '/people', path ) }
 				link={ '/people/team' + this.props.siteSuffix }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackPeopleClick }
 				icon="user"
 				preloadSectionName="people"
 				tipTarget="people"
 			>
-				<SidebarButton href={ '/people/new' + this.props.siteSuffix }>
+				<SidebarButton
+					onClick={ this.trackSidebarButtonClick( 'add_people' ) }
+					href={ '/people/new' + this.props.siteSuffix }
+				>
 					{ translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
 	}
+
+	trackSettingsClick = () => {
+		this.trackMenuItemClick( 'settings' );
+		this.onNavigate();
+	};
 
 	siteSettings() {
 		const { path, site, canUserManageOptions } = this.props;
@@ -443,7 +517,7 @@ export class MySitesSidebar extends Component {
 				label={ this.props.translate( 'Settings' ) }
 				selected={ itemLinkMatches( '/settings', path ) }
 				link={ siteSettingsLink }
-				onNavigate={ this.onNavigate }
+				onNavigate={ this.trackSettingsClick }
 				icon="cog"
 				preloadSectionName="settings"
 				tipTarget="settings"
@@ -504,6 +578,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	trackWpadminClick = () => {
+		this.trackMenuItemClick( 'wpadmin' );
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked WP Admin' );
 	};
 
@@ -532,6 +607,11 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackDomainSettingsClick = () => {
+		this.trackMenuItemClick( 'domain_settings' );
+		this.onNavigate();
+	};
+
 	renderSidebarMenus() {
 		if ( this.props.isDomainOnly ) {
 			return (
@@ -542,7 +622,7 @@ export class MySitesSidebar extends Component {
 							icon="cog"
 							label={ this.props.translate( 'Settings' ) }
 							link={ '/domains/manage' + this.props.siteSuffix }
-							onNavigate={ this.onNavigate }
+							onNavigate={ this.trackDomainSettingsClick }
 							tipTarget="settings"
 						/>
 					</ul>
