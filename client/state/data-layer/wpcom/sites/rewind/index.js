@@ -54,22 +54,22 @@ const refreshActivityLogAfterRewind = ( siteId, rewind ) => ( dispatch, getState
 		return;
 	}
 
-	const dateStart = getActivityLogs( state, siteId ).reduce(
+	const events = getActivityLogs( state, siteId );
+	const dateStart = events.reduce(
 		( oldest, { activityTs: ts } ) => Math.min( oldest, ts ),
 		Infinity
 	);
 
-	setTimeout(
-		() =>
-			dispatch(
-				activityLogRequest( siteId, {
-					dateStart,
-					dateEnd: Date.now(),
-					number: 1000,
-				} )
-			),
-		15000
-	);
+	const query = {
+		dateStart,
+		dateEnd: Date.now(),
+		number: 1000,
+	};
+
+	// queue an update to them as well to grab more authoritative
+	// data just wait because it takes much longer on the server
+	// for all of the changes to propagate back
+	setTimeout( () => dispatch( activityLogRequest( siteId, query ) ), 15000 );
 };
 
 const updateRewindState = ( { siteId }, data ) => {
