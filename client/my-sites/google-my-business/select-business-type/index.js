@@ -36,7 +36,11 @@ class SelectBusinessType extends Component {
 
 		return (
 			<div className="select-business-type">
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false }>
+				<HeaderCake
+					isCompact={ false }
+					alwaysShowActionText={ false }
+					backHref={ '/stats/day/' + siteId }
+				>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 				<Card className="select-business-type__explanation">
