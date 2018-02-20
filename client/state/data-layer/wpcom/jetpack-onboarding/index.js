@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -151,7 +151,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, error ) => {
 	// properly, in which case a subsequent request will return 'success'.
 	if (
 		get( settings, 'installWooCommerce' ) !== true ||
-		error.error !== 'http_request_failed' ||
+		! startsWith( error.message, 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
 		return announceSaveFailure( { dispatch }, { siteId } );

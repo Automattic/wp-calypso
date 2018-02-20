@@ -302,6 +302,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 	};
 	const error = {
 		error: 'http_request_failed',
+		message: 'cURL error 28: Operation timed out after 5001 milliseconds with 0 bytes received',
 	};
 
 	test( 'should trigger saveJetpackOnboardingSettings upon first WooCommerce install timeout', () => {
