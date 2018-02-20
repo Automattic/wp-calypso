@@ -44,6 +44,7 @@ export const jetpackOnboardingSettingsSchema = {
 						city: { type: 'string' },
 						state: { type: 'string' },
 						zip: { type: 'string' },
+						country: { type: 'string' },
 					},
 				},
 			],
