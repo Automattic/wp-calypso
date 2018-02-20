@@ -230,19 +230,12 @@ function getDefaultContext( request ) {
 
 function setUpLoggedOutRoute( req, res, next ) {
 	req.context = getDefaultContext( req );
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
 
 	next();
 }
 
 function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl, start;
-
-	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
-	} );
 
 	req.context = getDefaultContext( req );
 
@@ -375,6 +368,12 @@ module.exports = function() {
 
 	// redirects to handle old newdash formats
 	app.use( '/sites/:site/:section', function( req, res, next ) {
+		if ( req.params.section !== 'iframe' ) {
+			res.set( {
+				'X-Frame-Options': 'SAMEORIGIN',
+			} );
+		}
+
 		const redirectedSections = [
 			'posts',
 			'pages',
