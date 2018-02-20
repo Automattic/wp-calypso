@@ -317,10 +317,6 @@ form.sidebar__button input {
 	display: flex;
 	flex-direction: row;
 	padding-left: 10px;
-
-	@include breakpoint( "<660px" ) {
-		margin-top: 16px;
-	}
 }
 
 .sidebar .sidebar__footer .button {
@@ -418,15 +414,12 @@ form.sidebar__button input {
 
 .sidebar__region {
 	flex-shrink: 0;
-	@include breakpoint( ">660px" ) {
-		display: flex;
-		flex-direction: column;
-		overflow-y: auto;
-		overflow-x: hidden;
-		flex: 1;
-		transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
-		-webkit-overflow-scrolling: touch;
-	}
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
+	flex: 1;
+	-webkit-overflow-scrolling: touch;
 }
 
 .sidebar__menu {
