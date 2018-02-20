@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -131,12 +131,7 @@ class SiteOrDomain extends Component {
 
 		const domain = this.getDomainName();
 		const productSlug = getDomainProductSlug( domain );
-		const supportsPrivacy = get(
-			this.props.productsList[ productSlug ],
-			'supports_domain_privacy_purchase',
-			false
-		);
-		const domainItem = cartItems.domainRegistration( { productSlug, domain, supportsPrivacy } );
+		const domainItem = cartItems.domainRegistration( { productSlug, domain } );
 		const siteUrl = domain;
 
 		SignupActions.submitSignupStep(
