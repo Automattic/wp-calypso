@@ -36,6 +36,7 @@
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
+		"google-my-business": true,
 		"help": true,
 		"help/courses": true,
 		"jetpack/api-cache": true,
