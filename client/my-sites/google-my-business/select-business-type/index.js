@@ -62,7 +62,7 @@ class SelectBusinessType extends Component {
 				<CTACard
 					headerText={ translate( 'Physical Location or Service Area' ) }
 					mainText={ translate(
-						'My business has a physical location custmers can visit, ' +
+						'My business has a physical location customers can visit, ' +
 							'or provides goods and services to local customers, or both.'
 					) }
 					buttonText={ translate( 'Create My Listing' ) }
