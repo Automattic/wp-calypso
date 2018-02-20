@@ -14,17 +14,28 @@ describe( 'getCacheKey', () => {
 			query: {},
 			cacheQueryKeys: [],
 		};
+
 		expect( getCacheKey( context ) ).toBe( '/my/path' );
 	} );
 
-	test( 'should return cacheKey for known query params', () => {
+	test( 'should return cacheKey for a known query param', () => {
 		const context = {
 			pathname: '/my/path',
 			query: { cache_me: '1' },
 			cacheQueryKeys: [ 'cache_me' ],
 		};
 
-		expect( getCacheKey( context ) ).toBe( '/my/path?cache_me=1' );
+		expect( getCacheKey( context ) ).toBe( '/my/path?{"cache_me":"1"}' );
+	} );
+
+	test( 'should return cacheKey for multiple known query params', () => {
+		const context = {
+			pathname: '/my/path',
+			query: { cache_me: '1', and_me: '2', me_too: '3' },
+			cacheQueryKeys: [ 'and_me', 'cache_me', 'me_too' ],
+		};
+
+		expect( getCacheKey( context ) ).toBe( '/my/path?{"and_me":"2","cache_me":"1","me_too":"3"}' );
 	} );
 
 	test( 'should return a stable key pathname', () => {
@@ -33,12 +44,19 @@ describe( 'getCacheKey', () => {
 			query: { a: '1', b: '2' },
 			cacheQueryKeys: [ 'a', 'b' ],
 		};
-		const contextSwapped = {
+		const querySwapped = {
 			pathname: '/my/path',
 			query: { b: '2', a: '1' },
 			cacheQueryKeys: [ 'a', 'b' ],
 		};
-		expect( getCacheKey( context ) ).toEqual( getCacheKey( contextSwapped ) );
+		const keysSwapped = {
+			pathname: '/my/path',
+			query: { a: '1', b: '2' },
+			cacheQueryKeys: [ 'b', 'a' ],
+		};
+
+		expect( getCacheKey( context ) ).toEqual( getCacheKey( querySwapped ) );
+		expect( getCacheKey( context ) ).toEqual( getCacheKey( keysSwapped ) );
 	} );
 
 	test( 'should return null if unknown and cahceable query params are mixed', () => {
