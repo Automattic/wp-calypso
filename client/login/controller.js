@@ -8,7 +8,7 @@ import React from 'react';
 import { parse as parseUrl } from 'url';
 import page from 'page';
 import qs from 'qs';
-import { map } from 'lodash';
+import { includes, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -138,4 +138,14 @@ export function redirectDefaultLocale( context, next ) {
 	} else {
 		context.redirect( '/log-in' );
 	}
+}
+
+export function redirectJetpack( context, next ) {
+	const { isJetpack } = context.params;
+	const { redirect_to } = context.query;
+
+	if ( ! isJetpack === 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
+	}
+	next();
 }
