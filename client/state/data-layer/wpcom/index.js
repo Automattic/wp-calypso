@@ -20,6 +20,7 @@ import login2fa from './login-2fa';
 import me from './me';
 import meta from './meta';
 import plans from './plans';
+import plugins from './plugins';
 import posts from './posts';
 import privacyPolicy from './privacy-policy';
 import read from './read';
@@ -46,6 +47,7 @@ export const handlers = mergeHandlers(
 	me,
 	meta,
 	plans,
+	plugins,
 	posts,
 	privacyPolicy,
 	read,
