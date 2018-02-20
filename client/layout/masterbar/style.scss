@@ -27,10 +27,6 @@ $autobar-height: 20px;
 	.is-section-themes.has-no-sidebar & {
 		border: none;
 	}
-
-	@include breakpoint( ">660px" ) {
-		backface-visibility: hidden;
-	}
 }
 
 .pride .masterbar {
