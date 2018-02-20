@@ -400,7 +400,7 @@ class TransferDomainStep extends React.Component {
 					return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
 				} );
 
-				if ( this.props.isSignupStep && ! this.transferIsRestricted() ) {
+				if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {
 					this.props.onTransferDomain( domain );
 				}
 			}
