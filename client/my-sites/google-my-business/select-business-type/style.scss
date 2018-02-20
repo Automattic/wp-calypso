@@ -1,5 +1,8 @@
 .select-business-type__cta-card {
 	display: flex;
+	@include breakpoint( "<660px" ) {
+		display: block;
+	}
 }
 
 .select-business-type__cta-card-main {
@@ -20,6 +23,9 @@
 .select-business-type__cta-card-button-container {
 	align-self: center;
 	text-align: right;
+	@include breakpoint( "<660px" ) {
+		text-align: left;
+	}
 	flex: 1;
 }
 
@@ -31,6 +37,10 @@
 	.select-business-type__explanation {
 		display: flex;
 
+		@include breakpoint( "<660px" ) {
+			flex-direction: column-reverse;
+		}
+		
 		h1 {
 			color: $gray-dark;
 			font-size: 24px;
