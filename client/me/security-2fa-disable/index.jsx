@@ -100,7 +100,7 @@ class Security2faDisable extends Component {
 					{ translate(
 						'Switching to a new device? ' +
 							'{{changephonelink}}Follow these steps{{/changephonelink}} ' +
-							'to avoid being locked out of your account.',
+							'to avoid losing access to your account.',
 						{
 							components: {
 								changephonelink: (
