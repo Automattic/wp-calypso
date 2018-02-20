@@ -16,20 +16,16 @@ export class D3Base extends Component {
 		getParams: PropTypes.func.isRequired,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.updateParams = this.updateParams.bind( this );
+	}
+
 	state = {};
 
 	componentDidMount() {
-		window.addEventListener( 'resize', this.handleResize );
-		const { getParams } = this.props;
-		/**
-		 * Calling setState() in this method will trigger an extra rendering,
-		 * but it will happen before the browser updates the screen.
-		 *
-		 * ~ https://reactjs.org/docs/react-component.html
-		 */
-		/* eslint-disable react/no-did-mount-set-state */
-		this.setState( getParams( this.node ), this.draw );
-		/* eslint-enable react/no-did-mount-set-state */
+		window.addEventListener( 'resize', this.updateParams );
+		this.updateParams();
 	}
 
 	componentDidUpdate() {
@@ -37,13 +33,17 @@ export class D3Base extends Component {
 	}
 
 	componentWillReceiveProps() {
-		const { getParams } = this.props;
-		this.setState( getParams( this.node ), this.draw );
+		this.updateParams();
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.handleResize );
+		window.removeEventListener( 'resize', this.updateParams );
 		delete this.node;
+	}
+
+	updateParams() {
+		const { getParams } = this.props;
+		this.setState( getParams( this.node ), this.draw );
 	}
 
 	draw() {
