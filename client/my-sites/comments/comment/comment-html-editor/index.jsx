@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { delay, each, filter, get, map, reduce } from 'lodash';
+import { delay, each, get, map, reduce, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,7 +77,9 @@ export class CommentHtmlEditor extends Component {
 		}
 
 		if ( !! fragments[ 1 ] && this.isTagOpen( tag ) ) {
-			this.setState( ( { openTags } ) => ( { openTags: filter( openTags, tag ) } ) );
+			this.setState( ( { openTags } ) => ( {
+				openTags: reject( openTags, openTag => openTag === tag ),
+			} ) );
 			return this.insertContent( closer, options.adjustCursorPosition );
 		}
 
