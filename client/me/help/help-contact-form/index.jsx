@@ -134,8 +134,12 @@ export class HelpContactForm extends React.PureComponent {
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
+		const site = this.props.helpSite.jetpack
+			? config( 'jetpack_support_blog' )
+			: config( 'wpcom_support_blog' );
+
 		wpcom
-			.getQandA( query, config( 'happychat_support_blog' ) )
+			.getQandA( query, site )
 			.then( qanda =>
 				this.setState( {
 					qanda,

@@ -16,7 +16,6 @@
   "google_analytics_enabled",
   "google_analytics_key",
   "happychat_url",
-  "happychat_support_blog",
   "hostname",
   "i18n_default_locale_slug",
   "jetpack_min_version",
@@ -24,6 +23,7 @@
   "login_url",
   "logout_url",
   "hotjar_enabled",
+  "jetpack_support_blog",
   "mc_analytics_enabled",
   "oauth_client_id",
   "oauth_response_type",
@@ -39,5 +39,6 @@
   "twemoji_cdn_url",
   "wpcom_concierge_schedule_id",
   "wpcom_signup_id",
-  "wpcom_signup_key"
+  "wpcom_signup_key",
+  "wpcom_support_blog"
 ]
