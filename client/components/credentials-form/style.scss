@@ -1,0 +1,14 @@
+/*rtl:ignore*/
+.credentials-form .credentials--form__input {
+	margin-bottom: 20px;
+	transition: none;
+
+	&.is-error,
+	&[type="password"] {
+		margin-bottom: 0;
+	}
+}
+
+.credentials--form .logged-out-form__footer {
+	margin-top: 20px;
+}
