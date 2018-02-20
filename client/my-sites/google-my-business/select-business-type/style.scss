@@ -22,11 +22,11 @@
 
 .select-business-type__cta-card-button-container {
 	align-self: center;
+	flex: 1;
 	text-align: right;
 	@include breakpoint( "<960px" ) {
 		text-align: left;
 	}
-	flex: 1;
 }
 
 .select-business-type {
