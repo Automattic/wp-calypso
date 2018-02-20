@@ -1,10 +1,5 @@
 /** @format */
 /**
- * External dependencies
- */
-import { fromPairs } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
@@ -13,6 +8,7 @@ import { activityLogRequest } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
+import { getActivityLogs } from 'state/selectors';
 import { transformApi } from './api-transformer';
 import { rewindStatus } from './schema';
 
@@ -37,14 +33,6 @@ const fetchRewindState = action =>
  * Re-requests the activity log entries for all
  * previously-sent queries in application state
  *
- * This function is highly coupled to the details
- * of Activity Log and Rewind state!
- *
- * It will not grab events we haven't already
- * gotten. Instead it will re-issue the same requests
- * as previously made so that we get updates on
- * things like the `isDiscarded` status of events.
- *
  * @param {Number} siteId the site being queried
  * @param {Object} rewind Rewind state for the site
  * @returns {function} thunk action maybe dispatching requests
@@ -66,8 +54,21 @@ const refreshActivityLogAfterRewind = ( siteId, rewind ) => ( dispatch, getState
 		return;
 	}
 
-	Object.keys( logItems.data.queries ).forEach( query =>
-		dispatch( activityLogRequest( siteId, fromPairs( JSON.parse( query ) ) ) )
+	const dateStart = getActivityLogs( state, siteId ).reduce(
+		( oldest, { activityTs: ts } ) => Math.min( oldest, ts ),
+		Infinity
+	);
+
+	setTimeout(
+		() =>
+			dispatch(
+				activityLogRequest( siteId, {
+					dateStart,
+					dateEnd: Date.now(),
+					number: 1000,
+				} )
+			),
+		15000
 	);
 };
 
