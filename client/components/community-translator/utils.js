@@ -11,9 +11,7 @@ import { head, find, get } from 'lodash';
  */
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
-
-const PROJECT = 'test'; //wpcom
-const GP_API_BASE_URL = 'https://translate.wordpress.com/api';
+import { GP_PROJECT, GP_API_BASE_URL } from './constants';
 
 export function canDisplayCommunityTranslator( locale = userSettings.getSetting( 'language' ) ) {
 	// restrict mobile devices from translator for now while we refine touch interactions
@@ -45,7 +43,7 @@ export function getTranslationData(
 	locale,
 	originalStringData,
 	apiBase = GP_API_BASE_URL,
-	project = PROJECT
+	project = GP_PROJECT
 ) {
 	// TODO: glotPressUrl & project should be constants and vary depending on NODE_ENV
 	const glotPressUrl = `${ apiBase }/translations/-query-by-originals`;
@@ -71,7 +69,7 @@ export function submitTranslation(
 	translationObject,
 	locale,
 	apiBase = GP_API_BASE_URL,
-	project = PROJECT
+	project = GP_PROJECT
 ) {
 	const glotPressUrl = `${ apiBase }/translations/-new`;
 	const newTranslations = Object.keys( translationObject )
@@ -111,6 +109,6 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 	};
 }
 
-export function getTranslationGlotPressUrl( originalId, locale, project = PROJECT ) {
+export function getTranslationGlotPressUrl( originalId, locale, project = GP_PROJECT ) {
 	return `https://translate.wordpress.com/projects/${ project }/${ locale }/default?filters[original_id]=${ originalId }`;
 }
