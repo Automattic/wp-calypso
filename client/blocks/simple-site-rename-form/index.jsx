@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get, flow } from 'lodash';
+import { debounce, get, flow } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -16,13 +16,12 @@ import FormButton from 'components/forms/form-button';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import ConfirmationDialog from './dialog';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import { requestSiteRename } from 'state/site-rename/actions';
+import { requestPreflight, requestSiteRename } from 'state/site-rename/actions';
 import { isRequestingSiteRename } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 export class SimpleSiteRenameForm extends Component {
 	static defaultProps = {
-		currentDomainSuffix: '.wordpress.com',
 		currentDomain: {},
 	};
 
@@ -31,12 +30,16 @@ export class SimpleSiteRenameForm extends Component {
 		domainFieldValue: '',
 	};
 
+	debouncedRequestPreflight = debounce( () => {
+		this.props.requestPreflight( this.props.selectedSiteId, this.state.domainFieldValue );
+	}, 300 );
+
 	onConfirm = () => {
-		const { selectedSiteId } = this.props;
+		const { nonce, selectedSiteId } = this.props;
 		// @TODO: Give ability to chose whether or not to discard the original domain name.
 		const discard = true;
 
-		this.props.requestSiteRename( selectedSiteId, this.state.domainFieldValue, discard );
+		this.props.requestSiteRename( selectedSiteId, this.state.domainFieldValue, discard, nonce );
 	};
 
 	showConfirmationDialog() {
@@ -46,6 +49,7 @@ export class SimpleSiteRenameForm extends Component {
 	}
 
 	onSubmit = event => {
+		this.debouncedRequestPreflight();
 		this.showConfirmationDialog();
 		event.preventDefault();
 	};
@@ -60,14 +64,44 @@ export class SimpleSiteRenameForm extends Component {
 		this.setState( { domainFieldValue: get( event, 'target.value' ) } );
 	};
 
+	updateCurrentSiteSlug = () => {
+		const { currentDomain } = this.props;
+		const currentDomainName = get( currentDomain, 'name', '' );
+		this.currentSiteSlug = currentDomainName.replace( /\.wordpress\.com$/i, '' );
+	};
+
+	componentWillMount() {
+		this.updateCurrentSiteSlug();
+	}
+
+	componentDidUpdate( prevProps, prevState ) {
+		const prevDomainName = get( prevProps, 'currentDomain.name' );
+		const newDomainName = get( this.props, 'currentDomain.name' );
+		if ( prevDomainName !== newDomainName ) {
+			this.updateCurrentSiteSlug();
+		}
+
+		const { domainFieldValue } = this.state;
+		if (
+			! domainFieldValue ||
+			domainFieldValue === this.currentSiteSlug ||
+			prevState.domainFieldValue === domainFieldValue
+		) {
+			return;
+		}
+
+		this.debouncedRequestPreflight();
+	}
+
 	render() {
-		const { currentDomain, currentDomainSuffix, isSiteRenameRequesting, translate } = this.props;
-		const currentDomainPrefix = get( currentDomain, 'name', '' ).replace( currentDomainSuffix, '' );
+		const { currentDomain, isSiteRenameRequesting, nonce, translate } = this.props;
+
 		const isWPCOM = get( currentDomain, 'type' ) === 'WPCOM';
 		const isDisabled =
 			! isWPCOM ||
+			! nonce ||
 			! this.state.domainFieldValue ||
-			this.state.domainFieldValue === currentDomainPrefix;
+			this.state.domainFieldValue === this.currentSiteSlug;
 
 		return (
 			<div className="simple-site-rename-form">
@@ -75,7 +109,7 @@ export class SimpleSiteRenameForm extends Component {
 					isVisible={ this.state.showDialog }
 					onClose={ this.onDialogClose }
 					newDomainName={ this.state.domainFieldValue }
-					currentDomainName={ currentDomainPrefix }
+					currentDomainName={ this.currentSiteSlug }
 					onConfirm={ this.onConfirm }
 				/>
 				<form onSubmit={ this.onSubmit }>
@@ -84,9 +118,9 @@ export class SimpleSiteRenameForm extends Component {
 						<FormTextInputWithAffixes
 							type="text"
 							value={ this.state.domainFieldValue }
-							suffix={ currentDomainSuffix }
+							suffix={ '.wordpress.com' }
 							onChange={ this.onFieldChange }
-							placeholder={ currentDomainPrefix }
+							placeholder={ this.currentSiteSlug }
 						/>
 						<div className="simple-site-rename-form__footer">
 							<div className="simple-site-rename-form__info">
@@ -113,13 +147,14 @@ export default flow(
 	connect(
 		state => {
 			const siteId = getSelectedSiteId( state );
-
 			return {
-				selectedSiteId: siteId,
 				isSiteRenameRequesting: isRequestingSiteRename( state, siteId ),
+				nonce: 'bogus-nonce-get-this-out-of-the-state-tree-instead',
+				selectedSiteId: siteId,
 			};
 		},
 		{
+			requestPreflight,
 			requestSiteRename,
 		}
 	)
