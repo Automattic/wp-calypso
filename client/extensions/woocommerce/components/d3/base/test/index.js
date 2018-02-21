@@ -1,4 +1,7 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 
 /**
  * External dependencies
@@ -21,14 +24,12 @@ describe( 'D3base', () => {
 		assert.lengthOf( base.find( '.d3-base' ), 1 );
 	} );
 
-	// The following tests are skipped because the testEnvironment does not have `window`
-	// Fix here: https://github.com/Automattic/wp-calypso/pull/22637
-	test.skip( 'should render an svg', () => {
+	test( 'should render an svg', () => {
 		const base = mount( <D3Base drawChart={ noop } getParams={ noop } /> );
 		assert.lengthOf( base.render().find( 'svg' ), 1 );
 	} );
 
-	test.skip( 'should render a result of the drawChart prop', () => {
+	test( 'should render a result of the drawChart prop', () => {
 		const drawChart = svg => {
 			return svg.append( 'circle' );
 		};
@@ -36,7 +37,7 @@ describe( 'D3base', () => {
 		assert.lengthOf( base.render().find( 'circle' ), 1 );
 	} );
 
-	test.skip( 'should pass a property of getParams output to drawChart function', () => {
+	test( 'should pass a property of getParams output to drawChart function', () => {
 		const getParams = () => ( {
 			tagName: 'circle',
 		} );
