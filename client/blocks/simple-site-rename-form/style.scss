@@ -25,7 +25,6 @@
 	text-align: center;
 
 	@include breakpoint( '>660px' ) {
-		padding: 0;
 		text-align: left;
 	}
 
