@@ -198,13 +198,10 @@
 .search.is-searching .spinner {
 	flex: 0 0 auto;
 	display: flex;
-	align-items: center;
+	width: 50px;
 	height: 100%;
+	background-color: $white;
 	z-index: z-index( '.search', '.search.is-searching .spinner' );
-
-	.spinner__image {
-		width: 50px;
-	}
 }
 
 .animating.search-opening .search input {
