@@ -193,7 +193,7 @@ const sections = [
 		paths: [ '/google-my-business' ],
 		module: 'my-sites/google-my-business',
 		secondary: true,
-		group: 'google-my-business',
+		group: 'sites',
 	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
