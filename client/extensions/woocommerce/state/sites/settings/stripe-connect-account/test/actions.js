@@ -70,7 +70,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/account&_method=post', json: true } )
+				.query( { path: '/wc/v1/connect/stripe/account&_via_calypso&_method=post', json: true } )
 				.reply( 200, {
 					data: {
 						success: true,
@@ -114,7 +114,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/account&_method=get', json: true } )
+				.query( { path: '/wc/v1/connect/stripe/account&_via_calypso&_method=get', json: true } )
 				.reply( 200, {
 					data: {
 						success: true,
@@ -169,7 +169,10 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/account/deauthorize&_method=post', json: true } )
+				.query( {
+					path: '/wc/v1/connect/stripe/account/deauthorize&_via_calypso&_method=post',
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						success: true,
@@ -209,7 +212,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/oauth/init&_method=post', json: true } )
+				.query( { path: '/wc/v1/connect/stripe/oauth/init&_via_calypso&_method=post', json: true } )
 				.reply( 200, {
 					data: {
 						success: true,
@@ -253,7 +256,10 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v1/connect/stripe/oauth/connect&_method=post', json: true } )
+				.query( {
+					path: '/wc/v1/connect/stripe/oauth/connect&_via_calypso&_method=post',
+					json: true,
+				} )
 				.reply( 200, {
 					data: {
 						success: true,

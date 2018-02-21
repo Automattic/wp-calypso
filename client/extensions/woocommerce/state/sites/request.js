@@ -32,7 +32,7 @@ const _request = ( method, path, siteId, body, namespace = 'wc/v3' ) => {
 			path: `/jetpack-blogs/${ siteId }/rest-api/`,
 		},
 		{
-			path: `/${ namespace }/${ path }&_method=${ method }`,
+			path: `/${ namespace }/${ path }&_via_calypso&_method=${ method }`,
 			body: body && JSON.stringify( body ),
 			json: true,
 		}
