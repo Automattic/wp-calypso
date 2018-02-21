@@ -39,6 +39,7 @@ class Popover extends Component {
 		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		closeOnEsc: PropTypes.bool,
+		focusOnShow: PropTypes.bool,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isRtl: PropTypes.bool,
@@ -64,6 +65,7 @@ class Popover extends Component {
 		autoRtl: true,
 		className: '',
 		closeOnEsc: true,
+		focusOnShow: false,
 		isRtl: false,
 		isVisible: false,
 		position: 'top',
@@ -118,12 +120,17 @@ class Popover extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		const { isVisible } = this.props;
+		const { isVisible, onShow, focusOnShow } = this.props;
 
 		if ( ! prevState.show && this.state.show ) {
 			this.bindEscKeyListener();
 			this.bindDebouncedReposition();
 			bindWindowListeners();
+			onShow();
+
+			if ( focusOnShow && this.domContainer ) {
+				this.domContainer.focus();
+			}
 		}
 
 		if ( isVisible !== prevProps.isVisible ) {

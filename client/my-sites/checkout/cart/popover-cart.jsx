@@ -89,6 +89,7 @@ const PopoverCart = createReactClass( {
 					isVisible={ this.props.visible }
 					position="bottom left"
 					onClose={ this.onClose }
+					focusOnShow={ true }
 					context={ this.refs.toggleButton }
 				>
 					{ this.cartBody() }
