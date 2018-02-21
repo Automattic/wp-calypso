@@ -87,6 +87,10 @@ calypso-codemods commonjs-imports,commonjs-exports,named-export-from-default cli
 - rename-combine-reducers
 	- This transformation converts combineReducersWithPersistence imports to use combineReducers from 'state/utils'
 
+- single-tree-rendering
+	- Instead of rendering two distinct React element trees to the `#primary` and `#secondary` <div>s,
+	use a single `Layout` component tree that includes both, and render it to `#layout`.
+
 - sort-imports
 	- This transformation adds import comment blocks and sorts them as necessary.
 	- Note: It only needs to be run twice because of a bug where in certain cases an extra newline is added
