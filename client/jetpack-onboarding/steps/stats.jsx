@@ -66,14 +66,17 @@ class JetpackOnboardingStatsStep extends React.Component {
 	}
 
 	renderActionTile() {
-		const { isConnected, siteUrl, translate } = this.props;
+		const { basePath, isConnected, siteSlug, siteUrl, stepName, translate } = this.props;
 		const headerText = translate( 'Keep track of your visitors with Jetpack.' );
 		const subHeaderText = translate(
 			'Keep an eye on your success with simple, concise, and mobile-friendly stats. ' +
 				'Get updates on site traffic, successful posts, site searches, and comments, all in real time.'
 		);
+
 		const connectUrl = addQueryArgs(
 			{
+				from: 'jpo',
+				redirectAfterAuth: [ basePath, stepName, siteSlug ].join( '/' ),
 				url: siteUrl,
 				// TODO: add a parameter to the JPC to redirect back to this step after completion
 				// and in the redirect URL include the ?action=activate_stats parameter
