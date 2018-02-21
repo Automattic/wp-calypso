@@ -144,7 +144,7 @@ export function redirectJetpack( context, next ) {
 	const { isJetpack } = context.params;
 	const { redirect_to } = context.query;
 
-	if ( ! isJetpack === 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
 	next();
