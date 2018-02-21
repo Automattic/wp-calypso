@@ -14,6 +14,10 @@
 		opacity: 1;
 	}
 
+	&:not(.is-large) .search {
+		pointer-events: none;
+	}
+
 	&.is-large .site-selector__sites {
 		border-top: 1px solid $gray-lighten-20;
 	}
