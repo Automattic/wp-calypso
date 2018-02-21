@@ -167,14 +167,16 @@ class MeSidebar extends React.Component {
 							preloadSectionName="security"
 						/>
 
-						<SidebarItem
-							selected={ selected === 'privacy' }
-							link={ '/me/privacy' }
-							label={ translate( 'Privacy' ) }
-							icon="visible"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="privacy"
-						/>
+						{ config.isEnabled( 'me/privacy' ) && (
+							<SidebarItem
+								selected={ selected === 'privacy' }
+								link={ '/me/privacy' }
+								label={ translate( 'Privacy' ) }
+								icon="visible"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="privacy"
+							/>
+						) }
 
 						<SidebarItem
 							selected={ selected === 'notifications' }
