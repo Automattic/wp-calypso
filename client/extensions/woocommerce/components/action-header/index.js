@@ -19,6 +19,14 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import SiteIcon from 'blocks/site-icon';
 
 class ActionHeader extends React.Component {
+	static propTypes = {
+		breadcrumbs: PropTypes.node,
+		isLoading: PropTypes.bool,
+		primaryLabel: PropTypes.string,
+		setLayoutFocus: PropTypes.func.isRequired,
+		site: PropTypes.object.isRequired,
+	};
+
 	toggleSidebar = event => {
 		event.preventDefault();
 		this.props.setLayoutFocus( 'sidebar' );
@@ -38,7 +46,7 @@ class ActionHeader extends React.Component {
 	};
 
 	render() {
-		const { children, site } = this.props;
+		const { children, primaryLabel, site } = this.props;
 
 		return (
 			<header className="action-header">
@@ -56,17 +64,11 @@ class ActionHeader extends React.Component {
 						{ this.renderBreadcrumbs() }
 					</div>
 				</div>
-				<ActionButtons>{ children }</ActionButtons>
+				<ActionButtons primaryLabel={ primaryLabel }>{ children }</ActionButtons>
 			</header>
 		);
 	}
 }
-
-ActionHeader.propTypes = {
-	breadcrumbs: PropTypes.node,
-	actions: PropTypes.node,
-	setLayoutFocus: PropTypes.func.isRequired,
-};
 
 export default connect(
 	state => ( {

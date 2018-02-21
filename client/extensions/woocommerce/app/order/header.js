@@ -179,8 +179,10 @@ class OrderActionHeader extends Component {
 			</span>,
 		];
 
+		const primaryLabel = isEditing ? translate( 'Update' ) : translate( 'Edit Order' );
+
 		return (
-			<ActionHeader breadcrumbs={ breadcrumbs }>
+			<ActionHeader breadcrumbs={ breadcrumbs } primaryLabel={ primaryLabel }>
 				{ isEditing ? this.renderEditingButtons() : this.renderViewButtons() }
 			</ActionHeader>
 		);

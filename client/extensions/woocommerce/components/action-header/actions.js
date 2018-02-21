@@ -20,9 +20,7 @@ import SplitButton from 'components/split-button';
 
 class ActionButtons extends Component {
 	static propTypes = {
-		selectedText: PropTypes.string,
-		selectedCount: PropTypes.number,
-		label: PropTypes.string,
+		primaryLabel: PropTypes.string,
 	};
 
 	state = {
@@ -90,8 +88,9 @@ class ActionButtons extends Component {
 	};
 
 	getDropdown = () => {
+		const primaryLabel = this.props.primaryLabel;
 		const buttons = React.Children.toArray( this.props.children );
-		const first = buttons.pop();
+		const primary = buttons.pop();
 		const dropdownOptions = buttons.map( function( child, index ) {
 			if ( ! child ) {
 				return null;
@@ -105,10 +104,12 @@ class ActionButtons extends Component {
 
 		return (
 			<SplitButton
-				{ ...first.props }
-				label={ 'test' }
+				{ ...primary.props }
+				label={ primaryLabel }
 				className="action-header__split-button"
 				popoverClassName="woocommerce"
+				disabled={ false }
+				disableMain={ primary.props.disabled }
 			>
 				{ dropdownOptions }
 			</SplitButton>
