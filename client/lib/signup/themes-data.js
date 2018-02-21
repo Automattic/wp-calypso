@@ -37,7 +37,7 @@ export const themes = [
 		repo: 'pub',
 		fallback: true,
 		description: translate(
-			'A stylish, classic look to your personal blog or site for longform writing.'
+			'A stylish, classic design for your personal blogging and longform writing.'
 		),
 		design: 'blog',
 		demo_uri: 'https://libre2demo.wordpress.com',
@@ -48,7 +48,7 @@ export const themes = [
 		slug: 'penscratch-2',
 		repo: 'pub',
 		fallback: true,
-		description: translate( 'a fresh, stylish design for sharing your writing.' ),
+		description: translate( 'A fresh, stylish design for sharing your writing.' ),
 		design: 'blog',
 		demo_uri: 'https://penscratch2demo.wordpress.com',
 		verticals: [],
@@ -59,7 +59,7 @@ export const themes = [
 		repo: 'pub',
 		fallback: true,
 		description: translate(
-			'It’s ideally suited to showcasing longform writing interspersed with beautiful images and inspiring quotes.'
+			'Ideal for showcasing a mix of longform writing, beautiful images, and inspiring quotes.'
 		),
 		design: 'blog',
 		demo_uri: 'https://librettodemo.wordpress.com',
@@ -109,7 +109,7 @@ export const themes = [
 		repo: 'pub',
 		fallback: false,
 		description: translate(
-			'A clean business theme designed with health and wellness-focused sites in mind.'
+			'A business theme with clean, streamlined design, ideal for health and wellness-focused websites.'
 		),
 		design: [ 'page', 'store' ],
 		demo_uri: 'https://karunademo.wordpress.com',
@@ -133,7 +133,7 @@ export const themes = [
 		repo: 'pub',
 		fallback: true,
 		description: translate(
-			'Lodestar is a trendy one-page parallax theme designed with startups and small-business ventures in mind.'
+			'Lodestar is a modern one-page parallax theme designed with startups and small-business ventures in mind.'
 		),
 		design: 'page',
 		demo_uri: 'https://lodestardemo.wordpress.com',
@@ -145,7 +145,7 @@ export const themes = [
 		repo: 'pub',
 		fallback: false,
 		description: translate(
-			'Elegant tiles helps artists, photobloggers, and other creatives showcase their talents.'
+			'Elegant tiles help artists, photobloggers, and other creatives showcase their talents.'
 		),
 		design: 'grid',
 		demo_uri: 'https://altofocusdemo.wordpress.com',
