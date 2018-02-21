@@ -157,7 +157,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			const apiVersion = siteIsJetpack ? jetpackSiteSettingsAPIVersion : '1.4';
 			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion } );
 			if ( jetpackSettingsUISupported ) {
-				this.props.updateSettings( siteId, pick( fields, settingsFields.jetpack ) );
+				const fieldsToUpdate = /^error_/.test( fields.lang_id )
+					? omit( fields, 'lang_id' )
+					: fields;
+				this.props.updateSettings( siteId, pick( fieldsToUpdate, settingsFields.jetpack ) );
 			}
 		};
 
