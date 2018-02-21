@@ -965,7 +965,7 @@ function floodlightUserParams() {
 
 	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = currentUser.ID;
+		params.u4 = currentUser.ID.toString();
 	}
 
 	const anonymousUserId = tracksAnonymousUserId();
