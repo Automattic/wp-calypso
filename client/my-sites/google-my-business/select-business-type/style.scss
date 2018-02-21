@@ -1,0 +1,65 @@
+.select-business-type__cta-card {
+	display: flex;
+	@include breakpoint( "<960px" ) {
+		display: block;
+	}
+}
+
+.select-business-type__cta-card-main {
+	flex: 2 1;
+
+	h2 {
+		font-size: 21px;
+		color: $gray-dark;
+		font-weight: 400;
+	}
+
+	p {
+		font-size: 14px;
+		color: $gray-dark;
+	}
+}
+
+.select-business-type__cta-card-button-container {
+	align-self: center;
+	flex: 1;
+	text-align: right;
+	@include breakpoint( "<960px" ) {
+		text-align: left;
+	}
+}
+
+.select-business-type {
+	.header-cake {
+		margin-bottom: 0px;
+	}
+}
+
+.select-business-type__explanation {
+	display: flex;
+
+	@include breakpoint( "<960px" ) {
+		flex-direction: column-reverse;
+	}
+	
+	h1 {
+		color: $gray-dark;
+		font-size: 24px;
+		font-weight: 400;
+	}
+
+	h2 {
+		color: $gray-dark;
+		font-size: 16px;
+		font-weight: 400;
+	}
+
+	img {
+		max-width: 300px;
+		align-self: center;
+	}
+}
+
+.select-business-type__explanation-main {
+	flex: 2 1;
+}
