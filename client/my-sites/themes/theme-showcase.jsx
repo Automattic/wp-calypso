@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { compact, pickBy, sample } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -37,8 +37,6 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
-import PhotoBlogBanner from './themes-banner/photo-blog';
-import SmallBusinessBanner from './themes-banner/small-business';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -59,8 +57,6 @@ const optionShape = PropTypes.shape( {
 	getUrl: PropTypes.func,
 	action: PropTypes.func,
 } );
-
-const ShowcaseBanner = sample( [ PhotoBlogBanner, SmallBusinessBanner ] );
 
 class ThemeShowcase extends React.Component {
 	static propTypes = {
@@ -219,7 +215,6 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<ShowcaseBanner />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
