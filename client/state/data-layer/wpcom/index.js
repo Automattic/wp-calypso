@@ -14,7 +14,7 @@ import domains from './domains';
 import gravatarUpload from './gravatar-upload';
 import i18n from './i18n';
 import jetpackInstall from './jetpack-install';
-import jetpackOnboarding from './jetpack/settings';
+import jetpackSettings from './jetpack/settings';
 import localeGuess from './locale-guess';
 import login2fa from './login-2fa';
 import me from './me';
@@ -40,7 +40,7 @@ export const handlers = mergeHandlers(
 	gravatarUpload,
 	i18n,
 	jetpackInstall,
-	jetpackOnboarding,
+	jetpackSettings,
 	localeGuess,
 	login2fa,
 	me,
