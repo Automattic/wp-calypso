@@ -3,6 +3,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
+import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -38,6 +39,7 @@ import { retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
 	JPC_PATH_PLANS,
+	JPC_PATH_REMOTE_INSTALL,
 	MINIMUM_JETPACK_VERSION,
 	REMOTE_PATH_ACTIVATE,
 	REMOTE_PATH_AUTH,
@@ -547,10 +549,16 @@ export class JetpackConnectMain extends Component {
 
 	render() {
 		const status = this.getStatus();
+
 		if (
 			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) &&
 			! this.props.jetpackConnectSite.isDismissed
 		) {
+			if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
+				page.redirect( `${ JPC_PATH_REMOTE_INSTALL }` );
+				return null;
+			}
+
 			return this.renderInstructions( this.getInstructionsData( status ) );
 		}
 		return this.renderSiteEntry();
