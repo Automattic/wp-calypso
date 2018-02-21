@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
 import Tile from 'components/tile-grid/tile';
@@ -129,6 +130,8 @@ class JetpackOnboardingStatsStep extends React.Component {
 					title="Jetpack Stats ‹ Jetpack Start"
 				/>
 				<QuerySites siteId={ siteId } />
+
+				<JetpackLogo full size={ 45 } />
 
 				{ activatedStats ? this.renderSuccess() : this.renderActionTile() }
 			</div>
