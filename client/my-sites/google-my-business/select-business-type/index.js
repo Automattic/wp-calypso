@@ -19,17 +19,17 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class SelectBusinessType extends Component {
 	static propTypes = {
-		translate: PropTypes.func.isRequired,
-		siteId: PropTypes.string.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		siteId: PropTypes.string.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
-	trackMyListingClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_create_my_listing_click' );
+	trackCreateMyListingClick = () => {
+		this.props.recordTracksEvent( 'calypso_test_google_my_business_select_business_type_create_my_listing_button_click' );
 	};
 
-	trackOptimizeYourSEOClicked = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_optimize_your_seo_click' );
+	trackOptimizeYourSEOClick = () => {
+		this.props.recordTracksEvent( 'calypso_test_google_my_business_select_business_type_optimize_your_seo_button_click' );
 	};
 
 	goBack = () => {
@@ -44,16 +44,19 @@ class SelectBusinessType extends Component {
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
+
 				<Card className="select-business-type__explanation">
 					<div className="select-business-type__explanation-main">
 						<h1>{ translate( 'Which type of business are you?' ) }</h1>
+
 						<h2>
 							{ translate(
 								'Google My Business lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area.'
+								'It works for businesses that have a physical location or serve a local area.'
 							) }
 						</h2>
 					</div>
+
 					<img
 						src="/calypso/images/google-my-business/business-local.svg"
 						alt="Local business illustration"
@@ -66,7 +69,7 @@ class SelectBusinessType extends Component {
 					} ) }
 					mainText={ translate(
 						'My business has a physical location customers can visit, ' +
-							'or provides goods and services to local customers, or both.'
+						'or provides goods and services to local customers, or both.'
 					) }
 					buttonText={ translate( 'Create My Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
@@ -75,7 +78,7 @@ class SelectBusinessType extends Component {
 					buttonPrimary={ true }
 					buttonHref="https://www.google.com/business/"
 					buttonTarget="_blank"
-					buttonOnClick={ this.trackMyListingClick }
+					buttonOnClick={ this.trackCreateMyListingClick }
 				/>
 
 				<CTACard
@@ -89,7 +92,7 @@ class SelectBusinessType extends Component {
 					buttonIcon="external"
 					buttonHref={ '/settings/traffic/' + siteId }
 					buttonTarget="_blank"
-					buttonOnClick={ this.trackOptimizeYourSEOClicked }
+					buttonOnClick={ this.trackOptimizeYourSEOClick }
 				/>
 			</div>
 		);

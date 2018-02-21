@@ -21,15 +21,15 @@ const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
-		trackNudgeAlreadyListedClicked: PropTypes.func.isRequired,
-		trackNudgeDismissed: PropTypes.func.isRequired,
-		trackNudgeShown: PropTypes.func.isRequired,
-		trackNudgeStartNowClicked: PropTypes.func.isRequired,
+		trackNudgeAlreadyListedClick: PropTypes.func.isRequired,
+		trackNudgeDismissClick: PropTypes.func.isRequired,
+		trackNudgeStartNowClick: PropTypes.func.isRequired,
+		trackNudgeView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
 	componentWillMount() {
-		this.props.trackNudgeShown();
+		this.props.trackNudgeView();
 	}
 
 	render() {
@@ -38,7 +38,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 				className="google-my-business__stats-nudge"
 				preferenceName="google-my-business-nudge"
 				temporary={ TWO_WEEKS_IN_SECONDS }
-				onClick={ this.props.trackNudgeDismissed }
+				onClick={ this.props.trackNudgeDismissClick }
 			>
 				<SectionHeader
 					className="google-my-business__stats-nudge-header"
@@ -69,13 +69,13 @@ class GoogleMyBusinessStatsNudge extends Component {
 							<Button
 								href={ `/google-my-business/${ this.props.siteSlug }` }
 								primary
-								onClick={ this.props.trackNudgeStartNowClicked }
+								onClick={ this.props.trackNudgeStartNowClick }
 							>
 								{ this.props.translate( 'Start Now' ) }
 							</Button>
 
 							<Button
-								onClick={ this.props.trackNudgeAlreadyListedClicked }
+								onClick={ this.props.trackNudgeAlreadyListedClick }
 							>
 								{ this.props.translate( "I'm Already Listed" ) }
 							</Button>
@@ -88,12 +88,12 @@ class GoogleMyBusinessStatsNudge extends Component {
 }
 
 export default connect( () => ( {} ), {
-	trackNudgeShown: () =>
-		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_shown' ),
-	trackNudgeDismissed: () =>
-		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismissed' ),
-	trackNudgeStartNowClicked: () =>
-		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_clicked' ),
-	trackNudgeAlreadyListedClicked: () =>
-		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_already_listed_clicked' ),
+	trackNudgeView: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
+	trackNudgeDismissClick: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click' ),
+	trackNudgeStartNowClick: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_button_click' ),
+	trackNudgeAlreadyListedClick: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_already_button_listed_click' ),
 } )( localize( GoogleMyBusinessStatsNudge ) );
