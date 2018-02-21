@@ -16,6 +16,7 @@ import {
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_ANONID_SET,
+	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
 
 import { getCurrentOAuth2ClientId } from 'state/ui/oauth2-clients/selectors';
@@ -85,6 +86,18 @@ export const loadTrackingTool = trackingTool => ( {
 			{
 				type: ANALYTICS_TRACKING_ON,
 				payload: trackingTool,
+			},
+		],
+	},
+} );
+
+export const optOutTracks = isOptingOut => ( {
+	type: ANALYTICS_TRACKS_OPT_OUT,
+	meta: {
+		analytics: [
+			{
+				type: ANALYTICS_TRACKS_OPT_OUT,
+				payload: isOptingOut,
 			},
 		],
 	},

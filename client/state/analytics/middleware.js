@@ -20,6 +20,7 @@ import {
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
 	ANALYTICS_TRACKS_ANONID_SET,
+	ANALYTICS_TRACKS_OPT_OUT,
 } from 'state/action-types';
 import isTracking from 'state/selectors/is-tracking';
 
@@ -59,14 +60,17 @@ export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 			case ANALYTICS_PAGE_VIEW_RECORD:
 				return invoke( pageViewServices, service, payload );
 
-			case ANALYTICS_TRACKS_ANONID_SET:
-				return analytics.tracks.setAnonymousUserId( payload );
-
 			case ANALYTICS_STAT_BUMP:
 				return statBump( payload );
 
 			case ANALYTICS_TRACKING_ON:
 				return loadTrackingTool( payload, state );
+
+			case ANALYTICS_TRACKS_ANONID_SET:
+				return analytics.tracks.setAnonymousUserId( payload );
+
+			case ANALYTICS_TRACKS_OPT_OUT:
+				return analytics.tracks.optOut( payload );
 		}
 	} );
 };

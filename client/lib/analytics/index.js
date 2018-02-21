@@ -351,6 +351,10 @@ const analytics = {
 		setAnonymousUserId: function( anonId ) {
 			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		},
+
+		optOut: function( isOptingOut ) {
+			window._tkq.push( [ 'optOut', isOptingOut ] );
+		},
 	},
 
 	statsd: {
