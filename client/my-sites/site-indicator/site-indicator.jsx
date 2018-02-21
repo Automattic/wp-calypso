@@ -28,6 +28,13 @@ import {
 	isSiteAutomatedTransfer,
 } from 'state/selectors';
 
+const WPAdminLink = ( { href, onClick, children } ) => (
+	<a href={ href } onClick={ onClick } target="_blank" rel="noopener noreferrer">
+		{ children }
+		<Gridicon icon="external" size={ 12 } />
+	</a>
+);
+
 class SiteIndicator extends Component {
 	static propTypes = {
 		site: PropTypes.object,
@@ -97,7 +104,7 @@ class SiteIndicator extends Component {
 						{
 							components: {
 								link: (
-									<a
+									<WPAdminLink
 										onClick={ this.handleCoreUpdate }
 										href={ site.options.admin_url + 'update-core.php' }
 									/>
@@ -130,11 +137,14 @@ class SiteIndicator extends Component {
 
 		return (
 			<span>
-				<a onClick={ this.handleGenericUpdate } href={ site.options.admin_url + 'update-core.php' }>
+				<WPAdminLink
+					onClick={ this.handleGenericUpdate }
+					href={ site.options.admin_url + 'update-core.php' }
+				>
 					{ translate( 'There is an update available.', 'There are updates available.', {
 						count: siteUpdates.total,
 					} ) }
-				</a>
+				</WPAdminLink>
 			</span>
 		);
 	}
@@ -183,7 +193,7 @@ class SiteIndicator extends Component {
 					},
 					components: {
 						link: (
-							<a
+							<WPAdminLink
 								onClick={ this.handleJetpackUpdate }
 								href={ this.props.site.options.admin_url + 'plugins.php?plugin_status=upgrade' }
 							/>
