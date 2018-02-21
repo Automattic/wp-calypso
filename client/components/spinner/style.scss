@@ -15,11 +15,11 @@
 }
 
 .spinner__outer {
-	border-top-color: #00aadc;
+	border-top-color: $blue-medium;
 }
 
 .spinner__inner {
-	border-top-color: #00aadc;
-  border-right-color: #00aadc;
+	border-top-color: $blue-medium;
+  border-right-color: $blue-medium;
   opacity: 0.4;
 }
