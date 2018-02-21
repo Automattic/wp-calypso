@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 
 /**
@@ -15,7 +16,7 @@ describe( 'index', () => {
 		test( "doesn't throw an exception", () => {
 			expect( () => {
 				renderToString(
-					<LayoutLoggedOut
+					<Provider
 						store={ {
 							dispatch: () => {},
 							getState: () => ( {
@@ -23,7 +24,9 @@ describe( 'index', () => {
 							} ),
 							subscribe: () => {},
 						} }
-					/>
+					>
+						<LayoutLoggedOut />
+					</Provider>
 				);
 			} ).not.toThrow();
 		} );
