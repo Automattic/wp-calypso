@@ -97,7 +97,7 @@ class Security2faSetupBackupCodes extends React.Component {
 				<Security2faProgress step={ 3 } />
 				<p>
 					{ this.props.translate(
-						'Backup codes let you access your account if your phone is ' +
+						'Backup codes let you access your account if your unit is ' +
 							'lost, stolen, or if you run it through the washing ' +
 							"machine and the bag of rice trick doesn't work."
 					) }

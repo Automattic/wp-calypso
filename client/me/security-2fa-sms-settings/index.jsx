@@ -178,7 +178,7 @@ const Security2faSMSSettings = createReactClass( {
 						{ this.props.translate(
 							'First, we need your Mobile Phone number to ' +
 								'send you verification codes when you choose the SMS method or ' +
-								'in cases where the authenticator app on your phone is ' +
+								'in cases where the authenticator app on your phone or PC is ' +
 								'unavailable.'
 						) }
 					</p>

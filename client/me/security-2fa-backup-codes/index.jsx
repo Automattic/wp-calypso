@@ -123,7 +123,7 @@ class Security2faBackupCodes extends React.Component {
 			<div>
 				<p>
 					{ this.props.translate(
-						'Backup codes let you access your account if your phone is ' +
+						'Backup codes let you access your account if the unit with your 2FA app is ' +
 							'lost, stolen, or if you run it through the washing ' +
 							"machine and the bag of rice trick doesn't work."
 					) }

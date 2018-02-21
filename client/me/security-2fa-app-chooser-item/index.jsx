@@ -52,8 +52,8 @@ class Security2faAppChooserItem extends React.Component {
 				<p>
 					{ this.props.translate(
 						'You selected {{strong}}%(deviceName)s{{/strong}}. If you do not ' +
-							'already have an authentication app on your smartphone, you will ' +
-							'need to choose from one of the following options:',
+							'already have an authentication app on your smartphone or PC, ' +
+							'you will need to choose from one of the following options:',
 						{
 							args: {
 								deviceName: this.props.app.deviceName,

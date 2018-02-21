@@ -198,7 +198,7 @@ class Security2faEnable extends React.Component {
 			<div className="security-2fa-enable__qr-code-block">
 				<p className="security-2fa-enable__qr-instruction">
 					{ this.props.translate(
-						"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
+						"Scan this QR code with your authenticator app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}",
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
@@ -218,7 +218,8 @@ class Security2faEnable extends React.Component {
 			<div className="security-2fa-enable__time-code-block">
 				<p className="security-2fa-enable__time-instruction">
 					{ this.props.translate(
-						'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
+						'Enter this time code into your authenticator app. {{toggleMethodLink}}Prefer to ' +
+							'scan the code?{{/toggleMethodLink}}',
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
@@ -272,7 +273,7 @@ class Security2faEnable extends React.Component {
 						'Not sure what this screen means? You may need to download ' +
 							'{{authyLink}}Authy{{/authyLink}} or ' +
 							'{{googleAuthenticatorLink}}Google Authenticator{{/googleAuthenticatorLink}} ' +
-							'for your phone.',
+							'for your phone or PC.',
 						{
 							components: {
 								authyLink: (
