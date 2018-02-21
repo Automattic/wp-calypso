@@ -143,7 +143,7 @@ class DomainSearch extends Component {
 						>
 							<RegisterDomainStep
 								path={ this.props.context.path }
-								suggestion={ this.props.context.query.s }
+								suggestion={ this.props.context.query.suggestion }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }

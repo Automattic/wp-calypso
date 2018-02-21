@@ -52,7 +52,7 @@ const domainsAddRedirectHeader = ( context, next ) => {
 
 const redirectToDomainSearchWithSuggestionAsQuery = context => {
 	return page.redirect(
-		`/domains/add/${ context.params.domain }?s=${ context.params.suggestion }`
+		`/domains/add/${ context.params.domain }?suggestion=${ context.params.suggestion }`
 	);
 };
 
