@@ -8,10 +8,10 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import GMBSelectBusinessType from './select-business-type';
+import GoogleMyBusinessSelectBusinessType from './select-business-type';
 
 export function selectBusinessType( context, next ) {
 	const { params } = context;
-	context.primary = <GMBSelectBusinessType siteId={ params.site_id } />;
+	context.primary = <GoogleMyBusinessSelectBusinessType siteId={ params.site_id } />;
 	next();
 }

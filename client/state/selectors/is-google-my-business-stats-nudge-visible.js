@@ -47,7 +47,7 @@ const siteHasBusinessPlan = createSelector(
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if we should show the nudge
  */
-const isGmbNudgeVisible = ( state, siteId ) => {
+const isGoogleMyBusinessStatsNudgeVisible = ( state, siteId ) => {
 	const createdAt = getSiteOption( state, siteId, 'created_at' );
 	const isWeekPassedSinceSiteCreation =
 		Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 < Date.now();
@@ -59,4 +59,4 @@ const isGmbNudgeVisible = ( state, siteId ) => {
 	);
 };
 
-export default isGmbNudgeVisible;
+export default isGoogleMyBusinessStatsNudgeVisible;
