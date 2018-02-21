@@ -9,6 +9,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import urlModule from 'url';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -25,6 +27,7 @@ import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
+		backTo: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -65,6 +68,28 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
+		const { backTo, translate } = this.props;
+
+		// Log-ins from may include backTo, allowing them to return to the site
+		if ( backTo ) {
+			const url = urlModule.parse( backTo );
+
+			// Ensure we've got a relative URL (null) or an http[s] protocol
+			// We don't want to allow `javascript:…`
+			if ( null === url.protocol || 'http:' === url.protocol || 'https:' === url.protocol ) {
+				const linkText = url.hostname
+					? translate( 'Back to %(hostname)s', {
+							args: { hostname: url.hostname },
+						} )
+					: translate( 'Back' );
+				return (
+					<ExternalLink href={ backTo }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ linkText }
+					</ExternalLink>
+				);
+			}
+		}
 		return (
 			<LoggedOutFormBackLink
 				oauth2Client={ this.props.oauth2Client }
