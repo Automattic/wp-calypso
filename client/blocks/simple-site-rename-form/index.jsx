@@ -116,13 +116,9 @@ export class SimpleSiteRenameForm extends Component {
 	render() {
 		const { currentDomain, currentDomainSuffix, isSiteRenameRequesting, translate } = this.props;
 		const currentDomainPrefix = get( currentDomain, 'name', '' ).replace( currentDomainSuffix, '' );
-		const isWPCOM = get( currentDomain, 'type' ) === 'WPCOM';
 		const { domainFieldError, domainFieldValue } = this.state;
 		const isDisabled =
-			! isWPCOM ||
-			! domainFieldValue ||
-			!! domainFieldError ||
-			domainFieldValue === currentDomainPrefix;
+			! domainFieldValue || !! domainFieldError || domainFieldValue === currentDomainPrefix;
 
 		return (
 			<div className="simple-site-rename-form">
