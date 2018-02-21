@@ -136,7 +136,10 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 						break;
 				}
 			} );
-
+			// Jetpack returns an error if we try to save options that can't be changed.
+			if ( 'error_const' === fields.lang_id || 'error_cap' === fields.lang_id ) {
+				delete this.props.fields.lang_id;
+			}
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};
