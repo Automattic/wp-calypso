@@ -122,7 +122,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 						autoFocus="autofocus"
 						onChange={ onChange }
 						disabled={ isFetching }
-						placeholder={ translate( 'http://www.yoursite.com' ) }
+						placeholder={ 'http://yourjetpack.blog' }
 						onKeyUp={ this.handleKeyPress }
 						value={ url }
 					/>
