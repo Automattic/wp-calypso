@@ -22,12 +22,17 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
-	const { path, params: { flow, isJetpack, socialService, twoFactorAuthType } } = context;
+	const {
+		path,
+		params: { flow, isJetpack, socialService, twoFactorAuthType },
+		query: { back_to },
+	} = context;
 
 	context.cacheQueryKeys = [ 'client_id' ];
 
 	context.primary = (
 		<WPLogin
+			backTo={ back_to }
 			isJetpack={ isJetpack === 'jetpack' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
