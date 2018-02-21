@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,11 +29,23 @@ import {
 	getPendingInvitesForSite,
 	getAcceptedInvitesForSite,
 	getNumberOfInvitesFoundForSite,
+	isDeletingAnyInvite,
 } from 'state/invites/selectors';
+import { deleteInvites } from 'state/invites/actions';
 
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
+	};
+
+	handleClearAll = () => {
+		const { acceptedInvites, deleting, site } = this.props;
+
+		if ( deleting ) {
+			return;
+		}
+
+		this.props.deleteInvites( site.ID, map( acceptedInvites, 'key' ) );
 	};
 
 	render() {
@@ -94,7 +107,9 @@ class PeopleInvites extends React.PureComponent {
 							label={ translate( 'Accepted' ) }
 							count={ acceptedInviteCount }
 							// Excluding `site=` hides the "Invite user" link.
-						/>
+						>
+							{ this.renderClearAll() }
+						</PeopleListSectionHeader>
 						<Card>{ acceptedInvites.map( this.renderInvite ) }</Card>
 					</div>
 				) }
@@ -106,6 +121,16 @@ class PeopleInvites extends React.PureComponent {
 					/>
 				) }
 			</React.Fragment>
+		);
+	}
+
+	renderClearAll() {
+		const { deleting, translate } = this.props;
+
+		return (
+			<Button busy={ deleting } compact onClick={ this.handleClearAll }>
+				{ translate( 'Clear All Accepted' ) }
+			</Button>
 		);
 	}
 
@@ -155,15 +180,19 @@ class PeopleInvites extends React.PureComponent {
 	};
 }
 
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = site && site.ID;
+export default connect(
+	state => {
+		const site = getSelectedSite( state );
+		const siteId = site && site.ID;
 
-	return {
-		site,
-		requesting: isRequestingInvitesForSite( state, siteId ),
-		pendingInvites: getPendingInvitesForSite( state, siteId ),
-		acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
-		totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
-	};
-} )( localize( PeopleInvites ) );
+		return {
+			site,
+			requesting: isRequestingInvitesForSite( state, siteId ),
+			pendingInvites: getPendingInvitesForSite( state, siteId ),
+			acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
+			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
+			deleting: isDeletingAnyInvite( state, siteId ),
+		};
+	},
+	{ deleteInvites }
+)( localize( PeopleInvites ) );
