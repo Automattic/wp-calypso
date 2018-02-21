@@ -22,6 +22,7 @@ import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
 import Button from 'components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
+import Dialog from 'components/dialog';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
@@ -38,6 +39,19 @@ class PeopleInvites extends React.PureComponent {
 		site: PropTypes.object,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showClearAllConfirmation: false,
+		};
+	}
+
+	toggleClearAllConfirmation = () => {
+		this.setState( {
+			showClearAllConfirmation: ! this.state.showClearAllConfirmation,
+		} );
+	};
+
 	handleClearAll = () => {
 		const { acceptedInvites, deleting, site } = this.props;
 
@@ -46,6 +60,7 @@ class PeopleInvites extends React.PureComponent {
 		}
 
 		this.props.deleteInvites( site.ID, map( acceptedInvites, 'key' ) );
+		this.toggleClearAllConfirmation();
 	};
 
 	render() {
@@ -127,10 +142,25 @@ class PeopleInvites extends React.PureComponent {
 	renderClearAll() {
 		const { deleting, translate } = this.props;
 
+		const dialogButtons = [
+			<Button busy={ deleting } primary onClick={ this.handleClearAll }>
+				{ translate( 'Clear All' ) }
+			</Button>,
+			<Button busy={ deleting } onClick={ this.toggleClearAllConfirmation }>
+				{ translate( 'Cancel' ) }
+			</Button>,
+		];
+
 		return (
-			<Button busy={ deleting } compact onClick={ this.handleClearAll }>
-				{ translate( 'Clear All Accepted' ) }
-			</Button>
+			<React.Fragment>
+				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
+					{ translate( 'Clear All Accepted' ) }
+				</Button>
+				<Dialog isVisible={ this.state.showClearAllConfirmation } buttons={ dialogButtons }>
+					<h1>{ translate( 'Clear All Accepted' ) }</h1>
+					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
+				</Dialog>
+			</React.Fragment>
 		);
 	}
 
