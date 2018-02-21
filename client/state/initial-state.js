@@ -106,7 +106,7 @@ function isLoggedIn() {
 }
 
 function saveState( key, state, serializeState = serialize ) {
-	localforage.setItem( key, serializeState( state ) ).catch( setError => {
+	return localforage.setItem( key, serializeState( state ) ).catch( setError => {
 		debug( 'failed to set redux-store state as ' + key, setError );
 	} );
 }
@@ -151,10 +151,12 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 		window.saveState = saveState;
 
 		const savedStateId = ( get( window, 'location.search', '' ).match(
-			/[?&]restoreState2=(.*?)(?:&|$)/
-		) || [] )[ 2 ];
+			/[?&]restoreState=(.*?)(?:&|$)/
+		) || [] )[ 1 ];
+		debug( 'Saved state id', savedStateId );
+
 		if ( savedStateId ) {
-			debug( 'Loading saved state. Found saved state id', savedStateId );
+			debug( 'Loading saved state.', savedStateId );
 			return localforage
 				.getItem( 'redux-state-saved' )
 				.then( loadInitialState )
