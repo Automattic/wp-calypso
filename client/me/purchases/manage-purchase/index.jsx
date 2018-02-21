@@ -29,7 +29,6 @@ import {
 	isExpired,
 	isExpiring,
 	isOneTimePurchase,
-	isRedeemable,
 	isRefundable,
 	isRenewable,
 	isRenewal,
@@ -144,20 +143,6 @@ class ManagePurchase extends Component {
 			);
 
 			renewItems.push( privacyItem );
-		}
-
-		if ( isRedeemable( purchase ) ) {
-			const redemptionItem = cartItems.getRenewalItemFromCartItem(
-				cartItems.domainRedemption( {
-					domain: purchase.meta,
-				} ),
-				{
-					id: purchase.id,
-					domain: purchase.domain,
-				}
-			);
-
-			renewItems.push( redemptionItem );
 		}
 
 		addItems( renewItems );
