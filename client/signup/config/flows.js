@@ -153,10 +153,10 @@ const flows = {
 	},
 
 	subdomain: {
-		steps: [ 'design-type', 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'about', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
 		description: 'Provide a vertical for subdomains',
-		lastModified: '2016-10-31',
+		lastModified: '2018-02-21',
 	},
 
 	main: {
