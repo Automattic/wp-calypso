@@ -133,3 +133,29 @@
 		}
 	}
 }
+
+// & refers to .woocommerce base class
+&.popover .popover__menu-item {
+	padding: 8px 16px;
+
+	.gridicon {
+		top: 4px;
+	}
+
+	&.is-scary {
+		.gridicon {
+			color: $alert-red;
+		}
+
+		&.is-selected,
+		&:hover,
+		&:focus {
+			background: $alert-red;
+			color: $white;
+
+			.gridicon {
+				color: $white;
+			}
+		}
+	}
+}

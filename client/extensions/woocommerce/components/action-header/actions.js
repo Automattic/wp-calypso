@@ -14,6 +14,7 @@ import { debounce } from 'lodash';
  * Internal Dependencies
  */
 import afterLayoutFlush from 'lib/after-layout-flush';
+import Button from 'components/button';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SplitButton from 'components/split-button';
 
@@ -90,16 +91,25 @@ class ActionButtons extends Component {
 
 	getDropdown = () => {
 		const buttons = React.Children.toArray( this.props.children );
-		const first = buttons.shift();
+		const first = buttons.pop();
 		const dropdownOptions = buttons.map( function( child, index ) {
 			if ( ! child ) {
 				return null;
 			}
-			return <PopoverMenuItem key={ index }>{ child.props.children }</PopoverMenuItem>;
+			return (
+				<PopoverMenuItem itemComponent={ Button } { ...child.props } key={ index }>
+					{ child.props.children }
+				</PopoverMenuItem>
+			);
 		} );
 
 		return (
-			<SplitButton { ...first.props } label={ 'Actions!' } className="action-header__split-button">
+			<SplitButton
+				{ ...first.props }
+				label={ 'test' }
+				className="action-header__split-button"
+				popoverClassName="woocommerce"
+			>
 				{ dropdownOptions }
 			</SplitButton>
 		);
