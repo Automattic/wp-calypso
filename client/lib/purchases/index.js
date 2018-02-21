@@ -138,10 +138,6 @@ function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
 }
 
-function isRedeemable( purchase ) {
-	return purchase.isRedeemable;
-}
-
 /**
  * Checks if a purchase credit card number can be updated
  * Payments done via CC & Paygate can have their CC updated, but this
@@ -328,7 +324,6 @@ export {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isRedeemable,
 	isRefundable,
 	isRemovable,
 	isRenewable,

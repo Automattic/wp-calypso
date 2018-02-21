@@ -22,7 +22,6 @@ import {
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
-	isRedeemable,
 	isRenewable,
 	showCreditCardExpiringWarning,
 } from 'lib/purchases';
@@ -209,7 +208,7 @@ class PurchaseNotice extends Component {
 		const purchase = getPurchase( this.props );
 		const { translate } = this.props;
 
-		if ( ! isRenewable( purchase ) && ! isRedeemable( purchase ) ) {
+		if ( ! isRenewable( purchase ) ) {
 			return null;
 		}
 
