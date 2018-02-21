@@ -21,10 +21,10 @@ const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
-		trackNudgeShown: PropTypes.func.isRequired,
-		trackNudgeDismissed: PropTypes.func.isRequired,
-		trackNudgeStartNowClicked: PropTypes.func.isRequired,
 		trackNudgeAlreadyListedClicked: PropTypes.func.isRequired,
+		trackNudgeDismissed: PropTypes.func.isRequired,
+		trackNudgeShown: PropTypes.func.isRequired,
+		trackNudgeStartNowClicked: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -44,6 +44,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 					className="google-my-business__stats-nudge-header"
 					label={ this.props.translate( 'Recommendation from WordPress.com' ) }
 				/>
+
 				<div className="google-my-business__stats-nudge-body">
 					<div className="google-my-business__stats-nudge-image-wrapper">
 						<img
@@ -52,15 +53,18 @@ class GoogleMyBusinessStatsNudge extends Component {
 							alt={ this.props.translate( 'Your business with Google My Business' ) }
 						/>
 					</div>
+
 					<div className="google-my-business__stats-nudge-info">
 						<h1 className="google-my-business__stats-nudge-title">
 							{ this.props.translate( 'Reach more customers with Google My Business' ) }
 						</h1>
+
 						<h2 className="google-my-business__stats-nudge-description">
 							{ this.props.translate(
 								'Show up when customers search for businesses like yours on Google Search and Maps.'
 							) }
 						</h2>
+
 						<div className="google-my-business__stats-nudge-button-row">
 							<Button
 								href={ `/google-my-business/${ this.props.siteSlug }` }
@@ -69,8 +73,8 @@ class GoogleMyBusinessStatsNudge extends Component {
 							>
 								{ this.props.translate( 'Start Now' ) }
 							</Button>
+
 							<Button
-								href={ `/google-my-business/${ this.props.siteSlug }` }
 								onClick={ this.props.trackNudgeAlreadyListedClicked }
 							>
 								{ this.props.translate( "I'm Already Listed" ) }
@@ -84,7 +88,8 @@ class GoogleMyBusinessStatsNudge extends Component {
 }
 
 export default connect( () => ( {} ), {
-	trackNudgeShown: () => recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_shown' ),
+	trackNudgeShown: () =>
+		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_shown' ),
 	trackNudgeDismissed: () =>
 		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismissed' ),
 	trackNudgeStartNowClicked: () =>
