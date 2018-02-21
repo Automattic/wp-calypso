@@ -11,7 +11,7 @@
 	"roots": [
 		"<rootDir>/client/"
 	],
-	"testEnvironment": "node",
+	"testEnvironment": "jsdom",
 	"transformIgnorePatterns": ["node_modules[\\/\\\\](?!redux-form)"],
 	"testMatch": [ "<rootDir>/client/**/test/*.js?(x)" ],
 	"testURL": "https://example.com",
