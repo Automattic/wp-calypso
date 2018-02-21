@@ -22,11 +22,6 @@ class ActionButtons extends Component {
 		selectedText: PropTypes.string,
 		selectedCount: PropTypes.number,
 		label: PropTypes.string,
-		hasSiblingControls: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		hasSiblingControls: false,
 	};
 
 	state = {
@@ -130,16 +125,6 @@ class ActionButtons extends Component {
 	// of just once after all the DOM writes are finished. Prevent that by scheduling the call
 	// just *after* the next layout flush.
 	setDropdownAfterLayoutFlush = afterLayoutFlush( this.setDropdown );
-
-	keyHandler = event => {
-		switch ( event.keyCode ) {
-			case 32: // space
-			case 13: // enter
-				event.preventDefault();
-				document.activeElement.click();
-				break;
-		}
-	};
 }
 
 export default ActionButtons;
