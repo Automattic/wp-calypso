@@ -1,6 +1,8 @@
 // Sparkline
 // Making things sparky
 .sparkline {
+  width:100%;
+
   .sparkline__line {
 	fill: none;
 	stroke: $blue-wordpress;
