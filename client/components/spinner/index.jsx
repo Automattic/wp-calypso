@@ -27,6 +27,12 @@ export default class Spinner extends PureComponent {
 			'font-size': this.props.size, // allows border-width to be specified in em units
 		};
 
-		return <div className={ className } style={ style } />;
+		return (
+			<div className={ className } style={ style }>
+				<div className="spinner__outer">
+					<div className="spinner__inner" />
+				</div>
+			</div>
+		);
 	}
 }
