@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { get, flow, inRange, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
@@ -25,6 +26,15 @@ const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 
 export class SimpleSiteRenameForm extends Component {
+	static propTypes = {
+		currentDomainSuffix: PropTypes.string.isRequired,
+		currentDomain: PropTypes.object.isRequired,
+
+		// `connect`ed
+		isSiteRenameRequesting: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
+	};
+
 	static defaultProps = {
 		currentDomainSuffix: '.wordpress.com',
 		currentDomain: {},
