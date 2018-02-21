@@ -64,6 +64,16 @@ export class LoginLinks extends React.Component {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
 
+	renderBackLink() {
+		return (
+			<LoggedOutFormBackLink
+				oauth2Client={ this.props.oauth2Client }
+				recordClick={ this.recordBackToWpcomLinkClick }
+				classes={ { 'logged-out-form__link-item': false } }
+			/>
+		);
+	}
+
 	renderHelpLink() {
 		if ( ! this.props.twoFactorAuthType ) {
 			return null;
@@ -143,11 +153,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				<LoggedOutFormBackLink
-					oauth2Client={ this.props.oauth2Client }
-					recordClick={ this.recordBackToWpcomLinkClick }
-					classes={ { 'logged-out-form__link-item': false } }
-				/>
+				{ this.renderBackLink() }
 			</div>
 		);
 	}
