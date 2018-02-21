@@ -1,6 +1,7 @@
-$follow-menu-gray-disabled: $gray-lighten-20;
+$follow-menu-gray-disabled: lighten( $gray, 20% );
 
 .follow-menu {
+
 	.gridicons-reader-follow {
 		display: inline;
 		pointer-events: auto;
@@ -10,13 +11,14 @@ $follow-menu-gray-disabled: $gray-lighten-20;
 		display: none;
 	}
 
-	.follow-menu__icon {
+	.gridicon.follow-menu__icon {
 		fill: $blue-medium;
+		top: 5px;
 	}
 
 	.follow-menu__label {
 		color: $blue-medium;
-		padding-left: 2px;
+		padding-left: 3px;
 
 		&:hover {
 			color: $blue-medium;
@@ -35,17 +37,23 @@ $follow-menu-gray-disabled: $gray-lighten-20;
 		}
 
 		&.is-compact {
-			.follow-menu__label {
-				padding-left: 0;
+
+			.gridicon.follow-menu__icon {
+				top: 6px;
 			}
 
-			.follow-menu__icon {
-				margin-right: 2px;
+			.gridicon.gridicons-chevron-down {
+				left: 1px;
+			}
+
+			.follow-menu__label {
+				padding-left: 0;
 			}
 		}
 	}
 
 	&.is-following {
+
 		.gridicons-reader-follow {
 			display: none;
 		}
@@ -69,9 +77,10 @@ $follow-menu-gray-disabled: $gray-lighten-20;
 	}
 
 	&.is-disabled {
+
 		@include no-select();
-		color: $follow-menu-gray-disabled;
 		border-color: $follow-menu-gray-disabled;
+		color: $follow-menu-gray-disabled;
 		pointer-events: none;
 
 		.follow-menu__label {
