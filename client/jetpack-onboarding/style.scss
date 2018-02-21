@@ -98,9 +98,13 @@
 	text-align: center;
 	font-size: 12px;
 
+	a {
+		display: inline-block;
+	}
+
 	.gridicon {
 		position: relative;
 		top: 4px;
-		margin-right: 12px;
+		margin-right: 8px;
 	}
 }
