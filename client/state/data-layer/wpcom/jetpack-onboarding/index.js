@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get } from 'lodash';
+import { get, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -22,6 +22,8 @@ import {
 	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
 import { trailingslashit } from 'lib/route';
+
+export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 
 export const fromApi = response => {
 	if ( ! response.data || ! response.data.onboarding ) {
@@ -139,6 +141,37 @@ export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 		} )
 	);
 
+export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: errorMessage } ) => {
+	const { settings, siteId, type, meta: { dataLayer } } = action;
+	const { retryCount = 0 } = dataLayer;
+
+	// If we got a timeout on WooCommerce installation, try again (up to 3 times),
+	// since it might just be a slow server that actually ends up installing it
+	// properly, in which case a subsequent request will return 'success'.
+	if (
+		get( settings, 'installWooCommerce' ) !== true ||
+		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
+		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
+	) {
+		return announceSaveFailure( { dispatch }, { siteId } );
+	}
+
+	// We cannot use `extendAction( action, ... )` here, since `meta.dataLayer` now includes error information,
+	// which we would propagate, causing the data layer to think there's been an error on the subsequent attempt.
+	// Instead, we have to re-assemble our action.
+	dispatch( {
+		settings,
+		siteId,
+		type,
+		meta: {
+			dataLayer: {
+				retryCount: retryCount + 1,
+				trackRequest: true,
+			},
+		},
+	} );
+};
+
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
 		dispatchRequest(
@@ -151,6 +184,6 @@ export default {
 		),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, announceSaveFailure ),
+		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
 };

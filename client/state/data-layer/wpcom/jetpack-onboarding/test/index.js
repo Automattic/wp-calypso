@@ -5,11 +5,13 @@
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
+	MAX_WOOCOMMERCE_INSTALL_RETRIES,
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 	handleSaveSuccess,
 	announceRequestFailure,
 	announceSaveFailure,
+	retryOrAnnounceSaveFailure,
 	fromApi,
 } from '../';
 import {
@@ -268,6 +270,72 @@ describe( 'announceSaveFailure()', () => {
 
 	test( 'should trigger an error notice upon unsuccessful save request', () => {
 		announceSaveFailure( { dispatch }, { siteId } );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				notice: expect.objectContaining( {
+					status: 'is-error',
+					text: 'An unexpected error occurred. Please try again later.',
+					noticeId: `jpo-notice-error-${ siteId }`,
+					duration: 5000,
+				} ),
+			} )
+		);
+	} );
+} );
+
+describe( 'retryOrAnnounceSaveFailure()', () => {
+	const dispatch = jest.fn();
+	const siteId = 12345678;
+	const settings = {
+		installWooCommerce: true,
+	};
+	const action = {
+		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		siteId,
+		settings,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+			},
+		},
+	};
+	const error = {
+		error: 'http_request_failed',
+		message: 'cURL error 28: Operation timed out after 5001 milliseconds with 0 bytes received',
+	};
+
+	test( 'should trigger saveJetpackOnboardingSettings upon first WooCommerce install timeout', () => {
+		retryOrAnnounceSaveFailure( { dispatch }, action, error );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				settings,
+				siteId,
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				meta: {
+					dataLayer: {
+						retryCount: 1,
+						trackRequest: true,
+					},
+				},
+			} )
+		);
+	} );
+
+	test( 'should trigger announceSaveFailure upon max number of WooCommerce install timeout', () => {
+		const thirdAttemptAction = {
+			...action,
+			meta: {
+				...action.meta,
+				dataLayer: {
+					...action.meta.dataLayer,
+					retryCount: MAX_WOOCOMMERCE_INSTALL_RETRIES + 1,
+				},
+			},
+		};
+
+		retryOrAnnounceSaveFailure( { dispatch }, thirdAttemptAction, error );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( {
