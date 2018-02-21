@@ -242,4 +242,12 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			testHelper( document.querySelector( '.environment.is-tests' ) );
 		} );
 	}
+	if (
+		config.isEnabled( 'dev/preferences-helper' ) &&
+		document.querySelector( '.environment.is-prefs' )
+	) {
+		asyncRequire( 'lib/preferences/preferences-helper', prefHelper => {
+			prefHelper( document.querySelector( '.environment.is-prefs' ) );
+		} );
+	}
 }
