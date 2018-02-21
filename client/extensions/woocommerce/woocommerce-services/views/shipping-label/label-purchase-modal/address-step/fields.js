@@ -6,12 +6,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject } from 'lodash';
+import { isEqual, isObject, omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
+import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 import StepConfirmationButton from '../step-confirmation-button';
 import CountryDropdown from 'woocommerce/woocommerce-services/components/country-dropdown';
 import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
@@ -64,6 +65,7 @@ const AddressFields = ( props ) => {
 	}
 
 	const fieldErrors = isObject( errors ) ? errors : {};
+	const generalErrorOnly = fieldErrors.general && Object.keys( omit( fieldErrors, 'general' ) ).length === 0;
 	const getId = ( fieldName ) => group + '_' + fieldName;
 	const getValue = ( fieldName ) => values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
 	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
@@ -92,18 +94,19 @@ const AddressFields = ( props ) => {
 					updateValue={ updateValue( 'phone' ) }
 					className="address-step__phone" />
 			</div>
+			{ generalErrorOnly && <FieldError text={ fieldErrors.general } /> }
 			<TextField
 				id={ getId( 'address' ) }
 				title={ translate( 'Address' ) }
 				value={ getValue( 'address' ) }
 				updateValue={ updateValue( 'address' ) }
 				className="address-step__address-1"
-				error={ fieldErrors.address } />
+				error={ fieldErrors.address || generalErrorOnly } />
 			<TextField
 				id={ getId( 'address_2' ) }
 				value={ getValue( 'address_2' ) }
 				updateValue={ updateValue( 'address_2' ) }
-				error={ fieldErrors.address_2 } />
+				error={ fieldErrors.address_2 || generalErrorOnly } />
 			<div className="address-step__city-state-postal-code">
 				<TextField
 					id={ getId( 'city' ) }
@@ -111,7 +114,7 @@ const AddressFields = ( props ) => {
 					value={ getValue( 'city' ) }
 					updateValue={ updateValue( 'city' ) }
 					className="address-step__city"
-					error={ fieldErrors.city } />
+					error={ fieldErrors.city || generalErrorOnly } />
 				<StateDropdown
 					id={ getId( 'state' ) }
 					title={ translate( 'State' ) }
@@ -120,14 +123,14 @@ const AddressFields = ( props ) => {
 					countriesData={ storeOptions.countriesData }
 					updateValue={ updateValue( 'state' ) }
 					className="address-step__state"
-					error={ fieldErrors.state } />
+					error={ fieldErrors.state || generalErrorOnly } />
 				<TextField
 					id={ getId( 'postcode' ) }
 					title={ translate( 'Postal code' ) }
 					value={ getValue( 'postcode' ) }
 					updateValue={ updateValue( 'postcode' ) }
 					className="address-step__postal-code"
-					error={ fieldErrors.postcode } />
+					error={ fieldErrors.postcode || generalErrorOnly } />
 			</div>
 			<CountryDropdown
 				id={ getId( 'country' ) }
@@ -136,7 +139,7 @@ const AddressFields = ( props ) => {
 				disabled={ ! allowChangeCountry }
 				countriesData={ storeOptions.countriesData }
 				updateValue={ updateValue( 'country' ) }
-				error={ fieldErrors.country } />
+				error={ fieldErrors.country || generalErrorOnly } />
 			<StepConfirmationButton
 				disabled={ hasNonEmptyLeaves( errors ) || normalizationInProgress }
 				onClick={ submitAddressForNormalizationHandler } >

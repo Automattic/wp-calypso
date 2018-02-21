@@ -11,6 +11,9 @@
 .address-step__address-1.form-fieldset {
 	margin-bottom: 8px;
 }
+.field-error + .address-step__address-1.form-fieldset {
+	margin-top: 6px;
+}
 
 .address-step__city,
 .address-step__state,

@@ -27,7 +27,7 @@ const TextField = ( { id, title, description, value, placeholder, updateValue, e
 				onChange={ handleChangeEvent }
 				isError={ Boolean( error ) }
 			/>
-			{ error && <FieldError text={ error } /> }
+			{ error && typeof error === 'string' && <FieldError text={ error } /> }
 			{ ! error && description && <FormSettingExplanation>{ description }</FormSettingExplanation> }
 		</FormFieldset>
 	);
