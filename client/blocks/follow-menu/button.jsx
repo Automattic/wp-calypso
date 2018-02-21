@@ -71,8 +71,17 @@ class FollowMenuButton extends React.Component {
 			menuClasses.push( 'is-disabled' );
 		}
 
-		const followingIcon = <Gridicon key="following" icon="reader-following" size={ iconSize } />;
-		const followIcon = <Gridicon key="follow" icon="reader-follow" size={ iconSize } />;
+		const followingIcon = (
+			<Gridicon
+				className="follow-menu__icon"
+				key="following"
+				icon="reader-following"
+				size={ iconSize }
+			/>
+		);
+		const followIcon = (
+			<Gridicon className="follow-menu__icon" key="follow" icon="reader-follow" size={ iconSize } />
+		);
 		const followLabelElement = (
 			<span key="label" className="follow-menu__label">
 				{ label }
@@ -82,17 +91,16 @@ class FollowMenuButton extends React.Component {
 		return (
 			<ButtonGroup className={ menuClasses.join( ' ' ) }>
 				<Button
-					primary
 					compact={ this.props.compact }
 					onClick={ this.toggleFollow }
 					title={ label }
-					className="follow-menu__follow-button"
+					className="follow-menu__button"
 				>
 					{ [ followingIcon, followIcon, followLabelElement ] }
 				</Button>
 				{ this.props.following && (
-					<Button primary compact={ this.props.compact }>
-						<Gridicon icon="chevron-down" />
+					<Button compact={ this.props.compact } className="follow-menu__button">
+						<Gridicon className="follow-menu__icon" icon="chevron-down" />
 					</Button>
 				) }
 			</ButtonGroup>
