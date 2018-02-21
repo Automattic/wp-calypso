@@ -24,7 +24,7 @@ export default class Spinner extends PureComponent {
 		const style = {
 			width: this.props.size,
 			height: this.props.size,
-			'font-size': this.props.size, // allows border-width to be specified in em units
+			fontSize: this.props.size, // allows border-width to be specified in em units
 		};
 
 		return (
