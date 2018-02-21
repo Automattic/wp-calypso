@@ -28,8 +28,8 @@ export default class Spinner extends PureComponent {
 		};
 
 		return (
-			<div className={ className } style={ style }>
-				<div className="spinner__outer">
+			<div className={ className }>
+				<div className="spinner__outer" style={ style }>
 					<div className="spinner__inner" />
 				</div>
 			</div>
