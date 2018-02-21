@@ -5,7 +5,7 @@
  */
 
 import debugModule from 'debug';
-import { pick, throttle } from 'lodash';
+import { get, pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -105,6 +105,12 @@ function isLoggedIn() {
 	return !! userData && userData.ID;
 }
 
+function saveState( key, state, serializeState = serialize ) {
+	localforage.setItem( key, serializeState( state ) ).catch( setError => {
+		debug( 'failed to set redux-store state as ' + key, setError );
+	} );
+}
+
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
@@ -121,11 +127,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 			state = nextState;
 
-			localforage
-				.setItem( 'redux-state-' + user.get().ID, serializeState( state ) )
-				.catch( setError => {
-					debug( 'failed to set redux-store state', setError );
-				} );
+			return saveState( 'redux-state-' + user.get().ID, state, serializeState );
 		},
 		SERIALIZE_THROTTLE,
 		{ leading: false, trailing: true }
@@ -146,6 +148,20 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => localforage.clear( () => location.reload( true ) );
+		window.saveState = saveState;
+
+		const savedStateId = ( get( window, 'location.search', '' ).match(
+			/[?&]restoreState2=(.*?)(?:&|$)/
+		) || [] )[ 2 ];
+		if ( savedStateId ) {
+			debug( 'Loading saved state. Found saved state id', savedStateId );
+			return localforage
+				.getItem( 'redux-state-saved' )
+				.then( loadInitialState )
+				.catch( loadInitialStateFailed )
+				.then( persistOnChange )
+				.then( reduxStoreReady );
+		}
 
 		if ( shouldAddSympathy() ) {
 			// eslint-disable-next-line no-console
