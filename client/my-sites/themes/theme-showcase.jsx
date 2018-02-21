@@ -37,6 +37,9 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
+import PhotoBlogBanner from './themes-banner/photo-blog';
+import SmallBusinessBanner from './themes-banner/small-business';
+import RandomThemesBanner from './themes-banner/random-themes-banner';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -57,6 +60,11 @@ const optionShape = PropTypes.shape( {
 	getUrl: PropTypes.func,
 	action: PropTypes.func,
 } );
+
+const themeBanners = [ PhotoBlogBanner, SmallBusinessBanner ];
+const ShowcaseBanner = () => (
+	<RandomThemesBanner context="theme-showcase" banners={ themeBanners } />
+);
 
 class ThemeShowcase extends React.Component {
 	static propTypes = {
@@ -215,6 +223,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
+					<ShowcaseBanner />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
