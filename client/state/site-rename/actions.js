@@ -35,7 +35,7 @@ const dispatchErrorNotice = ( dispatch, error ) =>
 	dispatch(
 		getErrorNotice(
 			// @TODO translate copy once finalised
-			error.message || "Sorry, we we're unable to complete your domain change. Please try again."
+			error.message || 'Sorry, we were unable to complete your domain change. Please try again.'
 		)
 	);
 
