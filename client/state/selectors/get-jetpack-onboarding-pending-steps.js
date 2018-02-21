@@ -17,6 +17,9 @@ export default function getJetpackOnboardingPendingSteps( state, siteId, steps )
 		[ STEPS.WOOCOMMERCE ]: {
 			installWooCommerce: true,
 		},
+		[ STEPS.STATS ]: {
+			stats: true,
+		},
 	};
 
 	return reduce(
