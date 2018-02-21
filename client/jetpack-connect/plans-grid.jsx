@@ -34,12 +34,11 @@ class JetpackPlansGrid extends Component {
 	renderConnectHeader() {
 		const { isLanding, translate } = this.props;
 
-		let headerText = translate( 'Your site is now connected!' );
-		let subheaderText = translate( "Now pick a plan that's right for you." );
+		const headerText = translate( 'Explore our Jetpack plans' );
+		let subheaderText = translate( "Now that you're connected, pick a plan that fits your needs." );
 
 		if ( isLanding ) {
-			headerText = translate( "Pick a plan that's right for you." );
-			subheaderText = '';
+			subheaderText = translate( 'Pick a plan that fits your needs.' );
 		}
 		return <FormattedHeader headerText={ headerText } subHeaderText={ subheaderText } />;
 	}
