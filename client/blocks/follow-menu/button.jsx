@@ -74,7 +74,7 @@ class FollowMenuButton extends React.Component {
 		const followingIcon = <Gridicon key="following" icon="reader-following" size={ iconSize } />;
 		const followIcon = <Gridicon key="follow" icon="reader-follow" size={ iconSize } />;
 		const followLabelElement = (
-			<span key="label" className="follow-button__label">
+			<span key="label" className="follow-menu__label">
 				{ label }
 			</span>
 		);
@@ -86,7 +86,7 @@ class FollowMenuButton extends React.Component {
 					compact={ this.props.compact }
 					onClick={ this.toggleFollow }
 					title={ label }
-					className="follow-menu-follow-button"
+					className="follow-menu__follow-button"
 				>
 					{ [ followingIcon, followIcon, followLabelElement ] }
 				</Button>
