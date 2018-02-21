@@ -66,10 +66,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 	render() {
 		const { basePath, isRequestingSettings, translate } = this.props;
-		const headerText = translate( "Let's get started." );
-		const subHeaderText = translate(
-			'First up, what would you like to name your site and have as its public description?'
-		);
+		const headerText = translate( 'Welcome to WordPress!' );
 
 		return (
 			<div className="steps__main">
@@ -79,9 +76,24 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 					title="Site Title ‹ Jetpack Start"
 				/>
 
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				<FormattedHeader headerText={ headerText } />
 
 				<Card className="steps__form">
+					<img
+						className="steps__illustration"
+						src={ '/calypso/images/illustrations/illustration-start.svg' }
+						alt=""
+					/>
+
+					<div className="steps__description">
+						<p>{ translate( "Let's help you get set up." ) }</p>
+						<p>
+							{ translate(
+								'First up, what would you like to name your site and have as its public description?'
+							) }
+						</p>
+					</div>
+
 					<form onSubmit={ this.handleSubmit }>
 						<SiteTitle
 							autoFocusBlogname
@@ -92,17 +104,17 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							onChange={ this.handleChange }
 						/>
 
+						<JetpackOnboardingDisclaimer recordJpoEvent={ this.props.recordJpoEvent } />
+
 						<Button
 							disabled={ isRequestingSettings || ! this.state.blogname }
 							primary
 							type="submit"
 						>
-							{ translate( 'Next Step' ) }
+							{ translate( 'Continue' ) }
 						</Button>
 					</form>
 				</Card>
-
-				<JetpackOnboardingDisclaimer recordJpoEvent={ this.props.recordJpoEvent } />
 			</div>
 		);
 	}

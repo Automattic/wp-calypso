@@ -19,6 +19,21 @@
 		}
 	}
 
+	.steps__illustration {
+		margin-bottom: 20px;
+	}
+
+	.steps__description {
+		color: $gray-darken-20;
+		font-size: 12px;
+		margin-bottom: 30px;
+		text-align: center;
+
+		p {
+			margin-bottom: 0;
+		}
+	}
+
 	.steps__summary-columns {
 		display: flex;
 		justify-content: center;
@@ -92,9 +107,13 @@
 	text-align: center;
 	font-size: 12px;
 
+	a {
+		display: inline-block;
+	}
+
 	.gridicon {
 		position: relative;
 		top: 4px;
-		margin-right: 12px;
+		margin-right: 8px;
 	}
 }
