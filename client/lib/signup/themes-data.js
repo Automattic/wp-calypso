@@ -1,11 +1,19 @@
 /** @format */
+
+/**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
 export const themes = [
 	{
 		name: 'Shoreditch',
 		slug: 'shoreditch',
 		repo: 'pub',
 		fallback: true,
-		description: 'A functional and responsive theme perfect for your business’s online presence.',
+		description: translate(
+			'A functional and responsive theme perfect for your business’s online presence.'
+		),
 		design: [ 'page', 'store' ],
 		demo_uri: 'https://wordpress.com/theme/shoreditch',
 		verticals: [],
@@ -15,9 +23,10 @@ export const themes = [
 		slug: 'independent-publisher-2',
 		repo: 'pub',
 		fallback: false,
-		description:
+		description: translate(
 			'A clean and polished theme with a light color scheme, bold typography, and full-width images. ' +
-			'It’s designed to enhance your content and provide an immersive experience for your readers.',
+				'It’s designed to enhance your content and provide an immersive experience for your readers.'
+		),
 		design: 'blog',
 		demo_uri: 'http://independentpublisher2demo.wordpress.com',
 		verticals: [],
@@ -27,7 +36,9 @@ export const themes = [
 		slug: 'libre-2',
 		repo: 'pub',
 		fallback: true,
-		description: 'A stylish, classic look to your personal blog or site for longform writing.',
+		description: translate(
+			'A stylish, classic look to your personal blog or site for longform writing.'
+		),
 		design: 'blog',
 		demo_uri: 'https://libre2demo.wordpress.com',
 		verticals: [],
@@ -37,7 +48,7 @@ export const themes = [
 		slug: 'penscratch-2',
 		repo: 'pub',
 		fallback: true,
-		description: 'a fresh, stylish design for sharing your writing.',
+		description: translate( 'a fresh, stylish design for sharing your writing.' ),
 		design: 'blog',
 		demo_uri: 'https://penscratch2demo.wordpress.com',
 		verticals: [],
@@ -47,8 +58,9 @@ export const themes = [
 		slug: 'libretto',
 		repo: 'pub',
 		fallback: true,
-		description:
-			'It’s ideally suited to showcasing longform writing interspersed with beautiful images and inspiring quotes.',
+		description: translate(
+			'It’s ideally suited to showcasing longform writing interspersed with beautiful images and inspiring quotes.'
+		),
 		design: 'blog',
 		demo_uri: 'https://librettodemo.wordpress.com',
 		verticals: [],
@@ -58,9 +70,10 @@ export const themes = [
 		slug: 'twentyfifteen',
 		repo: 'pub',
 		fallback: true,
-		description:
+		description: translate(
 			'The annual WordPress theme for 2015 is super-clean, content-focused, ' +
-			'and designed to bring a little more simplicity to our blogs.',
+				'and designed to bring a little more simplicity to our blogs.'
+		),
 		design: 'blog',
 		demo_uri: 'https://twentyfifteendemo.wordpress.com',
 		verticals: [],
@@ -70,9 +83,10 @@ export const themes = [
 		slug: 'intergalactic-2',
 		repo: 'pub',
 		fallback: true,
-		description:
+		description: translate(
 			'A stunning option for your personal blog. Bold featured images act as the backdrop to your text, ' +
-			'giving you a high-contrast, readable theme that’s perfect for making your content pop.',
+				'giving you a high-contrast, readable theme that’s perfect for making your content pop.'
+		),
 		design: 'blog',
 		demo_uri: 'https://intergalactic2demo.wordpress.com',
 		verticals: [],
@@ -82,8 +96,9 @@ export const themes = [
 		slug: 'radcliffe-2',
 		repo: 'pub',
 		fallback: false,
-		description:
-			'A simple theme with clean typography, created with entrepreneurs and small business owners in mind.',
+		description: translate(
+			'A simple theme with clean typography, created with entrepreneurs and small business owners in mind.'
+		),
 		design: 'page',
 		demo_uri: 'https://radcliffe2demo.wordpress.com',
 		verticals: [],
@@ -93,7 +108,9 @@ export const themes = [
 		slug: 'karuna',
 		repo: 'pub',
 		fallback: false,
-		description: 'A clean business theme designed with health and wellness-focused sites in mind.',
+		description: translate(
+			'A clean business theme designed with health and wellness-focused sites in mind.'
+		),
 		design: [ 'page', 'store' ],
 		demo_uri: 'https://karunademo.wordpress.com',
 		verticals: [],
@@ -103,8 +120,9 @@ export const themes = [
 		slug: 'dara',
 		repo: 'pub',
 		fallback: true,
-		description:
-			'With bold Featured Images and bright, cheerful colors, Dara is ready to get to work for your business.',
+		description: translate(
+			'With bold Featured Images and bright, cheerful colors, Dara is ready to get to work for your business.'
+		),
 		design: [ 'page', 'store' ],
 		demo_uri: 'https://darademo.wordpress.com',
 		verticals: [],
@@ -114,8 +132,9 @@ export const themes = [
 		slug: 'lodestar',
 		repo: 'pub',
 		fallback: true,
-		description:
-			'Lodestar is a trendy one-page parallax theme designed with startups and small-business ventures in mind.',
+		description: translate(
+			'Lodestar is a trendy one-page parallax theme designed with startups and small-business ventures in mind.'
+		),
 		design: 'page',
 		demo_uri: 'https://lodestardemo.wordpress.com',
 		verticals: [],
@@ -125,8 +144,9 @@ export const themes = [
 		slug: 'altofocus',
 		repo: 'pub',
 		fallback: false,
-		description:
-			'Elegant tiles helps artists, photobloggers, and other creatives showcase their talents.',
+		description: translate(
+			'Elegant tiles helps artists, photobloggers, and other creatives showcase their talents.'
+		),
 		design: 'grid',
 		demo_uri: 'https://altofocusdemo.wordpress.com',
 		verticals: [],
@@ -136,8 +156,9 @@ export const themes = [
 		slug: 'apostrophe-2',
 		repo: 'pub',
 		fallback: false,
-		description:
-			'Simple and clean, Apostrophe 2 shines in the little details: bold type, bright color, and big images.',
+		description: translate(
+			'Simple and clean, Apostrophe 2 shines in the little details: bold type, bright color, and big images.'
+		),
 		design: 'grid',
 		demo_uri: 'https://apostrophe2demo.wordpress.com',
 		verticals: [],
@@ -147,9 +168,10 @@ export const themes = [
 		slug: 'dyad-2',
 		repo: 'pub',
 		fallback: true,
-		description:
+		description: translate(
 			'Displays words and images in perfect balance: a post’s featured image and text excerpt get equal billing on ' +
-			'the main blog page, while single posts and pages size and position images dynamically, depending on the screen size.',
+				'the main blog page, while single posts and pages size and position images dynamically, depending on the screen size.'
+		),
 		design: 'grid',
 		demo_uri: 'https://dyad2demo.wordpress.com',
 		verticals: [],
@@ -159,8 +181,9 @@ export const themes = [
 		slug: 'gazette',
 		repo: 'pub',
 		fallback: true,
-		description:
-			'A clean and flexible theme perfectly suited for minimalist magazine-style sites, personal blogs, or any content-rich site.',
+		description: translate(
+			'A clean and flexible theme perfectly suited for minimalist magazine-style sites, personal blogs, or any content-rich site.'
+		),
 		design: 'grid',
 		demo_uri: 'https://gazettedemo.wordpress.com',
 		verticals: [],
@@ -170,8 +193,9 @@ export const themes = [
 		slug: 'illustratr',
 		repo: 'pub',
 		fallback: true,
-		description:
-			'A minimalist portfolio theme that helps you create a strong — yet beautiful — online presence.',
+		description: translate(
+			'A minimalist portfolio theme that helps you create a strong — yet beautiful — online presence.'
+		),
 		design: 'grid',
 		demo_uri: 'https://illustratrdemo.wordpress.com',
 		verticals: [],
@@ -181,7 +205,9 @@ export const themes = [
 		slug: 'canard',
 		repo: 'pub',
 		fallback: true,
-		description: 'A flexible and versatile theme perfect for magazines, news sites, and blogs.',
+		description: translate(
+			'A flexible and versatile theme perfect for magazines, news sites, and blogs.'
+		),
 		design: 'grid',
 		demo_uri: 'https://canarddemo.wordpress.com',
 		verticals: [],
@@ -191,7 +217,9 @@ export const themes = [
 		slug: 'publication',
 		repo: 'pub',
 		fallback: true,
-		description: 'An elegant blog and magazine theme that features full-screen Featured Images.',
+		description: translate(
+			'An elegant blog and magazine theme that features full-screen Featured Images.'
+		),
 		design: 'grid',
 		demo_uri: 'https://publicationdemo.wordpress.com',
 		verticals: [],
