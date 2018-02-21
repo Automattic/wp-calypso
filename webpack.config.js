@@ -249,6 +249,10 @@ if ( calypsoEnv === 'desktop' ) {
 	// NOTE: order matters. vendor must be before manifest.
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
+		new webpack.optimize.CommonsChunkPlugin( {
+			async: 'tinymce',
+			minChunks: ( { resource } ) => resource && /node_modules[\/\\]tinymce/.test( resource ),
+		} ),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } ),
 	] );
 
