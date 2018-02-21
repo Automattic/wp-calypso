@@ -102,8 +102,11 @@ export class JetpackConnectMain extends Component {
 		if ( this.props.type === 'personal' ) {
 			from = 'ad';
 		}
+
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,
+			cta_id: this.props.ctaId,
+			cta_from: this.props.ctaFrom,
 		} );
 	}
 
