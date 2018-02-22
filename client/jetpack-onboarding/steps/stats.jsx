@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ConnectSuccess from '../connect-success';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
@@ -64,27 +65,6 @@ class JetpackOnboardingStatsStep extends React.Component {
 		} );
 	}
 
-	renderSuccess() {
-		const { getForwardUrl, translate } = this.props;
-
-		return (
-			<Fragment>
-				<FormattedHeader
-					headerText={ translate( 'Success! Jetpack is now collecting valuable stats.' ) }
-				/>
-
-				<TileGrid>
-					<Tile
-						buttonLabel={ translate( 'Continue' ) }
-						image="/calypso/images/illustrations/type-business.svg"
-						onClick={ this.handleStatsNextButton }
-						href={ getForwardUrl() }
-					/>
-				</TileGrid>
-			</Fragment>
-		);
-	}
-
 	renderActionTile() {
 		const { isConnected, siteUrl, translate } = this.props;
 		const headerText = translate( 'Keep track of your visitors with Jetpack.' );
@@ -120,7 +100,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 	}
 
 	render() {
-		const { activatedStats, basePath, siteId, translate } = this.props;
+		const { activatedStats, basePath, getForwardUrl, siteId, translate } = this.props;
 
 		return (
 			<div className="steps__main">
@@ -133,7 +113,16 @@ class JetpackOnboardingStatsStep extends React.Component {
 
 				<JetpackLogo full size={ 45 } />
 
-				{ activatedStats ? this.renderSuccess() : this.renderActionTile() }
+				{ activatedStats ? (
+					<ConnectSuccess
+						href={ getForwardUrl() }
+						illustration="/calypso/images/illustrations/type-business.svg"
+						onClick={ this.handleStatsNextButton }
+						title={ translate( 'Success! Jetpack is now collecting valuable stats.' ) }
+					/>
+				) : (
+					this.renderActionTile()
+				) }
 			</div>
 		);
 	}
