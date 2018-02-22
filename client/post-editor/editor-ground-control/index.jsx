@@ -72,7 +72,6 @@ export class EditorGroundControl extends PureComponent {
 	};
 
 	state = {
-		showAdvanceStatus: false,
 		needsVerification:
 			this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
 	};
@@ -158,10 +157,6 @@ export class EditorGroundControl extends PureComponent {
 			! this.props.isSaveBlocked
 		);
 	}
-
-	toggleAdvancedStatus = () => {
-		this.setState( { showAdvanceStatus: ! this.state.showAdvanceStatus } );
-	};
 
 	onPreviewButtonClick = event => {
 		if ( this.isPreviewEnabled() ) {
