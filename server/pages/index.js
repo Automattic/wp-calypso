@@ -11,7 +11,7 @@ import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import { get, includes, pick, forEach, intersection, snakeCase } from 'lodash';
-import getRawBody from 'raw-body';
+import bodyParser from 'body-parser';
 
 /**
  * Internal dependencies
@@ -566,35 +566,27 @@ module.exports = function() {
 		} );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
-	app.post( '/cspreport', function( req, res ) {
-		getRawBody(
-			req,
-			{
-				length: req.headers[ 'content-length' ],
-				limit: '1mb',
-				encoding: 'utf-8',
-			},
-			function( err, jsonBody ) {
-				if ( err ) {
-					res.status( 500 ).send( 'Bad report!' );
-					return;
-				}
+	app.post(
+		'/cspreport',
+		bodyParser.json( { type: [ 'json', 'application/csp-report' ] } ),
+		function( req, res ) {
+			const cspReport = req.body[ 'csp-report' ] || {};
+			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
+				report[ snakeCase( key ) ] = cspReport[ key ];
+				return report;
+			}, {} );
 
-				const body = JSON.parse( jsonBody );
-				const cspReport = body[ 'csp-report' ];
-				const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
-					report[ snakeCase( key ) ] = cspReport[ key ];
-					return report;
-				}, {} );
-
-				if ( calypsoEnv !== 'development' ) {
-					analytics.tracks.recordEvent( 'calypso_cspreport', cspReportSnakeCase, req );
-				}
-
-				res.status( 200 ).send( 'Got it!' );
+			if ( calypsoEnv !== 'development' ) {
+				analytics.tracks.recordEvent( 'calypso_cspreport', cspReportSnakeCase, req );
 			}
-		);
-	} );
+
+			res.status( 200 ).send( 'Got it!' );
+		},
+		// eslint-disable-next-line no-unused-vars
+		function( err, req, res, next ) {
+			res.status( 500 ).send( 'Bad report!' );
+		}
+	);
 
 	app.get( '/browsehappy', setUpRoute, function( req, res ) {
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
