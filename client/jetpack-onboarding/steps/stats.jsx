@@ -76,7 +76,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 		const connectUrl = addQueryArgs(
 			{
 				from: 'jpo',
-				redirectAfterAuth: [ basePath, stepName, siteSlug ].join( '/' ),
+				redirect_after_auth: [ basePath, stepName, siteSlug ].join( '/' ),
 				url: siteUrl,
 				// TODO: add a parameter to the JPC to redirect back to this step after completion
 				// and in the redirect URL include the ?action=activate_stats parameter
