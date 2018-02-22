@@ -31,7 +31,9 @@ class PreferenceList extends Component {
 						Object.keys( preferences ).map( prefName => (
 							<div key={ prefName }>
 								<h5 className="preferences-helper__preference-header">{ prefName }</h5>
-								<span className="preferences-helper__value-label">{ translate( 'Value:' ) }</span>
+								<span className="preferences-helper__value-label">
+									{ translate( 'Value' ) + ':' }
+								</span>
 								<span className="preferences-helper__value">
 									{ preferences[ prefName ].toString() }
 								</span>
