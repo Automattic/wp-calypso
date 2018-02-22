@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { identity, noop, get, findLast } from 'lodash';
 import moment from 'moment';
@@ -26,7 +26,7 @@ import { canCurrentUser, isVipSite } from 'state/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
 
-export class EditorGroundControl extends PureComponent {
+export class EditorGroundControl extends React.Component {
 	static propTypes = {
 		hasContent: PropTypes.bool,
 		isConfirmationSidebarEnabled: PropTypes.bool,
