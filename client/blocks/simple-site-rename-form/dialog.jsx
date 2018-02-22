@@ -92,9 +92,15 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 					) }
 				</p>
 				<div className="simple-site-rename-form__confirmation-detail">
-					<Gridicon icon="cross-circle" size={ 18 } className="simple-site-rename-form__copy-red" />
+					<Gridicon
+						icon="cross-circle"
+						size={ 18 }
+						className="simple-site-rename-form__copy-deletion"
+					/>
 					<p className="simple-site-rename-form__confirmation-detail-copy">
-						<strong className="simple-site-rename-form__copy-red">{ currentDomainName }</strong>
+						<strong className="simple-site-rename-form__copy-deletion">
+							{ currentDomainName }
+						</strong>
 						{ currentDomainSuffix }
 						<br />
 						{ translate( 'Will be removed and unavailable for use.' ) }
@@ -104,10 +110,10 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 					<Gridicon
 						icon="checkmark-circle"
 						size={ 18 }
-						className="simple-site-rename-form__copy-green"
+						className="simple-site-rename-form__copy-addition"
 					/>
 					<p className="simple-site-rename-form__confirmation-detail-copy">
-						<strong className="simple-site-rename-form__copy-green">{ newDomainName }</strong>
+						<strong className="simple-site-rename-form__copy-addition">{ newDomainName }</strong>
 						{ newDomainSuffix }
 						<br />
 						{ translate( 'Will be your new site address.' ) }
