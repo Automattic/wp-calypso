@@ -26,7 +26,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 			let redirectUri;
 			if ( context.isServerSide ) {
-				redirectUri = `${ context.protocol }://${ context.host }${ context.originalUrl }`;
+				redirectUri = context.originalUrl;
 			}
 			context.layout = (
 				<LayoutComponent
