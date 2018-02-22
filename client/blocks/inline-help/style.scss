@@ -7,7 +7,7 @@
 	border-radius: 100%;
 	background: $blue-wordpress;
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-	border: 1px solid $blue-dark;
+	border: 1px solid darken( $blue-wordpress, 5 );
 	transition: all 0.2s ease-in-out;
 
 	.gridicon {
@@ -18,13 +18,14 @@
 		width: auto;
 	}
 
-	&:hover {
+	&:hover:not(.is-active) {
 		animation: wiggle .8s .5s ease-in-out infinite;
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
 	}
 
 	&.is-active {
 		background: $blue-medium;
+		border-color: darken( $blue-medium, 5 )
 	}
 }
 
@@ -67,7 +68,7 @@
 	p {
 		font-size: 12px;
 
-		@include breakpoint( ">660px" ) {
+	@include breakpoint( ">660px" ) {
 			font-size: 14px;
 		}
 	}
@@ -296,6 +297,30 @@
 	}
 }
 
+.inline-help__popover.popover .inline-help__more-button,
+.inline-help__popover.popover .inline-help__support-button {
+	text-align: left;
+	font-weight: 400;
+	width: 50%;
+	background: $gray-light;
+	border-top: 1px solid $gray-lighten-20;
+	padding: 16px 16px 16px 48px;
+	font-size: 16px;
+	line-height: 1;
+	position: relative;
+	border-radius: 0 0 4px 4px;
+
+	@include breakpoint( ">660px" ) {
+		font-size: 14px;
+	}
+
+	.gridicon {
+		position: absolute;
+			top: 11px;
+			left: 13px;
+	}
+}
+
 .inline-help__empty-results {
 	padding: 16px 0 0 0;
 	margin: 0;
@@ -308,12 +333,8 @@
 	}
 }
 
-.layout.is-section-help .sidebar .inline-help {
-	background: $gray-text-min;
-
-	.gridicon {
-		fill: $white;
-	}
+.layout.is-section-help .inline-help {
+	
 }
 
 // PlaceholderLines component
