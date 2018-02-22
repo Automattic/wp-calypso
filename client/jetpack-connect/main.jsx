@@ -549,7 +549,7 @@ export class JetpackConnectMain extends Component {
 
 	render() {
 		const status = this.getStatus();
-
+		console.log( status );
 		if (
 			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) &&
 			! this.props.jetpackConnectSite.isDismissed
