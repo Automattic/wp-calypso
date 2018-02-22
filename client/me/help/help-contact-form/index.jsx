@@ -30,6 +30,7 @@ import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**
  * Module variables
@@ -251,10 +252,12 @@ export class HelpContactForm extends React.PureComponent {
 	 */
 	submitForm = () => {
 		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
-		const { additionalSupportOption } = this.props;
+		const { additionalSupportOption, currentUserLocale } = this.props;
 
 		if ( additionalSupportOption && additionalSupportOption.enabled ) {
-			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected' );
+			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected', {
+				locale: currentUserLocale,
+			} );
 		}
 
 		if ( this.state.sibylClicked ) {
@@ -278,8 +281,11 @@ export class HelpContactForm extends React.PureComponent {
 	 */
 	submitAdditionalForm = () => {
 		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
+		const { currentUserLocale } = this.props;
 
-		this.props.recordTracksEvent( 'calypso_happychat_a_b_native_ticket_selected' );
+		this.props.recordTracksEvent( 'calypso_happychat_a_b_native_ticket_selected', {
+			locale: currentUserLocale,
+		} );
 
 		this.props.additionalSupportOption.onSubmit( {
 			howCanWeHelp,
@@ -424,6 +430,7 @@ export class HelpContactForm extends React.PureComponent {
 }
 
 const mapStateToProps = state => ( {
+	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
 } );

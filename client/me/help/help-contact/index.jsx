@@ -284,7 +284,9 @@ class HelpContact extends React.Component {
 					// make sure we only record the track once
 					if ( ! this.state.wasAdditionalSupportOptionShown ) {
 						// track that additional support option is shown
-						this.props.recordTracksEvent( 'calypso_happychat_a_b_additional_support_option_shown' );
+						this.props.recordTracksEvent( 'calypso_happychat_a_b_additional_support_option_shown', {
+							locale: currentUserLocale,
+						} );
 						this.setState( { wasAdditionalSupportOptionShown: true } );
 					}
 
