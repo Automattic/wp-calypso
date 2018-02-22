@@ -188,18 +188,6 @@ Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
 };
 
 /**
- * Get the updates info for the site with id siteId
- *
- * @param {int} [siteId] The site ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.getAvailableUpdates = function( siteId, fn ) {
-	debug( '/sites/:site_id:/updates query' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/updates' }, fn );
-};
-
-/**
  * Fetches settings for the Monitor module.
  *
  * @param {int} [siteId] The site ID
