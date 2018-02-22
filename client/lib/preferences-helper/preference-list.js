@@ -6,19 +6,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { partial, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import { getAllRemotePreferences } from 'state/preferences/selectors';
-import { savePreference } from 'state/preferences/actions';
 import QueryPreferences from 'components/data/query-preferences';
+import Preference from './preference';
 
 class PreferenceList extends Component {
 	render() {
-		const { preferences, translate, unsetPreference } = this.props;
+		const { preferences, translate } = this.props;
 		return (
 			<div>
 				<QueryPreferences />
@@ -30,28 +30,12 @@ class PreferenceList extends Component {
 				</a>
 				<Card className="preferences-helper__current-preferences">
 					{ ! isEmpty( preferences ) ? (
-						Object.keys( preferences ).map( prefName => (
-							<div key={ prefName }>
-								<div className="preferences-helper__preference-header">
-									<button
-										className="preferences-helper__unset"
-										onClick={ partial( unsetPreference, prefName, null ) }
-										title={ translate( 'Unset Preference' ) }
-									>
-										{ 'X' }
-									</button>
-									<span>{ prefName }</span>
-								</div>
-								<ul className="preferences-helper__list">
-									{ Array.isArray( preferences[ prefName ] ) ? (
-										preferences[ prefName ].map( ( preference, index ) => (
-											<li key={ index }>{ preference }</li>
-										) )
-									) : (
-										<li key={ 0 }>{ preferences[ prefName ].toString() }</li>
-									) }
-								</ul>
-							</div>
+						Object.keys( preferences ).map( preferenceName => (
+							<Preference
+								key={ preferenceName }
+								name={ preferenceName }
+								value={ preferences[ preferenceName ] }
+							/>
 						) )
 					) : (
 						<h5 className="preferences-helper__preference-header">
@@ -68,7 +52,5 @@ export default connect(
 	state => ( {
 		preferences: getAllRemotePreferences( state ),
 	} ),
-	{
-		unsetPreference: savePreference,
-	}
+	null
 )( localize( PreferenceList ) );
