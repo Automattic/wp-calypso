@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, find } from 'lodash';
+import { get, find, indexOf, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -138,4 +138,19 @@ export function isDeletingInvite( state, siteId, inviteId ) {
  */
 export function didInviteDeletionSucceed( state, siteId, inviteId ) {
 	return 'success' === get( state, [ 'invites', 'deleting', siteId, inviteId ], false );
+}
+
+/**
+ * Returns true if currently deleting any invite for the given site,
+ * or false otherwise.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+
+ * @return {Boolean}          Whether an invite is being deleted
+ */
+export function isDeletingAnyInvite( state, siteId ) {
+	return (
+		-1 !== indexOf( values( get( state, [ 'invites', 'deleting', siteId ], {} ) ), 'requesting' )
+	);
 }

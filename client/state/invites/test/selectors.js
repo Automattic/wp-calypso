@@ -19,6 +19,7 @@ import {
 	getInviteForSite,
 	isDeletingInvite,
 	didInviteDeletionSucceed,
+	isDeletingAnyInvite,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -521,6 +522,45 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( isDeletingInvite( state, 12345, '9876asdf54321' ) ).to.equal( false );
+		} );
+	} );
+
+	describe( '#isDeletingAnyInvite()', () => {
+		test( 'should return true when requesting deletion for any invite on the site', () => {
+			const state = {
+				invites: {
+					deleting: {
+						12345: {
+							'123456asdf789': 'requesting',
+							'9876asdf54321': 'success',
+						},
+					},
+				},
+			};
+			expect( isDeletingAnyInvite( state, 12345 ) ).to.equal( true );
+		} );
+
+		test( 'should return false when all deletion requests are complete', () => {
+			const state = {
+				invites: {
+					deleting: {
+						12345: {
+							'123456asdf789': 'success',
+							'9876asdf54321': 'success',
+						},
+					},
+				},
+			};
+			expect( isDeletingAnyInvite( state, 12345 ) ).to.equal( false );
+		} );
+
+		test( 'should return false when deletion has not been requested', () => {
+			const state = {
+				invites: {
+					deleting: {},
+				},
+			};
+			expect( isDeletingAnyInvite( state, 12345 ) ).to.equal( false );
 		} );
 	} );
 } );

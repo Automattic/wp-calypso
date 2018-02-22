@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
 import Button from 'components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
+import Dialog from 'components/dialog';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
@@ -28,11 +30,37 @@ import {
 	getPendingInvitesForSite,
 	getAcceptedInvitesForSite,
 	getNumberOfInvitesFoundForSite,
+	isDeletingAnyInvite,
 } from 'state/invites/selectors';
+import { deleteInvites } from 'state/invites/actions';
 
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showClearAllConfirmation: false,
+		};
+	}
+
+	toggleClearAllConfirmation = () => {
+		this.setState( {
+			showClearAllConfirmation: ! this.state.showClearAllConfirmation,
+		} );
+	};
+
+	handleClearAll = () => {
+		const { acceptedInvites, deleting, site } = this.props;
+
+		if ( deleting ) {
+			return;
+		}
+
+		this.props.deleteInvites( site.ID, map( acceptedInvites, 'key' ) );
+		this.toggleClearAllConfirmation();
 	};
 
 	render() {
@@ -94,7 +122,9 @@ class PeopleInvites extends React.PureComponent {
 							label={ translate( 'Accepted' ) }
 							count={ acceptedInviteCount }
 							// Excluding `site=` hides the "Invite user" link.
-						/>
+						>
+							{ this.renderClearAll() }
+						</PeopleListSectionHeader>
 						<Card>{ acceptedInvites.map( this.renderInvite ) }</Card>
 					</div>
 				) }
@@ -105,6 +135,31 @@ class PeopleInvites extends React.PureComponent {
 						found={ totalInvitesFound }
 					/>
 				) }
+			</React.Fragment>
+		);
+	}
+
+	renderClearAll() {
+		const { deleting, translate } = this.props;
+
+		const dialogButtons = [
+			<Button busy={ deleting } primary onClick={ this.handleClearAll }>
+				{ translate( 'Clear All' ) }
+			</Button>,
+			<Button busy={ deleting } onClick={ this.toggleClearAllConfirmation }>
+				{ translate( 'Cancel' ) }
+			</Button>,
+		];
+
+		return (
+			<React.Fragment>
+				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
+					{ translate( 'Clear All Accepted' ) }
+				</Button>
+				<Dialog isVisible={ this.state.showClearAllConfirmation } buttons={ dialogButtons }>
+					<h1>{ translate( 'Clear All Accepted' ) }</h1>
+					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
+				</Dialog>
 			</React.Fragment>
 		);
 	}
@@ -155,15 +210,19 @@ class PeopleInvites extends React.PureComponent {
 	};
 }
 
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = site && site.ID;
+export default connect(
+	state => {
+		const site = getSelectedSite( state );
+		const siteId = site && site.ID;
 
-	return {
-		site,
-		requesting: isRequestingInvitesForSite( state, siteId ),
-		pendingInvites: getPendingInvitesForSite( state, siteId ),
-		acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
-		totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
-	};
-} )( localize( PeopleInvites ) );
+		return {
+			site,
+			requesting: isRequestingInvitesForSite( state, siteId ),
+			pendingInvites: getPendingInvitesForSite( state, siteId ),
+			acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
+			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
+			deleting: isDeletingAnyInvite( state, siteId ),
+		};
+	},
+	{ deleteInvites }
+)( localize( PeopleInvites ) );
