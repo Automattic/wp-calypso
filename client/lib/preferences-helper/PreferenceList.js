@@ -40,7 +40,7 @@ class PreferenceList extends Component {
 									</button>
 									<span>{ prefName }</span>
 								</div>
-								<ul className="preferences-helper__value">
+								<ul className="preferences-helper__list">
 									{ Array.isArray( preferences[ prefName ] ) ? (
 										preferences[ prefName ].map( ( preference, index ) => (
 											<li key={ index }>{ preference }</li>
