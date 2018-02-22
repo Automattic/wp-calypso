@@ -1,6 +1,0 @@
-/** @format */
-export const action = {
-	FETCH_FEED_POST: 'FETCH_FEED_POST',
-	RECEIVE_FEED_POST: 'RECEIVE_FEED_POST',
-	MARK_FEED_POST_SEEN: 'MARK_FEED_POST_SEEN',
-};

@@ -1,30 +1,23 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import * as actions from '../actions';
 import { tracks } from 'lib/analytics';
-import { READER_POSTS_RECEIVE } from 'state/action-types';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
 import wp from 'lib/wp';
 
-const undocumented = wp.undocumented;
+jest.mock( 'reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
 
 jest.mock( 'lib/analytics', () => ( {
-	tracks: {
-		recordEvent: require( 'sinon' ).spy(),
-	},
+	tracks: { recordEvent: jest.fn() },
+	mc: { bumpStat: jest.fn() },
 } ) );
 
 jest.mock( 'lib/wp', () => {
-	const { stub } = require( 'sinon' );
-	const readFeedPost = stub();
-	const readSitePost = stub();
+	const readFeedPost = jest.fn();
+	const readSitePost = jest.fn();
 
 	return {
 		undocumented: () => ( {
@@ -34,17 +27,21 @@ jest.mock( 'lib/wp', () => {
 	};
 } );
 
+const undocumented = wp.undocumented;
+const { pageViewForPost } = require( 'reader/stats' );
+const { mc } = require( 'lib/analytics' );
+
 describe( 'actions', () => {
-	const dispatchSpy = sinon.spy();
+	const dispatchSpy = jest.fn();
 	const trackingSpy = tracks.recordEvent;
 	const readFeedStub = undocumented().readFeedPost;
 	const readSiteStub = undocumented().readSitePost;
 
 	afterEach( () => {
-		dispatchSpy.reset();
-		trackingSpy.reset();
-		readFeedStub.reset();
-		readSiteStub.reset();
+		dispatchSpy.mockReset();
+		trackingSpy.mockReset();
+		readFeedStub.mockReset();
+		readSiteStub.mockReset();
 	} );
 
 	describe( '#receivePosts()', () => {
@@ -53,7 +50,7 @@ describe( 'actions', () => {
 			return actions
 				.receivePosts( posts )( dispatchSpy )
 				.then( () => {
-					expect( dispatchSpy ).to.have.been.calledWith( {
+					expect( dispatchSpy ).toHaveBeenCalledWith( {
 						type: READER_POSTS_RECEIVE,
 						posts,
 					} );
@@ -70,7 +67,7 @@ describe( 'actions', () => {
 				},
 			];
 			actions.receivePosts( posts )( dispatchSpy );
-			expect( trackingSpy ).to.have.been.calledWith( 'calypso_traintracks_render', 'foo' );
+			expect( trackingSpy ).toHaveBeenCalledWith( 'calypso_traintracks_render', 'foo' );
 		} );
 
 		test( 'should try to reload posts marked with should_reload', () => {
@@ -85,50 +82,50 @@ describe( 'actions', () => {
 			];
 
 			actions.receivePosts( posts )( dispatchSpy );
-			expect( dispatchSpy ).to.have.been.calledWith( sinon.match.func );
+			expect( dispatchSpy ).toHaveBeenCalledWith( expect.any( Function ) );
 		} );
 	} );
 
 	describe( '#fetchPost', () => {
 		test( 'should call read/sites for blog posts', () => {
-			readSiteStub.returns( Promise.resolve( {} ) );
+			readSiteStub.mockReturnValue( Promise.resolve( {} ) );
 			const req = actions.fetchPost( { blogId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readSiteStub ).to.have.been.calledWith( {
+			expect( readSiteStub ).toHaveBeenCalledWith( {
 				site: 1,
 				postId: 2,
 			} );
 
 			return req.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( sinon.match.func );
+				expect( dispatchSpy ).toHaveBeenCalledWith( expect.any( Function ) );
 			} );
 		} );
 
 		test( 'should call read/feeds for feed posts', () => {
-			readFeedStub.returns( Promise.resolve( {} ) );
+			readFeedStub.mockReturnValue( Promise.resolve( {} ) );
 			const req = actions.fetchPost( { feedId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readFeedStub ).to.have.been.calledWith( {
+			expect( readFeedStub ).toHaveBeenCalledWith( {
 				feedId: 1,
 				postId: 2,
 			} );
 
 			return req.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( sinon.match.func );
+				expect( dispatchSpy ).toHaveBeenCalledWith( expect.any( Function ) );
 			} );
 		} );
 
 		test( 'should dispatch an error when a blog post call fails', () => {
-			readSiteStub.returns( Promise.reject( { status: 'oh no' } ) );
+			readSiteStub.mockReturnValue( Promise.reject( { status: 'oh no' } ) );
 			const req = actions.fetchPost( { blogId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readSiteStub ).to.have.been.calledWith( {
+			expect( readSiteStub ).toHaveBeenCalledWith( {
 				site: 1,
 				postId: 2,
 			} );
 
 			return req.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
+				expect( dispatchSpy ).toHaveBeenCalledWith( {
 					type: READER_POSTS_RECEIVE,
 					posts: [
 						{
@@ -138,7 +135,7 @@ describe( 'actions', () => {
 							is_error: true,
 							error: { status: 'oh no' },
 							feed_ID: undefined,
-							global_ID: sinon.match.any,
+							global_ID: expect.any( String ),
 						},
 					],
 				} );
@@ -146,16 +143,16 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch an error when a feed post call fails', () => {
-			readFeedStub.returns( Promise.reject( { status: 'oh no' } ) );
+			readFeedStub.mockReturnValue( Promise.reject( { status: 'oh no' } ) );
 			const req = actions.fetchPost( { feedId: 1, postId: 2 } )( dispatchSpy );
 
-			expect( readFeedStub ).to.have.been.calledWith( {
+			expect( readFeedStub ).toHaveBeenCalledWith( {
 				feedId: 1,
 				postId: 2,
 			} );
 
 			return req.then( () => {
-				expect( dispatchSpy ).to.have.been.calledWith( {
+				expect( dispatchSpy ).toHaveBeenCalledWith( {
 					type: READER_POSTS_RECEIVE,
 					posts: [
 						{
@@ -165,11 +162,53 @@ describe( 'actions', () => {
 							is_error: true,
 							error: { status: 'oh no' },
 							feed_ID: 1,
-							global_ID: sinon.match.any,
+							global_ID: expect.any( String ),
 						},
 					],
 				} );
 			} );
+		} );
+	} );
+	describe( '#markPostSeen()', () => {
+		const see = actions.markPostSeen;
+		const dispatch = jest.fn();
+		const getState = jest.fn();
+
+		beforeEach( () => {
+			dispatch.mockReset();
+			getState.mockReset();
+			pageViewForPost.mockReset();
+			mc.bumpStat.mockReset();
+		} );
+
+		test( 'should not dispatch if post is falsey', () => {
+			const post = null;
+			see( post )( dispatch );
+
+			expect( dispatch.mock.calls.length ).toBe( 0 );
+		} );
+
+		test( 'should not dispatch if post has already been seen', () => {
+			const post = { global_ID: 1 };
+			const state = { reader: { posts: { seen: { 1: true } } } };
+			see( post )( dispatch, () => state );
+
+			expect( dispatch.mock.calls.length ).toBe( 0 );
+		} );
+
+		test( 'should dispatch POST_SEEN and send pageviews for unseen posts with sites', () => {
+			const post = { global_ID: 1, site_ID: 1 };
+			const site = { ID: 1 };
+			const state = { reader: { posts: { seen: {} } } };
+			see( post, site )( dispatch, () => state );
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: READER_POST_SEEN,
+				payload: { post, site },
+			} );
+
+			expect( pageViewForPost.mock.calls.length ).toBe( 1 );
+			expect( mc.bumpStat.mock.calls.length ).toBe( 1 );
 		} );
 	} );
 } );

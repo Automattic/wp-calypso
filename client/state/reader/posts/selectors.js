@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { keyBy, some } from 'lodash';
+import { keyBy, some, get } from 'lodash';
 
 /**
  * Internal depedencies
@@ -45,3 +45,6 @@ export const getPostsByKeys = treeSelect(
 	},
 	{ getCacheKey: postKeys => postKeys.map( keyToString ).join() }
 );
+
+export const hasPostBeenSeen = ( state, globalId ) =>
+	!! get( state, [ 'reader', 'posts', 'seen', globalId ] );

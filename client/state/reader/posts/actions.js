@@ -3,16 +3,18 @@
  * External Dependencies
  */
 import { v4 as uuid } from 'uuid';
-import { filter, forEach, compact, partition } from 'lodash';
+import { filter, forEach, compact, partition, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE } from 'state/action-types';
-import analytics from 'lib/analytics';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
+import analytics, { mc } from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import wpcom from 'lib/wp';
 import { keyForPost } from 'lib/feed-stream-store/post-key';
+import { pageViewForPost } from 'reader/stats';
+import { hasPostBeenSeen } from './selectors';
 
 function trackRailcarRender( post ) {
 	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );
@@ -103,3 +105,22 @@ export function reloadPost( post ) {
 		} );
 	};
 }
+
+export const markPostSeen = ( post, site ) => ( dispatch, getState ) => {
+	if ( ! post || hasPostBeenSeen( getState(), post.global_ID ) ) {
+		return;
+	}
+
+	dispatch( { type: READER_POST_SEEN, payload: { post, site } } );
+
+	if ( post.site_ID ) {
+		// they have a site ID, let's try to push a page view
+		const isAdmin = !! get( site, 'capabilities.manage_options', false );
+		if ( site && site.ID ) {
+			if ( site.is_private || ! isAdmin ) {
+				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
+				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
+			}
+		}
+	}
+};
