@@ -12,6 +12,7 @@ import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
 import { uniqueId } from 'lodash';
+import FocusTrap from 'focus-trap-react';
 
 /**
  * Internal dependencies
@@ -39,7 +40,6 @@ class Popover extends Component {
 		autoRtl: PropTypes.bool,
 		className: PropTypes.string,
 		closeOnEsc: PropTypes.bool,
-		focusOnShow: PropTypes.bool,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: PropTypes.function } ),
 		isRtl: PropTypes.bool,
@@ -65,7 +65,6 @@ class Popover extends Component {
 		autoRtl: true,
 		className: '',
 		closeOnEsc: true,
-		focusOnShow: false,
 		isRtl: false,
 		isVisible: false,
 		position: 'top',
@@ -120,17 +119,12 @@ class Popover extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		const { isVisible, onShow, focusOnShow } = this.props;
+		const { isVisible } = this.props;
 
 		if ( ! prevState.show && this.state.show ) {
 			this.bindEscKeyListener();
 			this.bindDebouncedReposition();
 			bindWindowListeners();
-			onShow();
-
-			if ( focusOnShow && this.domContainer ) {
-				this.domContainer.focus();
-			}
 		}
 
 		if ( isVisible !== prevProps.isVisible ) {
@@ -462,13 +456,15 @@ class Popover extends Component {
 
 		return (
 			<RootChild className={ this.props.rootClassName }>
-				<div style={ this.getStylePosition() } className={ classes }>
-					<div className="popover__arrow" />
+				<FocusTrap>
+					<div style={ this.getStylePosition() } className={ classes }>
+						<div className="popover__arrow" />
 
-					<div ref={ this.setDOMBehavior } className="popover__inner">
-						{ this.props.children }
+						<div ref={ this.setDOMBehavior } className="popover__inner">
+							{ this.props.children }
+						</div>
 					</div>
-				</div>
+				</FocusTrap>
 			</RootChild>
 		);
 	}
