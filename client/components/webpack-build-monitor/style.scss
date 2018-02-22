@@ -32,10 +32,13 @@
 	display: block;
 }
 
-.webpack-build-monitor .spinner__progress {
-	fill: currentColor;
-}
+.webpack-build-monitor {
+	.spinner__outer {
+		border-top-color: currentColor;
+	}
 
-.webpack-build-monitor .spinner__border {
-	fill: lighten( $alert-green, 30% );
+	.spinner__inner {
+		border-top-color: currentColor;
+		border-right-color: currentColor;
+	}
 }
