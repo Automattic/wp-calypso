@@ -1,10 +1,49 @@
-.layout {
-	&.is-section-preview {
-		height: 100%;
-		overflow: hidden;
+/*
+	Layout Elements
+	.layout__loading - Displays when loading Claypso
+	.layout__content - Contains primary and secondary elements
+		.layout__primary - Where the main content lives
+		.layout__secondary - Contains the site selector and sidebar elements
+			.sidebar
+			.site-selector
+*/
+
+// Set transitons for layout elements
+.layout__primary .main,
+.layout__secondary,
+.layout__secondary .sidebar,
+.layout__secondary .site-selector {
+	transition: transform 0.15s ease-in-out,
+				opacity 0.15s ease-out;
+}
+
+// If things take a bit to load...
+.layout__loader {
+	background: var( --masterbar-background );
+	border-bottom: 1px solid var( --masterbar-border-color );
+	height: 46px;
+	margin-left: -10%;
+	position: absolute;
+		left: 50%;
+		top: 0;
+	width: 20%;
+	z-index: z-index( 'root', '.layout__loader' );
+
+	// The transition-delay avoids showing the loader
+	// too often on faster connections.
+	display: none;
+	opacity: 0;
+	transition: opacity 0.1s linear;
+	transition-delay: 0.8s;
+
+	&.is-active {
+		display: block;
+		opacity: 1;
 	}
 }
 
+// Setup the content element to adapt to the sidebar,
+// lack of sidebar, or the WebPreview component.
 .layout__content {
 	@include clear-fix;
 	position: relative;
@@ -12,31 +51,33 @@
 	padding: 79px 32px 32px ( $sidebar-width-max + 32px );
 	box-sizing: border-box;
 	overflow: hidden;
-	transition: opacity 0.3s;
 
+	// I guess we dont want links to look like links.
+	a {
+		text-decoration: none;
+	}
+
+	// Various screens dont use a sidebar.
 	.has-no-sidebar & {
 		padding-left: 32px;
 	}
 
+	// Themes sets it own padding/margin
 	.is-section-theme &,
 	.is-section-themes.has-no-sidebar & {
 		padding: 0;
 		margin: 0;
 	}
 
+	// This is needed to ensure the WebPreview component
+	// displays at full height.
 	.is-section-preview & {
 		height: 100%;
 		padding: 47px 0 0 $sidebar-width-max;
 	}
 
-	@media print {
-		padding: 0;
-	}
-}
-
-// Tablets
-@include breakpoint( "<960px" ) {
-	.layout__content {
+	// Tablets
+	@include breakpoint( "<960px" ) {
 		padding: 71px 24px 24px ( $sidebar-width-min + 24px );
 
 		.has-no-sidebar & {
@@ -53,11 +94,9 @@
 			padding: 47px 0px 0px 228px;
 		}
 	}
-}
 
-// Mobile (Full Width)
-@include breakpoint( "<660px" ) {
-	.layout__content {
+	// Mobile (Full Width)
+	@include breakpoint( "<660px" ) {
 		margin-left: 0;
 		padding: 0;
 		padding-top: 47px;
@@ -72,90 +111,47 @@
 	}
 }
 
-.layout__primary {
-	transition: all 0.15s ease-in-out;
-
-	.is-section-preview & {
-		height: 100%;
-	}
-}
-
-.layout__content a {
-	text-decoration: none;
-}
-
-.layout {
-	.sidebar,
-	.layout__secondary .site-selector,
-	.current-site,
-	.sidebar__menu {
-		transform: translateX( 0 );
-		transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
-	}
-}
-
-.layout {
-	.sidebar,
-	.masterbar {
-		@media print {
-			display: none;
-		}
-	}
-}
-
-.layout.focus-sites {
-	.layout__primary {
-		opacity: 0.2;
-		pointer-events: none;
-	}
-
-	.layout__secondary .site-selector {
-		opacity: 1;
-		transform: translateX( 272px );
-		pointer-events: auto;
-
-		@include breakpoint( "<660px" ) {
-			transform: translateX( 100% );
-		}
-	}
-
-	.sidebar {
-		pointer-events: none;
-	}
-
-	.current-site,
-	.sidebar__menu {
-		opacity: 0;
-		transform: translateX( 64px );
-	}
-}
-
-.layout.focus-sidebar {
-	overflow: hidden;
-}
-
-.layout.focus-sidebar:not(.is-section-post-editor) .layout__primary {
-	//when sidebar is focused, create a z-index stacking context on primary, so elements don't bleed in mobile views.
-	transform: translate( 0, 0 );
-}
-
-// site selector in the sidebar
-.layout__secondary .site-selector {
-	background: $gray-lighten-30;
-	border-right: 1px solid lighten( $gray, 25% );
+// Setup the secondary element, which contains the sidebar and
+// the site-selector elements.
+.layout__secondary {
 	position: fixed;
 		top: 47px;
+		left: 0;
 		bottom: 0;
-		left: -272px;
-	width: 272px;
+	color: var( --sidebar-color );
+	background: var( --sidebar-background );
+	border-right: 1px solid darken( $sidebar-bg-color, 5% );
+	width: $sidebar-width-max;
 	overflow: hidden;
-	z-index: z-index( 'root', '.layout__secondary .site-selector' );
-	opacity: 0;
-	pointer-events: none;
 
-	.search {
-		border-bottom: 1px solid $gray-lighten-20;
+	@include breakpoint( "<960px" ) {
+		width: $sidebar-width-min;
 	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+	}
+
+	// The editor has its own sidebar which doesnt
+	// use the secondary element.
+	.is-section-post-editor &,
+	// Some screens (like /theme/) simply dont have
+	// a sidebar.
+	.has-no-sidebar & {
+		display: none;
+	}
+}
+
+// Setup the site-selector element. Its default
+// position is off screen.
+.layout__secondary .site-selector {
+	position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	pointer-events: none;
+	transform: translateX( -$sidebar-width-max );
 
 	.site,
 	.all-sites {
@@ -168,39 +164,92 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		width: 100%;
-		left: -100%;
 		-webkit-overflow-scrolling: touch;
-	}
-
-	.site-selector__recent {
-		border-bottom-color: $gray-lighten-20;
+		transform: translateX( -100% );
 	}
 }
 
-.layout__loader {
-	border-bottom: 1px solid var( --masterbar-border-color );
-	height: 46px;
-	margin-left: -10%;
-	position: absolute;
-		left: 50%;
-		top: 0;
-	width: 20%;
-	z-index: z-index( 'root', '.layout__loader' );
 
-	// set a delay threshold for opacity changes
-	// prevents showing loader on fast connections
-	visibility: hidden;
-	opacity: 0;
-	transition: opacity 0.1s linear;
-	transition-delay: 0.4s;
+/*
+	Focus States
+	Sites - Site Selector for those with multiple sites
+	Sidebar - The sidebar is the current focus
+	Content - The content is the furrent focus
+*/
 
-	@include breakpoint( "<480px" ) {
-		background: var( --masterbar-background );
+// Adjust the content as needed when focused on the site selector
+// or sidebar, but never in the editor.
+.layout.focus-sites:not(.is-section-post-editor),
+.layout.focus-sidebar:not(.is-section-post-editor) {
+	.layout__primary .main {
+		@include breakpoint( "<660px" ) {
+			pointer-events: none;
+			overflow: hidden;
+			max-height: calc( 100vh - 47px );
+
+			// Removing this transform could have unintended side-affects
+			// related to z-index and elements showing through on mobile.
+			transform: translateX( 100% );
+		}
 	}
 }
 
-.layout__loader.is-active {
-	visibility: visible;
-	opacity: 1;
+// Adjust elements when the site-selector is visible.
+.layout.focus-sites {
+	.layout__secondary .site-selector {
+		pointer-events: auto;
+		transform: translateX( 0 );
+	}
+
+	.layout__secondary .sidebar {
+		pointer-events: none;
+		transform: translateX( $sidebar-width-max );
+
+		@include breakpoint( "<660px" ) {
+			transform: translateX( 100% );
+		}
+	}
+
+	.layout__primary .main {
+		@include breakpoint( ">660px" ) {
+			pointer-events: none;
+			opacity: 0.25;
+		}
+	}
+}
+
+// Move the secondary element off screen when focused
+// on the content. This only applies to small screens.
+.layout.focus-content {
+	@include breakpoint( "<660px" ) {
+		.layout__secondary {
+			transform: translateX( -100% );
+		}
+	}
+}
+
+// Use all available space for the WebPreview component on /view
+.layout.is-section-preview {
+	height: 100%;
+	overflow: hidden;
+
+	.layout__primary {
+		height: 100%;
+	}
+}
+
+// Try to clean things up a bit when printing.
+.layout {
+	.masterbar,
+	.layout__secondary {
+		@media print {
+			display: none;
+		}
+	}
+
+	.layout__content {
+		@media print {
+			padding: 0;
+		}
+	}
 }
