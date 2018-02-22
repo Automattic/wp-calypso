@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { identity, noop, get, findLast } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 
@@ -73,21 +73,24 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	getVerificationNoticeLabel() {
+		const { translate } = this.props;
 		const primaryButtonState = getPublishButtonStatus(
-				this.props.post,
-				this.props.savedPost,
-				this.props.canUserPublishPosts
-			),
-			buttonLabels = {
-				update: i18n.translate( 'To update, check your email and confirm your address.' ),
-				schedule: i18n.translate( 'To schedule, check your email and confirm your address.' ),
-				publish: i18n.translate( 'To publish, check your email and confirm your address.' ),
-				requestReview: i18n.translate(
-					'To submit for review, check your email and confirm your address.'
-				),
-			};
-
-		return buttonLabels[ primaryButtonState ];
+			this.props.post,
+			this.props.savedPost,
+			this.props.canUserPublishPosts
+		);
+		switch ( primaryButtonState ) {
+			case 'update':
+				return translate( 'To update, check your email and confirm your address.' );
+			case 'schedule':
+				return translate( 'To schedule, check your email and confirm your address.' );
+			case 'publish':
+				return translate( 'To publish, check your email and confirm your address.' );
+			case 'requestReview':
+				return translate( 'To submit for review, check your email and confirm your address.' );
+			default:
+				return null;
+		}
 	}
 
 	shouldShowStatusLabel() {
