@@ -28,8 +28,8 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		} );
 	};
 
-	render() {
-		const { basePath, getForwardUrl, settings, translate } = this.props;
+	renderActionTile() {
+		const { getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's grow your audience with Jetpack." );
 		const subHeaderText = (
 			<Fragment>
@@ -43,15 +43,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const hasContactForm = !! get( settings, 'addContactForm' );
 
 		return (
-			<div className="steps__main">
-				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Start' ) } />
-				<PageViewTracker
-					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
-					title="Contact Form ‹ Jetpack Start"
-				/>
-
-				<JetpackLogo full size={ 45 } />
-
+			<Fragment>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<TileGrid>
@@ -65,6 +57,24 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 						href={ getForwardUrl() }
 					/>
 				</TileGrid>
+			</Fragment>
+		);
+	}
+
+	render() {
+		const { basePath, translate } = this.props;
+
+		return (
+			<div className="steps__main">
+				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Start' ) } />
+				<PageViewTracker
+					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
+					title="Contact Form ‹ Jetpack Start"
+				/>
+
+				<JetpackLogo full size={ 45 } />
+
+				{ this.renderActionTile() }
 			</div>
 		);
 	}
