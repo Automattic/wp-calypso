@@ -71,6 +71,7 @@ const tasks = {
 		completedButtonText: 'Add email',
 		url: '/domains/add/$siteSlug',
 		image: '/calypso/images/stats/tasks/domains.svg',
+		tour: 'checklistRegisterDomain',
 	},
 	domain_selected: {
 		title: 'Pick a website address',

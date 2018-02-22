@@ -66,6 +66,7 @@ class Search extends Component {
 		compact: PropTypes.bool,
 		hideOpenIcon: PropTypes.bool,
 		inputLabel: PropTypes.string,
+		dataTipTarget: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -90,6 +91,7 @@ class Search extends Component {
 		hideClose: false,
 		compact: false,
 		hideOpenIcon: false,
+		dataTipTarge: undefined,
 	};
 
 	state = {
@@ -372,6 +374,7 @@ class Search extends Component {
 						onFocus={ this.onFocus }
 						onBlur={ this.onBlur }
 						disabled={ this.props.disabled }
+						data-tip-target={ this.props.dataTipTarget }
 						aria-label={ inputLabel ? inputLabel : i18n.translate( 'Search' ) }
 						aria-hidden={ ! isOpenUnpinnedOrQueried }
 						autoCapitalize="none"
