@@ -22,7 +22,8 @@ import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
 import Drafts from 'layout/masterbar/drafts';
 import { composeAnalytics, recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { canCurrentUser } from 'state/selectors';
+import { canCurrentUser, isVipSite } from 'state/selectors';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { getRouteHistory } from 'state/ui/action-log/selectors';
 
 export class EditorGroundControl extends PureComponent {
@@ -70,57 +71,6 @@ export class EditorGroundControl extends PureComponent {
 		userUtils: null,
 		setPostDate: noop,
 	};
-
-	state = {
-		needsVerification:
-			this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
-	};
-
-	componentDidMount() {
-		if ( ! this.props.user ) {
-			return;
-		}
-
-		this.props.user
-			.on( 'change', this.updateNeedsVerification )
-			.on( 'verify', this.updateNeedsVerification );
-	}
-
-	componentWillUnmount() {
-		if ( ! this.props.user ) {
-			return;
-		}
-
-		this.props.user
-			.off( 'change', this.updateNeedsVerification )
-			.off( 'verify', this.updateNeedsVerification );
-	}
-
-	updateNeedsVerification = () => {
-		this.setState( {
-			needsVerification:
-				this.props.userUtils && this.props.userUtils.needsVerificationForSite( this.props.site ),
-		} );
-	};
-
-	componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			needsVerification:
-				nextProps.userUtils && nextProps.userUtils.needsVerificationForSite( nextProps.site ),
-		} );
-
-		if ( this.props.user ) {
-			this.props.user
-				.off( 'change', this.updateNeedsVerification )
-				.off( 'verify', this.updateNeedsVerification );
-		}
-
-		if ( nextProps.user ) {
-			nextProps.user
-				.on( 'change', this.updateNeedsVerification )
-				.on( 'verify', this.updateNeedsVerification );
-		}
-	}
 
 	getPreviewLabel() {
 		return this.props.translate( 'Preview' );
@@ -199,7 +149,7 @@ export class EditorGroundControl extends PureComponent {
 						isPublishing={ this.props.isPublishing }
 						isSaveBlocked={ this.props.isSaveBlocked }
 						hasContent={ this.props.hasContent }
-						needsVerification={ this.state.needsVerification }
+						needsVerification={ this.props.userNeedsVerification }
 						busy={
 							this.props.isPublishing ||
 							( isPublished( this.props.savedPost ) && this.props.isSaving )
@@ -234,6 +184,7 @@ export class EditorGroundControl extends PureComponent {
 			post,
 			onSave,
 			translate,
+			userNeedsVerification,
 		} = this.props;
 
 		return (
@@ -254,7 +205,7 @@ export class EditorGroundControl extends PureComponent {
 					indicator={ true }
 				/>
 				<Drafts />
-				{ this.state.needsVerification && (
+				{ userNeedsVerification && (
 					<div
 						className="editor-ground-control__email-verification-notice"
 						tabIndex={ 7 }
@@ -288,11 +239,11 @@ export class EditorGroundControl extends PureComponent {
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = get( ownProps, 'site.ID', null );
 
-	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
-
 	return {
-		canUserPublishPosts,
+		canUserPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
 		routeHistory: getRouteHistory( state ),
+		// do not allow publish for unverified e-mails, but allow if the site is VIP
+		userNeedsVerification: ! isCurrentUserEmailVerified( state ) && ! isVipSite( state, siteId ),
 	};
 };
 
