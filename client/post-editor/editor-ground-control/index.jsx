@@ -4,7 +4,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { identity, noop, get, last } from 'lodash';
+import { identity, noop, get, findLast } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n, { localize } from 'i18n-calypso';
@@ -216,13 +216,12 @@ export class EditorGroundControl extends PureComponent {
 	}
 
 	getCloseButtonPath() {
-		// find the first non-editor path in routeHistory, default to "all posts"
-		const nonEditorPaths = this.props.routeHistory.filter( action => {
-			return ! action.path.match( /^\/(post|page|(edit\/[^\/]+))\/[^\/]+(\/\d+)?$/i );
-		} );
-		return nonEditorPaths && last( nonEditorPaths ) && last( nonEditorPaths ).path
-			? last( nonEditorPaths ).path
-			: this.props.allPostsUrl;
+		// find the last non-editor path in routeHistory, default to "all posts"
+		const lastNonEditorPath = findLast(
+			this.props.routeHistory,
+			action => ! action.path.match( /^\/(post|page|(edit\/[^\/]+))\/[^\/]+(\/\d+)?$/i )
+		);
+		return lastNonEditorPath ? lastNonEditorPath.path : this.props.allPostsUrl;
 	}
 
 	onCloseButtonClick = () => {
