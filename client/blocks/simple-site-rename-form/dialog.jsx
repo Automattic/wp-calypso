@@ -87,8 +87,8 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 				<h1>{ translate( "Let's Review" ) }</h1>
 				<p>
 					{ translate(
-						'You are about to change your domain name. Once changed, ' +
-							'your previous domain name will be unavailable for you or anyone else.'
+						'You are about to change your site address. Once changed, ' +
+							'your previous site address will be unavailable for you or anyone else.'
 					) }
 				</p>
 				<div className="simple-site-rename-form__confirmation-detail">

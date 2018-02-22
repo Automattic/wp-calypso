@@ -38,7 +38,7 @@ export class SimpleSiteRenameForm extends Component {
 
 	onConfirm = () => {
 		const { selectedSiteId } = this.props;
-		// @TODO: Give ability to chose whether or not to discard the original domain name.
+		// @TODO: Give ability to chose whether or not to discard the original site address.
 		const discard = true;
 
 		this.props.requestSiteRename( selectedSiteId, this.state.domainFieldValue, discard );
@@ -52,12 +52,12 @@ export class SimpleSiteRenameForm extends Component {
 		}
 
 		if ( domain.match( /[^a-z0-9]/i ) ) {
-			return translate( 'Domain can only contain letters (a-z) and numbers.' );
+			return translate( 'Site address can only contain letters (a-z) and numbers.' );
 		}
 
 		if ( ! inRange( domain.length, SUBDOMAIN_LENGTH_MINIMUM, SUBDOMAIN_LENGTH_MAXIMUM ) ) {
 			return translate(
-				'Domain length should be between %(minimumLength)s and %(maximumLength)s characters.',
+				'Site address length should be between %(minimumLength)s and %(maximumLength)s characters.',
 				{
 					args: {
 						minimumLength: SUBDOMAIN_LENGTH_MINIMUM,
@@ -126,7 +126,7 @@ export class SimpleSiteRenameForm extends Component {
 				/>
 				<form onSubmit={ this.onSubmit }>
 					<Card className="simple-site-rename-form__content">
-						<FormSectionHeading>{ translate( 'Edit Domain Name' ) }</FormSectionHeading>
+						<FormSectionHeading>{ translate( 'Edit Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
 							type="text"
 							value={ this.state.domainFieldValue }
@@ -141,7 +141,7 @@ export class SimpleSiteRenameForm extends Component {
 								<Gridicon icon="info-outline" size={ 18 } />
 								<p>
 									{ translate(
-										'Once changed, the current domain name %(currentDomainName)s will no longer be available.',
+										'Once changed, the current site address %(currentDomainName)s will no longer be available.',
 										{
 											args: { currentDomainName },
 										}
