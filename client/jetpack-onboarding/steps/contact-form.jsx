@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ConnectSuccess from '../connect-success';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
@@ -51,6 +52,10 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		}
 
 		this.addContactForm();
+	};
+
+	handleNextButton = () => {
+		this.props.recordJpoEvent( 'calypso_jpo_contact_form_next_clicked' );
 	};
 
 	addContactForm() {
@@ -102,7 +107,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	}
 
 	render() {
-		const { basePath, siteId, translate } = this.props;
+		const { basePath, getForwardUrl, hasContactForm, siteId, translate } = this.props;
 
 		return (
 			<div className="steps__main">
@@ -115,7 +120,16 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 
 				<JetpackLogo full size={ 45 } />
 
-				{ this.renderActionTile() }
+				{ hasContactForm ? (
+					<ConnectSuccess
+						href={ getForwardUrl() }
+						illustration="/calypso/images/illustrations/contact-us.svg"
+						onClick={ this.handleNextButton }
+						title={ translate( 'Success! Jetpack has added a "Contact us" page to your site.' ) }
+					/>
+				) : (
+					this.renderActionTile()
+				) }
 			</div>
 		);
 	}
