@@ -149,7 +149,7 @@ export class Theme extends Component {
 
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
-		const { name, screenshot } = theme;
+		const { name, description, screenshot } = theme;
 		const themeClass = classNames( 'theme', {
 			'is-active': active,
 			'is-actionable': !! ( this.props.screenshotClickUrl || this.props.onScreenshotClick ),
@@ -219,6 +219,7 @@ export class Theme extends Component {
 						{ this.renderInstalling() }
 						{ screenshot ? (
 							<img
+								alt={ description }
 								className="theme__img"
 								src={ themeImgSrc }
 								srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
