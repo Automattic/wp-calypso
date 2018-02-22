@@ -12,7 +12,7 @@ import { isEqual, isObject, omit } from 'lodash';
  * Internal dependencies
  */
 import TextField from 'woocommerce/woocommerce-services/components/text-field';
-import FieldError from 'woocommerce/woocommerce-services/components/field-error';
+import Notice from 'components/notice';
 import StepConfirmationButton from '../step-confirmation-button';
 import CountryDropdown from 'woocommerce/woocommerce-services/components/country-dropdown';
 import StateDropdown from 'woocommerce/woocommerce-services/components/state-dropdown';
@@ -94,7 +94,7 @@ const AddressFields = ( props ) => {
 					updateValue={ updateValue( 'phone' ) }
 					className="address-step__phone" />
 			</div>
-			{ generalErrorOnly && <FieldError text={ fieldErrors.general } /> }
+			{ generalErrorOnly && <Notice status="is-error" showDismiss={ false }>{ fieldErrors.general }</Notice> }
 			<TextField
 				id={ getId( 'address' ) }
 				title={ translate( 'Address' ) }
