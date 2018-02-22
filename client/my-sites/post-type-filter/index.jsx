@@ -153,6 +153,8 @@ const PostTypeFilter = createReactClass( {
 			return null;
 		}
 
+		const isSingleSite = !! siteId;
+
 		const navItems = this.getNavItems();
 		const selectedItem = find( navItems, 'selected' ) || {};
 
@@ -185,13 +187,16 @@ const PostTypeFilter = createReactClass( {
 					{ ! authorToggleHidden && (
 						<AuthorSegmented author={ query.author } siteId={ siteId } statusSlug={ statusSlug } />
 					) }
-					<Search
-						pinned
-						fitsContainer
-						onSearch={ this.doSearch }
-						placeholder={ this.props.translate( 'Search…' ) }
-						delaySearch={ true }
-					/>
+					{ /* Disable search in all-sites mode because it doesn't work. */ }
+					{ isSingleSite && (
+						<Search
+							pinned
+							fitsContainer
+							onSearch={ this.doSearch }
+							placeholder={ this.props.translate( 'Search…' ) }
+							delaySearch={ true }
+						/>
+					) }
 					{ this.renderMultiSelectButton() }
 				</SectionNav>
 			</div>
