@@ -33,6 +33,10 @@ export function getPreference( state, key ) {
 	);
 }
 
+export function getAllRemotePreferences( state ) {
+	return state.preferences.remoteValues;
+}
+
 export const preferencesLastFetchedTimestamp = state => state.preferences.lastFetchedTimestamp;
 
 /**

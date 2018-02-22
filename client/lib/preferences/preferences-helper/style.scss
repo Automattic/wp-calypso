@@ -1,23 +1,20 @@
 .preferences-helper__current-preferences {
 	display: none;
 }
+.preferences-helper__info {
+	font-weight: normal;
+	text-transform: initial;
+}
 
-// .environment-badge .environment.is-prefs a.test-helper__variation {
-// 	font-weight: normal;
-// 	cursor: pointer;
-// 	text-transform: initial;
+.preferences-helper__unset {
+	color: $orange-jazzy;
+}
 
-// 	&.test-helper__current-variation {
-// 		text-decoration: underline;
-// 		color: $orange-jazzy;
-// 	}
-// }
-
-// .test-helper__test-header {
-// 	text-transform: initial;
-// 	margin-top: 5px;
-// 	font-weight: bolder;
-// }
+.preferences-helper__preference-header {
+	text-transform: initial;
+	margin-top: 5px;
+	font-weight: bolder;
+}
 
 .environment.is-prefs:hover .preferences-helper__current-preferences.card {
 	display: block;
@@ -29,7 +26,3 @@
 	margin: 0;
 	font-size: 11px;
 }
-
-// .test-helper__list {
-// 	margin: 5px 0 8px 20px;
-// }
