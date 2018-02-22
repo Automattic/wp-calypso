@@ -66,9 +66,10 @@ const refreshActivityLogAfterRewind = ( siteId, rewind ) => ( dispatch, getState
 		number: 1000,
 	};
 
-	// queue an update to them as well to grab more authoritative
-	// data just wait because it takes much longer on the server
-	// for all of the changes to propagate back
+	// queue to update all local activity log events
+	// we are waiting so long because it takes much
+	// longer on the server for all of the changes
+	// to propagate back than we would expect
 	setTimeout( () => dispatch( activityLogRequest( siteId, query ) ), 15000 );
 };
 
