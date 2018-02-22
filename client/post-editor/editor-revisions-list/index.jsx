@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, isEmpty, last, map } from 'lodash';
+import { filter, forEach, get, head, isEmpty, last, map, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,10 +21,12 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
-		comparisons: PropTypes.object,
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
+		filteredRevisions: PropTypes.array.isRequired,
+		comparisons: PropTypes.object,
+		filteredComparisons: PropTypes.object,
 		selectedRevisionId: PropTypes.number,
 		nextIsDisabled: PropTypes.bool,
 		prevIsDisabled: PropTypes.bool,
@@ -132,21 +134,21 @@ class EditorRevisionsList extends PureComponent {
 
 	render() {
 		const {
-			comparisons,
+			filteredRevisions,
+			filteredComparisons,
 			nextIsDisabled,
 			prevIsDisabled,
 			postId,
-			revisions,
 			selectedRevisionId,
 			siteId,
 		} = this.props;
 		const classes = classNames( 'editor-revisions-list', {
-			'is-loading': isEmpty( revisions ),
+			'is-loading': isEmpty( filteredRevisions ),
 		} );
 
 		return (
 			<div className={ classes }>
-				<EditorRevisionsListHeader numRevisions={ revisions.length } />
+				<EditorRevisionsListHeader numRevisions={ filteredRevisions.length } />
 				<EditorRevisionsListNavigation
 					nextIsDisabled={ nextIsDisabled }
 					prevIsDisabled={ prevIsDisabled }
@@ -155,11 +157,15 @@ class EditorRevisionsList extends PureComponent {
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
-						{ map( revisions, revision => {
+						{ map( filteredRevisions, revision => {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
 							} );
-							const revisionChanges = get( comparisons, [ revision.id, 'diff', 'totals' ], {} );
+							const revisionChanges = get(
+								filteredComparisons,
+								[ revision.id, 'diff', 'totals' ],
+								{}
+							);
 							return (
 								<li className={ itemClasses } key={ revision.id }>
 									<EditorRevisionsListItem
@@ -178,17 +184,59 @@ class EditorRevisionsList extends PureComponent {
 	}
 }
 
+const minWords = 4;
+
+const filterRevisions = ( revisions, comparisons ) => {
+	return filter( revisions, revision => {
+		const { add, del } = get( comparisons, [ revision.id, 'diff', 'totals' ], { add: 0, del: 0 } );
+		return add > minWords || del > minWords;
+	} );
+};
+
+const filterComparisons = ( comparisons, filteredRevisions ) => {
+	const filteredComparisons = pickBy( comparisons, comparison => {
+		const { add, del } = get( comparison, [ 'diff', 'totals' ], { add: 0, del: 0 } );
+		return add > minWords || del > minWords;
+	} );
+
+	forEach( filteredRevisions, ( revision, i ) => {
+		if ( ! revision.id ) {
+			return;
+		}
+		filteredComparisons[ revision.id ].nextRevisionId = get(
+			filteredRevisions,
+			[ i - 1, 'id' ],
+			null
+		);
+		filteredComparisons[ revision.id ].prevRevisionId = get(
+			filteredRevisions,
+			[ i + 1, 'id' ],
+			null
+		);
+	} );
+
+	return filteredComparisons;
+};
+
 export default connect(
 	( state, { comparisons, revisions, selectedRevisionId } ) => {
-		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
-		const latestRevisionId = get( head( revisions ), 'id' );
+		const filteredRevisions = filterRevisions( revisions, comparisons );
+		const filteredComparisons = filterComparisons( comparisons, filteredRevisions );
+		const { nextRevisionId, prevRevisionId } = get(
+			filteredComparisons,
+			[ selectedRevisionId ],
+			{}
+		);
+		const latestRevisionId = get( head( filteredRevisions ), 'id' );
 		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
 		const earliestRevisionIsSelected =
-			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
-		const nextIsDisabled = latestRevisionIsSelected || revisions.length === 1;
-		const prevIsDisabled = earliestRevisionIsSelected || revisions.length === 1;
+			! latestRevisionIsSelected && get( last( filteredRevisions ), 'id' ) === selectedRevisionId;
+		const nextIsDisabled = latestRevisionIsSelected || filteredRevisions.length === 1;
+		const prevIsDisabled = earliestRevisionIsSelected || filteredRevisions.length === 1;
 
 		return {
+			filteredRevisions,
+			filteredComparisons,
 			latestRevisionId,
 			prevIsDisabled,
 			nextIsDisabled,
