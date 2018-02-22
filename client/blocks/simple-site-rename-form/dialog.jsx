@@ -110,7 +110,7 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 						<strong className="simple-site-rename-form__copy-green">{ newDomainName }</strong>
 						{ newDomainSuffix }
 						<br />
-						{ translate( 'Will be your new primary domain.' ) }
+						{ translate( 'Will be your new site address.' ) }
 					</p>
 				</div>
 				<h1>{ translate( 'Check the box to confirm' ) }</h1>
