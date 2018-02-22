@@ -121,17 +121,17 @@ class InlineHelp extends Component {
 				<Gridicon icon="help-outline" />
 				{ showInlineHelp && (
 					<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
-				) }
-			</Button>
+						) }
+						</Button>
 		);
 	}
 }
 
 export default connect(
 	state => ( {
-		isHappychatOpen: isHappychatOpen( state ),
+	isHappychatOpen: isHappychatOpen( state ),
 	} ),
 	{
-		recordTracksEvent,
+	recordTracksEvent,
 	}
 )( localize( InlineHelp ) );

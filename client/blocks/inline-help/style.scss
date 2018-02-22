@@ -1,3 +1,43 @@
+.button.is-borderless.inline-help {
+	position: fixed;
+		right: 24px;
+		bottom: 16px;
+	line-height: 1;
+	padding: 4px 4px 2px 4px;
+	border-radius: 100%;
+	background: $white;
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+	border: 1px solid $gray-lighten-20;
+	transition: all 0.2s ease-in-out;
+
+	.gridicon {
+		fill: $gray-darken-10;
+		margin: 0;
+		top: 0;
+		height: auto;
+		width: auto;
+		transition: all 0.2s ease-in-out;
+	}
+
+	&:hover {
+		border-color: $gray-lighten-10;
+		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+
+		.gridicon {
+			fill: $blue-wordpress;
+		}
+	}
+
+	&.is-active {
+		background: $blue-wordpress;
+
+		.gridicon {
+			fill: $white;
+			transform: rotate( 30deg );
+		}
+	}
+}
+
 .inline-help__popover.popover {
 	@include breakpoint( "<660px" ) {
 			top: 0 !important;
@@ -40,7 +80,7 @@
 
 		position: fixed;
 			top: auto !important;
-			bottom: 35px !important;
+			bottom: 52px !important;
 	}
 
 	&.is-top .popover__arrow:before,

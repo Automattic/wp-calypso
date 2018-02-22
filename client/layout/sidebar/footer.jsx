@@ -13,13 +13,11 @@ import { connect } from 'react-redux';
  */
 import config from 'config';
 import HappychatButton from 'components/happychat/button';
-import InlineHelp from 'blocks/inline-help';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 
 const SidebarFooter = ( { children, isHappychatButtonVisible } ) => (
 	<div className="sidebar__footer">
 		{ children }
-		<InlineHelp />
 		{ isHappychatButtonVisible &&
 			config.isEnabled( 'happychat' ) && (
 				<HappychatButton className="sidebar__footer-chat" allowMobileRedirect />

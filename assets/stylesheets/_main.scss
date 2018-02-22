@@ -311,7 +311,7 @@ object {
 	padding: 16px 0;
 	position: fixed;
 		bottom: 0;
-		right: 16px;
+		left: 272px + 24px;
 	z-index: z-index( 'root', '.environment-badge' );
 	backface-visibility: hidden;
 
