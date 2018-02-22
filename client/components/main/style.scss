@@ -25,10 +25,6 @@
 	&.is-wide-layout {
 		max-width: 1040px;
 	}
-
-	@include breakpoint( "<660px" ) {
-		perspective: 1000;
-	}
 }
 
 // Used on views (ex posts & pages ) where the empty-content is already inside a padded div
