@@ -247,9 +247,7 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			domainsController.redirectToAddMappingIfVipSite(),
 			jetPackWarning,
-			domainsController.domainSearch,
-			makeLayout,
-			clientRender
+			domainsController.redirectToDomainSearchSuggestion
 		);
 
 		page(
