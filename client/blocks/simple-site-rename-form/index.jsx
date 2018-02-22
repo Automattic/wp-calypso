@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { get, flow, inRange, isEmpty } from 'lodash';
 import Gridicon from 'gridicons';
@@ -25,6 +26,15 @@ const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
 
 export class SimpleSiteRenameForm extends Component {
+	static propTypes = {
+		currentDomainSuffix: PropTypes.string.isRequired,
+		currentDomain: PropTypes.object.isRequired,
+
+		// `connect`ed
+		isSiteRenameRequesting: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
+	};
+
 	static defaultProps = {
 		currentDomainSuffix: '.wordpress.com',
 		currentDomain: {},
@@ -107,13 +117,9 @@ export class SimpleSiteRenameForm extends Component {
 		const { currentDomain, currentDomainSuffix, isSiteRenameRequesting, translate } = this.props;
 		const currentDomainName = get( currentDomain, 'name', '' );
 		const currentDomainPrefix = currentDomainName.replace( currentDomainSuffix, '' );
-		const isWPCOM = get( currentDomain, 'type' ) === 'WPCOM';
 		const { domainFieldError, domainFieldValue } = this.state;
 		const isDisabled =
-			! isWPCOM ||
-			! domainFieldValue ||
-			!! domainFieldError ||
-			domainFieldValue === currentDomainPrefix;
+			! domainFieldValue || !! domainFieldError || domainFieldValue === currentDomainPrefix;
 
 		return (
 			<div className="simple-site-rename-form">

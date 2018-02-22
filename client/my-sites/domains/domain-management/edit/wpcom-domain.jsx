@@ -6,7 +6,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { flow } from 'lodash';
+import { flow, get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -22,6 +22,7 @@ import VerticalNavItem from 'components/vertical-nav/item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestSiteRename } from 'state/site-rename/actions';
 import SiteRenamer from 'blocks/simple-site-rename-form';
+import { type as domainTypes } from 'lib/domains/constants';
 
 const WpcomDomain = createReactClass( {
 	displayName: 'WpcomDomain',
@@ -32,6 +33,19 @@ const WpcomDomain = createReactClass( {
 	},
 
 	getEditSiteAddressBlock() {
+		const { domain } = this.props;
+
+		/**
+		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
+		 */
+		if ( get( domain, 'name', '' ).match( /\.\w+\.blog$/ ) ) {
+			return null;
+		}
+
+		if ( isEnabled( 'site-renamer' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
+			return <SiteRenamer currentDomain={ domain } />;
+		}
+
 		return (
 			<VerticalNav>
 				<VerticalNavItem
@@ -48,12 +62,6 @@ const WpcomDomain = createReactClass( {
 	},
 
 	render() {
-		const { domain } = this.props;
-		/**
-		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
-		 */
-		const isDotBlogDomain = domain.name.match( /\.\w+\.blog$/ );
-
 		return (
 			<div>
 				<div className="domain-details-card">
@@ -74,12 +82,7 @@ const WpcomDomain = createReactClass( {
 						</Property>
 					</Card>
 				</div>
-				{ ! isDotBlogDomain &&
-					( isEnabled( 'site-renamer' ) ? (
-						<SiteRenamer currentDomain={ domain } />
-					) : (
-						this.getEditSiteAddressBlock()
-					) ) }
+				{ this.getEditSiteAddressBlock() }
 			</div>
 		);
 	},
