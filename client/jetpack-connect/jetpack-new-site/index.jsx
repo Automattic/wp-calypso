@@ -106,6 +106,7 @@ class JetpackNewSite extends Component {
 								onSubmit={ this.handleJetpackSubmit }
 								handleOnClickTos={ this.handleOnClickTos }
 								url={ this.state.jetpackUrl }
+								autoFocus={ false }
 							/>
 						</Card>
 						<Card className="jetpack-new-site__mobile">
@@ -125,6 +126,7 @@ class JetpackNewSite extends Component {
 									onSubmit={ this.handleJetpackSubmit }
 									handleOnClickTos={ this.handleOnClickTos }
 									url={ this.state.jetpackUrl }
+									autoFocus={ false }
 								/>
 							</div>
 						</Card>
