@@ -5,36 +5,41 @@
 	line-height: 1;
 	padding: 4px 4px 2px 4px;
 	border-radius: 100%;
-	background: $white;
+	background: $blue-wordpress;
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-	border: 1px solid $gray-lighten-20;
+	border: 1px solid $blue-dark;
 	transition: all 0.2s ease-in-out;
 
 	.gridicon {
-		fill: $gray-darken-10;
+		fill: $white;
 		margin: 0;
 		top: 0;
 		height: auto;
 		width: auto;
-		transition: all 0.2s ease-in-out;
 	}
 
 	&:hover {
-		border-color: $gray-lighten-10;
+		animation: wiggle .8s .5s ease-in-out infinite;
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
-
-		.gridicon {
-			fill: $blue-wordpress;
-		}
 	}
 
 	&.is-active {
-		background: $blue-wordpress;
+		background: $blue-medium;
+	}
+}
 
-		.gridicon {
-			fill: $white;
-			transform: rotate( 30deg );
-		}
+@keyframes wiggle {
+	0% {
+		transform: rotate( 0 );
+	}
+	40% {
+		transform: rotate( 15deg );
+	}
+	50% {
+		transform: rotate( -15deg );
+	}
+	100% {
+		transform: rotate( 0 );
 	}
 }
 
