@@ -105,7 +105,8 @@ export class SimpleSiteRenameForm extends Component {
 
 	render() {
 		const { currentDomain, currentDomainSuffix, isSiteRenameRequesting, translate } = this.props;
-		const currentDomainPrefix = get( currentDomain, 'name', '' ).replace( currentDomainSuffix, '' );
+		const currentDomainName = get( currentDomain, 'name', '' );
+		const currentDomainPrefix = currentDomainName.replace( currentDomainSuffix, '' );
 		const isWPCOM = get( currentDomain, 'type' ) === 'WPCOM';
 		const { domainFieldError, domainFieldValue } = this.state;
 		const isDisabled =
@@ -140,7 +141,10 @@ export class SimpleSiteRenameForm extends Component {
 								<Gridicon icon="info-outline" size={ 18 } />
 								<p>
 									{ translate(
-										'Once changed, previous domain names will no longer be available.'
+										'Once changed, the current domain name %(currentDomainName)s will no longer be available.',
+										{
+											args: { currentDomainName },
+										}
 									) }
 								</p>
 							</div>

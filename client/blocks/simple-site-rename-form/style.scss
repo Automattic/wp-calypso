@@ -20,11 +20,15 @@
 
 .simple-site-rename-form__info {
 	color: $gray-text-min;
+	flex-basis: 400px;
+	flex-shrink: 1;
 	margin: 5px 0 0 0;
 	padding: 0;
 	text-align: center;
+	word-break: break-word;
 
 	@include breakpoint( '>660px' ) {
+		margin-right: 15px;
 		text-align: left;
 	}
 
@@ -55,6 +59,7 @@
 	margin-top: 24px;
 
 	button {
+		flex-shrink: 0;
 		margin-left: auto;
 	}
 
