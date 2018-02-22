@@ -121,7 +121,7 @@ export const themes = [
 		repo: 'pub',
 		fallback: true,
 		description: translate(
-			'With bold Featured Images and bright, cheerful colors, Dara is ready to get to work for your business.'
+			'With bold featured images and bright, cheerful colors, Dara is ready to get to work for your business.'
 		),
 		design: [ 'page', 'store' ],
 		demo_uri: 'https://darademo.wordpress.com',
