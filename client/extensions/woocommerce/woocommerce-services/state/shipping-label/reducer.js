@@ -126,14 +126,17 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_TOGGLE_STEP ] = ( state, { stepNam
 };
 
 reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_ADDRESS_VALUE ] = ( state, { group, name, value } ) => {
+	const isAddressField = name !== 'name' && name !== 'company' && name !== 'phone';
 	const newState = { ...state,
 		form: { ...state.form,
 			[ group ]: { ...state.form[ group ],
 				values: { ...state.form[ group ].values,
 					[ name ]: value,
 				},
-				isNormalized: false,
-				normalized: null,
+				...( isAddressField && {
+					isNormalized: false,
+					normalized: null,
+				} ),
 			},
 		},
 	};
