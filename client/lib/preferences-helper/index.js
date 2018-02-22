@@ -5,6 +5,7 @@
  */
 import ReactDom from 'react-dom';
 import React from 'react';
+import { Provider } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,5 +13,10 @@ import React from 'react';
 import PreferenceList from './preference-list';
 
 export default function injectPreferenceHelper( element, store ) {
-	ReactDom.render( React.createElement( PreferenceList, { store } ), element );
+	ReactDom.render(
+		<Provider store={ store }>
+			<PreferenceList />
+		</Provider>,
+		element
+	);
 }

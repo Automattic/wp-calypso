@@ -14,12 +14,14 @@ import { partial, isEmpty } from 'lodash';
 import Card from 'components/card';
 import { getAllRemotePreferences } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
+import QueryPreferences from 'components/data/query-preferences';
 
 class PreferenceList extends Component {
 	render() {
 		const { preferences, translate, unsetPreference } = this.props;
 		return (
 			<div>
+				<QueryPreferences />
 				<a
 					href={ '/devdocs/client/state/preferences/README.md' }
 					title={ translate( 'Preferences' ) }
