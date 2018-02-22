@@ -14,7 +14,14 @@ import { getSiteAdminUrl } from 'state/sites/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getRewindState } from 'state/selectors';
 
-export const UnavailabilityNotice = ( { adminUrl, reason, rewindState, slug, translate } ) => {
+export const UnavailabilityNotice = ( {
+	adminUrl,
+	reason,
+	rewindState,
+	slug,
+	translate,
+	siteId,
+} ) => {
 	if ( rewindState !== 'unavailable' ) {
 		return null;
 	}
@@ -36,7 +43,7 @@ export const UnavailabilityNotice = ( { adminUrl, reason, rewindState, slug, tra
 			return (
 				<Banner
 					icon="history"
-					href={ `/settings/security/${ slug }` }
+					href={ `/start/rewind-switch/?siteId=${ siteId }&siteSlug=${ slug }` }
 					title={ translate( 'VaultPress is running.' ) }
 					description={ translate(
 						'We are unable to create backups and Rewind while VaultPress is running.'
@@ -57,6 +64,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 		reason,
 		rewindState,
 		slug: getSelectedSiteSlug( state ),
+		siteId,
 	};
 };
 
