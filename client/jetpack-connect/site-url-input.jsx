@@ -27,11 +27,13 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		onSubmit: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
+		autoFocus: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onChange: noop,
 		url: '',
+		autoFocus: true,
 	};
 
 	focusInput = noop;
@@ -107,7 +109,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	render() {
-		const { isError, isFetching, onChange, onSubmit, translate, url } = this.props;
+		const { isError, isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
 		const hasError = isError && 'notExists' !== isError;
 
 		return (
@@ -119,7 +121,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 						ref={ this.refInput }
 						id="siteUrl"
 						autoCapitalize="off"
-						autoFocus="autofocus"
+						autoFocus={ autoFocus }
 						onChange={ onChange }
 						disabled={ isFetching }
 						placeholder={ 'http://yourjetpack.blog' }
