@@ -6,7 +6,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,10 +22,6 @@ class ConnectSuccess extends PureComponent {
 		title: PropTypes.string,
 		// from HOCs
 		translate: PropTypes.func,
-	};
-
-	static defaultProps = {
-		onClick: noop,
 	};
 
 	render() {
