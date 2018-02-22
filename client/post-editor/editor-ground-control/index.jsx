@@ -302,24 +302,21 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = {
 	recordPreviewButtonClick: () =>
-		dispatch(
-			composeAnalytics(
-				recordTracksEvent(
-					`calypso_editor_${ postUtils.isPage( page ) ? 'page' : 'post' }_preview_button_click`
-				),
-				recordGoogleEvent(
-					'Editor',
-					`Clicked Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button`,
-					`Editor Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button Clicked`,
-					`editor${ postUtils.isPage( page ) ? 'Page' : 'Post' }ButtonClicked`
-				)
+		composeAnalytics(
+			recordTracksEvent(
+				`calypso_editor_${ postUtils.isPage( page ) ? 'page' : 'post' }_preview_button_click`
+			),
+			recordGoogleEvent(
+				'Editor',
+				`Clicked Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button`,
+				`Editor Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button Clicked`,
+				`editor${ postUtils.isPage( page ) ? 'Page' : 'Post' }ButtonClicked`
 			)
 		),
-	recordSiteButtonClick: () => dispatch( recordTracksEvent( 'calypso_editor_site_button_click' ) ),
-	recordCloseButtonClick: () =>
-		dispatch( recordTracksEvent( 'calypso_editor_close_button_click' ) ),
-} );
+	recordSiteButtonClick: () => recordTracksEvent( 'calypso_editor_site_button_click' ),
+	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( EditorGroundControl ) );
