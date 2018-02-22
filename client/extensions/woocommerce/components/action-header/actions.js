@@ -88,7 +88,13 @@ class ActionButtons extends Component {
 	};
 
 	getDropdown = () => {
+		const isSingleButton = React.Children.count( this.props.children ) === 1;
 		const primaryLabel = this.props.primaryLabel;
+
+		if ( ! primaryLabel || isSingleButton ) {
+			return this.props.children;
+		}
+
 		const buttons = React.Children.toArray( this.props.children );
 		const primary = buttons.pop();
 		const dropdownOptions = buttons.map( function( child, index ) {
