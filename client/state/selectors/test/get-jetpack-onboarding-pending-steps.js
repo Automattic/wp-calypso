@@ -9,6 +9,37 @@ import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
 import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 describe( 'getJetpackOnboardingPendingSteps()', () => {
+	test( 'should return pending status for the contact form step', () => {
+		const siteId = 2916284;
+		const action = saveJetpackOnboardingSettings( siteId, {
+			addContactForm: true,
+		} );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
+				},
+			},
+		};
+
+		const steps = [
+			STEPS.SITE_TITLE,
+			STEPS.SITE_TYPE,
+			STEPS.CONTACT_FORM,
+			STEPS.WOOCOMMERCE,
+			STEPS.STATS,
+		];
+		const expected = {
+			[ STEPS.SITE_TITLE ]: false,
+			[ STEPS.SITE_TYPE ]: false,
+			[ STEPS.CONTACT_FORM ]: true,
+			[ STEPS.WOOCOMMERCE ]: false,
+			[ STEPS.STATS ]: false,
+		};
+		const pending = getJetpackOnboardingPendingSteps( state, siteId, steps );
+		expect( pending ).toEqual( expected );
+	} );
+
 	test( 'should return pending status for the woocommerce step', () => {
 		const siteId = 2916284;
 		const action = saveJetpackOnboardingSettings( siteId, {
@@ -22,10 +53,17 @@ describe( 'getJetpackOnboardingPendingSteps()', () => {
 			},
 		};
 
-		const steps = [ STEPS.SITE_TITLE, STEPS.SITE_TYPE, STEPS.WOOCOMMERCE, STEPS.STATS ];
+		const steps = [
+			STEPS.SITE_TITLE,
+			STEPS.SITE_TYPE,
+			STEPS.CONTACT_FORM,
+			STEPS.WOOCOMMERCE,
+			STEPS.STATS,
+		];
 		const expected = {
 			[ STEPS.SITE_TITLE ]: false,
 			[ STEPS.SITE_TYPE ]: false,
+			[ STEPS.CONTACT_FORM ]: false,
 			[ STEPS.WOOCOMMERCE ]: true,
 			[ STEPS.STATS ]: false,
 		};
@@ -46,10 +84,17 @@ describe( 'getJetpackOnboardingPendingSteps()', () => {
 			},
 		};
 
-		const steps = [ STEPS.SITE_TITLE, STEPS.SITE_TYPE, STEPS.WOOCOMMERCE, STEPS.STATS ];
+		const steps = [
+			STEPS.SITE_TITLE,
+			STEPS.SITE_TYPE,
+			STEPS.CONTACT_FORM,
+			STEPS.WOOCOMMERCE,
+			STEPS.STATS,
+		];
 		const expected = {
 			[ STEPS.SITE_TITLE ]: false,
 			[ STEPS.SITE_TYPE ]: false,
+			[ STEPS.CONTACT_FORM ]: false,
 			[ STEPS.WOOCOMMERCE ]: false,
 			[ STEPS.STATS ]: true,
 		};
