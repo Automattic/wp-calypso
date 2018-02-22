@@ -7,16 +7,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import Gridicon from 'gridicons';
+import { flow } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import Button from 'components/button';
-import DismissibleCard from 'blocks/dismissible-card';
+import Card from 'components/card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SectionHeader from 'components/section-header';
-
-const TWO_WEEKS_IN_SECONDS = 60 * 60 * 24 * 14;
+import QueryPreferences from 'components/data/query-preferences';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
@@ -34,12 +35,13 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 	render() {
 		return (
-			<DismissibleCard
-				className="google-my-business__stats-nudge"
-				preferenceName="google-my-business-nudge"
-				temporary={ TWO_WEEKS_IN_SECONDS }
-				onClick={ this.props.trackNudgeDismissClick }
-			>
+			<Card className="google-my-business__stats-nudge">
+				<QueryPreferences />
+				<Gridicon
+					icon="cross"
+					className="google-my-business__close-icon"
+					onClick={ this.trackNudgeDismissClick }
+				/>
 				<SectionHeader
 					className="google-my-business__stats-nudge-header"
 					label={ this.props.translate( 'Recommendation from WordPress.com' ) }
@@ -74,22 +76,19 @@ class GoogleMyBusinessStatsNudge extends Component {
 								{ this.props.translate( 'Start Now' ) }
 							</Button>
 
-							<Button
-								onClick={ this.props.trackNudgeAlreadyListedClick }
-							>
+							<Button onClick={ this.props.trackNudgeAlreadyListedClick }>
 								{ this.props.translate( "I'm Already Listed" ) }
 							</Button>
 						</div>
 					</div>
 				</div>
-			</DismissibleCard>
+			</Card>
 		);
 	}
 }
 
 export default connect( () => ( {} ), {
-	trackNudgeView: () =>
-		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
+	trackNudgeView: () => recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
 	trackNudgeDismissClick: () =>
 		recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click' ),
 	trackNudgeStartNowClick: () =>
