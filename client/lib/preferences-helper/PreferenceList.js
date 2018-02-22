@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { partial } from 'lodash';
+import { partial, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,13 +27,11 @@ class PreferenceList extends Component {
 					{ translate( 'Preferences' ) }
 				</a>
 				<Card className="preferences-helper__current-preferences">
-					{ preferences &&
+					{ ! isEmpty( preferences ) ? (
 						Object.keys( preferences ).map( prefName => (
 							<div key={ prefName }>
 								<h5 className="preferences-helper__preference-header">{ prefName }</h5>
-								<span className="preferences-helper__value-label">
-									{ translate( 'Value: ' ) }
-								</span>
+								<span className="preferences-helper__value-label">{ translate( 'Value:' ) }</span>
 								<span className="preferences-helper__value">
 									{ preferences[ prefName ].toString() }
 								</span>
@@ -41,10 +39,15 @@ class PreferenceList extends Component {
 									className="preferences-helper__unset"
 									onClick={ partial( unsetPreference, prefName, null ) }
 								>
-									{ translate( 'Unset' ) }
+									{ translate( 'unset' ) }
 								</button>
-						</div>
-						) ) }
+							</div>
+						) )
+					) : (
+						<h5 className="preferences-helper__preference-header">
+							{ translate( 'No Preferences' ) }
+						</h5>
+					) }
 				</Card>
 			</div>
 		);
