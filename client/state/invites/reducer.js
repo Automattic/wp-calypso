@@ -130,7 +130,7 @@ export const counts = createReducer(
 		[ INVITES_DELETE_REQUEST_SUCCESS ]: ( state, action ) => {
 			return {
 				...state,
-				[ action.siteId ]: state[ action.sideId ] - action.inviteIds.length,
+				[ action.siteId ]: state[ action.siteId ] - action.inviteIds.length,
 			};
 		},
 	}
