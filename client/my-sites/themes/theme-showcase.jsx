@@ -61,11 +61,6 @@ const optionShape = PropTypes.shape( {
 	action: PropTypes.func,
 } );
 
-const themeBanners = [ PhotoBlogBanner, SmallBusinessBanner ];
-const ShowcaseBanner = () => (
-	<RandomThemesBanner context="theme-showcase" banners={ themeBanners } />
-);
-
 class ThemeShowcase extends React.Component {
 	static propTypes = {
 		emptyContent: PropTypes.element,
@@ -223,7 +218,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<ShowcaseBanner />
+					<RandomThemesBanner banners={ [ PhotoBlogBanner, SmallBusinessBanner ] } />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
