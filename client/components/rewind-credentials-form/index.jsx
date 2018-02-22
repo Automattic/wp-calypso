@@ -183,7 +183,7 @@ export class RewindCredentialsForm extends Component {
 
 				<div className="rewind-credentials-form__row">
 					<FormFieldset className="rewind-credentials-form__username">
-						<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
+						<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
 						<FormTextInput
 							name="user"
 							id="server-username"
@@ -197,7 +197,7 @@ export class RewindCredentialsForm extends Component {
 					</FormFieldset>
 
 					<FormFieldset className="rewind-credentials-form__password">
-						<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
+						<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
 						<FormPasswordInput
 							name="pass"
 							id="server-password"
