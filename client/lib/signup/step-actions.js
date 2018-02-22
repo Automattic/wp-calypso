@@ -29,7 +29,7 @@ import { getSiteId } from 'state/selectors';
 import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
 import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
 import { requestSites } from 'state/sites/actions';
-import { supportsPrivacyPurchase } from 'lib/cart-values/cart-items';
+import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -50,7 +50,7 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		const domainChoiceCart = [ domainItem ];
 		const { product_slug: productSlug } = domainItem;
 		const productsList = getProductsList( reduxStore.getState() );
-		if ( domainItem && supportsPrivacyPurchase( productSlug, productsList ) ) {
+		if ( domainItem && supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
 			domainChoiceCart.push(
 				cartItems.domainPrivacyProtection( {
 					domain: domainItem.meta,
@@ -156,7 +156,7 @@ export function createSiteWithCart(
 				let privacyItem = null;
 				const { product_slug: productSlug } = domainItem;
 				const productsList = getProductsList( reduxStore.getState() );
-				if ( domainItem && supportsPrivacyPurchase( productSlug, productsList ) ) {
+				if ( domainItem && supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
 					if ( isDomainTransfer( domainItem ) ) {
 						privacyItem = cartItems.domainTransferPrivacy( {
 							domain: domainItem.meta,
