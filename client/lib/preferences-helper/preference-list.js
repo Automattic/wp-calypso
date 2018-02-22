@@ -63,12 +63,9 @@ class PreferenceList extends Component {
 }
 
 export default connect(
-	state => {
-		const preferences = getAllRemotePreferences( state );
-		return {
-			preferences,
-		};
-	},
+	state => ( {
+		preferences: getAllRemotePreferences( state ),
+	} ),
 	{
 		unsetPreference: savePreference,
 	}
