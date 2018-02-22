@@ -21,7 +21,7 @@ class PreferenceList extends Component {
 		return (
 			<div>
 				<a
-					href={ '/devdocs/client/lib/preferences/README.md' }
+					href={ '/devdocs/client/state/preferences/README.md' }
 					title={ translate( 'Preferences' ) }
 				>
 					{ translate( 'Preferences' ) }
@@ -31,16 +31,19 @@ class PreferenceList extends Component {
 						Object.keys( preferences ).map( prefName => (
 							<div key={ prefName }>
 								<h5 className="preferences-helper__preference-header">{ prefName }</h5>
-								<div className="preferences-helper__info">
-									<span>{ translate( 'Value: ' ) + preferences[ prefName ] }</span>
-									<button
-										className="preferences-helper__unset"
-										onClick={ partial( unsetPreference, prefName, null ) }
-									>
-										{ translate( 'Unset' ) }
-									</button>
-								</div>
-							</div>
+								<span className="preferences-helper__value-label">
+									{ translate( 'Value: ' ) }
+								</span>
+								<span className="preferences-helper__value">
+									{ preferences[ prefName ].toString() }
+								</span>
+								<button
+									className="preferences-helper__unset"
+									onClick={ partial( unsetPreference, prefName, null ) }
+								>
+									{ translate( 'Unset' ) }
+								</button>
+						</div>
 						) ) }
 				</Card>
 			</div>

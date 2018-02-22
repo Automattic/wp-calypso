@@ -246,7 +246,7 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		config.isEnabled( 'dev/preferences-helper' ) &&
 		document.querySelector( '.environment.is-prefs' )
 	) {
-		asyncRequire( 'lib/preferences/preferences-helper', prefHelper => {
+		asyncRequire( 'lib/preferences-helper', prefHelper => {
 			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
 		} );
 	}
