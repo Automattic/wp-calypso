@@ -1,24 +1,28 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React from 'react';
-
 import createReactClass from 'create-react-class';
-
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import { flow, get } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import analyticsMixin from 'lib/mixins/analytics';
-import Card from 'components/card/compact';
+import Card from 'components/card';
 import Header from './card/header';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { requestSiteRename } from 'state/site-rename/actions';
+import SiteRenamer from 'blocks/simple-site-rename-form';
+import { type as domainTypes } from 'lib/domains/constants';
 
 const WpcomDomain = createReactClass( {
 	displayName: 'WpcomDomain',
@@ -29,11 +33,17 @@ const WpcomDomain = createReactClass( {
 	},
 
 	getEditSiteAddressBlock() {
+		const { domain } = this.props;
+
 		/**
 		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
 		 */
-		if ( this.props.domain.name.match( /\.\w+\.blog$/ ) ) {
+		if ( get( domain, 'name', '' ).match( /\.\w+\.blog$/ ) ) {
 			return null;
+		}
+
+		if ( isEnabled( 'site-renamer' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
+			return <SiteRenamer currentDomain={ domain } />;
 		}
 
 		return (
@@ -78,4 +88,12 @@ const WpcomDomain = createReactClass( {
 	},
 } );
 
-export default localize( WpcomDomain );
+export default flow(
+	localize,
+	connect(
+		state => ( {
+			siteId: getSelectedSiteId( state ),
+		} ),
+		dispatch => bindActionCreators( { requestSiteRename }, dispatch )
+	)
+)( WpcomDomain );
