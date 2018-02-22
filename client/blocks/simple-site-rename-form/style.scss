@@ -95,6 +95,8 @@
 	}
 
 	.simple-site-rename-form__confirmation-detail-copy {
+		word-break: break-word;
+
 		@include breakpoint( '>660px' ) {
 			margin-left: 24px;
 		}
