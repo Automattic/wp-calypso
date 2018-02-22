@@ -32,7 +32,13 @@ import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 import { hideMasterbar, setSection, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
 import { login } from 'lib/paths';
-import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
+import {
+	clearPlan,
+	persistMobileRedirect,
+	retrieveMobileRedirect,
+	retrievePlan,
+	storePlan,
+} from './persistence-utils';
 import { receiveJetpackOnboardingCredentials } from 'state/jetpack-onboarding/actions';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
@@ -156,7 +162,13 @@ export function connect( context, next ) {
 	debug( 'entered connect flow with params %o', params );
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
-	planSlug && storePlan( planSlug );
+	const selectedPlan = retrievePlan();
+
+	if ( planSlug ) {
+		storePlan( planSlug );
+	} else if ( selectedPlan ) {
+		clearPlan();
+	}
 
 	analytics.pageView.record( pathname, analyticsPageTitle );
 
