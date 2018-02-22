@@ -17,6 +17,7 @@ import Gridicon from 'gridicons';
  */
 import Animate from 'components/animate';
 import Button from 'components/button';
+import ExternalLink from 'components/external-link';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -28,12 +29,7 @@ import {
 	isSiteAutomatedTransfer,
 } from 'state/selectors';
 
-const WPAdminLink = ( { href, onClick, children } ) => (
-	<a href={ href } onClick={ onClick } target="_blank" rel="noopener noreferrer">
-		{ children }
-		<Gridicon icon="external" size={ 12 } />
-	</a>
-);
+const WPAdminLink = props => <ExternalLink icon iconSize={ 12 } target="_blank" { ...props } />;
 
 class SiteIndicator extends Component {
 	static propTypes = {

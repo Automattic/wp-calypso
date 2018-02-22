@@ -121,6 +121,8 @@
 	}
 
 	a > .gridicons-external {
-		margin-left: 6px;
+		// TODO: improve the styles of ExternalLink to use the relative em units
+		margin-left: 0.5em;
+		position: static;
 	}
 }
