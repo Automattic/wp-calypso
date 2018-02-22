@@ -10,6 +10,7 @@ import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -202,6 +203,8 @@ class DisconnectJetpack extends PureComponent {
 		);
 	};
 
+	handleTryRewind = () => this.props.trackTryRewind( this.props.siteSlug );
+
 	render() {
 		const {
 			disconnectHref,
@@ -276,7 +279,7 @@ class DisconnectJetpack extends PureComponent {
 						{ translate( 'Experiencing connection issues? Try to go back and rewind your site.' ) }
 					</p>
 					<div className="disconnect-jetpack__try-rewind-button-wrap">
-						<Button href={ `/stats/activity/${ siteSlug }` } onClick={ this.props.trackTryRewind }>
+						<Button href={ `/stats/activity/${ siteSlug }` } onClick={ this.handleTryRewind }>
 							{ translate( 'Rewind site' ) }
 						</Button>
 						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
@@ -302,17 +305,20 @@ export default connect(
 			rewindState: rewindState.state,
 		};
 	},
-	{
-		setAllSitesSelected,
-		recordGoogleEvent: recordGoogleEventAction,
-		recordTracksEvent: recordTracksEventAction,
-		disconnect,
-		successNotice,
-		errorNotice,
-		infoNotice,
-		removeNotice,
-		trackTryRewind: () => recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ),
+	dispatch => ( {
+		setAllSitesSelected: () => dispatch( setAllSitesSelected ),
+		recordGoogleEvent: () => dispatch( recordGoogleEventAction ),
+		recordTracksEvent: () => dispatch( recordTracksEventAction ),
+		disconnect: () => dispatch( disconnect ),
+		successNotice: () => dispatch( successNotice ),
+		errorNotice: () => dispatch( errorNotice ),
+		infoNotice: () => dispatch( infoNotice ),
+		removeNotice: () => dispatch( removeNotice ),
+		trackTryRewind: siteSlug => {
+			dispatch( recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ) );
+			page.redirect( `/stats/activity/${ siteSlug }` );
+		},
 		trackTryRewindHelp: () =>
-			recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind_help' ),
-	}
+			dispatch( recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind_help' ) ),
+	} )
 )( localize( DisconnectJetpack ) );
