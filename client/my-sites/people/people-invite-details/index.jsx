@@ -31,7 +31,7 @@ import {
 } from 'state/invites/selectors';
 import { deleteInvite } from 'state/invites/actions';
 
-class PeopleInviteDetails extends React.PureComponent {
+export class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 		inviteKey: PropTypes.string.isRequired,
