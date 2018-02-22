@@ -4,9 +4,11 @@
  */
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
+import { activityLogRequest } from 'state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
+import { getActivityLogs } from 'state/selectors';
 import { transformApi } from './api-transformer';
 import { rewindStatus } from './schema';
 
@@ -27,6 +29,50 @@ const fetchRewindState = action =>
 		action
 	);
 
+/**
+ * Re-requests the activity log entries for all
+ * previously-sent queries in application state
+ *
+ * @param {Number} siteId the site being queried
+ * @param {Object} rewind Rewind state for the site
+ * @returns {function} thunk action maybe dispatching requests
+ */
+const refreshActivityLogAfterRewind = ( siteId, rewind ) => ( dispatch, getState ) => {
+	if ( ! rewind || rewind.status === 'running' ) {
+		return;
+	}
+
+	const state = getState();
+	const prev = state.rewind[ siteId ];
+
+	if ( ! prev || ! ( prev.rewind && prev.rewind.status === 'running' ) ) {
+		return;
+	}
+
+	const logItems = state.activityLog.logItems[ siteId ];
+	if ( ! logItems ) {
+		return;
+	}
+
+	const events = getActivityLogs( state, siteId );
+	const dateStart = events.reduce(
+		( oldest, { activityTs: ts } ) => Math.min( oldest, ts ),
+		Infinity
+	);
+
+	const query = {
+		dateStart,
+		dateEnd: Date.now(),
+		number: 1000,
+	};
+
+	// queue to update all local activity log events
+	// we are waiting so long because it takes much
+	// longer on the server for all of the changes
+	// to propagate back than we would expect
+	setTimeout( () => dispatch( activityLogRequest( siteId, query ) ), 15000 );
+};
+
 const updateRewindState = ( { siteId }, data ) => {
 	const stateUpdate = {
 		type: REWIND_STATE_UPDATE,
@@ -34,10 +80,30 @@ const updateRewindState = ( { siteId }, data ) => {
 		data,
 	};
 
-	const hasRunningRewind = data.rewind && data.rewind.status === 'running';
+	const hasRunningRewind =
+		data.rewind && ( data.rewind.status === 'queued' || data.rewind.status === 'running' );
 
 	if ( ! hasRunningRewind ) {
-		return stateUpdate;
+		return [
+			/*
+			 * When we finish a Rewind operation we may have
+			 * changed the `isDiscarded` value for previous
+			 * events in the Activity Log. Thus, we'll need to
+			 * reissue the requests which pulled all of the
+			 * previous events into Calypso.
+			 *
+			 * This _must_ go before the state update because
+			 * it relies on existing state to know if we have
+			 * transitioned from a time when we had a Rewind
+			 * operation running to a time when we no longer
+			 * have that.
+			 *
+			 * If we wait until after state is updated then it
+			 * will never look like we had on.
+			 */
+			refreshActivityLogAfterRewind( siteId, data.rewind ),
+			stateUpdate,
+		];
 	}
 
 	const delayedStateRequest = dispatch =>
