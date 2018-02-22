@@ -63,7 +63,7 @@ class RewindMigrate extends Component {
 					<p className="rewind-migrate__description rewind-switch__description">
 						{ translate(
 							"You've already configured VaultPress correctly, " +
-								"so we're ready to migrate your credentials over to Jetpack with just one click." +
+								"so we're ready to migrate your credentials over to Jetpack with just one click. " +
 								"Are you ready to switch to our faster, more powerful system? Let's go!"
 						) }
 					</p>
@@ -76,7 +76,7 @@ class RewindMigrate extends Component {
 					<p>
 						{ translate(
 							'Note: Moving to Jetpack backups and security is final, ' +
-								'and the VaultPress backups previously generated will not be migrated to the new system.' +
+								'and the VaultPress backups previously generated will not be migrated to the new system. ' +
 								'We will retain the data in case you need to restore to a backup made before you switched.'
 						) }
 					</p>
