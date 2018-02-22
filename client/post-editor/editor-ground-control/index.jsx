@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
  */
 import Card from 'components/card';
 import Site from 'blocks/site';
-import * as postUtils from 'lib/posts/utils';
+import { isPage, isPublished } from 'lib/posts/utils';
 import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 import Button from 'components/button';
 import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
@@ -148,7 +148,7 @@ export class EditorGroundControl extends PureComponent {
 	shouldShowStatusLabel() {
 		const { isSaving, post } = this.props;
 
-		return isSaving || ( post && post.ID && ! postUtils.isPublished( post ) );
+		return isSaving || ( post && post.ID && ! isPublished( post ) );
 	}
 
 	isPreviewEnabled() {
@@ -207,7 +207,7 @@ export class EditorGroundControl extends PureComponent {
 						needsVerification={ this.state.needsVerification }
 						busy={
 							this.props.isPublishing ||
-							( postUtils.isPublished( this.props.savedPost ) && this.props.isSaving )
+							( isPublished( this.props.savedPost ) && this.props.isSaving )
 						}
 					/>
 				</div>
@@ -303,7 +303,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 const mapDispatchToProps = {
 	recordPreviewButtonClick: post => {
-		const postIsPage = postUtils.isPage( post );
+		const postIsPage = isPage( post );
 		return composeAnalytics(
 			recordTracksEvent( `calypso_editor_${ postIsPage ? 'page' : 'post' }_preview_button_click` ),
 			recordGoogleEvent(
