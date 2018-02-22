@@ -13,9 +13,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import QuerySites from 'components/data/query-sites';
+import { addCalypsoEnvQueryArg } from 'jetpack-connect/utils';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 import { getJetpackOnboardingSettings } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
 
 const NextSteps = ( { onClick, siteId, steps } ) => (
 	<Fragment>
@@ -77,7 +79,7 @@ export default localize(
 			steps: {
 				'jetpack-connect': {
 					label: translate( 'Connect to WordPress.com' ),
-					url: '/jetpack/connect?url=' + siteUrl,
+					url: addCalypsoEnvQueryArg( siteUrl + REMOTE_PATH_AUTH ),
 				},
 				theme: {
 					label: translate( 'Choose a Theme' ),
