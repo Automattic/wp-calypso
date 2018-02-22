@@ -31,7 +31,7 @@ import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
-import GoogleMyBusinessStatsNudge from 'components/google-my-business/stats-nudge';
+import GoogleMyBusinessStatsNudge from 'blocks/google-my-business/stats-nudge';
 import { isGoogleMyBusinessStatsNudgeVisible as isGoogleMyBusinessStatsNudgeVisibleSelector } from 'state/selectors';
 
 class StatsSite extends Component {
@@ -144,7 +144,9 @@ class StatsSite extends Component {
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
 					{ config.isEnabled( 'google-my-business' ) &&
-						isGoogleMyBusinessStatsNudgeVisible && <GoogleMyBusinessStatsNudge siteSlug={ slug } /> }
+						isGoogleMyBusinessStatsNudgeVisible && (
+							<GoogleMyBusinessStatsNudge siteSlug={ slug } />
+						) }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
@@ -239,7 +241,10 @@ export default connect(
 		return {
 			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
-			isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector( state, siteId ),
+			isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
+				state,
+				siteId
+			),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 		};
