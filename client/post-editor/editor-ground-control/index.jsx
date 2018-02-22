@@ -47,8 +47,6 @@ export class EditorGroundControl extends PureComponent {
 		savedPost: PropTypes.object,
 		setPostDate: PropTypes.func,
 		site: PropTypes.object,
-		user: PropTypes.object,
-		userUtils: PropTypes.object,
 		toggleSidebar: PropTypes.func,
 		translate: PropTypes.func,
 	};
@@ -67,8 +65,6 @@ export class EditorGroundControl extends PureComponent {
 		savedPost: null,
 		site: {},
 		translate: identity,
-		user: null,
-		userUtils: null,
 		setPostDate: noop,
 	};
 
