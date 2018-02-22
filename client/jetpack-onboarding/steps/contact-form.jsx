@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -14,22 +15,52 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QuerySites from 'components/data/query-sites';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
+import { addQueryArgs } from 'lib/route';
+import { getJetpackOnboardingPendingSteps, getUnconnectedSiteUrl } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingContactFormStep extends React.PureComponent {
+	componentDidUpdate() {
+		this.maybeAddContactForm();
+	}
+
+	maybeAddContactForm() {
+		const { action, hasContactForm, isConnected, isRequestingSettings, stepsPending } = this.props;
+		const isPending = get( stepsPending, STEPS.CONTACT_FORM );
+
+		if (
+			! isPending &&
+			! isRequestingSettings &&
+			isConnected &&
+			hasContactForm === false &&
+			action === 'add_contact_form'
+		) {
+			this.addContactForm();
+		}
+	}
+
 	handleAddContactForm = () => {
-		const { siteId } = this.props;
 		this.props.recordJpoEvent( 'calypso_jpo_contact_form_clicked' );
 
-		this.props.saveJpoSettings( siteId, {
-			addContactForm: true,
-		} );
+		if ( ! this.props.isConnected ) {
+			return;
+		}
+
+		this.addContactForm();
 	};
 
+	addContactForm() {
+		this.props.saveJpoSettings( this.props.siteId, {
+			addContactForm: true,
+		} );
+	}
+
 	renderActionTile() {
-		const { getForwardUrl, settings, translate } = this.props;
+		const { hasContactForm, isConnected, siteUrl, translate } = this.props;
 		const headerText = translate( "Let's grow your audience with Jetpack." );
 		const subHeaderText = (
 			<Fragment>
@@ -40,7 +71,16 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 				) }
 			</Fragment>
 		);
-		const hasContactForm = !! get( settings, 'addContactForm' );
+		const connectUrl = addQueryArgs(
+			{
+				url: siteUrl,
+				// TODO: add a parameter to the JPC to redirect back to this step after completion
+				// and in the redirect URL include the ?action=add_contact_form parameter
+				// to actually trigger the page and form creation action after getting back to JPO
+			},
+			'/jetpack/connect'
+		);
+		const href = ! isConnected ? connectUrl : null;
 
 		return (
 			<Fragment>
@@ -54,7 +94,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 						}
 						image={ '/calypso/images/illustrations/contact-us.svg' }
 						onClick={ this.handleAddContactForm }
-						href={ getForwardUrl() }
+						href={ href }
 					/>
 				</TileGrid>
 			</Fragment>
@@ -62,7 +102,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	}
 
 	render() {
-		const { basePath, translate } = this.props;
+		const { basePath, siteId, translate } = this.props;
 
 		return (
 			<div className="steps__main">
@@ -71,6 +111,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
 					title="Contact Form ‹ Jetpack Start"
 				/>
+				<QuerySites siteId={ siteId } />
 
 				<JetpackLogo full size={ 45 } />
 
@@ -80,4 +121,11 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	}
 }
 
-export default localize( JetpackOnboardingContactFormStep );
+export default connect(
+	( state, { settings, siteId, steps } ) => ( {
+		hasContactForm: !! get( settings, 'addContactForm' ),
+		isConnected: isJetpackSite( state, siteId ),
+		siteUrl: getUnconnectedSiteUrl( state, siteId ),
+		stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+	} ),
+)( localize( JetpackOnboardingContactFormStep ) );
