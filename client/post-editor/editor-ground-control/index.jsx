@@ -166,7 +166,7 @@ export class EditorGroundControl extends PureComponent {
 	onPreviewButtonClick = event => {
 		if ( this.isPreviewEnabled() ) {
 			this.props.onPreview( event );
-			this.props.recordPreviewButtonClick();
+			this.props.recordPreviewButtonClick( this.props.post );
 		}
 	};
 
@@ -302,18 +302,18 @@ const mapStateToProps = ( state, ownProps ) => {
 };
 
 const mapDispatchToProps = {
-	recordPreviewButtonClick: () =>
-		composeAnalytics(
-			recordTracksEvent(
-				`calypso_editor_${ postUtils.isPage( page ) ? 'page' : 'post' }_preview_button_click`
-			),
+	recordPreviewButtonClick: post => {
+		const postIsPage = postUtils.isPage( post );
+		return composeAnalytics(
+			recordTracksEvent( `calypso_editor_${ postIsPage ? 'page' : 'post' }_preview_button_click` ),
 			recordGoogleEvent(
 				'Editor',
-				`Clicked Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button`,
-				`Editor Preview ${ postUtils.isPage( page ) ? 'Page' : 'Post' } Button Clicked`,
-				`editor${ postUtils.isPage( page ) ? 'Page' : 'Post' }ButtonClicked`
+				`Clicked Preview ${ postIsPage ? 'Page' : 'Post' } Button`,
+				`Editor Preview ${ postIsPage ? 'Page' : 'Post' } Button Clicked`,
+				`editor${ postIsPage ? 'Page' : 'Post' }ButtonClicked`
 			)
-		),
+		);
+	},
 	recordSiteButtonClick: () => recordTracksEvent( 'calypso_editor_site_button_click' ),
 	recordCloseButtonClick: () => recordTracksEvent( 'calypso_editor_close_button_click' ),
 };
