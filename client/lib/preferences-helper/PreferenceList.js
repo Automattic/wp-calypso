@@ -30,19 +30,25 @@ class PreferenceList extends Component {
 					{ ! isEmpty( preferences ) ? (
 						Object.keys( preferences ).map( prefName => (
 							<div key={ prefName }>
-								<h5 className="preferences-helper__preference-header">{ prefName }</h5>
-								<span className="preferences-helper__value-label">
-									{ translate( 'Value' ) + ':' }
-								</span>
-								<span className="preferences-helper__value">
-									{ preferences[ prefName ].toString() }
-								</span>
-								<button
-									className="preferences-helper__unset"
-									onClick={ partial( unsetPreference, prefName, null ) }
-								>
-									{ translate( 'unset' ) }
-								</button>
+								<div className="preferences-helper__preference-header">
+									<button
+										className="preferences-helper__unset"
+										onClick={ partial( unsetPreference, prefName, null ) }
+										title={ translate( 'Unset Preference' ) }
+									>
+										{ 'X' }
+									</button>
+									<span>{ prefName }</span>
+								</div>
+								<ul className="preferences-helper__value">
+									{ Array.isArray( preferences[ prefName ] ) ? (
+										preferences[ prefName ].map( ( preference, index ) => (
+											<li key={ index }>{ preference }</li>
+										) )
+									) : (
+										<li key={ 0 }>{ preferences[ prefName ].toString() }</li>
+									) }
+								</ul>
 							</div>
 						) )
 					) : (

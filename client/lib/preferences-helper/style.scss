@@ -2,11 +2,6 @@
 	display: none;
 }
 
-.preferences-helper__value-label {
-	font-weight: bold;
-	margin-right: 5px;
-}
-
 .preferences-helper__value {
 	font-weight: normal;
 	text-transform: initial;
@@ -15,9 +10,6 @@
 
 .preferences-helper__unset {
 	color: $orange-jazzy;
-	text-decoration: underline;
-	font-weight: normal;
-	text-transform: initial;
 	cursor: pointer;
 }
 
@@ -26,6 +18,12 @@
 	margin-top: 5px;
 	font-weight: bolder;
 	white-space: nowrap;
+	overflow: hidden;
+
+	button {
+		display: inline;
+		margin-right: 5px;
+	}
 }
 
 .environment.is-prefs:hover .preferences-helper__current-preferences.card {
@@ -33,7 +31,7 @@
 	max-height: 80vh;
 	overflow-y: scroll;
 	position: absolute;
-		bottom: 100%;
+	bottom: 100%;
 	left: 0px;
 	margin: 0;
 	font-size: 11px;
