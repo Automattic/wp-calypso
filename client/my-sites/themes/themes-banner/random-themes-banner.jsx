@@ -12,34 +12,31 @@ class RandomThemesBanner extends PureComponent {
 		banners: PropTypes.array.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		const { banners } = props;
-		this.state = {
-			BannerComponent: sample( banners ),
-			isClient: false,
-		};
-	}
+	state = {
+		isClient: false,
+	};
 
 	componentDidMount() {
-		// In this particular case, we need to disable the ESLint check
-		// to disable using `setState()` on `componentDidMount()`, since
-		// it needs to be done this way to properly render the component
-		// both on client-side and server-side.
-		const state = this.state;
+		// Since we're using randomness to determine which banner to display, we cannot
+		// easily guarantee that the client will have the same banner as the server,
+		// thus possibly leading to reconciliation errors. To avoid them, we just render
+		// null on component mount, and only afterwards, we update component state to
+		// cause a re-render on the client in order to actually render the component.
+		// This means however that we have to use `setState` in `componentDidMount`.
+
+		// Set the banner component on mount.
+		this.BannerComponent = sample( this.props.banners );
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( {
-			...state,
 			isClient: true,
 		} );
 	}
 
 	render() {
-		const { isClient, BannerComponent } = this.state;
-
 		// Client-side.
-		if ( isClient ) {
+		if ( this.state.isClient ) {
+			const { BannerComponent } = this;
 			return <BannerComponent />;
 		}
 
