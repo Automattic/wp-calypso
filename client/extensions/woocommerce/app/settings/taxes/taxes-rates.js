@@ -55,7 +55,7 @@ class TaxesRates extends Component {
 		this.maybeFetchRates( nextProps );
 	};
 
-	renderIntro = () => {
+	renderLocation = () => {
 		const { address, areTaxesEnabled, translate } = this.props;
 		if ( ! areTaxesEnabled ) {
 			return null;
@@ -249,8 +249,8 @@ class TaxesRates extends Component {
 					</FormToggle>
 				</ExtendedHeader>
 				<Card>
-					{ this.renderIntro() }
 					{ this.renderCalculationStatus() }
+					{ this.renderLocation() }
 					{ this.possiblyRenderRates() }
 					{ this.renderPolicyNotice() }
 				</Card>
