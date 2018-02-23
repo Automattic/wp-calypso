@@ -6,7 +6,7 @@
 
 import debugModule from 'debug';
 import { assign, clone, difference, last, maxBy, some, transform } from 'lodash';
-import { EventEmitter } from 'events/';
+import { EventEmitter } from 'events';
 
 /**
  * Internal dependencies
