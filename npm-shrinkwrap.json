@@ -4859,7 +4859,7 @@
       "integrity": "sha512-WIr7iDkdmdbxu/Gh6eKEZJL6KPE74/5MEsf2whTOFNxbIoIixogroLdKYqB6FDav4Wavh/lZdzzd3b2KxIXC5Q==",
       "optional": true,
       "requires": {
-        "nan": "2.9.1",
+        "nan": "2.9.2",
         "node-pre-gyp": "0.6.39"
       },
       "dependencies": {
@@ -7172,7 +7172,7 @@
       "integrity": "sha512-90H1wLqiNR3tLhQUgwhC6GWHfRCG+Da14m7vxD608Mt/QTKR0TA751D+QH09x5bvcrLfvxLtxArtA0VEC0ORow==",
       "dev": true,
       "requires": {
-        "jest-cli": "22.4.1"
+        "jest-cli": "22.4.2"
       },
       "dependencies": {
         "ansi-escapes": {
@@ -7247,8 +7247,8 @@
           "dev": true
         },
         "jest-cli": {
-          "version": "22.4.1",
-          "integrity": "sha512-YrluVb3tHX1Ej2jYelcC68Gi8qMEXnTrCfW/l8oN6mw3RWYkfkKXGjb6AnVuu0t1vG1Q2onGDSn7K8s/+Ilrew==",
+          "version": "22.4.2",
+          "integrity": "sha512-ebo6ZWK2xDSs7LGnLvM16SZOIJ2dj0B6/oERmGcal32NHkks450nNfGrGTyOSPgJDgH8DFhVdBXgSamN7mtZ0Q==",
           "dev": true,
           "requires": {
             "ansi-escapes": "3.0.0",
@@ -7263,18 +7263,18 @@
             "istanbul-lib-instrument": "1.9.2",
             "istanbul-lib-source-maps": "1.2.3",
             "jest-changed-files": "22.2.0",
-            "jest-config": "22.4.1",
+            "jest-config": "22.4.2",
             "jest-environment-jsdom": "22.4.1",
             "jest-get-type": "22.1.0",
-            "jest-haste-map": "22.4.1",
+            "jest-haste-map": "22.4.2",
             "jest-message-util": "22.4.0",
             "jest-regex-util": "22.1.0",
             "jest-resolve-dependencies": "22.1.0",
-            "jest-runner": "22.4.1",
-            "jest-runtime": "22.4.1",
+            "jest-runner": "22.4.2",
+            "jest-runtime": "22.4.2",
             "jest-snapshot": "22.4.0",
             "jest-util": "22.4.1",
-            "jest-validate": "22.4.1",
+            "jest-validate": "22.4.2",
             "jest-worker": "22.2.2",
             "micromatch": "2.3.11",
             "node-notifier": "5.2.1",
@@ -7365,8 +7365,8 @@
       }
     },
     "jest-config": {
-      "version": "22.4.1",
-      "integrity": "sha512-yfyHvLTiZ7IOvl75LeUV1bGF0chQdMdSiDb/B1Gr9LRQH2y3ADPWfyrNUo94cbBaD6g2oLeHSlH8Cm+NLNYDSQ==",
+      "version": "22.4.2",
+      "integrity": "sha512-oG31qYO73/3vj/Q8aM2RgzmHndTkz9nRk8ISybfuJqqbf0RW7OUjHVOZPLOUiwLWtz52Yq2HkjIblsyhbA7vrg==",
       "dev": true,
       "requires": {
         "chalk": "2.3.1",
@@ -7374,11 +7374,11 @@
         "jest-environment-jsdom": "22.4.1",
         "jest-environment-node": "22.4.1",
         "jest-get-type": "22.1.0",
-        "jest-jasmine2": "22.4.1",
+        "jest-jasmine2": "22.4.2",
         "jest-regex-util": "22.1.0",
-        "jest-resolve": "22.4.1",
+        "jest-resolve": "22.4.2",
         "jest-util": "22.4.1",
-        "jest-validate": "22.4.1",
+        "jest-validate": "22.4.2",
         "pretty-format": "22.4.0"
       },
       "dependencies": {
@@ -7520,8 +7520,8 @@
       "dev": true
     },
     "jest-haste-map": {
-      "version": "22.4.1",
-      "integrity": "sha512-VWLkRCMSaU34YftLp0zfbb+gUNm+ZcM5ridzAnd5WTR+zUnP8RUGAiDh2YtPPaM5MbgCY0VPC+I0Ti6XN1UmhA==",
+      "version": "22.4.2",
+      "integrity": "sha512-EdQADHGXRqHJYAr7q9B9YYHZnrlcMwhx1+DnIgc9uN05nCW3RvGCxJ91MqWXcC1AzatLoSv7SNd0qXMp2jKBDA==",
       "dev": true,
       "requires": {
         "fb-watchman": "2.0.0",
@@ -7544,8 +7544,8 @@
       }
     },
     "jest-jasmine2": {
-      "version": "22.4.1",
-      "integrity": "sha512-02y0W+Y4b2RjnNJQwV2zVyD+nNMYcunNFpbMf9QcCxMrErAelYXBS2SOUWZTlZfoE2Z/pk9HLBCJ96V2M3nJaw==",
+      "version": "22.4.2",
+      "integrity": "sha512-KZaIHpXQ0AIlvQJFCU0uoXxtz5GG47X14r9upMe7VXE55UazoMZBFnQb9TX2HoYX2/AxJYnjHuvwKVCFqOrEtw==",
       "dev": true,
       "requires": {
         "chalk": "2.3.1",
@@ -7809,8 +7809,8 @@
       "dev": true
     },
     "jest-resolve": {
-      "version": "22.4.1",
-      "integrity": "sha512-PT1ujfwGoE/jwFo17fpiXVUiTmtiEgu5kuq7AUD7cK3MAM/KfT0GQ1R+RM1Y7W0VW4C8koRiiA/4hB4WvX/v0Q==",
+      "version": "22.4.2",
+      "integrity": "sha512-P1hSfcc2HJYT5t+WPu/11OfFMa7m8pBb2Gf2vm6W9OVs7YTXQ5RCC3nDqaYZQaTqxEM1ZZaTcQGcE6U2xMOsqQ==",
       "dev": true,
       "requires": {
         "browser-resolve": "1.11.2",
@@ -7864,18 +7864,18 @@
       }
     },
     "jest-runner": {
-      "version": "22.4.1",
-      "integrity": "sha512-0Ke/FYv8KbqQ2kVZVLPlj72Epi1snmpbV41lwPeuJ9Y7jkH4BzNS4fKznc6kOYoLsMEbr0WyYqoOysCrmhoXeQ==",
+      "version": "22.4.2",
+      "integrity": "sha512-W4vwgiVQS0NyXt8hgpw7i0YUtsfoChiQcoHWBJeq2ocV4VF2osEZx8HYgpH5HfNe1Cb5LZeZWxX8Dr3hesbGFg==",
       "dev": true,
       "requires": {
         "exit": "0.1.2",
-        "jest-config": "22.4.1",
+        "jest-config": "22.4.2",
         "jest-docblock": "22.4.0",
-        "jest-haste-map": "22.4.1",
-        "jest-jasmine2": "22.4.1",
+        "jest-haste-map": "22.4.2",
+        "jest-jasmine2": "22.4.2",
         "jest-leak-detector": "22.4.0",
         "jest-message-util": "22.4.0",
-        "jest-runtime": "22.4.1",
+        "jest-runtime": "22.4.2",
         "jest-util": "22.4.1",
         "jest-worker": "22.2.2",
         "throat": "4.1.0"
@@ -7892,8 +7892,8 @@
       }
     },
     "jest-runtime": {
-      "version": "22.4.1",
-      "integrity": "sha512-JFB3IUNAqlUKQWdYwwAjnsuKjAzWRWsCpDKYvuAQVGDC2/tI1VjScEtUmAickERdXLQQAWZrdFuXjE1wsLkk/A==",
+      "version": "22.4.2",
+      "integrity": "sha512-9/Fxbj99cqxI7o2nTNzevnI38eDBstkwve8ZeaAD/Kz0fbU3i3eRv2QPEmzbmyCyBvUWxCT7BzNLTzTqH1+pyA==",
       "dev": true,
       "requires": {
         "babel-core": "6.25.0",
@@ -7903,12 +7903,12 @@
         "convert-source-map": "1.5.1",
         "exit": "0.1.2",
         "graceful-fs": "4.1.11",
-        "jest-config": "22.4.1",
-        "jest-haste-map": "22.4.1",
+        "jest-config": "22.4.2",
+        "jest-haste-map": "22.4.2",
         "jest-regex-util": "22.1.0",
-        "jest-resolve": "22.4.1",
+        "jest-resolve": "22.4.2",
         "jest-util": "22.4.1",
-        "jest-validate": "22.4.1",
+        "jest-validate": "22.4.2",
         "json-stable-stringify": "1.0.1",
         "micromatch": "2.3.11",
         "realpath-native": "1.0.0",
@@ -8174,12 +8174,12 @@
       }
     },
     "jest-validate": {
-      "version": "22.4.1",
-      "integrity": "sha512-lZb7lIgNiA1egFxRCBzsBmE/R5M9Ai7zzuabsqd3SvsCffkMSB0imSZOaeAdmAbUvsxHliCdJ2tpBavAjCXo1A==",
+      "version": "22.4.2",
+      "integrity": "sha512-TLOgc/EULFBjMCAqZp5OdVvjxV16DZpfthd/UyPzM6lRmgWluohNVemAdnL3JvugU1s2Q2npcIqtbOtiPjaZ0A==",
       "dev": true,
       "requires": {
         "chalk": "2.3.1",
-        "jest-config": "22.4.1",
+        "jest-config": "22.4.2",
         "jest-get-type": "22.1.0",
         "leven": "2.1.0",
         "pretty-format": "22.4.0"
@@ -9645,8 +9645,8 @@
       "integrity": "sha1-Cr+2rYNXGLn7Te8GdOBmV6lUN1w="
     },
     "nan": {
-      "version": "2.9.1",
-      "integrity": "sha512-c609vVPyCEuuzqOjx3hwsSZMXLg5QTzbTfgBmEx6N444ymBt1+Yg/rTGr2+4S3VJ3btXI8m1TZ7nLcYcRTZYuQ=="
+      "version": "2.9.2",
+      "integrity": "sha512-ltW65co7f3PQWBDbqVvaU1WtFJUsNW7sWWm4HINhbMQIyVyzIeyZ8toX5TC5eeooE6piZoaEh4cZkueSKG3KYw=="
     },
     "natives": {
       "version": "1.1.1",
@@ -9944,7 +9944,7 @@
         "lodash.mergewith": "4.6.1",
         "meow": "3.7.0",
         "mkdirp": "0.5.1",
-        "nan": "2.9.1",
+        "nan": "2.9.2",
         "node-gyp": "3.6.2",
         "npmlog": "4.1.2",
         "request": "2.83.0",
