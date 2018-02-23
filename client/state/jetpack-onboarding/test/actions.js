@@ -56,7 +56,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveJetpackSettings()', () => {
-		test( 'should return a jetpack onboarding settings save action object', () => {
+		test( 'should return a jetpack settings save action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
