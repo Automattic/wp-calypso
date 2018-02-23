@@ -87,6 +87,7 @@ class MeSidebar extends React.Component {
 			'/me/security/connected-applications': 'security',
 			'/me/security/social-login': 'security',
 			'/me/security/two-step': 'security',
+			'me/privacy': 'privacy',
 			'/me/notifications/comments': 'notifications',
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',
@@ -165,6 +166,17 @@ class MeSidebar extends React.Component {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="security"
 						/>
+
+						{ config.isEnabled( 'me/privacy' ) && (
+							<SidebarItem
+								selected={ selected === 'privacy' }
+								link={ '/me/privacy' }
+								label={ translate( 'Privacy' ) }
+								icon="visible"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="privacy"
+							/>
+						) }
 
 						<SidebarItem
 							selected={ selected === 'notifications' }

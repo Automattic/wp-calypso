@@ -48,6 +48,13 @@ const sections = [
 		secondary: true,
 	},
 	{
+		name: 'privacy',
+		paths: [ '/me/privacy' ],
+		module: 'me/privacy',
+		group: 'me',
+		secondary: true,
+	},
+	{
 		name: 'purchases',
 		paths: [ '/me/purchases', '/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
 		module: 'me/purchases',
