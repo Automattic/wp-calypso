@@ -1,6 +1,6 @@
 /** @format */
 
-.disconnect-jetpack {
+.disconnect-jetpack__block {
 	text-align: center;
 	max-width: 400px;
 	color: $gray-darken-20;
@@ -70,7 +70,7 @@
 }
 
 .disconnect-jetpack-dialog {
-	.disconnect-jetpack {
+	.disconnect-jetpack__block {
 		margin-bottom: 0;
 	}
 }

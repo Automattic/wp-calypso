@@ -236,7 +236,7 @@ class DisconnectJetpack extends PureComponent {
 		}
 
 		return [
-			<Card key="disconnect-jetpack" className="disconnect-jetpack">
+			<Card key="disconnect-jetpack" className="disconnect-jetpack__block">
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ showTitle && (
 					<h1 className="disconnect-jetpack__header">
@@ -273,7 +273,7 @@ class DisconnectJetpack extends PureComponent {
 			'active' === rewindState && (
 				<Card
 					key="disconnect-jetpack__try-rewind"
-					className="disconnect-jetpack__try-rewind disconnect-jetpack"
+					className="disconnect-jetpack__try-rewind disconnect-jetpack__block"
 				>
 					<p className="disconnect-jetpack__highlight">
 						{ translate( 'Experiencing connection issues? Try to go back and rewind your site.' ) }
