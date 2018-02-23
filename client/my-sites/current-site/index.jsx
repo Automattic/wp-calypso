@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -110,8 +111,12 @@ class CurrentSite extends Component {
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
 
+		const cardClasses = classNames( 'current-site', {
+			multisite: this.props.siteCount > 1,
+		} );
+
 		return (
-			<Card className={ this.props.siteCount > 1 ? 'current-site multisite' : 'current-site' }>
+			<Card className={ cardClasses }>
 				{ this.props.siteCount > 1 && (
 					<Button className="current-site__switch-sites" borderless onClick={ this.switchSites }>
 						<Gridicon icon={ rtlOn ? 'chevron-right' : 'chevron-left' } size={ 24 } />
