@@ -235,7 +235,14 @@ export class FullPostView extends React.Component {
 	attemptToSendPageView = () => {
 		const { post, site } = this.props;
 
-		if ( post && post._state !== 'pending' && site && site.ID && ! this.hasSentPageView ) {
+		if (
+			post &&
+			post._state !== 'pending' &&
+			site &&
+			site.ID &&
+			! site.is_error &&
+			! this.hasSentPageView
+		) {
 			this.props.markPostSeen( post, site );
 			this.hasSentPageView = true;
 		}
