@@ -121,8 +121,8 @@ export class CreditCardFormFields extends React.Component {
 				<div className={ creditCardFormFieldsExtrasClassNames }>
 					{ this.createField( 'expiration-date', Input, {
 						inputMode: 'numeric',
-						label: translate( 'MM/YY', {
-							context: 'Expiry label on credit card form',
+						label: translate( 'Expiry: MM/YY', {
+							comment: 'Expiry label on credit card form',
 						} ),
 					} ) }
 
