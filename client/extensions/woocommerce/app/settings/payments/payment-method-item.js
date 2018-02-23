@@ -215,7 +215,6 @@ class PaymentMethodItem extends Component {
 					<p className={ methodTitle }>{ method.title }</p>
 				</ListItemField>
 				<ListItemField className="payments__method-method-information-container">
-					{ method.fees && <p className="payments__method-information">{ method.fees }</p> }
 					{ method.informationUrl && (
 						<p className="payments__method-information">
 							<a href={ method.informationUrl }>{ translate( 'More Information' ) }</a>
