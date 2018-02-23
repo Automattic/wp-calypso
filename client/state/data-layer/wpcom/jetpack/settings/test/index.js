@@ -198,38 +198,6 @@ describe( 'saveJetpackSettings()', () => {
 		);
 		expect( dispatch ).toHaveBeenCalledWith( updateJetpackSettings( siteId, settings ) );
 	} );
-
-	test( 'should pass null token and user email in save request when site credentials are unknown', () => {
-		const getState = () => ( {
-			jetpackOnboarding: {
-				credentials: {},
-			},
-		} );
-
-		saveJetpackSettings( { dispatch, getState }, action );
-
-		expect( dispatch ).toHaveBeenCalledWith(
-			http(
-				{
-					apiVersion: '1.1',
-					method: 'POST',
-					path: '/jetpack-blogs/' + siteId + '/rest-api/',
-					body: {
-						path: '/jetpack/v4/settings/',
-						body: JSON.stringify( {
-							onboarding: {
-								...settings,
-								token: null,
-								jpUser: null,
-							},
-						} ),
-						json: true,
-					},
-				},
-				action
-			)
-		);
-	} );
 } );
 
 describe( 'handleSaveSuccess()', () => {

@@ -8,6 +8,7 @@ import {
 	requestJetpackOnboardingSettings,
 	saveJetpackSettings,
 	saveJetpackSettingsSuccess,
+	saveJetpackOnboardingSettings,
 	updateJetpackSettings,
 } from '../actions';
 import {
@@ -90,6 +91,35 @@ describe( 'actions', () => {
 				siteId,
 				settings,
 			} );
+		} );
+	} );
+
+	describe( 'saveJetpackOnboardingSettings()', () => {
+		test( 'should pass null token and user email in save request when site credentials are unknown', () => {
+			const dispatch = jest.fn();
+			const siteId = 12345678;
+			const settings = {
+				siteTitle: 'My Awesome Site',
+				siteDescription: 'Not just another WordPress Site',
+			};
+
+			const getState = () => ( {
+				jetpackOnboarding: {
+					credentials: {},
+				},
+			} );
+
+			saveJetpackOnboardingSettings( siteId, settings )( dispatch, getState );
+
+			expect( dispatch ).toHaveBeenCalledWith(
+				saveJetpackSettings( siteId, {
+					onboarding: {
+						...settings,
+						token: null,
+						jpUser: null,
+					},
+				} )
+			);
 		} );
 	} );
 
