@@ -29,7 +29,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 					store={ store }
 					primary={ primary }
 					secondary={ secondary }
-					redirectUri={ context.isServerSide ? context.originalUrl : null }
+					redirectUri={ context.originalUrl }
 				/>
 			);
 		}
