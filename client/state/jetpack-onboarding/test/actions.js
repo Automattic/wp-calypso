@@ -6,7 +6,7 @@
 import {
 	receiveJetpackOnboardingCredentials,
 	requestJetpackOnboardingSettings,
-	saveJetpackOnboardingSettings,
+	saveJetpackSettings,
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
 } from '../actions';
@@ -54,14 +54,14 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'saveJetpackOnboardingSettings()', () => {
+	describe( 'saveJetpackSettings()', () => {
 		test( 'should return a jetpack onboarding settings save action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
 			};
 			const siteId = 12345678;
-			const action = saveJetpackOnboardingSettings( siteId, settings );
+			const action = saveJetpackSettings( siteId, settings );
 
 			expect( action ).toEqual( {
 				type: JETPACK_SETTINGS_SAVE,
