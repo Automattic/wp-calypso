@@ -15,7 +15,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { removep, wpautop } from 'lib/formatting';
-import { removeEmptySpacesInParagraphs } from './wpcom-utils';
+import { removeEmptySpacesInParagraphs, hasGutenPs } from './wpcom-utils';
 
 /* eslint-disable */
 function wpcomPlugin( editor ) {
@@ -63,7 +63,7 @@ function wpcomPlugin( editor ) {
 				);
 			}
 
-			if ( event.load && event.format !== 'raw' ) {
+			if ( event.load && event.format !== 'raw' && ! hasGutenPs( event.content ) ) {
 				event.content = wpautop( event.content );
 			}
 		}
@@ -337,7 +337,10 @@ function wpcomPlugin( editor ) {
 		// Keep empty paragraphs :(
 		e.content = e.content.replace( /<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>' );
 
-		e.content = removep( e.content );
+		// Leave p if in Gutenberg
+		if ( ! hasGutenPs( e.content ) ) {
+			e.content = removep( e.content );
+		}
 	} );
 
 	// Remove spaces from empty paragraphs.

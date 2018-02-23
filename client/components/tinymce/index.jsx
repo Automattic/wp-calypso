@@ -25,6 +25,7 @@ import 'tinymce/plugins/textcolor/plugin.js';
 
 // TinyMCE plugins that we've forked or written ourselves
 import wpcomPlugin from './plugins/wpcom/plugin.js';
+
 import wpcomAutoresizePlugin from './plugins/wpcom-autoresize/plugin.js';
 import wpcomHelpPlugin from './plugins/wpcom-help/plugin.js';
 import wpcomCharmapPlugin from './plugins/wpcom-charmap/plugin.js';
@@ -90,7 +91,7 @@ import i18n from './i18n';
 import { isMobile } from 'lib/viewport';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
-
+import { hasGutenPs } from './plugins/wpcom/wpcom-utils.js';
 /**
  * Internal Variables
  */
@@ -436,7 +437,9 @@ export default class extends React.Component {
 			// TODO: fix code duplication between the wordpress plugin and the React component
 			content = content.replace( /<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>' );
 
-			content = removep( content );
+			if ( ! hasGutenPs( content ) ) {
+				content = removep( content );
+			}
 		}
 
 		return content;
@@ -461,7 +464,10 @@ export default class extends React.Component {
 	setEditorContent = ( content, args = {} ) => {
 		if ( this._editor ) {
 			const { mode } = this.props;
-			this._editor.setContent( wpautop( content ), { ...args, mode } );
+			if ( ! hasGutenPs( content ) ) {
+				content = wpautop( content );
+			}
+			this._editor.setContent( content, { ...args, mode } );
 			if ( args.initial ) {
 				// Clear the undo stack when initially setting content
 				this._editor.undoManager.clear();
