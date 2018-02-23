@@ -15,6 +15,7 @@ import { identity, noop } from 'lodash';
  */
 import { CreditCardFormFields } from '../';
 import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import mockCountriesList from './mocks/mock-countries-list';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
@@ -28,7 +29,7 @@ jest.mock( 'lib/credit-card-details/ebanx', () => {
 
 const defaultProps = {
 	card: {},
-	countriesList: {},
+	countriesList: mockCountriesList,
 	eventFormName: 'A fine form',
 	translate: identity,
 	isFieldInvalid: identity,
@@ -51,8 +52,6 @@ describe( 'CreditCardFormFields', () => {
 
 		test( 'should display Ebanx fields when an Ebanx payment country is selected', () => {
 			const wrapper = shallow( <CreditCardFormFields { ...defaultProps } /> );
-			wrapper.setState( { countryCode: 'BR' } );
-			// shouldComponentUpdate prevents setState from triggering a rerender in <CreditCardFormFields />
 			wrapper.setProps( { card: { country: 'BR' } } );
 			expect( wrapper.find( '.ebanx-details-required' ) ).toHaveLength( 1 );
 			expect( wrapper.find( '.credit-card-form-fields__info-text' ) ).toHaveLength( 1 );

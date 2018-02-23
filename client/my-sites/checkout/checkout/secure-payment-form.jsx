@@ -122,9 +122,15 @@ const SecurePaymentForm = createReactClass( {
 				break;
 
 			case 'credit-card':
+				// Set the payment information based on a stored card (if
+				// available) or for a new card otherwise. But for new cards,
+				// don't overwrite existing new card payment details (for
+				// example, if the user already has entered information on the
+				// new card form and is now switching back to it after visiting
+				// another payment method).
 				if ( this.getInitialCard() ) {
 					newPayment = storedCardPayment( this.getInitialCard() );
-				} else {
+				} else if ( ! get( this.props.transaction, 'payment.newCardDetails', null ) ) {
 					newPayment = newCardPayment();
 				}
 				break;
@@ -136,7 +142,10 @@ const SecurePaymentForm = createReactClass( {
 		}
 
 		if ( newPayment ) {
-			// we need to defer this because this is mounted after `setDomainDetails` is called
+			// We need to defer this because this is mounted after `setDomainDetails`
+			// is called.
+			// Note: If this defer() is ever able to be removed, the corresponding
+			// defer() in NewCardForm::handleFieldChange() can likely be removed too.
 			defer( function() {
 				setPayment( newPayment );
 			} );

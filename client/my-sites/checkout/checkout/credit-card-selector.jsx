@@ -79,7 +79,7 @@ class CreditCardSelector extends React.Component {
 
 		if ( 'new-card' === section ) {
 			analytics.ga.recordEvent( 'Upgrades', 'Clicked Use a New Credit/Debit Card Link' );
-			newPayment = newCardPayment( this.props.transaction.newCardFormFields );
+			newPayment = newCardPayment( this.props.transaction.newCardRawDetails );
 		} else {
 			newPayment = storedCardPayment( this.getStoredCardDetails( section ) );
 		}
