@@ -121,7 +121,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 						ref={ this.refInput }
 						id="siteUrl"
 						autoCapitalize="off"
-						autoFocus={ autoFocus }
+						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						onChange={ onChange }
 						disabled={ isFetching }
 						placeholder={ 'http://yourjetpack.blog' }
