@@ -43,39 +43,39 @@ class GoogleMyBusinessStatsNudge extends Component {
 		}
 
 		return (
-			<Card className="google-my-business__stats-nudge">
+			<Card className="google-my-business-stats-nudge">
 				<QueryPreferences />
 				<Gridicon
 					icon="cross"
-					className="google-my-business__close-icon"
+					className="google-my-business-stats-nudge__close-icon"
 					onClick={ flow( this.props.trackNudgeDismissClick, this.props.dismissNudge ) }
 				/>
 				<SectionHeader
-					className="google-my-business__stats-nudge-header"
+					className="google-my-business-stats-nudge__header"
 					label={ this.props.translate( 'Recommendation from WordPress.com' ) }
 				/>
 
-				<div className="google-my-business__stats-nudge-body">
-					<div className="google-my-business__stats-nudge-image-wrapper">
+				<div className="google-my-business-stats-nudge__body">
+					<div className="google-my-business-stats-nudge__image-wrapper">
 						<img
-							className="google-my-business__stats-nudge-image"
+							className="google-my-business-stats-nudge__image"
 							src="/calypso/images/google-my-business/phone-screenshot.png"
 							alt={ this.props.translate( 'Your business with Google My Business' ) }
 						/>
 					</div>
 
-					<div className="google-my-business__stats-nudge-info">
-						<h1 className="google-my-business__stats-nudge-title">
+					<div className="google-my-business-stats-nudge__info">
+						<h1 className="google-my-business-stats-nudge__title">
 							{ this.props.translate( 'Reach more customers with Google My Business' ) }
 						</h1>
 
-						<h2 className="google-my-business__stats-nudge-description">
+						<h2 className="google-my-business-stats-nudge__description">
 							{ this.props.translate(
 								'Show up when customers search for businesses like yours on Google Search and Maps.'
 							) }
 						</h2>
 
-						<div className="google-my-business__stats-nudge-button-row">
+						<div className="google-my-business-stats-nudge__button-row">
 							<Button
 								href={ `/google-my-business/${ this.props.siteSlug }` }
 								primary

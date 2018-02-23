@@ -1,5 +1,5 @@
 
-.card.google-my-business__stats-nudge {
+.card.google-my-business-stats-nudge {
 	// allow section header to perfectly sit over the top of the card
 	padding: 0;
 	.dismissible-card__close-icon {
@@ -9,7 +9,7 @@
 	}
 }
 
-.google-my-business__stats-nudge-body {
+.google-my-business-stats-nudge__body {
 	display: flex;
 	flex-direction: row;
 	// standard padding
@@ -21,7 +21,7 @@
 	}
 }
 
-.google-my-business__stats-nudge-info {
+.google-my-business-stats-nudge__info {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -31,7 +31,7 @@
 	}
 }
 
-.google-my-business__stats-nudge-title {
+.google-my-business-stats-nudge__title {
 	font-size: 18px;
 	font-weight: 400;
 	@include breakpoint( ">960px" ) {
@@ -39,7 +39,7 @@
 	}
 }
 
-.google-my-business__stats-nudge-description {
+.google-my-business-stats-nudge__description {
 	font-size: 14px;
 	font-weight: 300;
 	margin: 10px 0;
@@ -48,7 +48,7 @@
 	}
 }
 
-.google-my-business__stats-nudge-button-row {
+.google-my-business-stats-nudge__button-row {
 	align-content: center;
 	display: flex;
 	flex-direction: row;
@@ -59,7 +59,7 @@
 	}
 }
 
-.google-my-business__stats-nudge-image-wrapper {
+.google-my-business-stats-nudge__image-wrapper {
 	display: none;
 	@include breakpoint( ">960px" ) {
 		display: block;
@@ -67,11 +67,11 @@
 	}
 }
 
-.google-my-business__stats-nudge-image {
+.google-my-business-stats-nudge__image {
 	height: auto;
 }
 
-.google-my-business__close-icon {
+.google-my-business-stats-nudge__close-icon {
 	position: absolute;
 	top: 14px;
 	right: 18px;
