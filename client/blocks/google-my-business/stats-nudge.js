@@ -45,7 +45,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 				<Gridicon
 					icon="cross"
 					className="google-my-business__close-icon"
-					onClick={ flow( this.props.trackNudgeDismissClick, this.props.updatePreference ) }
+					onClick={ flow( this.props.trackNudgeDismissClick, this.props.dismissNudge ) }
 				/>
 				<SectionHeader
 					className="google-my-business__stats-nudge-header"
@@ -81,7 +81,9 @@ class GoogleMyBusinessStatsNudge extends Component {
 								{ this.props.translate( 'Start Now' ) }
 							</Button>
 
-							<Button onClick={ this.props.trackNudgeAlreadyListedClick }>
+							<Button
+								onClick={ flow( this.props.trackNudgeAlreadyListedClick, this.props.dismissNudge ) }
+							>
 								{ this.props.translate( "I'm Already Listed" ) }
 							</Button>
 						</div>
@@ -114,7 +116,7 @@ export default connect(
 					recordTracksEvent(
 						'calypso_test_google_my_business_stats_nudge_already_button_listed_click'
 					),
-				updatePreference: nudgePreference => {
+				dismissNudge: nudgePreference => {
 					return savePreference(
 						'google-my-business-dimissible-nudge-' + ownProps.siteId.toString(),
 						{
@@ -128,7 +130,7 @@ export default connect(
 		),
 	( stateProps, dispatchProps, ownProps ) => {
 		return Object.assign( {}, ownProps, stateProps, dispatchProps, {
-			updatePreference: partial( dispatchProps.updatePreference, stateProps.nudgePreference ),
+			dismissNudge: partial( dispatchProps.dismissNudge, stateProps.nudgePreference ),
 		} );
 	}
 )( localize( GoogleMyBusinessStatsNudge ) );
