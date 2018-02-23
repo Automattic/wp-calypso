@@ -15,7 +15,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_ONBOARDING_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
 import { getUnconnectedSite, getUnconnectedSiteUrl } from 'state/selectors';
 import {
-	saveJetpackOnboardingSettingsSuccess,
+	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
 import { trailingslashit } from 'lib/route';
@@ -119,7 +119,7 @@ export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
 // the save request has finished. Tracking those requests is necessary for
 // displaying an up to date progress indicator for some steps.
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
-	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
+	dispatch( saveJetpackSettingsSuccess( siteId, settings ) );
 
 export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(

@@ -16,7 +16,7 @@ import {
 } from '../';
 import { JETPACK_SETTINGS_SAVE, JETPACK_ONBOARDING_SETTINGS_UPDATE } from 'state/action-types';
 import {
-	saveJetpackOnboardingSettingsSuccess,
+	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
 
@@ -256,7 +256,7 @@ describe( 'handleSaveSuccess()', () => {
 		handleSaveSuccess( { dispatch }, { siteId, settings } );
 
 		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( saveJetpackOnboardingSettingsSuccess( siteId, settings ) )
+			expect.objectContaining( saveJetpackSettingsSuccess( siteId, settings ) )
 		);
 	} );
 } );

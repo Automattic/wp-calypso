@@ -62,7 +62,7 @@ export const saveJetpackOnboardingSettings = ( siteId, onboardingSettings ) => (
 	);
 };
 
-export const saveJetpackOnboardingSettingsSuccess = ( siteId, settings ) => ( {
+export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	siteId,
 	settings,
