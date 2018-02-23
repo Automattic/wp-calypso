@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'gridicons';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -38,8 +38,15 @@ export class SidebarBanner extends Component {
 	};
 
 	render() {
-		const { className, ctaName, ctaText, href, icon, text } = this.props;
-		const classes = classnames( 'sidebar-banner', className );
+		const { className, ctaName, ctaText, href, text } = this.props;
+		const variation = abtest( 'redesignedSidebarBanner' );
+		const classes = classnames(
+			{
+				'sidebar-banner-new': variation === 'oldBanner',
+				'sidebar-banner': variation === 'newBanner',
+			},
+			className
+		);
 
 		return (
 			<div className={ classes }>

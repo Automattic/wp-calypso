@@ -1,5 +1,13 @@
 /** @format */
 export default {
+	redesignedSidebarBanner: {
+		datestamp: '20180222',
+		variations: {
+			newBanner: 50,
+			oldBanner: 50,
+		},
+		defaultVariation: 'oldBanner',
+	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {

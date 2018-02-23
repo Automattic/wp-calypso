@@ -1,5 +1,33 @@
 .sidebar-banner {
+	font-size: 12px;
 
+	.sidebar-banner__link {
+		background-color: $alert-green;
+		color: $white;
+		display: flex;
+
+		@include breakpoint( "<660px" ) {
+			padding: 0 24px;
+		}
+
+		.sidebar-banner__icon-wrapper {
+			flex: 0 0 auto;
+			padding: 5px 5px 2px;
+		}
+
+		.sidebar-banner__content {
+			width: 100%;
+			padding: 6px 5px 5px;
+		}
+
+		.sidebar-banner__cta {
+			padding: 6px 8px 2px 5px;
+			text-transform: uppercase;
+		}
+	}
+}
+
+.sidebar-banner-new {
 	.sidebar-banner__link {
 		background-color: $gray-light;
 		color: $gray-text;
