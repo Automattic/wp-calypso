@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 class StringPreference extends Component {
 	static propTypes = {
 		name: PropTypes.string.isRequired,
-		value: PropTypes.number.isRequired,
+		value: PropTypes.string.isRequired,
 	};
 
 	render() {
