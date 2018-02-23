@@ -2,8 +2,7 @@
 /**
  * External dependencies
  */
-import i18n from 'i18n-calypso';
-const momentLib = i18n.moment;
+import { momentLib } from 'i18n-calypso';
 
 /**
  * @typedef OffsetParams
