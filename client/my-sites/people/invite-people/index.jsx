@@ -327,8 +327,9 @@ class InvitePeople extends React.Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'Invite up to 10 email addresses and/or WordPress.com usernames. ' +
-										'Those needing a username will be sent instructions on how to create one.'
+									'Want to invite new users to your site? The more the merrier! ' +
+										'Invite as many as you want, up to 10 at a time, by adding ' +
+										'their email addresses or WordPress.com usernames.'
 								) }
 							</FormSettingExplanation>
 						</div>
