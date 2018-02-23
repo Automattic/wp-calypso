@@ -44,6 +44,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/components-usage-stats": false,
 		"dev/test-helper": true,
+		"dev/preferences-helper": true,
 		"domains/cctlds": true,
 		"domains/cctlds/ca": true,
 		"domains/cctlds/fr": true,
