@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 import { abtest } from 'lib/abtest';
 
 /**
@@ -38,12 +39,12 @@ export class SidebarBanner extends Component {
 	};
 
 	render() {
-		const { className, ctaName, ctaText, href, text } = this.props;
+		const { className, ctaName, ctaText, href, icon, text } = this.props;
 		const variation = abtest( 'redesignedSidebarBanner' );
 		const classes = classnames(
 			{
-				'sidebar-banner-new': variation === 'oldBanner',
-				'sidebar-banner': variation === 'newBanner',
+				'sidebar-banner': variation === 'oldBanner',
+				'sidebar-banner-new': variation === 'newBanner',
 			},
 			className
 		);
@@ -55,6 +56,11 @@ export class SidebarBanner extends Component {
 					eventProperties={ { cta_name: ctaName } }
 				/>
 				<a className="sidebar-banner__link" onClick={ this.onClick } href={ href }>
+					{ variation === 'oldBanner' && (
+						<span className="sidebar-banner__icon-wrapper">
+							<Gridicon className="sidebar-banner__icon" icon={ icon } size={ 18 } />
+						</span>
+					) }
 					<span className="sidebar-banner__content">
 						<span className="sidebar-banner__text">{ text }</span>
 					</span>
