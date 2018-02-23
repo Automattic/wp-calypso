@@ -271,12 +271,8 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
  */
 Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
 	return this.wpcom.req.get(
-		{
-			path: '/jetpack-blogs/' + siteId + '/rest-api/',
-			body: {
-				path: '/jetpack/v4/connection/',
-			},
-		},
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/connection/' },
 		fn
 	);
 };
@@ -290,12 +286,8 @@ Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
  */
 Undocumented.prototype.getJetpackUserConnectionData = function( siteId, fn ) {
 	return this.wpcom.req.get(
-		{
-			path: '/jetpack-blogs/' + siteId + '/rest-api/',
-			body: {
-				path: '/jetpack/v4/connection/data/',
-			},
-		},
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/connection/data/' },
 		fn
 	);
 };
