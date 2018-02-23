@@ -47,9 +47,9 @@ const siteHasBusinessPlan = createSelector(
  */
 const notYetDismissed = createSelector(
 	( state, siteId ) =>
-		null === getPreference( state, 'google-my-business-dimissible-nudge-' + siteId.toString() ),
+		null === getPreference( state, 'google-my-business-dismissible-nudge-' + siteId.toString() ),
 	( state, siteId ) => [
-		getPreference( state, 'google-my-business-dimissible-nudge-' + siteId.toString() ),
+		getPreference( state, 'google-my-business-dismissible-nudge-' + siteId.toString() ),
 	]
 );
 
@@ -63,7 +63,7 @@ const notYetDismissed = createSelector(
 const twoWeeksSinceFirstDismissal = ( state, siteId ) => {
 	const preference = getPreference(
 		state,
-		'google-my-business-dimissible-nudge-' + siteId.toString()
+		'google-my-business-dismissible-nudge-' + siteId.toString()
 	);
 	return (
 		preference &&

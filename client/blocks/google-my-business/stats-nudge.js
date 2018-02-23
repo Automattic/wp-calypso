@@ -99,7 +99,7 @@ export default connect(
 		return {
 			nudgePreference: getPreference(
 				state,
-				'google-my-business-dimissible-nudge-' + ownProps.siteId.toString()
+				'google-my-business-dismissible-nudge-' + ownProps.siteId.toString()
 			),
 		};
 	},
@@ -118,7 +118,7 @@ export default connect(
 					),
 				dismissNudge: nudgePreference => {
 					return savePreference(
-						'google-my-business-dimissible-nudge-' + ownProps.siteId.toString(),
+						'google-my-business-dismissible-nudge-' + ownProps.siteId.toString(),
 						{
 							lastDismissed: Date.now(),
 							timesDismissed: nudgePreference ? 1 + nudgePreference.timesDismissed : 1,

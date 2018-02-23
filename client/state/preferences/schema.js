@@ -26,7 +26,7 @@ export const remoteValuesSchema = {
 				required: [ 'view', 'timestamp', 'disabled' ],
 			},
 		},
-		'google-my-business-dimissible-nudge': {
+		'google-my-business-dismissible-nudge': {
 			type: 'object',
 			properties: {
 				timesDismissed: { type: 'number', minimum: 0 },
