@@ -44,7 +44,7 @@ Every PR should be reviewed and approved by someone other than the author, even 
 
 The recommended way of finding an appropriate person to review your code is by [blaming](https://help.github.com/articles/using-git-blame-to-trace-changes-in-a-file/) one of the files you are updating and looking at who was responsible for previous commits on that file.
 
-Then, you may ask that person to review your code by mentioning his/her GitHub username on the PR comments like this:
+Then, you may ask that person to review your code by mentioning their GitHub username on the PR comments like this:
 
 ```
  cc @username
@@ -86,7 +86,7 @@ Once you know what the first small piece of your feature will be, follow this ge
 5. When you feel that you are ready for a formal review or for merging into `master` make sure you check this list and our [merge checklist](../docs/merge-checklist.md).
   - Make sure your branch merges cleanly and consider rebasing against `master` to keep the branch history short and clean.
   - If there are visual changes, add before and after screenshots in the pull request comments.
-  - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so he or she can test your changes. This will help speed up the review process.
+  - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so they can test your changes. This will help speed up the review process.
   - Ensure that your commit messages are [meaningful](http://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).
 6. Mention that the PR is ready for review or if you have write access remove the **<span class="label status-in-progress">[Status] In Progress</span>** label from the pull request and add the **<span class="label status-needs-review">[Status] Needs Review</span>** label - someone will provide feedback on the latest unreviewed changes. The reviewer will also mark the pull request as **<span class="label status-awaiting-fixes">[Status] Awaiting Fixes</span>** if they think you need to change anything.
 7. If you get a <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a5.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f6a2.png" class="emoji" />, <img src="https://assets-cdn.github.com/images/icons/emoji/shipit.png" class="emoji" />, or a LGTM and the status has been changed to **<span class="label status-ready-to-merge">[Status] Ready to Merge</span>** – this is great – the pull request is ready to be merged into `master`.
