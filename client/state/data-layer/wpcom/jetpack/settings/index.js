@@ -87,7 +87,7 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
 };
 
 /**
- * Dispatches a request to save particular onboarding settings on a site
+ * Dispatches a request to save particular settings on a site
  *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
