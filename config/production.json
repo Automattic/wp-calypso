@@ -34,7 +34,7 @@
 		"help": true,
 		"help/courses": true,
 		"jetpack/api-cache": false,
-		"jetpack/connect-redirect-pressable-credential-approval": false,
+		"jetpack/connect-redirect-pressable-credential-approval": true,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,
