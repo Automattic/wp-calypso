@@ -583,6 +583,19 @@ describe( 'reducer', () => {
 				67890: 12,
 			} );
 		} );
+
+		test( 'should reduce after successful deletes', () => {
+			const original = deepFreeze( { 12345: 678, 67890: 12 } );
+			const state = counts( original, {
+				type: INVITES_DELETE_REQUEST_SUCCESS,
+				siteId: 67890,
+				inviteIds: [ '123456asdf789', '789lkjh123456' ],
+			} );
+			expect( state ).to.eql( {
+				12345: 678,
+				67890: 10,
+			} );
+		} );
 	} );
 
 	describe( '#requestingResend()', () => {
