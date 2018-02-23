@@ -14,10 +14,7 @@ import {
 	retryOrAnnounceSaveFailure,
 	fromApi,
 } from '../';
-import {
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
-	JETPACK_ONBOARDING_SETTINGS_UPDATE,
-} from 'state/action-types';
+import { JETPACK_SETTINGS_SAVE, JETPACK_ONBOARDING_SETTINGS_UPDATE } from 'state/action-types';
 import {
 	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
@@ -171,7 +168,7 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 		siteDescription: 'Not just another WordPress Site',
 	};
 	const action = {
-		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		type: JETPACK_SETTINGS_SAVE,
 		siteId,
 		settings,
 	};
@@ -291,7 +288,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		installWooCommerce: true,
 	};
 	const action = {
-		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+		type: JETPACK_SETTINGS_SAVE,
 		siteId,
 		settings,
 		meta: {
@@ -312,7 +309,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			expect.objectContaining( {
 				settings,
 				siteId,
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_SETTINGS_SAVE,
 				meta: {
 					dataLayer: {
 						retryCount: 1,

@@ -13,7 +13,7 @@ import {
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_SETTINGS_SAVE,
 	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
@@ -64,7 +64,7 @@ describe( 'actions', () => {
 			const action = saveJetpackOnboardingSettings( siteId, settings );
 
 			expect( action ).toEqual( {
-				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+				type: JETPACK_SETTINGS_SAVE,
 				siteId,
 				settings,
 				meta: {

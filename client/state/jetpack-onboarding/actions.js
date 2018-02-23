@@ -1,12 +1,17 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_SETTINGS_SAVE,
 	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
@@ -27,8 +32,8 @@ export const requestJetpackOnboardingSettings = siteId => ( {
 	},
 } );
 
-export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
-	type: JETPACK_ONBOARDING_SETTINGS_SAVE,
+export const saveJetpackSettings = ( siteId, settings ) => ( {
+	type: JETPACK_SETTINGS_SAVE,
 	siteId,
 	settings,
 	meta: {
@@ -37,6 +42,25 @@ export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
 		},
 	},
 } );
+
+export const saveJetpackOnboardingSettings = ( siteId, onboardingSettings ) => (
+	dispatch,
+	getState
+) => {
+	const state = getState();
+	const token = get( state.jetpackOnboarding.credentials, [ siteId, 'token' ], null );
+	const jpUser = get( state.jetpackOnboarding.credentials, [ siteId, 'userEmail' ], null );
+
+	dispatch(
+		saveJetpackSettings( siteId, {
+			onboarding: {
+				...onboardingSettings,
+				token,
+				jpUser,
+			},
+		} )
+	);
+};
 
 export const saveJetpackOnboardingSettingsSuccess = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,

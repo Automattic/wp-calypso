@@ -12,10 +12,7 @@ import { translate } from 'i18n-calypso';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import {
-	JETPACK_ONBOARDING_SETTINGS_REQUEST,
-	JETPACK_ONBOARDING_SETTINGS_SAVE,
-} from 'state/action-types';
+import { JETPACK_ONBOARDING_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
 import { getUnconnectedSite, getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	saveJetpackOnboardingSettingsSuccess,
@@ -95,11 +92,8 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
-export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) => {
+export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
 	const { settings, siteId } = action;
-	const state = getState();
-	const token = get( state.jetpackOnboarding.credentials, [ siteId, 'token' ], null );
-	const jpUser = get( state.jetpackOnboarding.credentials, [ siteId, 'userEmail' ], null );
 
 	dispatch( updateJetpackOnboardingSettings( siteId, action.settings ) );
 
@@ -111,13 +105,7 @@ export const saveJetpackOnboardingSettings = ( { dispatch, getState }, action ) 
 				path: '/jetpack-blogs/' + siteId + '/rest-api/',
 				body: {
 					path: '/jetpack/v4/settings/',
-					body: JSON.stringify( {
-						onboarding: {
-							...settings,
-							token,
-							jpUser,
-						},
-					} ),
+					body: JSON.stringify( settings ),
 					json: true,
 				},
 			},
@@ -183,7 +171,7 @@ export default {
 			}
 		),
 	],
-	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
+	[ JETPACK_SETTINGS_SAVE ]: [
+		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
 };
