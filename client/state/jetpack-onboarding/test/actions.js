@@ -124,7 +124,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'updateJetpackSettings()', () => {
-		test( 'should return a jetpack onboarding settings update action object', () => {
+		test( 'should return a jetpack settings update action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
