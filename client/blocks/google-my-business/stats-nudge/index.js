@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
-import { flow, partial } from 'lodash';
+import { flow } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -102,8 +102,7 @@ export default connect(
 		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state ),
 	} ),
 	{
-		trackNudgeView: () =>
-			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
+		trackNudgeView: () => recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
 		trackNudgeDismissClick: () =>
 			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click' ),
 		trackNudgeStartNowClick: () =>
@@ -113,5 +112,5 @@ export default connect(
 				'calypso_test_google_my_business_stats_nudge_already_button_listed_click'
 			),
 		dismissNudge,
-	},
+	}
 )( localize( GoogleMyBusinessStatsNudge ) );
