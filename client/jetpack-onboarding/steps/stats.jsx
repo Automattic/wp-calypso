@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ConnectSuccess from '../connect-success';
+import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
@@ -66,7 +67,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 	}
 
 	renderActionTile() {
-		const { basePath, isConnected, siteSlug, siteUrl, stepName, translate } = this.props;
+		const { isConnected, siteUrl, translate } = this.props;
 		const headerText = translate( 'Keep track of your visitors with Jetpack.' );
 		const subHeaderText = translate(
 			'Keep an eye on your success with simple, concise, and mobile-friendly stats. ' +
@@ -76,13 +77,10 @@ class JetpackOnboardingStatsStep extends React.Component {
 		const connectUrl = addQueryArgs(
 			{
 				from: 'jpo',
-				redirect_after_auth: [ basePath, stepName, siteSlug ].join( '/' ),
-				url: siteUrl,
-				// TODO: add a parameter to the JPC to redirect back to this step after completion
-				// and in the redirect URL include the ?action=activate_stats parameter
-				// to actually trigger the stats activation action after getting back to JPO
+				redirect_after_auth: addQueryArgs( { action: 'activate_stats' }, window.location.href ),
+				calypso_env: config( 'env_id' ),
 			},
-			'/jetpack/connect'
+			siteUrl + '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true'
 		);
 		const href = ! isConnected ? connectUrl : null;
 
