@@ -26,6 +26,7 @@ import analytics from 'lib/analytics';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
+import hasHappychatLocalizedSupport from 'state/happychat/selectors/has-happychat-localized-support';
 import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
@@ -58,10 +59,13 @@ import {
 } from 'state/selectors';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
+import { getLanguage, isDefaultLocale } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Module variables
  */
+const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 const wpcom = wpcomLib.undocumented();
 let savedContactForm = null;
 
@@ -77,8 +81,9 @@ const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:0
 
 class HelpContact extends React.Component {
 	state = {
-		isSubmitting: false,
 		confirmation: null,
+		isSubmitting: false,
+		wasAdditionalSupportOptionShown: false,
 	};
 
 	componentDidMount() {
@@ -266,13 +271,42 @@ class HelpContact extends React.Component {
 
 	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
-		const { translate, hasMoreThanOneSite } = this.props;
+		const { currentUserLocale, hasMoreThanOneSite, translate } = this.props;
 
 		switch ( variationSlug ) {
 			case SUPPORT_HAPPYCHAT:
+				// TEMPORARY: to collect data about the customer preferences, context 1050-happychat-gh
+				// for non english customers check if we have full support in their language
+				let buttonLabel = translate( 'Chat with us' );
+				let additionalSupportOption = { enabled: false };
+
+				if ( ! isDefaultLocale( currentUserLocale ) && ! this.props.hasHappychatLocalizedSupport ) {
+					// make sure we only record the track once
+					if ( ! this.state.wasAdditionalSupportOptionShown ) {
+						// track that additional support option is shown
+						this.props.recordTracksEvent( 'calypso_happychat_a_b_additional_support_option_shown', {
+							locale: currentUserLocale,
+						} );
+						this.setState( { wasAdditionalSupportOptionShown: true } );
+					}
+
+					// override chat buttons
+					buttonLabel = translate( 'Chat with us in %(defaultLanguage)s', {
+						args: { defaultLanguage },
+					} );
+
+					// add additional support option
+					additionalSupportOption = {
+						enabled: true,
+						label: translate( 'Email us' ),
+						onSubmit: this.submitKayakoTicket,
+					};
+				}
+
 				return {
+					additionalSupportOption,
 					onSubmit: this.startHappychat,
-					buttonLabel: translate( 'Chat with us' ),
+					buttonLabel,
 					showSubjectField: false,
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
@@ -510,6 +544,7 @@ export default connect(
 			currentUserLocale: getCurrentUserLocale( state ),
 			currentUser: getCurrentUser( state ),
 			getUserInfo: getHappychatUserInfo( state ),
+			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
 			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
 			isDirectlyFailed: isDirectlyFailed( state ),
 			isDirectlyReady: isDirectlyReady( state ),
@@ -528,10 +563,11 @@ export default connect(
 		};
 	},
 	{
-		openHappychat,
-		sendHappychatMessage,
-		sendUserInfo,
 		askDirectlyQuestion,
 		initializeDirectly,
+		openHappychat,
+		recordTracksEvent,
+		sendHappychatMessage,
+		sendUserInfo,
 	}
 )( localize( HelpContact ) );
