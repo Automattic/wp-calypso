@@ -106,7 +106,7 @@ class JetpackNewSite extends Component {
 								onSubmit={ this.handleJetpackSubmit }
 								handleOnClickTos={ this.handleOnClickTos }
 								url={ this.state.jetpackUrl }
-								autoFocus={ false }
+								autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
 							/>
 						</Card>
 						<Card className="jetpack-new-site__mobile">
@@ -126,7 +126,7 @@ class JetpackNewSite extends Component {
 									onSubmit={ this.handleJetpackSubmit }
 									handleOnClickTos={ this.handleOnClickTos }
 									url={ this.state.jetpackUrl }
-									autoFocus={ false }
+									autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
 								/>
 							</div>
 						</Card>
