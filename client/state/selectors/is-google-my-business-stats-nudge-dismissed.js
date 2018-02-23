@@ -49,7 +49,7 @@ const isGoogleMyBusinessStatsNudgeDismissed = state => {
 		return false;
 	}
 
-	if ( getDismissCount( state ) > MAX_DISMISS ) {
+	if ( getDismissCount( state ) >= MAX_DISMISS ) {
 		return true;
 	}
 
