@@ -18,7 +18,6 @@ import { map, pick, reduce, startsWith } from 'lodash';
 import actions from 'lib/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import User from 'lib/user';
-import userUtils from 'lib/user/utils';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
@@ -55,10 +54,7 @@ function determinePostType( context ) {
 }
 
 function renderEditor( context ) {
-	context.primary = React.createElement( PostEditor, {
-		user: user,
-		userUtils: userUtils,
-	} );
+	context.primary = React.createElement( PostEditor );
 }
 
 function maybeRedirect( context ) {
