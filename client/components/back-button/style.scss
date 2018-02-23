@@ -28,3 +28,14 @@
 		display: none;
 	}
 }
+
+.back-button__example {
+	.back-button {
+		position: relative;
+		top: 0;
+
+		.button.is-compact.is-borderless {
+			padding: 0;
+		}
+	}
+}

@@ -11,7 +11,7 @@ import React from 'react';
 import BackButton from 'components/back-button';
 
 const BackButtonExample = () => (
-	<div>
+	<div className="back-button__example">
 		<BackButton />
 	</div>
 );
