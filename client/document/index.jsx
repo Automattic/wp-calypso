@@ -67,8 +67,8 @@ class Document extends React.Component {
 				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					{ head.metas.map( props => <meta { ...props } /> ) }
-					{ head.links.map( props => <link { ...props } /> ) }
+					{ head.metas.map( ( props, index ) => <meta { ...props } key={ index } /> ) }
+					{ head.links.map( ( props, index ) => <link { ...props } key={ index } /> ) }
 
 					<link
 						rel="stylesheet"
