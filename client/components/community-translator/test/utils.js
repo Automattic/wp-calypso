@@ -1,27 +1,46 @@
-/** @format */
+/**
+ * @format
+ * @jest-environment jsdom
+ */
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import { identity } from 'lodash';
-import React from 'react';
-import { spy } from 'sinon';
 
 /**
  * Internal dependencies
  */
-import { Count } from '../';
+import { canDisplayCommunityTranslator } from '../utils';
+import { isMobile } from 'lib/viewport';
 
-describe( 'Count', () => {
-	test( 'should use the correct class name', () => {
-		const count = shallow( <Count count={ 23 } numberFormat={ identity } /> );
-		expect( count ).to.have.className( 'count' );
+jest.mock( 'lib/viewport', () => ( {
+	isMobile: jest.fn(),
+} ) );
+
+jest.mock( 'lib/user-settings', () => ( {
+	getSettings: jest.fn(),
+	getOriginalSetting: jest.fn(),
+} ) );
+
+describe( 'Community Translator', () => {
+	afterEach( () => {
+		isMobile.mockReset();
 	} );
-
-	test( 'should call provided as prop numberFormat function', () => {
-		const numberFormatSpy = spy();
-		shallow( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
-		expect( numberFormatSpy ).to.have.been.calledWith( 23 );
+	describe( 'canDisplayCommunityTranslator()', () => {
+		test( 'should display community translator in non-mobile and non-en locale', () => {
+			isMobile.mockReturnValue( false );
+			expect( canDisplayCommunityTranslator( 'it' ) ).toBe( true );
+		} );
+		test( 'should not display community translator in non-mobile and en locale', () => {
+			isMobile.mockReturnValue( false );
+			expect( canDisplayCommunityTranslator( 'en' ) ).toBe( false );
+		} );
+		test( 'should not display community translator in mobile', () => {
+			isMobile.mockReturnValue( true );
+			expect( canDisplayCommunityTranslator( 'de' ) ).toBe( false );
+		} );
+		test( 'should not display community translator when locale is not defined', () => {
+			isMobile.mockReturnValue( false );
+			expect( canDisplayCommunityTranslator( undefined ) ).toBe( false );
+		} );
 	} );
 } );

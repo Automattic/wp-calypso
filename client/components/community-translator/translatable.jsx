@@ -70,8 +70,10 @@ class Translatable extends Component {
 			this.state.originalData.originalId,
 			this.state.formState,
 			this.props.locale.langSlug
-		).then( () => {
+		).then( originalData => {
 			this.setState( {
+				error: originalData.error,
+				originalData,
 				submitting: false,
 				submissionSuccess: true,
 			} );

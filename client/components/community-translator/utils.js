@@ -39,6 +39,15 @@ export function isCommunityTranslatorEnabled() {
 	return true;
 }
 
+export function postRequest( glotPressUrl, postFormData ) {
+	return request
+		.post( glotPressUrl )
+		.withCredentials()
+		.send( postFormData )
+		.then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
+		.catch( error => normalizeDetailsFromTranslationData( error ) );
+}
+
 export function getTranslationData(
 	locale,
 	originalStringData,
@@ -56,12 +65,7 @@ export function getTranslationData(
 		JSON.stringify( originalStringsValue )
 	) }`;
 
-	return request
-		.post( glotPressUrl )
-		.withCredentials()
-		.send( postFormData )
-		.then( response => normalizeDetailsFromTranslationData( head( response.body ) ) )
-		.catch( error => normalizeDetailsFromTranslationData( error ) );
+	return postRequest( glotPressUrl, postFormData );
 }
 
 export function submitTranslation(
@@ -81,14 +85,7 @@ export function submitTranslation(
 		.join( '' );
 
 	const postFormData = `project=${ project }&locale_slug=${ locale }${ newTranslations }`;
-	return request
-		.post( glotPressUrl )
-		.withCredentials()
-		.send( postFormData )
-		.then( response => {
-			// eslint-disable-next-line
-			console.log( 'response.body', response.body );
-		} );
+	return postRequest( glotPressUrl, postFormData );
 }
 
 export function normalizeDetailsFromTranslationData( glotPressData ) {
@@ -110,5 +107,8 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 }
 
 export function getTranslationGlotPressUrl( originalId, locale, project = GP_PROJECT ) {
+	if ( ! originalId || ! locale ) {
+		return;
+	}
 	return `https://translate.wordpress.com/projects/${ project }/${ locale }/default?filters[original_id]=${ originalId }`;
 }
