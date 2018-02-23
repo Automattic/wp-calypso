@@ -7,7 +7,7 @@ import createSelector from 'lib/create-selector';
 import { getSiteOption, getSitePlanSlug } from 'state/sites/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
-const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
+const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 
 /**
  * Returns true if site has promote goal set
@@ -43,15 +43,14 @@ const siteHasBusinessPlan = createSelector(
  * - site is older than 1 week,
  * - site has a business plan
  * - site has a promote goal
- * - user had not dismissed nudge
- *   OR nudge dismissed for the first time over two weeks ago
  * @param  {Object}  state  Global state tree
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if we should show the nudge
  */
 const isGoogleMyBusinessStatsNudgeVisible = ( state, siteId ) => {
 	const createdAt = getSiteOption( state, siteId, 'created_at' );
-	const isWeekPassedSinceSiteCreation = Date.parse( createdAt ) + WEEK_IN_MS < Date.now();
+	const isWeekPassedSinceSiteCreation =
+		Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 < Date.now();
 
 	return (
 		isWeekPassedSinceSiteCreation &&
