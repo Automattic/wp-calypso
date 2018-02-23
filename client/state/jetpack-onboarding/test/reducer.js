@@ -11,6 +11,7 @@ import deepFreeze from 'deep-freeze';
 import reducer, { credentialsReducer, settingsReducer } from '../reducer';
 import {
 	DESERIALIZE,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 	SERIALIZE,
@@ -92,6 +93,19 @@ describe( 'reducer', () => {
 				...initialState,
 				[ siteId ]: newCredentials,
 			} );
+		} );
+
+		test( 'should remove credentials when site connects successfully', () => {
+			const siteId = 12345678;
+			const original = deepFreeze( {
+				[ siteId ]: siteCredentials,
+			} );
+			const state = credentialsReducer( original, {
+				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+				siteId,
+			} );
+
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should persist state', () => {
