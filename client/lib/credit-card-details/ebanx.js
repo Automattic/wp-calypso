@@ -3,7 +3,8 @@
  *
  * @format
  */
-import { isString, isUndefined } from 'lodash';
+import { isUndefined } from 'lodash';
+import { CPF } from 'cpf_cnpj';
 
 /**
  * Internal dependencies
@@ -27,13 +28,11 @@ export function isEbanxEnabledForCountry( countryCode = '' ) {
 /**
  * CPF number (Cadastrado de Pessoas Físicas) is the Brazilian tax identification number.
  * Total of 11 digits: 9 numbers followed by 2 verification numbers . E.g., 188.247.019-22
- * The following test is a weak test only.
  *
- * See algorithm at http://www.geradorcpf.com/algoritmo_do_cpf.htm
  * @param {String} cpf - a Brazilian tax identification number
  * @returns {Boolean} Whether the cpf is valid or not
  */
 
 export function isValidCPF( cpf = '' ) {
-	return isString( cpf ) && /^[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}$/.test( cpf );
+	return CPF.isValid( cpf );
 }
