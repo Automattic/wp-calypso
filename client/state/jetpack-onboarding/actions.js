@@ -12,7 +12,7 @@ import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_SAVE,
-	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
@@ -63,7 +63,7 @@ export const saveJetpackOnboardingSettings = ( siteId, onboardingSettings ) => (
 };
 
 export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
-	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+	type: JETPACK_SETTINGS_SAVE_SUCCESS,
 	siteId,
 	settings,
 } );
