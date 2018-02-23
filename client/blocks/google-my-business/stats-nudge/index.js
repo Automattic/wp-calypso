@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
@@ -19,8 +18,8 @@ import Card from 'components/card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SectionHeader from 'components/section-header';
 import QueryPreferences from 'components/data/query-preferences';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import { isGoogleMyBusinessStatsNudgeDismissed } from 'state/selectors';
+import { dismissNudge } from './actions';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
@@ -30,14 +29,19 @@ class GoogleMyBusinessStatsNudge extends Component {
 		trackNudgeStartNowClick: PropTypes.func.isRequired,
 		trackNudgeView: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		nudgePreference: PropTypes.object,
 	};
 
 	componentWillMount() {
-		this.props.trackNudgeView();
+		if ( ! this.props.isDismissed ) {
+			this.props.trackNudgeView();
+		}
 	}
 
 	render() {
+		if ( this.props.isDismissed ) {
+			return null;
+		}
+
 		return (
 			<Card className="google-my-business__stats-nudge">
 				<QueryPreferences />
@@ -95,33 +99,19 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 export default connect(
 	state => ( {
-		nudgePreference: getPreference( state, 'google-my-business-dismissible-nudge' ),
+		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state ),
 	} ),
-	dispatch =>
-		bindActionCreators(
-			{
-				trackNudgeView: () =>
-					recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
-				trackNudgeDismissClick: () =>
-					recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click' ),
-				trackNudgeStartNowClick: () =>
-					recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_button_click' ),
-				trackNudgeAlreadyListedClick: () =>
-					recordTracksEvent(
-						'calypso_test_google_my_business_stats_nudge_already_button_listed_click'
-					),
-				dismissNudge: nudgePreference => {
-					return savePreference( 'google-my-business-dismissible-nudge', {
-						lastDismissed: Date.now(),
-						timesDismissed: nudgePreference ? 1 + nudgePreference.timesDismissed : 1,
-					} );
-				},
-			},
-			dispatch
-		),
-	( stateProps, dispatchProps, ownProps ) => {
-		return Object.assign( {}, ownProps, stateProps, dispatchProps, {
-			dismissNudge: partial( dispatchProps.dismissNudge, stateProps.nudgePreference ),
-		} );
-	}
+	{
+		trackNudgeView: () =>
+			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
+		trackNudgeDismissClick: () =>
+			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click' ),
+		trackNudgeStartNowClick: () =>
+			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_button_click' ),
+		trackNudgeAlreadyListedClick: () =>
+			recordTracksEvent(
+				'calypso_test_google_my_business_stats_nudge_already_button_listed_click'
+			),
+		dismissNudge,
+	},
 )( localize( GoogleMyBusinessStatsNudge ) );
