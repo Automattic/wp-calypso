@@ -20,7 +20,7 @@ import {
 	reduce,
 } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
-import LRU from 'lru-cache';
+import LRU from 'lru';
 
 /**
  * Internal dependencies
