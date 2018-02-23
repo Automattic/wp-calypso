@@ -176,7 +176,6 @@ const webpackConfig = {
 	},
 	node: false,
 	plugins: _.compact( [
-		new webpack.NormalModuleReplacementPlugin( /^fs$/, 'lib/fs-mock' ),
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
