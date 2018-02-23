@@ -132,6 +132,12 @@ export class JetpackConnectMain extends Component {
 			this.setState( { waitingForSites: false } );
 			this.checkUrl( this.state.currentUrl );
 		}
+
+		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
+			if ( includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ) {
+				this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
+			}
+		}
 	}
 
 	dismissUrl = () => this.props.dismissUrl( this.state.currentUrl );
@@ -178,6 +184,14 @@ export class JetpackConnectMain extends Component {
 		} );
 
 		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_ACTIVATE ) );
+	} );
+
+	goToRemoteInstall = this.makeSafeRedirectionFunction( url => {
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: url,
+			type: 'remote_install',
+		} );
+		page.redirect( url );
 	} );
 
 	redirectToMobileApp = this.makeSafeRedirectionFunction( reason => {
@@ -549,16 +563,11 @@ export class JetpackConnectMain extends Component {
 
 	render() {
 		const status = this.getStatus();
-		console.log( status );
 		if (
 			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) &&
-			! this.props.jetpackConnectSite.isDismissed
+			! this.props.jetpackConnectSite.isDismissed &&
+			! config.isEnabled( 'jetpack/connect/remote-install' )
 		) {
-			if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-				page.redirect( `${ JPC_PATH_REMOTE_INSTALL }` );
-				return null;
-			}
-
 			return this.renderInstructions( this.getInstructionsData( status ) );
 		}
 		return this.renderSiteEntry();
