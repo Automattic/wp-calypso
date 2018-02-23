@@ -92,7 +92,7 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
-export const saveJetpackSettings = ( { dispatch, getState }, action ) => {
+export const saveJetpackSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
 	dispatch( updateJetpackSettings( siteId, action.settings ) );
