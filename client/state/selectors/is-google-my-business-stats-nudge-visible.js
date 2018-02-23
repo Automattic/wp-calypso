@@ -8,8 +8,8 @@ import { getSiteOption, getSitePlanSlug } from 'state/sites/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import { getPreference } from 'state/preferences/selectors';
 
-const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
-const TWO_WEEKS_IN_SECONDS = 2 * WEEK_IN_SECONDS;
+const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
+const MAX_DISMISS = 2;
 
 /**
  * Returns true if site has promote goal set
@@ -39,38 +39,39 @@ const siteHasBusinessPlan = createSelector(
 );
 
 /**
- * Returns true if nudge for the site had not yet been dismissed
+ * Returns the number of times the current user dismissed the nudge
  *
  * @param  {Object}  state  Global state tree
- * @param  {String}  siteId The Site ID
- * @return {Boolean} True if nudge has not been dismissed for site
+ * @return {Number}  Count the number of times the nudge has been dismissed
  */
-const notYetDismissed = createSelector(
-	( state, siteId ) =>
-		null === getPreference( state, 'google-my-business-dismissible-nudge-' + siteId.toString() ),
-	( state, siteId ) => [
-		getPreference( state, 'google-my-business-dismissible-nudge-' + siteId.toString() ),
-	]
-);
+const getDismissCount = state => {
+	const preference = getPreference( state, 'google-my-business-dismissible-nudge' );
+	return preference.timesDismissed || 0;
+};
 
 /**
- * Returns true if the nudge for the site been dismissed more than two weeks ago
+ * Returns the last time the nudge was dismissed by the current user or 0 if it was never dismissed
  *
  * @param  {Object}  state  Global state tree
- * @param  {String}  siteId The Site ID
- * @return {Boolean} True if the nudge for the site been dismissed more than two weeks ago
+ * @return {Number}  Timestamp marking the last time the nudge was dismissed
  */
-const twoWeeksSinceFirstDismissal = ( state, siteId ) => {
-	const preference = getPreference(
-		state,
-		'google-my-business-dismissible-nudge-' + siteId.toString()
-	);
-	return (
-		preference &&
-		preference.timesDismissed === 1 &&
-		preference.lastDismissed + TWO_WEEKS_IN_SECONDS * 1000 < Date.now()
-	);
+const getLastDismissTime = state => {
+	const preference = getPreference( state, 'google-my-business-dismissible-nudge' );
+	return preference.timesDismissed || 0;
 };
+
+/**
+ * Returns false if the Google My Business nudge has been dismissed by the current user
+ * - less than MAX_DISMISS times
+ * - more than 2 weeks ago
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Boolean} True if the nudge has been dismissed
+ */
+const isGoogleMyBusinessStatsNudgeDismissed = state =>
+	getDismissCount( state ) < MAX_DISMISS
+		? getLastDismissTime( state ) + 2 * WEEK_IN_MS > Date.now()
+		: false;
 
 /**
  * Returns true if the Google My Business (GMB) nudge should be visible in stats
@@ -87,14 +88,13 @@ const twoWeeksSinceFirstDismissal = ( state, siteId ) => {
  */
 const isGoogleMyBusinessStatsNudgeVisible = ( state, siteId ) => {
 	const createdAt = getSiteOption( state, siteId, 'created_at' );
-	const isWeekPassedSinceSiteCreation =
-		Date.parse( createdAt ) + WEEK_IN_SECONDS * 1000 < Date.now();
+	const isWeekPassedSinceSiteCreation = Date.parse( createdAt ) + WEEK_IN_MS < Date.now();
 
 	return (
 		isWeekPassedSinceSiteCreation &&
 		siteHasBusinessPlan( state, siteId ) &&
 		siteHasPromoteGoal( state, siteId ) &&
-		( notYetDismissed( state, siteId ) || twoWeeksSinceFirstDismissal( state, siteId ) )
+		! isGoogleMyBusinessStatsNudgeDismissed( state )
 	);
 };
 

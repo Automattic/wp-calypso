@@ -25,7 +25,6 @@ import { getPreference } from 'state/preferences/selectors';
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
-		siteId: PropTypes.number.isRequired,
 		trackNudgeAlreadyListedClick: PropTypes.func.isRequired,
 		trackNudgeDismissClick: PropTypes.func.isRequired,
 		trackNudgeStartNowClick: PropTypes.func.isRequired,
@@ -95,15 +94,10 @@ class GoogleMyBusinessStatsNudge extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			nudgePreference: getPreference(
-				state,
-				'google-my-business-dismissible-nudge-' + ownProps.siteId.toString()
-			),
-		};
-	},
-	( dispatch, ownProps ) =>
+	state => ( {
+		nudgePreference: getPreference( state, 'google-my-business-dismissible-nudge' ),
+	} ),
+	dispatch =>
 		bindActionCreators(
 			{
 				trackNudgeView: () =>
@@ -117,13 +111,10 @@ export default connect(
 						'calypso_test_google_my_business_stats_nudge_already_button_listed_click'
 					),
 				dismissNudge: nudgePreference => {
-					return savePreference(
-						'google-my-business-dismissible-nudge-' + ownProps.siteId.toString(),
-						{
-							lastDismissed: Date.now(),
-							timesDismissed: nudgePreference ? 1 + nudgePreference.timesDismissed : 1,
-						}
-					);
+					return savePreference( 'google-my-business-dismissible-nudge', {
+						lastDismissed: Date.now(),
+						timesDismissed: nudgePreference ? 1 + nudgePreference.timesDismissed : 1,
+					} );
 				},
 			},
 			dispatch
