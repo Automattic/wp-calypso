@@ -20,6 +20,7 @@ module.exports = {
 	plugins: [
 		'jest',
 		'jsx-a11y',
+		'import',
 	],
 	rules: {
 		camelcase: 0, // REST API objects include underscores
@@ -32,6 +33,8 @@ module.exports = {
 		'wpcalypso/jsx-classname-namespace': [ 2, {
 			rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
 		} ],
-		'wpcalypso/import-no-redux-combine-reducers': 2
+		'wpcalypso/import-no-redux-combine-reducers': 2,
+		'import/no-nodejs-modules': [ 'error', { allow: [ 'querystring', 'url', 'events' ] } ],
+		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
 	}
 };
