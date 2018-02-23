@@ -149,6 +149,7 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => localforage.clear( () => location.reload( true ) );
 		window.saveState = saveState;
+		window.localforage = localforage;
 
 		const savedStateId = ( get( window, 'location.search', '' ).match(
 			/[?&]restoreState=(.*?)(?:&|$)/
