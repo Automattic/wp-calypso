@@ -30,6 +30,7 @@ export class HappychatButton extends Component {
 	static propTypes = {
 		allowMobileRedirect: PropTypes.bool,
 		borderless: PropTypes.bool,
+		primary: PropTypes.bool,
 		getAuth: PropTypes.func,
 		initConnection: PropTypes.func,
 		isChatActive: PropTypes.bool,

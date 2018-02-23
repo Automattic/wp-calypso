@@ -1,6 +1,6 @@
 /** @format */
 
-.disconnect-jetpack {
+.disconnect-jetpack__block {
 	text-align: center;
 	max-width: 400px;
 	color: $gray-darken-20;
@@ -49,6 +49,16 @@
 	}
 }
 
+.disconnect-jetpack__try-rewind-button-wrap {
+	.button {
+		margin: 0 4px;
+	}
+
+	.gridicon {
+		margin-right: 5px;
+	}
+}
+
 .disconnect-jetpack__more-info-link {
 	font-size: 13px;
 }
@@ -60,7 +70,7 @@
 }
 
 .disconnect-jetpack-dialog {
-	.disconnect-jetpack {
+	.disconnect-jetpack__block {
 		margin-bottom: 0;
 	}
 }
