@@ -104,7 +104,6 @@
     "marked": "0.3.9",
     "mkdirp": "0.5.1",
     "moment": "2.19.2",
-    "moment-timezone": "0.5.14",
     "morgan": "1.2.0",
     "ms": "0.7.1",
     "name-all-modules-plugin": "1.0.1",
