@@ -9,7 +9,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { noop, isEqual, partial } from 'lodash';
-import path from 'path';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -21,7 +20,7 @@ import Notice from 'components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import { getMimeType, url } from 'lib/media/utils';
+import { getMimeType, url, basename } from 'lib/media/utils';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
@@ -116,7 +115,7 @@ class ImageEditor extends React.Component {
 					photon: site && ! site.is_private,
 				} );
 
-			fileName = media.file || path.basename( src );
+			fileName = media.file || basename( src );
 
 			mimeType = getMimeType( media ) || mimeType;
 

@@ -3,7 +3,6 @@
  * External dependencies
  */
 import urlLib from 'url';
-import path from 'path';
 import photon from 'photon';
 import { includes, omitBy, startsWith, get } from 'lodash';
 import { isUri } from 'valid-url';
@@ -25,6 +24,17 @@ import impureLodash from 'lib/impure-lodash';
 import versionCompare from 'lib/version-compare';
 
 const { uniqueId } = impureLodash;
+
+/**
+ * Taken from the official browserify 'path' polyfill: https://github.com/substack/path-browserify/blob/master/index.js
+ *
+ * Split a filename into [root, dir, basename, ext], unix version
+ * 'root' is just a slash, or nothing.
+ */
+const splitPathRe = /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+const splitPath = filename => splitPathRe.exec( filename ).slice( 1 );
+export const extname = path => splitPath( path )[ 3 ];
+export const basename = path => splitPath( path )[ 2 ];
 
 /**
  * Module variables
@@ -108,14 +118,14 @@ export function getFileExtension( media ) {
 			filePath = media;
 		}
 
-		extension = path.extname( filePath ).slice( 1 );
+		extension = extname( filePath ).slice( 1 );
 	} else if ( isFileObject ) {
-		extension = path.extname( media.name ).slice( 1 );
+		extension = extname( media.name ).slice( 1 );
 	} else if ( media.extension ) {
 		extension = media.extension;
 	} else {
 		const pathname = urlLib.parse( media.URL || media.file || media.guid || '' ).pathname || '';
-		extension = path.extname( pathname ).slice( 1 );
+		extension = extname( pathname ).slice( 1 );
 	}
 
 	return extension;
@@ -538,7 +548,7 @@ export function createTransientMedia( file ) {
 		// Generate from string
 		Object.assign( transientMedia, {
 			file: file,
-			title: path.basename( file ),
+			title: basename( file ),
 			extension: getFileExtension( file ),
 			mime_type: getMimeType( file ),
 		} );
@@ -566,7 +576,7 @@ export function createTransientMedia( file ) {
 			URL: fileUrl,
 			guid: fileUrl,
 			file: fileName,
-			title: file.title || path.basename( fileName ),
+			title: file.title || basename( fileName ),
 			extension: getFileExtension( file.fileName || fileContents ),
 			mime_type: getMimeType( file.fileName || fileContents ),
 			// Size is not an API media property, though can be useful for

@@ -9,7 +9,6 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import path from 'path';
 import Gridicon from 'gridicons';
 
 /**
@@ -34,6 +33,7 @@ import ExternalLink from 'components/external-link';
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
 import DropZone from 'components/drop-zone';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
+import { extname } from 'lib/media/utils';
 
 export class EditGravatar extends Component {
 	state = {
@@ -59,8 +59,7 @@ export class EditGravatar extends Component {
 			translate,
 			recordReceiveImageEvent,
 		} = this.props;
-		const extension = path
-			.extname( files[ 0 ].name )
+		const extension = extname( files[ 0 ].name )
 			.toLowerCase()
 			.substring( 1 );
 
