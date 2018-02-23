@@ -137,7 +137,7 @@ class InlineHelp extends Component {
 							<Gridicon icon="comment" /> { translate( 'Contact us' ) }
 							<Gridicon icon={ showContactForm ? 'chevron-up' : 'chevron-down' } className="inline-help__button-icon-right" />
 						</Button>
-						{ showContactForm && <HelpContact selectedSite={ this.props.selectedSite } /> }
+						{ showContactForm && <HelpContact compact={ true } selectedSite={ this.props.selectedSite } /> }
 						<Button onClick={ this.moreHelpClicked } className="inline-help__button" borderless href="/help">
 							<Gridicon icon="help" /> { translate( 'More help' ) }
 						</Button>

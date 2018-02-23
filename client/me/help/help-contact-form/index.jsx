@@ -313,6 +313,7 @@ export class HelpContactForm extends React.PureComponent {
 			showHowYouFeelField,
 			showSubjectField,
 			showSiteField,
+			showQASuggestions,
 			showHelpLanguagePrompt,
 			translate,
 		} = this.props;
@@ -388,9 +389,11 @@ export class HelpContactForm extends React.PureComponent {
 					</div>
 				) }
 
-				<FormLabel>{ translate( 'What are you trying to do?' ) }</FormLabel>
+				<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
 				<FormTextarea
-					placeholder={ translate( 'Please be descriptive' ) }
+					placeholder={ translate(
+						'Ask away! One of our Happiness Engineers will be with you soon.'
+					) }
 					name="message"
 					value={ this.state.message }
 					onChange={ this.handleChange }
@@ -402,12 +405,14 @@ export class HelpContactForm extends React.PureComponent {
 					</strong>
 				) }
 
-				<HelpResults
-					header={ translate( 'Do you want the answer to any of these questions?' ) }
-					helpLinks={ this.state.qanda }
-					iconTypeDescription="book"
-					onClick={ this.trackSibylClick }
-				/>
+				{ showQASuggestions && (
+					<HelpResults
+						header={ translate( 'Do you want the answer to any of these questions?' ) }
+						helpLinks={ this.state.qanda }
+						iconTypeDescription="book"
+						onClick={ this.trackSibylClick }
+					/>
+				) }
 
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 					{ buttonLabel }

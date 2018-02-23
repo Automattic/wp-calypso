@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
@@ -80,6 +81,14 @@ const startShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Fri, 29 Dec 2017 00
 const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
+	static propTypes = {
+		compact: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		compact: false,
+	};
+
 	state = {
 		confirmation: null,
 		isSubmitting: false,
@@ -311,6 +320,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
 					showSiteField: hasMoreThanOneSite,
+					showQASuggestions: true,
 				};
 
 			case SUPPORT_TICKET:
@@ -321,6 +331,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
 					showSiteField: hasMoreThanOneSite,
+					showQASuggestions: true,
 				};
 
 			case SUPPORT_DIRECTLY:
@@ -346,6 +357,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
 					showSiteField: false,
+					showQASuggestions: true,
 				};
 
 			default:
@@ -370,6 +382,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
 					showSiteField: false,
+					showQASuggestions: true,
 				};
 		}
 	};
@@ -389,6 +402,7 @@ class HelpContact extends React.Component {
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
+			compact: this.props.compact,
 			selectedSite: this.props.selectedSite,
 			disabled: isSubmitting,
 			showHelpLanguagePrompt: showHelpLanguagePrompt,
@@ -427,6 +441,19 @@ class HelpContact extends React.Component {
 		return (
 			this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly
 		);
+	};
+
+	// Modifies passed props for the "compact" contact form style.
+	contactFormPropsCompactFilter = props => {
+		if ( this.props.compact ) {
+			return Object.assign( props, {
+				showSubjectField: false,
+				showHowCanWeHelpField: false,
+				showHowYouFeelField: false,
+				showQASuggestions: false,
+			} );
+		}
+		return props;
 	};
 
 	/**
@@ -482,7 +509,7 @@ class HelpContact extends React.Component {
 
 		const contactFormProps = Object.assign(
 			this.getContactFormCommonProps( supportVariation ),
-			this.getContactFormPropsVariation( supportVariation )
+			this.contactFormPropsCompactFilter( this.getContactFormPropsVariation( supportVariation ) )
 		);
 
 		const currentDate = i18n.moment();
@@ -524,9 +551,11 @@ class HelpContact extends React.Component {
 	render() {
 		return (
 			<Main className="help-contact">
-				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
-					{ this.props.translate( 'Contact Us' ) }
-				</HeaderCake>
+				{ ! this.props.compact && (
+					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
+						{ this.props.translate( 'Contact Us' ) }
+					</HeaderCake>
+				) }
 				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }

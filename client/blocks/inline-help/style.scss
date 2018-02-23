@@ -67,17 +67,26 @@
 		}
 	}
 	.help-contact {
-		.header-cake {
-			display: none;
-		}
-		.help-results {
-			display: none;
-		}
 		.help-contact__form {
 			margin: 0;
 			.sites-dropdown__wrapper {
 				max-width: 100%;
+				.site__content {
+					padding: 8px;
+				}
 			}
+		}
+		.form-label {
+			text-align: left;
+		}
+		button {
+			width: 100%;
+		}
+		.sites-dropdown .site-selector .search {
+			top: 51px;
+		}
+		.sites-dropdown .site-selector__sites {
+			max-height: 20vh;
 		}
 	}
 }
