@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { momentLib } from 'i18n-calypso';
+import { moment as momentLib } from 'i18n-calypso';
 
 /**
  * @typedef OffsetParams
