@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { map, reduce, noop, compact } from 'lodash';
+import { map, reduce, noop, compact, filter, reject } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -18,6 +18,7 @@ import { localize } from 'i18n-calypso';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesActions from './actions';
+import PlanFeaturesBottom from './bottom';
 import {
 	isCurrentPlanPaid,
 	isCurrentSitePlan,
@@ -87,6 +88,7 @@ class PlanFeatures extends Component {
 						</table>
 					</div>
 				</div>
+				{ isInSignup && this.renderFarBottomAction() }
 			</div>
 		);
 	}
@@ -475,6 +477,54 @@ class PlanFeatures extends Component {
 		} );
 	}
 
+	renderFarBottomAction() {
+		const {
+			canPurchase,
+			isInSignup,
+			isLandingPage,
+			freePlanProperties,
+			site,
+			selectedPlan,
+		} = this.props;
+		const {
+			available,
+			current,
+			onUpgradeClick,
+			planName,
+			primaryUpgrade,
+			isPlaceholder,
+			planConstantObj,
+			popular,
+		} =
+			freePlanProperties || {};
+
+		if ( ! freePlanProperties ) {
+			return null;
+		}
+
+		return (
+			<PlanFeaturesBottom>
+				<PlanFeaturesActions
+					available={ available }
+					canPurchase={ canPurchase }
+					className={ getPlanClass( planName ) }
+					current={ current }
+					freePlan={ isFreePlan( planName ) }
+					isInSignup={ isInSignup }
+					isLandingPage={ isLandingPage }
+					isPlaceholder={ isPlaceholder }
+					isPopular={ popular }
+					manageHref={ `/plans/my-plan/${ site.slug }` }
+					planName={ planConstantObj.getTitle() }
+					planType={ planName }
+					primaryUpgrade={ primaryUpgrade }
+					onUpgradeClick={ onUpgradeClick }
+					selectedPlan={ selectedPlan }
+				/>
+			</PlanFeaturesBottom>
+		);
+	}
+
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -503,6 +553,10 @@ PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 };
 
+function filterFreePlan( { planName } ) {
+	return isFreePlan( planName );
+}
+
 export default connect(
 	( state, ownProps ) => {
 		const {
@@ -521,7 +575,8 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
-		const planProperties = compact(
+		let freePlanProperties = null;
+		let planProperties = compact(
 			map( plans, plan => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -617,9 +672,16 @@ export default connect(
 			} )
 		);
 
+		if ( isInSignup && abtest( 'minimizeFreePlan' ) === 'minimized' ) {
+			freePlanProperties = filter( planProperties, filterFreePlan );
+			freePlanProperties = freePlanProperties[ 0 ] || null;
+			planProperties = reject( planProperties, filterFreePlan );
+		}
+
 		return {
 			canPurchase,
 			planProperties,
+			freePlanProperties,
 			siteType,
 		};
 	},

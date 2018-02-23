@@ -402,6 +402,7 @@ class PlansFeaturesMain extends Component {
 				{ this.getPlanFeatures() }
 				<PaymentMethods />
 				{ faqs }
+				<div className="plans-features-main__bottom" />
 			</div>
 		);
 	}
