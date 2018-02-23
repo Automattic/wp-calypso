@@ -17,7 +17,7 @@ import {
 import { JETPACK_SETTINGS_SAVE, JETPACK_ONBOARDING_SETTINGS_UPDATE } from 'state/action-types';
 import {
 	saveJetpackOnboardingSettingsSuccess,
-	updateJetpackOnboardingSettings,
+	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
 
 describe( 'requestJetpackOnboardingSettings()', () => {
@@ -208,7 +208,7 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 				action
 			)
 		);
-		expect( dispatch ).toHaveBeenCalledWith( updateJetpackOnboardingSettings( siteId, settings ) );
+		expect( dispatch ).toHaveBeenCalledWith( updateJetpackSettings( siteId, settings ) );
 	} );
 
 	test( 'should pass null token and user email in save request when site credentials are unknown', () => {
