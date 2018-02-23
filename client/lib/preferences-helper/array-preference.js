@@ -19,7 +19,9 @@ class ArrayPreference extends Component {
 
 		return (
 			<ul className="preferences-helper__list">
-				{ value.map( ( preference, index ) => <li key={ index }>{ preference }</li> ) }
+				{ value.map( ( preference, index ) => (
+					<li key={ index }>{ JSON.stringify( preference ) }</li>
+				) ) }
 			</ul>
 		);
 	}
