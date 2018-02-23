@@ -5,7 +5,8 @@
  */
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
-import moment from 'moment-timezone';
+import i18n from 'i18n-calypso';
+const moment = i18n.moment;
 
 /**
  * Internal dependencies
