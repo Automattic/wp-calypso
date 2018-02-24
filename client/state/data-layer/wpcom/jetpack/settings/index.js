@@ -13,7 +13,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { JETPACK_ONBOARDING_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
-import { getUnconnectedSite, getUnconnectedSiteUrl } from 'state/selectors';
+import { getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
@@ -30,8 +30,12 @@ export const fromApi = response => {
 	return response.data;
 };
 
-const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
-	dispatch( updateJetpackSettings( siteId, settings ) );
+const receiveJetpackOnboardingSettings = (
+	{ dispatch },
+	{ siteId },
+	{ token, jpUser, ...settings } // eslint-disable-line no-unused-vars
+) => {
+	dispatch( updateJetpackSettings( siteId, ...settings ) );
 };
 
 /**
@@ -43,12 +47,8 @@ const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) 
  * @param   {Object}   action         Redux action
  * @returns {Object}   Dispatched http action
  */
-export const requestJetpackOnboardingSettings = ( { dispatch, getState }, action ) => {
-	const { siteId } = action;
-	const state = getState();
-	const credentials = getUnconnectedSite( state, siteId );
-	const token = get( credentials, 'token' );
-	const jpUser = get( credentials, 'userEmail' );
+export const requestJetpackSettings = ( { dispatch, getState }, action ) => {
+	const { siteId, query } = action;
 
 	return dispatch(
 		http(
@@ -58,12 +58,7 @@ export const requestJetpackOnboardingSettings = ( { dispatch, getState }, action
 				path: '/jetpack-blogs/' + siteId + '/rest-api/',
 				query: {
 					path: '/jetpack/v4/settings/',
-					query: JSON.stringify( {
-						onboarding: {
-							token,
-							jpUser,
-						},
-					} ),
+					query: JSON.stringify( query ),
 					json: true,
 				},
 			},
@@ -163,7 +158,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
 		dispatchRequest(
-			requestJetpackOnboardingSettings,
+			requestJetpackSettings,
 			receiveJetpackOnboardingSettings,
 			announceRequestFailure,
 			{
