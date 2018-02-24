@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
-import { jetpackOnboardingCredentialsSchema, jetpackOnboardingSettingsSchema } from './schema';
+import { jetpackOnboardingCredentialsSchema, jetpackSettingsSchema } from './schema';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
@@ -32,7 +32,7 @@ export const settingsReducer = keyedReducer(
 				...settings,
 			} ),
 		},
-		jetpackOnboardingSettingsSchema
+		jetpackSettingsSchema
 	)
 );
 settingsReducer.hasCustomPersistence = true;
