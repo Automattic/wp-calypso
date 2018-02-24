@@ -42,7 +42,7 @@ fieldMasks[ 'expiration-date' ] = {
 };
 
 export const formatAmexCreditCard = function( cardNumber ) {
-	const digits = cardNumber.replace( /[^0-9]/g, '' );
+	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 15 );
 	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 10 ) } ${ digits.slice(
 		10,
 		15
@@ -51,7 +51,7 @@ export const formatAmexCreditCard = function( cardNumber ) {
 };
 
 export const formatCreditCard = function( cardNumber ) {
-	const digits = cardNumber.replace( /[^0-9]/g, '' );
+	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 19 );
 	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 8 ) } ${ digits.slice(
 		8,
 		12

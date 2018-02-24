@@ -111,6 +111,9 @@ describe( 'index', () => {
 			test( 'formats a number as 4-6-5 with any sort of whitespace', () => {
 				expect( formatAmexCreditCard( ' 3782 8224 6310 005 ' ) ).toEqual( '3782 822463 10005' );
 			} );
+			test( 'formats a number as 4-6-5 and trims to 15 digits', () => {
+				expect( formatAmexCreditCard( '37828224631000512345' ) ).toEqual( '3782 822463 10005' );
+			} );
 		} );
 		describe( 'Diner Credit Cards', () => {
 			test( 'formats a number as 4-4-4-2', () => {
@@ -129,6 +132,11 @@ describe( 'index', () => {
 			} );
 			test( '19 digit cards format as 4-4-4-7', () => {
 				expect( formatCreditCard( '6011496233608973938' ) ).toEqual( '6011 4962 3360 8973938' );
+			} );
+			test( 'has a maximum length of 19', () => {
+				expect( formatCreditCard( '6011496233608973938123456789' ) ).toEqual(
+					'6011 4962 3360 8973938'
+				);
 			} );
 		} );
 	} );
