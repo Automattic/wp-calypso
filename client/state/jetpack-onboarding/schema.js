@@ -56,7 +56,7 @@ export const jetpackOnboardingSettingsSchema = {
 
 export const jetpackSettingsSchema = {
 	type: 'object',
-	additionalProperties: false,
+	additionalProperties: true,
 	properties: {
 		onboarding: jetpackOnboardingSettingsSchema,
 	},

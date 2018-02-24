@@ -23,11 +23,11 @@ import { trailingslashit } from 'lib/route';
 export const MAX_WOOCOMMERCE_INSTALL_RETRIES = 2;
 
 export const fromApi = response => {
-	if ( ! response.data || ! response.data.onboarding ) {
-		throw new Error( 'missing onboarding settings' );
+	if ( ! response.data ) {
+		throw new Error( 'missing settings' );
 	}
 
-	return response.data.onboarding;
+	return response.data;
 };
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
