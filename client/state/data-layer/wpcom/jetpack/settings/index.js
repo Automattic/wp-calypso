@@ -137,7 +137,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 	// since it might just be a slow server that actually ends up installing it
 	// properly, in which case a subsequent request will return 'success'.
 	if (
-		get( settings, 'installWooCommerce' ) !== true ||
+		get( settings, [ 'onboarding', 'installWooCommerce' ] ) !== true ||
 		! startsWith( errorMessage, 'cURL error 28' ) || // cURL timeout
 		retryCount > MAX_WOOCOMMERCE_INSTALL_RETRIES
 	) {
