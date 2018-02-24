@@ -47,7 +47,7 @@ const receiveJetpackOnboardingSettings = (
  * @param   {Object}   action         Redux action
  * @returns {Object}   Dispatched http action
  */
-export const requestJetpackSettings = ( { dispatch, getState }, action ) => {
+export const requestJetpackSettings = ( { dispatch }, action ) => {
 	const { siteId, query } = action;
 
 	return dispatch(
