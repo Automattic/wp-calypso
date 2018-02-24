@@ -56,14 +56,11 @@ import {
 	domainManagementTransferToOtherSite,
 } from 'my-sites/domains/paths';
 import SitesComponent from 'my-sites/sites';
-import { isATEnabled } from 'lib/automated-transfer';
 import { warningNotice } from 'state/notices/actions';
 import { makeLayout, render as clientRender } from 'controller';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import EmptyContentComponent from 'components/empty-content';
 import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
-import Main from 'components/main';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -439,24 +436,6 @@ export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
 	context.secondary = createNavigation( context );
 	next();
-}
-
-export function jetPackWarning( context, next ) {
-	const { getState } = getStore( context );
-	const basePath = sectionify( context.path );
-	const selectedSite = getSelectedSite( getState() );
-
-	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
-		context.primary = (
-			<Main>
-				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
-			</Main>
-		);
-
-		analytics.pageView.record( basePath, '> No Domains On Jetpack' );
-	} else {
-		next();
-	}
 }
 
 /**

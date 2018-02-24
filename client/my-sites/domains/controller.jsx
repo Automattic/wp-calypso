@@ -6,7 +6,7 @@ import page from 'page';
 import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 import React from 'react';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -28,6 +28,9 @@ import TransferDomain from 'my-sites/domains/transfer-domain';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import GoogleApps from 'components/upgrades/google-apps';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';
+import { isATEnabled } from 'lib/automated-transfer';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import { makeLayout, render as clientRender } from 'controller';
 
 /**
  * Module variables
@@ -226,10 +229,32 @@ const redirectToAddMappingIfVipSite = () => {
 	};
 };
 
+const jetpackNoDomainsWarning = ( context, next ) => {
+	const state = context.store.getState();
+	const basePath = sectionify( context.path );
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && selectedSite.jetpack && ! isATEnabled( selectedSite ) ) {
+		context.primary = (
+			<Main>
+				<JetpackManageErrorPage template="noDomainsOnJetpack" siteId={ selectedSite.ID } />
+			</Main>
+		);
+
+		analytics.pageView.record( basePath, '> No Domains On Jetpack' );
+
+		makeLayout( context, noop );
+		clientRender( context );
+	} else {
+		next();
+	}
+};
+
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
+	jetpackNoDomainsWarning,
 	siteRedirect,
 	mapDomain,
 	googleAppsWithRegistration,
