@@ -23,11 +23,13 @@ import {
 import {
 	getJetpackOnboardingSettings,
 	getRequest,
+	getUnconnectedSite,
 	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import {
-	requestJetpackOnboardingSettings,
+	requestJetpackSettings,
 	saveJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
 
@@ -113,7 +115,20 @@ export default connect(
 		const siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
 		const settings = getJetpackOnboardingSettings( state, siteId );
 		const isBusiness = get( settings, 'siteType' ) === 'business';
-		const isRequestingSettings = getRequest( state, requestJetpackOnboardingSettings( siteId ) )
+
+		const isConnected = isJetpackSite( state, siteId );
+		let query;
+
+		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
+			const { token, jpUser } = getUnconnectedSite( state, siteId );
+			query = {
+				onboarding: {
+					token,
+					jpUser,
+				},
+			};
+		}
+		const isRequestingSettings = getRequest( state, requestJetpackSettings( siteId, query ) )
 			.isLoading;
 
 		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
@@ -130,6 +145,7 @@ export default connect(
 		] );
 		return {
 			isRequestingSettings,
+			query,
 			siteId,
 			siteSlug,
 			settings,
