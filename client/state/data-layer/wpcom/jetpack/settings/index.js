@@ -48,7 +48,7 @@ const receiveJetpackOnboardingSettings = (
  * @returns {Object}   Dispatched http action
  */
 export const requestJetpackSettings = ( { dispatch }, action ) => {
-	const { siteId, query } = action;
+	const { siteId, query, ...otherActionAttrs } = action;
 
 	return dispatch(
 		http(
@@ -62,7 +62,7 @@ export const requestJetpackSettings = ( { dispatch }, action ) => {
 					json: true,
 				},
 			},
-			action
+			{ siteId, ...otherActionAttrs } // Remove query if present
 		)
 	);
 };

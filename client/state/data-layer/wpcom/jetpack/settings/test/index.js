@@ -6,7 +6,7 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	MAX_WOOCOMMERCE_INSTALL_RETRIES,
-	requestJetpackOnboardingSettings,
+	requestJetpackSettings,
 	saveJetpackSettings,
 	handleSaveSuccess,
 	announceRequestFailure,
@@ -20,7 +20,7 @@ import {
 	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
 
-describe( 'requestJetpackOnboardingSettings()', () => {
+describe( 'requestJetpackSettings()', () => {
 	const dispatch = jest.fn();
 	const token = 'abcd1234';
 	const userEmail = 'example@yourgroovydomain.com';
@@ -32,18 +32,7 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 	};
 
 	test( 'should dispatch an action for GET HTTP request to save Jetpack Onboarding settings', () => {
-		const getState = () => ( {
-			jetpackOnboarding: {
-				credentials: {
-					[ siteId ]: {
-						token,
-						userEmail,
-					},
-				},
-			},
-		} );
-
-		requestJetpackOnboardingSettings( { dispatch, getState }, action );
+		requestJetpackSettings( { dispatch }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -53,12 +42,7 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 					path: '/jetpack-blogs/' + siteId + '/rest-api/',
 					query: {
 						path: '/jetpack/v4/settings/',
-						query: JSON.stringify( {
-							onboarding: {
-								token,
-								jpUser: userEmail,
-							},
-						} ),
+						query: undefined,
 						json: true,
 					},
 				},
@@ -67,14 +51,21 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 		);
 	} );
 
-	test( 'should pass null token and user email in save request when site credentials are unknown', () => {
-		const getState = () => ( {
-			jetpackOnboarding: {
-				credentials: {},
+	test( 'should dispatch an action for GET HTTP request with a query including token and jpUser', () => {
+		const query = {
+			onboarding: {
+				token,
+				jpUser: userEmail,
 			},
-		} );
+		};
 
-		requestJetpackOnboardingSettings( { dispatch, getState }, action );
+		requestJetpackSettings(
+			{ dispatch },
+			{
+				...action,
+				query,
+			}
+		);
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -84,12 +75,7 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 					path: '/jetpack-blogs/' + siteId + '/rest-api/',
 					query: {
 						path: '/jetpack/v4/settings/',
-						query: JSON.stringify( {
-							onboarding: {
-								token,
-								jpUser: userEmail,
-							},
-						} ),
+						query: JSON.stringify( query ),
 						json: true,
 					},
 				},
@@ -241,7 +227,9 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 	const dispatch = jest.fn();
 	const siteId = 12345678;
 	const settings = {
-		installWooCommerce: true,
+		onboarding: {
+			installWooCommerce: true,
+		},
 	};
 	const action = {
 		type: JETPACK_SETTINGS_SAVE,
@@ -309,13 +297,10 @@ describe( 'fromApi', () => {
 		expect( () => fromApi( response ) ).toThrow( 'missing settings' );
 	} );
 
-	test( 'should throw an error if no onboarding settings are given', () => {
-		const response = { data: { noOnboarding: {} } };
-		expect( () => fromApi( response ) ).toThrow( 'missing settings' );
-	} );
-
-	test( 'should return onboarding settings object if present', () => {
+	test( 'should return data if present', () => {
 		const response = { data: { onboarding: { siteTitle: 'Yet Another Site Title' } } };
-		expect( fromApi( response ) ).toEqual( { siteTitle: 'Yet Another Site Title' } );
+		expect( fromApi( response ) ).toEqual( {
+			onboarding: { siteTitle: 'Yet Another Site Title' },
+		} );
 	} );
 } );
