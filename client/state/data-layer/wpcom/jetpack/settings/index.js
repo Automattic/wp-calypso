@@ -35,7 +35,7 @@ const receiveJetpackOnboardingSettings = (
 	{ siteId },
 	{ token, jpUser, ...settings } // eslint-disable-line no-unused-vars
 ) => {
-	dispatch( updateJetpackSettings( siteId, ...settings ) );
+	dispatch( updateJetpackSettings( siteId, settings ) );
 };
 
 /**
