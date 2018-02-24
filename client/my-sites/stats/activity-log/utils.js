@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import momentLib from 'moment-timezone';
+import i18n from 'i18n-calypso';
 
 /**
  * @typedef OffsetParams
@@ -43,20 +43,20 @@ export function adjustMoment( { timezone, gmtOffset, moment } ) {
 export function getStartMoment( { gmtOffset, startDate, timezone } ) {
 	if ( timezone ) {
 		if ( ! startDate ) {
-			return momentLib().tz( timezone );
+			return i18n.moment().tz( timezone );
 		}
 
-		return momentLib.tz( startDate, timezone );
+		return i18n.moment.tz( startDate, timezone );
 	}
 
 	if ( null !== gmtOffset ) {
-		return momentLib
+		return i18n.moment
 			.utc( startDate )
 			.subtract( gmtOffset, 'hours' )
 			.utcOffset( gmtOffset );
 	}
 
-	return momentLib.utc( startDate );
+	return i18n.moment.utc( startDate );
 }
 
 /**

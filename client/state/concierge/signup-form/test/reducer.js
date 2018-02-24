@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import moment from 'moment-timezone';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -53,7 +53,7 @@ describe( 'concierge/signupForm/reducer', () => {
 
 	describe( 'timezone', () => {
 		test( 'should use the default detected timezone.', () => {
-			expect( timezone( undefined, {} ) ).toEqual( moment.tz.guess() );
+			expect( timezone( undefined, {} ) ).toEqual( i18n.moment.tz.guess() );
 		} );
 
 		test( 'should return the timezone of the update action', () => {
@@ -86,7 +86,7 @@ describe( 'concierge/signupForm/reducer', () => {
 			expect( signupForm( undefined, {} ) ).toEqual( {
 				firstname: '',
 				lastname: '',
-				timezone: moment.tz.guess(),
+				timezone: i18n.moment.tz.guess(),
 				message: '',
 				status: null,
 			} );

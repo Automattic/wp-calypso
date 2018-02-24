@@ -5,7 +5,7 @@
  */
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
-import moment from 'moment-timezone';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -411,7 +411,7 @@ export const isEditedPostDirty = createSelector(
 			if ( post ) {
 				switch ( key ) {
 					case 'date': {
-						return ! moment( value ).isSame( post.date );
+						return ! i18n.moment( value ).isSame( post.date );
 					}
 					case 'parent': {
 						return get( post, 'parent.ID', 0 ) !== value;
@@ -446,7 +446,7 @@ export const isPostPublished = createSelector( ( state, siteId, postId ) => {
 
 	return (
 		includes( [ 'publish', 'private' ], post.status ) ||
-		( post.status === 'future' && moment( post.date ).isBefore( moment() ) )
+		( post.status === 'future' && i18n.moment( post.date ).isBefore( i18n.moment() ) )
 	);
 }, state => state.posts.queries );
 
