@@ -306,12 +306,12 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 describe( 'fromApi', () => {
 	test( 'should throw an error if no data field is set', () => {
 		const response = { noData: { onboarding: {} } };
-		expect( () => fromApi( response ) ).toThrow( 'missing onboarding settings' );
+		expect( () => fromApi( response ) ).toThrow( 'missing settings' );
 	} );
 
 	test( 'should throw an error if no onboarding settings are given', () => {
 		const response = { data: { noOnboarding: {} } };
-		expect( () => fromApi( response ) ).toThrow( 'missing onboarding settings' );
+		expect( () => fromApi( response ) ).toThrow( 'missing settings' );
 	} );
 
 	test( 'should return onboarding settings object if present', () => {
