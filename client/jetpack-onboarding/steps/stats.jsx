@@ -23,7 +23,6 @@ import { addQueryArgs } from 'lib/route';
 import { getJetpackOnboardingPendingSteps, getUnconnectedSiteUrl } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingStatsStep extends React.Component {
 	componentDidUpdate() {
@@ -128,12 +127,9 @@ class JetpackOnboardingStatsStep extends React.Component {
 	}
 }
 
-export default connect(
-	( state, { settings, siteId, steps } ) => ( {
-		activatedStats: get( settings, 'stats' ) === true,
-		isConnected: isJetpackSite( state, siteId ),
-		siteUrl: getUnconnectedSiteUrl( state, siteId ),
-		stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
-	} ),
-	{ saveJetpackOnboardingSettings }
-)( localize( JetpackOnboardingStatsStep ) );
+export default connect( ( state, { settings, siteId, steps } ) => ( {
+	activatedStats: get( settings, 'stats' ) === true,
+	isConnected: isJetpackSite( state, siteId ),
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingStatsStep ) );

@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { get, map, omit, reduce, some } from 'lodash';
@@ -21,7 +20,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	static emptyState = {
@@ -158,6 +156,4 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	}
 }
 
-export default connect( null, { saveJetpackOnboardingSettings } )(
-	localize( JetpackOnboardingBusinessAddressStep )
-);
+export default localize( JetpackOnboardingBusinessAddressStep );

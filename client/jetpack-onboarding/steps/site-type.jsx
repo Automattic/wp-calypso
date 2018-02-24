@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -17,7 +16,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	handleSiteTypeSelection = siteType => () => {
@@ -73,6 +71,4 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	}
 }
 
-export default connect( null, { saveJetpackOnboardingSettings } )(
-	localize( JetpackOnboardingSiteTypeStep )
-);
+export default localize( JetpackOnboardingSiteTypeStep );

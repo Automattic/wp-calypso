@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import page from 'page';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -20,7 +19,6 @@ import JetpackOnboardingDisclaimer from '../disclaimer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import SiteTitle from 'components/site-title';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	state = {
@@ -120,6 +118,4 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	}
 }
 
-export default connect( null, { saveJetpackOnboardingSettings } )(
-	localize( JetpackOnboardingSiteTitleStep )
-);
+export default localize( JetpackOnboardingSiteTitleStep );
