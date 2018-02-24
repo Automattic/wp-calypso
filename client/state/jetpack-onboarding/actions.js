@@ -15,7 +15,6 @@ import {
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
-import { getUnconnectedSite } from 'state/selectors';
 
 export const receiveJetpackOnboardingCredentials = ( siteId, credentials ) => ( {
 	type: JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
@@ -33,22 +32,6 @@ export const requestJetpackSettings = ( siteId, query ) => ( {
 		},
 	},
 } );
-
-export const requestJetpackOnboardingSettings = siteId => ( dispatch, getState ) => {
-	const state = getState();
-	const credentials = getUnconnectedSite( state, siteId );
-	const token = get( credentials, 'token', null );
-	const jpUser = get( credentials, 'userEmail', null );
-
-	dispatch(
-		requestJetpackSettings( siteId, {
-			onboarding: {
-				token,
-				jpUser,
-			},
-		} )
-	);
-};
 
 export const saveJetpackSettings = ( siteId, settings ) => ( {
 	type: JETPACK_SETTINGS_SAVE,
