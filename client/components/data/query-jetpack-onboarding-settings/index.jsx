@@ -10,15 +10,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getRequest } from 'state/selectors';
-import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import { getRequest, getUnconnectedSite } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackOnboardingSettings extends Component {
 	static propTypes = {
+		isConnected: PropTypes.bool,
+		query: PropTypes.shape( {
+			jpUser: PropTypes.string,
+			token: PropTypes.number,
+		} ),
 		siteId: PropTypes.number,
 		// Connected props
 		requestingSettings: PropTypes.bool,
-		requestJetpackOnboardingSettings: PropTypes.func,
+		requestJetpackSettings: PropTypes.func,
 	};
 
 	componentWillMount() {
@@ -36,7 +42,7 @@ class QueryJetpackOnboardingSettings extends Component {
 			return;
 		}
 
-		props.requestJetpackOnboardingSettings( props.siteId );
+		props.requestJetpackSettings( props.siteId, props.query );
 	}
 
 	render() {
@@ -45,8 +51,25 @@ class QueryJetpackOnboardingSettings extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => ( {
-		requestingSettings: getRequest( state, requestJetpackOnboardingSettings( siteId ) ).isLoading,
-	} ),
-	{ requestJetpackOnboardingSettings }
+	( state, { siteId } ) => {
+		const isConnected = isJetpackSite( state, siteId );
+		let query;
+
+		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
+			const { token, jpUser } = getUnconnectedSite( state, siteId );
+			query = {
+				onboarding: {
+					token,
+					jpUser,
+				},
+			};
+		}
+
+		return {
+			isConnected,
+			query,
+			requestingSettings: getRequest( state, requestJetpackSettings( siteId, query ) ).isLoading,
+		};
+	},
+	{ requestJetpackSettings }
 )( QueryJetpackOnboardingSettings );
