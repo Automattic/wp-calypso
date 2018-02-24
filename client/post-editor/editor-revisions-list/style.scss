@@ -170,17 +170,24 @@
 		display: inline;
 		white-space: nowrap;
 	}
-
-	&::before {
-		content: '';
-		display: block;
-		box-sizing: border-box;
-		@include placeholder(23%);
-	}
 }
 
 .editor-revisions-list__revision {
 	display: inline;
+}
+
+.editor-revisions-list__revision-placeholder {
+	display: block;
+	padding: 8px 16px;
+	border-bottom: 1px solid #d9e3ea;
+	border-right: 1px solid #d9e3ea;
+
+	&:before {
+		content: '';
+		display: block;
+		height: 43px;
+		@include placeholder(23%);
+	}
 }
 
 .editor-revisions-list__load-revision {
@@ -188,7 +195,6 @@
 }
 
 // Individual Revision List Item
-.editor-revisions-list.is-loading .editor-revisions-list__list::before,
 .editor-revisions-list__button {
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 	border-right: 1px solid darken($sidebar-bg-color, 5%);

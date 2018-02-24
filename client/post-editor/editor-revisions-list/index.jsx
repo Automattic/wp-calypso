@@ -17,6 +17,7 @@ import EditorRevisionsListHeader from './header';
 import EditorRevisionsListNavigation from './navigation';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
+import { isRequestingPostRevisions } from 'state/selectors';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
@@ -24,6 +25,7 @@ class EditorRevisionsList extends PureComponent {
 		comparisons: PropTypes.object,
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
+		isRequestingRevisions: PropTypes.bool,
 		revisions: PropTypes.array.isRequired,
 		selectedRevisionId: PropTypes.number,
 		nextIsDisabled: PropTypes.bool,
@@ -45,13 +47,9 @@ class EditorRevisionsList extends PureComponent {
 	componentDidMount() {
 		// Make sure that scroll position in the editor is not preserved.
 		window.scrollTo( 0, 0 );
-
 		KeyboardShortcuts.on( 'move-selection-up', this.selectNextRevision );
 		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
-
-		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingLatestRevision();
-		}
+		this.trySelectingLatestRevision();
 	}
 
 	componentWillUnmount() {
@@ -137,12 +135,17 @@ class EditorRevisionsList extends PureComponent {
 			prevIsDisabled,
 			postId,
 			revisions,
+			isRequestingRevisions,
 			selectedRevisionId,
 			siteId,
 		} = this.props;
 		const classes = classNames( 'editor-revisions-list', {
-			'is-loading': isEmpty( revisions ),
+			'is-loading': isEmpty( revisions ) || isRequestingRevisions,
 		} );
+
+		if ( isEmpty( revisions ) ) {
+			return null;
+		}
 
 		return (
 			<div className={ classes }>
@@ -155,6 +158,10 @@ class EditorRevisionsList extends PureComponent {
 				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
+						{ isEmpty( revisions ) ||
+							( isRequestingRevisions && (
+								<li className={ 'editor-revisions-list__revision-placeholder' } />
+							) ) }
 						{ map( revisions, revision => {
 							const itemClasses = classNames( 'editor-revisions-list__revision', {
 								'is-selected': revision.id === selectedRevisionId,
@@ -179,7 +186,7 @@ class EditorRevisionsList extends PureComponent {
 }
 
 export default connect(
-	( state, { comparisons, revisions, selectedRevisionId } ) => {
+	( state, { comparisons, revisions, selectedRevisionId, siteId, postId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
 		const latestRevisionId = get( head( revisions ), 'id' );
 		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
@@ -187,6 +194,7 @@ export default connect(
 			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
 		const nextIsDisabled = latestRevisionIsSelected || revisions.length === 1;
 		const prevIsDisabled = earliestRevisionIsSelected || revisions.length === 1;
+		const isRequestingRevisions = isRequestingPostRevisions( state, siteId, postId );
 
 		return {
 			latestRevisionId,
@@ -194,6 +202,7 @@ export default connect(
 			nextIsDisabled,
 			nextRevisionId,
 			prevRevisionId,
+			isRequestingRevisions,
 		};
 	},
 	{ selectPostRevision }

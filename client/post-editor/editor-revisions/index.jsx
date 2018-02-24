@@ -90,7 +90,6 @@ export default flow(
 		state => {
 			const postId = getEditorPostId( state );
 			const siteId = getSelectedSiteId( state );
-
 			const revisions = getPostRevisions( state, siteId, postId );
 			const selectedRevisionId = getPostRevisionsSelectedRevisionId( state );
 			const comparisons = getPostRevisionsComparisons( state, siteId, postId );
