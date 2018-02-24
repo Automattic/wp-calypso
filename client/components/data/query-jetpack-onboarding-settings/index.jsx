@@ -16,13 +16,13 @@ import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackOnboardingSettings extends Component {
 	static propTypes = {
+		siteId: PropTypes.number,
+		// Connected props
 		isConnected: PropTypes.bool,
 		query: PropTypes.shape( {
 			jpUser: PropTypes.string,
 			token: PropTypes.number,
 		} ),
-		siteId: PropTypes.number,
-		// Connected props
 		requestingSettings: PropTypes.bool,
 		requestJetpackSettings: PropTypes.func,
 	};
