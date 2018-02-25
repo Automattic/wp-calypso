@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -43,25 +38,6 @@ export const saveJetpackSettings = ( siteId, settings ) => ( {
 		},
 	},
 } );
-
-export const saveJetpackOnboardingSettings = ( siteId, onboardingSettings ) => (
-	dispatch,
-	getState
-) => {
-	const state = getState();
-	const token = get( state.jetpackOnboarding.credentials, [ siteId, 'token' ], null );
-	const jpUser = get( state.jetpackOnboarding.credentials, [ siteId, 'userEmail' ], null );
-
-	dispatch(
-		saveJetpackSettings( siteId, {
-			onboarding: {
-				...onboardingSettings,
-				token,
-				jpUser,
-			},
-		} )
-	);
-};
 
 export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
 	type: JETPACK_SETTINGS_SAVE_SUCCESS,
