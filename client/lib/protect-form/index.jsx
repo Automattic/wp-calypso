@@ -15,10 +15,6 @@ import { includes, without } from 'lodash';
  * Module variables
  */
 const debug = debugModule( 'calypso:protect-form' );
-const confirmText = i18n.translate(
-	'You have unsaved changes. Are you sure you want to leave this page?'
-);
-const beforeUnloadText = i18n.translate( 'You have unsaved changes.' );
 let formsChanged = [];
 let listenerCount = 0;
 
@@ -27,6 +23,7 @@ function warnIfChanged( event ) {
 		return;
 	}
 	debug( 'unsaved form changes detected' );
+	const beforeUnloadText = i18n.translate( 'You have unsaved changes.' );
 	( event || window.event ).returnValue = beforeUnloadText;
 	return beforeUnloadText;
 }
@@ -115,12 +112,22 @@ export class ProtectFormGuard extends Component {
 	}
 }
 
+function windowConfirm() {
+	if ( typeof window === 'undefined' ) {
+		return true;
+	}
+	const confirmText = i18n.translate(
+		'You have unsaved changes. Are you sure you want to leave this page?'
+	);
+	return window.confirm( confirmText );
+}
+
 export const checkFormHandler = ( context, next ) => {
 	if ( ! formsChanged.length ) {
 		return next();
 	}
 	debug( 'unsaved form changes detected' );
-	if ( typeof window === 'undefined' || window.confirm( confirmText ) ) {
+	if ( windowConfirm() ) {
 		formsChanged = [];
 		next();
 	} else {
