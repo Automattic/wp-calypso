@@ -64,11 +64,6 @@ const UrlSearch = Component =>
 				searchOpen: false !== query,
 			} );
 
-			if ( this.onSearch ) {
-				this.onSearch( query );
-				return;
-			}
-
 			const searchURL = buildSearchUrl( {
 				uri: window.location.href,
 				search: query,
