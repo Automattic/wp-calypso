@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, isEmpty, last, map } from 'lodash';
+import { get, head, includes, isEmpty, last, map, reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ import EditorRevisionsListHeader from './header';
 import EditorRevisionsListNavigation from './navigation';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
-import { isRequestingPostRevisions } from 'state/selectors';
+import PostEditStore from 'lib/posts/post-edit-store';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 class EditorRevisionsList extends PureComponent {
@@ -25,11 +25,11 @@ class EditorRevisionsList extends PureComponent {
 		comparisons: PropTypes.object,
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
-		isRequestingRevisions: PropTypes.bool,
 		revisions: PropTypes.array.isRequired,
 		selectedRevisionId: PropTypes.number,
 		nextIsDisabled: PropTypes.bool,
 		prevIsDisabled: PropTypes.bool,
+		newRevisionIds: PropTypes.array,
 	};
 
 	selectRevision = revisionId => {
@@ -135,12 +135,12 @@ class EditorRevisionsList extends PureComponent {
 			prevIsDisabled,
 			postId,
 			revisions,
-			isRequestingRevisions,
+			newRevisionIds,
 			selectedRevisionId,
 			siteId,
 		} = this.props;
 		const classes = classNames( 'editor-revisions-list', {
-			'is-loading': isEmpty( revisions ) || isRequestingRevisions,
+			'is-loading': isEmpty( revisions ) || ! isEmpty( newRevisionIds ),
 		} );
 
 		if ( isEmpty( revisions ) ) {
@@ -159,7 +159,7 @@ class EditorRevisionsList extends PureComponent {
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
 						{ isEmpty( revisions ) ||
-							( isRequestingRevisions && (
+							( ! isEmpty( newRevisionIds ) && (
 								<li className={ 'editor-revisions-list__revision-placeholder' } />
 							) ) }
 						{ map( revisions, revision => {
@@ -185,8 +185,11 @@ class EditorRevisionsList extends PureComponent {
 	}
 }
 
+const filterNewRevisionsIds = ( newRevisionIds, revisions ) =>
+	reject( newRevisionIds, x => includes( map( revisions, 'id' ), x ) );
+
 export default connect(
-	( state, { comparisons, revisions, selectedRevisionId, siteId, postId } ) => {
+	( state, { comparisons, revisions, selectedRevisionId, postId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
 		const latestRevisionId = get( head( revisions ), 'id' );
 		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
@@ -194,7 +197,8 @@ export default connect(
 			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
 		const nextIsDisabled = latestRevisionIsSelected || revisions.length === 1;
 		const prevIsDisabled = earliestRevisionIsSelected || revisions.length === 1;
-		const isRequestingRevisions = isRequestingPostRevisions( state, siteId, postId );
+		const revisionIds = PostEditStore.getRevisionIds( postId );
+		const newRevisionIds = filterNewRevisionsIds( revisionIds, revisions );
 
 		return {
 			latestRevisionId,
@@ -202,7 +206,7 @@ export default connect(
 			nextIsDisabled,
 			nextRevisionId,
 			prevRevisionId,
-			isRequestingRevisions,
+			newRevisionIds,
 		};
 	},
 	{ selectPostRevision }
