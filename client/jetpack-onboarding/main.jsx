@@ -71,6 +71,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 		const {
 			action,
 			isRequestingSettings,
+			jpoAuth,
 			recordJpoEvent,
 			saveJpoSettings,
 			settings,
@@ -81,7 +82,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} = this.props;
 		return (
 			<Main className="jetpack-onboarding">
-				<QueryJetpackOnboardingSettings siteId={ siteId } />
+				<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
 				{ siteId ? (
 					<Wizard
 						action={ action }
@@ -157,6 +158,7 @@ export default connect(
 		{ recordTracksEvent: recordTracksEventAction, saveJetpackSettings: saveJetpackSettingsAction },
 		ownProps
 	) => ( {
+		jpoAuth,
 		siteId,
 		...stateProps,
 		recordJpoEvent: ( event, additionalProperties ) =>

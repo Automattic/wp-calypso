@@ -10,19 +10,17 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getRequest, getUnconnectedSite } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getRequest } from 'state/selectors';
 import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackOnboardingSettings extends Component {
 	static propTypes = {
-		siteId: PropTypes.number,
-		// Connected props
-		isConnected: PropTypes.bool,
 		query: PropTypes.shape( {
 			jpUser: PropTypes.string,
 			token: PropTypes.number,
 		} ),
+		siteId: PropTypes.number,
+		// Connected props
 		requestingSettings: PropTypes.bool,
 		requestJetpackSettings: PropTypes.func,
 	};
@@ -51,25 +49,8 @@ class QueryJetpackOnboardingSettings extends Component {
 }
 
 export default connect(
-	( state, { siteId } ) => {
-		const isConnected = isJetpackSite( state, siteId );
-		let query;
-
-		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
-			const { token, userEmail: jpUser } = getUnconnectedSite( state, siteId );
-			query = {
-				onboarding: {
-					token,
-					jpUser,
-				},
-			};
-		}
-
-		return {
-			isConnected,
-			query,
-			requestingSettings: getRequest( state, requestJetpackSettings( siteId, query ) ).isLoading,
-		};
-	},
+	( state, { query, siteId } ) => ( {
+		requestingSettings: getRequest( state, requestJetpackSettings( siteId, query ) ).isLoading,
+	} ),
 	{ requestJetpackSettings }
 )( QueryJetpackOnboardingSettings );
