@@ -6,14 +6,12 @@
  * External dependencies
  */
 import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
-import validator from 'is-my-json-valid';
 
 /**
  * Internal dependencies
  */
 import {
 	SERIALIZE,
-	DESERIALIZE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
@@ -91,7 +89,6 @@ const timelineEvent = ( state = {}, action ) => {
 	return state;
 };
 
-const validateTimeline = validator( timelineSchema );
 const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
 
 /**
@@ -106,12 +103,6 @@ export const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
 			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
-		case DESERIALIZE:
-			const valid = validateTimeline( state );
-			if ( valid ) {
-				return state;
-			}
-			return [];
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'message.meta.forOperator', false ) ) {
@@ -155,7 +146,7 @@ export const timeline = ( state = [], action ) => {
 	}
 	return state;
 };
-timeline.hasCustomPersistence = true;
+timeline.schema = timelineSchema;
 
 export default combineReducers( {
 	status,
