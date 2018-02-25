@@ -34,7 +34,8 @@ const updateRewindState = ( { siteId }, data ) => {
 		data,
 	};
 
-	const hasRunningRewind = data.rewind && data.rewind.status === 'running';
+	const hasRunningRewind =
+		data.rewind && ( data.rewind.status === 'queued' || data.rewind.status === 'running' );
 
 	if ( ! hasRunningRewind ) {
 		return stateUpdate;
