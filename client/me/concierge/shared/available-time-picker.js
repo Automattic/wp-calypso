@@ -13,7 +13,7 @@ import { moment } from 'i18n-calypso';
 import AvailableTimeCard from './available-time-card';
 import { isDefaultLocale } from 'lib/i18n-utils';
 
-const NUMBER_OF_DAYS_TO_SHOW = 7;
+const NUMBER_OF_DAYS_TO_SHOW = 10;
 
 const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	const dates = {};
