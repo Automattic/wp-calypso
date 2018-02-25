@@ -94,4 +94,13 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
+	upgradePricingDisplay: {
+		datestamp: '20180213',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
 };
