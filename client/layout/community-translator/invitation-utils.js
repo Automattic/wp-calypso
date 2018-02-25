@@ -94,7 +94,7 @@ const invitationUtils = {
 	// The calypso editor is styled flush to the top, and makes the invitation
 	// look bad, so don't show it there
 	isValidSection: function( section ) {
-		return section !== 'post';
+		return section !== 'post-editor';
 	},
 
 	dismiss: function() {
