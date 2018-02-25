@@ -56,7 +56,7 @@ export default connect(
 		let query;
 
 		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
-			const { token, jpUser } = getUnconnectedSite( state, siteId );
+			const { token, userEmail: jpUser } = getUnconnectedSite( state, siteId );
 			query = {
 				onboarding: {
 					token,

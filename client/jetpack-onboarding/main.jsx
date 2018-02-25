@@ -117,7 +117,7 @@ export default connect(
 		let jpoAuth;
 
 		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
-			const { token, jpUser } = getUnconnectedSite( state, siteId );
+			const { token, userEmail: jpUser } = getUnconnectedSite( state, siteId );
 			jpoAuth = {
 				token,
 				jpUser,
