@@ -8,6 +8,8 @@
 		"itemsPerPage": { "type": "integer" },
 		"last": { "type": "string" },
 		"page": { "type": "integer" },
+		"nextAfter": { "type": "array" },
+		"prevBefore": { "type": "array" },
 		"summary": { "type": "string" },
 		"totalItems": { "type": "integer" },
 		"totalPages": { "type": "integer" },
