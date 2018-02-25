@@ -119,14 +119,14 @@ export default connect(
 		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
 			const { token, jpUser } = getUnconnectedSite( state, siteId );
 			query = {
-				onboarding: {
-					token,
-					jpUser,
-				},
+				token,
+				jpUser,
 			};
 		}
-		const isRequestingSettings = getRequest( state, requestJetpackSettings( siteId, query ) )
-			.isLoading;
+		const isRequestingSettings = getRequest(
+			state,
+			requestJetpackSettings( siteId, { onboarding: { ...query } } )
+		).isLoading;
 
 		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
 		// Note: here we can select which steps to display, based on user's input
@@ -167,7 +167,7 @@ export default connect(
 				...additionalProperties,
 			} ),
 		saveJpoSettings: ( s, settings ) =>
-			saveJetpackSettingsAction( s, { onboarding: { settings }, ...query } ),
+			saveJetpackSettingsAction( s, { onboarding: { ...settings, ...query } } ),
 		...ownProps,
 	} )
 )( JetpackOnboardingMain );
