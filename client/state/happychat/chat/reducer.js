@@ -71,20 +71,17 @@ const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			const { message } = action;
-			return Object.assign(
-				{},
-				{
-					id: message.id,
-					source: message.source,
-					message: message.text,
-					name: message.user.name,
-					image: message.user.avatarURL,
-					timestamp: message.timestamp,
-					user_id: message.user.id,
-					type: get( message, 'type', 'message' ),
-					links: get( message, 'meta.links' ),
-				}
-			);
+			return {
+				id: message.id,
+				source: message.source,
+				message: message.text,
+				name: message.user.name,
+				image: message.user.avatarURL,
+				timestamp: message.timestamp,
+				user_id: message.user.id,
+				type: get( message, 'type', 'message' ),
+				links: get( message, 'meta.links' ),
+			};
 	}
 	return state;
 };
@@ -128,19 +125,17 @@ export const timeline = ( state = [], action ) => {
 			} );
 			return sortTimeline(
 				state.concat(
-					map( messages, message => {
-						return Object.assign( {
-							id: message.id,
-							source: message.source,
-							message: message.text,
-							name: message.user.name,
-							image: message.user.picture,
-							timestamp: message.timestamp,
-							user_id: message.user.id,
-							type: get( message, 'type', 'message' ),
-							links: get( message, 'meta.links' ),
-						} );
-					} )
+					map( messages, message => ( {
+						id: message.id,
+						source: message.source,
+						message: message.text,
+						name: message.user.name,
+						image: message.user.picture,
+						timestamp: message.timestamp,
+						user_id: message.user.id,
+						type: get( message, 'type', 'message' ),
+						links: get( message, 'meta.links' ),
+					} ) )
 				)
 			);
 	}
