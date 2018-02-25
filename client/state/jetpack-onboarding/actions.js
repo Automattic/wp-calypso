@@ -28,16 +28,18 @@ export const requestJetpackSettings = ( siteId, query ) => ( {
 	},
 } );
 
-export const saveJetpackSettings = ( siteId, settings ) => ( {
-	type: JETPACK_SETTINGS_SAVE,
-	siteId,
-	settings,
-	meta: {
-		dataLayer: {
-			trackRequest: true,
+export const saveJetpackSettings = ( siteId, settings ) => {
+	return {
+		type: JETPACK_SETTINGS_SAVE,
+		siteId,
+		settings,
+		meta: {
+			dataLayer: {
+				trackRequest: true,
+			},
 		},
-	},
-} );
+	};
+};
 
 export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
 	type: JETPACK_SETTINGS_SAVE_SUCCESS,
