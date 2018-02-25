@@ -114,18 +114,18 @@ export default connect(
 		const isBusiness = get( settings, 'siteType' ) === 'business';
 
 		const isConnected = isJetpackSite( state, siteId );
-		let query;
+		let jpoAuth;
 
 		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
 			const { token, jpUser } = getUnconnectedSite( state, siteId );
-			query = {
+			jpoAuth = {
 				token,
 				jpUser,
 			};
 		}
 		const isRequestingSettings = getRequest(
 			state,
-			requestJetpackSettings( siteId, { onboarding: { ...query } } )
+			requestJetpackSettings( siteId, { onboarding: { ...jpoAuth } } )
 		).isLoading;
 
 		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
@@ -141,8 +141,8 @@ export default connect(
 			STEPS.SUMMARY,
 		] );
 		return {
+			jpoAuth,
 			isRequestingSettings,
-			query,
 			siteId,
 			siteSlug,
 			settings,
@@ -152,7 +152,7 @@ export default connect(
 	},
 	{ recordTracksEvent, saveJetpackSettings },
 	(
-		{ siteId, query, userIdHashed, ...stateProps },
+		{ siteId, jpoAuth, userIdHashed, ...stateProps },
 		{ recordTracksEvent: recordTracksEventAction, saveJetpackSettings: saveJetpackSettingsAction },
 		ownProps
 	) => ( {
@@ -167,7 +167,7 @@ export default connect(
 				...additionalProperties,
 			} ),
 		saveJpoSettings: ( s, settings ) =>
-			saveJetpackSettingsAction( s, { onboarding: { ...settings, ...query } } ),
+			saveJetpackSettingsAction( s, { onboarding: { ...settings, ...jpoAuth } } ),
 		...ownProps,
 	} )
 )( JetpackOnboardingMain );
