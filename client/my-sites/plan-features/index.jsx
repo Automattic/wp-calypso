@@ -686,7 +686,7 @@ export default connect(
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const showModifiedPricingDisplay =
-			!isInSignup && abtest('upgradePricingDisplay') === 'modified';
+			! isInSignup && abtest( 'upgradePricingDisplay' ) === 'modified';
 		let freePlanProperties = null;
 		let planProperties = compact(
 			map( plans, plan => {
