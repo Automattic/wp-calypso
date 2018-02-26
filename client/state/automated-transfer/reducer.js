@@ -10,12 +10,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
-import {
-	combineReducers,
-	keyedReducer,
-	withSchemaValidation,
-	withoutPersistence,
-} from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
 import { transferStates } from './constants';
 import { automatedTransfer as schema } from './schema';
 import {
@@ -40,8 +35,9 @@ export const status = ( state = null, action ) =>
 		action.type,
 		state
 	);
+status.hasCustomPersistence = true;
 
-export const fetchingStatus = withoutPersistence( ( state = false, action ) => {
+export const fetchingStatus = ( state = false, action ) => {
 	switch ( action.type ) {
 		case REQUEST_STATUS:
 			return true;
@@ -52,7 +48,7 @@ export const fetchingStatus = withoutPersistence( ( state = false, action ) => {
 		default:
 			return state;
 	}
-} );
+};
 
 export const siteReducer = combineReducers( {
 	eligibility,
