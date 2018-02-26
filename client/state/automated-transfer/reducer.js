@@ -1,12 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import eligibility from './eligibility/reducer';
@@ -23,18 +17,22 @@ import {
 	THEME_TRANSFER_STATUS_RECEIVE as TRANSFER_UPDATE,
 } from 'state/action-types';
 
-export const status = ( state = null, action ) =>
-	get(
-		{
-			[ ELIGIBILITY_UPDATE ]: state || transferStates.INQUIRING,
-			[ INITIATE ]: transferStates.START,
-			[ INITIATE_FAILURE ]: transferStates.FAILURE,
-			[ SET_STATUS ]: action.status,
-			[ TRANSFER_UPDATE ]: 'complete' === action.status ? transferStates.COMPLETE : state,
-		},
-		action.type,
-		state
-	);
+export const status = ( state = null, action ) => {
+	switch ( action.type ) {
+		case ELIGIBILITY_UPDATE:
+			return state || transferStates.INQUIRING;
+		case INITIATE:
+			return transferStates.START;
+		case INITIATE_FAILURE:
+			return transferStates.FAILURE;
+		case SET_STATUS:
+			return action.status;
+		case TRANSFER_UPDATE:
+			return 'complete' === action.status ? transferStates.COMPLETE : state;
+	}
+
+	return state;
+};
 status.hasCustomPersistence = true;
 
 export const fetchingStatus = ( state = false, action ) => {
