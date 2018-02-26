@@ -12,8 +12,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
+import Ribbon from 'components/ribbon';
 import CTACard from '../select-business-type/cta-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -43,18 +45,16 @@ class ShowListOfLocation extends Component {
 					<h1>{ translate( 'Select the listing you would like to connect to' ) }</h1>
 				</Card>
 
-				<CTACard
-					headerText={ "Cate's Cookies" }
-					mainText={
-						<p>
-							345 North Avenue<br />Talihassee, FL 34342<br />USA
-						</p>
-					}
-					buttonText={ translate( 'Connect', {
-						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }
-					buttonHref={ successHref }
-				/>
+				<Card>
+					<Ribbon color="green">Verified</Ribbon>
+					<h2 className="show-list-of-locations__header">Cate's Cookies</h2>
+					<p>
+						345 North Avenue<br />Talihassee, FL 34342<br />USA
+					</p>
+					<Button className="show-list-of-locations__button" href={ successHref }>
+						Connect
+					</Button>
+				</Card>
 
 				<CTACard
 					headerText={ 'Pinch Bakeshop' }
