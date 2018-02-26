@@ -140,13 +140,20 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		return some( omit( this.state.fields, 'state' ), val => val === '' );
 	};
 
-	renderActionTile() {
-		const { isConnected, siteUrl, translate } = this.props;
+	renderHeader() {
+		const { translate } = this.props;
 		const headerText = translate( 'Help your customers find you with Jetpack.' );
 		const subHeaderText = translate(
 			"Add your business address and a map of your location with Jetpack's business address widget. " +
 				"You can adjust the widget's location later."
 		);
+
+		return <FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />;
+	}
+
+	renderActionTile() {
+		const { isConnected, siteUrl, translate } = this.props;
+
 		const connectUrl = addQueryArgs(
 			{
 				url: siteUrl,
@@ -160,7 +167,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 		return (
 			<Fragment>
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				{ this.renderHeader() }
 
 				<TileGrid>
 					<Tile
@@ -176,14 +183,10 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 	renderForm() {
 		const { isRequestingSettings, translate } = this.props;
-		const headerText = translate( 'Help your customers find you with Jetpack.' );
-		const subHeaderText = translate(
-			"Add your business address and a map of your location with Jetpack's business address widget. " +
-				"You can adjust the widget's location later."
-		);
+
 		return (
 			<Fragment>
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				{ this.renderHeader() }
 
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
