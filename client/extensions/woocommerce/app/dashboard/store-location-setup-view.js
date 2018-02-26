@@ -19,7 +19,6 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import BasicWidget from 'woocommerce/components/basic-widget';
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
@@ -222,7 +221,7 @@ class StoreLocationSetupView extends Component {
 		if ( ! showForm ) {
 			return (
 				<div className="dashboard__placeholder">
-					<BasicWidget className="dashboard__placeholder-large card" />
+					<div className="dashboard__placeholder-large card dashboard-widget" />
 				</div>
 			);
 		}
