@@ -57,7 +57,7 @@ const WpcomDomain = createReactClass( {
 						status="is-info"
 						showDismiss={ false }
 						text={ translate(
-							'The site name can only be changed by the site owner. Please contact them if you would like to change it.'
+							'The site address can only be changed by the site owner. Please contact them if you would like to change it.'
 						) }
 					/>
 				);
