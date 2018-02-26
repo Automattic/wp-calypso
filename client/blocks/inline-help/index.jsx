@@ -116,14 +116,14 @@ class InlineHelp extends Component {
 		const { showContactForm, showInlineHelp } = this.state;
 		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
 		const popoverClasses = { 'is-help-active': showContactForm };
-		const contactFormButtonClasses = { 'is-active': showContactForm };
 		return (
 			<Button
 				className={ classNames( 'inline-help', inlineHelpButtonClasses ) }
 				onClick={ this.handleHelpButtonClicked }
 				borderless
 				title={ translate( 'Help' ) }
-				ref={ this.inlineHelpToggleRef } >
+				ref={ this.inlineHelpToggleRef }
+			>
 
 				<Gridicon icon="help-outline" />
 
@@ -132,33 +132,34 @@ class InlineHelp extends Component {
 					onClose={ this.closeInlineHelp }
 					position="top right"
 					context={ this.inlineHelpToggle }
-					className={ classNames( "inline-help__popover", popoverClasses ) }
-                >
+					className={ classNames( 'inline-help__popover', popoverClasses ) }
+				>
 
 					<div className="inline-help__search">
 						<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
 						<InlineHelpSearchResults openResult={ this.openResult } searchQuery={ this.props.searchQuery } />
 					</div>
-					
+
 					<div className="inline-help__contact">
 						<HelpContact
 							compact={ true }
 							selectedSite={ this.props.selectedSite } />
 					</div>
-					
+
 					<div className="inline-help__footer">
 						<Button
 							onClick={ this.moreHelpClicked }
 							className="inline-help__more-button"
 							borderless
-							href="/help">
+							href="/help"
+						>
 							<Gridicon icon="help" />
 							{ translate( 'More help' ) }
 						</Button>
 
 						<Button
 							onClick={ this.toggleContactForm }
-							className="inline-help__contact-button"//{ classNames( 'inline-help__button', contactFormButtonClasses ) }
+							className="inline-help__contact-button"
 							borderless >
 							<Gridicon icon="chat" />
 							{ translate( 'Contact us' ) }
@@ -167,7 +168,7 @@ class InlineHelp extends Component {
 
 						<Button
 							onClick={ this.toggleContactForm }
-							className="inline-help__cancel-button"//{ classNames( 'inline-help__button', contactFormButtonClasses ) }
+							className="inline-help__cancel-button"
 							borderless >
 							<Gridicon icon="chevron-left" />
 							{ translate( 'Cancel' ) }
