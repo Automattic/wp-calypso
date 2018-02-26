@@ -29,6 +29,7 @@ class FormDimensionsInput extends Component {
 			height: PropTypes.sting,
 			length: PropTypes.string,
 		} ),
+		dimensionsUnit: PropTypes.string,
 		onChange: PropTypes.func.isRequired,
 		noWrap: PropTypes.bool,
 	};
@@ -91,10 +92,12 @@ class FormDimensionsInput extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
+function mapStateToProps( state, { dimensionsUnit } ) {
 	const site = getSelectedSiteWithFallback( state );
-	const dimensionsUnitSetting = site && getDimensionsUnitSetting( state, site.ID );
-	const dimensionsUnit = ( dimensionsUnitSetting && dimensionsUnitSetting.value ) || 'in';
+	if ( ! dimensionsUnit ) {
+		const dimensionsUnitSetting = site && getDimensionsUnitSetting( state, site.ID );
+		dimensionsUnit = ( dimensionsUnitSetting && dimensionsUnitSetting.value ) || 'in';
+	}
 
 	return {
 		siteId: site && site.ID,
