@@ -3,6 +3,7 @@
  * Component which handle remote credentials for installing Jetpack
  */
 import React, { Component } from 'react';
+import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -21,6 +22,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
+import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
 import { externalRedirect } from 'lib/route';
 import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
@@ -57,11 +59,13 @@ export class OrgCredentialsForm extends Component {
 		const password = this.state.password;
 
 		this.props.jetpackRemoteInstall( url, username, password );
+
 		return;
 	};
 
 	componentDidUpdate() {
 		const { installError, isResponseCompleted, siteToConnect } = this.props;
+
 		if ( isResponseCompleted ) {
 			externalRedirect( addCalypsoEnvQueryArg( siteToConnect + REMOTE_PATH_AUTH ) );
 		}
@@ -75,7 +79,7 @@ export class OrgCredentialsForm extends Component {
 	};
 	getHeaderImage() {
 		return (
-			<div className="jetpack-connect__main-logo">
+			<div>
 				<JetpackLogo full size={ 45 } />
 			</div>
 		);
@@ -93,7 +97,7 @@ export class OrgCredentialsForm extends Component {
 		return (
 			<div className="jetpack-connect__install-step">
 				{ translate(
-					'Add your WordPress administrator credentials' +
+					'Add your WordPress administrator credentials ' +
 						'for this site. Your credentials will not be stored and are used for the purpose' +
 						'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 				) }
@@ -105,26 +109,34 @@ export class OrgCredentialsForm extends Component {
 		return (
 			<div>
 				<FormLabel htmlFor="username">{ this.props.translate( 'Username' ) }</FormLabel>
-				<FormTextInput
-					autoCapitalize="off"
-					autoCorrect="off"
-					className="credentials--form__input"
-					disabled={ this.state.submitting }
-					id="username"
-					name="username"
-					onChange={ this.getChangeHandler( 'username' ) }
-					value={ this.state.username || '' }
-				/>
+				<div className="jetpack-connect__site-address-container">
+					<Gridicon size={ 24 } icon="user" />
+					<FormTextInput
+						autoCapitalize="off"
+						autoCorrect="off"
+						className="credentials--form__input"
+						disabled={ this.state.submitting }
+						id="username"
+						name="username"
+						onChange={ this.getChangeHandler( 'username' ) }
+						value={ this.state.username || '' }
+					/>
+				</div>
 
 				<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
-				<FormPasswordInput
-					className="credentials--form__input"
-					disabled={ this.state.submitting }
-					id="password"
-					name="password"
-					onChange={ this.getChangeHandler( 'password' ) }
-					value={ this.state.password || '' }
-				/>
+				<div className="jetpack-connect__site-address-container">
+					<div className="jetpack-connect__password-form">
+						<Gridicon size={ 24 } icon="lock" />
+						<FormPasswordInput
+							className="credentials--form__input"
+							disabled={ this.state.submitting }
+							id="password"
+							name="password"
+							onChange={ this.getChangeHandler( 'password' ) }
+							value={ this.state.password || '' }
+						/>
+					</div>
+				</div>
 			</div>
 		);
 	}
@@ -132,14 +144,12 @@ export class OrgCredentialsForm extends Component {
 	formFooter() {
 		const { translate } = this.props;
 		return (
-			<LoggedOutFormFooter>
-				<FormButton
-					className="credentials--form__submit"
-					disabled={ ! this.state.username || ! this.state.password }
-				>
-					{ translate( 'Install Jetpack' ) }
-				</FormButton>
-			</LoggedOutFormFooter>
+			<FormButton
+				className="credentials--form__submit"
+				disabled={ ! this.state.username || ! this.state.password }
+			>
+				{ translate( 'Install Jetpack' ) }
+			</FormButton>
 		);
 	}
 
@@ -158,7 +168,7 @@ export class OrgCredentialsForm extends Component {
 
 	footerLink() {
 		return (
-			<LoggedOutFormLinks>
+			<LoggedOutFormFooter>
 				<LoggedOutFormLinkItem>
 					{ this.props.translate( 'Install Jetpack manually.' ) }
 				</LoggedOutFormLinkItem>
@@ -166,7 +176,7 @@ export class OrgCredentialsForm extends Component {
 					onClick={ this.handleHelpButtonClick }
 					label={ 'Get help connecting your site.' }
 				/>
-			</LoggedOutFormLinks>
+			</LoggedOutFormFooter>
 		);
 	}
 
@@ -182,17 +192,14 @@ export class OrgCredentialsForm extends Component {
 	render() {
 		return (
 			<MainWrapper>
-				<div className="jetpack-connect__authorize-form">
-					{ this.formHeader() }
-
-					<div className="credentials-form">
-						<LoggedOutForm onSubmit={ this.handleSubmit }>
-							{ this.formFields() }
-							{ this.formFooter() }
-						</LoggedOutForm>
-						{ this.footerLink() }
-					</div>
+				{ this.formHeader() }
+				<div className="jetpack-connect__site-url-input-container">
+					<LoggedOutForm onSubmit={ this.handleSubmit }>
+						{ this.formFields() }
+						{ this.formFooter() }
+					</LoggedOutForm>
 				</div>
+				{ this.footerLink() }
 			</MainWrapper>
 		);
 	}
