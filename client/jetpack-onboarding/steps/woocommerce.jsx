@@ -20,13 +20,12 @@ import {
 	getJetpackOnboardingCompletedSteps,
 	getJetpackOnboardingPendingSteps,
 } from 'state/selectors';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	handleWooCommerceInstallation = () => {
 		this.props.recordJpoEvent( 'calypso_jpo_woocommerce_install_clicked' );
 
-		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+		this.props.saveJpoSettings( this.props.siteId, {
 			installWooCommerce: true,
 		} );
 	};
@@ -76,10 +75,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	}
 }
 
-export default connect(
-	( state, { siteId, steps } ) => ( {
-		stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
-		stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
-	} ),
-	{ saveJetpackOnboardingSettings }
-)( localize( JetpackOnboardingWoocommerceStep ) );
+export default connect( ( state, { siteId, steps } ) => ( {
+	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingWoocommerceStep ) );

@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -18,14 +17,13 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingContactFormStep extends React.PureComponent {
 	handleAddContactForm = () => {
 		const { siteId } = this.props;
 		this.props.recordJpoEvent( 'calypso_jpo_contact_form_clicked' );
 
-		this.props.saveJetpackOnboardingSettings( siteId, {
+		this.props.saveJpoSettings( siteId, {
 			addContactForm: true,
 		} );
 	};
@@ -72,6 +70,4 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	}
 }
 
-export default connect( null, { saveJetpackOnboardingSettings } )(
-	localize( JetpackOnboardingContactFormStep )
-);
+export default localize( JetpackOnboardingContactFormStep );
