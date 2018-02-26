@@ -154,19 +154,22 @@ export function createSiteWithCart(
 			};
 			const addToCartAndProceed = () => {
 				let privacyItem = null;
-				const { product_slug: productSlug } = domainItem;
-				const productsList = getProductsList( reduxStore.getState() );
-				if ( domainItem && supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-					if ( isDomainTransfer( domainItem ) ) {
-						privacyItem = cartItems.domainTransferPrivacy( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
-					} else {
-						privacyItem = cartItems.domainPrivacyProtection( {
-							domain: domainItem.meta,
-							source: 'signup',
-						} );
+
+				if ( domainItem ) {
+					const { product_slug: productSlug } = domainItem;
+					const productsList = getProductsList( reduxStore.getState() );
+					if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+						if ( isDomainTransfer( domainItem ) ) {
+							privacyItem = cartItems.domainTransferPrivacy( {
+								domain: domainItem.meta,
+								source: 'signup',
+							} );
+						} else {
+							privacyItem = cartItems.domainPrivacyProtection( {
+								domain: domainItem.meta,
+								source: 'signup',
+							} );
+						}
 					}
 				}
 
