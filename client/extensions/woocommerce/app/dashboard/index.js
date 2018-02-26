@@ -77,27 +77,27 @@ class Dashboard extends Component {
 		redirectURL: false,
 	};
 
-	componentDidMount = () => {
+	componentDidMount() {
 		const { siteId } = this.props;
 
 		if ( siteId ) {
 			this.fetchStoreData();
 		}
-	};
+	}
 
-	componentDidUpdate = prevProps => {
+	componentDidUpdate( prevProps ) {
 		const { siteId } = this.props;
 		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
 		if ( siteId && oldSiteId !== siteId ) {
 			this.fetchStoreData();
 		}
-	};
+	}
 
 	// If the user 1) has set the store address in StoreLocationSetupView
 	// and 2) we have a redirectURL, don't render but go ahead and
 	// redirect (i.e. to the WooCommerce Setup Wizard in wp-admin)
-	shouldComponentUpdate = ( nextProps, nextState ) => {
+	shouldComponentUpdate( nextProps, nextState ) {
 		const { setStoreAddressDuringInitialSetup } = nextProps;
 		const { redirectURL } = nextState;
 
@@ -107,7 +107,7 @@ class Dashboard extends Component {
 		}
 
 		return true;
-	};
+	}
 
 	fetchStoreData = () => {
 		const { siteId, productsLoaded } = this.props;
@@ -242,7 +242,7 @@ class Dashboard extends Component {
 		);
 	};
 
-	render = () => {
+	render() {
 		const { className, isSetupComplete, loading, selectedSite, siteId } = this.props;
 
 		return (
@@ -255,7 +255,7 @@ class Dashboard extends Component {
 				<QuerySettingsGeneral siteId={ siteId } />
 			</Main>
 		);
-	};
+	}
 }
 
 function mapStateToProps( state ) {
