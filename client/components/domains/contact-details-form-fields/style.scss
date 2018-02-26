@@ -1,0 +1,142 @@
+.contact-details-form-fields {
+
+	margin-bottom: 0;
+
+
+	.contact-details-form-fields__container.country-code,
+	.contact-details-form-fields__container.state {
+
+		label + select {
+			width: 100%;
+		}
+	}
+
+	@include breakpoint( '>660px' ) {
+		.contact-details-form-fields__container {
+			position: relative;
+			float: left;
+			width: 100%;
+		}
+
+		.hidden-input a,
+		.contact-details-form-fields__field {
+			//float: left;
+			width: 100%;
+		}
+		.contact-details-form-fields__field.last-name {
+			margin-top: 0;
+		}
+
+		.contact-details-form-fields__container.last-name,
+		.contact-details-form-fields__container.phone,
+		.contact-details-form-fields__container.postal-code {
+			float: right;
+		}
+
+		.contact-details-form-fields__container.email,
+		.contact-details-form-fields__container.first-name,
+		.contact-details-form-fields__container.last-name,
+		.contact-details-form-fields__container.phone {
+			width: calc( 50% - 7px );
+		}
+
+		.contact-details-form-fields__field.city,
+		.contact-details-form-fields__field.postal-code,
+		.contact-details-form-fields__field.state {
+			width: calc( 33% - 8px );
+			float: left;
+		}
+
+		.contact-details-form-fields__field.postal-code,
+		.contact-details-form-fields__field.state {
+			margin-left: 14px;
+		}
+
+		.domain-management-form-footer {
+			justify-content: flex-end;
+		}
+
+		.g-apps-fieldset {
+
+			.country {
+				margin-top: 15px;
+				width: calc( 66% - 8px  );
+				float: left;
+			}
+			.postal-code {
+				margin-top: 15px;
+				width: 33%;
+				float: right;
+				margin-left: 0;
+			}
+		}
+
+		.eu-address-fieldset {
+			.postal-code {
+				float: left;
+				width: calc( 33% - 7px );
+				margin-left: 0;
+			}
+
+			.city {
+				float: right;
+				width: calc( 66% );
+			}
+		}
+
+		.uk-address-fieldset {
+			.postal-code {
+				width: calc( 33% - 7px );
+				float: right;
+				margin-left: 0;
+			}
+
+			.city {
+				width: calc( 66% );
+			}
+		}
+	}
+
+	.domain-management-form-footer {
+		padding-right: 0;
+		width: 100%;
+	}
+
+	.form__hidden-input a {
+		display: block;
+		font-size: 12px;
+		margin-top: 5px;
+	}
+
+	select {
+		font-size: 15px;
+		width: 100%;
+	}
+
+}
+
+.contact-details-form-fields__contact-details {
+	clear: both;
+	overflow: hidden;
+}
+
+.contact-details-form-fields__container.country-code {
+	float: none;
+	overflow: hidden;
+}
+
+.contact-details-form-fields__extra-fields,
+.contact-details-form-fields__field {
+	margin-top: 15px;
+}
+
+.contact-details-form-fields__field.first-name {
+	margin-top: 0;
+}
+
+.contact-details-form-fields__container > div.hidden-input {
+	margin-top: 0;
+}
+
+
+

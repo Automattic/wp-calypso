@@ -16,7 +16,7 @@ import { Input } from 'my-sites/domains/components/form';
 const EuAddressFieldset = props => {
 	const { getFieldProps, translate } = props;
 	return (
-		<div className="domain-form-fieldsets__address-fields eu-address-fieldset">
+		<div className="custom-form-fieldsets__address-fields eu-address-fieldset">
 			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
 			<Input label={ translate( 'City' ) } { ...getFieldProps( 'city', true ) } />
 		</div>

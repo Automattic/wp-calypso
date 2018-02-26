@@ -37,6 +37,7 @@ export default class extends React.Component {
 						countryCode={ this.props.countryCode.toUpperCase() }
 						className={ this.props.className }
 						isError={ this.props.isError }
+						disabled={ this.props.disabled }
 					/>
 				</div>
 				{ this.props.errorMessage && (

@@ -50,6 +50,7 @@ export default localize(
 					] ) }
 					className={ classnames( this.props.className, 'form-country-select' ) }
 					onChange={ this.props.onChange }
+					disabled={ this.props.disabled }
 				>
 					{ options.map( function( option ) {
 						return (
