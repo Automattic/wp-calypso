@@ -2,12 +2,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { compact, find, includes, reduce } from 'lodash';
+import { compact, find, flow, includes, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +19,7 @@ import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
 import { mapPostStatus } from 'lib/route';
 import { isEnabled } from 'config';
-import UrlSearch from 'lib/mixins/url-search';
+import urlSearch from 'lib/url-search';
 import QueryPostCounts from 'components/data/query-post-counts';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -30,11 +29,8 @@ import AuthorSegmented from './author-segmented';
 import Button from 'components/button';
 import Gridicon from 'gridicons';
 
-const PostTypeFilter = createReactClass( {
-	displayName: 'PostTypeFilter',
-	mixins: [ UrlSearch ],
-
-	propTypes: {
+export class PostTypeFilter extends Component {
+	static propTypes = {
 		authorToggleHidden: PropTypes.bool,
 		siteId: PropTypes.number,
 		query: PropTypes.shape( {
@@ -45,7 +41,7 @@ const PostTypeFilter = createReactClass( {
 		jetpack: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		counts: PropTypes.object,
-	},
+	};
 
 	getNavItems() {
 		const { query, siteId, siteSlug, jetpack, counts } = this.props;
@@ -112,7 +108,7 @@ const PostTypeFilter = createReactClass( {
 			},
 			[]
 		);
-	},
+	}
 
 	renderMultiSelectButton() {
 		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) || ! this.props.siteId ) {
@@ -133,7 +129,7 @@ const PostTypeFilter = createReactClass( {
 				</span>
 			</Button>
 		);
-	},
+	}
 
 	render() {
 		const {
@@ -192,7 +188,7 @@ const PostTypeFilter = createReactClass( {
 						<Search
 							pinned
 							fitsContainer
-							onSearch={ this.doSearch }
+							onSearch={ this.props.doSearch }
 							placeholder={ this.props.translate( 'Search…' ) }
 							delaySearch={ true }
 						/>
@@ -201,44 +197,48 @@ const PostTypeFilter = createReactClass( {
 				</SectionNav>
 			</div>
 		);
-	},
-} );
-
-export default connect(
-	( state, { query } ) => {
-		const siteId = getSelectedSiteId( state );
-		let authorToggleHidden = false;
-		if ( query && query.type === 'post' ) {
-			if ( siteId ) {
-				authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
-			} else {
-				authorToggleHidden = areAllSitesSingleUser( state );
-			}
-		} else {
-			// Hide for Custom Post Types
-			authorToggleHidden = true;
-		}
-
-		const props = {
-			siteId,
-			authorToggleHidden,
-			jetpack: isJetpackSite( state, siteId ),
-			siteSlug: getSiteSlug( state, siteId ),
-			isMultiSelectEnabled: isMultiSelectEnabled( state ),
-		};
-
-		if ( ! query ) {
-			return props;
-		}
-
-		return {
-			...props,
-			counts: query.author
-				? getNormalizedMyPostCounts( state, siteId, query.type )
-				: getNormalizedPostCounts( state, siteId, query.type ),
-		};
-	},
-	{
-		toggleMultiSelect,
 	}
-)( localize( PostTypeFilter ) );
+}
+
+export default flow(
+	localize,
+	urlSearch,
+	connect(
+		( state, { query } ) => {
+			const siteId = getSelectedSiteId( state );
+			let authorToggleHidden = false;
+			if ( query && query.type === 'post' ) {
+				if ( siteId ) {
+					authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
+				} else {
+					authorToggleHidden = areAllSitesSingleUser( state );
+				}
+			} else {
+				// Hide for Custom Post Types
+				authorToggleHidden = true;
+			}
+
+			const props = {
+				siteId,
+				authorToggleHidden,
+				jetpack: isJetpackSite( state, siteId ),
+				siteSlug: getSiteSlug( state, siteId ),
+				isMultiSelectEnabled: isMultiSelectEnabled( state ),
+			};
+
+			if ( ! query ) {
+				return props;
+			}
+
+			return {
+				...props,
+				counts: query.author
+					? getNormalizedMyPostCounts( state, siteId, query.type )
+					: getNormalizedPostCounts( state, siteId, query.type ),
+			};
+		},
+		{
+			toggleMultiSelect,
+		}
+	)
+)( PostTypeFilter );
