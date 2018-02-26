@@ -25,7 +25,7 @@ class ImporterMedium extends React.PureComponent {
 
 	render() {
 		importerData.description = this.props.translate(
-			'Import posts, tags, images and videos ' + 'from a Medium export file.'
+			'Import posts, tags, images, and videos ' + 'from a Medium export file.'
 		);
 
 		importerData.uploadDescription = this.props.translate(
