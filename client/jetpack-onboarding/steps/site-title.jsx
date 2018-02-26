@@ -54,7 +54,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 			description_changed: this.state.blogdescription !== this.getFieldValue( 'siteDescription' ),
 		} );
 
-		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+		this.props.saveJpoSettings( this.props.siteId, {
 			siteTitle: this.state.blogname,
 			siteDescription: this.state.blogdescription,
 		} );

@@ -22,7 +22,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 		this.props.recordJpoEvent( 'calypso_jpo_site_type_clicked', {
 			site_type: siteType,
 		} );
-		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+		this.props.saveJpoSettings( this.props.siteId, {
 			siteType,
 		} );
 	};

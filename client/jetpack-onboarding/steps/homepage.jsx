@@ -23,7 +23,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 			homepage_format: homepageFormat,
 		} );
 
-		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+		this.props.saveJpoSettings( this.props.siteId, {
 			homepageFormat,
 		} );
 	};

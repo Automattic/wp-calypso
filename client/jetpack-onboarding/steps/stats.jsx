@@ -59,7 +59,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 	};
 
 	activateStats() {
-		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+		this.props.saveJpoSettings( this.props.siteId, {
 			stats: true,
 		} );
 	}

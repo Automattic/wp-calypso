@@ -25,7 +25,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	handleWooCommerceInstallation = () => {
 		this.props.recordJpoEvent( 'calypso_jpo_woocommerce_install_clicked' );
 
-		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+		this.props.saveJpoSettings( this.props.siteId, {
 			installWooCommerce: true,
 		} );
 	};

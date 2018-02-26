@@ -79,7 +79,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			)
 		);
 
-		this.props.saveJetpackOnboardingSettings( siteId, { businessAddress: this.state } );
+		this.props.saveJpoSettings( siteId, { businessAddress: this.state } );
 
 		page( this.props.getForwardUrl() );
 	};

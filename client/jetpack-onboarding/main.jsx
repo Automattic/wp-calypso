@@ -94,7 +94,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						onBackClick={ this.getNavigationLinkClickHandler( 'back' ) }
 						onForwardClick={ this.getNavigationLinkClickHandler( 'forward' ) }
 						recordJpoEvent={ recordJpoEvent }
-						saveJetpackOnboardingSettings={ saveJpoSettings }
+						saveJpoSettings={ saveJpoSettings }
 						siteId={ siteId }
 						siteSlug={ siteSlug }
 						settings={ settings }

@@ -23,7 +23,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const { siteId } = this.props;
 		this.props.recordJpoEvent( 'calypso_jpo_contact_form_clicked' );
 
-		this.props.saveJetpackOnboardingSettings( siteId, {
+		this.props.saveJpoSettings( siteId, {
 			addContactForm: true,
 		} );
 	};
