@@ -242,7 +242,14 @@ class SiteIndicator extends Component {
 		};
 	};
 
-	trackSiteDisconnect = () => this.props.trackSiteDisconnect( this.props.site.ID );
+	trackSiteDisconnect = () => {
+		const siteId = this.props.site.ID;
+		this.props.recordGoogleEvent(
+			'Jetpack',
+			'Clicked in site indicator to start Jetpack Disconnect flow'
+		);
+		this.props.recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start', { siteId } );
+	};
 
 	errorAccessing() {
 		const { site, translate } = this.props;
@@ -417,9 +424,7 @@ export default connect(
 	},
 	{
 		updateWordPress,
-		trackSiteDisconnect: siteId => {
-			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' );
-			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start', { siteId } );
-		},
+		recordGoogleEvent,
+		recordTracksEvent,
 	}
 )( localize( SiteIndicator ) );
