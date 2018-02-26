@@ -440,7 +440,9 @@ $plan-features-sidebar-width: 272px;
 
 .plans-wrapper {
 	margin: 0 auto;
-	overflow-y: auto;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+	height: 100%;
 	padding: 20px 0 10px;
     transform: translateY(-20px);
 }
