@@ -4,14 +4,15 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import { localize } from 'i18n-calypso';
-import page from 'page';
+import { connect } from 'react-redux';
 import { get, map, omit, reduce, some } from 'lodash';
+import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import ConnectSuccess from '../connect-success';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -19,6 +20,11 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Tile from 'components/tile-grid/tile';
+import TileGrid from 'components/tile-grid';
+import { addQueryArgs } from 'lib/route';
+import { getUnconnectedSiteUrl } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
@@ -33,7 +39,12 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 	state = {
 		fields: get( this.props.settings, 'businessAddress' ) || this.constructor.emptyFields,
+		wantsBusinessAddress: false,
 	};
+
+	componentDidUpdate() {
+		this.maybeDisplayForm();
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
@@ -42,6 +53,39 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			} );
 		}
 	}
+
+	maybeDisplayForm() {
+		const { action, hasBusinessAddress, isConnected, isRequestingSettings } = this.props;
+
+		if (
+			! isRequestingSettings &&
+			isConnected &&
+			hasBusinessAddress === false &&
+			action === 'add_business_address'
+		) {
+			this.displayForm();
+		}
+	}
+
+	displayForm = () => {
+		this.setState( {
+			wantsBusinessAddress: true,
+		} );
+	};
+
+	handleAddBusinessAddressClick = () => {
+		this.props.recordJpoEvent( 'calypso_jpo_business_address_clicked' );
+
+		if ( ! this.props.isConnected ) {
+			return;
+		}
+
+		this.displayForm();
+	};
+
+	handleNextButtonClick = () => {
+		this.props.recordJpoEvent( 'calypso_jpo_business_address_next_clicked' );
+	};
 
 	getChangeHandler = field => event => {
 		this.setState( {
@@ -90,27 +134,52 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		);
 
 		this.props.saveJpoSettings( siteId, { businessAddress: this.state.fields } );
-
-		page( this.props.getForwardUrl() );
 	};
 
 	hasEmptyFields = () => {
 		return some( omit( this.state.fields, 'state' ), val => val === '' );
 	};
 
+	renderActionTile() {
+		const { isConnected, siteUrl, translate } = this.props;
+		const headerText = translate( 'Help your customers find you with Jetpack.' );
+		const subHeaderText = translate(
+			"Add your business address and a map of your location with Jetpack's business address widget. " +
+				"You can adjust the widget's location later."
+		);
+		const connectUrl = addQueryArgs(
+			{
+				url: siteUrl,
+				// TODO: add a parameter to the JPC to redirect back to this step after completion
+				// and in the redirect URL include the ?action=add_business_address parameter
+				// to actually trigger the form display action after getting back to JPO
+			},
+			'/jetpack/connect'
+		);
+		const href = ! isConnected ? connectUrl : null;
+
+		return (
+			<Fragment>
+				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+
+				<TileGrid>
+					<Tile
+						buttonLabel={ translate( 'Add a business address' ) }
+						image="/calypso/images/illustrations/illustration-layout.svg"
+						onClick={ this.handleAddBusinessAddressClick }
+						href={ href }
+					/>
+				</TileGrid>
+			</Fragment>
+		);
+	}
+
 	renderForm() {
 		const { isRequestingSettings, translate } = this.props;
-		const headerText = translate( 'Add a business address.' );
-		const subHeaderText = (
-			<Fragment>
-				{ translate(
-					'Enter your business address to add a widget containing your address to your website.'
-				) }
-				<br />
-				{ translate(
-					'You can add a map based on this information and change where this widget is located later on.'
-				) }
-			</Fragment>
+		const headerText = translate( 'Help your customers find you with Jetpack.' );
+		const subHeaderText = translate(
+			"Add your business address and a map of your location with Jetpack's business address widget. " +
+				"You can adjust the widget's location later."
 		);
 		return (
 			<Fragment>
@@ -159,8 +228,18 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		);
 	}
 
+	renderActionTileOrForm() {
+		const { isConnected } = this.props;
+		const { wantsBusinessAddress } = this.state;
+
+		if ( wantsBusinessAddress && isConnected ) {
+			return this.renderForm();
+		}
+		return this.renderActionTile();
+	}
+
 	render() {
-		const { basePath, translate } = this.props;
+		const { basePath, getForwardUrl, hasBusinessAddress, translate } = this.props;
 
 		return (
 			<div className="steps__main">
@@ -170,10 +249,23 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 					title="Business Address ‹ Jetpack Start"
 				/>
 
-				{ this.renderForm() }
+				{ hasBusinessAddress ? (
+					<ConnectSuccess
+						href={ getForwardUrl() }
+						illustration="/calypso/images/illustrations/illustration-layout.svg"
+						onClick={ this.handleNextButtonClick }
+						title={ translate( 'Success! Jetpack has added your business address to your site.' ) }
+					/>
+				) : (
+					this.renderActionTileOrForm()
+				) }
 			</div>
 		);
 	}
 }
 
-export default localize( JetpackOnboardingBusinessAddressStep );
+export default connect( ( state, { settings, siteId } ) => ( {
+	hasBusinessAddress: get( settings, 'businessAddress' ) !== false,
+	isConnected: isJetpackSite( state, siteId ),
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+} ) )( localize( JetpackOnboardingBusinessAddressStep ) );
