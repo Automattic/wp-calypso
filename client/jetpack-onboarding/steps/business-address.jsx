@@ -225,7 +225,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 							primary
 							type="submit"
 						>
-							{ translate( 'Next Step' ) }
+							{ translate( 'Add address' ) }
 						</Button>
 					</form>
 				</Card>
