@@ -439,17 +439,6 @@ export function businessPlan( slug, properties ) {
 }
 
 /**
- * Determines whether a domain Item supports purchasing a privacy subscription
- * @param {string} slug - e.g. domain_reg, dotblog_domain
- * @param {array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
- * @return {boolean} true if the domainItem supports privacy protection purchase
- */
-export function supportsPrivacyProtectionPurchase( productSlug, productsList ) {
-	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
-	return get( product, 'is_privacy_protection_product_purchase_allowed', false );
-}
-
-/**
  * Creates a new shopping cart item for a domain.
  *
  * @param {Object} productSlug - the unique string that identifies the product
@@ -1011,7 +1000,6 @@ export default {
 	siteRedirect,
 	shouldBundleDomainWithPlan,
 	spaceUpgradeItem,
-	supportsPrivacyProtectionPurchase,
 	themeItem,
 	unlimitedSpaceItem,
 	unlimitedThemesItem,
