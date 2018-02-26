@@ -15,6 +15,7 @@ import {
 	SITE_RENAME_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { errorNotice, successNotice } from 'state/notices/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { domainManagementEdit } from 'my-sites/domains/paths';
 import { requestSite } from 'state/sites/actions';
 
@@ -45,6 +46,28 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 		siteId,
 	} );
 
+	const eventProperties = {
+		new_domain: newBlogName,
+		discard,
+	};
+
+	const errorHandler = error => {
+		dispatch(
+			recordTracksEvent( 'calypso_siterename_error', {
+				...eventProperties,
+				error_code: error.code,
+			} )
+		);
+		dispatchErrorNotice( dispatch, error );
+		dispatch( {
+			type: SITE_RENAME_REQUEST_FAILURE,
+			error: error.message,
+			siteId,
+		} );
+	};
+
+	dispatch( recordTracksEvent( 'calypso_siterename_request', eventProperties ) );
+
 	return fetchNonce( siteId )
 		.then( nonce => {
 			wpcom
@@ -54,6 +77,8 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 					const newSlug = get( data, 'new_slug' );
 
 					if ( newSlug ) {
+						dispatch( recordTracksEvent( 'calypso_siterename_success', eventProperties ) );
+
 						const newAddress = newSlug + '.wordpress.com';
 						dispatch( requestSite( siteId ) ).then( () => {
 							page( domainManagementEdit( newAddress, newAddress ) );
@@ -76,21 +101,7 @@ export const requestSiteRename = ( siteId, newBlogName, discard ) => dispatch =>
 						siteId,
 					} );
 				} )
-				.catch( error => {
-					dispatchErrorNotice( dispatch, error );
-					dispatch( {
-						type: SITE_RENAME_REQUEST_FAILURE,
-						error: error.message,
-						siteId,
-					} );
-				} );
+				.catch( errorHandler );
 		} )
-		.catch( error => {
-			dispatchErrorNotice( dispatch, error );
-			dispatch( {
-				type: SITE_RENAME_REQUEST_FAILURE,
-				error: error.message,
-				siteId,
-			} );
-		} );
+		.catch( errorHandler );
 };

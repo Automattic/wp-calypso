@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
 import Dialog from 'components/dialog';
 import FormLabel from 'components/forms/form-label';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class SiteRenamerConfirmationDialog extends PureComponent {
 	static propTypes = {
@@ -84,6 +85,10 @@ class SiteRenamerConfirmationDialog extends PureComponent {
 				buttons={ buttons }
 				onClose={ this.onClose }
 			>
+				<TrackComponentView
+					eventName="calypso_siterename_areyousure_view"
+					eventProperties={ { new_domain: newDomainName } }
+				/>
 				<h1>{ translate( "Let's Review" ) }</h1>
 				<p>
 					{ translate(
