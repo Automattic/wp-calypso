@@ -82,10 +82,8 @@ class SelectBusinessType extends Component {
 					buttonText={ translate( 'Create My Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
 					} ) }
-					buttonIcon="external"
 					buttonPrimary={ true }
-					buttonHref="https://www.google.com/business/"
-					buttonTarget="_blank"
+					buttonHref={ '/google-my-business/connect/' + siteId }
 					buttonOnClick={ this.trackCreateMyListingClick }
 				/>
 
