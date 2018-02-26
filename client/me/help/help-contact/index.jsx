@@ -126,7 +126,9 @@ class HelpContact extends React.Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
-		page( '/help' );
+		if ( ! this.props.compact ) {
+			page( '/help' );
+		}
 	};
 
 	prepareDirectlyWidget = () => {
