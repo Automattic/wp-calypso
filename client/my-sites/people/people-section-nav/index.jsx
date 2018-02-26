@@ -5,37 +5,16 @@
  */
 
 import React, { Component } from 'react';
-import createReactClass from 'create-react-class';
 import { find, get, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
-import UrlSearch from 'lib/mixins/url-search';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-
-let PeopleSearch = createReactClass( {
-	displayName: 'PeopleSearch',
-	mixins: [ UrlSearch ],
-
-	render: function() {
-		return (
-			<Search
-				pinned
-				fitsContainer
-				onSearch={ this.doSearch }
-				initialValue={ this.props.search }
-				ref="url-search"
-				delaySearch={ true }
-				analyticsGroup="People"
-			/>
-		);
-	},
-} );
+import PeopleSearch from 'my-sites/people/people-section-nav/people-search';
 
 class PeopleNavTabs extends React.Component {
 	static displayName = 'PeopleNavTabs';
