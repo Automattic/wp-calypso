@@ -395,7 +395,6 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			<FormFieldset className="contact-details-form-fields">
 				{ this.createField( 'first-name', Input, {
-					autoFocus: true,
 					label: translate( 'First Name' ),
 				} ) }
 
