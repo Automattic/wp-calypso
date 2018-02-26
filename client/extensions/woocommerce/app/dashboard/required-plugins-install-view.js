@@ -23,8 +23,8 @@ import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import SetupHeader from './setup-header';
-import SetupNotices from './setup-notices';
+import SetupHeader from './setup/header';
+import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 import { hasSitePendingAutomatedTransfer } from 'state/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
@@ -377,7 +377,7 @@ class RequiredPluginsInstallView extends Component {
 	renderConfirmScreen = () => {
 		const { translate } = this.props;
 		return (
-			<div className="dashboard__setup-wrapper">
+			<div className="dashboard__setup-wrapper setup__wrapper">
 				<SetupNotices />
 				<div className="card dashboard__setup-confirm">
 					<SetupHeader
@@ -416,7 +416,7 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		return (
-			<div className="dashboard__setup-wrapper">
+			<div className="dashboard__setup-wrapper setup__wrapper">
 				<SetupNotices />
 				<div className="card dashboard__plugins-install-view">
 					{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }

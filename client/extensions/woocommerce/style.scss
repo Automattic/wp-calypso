@@ -3,6 +3,7 @@
 
 .woocommerce {
 	@import 'app/dashboard/style';
+	@import 'app/dashboard/setup/style';
 	@import 'app/order/style';
 	@import 'app/order/order-created/style';
 	@import 'app/order/order-customer/style';
@@ -34,7 +35,6 @@
 	@import 'components/compact-tinymce/style';
 	@import 'components/d3/base/style';
 	@import 'components/dashboard-widget/style';
-	@import 'components/dashboard-widget-row/style';
 	@import 'components/delta/style';
 	@import 'components/extended-header/style';
 	@import 'components/filtered-list/style';
