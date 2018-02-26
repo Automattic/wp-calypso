@@ -85,12 +85,12 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 					<div className="google-my-business-stats-nudge__info">
 						<h1 className="google-my-business-stats-nudge__title">
-							{ this.props.translate( 'Reach more customers with Google My Business' ) }
+							{ this.props.translate( 'Can your customers find you on Google?' ) }
 						</h1>
 
 						<h2 className="google-my-business-stats-nudge__description">
 							{ this.props.translate(
-								'Show up when customers search for businesses like yours on Google Search and Maps.'
+								'Be there when customers search businesses like yours on Google Search and Maps.'
 							) }
 						</h2>
 

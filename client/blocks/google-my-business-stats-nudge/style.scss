@@ -16,7 +16,7 @@
 	padding: 11px 24px 11px 24px;
 	@include breakpoint( ">960px" ) {
 		// support image "flowing" off the edge of card
-		max-height: 300px;
+		max-height: 250px;
 		overflow: hidden;
 	}
 }
@@ -35,7 +35,7 @@
 	font-size: 18px;
 	font-weight: 400;
 	@include breakpoint( ">960px" ) {
-		font-size: 24px;
+		font-size: 20px;
 	}
 }
 
@@ -44,7 +44,7 @@
 	font-weight: 300;
 	margin: 10px 0;
 	@include breakpoint( ">960px" ) {
-		font-size: 18px;
+		font-size: 16px;
 	}
 }
 
@@ -61,9 +61,12 @@
 
 .google-my-business-stats-nudge__image-wrapper {
 	display: none;
+	width: 320px;
+	padding: 0 40px;
 	@include breakpoint( ">960px" ) {
 		display: block;
 		margin-right: 24px;
+		min-height: 250px;
 	}
 }
 
