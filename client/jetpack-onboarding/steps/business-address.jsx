@@ -88,8 +88,8 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		return some( omit( this.state, 'state' ), val => val === '' );
 	};
 
-	render() {
-		const { basePath, isRequestingSettings, translate } = this.props;
+	renderForm() {
+		const { isRequestingSettings, translate } = this.props;
 		const headerText = translate( 'Add a business address.' );
 		const subHeaderText = (
 			<Fragment>
@@ -103,13 +103,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			</Fragment>
 		);
 		return (
-			<div className="steps__main">
-				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Start' ) } />
-				<PageViewTracker
-					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
-					title="Business Address ‹ Jetpack Start"
-				/>
-
+			<Fragment>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card className="steps__form">
@@ -151,6 +145,22 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 						</Button>
 					</form>
 				</Card>
+			</Fragment>
+		);
+	}
+
+	render() {
+		const { basePath, translate } = this.props;
+
+		return (
+			<div className="steps__main">
+				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Start' ) } />
+				<PageViewTracker
+					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
+					title="Business Address ‹ Jetpack Start"
+				/>
+
+				{ this.renderForm() }
 			</div>
 		);
 	}
