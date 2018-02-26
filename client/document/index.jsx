@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
@@ -46,7 +47,18 @@ class Document extends React.Component {
 			devDocs,
 			devDocsURL,
 			feedbackURL,
+			inlineScriptNonce,
+			analyticsScriptNonce,
 		} = this.props;
+
+		const inlineScript =
+			`COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
+			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
+			( initialReduxState
+				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
+				: '' ) +
+			( config ? config : '' );
 
 		return (
 			<html
@@ -139,42 +151,11 @@ class Document extends React.Component {
 
 					<script
 						type="text/javascript"
+						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
-							__html: 'COMMIT_SHA = ' + jsonStringifyForHtml( commitSha ),
+							__html: inlineScript,
 						} }
 					/>
-					{ user && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var currentUser = ' + jsonStringifyForHtml( user ),
-							} }
-						/>
-					) }
-					{ app && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var app = ' + jsonStringifyForHtml( app ),
-							} }
-						/>
-					) }
-					{ initialReduxState && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var initialReduxState = ' + jsonStringifyForHtml( initialReduxState ),
-							} }
-						/>
-					) }
-					{ config && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: config,
-							} }
-						/>
-					) }
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script src={ urls.manifest } />
@@ -200,6 +181,15 @@ class Document extends React.Component {
 						 `,
 						} }
 					/>
+					{ // Load GA only if enabled in the config.
+					appConfig( 'google_analytics_enabled' ) && (
+						<script
+							async={ true }
+							type="text/javascript"
+							src="https://www.google-analytics.com/analytics.js"
+							nonce={ analyticsScriptNonce }
+						/>
+					) }
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>
