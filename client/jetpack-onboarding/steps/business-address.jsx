@@ -22,7 +22,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
-	static emptyState = {
+	static emptyFields = {
 		city: '',
 		name: '',
 		state: '',
@@ -31,16 +31,25 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		country: '',
 	};
 
-	state = get( this.props.settings, 'businessAddress' ) || this.constructor.emptyState;
+	state = {
+		fields: get( this.props.settings, 'businessAddress' ) || this.constructor.emptyFields,
+	};
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isRequestingSettings && ! nextProps.isRequestingSettings ) {
-			this.setState( get( nextProps.settings, 'businessAddress' ) || this.constructor.emptyState );
+			this.setState( {
+				fields: get( nextProps.settings, 'businessAddress' ) || this.constructor.emptyFields,
+			} );
 		}
 	}
 
 	getChangeHandler = field => event => {
-		this.setState( { [ field ]: event.target.value } );
+		this.setState( {
+			fields: {
+				...this.state.fields,
+				[ field ]: event.target.value,
+			},
+		} );
 	};
 
 	fields = this.getFields();
@@ -71,7 +80,8 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			reduce(
 				this.fields,
 				( eventProps, value, field ) => {
-					const changed = get( settings, [ 'businessAddress', field ] ) !== this.state[ field ];
+					const changed =
+						get( settings, [ 'businessAddress', field ] ) !== this.state.fields[ field ];
 					eventProps[ `${ field }_changed` ] = changed;
 					return eventProps;
 				},
@@ -79,13 +89,13 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 			)
 		);
 
-		this.props.saveJpoSettings( siteId, { businessAddress: this.state } );
+		this.props.saveJpoSettings( siteId, { businessAddress: this.state.fields } );
 
 		page( this.props.getForwardUrl() );
 	};
 
 	hasEmptyFields = () => {
-		return some( omit( this.state, 'state' ), val => val === '' );
+		return some( omit( this.state.fields, 'state' ), val => val === '' );
 	};
 
 	renderForm() {
@@ -110,7 +120,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 					<form onSubmit={ this.handleSubmit }>
 						{ map( this.fields, ( fieldLabel, fieldName ) => {
 							const isValidatingField = ! isRequestingSettings && fieldName !== 'state';
-							const isValidField = this.state[ fieldName ] !== '';
+							const isValidField = this.state.fields[ fieldName ] !== '';
 
 							return (
 								<FormFieldset key={ fieldName }>
@@ -122,7 +132,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 										isError={ isValidatingField && ! isValidField }
 										isValid={ isValidatingField && isValidField }
 										onChange={ this.getChangeHandler( fieldName ) }
-										value={ this.state[ fieldName ] || '' }
+										value={ this.state.fields[ fieldName ] || '' }
 									/>
 									{ isValidatingField &&
 										! isValidField && (
