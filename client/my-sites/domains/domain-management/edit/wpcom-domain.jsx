@@ -16,6 +16,7 @@ import { isEnabled } from 'config';
 import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card';
 import Header from './card/header';
+import Notice from 'components/notice';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -33,7 +34,7 @@ const WpcomDomain = createReactClass( {
 	},
 
 	getEditSiteAddressBlock() {
-		const { domain } = this.props;
+		const { domain, translate } = this.props;
 
 		/**
 		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
@@ -43,6 +44,25 @@ const WpcomDomain = createReactClass( {
 		}
 
 		if ( isEnabled( 'site-address-editor' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
+			if ( ! domain.currentUserCanManage ) {
+				return (
+					/**
+					 * See: `NonOwnerCard` for other `domain.currentUserCanManage` usage
+					 * Unfortunately, we don't know the domain owner here & the above component takes an annotated list of domains.
+					 * @TODO Derive the owner from the state tree and display them so customers know who to contact.
+					 * @TODO Should this be a more basic `<Card />` instead of a `<Notice />` or wrapped in one?
+					 * @TODO Finalize copy
+					 */
+					<Notice
+						status="is-info"
+						showDismiss={ false }
+						text={ translate(
+							'The site name can only be changed by the site owner. Please contact them if you would like to change it.'
+						) }
+					/>
+				);
+			}
+
 			return <SiteRenamer currentDomain={ domain } />;
 		}
 
