@@ -178,3 +178,33 @@
 		}
 	}
 }
+
+.dashboard-widget__row {
+	display: flex;
+	align-items: flex-start;
+	flex-direction: column;
+
+	@include breakpoint( ">660px" ) {
+		flex-direction: row;
+	}
+
+	.dashboard-widget {
+		margin-right: 16px;
+
+		@include breakpoint( "<660px" ) {
+			width: 100%;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		@include breakpoint( ">660px" ) {
+			flex: 1;
+
+			&.is-two-thirds-width {
+				flex: 2;
+			}
+		}
+	}
+}
