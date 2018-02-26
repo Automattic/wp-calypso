@@ -16,6 +16,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
@@ -32,7 +33,6 @@ import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/gen
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
 import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
-import Card from 'components/card';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
 class ManageOrdersView extends Component {
@@ -138,7 +138,7 @@ class ManageOrdersView extends Component {
 		);
 	};
 
-	render = () => {
+	render() {
 		const { site, translate, orders, user } = this.props;
 		return (
 			<div className="dashboard__manage-has-orders">
@@ -162,28 +162,28 @@ class ManageOrdersView extends Component {
 						this.possiblyRenderReviewsWidget() }
 				</div>
 
-				<Card className="dashboard__reports-widget">
-					<div className="dashboard__reports-widget-content-wrapper">
-						<img src="/calypso/images/extensions/woocommerce/woocommerce-reports.svg" alt="" />
-						<div className="dashboard__reports-widget-content">
-							<h2>{ translate( 'Reports' ) }</h2>
-							<p>
-								{ translate(
-									'See a detailed breakdown of how your store is doing on the stats screen.'
-								) }
-							</p>
-							<p>
-								<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
-									{ orders.length ? translate( 'View full reports' ) : translate( 'View reports' ) }
-								</Button>
-							</p>
-						</div>
-					</div>
-				</Card>
+				<DashboardWidget
+					className="dashboard__reports-widget"
+					image="/calypso/images/extensions/woocommerce/woocommerce-reports.svg"
+					imagePosition="right"
+					title={ translate( 'Reports' ) }
+				>
+					<p>
+						{ translate(
+							'See a detailed breakdown of how your store is doing on the stats screen.'
+						) }
+					</p>
+					<p>
+						<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
+							{ orders.length ? translate( 'View full reports' ) : translate( 'View reports' ) }
+						</Button>
+					</p>
+				</DashboardWidget>
+
 				{ this.possiblyRenderShareWidget() }
 			</div>
 		);
-	};
+	}
 }
 
 function mapStateToProps( state ) {
