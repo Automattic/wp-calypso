@@ -17,6 +17,8 @@ import CompactCard from 'components/card/compact';
 import CTACard from './cta-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
+import config from 'config';
+import GoogleLoginButton from 'components/social-buttons/google';
 
 class SelectBusinessType extends Component {
 	static propTypes = {
@@ -39,6 +41,10 @@ class SelectBusinessType extends Component {
 
 	goBack = () => {
 		page.back( `/stats/day/${ this.props.siteId }` );
+	};
+
+	handleGoogleResponse = () => {
+		page.redirect( `/google-my-business/show-list-of-locations/${ this.props.siteId }` );
 	};
 
 	render() {
@@ -71,21 +77,31 @@ class SelectBusinessType extends Component {
 					/>
 				</CompactCard>
 
-				<CTACard
-					headerText={ translate( 'Physical Location or Service Area', {
-						comment: 'In the context of a business activity, brick and mortar or online service',
-					} ) }
-					mainText={ translate(
-						'My business has a physical location customers can visit, ' +
-							'or provides goods and services to local customers, or both.'
-					) }
-					buttonText={ translate( 'Create My Listing', {
-						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }
-					buttonPrimary={ true }
-					buttonHref={ '/google-my-business/connect/' + siteId }
-					buttonOnClick={ this.trackCreateMyListingClick }
-				/>
+				<Card>
+					<div className="select-business-type__cta-card-main">
+						<h2>
+							{ translate( 'Physical Location or Service Area', {
+								comment:
+									'In the context of a business activity, brick and mortar or online service',
+							} ) }
+						</h2>
+						<p>
+							{ translate(
+								'My business has a physical location customers can visit, ' +
+									'or provides goods and services to local customers, or both.'
+							) }
+						</p>
+					</div>
+					<div className="select-business-type__cta-card-button-container">
+						<GoogleLoginButton
+							clientId={ config( 'google_oauth_client_id' ) }
+							scope="https://www.googleapis.com/auth/plus.business.manage"
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ 'popup' }
+							redirectUri={ '' }
+						/>
+					</div>
+				</Card>
 
 				<CTACard
 					headerText={ translate( 'Online Only', {

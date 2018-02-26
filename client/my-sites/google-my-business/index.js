@@ -10,13 +10,13 @@ import page from 'page';
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import {
-	connectToGoogle,
 	selectBusinessType,
 	showListOfLocations,
 	searchForALocation,
 	success,
 	create,
 	verify,
+	stats,
 } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
@@ -29,16 +29,6 @@ export default function() {
 			siteSelection,
 			navigation,
 			selectBusinessType,
-			makeLayout,
-			clientRender
-		);
-
-		page( '/google-my-business/connect', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/google-my-business/connect/:site_id/',
-			siteSelection,
-			navigation,
-			connectToGoogle,
 			makeLayout,
 			clientRender
 		);
@@ -101,6 +91,16 @@ export default function() {
 			siteSelection,
 			navigation,
 			verify,
+			makeLayout,
+			clientRender
+		);
+
+		page( '/google-my-business/stats', siteSelection, sites, makeLayout, clientRender );
+		page(
+			'/google-my-business/stats/:site_id/',
+			siteSelection,
+			navigation,
+			stats,
 			makeLayout,
 			clientRender
 		);

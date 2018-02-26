@@ -9,22 +9,16 @@ import React from 'react';
  * Internal Dependencies
  */
 import GoogleMyBusinessSelectBusinessType from './select-business-type';
-import ConnectToGoogle from './connect-to-google';
 import SearchForALocation from './search-for-a-location';
 import ShowListOfLocations from './show-list-of-locations';
 import Success from './success';
 import Create from './create';
 import Verify from './verify';
+import Stats from './google-my-business-stats';
 
 export function selectBusinessType( context, next ) {
 	const { params } = context;
 	context.primary = <GoogleMyBusinessSelectBusinessType siteId={ params.site_id } />;
-	next();
-}
-
-export function connectToGoogle( context, next ) {
-	const { params } = context;
-	context.primary = <ConnectToGoogle siteId={ params.site_id } />;
 	next();
 }
 
@@ -55,5 +49,11 @@ export function create( context, next ) {
 export function verify( context, next ) {
 	const { params } = context;
 	context.primary = <Verify siteId={ params.site_id } />;
+	next();
+}
+
+export function stats( context, next ) {
+	const { params } = context;
+	context.primary = <Stats siteId={ params.site_id } />;
 	next();
 }
