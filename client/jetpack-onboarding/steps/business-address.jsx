@@ -19,6 +19,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
+import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
 import Tile from 'components/tile-grid/tile';
@@ -252,8 +253,9 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
 					title="Business Address ‹ Jetpack Start"
 				/>
-
 				<QuerySites siteId={ siteId } />
+
+				<JetpackLogo full size={ 45 } />
 
 				{ hasBusinessAddress ? (
 					<ConnectSuccess
