@@ -67,6 +67,12 @@ class InlineHelp extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps, prevState ) {
+		if ( prevState.showContactForm && prevProps.searchQuery !== this.props.searchQuery ) {
+			this.toggleContactForm();
+		}
+	}
+
 	toggleInlineHelp = () => {
 		const { showInlineHelp } = this.state;
 		if ( showInlineHelp ) {
