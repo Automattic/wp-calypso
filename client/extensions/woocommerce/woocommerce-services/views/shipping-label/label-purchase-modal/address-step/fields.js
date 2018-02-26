@@ -94,7 +94,9 @@ const AddressFields = ( props ) => {
 					updateValue={ updateValue( 'phone' ) }
 					className="address-step__phone" />
 			</div>
-			{ generalErrorOnly && <Notice status="is-error" showDismiss={ false }>{ fieldErrors.general }</Notice> }
+			{ generalErrorOnly && <Notice status="is-error" showDismiss={ false }>
+				{ translate( '%(message)s. Please modify the address and try again.', { args: { message: fieldErrors.general } } ) }
+			</Notice> }
 			<TextField
 				id={ getId( 'address' ) }
 				title={ translate( 'Address' ) }
