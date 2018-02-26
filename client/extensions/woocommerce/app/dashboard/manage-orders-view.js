@@ -1,15 +1,13 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import config from 'config';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,9 +15,11 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
+import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
+import formatCurrency from 'lib/format-currency';
 import {
 	areOrdersLoading,
 	areOrdersLoaded,
@@ -31,7 +31,6 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
-import ProcessOrdersWidget from 'woocommerce/components/process-orders-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
@@ -84,45 +83,60 @@ class ManageOrdersView extends Component {
 		}
 	};
 
+	shouldShowPendingReviews = () => {
+		return config.isEnabled( 'woocommerce/extension-reviews' ) && this.props.pendingReviews;
+	};
+
 	possiblyRenderProcessOrdersWidget = () => {
-		const { site, orders, ordersRevenue, currency } = this.props;
+		const { currency, orders, ordersRevenue, site, translate } = this.props;
 		if ( ! orders.length ) {
 			return null;
 		}
+		const currencyValue = ( currency && currency.value ) || '';
+		const orderCountPhrase = translate( '✨ New order', '✨ New orders', {
+			count: orders.length,
+		} );
+		const classes = classNames( 'dashboard__process-orders-container', {
+			'has-reviews': this.shouldShowPendingReviews(),
+		} );
 		return (
-			<ProcessOrdersWidget
-				className="dashboard__process-orders-widget"
-				site={ site }
-				orders={ orders }
-				ordersRevenue={ ordersRevenue }
-				currency={ currency }
-			/>
+			<DashboardWidgetRow className={ classes }>
+				<DashboardWidget className="dashboard__process-orders-total">
+					<span className="dashboard__process-orders-value">{ orders.length }</span>
+					<span className="dashboard__process-orders-label">{ orderCountPhrase }</span>
+				</DashboardWidget>
+				<DashboardWidget className="dashboard__process-orders-revenue">
+					<span className="dashboard__process-orders-value">
+						{ formatCurrency( ordersRevenue, currencyValue ) || ordersRevenue }
+					</span>
+					<span className="dashboard__process-orders-label">{ translate( '💰 Revenue' ) }</span>
+				</DashboardWidget>
+				<DashboardWidget className="dashboard__process-orders-action">
+					<Button href={ getLink( '/store/orders/:site', site ) }>
+						{ translate( 'Process orders' ) }
+					</Button>
+				</DashboardWidget>
+			</DashboardWidgetRow>
 		);
 	};
 
 	possiblyRenderReviewsWidget = () => {
-		const { site, pendingReviews, translate } = this.props;
-		if ( ! pendingReviews ) {
+		if ( ! this.shouldShowPendingReviews() ) {
 			return null;
 		}
 
-		const classes = classNames( 'card', 'dashboard__reviews-widget' );
-		const countText = translate( 'Pending review', 'Pending reviews', {
+		const { site, pendingReviews, translate } = this.props;
+		const countText = translate( '%d pending review', '%d pending reviews', {
+			args: [ pendingReviews ],
 			count: pendingReviews,
 		} );
 
 		return (
-			<div className={ classes }>
-				<div>
-					<span>{ pendingReviews }</span>
-					<span>{ countText }</span>
-				</div>
-				<div>
-					<Button href={ getLink( '/store/reviews/:site', site ) }>
-						{ translate( 'Moderate', { context: 'Product reviews widget moderation button' } ) }
-					</Button>
-				</div>
-			</div>
+			<DashboardWidget className="dashboard__reviews-widget" title={ countText } width="third">
+				<Button href={ getLink( '/store/reviews/:site', site ) }>
+					{ translate( 'Moderate', { context: 'Product reviews widget moderation button' } ) }
+				</Button>
+			</DashboardWidget>
 		);
 	};
 
@@ -156,11 +170,10 @@ class ManageOrdersView extends Component {
 
 				<LabelsSetupNotice />
 
-				<div className="dashboard__queue-widgets">
+				<DashboardWidgetRow>
 					{ this.possiblyRenderProcessOrdersWidget() }
-					{ config.isEnabled( 'woocommerce/extension-reviews' ) &&
-						this.possiblyRenderReviewsWidget() }
-				</div>
+					{ this.possiblyRenderReviewsWidget() }
+				</DashboardWidgetRow>
 
 				<DashboardWidget
 					className="dashboard__reports-widget"

@@ -181,7 +181,7 @@
 
 .dashboard-widget__row {
 	display: flex;
-	align-items: flex-start;
+	align-items: stretch;
 	flex-direction: column;
 
 	@include breakpoint( ">660px" ) {
