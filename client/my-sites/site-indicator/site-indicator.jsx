@@ -19,13 +19,13 @@ import Animate from 'components/animate';
 import ProgressIndicator from 'components/progress-indicator';
 import Button from 'components/button';
 import analytics from 'lib/analytics';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { canCurrentUser } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getUpdatesBySiteId } from 'state/sites/updates/selectors';
 import { updateWordPress } from 'state/sites/updates/actions';
 import {
+	canCurrentUser,
 	getSiteConnectionStatus,
 	isRequestingSiteConnectionStatus,
 	isSiteAutomatedTransfer,
@@ -242,15 +242,6 @@ class SiteIndicator extends Component {
 		};
 	};
 
-	trackSiteDisconnect = () => {
-		const siteId = this.props.site.ID;
-		this.props.recordGoogleEvent(
-			'Jetpack',
-			'Clicked in site indicator to start Jetpack Disconnect flow'
-		);
-		this.props.recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start', { siteId } );
-	};
-
 	errorAccessing() {
 		const { site, translate } = this.props;
 		let accessFailedMessage;
@@ -265,7 +256,7 @@ class SiteIndicator extends Component {
 						compact
 						scary
 						href={ `/settings/disconnect-site/${ site.slug }` }
-						onClick={ this.trackSiteDisconnect }
+						onClick={ this.props.trackSiteDisconnect }
 					>
 						{ translate( 'Remove Site' ) }
 					</Button>
@@ -424,7 +415,13 @@ export default connect(
 	},
 	{
 		updateWordPress,
-		recordGoogleEvent,
-		recordTracksEvent,
+		trackSiteDisconnect: () =>
+			composeAnalytics(
+				recordGoogleEvent(
+					'Jetpack',
+					'Clicked in site indicator to start Jetpack Disconnect flow'
+				),
+				recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
+			),
 	}
 )( localize( SiteIndicator ) );
