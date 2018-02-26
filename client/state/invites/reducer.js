@@ -127,6 +127,12 @@ export const counts = createReducer(
 				[ action.siteId ]: action.found,
 			};
 		},
+		[ INVITES_DELETE_REQUEST_SUCCESS ]: ( state, action ) => {
+			return {
+				...state,
+				[ action.siteId ]: state[ action.siteId ] - action.inviteIds.length,
+			};
+		},
 	}
 );
 

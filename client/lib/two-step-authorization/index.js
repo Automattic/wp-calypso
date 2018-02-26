@@ -35,7 +35,9 @@ function TwoStepAuthorization() {
 	this.smsResendThrottled = false;
 	this.bumpMCStat = function( eventAction ) {
 		analytics.mc.bumpStat( '2fa', eventAction );
-		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', { event_action: eventAction } );
+		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', {
+			event_action: eventAction,
+		} );
 	};
 
 	this.fetch();

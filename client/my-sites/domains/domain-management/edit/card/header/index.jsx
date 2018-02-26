@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,19 +30,23 @@ class Header extends React.Component {
 			return null;
 		}
 
+		const isJetpackSite = get( this.props, 'selectedSite.jetpack' );
+		const isAtomicSite = get( this.props, 'selectedSite.options.is_automated_transfer' );
+
+		const renderButton = this.props.selectedSite && ( ! isJetpackSite || isAtomicSite );
+
 		return (
 			<SectionHeader label={ domain.name }>
 				<DomainPrimaryFlag domain={ domain } />
 				<DomainTransferFlag domain={ domain } />
 
-				{ this.props.selectedSite &&
-					! this.props.selectedSite.jetpack && (
-						<PrimaryDomainButton
-							domain={ domain }
-							selectedSite={ this.props.selectedSite }
-							settingPrimaryDomain={ this.props.settingPrimaryDomain }
-						/>
-					) }
+				{ renderButton && (
+					<PrimaryDomainButton
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						settingPrimaryDomain={ this.props.settingPrimaryDomain }
+					/>
+				) }
 			</SectionHeader>
 		);
 	}

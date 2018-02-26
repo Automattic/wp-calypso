@@ -81,8 +81,6 @@ export const PostEditor = createReactClass( {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
-		user: PropTypes.object,
-		userUtils: PropTypes.object,
 		editPath: PropTypes.string,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
@@ -324,8 +322,6 @@ export const PostEditor = createReactClass( {
 						post={ this.state.post }
 						savedPost={ this.state.savedPost }
 						site={ site }
-						user={ this.props.user }
-						userUtils={ this.props.userUtils }
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }

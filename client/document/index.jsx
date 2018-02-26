@@ -40,6 +40,7 @@ class Document extends React.Component {
 			isDebug,
 			badge,
 			abTestHelper,
+			preferencesHelper,
 			branchName,
 			commitChecksum,
 			devDocs,
@@ -111,6 +112,7 @@ class Document extends React.Component {
 					) }
 					{ badge && (
 						<div className="environment-badge">
+							{ preferencesHelper && <div className="environment is-prefs" /> }
 							{ abTestHelper && <div className="environment is-tests" /> }
 							{ branchName &&
 								branchName !== 'master' && (

@@ -1,0 +1,42 @@
+.preferences-helper__current-preferences {
+	display: none;
+}
+
+.preferences-helper__list {
+	margin: 5px 0 8px 20px;
+	
+	li {
+		font-weight: normal;
+		text-transform: initial;
+		margin-right: 5px;
+	}
+}
+
+.preferences-helper__unset {
+	color: $orange-jazzy;
+	cursor: pointer;
+}
+
+.preferences-helper__preference-header {
+	text-transform: initial;
+	margin-top: 5px;
+	font-weight: bolder;
+	white-space: nowrap;
+	overflow: hidden;
+
+	button {
+		display: inline;
+		margin-right: 5px;
+	}
+}
+
+.environment.is-prefs:hover .preferences-helper__current-preferences.card {
+	display: block;
+	max-height: 80vh;
+	overflow-y: scroll;
+	position: absolute;
+	bottom: 100%;
+	right: 0px;
+	margin: 0;
+	font-size: 11px;
+}

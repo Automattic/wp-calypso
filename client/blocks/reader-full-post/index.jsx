@@ -55,7 +55,7 @@ import QueryReaderPost from 'components/data/query-reader-post';
 import ExternalLink from 'components/external-link';
 import DocumentHead from 'components/data/document-head';
 import ReaderFullPostUnavailable from './unavailable';
-import ReaderFullPostBack from './back';
+import BackButton from 'components/back-button';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
@@ -235,7 +235,14 @@ export class FullPostView extends React.Component {
 	attemptToSendPageView = () => {
 		const { post, site } = this.props;
 
-		if ( post && post._state !== 'pending' && site && site.ID && ! this.hasSentPageView ) {
+		if (
+			post &&
+			post._state !== 'pending' &&
+			site &&
+			site.ID &&
+			! site.is_error &&
+			! this.hasSentPageView
+		) {
 			this.props.markPostSeen( post, site );
 			this.hasSentPageView = true;
 		}
@@ -324,7 +331,7 @@ export class FullPostView extends React.Component {
 					post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 				{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-				<ReaderFullPostBack onBackClick={ this.handleBack } />
+				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
 						icon={ true }

@@ -44,6 +44,7 @@ export const download = {
 export const rewind = {
 	type: 'object',
 	properties: {
+		links: { type: 'object' },
 		rewind_id: { type: 'string' },
 		status: { type: 'string', enum: [ 'failed', 'finished', 'queued', 'running' ] },
 		started_at: { type: 'string' },

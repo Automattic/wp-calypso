@@ -327,6 +327,7 @@ $plan-features-sidebar-width: 272px;
 	text-overflow: ellipsis;
 }
 
+.plan-features__summary,
 .plan-features__description {
 	margin: 0;
 	padding: 24px 24px 0 24px;
@@ -534,5 +535,108 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features__row:last-of-type .plan-features__table-item {
 		border-bottom: solid 1px lighten( $gray, 27% );
+	}
+}
+
+.plans-features-main__bottom .plan-features__actions {
+	padding-bottom: 0;
+}
+.plans-features-main__bottom .plan-features__actions-button {
+	width: auto;
+}
+/**
+ * A/B test for upgrade pricing display
+ */
+.abtest-pricing-display {
+	.plan-price {
+		font-size: 16px;
+		margin: 3px 0 3px;
+	}
+	.plan-price__currency-symbol {
+		font-size: inherit;
+		vertical-align: initial;
+		color: inherit;
+	}
+	.plan-price__fraction {
+		font-size: inherit;
+		vertical-align: initial;
+		font-weight: inherit;
+	}
+	.plan-features__header-timeframe {
+		font-style: normal;
+		color: $gray;
+	}
+	.plan-price.is-original {
+		color: $gray-dark;
+	}
+	.plan-price.is-discounted,
+	.plan-price.is-original:before,
+	.plan-features__header-tip-info {
+		display: none;
+	}
+}
+
+.plan-features__notice-credits {
+	margin: 0 0 16px;
+}
+
+.plan-features__summary {
+	&-title,
+	&-price-row {
+		display: block;
+		margin-bottom: .3em;
+	}
+	&-price-row::after {
+		content: '';
+		display: block;
+		clear: both;
+	}
+	&-item {
+		float: left;
+	}
+	&-price {
+		float: right;
+		text-align: right;
+	}
+	&-discount {
+		color: $alert-green;
+	}
+	&-total {
+		font-weight: 500;
+	}
+	&-price-desc {
+		clear: both;
+		font-size: 12px;
+		color: $gray;
+	}
+	&-policy {
+		font-size: 12px;
+		color: $gray;
+	}
+}
+
+.plan-features__header-credit-label {
+	position: absolute;
+	font-size: 11px;
+	line-height: 20px;
+	height: 20px;
+	border-radius: 10px;
+	color: #fff;
+	font-weight: normal;
+	vertical-align: middle;
+	padding: 0 8px;
+	margin-left: 8px;
+	margin-top: -2px;
+
+	.is-personal-plan & {
+		background: darken( #fcd56e, 20% );
+	}
+
+	.is-business-plan & {
+		background: darken( #c879cc, 20% );
+	}
+
+	.is-premium-plan & {
+		background: darken( #44d0a3, 20% );
 	}
 }

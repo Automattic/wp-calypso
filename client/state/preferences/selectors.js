@@ -33,6 +33,18 @@ export function getPreference( state, key ) {
 	);
 }
 
+/**
+ * Returns the a key value store of all current remote preferences. The keys
+ * of the object are each preference key and the values are the preference
+ * values.
+ *
+ * @param  {Object} state Global state tree
+ * @return {Object}       Preference value
+ */
+export function getAllRemotePreferences( state ) {
+	return state.preferences.remoteValues;
+}
+
 export const preferencesLastFetchedTimestamp = state => state.preferences.lastFetchedTimestamp;
 
 /**

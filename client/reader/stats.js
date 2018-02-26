@@ -199,6 +199,10 @@ export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
+	if ( ! blogId || ! blogUrl || ! postId ) {
+		return;
+	}
+
 	const params = {
 		ref: 'http://wordpress.com/',
 		reader: 1,

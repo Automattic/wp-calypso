@@ -24,6 +24,7 @@ import SearchCard from 'components/search-card';
  * Docs examples
  */
 import Accordions from 'components/accordion/docs/example';
+import BackButton from 'components/back-button/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
@@ -139,6 +140,7 @@ class DesignAssets extends React.Component {
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
 					/>
+					<BackButton readmeFilePath="back-button" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />

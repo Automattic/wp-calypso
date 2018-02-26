@@ -512,16 +512,6 @@ export function domainPrivacyProtection( properties ) {
 }
 
 /**
- * Creates a new shopping cart item for a domain redemption late fee.
- *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
- */
-export function domainRedemption( properties ) {
-	return domainItem( 'domain_redemption', properties.domain, properties.source );
-}
-
-/**
  * Creates a new shopping cart item for an incoming domain transfer.
  *
  * @param {Object} properties - list of properties
@@ -958,7 +948,6 @@ export default {
 	customDesignItem,
 	domainMapping,
 	domainPrivacyProtection,
-	domainRedemption,
 	domainRegistration,
 	domainTransfer,
 	domainTransferPrivacy,

@@ -7,6 +7,7 @@ import {
 	HAPPYCHAT_IO_RECEIVE_ACCEPT,
 	HAPPYCHAT_IO_RECEIVE_DISCONNECT,
 	HAPPYCHAT_IO_RECEIVE_INIT,
+	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	HAPPYCHAT_IO_RECEIVE_RECONNECTING,
 } from 'state/action-types';
 import {
@@ -65,8 +66,25 @@ const isAvailable = ( state = false, action ) => {
 	return state;
 };
 
+/**
+ * Tracks whether happychat.io is accepting fully localized chats.
+ * Customers locale and HE locale should be an exact match ( doesn't default routing to english speaker HEs )
+ *
+ * @param  {Boolean} state  Current happychat status
+ * @param  {Object}  action Action playload
+ * @return {Boolean}        Updated happychat status
+ */
+export const localizedSupport = ( state = false, action ) => {
+	switch ( action.type ) {
+		case HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT:
+			return action.isAvailable;
+	}
+	return state;
+};
+
 export default combineReducers( {
 	error,
-	status,
 	isAvailable,
+	localizedSupport,
+	status,
 } );

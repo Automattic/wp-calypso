@@ -396,12 +396,14 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
+				<div className="plans-features-main__notice" />
 				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
 				<QuerySitePlans siteId={ get( site, 'ID' ) } />
 				{ this.getPlanFeatures() }
 				<PaymentMethods />
 				{ faqs }
+				<div className="plans-features-main__bottom" />
 			</div>
 		);
 	}

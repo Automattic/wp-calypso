@@ -13,7 +13,7 @@ export const ABTEST_LOCALSTORAGE_KEY = 'ABTests';
  */
 export function getActiveTestNames( { appendDatestamp = false, asCSV = false } = {} ) {
 	const output = Object.keys( activeTests ).map(
-		key => appendDatestamp ? `${ key }_${ activeTests[ key ].datestamp }` : key
+		key => ( appendDatestamp ? `${ key }_${ activeTests[ key ].datestamp }` : key )
 	);
 	return asCSV ? output.join( ',' ) : output;
 }

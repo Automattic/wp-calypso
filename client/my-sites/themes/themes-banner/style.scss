@@ -4,13 +4,13 @@
 	display: block;
 	position: relative;
 	background: no-repeat $blue-medium;
-	color: white;
+	color: white !important;
 	padding: 0.8em;
 	overflow: hidden;
 	user-select: none;
 	
-	&:hover, &:focus {
-		color: white;
+	&:hover, &:focus, &:visited {
+		color: white !important;
 	}
 	
 	&:before {
