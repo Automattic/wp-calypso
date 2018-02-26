@@ -1,4 +1,5 @@
 /** @format */
+/* eslint-disable react/prefer-es6-class */
 /**
  * External dependencies
  */
@@ -6,7 +7,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { concat, find, get, flatMap, includes } from 'lodash';
+import { concat, find, flow, get, flatMap, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +24,7 @@ import NoResults from 'my-sites/no-results';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
-import URLSearch from 'lib/mixins/url-search';
+import urlSearch from 'lib/url-search';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import {
@@ -51,7 +52,6 @@ const PluginsBrowser = createReactClass( {
 	displayName: 'PluginsBrowser',
 	_SHORT_LIST_LENGTH: 6,
 	visibleCategories: [ 'new', 'popular', 'featured' ],
-	mixins: [ URLSearch ],
 
 	reinitializeSearch() {
 		this.WrappedSearch = props => <Search { ...props } />;
@@ -301,7 +301,7 @@ const PluginsBrowser = createReactClass( {
 			<WrappedSearch
 				pinned
 				fitsContainer
-				onSearch={ this.doSearch }
+				onSearch={ this.props.doSearch }
 				initialValue={ this.props.search }
 				placeholder={ this.props.translate( 'Search Plugins' ) }
 				delaySearch={ true }
@@ -349,7 +349,7 @@ const PluginsBrowser = createReactClass( {
 	handleSuggestedSearch( term ) {
 		return () => {
 			this.reinitializeSearch();
-			this.doSearch( term );
+			this.props.doSearch( term );
 		};
 	},
 
@@ -520,34 +520,38 @@ const PluginsBrowser = createReactClass( {
 	},
 } );
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const sitePlan = getSitePlan( state, selectedSiteId );
+export default flow(
+	localize,
+	urlSearch,
+	connect(
+		state => {
+			const selectedSiteId = getSelectedSiteId( state );
+			const sitePlan = getSitePlan( state, selectedSiteId );
 
-		const hasBusinessPlan = sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) );
-		const hasPremiumPlan = sitePlan && ( hasBusinessPlan || isPremium( sitePlan ) );
+			const hasBusinessPlan = sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) );
+			const hasPremiumPlan = sitePlan && ( hasBusinessPlan || isPremium( sitePlan ) );
 
-		return {
-			selectedSiteId,
-			sitePlan,
-			hasPremiumPlan,
-			hasBusinessPlan,
-			isJetpackSite: isJetpackSite( state, selectedSiteId ),
-			hasJetpackSites: hasJetpackSites( state ),
-			jetpackManageError:
-				!! isJetpackSite( state, selectedSiteId ) &&
-				! canJetpackSiteManage( state, selectedSiteId ),
-			isRequestingSites: isRequestingSites( state ),
-			noPermissionsError:
-				!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
-			selectedSite: getSelectedSite( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-			sites: getSelectedOrAllSitesJetpackCanManage( state ),
-		};
-	},
-	{
-		recordTracksEvent,
-		recordGoogleEvent,
-	}
-)( localize( PluginsBrowser ) );
+			return {
+				selectedSiteId,
+				sitePlan,
+				hasPremiumPlan,
+				hasBusinessPlan,
+				isJetpackSite: isJetpackSite( state, selectedSiteId ),
+				hasJetpackSites: hasJetpackSites( state ),
+				jetpackManageError:
+					!! isJetpackSite( state, selectedSiteId ) &&
+					! canJetpackSiteManage( state, selectedSiteId ),
+				isRequestingSites: isRequestingSites( state ),
+				noPermissionsError:
+					!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),
+				selectedSite: getSelectedSite( state ),
+				siteSlug: getSelectedSiteSlug( state ),
+				sites: getSelectedOrAllSitesJetpackCanManage( state ),
+			};
+		},
+		{
+			recordTracksEvent,
+			recordGoogleEvent,
+		}
+	)
+)( PluginsBrowser );
