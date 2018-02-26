@@ -6,7 +6,6 @@
 
 import url from 'url';
 import i18n from 'i18n-calypso';
-import moment from 'moment-timezone';
 import { includes } from 'lodash';
 
 /**
@@ -76,7 +75,7 @@ export const isBackDatedPublished = function( post ) {
 		return false;
 	}
 
-	return moment( post.date ).isBefore( moment() );
+	return i18n.moment( post.date ).isBefore( i18n.moment() );
 };
 
 export const isPublished = function( post ) {
@@ -121,7 +120,7 @@ export const isBackDated = function( post ) {
 		return false;
 	}
 
-	return moment( post.date ).isBefore( moment( post.modified ) );
+	return i18n.moment( post.date ).isBefore( i18n.moment( post.modified ) );
 };
 
 export const isPage = function( post ) {
@@ -249,5 +248,5 @@ export const getOffsetDate = function( date, tz ) {
 		return i18n.moment( date );
 	}
 
-	return i18n.moment( moment.tz( date, tz ) );
+	return i18n.moment( i18n.moment.tz( date, tz ) );
 };

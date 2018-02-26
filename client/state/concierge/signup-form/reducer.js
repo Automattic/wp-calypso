@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import moment from 'moment-timezone';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ export const message = createReducer( '', {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.message,
 } );
 
-export const timezone = createReducer( moment.tz.guess(), {
+export const timezone = createReducer( i18n.moment.tz.guess(), {
 	[ CONCIERGE_SIGNUP_FORM_UPDATE ]: ( state, action ) => action.signupForm.timezone,
 } );
 
