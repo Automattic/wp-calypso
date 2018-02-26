@@ -24,7 +24,10 @@ import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
-import { openAddCardDialog, fetchSettings } from 'woocommerce/woocommerce-services/state/label-settings/actions';
+import {
+	openAddCardDialog,
+	fetchSettings,
+} from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import {
 	areSettingsFetching,
 	areSettingsLoaded,
@@ -39,7 +42,7 @@ import {
 	userCanManagePayments,
 } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
-import AddCardDialog from './add-credit-card-modal';
+import AddCardDialog from 'woocommerce/woocommerce-services/views/label-settings/add-credit-card-modal';
 
 class ShippingLabels extends Component {
 	componentWillMount() {
@@ -221,7 +224,7 @@ class ShippingLabels extends Component {
 
 		const openDialog = () => {
 			this.props.openAddCardDialog( siteId );
-		}
+		};
 
 		const onAddCardExternal = () => {
 			this.addCreditCardWindow = window.open( getOrigin() + '/me/purchases/add-credit-card' );
@@ -244,9 +247,11 @@ class ShippingLabels extends Component {
 				) }
 
 				<AddCardDialog siteId={ siteId } />
-				<Button onClick={ openDialog } compact>{ buttonLabel }</Button>
 
-				{ /* Render hidden button with external href to be shown with CSS in wp-admin only. */ }
+				{ /* Render two buttons with internal/external classNames to conditionally show them in Calypso or wp-admin using CSS */ }
+				<Button className="label-settings__internal" onClick={ openDialog } compact>
+					{ buttonLabel }
+				</Button>
 				<Button className="label-settings__external" onClick={ onAddCardExternal } compact>
 					{ buttonLabel } <Gridicon icon="external" />
 				</Button>
