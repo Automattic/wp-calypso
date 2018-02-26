@@ -120,7 +120,7 @@ class SearchStream extends React.Component {
 
 	render() {
 		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
-		const sortOrder = this.props.postsStore && this.props.postsStore.sortOrder;
+		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const showFollowByUrl = resemblesUrl( query );
 		const queryWithoutProtocol = withoutHttp( query );

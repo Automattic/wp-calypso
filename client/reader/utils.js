@@ -9,7 +9,6 @@ import { every } from 'lodash';
  * Internal Dependencies
  */
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
-import { setLastStoreId } from 'reader/controller-helper';
 import { fillGap } from 'lib/feed-stream-store/actions';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { reduxGetState } from 'lib/redux-bridge';
@@ -31,8 +30,6 @@ export function showSelectedPost( { store, replaceHistory, postKey, comments } )
 	if ( ! postKey ) {
 		return;
 	}
-
-	setLastStoreId( store && store.id );
 
 	if ( postKey.isGap === true ) {
 		return handleGapClicked( postKey, store.id );

@@ -8,7 +8,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import { get, startsWith } from 'lodash';
+import { get, startsWith, pickBy } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -38,7 +38,6 @@ import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { getSiteName } from 'reader/get-helpers';
-import { keyForPost } from 'reader/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';
@@ -56,8 +55,6 @@ import ReaderFullPostUnavailable from './unavailable';
 import BackButton from 'components/back-button';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
-import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
-import { getLastStore } from 'reader/controller-helper';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import config from 'config';
@@ -66,6 +63,7 @@ import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
+import { getCurrentStream, getPreviousItem, getNextItem } from 'state/reader/streams/selectors';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -266,24 +264,14 @@ export class FullPostView extends React.Component {
 	};
 
 	goToNextPost = () => {
-		const store = getLastStore();
-		if ( store ) {
-			if ( ! store.getSelectedPostKey() ) {
-				store.selectItem( keyForPost( this.props.post ), store.id );
-			}
-			FeedStreamStoreActions.selectNextItem( store.getID() );
-			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
+		if ( this.props.nextPost ) {
+			showSelectedPost( { postKey: this.props.nextPost } );
 		}
 	};
 
 	goToPreviousPost = () => {
-		const store = getLastStore();
-		if ( store ) {
-			if ( ! store.getSelectedPostKey() ) {
-				store.selectItem( keyForPost( this.props.post ), store.id );
-			}
-			FeedStreamStoreActions.selectPrevItem( store.getID() );
-			showSelectedPost( { store, postKey: store.getSelectedPostKey() } );
+		if ( this.props.previousPost ) {
+			showSelectedPost( { postKey: this.props.previousPost } );
 		}
 	};
 
@@ -491,13 +479,15 @@ export class FullPostView extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const { feedId, blogId, postId } = ownProps;
-		const post = getPostByKey( state, { feedId, blogId, postId } ) || { _state: 'pending' };
+		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
+		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
 		const props = {
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
+			postKey,
 		};
 
 		if ( ! isExternal && siteId ) {
@@ -508,6 +498,12 @@ export default connect(
 		}
 		if ( ownProps.referral ) {
 			props.referralPost = getPostByKey( state, ownProps.referral );
+		}
+
+		const currentStreamKey = getCurrentStream( state );
+		if ( currentStreamKey ) {
+			props.previousPost = getPreviousItem( state, postKey );
+			props.nextPost = getNextItem( state, postKey );
 		}
 
 		return props;

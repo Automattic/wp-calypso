@@ -21,9 +21,6 @@ jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'page', () => ( {
 	show: require( 'sinon' ).spy(),
 } ) );
-jest.mock( 'reader/controller-helper', () => ( {
-	setLastStoreId: jest.fn(),
-} ) );
 jest.mock( 'lib/redux-bridge', () => ( {
 	reduxGetState: function() {
 		return { reader: { posts: { items: {} } } };

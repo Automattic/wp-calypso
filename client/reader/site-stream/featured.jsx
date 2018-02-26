@@ -17,6 +17,8 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
 import QueryReaderPost from 'components/data/query-reader-post';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
+import { getStream } from 'state/reader/streams/selectors';
+import { requestPage } from 'state/reader/streams/actions';
 
 function getPostUrl( post ) {
 	return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
@@ -25,6 +27,10 @@ function getPostUrl( post ) {
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class FeedFeatured extends React.PureComponent {
 	static displayName = 'FeedFeatured';
+
+	componentDidMount() {
+		this.props.requestPage( { streamKey: this.props.streamKey } );
+	}
 
 	handleClick = postData => {
 		const post = postData.post;
@@ -70,11 +76,11 @@ class FeedFeatured extends React.PureComponent {
 	};
 
 	render() {
-		const { posts, translate, postsStore } = this.props;
+		const { posts, translate, stream } = this.props;
 		if ( ! posts ) {
 			return (
 				<Fragment>
-					{ postsStore.get().map( postKey => <QueryReaderPost postKey={ postKey } /> ) }
+					{ stream.items.map( postKey => <QueryReaderPost postKey={ postKey } /> ) }
 				</Fragment>
 			);
 		}
@@ -94,15 +100,15 @@ class FeedFeatured extends React.PureComponent {
 	}
 }
 
-function mapStateToProps( state, ownProps ) {
-	const { postsStore } = ownProps;
-	const postKeys = postsStore.get();
+function mapStateToProps( state, { streamKey } ) {
+	const stream = getStream( state, streamKey );
+	const postKeys = stream.items;
 	const posts = getPostsByKeys( state, postKeys );
 
 	const sourcePostKeys = posts.map( getDiscoverSourceData );
 	const sources = getPostsByKeys( state, sourcePostKeys );
 
-	return { posts, sources };
+	return { posts, sources, stream };
 }
 
-export default connect( mapStateToProps )( localize( FeedFeatured ) );
+export default connect( mapStateToProps, { requestPage } )( localize( FeedFeatured ) );
