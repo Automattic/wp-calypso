@@ -203,7 +203,14 @@ class DisconnectJetpack extends PureComponent {
 		);
 	};
 
-	handleTryRewind = () => this.props.trackTryRewind( this.props.siteSlug );
+	handleTryRewind = () => {
+		this.props.recordTracksEvent( 'calypso_disconnect_jetpack_try_rewind' );
+		page.redirect( `/stats/activity/${ this.props.siteSlug }` );
+	};
+
+	trackTryRewindHelp = () => {
+		this.props.recordTracksEvent( 'calypso_disconnect_jetpack_try_rewind_help' );
+	};
 
 	render() {
 		const {
@@ -282,7 +289,7 @@ class DisconnectJetpack extends PureComponent {
 						<Button href={ `/stats/activity/${ siteSlug }` } onClick={ this.handleTryRewind }>
 							{ translate( 'Rewind site' ) }
 						</Button>
-						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
+						<HappychatButton borderless={ false } onClick={ this.trackTryRewindHelp } primary>
 							<Gridicon icon="chat" size={ 18 } />
 							{ translate( 'Get help' ) }
 						</HappychatButton>
@@ -305,20 +312,14 @@ export default connect(
 			rewindState: rewindState.state,
 		};
 	},
-	dispatch => ( {
-		setAllSitesSelected: () => dispatch( setAllSitesSelected ),
-		recordGoogleEvent: () => dispatch( recordGoogleEventAction ),
-		recordTracksEvent: () => dispatch( recordTracksEventAction ),
-		disconnect: () => dispatch( disconnect ),
-		successNotice: () => dispatch( successNotice ),
-		errorNotice: () => dispatch( errorNotice ),
-		infoNotice: () => dispatch( infoNotice ),
-		removeNotice: () => dispatch( removeNotice ),
-		trackTryRewind: siteSlug => {
-			dispatch( recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ) );
-			page.redirect( `/stats/activity/${ siteSlug }` );
-		},
-		trackTryRewindHelp: () =>
-			dispatch( recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind_help' ) ),
-	} )
+	{
+		setAllSitesSelected,
+		recordGoogleEvent: recordGoogleEventAction,
+		recordTracksEvent: recordTracksEventAction,
+		disconnect,
+		successNotice,
+		errorNotice,
+		infoNotice,
+		removeNotice,
+	}
 )( localize( DisconnectJetpack ) );
