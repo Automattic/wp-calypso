@@ -32,6 +32,7 @@ class ShowListOfLocation extends Component {
 		const successHref = '/google-my-business/success/' + siteId;
 		const searchHref = '/google-my-business/search-for-a-location/' + siteId;
 		const verifyHref = '/google-my-business/verify/' + siteId;
+
 		return (
 			<div className="show-list-of-locations">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
@@ -44,7 +45,11 @@ class ShowListOfLocation extends Component {
 
 				<CTACard
 					headerText={ "Cate's Cookies" }
-					mainText={ '345 North Avenue<br>' + 'Talihassee, FL 34342<br>' + 'USA' }
+					mainText={
+						<p>
+							345 North Avenue<br />Talihassee, FL 34342<br />USA
+						</p>
+					}
 					buttonText={ translate( 'Connect', {
 						comment: 'Call to Action to add a business listing to Google My Business',
 					} ) }
@@ -53,7 +58,11 @@ class ShowListOfLocation extends Component {
 
 				<CTACard
 					headerText={ 'Pinch Bakeshop' }
-					mainText={ '234 Piedmont Drive<br>' + 'Talihassee, FL 34342<br>' + 'USA' }
+					mainText={
+						<p>
+							234 Piedmont Drive<br />Talihassee, FL 34342<br />USA
+						</p>
+					}
 					buttonText={ translate( 'Connect', {
 						comment: 'Call to Action to add a business listing to Google My Business',
 					} ) }
