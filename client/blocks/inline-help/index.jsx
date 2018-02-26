@@ -153,7 +153,7 @@ class InlineHelp extends Component {
 							borderless
 							href="/help"
 						>
-							<Gridicon icon="help" />
+							<Gridicon icon="help" className="inline-help__gridicon-left" />
 							{ translate( 'More help' ) }
 						</Button>
 
@@ -161,16 +161,16 @@ class InlineHelp extends Component {
 							onClick={ this.toggleContactForm }
 							className="inline-help__contact-button"
 							borderless >
-							<Gridicon icon="chat" />
+							<Gridicon icon="chat" className="inline-help__gridicon-left" />
 							{ translate( 'Contact us' ) }
-							<Gridicon icon="chevron-right" className="inline-help__button-icon-right" />
+							<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
 						</Button>
 
 						<Button
 							onClick={ this.toggleContactForm }
 							className="inline-help__cancel-button"
 							borderless >
-							<Gridicon icon="chevron-left" />
+							<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
 							{ translate( 'Cancel' ) }
 						</Button>
 					</div>
