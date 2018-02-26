@@ -204,9 +204,8 @@ class DisconnectJetpack extends PureComponent {
 	};
 
 	handleTryRewind = () => {
-		const { siteSlug } = this.props;
 		this.props.recordTracksEvent( 'calypso_disconnect_jetpack_try_rewind' );
-		page.redirect( `/stats/activity/${ siteSlug }` );
+		page.redirect( `/stats/activity/${ this.props.siteSlug }` );
 	};
 
 	trackTryRewindHelp = () => {
