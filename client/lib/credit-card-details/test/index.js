@@ -12,7 +12,7 @@ import assert from 'assert';
  * Internal dependencies
  */
 import { getCreditCardType } from '../';
-import { formatAmexCreditCard, formatCreditCard } from '../masking';
+import { formatCreditCard } from '../masking';
 
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
@@ -106,13 +106,13 @@ describe( 'index', () => {
 	describe( 'Masking', () => {
 		describe( 'American Express Card', () => {
 			test( 'formats a number as 4-6-5', () => {
-				expect( formatAmexCreditCard( '378282246310005' ) ).toEqual( '3782 822463 10005' );
+				expect( formatCreditCard( '378282246310005' ) ).toEqual( '3782 822463 10005' );
 			} );
 			test( 'formats a number as 4-6-5 with any sort of whitespace', () => {
-				expect( formatAmexCreditCard( ' 3782 8224 6310 005 ' ) ).toEqual( '3782 822463 10005' );
+				expect( formatCreditCard( ' 3782 8224 6310 005 ' ) ).toEqual( '3782 822463 10005' );
 			} );
 			test( 'formats a number as 4-6-5 and trims to 15 digits', () => {
-				expect( formatAmexCreditCard( '37828224631000512345' ) ).toEqual( '3782 822463 10005' );
+				expect( formatCreditCard( '37828224631000512345' ) ).toEqual( '3782 822463 10005' );
 			} );
 		} );
 		describe( 'Diner Credit Cards', () => {

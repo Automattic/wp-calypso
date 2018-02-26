@@ -51,6 +51,9 @@ export const formatAmexCreditCard = function( cardNumber ) {
 };
 
 export const formatCreditCard = function( cardNumber ) {
+	if ( getCreditCardType( cardNumber ) === 'amex' ) {
+		return formatAmexCreditCard( cardNumber );
+	}
 	const digits = cardNumber.replace( /[^0-9]/g, '' ).slice( 0, 19 );
 	const formattedNumber = `${ digits.slice( 0, 4 ) } ${ digits.slice( 4, 8 ) } ${ digits.slice(
 		8,
@@ -61,9 +64,6 @@ export const formatCreditCard = function( cardNumber ) {
 
 fieldMasks.number = {
 	mask: function( previousValue, nextValue ) {
-		if ( getCreditCardType( nextValue ) === 'amex' ) {
-			return formatAmexCreditCard( nextValue );
-		}
 		return formatCreditCard( nextValue );
 	},
 
