@@ -73,6 +73,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 			action,
 			isRequestingSettings,
 			recordJpoEvent,
+			saveJpoSettings,
 			settings,
 			siteId,
 			siteSlug,
@@ -93,7 +94,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						onBackClick={ this.getNavigationLinkClickHandler( 'back' ) }
 						onForwardClick={ this.getNavigationLinkClickHandler( 'forward' ) }
 						recordJpoEvent={ recordJpoEvent }
-						saveJetpackOnboardingSettings={ saveJetpackOnboardingSettings }
+						saveJetpackOnboardingSettings={ saveJpoSettings }
 						siteId={ siteId }
 						siteSlug={ siteSlug }
 						settings={ settings }
@@ -155,7 +156,7 @@ export default connect(
 				id: siteId + '_' + userIdHashed,
 				...additionalProperties,
 			} ),
-		saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
+		saveJpoSettings: saveJetpackOnboardingSettingsAction,
 		...ownProps,
 	} )
 )( JetpackOnboardingMain );
