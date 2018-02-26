@@ -578,7 +578,7 @@ module.exports = function() {
 			}, {} );
 
 			if ( calypsoEnv !== 'development' ) {
-				analytics.tracks.recordEvent( 'calypso_cspreport', cspReportSnakeCase, req );
+				analytics.tracks.recordEvent( 'calypso_csp_report', cspReportSnakeCase, req );
 			}
 
 			res.status( 200 ).send( 'Got it!' );
