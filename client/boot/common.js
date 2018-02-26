@@ -142,6 +142,7 @@ export const locales = ( currentUser, reduxStore ) => {
 
 	if ( window.i18nLocaleObject ) {
 		reduxStore.dispatch( setLocaleRawData( window.i18nLocaleObject ) );
+		delete window.i18nLocaleObject;
 	}
 
 	// Use current user's locale if it was not bootstrapped (non-ssr pages)
