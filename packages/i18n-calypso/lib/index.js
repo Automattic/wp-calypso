@@ -88,13 +88,18 @@ function normalizeTranslateArguments( args ) {
  * @return {[array]}           array of properties to pass into gettext-style method
  */
 function getJedArgs( jedMethod, props ) {
-	var argsByMethod = {
-		gettext: [ props.original ],
-		ngettext: [ props.original, props.plural, props.count ],
-		npgettext: [ props.context, props.original, props.plural, props.count ],
-		pgettext: [ props.context, props.original ]
-	};
-	return argsByMethod[ jedMethod ] || [];
+	switch ( jedMethod ) {
+		case 'gettext':
+			return [ props.original ];
+		case 'ngettext':
+			return [ props.original, props.plural, props.count ];
+		case 'npgettext':
+			return [ props.context, props.original, props.plural, props.count ];
+		case 'pgettext':
+			return [ props.context, props.original ];
+	}
+
+	return [];
 }
 
 /**
