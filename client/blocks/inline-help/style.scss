@@ -31,9 +31,10 @@
 	&.is-top .popover__arrow:before,
 	&.is-top-left .popover__arrow:before,
 	&.is-top-right .popover__arrow:before {
-		border-top: 10px solid #f3f6f8;
+		border-top: 10px solid $gray-light;
 	}
 
+/*
 	.inline-help__button {
 		text-align: left;
 		font-weight: 400;
@@ -66,32 +67,37 @@
 			}
 		}
 	}
+
 	.help-contact {
 		.help-contact__form {
 			margin: 0;
+			padding: 16px;
+
 			.sites-dropdown__wrapper {
 				max-width: 100%;
+
 				.site__content {
 					padding: 8px;
 				}
 			}
 		}
+
 		.form-label {
 			text-align: left;
 		}
-		button {
-			width: 100%;
-		}
-		.sites-dropdown .site-selector .search {
-			top: 51px;
-		}
-		.sites-dropdown .site-selector__sites {
-			max-height: 20vh;
-		}
+
+
+
+
 	}
+*/
 }
 
-.inline-help__heading {
+.inline-help__search {
+	.is-help-active & {
+		display: none;
+	}
+
 	.search-card {
 		border-radius: 4px 4px 0 0;
 		margin: 0;
@@ -133,16 +139,76 @@
 	}
 }
 
+.inline-help__contact {
+	display: none;
+
+	.is-help-active & {
+		display: block;
+	}
+
+	.help-contact__form {
+		margin: 0;
+		padding: 16px;
+		box-shadow: none;
+		text-align: left;
+		border-radius: 4px 4px 0 0;
+
+		.sites-dropdown__wrapper {
+			max-width: 100%;
+
+			.site__content {
+				padding: 8px;
+			}
+		}
+
+		button {
+			width: 100%;
+		}
+	}
+
+	.sites-dropdown .site-selector .search {
+		top: 51px;
+	}
+
+	.sites-dropdown .site-selector__sites {
+		max-height: 20vh;
+	}
+}
+
+.inline-help__footer {
+	background: $gray-light;
+	border-top: 1px solid $gray-lighten-20;
+	border-radius: 0 0 4px 4px;
+
+	.inline-help__cancel-button {
+		display: none;
+	}
+
+	.is-help-active & {
+		.inline-help__more-button,
+		.inline-help__contact-button {
+			display: none;
+		}
+
+		.inline-help__cancel-button {
+			display: block;
+		}
+	}
+}
+
+
+
+
 .inline-help__results-list {
 	list-style: none;
 	text-align: left;
 	margin: 0;
+	padding: 8px 0;
 }
 
 .inline-help__results-item {
 	margin: 0;
 	font-size: 18px;
-	border-top: 1px solid $border-ultra-light-gray;
 
 	@include breakpoint( ">660px" ) {
 		font-size: 14px;
@@ -155,10 +221,12 @@
 		font-weight: normal;
 		line-height: 1.4;
 		display: block;
-		padding: 14px 16px;
+		padding: 8px 16px;
 
 		&:hover {
 			cursor: pointer;
+			color: $blue-medium;
+			background: lighten( $gray, 35% );
 		}
 	}
 
@@ -195,8 +263,8 @@
 
 // PlaceholderLines component
 .inline-help__results-placeholder {
-	margin: 26px 16px;
-	min-height: 140px;
+	margin: 16px;
+	min-height: 120px;
 }
 
 .inline-help__results-placeholder-item {

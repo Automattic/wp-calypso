@@ -109,6 +109,7 @@ class InlineHelp extends Component {
 		const { translate } = this.props;
 		const { showContactForm, showInlineHelp } = this.state;
 		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
+		const popoverClasses = { 'is-help-active': showContactForm };
 		const contactFormButtonClasses = { 'is-active': showContactForm };
 		return (
 			<Button
@@ -116,30 +117,54 @@ class InlineHelp extends Component {
 				onClick={ this.handleHelpButtonClicked }
 				borderless
 				title={ translate( 'Help' ) }
-				ref={ this.inlineHelpToggleRef }
-			>
+				ref={ this.inlineHelpToggleRef } >
+
 				<Gridicon icon="help-outline" />
+
 				<Popover
 					isVisible={ this.state.showInlineHelp }
 					onClose={ this.closeInlineHelp }
 					position="top right"
 					context={ this.inlineHelpToggle }
-					className="inline-help__popover"
-				>
-					<div className="inline-help__heading">
+					className={ classNames( "inline-help__popover", popoverClasses ) }
+                >
+
+					<div className="inline-help__search">
 						<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
-						{ ! showContactForm && <InlineHelpSearchResults openResult={ this.openResult } searchQuery={ this.props.searchQuery } /> }
+						<InlineHelpSearchResults openResult={ this.openResult } searchQuery={ this.props.searchQuery } />
+					</div>
+					
+					<div className="inline-help__contact">
+						<HelpContact
+							compact={ true }
+							selectedSite={ this.props.selectedSite } />
+					</div>
+					
+					<div className="inline-help__footer">
+						<Button
+							onClick={ this.moreHelpClicked }
+							className="inline-help__more-button"
+							borderless
+							href="/help">
+							<Gridicon icon="help" />
+							{ translate( 'More help' ) }
+						</Button>
+
 						<Button
 							onClick={ this.toggleContactForm }
-							className={ classNames( 'inline-help__button', contactFormButtonClasses ) }
-							borderless
-						>
-							<Gridicon icon="comment" /> { translate( 'Contact us' ) }
-							<Gridicon icon={ showContactForm ? 'chevron-up' : 'chevron-down' } className="inline-help__button-icon-right" />
+							className="inline-help__contact-button"//{ classNames( 'inline-help__button', contactFormButtonClasses ) }
+							borderless >
+							<Gridicon icon="chat" />
+							{ translate( 'Contact us' ) }
+							<Gridicon icon="chevron-right" className="inline-help__button-icon-right" />
 						</Button>
-						{ showContactForm && <HelpContact compact={ true } selectedSite={ this.props.selectedSite } /> }
-						<Button onClick={ this.moreHelpClicked } className="inline-help__button" borderless href="/help">
-							<Gridicon icon="help" /> { translate( 'More help' ) }
+
+						<Button
+							onClick={ this.toggleContactForm }
+							className="inline-help__cancel-button"//{ classNames( 'inline-help__button', contactFormButtonClasses ) }
+							borderless >
+							<Gridicon icon="chevron-left" />
+							{ translate( 'Cancel' ) }
 						</Button>
 					</div>
 				</Popover>
