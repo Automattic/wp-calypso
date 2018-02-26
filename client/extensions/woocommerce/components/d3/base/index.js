@@ -28,8 +28,8 @@ export default class D3Base extends Component {
 		this.updateParams();
 	}
 
-	componentWillReceiveProps() {
-		this.updateParams();
+	componentWillReceiveProps( nextProps ) {
+		this.updateParams( nextProps );
 	}
 
 	componentDidUpdate() {
@@ -41,8 +41,8 @@ export default class D3Base extends Component {
 		delete this.node;
 	}
 
-	updateParams() {
-		const { getParams } = this.props;
+	updateParams( nextProps ) {
+		const getParams = ( nextProps && nextProps.getParams ) || this.props.getParams;
 		this.setState( getParams( this.node ), this.draw );
 	}
 
