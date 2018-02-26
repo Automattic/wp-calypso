@@ -20,6 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormInputValidation from 'components/forms/form-input-validation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import QuerySites from 'components/data/query-sites';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { addQueryArgs } from 'lib/route';
@@ -242,7 +243,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	}
 
 	render() {
-		const { basePath, getForwardUrl, hasBusinessAddress, translate } = this.props;
+		const { basePath, getForwardUrl, hasBusinessAddress, siteId, translate } = this.props;
 
 		return (
 			<div className="steps__main">
@@ -251,6 +252,8 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
 					title="Business Address ‹ Jetpack Start"
 				/>
+
+				<QuerySites siteId={ siteId } />
 
 				{ hasBusinessAddress ? (
 					<ConnectSuccess
