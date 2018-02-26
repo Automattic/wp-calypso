@@ -31,7 +31,8 @@ class SearchForALocation extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const href = '/google-my-business/create/' + siteId;
+		const href = '/google-my-business/verify/' + siteId;
+		const createHref = '/google-my-business/create/' + siteId;
 		return (
 			<div className="search-for-a-location">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
@@ -40,8 +41,8 @@ class SearchForALocation extends Component {
 
 				<Card>What is the name of your business?</Card>
 
-				<SearchCard onSearch={ noop } className="is-compact" />
-				<CompactCard>
+				<SearchCard onSearch={ noop } className="search-for-a-location__search-card is-compact" />
+				<CompactCard href={ href }>
 					<h2>Cate's Cookies</h2>
 					<p>
 						345 North Avenue<br />
@@ -50,7 +51,7 @@ class SearchForALocation extends Component {
 					</p>
 				</CompactCard>
 
-				<CompactCard>
+				<CompactCard href={ href }>
 					<h2>Pinch Bakeshop</h2>
 					<p>
 						234 Piedmont Drive<br />
@@ -60,7 +61,7 @@ class SearchForALocation extends Component {
 				</CompactCard>
 
 				<Card>
-					Can't find your business? <a href={ href }>Add it here.</a>
+					Can't find your business? <a href={ createHref }>Add it here.</a>
 				</Card>
 			</div>
 		);
