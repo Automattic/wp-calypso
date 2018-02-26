@@ -22,7 +22,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
-import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabledForCountry, translatedEbanxError } from 'lib/credit-card-details/ebanx';
 
 const wpcom = wp.undocumented();
 
@@ -267,9 +267,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 			ebanxResponse.data.paymentMethod = 'WPCOM_Billing_Ebanx';
 			callback( null, ebanxResponse.data );
 		} else {
-			const errorMessage =
-				ebanxResponse.error.err.status_message || ebanxResponse.error.err.message;
-			callback( new Error( 'Credit card Error: ' + errorMessage ) );
+			callback( translatedEbanxError( ebanxResponse.error.err ) );
 		}
 	}
 }

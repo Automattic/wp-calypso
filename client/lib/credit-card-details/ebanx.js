@@ -4,6 +4,7 @@
  * @format
  */
 import { isUndefined } from 'lodash';
+import i18n from 'i18n-calypso';
 import { CPF } from 'cpf_cnpj';
 
 /**
@@ -35,4 +36,22 @@ export function isEbanxEnabledForCountry( countryCode = '' ) {
 
 export function isValidCPF( cpf = '' ) {
 	return CPF.isValid( cpf );
+}
+
+export function translatedEbanxError( error ) {
+	let errorMessage = i18n.translate(
+		'Your payment was not processed this time due to an error, please try to submit it again.'
+	);
+
+	switch ( error.status_code ) {
+		case 'BP-DR-55':
+			errorMessage = { message: { cvv: i18n.translate( 'Invalid credit card CVV number' ) } };
+			break;
+		case 'BP-DR-51':
+		case 'BP-DR-95':
+			errorMessage = { message: { name: i18n.translate( 'Please enter your name.' ) } };
+			break;
+	}
+
+	return errorMessage;
 }
