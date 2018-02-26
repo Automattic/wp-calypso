@@ -76,8 +76,7 @@ class DashboardWidget extends Component {
 			'has-settings-panel': hasSettingsPanel,
 		} );
 
-		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		const imageComponent = <img className="dashboard-widget__image" src={ image } />;
+		const imageComponent = <img className="dashboard-widget__image" src={ image } alt="" />;
 
 		return (
 			<Card className={ classes }>
