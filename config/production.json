@@ -128,6 +128,7 @@
 		"upgrades/precancellation-chat": true,
 		"upgrades/presale-chat": true,
 		"woocommerce/extension-dashboard": true,
+		"woocommerce/extension-dashboard-stats-widget": false,
 		"woocommerce/extension-orders": true,
 		"woocommerce/extension-orders-create": true,
 		"woocommerce/extension-orders-edit": true,

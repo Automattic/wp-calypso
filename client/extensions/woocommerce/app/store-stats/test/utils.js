@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
+import { assert, expect } from 'chai';
 import { moment } from 'i18n-calypso';
 
 /**
@@ -14,7 +14,11 @@ import {
 	calculateDelta,
 	formatValue,
 	getDelta,
+	getDeltaFromData,
+	getConversionRateData,
+	getStartDate,
 	getEndPeriod,
+	getStartPeriod,
 	getQueryDate,
 	getUnitPeriod,
 } from '../utils';
@@ -136,6 +140,68 @@ describe( 'getQueryDate', () => {
 	} );
 } );
 
+describe( 'getStartDate', () => {
+	test( 'should return a string', () => {
+		const queryDate = getStartDate( '2017-06-12', 'day' );
+		assert.isString( queryDate );
+	} );
+
+	test( 'should return a value for today given an undefined startDate queryParameter', () => {
+		const today = moment().format( 'YYYY-MM-DD' );
+		const queryDate = getStartDate( undefined, 'day' );
+		assert.strictEqual( queryDate, today );
+	} );
+
+	test( 'should return a value for today given a startDate of less than the quantity', () => {
+		const quantity = UNITS.day.quantity;
+		const startDate = moment()
+			.subtract( Math.floor( quantity / 2 ), 'days' )
+			.format( 'YYYY-MM-DD' );
+		const queryDate = getStartDate( startDate, 'day' );
+		const today = moment().format( 'YYYY-MM-DD' );
+		assert.strictEqual( queryDate, today );
+	} );
+
+	test( 'should return a value going back only in multiples of the specified quantity', () => {
+		const quantity = UNITS.day.quantity;
+		const daysBack = Math.floor( quantity * 2.5 ); // 75
+		const startDate = moment()
+			.subtract( daysBack, 'days' )
+			.format( 'YYYY-MM-DD' );
+		const queryDate = getStartDate( startDate, 'day' );
+		const todayShouldBe = moment()
+			.subtract( quantity * 2, 'days' )
+			.format( 'YYYY-MM-DD' );
+		assert.strictEqual( queryDate, todayShouldBe );
+	} );
+
+	test( 'should calculate with weeks', () => {
+		const quantity = UNITS.week.quantity;
+		const weeksBack = Math.floor( quantity * 2.5 ); // 75
+		const startDate = moment()
+			.subtract( weeksBack, 'weeks' )
+			.format( 'YYYY-MM-DD' );
+		const queryDate = getStartDate( startDate, 'week' );
+		const todayShouldBe = moment()
+			.subtract( quantity * 2, 'weeks' )
+			.format( 'YYYY-MM-DD' );
+		assert.strictEqual( queryDate, todayShouldBe );
+	} );
+
+	test( 'should calculate with months', () => {
+		const quantity = UNITS.month.quantity;
+		const weeksBack = Math.floor( quantity * 2.5 );
+		const startDate = moment()
+			.subtract( weeksBack, 'months' )
+			.format( 'YYYY-MM-DD' );
+		const queryDate = getStartDate( startDate, 'month' );
+		const todayShouldBe = moment()
+			.subtract( quantity * 2, 'months' )
+			.format( 'YYYY-MM-DD' );
+		assert.strictEqual( queryDate, todayShouldBe );
+	} );
+} );
+
 describe( 'getUnitPeriod', () => {
 	test( 'should return a string', () => {
 		const queryDate = getUnitPeriod( '2017-07-05', 'week' );
@@ -178,6 +244,29 @@ describe( 'getEndPeriod', () => {
 	} );
 	test( 'should return an the date for the end of the day', () => {
 		const queryDate = getEndPeriod( '2017-07-05', 'day' );
+		assert.strictEqual( queryDate, '2017-07-05' );
+	} );
+} );
+
+describe( 'getStartPeriod', () => {
+	test( 'should return a string', () => {
+		const queryDate = getStartPeriod( '2017-07-05', 'week' );
+		assert.isString( queryDate );
+	} );
+	test( 'should return an the date for the first of the week', () => {
+		const queryDate = getStartPeriod( '2017-07-09', 'week' );
+		assert.strictEqual( queryDate, '2017-07-03' );
+	} );
+	test( 'should return an the date for the first of the month', () => {
+		const queryDate = getStartPeriod( '2017-07-05', 'month' );
+		assert.strictEqual( queryDate, '2017-07-01' );
+	} );
+	test( 'should return an the date for the start of the year', () => {
+		const queryDate = getStartPeriod( '2017-07-05', 'year' );
+		assert.strictEqual( queryDate, '2017-01-01' );
+	} );
+	test( 'should return an the date for the start of the day', () => {
+		const queryDate = getStartPeriod( '2017-07-05', 'day' );
 		assert.strictEqual( queryDate, '2017-07-05' );
 	} );
 } );
@@ -253,5 +342,118 @@ describe( 'getDelta', () => {
 		const delta = getDelta( deltas, '2017-07-06', 'right' );
 		assert.strictEqual( delta.right, true );
 		assert.strictEqual( delta.period, '2017-07-06' );
+	} );
+} );
+
+const visitorData = [
+	{ visitors: 11735, period: '2018-01-01' },
+	{ visitors: 18513, period: '2018-02-01' },
+	{ visitors: 21110, period: '2018-03-01' },
+];
+
+describe( 'getDeltaFromData', () => {
+	test( 'should return an Object', () => {
+		const delta = getDeltaFromData( visitorData, '2018-03-01', 'visitors', 'month' );
+		assert.isObject( delta );
+	} );
+	test( 'should return empty if less than 3 data points are provided', () => {
+		const delta = getDeltaFromData( visitorData.slice( 0, 1 ), '2018-01-01', 'visitors', 'month' );
+		expect( delta ).to.eql( {} );
+	} );
+	test( 'should return empty if the selected date cannot be found', () => {
+		const delta = getDeltaFromData( visitorData, '2018-04-01', 'visitors', 'month' );
+		expect( delta ).to.eql( {} );
+	} );
+	test( 'should return the correct delta', () => {
+		const delta = getDeltaFromData( visitorData, '2018-03-01', 'visitors', 'month' );
+		assert.include( delta.classes, 'is-favorable' );
+		assert.include( delta.classes, 'is-increase' );
+		assert.equal( delta.value, '14%' );
+	} );
+} );
+
+const orderData = [
+	{
+		period: '2018-01-31',
+		orders: 18,
+	},
+	{
+		period: '2018-02-28',
+		orders: 13,
+	},
+	{
+		period: '2018-03-31',
+		orders: 110,
+	},
+];
+
+describe( 'getConversionRateData', () => {
+	test( 'should return an Array', () => {
+		const data = getConversionRateData( visitorData, orderData, 'month' );
+		assert.isArray( data );
+	} );
+	test( 'should return the correct conversion rate', () => {
+		const data = getConversionRateData( visitorData, orderData, 'month' );
+		/*
+			2018-01
+				( orders [18] ) / visitors [11735] ) * 100 = 0.15
+			2018-02
+				( orders [13] ) / visitors [18513] ) * 100 = 0.07
+			 2018-03
+				( orders [110 ] ) / visitors [21110] ) * 100 = 0.52
+		*/
+		expect( data ).to.eql( [
+			{
+				period: '2018-01',
+				conversionRate: 0.15,
+			},
+			{
+				period: '2018-02',
+				conversionRate: 0.07,
+			},
+			{
+				period: '2018-03',
+				conversionRate: 0.52,
+			},
+		] );
+	} );
+	test( 'should return zero rates if there are no visitors logged', () => {
+		const _visitorData = [
+			{ visitors: 0, period: '2018-01-01' },
+			{ visitors: 18513, period: '2018-02-01' },
+			{ visitors: 21110, period: '2018-03-01' },
+		];
+		const data = getConversionRateData( _visitorData, orderData, 'month' );
+		expect( data ).to.eql( [
+			{
+				period: '2018-01',
+				conversionRate: 0,
+			},
+			{
+				period: '2018-02',
+				conversionRate: 0.07,
+			},
+			{
+				period: '2018-03',
+				conversionRate: 0.52,
+			},
+		] );
+	} );
+	test( 'should return zero rates if product data is not logged', () => {
+		const data = getConversionRateData( visitorData, [], 'month' );
+		expect( data ).to.eql( [
+			{
+				period: '2018-01',
+				conversionRate: 0,
+			},
+			{
+				period: '2018-02',
+				conversionRate: 0,
+			},
+			{
+				period: '2018-03',
+				conversionRate: 0,
+			},
+		] );
 	} );
 } );

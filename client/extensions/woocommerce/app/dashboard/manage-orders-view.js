@@ -33,6 +33,7 @@ import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/gen
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
 import ShareWidget from 'woocommerce/components/share-widget';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import StatsWidget from './widgets/stats-widget';
 
 class ManageOrdersView extends Component {
 	static propTypes = {
@@ -169,6 +170,8 @@ class ManageOrdersView extends Component {
 				</div>
 
 				<LabelsSetupNotice />
+
+				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
 
 				<DashboardWidgetRow>
 					{ this.possiblyRenderProcessOrdersWidget() }

@@ -179,6 +179,7 @@
 		"webpack/hot-loader": false,
 		"webpack/persistent-caching": false,
 		"woocommerce/extension-dashboard": true,
+		"woocommerce/extension-dashboard-stats-widget": true,
 		"woocommerce/extension-orders": true,
 		"woocommerce/extension-orders-create": true,
 		"woocommerce/extension-orders-edit": true,
