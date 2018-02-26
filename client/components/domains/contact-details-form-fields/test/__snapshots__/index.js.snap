@@ -10,7 +10,7 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
     <Input
       additionalClasses="contact-details-form-fields__field"
       autoComplete="on"
-      autoFocus={true}
+      autoFocus={false}
       disabled={false}
       errorMessage=""
       eventFormName="Domain contact details form"
