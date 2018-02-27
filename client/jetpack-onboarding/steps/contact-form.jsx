@@ -69,10 +69,12 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const headerText = translate( "Let's grow your audience with Jetpack." );
 		const subHeaderText = (
 			<Fragment>
-				{ translate( "A great first step is adding Jetpack's contact form." ) }
+				{ translate(
+					'A great first step is adding a Contact Us page that includes Jetpack’s contact form.'
+				) }
 				<br />
 				{ translate(
-					'Create a Jetpack account to get started and unlock this and dozens of other features.'
+					'Create a Jetpack account to unlock this and dozens of other Jetpack features.'
 				) }
 			</Fragment>
 		);
@@ -135,11 +137,9 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 	}
 }
 
-export default connect(
-	( state, { settings, siteId, steps } ) => ( {
-		hasContactForm: !! get( settings, 'addContactForm' ),
-		isConnected: isJetpackSite( state, siteId ),
-		siteUrl: getUnconnectedSiteUrl( state, siteId ),
-		stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
-	} ),
-)( localize( JetpackOnboardingContactFormStep ) );
+export default connect( ( state, { settings, siteId, steps } ) => ( {
+	hasContactForm: !! get( settings, 'addContactForm' ),
+	isConnected: isJetpackSite( state, siteId ),
+	siteUrl: getUnconnectedSiteUrl( state, siteId ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingContactFormStep ) );
