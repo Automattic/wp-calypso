@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
@@ -46,7 +47,7 @@ class StoredCard extends React.Component {
 	render() {
 		var card = this.props.card,
 			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),
-			cardClasses = 'stored-card ' + card.card_type.toLowerCase();
+			cardClasses = classNames( 'stored-card', card.card_type && card.card_type.toLowerCase() );
 
 		return (
 			<div className={ cardClasses }>
