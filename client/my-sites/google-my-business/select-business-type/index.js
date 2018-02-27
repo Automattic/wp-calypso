@@ -19,6 +19,7 @@ import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import GoogleLoginButton from 'components/social-buttons/google';
+import { preventWidows as preventWidowFormatting } from 'lib/formatting';
 
 class SelectBusinessType extends Component {
 	static propTypes = {
@@ -108,9 +109,9 @@ class SelectBusinessType extends Component {
 					headerText={ translate( 'Online Only', {
 						comment: 'In the context of a business activity, as opposed to a brick and mortar',
 					} ) }
-					mainText={ translate(
+					mainText={ preventWidowFormatting( translate(
 						"Don't provide in-person services? Learn more about reaching your customers online."
-					) }
+					) ) }
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
 					buttonHref={ '/settings/traffic/' + siteId }
 					buttonOnClick={ this.trackOptimizeYourSEOClick }

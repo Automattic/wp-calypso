@@ -1,7 +1,14 @@
 .google-my-business-success {
-	text-align: center;
+	max-width: 540px
 }
 
 .google-my-business-success__header {
 	font-size: 21px;
+	line-height: 1.2;
+	margin: 0.2em 0;
+	max-width: 500px;
+}
+
+.google-my-business-success__text {
+	max-width: 400px;
 }

@@ -8,11 +8,13 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
+import Gridicon from 'gridicons'
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import GoogleMyBusinessLocation from '../google-my-business-location';
 import HeaderCake from 'components/header-cake';
 import Ribbon from 'components/ribbon';
@@ -40,36 +42,31 @@ class ShowListOfLocation extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card>
+				<CompactCard>
 					<h1>{ translate( 'Select the listing you would like to connect to' ) }</h1>
-				</Card>
+				</CompactCard>
 
-				<Card>
-					<Ribbon color="green">Verified</Ribbon>
+				<CompactCard>
 					<GoogleMyBusinessLocation
 						title="Cate's Cookies"
 						text={
-							<p>
-								345 North Avenue<br />Talihassee, FL 34342<br />USA
-							</p>
+							( <div>345 North Avenue<br />Talihassee, FL 34342<br />USA</div> )
 						}
 						href={ successHref }
+						verified={ true }
 					/>
-				</Card>
+				</CompactCard>
 
-				<Card>
+				<CompactCard>
 					<GoogleMyBusinessLocation
 						title="Pinch Bakeshop"
-						text={
-							<p>
-								234 Piedmont Drive<br />Talihassee, FL 34342<br />USA
-							</p>
-						}
+						text={ ( <div>234 Piedmont Drive<br />Talihassee, FL 34342<br />USA</div> ) }
 						href={ verifyHref }
+						verified={ false }
 					/>
-				</Card>
+				</CompactCard>
 
-				<Card>
+				<Card className="show-list-of-locations__search">
 					{ translate(
 						"Don't see the listing you are trying to connect? {{a}}Search for your business{{/a}}.",
 						{

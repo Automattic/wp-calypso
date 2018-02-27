@@ -31,22 +31,24 @@ class Success extends Component {
 		const { translate, siteId } = this.props;
 		const href = '/google-my-business/stats/' + siteId;
 		return (
-			<div className="google-my-business-success">
+			<div>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
 				<Card>
-					<img src="/calypso/images/google-my-business/success.svg" width="100" height="103" />
-					<h1 className="google-my-business-success__header">
-						You've successfully connected your Google Business listing for Cate's Cookies
-					</h1>
-					<p>
-						You'll now be able to view the stats for your Google Business listing in WordPress.com
-					</p>
-					<Button primary href={ href }>
-						Take Me To Stats
-					</Button>
+					<div className="google-my-business-success">
+						<img src="/calypso/images/google-my-business/success.svg" width="130" height="134" />
+						<h1 className="google-my-business-success__header">
+							You've successfully connected your Google Business listing for Cate's Cookies
+						</h1>
+						<p className="google-my-business-success__text">
+							You'll now be able to view the stats for your Google Business listing in WordPress.com
+						</p>
+						<Button primary href={ href }>
+							Take Me To Stats
+						</Button>
+					</div>
 				</Card>
 			</div>
 		);
