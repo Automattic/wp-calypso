@@ -45,11 +45,7 @@ export default {
 		analytics.pageView.record( domainManagementList( ':site' ), 'Domain Management' );
 
 		pageContext.primary = (
-			<DomainManagementData
-				component={ DomainManagement.List }
-				context={ pageContext }
-				productsList={ productsList }
-			/>
+			<DomainManagementData component={ DomainManagement.List } context={ pageContext } />
 		);
 		next();
 	},
@@ -67,7 +63,6 @@ export default {
 			<DomainManagementData
 				component={ component }
 				context={ pageContext }
-				productsList={ productsList }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
@@ -205,7 +200,6 @@ export default {
 			<DomainManagementData
 				component={ DomainManagement.AddGoogleApps }
 				context={ pageContext }
-				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

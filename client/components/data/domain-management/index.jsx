@@ -13,12 +13,13 @@ import { connect } from 'react-redux';
 import StoreConnection from 'components/data/store-connection';
 import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
-import observe from 'lib/mixins/data-observe';
 import { fetchDomains } from 'lib/upgrades/actions';
+import QueryProducts from 'components/data/query-products-list';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 
 const stores = [ DomainsStore, CartStore ];
 
@@ -45,8 +46,6 @@ const DomainManagementData = createReactClass( {
 		sitePlans: PropTypes.object.isRequired,
 	},
 
-	mixins: [ observe( 'productsList' ) ],
-
 	componentWillMount: function() {
 		const { selectedSite } = this.props;
 
@@ -67,11 +66,12 @@ const DomainManagementData = createReactClass( {
 	render: function() {
 		return (
 			<div>
+				<QueryProducts />
 				<StoreConnection
 					component={ this.props.component }
 					stores={ stores }
 					getStateFromStores={ getStateFromStores }
-					products={ this.props.productsList.get() }
+					products={ this.props.productsList }
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSite={ this.props.selectedSite }
 					sitePlans={ this.props.sitePlans }
@@ -87,10 +87,12 @@ const DomainManagementData = createReactClass( {
 
 const mapStateToProps = state => {
 	const selectedSite = getSelectedSite( state );
+	const productsList = getProductsList( state );
 
 	return {
 		sitePlans: getPlansBySite( state, selectedSite ),
 		selectedSite,
+		productsList,
 	};
 };
 
