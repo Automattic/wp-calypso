@@ -33,6 +33,7 @@ class CreditCard extends React.Component {
 		return onSelect ? (
 			<div
 				className={ classes }
+				tabIndex={ -1 }
 				role="radio"
 				aria-checked={ selected }
 				onClick={ onSelect }
