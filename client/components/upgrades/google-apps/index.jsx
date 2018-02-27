@@ -15,16 +15,13 @@ import { localize } from 'i18n-calypso';
 import { cartItems } from 'lib/cart-values';
 import GoogleAppsDialog from './google-apps-dialog';
 import HeaderCake from 'components/header-cake';
-import QueryProducts from 'components/data/query-products-list';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getProductsList } from 'state/products-list/selectors';
 
 class GoogleApps extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		domain: PropTypes.string.isRequired,
 		onGoBack: PropTypes.func.isRequired,
-		productsList: PropTypes.object.isRequired,
 		onAddGoogleApps: PropTypes.func.isRequired,
 		onClickSkip: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
@@ -59,14 +56,12 @@ class GoogleApps extends Component {
 	render() {
 		return (
 			<div>
-				<QueryProducts />
 				<HeaderCake onClick={ this.props.onGoBack }>
 					{ this.props.translate( 'Register %(domain)s', { args: { domain: this.props.domain } } ) }
 				</HeaderCake>
 
 				<GoogleAppsDialog
 					domain={ this.props.domain }
-					productsList={ this.props.productsList }
 					onClickSkip={ this.props.onClickSkip }
 					onGoBack={ this.props.onGoBack }
 					onAddGoogleApps={ this.props.onAddGoogleApps }
@@ -83,7 +78,6 @@ class GoogleApps extends Component {
 
 export default connect( state => {
 	return {
-		productsList: getProductsList( state ),
 		selectedSite: getSelectedSite( state ),
 	};
 } )( localize( GoogleApps ) );
