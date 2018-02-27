@@ -15,7 +15,9 @@ import { localize } from 'i18n-calypso';
 import { cartItems } from 'lib/cart-values';
 import GoogleAppsDialog from './google-apps-dialog';
 import HeaderCake from 'components/header-cake';
+import QueryProducts from 'components/data/query-products-list';
 import { getSelectedSite } from 'state/ui/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 
 class GoogleApps extends Component {
 	static propTypes = {
@@ -57,6 +59,7 @@ class GoogleApps extends Component {
 	render() {
 		return (
 			<div>
+				<QueryProducts />
 				<HeaderCake onClick={ this.props.onGoBack }>
 					{ this.props.translate( 'Register %(domain)s', { args: { domain: this.props.domain } } ) }
 				</HeaderCake>
@@ -80,6 +83,7 @@ class GoogleApps extends Component {
 
 export default connect( state => {
 	return {
+		productsList: getProductsList( state ),
 		selectedSite: getSelectedSite( state ),
 	};
 } )( localize( GoogleApps ) );
