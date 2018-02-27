@@ -79,7 +79,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<Card className="steps__form">
 					<img
 						className="steps__illustration"
-						src={ '/calypso/images/illustrations/illustration-start.svg' }
+						src={ '/calypso/images/illustrations/site-title.svg' }
 						alt=""
 					/>
 
