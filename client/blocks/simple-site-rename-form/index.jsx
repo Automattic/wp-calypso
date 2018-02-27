@@ -18,6 +18,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FormInputValidation from 'components/forms/form-input-validation';
 import ConfirmationDialog from './dialog';
 import FormSectionHeading from 'components/forms/form-section-heading';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { requestSiteRename } from 'state/site-rename/actions';
 import { isRequestingSiteRename } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -131,6 +132,7 @@ export class SimpleSiteRenameForm extends Component {
 					onConfirm={ this.onConfirm }
 				/>
 				<form onSubmit={ this.onSubmit }>
+					<TrackComponentView eventName="calypso_siterename_form_view" />
 					<Card className="simple-site-rename-form__content">
 						<FormSectionHeading>{ translate( 'Edit Site Address' ) }</FormSectionHeading>
 						<FormTextInputWithAffixes
