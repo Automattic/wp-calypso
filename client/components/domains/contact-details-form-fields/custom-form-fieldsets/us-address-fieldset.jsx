@@ -15,15 +15,24 @@ import { StateSelect, Input } from 'my-sites/domains/components/form';
 
 const UsAddressFieldset = props => {
 	const { getFieldProps, translate, countryCode } = props;
+	const STATE_LABEL = {
+		CA: translate( 'Province' ),
+	};
+	const POST_CODE_LABEL = {
+		US: translate( 'ZIP code' ),
+	};
 	return (
 		<div className="custom-form-fieldsets__address-fields us-address-fieldset">
 			<Input label={ translate( 'City' ) } { ...getFieldProps( 'city', true ) } />
 			<StateSelect
-				label={ translate( 'State' ) }
+				label={ STATE_LABEL[ countryCode ] || translate( 'State' ) }
 				countryCode={ countryCode }
 				{ ...getFieldProps( 'state', true ) }
 			/>
-			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code', true ) } />
+			<Input
+				label={ POST_CODE_LABEL[ countryCode ] || translate( 'Postal Code' ) }
+				{ ...getFieldProps( 'postal-code', true ) }
+			/>
 		</div>
 	);
 };
