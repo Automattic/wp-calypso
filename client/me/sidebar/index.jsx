@@ -118,10 +118,10 @@ class MeSidebar extends React.Component {
 				<SidebarRegion>
 					<ProfileGravatar user={ this.props.currentUser } />
 
-					<div className="me-sidebar__signout">
+					<div className="sidebar__me-signout">
 						<Button
 							compact
-							className="me-sidebar__signout-button"
+							className="sidebar__me-signout-button"
 							onClick={ this.onSignOut }
 							title={ translate( 'Sign out of WordPress.com', { textOnly: true } ) }
 						>
