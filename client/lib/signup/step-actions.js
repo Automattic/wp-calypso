@@ -16,7 +16,7 @@ import wpcom from 'lib/wp';
 import userFactory from 'lib/user';
 const user = userFactory();
 import { getSavedVariations } from 'lib/abtest';
-import SignupCart from 'lib/signup/cart';
+import * as SignupCart from 'lib/signup/cart';
 import analytics from 'lib/analytics';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 import { cartItems } from 'lib/cart-values';
