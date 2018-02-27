@@ -33,13 +33,14 @@ If you want to temporarily enable/disable some feature flags for a given build, 
 ```bash
 ENABLE_FEATURES=manage/plugins/compatibility-warning DISABLE_FEATURES=code-splitting,reader npm start
 ```
+### Testing Feature Flags via URLs
 
-### Testing Feature Flags On Any Environment
+If you want to temporarily enable/disable some feature flags you can add a `?flags=` query parameter to the URL.
 
-If you want to temporarily enable/disable some feature flags on a particular environment (calypso.live included) you can add a `?flags=` query parameter to the URL.
+**Note** that this **only** works on development, staging, and calypso.live, **not** in production (this functionality is not suitable for public use on `*.wordpress.com`).
 
 - `?flags=foo` enables feature *foo*.
 - `?flags=-bar` disables feature *bar*.
 - `?flags=foo,-bar` enables feature *foo* and disables feature *bar*.
 
-E.g. https://wordpress.com/?flags=manage/plugins/compatibility-warning
+E.g. http://calypso.localhost:3000/?flags=manage/plugins/compatibility-warning
