@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import Gridicon from 'gridicons';
-import { flow } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,13 +17,18 @@ import Card from 'components/card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import SectionHeader from 'components/section-header';
 import QueryPreferences from 'components/data/query-preferences';
-import { isGoogleMyBusinessStatsNudgeDismissed } from 'state/selectors';
+import {
+	isGoogleMyBusinessStatsNudgeDismissed,
+	getGoogleMyBusinessStatsNudgeDismissCount,
+} from 'state/selectors';
 import { dismissNudge, alreadyListed } from './actions';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
+		isDismissed: PropTypes.bool.isRequired,
+		dismissCount: PropTypes.number.isRequired,
 		trackNudgeAlreadyListedClick: PropTypes.func.isRequired,
 		trackNudgeDismissClick: PropTypes.func.isRequired,
 		trackNudgeStartNowClick: PropTypes.func.isRequired,
@@ -34,9 +38,23 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 	componentWillMount() {
 		if ( ! this.props.isDismissed ) {
-			this.props.trackNudgeView();
+			this.props.trackNudgeView( this.props.dismissCount );
 		}
 	}
+
+	onDismissClick = () => {
+		this.props.trackNudgeDismissClick( this.props.dismissCount );
+		this.props.dismissNudge();
+	};
+
+	onStartNowClick = () => {
+		this.props.trackNudgeStartNowClick( this.props.dismissCount );
+	};
+
+	onAlreadyListedClick = () => {
+		this.props.trackNudgeAlreadyListedClick( this.props.dismissCount );
+		this.props.alreadyListed();
+	};
 
 	render() {
 		if ( this.props.isDismissed ) {
@@ -49,7 +67,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 				<Gridicon
 					icon="cross"
 					className="google-my-business-stats-nudge__close-icon"
-					onClick={ flow( this.props.trackNudgeDismissClick, this.props.dismissNudge ) }
+					onClick={ this.onDismissClick }
 				/>
 				<SectionHeader
 					className="google-my-business-stats-nudge__header"
@@ -80,17 +98,12 @@ class GoogleMyBusinessStatsNudge extends Component {
 							<Button
 								href={ `/google-my-business/${ this.props.siteSlug }` }
 								primary
-								onClick={ this.props.trackNudgeStartNowClick }
+								onClick={ this.onStartNowClick }
 							>
 								{ this.props.translate( 'Start Now' ) }
 							</Button>
 
-							<Button
-								onClick={ flow(
-									this.props.trackNudgeAlreadyListedClick,
-									this.props.alreadyListed
-								) }
-							>
+							<Button onClick={ this.onAlreadyListedClick }>
 								{ this.props.translate( "I'm Already Listed" ) }
 							</Button>
 						</div>
@@ -104,16 +117,23 @@ class GoogleMyBusinessStatsNudge extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state, ownProps.siteId ),
+		dismissCount: getGoogleMyBusinessStatsNudgeDismissCount( state, ownProps.siteId ),
 	} ),
 	{
-		trackNudgeView: () => recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
-		trackNudgeDismissClick: () =>
-			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click' ),
-		trackNudgeStartNowClick: () =>
-			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_button_click' ),
-		trackNudgeAlreadyListedClick: () =>
+		trackNudgeView: dismissCount =>
+			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view', { dismissCount } ),
+		trackNudgeDismissClick: dismissCount =>
+			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click', {
+				dismissCount,
+			} ),
+		trackNudgeStartNowClick: dismissCount =>
+			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_button_click', {
+				dismissCount,
+			} ),
+		trackNudgeAlreadyListedClick: dismissCount =>
 			recordTracksEvent(
-				'calypso_test_google_my_business_stats_nudge_already_button_listed_click'
+				'calypso_test_google_my_business_stats_nudge_already_button_listed_click',
+				{ dismissCount }
 			),
 		dismissNudge,
 		alreadyListed,

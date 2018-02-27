@@ -9,22 +9,10 @@ import { last } from 'lodash';
  * Internal dependencies
  */
 import { getPreference } from 'state/preferences/selectors';
+import { getGoogleMyBusinessStatsNudgeDismissCount } from 'state/selectors';
 
 const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
 const MAX_DISMISS = 2;
-
-/**
- * Returns the number of times the current user dismissed the nudge
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId The Id of the site
- * @return {Number}  Count  the number of times the nudge has been dismissed
- */
-const getDismissCount = ( state, siteId ) => {
-	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
-	const sitePreference = preference[ siteId ] || [];
-	return sitePreference.filter( event => 'dismiss' === event.type ).length;
-};
 
 /**
  * Returns the last time the nudge was dismissed by the current user or 0 if it was never dismissed
@@ -77,7 +65,7 @@ const isGoogleMyBusinessStatsNudgeDismissed = ( state, siteId ) => {
 		return false;
 	}
 
-	if ( getDismissCount( state, siteId ) >= MAX_DISMISS ) {
+	if ( getGoogleMyBusinessStatsNudgeDismissCount( state, siteId ) >= MAX_DISMISS ) {
 		return true;
 	}
 
