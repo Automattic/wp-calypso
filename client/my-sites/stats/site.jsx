@@ -31,7 +31,7 @@ import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
-import GoogleMyBusinessStatsNudge from 'blocks/google-my-business/stats-nudge';
+import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
 import { isGoogleMyBusinessStatsNudgeVisible as isGoogleMyBusinessStatsNudgeVisibleSelector } from 'state/selectors';
 
 class StatsSite extends Component {
@@ -145,7 +145,7 @@ class StatsSite extends Component {
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
 					{ config.isEnabled( 'google-my-business' ) &&
 						isGoogleMyBusinessStatsNudgeVisible && (
-							<GoogleMyBusinessStatsNudge siteSlug={ slug } />
+							<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
 						) }
 					<ChartTabs
 						barClick={ this.barClick }

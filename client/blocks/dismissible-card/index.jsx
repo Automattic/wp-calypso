@@ -26,7 +26,7 @@ class DismissibleCard extends Component {
 		className: PropTypes.string,
 		dismissCard: PropTypes.func,
 		isDismissed: PropTypes.bool,
-		temporary: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
+		temporary: PropTypes.bool,
 		onClick: PropTypes.func,
 		preferenceName: PropTypes.string.isRequired,
 	};
@@ -59,13 +59,8 @@ class DismissibleCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
-		const dismissedPreference = getPreference( state, preference );
-
 		return {
-			isDismissed:
-				typeof ownProps.temporary === 'number' && dismissedPreference && dismissedPreference > 0
-					? dismissedPreference + ownProps.temporary * 1000 > Date.now()
-					: dismissedPreference,
+			isDismissed: getPreference( state, preference ),
 		};
 	},
 	( dispatch, ownProps ) =>
@@ -73,13 +68,10 @@ export default connect(
 			{
 				dismissCard: () => {
 					const preference = `${ PREFERENCE_PREFIX }${ ownProps.preferenceName }`;
-					if ( typeof ownProps.temporary === 'boolean' ) {
+					if ( ownProps.temporary ) {
 						return setPreference( preference, true );
 					}
-					return savePreference(
-						preference,
-						typeof ownProps.temporary === 'number' ? Date.now() : true
-					);
+					return savePreference( preference, true );
 				},
 			},
 			dispatch
