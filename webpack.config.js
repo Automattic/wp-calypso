@@ -180,7 +180,6 @@ const webpackConfig = {
 		Buffer: true,
 		__filename: 'mock',
 		__dirname: 'mock',
-		fs: 'empty',
 		crypto: false,
 		stream: false,
 	},
