@@ -155,7 +155,7 @@
     "webpack": "3.10.0",
     "webpack-dev-middleware": "1.11.0",
     "webpack-hot-middleware": "2.15.0",
-    "wpcom": "5.5.0-beta.4",
+    "wpcom": "6.0.0-beta.1",
     "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "5.0.0",
     "wpcom-xhr-request": "1.1.1"

@@ -10048,7 +10048,7 @@
         "hosted-git-info": "2.5.0",
         "is-builtin-module": "1.0.0",
         "semver": "5.1.0",
-        "validate-npm-package-license": "3.0.2"
+        "validate-npm-package-license": "3.0.3"
       }
     },
     "normalize-path": {
@@ -13535,21 +13535,11 @@
       "dev": true
     },
     "spdx-correct": {
-      "version": "2.0.4",
-      "integrity": "sha512-c+4gPpt9YDhz7cHlz5UrsHzxxRi4ksclxnEEKsuGT9JdwSC+ZNmsGbYRzzgxyZaBYpcWnlu+4lPcdLKx4DOCmA==",
+      "version": "3.0.0",
+      "integrity": "sha512-N19o9z5cEyc8yQQPukRCZ9EUmb4HUpnrmaL/fxS2pBo2jbfcFRVuFZ/oFC+vZz0MNNk0h80iMn5/S6qGZOL5+g==",
       "requires": {
-        "spdx-expression-parse": "2.0.2",
-        "spdx-license-ids": "2.0.1"
-      },
-      "dependencies": {
-        "spdx-expression-parse": {
-          "version": "2.0.2",
-          "integrity": "sha512-oFxOkWCfFS0ltNp0H66gXlU4NF6bxg7RkoTYR0413t+yTY9zyj+AIWsjtN8dcVp6703ijDYBWBIARlJ7DkyP9Q==",
-          "requires": {
-            "spdx-exceptions": "2.1.0",
-            "spdx-license-ids": "2.0.1"
-          }
-        }
+        "spdx-expression-parse": "3.0.0",
+        "spdx-license-ids": "3.0.0"
       }
     },
     "spdx-exceptions": {
@@ -13562,17 +13552,11 @@
       "requires": {
         "spdx-exceptions": "2.1.0",
         "spdx-license-ids": "3.0.0"
-      },
-      "dependencies": {
-        "spdx-license-ids": {
-          "version": "3.0.0",
-          "integrity": "sha512-2+EPwgbnmOIl8HjGBXXMd9NAu02vLjOO1nWw4kmeRDFyHn+M/ETfHxQUK0oXg8ctgVnl9t3rosNVsZ1jG61nDA=="
-        }
       }
     },
     "spdx-license-ids": {
-      "version": "2.0.1",
-      "integrity": "sha1-AgF7zDU07k/+9tWNIOfT6aHDyOw="
+      "version": "3.0.0",
+      "integrity": "sha512-2+EPwgbnmOIl8HjGBXXMd9NAu02vLjOO1nWw4kmeRDFyHn+M/ETfHxQUK0oXg8ctgVnl9t3rosNVsZ1jG61nDA=="
     },
     "specificity": {
       "version": "0.2.1",
@@ -14915,10 +14899,10 @@
       "integrity": "sha1-HBRHm0DxOXp1eC8RXkCGRHQzogA="
     },
     "validate-npm-package-license": {
-      "version": "3.0.2",
-      "integrity": "sha512-8zlGw3EZDpC7iUDKy4yHCSqFwkBTeAK4h1QqDC3ST6rT7dzvu2ZuclExZN7zuXNEhQ3+2UBQgdca5eNNL06sBg==",
+      "version": "3.0.3",
+      "integrity": "sha512-63ZOUnL4SIXj4L0NixR3L1lcjO38crAbgrTpl28t8jjrfuiOBL5Iygm+60qPs/KsZGzPNg6Smnc/oY16QTjF0g==",
       "requires": {
-        "spdx-correct": "2.0.4",
+        "spdx-correct": "3.0.0",
         "spdx-expression-parse": "3.0.0"
       }
     },
@@ -15801,8 +15785,8 @@
       }
     },
     "wpcom": {
-      "version": "5.5.0-beta.4",
-      "integrity": "sha512-/E7/SB80i9LpPtEs2/HlUghoykJSDqAkTsZdwlkGUGpd7ZuudzqABW2C4++edSxrReK99/2JVGS7LXUMcfDPEQ==",
+      "version": "6.0.0-beta.1",
+      "integrity": "sha512-7dHYmQyunvmwXmKLsbChCDZVncB6r4HXJ+B3NC2blCeJ/FcpxYH0rm9AJ5WOuCw2hVG7ogE0JA7hrUvGnJPx2w==",
       "requires": {
         "babel-runtime": "6.26.0",
         "debug": "2.2.0",
