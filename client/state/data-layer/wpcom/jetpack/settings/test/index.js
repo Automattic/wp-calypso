@@ -14,7 +14,10 @@ import {
 	retryOrAnnounceSaveFailure,
 	fromApi,
 } from '../';
-import { JETPACK_SETTINGS_SAVE, JETPACK_ONBOARDING_SETTINGS_UPDATE } from 'state/action-types';
+import {
+	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_UPDATE,
+} from 'state/action-types';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
@@ -154,7 +157,7 @@ describe( 'saveJetpackSettings()', () => {
 	};
 
 	const action = {
-		type: JETPACK_SETTINGS_SAVE,
+		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 		siteId,
 		settings,
 	};
@@ -227,7 +230,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		},
 	};
 	const action = {
-		type: JETPACK_SETTINGS_SAVE,
+		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 		siteId,
 		settings,
 		meta: {
@@ -248,7 +251,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 			expect.objectContaining( {
 				settings,
 				siteId,
-				type: JETPACK_SETTINGS_SAVE,
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 				meta: {
 					dataLayer: {
 						retryCount: 1,

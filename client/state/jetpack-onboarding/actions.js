@@ -6,8 +6,8 @@
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
-	JETPACK_SETTINGS_SAVE,
-	JETPACK_SETTINGS_SAVE_SUCCESS,
+	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
@@ -30,7 +30,7 @@ export const requestJetpackSettings = ( siteId, query ) => ( {
 
 export const saveJetpackSettings = ( siteId, settings ) => {
 	return {
-		type: JETPACK_SETTINGS_SAVE,
+		type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 		siteId,
 		settings,
 		meta: {
@@ -42,7 +42,7 @@ export const saveJetpackSettings = ( siteId, settings ) => {
 };
 
 export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
-	type: JETPACK_SETTINGS_SAVE_SUCCESS,
+	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	siteId,
 	settings,
 } );

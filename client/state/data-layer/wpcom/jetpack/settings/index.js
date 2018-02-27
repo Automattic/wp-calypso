@@ -12,7 +12,10 @@ import { translate } from 'i18n-calypso';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { JETPACK_ONBOARDING_SETTINGS_REQUEST, JETPACK_SETTINGS_SAVE } from 'state/action-types';
+import {
+	JETPACK_ONBOARDING_SETTINGS_REQUEST,
+	JETPACK_ONBOARDING_SETTINGS_SAVE,
+} from 'state/action-types';
 import { getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	saveJetpackSettingsSuccess,
@@ -166,7 +169,7 @@ export default {
 			}
 		),
 	],
-	[ JETPACK_SETTINGS_SAVE ]: [
+	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
 		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
 };
