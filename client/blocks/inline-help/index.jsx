@@ -171,7 +171,7 @@ class InlineHelp extends Component {
 							className="inline-help__cancel-button"
 							borderless >
 							<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-							{ translate( 'Cancel' ) }
+							{ translate( 'Back' ) }
 						</Button>
 					</div>
 				</Popover>
