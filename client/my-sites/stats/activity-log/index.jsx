@@ -454,9 +454,7 @@ class ActivityLog extends Component {
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
-		const today = moment()
-			.utc()
-			.startOf( 'day' );
+		const today = moment().startOf( 'day' );
 
 		// Content shown when there are no logs.
 		// The network request either finished with no events or is still ongoing.
@@ -519,12 +517,7 @@ class ActivityLog extends Component {
 					<section className="activity-log__wrapper">
 						{ intoVisualGroups( moment, logs, this.getStartMoment(), this.applySiteOffset ).map(
 							( [ type, [ start, end ], events ] ) => {
-								const isToday = today.isSame(
-									end
-										.clone()
-										.utc()
-										.startOf( 'day' )
-								);
+								const isToday = today.isSame( end.clone().startOf( 'day' ) );
 
 								switch ( type ) {
 									case 'empty-day':
