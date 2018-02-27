@@ -15,10 +15,7 @@ import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackOnboardingSettings extends Component {
 	static propTypes = {
-		query: PropTypes.shape( {
-			jpUser: PropTypes.string,
-			token: PropTypes.number,
-		} ),
+		query: PropTypes.object,
 		siteId: PropTypes.number,
 		// Connected props
 		requestingSettings: PropTypes.bool,
