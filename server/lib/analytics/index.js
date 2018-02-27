@@ -35,12 +35,18 @@ function getUserFromRequest( request ) {
 
 	// if user doesn't have a cookie, and we had the user identification passed to us on query params
 	// we'll use that, otherwise, we'll just use anonymous.
-	const userType = get( request, 'query._ut', 'anon' );
-	const userId = get( request, 'query._ui', uuid() );
+	let userIdType = get( request, 'query._ut', 'anon' );
+	let userId = get( request, 'query._ui', null );
+
+	// if user ID not set, even though userIdType is set, we revert to anonymous
+	if ( ! userId ) {
+		userIdType = 'anon';
+		userId = uuid();
+	}
 
 	return {
 		_ui: userId,
-		_ut: userType,
+		_ut: userIdType,
 	};
 }
 
