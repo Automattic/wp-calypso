@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -11,16 +11,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ConnectIntro from '../connect-intro';
 import ConnectSuccess from '../connect-success';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
-import Tile from 'components/tile-grid/tile';
-import TileGrid from 'components/tile-grid';
-import { addQueryArgs } from 'lib/route';
-import { getJetpackOnboardingPendingSteps, getUnconnectedSiteUrl } from 'state/selectors';
+import { getJetpackOnboardingPendingSteps } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
@@ -65,37 +63,26 @@ class JetpackOnboardingStatsStep extends React.Component {
 	}
 
 	renderActionTile() {
-		const { isConnected, siteUrl, translate } = this.props;
-		const headerText = translate( 'Keep track of your visitors with Jetpack.' );
-		const subHeaderText = translate(
-			'Keep an eye on your success with simple, concise, and mobile-friendly stats. ' +
-				'Get updates on site traffic, successful posts, site searches, and comments, all in real time.'
+		const { siteId, translate } = this.props;
+		const header = (
+			<FormattedHeader
+				headerText={ translate( 'Keep track of your visitors with Jetpack.' ) }
+				subHeaderText={ translate(
+					'Keep an eye on your success with simple, concise, and mobile-friendly stats. ' +
+						'Get updates on site traffic, successful posts, site searches, and comments, all in real time.'
+				) }
+			/>
 		);
-		const connectUrl = addQueryArgs(
-			{
-				url: siteUrl,
-				// TODO: add a parameter to the JPC to redirect back to this step after completion
-				// and in the redirect URL include the ?action=activate_stats parameter
-				// to actually trigger the stats activation action after getting back to JPO
-			},
-			'/jetpack/connect'
-		);
-		const href = ! isConnected ? connectUrl : null;
 
 		return (
-			<Fragment>
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
-
-				<TileGrid>
-					<Tile
-						buttonLabel={ translate( 'Activate stats' ) }
-						image="/calypso/images/illustrations/jetpack-stats.svg"
-						onClick={ this.handleActivateStats }
-						href={ href }
-						e2eType={ 'activate-stats' }
-					/>
-				</TileGrid>
-			</Fragment>
+			<ConnectIntro
+				buttonLabel={ translate( 'Activate stats' ) }
+				e2eType="activate-stats"
+				header={ header }
+				illustration="/calypso/images/illustrations/jetpack-stats.svg"
+				onClick={ this.handleActivateStats }
+				siteId={ siteId }
+			/>
 		);
 	}
 
@@ -131,6 +118,5 @@ class JetpackOnboardingStatsStep extends React.Component {
 export default connect( ( state, { settings, siteId, steps } ) => ( {
 	activatedStats: get( settings, 'stats' ) === true,
 	isConnected: isJetpackSite( state, siteId ),
-	siteUrl: getUnconnectedSiteUrl( state, siteId ),
 	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
 } ) )( localize( JetpackOnboardingStatsStep ) );
