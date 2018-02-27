@@ -182,7 +182,7 @@ class GoogleLoginButton extends Component {
 		const isDisabled = Boolean(
 			this.state.isDisabled || this.props.isFormDisabled || this.state.error
 		);
-
+		const isPrimary = Boolean( this.props.isPrimary );
 		const { children } = this.props;
 		let customButton = null;
 
@@ -203,7 +203,10 @@ class GoogleLoginButton extends Component {
 					customButton
 				) : (
 					<button
-						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+						className={ classNames( 'social-buttons__button button', {
+							disabled: isDisabled,
+							'is-primary': isPrimary,
+						} ) }
 						onMouseOver={ this.showError }
 						onMouseOut={ this.hideError }
 						onClick={ this.handleClick }

@@ -12,11 +12,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import HeaderCake from 'components/header-cake';
 import Card from 'components/card';
+import GoogleMyBusinessLocation from '../google-my-business-location';
+import HeaderCake from 'components/header-cake';
 import Ribbon from 'components/ribbon';
-import CTACard from '../select-business-type/cta-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class ShowListOfLocation extends Component {
@@ -47,27 +46,28 @@ class ShowListOfLocation extends Component {
 
 				<Card>
 					<Ribbon color="green">Verified</Ribbon>
-					<h2 className="show-list-of-locations__header">Cate's Cookies</h2>
-					<p>
-						345 North Avenue<br />Talihassee, FL 34342<br />USA
-					</p>
-					<Button className="show-list-of-locations__button" href={ successHref }>
-						Connect
-					</Button>
+					<GoogleMyBusinessLocation
+						title="Cate's Cookies"
+						text={
+							<p>
+								345 North Avenue<br />Talihassee, FL 34342<br />USA
+							</p>
+						}
+						href={ successHref }
+					/>
 				</Card>
 
-				<CTACard
-					headerText={ 'Pinch Bakeshop' }
-					mainText={
-						<p>
-							234 Piedmont Drive<br />Talihassee, FL 34342<br />USA
-						</p>
-					}
-					buttonText={ translate( 'Connect', {
-						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }
-					buttonHref={ verifyHref }
-				/>
+				<Card>
+					<GoogleMyBusinessLocation
+						title="Pinch Bakeshop"
+						text={
+							<p>
+								234 Piedmont Drive<br />Talihassee, FL 34342<br />USA
+							</p>
+						}
+						href={ verifyHref }
+					/>
+				</Card>
 
 				<Card>
 					{ translate(
