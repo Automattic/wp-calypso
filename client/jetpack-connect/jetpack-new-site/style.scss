@@ -3,6 +3,10 @@
 	max-width: 960px;
 	margin: 35px auto 0;
 	text-align: center;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 15px;
+	}
 }
 
 .jetpack-new-site__header {
@@ -211,5 +215,36 @@
 
 	@include breakpoint( "<660px" ) {
 		display: block;
+	}
+}
+
+// Include Reader Back styles because they're not part of the main bundle
+// See: https://github.com/Automattic/wp-calypso/pull/19147
+.reader-full-post__back-container {
+	margin: 0;
+	position: fixed;
+		top: 47px;
+		left: 0;
+	z-index: z-index( '.masterbar', '.reader-back'	);
+
+	.button.is-compact.is-borderless {
+		padding: 18px 40px 18px 20px;
+
+		@include breakpoint( "<660px" ) {
+			padding: 18px 8px 16px;
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 46px;
+		background: $white;
+		border-bottom: 1px solid $gray-light;
+	}
+
+	span {
+		vertical-align: 1px;
 	}
 }
