@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 export const cardType = PropTypes.shape( {
-	stored_details_id: PropTypes.string,
 	card: PropTypes.string,
 	card_type: PropTypes.string,
 	name: PropTypes.string,
