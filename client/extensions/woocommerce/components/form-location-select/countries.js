@@ -81,7 +81,13 @@ class FormCountrySelectFromApi extends Component {
 		return (
 			<div>
 				<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
-				<FormSelect id="country" name="country" onChange={ onChange } value={ value }>
+				<FormSelect
+					autoComplete="country-code"
+					id="country"
+					name="country"
+					onChange={ onChange }
+					value={ value }
+				>
 					<option key="default" value="" disabled>
 						{ translate( 'Select Country' ) }
 					</option>

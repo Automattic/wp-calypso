@@ -75,7 +75,7 @@ class FormStateSelectFromApi extends Component {
 	renderDisabled = () => {
 		const { translate } = this.props;
 		return (
-			<FormSelect disabled>
+			<FormSelect autoComplete="off" disabled>
 				<option>
 					{ translate( 'N/A', { comment: "The currently-selected country doesn't have states" } ) }
 				</option>
@@ -96,7 +96,13 @@ class FormStateSelectFromApi extends Component {
 				{ isLoaded && ! locationsList.length ? (
 					this.renderDisabled()
 				) : (
-					<FormSelect id="state" name="state" onChange={ onChange } value={ value }>
+					<FormSelect
+						autoComplete="address-level1"
+						id="state"
+						name="state"
+						onChange={ onChange }
+						value={ value }
+					>
 						<option key="default" value="" disabled>
 							{ translate( 'Select State', {
 								comment: 'Label for customer address, state/province dropdown',

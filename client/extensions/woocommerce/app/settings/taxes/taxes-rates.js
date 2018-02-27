@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { isEmpty, round } from 'lodash';
+import { find, isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -20,11 +20,17 @@ import {
 	areTaxCalculationsEnabled,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
+import {
+	areLocationsLoaded,
+	getAllCountries,
+	getCountryName,
+	getStates,
+} from 'woocommerce/state/sites/locations/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
 import Card from 'components/card';
-import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
+import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
@@ -39,8 +45,12 @@ class TaxesRates extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	maybeFetchRates = props => {
-		const { address, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
+	maybeFetchRatesAndLocations = props => {
+		const { address, loadedLocations, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
+
+		if ( ! loadedLocations ) {
+			this.props.fetchLocations( siteId );
+		}
 
 		if ( loadedSettingsGeneral && ! loadedTaxRates ) {
 			this.props.fetchTaxRates( siteId, address );
@@ -48,51 +58,47 @@ class TaxesRates extends Component {
 	};
 
 	componentDidMount = () => {
-		this.maybeFetchRates( this.props );
+		this.maybeFetchRatesAndLocations( this.props );
 	};
 
-	componentWillReceiveProps = nextProps => {
-		this.maybeFetchRates( nextProps );
+	componentDidUpdate = () => {
+		this.maybeFetchRatesAndLocations( this.props );
 	};
 
 	renderLocation = () => {
-		const { address, areTaxesEnabled, translate } = this.props;
-		if ( ! areTaxesEnabled ) {
+		const {
+			areTaxesEnabled,
+			countryName,
+			loadedSettingsGeneral,
+			loadedLocations,
+			stateName,
+			translate,
+		} = this.props;
+
+		if ( ! areTaxesEnabled || ! loadedSettingsGeneral || ! loadedLocations ) {
 			return null;
 		}
 
-		const countryData = getCountryData( address.country );
-		if ( ! countryData ) {
-			return (
-				<p>
-					{ translate( 'Error: Your country ( %(country)s ) is not recognized', {
-						args: { country: address.country },
-					} ) }
-				</p>
-			);
-		}
-
-		const countryName = countryData.name;
-		const stateData = getStateData( address.country, address.state );
-		if ( ! stateData ) {
+		if ( isEmpty( stateName ) ) {
 			return (
 				<p>
 					{ translate(
-						'Error: Your country ( %(countryName)s ) was recognized, but ' +
-							'your state ( %(state)s ) was not. ',
-						{ args: { countryName, state: address.state } }
+						"The following tax rates are in effect at your store's " +
+							'{{strong}}%(countryName)s{{/strong}} location',
+						{
+							args: { countryName },
+							components: { strong: <strong /> },
+						}
 					) }
 				</p>
 			);
 		}
 
-		const stateName = stateData.name;
-
 		return (
 			<p>
 				{ translate(
-					"The following tax rates are in effect at your store's location in " +
-						'{{strong}}%(stateName)s, %(countryName)s{{/strong}}',
+					"The following tax rates are in effect at your store's " +
+						'{{strong}}%(stateName)s, %(countryName)s{{/strong}} location',
 					{
 						args: { stateName, countryName },
 						components: { strong: <strong /> },
@@ -103,12 +109,7 @@ class TaxesRates extends Component {
 	};
 
 	renderCalculationStatus = () => {
-		const { address, areTaxesEnabled, translate } = this.props;
-		const stateData = getStateData( address.country, address.state );
-
-		if ( ! stateData ) {
-			return null;
-		}
+		const { areTaxesEnabled, translate } = this.props;
 
 		if ( ! areTaxesEnabled ) {
 			return (
@@ -136,13 +137,8 @@ class TaxesRates extends Component {
 	};
 
 	possiblyRenderRates = () => {
-		const { address, areTaxesEnabled, taxRates, translate } = this.props;
+		const { areTaxesEnabled, taxRates, translate } = this.props;
 		if ( ! areTaxesEnabled ) {
-			return null;
-		}
-
-		const stateData = getStateData( address.country, address.state );
-		if ( ! stateData ) {
 			return null;
 		}
 
@@ -261,16 +257,33 @@ class TaxesRates extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const address = getStoreLocation( state, ownProps.siteId );
-	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
 	const areTaxesEnabled = areTaxCalculationsEnabled( state, ownProps.siteId );
+	const countries = getAllCountries( state, ownProps.siteId );
+	const loadedLocations = areLocationsLoaded( state, ownProps.siteId );
+	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
 	const loadedTaxRates = areTaxRatesLoaded( state, ownProps.siteId );
+	const storeLocation = getStoreLocation( state, ownProps.siteId );
 	const taxRates = getTaxRates( state, ownProps.siteId );
+
+	let countryName = '';
+	let stateName = '';
+
+	if ( loadedSettingsGeneral && loadedLocations ) {
+		countryName = getCountryName( state, storeLocation.country, ownProps.siteId );
+		const states = getStates( state, storeLocation.country, ownProps.siteId );
+		const storeState = find( states, { code: storeLocation.state } );
+		stateName = storeState ? storeState.name : '';
+	}
 
 	return {
 		address,
 		areTaxesEnabled,
+		countries,
+		countryName,
+		loadedLocations,
 		loadedSettingsGeneral,
 		loadedTaxRates,
+		stateName,
 		taxRates,
 	};
 }
@@ -278,6 +291,7 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchLocations,
 			fetchTaxRates,
 		},
 		dispatch

@@ -16,7 +16,9 @@ import AddressView from 'woocommerce/components/address-view';
 import Button from 'components/button';
 import Card from 'components/card';
 import CustomerAddressDialog from './dialog';
+import { areLocationsLoaded, getAllCountries } from 'woocommerce/state/sites/locations/selectors';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
+import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -34,6 +36,22 @@ class OrderCustomerInfo extends Component {
 
 	state = {
 		showDialog: false,
+	};
+
+	maybeFetchLocations = () => {
+		const { loadedLocations, siteId } = this.props;
+
+		if ( siteId && ! loadedLocations ) {
+			this.props.fetchLocations( siteId );
+		}
+	};
+
+	componentDidMount = () => {
+		this.maybeFetchLocations( this.props );
+	};
+
+	componentDidUpdate = () => {
+		this.maybeFetchLocations( this.props );
 	};
 
 	updateAddress = ( type = 'billing' ) => {
@@ -77,7 +95,11 @@ class OrderCustomerInfo extends Component {
 	};
 
 	renderBilling = ( address = {} ) => {
-		const { translate } = this.props;
+		const { countries, loadedLocations, translate } = this.props;
+		if ( ! loadedLocations ) {
+			return null;
+		}
+
 		if ( every( address, isEmpty ) ) {
 			return (
 				<Button
@@ -94,7 +116,7 @@ class OrderCustomerInfo extends Component {
 				<h4>{ translate( 'Address' ) }</h4>
 				<div className="order-customer__billing-address">
 					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
-					<AddressView address={ getAddressViewFormat( address ) } />
+					<AddressView address={ getAddressViewFormat( address ) } countries={ countries } />
 				</div>
 
 				<h4>{ translate( 'Email' ) }</h4>
@@ -110,7 +132,11 @@ class OrderCustomerInfo extends Component {
 	};
 
 	renderShipping = ( address = {} ) => {
-		const { translate } = this.props;
+		const { countries, loadedLocations, translate } = this.props;
+		if ( ! loadedLocations ) {
+			return null;
+		}
+
 		if ( every( address, isEmpty ) ) {
 			return (
 				<Button
@@ -127,7 +153,7 @@ class OrderCustomerInfo extends Component {
 				<h4>{ translate( 'Address' ) }</h4>
 				<div className="order-customer__shipping-address">
 					<p>{ `${ address.first_name } ${ address.last_name }` }</p>
-					<AddressView address={ getAddressViewFormat( address ) } />
+					<AddressView address={ getAddressViewFormat( address ) } countries={ countries } />
 				</div>
 				<Button className="order-customer__add-link" onClick={ this.toggleDialog( 'shipping' ) }>
 					{ translate( 'Edit Address' ) }
@@ -173,10 +199,15 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const order = getOrderWithEdits( state );
 
+		const loadedLocations = areLocationsLoaded( state, siteId );
+		const countries = getAllCountries( state, siteId );
+
 		return {
+			countries,
+			loadedLocations,
 			order,
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
+	dispatch => bindActionCreators( { editOrder, fetchLocations }, dispatch )
 )( localize( OrderCustomerInfo ) );

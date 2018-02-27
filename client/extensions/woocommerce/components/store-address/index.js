@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,11 +19,12 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Dialog from 'components/dialog';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { getCountryData } from 'woocommerce/lib/countries';
+import { areLocationsLoaded, getAllCountries } from 'woocommerce/state/sites/locations/selectors';
+import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getStoreLocation,
-	areSettingsGeneralLoading,
+	areSettingsGeneralLoaded,
 	areSettingsGeneralLoadError,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { setAddress } from 'woocommerce/state/sites/settings/actions';
@@ -38,6 +40,22 @@ class StoreAddress extends Component {
 		this.setState( { address: newProps.address } );
 	};
 
+	maybeFetchLocations = props => {
+		const { loadedLocations, siteId } = props;
+
+		if ( ! loadedLocations && siteId ) {
+			this.props.fetchLocations( siteId );
+		}
+	};
+
+	componentDidMount = () => {
+		this.maybeFetchLocations( this.props );
+	};
+
+	componentDidUpdate = () => {
+		this.maybeFetchLocations( this.props );
+	};
+
 	constructor( props ) {
 		super( props );
 		this.state = {
@@ -47,14 +65,21 @@ class StoreAddress extends Component {
 	}
 
 	onChange = event => {
+		const { countries } = this.props;
+
 		const addressEdits = { ...this.state.addressEdits };
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
 		addressEdits[ addressKey ] = newValue;
+
 		// Did they change the country? Force an appropriate state default
 		if ( 'country' === addressKey ) {
-			const countryData = getCountryData( newValue );
-			addressEdits.state = countryData ? countryData.defaultState : '';
+			const countryData = find( countries, { code: newValue } );
+			if ( countryData ) {
+				if ( ! isEmpty( countryData.states ) ) {
+					addressEdits.state = countryData.states[ 0 ].code;
+				}
+			}
 		}
 
 		this.setState( { addressEdits } );
@@ -68,7 +93,7 @@ class StoreAddress extends Component {
 	};
 
 	onCloseDialog = action => {
-		const { translate, site, onSetAddress } = this.props;
+		const { translate, siteId, onSetAddress } = this.props;
 		if ( 'save' === action ) {
 			const onFailure = () => {
 				this.setState( { showDialog: false } );
@@ -87,7 +112,7 @@ class StoreAddress extends Component {
 				address: { ...this.state.addressEdits },
 			} );
 			this.props.setAddress(
-				site.ID,
+				siteId,
 				this.state.addressEdits.street,
 				this.state.addressEdits.street2,
 				this.state.addressEdits.city,
@@ -105,7 +130,7 @@ class StoreAddress extends Component {
 	};
 
 	render() {
-		const { className, site, loading, fetchError, translate, showLabel } = this.props;
+		const { className, countries, siteId, loaded, fetchError, translate, showLabel } = this.props;
 
 		const buttons = [
 			{ action: 'close', label: translate( 'Close' ) },
@@ -113,7 +138,7 @@ class StoreAddress extends Component {
 		];
 
 		let display;
-		if ( ! site || loading || fetchError ) {
+		if ( ! siteId || ! loaded || fetchError ) {
 			display = (
 				<div>
 					<p />
@@ -126,7 +151,7 @@ class StoreAddress extends Component {
 			display = (
 				<div>
 					{ showLabel && <FormLabel>{ translate( 'Store location' ) }</FormLabel> }
-					<AddressView address={ this.state.address } />
+					<AddressView address={ this.state.address } countries={ countries } />
 					<Button compact onClick={ this.onShowDialog }>
 						{ translate( 'Edit address' ) }
 					</Button>
@@ -136,19 +161,24 @@ class StoreAddress extends Component {
 
 		const classes = classNames(
 			'store-address',
-			{ 'is-placeholder': ! site || loading },
+			{ 'is-placeholder': ! siteId || ! loaded },
 			className
 		);
 		return (
 			<Card className={ classes }>
-				<QuerySettingsGeneral siteId={ site && site.ID } />
+				<QuerySettingsGeneral siteId={ siteId } />
 				<Dialog
 					buttons={ buttons }
 					isVisible={ this.state.showDialog }
 					onClose={ this.onCloseDialog }
 					additionalClassNames="woocommerce store-location__edit-dialog"
 				>
-					<AddressView address={ this.state.addressEdits } isEditable onChange={ this.onChange } />
+					<AddressView
+						address={ this.state.addressEdits }
+						countries={ countries }
+						isEditable
+						onChange={ this.onChange }
+					/>
 				</Dialog>
 				{ display }
 			</Card>
@@ -158,20 +188,31 @@ class StoreAddress extends Component {
 
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
-	const loading = areSettingsGeneralLoading( state );
+	const siteId = site ? site.ID : false;
+
+	const loadedLocations = areLocationsLoaded( state, siteId );
+	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, siteId );
+	const loaded = loadedLocations && loadedSettingsGeneral;
+
 	const fetchError = areSettingsGeneralLoadError( state );
-	const address = getStoreLocation( state );
+	const countries = getAllCountries( state, siteId );
+
+	const address = getStoreLocation( state, siteId );
 	return {
-		site,
 		address,
-		loading,
+		countries,
 		fetchError,
+		loaded,
+		loadedLocations,
+		loadedSettingsGeneral,
+		siteId,
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchLocations,
 			setAddress,
 		},
 		dispatch

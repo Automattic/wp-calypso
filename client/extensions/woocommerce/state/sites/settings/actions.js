@@ -3,11 +3,6 @@
 /**
  * Internal dependencies
  */
-import {
-	getCurrencyCodeForCountry,
-	getDimensionUnitForCountry,
-	getWeightUnitForCountry,
-} from 'woocommerce/lib/countries';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import request from 'woocommerce/state/sites/request';
 import { setError } from '../status/wc-api/actions';
@@ -32,7 +27,7 @@ export const doInitialSetup = (
 	stateOrProvince,
 	postcode,
 	country,
-	pushDefaultsForCountry,
+	settings,
 	successAction,
 	failureAction
 ) => ( dispatch, getState ) => {
@@ -88,63 +83,62 @@ export const doInitialSetup = (
 		},
 	] );
 
-	if ( pushDefaultsForCountry ) {
-		// TODO Support other currency positions, post-v1 etc. See https://github.com/Automattic/wp-calypso/issues/15498
-		// In the event this is a brand new site and ! isStoreManagementSupportedInCalypsoForCountry,
-		// WooCommerce defaults for that country will be automatically loaded by the WooCommerce Setup Wizard
-		// in the merchant's site's wp-admin (to which we redirect after setting up the store)
-		const currency = getCurrencyCodeForCountry( country );
-		if ( currency ) {
-			update = update.concat( [
-				{
-					group_id: 'general',
-					id: 'woocommerce_currency',
-					value: currency,
-				},
-				{
-					group_id: 'general',
-					id: 'woocommerce_currency_pos',
-					value: 'left',
-				},
-				{
-					group_id: 'general',
-					id: 'woocommerce_price_decimal_sep',
-					value: '.',
-				},
-				{
-					group_id: 'general',
-					id: 'woocommerce_price_num_decimals',
-					value: '2',
-				},
-				{
-					group_id: 'general',
-					id: 'woocommerce_price_thousand_sep',
-					value: ',',
-				},
-			] );
-		}
+	if ( settings.currency_code ) {
+		update.push( {
+			group_id: 'general',
+			id: 'woocommerce_currency',
+			value: settings.currency_code,
+		} );
+	}
 
-		const dimensionUnit = getDimensionUnitForCountry( country );
-		if ( dimensionUnit ) {
-			update = update.concat( [
-				{
-					group_id: 'products',
-					id: 'woocommerce_dimension_unit',
-					value: dimensionUnit,
-				},
-			] );
-		}
+	if ( settings.currency_pos ) {
+		update.push( {
+			group_id: 'general',
+			id: 'woocommerce_currency_pos',
+			value: settings.currency_pos,
+		} );
+	}
 
-		const weightUnit = getWeightUnitForCountry( country );
-		if ( weightUnit ) {
-			update = update.concat( [
-				{
-					group_id: 'products',
-					id: 'woocommerce_weight_unit',
-					value: weightUnit,
-				},
-			] );
-		}
+	if ( settings.decimal_sep ) {
+		update.push( {
+			group_id: 'general',
+			id: 'woocommerce_price_decimal_sep',
+			value: settings.decimal_sep,
+		} );
+	}
+
+	if ( settings.num_decimals ) {
+		update.push( {
+			group_id: 'general',
+			id: 'woocommerce_price_num_decimals',
+			value: settings.num_decimals,
+		} );
+	}
+
+	if ( settings.thousand_sep ) {
+		update.push( {
+			group_id: 'general',
+			id: 'woocommerce_price_thousand_sep',
+			value: settings.thousand_sep,
+		} );
+	}
+
+	if ( settings.dimension_unit ) {
+		update.push( {
+			group_id: 'products',
+			id: 'woocommerce_dimension_unit',
+			value: settings.dimension_unit,
+		} );
+	}
+
+	if ( settings.weight_unit ) {
+		update = update.concat( [
+			{
+				group_id: 'products',
+				id: 'woocommerce_weight_unit',
+				value: settings.weight_unit,
+			},
+		] );
 	}
 
 	return request( siteId )

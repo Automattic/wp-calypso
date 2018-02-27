@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { every, includes, isEmpty, keys, pick, trim } from 'lodash';
+import { every, find, includes, isEmpty, keys, pick, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -28,6 +28,7 @@ import {
 } from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
+	getAllCountries,
 	getCountriesWithStates,
 } from 'woocommerce/state/sites/locations/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
@@ -136,7 +137,15 @@ class StoreLocationSetupView extends Component {
 	};
 
 	onNext = event => {
-		const { adminURL, currentUserEmailVerified, onRequestRedirect, siteId, translate } = this.props;
+		const {
+			adminURL,
+			countries,
+			currentUserEmailVerified,
+			onRequestRedirect,
+			pushDefaultsForCountry,
+			siteId,
+			translate,
+		} = this.props;
 		event.preventDefault();
 
 		// Already saving? Bail.
@@ -180,6 +189,18 @@ class StoreLocationSetupView extends Component {
 			);
 		};
 
+		let settings = {};
+
+		// If we have been asked to push appropriate defaults for the country
+		// (e.g. if there are no products yet on the site) then use locale
+		// info (if any) to do so
+		if ( pushDefaultsForCountry ) {
+			const localeInfo = find( countries, { code: this.state.address.country } );
+			if ( ! isEmpty( localeInfo ) ) {
+				settings = localeInfo;
+			}
+		}
+
 		this.props.doInitialSetup(
 			siteId,
 			this.state.address.street,
@@ -188,7 +209,7 @@ class StoreLocationSetupView extends Component {
 			this.state.address.state,
 			this.state.address.postcode,
 			this.state.address.country,
-			this.props.pushDefaultsForCountry,
+			settings,
 			onSuccess,
 			onFailure
 		);
@@ -197,6 +218,7 @@ class StoreLocationSetupView extends Component {
 	renderForm = () => {
 		const {
 			contactDetails,
+			countries,
 			countriesWithStates,
 			locationsLoaded,
 			settingsGeneralLoaded,
@@ -209,7 +231,6 @@ class StoreLocationSetupView extends Component {
 		const requiredKeys = [ 'country', 'city', 'postcode', 'street' ];
 
 		// See if this country has states
-		// TODO - refactor AddressView to do this for us
 		if ( includes( countriesWithStates, this.state.address.country ) ) {
 			requiredKeys.push( 'state' );
 		}
@@ -234,9 +255,10 @@ class StoreLocationSetupView extends Component {
 			<div>
 				<AddressView
 					address={ this.state.address }
+					className="dashboard__pre-setup-address"
+					countries={ countries }
 					isEditable
 					onChange={ this.onChange }
-					showAllLocations
 				/>
 				<SetupFooter
 					busy={ this.state.isSaving }
@@ -290,10 +312,12 @@ function mapStateToProps( state, ownProps ) {
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
 	const locationsLoaded = areLocationsLoaded( state, siteId );
+	const countries = getAllCountries( state, siteId );
 	const countriesWithStates = getCountriesWithStates( state, siteId );
 
 	return {
 		contactDetails,
+		countries,
 		countriesWithStates,
 		currentUserEmailVerified,
 		locationsLoaded,
