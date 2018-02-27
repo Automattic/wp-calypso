@@ -1,7 +1,7 @@
 // Credit Card Payment Box
 // -----------------------------------
 
-.stored-card {
+.credit-card__stored-card {
 	background-image: url('/calypso/images/upgrades/cc-visa-disabled.svg');
 	background-position: 18px center;
 	background-repeat: no-repeat;
@@ -11,18 +11,18 @@
 	justify-content: space-between;
 	padding: 15px 15px 15px 95px;
 
-	.stored-card__name {
+	.credit-card__stored-card-name {
 		color: $gray-darken-10;
 		margin-right: 10px;
 	}
 
-	.stored-card__number {
+	.credit-card__stored-card-number {
 		color: $gray-dark;
 		flex-basis: 100%;
 		font-weight: 600;
 	}
 
-	.stored-card__expiration-date {
+	.credit-card__stored-card-expiration-date {
 		color: $gray-darken-10;
 		font-style: italic;
 		opacity: 0.7;
@@ -30,60 +30,60 @@
 	}
 }
 
-.stored-card.visa {
+.credit-card__stored-card.visa {
 	background-image: url('/calypso/images/upgrades/cc-visa-disabled.svg');
 }
 
-.stored-card.mastercard {
+.credit-card__stored-card.mastercard {
 	background-image: url('/calypso/images/upgrades/cc-mastercard-disabled.svg');
 }
 
-.stored-card.amex {
+.credit-card__stored-card.amex {
 	background-image: url('/calypso/images/upgrades/cc-amex-disabled.svg');
 }
 
-.stored-card.discover {
+.credit-card__stored-card.discover {
 	background-image: url('/calypso/images/upgrades/cc-discover-disabled.svg');
 }
 
-.stored-card.diners {
+.credit-card__stored-card.diners {
 	background-image: url('/calypso/images/upgrades/cc-diners-disabled.svg');
 }
 
-.stored-card.jcb {
+.credit-card__stored-card.jcb {
 	background-image: url('/calypso/images/upgrades/cc-jcb-disabled.svg');
 }
 
-.stored-card.unionpay {
+.credit-card__stored-card.unionpay {
 	background-image: url('/calypso/images/upgrades/cc-unionpay-disabled.svg');
 }
 
 .credit-card.selected {
-	.stored-card.visa {
+	.credit-card__stored-card.visa {
 		background-image: url('/calypso/images/upgrades/cc-visa.svg');
 	}
 
-	.stored-card.mastercard {
+	.credit-card__stored-card.mastercard {
 		background-image: url('/calypso/images/upgrades/cc-mastercard.svg');
 	}
 
-	.stored-card.amex {
+	.credit-card__stored-card.amex {
 		background-image: url('/calypso/images/upgrades/cc-amex.svg');
 	}
 
-	.stored-card.discover {
+	.credit-card__stored-card.discover {
 		background-image: url('/calypso/images/upgrades/cc-discover.svg');
 	}
 
-	.stored-card.diners {
+	.credit-card__stored-card.diners {
 		background-image: url('/calypso/images/upgrades/cc-diners.svg');
 	}
 
-	.stored-card.jcb {
+	.credit-card__stored-card.jcb {
 		background-image: url('/calypso/images/upgrades/cc-jcb.svg');
 	}
 
-	.stored-card.unionpay {
+	.credit-card__stored-card.unionpay {
 		background-image: url('/calypso/images/upgrades/cc-unionpay.svg');
 	}
 }

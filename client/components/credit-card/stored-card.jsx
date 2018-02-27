@@ -44,17 +44,20 @@ class StoredCard extends React.Component {
 	};
 
 	render() {
-		var card = this.props.card,
-			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),
-			cardClasses = classNames( 'stored-card', card.card_type && card.card_type.toLowerCase() );
+		const card = this.props.card;
+		const expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' );
+		const cardClasses = classNames(
+			'credit-card__stored-card',
+			card.card_type && card.card_type.toLowerCase()
+		);
 
 		return (
 			<div className={ cardClasses }>
-				<span className="stored-card__number">
+				<span className="credit-card__stored-card-number">
 					{ getCreditCardSummary( this.props.translate, card.card_type, card.card ) }
 				</span>
-				<span className="stored-card__name">{ card.name }</span>
-				<span className="stored-card__expiration-date">
+				<span className="credit-card__stored-card-name">{ card.name }</span>
+				<span className="credit-card__stored-card-expiration-date">
 					{ this.props.translate( 'Expires %(date)s', {
 						args: { date: expirationDate },
 						context: 'date is of the form MM/YY',
