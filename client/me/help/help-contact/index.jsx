@@ -126,6 +126,18 @@ class HelpContact extends React.Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
+		this.setState( {
+			isSubmitting: false,
+			confirmation: {
+				title: this.props.translate( "We're on it!" ),
+				message: this.props.translate(
+					"We've received your message, and you'll hear back from " +
+						'one of our Happiness Engineers shortly.'
+				),
+			},
+		} );
+		this.clearSavedContactForm();
+
 		if ( ! this.props.compact ) {
 			page( '/help' );
 		}

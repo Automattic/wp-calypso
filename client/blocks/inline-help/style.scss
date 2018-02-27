@@ -106,6 +106,15 @@
 		button {
 			width: 100%;
 		}
+
+		.help-contact-confirmation {
+			min-height: auto;
+			height: auto;
+
+			.help-contact-confirmation__contents {
+				margin: 20px 0;
+			}
+		}
 	}
 
 	.sites-dropdown .site-selector .search {
