@@ -55,6 +55,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 						highlighted={ homepageFormat === 'posts' }
 						href={ forwardUrl }
 						onClick={ this.handleHomepageSelection( 'posts' ) }
+						e2eType={ 'posts' }
 					/>
 					<Tile
 						buttonLabel={ translate( 'A static welcome page' ) }
@@ -63,6 +64,7 @@ class JetpackOnboardingHomepageStep extends React.PureComponent {
 						highlighted={ homepageFormat === 'page' }
 						href={ forwardUrl }
 						onClick={ this.handleHomepageSelection( 'page' ) }
+						e2eType={ 'page' }
 					/>
 				</TileGrid>
 			</div>

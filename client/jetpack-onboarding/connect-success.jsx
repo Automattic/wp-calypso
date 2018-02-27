@@ -37,6 +37,7 @@ class ConnectSuccess extends PureComponent {
 						image={ illustration }
 						onClick={ onClick }
 						href={ href }
+						e2eType={ 'continue' }
 					/>
 				</TileGrid>
 			</Fragment>
