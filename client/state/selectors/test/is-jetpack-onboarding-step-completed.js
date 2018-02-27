@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -10,8 +12,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
-						siteDescription: 'Not just another amazing WordPress site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+							siteDescription: 'Not just another amazing WordPress site',
+						},
 					},
 				},
 			},
@@ -26,8 +30,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
-						siteDescription: 'Not just another amazing WordPress site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+							siteDescription: 'Not just another amazing WordPress site',
+						},
 					},
 				},
 			},
@@ -42,8 +48,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
-						siteDescription: 'Not just another amazing WordPress site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+							siteDescription: 'Not just another amazing WordPress site',
+						},
 					},
 				},
 			},
@@ -58,8 +66,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
-						siteDescription: 'Just another WordPress site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+							siteDescription: 'Just another WordPress site',
+						},
 					},
 				},
 			},
@@ -74,8 +84,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: '',
-						siteDescription: 'Not just another amazing WordPress site',
+						onboarding: {
+							siteTitle: '',
+							siteDescription: 'Not just another amazing WordPress site',
+						},
 					},
 				},
 			},
@@ -90,8 +102,10 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: '',
-						siteDescription: 'Just another WordPress site',
+						onboarding: {
+							siteTitle: '',
+							siteDescription: 'Just another WordPress site',
+						},
 					},
 				},
 			},
@@ -106,7 +120,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteType: 'personal',
+						onboarding: {
+							siteType: 'personal',
+						},
 					},
 				},
 			},
@@ -121,7 +137,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+						},
 					},
 				},
 			},
@@ -136,7 +154,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteType: false,
+						onboarding: {
+							siteType: false,
+						},
 					},
 				},
 			},
@@ -151,7 +171,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						homepageFormat: 'page',
+						onboarding: {
+							homepageFormat: 'page',
+						},
 					},
 				},
 			},
@@ -166,7 +188,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+						},
 					},
 				},
 			},
@@ -181,7 +205,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						homepageFormat: false,
+						onboarding: {
+							homepageFormat: false,
+						},
 					},
 				},
 			},
@@ -196,7 +222,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						addContactForm: true,
+						onboarding: {
+							addContactForm: true,
+						},
 					},
 				},
 			},
@@ -211,7 +239,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+						},
 					},
 				},
 			},
@@ -226,7 +256,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						addContactForm: false,
+						onboarding: {
+							addContactForm: false,
+						},
 					},
 				},
 			},
@@ -241,7 +273,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						businessAddress: [],
+						onboarding: {
+							businessAddress: [],
+						},
 					},
 				},
 			},
@@ -256,7 +290,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+						},
 					},
 				},
 			},
@@ -271,7 +307,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						businessAddress: false,
+						onboarding: {
+							businessAddress: false,
+						},
 					},
 				},
 			},
@@ -286,7 +324,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						installWooCommerce: true,
+						onboarding: {
+							installWooCommerce: true,
+						},
 					},
 				},
 			},
@@ -301,7 +341,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+						},
 					},
 				},
 			},
@@ -316,7 +358,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						installWooCommerce: false,
+						onboarding: {
+							installWooCommerce: false,
+						},
 					},
 				},
 			},
@@ -331,7 +375,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						stats: true,
+						onboarding: {
+							stats: true,
+						},
 					},
 				},
 			},
@@ -346,7 +392,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						siteTitle: 'My awesome site',
+						onboarding: {
+							siteTitle: 'My awesome site',
+						},
 					},
 				},
 			},
@@ -361,7 +409,9 @@ describe( 'isJetpackOnboardingStepCompleted()', () => {
 			jetpackOnboarding: {
 				settings: {
 					2916284: {
-						stats: false,
+						onboarding: {
+							stats: false,
+						},
 					},
 				},
 			},
