@@ -5,7 +5,7 @@
  */
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get, map, omit, reduce, some } from 'lodash';
+import { every, get, map, reduce } from 'lodash';
 import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -137,8 +137,8 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		this.props.saveJpoSettings( siteId, { businessAddress: this.state.fields } );
 	};
 
-	hasEmptyFields = () => {
-		return some( omit( this.state.fields, 'state' ), val => val === '' );
+	isFormEmpty = () => {
+		return every( this.state.fields, val => val === '' );
 	};
 
 	renderHeader() {
@@ -205,11 +205,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 								</FormFieldset>
 							);
 						} ) }
-						<Button
-							disabled={ isRequestingSettings || this.hasEmptyFields() }
-							primary
-							type="submit"
-						>
+						<Button disabled={ isRequestingSettings || this.isFormEmpty() } primary type="submit">
 							{ translate( 'Add address' ) }
 						</Button>
 					</form>
