@@ -1,7 +1,6 @@
 @import './stored-card';
 
 .credit-card {
-    cursor: pointer;
     border: 1px solid $gray-lighten-30;
     border-top: none;
     padding-left: 2px;
@@ -9,6 +8,10 @@
 
     &:first-of-type {
         border-top: 1px solid $gray-lighten-30;
+    }
+
+    &.selectable:not(.selected) {
+        cursor: pointer;
     }
 
     &.selected {
