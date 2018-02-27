@@ -32,7 +32,6 @@ export const getCreditCardSummary = ( translate, type, digits ) => {
 };
 
 export const cardType = PropTypes.shape( {
-	stored_details_id: PropTypes.string,
 	card: PropTypes.string,
 	card_type: PropTypes.string,
 	name: PropTypes.string,
