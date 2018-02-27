@@ -22,7 +22,8 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
-import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
+import CreditCard from 'components/credit-card';
+import { getCreditCardSummary } from 'components/credit-card/stored-card';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import {
 	openAddCardDialog,
@@ -73,8 +74,8 @@ class ShippingLabels extends Component {
 						<span />
 					</FormLabel>
 					<p className="label-settings__credit-card-description" />
-					<PaymentMethod selected={ false } isLoading={ true } />
-					<PaymentMethod selected={ false } isLoading={ true } />
+					<CreditCard card={ {} } />
+					<CreditCard card={ {} } />
 					<Button compact />
 				</FormFieldSet>
 			</div>
@@ -170,7 +171,7 @@ class ShippingLabels extends Component {
 						'account (%(card)s) to pay for the labels you print',
 					{
 						args: {
-							card: getPaymentMethodTitle( translate, selectedType, selectedDigits ),
+							card: getCreditCardSummary( translate, selectedType, selectedDigits ),
 						},
 					}
 				);
@@ -210,9 +211,8 @@ class ShippingLabels extends Component {
 		const renderPaymentMethod = method => {
 			const onSelect = () => onPaymentMethodChange( method.payment_method_id );
 			return (
-				<PaymentMethod
+				<CreditCard
 					key={ method.payment_method_id }
-					id={ method.payment_method_id }
 					card={ {
 						card_type: method.card_type,
 						card: method.card_digits,
@@ -242,8 +242,8 @@ class ShippingLabels extends Component {
 				<QueryStoredCards />
 				{ isReloading ? (
 					<div className="label-settings__placeholder">
-						<PaymentMethod selected={ false } isLoading={ true } />
-						<PaymentMethod selected={ false } isLoading={ true } />
+						<CreditCard card={ {} } />
+						<CreditCard card={ {} } />
 					</div>
 				) : (
 					paymentMethods.map( renderPaymentMethod )
