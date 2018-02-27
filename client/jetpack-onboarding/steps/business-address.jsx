@@ -174,7 +174,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				<TileGrid>
 					<Tile
 						buttonLabel={ translate( 'Add a business address' ) }
-						image="/calypso/images/illustrations/illustration-layout.svg"
+						image="/calypso/images/illustrations/business-address.svg"
 						onClick={ this.handleAddBusinessAddressClick }
 						href={ href }
 					/>
@@ -260,7 +260,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				{ hasBusinessAddress ? (
 					<ConnectSuccess
 						href={ getForwardUrl() }
-						illustration="/calypso/images/illustrations/illustration-layout.svg"
+						illustration="/calypso/images/illustrations/business-address.svg"
 						onClick={ this.handleNextButtonClick }
 						title={ translate( 'Success! Jetpack has added your business address to your site.' ) }
 					/>
