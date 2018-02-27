@@ -8,24 +8,20 @@ export const itemsSchema = {
 			patternProperties: {
 				// Post Type
 				'^.*$': {
-					type: 'object',
-					patternProperties: {
-						// Taxonomy name
-						'^.*$': {
-							type: 'object',
-							required: [ 'name' ],
-							properties: {
-								name: { type: 'string' },
-								label: { type: 'string' },
-								labels: { type: 'object' },
-								description: { type: 'string' },
-								hierarchical: { type: 'boolean' },
-								public: { type: 'boolean' },
-								capabilities: { type: 'object' },
-							},
+					type: 'array',
+					items: {
+						type: 'object',
+						required: [ 'name' ],
+						properties: {
+							name: { type: 'string' },
+							label: { type: 'string' },
+							labels: { type: 'object' },
+							description: { type: 'string' },
+							hierarchical: { type: 'boolean' },
+							public: { type: 'boolean' },
+							capabilities: { type: 'object' },
 						},
 					},
-					additionalProperties: false,
 				},
 			},
 			additionalProperties: false,
