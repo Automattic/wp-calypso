@@ -34,6 +34,7 @@ export const FormattedBlock = ( { content = {} } ) => {
 
 	switch ( type ) {
 		case 'a':
+		case 'link':
 			return <a href={ content.url }>{ descent }</a>;
 
 		case 'b':
