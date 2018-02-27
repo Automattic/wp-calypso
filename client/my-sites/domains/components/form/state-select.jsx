@@ -61,6 +61,7 @@ class StateSelect extends Component {
 			onChange,
 			isError,
 			inputRef,
+			selectText,
 		} = this.props;
 
 		return (
@@ -85,7 +86,7 @@ class StateSelect extends Component {
 							inputRef={ inputRef }
 						>
 							<option key="--" value="" disabled="disabled">
-								{ this.props.translate( 'Select State' ) }
+								{ selectText || this.props.translate( 'Select State' ) }
 							</option>
 							{ countryStates.map( state => (
 								<option key={ state.code } value={ state.code }>

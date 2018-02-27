@@ -18,6 +18,9 @@ const UsAddressFieldset = props => {
 	const STATE_LABEL = {
 		CA: translate( 'Province' ),
 	};
+	const STATE_SELECT_TEXT = {
+		CA: translate( 'Select Province' ),
+	};
 	const POST_CODE_LABEL = {
 		US: translate( 'ZIP code' ),
 	};
@@ -27,6 +30,7 @@ const UsAddressFieldset = props => {
 			<StateSelect
 				label={ STATE_LABEL[ countryCode ] || translate( 'State' ) }
 				countryCode={ countryCode }
+				selectText={ STATE_SELECT_TEXT[ countryCode ] }
 				{ ...getFieldProps( 'state', true ) }
 			/>
 			<Input
