@@ -170,7 +170,9 @@ export default connect(
 				...additionalProperties,
 			} ),
 		saveJpoSettings: ( s, settings ) =>
-			saveJetpackSettingsAction( s, { onboarding: { ...settings, ...jpoAuth.onboarding } } ),
+			saveJetpackSettingsAction( s, {
+				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
+			} ),
 		...ownProps,
 	} )
 )( JetpackOnboardingMain );
