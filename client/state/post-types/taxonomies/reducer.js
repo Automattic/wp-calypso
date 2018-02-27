@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { keyBy, merge } from 'lodash';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,7 +57,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				...state,
 				[ action.siteId ]: {
 					...state[ action.siteId ],
-					[ action.postType ]: keyBy( action.taxonomies, 'name' ),
+					[ action.postType ]: action.taxonomies,
 				},
 			};
 
