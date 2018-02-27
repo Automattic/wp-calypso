@@ -18,6 +18,10 @@ export const FormattedBlock = ( { content = {} } ) => {
 		pluginSlug,
 		themeSlug,
 		themeUri,
+		device,
+		ip,
+		location,
+		userAgent,
 	} = content;
 
 	if ( 'string' === typeof content ) {
@@ -36,6 +40,19 @@ export const FormattedBlock = ( { content = {} } ) => {
 		case 'a':
 			return <a href={ content.url }>{ descent }</a>;
 
+		case 'authentication':
+			return (
+				<p>
+					{ descent }
+					<br />
+					<small>
+						{ device }
+						({ userAgent }),
+						{ location }
+						({ ip })
+					</small>
+				</p>
+			);
 		case 'b':
 			return <strong>{ descent }</strong>;
 
