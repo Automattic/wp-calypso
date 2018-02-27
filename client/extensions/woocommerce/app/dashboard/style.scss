@@ -60,74 +60,85 @@
 			width: 80% !important;
 		}
 	}
-}
 
-@include breakpoint( ">960px" ) {
-	.dashboard__queue-widgets {
+	.dashboard-widget__row {
+		@include breakpoint( "<960px" ) {
+			flex-direction: column;
+		}
+	}
+
+	.dashboard-widget__row.dashboard__process-orders-container {
+		margin-bottom: 10px;
+		min-width: 100%;
+		background: $white;
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+			0 1px 2px $gray-lighten-30;
+		flex-direction: row;
+
+		@include breakpoint( "<480px" ) {
+			flex-direction: column;
+		}
+
+		@include breakpoint( ">480px" ) {
+			margin-bottom: 16px;
+		}
+
+		&.has-reviews {
+			min-width: calc( 75% - 16px );
+		}
+
+		.dashboard-widget {
+			text-align: center;
+			box-shadow: none;
+			background-color: transparent;
+			margin: 0;
+
+			.dashboard__process-orders-value {
+				display: block;
+				font-size: 24px;
+			}
+
+			&.dashboard__process-orders-revenue .dashboard__process-orders-value {
+				color: $alert-green;
+			}
+
+			.dashboard__process-orders-label {
+				color: $gray-text-min;
+			}
+		}
+	}
+
+	.dashboard-widget.dashboard__reviews-widget {
 		display: flex;
-
-		div {
-			flex-grow: 1;
-		}
-
-		div:nth-child( 2 ) {
-			margin-left: 8px;
-		}
-	}
-}
-
-.dashboard__process-orders-container {
-	margin-bottom: 10px;
-	min-width: 100%;
-	background: $white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
-
-	@include breakpoint( ">480px" ) {
-		margin-bottom: 16px;
-	}
-
-	&.has-reviews {
-		min-width: calc( 75% - 16px );
-	}
-
-	& + .dashboard__reviews-widget {
-		margin-left: 16px;
-	}
-
-	.dashboard-widget {
-		text-align: center;
-		box-shadow: none;
-		background-color: transparent;
-		margin: 0;
-
-		.dashboard__process-orders-value {
-			display: block;
-			font-size: 24px;
-		}
-
-		&.dashboard__process-orders-revenue .dashboard__process-orders-value {
-			color: $alert-green;
-		}
-
-		.dashboard__process-orders-label {
-			color: $gray-text-min;
-		}
-	}
-}
-
-.dashboard-widget.dashboard__reviews-widget {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	min-width: 25%;
-	text-align: center;
-
-	.dashboard-widget__title {
-		margin-bottom: 12px;
-	}
-
-	.dashboard-widget__content {
+		justify-content: space-between;
+		align-items: center;
+		min-width: 25%;
 		width: 100%;
+		text-align: center;
+
+		@include breakpoint( ">960px" ) {
+			margin-left: 16px;
+		}
+
+		.dashboard-widget__title {
+			margin-bottom: 12px;
+		}
+
+		.dashboard-widget__content {
+			width: 100%;
+		}
+
+		.dashboard-widget__children {
+			@include breakpoint( "<960px" ) {
+				display: flex;
+				align-items: stretch;
+
+				.dashboard-widget__title,
+				.button {
+					flex: 1 0 50%;
+					margin: auto;
+				}
+			}
+		}
 	}
 }
