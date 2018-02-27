@@ -46,7 +46,7 @@ export const http = (
 ) => {
 	const version = apiNamespace ? { apiNamespace } : { apiVersion };
 
-	if ( process.env.NODE_ENV !== 'production' ) {
+	if ( process.env.NODE_ENV === 'development' ) {
 		if ( ! ( action || onSuccess ) ) {
 			// eslint-disable-next-line no-console
 			console.warn(
