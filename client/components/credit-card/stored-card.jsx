@@ -5,10 +5,22 @@
  */
 
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
+export const cardType = PropTypes.shape( {
+	stored_details_id: PropTypes.string,
+	card: PropTypes.string,
+	card_type: PropTypes.string,
+	name: PropTypes.string,
+	expiry: PropTypes.string,
+} );
+
 class StoredCard extends React.Component {
+	static propTypes = {
+		card: cardType,
+	};
+
 	render() {
 		var card = this.props.card,
 			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),

@@ -5,13 +5,21 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import StoredCard from './stored-card';
+import StoredCard, { cardType } from './stored-card';
 
 class CreditCard extends React.Component {
+	static propTypes = {
+		card: cardType,
+		selected: PropTypes.bool,
+		onClick: PropTypes.func,
+		className: PropTypes.string,
+	};
+
 	handleKeyPress = event => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			this.props.onClick && this.props.onClick( event );
