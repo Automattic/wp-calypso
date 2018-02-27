@@ -207,3 +207,55 @@
 	margin: -8px 0 16px;
 	text-align: right;
 }
+
+@include breakpoint( '<660px' ) {
+	.order-details__table,
+	.order-details__totals {
+		table,
+		tbody,
+		thead {
+			display: block;
+		}
+
+		.table-row {
+			width: 100%;
+			display: flex;
+			justify-content: flex-end;
+			flex-wrap: wrap;
+
+			.table-heading,
+			.table-item {
+				flex: 1 0;
+			}
+		}
+	}
+
+	.order-details__table .table-row {
+		.order-details__item-product {
+			flex: 1 0 100%;
+			padding-bottom: 0;
+			border-bottom: none;
+		}
+
+		.order-details__item-cost {
+			padding-left: 24px;
+			text-align: left;
+		}
+
+		&.order-details__header {
+			.order-details__item-product {
+				display: none;
+			}
+		}
+	}
+
+	.order-details__totals .table-row {
+		&.order-details__coupon-list {
+			.table-item.order-details__coupon-list-label {
+				flex: 1 0 100%;
+				padding-bottom: 0;
+				border-bottom: none;
+			}
+		}
+	}
+}
