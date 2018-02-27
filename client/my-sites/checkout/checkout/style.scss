@@ -294,11 +294,11 @@
 			}
 		}
 
-		.payment-box-section.selected.no-stored-cards {
+		.checkout__payment-box-section.selected.no-stored-cards {
 			border-left: 1px solid $gray-lighten-30;
 		}
 
-		.payment-box-section.selected:not( .no-stored-cards ) .checkout__new-card-fields {
+		.checkout__payment-box-section.selected:not( .no-stored-cards ) .checkout__new-card-fields {
 			background-color: #fafdf6;
 		}
 
@@ -306,14 +306,14 @@
 			margin-top: 0;
 		}
 
-		.payment-box-section .checkout__new-card-toggle {
+		.checkout__payment-box-section .checkout__new-card-toggle {
 			box-shadow: none;
 			cursor: pointer;
 			font-size: 13px;
 			position: absolute;
 		}
 
-		.payment-box-section .checkout__new-card-fields {
+		.checkout__payment-box-section .checkout__new-card-fields {
 			background-color: $white;
 			max-height: 0;
 			overflow: hidden;
@@ -322,7 +322,7 @@
 			transition: all 500ms ease-in-out;
 		}
 
-		.payment-box-section.selected .checkout__new-card-fields {
+		.checkout__payment-box-section.selected .checkout__new-card-fields {
 			max-height: 100%;
 			margin-bottom: 0;
 			padding-top: 15px;
