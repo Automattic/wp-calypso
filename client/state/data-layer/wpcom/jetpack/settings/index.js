@@ -36,7 +36,7 @@ export const fromApi = response => {
 const receiveJetpackOnboardingSettings = (
 	{ dispatch },
 	{ siteId },
-	{ token, jpUser, ...settings } // eslint-disable-line no-unused-vars
+	settings // eslint-disable-line no-unused-vars
 ) => {
 	dispatch( updateJetpackSettings( siteId, settings ) );
 };
