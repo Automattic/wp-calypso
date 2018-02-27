@@ -24,6 +24,9 @@ import SecondaryCart from './cart/secondary-cart';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 
+/**
+ * Module variables
+ */
 const checkoutRoutes = [
 	new Route( '/checkout/features/:feature/:site/:plan' ),
 	new Route( '/checkout/features/:feature/:site' ),
