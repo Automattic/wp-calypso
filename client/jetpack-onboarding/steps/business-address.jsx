@@ -18,7 +18,6 @@ import FormattedHeader from 'components/formatted-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
 import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
@@ -193,9 +192,6 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				<Card className="steps__form">
 					<form onSubmit={ this.handleSubmit }>
 						{ map( this.fields, ( fieldLabel, fieldName ) => {
-							const isValidatingField = ! isRequestingSettings && fieldName !== 'state';
-							const isValidField = this.state.fields[ fieldName ] !== '';
-
 							return (
 								<FormFieldset key={ fieldName }>
 									<FormLabel htmlFor={ fieldName }>{ fieldLabel }</FormLabel>
@@ -203,20 +199,9 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 										autoFocus={ fieldName === 'name' }
 										disabled={ isRequestingSettings }
 										id={ fieldName }
-										isError={ isValidatingField && ! isValidField }
-										isValid={ isValidatingField && isValidField }
 										onChange={ this.getChangeHandler( fieldName ) }
 										value={ this.state.fields[ fieldName ] || '' }
 									/>
-									{ isValidatingField &&
-										! isValidField && (
-											<FormInputValidation
-												isError
-												text={ translate( 'Please enter a %(fieldLabel)s', {
-													args: { fieldLabel },
-												} ) }
-											/>
-										) }
 								</FormFieldset>
 							);
 						} ) }
