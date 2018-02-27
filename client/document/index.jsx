@@ -22,14 +22,15 @@ class Document extends React.Component {
 	render() {
 		const {
 			app,
-			chunk,
+			chunkFiles,
 			commitSha,
 			faviconURL,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
 			isRTL,
-			jsFile,
+			entrypoint,
+			manifest,
 			lang,
 			renderedLayout,
 			user,
@@ -156,18 +157,28 @@ class Document extends React.Component {
 					<script
 						type="text/javascript"
 						nonce={ inlineScriptNonce }
+						key={ '__inline_script' }
 						dangerouslySetInnerHTML={ {
 							__html: inlineScript,
 						} }
 					/>
 
-					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
-					<script src={ urls.manifest } />
-					<script src={ urls.vendor } />
-					<script src={ urls[ jsFile ] } />
-					{ chunk && <script src={ urls[ chunk ] } /> }
-					<script type="text/javascript">window.AppBoot();</script>
+					{ i18nLocaleScript && <script key={ i18nLocaleScript } src={ i18nLocaleScript } /> }
 					<script
+						key="__manifest"
+						nonce={ inlineScriptNonce }
+						dangerouslySetInnerHTML={ {
+							__html: manifest,
+						} }
+					/>
+					{ entrypoint.map( asset => <script key={ asset } src={ asset } /> ) }
+					{ chunkFiles.map( chunk => <script key={ chunk } src={ chunk } /> ) }
+					<script key="__boot" nonce={ inlineScriptNonce } type="text/javascript">
+						window.AppBoot();
+					</script>
+					<script
+						key="__console_warning"
+						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
 							__html: `
 						 (function() {
@@ -188,6 +199,7 @@ class Document extends React.Component {
 					{ // Load GA only if enabled in the config.
 					appConfig( 'google_analytics_enabled' ) && (
 						<script
+							key="__ga"
 							async={ true }
 							type="text/javascript"
 							src="https://www.google-analytics.com/analytics.js"
