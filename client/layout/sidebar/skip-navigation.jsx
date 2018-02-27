@@ -15,11 +15,7 @@ class SkipNavigation extends React.Component {
 
 	render() {
 		return (
-			<a
-				href={ '#' + this.props.skipToElementId }
-				className="sidebar__skip-navigation"
-				data-tip-target={ this.props.tipTarget }
-			>
+			<a href={ '#' + this.props.skipToElementId } className="sidebar__skip-navigation">
 				{ this.props.translate( 'Skip navigation' ) }
 			</a>
 		);
