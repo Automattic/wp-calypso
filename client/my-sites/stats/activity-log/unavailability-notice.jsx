@@ -44,9 +44,9 @@ export const UnavailabilityNotice = ( {
 				<Banner
 					icon="history"
 					href={ `/start/rewind-switch/?siteId=${ siteId }&siteSlug=${ slug }` }
-					title={ translate( 'VaultPress is running.' ) }
+					title={ translate( 'Try our new backup service' ) }
 					description={ translate(
-						'We are unable to create backups and Rewind while VaultPress is running.'
+						'Get real-time backups with one-click restores to any event in time.'
 					) }
 				/>
 			);
