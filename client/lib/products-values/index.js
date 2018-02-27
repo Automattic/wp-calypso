@@ -38,6 +38,15 @@ const productDependencies = {
 		gapps_unlimited: true,
 		private_whois: true,
 	},
+	[ PLAN_BUSINESS ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PERSONAL ]: {
+		domain_redemption: true,
+	},
+	[ PLAN_PREMIUM ]: {
+		domain_redemption: true,
+	},
 	[ domainProductSlugs.TRANSFER_IN ]: {
 		[ domainProductSlugs.TRANSFER_IN_PRIVACY ]: true,
 	},

@@ -5,6 +5,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -119,7 +120,10 @@ export class CartItem extends React.Component {
 	getProductInfo() {
 		const { cartItem, selectedSite } = this.props;
 
-		const domain = cartItem.meta || ( selectedSite && selectedSite.domain );
+		const domain =
+			cartItem.meta ||
+			get( cartItem, 'extra.domain_to_bundle' ) ||
+			( selectedSite && selectedSite.domain );
 		let info = null;
 
 		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
