@@ -120,6 +120,10 @@ export class Theme extends Component {
 		if ( this.props.screenshotClickUrl || this.props.onScreenshotClick ) {
 			return (
 				<a
+					role="link"
+					tabIndex="0"
+					aria-label={ this.props.theme.name }
+					title={ this.props.theme.description }
 					className="theme__active-focus"
 					href={ this.props.screenshotClickUrl }
 					onClick={ this.onScreenshotClick }
