@@ -151,6 +151,21 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 		window.saveState = saveState;
 		window.localforage = localforage;
 
+		// without DE/SERIALIZE use:
+		// saveState( 'redux-full-state-saved', JSON.parse( JSON.stringify( state ) ), x=>x ).then( console.log )
+		const savedFullStateId = ( get( window, 'location.search', '' ).match(
+			/[?&]restoreFullState=(.*?)(?:&|$)/
+		) || [] )[ 1 ];
+		debug( 'Full state id', savedFullStateId );
+
+		if ( savedFullStateId ) {
+			return localforage
+				.getItem( 'redux-full-state-saved' )
+				.then( state => ( debug( 'Loading full state:', state ), state ) )
+				.then( createReduxStore )
+				.then( reduxStoreReady );
+		}
+
 		const savedStateId = ( get( window, 'location.search', '' ).match(
 			/[?&]restoreState=(.*?)(?:&|$)/
 		) || [] )[ 1 ];
@@ -158,12 +173,18 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 
 		if ( savedStateId ) {
 			debug( 'Loading saved state.', savedStateId );
-			return localforage
-				.getItem( 'redux-state-saved' )
-				.then( loadInitialState )
-				.catch( loadInitialStateFailed )
-				.then( persistOnChange )
-				.then( reduxStoreReady );
+			return (
+				localforage
+					.getItem( 'redux-state-saved' )
+
+					// with DE/SERIALZE, use:
+					// saveState( 'redux-state-saved', state ).then( console.log )
+					.then( loadInitialState )
+					.catch( loadInitialStateFailed )
+					// Don't persist after load, but it that makes testing hard if we don't.
+					.then( persistOnChange )
+					.then( reduxStoreReady )
+			);
 		}
 
 		if ( shouldAddSympathy() ) {
