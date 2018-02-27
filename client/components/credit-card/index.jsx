@@ -20,7 +20,7 @@ class CreditCard extends React.Component {
 
 	render() {
 		const { card, selected, onClick, className, children } = this.props;
-		const classes = classNames( 'credit-card', className, { selected } );
+		const classes = classNames( 'credit-card', className, { selected, selectable: onClick } );
 		const content = card ? <StoredCard card={ card } /> : children;
 		const role = onClick ? 'radio' : 'listitem';
 
