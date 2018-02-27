@@ -15,6 +15,7 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
+import OrgCredentialsForm from './remote-credentials';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
@@ -214,6 +215,11 @@ export function signupForm( context, next ) {
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
+	next();
+}
+
+export function credsForm( context, next ) {
+	context.primary = <OrgCredentialsForm />;
 	next();
 }
 
