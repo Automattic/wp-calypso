@@ -58,14 +58,9 @@ describe( 'requestJetpackSettings()', () => {
 				jpUser: userEmail,
 			},
 		};
+		const actionWithAuth = { ...action, query };
 
-		requestJetpackSettings(
-			{ dispatch },
-			{
-				...action,
-				query,
-			}
-		);
+		requestJetpackSettings( { dispatch }, actionWithAuth );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -79,7 +74,7 @@ describe( 'requestJetpackSettings()', () => {
 						json: true,
 					},
 				},
-				action
+				actionWithAuth
 			)
 		);
 	} );
