@@ -28,11 +28,17 @@ export const remoteValuesSchema = {
 		},
 		'google-my-business-dismissible-nudge': {
 			type: 'object',
-			properties: {
-				timesDismissed: { type: 'number', minimum: 0 },
-				lastDismissed: { type: 'number', minimum: 0 },
+			'^[1-9]+$': {
+				type: 'array',
+				items: {
+					type: 'object',
+					properties: {
+						dismissedAt: { type: 'number', minimum: 0 },
+						type: { type: 'string', enum: [ 'dismiss', 'already-listed' ] },
+					},
+					required: [ 'dismissedAt', 'type' ],
+				},
 			},
-			required: [ 'timesDismissed', 'lastDismissed' ],
 		},
 		'guided-tours-history': {
 			type: 'array',

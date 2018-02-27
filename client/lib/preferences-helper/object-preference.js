@@ -20,7 +20,7 @@ class ObjectPreference extends Component {
 		return (
 			<ul className="preferences-helper__list">
 				{ Object.keys( value ).map( property => (
-					<li key={ property }>{ property + ': ' + value[ property ].toString() }</li>
+					<li key={ property }>{ property + ': ' + JSON.stringify( value[ property ] ) }</li>
 				) ) }
 			</ul>
 		);

@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { last } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { getPreference } from 'state/preferences/selectors';
@@ -12,22 +17,40 @@ const MAX_DISMISS = 2;
  * Returns the number of times the current user dismissed the nudge
  *
  * @param  {Object}  state  Global state tree
- * @return {Number}  Count the number of times the nudge has been dismissed
+ * @param  {Number}  siteId The Id of the site
+ * @return {Number}  Count  the number of times the nudge has been dismissed
  */
-const getDismissCount = state => {
-	const preference = getPreference( state, 'google-my-business-dismissible-nudge' );
-	return preference ? preference.timesDismissed : 0;
+const getDismissCount = ( state, siteId ) => {
+	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
+	const sitePreference = preference[ siteId ] || [];
+	return sitePreference.filter( event => 'dismiss' === event.type ).length;
 };
 
 /**
  * Returns the last time the nudge was dismissed by the current user or 0 if it was never dismissed
  *
  * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId The Id of the site
  * @return {Number}  Timestamp marking the last time the nudge was dismissed
  */
-const getLastDismissTime = state => {
-	const preference = getPreference( state, 'google-my-business-dismissible-nudge' );
-	return preference ? preference.lastDismissed : 0;
+const getLastDismissTime = ( state, siteId ) => {
+	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
+	const sitePreference = preference[ siteId ] || [];
+	const lastEvent = last( sitePreference.filter( event => 'dismiss' === event.type ) );
+	return lastEvent ? lastEvent.dismissedAt : 0;
+};
+
+/**
+ * Returns the true if the user indicated they have alreaday listed their business, false otherwise
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId The Id of the site
+ * @return {Boolean}  if the user indicated they have alreaday listed their business
+ */
+const getAlreadyListed = ( state, siteId ) => {
+	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
+	const sitePreference = preference[ siteId ] || [];
+	return sitePreference.some( event => 'already-listed' === event.type );
 };
 
 /**
@@ -40,16 +63,21 @@ const getLastDismissTime = state => {
  * - It must have been dismissed more than MAX_DISMISS times in total
  *
  * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId The Id of the site
  * @return {Boolean} True if the nudge has been dismissed
  */
-const isGoogleMyBusinessStatsNudgeDismissed = state => {
-	const lastDismissTime = getLastDismissTime( state );
+const isGoogleMyBusinessStatsNudgeDismissed = ( state, siteId ) => {
+	if ( getAlreadyListed( state, siteId ) ) {
+		return true;
+	}
+
+	const lastDismissTime = getLastDismissTime( state, siteId );
 	// Return false if it has never been dismissed
 	if ( lastDismissTime === 0 ) {
 		return false;
 	}
 
-	if ( getDismissCount( state ) >= MAX_DISMISS ) {
+	if ( getDismissCount( state, siteId ) >= MAX_DISMISS ) {
 		return true;
 	}
 

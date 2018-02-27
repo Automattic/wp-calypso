@@ -19,11 +19,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import SectionHeader from 'components/section-header';
 import QueryPreferences from 'components/data/query-preferences';
 import { isGoogleMyBusinessStatsNudgeDismissed } from 'state/selectors';
-import { dismissNudge } from './actions';
+import { dismissNudge, alreadyListed } from './actions';
 
 class GoogleMyBusinessStatsNudge extends Component {
 	static propTypes = {
 		siteSlug: PropTypes.string.isRequired,
+		siteId: PropTypes.number.isRequired,
 		trackNudgeAlreadyListedClick: PropTypes.func.isRequired,
 		trackNudgeDismissClick: PropTypes.func.isRequired,
 		trackNudgeStartNowClick: PropTypes.func.isRequired,
@@ -85,7 +86,10 @@ class GoogleMyBusinessStatsNudge extends Component {
 							</Button>
 
 							<Button
-								onClick={ flow( this.props.trackNudgeAlreadyListedClick, this.props.dismissNudge ) }
+								onClick={ flow(
+									this.props.trackNudgeAlreadyListedClick,
+									this.props.alreadyListed
+								) }
 							>
 								{ this.props.translate( "I'm Already Listed" ) }
 							</Button>
@@ -98,8 +102,8 @@ class GoogleMyBusinessStatsNudge extends Component {
 }
 
 export default connect(
-	state => ( {
-		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state ),
+	( state, ownProps ) => ( {
+		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state, ownProps.siteId ),
 	} ),
 	{
 		trackNudgeView: () => recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view' ),
@@ -112,5 +116,6 @@ export default connect(
 				'calypso_test_google_my_business_stats_nudge_already_button_listed_click'
 			),
 		dismissNudge,
+		alreadyListed,
 	}
 )( localize( GoogleMyBusinessStatsNudge ) );
