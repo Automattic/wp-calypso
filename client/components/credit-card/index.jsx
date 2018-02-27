@@ -22,7 +22,7 @@ class CreditCard extends React.Component {
 
 	handleKeyPress = event => {
 		if ( event.key === 'Enter' || event.key === ' ' ) {
-			this.props.onSelect && this.props.onSelect( event );
+			this.props.onSelect( event );
 		}
 	};
 
@@ -30,15 +30,18 @@ class CreditCard extends React.Component {
 		const { card, selected, onSelect, className, children } = this.props;
 		const classes = classNames( 'credit-card', className, { selected, selectable: onSelect } );
 
-		return (
+		return onSelect ? (
 			<div
 				className={ classes }
-				role={ onSelect ? 'radio' : 'listitem' }
+				role="radio"
+				aria-checked={ selected }
 				onClick={ onSelect }
 				onKeyPress={ this.handleKeyPress }
 			>
 				{ card ? <StoredCard card={ card } /> : children }
 			</div>
+		) : (
+			<div className={ classes }>{ card ? <StoredCard card={ card } /> : children }</div>
 		);
 	}
 }
