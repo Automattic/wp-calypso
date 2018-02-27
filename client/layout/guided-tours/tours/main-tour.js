@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
 
 /**
@@ -43,48 +42,60 @@ export const MainTour = makeTour(
 		when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }
 	>
 		<Step name="init" placement="right">
-			<p>
-				{ translate(
-					"{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, " +
-						'and give you some ideas for what to do next.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<ButtonRow>
-				<Next step="my-sites">{ translate( "Let's go!" ) }</Next>
-				<Quit>{ translate( 'No thanks.' ) }</Quit>
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							"{{strong}}Need a hand?{{/strong}} We'd love to show you around the place, " +
+								'and give you some ideas for what to do next.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<ButtonRow>
+						<Next step="my-sites">{ translate( "Let's go!" ) }</Next>
+						<Quit>{ translate( 'No thanks.' ) }</Quit>
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="my-sites" target="my-sites" placement="below" arrow="top-left">
-			<p>
-				{ translate(
-					"{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing " +
-						"your site's content and design.",
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<Continue click icon="my-sites" step="sidebar" target="my-sites" />
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							"{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing " +
+								"your site's content and design.",
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<Continue click icon="my-sites" step="sidebar" target="my-sites" />
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="sidebar" target="sidebar" arrow="left-middle" placement="beside">
-			<p>
-				{ translate(
-					'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.'
-				) }
-			</p>
-			<ButtonRow>
-				<Next step="click-preview" />
-				<Quit />
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.'
+						) }
+					</p>
+					<ButtonRow>
+						<Next step="click-preview" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step
@@ -95,25 +106,33 @@ export const MainTour = makeTour(
 			when={ isSelectedSitePreviewable }
 			scrollContainer=".sidebar__region"
 		>
-			<p>{ translate( 'Want to take a look at your site?' ) }</p>
-			<Continue click step="view-site" target="sitePreview">
-				{ translate( 'Click {{viewSiteButton/}} to continue.', {
-					components: {
-						viewSiteButton: <ViewSiteButton />,
-					},
-				} ) }
-			</Continue>
-			<ButtonRow>
-				<Quit />
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>{ translate( 'Want to take a look at your site?' ) }</p>
+					<Continue click step="view-site" target="sitePreview">
+						{ translate( 'Click {{viewSiteButton/}} to continue.', {
+							components: {
+								viewSiteButton: <ViewSiteButton />,
+							},
+						} ) }
+					</Continue>
+					<ButtonRow>
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="view-site" placement="center" when={ isSelectedSitePreviewable }>
-			<p>{ translate( 'This is what your site looks like to visitors.' ) }</p>
-			<ButtonRow>
-				<Next step="themes" />
-				<Quit />
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>{ translate( 'This is what your site looks like to visitors.' ) }</p>
+					<ButtonRow>
+						<Next step="themes" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step
@@ -125,42 +144,50 @@ export const MainTour = makeTour(
 			scrollContainer=".sidebar__region"
 			shouldScrollTo
 		>
-			<p>
-				{ translate(
-					'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} ' +
-						"your theme's colors, fonts, and more.",
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<ButtonRow>
-				<Next step="finish" />
-				<Quit />
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} ' +
+								"your theme's colors, fonts, and more.",
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<ButtonRow>
+						<Next step="finish" />
+						<Quit />
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="finish" placement="center">
-			<p>
-				{ translate(
-					"{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.",
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<ButtonRow>
-				<Quit onClick={ scrollSidebarToTop } primary>
-					{ translate( "We're all done!" ) }
-				</Quit>
-			</ButtonRow>
-			<Link href="https://learn.wordpress.com">
-				{ translate( 'Learn more about WordPress.com' ) }
-			</Link>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							"{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.",
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+					<ButtonRow>
+						<Quit onClick={ scrollSidebarToTop } primary>
+							{ translate( "We're all done!" ) }
+						</Quit>
+					</ButtonRow>
+					<Link href="https://learn.wordpress.com">
+						{ translate( 'Learn more about WordPress.com' ) }
+					</Link>
+				</Fragment>
+			) }
 		</Step>
 	</Tour>
 );

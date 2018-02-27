@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
 
 /**
@@ -40,31 +39,39 @@ export const TutorialSitePreviewTour = makeTour(
 			placement="below"
 			scrollContainer=".sidebar__region"
 		>
-			<p>
-				{ translate(
-					'{{viewSiteButton/}} shows you what your site looks like to visitors. Click it to continue.',
-					{
-						components: {
-							viewSiteButton: <ViewSiteButton />,
-						},
-					}
-				) }
-			</p>
-			<Continue hidden click step="finish" target="sitePreview" />
-			<ButtonRow>
-				<Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'{{viewSiteButton/}} shows you what your site looks like to visitors. Click it to continue.',
+							{
+								components: {
+									viewSiteButton: <ViewSiteButton />,
+								},
+							}
+						) }
+					</p>
+					<Continue hidden click step="finish" target="sitePreview" />
+					<ButtonRow>
+						<Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="finish" placement="center">
-			<p>
-				{ translate(
-					"Take a look around — and when you're done, explore the rest of WordPress.com."
-				) }
-			</p>
-			<ButtonRow>
-				<Quit primary>{ translate( 'Got it.' ) }</Quit>
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							"Take a look around — and when you're done, explore the rest of WordPress.com."
+						) }
+					</p>
+					<ButtonRow>
+						<Quit primary>{ translate( 'Got it.' ) }</Quit>
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 	</Tour>
 );

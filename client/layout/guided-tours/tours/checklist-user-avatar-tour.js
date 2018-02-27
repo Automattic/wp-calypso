@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import React, { Fragment } from 'react';
 import { noop } from 'lodash';
 import Gridicon from 'gridicons';
 
@@ -33,50 +32,66 @@ export const ChecklistUserAvatarTour = makeTour(
 				animationDelay: '0.7s',
 			} }
 		>
-			<p>
-				{ translate(
-					'Personalize your posts and comments with a profile picture. ' +
-						'Click on this image to upload your new image.'
-				) }
-			</p>
-			<ButtonRow>
-				<Continue target="edit-gravatar" step="image-notice" click hidden />
-				<SiteLink isButton={ false } href="/checklist/:site">
-					{ translate( 'Return to the checklist' ) }
-				</SiteLink>
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'Personalize your posts and comments with a profile picture. ' +
+								'Click on this image to upload your new image.'
+						) }
+					</p>
+					<ButtonRow>
+						<Continue target="edit-gravatar" step="image-notice" click hidden />
+						<SiteLink isButton={ false } href="/checklist/:site">
+							{ translate( 'Return to the checklist' ) }
+						</SiteLink>
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="image-notice" placement="right">
-			<p>{ translate( "Let's make sure it looks right before we proceed." ) }</p>
-			<Next step="crop-image">{ translate( 'Looks good, continue' ) }</Next>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>{ translate( "Let's make sure it looks right before we proceed." ) }</p>
+					<Next step="crop-image">{ translate( 'Looks good, continue' ) }</Next>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="crop-image" placement="right">
-			<p>
-				{ translate( 'Alright! Press {{b}}Change My Photo{{/b}} to save your changes.', {
-					components: { b: <strong /> },
-				} ) }
-			</p>
-			<Continue target="image-editor-button-done" step="finish" click hidden />
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate( 'Alright! Press {{b}}Change My Photo{{/b}} to save your changes.', {
+							components: { b: <strong /> },
+						} ) }
+					</p>
+					<Continue target="image-editor-button-done" step="finish" click hidden />
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="finish" placement="right">
-			<h1 className="tours__title">
-				<span className="tours__completed-icon-wrapper">
-					<Gridicon icon="checkmark" className="tours__completed-icon" />
-				</span>
-				{ translate( 'Well done!' ) }
-			</h1>
-			<p>
-				{ translate(
-					'Your profile picture has been saved. ' +
-						"Let's move on and see what's next on our checklist."
-				) }
-			</p>
-			<SiteLink isButton href="/checklist/:site">
-				{ translate( 'Return to the checklist' ) }
-			</SiteLink>
+			{ ( { translate } ) => (
+				<Fragment>
+					<h1 className="tours__title">
+						<span className="tours__completed-icon-wrapper">
+							<Gridicon icon="checkmark" className="tours__completed-icon" />
+						</span>
+						{ translate( 'Well done!' ) }
+					</h1>
+					<p>
+						{ translate(
+							'Your profile picture has been saved. ' +
+								"Let's move on and see what's next on our checklist."
+						) }
+					</p>
+					<SiteLink isButton href="/checklist/:site">
+						{ translate( 'Return to the checklist' ) }
+					</SiteLink>
+				</Fragment>
+			) }
 		</Step>
 	</Tour>
 );
