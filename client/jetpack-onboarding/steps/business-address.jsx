@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import ConnectIntro from '../connect-intro';
 import ConnectSuccess from '../connect-success';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
@@ -21,10 +22,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QuerySites from 'components/data/query-sites';
-import Tile from 'components/tile-grid/tile';
-import TileGrid from 'components/tile-grid';
-import { addQueryArgs } from 'lib/route';
-import { getUnconnectedSiteUrl } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
@@ -153,33 +150,17 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 	}
 
 	renderActionTile() {
-		const { isConnected, siteUrl, translate } = this.props;
-
-		const connectUrl = addQueryArgs(
-			{
-				url: siteUrl,
-				// TODO: add a parameter to the JPC to redirect back to this step after completion
-				// and in the redirect URL include the ?action=add_business_address parameter
-				// to actually trigger the form display action after getting back to JPO
-			},
-			'/jetpack/connect'
-		);
-		const href = ! isConnected ? connectUrl : null;
+		const { siteId, translate } = this.props;
 
 		return (
-			<Fragment>
-				{ this.renderHeader() }
-
-				<TileGrid>
-					<Tile
-						buttonLabel={ translate( 'Add a business address' ) }
-						image="/calypso/images/illustrations/business-address.svg"
-						onClick={ this.handleAddBusinessAddressClick }
-						href={ href }
-						e2eType={ 'business-address' }
-					/>
-				</TileGrid>
-			</Fragment>
+			<ConnectIntro
+				buttonLabel={ translate( 'Add a business address' ) }
+				e2eType="business-address"
+				header={ this.renderHeader() }
+				illustration="/calypso/images/illustrations/business-address.svg"
+				onClick={ this.handleAddBusinessAddressClick }
+				siteId={ siteId }
+			/>
 		);
 	}
 
@@ -257,5 +238,4 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 export default connect( ( state, { settings, siteId } ) => ( {
 	hasBusinessAddress: get( settings, 'businessAddress' ) !== false,
 	isConnected: isJetpackSite( state, siteId ),
-	siteUrl: getUnconnectedSiteUrl( state, siteId ),
 } ) )( localize( JetpackOnboardingBusinessAddressStep ) );
