@@ -13,7 +13,7 @@ import createReactClass from 'create-react-class';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
@@ -312,7 +312,16 @@ const Checkout = createReactClass( {
 		}
 
 		if ( domainReceiptId && receiptId ) {
+			// DO NOT assign the test here.
+			if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
+				return `/checklist/${ selectedSiteSlug }/gsuite`;
+			}
 			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
+		}
+
+		// NOTE: This test assignment should precede the G Suite
+		if ( this.props.isEligibleForCheckoutToChecklist ) {
+			abtest( 'checklistThankYouForPaidUser' );
 		}
 
 		if (
@@ -330,10 +339,8 @@ const Checkout = createReactClass( {
 			}
 		}
 
-		if (
-			this.props.isEligibleForCheckoutToChecklist &&
-			'show' === abtest( 'checklistThankYouForPaidUser' )
-		) {
+		// DO NOT assign the test here.
+		if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
 			return `/checklist/${ selectedSiteSlug }/paid`;
 		}
 
