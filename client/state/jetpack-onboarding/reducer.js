@@ -1,6 +1,11 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { merge } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
@@ -27,10 +32,8 @@ export const settingsReducer = keyedReducer(
 	createReducer(
 		{},
 		{
-			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) => ( {
-				...state,
-				...settings,
-			} ),
+			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) =>
+				merge( {}, state, settings ),
 		},
 		jetpackSettingsSchema
 	)
