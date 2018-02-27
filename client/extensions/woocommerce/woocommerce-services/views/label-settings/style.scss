@@ -1,4 +1,4 @@
-@import 'my-sites/checkout/checkout/stored-card';
+@import 'components/credit-card/style';
 
 .label-settings__credit-card-description {
 	margin-bottom: 4px;
@@ -6,26 +6,8 @@
 	padding-bottom: 8px;
 }
 
-.card.label-settings__card {
-	padding: 0 4px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-
-	.stored-card {
-		flex-basis: 100%;
-	}
-}
-
-.label-settings__payments {
-	.form-radio {
-		margin-left: 20px;
-		margin-right: 4px;
-	}
-
-	.button {
-		margin-top: 14px;
-	}
+.label-settings__payments .button {
+	margin-top: 14px;
 }
 
 .label-settings__labels-container {
