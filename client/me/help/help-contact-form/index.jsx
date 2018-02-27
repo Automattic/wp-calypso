@@ -31,6 +31,7 @@ import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { generateSubjectFromMessage } from './utils';
 
 /**
  * Module variables
@@ -255,8 +256,9 @@ export class HelpContactForm extends React.PureComponent {
 	 * @param  {object} event Event object
 	 */
 	submitForm = () => {
-		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
-		const { additionalSupportOption, currentUserLocale } = this.props;
+		const { howCanWeHelp, howYouFeel, message } = this.state;
+		const { additionalSupportOption, currentUserLocale, compact } = this.props;
+		const subject = compact ? generateSubjectFromMessage( message ) : this.state.subject;
 
 		if ( additionalSupportOption && additionalSupportOption.enabled ) {
 			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected', {
