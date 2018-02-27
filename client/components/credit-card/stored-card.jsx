@@ -8,23 +8,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
-export const getPaymentMethodTitle = ( translate, paymentType, digits ) => {
+export const getCreditCardSummary = ( translate, type, digits ) => {
 	const supportedTypes = {
 		amex: translate( 'American Express' ),
 		discover: translate( 'Discover' ),
 		mastercard: translate( 'MasterCard' ),
 		visa: translate( 'VISA' ),
+		diners: translate( 'Diners Club' ),
+		jcb: translate( 'JCB' ),
+		unionpay: translate( 'UnionPay' ),
 	};
 
+	const displayType = supportedTypes[ type && type.toLowerCase() ] || type;
+
 	if ( ! digits ) {
-		return supportedTypes[ paymentType ];
+		return displayType;
 	}
 
-	return translate( '%(card_type)s ****%(digits)s', {
-		args: {
-			card_type: supportedTypes[ paymentType ] || paymentType,
-			digits,
-		},
+	return translate( '%(displayType)s ****%(digits)s', {
+		args: { displayType, digits },
 	} );
 };
 
@@ -49,7 +51,7 @@ class StoredCard extends React.Component {
 		return (
 			<div className={ cardClasses }>
 				<span className="stored-card__number">
-					{ getPaymentMethodTitle( this.props.translate, card.card_type, card.card ) }
+					{ getCreditCardSummary( this.props.translate, card.card_type, card.card ) }
 				</span>
 				<span className="stored-card__name">{ card.name }</span>
 				<span className="stored-card__expiration-date">
