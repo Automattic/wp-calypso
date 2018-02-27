@@ -42,7 +42,7 @@ class CreditCardSelector extends React.Component {
 					className="payment-box-section"
 					card={ card }
 					selected={ card.stored_details_id === this.state.section }
-					onClick={ this.handleClickedSection.bind( this, card.stored_details_id ) }
+					onSelect={ this.handleClickedSection.bind( this, card.stored_details_id ) }
 				/>
 			);
 		} );
@@ -58,7 +58,7 @@ class CreditCardSelector extends React.Component {
 				key="new-card"
 				className={ classes }
 				selected={ 'new-card' === this.state.section }
-				onClick={ this.handleClickedSection.bind( this, 'new-card' ) }
+				onSelect={ this.handleClickedSection.bind( this, 'new-card' ) }
 			>
 				<NewCardForm
 					countriesList={ this.props.countriesList }
