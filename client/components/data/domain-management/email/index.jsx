@@ -51,7 +51,6 @@ class EmailData extends React.Component {
 	static propTypes = {
 		component: PropTypes.func.isRequired,
 		context: PropTypes.object.isRequired,
-		productsList: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string,
 		selectedSite: PropTypes.object.isRequired,
 		sitePlans: PropTypes.object.isRequired,

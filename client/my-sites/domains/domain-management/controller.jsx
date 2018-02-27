@@ -30,15 +30,12 @@ import {
 	domainManagementPrivacyProtection,
 	domainManagementRedirectSettings,
 } from 'my-sites/domains/paths';
-import ProductsList from 'lib/products-list';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
 import { decodeURIComponentIfValid } from 'lib/url';
-
-const productsList = new ProductsList();
 
 export default {
 	domainManagementList( pageContext, next ) {
@@ -122,7 +119,6 @@ export default {
 		pageContext.primary = (
 			<EmailData
 				component={ DomainManagement.Email }
-				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				context={ pageContext }
 			/>
