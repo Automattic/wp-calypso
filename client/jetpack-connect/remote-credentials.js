@@ -56,6 +56,14 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
+	componentWillMount() {
+		const { siteToConnect } = this.props;
+
+		if ( ! siteToConnect ) {
+			page.redirect( '/jetpack/connect' );
+		}
+	}
+
 	componentDidUpdate() {
 		const { installError, isResponseCompleted, siteToConnect } = this.props;
 
