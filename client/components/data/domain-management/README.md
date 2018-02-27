@@ -36,7 +36,6 @@ class MyComponent extends React.Component {
 			<DomainManagementData
 				component={ MyChildComponent }
 				context={ context }
-				productsList={ productsList }
 				sites={ sites } />
 		);
 	}
@@ -48,7 +47,6 @@ export default MyComponent;
 The component expects to receive all listed props:
 
 * `context` - a request context
-* `productsList` - a collection of all the products users can have on WordPress.com
 * `selectedDomainName` - the domain name currently selected (optional)
 * `sites` - a list of user sites 
 

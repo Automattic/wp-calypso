@@ -51,7 +51,6 @@ export default {
 				analyticsTitle="Domain Management"
 				component={ DomainManagement.List }
 				context={ pageContext }
-				productsList={ productsList }
 			/>
 		);
 		next();
@@ -71,7 +70,6 @@ export default {
 				analyticsTitle="Domain Management > Edit"
 				component={ component }
 				context={ pageContext }
-				productsList={ productsList }
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
 			/>
 		);
@@ -186,7 +184,6 @@ export default {
 				analyticsTitle="Domain Management > Add Google Apps"
 				component={ DomainManagement.AddGoogleApps }
 				context={ pageContext }
-				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
