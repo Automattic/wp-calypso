@@ -6,12 +6,3 @@
 		padding: 8px;
 	}
 }
-
-.credit-cards__single-card {
-	border: 1px solid $gray-lighten-30;
-	border-top: none;
-
-	&:first-child {
-		border-top: 1px solid $gray-lighten-30;
-	}
-}

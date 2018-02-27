@@ -9,8 +9,6 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 class StoredCard extends React.Component {
-	static displayName = 'StoredCard';
-
 	render() {
 		var card = this.props.card,
 			expirationDate = this.props.moment( card.expiry ).format( 'MM/YY' ),

@@ -57,7 +57,7 @@
 	background-image: url('/calypso/images/upgrades/cc-unionpay-disabled.svg');
 }
 
-.selected > .payment-box-section-inner {
+.credit-card.selected {
 	.stored-card.visa {
 		background-image: url('/calypso/images/upgrades/cc-visa.svg');
 	}
@@ -73,7 +73,6 @@
 	.stored-card.discover {
 		background-image: url('/calypso/images/upgrades/cc-discover.svg');
 	}
-
 
 	.stored-card.diners {
 		background-image: url('/calypso/images/upgrades/cc-diners.svg');

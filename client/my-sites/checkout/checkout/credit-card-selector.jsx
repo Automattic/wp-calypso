@@ -10,7 +10,7 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-import StoredCard from './stored-card';
+import CreditCard from 'components/credit-card';
 import NewCardForm from './new-card-form';
 import { newCardPayment, storedCardPayment } from 'lib/store-transactions';
 import { setPayment } from 'lib/upgrades/actions';
@@ -35,38 +35,37 @@ class CreditCardSelector extends React.Component {
 	}
 
 	storedCards = () => {
-		return this.props.cards.map( function( card ) {
-			const storedCard = <StoredCard card={ card } />;
-			return this.section( card.stored_details_id, storedCard );
-		}, this );
+		return this.props.cards.map( card => {
+			return (
+				<CreditCard
+					key={ card.stored_details_id }
+					className="payment-box-section"
+					card={ card }
+					selected={ card.stored_details_id === this.state.section }
+					onClick={ this.handleClickedSection.bind( this, card.stored_details_id ) }
+				/>
+			);
+		} );
 	};
 
 	newCardForm = () => {
-		const cardForm = (
-			<NewCardForm
-				countriesList={ this.props.countriesList }
-				transaction={ this.props.transaction }
-				hasStoredCards={ this.props.cards.length > 0 }
-			/>
-		);
-
-		return this.section( 'new-card', cardForm );
-	};
-
-	section = ( name, content ) => {
 		const classes = classNames( 'payment-box-section', {
-			selected: this.state.section === name,
-			'no-stored-cards': name === 'new-card' && this.props.cards.length === 0,
+			'no-stored-cards': this.props.cards.length === 0,
 		} );
 
 		return (
-			<div
+			<CreditCard
+				key="new-card"
 				className={ classes }
-				onClick={ this.handleClickedSection.bind( this, name ) }
-				key={ name }
+				selected={ 'new-card' === this.state.section }
+				onClick={ this.handleClickedSection.bind( this, 'new-card' ) }
 			>
-				<div className="payment-box-section-inner">{ content }</div>
-			</div>
+				<NewCardForm
+					countriesList={ this.props.countriesList }
+					transaction={ this.props.transaction }
+					hasStoredCards={ this.props.cards.length > 0 }
+				/>
+			</CreditCard>
 		);
 	};
 

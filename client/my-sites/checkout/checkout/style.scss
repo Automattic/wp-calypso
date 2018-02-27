@@ -294,39 +294,12 @@
 			}
 		}
 
-		.payment-box-section {
-			cursor: pointer;
-			border-bottom: 1px solid $gray-lighten-30;
-
-			&:first-of-type {
-				border-top: 1px solid $gray-lighten-30;
-			}
-
-			&.selected {
-				cursor: default;
-			}
-		}
-
-		.payment-box-section-inner {
+		.payment-box-section.selected.no-stored-cards {
 			border-left: 1px solid $gray-lighten-30;
-			padding-left: 2px;
-			position: relative;
-			border-right: 1px solid $gray-lighten-30;
-			min-height: 50px;
 		}
 
-		.payment-box-section.selected .payment-box-section-inner {
+		.payment-box-section.selected:not( .no-stored-cards ) .checkout__new-card-fields {
 			background-color: #fafdf6;
-			padding-left: 0;
-		}
-
-		.payment-box-section.selected:not( .no-stored-cards ) {
-			.payment-box-section-inner {
-				border-left: 3px solid $alert-green;
-			}
-			.checkout__new-card-fields {
-				background-color: #fafdf6;
-			}
 		}
 
 		.no-stored-cards .checkout__new-card-fields > .checkout-field:first-child {

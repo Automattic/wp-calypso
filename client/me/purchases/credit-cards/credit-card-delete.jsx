@@ -14,7 +14,7 @@ import React from 'react';
 import { deleteStoredCard } from 'state/stored-cards/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { isDeletingStoredCard } from 'state/stored-cards/selectors';
-import StoredCard from 'my-sites/checkout/checkout/stored-card';
+import StoredCard from 'components/credit-card/stored-card';
 
 class CreditCardDelete extends React.Component {
 	handleClick = () => {
