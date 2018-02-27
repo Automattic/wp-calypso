@@ -59,10 +59,10 @@
 		stroke: transparent;
 	}
 
-	.stored-card {
+	.credit-card__stored-card {
 		background: none;
 
-		.stored-card__number {
+		.credit-card__stored-card-number {
 			max-width: 100px;
 			color: transparent;
 		}
@@ -73,7 +73,7 @@
 			order: 1;
 		}
 
-		.stored-card__name, .stored-card__expiration-date {
+		.credit-card__stored-card-name, .credit-card__stored-card-expiration-date {
 			order: 1;
 			color: transparent;
 		}
