@@ -29,13 +29,13 @@ const getLastDismissTime = ( state, siteId ) => {
 };
 
 /**
- * Returns the true if the user indicated they have alreaday listed their business, false otherwise
+ * Returns the true if the user indicated they have already listed their business, false otherwise
  *
  * @param  {Object}  state  Global state tree
  * @param  {Number}  siteId The Id of the site
- * @return {Boolean}  if the user indicated they have alreaday listed their business
+ * @return {Boolean}  if the user indicated they have already listed their business
  */
-const getAlreadyListed = ( state, siteId ) => {
+const isAlreadyListed = ( state, siteId ) => {
 	const preference = getPreference( state, 'google-my-business-dismissible-nudge' ) || {};
 	const sitePreference = preference[ siteId ] || [];
 	return sitePreference.some( event => 'already-listed' === event.type );
@@ -43,7 +43,7 @@ const getAlreadyListed = ( state, siteId ) => {
 
 /**
  * Returns true if the Google My Business nudge has recently been dismissed by the current user
- * and this action is still effective
+ * and this action is still effective for this site
  *
  * The conditions for it to be effective (and thus make the nudge invisible) are the following:
  * - The last time it was dismissed must be less than 2 weeks ago
@@ -55,7 +55,7 @@ const getAlreadyListed = ( state, siteId ) => {
  * @return {Boolean} True if the nudge has been dismissed
  */
 const isGoogleMyBusinessStatsNudgeDismissed = ( state, siteId ) => {
-	if ( getAlreadyListed( state, siteId ) ) {
+	if ( isAlreadyListed( state, siteId ) ) {
 		return true;
 	}
 
