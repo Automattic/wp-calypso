@@ -100,7 +100,7 @@ class PlanFeaturesSummary extends Component {
 					</span>
 				</div>
 				{ ! current && (
-					<div className="plan-features__summary-policy">30-day money-back gurantee included</div>
+					<div className="plan-features__summary-policy">30-day money-back guarantee included</div>
 				) }
 			</div>
 		);
