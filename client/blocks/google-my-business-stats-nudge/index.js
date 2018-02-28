@@ -111,14 +111,16 @@ export default connect(
 	} ),
 	{
 		trackNudgeView: dismissCount =>
-			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_view', { dismissCount } ),
+			recordTracksEvent( 'calypso_google_my_business_stats_nudge_view', {
+				dismiss_count: dismissCount,
+			} ),
 		trackNudgeDismissClick: dismissCount =>
-			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_dismiss_icon_click', {
-				dismissCount,
+			recordTracksEvent( 'calypso_google_my_business_stats_nudge_dismiss_icon_click', {
+				dismiss_count: dismissCount,
 			} ),
 		trackNudgeStartNowClick: dismissCount =>
-			recordTracksEvent( 'calypso_test_google_my_business_stats_nudge_start_now_button_click', {
-				dismissCount,
+			recordTracksEvent( 'calypso_google_my_business_stats_nudge_start_now_button_click', {
+				dismiss_count: dismissCount,
 			} ),
 		dismissNudge,
 	}
