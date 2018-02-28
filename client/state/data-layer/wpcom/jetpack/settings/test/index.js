@@ -20,7 +20,7 @@ import {
 } from 'state/action-types';
 import {
 	saveJetpackOnboardingSettingsSuccess,
-	updateJetpackSettings,
+	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
 
 describe( 'requestJetpackOnboardingSettings()', () => {
@@ -180,7 +180,7 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 				action
 			)
 		);
-		expect( dispatch ).toHaveBeenCalledWith( updateJetpackSettings( siteId, settings ) );
+		expect( dispatch ).toHaveBeenCalledWith( updateJetpackOnboardingSettings( siteId, settings ) );
 	} );
 } );
 

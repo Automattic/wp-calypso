@@ -8,7 +8,7 @@ import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 	saveJetpackOnboardingSettingsSuccess,
-	updateJetpackSettings,
+	updateJetpackOnboardingSettings,
 } from '../actions';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
@@ -93,14 +93,14 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'updateJetpackSettings()', () => {
+	describe( 'updateJetpackOnboardingSettings()', () => {
 		test( 'should return a jetpack settings update action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
 			};
 			const siteId = 12345678;
-			const action = updateJetpackSettings( siteId, settings );
+			const action = updateJetpackOnboardingSettings( siteId, settings );
 
 			expect( action ).toEqual( {
 				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,

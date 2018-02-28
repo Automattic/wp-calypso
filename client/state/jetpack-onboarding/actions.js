@@ -45,7 +45,7 @@ export const saveJetpackOnboardingSettingsSuccess = ( siteId, settings ) => ( {
 	settings,
 } );
 
-export const updateJetpackSettings = ( siteId, settings ) => ( {
+export const updateJetpackOnboardingSettings = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 	siteId,
 	settings,

@@ -19,7 +19,7 @@ import {
 import { getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	saveJetpackOnboardingSettingsSuccess,
-	updateJetpackSettings,
+	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
 import { trailingslashit } from 'lib/route';
 
@@ -34,7 +34,7 @@ export const fromApi = response => {
 };
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
-	dispatch( updateJetpackSettings( siteId, settings ) );
+	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
 };
 
 /**
@@ -89,7 +89,7 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
 export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
-	dispatch( updateJetpackSettings( siteId, action.settings ) );
+	dispatch( updateJetpackOnboardingSettings( siteId, action.settings ) );
 
 	return dispatch(
 		http(
