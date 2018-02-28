@@ -51,7 +51,9 @@ class SelectBusinessType extends Component {
 
 				<Card className="select-business-type__explanation">
 					<div className="select-business-type__explanation-main">
-						<h1>{ translate( 'Which type of business are you?' ) }</h1>
+						<h1 className="select-business-type__explanation-heading">
+							{ translate( 'Which type of business are you?' ) }
+						</h1>
 
 						<p>
 							{ translate(
@@ -62,6 +64,7 @@ class SelectBusinessType extends Component {
 					</div>
 
 					<img
+						className="select-business-type__explanation-image"
 						src="/calypso/images/google-my-business/business-local.svg"
 						alt="Local business illustration"
 					/>

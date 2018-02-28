@@ -25,7 +25,7 @@ const CTACard = ( {
 } ) => (
 	<CompactCard className="select-business-type__cta-card">
 		<div className="select-business-type__cta-card-main">
-			<h2>{ headerText }</h2>
+			<h2 className="select-business-type__cta-card-heading">{ headerText }</h2>
 			<p>{ mainText }</p>
 		</div>
 		<div className="select-business-type__cta-card-button-container">
