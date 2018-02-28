@@ -30,6 +30,7 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
@@ -81,6 +82,19 @@ const AccountPassword = createReactClass( {
 			pendingValidation: true,
 			isUnsaved: '' !== newPassword,
 		} );
+	},
+
+	handleSaveButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Save Password Button' );
+	},
+
+	handleGenerateButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate Strong Password Button' );
+		this.generateStrongPassword();
+	},
+
+	handleNewPasswordFieldFocus() {
+		this.props.recordGoogleEvent( 'Me', 'Focused on New Password Field' );
 	},
 
 	submitForm: function( event ) {
@@ -149,7 +163,7 @@ const AccountPassword = createReactClass( {
 						id="password"
 						name="password"
 						onChange={ this.handlePasswordChange }
-						onFocus={ this.recordFocusEvent( 'New Password Field' ) }
+						onFocus={ this.handleNewPasswordFieldFocus }
 						value={ this.state.password }
 						submitting={ this.state.savingPassword }
 					/>
@@ -169,7 +183,7 @@ const AccountPassword = createReactClass( {
 							this.state.pendingValidation ||
 							this.props.accountPasswordData.passwordValidationFailed()
 						}
-						onClick={ this.recordClickEvent( 'Save Password Button' ) }
+						onClick={ this.handleSaveButtonClick }
 					>
 						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save Password' ) }
 					</FormButton>
@@ -177,10 +191,7 @@ const AccountPassword = createReactClass( {
 					<FormButton
 						className="button"
 						isPrimary={ false }
-						onClick={ this.recordClickEvent(
-							'Generate Strong Password Button',
-							this.generateStrongPassword
-						) }
+						onClick={ this.handleGenerateButtonClick }
 						type="button"
 					>
 						{ translate( 'Generate strong password' ) }
@@ -192,6 +203,6 @@ const AccountPassword = createReactClass( {
 } );
 
 export default compose(
-	connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) ),
+	connect( null, dispatch => bindActionCreators( { errorNotice, recordGoogleEvent }, dispatch ) ),
 	localize
 )( AccountPassword );
