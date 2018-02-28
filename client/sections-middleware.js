@@ -10,6 +10,7 @@ import { find, filter, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import { activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
 import { restoreLastSession } from 'lib/restore-last-path';
@@ -74,6 +75,13 @@ function createPageDefinition( path, sectionDefinition ) {
 			return;
 		}
 		dispatch( { type: 'SECTION_SET', isLoading: true } );
+
+		// If the section chunk is not loaded within 400ms, report it to analytics
+		const loadReportTimeout = setTimeout(
+			() => dispatch( bumpStat( 'calypso_chunk_waiting', sectionDefinition.name ) ),
+			400
+		);
+
 		preload( sectionDefinition.name )
 			.then( requiredModules => {
 				if ( ! _loadedSections[ sectionDefinition.module ] ) {
@@ -90,6 +98,10 @@ function createPageDefinition( path, sectionDefinition ) {
 					dispatch( { type: 'SECTION_SET', isLoading: false } );
 					LoadingError.show( context, sectionDefinition.name );
 				}
+			} )
+			.then( () => {
+				// If the load was faster than the timeout, this will cancel the analytics reporting
+				clearTimeout( loadReportTimeout );
 			} );
 	} );
 }
