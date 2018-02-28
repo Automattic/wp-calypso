@@ -4,12 +4,12 @@
 
 .google-my-business-location__verified {
 	color: $gray-darken-20;
-	line-height: 18px;
 	margin-top: 10px;
 }
 
 .google-my-business-location__verified-gridicon {
 	color: $alert-green;
+	vertical-align: text-bottom;;
 }
 
 .google-my-business-location__text {
