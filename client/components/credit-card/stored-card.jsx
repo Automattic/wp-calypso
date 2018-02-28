@@ -13,7 +13,7 @@ export const getCreditCardSummary = ( translate, type, digits ) => {
 	const supportedTypes = {
 		amex: translate( 'American Express' ),
 		discover: translate( 'Discover' ),
-		mastercard: translate( 'MasterCard' ),
+		mastercard: translate( 'Mastercard' ),
 		visa: translate( 'VISA' ),
 		diners: translate( 'Diners Club' ),
 		jcb: translate( 'JCB' ),
