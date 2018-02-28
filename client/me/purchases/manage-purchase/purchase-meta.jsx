@@ -30,8 +30,8 @@ import {
 import { isMonthly } from 'lib/plans/constants';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import { getSelectedSite as getSelectedSiteSelector, getSelectedSiteId } from 'state/ui/selectors';
 import { getUser } from 'state/users/selectors';
 import { managePurchase } from '../paths';
 import PaymentLogo from 'components/payment-logo';
@@ -148,7 +148,7 @@ class PurchaseMeta extends Component {
 
 	renderRenewsOrExpiresOn() {
 		const purchase = getPurchase( this.props );
-		const { translate, moment } = this.props;
+		const { translate, moment, isJetpack } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
 			const attachedPlanUrl = managePurchase(
@@ -172,7 +172,11 @@ class PurchaseMeta extends Component {
 		}
 
 		if ( isRenewing( purchase ) ) {
-			return moment( purchase.renewDate ).format( 'LL' );
+			// Unlike Dotcom, Jetpack plans renew on expiration date
+			// https://github.com/Automattic/wp-calypso/issues/13307
+			return isJetpack
+				? moment( purchase.expiryDate ).format( 'LL' )
+				: moment( purchase.renewDate ).format( 'LL' );
 		}
 
 		if ( isOneTimePurchase( purchase ) ) {
@@ -342,8 +346,10 @@ class PurchaseMeta extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
+	const siteId = getSelectedSiteId( state );
 
 	return {
+		isJetpack: isJetpackSite( state, siteId ),
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: purchase,
