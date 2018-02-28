@@ -131,7 +131,6 @@
 	flex-direction: column;
 	justify-content: space-between;
 	min-width: 320px;
-	text-align: left;
 
 	@include breakpoint( '>480px' ) {
 		max-width: 360px;
@@ -608,7 +607,7 @@
 		z-index: z-index('root', '.jetpack-connect__password-form .gridicon');
 		left: 8px;
 		top: 7px;
-		fill: $gray;
+		fill: $gray-lighten-20;
 	}
 }
 

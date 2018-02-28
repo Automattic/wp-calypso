@@ -48,16 +48,12 @@ export class OrgCredentialsForm extends Component {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
-		const url = siteToConnect;
-		const username = this.state.username;
-		const password = this.state.password;
-
 		if ( this.state.submitting ) {
 			return;
 		}
 		this.setState( { submitting: true } );
 
-		this.props.jetpackRemoteInstall( url, username, password );
+		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.username );
 	};
 
 	componentDidUpdate() {
@@ -74,6 +70,7 @@ export class OrgCredentialsForm extends Component {
 	getChangeHandler = field => event => {
 		this.setState( { [ field ]: event.target.value } );
 	};
+
 	getHeaderImage() {
 		return (
 			<div className="jetpack-connect__jetpack-logo">
@@ -92,13 +89,13 @@ export class OrgCredentialsForm extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="jetpack-connect__install-step">
+			<span className="jetpack-connect__install-step">
 				{ translate(
 					'Add your WordPress administrator credentials ' +
 						'for this site. Your credentials will not be stored and are used for the purpose' +
 						'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 				) }
-			</div>
+			</span>
 		);
 	}
 
