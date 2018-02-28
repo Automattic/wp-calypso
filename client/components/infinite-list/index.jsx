@@ -32,6 +32,7 @@ export default createReactClass( {
 	scrollRAFHandle: false,
 	scrollHelper: null,
 	isScrolling: false,
+	_isMounted: false,
 
 	propTypes: {
 		items: PropTypes.array.isRequired,
@@ -96,6 +97,7 @@ export default createReactClass( {
 	},
 
 	componentDidMount() {
+		this._isMounted = true;
 		if ( this._contextLoaded() ) {
 			this._setContainerY( this.state.scrollTop );
 		}
@@ -188,6 +190,7 @@ export default createReactClass( {
 		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		this.cancelAnimationFrame();
+		this._isMounted = false;
 	},
 
 	cancelAnimationFrame() {
@@ -223,7 +226,7 @@ export default createReactClass( {
 	scrollChecks() {
 		// isMounted is necessary to prevent running this before it is mounted,
 		// which could be triggered by data-observe mixin.
-		if ( ! this.isMounted() || this.getCurrentScrollTop() === this.lastScrollTop ) {
+		if ( ! this._isMounted || this.getCurrentScrollTop() === this.lastScrollTop ) {
 			this.scrollRAFHandle = null;
 			return;
 		}
