@@ -19,6 +19,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
+import SidebarRegion from 'layout/sidebar/region';
 import userFactory from 'lib/user';
 import userUtilities from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -114,97 +115,103 @@ class MeSidebar extends React.Component {
 
 		return (
 			<Sidebar>
-				<ProfileGravatar user={ this.props.currentUser } />
-				<div className="me-sidebar__signout">
-					<Button
-						compact
-						className="me-sidebar__signout-button"
-						onClick={ this.onSignOut }
-						title={ translate( 'Sign out of WordPress.com', { textOnly: true } ) }
-					>
-						{ translate( 'Sign Out' ) }
-					</Button>
-				</div>
-				<SidebarMenu>
-					<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
-					<ul>
-						<SidebarItem
-							selected={ selected === 'profile' }
-							link={
-								config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
-							}
-							label={ translate( 'My Profile' ) }
-							icon="user"
-							onNavigate={ this.onNavigate }
-						/>
+				<SidebarRegion>
+					<ProfileGravatar user={ this.props.currentUser } />
 
-						<SidebarItem
-							selected={ selected === 'account' }
-							link={
-								config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
-							}
-							label={ translate( 'Account Settings' ) }
-							icon="cog"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="account"
-						/>
+					<div className="sidebar__me-signout">
+						<Button
+							compact
+							className="sidebar__me-signout-button"
+							onClick={ this.onSignOut }
+							title={ translate( 'Sign out of WordPress.com', { textOnly: true } ) }
+						>
+							{ translate( 'Sign Out' ) }
+						</Button>
+					</div>
 
-						<SidebarItem
-							selected={ selected === 'purchases' }
-							link={ purchasesRoot }
-							label={ translate( 'Manage Purchases' ) }
-							icon="credit-card"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="purchases"
-						/>
-
-						<SidebarItem
-							selected={ selected === 'security' }
-							link={ '/me/security' }
-							label={ translate( 'Security' ) }
-							icon="lock"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="security"
-						/>
-
-						{ config.isEnabled( 'me/privacy' ) && (
+					<SidebarMenu>
+						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
+						<ul>
 							<SidebarItem
-								selected={ selected === 'privacy' }
-								link={ '/me/privacy' }
-								label={ translate( 'Privacy' ) }
-								icon="visible"
+								selected={ selected === 'profile' }
+								link={
+									config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
+								}
+								label={ translate( 'My Profile' ) }
+								icon="user"
 								onNavigate={ this.onNavigate }
-								preloadSectionName="privacy"
 							/>
-						) }
 
-						<SidebarItem
-							selected={ selected === 'notifications' }
-							link={
-								config.isEnabled( 'me/notifications' )
-									? '/me/notifications'
-									: '//wordpress.com/me/notifications'
-							}
-							label={ translate( 'Notification Settings' ) }
-							icon="bell"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="notification-settings"
-						/>
-					</ul>
-				</SidebarMenu>
-				<SidebarMenu>
-					<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
-					<ul>
-						<SidebarItem
-							selected={ selected === 'get-apps' }
-							link={ '/me/get-apps' }
-							label={ translate( 'Get Apps' ) }
-							icon="my-sites"
-							onNavigate={ this.onNavigate }
-						/>
-						{ this.renderNextStepsItem( selected ) }
-					</ul>
-				</SidebarMenu>
+							<SidebarItem
+								selected={ selected === 'account' }
+								link={
+									config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
+								}
+								label={ translate( 'Account Settings' ) }
+								icon="cog"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="account"
+							/>
+
+							<SidebarItem
+								selected={ selected === 'purchases' }
+								link={ purchasesRoot }
+								label={ translate( 'Manage Purchases' ) }
+								icon="credit-card"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="purchases"
+							/>
+
+							<SidebarItem
+								selected={ selected === 'security' }
+								link={ '/me/security' }
+								label={ translate( 'Security' ) }
+								icon="lock"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="security"
+							/>
+
+							{ config.isEnabled( 'me/privacy' ) && (
+								<SidebarItem
+									selected={ selected === 'privacy' }
+									link={ '/me/privacy' }
+									label={ translate( 'Privacy' ) }
+									icon="visible"
+									onNavigate={ this.onNavigate }
+									preloadSectionName="privacy"
+								/>
+							) }
+
+							<SidebarItem
+								selected={ selected === 'notifications' }
+								link={
+									config.isEnabled( 'me/notifications' )
+										? '/me/notifications'
+										: '//wordpress.com/me/notifications'
+								}
+								label={ translate( 'Notification Settings' ) }
+								icon="bell"
+								onNavigate={ this.onNavigate }
+								preloadSectionName="notification-settings"
+							/>
+						</ul>
+					</SidebarMenu>
+
+					<SidebarMenu>
+						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
+						<ul>
+							<SidebarItem
+								selected={ selected === 'get-apps' }
+								link={ '/me/get-apps' }
+								label={ translate( 'Get Apps' ) }
+								icon="my-sites"
+								onNavigate={ this.onNavigate }
+							/>
+							{ this.renderNextStepsItem( selected ) }
+						</ul>
+					</SidebarMenu>
+				</SidebarRegion>
+
 				<SidebarFooter />
 			</Sidebar>
 		);
