@@ -25,11 +25,15 @@ class SelectBusinessType extends Component {
 	};
 
 	trackCreateMyListingClick = () => {
-		this.props.recordTracksEvent( 'calypso_test_google_my_business_select_business_type_create_my_listing_button_click' );
+		this.props.recordTracksEvent(
+			'calypso_test_google_my_business_select_business_type_create_my_listing_button_click'
+		);
 	};
 
 	trackOptimizeYourSEOClick = () => {
-		this.props.recordTracksEvent( 'calypso_test_google_my_business_select_business_type_optimize_your_seo_button_click' );
+		this.props.recordTracksEvent(
+			'calypso_test_google_my_business_select_business_type_optimize_your_seo_button_click'
+		);
 	};
 
 	goBack = () => {
@@ -49,12 +53,12 @@ class SelectBusinessType extends Component {
 					<div className="select-business-type__explanation-main">
 						<h1>{ translate( 'Which type of business are you?' ) }</h1>
 
-						<h2>
+						<p>
 							{ translate(
 								'Google My Business lists your local business on Google Search and Google Maps. ' +
-								'It works for businesses that have a physical location or serve a local area.'
+									'It works for businesses that have a physical location or serve a local area.'
 							) }
-						</h2>
+						</p>
 					</div>
 
 					<img
@@ -69,7 +73,7 @@ class SelectBusinessType extends Component {
 					} ) }
 					mainText={ translate(
 						'My business has a physical location customers can visit, ' +
-						'or provides goods and services to local customers, or both.'
+							'or provides goods and services to local customers, or both.'
 					) }
 					buttonText={ translate( 'Create My Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
@@ -91,7 +95,6 @@ class SelectBusinessType extends Component {
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
 					buttonIcon="external"
 					buttonHref={ '/settings/traffic/' + siteId }
-					buttonTarget="_blank"
 					buttonOnClick={ this.trackOptimizeYourSEOClick }
 				/>
 			</div>
