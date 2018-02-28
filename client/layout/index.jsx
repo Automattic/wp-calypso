@@ -163,7 +163,7 @@ const Layout = createReactClass( {
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass }>
-					<PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } />
+					<PulsingDot active={ this.props.isLoading } />
 				</div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
