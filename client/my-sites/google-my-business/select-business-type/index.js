@@ -13,7 +13,7 @@ import page from 'page';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import CTACard from './cta-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -49,7 +49,7 @@ class SelectBusinessType extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card className="select-business-type__explanation">
+				<CompactCard className="select-business-type__explanation">
 					<div className="select-business-type__explanation-main">
 						<h1 className="select-business-type__explanation-heading">
 							{ translate( 'Which type of business are you?' ) }
@@ -68,7 +68,7 @@ class SelectBusinessType extends Component {
 						src="/calypso/images/google-my-business/business-local.svg"
 						alt="Local business illustration"
 					/>
-				</Card>
+				</CompactCard>
 
 				<CTACard
 					headerText={ translate( 'Physical Location or Service Area', {
