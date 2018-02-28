@@ -353,14 +353,14 @@ ShippingLabels.propTypes = {
 };
 
 export default connect(
-	( state, { siteId } ) => {
+	( state, { siteId, paperSize } ) => {
 		return {
 			isLoading: areSettingsFetching( state, siteId ) && ! areSettingsLoaded( state, siteId ),
 			isReloading: areSettingsFetching( state, siteId ) && areSettingsLoaded( state, siteId ),
 			pristine: isPristine( state, siteId ),
 			paymentMethods: getPaymentMethods( state, siteId ),
 			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
-			paperSize: getPaperSize( state, siteId ),
+			paperSize: paperSize || getPaperSize( state, siteId ),
 			storeOptions: getLabelSettingsStoreOptions( state, siteId ),
 			canEditPayments: userCanManagePayments( state, siteId ),
 			canEditSettings:
