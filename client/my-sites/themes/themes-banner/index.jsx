@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import Button from 'components/button';
 import safeImageUrl from 'lib/safe-image-url';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { getActiveTheme, getThemeDetailsUrl } from 'state/themes/selectors';
 
 class ThemesBanner extends PureComponent {
@@ -37,7 +37,7 @@ class ThemesBanner extends PureComponent {
 	};
 
 	recordEvent = () => {
-		const { siteId, themeId, activeThemeId } = this.props;
+		const { siteId, themeId, activeThemeId, recordTracksEvent } = this.props;
 		const tracksData = {
 			site_id: siteId,
 			theme: themeId,
@@ -99,4 +99,6 @@ const mapStateToProps = ( state, { themeId } ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( ThemesBanner ) );
+export default connect( mapStateToProps, {
+	recordTracksEvent: recordTracksEventAction,
+} )( localize( ThemesBanner ) );
