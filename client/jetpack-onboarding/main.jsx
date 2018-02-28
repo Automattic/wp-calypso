@@ -4,8 +4,9 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact, get } from 'lodash';
+import { compact, get, includes } from 'lodash';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
@@ -21,6 +22,7 @@ import {
 	JETPACK_ONBOARDING_STEPS as STEPS,
 } from './constants';
 import {
+	getJetpackOnboardingCompletedSteps,
 	getJetpackOnboardingSettings,
 	getRequest,
 	getUnconnectedSite,
@@ -78,6 +80,16 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} );
 	};
 
+	getSkipLinkText() {
+		const { stepName, stepsCompleted, translate } = this.props;
+		const steps = [ STEPS.CONTACT_FORM, STEPS.BUSINESS_ADDRESS, STEPS.STATS ];
+
+		if ( includes( steps, stepName ) && get( stepsCompleted, stepName ) ) {
+			return translate( 'Next' );
+		}
+		return null;
+	}
+
 	render() {
 		const {
 			action,
@@ -92,6 +104,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 			stepName,
 			steps,
 		} = this.props;
+
 		return (
 			<Main className="jetpack-onboarding">
 				{ /* We only allow querying of site settings once we know that we have finished
@@ -107,6 +120,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						basePath="/jetpack/start"
 						baseSuffix={ siteSlug }
 						components={ COMPONENTS }
+						forwardText={ this.getSkipLinkText() }
 						hideNavigation={ stepName === STEPS.SUMMARY }
 						isRequestingSettings={ isRequestingSettings }
 						isRequestingWhetherConnected={ isRequestingWhetherConnected }
@@ -155,7 +169,6 @@ export default connect(
 		).isLoading;
 
 		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
-		// Note: here we can select which steps to display, based on user's input
 		const steps = compact( [
 			STEPS.SITE_TITLE,
 			STEPS.SITE_TYPE,
@@ -166,6 +179,8 @@ export default connect(
 			STEPS.STATS,
 			STEPS.SUMMARY,
 		] );
+		const stepsCompleted = getJetpackOnboardingCompletedSteps( state, siteId, steps );
+
 		return {
 			jpoAuth,
 			isRequestingSettings,
@@ -174,6 +189,7 @@ export default connect(
 			siteSlug,
 			settings,
 			steps,
+			stepsCompleted,
 			userIdHashed,
 		};
 	},
@@ -203,4 +219,4 @@ export default connect(
 			} ),
 		...ownProps,
 	} )
-)( JetpackOnboardingMain );
+)( localize( JetpackOnboardingMain ) );
