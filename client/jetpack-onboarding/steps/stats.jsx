@@ -89,7 +89,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 				<TileGrid>
 					<Tile
 						buttonLabel={ translate( 'Activate stats' ) }
-						image="/calypso/images/illustrations/type-business.svg"
+						image="/calypso/images/illustrations/jetpack-stats.svg"
 						onClick={ this.handleActivateStats }
 						href={ href }
 					/>
@@ -115,7 +115,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 				{ activatedStats ? (
 					<ConnectSuccess
 						href={ getForwardUrl() }
-						illustration="/calypso/images/illustrations/type-business.svg"
+						illustration="/calypso/images/illustrations/jetpack-stats.svg"
 						onClick={ this.handleStatsNextButton }
 						title={ translate( 'Success! Jetpack is now collecting valuable stats.' ) }
 					/>
