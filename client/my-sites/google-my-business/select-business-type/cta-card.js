@@ -49,7 +49,7 @@ CTACard.propTypes = {
 	buttonIcon: PropTypes.string,
 	buttonOnClick: PropTypes.func,
 	buttonHref: PropTypes.string,
-	buttonTarget: PropTypes.string.isRequired,
+	buttonTarget: PropTypes.string,
 };
 
 export default CTACard;
