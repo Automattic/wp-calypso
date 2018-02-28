@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getRequest } from 'state/selectors';
-import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackOnboardingSettings extends Component {
 	static propTypes = {
@@ -19,7 +19,7 @@ class QueryJetpackOnboardingSettings extends Component {
 		siteId: PropTypes.number,
 		// Connected props
 		requestingSettings: PropTypes.bool,
-		requestJetpackSettings: PropTypes.func,
+		requestJetpackOnboardingSettings: PropTypes.func,
 	};
 
 	componentWillMount() {
@@ -37,7 +37,7 @@ class QueryJetpackOnboardingSettings extends Component {
 			return;
 		}
 
-		props.requestJetpackSettings( props.siteId, props.query );
+		props.requestJetpackOnboardingSettings( props.siteId, props.query );
 	}
 
 	render() {
@@ -47,7 +47,8 @@ class QueryJetpackOnboardingSettings extends Component {
 
 export default connect(
 	( state, { query, siteId } ) => ( {
-		requestingSettings: getRequest( state, requestJetpackSettings( siteId, query ) ).isLoading,
+		requestingSettings: getRequest( state, requestJetpackOnboardingSettings( siteId, query ) )
+			.isLoading,
 	} ),
-	{ requestJetpackSettings }
+	{ requestJetpackOnboardingSettings }
 )( QueryJetpackOnboardingSettings );

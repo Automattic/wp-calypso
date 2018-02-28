@@ -29,7 +29,7 @@ import {
 } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import {
-	requestJetpackSettings,
+	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
 
@@ -130,8 +130,10 @@ export default connect(
 			};
 		}
 
-		const isRequestingSettings = getRequest( state, requestJetpackSettings( siteId, jpoAuth ) )
-			.isLoading;
+		const isRequestingSettings = getRequest(
+			state,
+			requestJetpackOnboardingSettings( siteId, jpoAuth )
+		).isLoading;
 
 		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
 		// Note: here we can select which steps to display, based on user's input

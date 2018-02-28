@@ -6,7 +6,7 @@
 import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	MAX_WOOCOMMERCE_INSTALL_RETRIES,
-	requestJetpackSettings,
+	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 	handleSaveSuccess,
 	announceRequestFailure,
@@ -23,7 +23,7 @@ import {
 	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
 
-describe( 'requestJetpackSettings()', () => {
+describe( 'requestJetpackOnboardingSettings()', () => {
 	const dispatch = jest.fn();
 	const token = 'abcd1234';
 	const userEmail = 'example@yourgroovydomain.com';
@@ -35,7 +35,7 @@ describe( 'requestJetpackSettings()', () => {
 	};
 
 	test( 'should dispatch an action for GET HTTP request to save Jetpack Onboarding settings', () => {
-		requestJetpackSettings( { dispatch }, action );
+		requestJetpackOnboardingSettings( { dispatch }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -63,7 +63,7 @@ describe( 'requestJetpackSettings()', () => {
 		};
 		const actionWithAuth = { ...action, query };
 
-		requestJetpackSettings( { dispatch }, actionWithAuth );
+		requestJetpackOnboardingSettings( { dispatch }, actionWithAuth );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
