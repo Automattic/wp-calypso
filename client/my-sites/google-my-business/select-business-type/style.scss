@@ -1,6 +1,6 @@
 .select-business-type__cta-card {
 	display: flex;
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		display: block;
 	}
 }
@@ -27,21 +27,21 @@
 	flex: 1;
 	text-align: right;
 	margin: 0 20px;
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		text-align: left;
 	}
 }
 
 .select-business-type {
 	.header-cake {
-		margin-bottom: 0px;
+		margin-bottom: 0;
 	}
 }
 
 .select-business-type__explanation {
 	display: flex;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		flex-direction: column-reverse;
 	}
 
@@ -59,13 +59,13 @@
 	}
 
 	img {
-		max-width: 300px;
-		width: 100%;
+		max-width: 400px;
+		width: 150%;
 		align-self: center;
 
-		@include breakpoint( ">1040px" ) {
-			max-width: 400px;
-			width: 150%;
+		@include breakpoint( '<1040px' ) {
+			max-width: 300px;
+			width: 100%;
 		}
 	}
 }
