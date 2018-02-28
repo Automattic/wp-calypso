@@ -59,13 +59,13 @@
 	}
 
 	img {
-		max-width: 400px;
-		width: 150%;
+		max-width: 300px;
+		width: 100%;
 		align-self: center;
 
-		@include breakpoint( "<1040px" ) {
-			max-width: 300px;
-			width: 100%;
+		@include breakpoint( ">1040px" ) {
+			max-width: 400px;
+			width: 150%;
 		}
 	}
 }
