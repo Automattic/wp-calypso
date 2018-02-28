@@ -9,7 +9,6 @@ import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:application-passwords' );
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
@@ -257,6 +256,6 @@ const ApplicationPasswords = createReactClass( {
 	},
 } );
 
-export default connect( null, dispatch =>
-	bindActionCreators( { errorNotice, recordGoogleEvent }, dispatch )
-)( localize( ApplicationPasswords ) );
+export default connect( null, { errorNotice, recordGoogleEvent } )(
+	localize( ApplicationPasswords )
+);
