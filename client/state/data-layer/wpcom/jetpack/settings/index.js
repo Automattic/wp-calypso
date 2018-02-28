@@ -33,11 +33,7 @@ export const fromApi = response => {
 	return response.data;
 };
 
-const receiveJetpackOnboardingSettings = (
-	{ dispatch },
-	{ siteId },
-	settings // eslint-disable-line no-unused-vars
-) => {
+const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
 	dispatch( updateJetpackSettings( siteId, settings ) );
 };
 
