@@ -5,7 +5,7 @@
 
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { isUndefined, omit, assign, get } from 'lodash';
+import { isUndefined, omit, assign, get, has } from 'lodash';
 
 /**
  * Internal dependencies
@@ -35,18 +35,19 @@ function getUserFromRequest( request ) {
 
 	// if user doesn't have a cookie, and we had the user identification passed to us on query params
 	// we'll use that, otherwise, we'll just use anonymous.
-	let userIdType = get( request, 'query._ut', 'anon' );
-	let userId = get( request, 'query._ui', null );
 
-	// if user ID not set, even though userIdType is set, we revert to anonymous
-	if ( ! userId ) {
-		userIdType = 'anon';
-		userId = uuid();
+	// If we have a full identity on query params - use it
+	if ( has( request, 'query._ut' ) && has( request, 'query._ui' ) ) {
+		return {
+			_ui: request.query._ui,
+			_ut: request.query._ut,
+		};
 	}
 
+	// We didn't get a full identity, create an anon ID
 	return {
-		_ui: userId,
-		_ut: userIdType,
+		_ut: 'anon',
+		_ui: uuid(),
 	};
 }
 
