@@ -20,7 +20,7 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 export default class extends React.Component {
 	static displayName = 'Input';
-	static defaultProps = { autoFocus: false, autoComplete: 'on', labelProps: {} };
+	static defaultProps = { autoFocus: false, autoComplete: 'on' };
 
 	componentDidMount() {
 		this.setupInputModeHandlers();
