@@ -182,7 +182,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 					isError={ ! this.organizationFieldIsValid() }
 					errorMessage={ this.getOrganizationErrorMessage() }
 					label={ translate( 'Organization' ) }
-					labelProps: { optional: ! this.needsOrganization() },
+					labelProps={ ! this.needsOrganization() ? { optional: true } : {} }
 					onChange={ this.handleChangeEvent }
 				/>
 			</FormFieldset>
