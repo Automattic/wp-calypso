@@ -170,8 +170,8 @@ export default {
 
 		const activeFilter = find( filters(), filter => {
 			return (
-				context.path === filter.path ||
-				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.path ) )
+				context.pathname === filter.path ||
+				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 			);
 		} );
 
@@ -187,7 +187,7 @@ export default {
 
 			const props = {
 				period: activeFilter.period,
-				path: context.path,
+				path: context.pathname,
 			};
 			context.primary = <StatsOverview { ...props } />;
 			next();
@@ -213,8 +213,8 @@ export default {
 
 		const activeFilter = find( filters, filter => {
 			return (
-				context.path === filter.path ||
-				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.path ) )
+				context.pathname === filter.path ||
+				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 			);
 		} );
 
@@ -260,7 +260,7 @@ export default {
 			chartTab = queryOptions.tab || 'views';
 
 			const props = {
-				path: context.path,
+				path: context.pathname,
 				date,
 				chartTab,
 				context,
@@ -311,8 +311,8 @@ export default {
 
 		const activeFilter = find( filters, filter => {
 			return (
-				context.path === filter.path ||
-				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.path ) )
+				context.pathname === filter.path ||
+				( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) )
 			);
 		} );
 
@@ -356,7 +356,7 @@ export default {
 			);
 
 			const props = {
-				path: context.path,
+				path: context.pathname,
 				statsQueryOptions,
 				date,
 				context,
