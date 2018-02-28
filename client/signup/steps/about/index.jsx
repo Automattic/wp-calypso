@@ -377,89 +377,52 @@ class AboutStep extends Component {
 
 	renderGoalCheckboxes() {
 		const { translate, siteGoalsArray } = this.props;
-		const shareOption = ( // eslint-disable-line no-unused-vars
-			<FormLabel htmlFor="share" className="about__checkbox-option" key="share">
-				<FormInputCheckbox
-					name="siteGoals"
-					id="share"
-					onChange={ this.checkBoxHandleChange }
-					defaultChecked={ this.isCheckBoxChecked( 'share' ) }
-					value="share"
-					className="about__checkbox"
-					onKeyDown={ this.handleCheckboxKeyDown }
-				/>
-				<span className="about__checkbox-label">
-					{ translate( 'Share ideas, experiences, updates, reviews, stories, videos, or photos' ) }
-				</span>
-			</FormLabel>
-		);
-		const promoteOption = ( // eslint-disable-line no-unused-vars
-			<FormLabel htmlFor="promote" className="about__checkbox-option" key="promote">
-				<FormInputCheckbox
-					name="siteGoals"
-					id="promote"
-					onChange={ this.checkBoxHandleChange }
-					defaultChecked={ this.isCheckBoxChecked( 'promote' ) }
-					value="promote"
-					className="about__checkbox"
-					onKeyDown={ this.handleCheckboxKeyDown }
-				/>
-				<span className="about__checkbox-label">
-					{ translate( 'Promote your business, skills, organization, or events' ) }
-				</span>
-			</FormLabel>
-		);
-		const educateOption = ( // eslint-disable-line no-unused-vars
-			<FormLabel htmlFor="educate" className="about__checkbox-option" key="educate">
-				<FormInputCheckbox
-					name="siteGoals"
-					id="educate"
-					onChange={ this.checkBoxHandleChange }
-					defaultChecked={ this.isCheckBoxChecked( 'educate' ) }
-					value="educate"
-					className="about__checkbox"
-					onKeyDown={ this.handleCheckboxKeyDown }
-				/>
-				<span className="about__checkbox-label">
-					{ translate( 'Offer education, training, or mentoring' ) }
-				</span>
-			</FormLabel>
-		);
-		const sellOption = ( // eslint-disable-line no-unused-vars
-			<FormLabel htmlFor="sell" className="about__checkbox-option" key="sell">
-				<FormInputCheckbox
-					name="siteGoals"
-					id="sell"
-					onChange={ this.checkBoxHandleChange }
-					defaultChecked={ this.isCheckBoxChecked( 'sell' ) }
-					value="sell"
-					className="about__checkbox"
-					onKeyDown={ this.handleCheckboxKeyDown }
-				/>
-				<span className="about__checkbox-label">
-					{ translate( 'Sell products or collect payments' ) }
-				</span>
-			</FormLabel>
-		);
-		const showcaseOption = ( // eslint-disable-line no-unused-vars
-			<FormLabel htmlFor="showcase" className="about__checkbox-option" key="showcase">
-				<FormInputCheckbox
-					name="siteGoals"
-					id="showcase"
-					onChange={ this.checkBoxHandleChange }
-					defaultChecked={ this.isCheckBoxChecked( 'showcase' ) }
-					value="showcase"
-					className="about__checkbox"
-					onKeyDown={ this.handleCheckboxKeyDown }
-				/>
-				<span className="about__checkbox-label">{ translate( 'Showcase your portfolio' ) }</span>
-			</FormLabel>
-		);
+		const options = {
+			shareOption: {
+				key: 'share',
+				formLabel: translate(
+					'Share ideas, experiences, updates, reviews, stories, videos, or photos'
+				),
+			},
+			promoteOption: {
+				key: 'promote',
+				formLabel: translate( 'Promote your business, skills, organization, or events' ),
+			},
+			educateOption: {
+				key: 'educate',
+				formLabel: translate( 'Offer education, training, or mentoring' ),
+			},
+			sellOption: {
+				key: 'sell',
+				formLabel: translate( 'Sell products or collect payments' ),
+			},
+			showcaseOption: {
+				key: 'showcase',
+				formLabel: translate( 'Showcase your portfolio' ),
+			},
+		};
 
 		return (
 			<div className="about__checkboxes">
-				{ siteGoalsArray.map( function( element ) {
-					return eval( element );
+				{ siteGoalsArray.map( item => {
+					return (
+						<FormLabel
+							htmlFor={ options[ item ].key }
+							className="about__checkbox-option"
+							key={ options[ item ].key }
+						>
+							<FormInputCheckbox
+								name="siteGoals"
+								id={ options[ item ].key }
+								onChange={ this.checkBoxHandleChange }
+								defaultChecked={ this.isCheckBoxChecked( options[ item ].key ) }
+								value={ options[ item ].key }
+								className="about__checkbox"
+								onKeyDown={ this.handleCheckboxKeyDown }
+							/>
+							<span className="about__checkbox-label">{ options[ item ].formLabel }</span>
+						</FormLabel>
+					);
 				} ) }
 			</div>
 		);
