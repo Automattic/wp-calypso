@@ -70,12 +70,10 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 		const subHeaderText = (
 			<Fragment>
 				{ translate(
-					'A great first step is adding a Contact Us page that includes Jetpack’s contact form.'
+					'A great first step is adding a Contact Us page that includes a contact form.'
 				) }
 				<br />
-				{ translate(
-					'Create a Jetpack account to unlock this and dozens of other Jetpack features.'
-				) }
+				{ translate( 'Create a Jetpack account to unlock this and dozens of other features.' ) }
 			</Fragment>
 		);
 		const connectUrl = addQueryArgs(
