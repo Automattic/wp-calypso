@@ -114,6 +114,7 @@ StateSelect.propTypes = {
 	name: PropTypes.string,
 	onChange: PropTypes.func,
 	value: PropTypes.string,
+	selectText: PropTypes.string,
 	inputRef: PropTypes.func,
 };
 
