@@ -33,7 +33,8 @@ class SearchForALocation extends Component {
 	componentWillMount() {
 		return new Promise( resolve => {
 			loadScript(
-				'//maps.googleapis.com/maps/api/js?key=AIzaSyBO5-y0uPC5DhwrcKy-NHUkLUmFQpNj-1g&libraries=places', function() {
+				'//maps.googleapis.com/maps/api/js?key=AIzaSyBO5-y0uPC5DhwrcKy-NHUkLUmFQpNj-1g&libraries=places',
+				function() {
 					autocompleteService = new google.maps.places.AutocompleteService();
 				}
 			);
@@ -63,7 +64,7 @@ class SearchForALocation extends Component {
 		const { translate, siteId } = this.props;
 		const { predictions } = this.state;
 		const verifyHref = '/google-my-business/verify/' + siteId;
-		const createHref = '/google-my-business/create/' + siteId;
+		const createHref = '/google-my-business/create/' + siteId; // For M2 this would just link to https://business.google.com/create?hl=en
 		return (
 			<div className="search-for-a-location">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
