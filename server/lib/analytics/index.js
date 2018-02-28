@@ -4,14 +4,52 @@
  */
 
 import superagent from 'superagent';
+import { v4 as uuid } from 'uuid';
+import { isUndefined, omit, assign, get, has } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import { statsdTimingUrl } from '../../../client/lib/analytics/statsd';
-import { isUndefined, omit, assign } from 'lodash';
 const URL = require( 'url' );
+
+function getUserFromRequest( request ) {
+	// if user has a cookie, lets use that
+	const encodedUserCookie = get( request, 'cookies.wordpress_logged_in', null );
+
+	if ( encodedUserCookie ) {
+		try {
+			const userCookieParts = decodeURIComponent( encodedUserCookie ).split( '|' );
+
+			// We don't trust it, but for analytics this is enough
+			return {
+				_ul: userCookieParts[ 0 ],
+				_ui: parseInt( userCookieParts[ 1 ], 10 ),
+				_ut: 'wpcom:user_id',
+			};
+		} catch ( ex ) {
+			// ignore the error and let it fallback to anonymous below
+		}
+	}
+
+	// if user doesn't have a cookie, and we had the user identification passed to us on query params
+	// we'll use that, otherwise, we'll just use anonymous.
+
+	// If we have a full identity on query params - use it
+	if ( has( request, 'query._ut' ) && has( request, 'query._ui' ) ) {
+		return {
+			_ui: request.query._ui,
+			_ut: request.query._ut,
+		};
+	}
+
+	// We didn't get a full identity, create an anon ID
+	return {
+		_ut: 'anon',
+		_ui: uuid(),
+	};
+}
 
 const analytics = {
 	statsd: {
@@ -57,14 +95,13 @@ const analytics = {
 						_en: eventName,
 						_ts: date.getTime(),
 						_tz: date.getTimezoneOffset() / 60,
-						_ui: req.query._ui,
-						_ut: req.query._ut,
 						_dl: req.get( 'Referer' ),
 						_lg: acceptLanguageHeader.split( ',' )[ 0 ],
 						_pf: req.useragent.platform,
 						_via_ip: req.get( 'x-forwarded-for' ) || req.connection.remoteAddress,
 						_via_ua: req.useragent.source,
 					},
+					getUserFromRequest( req ),
 					eventProperties
 				)
 			);
