@@ -146,7 +146,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 		const headerText = translate( 'Help your customers find you with Jetpack.' );
 		const subHeaderText = translate(
 			"Add your business address and a map of your location with Jetpack's business address widget. " +
-				"You can adjust the widget's location later."
+				"You can edit the widget's content and position later."
 		);
 
 		return <FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />;
