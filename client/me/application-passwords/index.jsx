@@ -29,14 +29,14 @@ import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import eventRecorder from 'me/event-recorder';
 import Card from 'components/card';
 import classNames from 'classnames';
 import { errorNotice } from 'state/notices/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ApplicationPasswords = createReactClass( {
 	displayName: 'ApplicationPasswords',
-	mixins: [ observe( 'appPasswordsData' ), eventRecorder ],
+	mixins: [ observe( 'appPasswordsData' ) ],
 
 	componentDidMount: function() {
 		debug( this.displayName + ' React component is mounted.' );
@@ -52,6 +52,20 @@ const ApplicationPasswords = createReactClass( {
 			addingPassword: false,
 			submittingForm: false,
 		};
+	},
+
+	getClickHandler( action, callback ) {
+		return event => {
+			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+
+			if ( callback ) {
+				callback( event );
+			}
+		};
+	},
+
+	getFocusHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	},
 
 	createApplicationPassword: function( event ) {
@@ -110,7 +124,7 @@ const ApplicationPasswords = createReactClass( {
 							disabled={ this.state.submittingForm }
 							id="application-name"
 							name="applicationName"
-							onFocus={ this.recordFocusEvent( 'Application Name Field' ) }
+							onFocus={ this.getFocusHandler( 'Application Name Field' ) }
 							value={ this.state.applicationName }
 							onChange={ this.handleChange }
 						/>
@@ -119,7 +133,7 @@ const ApplicationPasswords = createReactClass( {
 					<FormButtonsBar>
 						<FormButton
 							disabled={ this.state.submittingForm || '' === this.state.applicationName }
-							onClick={ this.recordClickEvent( 'Generate New Application Password Button' ) }
+							onClick={ this.getClickHandler( 'Generate New Application Password Button' ) }
 						>
 							{ this.state.submittingForm
 								? this.props.translate( 'Generating Password…' )
@@ -128,7 +142,7 @@ const ApplicationPasswords = createReactClass( {
 						{ this.props.appPasswordsData.get().length ? (
 							<FormButton
 								isPrimary={ false }
-								onClick={ this.recordClickEvent(
+								onClick={ this.getClickHandler(
 									'Cancel Generate New Application Password Button',
 									this.toggleNewPassword
 								) }
@@ -166,7 +180,7 @@ const ApplicationPasswords = createReactClass( {
 
 				<FormButtonsBar>
 					<FormButton
-						onClick={ this.recordClickEvent(
+						onClick={ this.getClickHandler(
 							'New Application Password Done Button',
 							this.clearNewApplicationPassword
 						) }
@@ -209,7 +223,7 @@ const ApplicationPasswords = createReactClass( {
 				<SectionHeader label={ this.props.translate( 'Application Passwords' ) }>
 					<Button
 						compact
-						onClick={ this.recordClickEvent(
+						onClick={ this.getClickHandler(
 							'Create Application Password Button',
 							this.toggleNewPassword
 						) }
@@ -243,6 +257,6 @@ const ApplicationPasswords = createReactClass( {
 	},
 } );
 
-export default connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) )(
-	localize( ApplicationPasswords )
-);
+export default connect( null, dispatch =>
+	bindActionCreators( { errorNotice, recordGoogleEvent }, dispatch )
+)( localize( ApplicationPasswords ) );
