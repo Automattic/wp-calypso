@@ -35,7 +35,7 @@ const CTACard = ( {
 				target={ buttonTarget }
 				onClick={ buttonOnClick }
 			>
-				{ buttonText } <Gridicon icon={ buttonIcon } />
+				{ buttonText } { buttonIcon && <Gridicon icon={ buttonIcon } /> }
 			</Button>
 		</div>
 	</CompactCard>
@@ -46,7 +46,7 @@ CTACard.propTypes = {
 	mainText: PropTypes.string.isRequired,
 	buttonPrimary: PropTypes.bool,
 	buttonText: PropTypes.string.isRequired,
-	buttonIcon: PropTypes.string.isRequired,
+	buttonIcon: PropTypes.string,
 	buttonOnClick: PropTypes.func,
 	buttonHref: PropTypes.string,
 	buttonTarget: PropTypes.string.isRequired,

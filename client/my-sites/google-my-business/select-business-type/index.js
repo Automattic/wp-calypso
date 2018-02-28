@@ -93,7 +93,6 @@ class SelectBusinessType extends Component {
 						"Don't provide in-person services? Learn more about reaching your customers online."
 					) }
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
-					buttonIcon="external"
 					buttonHref={ '/settings/traffic/' + siteId }
 					buttonOnClick={ this.trackOptimizeYourSEOClick }
 				/>
