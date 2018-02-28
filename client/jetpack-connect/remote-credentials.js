@@ -53,7 +53,7 @@ export class OrgCredentialsForm extends Component {
 		}
 		this.setState( { submitting: true } );
 
-		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.username );
+		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
 	componentDidUpdate() {
