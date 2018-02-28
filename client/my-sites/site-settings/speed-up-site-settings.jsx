@@ -64,7 +64,7 @@ class SpeedUpSiteSettings extends Component {
 							moduleSlug="photon"
 							label={ translate( 'Serve images from our servers' ) }
 							description={ translate(
-								'Jetpack will optimize your images and server them from the server ' +
+								'Jetpack will optimize your images and serve them from the server ' +
 									'location nearest to your visitors. Using our global content delivery ' +
 									'network will boost the loading speed of your site.'
 							) }
