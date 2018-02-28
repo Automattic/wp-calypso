@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
@@ -18,6 +18,7 @@ class Pagination extends Component {
 		perPage: PropTypes.number.isRequired,
 		total: PropTypes.number,
 		pageClick: PropTypes.func.isRequired,
+		className: PropTypes.string,
 	};
 
 	getPageList = ( page, pageCount ) => {
@@ -51,7 +52,7 @@ class Pagination extends Component {
 	};
 
 	render() {
-		const { page, pageClick, perPage, total } = this.props;
+		const { page, pageClick, perPage, total, className } = this.props;
 		const pageCount = Math.ceil( total / perPage );
 
 		if ( pageCount <= 1 ) {
@@ -72,7 +73,7 @@ class Pagination extends Component {
 		} );
 
 		return (
-			<div className="pagination">
+			<div className={ classNames( 'pagination', className ) }>
 				<ul className="pagination__list">{ pageListRendered }</ul>
 			</div>
 		);

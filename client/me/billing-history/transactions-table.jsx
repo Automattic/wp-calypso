@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { defer, isEmpty, pick } from 'lodash';
+import { defer, isEmpty, pick, slice } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
@@ -13,10 +13,12 @@ import { capitalPDangit } from 'lib/formatting';
 /**
  * Internal dependencies
  */
+import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
 import tableRows from './table-rows';
-
 import SearchCard from 'components/search-card';
+
+const pageSize = 10;
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -27,31 +29,35 @@ class TransactionsTable extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		var initialTransactions;
 
 		if ( props.transactions ) {
-			initialTransactions = tableRows.filter( props.transactions, props.initialFilter );
+			this.state = this.applyFilters( props.transactions, props.initialFilter, 1 );
+		} else {
+			this.state = {
+				filter: props.initialFilter,
+				page: 1,
+				total: 0,
+			};
 		}
-
-		this.state = {
-			transactions: initialTransactions,
-			filter: props.initialFilter,
-		};
 	}
+
+	onPageClick = page => {
+		this.filterTransactions( this.state.filter, page );
+	};
 
 	componentWillUpdate() {
 		if ( ! this.state.transactions ) {
 			// `defer` is necessary to prevent a React.js rendering error. It is
 			// not possible to call `this.setState` during `componentWillUpdate`, so
 			// we use `defer` to run the update on the next event loop.
-			defer( this.filterTransactions.bind( this, this.state.filter ) );
+			defer( this.filterTransactions.bind( this, this.state.filter, 1 ) );
 		}
 	}
 
-	filterTransactions = filter => {
-		var newFilter, newTransactions;
+	applyFilters = ( transactions, filter, page ) => {
+		let newFilter;
 
-		if ( ! this.props.transactions ) {
+		if ( ! transactions ) {
 			return;
 		}
 
@@ -65,20 +71,32 @@ class TransactionsTable extends React.Component {
 			newFilter = filter;
 		}
 
-		newTransactions = tableRows.filter( this.props.transactions, newFilter );
+		const pageIndex = page - 1;
+		const filteredTransactions = tableRows.filter( this.props.transactions, newFilter );
+		const newTransactions = slice(
+			filteredTransactions,
+			pageIndex * pageSize,
+			pageIndex * pageSize + pageSize
+		);
 
-		this.setState( {
+		return {
 			transactions: newTransactions,
 			filter: newFilter,
-		} );
+			page,
+			total: filteredTransactions.length,
+		};
+	};
+
+	filterTransactions = ( filter, page ) => {
+		this.setState( this.applyFilters( this.props.transactions, filter, page ) );
 	};
 
 	onSearch = terms => {
-		this.filterTransactions( { search: terms } );
+		this.filterTransactions( { search: terms }, 1 );
 	};
 
 	render() {
-		var header;
+		let header;
 
 		if ( false !== this.props.header ) {
 			header = (
@@ -100,6 +118,13 @@ class TransactionsTable extends React.Component {
 					{ header }
 					<tbody>{ this.renderRows() }</tbody>
 				</table>
+				<Pagination
+					className="billing-history__pagination"
+					page={ this.state.page }
+					perPage={ pageSize }
+					total={ this.state.total }
+					pageClick={ this.onPageClick }
+				/>
 			</div>
 		);
 	}

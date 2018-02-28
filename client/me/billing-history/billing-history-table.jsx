@@ -79,7 +79,7 @@ class BillingHistoryTable extends React.Component {
 		return (
 			<TransactionsTable
 				{ ...this.props }
-				initialFilter={ { date: { newest: 5 } } }
+				initialFilter={ { date: { newest: true } } }
 				header
 				emptyTableText={ emptyTableText }
 				noFilterResultsText={ noFilterResultsText }

@@ -51,7 +51,7 @@ class UpcomingChargesTable extends Component {
 		return (
 			<TransactionsTable
 				transactions={ this.props.transactions }
-				initialFilter={ { date: { newest: 20 } } }
+				initialFilter={ { date: { newest: true } } }
 				emptyTableText={ emptyTableText }
 				noFilterResultsText={ noFilterResultsText }
 				transactionRenderer={ this.renderTransaction }

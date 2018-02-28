@@ -103,6 +103,10 @@
 	width: 110px;
 }
 
+.billing-history__pagination {
+	margin: 12px 0;
+}
+
 .billing-history__trans-wrap {
 	@include clear-fix;
 }
