@@ -1,49 +1,13 @@
+@import 'components/credit-card/style';
+
 .label-settings__credit-card-description {
 	margin-bottom: 4px;
 	color: $gray-text-min;
 	padding-bottom: 8px;
 }
 
-.card.label-settings__card {
-	margin-bottom: 14px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	cursor: pointer;
-}
-
-.label-settings__card .payment-logo {
-	margin-top: 0;
-}
-
-.form-checkbox.label-settings__card-checkbox {
-	margin-right: 20px;
-	float: left;
-}
-
-.payment-logo {
-	float: left;
-	margin-top: 10px;
-	margin-right: 14px;
-}
-
-.label-settings__card-details {
-	float: left;
-	flex-grow: 1;
-}
-
-.label-settings__card-number {
-	margin-bottom: 0;
-	font-weight: bold;
-}
-
-.label-settings__card-name {
-	margin-bottom: 0;
-}
-
-.label-settings__card-date {
-	float: right;
-	font-style: italic;
+.label-settings__payments .button {
+	margin-top: 14px;
 }
 
 .label-settings__labels-container {
@@ -93,6 +57,26 @@
 	.gridicon {
 		fill: transparent;
 		stroke: transparent;
+	}
+
+	.credit-card__stored-card {
+		background: none;
+
+		.credit-card__stored-card-number {
+			max-width: 100px;
+			color: transparent;
+		}
+
+		&::before {
+			content: '';
+			width: 100%;
+			order: 1;
+		}
+
+		.credit-card__stored-card-name, .credit-card__stored-card-expiration-date {
+			order: 1;
+			color: transparent;
+		}
 	}
 }
 

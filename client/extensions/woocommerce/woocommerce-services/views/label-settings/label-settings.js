@@ -22,7 +22,8 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
-import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
+import CreditCard from 'components/credit-card';
+import { getCreditCardSummary } from 'components/credit-card/stored-card';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import {
 	openAddCardDialog,
@@ -68,13 +69,13 @@ class ShippingLabels extends Component {
 					</FormLabel>
 					<FormSelect />
 				</FormFieldSet>
-				<FormFieldSet>
+				<FormFieldSet className="label-settings__payments">
 					<FormLabel className="label-settings__cards-label">
 						<span />
 					</FormLabel>
 					<p className="label-settings__credit-card-description" />
-					<PaymentMethod selected={ false } isLoading={ true } />
-					<PaymentMethod selected={ false } isLoading={ true } />
+					<CreditCard card={ {} } />
+					<CreditCard card={ {} } />
 					<Button compact />
 				</FormFieldSet>
 			</div>
@@ -170,7 +171,7 @@ class ShippingLabels extends Component {
 						'account (%(card)s) to pay for the labels you print',
 					{
 						args: {
-							card: getPaymentMethodTitle( translate, selectedType, selectedDigits ),
+							card: getCreditCardSummary( translate, selectedType, selectedDigits ),
 						},
 					}
 				);
@@ -207,16 +208,18 @@ class ShippingLabels extends Component {
 			buttonLabel = translate( 'Add a credit card' );
 		}
 
-		const renderPaymentMethod = ( method, index ) => {
+		const renderPaymentMethod = method => {
 			const onSelect = () => onPaymentMethodChange( method.payment_method_id );
 			return (
-				<PaymentMethod
-					key={ index }
+				<CreditCard
+					key={ method.payment_method_id }
+					card={ {
+						card_type: method.card_type,
+						card: method.card_digits,
+						name: method.name,
+						expiry: method.expiry,
+					} }
 					selected={ selectedPaymentMethod === method.payment_method_id }
-					type={ method.card_type }
-					name={ method.name }
-					digits={ method.card_digits }
-					expiry={ method.expiry }
 					onSelect={ onSelect }
 				/>
 			);
@@ -232,15 +235,15 @@ class ShippingLabels extends Component {
 		};
 
 		return (
-			<div>
+			<div className="label-settings__payments">
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
 
 				<QueryStoredCards />
 				{ isReloading ? (
 					<div className="label-settings__placeholder">
-						<PaymentMethod selected={ false } isLoading={ true } />
-						<PaymentMethod selected={ false } isLoading={ true } />
+						<CreditCard card={ {} } />
+						<CreditCard card={ {} } />
 					</div>
 				) : (
 					paymentMethods.map( renderPaymentMethod )
