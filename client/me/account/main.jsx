@@ -11,7 +11,6 @@ import debugFactory from 'debug';
 import emailValidator from 'email-validator';
 import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -796,11 +795,7 @@ export default compose(
 		state => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 		} ),
-		dispatch =>
-			bindActionCreators(
-				{ successNotice, errorNotice, recordGoogleEvent, recordTracksEvent },
-				dispatch
-			)
+		{ successNotice, errorNotice, recordGoogleEvent, recordTracksEvent }
 	),
 	localize,
 	protectForm
