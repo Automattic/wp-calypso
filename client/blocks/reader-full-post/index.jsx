@@ -17,7 +17,6 @@ import AutoDirection from 'components/auto-direction';
 import ReaderMain from 'components/reader-main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
-import { setSection } from 'state/ui/actions';
 import { markPostSeen } from 'state/reader/posts/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
@@ -500,5 +499,5 @@ export default connect(
 
 		return props;
 	},
-	{ setSection, markPostSeen }
+	{ markPostSeen }
 )( FullPostView );
