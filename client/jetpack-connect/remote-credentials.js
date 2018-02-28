@@ -92,7 +92,7 @@ export class OrgCredentialsForm extends Component {
 			<span className="jetpack-connect__install-step">
 				{ translate(
 					'Add your WordPress administrator credentials ' +
-						'for this site. Your credentials will not be stored and are used for the purpose' +
+						'for this site. Your credentials will not be stored and are used for the purpose ' +
 						'of installing Jetpack securely. You can also skip this step entirely and install Jetpack manually.'
 				) }
 			</span>
