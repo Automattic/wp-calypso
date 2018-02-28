@@ -28,7 +28,7 @@ export const requestJetpackSettings = ( siteId, query ) => ( {
 	},
 } );
 
-export const saveJetpackSettings = ( siteId, settings ) => ( {
+export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 	siteId,
 	settings,
@@ -39,7 +39,7 @@ export const saveJetpackSettings = ( siteId, settings ) => ( {
 	},
 } );
 
-export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
+export const saveJetpackOnboardingSettingsSuccess = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	siteId,
 	settings,

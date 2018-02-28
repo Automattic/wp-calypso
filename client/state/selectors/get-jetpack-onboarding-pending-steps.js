@@ -9,7 +9,7 @@ import { reduce } from 'lodash';
  * Internal dependencies
  */
 import { JETPACK_ONBOARDING_STEPS as STEPS } from 'jetpack-onboarding/constants';
-import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 import { getRequest } from 'state/selectors';
 
 export default function getJetpackOnboardingPendingSteps( state, siteId, steps ) {
@@ -27,7 +27,7 @@ export default function getJetpackOnboardingPendingSteps( state, siteId, steps )
 		( result, stepName ) => {
 			result[ stepName ] = getRequest(
 				state,
-				saveJetpackSettings( siteId, { onboarding: stepActionsMap[ stepName ] } )
+				saveJetpackOnboardingSettings( siteId, { onboarding: stepActionsMap[ stepName ] } )
 			).isLoading;
 			return result;
 		},

@@ -28,7 +28,10 @@ import {
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { requestJetpackSettings, saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import {
+	requestJetpackSettings,
+	saveJetpackOnboardingSettings,
+} from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -152,10 +155,13 @@ export default connect(
 			userIdHashed,
 		};
 	},
-	{ recordTracksEvent, saveJetpackSettings },
+	{ recordTracksEvent, saveJetpackOnboardingSettings },
 	(
 		{ siteId, jpoAuth, userIdHashed, ...stateProps },
-		{ recordTracksEvent: recordTracksEventAction, saveJetpackSettings: saveJetpackSettingsAction },
+		{
+			recordTracksEvent: recordTracksEventAction,
+			saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
+		},
 		ownProps
 	) => ( {
 		jpoAuth,
@@ -170,7 +176,7 @@ export default connect(
 				...additionalProperties,
 			} ),
 		saveJpoSettings: ( s, settings ) =>
-			saveJetpackSettingsAction( s, {
+			saveJetpackOnboardingSettingsAction( s, {
 				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
 			} ),
 		...ownProps,
