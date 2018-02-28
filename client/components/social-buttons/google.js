@@ -32,6 +32,7 @@ class GoogleLoginButton extends Component {
 		responseHandler: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		onClick: PropTypes.func,
+		hideGoogleIcon: PropTypes,
 	};
 
 	static defaultProps = {
@@ -184,6 +185,7 @@ class GoogleLoginButton extends Component {
 		);
 		const isPrimary = Boolean( this.props.isPrimary );
 		const { children } = this.props;
+		const hideGoogleIcon = this.props.hideGoogleIcon;
 		let customButton = null;
 
 		if ( children ) {
@@ -211,9 +213,13 @@ class GoogleLoginButton extends Component {
 						onMouseOut={ this.hideError }
 						onClick={ this.handleClick }
 					>
-						<GoogleIcon isDisabled={ isDisabled } />
+						{ ! hideGoogleIcon && <GoogleIcon isDisabled={ isDisabled } /> }
 
-						<span className="social-buttons__service-name">
+						<span
+							className={ classNames( 'social-buttons__service-name', {
+								'has-icon': ! hideGoogleIcon,
+							} ) }
+						>
 							{ this.props.translate( 'Continue with %(service)s', {
 								args: { service: 'Google' },
 								comment:

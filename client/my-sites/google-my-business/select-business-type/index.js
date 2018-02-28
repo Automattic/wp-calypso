@@ -101,6 +101,7 @@ class SelectBusinessType extends Component {
 							uxMode={ 'popup' }
 							redirectUri={ '' }
 							isPrimary={ true }
+							hideGoogleIcon={ true }
 						/>
 					</div>
 				</Card>
@@ -109,9 +110,11 @@ class SelectBusinessType extends Component {
 					headerText={ translate( 'Online Only', {
 						comment: 'In the context of a business activity, as opposed to a brick and mortar',
 					} ) }
-					mainText={ preventWidowFormatting( translate(
-						"Don't provide in-person services? Learn more about reaching your customers online."
-					) ) }
+					mainText={ preventWidowFormatting(
+						translate(
+							"Don't provide in-person services? Learn more about reaching your customers online."
+						)
+					) }
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
 					buttonHref={ '/settings/traffic/' + siteId }
 					buttonOnClick={ this.trackOptimizeYourSEOClick }
