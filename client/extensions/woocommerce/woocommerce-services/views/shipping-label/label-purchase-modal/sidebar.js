@@ -17,36 +17,33 @@ import PriceSummary from './price-summary';
 import {
 	setEmailDetailsOption,
 	setFulfillOrderOption,
-	updatePaperSize,
+	setSettingsValue,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
-	getShippingLabel,
 	isLoaded,
 	getFormErrors,
+	getSettingsValues,
 	shouldFulfillOrder,
 	shouldEmailDetails,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 const Sidebar = ( props ) => {
-	const { orderId, siteId, errors, paperSize, translate, fulfillOrder, emailDetails } = props;
+	const { orderId, siteId, errors, settings, translate, fulfillOrder, emailDetails } = props;
 
 	const onEmailDetailsChange = () => props.setEmailDetailsOption( orderId, siteId, ! emailDetails );
 	const onFulfillOrderChange = () => props.setFulfillOrderOption( orderId, siteId, ! fulfillOrder );
-	const setValue = ( key, value ) => {
-		switch ( key ) {
-			case 'paper_size':
-				props.updatePaperSize( orderId, siteId, value );
-				break;
-			case 'selected_payment_method_id':
-			case 'email_receipts':
-				break;
-		}
-	};
+	const onSettingsChange = ( key, value ) => props.setSettingsValue( orderId, siteId, key, value );
 
 	return (
 		<div className="label-purchase-modal__sidebar">
 			<PriceSummary siteId={ siteId } orderId={ orderId } />
-			<LabelSettings siteId={ siteId } setValue={ setValue } paperSize={ paperSize } errors={ errors } />
+			<LabelSettings
+				siteId={ siteId }
+				setValue={ onSettingsChange }
+				errors={ errors }
+				values={ settings }
+			/>
+			<hr />
 			<FormLabel className="label-purchase-modal__option-email-customer">
 				<FormCheckbox checked={ emailDetails } onChange={ onEmailDetailsChange } />
 				<span>{ translate( 'Email shipment details to the customer' ) }</span>
@@ -62,17 +59,16 @@ const Sidebar = ( props ) => {
 Sidebar.propTypes = {
 	siteId: PropTypes.number.isRequired,
 	orderId: PropTypes.number.isRequired,
-	paperSize: PropTypes.string.isRequired,
+	settings: PropTypes.object.isRequired,
 	errors: PropTypes.object.isRequired,
-	updatePaperSize: PropTypes.func.isRequired,
+	setSettingsValue: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return {
-		paperSize: shippingLabel.paperSize,
 		errors: loaded && getFormErrors( state, orderId, siteId ).sidebar,
+		settings: loaded && getSettingsValues( state, orderId, siteId ),
 		fulfillOrder: loaded && shouldFulfillOrder( state, orderId, siteId ),
 		emailDetails: loaded && shouldEmailDetails( state, orderId, siteId ),
 	};
@@ -82,7 +78,7 @@ const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( {
 		setEmailDetailsOption,
 		setFulfillOrderOption,
-		updatePaperSize,
+		setSettingsValue,
 	}, dispatch );
 };
 

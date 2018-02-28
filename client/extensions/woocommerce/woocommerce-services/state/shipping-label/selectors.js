@@ -9,7 +9,11 @@ import { translate } from 'i18n-calypso';
 import createSelector from 'lib/create-selector';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tree';
-import { areSettingsLoaded, areSettingsErrored } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import {
+	areSettingsLoaded,
+	areSettingsErrored,
+	getLabelSettingsFormData,
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import {
 	isLoaded as arePackagesLoaded,
 	isFetchError as arePackagesErrored,
@@ -49,18 +53,15 @@ export const shouldFulfillOrder = ( state, orderId, siteId = getSelectedSiteId( 
 	return shippingLabel && shippingLabel.fulfillOrder;
 };
 
+export const getSettingsValues = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const defaults = getLabelSettingsFormData( state, siteId );
+	return Object.assign( {}, defaults, shippingLabel && shippingLabel.settings );
+};
+
 export const shouldEmailDetails = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	return shippingLabel && shippingLabel.emailDetails;
-};
-
-export const getSelectedPaymentMethod = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	if ( ! shippingLabel ) {
-		return null;
-	}
-
-	return shippingLabel.paymentMethod;
 };
 
 export const hasRefreshedLabelStatus = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {

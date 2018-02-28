@@ -27,6 +27,7 @@ import {
 	areSettingsErrored,
 	userCanEditSettings,
 	userCanManagePayments,
+	getLabelSettingsFormData,
 	getLabelSettingsFormMeta,
 } from '../../state/label-settings/selectors';
 
@@ -46,7 +47,7 @@ class AccountSettingsRootView extends Component {
 	};
 
 	renderContent = () => {
-		const { isFetchError, siteId, translate } = this.props;
+		const { formData, isFetchError, siteId, translate } = this.props;
 
 		if ( isFetchError ) {
 			return (
@@ -54,7 +55,7 @@ class AccountSettingsRootView extends Component {
 			);
 		}
 
-		return <LabelSettings siteId={ siteId } setValue={ this.setValue } />;
+		return <LabelSettings siteId={ siteId } setValue={ this.setValue } values={ formData } />;
 	};
 
 	render() {
@@ -106,8 +107,10 @@ AccountSettingsRootView.propTypes = {
 };
 
 function mapStateToProps( state ) {
+	const siteId = getSelectedSiteId( state );
 	return {
-		siteId: getSelectedSiteId( state ),
+		siteId,
+		formData: getLabelSettingsFormData( state ) || {},
 		formMeta: getLabelSettingsFormMeta( state ),
 		labelsEnabled: areLabelsEnabled( state ),
 		isFetchError: areSettingsErrored( state ),

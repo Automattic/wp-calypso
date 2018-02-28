@@ -31,12 +31,9 @@ import {
 import {
 	areSettingsFetching,
 	areSettingsLoaded,
-	getEmailReceipts,
 	getLabelSettingsStoreOptions,
 	getMasterUserInfo,
-	getPaperSize,
 	getPaymentMethods,
-	getSelectedPaymentMethodId,
 	isPristine,
 	userCanEditSettings,
 	userCanManagePayments,
@@ -353,19 +350,19 @@ ShippingLabels.propTypes = {
 };
 
 export default connect(
-	( state, { siteId, paperSize } ) => {
+	( state, { siteId, values } ) => {
 		return {
 			isLoading: areSettingsFetching( state, siteId ) && ! areSettingsLoaded( state, siteId ),
 			isReloading: areSettingsFetching( state, siteId ) && areSettingsLoaded( state, siteId ),
 			pristine: isPristine( state, siteId ),
+			paperSize: values.paper_size,
+			selectedPaymentMethod: values.selected_payment_method_id,
+			emailReceipts: values.email_receipts,
 			paymentMethods: getPaymentMethods( state, siteId ),
-			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
-			paperSize: paperSize || getPaperSize( state, siteId ),
 			storeOptions: getLabelSettingsStoreOptions( state, siteId ),
 			canEditPayments: userCanManagePayments( state, siteId ),
 			canEditSettings:
 				userCanManagePayments( state, siteId ) || userCanEditSettings( state, siteId ),
-			emailReceipts: getEmailReceipts( state, siteId ),
 			...getMasterUserInfo( state, siteId ),
 		};
 	},
