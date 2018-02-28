@@ -6,6 +6,7 @@
 
 import React from 'react';
 import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:reauth-required' );
@@ -24,14 +25,14 @@ import FormInputValidation from 'components/forms/form-input-validation';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import eventRecorder from 'me/event-recorder';
 import userUtilities from 'lib/user/utils';
 import constants from 'me/constants';
 import Notice from 'components/notice';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ReauthRequired = createReactClass( {
 	displayName: 'ReauthRequired',
-	mixins: [ observe( 'twoStepAuthorization' ), eventRecorder ],
+	mixins: [ observe( 'twoStepAuthorization' ) ],
 
 	getInitialState: function() {
 		return {
@@ -40,6 +41,29 @@ const ReauthRequired = createReactClass( {
 			smsRequestsAllowed: true, // Can the user request another SMS code?
 			smsCodeSent: false,
 		};
+	},
+
+	getClickHandler( action, callback ) {
+		return () => {
+			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+
+			if ( callback ) {
+				callback();
+			}
+		};
+	},
+
+	getCheckboxHandler( checkboxName ) {
+		return event => {
+			const action = 'Clicked ' + checkboxName + ' checkbox';
+			const value = event.target.checked ? 1 : 0;
+
+			this.props.recordGoogleEvent( 'Me', action, 'checked', value );
+		};
+	},
+
+	getFocusHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	},
 
 	getCodeMessage: function() {
@@ -122,7 +146,7 @@ const ReauthRequired = createReactClass( {
 			<FormButton
 				disabled={ ! smsRequestsAllowed }
 				isPrimary={ false }
-				onClick={ this.recordClickEvent( clickAction, this.sendSMSCode ) }
+				onClick={ this.getClickHandler( clickAction, this.sendSMSCode ) }
 				type="button"
 			>
 				{ buttonLabel }
@@ -179,10 +203,7 @@ const ReauthRequired = createReactClass( {
 				<p>
 					<a
 						className="reauth-required__sign-out"
-						onClick={ this.recordClickEvent(
-							'Reauth Required Log Out Link',
-							userUtilities.logout
-						) }
+						onClick={ this.getClickHandler( 'Reauth Required Log Out Link', userUtilities.logout ) }
 					>
 						{ this.props.translate( 'Not you? Sign Out' ) }
 					</a>
@@ -197,7 +218,7 @@ const ReauthRequired = createReactClass( {
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
 							placeholder={ codePlaceholder }
-							onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
+							onFocus={ this.getFocusHandler( 'Reauth Required Verification Code Field' ) }
 							value={ this.state.code }
 							onChange={ this.handleChange }
 						/>
@@ -210,7 +231,7 @@ const ReauthRequired = createReactClass( {
 							<FormCheckbox
 								id="remember2fa"
 								name="remember2fa"
-								onClick={ this.recordCheckboxEvent( 'Remember 2fa' ) }
+								onClick={ this.getCheckboxHandler( 'Remember 2fa' ) }
 								checked={ this.state.remember2fa }
 								onChange={ this.handleCheckedChange }
 							/>
@@ -223,7 +244,7 @@ const ReauthRequired = createReactClass( {
 					<FormButtonsBar>
 						<FormButton
 							disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
-							onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) }
+							onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
 						>
 							{ this.props.translate( 'Verify' ) }
 						</FormButton>
@@ -246,4 +267,4 @@ const ReauthRequired = createReactClass( {
 	},
 } );
 
-export default localize( ReauthRequired );
+export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );
