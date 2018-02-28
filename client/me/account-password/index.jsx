@@ -6,7 +6,6 @@
 
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
-import { bindActionCreators } from 'redux';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
@@ -202,7 +201,6 @@ const AccountPassword = createReactClass( {
 	},
 } );
 
-export default compose(
-	connect( null, dispatch => bindActionCreators( { errorNotice, recordGoogleEvent }, dispatch ) ),
-	localize
-)( AccountPassword );
+export default compose( connect( null, { errorNotice, recordGoogleEvent } ), localize )(
+	AccountPassword
+);
