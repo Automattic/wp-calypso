@@ -26,15 +26,13 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormInputValidation from 'components/forms/form-input-validation';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
-import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
 
-	mixins: [ observe( 'accountPasswordData' ), eventRecorder ],
+	mixins: [ observe( 'accountPasswordData' ) ],
 
 	componentDidMount: function() {
 		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
