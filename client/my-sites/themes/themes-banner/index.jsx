@@ -37,7 +37,7 @@ class ThemesBanner extends PureComponent {
 	};
 
 	recordEvent = () => {
-		const { siteId, themeId, activeThemeId, recordTracksEvent } = this.props;
+		const { activeThemeId, recordTracksEvent, siteId, themeId } = this.props;
 		const tracksData = {
 			site_id: siteId,
 			theme: themeId,
