@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 
 const CTACard = ( {
@@ -23,7 +23,7 @@ const CTACard = ( {
 	buttonHref,
 	buttonOnClick,
 } ) => (
-	<Card className="select-business-type__cta-card">
+	<CompactCard className="select-business-type__cta-card">
 		<div className="select-business-type__cta-card-main">
 			<h2>{ headerText }</h2>
 			<p>{ mainText }</p>
@@ -38,7 +38,7 @@ const CTACard = ( {
 				{ buttonText } <Gridicon icon={ buttonIcon } />
 			</Button>
 		</div>
-	</Card>
+	</CompactCard>
 );
 
 CTACard.propTypes = {
