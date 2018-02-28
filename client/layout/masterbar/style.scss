@@ -92,6 +92,12 @@ $autobar-height: 20px;
 		color: var( --masterbar-color );
 	}
 
+	.masterbar__item-placeholder {
+		display: block;
+		@include placeholder;
+		line-height: 1;
+	}
+
 	.gridicon + .masterbar__item-content {
 		padding: 0 0 0 6px;
 	}

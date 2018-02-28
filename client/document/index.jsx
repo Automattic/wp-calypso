@@ -14,6 +14,7 @@ import { get } from 'lodash';
 import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
+import MasterbarShell from '../layout/masterbar/shell';
 import getStylesheet from './utils/stylesheet';
 
 class Document extends React.Component {
@@ -49,6 +50,7 @@ class Document extends React.Component {
 			feedbackURL,
 			inlineScriptNonce,
 			analyticsScriptNonce,
+			isLoggedIn,
 		} = this.props;
 
 		const inlineScript =
@@ -104,7 +106,7 @@ class Document extends React.Component {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 								} ) }
 							>
-								<div className="masterbar" />
+								{ isLoggedIn ? <MasterbarShell /> : <div className="masterbar" /> }
 								<div className="layout__content">
 									<div className="wpcom-site__logo noticon noticon-wordpress" />
 									{ hasSecondary && (

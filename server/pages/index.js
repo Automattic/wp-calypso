@@ -413,6 +413,14 @@ function setUpCSP( req, res, next ) {
 
 function setUpRoute( req, res, next ) {
 	req.context = getDefaultContext( req );
+
+	// @TODO don't merge this (!), only for testing purposes
+	if ( 'development' === process.env.NODE_ENV && req.query.login ) {
+		req.context.isLoggedIn = true;
+		setUpCSP( req, res, () => setUpLoggedInRoute( req, res, next ) );
+		return;
+	}
+
 	setUpCSP(
 		req,
 		res,
