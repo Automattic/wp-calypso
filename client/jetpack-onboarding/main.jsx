@@ -27,7 +27,7 @@ import {
 	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
@@ -41,6 +41,8 @@ class JetpackOnboardingMain extends React.PureComponent {
 	static defaultProps = {
 		stepName: STEPS.SITE_TITLE,
 	};
+
+	state = { allowRequest: false };
 
 	componentDidMount() {
 		const { siteId, siteSlug } = this.props;
@@ -58,6 +60,12 @@ class JetpackOnboardingMain extends React.PureComponent {
 				`//${ siteDomain }/wp-admin/admin.php`
 			);
 			externalRedirect( url );
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingWhetherConnected && ! nextProps.isRequestingWhetherConnected ) {
+			this.setState( { allowRequest: true } );
 		}
 	}
 
@@ -85,7 +93,13 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} = this.props;
 		return (
 			<Main className="jetpack-onboarding">
-				<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
+				{ /* We only allow querying of site settings once we know that we have finished
+				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
+				   * the site is a connected Jetpack site or not, and a network request that uses
+				   * the wrong argument can mess up our request tracking quite badly. */
+				this.state.allowRequest && (
+					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
+				) }
 				{ siteId ? (
 					<Wizard
 						action={ action }
@@ -117,7 +131,10 @@ export default connect(
 		const settings = getJetpackOnboardingSettings( state, siteId );
 		const isBusiness = get( settings, 'siteType' ) === 'business';
 
+		const isRequestingWhetherConnected =
+			isRequestingSite( state, siteId ) || isRequestingSites( state );
 		const isConnected = isJetpackSite( state, siteId );
+
 		let jpoAuth;
 
 		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
@@ -150,6 +167,7 @@ export default connect(
 		return {
 			jpoAuth,
 			isRequestingSettings,
+			isRequestingWhetherConnected,
 			siteId,
 			siteSlug,
 			settings,
