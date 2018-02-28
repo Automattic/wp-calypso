@@ -151,19 +151,9 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		return get( this.props.contactDetails, 'extra.legalType' ) === 'CCO';
 	}
 
-	organizationFieldIsValid() {
-		if ( this.needsOrganization() ) {
-			return (
-				! isEmpty( this.props.contactDetails.organization ) &&
-				isEmpty( this.state.errorMessages.organization )
-			);
-		}
-		return true;
-	}
-
 	getOrganizationErrorMessage() {
 		let message = ( this.state.errorMessages.organization || [] ).join( '\n' );
-		if ( isEmpty( this.props.contactDetails.organization ) ) {
+		if ( this.needsOrganization() && isEmpty( this.props.contactDetails.organization ) ) {
 			message = this.props.translate(
 				'An organization name is required for Canadian corporations'
 			);
@@ -171,8 +161,13 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		return message;
 	}
 
+	organizationFieldIsValid() {
+		return isEmpty( this.getOrganizationErrorMessage() );
+	}
+
 	renderOrganizationField() {
 		const { translate, contactDetails } = this.props;
+
 		return (
 			<FormFieldset>
 				<Input
