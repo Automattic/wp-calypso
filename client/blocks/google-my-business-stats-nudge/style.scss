@@ -15,9 +15,9 @@
 	// standard padding
 	padding: 11px 24px 11px 24px;
 	@include breakpoint( ">960px" ) {
-		// support image "flowing" off the edge of card
-		max-height: 250px;
-		overflow: hidden;
+		max-height: 300px;
+		// allow image to go right to the edge of the card
+		padding-bottom: 0px;
 	}
 }
 
@@ -28,6 +28,8 @@
 	@include breakpoint( ">960px" ) {
 		// the image has about 12 px of whitespace, this helps "balance" the block
 		padding-right: 12px;
+		// compensate for the parent card missing padding
+		padding-bottom: 11px;
 	}
 }
 
@@ -58,17 +60,17 @@
 
 .google-my-business-stats-nudge__image-wrapper {
 	display: none;
-	width: 320px;
 	padding: 0 40px;
 	@include breakpoint( ">960px" ) {
-		display: block;
+		display: flex;
 		margin-right: 24px;
-		min-height: 250px;
+		min-width: 250px;
 	}
 }
 
 .google-my-business-stats-nudge__image {
-	height: auto;
+	flex-shrink: 0;
+	max-height: 250px;
 }
 
 .google-my-business-stats-nudge__close-icon {

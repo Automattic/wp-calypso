@@ -78,7 +78,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 					<div className="google-my-business-stats-nudge__image-wrapper">
 						<img
 							className="google-my-business-stats-nudge__image"
-							src="/calypso/images/google-my-business/phone-screenshot.png"
+							src="/calypso/images/google-my-business/phone-screenshot-cropped.png"
 							alt={ this.props.translate( 'Your business with Google My Business' ) }
 						/>
 					</div>
