@@ -35,6 +35,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/components-usage-stats": false,
+		"google-my-business": true,
 		"help": true,
 		"jetpack/happychat": true,
 		"jetpack/onboarding": true,
