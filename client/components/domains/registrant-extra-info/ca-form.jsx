@@ -167,6 +167,10 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 
 	renderOrganizationField() {
 		const { translate, contactDetails } = this.props;
+		const label = {
+			label: translate( 'Organization' ),
+			...( this.needsOrganization() ? {} : { labelProps: { optional: true } } ),
+		};
 
 		return (
 			<FormFieldset>
@@ -176,8 +180,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 					value={ contactDetails.organization || '' }
 					isError={ ! this.organizationFieldIsValid() }
 					errorMessage={ this.getOrganizationErrorMessage() }
-					label={ translate( 'Organization' ) }
-					labelProps={ ! this.needsOrganization() ? { optional: true } : {} }
+					{ ...label }
 					onChange={ this.handleChangeEvent }
 				/>
 			</FormFieldset>
