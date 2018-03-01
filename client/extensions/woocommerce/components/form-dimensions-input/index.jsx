@@ -26,7 +26,7 @@ class FormDimensionsInput extends Component {
 		className: PropTypes.string,
 		dimensions: PropTypes.shape( {
 			width: PropTypes.string,
-			height: PropTypes.sting,
+			height: PropTypes.string,
 			length: PropTypes.string,
 		} ),
 		dimensionsUnit: PropTypes.string,
