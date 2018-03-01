@@ -30,6 +30,7 @@ import {
 	didInviteDeletionSucceed,
 } from 'state/invites/selectors';
 import { deleteInvite } from 'state/invites/actions';
+import { canCurrentUser } from 'state/selectors';
 
 export class PeopleInviteDetails extends React.PureComponent {
 	static propTypes = {
@@ -167,11 +168,24 @@ export class PeopleInviteDetails extends React.PureComponent {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { canViewPeople, site, translate } = this.props;
+		const siteId = site && site.ID;
+
+		if ( siteId && ! canViewPeople ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
 
 		return (
 			<Main className="people-invite-details">
-				{ site && site.ID && <QuerySiteInvites siteId={ site.ID } /> }
+				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
 
 				<HeaderCake isCompact onClick={ this.goBack }>
@@ -195,6 +209,7 @@ export default connect(
 			deleting: isDeletingInvite( state, siteId, ownProps.inviteKey ),
 			deleteSuccess: didInviteDeletionSucceed( state, siteId, ownProps.inviteKey ),
 			invite: getInviteForSite( state, siteId, ownProps.inviteKey ),
+			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
 		};
 	},
 	{ deleteInvite }
