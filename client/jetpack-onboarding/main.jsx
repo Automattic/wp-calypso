@@ -42,7 +42,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 		stepName: STEPS.SITE_TITLE,
 	};
 
-	state = { allowRequest: false };
+	state = { hasFinishedRequestingSite: false };
 
 	componentDidMount() {
 		const { siteId, siteSlug } = this.props;
@@ -65,7 +65,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.isRequestingWhetherConnected && ! nextProps.isRequestingWhetherConnected ) {
-			this.setState( { allowRequest: true } );
+			this.setState( { hasFinishedRequestingSite: true } );
 		}
 	}
 
@@ -98,7 +98,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
 				   * the site is a connected Jetpack site or not, and a network request that uses
 				   * the wrong argument can mess up our request tracking quite badly. */
-				this.state.allowRequest && (
+				this.state.hasFinishedRequestingSite && (
 					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
 				) }
 				{ siteId ? (
