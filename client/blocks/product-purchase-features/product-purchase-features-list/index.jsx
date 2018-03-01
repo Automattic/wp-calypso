@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -244,11 +245,15 @@ export default connect(
 		};
 	},
 	{
-		recordBusinessOnboardingClick: function( eventProps ) {
-			recordTracksEvent( 'calypso_plan_features_onboarding_click', eventProps );
-		},
-		recordReturnToDashboardClick: function( eventProps ) {
-			recordTracksEvent( 'calypso_plan_features_returnToDashboard_click', eventProps );
-		},
+		recordBusinessOnboardingClick: partial(
+			recordTracksEvent,
+			'calypso_plan_features_onboarding_click',
+			{}
+		),
+		recordReturnToDashboardClick: partial(
+			recordTracksEvent,
+			'calypso_plan_features_returnToDashboard_click',
+			{}
+		),
 	}
 )( ProductPurchaseFeaturesList );
