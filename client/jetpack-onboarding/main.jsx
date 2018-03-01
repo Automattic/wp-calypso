@@ -82,6 +82,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 		const {
 			action,
 			isRequestingSettings,
+			isRequestingWhetherConnected,
 			jpoAuth,
 			recordJpoEvent,
 			saveJpoSettings,
@@ -108,6 +109,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						components={ COMPONENTS }
 						hideNavigation={ stepName === STEPS.SUMMARY }
 						isRequestingSettings={ isRequestingSettings }
+						isRequestingWhetherConnected={ isRequestingWhetherConnected }
 						onBackClick={ this.getNavigationLinkClickHandler( 'back' ) }
 						onForwardClick={ this.getNavigationLinkClickHandler( 'forward' ) }
 						recordJpoEvent={ recordJpoEvent }
