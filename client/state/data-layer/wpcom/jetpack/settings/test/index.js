@@ -54,7 +54,7 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 		);
 	} );
 
-	test( 'should dispatch an action for GET HTTP request with a query including token and jpUser', () => {
+	test( 'should dispatch an action for GET HTTP request with a query including onboarding credentials', () => {
 		const query = {
 			onboarding: {
 				token,
