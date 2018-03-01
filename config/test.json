@@ -39,7 +39,6 @@
 		"help": true,
 		"jetpack/happychat": true,
 		"jetpack/onboarding": true,
-		"jetpack_core_inline_update": true,
 		"jitms": true,
 		"login/native-login-links": true,
 		"login/wp-login": true,

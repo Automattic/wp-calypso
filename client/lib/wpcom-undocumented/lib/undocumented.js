@@ -176,18 +176,6 @@ Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) 
 };
 
 /**
- * Update WordPress core install on the site with id siteId
- *
- * @param {int} [siteId] The site ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
-	debug( '/sites/:site_id:/core/update query' );
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/core/update' }, fn );
-};
-
-/**
  * Fetches settings for the Monitor module.
  *
  * @param {int} [siteId] The site ID

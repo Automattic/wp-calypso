@@ -201,7 +201,7 @@ export class EditorGroundControl extends React.Component {
 					compact
 					site={ this.props.site }
 					onSelect={ this.props.recordSiteButtonClick }
-					indicator={ true }
+					indicator={ false }
 				/>
 				<Drafts />
 				{ userNeedsVerification && (
