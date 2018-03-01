@@ -348,6 +348,227 @@ class RegisterDomainStep extends React.Component {
 		return designType && designType === 'blog' ? 'design_type_blog' : null;
 	}
 
+	checkDomainAvailability = ( domain, timestamp ) => callback => {
+		if (
+			! domain.match(
+				/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
+			)
+		) {
+			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
+			return callback();
+		}
+		if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
+			return callback();
+		}
+
+		checkDomainAvailability(
+			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+			( error, result ) => {
+				const timeDiff = Date.now() - timestamp;
+				const status = get( result, 'status', error );
+				const domainChecked = get( result, 'domain_name', domain );
+
+				const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
+				const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+				const isDomainTransferrable = TRANSFERRABLE === status;
+
+				this.setState( {
+					exactMatchDomain: domainChecked,
+					lastDomainStatus: status,
+					lastDomainIsTransferrable: isDomainTransferrable,
+				} );
+				if ( isDomainAvailable ) {
+					this.setState( { notice: null } );
+				} else {
+					this.showValidationErrorMessage(
+						domain,
+						status,
+						get( result, 'other_site_domain', null )
+					);
+				}
+
+				this.props.recordDomainAvailabilityReceive(
+					domain,
+					status,
+					timeDiff,
+					this.props.analyticsSection
+				);
+
+				this.props.onDomainsAvailabilityChange( true );
+				callback( null, isDomainAvailable ? result : null );
+			}
+		);
+	};
+
+	getDomainsSuggestions = ( domain, timestamp ) => callback => {
+		const suggestionQuantity =
+			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
+				? SUGGESTION_QUANTITY - 1
+				: SUGGESTION_QUANTITY;
+
+		const query = {
+			query: domain,
+			quantity: suggestionQuantity,
+			include_wordpressdotcom: false,
+			include_dotblogsubdomain: false,
+			tld_weight_overrides: this.getTldWeightOverrides(),
+			vendor: searchVendor,
+			vertical: this.props.surveyVertical,
+		};
+
+		domains
+			.suggestions( query )
+			.then( domainSuggestions => {
+				this.props.onDomainsAvailabilityChange( true );
+				const timeDiff = Date.now() - timestamp;
+				const analyticsResults = domainSuggestions.map( suggestion => suggestion.domain_name );
+
+				this.props.recordSearchResultsReceive(
+					domain,
+					analyticsResults,
+					timeDiff,
+					domainSuggestions.length,
+					this.props.analyticsSection
+				);
+
+				callback( null, domainSuggestions );
+			} )
+			.catch( error => {
+				const timeDiff = Date.now() - timestamp;
+
+				if ( error && error.statusCode === 503 ) {
+					this.props.onDomainsAvailabilityChange( false );
+				} else if ( error && error.error ) {
+					this.showValidationErrorMessage( domain, error.error );
+				}
+
+				const analyticsResults = [
+					error.code || error.error || 'ERROR' + ( error.statusCode || '' ),
+				];
+				this.props.recordSearchResultsReceive(
+					domain,
+					analyticsResults,
+					timeDiff,
+					-1,
+					this.props.analyticsSection
+				);
+				callback( error, null );
+			} );
+	};
+
+	handleDomainSuggestions = domain => ( error, result ) => {
+		if (
+			! this.state.loadingResults ||
+			domain !== this.state.lastDomainSearched ||
+			! this._isMounted
+		) {
+			// this callback is irrelevant now, a newer search has been made or the results were cleared OR
+			// domain registration was not available and component is unmounted
+			return;
+		}
+
+		const suggestions = uniqBy( flatten( compact( result ) ), function( suggestion ) {
+			return suggestion.domain_name;
+		} );
+
+		const isFreeOrUnknown = suggestion =>
+			suggestion.is_free === true || suggestion.status === domainAvailability.UNKNOWN;
+		const strippedDomainBase = this.getStrippedDomainBase( domain );
+		const exactMatchBeforeTld = suggestion =>
+			suggestion.domain_name === this.state.exactMatchDomain ||
+			startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
+		const bestAlternative = suggestion =>
+			! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
+		const availableSuggestions = reject( suggestions, isFreeOrUnknown );
+
+		const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
+		if ( recommendedSuggestion ) {
+			recommendedSuggestion.isRecommended = true;
+		} else if ( availableSuggestions.length > 0 ) {
+			availableSuggestions[ 0 ].isRecommended = true;
+		}
+
+		const bestAlternativeSuggestion = find( availableSuggestions, bestAlternative );
+		if ( bestAlternativeSuggestion ) {
+			bestAlternativeSuggestion.isBestAlternative = true;
+		} else if ( availableSuggestions.length > 1 ) {
+			availableSuggestions[ 1 ].isBestAlternative = true;
+		}
+
+		this.setState(
+			{
+				searchResults: suggestions,
+				loadingResults: false,
+			},
+			this.save
+		);
+	};
+
+	getSubdomainSuggestions = ( domain, timestamp ) => {
+		const includeWordPressDotCom =
+			this.props.surveyVertical && this.props.includeDotBlogSubdomain ? false : true;
+		const subdomainQuery = {
+			query: domain,
+			quantity: 1,
+			include_wordpressdotcom: includeWordPressDotCom,
+			include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
+			tld_weight_overrides: null,
+			vendor: 'wpcom',
+			vertical: this.props.surveyVertical,
+		};
+
+		domains
+			.suggestions( subdomainQuery )
+			.then( this.handleSubdomainSuggestions( domain, timestamp ) )
+			.catch( this.handleSubdomainSuggestionsFailure( domain, timestamp ) );
+	};
+
+	handleSubdomainSuggestions = ( domain, timestamp ) => subdomainSuggestions => {
+		this.props.onDomainsAvailabilityChange( true );
+		const timeDiff = Date.now() - timestamp;
+		const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
+
+		this.props.recordSearchResultsReceive(
+			domain,
+			analyticsResults,
+			timeDiff,
+			subdomainSuggestions.length,
+			this.props.analyticsSection
+		);
+
+		this.setState(
+			{
+				subdomainSearchResults: subdomainSuggestions,
+				loadingSubdomainResults: false,
+			},
+			this.save
+		);
+	};
+
+	handleSubdomainSuggestionsFailure = ( domain, timestamp ) => error => {
+		const timeDiff = Date.now() - timestamp;
+
+		if ( error && error.statusCode === 503 ) {
+			this.props.onDomainsAvailabilityChange( false );
+		} else if ( error && error.error ) {
+			this.showValidationErrorMessage( domain, error.error );
+		}
+
+		const analyticsResults = [ error.code || error.error || 'ERROR' + ( error.statusCode || '' ) ];
+		this.props.recordSearchResultsReceive(
+			domain,
+			analyticsResults,
+			timeDiff,
+			-1,
+			this.props.analyticsSection
+		);
+
+		this.setState( {
+			subdomainSearchResults: [],
+			loadingSubdomainResults: false,
+		} );
+	};
+
 	onSearch = searchQuery => {
 		const domain = getFixedDomainSearch( searchQuery );
 
@@ -378,223 +599,14 @@ class RegisterDomainStep extends React.Component {
 
 		async.parallel(
 			[
-				callback => {
-					if (
-						! domain.match(
-							/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
-						) ||
-						( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) )
-					) {
-						this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
-						return callback();
-					}
-
-					checkDomainAvailability(
-						{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
-						( error, result ) => {
-							const timeDiff = Date.now() - timestamp;
-							const status = get( result, 'status', error );
-							const domainChecked = get( result, 'domain_name', domain );
-
-							const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
-							const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
-							const isDomainTransferrable = TRANSFERRABLE === status;
-
-							this.setState( {
-								exactMatchDomain: domainChecked,
-								lastDomainStatus: status,
-								lastDomainIsTransferrable: isDomainTransferrable,
-							} );
-							if ( isDomainAvailable ) {
-								this.setState( { notice: null } );
-							} else {
-								this.showValidationErrorMessage(
-									domain,
-									status,
-									get( result, 'other_site_domain', null )
-								);
-							}
-
-							this.props.recordDomainAvailabilityReceive(
-								domain,
-								status,
-								timeDiff,
-								this.props.analyticsSection
-							);
-
-							this.props.onDomainsAvailabilityChange( true );
-							callback( null, isDomainAvailable ? result : null );
-						}
-					);
-				},
-				callback => {
-					const suggestionQuantity =
-						this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
-							? SUGGESTION_QUANTITY - 1
-							: SUGGESTION_QUANTITY;
-
-					const query = {
-						query: domain,
-						quantity: suggestionQuantity,
-						include_wordpressdotcom: false,
-						include_dotblogsubdomain: false,
-						tld_weight_overrides: this.getTldWeightOverrides(),
-						vendor: searchVendor,
-						vertical: this.props.surveyVertical,
-					};
-
-					domains
-						.suggestions( query )
-						.then( domainSuggestions => {
-							this.props.onDomainsAvailabilityChange( true );
-							const timeDiff = Date.now() - timestamp;
-							const analyticsResults = domainSuggestions.map(
-								suggestion => suggestion.domain_name
-							);
-
-							this.props.recordSearchResultsReceive(
-								domain,
-								analyticsResults,
-								timeDiff,
-								domainSuggestions.length,
-								this.props.analyticsSection
-							);
-
-							callback( null, domainSuggestions );
-						} )
-						.catch( error => {
-							const timeDiff = Date.now() - timestamp;
-
-							if ( error && error.statusCode === 503 ) {
-								this.props.onDomainsAvailabilityChange( false );
-							} else if ( error && error.error ) {
-								this.showValidationErrorMessage( domain, error.error );
-							}
-
-							const analyticsResults = [
-								error.code || error.error || 'ERROR' + ( error.statusCode || '' ),
-							];
-							this.props.recordSearchResultsReceive(
-								domain,
-								analyticsResults,
-								timeDiff,
-								-1,
-								this.props.analyticsSection
-							);
-							callback( error, null );
-						} );
-				},
+				this.checkDomainAvailability( domain, timestamp ),
+				this.getDomainsSuggestions( domain, timestamp ),
 			],
-			( error, result ) => {
-				if (
-					! this.state.loadingResults ||
-					domain !== this.state.lastDomainSearched ||
-					! this._isMounted
-				) {
-					// this callback is irrelevant now, a newer search has been made or the results were cleared OR
-					// domain registration was not available and component is unmounted
-					return;
-				}
-
-				const suggestions = uniqBy( flatten( compact( result ) ), function( suggestion ) {
-					return suggestion.domain_name;
-				} );
-
-				const isFreeOrUnknown = suggestion =>
-					suggestion.is_free === true || suggestion.status === domainAvailability.UNKNOWN;
-				const strippedDomainBase = this.getStrippedDomainBase( domain );
-				const exactMatchBeforeTld = suggestion =>
-					suggestion.domain_name === this.state.exactMatchDomain ||
-					startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
-				const bestAlternative = suggestion =>
-					! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
-				const availableSuggestions = reject( suggestions, isFreeOrUnknown );
-
-				const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
-				if ( recommendedSuggestion ) {
-					recommendedSuggestion.isRecommended = true;
-				} else if ( availableSuggestions.length > 0 ) {
-					availableSuggestions[ 0 ].isRecommended = true;
-				}
-
-				const bestAlternativeSuggestion = find( availableSuggestions, bestAlternative );
-				if ( bestAlternativeSuggestion ) {
-					bestAlternativeSuggestion.isBestAlternative = true;
-				} else if ( availableSuggestions.length > 1 ) {
-					availableSuggestions[ 1 ].isBestAlternative = true;
-				}
-
-				this.setState(
-					{
-						searchResults: suggestions,
-						loadingResults: false,
-					},
-					this.save
-				);
-			}
+			this.handleDomainSuggestions( domain )
 		);
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
-			const includeWordPressDotCom =
-				this.props.surveyVertical && this.props.includeDotBlogSubdomain ? false : true;
-			const subdomainQuery = {
-				query: domain,
-				quantity: 1,
-				include_wordpressdotcom: includeWordPressDotCom,
-				include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
-				tld_weight_overrides: null,
-				vendor: 'wpcom',
-				vertical: this.props.surveyVertical,
-			};
-
-			domains
-				.suggestions( subdomainQuery )
-				.then( subdomainSuggestions => {
-					this.props.onDomainsAvailabilityChange( true );
-					const timeDiff = Date.now() - timestamp;
-					const analyticsResults = subdomainSuggestions.map( suggestion => suggestion.domain_name );
-
-					this.props.recordSearchResultsReceive(
-						domain,
-						analyticsResults,
-						timeDiff,
-						subdomainSuggestions.length,
-						this.props.analyticsSection
-					);
-
-					this.setState(
-						{
-							subdomainSearchResults: subdomainSuggestions,
-							loadingSubdomainResults: false,
-						},
-						this.save
-					);
-				} )
-				.catch( error => {
-					const timeDiff = Date.now() - timestamp;
-
-					if ( error && error.statusCode === 503 ) {
-						this.props.onDomainsAvailabilityChange( false );
-					} else if ( error && error.error ) {
-						this.showValidationErrorMessage( domain, error.error );
-					}
-
-					const analyticsResults = [
-						error.code || error.error || 'ERROR' + ( error.statusCode || '' ),
-					];
-					this.props.recordSearchResultsReceive(
-						domain,
-						analyticsResults,
-						timeDiff,
-						-1,
-						this.props.analyticsSection
-					);
-
-					this.setState( {
-						subdomainSearchResults: [],
-						loadingSubdomainResults: false,
-					} );
-				} );
+			this.getSubdomainSuggestions( domain, timestamp );
 		}
 	};
 
