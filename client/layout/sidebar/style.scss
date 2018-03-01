@@ -39,6 +39,7 @@
 .sidebar__heading {
 	color: var( --sidebar-heading-color );
 	font-size: 14px;
+	font-weight: 600;
 	margin: 16px 8px 6px 16px;
 	display: flex;
 }
@@ -91,10 +92,10 @@
 	}
 
 	a {
-		font-size: 14px;
+		font-size: 15px;
 		line-height: 1;
 		position: relative;
-		padding: 11px 16px 11px 18px;
+		padding: 11px 16px 11px 20px;
 		color: var( --sidebar-color );
 		box-sizing: border-box;
 		white-space: nowrap;
@@ -133,7 +134,7 @@
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
 		width: 24px;
-		margin-right: 6px;
+		margin-right: 12px;
 		flex-shrink: 0;
 
 		// External indicator for sections that aren't available in Calypso
