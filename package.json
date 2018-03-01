@@ -151,7 +151,7 @@
     "twemoji": "2.3",
     "uglifyjs-webpack-plugin": "1.2.0",
     "url": "0.11.0",
-    "uuid": "2.0.1",
+    "uuid": "3.2.1",
     "valid-url": "1.0.9",
     "walk": "2.3.4",
     "webpack": "3.10.0",

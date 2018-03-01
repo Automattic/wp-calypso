@@ -2711,7 +2711,7 @@
         "object-assign": "2.1.1",
         "osenv": "0.1.5",
         "user-home": "1.1.1",
-        "uuid": "2.0.1",
+        "uuid": "2.0.3",
         "xdg-basedir": "1.0.1"
       },
       "dependencies": {
@@ -2726,6 +2726,11 @@
         "object-assign": {
           "version": "2.1.1",
           "integrity": "sha1-Q8NuXVaf+OSBbE76i+AtJpZ8GKo=",
+          "dev": true
+        },
+        "uuid": {
+          "version": "2.0.3",
+          "integrity": "sha1-Z+LoY3lyFVMN/zGOW/nc6/1Hsho=",
           "dev": true
         }
       }
@@ -2752,6 +2757,11 @@
     "constants-browserify": {
       "version": "1.0.0",
       "integrity": "sha1-wguW2MYXdIqvHBYCF2DNJ/y4y3U="
+    },
+    "contains-path": {
+      "version": "0.1.0",
+      "integrity": "sha1-/ozxhP9mcLa67wGp1IYaXL7EEgo=",
+      "dev": true
     },
     "content-disposition": {
       "version": "0.5.0",
@@ -4201,6 +4211,168 @@
       "version": "0.0.6",
       "integrity": "sha1-9MXWe+pmYx6cXgnK/ZMsbMMAdcM=",
       "dev": true
+    },
+    "eslint-import-resolver-node": {
+      "version": "0.3.2",
+      "integrity": "sha512-sfmTqJfPSizWu4aymbPr4Iidp5yKm8yDkHp+Ir3YiTHiiDfxh69mOUsmiqW6RZ9zRXFaF64GtYmN7e+8GHBv6Q==",
+      "dev": true,
+      "requires": {
+        "debug": "2.6.9",
+        "resolve": "1.5.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "2.6.9",
+          "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+          "dev": true,
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=",
+          "dev": true
+        }
+      }
+    },
+    "eslint-module-utils": {
+      "version": "2.1.1",
+      "integrity": "sha512-jDI/X5l/6D1rRD/3T43q8Qgbls2nq5km5KSqiwlyUbGo5+04fXhMKdCPhjwbqAa6HXWaMxj8Q4hQDIh7IadJQw==",
+      "dev": true,
+      "requires": {
+        "debug": "2.6.9",
+        "pkg-dir": "1.0.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "2.6.9",
+          "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+          "dev": true,
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "find-up": {
+          "version": "1.1.2",
+          "integrity": "sha1-ay6YIrGizgpgq2TWEOzK1TyyTQ8=",
+          "dev": true,
+          "requires": {
+            "path-exists": "2.1.0",
+            "pinkie-promise": "2.0.1"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=",
+          "dev": true
+        },
+        "path-exists": {
+          "version": "2.1.0",
+          "integrity": "sha1-D+tsZPD8UY2adU3V77YscCJ2H0s=",
+          "dev": true,
+          "requires": {
+            "pinkie-promise": "2.0.1"
+          }
+        },
+        "pkg-dir": {
+          "version": "1.0.0",
+          "integrity": "sha1-ektQio1bstYp1EcFb/TpyTFM89Q=",
+          "dev": true,
+          "requires": {
+            "find-up": "1.1.2"
+          }
+        }
+      }
+    },
+    "eslint-plugin-import": {
+      "version": "2.9.0",
+      "integrity": "sha1-JgAu+/ylmJtyiKwEdQi9JPIXsWk=",
+      "dev": true,
+      "requires": {
+        "builtin-modules": "1.1.1",
+        "contains-path": "0.1.0",
+        "debug": "2.6.9",
+        "doctrine": "1.5.0",
+        "eslint-import-resolver-node": "0.3.2",
+        "eslint-module-utils": "2.1.1",
+        "has": "1.0.1",
+        "lodash": "4.17.5",
+        "minimatch": "3.0.4",
+        "read-pkg-up": "2.0.0"
+      },
+      "dependencies": {
+        "debug": {
+          "version": "2.6.9",
+          "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
+          "dev": true,
+          "requires": {
+            "ms": "2.0.0"
+          }
+        },
+        "doctrine": {
+          "version": "1.5.0",
+          "integrity": "sha1-N53Ocw9hZvds76TmcHoVmwLFpvo=",
+          "dev": true,
+          "requires": {
+            "esutils": "2.0.2",
+            "isarray": "1.0.0"
+          }
+        },
+        "load-json-file": {
+          "version": "2.0.0",
+          "integrity": "sha1-eUfkIUmvgNaWy/eXvKq8/h/inKg=",
+          "dev": true,
+          "requires": {
+            "graceful-fs": "4.1.11",
+            "parse-json": "2.2.0",
+            "pify": "2.3.0",
+            "strip-bom": "3.0.0"
+          }
+        },
+        "ms": {
+          "version": "2.0.0",
+          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=",
+          "dev": true
+        },
+        "path-type": {
+          "version": "2.0.0",
+          "integrity": "sha1-8BLMuEFbcJb8LaoQVMPXI4lZTHM=",
+          "dev": true,
+          "requires": {
+            "pify": "2.3.0"
+          }
+        },
+        "pify": {
+          "version": "2.3.0",
+          "integrity": "sha1-7RQaasBDqEnqWISY59yosVMw6Qw=",
+          "dev": true
+        },
+        "read-pkg": {
+          "version": "2.0.0",
+          "integrity": "sha1-jvHAYjxqbbDcZxPEv6xGMysjaPg=",
+          "dev": true,
+          "requires": {
+            "load-json-file": "2.0.0",
+            "normalize-package-data": "2.4.0",
+            "path-type": "2.0.0"
+          }
+        },
+        "read-pkg-up": {
+          "version": "2.0.0",
+          "integrity": "sha1-a3KoBImE4MQeeVEP1en6mbO1Sb4=",
+          "dev": true,
+          "requires": {
+            "find-up": "2.1.0",
+            "read-pkg": "2.0.0"
+          }
+        },
+        "strip-bom": {
+          "version": "3.0.0",
+          "integrity": "sha1-IzTBjpx1n3vdVv3vfprj1YjmjtM=",
+          "dev": true
+        }
+      }
     },
     "eslint-plugin-jest": {
       "version": "21.2.0",
@@ -13264,10 +13436,6 @@
         "qs": {
           "version": "6.5.1",
           "integrity": "sha512-eRzhrN1WSINYCDCbrz796z37LOe3m5tmW7RQf6oBntukAG1nmovJvhnwHHRMAfeoItc1m2Hk02WER2aQ/iqs+A=="
-        },
-        "uuid": {
-          "version": "3.2.1",
-          "integrity": "sha512-jZnMwlb9Iku/O3smGWvZhauCf6cvvpKi4BKRiliS3cxnI+Gz9j5MEpTz2UFuXiKPJocb7gnsLHwiS05ige5BEA=="
         }
       }
     },
@@ -15764,8 +15932,8 @@
       "integrity": "sha1-ApT7kiu5N1FTVBxPcJYjHyh8ivg="
     },
     "uuid": {
-      "version": "2.0.1",
-      "integrity": "sha1-wqMN7bPlNdcsz4LjQ5QaULqFM6w="
+      "version": "3.2.1",
+      "integrity": "sha512-jZnMwlb9Iku/O3smGWvZhauCf6cvvpKi4BKRiliS3cxnI+Gz9j5MEpTz2UFuXiKPJocb7gnsLHwiS05ige5BEA=="
     },
     "valid-url": {
       "version": "1.0.9",
