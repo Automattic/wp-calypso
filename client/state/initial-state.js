@@ -131,8 +131,8 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 		{ leading: false, trailing: true }
 	);
 
-	if ( global.window ) {
-		global.window.addEventListener( 'beforeunload', throttledSaveState.flush );
+	if ( typeof window !== 'undefined' ) {
+		window.addEventListener( 'beforeunload', throttledSaveState.flush );
 	}
 
 	reduxStore.subscribe( throttledSaveState );

@@ -131,7 +131,7 @@ export class WebPreviewContent extends Component {
 	removeSelection = () => {
 		// remove all textual selections when user gives focus to preview iframe
 		// they might be confusing
-		if ( global.window ) {
+		if ( typeof window !== 'undefined' ) {
 			if ( isFunction( window.getSelection ) ) {
 				const selection = window.getSelection();
 				if ( isFunction( selection.empty ) ) {
