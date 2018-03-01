@@ -23,7 +23,7 @@ export default localize( ( { selectedSite, translate } ) => {
 						'and filtering that will help your users find what they are looking for.'
 				) }
 				buttonText={ translate( 'Enable Search in Traffic Settings' ) }
-				href={ '/settings/traffic/' + selectedSite.slug }
+				href={ '/settings/traffic/' + selectedSite.slug + '/#search' }
 			/>
 		</div>
 	);

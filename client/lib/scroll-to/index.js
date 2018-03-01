@@ -151,7 +151,7 @@ function scrollToComponent( WrappedComponent, namedAnchor ) {
 				<WrappedComponent
 					ref={ function( wrapped ) {
 						this.wrappedComponentInstance = wrapped;
-					} }
+					}.bind( this ) }
 					{ ...this.props }
 				/>
 			);
