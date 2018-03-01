@@ -4,6 +4,7 @@
 var debug = require( 'debug' )( 'i18n-calypso' ),
 	Jed = require( 'jed' ),
 	moment = require( 'moment-timezone' ),
+	sha1 = require( 'sha1' ),
 	EventEmitter = require( 'events' ).EventEmitter,
 	interpolateComponents = require( 'interpolate-components' ).default,
 	LRU = require( 'lru' ),
@@ -19,6 +20,15 @@ var numberFormatPHPJS = require( './number-format' );
  */
 var decimal_point_translation_key = 'number_format_decimals',
 	thousands_sep_translation_key = 'number_format_thousands_sep';
+
+var translationLookup = [
+	// By default don't modify the options when looking up translations.
+	function( options ) {
+		return options;
+	}
+];
+
+var hashCache = {};
 
 // raise a console warning
 function warn() {
@@ -125,6 +135,20 @@ function getTranslationFromJed( jed, options ) {
 	return jed[ jedMethod ].apply( jed, jedArgs );
 }
 
+function getTranslation( i18n, options ) {
+	var translation, lookup;
+
+	for ( i = translationLookup.length - 1; i >= 0; i-- ) {
+		lookup = translationLookup[ i ]( assign( {}, options ) );
+		// Only get the translation from jed if it exists.
+		if ( i18n.state.locale[ lookup.original ] ) {
+			return getTranslationFromJed( i18n.state.jed, lookup );
+		}
+	}
+
+	return null;
+}
+
 
 function I18N() {
 	if( ! ( this instanceof I18N ) ) {
@@ -172,6 +196,55 @@ I18N.prototype.configure = function( options ) {
 };
 
 I18N.prototype.setLocale = function( localeData ) {
+	if ( localeData && localeData[ '' ] && localeData[ '' ][ 'key-hash' ] ) {
+		var hashLength, minHashLength, maxHashLength, keyHash = localeData[ '' ][ 'key-hash' ];
+
+		var transform = function( string, hashLength ) {
+			if ( typeof hashCache[ hashLength + string ] !== 'undefined' ) {
+				return hashCache[ hashLength + string ];
+			}
+			var hash = sha1( string );
+
+			if ( hashLength ) {
+				return hashCache[ hashLength + string ] = hash.substr( 0, hashLength );
+			}
+
+			return hashCache[ hashLength + string ] = hash;
+		};
+
+		var generateLookup = function( hashLength ) {
+			return function( options ) {
+				if ( options.context ) {
+					options.original = transform( options.context + String.fromCharCode( 4 ) + options.original, hashLength );
+					delete options.context;
+				} else {
+					options.original = transform( options.original, hashLength );
+				}
+
+				return options;
+			};
+		}
+
+		if ( keyHash.substr( 0, 4 ) === 'sha1' ) {
+			if ( keyHash.length === 4 ) {
+				translationLookup.push( generateLookup( false ) );
+			} else {
+				var variableHashLengthPos = keyHash.substr( 5 ).indexOf( '-' );
+				if ( variableHashLengthPos < 0 ) {
+					hashLength = Number( keyHash.substr( 5 ) );
+					translationLookup.push( generateLookup( hashLength ) );
+				} else {
+					minHashLength = Number( keyHash.substr( 5, variableHashLengthPos ) );
+					maxHashLength = Number( keyHash.substr( 6 + variableHashLengthPos ) );
+
+					for ( hashLength = minHashLength; hashLength <= maxHashLength; hashLength++ ) {
+						translationLookup.push( generateLookup( hashLength ) );
+					}
+				}
+			}
+		}
+	}
+
 	// if localeData is not given, assumes default locale and reset
 	if ( ! localeData || ! localeData[ '' ].localeSlug ) {
 		this.state.locale = { '': { localeSlug: this.defaultLocaleSlug } };
@@ -249,11 +322,23 @@ I18N.prototype.addTranslations = function( localeData ) {
 
 
 /**
+ * Checks whether the given original has a translation. Parameters are the same as for translate().
+ *
+ * @param  {string} original  the string to translate
+ * @param  {string} plural    the plural string to translate (if applicable), original used as singular
+ * @param  {object} options   properties describing translation requirements for given text
+ * @return {boolean} whether a translation exists
+ */
+I18N.prototype.hasTranslation = function() {
+	return !! getTranslation( this, normalizeTranslateArguments( arguments ) );
+}
+
+/**
  * Exposes single translation method, which is converted into its respective Jed method.
  * See sibling README
- * @param  {string} original  - the string to translate
- * @param  {string} plural  - the plural string to translate (if applicable), original used as singular
- * @param  {object} options - properties describing translation requirements for given text
+ * @param  {string} original  the string to translate
+ * @param  {string} plural    the plural string to translate (if applicable), original used as singular
+ * @param  {object} options   properties describing translation requirements for given text
  * @return {string|React-components} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function() {
@@ -262,17 +347,21 @@ I18N.prototype.translate = function() {
 	options = normalizeTranslateArguments( arguments );
 
 	cacheable = ! options.components;
-
 	if ( cacheable ) {
 		optionsString = JSON.stringify( options );
-
 		translation = this.state.translations.get( optionsString );
+		// Return the cached translation.
 		if ( translation ) {
 			return translation;
 		}
 	}
 
-	translation = getTranslationFromJed( this.state.jed, options );
+	translation = getTranslation( this, options );
+	if ( ! translation ) {
+		// This purposefully calls jed for a case where there is no translation,
+		// so that jed gives us the expected object with English text.
+		translation = getTranslationFromJed( this.state.jed, options );
+	}
 
 	// handle any string substitution
 	if ( options.args ) {

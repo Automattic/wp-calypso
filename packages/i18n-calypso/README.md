@@ -7,11 +7,11 @@ This lib enables translations, exposing three public methods:
 * [.moment()](#moment-method)
 * [.numberFormat()](#numberformat-method)
 
-It also provides 2 utility methods for your React application:
+It also provides three utility methods for your React application:
 
 * [.mixin](#mixin)
 * [.localize()](#localize)
-
+* [.hasTranslation()](#hastranslation-method)
 
 ## Translate Method
 
@@ -242,12 +242,22 @@ i18n.numberFormat( 2500.1, 2 ); // '2.500,10'
 i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); // '2*500@330'
 ```
 
+## hasTranslation Method
+
+Using the method `hasTranslation` you can check whether a translation for a given string exists. As the `translate()` function will always return screen text that can be displayed (will supply the source text if no translation exists), it is unsuitable to determine whether text is translated. Other factors are optional [key hashing](#key-hashing) as well as purposeful translation to the source text.
+
+### Usage
+```js
+var i18n = require( 'i18n-calypso' );
+i18n.hasTranslation( 'This has been translated' ); // true
+i18n.hasTranslation( 'Not translation exists' ); // false
+```
 
 ## Mixin
 
 ### Usage
 
-```js
+```jsx
 import { mixin as i18nMixin } from 'i18n-calypso';
 
 const MyComponent = React.createClass( {
@@ -321,5 +331,23 @@ render(
 
 ## Some Background
 
-I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Jed](http://slexaxton.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.
+I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Jed](https://messageformat.github.io/Jed/) instance, and exposes a single `translate` method with sugared syntax for interacting with Jed.
+
+### Key Hashing
+
+In order to reduce file-size, i18n-calypso allows the usage of hashed keys for lookup. This is a non-standard extension of the Jed standard which is enabled by supplying a header key `key-hash` to specify a hash method (currently only `sha1` is supported), as well as a hash length. For example `sha1-4` uses the first 4 hexadecimal chars of the sha1 hash of the standard Jed lookup string. As a further optimization, variable hash lengths are available, potentially requiring multiple lookups per string: `sha1-3-7` specifies that hash lengths of 3 to 7 are used in the file.
+
+#### Example
+
+Instead of providing the full English text, like here:
+```json
+{"":{"localeSlug":"de"},"Please enter a valid email address.":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+```
+just the hash is used for lookup, resulting in a shorter file.
+```json
+{"":{"localeSlug":"de","key-hash":"sha1-1"},"d":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
+```
+The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.
+
+Note that when generating the jed file, all possible strings need to be taken into consideration for the collision calculation, as otherwise an untranslated source string would be provided with the wrong translation.
 
