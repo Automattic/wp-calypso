@@ -35,12 +35,14 @@ export const jetpackRemoteInstall = ( url, user, password ) => ( {
  *
  * @param {string} url - remote site url
  * @param {string} errorCode - the error returned from the installation attempt
+ * @param {string} errorMessage - additional error info
  * @return {Object} action object
  */
-export const jetpackRemoteInstallUpdateError = ( url, errorCode ) => ( {
+export const jetpackRemoteInstallUpdateError = ( url, errorCode, errorMessage ) => ( {
 	type: JETPACK_REMOTE_INSTALL_FAILURE,
 	url,
 	errorCode,
+	errorMessage,
 } );
 
 /**

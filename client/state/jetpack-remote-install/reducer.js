@@ -21,7 +21,7 @@ export const isComplete = keyedReducer( 'url', ( state = false, { type } ) => {
 	}
 } );
 
-export const error = keyedReducer( 'url', ( state = null, { type, errorCode } ) => {
+export const errorCodeReducer = keyedReducer( 'url', ( state = null, { type, errorCode } ) => {
 	switch ( type ) {
 		case JETPACK_REMOTE_INSTALL_FAILURE:
 			return errorCode;
@@ -34,6 +34,6 @@ export const error = keyedReducer( 'url', ( state = null, { type, errorCode } ) 
 } );
 
 export default combineReducers( {
-	error,
+	errorCode: errorCodeReducer,
 	isComplete,
 } );

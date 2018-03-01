@@ -6,7 +6,7 @@
 import { get } from 'lodash';
 
 /**
- * Returns any error that has resulted from requesting
+ * Returns any error code that has resulted from requesting
  * a remote install of the jetpack plugin on the .org
  * site at the given url.
  *
@@ -15,5 +15,5 @@ import { get } from 'lodash';
  * @return {?String} Error code, if any
  */
 export default function getJetpackRemoteInstallError( state, url ) {
-	return get( state.jetpackRemoteInstall.error, url, null );
+	return get( state.jetpackRemoteInstall.errorCode, url, null );
 }

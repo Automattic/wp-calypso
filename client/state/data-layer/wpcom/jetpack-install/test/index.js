@@ -16,7 +16,10 @@ const password = 'hGhrskf145kst';
 const SUCCESS_RESPONSE = { status: true };
 const FAILURE_RESPONSE = {
 	status: false,
-	error: 'COULD_NOT_LOGIN',
+	error: {
+		code: 'COULD_NOT_LOGIN',
+		message: 'extra info',
+	},
 };
 
 describe( 'installJetpackPlugin', () => {
@@ -34,6 +37,8 @@ describe( 'handleResponse', () => {
 
 	test( 'should return JetpackRemoteInstallUpdateError on failure', () => {
 		const result = handleResponse( { url }, FAILURE_RESPONSE );
-		expect( result ).toEqual( jetpackRemoteInstallUpdateError( url, 'COULD_NOT_LOGIN' ) );
+		expect( result ).toEqual(
+			jetpackRemoteInstallUpdateError( url, 'COULD_NOT_LOGIN', 'extra info' )
+		);
 	} );
 } );

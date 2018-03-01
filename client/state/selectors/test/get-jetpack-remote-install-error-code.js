@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { getJetpackRemoteInstallError } from 'state/selectors';
+import { getJetpackRemoteInstallErrorCode } from 'state/selectors';
 
 const url = 'https://yourgroovydomain.com';
 
@@ -11,19 +11,19 @@ describe( 'getJetpackRemoteInstallError()', () => {
 	test( 'should return null if no errors', () => {
 		const state = {
 			jetpackRemoteInstall: {
-				error: {},
+				errorCode: {},
 			},
 		};
-		expect( getJetpackRemoteInstallError( state, url ) ).toBeNull();
+		expect( getJetpackRemoteInstallErrorCode( state, url ) ).toBeNull();
 	} );
 	test( 'should return any existing error', () => {
 		const state = {
 			jetpackRemoteInstall: {
-				error: {
+				errorCode: {
 					[ url ]: 'SOME_ERROR',
 				},
 			},
 		};
-		expect( getJetpackRemoteInstallError( state, url ) ).toBe( 'SOME_ERROR' );
+		expect( getJetpackRemoteInstallErrorCode( state, url ) ).toBe( 'SOME_ERROR' );
 	} );
 } );

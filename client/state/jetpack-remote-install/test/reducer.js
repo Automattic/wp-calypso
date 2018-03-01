@@ -2,7 +2,7 @@
 /**
  * Internal dependencies
  */
-import reducer, { error, isComplete } from '../reducer';
+import reducer, { errorCodeReducer, isComplete } from '../reducer';
 import {
 	JETPACK_REMOTE_INSTALL,
 	JETPACK_REMOTE_INSTALL_FAILURE,
@@ -10,14 +10,14 @@ import {
 } from 'state/action-types';
 
 const url = 'https://yourgroovydomain.com';
-const errorCode = 'INVALID_CREDENTIALS';
+const errorCodeString = 'INVALID_CREDENTIALS';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
 		const state = reducer( undefined, {} );
 
 		expect( state ).toHaveProperty( 'isComplete' );
-		expect( state ).toHaveProperty( 'error' );
+		expect( state ).toHaveProperty( 'errorCode' );
 	} );
 
 	describe( 'isComplete', () => {
@@ -37,25 +37,29 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'error', () => {
+	describe( 'errorCode', () => {
 		const errorState = {
 			[ url ]: {
-				error: errorCode,
+				errorCode: errorCodeString,
 			},
 		};
 
 		test( 'should store error by url', () => {
-			const state = error( undefined, { type: JETPACK_REMOTE_INSTALL_FAILURE, url, errorCode } );
-			expect( state[ url ] ).toEqual( errorCode );
+			const state = errorCodeReducer( undefined, {
+				type: JETPACK_REMOTE_INSTALL_FAILURE,
+				url,
+				errorCode: errorCodeString,
+			} );
+			expect( state[ url ] ).toEqual( errorCodeString );
 		} );
 
 		test( 'should be cleared on successful install', () => {
-			const state = error( errorState, { type: JETPACK_REMOTE_INSTALL_SUCCESS, url } );
+			const state = errorCodeReducer( errorState, { type: JETPACK_REMOTE_INSTALL_SUCCESS, url } );
 			expect( state[ url ] ).not.toBeDefined();
 		} );
 
 		test( 'should be cleared on install request', () => {
-			const state = error( errorState, { type: JETPACK_REMOTE_INSTALL, url } );
+			const state = errorCodeReducer( errorState, { type: JETPACK_REMOTE_INSTALL, url } );
 			expect( state[ url ] ).not.toBeDefined();
 		} );
 	} );
