@@ -3,6 +3,7 @@
 	"env_id": "wpcalypso",
 	"client_slug": "browser",
 	"directly_rtm_widget_environment": "sandbox",
+	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"hostname": "wpcalypso.wordpress.com",
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
