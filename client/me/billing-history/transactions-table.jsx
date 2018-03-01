@@ -19,7 +19,7 @@ import TransactionsHeader from './transactions-header';
 import tableRows from './table-rows';
 import SearchCard from 'components/search-card';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
