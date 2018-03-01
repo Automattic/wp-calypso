@@ -16509,8 +16509,8 @@
       },
       "dependencies": {
         "accepts": {
-          "version": "1.3.4",
-          "integrity": "sha1-hiRnWMfdbSGmR0/whKR0DsBesh8=",
+          "version": "1.3.5",
+          "integrity": "sha1-63d99gEXI6OxTopywIBcjoZ0a9I=",
           "dev": true,
           "requires": {
             "mime-types": "2.1.18",
@@ -16604,7 +16604,7 @@
           "integrity": "sha1-41xt/i1kt9ygpc1PIXgb4ymeB2w=",
           "dev": true,
           "requires": {
-            "accepts": "1.3.4",
+            "accepts": "1.3.5",
             "array-flatten": "1.1.1",
             "body-parser": "1.18.2",
             "content-disposition": "0.5.2",
@@ -16924,8 +16924,8 @@
       }
     },
     "wpcom": {
-      "version": "5.4.1-beta.0",
-      "integrity": "sha512-qXqWZiAX2n16NPB0fzxvhcOi7LhopNM7ZTKDrUTc+0Thgv7H0qEYzTdbpxiY9p3PZd/6gEH9CkQ4PNx1AYDaIQ==",
+      "version": "5.4.1",
+      "integrity": "sha512-dahgmqzWsEOJywVVg+o5fQpfovkk/hajEo28GqLUu++NgsVHTo7K1CEmwBVSsicQcTOjHe/GHfq52hl6Ri1CVg==",
       "requires": {
         "babel-runtime": "6.26.0",
         "debug": "2.2.0",
