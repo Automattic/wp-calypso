@@ -139,6 +139,10 @@
 	@include breakpoint( '>660px' ) {
 		margin: 0 8px 16px 8px;
 	}
+
+	&.jetpack-connect__creds-form {
+		margin-left: 20px;
+	}
 }
 
 .jetpack-connect__install-step-title {

@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * External dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import FormButton from 'components/forms/form-button';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
@@ -18,7 +19,6 @@ import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
 import HelpButton from './help-button';
 import JetpackLogo from 'components/jetpack-logo';
-import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
@@ -89,7 +89,7 @@ export class OrgCredentialsForm extends Component {
 		const { translate } = this.props;
 
 		return (
-			<span className="jetpack-connect__install-step">
+			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
 				{ translate(
 					'Add your WordPress administrator credentials ' +
 						'for this site. Your credentials will not be stored and are used for the purpose ' +
@@ -196,12 +196,12 @@ export class OrgCredentialsForm extends Component {
 		return (
 			<MainWrapper>
 				{ this.formHeader() }
-				<div className="jetpack-connect__site-url-input-container">
-					<LoggedOutForm onSubmit={ this.handleSubmit }>
+				<Card className="jetpack-connect__site-url-input-container">
+					<div onSubmit={ this.handleSubmit }>
 						{ this.formFields() }
 						{ this.formFooter() }
-					</LoggedOutForm>
-				</div>
+					</div>
+				</Card>
 				{ this.footerLink() }
 			</MainWrapper>
 		);
