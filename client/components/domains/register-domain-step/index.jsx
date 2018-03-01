@@ -259,12 +259,16 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	focusSearchCard = () => {
-		this.refs.searchCard.focus();
+		this.searchCard.focus();
 	};
 
 	isLoadingSuggestions() {
 		return ! this.props.defaultSuggestions && ! this.props.defaultSuggestionsError;
 	}
+
+	bindSearchCardReference = searchCard => {
+		this.searchCard = searchCard;
+	};
 
 	render() {
 		const queryObject = getQueryObject( this.props );
@@ -273,7 +277,7 @@ class RegisterDomainStep extends React.Component {
 			<div className="register-domain-step">
 				<div className="register-domain-step__search">
 					<SearchCard
-						ref="searchCard"
+						ref={ this.bindSearchCardReference }
 						additionalClasses={ this.state.clickedExampleSuggestion ? 'is-refocused' : undefined }
 						initialValue={ this.state.lastQuery }
 						onSearch={ this.onSearch }
