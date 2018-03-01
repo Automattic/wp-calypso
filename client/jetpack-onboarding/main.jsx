@@ -23,9 +23,11 @@ import {
 import {
 	getJetpackOnboardingSettings,
 	getRequest,
+	getUnconnectedSite,
 	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
+import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
@@ -39,6 +41,8 @@ class JetpackOnboardingMain extends React.PureComponent {
 	static defaultProps = {
 		stepName: STEPS.SITE_TITLE,
 	};
+
+	state = { hasFinishedRequestingSite: false };
 
 	componentDidMount() {
 		const { siteId, siteSlug } = this.props;
@@ -59,6 +63,12 @@ class JetpackOnboardingMain extends React.PureComponent {
 		}
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingWhetherConnected && ! nextProps.isRequestingWhetherConnected ) {
+			this.setState( { hasFinishedRequestingSite: true } );
+		}
+	}
+
 	getNavigationLinkClickHandler = direction => () => {
 		const { recordJpoEvent, stepName } = this.props;
 
@@ -72,6 +82,8 @@ class JetpackOnboardingMain extends React.PureComponent {
 		const {
 			action,
 			isRequestingSettings,
+			isRequestingWhetherConnected,
+			jpoAuth,
 			recordJpoEvent,
 			saveJpoSettings,
 			settings,
@@ -82,7 +94,13 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} = this.props;
 		return (
 			<Main className="jetpack-onboarding">
-				<QueryJetpackOnboardingSettings siteId={ siteId } />
+				{ /* We only allow querying of site settings once we know that we have finished
+				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
+				   * the site is a connected Jetpack site or not, and a network request that uses
+				   * the wrong argument can mess up our request tracking quite badly. */
+				this.state.hasFinishedRequestingSite && (
+					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
+				) }
 				{ siteId ? (
 					<Wizard
 						action={ action }
@@ -91,6 +109,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						components={ COMPONENTS }
 						hideNavigation={ stepName === STEPS.SUMMARY }
 						isRequestingSettings={ isRequestingSettings }
+						isRequestingWhetherConnected={ isRequestingWhetherConnected }
 						onBackClick={ this.getNavigationLinkClickHandler( 'back' ) }
 						onForwardClick={ this.getNavigationLinkClickHandler( 'forward' ) }
 						recordJpoEvent={ recordJpoEvent }
@@ -113,8 +132,27 @@ export default connect(
 		const siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
 		const settings = getJetpackOnboardingSettings( state, siteId );
 		const isBusiness = get( settings, 'siteType' ) === 'business';
-		const isRequestingSettings = getRequest( state, requestJetpackOnboardingSettings( siteId ) )
-			.isLoading;
+
+		const isRequestingWhetherConnected =
+			isRequestingSite( state, siteId ) || isRequestingSites( state );
+		const isConnected = isJetpackSite( state, siteId );
+
+		let jpoAuth;
+
+		if ( ! isConnected && getUnconnectedSite( state, siteId ) ) {
+			const { token, userEmail: jpUser } = getUnconnectedSite( state, siteId );
+			jpoAuth = {
+				onboarding: {
+					token,
+					jpUser,
+				},
+			};
+		}
+
+		const isRequestingSettings = getRequest(
+			state,
+			requestJetpackOnboardingSettings( siteId, jpoAuth )
+		).isLoading;
 
 		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
 		// Note: here we can select which steps to display, based on user's input
@@ -129,7 +167,9 @@ export default connect(
 			STEPS.SUMMARY,
 		] );
 		return {
+			jpoAuth,
 			isRequestingSettings,
+			isRequestingWhetherConnected,
 			siteId,
 			siteSlug,
 			settings,
@@ -139,13 +179,14 @@ export default connect(
 	},
 	{ recordTracksEvent, saveJetpackOnboardingSettings },
 	(
-		{ siteId, userIdHashed, ...stateProps },
+		{ siteId, jpoAuth, userIdHashed, ...stateProps },
 		{
 			recordTracksEvent: recordTracksEventAction,
 			saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
 		},
 		ownProps
 	) => ( {
+		jpoAuth,
 		siteId,
 		...stateProps,
 		recordJpoEvent: ( event, additionalProperties ) =>
@@ -156,7 +197,10 @@ export default connect(
 				id: siteId + '_' + userIdHashed,
 				...additionalProperties,
 			} ),
-		saveJpoSettings: saveJetpackOnboardingSettingsAction,
+		saveJpoSettings: ( s, settings ) =>
+			saveJetpackOnboardingSettingsAction( s, {
+				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
+			} ),
 		...ownProps,
 	} )
 )( JetpackOnboardingMain );

@@ -128,8 +128,10 @@ describe( 'reducer', () => {
 
 	describe( 'settings', () => {
 		const settings = {
-			siteTitle: 'My awesome site',
-			siteDescription: 'Not just another amazing WordPress site',
+			onboarding: {
+				siteTitle: 'My awesome site',
+				siteDescription: 'Not just another amazing WordPress site',
+			},
 		};
 
 		test( 'should default to an empty object', () => {
@@ -171,8 +173,10 @@ describe( 'reducer', () => {
 		test( 'should add new settings for existing sites', () => {
 			const siteId = 12345678;
 			const newSettings = {
-				...settings,
-				siteType: 'business',
+				onboarding: {
+					...settings.onboarding,
+					siteType: 'business',
+				},
 			};
 			const initialState = deepFreeze( {
 				[ siteId ]: settings,
@@ -193,9 +197,12 @@ describe( 'reducer', () => {
 		test( 'should keep non-updated settings for sites', () => {
 			const siteId = 12345678;
 			const newSettings = {
-				...settings,
-				siteDescription: 'A new description',
+				onboarding: {
+					...settings.onboarding,
+					siteDescription: 'A new description',
+				},
 			};
+
 			const initialState = deepFreeze( {
 				[ siteId ]: settings,
 				[ 87654321 ]: settings,
@@ -234,8 +241,10 @@ describe( 'reducer', () => {
 		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				[ 12345678 ]: {
-					...settings,
-					siteTitle: {},
+					onboarding: {
+						...settings.onboarding,
+						siteTitle: {},
+					},
 				},
 			} );
 			const state = settingsReducer( original, { type: DESERIALIZE } );

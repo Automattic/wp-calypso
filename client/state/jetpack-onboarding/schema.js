@@ -53,3 +53,11 @@ export const jetpackOnboardingSettingsSchema = {
 		stats: { type: 'boolean' },
 	},
 };
+
+export const jetpackSettingsSchema = {
+	type: 'object',
+	additionalProperties: true,
+	properties: {
+		onboarding: jetpackOnboardingSettingsSchema,
+	},
+};

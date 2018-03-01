@@ -43,7 +43,9 @@ describe( 'getJetpackOnboardingPendingSteps()', () => {
 	test( 'should return pending status for the woocommerce step', () => {
 		const siteId = 2916284;
 		const action = saveJetpackOnboardingSettings( siteId, {
-			installWooCommerce: true,
+			onboarding: {
+				installWooCommerce: true,
+			},
 		} );
 		const state = {
 			dataRequests: {
@@ -74,7 +76,9 @@ describe( 'getJetpackOnboardingPendingSteps()', () => {
 	test( 'should return pending status for the stats step', () => {
 		const siteId = 2916284;
 		const action = saveJetpackOnboardingSettings( siteId, {
-			stats: true,
+			onboarding: {
+				stats: true,
+			},
 		} );
 		const state = {
 			dataRequests: {

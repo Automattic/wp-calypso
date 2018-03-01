@@ -38,7 +38,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestJetpackOnboardingSettings()', () => {
-		test( 'should return a jetpack onboarding settings request action object', () => {
+		test( 'should return a jetpack settings request action object', () => {
 			const siteId = 12345678;
 			const action = requestJetpackOnboardingSettings( siteId );
 
@@ -55,7 +55,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveJetpackOnboardingSettings()', () => {
-		test( 'should return a jetpack onboarding settings save action object', () => {
+		test( 'should return a jetpack settings save action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
@@ -94,7 +94,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'updateJetpackOnboardingSettings()', () => {
-		test( 'should return a jetpack onboarding settings update action object', () => {
+		test( 'should return a jetpack settings update action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',

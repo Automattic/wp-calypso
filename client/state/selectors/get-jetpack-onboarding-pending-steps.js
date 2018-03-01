@@ -30,7 +30,7 @@ export default function getJetpackOnboardingPendingSteps( state, siteId, steps )
 		( result, stepName ) => {
 			result[ stepName ] = getRequest(
 				state,
-				saveJetpackOnboardingSettings( siteId, stepActionsMap[ stepName ] )
+				saveJetpackOnboardingSettings( siteId, { onboarding: stepActionsMap[ stepName ] } )
 			).isLoading;
 			return result;
 		},

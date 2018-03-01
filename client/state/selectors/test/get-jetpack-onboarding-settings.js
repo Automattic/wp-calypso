@@ -1,3 +1,5 @@
+/** @format */
+
 /**
  * Internal dependencies
  */
@@ -9,35 +11,46 @@ describe( '#getJetpackOnboardingSettings()', () => {
 		siteDescription: 'Not just another amazing WordPress site',
 	};
 	const settings = {
-		2916284: onboardingSettings,
+		2916284: {
+			onboarding: onboardingSettings,
+		},
 	};
 
 	test( 'should return null if we have no settings at all', () => {
-		const selected = getJetpackOnboardingSettings( {
-			jetpackOnboarding: {
-				settings: {},
+		const selected = getJetpackOnboardingSettings(
+			{
+				jetpackOnboarding: {
+					settings: {},
+				},
 			},
-		}, 12345678 );
+			12345678
+		);
 
 		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return null if we have no settings for the current site ID', () => {
-		const selected = getJetpackOnboardingSettings( {
-			jetpackOnboarding: {
-				settings,
+		const selected = getJetpackOnboardingSettings(
+			{
+				jetpackOnboarding: {
+					settings,
+				},
 			},
-		}, 12345678 );
+			12345678
+		);
 
 		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return the site settings of a known unconnected site', () => {
-		const selected = getJetpackOnboardingSettings( {
-			jetpackOnboarding: {
-				settings,
+		const selected = getJetpackOnboardingSettings(
+			{
+				jetpackOnboarding: {
+					settings,
+				},
 			},
-		}, 2916284 );
+			2916284
+		);
 
 		expect( selected ).toBe( onboardingSettings );
 	} );

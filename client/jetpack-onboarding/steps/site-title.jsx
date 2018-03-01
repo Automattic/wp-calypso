@@ -63,7 +63,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 	};
 
 	render() {
-		const { basePath, isRequestingSettings, translate } = this.props;
+		const { basePath, isRequestingSettings, isRequestingWhetherConnected, translate } = this.props;
 		const headerText = translate( 'Welcome to WordPress!' );
 
 		return (
@@ -97,7 +97,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 							autoFocusBlogname
 							blogname={ this.state.blogname || '' }
 							blogdescription={ this.state.blogdescription || '' }
-							disabled={ isRequestingSettings }
+							disabled={ isRequestingSettings || isRequestingWhetherConnected }
 							isBlognameRequired
 							onChange={ this.handleChange }
 						/>
