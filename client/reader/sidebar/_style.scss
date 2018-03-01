@@ -1,6 +1,5 @@
 // Reader Sidebar
 .is-group-reader .sidebar {
-
 	overflow-x: hidden;
 
 	@include breakpoint( "<660px" ) {
@@ -52,20 +51,24 @@
 
 		.sidebar__heading {
 			margin: 0;
-			padding: 10px 16px 10px 18px;
+			font-weight: normal;
+			padding: 10px 16px 10px 20px;
+			color: $gray-darken-30;
 			cursor: pointer;
 			position: relative;
 			transition: background-color 0.15s ease-in-out,
 				box-shadow 0.15s ease-in-out;
 
 			.gridicon {
-				top: 10px;
+				top: 13px;
 				left: 20px;
-				height: 16px; // Smaller than recommended for gridicon, but works here
+				height: 18px; // Smaller than recommended for gridicon, but works here
 				transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 			}
 
 			.count {
+				font-size: 13px;
+				padding: 2px 7px 2px 6px;
 				margin-left: 8px;
 			}
 
