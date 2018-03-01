@@ -89,7 +89,7 @@ export class OrgCredentialsForm extends Component {
 		const { translate } = this.props;
 
 		return (
-			<span className="jetpack-connect__install-step creds-form">
+			<span className="jetpack-connect__install-step jetpack-connect__creds-form">
 				{ translate(
 					'Add your WordPress administrator credentials ' +
 						'for this site. Your credentials will not be stored and are used for the purpose ' +
