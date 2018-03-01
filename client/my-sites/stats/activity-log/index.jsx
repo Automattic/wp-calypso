@@ -454,7 +454,7 @@ class ActivityLog extends Component {
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
-		const today = moment().startOf( 'day' );
+		const today = this.applySiteOffset( moment().utc() ).startOf( 'day' );
 
 		// Content shown when there are no logs.
 		// The network request either finished with no events or is still ongoing.
