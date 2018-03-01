@@ -49,6 +49,17 @@ function animate() {
 	TWEEN.update();
 }
 
+/**
+ * Scrolls to the specified window location
+ * @param {Object} options - options object (see below)
+ * @param {number} options.x - desired left or x coordinate
+ * @param {number} options.y - desired top or y coordinate
+ * @param {function} options.easing - easing function, defaults to TWEEN.Easing.Circular.Out
+ * @param {number} options.duration - duration in ms, default 500
+ * @param {function} options.onStart - callback before start is called
+ * @param {function} options.onComplete - callback when scroll is finished
+ * @param {HTMLElement} options.container - the container to scroll instead of window, if any
+ */
 function scrollTo( options ) {
 	const currentScroll = getCurrentScroll( options.container ),
 		tween = new TWEEN.Tween( currentScroll )
@@ -70,7 +81,13 @@ function scrollTo( options ) {
 	}
 }
 
-// test
+/**
+ * Scroll to the wrapped component if the page has a URL anchor like #namedAnchor
+ *
+ * @param {React.Component} WrappedComponent - the component to scroll to
+ * @param {string} namedAnchor - the anchor name
+ * @returns {React.Component} - the component with scrollTo behaviour enabled
+ */
 function scrollToComponent( WrappedComponent, namedAnchor ) {
 	return class extends React.Component {
 		componentDidMount() {
@@ -142,16 +159,5 @@ function scrollToComponent( WrappedComponent, namedAnchor ) {
 	};
 }
 
-/**
- * Scrolls to the specified window location
- * @param {Object} options - options object (see below)
- * @param {number} options.x - desired left or x coordinate
- * @param {number} options.y - desired top or y coordinate
- * @param {function} options.easing - easing function, defaults to TWEEN.Easing.Circular.Out
- * @param {number} options.duration - duration in ms, default 500
- * @param {function} options.onStart - callback before start is called
- * @param {function} options.onComplete - callback when scroll is finished
- * @param {HTMLElement} options.container - the container to scroll instead of window, if any
- */
 export { scrollToComponent };
 export default scrollTo;
