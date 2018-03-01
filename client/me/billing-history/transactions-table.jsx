@@ -13,12 +13,13 @@ import { capitalPDangit } from 'lib/formatting';
 /**
  * Internal dependencies
  */
+import CompactCard from 'components/card/compact';
 import Pagination from 'components/pagination';
 import TransactionsHeader from './transactions-header';
 import tableRows from './table-rows';
 import SearchCard from 'components/search-card';
 
-const pageSize = 10;
+const PAGE_SIZE = 10;
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -75,8 +76,8 @@ class TransactionsTable extends React.Component {
 		const filteredTransactions = tableRows.filter( this.props.transactions, newFilter );
 		const newTransactions = slice(
 			filteredTransactions,
-			pageIndex * pageSize,
-			pageIndex * pageSize + pageSize
+			pageIndex * PAGE_SIZE,
+			pageIndex * PAGE_SIZE + PAGE_SIZE
 		);
 
 		return {
@@ -118,13 +119,7 @@ class TransactionsTable extends React.Component {
 					{ header }
 					<tbody>{ this.renderRows() }</tbody>
 				</table>
-				<Pagination
-					className="billing-history__pagination"
-					page={ this.state.page }
-					perPage={ pageSize }
-					total={ this.state.total }
-					pageClick={ this.onPageClick }
-				/>
+				{ this.renderPagination() }
 			</div>
 		);
 	}
@@ -178,6 +173,23 @@ class TransactionsTable extends React.Component {
 					<div className="billing-history__transaction-text" />
 				</td>
 			</tr>
+		);
+	};
+
+	renderPagination = () => {
+		if ( this.state.total < PAGE_SIZE ) {
+			return null;
+		}
+
+		return (
+			<CompactCard>
+				<Pagination
+					page={ this.state.page }
+					perPage={ PAGE_SIZE }
+					total={ this.state.total }
+					pageClick={ this.onPageClick }
+				/>
+			</CompactCard>
 		);
 	};
 
