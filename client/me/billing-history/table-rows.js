@@ -22,14 +22,12 @@ function getSearchableStrings( transaction ) {
 function search( transactions, searchQuery ) {
 	return transactions.filter( function( transaction ) {
 		return some( getSearchableStrings( transaction ), function( val ) {
-			var haystack, needle;
-
 			if ( isDate( val ) ) {
 				val = formatDate( val );
 			}
 
-			haystack = val.toString().toLowerCase();
-			needle = searchQuery.toLowerCase();
+			const haystack = val.toString().toLowerCase();
+			const needle = searchQuery.toLowerCase();
 
 			return haystack.indexOf( needle ) !== -1;
 		} );

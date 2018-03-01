@@ -125,7 +125,7 @@ class TransactionsTable extends React.Component {
 	}
 
 	serviceName = transaction => {
-		var item, name;
+		let item, name;
 
 		if ( ! transaction.items ) {
 			name = this.serviceNameDescription( transaction );
@@ -141,7 +141,7 @@ class TransactionsTable extends React.Component {
 	};
 
 	serviceNameDescription = transaction => {
-		var description;
+		let description;
 		if ( transaction.domain ) {
 			description = (
 				<div>
@@ -215,7 +215,7 @@ class TransactionsTable extends React.Component {
 		}
 
 		return this.state.transactions.map( function( transaction ) {
-			var date = tableRows.formatDate( transaction.date );
+			const date = tableRows.formatDate( transaction.date );
 
 			return (
 				<tr key={ transaction.id } className="billing-history__transaction">
