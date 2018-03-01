@@ -54,6 +54,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 						highlighted={ siteType === 'personal' }
 						href={ forwardUrl }
 						onClick={ this.handleSiteTypeSelection( 'personal' ) }
+						e2eType={ 'personal' }
 					/>
 					<Tile
 						buttonLabel={ translate( 'Business site' ) }
@@ -64,6 +65,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 						highlighted={ siteType === 'business' }
 						href={ forwardUrl }
 						onClick={ this.handleSiteTypeSelection( 'business' ) }
+						e2eType={ 'business' }
 					/>
 				</TileGrid>
 			</div>

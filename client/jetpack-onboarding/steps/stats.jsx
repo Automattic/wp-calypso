@@ -92,6 +92,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 						image="/calypso/images/illustrations/jetpack-stats.svg"
 						onClick={ this.handleActivateStats }
 						href={ href }
+						e2eType={ 'activate-stats' }
 					/>
 				</TileGrid>
 			</Fragment>

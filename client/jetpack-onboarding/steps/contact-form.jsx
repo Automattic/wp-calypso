@@ -100,6 +100,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 						image={ '/calypso/images/illustrations/contact-us.svg' }
 						onClick={ this.handleAddContactForm }
 						href={ href }
+						e2eType={ 'contact-form' }
 					/>
 				</TileGrid>
 			</Fragment>

@@ -176,6 +176,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 						image="/calypso/images/illustrations/business-address.svg"
 						onClick={ this.handleAddBusinessAddressClick }
 						href={ href }
+						e2eType={ 'business-address' }
 					/>
 				</TileGrid>
 			</Fragment>
