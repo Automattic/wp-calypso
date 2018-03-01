@@ -90,6 +90,7 @@ describe( 'PeopleInviteDetails', () => {
 				deleteInvite={ mockDeleteInvite }
 				translate={ mockTranslate }
 				moment={ moment }
+				canViewPeople={ true }
 			/>
 		);
 
@@ -118,6 +119,7 @@ describe( 'PeopleInviteDetails', () => {
 				deleteInvite={ mockDeleteInvite }
 				translate={ mockTranslate }
 				moment={ moment }
+				canViewPeople={ true }
 			/>
 		);
 
@@ -143,6 +145,7 @@ describe( 'PeopleInviteDetails', () => {
 				invite={ acceptedInviteObject }
 				translate={ mockTranslate }
 				moment={ moment }
+				canViewPeople={ true }
 			/>
 		);
 
