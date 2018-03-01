@@ -649,6 +649,10 @@
 .jetpack-connect__password-form {
 	position: relative;
 
+	.form-password-input {
+		position: relative;
+	}
+
 	.gridicon {
 		position: absolute;
 		z-index: z-index('root', '.jetpack-connect__password-form .gridicon');
