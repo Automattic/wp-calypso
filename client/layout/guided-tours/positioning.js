@@ -75,8 +75,7 @@ const dialogPositioners = {
 	} ),
 };
 
-export const query = selector =>
-	[].slice.call( global.window.document.querySelectorAll( selector ) );
+export const query = selector => [].slice.call( window.document.querySelectorAll( selector ) );
 
 export const posToCss = ( { x, y } ) => ( {
 	top: y ? y + 'px' : undefined,
@@ -105,7 +104,7 @@ export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
 	const rect =
 		target && target.getBoundingClientRect
 			? target.getBoundingClientRect()
-			: global.window.document.body.getBoundingClientRect();
+			: window.document.body.getBoundingClientRect();
 
 	if (
 		stepPos.y >= rect.top &&
@@ -141,7 +140,7 @@ export function getStepPosition( {
 	const rect =
 		target && target.getBoundingClientRect
 			? target.getBoundingClientRect()
-			: global.window.document.body.getBoundingClientRect();
+			: window.document.body.getBoundingClientRect();
 	const position = dialogPositioners[ validatePlacement( placement, target ) ]( rect );
 
 	return {
