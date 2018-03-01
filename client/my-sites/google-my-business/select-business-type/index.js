@@ -13,8 +13,9 @@ import page from 'page';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import CTACard from './cta-card';
+import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SelectBusinessType extends Component {
@@ -44,14 +45,16 @@ class SelectBusinessType extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<div className="select-business-type">
+			<Main className="select-business-type">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card className="select-business-type__explanation">
+				<CompactCard className="select-business-type__explanation">
 					<div className="select-business-type__explanation-main">
-						<h1>{ translate( 'Which type of business are you?' ) }</h1>
+						<h1 className="select-business-type__explanation-heading">
+							{ translate( 'Which type of business are you?' ) }
+						</h1>
 
 						<p>
 							{ translate(
@@ -62,10 +65,11 @@ class SelectBusinessType extends Component {
 					</div>
 
 					<img
+						className="select-business-type__explanation-image"
 						src="/calypso/images/google-my-business/business-local.svg"
 						alt="Local business illustration"
 					/>
-				</Card>
+				</CompactCard>
 
 				<CTACard
 					headerText={ translate( 'Physical Location or Service Area', {
@@ -93,11 +97,10 @@ class SelectBusinessType extends Component {
 						"Don't provide in-person services? Learn more about reaching your customers online."
 					) }
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
-					buttonIcon="external"
 					buttonHref={ '/settings/traffic/' + siteId }
 					buttonOnClick={ this.trackOptimizeYourSEOClick }
 				/>
-			</div>
+			</Main>
 		);
 	}
 }
