@@ -103,4 +103,12 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
+	redesignedSidebarBanner: {
+		datestamp: '20180222',
+		variations: {
+			newBanner: 50,
+			oldBanner: 50,
+		},
+		defaultVariation: 'oldBanner',
+	},
 };

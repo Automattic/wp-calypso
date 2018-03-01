@@ -11,6 +11,11 @@ import { stub } from 'sinon';
 /**
  * Internal dependencies
  */
+
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
+
 import { DomainToPaidPlanNotice } from '../domain-to-paid-plan-notice';
 
 describe( 'DomainToPaidPlanNotice', () => {
