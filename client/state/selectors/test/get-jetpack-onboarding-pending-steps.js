@@ -12,7 +12,9 @@ describe( 'getJetpackOnboardingPendingSteps()', () => {
 	test( 'should return pending status for the contact form step', () => {
 		const siteId = 2916284;
 		const action = saveJetpackOnboardingSettings( siteId, {
-			addContactForm: true,
+			onboarding: {
+				addContactForm: true,
+			},
 		} );
 		const state = {
 			dataRequests: {
