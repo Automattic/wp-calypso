@@ -267,3 +267,30 @@ a.notice__action {
 		}
 	}
 }
+
+// Inline notices
+.notice.is-inline {
+	background: lighten( $gray, 33 );
+	color: darken( $gray, 33 );
+	box-shadow: 0 0 0 1px $gray inset;
+
+	// Success!
+	&.is-success {
+		box-shadow: 0 0 0 1px $alert-green inset;
+	}
+
+	// Warning
+	&.is-warning {
+		box-shadow: 0 0 0 1px $alert-yellow inset;
+	}
+
+	// Error! OHNO!
+	&.is-error {
+		box-shadow: 0 0 0 1px $alert-red inset;
+	}
+
+	// General notice
+	&.is-info {
+		box-shadow: 0 0 0 1px $blue-medium inset;
+	}
+}

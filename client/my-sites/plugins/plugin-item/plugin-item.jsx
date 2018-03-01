@@ -185,6 +185,7 @@ class PluginItem extends Component {
 			return (
 				<Notice
 					isCompact
+					isInline
 					icon="checkmark"
 					status="is-success"
 					inline={ true }
@@ -205,6 +206,7 @@ class PluginItem extends Component {
 		return (
 			<Notice
 				isCompact
+				isInline
 				icon="sync"
 				status="is-warning"
 				inline={ true }
@@ -220,7 +222,7 @@ class PluginItem extends Component {
 		if ( progress.length ) {
 			const message = this.doing();
 			if ( message ) {
-				return <Notice isCompact status="is-info" text={ message } inline={ true } />;
+				return <Notice isCompact isInline status="is-info" text={ message } inline={ true } />;
 			}
 		}
 		if ( this.props.isAutoManaged ) {
