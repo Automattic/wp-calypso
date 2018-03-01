@@ -25,7 +25,7 @@ import QuerySiteInvites from 'components/data/query-site-invites';
 import Dialog from 'components/dialog';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { isPrivateSite } from 'state/selectors';
 import {
 	isRequestingInvitesForSite,
@@ -66,7 +66,7 @@ class PeopleInvites extends React.PureComponent {
 	};
 
 	render() {
-		const { site, isJetpack, isPrivate } = this.props;
+		const { site, isJetpack, isPrivate, jetpackPeopleSupported } = this.props;
 		const siteId = site && site.ID;
 
 		return (
@@ -78,6 +78,7 @@ class PeopleInvites extends React.PureComponent {
 					site={ site }
 					isJetpack={ isJetpack }
 					isPrivate={ isPrivate }
+					jetpackPeopleSupported={ jetpackPeopleSupported }
 				/>
 				{ this.renderInvitesList() }
 			</Main>
@@ -226,6 +227,7 @@ export default connect(
 			site,
 			isJetpack: isJetpackSite( state, siteId ),
 			isPrivate: isPrivateSite( state, siteId ),
+			jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
 			requesting: isRequestingInvitesForSite( state, siteId ),
 			pendingInvites: getPendingInvitesForSite( state, siteId ),
 			acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
