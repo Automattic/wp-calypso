@@ -39,6 +39,7 @@
 		"guided-tours/design-showcase-welcome": true,
 		"guided-tours/site-title": true,
 		"guided-tours/theme-sheet-welcome": true,
+		"happychat": true,
 		"help": true,
 		"help/courses": true,
 		"jetpack/api-cache": true,
