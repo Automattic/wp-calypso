@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -144,7 +143,11 @@ class ProductPurchaseFeaturesList extends Component {
 
 		return [
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
-			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
+			<JetpackReturnToDashboard
+				onClick={ this.props.recordReturnToDashboardClick }
+				selectedSite={ selectedSite }
+				key="jetpackReturnToDashboard"
+			/>,
 		];
 	}
 
@@ -241,9 +244,11 @@ export default connect(
 		};
 	},
 	{
-		recordBusinessOnboardingClick: partial(
-			recordTracksEvent,
-			'calypso_plan_features_onboarding_click'
-		),
+		recordBusinessOnboardingClick: function( eventProps ) {
+			recordTracksEvent( 'calypso_plan_features_onboarding_click', eventProps );
+		},
+		recordReturnToDashboardClick: function( eventProps ) {
+			recordTracksEvent( 'calypso_plan_features_returnToDashboard_click', eventProps );
+		},
 	}
 )( ProductPurchaseFeaturesList );
