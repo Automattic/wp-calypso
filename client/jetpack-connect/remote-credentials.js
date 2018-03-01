@@ -197,9 +197,6 @@ export class OrgCredentialsForm extends Component {
 			<MainWrapper>
 				{ this.formHeader() }
 				<Card className="jetpack-connect__site-url-input-container">
-					<div className="jetpack-connect__worg-logo-container">
-						<img src="/calypso/images/wordpress/logo-jpc.svg" alt="wordpress logo" width="65" />
-					</div>
 					<div onSubmit={ this.handleSubmit }>
 						{ this.formFields() }
 						{ this.formFooter() }
