@@ -16,7 +16,6 @@ import page from 'page';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import GoogleMyBusinessLocation from '../google-my-business-location';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 
@@ -53,6 +52,9 @@ class SearchForALocation extends Component {
 	};
 
 	handleSearch = query => {
+		this.setState( {
+			query: query,
+		} );
 		if ( query ) {
 			autocompleteService.getQueryPredictions( { input: query }, this.updatePredictions );
 		} else {
@@ -63,8 +65,27 @@ class SearchForALocation extends Component {
 	render() {
 		const { translate, siteId } = this.props;
 		const { predictions } = this.state;
-		const verifyHref = '/google-my-business/verify/' + siteId;
-		const createHref = '/google-my-business/create/' + siteId; // For M2 this would just link to https://business.google.com/create?hl=en
+		const href = '/google-my-business/address/' + siteId;
+		const predictionsMarkup =
+			predictions &&
+			predictions.map( prediction => {
+				return (
+					<CompactCard key={ prediction.place_id } href={ href }>
+						{ prediction.structured_formatting.main_text }
+						<p>{ prediction.structured_formatting.secondary_text }</p>
+					</CompactCard>
+				);
+			} );
+		const newListing = this.state.query ? (
+			<CompactCard href={ href }>
+				<p>
+					{ this.state.query }
+					<br />
+					{ translate( 'Create new listing' ) }
+				</p>
+			</CompactCard>
+		) : null;
+
 		return (
 			<div className="search-for-a-location">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
@@ -72,28 +93,20 @@ class SearchForALocation extends Component {
 				</HeaderCake>
 
 				<Card className="search-for-a-location__search-section">
-					<p>What is the name of your business?</p>
+					<h1>What's the name of your business?</h1>
 					<SearchCard
 						onSearch={ this.handleSearch }
+						inputLabel={ translate( 'Business name' ) }
 						className="search-for-a-location__search-card is-compact"
 					/>
 
-					{ predictions &&
-						predictions.map( prediction => {
-							return (
-								<CompactCard key={ prediction.place_id }>
-									<GoogleMyBusinessLocation
-										title={ prediction.structured_formatting.main_text }
-										text={ <p>{ prediction.structured_formatting.secondary_text }</p> }
-										href={ verifyHref }
-									/>
-								</CompactCard>
-							);
-						} ) }
-				</Card>
+					{ predictionsMarkup }
 
-				<Card>
-					Can't find your business? <a href={ createHref }>Create a new listing.</a>
+					{ newListing }
+
+					<p className="search-for-a-location__search-tos">
+						{ translate( 'By continuing you agree to the following Terms of Service' ) }
+					</p>
 				</Card>
 			</div>
 		);

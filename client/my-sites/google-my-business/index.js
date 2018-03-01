@@ -17,6 +17,7 @@ import {
 	create,
 	verify,
 	stats,
+	address,
 } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
@@ -101,6 +102,16 @@ export default function() {
 			siteSelection,
 			navigation,
 			stats,
+			makeLayout,
+			clientRender
+		);
+
+		page( '/google-my-business/address', siteSelection, sites, makeLayout, clientRender );
+		page(
+			'/google-my-business/address/:site_id/',
+			siteSelection,
+			navigation,
+			address,
 			makeLayout,
 			clientRender
 		);

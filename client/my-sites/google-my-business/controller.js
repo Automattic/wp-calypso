@@ -15,6 +15,7 @@ import Success from './success';
 import Create from './create';
 import Verify from './verify';
 import Stats from './google-my-business-stats';
+import Address from './google-my-business-address';
 
 export function selectBusinessType( context, next ) {
 	const { params } = context;
@@ -55,5 +56,11 @@ export function verify( context, next ) {
 export function stats( context, next ) {
 	const { params } = context;
 	context.primary = <Stats siteId={ params.site_id } />;
+	next();
+}
+
+export function address( context, next ) {
+	const { params } = context;
+	context.primary = <Address siteId={ params.site_id } />;
 	next();
 }

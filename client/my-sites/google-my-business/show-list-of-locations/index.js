@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
-import Gridicon from 'gridicons'
 
 /**
  * Internal dependencies
@@ -17,7 +16,6 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import GoogleMyBusinessLocation from '../google-my-business-location';
 import HeaderCake from 'components/header-cake';
-import Ribbon from 'components/ribbon';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class ShowListOfLocation extends Component {
@@ -50,7 +48,9 @@ class ShowListOfLocation extends Component {
 					<GoogleMyBusinessLocation
 						title="Cate's Cookies"
 						text={
-							( <div>345 North Avenue<br />Talihassee, FL 34342<br />USA</div> )
+							<div>
+								345 North Avenue<br />Talihassee, FL 34342<br />USA
+							</div>
 						}
 						href={ successHref }
 						verified={ true }
@@ -60,7 +60,11 @@ class ShowListOfLocation extends Component {
 				<CompactCard>
 					<GoogleMyBusinessLocation
 						title="Pinch Bakeshop"
-						text={ ( <div>234 Piedmont Drive<br />Talihassee, FL 34342<br />USA</div> ) }
+						text={
+							<div>
+								234 Piedmont Drive<br />Talihassee, FL 34342<br />USA
+							</div>
+						}
 						href={ verifyHref }
 						verified={ false }
 					/>
@@ -68,7 +72,7 @@ class ShowListOfLocation extends Component {
 
 				<Card className="show-list-of-locations__search">
 					{ translate(
-						"Don't see the listing you are trying to connect? {{a}}Search for your business{{/a}}.",
+						"Don't see the listing you are trying to connect? {{a}}Add your business{{/a}}.",
 						{
 							components: {
 								a: <a href={ searchHref } />,
