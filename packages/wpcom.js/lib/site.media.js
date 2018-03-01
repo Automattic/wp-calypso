@@ -1,8 +1,8 @@
 /**
  * Module dependencies.
  */
-const fs = require( 'fs' );
 import debugFactory from 'debug';
+import { createReadStream } from './util/fs';
 
 const debug = debugFactory( 'wpcom:media' );
 
@@ -20,7 +20,10 @@ function buildFormData( files ) {
 	let i, f, k, param;
 	for ( i = 0; i < files.length; i++ ) {
 		f = files[ i ];
-		f = 'string' === typeof f ? fs.createReadStream( f ) : f;
+
+		if ( 'string' === typeof f ) {
+			f = createReadStream( f );
+		}
 
 		const isStream = !! f._readableState;
 		const isFile = 'undefined' !== typeof File && f instanceof File;
@@ -39,7 +42,9 @@ function buildFormData( files ) {
 			}
 			// set file path
 			f = f.file;
-			f = 'string' === typeof f ? fs.createReadStream( f ) : f;
+			if ( 'string' === typeof f ) {
+				f = createReadStream( f );
+			}
 		}
 
 		formData.push( [ 'media[]', f ] );

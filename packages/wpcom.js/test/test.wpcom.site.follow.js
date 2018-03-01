@@ -7,7 +7,7 @@ var assert = require( 'assert' );
 /**
  * site.follow
  */
-describe( 'wpcom.site.follow', function() {
+describe.skip( 'wpcom.site.follow', function() {
 	// Global instances
 	var wpcom = util.wpcom();
 	var site = wpcom.site( util.site() );

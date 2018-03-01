@@ -1,7 +1,7 @@
 {
   "name": "wpcom",
   "description": "Official JavaScript library for the WordPress.com REST API",
-  "version": "5.4.0",
+  "version": "5.4.1",
   "main": "build/index.js",
   "author": "Automattic, Inc.",
   "scripts": {
@@ -13,7 +13,8 @@
     "Nathan Rajlich <nathan@automattic.com>",
     "Matt Sherman <matt.sherman@automattic.com>",
     "Timmy Crawford <timmy.crawford@automattic.com>",
-    "Benoit Person <benoit.person@gmail.com>"
+    "Benoit Person <benoit.person@gmail.com>",
+    "Jake Fried <jake.fried@automattic.com>"
   ],
   "keywords": [
     "wordpress",
@@ -36,6 +37,9 @@
     "History.md",
     "README.md"
   ],
+  "browser": {
+    "./build/lib/util/fs.js": "./build/lib/util/fs-browser.js"
+  },
   "dependencies": {
     "babel-runtime": "^6.9.2",
     "debug": "^2.2.0",

@@ -10,7 +10,7 @@ var assert = require( 'assert' );
  */
 var fixture = require( './fixture' );
 
-describe( 'wpcom.site.wpcomPlugin', function() {
+describe.skip( 'wpcom.site.wpcomPlugin', function() {
 	// Global instances
 	var wpcom = util.wpcom();
 	var site = wpcom.site( fixture.site_business );

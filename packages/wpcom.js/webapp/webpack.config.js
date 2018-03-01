@@ -2,10 +2,6 @@
 module.exports = {
 	entry: __dirname + '/main.js',
 
-	node: {
-		fs: 'empty'
-	},
-
 	output: {
 		path: __dirname,
 		filename: 'webapp-bundle.js',

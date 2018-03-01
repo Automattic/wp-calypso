@@ -489,7 +489,7 @@ describe( 'wpcom.site', function() {
 			} );
 		} );
 
-		describe( 'wpcom.site.wpcomPluginsList', function() {
+		describe.skip( 'wpcom.site.wpcomPluginsList', function() {
 			it( 'should request wpcom plugins list', done => {
 				wpcom
 				.site( fixture.site_business )
