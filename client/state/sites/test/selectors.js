@@ -56,6 +56,7 @@ import {
 	getJetpackComputedAttributes,
 	hasDefaultSiteTitle,
 	siteSupportsJetpackSettingsUi,
+	getUpdatesBySiteId,
 } from '../selectors';
 import config from 'config';
 import { userState } from 'state/selectors/test/fixtures/user-state';
@@ -3919,6 +3920,37 @@ describe( 'selectors', () => {
 			expect( noNewAttributes.isMainNetworkSite ).to.have.property;
 			expect( noNewAttributes.isSecondaryNetworkSite ).to.have.property;
 			expect( noNewAttributes.isSiteUpgradeable ).to.have.property;
+		} );
+	} );
+
+	describe( '#getUpdatesBySiteId()', () => {
+		test( 'should return null if site updates have not been fetched yet', () => {
+			const updates = getUpdatesBySiteId(
+				{
+					sites: {
+						items: {},
+					},
+				},
+				12345678
+			);
+
+			expect( updates ).to.be.null;
+		} );
+
+		test( 'should return the updates for an existing site', () => {
+			const exampleUpdates = { plugins: 1, total: 1 };
+			const updates = getUpdatesBySiteId(
+				{
+					sites: {
+						items: {
+							12345678: { updates: exampleUpdates },
+						},
+					},
+				},
+				12345678
+			);
+
+			expect( updates ).to.eql( exampleUpdates );
 		} );
 	} );
 } );
