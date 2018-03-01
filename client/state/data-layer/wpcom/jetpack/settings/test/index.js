@@ -34,7 +34,7 @@ describe( 'requestJetpackOnboardingSettings()', () => {
 		siteId,
 	};
 
-	test( 'should dispatch an action for GET HTTP request to save Jetpack Onboarding settings', () => {
+	test( 'should dispatch an action for a GET HTTP request to fetch Jetpack settings', () => {
 		requestJetpackOnboardingSettings( { dispatch }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -162,7 +162,7 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 		settings,
 	};
 
-	test( 'should dispatch an action for POST HTTP request to save Jetpack Onboarding settings', () => {
+	test( 'should dispatch an action for POST HTTP request to save Jetpack settings', () => {
 		saveJetpackOnboardingSettings( { dispatch }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
