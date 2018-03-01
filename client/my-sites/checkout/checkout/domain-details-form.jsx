@@ -220,7 +220,10 @@ export class DomainDetailsForm extends PureComponent {
 		this.setPrivacyProtectionSubscriptions( enable );
 	};
 
-	handleSubmitButtonClick = () => {
+	handleSubmitButtonClick = event => {
+		if ( event && event.preventDefault ) {
+			event.preventDefault();
+		}
 		if ( this.hasAnotherStep() ) {
 			return this.switchToNextStep();
 		}
