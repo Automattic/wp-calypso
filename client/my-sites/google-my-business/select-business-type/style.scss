@@ -1,5 +1,6 @@
 .select-business-type__cta-card {
 	display: flex;
+
 	@include breakpoint( '<960px' ) {
 		display: block;
 	}
@@ -31,9 +32,6 @@
 }
 
 .select-business-type {
-	margin: auto;
-	max-width: 720px;
-
 	.header-cake {
 		margin-bottom: 0;
 	}

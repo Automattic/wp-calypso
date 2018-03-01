@@ -15,6 +15,7 @@ import page from 'page';
 import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
 import CTACard from './cta-card';
+import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SelectBusinessType extends Component {
@@ -44,7 +45,7 @@ class SelectBusinessType extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<div className="select-business-type">
+			<Main className="select-business-type">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -99,7 +100,7 @@ class SelectBusinessType extends Component {
 					buttonHref={ '/settings/traffic/' + siteId }
 					buttonOnClick={ this.trackOptimizeYourSEOClick }
 				/>
-			</div>
+			</Main>
 		);
 	}
 }
