@@ -35,6 +35,7 @@ import {
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
+import { scrollToComponent } from 'lib/scroll-to';
 
 class JetpackSiteStats extends Component {
 	static defaultProps = {
@@ -265,4 +266,4 @@ export default connect(
 	{
 		activateModule,
 	}
-)( localize( JetpackSiteStats ) );
+)( localize( scrollToComponent( JetpackSiteStats, 'site-stats' ) ) );

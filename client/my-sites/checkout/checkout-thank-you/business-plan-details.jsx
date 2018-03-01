@@ -82,7 +82,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
 				) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
-				href={ '/settings/analytics/' + selectedSite.slug }
+				href={ '/settings/traffic/' + selectedSite.slug + '#google-analytics' }
 			/>
 		</div>
 	);
