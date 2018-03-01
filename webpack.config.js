@@ -180,6 +180,7 @@ const webpackConfig = {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
 		} ),
+		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },

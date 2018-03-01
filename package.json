@@ -111,7 +111,7 @@
     "notifications-panel": "2.1.5",
     "npm-run-all": "4.0.2",
     "page": "1.6.4",
-    "path": "0.12.7",
+    "path-browserify": "0.0.0",
     "percentage-regex": "3.0.0",
     "phone": "git+https://github.com/Automattic/node-phone.git#1.0.8",
     "photon": "2.0.1",
