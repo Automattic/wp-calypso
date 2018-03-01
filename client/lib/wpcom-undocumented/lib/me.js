@@ -47,21 +47,12 @@ UndocumentedMe.prototype.billingHistoryEmailReceipt = function( receiptId, callb
 	return this.wpcom.req.get( args, callback );
 };
 
-UndocumentedMe.prototype.getReceipt = function( receiptId, fn ) {
+UndocumentedMe.prototype.getReceipt = function( receiptId, query, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/me/billing-history/receipt/${ receiptId }`,
 		},
-		fn
-	);
-};
-
-UndocumentedMe.prototype.getReceiptForDisplay = function( receiptId, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/me/billing-history/receipt/${ receiptId }`,
-		},
-		{ format: 'display' },
+		query,
 		fn
 	);
 };
