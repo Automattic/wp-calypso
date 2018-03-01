@@ -11189,7 +11189,6 @@
     "path": {
       "version": "0.12.7",
       "integrity": "sha1-1NwqUGxM4hl+tIHr/NWzbAFAsQ8=",
-      "dev": true,
       "requires": {
         "process": "0.11.10",
         "util": "0.10.3"
