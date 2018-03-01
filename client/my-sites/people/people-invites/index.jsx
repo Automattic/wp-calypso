@@ -26,7 +26,7 @@ import Dialog from 'components/dialog';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
-import { isPrivateSite } from 'state/selectors';
+import { isPrivateSite, canCurrentUser } from 'state/selectors';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -35,7 +35,6 @@ import {
 	isDeletingAnyInvite,
 } from 'state/invites/selectors';
 import { deleteInvites } from 'state/invites/actions';
-import { canCurrentUser } from 'state/selectors';
 
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
