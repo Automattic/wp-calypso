@@ -154,6 +154,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 		return (
 			<ConnectIntro
+				action="add_business_address"
 				buttonLabel={ translate( 'Add a business address' ) }
 				e2eType="business-address"
 				header={ this.renderHeader() }
