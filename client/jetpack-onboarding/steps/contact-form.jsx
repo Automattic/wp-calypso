@@ -81,6 +81,7 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 
 		return (
 			<ConnectIntro
+				action="add_contact_form"
 				buttonLabel={ ! hasContactForm ? translate( 'Add a contact form' ) : null }
 				description={ hasContactForm ? translate( 'Your contact form has been created.' ) : null }
 				e2eType="contact-form"

@@ -76,6 +76,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 
 		return (
 			<ConnectIntro
+				action="activate_stats"
 				buttonLabel={ translate( 'Activate stats' ) }
 				e2eType="activate-stats"
 				header={ header }

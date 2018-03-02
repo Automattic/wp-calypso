@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
 import { addQueryArgs } from 'lib/route';
@@ -18,6 +19,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 
 class ConnectIntro extends PureComponent {
 	static propTypes = {
+		action: PropTypes.string,
 		buttonLabel: PropTypes.string,
 		description: PropTypes.string,
 		e2eType: PropTypes.string,
@@ -33,6 +35,7 @@ class ConnectIntro extends PureComponent {
 
 	render() {
 		const {
+			action,
 			buttonLabel,
 			description,
 			e2eType,
@@ -44,12 +47,16 @@ class ConnectIntro extends PureComponent {
 		} = this.props;
 		const connectUrl = addQueryArgs(
 			{
-				url: siteUrl,
-				// TODO: add a parameter to the JPC to redirect back to this step after completion
-				// and in the redirect URL include the ?action=SOMEACTION parameter
-				// to actually trigger the action after getting back to JPO
+				connect_url_redirect: true,
+				calypso_env: config( 'env_id' ),
+				from: 'jpo',
+				page: 'jetpack',
+				// TODO: Pass current URL as prop, have consumer generate it from host and port
+				// config values plus `[ basePath, stepName, siteSlug ].join( '/' )`.
+				// (We need an absolute URL here.)
+				redirect_after_auth: addQueryArgs( { action }, window.location.href ),
 			},
-			'/jetpack/connect'
+			siteUrl + '/wp-admin/admin.php'
 		);
 		const href = ! isConnected ? connectUrl : null;
 
