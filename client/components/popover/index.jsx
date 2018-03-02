@@ -12,7 +12,6 @@ import debugFactory from 'debug';
 import classNames from 'classnames';
 import clickOutside from 'click-outside';
 import { uniqueId } from 'lodash';
-import FocusTrap from 'focus-trap-react';
 
 /**
  * Internal dependencies
@@ -456,15 +455,13 @@ class Popover extends Component {
 
 		return (
 			<RootChild className={ this.props.rootClassName }>
-				<FocusTrap>
-					<div style={ this.getStylePosition() } className={ classes }>
-						<div className="popover__arrow" />
+				<div style={ this.getStylePosition() } className={ classes }>
+					<div className="popover__arrow" />
 
-						<div ref={ this.setDOMBehavior } className="popover__inner">
-							{ this.props.children }
-						</div>
+					<div ref={ this.setDOMBehavior } className="popover__inner">
+						{ this.props.children }
 					</div>
-				</FocusTrap>
+				</div>
 			</RootChild>
 		);
 	}
