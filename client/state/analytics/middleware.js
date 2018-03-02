@@ -70,7 +70,7 @@ export const dispatcher = ( { meta: { analytics: analyticsMeta } }, state ) => {
 				return analytics.tracks.setAnonymousUserId( payload );
 
 			case ANALYTICS_TRACKS_OPT_OUT:
-				return analytics.tracks.optOut( payload );
+				return analytics.tracks.setOptOut( payload );
 		}
 	} );
 };

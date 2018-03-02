@@ -352,8 +352,8 @@ const analytics = {
 			window._tkq.push( [ 'identifyAnonUser', anonId ] );
 		},
 
-		optOut: function( isOptingOut ) {
-			window._tkq.push( [ 'optOut', isOptingOut ] );
+		setOptOut: function( isOptingOut ) {
+			window._tkq.push( [ 'setOptOut', isOptingOut ] );
 		},
 	},
 

@@ -14,7 +14,7 @@ const analyticsMocks = [
 	'tracks.recordEvent',
 	'tracks.recordPageView',
 	'tracks.setAnonymousUserId',
-	'tracks.optOut',
+	'tracks.setOptOut',
 ];
 
 const adTrackingMocks = [

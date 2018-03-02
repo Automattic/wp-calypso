@@ -91,7 +91,7 @@ export const loadTrackingTool = trackingTool => ( {
 	},
 } );
 
-export const optOutTracks = isOptingOut => ( {
+export const setTracksOptOut = isOptingOut => ( {
 	type: ANALYTICS_TRACKS_OPT_OUT,
 	meta: {
 		analytics: [
