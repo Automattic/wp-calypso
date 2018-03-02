@@ -17,7 +17,8 @@ import versionCompare from 'lib/version-compare';
 import { normalizePluginData } from 'lib/plugins/utils';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { getNetworkSites } from 'state/selectors';
-import { getSite, sitePluginUpdated } from 'state/sites/selectors';
+import { getSite } from 'state/sites/selectors';
+import { sitePluginUpdated } from 'state/sites/actions';
 
 const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 
