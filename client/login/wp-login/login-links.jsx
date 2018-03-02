@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import urlModule from 'url';
 import Gridicon from 'gridicons';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -72,15 +73,13 @@ export class LoginLinks extends React.Component {
 
 		// A backTo prop may be supplied, allowing the back button href to be controlled.
 		if ( backTo ) {
-			const url = urlModule.parse( backTo );
+			const { hostname, protocol } = urlModule.parse( backTo );
 
 			// Ensure we've got a relative URL (null) or an http[s] protocol
 			// We don't want to allow `javascript:…`
-			if ( null === url.protocol || 'http:' === url.protocol || 'https:' === url.protocol ) {
-				const linkText = url.hostname
-					? translate( 'Back to %(hostname)s', {
-							args: { hostname: url.hostname },
-						} )
+			if ( includes( [ null, 'http:', 'https:' ], protocol ) ) {
+				const linkText = hostname
+					? translate( 'Back to %(hostname)s', { args: { hostname } } )
 					: translate( 'Back' );
 				return (
 					<ExternalLink href={ backTo }>
