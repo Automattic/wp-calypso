@@ -33,12 +33,7 @@ export const fromApi = response => {
 	return response.data;
 };
 
-const receiveJetpackOnboardingSettings = (
-	{ dispatch },
-	{ siteId },
-	// We don't want JP Onboarding specific things in our JP Settings Redux state
-	{ jpoUser, token, ...settings } // eslint-disable-line no-unused-vars
-) => {
+const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
 	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
 };
 
