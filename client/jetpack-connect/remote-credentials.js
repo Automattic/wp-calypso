@@ -149,10 +149,6 @@ export class OrgCredentialsForm extends Component {
 		);
 	}
 
-	formHeader() {
-		return <div>{ this.renderHeadersText() }</div>;
-	}
-
 	onClickBack() {
 		page.redirect( '/jetpack/connect' );
 	}
@@ -192,7 +188,7 @@ export class OrgCredentialsForm extends Component {
 	render() {
 		return (
 			<MainWrapper>
-				{ this.formHeader() }
+				{ this.renderHeadersText() }
 				<Card className="jetpack-connect__site-url-input-container">
 					<div onSubmit={ this.handleSubmit }>
 						{ this.formFields() }
