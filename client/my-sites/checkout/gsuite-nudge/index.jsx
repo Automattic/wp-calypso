@@ -36,7 +36,7 @@ export class GsuiteNudge extends React.Component {
 
 		// DO NOT assign the test here.
 		if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
-			page( `/checklist/${ siteSlug }/gsuite` );
+			page( `/checklist/${ siteSlug }/paid` );
 		} else {
 			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
 		}
