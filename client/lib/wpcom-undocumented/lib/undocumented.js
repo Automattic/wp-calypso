@@ -369,6 +369,7 @@ Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, 
 			invitees: usernamesOrEmails,
 			role: role,
 			message: message,
+			source: 'calypso',
 		},
 		fn
 	);
