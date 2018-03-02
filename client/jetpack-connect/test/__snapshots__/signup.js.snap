@@ -45,7 +45,7 @@ exports[`JetpackSignup should render 1`] = `
         </LoggedOutFormLinks>
       }
       redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
-      submitButtonText="Sign Up and Connect Jetpack"
+      submitButtonText="Create your account"
       submitForm={[Function]}
       submitting={false}
       suggestedUsername=""
@@ -104,7 +104,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
       }
       locale="es"
       redirectToAfterLoginUrl="https://example.com/?auth_approved=true"
-      submitButtonText="Sign Up and Connect Jetpack"
+      submitButtonText="Create your account"
       submitForm={[Function]}
       submitting={false}
       suggestedUsername=""
