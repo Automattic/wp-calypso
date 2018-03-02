@@ -70,7 +70,7 @@ export class LoginLinks extends React.Component {
 	renderBackLink() {
 		const { backTo, translate } = this.props;
 
-		// Log-ins from may include backTo, allowing them to return to the site
+		// A backTo prop may be supplied, allowing the back button href to be controlled.
 		if ( backTo ) {
 			const url = urlModule.parse( backTo );
 
