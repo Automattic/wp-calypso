@@ -33,9 +33,7 @@ export function handleReceived( endpointState = {}, action, now = new Date() ) {
 		return items;
 	}, {} );
 
-	//return { ...endpointState, ...receivedItems };
-	const newState = { ...endpointState, ...receivedItems };
-	return newState;
+	return { ...endpointState, ...receivedItems };
 }
 
 export default function( apiState = {}, action ) {

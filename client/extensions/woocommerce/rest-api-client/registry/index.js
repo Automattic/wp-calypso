@@ -15,33 +15,42 @@ const debug = debugFactory( 'rest-api-client:registry' );
 const _apiTypes = {};
 const _apiClients = new Map();
 
-export function registerApiType( name, apiType ) {
+// TODO: Unit test this.
+export function registerApiType( name, apiType, apiTypes = _apiTypes ) {
 	debug( 'Registering api type "' + name + '"' );
-	_apiTypes[ name ] = apiType;
+	apiTypes[ name ] = apiType;
 }
 
 export function getApiClient( apiTypeName, siteKey ) {
 	return findApiClient( apiTypeName, siteKey ) || createApiClient( apiTypeName, siteKey );
 }
 
-export function findApiClient( apiTypeName, siteKey ) {
-	return _apiClients.get( apiTypeName + '/' + siteKey );
+// TODO: Unit test this.
+export function findApiClient( apiTypeName, siteKey, apiClients = _apiClients ) {
+	return apiClients.get( apiTypeName + '/' + siteKey );
 }
 
-export function createApiClient( apiTypeName, siteKey ) {
+// TODO: Unit test this.
+export function createApiClient(
+	apiTypeName,
+	siteKey,
+	apiTypes = _apiTypes,
+	apiClients = _apiClients
+) {
 	debug( 'Creating api client[ ' + apiTypeName + ' ] for site "' + siteKey + '"' );
-	const apiType = _apiTypes[ apiTypeName ];
+	const apiType = apiTypes[ apiTypeName ];
 	if ( ! apiType ) {
 		debug( 'Unrecognized api type: ' + apiTypeName );
 		return undefined;
 	}
 	const apiClient = new ApiClient( apiTypeName, apiType, siteKey );
-	_apiClients.set( apiTypeName + '/' + siteKey, apiClient );
+	apiClients.set( apiTypeName + '/' + siteKey, apiClient );
 	return apiClient;
 }
 
-export function updateApiState( apiState, dispatch ) {
-	_apiClients.forEach( client => {
+// TODO: Unit test this.
+export function updateApiState( apiState, dispatch, apiClients = _apiClients ) {
+	apiClients.forEach( client => {
 		const { apiTypeName, siteKey } = client;
 		const siteState = get( apiState, [ apiTypeName, siteKey ], null );
 		client.setSiteState( siteState, dispatch );
