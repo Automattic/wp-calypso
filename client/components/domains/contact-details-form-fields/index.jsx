@@ -144,6 +144,8 @@ export class ContactDetailsFormFields extends Component {
 		const mainFieldValues = formState.getAllFieldValues( this.state.form );
 		return {
 			...mainFieldValues,
+			// domains registered according to ancient validation rules may have state set even though not required
+			state: this.props.hasCountryStates ? mainFieldValues.state : '',
 			phone: toIcannFormat( mainFieldValues.phone, countries[ this.state.phoneCountryCode ] ),
 		};
 	}
@@ -434,8 +436,8 @@ export class ContactDetailsFormFields extends Component {
 	}
 }
 
-export default connect( state => {
-	const contactDetails = state.contactDetails;
+export default connect( ( state, props ) => {
+	const contactDetails = props.contactDetails;
 	const hasCountryStates =
 		contactDetails && contactDetails.countryCode
 			? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )

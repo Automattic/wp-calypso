@@ -1,3 +1,11 @@
+/** @format */
+
+/**
+ * External dependencies
+ */
+
+import { get } from 'lodash';
+
 /**
  * Returns an array of states objects for the specified country code, or null
  * if there are not states for the country.
@@ -9,7 +17,7 @@
  */
 
 export function getCountryStates( state, countryCode ) {
-	return state.countryStates.items[ countryCode.toLowerCase() ] || null;
+	return get( state.countryStates, [ 'items', countryCode.toLowerCase() ], null );
 }
 
 /**
@@ -21,5 +29,5 @@ export function getCountryStates( state, countryCode ) {
  * @return {Boolean}             Whether a request is in progress
  */
 export function isCountryStatesFetching( state, countryCode ) {
-	return state.countryStates.isFetching[ countryCode.toLowerCase() ] || false;
+	return get( state.countryStates, [ 'isFetching', countryCode.toLowerCase() ], false );
 }
