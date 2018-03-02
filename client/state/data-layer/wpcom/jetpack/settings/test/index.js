@@ -147,10 +147,13 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 	const token = 'abcd1234';
 	const userEmail = 'example@yourgroovydomain.com';
 	const siteId = 12345678;
+	const onboardingSettings = {
+		siteTitle: 'My Awesome Site',
+		siteDescription: 'Not just another WordPress Site',
+	};
 	const settings = {
 		onboarding: {
-			siteTitle: 'My Awesome Site',
-			siteDescription: 'Not just another WordPress Site',
+			...onboardingSettings,
 			token,
 			jpUser: userEmail,
 		},
@@ -162,7 +165,7 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 		settings,
 	};
 
-	test( 'should dispatch an action for POST HTTP request to save Jetpack settings', () => {
+	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting JPO credentials', () => {
 		saveJetpackOnboardingSettings( { dispatch }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -180,7 +183,9 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 				action
 			)
 		);
-		expect( dispatch ).toHaveBeenCalledWith( updateJetpackOnboardingSettings( siteId, settings ) );
+		expect( dispatch ).toHaveBeenCalledWith(
+			updateJetpackOnboardingSettings( siteId, { onboarding: onboardingSettings } )
+		);
 	} );
 } );
 

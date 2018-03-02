@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, startsWith } from 'lodash';
+import { get, omit, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -89,7 +89,7 @@ export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
 	// We don't want JP Onboarding specific things in our JP Settings Redux state
-	const { jpoUser, token, ...settingsWithoutCredentials } = settings; // eslint-disable-line no-unused-vars
+	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
 	dispatch( updateJetpackOnboardingSettings( siteId, settingsWithoutCredentials ) );
 
 	return dispatch(
