@@ -3,6 +3,7 @@
  * Component which handle remote credentials for installing Jetpack
  */
 import React, { Component } from 'react';
+import config from 'config';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -55,6 +56,16 @@ export class OrgCredentialsForm extends Component {
 
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
+
+	componentWillMount() {
+		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
+			const { siteToConnect } = this.props;
+
+			if ( ! siteToConnect ) {
+				page.redirect( '/jetpack/connect' );
+			}
+		}
+	}
 
 	componentDidUpdate() {
 		const { installError, isResponseCompleted, siteToConnect } = this.props;
