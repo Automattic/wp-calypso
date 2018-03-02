@@ -3,81 +3,71 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Component, Fragment } from 'react';
 import { omit, noop } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import smartSetState from 'lib/react-smart-set-state';
-import { likePost, unlikePost } from 'lib/like-store/actions';
+import { like, unlike } from 'state/posts/likes/actions';
 import LikeButton from './button';
-import LikeStore from 'lib/like-store/like-store';
+import getPostLikeCount from 'state/selectors/get-post-like-count';
+import isLikedPost from 'state/selectors/is-liked-post';
+import QueryPostLikes from 'components/data/query-post-likes';
 
-class LikeButtonContainer extends PureComponent {
+class LikeButtonContainer extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
 		showZeroCount: PropTypes.bool,
 		tagName: PropTypes.string,
 		onLikeToggle: PropTypes.func,
+		found: PropTypes.number,
+		iLike: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onLikeToggle: noop,
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.handleLikeToggle = this.handleLikeToggle.bind( this );
-
-		this.state = this.getStateFromStores( props );
-		this.smartSetState = smartSetState;
-	}
-
-	getStateFromStores( props = this.props, animateLike = true ) {
-		return {
-			likeCount: LikeStore.getLikeCountForPost( props.siteId, props.postId ) || 0,
-			iLike: LikeStore.isPostLikedByCurrentUser( props.siteId, props.postId ),
-			animateLike: animateLike,
-		};
-	}
-
-	updateState = ( newState = this.getStateFromStores() ) => {
-		this.smartSetState( newState );
-	};
-
-	componentWillReceiveProps( nextProps ) {
-		this.updateState( this.getStateFromStores( nextProps ) );
-	}
-	componentDidMount() {
-		LikeStore.on( 'change', this.updateState );
-	}
-
-	componentWillUnmount() {
-		LikeStore.off( 'change', this.updateState );
-	}
-
-	handleLikeToggle( liked ) {
-		const toggler = liked ? likePost : unlikePost;
+	handleLikeToggle = liked => {
+		const toggler = liked ? this.props.like : this.props.unlike;
 		toggler( this.props.siteId, this.props.postId );
 
 		this.props.onLikeToggle( liked );
-	}
+	};
 
 	render() {
-		const props = omit( this.props, [ 'siteId' ] );
+		const props = omit( this.props, [
+			'siteId',
+			'postId',
+			'likeCount',
+			'iLike',
+			'like',
+			'unlike',
+		] );
 		return (
-			<LikeButton
-				{ ...props }
-				likeCount={ this.state.likeCount }
-				liked={ this.state.iLike }
-				animateLike={ this.state.animateLike }
-				onLikeToggle={ this.handleLikeToggle }
-			/>
+			<Fragment>
+				<QueryPostLikes siteId={ this.props.siteId } postId={ this.props.postId } />
+				<LikeButton
+					{ ...props }
+					likeCount={ this.props.likeCount }
+					liked={ this.props.iLike }
+					animateLike={ true }
+					onLikeToggle={ this.handleLikeToggle }
+				/>
+			</Fragment>
 		);
 	}
 }
 
-export default LikeButtonContainer;
+export default connect(
+	( state, { siteId, postId } ) => {
+		return {
+			likeCount: getPostLikeCount( state, siteId, postId ),
+			iLike: isLikedPost( state, siteId, postId ),
+		};
+	},
+	{ like, unlike }
+)( LikeButtonContainer );
