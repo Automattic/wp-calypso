@@ -88,7 +88,9 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
 export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
-	dispatch( updateJetpackOnboardingSettings( siteId, action.settings ) );
+	// We don't want JP Onboarding specific things in our JP Settings Redux state
+	const { jpoUser, token, ...settingsWithoutCredentials } = settings; // eslint-disable-line no-unused-vars
+	dispatch( updateJetpackOnboardingSettings( siteId, settingsWithoutCredentials ) );
 
 	return dispatch(
 		http(
