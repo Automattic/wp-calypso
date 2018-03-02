@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, startsWith } from 'lodash';
+import { get, omit, startsWith } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -88,7 +88,9 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
 export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
-	dispatch( updateJetpackOnboardingSettings( siteId, action.settings ) );
+	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
+	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
+	dispatch( updateJetpackOnboardingSettings( siteId, settingsWithoutCredentials ) );
 
 	return dispatch(
 		http(
