@@ -22,7 +22,6 @@
 
 	// @todo
 	// Remove extra .jetpack-branded class when feature flag is removed.
-	// Update jetpack-new-site/style.scss button @extend accordingly
 	&.jetpack-branded {
 		.button.is-primary {
 			background-color: $green-jetpack;
