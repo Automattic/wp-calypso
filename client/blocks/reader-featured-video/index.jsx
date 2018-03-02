@@ -74,13 +74,13 @@ class ReaderFeaturedVideo extends React.Component {
 
 	componentDidMount() {
 		if ( this.props.allowPlaying && typeof window !== 'undefined' ) {
-			window && window.addEventListener( 'resize', this.throttledUpdateVideoSize );
+			window.addEventListener( 'resize', this.throttledUpdateVideoSize );
 		}
 	}
 
 	componentWillUnmount() {
 		if ( this.props.allowPlaying && typeof window !== 'undefined' ) {
-			window && window.removeEventListener( 'resize', this.throttledUpdateVideoSize );
+			window.removeEventListener( 'resize', this.throttledUpdateVideoSize );
 		}
 	}
 
