@@ -26,7 +26,7 @@ import MainWrapper from './main-wrapper';
 import { addCalypsoEnvQueryArg } from './utils';
 import { externalRedirect } from 'lib/route';
 import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
-import { getJetpackRemoteInstallError, isJetpackRemoteInstallComplete } from 'state/selectors';
+import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { REMOTE_PATH_AUTH } from './constants';
 
@@ -223,7 +223,7 @@ export default connect(
 	state => {
 		const jetpackConnectSite = getConnectingSite( state );
 		const siteToConnect = jetpackConnectSite.url;
-		const installError = getJetpackRemoteInstallError( state, siteToConnect );
+		const installError = getJetpackRemoteInstallErrorCode( state, siteToConnect );
 		const isResponseCompleted = isJetpackRemoteInstallComplete( state, siteToConnect );
 		return {
 			installError,

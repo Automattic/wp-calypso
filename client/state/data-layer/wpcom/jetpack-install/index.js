@@ -32,7 +32,7 @@ export const handleResponse = ( { url }, data ) => {
 	if ( data.status ) {
 		return jetpackRemoteInstallComplete( url );
 	}
-	return jetpackRemoteInstallUpdateError( url, data.error );
+	return jetpackRemoteInstallUpdateError( url, data.error.code, data.error.message );
 };
 
 export default {
