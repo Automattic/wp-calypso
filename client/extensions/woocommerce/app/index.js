@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -14,6 +13,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import ApiClientProvider from 'woocommerce/rest-api-client/provider';
 import {
 	canCurrentUser,
 	isSiteAutomatedTransfer,
@@ -25,6 +25,8 @@ import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { getSiteFragment } from 'lib/route';
+
+const apiReduxRoot = 'extensions.woocommerce.apiClients';
 
 class App extends Component {
 	static propTypes = {
@@ -105,11 +107,13 @@ class App extends Component {
 
 		const className = 'woocommerce';
 		return (
-			<div className={ className }>
-				<DocumentHead title={ documentTitle } />
-				<QueryJetpackPlugins siteIds={ [ siteId ] } />
-				{ children }
-			</div>
+			<ApiClientProvider apiReduxRoot={ apiReduxRoot }>
+				<div className={ className }>
+					<DocumentHead title={ documentTitle } />
+					<QueryJetpackPlugins siteIds={ [ siteId ] } />
+					{ children }
+				</div>
+			</ApiClientProvider>
 		);
 	};
 }

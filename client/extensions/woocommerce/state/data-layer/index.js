@@ -9,6 +9,7 @@ import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
 import coupons from '../sites/coupons/handlers';
 import customers from './customers';
+import tempApi from 'woocommerce/calypso-rest-api/temp-api-handlers';
 import orderNotes from './orders/notes';
 import orderRefunds from './orders/refunds';
 import orders from './orders';
@@ -33,6 +34,7 @@ const debug = debugFactory( 'woocommerce:errors' );
 const handlers = mergeHandlers(
 	actionList,
 	coupons,
+	tempApi, // TODO: Remove this after API calls are ported.
 	customers,
 	orderNotes,
 	orderRefunds,

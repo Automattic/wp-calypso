@@ -14,6 +14,7 @@ import { translate } from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import App from './app';
+import { createApiMethods } from 'woocommerce/calypso-rest-api/data-layer-rest-api';
 import Dashboard from './app/dashboard';
 import EmptyContent from 'components/empty-content';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
@@ -30,6 +31,7 @@ import ProductUpdate from './app/products/product-update';
 import Promotions from './app/promotions';
 import PromotionCreate from './app/promotions/promotion-create';
 import PromotionUpdate from './app/promotions/promotion-update';
+import { registerApiType } from 'woocommerce/rest-api-client/registry';
 import Reviews from './app/reviews';
 import SettingsPayments from './app/settings/payments';
 import SettingsEmail from './app/settings/email';
@@ -40,6 +42,7 @@ import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 import { tracksStore } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'controller';
+import wcApi from 'woocommerce/wc-api';
 
 function initExtension() {
 	installActionHandlers();
@@ -249,6 +252,9 @@ function addTracksContext( context, next ) {
 }
 
 export default function() {
+	// Provide a calypso implementation of WooCommerce API.
+	registerApiType( 'woocommerce', wcApi( createApiMethods( '/wc/v3' ) ) );
+
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {
