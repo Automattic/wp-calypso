@@ -77,9 +77,6 @@ class InstallInstructions extends Component {
 		const { remoteSiteData, remoteSiteUrl, translate } = this.props;
 
 		const jetpackVersion = remoteSiteData.jetpackVersion;
-
-		// todo: get this from cookie
-		const isInstall = true;
 		const instructionsData = this.getInstructionsData();
 
 		return (
@@ -97,7 +94,6 @@ class InstallInstructions extends Component {
 									key={ 'instructions-step-' + key }
 									stepName={ stepName }
 									jetpackVersion={ jetpackVersion }
-									isInstall={ isInstall }
 									currentUrl={ remoteSiteUrl }
 									confirmJetpackInstallStatus={ this.props.confirmJetpackInstallStatus }
 									onClick={ instructionsData.buttonOnClick }
