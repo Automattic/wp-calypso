@@ -78,9 +78,9 @@ class SelectBusinessType extends Component {
 					/>
 				</CompactCard>
 
-				<Card>
+				<CompactCard className="select-business-type__cta-card">
 					<div className="select-business-type__cta-card-main">
-						<h2>
+						<h2 className="select-business-type__explanation-heading">
 							{ translate( 'Physical Location or Service Area', {
 								comment:
 									'In the context of a business activity, brick and mortar or online service',
@@ -95,6 +95,7 @@ class SelectBusinessType extends Component {
 					</div>
 					<div className="select-business-type__cta-card-button-container">
 						<GoogleLoginButton
+							className="select-business-type__cta-card-button"
 							clientId={ config( 'google_oauth_client_id' ) }
 							scope="https://www.googleapis.com/auth/plus.business.manage"
 							responseHandler={ this.handleGoogleResponse }
@@ -104,7 +105,7 @@ class SelectBusinessType extends Component {
 							hideGoogleIcon={ true }
 						/>
 					</div>
-				</Card>
+				</CompactCard>
 
 				<CTACard
 					headerText={ translate( 'Online Only', {

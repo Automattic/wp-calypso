@@ -32,7 +32,7 @@ class GoogleLoginButton extends Component {
 		responseHandler: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		onClick: PropTypes.func,
-		hideGoogleIcon: PropTypes,
+		hideGoogleIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -199,16 +199,22 @@ class GoogleLoginButton extends Component {
 			customButton = React.cloneElement( children, childProps );
 		}
 
+		const buttonClassNamesObject = {
+			disabled: isDisabled,
+			'is-primary': isPrimary,
+		};
+
+		if ( this.props.className ) {
+			buttonClassNamesObject[ this.props.className ] = true;
+		}
+
 		return (
 			<div className="social-buttons__button-container">
 				{ customButton ? (
 					customButton
 				) : (
 					<button
-						className={ classNames( 'social-buttons__button button', {
-							disabled: isDisabled,
-							'is-primary': isPrimary,
-						} ) }
+						className={ classNames( 'social-buttons__button button', buttonClassNamesObject ) }
 						onMouseOver={ this.showError }
 						onMouseOut={ this.hideError }
 						onClick={ this.handleClick }

@@ -30,6 +30,7 @@ const CTACard = ( {
 		</div>
 		<div className="select-business-type__cta-card-button-container">
 			<Button
+				className="select-business-type__cta-card-button"
 				primary={ buttonPrimary }
 				href={ buttonHref }
 				target={ buttonTarget }
