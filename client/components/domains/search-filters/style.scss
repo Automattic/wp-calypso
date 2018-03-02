@@ -1,0 +1,37 @@
+.search-filters__popover {
+	width: 28em;
+
+	.popover__inner {
+		padding: 2em;
+	}
+
+	.form-fieldset {
+		text-align: left;
+	}
+}
+
+.search-filters__buttons {
+	display: flex;
+	justify-content: space-between;
+
+	.button {
+		flex: 1 0 auto;
+		padding: 0.5em 3em 0.5em 3em;
+		margin-right: 1em;
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}
+
+.search-filters__text-input-fieldset .search-filters__label {
+	margin-bottom: 0.25em;
+}
+
+.search-filters__checkboxes-fieldset .search-filters__label {
+	margin-bottom: 1em;
+
+	&:last-of-type {
+		margin-bottom: 0;
+	}
+}
