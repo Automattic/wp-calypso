@@ -154,6 +154,9 @@ export default connect(
 	( state, { siteSlug } ) => {
 		let siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
 		if ( ! siteId ) {
+			// We rely on the fact that all sites are being requested automatically early in <Layout />.
+			// If sites aren't loaded, we'll consider that the site is not connected,
+			// which will always result in redirecting to wp-admin to obtain the onboarding credentials.
 			siteId = getSiteId( state, siteSlug );
 		}
 
