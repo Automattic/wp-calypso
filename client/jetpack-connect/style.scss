@@ -626,8 +626,8 @@
 	}
 
 	&.is-primary {
-		background-color: #00be28;
-		border-color: #007218;
+		background-color: $green-jetpack;
+		border-color: darken($green-jetpack, 5%);
 	}
 }
 
