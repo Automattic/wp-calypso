@@ -4,7 +4,10 @@
 .is-group-reader.has-no-sidebar {
 
 	.masterbar {
-		display: none; // Hides masterbar in fullpost
+
+		@include breakpoint( "<660px" ) {
+			display: none; // Hides masterbar in fullpost mobile
+		}
 	}
 }
 
@@ -52,7 +55,7 @@
 		right: 0;
 		top: 0;
 	text-transform: uppercase;
-	z-index: z-index( '.masterbar', '.reader-visit-site' );
+	z-index: z-index( '.reader-full-post__sidebar-comment-like', '.reader-full-post__visit-site-container' );
 
 	.external-link .gridicons-external {
 		fill: $gray-darken-10;
@@ -68,7 +71,7 @@
 	}
 
 	.external-link {
-		color: $gray-darken-10;
+		color: $blue-medium;
 		display: block;
 		padding: 10px 10px 15px 6px;
 
@@ -150,13 +153,23 @@
 	margin-bottom: 0;
 }
 
+.reader-full-post .back-button {
+
+	@include breakpoint( "<660px" ) {
+		background: transparent;
+		border-bottom: 0;
+		position: fixed;
+		width: 100px;
+		z-index: z-index( '.reader-full-post__sidebar-comment-like', '.reader-full-post .back-button' );
+	}
+}
+
 .reader-full-post .author-compact-profile {
 	display: inline-flex;
 	flex-direction: column;
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 35px;
-		overflow: hidden;
 		text-overflow: clip;
 		padding-right: 10px;
 		position: relative;
@@ -257,8 +270,20 @@
 
 		.author-compact-profile__follow .follow-button {
 			position: fixed;
-				left: calc( 100% - 320px );
+				left: calc( 100% - 270px );
 				top: 5px;
+
+			@include breakpoint( "<660px" ) {
+				background: transparent;
+				position: fixed;
+				z-index: z-index( '.reader-full-post__sidebar-comment-like', '.author-compact-profile__follow .follow-button' );
+
+				.gridicon {
+					height: 24px;
+					top: 7px;
+					width: 24px;
+				}
+			}
 		}
 
 		.author-compact-profile__follow-count {
@@ -305,26 +330,27 @@
 }
 
 .reader-full-post__sidebar-comment-like {
-	align-items: flex-start;
-	background: white;
-	display: flex;
-	border-bottom: 1px solid $gray;
-	flex-direction: row;
-	height: 40px;
-	justify-content: flex-end;
-	position: fixed;
-		left: 0;
-		top: 0;
-	width: 100%;
-	z-index: 10000000;
+
+	 @include breakpoint( "<660px" ) {
+		align-items: flex-start;
+		background: white;
+		display: flex;
+		border-bottom: 1px solid $gray-lighten-30;
+		flex-direction: row;
+		height: 47px;
+		justify-content: flex-end;
+		position: fixed;
+			left: 0;
+			top: 0;
+		width: 100%;
+	 }
 }
 
 .reader-full-post__sidebar .like-button {
 
 	@include breakpoint( "<660px" ) {
-		position: fixed;
-			right: 80px;
-			top: 5px;
+		margin-right: 60px;
+			top: 9px;
 	}
 
 	.like-button__label-status {
@@ -341,8 +367,7 @@
 	margin-right: 18px;
 
 	@include breakpoint( "<660px" ) {
-		right: 130px;
-		top: 5px;
+		top: 9px;
 	}
 
 	.comment-button__label-status {
@@ -356,7 +381,11 @@
 }
 
 .reader-full-post .has-author-link.has-author-icon {
-	margin-top: 5px;
+	margin-top: 25px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 5px;
+	}
 
 	.reader-author-link {
 		margin-top: 0;
