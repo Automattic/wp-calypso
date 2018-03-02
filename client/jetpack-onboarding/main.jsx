@@ -25,6 +25,7 @@ import {
 	getJetpackOnboardingCompletedSteps,
 	getJetpackOnboardingSettings,
 	getRequest,
+	getSiteId,
 	getUnconnectedSite,
 	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
@@ -47,11 +48,26 @@ class JetpackOnboardingMain extends React.PureComponent {
 	state = { hasFinishedRequestingSite: false };
 
 	componentDidMount() {
-		const { siteId, siteSlug } = this.props;
+		this.retrieveOnboardingCredentials();
+	}
 
-		// If we are missing the Jetpack onboarding credentials,
+	componentDidUpdate() {
+		this.retrieveOnboardingCredentials();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.isRequestingWhetherConnected && ! nextProps.isRequestingWhetherConnected ) {
+			this.setState( { hasFinishedRequestingSite: true } );
+		}
+	}
+
+	retrieveOnboardingCredentials() {
+		const { isConnected, siteId, siteSlug } = this.props;
+		const { hasFinishedRequestingSite } = this.state;
+
+		// If we are not connected and missing the Jetpack onboarding credentials,
 		// redirect back to wp-admin so we can obtain them again.
-		if ( ! siteId && siteSlug ) {
+		if ( hasFinishedRequestingSite && ! isConnected && ! siteId && siteSlug ) {
 			const siteDomain = siteSlug.replace( '::', '/' );
 			const url = addQueryArgs(
 				{
@@ -62,12 +78,6 @@ class JetpackOnboardingMain extends React.PureComponent {
 				`//${ siteDomain }/wp-admin/admin.php`
 			);
 			externalRedirect( url );
-		}
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.isRequestingWhetherConnected && ! nextProps.isRequestingWhetherConnected ) {
-			this.setState( { hasFinishedRequestingSite: true } );
 		}
 	}
 
@@ -142,7 +152,14 @@ class JetpackOnboardingMain extends React.PureComponent {
 }
 export default connect(
 	( state, { siteSlug } ) => {
-		const siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
+		let siteId = getUnconnectedSiteIdBySlug( state, siteSlug );
+		if ( ! siteId ) {
+			// We rely on the fact that all sites are being requested automatically early in <Layout />.
+			// If sites aren't loaded, we'll consider that the site is not connected,
+			// which will always result in redirecting to wp-admin to obtain the onboarding credentials.
+			siteId = getSiteId( state, siteSlug );
+		}
+
 		const settings = getJetpackOnboardingSettings( state, siteId );
 		const isBusiness = get( settings, 'siteType' ) === 'business';
 
@@ -182,6 +199,7 @@ export default connect(
 
 		return {
 			jpoAuth,
+			isConnected,
 			isRequestingSettings,
 			isRequestingWhetherConnected,
 			siteId,
