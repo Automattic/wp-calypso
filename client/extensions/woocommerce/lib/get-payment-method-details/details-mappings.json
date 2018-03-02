@@ -13,13 +13,13 @@
 		"methodType": "offline"
 	},
 	"paypal": {
-		"fees": "2.9% + 30c per transaction",
+		"fees": "Fee varies based on country",
 		"informationUrl": "https://docs.woocommerce.com/document/paypal-standard/",
 		"isSuggested": true,
 		"methodType": "off-site"
 	},
 	"stripe": {
-		"fees": "2.9% + 30c per transaction",
+		"fees": "Fee varies based on country",		
 		"informationUrl": "https://stripe.com/pricing",
 		"isSuggested": true,
 		"methodType": "on-site"
