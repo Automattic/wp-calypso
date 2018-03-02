@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact, get, includes } from 'lodash';
+import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -82,9 +82,8 @@ class JetpackOnboardingMain extends React.PureComponent {
 
 	getSkipLinkText() {
 		const { stepName, stepsCompleted, translate } = this.props;
-		const steps = [ STEPS.CONTACT_FORM, STEPS.BUSINESS_ADDRESS, STEPS.STATS ];
 
-		if ( includes( steps, stepName ) && get( stepsCompleted, stepName ) ) {
+		if ( get( stepsCompleted, stepName ) ) {
 			return translate( 'Next' );
 		}
 		return null;
