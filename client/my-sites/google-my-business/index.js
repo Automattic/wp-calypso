@@ -66,32 +66,12 @@ export default function() {
 			clientRender
 		);
 
-		page( '/google-my-business/success', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/google-my-business/success/:site_id/',
-			siteSelection,
-			navigation,
-			success,
-			makeLayout,
-			clientRender
-		);
-
 		page( '/google-my-business/create', siteSelection, sites, makeLayout, clientRender );
 		page(
 			'/google-my-business/create/:site_id/',
 			siteSelection,
 			navigation,
 			create,
-			makeLayout,
-			clientRender
-		);
-
-		page( '/google-my-business/verify', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/google-my-business/verify/:site_id/',
-			siteSelection,
-			navigation,
-			verify,
 			makeLayout,
 			clientRender
 		);

@@ -5,6 +5,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -30,9 +31,8 @@ class ShowListOfLocation extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const successHref = '/google-my-business/success/' + siteId;
 		const searchHref = '/google-my-business/search-for-a-location/' + siteId;
-		const verifyHref = '/google-my-business/verify/' + siteId;
+		const statsHref = '/google-my-business/stats/' + siteId;
 
 		return (
 			<div className="show-list-of-locations">
@@ -52,7 +52,7 @@ class ShowListOfLocation extends Component {
 								345 North Avenue<br />Talihassee, FL 34342<br />USA
 							</div>
 						}
-						href={ successHref }
+						href={ statsHref }
 						verified={ true }
 					/>
 				</CompactCard>
@@ -65,7 +65,7 @@ class ShowListOfLocation extends Component {
 								234 Piedmont Drive<br />Talihassee, FL 34342<br />USA
 							</div>
 						}
-						href={ verifyHref }
+						href={ statsHref }
 						verified={ false }
 					/>
 				</CompactCard>

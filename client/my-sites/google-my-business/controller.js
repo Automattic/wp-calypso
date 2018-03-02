@@ -11,9 +11,7 @@ import React from 'react';
 import GoogleMyBusinessSelectBusinessType from './select-business-type';
 import SearchForALocation from './search-for-a-location';
 import ShowListOfLocations from './show-list-of-locations';
-import Success from './success';
 import Create from './create';
-import Verify from './verify';
 import Stats from './google-my-business-stats';
 import Address from './google-my-business-address';
 
@@ -35,21 +33,9 @@ export function searchForALocation( context, next ) {
 	next();
 }
 
-export function success( context, next ) {
-	const { params } = context;
-	context.primary = <Success siteId={ params.site_id } />;
-	next();
-}
-
 export function create( context, next ) {
 	const { params } = context;
 	context.primary = <Create siteId={ params.site_id } />;
-	next();
-}
-
-export function verify( context, next ) {
-	const { params } = context;
-	context.primary = <Verify siteId={ params.site_id } />;
 	next();
 }
 

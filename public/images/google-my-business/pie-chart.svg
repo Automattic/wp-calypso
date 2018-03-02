@@ -1,0 +1,33 @@
+<svg width="89px" height="89px" viewBox="0 0 89 89" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49 (51002) - http://www.bohemiancoding.com/sketch -->
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="44.5" cy="44.5" r="44.5"></circle>
+        <path d="M44.5,89 C69.0766714,89 89,69.0766714 89,44.5 C89,19.9233286 69.0766714,0 44.5,0 C19.9233286,0 0,19.9233286 0,44.5 C0,69.0766714 19.9233286,89 44.5,89 Z" id="path-3"></path>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="89" height="89" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <path d="M44.5,89 C69.0766714,89 89,69.0766714 89,44.5 C89,19.9233286 69.0766714,0 44.5,0 C19.9233286,0 0,19.9233286 0,44.5 C0,69.0766714 19.9233286,89 44.5,89 Z" id="path-5"></path>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="89" height="89" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+    </defs>
+    <g id="Stats" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Stats@2x" transform="translate(-16.000000, -677.000000)">
+            <g id="How-customers-search-for-your-business" transform="translate(0.000000, 609.000000)">
+                <g id="2-Slices-Pie-Chart" transform="translate(16.000000, 68.000000)">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Oval"></g>
+                    <g id="#161032:40%" stroke-dasharray="111.8857142857143,445" mask="url(#mask-2)" stroke="#0087BE" stroke-width="89">
+                        <use mask="url(#mask-4)" xlink:href="#path-3"></use>
+                    </g>
+                    <g id="#FAFF81:60%" stroke-dasharray="167.8285714285714,445" mask="url(#mask-2)" transform="translate(44.500000, 44.500000) rotate(-144.000000) translate(-44.500000, -44.500000) " stroke="#005082" stroke-width="89">
+                        <use mask="url(#mask-6)" xlink:href="#path-5"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

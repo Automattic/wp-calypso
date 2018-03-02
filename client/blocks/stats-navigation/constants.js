@@ -18,5 +18,9 @@ export const navItems = {
 	insights: { label: translate( 'Insights' ), path: '/stats/insights', showIntervals: false },
 	activity: { label: translate( 'Activity' ), path: '/stats/activity', showIntervals: false },
 	store: { label: translate( 'Store' ), path: '/store/stats/orders', showIntervals: true },
-	gmb: { label: 'Google My Business', path: '/google-my-business', showIntervals: false }, // only show for some cases
+	'google-my-business': {
+		label: 'Google My Business',
+		path: '/google-my-business/stats',
+		showIntervals: false,
+	}, // only show for some cases
 };

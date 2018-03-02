@@ -9,9 +9,27 @@
 
 .google-my-business-location__verified-gridicon {
 	color: $alert-green;
-	vertical-align: text-bottom;;
+	vertical-align: text-bottom;
+}
+
+.google-my-business-location__content {
+	display: flex;
 }
 
 .google-my-business-location__text {
 	margin-bottom: 1em;
+}
+
+.google-my-business-location__image {
+	border-radius: 50%;
+	height: 60px;
+	margin: 0 1.5em 1.5em 0;
+	width: 60px;
+}
+
+.google-my-business-location__button {
+	@include breakpoint( '<480px' ) {
+		text-align: center;
+		width: 100%;
+	}
 }

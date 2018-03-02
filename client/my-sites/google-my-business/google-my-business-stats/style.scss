@@ -1,0 +1,53 @@
+.google-my-business-stats {
+
+}
+
+.google-my-business-stats__container {
+	display: flex;
+}
+
+.google-my-business-stats__image {
+	border-radius: 50%;
+	margin-bottom: 1em;
+	margin-right: 1em;
+	height: 60px;
+	width: 60px;
+}
+
+.google-my-business-stats__header {
+	font-weight: 600;
+}
+
+.google-my-business-stats__verified {
+	.gridicon {
+		color: $alert-green;
+	}
+}
+
+.google-my-business-stats {
+	.gridicon {
+		vertical-align: text-bottom;
+	}
+}
+
+.google-my-business-stats__listing-detail {
+	margin-bottom: 1em;
+}
+
+.google-my-business-stats__listing-button {
+	.gridicon {
+		margin-left: 1em;
+	}
+
+	@include breakpoint( '<480px' ) {
+		width: 100%;
+
+		.gridicon {
+			float: right;
+		}
+	}
+}
+
+.google-my-business-stats__address {
+	display: flex;
+}
