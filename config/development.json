@@ -61,7 +61,7 @@
 		"help/courses": true,
 		"jetpack/api-cache": true,
 		"jetpack/connect-redirect-pressable-credential-approval": true,
-		"jetpack/connect/remote-install": true,
+		"jetpack/connect/remote-install": false,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/happychat": true,
 		"jetpack/google-analytics-anonymize-ip": true,
