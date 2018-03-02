@@ -110,6 +110,7 @@ export default {
 			oldBanner: 50,
 		},
 		defaultVariation: 'oldBanner',
+		localeTargets: 'any',
 	},
 	siteGoalsShuffle: {
 		datestamp: '20180214',
