@@ -23,6 +23,7 @@ import {
 } from 'woocommerce/state/ui/payments/methods/actions';
 import { getCurrentlyEditingPaymentMethod } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import ExternalLink from 'components/external-link';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import { hasStripeKeyPairForMode } from './stripe/payment-method-stripe-utils';
@@ -215,9 +216,12 @@ class PaymentMethodItem extends Component {
 					<p className={ methodTitle }>{ method.title }</p>
 				</ListItemField>
 				<ListItemField className="payments__method-method-information-container">
+					{ method.fees && <p className="payments__method-information">{ method.fees }</p> }
 					{ method.informationUrl && (
 						<p className="payments__method-information">
-							<a href={ method.informationUrl }>{ translate( 'More Information' ) }</a>
+							<ExternalLink icon href={ method.informationUrl } target="_blank">
+								{ translate( 'More Information' ) }
+							</ExternalLink>
 						</p>
 					) }
 				</ListItemField>
