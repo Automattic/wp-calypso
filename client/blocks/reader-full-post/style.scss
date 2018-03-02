@@ -57,6 +57,13 @@
 	text-transform: uppercase;
 	z-index: z-index( '.reader-full-post__sidebar-comment-like', '.reader-full-post__visit-site-container' );
 
+	@include breakpoint( ">660px" ) {
+		border: 0;
+		position: absolute;
+			top: 47px;
+		z-index: 0;
+	}
+
 	.external-link .gridicons-external {
 		fill: $gray-darken-10;
 		top: 5px;
@@ -66,12 +73,8 @@
 		}
 	}
 
-	@include breakpoint( ">660px" ) {
-		top: 47px;
-	}
-
 	.external-link {
-		color: $blue-medium;
+		color: $gray-darken-10;
 		display: block;
 		padding: 10px 10px 15px 6px;
 
@@ -80,10 +83,10 @@
 		}
 
 		&:hover {
-			color: $gray-dark;
+			color: $blue-medium;
 
 			.gridicons-external {
-				fill: $gray-dark;
+				fill: $blue-medium;
 			}
 		}
 	}
@@ -93,12 +96,6 @@
 		@include breakpoint( "<660px" ) {
 			display: none;
 		}
-	}
-
-	@include breakpoint( ">660px" ) {
-		border: 0;
-		position: absolute;
-		z-index: 0;
 	}
 }
 
@@ -121,8 +118,8 @@
 
 	@include breakpoint( "<660px" ) {
 		position: static;
-		width: auto;
 		text-align: left;
+		width: auto;
 	}
 }
 
@@ -170,9 +167,9 @@
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 35px;
-		text-overflow: clip;
 		padding-right: 10px;
 		position: relative;
+		text-overflow: clip;
 		white-space: nowrap;
 
 		&::after {
@@ -314,8 +311,8 @@
 
 // Action buttons in full-post
 .reader-full-post .reader-post-actions {
-	margin-bottom: 20px;
 	clear: both;
+	margin-bottom: 20px;
 
 	.post-edit-button__label,
 	.reader-share__button-label,
@@ -483,7 +480,7 @@
 .reader-full-post__header-tags {
 	display: inline-flex;
 	flex: 1;
-	width: calc(100% - 120px);
+	width: calc( 100% - 120px );
 
 	.gridicon {
 		fill: $gray;
