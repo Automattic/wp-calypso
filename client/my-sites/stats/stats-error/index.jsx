@@ -18,14 +18,13 @@ class StatsError extends React.PureComponent {
 	};
 
 	render() {
-		const { className, message, children } = this.props;
-		const defaultMessage = this.props.translate(
-			"Some stats didn't load in time. Please try again later."
-		);
+		const { children, className, message, translate } = this.props;
+		const displayedMessage =
+			message || translate( "Some stats didn't load in time. Please try again later." );
 
 		return (
 			<div className={ classNames( 'module-content-text', 'is-error', className ) }>
-				<p>{ message || defaultMessage }</p>
+				<p>{ displayedMessage }</p>
 				{ children }
 			</div>
 		);
