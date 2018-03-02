@@ -49,13 +49,13 @@ class PreviewMain extends React.Component {
 
 	componentDidMount() {
 		if ( typeof window !== 'undefined' ) {
-			window && window.addEventListener( 'resize', this.debouncedUpdateLayout );
+			window.addEventListener( 'resize', this.debouncedUpdateLayout );
 		}
 	}
 
 	componentWillUnmount() {
 		if ( typeof window !== 'undefined' ) {
-			window && window.removeEventListener( 'resize', this.debouncedUpdateLayout );
+			window.removeEventListener( 'resize', this.debouncedUpdateLayout );
 		}
 	}
 
