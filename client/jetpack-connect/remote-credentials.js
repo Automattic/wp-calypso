@@ -19,7 +19,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
 import HelpButton from './help-button';
-import JetpackLogo from 'components/jetpack-logo';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
@@ -81,14 +80,6 @@ export class OrgCredentialsForm extends Component {
 	getChangeHandler = field => event => {
 		this.setState( { [ field ]: event.target.value } );
 	};
-
-	getHeaderImage() {
-		return (
-			<div className="jetpack-connect__jetpack-logo">
-				<JetpackLogo full size={ 45 } />
-			</div>
-		);
-	}
 
 	getHeaderText() {
 		const { translate } = this.props;
@@ -158,15 +149,6 @@ export class OrgCredentialsForm extends Component {
 		);
 	}
 
-	formHeader() {
-		return (
-			<div>
-				{ this.getHeaderImage() }
-				{ this.renderHeadersText() }
-			</div>
-		);
-	}
-
 	onClickBack() {
 		page.redirect( '/jetpack/connect' );
 	}
@@ -206,7 +188,7 @@ export class OrgCredentialsForm extends Component {
 	render() {
 		return (
 			<MainWrapper>
-				{ this.formHeader() }
+				{ this.renderHeadersText() }
 				<Card className="jetpack-connect__site-url-input-container">
 					<div onSubmit={ this.handleSubmit }>
 						{ this.formFields() }
