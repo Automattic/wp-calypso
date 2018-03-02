@@ -48,11 +48,15 @@ class PreviewMain extends React.Component {
 	debouncedUpdateLayout = debounce( this.updateLayout, 50 );
 
 	componentDidMount() {
-		global.window && global.window.addEventListener( 'resize', this.debouncedUpdateLayout );
+		if ( typeof window !== 'undefined' ) {
+			window && window.addEventListener( 'resize', this.debouncedUpdateLayout );
+		}
 	}
 
 	componentWillUnmount() {
-		global.window && global.window.removeEventListener( 'resize', this.debouncedUpdateLayout );
+		if ( typeof window !== 'undefined' ) {
+			window && window.removeEventListener( 'resize', this.debouncedUpdateLayout );
+		}
 	}
 
 	updateUrl() {

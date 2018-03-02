@@ -4,8 +4,8 @@
  * External dependencies
  */
 
-const fs = require( 'fs' );
-const path = require( 'path' );
+const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
+const path = require( 'path' ); // eslint-disable-line import/no-nodejs-modules
 
 /**
  * Internal dependencies
