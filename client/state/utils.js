@@ -119,7 +119,7 @@ export function isValidStateWithSchema( state, schema, debugInfo ) {
  *
  * @example
  * const reducer = keyedReducer( 'username', userReducer, [ DESERIALIZE, SERIALIZE ] );
- * reducer.hasCustomerPersistence = true;
+ * reducer.hasCustomPersistence = true;
  *
  * // now every item can decide what to do for persistence
  *

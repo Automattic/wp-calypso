@@ -4,13 +4,13 @@
  * External dependencies
  */
 
-import { dropWhile, get, pick, some } from 'lodash';
+import { dropWhile, pick, some } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import itemsSchema from './schema';
-import { combineReducers, createReducer } from 'state/utils';
+import itemSchema from './schema';
+import { combineReducers, createReducer, keyedReducer } from 'state/utils';
 import {
 	POST_LIKES_ADD_LIKER,
 	POST_LIKES_RECEIVE,
@@ -27,134 +27,86 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const items = createReducer(
-	{},
+export const itemReducer = createReducer(
+	{ likes: undefined, iLike: false, found: 0 },
 	{
-		[ POST_LIKES_RECEIVE ]: ( state, { siteId, postId, likes, iLike, found } ) => {
+		[ POST_LIKES_RECEIVE ]: ( state, { likes, iLike, found } ) => {
 			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						likes: likes.map( like =>
-							pick( like, 'ID', 'avatar_URL', 'login', 'name', 'site_ID', 'site_visible' )
-						),
-						iLike,
-						found,
-					},
-				},
+				likes: likes.map( like =>
+					pick( like, 'ID', 'avatar_URL', 'login', 'name', 'site_ID', 'site_visible' )
+				),
+				iLike,
+				found,
 			};
 		},
-		[ POST_LIKE ]: ( state, { siteId, postId } ) => {
-			const currentLike = get( state, [ siteId, postId ], {
-				likes: undefined,
+		[ POST_LIKE ]: state => {
+			if ( state.iLike ) {
+				return state;
+			}
+
+			return {
+				likes: state.likes,
+				iLike: true,
+				found: state.found + 1,
+			};
+		},
+		[ POST_UNLIKE ]: state => {
+			if ( ! state.iLike ) {
+				return state;
+			}
+
+			return {
+				likes: state.likes,
 				iLike: false,
-				found: 0,
-			} );
-
-			if ( currentLike.iLike ) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						likes: currentLike.likes,
-						iLike: true,
-						found: currentLike.found + 1,
-					},
-				},
+				found: Math.max( 0, state.found - 1 ),
 			};
 		},
-		[ POST_UNLIKE ]: ( state, { siteId, postId } ) => {
-			const currentLike = get( state, [ siteId, postId ], undefined );
-			if ( ! currentLike ) {
-				return state;
-			}
+		[ POST_LIKES_ADD_LIKER ]: ( state, { likeCount, liker } ) => {
+			const hasLiker = some( state.likes, like => like.ID === liker.ID );
 
-			if ( ! currentLike.iLike ) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						likes: currentLike.likes,
-						iLike: false,
-						found: currentLike.found - 1,
-					},
-				},
-			};
-		},
-		[ POST_LIKES_ADD_LIKER ]: ( state, { siteId, postId, likeCount, liker } ) => {
-			const currentLike = get( state, [ siteId, postId ], {
-				likes: undefined,
-				iLike: false,
-				found: 0,
-			} );
-
-			const hasLiker = some( currentLike.likes, like => like.ID === liker.ID );
-
-			if ( currentLike.likeCount === likeCount && hasLiker ) {
+			if ( state.likeCount === likeCount && hasLiker ) {
 				// if the like count matches and we already have this liker, bail
 				return state;
 			}
 
-			let likes = currentLike.likes;
+			let likes = state.likes;
 			if ( ! hasLiker ) {
-				likes = [ liker, ...( currentLike.likes || [] ) ];
+				likes = [ liker, ...( state.likes || [] ) ];
 			}
 
 			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						likes,
-						iLike: currentLike.iLike,
-						found: likeCount,
-					},
-				},
+				likes,
+				iLike: state.iLike,
+				found: likeCount,
 			};
 		},
-		[ POST_LIKES_REMOVE_LIKER ]: ( state, { siteId, postId, likeCount, liker } ) => {
-			const currentLike = get( state, [ siteId, postId ], {
-				likes: undefined,
-				iLike: false,
-				found: 0,
-			} );
+		[ POST_LIKES_REMOVE_LIKER ]: ( state, { likeCount, liker } ) => {
+			const hasLiker = some( state.likes, like => like.ID === liker.ID );
 
-			const hasLiker = some( currentLike.likes, like => like.ID === liker.ID );
-
-			if ( currentLike.likeCount === likeCount && ! hasLiker ) {
+			if ( state.likeCount === likeCount && ! hasLiker ) {
 				// if the like count matches and we don't have this liker, bail
 				return state;
 			}
 
-			let likes = currentLike.likes;
+			let likes = state.likes;
 			if ( hasLiker ) {
-				likes = dropWhile( currentLike.likes, l => liker.ID === l.ID );
+				likes = dropWhile( state.likes, l => liker.ID === l.ID );
 			}
 
 			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: {
-						likes,
-						iLike: currentLike.iLike,
-						found: likeCount,
-					},
-				},
+				likes,
+				iLike: state.iLike,
+				found: likeCount,
 			};
 		},
 	},
-	itemsSchema
+	itemSchema
 );
+
+const postIdReducer = keyedReducer( 'postId', itemReducer );
+postIdReducer.hasCustomPersistence = true;
+export const items = keyedReducer( 'siteId', postIdReducer );
+items.hasCustomPersistence = true;
 
 export default combineReducers( {
 	items,

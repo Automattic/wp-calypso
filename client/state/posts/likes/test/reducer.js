@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, { items } from '../reducer';
+import reducer, { items, itemReducer } from '../reducer';
 import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { addLiker, removeLiker, like, unlike } from '../actions';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -23,6 +23,11 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
+		const DEFAULT_ITEM_STATE = deepFreeze( {
+			likes: undefined,
+			iLike: false,
+			found: 0,
+		} );
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
@@ -180,35 +185,28 @@ describe( 'reducer', () => {
 					some_other_property: 'aaaaa',
 				},
 			];
-			const state = items(
-				{},
-				{
-					type: POST_LIKES_RECEIVE,
-					siteId: 12345678,
-					postId: 50,
-					likes,
-					found: 2,
-					iLike: false,
-				}
-			);
+			const state = itemReducer( DEFAULT_ITEM_STATE, {
+				type: POST_LIKES_RECEIVE,
+				siteId: 12345678,
+				postId: 50,
+				likes,
+				found: 2,
+				iLike: false,
+			} );
 
 			expect( state ).toEqual( {
-				12345678: {
-					50: {
-						likes: [
-							{
-								ID: 1,
-								avatar_URL: 'https://gravatar.com/whatever',
-								login: 'chicken',
-								name: 'A Former Egg',
-								site_ID: 2,
-								site_visible: true,
-							},
-						],
-						found: 2,
-						iLike: false,
+				likes: [
+					{
+						ID: 1,
+						avatar_URL: 'https://gravatar.com/whatever',
+						login: 'chicken',
+						name: 'A Former Egg',
+						site_ID: 2,
+						site_visible: true,
 					},
-				},
+				],
+				found: 2,
+				iLike: false,
 			} );
 		} );
 
@@ -283,99 +281,70 @@ describe( 'reducer', () => {
 
 		describe( 'a POST_LIKE action', () => {
 			test( 'should create a new state item if none is found', () => {
-				const state = items( deepFreeze( {} ), like( 1, 1 ) );
+				const state = itemReducer( DEFAULT_ITEM_STATE, like( 1, 1 ) );
 				expect( state ).toEqual( {
-					1: {
-						1: {
-							likes: undefined,
-							iLike: true,
-							found: 1,
-						},
-					},
+					likes: undefined,
+					iLike: true,
+					found: 1,
 				} );
 			} );
 
 			test( 'should update the current state if it is present', () => {
-				const state = items(
+				const state = itemReducer(
 					deepFreeze( {
-						1: {
-							1: {
-								likes: [],
-								iLike: false,
-								found: 1,
-							},
-						},
+						likes: [],
+						iLike: false,
+						found: 1,
 					} ),
 					like( 1, 1 )
 				);
 				expect( state ).toEqual( {
-					1: {
-						1: {
-							likes: [],
-							iLike: true,
-							found: 2,
-						},
-					},
+					likes: [],
+					iLike: true,
+					found: 2,
 				} );
 			} );
 
 			test( 'should not change the state if the user already likes the post', () => {
 				const initialState = deepFreeze( {
-					1: {
-						1: {
-							likes: [],
-							iLike: true,
-							found: 1,
-						},
-					},
+					likes: [],
+					iLike: true,
+					found: 1,
 				} );
-				const state = items( initialState, like( 1, 1 ) );
+				const state = itemReducer( initialState, like( 1, 1 ) );
 				expect( state ).toBe( initialState );
 			} );
 		} );
 
 		describe( 'a POST_UNLIKE action', () => {
 			test( 'should not create a new state item if none is found', () => {
-				const initialState = deepFreeze( {} );
-				const state = items( initialState, unlike( 1, 1 ) );
-				expect( state ).toBe( initialState );
+				const state = itemReducer( DEFAULT_ITEM_STATE, unlike( 1, 1 ) );
+				expect( state ).toBe( DEFAULT_ITEM_STATE );
 			} );
 
 			test( 'should update the current state if it is present', () => {
-				const state = items(
+				const state = itemReducer(
 					deepFreeze( {
-						1: {
-							1: {
-								likes: [],
-								iLike: true,
-								found: 1,
-							},
-						},
+						likes: [],
+						iLike: true,
+						found: 1,
 					} ),
 					unlike( 1, 1 )
 				);
 				expect( state ).toEqual( {
-					1: {
-						1: {
-							likes: [],
-							iLike: false,
-							found: 0,
-						},
-					},
+					likes: [],
+					iLike: false,
+					found: 0,
 				} );
 			} );
 
 			test( 'should not change the state if the user does not like the post', () => {
 				const initialState = deepFreeze( {
-					1: {
-						1: {
-							likes: [],
-							iLike: false,
-							found: 1,
-						},
-					},
+					likes: [],
+					iLike: false,
+					found: 1,
 				} );
-				const state = items( initialState, unlike( 1, 1 ) );
+				const state = itemReducer( initialState, unlike( 1, 1 ) );
 				expect( state ).toBe( initialState );
 			} );
 		} );
@@ -385,93 +354,65 @@ describe( 'reducer', () => {
 				ID: 10,
 			} );
 			test( 'should create a new entry when no entry is present', () => {
-				expect( items( deepFreeze( {} ), addLiker( 1, 1, 5, liker ) ) ).toEqual( {
-					1: {
-						1: {
-							likes: [ liker ],
-							found: 5,
-							iLike: false,
-						},
-					},
+				expect( itemReducer( DEFAULT_ITEM_STATE, addLiker( 1, 1, 5, liker ) ) ).toEqual( {
+					likes: [ liker ],
+					found: 5,
+					iLike: false,
 				} );
 			} );
 
 			test( 'should make a new array if one is not present', () => {
 				expect(
-					items(
+					itemReducer(
 						deepFreeze( {
-							1: {
-								1: {
-									likes: undefined,
-									found: 5,
-									iLike: false,
-								},
-							},
+							likes: undefined,
+							found: 5,
+							iLike: false,
 						} ),
 						addLiker( 1, 1, 6, liker )
 					)
 				).toEqual( {
-					1: {
-						1: {
-							likes: [ liker ],
-							found: 6,
-							iLike: false,
-						},
-					},
+					likes: [ liker ],
+					found: 6,
+					iLike: false,
 				} );
 			} );
 
 			test( 'should prepend to the existing array if present', () => {
 				expect(
-					items(
+					itemReducer(
 						deepFreeze( {
-							1: {
-								1: {
-									likes: [ { ID: 5 } ],
-									found: 5,
-									iLike: false,
-								},
-							},
+							likes: [ { ID: 5 } ],
+							found: 5,
+							iLike: false,
 						} ),
 						addLiker( 1, 1, 6, liker )
 					)
 				).toEqual( {
-					1: {
-						1: {
-							likes: [ liker, { ID: 5 } ],
-							found: 6,
-							iLike: false,
-						},
-					},
+					likes: [ liker, { ID: 5 } ],
+					found: 6,
+					iLike: false,
 				} );
 			} );
 
 			test( 'should leave the likes array alone if the liker is already present', () => {
 				const initialState = deepFreeze( {
-					1: {
-						1: {
-							likes: [ { ID: 2 }, liker ],
-							found: 5,
-							iLike: false,
-						},
-					},
+					likes: [ { ID: 2 }, liker ],
+					found: 5,
+					iLike: false,
 				} );
-				const state = items(
+				const state = itemReducer(
 					initialState,
 					// same liker, new count!
 					addLiker( 1, 1, 6, liker )
 				);
 
 				expect( state ).toEqual( {
-					1: {
-						1: {
-							likes: [ { ID: 2 }, liker ],
-							found: 6,
-							iLike: false,
-						},
-					},
+					likes: [ { ID: 2 }, liker ],
+					found: 6,
+					iLike: false,
 				} );
-				expect( state[ '1' ][ '1' ].likes ).toBe( initialState[ '1' ][ '1' ].likes );
+				expect( state.likes ).toBe( initialState.likes );
 			} );
 		} );
 
@@ -480,95 +421,66 @@ describe( 'reducer', () => {
 				ID: 10,
 			} );
 			test( 'should creat a new entry if none is present', () => {
-				const initialState = deepFreeze( {} );
-				expect( items( initialState, removeLiker( 1, 1, 5, liker ) ) ).toEqual( {
-					1: {
-						1: {
-							likes: undefined,
-							found: 5,
-							iLike: false,
-						},
-					},
+				expect( itemReducer( DEFAULT_ITEM_STATE, removeLiker( 1, 1, 5, liker ) ) ).toEqual( {
+					likes: undefined,
+					found: 5,
+					iLike: false,
 				} );
 			} );
 
 			test( 'should not update the likes array if none is present, but should update the count', () => {
 				expect(
-					items(
+					itemReducer(
 						deepFreeze( {
-							1: {
-								1: {
-									likes: undefined,
-									found: 5,
-									iLike: false,
-								},
-							},
+							likes: undefined,
+							found: 5,
+							iLike: false,
 						} ),
 						removeLiker( 1, 1, 6, liker )
 					)
 				).toEqual( {
-					1: {
-						1: {
-							likes: undefined,
-							found: 6,
-							iLike: false,
-						},
-					},
+					likes: undefined,
+					found: 6,
+					iLike: false,
 				} );
 			} );
 
 			test( 'should remove from the existing array if present', () => {
 				expect(
-					items(
+					itemReducer(
 						deepFreeze( {
-							1: {
-								1: {
-									likes: [ liker ],
-									found: 5,
-									iLike: false,
-								},
-							},
+							likes: [ liker ],
+							found: 5,
+							iLike: false,
 						} ),
 						removeLiker( 1, 1, 5, liker )
 					)
 				).toEqual( {
-					1: {
-						1: {
-							likes: [],
-							found: 5,
-							iLike: false,
-						},
-					},
+					likes: [],
+					found: 5,
+					iLike: false,
 				} );
 			} );
 
 			test( 'should leave the likes array alone if the liker is already missing', () => {
 				const initialState = deepFreeze( {
-					1: {
-						1: {
-							likes: [ { ID: 2 } ],
-							found: 5,
-							iLike: false,
-						},
-					},
+					likes: [ { ID: 2 } ],
+					found: 5,
+					iLike: false,
 				} );
 
-				const state = items(
+				const state = itemReducer(
 					initialState,
 					// same liker, new count!
 					removeLiker( 1, 1, 3, liker )
 				);
 
 				expect( state ).toEqual( {
-					1: {
-						1: {
-							likes: [ { ID: 2 } ],
-							found: 3,
-							iLike: false,
-						},
-					},
+					likes: [ { ID: 2 } ],
+					found: 3,
+					iLike: false,
 				} );
-				expect( state[ '1' ][ '1' ].likes ).toBe( initialState[ '1' ][ '1' ].likes );
+				expect( state.likes ).toBe( initialState.likes );
 			} );
 		} );
 	} );
