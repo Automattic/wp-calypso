@@ -624,6 +624,11 @@
 	&[type='password'] {
 		margin-bottom: 0;
 	}
+
+	&.is-primary {
+		background-color: #00be28;
+		border-color: #007218;
+	}
 }
 
 .jetpack-connect__password-container {
