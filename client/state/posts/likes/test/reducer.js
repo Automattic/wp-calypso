@@ -185,7 +185,7 @@ describe( 'reducer', () => {
 					some_other_property: 'aaaaa',
 				},
 			];
-			const state = itemReducer( DEFAULT_ITEM_STATE, {
+			const state = itemReducer( undefined, {
 				type: POST_LIKES_RECEIVE,
 				siteId: 12345678,
 				postId: 50,
@@ -281,7 +281,7 @@ describe( 'reducer', () => {
 
 		describe( 'a POST_LIKE action', () => {
 			test( 'should create a new state item if none is found', () => {
-				const state = itemReducer( DEFAULT_ITEM_STATE, like( 1, 1 ) );
+				const state = itemReducer( undefined, like( 1, 1 ) );
 				expect( state ).toEqual( {
 					likes: undefined,
 					iLike: true,
@@ -354,7 +354,7 @@ describe( 'reducer', () => {
 				ID: 10,
 			} );
 			test( 'should create a new entry when no entry is present', () => {
-				expect( itemReducer( DEFAULT_ITEM_STATE, addLiker( 1, 1, 5, liker ) ) ).toEqual( {
+				expect( itemReducer( undefined, addLiker( 1, 1, 5, liker ) ) ).toEqual( {
 					likes: [ liker ],
 					found: 5,
 					iLike: false,
@@ -421,7 +421,7 @@ describe( 'reducer', () => {
 				ID: 10,
 			} );
 			test( 'should creat a new entry if none is present', () => {
-				expect( itemReducer( DEFAULT_ITEM_STATE, removeLiker( 1, 1, 5, liker ) ) ).toEqual( {
+				expect( itemReducer( undefined, removeLiker( 1, 1, 5, liker ) ) ).toEqual( {
 					likes: undefined,
 					found: 5,
 					iLike: false,
