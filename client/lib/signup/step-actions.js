@@ -48,15 +48,17 @@ export function createSiteOrDomain( callback, dependencies, data, reduxStore ) {
 		};
 
 		const domainChoiceCart = [ domainItem ];
-		const { product_slug: productSlug } = domainItem;
-		const productsList = getProductsList( reduxStore.getState() );
-		if ( domainItem && supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
-			domainChoiceCart.push(
-				cartItems.domainPrivacyProtection( {
-					domain: domainItem.meta,
-					source: 'signup',
-				} )
-			);
+		if ( domainItem ) {
+			const { product_slug: productSlug } = domainItem;
+			const productsList = getProductsList( reduxStore.getState() );
+			if ( supportsPrivacyProtectionPurchase( productSlug, productsList ) ) {
+				domainChoiceCart.push(
+					cartItems.domainPrivacyProtection( {
+						domain: domainItem.meta,
+						source: 'signup',
+					} )
+				);
+			}
 		}
 
 		SignupCart.createCart( cartKey, domainChoiceCart, error =>
