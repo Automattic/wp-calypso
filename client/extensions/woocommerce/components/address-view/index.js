@@ -69,9 +69,6 @@ class AddressView extends Component {
 	onChangeCountry = event => {
 		// First, always forward the country event through
 		this.props.onChange( event );
-
-		// Then, send a second onChange to clear state
-		this.props.onChange( { target: { name: 'state', value: '' } } );
 	};
 
 	getCountryData = () => {
