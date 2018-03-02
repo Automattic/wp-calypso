@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import urlModule from 'url';
 import Gridicon from 'gridicons';
-import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -77,7 +76,7 @@ export class LoginLinks extends React.Component {
 
 			// Ensure we've got a relative URL (null) or an http[s] protocol
 			// We don't want to allow `javascript:…`
-			if ( includes( [ null, 'http:', 'https:' ], protocol ) ) {
+			if ( null === protocol || 'http:' === protocol || 'https:' === protocol ) {
 				const linkText = hostname
 					? translate( 'Back to %(hostname)s', { args: { hostname } } )
 					: translate( 'Back' );
