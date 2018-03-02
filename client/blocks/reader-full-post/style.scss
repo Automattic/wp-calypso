@@ -1,6 +1,13 @@
 // Styles targeted at story content
 @import 'content';
 
+.is-group-reader.has-no-sidebar {
+
+	.masterbar {
+		display: none; // Hides masterbar in fullpost
+	}
+}
+
 .reader-full-post.main {
 	max-width: none;
 	// Turns off the implicit positioning context set up by the normal main styles
@@ -250,13 +257,19 @@
 
 		.author-compact-profile__follow .follow-button {
 			position: fixed;
-				top: 10px;
-				right: 48px;
-			z-index: z-index( '.masterbar', '.reader-profile' );
+				left: calc( 100% - 320px );
+				top: 5px;
 		}
 
 		.author-compact-profile__follow-count {
 			display: none;
+		}
+
+		.author-compact-profile__follow .follow-button__label {
+
+			@include breakpoint( "<660px" ) {
+				display: none;
+			}
 		}
 	}
 }
@@ -291,13 +304,27 @@
 	top: 4px;
 }
 
+.reader-full-post__sidebar-comment-like {
+	align-items: flex-start;
+	background: white;
+	display: flex;
+	border-bottom: 1px solid $gray;
+	flex-direction: row;
+	height: 40px;
+	justify-content: flex-end;
+	position: fixed;
+		left: 0;
+		top: 0;
+	width: 100%;
+	z-index: 10000000;
+}
+
 .reader-full-post__sidebar .like-button {
 
 	@include breakpoint( "<660px" ) {
 		position: fixed;
-			right: 160px;
-			top: 10px;
-		z-index: z-index( '.masterbar', '.reader-profile' );
+			right: 80px;
+			top: 5px;
 	}
 
 	.like-button__label-status {
@@ -314,11 +341,8 @@
 	margin-right: 18px;
 
 	@include breakpoint( "<660px" ) {
-		position: fixed;
-			top: 10px;
-			right: 232px;
-		z-index: z-index( '.masterbar', '.reader-profile' );
-		margin-right: 0;
+		right: 130px;
+		top: 5px;
 	}
 
 	.comment-button__label-status {
