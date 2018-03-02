@@ -141,7 +141,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	preview() {
-		const { isPreviewable, path, site, siteId, translate } = this.props;
+		const { isPreviewable, path, site, siteId, translate, canUserEditThemeOptions } = this.props;
 
 		if ( ! siteId ) {
 			return null;
@@ -159,7 +159,17 @@ export class MySitesSidebar extends Component {
 				icon="computer"
 				preloadSectionName="preview"
 				forceInternalLink={ isPreviewable }
-			/>
+			>
+				{ canUserEditThemeOptions ? (
+					<SidebarButton
+						onClick={ this.trackSidebarButtonClick( 'customize' ) }
+						href={ this.props.customizeUrl }
+						preloadSectionName="customize"
+					>
+						{ this.props.translate( 'Customize' ) }
+					</SidebarButton>
+				) : null }
+			</SidebarItem>
 		);
 	}
 
@@ -223,12 +233,8 @@ export class MySitesSidebar extends Component {
 				icon="themes"
 				preloadSectionName="themes"
 			>
-				<SidebarButton
-					onClick={ this.trackSidebarButtonClick( 'customize' ) }
-					href={ this.props.customizeUrl }
-					preloadSectionName="customize"
-				>
-					{ this.props.translate( 'Customize' ) }
+				<SidebarButton onClick={ console.log( 'boom' ) } href={ themesLink }>
+					{ this.props.translate( 'Add' ) }
 				</SidebarButton>
 			</SidebarItem>
 		);
@@ -269,7 +275,11 @@ export class MySitesSidebar extends Component {
 				>
 					{ this.props.translate( 'Manage' ) }
 				</SidebarButton>
-			) : null;
+			) : (
+				<SidebarButton onClick={ console.log( 'boom' ) } href={ managePluginsLink }>
+					{ this.props.translate( 'Add' ) }
+				</SidebarButton>
+			);
 
 		return (
 			<SidebarItem
@@ -636,6 +646,7 @@ export class MySitesSidebar extends Component {
 				!! this.users() ||
 				!! this.siteSettings() ||
 				!! this.plugins() ||
+				!! this.themes() ||
 				!! this.upgrades();
 
 		return (
@@ -656,22 +667,16 @@ export class MySitesSidebar extends Component {
 					</SidebarMenu>
 				) : null }
 
-				{ !! this.themes() ? (
-					<SidebarMenu>
-						<SidebarHeading>{ this.props.translate( 'Personalize' ) }</SidebarHeading>
-						<ul>{ this.themes() }</ul>
-					</SidebarMenu>
-				) : null }
-
 				{ configuration ? (
 					<SidebarMenu>
 						<SidebarHeading>{ this.props.translate( 'Configure' ) }</SidebarHeading>
 						<ul>
+							{ this.themes() }
+							{ this.plugins() }
+							{ this.upgrades() }
 							{ this.ads() }
 							{ this.sharing() }
 							{ this.users() }
-							{ this.plugins() }
-							{ this.upgrades() }
 							{ this.siteSettings() }
 							{ this.wpAdmin() }
 						</ul>
