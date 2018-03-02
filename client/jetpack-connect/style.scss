@@ -19,6 +19,39 @@
 			display: none;
 		}
 	}
+
+	// @todo
+	// Remove extra .jetpack-branded class when feature flag is removed.
+	&.jetpack-branded {
+		.button.is-primary {
+			background-color: $green-jetpack;
+			border-color: darken($green-jetpack, 5%);
+
+			&:hover,
+			&:focus {
+				border-color: darken($green-jetpack, 30%);
+			}
+
+			&:focus {
+				box-shadow: 0 0 0 2px lighten($green-jetpack, 25%);
+			}
+
+			&[disabled],
+			&:disabled {
+				background: tint($green-jetpack, 50%);
+				border-color: tint($green-jetpack, 35%);
+				color: $white;
+			}
+		}
+	}
+}
+
+.jetpack-connect__main-logo {
+	text-align: center;
+
+	.jetpack-logo__icon {
+		fill: $green-jetpack;
+	}
 }
 
 .jetpack-connect__main.is-wide {
