@@ -938,8 +938,6 @@ export const PostEditor = createReactClass( {
 				message,
 			},
 		} );
-
-		window.scrollTo( 0, 0 );
 	},
 
 	setPostDate: function( date ) {
