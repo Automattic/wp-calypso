@@ -88,7 +88,7 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
 export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
-	// We don't want JP Onboarding specific things in our JP Settings Redux state
+	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
 	dispatch( updateJetpackOnboardingSettings( siteId, settingsWithoutCredentials ) );
 
