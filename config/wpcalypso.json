@@ -44,7 +44,6 @@
 		"help/courses": true,
 		"jetpack/api-cache": true,
 		"jetpack/connect/mobile-app-flow": true,
-		"jetpack/connection-rebranding": true,
 		"jetpack/happychat": true,
 		"jetpack/google-analytics-anonymize-ip": true,
 		"jetpack/google-analytics-for-stores": true,

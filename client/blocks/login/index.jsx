@@ -37,7 +37,6 @@ import PushNotificationApprovalPoller from './two-factor-authentication/push-not
 import userFactory from 'lib/user';
 import SocialConnectPrompt from './social-connect-prompt';
 import JetpackLogo from 'components/jetpack-logo';
-import { isEnabled } from 'config';
 
 const user = userFactory();
 
@@ -190,7 +189,7 @@ class Login extends Component {
 					</p>
 				);
 			}
-		} else if ( isJetpack && isEnabled( 'jetpack/connection-rebranding' ) ) {
+		} else if ( isJetpack ) {
 			headerText = translate( 'Log in to your WordPress.com account to set up Jetpack.' );
 			preHeader = (
 				<div>
@@ -278,11 +277,7 @@ class Login extends Component {
 	render() {
 		const { isJetpack } = this.props;
 		return (
-			<div
-				className={ classNames( 'login', {
-					'is-jetpack': isJetpack && isEnabled( 'jetpack/connection-rebranding' ),
-				} ) }
-			>
+			<div className={ classNames( 'login', { 'is-jetpack': isJetpack } ) }>
 				{ this.renderHeader() }
 
 				<ErrorNotice />
