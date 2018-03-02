@@ -44,10 +44,8 @@ export function isWithinBreakpoint( breakpoint ) {
 
 	if ( ! breakpoints.hasOwnProperty( breakpoint ) ) {
 		try {
-			global.window.console.warn(
-				'Undefined breakpoint used in `mobile-first-breakpoint`',
-				breakpoint
-			);
+			// eslint-disable-next-line no-console
+			console.warn( 'Undefined breakpoint used in `mobile-first-breakpoint`', breakpoint );
 		} catch ( e ) {}
 		return undefined;
 	}
@@ -65,5 +63,5 @@ export function isDesktop() {
 // FIXME: We can't detect window size on the server, so until we have more intelligent detection,
 // use 769, which is just above the general maximum mobile screen width.
 export function getWindowInnerWidth() {
-	return global.window ? global.window.innerWidth : 769;
+	return typeof window !== 'undefined' ? window.innerWidth : 769;
 }
