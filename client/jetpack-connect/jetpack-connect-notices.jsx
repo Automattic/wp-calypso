@@ -113,7 +113,7 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case NOT_JETPACK:
-				// Not a problem
+				// Not notice required, we will move on to installation
 				return null;
 
 			case WORDPRESS_DOT_COM:
