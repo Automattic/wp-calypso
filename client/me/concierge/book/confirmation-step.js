@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Confirmation from '../shared/confirmation';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -20,25 +19,25 @@ class ConfirmationStep extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { site } = this.props;
 
 		return (
 			<Confirmation
-				description={ translate(
+				description={
 					'We will send you a calendar invitation and an email with information on how to prepare.'
-				) }
-				title={ translate( 'Your Concierge session is booked!' ) }
+				}
+				title={ 'Your Concierge session is booked!' }
 			>
 				<Button
 					className="book__schedule-button"
 					href={ `/stats/day/${ site.slug }` }
 					primary={ true }
 				>
-					{ translate( 'Return to your dashboard' ) }
+					{ 'Return to your dashboard' }
 				</Button>
 			</Confirmation>
 		);
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( ConfirmationStep ) );
+export default connect( null, { recordTracksEvent } )( ConfirmationStep );

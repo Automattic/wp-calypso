@@ -5,7 +5,6 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { without } from 'lodash';
 
@@ -80,14 +79,7 @@ class CalendarStep extends Component {
 	}
 
 	render() {
-		const {
-			appointmentDetails,
-			appointmentId,
-			currentUserLocale,
-			signupForm,
-			site,
-			translate,
-		} = this.props;
+		const { appointmentDetails, appointmentId, currentUserLocale, signupForm, site } = this.props;
 
 		return (
 			<div>
@@ -97,16 +89,14 @@ class CalendarStep extends Component {
 				/>
 
 				<CompactCard>
-					{ translate(
-						'To reschedule your Concierge session, let us know your timezone and preferred day.'
-					) }
+					{ 'To reschedule your Concierge session, let us know your timezone and preferred day.' }
 				</CompactCard>
 
 				{ appointmentDetails && (
 					<div>
 						<CompactCard>
 							<FormFieldset>
-								<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
+								<FormLabel>{ "What's your timezone?" }</FormLabel>
 								<Timezone
 									includeManualOffsets={ false }
 									name="timezone"
@@ -114,13 +104,13 @@ class CalendarStep extends Component {
 									selectedZone={ appointmentDetails.meta.timezone }
 								/>
 								<FormSettingExplanation>
-									{ translate( 'Choose a city in your timezone.' ) }
+									{ 'Choose a city in your timezone.' }
 								</FormSettingExplanation>
 							</FormFieldset>
 						</CompactCard>
 
 						<AvailableTimePicker
-							actionText={ translate( 'Reschedule to this date' ) }
+							actionText={ 'Reschedule to this date' }
 							availableTimes={ this.getFilteredTimeSlots() }
 							currentUserLocale={ currentUserLocale }
 							disabled={ signupForm.status === CONCIERGE_STATUS_BOOKING || ! appointmentDetails }
@@ -143,4 +133,4 @@ export default connect(
 		signupForm: getConciergeSignupForm( state ),
 	} ),
 	{ recordTracksEvent, rescheduleConciergeAppointment, updateConciergeAppointmentDetails }
-)( localize( CalendarStep ) );
+)( CalendarStep );

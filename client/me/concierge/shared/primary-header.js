@@ -11,13 +11,10 @@ import React, { Component } from 'react';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import ExternalLink from 'components/external-link';
-import { localize } from 'i18n-calypso';
 import { CONCIERGE_SUPPORT } from 'lib/url/support';
 
 class PrimaryHeader extends Component {
 	render() {
-		const { translate } = this.props;
-
 		return (
 			<Card>
 				<img
@@ -26,10 +23,8 @@ class PrimaryHeader extends Component {
 					src={ '/calypso/images/illustrations/illustration-start.svg' }
 				/>
 				<FormattedHeader
-					headerText={ translate( 'WordPress.com Business Concierge Session' ) }
-					subHeaderText={ translate(
-						"In this 30-minute session we'll help you get started with your site."
-					) }
+					headerText={ 'WordPress.com Business Concierge Session' }
+					subHeaderText={ "In this 30-minute session we'll help you get started with your site." }
 				/>
 				<ExternalLink
 					className="shared__info-link"
@@ -37,11 +32,11 @@ class PrimaryHeader extends Component {
 					href={ CONCIERGE_SUPPORT }
 					target="_blank"
 				>
-					{ translate( 'Learn more' ) }
+					{ 'Learn more' }
 				</ExternalLink>
 			</Card>
 		);
 	}
 }
 
-export default localize( PrimaryHeader );
+export default PrimaryHeader;

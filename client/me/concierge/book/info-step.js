@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
 import CompactCard from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -19,14 +20,16 @@ import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import Timezone from 'components/timezone';
 import Site from 'blocks/site';
-import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
 import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { isDefaultLocale } from 'lib/i18n-utils';
 
 class InfoStep extends Component {
 	static propTypes = {
+		currentUserLocale: PropTypes.string.isRequired,
 		signupForm: PropTypes.object,
 		userSettings: PropTypes.object,
 		onComplete: PropTypes.func.isRequired,
@@ -66,56 +69,59 @@ class InfoStep extends Component {
 	}
 
 	render() {
-		const { signupForm: { firstname, lastname, message, timezone }, translate } = this.props;
+		const {
+			currentUserLocale,
+			signupForm: { firstname, lastname, message, timezone },
+		} = this.props;
+		const notice = ! isDefaultLocale( currentUserLocale )
+			? 'Sessions are 30 minutes long and in English.'
+			: null;
 
 		return (
 			<div>
 				<PrimaryHeader />
+				{ notice && <Notice showDismiss={ false } text={ notice } /> }
 				<CompactCard className="book__info-step-site-block">
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
 
 				<CompactCard>
 					<FormFieldset>
-						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
+						<FormLabel htmlFor="firstname">{ 'First Name' }</FormLabel>
 						<FormTextInput
 							name="firstname"
-							placeholder={ translate( 'What may we call you?' ) }
+							placeholder={ 'What may we call you?' }
 							onChange={ this.setFieldValue }
 							value={ firstname }
 						/>
 					</FormFieldset>
 					<FormFieldset>
-						<FormLabel htmlFor="lastname">{ translate( 'Last Name' ) }</FormLabel>
+						<FormLabel htmlFor="lastname">{ 'Last Name' }</FormLabel>
 						<FormTextInput
 							name="lastname"
-							placeholder={ translate( 'Optionally, please tell us your last name.' ) }
+							placeholder={ 'Optionally, please tell us your last name.' }
 							onChange={ this.setFieldValue }
 							value={ lastname }
 						/>
 					</FormFieldset>
 					<FormFieldset>
-						<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
+						<FormLabel>{ "What's your timezone?" }</FormLabel>
 						<Timezone
 							includeManualOffsets={ false }
 							name="timezone"
 							onSelect={ this.setTimezone }
 							selectedZone={ timezone }
 						/>
-						<FormSettingExplanation>
-							{ translate( 'Choose a city in your timezone.' ) }
-						</FormSettingExplanation>
+						<FormSettingExplanation>{ 'Choose a city in your timezone.' }</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel>
-							{ translate( 'What are you hoping to accomplish with your site?' ) }
-						</FormLabel>
+						<FormLabel>{ 'What are you hoping to accomplish with your site?' }</FormLabel>
 						<FormTextarea
-							placeholder={ translate(
+							placeholder={
 								'Sell products and services? Generate leads? Something else entirely?' +
-									" Be as specific as you can! It helps us provide the information you're looking for."
-							) }
+								" Be as specific as you can! It helps us provide the information you're looking for."
+							}
 							name="message"
 							onChange={ this.setFieldValue }
 							value={ message }
@@ -128,7 +134,7 @@ class InfoStep extends Component {
 						type="button"
 						onClick={ this.props.onComplete }
 					>
-						{ translate( 'Continue to calendar' ) }
+						{ 'Continue to calendar' }
 					</FormButton>
 				</CompactCard>
 			</div>
@@ -138,6 +144,7 @@ class InfoStep extends Component {
 
 export default connect(
 	state => ( {
+		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 		userSettings: getUserSettings( state ),
 	} ),
@@ -145,4 +152,4 @@ export default connect(
 		updateConciergeSignupForm,
 		recordTracksEvent,
 	}
-)( localize( InfoStep ) );
+)( InfoStep );

@@ -14,7 +14,6 @@ import { includes } from 'lodash';
 import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
 import Button from 'components/button';
 import Main from 'components/main';
-import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
 import { cancelConciergeAppointment } from 'state/concierge/actions';
 import {
@@ -40,21 +39,21 @@ class ConciergeCancel extends Component {
 	};
 
 	getDisplayComponent = () => {
-		const { appointmentId, appointmentDetails, siteSlug, signupForm, translate } = this.props;
+		const { appointmentId, appointmentDetails, siteSlug, signupForm } = this.props;
 
 		switch ( signupForm.status ) {
 			case CONCIERGE_STATUS_CANCELLED:
 				return (
 					<Confirmation
-						description={ translate( 'Would you like to schedule a new session?' ) }
-						title={ translate( 'Your Concierge session has been cancelled.' ) }
+						description={ 'Would you like to schedule a new session?' }
+						title={ 'Your Concierge session has been cancelled.' }
 					>
 						<Button
 							className="cancel__schedule-button"
 							href={ `/me/concierge/${ siteSlug }/book` }
 							primary={ true }
 						>
-							{ translate( 'Schedule' ) }
+							{ 'Schedule' }
 						</Button>
 					</Confirmation>
 				);
@@ -77,17 +76,15 @@ class ConciergeCancel extends Component {
 						/>
 
 						<Confirmation
-							description={ translate(
-								'You can also reschedule your session. What would you like to do?'
-							) }
-							title={ translate( 'Cancel your Concierge session' ) }
+							description={ 'You can also reschedule your session. What would you like to do?' }
+							title={ 'Cancel your Concierge session' }
 						>
 							<Button
 								className="cancel__reschedule-button"
 								disabled={ disabledRescheduling }
 								href={ `/me/concierge/${ siteSlug }/${ appointmentId }/reschedule` }
 							>
-								{ translate( 'Reschedule session' ) }
+								{ 'Reschedule session' }
 							</Button>
 
 							<Button
@@ -97,7 +94,7 @@ class ConciergeCancel extends Component {
 								primary={ true }
 								scary={ true }
 							>
-								{ translate( 'Cancel session' ) }
+								{ 'Cancel session' }
 							</Button>
 						</Confirmation>
 					</div>
@@ -116,4 +113,4 @@ export default connect(
 		signupForm: getConciergeSignupForm( state ),
 	} ),
 	{ cancelConciergeAppointment, recordTracksEvent }
-)( localize( ConciergeCancel ) );
+)( ConciergeCancel );
