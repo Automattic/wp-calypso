@@ -1,5 +1,11 @@
 # Accessibility
 
+This document provides some background on accessibility and how it fits in with our goals for Calypso.
+
+If you're mainly here to learn what to test for as you write or review PRs, we also have an [Accessibility Checklist](accessibility-checklist.md).
+
+## Overview
+
 We need Calypso to be accessible to all our users. According to surveys done by WebAIM,
 
 - 97.6% of screen reader users… [(2014)](http://webaim.org/projects/screenreadersurvey5/#javascript)
