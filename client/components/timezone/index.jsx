@@ -7,6 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 import { map, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -60,9 +61,16 @@ class Timezone extends Component {
 	}
 
 	render() {
-		const { selectedZone } = this.props;
+		const { className, selectedZone } = this.props;
 		return (
-			<select onChange={ this.onSelect } value={ selectedZone || '' }>
+			// Changing this to onBlur will not work, so we ignore this
+			// warning.
+			/* eslint-disable jsx-a11y/no-onchange */
+			<select
+				className={ classnames( 'timezone__component', className ) }
+				onChange={ this.onSelect }
+				value={ selectedZone || '' }
+			>
 				<QueryTimezones />
 				{ this.renderOptionsByContinent() }
 				<optgroup label="UTC">
@@ -70,6 +78,7 @@ class Timezone extends Component {
 				</optgroup>
 				{ this.props.includeManualOffsets && this.renderManualUtcOffsets() }
 			</select>
+			/* eslint-enable jsx-a11y/no-onchange */
 		);
 	}
 }
@@ -80,6 +89,7 @@ Timezone.defaultProps = {
 };
 
 Timezone.propTypes = {
+	className: PropTypes.string,
 	selectedZone: PropTypes.string,
 	onSelect: PropTypes.func,
 	includeManualOffsets: PropTypes.bool,

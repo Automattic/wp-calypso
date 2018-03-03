@@ -199,3 +199,28 @@
 		}
 	}
 }
+
+.docs__post-schedule {
+	@include breakpoint( ">480px" ) {
+		display: flex;
+		justify-content: space-between;
+	}
+}
+
+.docs__post-schedule-card {
+	display: inline-block;
+	margin: 0;
+	vertical-align: top;
+}
+
+.docs__post-schedule-timezone-card-wrapper {
+	display: inline-block;
+	margin: 15px 0 0;
+	vertical-align: top;
+
+	@include breakpoint( ">480px" ) {
+		margin: 0 0 0 10px;
+		width: calc(50% - 10px);
+	}
+}
+

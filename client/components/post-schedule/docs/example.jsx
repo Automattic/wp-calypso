@@ -119,15 +119,8 @@ const PostScheduleExample = localize(
 
 		render() {
 			return (
-				<div>
-					<Card
-						style={ {
-							width: '300px',
-							verticalAlign: 'top',
-							display: 'inline-block',
-							margin: 0,
-						} }
-					>
+				<div className="docs__post-schedule">
+					<Card className="docs__post-schedule-card">
 						<PostSchedule
 							events={ this.state.events }
 							onDateChange={ this.setDate }
@@ -146,14 +139,7 @@ const PostScheduleExample = localize(
 						/>
 					</Card>
 
-					<div
-						style={ {
-							width: '260px',
-							display: 'inline-block',
-							verticalAlign: 'top',
-							margin: ' 0 0 0 30px',
-						} }
-					>
+					<div className="docs__post-schedule-timezone-card-wrapper">
 						<Card className="card__component-instance">
 							<h3>
 								<span>owner</span>
@@ -167,14 +153,14 @@ const PostScheduleExample = localize(
 									{ this.state.timezone || 'not defined' }
 								</div>
 
-								<Timezone selectedZone={ this.state.timezone } onSelect={ this.setTimezone } />
+								<Timezone
+									className="post-schedule__component-timezone"
+									selectedZone={ this.state.timezone }
+									onSelect={ this.setTimezone }
+								/>
 
 								<a
 									className="card__property-action"
-									style={ {
-										top: '-8px',
-										position: 'relative',
-									} }
 									onClick={ this.clearState.bind( this, 'timezone' ) }
 									href="#"
 								>

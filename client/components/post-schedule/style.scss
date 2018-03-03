@@ -138,6 +138,10 @@ input[type="text"].post-schedule__clock-time {
 	border-top: 1px solid lighten( $gray, 25% );
 }
 
+.post-schedule__component-timezone {
+	width: 100%;
+}
+
 .post-schedule__timezone-info {
 	display: inline-block;
 	vertical-align: middle;
