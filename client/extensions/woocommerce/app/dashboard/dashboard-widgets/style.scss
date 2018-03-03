@@ -1,0 +1,39 @@
+
+.dashboard-widget.dashboard-widgets__inventory {
+	.table {
+		padding: 0;
+		box-shadow: none;
+
+		.table-row:hover {
+			background-color: transparent;
+
+			.table-item__cell-title::after {
+				background-image: linear-gradient(to right, rgba(255,255,255,0) 0%, #fff 90%)
+			}
+		}
+
+		.table-heading,
+		.table-item {
+			width: 8em;
+
+			&:first-child {
+				padding: 0;
+			}
+
+			&:last-child {
+				padding: 0;
+				text-align: right;
+			}
+
+			&.is-title-cell {
+				width: calc( 100% - 8em );
+			}
+		}
+	}
+
+	.is-out-of-stock {
+		.table-item {
+			color: $alert-red;
+		}
+	}
+}
