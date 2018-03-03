@@ -26,46 +26,114 @@ class HelpModal extends React.Component {
 	};
 
 	defaultShortcuts = () => {
+		const { translate } = this.props;
 		return [
-			{ c: this.props.translate( 'Copy' ), x: this.props.translate( 'Cut' ) },
-			{ v: this.props.translate( 'Paste' ), a: this.props.translate( 'Select all' ) },
-			{ z: this.props.translate( 'Undo' ), y: this.props.translate( 'Redo' ) },
-			{ b: this.props.translate( 'Bold' ), i: this.props.translate( 'Italic' ) },
-			{ u: this.props.translate( 'Underline' ), k: this.props.translate( 'Insert/edit link' ) },
+			[ { key: 'c', action: translate( 'Copy' ) }, { key: 'x', action: translate( 'Cut' ) } ],
+			[
+				{ key: 'v', action: translate( 'Paste' ) },
+				{ key: 'a', action: translate( 'Select all' ) },
+			],
+			[ { key: 'z', action: translate( 'Undo' ) }, { key: 'y', action: translate( 'Redo' ) } ],
+			[ { key: 'b', action: translate( 'Bold' ) }, { key: 'i', action: translate( 'Italic' ) } ],
+			[
+				{ key: 'u', action: translate( 'Underline' ) },
+				{ key: 'k', action: translate( 'Insert/edit link' ) },
+			],
 		];
 	};
 
 	additionalShortcuts = () => {
+		const { translate } = this.props;
 		return [
-			{ 1: this.props.translate( 'Heading 1' ), 2: this.props.translate( 'Heading 2' ) },
-			{ 3: this.props.translate( 'Heading 3' ), 4: this.props.translate( 'Heading 4' ) },
-			{ 5: this.props.translate( 'Heading 5' ), 6: this.props.translate( 'Heading 6' ) },
-			{ l: this.props.translate( 'Align left' ), c: this.props.translate( 'Align center' ) },
-			{ r: this.props.translate( 'Align right' ), j: this.props.translate( 'Justify' ) },
-			{ d: this.props.translate( 'Strikethrough' ), q: this.props.translate( 'Blockquote' ) },
-			{ u: this.props.translate( 'Bullet list' ), o: this.props.translate( 'Numbered list' ) },
-			{ a: this.props.translate( 'Insert/edit link' ), s: this.props.translate( 'Remove link' ) },
-			{
-				m: this.props.translate( 'Insert/edit image' ),
-				t: this.props.translate( 'Insert Read More tag' ),
-			},
-			{ h: this.props.translate( 'Keyboard Shortcuts' ), x: this.props.translate( 'Code' ) },
-			{ p: this.props.translate( 'Insert Page Break tag' ) },
+			[
+				{ key: 1, action: translate( 'Heading 1' ) },
+				{ key: 2, action: translate( 'Heading 2' ) },
+			],
+			[
+				{ key: 3, action: translate( 'Heading 3' ) },
+				{ key: 4, action: translate( 'Heading 4' ) },
+			],
+			[
+				{ key: 5, action: translate( 'Heading 5' ) },
+				{ key: 6, action: translate( 'Heading 6' ) },
+			],
+			[
+				{ key: 'l', action: translate( 'Align left' ) },
+				{ key: 'c', action: translate( 'Align center' ) },
+			],
+			[
+				{ key: 'r', action: translate( 'Align right' ) },
+				{ key: 'j', action: translate( 'Justify' ) },
+			],
+			[
+				{ key: 'd', action: translate( 'Strikethrough' ) },
+				{ key: 'q', action: translate( 'Blockquote' ) },
+			],
+			[
+				{ key: 'u', action: translate( 'Bulleted list' ) },
+				{ key: 'o', action: translate( 'Numbered list' ) },
+			],
+			[
+				{ key: 'a', action: translate( 'Insert/edit link' ) },
+				{ key: 's', action: translate( 'Remove link' ) },
+			],
+			[
+				{ key: 'm', action: translate( 'Insert/edit image' ) },
+				{ key: 't', action: translate( 'Insert Read More tag' ) },
+			],
+			[
+				{ key: 'h', action: translate( 'Keyboard Shortcuts' ) },
+				{ key: 'x', action: translate( 'Code' ) },
+			],
+			[ { key: 'p', action: translate( 'Insert Page Break tag' ) } ],
+		];
+	};
+
+	spaceFormatShortcuts = () => {
+		const { translate } = this.props;
+		return [
+			[
+				{ key: '*', action: translate( 'Bulleted list' ) },
+				{ key: '1.', action: translate( 'Numbered list' ) },
+			],
+			[
+				{ key: '-', action: translate( 'Bulleted list' ) },
+				{ key: '1)', action: translate( 'Numbered list' ) },
+			],
+		];
+	};
+
+	enterFormatShortcuts = () => {
+		const { translate } = this.props;
+		return [
+			[
+				{ key: '>', action: translate( 'Blockquote' ) },
+				{ key: '##', action: translate( 'Heading 2' ) },
+			],
+			[
+				{ key: '###', action: translate( 'Heading 3' ) },
+				{ key: '####', action: translate( 'Heading 4' ) },
+			],
+			[
+				{ key: '#####', action: translate( 'Heading 5' ) },
+				{ key: '######', action: translate( 'Heading 6' ) },
+			],
+			[ { key: '---', action: translate( 'Horizontal line' ) } ],
 		];
 	};
 
 	renderRow = ( row, index ) => {
 		let columns = [];
 
-		forEach( row, ( text, key ) => {
+		forEach( row, ( obj, i ) => {
 			columns.push(
-				<th className="wpcom-help__key" key={ key }>
-					<kbd>{ key }</kbd>
+				<th className="wpcom-help__key" key={ 'key-' + index + i }>
+					<kbd>{ obj.key }</kbd>
 				</th>
 			);
 			columns.push(
-				<td className="wpcom-help__action" key={ text }>
-					{ text }
+				<td className="wpcom-help__action" key={ 'action-' + index + i }>
+					{ obj.action }
 				</td>
 			);
 		} );
@@ -105,17 +173,22 @@ class HelpModal extends React.Component {
 	};
 
 	render() {
+		const translate = this.props.translate;
 		const defaultText = this.props.macosx
-			? this.props.translate( 'Default shortcuts, Command + key:', { context: 'Mac shortcuts' } )
-			: this.props.translate( 'Default shortcuts, Ctrl + key:', { context: 'Windows shortcuts' } );
+			? translate( 'Default shortcuts, Command + key:', { context: 'Mac shortcuts' } )
+			: translate( 'Default shortcuts, Ctrl + key:', { context: 'Windows shortcuts' } );
 
 		const additionalText = this.props.macosx
-			? this.props.translate( 'Additional shortcuts, Control + Option + key:', {
+			? translate( 'Additional shortcuts, Control + Option + key:', {
 					context: 'Mac shortcuts',
 				} )
-			: this.props.translate( 'Additional shortcuts, Shift + Alt + key:', {
+			: translate( 'Additional shortcuts, Shift + Alt + key:', {
 					context: 'Windows shortcuts',
 				} );
+
+		const spaceFormatText = translate( 'Formatting shortcuts, key, then space:' );
+
+		const enterFormatText = translate( 'Formatting shortcuts, key, then Enter:' );
 
 		return (
 			<Dialog
@@ -124,7 +197,7 @@ class HelpModal extends React.Component {
 				additionalClassNames="wpcom-help__dialog"
 				onClose={ this.props.onClose }
 			>
-				<h2 className="wpcom-help__heading">{ this.props.translate( 'Keyboard Shortcuts' ) }</h2>
+				<h2 className="wpcom-help__heading">{ translate( 'Keyboard Shortcuts' ) }</h2>
 				<p>{ defaultText }</p>
 				<table className="wpcom-help__table">
 					{ this.getTableHead() }
@@ -134,6 +207,16 @@ class HelpModal extends React.Component {
 				<table className="wpcom-help__table">
 					{ this.getTableHead() }
 					<tbody>{ this.additionalShortcuts().map( this.renderRow, this ) }</tbody>
+				</table>
+				<p>{ spaceFormatText }</p>
+				<table className="wpcom-help__table">
+					{ this.getTableHead() }
+					<tbody>{ this.spaceFormatShortcuts().map( this.renderRow, this ) }</tbody>
+				</table>
+				<p>{ enterFormatText }</p>
+				<table className="wpcom-help__table">
+					{ this.getTableHead() }
+					<tbody>{ this.enterFormatShortcuts().map( this.renderRow, this ) }</tbody>
 				</table>
 			</Dialog>
 		);

@@ -1,5 +1,5 @@
 .wpcom-help__dialog.dialog.card {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		max-width: 700px;
 	}
 }
@@ -8,7 +8,6 @@
 	font-size: 24px;
 }
 
-.wpcom-help__key,
 .wpcom-help__action {
 	border: 1px solid lighten( $gray, 20 );
 	font-weight: normal;
@@ -17,10 +16,17 @@
 
 .wpcom-help__key {
 	width: 48px;
+	padding: 4px 6px 4px 4px;
+	border: 1px solid lighten( $gray, 20 );
+	border-width: 0 0 1px;
 	text-align: center;
-	border-width: 0 0 1px 0;
 	font-weight: 700;
+	@include breakpoint( '>480px' ) {
+		width: 60px;
+		padding: 4px;
+	}
 }
+
 .wpcom-help__action {
 	border-width: 0 1px 1px 0;
 }
