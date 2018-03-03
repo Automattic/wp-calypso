@@ -186,7 +186,7 @@ class RegisterDomainStep extends React.Component {
 	getInitialFiltersState() {
 		return {
 			excludeDashes: true,
-			maxCharacters: null,
+			maxCharacters: '',
 			showExactMatchesOnly: false,
 		};
 	}

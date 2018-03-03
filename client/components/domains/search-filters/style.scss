@@ -8,6 +8,13 @@
 	.form-fieldset {
 		text-align: left;
 	}
+
+	.validation-fieldset {
+		margin-bottom: 1em;
+	}
+	.validation-fieldset__validation-message {
+		min-height: initial;
+	}
 }
 
 .search-filters__buttons {
