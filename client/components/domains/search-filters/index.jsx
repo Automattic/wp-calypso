@@ -18,7 +18,7 @@ export default class SearchFilters extends Component {
 	static propTypes = {
 		filters: PropTypes.shape( {
 			excludeDashes: PropTypes.bool,
-			maxCharacters: PropTypes.number,
+			maxCharacters: PropTypes.string,
 			showExactMatchesOnly: PropTypes.bool,
 		} ).isRequired,
 		onChange: PropTypes.func,
