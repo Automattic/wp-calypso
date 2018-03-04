@@ -188,7 +188,10 @@ class EditorDrawer extends Component {
 			<AccordionSection>
 				<EditorDrawerLabel
 					labelText={ translate( 'Excerpt' ) }
-					helpText={ translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
+					helpText={ translate(
+						'An excerpt is a short summary you can add to your posts. ' +
+							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
+					) }
 				>
 					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
 						<FormTextarea
