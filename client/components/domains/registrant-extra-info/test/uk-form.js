@@ -28,7 +28,7 @@ describe( 'uk-form', () => {
 				validationErrors: {
 					extra: {
 						uk: {
-							registrationNumber: [ 'testErrorCode' ],
+							registrationNumber: [ 'Test error message.' ],
 						},
 					},
 				},
@@ -36,7 +36,7 @@ describe( 'uk-form', () => {
 
 			const wrapper = shallow( <RegistrantExtraInfoUkForm { ...testProps } /> );
 			const error = wrapper.find( FormInputValidation );
-			expect( error.props() ).toHaveProperty( 'text', 'There was a problem with this field.' );
+			expect( error.props() ).toHaveProperty( 'text', 'Test error message.' );
 		} );
 
 		test( 'should render multiple registration errors', () => {
@@ -56,27 +56,6 @@ describe( 'uk-form', () => {
 			const wrapper = shallow( <RegistrantExtraInfoUkForm { ...testProps } /> );
 			const error = wrapper.find( FormInputValidation );
 			expect( error ).toHaveProperty( 'length', 3 );
-		} );
-
-		test( 'should convert error code to user-facing string', () => {
-			const testProps = {
-				...mockProps,
-				ccTldDetails: { registrantType: 'LLP' },
-				validationErrors: {
-					extra: {
-						uk: {
-							registrationNumber: [ 'dotukRegistrationNumberFormat' ],
-						},
-					},
-				},
-			};
-
-			const wrapper = shallow( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			const error = wrapper.find( FormInputValidation );
-			expect( error.props() ).toHaveProperty(
-				'text',
-				'A Company Registration Number is 8 numerals, or 2 letters followed by 6 numerals (e.g. AB123456 or 12345678).'
-			);
 		} );
 
 		test( 'Should disable submit button with validation errors', () => {
