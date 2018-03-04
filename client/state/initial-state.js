@@ -5,7 +5,7 @@
  */
 
 import debugModule from 'debug';
-import { pick, throttle } from 'lodash';
+import { get, pick, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -105,6 +105,12 @@ function isLoggedIn() {
 	return !! userData && userData.ID;
 }
 
+function saveState( key, state, serializeState = serialize ) {
+	return localforage.setItem( key, serializeState( state ) ).catch( setError => {
+		debug( 'failed to set redux-store state as ' + key, setError );
+	} );
+}
+
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
@@ -121,11 +127,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 			state = nextState;
 
-			localforage
-				.setItem( 'redux-state-' + user.get().ID, serializeState( state ) )
-				.catch( setError => {
-					debug( 'failed to set redux-store state', setError );
-				} );
+			return saveState( 'redux-state-' + user.get().ID, state, serializeState );
 		},
 		SERIALIZE_THROTTLE,
 		{ leading: false, trailing: true }
@@ -146,6 +148,44 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => localforage.clear( () => location.reload( true ) );
+		window.saveState = saveState;
+		window.localforage = localforage;
+
+		// without DE/SERIALIZE use:
+		// saveState( 'redux-full-state-saved', JSON.parse( JSON.stringify( state ) ), x=>x ).then( console.log )
+		const savedFullStateId = ( get( window, 'location.search', '' ).match(
+			/[?&]restoreFullState=(.*?)(?:&|$)/
+		) || [] )[ 1 ];
+		debug( 'Full state id', savedFullStateId );
+
+		if ( savedFullStateId ) {
+			return localforage
+				.getItem( 'redux-full-state-saved' )
+				.then( state => ( debug( 'Loading full state:', state ), state ) )
+				.then( createReduxStore )
+				.then( reduxStoreReady );
+		}
+
+		const savedStateId = ( get( window, 'location.search', '' ).match(
+			/[?&]restoreState=(.*?)(?:&|$)/
+		) || [] )[ 1 ];
+		debug( 'Saved state id', savedStateId );
+
+		if ( savedStateId ) {
+			debug( 'Loading saved state.', savedStateId );
+			return (
+				localforage
+					.getItem( 'redux-state-saved' )
+
+					// with DE/SERIALZE, use:
+					// saveState( 'redux-state-saved', state ).then( console.log )
+					.then( loadInitialState )
+					.catch( loadInitialStateFailed )
+					// Don't persist after load, but it that makes testing hard if we don't.
+					.then( persistOnChange )
+					.then( reduxStoreReady )
+			);
+		}
 
 		if ( shouldAddSympathy() ) {
 			// eslint-disable-next-line no-console
