@@ -48,7 +48,7 @@
 
 	.reader-excerpt__content {
 		margin-top: 2px;
-		white-space: nowrap;
+		width: 100%;
 
 		&::before {
 			@include long-content-fade( $size: 35px );
@@ -70,7 +70,6 @@
 	}
 }
 
-.conversations__stream .reader-post-card.has-thumbnail .reader-post-card__title,
 .conversations__stream .reader-post-card.has-thumbnail .reader-excerpt__content {
 	width: calc( 100% - 120px );
 }
