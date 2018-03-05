@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { moment } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -72,7 +73,13 @@ class CalendarCard extends Component {
 		};
 	}
 
-	withTimezone = dateTime => moment( dateTime ).tz( this.props.timezone );
+	withTimezone = dateTime => {
+		// force local moment instance to use default locale (en)
+		// https://github.com/automattic/hg/issues/587
+		const momentInstance = moment( dateTime );
+		momentInstance.locale( config( 'i18n_default_locale_slug' ) );
+		return momentInstance.tz( this.props.timezone );
+	};
 
 	/**
 	 * Returns a string representing the day of the week, with certain dates using natural

@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -34,7 +29,7 @@ export const storeFetchedConciergeAvailableTimes = ( { dispatch }, action, avail
 	dispatch( updateConciergeAvailableTimes( availableTimes ) );
 
 export const conciergeAvailableTimesFetchError = () =>
-	errorNotice( translate( "We couldn't load our Concierge schedule. Please try again later." ) );
+	errorNotice( "We couldn't load our Concierge schedule. Please try again later." );
 
 export const showConciergeAvailableTimesFetchError = ( { dispatch } ) =>
 	dispatch( conciergeAvailableTimesFetchError() );
