@@ -24,7 +24,7 @@ import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selecto
 const enhanceContextWithLogin = context => {
 	const { path, params: { flow, isJetpack, socialService, twoFactorAuthType } } = context;
 
-	context.cacheQueryKeys = [ 'client_id' ];
+	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
 
 	context.primary = (
 		<WPLogin
