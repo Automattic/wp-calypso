@@ -335,7 +335,7 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
-	paths: [ '/read/search' ],
+	paths: [ '/read/search', '/recommendations' ],
 	module: 'reader/search',
 	secondary: true,
 	group: 'reader',
