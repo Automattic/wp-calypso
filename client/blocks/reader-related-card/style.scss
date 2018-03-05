@@ -1,3 +1,4 @@
+
 // Custom breakpoints
 $reader-related-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
 $reader-related-card-breakpoint-small: "( max-width: 535px )";
@@ -442,7 +443,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	display: flex;
 	font-weight: 500;
 	max-height: 14px * 1.75;
-	max-width: 200px;
 	overflow: hidden;
 	overflow-wrap: break-word;
 	position: relative;
@@ -452,26 +452,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 	&::after {
 		@include long-content-fade( $size: 15% );
-	}
-
-	@include breakpoint( "<960px" ) {
-		max-width: 145px;
-	}
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		max-width: 200px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		max-width: 145px;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		max-width: 200px;
-	}
-
-	@include breakpoint( "<480px" ) {
-		max-width: 110px;
 	}
 }
 
