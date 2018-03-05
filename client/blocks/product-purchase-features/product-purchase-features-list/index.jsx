@@ -252,7 +252,7 @@ export default connect(
 		),
 		recordReturnToDashboardClick: partial(
 			recordTracksEvent,
-			'calypso_plan_features_returnToDashboard_click',
+			'calypso_plan_features_returntodashboard_click',
 			{}
 		),
 	}
