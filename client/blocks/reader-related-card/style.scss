@@ -1,7 +1,3 @@
-// Custom breakpoints
-$reader-related-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-breakpoint-small: "( max-width: 535px )";
-
 .reader-related-card__heading {
 	color: $gray;
 	font-size: 14px;
@@ -42,16 +38,8 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	margin: 0;
 	padding: 0;
 
-	@media #{$reader-related-card-breakpoint-medium} {
-		display: block;
-	}
-
 	@include breakpoint( "<660px" ) {
 		flex-direction: row;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		display: block;
 	}
 }
 
@@ -80,17 +68,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	&:first-child,
 	&:last-child {
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			margin: 0 0 20px 0;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			margin: 0 0 20px 0;
-		}
-
-		@include breakpoint( "<480px" ) {
-			margin: 0 0 20px 0;
-		}
 	}
 
 	&:only-child {
@@ -105,16 +82,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	padding: 0;
 
 	@include breakpoint( "<480px" ) {
-		display: flex;
-		flex-direction: column;
-	}
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		display: flex;
-		flex-direction: column;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
 		display: flex;
 		flex-direction: column;
 	}
@@ -145,14 +112,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 		display: block;
 		overflow: hidden;
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			display: flex;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			display: flex;
-		}
-
 		&::after {
 			@include long-content-fade( $size: 35px );
 				bottom: 0;
@@ -166,17 +125,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card__meta {
 			margin-bottom: 16px;
-		}
-
-		.reader-related-card__site-info {
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex: 3 0 0;
-			}
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex: 3 0 0;
-			}
 		}
 
 		.reader-related-card__title {
@@ -227,26 +175,11 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 			.reader-related-card__post {
 				max-height: 17px * 1.6 * 4;
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					max-height: 17px * 1.6 * 4;
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					max-height: 17px * 1.6 * 4;
-				}
 			}
 		}
 
 		.reader-related-card__post {
 
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex: 3 0 0;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex: 3 0 0;
-			}
 		}
 
 		.reader-related-card.has-thumbnail {
@@ -259,97 +192,20 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card__post {
 			max-height: 17px * 1.6 * 7.5;
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				max-height: 17px * 1.6 * 4;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				max-height: 17px * 1.6 * 4;
-			}
-
-			@include breakpoint( "<480px" ) {
-				max-height: 17px * 1.6 * 4;
-			}
 		}
 
 		.reader-related-card__featured-image {
 
-			@media #{$reader-related-card-breakpoint-medium} {
-				margin: 0 15px 0 0;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				margin: 0 15px 0 0;
-			}
 		}
 
 		.reader-related-card__meta {
 
-			@media #{$reader-related-card-breakpoint-medium} {
-				position: absolute;
-				width: 100%;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				position: absolute;
-			}
-		}
-
-		.reader-related-card__post {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				margin-top: 50px;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				margin-top: 50px;
-			}
 		}
 
 		.has-thumbnail {
 
 			.reader-related-card__site-info {
 
-				@media #{$reader-related-card-breakpoint-medium} {
-					margin-top: 20px;
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					margin-top: 20px;
-				}
-			}
-
-			.reader-related-card__meta {
-				margin-bottom: 19px;
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					margin-top: -4px;
-					right: 0;
-					width: calc( 100% - 97px );
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					margin-top: -4px;
-					right: 0;
-					width: calc( 100% - 97px );
-				}
-			}
-
-			.reader-related-card__post {
-				max-height: 17px * 1.6 * 4;
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					flex: 3 0 0;
-					margin-top: 25px;
-					max-height: 17px * 1.6 * 4.7;
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					flex: 3 0 0;
-					margin-top: 25px;
-					max-height: 17px * 1.6 * 4.7;
-				}
 			}
 		}
 
@@ -367,28 +223,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card {
 
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex-direction: row;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex-direction: row;
-			}
-		}
-
-		.reader-related-card__featured-image {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex: 0 0 80px;
-				margin: 0 15px 0 0;
-				width: 80px;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex: 0 0 80px;
-				margin: 0 15px 0 0;
-				width: 80px;
-			}
 		}
 	}
 }
@@ -458,18 +292,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 		max-width: 145px;
 	}
 
-	@media #{$reader-related-card-breakpoint-medium} {
-		max-width: 200px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		max-width: 145px;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		max-width: 200px;
-	}
-
 	@include breakpoint( "<480px" ) {
 		max-width: 110px;
 	}
@@ -478,20 +300,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 .reader-related-card__featured-image {
 	border: 1px solid $gray-lighten-30;
 	min-height: 153px;
-
-	@media #{$reader-related-card-breakpoint-small} {
-		flex: 1 1 0;
-		height: auto;
-		margin: 0 15px 0 0;
-		min-height: 78px;
-	}
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		height: auto;
-		flex: 1 1 0;
-		margin: 0 15px 0 0;
-		min-height: 78px;
-	}
 
 	@include breakpoint( "<660px" ) {
 		min-height: 78px;
@@ -615,13 +423,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 	.reader-related-card__site-info {
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			flex: 3 0 0;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			flex: 3 0 0;
-		}
 	}
 
 	.reader-related-card__post {

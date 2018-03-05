@@ -88,19 +88,8 @@
 	margin-left: 15px;
 	padding: 18px 0 21px 0;
 
-	@media #{$reader-related-card-breakpoint-medium} {
-		flex-basis: 100%;
-		margin: 0;
-	}
-
 	@include breakpoint( "<660px" ) {
 		flex-basis: calc( 50% - 30px );
-		margin-left: 15px;
-		margin-right: 15px;
-	}
-
-	@media #{$reader-related-card-breakpoint-small}  {
-		flex-basis: 100%;
 		margin-left: 15px;
 		margin-right: 15px;
 	}
@@ -110,19 +99,9 @@
 		margin-left: 0;
 		margin-right: 15px;
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			flex-basis: 100%;
-			margin-right: 0;
-		}
 
 		@include breakpoint( "<660px" ) {
 			flex-basis: calc( 50% - 30px );
-			margin-left: 15px;
-			margin-right: 15px;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			flex-basis: 100%;
 			margin-left: 15px;
 			margin-right: 15px;
 		}
@@ -131,16 +110,8 @@
 	.reader-related-card__post {
 		max-height: 208px;
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			max-height: 105px;
-		}
-
 		@include breakpoint( "<660px" ) {
 			max-height: 206px;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			max-height: 103px;
 		}
 
 		.reader-related-card__excerpt {
@@ -152,14 +123,6 @@
 
 		.reader-related-card__post {
 			max-height: 110px;
-
-			@media #{$reader-related-card-breakpoint-small} {
-				max-height: 104px;
-			}
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				max-height: 104px;
-			}
 		}
 
 		.reader-related-card__meta {
@@ -367,22 +330,9 @@
 
 	.reader-post-card__post {
 
-		@media #{$reader-post-card-breakpoint-large} {
-			flex-direction: column;
-		}
-
-		@include breakpoint( "<960px" ) {
-			flex-direction: column;
-		}
 	}
 
 	.reader-post-card.card.has-thumbnail .reader-featured-image {
-
-		@media #{$reader-post-card-breakpoint-large} {
-			height: 80px;
-			margin: 0 0 20px;
-			max-width: 100%;
-		}
 
 		@include breakpoint( "<960px" ) {
 			height: 80px;
@@ -396,10 +346,6 @@
 	}
 
 	.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
-
-		@media #{$reader-post-card-breakpoint-large} {
-			display: none;
-		}
 
 		@include breakpoint( "<960px" ) {
 			display: block;
