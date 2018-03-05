@@ -194,7 +194,7 @@
 
 .media-library__filter-bar {
 	.plan-storage {
-		@include breakpoint(">480px", "<660px") {
+		@include breakpoint("480px-660px") {
 			padding-left: 20px;
 			padding-right: 20px;
 		}
