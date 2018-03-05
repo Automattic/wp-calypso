@@ -138,12 +138,12 @@ class SiteNotice extends React.Component {
 		}
 		return (
 			<div className="site__notices">
+				{ this.freeToPaidPlanNotice() }
+				<DomainToPaidPlanNotice />
 				{ this.getSiteRedirectNotice( site ) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ this.domainCreditNotice() }
 				{ this.jetpackPluginsSetupNotice() }
-				{ this.freeToPaidPlanNotice() }
-				<DomainToPaidPlanNotice />
 			</div>
 		);
 	}
