@@ -230,7 +230,7 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed annually';
 			}
@@ -300,7 +300,7 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PERSONAL_FEATURES,
 		],
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed annually';
 			}
@@ -399,7 +399,7 @@ export const PLANS_LIST = {
 			FEATURE_ALL_PREMIUM_FEATURES,
 		],
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed annually';
 			}
@@ -543,7 +543,7 @@ export const PLANS_LIST = {
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed annually';
 			}
@@ -623,7 +623,7 @@ export const PLANS_LIST = {
 			FEATURE_ALL_FREE_FEATURES,
 		],
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed annually';
 			}
@@ -744,7 +744,7 @@ export const PLANS_LIST = {
 				FEATURE_ALL_PREMIUM_FEATURES,
 			] ),
 		getBillingTimeFrame: abtest => {
-			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
 				return '/month, billed annually';
 			}
