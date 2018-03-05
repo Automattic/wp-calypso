@@ -11,7 +11,8 @@
 .shipping-services__inner {
 	margin-top: 16px;
 
-	&.is-error .card {
+	&.is-error .card,
+	& > .is-error .card:not( .is-expanded ) {
 		border-top: 1px;
 		border-right: 1px;
 		border-left: 1px;
