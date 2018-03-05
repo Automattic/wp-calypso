@@ -23,7 +23,7 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 	};
 
 	renderPublishHeader() {
-		const { post, postTypeLabel, translate } = this.props;
+		const { post, translate } = this.props;
 		const postType = get( post, 'type', 'post' );
 
 		switch ( postType ) {
@@ -32,8 +32,8 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 					<div className="editor-confirmation-sidebar__header">
 						{ translate(
 							'{{strong}}Almost there!{{/strong}} ' +
-								'You can double-check your post’s settings below. When you’re happy, ' +
-								'use the big green button to send your post out into the world!',
+								'Double-check your post’s settings, then ' +
+								'use the big green button to publish!',
 							{
 								comment:
 									'This string appears as the header for the confirmation sidebar ' +
@@ -50,8 +50,8 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 					<div className="editor-confirmation-sidebar__header">
 						{ translate(
 							'{{strong}}Almost there!{{/strong}} ' +
-								'You can double-check your page’s settings below. When you’re happy, ' +
-								'use the big green button to send your page out into the world!',
+								'Double-check your page’s settings, then ' +
+								'use the big green button to publish!',
 							{
 								comment:
 									'This string appears as the header for the confirmation sidebar ' +
@@ -68,16 +68,12 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 					<div className="editor-confirmation-sidebar__header">
 						{ translate(
 							'{{strong}}Almost there!{{/strong}} ' +
-								'You can double-check your settings below. When you’re happy, ' +
-								'use the big green button to send your %(postTypeLabel)s out into the world!',
+								'Double-check your settings, then ' +
+								'use the big green button to publish!',
 							{
 								comment:
 									'This string appears as the header for the confirmation sidebar ' +
-									'when a user publishes a custom post type. `postTypeLabel` is the singular ' +
-									'name of the custom post type.',
-								args: {
-									postTypeLabel,
-								},
+									'when a user publishes a custom post type.',
 								components: {
 									strong: <strong />,
 								},
