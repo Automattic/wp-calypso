@@ -112,6 +112,7 @@ class SiteSettingsFormDiscussion extends Component {
 		const {
 			fields,
 			handleAutosavingToggle,
+			isJetpack,
 			isRequestingSettings,
 			isSavingSettings,
 			siteId,
@@ -191,13 +192,15 @@ class SiteSettingsFormDiscussion extends Component {
 					moduleSlug="gravatar-hovercards"
 					siteId={ siteId }
 				/>
-				<CompactFormToggle
-					checked={ !! fields.page_comments }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
-				>
-					{ translate( 'Enable Markdown for comments.' ) }
-				</CompactFormToggle>
+				{ isJetpack && (
+					<CompactFormToggle
+						checked={ !! fields.page_comments }
+						disabled={ isRequestingSettings || isSavingSettings }
+						onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
+					>
+						{ translate( 'Enable Markdown for comments.' ) }
+					</CompactFormToggle>
+				) }
 				<JetpackModuleToggle
 					disabled={ isRequestingSettings || isSavingSettings }
 					label={ translate( 'Enable comment likes' ) }
