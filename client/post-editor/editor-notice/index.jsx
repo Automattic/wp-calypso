@@ -73,7 +73,8 @@ export class EditorNotice extends Component {
 		/* eslint-disable max-len */
 		const { translate, type, typeObject, site, postUrl, postDate, moment } = this.props;
 		const formattedPostDate = moment( postDate ).format( 'lll' );
-		const typeLabel = typeObject && typeObject.labels.singular_name;
+		const typeLabel =
+			typeObject && typeObject.labels.singular_name ? typeObject.labels.singular_name : type;
 
 		switch ( key ) {
 			case 'warnPublishDateChange':
@@ -84,41 +85,17 @@ export class EditorNotice extends Component {
 				);
 
 			case 'publishFailure':
-				if ( 'page' === type ) {
-					return translate( 'Publishing of page failed.' );
-				}
-
-				if ( 'post' !== type && typeLabel ) {
-					return translate( 'Publishing of %(typeLabel)s failed.', { args: { typeLabel } } );
-				}
-
-				return translate( 'Publishing of post failed.' );
+				return translate( 'Publishing of %(typeLabel)s failed.', { args: { typeLabel } } );
 
 			case 'saveFailure':
 				return translate( 'Saving of draft failed.' );
 
 			case 'trashFailure':
-				if ( 'page' === type ) {
-					return translate( 'Trashing of page failed.' );
-				}
-
-				if ( 'post' !== type && typeLabel ) {
-					return translate( 'Trashing of %(typeLabel)s failed.', { args: { typeLabel } } );
-				}
-
-				return translate( 'Trashing of post failed.' );
+				return translate( 'Trashing of %(typeLabel)s failed.', { args: { typeLabel } } );
 
 			case 'published':
 				if ( ! site ) {
-					if ( 'page' === type ) {
-						return translate( 'Page published!' );
-					}
-
-					if ( 'post' !== type && typeLabel ) {
-						return translate( '%(typeLabel)s published!', { args: { typeLabel } } );
-					}
-
-					return translate( 'Post published!' );
+					return translate( '%(typeLabel)s published!', { args: { typeLabel } } );
 				}
 
 				if ( 'page' === type ) {
@@ -137,22 +114,8 @@ export class EditorNotice extends Component {
 					} );
 				}
 
-				if ( 'post' !== type && typeLabel ) {
-					return translate( '%(typeLabel)s published on {{postLink/}}!', {
-						args: { typeLabel },
-						components: {
-							postLink: (
-								<a href={ postUrl } onClick={ this.handlePillExternalClick }>
-									{ site.title }
-								</a>
-							),
-						},
-						comment:
-							'Editor: Message displayed when a post of a custom type is published, with a link to the post.',
-					} );
-				}
-
-				return translate( 'Post published on {{postLink/}}!', {
+				return translate( '%(typeLabel)s published on {{postLink/}}!', {
+					args: { typeLabel },
 					components: {
 						postLink: (
 							<a href={ postUrl } onClick={ this.handlePillExternalClick }>
@@ -160,42 +123,19 @@ export class EditorNotice extends Component {
 							</a>
 						),
 					},
-					comment: 'Editor: Message displayed when a post is published, with a link to the post.',
+					comment:
+						'Editor: Message displayed when a post or post of a custom type is published, with a link to the post.',
 				} );
 
 			case 'scheduled':
 				if ( ! site ) {
-					if ( 'page' === type ) {
-						return translate( 'Page scheduled!' );
-					}
-
-					if ( 'post' !== type && typeLabel ) {
-						return translate( '%(typeLabel)s scheduled!', { args: { typeLabel } } );
-					}
-
-					return translate( 'Post scheduled!' );
+					return translate( '%(typeLabel)s scheduled!', { args: { typeLabel } } );
 				}
 
-				if ( 'page' === type ) {
-					return translate( 'Page scheduled for %(formattedPostDate)s!', {
-						args: { formattedPostDate },
-						comment:
-							'Editor: Message displayed when a page is scheduled, with the scheduled date and time.',
-					} );
-				}
-
-				if ( 'post' !== type && typeLabel ) {
-					return translate( '%(typeLabel)s scheduled for %(formattedPostDate)s!', {
-						args: { typeLabel, formattedPostDate },
-						comment:
-							'Editor: Message displayed when a post of a custom type is scheduled, with the scheduled date and time.',
-					} );
-				}
-
-				return translate( 'Post scheduled for %(formattedPostDate)s!', {
-					args: { formattedPostDate },
+				return translate( '%(typeLabel)s scheduled for %(formattedPostDate)s!', {
+					args: { typeLabel, formattedPostDate },
 					comment:
-						'Editor: Message displayed when a post is scheduled, with the scheduled date and time.',
+						'Editor: Message displayed when a post, page, or post of a custom type is scheduled, with the scheduled date and time.',
 				} );
 
 			case 'publishedPrivately':
@@ -225,47 +165,16 @@ export class EditorNotice extends Component {
 
 			case 'updated':
 				if ( ! site ) {
-					if ( 'page' === type ) {
-						return translate( 'Page updated!' );
-					}
-
-					if ( 'post' !== type && typeLabel ) {
-						return translate( '%(typeLabel)s updated!', { args: { typeLabel } } );
-					}
-
-					return translate( 'Post updated!' );
+					return translate( '%(typeLabel)s updated!', { args: { typeLabel } } );
 				}
 
-				if ( 'page' === type ) {
-					return translate( 'Page updated! {{postLink}}Visit page{{/postLink}}.', {
-						components: {
-							postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
-						},
-						comment:
-							'Editor: Message displayed when a page is updated, with a link to the updated page.',
-					} );
-				}
-
-				if ( 'post' !== type && typeLabel ) {
-					return translate(
-						'%(typeLabel)s updated! {{postLink}}Visit %(typeLabel)s{{/postLink}}.',
-						{
-							args: { typeLabel },
-							components: {
-								postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
-							},
-							comment:
-								'Editor: Message displayed when a post of a custom type is updated, with a link to the updated post.',
-						}
-					);
-				}
-
-				return translate( 'Post updated! {{postLink}}Visit post{{/postLink}}.', {
+				return translate( '%(typeLabel)s updated! {{postLink}}Visit %(typeLabel)s{{/postLink}}.', {
+					args: { typeLabel },
 					components: {
 						postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
 					},
 					comment:
-						'Editor: Message displayed when a post is updated, with a link to the updated post.',
+						'Editor: Message displayed when a page, post, or post of a custom type is updated, with a link to the updated post.',
 				} );
 		}
 		/* eslint-enable max-len */
