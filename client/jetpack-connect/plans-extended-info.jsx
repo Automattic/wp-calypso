@@ -16,7 +16,7 @@ import FormattedHeader from 'components/formatted-header';
 const PlansExtendedInfo = ( { onClick, translate } ) => {
 	const headerText = translate( 'Unsure which plan is right for you?' );
 	const subheaderText = translate(
-		'Read out guide to choosing the right plan or compare plans in more details.'
+		'Read out guide to choosing the right plan or compare plans in more detail.'
 	);
 
 	return (
