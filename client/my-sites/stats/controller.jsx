@@ -446,6 +446,9 @@ export default {
 		if ( siteId && ! isJetpack ) {
 			page.redirect( '/stats' );
 		} else {
+			// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+			context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
+
 			analytics.pageView.record( '/stats/activity/:site', analyticsPageTitle + ' > Activity ' );
 
 			const props = {
