@@ -109,11 +109,7 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		const renewText = isPaidWithCredits( purchase )
-			? translate( 'Add Payment Method' )
-			: translate( 'Renew Now' );
-
-		return <NoticeAction onClick={ onClick }>{ renewText }</NoticeAction>;
+		return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
 	}
 
 	trackImpression( warning ) {
