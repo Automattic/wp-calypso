@@ -113,6 +113,7 @@ class SiteSettingsFormDiscussion extends Component {
 			fields,
 			handleAutosavingToggle,
 			isJetpack,
+			isMarkdownModuleActive,
 			isRequestingSettings,
 			isSavingSettings,
 			siteId,
@@ -192,15 +193,16 @@ class SiteSettingsFormDiscussion extends Component {
 					moduleSlug="gravatar-hovercards"
 					siteId={ siteId }
 				/>
-				{ isJetpack && (
-					<CompactFormToggle
-						checked={ !! fields.page_comments }
-						disabled={ isRequestingSettings || isSavingSettings }
-						onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
-					>
-						{ translate( 'Enable Markdown for comments.' ) }
-					</CompactFormToggle>
-				) }
+				{ isJetpack &&
+					isMarkdownModuleActive && (
+						<CompactFormToggle
+							checked={ !! fields.page_comments }
+							disabled={ isRequestingSettings || isSavingSettings }
+							onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
+						>
+							{ translate( 'Enable Markdown for comments.' ) }
+						</CompactFormToggle>
+					) }
 				<JetpackModuleToggle
 					disabled={ isRequestingSettings || isSavingSettings }
 					label={ translate( 'Enable comment likes' ) }
@@ -643,6 +645,7 @@ const connectComponent = connect( state => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const jetpackSettingsUISupported = siteSupportsJetpackSettingsUi( state, siteId );
 	const isLikesModuleActive = isJetpackModuleActive( state, siteId, 'likes' );
+	const isMarkdownModuleActive = isJetpackModuleActive( state, siteId, 'markdown' );
 
 	return {
 		siteId,
@@ -650,6 +653,7 @@ const connectComponent = connect( state => {
 		isJetpack,
 		jetpackSettingsUISupported,
 		isLikesModuleActive,
+		isMarkdownModuleActive,
 	};
 } );
 
