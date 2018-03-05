@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import createReactClass from 'create-react-class';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
@@ -22,26 +22,54 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormInputValidation from 'components/forms/form-input-validation';
-/* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import userUtilities from 'lib/user/utils';
 import constants from 'me/constants';
 import Notice from 'components/notice';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
-const ReauthRequired = createReactClass( {
-	displayName: 'ReauthRequired',
-	mixins: [ observe( 'twoStepAuthorization' ) ],
+import {
+	isReauthRequired,
+	isTwoStepSMSEnabled,
+	isSMSResendThrottled,
+	isCodeValidationFailed,
+	getSMSLastFour,
+} from 'state/two-step/selectors';
 
-	getInitialState: function() {
-		return {
+import {
+	requestTwoStep,
+	validateCode,
+	sendSMSValidationCode,
+	getAppAuthCodes,
+} from 'state/two-step/actions';
+
+class ReauthRequired extends React.Component {
+	static propTypes = {
+		recordGoogleEvent: PropTypes.func.isRequired,
+		requestTwoStep: PropTypes.func.isRequired,
+		validateCode: PropTypes.func.isRequired,
+		sendSMSValidationCode: PropTypes.func.isRequired,
+		getAppAuthCodes: PropTypes.func.isRequired,
+
+		isReauthRequired: PropTypes.bool.isRequired,
+		isTwoStepSMSEnabled: PropTypes.bool.isRequired,
+		isCodeValidationFailed: PropTypes.bool.isRequired,
+		isSMSResendThrottled: PropTypes.bool.isRequired,
+		SMSLastFour: PropTypes.string,
+	};
+
+	constructor( props ) {
+		super();
+
+		this.state = {
 			remember2fa: false, // Should the 2fa be remembered for 30 days?
 			code: '', // User's generated 2fa code
 			smsRequestsAllowed: true, // Can the user request another SMS code?
 			smsCodeSent: false,
 		};
-	},
+
+		props.requestTwoStep();
+	}
 
 	getClickHandler( action, callback ) {
 		return () => {
@@ -51,7 +79,7 @@ const ReauthRequired = createReactClass( {
 				callback();
 			}
 		};
-	},
+	}
 
 	getCheckboxHandler( checkboxName ) {
 		return event => {
@@ -60,23 +88,23 @@ const ReauthRequired = createReactClass( {
 
 			this.props.recordGoogleEvent( 'Me', action, 'checked', value );
 		};
-	},
+	}
 
 	getFocusHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
-	},
+	}
 
-	getCodeMessage: function() {
-		var codeMessage = '';
+	getCodeMessage = () => {
+		let codeMessage = '';
 
-		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
+		if ( this.props.isTwoStepSMSEnabled ) {
 			codeMessage = this.props.translate(
 				'Press the button below to request an SMS verification code. ' +
 					'Once you receive our text message at your phone number ending with ' +
 					'{{strong}}%(smsLastFour)s{{/strong}} , enter the code below.',
 				{
 					args: {
-						smsLastFour: this.props.twoStepAuthorization.getSMSLastFour(),
+						smsLastFour: this.props.SMSLastFour,
 					},
 					components: {
 						strong: <strong />,
@@ -90,52 +118,47 @@ const ReauthRequired = createReactClass( {
 		}
 
 		return codeMessage;
-	},
+	};
 
-	submitForm: function( event ) {
+	submitForm = event => {
 		event.preventDefault();
 		this.setState( { validatingCode: true } );
 
-		this.props.twoStepAuthorization.validateCode(
-			{
-				code: this.state.code,
-				remember2fa: this.state.remember2fa,
-			},
-			function( error, data ) {
-				this.setState( { validatingCode: false } );
-				if ( error ) {
-					debug( 'There was an error validating that code: ' + JSON.stringify( error ) );
-				} else {
-					debug( 'The code validated!' + JSON.stringify( data ) );
-				}
-			}.bind( this )
-		);
-	},
+		this.props.validateCode( this.state.code, this.state.remember2fa );
+		// this.props.twoStepAuthorization.validateCode(
+		// 	{
+		// 		code: this.state.code,
+		// 		remember2fa: this.state.remember2fa,
+		// 	},
+		// 	function( error, data ) {
+		// 		this.setState( { validatingCode: false } );
+		// 		if ( error ) {
+		// 			debug( 'There was an error validating that code: ' + JSON.stringify( error ) );
+		// 		} else {
+		// 			debug( 'The code validated!' + JSON.stringify( data ) );
+		// 		}
+		// 	}.bind( this )
+		// );
+	};
 
-	codeRequestTimer: false,
+	codeRequestTimer = false;
 
-	allowSMSRequests: function() {
+	allowSMSRequests = () => {
 		this.setState( { smsRequestsAllowed: true } );
-	},
+	};
 
-	sendSMSCode: function() {
+	sendSMSCode = () => {
 		this.setState( { smsRequestsAllowed: false, smsCodeSent: true } );
 		this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
 
-		this.props.twoStepAuthorization.sendSMSCode( function( error, data ) {
-			if ( ! error && data.sent ) {
-				debug( 'SMS code successfully sent' );
-			} else {
-				debug( 'There was a failure sending the SMS code.' );
-			}
-		} );
-	},
+		this.props.sendSMSValidationCode();
+	};
 
-	preValidateAuthCode: function() {
+	preValidateAuthCode = () => {
 		return this.state.code.length && this.state.code.length > 5;
-	},
+	};
 
-	renderSendSMSButton: function() {
+	renderSendSMSButton() {
 		const { smsRequestsAllowed, smsCodeSent } = this.state;
 
 		const [ clickAction, buttonLabel ] = ! smsCodeSent
@@ -152,10 +175,10 @@ const ReauthRequired = createReactClass( {
 				{ buttonLabel }
 			</FormButton>
 		);
-	},
+	}
 
-	renderFailedValidationMsg: function() {
-		if ( ! this.props.twoStepAuthorization.codeValidationFailed() ) {
+	renderFailedValidationMsg() {
+		if ( ! this.props.isCodeValidationFailed ) {
 			return null;
 		}
 
@@ -165,10 +188,10 @@ const ReauthRequired = createReactClass( {
 				text={ this.props.translate( 'You entered an invalid code. Please try again.' ) }
 			/>
 		);
-	},
+	}
 
-	renderSMSResendThrottled: function() {
-		if ( ! this.props.twoStepAuthorization.isSMSResendThrottled() ) {
+	renderSMSResendThrottled() {
+		if ( ! this.props.isSMSResendThrottled ) {
 			return null;
 		}
 
@@ -182,10 +205,10 @@ const ReauthRequired = createReactClass( {
 				/>
 			</div>
 		);
-	},
+	}
 
-	render: function() {
-		var codePlaceholder = this.props.twoStepAuthorization.isTwoStepSMSEnabled()
+	render() {
+		const codePlaceholder = this.props.isTwoStepSMSEnabled
 			? constants.sevenDigit2faPlaceholder
 			: constants.sixDigit2faPlaceholder;
 
@@ -194,7 +217,7 @@ const ReauthRequired = createReactClass( {
 				autoFocus={ false }
 				className="reauth-required__dialog"
 				isFullScreen={ false }
-				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
+				isVisible={ this.props.isReauthRequired }
 				buttons={ null }
 				onClose={ null }
 			>
@@ -215,7 +238,7 @@ const ReauthRequired = createReactClass( {
 						<FormTelInput
 							autoFocus={ true }
 							id="code"
-							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
+							isError={ this.props.isCodeValidationFailed }
 							name="code"
 							placeholder={ codePlaceholder }
 							onFocus={ this.getFocusHandler( 'Reauth Required Verification Code Field' ) }
@@ -254,17 +277,32 @@ const ReauthRequired = createReactClass( {
 				</form>
 			</Dialog>
 		);
-	},
+	}
 
-	handleChange( e ) {
+	handleChange = e => {
 		const { name, value } = e.currentTarget;
 		this.setState( { [ name ]: value } );
-	},
+	};
 
-	handleCheckedChange( e ) {
+	handleCheckedChange = e => {
 		const { name, checked } = e.currentTarget;
 		this.setState( { [ name ]: checked } );
-	},
-} );
+	};
+}
 
-export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );
+export default connect(
+	state => ( {
+		isReauthRequired: isReauthRequired( state ),
+		isTwoStepSMSEnabled: isTwoStepSMSEnabled( state ),
+		isCodeValidationFailed: isCodeValidationFailed( state ),
+		isSMSResendThrottled: isSMSResendThrottled( state ),
+		SMSLastFour: getSMSLastFour( state ),
+	} ),
+	{
+		recordGoogleEvent,
+		requestTwoStep,
+		validateCode,
+		sendSMSValidationCode,
+		getAppAuthCodes,
+	}
+)( localize( ReauthRequired ) );
