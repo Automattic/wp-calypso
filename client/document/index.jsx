@@ -7,7 +7,6 @@
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
 import { get } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -16,6 +15,7 @@ import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
+import WordPressLogo from 'components/wordpress-logo';
 
 class Document extends React.Component {
 	render() {
@@ -108,7 +108,7 @@ class Document extends React.Component {
 								<div className="masterbar" />
 								<div className="layout__content">
 									// <div className="wpcom-site__logo noticon noticon-wordpress" />
-									<Gridicon icon="my-sites" size={ 24 } className="wpcom-site__logo" />
+									<WordPressLogo size={ 72 } />
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />

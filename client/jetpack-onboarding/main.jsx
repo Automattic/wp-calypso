@@ -8,7 +8,6 @@ import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import config from 'config';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
 import Wizard from 'components/wizard';
+import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
@@ -146,11 +146,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 					/>
 				) : (
 					// <div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
-					<Gridicon
-						icon="my-sites"
-						size={ 24 }
-						className="jetpack-onboarding__loading wpcom-site__logo"
-					/>
+					<WordPressLogo size={ 72 } />
 				) }
 			</Main>
 		);
