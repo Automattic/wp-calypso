@@ -203,14 +203,6 @@ export class LoginForm extends Component {
 	onSubmitForm = event => {
 		event.preventDefault();
 
-		// focus on the email field to retrieve any changes
-		// that may have been ignored due to chrome not using events for autofill
-		this.usernameOrEmail.focus();
-
-		this.setState( {
-			usernameOrEmail: this.usernameOrEmail.value,
-		} );
-
 		if ( ! this.props.hasAccountTypeLoaded ) {
 			this.props.getAuthAccountType( this.state.usernameOrEmail );
 
@@ -320,6 +312,7 @@ export class LoginForm extends Component {
 							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
 							disabled={ isFormDisabled || this.isPasswordView() }
+							autoComplete="username"
 						/>
 
 						{ requestError &&
