@@ -147,7 +147,7 @@ class PlansFeaturesMain extends Component {
 
 		const helpLink =
 			isEnabled( 'jetpack/happychat' ) && isChatAvailable ? (
-				<HappychatButton />
+				<HappychatButton className="plans-features-main__happychat-button" />
 			) : (
 				<a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" />
 			);

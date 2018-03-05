@@ -1,9 +1,24 @@
+/** @format */
+
 .plans-features-main__group {
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		padding-top: 19px; // popular banner height adjustment
 	}
 
 	+ .faq {
 		margin-top: 20px;
+	}
+}
+
+// Required additional specificity
+.plans-features-main .plans-features-main__happychat-button {
+	color: $blue-wordpress;
+	font-weight: normal;
+	padding: 0;
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: $blue-wordpress;
 	}
 }
