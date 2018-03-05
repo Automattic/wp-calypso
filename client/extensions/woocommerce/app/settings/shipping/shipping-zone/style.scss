@@ -213,6 +213,17 @@
 	.dialog__content:last-child {
 		margin-bottom: 0;
 	}
+
+	.dialog__content {
+		display: flex;
+		flex-direction: column;
+		padding: 24px 0;
+
+		> div {
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+	}
 }
 
 .shipping-zone__method-delete {
@@ -260,14 +271,26 @@
 }
 
 .shipping-zone__method-dialog-header {
-	padding: 0 0 16px 0;
+	padding-bottom: 16px;
 	font-size: 18px;
 	display: flex;
 	justify-content: space-between;
+	flex-shrink: 0;
 
 	.form-fieldset {
 		margin-bottom: 0;
 	}
+}
+
+.shipping-zone__method-dialog-type-field {
+	flex-shrink: 0;
+}
+
+.shipping-zone__method-dialog-content {
+	overflow-y: auto;
+	// 1px padding to show the box-shadow border
+	padding-top: 1px;
+	padding-bottom: 1px;
 }
 
 .shipping-zone__enable {
