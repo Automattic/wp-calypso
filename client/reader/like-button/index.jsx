@@ -3,20 +3,22 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import postStore from 'lib/feed-post-store';
+import { reduxGetState } from 'lib/redux-bridge';
 import LikeButtonContainer from 'blocks/like-button';
-import { markSeen } from 'lib/feed-post-store/actions';
+import { markPostSeen } from 'state/reader/posts/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
 class ReaderLikeButton extends React.Component {
 	recordLikeToggle = liked => {
 		const post =
 			this.props.post ||
-			postStore.get( {
+			getPostByKey( reduxGetState(), {
 				blogId: this.props.siteId,
 				postId: this.props.postId,
 			} );
@@ -29,7 +31,7 @@ class ReaderLikeButton extends React.Component {
 			{ context: this.props.fullPost ? 'full-post' : 'card' }
 		);
 		if ( liked && ! this.props.fullPost && ! post._seen ) {
-			markSeen( post, this.props.site );
+			this.props.markPostSeen( post, this.props.site );
 		}
 	};
 
@@ -38,4 +40,4 @@ class ReaderLikeButton extends React.Component {
 	}
 }
 
-export default ReaderLikeButton;
+export default connect( null, { markPostSeen } )( ReaderLikeButton );

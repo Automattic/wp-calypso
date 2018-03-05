@@ -39,7 +39,8 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { isDomainOnlySite } from 'state/selectors';
+import { isDomainOnlySite, isSiteAutomatedTransfer } from 'state/selectors';
+
 import { isPlanFeaturesEnabled } from 'lib/plans';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 import { type } from 'lib/domains/constants';
@@ -254,7 +255,7 @@ export class List extends React.Component {
 	};
 
 	headerButtons() {
-		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack && ! this.props.isAtomicSite ) {
 			return null;
 		}
 
@@ -466,6 +467,7 @@ export default connect(
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
 			isDomainOnly: isDomainOnlySite( state, siteId ),
+			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
 		};
 	},
 	dispatch => {

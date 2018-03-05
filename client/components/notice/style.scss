@@ -83,9 +83,8 @@
 }
 
 .notice__text {
-	max-width: 680px;
-
-	a {
+	a,
+	a:visited {
 		text-decoration: underline;
 		color: $white;
 
@@ -177,6 +176,10 @@ a.notice__action {
 			width: 24px;
 			height: 24px;
 		}
+	}
+
+	&:visited {
+		color: $gray-lighten-10;
 	}
 
 	&:hover {

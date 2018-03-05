@@ -12,19 +12,28 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DomainProductPrice from 'components/domains/domain-product-price';
 import Button from 'components/button';
 
 class DomainSuggestion extends React.Component {
 	static propTypes = {
 		buttonContent: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
-		buttonClasses: PropTypes.string,
+		buttonProps: PropTypes.object,
 		extraClasses: PropTypes.string,
 		onButtonClick: PropTypes.func.isRequired,
 		priceRule: PropTypes.string,
 		price: PropTypes.string,
 		domain: PropTypes.string,
 		hidePrice: PropTypes.bool,
+		showChevron: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		buttonProps: config.isEnabled( 'domains/kracken-ui' )
+			? { primary: true }
+			: { borderless: true },
+		showChevron: ! config.isEnabled( 'domains/kracken-ui' ),
 	};
 
 	render() {
@@ -36,6 +45,7 @@ class DomainSuggestion extends React.Component {
 			'is-clickable',
 			{
 				'is-added': isAdded,
+				'is-kracken-ui': config.isEnabled( 'domains/kracken-ui' ),
 			},
 			extraClasses
 		);
@@ -52,10 +62,12 @@ class DomainSuggestion extends React.Component {
 					{ children }
 					{ ! hidePrice && <DomainProductPrice rule={ priceRule } price={ price } /> }
 				</div>
-				<Button borderless className="domain-suggestion__action">
+				<Button className="domain-suggestion__action" { ...this.props.buttonProps }>
 					{ this.props.buttonContent }
 				</Button>
-				<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+				{ this.props.showChevron && (
+					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" />
+				) }
 			</div>
 		);
 	}

@@ -365,17 +365,3 @@
 .is-reader-page .search-stream__single-column-results .empty-content {
 	margin-top: 0;
 }
-
-/* = List end (shown at end of streams)
- --------------------------------------------------------------- */
-
-.is-reader-page .list-end {
-	&:before {
-		border-bottom: none;
-	}
-
-	&:after {
-		background-color: inherit;
-		margin-top: 20px;
-	}
-}

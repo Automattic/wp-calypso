@@ -34,7 +34,6 @@ const isAdwordsEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
 const isYahooEnabled = true;
-const isCriteoEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
@@ -42,6 +41,7 @@ const isExperianEnabled = true;
 const isLinkedinEnabled = true;
 let isYandexEnabled = true;
 const isOutbrainEnabled = true;
+const isCriteoEnabled = false;
 const isAtlasEnabled = false;
 const isPandoraEnabled = false;
 const isQuoraEnabled = false;
@@ -965,7 +965,7 @@ function floodlightUserParams() {
 
 	const currentUser = user.get();
 	if ( currentUser ) {
-		params.u4 = currentUser.ID;
+		params.u4 = currentUser.ID.toString();
 	}
 
 	const anonymousUserId = tracksAnonymousUserId();

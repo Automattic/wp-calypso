@@ -18,7 +18,11 @@ import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
-import { isRequestingResend, didResendSucceed } from 'state/invites/selectors';
+import {
+	isRequestingInviteResend,
+	didInviteResendSucceed,
+	didInviteDeletionSucceed,
+} from 'state/invites/selectors';
 import { resendInvite } from 'state/invites/actions';
 
 class PeopleListItem extends React.PureComponent {
@@ -117,9 +121,17 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user } = this.props;
+		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
+
+		if ( isInvite && inviteWasDeleted ) {
+			// After an invite is deleted and the user is returned to the
+			// invites list, the invite can occasionally reappear in the next
+			// API call, so we need to check for this situation and avoid
+			// rendering an invite that we know is actually deleted.
+			return null;
+		}
 
 		const classes = classNames(
 			'people-list-item',
@@ -161,14 +173,18 @@ class PeopleListItem extends React.PureComponent {
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = ownProps.site && ownProps.site.ID;
-		const inviteKey = ownProps.invite && ownProps.invite.key;
+		const { site, invite } = ownProps;
+
+		const siteId = site && site.ID;
+		const inviteKey = invite && invite.key;
+		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
 
 		return {
-			requestingResend: isRequestingResend( state, siteId, inviteKey ),
-			resendSuccess: didResendSucceed( state, siteId, inviteKey ),
+			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
+			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
 			siteId,
 			inviteKey,
+			inviteWasDeleted,
 		};
 	},
 	{ resendInvite }

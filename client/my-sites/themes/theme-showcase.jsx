@@ -37,6 +37,9 @@ import {
 import { recordTracksEvent } from 'state/analytics/actions';
 import ThemesSearchCard from './themes-magic-search-card';
 import QueryThemeFilters from 'components/data/query-theme-filters';
+import PhotoBlogBanner from './themes-banner/photo-blog';
+import SmallBusinessBanner from './themes-banner/small-business';
+import RandomThemesBanner from './themes-banner/random-themes-banner';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -215,6 +218,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
+					<RandomThemesBanner banners={ [ PhotoBlogBanner, SmallBusinessBanner ] } />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }

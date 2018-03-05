@@ -6,6 +6,7 @@
 
 import React from 'react';
 import createReactClass from 'create-react-class';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:me:reauth-required' );
@@ -24,21 +25,45 @@ import FormInputValidation from 'components/forms/form-input-validation';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import eventRecorder from 'me/event-recorder';
 import userUtilities from 'lib/user/utils';
 import constants from 'me/constants';
 import Notice from 'components/notice';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const ReauthRequired = createReactClass( {
 	displayName: 'ReauthRequired',
-	mixins: [ observe( 'twoStepAuthorization' ), eventRecorder ],
+	mixins: [ observe( 'twoStepAuthorization' ) ],
 
 	getInitialState: function() {
 		return {
 			remember2fa: false, // Should the 2fa be remembered for 30 days?
 			code: '', // User's generated 2fa code
 			smsRequestsAllowed: true, // Can the user request another SMS code?
+			smsCodeSent: false,
 		};
+	},
+
+	getClickHandler( action, callback ) {
+		return () => {
+			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
+
+			if ( callback ) {
+				callback();
+			}
+		};
+	},
+
+	getCheckboxHandler( checkboxName ) {
+		return event => {
+			const action = 'Clicked ' + checkboxName + ' checkbox';
+			const value = event.target.checked ? 1 : 0;
+
+			this.props.recordGoogleEvent( 'Me', action, 'checked', value );
+		};
+	},
+
+	getFocusHandler( action ) {
+		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	},
 
 	getCodeMessage: function() {
@@ -46,8 +71,9 @@ const ReauthRequired = createReactClass( {
 
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
 			codeMessage = this.props.translate(
-				'Please check your text messages at the phone number ending with {{strong}}%(smsLastFour)s{{/strong}} ' +
-					'and enter the verification code below.',
+				'Press the button below to request an SMS verification code. ' +
+					'Once you receive our text message at your phone number ending with ' +
+					'{{strong}}%(smsLastFour)s{{/strong}} , enter the code below.',
 				{
 					args: {
 						smsLastFour: this.props.twoStepAuthorization.getSMSLastFour(),
@@ -93,7 +119,7 @@ const ReauthRequired = createReactClass( {
 	},
 
 	sendSMSCode: function() {
-		this.setState( { smsRequestsAllowed: false } );
+		this.setState( { smsRequestsAllowed: false, smsCodeSent: true } );
 		this.codeRequestTimer = setTimeout( this.allowSMSRequests, 60000 );
 
 		this.props.twoStepAuthorization.sendSMSCode( function( error, data ) {
@@ -110,38 +136,22 @@ const ReauthRequired = createReactClass( {
 	},
 
 	renderSendSMSButton: function() {
-		var button;
-		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			button = (
-				<FormButton
-					disabled={ ! this.state.smsRequestsAllowed }
-					isPrimary={ false }
-					onClick={ this.recordClickEvent(
-						'Resend SMS Code Button on Reauth Required',
-						this.sendSMSCode
-					) }
-					type="button"
-				>
-					{ this.props.translate( 'Resend SMS Code' ) }
-				</FormButton>
-			);
-		} else {
-			button = (
-				<FormButton
-					disabled={ ! this.state.smsRequestsAllowed }
-					isPrimary={ false }
-					onClick={ this.recordClickEvent(
-						'Send SMS Code Button on Reauth Required',
-						this.sendSMSCode
-					) }
-					type="button"
-				>
-					{ this.props.translate( 'Send SMS Code' ) }
-				</FormButton>
-			);
-		}
+		const { smsRequestsAllowed, smsCodeSent } = this.state;
 
-		return button;
+		const [ clickAction, buttonLabel ] = ! smsCodeSent
+			? [ 'Send SMS Code Button on Reauth Required', this.props.translate( 'Send SMS Code' ) ]
+			: [ 'Resend SMS Code Button on Reauth Required', this.props.translate( 'Resend SMS Code' ) ];
+
+		return (
+			<FormButton
+				disabled={ ! smsRequestsAllowed }
+				isPrimary={ false }
+				onClick={ this.getClickHandler( clickAction, this.sendSMSCode ) }
+				type="button"
+			>
+				{ buttonLabel }
+			</FormButton>
+		);
 	},
 
 	renderFailedValidationMsg: function() {
@@ -193,10 +203,7 @@ const ReauthRequired = createReactClass( {
 				<p>
 					<a
 						className="reauth-required__sign-out"
-						onClick={ this.recordClickEvent(
-							'Reauth Required Log Out Link',
-							userUtilities.logout
-						) }
+						onClick={ this.getClickHandler( 'Reauth Required Log Out Link', userUtilities.logout ) }
 					>
 						{ this.props.translate( 'Not you? Sign Out' ) }
 					</a>
@@ -211,7 +218,7 @@ const ReauthRequired = createReactClass( {
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
 							placeholder={ codePlaceholder }
-							onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
+							onFocus={ this.getFocusHandler( 'Reauth Required Verification Code Field' ) }
 							value={ this.state.code }
 							onChange={ this.handleChange }
 						/>
@@ -224,7 +231,7 @@ const ReauthRequired = createReactClass( {
 							<FormCheckbox
 								id="remember2fa"
 								name="remember2fa"
-								onClick={ this.recordCheckboxEvent( 'Remember 2fa' ) }
+								onClick={ this.getCheckboxHandler( 'Remember 2fa' ) }
 								checked={ this.state.remember2fa }
 								onChange={ this.handleCheckedChange }
 							/>
@@ -237,7 +244,7 @@ const ReauthRequired = createReactClass( {
 					<FormButtonsBar>
 						<FormButton
 							disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
-							onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) }
+							onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
 						>
 							{ this.props.translate( 'Verify' ) }
 						</FormButton>
@@ -260,4 +267,4 @@ const ReauthRequired = createReactClass( {
 	},
 } );
 
-export default localize( ReauthRequired );
+export default connect( null, { recordGoogleEvent } )( localize( ReauthRequired ) );

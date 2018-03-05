@@ -1,11 +1,17 @@
+/** @format */
+
 .order__container {
 	padding-bottom: 0;
 
-	@include breakpoint( ">660px" ) {
+	* {
+		box-sizing: border-box;
+	}
+
+	@include breakpoint( '>660px' ) {
 		margin-top: 58px;
 	}
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
@@ -15,16 +21,18 @@
 		}
 
 		.order-activity-log {
+			order: 2;
 			flex: 2;
 			margin-right: 16px;
 		}
 
 		.order-customer {
+			order: 3;
 			flex: 1;
 		}
 	}
 
-	@include breakpoint( ">1040px" ) {
+	@include breakpoint( '>1040px' ) {
 		.order-details {
 			order: 1;
 			flex: 2;
@@ -71,9 +79,10 @@
 	padding: 16px;
 	border-top: 1px solid $gray-lighten-30;
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 
-	@include breakpoint( ">480px" ) {
+	@include breakpoint( '>480px' ) {
 		margin: 0 -24px;
 		padding: 24px;
 	}
@@ -97,12 +106,16 @@
 
 	.order-payment__action,
 	.order-fulfillment__action {
+		display: flex;
+		justify-content: center;
 		flex-grow: 0;
 
 		.button {
-			float: left;
 			white-space: nowrap;
-			margin-left: 12px;
+
+			& + .button {
+				margin-left: 12px;
+			}
 
 			&.is-placeholder {
 				@include placeholder();
@@ -121,7 +134,24 @@
 		}
 	}
 
+	.order-fulfillment__print-container {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
 	.gridicon {
 		margin-right: 8px;
+	}
+
+	@include breakpoint( '<660px' ) {
+		.order-payment__label,
+		.order-fulfillment__label,
+		.order-payment__action,
+		.order-fulfillment__action {
+			width: 100%;
+		}
+		.order-payment__label + .order-payment__action {
+			margin-top: 8px;
+		}
 	}
 }

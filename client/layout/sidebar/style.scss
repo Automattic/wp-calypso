@@ -1,52 +1,18 @@
 .sidebar {
-	color: var( --sidebar-color );
 	display: flex;
 	flex-direction: column;
 	overflow: auto;
 	padding: 0;
-	background: var( --sidebar-background );
-	position: fixed;
-		top: 47px;
+	position: absolute;
+		top: 0;
+		right: 0;
 		bottom: 0;
 		left: 0;
 
-	@include breakpoint( "<960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
-		width: $sidebar-width-min;
-	}
-
-	@include breakpoint( ">960px" ) {
-		border-right: 1px solid darken( $sidebar-bg-color, 5% );
-		width: $sidebar-width-max;
-	}
-
 	@include breakpoint( "<660px" ) {
-		left: -100%;
-		width: 100%;
-		overflow-x: hidden;
-		max-height: calc( 100% - 47px );
-		pointer-events: none;
-		transform: translateX( 0 );
-		transition: all 0.15s cubic-bezier(0.770, 0.000, 0.175, 1.000);
-
-		.focus-sidebar & {
-			pointer-events: auto;
-			-webkit-overflow-scrolling: touch;
-			transform: translateX( 100% );
-		}
-
-		.focus-sites & {
-			transform: translateX( 100% );
-		}
-	}
-
-	@include breakpoint( ">660px" ) {
-		&.has-regions {
-			overflow: hidden;
-		}
+		-webkit-overflow-scrolling: touch;
 	}
 }
-
 
 // Clearing out the sidebar list styles
 .sidebar {
@@ -72,9 +38,9 @@
 // Sidebar group headings
 .sidebar__heading {
 	color: var( --sidebar-heading-color );
+	font-size: 14px;
 	font-weight: 600;
-	font-size: 12px;
-	margin: 16px 8px 6px 14px;
+	margin: 16px 8px 6px 16px;
 	display: flex;
 }
 
@@ -91,14 +57,10 @@
 
 		@include breakpoint( "<660px" ) {
 			background-color: $gray-light;
-			border-bottom: 1px solid rgba( $gray-lighten-20, 0.5 );
+			border-bottom: 1px solid lighten( $gray, 25 );
 
 			&:first-child {
-				border-top: 1px solid $gray-lighten-20;
-			}
-
-			&:last-child {
-				border-bottom: 1px solid $gray-lighten-20;
+				border-top: 1px solid lighten( $gray, 25 );
 			}
 		}
 	}
@@ -130,10 +92,10 @@
 	}
 
 	a {
-		font-size: 14px;
+		font-size: 15px;
 		line-height: 1;
 		position: relative;
-		padding: 11px 16px 11px 18px;
+		padding: 11px 16px 11px 20px;
 		color: var( --sidebar-color );
 		box-sizing: border-box;
 		white-space: nowrap;
@@ -172,15 +134,8 @@
 		fill: var( --sidebar-gridicon-fill );
 		height: 24px;
 		width: 24px;
-		margin-right: 6px;
+		margin-right: 12px;
 		flex-shrink: 0;
-
-		@include breakpoint( "<660px" ) {
-				top: 15px;
-				left: 16px;
-			height: 24px;
-			width: 24px;
-		}
 
 		// External indicator for sections that aren't available in Calypso
 		&.gridicons-external {
@@ -197,22 +152,23 @@
 	}
 }
 
-a.sidebar__button, form.sidebar__button {
+a.sidebar__button,
+form.sidebar__button {
 	display: flex;
 	position: relative;
 	align-self: center;
 	box-sizing: border-box;
-	overflow: visible;
+	overflow: hidden;
 	padding: 2px 8px 3px 8px;
 	height: 24px;
 	margin-right: 8px;
 	line-height: 18px;
-	background-color: $gray-light;
+	background-color: $white;
 	color: $gray-darken-20;
 	font-size: 12px;
 	font-weight: 600;
 	border-radius: 3px;
-	border: 1px solid darken( $sidebar-bg-color, 10% );
+	border: 1px solid $gray-lighten-20;
 
 	@include breakpoint( "<660px" ) {
 		font-size: 14px;
@@ -252,7 +208,7 @@ form.sidebar__button input {
 
 		.sidebar__button {
 			color: $gray-dark;
-			border: 1px solid darken( $sidebar-selected-color, 10% );
+			border: 1px solid $gray-darken-30;
 
 			&:hover {
 				color: $blue-medium;
@@ -361,11 +317,7 @@ form.sidebar__button input {
 	display: flex;
 	flex-direction: row;
 	padding-left: 10px;
-
-	@include breakpoint( "<660px" ) {
-		margin-top: 16px;
-	}
-
+	min-height: 42px;
 }
 
 .sidebar .sidebar__footer .button {
@@ -463,15 +415,12 @@ form.sidebar__button input {
 
 .sidebar__region {
 	flex-shrink: 0;
-	@include breakpoint( ">660px" ) {
-		display: flex;
-		flex-direction: column;
-		overflow-y: auto;
-		overflow-x: hidden;
-		flex: 1;
-		transform: translateX( 0 ); /* workaround for safari scrollbar rendering bug */
-		-webkit-overflow-scrolling: touch;
-	}
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
+	flex: 1;
+	-webkit-overflow-scrolling: touch;
 }
 
 .sidebar__menu {
@@ -497,6 +446,7 @@ form.sidebar__button input {
 		}
 	}
 }
+
 .sidebar__chevron-right {
 	position: absolute;
 	right: 0;

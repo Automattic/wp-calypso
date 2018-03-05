@@ -6,14 +6,12 @@
  * External dependencies
  */
 import { concat, filter, find, map, get, sortBy, takeRight } from 'lodash';
-import validator from 'is-my-json-valid';
 
 /**
  * Internal dependencies
  */
 import {
 	SERIALIZE,
-	DESERIALIZE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
@@ -73,25 +71,21 @@ const timelineEvent = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			const { message } = action;
-			return Object.assign(
-				{},
-				{
-					id: message.id,
-					source: message.source,
-					message: message.text,
-					name: message.user.name,
-					image: message.user.avatarURL,
-					timestamp: message.timestamp,
-					user_id: message.user.id,
-					type: get( message, 'type', 'message' ),
-					links: get( message, 'meta.links' ),
-				}
-			);
+			return {
+				id: message.id,
+				source: message.source,
+				message: message.text,
+				name: message.user.name,
+				image: message.user.avatarURL,
+				timestamp: message.timestamp,
+				user_id: message.user.id,
+				type: get( message, 'type', 'message' ),
+				links: get( message, 'meta.links' ),
+			};
 	}
 	return state;
 };
 
-const validateTimeline = validator( timelineSchema );
 const sortTimeline = timeline => sortBy( timeline, event => parseInt( event.timestamp, 10 ) );
 
 /**
@@ -106,12 +100,6 @@ export const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
 			return takeRight( state, HAPPYCHAT_MAX_STORED_MESSAGES );
-		case DESERIALIZE:
-			const valid = validateTimeline( state );
-			if ( valid ) {
-				return state;
-			}
-			return [];
 		case HAPPYCHAT_IO_RECEIVE_MESSAGE:
 			// if meta.forOperator is set, skip so won't show to user
 			if ( get( action, 'message.meta.forOperator', false ) ) {
@@ -137,25 +125,23 @@ export const timeline = ( state = [], action ) => {
 			} );
 			return sortTimeline(
 				state.concat(
-					map( messages, message => {
-						return Object.assign( {
-							id: message.id,
-							source: message.source,
-							message: message.text,
-							name: message.user.name,
-							image: message.user.picture,
-							timestamp: message.timestamp,
-							user_id: message.user.id,
-							type: get( message, 'type', 'message' ),
-							links: get( message, 'meta.links' ),
-						} );
-					} )
+					map( messages, message => ( {
+						id: message.id,
+						source: message.source,
+						message: message.text,
+						name: message.user.name,
+						image: message.user.picture,
+						timestamp: message.timestamp,
+						user_id: message.user.id,
+						type: get( message, 'type', 'message' ),
+						links: get( message, 'meta.links' ),
+					} ) )
 				)
 			);
 	}
 	return state;
 };
-timeline.hasCustomPersistence = true;
+timeline.schema = timelineSchema;
 
 export default combineReducers( {
 	status,

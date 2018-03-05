@@ -5,6 +5,7 @@
  */
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 
 /**
@@ -24,6 +25,10 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { createNotice } from 'state/notices/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import ChecklistShowShare from './share';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import userFactory from 'lib/user';
+
+const user = userFactory();
 
 class ChecklistShow extends PureComponent {
 	onAction = id => {
@@ -49,55 +54,79 @@ class ChecklistShow extends PureComponent {
 		}
 	};
 
-	renderHeader( completed, displayMode ) {
-		if ( ! completed ) {
-			if ( displayMode ) {
-				const title =
-					displayMode === 'free' ? 'Your site has been created!' : 'Thank you for your purchase!';
+	getHeaderTitle( displayMode ) {
+		if ( displayMode === 'free' ) {
+			return 'Your site has been created!';
+		}
 
-				return (
-					<Fragment>
-						<img
-							src="/calypso/images/signup/confetti.svg"
-							aria-hidden="true"
-							className="checklist-show__confetti"
-						/>
-						<FormattedHeader
-							headerText={ title }
-							subHeaderText={
-								"Now that your site has been created, it's time to get it ready for you to share. " +
-								"We've prepared a list of things that will help you get there quickly."
-							}
-						/>
-					</Fragment>
-				);
-			}
+		return 'Thank you for your purchase!';
+	}
 
-			return (
-				<FormattedHeader
-					headerText="Welcome back!"
-					subHeaderText="Let’s get your site ready for its debut with a few quick setup steps."
-				/>
+	getSubHeaderText( displayMode ) {
+		if ( displayMode === 'gsuite' ) {
+			return this.props.translate(
+				'We emailed %(email)s with instructions to complete your G Suite setup. ' +
+					'In the mean time, let’s get your new site ready for you to share. ' +
+					'We’ve prepared a list of things that will help you get there quickly.',
+				{
+					args: {
+						email: user.get().email,
+					},
+				}
 			);
 		}
 
 		return (
-			<Fragment>
-				<img
-					src="/calypso/images/signup/confetti.svg"
-					aria-hidden="true"
-					className="checklist-show__confetti"
-				/>
-				<FormattedHeader
-					headerText="Congratulations!"
-					subHeaderText="You have completed all your tasks. Now let's tell people about it. Share your site."
-				/>
-				<ChecklistShowShare
-					className="checklist-show__share"
-					siteSlug={ this.props.siteSlug }
-					recordTracksEvent={ this.props.track }
-				/>
-			</Fragment>
+			"Now that your site has been created, it's time to get it ready for you to share. " +
+			"We've prepared a list of things that will help you get there quickly."
+		);
+	}
+
+	renderHeader( completed, displayMode ) {
+		if ( completed ) {
+			return (
+				<Fragment>
+					<img
+						src="/calypso/images/signup/confetti.svg"
+						aria-hidden="true"
+						className="checklist-show__confetti"
+						alt=""
+					/>
+					<FormattedHeader
+						headerText="Congratulations!"
+						subHeaderText="You have completed all your tasks. Now let's tell people about it. Share your site."
+					/>
+					<ChecklistShowShare
+						className="checklist-show__share"
+						siteSlug={ this.props.siteSlug }
+						recordTracksEvent={ this.props.track }
+					/>
+				</Fragment>
+			);
+		}
+
+		if ( displayMode ) {
+			return (
+				<Fragment>
+					<img
+						src="/calypso/images/signup/confetti.svg"
+						aria-hidden="true"
+						className="checklist-show__confetti"
+						alt=""
+					/>
+					<FormattedHeader
+						headerText={ this.getHeaderTitle( displayMode ) }
+						subHeaderText={ this.getSubHeaderText( displayMode ) }
+					/>
+				</Fragment>
+			);
+		}
+
+		return (
+			<FormattedHeader
+				headerText="Welcome back!"
+				subHeaderText="Let’s get your site ready for its debut with a few quick setup steps."
+			/>
 		);
 	}
 
@@ -113,6 +142,7 @@ class ChecklistShow extends PureComponent {
 
 		return (
 			<Main className="checklist-show">
+				<SidebarNavigation />
 				<DocumentHead title={ title } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
 				{ this.renderHeader( completed, displayMode ) }
@@ -142,4 +172,4 @@ const mapDispatchToProps = {
 	update: requestSiteChecklistTaskUpdate,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( ChecklistShow );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ChecklistShow ) );

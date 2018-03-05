@@ -22,11 +22,6 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
 import Card from 'components/card';
-import {
-	DESTINATION_BASED_SALES_TAX,
-	NO_SALES_TAX,
-	ORIGIN_BASED_SALES_TAX,
-} from 'woocommerce/lib/countries/constants';
 import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
@@ -60,8 +55,12 @@ class TaxesRates extends Component {
 		this.maybeFetchRates( nextProps );
 	};
 
-	renderInfo = () => {
-		const { address, translate } = this.props;
+	renderLocation = () => {
+		const { address, areTaxesEnabled, translate } = this.props;
+		if ( ! areTaxesEnabled ) {
+			return null;
+		}
+
 		const countryData = getCountryData( address.country );
 		if ( ! countryData ) {
 			return (
@@ -89,42 +88,11 @@ class TaxesRates extends Component {
 
 		const stateName = stateData.name;
 
-		if ( NO_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<p>
-					{ translate(
-						'Since your store is located in {{strong}}%(stateName)s, ' +
-							"%(countryName)s{{/strong}} you're not required to collect sales tax.",
-						{
-							args: { stateName, countryName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
-			);
-		}
-
-		if ( ORIGIN_BASED_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<p>
-					{ translate(
-						"Since your store is located in {{strong}}%(stateName)s, %(countryName)s{{/strong}} you're " +
-							'required to charge sales tax based on your business address.',
-						{
-							args: { stateName, countryName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
-			);
-		}
-
-		// Default - DESTINATION_BASED_SALES_TAX
 		return (
 			<p>
 				{ translate(
-					"Since your store is located in {{strong}}%(stateName)s, %(countryName)s{{/strong}} you're " +
-						"required to charge sales tax based on the customer's shipping address.",
+					"The following tax rates are in effect at your store's location in " +
+						'{{strong}}%(stateName)s, %(countryName)s{{/strong}}',
 					{
 						args: { stateName, countryName },
 						components: { strong: <strong /> },
@@ -142,16 +110,12 @@ class TaxesRates extends Component {
 			return null;
 		}
 
-		if ( NO_SALES_TAX === stateData.salesTaxBasis ) {
-			return null;
-		}
-
 		if ( ! areTaxesEnabled ) {
 			return (
-				<Notice showDismiss={ false } status="is-error">
+				<Notice showDismiss={ false } status="is-warning">
 					{ translate(
 						'Sales taxes are not currently being charged. Unless ' +
-							'your products are exempt from sales tax we recommend that you ' +
+							'your store or products are exempt from sales tax we recommend that you ' +
 							'{{strong}}enable automatic tax calculation and charging{{/strong}}',
 						{
 							components: { strong: <strong /> },
@@ -161,24 +125,11 @@ class TaxesRates extends Component {
 			);
 		}
 
-		if ( DESTINATION_BASED_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<div className="taxes__taxes-calculate">
-					<Gridicon icon="checkmark" />
-					{ translate(
-						"We'll automatically calculate and charge the " +
-							'correct rate of tax for you each time a customer checks out.'
-					) }
-				</div>
-			);
-		}
-
 		return (
 			<div className="taxes__taxes-calculate">
 				<Gridicon icon="checkmark" />
 				{ translate(
-					"We'll automatically calculate and charge sales tax " +
-						'at the following rate each time a customer checks out.'
+					"We'll automatically calculate and charge sales tax " + 'each time a customer checks out.'
 				) }
 			</div>
 		);
@@ -195,15 +146,11 @@ class TaxesRates extends Component {
 			return null;
 		}
 
-		if ( ORIGIN_BASED_SALES_TAX !== stateData.salesTaxBasis ) {
-			return null;
-		}
-
 		if ( isEmpty( taxRates ) ) {
 			return (
 				<Notice showDismiss={ false } status="is-error">
 					{ translate(
-						'The WordPress.com sales tax rate service is not ' + 'available for this site.'
+						'The WordPress.com sales tax rate service is not available for this site.'
 					) }
 				</Notice>
 			);
@@ -302,8 +249,8 @@ class TaxesRates extends Component {
 					</FormToggle>
 				</ExtendedHeader>
 				<Card>
-					{ this.renderInfo() }
 					{ this.renderCalculationStatus() }
+					{ this.renderLocation() }
 					{ this.possiblyRenderRates() }
 					{ this.renderPolicyNotice() }
 				</Card>

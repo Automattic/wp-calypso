@@ -7,11 +7,10 @@ jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 import { expect } from 'chai';
 
 describe( 'index', () => {
-	var Dispatcher, LikeStore, FeedPostStoreActionType;
+	let Dispatcher, LikeStore;
 
 	beforeAll( () => {
 		LikeStore = require( '../like-store' );
-		FeedPostStoreActionType = require( 'lib/feed-post-store/constants' ).action;
 		Dispatcher = require( 'dispatcher' );
 	} );
 
@@ -153,24 +152,6 @@ describe( 'index', () => {
 		} );
 
 		expect( LikeStore.isPostLikedByCurrentUser( 555, 123 ) ).to.be.false;
-	} );
-
-	test( 'should pick up feed post items', () => {
-		Dispatcher.handleServerAction( {
-			type: FeedPostStoreActionType.RECEIVE_FEED_POST,
-			id: '1234',
-			error: null,
-			data: {
-				likes_enabled: true,
-				is_external: false,
-				site_ID: 1234,
-				ID: 1,
-				like_count: 100,
-			},
-		} );
-
-		expect( LikeStore.getLikeCountForPost( 1234, 1 ) ).to.eq( 100 );
-		expect( LikeStore.getLikersForPost( 1234, 1 ) ).to.be.null;
 	} );
 
 	test( 'should ignore external feed post items', () => {

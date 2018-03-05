@@ -52,10 +52,6 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
 			if ( ! error ) {
 				this.data = data;
 
-				if ( this.isReauthRequired() && this.isTwoStepSMSEnabled() && ! this.initialized ) {
-					this.sendSMSCode();
-				}
-
 				if ( this.isReauthRequired() && ! this.initialized ) {
 					this.bumpMCStat( 'reauth-required' );
 				}

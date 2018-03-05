@@ -6,10 +6,12 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import qs from 'qs';
+import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, forEach, intersection } from 'lodash';
+import { get, includes, pick, forEach, intersection, snakeCase } from 'lodash';
+import bodyParser from 'body-parser';
 
 /**
  * Internal dependencies
@@ -27,6 +29,7 @@ import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
 import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
+import analytics from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -184,6 +187,7 @@ function getDefaultContext( request ) {
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
+		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		devDocsURL: '/devdocs',
 		store: createReduxStore( initialServerState ),
 		bodyClasses,
@@ -229,7 +233,6 @@ function getDefaultContext( request ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
-	req.context = getDefaultContext( req );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
@@ -243,8 +246,6 @@ function setUpLoggedInRoute( req, res, next ) {
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
-
-	req.context = getDefaultContext( req );
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 		const user = require( 'user-bootstrap' );
@@ -342,13 +343,84 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 }
 
-function setUpRoute( req, res, next ) {
-	if ( req.cookies.wordpress_logged_in ) {
-		// the user is probably logged in
-		setUpLoggedInRoute( req, res, next );
-	} else {
-		setUpLoggedOutRoute( req, res, next );
+/**
+ * Sets up a Content Security Policy header
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+ * @param {Object} req Express request object
+ * @param {Object} res Express response object
+ * @param {Function} next a callback to call when done
+ */
+function setUpCSP( req, res, next ) {
+	const originalUrlPathname = req.originalUrl.split( '?' )[ 0 ];
+
+	// We only setup CSP for /log-in* for now
+	if ( ! /^\/log-in/.test( originalUrlPathname ) ) {
+		next();
+		return;
 	}
+
+	// This is calculated by taking the contents of the script text from between the tags,
+	// and calculating SHA256 hash on it, encoded in base64, example:
+	// `sha256-${ base64( sha256( 'window.AppBoot();' ) ) }` === sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ
+	// you can also just run it in Chrome, chrome will give you the hash of the violating scripts
+	const inlineScripts = [
+		'sha256-3yiQswl88knA3EhjrG5tj5gmV6EUdLYFvn2dygc0xUQ=',
+		'sha256-ZKTuGaoyrLu2lwYpcyzib+xE4/2mCN8PKv31uXS3Eg4=',
+	];
+
+	req.context.inlineScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
+	req.context.analyticsScriptNonce = crypto.randomBytes( 48 ).toString( 'hex' );
+
+	const policy = {
+		'default-src': [ "'self'" ],
+		'script-src': [
+			"'self'",
+			"'report-sample'",
+			"'unsafe-eval'",
+			'stats.wp.com',
+			'https://apis.google.com',
+			`'nonce-${ req.context.inlineScriptNonce }'`,
+			`'nonce-${ req.context.analyticsScriptNonce }'`,
+			...inlineScripts.map( hash => `'${ hash }'` ),
+		],
+		'base-uri': [ "'none'" ],
+		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
+		'form-action': [ "'self'" ],
+		'object-src': [ "'none'" ],
+		'img-src': [ "'self'", '*.wp.com', 'https://www.google-analytics.com' ],
+		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
+		'font-src': [
+			"'self'",
+			'*.wp.com',
+			'https://fonts.gstatic.com',
+			'data:', // should remove 'data:' ASAP
+		],
+		'media-src': [ "'self'" ],
+		'connect-src': [ "'self'", 'https://wordpress.com/' ],
+		'report-uri': [ '/cspreport' ],
+	};
+
+	const policyString = Object.keys( policy )
+		.map( key => `${ key } ${ policy[ key ].join( ' ' ) }` )
+		.join( '; ' );
+
+	// For now we're just logging policy violations and not blocking them
+	// so we won't actually break anything, later we'll remove the 'Report-Only'
+	// part so browsers will block violating content.
+	res.set( { 'Content-Security-Policy-Report-Only': policyString } );
+	next();
+}
+
+function setUpRoute( req, res, next ) {
+	req.context = getDefaultContext( req );
+	setUpCSP(
+		req,
+		res,
+		() =>
+			req.cookies.wordpress_logged_in // a cookie probably indicates someone is logged-in
+				? setUpLoggedInRoute( req, res, next )
+				: setUpLoggedOutRoute( req, res, next )
+	);
 }
 
 function render404( request, response ) {
@@ -483,11 +555,7 @@ module.exports = function() {
 				} );
 
 				if ( ! section.isomorphic ) {
-					app.get(
-						pathRegex,
-						section.enableLoggedOut ? setUpRoute : setUpLoggedInRoute,
-						serverRender
-					);
+					app.get( pathRegex, setUpRoute, serverRender );
 				}
 			} );
 
@@ -497,6 +565,29 @@ module.exports = function() {
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
+
+	// This is used to log to tracks Content Security Policy violation reports sent by browsers
+	app.post(
+		'/cspreport',
+		bodyParser.json( { type: [ 'json', 'application/csp-report' ] } ),
+		function( req, res ) {
+			const cspReport = req.body[ 'csp-report' ] || {};
+			const cspReportSnakeCase = Object.keys( cspReport ).reduce( ( report, key ) => {
+				report[ snakeCase( key ) ] = cspReport[ key ];
+				return report;
+			}, {} );
+
+			if ( calypsoEnv !== 'development' ) {
+				analytics.tracks.recordEvent( 'calypso_csp_report', cspReportSnakeCase, req );
+			}
+
+			res.status( 200 ).send( 'Got it!' );
+		},
+		// eslint-disable-next-line no-unused-vars
+		function( err, req, res, next ) {
+			res.status( 500 ).send( 'Bad report!' );
+		}
+	);
 
 	app.get( '/browsehappy', setUpRoute, function( req, res ) {
 		const wpcomRe = /^https?:\/\/[A-z0-9_-]+\.wordpress\.com$/;
@@ -519,10 +610,18 @@ module.exports = function() {
 			'X-Frame-Options': 'DENY',
 		} );
 
+		if ( calypsoEnv === 'development' ) {
+			return res.send(
+				renderJsx( 'support-user', {
+					authorized: true,
+					supportUser: req.query.support_user,
+					supportToken: req.query._support_token,
+				} )
+			);
+		}
+
 		if ( ! config.isEnabled( 'wpcom-user-bootstrap' ) || ! req.cookies.wordpress_logged_in ) {
-			return res.render( 'support-user', {
-				authorized: false,
-			} );
+			return res.send( renderJsx( 'support-user' ) );
 		}
 
 		// Maybe not logged in, note that you need docker to test this properly
@@ -538,26 +637,24 @@ module.exports = function() {
 					domain: '.wordpress.com',
 				} );
 
-				return res.render( 'support-user', {
-					authorized: false,
-				} );
+				return res.send( renderJsx( 'support-user' ) );
 			}
 
 			const activeFlags = get( data, 'meta.data.flags.active_flags', [] );
 
 			// A8C check
 			if ( ! includes( activeFlags, 'calypso_support_user' ) ) {
-				return res.render( 'support-user', {
-					authorized: false,
-				} );
+				return res.send( renderJsx( 'support-user' ) );
 			}
 
 			// Passed all checks, prepare support user session
-			return res.render( 'support-user', {
-				authorized: true,
-				supportUser: req.query.support_user,
-				supportToken: req.query._support_token,
-			} );
+			return res.send(
+				renderJsx( 'support-user', {
+					authorized: true,
+					supportUser: req.query.support_user,
+					supportToken: req.query._support_token,
+				} )
+			);
 		} );
 	} );
 

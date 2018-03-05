@@ -8,7 +8,7 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import merge from 'lodash/merge';
+import { merge } from 'lodash';
 
 describe( 'Head', () => {
 	let Head;

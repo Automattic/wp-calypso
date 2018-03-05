@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { extend } from 'lodash';
+import { extend, isArray } from 'lodash';
 import update from 'immutability-helper';
 import i18n from 'i18n-calypso';
 import config from 'config';
@@ -209,7 +209,10 @@ function isPaymentMethodEnabled( cart, method ) {
 		return false;
 	}
 
-	return cart.allowed_payment_methods.indexOf( methodClassName ) >= 0;
+	return (
+		isArray( cart.allowed_payment_methods ) &&
+		cart.allowed_payment_methods.indexOf( methodClassName ) >= 0
+	);
 }
 
 export {

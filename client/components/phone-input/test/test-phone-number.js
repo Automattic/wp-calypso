@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { equal, ok } from 'assert';
+import { equal, ok } from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { groupBy, pickBy, forIn } from 'lodash';
 
 /**

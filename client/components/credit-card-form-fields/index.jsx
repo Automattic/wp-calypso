@@ -8,13 +8,14 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { isEmpty, noop } from 'lodash';
+import { find, isEmpty, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
+import PaymentCountrySelect from 'components/payment-country-select';
+import { StateSelect, Input, HiddenInput } from 'my-sites/domains/components/form';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import { maskField, unmaskField, getCreditCardType } from 'lib/credit-card-details';
 import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
@@ -37,8 +38,7 @@ export class CreditCardFormFields extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = {
-			countryCode: '',
-			phoneCountryCode: '',
+			userSelectedPhoneCountryCode: '',
 		};
 	}
 
@@ -66,10 +66,14 @@ export class CreditCardFormFields extends React.Component {
 
 	getFieldValue = fieldName => this.props.card[ fieldName ] || '';
 
-	updateFieldValues( fieldName, nextValue ) {
-		const { onFieldChange } = this.props;
-
+	updateFieldValues = ( fieldName, nextValue ) => {
 		const previousValue = this.getFieldValue( fieldName );
+
+		if ( previousValue === nextValue ) {
+			return;
+		}
+
+		const { onFieldChange } = this.props;
 
 		const rawDetails = {
 			[ fieldName ]: unmaskField( fieldName, previousValue, nextValue ),
@@ -84,12 +88,12 @@ export class CreditCardFormFields extends React.Component {
 		}
 
 		onFieldChange( rawDetails, maskedDetails );
-	}
+	};
 
 	handlePhoneFieldChange = ( { value, countryCode } ) => {
 		this.setState(
 			{
-				phoneCountryCode: countryCode,
+				userSelectedPhoneCountryCode: countryCode,
 			},
 			() => {
 				this.updateFieldValues( 'phone-number', value );
@@ -98,36 +102,34 @@ export class CreditCardFormFields extends React.Component {
 	};
 
 	handleFieldChange = event => {
-		const { name: fieldName, value: nextValue, options, selectedIndex } = event.target;
-
-		const newState = {};
-
-		if ( fieldName === 'country' ) {
-			newState.countryCode = nextValue;
-			newState.countryName = options[ selectedIndex ].text;
-			if ( ! this.state.phoneCountryCode ) {
-				newState.phoneCountryCode = nextValue;
-			}
-		}
-
-		this.setState( newState, () => this.updateFieldValues( fieldName, nextValue ) );
+		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
 	shouldRenderEbanx() {
-		return isEbanxEnabledForCountry( this.state.countryCode );
+		return isEbanxEnabledForCountry( this.getFieldValue( 'country' ) );
 	}
 
 	renderEbanxFields() {
 		const { translate, countriesList } = this.props;
-		const { countryCode, phoneCountryCode, countryName } = this.state;
-
-		return [
-			<span key="ebanx-required-fields" className="credit-card-form-fields__info-text">
-				{ translate( 'The following fields are also required for payments in %(countryName)s', {
+		const { userSelectedPhoneCountryCode } = this.state;
+		const countryCode = this.getFieldValue( 'country' );
+		const countryData = find( countriesList.get(), { code: countryCode } );
+		const countryName = countryData && countryData.name ? countryData.name : '';
+		let ebanxMessage = '';
+		if ( countryName ) {
+			ebanxMessage = translate(
+				'The following fields are also required for payments in %(countryName)s',
+				{
 					args: {
 						countryName,
 					},
-				} ) }
+				}
+			);
+		}
+
+		return [
+			<span key="ebanx-required-fields" className="credit-card-form-fields__info-text">
+				{ ebanxMessage }
 			</span>,
 
 			this.createField( 'document', Input, {
@@ -142,7 +144,10 @@ export class CreditCardFormFields extends React.Component {
 			this.createField( 'phone-number', FormPhoneMediaInput, {
 				onChange: this.handlePhoneFieldChange,
 				countriesList: countriesList,
-				countryCode: phoneCountryCode,
+				// If the user has manually selected a country for the phone
+				// number, use that, but otherwise default this to the same
+				// country as the billing address.
+				countryCode: userSelectedPhoneCountryCode || countryCode,
 				label: translate( 'Phone' ),
 				key: 'phone-number',
 			} ),
@@ -224,9 +229,11 @@ export class CreditCardFormFields extends React.Component {
 						} ),
 					} ) }
 
-					{ this.createField( 'country', CountrySelect, {
+					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
 						countriesList: countriesList,
+						onChange: noop,
+						onCountrySelected: this.updateFieldValues,
 					} ) }
 
 					{ ebanxDetailsRequired && this.renderEbanxFields() }

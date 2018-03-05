@@ -23,6 +23,7 @@ import BasicWidget from 'woocommerce/components/basic-widget';
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
+import { getCountryData } from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
 	getCountriesWithStates,
@@ -124,6 +125,11 @@ class StoreLocationSetupView extends Component {
 
 		const address = this.state.address;
 		address[ addressKey ] = newValue;
+		// Did they change the country? Force an appropriate state default
+		if ( 'country' === addressKey ) {
+			const countryData = getCountryData( newValue );
+			address.state = countryData ? countryData.defaultState : '';
+		}
 
 		this.setState( { address, userBeganEditing: true } );
 	};

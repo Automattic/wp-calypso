@@ -13,9 +13,9 @@ import LoginBlock from 'blocks/login';
 
 const LoginExample = () => (
 	<React.Fragment>
-		<LoginBlock />
+		<LoginBlock disableAutoFocus />
 		<p />
-		<LoginBlock isJetpack />
+		<LoginBlock disableAutoFocus isJetpack />
 	</React.Fragment>
 );
 

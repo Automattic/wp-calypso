@@ -30,7 +30,6 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
 import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StatsFirstView from '../stats-first-view';
 import StatsNavigation from 'blocks/stats-navigation';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import SuccessBanner from '../activity-log-banner/success-banner';
@@ -455,9 +454,7 @@ class ActivityLog extends Component {
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
-		const today = moment()
-			.utc()
-			.startOf( 'day' );
+		const today = moment().startOf( 'day' );
 
 		// Content shown when there are no logs.
 		// The network request either finished with no events or is still ongoing.
@@ -481,7 +478,6 @@ class ActivityLog extends Component {
 				{ siteId &&
 					'active' === rewindState.state && <QueryRewindBackupStatus siteId={ siteId } /> }
 				<QuerySiteSettings siteId={ siteId } />
-				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
 				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
@@ -492,7 +488,7 @@ class ActivityLog extends Component {
 						icon="history"
 						href={
 							rewindState.canAutoconfigure
-								? `/settings/security/${ slug }`
+								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ slug }`
 								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ slug }`
 						}
 						title={ translate( 'Add site credentials' ) }
@@ -521,12 +517,7 @@ class ActivityLog extends Component {
 					<section className="activity-log__wrapper">
 						{ intoVisualGroups( moment, logs, this.getStartMoment(), this.applySiteOffset ).map(
 							( [ type, [ start, end ], events ] ) => {
-								const isToday = today.isSame(
-									end
-										.clone()
-										.utc()
-										.startOf( 'day' )
-								);
+								const isToday = today.isSame( end.clone().startOf( 'day' ) );
 
 								switch ( type ) {
 									case 'empty-day':
@@ -598,10 +589,9 @@ class ActivityLog extends Component {
 		const { siteId, context, rewindState } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
-		const rewindIsNotReady = includes(
-			[ 'uninitialized', 'awaitingCredentials' ],
-			rewindState.state
-		);
+		const rewindIsNotReady =
+			includes( [ 'uninitialized', 'awaitingCredentials' ], rewindState.state ) ||
+			'vp_can_transfer' === rewindState.reason;
 
 		return (
 			<Main wideLayout>

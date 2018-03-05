@@ -11,6 +11,7 @@ import deepFreeze from 'deep-freeze';
 import reducer, { credentialsReducer, settingsReducer } from '../reducer';
 import {
 	DESERIALIZE,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 	SERIALIZE,
@@ -94,6 +95,19 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove credentials when site connects successfully', () => {
+			const siteId = 12345678;
+			const original = deepFreeze( {
+				[ siteId ]: siteCredentials,
+			} );
+			const state = credentialsReducer( original, {
+				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+				siteId,
+			} );
+
+			expect( state ).toEqual( {} );
+		} );
+
 		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				[ 12345678 ]: siteCredentials,
@@ -128,8 +142,10 @@ describe( 'reducer', () => {
 
 	describe( 'settings', () => {
 		const settings = {
-			siteTitle: 'My awesome site',
-			siteDescription: 'Not just another amazing WordPress site',
+			onboarding: {
+				siteTitle: 'My awesome site',
+				siteDescription: 'Not just another amazing WordPress site',
+			},
 		};
 
 		test( 'should default to an empty object', () => {
@@ -171,8 +187,10 @@ describe( 'reducer', () => {
 		test( 'should add new settings for existing sites', () => {
 			const siteId = 12345678;
 			const newSettings = {
-				...settings,
-				siteType: 'business',
+				onboarding: {
+					...settings.onboarding,
+					siteType: 'business',
+				},
 			};
 			const initialState = deepFreeze( {
 				[ siteId ]: settings,
@@ -193,9 +211,12 @@ describe( 'reducer', () => {
 		test( 'should keep non-updated settings for sites', () => {
 			const siteId = 12345678;
 			const newSettings = {
-				...settings,
-				siteDescription: 'A new description',
+				onboarding: {
+					...settings.onboarding,
+					siteDescription: 'A new description',
+				},
 			};
+
 			const initialState = deepFreeze( {
 				[ siteId ]: settings,
 				[ 87654321 ]: settings,
@@ -234,8 +255,10 @@ describe( 'reducer', () => {
 		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				[ 12345678 ]: {
-					...settings,
-					siteTitle: {},
+					onboarding: {
+						...settings.onboarding,
+						siteTitle: {},
+					},
 				},
 			} );
 			const state = settingsReducer( original, { type: DESERIALIZE } );

@@ -139,7 +139,7 @@ describe( 'reducer', () => {
 				{ type: SERIALIZE }
 			);
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should never load persisted state', () => {

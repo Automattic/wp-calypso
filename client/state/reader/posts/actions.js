@@ -2,41 +2,22 @@
 /**
  * External Dependencies
  */
-import { filter, forEach, has, isUndefined, map, omit, partition, reject } from 'lodash';
+import { v4 as uuid } from 'uuid';
+import { filter, forEach, compact, partition, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE } from 'state/action-types';
-import analytics from 'lib/analytics';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
+import analytics, { mc } from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
-import Dispatcher from 'dispatcher';
-import { action } from 'lib/feed-post-store/constants';
 import wpcom from 'lib/wp';
+import { keyForPost } from 'lib/feed-stream-store/post-key';
+import { pageViewForPost } from 'reader/stats';
+import { hasPostBeenSeen } from './selectors';
 
 function trackRailcarRender( post ) {
 	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );
-}
-
-export function postToKey( post ) {
-	if ( post && post.feed_ID && post.feed_item_ID ) {
-		return {
-			feedId: post.feed_ID,
-			postId: post.feed_item_ID,
-		};
-	}
-
-	if ( post.is_external ) {
-		return {
-			feedId: post.feed_ID,
-			postId: post.ID,
-		};
-	}
-
-	return {
-		postId: post.ID,
-		blogId: post.site_ID,
-	};
 }
 
 function fetchForKey( postKey ) {
@@ -49,40 +30,10 @@ function fetchForKey( postKey ) {
 	return wpcom.undocumented().readFeedPost( postKey );
 }
 
-export function fetchPost( postKey ) {
-	return dispatch =>
-		fetchForKey( postKey ).then(
-			data => dispatch( receivePosts( [ data ] ) ),
-			err =>
-				dispatch( {
-					type: READER_POSTS_RECEIVE,
-					posts: [
-						{
-							feed_ID: postKey.feedId,
-							ID: postKey.postId,
-							site_ID: postKey.blogId,
-							is_external: ! postKey.blogId,
-							is_error: true,
-							global_ID: `${ postKey.feedId || 'na' }-${ postKey.blogId || 'na' }-${
-								postKey.postId
-							}`,
-							error: err,
-						},
-					],
-				} )
-		);
-}
-
-export function reloadPost( post ) {
-	return dispatch => {
-		// keep track of any railcars we might have
-		const railcar = post.railcar;
-		return fetchForKey( postToKey( post ) ).then( data => {
-			data.railcar = railcar;
-			return dispatch( receivePosts( [ data ] ) );
-		} );
-	};
-}
+// helper that hides promise rejections so they return successfully with null instead of rejecting
+// this is so that a failure within a slow run of normalization doesn't stop successful posts
+// from being dispatched
+const hideRejections = promise => promise.catch( () => null );
 
 /**
  * Returns an action object to signal that post objects have been received.
@@ -90,52 +41,86 @@ export function reloadPost( post ) {
  * @param  {Array}  posts Posts received
  * @return {Object} Action object
  */
-export function receivePosts( posts ) {
-	return function( dispatch ) {
-		if ( ! posts ) {
-			return Promise.resolve( [] );
-		}
+export const receivePosts = posts => dispatch => {
+	if ( ! posts ) {
+		return Promise.resolve( [] );
+	}
 
-		const withoutUndefined = reject( posts, isUndefined );
-		const normalizedPosts = map( withoutUndefined, runFastRules );
+	const [ toReload, toProcess ] = partition( posts, '_should_reload' );
+	toReload.forEach( post => dispatch( reloadPost( post ) ) );
 
-		const [ postsToReload, postsToProcess ] = partition( normalizedPosts, '_should_reload' );
-		forEach( postsToReload, post => {
-			delete post._should_reload;
-			dispatch( reloadPost( post ) );
-		} );
+	const normalizedPosts = compact( toProcess ).map( runFastRules );
 
-		forEach( map( postsToProcess, runSlowRules ), slowPromise => {
-			slowPromise.then( post => {
-				dispatch( {
-					type: READER_POSTS_RECEIVE,
-					posts: [ post ],
-				} );
+	// save the posts after running the fast rules
+	dispatch( {
+		type: READER_POSTS_RECEIVE,
+		posts: normalizedPosts,
+	} );
 
-				// keep the old feed post store in sync
-				Dispatcher.handleServerAction( {
-					data: post,
-					type: action.RECEIVE_NORMALIZED_FEED_POST,
-				} );
-			} );
-		} );
-
+	// also save them after running the slow rules
+	Promise.all( normalizedPosts.map( runSlowRules ).map( hideRejections ) ).then( processedPosts =>
 		dispatch( {
 			type: READER_POSTS_RECEIVE,
-			posts: normalizedPosts,
-		} );
+			posts: compact( processedPosts ), // prune out the "null" rejections
+		} )
+	);
 
-		// keep the old feed post store in sync
-		forEach( normalizedPosts, post => {
-			const postForFlux = has( post, '_should_reload' ) ? omit( post, '_should_reload' ) : post;
-			Dispatcher.handleServerAction( {
-				data: postForFlux,
-				type: action.RECEIVE_NORMALIZED_FEED_POST,
-			} );
-		} );
+	forEach( filter( normalizedPosts, 'railcar' ), trackRailcarRender );
 
-		forEach( filter( postsToProcess, 'railcar' ), trackRailcarRender );
+	// TODO: resolve weird dependency between related-posts and the return here
+	return Promise.resolve( normalizedPosts );
+};
 
-		return Promise.resolve( normalizedPosts );
+export const fetchPost = postKey => dispatch => {
+	return fetchForKey( postKey )
+		.then( data => dispatch( receivePosts( [ data ] ) ) )
+		.catch( error => dispatch( receiveErrorForPostKey( error, postKey ) ) );
+};
+
+function receiveErrorForPostKey( error, postKey ) {
+	return {
+		type: READER_POSTS_RECEIVE,
+		posts: [
+			{
+				feed_ID: postKey.feedId,
+				ID: postKey.postId,
+				site_ID: postKey.blogId,
+				is_external: ! postKey.blogId,
+				global_ID: uuid(),
+				is_error: true,
+				error,
+			},
+		],
 	};
 }
+
+export function reloadPost( post ) {
+	return function( dispatch ) {
+		// keep track of any railcars we might have
+		const railcar = post.railcar;
+		const postKey = keyForPost( post );
+		fetchForKey( postKey ).then( data => {
+			data.railcar = railcar;
+			dispatch( receivePosts( [ data ] ) );
+		} );
+	};
+}
+
+export const markPostSeen = ( post, site ) => ( dispatch, getState ) => {
+	if ( ! post || hasPostBeenSeen( getState(), post.global_ID ) ) {
+		return;
+	}
+
+	dispatch( { type: READER_POST_SEEN, payload: { post, site } } );
+
+	if ( post.site_ID ) {
+		// they have a site ID, let's try to push a page view
+		const isAdmin = !! get( site, 'capabilities.manage_options', false );
+		if ( site && site.ID ) {
+			if ( site.is_private || ! isAdmin ) {
+				pageViewForPost( site.ID, site.URL, post.ID, site.is_private );
+				mc.bumpStat( 'reader_pageviews', site.is_private ? 'private_view' : 'public_view' );
+			}
+		}
+	}
+};

@@ -15,6 +15,7 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
+import OrgCredentialsForm from './remote-credentials';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
@@ -57,16 +58,8 @@ const analyticsPageTitleByType = {
 	pro: 'Jetpack Install Pro',
 };
 
-const removeSidebar = context => {
-	context.store.dispatch(
-		setSection(
-			{ name: 'jetpackConnect' },
-			{
-				hasSidebar: false,
-			}
-		)
-	);
-};
+const removeSidebar = context =>
+	context.store.dispatch( setSection( null, { hasSidebar: false } ) );
 
 const jetpackNewSiteSelector = context => {
 	removeSidebar( context );
@@ -164,6 +157,8 @@ export function connect( context, next ) {
 	debug( 'entered connect flow with params %o', params );
 
 	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
 
 	analytics.pageView.record( pathname, analyticsPageTitle );
@@ -176,6 +171,8 @@ export function connect( context, next ) {
 		path,
 		type,
 		url: query.url,
+		ctaId: query.cta_id, // origin tracking params
+		ctaFrom: query.cta_from,
 	} );
 	next();
 }
@@ -218,6 +215,11 @@ export function signupForm( context, next ) {
 	} else {
 		context.primary = <NoDirectAccessError />;
 	}
+	next();
+}
+
+export function credsForm( context, next ) {
+	context.primary = <OrgCredentialsForm />;
 	next();
 }
 

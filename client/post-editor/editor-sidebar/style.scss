@@ -1,12 +1,16 @@
 .editor-sidebar {
-	@extend .sidebar;
+    position: fixed;
+    top: 46px;
+    right: -$sidebar-width-max;
+    bottom: 0px;
+	display: flex;
+	flex-direction: column;
 	z-index: z-index( 'root', '.editor-sidebar' );
 	background: $gray-lighten-30;
 	border-left: 1px solid darken( $sidebar-bg-color, 5% );
 	border-top: 1px solid darken( $sidebar-bg-color, 5% );
 	border-right: none;
 	box-sizing: border-box;
-	right: $sidebar-width-max;
 	left: auto;
 	transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 	overflow-x: hidden;
@@ -41,30 +45,40 @@
 	}
 }
 
-.editor-sidebar .sidebar__footer .button {
-	&.inline-help {
-		border-radius: 0;
-		border-left: 1px solid #c8d7e1;
-		flex: 0 1 60px;
-		margin-right: 0;
-		margin-left: auto;
-		outline: 0;
+.editor-sidebar .sidebar__footer {
+	align-items: center;
+	padding: 0;
+	border-top: 1px solid darken( $sidebar-bg-color, 10% );
+	margin: auto 0 0;
+	display: flex;
+	flex-direction: row;
+	padding-left: 10px;
 
-		@include breakpoint( "<660px" ) {
-			flex: 0 1 56px;
+	.button {
+		&.inline-help {
+			border-radius: 0;
+			border-left: 1px solid #c8d7e1;
+			flex: 0 1 60px;
+			margin-right: 0;
+			margin-left: auto;
+			outline: 0;
+
+			@include breakpoint( "<660px" ) {
+				flex: 0 1 56px;
+			}
+
+			.gridicon {
+				margin: 0 auto;
+				float: none;
+			}
 		}
 
-		.gridicon {
-			margin: 0 auto;
-			float: none;
-		}
-	}
+		&.is-active {
+			background: $blue-medium;
 
-	&.is-active {
-		background: $blue-medium;
-
-		.gridicon {
-			fill: $white;
+			.gridicon {
+				fill: $white;
+			}
 		}
 	}
 }

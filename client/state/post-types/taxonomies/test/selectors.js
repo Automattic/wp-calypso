@@ -119,16 +119,16 @@ describe( 'selectors', () => {
 						taxonomies: {
 							items: {
 								2916284: {
-									post: {
-										category: {
+									post: [
+										{
 											name: 'category',
 											label: 'Categories',
 										},
-										post_tag: {
+										{
 											name: 'post_tag',
 											label: 'Tags',
 										},
-									},
+									],
 								},
 							},
 						},

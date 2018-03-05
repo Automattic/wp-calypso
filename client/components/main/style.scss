@@ -2,7 +2,6 @@
 	margin: auto;
 	max-width: 720px;
 	z-index: z-index( 'root', '.main' );
-	backface-visibility: hidden;
 
 	// Themes is a great example of using all this new space ;)
 	&.themes {
@@ -25,11 +24,6 @@
 
 	&.is-wide-layout {
 		max-width: 1040px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		backface-visibility: hidden;
-		perspective: 1000;
 	}
 }
 

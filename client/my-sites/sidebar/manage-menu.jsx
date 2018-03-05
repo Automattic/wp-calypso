@@ -32,6 +32,7 @@ import {
 } from 'state/sites/selectors';
 import { areAllSitesSingleUser, canCurrentUser } from 'state/selectors';
 import { itemLinkMatches } from './utils';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ManageMenu extends PureComponent {
 	static propTypes = {
@@ -126,7 +127,10 @@ class ManageMenu extends PureComponent {
 		if ( ! includes( [ 'post', 'page' ], postType ) ) {
 			analytics.mc.bumpStat( 'calypso_publish_menu_click', postType );
 		}
-
+		// Tracks doesn't like dashes (as in 'jetpack-portfolio', for example)
+		this.props.recordTracksEvent(
+			'calypso_mysites_sidebar_' + postType.replace( /-/g, '_' ) + '_clicked'
+		);
 		this.props.onNavigate();
 	};
 
@@ -206,18 +210,31 @@ class ManageMenu extends PureComponent {
 						className="sidebar__button"
 						site={ site }
 						href={ menuItem.buttonLink }
+						onClick={ this.trackSidebarButtonClick( 'media' ) }
 					>
 						{ this.props.translate( 'Add' ) }
 					</MediaLibraryUploadButton>
 				) }
 				{ menuItem.name !== 'media' && (
-					<SidebarButton href={ menuItem.buttonLink } preloadSectionName="post-editor">
+					<SidebarButton
+						onClick={ this.trackSidebarButtonClick( menuItem.name ) }
+						href={ menuItem.buttonLink }
+						preloadSectionName="post-editor"
+					>
 						{ this.props.translate( 'Add' ) }
 					</SidebarButton>
 				) }
 			</SidebarItem>
 		);
 	}
+
+	trackSidebarButtonClick = name => {
+		return () => {
+			this.props.recordTracksEvent(
+				'calypso_mysites_sidebar_' + name.replace( /-/g, '_' ) + '_sidebar_button_clicked'
+			);
+		};
+	};
 
 	getCustomMenuItems() {
 		const customPostTypes = omit( this.props.postTypes, [ 'post', 'page' ] );
@@ -297,7 +314,9 @@ export default connect(
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 	} ),
-	null,
+	{
+		recordTracksEvent,
+	},
 	null,
 	{ areStatePropsEqual: compareProps( { ignore: [ 'canCurrentUserFn', 'getNewPostPathFn' ] } ) }
 )( localize( ManageMenu ) );

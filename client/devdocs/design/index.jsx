@@ -24,6 +24,7 @@ import SearchCard from 'components/search-card';
  * Docs examples
  */
 import Accordions from 'components/accordion/docs/example';
+import BackButton from 'components/back-button/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
@@ -45,6 +46,7 @@ import ExternalLink from 'components/external-link/docs/example';
 import FAQ from 'components/faq/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
+import FocusableExample from 'components/focusable/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
 import FormFields from 'components/forms/docs/example';
@@ -138,6 +140,7 @@ class DesignAssets extends React.Component {
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
 					/>
+					<BackButton readmeFilePath="back-button" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
@@ -159,6 +162,7 @@ class DesignAssets extends React.Component {
 					<FAQ readmeFilePath="faq" />
 					<FeatureGate readmeFilePath="feature-example" />
 					<FilePickers readmeFilePath="file-picker" />
+					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />

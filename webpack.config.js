@@ -2,6 +2,7 @@
 /**
  **** WARNING: No ES6 modules here. Not transpiled! ****
  */
+/* eslint-disable import/no-nodejs-modules */
 
 /**
  * External dependencies
@@ -173,21 +174,14 @@ const webpackConfig = {
 			getAliasesForExtensions()
 		),
 	},
-	node: {
-		console: false,
-		process: true,
-		global: true,
-		Buffer: true,
-		__filename: 'mock',
-		__dirname: 'mock',
-		fs: 'empty',
-		crypto: false,
-	},
+	node: false,
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
+			global: 'window',
 		} ),
+		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
@@ -248,6 +242,10 @@ if ( calypsoEnv === 'desktop' ) {
 	// NOTE: order matters. vendor must be before manifest.
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
+		new webpack.optimize.CommonsChunkPlugin( {
+			async: 'tinymce',
+			minChunks: ( { resource } ) => resource && /node_modules[\/\\]tinymce/.test( resource ),
+		} ),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } ),
 	] );
 

@@ -73,15 +73,51 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	domainSuggestionTestV5: {
-		datestamp: '20180204',
+	domainSuggestionTestV6: {
+		datestamp: '20180301',
 		variations: {
 			group_0: 1, // Default group
 			group_1: 1000,
 			group_2: 1000,
 			group_3: 1000,
+			group_4: 1000,
 		},
 		defaultVariation: 'group_0',
+		allowExistingUsers: true,
+	},
+	minimizeFreePlan: {
+		datestamp: '20180219',
+		variations: {
+			original: 50,
+			minimized: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	upgradePricingDisplay: {
+		datestamp: '20180213',
+		variations: {
+			original: 50,
+			modified: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	redesignedSidebarBanner: {
+		datestamp: '20180222',
+		variations: {
+			newBanner: 50,
+			oldBanner: 50,
+		},
+		defaultVariation: 'oldBanner',
+	},
+	siteGoalsShuffle: {
+		datestamp: '20180214',
+		variations: {
+			control: 50,
+			variant: 50,
+		},
+		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 };

@@ -70,7 +70,7 @@ describe( 'streams combined reducer', () => {
 	const loadAction = { type: DESERIALIZE };
 
 	const validState = deepfreeze( {
-		items: { following: [], 'feed:123': [ {}, {} ] },
+		items: { following: [ {} ], 'feed:123': [ {}, {} ] },
 		selected: { following: 0, 'feed:123': 42, elmo: 'is red' },
 	} );
 
@@ -93,8 +93,8 @@ describe( 'streams combined reducer', () => {
 	} );
 
 	it( 'should never serialize the selected data', () => {
-		expect( streamsReducer( validState, saveAction ).selected ).toEqual( {} );
-		expect( streamsReducer( invalidState, saveAction ).selected ).toEqual( {} );
+		expect( streamsReducer( validState, saveAction ).selected ).toBeUndefined();
+		expect( streamsReducer( invalidState, saveAction ).selected ).toBeUndefined();
 	} );
 
 	it( 'should never deserialize the selected data', () => {

@@ -29,6 +29,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
 import FormTextInput from 'components/forms/form-text-input';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
+import { getCountryData } from 'woocommerce/lib/countries';
 // @todo Update this to use our store countries list
 import { forPayments as countriesList } from 'lib/countries-list';
 
@@ -148,7 +149,8 @@ class CustomerAddressDialog extends Component {
 			const newState = { address: { ...address, [ name ]: value } };
 			// If country changed, we should also reset the state & phoneCountry
 			if ( 'country' === name ) {
-				newState.address.state = '';
+				const countryData = getCountryData( value );
+				newState.address.state = countryData ? countryData.defaultState : '';
 				newState.phoneCountry = value;
 			}
 			return newState;

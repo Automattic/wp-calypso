@@ -51,6 +51,7 @@ import SocialLoginForm from './social';
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
+		disableAutoFocus: PropTypes.bool,
 		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		getAuthAccountType: PropTypes.func.isRequired,
@@ -80,29 +81,32 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
+		const { disableAutoFocus } = this.props;
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			this.usernameOrEmail && this.usernameOrEmail.focus();
+			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
 		} );
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { requestError } = this.props;
+		const { disableAutoFocus, requestError } = this.props;
 
 		if ( prevProps.requestError || ! requestError ) {
 			return;
 		}
 
 		if ( requestError.field === 'password' ) {
-			defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && defer( () => this.password && this.password.focus() );
 		}
 
 		if ( requestError.field === 'usernameOrEmail' ) {
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
+		const { disableAutoFocus } = this.props;
+
 		if (
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
 			nextProps.socialAccountIsLinking
@@ -115,11 +119,11 @@ export class LoginForm extends Component {
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
 			this.setState( { password: '' } );
 
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
-			defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && defer( () => this.password && this.password.focus() );
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
@@ -293,7 +297,7 @@ export class LoginForm extends Component {
 										: this.props.translate( 'Change Username' ) }
 								</a>
 							) : (
-								this.props.translate( 'Email Address' )
+								this.props.translate( 'Email Address or Username' )
 							) }
 						</label>
 

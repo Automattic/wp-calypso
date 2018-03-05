@@ -7,7 +7,6 @@
 import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:store-transactions' );
-import { Readable } from 'stream';
 import inherits from 'inherits';
 
 /**
@@ -23,7 +22,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
 import wp from 'lib/wp';
-import { isEbanxEnabledForCountry } from 'lib/credit-card-details/ebanx';
+import { isEbanxEnabledForCountry, translatedEbanxError } from 'lib/credit-card-details/ebanx';
 
 const wpcom = wp.undocumented();
 
@@ -37,8 +36,8 @@ const wpcom = wp.undocumented();
  * @param {object} domainDetails - Optional domain registration details if the shopping cart contains a domain registration product
  *   transaction.
  */
-export function submit( params ) {
-	return new TransactionFlow( params );
+export function submit( params, onStep ) {
+	return new TransactionFlow( params, onStep );
 }
 
 function ValidationError( code, message ) {
@@ -47,29 +46,9 @@ function ValidationError( code, message ) {
 }
 inherits( ValidationError, Error );
 
-function TransactionFlow( initialData ) {
-	Readable.call( this, { objectMode: true } );
+function TransactionFlow( initialData, onStep ) {
 	this._initialData = initialData;
-	this._hasStarted = false;
-}
-inherits( TransactionFlow, Readable );
-
-/**
- * Pushes new data onto the stream. Whenever someone wants to read from the
- * stream of steps, this method will get called because we inherited the
- * functionality of `Readable`.
- *
- * Our goal is to capture the flow of the asynchronous callback functions as a
- * linear sequence of steps. When we get the first request for data, we begin
- * the chain of asynchronous functions. On future requests for data, there is
- * no need to start another asynchronous process, so we just return immediately
- * while the first one finises.
- */
-TransactionFlow.prototype._read = function() {
-	if ( this._hasStarted ) {
-		return false;
-	}
-	this._hasStarted = true;
+	this._onStep = onStep;
 
 	const paymentMethod = this._initialData.payment.paymentMethod;
 	const paymentHandler = this._paymentHandlers[ paymentMethod ];
@@ -78,7 +57,7 @@ TransactionFlow.prototype._read = function() {
 	}
 
 	paymentHandler.call( this );
-};
+}
 
 TransactionFlow.prototype._pushStep = function( options ) {
 	const defaults = {
@@ -87,7 +66,7 @@ TransactionFlow.prototype._pushStep = function( options ) {
 		timestamp: Date.now(),
 	};
 
-	this.push( Object.assign( defaults, options ) );
+	this._onStep( Object.assign( defaults, options ) );
 };
 
 TransactionFlow.prototype._paymentHandlers = {
@@ -184,7 +163,6 @@ TransactionFlow.prototype._createCardToken = function( callback ) {
 };
 
 TransactionFlow.prototype._submitWithPayment = function( payment ) {
-	const onComplete = this.push.bind( this, null ); // End the stream when the transaction has finished
 	const transaction = {
 		cart: omit( this._initialData.cart, [ 'messages' ] ), // messages contain reference to DOMNode
 		domain_details: this._initialData.domainDetails,
@@ -193,26 +171,21 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 
 	this._pushStep( { name: SUBMITTING_WPCOM_REQUEST } );
 
-	wpcom.transactions(
-		'POST',
-		transaction,
-		function( error, data ) {
-			if ( error ) {
-				return this._pushStep( {
-					name: RECEIVED_WPCOM_RESPONSE,
-					error: error,
-					last: true,
-				} );
-			}
-
-			this._pushStep( {
+	wpcom.transactions( 'POST', transaction, ( error, data ) => {
+		if ( error ) {
+			return this._pushStep( {
 				name: RECEIVED_WPCOM_RESPONSE,
-				data: data,
+				error,
 				last: true,
 			} );
-			onComplete();
-		}.bind( this )
-	);
+		}
+
+		this._pushStep( {
+			name: RECEIVED_WPCOM_RESPONSE,
+			data,
+			last: true,
+		} );
+	} );
 };
 
 function createPaygateToken( requestType, cardDetails, callback ) {
@@ -294,9 +267,7 @@ function createEbanxToken( requestType, cardDetails, callback ) {
 			ebanxResponse.data.paymentMethod = 'WPCOM_Billing_Ebanx';
 			callback( null, ebanxResponse.data );
 		} else {
-			const errorMessage =
-				ebanxResponse.error.err.status_message || ebanxResponse.error.err.message;
-			callback( new Error( 'Credit card Error: ' + errorMessage ) );
+			callback( translatedEbanxError( ebanxResponse.error.err ) );
 		}
 	}
 }

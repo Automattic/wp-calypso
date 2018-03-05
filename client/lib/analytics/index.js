@@ -105,12 +105,7 @@ loadScript( '//stats.wp.com/w.js?56', function( error ) {
 } ); // W_JS_VER
 
 // Google Analytics
-
-// Load GA only if enabled in the config.
 // Note that doNotTrack() and isPiiUrl() can change at any time so they shouldn't be stored in a variable.
-if ( config( 'google_analytics_enabled' ) ) {
-	loadScript( '//www.google-analytics.com/analytics.js' );
-}
 
 /**
  * Returns whether Google Analytics is allowed.

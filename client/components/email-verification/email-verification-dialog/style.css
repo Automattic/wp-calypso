@@ -46,6 +46,6 @@
 }
 
 .email-verification-dialog__confirmation-dialog-spinner {
-	display: inline-block;
+	display: inline-flex;
 	vertical-align: -25%;
 }

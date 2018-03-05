@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import EventEmitter from 'events/';
+import EventEmitter from 'events';
 import { forEach, map, mapValues, values } from 'lodash';
 
 /**

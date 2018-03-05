@@ -82,7 +82,7 @@ export default class Step extends Component {
 			this.setStepSection( this.context, { init: true } );
 			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context );
-			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
+			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
 			this.setStepPosition( this.props );
 			this.safeSetState( { initialized: true } );
 		} );
@@ -91,7 +91,7 @@ export default class Step extends Component {
 	componentDidMount() {
 		this.mounted = true;
 		this.wait( this.props, this.context ).then( () => {
-			global.window.addEventListener( 'resize', this.onScrollOrResize );
+			window.addEventListener( 'resize', this.onScrollOrResize );
 		} );
 	}
 
@@ -101,7 +101,7 @@ export default class Step extends Component {
 			this.quitIfInvalidRoute( nextProps, nextContext );
 			this.skipIfInvalidContext( nextProps, nextContext );
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
-			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
+			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
 			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 			const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 			this.setStepPosition( nextProps, shouldScrollTo );
@@ -112,7 +112,7 @@ export default class Step extends Component {
 		this.mounted = false;
 		this.safeSetState( { initialized: false } );
 
-		global.window.removeEventListener( 'resize', this.onScrollOrResize );
+		window.removeEventListener( 'resize', this.onScrollOrResize );
 		if ( this.scrollContainer ) {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}

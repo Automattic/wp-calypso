@@ -1,12 +1,5 @@
-.is-group-me .sidebar {
-	padding-top: 16px;
-}
-
-.me-sidebar__signout {
+.sidebar__me-signout {
 	flex-shrink: 0;	// these are required for the flexed sidebar to not implode in Safari
-}
-
-.me-sidebar__signout {
 	display: flex;
 	justify-content: center;
 	margin: 0 0 16px;
@@ -14,6 +7,7 @@
 
 .sidebar .profile-gravatar {
 	flex-shrink: 0;
+	margin-top: 16px;
 }
 
 // Hide Support Chat link, the item intentionally only exists for mobile users, and is accessible from the footer

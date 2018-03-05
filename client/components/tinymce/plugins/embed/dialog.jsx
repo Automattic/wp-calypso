@@ -305,7 +305,7 @@ export class EmbedDialog extends React.Component {
 				<div className="embed__preview-container">
 					{ ( isLoading || isError ) && (
 						<div className={ statusClassNames }>
-							{ isLoading && <Spinner className="embed__loading-spinner" size={ 20 } /> }
+							{ isLoading && <Spinner /> }
 							{ isError && (
 								<div className="embed__status-error">
 									{ this.getError( cachedMarkup.renderMarkup ) }

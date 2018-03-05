@@ -1,128 +1,31 @@
-@keyframes rotate-spinner__right {
-	0% {
-		transform: rotate( 0deg );
-	}
-	25% {
-		transform: rotate( 180deg );
-	}
-	50% {
-		transform: rotate( 180deg );
-	}
-	75% {
-		transform: rotate( 360deg );
-	}
+@keyframes rotate-spinner {
 	100% {
 		transform: rotate( 360deg );
 	}
 }
 
-@keyframes rotate-spinner__left {
-	0% {
-		transform: rotate( 0deg );
-	}
-	25% {
-		transform: rotate( 0deg );
-	}
-	50% {
-		transform: rotate( 180deg );
-	}
-	75% {
-		transform: rotate( 180deg );
-	}
-	100% {
-		transform: rotate( 360deg );
-	}
+.spinner {
+	display: flex;
+	align-items: center;
 }
 
-.spinner.is-fallback {
-	position: relative;
-	border-radius: 100%;
-	background-color: $gray-lighten-20;
-
-	&::before,
-	&::after {
-		content: '';
-		position: absolute;
-		background-color: $white;
-		border-radius: 50%;
-	}
-
-	&::before {
-		width: 90%;
-		height: 90%;
-		top: 5%;
-		left: 5%;
-	}
-
-	&::after {
-		width: 70%;
-		height: 70%;
-		top: 15%;
-		left: 15%;
-	}
-}
-
-.spinner__image {
-	display: block;
-}
-
-.spinner__border {
-	fill: $gray-lighten-20;
-}
-
-.spinner__progress {
+.spinner__outer, .spinner__inner {
+	margin: auto;
+	box-sizing: border-box;
+  border: 0.1em solid transparent;
+	border-radius: 50%;
 	animation: 3s linear infinite;
-	transform-origin: 50px 50px;
-	fill: $blue-medium;
+	animation-name: rotate-spinner;
 }
 
-.spinner.is-fallback .spinner__progress {
-	position: absolute;
-	overflow: hidden;
-	width: 50%;
-	height: 100%;
-	animation: none;
-
-	&::before {
-		content: '';
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		animation: 3s linear infinite;
-		border-radius: 9999px;
-		background-color: $blue-medium;
-		fill: none;
-	}
-
-	&.is-left {
-		left: 0;
-
-		&::before {
-			left: 100%;
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-			transform-origin: 0 50%;
-		}
-	}
-
-	&.is-right {
-		left: 50%;
-
-		&::before {
-			left: -100%;
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-			transform-origin: 100% 50%;
-		}
-	}
+.spinner__outer {
+	border-top-color: $blue-medium;
 }
 
-.spinner__progress.is-left,
-.spinner.is-fallback .spinner__progress.is-left::before {
-	animation-name: rotate-spinner__left;
-}
-
-.spinner__progress.is-right,
-.spinner.is-fallback .spinner__progress.is-right::before {
-	animation-name: rotate-spinner__right;
+.spinner__inner {
+	width: 100%;
+  height: 100%;
+	border-top-color: $blue-medium;
+  border-right-color: $blue-medium;
+  opacity: 0.4;
 }

@@ -8,7 +8,7 @@ import React from 'react';
 import { parse as parseUrl } from 'url';
 import page from 'page';
 import qs from 'qs';
-import { map } from 'lodash';
+import { includes, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,12 +22,13 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analyt
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
 
 const enhanceContextWithLogin = context => {
-	const { path, params: { flow, twoFactorAuthType, socialService } } = context;
+	const { path, params: { flow, isJetpack, socialService, twoFactorAuthType } } = context;
 
 	context.cacheQueryKeys = [ 'client_id' ];
 
 	context.primary = (
 		<WPLogin
+			isJetpack={ isJetpack === 'jetpack' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
@@ -112,8 +113,8 @@ export function magicLoginUse( context, next ) {
 }
 
 export function redirectDefaultLocale( context, next ) {
-	// only redirect `/log-in/en` to `/log-in`
-	if ( context.pathname !== '/log-in/en' ) {
+	// Only handle simple routes
+	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
 		return next();
 	}
 
@@ -132,5 +133,27 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	context.redirect( '/log-in' );
+	if ( context.params.isJetpack === 'jetpack' ) {
+		context.redirect( '/log-in/jetpack' );
+	} else {
+		context.redirect( '/log-in' );
+	}
+}
+
+export function redirectJetpack( context, next ) {
+	const { isJetpack } = context.params;
+	const { redirect_to } = context.query;
+
+	/**
+	 * Send arrivals from the jetpack connect process (when site user email matches
+	 * a wpcom account) to the jetpack branded login.
+	 *
+	 * A direct redirect to /log-in/jetpack is not currently done at jetpack.wordpress.com
+	 * because the iOS app relies on seeing a request to /log-in$ to show its
+	 * native credentials form.
+	 */
+	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
+	}
+	next();
 }

@@ -44,7 +44,11 @@ class Chart extends React.Component {
 		this.resize = throttle( this.resize, 400 );
 		window.addEventListener( 'resize', this.resize );
 
-		this.resize( this.props );
+		const { data, loading } = this.props;
+
+		if ( data && data.length && ! loading ) {
+			this.resize( this.props );
+		}
 	}
 
 	componentWillUnmount() {

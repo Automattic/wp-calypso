@@ -93,7 +93,6 @@ describe( 'selectors', () => {
 				includedDomain: undefined,
 				isCancelable: false,
 				isDomainRegistration: false,
-				isRedeemable: false,
 				isRefundable: false,
 				isRenewable: false,
 				isRenewal: false,

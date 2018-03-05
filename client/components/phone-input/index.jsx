@@ -243,6 +243,7 @@ class PhoneInput extends React.PureComponent {
 					name={ this.props.name }
 					ref={ this.setNumberInputRef }
 					type="tel"
+					disabled={ this.props.disabled }
 					className={ classnames( 'phone-input__number-input', {
 						'is-error': this.props.isError,
 					} ) }
@@ -255,6 +256,7 @@ class PhoneInput extends React.PureComponent {
 							onChange={ this.handleCountrySelection }
 							value={ this.getCountry().isoCode }
 							countriesList={ this.props.countriesList }
+							disabled={ this.props.disabled }
 						/>
 						<CountryFlag countryCode={ this.getCountry().isoCode.toLowerCase() } />
 					</div>

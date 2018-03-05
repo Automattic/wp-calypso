@@ -11,37 +11,90 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import ConnectIntro from '../connect-intro';
+import ConnectSuccess from '../connect-success';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
+import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Tile from 'components/tile-grid/tile';
-import TileGrid from 'components/tile-grid';
+import QuerySites from 'components/data/query-sites';
+import { getJetpackOnboardingPendingSteps } from 'state/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingContactFormStep extends React.PureComponent {
+	componentDidUpdate() {
+		this.maybeAddContactForm();
+	}
+
+	maybeAddContactForm() {
+		const { action, hasContactForm, isConnected, isRequestingSettings, stepsPending } = this.props;
+		const isPending = get( stepsPending, STEPS.CONTACT_FORM );
+
+		if (
+			! isPending &&
+			! isRequestingSettings &&
+			isConnected &&
+			hasContactForm === false &&
+			action === 'add_contact_form'
+		) {
+			this.addContactForm();
+		}
+	}
+
 	handleAddContactForm = () => {
-		const { siteId } = this.props;
 		this.props.recordJpoEvent( 'calypso_jpo_contact_form_clicked' );
 
-		this.props.saveJetpackOnboardingSettings( siteId, {
-			addContactForm: true,
-		} );
+		if ( ! this.props.isConnected ) {
+			return;
+		}
+
+		this.addContactForm();
 	};
 
-	render() {
-		const { basePath, getForwardUrl, settings, translate } = this.props;
-		const headerText = translate( "Let's shape your new site." );
-		const subHeaderText = (
-			<Fragment>
-				{ translate( 'Would you like to create a Contact Us page with a contact form on it?' ) }
-				<br />
-				{ translate(
-					'This form will allow visitors to contact you with their name, email, website, and a message.'
-				) }
-			</Fragment>
+	handleNextButton = () => {
+		this.props.recordJpoEvent( 'calypso_jpo_contact_form_next_clicked' );
+	};
+
+	addContactForm() {
+		this.props.saveJpoSettings( this.props.siteId, {
+			addContactForm: true,
+		} );
+	}
+
+	renderActionTile() {
+		const { hasContactForm, siteId, translate } = this.props;
+		const header = (
+			<FormattedHeader
+				headerText={ translate( "Let's grow your audience with Jetpack." ) }
+				subHeaderText={
+					<Fragment>
+						{ translate(
+							'A great first step is adding a Contact Us page that includes a contact form.'
+						) }
+						<br />
+						{ translate( 'Create a Jetpack account to unlock this and dozens of other features.' ) }
+					</Fragment>
+				}
+			/>
 		);
-		const hasContactForm = !! get( settings, 'addContactForm' );
+
+		return (
+			<ConnectIntro
+				action="add_contact_form"
+				buttonLabel={ ! hasContactForm ? translate( 'Add a contact form' ) : null }
+				description={ hasContactForm ? translate( 'Your contact form has been created.' ) : null }
+				e2eType="contact-form"
+				header={ header }
+				illustration="/calypso/images/illustrations/contact-us.svg"
+				onClick={ this.handleAddContactForm }
+				siteId={ siteId }
+			/>
+		);
+	}
+
+	render() {
+		const { basePath, getForwardUrl, hasContactForm, siteId, translate } = this.props;
 
 		return (
 			<div className="steps__main">
@@ -50,27 +103,27 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
 					title="Contact Form ‹ Jetpack Start"
 				/>
+				<QuerySites siteId={ siteId } />
 
-				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				<JetpackLogo full size={ 45 } />
 
-				<TileGrid>
-					<Tile
-						buttonLabel={ ! hasContactForm ? translate( 'Add a contact form' ) : undefined }
-						description={
-							hasContactForm
-								? translate( 'Your contact form has been created.' )
-								: translate( 'Not sure? You can skip this step and add a contact form later.' )
-						}
-						image={ '/calypso/images/illustrations/contact-us.svg' }
-						onClick={ this.handleAddContactForm }
+				{ hasContactForm ? (
+					<ConnectSuccess
 						href={ getForwardUrl() }
+						illustration="/calypso/images/illustrations/contact-us.svg"
+						onClick={ this.handleNextButton }
+						title={ translate( 'Success! Jetpack has added a "Contact us" page to your site.' ) }
 					/>
-				</TileGrid>
+				) : (
+					this.renderActionTile()
+				) }
 			</div>
 		);
 	}
 }
 
-export default connect( null, { saveJetpackOnboardingSettings } )(
-	localize( JetpackOnboardingContactFormStep )
-);
+export default connect( ( state, { settings, siteId, steps } ) => ( {
+	hasContactForm: !! get( settings, 'addContactForm' ),
+	isConnected: isJetpackSite( state, siteId ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingContactFormStep ) );

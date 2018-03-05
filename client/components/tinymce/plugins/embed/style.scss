@@ -46,11 +46,7 @@
 					left: 50%;
 					width: auto;
 					padding: 0;
-					margin-top: -10px; // move the spinner 10px upwards, to offset centering
-				}
-
-				.embed__loading-spinner .spinner__image {
-					vertical-align: middle;
+					transform: translate( -50%, -50% );
 				}
 			}
 

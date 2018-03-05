@@ -1,10 +1,18 @@
 .themes-banner {
+	$image_max_width: 410px;
+
+	display: block;
 	position: relative;
 	background: no-repeat $blue-medium;
-	background-size: cover;
-	color: white;
+	color: white !important;
 	padding: 0.8em;
-	
+	overflow: hidden;
+	user-select: none;
+
+	&:hover, &:focus, &:visited {
+		color: white !important;
+	}
+
 	&:before {
 		position: absolute;
 		display: block;
@@ -16,12 +24,13 @@
 		left: 0;
 		z-index: 1;
 	}
-	
-	h1, p, .button {
+
+	h1, p, .button.themes-banner__cta {
 		position: relative;
+		color: inherit;
 		z-index: 2;
 	}
-	
+
 	h1 {
 		font-weight: bold;
 		font-size: 1.6em;
@@ -35,13 +44,27 @@
 			margin-top: 0.6em;
 		}
 	}
-	
+
 	p {
 		margin: 0;
 		text-shadow: 0 1px 1px rgba(black, 0.4);
 	}
-	
-	.button {
+
+	img {
+		position: absolute;
+		transform-origin: top right;
+		max-width: $image_max_width;
+		transition: opacity 400ms ease-in-out;
+		user-select: none;
+		top: 0;
+		right: 0;
+
+		@media (max-width: 1440px) {
+			opacity: 0.5;
+		}
+	}
+
+	.button.themes-banner__cta {
 		margin-top: 1em;
 	}
 }

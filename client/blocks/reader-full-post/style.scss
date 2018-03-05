@@ -34,38 +34,6 @@
 	}
 }
 
-.reader-full-post__back-container {
-	margin: 0;
-	position: fixed;
-		top: 47px;
-		left: 0;
-	z-index: z-index( '.masterbar', '.reader-back'	);
-
-	.button.is-compact.is-borderless {
-		padding: 18px 40px 18px 20px;
-
-		@include breakpoint( "<660px" ) {
-			padding: 20px 8px 16px;
-		}
-	}
-
-	@include breakpoint( "<660px" ) {
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 46px;
-		background: $white;
-		border-bottom: 1px solid $gray-light;
-	}
-}
-
-.reader-full-post__back-container .reader-full-post__back-label {
-
-	@include breakpoint( "<660px") {
-		display: none;
-	}
-}
-
 .reader-full-post__visit-site-container {
 	background: $white;
 	border-bottom: 1px solid $gray-light;

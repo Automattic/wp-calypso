@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import hoek from 'hoek';
+import { cloneDeep } from 'lodash';
 
 /**
  * Internal dependencies
@@ -69,7 +69,7 @@ describe( 'Label purchase form reducer', () => {
 	let stateBefore;
 
 	beforeEach( () => {
-		stateBefore = hoek.clone( initialState );
+		stateBefore = cloneDeep( initialState );
 	} );
 
 	afterEach( () => {
@@ -109,7 +109,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'MOVE_ITEM moves items from original packaging to selected packages and deletes original package', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 		existingState[ orderId ].form.packages.selected.client_individual_0 = {
 			items: [ {
 				product_id: 789,
@@ -130,7 +130,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'ADD_ITEMS moves a set of items from their original packaging to selected package', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 		existingState[ orderId ].form.packages.selected.weight_2_custom1 = {
 			items: [
 				{
@@ -251,7 +251,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'SAVE_PACKAGES changes the saved state', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 		existingState[ orderId ].form.packages.saved = false;
 
 		const action = savePackages( orderId, siteId );
@@ -261,7 +261,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'REMOVE_IGNORE_VALIDATION removes the ignore validation flags, does not change anything else', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 
 		const action = removeIgnoreValidation( orderId, siteId, 'origin' );
 		const state = reducer( existingState, action );
@@ -272,7 +272,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'UPDATE_ADDRESS_VALUE on any field marks the address as not validated', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 		existingState[ orderId ].form.origin.ignoreValidation = null;
 		existingState[ orderId ].form.origin.isNormalized = true;
 		existingState[ orderId ].form.origin.normalized = { address: 'MAIN ST', postcode: '12345' };
@@ -286,7 +286,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'UPDATE_ADDRESS_VALUE changing the country restes the state field', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 
 		const action = updateAddressValue( orderId, siteId, 'origin', 'country', 'ES' );
 		const state = reducer( existingState, action );
@@ -296,7 +296,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'UPDATE_ADDRESS_VALUE removed the "ignore validation" flag on that field', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 
 		const action = updateAddressValue( orderId, siteId, 'origin', 'address', 'Main Street' );
 		const state = reducer( existingState, action );
@@ -306,7 +306,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'CLEAR_AVAILABLE_RATES clears the available rates and resets the print confirmation', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 
 		const action = clearAvailableRates( orderId, siteId );
 		const state = reducer( existingState, action );
@@ -356,7 +356,7 @@ describe( 'Label purchase form reducer', () => {
 	} );
 
 	it( 'Maintains fixed precision upon adjusting total weight', () => {
-		const existingState = hoek.clone( initialState );
+		const existingState = cloneDeep( initialState );
 		existingState[ orderId ].form.packages.selected.weight_0_custom1 = {
 			items: [
 				{

@@ -30,6 +30,7 @@ import { getHelpSelectedSite, getHelpSelectedSiteId } from 'state/help/selectors
 import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**
  * Module variables
@@ -49,6 +50,7 @@ const trackSupportAfterSibylClick = () =>
 
 export class HelpContactForm extends React.PureComponent {
 	static propTypes = {
+		additionalSupportOption: PropTypes.object,
 		formDescription: PropTypes.node,
 		buttonLabel: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
@@ -134,8 +136,12 @@ export class HelpContactForm extends React.PureComponent {
 			newIDs.sort();
 			return existingIDs.toString() === newIDs.toString();
 		};
+		const site = this.props.helpSite.jetpack
+			? config( 'jetpack_support_blog' )
+			: config( 'wpcom_support_blog' );
+
 		wpcom
-			.getQandA( query, config( 'happychat_support_blog' ) )
+			.getQandA( query, site )
 			.then( qanda =>
 				this.setState( {
 					qanda,
@@ -226,11 +232,37 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
+	 * Determine if the additional form is ready to submit
+	 * @return {bool} Return true if the additional support option can be used
+	 */
+	canSubmitAdditionalForm = () => {
+		const { disabled } = this.props;
+		const { subject, message } = this.state;
+
+		if ( disabled ) {
+			return false;
+		}
+
+		if ( ! subject.trim() ) {
+			return false;
+		}
+
+		return !! message.trim();
+	};
+
+	/**
 	 * Start a chat using the info set in state
 	 * @param  {object} event Event object
 	 */
 	submitForm = () => {
 		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
+		const { additionalSupportOption, currentUserLocale } = this.props;
+
+		if ( additionalSupportOption && additionalSupportOption.enabled ) {
+			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected', {
+				locale: currentUserLocale,
+			} );
+		}
 
 		if ( this.state.sibylClicked ) {
 			// track that the user had clicked a Sibyl result, but still contacted support
@@ -248,11 +280,33 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
+	 * Submit additional support option
+	 * @param  {object} event Event object
+	 */
+	submitAdditionalForm = () => {
+		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
+		const { currentUserLocale } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_happychat_a_b_native_ticket_selected', {
+			locale: currentUserLocale,
+		} );
+
+		this.props.additionalSupportOption.onSubmit( {
+			howCanWeHelp,
+			howYouFeel,
+			message,
+			subject,
+			site: this.props.helpSite,
+		} );
+	};
+
+	/**
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
 	 */
 	render() {
 		const {
+			additionalSupportOption,
 			formDescription,
 			buttonLabel,
 			showHowCanWeHelpField,
@@ -322,7 +376,8 @@ export class HelpContactForm extends React.PureComponent {
 					</div>
 				) }
 
-				{ showSubjectField && (
+				{ ( showSubjectField ||
+					( additionalSupportOption && additionalSupportOption.enabled ) ) && (
 					<div className="help-contact-form__subject">
 						<FormLabel>{ translate( 'Subject' ) }</FormLabel>
 						<FormTextInput
@@ -357,6 +412,17 @@ export class HelpContactForm extends React.PureComponent {
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 					{ buttonLabel }
 				</FormButton>
+
+				{ additionalSupportOption &&
+					additionalSupportOption.enabled && (
+						<FormButton
+							disabled={ ! this.canSubmitAdditionalForm() }
+							type="button"
+							onClick={ this.submitAdditionalForm }
+						>
+							{ additionalSupportOption.label }
+						</FormButton>
+					) }
 			</div>
 		);
 	}
@@ -368,12 +434,14 @@ export class HelpContactForm extends React.PureComponent {
 }
 
 const mapStateToProps = state => ( {
+	currentUserLocale: getCurrentUserLocale( state ),
 	helpSite: getHelpSelectedSite( state ),
 	helpSiteId: getHelpSelectedSiteId( state ),
 } );
 
 const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
+	recordTracksEvent,
 	trackSibylClick,
 	trackSupportAfterSibylClick,
 };

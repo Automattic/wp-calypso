@@ -4,7 +4,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import { stub, spy } from 'sinon';
+import { spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -121,31 +121,31 @@ describe( 'utils', () => {
 	} );
 
 	describe( '#createReducer()', () => {
-		describe( 'only default behavior', () => {
+		describe( 'with null initial state and no handlers', () => {
 			beforeAll( () => {
-				reducer = createReducer();
+				reducer = createReducer( null, {} );
 			} );
 
 			test( 'should return a function', () => {
 				expect( reducer ).to.be.a.function;
 			} );
 
-			test( 'should return initial state when invalid action passed', () => {
+			test( 'should return initial state when hydration action passed', () => {
+				expect( reducer( undefined, { type: '@@calypso/INIT' } ) ).to.be.null;
+			} );
+
+			test( 'should return identical state when invalid action passed', () => {
 				const invalidAction = {};
-
-				expect( reducer( currentState, invalidAction ) ).to.be.deep.equal( currentState );
+				expect( reducer( currentState, invalidAction ) ).to.equal( currentState );
 			} );
 
-			test( 'should return initial state when unknown action type passed', () => {
-				const unknownAction = {
-					type: 'UNKNOWN',
-				};
-
-				expect( reducer( currentState, unknownAction ) ).to.be.deep.equal( currentState );
+			test( 'should return identical state when unknown action type passed', () => {
+				const unknownAction = { type: 'UNKNOWN' };
+				expect( reducer( currentState, unknownAction ) ).to.equal( currentState );
 			} );
 
-			test( 'should return default null state when serialize action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).to.be.null;
+			test( 'should return undefined when serialize action type passed', () => {
+				expect( reducer( currentState, actionSerialize ) ).to.be.undefined;
 			} );
 
 			test( 'should return default null state when deserialize action type passed', () => {
@@ -171,8 +171,8 @@ describe( 'utils', () => {
 				} );
 			} );
 
-			test( 'should return default {} state when SERIALIZE action type passed', () => {
-				expect( reducer( currentState, actionSerialize ) ).to.be.equal( initialState );
+			test( 'should return undefined state when SERIALIZE action type passed', () => {
+				expect( reducer( currentState, actionSerialize ) ).to.be.undefined;
 			} );
 
 			test( 'should return default {} state when DESERIALIZE action type passed', () => {
@@ -201,7 +201,7 @@ describe( 'utils', () => {
 				reducer = createReducer( initialState, {}, testSchema );
 			} );
 
-			test( 'should return initial state when serialize action type passed', () => {
+			test( 'should return current state when serialize action type passed', () => {
 				expect( reducer( currentState, actionSerialize ) ).to.be.deep.equal( currentState );
 			} );
 
@@ -233,31 +233,6 @@ describe( 'utils', () => {
 			test( 'should return overridden state when deserialize action type passed', () => {
 				expect( reducer( currentState, actionDeserialize ) ).to.be.deep.equal( overriddenState );
 			} );
-		} );
-
-		test( 'should cache the serialize result on custom serialization behavior', () => {
-			const monitor = stub().returnsArg( 0 );
-
-			reducer = createReducer(
-				[],
-				{
-					[ SERIALIZE ]: monitor,
-					TEST_ADD: state => [ ...state, state.length ],
-				},
-				testSchema
-			);
-
-			let state;
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: 'TEST_ADD' } );
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: SERIALIZE } );
-			state = reducer( state, { type: 'TEST_ADD' } );
-			state = reducer( state, { type: SERIALIZE } );
-
-			expect( monitor ).to.have.been.calledThrice;
-			expect( state ).to.eql( [ 0, 1 ] );
 		} );
 	} );
 	describe( '#keyedReducer', () => {
@@ -472,7 +447,6 @@ describe( 'utils', () => {
 
 	describe( '#withSchemaValidation', () => {
 		const load = { type: DESERIALIZE };
-		const write = { type: SERIALIZE };
 		const normal = { type: 'NORMAL' };
 		const grow = { type: 'GROW' };
 		const schema = {
@@ -499,16 +473,6 @@ describe( 'utils', () => {
 		};
 		date.hasCustomPersistence = true;
 
-		test( 'should return initial state without a schema on SERIALIZE', () => {
-			const validated = withSchemaValidation( null, age );
-			expect( validated( 5, write ) ).to.equal( 0 );
-		} );
-
-		test( 'should return initial state without a schema on DESERIALIZE', () => {
-			const validated = withSchemaValidation( null, age );
-			expect( validated( 5, load ) ).to.equal( 0 );
-		} );
-
 		test( 'should invalidate DESERIALIZED state', () => {
 			const validated = withSchemaValidation( schema, age );
 
@@ -529,11 +493,6 @@ describe( 'utils', () => {
 
 		test( 'actions work as expected with schema', () => {
 			const validated = withSchemaValidation( schema, age );
-			expect( validated( 5, grow ) ).to.equal( 6 );
-		} );
-
-		test( 'actions work as expected without schema', () => {
-			const validated = withSchemaValidation( null, age );
 			expect( validated( 5, grow ) ).to.equal( 6 );
 		} );
 	} );
@@ -585,13 +544,18 @@ describe( 'utils', () => {
 		} );
 
 		test( 'should return initial state on init', () => {
-			const state = reducers( undefined, write );
+			const state = reducers( undefined, { type: '@@calypso/INIT' } );
+			expect( state ).to.eql( { age: 0, height: 160 } );
+		} );
+
+		test( 'should return initial state on DESERIALIZE', () => {
+			const state = reducers( undefined, load );
 			expect( state ).to.eql( { age: 0, height: 160 } );
 		} );
 
 		test( 'should not persist height, because it is missing a schema', () => {
 			const state = reducers( appState, write );
-			expect( state ).to.eql( { age: 20, height: 160 } );
+			expect( state ).to.eql( { age: 20 } );
 		} );
 
 		test( 'should not load height, because it is missing a schema', () => {
@@ -607,6 +571,19 @@ describe( 'utils', () => {
 		test( 'actions work as expected', () => {
 			const state = reducers( appState, grow );
 			expect( state ).to.eql( { age: 21, height: 172 } );
+		} );
+
+		test( 'undefined or missing state is not serialized and does not cause errors', () => {
+			const empty = reducers( undefined, write );
+			expect( empty ).to.be.undefined;
+
+			const nested = combineReducers( {
+				person: reducers,
+				date,
+			} );
+
+			const missingPerson = nested( { date: new Date( 100 ) }, write );
+			expect( missingPerson ).to.eql( { date: 100 } );
 		} );
 
 		test( 'nested reducers work on load', () => {
@@ -643,10 +620,33 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = nested( { person: { age: 22, date: new Date( 224 ) } }, write );
-			expect( valid ).to.eql( { person: { age: 22, height: 160, date: 224 }, count: 1 } );
+			expect( valid ).to.eql( { person: { age: 22, date: 224 } } );
 
 			const invalid = nested( { person: { age: -5, height: 100, date: new Date( -500 ) } }, write );
-			expect( invalid ).to.eql( { person: { age: -5, height: 160, date: -500 }, count: 1 } );
+			expect( invalid ).to.eql( { person: { age: -5, date: -500 } } );
+		} );
+
+		test( 'nested reducers leave out a state slice where none of the children is persisted', () => {
+			const ephemeral = combineReducers( {
+				height,
+				count,
+			} );
+
+			const nestedEphemeral = combineReducers( {
+				ephemeral,
+				age,
+			} );
+
+			const stored = nestedEphemeral(
+				{
+					// the `ephemeral` object should not be stored at all
+					ephemeral: { height: 100, count: 5 },
+					// `age` should be persisted, as it has a schema defined
+					age: 40,
+				},
+				write
+			);
+			expect( stored ).to.eql( { age: 40 } );
 		} );
 
 		test( 'deeply nested reducers work on load', () => {
@@ -695,13 +695,13 @@ describe( 'utils', () => {
 				{ bob: { person: { age: 22, date: new Date( 234 ) } }, count: 122 },
 				write
 			);
-			expect( valid ).to.eql( { bob: { person: { age: 22, height: 160, date: 234 } }, count: 1 } );
+			expect( valid ).to.eql( { bob: { person: { age: 22, date: 234 } } } );
 
 			const invalid = veryNested(
 				{ bob: { person: { age: -5, height: 22, date: new Date( -5 ) } }, count: 123 },
 				write
 			);
-			expect( invalid ).to.eql( { bob: { person: { age: -5, height: 160, date: -5 } }, count: 1 } );
+			expect( invalid ).to.eql( { bob: { person: { age: -5, date: -5 } } } );
 		} );
 
 		test( 'deeply nested reducers work with reducer with a custom handler', () => {
@@ -717,13 +717,13 @@ describe( 'utils', () => {
 				count,
 			} );
 			const valid = veryNested( { bob: { person: { date: new Date( 234 ) } }, count: 122 }, write );
-			expect( valid ).to.eql( { bob: { person: { height: 160, date: 234 } }, count: 1 } );
+			expect( valid ).to.eql( { bob: { person: { date: 234 } } } );
 
 			const invalid = veryNested(
 				{ bob: { person: { height: 22, date: new Date( -5 ) } }, count: 123 },
 				write
 			);
-			expect( invalid ).to.eql( { bob: { person: { height: 160, date: -5 } }, count: 1 } );
+			expect( invalid ).to.eql( { bob: { person: { date: -5 } } } );
 		} );
 
 		test( 'uses the provided validation from withSchemaValidation', () => {
@@ -733,7 +733,7 @@ describe( 'utils', () => {
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );
-			expect( valid ).to.eql( { height: 22, count: 1 } );
+			expect( valid ).to.eql( { height: 22 } );
 
 			const invalid = reducers( { height: -1, count: 44 }, load );
 			expect( invalid ).to.eql( { height: 160, count: 1 } );
@@ -746,7 +746,7 @@ describe( 'utils', () => {
 			} );
 
 			const valid = reducers( { height: 22, count: 44 }, write );
-			expect( valid ).to.eql( { height: 22, count: 1 } );
+			expect( valid ).to.eql( { height: 22 } );
 
 			const invalid = reducers( { height: -1, count: 44 }, load );
 			expect( invalid ).to.eql( { height: 160, count: 1 } );
@@ -782,8 +782,8 @@ describe( 'utils', () => {
 			expect( wrapped( 10, { type: DESERIALIZE } ) ).to.equal( 0 );
 		} );
 
-		test( 'should SERIALIZE to `null`', () => {
-			expect( wrapped( 10, { type: SERIALIZE } ) ).to.be.null;
+		test( 'should SERIALIZE to `undefined`', () => {
+			expect( wrapped( 10, { type: SERIALIZE } ) ).to.be.undefined;
 		} );
 	} );
 

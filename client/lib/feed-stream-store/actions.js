@@ -9,7 +9,7 @@ import { forEach, get } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import { action as ActionType } from './constants';
-import { receivePost } from 'lib/feed-post-store/actions';
+import { receivePosts } from 'state/reader/posts/actions';
 import feedPostListCache from './feed-stream-cache';
 import wpcom from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
@@ -70,29 +70,13 @@ export function receivePage( id, error, data ) {
 		forEach( data.posts, function( post ) {
 			if ( post && get( post, 'meta.data.discover_original_post' ) ) {
 				// Looks like the original post for a Discover post (meta=discover_original_post)
-				receivePost( null, post.meta.data.discover_original_post, {
-					blogId: post.meta.data.discover_original_post.site_ID,
-					postId: post.meta.data.discover_original_post.ID,
-				} );
+				reduxDispatch( receivePosts( [ post.meta.data.discover_original_post ] ) );
 			}
 
 			if ( post && get( post, 'meta.data.post' ) ) {
-				receivePost( null, post.meta.data.post, {
-					feedId: post.feed_ID,
-					postId: post.ID,
-				} );
-			} else if ( post && post.feed_ID && post.feed_item_ID ) {
-				// 1.2 style
-				receivePost( null, post, {
-					feedId: post.feed_ID,
-					postId: post.feed_item_ID,
-				} );
-			} else if ( post && post.site_ID ) {
-				// this looks like a full post object
-				receivePost( null, post, {
-					blogId: post.site_ID,
-					postId: post.ID,
-				} );
+				reduxDispatch( receivePosts( [ post.meta.data.post ] ) );
+			} else if ( post ) {
+				reduxDispatch( receivePosts( [ post ] ) );
 			}
 			if ( post.comments ) {
 				// conversations!

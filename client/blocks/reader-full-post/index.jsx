@@ -13,14 +13,11 @@ import { get, startsWith } from 'lodash';
 /**
  * Internal Dependencies
  */
-import PostStore from 'lib/feed-post-store';
 import AutoDirection from 'components/auto-direction';
 import ReaderMain from 'components/reader-main';
 import EmbedContainer from 'components/embed-container';
 import PostExcerpt from 'components/post-excerpt';
-import { setSection } from 'state/ui/actions';
-import smartSetState from 'lib/react-smart-set-state';
-import { fetchPost, markSeen } from 'lib/feed-post-store/actions';
+import { markPostSeen } from 'state/reader/posts/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
 import LikeButton from 'reader/like-button';
@@ -44,7 +41,7 @@ import { getSiteName } from 'reader/get-helpers';
 import { keyForPost } from 'lib/feed-stream-store/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
+import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';
 import { getStreamUrlFromPost } from 'reader/route';
 import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeStore from 'lib/like-store/like-store';
@@ -53,10 +50,11 @@ import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import QueryReaderPost from 'components/data/query-reader-post';
 import ExternalLink from 'components/external-link';
 import DocumentHead from 'components/data/document-head';
 import ReaderFullPostUnavailable from './unavailable';
-import ReaderFullPostBack from './back';
+import BackButton from 'components/back-button';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import * as FeedStreamStoreActions from 'lib/feed-stream-store/actions';
@@ -66,10 +64,11 @@ import Emojify from 'components/emojify';
 import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
-		post: PropTypes.object.isRequired,
+		post: PropTypes.object,
 		onClose: PropTypes.func.isRequired,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
@@ -235,8 +234,15 @@ export class FullPostView extends React.Component {
 	attemptToSendPageView = () => {
 		const { post, site } = this.props;
 
-		if ( post && post._state !== 'pending' && site && site.ID && ! this.hasSentPageView ) {
-			markSeen( post, site );
+		if (
+			post &&
+			post._state !== 'pending' &&
+			site &&
+			site.ID &&
+			! site.is_error &&
+			! this.hasSentPageView
+		) {
+			this.props.markPostSeen( post, site );
 			this.hasSentPageView = true;
 		}
 
@@ -276,7 +282,7 @@ export class FullPostView extends React.Component {
 	};
 
 	render() {
-		const { post, site, feed, referralPost } = this.props;
+		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
 
 		if ( post._state === 'error' ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
@@ -284,12 +290,14 @@ export class FullPostView extends React.Component {
 
 		const siteName = getSiteName( { site, post } );
 		const classes = { 'reader-full-post': true };
-		const showRelatedPosts = ! post.is_external && post.site_ID;
+		const showRelatedPosts = post && ! post.is_external && post.site_ID;
 		const relatedPostsFromOtherSitesTitle = translate(
 			'More on {{wpLink}}WordPress.com{{/wpLink}}',
 			{
 				components: {
-					wpLink: <a href="/" className="reader-related-card-v2__link" />,
+					/* eslint-disable */
+					wpLink: <a href="/" className="reader-related-card__link" />,
+					/* eslint-enable */
 				},
 			}
 		);
@@ -305,6 +313,7 @@ export class FullPostView extends React.Component {
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
+		const postKey = { blogId, feedId, postId };
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -319,7 +328,9 @@ export class FullPostView extends React.Component {
 				{ post &&
 					! post.is_external &&
 					post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
-				<ReaderFullPostBack onBackClick={ this.handleBack } />
+				{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
+				{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
+				<BackButton onClick={ this.handleBack } />
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink
 						icon={ true }
@@ -415,7 +426,7 @@ export class FullPostView extends React.Component {
 												<a
 													href={ getStreamUrlFromPost( post ) }
 													/* eslint-disable wpcalypso/jsx-classname-namespace */
-													className="reader-related-card-v2__link"
+													className="reader-related-card__link"
 													/* eslint-enable wpcalypso/jsx-classname-namespace */
 												>
 													{ siteName }
@@ -467,11 +478,14 @@ export class FullPostView extends React.Component {
 	}
 }
 
-const ConnectedFullPostView = connect(
+export default connect(
 	( state, ownProps ) => {
-		const { site_ID: siteId, feed_ID: feedId, is_external: isExternal } = ownProps.post;
+		const { feedId, blogId, postId } = ownProps;
+		const post = getPostByKey( state, { feedId, blogId, postId } ) || { _state: 'pending' };
 
-		const props = {};
+		const { site_ID: siteId, is_external: isExternal } = post;
+
+		const props = { post };
 
 		if ( ! isExternal && siteId ) {
 			props.site = getSite( state, siteId );
@@ -479,79 +493,11 @@ const ConnectedFullPostView = connect(
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
 		}
+		if ( ownProps.referral ) {
+			props.referralPost = getPostByKey( state, ownProps.referral );
+		}
 
 		return props;
 	},
-	{ setSection }
+	{ markPostSeen }
 )( FullPostView );
-
-/**
- * A container for the FullPostView responsible for binding to Flux stores
- */
-export default class FullPostFluxContainer extends React.Component {
-	constructor( props ) {
-		super( props );
-		this.state = this.getStateFromStores( props );
-		this.smartSetState = smartSetState;
-	}
-
-	static propTypes = {
-		blogId: PropTypes.string,
-		postId: PropTypes.string.isRequired,
-		onClose: PropTypes.func.isRequired,
-		referral: PropTypes.object,
-	};
-
-	getStateFromStores( props = this.props ) {
-		const postKey = {
-			blogId: props.blogId,
-			feedId: props.feedId,
-			postId: props.postId,
-		};
-
-		let referralPost;
-		if ( props.referral ) {
-			referralPost = PostStore.get( props.referral );
-			if ( ! referralPost ) {
-				fetchPost( props.referral );
-			}
-		}
-
-		const post = PostStore.get( postKey );
-
-		if ( ! post ) {
-			fetchPost( postKey );
-		}
-		return {
-			post,
-			referralPost,
-		};
-	}
-
-	updateState = ( newState = this.getStateFromStores() ) => {
-		this.smartSetState( newState );
-	};
-
-	componentWillMount() {
-		PostStore.on( 'change', this.updateState );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.updateState( this.getStateFromStores( nextProps ) );
-	}
-
-	componentWillUnmount() {
-		PostStore.off( 'change', this.updateState );
-	}
-
-	render() {
-		return this.state.post ? (
-			<ConnectedFullPostView
-				onClose={ this.props.onClose }
-				post={ this.state.post }
-				referralPost={ this.state.referralPost }
-				referralStream={ this.props.referralStream }
-			/>
-		) : null;
-	}
-}

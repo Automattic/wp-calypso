@@ -1,11 +1,17 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { merge } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { createReducer, combineReducers, keyedReducer } from 'state/utils';
-import { jetpackOnboardingCredentialsSchema, jetpackOnboardingSettingsSchema } from './schema';
+import { jetpackOnboardingCredentialsSchema, jetpackSettingsSchema } from './schema';
 import {
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
@@ -16,6 +22,7 @@ export const credentialsReducer = keyedReducer(
 		{},
 		{
 			[ JETPACK_ONBOARDING_CREDENTIALS_RECEIVE ]: ( state, { credentials } ) => credentials,
+			[ JETPACK_CONNECT_AUTHORIZE_RECEIVE ]: () => undefined,
 		},
 		jetpackOnboardingCredentialsSchema
 	)
@@ -27,12 +34,10 @@ export const settingsReducer = keyedReducer(
 	createReducer(
 		{},
 		{
-			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) => ( {
-				...state,
-				...settings,
-			} ),
+			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) =>
+				merge( {}, state, settings ),
 		},
-		jetpackOnboardingSettingsSchema
+		jetpackSettingsSchema
 	)
 );
 settingsReducer.hasCustomPersistence = true;

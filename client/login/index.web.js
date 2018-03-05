@@ -4,7 +4,14 @@
  * Internal dependencies
  */
 import config from 'config';
-import { lang, login, magicLogin, magicLoginUse, redirectDefaultLocale } from './controller';
+import {
+	lang,
+	login,
+	magicLogin,
+	magicLoginUse,
+	redirectJetpack,
+	redirectDefaultLocale,
+} from './controller';
 import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
 
 export default router => {
@@ -29,6 +36,7 @@ export default router => {
 				`/log-in/:isJetpack(jetpack)/${ lang }`,
 				`/log-in/${ lang }`,
 			],
+			redirectJetpack,
 			redirectDefaultLocale,
 			setUpLocale,
 			login,

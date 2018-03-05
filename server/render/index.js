@@ -122,7 +122,8 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user &&
 		cacheKey &&
-		isDefaultLocale( context.lang )
+		isDefaultLocale( context.lang ) &&
+		! context.query.email_address // Don't do SSR when PIIs are present at the request
 	) {
 		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
 	}
@@ -160,7 +161,7 @@ export function serverRender( req, res ) {
 	context.config = config.ssrConfig;
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop', context );
+		res.send( renderJsx( 'desktop', context ) );
 		return;
 	}
 

@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { map, range, flatten, max, keys, zipObject, times, size, concat, merge } from 'lodash';
 import { localize } from 'i18n-calypso';
-import numeral from 'numeral';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import { formatNumberMetric } from 'lib/format-number-compact';
 import Popover from 'components/popover';
 
 class Month extends PureComponent {
@@ -151,7 +151,7 @@ const StatsViewsMonths = props => {
 				totals.months[ month ] += value;
 				totals.yearsCount[ year ] += 1;
 				totals.monthsCount[ month ] += 1;
-				displayValue = value >= 1000 ? numeral( value ).format( '0.0a' ) : value;
+				displayValue = formatNumberMetric( value );
 			}
 			return (
 				<Month

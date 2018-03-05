@@ -91,6 +91,11 @@
 	cursor: pointer;
 	display: block;
 	overflow: hidden;
+
+	.domain__primary-flag {
+		vertical-align: middle;
+		margin-left: 8px;
+	}
 }
 
 .domain-management-list-item__title {
@@ -345,66 +350,6 @@ input[type=radio].domain-management-list-item__radio {
 	font-size: 13px;
 	font-style: italic;
 	margin: 5px 0;
-}
-
-.edit-contact-info__form-content {
-	margin-bottom: 20px;
-	overflow: auto;
-
-	.edit-contact-info__form-field {
-		margin-top: 15px;
-		position: relative;
-
-		input[type=text] {
-			margin: 0;
-		}
-
-		select {
-			width: 100%;
-		}
-
-		input[ disabled ], select[ disabled ] {
-			cursor: not-allowed;
-		}
-	}
-
-	.first-name {
-		margin-top: 0;
-	}
-
-	@include breakpoint( ">660px" ) {
-		.last-name {
-			margin-top: 0;
-		}
-
-		.edit-contact-info__form-field {
-			float: left;
-			width: 100%;
-		}
-
-		.last-name,
-		.phone,
-		.postal-code {
-			float: right;
-		}
-
-		.email,
-		.first-name,
-		.last-name,
-		.phone {
-			width: calc( 50% - 7px );
-		}
-
-		.city,
-		.postal-code,
-		.state {
-			width: calc( 33% - 8px );
-		}
-
-		.state {
-			margin-left: 14px;
-		}
-	}
 }
 
 .dns__details,

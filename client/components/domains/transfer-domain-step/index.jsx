@@ -253,10 +253,14 @@ class TransferDomainStep extends React.Component {
 	transferIsRestricted = () => {
 		const { submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
+		const transferRestrictionStatus = get(
+			this.state,
+			'inboundTransferStatus.transferRestrictionStatus',
+			false
+		);
 
 		return (
-			! submitting &&
-			'not_restricted' !== this.state.inboundTransferStatus.transferRestrictionStatus
+			! submitting && transferRestrictionStatus && 'not_restricted' !== transferRestrictionStatus
 		);
 	};
 
@@ -286,7 +290,12 @@ class TransferDomainStep extends React.Component {
 
 	goBack = () => {
 		if ( this.state.domain ) {
-			this.setState( { domain: null, precheck: false, supportsPrivacy: false } );
+			this.setState( {
+				domain: null,
+				inboundTransferStatus: {},
+				precheck: false,
+				supportsPrivacy: false,
+			} );
 		} else {
 			this.props.goBack();
 		}
@@ -296,13 +305,12 @@ class TransferDomainStep extends React.Component {
 		let content;
 		const { precheck } = this.state;
 		const { isSignupStep } = this.props;
+		const transferIsRestricted = this.transferIsRestricted();
 
-		if ( precheck && ! isSignupStep ) {
-			if ( this.transferIsRestricted() ) {
-				content = this.getTransferRestrictionMessage();
-			} else {
-				content = this.getTransferDomainPrecheck();
-			}
+		if ( transferIsRestricted ) {
+			content = this.getTransferRestrictionMessage();
+		} else if ( precheck && ! isSignupStep ) {
+			content = this.getTransferDomainPrecheck();
 		} else {
 			content = this.addTransfer();
 		}
@@ -392,7 +400,7 @@ class TransferDomainStep extends React.Component {
 					return { precheck: prevState.domain && ! submittingAvailability && ! submittingWhois };
 				} );
 
-				if ( this.props.isSignupStep && ! this.transferIsRestricted() ) {
+				if ( this.props.isSignupStep && this.state.domain && ! this.transferIsRestricted() ) {
 					this.props.onTransferDomain( domain );
 				}
 			}

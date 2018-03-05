@@ -5,6 +5,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { defer } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -63,7 +64,13 @@ class NewCardForm extends Component {
 	}
 
 	handleFieldChange = ( rawDetails, maskedDetails ) => {
-		setNewCreditCardDetails( {
+		// Because SecurePaymentForm::setInitialPaymentDetails() initializes
+		// the payment details via a defer() call, this must be deferred as
+		// well (to ensure that we only try to update credit card details after
+		// the credit card data has been set up). If the defer() call is ever
+		// removed from SecurePaymentForm::setInitialPaymentDetails(), it can
+		// likely be removed here too.
+		defer( setNewCreditCardDetails, {
 			rawDetails: rawDetails,
 			maskedDetails: maskedDetails,
 		} );

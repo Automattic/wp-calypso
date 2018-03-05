@@ -15,7 +15,7 @@ import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import Main from 'components/main';
 import NavigationLink from 'components/wizard/navigation-link';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
 import { submitSurvey } from 'lib/upgrades/actions';
 import Placeholder from 'my-sites/site-settings/placeholder';
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';

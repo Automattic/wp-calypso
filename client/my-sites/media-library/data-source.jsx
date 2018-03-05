@@ -75,19 +75,19 @@ export class MediaLibraryDataSource extends Component {
 			{
 				value: '',
 				label: translate( 'WordPress library' ),
-				icon: <Gridicon icon="my-sites" size={ 24 } />,
+				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 			{
 				value: 'google_photos',
-				label: translate( 'Photos from Your Google library' ),
-				icon: <Gridicon icon="image" size={ 24 } />,
+				label: translate( 'Photos from your Google library' ),
+				icon: <Gridicon icon="shutter" size={ 24 } />,
 			},
 		];
 		if ( config.isEnabled( 'external-media/free-photo-library' ) ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Free photo library' ),
-				icon: <Gridicon icon="add-image" size={ 24 } />,
+				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
 		}
 		const currentSelected = find( sources, item => item.value === source );

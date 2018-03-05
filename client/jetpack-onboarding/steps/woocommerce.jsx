@@ -20,13 +20,18 @@ import {
 	getJetpackOnboardingCompletedSteps,
 	getJetpackOnboardingPendingSteps,
 } from 'state/selectors';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	handleWooCommerceInstallation = () => {
-		this.props.saveJetpackOnboardingSettings( this.props.siteId, {
+		this.props.recordJpoEvent( 'calypso_jpo_woocommerce_install_clicked' );
+
+		this.props.saveJpoSettings( this.props.siteId, {
 			installWooCommerce: true,
 		} );
+	};
+
+	handleWooCommerceInstallationSkip = () => {
+		this.props.recordJpoEvent( 'calypso_jpo_woocommerce_skip_install_clicked' );
 	};
 
 	render() {
@@ -59,7 +64,9 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 							<Button href={ forwardUrl } onClick={ this.handleWooCommerceInstallation } primary>
 								{ translate( 'Yes, I am' ) }
 							</Button>
-							<Button href={ forwardUrl }>{ translate( 'Not right now' ) }</Button>
+							<Button href={ forwardUrl } onClick={ this.handleWooCommerceInstallationSkip }>
+								{ translate( 'Not right now' ) }
+							</Button>
 						</div>
 					) }
 				</div>
@@ -68,10 +75,7 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 	}
 }
 
-export default connect(
-	( state, { siteId, steps } ) => ( {
-		stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
-		stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
-	} ),
-	{ saveJetpackOnboardingSettings }
-)( localize( JetpackOnboardingWoocommerceStep ) );
+export default connect( ( state, { siteId, steps } ) => ( {
+	stepsCompleted: getJetpackOnboardingCompletedSteps( state, siteId, steps ),
+	stepsPending: getJetpackOnboardingPendingSteps( state, siteId, steps ),
+} ) )( localize( JetpackOnboardingWoocommerceStep ) );

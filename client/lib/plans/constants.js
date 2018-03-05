@@ -229,7 +229,13 @@ export const PLANS_LIST = {
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 			FEATURE_ALL_FREE_FEATURES,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getBillingTimeFrame: abtest => {
+			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+				// Note: Don't make this translatable because it's only visible to English-language users
+				return '/month, billed annually';
+			}
+			return i18n.translate( 'per month, billed yearly' );
+		},
 	},
 
 	[ PLAN_PREMIUM ]: {
@@ -293,7 +299,13 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_THEMES,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getBillingTimeFrame: abtest => {
+			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+				// Note: Don't make this translatable because it's only visible to English-language users
+				return '/month, billed annually';
+			}
+			return i18n.translate( 'per month, billed yearly' );
+		},
 	},
 
 	[ PLAN_BUSINESS ]: {
@@ -323,6 +335,7 @@ export const PLANS_LIST = {
 					}
 				);
 			}
+			0;
 			return i18n.translate(
 				'{{strong}}Best for Small Business:{{/strong}} Power your' +
 					' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
@@ -385,7 +398,13 @@ export const PLANS_LIST = {
 			FEATURE_UNLIMITED_STORAGE_SIGNUP,
 			FEATURE_ALL_PREMIUM_FEATURES,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+		getBillingTimeFrame: abtest => {
+			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+				// Note: Don't make this translatable because it's only visible to English-language users
+				return '/month, billed annually';
+			}
+			return i18n.translate( 'per month, billed yearly' );
+		},
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
@@ -523,7 +542,13 @@ export const PLANS_LIST = {
 				FEATURE_CONCIERGE_SETUP,
 				FEATURE_ALL_PERSONAL_FEATURES,
 			] ),
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		getBillingTimeFrame: abtest => {
+			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+				// Note: Don't make this translatable because it's only visible to English-language users
+				return '/month, billed annually';
+			}
+			return i18n.translate( 'per month, billed yearly' );
+		},
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
 
@@ -597,7 +622,13 @@ export const PLANS_LIST = {
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES,
 		],
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		getBillingTimeFrame: abtest => {
+			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+				// Note: Don't make this translatable because it's only visible to English-language users
+				return '/month, billed annually';
+			}
+			return i18n.translate( 'per month, billed yearly' );
+		},
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
 
@@ -712,7 +743,13 @@ export const PLANS_LIST = {
 				FEATURE_SEARCH,
 				FEATURE_ALL_PREMIUM_FEATURES,
 			] ),
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		getBillingTimeFrame: abtest => {
+			if ( abtest && abtest( 'upgradePricingDisplay' ) === 'modified' ) {
+				// Note: Don't make this translatable because it's only visible to English-language users
+				return '/month, billed annually';
+			}
+			return i18n.translate( 'per month, billed yearly' );
+		},
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
 };
@@ -781,7 +818,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_THEMES_SIGNUP ]: {
 		getSlug: () => FEATURE_FREE_THEMES_SIGNUP,
-		getTitle: () => i18n.translate( '100+ Free Themes' ),
+		getTitle: () => i18n.translate( 'Dozens of Free Themes' ),
 	},
 
 	[ FEATURE_WP_SUBDOMAIN_SIGNUP ]: {
@@ -1056,7 +1093,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_FREE_THEMES ]: {
 		getSlug: () => FEATURE_FREE_THEMES,
-		getTitle: () => i18n.translate( '100+ Free Themes' ),
+		getTitle: () => i18n.translate( 'Dozens of Free Themes' ),
 		getDescription: () =>
 			i18n.translate(
 				'Access to a wide range of professional theme templates ' +

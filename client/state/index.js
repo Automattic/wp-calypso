@@ -47,6 +47,7 @@ import inlineHelpSearchResults from './inline-help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
+import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
@@ -77,6 +78,7 @@ import signup from './signup/reducer';
 import simplePayments from './simple-payments/reducer';
 import sites from './sites/reducer';
 import siteRoles from './site-roles/reducer';
+import siteRename from './site-rename/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
@@ -134,6 +136,7 @@ const reducers = {
 	jetpackConnect,
 	jetpackOnboarding,
 	jetpack,
+	jetpackRemoteInstall,
 	jetpackSync,
 	jitm,
 	login,
@@ -161,6 +164,7 @@ const reducers = {
 	signup,
 	sites,
 	siteRoles,
+	siteRename,
 	siteSettings,
 	simplePayments,
 	stats,

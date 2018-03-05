@@ -5,24 +5,26 @@
  */
 
 .list-end {
-	position: relative;
 	width: 100%;
-	margin-top: (15 / 15) * 1em;
+	margin-top: 32px;
 	text-align: center;
-	&:before {
-		content: '';
-		position: absolute;
-		top: 50%;
-		left: 0;
-		right: 0;
-		z-index: z-index( 'root', '.list-end:before' );
-		border-bottom: solid 1px lighten( $gray, 25% );
+	border-top: solid 1px $gray-lighten-20;
+
+	.gridicon {
+		fill: $gray;
+		position: relative;
+		top: -13px;
+		background: $gray-light;
+		padding: 0 8px;
 	}
-	&:after {
-		@include noticon( '\f205', (24 / 15) * 1em );
-		color: $gray;
-		font-size: (22 / 15) * 1em;
-		padding: 0 (8 / 22) * 1em;
-		background-color: $gray-light;
+
+	// Reader is special since is has a white background, and has lots
+	// of random horizontal lines already.
+	.is-reader-page & {
+		border-top: none;
+
+		.gridicon {
+			background: $white;
+		}
 	}
 }

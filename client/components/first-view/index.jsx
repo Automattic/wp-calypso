@@ -42,9 +42,9 @@ class FirstView extends React.PureComponent {
 	}
 
 	componentWillUnmount() {
-		process.nextTick( () => {
+		setTimeout( () => {
 			this.updateDocumentStylesForHiddenFirstView();
-		} );
+		}, 0 );
 	}
 
 	render() {
@@ -111,11 +111,11 @@ class FirstView extends React.PureComponent {
 	updateDocumentStylesForVisibleFirstView = () => {
 		document.documentElement.classList.add( 'no-scroll' );
 		document.documentElement.classList.add( 'is-first-view-active' );
-		process.nextTick( () => {
+		setTimeout( () => {
 			if ( this.props.isVisible ) {
 				document.documentElement.classList.add( 'is-first-view-visible' );
 			}
-		} );
+		}, 0 );
 	};
 
 	updateDocumentStylesForHiddenFirstView = () => {

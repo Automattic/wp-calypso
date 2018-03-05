@@ -35,6 +35,15 @@ export default connect(
 
 ## Props
 
+### `query`
+
+<table>
+	<tr><th>Type</th><td>Object</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+A query to use when requesting Jetpack Onboarding Settings.
+
 ### `siteId`
 
 <table>

@@ -139,7 +139,8 @@ $theme-info-height: 54px;
 	opacity: 0.0;
 	transition: all 200ms ease-in-out;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		opacity: 1.0;
 
 		span {

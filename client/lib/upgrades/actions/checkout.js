@@ -31,22 +31,23 @@ export function setNewCreditCardDetails( options ) {
 }
 
 export function submitTransaction( { cart, transaction }, onComplete ) {
-	const steps = submit( {
-		cart: cart,
-		payment: transaction.payment,
-		domainDetails: transaction.domainDetails,
-	} );
+	submit(
+		{
+			cart: cart,
+			payment: transaction.payment,
+			domainDetails: transaction.domainDetails,
+		},
+		step => {
+			Dispatcher.handleViewAction( {
+				type: ActionTypes.TRANSACTION_STEP_SET,
+				step,
+			} );
 
-	steps.on( 'data', step => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.TRANSACTION_STEP_SET,
-			step,
-		} );
-
-		if ( onComplete && step.name === 'received-wpcom-response' ) {
-			onComplete( step.error, step.data );
+			if ( onComplete && step.name === 'received-wpcom-response' ) {
+				onComplete( step.error, step.data );
+			}
 		}
-	} );
+	);
 }
 
 export function resetTransaction() {

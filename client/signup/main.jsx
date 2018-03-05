@@ -55,7 +55,7 @@ import { recordSignupStart, recordSignupCompletion } from 'lib/analytics/ad-trac
 import { disableCart } from 'lib/upgrades/actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { affiliateReferral } from 'state/refer/actions';
-import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
+import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
 
 /**
  * Constants
@@ -466,7 +466,9 @@ class Signup extends React.Component {
 			flow = flows.getFlow( this.props.flowName ),
 			hideFreePlan = !! (
 				this.state.plans ||
-				( ( isDomainRegistration( domainItem ) || isDomainTransfer( domainItem ) ) &&
+				( ( isDomainRegistration( domainItem ) ||
+					isDomainTransfer( domainItem ) ||
+					isDomainMapping( domainItem ) ) &&
 					this.props.domainsWithPlansOnly )
 			);
 

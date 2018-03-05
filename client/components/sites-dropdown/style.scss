@@ -19,19 +19,22 @@
 .sites-dropdown__wrapper {
 	background: $white;
 	border: 1px solid $gray-lighten-20;
-	border-width: 1px 1px 2px;
+	border-width: 1px;
 	border-radius: 4px;
 	margin: 0;
+	overflow: hidden;
 	position: relative;
 	width: 300px;
 	transition: all .15s ease-in-out;
+	z-index: 1;
 
 	@include breakpoint( "<660px" ) {
 		width: 100%;
 	}
 
-	&:hover {
+	.has-multiple-sites &:hover {
 		border-color: $gray-lighten-10;
+		border-bottom-width: 2px;
 	}
 }
 
@@ -42,8 +45,11 @@
 }
 
 .sites-dropdown__selected {
-	cursor: pointer;
 	display: flex;
+
+	.has-multiple-sites & {
+		cursor: pointer;
+	}
 
 	.is-open & {
 		border-bottom: 1px solid $gray-lighten-30;

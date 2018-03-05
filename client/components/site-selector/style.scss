@@ -5,7 +5,6 @@
 .site-selector {
 	overflow: visible;
 	position: static;
-	pointer-events: auto;
 	border: none;
 	z-index: z-index( 'root', '.site-selector' );
 
@@ -13,7 +12,10 @@
 		display: flex;
 		position: relative;
 		opacity: 1;
-		pointer-events: initial;
+	}
+
+	&:not(.is-large) .search {
+		pointer-events: none;
 	}
 
 	&.is-large .site-selector__sites {
@@ -101,7 +103,6 @@
 	display: block;
 	opacity: 0;
 	position: absolute;
-	pointer-events: none;
 
 	.search__input[type="search"] {
 		font-size: 13px;
@@ -139,10 +140,6 @@
 	display: flex;
 	flex-direction: row;
 	padding-left: 10px;
-
-	@include breakpoint( "<660px" ) {
-		margin-top: 16px;
-	}
 }
 
 .site-selector__add-new-site .button {

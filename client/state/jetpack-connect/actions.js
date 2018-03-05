@@ -36,10 +36,10 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
+	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
 	SITE_REQUEST_SUCCESS,
-	SITES_RECEIVE,
 } from 'state/action-types';
 import userFactory from 'lib/user';
 import config from 'config';
@@ -313,9 +313,9 @@ export function authorize( queryObject ) {
 				} );
 				// Update the user now that we are fully connected.
 				userFactory().fetch();
-				return wpcom.me().sites( {
-					site_visibility: 'all',
-					include_domain_only: true,
+				// Site may not be accessible yet, so force fetch from wpcom
+				return wpcom.site( client_id ).get( {
+					force: 'wpcom',
 					fields:
 						'ID,URL,name,capabilities,jetpack,visible,is_private,is_vip,icon,plan,jetpack_modules,single_user_site,is_multisite,options', //eslint-disable-line max-len
 					options:
@@ -328,14 +328,13 @@ export function authorize( queryObject ) {
 						site: client_id,
 					} )
 				);
-				debug( 'Sites list updated!', data );
+				debug( 'Site updated', data );
 				dispatch( {
-					type: SITES_RECEIVE,
-					sites: data.sites,
+					type: SITE_RECEIVE,
+					site: data,
 				} );
 				dispatch( {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-					data: data,
 				} );
 			} )
 			.then( () => {

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,29 +22,76 @@ import PeopleListItem from 'my-sites/people/people-list-item';
 import Card from 'components/card';
 import Button from 'components/button';
 import QuerySiteInvites from 'components/data/query-site-invites';
+import Dialog from 'components/dialog';
 import InvitesListEnd from './invites-list-end';
 import { getSelectedSite } from 'state/ui/selectors';
+import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { isPrivateSite, canCurrentUser } from 'state/selectors';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
 	getAcceptedInvitesForSite,
 	getNumberOfInvitesFoundForSite,
+	isDeletingAnyInvite,
 } from 'state/invites/selectors';
+import { deleteInvites } from 'state/invites/actions';
 
 class PeopleInvites extends React.PureComponent {
 	static propTypes = {
 		site: PropTypes.object,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showClearAllConfirmation: false,
+		};
+	}
+
+	toggleClearAllConfirmation = () => {
+		this.setState( {
+			showClearAllConfirmation: ! this.state.showClearAllConfirmation,
+		} );
+	};
+
+	handleClearAll = () => {
+		const { acceptedInvites, deleting, site } = this.props;
+
+		if ( deleting ) {
+			return;
+		}
+
+		this.props.deleteInvites( site.ID, map( acceptedInvites, 'key' ) );
+		this.toggleClearAllConfirmation();
+	};
+
 	render() {
-		const { site } = this.props;
+		const { site, canViewPeople, isJetpack, isPrivate, jetpackPeopleSupported } = this.props;
 		const siteId = site && site.ID;
+
+		if ( siteId && ! canViewPeople ) {
+			return (
+				<Main>
+					<SidebarNavigation />
+					<EmptyContent
+						title={ this.props.translate( 'You are not authorized to view this page' ) }
+						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					/>
+				</Main>
+			);
+		}
 
 		return (
 			<Main className="people-invites">
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<SidebarNavigation />
-				<PeopleSectionNav filter="invites" site={ site } />
+				<PeopleSectionNav
+					filter="invites"
+					site={ site }
+					isJetpack={ isJetpack }
+					isPrivate={ isPrivate }
+					jetpackPeopleSupported={ jetpackPeopleSupported }
+				/>
 				{ this.renderInvitesList() }
 			</Main>
 		);
@@ -94,14 +142,44 @@ class PeopleInvites extends React.PureComponent {
 							label={ translate( 'Accepted' ) }
 							count={ acceptedInviteCount }
 							// Excluding `site=` hides the "Invite user" link.
-						/>
+						>
+							{ this.renderClearAll() }
+						</PeopleListSectionHeader>
 						<Card>{ acceptedInvites.map( this.renderInvite ) }</Card>
 					</div>
 				) }
 
 				{ ( hasPendingInvites || hasAcceptedInvites ) && (
-					<InvitesListEnd found={ totalInvitesFound } />
+					<InvitesListEnd
+						shown={ pendingInviteCount + acceptedInviteCount }
+						found={ totalInvitesFound }
+					/>
 				) }
+			</React.Fragment>
+		);
+	}
+
+	renderClearAll() {
+		const { deleting, translate } = this.props;
+
+		const dialogButtons = [
+			<Button busy={ deleting } primary onClick={ this.handleClearAll }>
+				{ translate( 'Clear All' ) }
+			</Button>,
+			<Button busy={ deleting } onClick={ this.toggleClearAllConfirmation }>
+				{ translate( 'Cancel' ) }
+			</Button>,
+		];
+
+		return (
+			<React.Fragment>
+				<Button busy={ deleting } compact onClick={ this.toggleClearAllConfirmation }>
+					{ translate( 'Clear All Accepted' ) }
+				</Button>
+				<Dialog isVisible={ this.state.showClearAllConfirmation } buttons={ dialogButtons }>
+					<h1>{ translate( 'Clear All Accepted' ) }</h1>
+					<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
+				</Dialog>
 			</React.Fragment>
 		);
 	}
@@ -152,15 +230,23 @@ class PeopleInvites extends React.PureComponent {
 	};
 }
 
-export default connect( state => {
-	const site = getSelectedSite( state );
-	const siteId = site && site.ID;
+export default connect(
+	state => {
+		const site = getSelectedSite( state );
+		const siteId = site && site.ID;
 
-	return {
-		site,
-		requesting: isRequestingInvitesForSite( state, siteId ),
-		pendingInvites: getPendingInvitesForSite( state, siteId ),
-		acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
-		totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
-	};
-} )( localize( PeopleInvites ) );
+		return {
+			site,
+			isJetpack: isJetpackSite( state, siteId ),
+			isPrivate: isPrivateSite( state, siteId ),
+			jetpackPeopleSupported: isJetpackMinimumVersion( state, siteId, '3.7.0-beta' ),
+			requesting: isRequestingInvitesForSite( state, siteId ),
+			pendingInvites: getPendingInvitesForSite( state, siteId ),
+			acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
+			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
+			deleting: isDeletingAnyInvite( state, siteId ),
+			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		};
+	},
+	{ deleteInvites }
+)( localize( PeopleInvites ) );

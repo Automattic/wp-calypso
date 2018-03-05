@@ -439,6 +439,17 @@ export function businessPlan( slug, properties ) {
 }
 
 /**
+ * Determines whether a domain Item supports purchasing a privacy subscription
+ * @param {string} slug - e.g. domain_reg, dotblog_domain
+ * @param {array} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
+ * @return {boolean} true if the domainItem supports privacy protection purchase
+ */
+export function supportsPrivacyProtectionPurchase( productSlug, productsList ) {
+	const product = find( productsList, [ 'product_slug', productSlug ] ) || {};
+	return get( product, 'is_privacy_protection_product_purchase_allowed', false );
+}
+
+/**
  * Creates a new shopping cart item for a domain.
  *
  * @param {Object} productSlug - the unique string that identifies the product
@@ -509,16 +520,6 @@ export function siteRedirect( properties ) {
  */
 export function domainPrivacyProtection( properties ) {
 	return domainItem( 'private_whois', properties.domain, properties.source );
-}
-
-/**
- * Creates a new shopping cart item for a domain redemption late fee.
- *
- * @param {Object} properties - list of properties
- * @returns {Object} the new item as `CartItemValue` object
- */
-export function domainRedemption( properties ) {
-	return domainItem( 'domain_redemption', properties.domain, properties.source );
 }
 
 /**
@@ -958,7 +959,6 @@ export default {
 	customDesignItem,
 	domainMapping,
 	domainPrivacyProtection,
-	domainRedemption,
 	domainRegistration,
 	domainTransfer,
 	domainTransferPrivacy,
@@ -1011,6 +1011,7 @@ export default {
 	siteRedirect,
 	shouldBundleDomainWithPlan,
 	spaceUpgradeItem,
+	supportsPrivacyProtectionPurchase,
 	themeItem,
 	unlimitedSpaceItem,
 	unlimitedThemesItem,

@@ -3,21 +3,14 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
-import reducer, { requesting, items } from '../reducer';
-import {
-	POST_LIKES_RECEIVE,
-	POST_LIKES_REQUEST,
-	POST_LIKES_REQUEST_FAILURE,
-	POST_LIKES_REQUEST_SUCCESS,
-	SERIALIZE,
-	DESERIALIZE,
-} from 'state/action-types';
+import reducer, { items, itemReducer } from '../reducer';
+import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { addLiker, removeLiker, like, unlike } from '../actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
@@ -26,154 +19,19 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
-	} );
-
-	describe( 'requesting()', () => {
-		test( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should set site ID, post ID to true value if a request is initiated', () => {
-			const state = requesting( undefined, {
-				type: POST_LIKES_REQUEST,
-				siteId: 12345678,
-				postId: 50,
-			} );
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-				},
-			} );
-		} );
-
-		test( 'should accumulate the requested site IDs', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST,
-					siteId: 87654321,
-					postId: 10,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-				},
-				87654321: {
-					10: true,
-				},
-			} );
-		} );
-
-		test( 'should accumulate the requested post IDs', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST,
-					siteId: 12345678,
-					postId: 10,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: true,
-					10: true,
-				},
-			} );
-		} );
-
-		test( 'should set requesting to false if request finishes successfully', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST_SUCCESS,
-					siteId: 12345678,
-					postId: 50,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: false,
-				},
-			} );
-		} );
-
-		test( 'should set post ID to false if request finishes unsuccessfully', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: POST_LIKES_REQUEST_FAILURE,
-					siteId: 12345678,
-					postId: 50,
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					50: false,
-				},
-			} );
-		} );
-
-		test( 'should not persist state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: SERIALIZE,
-				}
-			);
-
-			expect( state ).to.eql( {} );
-		} );
-
-		test( 'should not load persisted state', () => {
-			const state = requesting(
-				deepFreeze( {
-					12345678: {
-						50: true,
-					},
-				} ),
-				{
-					type: DESERIALIZE,
-				}
-			);
-
-			expect( state ).to.eql( {} );
-		} );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [ 'items' ] );
 	} );
 
 	describe( 'items()', () => {
+		const DEFAULT_ITEM_STATE = deepFreeze( {
+			likes: undefined,
+			iLike: false,
+			found: 0,
+		} );
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index post likes by site ID, post Id', () => {
@@ -190,7 +48,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -224,7 +82,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -265,7 +123,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -304,7 +162,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes: likes2,
@@ -327,35 +185,28 @@ describe( 'reducer', () => {
 					some_other_property: 'aaaaa',
 				},
 			];
-			const state = items(
-				{},
-				{
-					type: POST_LIKES_RECEIVE,
-					siteId: 12345678,
-					postId: 50,
-					likes,
-					found: 2,
-					iLike: false,
-				}
-			);
+			const state = itemReducer( undefined, {
+				type: POST_LIKES_RECEIVE,
+				siteId: 12345678,
+				postId: 50,
+				likes,
+				found: 2,
+				iLike: false,
+			} );
 
-			expect( state ).to.eql( {
-				12345678: {
-					50: {
-						likes: [
-							{
-								ID: 1,
-								avatar_URL: 'https://gravatar.com/whatever',
-								login: 'chicken',
-								name: 'A Former Egg',
-								site_ID: 2,
-								site_visible: true,
-							},
-						],
-						found: 2,
-						iLike: false,
+			expect( state ).toEqual( {
+				likes: [
+					{
+						ID: 1,
+						avatar_URL: 'https://gravatar.com/whatever',
+						login: 'chicken',
+						name: 'A Former Egg',
+						site_ID: 2,
+						site_visible: true,
 					},
-				},
+				],
+				found: 2,
+				iLike: false,
 			} );
 		} );
 
@@ -376,7 +227,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -404,7 +255,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: {
 					50: {
 						likes,
@@ -425,7 +276,212 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
+		} );
+
+		describe( 'a POST_LIKE action', () => {
+			test( 'should create a new state item if none is found', () => {
+				const state = itemReducer( undefined, like( 1, 1 ) );
+				expect( state ).toEqual( {
+					likes: undefined,
+					iLike: true,
+					found: 1,
+				} );
+			} );
+
+			test( 'should update the current state if it is present', () => {
+				const state = itemReducer(
+					deepFreeze( {
+						likes: [],
+						iLike: false,
+						found: 1,
+					} ),
+					like( 1, 1 )
+				);
+				expect( state ).toEqual( {
+					likes: [],
+					iLike: true,
+					found: 2,
+				} );
+			} );
+
+			test( 'should not change the state if the user already likes the post', () => {
+				const initialState = deepFreeze( {
+					likes: [],
+					iLike: true,
+					found: 1,
+				} );
+				const state = itemReducer( initialState, like( 1, 1 ) );
+				expect( state ).toBe( initialState );
+			} );
+		} );
+
+		describe( 'a POST_UNLIKE action', () => {
+			test( 'should not create a new state item if none is found', () => {
+				const state = itemReducer( DEFAULT_ITEM_STATE, unlike( 1, 1 ) );
+				expect( state ).toBe( DEFAULT_ITEM_STATE );
+			} );
+
+			test( 'should update the current state if it is present', () => {
+				const state = itemReducer(
+					deepFreeze( {
+						likes: [],
+						iLike: true,
+						found: 1,
+					} ),
+					unlike( 1, 1 )
+				);
+				expect( state ).toEqual( {
+					likes: [],
+					iLike: false,
+					found: 0,
+				} );
+			} );
+
+			test( 'should not change the state if the user does not like the post', () => {
+				const initialState = deepFreeze( {
+					likes: [],
+					iLike: false,
+					found: 1,
+				} );
+				const state = itemReducer( initialState, unlike( 1, 1 ) );
+				expect( state ).toBe( initialState );
+			} );
+		} );
+
+		describe( 'a POST_LIKES_ADD_LIKER action', () => {
+			const liker = deepFreeze( {
+				ID: 10,
+			} );
+			test( 'should create a new entry when no entry is present', () => {
+				expect( itemReducer( undefined, addLiker( 1, 1, 5, liker ) ) ).toEqual( {
+					likes: [ liker ],
+					found: 5,
+					iLike: false,
+				} );
+			} );
+
+			test( 'should make a new array if one is not present', () => {
+				expect(
+					itemReducer(
+						deepFreeze( {
+							likes: undefined,
+							found: 5,
+							iLike: false,
+						} ),
+						addLiker( 1, 1, 6, liker )
+					)
+				).toEqual( {
+					likes: [ liker ],
+					found: 6,
+					iLike: false,
+				} );
+			} );
+
+			test( 'should prepend to the existing array if present', () => {
+				expect(
+					itemReducer(
+						deepFreeze( {
+							likes: [ { ID: 5 } ],
+							found: 5,
+							iLike: false,
+						} ),
+						addLiker( 1, 1, 6, liker )
+					)
+				).toEqual( {
+					likes: [ liker, { ID: 5 } ],
+					found: 6,
+					iLike: false,
+				} );
+			} );
+
+			test( 'should leave the likes array alone if the liker is already present', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 }, liker ],
+					found: 5,
+					iLike: false,
+				} );
+				const state = itemReducer(
+					initialState,
+					// same liker, new count!
+					addLiker( 1, 1, 6, liker )
+				);
+
+				expect( state ).toEqual( {
+					likes: [ { ID: 2 }, liker ],
+					found: 6,
+					iLike: false,
+				} );
+				expect( state.likes ).toBe( initialState.likes );
+			} );
+		} );
+
+		describe( 'a POST_LIKES_REMOVE_LIKER action', () => {
+			const liker = deepFreeze( {
+				ID: 10,
+			} );
+			test( 'should creat a new entry if none is present', () => {
+				expect( itemReducer( undefined, removeLiker( 1, 1, 5, liker ) ) ).toEqual( {
+					likes: undefined,
+					found: 5,
+					iLike: false,
+				} );
+			} );
+
+			test( 'should not update the likes array if none is present, but should update the count', () => {
+				expect(
+					itemReducer(
+						deepFreeze( {
+							likes: undefined,
+							found: 5,
+							iLike: false,
+						} ),
+						removeLiker( 1, 1, 6, liker )
+					)
+				).toEqual( {
+					likes: undefined,
+					found: 6,
+					iLike: false,
+				} );
+			} );
+
+			test( 'should remove from the existing array if present', () => {
+				expect(
+					itemReducer(
+						deepFreeze( {
+							likes: [ liker ],
+							found: 5,
+							iLike: false,
+						} ),
+						removeLiker( 1, 1, 5, liker )
+					)
+				).toEqual( {
+					likes: [],
+					found: 5,
+					iLike: false,
+				} );
+			} );
+
+			test( 'should leave the likes array alone if the liker is already missing', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 } ],
+					found: 5,
+					iLike: false,
+				} );
+
+				const state = itemReducer(
+					initialState,
+					// same liker, new count!
+					removeLiker( 1, 1, 3, liker )
+				);
+
+				expect( state ).toEqual( {
+					likes: [ { ID: 2 } ],
+					found: 3,
+					iLike: false,
+				} );
+				expect( state.likes ).toBe( initialState.likes );
+			} );
 		} );
 	} );
 } );

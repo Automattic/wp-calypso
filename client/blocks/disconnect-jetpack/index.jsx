@@ -16,15 +16,19 @@ import { noop } from 'lodash';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import HappychatButton from 'components/happychat/button';
+import QueryRewindState from 'components/data/query-rewind-state';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
+	withAnalytics,
 } from 'state/analytics/actions';
 import { disconnect } from 'state/jetpack/connection/actions';
-import { setAllSitesSelected } from 'state/ui/actions';
+import { setAllSitesSelected, navigate } from 'state/ui/actions';
 import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 import { getPlanClass } from 'lib/plans/constants';
 import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
+import { getRewindState } from 'state/selectors';
 
 class DisconnectJetpack extends PureComponent {
 	static propTypes = {
@@ -47,6 +51,7 @@ class DisconnectJetpack extends PureComponent {
 		errorNotice: PropTypes.func,
 		infoNotice: PropTypes.func,
 		removeNotice: PropTypes.func,
+		rewindState: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -91,7 +96,7 @@ class DisconnectJetpack extends PureComponent {
 			case 'is-personal-plan':
 				features.push(
 					translate(
-						'{{icon/}} Daily, automated backups (unlimited storage)',
+						'{{icon/}} Daily automated backups (unlimited storage)',
 						this.getIcon( 'history' )
 					)
 				);
@@ -104,31 +109,31 @@ class DisconnectJetpack extends PureComponent {
 			case 'is-premium-plan':
 				features.push(
 					translate(
-						'{{icon/}} Daily, automated backups (unlimited storage)',
+						'{{icon/}} Daily automated backups (unlimited storage)',
 						this.getIcon( 'history' )
 					)
 				);
 				features.push(
-					translate( '{{icon/}} Daily, automated malware scanning', this.getIcon( 'spam' ) )
+					translate( '{{icon/}} Daily automated malware scanning', this.getIcon( 'spam' ) )
 				);
 				features.push(
 					translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
 				);
 				features.push(
-					translate( '{{icon/}} 13Gb of high-speed video hosting', this.getIcon( 'video' ) )
+					translate( '{{icon/}} 13GB of high-speed video hosting', this.getIcon( 'video' ) )
 				);
 				break;
 
 			case 'is-business-plan':
 				features.push(
 					translate(
-						'{{icon/}} Daily, automated backups (unlimited storage)',
+						'{{icon/}} Daily automated backups (unlimited storage)',
 						this.getIcon( 'history' )
 					)
 				);
 				features.push(
 					translate(
-						'{{icon/}} Daily, automated malware scanning with automated resolution',
+						'{{icon/}} Daily automated malware scanning with automated resolution',
 						this.getIcon( 'spam' )
 					)
 				);
@@ -198,6 +203,8 @@ class DisconnectJetpack extends PureComponent {
 		);
 	};
 
+	handleTryRewind = () => this.props.trackTryRewind( this.props.siteSlug );
+
 	render() {
 		const {
 			disconnectHref,
@@ -207,6 +214,8 @@ class DisconnectJetpack extends PureComponent {
 			siteSlug,
 			stayConnectedHref,
 			translate,
+			siteId,
+			rewindState,
 		} = this.props;
 		if ( isBroken ) {
 			return (
@@ -226,8 +235,9 @@ class DisconnectJetpack extends PureComponent {
 			);
 		}
 
-		return (
-			<Card className="disconnect-jetpack">
+		return [
+			<Card key="disconnect-jetpack" className="disconnect-jetpack__block">
+				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ showTitle && (
 					<h1 className="disconnect-jetpack__header">
 						{ translate( 'Disconnect from WordPress.com?' ) }
@@ -244,7 +254,7 @@ class DisconnectJetpack extends PureComponent {
 
 				<div className="disconnect-jetpack__button-wrap">
 					<Button href={ stayConnectedHref } onClick={ onStayConnectedClick }>
-						{ translate( 'Stay Connected' ) }
+						{ translate( 'Stay connected' ) }
 					</Button>
 					<Button primary scary href={ disconnectHref } onClick={ this.disconnectJetpack }>
 						{ translate( 'Disconnect', {
@@ -257,10 +267,27 @@ class DisconnectJetpack extends PureComponent {
 					className="disconnect-jetpack__more-info-link"
 					href="https://jetpack.com/features/"
 				>
-					{ translate( 'Read More about Jetpack benefits' ) }
+					{ translate( 'Read more about Jetpack benefits' ) }
 				</a>
-			</Card>
-		);
+			</Card>,
+			'active' === rewindState && (
+				<Card
+					key="disconnect-jetpack__try-rewind"
+					className="disconnect-jetpack__try-rewind disconnect-jetpack__block"
+				>
+					<p className="disconnect-jetpack__highlight">
+						{ translate( 'Experiencing connection issues? Try to go back and rewind your site.' ) }
+					</p>
+					<div className="disconnect-jetpack__try-rewind-button-wrap">
+						<Button onClick={ this.handleTryRewind }>{ translate( 'Rewind site' ) }</Button>
+						<HappychatButton borderless={ false } onClick={ this.props.trackTryRewindHelp } primary>
+							<Gridicon icon="chat" size={ 18 } />
+							{ translate( 'Get help' ) }
+						</HappychatButton>
+					</div>
+				</Card>
+			),
+		];
 	}
 }
 
@@ -268,11 +295,12 @@ export default connect(
 	( state, { siteId } ) => {
 		const planSlug = getSitePlanSlug( state, siteId );
 		const planClass = planSlug ? getPlanClass( planSlug ) : 'is-free-plan';
-
+		const rewindState = getRewindState( state, siteId );
 		return {
 			plan: planClass,
 			siteSlug: getSiteSlug( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
+			rewindState: rewindState.state,
 		};
 	},
 	{
@@ -284,5 +312,12 @@ export default connect(
 		errorNotice,
 		infoNotice,
 		removeNotice,
+		trackTryRewind: siteSlug =>
+			withAnalytics(
+				recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind' ),
+				navigate( `/stats/activity/${ siteSlug }` )
+			),
+		trackTryRewindHelp: () =>
+			recordTracksEventAction( 'calypso_disconnect_jetpack_try_rewind_help' ),
 	}
 )( localize( DisconnectJetpack ) );

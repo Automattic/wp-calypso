@@ -9,7 +9,6 @@ import { assign, clone, isEqual } from 'lodash';
  */
 import Dispatcher from 'dispatcher';
 import Emitter from 'lib/mixins/emitter';
-import { action as FeedPostStoreActionType } from 'lib/feed-post-store/constants';
 import { fetchLikes } from 'lib/like-store/actions';
 import { key } from './utils';
 
@@ -206,14 +205,6 @@ LikeStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'RECEIVE_LIKE_RESPONSE':
 		case 'RECEIVE_UNLIKE_RESPONSE':
 			LikeStore.receiveUserLikeChange( action );
-			break;
-
-		case FeedPostStoreActionType.RECEIVE_FEED_POST:
-			if ( ! action.data ) {
-				return;
-			}
-			LikeStore.receivePost( action.data.site_ID, action.data.ID, action.data );
-
 			break;
 	}
 } );

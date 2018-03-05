@@ -3,6 +3,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
+import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -38,6 +39,7 @@ import { retrieveMobileRedirect, retrievePlan } from './persistence-utils';
 import { urlToSlug } from 'lib/url';
 import {
 	JPC_PATH_PLANS,
+	JPC_PATH_REMOTE_INSTALL,
 	MINIMUM_JETPACK_VERSION,
 	REMOTE_PATH_ACTIVATE,
 	REMOTE_PATH_AUTH,
@@ -102,8 +104,11 @@ export class JetpackConnectMain extends Component {
 		if ( this.props.type === 'personal' ) {
 			from = 'ad';
 		}
+
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from,
+			cta_id: this.props.ctaId,
+			cta_from: this.props.ctaFrom,
 		} );
 	}
 
@@ -126,6 +131,12 @@ export class JetpackConnectMain extends Component {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { waitingForSites: false } );
 			this.checkUrl( this.state.currentUrl );
+		}
+
+		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
+			if ( includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ) {
+				this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
+			}
 		}
 	}
 
@@ -173,6 +184,14 @@ export class JetpackConnectMain extends Component {
 		} );
 
 		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_ACTIVATE ) );
+	} );
+
+	goToRemoteInstall = this.makeSafeRedirectionFunction( url => {
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: url,
+			type: 'remote_install',
+		} );
+		page.redirect( url );
 	} );
 
 	redirectToMobileApp = this.makeSafeRedirectionFunction( reason => {
@@ -546,7 +565,8 @@ export class JetpackConnectMain extends Component {
 		const status = this.getStatus();
 		if (
 			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) &&
-			! this.props.jetpackConnectSite.isDismissed
+			! this.props.jetpackConnectSite.isDismissed &&
+			! config.isEnabled( 'jetpack/connect/remote-install' )
 		) {
 			return this.renderInstructions( this.getInstructionsData( status ) );
 		}

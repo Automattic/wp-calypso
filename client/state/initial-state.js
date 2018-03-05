@@ -57,7 +57,7 @@ function deserialize( state ) {
  *
  * If both of these flags are set, then `force-sympathy` takes precedence.
  *
- * @returns {bool} Whether to clear persistent state on page load
+ * @returns {boolean} Whether to clear persistent state on page load
  */
 function shouldAddSympathy() {
 	// If `force-sympathy` flag is enabled, always clear persistent state.
@@ -79,29 +79,7 @@ function shouldAddSympathy() {
 	return false;
 }
 
-/**
- * Augments the initial state loader to clear persistent state if
- * `shouldAddSympathy()` returns true.
- *
- * @param {Function} initialStateLoader normal unsympathetic state loader
- * @returns {Function} maybe-augmented initial state loader
- */
-function maybeAddSympathy( initialStateLoader ) {
-	if ( ! shouldAddSympathy() ) {
-		return initialStateLoader;
-	}
-
-	console.log(
-		// eslint-disable-line no-console
-		'%cSkipping initial state rehydration to recreate first-load experience.',
-		'font-size: 14px; color: red;'
-	);
-
-	localforage.clear();
-	return () => createReduxStore( getInitialServerState() );
-}
-
-const loadInitialState = maybeAddSympathy( initialState => {
+const loadInitialState = initialState => {
 	debug( 'loading initial state', initialState );
 	if ( initialState === null ) {
 		debug( 'no initial state found in localforage' );
@@ -115,7 +93,7 @@ const loadInitialState = maybeAddSympathy( initialState => {
 	const serverState = getInitialServerState();
 	const mergedState = Object.assign( {}, localforageState, serverState );
 	return createReduxStore( mergedState );
-} );
+};
 
 function loadInitialStateFailed( error ) {
 	debug( 'failed to load initial redux-store state', error );
@@ -153,8 +131,8 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 		{ leading: false, trailing: true }
 	);
 
-	if ( global.window ) {
-		global.window.addEventListener( 'beforeunload', throttledSaveState.flush );
+	if ( typeof window !== 'undefined' ) {
+		window.addEventListener( 'beforeunload', throttledSaveState.flush );
 	}
 
 	reduxStore.subscribe( throttledSaveState );
@@ -163,15 +141,36 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	if ( config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession() ) {
-		localforage
+	const shouldPersist =
+		config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession();
+
+	if ( 'development' === process.env.NODE_ENV ) {
+		window.resetState = () => localforage.clear( () => location.reload( true ) );
+
+		if ( shouldAddSympathy() ) {
+			// eslint-disable-next-line no-console
+			console.log(
+				'%cSkipping initial state rehydration to recreate first-load experience.',
+				'font-size: 14px; color: red;'
+			);
+
+			localforage.clear();
+
+			return shouldPersist
+				? reduxStoreReady( persistOnChange( createReduxStore( getInitialServerState() ) ) )
+				: reduxStoreReady( createReduxStore( getInitialServerState() ) );
+		}
+	}
+
+	if ( shouldPersist ) {
+		return localforage
 			.getItem( 'redux-state-' + user.get().ID )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
 			.then( persistOnChange )
 			.then( reduxStoreReady );
-	} else {
-		debug( 'persist-redux is not enabled, building state from scratch' );
-		reduxStoreReady( loadInitialState( {} ) );
 	}
+
+	debug( 'persist-redux is not enabled, building state from scratch' );
+	reduxStoreReady( loadInitialState( {} ) );
 }

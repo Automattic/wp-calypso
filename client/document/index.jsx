@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
@@ -40,12 +41,24 @@ class Document extends React.Component {
 			isDebug,
 			badge,
 			abTestHelper,
+			preferencesHelper,
 			branchName,
 			commitChecksum,
 			devDocs,
 			devDocsURL,
 			feedbackURL,
+			inlineScriptNonce,
+			analyticsScriptNonce,
 		} = this.props;
+
+		const inlineScript =
+			`COMMIT_SHA = ${ jsonStringifyForHtml( commitSha ) };\n` +
+			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
+			( initialReduxState
+				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
+				: '' ) +
+			( config ? config : '' );
 
 		return (
 			<html
@@ -54,8 +67,8 @@ class Document extends React.Component {
 				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					{ head.metas.map( props => <meta { ...props } /> ) }
-					{ head.links.map( props => <link { ...props } /> ) }
+					{ head.metas.map( ( props, index ) => <meta { ...props } key={ index } /> ) }
+					{ head.links.map( ( props, index ) => <link { ...props } key={ index } /> ) }
 
 					<link
 						rel="stylesheet"
@@ -111,6 +124,7 @@ class Document extends React.Component {
 					) }
 					{ badge && (
 						<div className="environment-badge">
+							{ preferencesHelper && <div className="environment is-prefs" /> }
 							{ abTestHelper && <div className="environment is-tests" /> }
 							{ branchName &&
 								branchName !== 'master' && (
@@ -137,42 +151,11 @@ class Document extends React.Component {
 
 					<script
 						type="text/javascript"
+						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
-							__html: 'COMMIT_SHA = ' + jsonStringifyForHtml( commitSha ),
+							__html: inlineScript,
 						} }
 					/>
-					{ user && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var currentUser = ' + jsonStringifyForHtml( user ),
-							} }
-						/>
-					) }
-					{ app && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var app = ' + jsonStringifyForHtml( app ),
-							} }
-						/>
-					) }
-					{ initialReduxState && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: 'var initialReduxState = ' + jsonStringifyForHtml( initialReduxState ),
-							} }
-						/>
-					) }
-					{ config && (
-						<script
-							type="text/javascript"
-							dangerouslySetInnerHTML={ {
-								__html: config,
-							} }
-						/>
-					) }
 
 					{ i18nLocaleScript && <script src={ i18nLocaleScript } /> }
 					<script src={ urls.manifest } />
@@ -198,6 +181,15 @@ class Document extends React.Component {
 						 `,
 						} }
 					/>
+					{ // Load GA only if enabled in the config.
+					appConfig( 'google_analytics_enabled' ) && (
+						<script
+							async={ true }
+							type="text/javascript"
+							src="https://www.google-analytics.com/analytics.js"
+							nonce={ analyticsScriptNonce }
+						/>
+					) }
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>

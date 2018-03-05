@@ -147,7 +147,7 @@ class BillingReceipt extends React.Component {
 				<tr key={ item.id }>
 					<td className="billing-history__receipt-item-name">
 						<span>{ item.variation }</span>
-						<small>({ item.type })</small>
+						<small>({ item.type_localized })</small>
 						<br />
 						<em>{ item.domain }</em>
 					</td>

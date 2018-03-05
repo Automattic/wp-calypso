@@ -13,20 +13,8 @@ import { moment } from 'i18n-calypso';
 import AvailableTimeCard from './available-time-card';
 import { isDefaultLocale } from 'lib/i18n-utils';
 
-const NUMBER_OF_DAYS_TO_SHOW = 7;
-
 const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	const dates = {};
-
-	// Stub an object of { date: X, times: [] } for each day we care about
-	for ( let x = 0; x < NUMBER_OF_DAYS_TO_SHOW; x++ ) {
-		const startOfDay = moment()
-			.tz( timezone )
-			.startOf( 'day' )
-			.add( x, 'days' )
-			.valueOf();
-		dates[ startOfDay ] = { date: startOfDay, times: [] };
-	}
 
 	// Go through all available times and bundle them into each date object
 	availableTimes.forEach( beginTimestamp => {
@@ -36,6 +24,8 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 			.valueOf();
 		if ( dates.hasOwnProperty( startOfDay ) ) {
 			dates[ startOfDay ].times.push( beginTimestamp );
+		} else {
+			dates[ startOfDay ] = { date: startOfDay, times: [ beginTimestamp ] };
 		}
 	} );
 
