@@ -28,30 +28,25 @@
 	@include breakpoint( ">960px" ) {
 		// the image has about 12 px of whitespace, this helps "balance" the block
 		padding-right: 12px;
-		// compensate for the parent card missing padding
-		padding-bottom: 11px;
 	}
 }
 
 .google-my-business-stats-nudge__title {
-	font-size: 18px;
+	font-size: 21px;
 	font-weight: 400;
-	@include breakpoint( ">960px" ) {
-		font-size: 20px;
-	}
+	margin: 10px 0 5px;
 }
 
 .google-my-business-stats-nudge__description {
 	font-size: 16px;
 	font-weight: 400;
-	margin: 10px 0;
 }
 
 .google-my-business-stats-nudge__button-row {
 	align-content: center;
 	display: flex;
 	flex-direction: row;
-	margin: 16px 0;
+	margin: 20px 0;
 	.button {
 		// space out buttons
 		margin-right: 16px;
@@ -63,12 +58,12 @@
 	padding: 0 40px;
 	@include breakpoint( ">960px" ) {
 		display: flex;
-		margin-right: 24px;
 		min-width: 250px;
 	}
 }
 
 .google-my-business-stats-nudge__image {
+	flex: 1;
 	flex-shrink: 0;
 	max-height: 250px;
 }
