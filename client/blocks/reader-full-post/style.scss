@@ -340,6 +340,7 @@
 			left: 0;
 			top: 0;
 		width: 100%;
+		z-index: z-index( 'root', '.reader-full-post__sidebar-comment-like' );
 	 }
 }
 
