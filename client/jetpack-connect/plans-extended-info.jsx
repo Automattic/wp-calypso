@@ -23,7 +23,7 @@ const PlansExtendedInfo = ( { onClick, translate } ) => {
 		<Card className="jetpack-connect__plan-info">
 			<img
 				className="jetpack-connect__plan-info-illustration"
-				src={ '/calypso/images/illustrations/illustration-start-jetpack.svg' }
+				src={ '/calypso/images/illustrations/jetpack-start.svg' }
 				alt=""
 			/>
 			<FormattedHeader
