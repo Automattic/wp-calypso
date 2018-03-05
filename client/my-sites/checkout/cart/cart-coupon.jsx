@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-
+import { trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -102,7 +102,11 @@ class CartCoupon extends React.Component {
 					onChange={ this.handleCouponInput }
 					value={ this.state.couponInputValue }
 				/>
-				<button type="submit" className="button">
+				<button
+					type="submit"
+					className="cart__button button"
+					disabled={ ! trim( this.state.couponInputValue ) }
+				>
 					{ this.props.translate( 'Apply' ) }
 				</button>
 			</form>
