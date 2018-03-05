@@ -9,12 +9,6 @@ import React from 'react';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
-/**
- * Internal dependencies
- */
-
-import { isOutsideCalypso } from 'lib/url';
-
 export default class extends React.Component {
 	static displayName = 'CurrentThemeButton';
 
@@ -35,7 +29,6 @@ export default class extends React.Component {
 				} ) }
 				onClick={ this.props.onClick.bind( null, this.props.name ) }
 				href={ this.props.href }
-				target={ isOutsideCalypso( this.props.href ) ? '_blank' : null }
 			>
 				<Gridicon icon={ this.props.icon } size={ 18 } />
 				<span className="current-theme__button-label">{ this.props.label }</span>
