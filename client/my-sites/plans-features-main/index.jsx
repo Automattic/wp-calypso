@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { filter, get } from 'lodash';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -36,6 +37,9 @@ import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
+import HappychatButton from 'components/happychat/button';
+import HappychatConnection from 'components/happychat/connection-connected';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 
 class PlansFeaturesMain extends Component {
 	getPlanFeatures() {
@@ -139,7 +143,14 @@ class PlansFeaturesMain extends Component {
 	}
 
 	getJetpackFAQ() {
-		const { translate } = this.props;
+		const { isChatAvailable, translate } = this.props;
+
+		const helpLink =
+			isEnabled( 'jetpack/happychat' ) && isChatAvailable ? (
+				<HappychatButton />
+			) : (
+				<a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" />
+			);
 
 		return (
 			<FAQ>
@@ -190,17 +201,9 @@ class PlansFeaturesMain extends Component {
 				<FAQItem
 					question={ translate( 'Have more questions?' ) }
 					answer={ translate(
-						'No problem! Feel free to {{a}}get in touch{{/a}} with our Happiness Engineers.',
+						'No problem! Feel free to {{helpLink}}get in touch{{/helpLink}} with our Happiness Engineers.',
 						{
-							components: {
-								a: (
-									<a
-										href="https://jetpack.com/contact-support/"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
+							components: { helpLink },
 						}
 					) }
 				/>
@@ -396,6 +399,7 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
+				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
@@ -431,4 +435,6 @@ PlansFeaturesMain.defaultProps = {
 	showFAQ: true,
 };
 
-export default localize( PlansFeaturesMain );
+export default connect( state => ( {
+	isChatAvailable: isHappychatAvailable( state ),
+} ) )( localize( PlansFeaturesMain ) );
