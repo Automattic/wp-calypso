@@ -113,10 +113,8 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case NOT_JETPACK:
-				noticeValues.status = 'is-notice';
-				noticeValues.icon = 'status';
-				noticeValues.text = translate( "Jetpack couldn't be found." );
-				return noticeValues;
+				// Not notice required, we will move on to installation
+				return null;
 
 			case WORDPRESS_DOT_COM:
 				noticeValues.text = translate( "Oops, that's us." );
