@@ -6,7 +6,6 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import ThanksModal from 'my-sites/themes/thanks-modal';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
-import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
+import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
@@ -54,12 +53,8 @@ const ConnectedSingleSiteWpcom = connectOptions( props => {
 	);
 } );
 
-export default connect( ( state, { siteId } ) => {
-	const currentPlan = getCurrentPlan( state, siteId );
-	return {
-		siteSlug: getSiteSlug( state, siteId ),
-		currentPlanSlug: get( currentPlan, 'productSlug', null ),
-		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
-		requestingSitePlans: isRequestingSitePlans( state, siteId ),
-	};
-} )( ConnectedSingleSiteWpcom );
+export default connect( ( state, { siteId } ) => ( {
+	siteSlug: getSiteSlug( state, siteId ),
+	hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+	requestingSitePlans: isRequestingSitePlans( state, siteId ),
+} ) )( ConnectedSingleSiteWpcom );
