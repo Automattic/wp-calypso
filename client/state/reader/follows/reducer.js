@@ -36,6 +36,11 @@ function updateEmailSubscription( state, { payload, type } ) {
 		return state;
 	}
 
+	const urlKey = prepareComparableUrl( follow.URL );
+	if ( ! urlKey ) {
+		return state;
+	}
+
 	const currentFollowState = get( follow, [ 'delivery_methods', 'email' ], {} );
 
 	const newProps = {};
@@ -65,7 +70,7 @@ function updateEmailSubscription( state, { payload, type } ) {
 
 	return {
 		...state,
-		[ prepareComparableUrl( follow.URL ) ]: {
+		[ urlKey ]: {
 			...follow,
 			delivery_methods: {
 				email: newFollowState,
@@ -78,6 +83,11 @@ function updateEmailSubscription( state, { payload, type } ) {
 function updateNotificationSubscription( state, { payload, type } ) {
 	const follow = find( state, { blog_ID: +payload.blogId } );
 	if ( ! follow ) {
+		return state;
+	}
+
+	const urlKey = prepareComparableUrl( follow.URL );
+	if ( ! urlKey ) {
 		return state;
 	}
 
@@ -95,7 +105,7 @@ function updateNotificationSubscription( state, { payload, type } ) {
 
 	return {
 		...state,
-		[ prepareComparableUrl( follow.URL ) ]: {
+		[ urlKey ]: {
 			...follow,
 			delivery_methods: {
 				email: get( follow, [ 'delivery_methods', 'email' ], {} ),
@@ -112,6 +122,9 @@ export const items = createReducer(
 	{
 		[ READER_RECORD_FOLLOW ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.url );
+			if ( ! urlKey ) {
+				return state;
+			}
 			return {
 				...state,
 				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: true } ),
@@ -119,6 +132,9 @@ export const items = createReducer(
 		},
 		[ READER_RECORD_UNFOLLOW ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.url );
+			if ( ! urlKey ) {
+				return state;
+			}
 			return {
 				...state,
 				[ urlKey ]: merge( {}, state[ urlKey ], { is_following: false } ),
@@ -126,6 +142,9 @@ export const items = createReducer(
 		},
 		[ READER_FOLLOW_ERROR ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
+			if ( ! urlKey ) {
+				return state;
+			}
 			return {
 				...state,
 				[ urlKey ]: merge( {}, state[ urlKey ], { error: action.payload.error } ),
@@ -133,6 +152,9 @@ export const items = createReducer(
 		},
 		[ READER_FOLLOW ]: ( state, action ) => {
 			let urlKey = prepareComparableUrl( action.payload.feedUrl );
+			if ( ! urlKey ) {
+				return state;
+			}
 			const newValues = { is_following: true };
 
 			const actualFeedUrl = get( action.payload, [ 'follow', 'feed_URL' ], action.payload.feedUrl );
@@ -181,6 +203,9 @@ export const items = createReducer(
 		},
 		[ READER_UNFOLLOW ]: ( state, action ) => {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
+			if ( ! urlKey ) {
+				return state;
+			}
 			const currentFollow = state[ urlKey ];
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
 				return state;
@@ -202,6 +227,9 @@ export const items = createReducer(
 				follows,
 				( hash, follow ) => {
 					const urlKey = prepareComparableUrl( follow.URL );
+					if ( ! urlKey ) {
+						return hash;
+					}
 					const newFollow = {
 						...follow,
 						is_following: true,
@@ -219,7 +247,7 @@ export const items = createReducer(
 				return state;
 			}
 			const urlKey = prepareComparableUrl( incomingSite.feed_URL );
-			const currentFollow = state[ urlKey ];
+			const currentFollow = urlKey && state[ urlKey ];
 			const newFollow = {
 				delivery_methods: get( incomingSite, 'subscription.delivery_methods' ),
 				is_following: true,

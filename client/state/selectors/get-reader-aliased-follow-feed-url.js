@@ -26,6 +26,10 @@ export const commonExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.x
 export default function getReaderAliasedFollowFeedUrl( state, feedUrl ) {
 	const urlKey = prepareComparableUrl( feedUrl );
 
+	if ( ! urlKey ) {
+		return null;
+	}
+
 	// first check for exact match
 	if ( state.reader.follows.items[ urlKey ] ) {
 		return urlKey;
@@ -38,6 +42,7 @@ export default function getReaderAliasedFollowFeedUrl( state, feedUrl ) {
 			includes( follow.alias_feed_URLs, urlKey ) ||
 			some( commonExtensions, ext => `${ urlKey }/${ ext }` === key )
 	);
+
 	if ( foundAlias ) {
 		return foundAlias.feed_URL;
 	}

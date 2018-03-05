@@ -5,6 +5,14 @@
 import { untrailingslashit } from 'lib/route';
 
 export function prepareComparableUrl( url ) {
-	const preparedUrl = url && untrailingslashit( url );
-	return preparedUrl && preparedUrl.replace( /^https?:\/\//, '' ).toLowerCase();
+	const unslashedUrl = url && untrailingslashit( url );
+	if ( ! unslashedUrl ) {
+		return null;
+	}
+	const preparedUrl = unslashedUrl.replace( /^https?:\/\//, '' ).toLowerCase();
+	if ( preparedUrl === 'www' || preparedUrl === 'www.' ) {
+		return null;
+	}
+
+	return preparedUrl;
 }
