@@ -202,7 +202,10 @@ export class LoginForm extends Component {
 
 	onSubmitForm = event => {
 		event.preventDefault();
-		this.props.formUpdate();
+
+		// focus on the email field to retrieve any changes
+		// that may have been ignored due to chrome not using events for autofill
+		this.usernameOrEmail.focus();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
 			this.props.getAuthAccountType( this.state.usernameOrEmail );
