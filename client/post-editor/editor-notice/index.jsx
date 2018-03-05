@@ -122,15 +122,10 @@ export class EditorNotice extends Component {
 				}
 
 				if ( 'page' === type ) {
-					return translate( 'Page published on {{siteLink/}}! {{a}}Add another page{{/a}}', {
+					return translate( 'Page published on {{pageLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
+							pageLink: (
+								<a href={ postUrl } onClick={ this.handlePillExternalClick }>
 									{ site.title }
 								</a>
 							),
@@ -138,46 +133,34 @@ export class EditorNotice extends Component {
 								<a href={ `/page/${ site.slug }` } onClick={ this.handlePillAddPagePromptClick } />
 							),
 						},
-						comment:
-							'Editor: Message displayed when a page is published, with a link to the site it was published on.',
+						comment: 'Editor: Message displayed when a page is published, with a link to the page.',
 					} );
 				}
 
 				if ( 'post' !== type && typeLabel ) {
-					return translate( '%(typeLabel)s published on {{siteLink/}}!', {
+					return translate( '%(typeLabel)s published on {{postLink/}}!', {
 						args: { typeLabel },
 						components: {
-							siteLink: (
-								<a
-									href={ site.URL }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ this.handlePillExternalClick }
-								>
+							postLink: (
+								<a href={ postUrl } onClick={ this.handlePillExternalClick }>
 									{ site.title }
 								</a>
 							),
 						},
 						comment:
-							'Editor: Message displayed when a post of a custom type is published, with a link to the site it was published on.',
+							'Editor: Message displayed when a post of a custom type is published, with a link to the post.',
 					} );
 				}
 
-				return translate( 'Post published on {{siteLink/}}!', {
+				return translate( 'Post published on {{postLink/}}!', {
 					components: {
-						siteLink: (
-							<a
-								href={ site.URL }
-								target="_blank"
-								rel="noopener noreferrer"
-								onClick={ this.handlePillExternalClick }
-							>
+						postLink: (
+							<a href={ postUrl } onClick={ this.handlePillExternalClick }>
 								{ site.title }
 							</a>
 						),
 					},
-					comment:
-						'Editor: Message displayed when a post is published, with a link to the site it was published on.',
+					comment: 'Editor: Message displayed when a post is published, with a link to the post.',
 				} );
 
 			case 'scheduled':
