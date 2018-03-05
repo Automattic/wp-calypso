@@ -8,6 +8,7 @@ import { compact, get } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -144,7 +145,12 @@ class JetpackOnboardingMain extends React.PureComponent {
 						steps={ steps }
 					/>
 				) : (
-					<div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
+					// <div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
+					<Gridicon
+						icon="my-sites"
+						size={ 24 }
+						className="jetpack-onboarding__loading wpcom-site__logo"
+					/>
 				) }
 			</Main>
 		);

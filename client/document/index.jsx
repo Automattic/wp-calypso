@@ -7,6 +7,7 @@
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -106,7 +107,8 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									<div className="wpcom-site__logo noticon noticon-wordpress" />
+									// <div className="wpcom-site__logo noticon noticon-wordpress" />
+									<Gridicon icon="my-sites" size={ 24 } className="wpcom-site__logo" />
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />
