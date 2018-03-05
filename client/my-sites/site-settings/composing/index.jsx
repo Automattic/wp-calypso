@@ -16,6 +16,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import DateTimeFormat from '../date-time-format';
 import DefaultPostFormat from './default-post-format';
+import Markdown from './markdown';
 import PublishConfirmation from './publish-confirmation';
 import {
 	isJetpackMinimumVersion,
@@ -35,6 +36,7 @@ const Composing = ( {
 	jetpackSettingsUISupported,
 	onChangeField,
 	setFieldValue,
+	siteId,
 	updateFields,
 } ) => {
 	const CardComponent = jetpackSettingsUISupported ? CompactCard : Card;
@@ -61,6 +63,7 @@ const Composing = ( {
 					setFieldValue={ setFieldValue }
 				/>
 			) }
+			<Markdown disabled={ isRequestingSettings || isSavingSettings } siteId={ siteId } />
 			{ hasDateTimeFormats && (
 				<DateTimeFormat
 					fields={ fields }
@@ -99,5 +102,6 @@ export default connect( state => {
 	return {
 		hasDateTimeFormats: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.7' ),
 		jetpackSettingsUISupported: siteIsJetpack && siteSupportsJetpackSettingsUi( state, siteId ),
+		siteId,
 	};
 } )( Composing );
