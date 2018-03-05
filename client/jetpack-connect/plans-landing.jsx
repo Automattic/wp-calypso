@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
@@ -89,6 +90,10 @@ class PlansLanding extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_help_link_click' );
 	};
 
+	handleInfoButtonClick = info => {
+		this.props.recordTracksEvent( 'calypso_jpc_help_' + info + '_click' );
+	};
+
 	plansExtendedInfo = () => {
 		const { translate } = this.props;
 		const headerText = translate( 'Unsure which plan is right for you?' );
@@ -114,10 +119,14 @@ class PlansLanding extends Component {
 						href={
 							'https://jetpack.com/2017/02/01/a-simple-guide-to-choosing-the-best-jetpack-plan-your-wordpress-site/'
 						}
+						onClick={ this.handleInfoButtonClick( 'plan_guide' ) }
 					>
 						{ translate( 'PLAN GUIDE' ) }
 					</Button>
-					<Button href={ 'https://jetpack.com/features/comparison' }>
+					<Button
+						href={ 'https://jetpack.com/features/comparison' }
+						onClick={ this.handleInfoButtonClick( 'feature_comparison' ) }
+					>
 						{ translate( 'FEATURE COMPARISON' ) }
 					</Button>
 				</div>
