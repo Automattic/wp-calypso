@@ -17,7 +17,6 @@
 	.reader-post-card__byline-details {
 		flex-wrap: wrap;
 		max-height: none;
-		max-width: calc( 100% - 140px );
 	}
 
 	.reader-post-card__byline-author-site {
@@ -70,8 +69,9 @@
 	}
 }
 
-.conversations__stream .reader-post-card.has-thumbnail .reader-excerpt__content {
-	width: calc( 100% - 120px );
+.conversations__stream .reader-post-card.card.is-compact .reader-post-card__post-details {
+	min-width: 0;
+	white-space: nowrap;
 }
 
 .conversations__comment-list-ul {
