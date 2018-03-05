@@ -23,131 +23,47 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 	};
 
 	renderPublishHeader() {
-		const { post, translate } = this.props;
-		const postType = get( post, 'type', 'post' );
+		const { translate } = this.props;
 
-		switch ( postType ) {
-			case 'post':
-				return (
-					<div className="editor-confirmation-sidebar__header">
-						{ translate(
-							'{{strong}}Almost there!{{/strong}} ' +
-								'Double-check your post’s settings, then ' +
-								'use the big green button to publish!',
-							{
-								comment:
-									'This string appears as the header for the confirmation sidebar ' +
-									'when a user publishes a post.',
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</div>
-				);
-			case 'page':
-				return (
-					<div className="editor-confirmation-sidebar__header">
-						{ translate(
-							'{{strong}}Almost there!{{/strong}} ' +
-								'Double-check your page’s settings, then ' +
-								'use the big green button to publish!',
-							{
-								comment:
-									'This string appears as the header for the confirmation sidebar ' +
-									'when a user publishes a page.',
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</div>
-				);
-			default:
-				return (
-					<div className="editor-confirmation-sidebar__header">
-						{ translate(
-							'{{strong}}Almost there!{{/strong}} ' +
-								'Double-check your settings, then ' +
-								'use the big green button to publish!',
-							{
-								comment:
-									'This string appears as the header for the confirmation sidebar ' +
-									'when a user publishes a custom post type.',
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</div>
-				);
-		}
+		return (
+			<div className="editor-confirmation-sidebar__header">
+				{ translate(
+					'{{strong}}Almost there!{{/strong}} ' +
+						'Double-check your settings, then ' +
+						'use the big green button to publish!',
+					{
+						comment:
+							'This string appears as the header for the confirmation sidebar ' +
+							'when a user publishes a post.',
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
+			</div>
+		);
 	}
 
 	renderScheduleHeader() {
-		const { post, postTypeLabel, translate } = this.props;
-		const postType = get( post, 'type', 'post' );
+		const { translate } = this.props;
 
-		switch ( postType ) {
-			case 'post':
-				return (
-					<div className="editor-confirmation-sidebar__header">
-						{ translate(
-							'{{strong}}Almost there!{{/strong}} ' +
-								'You can double-check your post’s settings below. When you’re happy, ' +
-								'use the big green button to schedule your post!',
-							{
-								comment:
-									'This string appears as the header for the confirmation sidebar ' +
-									'when a user schedules the publishing of a post.',
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</div>
-				);
-			case 'page':
-				return (
-					<div className="editor-confirmation-sidebar__header">
-						{ translate(
-							'{{strong}}Almost there!{{/strong}} ' +
-								'You can double-check your page’s settings below. When you’re happy, ' +
-								'use the big green button to schedule your page!',
-							{
-								comment:
-									'This string appears as the header for the confirmation sidebar ' +
-									'when a user schedules the publishing of a page.',
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</div>
-				);
-			default:
-				return (
-					<div className="editor-confirmation-sidebar__header">
-						{ translate(
-							'{{strong}}Almost there!{{/strong}} ' +
-								'You can double-check your settings below. When you’re happy, ' +
-								'use the big green button to schedule your %(postTypeLabel)s!',
-							{
-								comment:
-									'This string appears as the header for the confirmation sidebar ' +
-									'when a user schedules a custom post type. `postTypeLabel` is the singular ' +
-									'name of the custom post type.',
-								args: {
-									postTypeLabel,
-								},
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</div>
-				);
-		}
+		return (
+			<div className="editor-confirmation-sidebar__header">
+				{ translate(
+					'{{strong}}Almost there!{{/strong}} ' +
+						'Double-check your settings below, then ' +
+						'use the big green button to schedule!',
+					{
+						comment:
+							'This string appears as the header for the confirmation sidebar ' +
+							'when a user schedules the publishing of a post.',
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
+			</div>
+		);
 	}
 
 	render() {
