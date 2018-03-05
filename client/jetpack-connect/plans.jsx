@@ -12,14 +12,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
-import Card from 'components/card';
-import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
+import PlansExtendedInfo from './plans-extended-info';
 import PlansSkipButton from './plans-skip-button';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -192,47 +190,9 @@ class Plans extends Component {
 	}
 
 	handleInfoButtonClick = info => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_' + info + '_click' );
-	};
-
-	plansExtendedInfo = () => {
-		const { translate } = this.props;
-		const headerText = translate( 'Unsure which plan is right for you?' );
-		const subheaderText = translate(
-			'Read out guide to choosing the right plan or compare plans in more details.'
-		);
-
-		return (
-			<Card className="jetpack-connect__plan-info">
-				<img
-					className="jetpack-connect__plan-info-illustration"
-					src={ '/calypso/images/illustrations/illustration-start-jetpack.svg' }
-					alt=""
-				/>
-				<FormattedHeader
-					className="jetpack-connect__plan-help"
-					headerText={ headerText }
-					subHeaderText={ subheaderText }
-				/>
-				<div className="jetpack-connect__plan-info-buttons">
-					<Button
-						primary
-						href={
-							'https://jetpack.com/2017/02/01/a-simple-guide-to-choosing-the-best-jetpack-plan-your-wordpress-site/'
-						}
-						onClick={ this.handleInfoButtonClick( 'plan_guide' ) }
-					>
-						{ translate( 'PLAN GUIDE' ) }
-					</Button>
-					<Button
-						href={ 'https://jetpack.com/features/comparison' }
-						onClick={ this.handleInfoButtonClick( 'feature_comparison' ) }
-					>
-						{ translate( 'FEATURE COMPARISON' ) }
-					</Button>
-				</div>
-			</Card>
-		);
+		this.props.recordTracksEvent( 'calypso_jpc_help_' + info + '_click', {
+			site_type: 'connected',
+		} );
 	};
 
 	render() {
@@ -262,7 +222,7 @@ class Plans extends Component {
 					selectedSite={ selectedSite }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } isRtl={ isRtlLayout } />
-					{ this.plansExtendedInfo() }
+					<PlansExtendedInfo onClick={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton
 							label={ helpButtonLabel }
