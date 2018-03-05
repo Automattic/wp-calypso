@@ -98,7 +98,6 @@
 }
 
 .reader-combined-card__post-list {
-	height: 25px;
 	margin: 0;
 	width: 100%;
 }
@@ -254,6 +253,7 @@
 
 .reader-combined-card__footer {
 	display: flex;
+	height: 25px;
 	justify-content: flex-end;
 	margin-bottom: 5px;
 }
