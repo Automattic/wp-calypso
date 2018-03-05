@@ -385,10 +385,6 @@ class SimplePaymentsDialog extends Component {
 		);
 	}
 
-	returnTrue() {
-		return true;
-	}
-
 	render() {
 		const {
 			showDialog,
@@ -446,7 +442,6 @@ class SimplePaymentsDialog extends Component {
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							event="editor_simple_payments_modal_nudge"
-							shouldDisplay={ this.returnTrue }
 						/>
 					}
 					secondaryAction={
