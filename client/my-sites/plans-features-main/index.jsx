@@ -212,7 +212,14 @@ class PlansFeaturesMain extends Component {
 	}
 
 	getFAQ() {
-		const { site, translate } = this.props;
+		const { isChatAvailable, site, translate } = this.props;
+
+		const helpLink =
+			isEnabled( 'happychat' ) && isChatAvailable ? (
+				<HappychatButton className="plans-features-main__happychat-button" />
+			) : (
+				<a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" />
+			);
 
 		return (
 			<FAQ>
@@ -333,13 +340,9 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Have more questions?' ) }
 					answer={ translate(
 						'Need help deciding which plan works for you? Our happiness engineers are available for' +
-							' any questions you may have. {{a}}Get help{{/a}}.',
+							' any questions you may have. {{helpLink}}Get help{{/helpLink}}.',
 						{
-							components: {
-								a: (
-									<a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" />
-								),
-							},
+							components: { helpLink },
 						}
 					) }
 				/>
