@@ -24,6 +24,7 @@ import {
 	isOneTimePurchase,
 	isRenewable,
 	showCreditCardExpiringWarning,
+	isPaidWithCredits,
 } from 'lib/purchases';
 import { isDomainTransfer } from 'lib/products-values';
 import { getPurchase, getSelectedSite } from '../utils';
@@ -45,17 +46,29 @@ class PurchaseNotice extends Component {
 
 	getExpiringText( purchase ) {
 		const { translate, moment, selectedSite } = this.props;
+
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
-			return translate(
-				'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
-					'Please, add a credit card if you want it to autorenew. ',
-				{
-					args: {
-						purchaseName: getName( purchase ),
-						expiry: moment( purchase.expiryMoment ).fromNow(),
-					},
-				}
-			);
+			return isPaidWithCredits( purchase )
+				? translate(
+						'You purchased %(purchaseName)s with credits and it will expire %(expiry)s. ' +
+							'Please, add a credit card if you want it to autorenew.',
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								expiry: moment( purchase.expiryMoment ).fromNow(),
+							},
+						}
+					)
+				: translate(
+						'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+							'Please, add a credit card if you want it to autorenew. ',
+						{
+							args: {
+								purchaseName: getName( purchase ),
+								expiry: moment( purchase.expiryMoment ).fromNow(),
+							},
+						}
+					);
 		}
 		if ( isMonthly( purchase.productSlug ) ) {
 			const expiryMoment = moment( purchase.expiryMoment );
@@ -96,7 +109,11 @@ class PurchaseNotice extends Component {
 			);
 		}
 
-		return <NoticeAction onClick={ onClick }>{ translate( 'Renew Now' ) }</NoticeAction>;
+		const renewText = isPaidWithCredits( purchase )
+			? translate( 'Add Payment Method' )
+			: translate( 'Renew Now' );
+
+		return <NoticeAction onClick={ onClick }>{ renewText }</NoticeAction>;
 	}
 
 	trackImpression( warning ) {

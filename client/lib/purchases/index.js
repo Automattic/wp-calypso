@@ -134,6 +134,10 @@ function isPaidWithPaypal( purchase ) {
 	return 'paypal' === purchase.payment.type;
 }
 
+function isPaidWithCredits( purchase ) {
+	return purchase.payment && 'credits' === purchase.payment.type;
+}
+
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
 }
@@ -320,6 +324,7 @@ export {
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
+	isPaidWithCredits,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,

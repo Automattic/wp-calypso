@@ -8,7 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isRemovable, isCancelable } from '../index';
+import { isRemovable, isCancelable, isPaidWithCredits } from '../index';
+
 import {
 	DOMAIN_PURCHASE,
 	DOMAIN_PURCHASE_PENDING_TRANSFER,
@@ -19,6 +20,8 @@ import {
 	PLAN_PURCHASE,
 	SITE_REDIRECT_PURCHASE,
 	SITE_REDIRECT_PURCHASE_EXPIRED,
+	PLAN_PURCHASE_WITH_CREDITS,
+	PLAN_PURCHASE_WITH_PAYPAL,
 } from './data';
 
 describe( 'index', () => {
@@ -66,6 +69,19 @@ describe( 'index', () => {
 
 		test( 'should not be cancelable if domain is pending transfer', () => {
 			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).to.be.false;
+		} );
+	} );
+	describe( '#isPaidWithCredits', () => {
+		test( 'should be true when paid with credits', () => {
+			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_CREDITS ) ).to.be.true;
+		} );
+		test( 'should false when not paid with credits', () => {
+			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).to.be.false;
+		} );
+		test( 'should be false when payment not set on purchase', () => {
+			const purchase = Object.assign( {}, DOMAIN_PURCHASE );
+			delete purchase.payment;
+			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).to.be.false;
 		} );
 	} );
 } );
