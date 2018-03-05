@@ -96,7 +96,9 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 						plan={ PLAN_JETPACK_PREMIUM }
 						title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 						description={ translate(
-							'Get advanced customization, more storage space, and video support along with all your new themes.'
+							'In addition to more than 100 premium themes, ' +
+								'get Elasticsearch-powered site search, real-time offsite backups, ' +
+								'and security scanning.'
 						) }
 						event="themes_plans_free_personal_premium"
 					/>
