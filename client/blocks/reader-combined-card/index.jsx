@@ -23,6 +23,7 @@ import { recordTrack } from 'reader/stats';
 import { getSiteName } from 'reader/get-helpers';
 import FollowButton from 'reader/follow-button';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
+import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 
 class ReaderCombinedCard extends React.Component {
 	static propTypes = {
@@ -134,6 +135,18 @@ class ReaderCombinedCard extends React.Component {
 						/>
 					) ) }
 				</ul>
+				<div className="reader-combined-card__footer">
+					<ReaderPostOptionsMenu
+						className="reader-combined-card__options-menu ignore-click"
+						showFollow={ true }
+						showConversationFollow={ false }
+						showVisitPost={ false }
+						showEditPost={ false }
+						showReportSite={ true }
+						showReportPost={ false }
+						post={ posts[ 0 ] }
+					/>
+				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 			</Card>
