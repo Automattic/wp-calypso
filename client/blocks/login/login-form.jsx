@@ -207,6 +207,10 @@ export class LoginForm extends Component {
 		// that may have been ignored due to chrome not using events for autofill
 		this.usernameOrEmail.focus();
 
+		this.setState( {
+			usernameOrEmail: this.usernameOrEmail.value,
+		} );
+
 		if ( ! this.props.hasAccountTypeLoaded ) {
 			this.props.getAuthAccountType( this.state.usernameOrEmail );
 
