@@ -181,8 +181,15 @@ class ProductSearchRow extends Component {
 	};
 
 	renderInputName = product => {
-		const { currency, translate } = this.props;
-		const price = formatCurrency( product.price, currency );
+		const { currency, translate, showRegularPrice } = this.props;
+
+		let price;
+		if ( showRegularPrice ) {
+			price = formatCurrency( product.regular_price || '0', currency );
+		} else {
+			price = formatCurrency( product.price, currency );
+		}
+
 		let nameWithPrice = `${ product.name } - ${ price }`;
 		// Some things do need special handling…
 		if ( product.isVariation ) {
