@@ -90,12 +90,9 @@ const akismetFeatures = {
 };
 
 class JetpackThankYouCard extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			completedJetpackFeatures: {},
-		};
-	}
+	state = {
+		completedJetpackFeatures: {},
+	};
 
 	trackConfigFinished( eventName, options = null ) {
 		if ( ! this.sentTracks ) {
