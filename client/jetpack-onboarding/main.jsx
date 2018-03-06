@@ -145,8 +145,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						steps={ steps }
 					/>
 				) : (
-					// <div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
-					<WordPressLogo size={ 72 } />
+					<WordPressLogo size={ 72 } className="jetpack-onboarding__loading wpcom-site__logo" />
 				) }
 			</Main>
 		);
