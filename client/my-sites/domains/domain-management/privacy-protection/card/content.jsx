@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -39,7 +40,7 @@ class Content extends React.PureComponent {
 				</div>
 				<div className="privacy-protection-card__features">
 					<h5>
-						<span className="noticon noticon-checkmark" />
+						<Gridicon icon="checkmark-circle" size="16" />
 						{ translate( '{{strong}}Protects{{/strong}} Your Identity Online', {
 							components: {
 								strong: <strong />,
@@ -48,7 +49,7 @@ class Content extends React.PureComponent {
 					</h5>
 
 					<h5>
-						<span className="noticon noticon-checkmark" />
+						<Gridicon icon="checkmark-circle" size="16" />
 						{ translate( '{{strong}}Reduces{{/strong}} Email Spam', {
 							components: {
 								strong: <strong />,
@@ -57,7 +58,7 @@ class Content extends React.PureComponent {
 					</h5>
 
 					<h5>
-						<span className="noticon noticon-checkmark" />
+						<Gridicon icon="checkmark-circle" size="16" />
 						{ translate( '{{strong}}Helps{{/strong}} Prevent Domain Hacking', {
 							components: {
 								strong: <strong />,

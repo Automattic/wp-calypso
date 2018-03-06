@@ -516,7 +516,7 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card__header {
-	border-bottom: 2px solid $gray-lighten-20;
+	border-bottom: 1px solid $gray-lighten-30;
 	display: block;
 	overflow: auto;
 	padding: 16px 16px 20px;
@@ -568,7 +568,6 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card__content {
-	background: $gray-light;
 	clear: both;
 	display: block;
 	overflow: auto;
@@ -615,9 +614,11 @@ ul.email-forwarding__list {
 			margin-bottom: 0;
 		}
 
-		.noticon {
-			color: $alert-green;
+		.gridicon {
+			fill: $alert-green;
 			margin-right: 5px;
+			position: relative;
+				top: 3px;
 		}
 	}
 }
