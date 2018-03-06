@@ -6,6 +6,7 @@ import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -142,7 +143,13 @@ class BillingReceipt extends React.Component {
 
 	renderLineItems() {
 		const { transaction, translate } = this.props;
-		const items = transaction.items.map( item => {
+
+		const groupedTransactionItems = [
+			...reject( transaction.items, { product: 'Domain' } ),
+			...transaction.domain_items,
+		];
+
+		const items = groupedTransactionItems.map( item => {
 			return (
 				<tr key={ item.id }>
 					<td className="billing-history__receipt-item-name">
