@@ -40,7 +40,7 @@ class Content extends React.PureComponent {
 				</div>
 				<div className="privacy-protection-card__features">
 					<h5>
-						<Gridicon icon="checkmark-circle" size={ 16 } />
+						<Gridicon icon="checkmark-circle" size={ 18 } />
 						{ translate( '{{strong}}Protects{{/strong}} Your Identity Online', {
 							components: {
 								strong: <strong />,
@@ -49,7 +49,7 @@ class Content extends React.PureComponent {
 					</h5>
 
 					<h5>
-						<Gridicon icon="checkmark-circle" size={ 16 } />
+						<Gridicon icon="checkmark-circle" size={ 18 } />
 						{ translate( '{{strong}}Reduces{{/strong}} Email Spam', {
 							components: {
 								strong: <strong />,
@@ -58,7 +58,7 @@ class Content extends React.PureComponent {
 					</h5>
 
 					<h5>
-						<Gridicon icon="checkmark-circle" size={ 16 } />
+						<Gridicon icon="checkmark-circle" size={ 18 } />
 						{ translate( '{{strong}}Helps{{/strong}} Prevent Domain Hacking', {
 							components: {
 								strong: <strong />,
