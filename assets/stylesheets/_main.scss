@@ -333,8 +333,8 @@ object {
 		text-align: center;
 		z-index: z-index( '.environment-badge', '.environment-badge .bug-report' );
 		transition: border-radius 0.2s ease-out;
-		&:before {
-			@include noticon( '\f50a', 14px );
+
+		.gridicon {
 			vertical-align: middle;
 		}
 	}

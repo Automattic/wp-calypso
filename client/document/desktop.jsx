@@ -6,6 +6,7 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -92,7 +93,9 @@ class Desktop extends React.Component {
 								href={ feedbackURL }
 								title="Report an issue"
 								target="_blank"
-							/>
+							>
+								<Gridicon icon="bug" size={ 18 } />
+							</a>
 						</div>
 					) }
 
