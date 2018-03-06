@@ -1,9 +1,13 @@
 /** @format */
 
 /**
+ * External dependencies
+ */
+import { replace } from 'lodash';
+
+/**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
@@ -229,7 +233,7 @@ export const validateAccountRecoveryPhone = code => dispatch => {
 	return wpcom
 		.undocumented()
 		.me()
-		.validateAccountRecoveryPhone( code )
+		.validateAccountRecoveryPhone( replace( code, /\s/g, '' ) )
 		.then( () => dispatch( validateAccountRecoveryPhoneSuccess() ) )
 		.catch( error => dispatch( validateAccountRecoveryPhoneFailed( error ) ) );
 };
