@@ -264,6 +264,10 @@ function monthsUntilCardExpires( purchase ) {
 	return purchase.payment.creditCard.expiryMoment.diff( moment(), 'months' );
 }
 
+function subscribedWithinPastWeek( purchase ) {
+	return purchase.subscribedDate && moment( purchase.subscribedDate ).diff( moment(), 'days' ) < 7;
+}
+
 /**
  * Returns the payment logo to display based on the payment method
  *
@@ -339,4 +343,5 @@ export {
 	purchaseType,
 	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
+	subscribedWithinPastWeek,
 };

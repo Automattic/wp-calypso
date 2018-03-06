@@ -25,6 +25,7 @@ import {
 	isRenewable,
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
+	subscribedWithinPastWeek,
 } from 'lib/purchases';
 import { isDomainTransfer } from 'lib/products-values';
 import { getPurchase, getSelectedSite } from '../utils';
@@ -145,7 +146,10 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( purchase.expiryMoment < moment().add( 90, 'days' ) ) {
+		if (
+			! subscribedWithinPastWeek( purchase ) &&
+			purchase.expiryMoment < moment().add( 90, 'days' )
+		) {
 			noticeStatus = 'is-error';
 		}
 
