@@ -101,8 +101,16 @@
 	margin: 0 0 0 15px;
 	padding: 20px 0;
 
+	@include breakpoint( "<960px" ) {
+		margin: 0;
+	}
+
 	@include breakpoint( "<660px" ) {
 		margin: 0 0 0 15px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		margin: 0 5px 0 0;
 	}
 
 	&:nth-child( 2n ) {
@@ -118,14 +126,10 @@
 	}
 
 	.reader-related-card__post {
-		max-height: 208px;
+		max-height: 16px * 1.6 * 11;
 
-		@include breakpoint( "<660px" ) {
-			max-height: 206px;
-		}
-
-		.reader-related-card__excerpt {
-			-webkit-line-clamp: initial;
+		@include breakpoint( "<960px" ) {
+			max-height: 16px * 1.6 * 8;
 		}
 	}
 
@@ -410,6 +414,7 @@
 	z-index: z-index( 'root', '.following-manage__url-follow' );
 
 	.follow-button {
+
 		.gridicon {
 			fill: $blue-medium;
 		}
@@ -417,7 +422,7 @@
 		.follow-button__label {
 			color: $blue-medium;
 
-			@include breakpoint ("<660px" ) {
+			@include breakpoint ( "<660px" ) {
 				display: inline;
 			}
 		}

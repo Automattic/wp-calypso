@@ -1,6 +1,6 @@
-
 // Adds a top border to first card in the Site Stream
 .is-reader-page .is-site-stream .reader-post-card.card {
+
 	&:nth-child(2) {
 		border-top: 1px solid $gray-lighten-20;
 	}
@@ -8,6 +8,7 @@
 
 // Removes top border from first card in Discover Stream
 .is-reader-page .is-discover-stream.is-site-stream .reader-post-card.card {
+
 	&:nth-child(2) {
 		border-top: 0;
 	}
@@ -16,7 +17,7 @@
 .reader-post-card.card {
 	border-bottom: 1px solid $gray-lighten-20;
 	box-shadow: none;
-	margin: 0 15px;
+	margin: 0 8px 0 0;
 	padding: 18px 0 20px;
 	position: relative;
 
@@ -25,6 +26,7 @@
 	}
 
 	&.is-selected {
+
 		&::before {
 			content: '';
 			position: absolute;
@@ -119,6 +121,7 @@
 
 	&.is-gallery,
 	&.is-photo {
+
 		.reader-post-card__post {
 			margin-top: 16px;
 		}
@@ -129,6 +132,7 @@
 	}
 
 	&.is-compact {
+
 		.reader-post-card__byline-details {
 			display: flex;
 			flex-direction: row;
@@ -158,6 +162,7 @@
 
 		.reader-post-card__byline-author-site,
 		.reader-post-card__timestamp-and-tag {
+
 			&::after {
 				display: none;
 			}
@@ -184,7 +189,7 @@
 		.reader-post-card__post {
 			margin-top: 0;
 
-			@include breakpoint( '<960px' ) {
+			@include breakpoint( "<960px" ) {
 				flex-direction: row;
 			}
 		}
@@ -296,7 +301,7 @@
 		@include long-content-fade( $size: 10% );
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint( ">660px" ) {
 		width: calc( 100% - 90px );
 	}
 }
@@ -323,12 +328,12 @@
 	position: relative;
 	width: calc( 100% - 140px );
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint( "<480px" ) {
 		max-width: 500px;
 	}
 
 	&::after {
-		@include long-content-fade( $size: 10% );
+		@include long-content-fade( $size: 35px );
 	}
 }
 
@@ -460,7 +465,7 @@
 		max-height: 15px * 1.6 * 3.2;
 
 		// Clamp to 2 lines on wider viewports
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( ">960px" ) {
 			max-height: 15px * 1.6 * 2;
 		}
 
@@ -490,6 +495,7 @@
 
 // 3 line excerpt for thumbnail cards
 .reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover):not(.is-compact) {
+
 	.reader-excerpt {
 		max-height: 15px * 1.6 * 3.2;
 		overflow: hidden;
@@ -502,6 +508,7 @@
 	height: 22px;
 
 	&.reader-post-actions__visit {
+
 		.gridicon {
 			position: relative;
 				left: -2px;
@@ -538,7 +545,7 @@
 	.reader-share_button .gridicon {
 		position: relative;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( ">960px" ) {
 			top: 1px;
 		}
 	}
@@ -547,11 +554,11 @@
 	.comment-button__label-status,
 	.like-button__label-status {
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint( ">960px" ) {
 			display: none;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint( "<660px" ) {
 			display: none;
 		}
 	}
@@ -581,6 +588,7 @@
 	}
 
 	&.is-following {
+
 		.gridicon {
 			fill: $alert-green;
 		}
@@ -633,7 +641,6 @@
 	cursor: pointer;
 	flex: 1;
 	list-style-type: none;
-	margin-right: 1px;
 
 	&:last-child {
 		margin-right: 0;
@@ -654,7 +661,7 @@
 .reader-post-card__gallery-image {
 	height: 100px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint( ">960px" ) {
 		height: 130px;
 	}
 }
