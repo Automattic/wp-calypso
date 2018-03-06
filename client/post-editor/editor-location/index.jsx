@@ -7,7 +7,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import qs from 'querystring';
 
 /**
  * Internal dependencies
@@ -16,12 +15,8 @@ import PostActions from 'lib/posts/actions';
 import EditorDrawerWell from 'post-editor/editor-drawer-well';
 import { recordEvent, recordStat } from 'lib/posts/stats';
 import EditorLocationSearch from './search';
+import EditorLocationMap from './map';
 import Notice from 'components/notice';
-
-/**
- * Module variables
- */
-const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
 class EditorLocation extends React.Component {
 	static displayName = 'EditorLocation';
@@ -29,7 +24,7 @@ class EditorLocation extends React.Component {
 	static propTypes = {
 		label: PropTypes.string,
 		coordinates: function( props, propName ) {
-			var prop = props[ propName ];
+			const prop = props[ propName ];
 			if (
 				prop &&
 				( ! Array.isArray( prop ) || 2 !== prop.length || 2 !== prop.filter( Number ).length )
@@ -92,6 +87,7 @@ class EditorLocation extends React.Component {
 	};
 
 	onSearchSelect = result => {
+		this.resetError();
 		PostActions.updateMetadata( {
 			geo_latitude: result.geometry.location.lat,
 			geo_longitude: result.geometry.location.lng,
@@ -103,19 +99,17 @@ class EditorLocation extends React.Component {
 			return;
 		}
 
-		const src =
-			GOOGLE_MAPS_BASE_URL +
-			qs.stringify( {
-				markers: this.props.coordinates.join( ',' ),
-				zoom: 8,
-				size: '400x300',
-			} );
-
-		return <img src={ src } className="editor-location__map" />;
+		return (
+			<EditorLocationMap
+				coordinates={ this.props.coordinates }
+				onError={ this.onGeolocateFailure }
+				onSelect={ this.onSearchSelect }
+			/>
+		);
 	};
 
 	render() {
-		var error, buttonText;
+		let error, buttonText;
 
 		if ( this.state.error ) {
 			error = (
