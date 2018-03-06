@@ -52,8 +52,8 @@
 	margin: auto 0 0;
 	display: flex;
 	flex-direction: row;
+	flex-shrink: 0;
 	padding-left: 10px;
-	flex: none;
 
 	.button {
 		&.inline-help {
