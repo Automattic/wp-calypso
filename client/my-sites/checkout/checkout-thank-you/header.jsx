@@ -102,8 +102,7 @@ class CheckoutThankYouHeader extends PureComponent {
 
 		if ( isDomainMapping( primaryPurchase ) ) {
 			return translate(
-				'Your domain {{strong}}%(domainName)s{{/strong}} was added to your site. ' +
-					'It may take a little while to start working – see below for more information.',
+				'Follow the instructions below to finish setting up your domain {{strong}}%(domainName)s{{/strong}}.',
 				{
 					args: { domainName: primaryPurchase.meta },
 					components: { strong: <strong /> },

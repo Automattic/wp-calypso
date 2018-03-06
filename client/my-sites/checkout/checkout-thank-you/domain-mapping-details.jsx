@@ -31,12 +31,13 @@ const DomainMappingDetails = ( {
 		<span />
 	);
 
-	const domainInstructions = (
+	let instructions = (
 		<div>
 			<p>
 				{ translate(
-					"If not, you will need to log into {{registrarSupportLink}}your registrar's site{{/registrarSupportLink}} " +
-						'(where you purchased the domain originally) and change the "Name Servers" to:',
+					'To point your domain at your WordPress.com site, log in to your' +
+						"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
+						'(where you purchased the domain), and update your name servers to:',
 					{
 						components: {
 							registrarSupportLink: registrarSupportLink,
@@ -52,72 +53,58 @@ const DomainMappingDetails = ( {
 		</div>
 	);
 
-	const subdomainInstructions = (
-		<div>
-			<p>
-				{ translate(
-					"If not, you will need to log into {{registrarSupportLink}}your registrar's site{{/registrarSupportLink}} " +
-						'(where you purchased the domain originally) and add the following "CNAME" record:',
-					{
-						components: {
-							registrarSupportLink: registrarSupportLink,
-						},
-					}
-				) }
-			</p>
-			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
-				<li>
-					{ domain }. IN CNAME { selectedSiteDomain }.
-				</li>
-			</ul>
-		</div>
-	);
+	if ( isSubdomainMapping ) {
+		instructions = (
+			<div>
+				<p>
+					{ translate(
+						'To point your domain at your WordPress.com site, log in to your ' +
+							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
+							'(where you purchased the domain), and edit the DNS records to add a CNAME record:',
+						{
+							components: {
+								registrarSupportLink: registrarSupportLink,
+							},
+						}
+					) }
+				</p>
+				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
+					<li>
+						{ domain }. IN CNAME { selectedSiteDomain }.
+					</li>
+				</ul>
+			</div>
+		);
+	}
 
-	const subdomainInstructionsBusiness = (
-		<div>
-			<p>
-				{ translate(
-					"If not, you will need to log into {{registrarSupportLink}}your registrar's site{{/registrarSupportLink}} " +
-						'(where you purchased the domain originally) and add the following "NS" records:',
-					{
-						components: {
-							registrarSupportLink: registrarSupportLink,
-						},
-					}
-				) }
-			</p>
-			<ul className="checkout-thank-you__domain-mapping-details-nameservers">
-				<li>{ domain }. IN NS ns1.wordpress.com.</li>
-				<li>{ domain }. IN NS ns2.wordpress.com.</li>
-				<li>{ domain }. IN NS ns3.wordpress.com.</li>
-			</ul>
-		</div>
-	);
+	if ( isSubdomainMapping && isBusinessPlan ) {
+		instructions = (
+			<div>
+				<p>
+					{ translate(
+						'To point your domain at your WordPress.com site, log in to your ' +
+							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
+							'(where you purchased the domain), and edit the DNS records to add NS records:',
+						{
+							components: {
+								registrarSupportLink: registrarSupportLink,
+							},
+						}
+					) }
+				</p>
+				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
+					<li>{ domain }. IN NS ns1.wordpress.com.</li>
+					<li>{ domain }. IN NS ns2.wordpress.com.</li>
+					<li>{ domain }. IN NS ns3.wordpress.com.</li>
+				</ul>
+			</div>
+		);
+	}
 
 	const description = (
 		<div>
-			<p>
-				{ translate(
-					'Your domain {{em}}%(domain)s{{/em}} has to be configured to work with WordPress.com.',
-					{
-						args: { domain },
-						components: { em: <em /> },
-					}
-				) }
-			</p>
-			<p>
-				{ translate(
-					'If you already did this yourself, or if the domain was already configured for you, no further action is needed.'
-				) }
-			</p>
-			{ ! isSubdomainMapping && domainInstructions }
-			{ isSubdomainMapping && ! isBusinessPlan && subdomainInstructions }
-			{ isSubdomainMapping && isBusinessPlan && subdomainInstructionsBusiness }
-			<p>
-				{ translate(
-					'Once you make the change, just wait a few hours and the domain should start loading your site automatically.'
-				) }
-			</p>
+			{ instructions }
+			<p>{ translate( 'If you already did this, no further action is required.' ) }</p>
 		</div>
 	);
 
