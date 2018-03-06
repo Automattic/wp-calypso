@@ -4,11 +4,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { isRemovable, isCancelable, isPaidWithCredits } from '../index';
+import { isRemovable, isCancelable, isPaidWithCredits, subscribedWithinPastWeek } from '../index';
 
 import {
 	DOMAIN_PURCHASE,
@@ -82,6 +83,29 @@ describe( 'index', () => {
 			const purchase = Object.assign( {}, DOMAIN_PURCHASE );
 			delete purchase.payment;
 			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).to.be.false;
+		} );
+	} );
+	describe( '#subscribedWithinPastWeek', () => {
+		test( 'should return false when no subscribed date', () => {
+			expect( subscribedWithinPastWeek( {} ) ).to.be.false;
+		} );
+		test( 'should return false when subscribed more than 1 week ago', () => {
+			expect(
+				subscribedWithinPastWeek( {
+					subscribedDate: moment()
+						.subtract( 'days', 8 )
+						.format(),
+				} )
+			).to.be.false;
+		} );
+		test( 'should return true when subscribed less than 1 week ago', () => {
+			expect(
+				subscribedWithinPastWeek( {
+					subscribedDate: moment()
+						.substract( 'days', 3 )
+						.format(),
+				} )
+			).to.be.true;
 		} );
 	} );
 } );
