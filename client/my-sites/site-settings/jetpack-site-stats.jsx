@@ -3,7 +3,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
@@ -142,7 +142,7 @@ class JetpackSiteStats extends Component {
 		);
 
 		return (
-			<div>
+			<Fragment>
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"
 					header={ header }
@@ -200,7 +200,7 @@ class JetpackSiteStats extends Component {
 				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
 					{ translate( 'View your site stats' ) }
 				</CompactCard>
-			</div>
+			</Fragment>
 		);
 	}
 
