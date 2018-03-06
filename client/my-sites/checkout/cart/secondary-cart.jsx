@@ -21,7 +21,6 @@ import CartSummaryBar from 'my-sites/checkout/cart/cart-summary-bar';
 import CartPlanAd from './cart-plan-ad';
 import CartPlanDiscountAd from './cart-plan-discount-ad';
 import Sidebar from 'layout/sidebar';
-import observe from 'lib/mixins/data-observe';
 import CartBodyLoadingPlaceholder from 'my-sites/checkout/cart/cart-body/loading-placeholder';
 import { action as upgradesActionTypes } from 'lib/upgrades/constants';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
@@ -33,8 +32,6 @@ const SecondaryCart = createReactClass( {
 		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 	},
-
-	mixins: [ observe( 'sites' ) ],
 
 	getInitialState() {
 		return {
