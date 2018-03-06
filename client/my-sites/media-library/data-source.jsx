@@ -112,6 +112,7 @@ export class MediaLibraryDataSource extends Component {
 				>
 					{ currentSelected && currentSelected.icon }
 					{ this.renderScreenReader( currentSelected ) }
+					<Gridicon icon="chevron-down" size={ 18 } />
 
 					<PopoverMenu
 						context={ this.refs && this.refs.popoverMenuButton }
