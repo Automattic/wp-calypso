@@ -149,13 +149,12 @@ const SinglePlugin = createReactClass( {
 	},
 
 	pluginExists( plugin ) {
-		if ( this.isFetching() ) {
-			return 'unknown';
-		}
 		if ( plugin && plugin.fetched ) {
 			return true;
 		}
-
+		if ( this.isFetching() ) {
+			return 'unknown';
+		}
 		const sites = this.props.sites;
 
 		// If the plugin has at least one site then we know it exists
