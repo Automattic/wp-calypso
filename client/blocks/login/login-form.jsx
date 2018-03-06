@@ -206,8 +206,11 @@ export class LoginForm extends Component {
 		const usernameOrEmail = this.usernameOrEmail.value;
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			// this.props.getAuthAccountType( this.state.usernameOrEmail );
 			this.props.getAuthAccountType( usernameOrEmail );
+
+			this.setState( {
+				usernameOrEmail,
+			} );
 
 			return;
 		}
