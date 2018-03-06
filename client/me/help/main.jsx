@@ -28,6 +28,7 @@ import HelpUnverifiedWarning from './help-unverified-warning';
 import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import config from 'config';
 
 /**
  * Module variables
@@ -36,7 +37,7 @@ const debug = debugModule( 'calypso:help-search' );
 
 const getSupportLocale = () => {
 	const localeSlug = getLocaleSlug();
-	if ( [ 'es', 'pt-br' ].indexOf( getLocaleSlug() ) > -1 ) {
+	if ( config( 'support_locales' ).indexOf( getLocaleSlug() ) > -1 ) {
 		return localeSlug;
 	}
 	return 'en';
