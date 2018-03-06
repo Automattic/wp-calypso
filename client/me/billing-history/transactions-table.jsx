@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { defer, isEmpty, pick } from 'lodash';
+import { defer, isEmpty, pick, reject } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
@@ -105,19 +105,23 @@ class TransactionsTable extends React.Component {
 	}
 
 	serviceName = transaction => {
-		var item, name;
-
 		if ( ! transaction.items ) {
-			name = this.serviceNameDescription( transaction );
-		} else if ( transaction.items.length === 1 ) {
-			item = transaction.items[ 0 ];
-			item.plan = capitalPDangit( titleCase( item.variation ) );
-			name = this.serviceNameDescription( item );
-		} else {
-			name = <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
+			return this.serviceNameDescription( transaction );
 		}
 
-		return name;
+		const groupedTransactionItems = [
+			...reject( transaction.items, { product: 'Domain' } ),
+			...transaction.domain_items,
+		];
+
+		if ( groupedTransactionItems.length > 1 ) {
+			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
+		}
+
+		return this.serviceNameDescription( {
+			...groupedTransactionItems[ 0 ],
+			plan: capitalPDangit( titleCase( groupedTransactionItems[ 0 ].variation ) ),
+		} );
 	};
 
 	serviceNameDescription = transaction => {
