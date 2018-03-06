@@ -22,7 +22,6 @@ import observe from 'lib/mixins/data-observe';
 import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import translator from 'lib/translator-jumpstart';
-import TranslatorInvitation from './community-translator/invitation';
 import TranslatorLauncher from './community-translator/launcher';
 import Welcome from 'my-sites/welcome/welcome';
 import WelcomeMessage from 'layout/nux-welcome/welcome-message';
@@ -57,14 +56,13 @@ const Layout = createReactClass( {
 	/* eslint-enable react/no-deprecated */
 	displayName: 'Layout',
 
-	mixins: [ observe( 'user', 'nuxWelcome', 'translatorInvitation' ) ],
+	mixins: [ observe( 'user', 'nuxWelcome' ) ],
 
 	propTypes: {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
 		user: PropTypes.object,
 		nuxWelcome: PropTypes.object,
-		translatorInvitation: PropTypes.object,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -99,18 +97,12 @@ const Layout = createReactClass( {
 	},
 
 	renderWelcome: function() {
-		const translatorInvitation = this.props.translatorInvitation;
-
 		if ( ! this.props.user ) {
 			return null;
 		}
 
 		const showWelcome = this.props.nuxWelcome.getWelcome();
 		const newestSite = this.newestSite();
-		const showInvitation =
-			! showWelcome &&
-			translatorInvitation.isPending() &&
-			translatorInvitation.isValidSection( this.props.section.name );
 
 		return (
 			<span>
@@ -121,7 +113,6 @@ const Layout = createReactClass( {
 				>
 					<WelcomeMessage welcomeSite={ newestSite } />
 				</Welcome>
-				<TranslatorInvitation isVisible={ showInvitation } />
 			</span>
 		);
 	},
