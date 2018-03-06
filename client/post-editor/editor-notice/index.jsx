@@ -40,12 +40,12 @@ export class EditorNotice extends Component {
 		postDate: PropTypes.string,
 	};
 
-	handlePillExternalClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_pill_site_external_click' );
+	handleViewPostClick = () => {
+		this.props.recordTracksEvent( 'calypso_editor_notif_view_post_click' );
 	};
 
-	handlePillAddPagePromptClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_pill_add_page_prompt_click' );
+	handleAddPagePromptClick = () => {
+		this.props.recordTracksEvent( 'calypso_editor_notif_add_page_prompt_click' );
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -106,13 +106,11 @@ export class EditorNotice extends Component {
 					return translate( 'Page published on {{pageLink/}}! {{a}}Add another page{{/a}}', {
 						components: {
 							pageLink: (
-								<a href={ postUrl } onClick={ this.handlePillExternalClick }>
+								<a href={ postUrl } onClick={ this.handleViewPostClick }>
 									{ site.title }
 								</a>
 							),
-							a: (
-								<a href={ `/page/${ site.slug }` } onClick={ this.handlePillAddPagePromptClick } />
-							),
+							a: <a href={ `/page/${ site.slug }` } onClick={ this.handleAddPagePromptClick } />,
 						},
 						comment: 'Editor: Message displayed when a page is published, with a link to the page.',
 					} );
@@ -122,7 +120,7 @@ export class EditorNotice extends Component {
 					args: { typeLabel: typeLabel },
 					components: {
 						postLink: (
-							<a href={ postUrl } onClick={ this.handlePillExternalClick }>
+							<a href={ postUrl } onClick={ this.handleViewPostClick }>
 								{ site.title }
 							</a>
 						),
@@ -175,7 +173,7 @@ export class EditorNotice extends Component {
 				return translate( '%(typeLabel)s updated! {{postLink}}Visit %(typeLabel)s{{/postLink}}.', {
 					args: { typeLabel },
 					components: {
-						postLink: <a href={ postUrl } onClick={ this.handlePillExternalClick } />,
+						postLink: <a href={ postUrl } onClick={ this.handleViewPostClick } />,
 					},
 					comment:
 						'Editor: Message displayed when a page, post, or post of a custom type is updated, with a link to the updated post.',
