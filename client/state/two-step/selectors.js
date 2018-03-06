@@ -6,15 +6,21 @@
 import { get } from 'lodash';
 
 export const isReauthRequired = state =>
-	get( state, 'two-step.settings.twoStepReauthorizationRequired', true );
+	get( state, 'twoStep.settings.twoStepReauthorizationRequired', false );
 
 export const isTwoStepSMSEnabled = state =>
-	get( state, 'two-step.settings.twoStepSmsEnabled', false );
+	get( state, 'twoStep.settings.twoStepSmsEnabled', false );
 
-export const getSMSLastFour = state => get( state, 'two-step.settings.twoStepSmsLastFour', null );
+export const getSMSLastFour = state => get( state, 'twoStep.settings.twoStepSmsLastFour', null );
 
 export const isSMSResendThrottled = state =>
-	get( state, 'two-step.settings.lastSendSmsError', false );
+	get( state, 'twoStep.settings.lastSendSmsError', false );
 
-export const isCodeValidationFailed = state =>
-	get( state, 'two-step.settings.lastCodeValidationError', false );
+export const isCodeValidationFailed = state => {
+	const codeValidationResult = get( state, 'twoStep.codeValidationResult', null );
+
+	return codeValidationResult === null ? false : ! codeValidationResult;
+};
+
+export const isCodeValidationInProgress = state =>
+	get( state, 'twoStep.isCodeValidationInProgress', false );

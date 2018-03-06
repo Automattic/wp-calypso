@@ -16,7 +16,7 @@ import {
 	TWO_STEP_SEND_SMS_CODE_REQUEST,
 	TWO_STEP_APP_AUTH_CODES_REQUEST,
 } from 'state/action-types';
-import { setTwoStep } from 'state/two-step/actions';
+import { setTwoStep, setTwoStepCodeValidationResult } from 'state/two-step/actions';
 
 const fromApi = data =>
 	Object.keys( data ).reduce( ( accumulator, currentKey ) => {
@@ -59,6 +59,10 @@ const validateTwoStepCode = ( { dispatch }, action ) =>
 		)
 	);
 
+const storeTwoStepCodeValidationResult = ( { dispatch }, action, data ) => {
+	dispatch( setTwoStepCodeValidationResult( fromApi( data ) ) );
+};
+
 const sendSMSValidationCode = ( { dispatch }, action ) =>
 	dispatch(
 		http(
@@ -85,7 +89,9 @@ const getAppAuthCodes = ( { dispatch }, action ) =>
 
 export default {
 	[ TWO_STEP_REQUEST ]: [ dispatchRequest( requestTwoStep, storeFetchedTwoStep, noop ) ],
-	[ TWO_STEP_VALIDATE_CODE_REQUEST ]: [ dispatchRequest( validateTwoStepCode, noop, noop ) ],
+	[ TWO_STEP_VALIDATE_CODE_REQUEST ]: [
+		dispatchRequest( validateTwoStepCode, storeTwoStepCodeValidationResult, noop ),
+	],
 	[ TWO_STEP_SEND_SMS_CODE_REQUEST ]: [ dispatchRequest( sendSMSValidationCode, noop, noop ) ],
 	[ TWO_STEP_APP_AUTH_CODES_REQUEST ]: [ dispatchRequest( getAppAuthCodes, noop, noop ) ],
 };

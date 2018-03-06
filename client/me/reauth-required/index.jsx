@@ -34,6 +34,7 @@ import {
 	isSMSResendThrottled,
 	isCodeValidationFailed,
 	getSMSLastFour,
+	isCodeValidationInProgress,
 } from 'state/two-step/selectors';
 
 import {
@@ -55,6 +56,7 @@ class ReauthRequired extends React.Component {
 		isTwoStepSMSEnabled: PropTypes.bool.isRequired,
 		isCodeValidationFailed: PropTypes.bool.isRequired,
 		isSMSResendThrottled: PropTypes.bool.isRequired,
+		isCodeValidationInProgress: PropTypes.bool.isRequired,
 		SMSLastFour: PropTypes.string,
 	};
 
@@ -122,23 +124,8 @@ class ReauthRequired extends React.Component {
 
 	submitForm = event => {
 		event.preventDefault();
-		this.setState( { validatingCode: true } );
 
 		this.props.validateCode( this.state.code, this.state.remember2fa );
-		// this.props.twoStepAuthorization.validateCode(
-		// 	{
-		// 		code: this.state.code,
-		// 		remember2fa: this.state.remember2fa,
-		// 	},
-		// 	function( error, data ) {
-		// 		this.setState( { validatingCode: false } );
-		// 		if ( error ) {
-		// 			debug( 'There was an error validating that code: ' + JSON.stringify( error ) );
-		// 		} else {
-		// 			debug( 'The code validated!' + JSON.stringify( data ) );
-		// 		}
-		// 	}.bind( this )
-		// );
 	};
 
 	codeRequestTimer = false;
@@ -266,7 +253,7 @@ class ReauthRequired extends React.Component {
 
 					<FormButtonsBar>
 						<FormButton
-							disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
+							disabled={ this.props.isCodeValidationInProgress || ! this.preValidateAuthCode() }
 							onClick={ this.getClickHandler( 'Submit Validation Code on Reauth Required' ) }
 						>
 							{ this.props.translate( 'Verify' ) }
@@ -297,6 +284,7 @@ export default connect(
 		isCodeValidationFailed: isCodeValidationFailed( state ),
 		isSMSResendThrottled: isSMSResendThrottled( state ),
 		SMSLastFour: getSMSLastFour( state ),
+		isCodeValidationInProgress: isCodeValidationInProgress( state ),
 	} ),
 	{
 		recordGoogleEvent,
