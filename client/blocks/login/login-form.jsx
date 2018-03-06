@@ -318,7 +318,6 @@ export class LoginForm extends Component {
 							ref={ this.saveUsernameOrEmailRef }
 							value={ this.state.usernameOrEmail }
 							disabled={ isFormDisabled || this.isPasswordView() }
-							autoComplete="username"
 						/>
 
 						{ requestError &&
