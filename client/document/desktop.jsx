@@ -13,6 +13,7 @@ import classNames from 'classnames';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
+import WordPressLogo from 'components/wordpress-logo';
 
 class Desktop extends React.Component {
 	render() {
@@ -59,7 +60,7 @@ class Desktop extends React.Component {
 						<div className="layout">
 							<div className="masterbar" />
 							<div className="layout__content">
-								<div className="wpcom-site__logo noticon noticon-wordpress" />
+								<WordPressLogo size={ 72 } className="wpcom-site__logo" />
 								{ hasSecondary && (
 									<Fragment>
 										<div className="layout__secondary" />

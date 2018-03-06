@@ -16,6 +16,7 @@ import config from 'config';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
 import Wizard from 'components/wizard';
+import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
@@ -144,7 +145,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						steps={ steps }
 					/>
 				) : (
-					<div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
+					<WordPressLogo size={ 72 } className="jetpack-onboarding__loading wpcom-site__logo" />
 				) }
 			</Main>
 		);
