@@ -203,9 +203,9 @@ export class LoginForm extends Component {
 	onSubmitForm = event => {
 		event.preventDefault();
 
-		const usernameOrEmail = this.usernameOrEmail.value;
-
 		if ( ! this.props.hasAccountTypeLoaded ) {
+			const usernameOrEmail = this.usernameOrEmail.value;
+
 			this.props.getAuthAccountType( usernameOrEmail );
 
 			this.setState( {
