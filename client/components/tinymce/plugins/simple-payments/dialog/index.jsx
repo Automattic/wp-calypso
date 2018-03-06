@@ -32,10 +32,7 @@ import {
 	customPostToProduct,
 	productToCustomPost,
 } from 'state/data-layer/wpcom/sites/simple-payments/index.js';
-import {
-	receiveUpdateProduct,
-	receiveDeleteProduct,
-} from 'state/simple-payments/product-list/actions';
+import crudActions from 'state/crud/actions';
 import { PLAN_PREMIUM, FEATURE_SIMPLE_PAYMENTS } from 'lib/plans/constants';
 import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
@@ -51,6 +48,8 @@ const isEmptyArray = a => Array.isArray( a ) && a.length === 0;
 // ready to be passed to `wpcom` API.
 const productFormToCustomPost = state => productToCustomPost( getProductFormValues( state ) );
 
+const productActions = crudActions( 'simplePayments.productList' );
+
 // Thunk action creator to create a new button
 const createPaymentButton = siteId => ( dispatch, getState ) => {
 	const productCustomPost = productFormToCustomPost( getState() );
@@ -60,7 +59,7 @@ const createPaymentButton = siteId => ( dispatch, getState ) => {
 		.addPost( productCustomPost )
 		.then( newPost => {
 			const newProduct = customPostToProduct( newPost );
-			dispatch( receiveUpdateProduct( siteId, newProduct ) );
+			dispatch( productActions.createOrUpdate( newProduct, { siteId } ) );
 			return newProduct;
 		} );
 };
@@ -75,7 +74,7 @@ const updatePaymentButton = ( siteId, paymentId ) => ( dispatch, getState ) => {
 		.update( productCustomPost )
 		.then( updatedPost => {
 			const updatedProduct = customPostToProduct( updatedPost );
-			dispatch( receiveUpdateProduct( siteId, updatedProduct ) );
+			dispatch( productActions.createOrUpdate( updatedProduct, { siteId } ) );
 			return updatedProduct;
 		} );
 };
@@ -88,7 +87,7 @@ const trashPaymentButton = ( siteId, paymentId ) => dispatch => {
 	return post
 		.delete()
 		.then( () => post.delete() )
-		.then( () => dispatch( receiveDeleteProduct( siteId, paymentId ) ) );
+		.then( () => dispatch( productActions.delete( paymentId, { siteId } ) ) );
 };
 
 class SimplePaymentsDialog extends Component {

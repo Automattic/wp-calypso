@@ -25,7 +25,7 @@ export default createSelector( ( state, siteId, simplePaymentId = null ) => {
 		return null;
 	}
 
-	const simplePaymentProducts = get( state, `simplePayments.productList.items.${ siteId }`, null );
+	const simplePaymentProducts = get( state, `simplePayments.productList.${ siteId }.items`, null );
 
 	if ( ! simplePaymentProducts ) {
 		return null;
@@ -45,4 +45,4 @@ export default createSelector( ( state, siteId, simplePaymentId = null ) => {
 	}
 
 	return simplePaymentProduct;
-}, state => state.simplePayments.productList.items );
+}, state => state.simplePayments.productList );
