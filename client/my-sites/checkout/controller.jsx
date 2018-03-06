@@ -30,18 +30,22 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 const productsList = productsFactory();
 
 const checkoutRoutes = [
-	new Route( '/checkout/thank-you' ),
-	new Route( '/checkout/thank-you/:receipt' ),
-	new Route( '/checkout/:product' ),
-	new Route( '/checkout/:product/renew/:receipt' ),
-	new Route( '/checkout/:site/with-gsuite/:domain/:receipt' ),
+	new Route( '/checkout/thank-you/no-site/:receipt' ),
+	new Route( '/checkout/thank-you/:site/:receipt' ),
+	new Route( '/checkout/thank-you/:site/:receipt/with-gsuite/:gsuiteReceipt' ),
+	new Route( '/checkout/features/:feature/:domain/:plan_name' ),
+	new Route( '/checkout/thank-you/features/:feature/:site/:receipt' ),
+	new Route( '/checkout/no-site' ),
+	new Route( '/checkout/:site/:product' ),
+	new Route( '/checkout/:product/renew/:purchaseId/:site' ),
+	new Route( '/checkout/:site/with-gsuite/:domain/:receipt?' ),
 ];
 
 export default {
 	checkout: function( context, next ) {
 		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
-		const product = context.params.product;
-		const selectedFeature = context.params.feature;
+		const { params } = context;
+		const { feature, product } = params;
 
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
@@ -61,7 +65,7 @@ export default {
 					product={ product }
 					productsList={ productsList }
 					purchaseId={ context.params.purchaseId }
-					selectedFeature={ selectedFeature }
+					selectedFeature={ feature }
 					couponCode={ context.query.code }
 				/>
 			</CheckoutData>
@@ -100,15 +104,15 @@ export default {
 		const receiptId = Number( context.params.receiptId );
 		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
+		const state = context.store.getState();
+		const selectedSite = getSelectedSite( state );
+
 		analytics.pageView.record( routePath, 'Checkout Thank You', routeParams );
 
 		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
-
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
 
 		context.primary = (
 			<CheckoutThankYouComponent
