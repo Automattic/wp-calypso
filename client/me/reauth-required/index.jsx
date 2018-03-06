@@ -8,8 +8,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:reauth-required' );
 
 /**
  * Internal Dependencies
