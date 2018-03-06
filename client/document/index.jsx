@@ -165,6 +165,7 @@ class Document extends React.Component {
 					<script src={ urls.manifest } />
 					<script src={ urls.vendor } />
 					<script src={ urls[ jsFile ] } />
+					{ user && <script src={ urls[ 'async-load-layout' ] } /> }
 					{ chunk && <script src={ urls[ chunk ] } /> }
 					<script type="text/javascript">window.AppBoot();</script>
 					<script
