@@ -19,6 +19,7 @@ import ExternalLink from 'components/external-link';
 import FormInput from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormFieldset from 'components/forms/form-fieldset';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -297,7 +298,7 @@ class SiteVerification extends Component {
 		yandexCode = this.getMetaTag( 'yandex', yandexCode || '' );
 
 		return (
-			<div>
+			<div className="seo-settings__site-verification">
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
@@ -326,6 +327,15 @@ class SiteVerification extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
+					<FormFieldset>
+						<JetpackModuleToggle
+							siteId={ siteId }
+							moduleSlug="verification-tools"
+							label={ translate( 'Enable Site Verification Services.' ) }
+							disabled={ isDisabled }
+						/>
+					</FormFieldset>
+
 					<p>
 						{ translate(
 							'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
