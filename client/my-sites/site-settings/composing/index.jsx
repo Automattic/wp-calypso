@@ -52,6 +52,7 @@ const Composing = ( {
 					isSavingSettings={ isSavingSettings }
 					onChangeField={ onChangeField }
 				/>
+				<Markdown disabled={ isRequestingSettings || isSavingSettings } siteId={ siteId } />
 			</CardComponent>
 
 			{ jetpackSettingsUISupported && (
@@ -63,7 +64,6 @@ const Composing = ( {
 					setFieldValue={ setFieldValue }
 				/>
 			) }
-			<Markdown disabled={ isRequestingSettings || isSavingSettings } siteId={ siteId } />
 			{ hasDateTimeFormats && (
 				<DateTimeFormat
 					fields={ fields }
