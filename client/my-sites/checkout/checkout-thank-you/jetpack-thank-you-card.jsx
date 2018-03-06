@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import page from 'page';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { difference, filter, get, map, range, reduce, some } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -669,5 +668,9 @@ export default connect(
 			planSlug,
 		};
 	},
-	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
+	{
+		fetchPluginData,
+		installPlugin,
+		requestSites,
+	}
 )( localize( JetpackThankYouCard ) );
