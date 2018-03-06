@@ -20,12 +20,9 @@ import FormInput from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormFieldset from 'components/forms/form-fieldset';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import SectionHeader from 'components/section-header';
-import { activateModule } from 'state/jetpack/modules/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
@@ -192,12 +189,6 @@ class SiteVerification extends Component {
 		};
 	}
 
-	activateVerificationServices = () => {
-		const { siteId } = this.props;
-
-		this.props.activateModule( siteId, 'verification-tools' );
-	};
-
 	getVerificationError( isPasteError ) {
 		const { translate } = this.props;
 
@@ -301,19 +292,6 @@ class SiteVerification extends Component {
 			<div className="seo-settings__site-verification">
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-
-				{ siteIsJetpack &&
-					isVerificationToolsActive === false && (
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate( 'Site Verification Services are disabled in Jetpack.' ) }
-						>
-							<NoticeAction onClick={ this.activateVerificationServices }>
-								{ translate( 'Enable' ) }
-							</NoticeAction>
-						</Notice>
-					) }
 
 				<SectionHeader label={ translate( 'Site Verification Services' ) }>
 					<Button
@@ -478,7 +456,6 @@ export default connect(
 				service,
 			} ),
 		trackFormSubmitted: partial( recordTracksEvent, 'calypso_seo_settings_form_submit' ),
-		activateModule,
 	},
 	undefined,
 	{ pure: false } // defaults to true, but this component has internal state
