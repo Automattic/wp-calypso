@@ -180,8 +180,10 @@ export class LoginForm extends Component {
 	};
 
 	loginUser() {
-		const { password, usernameOrEmail } = this.state;
+		const { usernameOrEmail } = this.state;
 		const { onSuccess, redirectTo } = this.props;
+
+		const password = this.password.value;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
