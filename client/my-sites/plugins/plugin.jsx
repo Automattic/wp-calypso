@@ -30,11 +30,12 @@ import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { canJetpackSiteManage, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import { canJetpackSiteManage, isJetpackSite } from 'state/sites/selectors';
 import {
 	canCurrentUser,
 	canCurrentUserManagePlugins,
 	getSelectedOrAllSitesWithPlugins,
+	hasLoadedSites,
 	isSiteAutomatedTransfer,
 } from 'state/selectors';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
@@ -323,7 +324,7 @@ const SinglePlugin = createReactClass( {
 	render() {
 		const { selectedSite } = this.props;
 
-		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
+		if ( this.props.hasLoadedSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
 
@@ -405,7 +406,7 @@ export default connect(
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
 			canJetpackSiteManage: selectedSiteId && canJetpackSiteManage( state, selectedSiteId ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, selectedSiteId ),
-			isRequestingSites: isRequestingSites( state ),
+			hasLoadedSites: hasLoadedSites( state ),
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ),
