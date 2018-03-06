@@ -229,6 +229,13 @@ function getAvailabilityNotice( domain, error, site ) {
 			);
 			break;
 
+		case domainAvailability.RECENTLY_EXPIRED:
+			message = translate(
+				'This domain is expired and cannot be mapped at this time. ' +
+					'Please contact support to restore your domain.'
+			);
+			break;
+
 		case domainAvailability.UNKOWN_ACTIVE:
 			message = translate(
 				'This domain is still active and is not available to map yet. ' +
