@@ -17,9 +17,10 @@ export const settings = ( state = {}, action ) => {
 		return action.data;
 	}
 
-	if ( action.type === TWO_STEP_SET_CODE_VALIDATION_RESULT ) {
+	if ( action.type === TWO_STEP_SET_CODE_VALIDATION_RESULT && action.data.success ) {
 		return Object.assign( {}, state, {
-			twoStepReauthorizationRequired: ! action.data.success,
+			twoStepReauthorizationRequired: false,
+			twoStepAuthorizationExpiresSoon: false,
 		} );
 	}
 

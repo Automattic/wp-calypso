@@ -21,6 +21,11 @@ import {
 	setTwoStepCodeValidationResult,
 	setTwoStepSendSMSValidationCodeResult,
 } from 'state/two-step/actions';
+import { requestUserProfileLinks } from 'state/profile-links/actions';
+import { isReauthRequired } from 'state/two-step/selectors';
+import userSettings from 'lib/user-settings';
+import applicationPasswords from 'lib/application-passwords-data';
+import connectedApplications from 'lib/connected-applications-data';
 
 const fromApi = data =>
 	Object.keys( data ).reduce( ( accumulator, currentKey ) => {
@@ -64,7 +69,16 @@ const validateTwoStepCode = ( { dispatch }, action ) =>
 		)
 	);
 
-const storeTwoStepCodeValidationResult = ( { dispatch }, action, data ) => {
+const storeTwoStepCodeValidationResult = ( { dispatch, getState }, action, data ) => {
+	// If the validation was successful AND reauth was required, fetch
+	// data from the following modules.
+	if ( data.success && isReauthRequired( getState() ) ) {
+		userSettings.fetchSettings();
+		applicationPasswords.fetch();
+		connectedApplications.fetch();
+		dispatch( requestUserProfileLinks() );
+	}
+
 	dispatch( setTwoStepCodeValidationResult( fromApi( data ) ) );
 };
 
