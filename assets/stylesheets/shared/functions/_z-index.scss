@@ -46,6 +46,7 @@ $z-layers: (
 		'.reader-feed-header': 0,
 		'.reader-feed-header__back-and-follow': 0,
 		'.reader-related-card.card': 0,
+		'.reader-full-post__sidebar-comment-like': 1,
 		'.list-stream__header-follow': 0,
 		'.following__intro-close-icon-bg' : 0,
 		'.media-library .search.is-expanded-to-container': 1,
@@ -230,6 +231,11 @@ $z-layers: (
 	'.reader-feed-header__back-and-follow': (
 		'.card.header-cake': 1,
 		'.reader-feed-header__follow': 1
+	),
+	'.reader-full-post__sidebar-comment-like': (
+		'.reader-full-post .back-button': 2,
+		'.author-compact-profile__follow .follow-button': 2,
+		'.reader-full-post__visit-site-container': 2
 	),
 	'.reader-related-card.card': (
 		'.reader-related-card__meta': 1
