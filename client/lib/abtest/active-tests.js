@@ -110,6 +110,5 @@ export default {
 			oldBanner: 50,
 		},
 		defaultVariation: 'oldBanner',
-		localeTargets: 'any',
 	},
 };
