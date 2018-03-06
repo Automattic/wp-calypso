@@ -204,7 +204,7 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			const usernameOrEmail = this.usernameOrEmail.props.value;
+			const usernameOrEmail = document.getElementById( this.usernameOrEmail.props.id ).value;
 
 			this.props.getAuthAccountType( usernameOrEmail );
 
