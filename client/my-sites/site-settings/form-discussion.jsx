@@ -196,7 +196,7 @@ class SiteSettingsFormDiscussion extends Component {
 				{ isJetpack &&
 					isMarkdownModuleActive && (
 						<CompactFormToggle
-							checked={ !! fields.page_comments }
+							checked={ !! fields.wpcom_publish_comments_with_markdown }
 							disabled={ isRequestingSettings || isSavingSettings }
 							onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
 						>
