@@ -15,8 +15,8 @@ import { flow, get, once } from 'lodash';
  */
 import { getSite } from 'state/sites/selectors';
 import UpdateTemplate from './update-template';
-import PostActions from 'lib/posts/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { savePost, trashPost, restorePost } from 'state/posts/actions';
 
 const RESET_TIMEOUT_MS = 1200;
 
@@ -55,7 +55,7 @@ const enhance = flow(
 		( state, props ) => ( {
 			site: getSite( state, get( props, [ props.page ? 'page' : 'post', 'site_ID' ] ) ),
 		} ),
-		{ recordGoogleEvent }
+		{ recordGoogleEvent, savePost, trashPost, restorePost }
 	)
 );
 
@@ -108,12 +108,12 @@ const updatePostStatus = WrappedComponent =>
 				const post = this.props.post || this.props.page;
 				let previousStatus = null;
 
-				const setNewStatus = ( error, resultPost ) => {
-					if ( error ) {
-						this.setErrorState();
-						return false;
-					}
+				const setErrorStatus = () => {
+					this.setErrorState();
+					return false;
+				};
 
+				const setNewStatus = resultPost => {
 					this.setState( {
 						previousStatus,
 						updatedStatus: resultPost.status,
@@ -134,8 +134,7 @@ const updatePostStatus = WrappedComponent =>
 						const type = this.props.post ? 'post' : 'page';
 
 						if ( typeof window === 'object' && window.confirm( strings[ type ].deleteWarning ) ) {
-							// eslint-disable-line no-alert
-							PostActions.trash( site, post, setNewStatus );
+							this.props.deletePost( site.ID, post.ID ).then( setNewStatus, setErrorStatus );
 						} else {
 							this.resetState();
 						}
@@ -148,7 +147,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = post.status;
-						PostActions.trash( site, post, setNewStatus );
+						this.props.trashPost( site.ID, post.ID ).then( setNewStatus, setErrorStatus );
 						return;
 
 					case 'restore':
@@ -158,7 +157,7 @@ const updatePostStatus = WrappedComponent =>
 							updated: true,
 						} );
 						previousStatus = 'trash';
-						PostActions.restore( site, post, setNewStatus );
+						this.props.restorePost( site.ID, post.ID ).then( setNewStatus, setErrorStatus );
 						return;
 
 					default:
@@ -167,12 +166,14 @@ const updatePostStatus = WrappedComponent =>
 							updatedStatus: 'updating',
 							updated: true,
 						} );
-						PostActions.update( site, post, { status }, ( error, resultPost ) => {
-							if ( ! setNewStatus( error, resultPost ) ) {
-								return;
-							}
-							setTimeout( this.resetState, RESET_TIMEOUT_MS );
-						} );
+						this.props
+							.savePost( site.ID, post.ID, { status } )
+							.then( setNewStatus, setErrorStatus )
+							.then( success => {
+								if ( success ) {
+									setTimeout( this.resetState, RESET_TIMEOUT_MS );
+								}
+							} );
 				}
 			};
 
