@@ -53,7 +53,7 @@ const SeoSettingsHelpCard = ( {
 					<JetpackModuleToggle
 						siteId={ siteId }
 						moduleSlug="seo-tools"
-						label={ translate( 'Enable SEO Tools' ) }
+						label={ translate( 'Enable SEO Tools to optimize your site for search engines' ) }
 						disabled={ disabled }
 					/>
 				</Card>
