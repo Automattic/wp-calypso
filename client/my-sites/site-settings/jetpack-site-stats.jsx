@@ -7,28 +7,26 @@ import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
-import FoldableCard from 'components/foldable-card';
-import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import SectionHeader from 'components/section-header';
+import CompactFormToggle from 'components/forms/form-toggle/compact';
+import ExternalLink from 'components/external-link';
+import FoldableCard from 'components/foldable-card';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
-import { getStatsPathForTab } from 'lib/route';
+import SectionHeader from 'components/section-header';
+import { activateModule } from 'state/jetpack/modules/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
+import { getStatsPathForTab } from 'lib/route';
 import {
 	isActivatingJetpackModule,
 	isJetpackModuleActive,
@@ -115,30 +113,24 @@ class JetpackSiteStats extends Component {
 		);
 	}
 
-	renderModuleEnableBanner() {
-		const { translate } = this.props;
-
-		return (
-			<Banner
-				title={ translate( 'Site Stats module is disabled' ) }
-				description={ translate(
-					'Enable this to see detailed information about your traffic, likes, comments, and subscribers.'
-				) }
-				callToAction={ translate( 'Enable' ) }
-				onClick={ this.handleStatsActivationButton }
-				event={ 'site_stats_module_enable_banner' }
-				icon="stats"
-			/>
-		);
-	}
-
 	renderCardSettings() {
-		const { siteRoles, siteSlug, translate } = this.props;
+		const {
+			activatingStatsModule,
+			moduleUnavailable,
+			siteId,
+			siteRoles,
+			siteSlug,
+			translate,
+		} = this.props;
 		const header = (
-			<div>
-				<Gridicon icon="checkmark" />
-				{ translate( "Enabled! You're collecting valuable data and insights." ) }
-			</div>
+			<JetpackModuleToggle
+				siteId={ siteId }
+				moduleSlug="stats"
+				label={ translate(
+					'See detailed information about your traffic, likes, comments, and subscribers.'
+				) }
+				disabled={ activatingStatsModule || moduleUnavailable }
+			/>
 		);
 
 		return (
@@ -204,29 +196,6 @@ class JetpackSiteStats extends Component {
 		);
 	}
 
-	renderPlaceholder() {
-		return (
-			<Card className="site-settings__card is-placeholder">
-				<div />
-			</Card>
-		);
-	}
-
-	renderCardContent() {
-		const { activatingStatsModule, statsModuleActive } = this.props;
-
-		if ( activatingStatsModule ) {
-			return this.renderPlaceholder();
-		}
-
-		if ( statsModuleActive === true ) {
-			return this.renderCardSettings();
-		} else if ( statsModuleActive === false ) {
-			return this.renderModuleEnableBanner();
-		}
-		return this.renderPlaceholder();
-	}
-
 	render() {
 		const { siteId, translate } = this.props;
 
@@ -237,7 +206,7 @@ class JetpackSiteStats extends Component {
 
 				<SectionHeader label={ translate( 'Site stats' ) } />
 
-				{ this.renderCardContent() }
+				{ this.renderCardSettings() }
 			</div>
 		);
 	}
