@@ -9,27 +9,26 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { find } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import {
 	areSetupChoicesLoading,
-	getOptedOutOfShippingSetup,
 	getTriedCustomizerDuringInitialSetup,
 	getCheckedTaxSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
+import Checklist from 'components/checklist';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchPaymentMethods } from 'woocommerce/state/sites/payment-methods/actions';
-import {
-	setOptedOutOfShippingSetup,
-	setTriedCustomizerDuringInitialSetup,
-} from 'woocommerce/state/sites/setup-choices/actions';
+import { setTriedCustomizerDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { arePaymentsSetup } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import SetupTask from './task';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasks extends Component {
@@ -39,13 +38,6 @@ class SetupTasks extends Component {
 			slug: PropTypes.string.isRequired,
 		} ),
 	};
-
-	constructor( props ) {
-		super( props );
-		this.state = {
-			showShippingTask: props.loading || ! props.optedOutOfShippingSetup,
-		};
-	}
 
 	componentDidMount = () => {
 		const { site } = this.props;
@@ -72,18 +64,6 @@ class SetupTasks extends Component {
 		}
 	};
 
-	onClickNoShip = event => {
-		event.preventDefault();
-		this.setState( {
-			showShippingTask: false,
-		} );
-		this.props.setOptedOutOfShippingSetup( this.props.site.ID, true );
-	};
-
-	onClickOpenCustomizer = () => {
-		this.props.setTriedCustomizerDuringInitialSetup( this.props.site.ID, true );
-	};
-
 	getSetupTasks = () => {
 		const {
 			site,
@@ -102,108 +82,86 @@ class SetupTasks extends Component {
 
 		return [
 			{
-				checked: hasProducts,
-				explanation: translate( 'Start by adding the first product to your\u00a0store.' ),
-				label:
-					( hasProducts &&
-						( ( 1 === getTotalProducts && translate( 'Product added' ) ) ||
-							translate( 'Products added' ) ) ) ||
-					translate( 'Add a product' ),
-
-				show: true,
-				actions: [
-					{
-						label: translate( 'Add a product' ),
-						path: getLink( '/store/product/:site', site ),
-						analyticsProp: 'add-product',
-					},
-				],
+				id: 'add-product',
+				title: translate( 'Add a product' ),
+				completedTitle: translate( 'You have added a product' ),
+				completedButtonText: translate( 'View products' ),
+				description: translate( 'Start by adding the first product to your\u00a0store.' ),
+				duration: translate( '3 mins' ),
+				url: getLink( '/store/product/:site', site ),
+				completed: hasProducts,
 			},
 			{
-				checked: shippingIsSetUp,
-				explanation: translate( "We've set up shipping based on your store location." ),
-				label:
-					( shippingIsSetUp && translate( 'Shipping is set up' ) ) ||
-					translate( 'Review shipping' ),
-				show: this.state.showShippingTask,
-				actions: [
-					{
-						label: translate( 'Review shipping' ),
-						path: getLink( '/store/settings/shipping/:site', site ),
-						analyticsProp: 'set-up-shipping',
-					},
-				],
+				id: 'set-up-shipping',
+				title: translate( 'Review shipping' ),
+				completedTitle: translate( 'Shipping is set up' ),
+				completedButtonText: translate( 'View shipping' ),
+				description: translate( "We've set up shipping based on your store location." ),
+				duration: translate( '2 mins' ),
+				url: getLink( '/store/settings/shipping/:site', site ),
+				completed: shippingIsSetUp,
 			},
 			{
-				checked: paymentsAreSetUp,
-				explanation: translate( 'Choose how you would like your customers to pay you.' ),
-				label:
-					( paymentsAreSetUp && translate( 'Payments are set up' ) ) ||
-					translate( 'Review payments' ),
-				show: true,
-				actions: [
-					{
-						label:
-							( paymentsAreSetUp && translate( 'Review payments' ) ) ||
-							translate( 'Set up payments' ),
-						path: getLink( '/store/settings/payments/:site', site ),
-						analyticsProp: 'set-up-payments',
-					},
-				],
+				id: 'set-up-payments',
+				title: translate( 'Review payments' ),
+				completedTitle: translate( 'Payments are set up' ),
+				completedButtonText: translate( 'Review payments' ),
+				description: translate( 'Choose how you would like your customers to pay you.' ),
+				duration: translate( '2 mins' ),
+				url: getLink( '/store/settings/payments/:site', site ),
+				completed: paymentsAreSetUp,
 			},
 			{
-				checked: taxesAreSetUp,
-				explanation: translate( "We've set up automatic tax calculations for you." ),
-				label: ( taxesAreSetUp && translate( 'Taxes are set up' ) ) || translate( 'Review taxes' ),
-				show: true,
-				actions: [
-					{
-						label: translate( 'Review taxes' ),
-						path: getLink( '/store/settings/taxes/:site', site ),
-						analyticsProp: 'set-up-taxes',
-					},
-				],
+				id: 'set-up-taxes',
+				title: translate( 'Review taxes' ),
+				completedTitle: translate( 'Taxes are setup' ),
+				completedButtonText: translate( 'Review taxes' ),
+				description: translate( "We've set up automatic tax calculations for you." ),
+				duration: translate( '2 mins' ),
+				url: getLink( '/store/settings/taxes/:site', site ),
+				completed: taxesAreSetUp,
 			},
 			{
-				checked: triedCustomizer,
-				explanation: translate(
+				id: 'view-and-customize',
+				title: translate( 'View and customize' ),
+				completedTitle: translate( 'View and customize' ),
+				completedButtonText: translate( 'View and customize' ),
+				description: translate(
 					'View your store and make any final tweaks before opening for business.'
 				),
-				label: translate( 'View and customize' ),
-				show: true,
-				actions: [
-					{
-						label: translate( 'View and customize' ),
-						path: customizerUrl,
-						onClick: this.onClickOpenCustomizer,
-						analyticsProp: 'view-and-customize',
-					},
-				],
+				duration: translate( '4 mins' ),
+				url: customizerUrl,
+				completed: triedCustomizer,
 			},
 		];
 	};
 
-	renderSetupTask = ( setupTask, index ) => {
-		if ( ! setupTask.show ) {
-			return null;
-		}
+	handleAction = id => {
+		const task = find( this.getSetupTasks(), { id } );
 
-		return (
-			<SetupTask
-				actions={ setupTask.actions }
-				checked={ setupTask.checked }
-				explanation={ setupTask.explanation }
-				key={ index }
-				label={ setupTask.label }
-			/>
-		);
+		recordTrack( 'calypso_woocommerce_dashboard_action_click', {
+			action: id,
+		} );
+
+		if ( 'view-and-customize' === id ) {
+			this.props.setTriedCustomizerDuringInitialSetup( this.props.site.ID, true );
+			window.open( task.url );
+		} else {
+			page.redirect( task.url );
+		}
 	};
 
 	render = () => {
 		return (
 			<div className="setup__checklist">
 				<QuerySettingsGeneral siteId={ this.props.site.ID } />
-				{ this.getSetupTasks().map( this.renderSetupTask ) }
+				<Checklist
+					tasks={ this.getSetupTasks() }
+					onAction={ this.handleAction }
+					onToggle={ this.handleToggle }
+					isLoading={ this.props.loading || ! this.props.productsLoaded }
+					placeholderCount={ 5 }
+				/>
 			</div>
 		);
 	};
@@ -212,7 +170,6 @@ class SetupTasks extends Component {
 function mapStateToProps( state ) {
 	return {
 		loading: areSetupChoicesLoading( state ),
-		optedOutOfShippingSetup: getOptedOutOfShippingSetup( state ),
 		triedCustomizer: getTriedCustomizerDuringInitialSetup( state ),
 		hasProducts: getTotalProducts( state ) > 0,
 		productsLoaded: areProductsLoaded( state ),
@@ -227,7 +184,6 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchPaymentMethods,
 			fetchProducts,
-			setOptedOutOfShippingSetup,
 			setTriedCustomizerDuringInitialSetup,
 		},
 		dispatch
