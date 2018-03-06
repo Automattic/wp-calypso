@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -73,8 +74,7 @@ export class EditorNotice extends Component {
 		/* eslint-disable max-len */
 		const { translate, type, typeObject, site, postUrl, postDate, moment } = this.props;
 		const formattedPostDate = moment( postDate ).format( 'lll' );
-		const typeLabel =
-			typeObject && typeObject.labels.singular_name ? typeObject.labels.singular_name : type;
+		const typeLabel = get( typeObject, 'labels.singular_name', type );
 
 		switch ( key ) {
 			case 'warnPublishDateChange':
@@ -85,17 +85,21 @@ export class EditorNotice extends Component {
 				);
 
 			case 'publishFailure':
-				return translate( 'Publishing of %(typeLabel)s failed.', { args: { typeLabel } } );
+				return translate( 'Publishing of %(typeLabel)s failed.', {
+					args: { typeLabel: typeLabel.toLowerCase() },
+				} );
 
 			case 'saveFailure':
 				return translate( 'Saving of draft failed.' );
 
 			case 'trashFailure':
-				return translate( 'Trashing of %(typeLabel)s failed.', { args: { typeLabel } } );
+				return translate( 'Trashing of %(typeLabel)s failed.', {
+					args: { typeLabel: typeLabel.toLowerCase() },
+				} );
 
 			case 'published':
 				if ( ! site ) {
-					return translate( '%(typeLabel)s published!', { args: { typeLabel } } );
+					return translate( '%(typeLabel)s published!', { args: { typeLabel: typeLabel } } );
 				}
 
 				if ( 'page' === type ) {
@@ -115,7 +119,7 @@ export class EditorNotice extends Component {
 				}
 
 				return translate( '%(typeLabel)s published on {{postLink/}}!', {
-					args: { typeLabel },
+					args: { typeLabel: typeLabel },
 					components: {
 						postLink: (
 							<a href={ postUrl } onClick={ this.handlePillExternalClick }>
