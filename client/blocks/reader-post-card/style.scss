@@ -21,8 +21,8 @@
 	padding: 18px 0 20px;
 	position: relative;
 
-	@include breakpoint( '>660px' ) {
-		margin: 0;
+	@include breakpoint( "<660px" ) {
+		padding: 18px 15px 20px;
 	}
 
 	&.is-selected {
@@ -36,7 +36,7 @@
 				width: 2px;
 			background: $blue-wordpress;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint( ">660px" ) {
 				left: -16px;
 			}
 		}
@@ -50,7 +50,7 @@
 			max-width: 190px;
 			box-sizing: border-box;
 
-			@include breakpoint( '>960px' ) {
+			@include breakpoint( ">960px" ) {
 				max-width: 250px;
 			}
 		}
@@ -155,7 +155,7 @@
 			margin-top: 0;
 			margin-left: 0;
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint( ">480px" ) {
 				margin-left: 5px;
 			}
 		}
@@ -440,7 +440,7 @@
 		color: $gray-dark;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint( ">480px" ) {
 		font-size: 19px;
 	}
 }
@@ -606,7 +606,7 @@
 		margin-bottom: 3px;
 
 		.follow-button__label {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint( "<660px" ) {
 				display: inline;
 			}
 		}
