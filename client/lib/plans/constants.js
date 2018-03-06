@@ -195,7 +195,7 @@ export const PLANS_LIST = {
 			i18n.translate(
 				'{{strong}}Best for Personal Use:{{/strong}} Boost your' +
 					' website with a custom domain name, and remove all WordPress.com advertising. ' +
-					'Get access to high quality email and live chat support.',
+					'Get access to high-quality email and live chat support.',
 				{
 					components: {
 						strong: (
@@ -458,8 +458,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
-				'Automated backups and malware scanning, expert priority ' +
-					'support, marketing automation, and more.'
+				'Comprehensive, automated scanning for security ' +
+					'vulnerabilities and threats on your site.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -507,8 +507,8 @@ export const PLANS_LIST = {
 			includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'Automated backups and malware scanning, expert priority ' +
-					'support, marketing automation, and more.'
+				'Comprehensive, automated scanning for security ' +
+					'vulnerabilities and threats on your site.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -561,7 +561,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site including ' +
+				'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
@@ -651,8 +651,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'WordPress sites from start to finish: unlimited premium ' +
-					'themes, business class security, and marketing automation.'
+				'The most powerful WordPress sites: unlimited premium ' +
+					'themes, business-optimized security, and marketing automation.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -709,8 +709,8 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'WordPress sites from start to finish: unlimited premium ' +
-					'themes, business class security, and marketing automation.'
+				'The most powerful WordPress sites: unlimited premium ' +
+					'themes, business-optimized security, and marketing automation.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -954,9 +954,8 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'VideoPress Support' ),
 		getDescription: () =>
 			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats ' +
-					'(13GB storage space).'
+				'Easy video uploads, and a fast, unbranded, customizable video player, ' +
+					'enhanced with rich stats and unlimited storage space. '
 			),
 		getStoreSlug: () => 'videopress',
 	},
@@ -966,9 +965,8 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Unlimited Video Hosting' ),
 		getDescription: () =>
 			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats ' +
-					'(unlimited storage space).'
+				'Easy video uploads, and a fast, unbranded, customizable video player, ' +
+					'enhanced with rich stats and unlimited storage space. '
 			),
 		getStoreSlug: () => 'videopress',
 	},
@@ -1075,7 +1073,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_WORDADS_INSTANT ]: {
 		getSlug: () => FEATURE_WORDADS_INSTANT,
-		getTitle: () => i18n.translate( 'Monetize Your Site' ),
+		getTitle: () => i18n.translate( 'Site Monetization' ),
 		getDescription: () =>
 			i18n.translate(
 				'Add advertising to your site through our WordAds program and earn money from impressions.'
@@ -1149,8 +1147,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
 		getDescription: () =>
 			i18n.translate(
-				'High quality support to help you get your website up ' +
-					'and running and working how you want it.'
+				'Hands-on support to help you set up your site ' + 'exactly how you want it.'
 			),
 	},
 
@@ -1159,8 +1156,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () =>
 			i18n.translate(
-				'High quality support to help you get your website up ' +
-					'and running and working how you want it.'
+				'Hands-on support to help you set up your site ' + 'exactly how you want it.'
 			),
 	},
 
@@ -1192,7 +1188,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
 		getSlug: () => FEATURE_SPAM_AKISMET_PLUS,
 		getTitle: () => i18n.translate( 'Spam Protection' ),
-		getDescription: () => i18n.translate( 'State-of-the-art spam defense powered by Akismet.' ),
+		getDescription: () => i18n.translate( 'State-of-the-art spam defense, powered by Akismet.' ),
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
@@ -1350,7 +1346,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_REVENUE_GENERATION_JETPACK ]: {
 		getSlug: () => FEATURE_REVENUE_GENERATION_JETPACK,
 		getTitle: () => i18n.translate( 'Revenue Generation' ),
-		getDescription: () => i18n.translate( 'High quality ads to generate income from your site.' ),
+		getDescription: () => i18n.translate( 'High-quality ads to generate income from your site.' ),
 		hideInfoPopover: true,
 	},
 
@@ -1394,7 +1390,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_CONCIERGE_SETUP,
 		getTitle: () => i18n.translate( 'Jetpack Concierge' ),
 		getDescription: () =>
-			i18n.translate( 'A complimentary one-on-one education session with a Jetpack expert.' ),
+			i18n.translate( 'A complimentary one-on-one orientation session with a Jetpack expert.' ),
 	},
 
 	[ FEATURE_MARKETING_AUTOMATION ]: {
@@ -1408,10 +1404,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEARCH ]: {
 		getSlug: () => FEATURE_SEARCH,
-		getTitle: () => i18n.translate( 'Enhanced site-wide search' ),
+		getTitle: () => i18n.translate( 'Enhanced Site-wide Search' ),
 		getDescription: () =>
 			i18n.translate(
-				'Fast, high-quality search results with custom filtering, powered by Elasticsearch.'
+				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
 			),
 	},
 };
