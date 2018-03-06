@@ -466,6 +466,49 @@
 	& + & {
 		margin-top: 24px;
 	}
+
+	&.disconnect {
+		width: 70%;
+		margin: auto;
+		height: 100px;
+
+		@include breakpoint( "<480px" ) {
+			padding: 12px;
+			max-width: 200px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			margin-top: 1em;
+			max-width: 400px;
+		}
+
+		@include breakpoint( ">660px" ) {
+			margin-top: 10px;
+			max-width: 600px;
+		}
+	}
+}
+
+.site-settings__disconnect-card {
+		width: 70%;
+		margin: auto;
+		height: 400px;
+
+		@include breakpoint( "<480px" ) {
+			padding: 24px;
+			width: 300px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			margin-top: 2em;
+			max-width: 500px;
+		}
+
+		@include breakpoint( ">660px" ) {
+			margin-top: 17px;
+			max-width: 800px;
+			max-height: 600px;
+		}
 }
 
 .site-settings__jetpack-dev-mode-notice .notice {
