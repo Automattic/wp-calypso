@@ -94,8 +94,8 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
-	upgradePricingDisplay: {
-		datestamp: '20180213',
+	upgradePricingDisplayV2: {
+		datestamp: '20180305',
 		variations: {
 			original: 50,
 			modified: 50,
