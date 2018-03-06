@@ -113,7 +113,7 @@ class JetpackSiteStats extends Component {
 		);
 	}
 
-	renderCardSettings() {
+	render() {
 		const {
 			activatingStatsModule,
 			moduleUnavailable,
@@ -122,6 +122,7 @@ class JetpackSiteStats extends Component {
 			siteSlug,
 			translate,
 		} = this.props;
+
 		const header = (
 			<JetpackModuleToggle
 				siteId={ siteId }
@@ -134,79 +135,71 @@ class JetpackSiteStats extends Component {
 		);
 
 		return (
-			<Fragment>
-				<FoldableCard
-					className="site-settings__foldable-card is-top-level"
-					header={ header }
-					clickableHeader
-				>
-					<FormFieldset>
-						<div className="site-settings__info-link-container">
-							<InfoPopover position="left">
-								<ExternalLink
-									href="https://jetpack.com/support/wordpress-com-stats/"
-									target="_blank"
-								>
-									{ translate( 'Learn more about WordPress.com Stats' ) }
-								</ExternalLink>
-							</InfoPopover>
-						</div>
-
-						{ this.renderToggle(
-							'admin_bar',
-							translate( 'Put a chart showing 48 hours of views in the admin bar' )
-						) }
-						{ this.renderToggle( 'hide_smile', translate( 'Hide the stats smiley face image' ) ) }
-						<FormSettingExplanation isIndented>
-							{ translate( 'The image helps collect stats, but should work when hidden.' ) }
-						</FormSettingExplanation>
-					</FormFieldset>
-
-					<FormFieldset>
-						<FormLegend>{ translate( 'Count logged in page views from' ) }</FormLegend>
-						{ siteRoles &&
-							siteRoles.map( role =>
-								this.renderToggle(
-									'count_roles_' + role.name,
-									role.display_name,
-									includes( this.getCurrentGroupFields( 'count_roles' ), role.name ),
-									this.onChangeToggleGroup( 'count_roles', role.name )
-								)
-							) }
-					</FormFieldset>
-
-					<FormFieldset>
-						<FormLegend>{ translate( 'Allow stats reports to be viewed by' ) }</FormLegend>
-						{ siteRoles &&
-							siteRoles.map( role =>
-								this.renderToggle(
-									'roles_' + role.name,
-									role.display_name,
-									includes( this.getCurrentGroupFields( 'roles' ), role.name ),
-									this.onChangeToggleGroup( 'roles', role.name )
-								)
-							) }
-					</FormFieldset>
-				</FoldableCard>
-
-				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
-					{ translate( 'View your site stats' ) }
-				</CompactCard>
-			</Fragment>
-		);
-	}
-
-	render() {
-		const { siteId, translate } = this.props;
-
-		return (
 			<div className="site-settings__traffic-settings">
 				<QueryJetpackConnection siteId={ siteId } />
 				<QuerySiteRoles siteId={ siteId } />
 
 				<SectionHeader label={ translate( 'Site stats' ) } />
 
-				{ this.renderCardSettings() }
+				<Fragment>
+					<FoldableCard
+						className="site-settings__foldable-card is-top-level"
+						header={ header }
+						clickableHeader
+					>
+						<FormFieldset>
+							<div className="site-settings__info-link-container">
+								<InfoPopover position="left">
+									<ExternalLink
+										href="https://jetpack.com/support/wordpress-com-stats/"
+										target="_blank"
+									>
+										{ translate( 'Learn more about WordPress.com Stats' ) }
+									</ExternalLink>
+								</InfoPopover>
+							</div>
+
+							{ this.renderToggle(
+								'admin_bar',
+								translate( 'Put a chart showing 48 hours of views in the admin bar' )
+							) }
+							{ this.renderToggle( 'hide_smile', translate( 'Hide the stats smiley face image' ) ) }
+							<FormSettingExplanation isIndented>
+								{ translate( 'The image helps collect stats, but should work when hidden.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLegend>{ translate( 'Count logged in page views from' ) }</FormLegend>
+							{ siteRoles &&
+								siteRoles.map( role =>
+									this.renderToggle(
+										'count_roles_' + role.name,
+										role.display_name,
+										includes( this.getCurrentGroupFields( 'count_roles' ), role.name ),
+										this.onChangeToggleGroup( 'count_roles', role.name )
+									)
+								) }
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLegend>{ translate( 'Allow stats reports to be viewed by' ) }</FormLegend>
+							{ siteRoles &&
+								siteRoles.map( role =>
+									this.renderToggle(
+										'roles_' + role.name,
+										role.display_name,
+										includes( this.getCurrentGroupFields( 'roles' ), role.name ),
+										this.onChangeToggleGroup( 'roles', role.name )
+									)
+								) }
+						</FormFieldset>
+					</FoldableCard>
+
+					<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
+						{ translate( 'View your site stats' ) }
+					</CompactCard>
+				</Fragment>
 			</div>
 		);
 	}
