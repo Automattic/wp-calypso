@@ -17,11 +17,17 @@ import { hasNonEmptyLeaves } from 'woocommerce/woocommerce-services/lib/utils/tr
 import normalizeAddress from './normalize-address';
 import getRates from './get-rates';
 import { getPrintURL } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
-import { getFirstErroneousStep, getShippingLabel, getFormErrors, shouldFulfillOrder, shouldEmailDetails } from './selectors';
+import {
+	getFirstErroneousStep,
+	getShippingLabel,
+	getSettingsValues,
+	getFormErrors,
+	shouldFulfillOrder,
+	shouldEmailDetails,
+} from './selectors';
 import { createNote } from 'woocommerce/state/sites/orders/notes/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
-import { getEmailReceipts } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
@@ -37,7 +43,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_ADDRESS_SUGGESTION,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PACKAGE_WEIGHT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_SETTINGS_VALUE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION,
@@ -587,8 +593,8 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 		} ),
 		labelId: label.label_id,
 	} ) );
-	const state = getShippingLabel( getState(), orderId, siteId );
-	const printUrl = getPrintURL( state.paperSize, labelsToPrint );
+	const settings = getSettingsValues( getState(), orderId, siteId );
+	const printUrl = getPrintURL( settings.paper_size, labelsToPrint );
 	const showSuccessNotice = () => {
 		dispatch( NoticeActions.successNotice( translate(
 			'Your shipping label was purchased successfully',
@@ -677,8 +683,11 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 			} ),
 		};
 
+		const settings = getSettingsValues( getState(), orderId, siteId );
+		formData.payment_method_id = settings.selected_payment_method_id;
+
 		//compatibility - only add the email_receipt if the plugin and the server support it
-		const emailReceipt = getEmailReceipts( getState(), siteId );
+		const emailReceipt = settings.email_receipts;
 		if ( isBoolean( emailReceipt ) ) {
 			formData.email_receipt = emailReceipt;
 		}
@@ -784,13 +793,13 @@ export const confirmRefund = ( orderId, siteId ) => ( dispatch, getState ) => {
 
 export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, getState ) => {
 	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG, labelId, orderId, siteId } );
-	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
-	const printUrl = getPrintURL( shippingLabel.paperSize, [ { labelId } ] );
+	const settings = getSettingsValues( getState(), orderId, siteId );
+	const printUrl = getPrintURL( settings.paper_size, [ { labelId } ] );
 
 	api.get( siteId, printUrl )
 		.then( ( fileData ) => {
-			const shippingLabelAfter = getShippingLabel( getState(), orderId, siteId );
-			if ( shippingLabel.paperSize === shippingLabelAfter.paperSize ) {
+			const settingsAfter = getSettingsValues( getState(), orderId, siteId );
+			if ( settings.paper_size === settingsAfter.paper_size ) {
 				dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY, labelId, orderId, siteId, fileData } );
 			}
 		} );
@@ -812,11 +821,12 @@ export const confirmReprint = ( orderId, siteId ) => ( dispatch, getState ) => {
 		.then( () => dispatch( closeReprintDialog( orderId, siteId ) ) );
 };
 
-export const updatePaperSize = ( orderId, siteId, value ) => ( dispatch, getState ) => {
+export const setSettingsValue = ( orderId, siteId, key, value ) => ( dispatch, getState ) => {
 	dispatch( {
-		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_PAPER_SIZE,
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_SETTINGS_VALUE,
 		siteId,
 		orderId,
+		key,
 		value,
 	} );
 
