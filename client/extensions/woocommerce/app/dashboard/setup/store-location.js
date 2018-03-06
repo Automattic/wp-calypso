@@ -22,13 +22,15 @@ import {
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
-import { getCountryData } from 'woocommerce/lib/countries';
+import {
+	getCountryData,
+	isStoreManagementSupportedInCalypsoForCountry,
+} from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
 	getCountriesWithStates,
 } from 'woocommerce/state/sites/locations/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './footer';
 import SetupHeader from './header';
