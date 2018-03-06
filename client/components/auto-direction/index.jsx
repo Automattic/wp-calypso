@@ -188,11 +188,11 @@ const setChildDirection = ( child, isRtl ) => {
 			}
 
 			if ( inlineComponents.some( inlineComponent => innerChild.type === inlineComponent ) ) {
-				innerChildDirection = getChildDirection( innerChild );
+				innerChildDirection = getChildDirection( innerChild, isRtl );
 				return innerChild;
 			}
 
-			return setChildDirection( innerChild );
+			return setChildDirection( innerChild, isRtl );
 		} );
 
 		return React.cloneElement(
