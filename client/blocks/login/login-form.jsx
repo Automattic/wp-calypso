@@ -180,10 +180,8 @@ export class LoginForm extends Component {
 	};
 
 	loginUser() {
-		const { usernameOrEmail } = this.state;
+		const { password, usernameOrEmail } = this.state;
 		const { onSuccess, redirectTo } = this.props;
-
-		const password = this.password.value;
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_submit' );
 
@@ -206,7 +204,7 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			const usernameOrEmail = this.usernameOrEmail.value;
+			const usernameOrEmail = this.usernameOrEmail.props.value;
 
 			this.props.getAuthAccountType( usernameOrEmail );
 
