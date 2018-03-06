@@ -138,7 +138,7 @@ class GoogleAnalyticsForm extends Component {
 			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
 
 		return (
-			<form id="site-settings" onSubmit={ handleSubmitForm }>
+			<form id="analytics" onSubmit={ handleSubmitForm }>
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ isJetpackUnsupported &&

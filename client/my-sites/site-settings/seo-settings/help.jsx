@@ -24,7 +24,7 @@ const SeoSettingsHelpCard = ( { hasAdvancedSEOFeature, siteIsJetpack, translate 
 		: 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/';
 
 	return (
-		<div>
+		<div id="seo">
 			<SectionHeader label={ translate( 'Search engine optimization' ) } />
 			{ hasAdvancedSEOFeature && (
 				<Card>
