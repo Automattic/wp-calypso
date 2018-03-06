@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import config from 'config';
+import { abtest } from 'lib/abtest';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
@@ -120,6 +121,7 @@ class InlineHelp extends Component {
 		const { showContactForm, showInlineHelp } = this.state;
 		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
 		const popoverClasses = { 'is-help-active': showContactForm };
+		const showContactButton = abtest( 'inlineHelpWithContactForm' ) === 'inlinecontact';
 		return (
 			<Button
 				className={ classNames( 'inline-help', inlineHelpButtonClasses ) }
@@ -161,14 +163,16 @@ class InlineHelp extends Component {
 							{ translate( 'More help' ) }
 						</Button>
 
-						<Button
-							onClick={ this.toggleContactForm }
-							className="inline-help__contact-button"
-							borderless >
-							<Gridicon icon="chat" className="inline-help__gridicon-left" />
-							{ translate( 'Contact us' ) }
-							<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
-						</Button>
+						{ showContactButton &&
+							<Button
+								onClick={ this.toggleContactForm }
+								className="inline-help__contact-button"
+								borderless >
+								<Gridicon icon="chat" className="inline-help__gridicon-left" />
+								{ translate( 'Contact us' ) }
+								<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
+							</Button>
+						}
 
 						<Button
 							onClick={ this.toggleContactForm }
