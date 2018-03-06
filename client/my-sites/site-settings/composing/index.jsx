@@ -52,7 +52,9 @@ const Composing = ( {
 					isSavingSettings={ isSavingSettings }
 					onChangeField={ onChangeField }
 				/>
-				<Markdown disabled={ isRequestingSettings || isSavingSettings } siteId={ siteId } />
+				{ jetpackSettingsUISupported && (
+					<Markdown disabled={ isRequestingSettings || isSavingSettings } siteId={ siteId } />
+				) }
 			</CardComponent>
 
 			{ jetpackSettingsUISupported && (
