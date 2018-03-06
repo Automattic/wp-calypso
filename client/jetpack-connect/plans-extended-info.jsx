@@ -39,13 +39,13 @@ const PlansExtendedInfo = ( { onClick, translate } ) => {
 					}
 					onClick={ onClick( 'plan_guide' ) }
 				>
-					{ translate( 'PLAN GUIDE' ) }
+					{ translate( 'Plan Guide' ) }
 				</Button>
 				<Button
 					href={ 'https://jetpack.com/features/comparison' }
 					onClick={ onClick( 'feature_comparison' ) }
 				>
-					{ translate( 'FEATURE COMPARISON' ) }
+					{ translate( 'Feature Comparison' ) }
 				</Button>
 			</div>
 		</Card>
