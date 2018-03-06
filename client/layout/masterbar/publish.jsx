@@ -18,6 +18,7 @@ import { isMobile } from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
 import MasterbarDrafts from './drafts';
+import { isRtl as isRtlSelector } from 'state/selectors';
 
 class MasterbarItemNew extends React.Component {
 	static propTypes = {
@@ -61,11 +62,13 @@ class MasterbarItemNew extends React.Component {
 	preloadPostEditor = () => preload( 'post-editor' );
 
 	getPopoverPosition() {
+		const { isRtl } = this.props;
+
 		if ( isMobile() ) {
 			return 'bottom';
 		}
 
-		if ( this.props.user.isRTL() ) {
+		if ( isRtl ) {
 			return 'bottom right';
 		}
 
@@ -119,6 +122,7 @@ class MasterbarItemNew extends React.Component {
 const mapStateToProps = state => {
 	return {
 		selectedSite: getSelectedSite( state ),
+		isRtl: isRtlSelector( state ),
 	};
 };
 

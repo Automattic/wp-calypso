@@ -241,11 +241,6 @@ User.prototype.getAvatarUrl = function( options ) {
 	return avatar + '?' + qs.stringify( options );
 };
 
-User.prototype.isRTL = function() {
-	const language = this.getLanguage();
-	return language && language.rtl;
-};
-
 /**
  * Clear any user data.
  *
