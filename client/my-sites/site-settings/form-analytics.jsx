@@ -24,6 +24,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
@@ -194,6 +195,20 @@ class GoogleAnalyticsForm extends Component {
 					/>
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">
+						{ siteIsJetpack &&
+							! showUpgradeNudge && (
+								<fieldset>
+									<JetpackModuleToggle
+										siteId={ siteId }
+										moduleSlug="google-analytics"
+										label={ translate(
+											'Track your WordPress site statistics with Google Analytics.'
+										) }
+										disabled={ isRequestingSettings || isSavingSettings }
+									/>
+								</fieldset>
+							) }
+
 						<fieldset>
 							<FormLabel htmlFor="wgaCode">
 								{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
