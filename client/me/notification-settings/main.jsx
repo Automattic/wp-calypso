@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
@@ -64,7 +63,7 @@ class NotificationSettings extends Component {
 			<Main className="notification-settings">
 				<QueryUserDevices />
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 				<Navigation path={ this.props.path } />
 				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
 				<BlogsSettings

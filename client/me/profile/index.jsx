@@ -27,7 +27,6 @@ import observe from 'lib/mixins/data-observe';
 import ProfileLinks from 'me/profile-links';
 import ReauthRequired from 'me/reauth-required';
 import SectionHeader from 'components/section-header';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import { protectForm } from 'lib/protect-form';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -61,7 +60,7 @@ const Profile = createReactClass( {
 		return (
 			<Main className="profile">
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="me-profile-settings">
 					<EditGravatar />

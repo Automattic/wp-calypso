@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
 import Card from 'components/card';
@@ -77,7 +76,7 @@ class NotificationCommentsSettings extends Component {
 			<Main>
 				<QueryUserDevices />
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 
 				<Navigation path={ path } />
 

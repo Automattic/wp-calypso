@@ -27,7 +27,6 @@ import FormButton from 'components/forms/form-button';
 import FormSelect from 'components/forms/form-select';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import observe from 'lib/mixins/data-observe';
 import Main from 'components/main';
 import { recordGoogleEvent } from 'state/analytics/actions';
@@ -76,7 +75,7 @@ const NotificationSubscriptions = createReactClass( {
 		return (
 			<Main className="notifications-settings">
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 
 				<Navigation path={ this.props.path } />
 

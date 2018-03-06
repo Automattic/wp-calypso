@@ -22,7 +22,6 @@ import Security2faBackupCodes from 'me/security-2fa-backup-codes';
 import Security2faDisable from 'me/security-2fa-disable';
 import Security2faSetup from 'me/security-2fa-setup';
 import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
 
 const debug = debugFactory( 'calypso:me:two-step' );
 
@@ -154,7 +153,7 @@ class TwoStep extends Component {
 
 				<SecuritySectionNav path={ this.props.path } />
 
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 
 				<DocumentHead
 					title={ this.props.translate( 'Two-Step Authentication', { textOnly: true } ) }

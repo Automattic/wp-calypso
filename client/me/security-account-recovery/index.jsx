@@ -22,7 +22,6 @@ import RecoveryEmailValidationNotice from './recovery-email-validation-notice';
 import RecoveryPhone from './recovery-phone';
 import RecoveryPhoneValidationNotice from './recovery-phone-validation-notice';
 import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryPhone,
@@ -57,7 +56,7 @@ const SecurityAccountRecovery = props => (
 
 		<SecuritySectionNav path={ props.path } />
 
-		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+		<ReauthRequired />
 
 		<DocumentHead title={ props.translate( 'Account Recovery', { textOnly: true } ) } />
 

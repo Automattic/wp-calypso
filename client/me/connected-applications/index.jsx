@@ -28,7 +28,6 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import { successNotice } from 'state/notices/actions';
 
 /* eslint-disable react/prefer-es6-class */
@@ -163,7 +162,7 @@ const ConnectedApplications = createReactClass( {
 	render: function() {
 		return (
 			<Main className="connected-applications">
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 				<MeSidebarNavigation />
 
 				<DocumentHead
