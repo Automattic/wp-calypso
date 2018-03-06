@@ -14,7 +14,7 @@ export const isTwoStepSMSEnabled = state =>
 export const getSMSLastFour = state => get( state, 'twoStep.settings.twoStepSmsLastFour', null );
 
 export const isSMSResendThrottled = state =>
-	get( state, 'twoStep.settings.lastSendSmsError', false );
+	get( state, 'twoStep.SMSValidationCodeResult.error', null ) === 'rate_limited';
 
 export const isCodeValidationFailed = state => {
 	const codeValidationResult = get( state, 'twoStep.codeValidationResult', null );

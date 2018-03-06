@@ -7,6 +7,8 @@ import {
 	TWO_STEP_SET,
 	TWO_STEP_VALIDATE_CODE_REQUEST,
 	TWO_STEP_SET_CODE_VALIDATION_RESULT,
+	TWO_STEP_SEND_SMS_CODE_REQUEST,
+	TWO_STEP_SET_CODE_SEND_SMS_CODE_RESULT,
 } from 'state/action-types';
 import { combineReducers } from 'state/utils';
 
@@ -24,10 +26,19 @@ export const settings = ( state = {}, action ) => {
 	return state;
 };
 
-export const smsResendThrottled = ( state = false, action ) => {
+export const SMSValidationCodeResult = ( state = null, action ) => {
+	if ( action.type === TWO_STEP_SEND_SMS_CODE_REQUEST ) {
+		return null;
+	}
+
+	if ( action.type === TWO_STEP_SET_CODE_SEND_SMS_CODE_RESULT ) {
+		return action.data;
+	}
+
 	return state;
 };
 
+//TODO: implemenation
 export const appAuthCodes = ( state = {}, action ) => {
 	return state;
 };
@@ -58,7 +69,7 @@ export const codeValidationResult = ( state = null, action ) => {
 
 export default combineReducers( {
 	settings,
-	smsResendThrottled,
+	SMSValidationCodeResult,
 	appAuthCodes,
 	isCodeValidationInProgress,
 	codeValidationResult,

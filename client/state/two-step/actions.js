@@ -9,6 +9,7 @@ import {
 	TWO_STEP_VALIDATE_CODE_REQUEST,
 	TWO_STEP_SET_CODE_VALIDATION_RESULT,
 	TWO_STEP_SEND_SMS_CODE_REQUEST,
+	TWO_STEP_SET_CODE_SEND_SMS_CODE_RESULT,
 	TWO_STEP_APP_AUTH_CODES_REQUEST,
 } from 'state/action-types';
 
@@ -34,4 +35,10 @@ export const validateCode = ( code, remember2fa, action ) => ( {
 
 export const sendSMSValidationCode = () => ( { type: TWO_STEP_SEND_SMS_CODE_REQUEST } );
 
+//TODO: this is not used
 export const getAppAuthCodes = () => ( { type: TWO_STEP_APP_AUTH_CODES_REQUEST } );
+
+export const setTwoStepSendSMSValidationCodeResult = data => ( {
+	type: TWO_STEP_SET_CODE_SEND_SMS_CODE_RESULT,
+	data,
+} );
