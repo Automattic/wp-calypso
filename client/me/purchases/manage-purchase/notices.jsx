@@ -48,27 +48,29 @@ class PurchaseNotice extends Component {
 		const { translate, moment, selectedSite } = this.props;
 
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
-			return isPaidWithCredits( purchase )
-				? translate(
-						'You purchased %(purchaseName)s with credits and it will expire %(expiry)s. ' +
-							'Please, add a credit card if you want it to autorenew.',
-						{
-							args: {
-								purchaseName: getName( purchase ),
-								expiry: moment( purchase.expiryMoment ).fromNow(),
-							},
-						}
-					)
-				: translate(
-						'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
-							'Please, add a credit card if you want it to autorenew. ',
-						{
-							args: {
-								purchaseName: getName( purchase ),
-								expiry: moment( purchase.expiryMoment ).fromNow(),
-							},
-						}
-					);
+			if ( isPaidWithCredits( purchase ) ) {
+				return translate(
+					'You purchased %(purchaseName)s with credits. Please add a credit card before your ' +
+						"plan expires %(expiry)s so that you don't lose out on your paid features!",
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							expiry: moment( purchase.expiryMoment ).fromNow(),
+						},
+					}
+				);
+			}
+
+			return translate(
+				'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
+					"Add a credit card so you don't lose out on your paid features!",
+				{
+					args: {
+						purchaseName: getName( purchase ),
+						expiry: moment( purchase.expiryMoment ).fromNow(),
+					},
+				}
+			);
 		}
 		if ( isMonthly( purchase.productSlug ) ) {
 			const expiryMoment = moment( purchase.expiryMoment );
