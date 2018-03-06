@@ -24,7 +24,7 @@ class Markdown extends PureComponent {
 		const { disabled, siteId, translate } = this.props;
 
 		return (
-			<FormFieldset className="composing__markdown has-divider">
+			<FormFieldset className="composing__markdown has-divider is-top-only">
 				<JetpackModuleToggle
 					disabled={ disabled }
 					label={ translate( 'Write posts or pages in plain-text Markdown syntax' ) }
