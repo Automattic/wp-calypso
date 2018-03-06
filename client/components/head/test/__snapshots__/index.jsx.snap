@@ -29,6 +29,10 @@ exports[`Head should render custom title 1`] = `
     name="apple-mobile-web-app-capable"
   />
   <meta
+    content="#0087be"
+    name="theme-color"
+  />
+  <meta
     content="origin"
     name="referrer"
   />
@@ -169,6 +173,10 @@ exports[`Head should render default title 1`] = `
   <meta
     content="yes"
     name="apple-mobile-web-app-capable"
+  />
+  <meta
+    content="#0087be"
+    name="theme-color"
   />
   <meta
     content="origin"
