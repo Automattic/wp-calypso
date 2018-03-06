@@ -265,9 +265,7 @@ export function addDns( domainName, record, onComplete ) {
 		record,
 	} );
 
-	const dns = DnsStore.getByDomainName( domainName );
-
-	wpcom.updateDns( domainName, dns.records, error => {
+	wpcom.addDns( domainName, record, error => {
 		const type = ! error ? ActionTypes.DNS_ADD_COMPLETED : ActionTypes.DNS_ADD_FAILED;
 		Dispatcher.handleServerAction( {
 			type,
@@ -290,9 +288,7 @@ export function deleteDns( domainName, record, onComplete ) {
 		record,
 	} );
 
-	const dns = DnsStore.getByDomainName( domainName );
-
-	wpcom.updateDns( domainName, dns.records, error => {
+	wpcom.deleteDns( domainName, record, error => {
 		const type = ! error ? ActionTypes.DNS_DELETE_COMPLETED : ActionTypes.DNS_DELETE_FAILED;
 
 		Dispatcher.handleServerAction( {
