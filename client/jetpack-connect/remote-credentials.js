@@ -190,10 +190,10 @@ export class OrgCredentialsForm extends Component {
 			<MainWrapper>
 				{ this.renderHeadersText() }
 				<Card className="jetpack-connect__site-url-input-container">
-					<div onSubmit={ this.handleSubmit }>
+					<form onSubmit={ this.handleSubmit }>
 						{ this.formFields() }
 						{ this.formFooter() }
-					</div>
+					</form>
 				</Card>
 				{ this.footerLink() }
 			</MainWrapper>
