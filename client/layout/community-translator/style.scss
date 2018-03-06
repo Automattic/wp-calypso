@@ -1,0 +1,96 @@
+.community-translator {
+	position: fixed;
+		bottom: 50px;
+		right: 16px;
+	border-radius: 27px;
+	background: $blue-wordpress;
+	cursor: pointer;
+	padding: 4px;
+	font-size: 13px;
+	z-index: z-index( 'root', '.community-translator' );
+
+	&.is-active {
+		background: $orange-jazzy;
+	}
+}
+
+.community-translator__button {
+	align-items: center;
+	color: $white;
+	text-decoration: none;
+	outline: 0;
+	display: flex;
+
+	&:hover {
+		color: $white;
+
+		.community-translator__text {
+			transition: all 0.15s ease-in-out;
+			width: auto;
+			margin-right: 6px;
+			padding: 0 2px;
+		}
+	}
+}
+
+.community-translator__text {
+	width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+// Overwriting the popup defaults
+body {
+	.webui-popover {
+		border-radius: 2px;
+		padding: 0;
+		text-align: inherit;
+		border-color: $gray-lighten-20;
+		z-index: z-index( 'root', 'body .webui-popover' ); // Appear above dialog
+
+		.webui-popover-title {
+			background-color: $gray-lighten-20;
+			border-color: $gray-lighten-30;
+			border-radius: 1px 1px 0 0;
+		}
+
+		&.top,
+		&.top-right,
+		&.top-left {
+			.arrow {
+				border-top-color: $gray-lighten-20;
+			}
+		}
+
+		&.right,
+		&.right-top,
+		&.right-bottom {
+			.arrow {
+				border-right-color: $gray-lighten-20;
+			}
+		}
+
+		&.left,
+		&.left-top,
+		&.left-bottom {
+			.arrow {
+				border-left-color: $gray-lighten-20;
+			}
+		}
+
+		&.bottom,
+		&.bottom-right,
+		&.bottom-left {
+			.arrow {
+				border-bottom-color: $gray-lighten-20;
+				&:after {
+					border-bottom-color: $gray-lighten-20;
+				}
+			}
+		}
+	}
+}
+
+.community-translator__modal {
+	max-width: 400px;
+}
