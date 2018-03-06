@@ -51,7 +51,10 @@ class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Thank you!' );
 		}
 
-		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
+		if (
+			primaryPurchase &&
+			( isDomainMapping( primaryPurchase ) || isDelayedDomainTransfer( primaryPurchase ) )
+		) {
 			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
 				return preventWidows( translate( 'Almost done!' ) );
 			}
@@ -252,7 +255,10 @@ class CheckoutThankYouHeader extends PureComponent {
 		let svg = 'thank-you.svg';
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
-		} else if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
+		} else if (
+			primaryPurchase &&
+			( isDomainMapping( primaryPurchase ) || isDelayedDomainTransfer( primaryPurchase ) )
+		) {
 			svg = 'publish-button.svg';
 		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
 			svg = 'check-emails-desktop.svg';
@@ -261,7 +267,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
 				<div className="checkout-thank-you__header-icon">
-					<img src={ `/calypso/images/upgrades/${ svg }` } />
+					<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
 				</div>
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">
