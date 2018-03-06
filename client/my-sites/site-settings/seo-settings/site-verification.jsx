@@ -305,14 +305,16 @@ class SiteVerification extends Component {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<FormFieldset>
-						<JetpackModuleToggle
-							siteId={ siteId }
-							moduleSlug="verification-tools"
-							label={ translate( 'Enable Site Verification Services.' ) }
-							disabled={ isDisabled }
-						/>
-					</FormFieldset>
+					{ siteIsJetpack && (
+						<FormFieldset>
+							<JetpackModuleToggle
+								siteId={ siteId }
+								moduleSlug="verification-tools"
+								label={ translate( 'Enable Site Verification Services.' ) }
+								disabled={ isDisabled }
+							/>
+						</FormFieldset>
+					) }
 
 					<p>
 						{ translate(
