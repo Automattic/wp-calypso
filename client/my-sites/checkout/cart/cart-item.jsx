@@ -218,7 +218,7 @@ export class CartItem extends React.Component {
 
 		if ( canRemoveFromCart( cart, cartItem ) ) {
 			return (
-				<button className="remove-item" onClick={ this.removeFromCart }>
+				<button className="cart__remove-item" onClick={ this.removeFromCart }>
 					<Gridicon icon="cross-small" />
 				</button>
 			);
