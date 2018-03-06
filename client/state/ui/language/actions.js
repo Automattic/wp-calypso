@@ -13,16 +13,18 @@ import i18n from 'i18n-calypso';
 import { LOCALE_SET } from 'state/action-types';
 
 /**
- * Set the ui locale
+ * Set the ui locale and ui locale variant
  *
- * @param   {Object} localeSlug the locale slug to change the locale to
+ * @param   {String} localeSlug the locale slug to change the ui locale to
+ * @param   {String} localeVariant optional local variant to switch to
  * @returns {Function} Action thunk
  */
-export const setLocale = localeSlug => {
-	switchLocale( localeSlug );
+export const setLocale = ( localeSlug, localeVariant ) => {
+	switchLocale( localeSlug, localeVariant );
 	return {
 		type: LOCALE_SET,
 		localeSlug,
+		localeVariant,
 	};
 };
 

@@ -17,14 +17,12 @@ const debug = debugFactory( 'calypso:i18n' );
 
 function languageFileUrl( localeSlug ) {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
-
 	return `${ protocol }widgets.wp.com/languages/calypso/${ localeSlug }.json`;
 }
 
 function setLocaleInDOM( localeSlug, isRTL ) {
 	document.documentElement.lang = localeSlug;
 	document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-
 	const directionFlag = isRTL ? '-rtl' : '';
 	const debugFlag = process.env.NODE_ENV === 'development' ? '-debug' : '';
 	const cssUrl = window.app.staticUrls[ `style${ debugFlag }${ directionFlag }.css` ];
@@ -33,8 +31,10 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 }
 
 let lastRequestedLocale = null;
-export default function switchLocale( localeSlug ) {
-	const language = getLanguage( localeSlug );
+
+export default function switchLocale( localeSlug, localeVariant ) {
+	// check if the language exists in config.languages
+	const language = getLanguage( localeVariant || localeSlug );
 
 	if ( ! language ) {
 		return;
@@ -46,31 +46,32 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
-	lastRequestedLocale = localeSlug;
+	lastRequestedLocale = language.langSlug;
 
-	if ( isDefaultLocale( localeSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		setLocaleInDOM( localeSlug, !! language.rtl );
+	if ( isDefaultLocale( language.langSlug ) ) {
+		i18n.configure( { defaultLocaleSlug: language.langSlug } );
+		// variant lang objects contain references to their parent lang, which is what we want to tell the browser we're running
+		setLocaleInDOM( language.parentLangSlug || language.langSlug, !! language.rtl );
 	} else {
-		request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
+		request.get( languageFileUrl( language.langSlug ) ).end( function( error, response ) {
 			if ( error ) {
 				debug(
 					'Encountered an error loading locale file for ' +
-						localeSlug +
+					language.langSlug +
 						'. Falling back to English.'
 				);
 				return;
 			}
 
 			// Handle race condition when we're requested to switch to a different
-			// locale while we're in the middle of request, we should abondon result
-			if ( localeSlug !== lastRequestedLocale ) {
+			// locale while we're in the middle of request, we should abandon result
+			if ( language.langSlug !== lastRequestedLocale ) {
 				return;
 			}
 
 			i18n.setLocale( response.body );
 
-			setLocaleInDOM( localeSlug, !! language.rtl );
+			setLocaleInDOM( language.parentLangSlug || language.langSlug, !! language.rtl );
 		} );
 	}
 }

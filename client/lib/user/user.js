@@ -135,7 +135,6 @@ User.prototype.fetch = function() {
 				this.handleFetchFailure( error );
 				return;
 			}
-
 			const userData = filterUserObject( data );
 			this.handleFetchSuccess( userData );
 			debug( 'User successfully retrieved' );
@@ -175,7 +174,6 @@ User.prototype.handleFetchSuccess = function( userData ) {
 	// Release lock from subsequent fetches
 	this.fetching = false;
 	this.clearStoreIfChanged( userData.ID );
-
 	// Store user info in `this.data` and localstorage as `wpcom_user`
 	store.set( 'wpcom_user', userData );
 	if ( userData.abtests ) {

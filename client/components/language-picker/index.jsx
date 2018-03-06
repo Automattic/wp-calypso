@@ -66,7 +66,6 @@ export class LanguagePicker extends PureComponent {
 		if ( ! language ) {
 			return;
 		}
-
 		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ];
 		const event = { target: { value } };
@@ -134,10 +133,13 @@ export class LanguagePicker extends PureComponent {
 		if ( ! language ) {
 			return this.renderPlaceholder();
 		}
-
-		const [ langCode, langSubcode ] = language.langSlug.split( '-' );
 		const langName = language.name;
 		const { disabled, translate } = this.props;
+
+		// assumes xx-yy_variant abstract this into a function and translate( 'formal' )
+		const languageCodes = language.langSlug.split( /[_-]+/ );
+		const langCode = languageCodes[ 0 ];
+		const langSubcode = languageCodes.indexOf( 'formal' ) > -1 ? null : languageCodes[ 1 ];
 
 		return (
 			<div

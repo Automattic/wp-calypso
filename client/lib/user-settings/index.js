@@ -258,6 +258,11 @@ UserSettings.prototype.getSetting = function( settingName ) {
  * @return {Boolean} updating successful response
  */
 UserSettings.prototype.updateSetting = function( settingName, value ) {
+	/*
+		settingName for local_variant is different
+	 */
+	// eslint-disable-next-line
+	console.log( 'UserSettings.prototype.updateSetting()', settingName, value );
 	if ( has( this.settings, settingName ) ) {
 		set( this.unsavedSettings, settingName, value );
 
@@ -265,6 +270,7 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 		 * If the two match, we don't consider the setting "changed".
 		 * user_login is a special case since the logic for validating and saving a username
 		 * is more complicated.
+		 * language is a special case too because a user may switch form a variant to the parent
 		 */
 		if (
 			get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
@@ -276,10 +282,9 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 
 		this.emit( 'change' );
 		return true;
-	} else {
-		debug( settingName + ' does not exist in user-settings data module.' );
-		return false;
 	}
+	debug( settingName + ' does not exist in user-settings data module.' );
+	return false;
 };
 
 UserSettings.prototype.isSettingUnsaved = function( settingName ) {

@@ -60,7 +60,8 @@ const EditUserForm = createReactClass( {
 				originalUser[ setting ] !== this.state[ setting ]
 			);
 		} );
-
+		// eslint-disable-next-line
+		console.log( 'getChangedSettings() this.state, originalUser, changedKeys', this.state, originalUser, changedKeys );
 		return pick( this.state, changedKeys );
 	},
 

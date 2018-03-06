@@ -73,11 +73,12 @@ export function filterUserObject( obj ) {
 }
 
 export function getComputedAttributes( attributes ) {
-	const language = getLanguage( attributes.language );
+	const language = getLanguage( attributes.locale_variant || attributes.language );
 	const primaryBlogUrl = attributes.primary_blog_url || '';
 	return {
 		primarySiteSlug: getSiteSlug( primaryBlogUrl ),
 		localeSlug: attributes.language,
+		localeVariant: attributes.locale_variant || null,
 		isRTL: !! ( language && language.rtl ),
 	};
 }

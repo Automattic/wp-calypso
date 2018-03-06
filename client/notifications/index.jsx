@@ -29,7 +29,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 /**
  * Returns whether or not the browser session
@@ -248,7 +248,7 @@ export class Notifications extends Component {
 
 export default connect(
 	state => ( {
-		currentLocaleSlug: getCurrentLocaleSlug( state ),
+		currentLocaleSlug: getCurrentUserLocale( state ),
 	} ),
 	{ recordTracksEvent }
 )( Notifications );

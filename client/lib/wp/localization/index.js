@@ -9,7 +9,7 @@ import qs from 'querystring';
 /**
  * Internal dependencies
  */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUserLocale, getCurrentUserLocaleVariant } from 'state/current-user/selectors';
 
 /**
  * Module variables
@@ -88,7 +88,9 @@ export function injectLocalization( wpcom ) {
  */
 export function bindState( store ) {
 	function setLocaleFromState() {
-		setLocale( getCurrentUserLocale( store.getState() ) );
+		setLocale(
+			getCurrentUserLocaleVariant( store.getState() ) || getCurrentUserLocale( store.getState() )
+		);
 	}
 
 	store.subscribe( setLocaleFromState );

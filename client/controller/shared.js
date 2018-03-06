@@ -17,6 +17,7 @@ import { setSection as setSectionAction } from 'state/ui/actions';
 import { getSection } from 'state/ui/selectors';
 import { setLocale } from 'state/ui/language/actions';
 import isRTL from 'state/selectors/is-rtl';
+import { getLanguage } from 'lib/i18n-utils';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
@@ -63,12 +64,16 @@ export function setUpLocale( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
 
 	if ( context.params.lang ) {
+		// what if this is a variant?
 		context.lang = context.params.lang;
 	} else if ( currentUser ) {
 		context.lang = currentUser.localeSlug;
 	}
 
-	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
+	context.store.dispatch(
+		setLocale( context.lang || config( 'i18n_default_locale_slug' ) ),
+		currentUser.localeVariant
+	);
 
 	loadSectionCSS( context, next );
 }

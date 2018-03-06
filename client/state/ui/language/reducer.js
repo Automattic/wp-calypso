@@ -6,7 +6,7 @@
 
 import { combineReducers, createReducer } from 'state/utils';
 import { LOCALE_SET } from 'state/action-types';
-import { localeSlugSchema, isRtlSchema } from './schema';
+import { localeSlugSchema, localeVariantSchema, isRtlSchema } from './schema';
 import { getLanguage } from 'lib/i18n-utils/utils';
 
 /**
@@ -26,6 +26,22 @@ export const localeSlug = createReducer(
 );
 
 /**
+ * Tracks the state of the ui locale variant
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ *
+ */
+export const localeVariant = createReducer(
+	null,
+	{
+		[ LOCALE_SET ]: ( state, action ) => action.localeVariant,
+	},
+	localeVariantSchema
+);
+
+/**
  * Tracks the state of the ui language isRtl.
  *
  * @param  {Object} state  Current state
@@ -37,7 +53,7 @@ export const isRtl = createReducer(
 	null,
 	{
 		[ LOCALE_SET ]: ( state, action ) => {
-			const localeSlugFromAction = action.localeSlug;
+			const localeSlugFromAction = action.localeVariant || action.localeSlug;
 
 			if ( ! localeSlugFromAction ) {
 				return null;
@@ -55,4 +71,4 @@ export const isRtl = createReducer(
 	isRtlSchema
 );
 
-export default combineReducers( { localeSlug, isRtl } );
+export default combineReducers( { localeSlug, localeVariant, isRtl } );
