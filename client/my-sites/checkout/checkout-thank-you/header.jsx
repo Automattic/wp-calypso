@@ -47,14 +47,15 @@ class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Some items failed.' );
 		}
 
+		if ( primaryPurchase && isDomainMapping( primaryPurchase ) ) {
+			return preventWidows( translate( 'Almost done!' ) );
+		}
+
 		if ( primaryPurchase && isChargeback( primaryPurchase ) ) {
 			return translate( 'Thank you!' );
 		}
 
-		if (
-			primaryPurchase &&
-			( isDomainMapping( primaryPurchase ) || isDelayedDomainTransfer( primaryPurchase ) )
-		) {
+		if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
 			if ( isDelayedDomainTransfer( primaryPurchase ) ) {
 				return preventWidows( translate( 'Almost done!' ) );
 			}

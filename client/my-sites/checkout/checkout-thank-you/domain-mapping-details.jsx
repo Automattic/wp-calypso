@@ -30,12 +30,11 @@ const DomainMappingDetails = ( {
 	) : (
 		<span />
 	);
-
 	let instructions = (
 		<div>
 			<p>
 				{ translate(
-					'To point your domain at your WordPress.com site, log in to your' +
+					'To point your domain at your WordPress.com site, log in to your ' +
 						"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
 						'(where you purchased the domain), and update your name servers to:',
 					{
@@ -84,7 +83,7 @@ const DomainMappingDetails = ( {
 					{ translate(
 						'To point your domain at your WordPress.com site, log in to your ' +
 							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
-							'(where you purchased the domain), and edit the DNS records to add NS records:',
+							'(where you purchased the domain), and edit the DNS records to add these NS records:',
 						{
 							components: {
 								registrarSupportLink: registrarSupportLink,
