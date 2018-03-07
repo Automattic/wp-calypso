@@ -30,9 +30,9 @@ class JetpackNewSite extends Component {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
 	}
 
-	handleJetpackSubmit = () => {
+	handleGetNewJetpackSiteUrl = () => {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_connect_click' );
-		page( '/jetpack/connect?url=' + this.state.jetpackUrl );
+		page( '/jetpack/connect' );
 	};
 
 	handleBack( event ) {
@@ -51,19 +51,13 @@ class JetpackNewSite extends Component {
 							{ this.props.translate( 'Add a New Site' ) }
 						</h1>
 						<p className="formatted-header__subtitle">
-							{ this.props.translate(
-								'Create a new site or add your existing self-hosted site.'
-							) }{' '}
+							{ this.props.translate( 'Create a new site or add your existing self-hosted site.' ) }{' '}
 						</p>
 					</header>
 					<div className="jetpack-new-site__content">
 						<Card className="jetpack-new-site__card">
 							<div className="jetpack-new-site__card-description">
-								<p>
-									{ this.props.translate(
-										'Create a shiny new WordPress.com site.'
-									) }
-								</p>
+								<p>{ this.props.translate( 'Create a shiny new WordPress.com site.' ) }</p>
 							</div>
 							<Button
 								className="jetpack-new-site__button button is-primary"
@@ -85,7 +79,7 @@ class JetpackNewSite extends Component {
 							</div>
 							<Button
 								className="jetpack-new-site__connect-button button is-primary"
-								onClick={ this.handleJetpackSubmit }
+								onClick={ this.handleGetNewJetpackSiteUrl }
 							>
 								{ this.props.translate( 'Add existing site' ) }
 							</Button>
