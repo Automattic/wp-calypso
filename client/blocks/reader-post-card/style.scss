@@ -1,28 +1,22 @@
 // Adds a top border to first card in the Site Stream
-.is-reader-page .is-site-stream .reader-post-card.card {
-
-	&:nth-child(2) {
-		border-top: 1px solid $gray-lighten-20;
-	}
+.is-reader-page .is-site-stream .reader-post-card.card:nth-child(2) {
+	border-top: 1px solid $gray-lighten-20;
 }
 
 // Removes top border from first card in Discover Stream
-.is-reader-page .is-discover-stream.is-site-stream .reader-post-card.card {
-
-	&:nth-child(2) {
-		border-top: 0;
-	}
+.is-reader-page .is-discover-stream.is-site-stream .reader-post-card.card:nth-child(2) {
+	border-top: 0;
 }
 
 .reader-post-card.card {
 	border-bottom: 1px solid $gray-lighten-20;
 	box-shadow: none;
-	margin: 0 8px 0 0;
+	margin: 0 15px;
 	padding: 18px 0 20px;
 	position: relative;
 
-	@include breakpoint( "<660px" ) {
-		padding: 18px 15px 20px;
+	@include breakpoint( ">660px" ) {
+		margin: 0;
 	}
 
 	&.is-selected {
@@ -43,6 +37,7 @@
 	}
 
 	&.has-thumbnail {
+
 		.reader-featured-image {
 			flex-basis: auto;
 			flex-grow: 1;
@@ -52,6 +47,12 @@
 
 			@include breakpoint( ">960px" ) {
 				max-width: 250px;
+			}
+
+			@include breakpoint( "<480px" ) {
+				height: 100px;
+				margin: 0 0 15px 0;
+				max-width: 100%;
 			}
 		}
 
@@ -407,6 +408,10 @@
 	flex-direction: row;
 	margin-top: 14px;
 
+	@include breakpoint( "<480px" ) {
+		flex-direction: column;
+	}
+
 	.reader-post-card__post-details {
 		flex: 1 auto;
 		width: 100%;
@@ -494,7 +499,7 @@
 }
 
 // 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-discover):not(.is-compact) {
+.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-compact) {
 
 	.reader-excerpt {
 		max-height: 15px * 1.6 * 3.2;
@@ -507,13 +512,10 @@
 	font-size: 14px;
 	height: 22px;
 
-	&.reader-post-actions__visit {
-
-		.gridicon {
-			position: relative;
-				left: -2px;
-				top: -1px;
-		}
+	&.reader-post-actions__visit .gridicon {
+		position: relative;
+			left: -2px;
+			top: -1px;
 	}
 
 	.gridicons-external {
@@ -540,14 +542,6 @@
 	.comment-button .gridicon {
 		top: 4px;
 		margin-right: 2px;
-	}
-
-	.reader-share_button .gridicon {
-		position: relative;
-
-		@include breakpoint( ">960px" ) {
-			top: 1px;
-		}
 	}
 
 	.reader-share__button-label,
