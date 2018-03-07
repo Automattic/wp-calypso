@@ -760,21 +760,54 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ALL_FREE_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_FREE_FEATURES,
-		getTitle: () => i18n.translate( 'All free features' ),
+		getTitle: () =>
+			i18n.translate( '{{a}}All free features{{/a}}', {
+				components: {
+					a: (
+						<a
+							href="https://jetpack.com/features/comparison"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the free version of Jetpack.' ),
 	},
 
 	[ FEATURE_ALL_PERSONAL_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
-		getTitle: () => i18n.translate( 'All Personal features' ),
+		getTitle: () =>
+			i18n.translate( '{{a}}All Personal features{{/a}}', {
+				components: {
+					a: (
+						<a
+							href="https://jetpack.com/features/comparison"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
 	},
 
 	[ FEATURE_ALL_PREMIUM_FEATURES ]: {
 		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
-		getTitle: () => i18n.translate( 'All Premium features' ),
+		getTitle: () =>
+			i18n.translate( '{{a}}All Premium features{{/a}}', {
+				components: {
+					a: (
+						<a
+							href="https://jetpack.com/features/comparison"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
 	},
