@@ -8,6 +8,7 @@ import { capitalize, defer, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
@@ -204,7 +205,10 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			const usernameOrEmail = document.getElementById( this.usernameOrEmail.props.id ).value;
+			// Google Chrome on iOS will autofill without sending events, leading the user
+			// to see a filled box but getting an error. We fetch the value directly from
+			// the DOM as a workaround.
+			const usernameOrEmail = ReactDom.findDOMNode( this.usernameOrEmail ).value;
 
 			this.props.getAuthAccountType( usernameOrEmail );
 
