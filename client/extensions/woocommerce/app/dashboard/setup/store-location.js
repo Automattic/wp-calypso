@@ -19,21 +19,22 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import BasicWidget from 'woocommerce/components/basic-widget';
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
-import { getCountryData } from 'woocommerce/lib/countries';
+import {
+	getCountryData,
+	isStoreManagementSupportedInCalypsoForCountry,
+} from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
 	getCountriesWithStates,
 } from 'woocommerce/state/sites/locations/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
-import SetupFooter from './setup-footer';
-import SetupHeader from './setup-header';
-import SetupNotices from './setup-notices';
+import SetupFooter from './footer';
+import SetupHeader from './header';
+import SetupNotices from './notices';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryLocations from 'woocommerce/components/query-locations';
@@ -219,19 +220,20 @@ class StoreLocationSetupView extends Component {
 		} );
 		const submitDisabled = this.state.isSaving || ! everyRequiredFieldHasAValue;
 
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		if ( ! showForm ) {
 			return (
 				<div className="dashboard__placeholder">
-					<BasicWidget className="dashboard__placeholder-large card" />
+					<div className="dashboard__placeholder-large card dashboard-widget" />
 				</div>
 			);
 		}
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 
 		return (
 			<div>
 				<AddressView
 					address={ this.state.address }
-					className="dashboard__pre-setup-address"
 					isEditable
 					onChange={ this.onChange }
 					showAllLocations
@@ -259,12 +261,12 @@ class StoreLocationSetupView extends Component {
 		const { siteId, translate } = this.props;
 
 		return (
-			<div className="dashboard__setup-wrapper">
+			<div className="setup__wrapper">
 				<SetupNotices />
 				{ this.state.showEmailVerificationDialog && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }
-				<div className="card dashboard__location">
+				<div className="setup__location card">
 					<SetupHeader
 						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-setup.svg' }
 						imageWidth={ 160 }

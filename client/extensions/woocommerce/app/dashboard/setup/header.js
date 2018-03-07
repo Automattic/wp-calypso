@@ -9,17 +9,17 @@ import PropTypes from 'prop-types';
 
 const SetupHeader = ( { imageSource, imageWidth, subtitle, title, children } ) => {
 	return (
-		<div className="dashboard__setup-header">
+		<div className="setup__header">
 			{ imageSource && (
 				<img
 					src={ imageSource }
 					width={ imageWidth }
-					className="dashboard__setup-header-image"
+					className="setup__header-image"
 					alt=""
 				/>
 			) }
-			{ <h2 className="dashboard__setup-header-title form-section-heading">{ title }</h2> }
-			{ subtitle && <p className="dashboard__setup-header-subtitle">{ subtitle }</p> }
+			{ <h2 className="setup__header-title form-section-heading">{ title }</h2> }
+			{ subtitle && <p className="setup__header-subtitle">{ subtitle }</p> }
 			{ children }
 		</div>
 	);

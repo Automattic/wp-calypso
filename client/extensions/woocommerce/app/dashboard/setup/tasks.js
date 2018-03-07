@@ -29,7 +29,7 @@ import {
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { arePaymentsSetup } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import SetupTask from './setup-task';
+import SetupTask from './task';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
 
 class SetupTasks extends Component {
@@ -201,7 +201,7 @@ class SetupTasks extends Component {
 
 	render = () => {
 		return (
-			<div className="dashboard__setup-checklist">
+			<div className="setup__checklist">
 				<QuerySettingsGeneral siteId={ this.props.site.ID } />
 				{ this.getSetupTasks().map( this.renderSetupTask ) }
 			</div>
