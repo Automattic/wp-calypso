@@ -20,7 +20,7 @@ describe( 'EditorNotice', () => {
 		chaiExpect( wrapper ).to.not.have.descendants( Notice );
 	} );
 
-	test( 'should display an no content error message if recognized', () => {
+	test( 'should display a no content error message if recognized', () => {
 		const wrapper = shallow(
 			<EditorNotice
 				translate={ translate }
@@ -84,6 +84,50 @@ describe( 'EditorNotice', () => {
 			.equal( 'is-success' );
 	} );
 
+	test( 'should display publish success for post', () => {
+		const wrapper = shallow(
+			<EditorNotice
+				translate={ translate }
+				moment={ moment }
+				message="published"
+				status="is-success"
+				type="post"
+				site={ {
+					URL: 'https://example.wordpress.com',
+					title: 'Example Site',
+					slug: 'example.wordpress.com',
+				} }
+			/>
+		);
+
+		expect( wrapper ).toMatchSnapshot();
+		chaiExpect( wrapper.find( Notice ) )
+			.to.have.prop( 'status' )
+			.equal( 'is-success' );
+	} );
+
+	test( 'should display publish success for custom post type', () => {
+		const wrapper = shallow(
+			<EditorNotice
+				translate={ translate }
+				moment={ moment }
+				message="published"
+				status="is-success"
+				type="jetpack-testimonial"
+				site={ {
+					URL: 'https://example.wordpress.com',
+					title: 'Example Site',
+					slug: 'example.wordpress.com',
+				} }
+			/>
+		);
+
+		expect( wrapper ).toMatchSnapshot();
+		chaiExpect( wrapper.find( Notice ) )
+			.to.have.prop( 'status' )
+			.equal( 'is-success' );
+	} );
+
 	test( 'should display custom post type view label', () => {
 		const wrapper = shallow(
 			<EditorNotice
@@ -95,7 +139,7 @@ describe( 'EditorNotice', () => {
 						view_item: 'View Project',
 					},
 				} }
-				message="published"
+				message="view"
 				status="is-success"
 				site={ {
 					URL: 'https://example.wordpress.com',
