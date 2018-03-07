@@ -127,7 +127,8 @@
 			left: 1px;
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			background: $alert-green;
 			border-color: $alert-green;
 

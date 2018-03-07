@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
 
 export class ChecklistTask extends PureComponent {
@@ -88,18 +89,16 @@ export class ChecklistTask extends PureComponent {
 						</small>
 					) }
 				</div>
-				<span
+				<Focusable
 					className="checklist__task-icon"
 					onClick={ this.handleToggle }
-					tabIndex="0"
-					role="button"
 					aria-pressed={ completed ? 'true' : 'false' }
 				>
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
 					{ <Gridicon icon="checkmark" size={ 18 } /> }
-				</span>
+				</Focusable>
 			</Card>
 		);
 	}
