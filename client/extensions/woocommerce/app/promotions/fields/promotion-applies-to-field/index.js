@@ -122,6 +122,7 @@ class PromotionAppliesToField extends React.Component {
 				value={ productIds }
 				onChange={ this.onProductIdsChange }
 				singular={ singular }
+				showRegularPrice
 			/>
 		);
 	};
