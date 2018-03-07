@@ -28,9 +28,6 @@ import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
 import { hasDomainDetails } from 'lib/store-transactions';
 import notices from 'notices';
-/* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
 import { managePurchase } from 'me/purchases/paths';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
@@ -61,10 +58,11 @@ import { canAddGoogleApps } from 'lib/domains';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
+import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
+import QueryProducts from 'components/data/query-products-list';
 
 const Checkout = createReactClass( {
 	displayName: 'Checkout',
-	mixins: [ observe( 'productsList' ) ],
 
 	propTypes: {
 		cards: PropTypes.array.isRequired,
@@ -477,7 +475,7 @@ const Checkout = createReactClass( {
 				transaction={ this.props.transaction }
 				cards={ this.props.cards }
 				paymentMethods={ this.paymentMethodsAbTestFilter() }
-				products={ this.props.productsList.get() }
+				products={ this.props.productsList }
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
@@ -494,7 +492,7 @@ const Checkout = createReactClass( {
 
 	isLoading: function() {
 		const isLoadingCart = ! this.props.cart.hasLoadedFromServer,
-			isLoadingProducts = ! this.props.productsList.hasLoadedFromServer();
+			isLoadingProducts = this.props.isProductsListFetching;
 
 		return isLoadingCart || isLoadingProducts;
 	},
@@ -520,6 +518,7 @@ const Checkout = createReactClass( {
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
+					<QueryProducts />
 					<QueryContactDetailsCache />
 					<QueryStoredCards />
 					<QueryGeo />
@@ -550,6 +549,8 @@ export default connect(
 				selectedSiteId,
 				props.cart
 			),
+			productsList: getProductsList( state ),
+			isProductsListFetching: isProductsListFetching( state ),
 		};
 	},
 	{

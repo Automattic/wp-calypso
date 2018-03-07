@@ -24,7 +24,7 @@ class PrivacyProtection extends Component {
 	};
 
 	getPrivacyProtectionCost() {
-		const products = this.props.productsList.get();
+		const products = this.props.productsList;
 		return products.private_whois.cost_display;
 	}
 
