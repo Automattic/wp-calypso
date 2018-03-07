@@ -44,7 +44,7 @@ class AdsMain extends Component {
 		requestingWordAdsApproval: PropTypes.bool.isRequired,
 		requestWordAdsApproval: PropTypes.func.isRequired,
 		section: PropTypes.string.isRequired,
-		site: PropTypes.object.isRequired,
+		site: PropTypes.object,
 		wordAdsError: PropTypes.string,
 		wordAdsSuccess: PropTypes.bool,
 	};
@@ -191,7 +191,12 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
 		let component = this.getComponent( this.props.section );
 		let notice = null;
 
@@ -201,10 +206,7 @@ class AdsMain extends Component {
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
-		} else if (
-			! this.props.site.options.wordads &&
-			isWordadsInstantActivationEligible( this.props.site )
-		) {
+		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
 		}
 
