@@ -21,15 +21,21 @@ const DomainMappingDetails = ( {
 	domain,
 	isBusinessPlan,
 	isSubdomainMapping,
+	isRegisteredWithUs,
 	registrarSupportUrl,
 	selectedSiteDomain,
 	translate,
 } ) => {
+	if ( isSubdomainMapping && isRegisteredWithUs ) {
+		return null;
+	}
+
 	const registrarSupportLink = registrarSupportUrl ? (
 		<a target="_blank" rel="noopener noreferrer" href={ registrarSupportUrl } />
 	) : (
 		<span />
 	);
+
 	let instructions = (
 		<div>
 			<p>

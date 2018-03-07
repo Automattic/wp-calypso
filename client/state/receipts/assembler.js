@@ -16,6 +16,7 @@ export function createReceiptObject( data ) {
 				productNameShort: purchase.product_name_short,
 				registrarSupportUrl: purchase.registrar_support_url,
 				isEmailVerified: Boolean( purchase.is_email_verified ),
+				isRegisteredWithUs: Boolean( purchase.is_registered_with_us ),
 			};
 		} ),
 		failedPurchases: ( data.failedPurchases || [] ).map( purchase => {
