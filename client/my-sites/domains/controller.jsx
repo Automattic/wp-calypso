@@ -15,7 +15,6 @@ import DocumentHead from 'components/data/document-head';
 import { sectionify } from 'lib/route';
 import Main from 'components/main';
 import { addItem } from 'lib/upgrades/actions';
-import productsFactory from 'lib/products-list';
 import { getSites } from 'state/selectors';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -36,11 +35,6 @@ import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-
-/**
- * Module variables
- */
-const productsList = productsFactory();
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -188,7 +182,6 @@ const googleAppsWithRegistration = ( context, next ) => {
 			/>
 			<CartData>
 				<GoogleApps
-					productsList={ productsList }
 					domain={ context.params.registerDomain }
 					onGoBack={ handleGoBack }
 					onAddGoogleApps={ handleAddGoogleApps }

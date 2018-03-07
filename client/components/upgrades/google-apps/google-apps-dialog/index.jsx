@@ -32,7 +32,6 @@ import { getProductsList } from 'state/products-list/selectors';
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
-		productsList: PropTypes.object.isRequired,
 		onAddGoogleApps: PropTypes.func.isRequired,
 		onClickSkip: PropTypes.func.isRequired,
 		onGoBack: PropTypes.func,
