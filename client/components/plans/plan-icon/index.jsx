@@ -11,20 +11,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import {
-	PLAN_FREE,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_PERSONAL,
-	getPlanClass,
-} from 'lib/plans/constants';
+import { isBusinessPlan, isPersonalPlan, isPremiumPlan } from '../../../lib/plans';
+import { getPlanClass, PLANS_CONSTANTS_LIST } from '../../../lib/plans/constants';
 
 export default class PlanIcon extends Component {
 	getIcon( planName ) {
@@ -41,18 +29,14 @@ export default class PlanIcon extends Component {
 
 	render() {
 		const { plan } = this.props;
-		switch ( plan ) {
-			case PLAN_PERSONAL:
-			case PLAN_JETPACK_PERSONAL:
-			case PLAN_JETPACK_PERSONAL_MONTHLY:
+		switch ( true ) {
+			case isPersonalPlan( plan ):
 				return this.getIcon( 'personal' );
-			case PLAN_PREMIUM:
-			case PLAN_JETPACK_PREMIUM:
-			case PLAN_JETPACK_PREMIUM_MONTHLY:
+
+			case isPremiumPlan( plan ):
 				return this.getIcon( 'premium' );
-			case PLAN_BUSINESS:
-			case PLAN_JETPACK_BUSINESS:
-			case PLAN_JETPACK_BUSINESS_MONTHLY:
+
+			case isBusinessPlan( plan ):
 				return this.getIcon( 'business' );
 			default:
 				return this.getIcon( 'free' );
@@ -62,17 +46,5 @@ export default class PlanIcon extends Component {
 
 PlanIcon.propTypes = {
 	classNames: PropTypes.string,
-	plan: PropTypes.oneOf( [
-		PLAN_FREE,
-		PLAN_PREMIUM,
-		PLAN_BUSINESS,
-		PLAN_JETPACK_FREE,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-		PLAN_PERSONAL,
-	] ).isRequired,
+	plan: PropTypes.oneOf( PLANS_CONSTANTS_LIST ).isRequired,
 };

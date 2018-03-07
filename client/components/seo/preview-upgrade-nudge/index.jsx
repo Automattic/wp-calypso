@@ -16,19 +16,20 @@ import Gridicon from 'gridicons';
 import QueryPlans from 'components/data/query-plans';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { preventWidows } from 'lib/formatting';
-import { isJetpackSite } from 'state/sites/selectors';
 import FeatureExample from 'components/feature-example';
 import Banner from 'components/banner';
-import { PLAN_BUSINESS, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
+import { findSimilarPlan } from '../../../lib/plans';
+import { TYPE_BUSINESS } from '../../../lib/plans/constants';
+import { getCurrentPlan } from '../../../state/sites/plans/selectors';
 
-const SeoPreviewNudge = ( { translate, isJetpack = false } ) => {
+const SeoPreviewNudge = ( { translate, currentPlan } ) => {
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 
 			<Banner
-				plan={ isJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+				plan={ findSimilarPlan( currentPlan, { type: TYPE_BUSINESS } ) }
 				title={ translate( 'Upgrade to a Business Plan to unlock the power of our SEO tools!' ) }
 				event="site_preview_seo_plan_upgrade"
 				className="preview-upgrade-nudge__banner"
@@ -84,12 +85,9 @@ SeoPreviewNudge.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = ( state, ownProps ) => {
-	const { site } = ownProps;
-	const isJetpack = isJetpackSite( state, site.ID );
-
+const mapStateToProps = ( state, { site } ) => {
 	return {
-		isJetpack,
+		plan: getCurrentPlan( state, site.ID ),
 	};
 };
 

@@ -16,15 +16,16 @@ import {
 	FEATURES_LIST,
 	PLANS_LIST,
 	PLAN_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
+import {
+	TERM_ANNUALLY,
+	TERM_MONTHLY,
+	TYPE_BUSINESS,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+} from './constants';
 
 /**
  * Module vars
@@ -169,16 +170,7 @@ export function filterPlansBySiteAndProps(
  * @return {String}          Monthly version slug or "" if the slug could not be converted.
  */
 export function getMonthlyPlanByYearly( planSlug ) {
-	switch ( planSlug ) {
-		case PLAN_JETPACK_PREMIUM:
-			return PLAN_JETPACK_PREMIUM_MONTHLY;
-		case PLAN_JETPACK_BUSINESS:
-			return PLAN_JETPACK_BUSINESS_MONTHLY;
-		case PLAN_JETPACK_PERSONAL:
-			return PLAN_JETPACK_PERSONAL_MONTHLY;
-		default:
-			return '';
-	}
+	return findSimilarPlan( planSlug, { term: TERM_MONTHLY } );
 }
 
 /**
@@ -189,16 +181,7 @@ export function getMonthlyPlanByYearly( planSlug ) {
  * @return {String}          Yearly version slug or "" if the slug could not be converted.
  */
 export function getYearlyPlanByMonthly( planSlug ) {
-	switch ( planSlug ) {
-		case PLAN_JETPACK_PREMIUM_MONTHLY:
-			return PLAN_JETPACK_PREMIUM;
-		case PLAN_JETPACK_BUSINESS_MONTHLY:
-			return PLAN_JETPACK_BUSINESS;
-		case PLAN_JETPACK_PERSONAL_MONTHLY:
-			return PLAN_JETPACK_PERSONAL;
-		default:
-			return '';
-	}
+	return findSimilarPlan( planSlug, { term: TERM_ANNUALLY } );
 }
 
 /**
@@ -214,11 +197,76 @@ export function getYearlyPlanByMonthly( planSlug ) {
  * @return {Boolean}           Whether the plan "types" match regardless of interval
  */
 export function planLevelsMatch( planSlugA, planSlugB ) {
+	const planA = getPlan( planSlugA );
+	const planB = getPlan( planSlugB );
 	return (
-		planSlugA === planSlugB ||
-		getMonthlyPlanByYearly( planSlugA ) === planSlugB ||
-		planSlugA === getMonthlyPlanByYearly( planSlugB )
+		planA && planB && planA.getType() === planB.getType() && planA.getGroup() === planB.getGroup()
 	);
+}
+
+export function isBusinessPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_BUSINESS } );
+}
+
+export function isPremiumPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PREMIUM } );
+}
+
+export function isPersonalPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_PERSONAL } );
+}
+
+export function planMatches( planSlug, query = {} ) {
+	return __internal__planMatches( getPlan( planSlug ), query );
+}
+
+export function findSimilarPlan( similarToPlanSlug, query = {} ) {
+	const plan = getPlan( similarToPlanSlug );
+
+	return findPlan( {
+		type: plan.getType(),
+		group: plan.getGroup(),
+		term: plan.getTerm(),
+
+		...query,
+	} );
+}
+
+export function findPlan( query ) {
+	for ( const planSlug in PLANS_LIST ) {
+		const plan = PLANS_LIST[ planSlug ];
+		if ( __internal__planMatches( plan, query ) ) {
+			return planSlug;
+		}
+	}
+
+	return '';
+}
+
+export function __internal__planMatches( plan, query ) {
+	const getValue = key => {
+		switch ( key ) {
+			case 'group':
+				return plan.getGroup();
+			case 'term':
+				return plan.getTerm();
+			case 'type':
+				return plan.getType();
+			default:
+				throw new Error( `Unrecognized query key "${ key }"` );
+		}
+	};
+
+	for ( const key in query ) {
+		const expectedValue = Array.isArray( query[ key ] ) ? query[ key ] : [ query[ key ] ];
+		const actualValue = getValue( key );
+		const matches = expectedValue.indexOf( actualValue ) !== -1;
+		if ( ! matches ) {
+			return false;
+		}
+	}
+
+	return true;
 }
 
 export const isPlanFeaturesEnabled = () => {
