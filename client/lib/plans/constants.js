@@ -561,7 +561,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site including ' +
+				'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
@@ -1156,10 +1156,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () =>
-			i18n.translate(
-				'High quality support to help you get your website up ' +
-					'and running and working how you want it.'
-			),
+			i18n.translate( 'Hands-on support to help you set up your site exactly how you want it.' ),
 	},
 
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
@@ -1190,7 +1187,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
 		getSlug: () => FEATURE_SPAM_AKISMET_PLUS,
 		getTitle: () => i18n.translate( 'Spam Protection' ),
-		getDescription: () => i18n.translate( 'State-of-the-art spam defense powered by Akismet.' ),
+		getDescription: () => i18n.translate( 'State-of-the-art spam defense, powered by Akismet.' ),
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
