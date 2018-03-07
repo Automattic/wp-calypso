@@ -14,7 +14,6 @@ import { flow, get, includes, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import updatePostStatus from 'components/update-post-status';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import PopoverMenu from 'components/popover/menu';
@@ -32,6 +31,7 @@ import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -50,9 +50,6 @@ class Page extends Component {
 		recordEditPage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
-
-		// connected via updatePostStatus
-		updatePostStatus: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -422,23 +419,48 @@ class Page extends Component {
 		);
 	}
 
+	updatePostStatus( status ) {
+		const { page, translate } = this.props;
+
+		switch ( status ) {
+			case 'delete':
+				const deleteWarning = translate( 'Delete this page permanently?' );
+
+				if ( typeof window === 'object' && window.confirm( deleteWarning ) ) {
+					this.props.deletePost( page.site_ID, page.ID );
+				}
+				return;
+
+			case 'trash':
+				this.props.trashPost( page.site_ID, page.ID );
+				return;
+
+			case 'restore':
+				this.props.restorePost( page.site_ID, page.ID );
+				return;
+
+			default:
+				this.props.savePost( page.site_ID, page.ID, { status } );
+		}
+	}
+
 	updateStatusPublish = () => {
-		this.props.updatePostStatus( 'publish' );
+		this.updatePostStatus( 'publish' );
 		this.props.recordEvent( 'Clicked Publish Page' );
 	};
 
 	updateStatusTrash = () => {
-		this.props.updatePostStatus( 'trash' );
+		this.updatePostStatus( 'trash' );
 		this.props.recordEvent( 'Clicked Move to Trash' );
 	};
 
 	updateStatusRestore = () => {
-		this.props.updatePostStatus( 'restore' );
+		this.updatePostStatus( 'restore' );
 		this.props.recordEvent( 'Clicked Restore' );
 	};
 
 	updateStatusDelete = () => {
-		this.props.updatePostStatus( 'delete' );
+		this.updatePostStatus( 'delete' );
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
@@ -467,6 +489,10 @@ const mapState = ( state, props ) => {
 };
 
 const mapDispatch = {
+	savePost,
+	deletePost,
+	trashPost,
+	restorePost,
 	setPreviewUrl,
 	setLayoutFocus,
 	recordEvent,
@@ -477,4 +503,4 @@ const mapDispatch = {
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
 
-export default flow( localize, updatePostStatus, connect( mapState, mapDispatch ) )( Page );
+export default flow( localize, connect( mapState, mapDispatch ) )( Page );
