@@ -1076,7 +1076,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Site Monetization' ),
 		getDescription: () =>
 			i18n.translate(
-				'Add advertising to your site through our WordAds program and earn money from impressions.'
+				'Put your site to work and earn through ad revenue, easy-to-add PayPal buttons, and more.'
 			),
 	},
 
@@ -1193,8 +1193,8 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Daily Off-site Backups' ),
 		getDescription: () =>
 			i18n.translate(
-				'Automatic daily backups of every single aspect of your site. ' +
-					'Stored safely and optimized for WordPress.'
+				'Automatic daily backups of your entire site, with ' +
+					'unlimited, WordPress-optimized secure storage.'
 			),
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
@@ -1252,7 +1252,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive and automated scanning for any security vulnerabilities or threats on your site.'
+				'Comprehensive, automated scanning for security vulnerabilities or threats on your site.'
 			),
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: {
