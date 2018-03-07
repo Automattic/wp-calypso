@@ -60,6 +60,7 @@ export default class Step extends Component {
 		style: PropTypes.object,
 		canSkip: PropTypes.bool,
 		wait: PropTypes.func,
+		onTargetDisappear: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -112,6 +113,7 @@ export default class Step extends Component {
 			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 			const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 			this.setStepPosition( nextProps, shouldScrollTo );
+			this.watchTarget();
 		} );
 	}
 
@@ -155,7 +157,11 @@ export default class Step extends Component {
 	}
 
 	watchTarget() {
-		if ( ! this.props.target || typeof MutationObserver === 'undefined' ) {
+		if (
+			! this.props.target ||
+			! this.props.onTargetDisappear ||
+			typeof MutationObserver === 'undefined'
+		) {
 			return;
 		}
 
