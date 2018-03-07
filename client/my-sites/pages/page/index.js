@@ -52,17 +52,19 @@ class Page extends Component {
 		recordStatsPage: PropTypes.func.isRequired,
 
 		// connected via updatePostStatus
-		togglePageActions: PropTypes.func.isRequired,
 		updatePostStatus: PropTypes.func.isRequired,
-		showPageActions: PropTypes.bool.isRequired,
+	};
+
+	state = {
+		showPageActions: false,
 	};
 
 	togglePageActions = () => {
-		this.props.togglePageActions();
-		// TODO check previous impl for race conditions
-		if ( this.props.showPageActions ) {
-			this.props.recordMoreOptions();
-		}
+		this.setState( { showPageActions: ! this.state.showPageActions }, () => {
+			if ( this.state.showPageActions ) {
+				this.props.recordMoreOptions();
+			}
+		} );
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -342,7 +344,7 @@ class Page extends Component {
 
 		const popoverMenu = hasMenuItems && (
 			<PopoverMenu
-				isVisible={ this.props.showPageActions }
+				isVisible={ this.state.showPageActions }
 				onClose={ this.togglePageActions }
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.popoverMenuButton }
@@ -361,9 +363,8 @@ class Page extends Component {
 		const ellipsisGridicon = hasMenuItems && (
 			<Gridicon
 				icon="ellipsis"
-				className={ classNames( {
-					'page__actions-toggle': true,
-					'is-active': this.props.showPageActions,
+				className={ classNames( 'page__actions-toggle', {
+					'is-active': this.state.showPageActions,
 				} ) }
 				onClick={ this.togglePageActions }
 				ref="popoverMenuButton"

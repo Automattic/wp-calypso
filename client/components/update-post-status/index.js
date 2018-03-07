@@ -30,15 +30,9 @@ const updatePostStatus = WrappedComponent =>
 				page: PropTypes.object,
 			};
 
-			state = {
-				showPageActions: false,
-			};
-
 			updatePostStatus = status => {
 				const { translate } = this.props;
 				const post = this.props.post || this.props.page;
-
-				this.setState( { showPageActions: false } );
 
 				switch ( status ) {
 					case 'delete':
@@ -47,48 +41,25 @@ const updatePostStatus = WrappedComponent =>
 							: translate( 'Delete this page permanently?' );
 
 						if ( typeof window === 'object' && window.confirm( deleteWarning ) ) {
-							this.props
-								.deletePost( post.site_ID, post.ID )
-								.then( this.resetState, this.resetState );
-						} else {
-							this.resetState();
+							this.props.deletePost( post.site_ID, post.ID );
 						}
 						return;
 
 					case 'trash':
-						this.props.trashPost( post.site_ID, post.ID ).then( this.resetState, this.resetState );
+						this.props.trashPost( post.site_ID, post.ID );
 						return;
 
 					case 'restore':
-						this.props
-							.restorePost( post.site_ID, post.ID )
-							.then( this.resetState, this.resetState );
+						this.props.restorePost( post.site_ID, post.ID );
 						return;
 
 					default:
-						this.props
-							.savePost( post.site_ID, post.ID, { status } )
-							.then( this.resetState, this.resetState );
+						this.props.savePost( post.site_ID, post.ID, { status } );
 				}
 			};
 
-			resetState = () => {
-				this.setState( { showPageActions: true } );
-			};
-
-			togglePageActions = () => {
-				this.setState( { showPageActions: ! this.state.showPageActions } );
-			};
-
 			render() {
-				return (
-					<WrappedComponent
-						{ ...this.props }
-						togglePageActions={ this.togglePageActions }
-						updatePostStatus={ this.updatePostStatus }
-						showPageActions={ this.state.showPageActions }
-					/>
-				);
+				return <WrappedComponent { ...this.props } updatePostStatus={ this.updatePostStatus } />;
 			}
 		}
 	);
