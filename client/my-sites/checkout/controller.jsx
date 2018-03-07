@@ -30,15 +30,26 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 const productsList = productsFactory();
 
 const checkoutRoutes = [
+	new Route( '/checkout/features/:feature/:domain/:plan_name' ),
+	new Route( '/checkout/features/:feature/:domain' ),
+	new Route( '/checkout/:product/renew/:purchaseId/:site' ),
+	new Route( '/checkout/:site/:product' ),
+	new Route( '/checkout/:site' ),
+];
+
+const checkoutGSuiteNudgeRoutes = [
+	new Route( '/checkout/:site/with-gsuite/:domain/:receipt' ),
+	new Route( '/checkout/:site/with-gsuite/:domain' ),
+];
+
+const checkoutThankYouRoutes = [
+	new Route( '/checkout/thank-you/no-site' ),
 	new Route( '/checkout/thank-you/no-site/:receipt' ),
+	new Route( '/checkout/thank-you/:site' ),
 	new Route( '/checkout/thank-you/:site/:receipt' ),
 	new Route( '/checkout/thank-you/:site/:receipt/with-gsuite/:gsuiteReceipt' ),
-	new Route( '/checkout/features/:feature/:domain/:plan_name' ),
+	new Route( '/checkout/thank-you/features/:feature/:site' ),
 	new Route( '/checkout/thank-you/features/:feature/:site/:receipt' ),
-	new Route( '/checkout/no-site' ),
-	new Route( '/checkout/:site/:product' ),
-	new Route( '/checkout/:product/renew/:purchaseId/:site' ),
-	new Route( '/checkout/:site/with-gsuite/:domain/:receipt?' ),
 ];
 
 export default {
@@ -100,7 +111,7 @@ export default {
 	},
 
 	checkoutThankYou: function( context, next ) {
-		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
+		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutThankYouRoutes );
 		const receiptId = Number( context.params.receiptId );
 		const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
@@ -129,7 +140,10 @@ export default {
 	},
 
 	gsuiteNudge( context, next ) {
-		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutRoutes );
+		const { routePath, routeParams } = sectionifyWithRoutes(
+			context.path,
+			checkoutGSuiteNudgeRoutes
+		);
 		const { domain, site, receiptId } = context.params;
 		context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
 
