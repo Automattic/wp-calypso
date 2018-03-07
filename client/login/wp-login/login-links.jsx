@@ -3,28 +3,30 @@
 /**
  * External dependencies
  */
-
+import Gridicon from 'gridicons';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import urlModule from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
+import { addQueryArgs } from 'lib/url';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { isEnabled } from 'config';
+import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { login } from 'lib/paths';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
+		backTo: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -63,6 +65,36 @@ export class LoginLinks extends React.Component {
 	recordResetPasswordLinkClick = () => {
 		this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
 	};
+
+	renderBackLink() {
+		const { backTo, translate } = this.props;
+
+		// A backTo prop may be supplied, allowing the back button href to be controlled.
+		if ( backTo ) {
+			const { hostname, protocol } = urlModule.parse( backTo );
+
+			// Ensure we've got a relative URL (null) or an http[s] protocol
+			// We don't want to allow `javascript:…`
+			if ( null === protocol || 'http:' === protocol || 'https:' === protocol ) {
+				const linkText = hostname
+					? translate( 'Back to %(hostname)s', { args: { hostname } } )
+					: translate( 'Back' );
+				return (
+					<ExternalLink href={ backTo }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ linkText }
+					</ExternalLink>
+				);
+			}
+		}
+		return (
+			<LoggedOutFormBackLink
+				classes={ { 'logged-out-form__link-item': false } }
+				oauth2Client={ this.props.oauth2Client }
+				recordClick={ this.recordBackToWpcomLinkClick }
+			/>
+		);
+	}
 
 	renderHelpLink() {
 		if ( ! this.props.twoFactorAuthType ) {
@@ -143,11 +175,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				<LoggedOutFormBackLink
-					oauth2Client={ this.props.oauth2Client }
-					recordClick={ this.recordBackToWpcomLinkClick }
-					classes={ { 'logged-out-form__link-item': false } }
-				/>
+				{ this.renderBackLink() }
 			</div>
 		);
 	}
