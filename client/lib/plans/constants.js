@@ -458,8 +458,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
-				'Automated backups and malware scanning, expert priority ' +
-					'support, marketing automation, and more.'
+				'Automated malware scanning, expert priority ' + 'support, marketing automation, and more.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -561,7 +560,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site including ' +
+				'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
@@ -580,7 +579,6 @@ export const PLANS_LIST = {
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES,
@@ -617,7 +615,6 @@ export const PLANS_LIST = {
 		],
 		getSignupFeatures: () => [
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-			FEATURE_UNLIMITED_STORAGE,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_PREMIUM_SUPPORT,
 			FEATURE_ALL_FREE_FEATURES,
@@ -651,8 +648,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'WordPress sites from start to finish: unlimited premium ' +
-					'themes, business class security, and marketing automation.'
+				'The full power of WordPress, unlocked: unlimited premium ' +
+					'themes, the most advanced security features, and marketing automation.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -966,9 +963,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Unlimited Video Hosting' ),
 		getDescription: () =>
 			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats ' +
-					'(unlimited storage space).'
+				'Easy video uploads, and a fast, unbranded, customizable player, enhanced with rich stats and unlimited storage space.'
 			),
 		getStoreSlug: () => 'videopress',
 	},
@@ -1075,10 +1070,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_WORDADS_INSTANT ]: {
 		getSlug: () => FEATURE_WORDADS_INSTANT,
-		getTitle: () => i18n.translate( 'Monetize Your Site' ),
+		getTitle: () => i18n.translate( 'Monetization Options' ),
 		getDescription: () =>
 			i18n.translate(
-				'Add advertising to your site through our WordAds program and earn money from impressions.'
+				'Put your site to work and earn through ad revenue, easy-to-add PayPal buttons, and more.'
 			),
 	},
 
@@ -1158,10 +1153,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () =>
-			i18n.translate(
-				'High quality support to help you get your website up ' +
-					'and running and working how you want it.'
-			),
+			i18n.translate( 'Hands-on support to help you set up your site exactly how you want it.' ),
 	},
 
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
@@ -1192,15 +1184,14 @@ export const FEATURES_LIST = {
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
 		getSlug: () => FEATURE_SPAM_AKISMET_PLUS,
 		getTitle: () => i18n.translate( 'Spam Protection' ),
-		getDescription: () => i18n.translate( 'State-of-the-art spam defense powered by Akismet.' ),
+		getDescription: () => i18n.translate( 'State-of-the-art spam defense, powered by Akismet.' ),
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
 		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 		getTitle: () => i18n.translate( 'Daily Off-site Backups' ),
 		getDescription: () =>
 			i18n.translate(
-				'Automatic daily backups of every single aspect of your site. ' +
-					'Stored safely and optimized for WordPress.'
+				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage'
 			),
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
@@ -1258,7 +1249,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive and automated scanning for any security vulnerabilities or threats on your site.'
+				'Comprehensive, automated scanning for security vulnerabilities or threats on your site.'
 			),
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: {
@@ -1394,7 +1385,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_CONCIERGE_SETUP,
 		getTitle: () => i18n.translate( 'Jetpack Concierge' ),
 		getDescription: () =>
-			i18n.translate( 'A complimentary one-on-one education session with a Jetpack expert.' ),
+			i18n.translate( 'A complimentary one-on-one orientation session with a Jetpack expert.' ),
 	},
 
 	[ FEATURE_MARKETING_AUTOMATION ]: {
@@ -1408,10 +1399,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEARCH ]: {
 		getSlug: () => FEATURE_SEARCH,
-		getTitle: () => i18n.translate( 'Enhanced site-wide search' ),
+		getTitle: () => i18n.translate( 'Enhanced Site-wide Search' ),
 		getDescription: () =>
 			i18n.translate(
-				'Fast, high-quality search results with custom filtering, powered by Elasticsearch.'
+				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
 			),
 	},
 };
