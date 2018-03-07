@@ -22,17 +22,13 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
-function handleTargetDisappearInChooseImageStep( { quit, next } ) {
+function handleTargetDisappear( { quit, next } ) {
 	const dialog = document.querySelector( '.editor-media-modal' );
 	if ( dialog ) {
 		next();
 	} else {
 		quit();
 	}
-}
-
-function quitWhenTargetDisappear( context ) {
-	context.quit( context );
 }
 
 export const ChecklistSiteIconTour = makeTour(
@@ -69,7 +65,7 @@ export const ChecklistSiteIconTour = makeTour(
 				marginTop: '-10px',
 				marginLeft: '-40px',
 			} }
-			onTargetDisappear={ handleTargetDisappearInChooseImageStep }
+			onTargetDisappear={ handleTargetDisappear }
 		>
 			<p>
 				{ translate( 'Pick or drag a file from your computer to add it to your media library.' ) }
@@ -83,7 +79,7 @@ export const ChecklistSiteIconTour = makeTour(
 			arrow="bottom-center"
 			placement="above"
 			style={ { marginTop: '40px', marginLeft: '60px' } }
-			onTargetDisappear={ quitWhenTargetDisappear }
+			onTargetDisappear={ handleTargetDisappear }
 		>
 			<Continue target="dialog-base-action-confirm" step="click-done" click>
 				{ translate( 'Good choice, press {{b}}Continue{{/b}} to use it as your Site Icon.', {
