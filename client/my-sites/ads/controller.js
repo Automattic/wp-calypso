@@ -14,10 +14,8 @@ import page from 'page';
 import { sectionify } from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
-import { canAccessWordads } from 'lib/ads/utils';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { userCan } from 'lib/site/utils';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import Ads from 'my-sites/ads/main';
 
@@ -49,21 +47,9 @@ export default {
 	},
 
 	layout: function( context, next ) {
-		const site = getSelectedSite( context.store.getState() );
-		const pathSuffix = site ? '/' + site.slug : '';
 		const layoutTitle = _getLayoutTitle( context );
 
 		context.store.dispatch( setTitle( layoutTitle ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-
-		if ( site && ! userCan( 'manage_options', site ) ) {
-			page.redirect( '/stats' + pathSuffix );
-			return;
-		}
-
-		if ( site && ! canAccessWordads( site ) ) {
-			page.redirect( '/stats' + pathSuffix );
-			return;
-		}
 
 		_recordPageView( context, layoutTitle );
 
