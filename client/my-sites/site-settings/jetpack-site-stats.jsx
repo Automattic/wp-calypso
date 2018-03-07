@@ -64,14 +64,6 @@ class JetpackSiteStats extends Component {
 		};
 	};
 
-	handleStatsActivationButton = event => {
-		const { siteId } = this.props;
-
-		this.props.activateModule( siteId, 'stats' );
-
-		event.preventDefault();
-	};
-
 	getCurrentGroupFields( groupName ) {
 		const { fields } = this.props;
 
