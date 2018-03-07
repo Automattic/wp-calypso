@@ -19,17 +19,12 @@ import { recordTracksEvent } from 'state/analytics/actions';
 class JetpackNewSite extends Component {
 	constructor() {
 		super();
-		this.handleOnClickTos = this.handleOnClickTos.bind( this );
 		this.handleBack = this.handleBack.bind( this );
 	}
-
-	state = { jetpackUrl: '' };
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_view' );
 	}
-
-	handleJetpackUrlChange = event => this.setState( { jetpackUrl: event.target.value } );
 
 	getNewWpcomSiteUrl() {
 		return config( 'signup_url' ) + '?ref=calypso-selector';
@@ -39,10 +34,6 @@ class JetpackNewSite extends Component {
 		this.props.recordTracksEvent( 'calypso_jetpack_new_site_connect_click' );
 		page( '/jetpack/connect?url=' + this.state.jetpackUrl );
 	};
-
-	handleOnClickTos() {
-		this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
-	}
 
 	handleBack( event ) {
 		event.preventDefault();
