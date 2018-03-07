@@ -93,7 +93,7 @@ describe( 'index', () => {
 			expect(
 				subscribedWithinPastWeek( {
 					subscribedDate: moment()
-						.subtract( 'days', 8 )
+						.subtract( 8, 'days' )
 						.format(),
 				} )
 			).to.be.false;
@@ -102,7 +102,7 @@ describe( 'index', () => {
 			expect(
 				subscribedWithinPastWeek( {
 					subscribedDate: moment()
-						.substract( 'days', 3 )
+						.subtract( 3, 'days' )
 						.format(),
 				} )
 			).to.be.true;

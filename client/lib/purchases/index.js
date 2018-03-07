@@ -265,7 +265,11 @@ function monthsUntilCardExpires( purchase ) {
 }
 
 function subscribedWithinPastWeek( purchase ) {
-	return purchase.subscribedDate && moment( purchase.subscribedDate ).diff( moment(), 'days' ) < 7;
+	// Subscribed date should always be in the past. One week ago would be -7 days.
+	return (
+		'undefined' !== typeof purchase.subscribedDate &&
+		moment( purchase.subscribedDate ).diff( moment(), 'days' ) >= -7
+	);
 }
 
 /**
