@@ -237,6 +237,25 @@ class StoreSidebar extends Component {
 		);
 	};
 
+	stats = () => {
+		const { site, siteSuffix, translate } = this.props;
+		const link = '/store/stats/orders/week' + siteSuffix;
+		const classes = classNames( {
+			stats: true,
+			'is-placeholder': ! site,
+			selected: false,
+		} );
+
+		return (
+			<SidebarItem
+				className={ classes }
+				icon="stats-alt"
+				label={ translate( 'Stats' ) }
+				link={ link }
+			/>
+		);
+	};
+
 	render = () => {
 		const {
 			finishedAddressSetup,
@@ -275,6 +294,7 @@ class StoreSidebar extends Component {
 						{ showAllSidebarItems && this.reviews() }
 						{ showAllSidebarItems && <SidebarSeparator /> }
 						{ showAllSidebarItems && this.settings() }
+						{ showAllSidebarItems && this.stats() }
 					</ul>
 				</SidebarMenu>
 				<QuerySettingsGeneral siteId={ siteId } />
