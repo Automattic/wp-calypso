@@ -64,7 +64,7 @@ import { loadTrackingTool } from 'state/analytics/actions';
 
 const Checkout = createReactClass( {
 	displayName: 'Checkout',
-	mixins: [ observe( 'sites', 'productsList' ) ],
+	mixins: [ observe( 'productsList' ) ],
 
 	propTypes: {
 		cards: PropTypes.array.isRequired,
