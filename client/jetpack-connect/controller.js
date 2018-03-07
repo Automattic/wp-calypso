@@ -100,7 +100,7 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 
 export function maybeOnboard( { query, store }, next ) {
 	if ( ! isEmpty( query ) && query.onboarding ) {
-		if ( query.site_url && query.jp_version && versionCompare( query.jp_version, '5.8', '<' ) ) {
+		if ( query.site_url && query.jp_version && versionCompare( query.jp_version, '5.9', '<' ) ) {
 			return externalRedirect( query.site_url + '/wp-admin/admin.php?page=jetpack#/dashboard' );
 		}
 
