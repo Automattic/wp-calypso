@@ -648,8 +648,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'WordPress sites from start to finish: unlimited premium ' +
-					'themes, business class security, and marketing automation.'
+				'The full power of WordPress, unlocked: unlimited premium ' +
+					'themes, the most advanced security features, and marketing automation.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -1399,10 +1399,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_SEARCH ]: {
 		getSlug: () => FEATURE_SEARCH,
-		getTitle: () => i18n.translate( 'Enhanced site-wide search' ),
+		getTitle: () => i18n.translate( 'Enhanced Site-wide Search' ),
 		getDescription: () =>
 			i18n.translate(
-				'Fast, high-quality search results with custom filtering, powered by Elasticsearch.'
+				'Fast, relevant search results with custom filtering, powered by Elasticsearch.'
 			),
 	},
 };
