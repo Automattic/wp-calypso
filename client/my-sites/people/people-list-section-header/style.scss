@@ -1,0 +1,5 @@
+.people-list-section-header__add-button.is-compact {
+	@include breakpoint( "<480px" ) {
+		font-size: 0;
+	}
+}
