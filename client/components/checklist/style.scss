@@ -32,19 +32,19 @@
 		display: flex;
 		flex: 1 1;
 		margin: 0;
-		color: $gray;
+		color: $gray-text-min;
 	}
 
 	&-progress-number {
 		display: flex;
-		color: $gray;
+		color: $gray-text-min;
 		padding-left: 1em;
 	}
 
 	&-summary {
 		font-size: 12px;
 		line-height: 24px;
-		color: $gray;
+		color: $gray-text-min;
 		cursor: pointer;
 	}
 
@@ -178,7 +178,7 @@
 
 	&-duration {
 		font-size: 12px;
-		color: $gray;
+		color: $gray-text-min;
 
 		.checklist__task-primary & {
 			display: inline-block;
@@ -221,7 +221,7 @@
 
 		.checklist__task-title,
 		.checklist__task-title-link {
-			color: $gray;
+			color: $gray-text-min;
 			font-size: 14px;
 			cursor: default;
 		}
@@ -247,7 +247,7 @@
 			border: 0;
 			padding: 0;
 			text-decoration: underline;
-			color: $gray;
+			color: $gray-text-min;
 			font-size: 12px;
 			font-weight: 400;
 			width: 100%;
