@@ -55,12 +55,12 @@ export default {
 
 		context.store.dispatch( setTitle( layoutTitle ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		if ( ! userCan( 'manage_options', site ) ) {
+		if ( site && ! userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' + pathSuffix );
 			return;
 		}
 
-		if ( ! canAccessWordads( site ) ) {
+		if ( site && ! canAccessWordads( site ) ) {
 			page.redirect( '/stats' + pathSuffix );
 			return;
 		}
