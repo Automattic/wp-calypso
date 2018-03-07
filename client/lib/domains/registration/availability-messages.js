@@ -231,8 +231,12 @@ function getAvailabilityNotice( domain, error, site ) {
 
 		case domainAvailability.RECENTLY_EXPIRED:
 			message = translate(
-				'This domain is expired and cannot be mapped at this time. ' +
-					'Please contact support to restore your domain.'
+				'This domain expired recently. To get it back please {{a}}contact support{{/a}}.',
+				{
+					components: {
+						a: <a href={ CALYPSO_CONTACT } />,
+					},
+				}
 			);
 			break;
 
