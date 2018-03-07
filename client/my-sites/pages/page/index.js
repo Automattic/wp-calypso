@@ -16,7 +16,7 @@ import { flow, get, includes, partial } from 'lodash';
  */
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
-import PopoverMenu from 'components/popover/menu';
+import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import SiteIcon from 'blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
@@ -50,18 +50,6 @@ class Page extends Component {
 		recordEditPage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
-	};
-
-	state = {
-		showPageActions: false,
-	};
-
-	togglePageActions = () => {
-		this.setState( { showPageActions: ! this.state.showPageActions }, () => {
-			if ( this.state.showPageActions ) {
-				this.props.recordMoreOptions();
-			}
-		} );
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -339,12 +327,11 @@ class Page extends Component {
 			sendToTrashItem ||
 			moreInfoItem;
 
-		const popoverMenu = hasMenuItems && (
-			<PopoverMenu
-				isVisible={ this.state.showPageActions }
-				onClose={ this.togglePageActions }
-				position={ 'bottom left' }
-				context={ this.refs && this.refs.popoverMenuButton }
+		const ellipsisMenu = hasMenuItems && (
+			<EllipsisMenu
+				className="page__actions-toggle"
+				position="bottom left"
+				onToggle={ this.handleMenuToggle }
 			>
 				{ editItem }
 				{ publishItem }
@@ -354,18 +341,7 @@ class Page extends Component {
 				{ restoreItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
-			</PopoverMenu>
-		);
-
-		const ellipsisGridicon = hasMenuItems && (
-			<Gridicon
-				icon="ellipsis"
-				className={ classNames( 'page__actions-toggle', {
-					'is-active': this.state.showPageActions,
-				} ) }
-				onClick={ this.togglePageActions }
-				ref="popoverMenuButton"
-			/>
+			</EllipsisMenu>
 		);
 
 		const cardClasses = {
@@ -413,8 +389,7 @@ class Page extends Component {
 						siteUrl={ this.props.multisite && this.getSiteDomain() }
 					/>
 				</div>
-				{ ellipsisGridicon }
-				{ popoverMenu }
+				{ ellipsisMenu }
 			</CompactCard>
 		);
 	}
@@ -466,6 +441,13 @@ class Page extends Component {
 
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
+	};
+
+	handleMenuToggle = isVisible => {
+		if ( isVisible ) {
+			// record a GA event when the menu is opened
+			this.props.recordMoreOptions();
+		}
 	};
 }
 

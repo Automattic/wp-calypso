@@ -139,17 +139,7 @@
 }
 
 .page__actions-toggle {
-	color: $gray-text-min;
-	cursor: pointer;
-	font-size: 24px;
 	margin-left: 24px;
-	min-width: 24px;
-	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-	&.is-active {
-		color: $blue-medium;
-		transform: rotate( 90deg );
-	}
 }
 
 .page__popover-more-info {
