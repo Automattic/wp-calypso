@@ -55,7 +55,7 @@ class PeopleListSectionHeader extends Component {
 				{ siteLink && (
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
 						<Gridicon icon="user-add" />
-						{ translate( 'Invite People', { context: 'button label' } ) }
+						{ translate( 'Invite', { context: 'button label' } ) }
 					</Button>
 				) }
 			</SectionHeader>

@@ -198,7 +198,7 @@ class PeopleInvites extends React.PureComponent {
 				</div>
 				<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
 					<Gridicon icon="user-add" />
-					{ translate( 'Invite People', { context: 'button label' } ) }
+					{ translate( 'Invite', { context: 'button label' } ) }
 				</Button>
 			</div>
 		);
