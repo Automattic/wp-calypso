@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { USER_RECEIVE, USERS_REQUEST } from 'state/action-types';
+import { USER_RECEIVE, USERS_REQUEST, USER_DELETE_RECEIVE, USER_DELETE } from 'state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a user object has
@@ -32,3 +32,19 @@ export const requestUsers = ( siteId, ids ) => ( {
 	ids,
 	siteId,
 } );
+
+export function deleteUser( siteId, userId, reassignUserId = null ) {
+	return {
+		siteId,
+		userId,
+		reassignUserId,
+		type: USER_DELETE,
+	};
+}
+
+export function receiveDeletedUser( userId ) {
+	return {
+		type: USER_DELETE_RECEIVE,
+		userId,
+	};
+}

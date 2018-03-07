@@ -9,10 +9,10 @@ import { flow, get, isUndefined, map, noop, omit, omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { USERS_REQUEST } from 'state/action-types';
+import { USERS_REQUEST, USER_DELETE } from 'state/action-types';
 import { dispatchRequest, getHeaders } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveUser } from 'state/users/actions';
+import { receiveUser, receiveDeletedUser } from 'state/users/actions';
 
 export const DEFAULT_PER_PAGE = 10;
 
@@ -65,7 +65,7 @@ export const fetchUsers = ( { dispatch }, action ) => {
  * @param {Object} action Redux action
  * @param {Array} users raw data from post revisions API
  */
-export const receiveSuccess = ( { dispatch }, action, users ) => {
+export const receiveUsers = ( { dispatch }, action, users ) => {
 	const { page = 1, perPage = DEFAULT_PER_PAGE } = action;
 	const normalizedUsers = map( users, normalizeUser );
 
@@ -83,8 +83,39 @@ export const receiveSuccess = ( { dispatch }, action, users ) => {
 	map( normalizedUsers, flow( receiveUser, dispatch ) );
 };
 
-const dispatchUsersRequest = dispatchRequest( fetchUsers, receiveSuccess, noop );
+const dispatchUsersRequest = dispatchRequest( fetchUsers, receiveUsers, noop );
+
+export const deleteUser = ( { dispatch }, action ) => {
+	const { siteId, userId, reassignUserId } = action;
+
+	const query = {};
+
+	if ( reassignUserId ) {
+		query.reassign = reassignUserId;
+	}
+
+	dispatch(
+		http(
+			{
+				path: `/sites/${ siteId }/users/${ userId }/delete`,
+				method: 'POST',
+				apiNamespace: '1.1',
+				query,
+			},
+			action
+		)
+	);
+};
+
+export const receiveDeleteUser = ( { dispatch }, action ) => {
+	const { userId } = action;
+
+	dispatch( receiveDeletedUser( userId ) );
+};
+
+const dispatchDeleteUserRequest = dispatchRequest( deleteUser, receiveDeleteUser, noop );
 
 export default {
 	[ USERS_REQUEST ]: [ dispatchUsersRequest ],
+	[ USER_DELETE ]: [ dispatchDeleteUserRequest ],
 };
