@@ -43,7 +43,7 @@ class Security extends React.Component {
 
 		return (
 			<Main className="security">
-				<DocumentHead title={ translate( 'Password', { textOnly: true } ) } />
+				<DocumentHead title={ translate( 'Password' ) } />
 				<MeSidebarNavigation />
 
 				<SecuritySectionNav path={ this.props.path } />
