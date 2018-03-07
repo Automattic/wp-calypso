@@ -458,8 +458,8 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive, automated scanning for security ' +
-					'vulnerabilities and threats on your site.'
+				'Comprehensive, automated scanning for security vulnerabilities, ' +
+					'fast video hosting, and marketing automation.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -507,8 +507,8 @@ export const PLANS_LIST = {
 			includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'Comprehensive, automated scanning for security ' +
-					'vulnerabilities and threats on your site.'
+				'Comprehensive, automated scanning for security vulnerabilities, ' +
+					'fast video hosting, and marketing automation.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -652,7 +652,7 @@ export const PLANS_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, business-optimized security, and marketing automation.'
+					'themes, real-time backups, and enhanced search.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -710,7 +710,7 @@ export const PLANS_LIST = {
 		getDescription: () =>
 			i18n.translate(
 				'The most powerful WordPress sites: unlimited premium ' +
-					'themes, business-optimized security, and marketing automation.'
+					'themes, real-time backups, and enhanced search.'
 			),
 		getTagline: () =>
 			i18n.translate(
@@ -1388,7 +1388,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_CONCIERGE_SETUP ]: {
 		getSlug: () => FEATURE_CONCIERGE_SETUP,
-		getTitle: () => i18n.translate( 'Jetpack Concierge' ),
+		getTitle: () => i18n.translate( 'Concierge Setup' ),
 		getDescription: () =>
 			i18n.translate( 'A complimentary one-on-one orientation session with a Jetpack expert.' ),
 	},
