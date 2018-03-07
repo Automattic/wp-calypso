@@ -948,9 +948,7 @@ export const PostEditor = createReactClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { date: dateValue } );
 
-		if ( siteId && postId ) {
-			this.props.editPost( siteId, postId, { date: dateValue } );
-		}
+		this.props.editPost( siteId, postId, { date: dateValue } );
 
 		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',
