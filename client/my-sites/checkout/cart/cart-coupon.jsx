@@ -5,12 +5,13 @@
  */
 
 import React from 'react';
-import { trim } from 'lodash';
+import { isEmpty, trim } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import analytics from 'lib/analytics';
 import { applyCoupon } from 'lib/upgrades/actions';
 
@@ -102,13 +103,9 @@ class CartCoupon extends React.Component {
 					onChange={ this.handleCouponInput }
 					value={ this.state.couponInputValue }
 				/>
-				<button
-					type="submit"
-					className="cart__button button"
-					disabled={ ! trim( this.state.couponInputValue ) }
-				>
+				<Button type="submit" disabled={ isEmpty( trim( this.state.couponInputValue ) ) }>
 					{ this.props.translate( 'Apply' ) }
-				</button>
+				</Button>
 			</form>
 		);
 	};
