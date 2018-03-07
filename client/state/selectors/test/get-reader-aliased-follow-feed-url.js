@@ -10,13 +10,13 @@ import { expect } from 'chai';
  */
 import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
 
-const site1UrlKey = 'discover.wordpress.com';
-const site1Aliases = [ 'site1 alias!', 'site1 second alias!' ];
+const site1UrlKey = 'example.com';
+const site1Aliases = [ 'www.example.com', 'www.example.com/discover/feed' ];
 
-const siteA = 'sitea/feed';
-const siteB = 'siteb/rss';
-const siteC = 'sitec/rss.xml';
-const siteD = 'sited/feed/atom';
+const siteA = 'example.com/a/feed';
+const siteB = 'example.com/b/rss';
+const siteC = 'example.com/c/rss.xml';
+const siteD = 'example.com/d/feed/atom';
 
 describe( 'getReaderAliasedFollowFeedUrl()', () => {
 	const state = {
@@ -55,10 +55,10 @@ describe( 'getReaderAliasedFollowFeedUrl()', () => {
 	} );
 
 	test( 'should try to guess basic rss/feed extensions', () => {
-		const feedUrlA = getReaderAliasedFollowFeedUrl( state, 'siteA' );
-		const feedUrlB = getReaderAliasedFollowFeedUrl( state, 'siteB' );
-		const feedUrlC = getReaderAliasedFollowFeedUrl( state, 'siteC' );
-		const feedUrlD = getReaderAliasedFollowFeedUrl( state, 'siteD' );
+		const feedUrlA = getReaderAliasedFollowFeedUrl( state, 'example.com/a' );
+		const feedUrlB = getReaderAliasedFollowFeedUrl( state, 'example.com/b' );
+		const feedUrlC = getReaderAliasedFollowFeedUrl( state, 'example.com/c' );
+		const feedUrlD = getReaderAliasedFollowFeedUrl( state, 'example.com/d' );
 
 		expect( feedUrlA ).eql( siteA );
 		expect( feedUrlB ).eql( siteB );
