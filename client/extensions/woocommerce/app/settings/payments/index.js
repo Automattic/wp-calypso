@@ -21,8 +21,10 @@ import { createPaymentSettingsActionList } from 'woocommerce/state/ui/payments/a
 import { errorNotice, successNotice } from 'state/notices/actions';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
+import { getCurrencyEdits } from 'woocommerce/state/ui/payments/currency/selectors';
 import { getFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getPaymentMethodsEdits } from 'woocommerce/state/ui/payments/methods/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	hasOAuthParamsInLocation,
@@ -124,7 +126,8 @@ class SettingsPayments extends Component {
 	};
 
 	render() {
-		const { isSaving, site, translate, className, finishedInitialSetup } = this.props;
+		const { isSaving, site, translate, className, finishedInitialSetup, hasEdits } = this.props;
+		const saveDisabled = isSaving || ! hasEdits;
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
@@ -135,7 +138,7 @@ class SettingsPayments extends Component {
 		return (
 			<Main className={ classNames( 'settingsPayments', className ) } wideLayout>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
-					<Button primary onClick={ this.onSave } busy={ isSaving } disabled={ isSaving }>
+					<Button primary onClick={ this.onSave } busy={ isSaving } disabled={ saveDisabled }>
 						{ saveMessage }
 					</Button>
 				</ActionHeader>
@@ -151,10 +154,18 @@ class SettingsPayments extends Component {
 function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const edits = site && getPaymentMethodsEdits( state, site.ID );
+	const currencyEdits = site && getCurrencyEdits( state, site.ID );
+	const hasEdits =
+		( edits && edits.updates && edits.updates.length > 0 ) ||
+		( currencyEdits && currencyEdits.length > 0 ) ||
+		false;
+
 	return {
 		isSaving: Boolean( getActionList( state ) ),
 		site,
 		finishedInitialSetup,
+		hasEdits,
 	};
 }
 

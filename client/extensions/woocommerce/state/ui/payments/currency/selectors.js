@@ -15,7 +15,7 @@ import {
 	areSettingsGeneralLoaded,
 } from 'woocommerce/state/sites/settings/general/selectors';
 
-const getCurrencyEdits = ( state, siteId ) => {
+export const getCurrencyEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'payments', siteId, 'currency' ] );
 };
 
