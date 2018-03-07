@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,7 +14,6 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
  */
 import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
-import productsListFactory from 'lib/products-list';
 import RegisterDomainStep from 'components/domains/register-domain-step';
 import SignupActions from 'lib/signup/actions';
 import { getStepUrl } from 'signup/utils';
@@ -33,8 +32,8 @@ import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
-
-const productsList = productsListFactory();
+import { getProductsList } from 'state/products-list/selectors';
+import QueryProducts from 'components/data/query-products-list';
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -57,8 +56,6 @@ class DomainsStep extends React.Component {
 		store: PropTypes.object,
 	};
 
-	state = { products: productsList.get() };
-
 	showDomainSearch = () => {
 		page( getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
 	};
@@ -69,18 +66,6 @@ class DomainsStep extends React.Component {
 
 	getTransferDomainUrl = () => {
 		return getStepUrl( this.props.flowName, this.props.stepName, 'transfer', this.props.locale );
-	};
-
-	componentDidMount() {
-		productsList.on( 'change', this.refreshState );
-	}
-
-	componentWillUnmount() {
-		productsList.off( 'change', this.refreshState );
-	}
-
-	refreshState = () => {
-		this.setState( { products: productsList.get() } );
 	};
 
 	handleAddDomain = suggestion => {
@@ -240,7 +225,7 @@ class DomainsStep extends React.Component {
 	};
 
 	domainForm = () => {
-		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
+		const initialState = this.props.step && this.props.step.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
 
 		return (
@@ -248,7 +233,7 @@ class DomainsStep extends React.Component {
 				path={ this.props.path }
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
-				products={ this.state.products }
+				products={ this.props.productsList }
 				basePath={ this.props.path }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
@@ -281,7 +266,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					products={ productsList.get() }
+					products={ this.props.productsList }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					initialQuery={ initialQuery }
 					analyticsSection="signup"
@@ -309,7 +294,7 @@ class DomainsStep extends React.Component {
 					onRegisterDomain={ this.handleAddDomain }
 					onTransferDomain={ this.handleAddTransfer }
 					onSave={ this.onTransferSave }
-					products={ productsList.get() }
+					products={ this.props.productsList }
 				/>
 			</div>
 		);
@@ -353,17 +338,20 @@ class DomainsStep extends React.Component {
 		}
 
 		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				backUrl={ backUrl }
-				positionInFlow={ this.props.positionInFlow }
-				signupProgress={ this.props.signupProgress }
-				subHeaderText={ translate( "First up, let's find a domain." ) }
-				fallbackHeaderText={ translate( "Let's give your site an address." ) }
-				fallbackSubHeaderText={ fallbackSubHeaderText }
-				stepContent={ content }
-			/>
+			<Fragment>
+				<QueryProducts />,
+				<StepWrapper
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName }
+					backUrl={ backUrl }
+					positionInFlow={ this.props.positionInFlow }
+					signupProgress={ this.props.signupProgress }
+					subHeaderText={ translate( "First up, let's find a domain." ) }
+					fallbackHeaderText={ translate( "Let's give your site an address." ) }
+					fallbackSubHeaderText={ fallbackSubHeaderText }
+					stepContent={ content }
+				/>
+			</Fragment>
 		);
 	}
 }
@@ -408,6 +396,7 @@ export default connect(
 			: true,
 		surveyVertical: getSurveyVertical( state ),
 		designType: getDesignType( state ),
+		productsList: getProductsList( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
