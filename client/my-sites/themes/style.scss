@@ -4,7 +4,7 @@
 
 	@include breakpoint( "<480px" ) {
 		box-sizing: border-box;
-		width: 100%;
+		max-width: 100%;
 	}
 
 	+ .dialog__action-buttons {
@@ -12,6 +12,17 @@
 
 		.button:first-child {
 			margin-left: 0;
+		}
+
+		@include breakpoint( "<480px" ) {
+			.button, .button:first-child {
+				display: block;
+				margin: 0 auto 10px;
+			}
+
+			.button:last-child {
+				margin-bottom: 0;
+			}
 		}
 	}
 
