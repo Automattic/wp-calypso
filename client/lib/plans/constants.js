@@ -448,7 +448,14 @@ export const PLANS_LIST = {
 		...getPlanBusinessDetails(),
 		availableFor: plan =>
 			includes(
-				[ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ],
+				[
+					PLAN_FREE,
+					PLAN_PERSONAL,
+					PLAN_PERSONAL_2_YEARS,
+					PLAN_PREMIUM,
+					PLAN_PREMIUM_2_YEARS,
+					PLAN_BUSINESS,
+				],
 				plan
 			),
 		getProductId: () => 1028,
