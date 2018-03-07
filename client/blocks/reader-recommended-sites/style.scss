@@ -1,7 +1,3 @@
-// Custom breakpoints needed to match Related Posts
-$reader-related-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-breakpoint-small: "( max-width: 535px )";
-
 .reader-recommended-sites {
 
 	@include breakpoint( "<660px" ) {
@@ -36,20 +32,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	flex-direction: row;
 	margin: 0 0 20px;
 	padding: 0;
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		flex-direction: column;
-	}
-
-	@include breakpoint( "<660px" ) {
-		flex-direction: row;
-		flex: 0;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		flex-direction: column;
-		flex: 0;
-	}
 }
 
 .reader-recommended-sites__site-list-item {
@@ -58,26 +40,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	flex-direction: column;
 	list-style-type: none;
 	margin-top: -40px;
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		flex-direction: row;
-		flex: 0 1 auto;
-		margin-top: 0;
-
-		& + & {
-			margin-top: 10px;
-		}
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		flex-direction: row;
-		flex: 0 1 auto;
-		margin-top: 0;
-
-		& + & {
-			margin-top: 10px;
-		}
-	}
 
 	> :nth-child(2) {
 		flex: 1 1 auto;
@@ -99,14 +61,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 				top: -2px;
 				right: -2px;
 			}
-
-			@media #{$reader-related-card-breakpoint-medium}{
-				right: 0;
-			}
-
-			@media #{$reader-related-card-breakpoint-small}{
-				top: 8px;
-			}
 		}
 
 		.button.is-borderless .gridicon,
@@ -121,10 +75,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	.reader-subscription-list-item {
 		padding: 5px 0;
 		position: relative;
-
-		@media #{$reader-related-card-breakpoint-medium} {
-			margin: 0 0 0 10px;
-		}
 
 		@include breakpoint( "<660px" ) {
 			margin: 10px 0 0 10px;
@@ -147,27 +97,10 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 	&:first-child {
 		margin-right: 20px;
-
-		@media #{$reader-related-card-breakpoint-small} {
-			margin-right: 0;
-		}
 	}
 
 	&:last-child {
 		margin-left: 20px;
-
-		@media #{$reader-related-card-breakpoint-small} {
-			margin-left: 0;
-		}
-	}
-
-	&:first-child,
-	&:last-child {
-
-		@media #{$reader-related-card-breakpoint-medium} {
-			margin-left: 0;
-			margin-right: 0;
-		}
 	}
 
 	&:only-child {
@@ -207,7 +140,7 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 		&:not(.is-placeholder) {
 			&::after {
-				@include long-content-fade( $size: 20% );
+				@include long-content-fade( $size: 35px );
 			}
 		}
 

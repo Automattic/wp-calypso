@@ -443,69 +443,35 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 .reader-stream__recommended-posts-list {
 	display: flex;
 	flex-direction: row;
-	margin: 0 0 -30px;
+	margin: 0;
 	padding: 0;
 
-	@media #{$reader-related-card-breakpoint-medium} {
+	@include breakpoint( "<480px" ) {
 		flex-direction: column;
-		margin: 0 0 -10px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		flex-direction: row;
-		margin: 0 0 -30px;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		flex-direction: column;
-		margin: 0 0 -10px;
 	}
 }
 
 .reader-stream__recommended-posts-list-item {
+	display: flex;
+	flex-direction: row;
 	list-style-type: none;
-	position: relative;
-	width: 50%;
-	position: relative;
-		top: -41px;
+	width: 100%;
 
-	@media #{$reader-related-card-breakpoint-medium} {
-		flex-direction: row;
-		top: 0;
-		width: 100%;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		flex-direction: row;
-		top: 0;
-		width: 100%;
+	@include breakpoint( ">960px" ) {
+		flex-direction: column;
+		margin-top: -40px;
+		width: 50%;
 	}
 
 	.reader-stream__recommended-post-dismiss {
 		height: 30px;
 
+		@include breakpoint( "<960px" ) {
+			margin-right: 15px;
+		}
+
 		.button {
 			float: right;
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				float: none;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				float: none;
-			}
-		}
-
-		@media #{$reader-related-card-breakpoint-medium} {
-			float: left;
-			position: relative;
-			width: 20px;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			float: left;
-			position: relative;
-			width: 20px;
 		}
 
 		.gridicon {
@@ -513,28 +479,12 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 			width: 14px;
 			height: 14px;
 			top: -3px;
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				top: -10px;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				top: -10px;
-			}
 		}
 	}
 
 	.card.reader-related-card {
 		margin: 0;
 		padding-top: 6px;
-
-		@media #{$reader-related-card-breakpoint-medium} {
-			padding-top: 0;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			padding-top: 0;
-		}
 
 		.reader-related-card__meta .gravatar {
 			margin: 3px 8px 0 0;
@@ -544,42 +494,15 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 			.reader-related-card__meta {
 				margin-bottom: 17px;
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					margin-top: -2px;
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					margin-top: -2px;
-				}
 			}
 
 			.reader-related-card__meta .follow-button {
 				margin-top: -9px;
 			}
 
-			.reader-related-card__site-info {
-
-				@media #{$reader-related-card-breakpoint-small} {
-					margin-top: 20px;
-				}
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					margin-top: 20px;
-				}
-			}
-
 			.reader-related-card__post {
 				margin-top: 0;
 				max-height: 108px;
-
-				@media #{$reader-related-card-breakpoint-small} {
-					max-height: 128px;
-				}
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					max-height: 128px;
-				}
 
 				@include breakpoint( "<480px" ) {
 					max-height: 125px;
@@ -607,14 +530,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	&:first-child,
 	&:last-child {
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			margin: 0 0 20px 0;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			margin: 0 0 20px 0;
-		}
-
 		@include breakpoint( "<480px" ) {
 			margin: 0 0 20px 0;
 		}
@@ -632,16 +547,8 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 		margin-top: -2px;
 		max-height: 208px;
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			max-height: 107px;
-		}
-
 		@include breakpoint( "<660px" ) {
 			max-height: 207px;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			max-height: 104px;
 		}
 
 		.reader-related-card__excerpt {
@@ -652,13 +559,5 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	.reader-related-card__featured-image {
 		border: 1px solid $gray-lighten-30;
 		margin: 0 0 14px;
-
-		@media #{$reader-related-card-breakpoint-medium} {
-			margin: 0 15px 0 0;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			margin: 0 15px 0 0;
-		}
 	}
 }
