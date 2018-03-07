@@ -30,9 +30,9 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 const productsList = productsFactory();
 
 const checkoutRoutes = [
-	new Route( '/checkout/features/:feature/:domain/:plan_name' ),
-	new Route( '/checkout/features/:feature/:domain' ),
-	new Route( '/checkout/:product/renew/:purchaseId/:site' ),
+	new Route( '/checkout/features/:feature/:site/:plan' ),
+	new Route( '/checkout/features/:feature/:site' ),
+	new Route( '/checkout/:product/renew/:purchase/:site' ),
 	new Route( '/checkout/:site/:product' ),
 	new Route( '/checkout/:site' ),
 ];
@@ -43,13 +43,14 @@ const checkoutGSuiteNudgeRoutes = [
 ];
 
 const checkoutThankYouRoutes = [
-	new Route( '/checkout/thank-you/no-site' ),
 	new Route( '/checkout/thank-you/no-site/:receipt' ),
-	new Route( '/checkout/thank-you/:site' ),
+	new Route( '/checkout/thank-you/no-site' ),
 	new Route( '/checkout/thank-you/:site/:receipt' ),
+	new Route( '/checkout/thank-you/:site' ),
 	new Route( '/checkout/thank-you/:site/:receipt/with-gsuite/:gsuiteReceipt' ),
-	new Route( '/checkout/thank-you/features/:feature/:site' ),
+	new Route( '/checkout/thank-you/:site/:receipt/with-gsuite' ),
 	new Route( '/checkout/thank-you/features/:feature/:site/:receipt' ),
+	new Route( '/checkout/thank-you/features/:feature/:site' ),
 ];
 
 export default {
