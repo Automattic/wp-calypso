@@ -7,12 +7,9 @@ GoogleApps is a React component used to add Google Apps email addresses to domai
 ## Usage
 
 ```jsx
-
 import React from 'react';
 import GoogleApps from 'components/google-apps';
 import productsListFactory from 'lib/products-list';
-
-const productsList = productsListFactory();
 
 class MyComponent extends React.Component {
 	render() {
@@ -31,7 +28,6 @@ class MyComponent extends React.Component {
 * (optional) `cart` object: The user's shopping cart
 * `domain` object: An object representing a domain name
 * `onGoBack` object: Called when the user clicks back in the header cake
-* `productsList` object: An instance of `lib/products-list`
 * `onAddGoogleApps` funtion: Called when Google Apps is added to the cart
 * `onClickSkip` function: Called when the user skips purchasing Google Apps
 * (optional) `onSave` function: Called when the user input fields are blurred
