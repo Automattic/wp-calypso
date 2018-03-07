@@ -13,10 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
-import JetpackLogo from 'components/jetpack-logo';
 import BackButton from 'components/back-button';
-import SiteUrlInput from '../site-url-input';
-import WordPressLogo from 'components/wordpress-logo';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class JetpackNewSite extends Component {
