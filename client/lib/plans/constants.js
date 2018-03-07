@@ -598,7 +598,7 @@ export const PLANS_LIST = {
 		availableFor: plan => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'Security essentials for your WordPress site including ' +
+				'Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.'
 			),
 		getTagline: () =>
@@ -962,7 +962,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-		getTitle: () => i18n.translate( 'Unlimited Video Hosting' ),
+		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Video Hosting' ),
 		getDescription: () =>
 			i18n.translate(
 				'Easy video uploads, and a fast, unbranded, customizable video player, ' +
@@ -1155,9 +1155,7 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),
 		getDescription: () =>
-			i18n.translate(
-				'Hands-on support to help you set up your site ' + 'exactly how you want it.'
-			),
+			i18n.translate( 'Hands-on support to help you set up your site exactly how you want it.' ),
 	},
 
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
