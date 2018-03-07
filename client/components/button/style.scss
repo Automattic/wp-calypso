@@ -75,7 +75,6 @@ button {
 		.gridicon {
 			top: 5px;
 			margin-top: -8px;
-			margin-right: 4px;
 		}
 		// Make the left margin of the small plus icon visually less huge
 		.gridicons-plus-small {
@@ -105,6 +104,10 @@ button {
 		width: 18px;
 		height: 18px;
 	}
+}
+
+.button-text {
+	margin-left: 4px;
 }
 
 // Primary buttons
