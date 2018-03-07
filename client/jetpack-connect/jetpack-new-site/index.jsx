@@ -58,77 +58,49 @@ class JetpackNewSite extends Component {
 			<div>
 				<BackButton onClick={ this.handleBack } />
 				<div className="jetpack-new-site__main jetpack-new-site">
-					<div className="jetpack-new-site__header">
-						<h2 className="jetpack-new-site__header-title">
+					<header className="formatted-header">
+						<h1 className="formatted-header__title">
 							{ this.props.translate( 'Add a New Site' ) }
-						</h2>
-						<div className="jetpack-new-site__header-text">
+						</h1>
+						<p className="formatted-header__subtitle">
 							{ this.props.translate(
-								'Create a new site on WordPress.com or add your existing self-hosted WordPress site with Jetpack.'
+								'Create a new site or add your existing self-hosted site.'
 							) }{' '}
-						</div>
-					</div>
+						</p>
+					</header>
 					<div className="jetpack-new-site__content">
-						<Card className="jetpack-new-site__wpcom-site">
-							<WordPressLogo />
-							<h3 className="jetpack-new-site__card-title">
-								{ this.props.translate( 'Create a shiny new WordPress.com site' ) }
-							</h3>
+						<Card className="jetpack-new-site__card">
 							<div className="jetpack-new-site__card-description">
 								<p>
 									{ this.props.translate(
-										"Tell us what type of site you need and we'll get you setup. " +
-											'If you need help we’ve got you covered with 24/7 support.'
+										'Create a shiny new WordPress.com site.'
 									) }
 								</p>
 							</div>
-							<div className="jetpack-new-site__button-holder">
-								<Button
-									className="jetpack-new-site__button button is-primary"
-									href={ this.getNewWpcomSiteUrl() }
-								>
-									{ this.props.translate( 'Start Now' ) }
-								</Button>
-							</div>
-						</Card>
-						<Card className="jetpack-new-site__jetpack-site">
-							<JetpackLogo size={ 72 } />
-							<h3 className="jetpack-new-site__card-title">
-								{ this.props.translate( 'Add an existing WordPress site with Jetpack' ) }
-							</h3>
-							<div className="jetpack-new-site__card-description">
-								{ this.props.translate(
-									'We’ll be using the Jetpack plugin to connect your site to WordPress.com.'
-								) }
-							</div>
-							<SiteUrlInput
-								onChange={ this.handleJetpackUrlChange }
-								onSubmit={ this.handleJetpackSubmit }
-								handleOnClickTos={ this.handleOnClickTos }
-								url={ this.state.jetpackUrl }
-								autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
-							/>
-						</Card>
-						<Card className="jetpack-new-site__mobile">
-							<div className="jetpack-new-site__mobile-wpcom-site">
-								<p>{ this.props.translate( 'Create a new shiny WordPress.com site:' ) }</p>
-								<Button primary href={ this.getNewWpcomSiteUrl() }>
-									{ this.props.translate( 'Start Now' ) }
-								</Button>
-							</div>
+							<Button
+								className="jetpack-new-site__button button is-primary"
+								href={ this.getNewWpcomSiteUrl() }
+							>
+								{ this.props.translate( 'Create a new site' ) }
+							</Button>
+
 							<div className="jetpack-new-site__divider">
 								<span>{ this.props.translate( 'or' ) }</span>
 							</div>
-							<div className="jetpack-new-site__mobile-jetpack-site">
-								<p>{ this.props.translate( 'Add an existing WordPress site with Jetpack:' ) }</p>
-								<SiteUrlInput
-									onChange={ this.handleJetpackUrlChange }
-									onSubmit={ this.handleJetpackSubmit }
-									handleOnClickTos={ this.handleOnClickTos }
-									url={ this.state.jetpackUrl }
-									autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
-								/>
+
+							<div className="jetpack-new-site__card-description">
+								<p>
+									{ this.props.translate(
+										'If you already have a WordPress site hosted somewhere else, we can add it for you now.'
+									) }
+								</p>
 							</div>
+							<Button
+								className="jetpack-new-site__connect-button button is-primary"
+								onClick={ this.handleJetpackSubmit }
+							>
+								{ this.props.translate( 'Add existing site' ) }
+							</Button>
 						</Card>
 					</div>
 				</div>
