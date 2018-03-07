@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
@@ -53,13 +52,8 @@ class Page extends Component {
 		recordStatsPage: PropTypes.func.isRequired,
 
 		// connected via updatePostStatus
-		buildUpdateTemplate: PropTypes.func.isRequired,
 		togglePageActions: PropTypes.func.isRequired,
 		updatePostStatus: PropTypes.func.isRequired,
-		updated: PropTypes.bool.isRequired,
-		updatedStatus: PropTypes.string,
-		previousStatus: PropTypes.string,
-		showMoreOptions: PropTypes.bool.isRequired,
 		showPageActions: PropTypes.bool.isRequired,
 	};
 
@@ -423,13 +417,6 @@ class Page extends Component {
 				</div>
 				{ ellipsisGridicon }
 				{ popoverMenu }
-				<ReactCSSTransitionGroup
-					transitionName="updated-trans"
-					transitionEnterTimeout={ 300 }
-					transitionLeaveTimeout={ 300 }
-				>
-					{ this.props.buildUpdateTemplate() }
-				</ReactCSSTransitionGroup>
 			</CompactCard>
 		);
 	}
