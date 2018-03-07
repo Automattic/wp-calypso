@@ -8,23 +8,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, get } from 'lodash';
+import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
 import { savePost, trashPost, restorePost } from 'state/posts/actions';
 
-const enhance = flow(
-	localize,
-	connect(
-		( state, props ) => ( {
-			site: getSite( state, get( props, [ props.page ? 'page' : 'post', 'site_ID' ] ) ),
-		} ),
-		{ savePost, trashPost, restorePost }
-	)
-);
+const enhance = flow( localize, connect( null, { savePost, trashPost, restorePost } ) );
 
 const updatePostStatus = WrappedComponent =>
 	enhance(
@@ -44,7 +35,7 @@ const updatePostStatus = WrappedComponent =>
 			};
 
 			updatePostStatus = status => {
-				const { translate, site } = this.props;
+				const { translate } = this.props;
 				const post = this.props.post || this.props.page;
 
 				this.setState( { showPageActions: false } );
@@ -56,23 +47,27 @@ const updatePostStatus = WrappedComponent =>
 							: translate( 'Delete this page permanently?' );
 
 						if ( typeof window === 'object' && window.confirm( deleteWarning ) ) {
-							this.props.deletePost( site.ID, post.ID ).then( this.resetState, this.resetState );
+							this.props
+								.deletePost( post.site_ID, post.ID )
+								.then( this.resetState, this.resetState );
 						} else {
 							this.resetState();
 						}
 						return;
 
 					case 'trash':
-						this.props.trashPost( site.ID, post.ID ).then( this.resetState, this.resetState );
+						this.props.trashPost( post.site_ID, post.ID ).then( this.resetState, this.resetState );
 						return;
 
 					case 'restore':
-						this.props.restorePost( site.ID, post.ID ).then( this.resetState, this.resetState );
+						this.props
+							.restorePost( post.site_ID, post.ID )
+							.then( this.resetState, this.resetState );
 						return;
 
 					default:
 						this.props
-							.savePost( site.ID, post.ID, { status } )
+							.savePost( post.site_ID, post.ID, { status } )
 							.then( this.resetState, this.resetState );
 				}
 			};
