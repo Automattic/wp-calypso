@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { defer, isEmpty, pick, reject } from 'lodash';
+import { defer, isEmpty, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
@@ -15,7 +15,7 @@ import { capitalPDangit } from 'lib/formatting';
  */
 import TransactionsHeader from './transactions-header';
 import tableRows from './table-rows';
-
+import { groupDomainProducts } from './utils';
 import SearchCard from 'components/search-card';
 
 class TransactionsTable extends React.Component {
@@ -109,10 +109,7 @@ class TransactionsTable extends React.Component {
 			return this.serviceNameDescription( transaction );
 		}
 
-		const groupedTransactionItems = [
-			...reject( transaction.items, { product: 'Domain' } ),
-			...transaction.domain_items,
-		];
+		const groupedTransactionItems = groupDomainProducts( transaction.items, this.props.translate );
 
 		if ( groupedTransactionItems.length > 1 ) {
 			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;

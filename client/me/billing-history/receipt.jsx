@@ -6,7 +6,6 @@ import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { reject } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +19,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import tableRows from './table-rows';
+import { groupDomainProducts } from './utils';
 import { getPastBillingTransaction, getPastBillingTransactions } from 'state/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -143,11 +143,7 @@ class BillingReceipt extends React.Component {
 
 	renderLineItems() {
 		const { transaction, translate } = this.props;
-
-		const groupedTransactionItems = [
-			...reject( transaction.items, { product: 'Domain' } ),
-			...transaction.domain_items,
-		];
+		const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
 		const items = groupedTransactionItems.map( item => {
 			return (
