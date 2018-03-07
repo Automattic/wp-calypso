@@ -59,7 +59,8 @@ class Buttons extends React.PureComponent {
 					<div className="docs__design-button-row">
 						<Button>Button</Button>
 						<Button>
-							<Gridicon icon="heart" /> Icon button
+							<Gridicon icon="heart" />
+							<span className="button-text">Icon button</span>
 						</Button>
 						<Button>
 							<Gridicon icon="plugins" />
