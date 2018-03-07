@@ -68,8 +68,6 @@ export class JetpackConnectMain extends Component {
 		url: PropTypes.string,
 	};
 
-	redirecting = false;
-
 	/* eslint-disable indent */
 	state = this.props.url
 		? {
@@ -116,11 +114,11 @@ export class JetpackConnectMain extends Component {
 		if (
 			this.getStatus() === NOT_CONNECTED_JETPACK &&
 			this.isCurrentUrlFetched() &&
-			! this.redirecting
+			! this.state.redirecting
 		) {
 			return this.goToRemoteAuth( this.state.currentUrl );
 		}
-		if ( this.getStatus() === ALREADY_OWNED && ! this.redirecting ) {
+		if ( this.getStatus() === ALREADY_OWNED && ! this.state.redirecting ) {
 			if ( this.props.isMobileAppFlow ) {
 				return this.redirectToMobileApp( 'already-connected' );
 			}
@@ -144,8 +142,8 @@ export class JetpackConnectMain extends Component {
 
 	makeSafeRedirectionFunction( func ) {
 		return url => {
-			if ( ! this.redirecting ) {
-				this.redirecting = true;
+			if ( ! this.state.redirecting ) {
+				this.setState( { redirecting: true } );
 				func( url );
 			}
 		};
@@ -274,10 +272,6 @@ export class JetpackConnectMain extends Component {
 			this.isCurrentUrlFetched() &&
 			this.props.jetpackConnectSite.data[ propName ]
 		);
-	}
-
-	isRedirecting() {
-		return this.props.jetpackConnectSite && this.redirecting && this.isCurrentUrlFetched();
 	}
 
 	getStatus() {
@@ -460,7 +454,7 @@ export class JetpackConnectMain extends Component {
 					onSubmit={ this.handleUrlSubmit }
 					isError={ this.getStatus() }
 					isFetching={
-						this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites
+						this.isCurrentUrlFetching() || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ this.isInstall() }
 				/>
