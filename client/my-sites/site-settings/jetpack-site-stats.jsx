@@ -23,12 +23,10 @@ import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import QuerySiteRoles from 'components/data/query-site-roles';
 import SectionHeader from 'components/section-header';
-import { activateModule } from 'state/jetpack/modules/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSiteRoles } from 'state/site-roles/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import {
-	isActivatingJetpackModule,
 	isJetpackModuleActive,
 	isJetpackModuleUnavailableInDevelopmentMode,
 	isJetpackSiteInDevelopmentMode,
@@ -106,14 +104,7 @@ class JetpackSiteStats extends Component {
 	}
 
 	render() {
-		const {
-			activatingStatsModule,
-			moduleUnavailable,
-			siteId,
-			siteRoles,
-			siteSlug,
-			translate,
-		} = this.props;
+		const { moduleUnavailable, siteId, siteRoles, siteSlug, translate } = this.props;
 
 		const header = (
 			<JetpackModuleToggle
@@ -122,7 +113,7 @@ class JetpackSiteStats extends Component {
 				label={ translate(
 					'See detailed information about your traffic, likes, comments, and subscribers.'
 				) }
-				disabled={ activatingStatsModule || moduleUnavailable }
+				disabled={ moduleUnavailable }
 			/>
 		);
 
@@ -195,26 +186,20 @@ class JetpackSiteStats extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const siteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			siteId,
-			'stats'
-		);
+export default connect( state => {
+	const siteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, siteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		siteId,
+		'stats'
+	);
 
-		return {
-			siteId,
-			siteSlug: getSelectedSiteSlug( state, siteId ),
-			activatingStatsModule: isActivatingJetpackModule( state, siteId, 'stats' ),
-			statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
-			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			siteRoles: getSiteRoles( state, siteId ),
-		};
-	},
-	{
-		activateModule,
-	}
-)( localize( JetpackSiteStats ) );
+	return {
+		siteId,
+		siteSlug: getSelectedSiteSlug( state, siteId ),
+		statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
+		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		siteRoles: getSiteRoles( state, siteId ),
+	};
+} )( localize( JetpackSiteStats ) );
