@@ -257,6 +257,7 @@ class SelectDropdown extends Component {
 						{ 'number' === typeof this.props.selectedCount && (
 							<Count count={ this.props.selectedCount } />
 						) }
+						<Gridicon icon="chevron-down" size={ 18 } />
 					</div>
 
 					<ul
