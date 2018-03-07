@@ -250,7 +250,7 @@ class StoreSidebar extends Component {
 			<SidebarItem
 				className={ classes }
 				icon="stats-alt"
-				label={ translate( 'Stats' ) }
+				label={ translate( 'Reports' ) }
 				link={ link }
 			/>
 		);
