@@ -80,9 +80,7 @@ describe( 'index', () => {
 			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).to.be.false;
 		} );
 		test( 'should be false when payment not set on purchase', () => {
-			const purchase = Object.assign( {}, DOMAIN_PURCHASE );
-			delete purchase.payment;
-			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).to.be.false;
+			expect( isPaidWithCredits( {} ) ).to.be.false;
 		} );
 	} );
 	describe( '#subscribedWithinPastWeek', () => {

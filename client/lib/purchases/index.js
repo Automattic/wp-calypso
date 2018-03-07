@@ -135,7 +135,7 @@ function isPaidWithPaypal( purchase ) {
 }
 
 function isPaidWithCredits( purchase ) {
-	return purchase.payment && 'credits' === purchase.payment.type;
+	return 'undefined' !== typeof purchase.payment && 'credits' === purchase.payment.type;
 }
 
 function isPendingTransfer( purchase ) {
