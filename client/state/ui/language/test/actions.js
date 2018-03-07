@@ -17,6 +17,15 @@ describe( 'actions', () => {
 			expect( setLocale( 'he' ) ).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
+				localeVariant: undefined,
+			} );
+		} );
+
+		test( 'returns an appropriate action with localeVariant', () => {
+			expect( setLocale( 'he', 'he_formal' ) ).to.eql( {
+				type: LOCALE_SET,
+				localeSlug: 'he',
+				localeVariant: 'he_formal',
 			} );
 		} );
 	} );
@@ -27,11 +36,13 @@ describe( 'actions', () => {
 				setLocaleRawData( {
 					'': {
 						localeSlug: 'he',
+						localeVariant: 'he_formal',
 					},
 				} )
 			).to.eql( {
 				type: LOCALE_SET,
 				localeSlug: 'he',
+				localeVariant: 'he_formal',
 			} );
 		} );
 	} );

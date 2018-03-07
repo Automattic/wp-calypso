@@ -8,7 +8,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { localeSlug, isRtl } from '../reducer';
+import { localeSlug, localeVariant, isRtl } from '../reducer';
 import { LOCALE_SET } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -34,6 +34,31 @@ describe( 'reducer', () => {
 			const action = { type: LOCALE_SET, localeSlug: 'he' };
 
 			expect( localeSlug( state, action ) ).to.eql( 'he' );
+		} );
+	} );
+
+	describe( 'localeVariant', () => {
+		test( 'returns default state with undefined state and empty action', () => {
+			expect( localeVariant( undefined, {} ) ).to.be.null;
+		} );
+
+		test( 'returns previous state with empty action', () => {
+			expect( localeVariant( 'de_formal', {} ) ).to.eql( 'de_formal' );
+		} );
+
+		test( 'returns default state with undefined state and invalid action type', () => {
+			expect( localeVariant( undefined, { type: 'foobar' } ) ).to.be.null;
+		} );
+
+		test( 'returns undefined with undefined state and missing slug', () => {
+			expect( localeVariant( undefined, { type: LOCALE_SET } ) ).to.be.undefined;
+		} );
+
+		test( 'returns new state with valid slug', () => {
+			const state = 'en';
+			const action = { type: LOCALE_SET, localeVariant: 'de_formal' };
+
+			expect( localeVariant( state, action ) ).to.eql( 'de_formal' );
 		} );
 	} );
 

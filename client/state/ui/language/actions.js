@@ -39,5 +39,6 @@ export const setLocaleRawData = localeData => {
 	return {
 		type: LOCALE_SET,
 		localeSlug: localeData[ '' ].localeSlug,
+		localeVariant: localeData[ '' ].localeVariant,
 	};
 };

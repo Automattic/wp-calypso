@@ -53,6 +53,13 @@ export class LanguagePicker extends PureComponent {
 		}
 	}
 
+	shouldComponentUpdate( nextProps ) {
+		if ( nextProps.disabled === true ) {
+			return false;
+		}
+		return true;
+	}
+
 	findLanguage( valueKey, value ) {
 		return find( this.props.languages, lang => {
 			// The value passed is sometimes string instead of number - need to use ==
@@ -66,8 +73,8 @@ export class LanguagePicker extends PureComponent {
 		if ( ! language ) {
 			return;
 		}
-		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ];
+		// onChange takes an object in shape of a DOM event as argument
 		const event = { target: { value } };
 		this.props.onChange( event );
 		this.setState( {

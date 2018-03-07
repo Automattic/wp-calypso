@@ -258,28 +258,39 @@ UserSettings.prototype.getSetting = function( settingName ) {
  * @return {Boolean} updating successful response
  */
 UserSettings.prototype.updateSetting = function( settingName, value ) {
-	/*
-		settingName for local_variant is different
-	 */
-	// eslint-disable-next-line
-	console.log( 'UserSettings.prototype.updateSetting()', settingName, value );
 	if ( has( this.settings, settingName ) ) {
 		set( this.unsavedSettings, settingName, value );
-
+		let canDeleteUnsavedSetting = false;
 		/*
 		 * If the two match, we don't consider the setting "changed".
 		 * user_login is a special case since the logic for validating and saving a username
 		 * is more complicated.
-		 * language is a special case too because a user may switch form a variant to the parent
 		 */
-		if (
-			get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
-			'user_login' !== settingName
-		) {
+		if ( get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
+			'user_login' !== settingName &&
+			'language' !== settingName ) {
+			canDeleteUnsavedSetting = true;
+		}
+
+		/*
+		 * language is a special case since we have to check for changes to locale_variant
+		 * this might be easier if we tracked the lang_id instead as we do in client/my-sites/site-settings/form-general.jsx
+ 		*/
+		if ( 'language' === settingName ) {
+			if (
+				// if the incoming language code is not the root of the current variant
+				( value === this.settings.language && isEmpty( this.settings.locale_variant ) ) ||
+				// if the incoming language code is not the variant itself
+				( value === this.settings.locale_variant )
+			) {
+				canDeleteUnsavedSetting = true;
+			}
+		}
+
+		if ( canDeleteUnsavedSetting ) {
 			debug( 'Removing ' + settingName + ' from changed settings.' );
 			deleteUnsavedSetting( this.unsavedSettings, settingName );
 		}
-
 		this.emit( 'change' );
 		return true;
 	}

@@ -10,7 +10,7 @@ import { parse } from 'url';
  */
 import config from 'config';
 
-const localeRegex = /^[A-Z]{2,3}(_[A-Z]{2,6})?$/i;
+const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
 
 function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
