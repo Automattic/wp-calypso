@@ -161,15 +161,11 @@
 		}
 	}
 
-	&-title {
+	&-title-link.button {
+		padding: 0;
 		color: $blue-wordpress;
 		font-weight: 400;
 		font-size: 16px;
-	}
-
-	&-title-link:hover {
-		cursor: pointer;
-		color: $gray-dark;
 	}
 
 	&-description {
