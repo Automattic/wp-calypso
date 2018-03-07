@@ -31,8 +31,9 @@ import Promotions from './app/promotions';
 import PromotionCreate from './app/promotions/promotion-create';
 import PromotionUpdate from './app/promotions/promotion-update';
 import Reviews from './app/reviews';
-import SettingsPayments from './app/settings/payments';
+import SettingsDisplay from './app/settings/display';
 import SettingsEmail from './app/settings/email';
+import SettingsPayments from './app/settings/payments';
 import SettingsTaxes from './app/settings/taxes';
 import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
@@ -183,6 +184,12 @@ const getStorePages = () => {
 			configKey: 'woocommerce/extension-settings-email',
 			documentTitle: translate( 'Email' ),
 			path: '/store/settings/email/:site/:setup?',
+		},
+		{
+			container: SettingsDisplay,
+			configKey: 'woocommerce/extension-settings-display',
+			documentTitle: translate( 'Display' ),
+			path: '/store/settings/display/:site',
 		},
 	];
 

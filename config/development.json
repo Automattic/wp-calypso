@@ -187,6 +187,7 @@
 		"woocommerce/extension-promotions": true,
 		"woocommerce/extension-reviews": true,
 		"woocommerce/extension-settings": true,
+		"woocommerce/extension-settings-display": true,
 		"woocommerce/extension-settings-email": true,
 		"woocommerce/extension-settings-email-generic": true,
 		"woocommerce/extension-settings-payments": true,

@@ -217,6 +217,11 @@ class StoreSidebar extends Component {
 			'/store/settings/taxes',
 			'/store/settings/email',
 		];
+
+		if ( config.isEnabled( 'woocommerce/extension-settings-display' ) ) {
+			childLinks.push( '/store/settings/display' );
+		}
+
 		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
 		const classes = classNames( {
 			settings: true,

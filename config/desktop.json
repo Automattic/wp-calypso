@@ -111,6 +111,7 @@
 		"woocommerce/extension-promotions": false,
 		"woocommerce/extension-reviews": false,
 		"woocommerce/extension-settings": false,
+		"woocommerce/extension-settings-display": false,
 		"woocommerce/extension-settings-email": false,
 		"woocommerce/extension-settings-email-generic": false,
 		"woocommerce/extension-settings-payments": false,
