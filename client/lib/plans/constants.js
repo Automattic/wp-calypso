@@ -280,7 +280,6 @@ const getPlanBusinessDetails = () => ( {
 				}
 			);
 		}
-		0;
 		return i18n.translate(
 			'{{strong}}Best for Small Business:{{/strong}} Power your' +
 				' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
