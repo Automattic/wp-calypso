@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
 import CompactCard from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -22,11 +23,14 @@ import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
 import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions'; /** @format */
+import { isDefaultLocale } from 'lib/i18n-utils';
 
 class InfoStep extends Component {
 	static propTypes = {
+		currentUserLocale: PropTypes.string.isRequired,
 		signupForm: PropTypes.object,
 		userSettings: PropTypes.object,
 		onComplete: PropTypes.func.isRequired,
@@ -66,11 +70,19 @@ class InfoStep extends Component {
 	}
 
 	render() {
-		const { signupForm: { firstname, lastname, message, timezone }, translate } = this.props;
+		const {
+			currentUserLocale,
+			signupForm: { firstname, lastname, message, timezone },
+			translate,
+		} = this.props;
+		const notice = ! isDefaultLocale( currentUserLocale )
+			? translate( 'All Concierge Sessions are in English (Spanish is not available).' )
+			: null;
 
 		return (
 			<div>
 				<PrimaryHeader />
+				{ notice && <Notice showDismiss={ false } text={ notice } /> }
 				<CompactCard className="book__info-step-site-block">
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
@@ -120,6 +132,9 @@ class InfoStep extends Component {
 							onChange={ this.setFieldValue }
 							value={ message }
 						/>
+						<FormSettingExplanation>
+							{ translate( 'Please respond in English.' ) }
+						</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormButton
@@ -138,6 +153,7 @@ class InfoStep extends Component {
 
 export default connect(
 	state => ( {
+		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
 		userSettings: getUserSettings( state ),
 	} ),
