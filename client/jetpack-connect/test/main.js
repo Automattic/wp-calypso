@@ -7,8 +7,10 @@
  * External dependencies
  */
 import page from 'page';
+import React from 'react';
 import { externalRedirect } from 'lib/route';
 import { noop } from 'lodash';
+import { mount } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -52,21 +54,21 @@ describe( 'JetpackConnectMain', () => {
 	} );
 
 	describe( 'makeSafeRedirectionFunction', () => {
-		const component = new JetpackConnectMain( REQUIRED_PROPS );
-
-		beforeEach( () => {
-			component.redirecting = false;
-		} );
-
-		test( 'should make a function that can calls the wrappe function', () => {
+		test( 'should make a function that can calls the wrapper function', () => {
+			const component = mount(
+				<JetpackConnectMain { ...REQUIRED_PROPS } translate={ jest.fn() } />
+			);
 			const innerFunc = jest.fn();
-			const wrapperFunc = component.makeSafeRedirectionFunction( innerFunc );
+			const wrapperFunc = component.instance().makeSafeRedirectionFunction( innerFunc );
 			expect( () => wrapperFunc() ).not.toThrow();
 		} );
 
 		test( 'should protect against multiple calls', () => {
 			const innerFunc = jest.fn();
-			const wrapperFunc = component.makeSafeRedirectionFunction( innerFunc );
+			const component = mount(
+				<JetpackConnectMain { ...REQUIRED_PROPS } translate={ jest.fn() } />
+			);
+			const wrapperFunc = component.instance().makeSafeRedirectionFunction( innerFunc );
 			wrapperFunc();
 			wrapperFunc();
 			wrapperFunc();
@@ -78,7 +80,6 @@ describe( 'JetpackConnectMain', () => {
 		const component = new JetpackConnectMain( REQUIRED_PROPS );
 
 		beforeEach( () => {
-			component.redirecting = false;
 			component.props.recordTracksEvent.mockReset();
 			externalRedirect.mockReset();
 		} );
@@ -103,7 +104,6 @@ describe( 'JetpackConnectMain', () => {
 		const component = new JetpackConnectMain( REQUIRED_PROPS );
 
 		beforeEach( () => {
-			component.redirecting = false;
 			component.props.recordTracksEvent.mockReset();
 			externalRedirect.mockReset();
 		} );
@@ -128,7 +128,6 @@ describe( 'JetpackConnectMain', () => {
 		const component = new JetpackConnectMain( REQUIRED_PROPS );
 
 		beforeEach( () => {
-			component.redirecting = false;
 			component.props.recordTracksEvent.mockReset();
 			externalRedirect.mockReset();
 		} );
