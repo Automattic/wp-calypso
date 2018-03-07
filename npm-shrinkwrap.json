@@ -17174,8 +17174,8 @@
       }
     },
     "wpcom-proxy-request": {
-      "version": "5.0.0",
-      "integrity": "sha512-dHCBAWDi/DMVQ+bF2PZ+ySDuBVjobFXMHGJdqAjcGoM8H4O7f046I0qf9tvhuzcKsjBBhK8SEIdK0PU979gh9w==",
+      "version": "4.0.5",
+      "integrity": "sha512-eTt+n4qDvNNybYOMNXCPSehcQUCFENWLANp6th3ST+cwuKjzF6wKuMGQko1sHVPz0VKOCksOf/Ye8+rGPa6eAQ==",
       "requires": {
         "component-event": "0.1.4",
         "debug": "2.2.0",
