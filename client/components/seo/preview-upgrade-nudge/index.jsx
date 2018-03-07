@@ -87,7 +87,7 @@ SeoPreviewNudge.propTypes = {
 
 const mapStateToProps = ( state, { site } ) => {
 	return {
-		plan: getCurrentPlan( state, site.ID ),
+		currentPlan: getCurrentPlan( state, site.ID ),
 	};
 };
 
