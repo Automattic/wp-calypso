@@ -1197,8 +1197,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Daily Off-site Backups' ),
 		getDescription: () =>
 			i18n.translate(
-				'Automatic daily backups of every single aspect of your site. ' +
-					'Stored safely and optimized for WordPress.'
+				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage'
 			),
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
