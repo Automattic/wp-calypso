@@ -656,3 +656,11 @@
 .jetpack-connect__navigation {
 	text-align: center;
 }
+
+.layout.has-chat.is-section-jetpack-connect:not(.is-group-editor):not(.is-section-theme):not(.is-group-reader)
+	.layout__content {
+	@include breakpoint( '>1040px' ) {
+		padding-left: 32px;
+		padding-right: 319px;
+	}
+}
