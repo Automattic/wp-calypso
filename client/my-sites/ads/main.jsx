@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import page from 'page';
 import { find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -33,6 +34,7 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
+import { canCurrentUser } from 'state/selectors';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -48,6 +50,27 @@ class AdsMain extends Component {
 		wordAdsError: PropTypes.string,
 		wordAdsSuccess: PropTypes.bool,
 	};
+
+	componentDidMount() {
+		this.redirectIfNoAccess();
+	}
+
+	componentDidUpdate() {
+		this.redirectIfNoAccess();
+	}
+
+	canAccess() {
+		const { canManageOptions, site } = this.props;
+		return site && canManageOptions && canAccessWordads( site );
+	}
+
+	redirectIfNoAccess() {
+		const { siteSlug } = this.props;
+
+		if ( ! this.canAccess() && siteSlug ) {
+			page( '/stats/' + siteSlug );
+		}
+	}
 
 	getSelectedText() {
 		const selected = find( this.getFilters(), { path: this.props.path } );
@@ -193,7 +216,7 @@ class AdsMain extends Component {
 	render() {
 		const { site, translate } = this.props;
 
-		if ( ! site ) {
+		if ( ! this.canAccess() ) {
 			return null;
 		}
 
@@ -243,6 +266,7 @@ const mapStateToProps = state => {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
