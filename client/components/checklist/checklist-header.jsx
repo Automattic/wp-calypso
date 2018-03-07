@@ -34,7 +34,7 @@ export class ChecklistHeader extends PureComponent {
 			<Card compact className="checklist__header">
 				<div className="checklist__header-main">
 					<div className="checklist__header-progress">
-						<h4 className="checklist__header-progress-text">{ translate( 'Your setup list' ) }</h4>
+						<h2 className="checklist__header-progress-text">{ translate( 'Your setup list' ) }</h2>
 						<span className="checklist__header-progress-number">{ `${ completed }/${ total }` }</span>
 					</div>
 					<ProgressBar compact total={ total } value={ completed } />

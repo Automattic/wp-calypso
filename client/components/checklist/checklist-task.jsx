@@ -67,11 +67,11 @@ export class ChecklistTask extends PureComponent {
 				} ) }
 			>
 				<div className="checklist__task-primary">
-					<h5 className="checklist__task-title">
+					<h3 className="checklist__task-title">
 						<Button borderless className="checklist__task-title-link" onClick={ this.handleClick }>
 							{ ( completed && completedTitle ) || title }
 						</Button>
-					</h5>
+					</h3>
 					<p className="checklist__task-description">{ description }</p>
 					{ duration && (
 						<small className="checklist__task-duration">
