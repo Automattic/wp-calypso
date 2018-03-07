@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
+import FormattedHeader from 'components/formatted-header';
 import BackButton from 'components/back-button';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -46,14 +47,12 @@ class JetpackNewSite extends Component {
 			<div>
 				<BackButton onClick={ this.handleBack } />
 				<div className="jetpack-new-site__main jetpack-new-site">
-					<header className="formatted-header">
-						<h1 className="formatted-header__title">
-							{ this.props.translate( 'Add a New Site' ) }
-						</h1>
-						<p className="formatted-header__subtitle">
-							{ this.props.translate( 'Create a new site or add your existing self-hosted site.' ) }{' '}
-						</p>
-					</header>
+					<FormattedHeader
+						headerText={ this.props.translate( 'Add a New Site' ) }
+						subHeaderText={ this.props.translate(
+							'Create a new site or add your existing self-hosted site.'
+						) }
+					/>
 					<div className="jetpack-new-site__content">
 						<Card className="jetpack-new-site__card">
 							<div className="jetpack-new-site__card-description">
