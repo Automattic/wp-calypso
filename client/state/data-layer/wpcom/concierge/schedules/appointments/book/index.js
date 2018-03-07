@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -58,8 +53,8 @@ export const onError = ( { type }, error ) => {
 
 	const errorMessage =
 		CONCIERGE_ERROR_NO_AVAILABLE_STAFF === error.code
-			? translate( 'This session is no longer available. Please select a different time.' )
-			: translate( 'We could not book your appointment. Please try again later.' );
+			? 'This session is no longer available. Please select a different time.'
+			: 'We could not book your appointment. Please try again later.';
 
 	return [
 		withAnalytics(

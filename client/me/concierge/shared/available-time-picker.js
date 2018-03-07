@@ -11,7 +11,6 @@ import { moment } from 'i18n-calypso';
  * Internal dependencies
  */
 import AvailableTimeCard from './available-time-card';
-import { isDefaultLocale } from 'lib/i18n-utils';
 
 const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	const dates = {};
@@ -45,14 +44,7 @@ class AvailableTimePicker extends Component {
 	};
 
 	render() {
-		const {
-			actionText,
-			availableTimes,
-			currentUserLocale,
-			disabled,
-			onSubmit,
-			timezone,
-		} = this.props;
+		const { actionText, availableTimes, disabled, onSubmit, timezone } = this.props;
 		const availability = groupAvailableTimesByDate( availableTimes, timezone );
 
 		return (
@@ -62,7 +54,6 @@ class AvailableTimePicker extends Component {
 						actionText={ actionText }
 						date={ date }
 						disabled={ disabled }
-						isDefaultLocale={ isDefaultLocale( currentUserLocale ) }
 						key={ date }
 						onSubmit={ onSubmit }
 						times={ times }

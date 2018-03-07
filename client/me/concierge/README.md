@@ -4,6 +4,10 @@ Concierge
 These components are used to render Business Concierge Sessions flows for booking, cancelling and 
 rescheduling appointments.
 
+## Important note
+Components aren't localized on purpose because we only support english speaking concierge sessions.
+
+
 ## Supported routes
 
 ```js

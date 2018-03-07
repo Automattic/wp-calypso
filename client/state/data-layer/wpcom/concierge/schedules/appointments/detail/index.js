@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { translate } from 'i18n-calypso';
-
-/**
  * Internal dependencies
  */
 import { http } from 'state/data-layer/wpcom-http/actions';
@@ -34,7 +29,7 @@ export const onSuccess = ( { appointmentId }, appointmentDetails ) =>
 	updateConciergeAppointmentDetails( appointmentId, appointmentDetails );
 
 export const onError = () =>
-	errorNotice( translate( 'We could not find your appointment. Please try again later.' ) );
+	errorNotice( 'We could not find your appointment. Please try again later.' );
 
 export default {
 	[ CONCIERGE_APPOINTMENT_DETAILS_REQUEST ]: [

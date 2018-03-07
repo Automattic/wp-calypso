@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -21,7 +20,6 @@ class Upsell extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
 		return (
 			<div>
 				<PrimaryHeader />
@@ -29,11 +27,9 @@ class Upsell extends Component {
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
 				<CompactCard>
-					<p>
-						{ translate( 'Only sites on a Business plan are eligible for a Concierge session.' ) }
-					</p>
+					<p>{ 'Only sites on a Business plan are eligible for a Concierge session.' }</p>
 					<Button href={ `/plans/${ this.props.site.slug }` } primary>
-						{ translate( 'Upgrade to Business' ) }
+						{ 'Upgrade to Business' }
 					</Button>
 				</CompactCard>
 			</div>
@@ -41,4 +37,4 @@ class Upsell extends Component {
 	}
 }
 
-export default localize( Upsell );
+export default Upsell;
