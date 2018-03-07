@@ -165,8 +165,6 @@ class RemovePurchase extends Component {
 		const { isDomainOnlySite, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
-			this.recordEvent( 'calypso_purchases_cancel_form_submit' );
-
 			const survey = wpcom
 				.marketing()
 				.survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
@@ -196,6 +194,8 @@ class RemovePurchase extends Component {
 				} )
 				.catch( err => debug( err ) ); // shouldn't get here
 		}
+
+		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		this.props.removePurchase( purchase.id, user.get().ID ).then( () => {
 			const productName = getName( purchase );
