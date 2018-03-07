@@ -71,6 +71,12 @@ export default class Step extends Component {
 	state = { initialized: false };
 
 	/**
+	 * A mutation observer to watch whether the target exists
+	 * @type {object}
+	 */
+	observer = null;
+
+	/**
 	 * Flag to determine if we're repositioning the Step dialog
 	 * @type {boolean} True if the Step dialog is being repositioned.
 	 */
@@ -92,6 +98,7 @@ export default class Step extends Component {
 		this.mounted = true;
 		this.wait( this.props, this.context ).then( () => {
 			window.addEventListener( 'resize', this.onScrollOrResize );
+			this.watchTarget();
 		} );
 	}
 
@@ -116,6 +123,8 @@ export default class Step extends Component {
 		if ( this.scrollContainer ) {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}
+
+		this.unwatchTarget();
 	}
 
 	/*
@@ -142,6 +151,31 @@ export default class Step extends Component {
 			this.setState( state );
 		} else {
 			this.state = { ...this.state, ...state };
+		}
+	}
+
+	watchTarget() {
+		if ( ! this.props.target || typeof MutationObserver === 'undefined' ) {
+			return;
+		}
+
+		if ( ! this.observer ) {
+			this.observer = new MutationObserver( () => {
+				const target = document.querySelector( `[data-tip-target="${ this.props.target }"]` );
+				if ( ! target ) {
+					this.props.onTargetDisappear( {
+						quit: () => this.context.quit( this.context ),
+						next: () => this.skipToNext( this.props, this.context ),
+					} );
+				}
+			} );
+			this.observer.observe( document.body, { childList: true, subtree: true } );
+		}
+	}
+
+	unwatchTarget() {
+		if ( this.observer ) {
+			this.observer.disconnect();
 		}
 	}
 
@@ -235,16 +269,21 @@ export default class Step extends Component {
 		return this.stepSection && path && this.stepSection !== pathToSection( path );
 	}
 
-	skipIfInvalidContext( props, context ) {
-		const { canSkip, when } = props;
-		const { branching, isValid, next, step, tour, tourVersion } = context;
+	skipToNext( props, context ) {
+		const { branching, next, step, tour, tourVersion } = context;
 
 		this.setAnalyticsTimestamp( context );
 
-		if ( when && ! isValid( when ) && canSkip ) {
-			const nextStepName = props.next || anyFrom( branching[ step ] );
-			const skipping = this.shouldSkipAnalytics();
-			next( { tour, tourVersion, step, nextStepName, skipping } );
+		const nextStepName = props.next || anyFrom( branching[ step ] );
+		const skipping = this.shouldSkipAnalytics();
+		next( { tour, tourVersion, step, nextStepName, skipping } );
+	}
+
+	skipIfInvalidContext( props, context ) {
+		const { canSkip, when } = props;
+
+		if ( when && ! context.isValid( when ) && canSkip ) {
+			this.skipToNext( props, context );
 		}
 	}
 
