@@ -14,7 +14,6 @@ import page from 'page';
  */
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
-import nuxWelcome from 'layout/nux-welcome';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
@@ -29,7 +28,11 @@ const user = userFactory();
 export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() ) ? (
-			<Layout primary={ primary } secondary={ secondary } user={ user } nuxWelcome={ nuxWelcome } />
+			<Layout
+				primary={ primary }
+				secondary={ secondary }
+				user={ user }
+			/>
 		) : (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 		) }

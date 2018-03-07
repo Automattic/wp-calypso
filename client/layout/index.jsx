@@ -23,10 +23,7 @@ import GlobalNotices from 'components/global-notices';
 import notices from 'notices';
 import translator from 'lib/translator-jumpstart';
 import TranslatorLauncher from './community-translator/launcher';
-import Welcome from 'my-sites/welcome/welcome';
-import WelcomeMessage from 'layout/nux-welcome/welcome-message';
 import GuidedTours from 'layout/guided-tours';
-import analytics from 'lib/analytics';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
 import SitesListNotices from 'lib/sites-list/notices';
@@ -56,13 +53,12 @@ const Layout = createReactClass( {
 	/* eslint-enable react/no-deprecated */
 	displayName: 'Layout',
 
-	mixins: [ observe( 'user', 'nuxWelcome' ) ],
+	mixins: [ observe( 'user' ) ],
 
 	propTypes: {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
 		user: PropTypes.object,
-		nuxWelcome: PropTypes.object,
 		focus: PropTypes.object,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
@@ -71,11 +67,6 @@ const Layout = createReactClass( {
 		section: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
 		isOffline: PropTypes.bool,
 		colorSchemePreference: PropTypes.string,
-	},
-
-	closeWelcome: function() {
-		this.props.nuxWelcome.closeWelcome();
-		analytics.ga.recordEvent( 'Welcome Box', 'Clicked Close Button' );
 	},
 
 	newestSite: function() {
@@ -93,27 +84,6 @@ const Layout = createReactClass( {
 				section={ this.props.section.group }
 				sites={ this.props.sites }
 			/>
-		);
-	},
-
-	renderWelcome: function() {
-		if ( ! this.props.user ) {
-			return null;
-		}
-
-		const showWelcome = this.props.nuxWelcome.getWelcome();
-		const newestSite = this.newestSite();
-
-		return (
-			<span>
-				<Welcome
-					isVisible={ showWelcome }
-					closeAction={ this.closeWelcome }
-					additionalClassName="NuxWelcome"
-				>
-					<WelcomeMessage welcomeSite={ newestSite } />
-				</Welcome>
-			</span>
 		);
 	},
 
@@ -159,7 +129,6 @@ const Layout = createReactClass( {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && <JITM /> }
-					{ this.renderWelcome() }
 					<GlobalNotices
 						id="notices"
 						notices={ notices.list }
