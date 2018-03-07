@@ -41,11 +41,11 @@ export class EditorNotice extends Component {
 	};
 
 	handleViewPostClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_notif_view_post_click' );
+		this.props.recordTracksEvent( 'calypso_editor_notice_view_post_click' );
 	};
 
 	handleAddPagePromptClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_notif_add_page_prompt_click' );
+		this.props.recordTracksEvent( 'calypso_editor_notice_add_page_prompt_click' );
 	};
 
 	componentWillReceiveProps( nextProps ) {
@@ -130,10 +130,6 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'scheduled':
-				if ( ! site ) {
-					return translate( '%(typeLabel)s scheduled!', { args: { typeLabel } } );
-				}
-
 				return translate( '%(typeLabel)s scheduled for %(formattedPostDate)s!', {
 					args: { typeLabel, formattedPostDate },
 					comment:
@@ -152,24 +148,12 @@ export class EditorNotice extends Component {
 				);
 
 			case 'view':
-				if ( 'page' === type ) {
-					return translate( 'View Page' );
-				}
-
-				if ( 'post' !== type && typeObject ) {
-					return typeObject.labels.view_item;
-				}
-
-				return translate( 'View Post' );
+				return typeObject.labels.view_item;
 
 			case 'preview':
 				return translate( 'View Preview' );
 
 			case 'updated':
-				if ( ! site ) {
-					return translate( '%(typeLabel)s updated!', { args: { typeLabel } } );
-				}
-
 				return translate( '%(typeLabel)s updated! {{postLink}}Visit %(typeLabel)s{{/postLink}}.', {
 					args: { typeLabel },
 					components: {
