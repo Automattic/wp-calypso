@@ -3,27 +3,26 @@
 /**
  * External dependencies
  */
-
+import Gridicon from 'gridicons';
+import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import urlModule from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
-import urlModule from 'url';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
+import { addQueryArgs } from 'lib/url';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import { isEnabled } from 'config';
+import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { login } from 'lib/paths';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -90,9 +89,9 @@ export class LoginLinks extends React.Component {
 		}
 		return (
 			<LoggedOutFormBackLink
+				classes={ { 'logged-out-form__link-item': false } }
 				oauth2Client={ this.props.oauth2Client }
 				recordClick={ this.recordBackToWpcomLinkClick }
-				classes={ { 'logged-out-form__link-item': false } }
 			/>
 		);
 	}

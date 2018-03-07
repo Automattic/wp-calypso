@@ -3,28 +3,27 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
-import { parse as parseUrl } from 'url';
 import page from 'page';
 import qs from 'qs';
+import React from 'react';
 import { includes, map } from 'lodash';
+import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import WPLogin from './wp-login';
-import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
+import MagicLogin from './magic-login';
+import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 const enhanceContextWithLogin = context => {
 	const {
-		path,
 		params: { flow, isJetpack, socialService, twoFactorAuthType },
+		path,
 		query: { back_to },
 	} = context;
 
