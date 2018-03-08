@@ -106,8 +106,8 @@ class JetpackInstallStep extends Component {
 			activateJetpack: {
 				title: translate( '1. Activate Jetpack' ),
 				text: translate(
-					'You will be redirected to the Jetpack plugin page on your site’s wp-admin ' +
-						'dashboard to activate Jetpack. Click the blue “Activate Plugin” button. '
+					'You will be redirected to the Plugins page on your site’s wp-admin ' +
+						'dashboard to activate Jetpack. Click the blue “Activate” link. '
 				),
 				action: this.renderNotJetpackButton(),
 				example: (
