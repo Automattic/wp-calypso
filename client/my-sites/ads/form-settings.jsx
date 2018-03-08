@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import notices from 'notices';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
@@ -14,11 +14,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import StateSelector from 'components/forms/us-state-selector';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -28,6 +27,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import WordadsActions from 'lib/ads/actions';
+import SectionHeader from 'components/section-header';
 import SettingsStore from 'lib/ads/settings-store';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -522,38 +522,35 @@ class AdsFormSettings extends Component {
 
 	render() {
 		const { translate } = this.props;
+		const isPending = this.state.isLoading || this.state.isSubmitting;
 
 		return (
-			<Card>
-				<form
-					id="wordads-settings"
-					onSubmit={ this.handleSubmit }
-					onChange={ this.props.markChanged }
-				>
-					<FormButtonsBar>
-						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
-							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-						</FormButton>
-					</FormButtonsBar>
+			<Fragment>
+				<SectionHeader label={ translate( 'Ads Settings' ) }>
+					<Button compact primary onClick={ this.handleSubmit } disabled={ isPending }>
+						{ isPending ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
+					</Button>
+				</SectionHeader>
 
-					{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
+				<Card>
+					<form
+						id="wordads-settings"
+						onSubmit={ this.handleSubmit }
+						onChange={ this.props.markChanged }
+					>
+						{ ! this.props.siteIsJetpack ? this.showAdsToOptions() : null }
 
-					{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
+						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
 
-					<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
-					{ this.siteOwnerOptions() }
-					{ this.state.us_checked ? this.taxOptions() : null }
+						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
+						{ this.siteOwnerOptions() }
+						{ this.state.us_checked ? this.taxOptions() : null }
 
-					<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
-					{ this.acceptCheckbox() }
-
-					<FormButtonsBar>
-						<FormButton disabled={ this.state.isLoading || this.state.isSubmitting }>
-							{ this.state.isSubmitting ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
-						</FormButton>
-					</FormButtonsBar>
-				</form>
-			</Card>
+						<FormSectionHeading>{ translate( 'Terms of Service' ) }</FormSectionHeading>
+						{ this.acceptCheckbox() }
+					</form>
+				</Card>
+			</Fragment>
 		);
 	}
 }
