@@ -22,9 +22,9 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
-const ChangeButtonLabel = translate( 'Change' );
-const ContinueButtonLabel = translate( 'Continue' );
-const DoneButtonLabel = translate( 'Done' );
+const CHANGE_BUTTON_LABEL = translate( 'Change' );
+const CONTINUE_BUTTON_LABEL = translate( 'Continue' );
+const DONE_BUTTON_LABEL = translate( 'Done' );
 
 function handleTargetDisappear( { quit, next } ) {
 	const dialog = document.querySelector( '.editor-media-modal' );
@@ -49,9 +49,9 @@ export const ChecklistSiteIconTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'Press {{ChangeButton/}} to upload your own image or icon that can help people identify your site in the browser.',
+					'Press {{changeButton/}} to upload your own image or icon that can help people identify your site in the browser.',
 					{
-						components: { ChangeButton: <strong>{ ChangeButtonLabel }</strong> },
+						components: { changeButton: <strong>{ CHANGE_BUTTON_LABEL }</strong> },
 					}
 				) }
 			</p>
@@ -89,8 +89,8 @@ export const ChecklistSiteIconTour = makeTour(
 			onTargetDisappear={ handleTargetDisappear }
 		>
 			<Continue target="dialog-base-action-confirm" step="click-done" click>
-				{ translate( 'Good choice, press {{ContinueButton/}} to use it as your Site Icon.', {
-					components: { ContinueButton: <strong>{ ContinueButtonLabel }</strong> },
+				{ translate( 'Good choice, press {{continueButton/}} to use it as your Site Icon.', {
+					components: { continueButton: <strong>{ CONTINUE_BUTTON_LABEL }</strong> },
 				} ) }
 			</Continue>
 		</Step>
@@ -104,8 +104,8 @@ export const ChecklistSiteIconTour = makeTour(
 		>
 			<Continue target="image-editor-button-done" step="finish" click>
 				{ translate(
-					'Let’s make sure it looks right before you press {{DoneButton/}} to save your changes.',
-					{ components: { DoneButton: <strong>{ DoneButtonLabel }</strong> } }
+					'Let’s make sure it looks right before you press {{doneButton/}} to save your changes.',
+					{ components: { doneButton: <strong>{ DONE_BUTTON_LABEL }</strong> } }
 				) }
 			</Continue>
 		</Step>

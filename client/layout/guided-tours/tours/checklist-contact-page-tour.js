@@ -27,8 +27,8 @@ function isPostEditorSection( state ) {
 	return getSectionName( state ) === 'post-editor';
 }
 
-const SetFeaturedImageButtonLabel = translate( 'Set Featured Image' );
-const UpdateButtonLabel = translate( 'Update' );
+const SET_FEATURED_IMAGE_BUTTON_LABEL = translate( 'Set Featured Image' );
+const UPDATE_BUTTON_LABEL = translate( 'Update' );
 
 export const ChecklistContactPageTour = makeTour(
 	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route" when={ noop }>
@@ -50,7 +50,7 @@ export const ChecklistContactPageTour = makeTour(
 				) }
 			</p>
 			<ButtonRow>
-			<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
+				<Next step="featured-images">{ translate( 'All done, continue' ) }</Next>
 				<SiteLink href="/checklist/:site">{ translate( 'Return to the checklist' ) }</SiteLink>
 				<Continue step="featured-images" hidden />
 			</ButtonRow>
@@ -95,10 +95,10 @@ export const ChecklistContactPageTour = makeTour(
 		>
 			<Continue target="dialog-base-action-confirm" step="click-update" click>
 				{ translate(
-					'We’re all set, press {{SetFeaturedImageButton/}} to add this image to your page.',
+					'We’re all set, press {{setFeaturedImageButton/}} to add this image to your page.',
 					{
 						components: {
-							SetFeaturedImageButton: <strong>{ SetFeaturedImageButtonLabel }</strong>,
+							setFeaturedImageButton: <strong>{ SET_FEATURED_IMAGE_BUTTON_LABEL }</strong>,
 						},
 					}
 				) }
@@ -113,8 +113,8 @@ export const ChecklistContactPageTour = makeTour(
 			style={ { marginTop: '-10px' } }
 		>
 			<Continue target="editor-publish-button" step="finish" click>
-				{ translate( 'Almost done, press the {{UpdateButton/}} button to save your changes.', {
-					components: { UpdateButton: <strong>{ UpdateButtonLabel }</strong> },
+				{ translate( 'Almost done, press the {{updateButton/}} button to save your changes.', {
+					components: { updateButton: <strong>{ UPDATE_BUTTON_LABEL }</strong> },
 				} ) }
 			</Continue>
 		</Step>

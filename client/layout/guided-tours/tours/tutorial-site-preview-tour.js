@@ -21,7 +21,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/ui/guided-tours/contexts';
 
-const ViewSiteButtonLabel = translate( 'View Site' );
+const VIEW_SITE_BUTTON_LABEL = translate( 'View Site' );
 
 export const TutorialSitePreviewTour = makeTour(
 	<Tour
@@ -43,10 +43,10 @@ export const TutorialSitePreviewTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'{{ViewSiteButton/}} shows you what your site looks like to visitors. Click it to continue.',
+					'{{viewSiteButton/}} shows you what your site looks like to visitors. Click it to continue.',
 					{
 						components: {
-							ViewSiteButton: <strong>{ ViewSiteButtonLabel }</strong>,
+							viewSiteButton: <strong>{ VIEW_SITE_BUTTON_LABEL }</strong>,
 						},
 					}
 				) }

@@ -21,8 +21,8 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
-const SetFeaturedImageButtonLabel = translate( 'Set Featured Image' );
-const UpdateButtonLabel = translate( 'Update' );
+const SET_FEATURED_IMAGE_BUTTON_LABEL = translate( 'Set Featured Image' );
+const UPDATE_BUTTON_LABEL = translate( 'Update' );
 
 export const ChecklistAboutPageTour = makeTour(
 	<Tour name="checklistAboutPage" version="20171205" path="/non-existent-route" when={ noop }>
@@ -87,10 +87,10 @@ export const ChecklistAboutPageTour = makeTour(
 		>
 			<Continue target="dialog-base-action-confirm" step="click-update" click>
 				{ translate(
-					'We’re all set, press {{SetFeaturedImageButton/}} to add this image to your page.',
+					'We’re all set, press {{setFeaturedImageButton/}} to add this image to your page.',
 					{
 						components: {
-							SetFeaturedImageButton: <strong>{ SetFeaturedImageButtonLabel }</strong>,
+							setFeaturedImageButton: <strong>{ SET_FEATURED_IMAGE_BUTTON_LABEL }</strong>,
 						},
 					}
 				) }
@@ -99,8 +99,8 @@ export const ChecklistAboutPageTour = makeTour(
 
 		<Step name="click-update" target="editor-publish-button" arrow="right-top" placement="beside">
 			<Continue target="editor-publish-button" step="finish" click>
-				{ translate( 'Almost done, press the {{UpdateButton/}} button to save your changes.', {
-					components: { UpdateButton: <strong>{ UpdateButtonLabel }</strong> },
+				{ translate( 'Almost done, press the {{updateButton/}} button to save your changes.', {
+					components: { updateButton: <strong>{ UPDATE_BUTTON_LABEL }</strong> },
 				} ) }
 			</Continue>
 		</Step>

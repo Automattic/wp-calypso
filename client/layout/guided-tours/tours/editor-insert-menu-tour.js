@@ -30,7 +30,7 @@ class RepositioningStep extends Step {
 	}
 }
 
-const AddMediaButtonLabel = translate( 'Add Media' );
+const ADD_MEDIA_BUTTON_LABEL = translate( 'Add Media' );
 
 export const EditorInsertMenuTour = makeTour(
 	<Tour
@@ -51,8 +51,8 @@ export const EditorInsertMenuTour = makeTour(
 			} }
 		>
 			<p>
-				{ translate( '{{AddMediaButton/}} has moved to a new button.', {
-					components: { AddMediaButton: <strong>{ AddMediaButtonLabel }</strong> },
+				{ translate( '{{addMediaButton/}} has moved to a new button.', {
+					components: { addMediaButton: <strong>{ ADD_MEDIA_BUTTON_LABEL }</strong> },
 				} ) }
 			</p>
 			<p>
