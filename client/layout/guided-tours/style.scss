@@ -124,7 +124,7 @@
 	.guided-tours__quit-button {
 		color: darken( $white, 20% );
 		background: none;
-		border: 1px darken( $white, 20% ) solid;
+		border: 1px rgba( $white, 0.2 ) solid;
 	}
 }
 
@@ -149,7 +149,7 @@ a.config-elements__text-link,
 	.guided-tours__quit-button {
 		color: darken( $white, 20% );
 		background: none;
-		border: 1px darken( $white, 20% ) solid;
+		border: 1px rgba( $white, 0.2 ) solid;
 	}
 }
 
