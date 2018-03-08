@@ -9,9 +9,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import DelayRender from 'devdocs/delay-render';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
 import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
+import Placeholder from 'devdocs/devdocs-async-load/placeholder';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );
@@ -31,7 +33,13 @@ const shouldShowInstance = ( example, filter, component ) => {
 	return ! filter || searchPattern.toLowerCase().indexOf( filter ) > -1;
 };
 
-const Collection = ( { children, filter, section = 'design', component } ) => {
+const Collection = ( {
+	children,
+	component,
+	examplesToMount = 20,
+	filter,
+	section = 'design',
+} ) => {
 	let showCounter = 0;
 	const summary = [];
 
@@ -71,7 +79,30 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 						{ summary }...
 					</div>
 				) }
-			{ examples }
+			{ /*
+				The entire list of examples for `/devdocs/blocks` and
+				`/devdocs/design` takes a long time to mount, so we use
+				`DelayRender` to render just the first few components.
+				This means the page change feels a lot faster, especially
+				on lower-end machines and on Firefox.
+			*/ }
+			{ examples.length <= examplesToMount ? (
+				examples
+			) : (
+				<React.Fragment>
+					{ examples.slice( 0, examplesToMount ) }
+
+					<DelayRender>
+						{ shouldRender =>
+							shouldRender ? (
+								examples.slice( examplesToMount )
+							) : (
+								<Placeholder count={ examplesToMount } />
+							)
+						}
+					</DelayRender>
+				</React.Fragment>
+			) }
 		</div>
 	);
 };
