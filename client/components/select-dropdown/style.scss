@@ -82,7 +82,6 @@ $compact-header-height: 35;
 		height: #{$compact-header-height }px;
 		line-height: #{$compact-header-height - 3 }px;
 		padding-right: #{ $side-margin / 2 }px;
-		color: $gray-text-min;
 		font-size: 12px;
 
 		.count {
@@ -98,7 +97,7 @@ $compact-header-height: 35;
 		background-color: $gray-light;
 
 		.gridicons-chevron-down {
-			transform: rotate( 180deg );
+			transform: rotate( -180deg );
 		}
 	}
 
