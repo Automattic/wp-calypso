@@ -11,6 +11,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { isBusinessPlanUser } from 'state/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { PLAN_BUSINESS_2_YEARS } from '../../../lib/plans/constants';
 
 describe( 'isBusinessPlanUser()', () => {
 	test( 'should return true if any purchase is a business plan.', () => {
@@ -27,6 +28,29 @@ describe( 'isBusinessPlanUser()', () => {
 					{
 						user_id: '123',
 						product_slug: PLAN_BUSINESS,
+					},
+				],
+				hasLoadedUserPurchasesFromServer: true,
+			},
+		} );
+
+		assert.isTrue( isBusinessPlanUser( state ) );
+	} );
+
+	test( 'should return true if any purchase is a business plan (2-years).', () => {
+		const state = deepFreeze( {
+			currentUser: {
+				id: 123,
+			},
+			purchases: {
+				data: [
+					{
+						user_id: '123',
+						product_slug: 'some-other-plan',
+					},
+					{
+						user_id: '123',
+						product_slug: PLAN_BUSINESS_2_YEARS,
 					},
 				],
 				hasLoadedUserPurchasesFromServer: true,
@@ -77,7 +101,7 @@ describe( 'isBusinessPlanUser()', () => {
 					{
 						// intentionally put a purchase that doesn't belong to the user 123 here.
 						user_id: '789',
-						product_slug: PLAN_BUSINESS,
+						product_slug: PLAN_BUSINESS_2_YEARS,
 					},
 				],
 				hasLoadedUserPurchasesFromServer: true,

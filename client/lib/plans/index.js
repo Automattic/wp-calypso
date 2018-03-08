@@ -38,11 +38,7 @@ export function getPlans() {
 }
 
 export function getPlan( planKey ) {
-	const plan = PLANS_LIST[ planKey ];
-	if ( ! plan ) {
-		throw new Error( `There is no such plan as "${ planKey }"` );
-	}
-	return plan;
+	return PLANS_LIST[ planKey ];
 }
 
 export function getValidFeatureKeys() {
