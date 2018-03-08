@@ -13,15 +13,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
 import {
 	getOptedOutOfShippingSetup,
 	getOptedOutofTaxesSetup,
 	getTriedCustomizerDuringInitialSetup,
 } from 'woocommerce/state/sites/setup-choices/selectors';
 import { setFinishedInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
-import SetupFooter from './setup-footer';
-import SetupHeader from './setup-header';
-import SetupTasks from './setup-tasks';
+import SetupFooter from './footer';
+import SetupHeader from './header';
+import SetupTasks from './tasks';
 import QueryShippingZones from 'woocommerce/components/query-shipping-zones';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import { areAnyShippingMethodsEnabled } from 'woocommerce/state/ui/shipping/zones/selectors';
@@ -47,7 +48,7 @@ class SetupTasksView extends Component {
 		const { allTasksCompleted, site, translate } = this.props;
 
 		return (
-			<div className="card dashboard__setup-wrapper">
+			<Card className="setup__wrapper">
 				<QueryShippingZones siteId={ site.ID } />
 				<QuerySettingsGeneral siteId={ site.ID } />
 				<SetupHeader
@@ -64,7 +65,7 @@ class SetupTasksView extends Component {
 					label={ translate( "I'm finished setting up" ) }
 					primary={ allTasksCompleted }
 				/>
-			</div>
+			</Card>
 		);
 	};
 }

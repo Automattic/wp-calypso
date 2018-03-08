@@ -144,7 +144,11 @@ class ProductPurchaseFeaturesList extends Component {
 
 		return [
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
-			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
+			<JetpackReturnToDashboard
+				onClick={ this.props.recordReturnToDashboardClick }
+				selectedSite={ selectedSite }
+				key="jetpackReturnToDashboard"
+			/>,
 		];
 	}
 
@@ -243,7 +247,13 @@ export default connect(
 	{
 		recordBusinessOnboardingClick: partial(
 			recordTracksEvent,
-			'calypso_plan_features_onboarding_click'
+			'calypso_plan_features_onboarding_click',
+			{}
+		),
+		recordReturnToDashboardClick: partial(
+			recordTracksEvent,
+			'calypso_plan_features_returntodashboard_click',
+			{}
 		),
 	}
 )( ProductPurchaseFeaturesList );

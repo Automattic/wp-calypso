@@ -24,6 +24,11 @@ import {
 import { doesSelectedSiteHaveMediaFiles, isNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 
+const ADD_NEW_BUTTON_LABEL = translate( 'Add New' );
+const EDIT_BUTTON_LABEL = translate( 'Edit' );
+const EDIT_IMAGE_BUTTON_LABEL = translate( 'Edit Image' );
+const DONE_BUTTON_LABEL = translate( 'Done' );
+
 export const MediaBasicsTour = makeTour(
 	<Tour
 		name="mediaBasicsTour"
@@ -36,11 +41,11 @@ export const MediaBasicsTour = makeTour(
 			<p>
 				{ translate(
 					'Upload media — photos, documents, audio files, and more — ' +
-						'by clicking the {{icon/}} {{strong}}Add New{{/strong}} button.',
+						'by clicking the {{icon/}} {{addNewButton/}} button.',
 					{
 						components: {
 							icon: <Gridicon icon="add-image" />,
-							strong: <strong />,
+							addNewButton: <strong>{ ADD_NEW_BUTTON_LABEL }</strong>,
 						},
 					}
 				) }
@@ -99,9 +104,9 @@ export const MediaBasicsTour = makeTour(
 			style={ { marginLeft: '-8px' } }
 		>
 			<Continue click step="launch-modal" target=".editor-media-modal__secondary-action">
-				{ translate( 'Now click the {{strong}}Edit{{/strong}} button.', {
+				{ translate( 'Now click the {{editButton/}} button.', {
 					components: {
-						strong: <strong />,
+						editButton: <strong>{ EDIT_BUTTON_LABEL }</strong>,
 					},
 				} ) }
 			</Continue>
@@ -122,24 +127,21 @@ export const MediaBasicsTour = makeTour(
 		<Step name="done" placement="center">
 			<p>
 				{ translate(
-					'Need to adjust your image? Click {{icon/}} {{strong}}Edit Image{{/strong}} to perform basic tweaks.',
+					'Need to adjust your image? Click {{icon/}} {{editImageButton/}} to perform basic tweaks.',
 					{
 						components: {
 							icon: <Gridicon icon="pencil" />,
-							strong: <strong />,
+							editImageButton: <strong>{ EDIT_IMAGE_BUTTON_LABEL }</strong>,
 						},
 					}
 				) }
 			</p>
 			<p>
-				{ translate(
-					'Click {{strong}}Done{{/strong}} to go back to your full library. Happy uploading!',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
+				{ translate( 'Click {{doneButton /}} to go back to your full library. Happy uploading!', {
+					components: {
+						doneButton: <strong>{ DONE_BUTTON_LABEL }</strong>,
+					},
+				} ) }
 			</p>
 			<ButtonRow>
 				<Quit primary>{ translate( "Got it, I'm ready to explore!" ) }</Quit>

@@ -9,19 +9,18 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import BasicWidget from 'woocommerce/components/basic-widget';
-import WidgetGroup from 'woocommerce/components/widget-group';
+import WidgetRow from 'woocommerce/components/dashboard-widget/row';
 
 const DashboardPlaceholder = () => {
-	const loading = <BasicWidget title="…" className="dashboard__placeholder-small" />;
+	const loading = <div title="…" className="dashboard__placeholder-small dashboard-widget card" />;
 
 	return (
 		<div className="dashboard__placeholder">
-			<BasicWidget className="dashboard__placeholder-large card" />
-			<WidgetGroup>
+			<div className="dashboard__placeholder-large card dashboard-widget" />
+			<WidgetRow>
 				{ loading }
 				{ loading }
-			</WidgetGroup>
+			</WidgetRow>
 		</div>
 	);
 };

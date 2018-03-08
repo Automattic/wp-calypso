@@ -6,10 +6,10 @@
 		box-sizing: border-box;
 		width: 100%;
 	}
-	
+
 	+ .dialog__action-buttons {
 		text-align: center;
-		
+
 		.button:first-child {
 			margin-left: 0;
 		}
@@ -26,7 +26,7 @@
 		p {
 			margin: 0;
 		}
-		
+
 		+ span {
 			display: block;
 			text-align: center;
@@ -111,10 +111,12 @@
 		}
 
 		@include breakpoint( "<480px" ) {
-			margin-top: 20px;
+			margin-top: 24px;
+			margin-right: 15px;
 			font-size: 0;
 			.gridicon {
 				padding: 0;
+				margin-right: 0;
 			}
 		}
 	}

@@ -27,13 +27,13 @@ class SelectBusinessType extends Component {
 
 	trackCreateMyListingClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_test_google_my_business_select_business_type_create_my_listing_button_click'
+			'calypso_google_my_business_select_business_type_create_my_listing_button_click'
 		);
 	};
 
 	trackOptimizeYourSEOClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_test_google_my_business_select_business_type_optimize_your_seo_button_click'
+			'calypso_google_my_business_select_business_type_optimize_your_seo_button_click'
 		);
 	};
 

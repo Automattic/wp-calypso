@@ -14,7 +14,7 @@ import classNames from 'classnames';
 
 const DashboardWidgetRow = props => {
 	const { children, className } = props;
-	const classes = classNames( 'dashboard-widget-row', className );
+	const classes = classNames( 'dashboard-widget__row', className );
 
 	return <div className={ classes }>{ children }</div>;
 };

@@ -34,7 +34,7 @@
 	flex-grow: 1;
 	flex-direction: row;
 
-	@include breakpoint( '<1040px' ) {
+	@include breakpoint( '<1280px' ) {
 		flex-direction: column;
 	}
 

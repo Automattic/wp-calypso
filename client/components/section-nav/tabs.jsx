@@ -17,6 +17,7 @@ import DropdownItem from 'components/select-dropdown/item';
 import SelectDropdown from 'components/select-dropdown';
 import { getWindowInnerWidth } from 'lib/viewport';
 import afterLayoutFlush from 'lib/after-layout-flush';
+import TranslatableString from 'components/translatable/proptype';
 
 /**
  * Internal Variables
@@ -28,7 +29,7 @@ const MOBILE_PANEL_THRESHOLD = 480;
  */
 class NavTabs extends Component {
 	static propTypes = {
-		selectedText: PropTypes.string,
+		selectedText: TranslatableString,
 		selectedCount: PropTypes.number,
 		label: PropTypes.string,
 		hasSiblingControls: PropTypes.bool,
@@ -115,7 +116,6 @@ class NavTabs extends Component {
 				</DropdownItem>
 			);
 		} );
-
 		return (
 			<SelectDropdown
 				className="section-nav-tabs__dropdown"

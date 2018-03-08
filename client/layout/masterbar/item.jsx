@@ -9,12 +9,13 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
+import TranslatableString from 'components/translatable/proptype';
 
 class MasterbarItem extends Component {
 	static propTypes = {
 		url: PropTypes.string,
 		onClick: PropTypes.func,
-		tooltip: PropTypes.string,
+		tooltip: TranslatableString,
 		icon: PropTypes.string,
 		className: PropTypes.string,
 		isActive: PropTypes.bool,

@@ -116,9 +116,9 @@
 			align-items: normal;
 			padding-top: 6px;
 		}
-		
+
 		@include breakpoint( "<660px" ) {
-			margin-bottom: 9px;	
+			margin-bottom: 9px;
 		}
 	}
 }
@@ -142,45 +142,14 @@
 		margin-top: 2px;
 	}
 
-	.gridicons-chevron-down {
-		top: -3px;
-	}
-
 	.gridicon {
 		top: 4px;
 	}
 
-	&:after {
-		@include noticon( '\f431', 20px );
-		line-height: 16px;
-		color: rgba( $gray, 0.5 );
-		padding-top: 6px;
-	}
-
-	@include breakpoint( "<480px" ) {
-		.gridicons-chevron-down {
-			width: 18px;
-			height: 18px;
-			color: rgba( $gray, 0.5 );
-		}
-
-		.gridicon {
-			top: 2px;
-		}
-
-		&:after {
-			padding-top: 3px;
-		}
-	}
-}
-
-.media-library__source-button.is-open.is-borderless {
-	&:after {
-		@include noticon( '\f432', 20px );
-	}
-
-	.gridicon {
-		color: $gray-dark;
+	.gridicons-chevron-down {
+		width: 18px;
+		height: 18px;
+		top: 2px;
 	}
 }
 

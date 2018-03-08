@@ -156,9 +156,7 @@ class TwoStep extends Component {
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<DocumentHead
-					title={ this.props.translate( 'Two-Step Authentication', { textOnly: true } ) }
-				/>
+				<DocumentHead title={ this.props.translate( 'Two-Step Authentication' ) } />
 
 				<Card>{ this.renderTwoStepSection() }</Card>
 

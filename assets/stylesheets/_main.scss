@@ -6,15 +6,15 @@ $sidebar-width-max: 272px;
 $sidebar-width-min: 228px;
 
 .wpcom-site__logo {
-	color: $gray-lighten-20;
-	font-size: 12vw;
+	fill: $gray-lighten-20;
 	position: fixed;
 		top: 50%;
 		left: 50%;
 	transform: translate( -50%, -50% );
 
 	@include breakpoint( ">960px" ) {
-		font-size: 120px;
+		width: 100px;
+		height: 100px;
 	}
 }
 
@@ -333,8 +333,8 @@ object {
 		text-align: center;
 		z-index: z-index( '.environment-badge', '.environment-badge .bug-report' );
 		transition: border-radius 0.2s ease-out;
-		&:before {
-			@include noticon( '\f50a', 14px );
+
+		.gridicon {
 			vertical-align: middle;
 		}
 	}

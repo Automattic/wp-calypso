@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import { untrailingslashit } from 'lib/route';
 
 /**
@@ -14,7 +14,7 @@ import { untrailingslashit } from 'lib/route';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize( ( { selectedSite, translate, onClick = noop } ) => {
 	let adminURL = get( selectedSite, 'options.admin_url', '' );
 	if ( adminURL ) {
 		adminURL = untrailingslashit( adminURL ) + '/admin.php?page=jetpack';
@@ -27,6 +27,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				title={ translate( 'Return to your Jetpack dashboard' ) }
 				buttonText={ translate( 'Go back to %(site)s', { args: { site: selectedSite.name } } ) }
 				href={ adminURL }
+				onClick={ onClick }
 			/>
 		</div>
 	);

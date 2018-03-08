@@ -24,6 +24,8 @@ import {
 	isOneTimePurchase,
 	isRenewable,
 	showCreditCardExpiringWarning,
+	isPaidWithCredits,
+	subscribedWithinPastWeek,
 } from 'lib/purchases';
 import { isDomainTransfer } from 'lib/products-values';
 import { getPurchase, getSelectedSite } from '../utils';
@@ -45,10 +47,24 @@ class PurchaseNotice extends Component {
 
 	getExpiringText( purchase ) {
 		const { translate, moment, selectedSite } = this.props;
+
 		if ( selectedSite && purchase.expiryStatus === 'manualRenew' ) {
+			if ( isPaidWithCredits( purchase ) ) {
+				return translate(
+					'You purchased %(purchaseName)s with credits. Please add a credit card before your ' +
+						"plan expires %(expiry)s so that you don't lose out on your paid features!",
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							expiry: moment( purchase.expiryMoment ).fromNow(),
+						},
+					}
+				);
+			}
+
 			return translate(
 				'%(purchaseName)s will expire and be removed from your site %(expiry)s. ' +
-					'Please, add a credit card if you want it to autorenew. ',
+					"Add a credit card so you don't lose out on your paid features!",
 				{
 					args: {
 						purchaseName: getName( purchase ),
@@ -130,7 +146,10 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( purchase.expiryMoment < moment().add( 90, 'days' ) ) {
+		if (
+			! subscribedWithinPastWeek( purchase ) &&
+			purchase.expiryMoment < moment().add( 90, 'days' )
+		) {
 			noticeStatus = 'is-error';
 		}
 

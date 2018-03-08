@@ -3,6 +3,7 @@
 
 .woocommerce {
 	@import 'app/dashboard/style';
+	@import 'app/dashboard/setup/style';
 	@import 'app/order/style';
 	@import 'app/order/order-created/style';
 	@import 'app/order/order-customer/style';
@@ -29,12 +30,10 @@
 
 	@import 'components/action-header/style';
 	@import 'components/address-view/style';
-	@import 'components/basic-widget/style';
 	@import 'components/bulk-select/style';
 	@import 'components/compact-tinymce/style';
 	@import 'components/d3/base/style';
 	@import 'components/dashboard-widget/style';
-	@import 'components/dashboard-widget-row/style';
 	@import 'components/delta/style';
 	@import 'components/extended-header/style';
 	@import 'components/filtered-list/style';
@@ -45,7 +44,6 @@
 	@import 'components/location-flag/style';
 	@import 'components/order-status/style';
 	@import 'components/price-input/style';
-	@import 'components/process-orders-widget/style';
 	@import 'components/product-image-uploader/style';
 	@import 'components/product-reviews-widget/style';
 	@import 'components/product-search/style';
@@ -54,7 +52,6 @@
 	@import 'components/d3/sparkline/style';
 	@import 'components/store-address/style';
 	@import 'components/table/style';
-	@import 'components/widget-group/style';
 
 	@import 'woocommerce-services/style';
 

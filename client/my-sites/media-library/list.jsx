@@ -19,12 +19,11 @@ import { getMimePrefix } from 'lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
-import userFactory from 'lib/user';
-const user = userFactory();
 
 import SortedGrid from 'components/sorted-grid';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
 import { getPreference } from 'state/preferences/selectors';
+import { isRtl as isRtlSelector } from 'state/selectors';
 
 const GOOGLE_MAX_RESULTS = 1000;
 
@@ -97,7 +96,9 @@ export class MediaLibraryList extends React.Component {
 		if ( ! isFillingEntireRow && ! isLastInRow ) {
 			marginValue = ( 1 % this.props.mediaScale ) / ( itemsPerRow - 1 ) * 100 + '%';
 
-			if ( user.isRTL() ) {
+			const { isRtl } = this.props;
+
+			if ( isRtl ) {
 				style.marginLeft = marginValue;
 			} else {
 				style.marginRight = marginValue;
@@ -294,6 +295,7 @@ export class MediaLibraryList extends React.Component {
 export default connect(
 	state => ( {
 		mediaScale: getPreference( state, 'mediaScale' ),
+		isRtl: isRtlSelector( state ),
 	} ),
 	null,
 	null,

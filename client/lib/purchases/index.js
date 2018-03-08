@@ -134,6 +134,10 @@ function isPaidWithPaypal( purchase ) {
 	return 'paypal' === purchase.payment.type;
 }
 
+function isPaidWithCredits( purchase ) {
+	return 'undefined' !== typeof purchase.payment && 'credits' === purchase.payment.type;
+}
+
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
 }
@@ -260,6 +264,14 @@ function monthsUntilCardExpires( purchase ) {
 	return purchase.payment.creditCard.expiryMoment.diff( moment(), 'months' );
 }
 
+function subscribedWithinPastWeek( purchase ) {
+	// Subscribed date should always be in the past. One week ago would be -7 days.
+	return (
+		'undefined' !== typeof purchase.subscribedDate &&
+		moment( purchase.subscribedDate ).diff( moment(), 'days' ) >= -7
+	);
+}
+
 /**
  * Returns the payment logo to display based on the payment method
  *
@@ -320,6 +332,7 @@ export {
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,
 	isPaidWithPaypal,
+	isPaidWithCredits,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -334,4 +347,5 @@ export {
 	purchaseType,
 	cardProcessorSupportsUpdates,
 	showCreditCardExpiringWarning,
+	subscribedWithinPastWeek,
 };

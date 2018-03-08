@@ -14,8 +14,6 @@ import page from 'page';
  */
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
-import nuxWelcome from 'layout/nux-welcome';
-import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './shared.js';
 import { getCurrentUser } from 'state/current-user/selectors';
 import userFactory from 'lib/user';
@@ -34,8 +32,6 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } )
 				primary={ primary }
 				secondary={ secondary }
 				user={ user }
-				nuxWelcome={ nuxWelcome }
-				translatorInvitation={ translatorInvitation }
 			/>
 		) : (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />

@@ -45,7 +45,7 @@ class SetupTask extends Component {
 	renderTaskPrimaryActions = ( actions, taskCompleted ) => {
 		const primaryActions = actions.filter( action => ! action.isSecondary );
 		return (
-			<div className="dashboard__setup-task-primary-actions">
+			<div className="setup__task-primary-actions">
 				{ primaryActions.map( ( action, index ) => {
 					// Only the last primary action gets to be a primary button
 					const primary = index === primaryActions.length - 1 && ! taskCompleted;
@@ -82,7 +82,7 @@ class SetupTask extends Component {
 	renderTaskSecondaryActions = actions => {
 		const secondaryActions = actions.filter( action => action.isSecondary );
 		return (
-			<div className="dashboard__setup-task-secondary-actions">
+			<div className="setup__task-secondary-actions">
 				{ secondaryActions.map( ( action, index ) => {
 					const trackClick = e => {
 						this.track( action.analyticsProp );
@@ -101,16 +101,16 @@ class SetupTask extends Component {
 	render = () => {
 		const { actions, checked, explanation, label } = this.props;
 		return (
-			<div className={ checked ? 'dashboard__setup-task is-checked' : 'dashboard__setup-task' }>
-				<div className="dashboard__setup-task-status">
+			<div className={ checked ? 'setup__task is-checked' : 'setup__task' }>
+				<div className="setup__task-status">
 					{ checked ? <Gridicon icon="checkmark" size={ 36 } /> : null }
 				</div>
-				<div className="dashboard__setup-task-label-and-actions">
-					<div className="dashboard__setup-task-label">
+				<div className="setup__task-label-and-actions">
+					<div className="setup__task-label">
 						<h2>{ label }</h2>
 						<p>{ explanation }</p>
 					</div>
-					<div className="dashboard__setup-task-actions">
+					<div className="setup__task-actions">
 						{ this.renderTaskPrimaryActions( actions, checked ) }
 						{ this.renderTaskSecondaryActions( actions ) }
 					</div>

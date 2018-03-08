@@ -39,7 +39,7 @@ const user = new User(),
  * Local variables
  */
 
-var injectUrl,
+let injectUrl,
 	initialized,
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
@@ -88,6 +88,11 @@ const communityTranslatorJumpstart = {
 
 		if ( 'string' !== typeof originalFromPage ) {
 			debug( 'unknown original format' );
+			return displayedTranslationFromPage;
+		}
+
+		if ( 'boolean' === typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
+			debug( 'respecting textOnly for string "' + originalFromPage + '"' );
 			return displayedTranslationFromPage;
 		}
 
