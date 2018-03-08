@@ -14,7 +14,7 @@ import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
 import FeedError from 'reader/feed-error';
-import RefreshFeedHeader from 'blocks/reader-feed-header';
+import ReaderFeedHeader from 'blocks/reader-feed-header';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import { getSite } from 'state/reader/sites/selectors';
@@ -62,7 +62,7 @@ class FeedStream extends React.Component {
 				shouldCombineCards={ false }
 			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
-				<RefreshFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
+				<ReaderFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
 				{ ! feed && <QueryReaderFeed feedId={ this.props.feedId } /> }
 				{ siteId && <QueryReaderSite siteId={ siteId } /> }
 			</Stream>

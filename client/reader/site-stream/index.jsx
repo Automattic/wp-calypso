@@ -12,7 +12,7 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import RefreshFeedHeader from 'blocks/reader-feed-header';
+import ReaderFeedHeader from 'blocks/reader-feed-header';
 import EmptyContent from './empty';
 import Stream from 'reader/stream';
 import FeedError from 'reader/feed-error';
@@ -78,7 +78,7 @@ class SiteStream extends React.Component {
 				shouldCombineCards={ false }
 			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
-				<RefreshFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
+				<ReaderFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
 				{ featuredContent }
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
