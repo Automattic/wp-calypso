@@ -135,32 +135,29 @@ const RatesStep = ( props ) => {
 		allPackages,
 		values,
 		available,
-		errors,
 		expanded,
 		ratesTotal,
 		translate,
 	} = props;
 	const summary = ratesSummary( values, available, ratesTotal, form.packages.saved, translate );
 	const toggleStepHandler = () => props.toggleStep( orderId, siteId, 'rates' );
-	const updateRateHandler = ( packageId, value ) => props.updateRate( orderId, siteId, packageId, value );
-
 	return (
 		<StepContainer
 			title={ translate( 'Rates' ) }
 			summary={ summary }
 			expanded={ expanded }
 			toggleStep={ toggleStepHandler }
-			{ ...getRatesStatus( props ) } >
+			{ ...getRatesStatus( props ) }
 			{ ! isEmpty( available ) && showCheckoutShippingInfo( props ) }
+		>
 			<ShippingRates
+				siteId={ siteId }
+				orderId={ orderId }
 				id="rates"
 				showRateNotice={ false }
 				selectedPackages={ form.packages.selected }
 				allPackages={ allPackages }
-				selectedRates={ values }
-				availableRates={ available }
-				updateRate={ updateRateHandler }
-				errors={ errors } />
+			/>
 		</StepContainer>
 	);
 };
@@ -173,7 +170,6 @@ RatesStep.propTypes = {
 	available: PropTypes.object.isRequired,
 	errors: PropTypes.object.isRequired,
 	toggleStep: PropTypes.func.isRequired,
-	updateRate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { orderId, siteId } ) => {
