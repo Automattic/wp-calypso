@@ -109,7 +109,7 @@ class CheckoutThankYouHeader extends PureComponent {
 			if ( primaryPurchase.isRootDomainWithUs ) {
 				return translate(
 					'Your domain {{strong}}%(domain)s{{/strong}} was added to your site. ' +
-						'We have set everything up for you but it may take a little while to start working.',
+						'We have set everything up for you, but it may take a little while to start working.',
 					{
 						args: {
 							domain: primaryPurchase.meta,
