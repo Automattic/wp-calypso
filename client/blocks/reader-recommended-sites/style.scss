@@ -41,7 +41,6 @@
 	flex-direction: row;
 	list-style-type: none;
 	width: 100%;
-	border: 1px solid red;
 
 	@include breakpoint( ">960px" ) {
 		align-items: flex-end;
@@ -50,26 +49,41 @@
 	}
 
 	> :last-child {
-		border: 1px solid blue;
 		width: 100%;
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
 		width: 30px;
-		border:1px solid green;
 
-		.button.is-borderless .gridicon {
-			fill: $gray-lighten-10;
-			width: 14px;
-			height: 14px;
+		@include breakpoint( ">960px" ) {
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		.button {
+			padding: 0;
+
+			&.is-borderless .gridicon {
+				fill: $gray-lighten-10;
+				width: 14px;
+				height: 14px;
+				top: 0;
+			}
 		}
 	}
 
-	.reader-subscription-list-item  .follow-button .follow-button__label {
-		border: 1px solid blue;
+	.reader-subscription-list-item {
+		margin: 0;
 
 		@include breakpoint( "<960px" ) {
-			display: none;
+			padding: 0 0 20px;
+		}
+
+		.follow-button .follow-button__label {
+
+			@include breakpoint( "<960px" ) {
+				display: none;
+			}
 		}
 	}
 
