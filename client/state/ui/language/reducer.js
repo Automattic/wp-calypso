@@ -30,13 +30,13 @@ export const localeSlug = createReducer(
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @return {Object}        Updated or default state
  *
  */
 export const localeVariant = createReducer(
 	null,
 	{
-		[ LOCALE_SET ]: ( state, action ) => action.localeVariant,
+		[ LOCALE_SET ]: ( state, action ) => action.localeVariant || state,
 	},
 	localeVariantSchema
 );

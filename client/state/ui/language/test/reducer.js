@@ -50,8 +50,8 @@ describe( 'reducer', () => {
 			expect( localeVariant( undefined, { type: 'foobar' } ) ).to.be.null;
 		} );
 
-		test( 'returns undefined with undefined state and missing slug', () => {
-			expect( localeVariant( undefined, { type: LOCALE_SET } ) ).to.be.undefined;
+		test( 'returns default state of null with undefined state and missing slug', () => {
+			expect( localeVariant( undefined, { type: LOCALE_SET } ) ).to.be.null;
 		} );
 
 		test( 'returns new state with valid slug', () => {
