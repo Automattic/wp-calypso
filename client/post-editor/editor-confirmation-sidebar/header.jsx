@@ -3,18 +3,13 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
 import * as utils from 'lib/posts/utils';
 
 class EditorConfirmationSidebarHeader extends PureComponent {
@@ -77,16 +72,4 @@ class EditorConfirmationSidebarHeader extends PureComponent {
 	}
 }
 
-export default connect( ( state, { post } ) => {
-	const siteId = getSelectedSiteId( state );
-	const postTypes = getPostTypes( state, siteId );
-	const postTypeLabel =
-		post &&
-		postTypes &&
-		postTypes[ post.type ] &&
-		get( postTypes[ post.type ], 'labels.singular_name' );
-
-	return {
-		postTypeLabel,
-	};
-} )( localize( EditorConfirmationSidebarHeader ) );
+export default localize( EditorConfirmationSidebarHeader );
