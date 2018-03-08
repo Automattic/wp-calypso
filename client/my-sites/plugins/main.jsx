@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import createReactClass from 'create-react-class';
+import page from 'page';
 import { connect } from 'react-redux';
 import { find, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -30,7 +31,12 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import { canCurrentUser, canCurrentUserManagePlugins, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
+import {
+	canCurrentUser,
+	canCurrentUserManagePlugins,
+	getSelectedOrAllSitesWithPlugins,
+	hasJetpackSites,
+} from 'state/selectors';
 import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -58,6 +64,20 @@ const PluginsMain = createReactClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
+
+		// Selected site is not a Jetpack site
+		if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
+			page.redirect( `/plugins/${ selectedSiteSlug }` );
+			return;
+		}
+
+		//  None of the other sites are Jetpack sites
+		if ( ! selectedSiteSlug && ! hasJpSites ) {
+			page.redirect( '/plugins' );
+			return;
+		}
+
 		this.refreshPlugins( nextProps );
 	},
 
@@ -488,7 +508,9 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
+
 		return {
+			hasJetpackSites: hasJetpackSites( state ),
 			sites: getSelectedOrAllSitesWithPlugins( state ),
 			selectedSite,
 			selectedSiteId,
