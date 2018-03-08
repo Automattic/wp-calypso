@@ -136,7 +136,7 @@ Our WordPress.com end-to-end (e2e) tests need to know which A/B test group to us
 
 ### Updating known A/B tests and overrides in the e2e tests
 
-Every time you add a new A/B test to Calypso you must update the [e2e tests repository](https://github.com/Automattic/wp-e2e-tests/) with that A/B test and optionally set an override of behaviour.
+Every time you add a new A/B test to Calypso you must update the [e2e tests repository](https://github.com/Automattic/wp-e2e-tests/) with that A/B test and set an override of behaviour.
 
 For example, if you were adding:
 
@@ -155,25 +155,21 @@ module.exports = {
 };
 ```
 
-If your change was purely cosmetic, ie. it doesn't change functionality eg. a text label or colour, you would need to update [config/default.json](https://github.com/Automattic/wp-e2e-tests/blob/master/config/default.json) to include:
+You would need to update [config/default.json](https://github.com/Automattic/wp-e2e-tests/blob/master/config/default.json) to include:
 
 ```js
 "knownABTestKeys": [
    "freeTrialButtonWording"
  ]
-```
-
-This lets our e2e tests know this A/B test exists, but doesn't set or overide any of the behaviour, so e2e test users will be assigned to groups in the same way as anyone else.
-
-If your change was functional, ie. changing functionality or flows etc. eg. adding a new signup step, you would _also_ need to add an override to the same file:
-
-```js
-"overrideABTests": [
+ 
+ "overrideABTests": [
   [ "freeTrialButtonWording_201502160", "startFreeTrial" ]
-]
+ ]
 ```
 
-This makes sure that all e2e test users are in the specified group so that behaviour remains the same and consistent across all e2e test runs. Ideally you should aim to put the e2e tests in the most common (>50%) group, or in the default (existing) behaviour.
+Adding the test to `knownABTestKeys` lets our e2e tests know this A/B test exists, but doesn't set or override any of the behaviour, so e2e test users will be assigned to groups in the same way as anyone else.
+
+Adding the test to `overrideABTests` ensures that all e2e test users are in the specified group so that behaviour remains the same and consistent across all e2e test runs. This is important for functional changes but also visual changes (for visual regression tests). Ideally you should aim to put the e2e tests in the most common (>50%) group, or in the default (existing) behaviour.
 
 *Note:* You should add this change to the e2e tests _before_ merging your wp-calypso change - it doesn't matter if the A/B test doesn't exist in wp-calypso yet when merging the e2e test change.
 
