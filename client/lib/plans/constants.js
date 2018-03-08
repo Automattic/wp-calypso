@@ -962,7 +962,12 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: {
 		getSlug: () => FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Video Hosting' ),
+		getTitle: () =>
+			i18n.translate( '{{strong}}Unlimited{{/strong}} Video Hosting', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
 				'Easy video uploads, and a fast, unbranded, customizable video player, ' +
