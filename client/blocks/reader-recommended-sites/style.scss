@@ -79,10 +79,6 @@
 			padding: 0 0 20px;
 		}
 
-		.reader-subscription-list-item__avatar {
-			min-width: 0;
-		}
-
 		.follow-button .follow-button__label {
 
 			@include breakpoint( "<960px" ) {
