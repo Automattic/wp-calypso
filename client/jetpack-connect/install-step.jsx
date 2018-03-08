@@ -83,14 +83,16 @@ class JetpackInstallStep extends Component {
 				text: translate(
 					'Click the “Install Jetpack” button below. You will be redirected to the ' +
 						'Jetpack plugin page on your site’s wp-admin dashboard to install Jetpack. ' +
-						'Click the blue install button.'
+						'Click the blue “Install Now” button.'
 				),
 				action: this.renderAlreadyHaveJetpackButton(),
 				example: <JetpackExampleInstall url={ currentUrl } onClick={ onClick } />,
 			},
 			activateJetpackAfterInstall: {
 				title: translate( '2. Activate Jetpack' ),
-				text: translate( "Then you'll click the blue “Activate Plugin” link to activate Jetpack." ),
+				text: translate(
+					"Then you'll click the blue “Activate Plugin” button to activate Jetpack."
+				),
 				action: null,
 				example: (
 					<JetpackExampleActivate url={ currentUrl } isInstall={ true } onClick={ onClick } />
@@ -106,7 +108,7 @@ class JetpackInstallStep extends Component {
 				title: translate( '1. Activate Jetpack' ),
 				text: translate(
 					'You will be redirected to the Jetpack plugin page on your site’s wp-admin ' +
-						'dashboard to activate Jetpack. Click the blue “Activate Plugin” link. '
+						'dashboard to activate Jetpack. Click the blue “Activate Plugin” button. '
 				),
 				action: this.renderNotJetpackButton(),
 				example: (
