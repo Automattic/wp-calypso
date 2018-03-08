@@ -76,9 +76,7 @@ class VerificationCodeForm extends Component {
 
 		this.props.formUpdate();
 
-		this.setState( {
-			[ name ]: value.trim(),
-		} );
+		this.setState( { [ name ]: value } );
 	};
 
 	onSubmitForm = event => {
@@ -156,7 +154,7 @@ class VerificationCodeForm extends Component {
 								'is-error': requestError && requestError.field === 'twoStepCode',
 							} ) }
 							name="twoStepCode"
-							pattern="[0-9]*"
+							pattern="[0-9 ]*"
 							ref={ this.saveRef }
 							disabled={ this.state.isDisabled }
 							type="tel"
