@@ -32,7 +32,7 @@ export const slugify = tag =>
 
 export function requestTags( tag ) {
 	const path = tag ? `/read/tags/${ slugify( tag ) }` : '/read/tags';
-	const reducerAction = { type: READER_TAGS, resetFollowingData: ! tag };
+	const reducerAction = { type: READER_TAGS, resetFollowingData: ! tag, meta: { tag } };
 	return http( { path, method: 'GET', apiVersion: '1.2', fromApi }, reducerAction );
 }
 

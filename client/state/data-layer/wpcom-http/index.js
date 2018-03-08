@@ -72,9 +72,17 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 				}
 
 				if ( nextError ) {
-					failures.forEach( handler => {
-						dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) );
-					} );
+					if ( rawAction.options.fromApi ) {
+						failures.forEach( handler => {
+							dispatch(
+								extendAction( handler, { payload: data, meta: { headers }, error: true } )
+							);
+						} );
+					} else {
+						failures.forEach( handler => {
+							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) );
+						} );
+					}
 				} else {
 					// eslint-disable-next-line
 					if ( rawAction.options.fromApi ) {
@@ -82,7 +90,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 						try {
 							successes.forEach( handler => {
 								dispatch(
-									extendAction( handler, { payload: fromApi( data ), meta: { headers } } )
+									extendAction( handler, { payload: fromApi( data, headers ), meta: { headers } } )
 								);
 							} );
 						} catch ( err ) {

@@ -17,8 +17,9 @@ import { decodeEntities } from 'lib/formatting';
  *    ...
  *  ]
  */
-export function fromApi( apiResponse ) {
-	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) ) {
+export function fromApi( apiResponse, headers ) {
+	console.error( headers );
+	if ( ! apiResponse || ( ! apiResponse.tag && ! apiResponse.tags ) || headers.status === 404 ) {
 		throw new Error( `invalid tags response: ${ JSON.stringify( apiResponse ) }` );
 	}
 
