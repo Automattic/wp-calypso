@@ -103,11 +103,11 @@ button {
 		margin-top: -2px;
 		width: 18px;
 		height: 18px;
-	}
-}
 
-.button-text {
-	margin-left: 4px;
+		&:not(:last-child) {
+			margin-right: 4px;
+		}
+	}
 }
 
 // Primary buttons
