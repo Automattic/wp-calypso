@@ -19,7 +19,7 @@ jobs:
             mkdir -p $CIRCLE_TEST_REPORTS
 
       - restore_cache:
-          key: v1-{{ .Branch }}-{{ checksum "package.json" }}
+          key: v1-{{ .Branch }}-{{ checksum "npm-shrinkwrap.json" }}
 
       - run: npm install
 
