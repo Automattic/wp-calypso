@@ -40,8 +40,14 @@
 		color: $blue-medium;
 		padding: 9px 16px;
 
-		.gridicon:hover {
-			fill: $white;
+		.gridicon {
+			top: 3px;
+			margin-right: 8px;
+			padding-right: 0;
+
+			&:hover {
+				fill: $white;
+			}
 		}
 
 		&:hover,
@@ -58,24 +64,20 @@
 				color: $white;
 			}
 		}
-	}
 
-	.follow-button__label,
-	.conversation-follow-button__label {
-		display: inline-block;
-		margin-left: 26px;
+		.follow-button__label,
+		.conversation-follow-button__label {
+
+			@include breakpoint( "<660px" ) {
+				display: inline-block;
+			}
+		}
 	}
 }
 
 .popover__menu-item.reader-post-options-menu__blog-sticker-menu-item {
 	padding: 6px 16px 9px;
 	width: 100%;
-
-	.gridicon {
-		position: relative;
-			left: -1px;
-			top: 1px;
-	}
 
 	&:last-child {
 		margin-bottom: 0;
