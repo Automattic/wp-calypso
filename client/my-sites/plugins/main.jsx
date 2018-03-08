@@ -64,14 +64,9 @@ const PluginsMain = createReactClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		const {
-			hasJetpackSites: hasJpSites,
-			isRequestingSites: isRequesting,
-			selectedSiteIsJetpack,
-			selectedSiteSlug,
-		} = nextProps;
+		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
 
-		if ( ! isRequesting ) {
+		if ( this.props.isRequestingSites && ! nextProps.isRequestingSites ) {
 			// Selected site is not a Jetpack site
 			if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
 				page.redirect( `/plugins/${ selectedSiteSlug }` );
