@@ -30,7 +30,7 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginsBrowser from './plugins-browser';
 import NonSupportedJetpackVersionNotice from './not-supported-jetpack-version';
 import NoPermissionsError from './no-permissions-error';
-import { canCurrentUser, canCurrentUserManagePlugins } from 'state/selectors';
+import { canCurrentUser, canCurrentUserManagePlugins, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 import {
 	canJetpackSiteManage,
 	canJetpackSiteUpdateFiles,
@@ -38,7 +38,6 @@ import {
 	isRequestingSites,
 } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 import HeaderButton from 'components/header-button';
 import { isEnabled } from 'config';
 
