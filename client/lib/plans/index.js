@@ -23,6 +23,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	TYPE_BUSINESS,
+	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 } from './constants';
@@ -32,12 +33,16 @@ import {
  */
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
-export function isFreePlan( plan ) {
-	return plan === PLAN_FREE || plan === PLAN_JETPACK_FREE;
+export function getPlans() {
+	return PLANS_LIST;
 }
 
-export function getPlan( plan ) {
-	return PLANS_LIST[ plan ];
+export function getPlan( planKey ) {
+	const plan = PLANS_LIST[ planKey ];
+	if ( ! plan ) {
+		throw new Error( `There is no such plan as "${ planKey }"` );
+	}
+	return plan;
 }
 
 export function getValidFeatureKeys() {
@@ -199,74 +204,32 @@ export function getYearlyPlanByMonthly( planSlug ) {
 export function planLevelsMatch( planSlugA, planSlugB ) {
 	const planA = getPlan( planSlugA );
 	const planB = getPlan( planSlugB );
-	return (
-		planA && planB && planA.getType() === planB.getType() && planA.getGroup() === planB.getGroup()
-	);
+	return planA && planB && planA.type === planB.type && planA.group === planB.group;
 }
 
 export function isBusinessPlan( planSlug ) {
-	return planMatches( planSlug, { type: TYPE_BUSINESS } );
+	return getPlan( planSlug ).type === TYPE_BUSINESS;
 }
 
 export function isPremiumPlan( planSlug ) {
-	return planMatches( planSlug, { type: TYPE_PREMIUM } );
+	return getPlan( planSlug ).type === TYPE_PREMIUM;
 }
 
 export function isPersonalPlan( planSlug ) {
-	return planMatches( planSlug, { type: TYPE_PERSONAL } );
+	return getPlan( planSlug ).type === TYPE_PERSONAL;
 }
 
-export function planMatches( planSlug, query = {} ) {
-	return __internal__planMatches( getPlan( planSlug ), query );
+export function isFreePlan( planSlug ) {
+	return getPlan( planSlug ).type === TYPE_FREE;
 }
 
 export function findSimilarPlan( similarToPlanSlug, query = {} ) {
 	const plan = getPlan( similarToPlanSlug );
+	const type = query.type || plan.type;
+	const group = query.group || plan.group;
+	const term = query.term || plan.term;
 
-	return findPlan( {
-		type: plan.getType(),
-		group: plan.getGroup(),
-		term: plan.getTerm(),
-
-		...query,
-	} );
-}
-
-export function findPlan( query ) {
-	for ( const planSlug in PLANS_LIST ) {
-		const plan = PLANS_LIST[ planSlug ];
-		if ( __internal__planMatches( plan, query ) ) {
-			return planSlug;
-		}
-	}
-
-	return '';
-}
-
-export function __internal__planMatches( plan, query ) {
-	const getValue = key => {
-		switch ( key ) {
-			case 'group':
-				return plan.getGroup();
-			case 'term':
-				return plan.getTerm();
-			case 'type':
-				return plan.getType();
-			default:
-				throw new Error( `Unrecognized query key "${ key }"` );
-		}
-	};
-
-	for ( const key in query ) {
-		const expectedValue = Array.isArray( query[ key ] ) ? query[ key ] : [ query[ key ] ];
-		const actualValue = getValue( key );
-		const matches = expectedValue.indexOf( actualValue ) !== -1;
-		if ( ! matches ) {
-			return false;
-		}
-	}
-
-	return true;
+	return getPlans().filter( p => p.type === type && p.group === group && p.term === term )[ 0 ];
 }
 
 export const isPlanFeaturesEnabled = () => {
