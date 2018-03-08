@@ -16,6 +16,7 @@ import AddressView from 'woocommerce/components/address-view';
 import Button from 'components/button';
 import Card from 'components/card';
 import CustomerAddressDialog from './dialog';
+import CustomerSearch from 'woocommerce/components/customer-search';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
@@ -53,6 +54,10 @@ class OrderCustomerInfo extends Component {
 		return () => {
 			this.setState( { showDialog: type } );
 		};
+	};
+
+	populateCustomer = () => {
+		// Set billing, shipping, and customer_id on the order
 	};
 
 	renderDialogs = () => {
@@ -147,6 +152,8 @@ class OrderCustomerInfo extends Component {
 				<SectionHeader label={ translate( 'Customer Information' ) } />
 				<Card>
 					<div className="order-customer__container">
+						<CustomerSearch onSelect={ this.populateCustomer } />
+
 						<div className="order-customer__billing">
 							<h3 className="order-customer__billing-details">
 								{ translate( 'Billing Details' ) }
