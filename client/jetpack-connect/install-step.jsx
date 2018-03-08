@@ -81,7 +81,7 @@ class JetpackInstallStep extends Component {
 				title: translate( '1. Install Jetpack' ),
 				text: translate(
 					"Click the green “Install Jetpack” button below. You'll be redirected to the " +
-						"Jetpack plugin page on your site’s wp-admin dashboard. where you'll " +
+						"Jetpack plugin page on your site’s wp-admin dashboard, where you'll " +
 						'then click the blue “Install Now” button.'
 				),
 				action: this.renderAlreadyHaveJetpackButton(),
