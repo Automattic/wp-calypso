@@ -24,7 +24,7 @@ jobs:
       - run: npm install
 
       - save_cache:
-          key: v1-{{ .Branch }}-{{ checksum "package.json" }}
+          key: v1-{{ .Branch }}-{{ checksum "npm-shrinkwrap.json" }}
           paths:
             - "node_modules"
 
