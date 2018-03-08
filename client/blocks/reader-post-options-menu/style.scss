@@ -5,10 +5,18 @@
 		color: $gray;
 
 		&:hover,
-		&:focus,
 		&:active {
 			color: $blue-medium;
 		}
+
+		&:focus {
+			box-shadow: none;
+			outline: thin dotted;
+		}
+	}
+
+	.ellipsis-menu__toggle {
+		padding: 0;
 	}
 
 	&.is-menu-visible .button.is-borderless {
@@ -22,6 +30,7 @@
 }
 
 .reader-post-options-menu__popover {
+
 	.popover__menu {
 		min-width: 212px;
 	}
@@ -31,14 +40,8 @@
 		color: $blue-medium;
 		padding: 9px 16px;
 
-		.gridicon {
-			position: absolute;
-				left: 17px;
-				top: 12px;
-
-			&:hover {
-				fill: $white;
-			}
+		.gridicon:hover {
+			fill: $white;
 		}
 
 		&:hover,
