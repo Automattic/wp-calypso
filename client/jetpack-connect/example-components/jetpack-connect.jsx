@@ -45,17 +45,11 @@ const JetpackConnectExampleConnect = ( { isLegacy, url, translate, onClick } ) =
 					<div className="example-components__content-wp-admin-connect-banner">
 						{ ! isLegacy ? (
 							<div className="example-components__content-wp-admin-plugin-name" aria-hidden="true">
-								{ translate( 'Your Jetpack is almost ready!', {
-									context:
-										'Jetpack Connect activate plugin instructions, connection banner headline',
-								} ) }
+								{ translate( 'Connect Jetpack to WordPress.com' ) }
 							</div>
 						) : null }
 						<div className="example-components__content-wp-admin-connect-button" aria-hidden="true">
-							{ translate( 'Connect to WordPress.com', {
-								context:
-									'Jetpack Connect post-plugin-activation step, Connect to WordPress.com button',
-							} ) }
+							{ translate( 'Set up Jetpack' ) }
 						</div>
 					</div>
 				</div>

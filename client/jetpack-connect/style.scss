@@ -225,7 +225,7 @@
 .example-components__install-plugin-header {
 	width: 100%;
 	padding-bottom: 12%;
-	background-color: #8cc258; //Jetpack Green
+	background-color: $green-jetpack;
 }
 
 .example-components__install-plugin-body {
@@ -293,7 +293,6 @@
 		margin: 10px;
 		padding: 10px 10px 12px 10px;
 		background-color: $white;
-		border-left: 4px solid #46b450;
 	}
 
 	.example-components__content-wp-admin-connect-button {
@@ -302,9 +301,10 @@
 		padding: 7px 14px;
 		line-height: 1;
 		color: $white;
-		background-color: #008ec2; // wp-admin button blue
-		border: 1px solid #006799;
 		border-radius: 3px;
+		background-color: #00be28;
+		border: 2px #00a523 solid;
+		border-width: 1px 1px 2px;
 	}
 }
 
@@ -351,8 +351,13 @@
 
 .example-components__content-wp-admin-activate-link {
 	font-size: 12px;
-	color: #0073aa;
-	text-decoration: underline;
+	display: inline-block;
+	padding: 7px 14px;
+	line-height: 1;
+	color: $white;
+	background-color: #008ec2; // wp-admin button blue
+	border: 1px solid #006799;
+	border-radius: 3px;
 }
 
 .example-components__site-url-input-container
