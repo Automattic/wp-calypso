@@ -21,8 +21,9 @@
 	}
 }
 
-.product-purchase-features-list__item .purchase-detail {
+.product-purchase-features-list__item .purchase-detail, .product-purchase-features-list__item-hc {
 	background-color: $white;
 	border-radius: 0;
 	margin: 0;
+	padding: 32px;
 }

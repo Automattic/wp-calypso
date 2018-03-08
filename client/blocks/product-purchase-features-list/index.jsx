@@ -4,7 +4,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { partial } from 'lodash';
 
@@ -16,6 +16,11 @@ import {
 	PLANS_LIST,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_FREE,
+	PLAN_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_PREMIUM,
 	TYPE_PERSONAL,
@@ -31,6 +36,8 @@ import MonetizeSite from './monetize-site';
 import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
+import HappinessSupportCard from './happiness-support-card';
+import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
@@ -38,6 +45,7 @@ import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackSearch from './jetpack-search';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackWordPressCom from './jetpack-wordpress-com';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
@@ -55,121 +63,197 @@ export class ProductPurchaseFeaturesList extends Component {
 	};
 
 	getBusinessFeatures() {
-		const { selectedSite, plan, planHasDomainCredit } = this.props;
-		return (
-			<Fragment>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<BusinessOnboarding
-					onClick={ this.props.recordBusinessOnboardingClick }
-					link={ `/me/concierge/${ selectedSite.slug }/book` }
-				/>
-				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
-				) }
-				<JetpackSearch selectedSite={ selectedSite } />
-				<GoogleVouchers selectedSite={ selectedSite } />
-				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<AdvertisingRemoved isBusinessPlan />
-				<CustomizeTheme selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				<FindNewTheme selectedSite={ selectedSite } />
-			</Fragment>
-		);
+		const { isAutomatedTransfer, selectedSite, planHasDomainCredit } = this.props;
+		return [
+			<HappinessSupportCard
+				selectedSite={ selectedSite }
+				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
+				showLiveChatButton={
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
+				}
+			/>,
+			<CustomDomain
+				selectedSite={ selectedSite }
+				hasDomainCredit={ planHasDomainCredit }
+				key="customDomainFeature"
+			/>,
+			<BusinessOnboarding
+				key="businessOnboarding"
+				onClick={ this.props.recordBusinessOnboardingClick }
+				link={ `/me/concierge/${ selectedSite.slug }/book` }
+			/>,
+			isEnabled( 'manage/plugins/upload' ) ? (
+				<UploadPlugins selectedSite={ selectedSite } key="uploadPluginsFeature" />
+			) : null,
+			isWordadsInstantActivationEligible( selectedSite ) ? (
+				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
+			) : null,
+			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
+			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
+			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
+			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
+			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
+			<VideoAudioPosts
+				selectedSite={ selectedSite }
+				key="videoAudioPostsFeature"
+				plan={ PLAN_BUSINESS }
+			/>,
+			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
+		];
 	}
 
 	getPremiumFeatures() {
-		const { selectedSite, plan, planHasDomainCredit } = this.props;
+		const { isAutomatedTransfer, selectedSite, planHasDomainCredit } = this.props;
 
-		return (
-			<Fragment>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<AdvertisingRemoved isBusinessPlan={ false } />
-				<GoogleVouchers selectedSite={ selectedSite } />
-				<CustomizeTheme selectedSite={ selectedSite } />
-				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
-				) }
-			</Fragment>
-		);
+		return [
+			<HappinessSupportCard
+				selectedSite={ selectedSite }
+				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
+				showLiveChatButton={
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
+				}
+			/>,
+			<CustomDomain
+				selectedSite={ selectedSite }
+				hasDomainCredit={ planHasDomainCredit }
+				key="customDomainFeature"
+			/>,
+			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
+			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
+			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
+			<VideoAudioPosts
+				selectedSite={ selectedSite }
+				key="videoAudioPostsFeature"
+				plan={ PLAN_PREMIUM }
+			/>,
+			isWordadsInstantActivationEligible( selectedSite ) ? (
+				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
+			) : null,
+		];
 	}
 
 	getPersonalFeatures() {
-		const { selectedSite, planHasDomainCredit } = this.props;
+		const { isAutomatedTransfer, selectedSite, planHasDomainCredit } = this.props;
 
-		return (
-			<Fragment>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<AdvertisingRemoved isBusinessPlan={ false } />
-			</Fragment>
-		);
+		return [
+			<HappinessSupportCard
+				selectedSite={ selectedSite }
+				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
+				showLiveChatButton={
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
+				}
+			/>,
+			<CustomDomain
+				selectedSite={ selectedSite }
+				hasDomainCredit={ planHasDomainCredit }
+				key="customDomainFeature"
+			/>,
+			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
+		];
 	}
 
 	getJetpackFreeFeatures() {
-		const { selectedSite } = this.props;
+		const { isAutomatedTransfer, selectedSite } = this.props;
 
-		return (
-			<Fragment>
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<JetpackReturnToDashboard
-					onClick={ this.props.recordReturnToDashboardClick }
-					selectedSite={ selectedSite }
-				/>
-			</Fragment>
-		);
+		return [
+			<HappinessSupportCard
+				selectedSite={ selectedSite }
+				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
+				showLiveChatButton={
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
+				}
+			/>,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<JetpackReturnToDashboard
+				onClick={ this.props.recordReturnToDashboardClick }
+				selectedSite={ selectedSite }
+				key="jetpackReturnToDashboard"
+			/>,
+		];
 	}
 
 	getJetpackPremiumFeatures() {
-		const { selectedSite } = this.props;
+		const { isAutomatedTransfer, selectedSite } = this.props;
 
-		return (
-			<Fragment>
-				<MonetizeSite selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<JetpackBackupSecurity />
-				<JetpackAntiSpam />
-				<JetpackPublicize />
-				<JetpackVideo />
-				<JetpackReturnToDashboard selectedSite={ selectedSite } />
-			</Fragment>
-		);
+		return [
+			<HappinessSupportCard
+				selectedSite={ selectedSite }
+				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
+				showLiveChatButton={
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
+				}
+			/>,
+			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackAntiSpam key="jetpackAntiSpam" />,
+			<JetpackPublicize key="jetpackPublicize" />,
+			<JetpackVideo key="jetpackVideo" />,
+			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
+		];
 	}
 
 	getJetpackPersonalFeatures() {
-		const { selectedSite } = this.props;
+		const { isAutomatedTransfer, selectedSite } = this.props;
 
-		return (
-			<Fragment>
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<JetpackBackupSecurity />
-				<JetpackAntiSpam />
-				<JetpackReturnToDashboard selectedSite={ selectedSite } />
-			</Fragment>
-		);
+		return [
+			<HappinessSupportCard
+				selectedSite={ selectedSite }
+				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
+				showLiveChatButton={
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
+				}
+			/>,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackAntiSpam key="jetpackAntiSpam" />,
+			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
+		];
 	}
 
 	getJetpackBusinessFeatures() {
-		const { selectedSite } = this.props;
+		const { isAutomatedTransfer, liveChatAvailable, selectedSite } = this.props;
 
-		return (
-			<Fragment>
-				<BusinessOnboarding
-					onClick={ this.props.recordBusinessOnboardingClick }
-					link="https://calendly.com/jetpack/concierge"
-				/>
-				<JetpackSearch selectedSite={ selectedSite } />
-				<MonetizeSite selectedSite={ selectedSite } />
-				<GoogleAnalyticsStats selectedSite={ selectedSite } />
-				<JetpackWordPressCom selectedSite={ selectedSite } />
-				<FindNewTheme selectedSite={ selectedSite } />
-				<JetpackVideo />
-				<JetpackPublicize />
-				<JetpackBackupSecurity />
-				<JetpackAntiSpam />
-				<JetpackReturnToDashboard selectedSite={ selectedSite } />
-			</Fragment>
-		);
+		return [
+			<HappinessSupportCard
+				selectedSite={ selectedSite }
+				isFeatureCard={ true }
+				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
+				liveChatAvailable={ liveChatAvailable }
+				showLiveChatButton={
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
+					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
+				}
+			/>,
+			<BusinessOnboarding
+				key="businessOnboarding"
+				onClick={ this.props.recordBusinessOnboardingClick }
+				link="https://calendly.com/jetpack/concierge"
+			/>,
+			<JetpackSearch selectedSite={ selectedSite } key="jetpackSearch" />,
+			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
+			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
+			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
+			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
+			<JetpackVideo key="jetpackVideo" />,
+			<JetpackPublicize key="jetpackPublicize" />,
+			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
+			<JetpackAntiSpam key="jetpackAntiSpam" />,
+			<JetpackReturnToDashboard selectedSite={ selectedSite } key="jetpackReturnToDashboard" />,
+		];
 	}
 
 	getFeatures() {
@@ -208,8 +292,11 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state ),
 			selectedSiteId = getSelectedSiteId( state );
+		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 		return {
+			isAutomatedTransfer,
+			liveChatAvailable: isHappychatAvailable( state ),
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 		};
