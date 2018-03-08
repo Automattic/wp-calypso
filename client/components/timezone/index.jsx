@@ -16,9 +16,6 @@ import { localize } from 'i18n-calypso';
 import QueryTimezones from 'components/data/query-timezones';
 import { getRawOffsets, getTimezones, getTimezonesLabel } from 'state/selectors';
 import SelectDropdown from 'components/select-dropdown';
-import DropdownItem from 'components/select-dropdown/item';
-import DropdownLabel from 'components/select-dropdown/label';
-import DropdownSeparator from 'components/select-dropdown/separator';
 
 class Timezone extends Component {
 	onSelect = option => {
@@ -34,7 +31,7 @@ class Timezone extends Component {
 				label: continent,
 				isLabel: true,
 			} ].concat(
-				map( countries, ( timezone, index ) => {
+				map( countries, timezone => {
 					const [ value, label ] = timezone;
 					return { value, label };
 				} )
@@ -43,14 +40,14 @@ class Timezone extends Component {
 	}
 
 	getManualUtcOffsets() {
-		const { rawOffsets, selectedZone, translate } = this.props;
+		const { rawOffsets, translate } = this.props;
 
 		return [ {
 			value: 'label-manual',
 			label: translate( 'Manual Offsets' ),
 			isLabel: true,
 		} ].concat(
-			map( this.props.rawOffsets, ( label, value ) => ( { label, value } ) )
+			map( rawOffsets, ( label, value ) => ( { label, value } ) )
 		);
 	}
 
@@ -61,7 +58,7 @@ class Timezone extends Component {
 			{ value: 'label-UTC', label: 'UTC', isLabel: true },
 			{ value: 'UTC', label: 'UTC' },
 		] );
-		if ( this.props.includeManualOffsets ) {
+		if ( includeManualOffsets ) {
 			options = options.concat( this.getManualUtcOffsets() );
 		}
 
@@ -69,7 +66,7 @@ class Timezone extends Component {
 			<React.Fragment>
 				<QueryTimezones />
 				<SelectDropdown
-					className='timezone-selector'
+					className="timezone__selector"
 					onSelect={ this.onSelect }
 					options={ options }
 					value={ selectedZone || '' }
