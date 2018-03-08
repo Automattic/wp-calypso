@@ -61,16 +61,16 @@ function loadSectionCSS( context, next ) {
 
 export function setUpLocale( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
-
+	let localeVariant;
 	if ( context.params.lang ) {
-		// what if this is a variant?
 		context.lang = context.params.lang;
 	} else if ( currentUser ) {
 		context.lang = currentUser.localeSlug;
+		localeVariant = currentUser.localeVariant;
 	}
 
 	context.store.dispatch(
-		setLocale( context.lang || config( 'i18n_default_locale_slug' ) ),
+		setLocale( context.lang || config( 'i18n_default_locale_slug' ), localeVariant ),
 		currentUser.localeVariant
 	);
 
