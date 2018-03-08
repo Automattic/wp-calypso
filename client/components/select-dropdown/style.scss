@@ -72,9 +72,10 @@ $compact-header-height: 35;
 	cursor: pointer;
 
 	.gridicons-chevron-down {
-		fill: $gray;
+		fill: $gray-darken-20;
 		margin: 0;
 		flex-shrink: 0;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	.is-compact & {
@@ -95,6 +96,10 @@ $compact-header-height: 35;
 		border-radius: 4px 4px 0 0;
 		box-shadow: none;
 		background-color: $gray-light;
+
+		.gridicons-chevron-down {
+			transform: rotate( 180deg );
+		}
 	}
 
 	.accessible-focus .select-dropdown:not(.is-open) .select-dropdown__container:focus & {
