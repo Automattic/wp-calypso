@@ -16,7 +16,7 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/word-ads.svg" /> }
+				icon={ <img alt="" src="/calypso/images/upgrades/word-ads.svg" /> }
 				title={ translate( 'Easily monetize your site' ) }
 				description={ translate(
 					'Take advantage of WordAds instant activation on your upgraded site. ' +

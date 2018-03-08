@@ -16,7 +16,7 @@ export default localize( ( { isBusinessPlan, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/advertising-removed.svg" /> }
+				icon={ <img alt="" src="/calypso/images/upgrades/advertising-removed.svg" /> }
 				title={ translate( 'Advertising removed' ) }
 				description={
 					isBusinessPlan
