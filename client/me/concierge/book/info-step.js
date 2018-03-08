@@ -26,7 +26,7 @@ import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions'; /** @format */
-import { isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale, getLanguage } from 'lib/i18n-utils';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -75,8 +75,11 @@ class InfoStep extends Component {
 			signupForm: { firstname, lastname, message, timezone },
 			translate,
 		} = this.props;
+		const language = getLanguage( currentUserLocale ).name;
 		const notice = ! isDefaultLocale( currentUserLocale )
-			? translate( 'All Concierge Sessions are in English (Spanish is not available).' )
+			? translate( 'All Concierge Sessions are in English (%(language)s is not available)', {
+					args: { language },
+				} )
 			: null;
 
 		return (
