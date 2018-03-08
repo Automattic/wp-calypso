@@ -20,7 +20,7 @@ class SelectDropdownExample extends React.PureComponent {
 
 	static defaultProps = {
 		options: [
-			{ value: 'status-options', label: 'Statuses', isLabel: true },
+			{ value: 'label-statuses', label: 'Statuses', isLabel: true },
 			{ value: 'published', label: 'Published', count: 12 },
 			{ value: 'scheduled', label: 'Scheduled' },
 			{ value: 'drafts', label: 'Drafts' },

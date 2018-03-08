@@ -139,7 +139,7 @@ A good example for this case is a form element. You don't want to have to write 
 ```js
 import SelectDropdown from 'components/select-dropdown';
 var options = [
-	{ label: 'Post status', isLabel: true },
+	{ value: 'label-statuses', label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
@@ -203,7 +203,7 @@ Adding `isLabel` key set to `true` into the item object will create a `DropdownL
 
 ```js
 var options = [
-	{ label: 'Post status', isLabel: true },
+	{ value: 'label-statuses', label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
