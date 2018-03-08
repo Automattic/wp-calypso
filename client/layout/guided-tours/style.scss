@@ -121,7 +121,7 @@
 	.button:nth-child(1) {
 		margin-right: 4%;
 	}
-	.guided-tours__quit-button {
+	.guided-tours__quit-button:not(.is-primary) {
 		color: darken( $white, 20% );
 		background: none;
 		border: 1px rgba( $white, 0.2 ) solid;
@@ -146,7 +146,7 @@ a.config-elements__text-link,
 	.button {
 		width: 48%;
 	}
-	.guided-tours__quit-button {
+	.guided-tours__quit-button:not(.is-primary) {
 		color: darken( $white, 20% );
 		background: none;
 		border: 1px rgba( $white, 0.2 ) solid;
