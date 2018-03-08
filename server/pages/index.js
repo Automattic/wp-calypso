@@ -30,7 +30,6 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
-import { getLanguage } from 'lib/i18n-utils';
 import { getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
 
 const debug = debugFactory( 'calypso:pages' );
