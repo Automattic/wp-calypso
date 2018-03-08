@@ -71,13 +71,33 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 					return null;
 				}
 
-				return !! nextError
-					? failures.forEach( handler =>
-							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
-						)
-					: successes.forEach( handler =>
-							dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) )
-						);
+				if ( nextError ) {
+					failures.forEach( handler => {
+						dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) );
+					} );
+				} else {
+					// eslint-disable-next-line
+					if ( rawAction.options.fromApi ) {
+						const fromApi = rawAction.options.fromApi;
+						try {
+							successes.forEach( handler => {
+								dispatch(
+									extendAction( handler, { payload: fromApi( data ), meta: { headers } } )
+								);
+							} );
+						} catch ( err ) {
+							successes.forEach( handler => {
+								dispatch(
+									extendAction( handler, { payload: data, meta: { headers }, error: true } )
+								);
+							} );
+						}
+					} else {
+						successes.forEach( handler => {
+							dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) );
+						} );
+					}
+				}
 			},
 		] )
 	);

@@ -36,5 +36,6 @@ export function fromApi( apiResponse ) {
 		url: `/tag/${ tag.slug }`,
 		title: decodeEntities( tag.title ),
 		slug: tag.slug.toLowerCase(),
+		isFollowing: !! apiResponse.tags,
 	} ) );
 }
