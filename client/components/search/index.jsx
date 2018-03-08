@@ -361,7 +361,7 @@ class Search extends Component {
 						className={ inputClass }
 						placeholder={ placeholder }
 						role="search"
-						value={ searchValue }
+						defaultValue={ searchValue }
 						ref="searchInput"
 						onInput={
 							this.onChange
