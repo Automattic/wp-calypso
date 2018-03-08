@@ -266,9 +266,11 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 		 * user_login is a special case since the logic for validating and saving a username
 		 * is more complicated.
 		 */
-		if ( get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
+		if (
+			get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
 			'user_login' !== settingName &&
-			'language' !== settingName ) {
+			'language' !== settingName
+		) {
 			canDeleteUnsavedSetting = true;
 		}
 
@@ -278,10 +280,12 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
  		*/
 		if ( 'language' === settingName ) {
 			if (
-				// if the incoming language code is not the root of the current variant
+				// if the incoming language code is same as the saved language code and there's no saved variant (isEmpty)
+				// it means we're dealing with the same locale === setting hasn't changed
+				// if there is a saved variant is not empty we know that the user is changing back to the root language
 				( value === this.settings.language && isEmpty( this.settings.locale_variant ) ) ||
-				// if the incoming language code is not the variant itself
-				( value === this.settings.locale_variant )
+				// if the incoming language code is the variant itself === setting hasn't changed
+				value === this.settings.locale_variant
 			) {
 				canDeleteUnsavedSetting = true;
 			}
