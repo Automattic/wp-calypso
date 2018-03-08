@@ -70,8 +70,7 @@ export function setUpLocale( context, next ) {
 	}
 
 	context.store.dispatch(
-		setLocale( context.lang || config( 'i18n_default_locale_slug' ), localeVariant ),
-		currentUser.localeVariant
+		setLocale( context.lang || config( 'i18n_default_locale_slug' ), localeVariant )
 	);
 
 	loadSectionCSS( context, next );
