@@ -103,6 +103,9 @@ export const MainTour = makeTour(
 					},
 				} ) }
 			</Continue>
+			<ButtonRow>
+				<Quit />
+			</ButtonRow>
 		</Step>
 
 		<Step name="view-site" placement="center" when={ isSelectedSitePreviewable }>
