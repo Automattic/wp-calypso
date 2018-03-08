@@ -61,9 +61,7 @@ describe( 'JetpackConnectMain', () => {
 
 	describe( 'makeSafeRedirectionFunction', () => {
 		test( 'should make a function that can calls the wrapper function', () => {
-			const component = shallow(
-				<JetpackConnectMain { ...REQUIRED_PROPS } translate={ jest.fn() } />
-			);
+			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
 			const innerFunc = jest.fn();
 			const wrapperFunc = component.instance().makeSafeRedirectionFunction( innerFunc );
 			expect( () => wrapperFunc() ).not.toThrow();
@@ -71,9 +69,7 @@ describe( 'JetpackConnectMain', () => {
 
 		test( 'should protect against multiple calls', () => {
 			const innerFunc = jest.fn();
-			const component = shallow(
-				<JetpackConnectMain { ...REQUIRED_PROPS } translate={ jest.fn() } />
-			);
+			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
 			const wrapperFunc = component.instance().makeSafeRedirectionFunction( innerFunc );
 			wrapperFunc();
 			wrapperFunc();
