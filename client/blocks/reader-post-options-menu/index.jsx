@@ -161,8 +161,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		// Should we show the 'block' option?
 		if (
 			post.site_ID &&
-			! post.is_external &&
-			! post.is_jetpack &&
+			( ! post.is_external || post.is_jetpack ) &&
 			! isEditPossible &&
 			! isDiscoverPost
 		) {
