@@ -48,6 +48,10 @@
 	.jetpack-logo__icon {
 		fill: $green-jetpack;
 	}
+
+	@include breakpoint( '<660px' ) {
+		margin-top: 20px;
+	}
 }
 
 .jetpack-connect__main.is-wide {
