@@ -38,6 +38,11 @@ class ReaderPostOptionsMenu extends React.Component {
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
 		showFollow: PropTypes.bool,
+		showVisitPost: PropTypes.bool,
+		showEditPost: PropTypes.bool,
+		showConversationFollow: PropTypes.bool,
+		showReportPost: PropTypes.bool,
+		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
 	};
 
@@ -45,6 +50,11 @@ class ReaderPostOptionsMenu extends React.Component {
 		onBlock: noop,
 		position: 'top left',
 		showFollow: true,
+		showVisitPost: true,
+		showEditPost: true,
+		showConversationFollow: true,
+		showReportPost: true,
+		showReportSite: false,
 	};
 
 	blockSite = () => {
@@ -66,6 +76,21 @@ class ReaderPostOptionsMenu extends React.Component {
 
 		window.open(
 			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ),
+			'_blank'
+		);
+	};
+
+	reportSite = () => {
+		if ( ! this.props.site || ! this.props.site.URL ) {
+			return;
+		}
+
+		stats.recordAction( 'report_site' );
+		stats.recordGaEvent( 'Clicked Report Site', 'post_options' );
+		stats.recordTrackForPost( 'calypso_reader_site_reported', this.props.site );
+
+		window.open(
+			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.site.URL ),
 			'_blank'
 		);
 	};
@@ -128,7 +153,8 @@ class ReaderPostOptionsMenu extends React.Component {
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
-		const showConversationFollowButton = shouldShowConversationFollowButton( post );
+		const showConversationFollowButton =
+			this.props.showConversationFollow && shouldShowConversationFollowButton( post );
 
 		let isBlockPossible = false;
 
@@ -180,17 +206,19 @@ class ReaderPostOptionsMenu extends React.Component {
 						/>
 					) }
 
-					{ post.URL && (
-						<PopoverMenuItem onClick={ this.visitPost } icon="external">
-							{ translate( 'Visit Post' ) }
-						</PopoverMenuItem>
-					) }
+					{ this.props.showVisitPost &&
+						post.URL && (
+							<PopoverMenuItem onClick={ this.visitPost } icon="external">
+								{ translate( 'Visit Post' ) }
+							</PopoverMenuItem>
+						) }
 
-					{ isEditPossible && (
-						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-							{ translate( 'Edit Post' ) }
-						</PopoverMenuItem>
-					) }
+					{ this.props.showEditPost &&
+						isEditPossible && (
+							<PopoverMenuItem onClick={ this.editPost } icon="pencil">
+								{ translate( 'Edit Post' ) }
+							</PopoverMenuItem>
+						) }
 
 					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
 						( isBlockPossible || isDiscoverPost ) && (
@@ -203,11 +231,19 @@ class ReaderPostOptionsMenu extends React.Component {
 						</PopoverMenuItem>
 					) }
 
-					{ ( isBlockPossible || isDiscoverPost ) && (
+					{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
 						<PopoverMenuItem onClick={ this.reportPost }>
 							{ translate( 'Report this Post' ) }
 						</PopoverMenuItem>
 					) }
+
+					{ this.props.showReportSite &&
+						site &&
+						isBlockPossible && (
+							<PopoverMenuItem onClick={ this.reportSite }>
+								{ translate( 'Report this Site' ) }
+							</PopoverMenuItem>
+						) }
 				</EllipsisMenu>
 			</span>
 		);

@@ -4,7 +4,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { get, size, filter, isEmpty } from 'lodash';
+import { get, size, filter, isEmpty, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
@@ -23,6 +23,8 @@ import { recordTrack } from 'reader/stats';
 import { getSiteName } from 'reader/get-helpers';
 import FollowButton from 'reader/follow-button';
 import { getPostsByKeys } from 'state/reader/posts/selectors';
+import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
+import PostBlocked from 'blocks/reader-post-card/blocked';
 
 class ReaderCombinedCard extends React.Component {
 	static propTypes = {
@@ -35,11 +37,13 @@ class ReaderCombinedCard extends React.Component {
 		selectedPostKey: PropTypes.object,
 		showFollowButton: PropTypes.bool,
 		followSource: PropTypes.string,
+		blockedSites: PropTypes.array,
 	};
 
 	static defaultProps = {
 		isDiscover: false,
 		showFollowButton: false,
+		blockedSites: [],
 	};
 
 	componentDidMount() {
@@ -76,6 +80,7 @@ class ReaderCombinedCard extends React.Component {
 			selectedPostKey,
 			onClick,
 			isDiscover,
+			blockedSites,
 			translate,
 		} = this.props;
 		const feedId = postKey.feedId;
@@ -87,6 +92,11 @@ class ReaderCombinedCard extends React.Component {
 		const isSelectedPost = post => keysAreEqual( keyForPost( post ), selectedPostKey );
 		const followUrl = ( feed && feed.URL ) || ( site && site.URL );
 		const mediaCount = filter( posts, post => post && ! isEmpty( post.canonical_media ) ).length;
+
+		// Handle blocked sites here rather than in the post lifecycle, because we don't have the posts there
+		if ( posts[ 0 ] && ! posts[ 0 ].is_external && includes( blockedSites, +posts[ 0 ].site_ID ) ) {
+			return <PostBlocked post={ posts[ 0 ] } />;
+		}
 
 		return (
 			<Card className="reader-combined-card">
@@ -134,6 +144,18 @@ class ReaderCombinedCard extends React.Component {
 						/>
 					) ) }
 				</ul>
+				<div className="reader-combined-card__footer">
+					<ReaderPostOptionsMenu
+						className="reader-combined-card__options-menu ignore-click"
+						showFollow={ true }
+						showConversationFollow={ false }
+						showVisitPost={ false }
+						showEditPost={ false }
+						showReportSite={ true }
+						showReportPost={ false }
+						post={ posts[ 0 ] }
+					/>
+				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }
 				{ siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 			</Card>

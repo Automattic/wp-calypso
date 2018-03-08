@@ -61,6 +61,7 @@ class PostLifecycle extends React.Component {
 					selectedPostKey={ selectedPostKey }
 					followSource={ followSource }
 					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
+					blockedSites={ this.props.blockedSites }
 				/>
 			);
 		} else if ( postKey.isRecommendation ) {
