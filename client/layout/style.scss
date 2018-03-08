@@ -111,6 +111,13 @@
 	}
 }
 
+// Fade-in used by SidebarBanner component
+.layout__primary {
+	&.fade-in {
+		animation: appear 1s ease;
+	}
+}
+
 // Setup the secondary element, which contains the sidebar and
 // the site-selector elements.
 .layout__secondary {

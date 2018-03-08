@@ -5,11 +5,13 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 import { abtest } from 'lib/abtest';
+import closest from 'component-closest';
 
 /**
  * Internal dependencies
@@ -34,9 +36,31 @@ export class SidebarBanner extends Component {
 	};
 
 	onClick = () => {
+		this.maybeFadeIn();
 		const { ctaName, track } = this.props;
 		track( 'calypso_upgrade_nudge_cta_click', { cta_name: ctaName } );
 	};
+
+	maybeFadeIn() {
+		const { href } = this.props;
+		const location = window.location;
+
+		if ( href.indexOf( '/' ) !== 0 ) {
+			return; // Not a relative location.
+		} else if ( href !== location.pathname + location.search + location.hash ) {
+			return; // Location is changing, no fade-in necessary.
+		}
+
+		const thisNode = ReactDom.findDOMNode( this );
+		const layout = thisNode ? closest( thisNode, '.layout' ) : null;
+		const layoutPrimary = layout ? layout.querySelector( '.layout__primary' ) : null;
+
+		if ( layoutPrimary ) {
+			layoutPrimary.classList.remove( 'fade-in' );
+			void layoutPrimary.offsetWidth; // Force reflow.
+			layoutPrimary.classList.add( 'fade-in' );
+		}
+	}
 
 	render() {
 		const { className, ctaName, ctaText, href, icon, text } = this.props;
