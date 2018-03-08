@@ -12,6 +12,7 @@ import { compact, includes } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { isBusinessPlan, isFreePlan, isPersonalPlan, isPremiumPlan } from './index';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -1606,26 +1607,20 @@ export function isBestValue( plan ) {
 	return includes( BEST_VALUE_PLANS, plan );
 }
 
-export function getPlanClass( plan ) {
-	switch ( plan ) {
-		case PLAN_JETPACK_FREE:
-		case PLAN_FREE:
+export function getPlanClass( planKey ) {
+	switch ( true ) {
+		case isFreePlan( planKey ):
 			return 'is-free-plan';
-		case PLAN_PERSONAL:
-		case PLAN_PERSONAL_2_YEARS:
-		case PLAN_JETPACK_PERSONAL:
-		case PLAN_JETPACK_PERSONAL_MONTHLY:
+
+		case isPersonalPlan( planKey ):
 			return 'is-personal-plan';
-		case PLAN_PREMIUM:
-		case PLAN_PREMIUM_2_YEARS:
-		case PLAN_JETPACK_PREMIUM:
-		case PLAN_JETPACK_PREMIUM_MONTHLY:
+
+		case isPremiumPlan( planKey ):
 			return 'is-premium-plan';
-		case PLAN_BUSINESS:
-		case PLAN_BUSINESS_2_YEARS:
-		case PLAN_JETPACK_BUSINESS:
-		case PLAN_JETPACK_BUSINESS_MONTHLY:
+
+		case isBusinessPlan( planKey ):
 			return 'is-business-plan';
+
 		default:
 			return '';
 	}
