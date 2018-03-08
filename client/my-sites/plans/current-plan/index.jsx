@@ -24,8 +24,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import DocumentHead from 'components/data/document-head';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/domains/navigation';
-import ProductPurchaseFeatures from 'blocks/product-purchase-features';
-import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/product-purchase-features-list';
+import ProductPurchaseFeaturesList from 'blocks/product-purchase-features-list';
 import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -125,7 +124,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				<ProductPurchaseFeatures>
+				<div className="current-plan__product-purchase-features">
 					<CurrentPlanHeader
 						selectedSite={ selectedSite }
 						isPlaceholder={ isLoading }
@@ -138,7 +137,7 @@ class CurrentPlan extends Component {
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
 					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
-				</ProductPurchaseFeatures>
+				</div>
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
