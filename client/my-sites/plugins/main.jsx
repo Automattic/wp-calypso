@@ -64,18 +64,25 @@ const PluginsMain = createReactClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		const { hasJetpackSites: hasJpSites, selectedSiteIsJetpack, selectedSiteSlug } = nextProps;
+		const {
+			hasJetpackSites: hasJpSites,
+			isRequestingSites: isRequesting,
+			selectedSiteIsJetpack,
+			selectedSiteSlug,
+		} = nextProps;
 
-		// Selected site is not a Jetpack site
-		if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
-			page.redirect( `/plugins/${ selectedSiteSlug }` );
-			return;
-		}
+		if ( ! isRequesting ) {
+			// Selected site is not a Jetpack site
+			if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
+				page.redirect( `/plugins/${ selectedSiteSlug }` );
+				return;
+			}
 
-		//  None of the other sites are Jetpack sites
-		if ( ! selectedSiteSlug && ! hasJpSites ) {
-			page.redirect( '/plugins' );
-			return;
+			//  None of the other sites are Jetpack sites
+			if ( ! selectedSiteSlug && ! hasJpSites ) {
+				page.redirect( '/plugins' );
+				return;
+			}
 		}
 
 		this.refreshPlugins( nextProps );
