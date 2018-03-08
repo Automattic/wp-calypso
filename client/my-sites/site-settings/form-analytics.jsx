@@ -177,19 +177,18 @@ class GoogleAnalyticsForm extends Component {
 					/>
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">
-						{ siteIsJetpack &&
-							! showUpgradeNudge && (
-								<fieldset>
-									<JetpackModuleToggle
-										siteId={ siteId }
-										moduleSlug="google-analytics"
-										label={ translate(
-											'Track your WordPress site statistics with Google Analytics.'
-										) }
-										disabled={ isRequestingSettings || isSavingSettings }
-									/>
-								</fieldset>
-							) }
+						{ siteIsJetpack && (
+							<fieldset>
+								<JetpackModuleToggle
+									siteId={ siteId }
+									moduleSlug="google-analytics"
+									label={ translate(
+										'Track your WordPress site statistics with Google Analytics.'
+									) }
+									disabled={ isRequestingSettings || isSavingSettings }
+								/>
+							</fieldset>
+						) }
 
 						<fieldset>
 							<FormLabel htmlFor="wgaCode">
