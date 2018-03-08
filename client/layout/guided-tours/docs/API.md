@@ -11,7 +11,7 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 * `name`: (string) Unique name of tour in camelCase.
 * `version` (string): Version identifier. We use date string like "20161224".
 * `path` (string or array, optional): Use this prop to limit tour only to some path prefix (or more prefixes if array). Example: `path={ [ '/stats', '/settings' ] }`
-* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start. Can be overridden by adding a `tour` query argument to the URL like so: `?tour=tourName`, in which case the tour will be triggered even if `when` would evaluate to `false`. This is useful for sending along a tour via email or chat. On the other hand, the framework will try to not trigger a tour multiple times (see `toursSeen` in [ARCHITECTURE.md](./ARCHITECTURE.md)). *Note:* you can reset the tours history by adding `?tour=reset` to the URL. 
+* `when` (function, optional): This is a Redux selector function. Use this to define conditions for the tour to start. Can be overridden by adding a `tour` query argument to the URL like so: `?tour=tourName`, in which case the tour will be triggered even if `when` would evaluate to `false`. This is useful for sending along a tour via email or chat. On the other hand, the framework will try to not trigger a tour multiple times (see `toursSeen` in [ARCHITECTURE.md](./ARCHITECTURE.md)). *Note:* you can reset the tours history by adding `?tour=reset` to the URL.
 * `children` (nodes): only supported type is `<Step>`
 
 ### Example
@@ -41,7 +41,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 * `wait`: (function, optional) If defined, the step will be waiting until `wait` function has done. In case of returning a `Promise`, the step starts when resolved.
 * `when`: (function, optional) This is a Redux selector that can prevent a step from showing when it evaluates to false. When using `when` you should also set the `next` prop to tell Guided Tours the name of the step it should skip to. If you omit this prop, step will be rendered as expected. Example usage would be to show a certain step only for non-mobile environments: `when={ not( isMobile ) }`
 * `next`: (string, optional) Define this to tell Guided Tours the name of the step it should skip to when `when` evaluates to false.
-* `scrollContainer`: (string, optional) This is a CSS selector for the container that the framework should attempt to scroll in case the target isn't visible. E.g. if the target is a menu item that could be invisible because of a scrolled sidebar, we'd want the framework to scroll the sidebar until the target is visible. The CSS selector to pass would then be `.sidebar__region`. Note: there were some differences for the sidebar between desktop and tablet that don't seem to be a problem anymore, but in any case have been [documented in  this issue](https://github.com/Automattic/wp-calypso/issues/7208). 
+* `scrollContainer`: (string, optional) This is a CSS selector for the container that the framework should attempt to scroll in case the target isn't visible. E.g. if the target is a menu item that could be invisible because of a scrolled sidebar, we'd want the framework to scroll the sidebar until the target is visible. The CSS selector to pass would then be `.sidebar__region`. Note: there were some differences for the sidebar between desktop and tablet that don't seem to be a problem anymore, but in any case have been [documented in  this issue](https://github.com/Automattic/wp-calypso/issues/7208).
 * `children`: (node) Contents of the step. Usually a paragraph of instructions and some controls for the tour. See below for available options. Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
 
 ### Example
@@ -148,8 +148,7 @@ Quit is a React component that shows a button that allows users to quit current 
 
 ### Props
 
-* `primary` (bool, optional) If true, button will be rendered as primary. Use only if Quit is the only available action in that step.
-* `subtle` (bool, optional) If true, button will be rendered the same color as the step background. For use when we need that style but only have a single button to display.
+* `primary` (bool, optional) If true, button will be rendered as primary.
 
 ### Label
 

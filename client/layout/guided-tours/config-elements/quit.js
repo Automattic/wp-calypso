@@ -35,10 +35,10 @@ export default class Quit extends Component {
 	};
 
 	render() {
-		const { children, primary, subtle } = this.props;
-		const classes = subtle ? 'guided-tours__subtle-button' : '';
+		const { children, primary } = this.props;
 		return (
-			<Button className={ classes } onClick={ this.onClick } primary={ primary }>
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+			<Button className="guided-tours__quit-button" onClick={ this.onClick } primary={ primary }>
 				{ children || translate( 'Quit' ) }
 			</Button>
 		);

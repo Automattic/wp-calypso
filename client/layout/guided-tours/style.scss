@@ -121,10 +121,10 @@
 	.button:nth-child(1) {
 		margin-right: 4%;
 	}
-	.button:nth-child(2) {
+	.guided-tours__quit-button {
 		color: darken( $white, 20% );
 		background: none;
-		border: none;
+		border: 1px darken( $white, 20% ) solid;
 	}
 }
 
@@ -142,13 +142,14 @@ a.config-elements__text-link,
 }
 
 .guided-tours__single-button-row {
+	text-align: center;
 	.button {
-		width: 100%;
+		width: 48%;
 	}
-	.guided-tours__subtle-button, {
+	.guided-tours__quit-button {
 		color: darken( $white, 20% );
 		background: none;
-		border: none;
+		border: 1px darken( $white, 20% ) solid;
 	}
 }
 
