@@ -17,7 +17,6 @@ import { setSection as setSectionAction } from 'state/ui/actions';
 import { getSection } from 'state/ui/selectors';
 import { setLocale } from 'state/ui/language/actions';
 import isRTL from 'state/selectors/is-rtl';
-import { getLanguage } from 'lib/i18n-utils';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {

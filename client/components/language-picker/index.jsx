@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -19,7 +19,7 @@ import QueryGeo from 'components/data/query-geo';
 import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
 
-export class LanguagePicker extends PureComponent {
+export class LanguagePicker extends Component {
 	static propTypes = {
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
