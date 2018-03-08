@@ -128,7 +128,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 						onKeyUp={ this.handleKeyPress }
 						value={ url }
 					/>
-					{ isFetching ? <Spinner duration={ 30 } /> : null }
+					{ isFetching ? <Spinner /> : null }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }
