@@ -22,6 +22,10 @@ import {
 	Tour,
 } from 'layout/guided-tours/config-elements';
 
+const CHANGE_BUTTON_LABEL = translate( 'Change' );
+const CONTINUE_BUTTON_LABEL = translate( 'Continue' );
+const DONE_BUTTON_LABEL = translate( 'Done' );
+
 function handleTargetDisappear( { quit, next } ) {
 	const dialog = document.querySelector( '.editor-media-modal' );
 	if ( dialog ) {
@@ -45,7 +49,10 @@ export const ChecklistSiteIconTour = makeTour(
 		>
 			<p>
 				{ translate(
-					'Press this graphic to upload your own image or icon that can help people identify your site in the browser.'
+					'Press {{changeButton/}} to upload your own image or icon that can help people identify your site in the browser.',
+					{
+						components: { changeButton: <strong>{ CHANGE_BUTTON_LABEL }</strong> },
+					}
 				) }
 			</p>
 			<ButtonRow>
@@ -82,8 +89,8 @@ export const ChecklistSiteIconTour = makeTour(
 			onTargetDisappear={ handleTargetDisappear }
 		>
 			<Continue target="dialog-base-action-confirm" step="click-done" click>
-				{ translate( 'Good choice, press {{b}}Continue{{/b}} to use it as your Site Icon.', {
-					components: { b: <strong /> },
+				{ translate( 'Good choice, press {{continueButton/}} to use it as your Site Icon.', {
+					components: { continueButton: <strong>{ CONTINUE_BUTTON_LABEL }</strong> },
 				} ) }
 			</Continue>
 		</Step>
@@ -97,8 +104,8 @@ export const ChecklistSiteIconTour = makeTour(
 		>
 			<Continue target="image-editor-button-done" step="finish" click>
 				{ translate(
-					'Let’s make sure it looks right before you press {{b}}Done{{/b}} to save your changes.',
-					{ components: { b: <strong /> } }
+					'Let’s make sure it looks right before you press {{doneButton/}} to save your changes.',
+					{ components: { doneButton: <strong>{ DONE_BUTTON_LABEL }</strong> } }
 				) }
 			</Continue>
 		</Step>
