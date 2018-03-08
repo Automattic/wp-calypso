@@ -14,11 +14,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
-import { abtest } from 'lib/abtest';
 import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
@@ -122,49 +122,6 @@ class GoogleAppsDialog extends React.Component {
 		);
 	}
 
-	maybeShowKeepSearching() {
-		const { translate } = this.props;
-
-		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
-			return null;
-		}
-		return (
-			<button
-				className="google-apps-dialog__keepsearching-button button"
-				href="#"
-				onClick={ this.handleFormKeepSearching }
-			>
-				{ translate( 'Keep Searching' ) }
-			</button>
-		);
-	}
-
-	checkoutButtonOrLink() {
-		const { translate } = this.props;
-
-		if ( this.state.isAddingEmail ) {
-			return null;
-		}
-
-		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
-			return (
-				<a className="google-apps-dialog__cancel-link" href="#" onClick={ this.handleFormCheckout }>
-					{ translate( 'No thanks, I don’t need email or I’ll use another provider.' ) }
-				</a>
-			);
-		}
-
-		return (
-			<button
-				className="google-apps-dialog__checkout-button button"
-				href="#"
-				onClick={ this.handleFormCheckout }
-			>
-				{ translate( 'Checkout' ) }
-			</button>
-		);
-	}
-
 	footer() {
 		const { translate } = this.props;
 		const continueButtonHandler = this.state.isAddingEmail
@@ -176,15 +133,21 @@ class GoogleAppsDialog extends React.Component {
 
 		return (
 			<footer className="google-apps-dialog__footer">
-				{ this.maybeShowKeepSearching() }
-				{ this.checkoutButtonOrLink() }
-				<button
-					className="google-apps-dialog__continue-button button is-primary"
-					type="submit"
+				{ ! this.state.isAddingEmail && (
+					<Button
+						className="google-apps-dialog__checkout-button"
+						onClick={ this.handleFormCheckout }
+					>
+						{ translate( 'Checkout' ) }
+					</Button>
+				) }
+				<Button
+					primary
+					className="google-apps-dialog__continue-button"
 					onClick={ continueButtonHandler }
 				>
 					{ continueButtonText }
-				</button>
+				</Button>
 			</footer>
 		);
 	}
