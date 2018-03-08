@@ -367,26 +367,6 @@
 			font-weight: 400;
 			margin-bottom: 15px;
 		}
-
-		.all-fields-required {
-			color: $gray-lighten-10;
-			display: block;
-			font-size: 12px;
-			font-style: italic;
-
-			@include breakpoint( '>660px' ) {
-				top: 7px;
-			}
-
-			&.has-saved-cards {
-				top: 18px;
-
-				@include breakpoint( '>660px' ) {
-					position: absolute;
-						right: 18px;
-				}
-			}
-		}
 	}
 
 	.checkout__summary-toggle {
