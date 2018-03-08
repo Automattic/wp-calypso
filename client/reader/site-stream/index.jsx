@@ -19,7 +19,7 @@ import FeedError from 'reader/feed-error';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 import isSiteBlocked from 'state/selectors/is-site-blocked';
-import SiteBlockedError from 'reader/site-blocked-error';
+import SiteBlocked from 'reader/site-blocked';
 
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
@@ -47,19 +47,19 @@ class SiteStream extends React.Component {
 	};
 
 	render() {
-		const { site, feed, featuredStore, isBlocked } = this.props;
+		const { site, feed, featuredStore, isBlocked, siteId } = this.props;
 
 		// check for redirect
 		if ( site && site.prefer_feed && site.feed_ID ) {
 			page.replace( '/read/feeds/' + site.feed_ID );
 		}
 
-		if ( isBlocked ) {
-			return <SiteBlockedError />;
-		}
-
 		const emptyContent = <EmptyContent />;
 		const title = site ? site.name : this.props.translate( 'Loading Site' );
+
+		if ( isBlocked ) {
+			return <SiteBlocked title={ title } siteId={ siteId } />;
+		}
 
 		if ( ( site && site.is_error ) || ( feed && feed.is_error ) ) {
 			return <FeedError sidebarTitle={ title } />;

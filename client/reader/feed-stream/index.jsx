@@ -21,7 +21,7 @@ import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 import { getSiteName } from 'reader/get-helpers';
 import isSiteBlocked from 'state/selectors/is-site-blocked';
-import SiteBlockedError from 'reader/site-blocked-error';
+import SiteBlocked from 'reader/site-blocked';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
 const getReaderSiteId = feed => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
@@ -41,12 +41,12 @@ class FeedStream extends React.Component {
 	render() {
 		const { feed, site, siteId, isBlocked } = this.props;
 
-		if ( isBlocked ) {
-			return <SiteBlockedError />;
-		}
-
 		const emptyContent = <EmptyContent />;
 		const title = getSiteName( { feed, site } ) || this.props.translate( 'Loading Feed' );
+
+		if ( isBlocked ) {
+			return <SiteBlocked title={ title } siteId={ siteId } />;
+		}
 
 		if ( ( feed && feed.is_error ) || ( site && site.is_error ) ) {
 			return <FeedError sidebarTitle={ title } />;
