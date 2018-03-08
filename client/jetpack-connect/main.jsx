@@ -523,9 +523,9 @@ export class JetpackConnectMain extends Component {
 	}
 
 	renderInstructions( instructionsData ) {
-		const jetpackVersion = this.checkProperty( 'jetpackVersion' ),
-			isInstall = this.isInstall(),
-			{ currentUrl } = this.state;
+		const jetpackVersion = this.checkProperty( 'jetpackVersion' );
+		const { currentUrl } = this.state;
+
 		return (
 			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
@@ -541,7 +541,6 @@ export class JetpackConnectMain extends Component {
 									key={ 'instructions-step-' + key }
 									stepName={ stepName }
 									jetpackVersion={ jetpackVersion }
-									isInstall={ isInstall }
 									currentUrl={ currentUrl }
 									confirmJetpackInstallStatus={ this.props.confirmJetpackInstallStatus }
 									onClick={ instructionsData.buttonOnClick }

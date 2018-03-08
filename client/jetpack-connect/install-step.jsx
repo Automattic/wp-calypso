@@ -23,7 +23,6 @@ class JetpackInstallStep extends Component {
 	static propTypes = {
 		confirmJetpackInstallStatus: PropTypes.func.isRequired,
 		currentUrl: PropTypes.string,
-		isInstall: PropTypes.bool.isRequired,
 		jetpackVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		onClick: PropTypes.func,
 	};
