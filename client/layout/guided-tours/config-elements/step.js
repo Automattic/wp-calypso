@@ -104,6 +104,7 @@ export default class Step extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
+		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );
 			this.quitIfInvalidRoute( nextProps, nextContext );
@@ -111,7 +112,6 @@ export default class Step extends Component {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
 			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
-			const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 			this.setStepPosition( nextProps, shouldScrollTo );
 			this.watchTarget();
 		} );
