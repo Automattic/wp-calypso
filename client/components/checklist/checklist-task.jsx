@@ -16,12 +16,14 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import Focusable from 'components/focusable';
 import ScreenReaderText from 'components/screen-reader-text';
 
 export class ChecklistTask extends PureComponent {
 	static propTypes = {
 		id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
+		buttonText: PropTypes.string,
 		completedTitle: PropTypes.string,
 		completedButtonText: PropTypes.string,
 		description: PropTypes.string.isRequired,
@@ -53,6 +55,7 @@ export class ChecklistTask extends PureComponent {
 			title,
 			translate,
 		} = this.props;
+		const { buttonText = translate( 'Do it!' ) } = this.props;
 		const hasActionlink = completed && completedButtonText;
 
 		return (
@@ -64,11 +67,11 @@ export class ChecklistTask extends PureComponent {
 				} ) }
 			>
 				<div className="checklist__task-primary">
-					<h5 className="checklist__task-title">
-						<a className="checklist__task-title-link" onClick={ this.handleClick }>
+					<h3 className="checklist__task-title">
+						<Button borderless className="checklist__task-title-link" onClick={ this.handleClick }>
 							{ ( completed && completedTitle ) || title }
-						</a>
-					</h5>
+						</Button>
+					</h3>
 					<p className="checklist__task-description">{ description }</p>
 					{ duration && (
 						<small className="checklist__task-duration">
@@ -78,7 +81,7 @@ export class ChecklistTask extends PureComponent {
 				</div>
 				<div className="checklist__task-secondary">
 					<Button className="checklist__task-action" onClick={ this.handleClick }>
-						{ hasActionlink ? completedButtonText : translate( 'Do it!' ) }
+						{ hasActionlink ? completedButtonText : buttonText }
 					</Button>
 					{ duration && (
 						<small className="checklist__task-duration">
@@ -86,18 +89,16 @@ export class ChecklistTask extends PureComponent {
 						</small>
 					) }
 				</div>
-				<span
+				<Focusable
 					className="checklist__task-icon"
 					onClick={ this.handleToggle }
-					tabIndex="0"
-					role="button"
 					aria-pressed={ completed ? 'true' : 'false' }
 				>
 					<ScreenReaderText>
 						{ completed ? translate( 'Mark as uncompleted' ) : translate( 'Mark as completed' ) }
 					</ScreenReaderText>
 					{ <Gridicon icon="checkmark" size={ 18 } /> }
-				</span>
+				</Focusable>
 			</Card>
 		);
 	}
