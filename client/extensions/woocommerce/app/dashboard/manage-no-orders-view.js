@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import page from 'page';
 
 /**
@@ -16,6 +17,8 @@ import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ShareWidget from 'woocommerce/components/share-widget';
 import { recordTrack } from 'woocommerce/lib/analytics';
+import QuerySettingsProducts from 'woocommerce/components/query-settings-products';
+import { getProductsSettingValue } from 'woocommerce/state/sites/settings/products/selectors';
 
 class ManageNoOrdersView extends Component {
 	static propTypes = {
@@ -67,12 +70,15 @@ class ManageNoOrdersView extends Component {
 	};
 
 	renderViewAndTestWidget = () => {
-		const { site, translate } = this.props;
+		const { site, translate, shopPageId } = this.props;
 		const trackClick = () => {
 			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 				action: 'view-and-test',
 			} );
 		};
+
+		const shopUrl = shopPageId && site.URL + '?p=' + shopPageId;
+
 		return (
 			<DashboardWidget
 				className="dashboard__view-and-test-widget"
@@ -90,7 +96,7 @@ class ManageNoOrdersView extends Component {
 							' a product to your cart, and attempt to check out using different addresses.'
 					) }
 				</p>
-				<Button onClick={ trackClick } href={ site.URL }>
+				<Button onClick={ trackClick } href={ shopUrl } disabled={ ! shopUrl }>
 					{ translate( 'View & test your store' ) }
 				</Button>
 			</DashboardWidget>
@@ -98,8 +104,10 @@ class ManageNoOrdersView extends Component {
 	};
 
 	render() {
+		const { site } = this.props;
 		return (
 			<div className="dashboard__manage-no-orders">
+				<QuerySettingsProducts siteId={ site && site.ID } />
 				{ this.renderShareWidget() }
 				<DashboardWidgetRow>
 					{ this.renderStatsWidget() }
@@ -110,4 +118,11 @@ class ManageNoOrdersView extends Component {
 	}
 }
 
-export default localize( ManageNoOrdersView );
+function mapStateToProps( state ) {
+	const shopPageId = getProductsSettingValue( state, 'woocommerce_shop_page_id' );
+	return {
+		shopPageId,
+	};
+}
+
+export default connect( mapStateToProps )( localize( ManageNoOrdersView ) );
