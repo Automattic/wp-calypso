@@ -50,7 +50,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		if (
 			primaryPurchase &&
 			isDomainMapping( primaryPurchase ) &&
-			! primaryPurchase.isRegisteredWithUs
+			! primaryPurchase.isRootDomainWithUs
 		) {
 			return preventWidows( translate( 'Almost done!' ) );
 		}
@@ -106,7 +106,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isDomainMapping( primaryPurchase ) ) {
-			if ( primaryPurchase.isRegisteredWithUs ) {
+			if ( primaryPurchase.isRootDomainWithUs ) {
 				return translate(
 					'Your domain {{strong}}%(domain)s{{/strong}} was added to your site. ' +
 						'We have set everything up for you but it may take a little while to start working.',
@@ -276,7 +276,7 @@ class CheckoutThankYouHeader extends PureComponent {
 			svg = 'items-failed.svg';
 		} else if (
 			primaryPurchase &&
-			( ( isDomainMapping( primaryPurchase ) && ! primaryPurchase.isRegisteredWithUs ) ||
+			( ( isDomainMapping( primaryPurchase ) && ! primaryPurchase.isRootDomainWithUs ) ||
 				isDelayedDomainTransfer( primaryPurchase ) )
 		) {
 			svg = 'publish-button.svg';

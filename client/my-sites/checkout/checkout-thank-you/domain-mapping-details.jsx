@@ -21,12 +21,12 @@ const DomainMappingDetails = ( {
 	domain,
 	isBusinessPlan,
 	isSubdomainMapping,
-	isRegisteredWithUs,
+	isRootDomainWithUs,
 	registrarSupportUrl,
 	selectedSiteDomain,
 	translate,
 } ) => {
-	if ( isSubdomainMapping && isRegisteredWithUs ) {
+	if ( isSubdomainMapping && isRootDomainWithUs ) {
 		return null;
 	}
 

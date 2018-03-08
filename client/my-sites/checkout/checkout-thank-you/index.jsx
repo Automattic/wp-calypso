@@ -452,7 +452,7 @@ class CheckoutThankYou extends React.Component {
 			! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
 				? null
 				: get( primaryPurchase, 'registrarSupportUrl', null );
-		const isRegisteredWithUs = get( primaryPurchase, 'isRegisteredWithUs', false );
+		const isRootDomainWithUs = get( primaryPurchase, 'isRootDomainWithUs', false );
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -494,7 +494,7 @@ class CheckoutThankYou extends React.Component {
 							domain={ domain }
 							purchases={ purchases }
 							failedPurchases={ failedPurchases }
-							isRegisteredWithUs={ isRegisteredWithUs }
+							isRootDomainWithUs={ isRootDomainWithUs }
 							registrarSupportUrl={ registrarSupportUrl }
 							selectedSite={ selectedSite }
 							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
