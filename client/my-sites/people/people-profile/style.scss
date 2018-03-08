@@ -45,10 +45,9 @@
 }
 
 .people-profile__username {
-	font-family: $serif;
 	color: $gray-dark;
 	font-size: 16px;
-	font-weight: 700;
+	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
 	overflow: hidden;
@@ -78,10 +77,9 @@
 }
 
 .people-profile__subscribed {
-	color: $gray;
-	font-size: 11px;
+	color: $gray-text-min;
+	font-size: 12px;
 	margin-top: 4px;
-	text-transform: uppercase;
 }
 
 .people-profile__role-badge {

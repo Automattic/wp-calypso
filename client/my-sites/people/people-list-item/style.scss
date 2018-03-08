@@ -74,12 +74,6 @@
 	flex-shrink: 0;
 }
 
-.people-list-item__actions .people-list-item__remove-button {
-	font-size: 11px;
-	text-transform: uppercase;
-	color: $alert-red;
-}
-
 .people-list-item .card__link-indicator {
 	right: 0px;
 	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
