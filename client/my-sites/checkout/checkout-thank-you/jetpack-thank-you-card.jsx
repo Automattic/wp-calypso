@@ -576,7 +576,7 @@ class JetpackThankYouCard extends Component {
 						className={ classNames( 'button', 'thank-you-card__button', {
 							'is-placeholder': ! buttonUrl,
 						} ) }
-						onclick={ this.onBackToYourSiteClick }
+						onClick={ this.onBackToYourSiteClick }
 						href={ buttonUrl }
 					>
 						{ translate( 'Back to your site' ) }
