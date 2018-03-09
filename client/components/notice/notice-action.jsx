@@ -8,6 +8,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Gridicon from 'gridicons';
 
+/**
+ * Internal dependencies
+ */
+import Button from 'components/button';
+
 export default class extends React.Component {
 	static displayName = 'NoticeAction';
 
@@ -24,6 +29,7 @@ export default class extends React.Component {
 
 	render() {
 		const attributes = {
+			borderless: true,
 			className: 'notice__action',
 			href: this.props.href,
 			onClick: this.props.onClick,
@@ -35,11 +41,11 @@ export default class extends React.Component {
 		}
 
 		return (
-			<a { ...attributes }>
+			<Button { ...attributes }>
 				<span>{ this.props.children }</span>
 				{ this.props.icon && <Gridicon icon={ this.props.icon } size={ 24 } /> }
 				{ this.props.external && <Gridicon icon="external" size={ 24 } /> }
-			</a>
+			</Button>
 		);
 	}
 }
