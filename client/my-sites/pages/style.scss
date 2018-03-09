@@ -9,15 +9,6 @@
 		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
-
-	.is-placeholder {
-		.noticon {
-			color: transparent;
-			background-color: $gray-lighten-30;
-			animation: loading-fade 1.6s ease-in-out infinite;
-			opacity: 0.3;
-		}
-	}
 }
 
 .pages__page-list-header {
