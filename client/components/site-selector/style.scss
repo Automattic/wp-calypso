@@ -201,3 +201,34 @@
 .site-selector__no-results + .site-selector__hidden-sites-message {
 	display: none;
 }
+
+.site-selector__popover {
+	left: 16px !important;
+
+	.gridicons-my-sites {
+		color: $blue-wordpress;
+	}
+
+	.gridicons-plans {
+		color: $green-jetpack;
+	}
+
+	.popover__menu-item {
+
+		.site-selector__popover-item-details {
+			color: $gray-text-min;
+			display: block;
+			font-size: 13px;
+			font-weight: 400;
+			margin: 5px 0 0 0;
+		}
+
+		&.is-selected,
+		&:hover,
+		&:focus {
+			.site-selector__popover-item-details {
+				color: $white;
+			}
+		}
+	}
+}
