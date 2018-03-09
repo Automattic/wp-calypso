@@ -58,9 +58,11 @@
 }
 
 .devdocs__doc {
+	max-width: 720px;
+
 	h1, h2, h3, h4, h5, h6 {
-		font-family: $serif;
-		font-weight: 700;
+		font-family: $sans;
+		font-weight: 600;
 		line-height: 1.5em;
 		margin-bottom: 0.6em;
 	}
@@ -100,7 +102,7 @@
 		$invert: $white;
 		font-weight: bold;
 		font-size: 12px;
-		padding: 1px 5px 2px 5px;
+		padding: 1px 5px 2px;
 		border-radius: 2px;
 
 		&.status-awaiting-fixes {
@@ -172,7 +174,7 @@
 		color: $white;
 	}
 
-	&:nth-child(4n) {
+	&:nth-child( 4n ) {
 		background-color: #e0ffff;
 
 		&:hover {
@@ -181,7 +183,7 @@
 		}
 	}
 
-	&:nth-child(4n + 1) {
+	&:nth-child( 4n + 1 ) {
 		background-color: #e0e0ff;
 
 		&:hover {
@@ -190,7 +192,7 @@
 		}
 	}
 
-	&:nth-child(4n + 2) {
+	&:nth-child( 4n + 2 ) {
 		background-color: #ffffe0;
 
 		&:hover {
