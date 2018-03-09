@@ -27,7 +27,7 @@
 }
 
 .docs-example__stats {
-	border-bottom: 1px solid transparentize( $gray-lighten-20, .5 );
+	border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
 	font-size: 14px;
 	padding-bottom: 16px;
 }
@@ -45,23 +45,22 @@
 	padding: 10px;
 
 	&.docs-example__wrapper.is-unique {
-		border: 0
+		border: 0;
 	}
 }
 
-.docs-example__wrapper-header	{
-	margin: 0;
+.docs-example__wrapper-header {
+	margin: 0 0 20px;
 	line-height: 50px;
 	height: 50px;
-	margin-bottom: 20px;
 	position: relative;
 
 	span,
 	a {
 		color: $gray-dark;
-		font-family: $serif;
+		font-family: $sans;
 		font-size: 34px;
-		font-weight: bold;
+		font-weight: 600;
 
 		&.docs-example__wrapper-header-title {
 			line-height: 50px;
@@ -82,7 +81,7 @@
 	}
 
 	p {
-		margin-bottom: .5rem
+		margin-bottom: 0.5rem;
 	}
 
 	code {
@@ -94,19 +93,19 @@
 		border-spacing: 0;
 
 		th, td {
-			border-bottom: 1px solid transparentize( $gray-lighten-20, .5 );
+			border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
 			text-align: left;
 		}
 
 		th {
 			color: $blue-dark;
-			font-size: .75em;
-			padding: .25em 3em .25em 0em;
+			font-size: 0.75em;
+			padding: 0.25em 3em 0.25em 0;
 		}
 
 		td {
-			font-size: .83em;
-			padding: 1.17em 3em 1.17em 0em;
+			font-size: 0.83em;
+			padding: 1.17em 3em 1.17em 0;
 		}
 	}
 
@@ -125,24 +124,24 @@
 	}
 
 	h3 {
-    font-size: 1em;
+    	font-size: 1em;
 	}
 
 	h4 {
-		font-size: .83em;
+		font-size: 0.83em;
 	}
 
 	h5 {
-		font-size: .67em;
+		font-size: 0.67em;
 	}
 
 	h6 {
-		font-size: .5em;
+		font-size: 0.5em;
 	}
 }
 
 .docs-example__readme-viewer-edit-link {
-	font-size: .75em;
+	font-size: 0.75em;
 	text-align: right;
 }
 
@@ -153,5 +152,5 @@
 }
 
 .docs-example__readme-viewer-not-available {
-	font-size: .83em;
+	font-size: 0.83em;
 }
