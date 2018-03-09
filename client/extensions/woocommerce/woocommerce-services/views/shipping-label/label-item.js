@@ -106,20 +106,11 @@ class LabelItem extends Component {
 			<div key={ label.labelId } className="shipping-label__item" >
 				<p className="shipping-label__item-detail">
 					<span>
-						{ label.returningLabelIndex == null ? (
-							translate( 'Label #%(labelIndex)s printed', {
-								args: {
-									labelIndex: label.labelIndex + 1,
-								},
-							} )
-						) : (
-							translate( 'Label #%(labelIndex)s printed: return for Label #%(returningLabelIndex)s', {
-								args: {
-									labelIndex: label.labelIndex + 1,
-									returningLabelIndex: label.returningLabelIndex + 1,
-								},
-							} )
-						) }
+						{ translate( 'Label #%(labelIndex)s printed', {
+							args: {
+								labelIndex: label.labelIndex + 1,
+							},
+						} ) }
 					</span>
 					{ label.showDetails && label.returningLabelIndex == null && this.renderLabelDetails( label ) }
 				</p>
@@ -132,7 +123,16 @@ class LabelItem extends Component {
 					<p className="shipping-label__item-actions">
 						{ this.renderRefund( label ) }
 						{ this.renderReprint( label ) }
-						{ label.returningLabelIndex == null ? this.renderReturn( label ) : null }
+					</p>
+				}
+				{ label.showDetails &&
+					<p className="shipping-label__item-actions">
+						{ label.returningLabelIndex == null
+							? this.renderReturn( label )
+							: translate( 'Return for Label #%(labelIndex)s', {
+								args: { labelIndex: label.returningLabelIndex + 1 },
+							} )
+						}
 					</p>
 				}
 			</div>
