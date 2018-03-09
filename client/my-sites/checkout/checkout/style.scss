@@ -145,11 +145,6 @@
 		font-weight: 600;
 		opacity: 0.7;
 		text-transform: uppercase;
-
-		::after {
-			@include noticon( '\f470', (13 / 12) * 1em );
-			float: right;
-		}
 	}
 
 	.checkout__box-padding {
