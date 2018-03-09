@@ -3,12 +3,6 @@
 		padding-top: 48px;
 	}
 
-	.dashboard-widget__title {
-		font-size: 24px;
-		line-height: 1.2em;
-		margin-bottom: 16px;
-	}
-
 	ul.share-widget__services {
 		list-style-type: none;
 		margin: 0 auto;
@@ -25,10 +19,14 @@
 				display: block;
 
 				&:hover {
-					transform: translateY( -4px ) scale( 1.05 );
+					transform: translateY( -4px );
 				}
 			}
 		}
+	}
+
+	img {
+		max-width: 600px;
 	}
 }
 
