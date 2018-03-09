@@ -148,8 +148,8 @@ const RatesStep = ( props ) => {
 			expanded={ expanded }
 			toggleStep={ toggleStepHandler }
 			{ ...getRatesStatus( props ) }
-			{ ! isEmpty( available ) && showCheckoutShippingInfo( props ) }
 		>
+			{ ! isEmpty( available ) && showCheckoutShippingInfo( props ) }
 			<ShippingRates
 				siteId={ siteId }
 				orderId={ orderId }
