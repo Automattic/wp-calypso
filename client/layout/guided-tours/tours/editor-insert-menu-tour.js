@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import { ButtonRow, makeTour, Step, Tour, Quit } from 'layout/guided-tours/config-elements';
 import { hasUserRegisteredBefore } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 
 class RepositioningStep extends Step {
 	componentDidMount() {
@@ -37,7 +38,11 @@ export const EditorInsertMenuTour = makeTour(
 		name="editorInsertMenu"
 		path={ [ '/post/', '/page/' ] }
 		version="20161215"
-		when={ and( hasUserRegisteredBefore( new Date( '2016-12-15' ) ), isDesktop ) }
+		when={ and(
+			hasUserRegisteredBefore( new Date( '2016-12-15' ) ),
+			isDesktop,
+			isCurrentUserEmailVerified
+		) }
 	>
 		<RepositioningStep
 			arrow="left-top"

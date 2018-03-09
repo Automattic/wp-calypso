@@ -23,6 +23,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { isNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 
 const PUBLISH_BUTTON_LABEL = translate( 'Publish' );
 
@@ -31,7 +32,7 @@ export const EditorBasicsTour = makeTour(
 		name="editorBasicsTour"
 		version="20170503"
 		path={ [ '/post/', '/page/' ] }
-		when={ and( isDesktop, isNewUser ) }
+		when={ and( isDesktop, isNewUser, isCurrentUserEmailVerified ) }
 	>
 		<Step
 			name="init"
