@@ -53,6 +53,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_RETURN_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_RETURN_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
@@ -837,4 +839,19 @@ export const openDetailsDialog = ( orderId, siteId, labelId ) => {
 
 export const closeDetailsDialog = ( orderId, siteId ) => {
 	return { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG, orderId, siteId };
+};
+
+export const openReturnDialog = ( orderId, siteId, labelId ) => ( dispatch, getState ) => {
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_RETURN_DIALOG, orderId, siteId, labelId } );
+
+	const form = getShippingLabel( getState(), orderId, siteId ).form;
+	getRates( orderId, siteId, dispatch, form.origin.values, form.destination.values, [ { returning: labelId } ] )
+		.catch( ( error ) => {
+			dispatch( NoticeActions.errorNotice( error.toString() ) );
+		} );
+};
+
+export const closeReturnDialog = ( orderId, siteId ) => ( dispatch ) => {
+	dispatch( clearAvailableRates( orderId, siteId ) );
+	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_RETURN_DIALOG, orderId, siteId } );
 };
