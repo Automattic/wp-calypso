@@ -32,9 +32,10 @@ export default class QueryManager {
 	/**
 	 * Constructs a new instance of QueryManager
 	 *
-	 * @param {Object} data            Initial data
-	 * @param {Object} options         Manager options
-	 * @param {String} options.itemKey Field to key items by
+	 * @param {Object} data                  Initial data
+	 * @param {Object} options               Manager options
+	 * @param {String} options.itemKey       Field to key items by
+	 * @param {Boolean} options.adjustCounts Field to key items by
 	 */
 	constructor( data, options ) {
 		this.data = Object.assign(
@@ -48,6 +49,7 @@ export default class QueryManager {
 		this.options = Object.assign(
 			{
 				itemKey: 'ID',
+				adjustCounts: true,
 			},
 			options
 		);
@@ -215,14 +217,15 @@ export default class QueryManager {
 	 * instance state. Instead, it returns a new instance of QueryManager if
 	 * the tracked items have been modified, or the current instance otherwise.
 	 *
-	 * @param  {(Array|Object)} items              Item(s) to be received
-	 * @param  {Object}         options            Options for receive
-	 * @param  {Boolean}        options.patch      Apply changes as partial
-	 * @param  {Object}         options.query      Query set to set or replace
-	 * @param  {Boolean}        options.mergeQuery Add to existing query set
-	 * @param  {Number}         options.found      Total found items for query
-	 * @return {QueryManager}                      New instance if changed, or
-	 *                                             same instance otherwise
+	 * @param  {(Array|Object)} items                Item(s) to be received
+	 * @param  {Object}         options              Options for receive
+	 * @param  {Boolean}        options.patch        Apply changes as partial
+	 * @param  {Object}         options.query        Query set to set or replace
+	 * @param  {Boolean}        options.mergeQuery   Add to existing query set
+	 * @param  {Boolean}        options.adjustCounts Field to key items by
+	 * @param  {Number}         options.found        Total found items for query
+	 * @return {QueryManager}                        New instance if changed, or
+	 *                                               same instance otherwise
 	 */
 	receive( items = [], options = {} ) {
 		// Coerce received single item to array
@@ -340,7 +343,10 @@ export default class QueryManager {
 
 				// Found counts should not be adjusted for the received query if
 				// merging into existing items
-				const shouldAdjustFoundCount = ! isReceivedQueryKey;
+				const shouldUpdateCounts = options.hasOwnProperty( 'adjustCounts' )
+					? options.adjustCounts
+					: this.options.adjustCounts;
+				const shouldAdjustFoundCount = ! isReceivedQueryKey && shouldUpdateCounts;
 
 				const query = this.constructor.QueryKey.parse( queryKey );
 				let needsSort = false;

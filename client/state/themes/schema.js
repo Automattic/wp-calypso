@@ -65,6 +65,9 @@ export const queriesSchema = {
 						itemKey: {
 							type: 'string',
 						},
+						adjustCounts: {
+							type: 'boolean',
+						},
 					},
 				},
 			},

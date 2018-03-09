@@ -312,6 +312,7 @@ describe( 'reducer', () => {
 					siteId: 2916284,
 					query: { search: 'Sixteen' },
 					found: 1,
+					adjustCounts: false,
 					themes: [ twentysixteen ],
 				} )
 			);
@@ -336,6 +337,7 @@ describe( 'reducer', () => {
 					},
 					options: {
 						itemKey: 'id',
+						adjustCounts: true,
 					},
 				},
 			} );

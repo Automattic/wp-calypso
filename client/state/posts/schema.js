@@ -51,6 +51,9 @@ const queryManagerSchema = {
 				itemKey: {
 					type: 'string',
 				},
+				adjustCounts: {
+					type: 'boolean',
+				},
 			},
 		},
 	},
