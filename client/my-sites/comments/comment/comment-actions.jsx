@@ -93,9 +93,7 @@ export class CommentActions extends Component {
 	setTrash = () => this.setStatus( 'trash' );
 
 	showNotice = status => {
-		const { minimumComment, translate } = this.props;
-
-		this.props.removeNotice( 'comment-notice' );
+		const { commentId, minimumComment, translate } = this.props;
 
 		const message = get(
 			{
@@ -109,7 +107,7 @@ export class CommentActions extends Component {
 
 		const noticeOptions = {
 			button: translate( 'Undo' ),
-			id: 'comment-notice',
+			id: `comment-notice-${ commentId }-${ status }`,
 			isPersistent: true,
 			onClick: this.undo( status, minimumComment ),
 		};
@@ -137,7 +135,7 @@ export class CommentActions extends Component {
 			unlike();
 		}
 
-		this.props.removeNotice( 'comment-notice' );
+		this.props.removeNotice( `comment-notice-${ commentId }-${ status }` );
 	};
 
 	toggleApproved = () => this.setStatus( this.props.commentIsApproved ? 'unapproved' : 'approved' );
