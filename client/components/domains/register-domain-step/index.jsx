@@ -384,6 +384,7 @@ class RegisterDomainStep extends React.Component {
 						return callback();
 					}
 					if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
+						this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
 						return callback();
 					}
 
