@@ -29,7 +29,7 @@ import {
 } from 'state/sites/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plans/selectors';
 import {
@@ -683,6 +683,7 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
+		const isLoggedIn = !! getCurrentUserId( state );
 		let freePlanProperties = null;
 		let planProperties = compact(
 			map( plans, plan => {
@@ -780,10 +781,16 @@ export default connect(
 			} )
 		);
 
-		if ( isInSignup && abtest( 'minimizeFreePlan' ) === 'minimized' ) {
-			freePlanProperties = filter( planProperties, filterFreePlan );
-			freePlanProperties = freePlanProperties[ 0 ] || null;
-			planProperties = reject( planProperties, filterFreePlan );
+		if ( isInSignup ) {
+			const isInTest =
+				abtest(
+					isLoggedIn ? 'minimizedFreePlanForSignedUser' : 'minimizedFreePlanForUnsignedUser'
+				) === 'minimized';
+			if ( isInTest ) {
+				freePlanProperties = filter( planProperties, filterFreePlan );
+				freePlanProperties = freePlanProperties[ 0 ] || null;
+				planProperties = reject( planProperties, filterFreePlan );
+			}
 		}
 
 		const maxCredits = getMaxCredits( planProperties, ownProps.site.jetpack );
