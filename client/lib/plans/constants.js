@@ -84,8 +84,11 @@ export const FEATURE_UPLOAD_THEMES = 'upload-themes';
 export const FEATURE_REPUBLICIZE = 'republicize';
 export const FEATURE_SIMPLE_PAYMENTS = 'simple-payments';
 export const FEATURE_ALL_FREE_FEATURES = 'all-free-features';
+export const FEATURE_ALL_FREE_FEATURES_JETPACK = 'all-free-features-jetpack';
 export const FEATURE_ALL_PERSONAL_FEATURES = 'all-personal-features';
+export const FEATURE_ALL_PERSONAL_FEATURES_JETPACK = 'all-personal-features-jetpack';
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
+export const FEATURE_ALL_PREMIUM_FEATURES_JETPACK = 'all-premium-features-jetpack';
 export const FEATURE_ADVANCED_CUSTOMIZATION = 'advanced-customization';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
@@ -547,7 +550,7 @@ export const PLANS_LIST = {
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_CONCIERGE_SETUP,
-				FEATURE_ALL_PERSONAL_FEATURES,
+				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -596,7 +599,7 @@ export const PLANS_LIST = {
 				FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 				FEATURE_ADVANCED_SEO,
 				FEATURE_CONCIERGE_SETUP,
-				FEATURE_ALL_PERSONAL_FEATURES,
+				FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: abtest => {
 			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
@@ -638,7 +641,7 @@ export const PLANS_LIST = {
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_ALL_FREE_FEATURES,
+			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -674,7 +677,7 @@ export const PLANS_LIST = {
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_PREMIUM_SUPPORT,
-			FEATURE_ALL_FREE_FEATURES,
+			FEATURE_ALL_FREE_FEATURES_JETPACK,
 		],
 		getBillingTimeFrame: abtest => {
 			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
@@ -738,7 +741,7 @@ export const PLANS_LIST = {
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 				FEATURE_SEARCH,
-				FEATURE_ALL_PREMIUM_FEATURES,
+				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
@@ -795,7 +798,7 @@ export const PLANS_LIST = {
 				FEATURE_UNLIMITED_PREMIUM_THEMES,
 				FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 				FEATURE_SEARCH,
-				FEATURE_ALL_PREMIUM_FEATURES,
+				FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 			] ),
 		getBillingTimeFrame: abtest => {
 			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
@@ -814,8 +817,8 @@ export const FEATURES_LIST = {
 		getTitle: () => '',
 	},
 
-	[ FEATURE_ALL_FREE_FEATURES ]: {
-		getSlug: () => FEATURE_ALL_FREE_FEATURES,
+	[ FEATURE_ALL_FREE_FEATURES_JETPACK ]: {
+		getSlug: () => FEATURE_ALL_FREE_FEATURES_JETPACK,
 		getTitle: () =>
 			i18n.translate( '{{a}}All free features{{/a}}', {
 				components: {
@@ -832,8 +835,13 @@ export const FEATURES_LIST = {
 			i18n.translate( 'Also includes all features offered in the free version of Jetpack.' ),
 	},
 
-	[ FEATURE_ALL_PERSONAL_FEATURES ]: {
-		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
+	[ FEATURE_ALL_FREE_FEATURES ]: {
+		getSlug: () => FEATURE_ALL_FREE_FEATURES,
+		getTitle: () => i18n.translate( 'All free features' ),
+	},
+
+	[ FEATURE_ALL_PERSONAL_FEATURES_JETPACK ]: {
+		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
 		getTitle: () =>
 			i18n.translate( '{{a}}All Personal features{{/a}}', {
 				components: {
@@ -850,8 +858,13 @@ export const FEATURES_LIST = {
 			i18n.translate( 'Also includes all features offered in the Personal plan.' ),
 	},
 
-	[ FEATURE_ALL_PREMIUM_FEATURES ]: {
-		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
+	[ FEATURE_ALL_PERSONAL_FEATURES ]: {
+		getSlug: () => FEATURE_ALL_PERSONAL_FEATURES,
+		getTitle: () => i18n.translate( 'All Personal features' ),
+	},
+
+	[ FEATURE_ALL_PREMIUM_FEATURES_JETPACK ]: {
+		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 		getTitle: () =>
 			i18n.translate( '{{a}}All Premium features{{/a}}', {
 				components: {
@@ -866,6 +879,11 @@ export const FEATURES_LIST = {
 			} ),
 		getDescription: () =>
 			i18n.translate( 'Also includes all features offered in the Premium plan.' ),
+	},
+
+	[ FEATURE_ALL_PREMIUM_FEATURES ]: {
+		getSlug: () => FEATURE_ALL_PREMIUM_FEATURES,
+		getTitle: () => i18n.translate( 'All Premium features' ),
 	},
 
 	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
