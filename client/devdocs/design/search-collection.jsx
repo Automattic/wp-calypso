@@ -66,7 +66,9 @@ const Collection = ( {
 				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
 					{ example }
 				</DocsExampleWrapper>
-				{ component && <ReadmeViewer readmeFilePath={ example.props.readmeFilePath } /> }
+				{ component && (
+					<ReadmeViewer section={ section } readmeFilePath={ example.props.readmeFilePath } />
+				) }
 			</div>
 		);
 	} );
