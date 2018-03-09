@@ -52,7 +52,7 @@
 
 	.dashboard__reports-widget .dashboard-widget__image {
 		margin-right: 10%;
-		width: calc( 40% - 8px ) !important;
+		width: calc( 35% - 8px ) !important;
 		margin-bottom: 16px;
 
 		@include breakpoint( ">660px" ) {
@@ -67,7 +67,7 @@
 
 		& + .dashboard-widget__children {
 			@include breakpoint( ">660px" ) {
-				width: calc( 60% - 34px) !important;
+				width: calc( 65% - 34px) !important;
 			}
 		}
 	}
