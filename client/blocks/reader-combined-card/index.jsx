@@ -176,8 +176,14 @@ function combinedCardPostKeyToKeys( postKey ) {
 export default connect( ( state, ownProps ) => {
 	const postKeys = combinedCardPostKeyToKeys( ownProps.postKey );
 
+	// Posts are directly supplied in Devdocs
+	let posts = ownProps.posts;
+	if ( ! posts ) {
+		posts = getPostsByKeys( state, postKeys );
+	}
+
 	return {
-		posts: getPostsByKeys( state, postKeys ),
+		posts,
 		postKeys,
 	};
 } )( localize( ReaderCombinedCard ) );
