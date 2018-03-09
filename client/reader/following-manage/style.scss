@@ -223,13 +223,6 @@
 	}
 }
 
-.reader-site-notification-settings .gridicons-cog {
-
-	@include breakpoint( "<660px" ) {
-		left: -1px;
-	}
-}
-
 .following-manage__search-results.is-empty {
 	margin-top: 10px;
 	word-wrap: break-word;
