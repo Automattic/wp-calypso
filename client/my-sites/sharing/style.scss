@@ -398,10 +398,6 @@
 	width: 36px;
 	border: 1px solid $gray-light;
 	color: white;
-
-	&.is-fallback::before {
-		@include noticon( '\f304', 40px );
-	}
 }
 
 .sharing-connection__account-status {
