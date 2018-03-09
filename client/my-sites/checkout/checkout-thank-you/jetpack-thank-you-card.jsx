@@ -36,8 +36,6 @@ import {
 	isRequestingSites,
 	getJetpackSiteRemoteManagementUrl,
 } from 'state/sites/selectors';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
 import { installPlugin } from 'state/plugins/premium/actions';
 import {
@@ -173,34 +171,15 @@ class JetpackThankYouCard extends Component {
 	}
 
 	startNextPlugin() {
-		let { nextPlugin: plugin } = this.props;
-		if ( ! plugin ) {
+		const { nextPlugin, selectedSite } = this.props;
+		if ( ! nextPlugin ) {
 			return;
 		}
-		const { slug } = plugin;
+		const { slug } = nextPlugin;
 
 		if ( this.state.installingPlugins[ slug ] ) {
 			return;
 		}
-
-		const install = this.props.installPlugin;
-		const site = this.props.selectedSite;
-
-		// Merge wporg info into the plugin object
-		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, slug ) );
-
-		const getPluginFromStore = function() {
-			const sitePlugin = PluginsStore.getSitePlugin( site, slug );
-			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
-				// if the Plugins are still being fetched, we wait. We are not using flux
-				// store events because it would be more messy to handle the one-time-only
-				// callback with bound parameters than to do it this way.
-				return setTimeout( getPluginFromStore, 500 );
-			}
-			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed
-			plugin = Object.assign( { id: slug }, plugin, sitePlugin );
-			install( plugin, site );
-		};
 
 		// Redux state is not updated with installing plugins quickly enough.
 		// Track installing plugins locally to avoid redundant install requests.
@@ -208,7 +187,7 @@ class JetpackThankYouCard extends Component {
 			( { installingPlugins } ) => ( {
 				installingPlugins: { ...installingPlugins, [ slug ]: true },
 			} ),
-			getPluginFromStore
+			() => this.props.installPlugin( nextPlugin, selectedSite )
 		);
 	}
 
@@ -626,7 +605,6 @@ export default connect(
 
 		// We need to pass the raw redux site to JetpackSite() in order to properly build the site.
 		return {
-			wporg: state.plugins.wporg.items,
 			isSiteMultiSite: isJetpackSiteMultiSite( state, siteId ),
 			isSiteMainNetworkSite: isJetpackSiteMainNetworkSite( state, siteId ),
 			isRequesting: isRequesting( state, siteId ),
@@ -647,7 +625,6 @@ export default connect(
 		};
 	},
 	{
-		fetchPluginData,
 		installPlugin,
 		requestSites,
 	}
