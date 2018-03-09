@@ -3,14 +3,12 @@
  * External dependencies
  */
 import express from 'express';
-import fs from 'fs';
-import path from 'path';
 import { stringify } from 'qs';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { get, includes, pick, forEach, intersection, snakeCase } from 'lodash';
+import { get, includes, pick, intersection, snakeCase } from 'lodash';
 import bodyParser from 'body-parser';
 
 /**
@@ -18,7 +16,6 @@ import bodyParser from 'body-parser';
  */
 import config from 'config';
 import sanitize from 'sanitize';
-import utils from 'bundler/utils';
 import { pathToRegExp } from '../../client/utils';
 import sections from '../../client/sections';
 import { serverRouter, getCacheKey } from 'isomorphic-routing';
@@ -30,28 +27,11 @@ import { login } from 'lib/paths';
 import { logSectionResponseTime } from './analytics';
 import { setCurrentUserOnReduxStore } from 'lib/redux-helpers';
 import analytics from '../lib/analytics';
+import { generateStaticUrls, staticFilesUrls } from './static-files';
 
 const debug = debugFactory( 'calypso:pages' );
 
-const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
-
-const staticFiles = [
-	{ path: 'style.css' },
-	{ path: 'editor.css' },
-	{ path: 'tinymce/skins/wordpress/wp-content.css' },
-	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' },
-	{ path: 'style-debug-rtl.css' },
-];
-
-const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
-	if ( ! file.hash ) {
-		file.hash = utils.hashFile( process.cwd() + SERVER_BASE_PATH + '/' + file.path );
-	}
-	result[ file.path ] = utils.getUrl( file.path, file.hash );
-	return result;
-}, {} );
 
 // List of browser languages to show pride styling for.
 // Add a '*' element to show the styling for all visitors.
@@ -66,34 +46,6 @@ function getInitialServerState( serializedServerState ) {
 	// Bootstrapped state from a server-render
 	const serverState = reducer( serializedServerState, { type: DESERIALIZE } );
 	return pick( serverState, Object.keys( serializedServerState ) );
-}
-
-const ASSETS_PATH = path.join( __dirname, '../', 'bundler', 'assets.json' );
-const getAssets = ( () => {
-	let assets;
-	return () => {
-		if ( ! assets ) {
-			assets = JSON.parse( fs.readFileSync( ASSETS_PATH, 'utf8' ) );
-		}
-		return assets;
-	};
-} )();
-
-/**
- * Generate an object that maps asset names name to a server-relative urls.
- * Assets in request and static files are included.
- *
- * @returns {Object} Map of asset names to urls
- **/
-function generateStaticUrls() {
-	const urls = { ...staticFilesUrls };
-	const assets = getAssets();
-
-	forEach( assets, ( asset, name ) => {
-		urls[ name ] = asset.js;
-	} );
-
-	return urls;
 }
 
 function getCurrentBranchName() {
