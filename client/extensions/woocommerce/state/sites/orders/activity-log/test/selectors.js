@@ -113,6 +113,7 @@ const labelsLoadedSubtree = {
 				request_date: 4100000,
 				refund_date: 4200000,
 			},
+			returning_label_id: null,
 		},
 		{
 			label_id: 3,
@@ -135,6 +136,7 @@ const labelsLoadedSubtree = {
 				refund_date: 3200000,
 				amount: '6.95',
 			},
+			returning_label_id: null,
 		},
 		{
 			label_id: 2,
@@ -155,6 +157,7 @@ const labelsLoadedSubtree = {
 				status: 'pending',
 				request_date: 2100000,
 			},
+			returning_label_id: null,
 		},
 		{
 			label_id: 1,
@@ -171,6 +174,7 @@ const labelsLoadedSubtree = {
 			carrier_id: 'usps',
 			service_name: 'First Class',
 			main_receipt_id: 654321,
+			returning_label_id: null,
 		},
 		{
 			label_id: 10000,
@@ -187,6 +191,7 @@ const labelsLoadedSubtree = {
 			carrier_id: 'usps',
 			service_name: 'First Class',
 			main_receipt_id: 123456789,
+			returning_label_id: null,
 		},
 		{
 			label_id: 10001,
@@ -202,6 +207,7 @@ const labelsLoadedSubtree = {
 			tracking: '12345',
 			carrier_id: 'usps',
 			service_name: 'First Class',
+			returning_label_id: null,
 		},
 	],
 };
@@ -390,6 +396,7 @@ describe( 'selectors', () => {
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
 					receiptId: 12345,
+					returningLabelIndex: null,
 				},
 				{
 					key: 3,
@@ -418,6 +425,7 @@ describe( 'selectors', () => {
 					carrierId: 'usps',
 					serviceName: 'First Class',
 					receiptId: 12345,
+					returningLabelIndex: null,
 				},
 				{
 					key: 2,
@@ -446,6 +454,7 @@ describe( 'selectors', () => {
 					carrierId: 'canada_post',
 					serviceName: 'Xpress',
 					receiptId: 67890,
+					returningLabelIndex: null,
 				},
 				{
 					key: 1,
@@ -466,6 +475,7 @@ describe( 'selectors', () => {
 					carrierId: 'usps',
 					serviceName: 'First Class',
 					receiptId: 654321,
+					returningLabelIndex: null,
 				},
 			] );
 		} );
