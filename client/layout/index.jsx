@@ -130,11 +130,13 @@ const Layout = createReactClass( {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && <JITM /> }
-					<GlobalNotices
-						id="notices"
-						notices={ notices.list }
-						forcePinned={ 'post' === this.props.section.name }
-					/>
+					<div aria-live="assertive">
+						<GlobalNotices
+							id="notices"
+							notices={ notices.list }
+							forcePinned={ 'post' === this.props.section.name }
+						/>
+					</div>
 
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
