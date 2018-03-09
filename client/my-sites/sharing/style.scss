@@ -703,20 +703,10 @@
 		display: inline-flex;
 	}
 
-	&.is-edit::before {
-		@include noticon( '\f411', 16px );
-		margin-right: 4px;
-	}
-
 	&:disabled {
 		cursor: default;
 		border-color: $gray-lighten-30;
 		color: $gray-lighten-30;
-	}
-
-	&.is-add::before {
-		@include noticon( '\f510', 16px );
-		margin-right: 4px;
 	}
 
 	&.is-top::after,
