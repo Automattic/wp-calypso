@@ -474,9 +474,10 @@
 .sharing-connection__account-action.reconnect {
 	color: $alert-yellow;
 
-	&:before {
-		@include noticon( '\f414', 16px );
-		margin-right: 8px;
+	.gridicon {
+		margin-right: 4px;
+		position: relative;
+			top: 3px;
 	}
 }
 
