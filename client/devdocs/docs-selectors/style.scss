@@ -1,5 +1,5 @@
 .devdocs.docs-selectors {
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		padding-right: 0;
 		padding-left: 0;
 	}
@@ -15,7 +15,7 @@
 }
 
 .docs-selectors__result-name {
-	@extend %content-font;
+	font-family: $sans;
 	font-size: 15px;
 	font-weight: 600;
 	line-height: 1.8;
@@ -31,20 +31,16 @@
 	margin: 0;
 }
 
-.docs-selectors__result-description {
-	line-height: 1.4;
-}
-
 .docs-selectors__result-io:not( :empty ) {
 	display: flex;
 	margin: 28px -25px -17px;
 	position: relative;
 
-	@include breakpoint( "<960px" ) {
+	@include breakpoint( '<960px' ) {
 		flex-direction: column;
 	}
 
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( '<480px' ) {
 		margin-right: -17px;
 		margin-left: -17px;
 	}
@@ -99,7 +95,7 @@
 	padding: 24px;
 	flex: 2;
 
-	@include breakpoint( ">960px" ) {
+	@include breakpoint( '>960px' ) {
 		border-left-width: 0;
 		border-top-width: 1px;
 	}
