@@ -40,14 +40,6 @@ export default function() {
 	);
 
 	page(
-		'/checkout/features/:feature/:domain/:plan_name?',
-		siteSelection,
-		checkoutController.checkout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		'/checkout/thank-you/features/:feature/:site/:receiptId?',
 		siteSelection,
 		checkoutController.checkoutThankYou,
@@ -59,6 +51,14 @@ export default function() {
 		'/checkout/no-site',
 		noSite,
 		checkoutController.sitelessCheckout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/features/:feature/:domain/:plan_name?',
+		siteSelection,
+		checkoutController.checkout,
 		makeLayout,
 		clientRender
 	);
