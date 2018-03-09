@@ -268,24 +268,28 @@ export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteI
 	return null;
 };
 
-export const canPurchase = createSelector(
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => {
-		const form = getForm( state, orderId, siteId );
+export const canPurchase = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const form = getForm( state, orderId, siteId );
 
+	if ( getShippingLabel( state, orderId, siteId ).returnDialog ) {
+		const errors = getFormErrors( state, orderId, siteId );
 		return (
 			! isEmpty( form ) &&
-			! getFirstErroneousStep( state, orderId, siteId ) &&
-			! form.origin.normalizationInProgress &&
-			! form.destination.normalizationInProgress &&
+			! hasNonEmptyLeaves( errors.rates ) &&
 			! form.rates.retrievalInProgress &&
 			! isEmpty( form.rates.available )
 		);
-	},
-	( state, orderId, siteId = getSelectedSiteId( state ) ) => [
-		getForm( state, orderId, siteId ),
-		getFirstErroneousStep( state, orderId, siteId ),
-	]
-);
+	}
+
+	return (
+		! isEmpty( form ) &&
+		! getFirstErroneousStep( state, orderId, siteId ) &&
+		! form.origin.normalizationInProgress &&
+		! form.destination.normalizationInProgress &&
+		! form.rates.retrievalInProgress &&
+		! isEmpty( form.rates.available )
+	);
+};
 
 export const areLabelsFullyLoaded = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	return isLoaded( state, orderId, siteId ) && areSettingsLoaded( state, siteId ) && arePackagesLoaded( state, siteId );
