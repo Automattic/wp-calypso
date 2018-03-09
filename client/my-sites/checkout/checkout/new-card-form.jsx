@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { defer } from 'lodash';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -32,9 +31,6 @@ class NewCardForm extends Component {
 
 	render() {
 		const { countriesList, hasStoredCards, translate, transaction } = this.props;
-		const classes = classNames( 'all-fields-required', {
-			'has-saved-cards': this.props.hasStoredCards,
-		} );
 
 		return (
 			<div className="checkout__new-card">
@@ -48,8 +44,6 @@ class NewCardForm extends Component {
 							{ translate( 'Use New Credit/Debit Card' ) }:
 						</h6>
 					) : null }
-
-					<span className={ classes }>{ translate( 'All fields required' ) }</span>
 
 					<CreditCardFormFields
 						card={ transaction.newCardFormFields }
