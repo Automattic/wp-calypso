@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import page from 'page';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { difference, filter, get, map, range, reduce, some } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -91,12 +90,10 @@ const akismetFeatures = {
 };
 
 class JetpackThankYouCard extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			completedJetpackFeatures: {},
-		};
-	}
+	state = {
+		completedJetpackFeatures: {},
+		installInitiatedPlugins: new Set(),
+	};
 
 	trackConfigFinished( eventName, options = null ) {
 		if ( ! this.sentTracks ) {
@@ -207,8 +204,10 @@ class JetpackThankYouCard extends Component {
 	}
 
 	startNextPlugin( plugin ) {
+		const { slug } = plugin;
+
 		// We're already installing.
-		if ( this.props.isInstalling ) {
+		if ( this.props.isInstalling || this.state.installInitiatedPlugins.has( slug ) ) {
 			return;
 		}
 
@@ -216,10 +215,10 @@ class JetpackThankYouCard extends Component {
 		const site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
-		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
+		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, slug ) );
 
 		const getPluginFromStore = function() {
-			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
+			const sitePlugin = PluginsStore.getSitePlugin( site, slug );
 			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
 				// if the Plugins are still being fetched, we wait. We are not using flux
 				// store events because it would be more messy to handle the one-time-only
@@ -227,10 +226,18 @@ class JetpackThankYouCard extends Component {
 				return setTimeout( getPluginFromStore, 500 );
 			}
 			// Merge any site-specific info into the plugin object, setting a default plugin ID if needed
-			plugin = Object.assign( { id: plugin.slug }, plugin, sitePlugin );
+			plugin = Object.assign( { id: slug }, plugin, sitePlugin );
 			install( plugin, site );
 		};
-		getPluginFromStore();
+
+		// Redux state is not updated with installing plugins quickly enough.
+		// Track installing plugins locally to avoid redundant install requests.
+		this.setState(
+			( { installInitiatedPlugins } ) => ( {
+				installInitiatedPlugins: installInitiatedPlugins.add( slug ),
+			} ),
+			getPluginFromStore
+		);
 	}
 
 	renderFeature( feature, key = 0 ) {
@@ -669,5 +676,9 @@ export default connect(
 			planSlug,
 		};
 	},
-	dispatch => bindActionCreators( { requestSites, fetchPluginData, installPlugin }, dispatch )
+	{
+		fetchPluginData,
+		installPlugin,
+		requestSites,
+	}
 )( localize( JetpackThankYouCard ) );
