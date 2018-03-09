@@ -117,6 +117,12 @@
 				color: $gray-text-min;
 			}
 		}
+
+		.dashboard__process-orders-action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 
 	.dashboard-widget.dashboard__reviews-widget {
