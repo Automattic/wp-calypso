@@ -32,10 +32,10 @@ export default class QueryManager {
 	/**
 	 * Constructs a new instance of QueryManager
 	 *
-	 * @param {Object} data                  Initial data
-	 * @param {Object} options               Manager options
-	 * @param {String} options.itemKey       Field to key items by
-	 * @param {Boolean} options.adjustCounts Field to key items by
+	 * @param {Object}  data                  Initial data
+	 * @param {Object}  options               Manager options
+	 * @param {String}  options.itemKey       Field to key items by
+	 * @param {Boolean} options.adjustCounts  Field to key items by
 	 */
 	constructor( data, options ) {
 		this.data = Object.assign(
