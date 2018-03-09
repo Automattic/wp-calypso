@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
@@ -45,6 +46,7 @@ class RateSelector extends React.Component {
 		const {
 			orderId,
 			siteId,
+			isLoading,
 			packageId,
 			packageName,
 			id,
@@ -65,11 +67,16 @@ class RateSelector extends React.Component {
 
 		const onRateUpdate = value => this.props.updateRate( orderId, siteId, packageId, value );
 		return (
-			<div className="rates-step__rate-selector">
+			<div
+				className={ classNames(
+					'rates-step__rate-selector',
+					isLoading && 'rates-step__placeholder'
+				) }
+			>
 				{ serverErrors &&
 					isEmpty( packageRates ) &&
 					packageName && <p className="rates-step__package-heading">{ packageName }</p> }
-				{ ! isEmpty( packageRates ) && (
+				{ ( ! isEmpty( packageRates ) || isLoading ) && (
 					<Dropdown
 						id={ id }
 						valuesMap={ valuesMap }
@@ -93,8 +100,9 @@ const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
 	const ratesForm = shippingLabel.form.rates;
 	return {
+		isLoading: ratesForm.retrievalInProgress,
 		errors: loaded && getFormErrors( state, orderId, siteId ).rates,
-		selectedRate: ratesForm.values[ packageId ], // Store owner selected rate, not customer
+		selectedRate: ratesForm.values[ packageId ] || '', // Store owner selected rate, not customer
 		packageRates: get( ratesForm.available, [ packageId, 'rates' ], [] ),
 	};
 };

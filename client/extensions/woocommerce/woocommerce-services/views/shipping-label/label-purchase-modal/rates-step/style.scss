@@ -8,6 +8,16 @@
 	.form-fieldset {
 		margin-bottom: 0;
 	}
+
+	&.rates-step__placeholder {
+		legend, select {
+			@include placeholder();
+			pointer-events: none;
+			border: none;
+			border-radius: 0;
+			background-image: none;
+		}
+	}
 }
 
 .rates-step__rate-selector .form-server-error {
