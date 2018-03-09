@@ -33,8 +33,9 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 }
 
 let lastRequestedLocale = null;
-export default function switchLocale( localeSlug ) {
-	const language = getLanguage( localeSlug );
+export default function switchLocale( localeSlug, localeVariant ) {
+	// check if the language exists in config.languages
+	const language = getLanguage( localeSlug, localeVariant );
 
 	if ( ! language ) {
 		return;

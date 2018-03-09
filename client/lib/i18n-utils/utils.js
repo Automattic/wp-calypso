@@ -10,8 +10,14 @@ import { parse } from 'url';
  */
 import config from 'config';
 
-const localeRegex = /^[A-Z]{2,3}$/i;
-const localeWithRegionRegex = /^[A-Z]{2,3}-[A-Z]{2,3}$/i;
+/**
+ * a locale can consist of three component
+ * aa: language code
+ * -bb: regional code
+ * _cc: variant suffix
+ * while the language code is mandatory, the other two are optional.
+ */
+const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
 
 function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
@@ -29,16 +35,20 @@ export function isDefaultLocale( locale ) {
 	return locale === config( 'i18n_default_locale_slug' );
 }
 
-export function getLanguage( langSlug ) {
-	let language;
+export function getLanguage( localeSlug, localeVariant = null ) {
+	// if a localeVariant is given, we should use it. Otherwise, use localeSlug
+	const langSlug = localeVariant || localeSlug;
 
-	if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
-		language =
+	if ( localeRegex.test( langSlug ) ) {
+		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
+		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
+		return (
 			find( config( 'languages' ), { langSlug } ) ||
-			find( config( 'languages' ), { langSlug: langSlug.split( '-' )[ 0 ] } );
+			find( config( 'languages' ), { langSlug: langSlug.split( /[-_]/ )[ 0 ] } )
+		);
 	}
 
-	return language;
+	return undefined;
 }
 
 /**
