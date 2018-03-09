@@ -26,7 +26,7 @@ import { getPostsByKeys } from 'state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import PostBlocked from 'blocks/reader-post-card/blocked';
 
-class ReaderCombinedCard extends React.Component {
+class ReaderCombinedCardComponent extends React.Component {
 	static propTypes = {
 		posts: PropTypes.array.isRequired,
 		site: PropTypes.object,
@@ -163,7 +163,7 @@ class ReaderCombinedCard extends React.Component {
 	}
 }
 
-function combinedCardPostKeyToKeys( postKey ) {
+export function combinedCardPostKeyToKeys( postKey ) {
 	if ( ! postKey || ! postKey.postIds ) {
 		return [];
 	}
@@ -173,17 +173,13 @@ function combinedCardPostKeyToKeys( postKey ) {
 	return postKey.postIds.map( postId => ( { feedId, blogId, postId } ) );
 }
 
+export const ReaderCombinedCard = localize( ReaderCombinedCardComponent );
+
 export default connect( ( state, ownProps ) => {
 	const postKeys = combinedCardPostKeyToKeys( ownProps.postKey );
 
-	// Posts are directly supplied in Devdocs
-	let posts = ownProps.posts;
-	if ( ! posts ) {
-		posts = getPostsByKeys( state, postKeys );
-	}
-
 	return {
-		posts,
+		posts: getPostsByKeys( state, postKeys ),
 		postKeys,
 	};
-} )( localize( ReaderCombinedCard ) );
+} )( ReaderCombinedCard );
