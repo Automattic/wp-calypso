@@ -288,18 +288,18 @@
 	}
 }
 
-.sharing-service__glyph.noticon {
-	color: $white;
-	font-size: 32px;
-	margin: 0;
-	line-height: 1;
-	width: auto;
-	height: auto;
-
-	@include breakpoint( "<660px" ) {
-		font-size: 16px;
-	}
-}
+// .sharing-service__glyph.noticon {
+// 	color: $white;
+// 	font-size: 32px;
+// 	margin: 0;
+// 	line-height: 1;
+// 	width: auto;
+// 	height: auto;
+//
+// 	@include breakpoint( "<660px" ) {
+// 		font-size: 16px;
+// 	}
+// }
 
 @mixin sharing-service( $name, $color ) {
 	.sharing-service.#{ $name } .sharing-service__icon {
@@ -521,11 +521,6 @@
 
 	.sharing-buttons-add {
 		float: right;
-
-		.noticon {
-			font-size: 32px;
-			margin: 7px -18px -2px 0  #{"/*rtl:ignore*/"};
-		}
 
 		&.inactive {
 			opacity: 0.3;
