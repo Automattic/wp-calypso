@@ -10,7 +10,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { jetpackModuleActive, navigation, sites, siteSelection } from 'my-sites/controller';
-import { buttons, connections, layout } from './controller';
+import { buttons, connections, layout, canUserManageSharing } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
@@ -20,6 +20,7 @@ export default function() {
 		siteSelection,
 		navigation,
 		jetpackModuleActive( 'publicize', false ),
+		canUserManageSharing,
 		connections,
 		layout,
 		makeLayout,
