@@ -1,11 +1,258 @@
-.devdocs,
-.design,
-.wizard-component {
+.is-section-devdocs {
+/* If we wanna get crazy...
+	.masterbar {
+		background: darken( $gray, 40 );
+		border-bottom: 1px solid darken( $gray, 40 );
+	}
+	
+
+	.layout__content {
+		background: darken( $gray, 40 );
+		padding: 47px 0 0 $sidebar-width-max;
+		min-height: 100vh; // Needed since we're covering the body bg
+
+		// Tablets
+		@include breakpoint( "<960px" ) {
+			padding-left: $sidebar-width-min;
+		}
+
+		// Mobile (Full Width)
+		@include breakpoint( "<660px" ) {
+			padding-left: 0;
+		}
+	}
+*/
+	.main {
+		max-width: 100%;
+	}
+
+}
+/*
+.devdocs.devdocs__doc {
+	.devdocs__doc-content {
+		color: $white;
+
+		a {
+			color: $blue-light;
+			text-decoration: underline;
+		}
+	}
+}
+*/
+
+// Search, the default page for /devdocs
+.main.devdocs.devdocs__search {
+	.search-card {
+		max-width: 760px;
+		margin: 32px auto;
+	}
+}
+.devdocs__results {
+	max-width: 760px;
+	margin: auto;
+}
+
+.devdocs__result {
+	&.is-compact {}
+
+	.devdocs__result-header {}
+	
+	.devdocs__result-title {
+		color: $gray-darken-30;
+		font-family: $serif;
+		font-weight: bold;
+		font-size: 24px;
+
+		.devdocs__result-link {
+			color: $gray-darken-30;
+			text-decoration: underline;
+
+			&:hover {
+				color: $blue-medium;
+			}
+		}
+	}
+
+	.devdocs__result-path {
+		font-family: $code;
+		color: $gray-text-min;
+	}
+	
+	.devdocs__result-snippet {
+		font-size: 13px;
+		color: $gray-text;
+		margin-top: 16px;
+
+		mark {
+			background: rgba( $blue-light, 0.4 );
+			padding: 2px;
+			border-radius: 3px;
+		}
+	}
+}
+
+// UI Components
+.main.design.design__ui-components {
+	.design__ui-components-search {
+		max-width: 760px;
+		margin: 32px auto;
+	}
+}
+
+.design__collection {
+	background: darken( $gray, 40 );
+	margin: 0 -32px;
+	padding: 64px 0 32px 0;
+}
+
+.docs-example__wrapper {
+	max-width: 760px;
+	margin: 0 auto 64px auto;
+	box-shadow: 0 8px 24px rgba( 0, 0, 0, 0.3 );
+	border-radius: 3px;
+
+	.docs-example__wrapper-header{
+		padding: 16px 32px;
+		background: rgba( 0, 0, 0, 0.2 );
+		border-radius: 3px 3px 0 0;
+	}
+
+	.docs-example__wrapper-header-title {
+		color: $white;
+		font-size: 22px;
+		font-weight: 300;
+
+		a {
+			color: $white;
+			text-decoration: underline;
+		}
+
+		.gridicon {
+			position: relative;
+				top: 5px;
+				left: 6px;
+		}
+	}
+
+	.docs-examples__wrapper-content {
+		background: $gray-light;
+		padding: 32px;
+		border-radius: 0 0 3px 3px;
+	}
+}
+
+
+// State Selectors
+.main.devdocs.docs-selectors {}
+
+.docs-selectors__results {
+	list-style: none;
+	margin: 0;
+
+	li {
+		display: block;
+	}
+}
+
+.docs-selectors__result {
+	.docs-selectors__result-name {
+		font-family: $code;
+		text-decoration: underline;
+		font-weight: bold;
+		font-size: 18px;
+	}
+
+	.docs-selectors__result-description {
+		margin: 0;
+	}
+
+	.docs-selectors__result-io {
+		display: none;
+		font-size: 16px;
+
+		.docs-selectors__result-arguments {
+			flex: 3;
+			margin-right: 8px;
+		}
+		
+		.docs-selectors__result-return {
+			flex: 2;
+			margin-left: 8px;
+		}
+
+		.docs-selectors__result-arguments,
+		.docs-selectors__result-return {
+			color: $gray-dark;
+			background: $gray-lighten-30;
+			border-radius: 4px;
+			padding: 16px 24px;
+		}
+		
+
+		.docs-selectors__result-label {
+			display: block;
+			margin-bottom: 32px;
+			font-weight: 600;
+		}
+
+		.docs-selectors__result-arguments-content {
+			display: flex;
+			padding-top: 16px;
+			margin-bottom: 24px;
+			border-top: 1px solid $gray-lighten-20;
+
+			.docs-selectors__result-arguments-name {
+				width: 30%;
+				margin-right: 24px;
+				text-align: right;
+			}
+		}
+
+		.docs-selectors__result-arguments-name,
+		.docs-selectors__result-arguments-name strong,
+		.docs-selectors__param-type {
+			font-family: $code;
+			color: $gray-dark;
+		}
+
+		.docs-selectors__result-arguments-name strong {
+			color: $gray-dark;
+			background: $white;
+			border-radius: 3px;
+			display: inline-block;
+			padding: 2px 8px;
+			margin-left: -8px;
+			margin-bottom: 12px;
+		}
+
+		.docs-selectors__param-type {
+			font-size: 14px;
+		}
+
+		p {
+			margin: 0;
+			padding-top: 4px;
+			font-size: 15px;
+		}
+	}
+
+	&.is-expanded {
+		.docs-selectors__result-io {
+			display: flex;
+			margin: 24px 0 8px 0;
+		}
+	}
+}
+
+/*
+#wpcom .devdocs,
+#wpcom .wizard-component {
 	font-size: 18px;
 	line-height: 1.618;
 	color: $gray-dark;
 	margin: 0 auto;
 	padding: 0;
+	max-width: 100%;
 }
 
 .is-section-devdocs-start .layout__primary {
@@ -201,3 +448,5 @@
 		}
 	}
 }
+
+*/

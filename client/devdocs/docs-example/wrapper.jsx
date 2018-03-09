@@ -14,12 +14,14 @@ import Gridicon from 'gridicons';
 
 const renderTitle = ( unique, name, url ) =>
 	unique ? (
-		<span className="docs-example__wrapper-header-title">{ name }</span>
+		<h2 className="docs-example__wrapper-header-title">{ name }</h2>
 	) : (
-		<a className="docs-example__wrapper-header-title" href={ url }>
-			{ name }
-			<Gridicon icon="link" />
-		</a>
+		<h2 className="docs-example__wrapper-header-title">
+			<a href={ url }>
+				{ name }
+				<Gridicon icon="link" />
+			</a>
+		</h2>
 	);
 
 class DocsExampleWrapper extends Component {
@@ -38,8 +40,8 @@ class DocsExampleWrapper extends Component {
 					'docs-example__wrapper-unique': unique,
 				} ) }
 			>
-				<h2 className="docs-example__wrapper-header">{ renderTitle( unique, name, url ) }</h2>
-				{ children }
+				<div className="docs-example__wrapper-header">{ renderTitle( unique, name, url ) }</div>
+				<div className="docs-examples__wrapper-content">{ children }</div>
 			</div>
 		);
 	}

@@ -119,7 +119,7 @@ class DesignAssets extends React.Component {
 		const { filter } = this.state;
 
 		return (
-			<Main className="design">
+			<Main className="design design__ui-components">
 				<DocumentHead title="UI Components" />
 
 				{ component ? (
@@ -132,6 +132,7 @@ class DesignAssets extends React.Component {
 						initialValue={ filter }
 						placeholder="Search components…"
 						analyticsGroup="Docs"
+						className="design__ui-components-search"
 					/>
 				) }
 

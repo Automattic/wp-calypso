@@ -40,9 +40,12 @@
 	margin-top: 1.5em;
 }
 
+
+
 .docs-example__wrapper {
-	color: $gray-dark;
-	padding: 10px;
+	background: $gray-dark;
+	padding: 24px;
+	margin: 0 16px;
 
 	&.docs-example__wrapper.is-unique {
 		border: 0;
