@@ -463,10 +463,9 @@
 			min-height: 91px;
 			padding: 20px 20px 20px 0;
 
-			&::before {
-				color: $blue-medium;
+			.wordpress-logo {
+				fill: $blue-medium;
 				margin: 0 10px;
-				@include noticon( '\f205', 60px );
 				@include breakpoint( '>660px' ) {
 					margin: 0 20px;
 				}
