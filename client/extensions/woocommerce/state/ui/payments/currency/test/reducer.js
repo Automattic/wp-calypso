@@ -21,4 +21,14 @@ describe( 'reducer', () => {
 			expect( newState ).to.deep.equal( { currency: 'USD' } );
 		} );
 	} );
+	describe( 'currencyUpdatedAction', () => {
+		test( 'should clear edits upon successful update', () => {
+			const action = {
+				type: 'WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS',
+				siteId,
+			};
+			const newState = reducer( state, action );
+			expect( newState ).to.equal( null );
+		} );
+	} );
 } );
