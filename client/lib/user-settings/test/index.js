@@ -38,6 +38,29 @@ describe( 'User Settings', () => {
 		}
 	} );
 
+	describe( '#updateSetting', () => {
+		test( 'should treat root language langSlug as an unsaved setting when its locale variant is activated', () => {
+			userSettings.settings.language = 'de';
+			userSettings.settings.locale_variant = 'de_formal';
+			userSettings.updateSetting( 'language', 'de' );
+			expect( userSettings.unsavedSettings.language ).to.equal( 'de' );
+		} );
+
+		test( 'should treat same locale variant language as an already-saved setting', () => {
+			userSettings.settings.language = 'de';
+			userSettings.settings.locale_variant = 'de_formal';
+			userSettings.updateSetting( 'language', 'fr' );
+			expect( userSettings.unsavedSettings.language ).to.equal( 'fr' );
+		} );
+
+		test( 'should treat new root language as an unsaved setting', () => {
+			userSettings.settings.language = 'de';
+			userSettings.settings.locale_variant = 'de_formal';
+			userSettings.updateSetting( 'language', 'de_formal' );
+			expect( userSettings.unsavedSettings.language ).to.be.undefined;
+		} );
+	} );
+
 	describe( '#getOriginalSetting', () => {
 		describe( 'when a setting has a truthy value', () => {
 			beforeEach( () => {
