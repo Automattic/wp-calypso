@@ -299,13 +299,6 @@
 	}
 }
 
-.search-stream .search-stream__single-column-results .reader-site-notification-settings__button-label {
-
-	@include breakpoint ( "<660px" ) {
-		display: none;
-	}
-}
-
 .search-stream__results.is-two-columns .reader-subscription-list-item__byline {
 	min-width: 180px;
 	max-width: 180px;
@@ -388,13 +381,6 @@
 
 	.reader-email-settings__button-label {
 		display: none;
-	}
-}
-
-.search-stream .reader-subscription-list-item .gridicons-cog {
-
-	@include breakpoint( "<660px" ) {
-		left: -1px;
 	}
 }
 
