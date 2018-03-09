@@ -148,6 +148,11 @@ class ReaderPostOptionsMenu extends React.Component {
 
 	render() {
 		const { post, site, feed, teams, translate, position } = this.props;
+
+		if ( ! post ) {
+			return null;
+		}
+
 		const { ID: postId, site_ID: siteId } = post;
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
@@ -251,8 +256,8 @@ class ReaderPostOptionsMenu extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const feedId = ownProps.post.feed_ID;
-		const siteId = ownProps.post.is_external ? null : ownProps.post.site_ID;
+		const feedId = ownProps.post && ownProps.post.feed_ID;
+		const siteId = ownProps.post && ( ownProps.post.is_external ? null : ownProps.post.site_ID );
 		return {
 			feed: feedId && feedId > 0 ? getFeed( state, feedId ) : undefined,
 			site: siteId && siteId > 0 ? getSite( state, siteId ) : undefined,
