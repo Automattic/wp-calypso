@@ -54,7 +54,6 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_RETURN_DIALOG,
-	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_RETURN_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
@@ -910,9 +909,4 @@ export const openReturnDialog = ( orderId, siteId, labelId ) => ( dispatch, getS
 		.catch( ( error ) => {
 			dispatch( NoticeActions.errorNotice( error.toString() ) );
 		} );
-};
-
-export const closeReturnDialog = ( orderId, siteId ) => ( dispatch ) => {
-	dispatch( clearAvailableRates( orderId, siteId ) );
-	dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_RETURN_DIALOG, orderId, siteId } );
 };
