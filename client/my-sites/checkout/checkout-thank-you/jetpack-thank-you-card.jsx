@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
-import { difference, filter, get, map, range, reduce, some } from 'lodash';
+import { difference, get, map, mapValues, range, reduce, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -92,7 +92,22 @@ const akismetFeatures = {
 class JetpackThankYouCard extends Component {
 	state = {
 		completedJetpackFeatures: {},
-		installInitiatedPlugins: new Set(),
+		installingPlugins: {},
+		sitePlugins: null,
+	};
+
+	receivePluginStoreData = () => {
+		const sitePlugins = PluginsStore.getSitePlugins( this.props.selectedSite );
+
+		// Clear the current plugin if it has been installed
+		const installingPlugins = mapValues(
+			this.state.installingPlugins,
+			( previousValue, slugInState ) =>
+				some( sitePlugins, ( { slug } ) => slug === slugInState ) ? false : previousValue
+		);
+
+		this.activateJetpackFeatures();
+		this.setState( { sitePlugins, installingPlugins } );
 	};
 
 	trackConfigFinished( eventName, options = null ) {
@@ -102,26 +117,17 @@ class JetpackThankYouCard extends Component {
 		this.sentTracks = true;
 	}
 
-	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins( plugins ) {
-		return plugins.map( plugin => {
-			const pluginData = getPlugin( this.props.wporg, plugin.slug );
-			if ( ! pluginData ) {
-				this.props.fetchPluginData( plugin.slug );
-			}
-			return Object.assign( {}, plugin, pluginData );
-		} );
-	}
-
-	allPluginsHaveWporgData() {
-		const plugins = this.addWporgDataToPlugins( this.props.plugins );
-		return plugins.length === filter( plugins, { wporg: true } ).length;
-	}
-
 	componentDidMount() {
+		const { selectedSite } = this.props;
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
 		this.props.requestSites();
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_start' );
+
+		// Set-up plugin store listener and fetch plugins
+		PluginsStore.on( 'change', this.receivePluginStoreData );
+		PluginsStore.getSitePlugins( selectedSite );
+
+		this.startNextPlugin();
 
 		page.exit( '/checkout/thank-you/*', ( context, next ) => {
 			const confirmText = this.warnIfNotFinished( {} );
@@ -129,7 +135,6 @@ class JetpackThankYouCard extends Component {
 				return next();
 			}
 			if ( window.confirm( confirmText ) ) {
-				// eslint-disable-line no-aler
 				next();
 			} else {
 				// save off the current path just in case context changes after this call
@@ -143,47 +148,11 @@ class JetpackThankYouCard extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
+		PluginsStore.removeListener( 'change', this.receivePluginStoreData );
 	}
 
 	componentDidUpdate() {
-		const { nextPlugin, planFeatures, plugins, selectedSite: site } = this.props;
-		const { completedJetpackFeatures } = this.state;
-
-		if (
-			! site ||
-			! site.jetpack ||
-			! site.canManage ||
-			! this.allPluginsHaveWporgData() ||
-			this.props.isInstalling
-		) {
-			return;
-		}
-
-		if (
-			planFeatures &&
-			! site.canUpdateFiles &&
-			! Object.keys( completedJetpackFeatures ).length
-		) {
-			this.activateJetpackFeatures();
-		}
-
-		if ( site.canUpdateFiles && nextPlugin ) {
-			this.startNextPlugin( nextPlugin );
-		} else if (
-			site.canUpdateFiles &&
-			plugins &&
-			! this.shouldRenderPlaceholders() &&
-			! some( plugins, plugin => 'done' !== plugin.status ) &&
-			! Object.keys( completedJetpackFeatures ).length
-		) {
-			this.activateJetpackFeatures();
-		} else if (
-			site.canUpdateFiles &&
-			! nextPlugin &&
-			! Object.keys( completedJetpackFeatures ).length
-		) {
-			this.activateJetpackFeatures();
-		}
+		this.startNextPlugin();
 	}
 
 	warnIfNotFinished( event ) {
@@ -203,11 +172,14 @@ class JetpackThankYouCard extends Component {
 		return beforeUnloadText;
 	}
 
-	startNextPlugin( plugin ) {
+	startNextPlugin() {
+		let { nextPlugin: plugin } = this.props;
+		if ( ! plugin ) {
+			return;
+		}
 		const { slug } = plugin;
 
-		// We're already installing.
-		if ( this.props.isInstalling || this.state.installInitiatedPlugins.has( slug ) ) {
+		if ( this.state.installingPlugins[ slug ] ) {
 			return;
 		}
 
@@ -233,8 +205,8 @@ class JetpackThankYouCard extends Component {
 		// Redux state is not updated with installing plugins quickly enough.
 		// Track installing plugins locally to avoid redundant install requests.
 		this.setState(
-			( { installInitiatedPlugins } ) => ( {
-				installInitiatedPlugins: installInitiatedPlugins.add( slug ),
+			( { installingPlugins } ) => ( {
+				installingPlugins: { ...installingPlugins, [ slug ]: true },
 			} ),
 			getPluginFromStore
 		);
@@ -469,9 +441,7 @@ class JetpackThankYouCard extends Component {
 			{}
 		);
 
-		this.setState( {
-			completedJetpackFeatures,
-		} );
+		this.setState( { completedJetpackFeatures } );
 	}
 
 	getFeaturesWithStatus() {
