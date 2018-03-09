@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { identity } from 'lodash';
@@ -31,6 +30,18 @@ const defaultProps = {
 			name: 'Čeština',
 			wpLocale: 'cs_CZ',
 		},
+		{
+			value: 900,
+			langSlug: 'de_formal',
+			name: 'Deutsch (Sie)',
+			wpLocale: 'de_DE_formal',
+		},
+		{
+			value: 902,
+			langSlug: 'es-mx_gringos',
+			name: 'Español de México de los Gringos',
+			wpLocale: 'es_MX_gringos',
+		},
 	],
 	translate: identity,
 	valueKey: 'langSlug',
@@ -41,7 +52,23 @@ const defaultProps = {
 describe( 'LanguagePicker', () => {
 	test( 'should render the right icon and label', () => {
 		const wrapper = shallow( <LanguagePicker { ...defaultProps } /> );
-		expect( wrapper.find( '.language-picker__icon' ) ).to.have.text( 'en' );
-		expect( wrapper.find( '.language-picker__name-label' ) ).to.have.text( 'English' );
+		expect( wrapper.find( '.language-picker__icon' ).text() ).toBe( 'en' );
+		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( 'English' );
+	} );
+	test( 'should render the right icon and label for a language variant', () => {
+		const newProps = { ...defaultProps, value: 'de_formal' };
+		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
+		expect( wrapper.find( '.language-picker__icon' ).text() ).toBe( 'de' );
+		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( 'Deutsch (Sie)' );
+	} );
+	test( 'should render the right icon and label for a language variant with regional subcode', () => {
+		const newProps = { ...defaultProps, value: 'es-mx_gringos' };
+		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
+		expect( wrapper.find( '.language-picker__icon-inner' ).html() ).toBe(
+			'<div class="language-picker__icon-inner">es<br/>mx</div>'
+		);
+		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe(
+			'Español de México de los Gringos'
+		);
 	} );
 } );
