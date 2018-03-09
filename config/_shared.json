@@ -35,7 +35,8 @@
 	"google_oauth_client_id": "108380595987-j91sm1alavcdgd81i2655kp8q1lbtvrc.apps.googleusercontent.com",
 	"facebook_app_id": "611241942420191",
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
-	"support_locales": [ "en", "es", "pt-br" ],
+    "support_locales": [ "en", "es", "pt-br" ],
+    "english_locales": [ "en", "en-gb"],
     "languages": [
         { "value": 2, "langSlug": "af", "name": "Afrikaans", "wpLocale": "af", "territories": [ "002" ] },
         { "value": 418, "langSlug": "als", "name": "Alemannisch", "wpLocale": "", "territories": [ "155" ] },

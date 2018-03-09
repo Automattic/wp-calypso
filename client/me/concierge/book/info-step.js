@@ -6,6 +6,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import config from 'config';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,8 +27,8 @@ import { updateConciergeSignupForm } from 'state/concierge/actions';
 import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
-import { recordTracksEvent } from 'state/analytics/actions'; /** @format */
-import { isDefaultLocale, getLanguage } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { getLanguage } from 'lib/i18n-utils';
 
 class InfoStep extends Component {
 	static propTypes = {
@@ -76,16 +78,18 @@ class InfoStep extends Component {
 			translate,
 		} = this.props;
 		const language = getLanguage( currentUserLocale ).name;
-		const notice = ! isDefaultLocale( currentUserLocale )
-			? translate( 'All Concierge Sessions are in English (%(language)s is not available)', {
-					args: { language },
-				} )
-			: null;
+		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
+		const noticeText = translate(
+			'All Concierge Sessions are in English (%(language)s is not available)',
+			{
+				args: { language },
+			}
+		);
 
 		return (
 			<div>
 				<PrimaryHeader />
-				{ notice && <Notice showDismiss={ false } text={ notice } /> }
+				{ ! isEnglish && <Notice showDismiss={ false } text={ noticeText } /> }
 				<CompactCard className="book__info-step-site-block">
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
@@ -135,9 +139,12 @@ class InfoStep extends Component {
 							onChange={ this.setFieldValue }
 							value={ message }
 						/>
-						<FormSettingExplanation>
-							{ translate( 'Please respond in English.' ) }
-						</FormSettingExplanation>
+
+						{ ! isEnglish && (
+							<FormSettingExplanation>
+								{ translate( 'Please respond in English.' ) }
+							</FormSettingExplanation>
+						) }
 					</FormFieldset>
 
 					<FormButton
