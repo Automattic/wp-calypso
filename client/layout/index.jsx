@@ -135,11 +135,11 @@ const Layout = createReactClass( {
 						forcePinned={ 'post' === this.props.section.name }
 					/>
 
-					<div id="primary" className="layout__primary">
-						{ this.props.primary }
-					</div>
 					<div id="secondary" className="layout__secondary">
 						{ this.props.secondary }
+					</div>
+					<div id="primary" className="layout__primary">
+						{ this.props.primary }
 					</div>
 				</div>
 				<TranslatorLauncher
