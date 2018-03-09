@@ -63,35 +63,11 @@
 }
 
 .most-popular__notice {
-	position: relative;
 	top: 25px;
-	padding: 11px 24px;
 	margin-bottom: 24px;
-	border-radius: 1px;
-	background: #fff;
-	box-sizing: border-box;
-	font-size: 14px;
-	line-height: 1.4285;
-	animation: appear .3s ease-in-out;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
-		0 1px 2px $gray-lighten-30;
 
 	@include breakpoint( ">660px" ) {
-		padding: 13px 48px;
-		font-size: inherit;
-		display: inline-flex;
 		top: 10px;
 		margin: 0 5px;
-
-		&::before {
-			@include noticon-style;
-			content: '\f456';
-			position: absolute;
-				top: 23px;
-				left: 20px;
-			margin: -12px 0px 0 -8px;
-			font-size: 24px;
-			line-height: 1;
-		}
 	}
 }
