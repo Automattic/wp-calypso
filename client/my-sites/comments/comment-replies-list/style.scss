@@ -1,3 +1,8 @@
 .comment-replies-list {
 	margin-left: 56px;
 }
+
+// Show the box shadow for the first two 2 replies
+.comment-replies-list:nth-child(n+2) {
+	margin-bottom: 10px;
+}

@@ -23,6 +23,11 @@
 	}
 }
 
+// Hide comment tree replies bottom box-shadow by removing the margin
+.card.comment .card.comment {
+	margin-bottom: 0px;
+}
+
 // `transition` here is applied with less specificity to avoid overwriting ReactCSSTransitionGroup's animation.
 .comment {
 	transition: margin 0.15s linear;
