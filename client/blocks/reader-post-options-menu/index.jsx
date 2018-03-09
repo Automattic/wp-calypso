@@ -255,14 +255,14 @@ class ReaderPostOptionsMenu extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const feedId = ownProps.post && ownProps.post.feed_ID;
-		const siteId = ownProps.post && ( ownProps.post.is_external ? null : ownProps.post.site_ID );
-		return {
-			feed: feedId && feedId > 0 ? getFeed( state, feedId ) : undefined,
-			site: siteId && siteId > 0 ? getSite( state, siteId ) : undefined,
-			teams: getReaderTeams( state ),
-		};
+	( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
+		const siteId = is_external ? null : site_ID;
+
+		return Object.assign(
+			{ teams: getReaderTeams( state ) },
+			feedId > 0 && { feed: getFeed( state, feedId ) },
+			siteId > 0 && { site: getSite( state, siteId ) }
+		);
 	},
 	{
 		blockSite,
