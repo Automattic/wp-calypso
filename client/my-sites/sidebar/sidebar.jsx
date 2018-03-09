@@ -227,6 +227,7 @@ export class MySitesSidebar extends Component {
 					onClick={ this.trackSidebarButtonClick( 'customize' ) }
 					href={ this.props.customizeUrl }
 					preloadSectionName="customize"
+					forceTargetInternal
 				>
 					{ this.props.translate( 'Customize' ) }
 				</SidebarButton>
