@@ -13,11 +13,13 @@ import { localize } from 'i18n-calypso';
 import RefundDialog from './label-refund-modal';
 import ReprintDialog from './label-reprint-modal';
 import DetailsDialog from './label-details-modal';
+import ReturnDialog from './label-return-modal';
 import TrackingLink from './tracking-link';
 import {
 	openRefundDialog,
 	openReprintDialog,
 	openDetailsDialog,
+	openReturnDialog,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 
 class LabelItem extends Component {
@@ -81,6 +83,22 @@ class LabelItem extends Component {
 		);
 	};
 
+	renderReturn = ( label ) => {
+		const { orderId, siteId, translate } = this.props;
+
+		const openDialog = ( e ) => {
+			e.preventDefault();
+			this.props.openReturnDialog( orderId, siteId, label.labelId );
+		};
+
+		return (
+			<span>
+				<ReturnDialog siteId={ siteId } orderId={ orderId } { ...label } />
+				<a href="#" onClick={ openDialog } >{ translate( 'Create return label' ) }</a>
+			</span>
+		);
+	};
+
 	render() {
 		const { label, translate } = this.props;
 
@@ -105,6 +123,7 @@ class LabelItem extends Component {
 					<p className="shipping-label__item-actions">
 						{ this.renderRefund( label ) }
 						{ this.renderReprint( label ) }
+						{ this.renderReturn( label ) }
 					</p>
 				}
 			</div>
@@ -119,10 +138,16 @@ LabelItem.propTypes = {
 	openRefundDialog: PropTypes.func.isRequired,
 	openReprintDialog: PropTypes.func.isRequired,
 	openDetailsDialog: PropTypes.func.isRequired,
+	openReturnDialog: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = ( dispatch ) => {
-	return bindActionCreators( { openRefundDialog, openReprintDialog, openDetailsDialog }, dispatch );
+	return bindActionCreators( {
+		openRefundDialog,
+		openReprintDialog,
+		openDetailsDialog,
+		openReturnDialog,
+	}, dispatch );
 };
 
 export default connect( null, mapDispatchToProps )( localize( LabelItem ) );
