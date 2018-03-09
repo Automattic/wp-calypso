@@ -288,19 +288,6 @@
 	}
 }
 
-// .sharing-service__glyph.noticon {
-// 	color: $white;
-// 	font-size: 32px;
-// 	margin: 0;
-// 	line-height: 1;
-// 	width: auto;
-// 	height: auto;
-//
-// 	@include breakpoint( "<660px" ) {
-// 		font-size: 16px;
-// 	}
-// }
-
 @mixin sharing-service( $name, $color ) {
 	.sharing-service.#{ $name } .sharing-service__icon {
 		background: $color;
