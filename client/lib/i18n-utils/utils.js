@@ -35,6 +35,12 @@ export function isDefaultLocale( locale ) {
 	return locale === config( 'i18n_default_locale_slug' );
 }
 
+/**
+ * Matches and returns language from config.languages based on the given localeSlug and localeVariant
+ * @param  {String} localeSlug locale slug of the language to match
+ * @param  {String?} localeVariant local variant of the language to match. It takes precedence if exists.
+ * @return {Object|undefined} An object containing the locale data or undefined.
+ */
 export function getLanguage( localeSlug, localeVariant = null ) {
 	// if a localeVariant is given, we should use it. Otherwise, use localeSlug
 	const langSlug = localeVariant || localeSlug;
