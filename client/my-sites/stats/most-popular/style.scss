@@ -67,7 +67,6 @@
 	margin-bottom: 24px;
 
 	@include breakpoint( ">660px" ) {
-		display: inline-flex;
 		top: 10px;
 		margin: 0 5px;
 	}
