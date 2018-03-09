@@ -36,9 +36,9 @@ export default class Quit extends Component {
 
 	render() {
 		const { children, primary } = this.props;
+		const classes = primary ? 'guided-tours__primary-button' : 'guided-tours__quit-button';
 		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<Button className="guided-tours__quit-button" onClick={ this.onClick } primary={ primary }>
+			<Button className={ classes } onClick={ this.onClick } primary={ primary }>
 				{ children || translate( 'Quit' ) }
 			</Button>
 		);
