@@ -18,6 +18,7 @@ import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-ut
 import FormSectionHeading from 'components/forms/form-section-heading';
 import {
 	closeReturnDialog,
+	purchaseReturnLabel,
 	updatePaperSize,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
@@ -30,7 +31,7 @@ const ReturnDialog = props => {
 	const { orderId, siteId, returnDialog, paperSize, storeOptions, labelId, translate } = props;
 
 	const onClose = () => props.closeReturnDialog( orderId, siteId );
-	const onConfirm = () => {};
+	const onConfirm = () => props.purchaseReturnLabel( orderId, siteId );
 	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
 
 	const buttons = [
@@ -78,6 +79,7 @@ ReturnDialog.propTypes = {
 	storeOptions: PropTypes.object.isRequired,
 	labelId: PropTypes.number,
 	closeReturnDialog: PropTypes.func.isRequired,
+	purchaseReturnLabel: PropTypes.func.isRequired,
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
@@ -92,7 +94,10 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 };
 
 const mapDispatchToProps = dispatch => {
-	return bindActionCreators( { closeReturnDialog, updatePaperSize }, dispatch );
+	return bindActionCreators(
+		{ closeReturnDialog, purchaseReturnLabel, updatePaperSize },
+		dispatch
+	);
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ReturnDialog ) );
