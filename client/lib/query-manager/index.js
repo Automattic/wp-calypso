@@ -35,7 +35,7 @@ export default class QueryManager {
 	 * @param {Object}  data                  Initial data
 	 * @param {Object}  options               Manager options
 	 * @param {String}  options.itemKey       Field to key items by
-	 * @param {Boolean} options.adjustCounts  Field to key items by
+	 * @param {Boolean} options.adjustCounts  Flag to disable the update of previous found counts
 	 */
 	constructor( data, options ) {
 		this.data = Object.assign(
@@ -222,7 +222,7 @@ export default class QueryManager {
 	 * @param  {Boolean}        options.patch        Apply changes as partial
 	 * @param  {Object}         options.query        Query set to set or replace
 	 * @param  {Boolean}        options.mergeQuery   Add to existing query set
-	 * @param  {Boolean}        options.adjustCounts Field to key items by
+	 * @param  {Boolean}        options.adjustCounts Flag to disable the update of found counts
 	 * @param  {Number}         options.found        Total found items for query
 	 * @return {QueryManager}                        New instance if changed, or
 	 *                                               same instance otherwise
