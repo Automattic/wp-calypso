@@ -22,7 +22,7 @@ import {
 	getDocumentHeadLink,
 } from 'state/document-head/selectors';
 import isRTL from 'state/selectors/is-rtl';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { getCurrentLocaleSlug, getCurrentLocaleVariant } from 'state/selectors';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
@@ -152,7 +152,10 @@ export function serverRender( req, res ) {
 			stateCache.set( cacheKey, serverState );
 		}
 
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+		context.lang =
+			getCurrentLocaleVariant( context.store.getState() ) ||
+			getCurrentLocaleSlug( context.store.getState() ) ||
+			context.lang;
 		const isLocaleRTL = isRTL( context.store.getState() );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
