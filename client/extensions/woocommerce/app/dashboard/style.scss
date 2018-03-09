@@ -52,12 +52,23 @@
 
 	.dashboard__reports-widget .dashboard-widget__image {
 		margin-right: 10%;
-		width: calc( 30% ) !important;
+		width: calc( 40% - 8px ) !important;
+		margin-bottom: 16px;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 0;
+		}
 
 		@include breakpoint( "<660px" ) {
 			margin-right: auto;
 			margin-left: auto;
 			width: 80% !important;
+		}
+
+		& + .dashboard-widget__children {
+			@include breakpoint( ">660px" ) {
+				width: calc( 60% - 34px) !important;
+			}
 		}
 	}
 
