@@ -1,5 +1,5 @@
 .design {
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( '<660px' ) {
 		padding: 0 6px;
 	}
 }
@@ -9,14 +9,14 @@
 .design__group > h2 a:first-child,
 .docs__design-group > h2 a:first-child {
 	color: $gray-dark;
-	font-family: $serif;
+	font-family: $sans;
 	font-size: 38px;
-	font-weight: bold;
+	font-weight: 600;
 	margin: 40px 0 15px;
 }
 
 .design h3, .design h4 {
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 8px;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .design__collection {
-	min-height: 500px
+	min-height: 500px;
 }
 
 // ==========================================================================
@@ -116,7 +116,7 @@
 }
 
 .card__block {
-	margin: 0 0 10px 0;
+	margin: 0 0 10px;
 }
 
 .state-value {
