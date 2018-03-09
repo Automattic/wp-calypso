@@ -29,10 +29,9 @@ import authController from 'auth/controller';
 const debug = debugFactory( 'calypso' );
 
 const switchUserLocale = ( currentUser, reduxStore ) => {
-	const localeSlug = currentUser.get().localeSlug;
-
-	if ( localeSlug ) {
-		reduxStore.dispatch( setLocale( localeSlug ) );
+	const currentUserData = currentUser.get();
+	if ( currentUserData.localeSlug ) {
+		reduxStore.dispatch( setLocale( currentUserData.localeSlug, currentUserData.localeVariant ) );
 	}
 };
 

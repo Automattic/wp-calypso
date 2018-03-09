@@ -153,6 +153,7 @@ export function serverRender( req, res ) {
 		}
 
 		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+
 		const isLocaleRTL = isRTL( context.store.getState() );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}

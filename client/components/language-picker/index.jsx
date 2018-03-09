@@ -5,7 +5,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -19,7 +19,7 @@ import QueryGeo from 'components/data/query-geo';
 import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
 
-export class LanguagePicker extends PureComponent {
+export class LanguagePicker extends Component {
 	static propTypes = {
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
@@ -53,6 +53,13 @@ export class LanguagePicker extends PureComponent {
 		}
 	}
 
+	shouldComponentUpdate( nextProps ) {
+		if ( nextProps.disabled === true ) {
+			return false;
+		}
+		return true;
+	}
+
 	findLanguage( valueKey, value ) {
 		return find( this.props.languages, lang => {
 			// The value passed is sometimes string instead of number - need to use ==
@@ -66,9 +73,8 @@ export class LanguagePicker extends PureComponent {
 		if ( ! language ) {
 			return;
 		}
-
-		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ];
+		// onChange takes an object in shape of a DOM event as argument
 		const event = { target: { value } };
 		this.props.onChange( event );
 		this.setState( {
@@ -134,10 +140,13 @@ export class LanguagePicker extends PureComponent {
 		if ( ! language ) {
 			return this.renderPlaceholder();
 		}
-
-		const [ langCode, langSubcode ] = language.langSlug.split( '-' );
 		const langName = language.name;
 		const { disabled, translate } = this.props;
+
+		// assumes xx-yy_variant abstract this into a function and translate( 'formal' )
+		const languageCodes = language.langSlug.split( /[_-]+/ );
+		const langCode = languageCodes[ 0 ];
+		const langSubcode = languageCodes.indexOf( 'formal' ) > -1 ? null : languageCodes[ 1 ];
 
 		return (
 			<div

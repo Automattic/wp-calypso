@@ -308,6 +308,7 @@ function setUpLoggedInRoute( req, res, next ) {
 				req.context.store.dispatch( {
 					type: LOCALE_SET,
 					localeSlug: data.localeSlug,
+					localeVariant: data.localeVariant,
 				} );
 			}
 

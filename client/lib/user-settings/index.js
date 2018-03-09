@@ -260,7 +260,7 @@ UserSettings.prototype.getSetting = function( settingName ) {
 UserSettings.prototype.updateSetting = function( settingName, value ) {
 	if ( has( this.settings, settingName ) ) {
 		set( this.unsavedSettings, settingName, value );
-
+		let canDeleteUnsavedSetting = false;
 		/*
 		 * If the two match, we don't consider the setting "changed".
 		 * user_login is a special case since the logic for validating and saving a username
@@ -268,18 +268,38 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 		 */
 		if (
 			get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
-			'user_login' !== settingName
+			'user_login' !== settingName &&
+			'language' !== settingName
 		) {
+			canDeleteUnsavedSetting = true;
+		}
+
+		/*
+		 * language is a special case since we have to check for changes to locale_variant
+		 * this might be easier if we tracked the lang_id instead as we do in client/my-sites/site-settings/form-general.jsx
+ 		*/
+		if ( 'language' === settingName ) {
+			if (
+				// if the incoming language code is same as the saved language code and there's no saved variant (isEmpty)
+				// it means we're dealing with the same locale === setting hasn't changed
+				// if there is a saved variant is not empty we know that the user is changing back to the root language
+				( value === this.settings.language && isEmpty( this.settings.locale_variant ) ) ||
+				// if the incoming language code is the variant itself === setting hasn't changed
+				value === this.settings.locale_variant
+			) {
+				canDeleteUnsavedSetting = true;
+			}
+		}
+
+		if ( canDeleteUnsavedSetting ) {
 			debug( 'Removing ' + settingName + ' from changed settings.' );
 			deleteUnsavedSetting( this.unsavedSettings, settingName );
 		}
-
 		this.emit( 'change' );
 		return true;
-	} else {
-		debug( settingName + ' does not exist in user-settings data module.' );
-		return false;
 	}
+	debug( settingName + ' does not exist in user-settings data module.' );
+	return false;
 };
 
 UserSettings.prototype.isSettingUnsaved = function( settingName ) {

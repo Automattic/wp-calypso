@@ -103,9 +103,10 @@ const Account = createReactClass( {
 	updateLanguage( event ) {
 		const { value } = event.target;
 		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+		const originalLocaleVariant = this.props.userSettings.getOriginalSetting( 'locale_variant' );
 
 		this.updateUserSetting( 'language', value );
-		const redirect = value !== originalLanguage ? '/me/account' : false;
+		const redirect = value !== originalLanguage || value !== originalLocaleVariant ? '/me/account' : false;
 		this.setState( { redirect } );
 	},
 
@@ -534,7 +535,9 @@ const Account = createReactClass( {
 						languages={ config( 'languages' ) }
 						onClick={ this.recordClickEvent( 'Interface Language Field' ) }
 						valueKey="langSlug"
-						value={ this.getUserSetting( 'language' ) || '' }
+						value={
+							this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
+						}
 						onChange={ this.updateLanguage }
 					/>
 					<FormSettingExplanation>
