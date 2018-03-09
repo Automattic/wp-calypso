@@ -84,6 +84,7 @@ class SetupTasks extends Component {
 			{
 				id: 'add-product',
 				title: translate( 'Add a product' ),
+				buttonText: translate( 'Add a product' ),
 				completedTitle: translate( 'You have added a product' ),
 				completedButtonText: translate( 'View products' ),
 				description: translate( 'Start by adding the first product to your\u00a0store.' ),
@@ -94,6 +95,7 @@ class SetupTasks extends Component {
 			{
 				id: 'set-up-shipping',
 				title: translate( 'Review shipping' ),
+				buttonText: translate( 'Review shipping' ),
 				completedTitle: translate( 'Shipping is set up' ),
 				completedButtonText: translate( 'View shipping' ),
 				description: translate( "We've set up shipping based on your store location." ),
@@ -104,6 +106,7 @@ class SetupTasks extends Component {
 			{
 				id: 'set-up-payments',
 				title: translate( 'Review payments' ),
+				buttonText: translate( 'Review payments' ),
 				completedTitle: translate( 'Payments are set up' ),
 				completedButtonText: translate( 'Review payments' ),
 				description: translate( 'Choose how you would like your customers to pay you.' ),
@@ -114,6 +117,7 @@ class SetupTasks extends Component {
 			{
 				id: 'set-up-taxes',
 				title: translate( 'Review taxes' ),
+				buttonText: translate( 'Review taxes' ),
 				completedTitle: translate( 'Taxes are setup' ),
 				completedButtonText: translate( 'Review taxes' ),
 				description: translate( "We've set up automatic tax calculations for you." ),
@@ -124,6 +128,7 @@ class SetupTasks extends Component {
 			{
 				id: 'view-and-customize',
 				title: translate( 'View and customize' ),
+				buttonText: translate( 'Customize' ),
 				completedTitle: translate( 'View and customize' ),
 				completedButtonText: translate( 'View and customize' ),
 				description: translate(
