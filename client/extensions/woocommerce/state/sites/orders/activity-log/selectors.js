@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter } from 'lodash';
+import { filter, map, reverse, invert, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -108,8 +108,9 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 	if ( plugins.isWcsEnabled( state, siteId ) ) {
 		const labels = getLabels( state, orderId, siteId );
 		const renderableLabels = filter( labels, { status: 'PURCHASED' } );
-		renderableLabels.forEach( ( label, index, allLabels ) => {
-			const labelIndex = allLabels.length - 1 - index;
+		const labelIndexById = mapValues( invert( reverse( map( renderableLabels, 'label_id' ) ) ), Number );
+		renderableLabels.forEach( ( label ) => {
+			const labelIndex = labelIndexById[ label.label_id ];
 			if ( label.refund ) {
 				switch ( label.refund.status ) {
 					case 'complete':
@@ -162,6 +163,7 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 				currency: label.currency,
 				// If there's a refund in progress or completed, the Reprint/Refund buttons or the tracking number must *not* be shown
 				showDetails: ! label.refund || 'rejected' === label.refund.status || 'unknown' === label.refund.status,
+				returningLabelIndex: labelIndexById[ label.returning_label_id ],
 			} );
 		} );
 	}
