@@ -696,6 +696,61 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 	} );
 };
 
+export const purchaseReturnLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
+	let error = null;
+	let labels = null;
+
+	const setError = ( err ) => error = err;
+	const setSuccess = ( json ) => {
+		labels = json.labels;
+	};
+	const setIsSaving = ( saving ) => {
+		if ( saving ) {
+			dispatch( { type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST, orderId, siteId } );
+		} else if ( error ) {
+			handleLabelPurchaseError( orderId, siteId, dispatch, getState, error );
+		} else {
+			pollForLabelsPurchase( orderId, siteId, dispatch, getState, labels );
+		}
+	};
+
+	Promise.resolve().then( () => {
+		const state = getShippingLabel( getState(), orderId, siteId );
+		const form = state.form;
+		const pckgId = 'return';
+		const rate = find( form.rates.available[ pckgId ].rates, { service_id: form.rates.values[ pckgId ] } );
+		const formData = {
+			async: true,
+			origin: form.origin.values,
+			destination: form.destination.values,
+			packages: [ {
+				returning: state.returnDialog.labelId,
+				shipment_id: form.rates.available[ pckgId ].shipment_id,
+				rate_id: rate.rate_id,
+				service_id: form.rates.values[ pckgId ],
+				carrier_id: rate.carrier_id,
+				service_name: rate.title,
+				products: [],
+			} ],
+		};
+
+		//compatibility - only add the email_receipt if the plugin and the server support it
+		const emailReceipt = getEmailReceipts( getState(), siteId );
+		if ( isBoolean( emailReceipt ) ) {
+			formData.email_receipt = emailReceipt;
+		}
+
+		setIsSaving( true );
+		api.post( siteId, api.url.orderLabels( orderId ), formData )
+			.then( setSuccess )
+			.catch( setError )
+			.then( () => setIsSaving( false ) );
+	} ).catch( ( err ) => {
+		console.error( err );
+		dispatch( NoticeActions.errorNotice( err.toString() ) );
+	} );
+};
+
 export const confirmPrintLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 	printDocument( shippingLabel.form.fileData, getPDFFileName( orderId ) )
