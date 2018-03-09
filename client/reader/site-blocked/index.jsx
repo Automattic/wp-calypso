@@ -51,13 +51,16 @@ class SiteBlocked extends React.Component {
 				<EmptyContent
 					action={ action }
 					title={ translate( 'You have blocked this site.' ) }
-					line={ translate( "If you'd like to see posts from {{em}}%s{{/em}} again, use Unblock.", {
-						args: title,
-						components: {
-							em: <em />,
-						},
-					} ) }
-					illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+					line={ translate(
+						"Unblock this site if you'd like to see posts from {{em}}%s{{/em}} again.",
+						{
+							args: title,
+							components: {
+								em: <em />,
+							},
+						}
+					) }
+					illustration={ '/calypso/images/illustrations/illustration-500.svg' }
 					illustrationWidth={ 500 }
 				/>
 			</ReaderMain>
