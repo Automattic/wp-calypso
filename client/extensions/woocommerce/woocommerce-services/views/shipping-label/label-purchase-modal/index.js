@@ -31,7 +31,7 @@ const PurchaseDialog = ( props ) => {
 	}
 
 	const buttons = [
-		<BuyAndPrintButton key="purchase" siteId={ props.siteId } orderId={ props.orderId } />
+		<BuyAndPrintButton key="purchase" siteId={ props.siteId } orderId={ props.orderId } />,
 	];
 
 	const onClose = () => props.exitPrintingFlow( props.orderId, props.siteId, false );

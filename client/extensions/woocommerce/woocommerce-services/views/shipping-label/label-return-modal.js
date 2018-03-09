@@ -18,7 +18,6 @@ import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-ut
 import FormSectionHeading from 'components/forms/form-section-heading';
 import {
 	closeReturnDialog,
-	purchaseReturnLabel,
 	updatePaperSize,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
@@ -26,24 +25,17 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import RateSelector from './label-purchase-modal/rates-step/rate-selector';
+import BuyAndPrintButton from './label-purchase-modal/buy-and-print-button';
 
 const ReturnDialog = props => {
 	const { orderId, siteId, returnDialog, paperSize, storeOptions, labelId, translate } = props;
 
 	const onClose = () => props.closeReturnDialog( orderId, siteId );
-	const onConfirm = () => props.purchaseReturnLabel( orderId, siteId );
 	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
-		{
-			action: 'confirm',
-			onClick: onConfirm,
-			isPrimary: true,
-			disabled: returnDialog && returnDialog.isFetching,
-			additionalClassNames: returnDialog && returnDialog.isFetching ? 'is-busy' : '',
-			label: translate( 'Print' ),
-		},
+		<BuyAndPrintButton key="purchase" siteId={ props.siteId } orderId={ props.orderId } />,
 	];
 
 	return (
@@ -79,7 +71,6 @@ ReturnDialog.propTypes = {
 	storeOptions: PropTypes.object.isRequired,
 	labelId: PropTypes.number,
 	closeReturnDialog: PropTypes.func.isRequired,
-	purchaseReturnLabel: PropTypes.func.isRequired,
 	updatePaperSize: PropTypes.func.isRequired,
 };
 
@@ -94,10 +85,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 };
 
 const mapDispatchToProps = dispatch => {
-	return bindActionCreators(
-		{ closeReturnDialog, purchaseReturnLabel, updatePaperSize },
-		dispatch
-	);
+	return bindActionCreators( { closeReturnDialog, updatePaperSize }, dispatch );
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ReturnDialog ) );
