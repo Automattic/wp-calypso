@@ -19,7 +19,7 @@ import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
 import { preload } from 'sections-preload';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
+import InfiniteScroll from 'components/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
 import Placeholder from './placeholder';
@@ -89,8 +89,6 @@ export default class PageList extends Component {
 
 const Pages = createReactClass( {
 	displayName: 'Pages',
-
-	mixins: [ infiniteScroll( 'fetchPages' ) ],
 
 	propTypes: {
 		incrementPage: PropTypes.func.isRequired,
@@ -326,6 +324,7 @@ const Pages = createReactClass( {
 
 		return (
 			<div id="pages" className="pages__page-list">
+				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ blogPostsPage }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <ListEnd /> : null }

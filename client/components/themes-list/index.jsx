@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
-import InfiniteScroll from 'lib/mixins/infinite-scroll';
+import InfiniteScroll from 'components/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
 /**
@@ -24,7 +24,6 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 /* eslint-disable react/prefer-es6-class */
 export const ThemesList = createReactClass( {
 	displayName: 'ThemesList',
-	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
 
 	propTypes: {
 		themes: PropTypes.array.isRequired,
@@ -132,6 +131,7 @@ export const ThemesList = createReactClass( {
 
 		return (
 			<div className="themes-list">
+				<InfiniteScroll nextPageMethod={ this.fetchNextPage } />
 				{ this.props.themes.map( this.renderTheme ) }
 				{ this.props.loading && this.renderLoadingPlaceholders() }
 				{ this.renderTrailingItems() }
