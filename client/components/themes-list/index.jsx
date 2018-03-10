@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { isEqual, noop, times } from 'lodash';
 import { localize } from 'i18n-calypso';
 
@@ -18,14 +17,8 @@ import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'components/infinite-scroll';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
-/**
- * Component
- */
-/* eslint-disable react/prefer-es6-class */
-export const ThemesList = createReactClass( {
-	displayName: 'ThemesList',
-
-	propTypes: {
+export class ThemesList extends React.Component {
+	static propTypes = {
 		themes: PropTypes.array.isRequired,
 		emptyContent: PropTypes.element,
 		loading: PropTypes.bool.isRequired,
@@ -40,25 +33,23 @@ export const ThemesList = createReactClass( {
 		// i18n function provided by localize()
 		translate: PropTypes.func,
 		placeholderCount: PropTypes.number,
-	},
+	};
 
-	fetchNextPage( options ) {
+	static defaultProps = {
+		loading: false,
+		themes: [],
+		fetchNextPage: noop,
+		placeholderCount: DEFAULT_THEME_QUERY.number,
+		optionsGenerator: () => [],
+		getActionLabel: () => '',
+		isActive: () => false,
+		getPrice: () => '',
+		isInstalling: () => false,
+	};
+
+	fetchNextPage = options => {
 		this.props.fetchNextPage( options );
-	},
-
-	getDefaultProps() {
-		return {
-			loading: false,
-			themes: [],
-			fetchNextPage: noop,
-			placeholderCount: DEFAULT_THEME_QUERY.number,
-			optionsGenerator: () => [],
-			getActionLabel: () => '',
-			isActive: () => false,
-			getPrice: () => '',
-			isInstalling: () => false,
-		};
-	},
+	};
 
 	shouldComponentUpdate( nextProps ) {
 		return (
@@ -69,7 +60,7 @@ export const ThemesList = createReactClass( {
 			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick
 		);
-	},
+	}
 
 	renderTheme( theme, index ) {
 		return (
@@ -90,7 +81,7 @@ export const ThemesList = createReactClass( {
 				upsellUrl={ this.props.upsellUrl }
 			/>
 		);
-	},
+	}
 
 	renderLoadingPlaceholders() {
 		return times( this.props.placeholderCount, function( i ) {
@@ -102,7 +93,7 @@ export const ThemesList = createReactClass( {
 				/>
 			);
 		} );
-	},
+	}
 
 	// Invisible trailing items keep all elements same width in flexbox grid.
 	renderTrailingItems() {
@@ -110,7 +101,7 @@ export const ThemesList = createReactClass( {
 		return times( NUM_SPACERS, function( i ) {
 			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 		} );
-	},
+	}
 
 	renderEmpty() {
 		return (
@@ -122,7 +113,7 @@ export const ThemesList = createReactClass( {
 				/>
 			)
 		);
-	},
+	}
 
 	render() {
 		if ( ! this.props.loading && this.props.themes.length === 0 ) {
@@ -132,12 +123,12 @@ export const ThemesList = createReactClass( {
 		return (
 			<div className="themes-list">
 				<InfiniteScroll nextPageMethod={ this.fetchNextPage } />
-				{ this.props.themes.map( this.renderTheme ) }
+				{ this.props.themes.map( this.renderTheme, this ) }
 				{ this.props.loading && this.renderLoadingPlaceholders() }
 				{ this.renderTrailingItems() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( ThemesList );
