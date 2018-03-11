@@ -48,7 +48,7 @@ export class HappinessSupport extends Component {
 		const { isJetpackFreePlan, translate } = this.props;
 		return isJetpackFreePlan
 			? translate( 'Support documentation' )
-			: translate( 'Priority support' );
+			: translate( 'Priority supports' );
 	}
 
 	getSupportText() {
