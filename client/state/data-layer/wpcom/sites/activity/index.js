@@ -52,6 +52,7 @@ export const togglePolling = ( { dispatch, getState }, { isWatching, siteId } ) 
 			activityLogRequest( siteId, {
 				dateStart: Date.now(),
 				number: 100,
+				sortOrder: 'asc',
 			} ),
 			{ meta: { dataLayer: { isWatching: true } } }
 		)
@@ -124,7 +125,12 @@ export const continuePolling = ( { dispatch, getState }, action ) => {
 			const searchAfter = nextAfter || thisState.nextAfter;
 
 			if ( searchAfter ) {
-				dispatch( merge( activityLogRequest( siteId, { searchAfter, number: 100 } ), meta ) );
+				dispatch(
+					merge(
+						activityLogRequest( siteId, { searchAfter, number: 100, sortOrder: 'asc' } ),
+						meta
+					)
+				);
 				return;
 			}
 
@@ -140,6 +146,7 @@ export const continuePolling = ( { dispatch, getState }, action ) => {
 					activityLogRequest( siteId, {
 						dateStart: dateStart > -Infinity ? dateStart : Date.now(),
 						number: 100,
+						sortOrder: 'asc',
 					} ),
 					meta
 				)
@@ -171,6 +178,7 @@ export const handleActivityLogRequest = action => {
 					name: params.name,
 					number: params.number,
 					search_after: JSON.stringify( params.searchAfter ),
+					sort_order: params.sortOrder,
 				},
 				a => a === undefined
 			),
