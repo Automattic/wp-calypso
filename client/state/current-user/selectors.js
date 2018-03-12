@@ -56,6 +56,13 @@ export const createCurrentUserSelector = ( path, otherwise = null ) => state => 
 export const getCurrentUserLocale = createCurrentUserSelector( 'localeSlug' );
 
 /**
+ * Returns the locale variant slug for the current user.
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Current user locale variant
+ */
+export const getCurrentUserLocaleVariant = createCurrentUserSelector( 'localeVariant' );
+
+/**
  * Returns the country code for the current user.
  *
  * @param  {Object}  state  Global state tree
