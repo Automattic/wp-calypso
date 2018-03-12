@@ -378,12 +378,10 @@ class RegisterDomainStep extends React.Component {
 					if (
 						! domain.match(
 							/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
-						)
+						) ||
+						( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) )
 					) {
 						this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
-						return callback();
-					}
-					if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
 						return callback();
 					}
 
