@@ -136,7 +136,7 @@ function getTranslationFromJed( jed, options ) {
 }
 
 function getTranslation( i18n, options ) {
-	var translation, lookup;
+	var i, lookup;
 
 	for ( i = translationLookup.length - 1; i >= 0; i-- ) {
 		lookup = translationLookup[ i ]( assign( {}, options ) );
