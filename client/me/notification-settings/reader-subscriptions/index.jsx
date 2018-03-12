@@ -15,7 +15,7 @@ import { flowRight } from 'lodash';
  */
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
-import formBase from 'me/form-base';
+import formBase from 'me/form-base/hoc';
 import Card from 'components/card';
 import Navigation from 'me/notification-settings/navigation';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -35,7 +35,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 const NotificationSubscriptions = createReactClass( {
 	displayName: 'NotificationSubscriptions',
 
-	mixins: [ formBase, observe( 'userSettings' ) ],
+	mixins: [ observe( 'userSettings' ) ],
 
 	handleClickEvent( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
@@ -84,7 +84,7 @@ const NotificationSubscriptions = createReactClass( {
 					<form
 						id="notification-settings"
 						onChange={ this.props.markChanged }
-						onSubmit={ this.submitForm }
+						onSubmit={ this.props.submitForm }
 					>
 						<FormSectionHeading>
 							{ this.props.translate( 'Subscriptions Delivery' ) }
@@ -110,12 +110,12 @@ const NotificationSubscriptions = createReactClass( {
 								{ this.props.translate( 'Default Email Delivery' ) }
 							</FormLabel>
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="subscription_delivery_email_default"
 								name="subscription_delivery_email_default"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
-								value={ this.getSetting( 'subscription_delivery_email_default' ) }
+								value={ this.props.getSetting( 'subscription_delivery_email_default' ) }
 							>
 								<option value="never">{ this.props.translate( 'Never send email' ) }</option>
 								<option value="instantly">
@@ -130,11 +130,11 @@ const NotificationSubscriptions = createReactClass( {
 							<FormLegend>{ this.props.translate( 'Jabber Subscription Delivery' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
-									checked={ this.getSetting( 'subscription_delivery_jabber_default' ) }
-									disabled={ this.getDisabledState() }
+									checked={ this.props.getSetting( 'subscription_delivery_jabber_default' ) }
+									disabled={ this.props.getDisabledState() }
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
-									onChange={ this.toggleSetting }
+									onChange={ this.props.toggleSetting }
 									onClick={ this.handleCheckboxEvent( 'Notification Delivery by Jabber' ) }
 								/>
 								<span>
@@ -148,12 +148,12 @@ const NotificationSubscriptions = createReactClass( {
 								{ this.props.translate( 'Email Delivery Format' ) }
 							</FormLabel>
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="subscription_delivery_mail_option"
 								name="subscription_delivery_mail_option"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.handleFocusEvent( 'Email Delivery Format' ) }
-								value={ this.getSetting( 'subscription_delivery_mail_option' ) }
+								value={ this.props.getSetting( 'subscription_delivery_mail_option' ) }
 							>
 								<option value="html">{ this.props.translate( 'HTML' ) }</option>
 								<option value="text">{ this.props.translate( 'Plain Text' ) }</option>
@@ -165,13 +165,13 @@ const NotificationSubscriptions = createReactClass( {
 								{ this.props.translate( 'Email Delivery Window' ) }
 							</FormLabel>
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								className="me-notification-settings__delivery-window"
 								id="subscription_delivery_day"
 								name="subscription_delivery_day"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.handleFocusEvent( 'Email Delivery Window Day' ) }
-								value={ this.getSetting( 'subscription_delivery_day' ) }
+								value={ this.props.getSetting( 'subscription_delivery_day' ) }
 							>
 								<option value="0">{ this.props.translate( 'Sunday' ) }</option>
 								<option value="1">{ this.props.translate( 'Monday' ) }</option>
@@ -183,12 +183,12 @@ const NotificationSubscriptions = createReactClass( {
 							</FormSelect>
 
 							<FormSelect
-								disabled={ this.getDisabledState() }
+								disabled={ this.props.getDisabledState() }
 								id="subscription_delivery_hour"
 								name="subscription_delivery_hour"
-								onChange={ this.updateSetting }
+								onChange={ this.props.updateSetting }
 								onFocus={ this.handleFocusEvent( 'Email Delivery Window Time' ) }
-								value={ this.getSetting( 'subscription_delivery_hour' ) }
+								value={ this.props.getSetting( 'subscription_delivery_hour' ) }
 							>
 								<option value="0">{ this.getDeliveryHourLabel( 0 ) }</option>
 								<option value="2">{ this.getDeliveryHourLabel( 2 ) }</option>
@@ -215,11 +215,11 @@ const NotificationSubscriptions = createReactClass( {
 							<FormLegend>{ this.props.translate( 'Block Emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
-									checked={ this.getSetting( 'subscription_delivery_email_blocked' ) }
-									disabled={ this.getDisabledState() }
+									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
+									disabled={ this.props.getDisabledState() }
 									id="subscription_delivery_email_blocked"
 									name="subscription_delivery_email_blocked"
-									onChange={ this.toggleSetting }
+									onChange={ this.props.toggleSetting }
 									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
 								/>
 								<span>
@@ -231,11 +231,11 @@ const NotificationSubscriptions = createReactClass( {
 						</FormFieldset>
 
 						<FormButton
-							isSubmitting={ this.state.submittingForm }
-							disabled={ this.getDisabledState() }
+							isSubmitting={ this.props.isSubmittingForm() }
+							disabled={ this.props.getDisabledState() }
 							onClick={ this.handleClickEvent( 'Save Notification Settings Button' ) }
 						>
-							{ this.state.submittingForm
+							{ this.props.isSubmittingForm()
 								? this.props.translate( 'Saving…' )
 								: this.props.translate( 'Save Notification Settings' ) }
 						</FormButton>
@@ -248,4 +248,6 @@ const NotificationSubscriptions = createReactClass( {
 
 const connectComponent = connect( null, { recordGoogleEvent } );
 
-export default flowRight( connectComponent, localize, protectForm )( NotificationSubscriptions );
+export default flowRight( connectComponent, localize, protectForm, formBase )(
+	NotificationSubscriptions
+);
