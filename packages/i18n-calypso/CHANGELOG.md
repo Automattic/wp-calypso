@@ -1,3 +1,7 @@
+1.9.1
+------
+Fix a reference to an undefined value.
+
 1.9.0
 ------
 Add support for [key hashing](https://github.com/Automattic/i18n-calypso/#key-hashing) and add a method [`hasTranslation()`](https://github.com/Automattic/i18n-calypso/#hastranslation-method).
