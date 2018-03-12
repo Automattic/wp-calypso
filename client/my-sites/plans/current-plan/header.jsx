@@ -100,9 +100,11 @@ export class CurrentPlanHeader extends Component {
 					</div>
 					{ this.renderPurchaseInfo() }
 					{ includePlansLink && (
-						<Button className="current-plan__compare-plans" href={ '/plans/' + selectedSite.slug }>
-							{ translate( 'Compare Plans' ) }
-						</Button>
+						<div className="current-plan__compare-plans">
+							<Button href={ '/plans/' + selectedSite.slug }>
+								{ translate( 'Compare Plans' ) }
+							</Button>
+						</div>
 					) }
 				</div>
 			</div>
