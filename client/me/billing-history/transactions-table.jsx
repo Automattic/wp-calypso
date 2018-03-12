@@ -109,15 +109,18 @@ class TransactionsTable extends React.Component {
 			return this.serviceNameDescription( transaction );
 		}
 
-		const groupedTransactionItems = groupDomainProducts( transaction.items, this.props.translate );
+		const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
+			transaction.items,
+			this.props.translate
+		);
 
-		if ( groupedTransactionItems.length > 1 ) {
+		if ( moreTransactionItems.length > 0 ) {
 			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
 		}
 
 		return this.serviceNameDescription( {
-			...groupedTransactionItems[ 0 ],
-			plan: capitalPDangit( titleCase( groupedTransactionItems[ 0 ].variation ) ),
+			...transactionItem,
+			plan: capitalPDangit( titleCase( transactionItem.variation ) ),
 		} );
 	};
 
