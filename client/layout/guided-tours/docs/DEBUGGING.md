@@ -11,7 +11,13 @@ In the following example, the tours `gdocsIntegrationTour` and `editorInsertMenu
 
 ![Tour seen](./img/tour-seen.png)
 
-Currently, there is no systematic way of clearing a user's history for debugging. One way you can clear it is by applying the [`clean-history.patch`](./patch/clean-history.patch) to your working tree, load the page to clean the history, and remove it again.
+To clear a user's tour history, simply visit Calypso with `tour=reset` as a query argument. This will then call `resetGuidedToursHistory`:
+
+```JavaScript
+export function resetGuidedToursHistory() {
+	return savePreference( 'guided-tours-history', [] );
+}
+```
 
 ## My tour is only shown when called via the query arg
 
