@@ -310,21 +310,6 @@ button {
 	}
 }
 
-// Positions and resets font styles of noticons applied to buttons
-.button.noticon {
-	line-height: inherit;
-
-	&:before {
-		display: inline-block;
-		vertical-align: middle;
-		margin-top: -2px;
-		font-size: 16px;
-		font-style: normal;
-		font-weight: normal;
-	}
-}
-
-
 @keyframes button__busy-animation {
   0%   { background-position: 240px 0; }
 }
