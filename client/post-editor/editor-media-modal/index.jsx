@@ -60,7 +60,7 @@ class EditorMediaModal extends Component {
 		}
 
 		if ( media ) {
-			this.props.onInsertMedia( media, items );
+			this.props.onInsertMedia( media );
 
 			if ( stat ) {
 				this.props.bumpStat( 'editor_media_actions', stat );
