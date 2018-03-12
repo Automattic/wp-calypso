@@ -7,7 +7,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -90,7 +90,12 @@ export function render( element, key = JSON.stringify( element ), req ) {
 					logToLogstash( {
 						feature: 'calypso_ssr',
 						message: 'render cache miss',
-						extra: { key, existingKeys: markupCache.keys, headers: req.headers },
+						extra: {
+							key,
+							'existing-keys': markupCache.keys,
+							'user-agent': get( req.headers, 'user-agent', '' ),
+							path: req.context.path,
+						},
 					} )
 				);
 			}
