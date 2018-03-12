@@ -164,7 +164,7 @@ class Chart extends React.Component {
 						<Notice
 							className="chart__empty-notice"
 							status="is-warning"
-							isCompact="true"
+							isCompact
 							text={ translate( 'No activity this period', {
 								context: 'Message on empty bar chart in Stats',
 								comment: 'Should be limited to 32 characters to prevent wrapping',
