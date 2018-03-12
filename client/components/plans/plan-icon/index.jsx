@@ -38,6 +38,7 @@ export default class PlanIcon extends Component {
 
 			case isBusinessPlan( plan ):
 				return this.getIcon( 'business' );
+
 			default:
 				return this.getIcon( 'free' );
 		}
