@@ -826,6 +826,8 @@ export const PostEditor = createReactClass( {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
 
+		this.hideNotice();
+
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
