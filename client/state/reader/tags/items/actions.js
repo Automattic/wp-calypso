@@ -8,12 +8,13 @@ import { trim } from 'lodash';
  * Internal dependencies
  */
 import {
-	READER_TAGS_REQUEST,
-	READER_TAGS_RECEIVE,
+	READER_TAGS,
 	READER_UNFOLLOW_TAG_REQUEST,
 	READER_UNFOLLOW_TAG_RECEIVE,
 	READER_FOLLOW_TAG_REQUEST,
 } from 'state/action-types';
+import { http } from 'state/data-layer/wpcom-http/actions';
+import { fromApi } from 'state/data-layer/wpcom/read/tags/utils';
 
 /**
  * Helper function. Turns a tag name into a tag "slug" for use with the API.
@@ -29,21 +30,14 @@ export const slugify = tag =>
 			.replace( /-{2,}/g, '-' )
 	);
 
-export const requestTags = tag => {
-	const type = READER_TAGS_REQUEST;
-	if ( ! tag ) {
-		return { type };
-	}
-
-	const slug = slugify( tag );
-	return {
-		type,
-		payload: { tag, slug },
-	};
-};
+export function requestTags( tag ) {
+	const path = tag ? `/read/tags/${ slugify( tag ) }` : '/read/tags';
+	const reducerAction = { type: READER_TAGS, resetFollowingData: ! tag, meta: { tag } };
+	return http( { path, method: 'GET', apiVersion: '1.2', fromApi }, reducerAction );
+}
 
 export const receiveTags = ( { payload, resetFollowingData = false } ) => ( {
-	type: READER_TAGS_RECEIVE,
+	type: READER_TAGS,
 	payload,
 	meta: { resetFollowingData },
 } );
