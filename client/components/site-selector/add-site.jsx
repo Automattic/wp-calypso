@@ -14,6 +14,7 @@ import config from 'config';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenuSeparator from 'components/popover/menu-separator';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteSelectorAddSite extends Component {
@@ -80,6 +81,7 @@ class SiteSelectorAddSite extends Component {
 							</span>
 						</span>
 					</PopoverMenuItem>
+					<PopoverMenuSeparator />
 					<PopoverMenuItem
 						href={ this.getNewJetpackSiteUrl() }
 						onClick={ this.recordPopoverAddJetpackSite }
