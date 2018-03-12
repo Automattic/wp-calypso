@@ -35,6 +35,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { canCurrentUser } from 'state/selectors';
+import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -52,11 +53,11 @@ class AdsMain extends Component {
 	};
 
 	componentDidMount() {
-		this.redirectIfNoAccess();
+		this.redirectToStats();
 	}
 
 	componentDidUpdate() {
-		this.redirectIfNoAccess();
+		this.redirectToStats();
 	}
 
 	canAccess() {
@@ -64,11 +65,14 @@ class AdsMain extends Component {
 		return site && canManageOptions && canAccessWordads( site );
 	}
 
-	redirectIfNoAccess() {
+	redirectToStats() {
 		const { siteSlug } = this.props;
+		const siteFragment = getSiteFragment( page.current );
 
 		if ( ! this.canAccess() && siteSlug ) {
 			page( '/stats/' + siteSlug );
+		} else if ( ! siteFragment ) {
+			page( '/stats/' );
 		}
 	}
 
