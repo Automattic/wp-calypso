@@ -45,13 +45,18 @@
 		margin-bottom: 24px;
 
 		&.is-selected,
-		&:hover,
 		&.is-x-post.is-selected,
-		&.is-x-post:hover,
-		&.tag-afk.is-selected,
-		&.tag-afk:hover {
-			box-shadow: 0 0 0 1px $gray,
-						0 2px 4px $gray-lighten-20;
+		&.tag-afk.is-selected {
+
+			&::before {
+				background: $blue-wordpress;
+				content: "";
+				position: absolute;
+					bottom: 0;
+					left: -8px;
+					top: 0;
+				width: 2px;
+			}
 		}
 	}
 
@@ -88,7 +93,6 @@
 
 	// Loading Placeholders
 	&.is-placeholder {
-
 		pointer-events: none;
 		user-select: none;
 
@@ -132,6 +136,7 @@
 	}
 
 	.post-excerpt-only {
+
 		p {
 			margin-bottom: 1em;
 		}
@@ -221,7 +226,6 @@
 }
 
 // X-Posts
-
 .is-reader-page {
 
 	.reader__card.card.is-x-post {
@@ -358,7 +362,6 @@
 }
 
 // P2 cross-posts (x-posts), which is Automattic-only.
-
 .reader__x-post-author {
 	font-weight: 600;
 }
@@ -407,12 +410,6 @@
 }
 
 // In-stream Recommendations
-
-// Custom breakpoints needed to match Related Posts
-
-$reader-related-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-breakpoint-small: "( max-width: 535px )";
-
 .reader-stream__recommended-posts {
 	border-bottom: 1px solid $gray-lighten-20;
 	padding-bottom: 12px;
