@@ -19,21 +19,25 @@ class ReadmeViewer extends Component {
 	static propTypes = {
 		getReadme: PropTypes.func,
 		readmeFilePath: PropTypes.string,
+		section: PropTypes.string,
 	};
 
 	static defaultProps = {
-		getReadme: readmeFilePath => {
+		getReadme: ( section, readmeFilePath ) => {
+			if ( section === 'blocks' ) {
+				return htmlToReactParser.parse( require( `../../blocks/${ readmeFilePath }/README.md` ) );
+			}
 			return htmlToReactParser.parse( require( `../../components/${ readmeFilePath }/README.md` ) );
 		},
 	};
 
 	render() {
-		const readmeFilePath = this.props.readmeFilePath;
-		const readme = readmeFilePath && this.props.getReadme( readmeFilePath );
+		const { section, readmeFilePath } = this.props;
+		const readme = readmeFilePath && this.props.getReadme( section, readmeFilePath );
 		const editLink = (
 			<div className="docs-example__readme-viewer-edit-link">
 				<a
-					href={ `https://github.com/Automattic/wp-calypso/edit/master/client/components/${ readmeFilePath }/README.md` }
+					href={ `https://github.com/Automattic/wp-calypso/edit/master/client/${ section }/${ readmeFilePath }/README.md` }
 				>
 					Improve this document on GitHub
 				</a>
