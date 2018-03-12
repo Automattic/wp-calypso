@@ -24,6 +24,7 @@ export class ChecklistTask extends PureComponent {
 		id: PropTypes.string.isRequired,
 		title: PropTypes.string.isRequired,
 		buttonText: PropTypes.string,
+		buttonPrimary: PropTypes.bool,
 		completedTitle: PropTypes.string,
 		completedButtonText: PropTypes.string,
 		description: PropTypes.string.isRequired,
@@ -47,6 +48,7 @@ export class ChecklistTask extends PureComponent {
 
 	render() {
 		const {
+			buttonPrimary,
 			completed,
 			completedTitle,
 			completedButtonText,
@@ -80,7 +82,11 @@ export class ChecklistTask extends PureComponent {
 					) }
 				</div>
 				<div className="checklist__task-secondary">
-					<Button className="checklist__task-action" onClick={ this.handleClick }>
+					<Button
+						className="checklist__task-action"
+						onClick={ this.handleClick }
+						primary={ buttonPrimary }
+					>
 						{ hasActionlink ? completedButtonText : buttonText }
 					</Button>
 					{ duration && (
