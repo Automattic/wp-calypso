@@ -18,12 +18,12 @@ import SectionNav from 'components/section-nav';
 import MainComponent from 'components/main';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
+import InfiniteScroll from 'components/infinite-scroll';
 import NoResults from 'my-sites/no-results';
 import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
 import URLSearch from 'lib/mixins/url-search';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import {
@@ -51,7 +51,7 @@ const PluginsBrowser = createReactClass( {
 	displayName: 'PluginsBrowser',
 	_SHORT_LIST_LENGTH: 6,
 	visibleCategories: [ 'new', 'popular', 'featured' ],
-	mixins: [ infiniteScroll( 'fetchNextPagePlugins' ), URLSearch ],
+	mixins: [ URLSearch ],
 
 	reinitializeSearch() {
 		this.WrappedSearch = props => <Search { ...props } />;
@@ -508,6 +508,7 @@ const PluginsBrowser = createReactClass( {
 
 		return (
 			<MainComponent wideLayout>
+				<InfiniteScroll nextPageMethod={ this.fetchNextPagePlugins } />
 				<NonSupportedJetpackVersionNotice />
 				{ this.renderDocumentHead() }
 				<SidebarNavigation />
