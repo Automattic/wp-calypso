@@ -45,7 +45,7 @@ describe( 'HappinessSupport', () => {
 
 	test( 'should render a translated support button', () => {
 		expect( wrapper.find( 'Button.happiness-support__support-button' ).props().children ).to.equal(
-			'Translated: Search our support site'
+			'Translated: Support documentation'
 		);
 	} );
 

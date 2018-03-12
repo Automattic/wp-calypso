@@ -54,15 +54,14 @@ class CurrentPlan extends Component {
 		return ! selectedSite || isRequestingPlans;
 	}
 
-	getHeaderWording( plan ) {
+	getHeaderWording( planConstObj ) {
 		const { translate } = this.props;
 
-		const planConstObj = getPlan( plan ),
-			title = translate( 'Your site is on a %(planName)s plan', {
-				args: {
-					planName: planConstObj.getTitle(),
-				},
-			} );
+		const title = translate( 'Your site is on a %(planName)s plan', {
+			args: {
+				planName: planConstObj.getTitle(),
+			},
+		} );
 
 		const tagLine = planConstObj.getTagline
 			? planConstObj.getTagline()
@@ -93,7 +92,12 @@ class CurrentPlan extends Component {
 		const currentPlanSlug = selectedSite.plan.product_slug,
 			isLoading = this.isLoading();
 
-		const { title, tagLine } = this.getHeaderWording( currentPlanSlug );
+		const planConstObj = getPlan( currentPlanSlug ),
+			planFeaturesHeader = translate( '%s plan features', {
+				args: planConstObj.getTitle(),
+			} );
+
+		const { title, tagLine } = this.getHeaderWording( planConstObj );
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -136,6 +140,13 @@ class CurrentPlan extends Component {
 						isAutomatedTransfer={ isAutomatedTransfer }
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
+					<div
+						className={ classNames( 'current-plan__header-text current-plan__text', {
+							'is-placeholder': { isLoading },
+						} ) }
+					>
+						<h1 class="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					</div>
 					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
 				</Fragment>
 

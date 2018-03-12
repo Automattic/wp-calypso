@@ -2,26 +2,13 @@
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: space-between;
-}
-
-.current-plan__header-item {
-	display: flex;
-	width: 100%;
 	margin-bottom: 12px;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-
-	@include breakpoint( ">1040px" ) {
-		width: calc( 50% - 6px );
-		margin-bottom: 0;
-	}
 }
 
-.current-plan__header-item-content {
+.current-plan__header-content {
 	background-color: $white;
 	padding: 32px;
+	width: 100%;
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
 		0 1px 2px $gray-lighten-30;
 
@@ -32,13 +19,19 @@
 }
 
 .current-plan__header-icon {
-	margin: 0 auto;
 	width: 80px;
 	height: 80px;
+	float: left;
+	margin-left: 20px;
+	margin-right: 40px;
+	display: flex;
+	flex-direction: row;
 }
 
 .current-plan__header-copy {
 	width: 100%;
+	text-align: left;
+	margin-top: -20px;
 }
 
 .current-plan__header-heading,
@@ -92,6 +85,8 @@
 
 .current-plan__header-purchase-info-wrapper.card.is-compact {
 	margin: 24px -32px -32px;
+	display: flex;
+	flex-direction: column;
 }
 
 .current-plan__header-purchase-info {
@@ -116,4 +111,10 @@
 
 .current-plan__compare-plans {
 	margin: 16px 0 0;
+}
+
+.current-plan__text {
+	margin-top: 50px;
+	margin-bottom: 20px;
+	text-align: center;
 }

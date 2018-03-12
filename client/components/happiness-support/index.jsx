@@ -48,7 +48,7 @@ export class HappinessSupport extends Component {
 		const { isJetpackFreePlan, translate } = this.props;
 		return isJetpackFreePlan
 			? translate( 'Support documentation' )
-			: translate( 'Priority supports' );
+			: translate( 'Priority support' );
 	}
 
 	getSupportText() {
@@ -140,7 +140,7 @@ export class HappinessSupport extends Component {
 				rel="noopener noreferrer"
 				className="happiness-support__support-button"
 			>
-				{ this.props.translate( 'Search our support site' ) }
+				{ this.props.translate( 'Support documentation' ) }
 			</Button>
 		);
 	}

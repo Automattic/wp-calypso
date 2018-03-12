@@ -77,38 +77,33 @@ export class CurrentPlanHeader extends Component {
 
 		return (
 			<div className="current-plan__header">
-				<div className="current-plan__header-item">
-					<div className="current-plan__header-item-content">
-						<div className="current-plan__header-icon">
-							{ currentPlanSlug && <PlanIcon plan={ currentPlanSlug } /> }
-						</div>
-						<div className="current-plan__header-copy">
-							<h1
-								className={ classNames( 'current-plan__header-heading', {
-									'is-placeholder': isPlaceholder,
-								} ) }
-							>
-								{ title }
-							</h1>
-
-							<h2
-								className={ classNames( 'current-plan__header-text', {
-									'is-placeholder': isPlaceholder,
-								} ) }
-							>
-								{ tagLine }
-							</h2>
-						</div>
-						{ this.renderPurchaseInfo() }
-						{ includePlansLink && (
-							<Button
-								className="current-plan__compare-plans"
-								href={ '/plans/' + selectedSite.slug }
-							>
-								{ translate( 'Compare Plans' ) }
-							</Button>
-						) }
+				<div className="current-plan__header-content">
+					<div className="current-plan__header-icon">
+						{ currentPlanSlug && <PlanIcon plan={ currentPlanSlug } /> }
 					</div>
+					<div className="current-plan__header-copy">
+						<h1
+							className={ classNames( 'current-plan__header-heading', {
+								'is-placeholder': isPlaceholder,
+							} ) }
+						>
+							{ title }
+						</h1>
+
+						<h2
+							className={ classNames( 'current-plan__header-text', {
+								'is-placeholder': isPlaceholder,
+							} ) }
+						>
+							{ tagLine }
+						</h2>
+					</div>
+					{ this.renderPurchaseInfo() }
+					{ includePlansLink && (
+						<Button className="current-plan__compare-plans" href={ '/plans/' + selectedSite.slug }>
+							{ translate( 'Compare Plans' ) }
+						</Button>
+					) }
 				</div>
 			</div>
 		);
