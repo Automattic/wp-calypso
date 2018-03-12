@@ -10,7 +10,9 @@ import { map, partition, reduce } from 'lodash';
 import formatCurrency from 'lib/format-currency';
 
 export const groupDomainProducts = ( transactionItems, translate ) => {
-	const [ domainProducts, otherProducts ] = partition( transactionItems, { product: 'Domain' } );
+	const [ domainProducts, otherProducts ] = partition( transactionItems, {
+		product_slug: 'wp-domains',
+	} );
 
 	const groupedDomainProducts = reduce(
 		domainProducts,
@@ -20,6 +22,8 @@ export const groupDomainProducts = ( transactionItems, translate ) => {
 			} else {
 				groups[ product.domain ] = product;
 			}
+			groups[ product.domain ].hasPrivateRegistration |=
+				product.variation_slug === 'wp-private-registration';
 			return groups;
 		},
 		{}
@@ -30,7 +34,9 @@ export const groupDomainProducts = ( transactionItems, translate ) => {
 		...map( groupedDomainProducts, product => ( {
 			...product,
 			amount: formatCurrency( product.raw_amount, product.currency ),
-			variation: translate( 'Domain Registration' ),
+			variation: product.hasPrivateRegistration
+				? translate( 'Domain Registration with Privacy Protection' )
+				: translate( 'Domain Registration' ),
 		} ) ),
 	];
 };
