@@ -301,7 +301,7 @@ export function parseUnitPeriods( unit, period ) {
 }
 
 export function parseStoreStatsReferrers( payload ) {
-	if ( ! payload || ! payload.data || ! Array.isArray( payload.data ) ) {
+	if ( ! payload || ! payload.data || ! payload.fields || ! Array.isArray( payload.data ) ) {
 		return [];
 	}
 	const { fields } = payload;
