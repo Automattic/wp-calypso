@@ -570,7 +570,7 @@ class HelpContact extends React.Component {
 						{ this.props.translate( 'Contact Us' ) }
 					</HeaderCake>
 				) }
-				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
+				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
