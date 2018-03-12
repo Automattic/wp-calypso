@@ -380,7 +380,6 @@ export const PLANS_LIST = {
 		getBlogAudience: () => i18n.translate( 'Best for students' ),
 		getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 		getStoreAudience: () => i18n.translate( 'Best for students' ),
-		getPriceTitle: () => 'Free for life', //TODO: DO NOT USE
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
@@ -441,7 +440,6 @@ export const PLANS_LIST = {
 		getProductId: () => 1003,
 		getStoreSlug: () => PLAN_PREMIUM,
 		getPathSlug: () => 'premium',
-		getPriceTitle: () => '$99 per year', //TODO: DO NOT USE
 	},
 
 	[ PLAN_PREMIUM_2_YEARS ]: {
@@ -452,7 +450,6 @@ export const PLANS_LIST = {
 		getProductId: () => 1023,
 		getStoreSlug: () => PLAN_PREMIUM_2_YEARS,
 		getPathSlug: () => 'premium-2-years',
-		getPriceTitle: () => '$90 per year', //TODO: DO NOT USE
 	},
 
 	[ PLAN_BUSINESS ]: {
@@ -466,7 +463,6 @@ export const PLANS_LIST = {
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
 		getPathSlug: () => 'business',
-		getPriceTitle: () => '$288 per year', //TODO: DO NOT USE
 	},
 
 	[ PLAN_BUSINESS_2_YEARS ]: {
@@ -487,7 +483,6 @@ export const PLANS_LIST = {
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
 		getPathSlug: () => 'business-2-years',
-		getPriceTitle: () => '$299 per year', //TODO: DO NOT USE
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
