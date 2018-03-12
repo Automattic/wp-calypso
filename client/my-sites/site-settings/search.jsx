@@ -30,6 +30,7 @@ import {
 } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isBusiness, isEnterprise, isVipPlan, isJetpackBusiness } from 'lib/products-values';
+import { scrollToComponent } from 'lib/scroll-to';
 
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise );
 
@@ -165,4 +166,4 @@ export default connect( state => {
 		searchModule: getJetpackModule( state, siteId, 'search' ),
 		searchModuleActive: !! isJetpackModuleActive( state, siteId, 'search' ),
 	};
-} )( localize( Search ) );
+} )( localize( scrollToComponent( Search, 'search' ) ) );

@@ -6,6 +6,8 @@
 
 import TWEEN from 'tween.js';
 import { defer } from 'lodash';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 function getCurrentScroll( container ) {
 	if ( container && container.scrollTop !== undefined ) {
@@ -58,7 +60,7 @@ function animate() {
  * @param {function} options.onComplete - callback when scroll is finished
  * @param {HTMLElement} options.container - the container to scroll instead of window, if any
  */
-export default function scrollTo( options ) {
+function scrollTo( options ) {
 	const currentScroll = getCurrentScroll( options.container ),
 		tween = new TWEEN.Tween( currentScroll )
 			.easing( options.easing || TWEEN.Easing.Circular.Out )
@@ -78,3 +80,84 @@ export default function scrollTo( options ) {
 		tween.start();
 	}
 }
+
+/**
+ * Scroll to the wrapped component if the page has a URL anchor like #namedAnchor
+ *
+ * @param {React.Component} WrappedComponent - the component to scroll to
+ * @param {string} namedAnchor - the anchor name
+ * @returns {React.Component} - the component with scrollTo behaviour enabled
+ */
+function scrollToComponent( WrappedComponent, namedAnchor ) {
+	return class extends React.Component {
+		componentDidMount() {
+			this.checkForAnchor();
+
+			// If we have a comment anchor, scroll to comments
+			if ( this.hasAnchor && ! this.hasScrolledToAnchor ) {
+				this.scrollToAnchor();
+			}
+		}
+
+		// Does the URL contain the anchor #{namedAnchor}? If so, scroll to the section if we're not already there.
+		checkForAnchor = () => {
+			const hash = window.location.hash.substr( 1 );
+			if ( hash === namedAnchor ) {
+				this.hasAnchor = true;
+			}
+		};
+
+		// Scroll to the top of the section.
+		scrollToAnchor = () => {
+			if ( this._scrolling ) {
+				return;
+			}
+
+			this._scrolling = true;
+			setTimeout( () => {
+				const componentNode = ReactDom.findDOMNode( this.wrappedComponentInstance );
+				if ( componentNode && componentNode.offsetTop ) {
+					scrollTo( {
+						x: 0,
+						y: componentNode.offsetTop - 48,
+						duration: 300,
+						onComplete: () => {
+							// check to see if the comment node moved while we were scrolling
+							// and scroll to the end position
+							const componentNodeAfterScroll = ReactDom.findDOMNode(
+								this.wrappedComponentInstance
+							);
+							if ( componentNodeAfterScroll && componentNodeAfterScroll.offsetTop ) {
+								window.scrollTo( 0, componentNodeAfterScroll.offsetTop - 48 );
+							}
+							this._scrolling = false;
+						},
+					} );
+					if ( this.hasAnchor ) {
+						this.hasScrolledToAnchor = true;
+					}
+				}
+			}, 0 );
+		};
+
+		getRefName() {
+			return namedAnchor + '_component';
+		}
+
+		render() {
+			// ... and renders the wrapped component with the fresh data!
+			// Notice that we pass through any additional props
+			return (
+				<WrappedComponent
+					ref={ function( wrapped ) {
+						this.wrappedComponentInstance = wrapped;
+					}.bind( this ) }
+					{ ...this.props }
+				/>
+			);
+		}
+	};
+}
+
+export { scrollToComponent };
+export default scrollTo;

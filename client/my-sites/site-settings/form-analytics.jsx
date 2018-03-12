@@ -44,6 +44,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 } from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import { scrollToComponent } from 'lib/scroll-to';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
@@ -349,5 +350,5 @@ const connectComponent = connect(
 const getFormSettings = partialRight( pick, [ 'wga' ] );
 
 export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	GoogleAnalyticsForm
+	scrollToComponent( GoogleAnalyticsForm, 'google-analytics' )
 );
