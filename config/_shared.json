@@ -38,6 +38,7 @@
     "support_locales": [ "en", "es", "pt-br" ],
     "english_locales": [ "en", "en-gb"],
     "languages": [
+        { "value": 900, "langSlug": "de_formal", "name": "Deutsch (Sie)", "wpLocale": "de_DE_formal", "parentLangSlug": "de", "territories": [ "155" ] },
         { "value": 2, "langSlug": "af", "name": "Afrikaans", "wpLocale": "af", "territories": [ "002" ] },
         { "value": 418, "langSlug": "als", "name": "Alemannisch", "wpLocale": "", "territories": [ "155" ] },
         { "value": 481, "langSlug": "am", "name": "አማርኛ", "wpLocale": "am", "territories": [ "002" ] },
