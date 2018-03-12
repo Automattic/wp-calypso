@@ -18,6 +18,7 @@ import { getGeoCountryShort } from 'state/geo/selectors';
 import QueryGeo from 'components/data/query-geo';
 import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
+import { getLanguageCodeLabels } from './utils';
 
 export class LanguagePicker extends PureComponent {
 	static propTypes = {
@@ -135,9 +136,9 @@ export class LanguagePicker extends PureComponent {
 			return this.renderPlaceholder();
 		}
 
-		const [ langCode, langSubcode ] = language.langSlug.split( '-' );
-		const langName = language.name;
 		const { disabled, translate } = this.props;
+		const langName = language.name;
+		const { langCode, langSubcode } = getLanguageCodeLabels( language.langSlug );
 
 		return (
 			<div
