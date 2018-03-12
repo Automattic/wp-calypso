@@ -55,6 +55,27 @@ function deleteUnsavedSetting( settings, settingName, recursive ) {
 }
 
 /**
+ * Checks if an incoming change to settings.language is a change to the existing settings
+ * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
+ *
+ * @param  {String}  languageSettingValue the newly-set language slug string.
+ * @param  {Object}  settings user settings object.
+ * @return {Boolean} if the language setting has been changed.
+ */
+function hasLanguageChanged( languageSettingValue, settings = {} ) {
+	if ( ! languageSettingValue ) {
+		return false;
+	}
+	// if there is a saved variant we know that the user is changing back to the root language === setting hasn't changed
+	// but if settings.locale_variant is not empty then we assume the user is trying to switch back to the root
+	return (
+		( languageSettingValue === settings.language && isEmpty( settings.locale_variant ) ) ||
+		//if the incoming language code is the variant itself === setting hasn't changed
+		languageSettingValue === settings.locale_variant
+	);
+}
+
+/**
  * Initialize UserSettings with defaults
  *
  * @return {Undefined} undefined
@@ -261,25 +282,35 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 	if ( has( this.settings, settingName ) ) {
 		set( this.unsavedSettings, settingName, value );
 
-		/*
-		 * If the two match, we don't consider the setting "changed".
-		 * user_login is a special case since the logic for validating and saving a username
-		 * is more complicated.
-		 */
+		let canDeleteUnsavedSetting = false;
+
+		// If the two match, we don't consider the setting "changed".
+		// user_login is a special case since the logic for validating and saving a username
+		// is more complicated.
 		if (
 			get( this.settings, settingName ) === get( this.unsavedSettings, settingName ) &&
-			'user_login' !== settingName
+			'user_login' !== settingName &&
+			'language' !== settingName
 		) {
+			canDeleteUnsavedSetting = true;
+		}
+
+		// language is a special case since we have to check for changes to locale_variant
+		// this might be easier if we tracked the lang_id instead as we do in client/my-sites/site-settings/form-general.jsx
+		if ( 'language' === settingName && hasLanguageChanged( value, this.settings ) ) {
+			canDeleteUnsavedSetting = true;
+		}
+
+		if ( canDeleteUnsavedSetting ) {
 			debug( 'Removing ' + settingName + ' from changed settings.' );
 			deleteUnsavedSetting( this.unsavedSettings, settingName );
 		}
 
 		this.emit( 'change' );
 		return true;
-	} else {
-		debug( settingName + ' does not exist in user-settings data module.' );
-		return false;
 	}
+	debug( settingName + ' does not exist in user-settings data module.' );
+	return false;
 };
 
 UserSettings.prototype.isSettingUnsaved = function( settingName ) {
