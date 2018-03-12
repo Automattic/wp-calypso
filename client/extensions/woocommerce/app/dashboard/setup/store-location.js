@@ -124,7 +124,17 @@ class StoreLocationSetupView extends Component {
 
 		const address = this.state.address;
 		address[ addressKey ] = newValue;
-		// TODO - Did they change the country? Force an appropriate state default
+
+		// Users of AddressView isEditable must always update the state prop
+		// passed to AddressView in the event of country changes
+		if ( 'country' === addressKey ) {
+			const countryData = find( this.props.countries, { code: newValue } );
+			if ( ! isEmpty( countryData.states ) ) {
+				address.state = countryData.states[ 0 ].code;
+			} else {
+				address.state = '';
+			}
+		}
 
 		this.setState( { address, userBeganEditing: true } );
 	};
