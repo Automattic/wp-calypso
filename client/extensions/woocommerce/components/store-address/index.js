@@ -65,20 +65,19 @@ class StoreAddress extends Component {
 	}
 
 	onChange = event => {
-		const { countries } = this.props;
-
 		const addressEdits = { ...this.state.addressEdits };
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
 		addressEdits[ addressKey ] = newValue;
 
-		// Did they change the country? Force an appropriate state default
+		// Users of AddressView isEditable must always update the state prop
+		// passed to AddressView in the event of country changes
 		if ( 'country' === addressKey ) {
-			const countryData = find( countries, { code: newValue } );
-			if ( countryData ) {
-				if ( ! isEmpty( countryData.states ) ) {
-					addressEdits.state = countryData.states[ 0 ].code;
-				}
+			const countryData = find( this.props.countries, { code: newValue } );
+			if ( ! isEmpty( countryData.states ) ) {
+				addressEdits.state = countryData.states[ 0 ].code;
+			} else {
+				addressEdits.state = '';
 			}
 		}
 

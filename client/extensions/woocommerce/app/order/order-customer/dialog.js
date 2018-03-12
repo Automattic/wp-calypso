@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import emailValidator from 'email-validator';
-import { get, isEmpty, noop } from 'lodash';
+import { find, get, isEmpty, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -157,7 +157,18 @@ class CustomerAddressDialog extends Component {
 		this.setState( prevState => {
 			const { address } = prevState;
 			const newState = { address: { ...address, [ name ]: value } };
-			// TODO - do we still need this - If country changed, we should also reset the state & phoneCountry
+
+			// Users of AddressView isEditable must always update the state prop
+			// passed to AddressView in the event of country changes
+			if ( 'country' === name ) {
+				const countryData = find( this.props.countries, { code: value } );
+				if ( ! isEmpty( countryData.states ) ) {
+					newState.address.state = countryData.states[ 0 ].code;
+				} else {
+					newState.address.state = '';
+				}
+			}
+
 			return newState;
 		} );
 	};
