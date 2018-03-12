@@ -1,0 +1,72 @@
+.term-picker-option {
+	display: flex;
+	width: 100%;
+	padding: 17px 12px;
+	cursor: pointer;
+
+	border-radius: 5px;
+	border: 1px solid #d1e2e8;
+	margin-bottom: 20px;
+
+	background: #FFF;
+
+	.term-picker-option__radio-wrapper {
+		width: 20px;
+		margin-right: 10px;
+	}
+
+	.term-picker-option__radio {
+		width: 20px;
+		height: 20px;
+
+		&:checked:before {
+			width: 10px;
+			height: 10px;
+		}
+	}
+
+	.term-picker-option__header,
+	.term-picker-option__description {
+		width: 100%;
+	}
+
+	.term-picker-option__term,
+	.term-picker-option__price,
+	.term-picker-option__discount,
+	.term-picker-option__side-note,
+	.term-picker-option__description {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.term-picker-option__header {
+		line-height: 26px;
+	}
+
+	.term-picker-option__term {
+		display: inline-block;
+		font-size: 26px;
+		line-height: 26px;
+	}
+
+	.term-picker-option__discount {
+		margin-left: 10px;
+	}
+
+	.term-picker-option__description {
+		font-size: 16px;
+	}
+
+	.term-picker-option__price {
+		color: #4f646e;
+	}
+
+	.term-picker-option__side-note {
+		color: #749eaf;
+		margin-left: 5px;
+	}
+}
+
+.term-picker-option--active {
+	border: 3px solid #19b76e;
+}

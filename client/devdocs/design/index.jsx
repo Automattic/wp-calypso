@@ -28,6 +28,7 @@ import SearchCard from 'components/search-card';
 import ActionCard from 'components/action-card/docs/example';
 import Accordions from 'components/accordion/docs/example';
 import BackButton from 'components/back-button/docs/example';
+import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
@@ -88,6 +89,7 @@ import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
 import Suggestions from 'components/suggestions/docs/example';
 import TextDiff from 'components/text-diff/docs/example';
+import TermPickerOption from 'components/term-picker-option/docs/example';
 import TileGrid from 'components/tile-grid/docs/example';
 import TimeSince from 'components/time-since/docs/example';
 import Timezone from 'components/timezone/docs/example';
@@ -154,6 +156,7 @@ class DesignAssets extends React.Component {
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
+					<Badge />
 					<SplitButton readmeFilePath="split-button" />
 					<Cards readmeFilePath="card" />
 					<Checklist />
@@ -211,6 +214,7 @@ class DesignAssets extends React.Component {
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<Suggestions />
 					<TextDiff />
+					<TermPickerOption />
 					<TileGrid />
 					<TimeSince />
 					<Timezone readmeFilePath="timezone" />
