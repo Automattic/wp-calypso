@@ -35,6 +35,8 @@ export class HappinessSupport extends Component {
 	};
 
 	static defaultProps = {
+		isJetpack: false,
+		isJetpackFreePlan: false,
 		showLiveChatButton: false,
 	};
 

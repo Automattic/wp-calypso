@@ -37,7 +37,6 @@ import BusinessOnboarding from './business-onboarding';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import HappinessSupportCard from './happiness-support-card';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackPublicize from './jetpack-publicize';
 import JetpackVideo from './jetpack-video';
@@ -63,16 +62,12 @@ export class ProductPurchaseFeaturesList extends Component {
 	};
 
 	getBusinessFeatures() {
-		const { isAutomatedTransfer, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
 		return [
 			<HappinessSupportCard
-				selectedSite={ selectedSite }
-				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
-				showLiveChatButton={
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
-				}
+				isPlaceholder={ isPlaceholder }
+				showLiveChatButton={ true }
+				liveChatButtonEventName={ 'my_plan_business' }
 			/>,
 			<CustomDomain
 				selectedSite={ selectedSite }
@@ -105,18 +100,10 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPremiumFeatures() {
-		const { isAutomatedTransfer, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
 
 		return [
-			<HappinessSupportCard
-				selectedSite={ selectedSite }
-				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
-				showLiveChatButton={
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
-				}
-			/>,
+			<HappinessSupportCard isPlaceholder={ isPlaceholder } />,
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ planHasDomainCredit }
@@ -137,18 +124,10 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPersonalFeatures() {
-		const { isAutomatedTransfer, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
 
 		return [
-			<HappinessSupportCard
-				selectedSite={ selectedSite }
-				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
-				showLiveChatButton={
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
-				}
-			/>,
+			<HappinessSupportCard isPlaceholder={ isPlaceholder } />,
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ planHasDomainCredit }
@@ -159,17 +138,13 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackFreeFeatures() {
-		const { isAutomatedTransfer, selectedSite } = this.props;
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 
 		return [
 			<HappinessSupportCard
-				selectedSite={ selectedSite }
 				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
-				showLiveChatButton={
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
-				}
+				isJetpackFreePlan={ true }
+				isPlaceholder={ isPlaceholder }
 			/>,
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
 			<JetpackReturnToDashboard
@@ -181,17 +156,12 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackPremiumFeatures() {
-		const { isAutomatedTransfer, selectedSite } = this.props;
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 
 		return [
 			<HappinessSupportCard
-				selectedSite={ selectedSite }
 				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
-				showLiveChatButton={
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
-				}
+				isPlaceholder={ isPlaceholder }
 			/>,
 			<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />,
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
@@ -204,17 +174,12 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackPersonalFeatures() {
-		const { isAutomatedTransfer, selectedSite } = this.props;
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 
 		return [
 			<HappinessSupportCard
-				selectedSite={ selectedSite }
 				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
-				showLiveChatButton={
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
-				}
+				isPlaceholder={ isPlaceholder }
 			/>,
 			<JetpackWordPressCom selectedSite={ selectedSite } key="jetpackWordPressCom" />,
 			<JetpackBackupSecurity key="jetpackBackupSecurity" />,
@@ -224,19 +189,13 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getJetpackBusinessFeatures() {
-		const { isAutomatedTransfer, liveChatAvailable, selectedSite } = this.props;
-
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 		return [
 			<HappinessSupportCard
-				selectedSite={ selectedSite }
-				isFeatureCard={ true }
 				isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
-				isJetpackFreePlan={ selectedSite.plan.product_slug === PLAN_JETPACK_FREE }
-				liveChatAvailable={ liveChatAvailable }
-				showLiveChatButton={
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS ||
-					selectedSite.plan.product_slug === PLAN_JETPACK_BUSINESS_MONTHLY
-				}
+				isPlaceholder={ isPlaceholder }
+				showLiveChatButton={ true }
+				liveChatButtonEventName={ 'my_plan_jetpack_professsional' }
 			/>,
 			<BusinessOnboarding
 				key="businessOnboarding"
@@ -296,7 +255,6 @@ export default connect(
 
 		return {
 			isAutomatedTransfer,
-			liveChatAvailable: isHappychatAvailable( state ),
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 		};
