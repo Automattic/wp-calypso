@@ -138,7 +138,7 @@ export class LanguagePicker extends PureComponent {
 
 		const { disabled, translate } = this.props;
 		const langName = language.name;
-		const langCodes = getLanguageCodeLabels( language.langSlug );
+		const { langCode, langSubcode } = getLanguageCodeLabels( language.langSlug );
 
 		return (
 			<div
@@ -151,9 +151,9 @@ export class LanguagePicker extends PureComponent {
 			>
 				<div className="language-picker__icon">
 					<div className="language-picker__icon-inner">
-						{ langCodes.langCode }
-						{ langCodes.langSubcode && <br /> }
-						{ langCodes.langSubcode }
+						{ langCode }
+						{ langSubcode && <br /> }
+						{ langSubcode }
 					</div>
 				</div>
 				<div className="language-picker__name">
