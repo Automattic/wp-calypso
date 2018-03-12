@@ -101,12 +101,12 @@ const Checkout = createReactClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if (
-			! this.props.cart.hasLoadedFromServer &&
-			nextProps.cart.hasLoadedFromServer &&
-			this.props.product
-		) {
-			this.addProductToCart();
+		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
+			if ( this.props.product ) {
+				this.addProductToCart();
+			}
+
+			this.trackPageView();
 		}
 	},
 
