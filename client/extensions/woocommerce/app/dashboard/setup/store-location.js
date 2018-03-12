@@ -22,10 +22,7 @@ import {
 import { bumpStat } from 'woocommerce/lib/analytics';
 import { errorNotice } from 'state/notices/actions';
 import { getContactDetailsCache } from 'state/selectors';
-import {
-	getCountryData,
-	isStoreManagementSupportedInCalypsoForCountry,
-} from 'woocommerce/lib/countries';
+import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import {
 	areLocationsLoaded,
 	getAllCountries,
@@ -127,11 +124,7 @@ class StoreLocationSetupView extends Component {
 
 		const address = this.state.address;
 		address[ addressKey ] = newValue;
-		// Did they change the country? Force an appropriate state default
-		if ( 'country' === addressKey ) {
-			const countryData = getCountryData( newValue );
-			address.state = countryData ? countryData.defaultState : '';
-		}
+		// TODO - Did they change the country? Force an appropriate state default
 
 		this.setState( { address, userBeganEditing: true } );
 	};
@@ -255,7 +248,6 @@ class StoreLocationSetupView extends Component {
 			<div>
 				<AddressView
 					address={ this.state.address }
-					className="dashboard__pre-setup-address"
 					countries={ countries }
 					isEditable
 					onChange={ this.onChange }
