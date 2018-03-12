@@ -11,6 +11,7 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
+import WordPressLogo from 'components/wordpress-logo';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
@@ -28,6 +29,7 @@ class CreditsPaymentBox extends React.Component {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<div className="payment-box-section">
+					<WordPressLogo size={ 52 } />
 					<div className="checkout__payment-box-section-content">
 						<h6>{ this.props.translate( 'WordPress.com Credits' ) }</h6>
 
