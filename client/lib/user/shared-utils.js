@@ -78,6 +78,7 @@ export function getComputedAttributes( attributes ) {
 	return {
 		primarySiteSlug: getSiteSlug( primaryBlogUrl ),
 		localeSlug: attributes.language,
+		localeVariant: attributes.locale_variant,
 		isRTL: !! ( language && language.rtl ),
 	};
 }
