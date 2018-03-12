@@ -5,7 +5,7 @@
  */
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { defer, throttle } from 'lodash';
+import { throttle } from 'lodash';
 
 const SCROLL_CHECK_RATE_IN_MS = 400;
 
@@ -15,7 +15,7 @@ export default class InfiniteScroll extends Component {
 	};
 
 	checkScrollPositionHandler = throttle(
-		this.checkScrollPosition.bind( this, true ),
+		() => this.checkScrollPosition( true ),
 		SCROLL_CHECK_RATE_IN_MS
 	);
 
@@ -45,9 +45,7 @@ export default class InfiniteScroll extends Component {
 				triggeredByScroll = true;
 			}
 
-			// scroll check may be triggered while dispatching an action,
-			// we cannot create new action while dispatching old one
-			defer( () => this.props.nextPageMethod( { triggeredByScroll } ) );
+			this.props.nextPageMethod( { triggeredByScroll } );
 		}
 	}
 
