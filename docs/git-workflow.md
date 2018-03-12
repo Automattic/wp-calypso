@@ -15,6 +15,8 @@ Branches use the following naming conventions:
 
 For example, you can run: `git checkout master` and then `git checkout -b fix/whatsits` to create a new `fix/whatsits` branch off of `origin/master`.
 
+*warning*: Do not use two slashes in the name of a branch. It can too-easily [cause issues](https://stackoverflow.com/questions/2527355/using-the-slash-character-in-git-branch-name).
+
 Short Branches: Merge Early and Often
 -------------------------------------
 
