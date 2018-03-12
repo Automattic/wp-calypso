@@ -72,9 +72,10 @@ export function renderJsx( view, props ) {
  *
  * @param {object} element - React element to be rendered to html
  * @param {string} key - (optional) custom key
+ * @param {function} dispatch - dispatch a redux action
  * @return {string} The rendered Layout
  */
-export function render( element, key = JSON.stringify( element ) ) {
+export function render( element, key = JSON.stringify( element ), dispatch ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
@@ -83,10 +84,19 @@ export function render( element, key = JSON.stringify( element ) ) {
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
+			if ( Math.random() < 0.001 || config.isEnabled( 'ssr/always-log-cache-misses' ) ) {
+				// Snapshot keys for 0.1% of cache misses
+				dispatch(
+					logToLogstash( {
+						feature: 'calypso_ssr',
+						message: 'render cache miss',
+						extra: { key, existingKeys: markupCache.keys },
+					} )
+				);
+			}
 			renderedLayout = ReactDomServer.renderToString( element );
 			markupCache.set( key, renderedLayout );
 		}
-
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
 
@@ -127,19 +137,14 @@ export function serverRender( req, res ) {
 		isDefaultLocale( context.lang ) &&
 		! context.query.email_address // Don't do SSR when PIIs are present at the request
 	) {
-		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
+		context.renderedLayout = render(
+			context.layout,
+			req.error ? req.error.message : cacheKey,
+			context.store.dispatch
+		);
 	}
 
 	if ( context.store ) {
-		console.log( 'dispatch log call' );
-		context.store.dispatch(
-			logToLogstash( {
-				feature: 'calypso_ssr',
-				message: 'render cache keys',
-				extra: markupCache.keys,
-			} )
-		);
-
 		title = getDocumentHeadFormattedTitle( context.store.getState() );
 		metas = getDocumentHeadMeta( context.store.getState() );
 		links = getDocumentHeadLink( context.store.getState() );
