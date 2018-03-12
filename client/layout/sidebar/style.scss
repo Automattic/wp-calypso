@@ -342,12 +342,6 @@ form.sidebar__button input {
 		@include breakpoint( "<660px" ) {
 			flex: 0 1 56px;
 		}
-
-		.gridicon {
-			margin: 0 auto;
-			float: none;
-			fill: var( --sidebar-gridicon-fill );
-		}
 	}
 
 	&.is-active {
