@@ -122,7 +122,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 		return (
 			<Main className="jetpack-onboarding">
 				<DocumentHead
-					title={ concatTitle( get( STEP_TITLES, stepName ), translate( 'Jetpack Start' ) ) }
+					title={ concatTitle( translate( 'Jetpack Start' ), get( STEP_TITLES, stepName ) ) }
 				/>
 				{ /* We only allow querying of site settings once we know that we have finished
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
