@@ -111,7 +111,13 @@
 .guided-tours__choice-button-row {
 	display: flex;
 	align-items: center;
+}
 
+.guided-tours__single-button-row {
+	text-align: center;
+}
+
+.guided-tours__choice-button-row, .guided-tours__single-button-row {
 	.button {
 		width: 48%;
 	}
@@ -121,7 +127,7 @@
 	.button:nth-child(1) {
 		margin-right: 4%;
 	}
-	.guided-tours__quit-button:not(.is-primary) {
+	.guided-tours__quit-button {
 		color: darken( $white, 20% );
 		background: none;
 		border: 1px rgba( $white, 0.2 ) solid;
@@ -138,18 +144,6 @@ a.config-elements__text-link,
 
 	&:visited {
 		color: $white;
-	}
-}
-
-.guided-tours__single-button-row {
-	text-align: center;
-	.button {
-		width: 48%;
-	}
-	.guided-tours__quit-button:not(.is-primary) {
-		color: darken( $white, 20% );
-		background: none;
-		border: 1px rgba( $white, 0.2 ) solid;
 	}
 }
 
