@@ -54,13 +54,17 @@ function deleteUnsavedSetting( settings, settingName, recursive ) {
 	}
 }
 
-/*
+/**
  * Checks if an incoming change to settings.language is a change to the existing settings
  * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
+ *
+ * @param  {String}  languageSettingValue the newly-set language slug string.
+ * @param  {Object}  settings user settings object.
+ * @return {Boolean} if the language setting has been changed.
  */
 function hasLanguageChanged( languageSettingValue, settings = {} ) {
 	if ( ! languageSettingValue ) {
-		false;
+		return false;
 	}
 	// if there is a saved variant we know that the user is changing back to the root language === setting hasn't changed
 	// but if settings.locale_variant is not empty then we assume the user is trying to switch back to the root
