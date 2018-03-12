@@ -13,37 +13,33 @@ import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 
-const PlansExtendedInfo = ( { onClick, translate } ) => {
-	const headerText = translate( 'Unsure which plan is right for you?' );
-	const subheaderText = translate(
-		'Read out guide to choosing the right plan or compare plans in more detail.'
-	);
-
+const PlansExtendedInfo = ( { recordTracks, translate } ) => {
 	return (
 		<Card className="jetpack-connect__plan-info">
 			<img
 				className="jetpack-connect__plan-info-illustration"
-				src={ '/calypso/images/illustrations/jetpack-start.svg' }
+				src="/calypso/images/illustrations/jetpack-start.svg"
 				alt=""
 			/>
 			<FormattedHeader
-				className="jetpack-connect__plan-help"
-				headerText={ headerText }
-				subHeaderText={ subheaderText }
+				headerText={ translate( 'Unsure which plan is right for you?' ) }
+				subHeaderText={ translate(
+					'Read our guide to choosing the right plan or compare plans in more detail.'
+				) }
 			/>
 			<div className="jetpack-connect__plan-info-buttons">
 				<Button
 					primary
-					href={
-						'https://jetpack.com/2017/02/01/a-simple-guide-to-choosing-the-best-jetpack-plan-your-wordpress-site/'
-					}
-					onClick={ onClick( 'plan_guide' ) }
+					href="https://jetpack.com/2017/02/01/a-simple-guide-to-choosing-the-best-jetpack-plan-your-wordpress-site/"
+					onClick={ recordTracks( 'plan_guide' ) }
+					target="_blank"
 				>
 					{ translate( 'Plan Guide' ) }
 				</Button>
 				<Button
-					href={ 'https://jetpack.com/features/comparison' }
-					onClick={ onClick( 'feature_comparison' ) }
+					href="https://jetpack.com/features/comparison"
+					onClick={ recordTracks( 'feature_comparison' ) }
+					target="_blank"
 				>
 					{ translate( 'Feature Comparison' ) }
 				</Button>
