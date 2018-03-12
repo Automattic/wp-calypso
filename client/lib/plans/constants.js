@@ -1608,20 +1608,21 @@ export function isBestValue( plan ) {
 }
 
 export function getPlanClass( planKey ) {
-	switch ( true ) {
-		case isFreePlan( planKey ):
-			return 'is-free-plan';
-
-		case isPersonalPlan( planKey ):
-			return 'is-personal-plan';
-
-		case isPremiumPlan( planKey ):
-			return 'is-premium-plan';
-
-		case isBusinessPlan( planKey ):
-			return 'is-business-plan';
-
-		default:
-			return '';
+	if ( isFreePlan( planKey ) ) {
+		return 'is-free-plan';
 	}
+
+	if ( isPersonalPlan( planKey ) ) {
+		return 'is-personal-plan';
+	}
+
+	if ( isPremiumPlan( planKey ) ) {
+		return 'is-premium-plan';
+	}
+
+	if ( isBusinessPlan( planKey ) ) {
+		return 'is-business-plan';
+	}
+
+	return '';
 }

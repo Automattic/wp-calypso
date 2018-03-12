@@ -29,19 +29,19 @@ export default class PlanIcon extends Component {
 
 	render() {
 		const { plan } = this.props;
-		switch ( true ) {
-			case isPersonalPlan( plan ):
-				return this.getIcon( 'personal' );
-
-			case isPremiumPlan( plan ):
-				return this.getIcon( 'premium' );
-
-			case isBusinessPlan( plan ):
-				return this.getIcon( 'business' );
-
-			default:
-				return this.getIcon( 'free' );
+		if ( isPersonalPlan( plan ) ) {
+			return this.getIcon( 'personal' );
 		}
+
+		if ( isPremiumPlan( plan ) ) {
+			return this.getIcon( 'premium' );
+		}
+
+		if ( isBusinessPlan( plan ) ) {
+			return this.getIcon( 'business' );
+		}
+
+		return this.getIcon( 'free' );
 	}
 }
 
