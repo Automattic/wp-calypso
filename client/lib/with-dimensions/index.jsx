@@ -62,9 +62,11 @@ export default EnhancedComponent =>
 			);
 			this.handleResize();
 		}
+		
 		componentWillReceiveProps( nextProps ) {
 			this.handleResize( nextProps );
 		}
+
 		componentWillUnmount() {
 			window.removeEventListener( 'resize', this.resizeEventListener );
 		}
@@ -72,11 +74,12 @@ export default EnhancedComponent =>
 		handleMount = ref => {
 			this.divRef = ref;
 			this.handleResize();
-		};
+		}
+
 		setWithDimensionsRef = ref => {
 			this.setRef = ref;
 			this.handleResize();
-		};
+		}
 
 		render() {
 			return (
