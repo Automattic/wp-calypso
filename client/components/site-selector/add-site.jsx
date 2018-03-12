@@ -76,7 +76,7 @@ class SiteSelectorAddSite extends Component {
 						<span>
 							<span>{ translate( 'Create a new site' ) }</span>
 							<span className="site-selector__popover-item-details">
-								{ translate( 'Start a new WordPress.com site' ) }
+								{ translate( 'Start a new site on WordPress.com' ) }
 							</span>
 						</span>
 					</PopoverMenuItem>
