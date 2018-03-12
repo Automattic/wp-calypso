@@ -13,7 +13,9 @@ jest.mock( 'lib/wp', () => require( './mocks/wp' ) );
 jest.mock( 'lib/user/utils', () => require( './mocks/user-utils' ) );
 
 describe( 'User Settings', () => {
-	beforeAll( () => {
+	beforeEach( () => {
+		userSettings.settings = {};
+		userSettings.unsavedSettings = {};
 		userSettings.fetchSettings();
 	} );
 
@@ -112,5 +114,21 @@ describe( 'User Settings', () => {
 			expect( userSettings.settings.testParent.testChild ).toBe( true );
 			done();
 		}
+	} );
+
+	test( 'should clean unsaved settings if swaping back to the original value', () => {
+		expect( userSettings.settings.test ).toEqual( false );
+		expect( userSettings.updateSetting( 'test', true ) ).toBe( true );
+		expect( userSettings.unsavedSettings ).toEqual( { test: true } );
+		expect( userSettings.updateSetting( 'test', false ) ).toBe( true );
+		expect( userSettings.unsavedSettings ).toEqual( {} );
+	} );
+
+	test( 'should clean unsaved nested settings if the parent becomes empty', () => {
+		expect( userSettings.settings.testParent.testChild ).toBe( false );
+		expect( userSettings.updateSetting( 'testParent.testChild', true ) ).toBe( true );
+		expect( userSettings.unsavedSettings ).toEqual( { testParent: { testChild: true } } );
+		expect( userSettings.updateSetting( 'testParent.testChild', false ) ).toBe( true );
+		expect( userSettings.unsavedSettings ).toEqual( {} );
 	} );
 } );
