@@ -72,10 +72,10 @@ export function renderJsx( view, props ) {
  *
  * @param {object} element - React element to be rendered to html
  * @param {string} key - (optional) custom key
- * @param {function} dispatch - dispatch a redux action
+ * @param {object} req - Request object
  * @return {string} The rendered Layout
  */
-export function render( element, key = JSON.stringify( element ), dispatch ) {
+export function render( element, key = JSON.stringify( element ), req ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
@@ -86,11 +86,11 @@ export function render( element, key = JSON.stringify( element ), dispatch ) {
 			debug( 'cache miss for key', key );
 			if ( Math.random() < 0.001 || config.isEnabled( 'ssr/always-log-cache-misses' ) ) {
 				// Snapshot keys for 0.1% of cache misses
-				dispatch(
+				req.context.store.dispatch(
 					logToLogstash( {
 						feature: 'calypso_ssr',
 						message: 'render cache miss',
-						extra: { key, existingKeys: markupCache.keys },
+						extra: { key, existingKeys: markupCache.keys, headers: req.headers },
 					} )
 				);
 			}
@@ -140,7 +140,7 @@ export function serverRender( req, res ) {
 		context.renderedLayout = render(
 			context.layout,
 			req.error ? req.error.message : cacheKey,
-			context.store.dispatch
+			req
 		);
 	}
 
