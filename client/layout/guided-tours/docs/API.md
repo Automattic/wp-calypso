@@ -25,6 +25,8 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 </Tour>
 ```
 
+Note that you can use e.g. `lodash`'s `overEvery` as an `and` function to connect different `when` conditions. When you do so, consider your conditions' order: the function stops evaluating its argument functions as soon as one condition is false. This will affect you if you're assigning users to an A/B test, for example. Also think about how computing-intensive the functions are -- ideally order them so that you can bail with the least amount of resources as possible.
+
 For more comprehensive examples of tours, look at [TUTORIAL.md](TUTORIAL.md) or explore existing tours in `client/layout/guided-tours/tours`.
 
 ## Step
