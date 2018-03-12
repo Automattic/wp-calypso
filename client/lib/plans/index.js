@@ -5,7 +5,7 @@
  */
 
 import moment from 'moment';
-import { find, get, includes, invoke } from 'lodash';
+import { difference, find, get, includes, invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -219,13 +219,24 @@ export function isFreePlan( planSlug ) {
 	return getPlan( planSlug ).type === TYPE_FREE;
 }
 
-export function findSimilarPlan( similarToPlanSlug, query = {} ) {
-	const plan = getPlan( similarToPlanSlug );
+export function findSimilarPlan( planKey, query = {} ) {
+	const plan = getPlan( planKey );
 	const type = query.type || plan.type;
 	const group = query.group || plan.group;
 	const term = query.term || plan.term;
 
-	return getPlans().filter( p => p.type === type && p.group === group && p.term === term )[ 0 ];
+	return getPlans().filter( p => planMatches( p, { type, group, term } ) )[ 0 ];
+}
+
+export function planMatches( planKey, query = {} ) {
+	const unknownKeys = difference( Object.keys( query ), [ 'type', 'group', 'term' ] );
+	if ( unknownKeys.length ) {
+		throw new Error();
+	}
+
+	const plan = getPlan( planKey ) || {}; // @TODO: make getPlan() throw an error on failure
+	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
+	return match( 'type' ) && match( 'group' ) && match( 'term' );
 }
 
 export const isPlanFeaturesEnabled = () => {
