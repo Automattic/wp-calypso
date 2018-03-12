@@ -32,7 +32,7 @@ describe( 'isBusinessPlan', () => {
 		expect( isBusinessPlan( PLAN_JETPACK_BUSINESS ) ).to.be.true;
 		expect( isBusinessPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).to.be.true;
 	} );
-	test( 'should return true for all non-business plans', () => {
+	test( 'should return false for all non-business plans', () => {
 		expect( isBusinessPlan( PLAN_FREE ) ).to.be.false;
 		expect( isBusinessPlan( PLAN_PERSONAL ) ).to.be.false;
 		expect( isBusinessPlan( PLAN_PERSONAL_2_YEARS ) ).to.be.false;
@@ -53,7 +53,7 @@ describe( 'isPremiumPlan', () => {
 		expect( isPremiumPlan( PLAN_JETPACK_PREMIUM ) ).to.be.true;
 		expect( isPremiumPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).to.be.true;
 	} );
-	test( 'should return true for all non-premium plans', () => {
+	test( 'should return false for all non-premium plans', () => {
 		expect( isPremiumPlan( PLAN_FREE ) ).to.be.false;
 		expect( isPremiumPlan( PLAN_BUSINESS ) ).to.be.false;
 		expect( isPremiumPlan( PLAN_BUSINESS_2_YEARS ) ).to.be.false;
