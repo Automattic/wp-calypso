@@ -76,11 +76,14 @@ class SetupFooter extends Component {
 	}
 }
 
-export default connect(
-	state => ( {
-		happychatIsAvailable: isHappychatAvailable( state ),
-	} ),
-	{
-		happychatEvent: () => recordTracksEvent( 'calypso_rewind_credentials_get_help' ),
-	}
-)( localize( SetupFooter ) );
+const mapStateToProps = state => ( {
+	happychatIsAvailable: isHappychatAvailable( state ),
+} );
+
+const mapDispatchToProps = dispatch => ( {
+	happychatEvent: () => dispatch(
+		recordTracksEvent( 'calypso_rewind_credentials_get_help' )
+	),
+} );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SetupFooter ) );

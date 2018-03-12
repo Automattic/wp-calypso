@@ -282,8 +282,9 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
-	trackHelpThreat: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
-	trackHelpBackupFail: () => recordTracksEvent( 'calypso_activitylog_backup_fail_get_help' ),
+	trackHelpThreat: () => dispatch( recordTracksEvent( 'calypso_activitylog_threat_get_help' ) ),
+	trackHelpBackupFail: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_backup_fail_get_help' ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );

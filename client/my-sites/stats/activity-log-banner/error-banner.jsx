@@ -121,8 +121,12 @@ class ErrorBanner extends PureComponent {
 	}
 }
 
-export default connect( null, {
+const mapDispatchToProps = dispatch => ( {
 	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
-	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
-	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
-} )( localize( ErrorBanner ) );
+	trackHappyChatBackup: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_error_banner_backup' ) ),
+	trackHappyChatRestore: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_error_banner_restore' ) ),
+} );
+
+export default connect( null, mapDispatchToProps )( localize( ErrorBanner ) );
