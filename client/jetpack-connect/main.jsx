@@ -172,11 +172,12 @@ export class JetpackConnectMain extends Component {
 	} );
 
 	goToInstallInstructions = this.makeSafeRedirectionFunction( url => {
+		const urlWithQuery = addQueryArgs( { url: this.state.currentUrl }, url );
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-			url: url,
+			url: urlWithQuery,
 			type: 'install_instructions',
 		} );
-		page( url );
+		page( urlWithQuery );
 	} );
 
 	redirectToMobileApp = this.makeSafeRedirectionFunction( reason => {

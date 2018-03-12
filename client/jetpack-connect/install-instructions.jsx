@@ -4,6 +4,7 @@
  */
 import Gridicon from 'gridicons';
 import page from 'page';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -26,6 +27,10 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_ACTIVATE, REMOTE_PATH_INSTALL } from './constants';
 
 class InstallInstructions extends Component {
+	static propTypes = {
+		remoteSiteUrl: PropTypes.string.isRequired,
+	};
+
 	getInstructionsData() {
 		const { remoteSiteData, translate } = this.props;
 		const notJetpack = ! remoteSiteData.hasJetpack;
@@ -127,7 +132,6 @@ class InstallInstructions extends Component {
 export default connect(
 	state => ( {
 		remoteSiteData: getConnectingSite( state ).data || {},
-		remoteSiteUrl: getConnectingSite( state ).url,
 	} ),
 	{
 		confirmJetpackInstallStatus,

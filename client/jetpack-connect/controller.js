@@ -179,7 +179,11 @@ export function connect( context, next ) {
 }
 
 export function instructions( context, next ) {
-	context.primary = <InstallInstructions />;
+	const url = context.query.url;
+	if ( ! url ) {
+		return page.redirect( '/jetpack/connect' );
+	}
+	context.primary = <InstallInstructions remoteSiteUrl={ url } />;
 	next();
 }
 
