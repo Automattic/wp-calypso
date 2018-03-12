@@ -424,7 +424,15 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, translate, supportsLanguageSelection } = this.props;
+		const {
+			fields,
+			isRequestingSettings,
+			translate,
+			supportsLanguageSelection,
+			moment,
+		} = this.props;
+		const guessedTimezone = moment.tz.guess();
+		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
 		return (
 			<FormFieldset
@@ -439,7 +447,21 @@ class SiteSettingsFormGeneral extends Component {
 				/>
 
 				<FormSettingExplanation>
-					{ translate( 'Choose a city in your timezone.' ) }
+					{ translate( 'Choose a city in your timezone.' ) }{' '}
+					{ translate( 'We think you might be in {{timeZoneLink/}} (click to select it).', {
+						components: {
+							timeZoneLink: (
+								<Button
+									onClick={ setGuessedTimezone }
+									borderless={ true }
+									compact={ true }
+									className="site-settings__general-settings-set-guessed-timezone"
+								>
+									{ guessedTimezone }
+								</Button>
+							),
+						},
+					} ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
