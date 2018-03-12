@@ -74,10 +74,10 @@ export default class Typography extends React.PureComponent {
 				<DocumentHead title="Typography" />
 
 				<div className="docs__design-group">
-					<h2>
+					<h1>
 						<a href="/devdocs/typography">Typography</a>
-					</h2>
-					<h3>Interface Typography</h3>
+					</h1>
+					<h2>Interface Typography</h2>
 					<p>
 						We use system fonts which improve the page rendering speed.<br />
 						<code>
@@ -96,7 +96,7 @@ export default class Typography extends React.PureComponent {
 						<p style={ interfaceLabel }>Site description</p>
 						<p style={ interfaceCaption }>Views per page</p>
 					</Card>
-					<h3>Content Typography</h3>
+					<h2>Content Typography</h2>
 					<p>
 						We use <code>Noto Serif</code> which helps to make the web more beautiful across
 						platforms for all languages.

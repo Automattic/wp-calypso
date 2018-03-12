@@ -1,56 +1,23 @@
 .is-section-devdocs {
-/* If we wanna get crazy...
-	.masterbar {
-		background: darken( $gray, 40 );
-		border-bottom: 1px solid darken( $gray, 40 );
-	}
-	
-
-	.layout__content {
-		background: darken( $gray, 40 );
-		padding: 47px 0 0 $sidebar-width-max;
-		min-height: 100vh; // Needed since we're covering the body bg
-
-		// Tablets
-		@include breakpoint( "<960px" ) {
-			padding-left: $sidebar-width-min;
-		}
-
-		// Mobile (Full Width)
-		@include breakpoint( "<660px" ) {
-			padding-left: 0;
-		}
-	}
-*/
 	.main {
 		max-width: 100%;
 	}
-
 }
-/*
-.devdocs.devdocs__doc {
-	.devdocs__doc-content {
-		color: $white;
 
-		a {
-			color: $blue-light;
-			text-decoration: underline;
-		}
-	}
+
+// Sidebar Title
+.devdocs__title {
+    color: $gray-darken-30;
+    font-weight: 300;
+    font-size: 24px;
+    padding: 24px;
 }
-*/
+
 
 // Search, the default page for /devdocs
-.main.devdocs.devdocs__search {
-	.search-card {
-		max-width: 760px;
-		margin: 32px auto;
-	}
-}
-.devdocs__results {
-	max-width: 760px;
-	margin: auto;
-}
+.main.devdocs.devdocs__search {}
+
+.devdocs__results {}
 
 .devdocs__result {
 	&.is-compact {}
@@ -58,13 +25,10 @@
 	.devdocs__result-header {}
 	
 	.devdocs__result-title {
-		color: $gray-darken-30;
-		font-family: $serif;
 		font-weight: bold;
-		font-size: 24px;
+		font-size: 18px;
 
 		.devdocs__result-link {
-			color: $gray-darken-30;
 			text-decoration: underline;
 
 			&:hover {
@@ -79,9 +43,9 @@
 	}
 	
 	.devdocs__result-snippet {
-		font-size: 13px;
+		font-size: 15px;
 		color: $gray-text;
-		margin-top: 16px;
+		margin-top: 8px;
 
 		mark {
 			background: rgba( $blue-light, 0.4 );
@@ -91,40 +55,39 @@
 	}
 }
 
+
 // UI Components
-.main.design.design__ui-components {
-	.design__ui-components-search {
-		max-width: 760px;
-		margin: 32px auto;
-	}
-}
+.main.design.design__ui-components {}
 
 .design__collection {
-	background: darken( $gray, 40 );
-	margin: 0 -32px;
-	padding: 64px 0 32px 0;
+	margin: 32px 0 0 0;
 }
 
+
+// README.md Viewer
 .docs-example__wrapper {
-	max-width: 760px;
-	margin: 0 auto 64px auto;
-	box-shadow: 0 8px 24px rgba( 0, 0, 0, 0.3 );
-	border-radius: 3px;
+	max-width: 720px;
+	box-sizing: border-box;
+	padding: 16px;
+	border-radius: 6px;
+	background: darken( $gray, 40 );
+	box-shadow: 0 -2px 6px inset rgba( 0, 0, 0, 0.7 );
+	margin: 0 auto 24px auto;
 
 	.docs-example__wrapper-header{
-		padding: 16px 32px;
-		background: rgba( 0, 0, 0, 0.2 );
-		border-radius: 3px 3px 0 0;
+		padding: 0 0 16px 16px;
 	}
 
 	.docs-example__wrapper-header-title {
-		color: $white;
+		font-family: $code;
 		font-size: 22px;
 		font-weight: 300;
+		letter-spacing: 1px;
+		color: $white;
 
 		a {
-			color: $white;
 			text-decoration: underline;
+			color: $white;
 		}
 
 		.gridicon {
@@ -135,10 +98,111 @@
 	}
 
 	.docs-examples__wrapper-content {
+		border: 1px solid rgba( $white, 0.1 );
+		box-shadow: 0 2px 12px rgba( 0, 0, 0, 0.7 );
 		background: $gray-light;
 		padding: 32px;
-		border-radius: 0 0 3px 3px;
+		border-radius: 3px;
 	}
+}
+
+.docs-example__readme-viewer-edit-link {
+	text-align: right;
+}
+
+.docs-example__readme-viewer {
+	p, li {
+		font-size: 1.5rem;
+	}
+
+	p {
+		margin-bottom: 0.5rem;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+
+		th, td {
+			border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
+			text-align: left;
+		}
+
+		th {
+			color: $blue-dark;
+			font-size: 0.75em;
+			padding: 0.25em 3em 0.25em 0;
+		}
+
+		td {
+			font-size: 0.83em;
+			padding: 1.17em 3em 1.17em 0;
+		}
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		display: block;
+		margin-bottom: 0.5em;
+		margin-left: 0;
+	}
+
+	h1 {
+		font-size: 1.33em;
+	}
+
+	h2 {
+		font-size: 1.17em;
+	}
+
+	h3 {
+    	font-size: 1em;
+	}
+
+	h4 {
+		font-size: 0.83em;
+	}
+
+	h5 {
+		font-size: 0.67em;
+	}
+
+	h6 {
+		font-size: 0.5em;
+	}
+}
+
+
+// Some components/blocks use a button to toggle variants
+// This is really dumb right now.
+.docs__design-toggle,
+.design__toggle {
+    float: right;
+    	top: -86px;
+    	right: -32px;
+    position: relative;
+}
+
+// Some components/blocks need some space to look right
+// This all kind of defeats the purpose of devdocs.
+.docs__design-button-row,
+.design__button-row {
+    margin-bottom: 20px;
+}
+
+// Look at these terrible !important's
+.docs__design-button-row .button,
+.design__button-row .button {
+    margin-right: 16px !important;
+}
+
+// Just LOOK AT THEM
+.docs__design-button-row .button-group .button,
+.docs__design-button-row .split-button__main {
+    margin-right: 0 !important;
+}
+
+.docs__design-button-group-row {
+    margin-bottom: 20px;
 }
 
 
@@ -155,6 +219,9 @@
 }
 
 .docs-selectors__result {
+	max-width: 720px;
+	margin: auto;
+
 	.docs-selectors__result-name {
 		font-family: $code;
 		text-decoration: underline;
@@ -244,68 +311,11 @@
 	}
 }
 
-/*
-#wpcom .devdocs,
-#wpcom .wizard-component {
-	font-size: 18px;
-	line-height: 1.618;
-	color: $gray-dark;
-	margin: 0 auto;
-	padding: 0;
-	max-width: 100%;
-}
-
-.is-section-devdocs-start .layout__primary {
-	margin-left: 0;
-}
-
-.devdocs__title {
-	color: $gray-darken-20;
-	font-weight: 300;
-	font-size: 24px;
-	padding: 24px;
-}
-
-.devdocs__result.card {
-	padding: 16px 0;
-}
-
-.devdocs__result-header {
-	overflow: hidden;
-	padding: 0 18px;
-}
-
-.devdocs__result-title {
-	clear: none;
-	float: left;
-}
-
-.devdocs__result-link {
-	font-size: 18px;
-}
-
-.devdocs__result-path {
-	font-size: ( 12 / 15 ) * 1em;
-	clear: none;
-	color: $gray;
-	float: right;
-	margin: 8px 0 0;
-}
-
-.devdocs__result-snippet {
-	p {
-		margin-bottom: 0;
-	}
-	margin: 0;
-	margin-top: 10px;
-	border-top: 1px solid $gray-lighten-20;
-	padding: 9px 18px;
-	font-size: ( 13 / 15 ) * 0.8em;
-	background-color: $white;
-}
-
-.devdocs__doc {
+// Documentation — Copy-heavy things like Contributing and Typography
+.devdocs__doc-content,
+.docs__design-group {
 	max-width: 720px;
+	margin: 32px auto;
 
 	h1, h2, h3, h4, h5, h6 {
 		font-family: $sans;
@@ -376,77 +386,3 @@
 		margin-bottom: 1em;
 	}
 }
-
-.devdocs__doc-header {
-	font-size: 13px;
-
-	a {
-		float: right;
-	}
-}
-
-.devdocs__doc-content {
-	margin-top: 48px;
-}
-
-.devdocs__welcome {
-	color: $gray-dark;
-}
-
-.devdocs__welcome-title {
-	font-size: 28px;
-	font-weight: 600;
-	margin-bottom: 24px;
-}
-
-.devdocs__welcome-illustration {
-	float: right;
-	margin-top: -120px;
-}
-
-
-.docs__popover-hover-example__bullet {
-	list-style: none;
-	float: left;
-	cursor: pointer;
-	width: 25px;
-	height: 25px;
-	line-height: 25px;
-	text-align: center;
-	font-size: 10px;
-	background-color: #e0ffe0;
-
-	&:hover {
-		background-color: $gray;
-		color: $white;
-	}
-
-	&:nth-child( 4n ) {
-		background-color: #e0ffff;
-
-		&:hover {
-			background-color: $gray;
-			color: $white;
-		}
-	}
-
-	&:nth-child( 4n + 1 ) {
-		background-color: #e0e0ff;
-
-		&:hover {
-			background-color: $gray;
-			color: $white;
-		}
-	}
-
-	&:nth-child( 4n + 2 ) {
-		background-color: #ffffe0;
-
-		&:hover {
-			background-color: $gray;
-			color: $white;
-		}
-	}
-}
-
-*/

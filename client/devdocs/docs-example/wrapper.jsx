@@ -7,20 +7,12 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import Gridicon from 'gridicons';
-
 const renderTitle = ( unique, name, url ) =>
 	unique ? (
 		<h2 className="docs-example__wrapper-header-title">{ name }</h2>
 	) : (
 		<h2 className="docs-example__wrapper-header-title">
-			<a href={ url }>
-				{ name }
-				<Gridicon icon="link" />
-			</a>
+			<a href={ url }>{ name }</a>
 		</h2>
 	);
 

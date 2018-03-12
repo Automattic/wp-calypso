@@ -63,10 +63,12 @@ const Collection = ( {
 		}
 
 		return (
-			<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
-				{ example }
+			<div>
+				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
+					{ example }
+				</DocsExampleWrapper>
 				{ component && <ReadmeViewer readmeFilePath={ example.props.readmeFilePath } /> }
-			</DocsExampleWrapper>
+			</div>
 		);
 	} );
 

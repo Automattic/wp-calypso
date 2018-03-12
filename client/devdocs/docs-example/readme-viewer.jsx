@@ -40,24 +40,22 @@ class ReadmeViewer extends Component {
 			</div>
 		);
 		return (
-			<div className="docs-example__readme-viewer">
-				<hr className="docs-example__readme-viewer-hr" />
-				<FoldableCard
-					header="README.md"
-					clickableHeader={ true }
-					compact={ true }
-					expanded={ true }
-					summary="README.md"
-					disabled={ ! readme }
-				>
-					{ readme && editLink }
-					{ readme || (
-						<div className="docs-example__readme-viewer-not-available">
-							README.md is not available.
-						</div>
-					) }
-				</FoldableCard>
-			</div>
+			<FoldableCard
+				header="README.md"
+				clickableHeader={ true }
+				compact={ true }
+				expanded={ true }
+				summary="README.md"
+				className="docs-example__readme-viewer"
+				disabled={ ! readme }
+			>
+				{ readme && editLink }
+				{ readme || (
+					<div className="docs-example__readme-viewer-not-available">
+						README.md is not available.
+					</div>
+				) }
+			</FoldableCard>
 		);
 	}
 }
