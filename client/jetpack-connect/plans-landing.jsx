@@ -88,8 +88,9 @@ class PlansLanding extends Component {
 	};
 
 	handleInfoButtonClick = info => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_' + info + '_click', {
+		this.props.recordTracksEvent( 'calypso_jpc_help_plans_info_lookup_click', {
 			site_type: 'unconnected',
+			source: info,
 		} );
 	};
 
@@ -115,7 +116,7 @@ class PlansLanding extends Component {
 					onSelect={ this.storeSelectedPlan }
 				>
 					<PlansSkipButton onClick={ this.handleSkipButtonClick } />
-					<PlansExtendedInfo onClick={ this.handleInfoButtonClick } />
+					<PlansExtendedInfo recordTracks={ this.handleInfoButtonClick } />
 					<LoggedOutFormLinks>
 						<JetpackConnectHappychatButton eventName="calypso_jpc_planslanding_chat_initiated">
 							<HelpButton onClick={ this.handleHelpButtonClick } />
