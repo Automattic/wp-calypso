@@ -422,11 +422,6 @@ export class JetpackConnectMain extends Component {
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
 					{ translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
-				{ this.isInstall() || config.isEnabled( 'jetpack/connect/remote-install' ) ? null : (
-					<LoggedOutFormLinkItem href="/start">
-						{ translate( 'Start a new site on WordPress.com' ) }
-					</LoggedOutFormLinkItem>
-				) }
 				<HelpButton />
 			</LoggedOutFormLinks>
 		);
