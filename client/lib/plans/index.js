@@ -5,7 +5,7 @@
  */
 
 import moment from 'moment';
-import { difference, find, get, includes, invoke, pick } from 'lodash';
+import { difference, find, get, includes, invoke, pick, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -239,7 +239,7 @@ export function findSimilarPlan( planKey, diff = {} ) {
 		...diff,
 	};
 
-	return getPlans().filter( p => planMatches( p, query ) )[ 0 ];
+	return values( getPlans() ).filter( p => planMatches( p, query ) )[ 0 ];
 }
 
 /**
