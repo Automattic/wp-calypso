@@ -63,8 +63,8 @@ const ApplicationPasswords = createReactClass( {
 		};
 	},
 
-	getFocusHandler( action ) {
-		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
+	handleApplicationNameFocus() {
+		this.props.recordGoogleEvent( 'Me', 'Focused on Application Name Field' );
 	},
 
 	createApplicationPassword: function( event ) {
@@ -123,7 +123,7 @@ const ApplicationPasswords = createReactClass( {
 							disabled={ this.state.submittingForm }
 							id="application-name"
 							name="applicationName"
-							onFocus={ this.getFocusHandler( 'Application Name Field' ) }
+							onFocus={ this.handleApplicationNameFocus }
 							value={ this.state.applicationName }
 							onChange={ this.handleChange }
 						/>
