@@ -34,7 +34,7 @@ module.exports = {
 			rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
 		} ],
 		'wpcalypso/import-no-redux-combine-reducers': 2,
-		'import/no-nodejs-modules': [ 'error', { allow: [ 'querystring', 'url', 'events', 'path' ] } ],
+		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path' ] } ],
 		'import/no-extraneous-dependencies': [ 'error', { packageDir: './' } ],
 	}
 };
