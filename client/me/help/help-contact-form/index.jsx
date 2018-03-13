@@ -393,9 +393,7 @@ export class HelpContactForm extends React.PureComponent {
 
 				<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
 				<FormTextarea
-					placeholder={ translate(
-						'Ask away! One of our Happiness Engineers will be with you soon.'
-					) }
+					placeholder={ translate( 'Ask away! Help will be with you soon.' ) }
 					name="message"
 					value={ this.state.message }
 					onChange={ this.handleChange }
