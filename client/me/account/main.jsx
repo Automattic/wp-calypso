@@ -283,11 +283,13 @@ const Account = createReactClass( {
 		};
 	},
 
-	getRadioHandler( radioName ) {
-		return event => {
-			const action = 'Clicked ' + radioName + ' radio';
-			this.props.recordGoogleEvent( 'Me', action, 'checked', event.target.value );
-		};
+	handleUsernameChangeBlogRadio( event ) {
+		this.props.recordGoogleEvent(
+			'Me',
+			'Clicked Username Change Blog Action radio',
+			'checked',
+			event.target.value
+		);
 	},
 
 	cancelUsernameChange() {
@@ -626,7 +628,7 @@ const Account = createReactClass( {
 						<FormRadio
 							name="usernameAction"
 							onChange={ this.handleRadioChange }
-							onClick={ this.getRadioHandler( 'Username Change Blog Action' ) }
+							onClick={ this.handleUsernameChangeBlogRadio }
 							value={ key }
 							checked={ key === this.state.usernameAction }
 						/>
