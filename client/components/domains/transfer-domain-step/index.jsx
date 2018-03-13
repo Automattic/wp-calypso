@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import { endsWith, get, isEmpty, isFunction, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -111,7 +111,7 @@ class TransferDomainStep extends React.Component {
 			? basePath.substring( 0, basePath.length - 9 )
 			: basePath;
 
-		const query = qs.stringify( { initialQuery: this.state.searchQuery.trim() } );
+		const query = stringify( { initialQuery: this.state.searchQuery.trim() } );
 		mapDomainUrl = `${ basePathForMapping }/mapping`;
 		if ( selectedSite ) {
 			mapDomainUrl += `/${ selectedSite.slug }?${ query }`;

@@ -12,7 +12,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -269,7 +269,7 @@ export class LoginForm extends Component {
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			signupUrl =
 				'/start/wpcc?' +
-				qs.stringify( {
+				stringify( {
 					oauth2_client_id: oauth2Client.id,
 					oauth2_redirect: redirectTo,
 				} );

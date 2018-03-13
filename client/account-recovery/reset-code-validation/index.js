@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import qs from 'qs';
+import { parse } from 'qs';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ class ResetPasswordEmailValidation extends Component {
 		return queryString.slice( 1 );
 	};
 
-	parseQueryArgs = () => qs.parse( this.getQueryString() );
+	parseQueryArgs = () => parse( this.getQueryString() );
 
 	componentDidMount = () => {
 		const { user, method, key } = this.parseQueryArgs();

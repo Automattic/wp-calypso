@@ -10,7 +10,7 @@ import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import { noop } from 'lodash';
 import pageSpy from 'page';
-import qs from 'qs';
+import { parse } from 'qs';
 import React from 'react';
 
 /**
@@ -130,7 +130,7 @@ describe( 'DailyPostButton', () => {
 			);
 			prompt.instance().openEditorWithSite( 'apps.wordpress.com' );
 			const pageArgs = pageSpy.lastCall.args[ 0 ];
-			const query = qs.parse( pageArgs.split( '?' )[ 1 ] );
+			const query = parse( pageArgs.split( '?' )[ 1 ] );
 			const { title, URL } = dailyPromptPost;
 			assert.deepEqual( query, { title: `Daily Prompt: ${ title }`, url: URL } );
 		} );

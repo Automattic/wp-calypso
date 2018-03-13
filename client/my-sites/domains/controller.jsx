@@ -3,7 +3,7 @@
  * External dependencies
  */
 import page from 'page';
-import qs from 'qs';
+import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import { get } from 'lodash';
@@ -216,7 +216,7 @@ const redirectToAddMappingIfVipSite = () => {
 		const state = context.store.getState();
 		const selectedSite = getSelectedSite( state );
 		const domain = context.params.domain ? `/${ context.params.domain }` : '';
-		const query = qs.stringify( { initialQuery: context.params.suggestion } );
+		const query = stringify( { initialQuery: context.params.suggestion } );
 
 		if ( selectedSite && selectedSite.is_vip ) {
 			return page.redirect( `/domains/add/mapping${ domain }?${ query }` );
