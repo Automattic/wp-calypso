@@ -171,6 +171,24 @@
 		color: $gray-darken-10;
 	}
 
+	// placeholder for videopress videos
+	.video-plh-notice {
+		position: relative;
+		margin-bottom: 24px;
+		padding: 11px 24px;
+		border-radius: 1px;
+		background: $gray-light;
+		box-sizing: border-box;
+		font-size: 14px;
+		line-height: 1.4285;
+		animation: appear .3s ease-in-out;
+
+		@include breakpoint( ">660px" ) {
+			padding: 13px 48px;
+			font-size: inherit;
+		}
+	}
+
 	sup, sub {
 		vertical-align: baseline;
 		position: relative;
