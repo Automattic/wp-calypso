@@ -5,7 +5,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import querystring from 'querystring';
+import { stringify } from 'querystring';
 import { includes, reduce, filter, map } from 'lodash';
 
 /**
@@ -55,7 +55,7 @@ const _getPDFURL = ( paperSize, labels, baseUrl ) => {
 		json: true,
 	};
 
-	return baseUrl + '?' + querystring.stringify( params );
+	return baseUrl + '?' + stringify( params );
 };
 
 export const getPrintURL = ( paperSize, labels ) => {

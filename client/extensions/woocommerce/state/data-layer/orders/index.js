@@ -5,7 +5,7 @@
 import debugFactory from 'debug';
 import { isFinite, omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
-import qs from 'querystring';
+import { stringify } from 'querystring';
 
 /**
  * Internal dependencies
@@ -78,7 +78,7 @@ export function apiError( { dispatch }, action, error ) {
 
 export function requestOrders( { dispatch }, action ) {
 	const { siteId, query } = action;
-	const queryString = qs.stringify( omitBy( query, val => '' === val ) );
+	const queryString = stringify( omitBy( query, val => '' === val ) );
 	action.failureAction = failOrders( siteId, query );
 
 	dispatch( request( siteId, action ).getWithHeaders( `orders?${ queryString }` ) );

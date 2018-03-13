@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import qs from 'querystring';
+import { parse, stringify } from 'querystring';
 
 /**
  * Internal dependencies
@@ -47,7 +47,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	let localeQueryParam;
-	const query = qs.parse( params.query );
+	const query = parse( params.query );
 
 	if ( params.apiNamespace ) {
 		// v2 api request
@@ -57,7 +57,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	return Object.assign( params, {
-		query: qs.stringify( Object.assign( query, localeQueryParam ) ),
+		query: stringify( Object.assign( query, localeQueryParam ) ),
 	} );
 }
 

@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { omitBy } from 'lodash';
-import qs from 'querystring';
+import { stringify } from 'querystring';
 
 /**
  * Internal dependencies
@@ -124,7 +124,7 @@ export function handleProductCategoryDeleteSuccess( { dispatch }, action, catego
 export function handleProductCategoriesRequest( { dispatch }, action ) {
 	const { siteId, query } = action;
 	const requestQuery = { ...DEFAULT_QUERY, ...query };
-	const queryString = qs.stringify( omitBy( requestQuery, val => '' === val ) );
+	const queryString = stringify( omitBy( requestQuery, val => '' === val ) );
 
 	dispatch( request( siteId, action ).getWithHeaders( `products/categories?${ queryString }` ) );
 }
