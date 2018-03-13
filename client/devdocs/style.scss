@@ -1,10 +1,3 @@
-.is-section-devdocs {
-	.main {
-		max-width: 100%;
-	}
-}
-
-
 // Sidebar Title
 .devdocs__title {
     color: $gray-darken-30;
@@ -14,16 +7,8 @@
 }
 
 
-// Search, the default page for /devdocs
-.main.devdocs.devdocs__search {}
-
-.devdocs__results {}
-
+// Search
 .devdocs__result {
-	&.is-compact {}
-
-	.devdocs__result-header {}
-	
 	.devdocs__result-title {
 		font-weight: bold;
 		font-size: 18px;
@@ -56,40 +41,51 @@
 }
 
 
-// UI Components
-.main.design.design__ui-components {}
+// Block and Component examples
+.main.devdocs.devdocs__blocks,
+.main.devdocs.devdocs__components {
+	// Make way for showing big components and multiple columns
+	max-width: 100%;
+}
 
 .design__collection {
 	margin: 32px 0 0 0;
 
+	// Show 2 columns for big screens
 	@include breakpoint( '1280px-1600px' ) {
 		column-count: 2;
 	}
 
+	// Show 3 columns for really big screens
 	@include breakpoint( '>1600px' ) {
 		column-count: 3;
+	}
+
+	// When viewing a single example always show a single column.
+	.main.devdocs.is-single & {
+		column-count: 1;
 	}
 }
 
 
 // README.md Viewer
 .docs-example__wrapper {
-	max-width: 720px;
+	max-width: 960px;
 	box-sizing: border-box;
-	padding: 16px;
-	border-radius: 6px;
-	background: darken( $gray, 40 );
-	box-shadow: 0 -2px 6px inset rgba( 0, 0, 0, 0.7 );
+	padding: 12px;
+	border-radius: 4px;
+	background: darken( $gray, 33 );
+	box-shadow: inset 0 2px 12px rgba( 0, 0, 0, 0.4 );
 	margin: 0 auto 24px auto;
 	break-inside: avoid;
 
 	.docs-example__wrapper-header{
-		padding: 0 0 16px 16px;
+		padding: 8px 0 16px 12px;
 	}
 
 	.docs-example__wrapper-header-title {
 		font-family: $code;
-		font-size: 22px;
+		font-size: 20px;
 		font-weight: 300;
 		letter-spacing: 1px;
 		color: $white;
@@ -107,8 +103,7 @@
 	}
 
 	.docs-examples__wrapper-content {
-		border: 1px solid rgba( $white, 0.1 );
-		box-shadow: 0 2px 12px rgba( 0, 0, 0, 0.7 );
+		box-shadow: 0 2px 12px rgba( 0, 0, 0, 0.4 );
 		background: $gray-light;
 		padding: 32px;
 		border-radius: 3px;
@@ -120,6 +115,8 @@
 }
 
 .docs-example__readme-viewer {
+	break-inside: avoid;
+
 	p, li {
 		font-size: 1.5rem;
 	}
@@ -216,8 +213,6 @@
 
 
 // State Selectors
-.main.devdocs.docs-selectors {}
-
 .docs-selectors__results {
 	list-style: none;
 	margin: 0;
@@ -235,7 +230,7 @@
 		font-family: $code;
 		text-decoration: underline;
 		font-weight: bold;
-		font-size: 18px;
+		font-size: 16px;
 	}
 
 	.docs-selectors__result-description {
@@ -322,9 +317,13 @@
 
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content,
-.docs__design-group {
+.docs-example__readme-viewer {
 	max-width: 720px;
 	margin: 32px auto;
+
+	a {
+		text-decoration: underline;
+	}
 
 	h1, h2, h3, h4, h5, h6 {
 		font-family: $sans;
@@ -334,7 +333,7 @@
 	}
 
 	h1 {
-		color: $blue-wordpress;
+		color: $gray-darken-30;
 		font-size: 47px;
 		line-height: 1.333;
 	}
@@ -343,10 +342,15 @@
 		font-size: 1.777em;
 	}
 
+	p, li {
+		line-height: 1.6;
+	}
+
 	pre {
 		padding: (12 / 15) * 1em;
 		background: $white;
 		background-color: $white;
+		color: $blue-dark;
 	}
 
 	code {
@@ -354,6 +358,7 @@
 		background-color: $white;
 		padding: 0.2em;
 		border-radius: 3px;
+		color: $blue-dark;
 	}
 
 	pre > code {
@@ -394,4 +399,14 @@
 		max-width: 100%;
 		margin-bottom: 1em;
 	}
+}
+
+// At the end of documentation
+.devdocs__doc .devdocs__doc-footer {
+	display: block;
+	text-align: center;
+	margin: 32px 0;
+	padding: 16px 0;
+	border-top: 1px solid $gray-lighten-30;
+	text-decoration: underline;
 }
