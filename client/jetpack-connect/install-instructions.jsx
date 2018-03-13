@@ -2,8 +2,6 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
-import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -78,7 +76,7 @@ class InstallInstructions extends Component {
 	}
 
 	render() {
-		const { jetpackVersion, remoteSiteUrl, translate } = this.props;
+		const { jetpackVersion, remoteSiteUrl } = this.props;
 		const instructionsData = this.getInstructionsData();
 
 		return (
@@ -106,17 +104,6 @@ class InstallInstructions extends Component {
 					<Button onClick={ instructionsData.buttonOnClick } primary>
 						{ instructionsData.buttonText }
 					</Button>
-					<div className="jetpack-connect__navigation">
-						<Button
-							compact
-							borderless
-							className="jetpack-connect__back-button"
-							onClick={ page.back }
-						>
-							<Gridicon icon="arrow-left" size={ 18 } />
-							{ translate( 'Back' ) }
-						</Button>
-					</div>
 				</div>
 				<LoggedOutFormLinks>
 					<HelpButton />
