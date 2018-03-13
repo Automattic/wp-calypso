@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import PropTypes from 'prop-types';
+import PropTypes, { Fragment } from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -124,7 +124,7 @@ class CurrentPlan extends Component {
 					/>
 				) }
 
-				<div className="current-plan__product-purchase-features">
+				<Fragment>
 					<CurrentPlanHeader
 						selectedSite={ selectedSite }
 						isPlaceholder={ isLoading }
@@ -137,7 +137,7 @@ class CurrentPlan extends Component {
 						includePlansLink={ currentPlan && isFreeJetpackPlan( currentPlan ) }
 					/>
 					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
-				</div>
+				</Fragment>
 
 				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
