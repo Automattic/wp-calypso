@@ -114,7 +114,8 @@ export function serverRender( req, res ) {
 	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
+		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + langFileName + '.js';
 	}
 
 	if (
@@ -152,10 +153,8 @@ export function serverRender( req, res ) {
 			stateCache.set( cacheKey, serverState );
 		}
 
-		context.lang =
-			getCurrentLocaleVariant( context.store.getState() ) ||
-			getCurrentLocaleSlug( context.store.getState() ) ||
-			context.lang;
+		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+
 		const isLocaleRTL = isRTL( context.store.getState() );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
