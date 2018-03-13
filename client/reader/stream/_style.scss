@@ -40,24 +40,24 @@
 	transition: all 0.1s ease-in-out;
 	margin-bottom: 15px;
 
+	&.is-selected,
+	&.is-x-post.is-selected,
+	&.tag-afk.is-selected {
+
+		&::before {
+			background: $blue-wordpress;
+			content: "";
+			position: absolute;
+				bottom: 0;
+				left: -8px;
+				top: 0;
+			width: 2px;
+		}
+	}
+
 	@include breakpoint( ">480px" ) {
 		padding: 16px 24px 24px;
 		margin-bottom: 24px;
-
-		&.is-selected,
-		&.is-x-post.is-selected,
-		&.tag-afk.is-selected {
-
-			&::before {
-				background: $blue-wordpress;
-				content: "";
-				position: absolute;
-					bottom: 0;
-					left: -8px;
-					top: 0;
-				width: 2px;
-			}
-		}
 	}
 
 	.site {
@@ -230,8 +230,13 @@
 
 	.reader__card.card.is-x-post {
 		border-bottom: 1px solid $gray-lighten-20;
-		margin: 0;
-		padding: 20px 42px;
+		margin: 0 15px;
+		padding: 20px;
+
+		@include breakpoint( ">660px" ) {
+			margin: 0;
+			padding: 20px 42px;
+		}
 
 		&:hover {
 			box-shadow: none; // Disables hover for now until we implement hover in all card types
