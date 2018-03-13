@@ -238,10 +238,6 @@
 			padding: 20px 42px;
 		}
 
-		&:hover {
-			box-shadow: none; // Disables hover for now until we implement hover in all card types
-		}
-
 		.reader__post-title-link,
 		.reader__post-title-link:visited {
 			color: $gray-darken-20;
