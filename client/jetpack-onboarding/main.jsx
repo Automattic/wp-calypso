@@ -5,7 +5,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { compact, get } from 'lodash';
-import { concatTitle } from 'lib/react-helpers';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -122,7 +121,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 		return (
 			<Main className="jetpack-onboarding">
 				<DocumentHead
-					title={ concatTitle( get( STEP_TITLES, stepName ), translate( 'Jetpack Start' ) ) }
+					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
 				/>
 				{ /* We only allow querying of site settings once we know that we have finished
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
