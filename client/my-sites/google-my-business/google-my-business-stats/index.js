@@ -87,27 +87,38 @@ class Stats extends Component {
 					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					<Card>
 						<img src="/calypso/images/google-my-business/pie-chart.svg" />
-						<p>451 Total searches</p>
-						<p>
+						<div className="google-my-business-stats__stat-title">451 Total searches</div>
+						<div className="google-my-business-stats__search-type">
+							<span className="google-my-business-stats__search-type-direct" />
 							Direct<br />
 							362 (60%)<br />
-							Customers who find your listing searching for your business name or address
-						</p>
+							<span className="google-my-business-stats__search-type-description">
+								Customers who find your listing searching for your business name or address
+							</span>
+						</div>
 
-						<p>
+						<div className="google-my-business-stats__search-type">
+							<span className="google-my-business-stats__search-type-discovery" />
 							Discovery<br />
 							89 (40%)<br />
-							Customers who find your listing searching for a category, product, or service
-						</p>
+							<span className="google-my-business-stats__search-type-description">
+								Customers who find your listing searching for a category, product, or service
+							</span>
+						</div>
 					</Card>
 
 					<Card>
-						<p>
-							Businesses with recent photos typically receive more clicks to their business
-							websites.
-						</p>
-						<img src="/calypso/images/google-my-business/reviews.svg" />
-						<Button primary>
+						<div className="google-my-business-stats__feature">
+							<p>
+								Businesses with recent photos typically receive more clicks to their business
+								websites.
+							</p>
+							<img
+								src="/calypso/images/google-my-business/reviews.svg"
+								className="google-my-business-stats__feature-image"
+							/>
+						</div>
+						<Button primary className="google-my-business-stats__feature-button">
 							Post Photos
 							<Gridicon icon="external" />
 						</Button>
@@ -117,34 +128,47 @@ class Stats extends Component {
 						label={ translate( 'Where your customers view your business on Google' ) }
 					/>
 					<Card>
-						<p>The Google services that customers use to find your business</p>
+						<p className="google-my-business-stats__description">
+							The Google services that customers use to find your business
+						</p>
 						<FormFieldset>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
 								<option>{ translate( '1 month' ) }</option>
 								<option>{ translate( '1 quarter' ) }</option>
 							</FormSelect>
 						</FormFieldset>
-						<p>451 total views</p>
+						<div className="google-my-business-stats__stat-title">451 total views</div>
+						<img src="/calypso/images/google-my-business/views.svg" />
 					</Card>
 
 					<SectionHeader label={ translate( 'Customer actions' ) } />
 					<Card>
-						<p>The most common actions that customers take on your listing</p>
+						<p className="google-my-business-stats__description">
+							The most common actions that customers take on your listing
+						</p>
 						<FormFieldset>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
 								<option>{ translate( '1 month' ) }</option>
 								<option>{ translate( '1 quarter' ) }</option>
 							</FormSelect>
 						</FormFieldset>
-						<p>156 total actions</p>
+						<div className="google-my-business-stats__stat-title">451 total actions</div>
+						<img src="/calypso/images/google-my-business/actions.svg" />
 					</Card>
 
 					<Card>
-						<p>Complete business listings get on average 7x more clicks than empty listings.</p>
-						<img src="/calypso/images/google-my-business/complete-listing.svg" />
-						<Button primary>
+						<div className="google-my-business-stats__feature">
+							<p className="google-my-business-stats__description">
+								Complete business listings get on average 7x more clicks than empty listings.
+							</p>
+							<img
+								src="/calypso/images/google-my-business/complete-listing.svg"
+								className="google-my-business-stats__feature-image"
+							/>
+						</div>
+						<Button primary className="google-my-business-stats__feature-button">
 							Complete your listing
 							<Gridicon icon="external" />
 						</Button>
@@ -152,84 +176,127 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'Driving direction results' ) } />
 					<Card>
-						<p>The places where customers request driving directions to your business.</p>
+						<p className="google-my-business-stats__description">
+							The places where customers request driving directions to your business.
+						</p>
 						<FormFieldset>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
 								<option>{ translate( '1 month' ) }</option>
 								<option>{ translate( '1 quarter' ) }</option>
 							</FormSelect>
 						</FormFieldset>
-						<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-						<p>{ translate( "We don't have enough data" ) }</p>
+						<div className="google-my-business-stats__not-enough-data">
+							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
+							<br />
+							{ translate( "We don't have enough data" ) }
+						</div>
 					</Card>
 
 					<SectionHeader label={ translate( 'Phone Calls' ) } />
 					<Card>
-						<p>When and how many times customers call your business</p>
+						<p className="google-my-business-stats__description">
+							When and how many times customers call your business
+						</p>
 						<FormFieldset>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( 'Time of day' ) }</option>
+								<option>{ translate( 'Day of week' ) }</option>
 							</FormSelect>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
 								<option>{ translate( '1 month' ) }</option>
 								<option>{ translate( '1 quarter' ) }</option>
 							</FormSelect>
 						</FormFieldset>
-						<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-						<p>{ translate( "We don't have enough data" ) }</p>
+						<div className="google-my-business-stats__not-enough-data">
+							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
+							<br />
+							{ translate( "We don't have enough data" ) }
+						</div>
+					</Card>
+
+					<Card>
+						<div className="google-my-business-stats__feature">
+							<p>
+								Customers compare business listings on Google to make decisions. Make your listing
+								count.
+							</p>
+							<img
+								src="/calypso/images/google-my-business/compare.svg"
+								className="google-my-business-stats__feature-image"
+							/>
+						</div>
+						<Button primary className="google-my-business-stats__feature-button">
+							Complete Your Listing
+							<Gridicon icon="external" />
+						</Button>
 					</Card>
 
 					<SectionHeader label={ translate( 'Return customers' ) } />
 					<Card>
-						<p>How many customers return to your website?</p>
+						<p className="google-my-business-stats__description">How many customers return to your website?</p>
 						<FormFieldset>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
 								<option>{ translate( '1 month' ) }</option>
 								<option>{ translate( '1 quarter' ) }</option>
 							</FormSelect>
 						</FormFieldset>
-						<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-						<p>{ translate( "We don't have enough data" ) }</p>
+						<div className="google-my-business-stats__not-enough-data">
+							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
+							<br />
+							{ translate( "We don't have enough data" ) }
+						</div>
 					</Card>
 
 					<SectionHeader label={ translate( 'Popular times' ) } />
 					<Card>
-						<p>The most popular times for your customers to visit your website.</p>
-						<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-						<p>{ translate( "We don't have enough data" ) }</p>
+						<p className="google-my-business-stats__description">The most popular times for your customers to visit your website.</p>
+						<FormFieldset>
+							<FormSelect className="google-my-business-stats__select">
+								<option>{ translate( '1 week' ) }</option>
+								<option>{ translate( '1 month' ) }</option>
+								<option>{ translate( '1 quarter' ) }</option>
+							</FormSelect>
+						</FormFieldset>
+						<div className="google-my-business-stats__not-enough-data">
+							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
+							<br />
+							{ translate( "We don't have enough data" ) }
+						</div>
 					</Card>
 
 					<SectionHeader label={ translate( 'Photo views' ) } />
 					<Card>
-						<p>
+						<p className="google-my-business-stats__description">
 							The number of times your business photos have been viewed, compared to photos from
 							other businesses.
 						</p>
 						<FormFieldset>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
 								<option>{ translate( '1 month' ) }</option>
 								<option>{ translate( '1 quarter' ) }</option>
 							</FormSelect>
 						</FormFieldset>
+						<img src="/calypso/images/google-my-business/bar-chart.svg" />
 					</Card>
 
 					<SectionHeader label={ translate( 'Photo quantity' ) } />
 					<Card>
-						<p>
+						<p className="google-my-business-stats__description">
 							The number of photos that appear on your business, compared to photos from other
 							businesses.
 						</p>
 						<FormFieldset>
-							<FormSelect>
+							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
 								<option>{ translate( '1 month' ) }</option>
 								<option>{ translate( '1 quarter' ) }</option>
 							</FormSelect>
 						</FormFieldset>
+						<img src="/calypso/images/google-my-business/bar-chart.svg" />
 					</Card>
 
 					<Card>

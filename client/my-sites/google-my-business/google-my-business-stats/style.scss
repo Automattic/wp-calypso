@@ -26,7 +26,7 @@
 
 .google-my-business-stats {
 	.gridicon {
-		vertical-align: text-bottom;
+		vertical-align: baseline;
 	}
 }
 
@@ -40,14 +40,74 @@
 	}
 
 	@include breakpoint( '<480px' ) {
+		text-align: center;
 		width: 100%;
-
-		.gridicon {
-			float: right;
-		}
 	}
+}
+
+.google-my-business-stats__stat-title {
+	font-size: 18px;
+	line-height: 3;
+}
+
+.google-my-business-stats__search-type {
+	margin: 0 0 1em 1em;
+}
+
+@mixin google-my-business-stats__search-type-direct {
+	border-radius: 50%;
+	display: inline-block;
+	height: 10px;
+	margin: 0 0.5em 0 -1em;
+	width: 10px;
+}
+
+.google-my-business-stats__search-type-direct {
+	@include google-my-business-stats__search-type-direct;
+	background: $blue-dark;
+}
+
+.google-my-business-stats__search-type-discovery {
+	@include google-my-business-stats__search-type-direct;
+	background: $blue-medium;
+}
+
+.google-my-business-stats__search-type-description {
+	color: $gray-darken-20;
 }
 
 .google-my-business-stats__address {
 	display: flex;
+}
+
+.google-my-business-stats__feature {
+	display: flex;
+}
+
+.google-my-business-stats__feature-image {
+	margin: 0 0 1em 1em;
+	width: 120%;
+}
+
+.google-my-business-stats__feature-button {
+	@include breakpoint( '<480px' ) {
+		text-align: center;
+		width: 100%;
+	}
+	.gridicon {
+		margin-left: 1em;
+	}
+}
+
+ .google-my-business-stats__select {
+ 	width: 100%;
+ }
+
+.google-my-business-stats__not-enough-data {
+	line-height: 3em;
+	text-align: center;
+}
+
+.google-my-business-stats__description {
+	color: $gray-darken-20;
 }
