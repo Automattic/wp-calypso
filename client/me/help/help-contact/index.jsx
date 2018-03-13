@@ -15,6 +15,7 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import Main from 'components/main';
+import Complementary from 'components/complementary';
 import Card from 'components/card';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
@@ -565,8 +566,9 @@ class HelpContact extends React.Component {
 	};
 
 	render() {
+		const Wrapper = this.props.compact ? Complementary : Main;
 		return (
-			<Main className="help-contact">
+			<Wrapper className="help-contact">
 				{ ! this.props.compact && (
 					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
 						{ this.props.translate( 'Contact Us' ) }
@@ -577,7 +579,7 @@ class HelpContact extends React.Component {
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
-			</Main>
+			</Wrapper>
 		);
 	}
 }
