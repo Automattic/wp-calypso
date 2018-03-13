@@ -30,15 +30,4 @@ export default function MyComponent() {
 
 ### plan
 
-Plan constant from `lib/plans/constants`. Can be one of:
-
-- PLAN_FREE,
-- PLAN_PREMIUM,
-- PLAN_BUSINESS,
-- PLAN_JETPACK_FREE,
-- PLAN_JETPACK_BUSINESS,
-- PLAN_JETPACK_BUSINESS_MONTHLY,
-- PLAN_JETPACK_PREMIUM,
-- PLAN_JETPACK_PREMIUM_MONTHLY,
-- PLAN_PERSONAL
-
+Plan constant from `lib/plans/constants` - check that file for possible values.

@@ -12,6 +12,7 @@ import { compact, includes } from 'lodash';
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { isBusinessPlan, isFreePlan, isPersonalPlan, isPremiumPlan } from './index';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -143,7 +144,22 @@ export const FEATURE_CONCIERGE_SETUP = 'concierge-setup-jetpack';
 export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
 export const FEATURE_SEARCH = 'search';
 
+// Meta grouping constants
+export const GROUP_WPCOM = 'GROUP_WPCOM';
+export const GROUP_JETPACK = 'GROUP_JETPACK';
+
+export const TERM_MONTHLY = 'TERM_MONTHLY';
+export const TERM_ANNUALLY = 'TERM_ANNUALLY';
+export const TERM_BIENNIALLY = 'TERM_BIENNIALLY';
+
+export const TYPE_FREE = 'TYPE_FREE';
+export const TYPE_PERSONAL = 'TYPE_PERSONAL';
+export const TYPE_PREMIUM = 'TYPE_PREMIUM';
+export const TYPE_BUSINESS = 'TYPE_BUSINESS';
+
 const getPlanPersonalDetails = () => ( {
+	group: GROUP_WPCOM,
+	type: TYPE_PERSONAL,
 	getTitle: () => i18n.translate( 'Personal' ),
 	getAudience: () => i18n.translate( 'Best for hobbyists' ),
 	getBlogAudience: () => i18n.translate( 'Best for hobbyists' ),
@@ -197,6 +213,8 @@ const getPlanPersonalDetails = () => ( {
 } );
 
 const getPlanPremiumDetails = () => ( {
+	group: GROUP_WPCOM,
+	type: TYPE_PREMIUM,
 	getTitle: () => i18n.translate( 'Premium' ),
 	getAudience: () => i18n.translate( 'Best for entrepreneurs' ),
 	getBlogAudience: () => i18n.translate( 'Best for professionals' ),
@@ -262,6 +280,8 @@ const getPlanPremiumDetails = () => ( {
 } );
 
 const getPlanBusinessDetails = () => ( {
+	group: GROUP_WPCOM,
+	type: TYPE_BUSINESS,
 	getTitle: () => i18n.translate( 'Business' ),
 	getAudience: () => i18n.translate( 'Best for small businesses' ),
 	getBlogAudience: () => i18n.translate( 'Best for brands' ),
@@ -357,6 +377,9 @@ const getPlanBusinessDetails = () => ( {
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const PLANS_LIST = {
 	[ PLAN_FREE ]: {
+		group: GROUP_WPCOM,
+		type: TYPE_FREE,
+		term: TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Free' ),
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getBlogAudience: () => i18n.translate( 'Best for students' ),
@@ -400,6 +423,7 @@ export const PLANS_LIST = {
 
 	[ PLAN_PERSONAL ]: {
 		...getPlanPersonalDetails(),
+		term: TERM_ANNUALLY,
 		availableFor: plan => includes( [ PLAN_FREE ], plan ),
 		getProductId: () => 1009,
 		getStoreSlug: () => PLAN_PERSONAL,
@@ -408,6 +432,7 @@ export const PLANS_LIST = {
 
 	[ PLAN_PERSONAL_2_YEARS ]: {
 		...getPlanPersonalDetails(),
+		term: TERM_BIENNIALLY,
 		availableFor: plan => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
 		getProductId: () => 1029,
 		getStoreSlug: () => PLAN_PERSONAL_2_YEARS,
@@ -416,6 +441,7 @@ export const PLANS_LIST = {
 
 	[ PLAN_PREMIUM ]: {
 		...getPlanPremiumDetails(),
+		term: TERM_ANNUALLY,
 		availableFor: plan => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS ], plan ),
 		getProductId: () => 1003,
 		getStoreSlug: () => PLAN_PREMIUM,
@@ -425,6 +451,7 @@ export const PLANS_LIST = {
 
 	[ PLAN_PREMIUM_2_YEARS ]: {
 		...getPlanPremiumDetails(),
+		term: TERM_BIENNIALLY,
 		availableFor: plan =>
 			includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM ], plan ),
 		getProductId: () => 1023,
@@ -435,6 +462,7 @@ export const PLANS_LIST = {
 
 	[ PLAN_BUSINESS ]: {
 		...getPlanBusinessDetails(),
+		term: TERM_ANNUALLY,
 		availableFor: plan =>
 			includes(
 				[ PLAN_FREE, PLAN_PERSONAL, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS ],
@@ -448,6 +476,7 @@ export const PLANS_LIST = {
 
 	[ PLAN_BUSINESS_2_YEARS ]: {
 		...getPlanBusinessDetails(),
+		term: TERM_BIENNIALLY,
 		availableFor: plan =>
 			includes(
 				[
@@ -467,6 +496,9 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_FREE ]: {
+		term: TERM_ANNUALLY,
+		group: GROUP_JETPACK,
+		type: TYPE_FREE,
 		getTitle: () => i18n.translate( 'Free' ),
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
@@ -499,6 +531,9 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_PREMIUM ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_PREMIUM,
+		term: TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Premium' ),
 		getAudience: () => i18n.translate( 'Best for small businesses' ),
 		getSubtitle: () => i18n.translate( 'Protection, speed, and revenue.' ),
@@ -557,6 +592,9 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_PREMIUM,
+		term: TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Premium' ),
 		getAudience: () => i18n.translate( 'Best for small businesses' ),
 		getProductId: () => 2003,
@@ -612,6 +650,9 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_PERSONAL ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_PERSONAL,
+		term: TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Personal' ),
 		getAudience: () => i18n.translate( 'Best for hobbyists' ),
 		getProductId: () => 2005,
@@ -648,6 +689,9 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_PERSONAL_MONTHLY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_PERSONAL,
+		term: TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Personal' ),
 		getAudience: () => i18n.translate( 'Best for hobbyists' ),
 		getStoreSlug: () => PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -690,6 +734,9 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_BUSINESS ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_BUSINESS,
+		term: TERM_ANNUALLY,
 		getTitle: () => i18n.translate( 'Professional' ),
 		getAudience: () => i18n.translate( 'Best for organizations' ),
 		getProductId: () => 2001,
@@ -748,6 +795,9 @@ export const PLANS_LIST = {
 	},
 
 	[ PLAN_JETPACK_BUSINESS_MONTHLY ]: {
+		group: GROUP_JETPACK,
+		type: TYPE_BUSINESS,
+		term: TERM_MONTHLY,
 		getTitle: () => i18n.translate( 'Professional' ),
 		getAudience: () => i18n.translate( 'Best for organizations' ),
 		getSubtitle: () => i18n.translate( 'Ultimate security and traffic tools.' ),
@@ -810,6 +860,8 @@ export const PLANS_LIST = {
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
 };
+
+export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );
 
 export const FEATURES_LIST = {
 	[ FEATURE_BLANK ]: {
@@ -1555,27 +1607,22 @@ export function isBestValue( plan ) {
 	return includes( BEST_VALUE_PLANS, plan );
 }
 
-export function getPlanClass( plan ) {
-	switch ( plan ) {
-		case PLAN_JETPACK_FREE:
-		case PLAN_FREE:
-			return 'is-free-plan';
-		case PLAN_PERSONAL:
-		case PLAN_PERSONAL_2_YEARS:
-		case PLAN_JETPACK_PERSONAL:
-		case PLAN_JETPACK_PERSONAL_MONTHLY:
-			return 'is-personal-plan';
-		case PLAN_PREMIUM:
-		case PLAN_PREMIUM_2_YEARS:
-		case PLAN_JETPACK_PREMIUM:
-		case PLAN_JETPACK_PREMIUM_MONTHLY:
-			return 'is-premium-plan';
-		case PLAN_BUSINESS:
-		case PLAN_BUSINESS_2_YEARS:
-		case PLAN_JETPACK_BUSINESS:
-		case PLAN_JETPACK_BUSINESS_MONTHLY:
-			return 'is-business-plan';
-		default:
-			return '';
+export function getPlanClass( planKey ) {
+	if ( isFreePlan( planKey ) ) {
+		return 'is-free-plan';
 	}
+
+	if ( isPersonalPlan( planKey ) ) {
+		return 'is-personal-plan';
+	}
+
+	if ( isPremiumPlan( planKey ) ) {
+		return 'is-premium-plan';
+	}
+
+	if ( isBusinessPlan( planKey ) ) {
+		return 'is-business-plan';
+	}
+
+	return '';
 }
