@@ -374,6 +374,7 @@ sections.push( {
 	secondary: false,
 	isomorphic: true,
 	css: 'login',
+	cacheQueryKeys: [ 'client_id' ],
 } );
 
 sections.push( {

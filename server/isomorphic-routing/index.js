@@ -3,7 +3,8 @@
  * External dependencies
  */
 import deterministicStringify from 'json-stable-stringify';
-import { every, has, isEmpty } from 'lodash';
+import { isEmpty, pick } from 'lodash';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -34,6 +35,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 			expressApp.get(
 				route,
 				setUpRoute,
+				enhanceContext( section ),
 				combineMiddlewares(
 					setSectionMiddlewareFactory( section ),
 					setRouteMiddleware,
@@ -53,23 +55,37 @@ function setRouteMiddleware( context, next ) {
 
 function combineMiddlewares( ...middlewares ) {
 	return function( req, res, next ) {
-		req.context = getEnhancedContext( req, res );
 		applyMiddlewares( req.context, next, ...middlewares, () => {
 			next();
 		} );
 	};
 }
 
-// TODO: Maybe merge into getDefaultContext().
-function getEnhancedContext( req, res ) {
+function enhanceContext( section ) {
+	return function( req, res, next ) {
+		req.context = getEnhancedContext( req, res, section );
+		next();
+	};
+}
+
+export function getEnhancedContext( req, res, section ) {
+	// Do not expose "non-cacheable" query parameters to the SSR engine otherwise sensitive
+	// information could leak into the cache
+	const cacheQueryKeys = section.cacheQueryKeys || [];
+	const query = pick( req.query, cacheQueryKeys );
+	const querystring = stringify( query );
+	const path = req.path + ( querystring ? '?' + querystring : '' );
+
 	return Object.assign( {}, req.context, {
 		isLoggedIn: req.cookies.wordpress_logged_in,
 		isServerSide: true,
-		originalUrl: req.originalUrl,
-		path: req.url,
+		originalUrl: path,
+		path: path,
 		pathname: req.path,
 		params: req.params,
-		query: req.query,
+		query: query,
+		protocol: req.protocol,
+		host: req.headers.host,
 		redirect: res.redirect.bind( res ),
 		res,
 	} );
@@ -96,23 +112,13 @@ function compose( ...functions ) {
  * Get a key used to cache SSR result for the request, or null to disable the cache.
  *
  * @param  {Object}        context                The request context
- * @param  {Array<string>} context.cacheQueryKeys Query parameter keys that should be cached
  * @param  {string}        context.pathname       Request path
  * @param  {Object}        context.query          Query parameters
  * @return {?string}                              The cache key or null to disable cache
  */
-export function getCacheKey( { cacheQueryKeys, pathname, query } ) {
-	// If we have a query, do not cache if any params are not in cacheQueryKeys
+export function getCacheKey( { pathname, query } ) {
 	if ( ! isEmpty( query ) ) {
-		// Cache if our all of the query parameters are in cacheQueryKeys
-		if (
-			! isEmpty( cacheQueryKeys ) &&
-			Object.keys( query ).length === cacheQueryKeys.length &&
-			every( cacheQueryKeys, key => has( query, key ) )
-		) {
-			return pathname + '?' + deterministicStringify( query );
-		}
-		return null;
+		return pathname + '?' + deterministicStringify( query );
 	}
 
 	return pathname;

@@ -3,16 +3,74 @@
 /**
  * Internal dependencies
  */
-import { getCacheKey } from '..';
+import { getCacheKey, getEnhancedContext } from '..';
+import { pick } from 'lodash';
 
 jest.mock( 'redux-form/es/reducer', () => require( 'lodash' ).identity );
+
+describe( 'getEnhancedContext', () => {
+	const reqMock = {
+		path: '/',
+		query: {},
+		cookies: {},
+		headers: {},
+		context: {},
+	};
+
+	const resMock = {
+		redirect: () => null,
+	};
+
+	test( 'should leave context query property empty for routes with no query', () => {
+		const enhancedContext = getEnhancedContext( reqMock, resMock, {} );
+		expect( pick( enhancedContext, [ 'query', 'path', 'pathname', 'originalUrl' ] ) ).toEqual( {
+			query: {},
+			path: '/',
+			pathname: '/',
+			originalUrl: '/',
+		} );
+	} );
+
+	test( 'should leave context query property as it is for a cacheable query param', () => {
+		const req = Object.assign( {}, reqMock, {
+			query: { cache_me: '1' },
+		} );
+		const section = {
+			cacheQueryKeys: [ 'cache_me' ],
+		};
+
+		const enhancedContext = getEnhancedContext( req, resMock, section );
+		expect( pick( enhancedContext, [ 'query', 'path', 'pathname', 'originalUrl' ] ) ).toEqual( {
+			query: { cache_me: '1' },
+			path: '/?cache_me=1',
+			pathname: '/',
+			originalUrl: '/?cache_me=1',
+		} );
+	} );
+
+	test( 'should filter out non-cacheable query params', () => {
+		const req = Object.assign( {}, reqMock, {
+			query: { cache_me: '1', and_me: '2', not_me: '3' },
+		} );
+		const section = {
+			cacheQueryKeys: [ 'cache_me', 'and_me' ],
+		};
+
+		const enhancedContext = getEnhancedContext( req, resMock, section );
+		expect( pick( enhancedContext, [ 'query', 'path', 'pathname', 'originalUrl' ] ) ).toEqual( {
+			query: { cache_me: '1', and_me: '2' },
+			path: '/?cache_me=1&and_me=2',
+			pathname: '/',
+			originalUrl: '/?cache_me=1&and_me=2',
+		} );
+	} );
+} );
 
 describe( 'getCacheKey', () => {
 	test( 'should return pathname for routes with no query', () => {
 		const context = {
 			pathname: '/my/path',
 			query: {},
-			cacheQueryKeys: [],
 		};
 
 		expect( getCacheKey( context ) ).toBe( '/my/path' );
@@ -42,40 +100,17 @@ describe( 'getCacheKey', () => {
 		const context = {
 			pathname: '/my/path',
 			query: { a: '1', b: '2' },
-			cacheQueryKeys: [ 'a', 'b' ],
 		};
 		const querySwapped = {
 			pathname: '/my/path',
 			query: { b: '2', a: '1' },
-			cacheQueryKeys: [ 'a', 'b' ],
 		};
 		const keysSwapped = {
 			pathname: '/my/path',
 			query: { a: '1', b: '2' },
-			cacheQueryKeys: [ 'b', 'a' ],
 		};
 
 		expect( getCacheKey( context ) ).toEqual( getCacheKey( querySwapped ) );
 		expect( getCacheKey( context ) ).toEqual( getCacheKey( keysSwapped ) );
-	} );
-
-	test( 'should return null if unknown and cacheable query params are mixed', () => {
-		const context = {
-			pathname: '/my/path',
-			query: { cache_me: 1, do_not_cache: 'abcd' },
-			cacheQueryKeys: [ 'cache_me' ],
-		};
-
-		expect( getCacheKey( context ) ).toBeNull();
-	} );
-
-	test( 'should return null if unknown query params are detected', () => {
-		const context = {
-			pathname: '/my/path',
-			query: { do_not_cache: 'abcd' },
-			cacheQueryKeys: [],
-		};
-
-		expect( getCacheKey( context ) ).toBeNull();
 	} );
 } );
