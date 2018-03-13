@@ -32,8 +32,7 @@ class InstallInstructions extends Component {
 	};
 
 	getInstructionsData() {
-		const { remoteSiteData, translate } = this.props;
-		const notJetpack = ! remoteSiteData.hasJetpack;
+		const { notJetpack, translate } = this.props;
 
 		return {
 			headerTitle: notJetpack
@@ -79,9 +78,7 @@ class InstallInstructions extends Component {
 	}
 
 	render() {
-		const { remoteSiteData, remoteSiteUrl, translate } = this.props;
-
-		const jetpackVersion = remoteSiteData.jetpackVersion;
+		const { jetpackVersion, remoteSiteUrl, translate } = this.props;
 		const instructionsData = this.getInstructionsData();
 
 		return (
@@ -130,9 +127,24 @@ class InstallInstructions extends Component {
 }
 
 export default connect(
-	state => ( {
-		remoteSiteData: getConnectingSite( state ).data || {},
-	} ),
+	state => {
+		const remoteSite = getConnectingSite( state );
+		const remoteSiteData = remoteSite.data || {};
+		let notJetpack = ! remoteSiteData.hasJetpack;
+
+		const { installConfirmedByUser } = remoteSite;
+		if ( installConfirmedByUser === false ) {
+			notJetpack = true;
+		}
+		if ( installConfirmedByUser === true ) {
+			notJetpack = false;
+		}
+
+		return {
+			jetpackVersion: remoteSiteData.jetpackVersion,
+			notJetpack,
+		};
+	},
 	{
 		confirmJetpackInstallStatus,
 		recordTracksEvent,
