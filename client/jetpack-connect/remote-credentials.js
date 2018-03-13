@@ -22,6 +22,7 @@ import HelpButton from './help-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
+import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
 import { externalRedirect } from 'lib/route';
 import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
@@ -40,7 +41,7 @@ export class OrgCredentialsForm extends Component {
 		return {
 			username: '',
 			password: '',
-			submitting: false,
+			isSubmitting: false,
 		};
 	}
 
@@ -48,10 +49,10 @@ export class OrgCredentialsForm extends Component {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
-		if ( this.state.submitting ) {
+		if ( this.state.isSubmitting ) {
 			return;
 		}
-		this.setState( { submitting: true } );
+		this.setState( { isSubmitting: true } );
 
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
@@ -102,36 +103,41 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFields() {
+		const { installError, isResponseCompleted, siteToConnect, translate } = this.props;
+		const { isSubmitting, password, username } = this.state;
+		const isFetching = ! installError && ! isResponseCompleted && isSubmitting && siteToConnect;
+
 		return (
 			<div>
-				<FormLabel htmlFor="username">{ this.props.translate( 'Username' ) }</FormLabel>
+				<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
 					<FormTextInput
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="jetpack-connect__credentials-form-input"
-						disabled={ this.state.submitting }
+						disabled={ isSubmitting }
 						id="username"
 						name="username"
 						onChange={ this.getChangeHandler( 'username' ) }
-						value={ this.state.username || '' }
+						value={ username || '' }
 					/>
 				</div>
 
 				<div className="jetpack-connect__password-container">
-					<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					<div className="jetpack-connect__password-form">
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
 							className="jetpack-connect__password-form-input"
-							disabled={ this.state.submitting }
+							disabled={ isSubmitting }
 							id="password"
 							name="password"
 							onChange={ this.getChangeHandler( 'password' ) }
-							value={ this.state.password || '' }
+							value={ password || '' }
 						/>
 					</div>
+					{ isFetching ? <Spinner /> : null }
 				</div>
 			</div>
 		);
