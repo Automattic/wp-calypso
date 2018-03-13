@@ -4,7 +4,7 @@
  * External dependencies
  */
 import page from 'page';
-import qs from 'qs';
+import { parse } from 'qs';
 import React from 'react';
 import { includes, map } from 'lodash';
 import { parse as parseUrl } from 'url';
@@ -59,7 +59,7 @@ export function login( context, next ) {
 		}
 
 		const parsedRedirectUrl = parseUrl( redirect_to );
-		const redirectQueryString = qs.parse( parsedRedirectUrl.query );
+		const redirectQueryString = parse( parsedRedirectUrl.query );
 
 		if ( client_id !== redirectQueryString.client_id ) {
 			recordTracksEvent( 'calypso_login_phishing_attempt', context.query );

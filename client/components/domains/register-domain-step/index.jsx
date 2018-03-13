@@ -21,7 +21,7 @@ import {
 	uniqBy,
 } from 'lodash';
 import page from 'page';
-import qs from 'qs';
+import { stringify } from 'qs';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -748,7 +748,7 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.mapDomainUrl ) {
 			mapDomainUrl = this.props.mapDomainUrl;
 		} else {
-			const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
+			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
 			mapDomainUrl = `${ this.props.basePath }/mapping`;
 			if ( this.props.selectedSite ) {
 				mapDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
@@ -764,7 +764,7 @@ class RegisterDomainStep extends React.Component {
 		if ( this.props.transferDomainUrl ) {
 			transferDomainUrl = this.props.transferDomainUrl;
 		} else {
-			const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
+			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
 			transferDomainUrl = `${ this.props.basePath }/transfer`;
 			if ( this.props.selectedSite ) {
 				transferDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;

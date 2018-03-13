@@ -6,7 +6,7 @@ import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
 import PropTypes from 'prop-types';
-import qs from 'qs';
+import { stringify } from 'qs';
 import { get, defer } from 'lodash';
 import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
@@ -100,7 +100,7 @@ export class DailyPostButton extends React.Component {
 
 		this.props.markPostSeen( this.props.post, this.props.site );
 
-		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
+		page( `/post/${ siteSlug }?${ stringify( pingbackAttributes ) }` );
 		return true;
 	};
 

@@ -5,7 +5,7 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import qs from 'qs';
+import { stringify } from 'qs';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
@@ -325,13 +325,13 @@ function setUpLoggedInRoute( req, res, next ) {
 
 				if ( req.query.newuseremail ) {
 					debug( 'Detected legacy email verification action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/verify-email/?' + qs.stringify( req.query ) );
+					res.redirect( 'https://wordpress.com/verify-email/?' + stringify( req.query ) );
 					return;
 				}
 
 				if ( req.query.action === 'wpcom-invite-users' ) {
 					debug( 'Detected legacy invite acceptance action. Redirecting...' );
-					res.redirect( 'https://wordpress.com/accept-invite/?' + qs.stringify( req.query ) );
+					res.redirect( 'https://wordpress.com/accept-invite/?' + stringify( req.query ) );
 					return;
 				}
 			}
