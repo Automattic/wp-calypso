@@ -56,6 +56,33 @@ $date-picker_nav_button_size: 20px;
 	line-height: 18px;
 }
 
+.date-picker__nav-bar {
+	height: 26px;
+	text-align: center;
+	top: 11px;
+}
+
+.date-picker__previous-month,
+.date-picker__next-month {
+	float: right;
+	padding: 1px 4px;
+	font-size: 12px;
+	text-transform: capitalize;
+	cursor: pointer;
+	z-index: 2;
+	order-width: 1px;
+	&:hover {
+		color: $blue-medium;
+	}
+}
+.date-picker__previous-month {
+	float: left;
+}
+
+.date-picker__next-month {
+	float: right;
+}
+
 .DayPicker-Month {
 	display: table;
 	width: 100%;
