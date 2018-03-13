@@ -3,7 +3,6 @@
 }
 
 .search-stream__intro {
-
 	@include breakpoint( "<660px" ) {
 		margin-left: 16px;
 	}
@@ -18,9 +17,17 @@
 	position: fixed;
 	top: 0;
 	margin-top: 47px; // masterbar is exactly 47px
-	padding-top: 30px;
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
+
+	// Below 660px we show the MobileBackToSidebar header so no padding needed
+	@include breakpoint( ">660px") {
+		padding-top: 30px;
+	}
+
+	.mobile-back-to-sidebar {
+		margin: 0;
+	}
 }
 
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
