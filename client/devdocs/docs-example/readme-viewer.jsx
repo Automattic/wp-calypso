@@ -13,7 +13,6 @@ const htmlToReactParser = new Parser();
 /**
  * Internal Dependencies
  */
-import FoldableCard from 'components/foldable-card';
 
 class ReadmeViewer extends Component {
 	static propTypes = {
@@ -40,22 +39,14 @@ class ReadmeViewer extends Component {
 			</div>
 		);
 		return (
-			<FoldableCard
-				header="README.md"
-				clickableHeader={ true }
-				compact={ true }
-				expanded={ true }
-				summary="README.md"
-				className="docs-example__readme-viewer"
-				disabled={ ! readme }
-			>
+			<div className="docs-example__readme-viewer">
 				{ readme && editLink }
 				{ readme || (
 					<div className="docs-example__readme-viewer-not-available">
 						README.md is not available.
 					</div>
 				) }
-			</FoldableCard>
+			</div>
 		);
 	}
 }
