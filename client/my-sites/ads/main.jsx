@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import page from 'page';
 import { find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -33,6 +34,8 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
+import { canCurrentUser } from 'state/selectors';
+import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -44,10 +47,34 @@ class AdsMain extends Component {
 		requestingWordAdsApproval: PropTypes.bool.isRequired,
 		requestWordAdsApproval: PropTypes.func.isRequired,
 		section: PropTypes.string.isRequired,
-		site: PropTypes.object.isRequired,
+		site: PropTypes.object,
 		wordAdsError: PropTypes.string,
 		wordAdsSuccess: PropTypes.bool,
 	};
+
+	componentDidMount() {
+		this.redirectToStats();
+	}
+
+	componentDidUpdate() {
+		this.redirectToStats();
+	}
+
+	canAccess() {
+		const { canManageOptions, site } = this.props;
+		return site && canManageOptions && canAccessWordads( site );
+	}
+
+	redirectToStats() {
+		const { siteSlug } = this.props;
+		const siteFragment = getSiteFragment( page.current );
+
+		if ( ! this.canAccess() && siteSlug ) {
+			page( '/stats/' + siteSlug );
+		} else if ( ! siteFragment ) {
+			page( '/stats/' );
+		}
+	}
 
 	getSelectedText() {
 		const selected = find( this.getFilters(), { path: this.props.path } );
@@ -191,7 +218,12 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
+
+		if ( ! this.canAccess() ) {
+			return null;
+		}
+
 		let component = this.getComponent( this.props.section );
 		let notice = null;
 
@@ -201,10 +233,7 @@ class AdsMain extends Component {
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
-		} else if (
-			! this.props.site.options.wordads &&
-			isWordadsInstantActivationEligible( this.props.site )
-		) {
+		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
 		}
 
@@ -241,6 +270,7 @@ const mapStateToProps = state => {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
