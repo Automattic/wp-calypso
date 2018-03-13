@@ -18,7 +18,6 @@ import { cartItems } from 'lib/cart-values';
 import CompactCard from 'components/card/compact';
 import GoogleAppsUsers from './users';
 import GoogleAppsProductDetails from './product-details';
-import { abtest } from 'lib/abtest';
 import {
 	validate as validateGappsUsers,
 	filter as filterUsers,
@@ -125,9 +124,6 @@ class GoogleAppsDialog extends React.Component {
 	maybeShowKeepSearching() {
 		const { translate } = this.props;
 
-		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
-			return null;
-		}
 		return (
 			<button
 				className="google-apps-dialog__keepsearching-button button"
@@ -144,14 +140,6 @@ class GoogleAppsDialog extends React.Component {
 
 		if ( this.state.isAddingEmail ) {
 			return null;
-		}
-
-		if ( abtest( 'multiDomainRegistrationV1' ) === 'singlePurchaseFlow' ) {
-			return (
-				<a className="google-apps-dialog__cancel-link" href="#" onClick={ this.handleFormCheckout }>
-					{ translate( 'No thanks, I don’t need email or I’ll use another provider.' ) }
-				</a>
-			);
 		}
 
 		return (
