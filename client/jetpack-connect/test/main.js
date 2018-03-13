@@ -78,52 +78,6 @@ describe( 'JetpackConnectMain', () => {
 		} );
 	} );
 
-	describe( 'goToPluginActivation', () => {
-		test( 'should fire redirect', () => {
-			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
-			component.instance().goToPluginActivation( 'example.com' );
-
-			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-
-		test( 'should dispatch analytics', () => {
-			const url = 'example.com';
-			const spy = jest.fn();
-			const component = shallow(
-				<JetpackConnectMain { ...REQUIRED_PROPS } recordTracksEvent={ spy } />
-			);
-			spy.mockReset();
-			component.instance().goToPluginActivation( url );
-
-			expect( spy ).toHaveBeenCalledTimes( 1 );
-			expect( spy.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-	} );
-
-	describe( 'goToPluginInstall', () => {
-		test( 'should fire redirect', () => {
-			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
-			component.instance().goToPluginInstall( 'example.com' );
-
-			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-
-		test( 'should dispatch analytics', () => {
-			const url = 'example.com';
-			const spy = jest.fn();
-			const component = shallow(
-				<JetpackConnectMain { ...REQUIRED_PROPS } recordTracksEvent={ spy } />
-			);
-			spy.mockReset();
-			component.instance().goToPluginInstall( url );
-
-			expect( spy ).toHaveBeenCalledTimes( 1 );
-			expect( spy.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-	} );
-
 	describe( 'goToRemoteAuth', () => {
 		test( 'should fire redirect', () => {
 			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
