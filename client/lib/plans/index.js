@@ -5,7 +5,7 @@
  */
 
 import moment from 'moment';
-import { difference, find, get, includes, invoke } from 'lodash';
+import { difference, find, get, includes, invoke, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -219,22 +219,57 @@ export function isFreePlan( planSlug ) {
 	return getPlan( planSlug ).type === TYPE_FREE;
 }
 
-export function findSimilarPlan( planKey, query = {} ) {
+/**
+ * A similar plan is one that has the same `type`, `group`, and `term` as first
+ * argument, except for differences specified in the second argument.
+ *
+ * For example:
+ *
+ * > findSimilarPlan( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * TYPE_BUSINESS_2_YEARS
+ *
+ * @param {string|object} planKey Source plan to compare to
+ * @param {object} diff Properties that should differ in matched plan. @see planMatches
+ * @return {object|null} Matched plan
+ */
+export function findSimilarPlan( planKey, diff = {} ) {
 	const plan = getPlan( planKey );
-	const type = query.type || plan.type;
-	const group = query.group || plan.group;
-	const term = query.term || plan.term;
+	const query = {
+		...pick( plan, 'type', 'group', 'term' ),
+		...diff,
+	};
 
-	return getPlans().filter( p => planMatches( p, { type, group, term } ) )[ 0 ];
+	return getPlans().filter( p => planMatches( p, query ) )[ 0 ];
 }
 
+/**
+ * Matches plan specified by `planKey` against `query`.
+ * Only compares `type`, `group`, and `term` properties.
+ *
+ * For example:
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+ * true
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * false
+ *
+ * @param {string|object} planKey Plan to match
+ * @param {object} query Properties that should match
+ * @return {bool} Does `planKey` match?
+ */
 export function planMatches( planKey, query = {} ) {
-	const unknownKeys = difference( Object.keys( query ), [ 'type', 'group', 'term' ] );
+	const acceptedKeys = [ 'type', 'group', 'term' ];
+	const unknownKeys = difference( Object.keys( query ), acceptedKeys );
 	if ( unknownKeys.length ) {
-		throw new Error();
+		throw new Error(
+			`planMatches can only match against ${ acceptedKeys.join( ',' ) }, ` +
+				`but unknown keys ${ unknownKeys.join( ',' ) } were passed.`
+		);
 	}
 
-	const plan = getPlan( planKey ) || {}; // @TODO: make getPlan() throw an error on failure
+	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
+	const plan = getPlan( planKey ) || {};
 	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
 	return match( 'type' ) && match( 'group' ) && match( 'term' );
 }
