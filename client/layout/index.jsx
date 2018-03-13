@@ -42,11 +42,13 @@ import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
 import NpsSurveyNotice from 'layout/nps-survey-notice';
+import TracksOptOut from 'layout/tracks-opt-out';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
 import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
 import SupportUser from 'support/support-user';
+import userSettings from 'lib/user-settings';
 
 /* eslint-disable react/no-deprecated */
 const Layout = createReactClass( {
@@ -153,6 +155,7 @@ const Layout = createReactClass( {
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
 				<AppBanner />
+				<TracksOptOut userSettings={ userSettings } />
 			</div>
 		);
 	},
