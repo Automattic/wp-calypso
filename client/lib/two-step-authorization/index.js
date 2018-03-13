@@ -3,16 +3,17 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
+import { replace } from 'lodash';
+
 const debug = debugFactory( 'calypso:two-step-authorization' );
 
 /**
  * Internal Dependencies
  */
+import analytics from 'lib/analytics';
 import emitter from 'lib/mixins/emitter';
 import userSettings from 'lib/user-settings';
-import analytics from 'lib/analytics';
 import wp from 'lib/wp';
 import { reduxDispatch } from 'lib/redux-bridge';
 import { requestConnectedApplications } from 'state/connected-applications/actions';
@@ -30,8 +31,8 @@ function TwoStepAuthorization() {
 
 	this.data = null;
 	this.initialized = false;
-	this.indvalidCode = false;
 	this.smsResendThrottled = false;
+
 	this.bumpMCStat = function( eventAction ) {
 		analytics.mc.bumpStat( '2fa', eventAction );
 		analytics.tracks.recordEvent( 'calypso_login_twostep_authorize', {
@@ -71,7 +72,10 @@ TwoStepAuthorization.prototype.fetch = function( callback ) {
  */
 TwoStepAuthorization.prototype.validateCode = function( args, callback ) {
 	wpcom.me().validateTwoStepCode(
-		args,
+		{
+			...args,
+			code: replace( args.code, /\s/g, '' ),
+		},
 		function( error, data ) {
 			if ( ! error && data.success ) {
 				// If the validation was successful AND reauth was required, fetch
@@ -172,7 +176,7 @@ TwoStepAuthorization.prototype.backupCodes = function( callback ) {
  */
 TwoStepAuthorization.prototype.validateBackupCode = function( code, callback ) {
 	const args = {
-		code: code,
+		code: replace( code, /\s/g, '' ),
 		action: 'create-backup-receipt',
 	};
 
