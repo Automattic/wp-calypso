@@ -4,7 +4,7 @@
  */
 import debugFactory from 'debug';
 import { isUndefined, mapValues, omitBy } from 'lodash';
-import qs from 'querystring';
+import { stringify } from 'querystring';
 import warn from 'lib/warn';
 
 /**
@@ -122,7 +122,7 @@ export function handleProductRequest( { dispatch }, action ) {
 
 export function productsRequest( { dispatch }, action ) {
 	const { siteId, params } = action;
-	const queryString = qs.stringify( omitBy( params, val => '' === val ) );
+	const queryString = stringify( omitBy( params, val => '' === val ) );
 
 	dispatch( request( siteId, action ).getWithHeaders( `products?${ queryString }` ) );
 }

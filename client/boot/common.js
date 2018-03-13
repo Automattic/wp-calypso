@@ -6,7 +6,7 @@
 
 import debugFactory from 'debug';
 import page from 'page';
-import qs from 'querystring';
+import { parse } from 'querystring';
 import { some, startsWith } from 'lodash';
 import url from 'url';
 
@@ -47,7 +47,7 @@ const setupContextMiddleware = reduxStore => {
 		// set `context.hash` (we have to parse manually)
 		if ( context.hashstring ) {
 			try {
-				context.hash = qs.parse( context.hashstring );
+				context.hash = parse( context.hashstring );
 			} catch ( e ) {
 				debug( 'failed to query-string parse `location.hash`', e );
 				context.hash = {};
