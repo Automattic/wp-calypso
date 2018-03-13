@@ -116,26 +116,6 @@ $date-picker_nav_button_size: 20px;
 	}
 }
 
-.DayPicker-NavButton--prev {
-	color: $gray;
-	left: 0;
-
-	&:before {
-		@include noticon( '\f431' );
-		transform: rotate( 90deg );
-	}
-}
-
-.DayPicker-NavButton--next {
-	color: $gray;
-	right: 0;
-
-	&:before {
-		@include noticon( '\f432' );
-		transform: rotate( 90deg );
-	}
-}
-
 .DayPicker-Caption {
 	display: table-caption;
 	text-align: center;
