@@ -1,11 +1,6 @@
 /** @format */
 
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { isSiteBlocked } from 'state/selectors';
@@ -22,8 +17,8 @@ describe( 'isSiteBlocked()', () => {
 				},
 			},
 		};
-		expect( isSiteBlocked( state, 123 ) ).to.be.true;
-		expect( isSiteBlocked( state, 124 ) ).to.be.false;
-		expect( isSiteBlocked( state, 125 ) ).to.be.false;
+		expect( isSiteBlocked( state, 123 ) ).toBe( true );
+		expect( isSiteBlocked( state, 124 ) ).toBe( false );
+		expect( isSiteBlocked( state, 125 ) ).toBe( false );
 	} );
 } );
