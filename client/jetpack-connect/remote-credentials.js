@@ -34,7 +34,7 @@ export class OrgCredentialsForm extends Component {
 	state = {
 		username: '',
 		password: '',
-		submitting: false,
+		isSubmitting: false,
 	};
 
 	getInitialFields() {
@@ -143,14 +143,24 @@ export class OrgCredentialsForm extends Component {
 		);
 	}
 
+	renderButtonLabel() {
+		const { installError, isResponseCompleted, siteToConnect, translate } = this.props;
+		const { isSubmitting } = this.state;
+		const isFetching = ! installError && ! isResponseCompleted && isSubmitting && siteToConnect;
+
+		if ( ! isFetching ) {
+			return translate( 'Install Jetpack' );
+		}
+		return translate( 'Installing…' );
+	}
+
 	formFooter() {
-		const { translate } = this.props;
 		return (
 			<FormButton
 				className="jetpack-connect__credentials-submit"
 				disabled={ ! this.state.username || ! this.state.password }
 			>
-				{ translate( 'Install Jetpack' ) }
+				{ this.renderButtonLabel() }
 			</FormButton>
 		);
 	}
