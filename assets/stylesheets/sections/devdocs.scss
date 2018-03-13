@@ -1,13 +1,3 @@
-// Main stylesheet
-//@import '../style';
-
-// Section stylesheets
-//@import 'login';
-//@import 'post-editor';
-//@import 'reader-full-post';
-//@import 'signup';
-//@import 'site-settings';
-
-// Devdocs
-//@import 'devdocs/design/style';
-//@import 'devdocs/design/syntax';
+@import '../style';
+@import 'devdocs/style';
+@import 'devdocs/design/syntax';
