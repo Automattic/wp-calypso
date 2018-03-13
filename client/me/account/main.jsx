@@ -797,7 +797,7 @@ export default compose(
 		state => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 		} ),
-		{ successNotice, errorNotice, recordGoogleEvent, recordTracksEvent }
+		{ errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),
 	localize,
 	protectForm
