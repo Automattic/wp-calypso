@@ -137,6 +137,7 @@ class RegisterDomainStep extends React.Component {
 		onAddDomain: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
+		onDomainSearchChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -145,6 +146,7 @@ class RegisterDomainStep extends React.Component {
 		onSave: noop,
 		onAddMapping: noop,
 		onAddDomain: noop,
+		onDomainSearchChange: noop,
 	};
 
 	constructor( props ) {
@@ -228,6 +230,11 @@ class RegisterDomainStep extends React.Component {
 				}
 
 				delete state.lastSurveyVertical;
+			}
+
+			if ( this.props.suggestion ) {
+				state.lastQuery = this.props.suggestion;
+				state.loadingResults = true;
 			}
 
 			this.setState( state );
@@ -328,8 +335,13 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	onSearchChange = searchQuery => {
+		if ( ! this._isMounted ) {
+			return;
+		}
+
 		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
 
+		this.props.onDomainSearchChange( searchQuery );
 		this.setState( {
 			exactMatchDomain: null,
 			lastQuery: searchQuery,

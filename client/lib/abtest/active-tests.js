@@ -110,6 +110,14 @@ export default {
 			modified: 50,
 		},
 		defaultVariation: 'original',
+	},
+	domainSearchPrefill: {
+		datestamp: '20180315',
+		variations: {
+			noPrefill: 50,
+			withSiteTitle: 50,
+		},
+		defaultVariation: 'noPrefill',
 		allowExistingUsers: true,
 	},
 	redesignedSidebarBanner: {
