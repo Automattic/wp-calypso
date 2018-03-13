@@ -26,7 +26,20 @@ import SectionHeader from 'components/section-header';
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {
+		countries: PropTypes.arrayOf(
+			PropTypes.shape( {
+				code: PropTypes.string.isRequired,
+				name: PropTypes.string.isRequired,
+				states: PropTypes.arrayOf(
+					PropTypes.shape( {
+						code: PropTypes.string.isRequired,
+						name: PropTypes.string.isRequired,
+					} )
+				),
+			} )
+		),
 		editOrder: PropTypes.func.isRequired,
+		loadedLocations: PropTypes.bool,
 		orderId: PropTypes.oneOfType( [
 			PropTypes.number, // A number indicates an existing order
 			PropTypes.shape( { id: PropTypes.string } ), // Placeholders have format { id: 'order_1' }

@@ -58,7 +58,20 @@ class CustomerAddressDialog extends Component {
 			last_name: PropTypes.string,
 			phone: PropTypes.string,
 		} ),
+		areLocationsLoaded: PropTypes.bool,
 		closeDialog: PropTypes.func,
+		countries: PropTypes.arrayOf(
+			PropTypes.shape( {
+				code: PropTypes.string.isRequired,
+				name: PropTypes.string.isRequired,
+				states: PropTypes.arrayOf(
+					PropTypes.shape( {
+						code: PropTypes.string.isRequired,
+						name: PropTypes.string.isRequired,
+					} )
+				),
+			} )
+		),
 		isBilling: PropTypes.bool,
 		isVisible: PropTypes.bool,
 		siteId: PropTypes.number,
@@ -75,12 +88,17 @@ class CustomerAddressDialog extends Component {
 
 	state = {};
 
-	componentDidMount() {
+	maybeFetchLocations() {
 		const { siteId } = this.props;
-		this.initializeState();
+
 		if ( siteId && ! this.props.areLocationsLoaded ) {
 			this.props.fetchLocations( siteId );
 		}
+	}
+
+	componentDidMount() {
+		this.initializeState();
+		this.maybeFetchLocations();
 	}
 
 	componentWillMount() {
@@ -94,15 +112,11 @@ class CustomerAddressDialog extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { siteId } = this.props;
-
 		// Modal was just opened
 		if ( this.props.isVisible && ! prevProps.isVisible ) {
 			this.initializeState();
 		}
-		if ( siteId && ! this.props.areLocationsLoaded ) {
-			this.props.fetchLocations( siteId );
-		}
+		this.maybeFetchLocations();
 	}
 
 	initializeState = () => {

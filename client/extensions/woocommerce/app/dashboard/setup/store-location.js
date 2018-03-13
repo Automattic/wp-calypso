@@ -65,6 +65,18 @@ class StoreLocationSetupView extends Component {
 			countryCode: PropTypes.string,
 		} ),
 		adminURL: PropTypes.string.isRequired,
+		countries: PropTypes.arrayOf(
+			PropTypes.shape( {
+				code: PropTypes.string.isRequired,
+				name: PropTypes.string.isRequired,
+				states: PropTypes.arrayOf(
+					PropTypes.shape( {
+						code: PropTypes.string.isRequired,
+						name: PropTypes.string.isRequired,
+					} )
+				),
+			} )
+		),
 		onRequestRedirect: PropTypes.func.isRequired,
 		pushDefaultsForCountry: PropTypes.bool.isRequired,
 		settingsGeneralLoaded: PropTypes.bool,
