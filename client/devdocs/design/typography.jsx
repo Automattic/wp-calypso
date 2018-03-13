@@ -18,30 +18,40 @@ export default class Typography extends React.PureComponent {
 
 	render() {
 		const interfaceTitle = {
+			display: 'block',
+			margin: '8px 0',
 			fontSize: '24px',
 			fontWeight: '300',
 			lineHeight: '32px',
 		};
 
 		const interfaceSubtitle = {
+			display: 'block',
+			margin: '8px 0',
 			fontSize: '21px',
 			fontWeight: '300',
 			lineHeight: '32px',
 		};
 
 		const interfaceBodyCopy = {
+			display: 'block',
+			margin: '8px 0',
 			fontSize: '14px',
 			fontWeight: '400',
 			lineHeight: '1.5',
 		};
 
 		const interfaceLabel = {
+			display: 'block',
+			margin: '8px 0',
 			fontSize: '13px',
 			fontWeight: '600',
 			lineHeight: '18px',
 		};
 
 		const interfaceCaption = {
+			display: 'block',
+			margin: '8px 0',
 			fontSize: '11px',
 			fontWeight: '400',
 			lineHeight: '16px',
@@ -49,6 +59,8 @@ export default class Typography extends React.PureComponent {
 		};
 
 		const contentTitle = {
+			display: 'block',
+			margin: '8px 0',
 			fontFamily: 'Noto Serif',
 			fontSize: '32px',
 			fontWeight: '700',
@@ -56,6 +68,8 @@ export default class Typography extends React.PureComponent {
 		};
 
 		const contentSubtitle = {
+			display: 'block',
+			margin: '8px 0',
 			fontFamily: 'Noto Serif',
 			fontSize: '24px',
 			fontWeight: '700',
@@ -63,6 +77,8 @@ export default class Typography extends React.PureComponent {
 		};
 
 		const contentBodyCopy = {
+			display: 'block',
+			margin: '8px 0',
 			fontFamily: 'Noto Serif',
 			fontSize: '16px',
 			fontWeight: '400',
@@ -70,14 +86,13 @@ export default class Typography extends React.PureComponent {
 		};
 
 		return (
-			<Main className="design">
+			<Main className="devdocs devdocs__typography">
 				<DocumentHead title="Typography" />
 
-				<div className="docs__design-group">
-					<h1>
-						<a href="/devdocs/typography">Typography</a>
-					</h1>
+				<div className="devdocs__doc-content">
+					<h1>Typography</h1>
 					<h2>Interface Typography</h2>
+
 					<p>
 						We use system fonts which improve the page rendering speed.<br />
 						<code>
@@ -85,30 +100,33 @@ export default class Typography extends React.PureComponent {
 							"Cantarell", "Helvetica Neue", sans-serif
 						</code>
 					</p>
+
 					<Card>
-						<p style={ interfaceTitle }>Quick foxes jump nightly above wizards.</p>
-						<p style={ interfaceSubtitle }>Pack my box with five dozen liquor jugs</p>
-						<p style={ interfaceBodyCopy }>
+						<span style={ interfaceTitle }>Quick foxes jump nightly above wizards.</span>
+						<span style={ interfaceSubtitle }>Pack my box with five dozen liquor jugs</span>
+						<span style={ interfaceBodyCopy }>
 							“A man who would letterspace lower case would steal sheep,” Frederic Goudy liked to
 							say. The reason for not letterspacing lower case is that it hampers legibility. But
 							there are some lowercase alphabets to which…
-						</p>
-						<p style={ interfaceLabel }>Site description</p>
-						<p style={ interfaceCaption }>Views per page</p>
+						</span>
+						<span style={ interfaceLabel }>Site description</span>
+						<span style={ interfaceCaption }>Views per page</span>
 					</Card>
+
 					<h2>Content Typography</h2>
 					<p>
 						We use <code>Noto Serif</code> which helps to make the web more beautiful across
 						platforms for all languages.
 					</p>
+
 					<Card>
-						<p style={ contentTitle }>Quick foxes jump nightly above wizards.</p>
-						<p style={ contentSubtitle }>Pack my box with five dozen liquor jugs</p>
-						<p style={ contentBodyCopy }>
+						<span style={ contentTitle }>Quick foxes jump nightly above wizards.</span>
+						<span style={ contentSubtitle }>Pack my box with five dozen liquor jugs</span>
+						<span style={ contentBodyCopy }>
 							“A man who would letterspace lower case would steal sheep,” Frederic Goudy liked to
 							say. The reason for not letterspacing lower case is that it hampers legibility. But
 							there are some lowercase alphabets to which…
-						</p>
+						</span>
 					</Card>
 				</div>
 			</Main>
