@@ -121,7 +121,7 @@ export default class AppComponents extends React.Component {
 				<Collection
 					component={ this.props.component }
 					filter={ this.state.filter }
-					section={ 'blocks' }
+					section="blocks"
 				>
 					<AuthorSelector />
 					<CalendarButton />
@@ -161,7 +161,7 @@ export default class AppComponents extends React.Component {
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
-					<ReaderCombinedCard readmeFilePath="reader-combined-card" />
+					<ReaderCombinedCard />
 					<ReaderRecommendedSites />
 					<PlanPrice />
 					<PostShare />

@@ -19,16 +19,16 @@ function MyMenu() {
 
 ### `post`
 
-| Type | Required |
-| ------ | ----------- |
-| object   | yes |
+| Type     | Required |
+| -------- | -------- |
+| object   | yes      |
 
 A Reader post object.
 
 ### `onBlock`
 
-| Type | Required |
-| ------ | ----------- |
-| function   | no |
+| Type     | Required |
+| -------- | -------- |
+| function | no       |
 
 A callback to invoke when a post or site is blocked.
