@@ -16,13 +16,13 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
-				title={ translate( 'Connect to Google Analytics' ) }
+				icon={ <img alt="" src="/calypso/images/upgrades/customize-theme.svg" /> }
+				title={ translate( 'Try a New Theme' ) }
 				description={ translate(
-					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
+					"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. Give one a try!"
 				) }
-				buttonText={ translate( 'Connect Google Analytics' ) }
-				href={ '/settings/analytics/' + selectedSite.slug }
+				buttonText={ translate( 'Browse premium themes' ) }
+				href={ '/themes/' + selectedSite.slug }
 			/>
 		</div>
 	);

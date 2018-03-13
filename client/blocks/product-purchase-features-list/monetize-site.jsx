@@ -16,13 +16,14 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/customize-theme.svg" /> }
-				title={ translate( 'Try a New Theme' ) }
+				icon={ <img alt="" src="/calypso/images/upgrades/word-ads.svg" /> }
+				title={ translate( 'Easily monetize your site' ) }
 				description={ translate(
-					"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. Give one a try!"
+					'Take advantage of WordAds instant activation on your upgraded site. ' +
+						'WordAds lets you earn money by displaying promotional content.'
 				) }
-				buttonText={ translate( 'Browse premium themes' ) }
-				href={ '/themes/' + selectedSite.slug }
+				buttonText={ translate( 'Start earning' ) }
+				href={ '/ads/settings/' + selectedSite.slug }
 			/>
 		</div>
 	);

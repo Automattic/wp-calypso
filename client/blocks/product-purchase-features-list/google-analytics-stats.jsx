@@ -16,14 +16,13 @@ export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
-				icon={ <img src="/calypso/images/upgrades/word-ads.svg" /> }
-				title={ translate( 'Easily monetize your site' ) }
+				icon={ <img alt="" src="/calypso/images/upgrades/adwords.svg" /> }
+				title={ translate( 'Connect to Google Analytics' ) }
 				description={ translate(
-					'Take advantage of WordAds instant activation on your upgraded site. ' +
-						'WordAds lets you earn money by displaying promotional content.'
+					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
 				) }
-				buttonText={ translate( 'Start earning' ) }
-				href={ '/ads/settings/' + selectedSite.slug }
+				buttonText={ translate( 'Connect Google Analytics' ) }
+				href={ '/settings/analytics/' + selectedSite.slug }
 			/>
 		</div>
 	);
