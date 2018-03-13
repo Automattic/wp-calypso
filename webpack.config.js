@@ -183,6 +183,7 @@ const webpackConfig = {
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
+		new webpack.NormalModuleReplacementPlugin( /^(json3|jsonify)$/, 'lib/shims/json' ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
@@ -273,10 +274,6 @@ if ( isDevelopment ) {
 } else {
 	webpackConfig.entry.build = path.join( __dirname, 'client', 'boot', 'app' );
 }
-
-webpackConfig.plugins.push(
-	new webpack.NormalModuleReplacementPlugin( /^(json3|jsonify)$/, 'lib/shims/json' )
-);
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
