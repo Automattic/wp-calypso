@@ -453,8 +453,8 @@ class SiteSettingsFormGeneral extends Component {
 							timeZoneLink: (
 								<Button
 									onClick={ setGuessedTimezone }
-									borderless={ true }
-									compact={ true }
+									borderless
+									compact
 									className="site-settings__general-settings-set-guessed-timezone"
 								>
 									{ guessedTimezone }
