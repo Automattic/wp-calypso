@@ -20,6 +20,10 @@
 		}
 	}
 
+	p {
+		font-size: 14px;
+	}
+
 	@include breakpoint( ">660px" ) {
 		width: 320px;
 
