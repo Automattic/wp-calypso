@@ -457,6 +457,10 @@ const Flows = {
 		return flows;
 	},
 
+	isValidFlow( flowName ) {
+		return Boolean( Flows.getFlows()[ flowName ] );
+	},
+
 	/**
 	 * Preload AB Test variations after a certain step has been completed.
 	 *

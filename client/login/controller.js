@@ -27,7 +27,7 @@ const enhanceContextWithLogin = context => {
 		query: { back_to },
 	} = context;
 
-	context.cacheQueryKeys = [ 'client_id' ];
+	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
 
 	context.primary = (
 		<WPLogin
