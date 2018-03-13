@@ -24,7 +24,7 @@ import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import HelpContact from 'me/help/help-contact';
 import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getHelpSelectedSite } from 'state/help/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 
 /**
@@ -191,7 +191,7 @@ class InlineHelp extends Component {
 const mapStateToProps = ( state, ownProps ) => ( {
 	searchQuery: getSearchQuery( state ),
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	selectedSite: getSelectedSite( state ),
+	selectedSite: getHelpSelectedSite( state ),
 	isHappychatOpen: isHappychatOpen( state ),
 } );
 const mapDispatchToProps = {
