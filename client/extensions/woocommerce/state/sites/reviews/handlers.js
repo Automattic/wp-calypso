@@ -5,7 +5,7 @@
  */
 
 import { get, omitBy, omit } from 'lodash';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 
 /**

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { decode, parse, stringify } from 'querystring';
+import { decode, parse, stringify } from 'qs';
 import store from 'store';
 
 export const GUEST_TICKET_LOCALFORAGE_KEY = 'guest_sandbox_ticket';

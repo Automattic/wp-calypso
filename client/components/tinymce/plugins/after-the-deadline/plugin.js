@@ -22,7 +22,7 @@
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 import { find, throttle } from 'lodash';
 import { getLocaleSlug, translate } from 'i18n-calypso';
 

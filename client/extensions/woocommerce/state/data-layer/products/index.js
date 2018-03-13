@@ -4,7 +4,7 @@
  */
 import debugFactory from 'debug';
 import { isUndefined, mapValues, omitBy } from 'lodash';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 import warn from 'lib/warn';
 
 /**

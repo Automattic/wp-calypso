@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies

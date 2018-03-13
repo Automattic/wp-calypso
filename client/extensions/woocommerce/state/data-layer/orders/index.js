@@ -5,7 +5,7 @@
 import debugFactory from 'debug';
 import { isFinite, omitBy } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies

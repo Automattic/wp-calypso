@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import url from 'url';
-import { parse, stringify } from 'querystring';
+import { parse, stringify } from 'qs';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import classnames from 'classnames';

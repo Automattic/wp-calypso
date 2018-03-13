@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import { assign } from 'lodash';
 import React from 'react';
 import url from 'url';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
