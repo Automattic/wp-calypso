@@ -21,8 +21,7 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
-
-const SITE_TITLE_BUTTON_LABEL = translate( 'Site Title' );
+import { SiteTitleButton } from '../button-labels';
 
 export const ChecklistSiteTitleTour = makeTour(
 	<Tour name="checklistSiteTitle" version="20171205" path="/non-existent-route" when={ noop }>
@@ -39,7 +38,7 @@ export const ChecklistSiteTitleTour = makeTour(
 				{ translate(
 					'Update the {{siteTitleButton/}} field with a descriptive name to let your visitors know which site they’re visiting.',
 					{
-						components: { siteTitleButton: <strong>{ SITE_TITLE_BUTTON_LABEL }</strong> },
+						components: { siteTitleButton: <SiteTitleButton /> },
 					}
 				) }
 			</p>

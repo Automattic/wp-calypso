@@ -24,8 +24,7 @@ import {
 import { isAbTestInVariant, isEnabled, isNewUser } from 'state/ui/guided-tours/contexts';
 import { isPreviewShowing } from 'state/ui/selectors';
 import { isDesktop } from 'lib/viewport';
-
-const ALL_THEMES_BUTTON_LABEL = translate( 'All Themes' );
+import { AllThemesButton } from '../button-labels';
 
 export const ThemeSheetWelcomeTour = makeTour(
 	<Tour
@@ -132,7 +131,7 @@ export const ThemeSheetWelcomeTour = makeTour(
 					"That's it! " +
 						'You can click on {{allThemesButton/}} at any time to return to our design showcase.',
 					{
-						components: { allThemesButton: <strong>{ ALL_THEMES_BUTTON_LABEL }</strong> },
+						components: { allThemesButton: <AllThemesButton /> },
 					}
 				) }
 			</p>

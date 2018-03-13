@@ -29,9 +29,9 @@ import {
 } from 'state/ui/guided-tours/contexts';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import scrollTo from 'lib/scroll-to';
+import { ViewSiteButton } from '../button-labels';
 
 const scrollSidebarToTop = () => scrollTo( { y: 0, container: getScrollableSidebar() } );
-const VIEW_SITE_BUTTON_LABEL = translate( 'View Site' );
 
 // note that this tour checks for a non-existent feature flag.
 // this is kept as an example, while making sure it never gets triggered
@@ -99,7 +99,7 @@ export const MainTour = makeTour(
 			<Continue click step="view-site" target="sitePreview">
 				{ translate( 'Click {{viewSiteButton/}} to continue.', {
 					components: {
-						viewSiteButton: <strong>{ VIEW_SITE_BUTTON_LABEL }</strong>,
+						viewSiteButton: <ViewSiteButton />,
 					},
 				} ) }
 			</Continue>

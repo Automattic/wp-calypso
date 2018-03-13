@@ -7,7 +7,6 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -30,14 +29,9 @@ import {
 	isAbTestInVariant,
 } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
+import { SettingsButton } from '../button-labels';
 
 const TWO_DAYS_IN_MILLISECONDS = 2 * 1000 * 3600 * 24;
-
-const SETTINGS_BUTTON_LABEL = translate( '{{icon/}} Settings', {
-	components: {
-		icon: <Gridicon icon="cog" />,
-	},
-} );
 
 export const SiteTitleTour = makeTour(
 	<Tour
@@ -81,7 +75,7 @@ export const SiteTitleTour = makeTour(
 			<Continue target="settings" step="site-title-input" click>
 				{ translate( 'Click {{settingsButton/}} to continue.', {
 					components: {
-						settingsButton: <strong>{ SETTINGS_BUTTON_LABEL }</strong>,
+						settingsButton: <SettingsButton />,
 					},
 				} ) }
 			</Continue>

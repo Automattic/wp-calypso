@@ -22,13 +22,11 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
+import { SetFeaturedImageButton, UpdateButton } from '../button-labels';
 
 function isPostEditorSection( state ) {
 	return getSectionName( state ) === 'post-editor';
 }
-
-const SET_FEATURED_IMAGE_BUTTON_LABEL = translate( 'Set Featured Image' );
-const UPDATE_BUTTON_LABEL = translate( 'Update' );
 
 export const ChecklistContactPageTour = makeTour(
 	<Tour name="checklistContactPage" version="20171205" path="/non-existent-route" when={ noop }>
@@ -98,7 +96,7 @@ export const ChecklistContactPageTour = makeTour(
 					'We’re all set, press {{setFeaturedImageButton/}} to add this image to your page.',
 					{
 						components: {
-							setFeaturedImageButton: <strong>{ SET_FEATURED_IMAGE_BUTTON_LABEL }</strong>,
+							setFeaturedImageButton: <SetFeaturedImageButton />,
 						},
 					}
 				) }
@@ -114,7 +112,7 @@ export const ChecklistContactPageTour = makeTour(
 		>
 			<Continue target="editor-publish-button" step="finish" click>
 				{ translate( 'Almost done, press the {{updateButton/}} button to save your changes.', {
-					components: { updateButton: <strong>{ UPDATE_BUTTON_LABEL }</strong> },
+					components: { updateButton: <UpdateButton /> },
 				} ) }
 			</Continue>
 		</Step>
