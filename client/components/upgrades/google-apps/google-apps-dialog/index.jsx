@@ -138,7 +138,7 @@ class GoogleAppsDialog extends React.Component {
 						className="google-apps-dialog__checkout-button"
 						onClick={ this.handleFormCheckout }
 					>
-						{ translate( 'Checkout' ) }
+						{ translate( 'Skip' ) }
 					</Button>
 				) }
 				<Button
