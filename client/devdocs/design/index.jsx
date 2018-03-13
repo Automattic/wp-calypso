@@ -119,7 +119,7 @@ class DesignAssets extends React.Component {
 		const { filter } = this.state;
 
 		return (
-			<Main className="design design__ui-components">
+			<Main className="devdocs devdocs__components">
 				<DocumentHead title="UI Components" />
 
 				{ component ? (

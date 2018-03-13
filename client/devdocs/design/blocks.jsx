@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import page from 'page';
+import classnames from 'classnames';
 import { trim } from 'lodash';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 
@@ -96,8 +97,12 @@ export default class AppComponents extends React.Component {
 	};
 
 	render() {
+		const className = classnames( 'devdocs', 'devdocs__blocks', {
+			'is-single': this.props.component,
+		} );
+
 		return (
-			<Main className="design design__blocks">
+			<Main className={ className }>
 				<DocumentHead title="Blocks" />
 				{ this.props.component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
