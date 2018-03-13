@@ -160,7 +160,9 @@ class HelpContact extends React.Component {
 
 		this.clearSavedContactForm();
 
-		page( '/help' );
+		if ( ! this.props.compact ) {
+			page( '/help' );
+		}
 	};
 
 	submitKayakoTicket = contactForm => {
