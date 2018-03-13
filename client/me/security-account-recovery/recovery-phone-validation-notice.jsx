@@ -83,11 +83,7 @@ class RecoveryPhoneValidationNotice extends Component {
 				/>
 
 				<FormButtonsBar className="security-account-recovery__recovery-phone-validation-buttons">
-					<FormButton
-						isPrimary={ true }
-						disabled={ isValidating }
-						onClick={ this.onValidate }
-					>
+					<FormButton isPrimary={ true } disabled={ isValidating } onClick={ this.onValidate }>
 						{ validateButtonText }
 					</FormButton>
 				</FormButtonsBar>

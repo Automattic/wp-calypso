@@ -1,0 +1,37 @@
+.card.is-compact {
+	&.settings-group-card {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: 100%;
+		display: flex;
+		padding-top: 24px;
+		padding-bottom: 24px;
+
+		@include breakpoint( '<660px' ) {
+			flex-wrap: wrap;
+		}
+	}
+}
+
+.settings-group-card__heading {
+	font-size: 16px;
+	font-weight: 600;
+	color: darken( $gray, 20% );
+	width: 22%;
+	padding-right: 10px;
+	box-sizing: border-box;
+	@include breakpoint( '<660px' ) {
+		width: 100%;
+	}
+}
+
+.settings-group-card__content {
+	width: 78%;
+	@include breakpoint( '<660px' ) {
+		width: 100%;
+	}
+
+	.is-full-width {
+		width: 100%;
+	}
+}

@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -17,11 +18,21 @@ import {
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 const emptyZoneLocations = { country: [], continent: [], state: [], postcode: [] };
 
 describe( 'selectors', () => {
 	describe( 'getShippingZoneMethods', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
@@ -259,6 +270,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyEditingShippingZoneMethods', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
@@ -422,9 +442,19 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getNewMethodTypeOptions', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return all the built-in types when there are no methods in the zone', () => {
 			const state = createState( {
 				site: {
+					shippingMethods: [ { id: 'flat_rate' }, { id: 'free_shipping' }, { id: 'local_pickup' } ],
 					shippingZones: [ { id: 1, methodIds: [] } ],
 					shippingZoneMethods: {},
 					shippingZoneLocations: { 1: emptyZoneLocations },
@@ -448,9 +478,99 @@ describe( 'selectors', () => {
 			] );
 		} );
 
+		test( 'should omit any unrecognized shipping methods', () => {
+			const state = createState( {
+				site: {
+					shippingMethods: [ { id: 'flat_rate' }, { id: 'free_shipping' }, { id: '#yolo!' } ],
+					shippingZones: [ { id: 1, methodIds: [] } ],
+					shippingZoneMethods: {},
+					shippingZoneLocations: { 1: emptyZoneLocations },
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [],
+							updates: [],
+							deletes: [],
+							currentlyEditingId: null,
+						},
+					},
+				},
+			} );
+
+			expect( getNewMethodTypeOptions( state, 1 ) ).to.deep.equal( [
+				'flat_rate',
+				'free_shipping',
+			] );
+		} );
+
+		test( 'should omit any WooCommerce Services methods if the plugin is disabled', () => {
+			const state = createState( {
+				site: {
+					shippingMethods: [
+						{ id: 'flat_rate' },
+						{ id: 'free_shipping' },
+						{ id: 'wc_services_usps' },
+					],
+					shippingZones: [ { id: 1, methodIds: [] } ],
+					shippingZoneMethods: {},
+					shippingZoneLocations: { 1: emptyZoneLocations },
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [],
+							updates: [],
+							deletes: [],
+							currentlyEditingId: null,
+						},
+					},
+				},
+			} );
+
+			expect( getNewMethodTypeOptions( state, 1 ) ).to.deep.equal( [
+				'flat_rate',
+				'free_shipping',
+			] );
+		} );
+
+		test( 'should include WooCommerce Services methods if the plugin is enabled', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( true );
+			const state = createState( {
+				site: {
+					shippingMethods: [
+						{ id: 'flat_rate' },
+						{ id: 'free_shipping' },
+						{ id: 'wc_services_usps' },
+					],
+					shippingZones: [ { id: 1, methodIds: [] } ],
+					shippingZoneMethods: {},
+					shippingZoneLocations: { 1: emptyZoneLocations },
+				},
+				ui: {
+					shipping: {
+						zones: {
+							creates: [],
+							updates: [],
+							deletes: [],
+							currentlyEditingId: null,
+						},
+					},
+				},
+			} );
+
+			expect( getNewMethodTypeOptions( state, 1 ) ).to.deep.equal( [
+				'flat_rate',
+				'free_shipping',
+				'wc_services_usps',
+			] );
+		} );
+
 		test( 'should not allow for repeated methods, except for local_pickup', () => {
 			const state = createState( {
 				site: {
+					shippingMethods: [ { id: 'flat_rate' }, { id: 'free_shipping' }, { id: 'local_pickup' } ],
 					shippingZones: [ { id: 1, methodIds: [ 7, 8, 9 ] } ],
 					shippingZoneMethods: {
 						7: { id: 7, methodType: 'local_pickup' },
@@ -477,6 +597,7 @@ describe( 'selectors', () => {
 		test( 'should overlay committed edits to the zone, but not uncommitted edits to the zone currently edited', () => {
 			const state = createState( {
 				site: {
+					shippingMethods: [ { id: 'flat_rate' }, { id: 'free_shipping' }, { id: 'local_pickup' } ],
 					shippingZones: [ { id: 1, methodIds: [ 7, 8 ] } ],
 					shippingZoneMethods: {
 						7: { id: 7, methodType: 'free_shipping' },
@@ -521,6 +642,7 @@ describe( 'selectors', () => {
 		test( 'should use the zone currently being edited if the zoneId param is omitted, overlaying all the edits', () => {
 			const state = createState( {
 				site: {
+					shippingMethods: [ { id: 'flat_rate' }, { id: 'free_shipping' }, { id: 'local_pickup' } ],
 					shippingZones: [ { id: 1, methodIds: [ 7 ] } ],
 					shippingZoneMethods: {
 						7: { id: 7, methodType: 'free_shipping' },
@@ -563,6 +685,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getCurrentlyOpenShippingZoneMethod', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return null when the zones are being loaded', () => {
 			const state = createState( {
 				site: {
@@ -796,6 +927,15 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'isCurrentlyOpenShippingZoneMethodNew', () => {
+		let wcsEnabledStub;
+		beforeEach( () => {
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+		} );
+
+		afterEach( () => {
+			wcsEnabledStub.restore();
+		} );
+
 		test( 'should return the isNew state of the current method', () => {
 			const state = createState( {
 				site: {

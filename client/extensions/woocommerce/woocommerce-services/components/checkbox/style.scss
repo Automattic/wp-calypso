@@ -1,0 +1,31 @@
+.form-checkbox {
+	margin-right: 8px;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	position: relative;
+	vertical-align: text-bottom;
+
+	input {
+		margin: 0;
+
+		&:before {
+			display: none !important; // Prevent Calypso's Noticons font
+		}
+	}
+
+	.gridicon {
+		color: $blue-medium;
+		pointer-events: none;
+		position: absolute;
+
+		&.gridicons-checkmark {
+			left: 1px;
+			top: 1px;
+		}
+	}
+
+	&.is-disabled .gridicon {
+		color: lighten( $gray, 10% );
+	}
+}

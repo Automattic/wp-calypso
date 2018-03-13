@@ -4,7 +4,17 @@
  * External dependencies
  */
 
-import { find, isEmpty, isNumber, isNil, map, pullAll } from 'lodash';
+import {
+	find,
+	intersection,
+	isEmpty,
+	isNumber,
+	isNil,
+	map,
+	merge,
+	pullAll,
+	startsWith,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,11 +25,14 @@ import {
 	getAPIShippingZones,
 	areShippingZonesLoaded,
 } from 'woocommerce/state/sites/shipping-zones/selectors';
+import { getShippingMethods } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { getShippingZoneMethod } from 'woocommerce/state/sites/shipping-zone-methods/selectors';
 import { getShippingZonesEdits, getCurrentlyEditingShippingZone } from '../selectors';
 import { getBucket } from 'woocommerce/state/ui/helpers';
 import { builtInShippingMethods } from 'woocommerce/state/ui/shipping/zones/methods/reducer';
 import { mergeMethodEdits } from './helpers';
+import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
+import getDefaultSettingsValues from 'woocommerce/woocommerce-services/lib/get-default-settings-values';
 
 const getShippingZone = createSelector(
 	( state, zoneId, siteId ) => {
@@ -113,10 +126,13 @@ const overlayShippingZoneMethods = ( state, zone, siteId, extraEdits ) => {
 			// If the "enabled" prop hasn't been modified, use the value from the original method
 			enabled = getShippingZoneMethod( state, method._originalId, siteId ).enabled;
 		}
-		return {
-			...method,
-			enabled: false !== enabled,
-		};
+
+		const defaultValues = startsWith( method.methodType, 'wc_services' )
+			? getDefaultSettingsValues(
+					getShippingMethodSchema( state, method.methodType, siteId ).formSchema
+				)
+			: {};
+		return merge( {}, defaultValues, method, { enabled: false !== enabled } );
 	} );
 	return sortShippingZoneMethods( state, siteId, allMethods );
 };
@@ -199,11 +215,15 @@ export const getCurrentlyOpenShippingZoneMethod = (
 		return null;
 	}
 
+	const { methodType } = zone.methods.currentlyEditingChanges;
+	const defaultValues = startsWith( methodType, 'wc_services' )
+		? getDefaultSettingsValues( getShippingMethodSchema( state, methodType, siteId ).formSchema )
+		: {};
+
 	if ( zone.methods.currentlyEditingNew ) {
-		return {
-			...zone.methods.currentlyEditingChanges,
+		return merge( {}, defaultValues, zone.methods.currentlyEditingChanges, {
 			enabled: false !== zone.methods.currentlyEditingChanges.enabled,
-		};
+		} );
 	}
 
 	const methods = getCurrentlyEditingShippingZoneMethods( state );
@@ -216,11 +236,7 @@ export const getCurrentlyOpenShippingZoneMethod = (
 		? false !== openMethod.enabled
 		: false !== zone.methods.currentlyEditingChanges.enabled;
 
-	return {
-		...openMethod,
-		...zone.methods.currentlyEditingChanges,
-		enabled,
-	};
+	return merge( {}, defaultValues, openMethod, zone.methods.currentlyEditingChanges, { enabled } );
 };
 
 /**
@@ -262,10 +278,17 @@ export const getNewMethodTypeOptions = (
 			: getShippingZoneMethods( state, zoneId, siteId );
 
 	const currentMethodTypes = map( currentMethods, 'methodType' );
-	const allMethods = Object.keys( builtInShippingMethods );
+	const allMethods = intersection(
+		Object.keys( builtInShippingMethods ),
+		map( getShippingMethods( state, siteId ), 'id' )
+	);
 	allMethods.forEach( methodType => {
-		// A user can add as many "Local Pickup" methods as he wants for a given zone
-		if ( 'local_pickup' === methodType || -1 === currentMethodTypes.indexOf( methodType ) ) {
+		// A user can add as many "Local Pickup" and Live Rates methods as he wants for a given zone
+		if (
+			'local_pickup' === methodType ||
+			startsWith( methodType, 'wc_services' ) ||
+			-1 === currentMethodTypes.indexOf( methodType )
+		) {
 			options.push( methodType );
 		}
 	} );

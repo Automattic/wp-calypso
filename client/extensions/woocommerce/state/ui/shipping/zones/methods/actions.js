@@ -1,4 +1,9 @@
 /** @format */
+/**
+ * External dependencies
+ */
+import { forEach, isEmpty, omit, startsWith } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,6 +20,10 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_ENABLED,
 	WOOCOMMERCE_SHIPPING_ZONE_METHOD_TOGGLE_OPENED_ENABLED,
 } from 'woocommerce/state/action-types';
+import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
+import { errorNotice } from 'state/notices/actions';
+import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
+import { updateField } from 'woocommerce/woocommerce-services/state/service-settings/actions';
 
 /**
  * Adds a new shipping method to the shipping zone currently being edited.
@@ -51,8 +60,28 @@ export const cancelShippingZoneMethod = siteId => {
  * @param {Number} siteId Site ID.
  * @return {Object} Action object.
  */
-export const closeShippingZoneMethod = siteId => {
-	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE, siteId };
+export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
+	const method = getCurrentlyOpenShippingZoneMethod( getState(), siteId );
+	// Perform validation if the method is from WooCommerce Services
+	if ( startsWith( method.methodType, 'wc_services' ) ) {
+		const methodFields = omit( method, [ 'id', 'enabled', 'methodType' ] );
+		// Mark all the fields as "interacted with" to trigger a full validation
+		forEach( methodFields, ( value, key ) =>
+			dispatch( updateField( siteId, method.id, key, value ) )
+		);
+		if ( ! isEmpty( getFormErrors( getState(), siteId ) ) ) {
+			return dispatch(
+				errorNotice(
+					translate(
+						'There was a problem with one or more entries. ' +
+							'Please fix the errors below and try saving again.'
+					),
+					{ duration: 5000 }
+				)
+			);
+		}
+	}
+	dispatch( { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE, siteId } );
 };
 
 /**

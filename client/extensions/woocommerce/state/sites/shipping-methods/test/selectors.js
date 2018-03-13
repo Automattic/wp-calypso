@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -15,8 +16,18 @@ import {
 	getShippingMethodNameMap,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 describe( 'selectors', () => {
+	let wcsEnabledStub;
+	beforeEach( () => {
+		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+	} );
+
+	afterEach( () => {
+		wcsEnabledStub.restore();
+	} );
+
 	describe( 'shipping methods loading state', () => {
 		test( 'when woocommerce state is not available.', () => {
 			const state = {
@@ -121,6 +132,87 @@ describe( 'selectors', () => {
 			expect( getShippingMethods( stateLoading ) ).to.equal( LOADING );
 			expect( areShippingMethodsLoaded( stateLoading ) ).to.be.false;
 			expect( areShippingMethodsLoading( stateLoading ) ).to.be.true;
+		} );
+
+		test( 'when methods are loaded but the method schemas are not, with WooCommerce Services disabled.', () => {
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								shippingMethods: [
+									{ id: 'free_shipping', title: 'Free Shipping' },
+									{ id: 'wc_services_usps' },
+								],
+							},
+						},
+					},
+				},
+			};
+
+			expect( getShippingMethods( state, 123 ) ).to.deep.equal( [
+				{ id: 'free_shipping', title: 'Free Shipping' },
+			] );
+			expect( areShippingMethodsLoaded( state, 123 ) ).to.be.true;
+			expect( areShippingMethodsLoading( state, 123 ) ).to.be.false;
+		} );
+
+		test( 'when methods are loaded but the method schemas are not, with WooCommerce Services enabled.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( true );
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								shippingMethods: [ { id: 'wc_services_usps', title: 'USPS (WCS)' } ],
+							},
+						},
+						woocommerceServices: {
+							123: {
+								shippingMethodSchemas: {
+									wc_services_usps: LOADING,
+								},
+							},
+						},
+					},
+				},
+			};
+
+			expect( getShippingMethods( state, 123 ) ).to.deep.equal( [
+				{ id: 'wc_services_usps', title: 'USPS' },
+			] );
+			expect( areShippingMethodsLoaded( state, 123 ) ).to.be.false;
+			expect( areShippingMethodsLoading( state, 123 ) ).to.be.true;
+		} );
+
+		test( 'when methods and schemas are loaded.', () => {
+			wcsEnabledStub.restore();
+			wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( true );
+			const state = {
+				extensions: {
+					woocommerce: {
+						sites: {
+							123: {
+								shippingMethods: [ { id: 'wc_services_usps' } ],
+							},
+						},
+						woocommerceServices: {
+							123: {
+								shippingMethodSchemas: {
+									wc_services_usps: {},
+								},
+							},
+						},
+					},
+				},
+			};
+
+			expect( getShippingMethods( state, 123 ) ).to.deep.equal( [
+				{ id: 'wc_services_usps', title: 'USPS' },
+			] );
+			expect( areShippingMethodsLoaded( state, 123 ) ).to.be.true;
+			expect( areShippingMethodsLoading( state, 123 ) ).to.be.false;
 		} );
 	} );
 

@@ -28,11 +28,7 @@ const user = userFactory();
 export const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<ReduxProvider store={ store }>
 		{ getCurrentUser( store.getState() ) ? (
-			<Layout
-				primary={ primary }
-				secondary={ secondary }
-				user={ user }
-			/>
+			<Layout primary={ primary } secondary={ secondary } user={ user } />
 		) : (
 			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 		) }

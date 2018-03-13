@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, get, isArray, isObject } from 'lodash';
+import { every, find, get, isArray, isObject, some, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,6 +12,11 @@ import { find, get, isArray, isObject } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAPIShippingZones } from '../shipping-zones/selectors';
 import { LOADING } from 'woocommerce/state/constants';
+import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
+import {
+	isShippingZoneMethodSettingsLoaded,
+	isShippingZoneMethodSettingsLoading,
+} from 'woocommerce/woocommerce-services/state/shipping-zone-method-settings/selectors';
 
 const getAPIShippingZoneMethods = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'sites', siteId, 'shippingZoneMethods' ] );
@@ -47,7 +52,22 @@ export const areShippingZoneMethodsLoaded = (
 		return false;
 	}
 	const zone = find( zones, { id: zoneId } );
-	return zone && isArray( zone.methodIds );
+	if ( ! zone || ! isArray( zone.methodIds ) ) {
+		return false;
+	}
+	if ( ! isWcsEnabled( state, siteId ) ) {
+		return true;
+	}
+	const wcsMethods = zone.methodIds
+		.map( id => {
+			const method = getShippingZoneMethod( state, id, siteId );
+			if ( ! method || ! startsWith( method.methodType, 'wc_services' ) ) {
+				return null;
+			}
+			return method;
+		} )
+		.filter( Boolean );
+	return every( wcsMethods, ( { id } ) => isShippingZoneMethodSettingsLoaded( state, id, siteId ) );
 };
 
 /**
@@ -66,5 +86,23 @@ export const areShippingZoneMethodsLoading = (
 		return false;
 	}
 	const zone = find( zones, { id: zoneId } );
-	return zone && LOADING === zone.methodIds;
+	if ( ! zone ) {
+		return false;
+	}
+	if ( LOADING === zone.methodIds ) {
+		return true;
+	}
+	if ( ! isWcsEnabled( state, siteId ) || ! isArray( zone.methodIds ) ) {
+		return false;
+	}
+	const wcsMethods = zone.methodIds
+		.map( id => {
+			const method = getShippingZoneMethod( state, id, siteId );
+			if ( ! method || ! startsWith( method.methodType, 'wc_services' ) ) {
+				return null;
+			}
+			return method;
+		} )
+		.filter( Boolean );
+	return some( wcsMethods, ( { id } ) => isShippingZoneMethodSettingsLoading( state, id, siteId ) );
 };

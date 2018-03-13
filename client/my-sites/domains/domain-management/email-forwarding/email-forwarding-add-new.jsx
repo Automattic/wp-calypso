@@ -83,49 +83,49 @@ const EmailForwardingAddNew = createReactClass( {
 			const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 			addEmailForwarding( this.props.selectedDomainName, mailbox, destination, error => {
-					this.recordEvent(
-						'addNewEmailForwardClick',
-						this.props.selectedDomainName,
-						mailbox,
-						destination,
-						! Boolean( error )
-					);
+				this.recordEvent(
+					'addNewEmailForwardClick',
+					this.props.selectedDomainName,
+					mailbox,
+					destination,
+					! Boolean( error )
+				);
 
-					if ( error ) {
-						notices.error(
-							error.message ||
-								this.props.translate(
+				if ( error ) {
+					notices.error(
+						error.message ||
+							this.props.translate(
 								'Failed to add email forwarding record. ' +
 									'Please try again or ' +
 									'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
-									{
-										components: {
-											contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-										},
-									}
-								)
-						);
-					} else {
-						this.formStateController.resetFields( this.getInitialState().fields );
+								{
+									components: {
+										contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+							)
+					);
+				} else {
+					this.formStateController.resetFields( this.getInitialState().fields );
 
-						notices.success(
-							this.props.translate(
+					notices.success(
+						this.props.translate(
 							'%(email)s has been successfully added! ' +
 								'You must confirm your email before it starts working. ' +
 								'Please check your inbox for %(destination)s.',
-								{
-									args: {
-										email: mailbox + '@' + this.props.selectedDomainName,
-										destination: destination,
-									},
-								}
-							),
 							{
-								duration: 5000,
+								args: {
+									email: mailbox + '@' + this.props.selectedDomainName,
+									destination: destination,
+								},
 							}
-						);
-					}
-					this.setState( { formSubmitting: false, showForm: ! error } );
+						),
+						{
+							duration: 5000,
+						}
+					);
+				}
+				this.setState( { formSubmitting: false, showForm: ! error } );
 			} );
 		} );
 	},
