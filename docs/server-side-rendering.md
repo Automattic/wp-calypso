@@ -24,7 +24,9 @@ React components used on the server will be rendered to HTML by being passed to 
 
 Because it is necessary to serve the redux state along with a server-rendered page, we use two levels of cache on the server: one to [store the redux state](https://github.com/Automattic/wp-calypso/blob/master/server/state-cache/index.js), and one to [store rendered layouts](https://github.com/Automattic/wp-calypso/blob/7ded1642a5b95a30b64fe0a3e462ddd2317c0df2/server/render/index.js#L33).
 
-Both caches use the same key, which is the pathname of the URL. URLs with query args are not cached unless the arg name is present in `context.queryCacheKeys`, in which case the argument or arguments are appended to the key.
+Both caches use the same key, which is the pathname of the URL. URLs with query args are not cached unless all the args are present in `context.queryCacheKeys`, in which case the argument or arguments are appended to the key. If query arguments _not in_ `queryCacheKeys` are detected, server-side rendering is disabled for the request.
+
+This means that all data that was fetched to render a given page is available the next time the corresponding route is hit. A section controller thus only needs to check if the required data is available (using selectors), and dispatch the corresponding fetching action if it isn't; see the [themes controller](../client/my-sites/themes/controller.jsx) for an example.
 
 The render cache will also use error messages as the key, allowing pages such as "Not found" to be cached.
 
