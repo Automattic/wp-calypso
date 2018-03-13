@@ -57,7 +57,6 @@ _.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) )
  *
  * Providing webpack with these aliases instead of telling it to scan client/extensions for every
  * module resolution speeds up builds significantly.
- * @returns {Object} a mapping of extension name to path
  */
 function getAliasesForExtensions() {
 	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
@@ -183,7 +182,6 @@ const webpackConfig = {
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-		new webpack.NormalModuleReplacementPlugin( /^(json3|jsonify)$/, 'lib/shims/json' ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
