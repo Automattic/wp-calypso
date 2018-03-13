@@ -5,8 +5,7 @@
  */
 import createSelector from 'lib/create-selector';
 import { getSiteOption, getSitePlanSlug } from 'state/sites/selectors';
-import { TYPE_BUSINESS } from '../../lib/plans/constants';
-import { getPlan } from '../../lib/plans/index';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
 
 const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 
@@ -33,7 +32,7 @@ const siteHasPromoteGoal = createSelector(
  * @return {Boolean} True if site has business plan
  */
 const siteHasBusinessPlan = createSelector(
-	( state, siteId ) => getPlan( getSitePlanSlug( state, siteId ) ).type === TYPE_BUSINESS,
+	( state, siteId ) => getSitePlanSlug( state, siteId ) === PLAN_BUSINESS,
 	( state, siteId ) => [ getSitePlanSlug( state, siteId ) ]
 );
 
