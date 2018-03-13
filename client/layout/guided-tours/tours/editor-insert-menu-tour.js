@@ -16,6 +16,7 @@ import { ButtonRow, makeTour, Step, Tour, Quit } from 'layout/guided-tours/confi
 import { hasUserRegisteredBefore } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { AddMediaButton } from '../button-labels';
 
 class RepositioningStep extends Step {
 	componentDidMount() {
@@ -30,8 +31,6 @@ class RepositioningStep extends Step {
 		clearInterval( this.interval );
 	}
 }
-
-const ADD_MEDIA_BUTTON_LABEL = translate( 'Add Media' );
 
 export const EditorInsertMenuTour = makeTour(
 	<Tour
@@ -57,7 +56,7 @@ export const EditorInsertMenuTour = makeTour(
 		>
 			<p>
 				{ translate( '{{addMediaButton/}} has moved to a new button.', {
-					components: { addMediaButton: <strong>{ ADD_MEDIA_BUTTON_LABEL }</strong> },
+					components: { addMediaButton: <AddMediaButton /> },
 				} ) }
 			</p>
 			<p>

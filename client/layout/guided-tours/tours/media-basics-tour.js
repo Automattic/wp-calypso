@@ -7,7 +7,6 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -23,11 +22,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { doesSelectedSiteHaveMediaFiles, isNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
-
-const ADD_NEW_BUTTON_LABEL = translate( 'Add New' );
-const EDIT_BUTTON_LABEL = translate( 'Edit' );
-const EDIT_IMAGE_BUTTON_LABEL = translate( 'Edit Image' );
-const DONE_BUTTON_LABEL = translate( 'Done' );
+import { AddNewButton, EditButton, EditImageButton, DoneButton } from '../button-labels';
 
 export const MediaBasicsTour = makeTour(
 	<Tour
@@ -41,11 +36,10 @@ export const MediaBasicsTour = makeTour(
 			<p>
 				{ translate(
 					'Upload media — photos, documents, audio files, and more — ' +
-						'by clicking the {{icon/}} {{addNewButton/}} button.',
+						'by clicking the {{addNewButton/}} button.',
 					{
 						components: {
-							icon: <Gridicon icon="add-image" />,
-							addNewButton: <strong>{ ADD_NEW_BUTTON_LABEL }</strong>,
+							addNewButton: <AddNewButton />,
 						},
 					}
 				) }
@@ -106,7 +100,7 @@ export const MediaBasicsTour = makeTour(
 			<Continue click step="launch-modal" target=".editor-media-modal__secondary-action">
 				{ translate( 'Now click the {{editButton/}} button.', {
 					components: {
-						editButton: <strong>{ EDIT_BUTTON_LABEL }</strong>,
+						editButton: <EditButton />,
 					},
 				} ) }
 			</Continue>
@@ -127,11 +121,10 @@ export const MediaBasicsTour = makeTour(
 		<Step name="done" placement="center">
 			<p>
 				{ translate(
-					'Need to adjust your image? Click {{icon/}} {{editImageButton/}} to perform basic tweaks.',
+					'Need to adjust your image? Click {{editImageButton/}} to perform basic tweaks.',
 					{
 						components: {
-							icon: <Gridicon icon="pencil" />,
-							editImageButton: <strong>{ EDIT_IMAGE_BUTTON_LABEL }</strong>,
+							editImageButton: <EditImageButton />,
 						},
 					}
 				) }
@@ -139,7 +132,7 @@ export const MediaBasicsTour = makeTour(
 			<p>
 				{ translate( 'Click {{doneButton /}} to go back to your full library. Happy uploading!', {
 					components: {
-						doneButton: <strong>{ DONE_BUTTON_LABEL }</strong>,
+						doneButton: <DoneButton />,
 					},
 				} ) }
 			</p>

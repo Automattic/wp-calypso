@@ -24,8 +24,7 @@ import {
 import { isNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-
-const PUBLISH_BUTTON_LABEL = translate( 'Publish' );
+import { PublishButton } from '../button-labels';
 
 export const EditorBasicsTour = makeTour(
 	<Tour
@@ -122,7 +121,7 @@ export const EditorBasicsTour = makeTour(
 						'Click {{publishButton/}} to share your work with the world!',
 					{
 						components: {
-							publishButton: <strong>{ PUBLISH_BUTTON_LABEL }</strong>,
+							publishButton: <PublishButton />,
 						},
 					}
 				) }

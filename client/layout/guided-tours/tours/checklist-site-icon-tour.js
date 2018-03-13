@@ -21,10 +21,7 @@ import {
 	Step,
 	Tour,
 } from 'layout/guided-tours/config-elements';
-
-const CHANGE_BUTTON_LABEL = translate( 'Change' );
-const CONTINUE_BUTTON_LABEL = translate( 'Continue' );
-const DONE_BUTTON_LABEL = translate( 'Done' );
+import { ChangeButton, ContinueButton, DoneButton } from '../button-labels';
 
 function handleTargetDisappear( { quit, next } ) {
 	const dialog = document.querySelector( '.editor-media-modal' );
@@ -51,7 +48,7 @@ export const ChecklistSiteIconTour = makeTour(
 				{ translate(
 					'Press {{changeButton/}} to upload your own image or icon that can help people identify your site in the browser.',
 					{
-						components: { changeButton: <strong>{ CHANGE_BUTTON_LABEL }</strong> },
+						components: { changeButton: <ChangeButton /> },
 					}
 				) }
 			</p>
@@ -90,7 +87,7 @@ export const ChecklistSiteIconTour = makeTour(
 		>
 			<Continue target="dialog-base-action-confirm" step="click-done" click>
 				{ translate( 'Good choice, press {{continueButton/}} to use it as your Site Icon.', {
-					components: { continueButton: <strong>{ CONTINUE_BUTTON_LABEL }</strong> },
+					components: { continueButton: <ContinueButton /> },
 				} ) }
 			</Continue>
 		</Step>
@@ -105,7 +102,7 @@ export const ChecklistSiteIconTour = makeTour(
 			<Continue target="image-editor-button-done" step="finish" click>
 				{ translate(
 					'Let’s make sure it looks right before you press {{doneButton/}} to save your changes.',
-					{ components: { doneButton: <strong>{ DONE_BUTTON_LABEL }</strong> } }
+					{ components: { doneButton: <DoneButton /> } }
 				) }
 			</Continue>
 		</Step>
