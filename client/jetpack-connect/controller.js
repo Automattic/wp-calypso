@@ -179,6 +179,11 @@ export function connect( context, next ) {
 }
 
 export function instructions( context, next ) {
+	analytics.pageView.record(
+		'jetpack/connect/instructions',
+		'Jetpack Manual Install Instructions'
+	);
+
 	const url = context.query.url;
 	if ( ! url ) {
 		return page.redirect( '/jetpack/connect' );
