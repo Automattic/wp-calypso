@@ -42,7 +42,7 @@ const WpcomDomain = createReactClass( {
 			return null;
 		}
 
-		if ( isEnabled( 'site-renamer' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
+		if ( isEnabled( 'site-address-editor' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
 			return <SiteRenamer currentDomain={ domain } />;
 		}
 

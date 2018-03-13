@@ -23,13 +23,16 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { isNewUser } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+
+const PUBLISH_BUTTON_LABEL = translate( 'Publish' );
 
 export const EditorBasicsTour = makeTour(
 	<Tour
 		name="editorBasicsTour"
 		version="20170503"
 		path={ [ '/post/', '/page/' ] }
-		when={ and( isDesktop, isNewUser ) }
+		when={ and( isDesktop, isNewUser, isCurrentUserEmailVerified ) }
 	>
 		<Step
 			name="init"
@@ -116,10 +119,10 @@ export const EditorBasicsTour = makeTour(
 			<p>
 				{ translate(
 					'Your changes are saved automatically. ' +
-						'Click {{strong}}Publish{{/strong}} to share your work with the world!',
+						'Click {{publishButton/}} to share your work with the world!',
 					{
 						components: {
-							strong: <strong />,
+							publishButton: <strong>{ PUBLISH_BUTTON_LABEL }</strong>,
 						},
 					}
 				) }

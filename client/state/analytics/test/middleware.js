@@ -17,6 +17,7 @@ import {
 	recordTracksEvent,
 	recordPageView,
 	setTracksAnonymousUserId,
+	setTracksOptOut,
 } from '../actions';
 import { dispatcher as dispatch } from '../middleware.js';
 import { spy as mockAnalytics } from 'lib/analytics';
@@ -78,12 +79,6 @@ describe( 'middleware', () => {
 			expect( mockAnalytics ).to.have.been.calledWith( 'ga.recordPageView' );
 		} );
 
-		test( 'should call tracks.recordEvent', () => {
-			dispatch( recordTracksEvent( 'event', { name: 'value' } ) );
-
-			expect( mockAnalytics ).to.have.been.calledWith( 'tracks.recordEvent' );
-		} );
-
 		test( 'should call trackCustomFacebookConversionEvent', () => {
 			dispatch( recordCustomFacebookConversionEvent( 'event', { name: 'value' } ) );
 
@@ -106,6 +101,12 @@ describe( 'middleware', () => {
 			dispatch( setTracksAnonymousUserId( 'abcd1234' ) );
 
 			expect( mockAnalytics ).to.have.been.calledWith( 'tracks.setAnonymousUserId' );
+		} );
+
+		test( 'should call `setOptOut`', () => {
+			dispatch( setTracksOptOut( false ) );
+
+			expect( mockAnalytics ).to.have.been.calledWith( 'tracks.setOptOut' );
 		} );
 	} );
 } );

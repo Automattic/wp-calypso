@@ -8,10 +8,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { addLocaleQueryParam, bindState, getLocale, injectLocalization, setLocale } from '../';
-import { getCurrentUserLocale as getCurrentUserLocaleMock } from 'state/current-user/selectors';
+import {
+	getCurrentUserLocale as getCurrentUserLocaleMock,
+	getCurrentUserLocaleVariant as getCurrentUserLocaleVariantMock,
+} from 'state/current-user/selectors';
 
 jest.mock( 'state/current-user/selectors', () => ( {
 	getCurrentUserLocale: jest.fn(),
+	getCurrentUserLocaleVariant: jest.fn(),
 } ) );
 
 describe( 'index', () => {
@@ -40,6 +44,12 @@ describe( 'index', () => {
 			expect( params ).to.eql( {
 				query: 'search=foo&locale=fr',
 			} );
+		} );
+
+		test( 'should prefer and set initial variant locale from state', () => {
+			getCurrentUserLocaleVariantMock.mockReturnValueOnce( 'fr_formal' );
+			bindState( { subscribe() {}, getState() {} } );
+			expect( getLocale() ).to.equal( 'fr_formal' );
 		} );
 	} );
 

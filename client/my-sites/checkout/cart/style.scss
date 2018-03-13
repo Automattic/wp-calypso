@@ -67,7 +67,7 @@
 			font-style: italic;
 		}
 
-		.remove-item {
+		.cart__remove-item {
 			box-shadow: none;
 			cursor: pointer;
 			color: $alert-red;
@@ -79,11 +79,19 @@
 			position: absolute;
 			right: 0;
 			top: 0;
+
+			&:focus {
+				outline: none;
+
+				.accessible-focus & {
+					box-shadow: inset 0 0 0 2px $blue-light;
+				}
+			}
 		}
 	}
 
 	.cart-item__loading-placeholder {
-		.remove-item {
+		.cart__remove-item {
 			@include placeholder(23%);
 			border-radius: 0;
 			width: 25px;
@@ -197,6 +205,14 @@
 		position: absolute;
 		    top: 12px;
 		    right: 12px;
+	}
+
+	&:focus {
+		outline: none;
+
+		.accessible-focus & {
+			box-shadow: inset 0 0 0 2px $blue-light;
+		}
 	}
 }
 

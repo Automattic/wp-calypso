@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormTelInput from 'components/forms/form-tel-input';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
+import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 
@@ -49,8 +49,6 @@ class RecoveryPhoneValidationNotice extends Component {
 
 		const { candidateCode } = this.state;
 
-		const validationCodeLength = 8;
-		const isCodeLengthValid = validationCodeLength !== candidateCode.length;
 		const validateButtonText = isValidating ? translate( 'Validating' ) : translate( 'Validate' );
 
 		return (
@@ -69,22 +67,23 @@ class RecoveryPhoneValidationNotice extends Component {
 						</NoticeAction>
 					) }
 				</Notice>
+
 				<FormLabel className="security-account-recovery__recovery-phone-validation-label">
 					{ translate( 'Enter the code you receive via SMS:' ) }
 				</FormLabel>
-				<FormTelInput
+
+				<FormTextInput
 					autoComplete="off"
-					disabled={ false }
-					placeholder={ translate( 'e.g. 12345678' ) }
+					disabled={ isValidating }
+					placeholder={ translate( 'e.g. 1234 5678' ) }
 					onChange={ this.onChange }
 					value={ candidateCode }
+					pattern="[0-9 ]*"
+					type="tel"
 				/>
+
 				<FormButtonsBar className="security-account-recovery__recovery-phone-validation-buttons">
-					<FormButton
-						isPrimary={ true }
-						disabled={ isValidating || isCodeLengthValid }
-						onClick={ this.onValidate }
-					>
+					<FormButton isPrimary={ true } disabled={ isValidating } onClick={ this.onValidate }>
 						{ validateButtonText }
 					</FormButton>
 				</FormButtonsBar>

@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 import { assign } from 'lodash';
 import React from 'react';
 import url from 'url';
-import qs from 'querystring';
+import { stringify } from 'querystring';
 
 /**
  * Internal dependencies
@@ -41,7 +41,7 @@ export function retry( chunkName ) {
 		analytics.mc.bumpStat( 'calypso_chunk_retry', chunkName );
 
 		// Trigger a full page load which should include script tags for the current chunk
-		window.location.search = qs.stringify( assign( parsed.query, { retry: '1' } ) );
+		window.location.search = stringify( assign( parsed.query, { retry: '1' } ) );
 	}
 }
 

@@ -87,7 +87,7 @@ const validate = ( values, props ) => {
 		);
 	}
 
-	if ( ! values.price ) {
+	if ( ! values.price || parseFloat( values.price ) === 0 ) {
 		errors.price = translate( 'Everything comes with a price tag these days. Add yours here.' );
 	} else if ( parseFloat( values.price ) === NaN ) {
 		errors.price = translate( 'Invalid price' );
@@ -138,8 +138,8 @@ const validate = ( values, props ) => {
 // `Fields` is receiving to `{ input, meta }` that `Field` expects.
 const renderPriceField = ( { price, currency, ...props } ) => {
 	const { precision } = getCurrencyDefaults( currency.input.value );
-	// Tune the placeholder to the precision value: 0 -> '0', 1 -> '0.0', 2 -> '0.00'
-	const placeholder = precision > 0 ? padEnd( '0.', precision + 2, '0' ) : '0';
+	// Tune the placeholder to the precision value: 0 -> '1', 1 -> '1.0', 2 -> '1.00'
+	const placeholder = precision > 0 ? padEnd( '1.', precision + 2, '0' ) : '1';
 	return (
 		<FieldsetRenderer
 			inputComponent={ FormCurrencyInput }

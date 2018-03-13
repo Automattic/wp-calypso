@@ -22,7 +22,7 @@
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';
-import qs from 'querystring';
+import { stringify } from 'querystring';
 import { find, throttle } from 'lodash';
 import { getLocaleSlug, translate } from 'i18n-calypso';
 
@@ -252,7 +252,7 @@ function plugin( editor ) {
 		} );
 
 		const key = editor.getParam( 'atd_rpc_id' );
-		xhr.send( qs.stringify( { data, key } ) );
+		xhr.send( stringify( { data, key } ) );
 	}
 
 	function setAlwaysIgnore( text ) {

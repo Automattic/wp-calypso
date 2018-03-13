@@ -31,7 +31,7 @@ export default class extends React.Component {
 		const icon = this.props.isError || this.props.isWarning ? 'notice-outline' : 'checkmark';
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } role="alert">
 				<span>
 					<Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } />{' '}
 					{ this.props.text }

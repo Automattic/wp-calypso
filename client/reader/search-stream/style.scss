@@ -71,7 +71,20 @@
 // Post recommendations in Search
 .is-reader-page .search-stream .reader__content {
 	display: flex;
-	flex-flow: row wrap; // So post recs are side by side
+	flex-flow: row wrap;
+
+	@include breakpoint( "<960px") {
+		flex-flow: column wrap;
+	}
+
+	@include breakpoint( "<660px" ) {
+		flex-flow: row wrap;
+		padding: 15px 5px 15px 15px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex-flow: column wrap;
+	}
 }
 
 .is-reader-page .search-stream.search-stream__with-sites .search-stream__results.is-two-columns .reader__content,
@@ -85,66 +98,38 @@
 	border-bottom: 1px solid $gray-lighten-20;
 	display: flex;
 	flex-basis: calc( 50% - 15px );
-	margin-left: 15px;
-	padding: 18px 0 21px 0;
+	margin: 0 0 0 15px;
+	padding: 20px 0;
 
-	@media #{$reader-related-card-breakpoint-medium} {
-		flex-basis: 100%;
+	@include breakpoint( "<960px" ) {
 		margin: 0;
 	}
 
 	@include breakpoint( "<660px" ) {
-		flex-basis: calc( 50% - 30px );
-		margin-left: 15px;
-		margin-right: 15px;
+		margin: 0 0 0 15px;
 	}
 
-	@media #{$reader-related-card-breakpoint-small}  {
-		flex-basis: 100%;
-		margin-left: 15px;
-		margin-right: 15px;
+	@include breakpoint( "<480px" ) {
+		margin: 0 5px 0 0;
 	}
 
 	&:nth-child( 2n ) {
-		flex-basis: calc( 50% - 15px );
-		margin-left: 0;
-		margin-right: 15px;
+		margin: 0 15px 0 0;
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			flex-basis: 100%;
-			margin-right: 0;
+		@include breakpoint( "<960px" ) {
+			margin: 0;
 		}
 
 		@include breakpoint( "<660px" ) {
-			flex-basis: calc( 50% - 30px );
-			margin-left: 15px;
-			margin-right: 15px;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			flex-basis: 100%;
-			margin-left: 15px;
-			margin-right: 15px;
+			margin: 0 5px 0 0;
 		}
 	}
 
 	.reader-related-card__post {
-		max-height: 208px;
+		max-height: 16px * 1.6 * 11;
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			max-height: 105px;
-		}
-
-		@include breakpoint( "<660px" ) {
-			max-height: 206px;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			max-height: 103px;
-		}
-
-		.reader-related-card__excerpt {
-			-webkit-line-clamp: initial;
+		@include breakpoint( "<960px" ) {
+			max-height: 16px * 1.6 * 8;
 		}
 	}
 
@@ -152,14 +137,6 @@
 
 		.reader-related-card__post {
 			max-height: 110px;
-
-			@media #{$reader-related-card-breakpoint-small} {
-				max-height: 104px;
-			}
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				max-height: 104px;
-			}
 		}
 
 		.reader-related-card__meta {
@@ -322,13 +299,6 @@
 	}
 }
 
-.search-stream .search-stream__single-column-results .reader-site-notification-settings__button-label {
-
-	@include breakpoint ( "<660px" ) {
-		display: none;
-	}
-}
-
 .search-stream__results.is-two-columns .reader-subscription-list-item__byline {
 	min-width: 180px;
 	max-width: 180px;
@@ -367,22 +337,12 @@
 
 	.reader-post-card__post {
 
-		@media #{$reader-post-card-breakpoint-large} {
-			flex-direction: column;
-		}
-
 		@include breakpoint( "<960px" ) {
 			flex-direction: column;
 		}
 	}
 
 	.reader-post-card.card.has-thumbnail .reader-featured-image {
-
-		@media #{$reader-post-card-breakpoint-large} {
-			height: 80px;
-			margin: 0 0 20px;
-			max-width: 100%;
-		}
 
 		@include breakpoint( "<960px" ) {
 			height: 80px;
@@ -396,10 +356,6 @@
 	}
 
 	.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
-
-		@media #{$reader-post-card-breakpoint-large} {
-			display: none;
-		}
 
 		@include breakpoint( "<960px" ) {
 			display: block;
@@ -428,13 +384,6 @@
 	}
 }
 
-.search-stream .reader-subscription-list-item .gridicons-cog {
-
-	@include breakpoint( "<660px" ) {
-		left: -1px;
-	}
-}
-
 .card.reader-search-card.is-photo {
 	@include breakpoint( "<660px" ) {
 		z-index: z-index( 'root', '.reader-search-card' );
@@ -451,6 +400,7 @@
 	z-index: z-index( 'root', '.following-manage__url-follow' );
 
 	.follow-button {
+
 		.gridicon {
 			fill: $blue-medium;
 		}
@@ -458,7 +408,7 @@
 		.follow-button__label {
 			color: $blue-medium;
 
-			@include breakpoint ("<660px" ) {
+			@include breakpoint ( "<660px" ) {
 				display: inline;
 			}
 		}

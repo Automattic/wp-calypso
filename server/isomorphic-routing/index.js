@@ -4,7 +4,7 @@
  */
 
 import { isEmpty, pick } from 'lodash';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -102,6 +102,6 @@ export function getCacheKey( context ) {
 	return (
 		context.pathname +
 		'?' +
-		qs.stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
+		stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
 	);
 }

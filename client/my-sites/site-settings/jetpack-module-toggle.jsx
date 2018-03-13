@@ -75,11 +75,11 @@ class JetpackModuleToggle extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const active = isJetpackModuleActive( state, ownProps.siteId, ownProps.moduleSlug );
-		const activating = isActivatingJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
-		const moduleDetails = getJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
-		const deactivating = isDeactivatingJetpackModule( state, ownProps.siteId, ownProps.moduleSlug );
+	( state, { moduleSlug, siteId } ) => {
+		const active = isJetpackModuleActive( state, siteId, moduleSlug );
+		const activating = isActivatingJetpackModule( state, siteId, moduleSlug );
+		const moduleDetails = getJetpackModule( state, siteId, moduleSlug );
+		const deactivating = isDeactivatingJetpackModule( state, siteId, moduleSlug );
 		const moduleDetailsNotLoaded = moduleDetails === null;
 		const toggling = activating || deactivating;
 		return {
@@ -87,7 +87,7 @@ export default connect(
 			checked: ( active && ! deactivating ) || ( ! active && activating ),
 			toggling,
 			toggleDisabled: moduleDetailsNotLoaded || toggling,
-			isJetpackSite: isJetpackSite( state, ownProps.siteId ),
+			isJetpackSite: isJetpackSite( state, siteId ),
 		};
 	},
 	{

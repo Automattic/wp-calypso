@@ -26,21 +26,28 @@ class PluginSections extends React.Component {
 	state = {
 		selectedSection: false,
 		readMore: false,
+		descriptionHeight: 0,
 	};
 
 	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
-	descriptionHeight = 0;
 
 	recordEvent = eventAction => {
 		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
 	};
 
+	componentDidMount() {
+		this.calculateDescriptionHeight();
+	}
+
 	componentDidUpdate() {
+		this.calculateDescriptionHeight();
+	}
+
+	calculateDescriptionHeight() {
 		if ( this.refs.content ) {
 			const node = this.refs.content;
-
-			if ( node && node.offsetHeight ) {
-				this.descriptionHeight = node.offsetHeight;
+			if ( node && node.offsetHeight && node.offsetHeight !== this.state.descriptionHeight ) {
+				this.setState( { descriptionHeight: node.offsetHeight } );
 			}
 		}
 	}
@@ -142,7 +149,7 @@ class PluginSections extends React.Component {
 	};
 
 	renderReadMore = () => {
-		if ( this.props.isWpcom || this.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
+		if ( this.props.isWpcom || this.state.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
 			return null;
 		}
 		const button = (

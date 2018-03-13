@@ -5,17 +5,16 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import userModule from 'lib/user';
 import { stripHTML } from 'lib/formatting';
 import { isRTLCharacter, isLTRCharacter } from './direction';
 import Emojify from 'components/emojify';
-
-const user = userModule();
+import { isRtl as isRtlSelector } from 'state/selectors';
 
 const MAX_LENGTH_OF_TEXT_TO_EXAMINE = 100;
 
@@ -109,10 +108,11 @@ const getContent = reactElement => {
  * Gets the main directionality in a text
  * It returns what kind of characters we had the most, RTL or LTR according to some ratio
  *
- * @param {string} text the text to be examined
+ * @param {string}  text  the text to be examined
+ * @param {boolean} isRtl whether current language is RTL
  * @returns {string} either 'rtl' or 'ltr'
  */
-const getTextMainDirection = text => {
+const getTextMainDirection = ( text, isRtl ) => {
 	let rtlCount = 0;
 	let ltrCount = 0;
 
@@ -126,7 +126,7 @@ const getTextMainDirection = text => {
 	}
 
 	if ( rtlCount + ltrCount === 0 ) {
-		return user.isRTL() ? 'rtl' : 'ltr';
+		return isRtl ? 'rtl' : 'ltr';
 	}
 
 	return rtlCount > ltrCount ? 'rtl' : 'ltr';
@@ -140,12 +140,12 @@ const getDirectionProps = ( child, direction ) => ( {
 	} ),
 } );
 
-const getChildDirection = child => {
+const getChildDirection = ( child, isRtl ) => {
 	const childContent = getContent( child );
 
 	if ( childContent ) {
-		const textMainDirection = getTextMainDirection( childContent );
-		const userDirection = user.isRTL() ? 'rtl' : 'ltr';
+		const textMainDirection = getTextMainDirection( childContent, isRtl );
+		const userDirection = isRtl ? 'rtl' : 'ltr';
 
 		if ( textMainDirection !== userDirection ) {
 			return textMainDirection;
@@ -163,10 +163,11 @@ const inlineComponents = [ Emojify ];
  * to text content and only leaf components have those.
  *
  * @param {React.Element} child
+ * @param {boolean}       isRtl whether current language is RTL
  * @returns {React.Element} transformed child
  */
-const setChildDirection = child => {
-	const childDirection = getChildDirection( child );
+const setChildDirection = ( child, isRtl ) => {
+	const childDirection = getChildDirection( child, isRtl );
 
 	if ( childDirection ) {
 		return React.cloneElement( child, getDirectionProps( child, childDirection ) );
@@ -187,11 +188,11 @@ const setChildDirection = child => {
 			}
 
 			if ( inlineComponents.some( inlineComponent => innerChild.type === inlineComponent ) ) {
-				innerChildDirection = getChildDirection( innerChild );
+				innerChildDirection = getChildDirection( innerChild, isRtl );
 				return innerChild;
 			}
 
-			return setChildDirection( innerChild );
+			return setChildDirection( innerChild, isRtl );
 		} );
 
 		return React.cloneElement(
@@ -209,11 +210,11 @@ const setChildDirection = child => {
  * @param {Object.children} props react element props that must contain some children
  * @returns {React.Element} returns a react element with adjusted children
  */
-const AutoDirection = props => {
-	const { children } = props;
-	const directionedChild = setChildDirection( children );
+export const AutoDirection = props => {
+	const { children, isRtl } = props;
+	const directionedChild = setChildDirection( children, isRtl );
 
 	return directionedChild;
 };
 
-export default AutoDirection;
+export default connect( state => ( { isRtl: isRtlSelector( state ) } ) )( AutoDirection );

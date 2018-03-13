@@ -14,6 +14,18 @@
 	}
 }
 
+.reader-site-notification-settings .gridicons-cog {
+	fill: $gray-lighten-10;
+	height: 18px;
+	position: relative;
+		top: 4px;
+		left: -4px;
+
+	@include breakpoint( "<660px" ) {
+		left: -1px;
+	}
+}
+
 .reader-popover__wrapper {
 
 	.segmented-control {
@@ -50,14 +62,6 @@
 			left: 3px;
 			top: 2px;
 	}
-}
-
-.reader-site-notification-settings .gridicons-cog {
-	fill: $gray-lighten-10;
-	height: 18px;
-	position: relative;
-		left: -4px;
-		top: 4px;
 }
 
 .reader-site-notification-settings__popout-form-toggle {

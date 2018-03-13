@@ -423,6 +423,39 @@ form.sidebar__button input {
 	-webkit-overflow-scrolling: touch;
 }
 
+.sidebar__skip-navigation {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	flex-shrink: 0;
+
+	&:focus {
+		position: static;
+		width: auto;
+		height: auto;
+		padding: 11px 16px 11px 18px;
+		outline: none;
+		box-shadow: inset 0 0 0 2px $blue-light;
+		font-size: 14px;
+		line-height: 1;
+		color: var( --sidebar-color );
+		box-sizing: border-box;
+		white-space: nowrap;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+
+		&:after {
+			top: 2px;
+			right: 2px;
+			bottom: 2px;
+		}
+	}
+}
+
 .sidebar__menu {
 	.is-placeholder {
 		cursor: default;

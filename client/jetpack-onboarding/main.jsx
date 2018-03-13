@@ -13,13 +13,16 @@ import { recordTracksEvent } from 'state/analytics/actions';
  * Internal dependencies
  */
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
 import Wizard from 'components/wizard';
+import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
+	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 } from './constants';
 import {
 	getJetpackOnboardingCompletedSteps,
@@ -112,10 +115,14 @@ class JetpackOnboardingMain extends React.PureComponent {
 			siteSlug,
 			stepName,
 			steps,
+			translate,
 		} = this.props;
 
 		return (
 			<Main className="jetpack-onboarding">
+				<DocumentHead
+					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
+				/>
 				{ /* We only allow querying of site settings once we know that we have finished
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
 				   * the site is a connected Jetpack site or not, and a network request that uses
@@ -144,7 +151,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						steps={ steps }
 					/>
 				) : (
-					<div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
+					<WordPressLogo size={ 72 } className="jetpack-onboarding__loading wpcom-site__logo" />
 				) }
 			</Main>
 		);

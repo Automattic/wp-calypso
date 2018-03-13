@@ -7,14 +7,24 @@ exports[`EditorNotice should display custom post type view label 1`] = `
   <Localized(Notice)
     showDismiss={true}
     status="is-success"
+    text="View Project"
+  />
+</div>
+`;
+
+exports[`EditorNotice should display publish success for custom post type 1`] = `
+<div
+  className="editor-notice is-global"
+>
+  <Localized(Notice)
+    showDismiss={true}
+    status="is-success"
     text={
       Array [
-        "Post published on ",
+        "jetpack-testimonial published on ",
         <a
-          href="https://example.wordpress.com"
+          href={undefined}
           onClick={[Function]}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           Example Site
         </a>,
@@ -36,10 +46,8 @@ exports[`EditorNotice should display publish success for page 1`] = `
       Array [
         "Page published on ",
         <a
-          href="https://example.wordpress.com"
+          href={undefined}
           onClick={[Function]}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           Example Site
         </a>,
@@ -50,6 +58,29 @@ exports[`EditorNotice should display publish success for page 1`] = `
         >
           Add another page
         </a>,
+      ]
+    }
+  />
+</div>
+`;
+
+exports[`EditorNotice should display publish success for post 1`] = `
+<div
+  className="editor-notice is-global"
+>
+  <Localized(Notice)
+    showDismiss={true}
+    status="is-success"
+    text={
+      Array [
+        "post published on ",
+        <a
+          href={undefined}
+          onClick={[Function]}
+        >
+          Example Site
+        </a>,
+        "!",
       ]
     }
   />

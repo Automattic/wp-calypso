@@ -18,10 +18,6 @@
 		cursor: pointer;
 		color: $gray-darken-20;
 
-		@include breakpoint( "<660px" ) {
-			display: none;
-		}
-
 		&:hover {
 			color: $blue-medium;
 		}

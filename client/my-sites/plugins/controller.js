@@ -20,7 +20,7 @@ import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
 import { setSection } from 'state/ui/actions';
 import { getSelectedSite, getSection } from 'state/ui/selectors';
-import { hasJetpackSites, getSelectedOrAllSitesWithPlugins } from 'state/selectors';
+import { getSelectedOrAllSitesWithPlugins } from 'state/selectors';
 
 /**
  * Module variables
@@ -225,24 +225,6 @@ const controller = {
 				return;
 			}
 		}
-		next();
-	},
-
-	redirectSimpleSitesToPluginBrowser( context, next ) {
-		const site = getSelectedSite( context.store.getState() );
-
-		// Selected site is not a Jetpack site
-		if ( site && ! site.jetpack ) {
-			page.redirect( `/plugins/${ site.slug }` );
-			return;
-		}
-
-		//  None of the other sites are Jetpack sites
-		if ( ! site && ! hasJetpackSites( context.store.getState() ) ) {
-			page.redirect( '/plugins' );
-			return;
-		}
-
 		next();
 	},
 

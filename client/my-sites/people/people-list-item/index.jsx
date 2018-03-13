@@ -159,7 +159,14 @@ class PeopleListItem extends React.PureComponent {
 
 				{ onRemove && (
 					<div className="people-list-item__actions">
-						<Button className="button is-link people-list-item__remove-button" onClick={ onRemove }>
+						<Button
+							compact
+							scary
+							borderless
+							className="people-list-item__remove-button"
+							onClick={ onRemove }
+						>
+							<Gridicon icon="trash" />
 							{ translate( 'Remove', {
 								context: 'Verb: Remove a user or follower from the blog.',
 							} ) }

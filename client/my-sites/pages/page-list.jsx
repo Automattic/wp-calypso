@@ -6,7 +6,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
@@ -19,7 +18,7 @@ import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
 import { preload } from 'sections-preload';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
+import InfiniteScroll from 'components/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
 import Placeholder from './placeholder';
@@ -87,12 +86,8 @@ export default class PageList extends Component {
 	}
 }
 
-const Pages = createReactClass( {
-	displayName: 'Pages',
-
-	mixins: [ infiniteScroll( 'fetchPages' ) ],
-
-	propTypes: {
+class Pages extends Component {
+	static propTypes = {
 		incrementPage: PropTypes.func.isRequired,
 		lastPage: PropTypes.bool,
 		loading: PropTypes.bool.isRequired,
@@ -104,20 +99,18 @@ const Pages = createReactClass( {
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
 		query: PropTypes.object,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			perPage: 100,
-			loading: false,
-			lastPage: false,
-			page: 0,
-			pages: [],
-			trackScrollPage: function() {},
-		};
-	},
+	static defaultProps = {
+		perPage: 100,
+		loading: false,
+		lastPage: false,
+		page: 0,
+		pages: [],
+		trackScrollPage: function() {},
+	};
 
-	fetchPages( options ) {
+	fetchPages = options => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
@@ -125,7 +118,7 @@ const Pages = createReactClass( {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
 		this.props.incrementPage();
-	},
+	};
 
 	_insertTimeMarkers( pages ) {
 		const markedPages = [],
@@ -159,7 +152,7 @@ const Pages = createReactClass( {
 		}, this );
 
 		return markedPages;
-	},
+	}
 
 	getNoContentMessage() {
 		const { query = {}, translate, site, siteId } = this.props;
@@ -228,7 +221,7 @@ const Pages = createReactClass( {
 				illustrationWidth={ attributes.illustrationWidth }
 			/>
 		);
-	},
+	}
 
 	addLoadingRows( rows, count ) {
 		for ( let i = 0; i < count; i++ ) {
@@ -239,7 +232,7 @@ const Pages = createReactClass( {
 				<Placeholder.Page key={ 'placeholder-page-' + i } multisite={ ! this.props.site } />
 			);
 		}
-	},
+	}
 
 	renderLoading() {
 		const rows = [];
@@ -250,7 +243,7 @@ const Pages = createReactClass( {
 				{ rows }
 			</div>
 		);
-	},
+	}
 
 	renderPagesList( { pages } ) {
 		const { site } = this.props;
@@ -270,7 +263,7 @@ const Pages = createReactClass( {
 		}
 
 		return this.renderChronological( { pages, site } );
-	},
+	}
 
 	renderHierarchical( { pages, site } ) {
 		pages = sortPagesHierarchically( pages );
@@ -293,7 +286,7 @@ const Pages = createReactClass( {
 				{ rows }
 			</div>
 		);
-	},
+	}
 
 	renderChronological( { pages, site } ) {
 		if ( ! this.props.search ) {
@@ -326,12 +319,13 @@ const Pages = createReactClass( {
 
 		return (
 			<div id="pages" className="pages__page-list">
+				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ blogPostsPage }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
 			</div>
 		);
-	},
+	}
 
 	renderNoContent() {
 		return (
@@ -339,7 +333,7 @@ const Pages = createReactClass( {
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
-	},
+	}
 
 	render() {
 		const { hasSites, loading, pages } = this.props;
@@ -353,8 +347,8 @@ const Pages = createReactClass( {
 		}
 
 		return this.renderLoading();
-	},
-} );
+	}
+}
 
 const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),

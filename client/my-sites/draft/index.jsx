@@ -17,17 +17,9 @@ import { flow, noop } from 'lodash';
  */
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import actions from 'lib/posts/actions';
 import photon from 'photon';
 import { hasTouch } from 'lib/touch-detect';
-import updatePostStatus from 'components/update-post-status';
 import * as utils from 'lib/posts/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import TimeSince from 'components/time-since';
 
@@ -42,90 +34,12 @@ class Draft extends Component {
 
 		// via `localize`
 		translate: PropTypes.func.isRequired,
-
-		// via `updatePostStatus`
-		updatePostStatus: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
-		showAllActions: false,
 		onTitleClick: noop,
 		selected: false,
 		showAuthor: false,
-	};
-
-	state = {
-		showPopoverMenu: false,
-		hasError: false,
-	};
-
-	trashPost = () => {
-		this.setState( {
-			showPopoverMenu: false,
-			isTrashing: true,
-		} );
-
-		const updateStatus = function( error ) {
-			if ( ! this.isMounted() ) {
-				return;
-			}
-
-			if ( error ) {
-				return this.setState( {
-					isTrashing: false,
-					hasError: true,
-				} );
-			}
-
-			return this.setState( { isTrashing: false } );
-		}.bind( this );
-
-		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			actions.trash( this.props.site, this.props.post, updateStatus );
-		}
-	};
-
-	restorePost = () => {
-		this.setState( {
-			showPopoverMenu: false,
-			isRestoring: true,
-		} );
-
-		const updateStatus = function( error ) {
-			if ( ! this.isMounted() ) {
-				return;
-			}
-
-			if ( error ) {
-				return this.setState( {
-					isRestoring: false,
-					hasError: true,
-				} );
-			}
-
-			return this.setState( { isRestoring: false } );
-		}.bind( this );
-
-		if ( utils.userCan( 'delete_post', this.props.post ) ) {
-			actions.restore( this.props.site, this.props.post, updateStatus );
-		}
-	};
-
-	previewPost = () => {
-		window.open( utils.getPreviewURL( this.props.site, this.props.post ) );
-	};
-
-	publishPost = () => {
-		this.setState( { showPopoverMenu: false } );
-		if ( utils.userCan( 'publish_post', this.props.post ) ) {
-			this.props.updatePostStatus( 'publish' );
-		}
-	};
-
-	togglePopoverMenu = () => {
-		this.setState( {
-			showPopoverMenu: ! this.state.showPopoverMenu,
-		} );
 	};
 
 	render() {
@@ -189,44 +103,6 @@ class Draft extends Component {
 		return <div className="draft__featured-image" style={ style } />;
 	}
 
-	restoreButton() {
-		if ( this.state.isRestoring ) {
-			return null;
-		}
-
-		return (
-			<button className="draft__restore" onClick={ this.restorePost }>
-				<Gridicon icon="undo" size={ 18 } />
-				{ this.props.translate( 'Restore' ) }
-			</button>
-		);
-	}
-
-	showStatusChange() {
-		if ( this.props.post.status === 'publish' ) {
-			return (
-				<Notice
-					isCompact={ true }
-					status="is-success"
-					text={ 'Post successfully published.' }
-					button={ 'View' }
-					showDismiss={ false }
-				>
-					<NoticeAction href={ this.props.post.URL }>{ 'View' }</NoticeAction>
-				</Notice>
-			);
-		} else if ( this.state.hasError ) {
-			return (
-				<Notice
-					isCompact={ true }
-					status="is-error"
-					text={ 'There was a problem.' }
-					showDismiss={ false }
-				/>
-			);
-		}
-	}
-
 	postPlaceholder() {
 		return (
 			<CompactCard className="draft is-placeholder">
@@ -242,62 +118,10 @@ class Draft extends Component {
 			</CompactCard>
 		);
 	}
-
-	renderTrashAction() {
-		if ( ! utils.userCan( 'delete_post', this.props.post ) ) {
-			return null;
-		}
-
-		if ( this.props.post.status === 'trash' || this.state.isRestoring ) {
-			return null;
-		}
-
-		return (
-			<div className="draft__actions">
-				<Gridicon icon="trash" onClick={ this.trashPost } size={ 18 } />
-			</div>
-		);
-	}
-
-	renderAllActions() {
-		return (
-			<div className="draft__all-actions">
-				<PostRelativeTimeStatus post={ this.props.post } includeEditLink={ true } />
-				<Gridicon
-					className="draft__actions-toggle"
-					onClick={ this.togglePopoverMenu }
-					ref="popoverMenuButton"
-					icon="ellipsis"
-					size={ 18 }
-				/>
-				<PopoverMenu
-					isVisible={ this.state.showPopoverMenu }
-					onClose={ this.togglePopoverMenu }
-					position={ 'bottom left' }
-					context={ this.refs && this.refs.popoverMenuButton }
-				>
-					<PopoverMenuItem onClick={ this.previewPost }>
-						{ this.props.translate( 'Preview' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem onClick={ this.publishPost }>
-						{ this.props.translate( 'Publish' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem className="draft__trash-item" onClick={ this.trashPost }>
-						{ this.props.translate( 'Send to Trash' ) }
-					</PopoverMenuItem>
-				</PopoverMenu>
-			</div>
-		);
-	}
-
-	draftActions() {
-		return this.props.showAllActions ? this.renderAllActions() : this.renderTrashAction();
-	}
 }
 
 const mapState = ( state, { siteId } ) => ( {
 	site: getSite( state, siteId ),
-	selectedSiteId: getSelectedSiteId( state ),
 } );
 
-export default flow( localize, updatePostStatus, connect( mapState ) )( Draft );
+export default flow( localize, connect( mapState ) )( Draft );

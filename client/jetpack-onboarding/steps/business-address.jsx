@@ -14,7 +14,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import ConnectIntro from '../connect-intro';
 import ConnectSuccess from '../connect-success';
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -158,7 +157,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				buttonLabel={ translate( 'Add a business address' ) }
 				e2eType="business-address"
 				header={ this.renderHeader() }
-				illustration="/calypso/images/illustrations/business-address.svg"
+				illustration="/calypso/images/illustrations/jetpack-business-address.svg"
 				onClick={ this.handleAddBusinessAddressClick }
 				siteId={ siteId }
 			/>
@@ -212,7 +211,6 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Business Address ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.BUSINESS_ADDRESS, ':site' ].join( '/' ) }
 					title="Business Address ‹ Jetpack Start"
@@ -224,7 +222,7 @@ class JetpackOnboardingBusinessAddressStep extends React.PureComponent {
 				{ hasBusinessAddress ? (
 					<ConnectSuccess
 						href={ getForwardUrl() }
-						illustration="/calypso/images/illustrations/business-address.svg"
+						illustration="/calypso/images/illustrations/jetpack-business-address.svg"
 						onClick={ this.handleNextButtonClick }
 						title={ translate( 'Success! Jetpack has added your business address to your site.' ) }
 					/>

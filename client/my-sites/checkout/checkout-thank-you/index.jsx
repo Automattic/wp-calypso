@@ -439,15 +439,20 @@ class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, sitePlans } = this.props,
-			purchases = getPurchases( this.props ),
-			failedPurchases = getFailedPurchases( this.props ),
-			hasFailedPurchases = failedPurchases.length > 0,
-			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain(),
-			registrarSupportUrl =
-				! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
-					? null
-					: primaryPurchase.registrarSupportUrl;
+		const { selectedSite, sitePlans } = this.props;
+		const purchases = getPurchases( this.props );
+		const failedPurchases = getFailedPurchases( this.props );
+		const hasFailedPurchases = failedPurchases.length > 0;
+		const [
+			ComponentClass,
+			primaryPurchase,
+			domain,
+		] = this.getComponentAndPrimaryPurchaseAndDomain();
+		const registrarSupportUrl =
+			! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
+				? null
+				: get( primaryPurchase, 'registrarSupportUrl', null );
+		const isRootDomainWithUs = get( primaryPurchase, 'isRootDomainWithUs', false );
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -489,6 +494,7 @@ class CheckoutThankYou extends React.Component {
 							domain={ domain }
 							purchases={ purchases }
 							failedPurchases={ failedPurchases }
+							isRootDomainWithUs={ isRootDomainWithUs }
 							registrarSupportUrl={ registrarSupportUrl }
 							selectedSite={ selectedSite }
 							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }

@@ -57,6 +57,7 @@ _.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) )
  *
  * Providing webpack with these aliases instead of telling it to scan client/extensions for every
  * module resolution speeds up builds significantly.
+ * @returns {Object} a mapping of extension name to path
  */
 function getAliasesForExtensions() {
 	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );

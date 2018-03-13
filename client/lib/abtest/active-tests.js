@@ -85,8 +85,8 @@ export default {
 		defaultVariation: 'group_0',
 		allowExistingUsers: true,
 	},
-	minimizeFreePlan: {
-		datestamp: '20180219',
+	minimizedFreePlanForSignedUser: {
+		datestamp: '20180308',
 		variations: {
 			original: 50,
 			minimized: 50,
@@ -94,8 +94,17 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
-	upgradePricingDisplay: {
-		datestamp: '20180213',
+	minimizedFreePlanForUnsignedUser: {
+		datestamp: '20180308',
+		variations: {
+			original: 50,
+			minimized: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	upgradePricingDisplayV2: {
+		datestamp: '20180305',
 		variations: {
 			original: 50,
 			modified: 50,

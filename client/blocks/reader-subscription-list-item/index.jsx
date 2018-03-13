@@ -27,6 +27,7 @@ import {
 import { untrailingslashit } from 'lib/route';
 import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
+import ExternalLink from 'components/external-link';
 
 /**
  * Takes in a string and removes the starting https, www., and removes a trailing slash
@@ -138,15 +139,15 @@ function ReaderSubscriptionListItem( {
 					) }
 				{ siteUrl && (
 					<div className="reader-subscription-list-item__site-url-timestamp">
-						<a
+						<ExternalLink
 							href={ siteUrl }
-							target="_blank"
-							rel="noopener noreferrer"
 							className="reader-subscription-list-item__site-url"
 							onClick={ recordSiteUrlClick }
+							icon={ true }
+							iconSize={ 14 }
 						>
 							{ formatUrlForDisplay( siteUrl ) }
-						</a>
+						</ExternalLink>
 						{ showLastUpdatedDate && (
 							<span className="reader-subscription-list-item__timestamp">
 								{ feed && feed.last_update && translate( 'updated %s', { args: lastUpdatedDate } ) }

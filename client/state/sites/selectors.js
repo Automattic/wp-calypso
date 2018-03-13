@@ -1132,3 +1132,13 @@ export function isNewSite( state, siteId ) {
 export function hasAllSitesList( state ) {
 	return !! state.sites.hasAllSitesList;
 }
+
+/**
+ * Returns the updates object for a site
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Object} Available updates for the site
+ */
+export function getUpdatesBySiteId( state, siteId ) {
+	return get( getRawSite( state, siteId ), 'updates', null );
+}

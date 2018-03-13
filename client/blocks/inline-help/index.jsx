@@ -1,7 +1,7 @@
+/** @format */
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity } from 'lodash';
@@ -27,7 +27,9 @@ import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline
  * Module variables
  */
 const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled ? getGlobalKeyboardShortcuts() : null;
+const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
+	? getGlobalKeyboardShortcuts()
+	: null;
 const debug = debugFactory( 'calypso:inline-help' );
 
 class InlineHelp extends Component {
@@ -41,6 +43,19 @@ class InlineHelp extends Component {
 
 	state = {
 		showInlineHelp: false,
+	};
+
+	openResult = href => {
+		if ( ! href ) {
+			return;
+		}
+
+		this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', {
+			search_query: this.props.searchQuery,
+			result_url: href,
+		} );
+
+		window.location = href;
 	};
 
 	componentDidMount() {
@@ -81,7 +96,7 @@ class InlineHelp extends Component {
 	moreHelpClicked = () => {
 		this.closeInlineHelp();
 		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
-	}
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -103,9 +118,17 @@ class InlineHelp extends Component {
 					className="inline-help__popover"
 				>
 					<div className="inline-help__heading">
-						<InlineHelpSearchCard query={ this.props.searchQuery } />
-						<InlineHelpSearchResults searchQuery={ this.props.searchQuery } />
-						<Button onClick={ this.moreHelpClicked } className="inline-help__button" borderless href="/help">
+						<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
+						<InlineHelpSearchResults
+							openResult={ this.openResult }
+							searchQuery={ this.props.searchQuery }
+						/>
+						<Button
+							onClick={ this.moreHelpClicked }
+							className="inline-help__button"
+							borderless
+							href="/help"
+						>
 							<Gridicon icon="help" /> { translate( 'More help' ) }
 						</Button>
 					</div>

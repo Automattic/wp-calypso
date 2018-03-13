@@ -8,10 +8,11 @@ import { capitalize, defer, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -204,7 +205,16 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			this.props.getAuthAccountType( this.state.usernameOrEmail );
+			// Google Chrome on iOS will autofill without sending events, leading the user
+			// to see a filled box but getting an error. We fetch the value directly from
+			// the DOM as a workaround.
+			const usernameOrEmail = ReactDom.findDOMNode( this.usernameOrEmail ).value;
+
+			this.props.getAuthAccountType( usernameOrEmail );
+
+			this.setState( {
+				usernameOrEmail,
+			} );
 
 			return;
 		}
@@ -259,7 +269,7 @@ export class LoginForm extends Component {
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			signupUrl =
 				'/start/wpcc?' +
-				qs.stringify( {
+				stringify( {
 					oauth2_client_id: oauth2Client.id,
 					oauth2_redirect: redirectTo,
 				} );

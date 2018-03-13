@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import ConnectIntro from '../connect-intro';
 import ConnectSuccess from '../connect-success';
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -92,7 +91,6 @@ class JetpackOnboardingStatsStep extends React.Component {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Jetpack Stats ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.STATS, ':site' ].join( '/' ) }
 					title="Jetpack Stats ‹ Jetpack Start"

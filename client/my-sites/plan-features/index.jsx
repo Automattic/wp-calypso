@@ -29,7 +29,7 @@ import {
 } from 'state/sites/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plans/selectors';
 import {
@@ -106,43 +106,15 @@ class PlanFeatures extends Component {
 
 		// center plans
 		if ( isInSignup && plansWrapper ) {
-			displayJetpackPlans ? ( plansWrapper.scrollLeft = 190 ) : ( plansWrapper.scrollLeft = 495 );
+			displayJetpackPlans ? ( plansWrapper.scrollLeft = 312 ) : ( plansWrapper.scrollLeft = 495 );
 		}
 	};
 
 	renderCreditNotice() {
-		const { canPurchase, hasPlaceholders, planProperties, site, translate } = this.props;
+		const { canPurchase, hasPlaceholders, maxCredits, translate } = this.props;
 		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
 
-		if ( hasPlaceholders || ! canPurchase || ! bannerContainer ) {
-			return null;
-		}
-
-		const credits = planProperties.reduce(
-			( prev, prop ) => {
-				let current = 0;
-				if ( prop.discountPrice ) {
-					current = prop.rawPrice - prop.discountPrice;
-					if ( ! site.jetpack ) {
-						current = current * 12;
-					}
-				} else if ( prop.relatedMonthlyPlan ) {
-					current = prop.relatedMonthlyPlan.raw_price * 12 - prop.rawPrice;
-				}
-
-				if ( current > prev.amount ) {
-					return {
-						amount: current,
-						currencyCode: prop.currencyCode,
-					};
-				}
-
-				return prev;
-			},
-			{ amount: 0, currencyCode: '' }
-		);
-
-		if ( ! credits.amount ) {
+		if ( hasPlaceholders || ! canPurchase || ! bannerContainer || ! maxCredits.amount ) {
 			return null;
 		}
 
@@ -158,7 +130,7 @@ class PlanFeatures extends Component {
 						'Apply the value of your current plan towards an upgrade before your credits expire!',
 					{
 						args: {
-							credits: formatCurrency( credits.amount, credits.currencyCode ),
+							credits: formatCurrency( maxCredits.amount, maxCredits.currencyCode ),
 						},
 						components: {
 							b: <strong />,
@@ -347,7 +319,7 @@ class PlanFeatures extends Component {
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame( abtest );
+			let billingTimeFrame = planConstantObj.getBillingTimeFrame( getABTestVariation );
 
 			if ( isInSignup && ! displayJetpackPlans ) {
 				switch ( siteType ) {
@@ -667,6 +639,32 @@ function filterFreePlan( { planName } ) {
 	return isFreePlan( planName );
 }
 
+function getMaxCredits( planProperties, isJetpack ) {
+	return planProperties.reduce(
+		( prev, prop ) => {
+			let current = 0;
+			if ( prop.discountPrice ) {
+				current = prop.rawPrice - prop.discountPrice;
+				if ( ! isJetpack ) {
+					current = current * 12;
+				}
+			} else if ( prop.relatedMonthlyPlan ) {
+				current = prop.relatedMonthlyPlan.raw_price * 12 - prop.rawPrice;
+			}
+
+			if ( current > prev.amount ) {
+				return {
+					amount: current,
+					currencyCode: prop.currencyCode,
+				};
+			}
+
+			return prev;
+		},
+		{ amount: 0, currencyCode: '' }
+	);
+}
+
 export default connect(
 	( state, ownProps ) => {
 		const {
@@ -685,8 +683,7 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
-		const showModifiedPricingDisplay =
-			! isInSignup && abtest( 'upgradePricingDisplay' ) === 'modified';
+		const isLoggedIn = !! getCurrentUserId( state );
 		let freePlanProperties = null;
 		let planProperties = compact(
 			map( plans, plan => {
@@ -784,11 +781,21 @@ export default connect(
 			} )
 		);
 
-		if ( isInSignup && abtest( 'minimizeFreePlan' ) === 'minimized' ) {
-			freePlanProperties = filter( planProperties, filterFreePlan );
-			freePlanProperties = freePlanProperties[ 0 ] || null;
-			planProperties = reject( planProperties, filterFreePlan );
+		if ( isInSignup ) {
+			const isInTest =
+				abtest(
+					isLoggedIn ? 'minimizedFreePlanForSignedUser' : 'minimizedFreePlanForUnsignedUser'
+				) === 'minimized';
+			if ( isInTest ) {
+				freePlanProperties = filter( planProperties, filterFreePlan );
+				freePlanProperties = freePlanProperties[ 0 ] || null;
+				planProperties = reject( planProperties, filterFreePlan );
+			}
 		}
+
+		const maxCredits = getMaxCredits( planProperties, ownProps.site.jetpack );
+		const showModifiedPricingDisplay =
+			! isInSignup && !! maxCredits.amount && abtest( 'upgradePricingDisplayV2' ) === 'modified';
 
 		return {
 			canPurchase,
@@ -796,6 +803,7 @@ export default connect(
 			freePlanProperties,
 			siteType,
 			sitePlan,
+			maxCredits,
 			showModifiedPricingDisplay,
 		};
 	},

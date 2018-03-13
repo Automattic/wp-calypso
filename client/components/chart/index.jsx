@@ -13,6 +13,7 @@ import { noop, throttle } from 'lodash';
 import BarContainer from './bar-container';
 import { hasTouch } from 'lib/touch-detect';
 import Tooltip from 'components/tooltip';
+import Notice from 'components/notice';
 
 class Chart extends React.Component {
 	state = {
@@ -160,13 +161,16 @@ class Chart extends React.Component {
 				) }
 				{ isEmptyChart && (
 					<div className="chart__empty">
-						{ /* @todo this message needs to either use a <Notice> or make a custom "chart__notice" class */ }
-						<span className="chart__empty-notice">
-							{ translate( 'No activity this period', {
+						<Notice
+							className="chart__empty-notice"
+							status="is-warning"
+							isCompact
+							text={ translate( 'No activity this period', {
 								context: 'Message on empty bar chart in Stats',
 								comment: 'Should be limited to 32 characters to prevent wrapping',
 							} ) }
-						</span>
+							showDismiss={ false }
+						/>
 					</div>
 				) }
 			</div>

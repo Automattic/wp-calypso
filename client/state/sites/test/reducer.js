@@ -35,6 +35,7 @@ import {
 	SITE_SETTINGS_UPDATE,
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+	SITE_PLUGIN_UPDATED,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -60,7 +61,6 @@ describe( 'reducer', () => {
 			'guidedTransfer',
 			'monitor',
 			'vouchers',
-			'updates',
 			'requesting',
 			'sharingButtons',
 			'blogStickers',
@@ -771,6 +771,79 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.false;
+		} );
+	} );
+
+	describe( '#updates', () => {
+		const exampleUpdates = {
+			plugins: 1,
+			themes: 1,
+			total: 2,
+			translations: 0,
+			wordpress: 0,
+		};
+
+		test( 'should reduce plugins and total updates count after successful plugin update', () => {
+			const original = deepFreeze( {
+				2916284: {
+					updates: {
+						plugins: 1,
+						themes: 1,
+						total: 4,
+						translations: 1,
+						wordpress: 1,
+					},
+				},
+				77203074: {
+					updates: exampleUpdates,
+				},
+			} );
+
+			const state = items( original, {
+				type: SITE_PLUGIN_UPDATED,
+				siteId: 2916284,
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					updates: {
+						plugins: 0,
+						themes: 1,
+						total: 3,
+						translations: 1,
+						wordpress: 1,
+					},
+				},
+				77203074: {
+					updates: exampleUpdates,
+				},
+			} );
+		} );
+
+		test( 'should load persisted state with valid updates', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'Test Blog',
+					updates: exampleUpdates,
+				},
+			} );
+
+			const state = items( original, { type: DESERIALIZE } );
+			expect( state ).to.eql( original );
+		} );
+
+		test( 'should return initial state when persisted state has invalid updates', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'Test Blog',
+					updates: { plugins: false },
+				},
+			} );
+
+			const state = items( original, { type: DESERIALIZE } );
+			expect( state ).to.be.null;
 		} );
 	} );
 } );

@@ -15,6 +15,7 @@ import Gridicon from 'gridicons';
 import { ButtonRow, makeTour, Step, Tour, Quit } from 'layout/guided-tours/config-elements';
 import { hasUserRegisteredBefore } from 'state/ui/guided-tours/contexts';
 import { isDesktop } from 'lib/viewport';
+import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 
 class RepositioningStep extends Step {
 	componentDidMount() {
@@ -30,12 +31,18 @@ class RepositioningStep extends Step {
 	}
 }
 
+const ADD_MEDIA_BUTTON_LABEL = translate( 'Add Media' );
+
 export const EditorInsertMenuTour = makeTour(
 	<Tour
 		name="editorInsertMenu"
 		path={ [ '/post/', '/page/' ] }
 		version="20161215"
-		when={ and( hasUserRegisteredBefore( new Date( '2016-12-15' ) ), isDesktop ) }
+		when={ and(
+			hasUserRegisteredBefore( new Date( '2016-12-15' ) ),
+			isDesktop,
+			isCurrentUserEmailVerified
+		) }
 	>
 		<RepositioningStep
 			arrow="left-top"
@@ -49,15 +56,13 @@ export const EditorInsertMenuTour = makeTour(
 			} }
 		>
 			<p>
-				{ translate( '{{strong}}Add Media{{/strong}} has moved to a new button.', {
-					components: { strong: <strong /> },
-					comment: 'Title of the Guided Tour for the Editor Insert Menu button.',
+				{ translate( '{{addMediaButton/}} has moved to a new button.', {
+					components: { addMediaButton: <strong>{ ADD_MEDIA_BUTTON_LABEL }</strong> },
 				} ) }
 			</p>
 			<p>
 				{ translate( 'Click {{icon/}} to add media and other kinds of content.', {
 					components: { icon: <Gridicon icon="chevron-down" /> },
-					comment: 'Refers to the Insert Content button and dropdown in the post editor.',
 				} ) }
 			</p>
 			<ButtonRow>

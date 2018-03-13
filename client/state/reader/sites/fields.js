@@ -16,4 +16,5 @@ export const fields = [
 	'subscribers_count',
 	'options', // have to include this to get options at all
 	'subscription',
+	'is_blocked',
 ];

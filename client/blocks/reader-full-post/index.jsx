@@ -361,22 +361,24 @@ export class FullPostView extends React.Component {
 									post={ post }
 								/>
 							) }
-						{ shouldShowComments( post ) && (
-							<CommentButton
-								key="comment-button"
-								commentCount={ commentCount }
-								onClick={ this.handleCommentClick }
-								tagName="div"
-							/>
-						) }
-						{ shouldShowLikes( post ) && (
-							<LikeButton
-								siteId={ +post.site_ID }
-								postId={ +post.ID }
-								fullPost={ true }
-								tagName="div"
-							/>
-						) }
+						<div className="reader-full-post__sidebar-comment-like">
+							{ shouldShowComments( post ) && (
+								<CommentButton
+									key="comment-button"
+									commentCount={ commentCount }
+									onClick={ this.handleCommentClick }
+									tagName="div"
+								/>
+							) }
+							{ shouldShowLikes( post ) && (
+								<LikeButton
+									siteId={ +post.site_ID }
+									postId={ +post.ID }
+									fullPost={ true }
+									tagName="div"
+								/>
+							) }
+						</div>
 					</div>
 					<Emojify>
 						<article className="reader-full-post__story" ref="article">

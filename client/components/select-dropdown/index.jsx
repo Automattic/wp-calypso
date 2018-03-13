@@ -18,13 +18,14 @@ import DropdownItem from 'components/select-dropdown/item';
 import DropdownSeparator from 'components/select-dropdown/separator';
 import DropdownLabel from 'components/select-dropdown/label';
 import Count from 'components/count';
+import TranslatableString from 'components/translatable/proptype';
 
 /**
  * SelectDropdown
  */
 class SelectDropdown extends Component {
 	static propTypes = {
-		selectedText: PropTypes.string,
+		selectedText: TranslatableString,
 		selectedIcon: PropTypes.element,
 		selectedCount: PropTypes.number,
 		initialSelected: PropTypes.string,
@@ -37,7 +38,7 @@ class SelectDropdown extends Component {
 		options: PropTypes.arrayOf(
 			PropTypes.shape( {
 				value: PropTypes.string.isRequired,
-				label: PropTypes.string.isRequired,
+				label: TranslatableString.isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
 			} )
@@ -256,6 +257,7 @@ class SelectDropdown extends Component {
 						{ 'number' === typeof this.props.selectedCount && (
 							<Count count={ this.props.selectedCount } />
 						) }
+						<Gridicon icon="chevron-down" size={ 18 } />
 					</div>
 
 					<ul

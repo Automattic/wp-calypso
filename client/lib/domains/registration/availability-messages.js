@@ -229,6 +229,17 @@ function getAvailabilityNotice( domain, error, site ) {
 			);
 			break;
 
+		case domainAvailability.RECENTLY_EXPIRED:
+			message = translate(
+				'This domain expired recently. To get it back please {{a}}contact support{{/a}}.',
+				{
+					components: {
+						a: <a href={ CALYPSO_CONTACT } />,
+					},
+				}
+			);
+			break;
+
 		case domainAvailability.UNKOWN_ACTIVE:
 			message = translate(
 				'This domain is still active and is not available to map yet. ' +

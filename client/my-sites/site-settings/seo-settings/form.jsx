@@ -39,7 +39,6 @@ import { isJetpackModuleActive, isHiddenSite, isPrivateSite } from 'state/select
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
-import { activateModule } from 'state/jetpack/modules/actions';
 import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
@@ -286,7 +285,6 @@ export class SeoForm extends React.Component {
 			showPreview = false,
 		} = this.state;
 
-		const activateSeoTools = () => this.props.activateModule( siteId, 'seo-tools' );
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSeoDisabled = isDisabled || isSeoToolsActive === false;
@@ -362,17 +360,6 @@ export class SeoForm extends React.Component {
 						<NoticeAction href={ jetpackUpdateUrl }>{ translate( 'Update Now' ) }</NoticeAction>
 					</Notice>
 				) }
-				{ siteIsJetpack &&
-					hasSupportingPlan( site.plan ) &&
-					isSeoToolsActive === false && (
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate( 'SEO Tools module is disabled in Jetpack.' ) }
-						>
-							<NoticeAction onClick={ activateSeoTools }>{ translate( 'Enable' ) }</NoticeAction>
-						</Notice>
-					) }
 
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature && (
@@ -524,7 +511,6 @@ const mapDispatchToProps = {
 		recordTracksEvent,
 		'calypso_seo_tools_front_page_meta_updated'
 	),
-	activateModule,
 };
 
 export default connect(

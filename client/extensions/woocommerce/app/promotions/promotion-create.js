@@ -30,6 +30,7 @@ import {
 	getPromotionEdits,
 	getPromotionWithLocalEdits,
 } from 'woocommerce/state/selectors/promotions';
+import { getSaveErrorMessage } from './save-error-message';
 import PromotionHeader from './promotion-header';
 import PromotionForm from './promotion-form';
 import { ProtectFormGuard } from 'lib/protect-form';
@@ -145,15 +146,13 @@ class PromotionCreate extends React.Component {
 			page.redirect( getLink( '/store/promotions/:site', site ) );
 		};
 
-		const failureAction = dispatch => {
-			dispatch(
-				errorNotice(
-					translate( 'There was a problem saving the %(promotion)s promotion. Please try again.', {
-						args: { promotion: promotion.name },
-					} )
-				)
-			);
+		const failureAction = error => {
 			this.setState( () => ( { busy: false } ) );
+			const errorSlug = ( error && error.error ) || undefined;
+
+			return errorNotice( getSaveErrorMessage( errorSlug, promotion.name, translate ), {
+				duration: 8000,
+			} );
 		};
 
 		this.props.createPromotion( site.ID, promotion, successAction, failureAction );

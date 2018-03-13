@@ -38,6 +38,11 @@ class ReaderPostOptionsMenu extends React.Component {
 		feed: PropTypes.object,
 		onBlock: PropTypes.func,
 		showFollow: PropTypes.bool,
+		showVisitPost: PropTypes.bool,
+		showEditPost: PropTypes.bool,
+		showConversationFollow: PropTypes.bool,
+		showReportPost: PropTypes.bool,
+		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
 	};
 
@@ -45,6 +50,11 @@ class ReaderPostOptionsMenu extends React.Component {
 		onBlock: noop,
 		position: 'top left',
 		showFollow: true,
+		showVisitPost: true,
+		showEditPost: true,
+		showConversationFollow: true,
+		showReportPost: true,
+		showReportSite: false,
 	};
 
 	blockSite = () => {
@@ -66,6 +76,21 @@ class ReaderPostOptionsMenu extends React.Component {
 
 		window.open(
 			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ),
+			'_blank'
+		);
+	};
+
+	reportSite = () => {
+		if ( ! this.props.site || ! this.props.site.URL ) {
+			return;
+		}
+
+		stats.recordAction( 'report_site' );
+		stats.recordGaEvent( 'Clicked Report Site', 'post_options' );
+		stats.recordTrackForPost( 'calypso_reader_site_reported', this.props.site );
+
+		window.open(
+			'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.site.URL ),
 			'_blank'
 		);
 	};
@@ -123,20 +148,25 @@ class ReaderPostOptionsMenu extends React.Component {
 
 	render() {
 		const { post, site, feed, teams, translate, position } = this.props;
+
+		if ( ! post ) {
+			return null;
+		}
+
 		const { ID: postId, site_ID: siteId } = post;
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
-		const showConversationFollowButton = shouldShowConversationFollowButton( post );
+		const showConversationFollowButton =
+			this.props.showConversationFollow && shouldShowConversationFollowButton( post );
 
 		let isBlockPossible = false;
 
 		// Should we show the 'block' option?
 		if (
 			post.site_ID &&
-			! post.is_external &&
-			! post.is_jetpack &&
+			( ! post.is_external || post.is_jetpack ) &&
 			! isEditPossible &&
 			! isDiscoverPost
 		) {
@@ -180,17 +210,19 @@ class ReaderPostOptionsMenu extends React.Component {
 						/>
 					) }
 
-					{ post.URL && (
-						<PopoverMenuItem onClick={ this.visitPost } icon="external">
-							{ translate( 'Visit Post' ) }
-						</PopoverMenuItem>
-					) }
+					{ this.props.showVisitPost &&
+						post.URL && (
+							<PopoverMenuItem onClick={ this.visitPost } icon="external">
+								{ translate( 'Visit Post' ) }
+							</PopoverMenuItem>
+						) }
 
-					{ isEditPossible && (
-						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-							{ translate( 'Edit Post' ) }
-						</PopoverMenuItem>
-					) }
+					{ this.props.showEditPost &&
+						isEditPossible && (
+							<PopoverMenuItem onClick={ this.editPost } icon="pencil">
+								{ translate( 'Edit Post' ) }
+							</PopoverMenuItem>
+						) }
 
 					{ ( this.props.showFollow || isEditPossible || post.URL ) &&
 						( isBlockPossible || isDiscoverPost ) && (
@@ -203,11 +235,19 @@ class ReaderPostOptionsMenu extends React.Component {
 						</PopoverMenuItem>
 					) }
 
-					{ ( isBlockPossible || isDiscoverPost ) && (
+					{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
 						<PopoverMenuItem onClick={ this.reportPost }>
 							{ translate( 'Report this Post' ) }
 						</PopoverMenuItem>
 					) }
+
+					{ this.props.showReportSite &&
+						site &&
+						isBlockPossible && (
+							<PopoverMenuItem onClick={ this.reportSite }>
+								{ translate( 'Report this Site' ) }
+							</PopoverMenuItem>
+						) }
 				</EllipsisMenu>
 			</span>
 		);
@@ -215,14 +255,14 @@ class ReaderPostOptionsMenu extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const feedId = ownProps.post.feed_ID;
-		const siteId = ownProps.post.is_external ? null : ownProps.post.site_ID;
-		return {
-			feed: feedId && feedId > 0 ? getFeed( state, feedId ) : undefined,
-			site: siteId && siteId > 0 ? getSite( state, siteId ) : undefined,
-			teams: getReaderTeams( state ),
-		};
+	( state, { post: { feed_ID: feedId, is_external, site_ID } = {} } ) => {
+		const siteId = is_external ? null : site_ID;
+
+		return Object.assign(
+			{ teams: getReaderTeams( state ) },
+			feedId > 0 && { feed: getFeed( state, feedId ) },
+			siteId > 0 && { site: getSite( state, siteId ) }
+		);
 	},
 	{
 		blockSite,
