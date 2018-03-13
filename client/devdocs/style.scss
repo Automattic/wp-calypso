@@ -61,6 +61,14 @@
 
 .design__collection {
 	margin: 32px 0 0 0;
+
+	@include breakpoint( '1280px-1600px' ) {
+		column-count: 2;
+	}
+
+	@include breakpoint( '>1600px' ) {
+		column-count: 3;
+	}
 }
 
 
@@ -73,6 +81,7 @@
 	background: darken( $gray, 40 );
 	box-shadow: 0 -2px 6px inset rgba( 0, 0, 0, 0.7 );
 	margin: 0 auto 24px auto;
+	break-inside: avoid;
 
 	.docs-example__wrapper-header{
 		padding: 0 0 16px 16px;
