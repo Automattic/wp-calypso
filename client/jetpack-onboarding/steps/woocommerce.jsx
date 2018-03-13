@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
@@ -46,7 +45,6 @@ class JetpackOnboardingWoocommerceStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'WooCommerce ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.WOOCOMMERCE, ':site' ].join( '/' ) }
 					title="WooCommerce ‹ Jetpack Start"

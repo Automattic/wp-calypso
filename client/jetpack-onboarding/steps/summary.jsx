@@ -11,7 +11,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompletedSteps from '../summary-completed-steps';
@@ -38,7 +37,6 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Summary ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.SUMMARY, ':site' ].join( '/' ) }
 					title="Summary ‹ Jetpack Start"

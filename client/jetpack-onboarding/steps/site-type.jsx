@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
@@ -36,7 +35,6 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Site Type ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.SITE_TYPE, ':site' ].join( '/' ) }
 					title="Site Type ‹ Jetpack Start"
