@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
@@ -15,7 +15,6 @@ import i18n, { localize } from 'i18n-calypso';
  */
 import config from 'config';
 import Main from 'components/main';
-import Complementary from 'components/complementary';
 import Card from 'components/card';
 import Notice from 'components/notice';
 import HelpContactForm from 'me/help/help-contact-form';
@@ -566,9 +565,8 @@ class HelpContact extends React.Component {
 	};
 
 	render() {
-		const Wrapper = this.props.compact ? Complementary : Main;
-		return (
-			<Wrapper className="help-contact">
+		const content = (
+			<Fragment>
 				{ ! this.props.compact && (
 					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
 						{ this.props.translate( 'Contact Us' ) }
@@ -579,8 +577,12 @@ class HelpContact extends React.Component {
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
-			</Wrapper>
+			</Fragment>
 		);
+		if ( this.props.compact ) {
+			return content;
+		}
+		return <Main className="help-contact">{ content }</Main>;
 	}
 }
 
