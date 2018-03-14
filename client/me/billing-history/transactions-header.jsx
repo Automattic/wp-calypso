@@ -89,7 +89,7 @@ class TransactionsHeader extends React.Component {
 
 	setFilter( filter ) {
 		this.setState( { activePopover: '' } );
-		this.props.onNewFilter( filter );
+		this.props.onNewFilter( filter, 1 );
 	}
 
 	renderDatePopover() {
@@ -136,11 +136,8 @@ class TransactionsHeader extends React.Component {
 								</tr>
 							</thead>
 							<tbody>
-								{ this.renderDatePicker( '5 Newest', this.props.translate( '5 Newest' ), {
-									newest: 5,
-								} ) }
-								{ this.renderDatePicker( '10 Newest', this.props.translate( '10 Newest' ), {
-									newest: 10,
+								{ this.renderDatePicker( 'newest', this.props.translate( 'Newest' ), {
+									newest: true,
 								} ) }
 							</tbody>
 							<thead>
@@ -180,8 +177,8 @@ class TransactionsHeader extends React.Component {
 		const currentDate = this.props.filter.date || {};
 		let isSelected;
 
-		if ( date.newest ) {
-			isSelected = date.newest === currentDate.newest;
+		if ( date.newest && currentDate.newest ) {
+			isSelected = true;
 		} else if ( date.month && currentDate.month ) {
 			isSelected = date.month.isSame( currentDate.month, 'month' );
 		} else if ( date.before ) {
@@ -212,7 +209,10 @@ class TransactionsHeader extends React.Component {
 	}
 
 	handlePickerSelection( filter ) {
-		this.setFilter( filter );
+		this.setFilter( {
+			...this.props.filter,
+			...filter,
+		} );
 		this.setState( { searchValue: '' } );
 	}
 
