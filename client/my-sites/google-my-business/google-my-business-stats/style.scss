@@ -48,9 +48,16 @@
 	}
 }
 
+.google-my-business-stats__section-title {
+	font-size: 20px;
+	margin: 0 0 30px;
+	line-height: 1.4em;
+}
+
 .google-my-business-stats__stat-title {
 	font-size: 18px;
 	line-height: 3;
+	text-align: center;
 }
 
 .google-my-business-stats__search-type {
@@ -114,8 +121,30 @@
 .google-my-business-stats__not-enough-data {
 	line-height: 3em;
 	text-align: center;
+
+	img {
+		width: 175px;
+	}
+}
+
+.google-my-business-stats__empty-title {
+	font-weight: bold;
+	line-height: 1em;
+	margin: 0 0 5px;
+}
+
+.google-my-business-stats__empty-text {
+	color: $gray-darken-20;
+	line-height: 1.4em;
 }
 
 .google-my-business-stats__description {
 	color: $gray-darken-20;
+}
+
+.google-my-business-stats__searches-pie-chart {
+	display: block;
+	margin: auto;
+	max-width: 150px;
+	width: 100%;
 }
