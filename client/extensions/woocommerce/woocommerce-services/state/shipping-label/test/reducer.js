@@ -19,11 +19,12 @@ import {
 	savePackages,
 	removeIgnoreValidation,
 	updateAddressValue,
-    clearAvailableRates,
+	clearAvailableRates,
 } from '../actions';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_TYPE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE,
  } from '../../action-types';
 
 const orderId = 1;
@@ -400,5 +401,18 @@ describe( 'Label purchase form reducer', () => {
 		state = reducer( state, packageTypeAction );
 
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.weight ).to.eql( 1.63 );
+	} );
+
+	it( 'WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE updates package signature option', () => {
+		const action = {
+			type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_PACKAGE_SIGNATURE,
+			siteId,
+			orderId,
+			packageId: 'weight_0_custom1',
+			signature: 'yes',
+		};
+		const state = reducer( initialState, action );
+
+		expect( state[ orderId ].form.packages.selected.weight_0_custom1.signature ).to.eql( 'yes' );
 	} );
 } );
