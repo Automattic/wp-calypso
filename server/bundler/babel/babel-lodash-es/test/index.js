@@ -3,13 +3,15 @@
 /**
  * External dependencies
  */
-const babel = require( 'babel-core' );
+const babel = require( '@babel/core' );
 
 describe( 'babel-lodash-es', () => {
 	function transform( code ) {
-		return babel.transform( code, {
-			plugins: [ require( '..' ) ],
-		} ).code;
+		return babel
+			.transform( code, {
+				plugins: [ require( '..' ) ],
+			} )
+			.code.replace( /\"/g, "'" );
 	}
 
 	test( 'should transform named import from top-level package', () => {
