@@ -8,7 +8,7 @@ import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import page from 'page';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
 import { map, pick, reduce, startsWith } from 'lodash';
 

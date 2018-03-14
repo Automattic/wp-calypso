@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { decode, parse, stringify } from 'querystring';
+import { parse, stringify } from 'qs';
 import store from 'store';
 
 export const GUEST_TICKET_LOCALFORAGE_KEY = 'guest_sandbox_ticket';
@@ -61,7 +61,7 @@ const initialize = () => {
 
 	deleteOldTicket();
 
-	const queryObject = decode( window.location.search.replace( '?', '' ) );
+	const queryObject = parse( window.location.search.replace( '?', '' ) );
 
 	if ( queryObject.guest_ticket ) {
 		store.set( GUEST_TICKET_LOCALFORAGE_KEY, {

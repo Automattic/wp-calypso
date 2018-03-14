@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 import i18n from 'i18n-calypso';
 
 var baseUrl = '//widgets.wp.com/sharing-buttons-preview/';

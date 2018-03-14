@@ -5,7 +5,7 @@
 import { expect } from 'chai';
 import localforageMock from 'localforage';
 import { defer } from 'lodash';
-import { parse } from 'querystring';
+import { parse } from 'qs';
 import { spy } from 'sinon';
 
 /**

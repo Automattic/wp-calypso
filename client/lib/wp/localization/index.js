@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { parse, stringify } from 'querystring';
+import { parse, stringify } from 'qs';
 
 /**
  * Internal dependencies

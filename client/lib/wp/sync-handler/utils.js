@@ -6,7 +6,7 @@
 
 import deterministicStringify from 'json-stable-stringify';
 import sha1 from 'hash.js/lib/hash/sha/1';
-import { parse, stringify } from 'querystring';
+import { parse, stringify } from 'qs';
 
 /**
  * Internal dependencies

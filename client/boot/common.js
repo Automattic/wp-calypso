@@ -6,7 +6,7 @@
 
 import debugFactory from 'debug';
 import page from 'page';
-import { parse } from 'querystring';
+import { parse } from 'qs';
 import { some, startsWith } from 'lodash';
 import url from 'url';
 

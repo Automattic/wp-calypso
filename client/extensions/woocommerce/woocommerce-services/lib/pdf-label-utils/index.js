@@ -5,7 +5,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 import { includes, reduce, filter, map } from 'lodash';
 
 /**

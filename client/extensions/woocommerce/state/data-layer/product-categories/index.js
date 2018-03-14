@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { omitBy } from 'lodash';
-import { stringify } from 'querystring';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
