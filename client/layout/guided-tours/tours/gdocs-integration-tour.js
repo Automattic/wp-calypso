@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
 
 /**
@@ -35,18 +34,22 @@ export const GDocsIntegrationTour = makeTour(
 		when={ and( isCurrentUserEmailVerified, hasUserPastedFromGoogleDocs ) }
 	>
 		<Step name="init" placement="right">
-			<p>{ translate( 'Did you know you can create drafts from Google Docs?' ) }</p>
-			<ButtonRow>
-				<LinkQuit
-					primary
-					target="_blank"
-					onClick={ trackUserInterest }
-					href="https://apps.wordpress.com/google-docs/"
-				>
-					{ translate( 'Learn more' ) }
-				</LinkQuit>
-				<Quit>{ translate( 'No thanks' ) }</Quit>
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>{ translate( 'Did you know you can create drafts from Google Docs?' ) }</p>
+					<ButtonRow>
+						<LinkQuit
+							primary
+							target="_blank"
+							onClick={ trackUserInterest }
+							href="https://apps.wordpress.com/google-docs/"
+						>
+							{ translate( 'Learn more' ) }
+						</LinkQuit>
+						<Quit>{ translate( 'No thanks' ) }</Quit>
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 	</Tour>
 );

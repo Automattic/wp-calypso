@@ -4,8 +4,7 @@
  * External dependencies
  */
 
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import React, { Fragment } from 'react';
 import Gridicon from 'gridicons';
 import { noop } from 'lodash';
 
@@ -44,20 +43,25 @@ export const ChecklistSiteIconTour = makeTour(
 				zIndex: 1,
 			} }
 		>
-			<p>
-				{ translate(
-					'Press {{changeButton/}} to upload your own image or icon that can help people identify your site in the browser.',
-					{
-						components: { changeButton: <ChangeButton /> },
-					}
-				) }
-			</p>
-			<ButtonRow>
-				<Continue target="settings-site-icon-change" step="choose-image" click hidden />
-				<SiteLink isButton={ false } href="/checklist/:site">
-					{ translate( 'Return to the checklist' ) }
-				</SiteLink>
-			</ButtonRow>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'Press {{changeButton/}} to upload your own image or icon ' +
+								'that can help people identify your site in the browser.',
+							{
+								components: { changeButton: <ChangeButton /> },
+							}
+						) }
+					</p>
+					<ButtonRow>
+						<Continue target="settings-site-icon-change" step="choose-image" click hidden />
+						<SiteLink isButton={ false } href="/checklist/:site">
+							{ translate( 'Return to the checklist' ) }
+						</SiteLink>
+					</ButtonRow>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step
@@ -71,10 +75,16 @@ export const ChecklistSiteIconTour = makeTour(
 			} }
 			onTargetDisappear={ handleTargetDisappear }
 		>
-			<p>
-				{ translate( 'Pick or drag a file from your computer to add it to your media library.' ) }
-			</p>
-			<Next step="click-continue">{ translate( 'All done, continue' ) }</Next>
+			{ ( { translate } ) => (
+				<Fragment>
+					<p>
+						{ translate(
+							'Pick or drag a file from your computer to add it to your media library.'
+						) }
+					</p>
+					<Next step="click-continue">{ translate( 'All done, continue' ) }</Next>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step
@@ -85,11 +95,15 @@ export const ChecklistSiteIconTour = makeTour(
 			style={ { marginTop: '40px', marginLeft: '60px' } }
 			onTargetDisappear={ handleTargetDisappear }
 		>
-			<Continue target="dialog-base-action-confirm" step="click-done" click>
-				{ translate( 'Good choice, press {{continueButton/}} to use it as your Site Icon.', {
-					components: { continueButton: <ContinueButton /> },
-				} ) }
-			</Continue>
+			{ ( { translate } ) => (
+				<Fragment>
+					<Continue target="dialog-base-action-confirm" step="click-done" click>
+						{ translate( 'Good choice, press {{continueButton/}} to use it as your Site Icon.', {
+							components: { continueButton: <ContinueButton /> },
+						} ) }
+					</Continue>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step
@@ -99,29 +113,37 @@ export const ChecklistSiteIconTour = makeTour(
 			placement="above"
 			style={ { marginTop: '30px', marginLeft: '90px' } }
 		>
-			<Continue target="image-editor-button-done" step="finish" click>
-				{ translate(
-					'Let’s make sure it looks right before you press {{doneButton/}} to save your changes.',
-					{ components: { doneButton: <DoneButton /> } }
-				) }
-			</Continue>
+			{ ( { translate } ) => (
+				<Fragment>
+					<Continue target="image-editor-button-done" step="finish" click>
+						{ translate(
+							'Let’s make sure it looks right before you press {{doneButton/}} to save your changes.',
+							{ components: { doneButton: <DoneButton /> } }
+						) }
+					</Continue>
+				</Fragment>
+			) }
 		</Step>
 
 		<Step name="finish" placement="right">
-			<h1 className="tours__title">
-				<span className="tours__completed-icon-wrapper">
-					<Gridicon icon="checkmark" className="tours__completed-icon" />
-				</span>
-				{ translate( 'Excellent, you’re done!' ) }
-			</h1>
-			<p>
-				{ translate(
-					'Your Site Icon has been saved. Let’s move on and see what’s next on our checklist.'
-				) }
-			</p>
-			<SiteLink isButton href={ '/checklist/:site' }>
-				{ translate( 'Return to the checklist' ) }
-			</SiteLink>
+			{ ( { translate } ) => (
+				<Fragment>
+					<h1 className="tours__title">
+						<span className="tours__completed-icon-wrapper">
+							<Gridicon icon="checkmark" className="tours__completed-icon" />
+						</span>
+						{ translate( 'Excellent, you’re done!' ) }
+					</h1>
+					<p>
+						{ translate(
+							'Your Site Icon has been saved. Let’s move on and see what’s next on our checklist.'
+						) }
+					</p>
+					<SiteLink isButton href={ '/checklist/:site' }>
+						{ translate( 'Return to the checklist' ) }
+					</SiteLink>
+				</Fragment>
+			) }
 		</Step>
 	</Tour>
 );

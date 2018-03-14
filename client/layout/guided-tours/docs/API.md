@@ -19,9 +19,9 @@ Tour is a React component that declares the top-level of a tour. It consists of 
 ```jsx
 // tour with a single step
 <Tour path="/me" name="exampleTour" when={ isNewUser }>
-  <Step>
-    …
-  </Step>
+	<Step>
+		…
+	</Step>
 </Tour>
 ```
 
@@ -42,7 +42,7 @@ Step is a React component that defines a single Step of a tour. It is represente
 * `when`: (function, optional) This is a Redux selector that can prevent a step from showing when it evaluates to false. When using `when` you should also set the `next` prop to tell Guided Tours the name of the step it should skip to. If you omit this prop, step will be rendered as expected. Example usage would be to show a certain step only for non-mobile environments: `when={ not( isMobile ) }`
 * `next`: (string, optional) Define this to tell Guided Tours the name of the step it should skip to when `when` evaluates to false.
 * `scrollContainer`: (string, optional) This is a CSS selector for the container that the framework should attempt to scroll in case the target isn't visible. E.g. if the target is a menu item that could be invisible because of a scrolled sidebar, we'd want the framework to scroll the sidebar until the target is visible. The CSS selector to pass would then be `.sidebar__region`. Note: there were some differences for the sidebar between desktop and tablet that don't seem to be a problem anymore, but in any case have been [documented in  this issue](https://github.com/Automattic/wp-calypso/issues/7208).
-* `children`: (node) Contents of the step. Usually a paragraph of instructions and some controls for the tour. See below for available options. Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
+* `children`: (component) Content of the step. Unlike most other components' children, this one takes a so called render prop as a single child. It's a component (function or class) to be rendered when the step is actually displayed. The `translate` function is passed as a prop to the child component. The content is usually a paragraph of instructions and some controls for the tour. See below for available options. Note that all text content needs to be wrapped in `<p>` so it gets proper styling.
 
 ### Example
 
@@ -54,32 +54,40 @@ Here is the code used:
 
 ```jsx
 <Step name="example" placement="below" target="my-sites" arrow="top-left">
-  <p>Plain text description.</p>
-  <p>Multiple lines.</p>
-  <Continue step="next-step" click target="my-sites" icon="my-sites" />
-  <ButtonRow>
-    <Next step="next-step" />
-    <Quit />
-  </ButtonRow>
-  <Link href="https://learn.wordpress.com">
-    { translate( 'Learn more about WordPress.com' ) }
-  </Link>
+	{ ( { translate } ) => (
+		<Fragment>
+			<p>Plain text description.</p>
+			<p>Multiple lines.</p>
+			<Continue step="next-step" click target="my-sites" icon="my-sites" />
+			<ButtonRow>
+				<Next step="next-step" />
+				<Quit />
+			</ButtonRow>
+			<Link href="https://learn.wordpress.com">
+				{ translate( 'Learn more about WordPress.com' ) }
+			</Link>
+		</Fragment>
+	) }
 </Step>
 ```
 
 ## ButtonRow
 
-ButtonRow is a React component to display button controls in Step and takes care of their proper styling. Usually used as the last child of Step to contain all available controls.
+ButtonRow is a React component to display button controls in Step and takes care of their proper styling. Usually used as the last element of Step content to contain all available controls.
 
 ### Example
 
 ```jsx
 <Step>
-  <p>ButtonRow Example</p>
-  <ButtonRow>
-    <Next step="next-step" />
-    <Quit />
-  </ButtonRow>
+	{ () => (
+		<Fragment>
+			<p>ButtonRow Example</p>
+			<ButtonRow>
+				<Next step="next-step" />
+				<Quit />
+			</ButtonRow>
+		</Fragment>
+	) }
 </Step>
 ```
 
@@ -178,13 +186,17 @@ Place Link after ButtonRow (if present) for correct styling.
 ```jsx
 // last step of tour with option to quit or visit learn.wordpress.com
 <Step>
-  <p>This is the last step!</p>
-  <ButtonRow>
-    <Quit />
-  </ButtonRow>
-  <Link href="https://learn.wordpress.com">
-    { translate( 'Learn more about WordPress.com' ) }
-  </Link>
+	{ ( { translate } ) => (
+		<Fragment>
+			<p>This is the last step!</p>
+			<ButtonRow>
+				<Quit />
+			</ButtonRow>
+			<Link href="https://learn.wordpress.com">
+				{ translate( 'Learn more about WordPress.com' ) }
+			</Link>
+		</Fragment>
+	) }
 </Step>
 ```
 
@@ -198,9 +210,9 @@ In the file where the tour is defined, wrap the `Tour` declaration with `makeTou
 
 ```jsx
 export const MyTour = makeTour(
-  <Tour name="my" …>
-    …
-  </Tour>
+	<Tour name="my" …>
+		…
+	</Tour>
 );
 ```
 
@@ -212,9 +224,9 @@ This is a factory for the top-level component of Guided Tours. You shouldn't be 
 
 ```jsx
 combineTours( {
-  main: MainTour,
-  anotherTour: AnotherTour,
-  thirdTour: ThirdTour,
+	main: MainTour,
+	anotherTour: AnotherTour,
+	thirdTour: ThirdTour,
 } );
 ```
 
@@ -269,7 +281,7 @@ We treat the `target` prop as a CSS selector if it contains `.`, `#`, or a space
 
 ```jsx
 // target element
-<Step target=" body">
+<Step target="body">
 ```
 
 Notice the space before "body" in the last example. **This is a hack** that forces the framework to use the value directly as a CSS selector and not as `[data-tip-target="body"]`. Please consider using any other way (CSS class, ID, custom attribute…) before settling with this one.
