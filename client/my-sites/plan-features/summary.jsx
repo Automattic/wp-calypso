@@ -25,6 +25,7 @@ class PlanFeaturesSummary extends Component {
 		site: PropTypes.object.isRequired,
 	};
 
+	// Note: Don't make this translatable because it's only visible to English-language users
 	getTitle() {
 		const { current, site } = this.props;
 		const isJetpackSite = !! site.jetpack;
@@ -82,6 +83,7 @@ class PlanFeaturesSummary extends Component {
 			return null;
 		}
 
+		// Note: Don't make this translatable because it's only visible to English-language users
 		return (
 			<div className="plan-features__summary">
 				<strong className="plan-features__summary-title">{ this.getTitle() }</strong>
