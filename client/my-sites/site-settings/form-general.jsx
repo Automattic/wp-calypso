@@ -238,7 +238,7 @@ class SiteSettingsFormGeneral extends Component {
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 				/>
 				<FormSettingExplanation>
-					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
+					{ translate( 'Language this site is primarily written in.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
