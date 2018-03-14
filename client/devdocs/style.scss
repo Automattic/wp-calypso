@@ -23,6 +23,7 @@
 	}
 
 	.devdocs__result-path {
+		font-size: 14px;
 		font-family: $code;
 		color: $gray-text-min;
 	}
@@ -30,13 +31,17 @@
 	.devdocs__result-snippet {
 		font-size: 15px;
 		color: $gray-text;
-		margin-top: 8px;
+		margin-top: 4px;
 
 		mark {
 			background: rgba( $blue-light, 0.4 );
 			padding: 2px;
 			border-radius: 3px;
 		}
+
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 }
 
@@ -66,7 +71,6 @@
 	background: $white;
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
 		0 1px 2px $gray-lighten-30;
-	//border: 1px solid $gray-lighten-20;
 	margin: 0 auto 24px auto;
 
 	.docs-example__wrapper-header {}
@@ -87,6 +91,7 @@
 		padding: 16px;
 		box-shadow: inset 0 2px 1px rgba( $gray-dark, 0.075 );
 		
+		// Grid background
 		background-image: linear-gradient( rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
 		linear-gradient( 90deg, rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
 		linear-gradient( rgba( $gray-dark, 0.025 ) 1px, transparent 1px ),
@@ -115,28 +120,6 @@
 		.docs-examples__wrapper-content {
 			padding: 32px;
 		}
-		/*.docs-example__wrapper-header-title a {
-			position: absolute;
-				top: 0;
-				right: 0;
-				bottom: 0;
-				left: 0;
-			padding: 16px;
-		}
-
-		.docs-examples__wrapper-content {
-			//max-height: 200px;
-			//overflow: hidden;
-			pointer-events: none;
-			transition: opacity 0.15s ease-in-out;
-		}
-
-		&:hover {
-			.docs-examples__wrapper-content {
-				opacity: 0.4;
-			}
-		}
-		*/
 	}
 }
 
