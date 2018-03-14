@@ -36,6 +36,7 @@ import {
 	getMasterUserInfo,
 	getPaperSize,
 	getPaymentMethods,
+	getPaymentMethodsWarning,
 	getSelectedPaymentMethodId,
 	isPristine,
 	userCanEditSettings,
@@ -109,6 +110,14 @@ class ShippingLabels extends Component {
 				) }
 			</Notice>
 		);
+	};
+
+	renderPaymentWarningNotice = () => {
+		const { paymentMethodsWarning } = this.props;
+
+		if ( paymentMethodsWarning ) {
+			return <Notice status="is-error" showDismiss={ false } text={ paymentMethodsWarning } />;
+		}
 	};
 
 	renderSettingsPermissionNotice = () => {
@@ -235,6 +244,7 @@ class ShippingLabels extends Component {
 			<div>
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
+				{ this.renderPaymentWarningNotice() }
 
 				<QueryStoredCards />
 				{ isReloading ? (
@@ -359,6 +369,7 @@ export default connect(
 			isReloading: areSettingsFetching( state, siteId ) && areSettingsLoaded( state, siteId ),
 			pristine: isPristine( state, siteId ),
 			paymentMethods: getPaymentMethods( state, siteId ),
+			paymentMethodsWarning: getPaymentMethodsWarning( state, siteId ),
 			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
 			paperSize: getPaperSize( state, siteId ),
 			storeOptions: getLabelSettingsStoreOptions( state, siteId ),
