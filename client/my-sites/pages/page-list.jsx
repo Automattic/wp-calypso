@@ -121,9 +121,10 @@ class Pages extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		const pageListChanged =
-			nextProps.search !== this.props.search ||
-			nextProps.siteId !== this.props.siteId ||
-			nextProps.status !== this.props.status;
+			nextProps.query.search !== this.props.query.search ||
+			nextProps.query.siteId !== this.props.query.siteId ||
+			nextProps.query.status !== this.props.query.status ||
+			nextProps.query.page !== this.props.query.page;
 
 		if (
 			nextProps.pages !== this.props.pages &&
@@ -195,7 +196,7 @@ class Pages extends Component {
 
 				// if the last shadow item just got removed, start showing the up-to-date post
 				// list as specified by props.
-				if ( size( newShadowItems) === 0 ) {
+				if ( size( newShadowItems ) === 0 ) {
 					newState.pages = this.props.pages;
 				}
 

@@ -19,6 +19,7 @@ import Gridicon from 'gridicons';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import SiteIcon from 'blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
 import * as utils from 'lib/posts/utils';
@@ -317,6 +318,34 @@ class Page extends Component {
 		);
 	}
 
+	undoPostStatus = status => () => this.updatePostStatus( status );
+
+	renderShadowNotice() {
+		if ( ! this.state.shadowStatus ) {
+			return null;
+		}
+
+		const { translate } = this.props;
+		const { status, icon, text, undo } = this.state.shadowStatus;
+
+		return (
+			<Notice
+				className="page__shadow-notice"
+				isCompact
+				inline
+				status={ status }
+				icon={ icon }
+				text={ text }
+			>
+				{ undo && (
+					<NoticeAction onClick={ this.undoPostStatus( undo ) }>
+						{ translate( 'Undo' ) }
+					</NoticeAction>
+				) }
+			</Notice>
+		);
+	}
+
 	render() {
 		const { page, site = {}, translate } = this.props;
 		const title = page.title || translate( '(no title)' );
@@ -376,10 +405,6 @@ class Page extends Component {
 			<div className={ classNames( hierarchyIndentClasses ) } />
 		);
 
-		const shadowNotice = this.state.shadowStatus && (
-			<Notice className="page__shadow-notice" isCompact inline { ...this.state.shadowStatus } />
-		);
-
 		const mainClasses = classNames( 'page__main', {
 			'is-shadow': this.state.shadowStatus,
 		} );
@@ -411,7 +436,7 @@ class Page extends Component {
 					/>
 				</div>
 				{ ellipsisMenu }
-				{ shadowNotice }
+				{ this.renderShadowNotice() }
 			</CompactCard>
 		);
 	}
@@ -421,16 +446,24 @@ class Page extends Component {
 		return await new Promise( resolve => this.setState( { shadowStatus: status }, resolve ) );
 	}
 
-	async performUpdate( { action, progressNotice, successNotice, errorNotice } ) {
+	async performUpdate( { action, progressNotice, successNotice, errorNotice, undo } ) {
 		await this.onShadow( progressNotice );
 		try {
 			await action();
-			await this.onShadow( successNotice );
+			if ( undo === false ) {
+				await this.onShadow( false );
+				return;
+			}
+			await this.onShadow( { ...successNotice, undo } );
+			if ( ! undo ) {
+				await sleep( 5000 );
+				await this.onShadow( false );
+			}
 		} catch ( error ) {
 			await this.onShadow( errorNotice );
+			await sleep( 5000 );
+			await this.onShadow( false );
 		}
-		await sleep( 5000 );
-		await this.onShadow( false );
 	}
 
 	async updatePostStatus( status ) {
@@ -438,31 +471,28 @@ class Page extends Component {
 
 		switch ( status ) {
 			case 'delete':
-				const deleteWarning = translate( 'Delete this page permanently?' );
-
-				if ( typeof window === 'object' && window.confirm( deleteWarning ) ) {
-					await this.performUpdate( {
-						action: () => this.props.deletePost( page.site_ID, page.ID ),
-						progressNotice: {
-							status: 'is-error',
-							icon: 'trash',
-							text: translate( 'Deleting…' ),
-						},
-						successNotice: {
-							status: 'is-success',
-							text: translate( 'Page deleted.' ),
-						},
-						errorNotice: {
-							status: 'is-error',
-							text: translate( 'Failed to delete page.' ),
-						},
-					} );
-				}
+				await this.performUpdate( {
+					action: () => this.props.deletePost( page.site_ID, page.ID ),
+					progressNotice: {
+						status: 'is-error',
+						icon: 'trash',
+						text: translate( 'Deleting…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page deleted.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to delete page.' ),
+					},
+				} );
 				return;
 
 			case 'trash':
 				await this.performUpdate( {
-					action: () => this.props.trashPost( page.site_ID, page.ID ),
+					action: () => this.props.trashPost( page.site_ID, page.ID, page ),
+					undo: page.status !== 'trash' && 'restore',
 					progressNotice: {
 						status: 'is-error',
 						icon: 'trash',
@@ -470,7 +500,7 @@ class Page extends Component {
 					},
 					successNotice: {
 						status: 'is-success',
-						text: translate( 'Page trashed.' ),
+						text: translate( 'Page trashed' ),
 					},
 					errorNotice: {
 						status: 'is-error',
@@ -482,6 +512,7 @@ class Page extends Component {
 			case 'restore':
 				await this.performUpdate( {
 					action: () => this.props.restorePost( page.site_ID, page.ID ),
+					undo: page.status === 'trash' && 'trash',
 					progressNotice: {
 						status: 'is-warning',
 						icon: 'history',
@@ -490,6 +521,7 @@ class Page extends Component {
 					successNotice: {
 						status: 'is-success',
 						text: translate( 'Page restored.' ),
+						undo: page.status,
 					},
 					errorNotice: {
 						status: 'is-error',
@@ -509,6 +541,7 @@ class Page extends Component {
 					successNotice: {
 						status: 'is-success',
 						text: translate( 'Page published.' ),
+						undo: page.status,
 					},
 					errorNotice: {
 						status: 'is-error',
@@ -534,7 +567,10 @@ class Page extends Component {
 	};
 
 	updateStatusDelete = () => {
-		this.updatePostStatus( 'delete' );
+		const deleteWarning = this.props.translate( 'Delete this page permanently?' );
+		if ( typeof window === 'object' && window.confirm( deleteWarning ) ) {
+			this.updatePostStatus( 'delete' );
+		}
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
