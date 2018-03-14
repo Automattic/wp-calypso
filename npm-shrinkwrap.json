@@ -3521,6 +3521,10 @@
         "domelementtype": "1.3.0"
       }
     },
+    "dompurify": {
+      "version": "1.0.2",
+      "integrity": "sha512-3POD2YKOvoG/qI7e+IMUBAdKyN5CmeMyrFQu7rk92neduPFWl81/ramY6UrYkJInMUTBwzqw0QS5GEr27kmV4A=="
+    },
     "domutils": {
       "version": "1.7.0",
       "integrity": "sha512-Lgd2XcJ/NjEw+7tFvfKxOzCYKZsdct5lczQ2ZaQY8Djz7pfAD3Gbp8ySJWtreII/vDlMVmxwa6pHmdxIYgttDg==",
@@ -10833,6 +10837,10 @@
       "version": "1.0.11",
       "integrity": "sha1-xUYBd4rVYPEULODgG8yotW0TQm0="
     },
+    "object-path-immutable": {
+      "version": "0.5.2",
+      "integrity": "sha512-6fnJfXjj/SCdqctFRN8wJAxvbnHsFZ9ISnvgEImZ3ophWDx38r6Wu8PZJ9LXrjhihOOhGiLKicN682VtL/9cfg=="
+    },
     "object-visit": {
       "version": "1.0.1",
       "integrity": "sha1-95xEk68MU3e1n+OdOV5BBC3QRbs=",
@@ -10907,6 +10915,10 @@
         "function-bind": "1.1.1",
         "has": "1.0.1"
       }
+    },
+    "objectpath": {
+      "version": "1.2.1",
+      "integrity": "sha1-yHQzvdNSrqAU5PnAtS1wpCZSBS4="
     },
     "omggif": {
       "version": "1.0.9",
