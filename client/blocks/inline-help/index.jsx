@@ -113,8 +113,13 @@ class InlineHelp extends Component {
 	};
 
 	toggleContactForm = () => {
+		if ( this.state.showContactForm ) {
+			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_hide' );
+		} else {
+			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_show' );
+		}
 		this.setState( { showContactForm: ! this.state.showContactForm } );
-	}
+	};
 
 	render() {
 		const { translate } = this.props;
@@ -130,7 +135,6 @@ class InlineHelp extends Component {
 				title={ translate( 'Help' ) }
 				ref={ this.inlineHelpToggleRef }
 			>
-
 				<Gridicon icon="help-outline" />
 
 				<Popover
@@ -140,16 +144,16 @@ class InlineHelp extends Component {
 					context={ this.inlineHelpToggle }
 					className={ classNames( 'inline-help__popover', popoverClasses ) }
 				>
-
 					<div className="inline-help__search">
 						<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
-						<InlineHelpSearchResults openResult={ this.openResult } searchQuery={ this.props.searchQuery } />
+						<InlineHelpSearchResults
+							openResult={ this.openResult }
+							searchQuery={ this.props.searchQuery }
+						/>
 					</div>
 
 					<div className="inline-help__contact">
-						<HelpContact
-							compact={ true }
-							selectedSite={ this.props.selectedSite } />
+						<HelpContact compact={ true } selectedSite={ this.props.selectedSite } />
 					</div>
 
 					<div className="inline-help__footer">
@@ -163,21 +167,23 @@ class InlineHelp extends Component {
 							{ translate( 'More help' ) }
 						</Button>
 
-						{ showContactButton &&
+						{ showContactButton && (
 							<Button
 								onClick={ this.toggleContactForm }
 								className="inline-help__contact-button"
-								borderless >
+								borderless
+							>
 								<Gridicon icon="chat" className="inline-help__gridicon-left" />
 								{ translate( 'Contact us' ) }
 								<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
 							</Button>
-						}
+						) }
 
 						<Button
 							onClick={ this.toggleContactForm }
 							className="inline-help__cancel-button"
-							borderless >
+							borderless
+						>
 							<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
 							{ translate( 'Back' ) }
 						</Button>
