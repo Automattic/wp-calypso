@@ -59,7 +59,6 @@ First we'll need to create a file for our tour, then add our essential boilerpla
  * External dependencies
  */
 import React from 'react';
-import { translate } from 'i18n-calypso';
 import {
 	overEvery as and,
 } from 'lodash';
@@ -93,14 +92,14 @@ Now add that tour to the [tour list](../config.js):
 +import { TutorialSitePreviewTour } from 'layout/guided-tours/tours/tutorial-site-preview-tour';
 
  export default combineTours( {
-     …
-     siteTitle: SiteTitleTour,
+		 …
+		 siteTitle: SiteTitleTour,
 +    tutorialSitePreview: TutorialSitePreviewTour,
 ```
 
 And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/master/config/development.json) for the appropriate environment(s), such as `"guided-tours/tutorial-site-preview": true,`.
 
-**Important:** use the feature flag to ensure that the tour is only triggered in environments where all the required features are available. E.g. especially the `desktop` environment may differ from general Calypso because of the different context that it runs in and the different release cycles. 
+**Important:** use the feature flag to ensure that the tour is only triggered in environments where all the required features are available. E.g. especially the `desktop` environment may differ from general Calypso because of the different context that it runs in and the different release cycles.
 
 ### The Tour element
 
@@ -114,7 +113,7 @@ export const TutorialSitePreviewTour = makeTour(
 	path="/stats"
 	when={ and(
 		isEnabled( 'guided-tours/main' ),
-        isSelectedSitePreviewable,
+				isSelectedSitePreviewable,
 		isNewUser,
 		) }
 	>
@@ -171,36 +170,37 @@ Now let's insert the first `<Step>` element into the `<Tour>`. It looks like thi
 
 ```JSX
 <Step
-    name="init"
-    target="sitePreview"
-    arrow="top-left"
-    placement="below"
-    scrollContainer=".sidebar__region"
+	name="init"
+	target="sitePreview"
+	arrow="top-left"
+	placement="below"
+	scrollContainer=".sidebar__region"
 >
-    <p>
-        { translate(
-            '{{strong}}View Site{{/strong}} shows you what your site looks like to visitors. Click it to continue.',
-            {
-                components: {
-                    strong: <strong />,
-                },
-            }
-        ) }
-    </p>
-    <Continue hidden click step="finish" target="sitePreview" />
-    <ButtonRow>
-        <Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
-    </ButtonRow>
+	{ ( { translate } ) => (
+		<Fragment>
+			<p>
+				{ translate(
+					'{{strong}}View Site{{/strong}} shows you what your site looks like to visitors. Click it to continue.',
+					{ components: { strong: <strong /> } },
+				) }
+			</p>
+			<Continue hidden click step="finish" target="sitePreview" />
+			<ButtonRow>
+					<Quit subtle>{ translate( 'No, thanks.' ) }</Quit>
+			</ButtonRow>
+		</Fragment>
+	) }
 </Step>
 ```
 
 A few notes:
 
+- the `children` of the `Step` component is not a regular JSX markup. It's a so-called render prop: a component (function or class) to be rendered. The component will be passed the `translate` function as a prop. The reason for this design is performance: we don't need to instantiate all the JSX markup and translate all strings for all steps for all tours statically when loading the modules: they are hidden inside a component and evaluated only when a particular step is actually rendered.
 - The first step of a tour needs to have a name of `init` to be recognizable as the first step by the framework.
 - The `target` is the DOM element the step should be "glued" to or will point at. There are two ways to do that: either the element has a `data-tip-target` attribute, and we pass that name, or we pass a CSS selector that selects that element (cf. method `targetForSlug`). In this case, it's a `data-tip-target`.
 - The `scrollContainer` tells the framework which container it should attempt to scroll in case the `target` isn't visible. In this case, the framework will attempt to scroll the sidebar until the site preview button is in view.
 - `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `master`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
-- The `Continue` steps attributes basically say: when the user `click`s the `target`, proceed to the step called `close-preview` (the next step, below). The `hidden` attribute tells the framework to not add an explanatory text below the step. 
+- The `Continue` steps attributes basically say: when the user `click`s the `target`, proceed to the step called `close-preview` (the next step, below). The `hidden` attribute tells the framework to not add an explanatory text below the step.
 - The `ButtonRow` with the `Quit` button doesn't really look nice, but it's important to provide a way for the user to get out of the tour. The framework will quit a tour if it believes that the user is trying to navigate away from it, but in this case we thought an explicit way to quit would be good to provide.
 
 ## Adding the Second Step
@@ -209,14 +209,18 @@ Now we add the second step after the first one:
 
 ```JSX
 <Step name="finish" placement="center">
-    <p>
-        { translate(
-            "Take a look around — and when you're done, explore the rest of WordPress.com."
-        ) }
-    </p>
-    <ButtonRow>
-        <Quit primary>{ translate( 'Got it.' ) }</Quit>
-    </ButtonRow>
+	{ ( { translate } ) => (
+		<Fragment>
+			<p>
+				{ translate(
+					"Take a look around — and when you're done, explore the rest of WordPress.com."
+				) }
+			</p>
+			<ButtonRow>
+				<Quit primary>{ translate( 'Got it.' ) }</Quit>
+			</ButtonRow>
+		</Fragment>
+	) }
 </Step>
 ```
 
