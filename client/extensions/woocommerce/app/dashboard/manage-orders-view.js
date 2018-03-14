@@ -187,7 +187,7 @@ class ManageOrdersView extends Component {
 						) }
 					</p>
 					<p>
-						<Button href={ getLink( '/store/stats/orders/day/:site', site ) }>
+						<Button href={ getLink( '/store/stats/orders/week/:site', site ) }>
 							{ orders.length ? translate( 'View full reports' ) : translate( 'View reports' ) }
 						</Button>
 					</p>

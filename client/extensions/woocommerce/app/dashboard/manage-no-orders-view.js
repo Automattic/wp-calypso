@@ -45,7 +45,7 @@ class ManageNoOrdersView extends Component {
 			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 				action: 'view-stats',
 			} );
-			page.redirect( getLink( '/store/stats/orders/day/:site', site ) );
+			page.redirect( getLink( '/store/stats/orders/week/:site', site ) );
 		};
 		return (
 			<DashboardWidget
