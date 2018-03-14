@@ -20,6 +20,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormTelInput from 'components/forms/form-tel-input';
 import FormTextInput from 'components/forms/form-text-input';
+import Main from 'components/main';
 import StepNavigation from '../step-navigation';
 
 class GoogleMyBusinessConnections extends Component {
@@ -38,7 +39,7 @@ class GoogleMyBusinessConnections extends Component {
 		const backHref = '/google-my-business/category/' + siteId;
 
 		return (
-			<div className="google-my-business-connections">
+			<Main className="google-my-business google-my-business-connections">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -61,7 +62,7 @@ class GoogleMyBusinessConnections extends Component {
 				</Card>
 
 				<StepNavigation value={ 70 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
-			</div>
+			</Main>
 		);
 	}
 }

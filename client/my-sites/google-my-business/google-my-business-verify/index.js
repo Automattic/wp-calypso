@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
+import Main from 'components/main';
 import StepNavigation from '../step-navigation';
 
 class GoogleMyBusinessVerify extends Component {
@@ -34,7 +35,7 @@ class GoogleMyBusinessVerify extends Component {
 		const backHref = '/google-my-business/connections/' + siteId;
 
 		return (
-			<div className="google-my-business-verify">
+			<Main className="google-my-business google-my-business-verify">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -61,7 +62,7 @@ class GoogleMyBusinessVerify extends Component {
 				</Card>
 
 				<StepNavigation value={ 100 } total={ 100 } backHref={ backHref } />
-			</div>
+			</Main>
 		);
 	}
 }

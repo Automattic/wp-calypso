@@ -19,6 +19,10 @@ import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import StepNavigation from '../step-navigation';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
+import Main from 'components/main';
 
 let autocompleteService = {};
 
@@ -66,6 +70,8 @@ class SearchForALocation extends Component {
 		const { predictions } = this.state;
 		const nextHref = '/google-my-business/address/' + siteId;
 		const backHref = '/google-my-business/show-list-of-locations/' + siteId;
+		const tosHref =
+			'https://www.google.com/intl/en/+/policy/pages-services.html?_ga=2.180297060.1172336099.1521039613-786824372.1502702633';
 		const predictionsMarkup =
 			predictions &&
 			predictions.map( prediction => {
@@ -76,41 +82,37 @@ class SearchForALocation extends Component {
 					</CompactCard>
 				);
 			} );
-		const newListing = this.state.query ? (
-			<CompactCard href={ nextHref }>
-				<p>
-					{ this.state.query }
-					<br />
-					{ translate( 'Create new listing' ) }
-				</p>
-			</CompactCard>
-		) : null;
 
 		return (
-			<div className="search-for-a-location">
+			<Main className="google-my-business search-for-a-location">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
 				<Card className="search-for-a-location__search-section">
-					<h1>What's the name of your business?</h1>
-					<SearchCard
-						onSearch={ this.handleSearch }
-						inputLabel={ translate( 'Business name' ) }
-						className="search-for-a-location__search-card is-compact"
-					/>
-
-					{ predictionsMarkup }
-
-					{ newListing }
+					<FormFieldset>
+						<FormLegend className="search-for-a-location__legend">
+							{ translate( "What's the name of your business?" ) }
+						</FormLegend>
+						<FormLabel>{ translate( 'Business Name' ) }</FormLabel>
+						<SearchCard
+							onSearch={ this.handleSearch }
+							className="search-for-a-location__search-card is-compact"
+						/>
+						{ predictionsMarkup }
+					</FormFieldset>
 
 					<p className="search-for-a-location__search-tos">
-						{ translate( 'By continuing you agree to the following Terms of Service' ) }
+						{ translate( 'By continuing you agree to the following {{a}}Terms of Service{{/a}}', {
+							components: {
+								a: <a href={ tosHref } />,
+							},
+						} ) }
 					</p>
 				</Card>
 
 				<StepNavigation value={ 10 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
-			</div>
+			</Main>
 		);
 	}
 }

@@ -46,6 +46,7 @@ class Stats extends Component {
 							<img
 								src="https://lh5.googleusercontent.com/p/AF1QipPBVVXFSwBfsObM5TbyoLSGySD_CJAXiztaxf0a=w408-h544-k-no"
 								className="google-my-business-stats__image"
+								alt="gravatar"
 							/>
 
 							<div className="google-my-business-stats__text">

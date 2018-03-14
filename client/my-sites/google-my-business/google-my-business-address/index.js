@@ -22,6 +22,7 @@ import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
+import Main from 'components/main';
 import StepNavigation from '../step-navigation';
 
 class GoogleMyBusinessAddress extends Component {
@@ -40,7 +41,7 @@ class GoogleMyBusinessAddress extends Component {
 		const backHref = '/google-my-business/search-for-a-location/' + siteId;
 
 		return (
-			<div className="google-my-business-address">
+			<Main className="google-my-business google-my-business-address">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -74,7 +75,7 @@ class GoogleMyBusinessAddress extends Component {
 				</Card>
 
 				<StepNavigation value={ 20 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
-			</div>
+			</Main>
 		);
 	}
 }
