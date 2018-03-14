@@ -34,7 +34,7 @@ class Stats extends Component {
 	};
 
 	render() {
-		const { translate, siteId } = this.props;
+		const { translate } = this.props;
 		return (
 			<Main>
 				<SidebarNavigation title="Stats" />
@@ -86,7 +86,7 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					<Card>
-						<img src="/calypso/images/google-my-business/pie-chart.svg" />
+						<img src="/calypso/images/google-my-business/pie-chart.svg" alt="Pie chart" />
 						<div className="google-my-business-stats__stat-title">451 Total searches</div>
 						<div className="google-my-business-stats__search-type">
 							<span className="google-my-business-stats__search-type-direct" />
@@ -235,7 +235,9 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'Return customers' ) } />
 					<Card>
-						<p className="google-my-business-stats__description">How many customers return to your website?</p>
+						<p className="google-my-business-stats__description">
+							How many customers return to your website?
+						</p>
 						<FormFieldset>
 							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
@@ -252,7 +254,9 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'Popular times' ) } />
 					<Card>
-						<p className="google-my-business-stats__description">The most popular times for your customers to visit your website.</p>
+						<p className="google-my-business-stats__description">
+							The most popular times for your customers to visit your website.
+						</p>
 						<FormFieldset>
 							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
