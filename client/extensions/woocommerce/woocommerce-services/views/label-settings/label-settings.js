@@ -22,6 +22,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
 import {
@@ -112,12 +113,21 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	refetchSettings = () => {
+		this.props.fetchSettings( this.props.siteId );
+	};
+
 	renderPaymentWarningNotice = () => {
 		const { paymentMethodsWarning } = this.props;
-
-		if ( paymentMethodsWarning ) {
-			return <Notice status="is-warning" showDismiss={ false } text={ paymentMethodsWarning } />;
+		if ( ! paymentMethodsWarning ) {
+			return;
 		}
+
+		return (
+			<Notice status="is-warning" showDismiss={ false } text={ paymentMethodsWarning }>
+				<NoticeAction onClick={ this.refetchSettings }>Retry</NoticeAction>
+			</Notice>
+		);
 	};
 
 	renderSettingsPermissionNotice = () => {
@@ -144,7 +154,7 @@ class ShippingLabels extends Component {
 
 	onVisibilityChange = () => {
 		if ( ! document.hidden ) {
-			this.props.fetchSettings( this.props.siteId );
+			this.refetchSettings();
 		}
 		if ( this.addCreditCardWindow && this.addCreditCardWindow.closed ) {
 			document.removeEventListener( 'visibilitychange', this.onVisibilityChange );
@@ -244,7 +254,7 @@ class ShippingLabels extends Component {
 			<div>
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
-				{ this.renderPaymentWarningNotice() }
+				{ ! isReloading && this.renderPaymentWarningNotice() }
 
 				<QueryStoredCards />
 				{ isReloading ? (
