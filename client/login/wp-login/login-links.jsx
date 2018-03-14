@@ -10,7 +10,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import url from 'url';
+import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -73,14 +73,14 @@ export class LoginLinks extends React.Component {
 		// so users can go back to their site rather than WordPress.com
 		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
 		if ( redirectTo ) {
-			const { pathname, query: redirectToQuery } = url.parse( redirectTo, true );
+			const { pathname, query: redirectToQuery } = parseUrl( redirectTo, true );
 			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id ) {
 				const returnToSiteUrl = addQueryArgs(
 					{ client_id: redirectToQuery.client_id },
 					'https://jetpack.wordpress.com/jetpack.returntosite/1/'
 				);
 
-				const { hostname } = url.parse( redirectToQuery.site_url );
+				const { hostname } = parseUrl( redirectToQuery.site_url );
 				const linkText = hostname
 					? this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
 					: this.props.translate( 'Back' );
