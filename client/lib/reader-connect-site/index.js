@@ -11,11 +11,10 @@ import { connect } from 'react-redux';
 /*
  * Internal Dependencies
  */
-import { getSite, getSiteByFeedUrl } from 'state/reader/sites/selectors';
-import { getFeed, getFeedByFeedUrl } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
+import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
-import { getReaderAliasedFollowFeedUrl } from 'state/selectors';
 
 /**
  * A HoC function that will take in reader identifiers siteId or feedId and
@@ -33,7 +32,6 @@ const connectSite = Component => {
 		static propTypes = {
 			feed: PropTypes.object,
 			site: PropTypes.object,
-			url: PropTypes.string,
 		};
 
 		render() {
@@ -61,15 +59,12 @@ const connectSite = Component => {
 			feed = !! feedId ? getFeed( state, site.feed_ID ) : undefined;
 		}
 
-		// as a last effort check if we have the site/feed by url
-		if ( ! feed && ownProps.url ) {
-			feed = getFeedByFeedUrl( state, getReaderAliasedFollowFeedUrl( state, ownProps.url ) );
-		}
-		if ( ! site && ownProps.url ) {
-			site = getSiteByFeedUrl( state, getReaderAliasedFollowFeedUrl( state, ownProps.url ) );
-		}
-
-		return { feed, site, siteId, feedId };
+		return {
+			feed,
+			site,
+			siteId,
+			feedId,
+		};
 	} )( connectSiteFetcher );
 };
 
