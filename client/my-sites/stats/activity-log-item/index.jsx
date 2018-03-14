@@ -82,6 +82,9 @@ class ActivityLogItem extends Component {
 
 			case 'rewind__backup_error':
 				return this.renderHelpAction( this.props.trackHelpBackupFail );
+
+			case 'plugin__update_failed':
+				return this.renderHelpAction( this.props.trackHelpUpdatePluginFail );
 		}
 
 		if ( ! hideRestore && activityIsRewindable ) {
@@ -282,8 +285,11 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
-	trackHelpThreat: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
-	trackHelpBackupFail: () => recordTracksEvent( 'calypso_activitylog_backup_fail_get_help' ),
+	trackHelpThreat: () => dispatch( recordTracksEvent( 'calypso_activitylog_threat_get_help' ) ),
+	trackHelpBackupFail: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_backup_fail_get_help' ) ),
+	trackHelpUpdatePluginFail: () =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_update_plugin_fail_get_help' ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );
