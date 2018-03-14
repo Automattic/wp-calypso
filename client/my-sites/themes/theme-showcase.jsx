@@ -204,13 +204,22 @@ class ThemeShowcase extends React.Component {
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
-		const themeBanners = omit(
-			{
-				'photo-blog': PhotoBlogBanner,
-				'small-business': SmallBusinessBanner,
-			},
-			currentThemeId
-		); // We don't want to advertise the theme that's already active.
+		let themeBanners = null;
+
+		const availableBanners = {
+			'photo-blog': PhotoBlogBanner,
+			'small-business': SmallBusinessBanner,
+		};
+
+		// We don't want to advertise the theme that's already active.
+		// For logged-out users, we show all available banners.
+		if ( isLoggedIn ) {
+			if ( this.props.siteId && currentThemeId ) {
+				themeBanners = values( omit( availableBanners, currentThemeId ) );
+			}
+		} else {
+			themeBanners = values( availableBanners );
+		}
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
@@ -229,7 +238,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<RandomThemesBanner banners={ values( themeBanners ) } />
+					{ themeBanners ? <RandomThemesBanner banners={ themeBanners } /> : null }
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
