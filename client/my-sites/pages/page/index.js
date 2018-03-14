@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, partial } from 'lodash';
+import { flow, get, includes, noop, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
 import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import Notice from 'components/notice';
 import SiteIcon from 'blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
 import * as utils from 'lib/posts/utils';
@@ -39,6 +40,10 @@ function preloadEditor() {
 	preload( 'post-editor' );
 }
 
+function sleep( ms ) {
+	return new Promise( r => setTimeout( r, ms ) );
+}
+
 class Page extends Component {
 	static propTypes = {
 		// connected
@@ -50,6 +55,14 @@ class Page extends Component {
 		recordEditPage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		onShadow: noop,
+	};
+
+	state = {
+		shadowStatus: false,
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -363,11 +376,19 @@ class Page extends Component {
 			<div className={ classNames( hierarchyIndentClasses ) } />
 		);
 
+		const shadowNotice = this.state.shadowStatus && (
+			<Notice className="page__shadow-notice" isCompact inline { ...this.state.shadowStatus } />
+		);
+
+		const mainClasses = classNames( 'page__main', {
+			'is-shadow': this.state.shadowStatus,
+		} );
+
 		return (
 			<CompactCard className={ classNames( cardClasses ) }>
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
-				<div className="page__main">
+				<div className={ mainClasses }>
 					<a
 						className="page__title"
 						href={ canEdit ? editLinkForPage( page, site ) : page.URL }
@@ -390,11 +411,29 @@ class Page extends Component {
 					/>
 				</div>
 				{ ellipsisMenu }
+				{ shadowNotice }
 			</CompactCard>
 		);
 	}
 
-	updatePostStatus( status ) {
+	async onShadow( status ) {
+		await this.props.onShadow( this.props.page.global_ID, !! status );
+		return await new Promise( resolve => this.setState( { shadowStatus: status }, resolve ) );
+	}
+
+	async performUpdate( { action, progressNotice, successNotice, errorNotice } ) {
+		await this.onShadow( progressNotice );
+		try {
+			await action();
+			await this.onShadow( successNotice );
+		} catch ( error ) {
+			await this.onShadow( errorNotice );
+		}
+		await sleep( 5000 );
+		await this.onShadow( false );
+	}
+
+	async updatePostStatus( status ) {
 		const { page, translate } = this.props;
 
 		switch ( status ) {
@@ -402,20 +441,80 @@ class Page extends Component {
 				const deleteWarning = translate( 'Delete this page permanently?' );
 
 				if ( typeof window === 'object' && window.confirm( deleteWarning ) ) {
-					this.props.deletePost( page.site_ID, page.ID );
+					await this.performUpdate( {
+						action: () => this.props.deletePost( page.site_ID, page.ID ),
+						progressNotice: {
+							status: 'is-error',
+							icon: 'trash',
+							text: translate( 'Deleting…' ),
+						},
+						successNotice: {
+							status: 'is-success',
+							text: translate( 'Page deleted.' ),
+						},
+						errorNotice: {
+							status: 'is-error',
+							text: translate( 'Failed to delete page.' ),
+						},
+					} );
 				}
 				return;
 
 			case 'trash':
-				this.props.trashPost( page.site_ID, page.ID );
+				await this.performUpdate( {
+					action: () => this.props.trashPost( page.site_ID, page.ID ),
+					progressNotice: {
+						status: 'is-error',
+						icon: 'trash',
+						text: translate( 'Trashing…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page trashed.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to trash page.' ),
+					},
+				} );
 				return;
 
 			case 'restore':
-				this.props.restorePost( page.site_ID, page.ID );
+				await this.performUpdate( {
+					action: () => this.props.restorePost( page.site_ID, page.ID ),
+					progressNotice: {
+						status: 'is-warning',
+						icon: 'history',
+						text: translate( 'Restoring…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page restored.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to restore page.' ),
+					},
+				} );
 				return;
 
-			default:
-				this.props.savePost( page.site_ID, page.ID, { status } );
+			case 'publish':
+				await this.performUpdate( {
+					action: () => this.props.savePost( page.site_ID, page.ID, { status } ),
+					progressNotice: {
+						status: 'is-warning',
+						icon: 'history',
+						text: translate( 'Publishing…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page published.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to publish page.' ),
+					},
+				} );
 		}
 	}
 

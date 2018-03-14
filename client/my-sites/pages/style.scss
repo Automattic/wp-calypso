@@ -119,6 +119,10 @@
 
 .page__main {
 	flex-grow: 1;
+
+	&.is-shadow {
+		opacity: 0.5;
+	}
 }
 
 .page__title,
@@ -165,4 +169,9 @@
 	.undo {
 		display: inline;
 	}
+}
+
+.page__shadow-notice {
+	position: absolute;
+	right: 24px;
 }

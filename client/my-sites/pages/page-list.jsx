@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
+import { flowRight, size, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -110,6 +110,29 @@ class Pages extends Component {
 		trackScrollPage: function() {},
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			pages: this.props.pages,
+			shadowItems: {},
+		};
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		const pageListChanged =
+			nextProps.search !== this.props.search ||
+			nextProps.siteId !== this.props.siteId ||
+			nextProps.status !== this.props.status;
+
+		if (
+			nextProps.pages !== this.props.pages &&
+			( size( this.state.shadowItems ) === 0 || pageListChanged )
+		) {
+			this.setState( { pages: nextProps.pages, shadowItems: {} } );
+		}
+	}
+
 	fetchPages = options => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
@@ -153,6 +176,32 @@ class Pages extends Component {
 
 		return markedPages;
 	}
+
+	handleShadow = ( globalID, status ) =>
+		new Promise( resolve =>
+			this.setState( state => {
+				if ( status ) {
+					// add the `globalID` to the `shadowItems` object (behaves like Set)
+					return {
+						shadowItems: { ...state.shadowItems, [ globalID ]: true },
+					};
+				}
+
+				// remove `globalID` from the `shadowItems` set
+				const newShadowItems = without( state.shadowItems, globalID );
+				const newState = {
+					shadowItems: newShadowItems,
+				};
+
+				// if the last shadow item just got removed, start showing the up-to-date post
+				// list as specified by props.
+				if ( size( newShadowItems) === 0 ) {
+					newState.pages = this.props.pages;
+				}
+
+				return newState;
+			}, resolve )
+		);
 
 	getNoContentMessage() {
 		const { query = {}, translate, site, siteId } = this.props;
@@ -271,6 +320,7 @@ class Pages extends Component {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
+					onShadow={ this.handleShadow }
 					page={ page }
 					site={ site }
 					multisite={ false }
@@ -282,6 +332,7 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
+				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				{ rows }
 			</div>
@@ -302,6 +353,7 @@ class Pages extends Component {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
+					onShadow={ this.handleShadow }
 					page={ page }
 					multisite={ this.props.siteId === null }
 				/>
@@ -336,7 +388,8 @@ class Pages extends Component {
 	}
 
 	render() {
-		const { hasSites, loading, pages } = this.props;
+		const { hasSites, loading } = this.props;
+		const { pages } = this.state;
 
 		if ( pages.length && hasSites ) {
 			return this.renderPagesList( { pages } );
