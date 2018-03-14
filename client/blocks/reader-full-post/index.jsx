@@ -8,6 +8,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { get, startsWith } from 'lodash';
 
 /**
@@ -74,6 +75,10 @@ export class FullPostView extends React.Component {
 		referralStream: PropTypes.string,
 	};
 
+	state = {
+		showFocusMode: false,
+	};
+
 	hasScrolledToCommentAnchor = false;
 
 	componentDidMount() {
@@ -136,6 +141,15 @@ export class FullPostView extends React.Component {
 		recordTrackForPost( 'calypso_reader_article_closed', this.props.post );
 
 		this.props.onClose && this.props.onClose();
+	};
+
+	handleResizeClick = () => this.setState( { showFocusMode: ! this.state.showFocusMode } );
+
+	handleResizeKeyPress = event => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.setState( { showFocusMode: ! this.state.showFocusMode } );
+		}
 	};
 
 	handleCommentClick = () => {
@@ -289,7 +303,7 @@ export class FullPostView extends React.Component {
 		}
 
 		const siteName = getSiteName( { site, post } );
-		const classes = { 'reader-full-post': true };
+		const classes = { 'reader-full-post': true, 'is-focus-mode': this.state.showFocusMode };
 		const showRelatedPosts = post && ! post.is_external && post.site_ID;
 		const relatedPostsFromOtherSitesTitle = translate(
 			'More on {{wpLink}}WordPress.com{{/wpLink}}',
@@ -377,6 +391,17 @@ export class FullPostView extends React.Component {
 									fullPost={ true }
 									tagName="div"
 								/>
+							) }
+							{ ! isLoading && (
+								<div
+									className="reader-full-post__resize-button"
+									onClick={ this.handleResizeClick }
+									onKeyPress={ this.handleResizeKeyPress }
+									role="button"
+									tabIndex="0"
+								>
+									<Gridicon icon={ this.state.showFocusMode ? 'user' : 'resize' } />
+								</div>
 							) }
 						</div>
 					</div>

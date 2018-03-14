@@ -587,3 +587,76 @@
 	margin-bottom: 16px;
 	min-height: 200px;
 }
+
+.reader-full-post .reader-full-post__resize-button {
+	display: none;
+	color: $gray;
+	cursor: pointer;
+	margin-left: 18px;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $blue-medium;
+	}
+
+	@include breakpoint( ">660px" ) {
+		display: inline-flex;
+	}
+}
+
+// Distraction free reading mode
+
+.reader-full-post.is-focus-mode {
+
+	.reader-full-post__content {
+		@include breakpoint( ">660px" ) {
+			padding-left: 0;
+		}
+	}
+
+	.reader-full-post__story {
+		@include breakpoint( ">660px" ) {
+			margin: 0 auto;
+		}
+	}
+
+	.reader-full-post__sidebar {
+		@include breakpoint( ">660px" ) {
+			left: 20px;
+			width: 80px;
+		}
+	}
+
+	.reader-full-post__sidebar-comment-like {
+		@include breakpoint( ">660px" ) {
+			display: flex;
+			flex-direction: column;
+		}
+	}
+
+	.reader-full-post__sidebar-comment-like > div {
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 5px;
+		}
+	}
+
+	.reader-full-post__sidebar-comment-like .comment-button {
+		@include breakpoint( ">660px" ) {
+			padding: 0;
+		}
+	}
+
+	.reader-full-post__resize-button {
+		@include breakpoint( ">660px" ) {
+			margin-left: 0;
+		}
+	}
+
+	.author-compact-profile {
+		@include breakpoint( ">660px" ) {
+			display: none;
+		}
+	}
+}
+
