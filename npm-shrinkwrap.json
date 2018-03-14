@@ -5493,8 +5493,8 @@
       }
     },
     "gridicons": {
-      "version": "3.0.0-alpha.2",
-      "integrity": "sha512-dh0vnGzzsdtAiE4YEEFG3W9jK39At+0NAdeXoWmcfafiiHCas/K8rUfPsbDQKGqLP3KoAp1bRsgk2kMu9fWwcQ==",
+      "version": "3.0.0",
+      "integrity": "sha512-fGKzzhhwq2jL7Wz25PuUb4DEIO3xPkRO2ofspo0Xh3yiMPj/nZ051anggYjX/Z7iNvB8md1VcnEx9KZkOvdgdg==",
       "requires": {
         "prop-types": "15.5.10"
       }
