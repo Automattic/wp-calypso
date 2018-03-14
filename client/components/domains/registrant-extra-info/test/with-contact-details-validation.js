@@ -85,7 +85,9 @@ describe( 'uk-form validation', () => {
 				).dive();
 
 				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {
-					extra: { registrationNumber: [ 'dotukRegistrantTypeRequiresRegistrationNumber' ] },
+					extra: {
+						uk: { registrationNumber: [ 'dotukRegistrantTypeRequiresRegistrationNumber' ] },
+					},
 				} );
 			} );
 		} );
@@ -165,7 +167,7 @@ describe( 'uk-form validation', () => {
 				).dive();
 
 				expect( wrapper.props() ).toHaveProperty( 'validationErrors', {
-					extra: { tradingName: [ 'dotukRegistrantTypeRequiresTradingName' ] },
+					extra: { uk: { tradingName: [ 'dotukRegistrantTypeRequiresTradingName' ] } },
 				} );
 			} );
 		} );
