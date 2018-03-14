@@ -25,14 +25,6 @@
 		border: solid 1px $alert-green;
 		color: $alert-green;
 		transition: border-color 0.3s ease, color 0.3s ease;
-		.conf-alert_title {
-			&:after {
-				@extend %noticon;
-				content: '\f418';
-				font-size: (24 / 16) * 1em;
-				vertical-align: top;
-			}
-		}
 		hr {
 			background: #eee;
 			margin: (10 / 16) * 1em 0 0;
@@ -41,7 +33,7 @@
 			display: block;
 			font-size: (12 / 16) * 1em;
 			color: $gray;
-			padding: (10 / 12) * 1em 0 0;
+			padding: (10 / 12) * 1em 0 0 (10 / 16) * 1em;
 			&:hover {
 				cursor: pointer;
 			}
@@ -78,26 +70,6 @@
 				}
 				&:last-child {
 					animation-delay: 0.3s;
-				}
-			}
-			.conf-alert_title {
-				&:after {
-					content: '';
-				}
-			}
-		}
-		&.conf-alert--trashed {
-			.conf-alert_title {
-				&:after {
-					content: '\f407';
-				}
-			}
-		}
-		&.conf-alert--deleted,
-		&.conf-alert--error {
-			.conf-alert_title {
-				&:after {
-					content: '';
 				}
 			}
 		}
