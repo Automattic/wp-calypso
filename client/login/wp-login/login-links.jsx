@@ -86,7 +86,7 @@ export class LoginLinks extends React.Component {
 					: this.props.translate( 'Back' );
 
 				return (
-					<ExternalLink href={ returnToSiteUrl }>
+					<ExternalLink className="wp-login__site-return-link" href={ returnToSiteUrl }>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ linkText }
 					</ExternalLink>
