@@ -72,6 +72,7 @@ export class Checklist extends Component {
 				key={ task.id }
 				id={ task.id }
 				title={ task.title }
+				buttonPrimary={ task.buttonPrimary }
 				buttonText={ task.buttonText }
 				completedTitle={ task.completedTitle }
 				completedButtonText={ task.completedButtonText }
