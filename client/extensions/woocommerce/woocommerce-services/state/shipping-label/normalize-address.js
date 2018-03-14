@@ -20,8 +20,8 @@ export default ( orderId, siteId, dispatch, address, group ) => {
 		let error = null, fieldErrors = null;
 		const setError = ( err ) => error = err;
 		const setSuccess = ( json ) => {
-			if ( json.fieldErrors ) {
-				fieldErrors = json.fieldErrors;
+			if ( json.field_errors ) {
+				fieldErrors = json.field_errors;
 				return;
 			}
 			dispatch( {
