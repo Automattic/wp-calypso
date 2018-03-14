@@ -1,14 +1,5 @@
 /** @format */
 export default {
-	multiDomainRegistrationV1: {
-		datestamp: '20200721',
-		variations: {
-			singlePurchaseFlow: 10,
-			popupCart: 45,
-			keepSearchingInGapps: 45,
-		},
-		defaultVariation: 'singlePurchaseFlow',
-	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
