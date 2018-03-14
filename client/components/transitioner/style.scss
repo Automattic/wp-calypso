@@ -1,0 +1,46 @@
+.transitioner {
+	.transitioner__incoming {
+		position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+	}
+
+	&.transitioner__transition-right {
+		transition: all 0.2s ease-in-out;
+		transform: translate( -100% ); // start position, trans component is off to the right
+		position: relative;
+
+		.transitioner__incoming {
+			background: rgba(150,150,0,0.1);
+			transform: translate( 100% );
+		}
+	}
+
+	&.transitioner__transition-left {
+		transition: all 0.2s ease-in-out;
+		transform: translate( 100% ); // start position, trans component is off to the left
+
+		.transitioner__incoming {
+			background: rgba(190,0,0,0.1);
+			transform: translate( -100% );
+		}
+	}
+}
+
+
+.sb-view-transition-enter {
+	opacity: 0.5;
+	transition-property: transform, opacity;
+	transition-duration: 300ms;
+	transition-timing-function: cubic-bezier(0.175, 0.665, 0.320, 1), linear;
+}
+
+.sb-view-transition-leave {
+	opacity: 0;
+	
+ 	 transition-property: transform, opacity;
+	transition-duration: 300ms;
+	transition-timing-function: cubic-bezier(0.175, 0.665, 0.320, 1), linear;
+}
