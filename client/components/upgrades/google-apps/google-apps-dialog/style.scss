@@ -135,18 +135,13 @@ form.google-apps-dialog {
 		border: 2px dashed $gray-lighten-20;
 		color: $gray;
 		cursor: pointer;
+		display: flex;
+		align-items: center;
 		margin: 0 0 30px;
-		padding: 12px 18px 12px 45px;
+		padding: 12px;
 		position: relative;
 		text-align: left;
 		width: 100%;
-
-		&:before {
-			position: absolute;
-				left: 10px;
-				top: 7px;
-			@include noticon( '\f510', 30px );
-		}
 	}
 }
 
