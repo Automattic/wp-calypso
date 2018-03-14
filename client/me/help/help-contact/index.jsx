@@ -115,6 +115,7 @@ class HelpContact extends React.Component {
 	};
 
 	startHappychat = contactForm => {
+		this.recordCompactSubmit( 'happychat' );
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
@@ -154,6 +155,7 @@ class HelpContact extends React.Component {
 	};
 
 	submitDirectlyQuestion = contactForm => {
+		this.recordCompactSubmit( 'directly' );
 		const { display_name, email } = this.props.currentUser;
 
 		this.props.askDirectlyQuestion( contactForm.message, display_name, email );
@@ -178,6 +180,7 @@ class HelpContact extends React.Component {
 		const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 		this.setState( { isSubmitting: true } );
+		this.recordCompactSubmit( 'kayako' );
 
 		wpcom.submitKayakoTicket(
 			subject,
@@ -220,6 +223,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale } = this.props;
 
 		this.setState( { isSubmitting: true } );
+		this.recordCompactSubmit( 'forums' );
 
 		wpcom.submitSupportForumsTopic(
 			subject,
@@ -292,6 +296,14 @@ class HelpContact extends React.Component {
 		}
 
 		return SUPPORT_FORUM;
+	};
+
+	recordCompactSubmit = variation => {
+		if ( this.props.compact ) {
+			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+				support_variation: variation,
+			} );
+		}
 	};
 
 	getContactFormPropsVariation = variationSlug => {
