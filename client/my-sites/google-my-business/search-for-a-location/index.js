@@ -21,7 +21,6 @@ import SearchCard from 'components/search-card';
 import StepNavigation from '../step-navigation';
 
 let autocompleteService = {};
-let google;
 
 class SearchForALocation extends Component {
 	static propTypes = {
