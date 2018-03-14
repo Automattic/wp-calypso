@@ -112,11 +112,17 @@
 }
 
 .packages-step__package-weight {
-	display: inline-block;
 	width: 140px;
-	margin-bottom: 0;
+	margin-bottom: 10px;
+	float: left;
+	margin-right: 65px;
 }
 
 .packages-step__package-weight-unit {
 	margin-left: 8px;
+}
+
+.packages-step__package-signature {
+	width: 190px;
+	float: left;
 }

@@ -25,6 +25,7 @@ import {
 	updatePackageWeight,
 	setPackageType,
 	openAddItem,
+	setPackageSignature,
 } from 'woocommerce/woocommerce-services/state/shipping-label/actions';
 import {
 	getShippingLabel,
@@ -156,6 +157,9 @@ const PackageInfo = ( props ) => {
 	};
 
 	const onWeightChange = ( event ) => props.updatePackageWeight( orderId, siteId, packageId, event.target.value );
+	const onSignatureChange = ( event ) => {
+		props.setPackageSignature( orderId, siteId, packageId, event.target.value );
+	};
 
 	return (
 		<div className="packages-step__package">
@@ -169,18 +173,32 @@ const PackageInfo = ( props ) => {
 			</div>
 
 			<div>
-				<FormFieldset className="packages-step__package-weight">
-				<FormLabel htmlFor={ `weight_${ packageId }` }>{ translate( 'Total Weight' ) }</FormLabel>
-					<FormTextInputWithAffixes
-						id={ `weight_${ packageId }` }
-						placeholder={ translate( '0' ) }
-						value={ pckg.weight || '' }
-						onChange={ onWeightChange }
-						isError={ Boolean( pckgErrors.weight ) }
-						type="number"
-						noWrap
-						suffix={ weightUnit } />
-					{ pckgErrors.weight && <FieldError text={ pckgErrors.weight } /> }
+				<FormFieldset>
+					<div className="packages-step__package-weight">
+						<FormLabel htmlFor={ `weight_${ packageId }` }>{ translate( 'Total Weight' ) }</FormLabel>
+						<FormTextInputWithAffixes
+							id={ `weight_${ packageId }` }
+							placeholder={ translate( '0' ) }
+							value={ pckg.weight || '' }
+							onChange={ onWeightChange }
+							isError={ Boolean( pckgErrors.weight ) }
+							type="number"
+							noWrap
+							suffix={ weightUnit } />
+						{ pckgErrors.weight && <FieldError text={ pckgErrors.weight } /> }
+					</div>
+					<div className="packages-step__package-signature">
+						<FormLabel htmlFor={ `signature_${ packageId }` }>{ translate( 'Require Signature' ) }</FormLabel>
+						<FormSelect
+							id={ `weight_${ packageId }` }
+							value={ pckg.signature || 'no' }
+							onChange={ onSignatureChange }
+						>
+							<option value={ 'no' } key={ 'no' }>{ translate( 'No' ) }</option> )
+							<option value={ 'yes' } key={ 'yes' }>{ translate( 'Yes' ) }</option> )
+							<option value={ 'adult' } key={ 'adult' }>{ translate( 'Yes, from an adult' ) }</option> )
+						</FormSelect>
+					</div>
 				</FormFieldset>
 			</div>
 		</div>
@@ -220,6 +238,7 @@ const mapDispatchToProps = ( dispatch ) => {
 		updatePackageWeight,
 		setPackageType,
 		openAddItem,
+		setPackageSignature,
 	}, dispatch );
 };
 
