@@ -14,9 +14,11 @@ import {
 	get,
 	includes,
 	isEmpty,
+	mapKeys,
 	noop,
 	pickBy,
 	reject,
+	snakeCase,
 	startsWith,
 	times,
 	uniqBy,
@@ -365,10 +367,13 @@ class RegisterDomainStep extends React.Component {
 		this.onSearchChange( this.state.lastQuery, () => this.onSearch( this.state.lastQuery ) );
 	};
 
-	getSetFilters() {
+	getSetFiltersForAPI() {
 		const { filters } = this.state;
 		return {
-			...pickBy( filters, value => isNumberString( value ) || typeof value === 'boolean' ),
+			...mapKeys(
+				pickBy( filters, value => isNumberString( value ) || typeof value === 'boolean' ),
+				( value, key ) => snakeCase( key )
+			),
 		};
 	}
 
@@ -483,7 +488,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: this.getTldWeightOverrides(),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
-			...this.getSetFilters(),
+			...this.getSetFiltersForAPI(),
 		};
 
 		domains
@@ -585,7 +590,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: null,
 			vendor: 'wpcom',
 			vertical: this.props.surveyVertical,
-			...this.getSetFilters(),
+			...this.getSetFiltersForAPI(),
 		};
 
 		domains
