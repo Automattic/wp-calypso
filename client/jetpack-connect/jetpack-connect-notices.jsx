@@ -92,9 +92,8 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case NOT_ACTIVE_JETPACK:
-				noticeValues.icon = 'block';
-				noticeValues.text = translate( 'Jetpack is deactivated.' );
-				return noticeValues;
+				// in use in remote install, which automatically redirects to install
+				return null;
 
 			case OUTDATED_JETPACK:
 				noticeValues.icon = 'block';
