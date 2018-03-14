@@ -111,8 +111,9 @@ class PlanFeaturesHeader extends Component {
 	getCreditLabel() {
 		const {
 			available,
-			showModifiedPricingDisplay,
 			discountPrice,
+			site,
+			showModifiedPricingDisplay,
 			rawPrice,
 			relatedMonthlyPlan,
 		} = this.props;
@@ -130,7 +131,11 @@ class PlanFeaturesHeader extends Component {
 		}
 
 		// Note: Don't make this translatable because it's only visible to English-language users
-		return <span className="plan-features__header-credit-label">Credit available</span>;
+		return (
+			<span className="plan-features__header-credit-label">
+				{ site.jetpack ? 'Discount available' : 'Credit available' }
+			</span>
+		);
 	}
 
 	getDiscountTooltipMessage() {

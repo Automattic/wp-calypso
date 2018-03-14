@@ -56,7 +56,7 @@ import { abtest, getABTestVariation } from 'lib/abtest';
 
 class PlanFeatures extends Component {
 	render() {
-		const { planProperties, isInSignup, showModifiedPricingDisplay } = this.props;
+		const { planProperties, isInSignup, showModifiedPricingDisplay, site } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -79,7 +79,7 @@ class PlanFeatures extends Component {
 
 		return (
 			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
-				{ showModifiedPricingDisplay && this.renderCreditNotice() }
+				{ showModifiedPricingDisplay && ! site.jetpack && this.renderCreditNotice() }
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
 					<div className="plan-features__content">
