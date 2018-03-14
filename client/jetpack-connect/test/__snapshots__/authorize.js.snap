@@ -75,7 +75,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
         <LoggedOutFormLinkItem
           href="http://an.example.site/wp-admin/admin.php?page=jetpack"
         >
-          <Component
+          <t
             icon="arrow-left"
             size={18}
           />
