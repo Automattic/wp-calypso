@@ -60,21 +60,24 @@ $date-picker_nav_button_size: 20px;
 	height: 26px;
 	text-align: center;
 	top: 11px;
+	z-index: z-index( '.popover', '.date-picker__nav-bar' );
 }
 
 .date-picker__previous-month,
 .date-picker__next-month {
 	float: right;
-	padding: 1px 4px;
+	padding: 1px 8px;
 	font-size: 12px;
 	text-transform: capitalize;
 	cursor: pointer;
 	z-index: 2;
 	order-width: 1px;
+
 	&:hover {
 		color: $blue-medium;
 	}
 }
+
 .date-picker__previous-month {
 	float: left;
 }

@@ -66,7 +66,7 @@ class PostScheduleHeader extends React.Component {
 		return (
 			<div className={ headerClasses }>
 				<span className="post-schedule__header-month" onClick={ this.setToCurrentMonth }>
-					{ this.props.date.format( 'MMMM' ) }
+					{ this.props.date.format( 'MMM' ) }
 				</span>
 
 				<div
