@@ -10,6 +10,7 @@
 		margin-bottom: 8px;
 
 		.selected {
+
 			.menu-link-icon,
 			.sidebar__menu-action .gridicon,
 			.sidebar-dynamic-menu-action-icon {
@@ -18,6 +19,22 @@
 
 			.sidebar-streams__edit-icon {
 				fill: $white;
+			}
+
+			.gridicon {
+
+				@include breakpoint( "<660px" ) {
+					fill: $blue-medium;
+				}
+			}
+
+			li > a,
+			li > a:visited,
+			:not( .sidebar__button ) {
+
+				@include breakpoint( "<660px" ) {
+					color: $blue-medium;
+				}
 			}
 		}
 
