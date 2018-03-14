@@ -7,69 +7,72 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { map, noop } from 'lodash';
+import { map, flatMap, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import QueryTimezones from 'components/data/query-timezones';
-import { getRawOffsets, getTimezones } from 'state/selectors';
+import { getRawOffsets, getTimezones, getTimezonesLabel } from 'state/selectors';
+import SelectDropdown from 'components/select-dropdown';
 
 class Timezone extends Component {
-	onSelect = event => {
-		this.props.onSelect( event.target.value );
+	onSelect = option => {
+		this.props.onSelect( option.value );
 	};
 
-	renderOptionsByContinent() {
-		const { timezones } = this.props;
-
-		return map( timezones, timezoneContinent => {
+	getTimezonesByContinent() {
+		return flatMap( this.props.timezones, timezoneContinent => {
 			const [ continent, countries ] = timezoneContinent;
 
-			return (
-				<optgroup label={ continent } key={ continent }>
-					{ map( countries, ( timezone, index ) => {
-						const [ value, label ] = timezone;
-
-						return (
-							<option value={ value } key={ index }>
-								{ label }
-							</option>
-						);
-					} ) }
-				</optgroup>
+			return [ {
+				value: 'label-' + continent,
+				label: continent,
+				isLabel: true,
+			} ].concat(
+				map( countries, timezone => {
+					const [ value, label ] = timezone;
+					return { value, label };
+				} )
 			);
 		} );
 	}
 
-	renderManualUtcOffsets() {
+	getManualUtcOffsets() {
 		const { rawOffsets, translate } = this.props;
 
-		return (
-			<optgroup label={ translate( 'Manual Offsets' ) }>
-				{ map( rawOffsets, ( label, value ) => {
-					return (
-						<option value={ value } key={ value }>
-							{ label }
-						</option>
-					);
-				} ) }
-			</optgroup>
+		return [ {
+			value: 'label-manual',
+			label: translate( 'Manual Offsets' ),
+			isLabel: true,
+		} ].concat(
+			map( rawOffsets, ( label, value ) => ( { label, value } ) )
 		);
 	}
 
 	render() {
-		const { selectedZone } = this.props;
+		const { includeManualOffsets, selectedZone, selectedZoneLabel } = this.props;
+
+		let options = this.getTimezonesByContinent().concat( [
+			{ value: 'label-UTC', label: 'UTC', isLabel: true },
+			{ value: 'UTC', label: 'UTC' },
+		] );
+		if ( includeManualOffsets ) {
+			options = options.concat( this.getManualUtcOffsets() );
+		}
+
 		return (
-			<select onChange={ this.onSelect } value={ selectedZone || '' }>
+			<React.Fragment>
 				<QueryTimezones />
-				{ this.renderOptionsByContinent() }
-				<optgroup label="UTC">
-					<option value="UTC">UTC</option>
-				</optgroup>
-				{ this.props.includeManualOffsets && this.renderManualUtcOffsets() }
-			</select>
+				<SelectDropdown
+					className="timezone__selector"
+					onSelect={ this.onSelect }
+					options={ options }
+					value={ selectedZone || '' }
+					selectedText={ selectedZoneLabel || selectedZone || '' }
+				/>
+			</React.Fragment>
 		);
 	}
 }
@@ -85,7 +88,8 @@ Timezone.propTypes = {
 	includeManualOffsets: PropTypes.bool,
 };
 
-export default connect( state => ( {
+export default connect( ( state, ownProps ) => ( {
 	rawOffsets: getRawOffsets( state ),
 	timezones: getTimezones( state ),
+	selectedZoneLabel: getTimezonesLabel( state, ownProps.selectedZone ),
 } ) )( localize( Timezone ) );
