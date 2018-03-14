@@ -16,6 +16,7 @@ const config = {
 			'@babel/env',
 			{
 				modules,
+				loose: true, // less spec compliant but also much less code
 				targets: {
 					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'not ie <= 10' ],
 				},
