@@ -13,6 +13,8 @@ import { bypassDataLayer } from '../utils';
 import { middleware } from '../wpcom-api-middleware';
 import { mergeHandlers } from 'state/action-watchers/utils';
 
+jest.mock( 'store/store', () => ( { get: () => {} } ) );
+
 describe( 'WordPress.com API Middleware', () => {
 	let next;
 	let store;
