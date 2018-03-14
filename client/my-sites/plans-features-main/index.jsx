@@ -40,8 +40,25 @@ import PaymentMethods from 'blocks/payment-methods';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { selectSiteId } from 'state/help/actions';
 
 class PlansFeaturesMain extends Component {
+	componentWillUpdate( nextProps ) {
+		/**
+		 * Happychat does not update with the selected site right now :(
+		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
+		 * page, for example between a Jetpack and Simple site.
+		 *
+		 * @TODO: When happychat correctly handles site switching, remove manual
+		 * site update action from client/my-sites/plans-features-main/index.jsx
+		 */
+		const siteId = get( this.props, [ 'site', 'ID' ] );
+		const nextSiteId = get( nextProps, [ 'site', 'ID' ] );
+		if ( siteId !== nextSiteId && nextSiteId ) {
+			this.props.selectSiteId( nextSiteId );
+		}
+	}
+
 	getPlanFeatures() {
 		const {
 			basePlansPath,
@@ -438,6 +455,9 @@ PlansFeaturesMain.defaultProps = {
 	showFAQ: true,
 };
 
-export default connect( state => ( {
-	isChatAvailable: isHappychatAvailable( state ),
-} ) )( localize( PlansFeaturesMain ) );
+export default connect(
+	state => ( {
+		isChatAvailable: isHappychatAvailable( state ),
+	} ),
+	{ selectSiteId }
+)( localize( PlansFeaturesMain ) );
