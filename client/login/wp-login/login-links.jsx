@@ -3,11 +3,9 @@
 /**
  * External dependencies
  */
-import Gridicon from 'gridicons';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import urlModule from 'url';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -26,7 +24,6 @@ import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
-		backTo: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
@@ -67,26 +64,6 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
-		const { backTo, translate } = this.props;
-
-		// A backTo prop may be supplied, allowing the back button href to be controlled.
-		if ( backTo ) {
-			const { hostname, protocol } = urlModule.parse( backTo );
-
-			// Ensure we've got a relative URL (null) or an http[s] protocol
-			// We don't want to allow `javascript:…`
-			if ( null === protocol || 'http:' === protocol || 'https:' === protocol ) {
-				const linkText = hostname
-					? translate( 'Back to %(hostname)s', { args: { hostname } } )
-					: translate( 'Back' );
-				return (
-					<ExternalLink href={ backTo }>
-						<Gridicon icon="arrow-left" size={ 18 } />
-						{ linkText }
-					</ExternalLink>
-				);
-			}
-		}
 		return (
 			<LoggedOutFormBackLink
 				classes={ { 'logged-out-form__link-item': false } }

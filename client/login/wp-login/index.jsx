@@ -29,7 +29,6 @@ import { recordPageViewWithClientId as recordPageView } from 'state/analytics/ac
 
 export class Login extends React.Component {
 	static propTypes = {
-		backTo: PropTypes.string,
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
 		isJetpack: PropTypes.bool.isRequired,
@@ -166,7 +165,7 @@ export class Login extends React.Component {
 	}
 
 	render() {
-		const { backTo, locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
+		const { locale, privateSite, socialConnect, translate, twoFactorAuthType } = this.props;
 		const canonicalUrl = addLocaleToWpcomUrl( 'https://wordpress.com/login', locale );
 
 		return (
@@ -186,7 +185,6 @@ export class Login extends React.Component {
 
 						{ ! socialConnect && (
 							<LoginLinks
-								backTo={ backTo }
 								locale={ locale }
 								privateSite={ privateSite }
 								twoFactorAuthType={ twoFactorAuthType }
