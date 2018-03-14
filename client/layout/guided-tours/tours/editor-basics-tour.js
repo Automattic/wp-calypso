@@ -62,6 +62,7 @@ export const EditorBasicsTour = makeTour(
 					<img
 						src="https://i0.wp.com/en-support.files.wordpress.com/2017/03/editor-content-area_360.gif"
 						style={ { marginBottom: '10px', border: '3px solid #00AADC', borderRadius: '4px' } }
+						alt=""
 					/>
 					<ButtonRow>
 						<Next step="add-things" />

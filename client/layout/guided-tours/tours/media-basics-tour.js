@@ -64,6 +64,7 @@ export const MediaBasicsTour = makeTour(
 					<img
 						src="https://i0.wp.com/en-support.files.wordpress.com/2017/07/media-drag-and-drop.gif"
 						style={ { marginBottom: '10px', border: '3px solid #00AADC', borderRadius: '4px' } }
+						alt=""
 					/>
 					<ButtonRow>
 						<Next step="select-image" />
@@ -92,7 +93,10 @@ export const MediaBasicsTour = makeTour(
 					<Continue
 						click
 						step="click-to-edit"
-						target=".media-library__list-item:not(.is-selected) .media-library__list-item-figure, .media-library__list-item-figure"
+						target={
+							'.media-library__list-item:not(.is-selected) .media-library__list-item-figure, ' +
+							'.media-library__list-item-figure'
+						}
 					>
 						{ translate( 'To find these options, click on this file to select it.' ) }
 					</Continue>

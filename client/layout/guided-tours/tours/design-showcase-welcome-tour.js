@@ -74,7 +74,8 @@ export const DesignShowcaseWelcomeTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Search for your ideal theme by feature, look, or topic — you can use words like "business", "photography", or "food".'
+							'Search for your ideal theme by feature, look, or topic — ' +
+								'you can use words like "business", "photography", or "food".'
 						) }
 					</p>
 					<ButtonRow>

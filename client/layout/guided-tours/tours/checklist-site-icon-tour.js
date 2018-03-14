@@ -47,7 +47,8 @@ export const ChecklistSiteIconTour = makeTour(
 				<Fragment>
 					<p>
 						{ translate(
-							'Press {{changeButton/}} to upload your own image or icon that can help people identify your site in the browser.',
+							'Press {{changeButton/}} to upload your own image or icon ' +
+								'that can help people identify your site in the browser.',
 							{
 								components: { changeButton: <ChangeButton /> },
 							}
