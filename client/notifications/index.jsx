@@ -221,7 +221,7 @@ export class Notifications extends Component {
 						post_id: postId,
 						comment_id: commentId,
 					} );
-					page( `/comments/${ siteId }/${ commentId }?action=edit` );
+					page( `/comment/${ siteId }/${ commentId }?action=edit` );
 				},
 			],
 		};
