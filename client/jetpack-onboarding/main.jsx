@@ -33,11 +33,13 @@ import {
 	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import {
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
+import { setSelectedSiteId } from 'state/ui/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -52,10 +54,12 @@ class JetpackOnboardingMain extends React.PureComponent {
 
 	componentDidMount() {
 		this.retrieveOnboardingCredentials();
+		this.setSelectedSite();
 	}
 
 	componentDidUpdate() {
 		this.retrieveOnboardingCredentials();
+		this.setSelectedSite();
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -81,6 +85,20 @@ class JetpackOnboardingMain extends React.PureComponent {
 				`//${ siteDomain }/wp-admin/admin.php`
 			);
 			externalRedirect( url );
+		}
+	}
+
+	setSelectedSite() {
+		const { hasFinishedRequestingSite } = this.state;
+		const { isConnected, isSiteSelected, siteId } = this.props;
+
+		if ( ! hasFinishedRequestingSite ) {
+			return;
+		}
+
+		if ( isConnected && ! isSiteSelected ) {
+			// If the site we're onboarding is connected and not selected, select it
+			this.props.setSelectedSiteId( siteId );
 		}
 	}
 
@@ -173,6 +191,8 @@ export default connect(
 		const isRequestingWhetherConnected =
 			isRequestingSite( state, siteId ) || isRequestingSites( state );
 		const isConnected = isJetpackSite( state, siteId );
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSiteSelected = selectedSiteId === siteId;
 
 		let jpoAuth;
 
@@ -216,6 +236,7 @@ export default connect(
 			isConnected,
 			isRequestingSettings,
 			isRequestingWhetherConnected,
+			isSiteSelected,
 			siteId,
 			siteSlug,
 			settings,
@@ -224,12 +245,13 @@ export default connect(
 			userIdHashed,
 		};
 	},
-	{ recordTracksEvent, saveJetpackOnboardingSettings },
+	{ recordTracksEvent, saveJetpackOnboardingSettings, setSelectedSiteId },
 	(
 		{ siteId, jpoAuth, userIdHashed, ...stateProps },
 		{
 			recordTracksEvent: recordTracksEventAction,
 			saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
+			...dispatchProps
 		},
 		ownProps
 	) => ( {
@@ -248,6 +270,7 @@ export default connect(
 			saveJetpackOnboardingSettingsAction( s, {
 				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
 			} ),
+		...dispatchProps,
 		...ownProps,
 	} )
 )( localize( JetpackOnboardingMain ) );
