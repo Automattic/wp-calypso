@@ -27,7 +27,7 @@
 		font-family: $code;
 		color: $gray-text-min;
 	}
-	
+
 	.devdocs__result-snippet {
 		font-size: 15px;
 		color: $gray-text;
@@ -90,7 +90,7 @@
 		background: $gray-light;
 		padding: 16px;
 		box-shadow: inset 0 2px 1px rgba( $gray-dark, 0.075 );
-		
+
 		// Grid background
 		background-image: linear-gradient( rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
 		linear-gradient( 90deg, rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
@@ -117,7 +117,7 @@
 			display: block;
 		}
 
-		.docs-examples__wrapper-content {
+		.docs-example__wrapper-content {
 			padding: 32px;
 		}
 	}
@@ -256,7 +256,7 @@
 			flex: 3;
 			margin-right: 8px;
 		}
-		
+
 		.docs-selectors__result-return {
 			flex: 2;
 			margin-left: 8px;
@@ -269,7 +269,6 @@
 			border-radius: 4px;
 			padding: 16px 24px;
 		}
-		
 
 		.docs-selectors__result-label {
 			display: block;
