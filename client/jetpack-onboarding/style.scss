@@ -38,22 +38,18 @@
 
 	.steps__summary-columns {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: center;
 		font-size: 14px;
 		margin-top: 30px;
-
-		@include breakpoint( '<480px' ) {
-			display: block;
-			text-align: center;
-		}
 	}
 
 	.steps__summary-column {
 		margin: 0 60px 20px;
 
-		@include breakpoint( '<480px' ) {
-			display: inline-block;
-			text-align: left;
+		@include breakpoint( '<660px' ) {
+			margin-left: 30px;
+			margin-right: 30px;
 		}
 	}
 
