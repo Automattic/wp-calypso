@@ -57,7 +57,6 @@ const Collection = ( {
 			summary.push(
 				<span key={ `instance-link-${ showCounter }` } className="design__instance-link">
 					<a href={ exampleLink }>{ exampleName }</a>
-					,&nbsp;
 				</span>
 			);
 		}
@@ -78,7 +77,7 @@ const Collection = ( {
 				filter && (
 					<div className="design__instance-links">
 						<span>Showing </span>
-						{ summary }...
+						{ summary }
 					</div>
 				) }
 			{ /*
