@@ -1,5 +1,8 @@
 .google-my-business-stats {
-
+	
+	.section-header__label {
+		line-height: 1.4em;
+	}
 }
 
 .google-my-business-stats__container {
@@ -81,12 +84,17 @@
 }
 
 .google-my-business-stats__feature {
-	display: flex;
+	font-size: 16px;
+	@include breakpoint( '>660px' ) {
+		font-size: 20px;
+	}
 }
 
 .google-my-business-stats__feature-image {
+	float: right;
 	margin: 0 0 1em 1em;
-	width: 120%;
+	max-width: 200px;
+	width: 50%;
 }
 
 .google-my-business-stats__feature-button {

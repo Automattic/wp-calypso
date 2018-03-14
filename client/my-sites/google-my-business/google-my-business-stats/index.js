@@ -109,14 +109,14 @@ class Stats extends Component {
 
 					<Card>
 						<div className="google-my-business-stats__feature">
-							<p>
-								Businesses with recent photos typically receive more clicks to their business
-								websites.
-							</p>
 							<img
 								src="/calypso/images/google-my-business/reviews.svg"
 								className="google-my-business-stats__feature-image"
 							/>
+							<p>
+								Businesses with recent photos typically receive more clicks to their business
+								websites.
+							</p>
 						</div>
 						<Button primary className="google-my-business-stats__feature-button">
 							Post Photos
@@ -160,13 +160,13 @@ class Stats extends Component {
 
 					<Card>
 						<div className="google-my-business-stats__feature">
-							<p className="google-my-business-stats__description">
-								Complete business listings get on average 7x more clicks than empty listings.
-							</p>
 							<img
 								src="/calypso/images/google-my-business/complete-listing.svg"
 								className="google-my-business-stats__feature-image"
 							/>
+							<p className="google-my-business-stats__description">
+								Complete business listings get on average 7x more clicks than empty listings.
+							</p>
 						</div>
 						<Button primary className="google-my-business-stats__feature-button">
 							Complete your listing
@@ -218,14 +218,14 @@ class Stats extends Component {
 
 					<Card>
 						<div className="google-my-business-stats__feature">
-							<p>
-								Customers compare business listings on Google to make decisions. Make your listing
-								count.
-							</p>
 							<img
 								src="/calypso/images/google-my-business/compare.svg"
 								className="google-my-business-stats__feature-image"
 							/>
+							<p>
+								Customers compare business listings on Google to make decisions. Make your listing
+								count.
+							</p>
 						</div>
 						<Button primary className="google-my-business-stats__feature-button">
 							Complete Your Listing
