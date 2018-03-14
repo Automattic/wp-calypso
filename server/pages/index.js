@@ -48,7 +48,7 @@ function getInitialServerState( serializedServerState ) {
 	return pick( serverState, Object.keys( serializedServerState ) );
 }
 
-function getCurrentBranchName() {
+export function getCurrentBranchName() {
 	try {
 		return execSync( 'git rev-parse --abbrev-ref HEAD' )
 			.toString()
@@ -58,7 +58,7 @@ function getCurrentBranchName() {
 	}
 }
 
-function getCurrentCommitShortChecksum() {
+export function getCurrentCommitShortChecksum() {
 	try {
 		return execSync( 'git rev-parse --short HEAD' )
 			.toString()
@@ -381,7 +381,7 @@ function render404( request, response ) {
 	response.status( 404 ).send( renderJsx( '404', ctx ) );
 }
 
-module.exports = function() {
+export default function() {
 	const app = express();
 
 	app.set( 'views', __dirname );
@@ -618,4 +618,4 @@ module.exports = function() {
 	app.use( serverRenderError );
 
 	return app;
-};
+}

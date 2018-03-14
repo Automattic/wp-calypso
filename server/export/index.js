@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { execSync } from 'child_process';
 import { resolve, join } from 'path';
 import { writeFile } from 'fs';
 import { pick, partial } from 'lodash';
@@ -22,29 +21,10 @@ import {
 } from 'state/document-head/selectors';
 import sections from '../../client/sections';
 import { createReduxStore } from 'state';
+import { getCurrentBranchName, getCurrentCommitShortChecksum } from '../pages/index';
 import { generateStaticUrls, staticFilesUrls } from '../pages/static-files';
 
 import Shell from 'document';
-
-function getCurrentBranchName() {
-	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
-function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' )
-			.toString()
-			.replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
 
 const getDefaultContext = () => {
 	const calypsoEnv = config( 'env_id' );
