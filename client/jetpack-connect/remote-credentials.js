@@ -57,11 +57,16 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	componentWillMount() {
-		const { isResponseCompleted, siteToConnect } = this.props;
-		if ( isResponseCompleted ) {
+	componentWillReceiveProps() {
+		const { installError } = this.props;
+
+		if ( installError ) {
 			this.setState( { isSubmitting: false } );
 		}
+	}
+
+	componentWillMount() {
+		const { siteToConnect } = this.props;
 
 		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 			if ( ! siteToConnect ) {
@@ -106,9 +111,8 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFields() {
-		const { installError, isResponseCompleted, siteToConnect, translate } = this.props;
+		const { translate } = this.props;
 		const { isSubmitting, password, username } = this.state;
-		const isFetching = ! installError && ! isResponseCompleted && isSubmitting && siteToConnect;
 
 		return (
 			<div>
@@ -140,22 +144,21 @@ export class OrgCredentialsForm extends Component {
 							value={ password || '' }
 						/>
 					</div>
-					{ isFetching ? <Spinner /> : null }
+					{ isSubmitting ? <Spinner /> : null }
 				</div>
 			</div>
 		);
 	}
 
 	renderButtonLabel() {
-		const { installError, isResponseCompleted, siteToConnect, translate } = this.props;
+		const { isResponseCompleted, translate } = this.props;
 		const { isSubmitting } = this.state;
-		const isFetching = ! installError && ! isResponseCompleted && isSubmitting && siteToConnect;
 
 		if ( isResponseCompleted ) {
 			return translate( 'Jetpack installed' );
 		}
 
-		if ( ! isFetching ) {
+		if ( ! isSubmitting ) {
 			return translate( 'Install Jetpack' );
 		}
 
@@ -163,10 +166,12 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFooter() {
+		const { isSubmitting } = this.state;
+
 		return (
 			<FormButton
 				className="jetpack-connect__credentials-submit"
-				disabled={ ! this.state.username || ! this.state.password }
+				disabled={ ! this.state.username || ! this.state.password || isSubmitting }
 			>
 				{ this.renderButtonLabel() }
 			</FormButton>
