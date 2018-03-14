@@ -37,7 +37,6 @@ const config = {
 			{ async: isCalypsoClient && codeSplit },
 		],
 		// @todo: re-evaluate inline-imports.js
-		// isCalypsoClient && './inline-imports.js',
 		'@babel/plugin-proposal-export-default-from',
 		'@babel/plugin-proposal-export-namespace-from',
 		'@babel/transform-runtime',
@@ -50,6 +49,7 @@ const config = {
 				},
 			},
 		],
+		isCalypsoClient && './inline-imports.js', // needs to occur after transform-imports
 	] ),
 	env: {
 		test: {
