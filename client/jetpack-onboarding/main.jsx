@@ -90,13 +90,13 @@ class JetpackOnboardingMain extends React.PureComponent {
 
 	setSelectedSite() {
 		const { hasFinishedRequestingSite } = this.state;
-		const { isConnected, selectedSiteId, siteId } = this.props;
+		const { isConnected, isSiteSelected, siteId } = this.props;
 
 		if ( ! hasFinishedRequestingSite ) {
 			return;
 		}
 
-		if ( isConnected && selectedSiteId !== siteId ) {
+		if ( isConnected && isSiteSelected ) {
 			// If the site we're onboarding is connected and not selected, select it
 			this.props.setSelectedSiteId( siteId );
 		}
@@ -192,6 +192,7 @@ export default connect(
 			isRequestingSite( state, siteId ) || isRequestingSites( state );
 		const isConnected = isJetpackSite( state, siteId );
 		const selectedSiteId = getSelectedSiteId( state );
+		const isSiteSelected = selectedSiteId !== siteId;
 
 		let jpoAuth;
 
@@ -235,7 +236,7 @@ export default connect(
 			isConnected,
 			isRequestingSettings,
 			isRequestingWhetherConnected,
-			selectedSiteId,
+			isSiteSelected,
 			siteId,
 			siteSlug,
 			settings,
