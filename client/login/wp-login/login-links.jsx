@@ -3,11 +3,14 @@
 /**
  * External dependencies
  */
+import Gridicon from 'gridicons';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -16,6 +19,7 @@ import ExternalLink from 'components/external-link';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
 import { addQueryArgs } from 'lib/url';
 import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentQueryArguments } from 'state/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isEnabled } from 'config';
 import { login } from 'lib/paths';
@@ -28,6 +32,7 @@ export class LoginLinks extends React.Component {
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		privateSite: PropTypes.bool,
+		query: PropTypes.object,
 		recordTracksEvent: PropTypes.func.isRequired,
 		resetMagicLoginRequestForm: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -64,6 +69,31 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
+		// If we seem to be in a Jetpack connection flow, provide some special handling
+		// so users can go back to their site rather than WordPress.com
+		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
+		if ( redirectTo ) {
+			const { pathname, query: redirectToQuery } = url.parse( redirectTo, true );
+			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id ) {
+				const returnToSiteUrl = addQueryArgs(
+					{ client_id: redirectToQuery.client_id },
+					'https://jetpack.wordpress.com/jetpack.returntosite/1/'
+				);
+
+				const { hostname } = url.parse( redirectToQuery.site_url );
+				const linkText = hostname
+					? this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
+					: this.props.translate( 'Back' );
+
+				return (
+					<ExternalLink href={ returnToSiteUrl }>
+						<Gridicon icon="arrow-left" size={ 18 } />
+						{ linkText }
+					</ExternalLink>
+				);
+			}
+		}
+
 		return (
 			<LoggedOutFormBackLink
 				classes={ { 'logged-out-form__link-item': false } }
@@ -161,6 +191,7 @@ export class LoginLinks extends React.Component {
 const mapState = state => ( {
 	isLoggedIn: Boolean( getCurrentUserId( state ) ),
 	oauth2Client: getCurrentOAuth2Client( state ),
+	query: getCurrentQueryArguments( state ),
 } );
 
 const mapDispatch = {
