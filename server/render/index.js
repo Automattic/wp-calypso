@@ -84,7 +84,10 @@ export function render( element, key = JSON.stringify( element ), req ) {
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
-			if ( Math.random() < 0.001 || config.isEnabled( 'ssr/always-log-cache-misses' ) ) {
+			if (
+				( config.isEnabled( 'ssr/sample-log-cache-misses' ) && Math.random() < 0.001 ) ||
+				config.isEnabled( 'ssr/always-log-cache-misses' )
+			) {
 				// Log 0.1% of cache misses
 				req.context.store.dispatch(
 					logToLogstash( {
