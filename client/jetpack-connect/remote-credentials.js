@@ -58,9 +58,12 @@ export class OrgCredentialsForm extends Component {
 	};
 
 	componentWillMount() {
-		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-			const { siteToConnect } = this.props;
+		const { isResponseCompleted, siteToConnect } = this.props;
+		if ( isResponseCompleted ) {
+			this.setState( { isSubmitting: false } );
+		}
 
+		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 			if ( ! siteToConnect ) {
 				page.redirect( '/jetpack/connect' );
 			}
@@ -148,9 +151,14 @@ export class OrgCredentialsForm extends Component {
 		const { isSubmitting } = this.state;
 		const isFetching = ! installError && ! isResponseCompleted && isSubmitting && siteToConnect;
 
+		if ( isResponseCompleted ) {
+			return translate( 'Jetpack installed' );
+		}
+
 		if ( ! isFetching ) {
 			return translate( 'Install Jetpack' );
 		}
+
 		return translate( 'Installing…' );
 	}
 
