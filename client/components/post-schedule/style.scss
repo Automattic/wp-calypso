@@ -14,10 +14,10 @@
 	position: absolute;
 	z-index: z-index( '.popover', '.post-schedule__header' );
 	top: 11px;
-	font-size: 18px;
-	font-weight: 300;
-	width: 80%;
-	margin: 0 10%;
+	font-size: 16px;
+	font-weight: 500;
+	width: 47%;
+	margin: 0 27%;
 
 	&:first-letter {
 		text-transform: uppercase;
@@ -56,11 +56,11 @@
 	display: inline-block;
 	position: relative;
 	text-align: center;
-	font-size: 12px;
+	font-weight: 300;
 	height: 20px;
 	line-height: 20px;
 	padding: 0 5px;
-	margin-left: 10px;
+	margin-left: 5px;
 	cursor: pointer;
 }
 
