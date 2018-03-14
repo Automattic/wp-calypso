@@ -5,10 +5,9 @@ exports[`Card should be linkable 1`] = `
   className="card is-card-link"
   href="/test"
 >
-  <t
+  <Component
     className="card__link-indicator"
     icon="chevron-right"
-    size={24}
   />
   This is a linked card
 </a>
