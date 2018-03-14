@@ -25,6 +25,21 @@ class PlanFeaturesSummary extends Component {
 		site: PropTypes.object.isRequired,
 	};
 
+	getTitle() {
+		const { current, site } = this.props;
+		const isJetpackSite = !! site.jetpack;
+
+		if ( current ) {
+			return 'Plan summary';
+		}
+
+		if ( isJetpackSite ) {
+			return 'Discount summary';
+		}
+
+		return 'Credit summary';
+	}
+
 	render() {
 		const {
 			available,
@@ -69,9 +84,7 @@ class PlanFeaturesSummary extends Component {
 
 		return (
 			<div className="plan-features__summary">
-				<strong className="plan-features__summary-title">
-					{ current ? 'Plan summary' : 'Credit summary' }
-				</strong>
+				<strong className="plan-features__summary-title">{ this.getTitle() }</strong>
 				<div className="plan-features__summary-price-row">
 					<span className="plan-features__summary-item">{ planTitle } plan</span>
 					<span className="plan-features__summary-price">
@@ -86,7 +99,7 @@ class PlanFeaturesSummary extends Component {
 				{ !! discountYearlyPrice && (
 					<div className="plan-features__summary-price-row plan-features__summary-discount">
 						<span className="plan-features__summary-item">
-							{ isJetpackSite ? 'Jetpack credits' : `${ currentPlanTitle } plan credits` }
+							{ isJetpackSite ? 'Jetpack discount' : `${ currentPlanTitle } plan credits` }
 						</span>
 						<span className="plan-features__summary-price">
 							{ formatCurrency( discountYearlyPrice - yearlyPrice, currencyCode ) }
