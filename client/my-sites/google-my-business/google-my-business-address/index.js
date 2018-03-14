@@ -16,14 +16,13 @@ import page from 'page';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
-import Button from 'components/button';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
-import FormTelInput from 'components/forms/form-tel-input';
 import FormTextInput from 'components/forms/form-text-input';
+import StepNavigation from '../step-navigation';
 
 class GoogleMyBusinessAddress extends Component {
 	static propTypes = {
@@ -37,7 +36,8 @@ class GoogleMyBusinessAddress extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const href = '/google-my-business/address/' + siteId;
+		const nextHref = '/google-my-business/category/' + siteId;
+		const backHref = '/google-my-business/search-for-a-location/' + siteId;
 
 		return (
 			<div className="google-my-business-address">
@@ -71,10 +71,9 @@ class GoogleMyBusinessAddress extends Component {
 							{ translate( 'I deliver goods and services to my customers. Learn more.' ) }
 						</p>
 					</FormFieldset>
-					<Button primary href={ href }>
-						Next
-					</Button>
 				</Card>
+
+				<StepNavigation value={ 20 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</div>
 		);
 	}

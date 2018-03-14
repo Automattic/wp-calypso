@@ -14,6 +14,9 @@ import ShowListOfLocations from './show-list-of-locations';
 import Create from './create';
 import Stats from './google-my-business-stats';
 import Address from './google-my-business-address';
+import Category from './google-my-business-category';
+import Connections from './google-my-business-connections';
+import Verify from './google-my-business-verify';
 
 export function selectBusinessType( context, next ) {
 	const { params } = context;
@@ -48,5 +51,23 @@ export function stats( context, next ) {
 export function address( context, next ) {
 	const { params } = context;
 	context.primary = <Address siteId={ params.site_id } />;
+	next();
+}
+
+export function category( context, next ) {
+	const { params } = context;
+	context.primary = <Category siteId={ params.site_id } />;
+	next();
+}
+
+export function connections( context, next ) {
+	const { params } = context;
+	context.primary = <Connections siteId={ params.site_id } />;
+	next();
+}
+
+export function verify( context, next ) {
+	const { params } = context;
+	context.primary = <Verify siteId={ params.site_id } />;
 	next();
 }

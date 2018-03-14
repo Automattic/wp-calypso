@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
 import page from 'page';
 
 /**
@@ -16,13 +15,14 @@ import page from 'page';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
-
-import Search from 'components/search';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
+import FormLabel from 'components/forms/form-label';
+import FormTelInput from 'components/forms/form-tel-input';
+import FormTextInput from 'components/forms/form-text-input';
 import StepNavigation from '../step-navigation';
 
-class GoogleMyBusinessCategory extends Component {
+class GoogleMyBusinessConnections extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -34,32 +34,38 @@ class GoogleMyBusinessCategory extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const nextHref = '/google-my-business/connections/' + siteId;
-		const backHref = '/google-my-business/address/' + siteId;
+		const nextHref = '/google-my-business/verify/' + siteId;
+		const backHref = '/google-my-business/category/' + siteId;
 
 		return (
-			<div className="google-my-business-address">
+			<div className="google-my-business-connections">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
 				<Card>
 					<FormFieldset>
-						<FormLegend>What kind of business do you run?</FormLegend>
+						<FormLegend>Make connections (optional)</FormLegend>
 
 						<p>
-							Correct category selection helps you attract customers searching for businesses like
-							yours in your area. Select a category that best matches your business. Learn more
+							Providing current info will help customers get in touch and learn more about your
+							business
 						</p>
 
-						<Search onSearch={ noop } inputLabel={ translate( 'Business Category' ) } />
+						<FormLabel>{ translate( 'Phone number' ) }</FormLabel>
+						<FormTelInput />
+
+						<FormLabel>{ translate( 'Website' ) }</FormLabel>
+						<FormTextInput />
 					</FormFieldset>
 				</Card>
 
-				<StepNavigation value={ 50 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
+				<StepNavigation value={ 70 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</div>
 		);
 	}
 }
 
-export default connect( undefined, { recordTracksEvent } )( localize( GoogleMyBusinessCategory ) );
+export default connect( undefined, { recordTracksEvent } )(
+	localize( GoogleMyBusinessConnections )
+);

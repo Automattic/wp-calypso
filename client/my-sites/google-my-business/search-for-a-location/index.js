@@ -18,8 +18,10 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
+import StepNavigation from '../step-navigation';
 
 let autocompleteService = {};
+let google;
 
 class SearchForALocation extends Component {
 	static propTypes = {
@@ -30,14 +32,12 @@ class SearchForALocation extends Component {
 	state = { predictions: [] };
 
 	componentWillMount() {
-		return new Promise( resolve => {
-			loadScript(
-				'//maps.googleapis.com/maps/api/js?key=AIzaSyBO5-y0uPC5DhwrcKy-NHUkLUmFQpNj-1g&libraries=places',
-				function() {
-					autocompleteService = new google.maps.places.AutocompleteService();
-				}
-			);
-		} );
+		loadScript(
+			'//maps.googleapis.com/maps/api/js?key=AIzaSyBO5-y0uPC5DhwrcKy-NHUkLUmFQpNj-1g&libraries=places',
+			function() {
+				autocompleteService = new google.maps.places.AutocompleteService();
+			}
+		);
 	}
 
 	goBack = () => {
@@ -65,19 +65,20 @@ class SearchForALocation extends Component {
 	render() {
 		const { translate, siteId } = this.props;
 		const { predictions } = this.state;
-		const href = '/google-my-business/address/' + siteId;
+		const nextHref = '/google-my-business/address/' + siteId;
+		const backHref = '/google-my-business/show-list-of-locations/' + siteId;
 		const predictionsMarkup =
 			predictions &&
 			predictions.map( prediction => {
 				return (
-					<CompactCard key={ prediction.place_id } href={ href }>
+					<CompactCard key={ prediction.place_id } href={ nextHref }>
 						{ prediction.structured_formatting.main_text }
 						<p>{ prediction.structured_formatting.secondary_text }</p>
 					</CompactCard>
 				);
 			} );
 		const newListing = this.state.query ? (
-			<CompactCard href={ href }>
+			<CompactCard href={ nextHref }>
 				<p>
 					{ this.state.query }
 					<br />
@@ -108,6 +109,8 @@ class SearchForALocation extends Component {
 						{ translate( 'By continuing you agree to the following Terms of Service' ) }
 					</p>
 				</Card>
+
+				<StepNavigation value={ 10 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</div>
 		);
 	}

@@ -1,0 +1,30 @@
+.step-navigation {
+	background-color: $gray-lighten-30;
+	color: $blue-dark;
+	display: flex;
+	font-size: 14px;
+	margin-bottom: 0;
+
+	@include breakpoint( '<480px' ) {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.progress-bar {
+		margin: 7px 1em;
+	}
+
+	a {
+		display: flex;
+	}
+}
+
+.step-navigation__left-arrow {
+	margin-right: 0.5em;
+}
+
+.step-navigation__right-arrow {
+	margin-left: 0.5em;
+}
