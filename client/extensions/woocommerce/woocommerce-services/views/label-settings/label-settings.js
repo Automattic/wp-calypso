@@ -116,7 +116,7 @@ class ShippingLabels extends Component {
 		const { paymentMethodsWarning } = this.props;
 
 		if ( paymentMethodsWarning ) {
-			return <Notice status="is-error" showDismiss={ false } text={ paymentMethodsWarning } />;
+			return <Notice status="is-warning" showDismiss={ false } text={ paymentMethodsWarning } />;
 		}
 	};
 
