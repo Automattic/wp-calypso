@@ -2,7 +2,10 @@
 	margin-left: 56px;
 }
 
-// Show the box shadow for the first two 2 replies
-.comment-replies-list:nth-child(n+2) {
-	margin-bottom: 10px;
+.is-at-max-depth > .comment {
+	margin-bottom: 0px;
+}
+
+.is-at-max-depth > .card {
+	box-shadow: 0 -1px transparentize( $gray-lighten-20, .5 );
 }

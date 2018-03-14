@@ -32,7 +32,10 @@ export class CommentRepliesList extends Component {
 
 		const repliesToShow = showAllReplies ? replies : take( replies, 5 );
 
-		const classes = classNames( { 'comment-replies-list': depth < 2 } );
+		const classes = classNames(
+			{ 'comment-replies-list': depth < 2 },
+			{ 'is-at-max-depth': depth >= 2 }
+		);
 
 		return (
 			<div className={ classes }>
