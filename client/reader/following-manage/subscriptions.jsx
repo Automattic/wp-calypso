@@ -136,7 +136,6 @@ class FollowingManageSubscriptions extends Component {
 								followSource: READER_SUBSCRIPTIONS,
 							} }
 							width={ width }
-							passthroughProp={ sortOrder }
 							totalCount={ sortedFollows.length }
 							windowScrollerRef={ this.props.windowScrollerRef }
 							rowRenderer={ siteRowRenderer }

@@ -30,7 +30,6 @@ class ReaderInfiniteStream extends Component {
 		windowScrollerRef: PropTypes.func,
 		extraRenderItemProps: PropTypes.object,
 		minHeight: PropTypes.number,
-		passthroughProp: PropTypes.any, // https://github.com/bvaughn/react-virtualized#pure-components. For use with things like sort etc.
 	};
 
 	static defaultProps = {
@@ -120,7 +119,7 @@ class ReaderInfiniteStream extends Component {
 	}
 
 	render() {
-		const { hasNextPage, width, passthroughProp } = this.props;
+		const { hasNextPage, width } = this.props;
 		const rowCount = hasNextPage( this.props.items.length )
 			? this.props.items.length + 10
 			: this.props.items.length;
@@ -144,7 +143,7 @@ class ReaderInfiniteStream extends Component {
 								ref={ this.handleListMounted( registerChild ) }
 								scrollTop={ scrollTop }
 								width={ width }
-								passthroughProp={ passthroughProp }
+								items={ this.props.items } // passthrough-prop unused by the component except to signal a rerender
 							/>
 						) }
 					</WindowScroller>

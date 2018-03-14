@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /*
  * Internal Dependencies
  */
-import { getSite } from 'state/reader/sites/selectors';
+import { getSite, getSiteByFeedUrl } from 'state/reader/sites/selectors';
 import { getFeed, getFeedByFeedUrl } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
@@ -60,9 +60,13 @@ const connectSite = Component => {
 			feedId = site.feed_ID;
 			feed = !! feedId ? getFeed( state, site.feed_ID ) : undefined;
 		}
-		// check if we have a url that is a known alias
+
+		// as a last effort check if we have the site/feed by url
 		if ( ! feed && ownProps.url ) {
 			feed = getFeedByFeedUrl( state, getReaderAliasedFollowFeedUrl( state, ownProps.url ) );
+		}
+		if ( ! site && ownProps.url ) {
+			site = getSiteByFeedUrl( state, getReaderAliasedFollowFeedUrl( state, ownProps.url ) );
 		}
 
 		return { feed, site, siteId, feedId };
