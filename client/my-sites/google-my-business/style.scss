@@ -1,3 +1,4 @@
+@import './google-my-business-address/style';
 @import './google-my-business-location/style';
 @import './google-my-business-stats/style';
 @import './search-for-a-location/style';
@@ -8,5 +9,9 @@
 .google-my-business {
 	.form-legend {
 		font-size: 24px;
+	}
+
+	.form-text-input {
+		margin-bottom: 1em;
 	}
 }
