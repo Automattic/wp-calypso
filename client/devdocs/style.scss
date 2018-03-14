@@ -49,71 +49,99 @@
 }
 
 .design__collection {
-	margin: 32px 0 0 0;
 
-	// Show 2 columns for big screens
-	@include breakpoint( '1280px-1600px' ) {
-		column-count: 2;
+	// Use multiple columns when listing components
+	.main.devdocs.is-list & {
+		column-gap: 24px;
+
+		// Show 2 columns for big screens
+		@include breakpoint( '>1280px' ) {
+			column-count: 2;
+		}
+	}
+}
+
+.docs-example__wrapper {
+	box-sizing: border-box;
+	background: $white;
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
+	//border: 1px solid $gray-lighten-20;
+	margin: 0 auto 24px auto;
+
+	.docs-example__wrapper-header {}
+
+	.docs-example__wrapper-header-title {
+		font-family: $code;
+		font-size: 18px;
+		font-weight: 300;
+		letter-spacing: 1px;
+
+		a {
+			text-decoration: underline;
+		}
 	}
 
-	// Show 3 columns for really big screens
-	@include breakpoint( '>1600px' ) {
-		column-count: 3;
+	.docs-examples__wrapper-content {
+		background: $gray-light;
+		padding: 16px;
+		box-shadow: inset 0 2px 1px rgba( $gray-dark, 0.075 );
+		
+		background-image: linear-gradient( rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
+		linear-gradient( 90deg, rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
+		linear-gradient( rgba( $gray-dark, 0.025 ) 1px, transparent 1px ),
+		linear-gradient( 90deg, rgba( $gray-dark, 0.025 ) 1px, transparent 1px );
+		background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
+		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 	}
 
-	// When viewing a single example always show a single column.
+	// Styles specific to the single view
 	.main.devdocs.is-single & {
-		column-count: 1;
+		.docs-example__wrapper-header-title {
+			padding: 16px 24px;
+		}
+	}
+
+	// How examples look in the list view
+	.main.devdocs.is-list & {
+		break-inside: avoid;
+		max-width: 703px;
+
+		.docs-example__wrapper-header-title a {
+			padding: 16px 24px;
+			display: block;
+		}
+
+		.docs-examples__wrapper-content {
+			padding: 32px;
+		}
+		/*.docs-example__wrapper-header-title a {
+			position: absolute;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+			padding: 16px;
+		}
+
+		.docs-examples__wrapper-content {
+			//max-height: 200px;
+			//overflow: hidden;
+			pointer-events: none;
+			transition: opacity 0.15s ease-in-out;
+		}
+
+		&:hover {
+			.docs-examples__wrapper-content {
+				opacity: 0.4;
+			}
+		}
+		*/
 	}
 }
 
 
 // README.md Viewer
-.docs-example__wrapper {
-	max-width: 960px;
-	box-sizing: border-box;
-	padding: 12px;
-	border-radius: 4px;
-	background: darken( $gray, 33 );
-	box-shadow: inset 0 2px 12px rgba( 0, 0, 0, 0.4 );
-	margin: 0 auto 24px auto;
-	break-inside: avoid;
-
-	.docs-example__wrapper-header{
-		padding: 8px 0 16px 12px;
-	}
-
-	.docs-example__wrapper-header-title {
-		font-family: $code;
-		font-size: 20px;
-		font-weight: 300;
-		letter-spacing: 1px;
-		color: $white;
-
-		a {
-			text-decoration: underline;
-			color: $white;
-		}
-
-		.gridicon {
-			position: relative;
-				top: 5px;
-				left: 6px;
-		}
-	}
-
-	.docs-examples__wrapper-content {
-		box-shadow: 0 2px 12px rgba( 0, 0, 0, 0.4 );
-		background: $gray-light;
-		padding: 32px;
-		border-radius: 3px;
-	}
-}
-
-.docs-example__readme-viewer-edit-link {
-	text-align: right;
-}
-
 .docs-example__readme-viewer {
 	break-inside: avoid;
 
@@ -182,9 +210,9 @@
 // This is really dumb right now.
 .docs__design-toggle,
 .design__toggle {
-    float: right;
-    	top: -86px;
-    	right: -32px;
+	float: right;
+		top: -82px;
+		right: -22px;
     position: relative;
 }
 
@@ -320,43 +348,60 @@
 .docs-example__readme-viewer {
 	max-width: 720px;
 	margin: 32px auto;
+	font-size: 16px;
+	font-family: $serif;
 
 	a {
 		text-decoration: underline;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		font-family: $sans;
 		font-weight: 600;
-		line-height: 1.5em;
-		margin-bottom: 0.6em;
+		line-height: 1.2;
+		margin: 32px 0 16px 0;
+		font-size: 21px;
+		color: $gray-darken-30;
 	}
 
 	h1 {
-		color: $gray-darken-30;
-		font-size: 47px;
-		line-height: 1.333;
+		color: $gray-dark;
+		font-size: 54px;
+		line-height: 1.4;
+		margin-top: 0;
 	}
 
 	h2 {
-		font-size: 1.777em;
+		font-size: 32px;
+		color: $gray-dark;
+	}
+
+	h3 {
+		font-size: 24px;
 	}
 
 	p, li {
 		line-height: 1.6;
 	}
 
+	ul, ol {
+		margin: 0 0 32px 48px;
+	}
+
+	li {
+		margin-bottom: 8px;
+	}
+
 	pre {
-		padding: (12 / 15) * 1em;
+		padding: 8px;
 		background: $white;
 		background-color: $white;
 		color: $blue-dark;
 	}
 
 	code {
-		font-size: (13 / 15) * 1em;
+		font-size: 15px;
 		background-color: $white;
-		padding: 0.2em;
+		padding: 2px 6px;
 		border-radius: 3px;
 		color: $blue-dark;
 	}
@@ -372,9 +417,9 @@
 	.label {
 		$invert: $white;
 		font-weight: bold;
-		font-size: 12px;
+		font-size: 15px;
 		padding: 1px 5px 2px;
-		border-radius: 2px;
+		border-radius: 3px;
 
 		&.status-awaiting-fixes {
 			background: #ea652d;
@@ -397,16 +442,17 @@
 
 	video {
 		max-width: 100%;
-		margin-bottom: 1em;
+		margin-bottom: 24px;
 	}
 }
 
-// At the end of documentation
-.devdocs__doc .devdocs__doc-footer {
+// At the end of documentation and reademe's
+.devdocs__doc .devdocs__doc-footer,
+.docs-example__readme-viewer-edit-link {
 	display: block;
 	text-align: center;
 	margin: 32px 0;
 	padding: 16px 0;
-	border-top: 1px solid $gray-lighten-30;
+	border-top: 1px solid $gray-lighten-20;
 	text-decoration: underline;
 }

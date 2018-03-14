@@ -40,12 +40,12 @@ class ReadmeViewer extends Component {
 		);
 		return (
 			<div className="docs-example__readme-viewer">
-				{ readme && editLink }
 				{ readme || (
 					<div className="docs-example__readme-viewer-not-available">
 						README.md is not available.
 					</div>
 				) }
+				{ readme && editLink }
 			</div>
 		);
 	}

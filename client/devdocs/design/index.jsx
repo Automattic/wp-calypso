@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
+import classnames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
@@ -118,8 +119,13 @@ class DesignAssets extends React.Component {
 		const { componentsUsageStats = {}, component } = this.props;
 		const { filter } = this.state;
 
+		const className = classnames( 'devdocs', 'devdocs__components', {
+			'is-single': this.props.component,
+			'is-list': ! this.props.component,
+		} );
+
 		return (
-			<Main className="devdocs devdocs__components">
+			<Main className={ className }>
 				<DocumentHead title="UI Components" />
 
 				{ component ? (

@@ -99,6 +99,7 @@ export default class AppComponents extends React.Component {
 	render() {
 		const className = classnames( 'devdocs', 'devdocs__blocks', {
 			'is-single': this.props.component,
+			'is-list': ! this.props.component,
 		} );
 
 		return (
