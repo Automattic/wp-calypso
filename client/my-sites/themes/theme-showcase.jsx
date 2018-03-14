@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { compact, pickBy } from 'lodash';
+import { compact, omit, pickBy, values } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -40,6 +40,7 @@ import QueryThemeFilters from 'components/data/query-theme-filters';
 import PhotoBlogBanner from './themes-banner/photo-blog';
 import SmallBusinessBanner from './themes-banner/small-business';
 import RandomThemesBanner from './themes-banner/random-themes-banner';
+import { getActiveTheme } from 'state/themes/selectors';
 
 const subjectsMeta = {
 	photo: { icon: 'camera', order: 1 },
@@ -63,6 +64,7 @@ const optionShape = PropTypes.shape( {
 
 class ThemeShowcase extends React.Component {
 	static propTypes = {
+		currentThemeId: PropTypes.string,
 		emptyContent: PropTypes.element,
 		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		search: PropTypes.string,
@@ -153,6 +155,7 @@ class ThemeShowcase extends React.Component {
 
 	render() {
 		const {
+			currentThemeId,
 			siteId,
 			options,
 			getScreenshotOption,
@@ -201,6 +204,14 @@ class ThemeShowcase extends React.Component {
 				.sort( ( a, b ) => a.order - b.order )
 		);
 
+		const themeBanners = omit(
+			{
+				'photo-blog': PhotoBlogBanner,
+				'small-business': SmallBusinessBanner,
+			},
+			currentThemeId
+		); // We don't want to advertise the theme that's already active.
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
@@ -218,7 +229,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<RandomThemesBanner banners={ [ PhotoBlogBanner, SmallBusinessBanner ] } />
+					<RandomThemesBanner banners={ values( themeBanners ) } />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
@@ -281,6 +292,7 @@ class ThemeShowcase extends React.Component {
 }
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => ( {
+	currentThemeId: getActiveTheme( state, siteId ),
 	isLoggedIn: !! getCurrentUserId( state ),
 	siteSlug: getSiteSlug( state, siteId ),
 	description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
