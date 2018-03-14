@@ -43,16 +43,16 @@
       }
     },
     "@babel/code-frame": {
-      "version": "7.0.0-beta.40",
-      "integrity": "sha512-eVXQSbu/RimU6OKcK2/gDJVTFcxXJI4sHbIqw2mhwMZeQ2as/8AhS9DGkEDoHMBBNJZ5B0US63lF56x+KDcxiA==",
+      "version": "7.0.0-beta.41",
+      "integrity": "sha512-omQT0n9EW38xfMCY7cCW/PAT55igUX9c9cMq6QN4EjxCcelcrocwMJ6H4JP4BGrQ+OHdJAQPM9/Eaa2Yce4Aug==",
       "dev": true,
       "requires": {
-        "@babel/highlight": "7.0.0-beta.40"
+        "@babel/highlight": "7.0.0-beta.41"
       }
     },
     "@babel/highlight": {
-      "version": "7.0.0-beta.40",
-      "integrity": "sha512-mOhhTrzieV6VO7odgzFGFapiwRK0ei8RZRhfzHhb6cpX3QM8XXuCLXWjN8qBB7JReDdUR80V3LFfFrGUYevhNg==",
+      "version": "7.0.0-beta.41",
+      "integrity": "sha512-5RURdqgHmXdg775Dr6GIFaVatHaPtaVgMF29jvWgkm8LP/B3MjZR/TOhkpbIBChqFzTn7uQKiBR3002pGjKY7Q==",
       "dev": true,
       "requires": {
         "chalk": "2.3.2",
@@ -8231,7 +8231,7 @@
       "integrity": "sha512-eyCJB0T3hrlpFF2FqQoIB093OulP+1qvATQmD3IOgJgMGqPL6eYw8TbC5P/VCWPqKhGL51xvjIIhow5eZ2wHFw==",
       "dev": true,
       "requires": {
-        "@babel/code-frame": "7.0.0-beta.40",
+        "@babel/code-frame": "7.0.0-beta.41",
         "chalk": "2.3.2",
         "micromatch": "2.3.11",
         "slash": "1.0.0",
@@ -10656,8 +10656,8 @@
       "dev": true
     },
     "notifications-panel": {
-      "version": "2.1.7",
-      "integrity": "sha512-9H2OYpCIjYJI/ro7HBwpQXe7JcRWW+54bR0y8K4WslfM834zCsDkLSxlYPoPMsiodLdureVzDRlVKG4+TQ1fmg=="
+      "version": "2.1.8",
+      "integrity": "sha512-bpDlKzTtdE4Cc2yyygd3o+BLYj9Bc5EgICL+M8UV7yoNZCVEowGRPz7C3Q1MsOwKVBX5Mexi9ieJbKTe8KUl6A=="
     },
     "npm-run-all": {
       "version": "4.0.2",
