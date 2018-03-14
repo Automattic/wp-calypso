@@ -64,6 +64,7 @@
         { "value": 13, "langSlug": "cy", "name": "Cymraeg", "wpLocale": "cy", "territories": [ "154" ] },
         { "value": 14, "langSlug": "da", "name": "Dansk", "wpLocale": "da_DK", "territories": [ "154" ] },
         { "value": 15, "langSlug": "de", "name": "Deutsch", "wpLocale": "de_DE", "popular": 4, "territories": [ "155" ] },
+        { "value": 900, "langSlug": "de_formal", "name": "Deutsch (Sie)", "wpLocale": "de_DE_formal", "parentLangSlug": "de", "territories": [ "155" ] },
         { "value": 427, "langSlug": "dv", "name": "ދިވެހި", "wpLocale": "dv", "rtl": true, "territories": [ "034" ] },
         { "value": 16, "langSlug": "dz", "name": "ཇོང་ཁ", "wpLocale": "", "territories": [ "034" ] },
         { "value": 17, "langSlug": "el", "name": "Ελληνικά", "wpLocale": "el", "territories": [ "039" ] },
