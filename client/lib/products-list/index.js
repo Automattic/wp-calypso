@@ -45,7 +45,11 @@ ProductsList.prototype.get = function() {
 		debug( 'First time loading ProductsList, check store' );
 
 		if ( typeof localStorage !== 'undefined' ) {
-			data = JSON.parse( localStorage.getItem( 'ProductsList' ) );
+			try {
+				data = JSON.parse( localStorage.getItem( 'ProductsList' ) );
+			} catch ( e ) {
+				// in case of bad data, do nothing, leave data undefined and just fetch again
+			}
 		}
 
 		if ( data ) {
