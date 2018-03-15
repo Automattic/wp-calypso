@@ -66,18 +66,15 @@ $devdocs-max-width: 720px;
 
 	// Use multiple columns when listing components
 	.main.devdocs.is-list & {
+		column-gap: 24px;
 
 		// Show 2 columns for big screens
 		@include breakpoint( '>1280px' ) {
 			column-count: 2;
-			column-gap: 24px;
 		}
 
 		@media ( min-width: 2000px ) {
-			column-count: 1;
-			display: grid;
-			grid-gap: 24px;
-			grid-template-columns: 32% 33% 32%;
+			column-count: 3;
 		}
 	}
 }
@@ -191,7 +188,6 @@ $devdocs-max-width: 720px;
 		// width fixed height examples and make the entire
 		// example clickable.
 		@media ( min-width: 2000px ) {
-			margin: 0;
 			padding-top: 60px;
 
 			.docs-example__wrapper-header-title a {
