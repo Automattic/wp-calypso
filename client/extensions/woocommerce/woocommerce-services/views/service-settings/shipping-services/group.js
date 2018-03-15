@@ -38,6 +38,7 @@ const updateAll = ( event, updateValue, services ) => {
 const ShippingServiceGroup = ( props ) => {
 	const {
 		title,
+		deliveryEstimate,
 		services,
 		updateValue,
 		errors,
@@ -59,6 +60,11 @@ const ShippingServiceGroup = ( props ) => {
 				onChange={ onChange }
 				onClick={ stopPropagation } />
 			{ title }
+			{ deliveryEstimate && (
+				<small className="shipping-services__delivery-estimate">
+					({ deliveryEstimate })
+				</small>
+			) }
 		</div>;
 	};
 
@@ -104,6 +110,7 @@ const ShippingServiceGroup = ( props ) => {
 
 ShippingServiceGroup.propTypes = {
 	title: PropTypes.string.isRequired,
+	deliveryEstimate: PropTypes.string,
 	services: PropTypes.arrayOf( PropTypes.shape( {
 		id: PropTypes.string.isRequired,
 		name: PropTypes.string.isRequired,
