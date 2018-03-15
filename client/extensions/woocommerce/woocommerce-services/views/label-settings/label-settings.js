@@ -118,14 +118,14 @@ class ShippingLabels extends Component {
 	};
 
 	renderPaymentWarningNotice = () => {
-		const { paymentMethodsWarning } = this.props;
+		const { paymentMethodsWarning, translate } = this.props;
 		if ( ! paymentMethodsWarning ) {
 			return;
 		}
 
 		return (
 			<Notice status="is-warning" showDismiss={ false } text={ paymentMethodsWarning }>
-				<NoticeAction onClick={ this.refetchSettings }>Retry</NoticeAction>
+				<NoticeAction onClick={ this.refetchSettings }>{ translate( 'Retry' ) }</NoticeAction>
 			</Notice>
 		);
 	};
