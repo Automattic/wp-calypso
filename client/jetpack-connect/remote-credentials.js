@@ -22,6 +22,7 @@ import HelpButton from './help-button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
+import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
 import { externalRedirect } from 'lib/route';
 import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
@@ -33,14 +34,14 @@ export class OrgCredentialsForm extends Component {
 	state = {
 		username: '',
 		password: '',
-		submitting: false,
+		isSubmitting: false,
 	};
 
 	getInitialFields() {
 		return {
 			username: '',
 			password: '',
-			submitting: false,
+			isSubmitting: false,
 		};
 	}
 
@@ -48,18 +49,26 @@ export class OrgCredentialsForm extends Component {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
 
-		if ( this.state.submitting ) {
+		if ( this.state.isSubmitting ) {
 			return;
 		}
-		this.setState( { submitting: true } );
+		this.setState( { isSubmitting: true } );
 
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	componentWillMount() {
-		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-			const { siteToConnect } = this.props;
+	componentWillReceiveProps() {
+		const { installError } = this.props;
 
+		if ( installError ) {
+			this.setState( { isSubmitting: false } );
+		}
+	}
+
+	componentWillMount() {
+		const { siteToConnect } = this.props;
+
+		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 			if ( ! siteToConnect ) {
 				page.redirect( '/jetpack/connect' );
 			}
@@ -102,49 +111,69 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	formFields() {
+		const { translate } = this.props;
+		const { isSubmitting, password, username } = this.state;
+
 		return (
 			<div>
-				<FormLabel htmlFor="username">{ this.props.translate( 'Username' ) }</FormLabel>
+				<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
 					<FormTextInput
 						autoCapitalize="off"
 						autoCorrect="off"
 						className="jetpack-connect__credentials-form-input"
-						disabled={ this.state.submitting }
+						disabled={ isSubmitting }
 						id="username"
 						name="username"
 						onChange={ this.getChangeHandler( 'username' ) }
-						value={ this.state.username || '' }
+						value={ username || '' }
 					/>
 				</div>
 
 				<div className="jetpack-connect__password-container">
-					<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					<div className="jetpack-connect__password-form">
 						<Gridicon size={ 24 } icon="lock" />
 						<FormPasswordInput
 							className="jetpack-connect__password-form-input"
-							disabled={ this.state.submitting }
+							disabled={ isSubmitting }
 							id="password"
 							name="password"
 							onChange={ this.getChangeHandler( 'password' ) }
-							value={ this.state.password || '' }
+							value={ password || '' }
 						/>
 					</div>
+					{ isSubmitting ? <Spinner /> : null }
 				</div>
 			</div>
 		);
 	}
 
+	renderButtonLabel() {
+		const { isResponseCompleted, translate } = this.props;
+		const { isSubmitting } = this.state;
+
+		if ( isResponseCompleted ) {
+			return translate( 'Jetpack installed' );
+		}
+
+		if ( ! isSubmitting ) {
+			return translate( 'Install Jetpack' );
+		}
+
+		return translate( 'Installing…' );
+	}
+
 	formFooter() {
-		const { translate } = this.props;
+		const { isSubmitting } = this.state;
+
 		return (
 			<FormButton
 				className="jetpack-connect__credentials-submit"
-				disabled={ ! this.state.username || ! this.state.password }
+				disabled={ ! this.state.username || ! this.state.password || isSubmitting }
 			>
-				{ translate( 'Install Jetpack' ) }
+				{ this.renderButtonLabel() }
 			</FormButton>
 		);
 	}
