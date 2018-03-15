@@ -9,7 +9,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { compact, omit, pickBy, values } from 'lodash';
+import { compact, omit, pickBy } from 'lodash';
 import Gridicon from 'gridicons';
 
 /**
@@ -229,7 +229,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					<RandomThemesBanner banners={ values( themeBanners ) } />
+					<RandomThemesBanner banners={ themeBanners } />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }

@@ -9,7 +9,7 @@ import { isEqual, sample } from 'lodash';
 
 class RandomThemesBanner extends PureComponent {
 	static propTypes = {
-		banners: PropTypes.array.isRequired,
+		banners: PropTypes.objectOf( PropTypes.func ).isRequired,
 	};
 
 	state = {
@@ -27,14 +27,14 @@ class RandomThemesBanner extends PureComponent {
 		// Set the banner component on mount.
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( {
-			banner: sample( this.props.banners ),
+			banner: sample( Object.keys( this.props.banners ) ),
 		} );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( this.props.banners, nextProps.banners ) ) {
+		if ( ! isEqual( Object.keys( this.props.banners ), Object.keys( nextProps.banners ) ) ) {
 			this.setState( {
-				banner: sample( nextProps.banners ),
+				banner: sample( Object.keys( nextProps.banners ) ),
 			} );
 		}
 	}
@@ -42,7 +42,7 @@ class RandomThemesBanner extends PureComponent {
 	render() {
 		// Client-side.
 		if ( this.state.banner ) {
-			const BannerComponent = this.state.banner;
+			const BannerComponent = this.props.banners[ this.state.banner ];
 			return <BannerComponent />;
 		}
 
