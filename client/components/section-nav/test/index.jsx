@@ -50,7 +50,7 @@ describe( 'section-nav', () => {
 
 			panelElem = sectionNav.props.children[ 1 ];
 			headerElem = sectionNav.props.children[ 0 ];
-			headerTextElem = headerElem.props.children;
+			headerTextElem = headerElem.props.children[ 0 ];
 			text = headerTextElem.props.children;
 		} );
 
