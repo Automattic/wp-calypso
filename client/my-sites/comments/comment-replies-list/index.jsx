@@ -54,8 +54,8 @@ export class CommentRepliesList extends Component {
 				{ map( repliesToShow, ( { commentId } ) => (
 					<Comment
 						commentId={ commentId }
-						isPostView={ true }
 						isAtMaxDepth={ depth >= maxDepth }
+						isPostView={ true }
 						key={ `comment-${ siteId }-${ commentParentId }-${ commentId }` }
 						refreshCommentData={ true }
 					/>
