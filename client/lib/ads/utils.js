@@ -32,8 +32,7 @@ export function canAccessWordads( site ) {
 export function isWordadsInstantActivationEligible( site ) {
 	if (
 		( isBusiness( site.plan ) || isPremium( site.plan ) ) &&
-		userCan( 'activate_wordads', site ) &&
-		! site.jetpack
+		userCan( 'activate_wordads', site )
 	) {
 		return true;
 	}
