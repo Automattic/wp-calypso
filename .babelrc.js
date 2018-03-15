@@ -53,7 +53,7 @@ const config = {
 				},
 			},
 		],
-		isCalypsoClient && './inline-imports.js', // needs to occur after transform-imports
+		isCalypsoClient && './inline-imports.js', // inline-imports can only occur after transform-imports
 	] ),
 	env: {
 		test: {
