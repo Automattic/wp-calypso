@@ -6,7 +6,6 @@
 
 import validator from 'is-my-json-valid';
 import {
-	flow,
 	forEach,
 	get,
 	includes,
@@ -16,7 +15,6 @@ import {
 	merge,
 	omit,
 	omitBy,
-	partialRight,
 	reduce,
 } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line wpcalypso/import-no-redux-combine-reducers
@@ -205,9 +203,9 @@ export function extendAction( action, data ) {
 		return merge( {}, action, data );
 	}
 
-	return dispatch => {
-		const newDispatch = flow( partialRight( extendAction, data ), dispatch );
-		return action( newDispatch );
+	return ( dispatch, getState ) => {
+		const newDispatch = a => dispatch( extendAction( a, data ) );
+		return action( newDispatch, getState );
 	};
 }
 
