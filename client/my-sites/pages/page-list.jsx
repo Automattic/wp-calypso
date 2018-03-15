@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight, size, without } from 'lodash';
+import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -120,15 +120,11 @@ class Pages extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const pageListChanged =
-			nextProps.query.search !== this.props.query.search ||
-			nextProps.query.siteId !== this.props.query.siteId ||
-			nextProps.query.status !== this.props.query.status ||
-			nextProps.query.page !== this.props.query.page;
+		const queryChanged = ! isEqual( nextProps.query, this.props.query );
 
 		if (
 			nextProps.pages !== this.props.pages &&
-			( size( this.state.shadowItems ) === 0 || pageListChanged )
+			( size( this.state.shadowItems ) === 0 || queryChanged )
 		) {
 			this.setState( { pages: nextProps.pages, shadowItems: {} } );
 		}
@@ -178,17 +174,20 @@ class Pages extends Component {
 		return markedPages;
 	}
 
-	handleShadow = ( globalID, status ) =>
+	updateShadowStatus = ( globalID, shadowStatus ) =>
 		new Promise( resolve =>
 			this.setState( state => {
-				if ( status ) {
-					// add the `globalID` to the `shadowItems` object (behaves like Set)
+				if ( shadowStatus ) {
+					// add or update the `globalID` key in the `shadowItems` map
 					return {
-						shadowItems: { ...state.shadowItems, [ globalID ]: true },
+						shadowItems: {
+							...state.shadowItems,
+							[ globalID ]: shadowStatus,
+						},
 					};
 				}
 
-				// remove `globalID` from the `shadowItems` set
+				// remove `globalID` from the `shadowItems` map
 				const newShadowItems = without( state.shadowItems, globalID );
 				const newState = {
 					shadowItems: newShadowItems,
@@ -321,7 +320,8 @@ class Pages extends Component {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
-					onShadow={ this.handleShadow }
+					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
+					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					site={ site }
 					multisite={ false }

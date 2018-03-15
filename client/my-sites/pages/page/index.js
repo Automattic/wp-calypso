@@ -34,6 +34,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
+import { withoutNotice } from 'state/notices/actions';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
@@ -59,11 +60,7 @@ class Page extends Component {
 	};
 
 	static defaultProps = {
-		onShadow: noop,
-	};
-
-	state = {
-		shadowStatus: false,
+		onShadowStatusChange: noop,
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -318,15 +315,15 @@ class Page extends Component {
 		);
 	}
 
-	undoPostStatus = status => () => this.updatePostStatus( status );
+	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
 	renderShadowNotice() {
-		if ( ! this.state.shadowStatus ) {
+		if ( ! this.props.shadowStatus ) {
 			return null;
 		}
 
 		const { translate } = this.props;
-		const { status, icon, text, undo } = this.state.shadowStatus;
+		const { status, icon, text, undo } = this.props.shadowStatus;
 
 		return (
 			<Notice
@@ -338,9 +335,7 @@ class Page extends Component {
 				text={ text }
 			>
 				{ undo && (
-					<NoticeAction onClick={ this.undoPostStatus( undo ) }>
-						{ translate( 'Undo' ) }
-					</NoticeAction>
+					<NoticeAction onClick={ this.undoPostStatus }>{ translate( 'Undo' ) }</NoticeAction>
 				) }
 			</Notice>
 		);
@@ -406,7 +401,7 @@ class Page extends Component {
 		);
 
 		const mainClasses = classNames( 'page__main', {
-			'is-shadow': this.state.shadowStatus,
+			'is-shadow': this.props.shadowStatus,
 		} );
 
 		return (
@@ -441,37 +436,35 @@ class Page extends Component {
 		);
 	}
 
-	async onShadow( status ) {
-		await this.props.onShadow( this.props.page.global_ID, !! status );
-		return await new Promise( resolve => this.setState( { shadowStatus: status }, resolve ) );
+	changeShadowStatus( shadowStatus ) {
+		return this.props.onShadowStatusChange( this.props.page.global_ID, shadowStatus );
 	}
 
 	async performUpdate( { action, progressNotice, successNotice, errorNotice, undo } ) {
-		await this.onShadow( progressNotice );
+		await this.changeShadowStatus( progressNotice );
 		try {
 			await action();
 			if ( undo === false ) {
-				await this.onShadow( false );
+				await this.changeShadowStatus( false );
 				return;
 			}
-			await this.onShadow( { ...successNotice, undo } );
-			if ( ! undo ) {
-				await sleep( 5000 );
-				await this.onShadow( false );
+			await this.changeShadowStatus( { ...successNotice, undo } );
+			if ( undo ) {
+				return;
 			}
 		} catch ( error ) {
-			await this.onShadow( errorNotice );
-			await sleep( 5000 );
-			await this.onShadow( false );
+			await this.changeShadowStatus( errorNotice );
 		}
+		await sleep( 5000 );
+		await this.changeShadowStatus( false );
 	}
 
-	async updatePostStatus( status ) {
+	updatePostStatus( status ) {
 		const { page, translate } = this.props;
 
 		switch ( status ) {
 			case 'delete':
-				await this.performUpdate( {
+				this.performUpdate( {
 					action: () => this.props.deletePost( page.site_ID, page.ID ),
 					progressNotice: {
 						status: 'is-error',
@@ -490,7 +483,7 @@ class Page extends Component {
 				return;
 
 			case 'trash':
-				await this.performUpdate( {
+				this.performUpdate( {
 					action: () => this.props.trashPost( page.site_ID, page.ID, page ),
 					undo: page.status !== 'trash' && 'restore',
 					progressNotice: {
@@ -500,7 +493,7 @@ class Page extends Component {
 					},
 					successNotice: {
 						status: 'is-success',
-						text: translate( 'Page trashed' ),
+						text: translate( 'Page trashed.' ),
 					},
 					errorNotice: {
 						status: 'is-error',
@@ -510,7 +503,7 @@ class Page extends Component {
 				return;
 
 			case 'restore':
-				await this.performUpdate( {
+				this.performUpdate( {
 					action: () => this.props.restorePost( page.site_ID, page.ID ),
 					undo: page.status === 'trash' && 'trash',
 					progressNotice: {
@@ -521,7 +514,6 @@ class Page extends Component {
 					successNotice: {
 						status: 'is-success',
 						text: translate( 'Page restored.' ),
-						undo: page.status,
 					},
 					errorNotice: {
 						status: 'is-error',
@@ -531,17 +523,16 @@ class Page extends Component {
 				return;
 
 			case 'publish':
-				await this.performUpdate( {
+				this.performUpdate( {
 					action: () => this.props.savePost( page.site_ID, page.ID, { status } ),
 					progressNotice: {
-						status: 'is-warning',
-						icon: 'history',
+						status: 'is-success',
+						icon: 'reader',
 						text: translate( 'Publishing…' ),
 					},
 					successNotice: {
 						status: 'is-success',
 						text: translate( 'Page published.' ),
-						undo: page.status,
 					},
 					errorNotice: {
 						status: 'is-error',
@@ -606,10 +597,10 @@ const mapState = ( state, props ) => {
 };
 
 const mapDispatch = {
-	savePost,
-	deletePost,
-	trashPost,
-	restorePost,
+	savePost: withoutNotice( savePost ),
+	deletePost: withoutNotice( deletePost ),
+	trashPost: withoutNotice( trashPost ),
+	restorePost: withoutNotice( restorePost ),
 	setPreviewUrl,
 	setLayoutFocus,
 	recordEvent,
