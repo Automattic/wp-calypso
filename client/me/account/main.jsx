@@ -148,7 +148,9 @@ const Account = createReactClass( {
 	},
 
 	// this is a temporary check to exclude the CT from locale variants
-	canDisplayCommunityTranslator( locale ) {
+	shouldDisplayCommunityTranslator() {
+		const locale = this.getUserSetting( 'language' );
+
 		if ( ! locale || locale === 'en' ) {
 			return false;
 		}
@@ -170,7 +172,7 @@ const Account = createReactClass( {
 	},
 
 	communityTranslator() {
-		if ( ! this.canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) ) {
+		if ( ! this.shouldDisplayCommunityTranslator() ) {
 			return;
 		}
 		const { translate } = this.props;
@@ -206,11 +208,11 @@ const Account = createReactClass( {
 	},
 
 	thankTranslationContributors() {
-		const locale = this.getUserSetting( 'language' );
-		if ( ! this.canDisplayCommunityTranslator( locale ) ) {
+		if ( ! this.shouldDisplayCommunityTranslator() ) {
 			return;
 		}
 
+		const locale = this.getUserSetting( 'language' );
 		const language = getLanguage( locale );
 		if ( ! language ) {
 			return;
