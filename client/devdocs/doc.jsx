@@ -102,20 +102,20 @@ export default class extends React.Component {
 		return (
 			<div className="devdocs devdocs__doc">
 				{ title ? <DocumentHead title={ title } /> : null }
-				<div
-					className="devdocs__doc-content"
-					ref="body"
-					//eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, this.state.body ) } }
-				/>
 				<a
-					className="devdocs__doc-footer"
+					className="devdocs__doc-edit-link"
 					href={ editURL }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
 					Improve this document on GitHub
 				</a>
+				<div
+					className="devdocs__doc-content"
+					ref="body"
+					//eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: highlight( this.props.term, this.state.body ) } }
+				/>
 			</div>
 		);
 	}

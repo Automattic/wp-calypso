@@ -1,3 +1,5 @@
+$devdocs-max-width: 720px;
+
 // Sidebar Title
 .devdocs__title {
     color: $gray-darken-30;
@@ -51,6 +53,13 @@
 .main.devdocs.devdocs__components {
 	// Make way for showing big components and multiple columns
 	max-width: 100%;
+
+	// Keep the search and header cake at the same max-width
+	// as other sections.
+	.search-card,
+	.header-cake {
+		max-width: $devdocs-max-width;
+	}
 }
 
 .design__collection {
@@ -66,28 +75,37 @@
 	}
 }
 
+// We show a list of links for results above
+// the actual examples.
 .design__instance-links {
 	margin-bottom: 24px;
 }
 
+.design__instance-links-label {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	margin: 8px;
+	color: $gray-text-min;
+}
+
 .design__instance-link {
 	display: inline-block;
+	background: $white;
+	text-decoration: underline;
+	border-radius: 3px;
+	padding: 3px 6px;
+	margin: 0 6px 4px 0;
+	font-family: $code;
+	box-shadow: 0 1px 2px rgba( $gray-dark, 0.05 );
 }
 
-.design__instance-link::after {
-	content: ',';
-	padding-right: 3px;
-}
-
-.design__instance-link:last-of-type::after {
-	content: none;
-}
-
+// The wrapper containing the actual examples
 .docs-example__wrapper {
 	box-sizing: border-box;
 	background: $white;
-	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
-		0 1px 2px $gray-lighten-30;
+	box-shadow: 0 1px 2px $gray-lighten-30;
+	border: 1px solid rgba( $gray-lighten-20, 0.65 );
 	margin: 0 auto 24px;
 	position: relative;
 
@@ -114,6 +132,12 @@
 		linear-gradient( 90deg, rgba( $gray-dark, 0.025 ) 1px, transparent 1px );
 		background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
 		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+
+		// Some components use a card and the extra margin
+		// looks strange.
+		.card {
+			margin-bottom: 0;
+		}
 	}
 
 	// Styles specific to the single view
@@ -126,7 +150,7 @@
 	// How examples look in the list view
 	.main.devdocs.is-list & {
 		break-inside: avoid;
-		max-width: 703px;
+		max-width: $devdocs-max-width;
 
 		.docs-example__wrapper-header-title a {
 			padding: 16px 24px;
@@ -250,7 +274,7 @@
 }
 
 .docs-selectors__result {
-	max-width: 720px;
+	max-width: $devdocs-max-width;
 	margin: auto;
 
 	.docs-selectors__result-name {
@@ -344,7 +368,7 @@
 // Documentation — Copy-heavy things like Contributing and Typography
 .devdocs__doc-content,
 .docs-example__readme-viewer {
-	max-width: 720px;
+	max-width: $devdocs-max-width;
 	margin: 32px auto;
 	font-size: 16px;
 	font-family: $serif;
@@ -461,12 +485,9 @@
 }
 
 // At the end of documentation and reademe's
-.devdocs__doc .devdocs__doc-footer,
-.docs-example__readme-viewer-edit-link {
-	display: block;
+a.devdocs__doc-edit-link,
+a.docs-example__doc-edit-link {
 	text-align: center;
-	margin: 32px 0;
-	padding: 16px 0;
-	border-top: 1px solid $gray-lighten-20;
 	text-decoration: underline;
+	float: right;
 }

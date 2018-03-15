@@ -76,7 +76,7 @@ const Collection = ( {
 			{ showCounter > 1 &&
 				filter && (
 					<div className="design__instance-links">
-						<span>Showing: </span>
+						<span className="design__instance-links-label">Results:</span>
 						{ summary }
 					</div>
 				) }

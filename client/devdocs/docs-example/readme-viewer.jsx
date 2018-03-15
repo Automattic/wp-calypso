@@ -30,22 +30,23 @@ class ReadmeViewer extends Component {
 		const readmeFilePath = this.props.readmeFilePath;
 		const readme = readmeFilePath && this.props.getReadme( readmeFilePath );
 		const editLink = (
-			<div className="docs-example__readme-viewer-edit-link">
-				<a
-					href={ `https://github.com/Automattic/wp-calypso/edit/master/client/components/${ readmeFilePath }/README.md` }
-				>
-					Improve this document on GitHub
-				</a>
-			</div>
+			<a
+				className="docs-example__doc-edit-link"
+				href={ `https://github.com/Automattic/wp-calypso/edit/master/client/components/${ readmeFilePath }/README.md` }
+			>
+				Improve this document on GitHub
+			</a>
 		);
 		return (
-			<div className="docs-example__readme-viewer">
-				{ readme || (
-					<div className="docs-example__readme-viewer-not-available">
-						README.md is not available.
-					</div>
-				) }
+			<div>
 				{ readme && editLink }
+				<div className="docs-example__readme-viewer">
+					{ readme || (
+						<div className="docs-example__readme-viewer-not-available">
+							README.md is not available.
+						</div>
+					) }
+				</div>
 			</div>
 		);
 	}
