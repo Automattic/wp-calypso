@@ -38,18 +38,15 @@ function decodeUserSettingsEntities( data ) {
  * Deletes a provided unsaved setting, then calls itself recursively
  * to delete any empty parents of the setting passed to it
  */
-function deleteUnsavedSetting( settings, settingName, recursive ) {
-	if ( ! isEmpty( get( settings, settingName ) ) || recursive ) {
-		unset( settings, settingName );
-
-		const settingKeys = settingName.split( '.' );
-		if ( settingKeys.length > 1 ) {
-			settingKeys.pop();
-			const parentKey = settingKeys.join( '.' );
-			//if parent is empty, call function again
-			if ( parentKey && isEmpty( get( settings, parentKey ) ) ) {
-				deleteUnsavedSetting( settings, parentKey, true );
-			}
+function deleteUnsavedSetting( settings, settingName ) {
+	unset( settings, settingName );
+	const settingKeys = settingName.split( '.' );
+	if ( settingKeys.length > 1 ) {
+		settingKeys.pop();
+		const parentKey = settingKeys.join( '.' );
+		// if parent is empty, call function again
+		if ( parentKey && isEmpty( get( settings, parentKey ) ) ) {
+			deleteUnsavedSetting( settings, parentKey );
 		}
 	}
 }
