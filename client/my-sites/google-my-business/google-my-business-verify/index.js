@@ -42,11 +42,11 @@ class GoogleMyBusinessVerify extends Component {
 
 				<CompactCard>
 					<h2>{ translate( 'Choose a way to verify' ) }</h2>
-					<p>
+					<div>
 						{ translate( "Select how you'd like to get a verification code" ) }
 						<br />
 						<a href="https://business.google.com">{ translate( 'Learn More' ) }</a>
-					</p>
+					</div>
 				</CompactCard>
 				<CompactCard>
 					<h2>{ translate( 'Postcard by mail' ) }</h2>

@@ -23,11 +23,13 @@ const StepNavigation = ( { backHref, nextHref, total, value, translate } ) => (
 			</a>
 		) }
 		<ProgressBar value={ value } total={ total } />
-		{ nextHref && (
+		{ nextHref ? (
 			<a href={ nextHref }>
-				{ translate( 'Next' ) }{' '}
+				{ translate( 'Next' ) }
 				<Gridicon icon="arrow-right" size={ 24 } className="step-navigation__right-arrow" />
 			</a>
+		) : (
+			<a href={ nextHref }>{ translate( 'Done' ) }</a>
 		) }
 	</Card>
 );
