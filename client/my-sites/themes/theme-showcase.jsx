@@ -229,7 +229,7 @@ class ThemeShowcase extends React.Component {
 				) }
 				<div className="themes__content">
 					<QueryThemeFilters />
-					{ currentThemeId && <RandomThemesBanner banners={ values( themeBanners ) } /> }
+					<RandomThemesBanner banners={ values( themeBanners ) } />
 					<ThemesSearchCard
 						onSearch={ this.doSearch }
 						search={ filterString + search }
