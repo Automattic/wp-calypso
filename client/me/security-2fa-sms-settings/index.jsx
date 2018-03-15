@@ -112,6 +112,9 @@ const Security2faSMSSettings = createReactClass( {
 			return;
 		}
 
+		// This direct setting of the phone number needs to be replaced by something like
+		// what happens in Account Recovery (SMS code is sent if number is not already saved on file):
+		// API call to POST https://public-api.wordpress.com/rest/v1.1/me/account-recovery/phone
 		this.props.userSettings.updateSetting( 'two_step_sms_phone_number', phoneNumber.phoneNumber );
 		this.props.userSettings.updateSetting( 'two_step_sms_country', phoneNumber.countryCode );
 
