@@ -55,11 +55,12 @@ class GoogleAppsUsers extends React.Component {
 		return (
 			<GoogleAppsUsersForm
 				domain={ this.props.domain }
-				onBlur={ this.props.onBlur }
-				user={ user }
 				index={ index }
-				updateField={ this.updateField }
+				key={ `google-apps-user-form-${ index }` }
+				onBlur={ this.props.onBlur }
 				recordInputFocus={ this.recordInputFocus }
+				user={ user }
+				updateField={ this.updateField }
 			/>
 		);
 	};
