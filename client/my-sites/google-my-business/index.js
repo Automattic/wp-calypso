@@ -67,16 +67,6 @@ export default function() {
 			clientRender
 		);
 
-		page( '/google-my-business/create', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/google-my-business/create/:site_id/',
-			siteSelection,
-			navigation,
-			create,
-			makeLayout,
-			clientRender
-		);
-
 		page( '/google-my-business/stats', siteSelection, sites, makeLayout, clientRender );
 		page(
 			'/google-my-business/stats/:site_id/',

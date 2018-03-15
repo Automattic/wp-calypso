@@ -22,12 +22,17 @@ import StatsNavigation from 'blocks/stats-navigation';
 import { recordTracksEvent } from 'state/analytics/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSelect from 'components/forms/form-select';
+import { createNotice } from 'state/notices/actions';
 
 class Stats extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
+
+	componentDidMount() {
+		this.props.createNotice( 'is-success', 'Connected to Google My Business' );
+	}
 
 	goBack = () => {
 		page.back( `/google-my-business/${ this.props.siteId }` );
@@ -38,7 +43,7 @@ class Stats extends Component {
 		return (
 			<Main>
 				<SidebarNavigation title="Stats" />
-				<div className="google-my-business-stats">
+				<div className="google-my-business-stats google-my-business">
 					<StatsNavigation selectedItem={ 'google-my-business' } />
 
 					<Card>
@@ -85,10 +90,9 @@ class Stats extends Component {
 						</Button>
 					</Card>
 
-					<SectionHeader label={ translate( 'Searches' ) } />
+					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">How customers search for your business</h2>
-						<img src="/calypso/images/google-my-business/pie-chart.svg" alt="Pie chart" className="google-my-business-stats__searches-pie-chart" />
+						<img src="/calypso/images/google-my-business/pie-chart.svg" alt="Pie chart" />
 						<div className="google-my-business-stats__stat-title">451 Total searches</div>
 						<div className="google-my-business-stats__search-type">
 							<span className="google-my-business-stats__search-type-direct" />
@@ -111,14 +115,14 @@ class Stats extends Component {
 
 					<Card>
 						<div className="google-my-business-stats__feature">
-							<img
-								src="/calypso/images/google-my-business/reviews.svg"
-								className="google-my-business-stats__feature-image"
-							/>
 							<p>
 								Businesses with recent photos typically receive more clicks to their business
 								websites.
 							</p>
+							<img
+								src="/calypso/images/google-my-business/reviews.svg"
+								className="google-my-business-stats__feature-image"
+							/>
 						</div>
 						<Button primary className="google-my-business-stats__feature-button">
 							Post Photos
@@ -127,10 +131,9 @@ class Stats extends Component {
 					</Card>
 
 					<SectionHeader
-						label={ translate( 'Customer Views' ) }
+						label={ translate( 'Where your customers view your business on Google' ) }
 					/>
 					<Card>
-						<h2 className="google-my-business-stats__section-title">Where your customers view your business on Google</h2>
 						<p className="google-my-business-stats__description">
 							The Google services that customers use to find your business
 						</p>
@@ -147,7 +150,6 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'Customer actions' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">What your customers do on your listing</h2>
 						<p className="google-my-business-stats__description">
 							The most common actions that customers take on your listing
 						</p>
@@ -164,13 +166,13 @@ class Stats extends Component {
 
 					<Card>
 						<div className="google-my-business-stats__feature">
+							<p className="google-my-business-stats__description">
+								Complete business listings get on average 7x more clicks than empty listings.
+							</p>
 							<img
 								src="/calypso/images/google-my-business/complete-listing.svg"
 								className="google-my-business-stats__feature-image"
 							/>
-							<p className="google-my-business-stats__description">
-								Complete business listings get on average 7x more clicks than empty listings.
-							</p>
 						</div>
 						<Button primary className="google-my-business-stats__feature-button">
 							Complete your listing
@@ -178,23 +180,27 @@ class Stats extends Component {
 						</Button>
 					</Card>
 
-					<SectionHeader label={ translate( 'Driving directions' ) } />
+					<SectionHeader label={ translate( 'Driving direction results' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">Driving direction results</h2>
 						<p className="google-my-business-stats__description">
 							The places where customers request driving directions to your business.
 						</p>
+						<FormFieldset>
+							<FormSelect className="google-my-business-stats__select">
+								<option>{ translate( '1 week' ) }</option>
+								<option>{ translate( '1 month' ) }</option>
+								<option>{ translate( '1 quarter' ) }</option>
+							</FormSelect>
+						</FormFieldset>
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
-							<h3 className="google-my-business-stats__empty-title">{ translate( "We don't have enough data" ) }</h3>
-							<p className="google-my-business-stats__empty-text">Once customers start requesting driving directions these stats will appear here.</p>
+							{ translate( "We don't have enough data" ) }
 						</div>
 					</Card>
 
 					<SectionHeader label={ translate( 'Phone Calls' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">Customer phone calls</h2>
 						<p className="google-my-business-stats__description">
 							When and how many times customers call your business
 						</p>
@@ -212,21 +218,20 @@ class Stats extends Component {
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
-							<h3 className="google-my-business-stats__empty-title">{ translate( "We don't have enough data" ) }</h3>
-							<p className="google-my-business-stats__empty-text">Once customers start to call you from your listing these stats will here.</p>
+							{ translate( "We don't have enough data" ) }
 						</div>
 					</Card>
 
 					<Card>
 						<div className="google-my-business-stats__feature">
-							<img
-								src="/calypso/images/google-my-business/compare.svg"
-								className="google-my-business-stats__feature-image"
-							/>
 							<p>
 								Customers compare business listings on Google to make decisions. Make your listing
 								count.
 							</p>
+							<img
+								src="/calypso/images/google-my-business/compare.svg"
+								className="google-my-business-stats__feature-image"
+							/>
 						</div>
 						<Button primary className="google-my-business-stats__feature-button">
 							Complete Your Listing
@@ -236,7 +241,9 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'Return customers' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">How many customers return to your website?</h2>
+						<p className="google-my-business-stats__description">
+							How many customers return to your website?
+						</p>
 						<FormFieldset>
 							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
@@ -247,14 +254,15 @@ class Stats extends Component {
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
-							<h3 className="google-my-business-stats__empty-title">{ translate( "We don't have enough data" ) }</h3>
-							<p className="google-my-business-stats__empty-text">Once customers start returning to your website these stats will appear here.</p>
+							{ translate( "We don't have enough data" ) }
 						</div>
 					</Card>
 
 					<SectionHeader label={ translate( 'Popular times' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">The most popular times for your customers to visit your website.</h2>
+						<p className="google-my-business-stats__description">
+							The most popular times for your customers to visit your website.
+						</p>
 						<FormFieldset>
 							<FormSelect className="google-my-business-stats__select">
 								<option>{ translate( '1 week' ) }</option>
@@ -265,14 +273,12 @@ class Stats extends Component {
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
-							<h3 className="google-my-business-stats__empty-title">{ translate( "We don't have enough data" ) }</h3>
-							<p className="google-my-business-stats__empty-text">Once we understand your popular times these stats will appear.</p>
+							{ translate( "We don't have enough data" ) }
 						</div>
 					</Card>
 
 					<SectionHeader label={ translate( 'Photo views' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">Photo views</h2>
 						<p className="google-my-business-stats__description">
 							The number of times your business photos have been viewed, compared to photos from
 							other businesses.
@@ -289,7 +295,6 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'Photo quantity' ) } />
 					<Card>
-						<h2 className="google-my-business-stats__section-title">How many photos do you have</h2>
 						<p className="google-my-business-stats__description">
 							The number of photos that appear on your business, compared to photos from other
 							businesses.
@@ -317,4 +322,4 @@ class Stats extends Component {
 	}
 }
 
-export default connect( undefined, { recordTracksEvent } )( localize( Stats ) );
+export default connect( undefined, { recordTracksEvent, createNotice } )( localize( Stats ) );
