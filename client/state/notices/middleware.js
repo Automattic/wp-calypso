@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { truncate, includes } from 'lodash';
+import { get, truncate, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -358,7 +358,7 @@ export const handlers = {
  */
 
 export default ( { dispatch, getState } ) => next => action => {
-	if ( handlers.hasOwnProperty( action.type ) ) {
+	if ( ! get( action, 'meta.notices.skip' ) && handlers.hasOwnProperty( action.type ) ) {
 		handlers[ action.type ]( dispatch, action, getState );
 	}
 

@@ -24,7 +24,7 @@ import {
 	POST_RESTORE_FAILURE,
 	POST_SAVE_SUCCESS,
 } from 'state/action-types';
-import { successNotice } from 'state/notices/actions';
+import { successNotice, withoutNotice } from 'state/notices/actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'middleware', () => {
@@ -45,15 +45,21 @@ describe( 'middleware', () => {
 			delete handlers.DUMMY_TYPE;
 		} );
 
+		const dummyCreator = target => ( { type: 'DUMMY_TYPE', target } );
+
 		test( 'should trigger the observer corresponding to the dispatched action type', () => {
-			noticesMiddleware( store )( noop )( { type: 'DUMMY_TYPE', target: 'World' } );
+			noticesMiddleware( store )( noop )( dummyCreator( 'World' ) );
 
 			expect( store.dispatch ).to.have.been.calledWithMatch( {
 				type: NOTICE_CREATE,
-				notice: {
-					text: 'Hello World',
-				},
+				notice: { text: 'Hello World' },
 			} );
+		} );
+
+		test( 'should not trigger the observer when meta.notices.skip is set to true', () => {
+			noticesMiddleware( store )( noop )( withoutNotice( dummyCreator )( 'World' ) );
+
+			expect( store.dispatch ).to.not.have.been.called;
 		} );
 	} );
 
