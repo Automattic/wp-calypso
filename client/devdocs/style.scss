@@ -66,11 +66,18 @@ $devdocs-max-width: 720px;
 
 	// Use multiple columns when listing components
 	.main.devdocs.is-list & {
-		column-gap: 24px;
 
 		// Show 2 columns for big screens
 		@include breakpoint( '>1280px' ) {
 			column-count: 2;
+			column-gap: 24px;
+		}
+
+		@media ( min-width: 2000px ) {
+			column-count: 1;
+			display: grid;
+			grid-gap: 24px;
+			grid-template-columns: 32% 33% 32%;
 		}
 	}
 }
@@ -114,9 +121,14 @@ $devdocs-max-width: 720px;
 		font-size: 18px;
 		font-weight: 300;
 		letter-spacing: 1px;
+		border-bottom: 1px solid rgba( $gray-lighten-20, 0.65 );
 
-		a {
+		a, a:visited {
 			text-decoration: underline;
+
+			&:hover {
+				color: $blue-wordpress;
+			}
 		}
 	}
 
@@ -133,6 +145,14 @@ $devdocs-max-width: 720px;
 		background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
 		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 
+		// A wrapper inside a wrapper to help reliably center
+		// component and block examples.
+		.docs-example__wrapper-content-centering {
+			display: table;
+			margin: auto;
+			min-width: ( $devdocs-max-width / 2 );
+		}
+
 		// Some components use a card and the extra margin
 		// looks strange.
 		.card {
@@ -140,17 +160,16 @@ $devdocs-max-width: 720px;
 		}
 	}
 
-	// Styles specific to the single view
+	// Styles specific to the single component view
 	.main.devdocs.is-single & {
 		.docs-example__wrapper-header-title {
 			padding: 16px 24px;
 		}
 	}
 
-	// How examples look in the list view
+	// How examples look in the lists of components view
 	.main.devdocs.is-list & {
 		break-inside: avoid;
-		max-width: $devdocs-max-width;
 
 		.docs-example__wrapper-header-title a {
 			padding: 16px 24px;
@@ -161,14 +180,43 @@ $devdocs-max-width: 720px;
 			padding: 32px;
 			overflow: hidden;
 		}
-	}
-}
 
-// A wrapper inside a wrapper to help reliably center
-// component and block examples.
-.docs-example__wrapper-content-wrap {
-	display: table;
-	margin: auto;
+		// When we only have room for one column we
+		// set the max-width to line up with search
+		@include breakpoint( '<1280px' ) {
+			max-width: $devdocs-max-width;
+		}
+
+		// At really wide screens, we switch to a grid layout
+		// width fixed height examples and make the entire
+		// example clickable.
+		@media ( min-width: 2000px ) {
+			margin: 0;
+			padding-top: 60px;
+
+			.docs-example__wrapper-header-title a {
+				position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+			}
+
+			.docs-example__wrapper-content {
+				height: 140px;
+				overflow: hidden;
+				pointer-events: none;
+			}
+
+			&:hover {
+				border-color: $blue-light;
+
+				.docs-example__wrapper-content {
+					opacity: 0.7;
+				}
+			}
+		}
+	}
 }
 
 
