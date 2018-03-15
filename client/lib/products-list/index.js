@@ -45,7 +45,7 @@ ProductsList.prototype.get = function() {
 		debug( 'First time loading ProductsList, check store' );
 
 		if ( typeof localStorage !== 'undefined' ) {
-			data = localStorage.getItem( 'ProductsList' );
+			data = JSON.parse( localStorage.getItem( 'ProductsList' ) );
 		}
 
 		if ( data ) {
@@ -95,7 +95,7 @@ ProductsList.prototype.fetch = function() {
 			this.emit( 'change' );
 
 			if ( typeof localStorage !== 'undefined' ) {
-				localStorage.setItem( 'ProductsList', productsList );
+				localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
 			}
 		}.bind( this )
 	);
