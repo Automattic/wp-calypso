@@ -53,6 +53,17 @@ class InventoryWidget extends Component {
 		return sortBy( lowProducts, 'stock_quantity' );
 	};
 
+	getClasses = () => {
+		const { lowStockThreshold, noStockThreshold, products } = this.props;
+		const lowProducts = filter( products, p => parseInt( p.stock_quantity ) <= lowStockThreshold );
+		const noProducts = filter( products, p => parseInt( p.stock_quantity ) <= noStockThreshold );
+		return classNames( {
+			'dashboard-widgets__inventory': true,
+			'has-low-stock': lowProducts.length > 0,
+			'has-no-stock': noProducts.length > 0,
+		} );
+	};
+
 	renderRow = ( p, i ) => {
 		const { noStockThreshold, site, translate } = this.props;
 		const outOfStock = parseInt( p.stock_quantity ) <= noStockThreshold;
@@ -90,12 +101,12 @@ class InventoryWidget extends Component {
 	renderContents = () => {
 		const { isLowStockEnabled, translate } = this.props;
 		if ( ! isLowStockEnabled ) {
-			return <p>Enable low stock management…</p>;
+			return null;
 		}
 		const lowProducts = this.getLowStockProducts();
 		if ( ! lowProducts.length ) {
 			return (
-				<p>
+				<p className="dashboard-widgets__message-ok">
 					{ translate(
 						'{{strong}}Looking good!{{/strong}} None of your products are currently at low stock levels.',
 						{ components: { strong: <strong /> } }
@@ -105,7 +116,9 @@ class InventoryWidget extends Component {
 		}
 		return (
 			<Fragment>
-				<p>{ translate( 'Some of your products are running low on inventory.' ) }</p>
+				<p className="dashboard-widgets__message-low">
+					{ translate( 'Some of your products are running low on inventory.' ) }
+				</p>
 				{ this.renderLowStock( lowProducts ) }
 			</Fragment>
 		);
@@ -120,7 +133,7 @@ class InventoryWidget extends Component {
 		return (
 			<DashboardWidget
 				width={ this.props.width }
-				className="dashboard-widgets__inventory"
+				className={ this.getClasses() }
 				title={ translate( 'Inventory Alerts' ) }
 			>
 				{ this.renderContents() }

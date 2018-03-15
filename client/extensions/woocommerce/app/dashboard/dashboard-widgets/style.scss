@@ -19,6 +19,22 @@
 		}
 	}
 
+	&.has-low-stock {
+		border-left: 3px solid $alert-yellow;
+	}
+
+	&.has-no-stock {
+		border-left: 3px solid $alert-red;
+	}
+
+	.dashboard-widgets__message-ok {
+		padding-bottom: 20px;
+	}
+
+	.dashboard-widgets__message-low {
+		margin-bottom: 10px;
+	}
+
 	.table {
 		padding: 0;
 		box-shadow: none;
