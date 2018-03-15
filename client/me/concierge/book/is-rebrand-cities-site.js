@@ -27,7 +27,7 @@ import PropTypes from 'prop-types';
  */
 import SiteUsersFetcher from 'components/site-users-fetcher';
 
-const REBRAND_CITIES_ACCOUNT_USERNAME = 'mwtest514';
+const REBRAND_CITIES_ACCOUNT_USERNAME = 'rebrandcities';
 
 /**
  * The <AreUsersPresent /> component takes a set of users and an onChange callback. It
