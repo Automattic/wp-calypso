@@ -167,11 +167,6 @@ class Search extends Component {
 		this.onSearch = this.props.delaySearch
 			? debounce( this.props.onSearch, this.props.delayTimeout )
 			: this.props.onSearch;
-
-		if ( this.props.autoFocus ) {
-			// this hack makes autoFocus work correctly in Dropdown
-			setTimeout( () => this.focus(), 0 );
-		}
 	}
 
 	scrollOverlay = () => {
@@ -347,6 +342,7 @@ class Search extends Component {
 				</div>
 				<div className={ fadeDivClass }>
 					<input
+						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						type="search"
 						id={ 'search-component-' + this.instanceId }
 						className={ inputClass }
