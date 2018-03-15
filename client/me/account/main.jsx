@@ -43,7 +43,7 @@ import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage, isLocaleVariant } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
 import _user from 'lib/user';
 
@@ -105,7 +105,7 @@ const Account = createReactClass( {
 		this.updateUserSetting( 'language', value );
 		const redirect =
 			value !== originalLanguage || value !== originalLocaleVariant ? '/me/account' : false;
-		this.setState( { redirect } );
+		this.setState( { redirect, localeVariantSelected: isLocaleVariant( value ) } );
 	},
 
 	updateColorScheme( colorScheme ) {
@@ -147,55 +147,77 @@ const Account = createReactClass( {
 		return !! this.state.emailValidationError;
 	},
 
-	communityTranslator() {
-		const { translate } = this.props;
-		const userLocale = this.getUserSetting( 'language' );
-		const showTranslator = userLocale && userLocale !== 'en';
-		if ( showTranslator ) {
-			return (
-				<FormFieldset>
-					<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checked={ this.getUserSetting( 'enable_translator' ) }
-							onChange={ this.updateUserSettingCheckbox }
-							disabled={ this.getDisabledState() }
-							id="enable_translator"
-							name="enable_translator"
-							onClick={ this.getCheckboxHandler( 'Community Translator' ) }
-						/>
-						<span>
-							{ translate( 'Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
-								components: {
-									a: (
-										<a
-											target="_blank"
-											rel="noopener noreferrer"
-											href="https://en.support.wordpress.com/community-translator/"
-											onClick={ this.getClickHandler( 'Community Translator Learn More Link' ) }
-										/>
-									),
-								},
-							} ) }
-						</span>
-					</FormLabel>
-				</FormFieldset>
-			);
+	// this is a temporary check to exclude the CT from locale variants
+	shouldDisplayCommunityTranslator() {
+		const locale = this.getUserSetting( 'language' );
+
+		if ( ! locale || locale === 'en' ) {
+			return false;
 		}
+
+		// if the user has selected a locale variant
+		if ( this.state.localeVariantSelected ) {
+			return false;
+		}
+
+		// if the user hasn't yet selected a language, and the currently saved locale is a variant
+		if (
+			typeof this.state.localeVariantSelected !== 'boolean' &&
+			this.getUserSetting( 'locale_variant' )
+		) {
+			return false;
+		}
+
+		return true;
+	},
+
+	communityTranslator() {
+		if ( ! this.shouldDisplayCommunityTranslator() ) {
+			return;
+		}
+		const { translate } = this.props;
+		return (
+			<FormFieldset>
+				<FormLegend>{ translate( 'Community Translator' ) }</FormLegend>
+				<FormLabel>
+					<FormCheckbox
+						checked={ this.getUserSetting( 'enable_translator' ) }
+						onChange={ this.updateUserSettingCheckbox }
+						disabled={ this.getDisabledState() }
+						id="enable_translator"
+						name="enable_translator"
+						onClick={ this.getCheckboxHandler( 'Community Translator' ) }
+					/>
+					<span>
+						{ translate( 'Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
+							components: {
+								a: (
+									<a
+										target="_blank"
+										rel="noopener noreferrer"
+										href="https://en.support.wordpress.com/community-translator/"
+										onClick={ this.getClickHandler( 'Community Translator Learn More Link' ) }
+									/>
+								),
+							},
+						} ) }
+					</span>
+				</FormLabel>
+			</FormFieldset>
+		);
 	},
 
 	thankTranslationContributors() {
-		const { translate } = this.props;
-		const locale = this.getUserSetting( 'language' );
-		if ( ! locale || locale === 'en' ) {
+		if ( ! this.shouldDisplayCommunityTranslator() ) {
 			return;
 		}
 
+		const locale = this.getUserSetting( 'language' );
 		const language = getLanguage( locale );
 		if ( ! language ) {
 			return;
 		}
-
+		const { translate } = this.props;
 		const url = 'https://translate.wordpress.com/translators/?contributor_locale=' + locale;
 
 		return (

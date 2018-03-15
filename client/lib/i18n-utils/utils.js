@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import { find, isString } from 'lodash';
 import { parse } from 'url';
 
 /**
@@ -33,6 +33,20 @@ function getPathParts( path ) {
  */
 export function isDefaultLocale( locale ) {
 	return locale === config( 'i18n_default_locale_slug' );
+}
+
+/**
+ * Checks if provided locale has a parentLangSlug and is therefore a locale variant
+ *
+ * @param {string} locale - locale slug (eg: 'fr')
+ * @return {boolean} true when the locale has a parentLangSlug
+ */
+export function isLocaleVariant( locale ) {
+	if ( ! isString( locale ) ) {
+		return false;
+	}
+	const language = getLanguage( locale );
+	return !! language && isString( language.parentLangSlug );
 }
 
 /**

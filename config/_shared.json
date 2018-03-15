@@ -74,7 +74,7 @@
         { "value": 18, "langSlug": "eo", "name": "Esperanto", "wpLocale": "eo", "territories": [] },
         { "value": 19, "langSlug": "es", "name": "Español", "wpLocale": "es_ES", "popular": 2, "territories": [ "019", "039" ] },
         { "value": 484, "langSlug": "es-cl", "name": "Español de Chile", "wpLocale": "es_CL", "territories": [ "019" ] },
-        { "value": 902, "langSlug": "es-mx", "name": "Español de México", "wpLocale": "es_MX", "territories": [ "019" ] },
+        { "value": 902, "langSlug": "es-mx", "name": "Español de México", "wpLocale": "es_MX", "parentLangSlug": "es", "territories": [ "019" ] },
         { "value": 20, "langSlug": "et", "name": "Eesti", "wpLocale": "et", "territories": [ "154" ] },
         { "value": 429, "langSlug": "eu", "name": "Euskara", "wpLocale": "eu", "territories": [ "039" ] },
         { "value": 21, "langSlug": "fa", "name": "فارسی", "wpLocale": "fa_IR", "rtl": true, "territories": [ "034" ] },
