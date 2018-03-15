@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
 import page from 'page';
 
 /**
@@ -125,6 +124,7 @@ class GoogleMyBusinessCategory extends Component {
 
 	state = {
 		query: '',
+		category: '',
 	};
 
 	setSuggestionsRef = ref => ( this.suggestionsRef = ref );
@@ -133,13 +133,27 @@ class GoogleMyBusinessCategory extends Component {
 
 	handleSearch = query => this.setState( { query: query } );
 
-	handleKeyDown = event => this.suggestionsRef.handleKeyEvent( event );
+	handleKeyDown = event => {
+		this.setState( {
+			category: null,
+		} );
+		this.suggestionsRef.handleKeyEvent( event );
+	};
 
 	getSuggestions() {
-		return GoogleMyBusinessCategory.hints
-			.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
-			.map( hint => ( { label: hint } ) );
+		return this.state.category
+			? []
+			: GoogleMyBusinessCategory.hints
+					.filter( hint => this.state.query && hint.match( new RegExp( this.state.query, 'i' ) ) )
+					.map( hint => ( { label: hint } ) );
 	}
+
+	selectSuggestion = suggestion => {
+		this.setState( {
+			category: suggestion.label,
+			query: null,
+		} );
+	};
 
 	goBack = () => {
 		page.back( `/google-my-business/${ this.props.siteId }` );
@@ -183,12 +197,13 @@ class GoogleMyBusinessCategory extends Component {
 							onBlur={ this.hideSuggestions }
 							onKeyDown={ this.handleKeyDown }
 							placeholder="Type something..."
+							value={ this.state.category }
 						/>
 						<Suggestions
 							ref={ this.setSuggestionsRef }
 							query={ this.state.query }
 							suggestions={ this.getSuggestions() }
-							suggest={ noop }
+							suggest={ this.selectSuggestion }
 						/>
 					</FormFieldset>
 				</Card>
