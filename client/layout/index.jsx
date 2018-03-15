@@ -135,7 +135,7 @@ const Layout = createReactClass( {
 						forcePinned={ 'post' === this.props.section.name }
 					/>
 
-					<div id="secondary" className="layout__secondary">
+					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
