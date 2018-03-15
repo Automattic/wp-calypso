@@ -18,7 +18,7 @@ const config = {
 				targets: {
 					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'not ie <= 10' ],
 				},
-				exclude: [ 'transform-classes', 'transform-regenerator', 'transform-template-literals' ], // transform-classes is added manually later.
+				exclude: [ 'transform-classes', 'transform-template-literals' ], // transform-classes is added manually later.
 			},
 		],
 		'@babel/stage-2',
