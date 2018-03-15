@@ -444,17 +444,20 @@ class Page extends Component {
 		await this.changeShadowStatus( progressNotice );
 		try {
 			await action();
-			if ( undo === false ) {
+			if ( undo === 'undo' ) {
+				// This update was actually undo. Reset the shadow status immediately
 				await this.changeShadowStatus( false );
 				return;
 			}
 			await this.changeShadowStatus( { ...successNotice, undo } );
 			if ( undo ) {
+				// If undo is offered, keep the success notice displayed indefinitely
 				return;
 			}
 		} catch ( error ) {
 			await this.changeShadowStatus( errorNotice );
 		}
+		// remove the success/error notice after 5 seconds
 		await sleep( 5000 );
 		await this.changeShadowStatus( false );
 	}
@@ -485,7 +488,7 @@ class Page extends Component {
 			case 'trash':
 				this.performUpdate( {
 					action: () => this.props.trashPost( page.site_ID, page.ID, page ),
-					undo: page.status !== 'trash' && 'restore',
+					undo: page.status !== 'trash' ? 'restore' : 'undo',
 					progressNotice: {
 						status: 'is-error',
 						icon: 'trash',
@@ -505,7 +508,7 @@ class Page extends Component {
 			case 'restore':
 				this.performUpdate( {
 					action: () => this.props.restorePost( page.site_ID, page.ID ),
-					undo: page.status === 'trash' && 'trash',
+					undo: page.status === 'trash' ? 'trash' : 'undo',
 					progressNotice: {
 						status: 'is-warning',
 						icon: 'history',
