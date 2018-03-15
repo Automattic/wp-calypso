@@ -5,7 +5,7 @@
 import React, { Component, Fragment } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { filter } from 'lodash';
+import { filter, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -49,7 +49,8 @@ class InventoryWidget extends Component {
 
 	getLowStockProducts = () => {
 		const { lowStockThreshold, products } = this.props;
-		return filter( products, p => parseInt( p.stock_quantity ) <= lowStockThreshold );
+		const lowProducts = filter( products, p => parseInt( p.stock_quantity ) <= lowStockThreshold );
+		return sortBy( lowProducts, 'stock_quantity' );
 	};
 
 	renderRow = ( p, i ) => {
