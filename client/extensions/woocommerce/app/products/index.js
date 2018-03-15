@@ -30,7 +30,6 @@ import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import ProductsList from './products-list';
 import ProductsListSearchResults from './products-list-search-results';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SectionNav from 'components/section-nav';
 import Search from 'components/search';
 
@@ -124,7 +123,6 @@ class Products extends Component {
 
 		return (
 			<Main className={ classes } wideLayout>
-				<SidebarNavigation />
 				<ActionHeader breadcrumbs={ <span>{ translate( 'Products' ) }</span> }>
 					<Button primary href={ getLink( '/store/product/:site/', site ) }>
 						{ translate( 'Add a product' ) }

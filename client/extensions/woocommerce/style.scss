@@ -55,9 +55,9 @@
 
 	@import 'woocommerce-services/style';
 
-	.section-nav {
+	.main {
 		@include breakpoint( ">660px" ) {
-			margin-top: 58px;
+			padding-top: 35px;
 		}
 	}
 
@@ -87,10 +87,6 @@
 		@media( max-width: 660px ) {
 			margin: 0px;
 		}
-	}
-
-	.layout__content {
-		padding-top: 67px;
 	}
 }
 
@@ -155,39 +151,8 @@
 
 .is-section-woocommerce.focus-sidebar {
 	@include breakpoint( "<660px" ) {
-		.sticky-panel,
-		.products__form,
-		.current-section {
+		.products__form {
 			display: none;
-		}
-	}
-}
-
-.is-section-woocommerce.focus-content {
-	@include breakpoint( "<660px" ) {
-		.site-icon,
-		.current-section__site-title,
-		.current-section__section-title {
-			display: none;
-		}
-
-		.current-section {
-			margin: 0;
-
-			a {
-				position: fixed;
-				z-index: 1;
-				margin-top: 0;
-				background: transparent;
-				border: none;
-				padding-top: 11px;
-				padding-bottom: 11px;
-			}
-
-			.gridicons-chevron-left {
-				margin-left: 11px;
-				margin-right: 11px;
-			}
 		}
 	}
 }

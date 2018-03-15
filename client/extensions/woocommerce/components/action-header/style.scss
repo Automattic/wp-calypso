@@ -1,50 +1,123 @@
-.action-header__header {
+.action-header {
 	width: 100%;
-	min-height: 46px;
-	padding: 2px 16px 2px;
+	min-height: 47px;
+	margin: 0 0 8px;
+	padding: 8px 16px 8px 0;
 	display: flex;
+	justify-content: flex-start;
 	flex-direction: row;
 	align-items: center;
+	box-sizing: border-box;
+	color: $gray-dark;
+	background: $white;
+	border-bottom: 1px solid $gray-lighten-20;
 
 	@include breakpoint( ">480px" ) {
-		padding-left: 24px;
-		padding-right: 24px;
+		padding: 8px 24px 8px 0;
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding: 5px 16px;
+		margin: 0;
+	}
+
+	@include breakpoint( ">960px" ) {
+		position: fixed;
+		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+		width: calc(100% - 273px);
+		top: 47px;
+		left: 273px;
+	}
+	@include breakpoint( "660px-960px" ) {
+		position: fixed;
+		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+		width: calc(100% - 229px);
+		top: 47px;
+		left: 229px;
 	}
 }
 
-.action-header__breadcrumbs {
-	width: 60%;
-	font-size: 13px;
-	@include breakpoint( "<660px" ) {
-		padding-left: 24px;
-	}
+.action-header__back-to-sidebar {
+	flex-grow: 0;
+	flex-shrink: 0;
+	min-width: 40px;
 
-	&.is-loading {
-		@include placeholder();
+	@include breakpoint( ">660px" ) {
+		display: none;
 	}
 }
 
-.action-header__breadcrumbs-separator {
-	color: $gray;
-	margin: 0 2px;
+.action-header__content {
+	flex-grow: 2;
+	flex-shrink: 0;
+	display: flex;
+	justify-content: flex-start;
+
+	.site-icon {
+		margin-right: 8px;
+	}
+
+	.action-header__site-title {
+		font-size: 10px;
+		color: $gray-darken-10;
+		margin: 2px 0 -3px;
+	}
+
+	.action-header__breadcrumbs {
+		font-size: 13px;
+
+		&.is-loading {
+			@include placeholder();
+		}
+
+		span {
+			display: inline-block;
+		}
+
+		span + span::before {
+			content: ' / ';
+			color: $gray;
+			margin: 0 2px;
+		}
+	}
 }
 
 .action-header__actions {
-	width: 52%;
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
+	flex-grow: 1;
+	flex-shrink: 2;
+	// Triggers the width of the list, so ActionButtons correctly measures the space.
+	overflow: hidden;
+	text-align: right;
 
-	.button.is-borderless span {
-		@include breakpoint( "<660px" ) {
-			display: none;
+	.action-header__actions-list {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		flex-wrap: nowrap;
+
+		.button {
+			flex-basis: auto;
+		}
+	}
+
+	&.is-dropdown .action-header__actions-list {
+		display: none;
+	}
+
+	.action-header__split-button {
+		.button + .button {
+			margin-left: 0;
 		}
 	}
 
 	.button {
 		white-space: nowrap;
+		overflow: visible;
 		padding: 5px 14px 7px;
-		margin-left: 12px;
+
+		& + .button {
+			margin-left: 12px;
+		}
 
 		&.is-borderless {
 			padding: 0;
@@ -60,31 +133,29 @@
 		}
 	}
 }
-.action-header__notice {
-		margin: 0;
-		width: 100%;
-}
 
-.sticky-panel {
-	@include breakpoint( ">960px" ) {
-		position: fixed;
-		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-		width: calc(100% - 273px);
-		top: 47px;
-		left: 273px;
-	}
-	@include breakpoint( "660px-960px" ) {
-		position: fixed;
-		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-		width: calc(100% - 229px);
-		top: 47px;
-		left: 229px;
-	}
-	@include breakpoint( ">660px" ) {
-		margin-bottom: 58px;
-	}
-}
+// & refers to .woocommerce base class
+&.popover .popover__menu-item {
+	padding: 8px 16px;
 
-& .sticky-panel.is-sticky .sticky-panel__content {
-	margin-top: 0;
+	.gridicon {
+		top: 4px;
+	}
+
+	&.is-scary {
+		.gridicon {
+			color: $alert-red;
+		}
+
+		&.is-selected,
+		&:hover,
+		&:focus {
+			background: $alert-red;
+			color: $white;
+
+			.gridicon {
+				color: $white;
+			}
+		}
+	}
 }
