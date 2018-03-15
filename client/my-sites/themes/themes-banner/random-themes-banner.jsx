@@ -5,7 +5,7 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { isEqual, sample } from 'lodash';
+import { includes, sample } from 'lodash';
 
 class RandomThemesBanner extends PureComponent {
 	static propTypes = {
@@ -32,7 +32,7 @@ class RandomThemesBanner extends PureComponent {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! isEqual( Object.keys( this.props.banners ), Object.keys( nextProps.banners ) ) ) {
+		if ( ! includes( Object.keys( nextProps.banners ), this.state.banner ) ) {
 			this.setState( {
 				banner: sample( Object.keys( nextProps.banners ) ),
 			} );
