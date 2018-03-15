@@ -15,13 +15,10 @@ import Gridicon from 'gridicons';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Button from 'components/button';
 
-const GoogleMyBusinessLocation = ( { translate, title, text, href, verified } ) => (
+const GoogleMyBusinessLocation = ( { translate, title, text, href, verified, img } ) => (
 	<div>
 		<div className="google-my-business-location__content">
-			<img
-				src="https://lh5.googleusercontent.com/p/AF1QipPBVVXFSwBfsObM5TbyoLSGySD_CJAXiztaxf0a=w408-h544-k-no"
-				className="google-my-business-location__image"
-			/>
+			<img src={ img } className="google-my-business-location__image" alt="gravatar" />
 			<div className="google-my-business-location__text">
 				<h2 className="google-my-business-location__header">{ title }</h2>
 				{ text }

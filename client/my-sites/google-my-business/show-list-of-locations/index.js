@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -47,6 +46,7 @@ class ShowListOfLocation extends Component {
 				<CompactCard>
 					<GoogleMyBusinessLocation
 						title="Cate's Cookies"
+						img="/calypso/images/google-my-business/cookies.png"
 						text={
 							<div>
 								345 North Avenue<br />Talihassee, FL 34342<br />USA
@@ -60,6 +60,7 @@ class ShowListOfLocation extends Component {
 				<CompactCard>
 					<GoogleMyBusinessLocation
 						title="Pinch Bakeshop"
+						img="/calypso/images/google-my-business/pinch.png"
 						text={
 							<div>
 								234 Piedmont Drive<br />Talihassee, FL 34342<br />USA

@@ -49,7 +49,7 @@ class Stats extends Component {
 					<Card>
 						<div className="google-my-business-stats__container">
 							<img
-								src="https://lh5.googleusercontent.com/p/AF1QipPBVVXFSwBfsObM5TbyoLSGySD_CJAXiztaxf0a=w408-h544-k-no"
+								src="/calypso/images/google-my-business/cookies.png"
 								className="google-my-business-stats__image"
 								alt="gravatar"
 							/>
