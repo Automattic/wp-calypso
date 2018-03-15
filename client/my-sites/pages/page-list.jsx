@@ -110,21 +110,15 @@ class Pages extends Component {
 		trackScrollPage: function() {},
 	};
 
-	constructor( props ) {
-		super( props );
-
-		this.state = {
-			pages: this.props.pages,
-			shadowItems: {},
-		};
-	}
+	state = {
+		pages: this.props.pages,
+		shadowItems: {},
+	};
 
 	componentWillReceiveProps( nextProps ) {
-		const queryChanged = ! isEqual( nextProps.query, this.props.query );
-
 		if (
 			nextProps.pages !== this.props.pages &&
-			( size( this.state.shadowItems ) === 0 || queryChanged )
+			( size( this.state.shadowItems ) === 0 || ! isEqual( nextProps.query, this.props.query ) )
 		) {
 			this.setState( { pages: nextProps.pages, shadowItems: {} } );
 		}
@@ -333,7 +327,6 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				{ rows }
 			</div>

@@ -526,7 +526,7 @@ class Page extends Component {
 				this.performUpdate( {
 					action: () => this.props.savePost( page.site_ID, page.ID, { status } ),
 					progressNotice: {
-						status: 'is-success',
+						status: 'is-info',
 						icon: 'reader',
 						text: translate( 'Publishing…' ),
 					},
