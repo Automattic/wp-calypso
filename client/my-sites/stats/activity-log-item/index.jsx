@@ -77,11 +77,10 @@ class ActivityLogItem extends Component {
 		const { hideRestore, activity: { activityIsRewindable, activityName } } = this.props;
 
 		switch ( activityName ) {
-			case 'rewind__scan_result_found':
-				return this.renderHelpAction( this.props.trackHelpThreat );
-
+			case 'plugin__update_failed':
 			case 'rewind__backup_error':
-				return this.renderHelpAction( this.props.trackHelpBackupFail );
+			case 'rewind__scan_result_found':
+				return this.renderHelpAction();
 		}
 
 		if ( ! hideRestore && activityIsRewindable ) {
@@ -116,25 +115,22 @@ class ActivityLogItem extends Component {
 	}
 
 	/**
-	 * Displays a button for users to get help. Tracks button click based on the function passed.
+	 * Displays a button for users to get help. Tracks button click.
 	 *
-	 * @param {function} trackHelp Method to call and track the button click.
 	 * @returns {Object} Get help button.
 	 */
-	renderHelpAction( trackHelp ) {
-		const { translate } = this.props;
+	renderHelpAction = () => (
+		<HappychatButton
+			className="activity-log-item__help-action"
+			borderless={ false }
+			onClick={ this.handleTrackHelp }
+		>
+			<Gridicon icon="chat" size={ 18 } />
+			{ this.props.translate( 'Get Help' ) }
+		</HappychatButton>
+	);
 
-		return (
-			<HappychatButton
-				className="activity-log-item__help-action"
-				borderless={ false }
-				onClick={ trackHelp }
-			>
-				<Gridicon icon="chat" size={ 18 } />
-				{ translate( 'Get Help' ) }
-			</HappychatButton>
-		);
-	}
+	handleTrackHelp = () => this.props.trackHelp( this.props.activity.activityName );
 
 	render() {
 		const {
@@ -282,8 +278,8 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
-	trackHelpThreat: () => recordTracksEvent( 'calypso_activitylog_threat_get_help' ),
-	trackHelpBackupFail: () => recordTracksEvent( 'calypso_activitylog_backup_fail_get_help' ),
+	trackHelp: activityName =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_event_get_help', { activityName } ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );
