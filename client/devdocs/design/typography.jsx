@@ -17,89 +17,6 @@ export default class Typography extends React.PureComponent {
 	static displayName = 'Typography';
 
 	render() {
-		const interfaceTitle = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily:
-				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
-				'"Cantarell", "Helvetica Neue", sans-serif',
-			fontSize: '24px',
-			fontWeight: '300',
-			lineHeight: '32px',
-		};
-
-		const interfaceSubtitle = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily:
-				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
-				'"Cantarell", "Helvetica Neue", sans-serif',
-			fontSize: '21px',
-			fontWeight: '300',
-			lineHeight: '32px',
-		};
-
-		const interfaceBodyCopy = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily:
-				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
-				'"Cantarell", "Helvetica Neue", sans-serif',
-			fontSize: '14px',
-			fontWeight: '400',
-			lineHeight: '1.5',
-		};
-
-		const interfaceLabel = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily:
-				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
-				'"Cantarell", "Helvetica Neue", sans-serif',
-			fontSize: '13px',
-			fontWeight: '600',
-			lineHeight: '18px',
-		};
-
-		const interfaceCaption = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily:
-				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
-				'"Cantarell", "Helvetica Neue", sans-serif',
-			fontSize: '11px',
-			fontWeight: '400',
-			lineHeight: '16px',
-			textTransform: 'uppercase',
-		};
-
-		const contentTitle = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily: 'Noto Serif',
-			fontSize: '32px',
-			fontWeight: '700',
-			lineHeight: '40px',
-		};
-
-		const contentSubtitle = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily: 'Noto Serif',
-			fontSize: '24px',
-			fontWeight: '700',
-			lineHeight: '32px',
-		};
-
-		const contentBodyCopy = {
-			display: 'block',
-			margin: '8px 0',
-			fontFamily: 'Noto Serif',
-			fontSize: '16px',
-			fontWeight: '400',
-			lineHeight: '1.5',
-		};
-
 		return (
 			<Main className="devdocs devdocs__typography">
 				<DocumentHead title="Typography" />
@@ -116,16 +33,14 @@ export default class Typography extends React.PureComponent {
 						</code>
 					</p>
 
-					<Card>
-						<span style={ interfaceTitle }>Quick foxes jump nightly above wizards.</span>
-						<span style={ interfaceSubtitle }>Pack my box with five dozen liquor jugs</span>
-						<span style={ interfaceBodyCopy }>
+					<Card className="design__typography-interface-example">
+						<h2>Quick foxes jump nightly above wizards.</h2>
+						<h3>Pack my box with five dozen liquor jugs</h3>
+						<p>
 							“A man who would letterspace lower case would steal sheep,” Frederic Goudy liked to
 							say. The reason for not letterspacing lower case is that it hampers legibility. But
 							there are some lowercase alphabets to which…
-						</span>
-						<span style={ interfaceLabel }>Site description</span>
-						<span style={ interfaceCaption }>Views per page</span>
+						</p>
 					</Card>
 
 					<h2>Content Typography</h2>
@@ -134,14 +49,14 @@ export default class Typography extends React.PureComponent {
 						platforms for all languages.
 					</p>
 
-					<Card>
-						<span style={ contentTitle }>Quick foxes jump nightly above wizards.</span>
-						<span style={ contentSubtitle }>Pack my box with five dozen liquor jugs</span>
-						<span style={ contentBodyCopy }>
+					<Card className="design__typography-content-example">
+						<h2>Quick foxes jump nightly above wizards.</h2>
+						<h3>Pack my box with five dozen liquor jugs</h3>
+						<p>
 							“A man who would letterspace lower case would steal sheep,” Frederic Goudy liked to
 							say. The reason for not letterspacing lower case is that it hampers legibility. But
 							there are some lowercase alphabets to which…
-						</span>
+						</p>
 					</Card>
 				</div>
 			</Main>
