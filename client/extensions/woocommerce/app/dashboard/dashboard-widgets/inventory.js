@@ -35,6 +35,7 @@ class InventoryWidget extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		width: PropTypes.oneOf( [ 'half', 'third' ] ).isRequired,
 	};
 
 	componentDidMount() {
@@ -117,7 +118,7 @@ class InventoryWidget extends Component {
 
 		return (
 			<DashboardWidget
-				width="half"
+				width={ this.props.width }
 				className="dashboard-widgets__inventory"
 				title={ translate( 'Inventory Alerts' ) }
 			>
