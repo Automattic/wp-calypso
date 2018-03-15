@@ -76,9 +76,14 @@ class SearchForALocation extends Component {
 			predictions &&
 			predictions.map( prediction => {
 				return (
-					<CompactCard key={ prediction.place_id } href={ nextHref }>
-						{ prediction.structured_formatting.main_text }
-						<p>{ prediction.structured_formatting.secondary_text }</p>
+					<CompactCard
+						key={ prediction.place_id }
+						href={ nextHref }
+						className="search-for-a-location__result"
+					>
+						<strong>{ prediction.structured_formatting.main_text }</strong>
+						<br />
+						{ prediction.structured_formatting.secondary_text }
 					</CompactCard>
 				);
 			} );
