@@ -1,5 +1,24 @@
-
 .dashboard-widget.dashboard-widgets__inventory {
+	.dashboard-widget__content {
+		position: relative;
+
+		.dashboard-widget__children {
+			overflow: scroll;
+			max-height: 200px;
+		}
+
+		&:after {
+			content: " ";
+			display: block;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 20px;
+			background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, #fff 90%)
+		}
+	}
+
 	.table {
 		padding: 0;
 		box-shadow: none;
