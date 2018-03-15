@@ -13,7 +13,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import Button from 'components/button';
 import Main from 'components/main';
@@ -40,12 +40,15 @@ class GoogleMyBusinessVerify extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card>
+				<CompactCard>
 					<h2>{ translate( 'Choose a way to verify' ) }</h2>
-					<p>{ translate( "Select how you'd like to get a verification code" ) }</p>
 					<p>
+						{ translate( "Select how you'd like to get a verification code" ) }
+						<br />
 						<a href="https://business.google.com">{ translate( 'Learn More' ) }</a>
 					</p>
+				</CompactCard>
+				<CompactCard>
 					<h2>{ translate( 'Postcard by mail' ) }</h2>
 					<p>{ translate( 'Have a postcard with your code mailed to this address' ) }</p>
 					<p>
@@ -56,10 +59,12 @@ class GoogleMyBusinessVerify extends Component {
 					<Button primary href={ href }>
 						{ translate( 'Verify by mail' ) }
 					</Button>
+				</CompactCard>
+				<CompactCard>
 					<h2>{ translate( 'Verify later' ) }</h2>
 					<p>{ translate( "You can't fully manage your listing until you're verified" ) }</p>
 					<Button href={ href }>{ translate( 'Verify later' ) }</Button>
-				</Card>
+				</CompactCard>
 
 				<StepNavigation value={ 100 } total={ 100 } backHref={ backHref } />
 			</Main>

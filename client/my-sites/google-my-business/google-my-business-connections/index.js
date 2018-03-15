@@ -57,7 +57,7 @@ class GoogleMyBusinessConnections extends Component {
 						<FormTelInput />
 
 						<FormLabel>{ translate( 'Website' ) }</FormLabel>
-						<FormTextInput />
+						<FormTextInput value={ this.props.siteId } />
 					</FormFieldset>
 				</Card>
 

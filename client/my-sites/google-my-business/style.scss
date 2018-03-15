@@ -7,10 +7,13 @@
 @import './step-navigation/style';
 
 .google-my-business {
+	h2,
 	.form-legend {
-		font-size: 24px;
+		font-size: 21px;
+		font-weight: 400;
 	}
 
+	.form-tel-input,
 	.form-text-input {
 		margin-bottom: 1em;
 	}
