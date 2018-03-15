@@ -128,7 +128,7 @@ export default connect(
 		}
 
 		return {
-			jetpackVersion: remoteSiteData.jetpackVersion,
+			jetpackVersion: remoteSiteData.jetpackVersion || false,
 			notJetpack,
 		};
 	},
