@@ -45,7 +45,11 @@ ProductsList.prototype.get = function() {
 		debug( 'First time loading ProductsList, check store' );
 
 		if ( typeof localStorage !== 'undefined' ) {
-			data = localStorage.getItem( 'ProductsList' );
+			try {
+				data = JSON.parse( localStorage.getItem( 'ProductsList' ) );
+			} catch ( e ) {
+				// in case of bad data, do nothing, leave data undefined and just fetch again
+			}
 		}
 
 		if ( data ) {
@@ -95,7 +99,7 @@ ProductsList.prototype.fetch = function() {
 			this.emit( 'change' );
 
 			if ( typeof localStorage !== 'undefined' ) {
-				localStorage.setItem( 'ProductsList', productsList );
+				localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
 			}
 		}.bind( this )
 	);
