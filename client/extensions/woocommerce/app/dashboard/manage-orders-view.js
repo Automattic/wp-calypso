@@ -178,7 +178,7 @@ class ManageOrdersView extends Component {
 				<DashboardWidget
 					className="dashboard__reports-widget"
 					image="/calypso/images/extensions/woocommerce/woocommerce-reports.svg"
-					imagePosition="right"
+					imagePosition="left"
 					title={ translate( 'Reports' ) }
 				>
 					<p>
