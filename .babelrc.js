@@ -5,7 +5,6 @@ const path = require( 'path' );
 const isCalypsoClient = process.env.CALYPSO_CLIENT === 'true';
 const isCalypsoServer = process.env.CALYPSO_SERVER === 'true';
 const isCalypso = isCalypsoClient || isCalypsoServer;
-const isTest = process.env.NODE_ENV === 'test';
 
 const modules = isCalypsoClient ? false : 'commonjs'; // only calypso should keep es6 modules
 const codeSplit = require( './server/config' ).isEnabled( 'code-splitting' );
@@ -16,16 +15,21 @@ const config = {
 			'@babel/env',
 			{
 				modules,
-				loose: true, // less spec compliant but also much less code
 				targets: {
 					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'not ie <= 10' ],
 				},
+				exclude: [ 'transform-classes' ], // transform-classes is added manually later.
 			},
 		],
 		'@babel/stage-2',
 		'@babel/react',
 	],
 	plugins: _.compact( [
+		// the two class transforms are to emulate exactly how babel 6 handled classes.
+		// it very slightly diverges from spec but also is more concise.
+		// see: http://new.babeljs.io/docs/en/next/v7-migration.html#babel-plugin-proposal-class-properties
+		[ '@babel/plugin-proposal-class-properties', { loose: true } ],
+		[ '@babel/plugin-transform-classes', { loose: false } ],
 		! isCalypso && 'add-module-exports',
 		isCalypso && [
 			path.join(
@@ -37,7 +41,6 @@ const config = {
 			),
 			{ async: isCalypsoClient && codeSplit },
 		],
-		// @todo: re-evaluate inline-imports.js
 		'@babel/plugin-proposal-export-default-from',
 		'@babel/plugin-proposal-export-namespace-from',
 		'@babel/transform-runtime',
@@ -54,10 +57,10 @@ const config = {
 	] ),
 	env: {
 		test: {
-			plugins: _.compact( [
-				isTest && './server/bundler/babel/babel-lodash-es',
+			plugins: [
+				'./server/bundler/babel/babel-lodash-es',
 				[ 'transform-builtin-extend', { globals: [ 'Error' ] } ],
-			] ),
+			],
 		},
 	},
 };
