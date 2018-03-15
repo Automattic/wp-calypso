@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Button from 'components/button';
+import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import CompletedSteps from '../summary-completed-steps';
@@ -43,32 +44,36 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 				/>
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
-				<div className="steps__summary-columns">
-					<div className="steps__summary-column">
-						<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
-						<CompletedSteps
-							basePath={ basePath }
-							onClick={ this.handleSummaryStepClick }
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							steps={ steps }
-						/>
+				<Card>
+					<div className="steps__summary-columns">
+						<div className="steps__summary-column">
+							<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
+							<CompletedSteps
+								basePath={ basePath }
+								onClick={ this.handleSummaryStepClick }
+								siteId={ siteId }
+								siteSlug={ siteSlug }
+								steps={ steps }
+							/>
+						</div>
+						<div className="steps__summary-column">
+							<h3 className="steps__summary-heading">
+								{ translate( 'Continue your site setup:' ) }
+							</h3>
+							<NextSteps
+								onClick={ this.handleSummaryStepClick }
+								siteId={ siteId }
+								siteSlug={ siteSlug }
+								siteUrl={ siteUrl }
+							/>
+						</div>
 					</div>
-					<div className="steps__summary-column">
-						<h3 className="steps__summary-heading">{ translate( 'Continue your site setup:' ) }</h3>
-						<NextSteps
-							onClick={ this.handleSummaryStepClick }
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							siteUrl={ siteUrl }
-						/>
+					<div className="steps__button-group">
+						<Button href={ siteUrl } primary>
+							{ translate( 'Visit your site' ) }
+						</Button>
 					</div>
-				</div>
-				<div className="steps__button-group">
-					<Button href={ siteUrl } primary>
-						{ translate( 'Visit your site' ) }
-					</Button>
-				</div>
+				</Card>
 			</div>
 		);
 	}
