@@ -33,7 +33,9 @@ class DocsExampleWrapper extends Component {
 				} ) }
 			>
 				<div className="docs-example__wrapper-header">{ renderTitle( unique, name, url ) }</div>
-				<div className="docs-example__wrapper-content">{ children }</div>
+				<div className="docs-example__wrapper-content">
+					<span className="docs-example__wrapper-content-wrap">{ children }</span>
+				</div>
 			</div>
 		);
 	}

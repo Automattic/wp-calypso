@@ -164,6 +164,13 @@ $devdocs-max-width: 720px;
 	}
 }
 
+// A wrapper inside a wrapper to help reliably center
+// component and block examples.
+.docs-example__wrapper-content-wrap {
+	display: table;
+	margin: auto;
+}
+
 
 // README.md Viewer
 .docs-example__readme-viewer {
