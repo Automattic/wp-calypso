@@ -10,38 +10,6 @@ Array [
 ]
 `;
 
-exports[`JetpackConnectMain goToPluginActivation should dispatch analytics 1`] = `
-Array [
-  "calypso_jpc_success_redirect",
-  Object {
-    "type": "plugin_activation",
-    "url": "example.com",
-  },
-]
-`;
-
-exports[`JetpackConnectMain goToPluginActivation should fire redirect 1`] = `
-Array [
-  "example.com/wp-admin/plugins.php?calypso_env=test",
-]
-`;
-
-exports[`JetpackConnectMain goToPluginInstall should dispatch analytics 1`] = `
-Array [
-  "calypso_jpc_success_redirect",
-  Object {
-    "type": "plugin_install",
-    "url": "example.com",
-  },
-]
-`;
-
-exports[`JetpackConnectMain goToPluginInstall should fire redirect 1`] = `
-Array [
-  "example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack&calypso_env=test",
-]
-`;
-
 exports[`JetpackConnectMain goToRemoteAuth should dispatch analytics 1`] = `
 Array [
   "calypso_jpc_success_redirect",

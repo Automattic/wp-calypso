@@ -15,13 +15,14 @@ import { translate } from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import CheckoutData from 'components/data/checkout';
 import config from 'config';
-import OrgCredentialsForm from './remote-credentials';
+import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
 import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
+import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
 import versionCompare from 'lib/version-compare';
@@ -174,6 +175,20 @@ export function connect( context, next ) {
 		ctaId: query.cta_id, // origin tracking params
 		ctaFrom: query.cta_from,
 	} );
+	next();
+}
+
+export function instructions( context, next ) {
+	analytics.pageView.record(
+		'jetpack/connect/instructions',
+		'Jetpack Manual Install Instructions'
+	);
+
+	const url = context.query.url;
+	if ( ! url ) {
+		return page.redirect( '/jetpack/connect' );
+	}
+	context.primary = <InstallInstructions remoteSiteUrl={ url } />;
 	next();
 }
 
