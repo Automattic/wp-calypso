@@ -1,0 +1,149 @@
+{
+  "settings": {
+    "defaultTool": "native"
+  },
+  "tasks": [
+    {
+      "name": "clean",
+      "description": "Cleans all build artifacts from the working directory",
+      "tasks": [
+        {
+          "name": "clean-npm",
+          "description": "Remove node_modules and npm-shrinkwrap.json",
+          "tasks": [
+            {
+              "exec": {
+                "native-nix": {
+                  "command": [
+                    "rm -rf node_modules"
+                  ]
+                },
+                "native-win": {
+                  "command": [
+                    "rmdir /S /Q node_modules"
+                  ]
+                }
+              }
+            },
+            {
+              "exec": {
+                "native-nix": {
+                  "command": [
+                    "rm -rf npm-shrinkwrap.json"
+                  ]
+                },
+                "native-win": {
+                  "command": [
+                    "del /Q /F npm-shrinkwrap.json"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "clean-devdocs",
+          "description": "Clean devdocs artifacts",
+          "tasks": [
+            {
+              "exec": {
+                "native-nix": {
+                  "command": [
+                    "rm -rf server/devdocs/search-index.js"
+                  ]
+                },
+                "native-win": {
+                  "command": [
+                    "del /Q /F server/devdocs/search-index.js"
+                  ]
+                }
+              }
+            },
+            {
+              "exec": {
+                "native-nix": {
+                  "command": [
+                    "rm -rf server/devdocs/prototypes-index.json"
+                  ]
+                },
+                "native-win": {
+                  "command": [
+                    "del /Q /F server/devdocs/prototypes-index.json"
+                  ]
+                }
+              }
+            },
+            {
+              "exec": {
+                "native-nix": {
+                  "command": [
+                    "rm -rf server/devdocs/components-usage-stats.json"
+                  ]
+                },
+                "native-win": {
+                  "command": [
+                    "del /Q /F server/devdocs/components-usage-stats.json"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "clean-public",
+          "description": "clean the public file of artifacts",
+          "tasks": [
+          ]
+        }
+      ]
+    },
+    {
+      "name": "build",
+      "description": "Build Calypso",
+      "tasks": [
+        "install",
+        {
+          "name": "build-css",
+          "description": "Build the css for the client",
+          "exec": {
+            "native": {
+              "command": [
+                "npm run -s env -- node --max_old_space_size=8192 ./node_modules/webpack/bin/webpack.js --display-error-details --config webpack.config.js"
+              ]
+            }
+          }
+        },
+        {
+          "name": "all",
+          "exec": {
+            "native": {
+              "command": [
+                "./node-modules/.bin/run-p","-s build-devdocs:* build-server build-client-if-prod build-client-if-desktop"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "install",
+      "description": "Install dependencies",
+      "exec": {
+        "native": {
+          "command": [
+            "npm install"
+          ]
+        }
+      },
+      "skips": {
+        "files_not_changed": [
+          "package.json"
+        ],
+        "path_exists": [
+          "node_modules"
+        ],
+        "skip_dependencies_if_skip": true
+      }
+    }
+  ]
+}
