@@ -70,6 +70,10 @@
 	margin-bottom: 24px;
 }
 
+.design__instance-link {
+	display: inline-block;
+}
+
 .design__instance-link::after {
 	content: ',';
 	padding-right: 3px;
@@ -130,6 +134,7 @@
 
 		.docs-example__wrapper-content {
 			padding: 32px;
+			overflow: hidden;
 		}
 	}
 }
