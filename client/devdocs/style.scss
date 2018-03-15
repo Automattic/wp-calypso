@@ -229,6 +229,12 @@ $devdocs-max-width: 720px;
 	}
 }
 
+.docs-example__readme-viewer-not-available {
+	font-family: $sans;
+	text-align: center;
+	color: $gray-text-min;
+}
+
 
 // Some components/blocks use a button to toggle variants
 // This is really dumb right now.

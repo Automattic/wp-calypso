@@ -43,7 +43,7 @@ class ReadmeViewer extends Component {
 				<div className="docs-example__readme-viewer">
 					{ readme || (
 						<div className="docs-example__readme-viewer-not-available">
-							README.md is not available.
+							No documentation available.
 						</div>
 					) }
 				</div>
