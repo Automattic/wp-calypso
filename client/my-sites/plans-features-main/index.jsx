@@ -49,8 +49,7 @@ class PlansFeaturesMain extends Component {
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
 		 * page, for example between a Jetpack and Simple site.
 		 *
-		 * @TODO: When happychat correctly handles site switching, remove manual
-		 * site update action from client/my-sites/plans-features-main/index.jsx
+		 * @TODO: When happychat correctly handles site switching, remove selectSiteId action.
 		 */
 		const siteId = get( this.props, [ 'site', 'ID' ] );
 		const nextSiteId = get( nextProps, [ 'site', 'ID' ] );

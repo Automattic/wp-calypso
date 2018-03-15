@@ -11,7 +11,7 @@ export class HappychatConnection extends Component {
 		if ( this.props.isHappychatEnabled && this.props.isConnectionUninitialized ) {
 			/**
 			 * @TODO: When happychat correctly handles site switching, remove manual
-			 * site update action from client/my-sites/plans-features-main/index.jsx
+			 * selectSiteId action from client/my-sites/plans-features-main/index.jsx
 			 */
 			this.props.initConnection( this.props.getAuth() );
 		}
