@@ -14,6 +14,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { recordPageView } from 'state/analytics/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { hasLoadedSites } from 'state/selectors';
 
 /**
  * Module variables
@@ -27,6 +29,8 @@ export class PageViewTracker extends React.Component {
 		delay: PropTypes.number,
 		path: PropTypes.string.isRequired,
 		recorder: PropTypes.func,
+		selectedSiteId: PropTypes.number,
+		sitesLoaded: PropTypes.bool,
 		title: PropTypes.string.isRequired,
 	};
 
@@ -44,12 +48,18 @@ export class PageViewTracker extends React.Component {
 		clearTimeout( this.state.timer );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.selectedSiteId !== nextProps.selectedSiteId ) {
+			this.queuePageView();
+		}
+	}
+
 	queuePageView = () => {
-		const { delay = 0, path, recorder = noop, title } = this.props;
+		const { delay = 0, path, recorder = noop, sitesLoaded, title } = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( this.state.timer ) {
+		if ( ! sitesLoaded || this.state.timer ) {
 			return;
 		}
 
@@ -67,8 +77,13 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
+const mapStateToProps = state => ( {
+	selectedSiteId: getSelectedSiteId( state ),
+	sitesLoaded: hasLoadedSites( state ),
+} );
+
 const mapDispatchToProps = dispatch => ( {
 	recorder: flowRight( dispatch, recordPageView ),
 } );
 
-export default connect( null, mapDispatchToProps )( PageViewTracker );
+export default connect( mapStateToProps, mapDispatchToProps )( PageViewTracker );
