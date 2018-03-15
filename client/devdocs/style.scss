@@ -184,9 +184,6 @@ $devdocs-max-width: 720px;
 			max-width: $devdocs-max-width;
 		}
 
-		// At really wide screens, we switch to a grid layout
-		// width fixed height examples and make the entire
-		// example clickable.
 		@media ( min-width: 2000px ) {
 			padding-top: 60px;
 
@@ -288,9 +285,7 @@ $devdocs-max-width: 720px;
 
 
 // Some components/blocks use a button to toggle variants
-// This is really dumb right now.
-.docs__design-toggle,
-.design__toggle {
+.docs__design-toggle {
 	top: 10px;
 	right: 24px;
 	z-index: 1;
@@ -298,19 +293,17 @@ $devdocs-max-width: 720px;
 }
 
 // Some components/blocks need some space to look right
-// This all kind of defeats the purpose of devdocs.
 .docs__design-button-row,
 .design__button-row {
     margin-bottom: 20px;
 }
 
-// Look at these terrible !important's
+// !important's :(
 .docs__design-button-row .button,
 .design__button-row .button {
     margin-right: 16px !important;
 }
 
-// Just LOOK AT THEM
 .docs__design-button-row .button-group .button,
 .docs__design-button-row .split-button__main {
     margin-right: 0 !important;
