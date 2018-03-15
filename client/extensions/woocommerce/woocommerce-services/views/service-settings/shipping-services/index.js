@@ -45,6 +45,7 @@ const ShippingServiceGroups = ( {
 			<ShippingServiceGroup
 				key={ serviceGroup }
 				title={ serviceGroups[ serviceGroup ][ 0 ].group_name }
+				deliveryEstimate={ serviceGroups[ serviceGroup ][ 0 ].group_estimate || false }
 				services={ serviceGroups[ serviceGroup ] }
 				currencySymbol={ currencySymbol }
 				updateValue={ updateValue }
