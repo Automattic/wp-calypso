@@ -678,3 +678,12 @@
 		display: none;
 	}
 }
+
+// Nested comment at max depth
+
+.card.comment {
+	&.is-at-max-depth {
+		margin-bottom: 0px;
+		box-shadow: 0 -1px transparentize($gray-lighten-20, 0.5);
+	}
+}

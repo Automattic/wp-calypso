@@ -1,11 +1,5 @@
 .comment-replies-list {
-	margin-left: 56px;
-}
-
-.is-at-max-depth > .comment {
-	margin-bottom: 0px;
-}
-
-.is-at-max-depth > .card {
-	box-shadow: 0 -1px transparentize( $gray-lighten-20, .5 );
+	&.is-nested {
+		margin-left: 56px;
+	}
 }
