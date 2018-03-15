@@ -31,6 +31,10 @@
 			}
 		}
 
+		.table-item:not(.is-title-cell) {
+			font-weight: bold;
+		}
+
 		.table-heading,
 		.table-item {
 			width: 8em;
