@@ -18,10 +18,10 @@ export default class Typography extends React.PureComponent {
 
 	render() {
 		return (
-			<Main className="devdocs devdocs__typography">
+			<Main className="devdocs design__typography devdocs__typography">
 				<DocumentHead title="Typography" />
 
-				<div className="devdocs__doc-content">
+				<div className="design__typography-content devdocs__doc-content">
 					<h1>Typography</h1>
 					<h2>Interface Typography</h2>
 
