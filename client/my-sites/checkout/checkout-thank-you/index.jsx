@@ -103,7 +103,6 @@ class CheckoutThankYou extends React.Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
 		failedPurchases: PropTypes.array,
-		productsList: PropTypes.object.isRequired,
 		receiptId: PropTypes.number,
 		gsuiteReceiptId: PropTypes.number,
 		selectedFeature: PropTypes.string,
