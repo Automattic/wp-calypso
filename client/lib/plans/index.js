@@ -5,7 +5,7 @@
  */
 
 import moment from 'moment';
-import { find, get, includes, invoke } from 'lodash';
+import { difference, find, get, includes, invoke, pick, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,27 +16,34 @@ import {
 	FEATURES_LIST,
 	PLANS_LIST,
 	PLAN_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
+import {
+	TERM_ANNUALLY,
+	TERM_MONTHLY,
+	TYPE_BUSINESS,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+} from './constants';
 
 /**
  * Module vars
  */
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
-export function isFreePlan( plan ) {
-	return plan === PLAN_FREE || plan === PLAN_JETPACK_FREE;
+export function getPlans() {
+	return PLANS_LIST;
 }
 
-export function getPlan( plan ) {
-	return PLANS_LIST[ plan ];
+export function getPlan( planKey ) {
+	if ( Object.prototype.toString.apply( planKey ) === '[object Object]' ) {
+		if ( values( PLANS_LIST ).indexOf( planKey ) !== -1 ) {
+			return planKey;
+		}
+	}
+	return PLANS_LIST[ planKey ];
 }
 
 export function getValidFeatureKeys() {
@@ -169,16 +176,7 @@ export function filterPlansBySiteAndProps(
  * @return {String}          Monthly version slug or "" if the slug could not be converted.
  */
 export function getMonthlyPlanByYearly( planSlug ) {
-	switch ( planSlug ) {
-		case PLAN_JETPACK_PREMIUM:
-			return PLAN_JETPACK_PREMIUM_MONTHLY;
-		case PLAN_JETPACK_BUSINESS:
-			return PLAN_JETPACK_BUSINESS_MONTHLY;
-		case PLAN_JETPACK_PERSONAL:
-			return PLAN_JETPACK_PERSONAL_MONTHLY;
-		default:
-			return '';
-	}
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
 }
 
 /**
@@ -189,16 +187,7 @@ export function getMonthlyPlanByYearly( planSlug ) {
  * @return {String}          Yearly version slug or "" if the slug could not be converted.
  */
 export function getYearlyPlanByMonthly( planSlug ) {
-	switch ( planSlug ) {
-		case PLAN_JETPACK_PREMIUM_MONTHLY:
-			return PLAN_JETPACK_PREMIUM;
-		case PLAN_JETPACK_BUSINESS_MONTHLY:
-			return PLAN_JETPACK_BUSINESS;
-		case PLAN_JETPACK_PERSONAL_MONTHLY:
-			return PLAN_JETPACK_PERSONAL;
-		default:
-			return '';
-	}
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
 }
 
 /**
@@ -214,11 +203,111 @@ export function getYearlyPlanByMonthly( planSlug ) {
  * @return {Boolean}           Whether the plan "types" match regardless of interval
  */
 export function planLevelsMatch( planSlugA, planSlugB ) {
-	return (
-		planSlugA === planSlugB ||
-		getMonthlyPlanByYearly( planSlugA ) === planSlugB ||
-		planSlugA === getMonthlyPlanByYearly( planSlugB )
-	);
+	const planA = getPlan( planSlugA );
+	const planB = getPlan( planSlugB );
+	return planA && planB && planA.type === planB.type && planA.group === planB.group;
+}
+
+export function isBusinessPlan( planSlug ) {
+	return getPlan( planSlug ).type === TYPE_BUSINESS;
+}
+
+export function isPremiumPlan( planSlug ) {
+	return getPlan( planSlug ).type === TYPE_PREMIUM;
+}
+
+export function isPersonalPlan( planSlug ) {
+	return getPlan( planSlug ).type === TYPE_PERSONAL;
+}
+
+export function isFreePlan( planSlug ) {
+	return getPlan( planSlug ).type === TYPE_FREE;
+}
+
+/**
+ * @see findSimilarPlansKeys
+ *
+ * @param {string|object} planKey Source plan to compare to
+ * @param {object} diff Properties that should differ in matched plan. @see planMatches
+ * @return {string|undefined} Matched plan
+ */
+export function findFirstSimilarPlanKey( planKey, diff ) {
+	return findSimilarPlansKeys( planKey, diff )[ 0 ];
+}
+
+/**
+ * A similar plan is one that has the same `type`, `group`, and `term` as first
+ * argument, except for differences specified in the second argument.
+ *
+ * For example:
+ *
+ * > findSimilarPlansKeys( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * [PLAN_BUSINESS_2_YEARS]
+ * > findSimilarPlansKeys( TYPE_JETPACK_BUSINESS_MONTHLY, { type: TYPE_ANNUALLY } );
+ * [TYPE_JETPACK_BUSINESS]
+ *
+ * @param {string|object} planKey Source plan to compare to
+ * @param {object} diff Properties that should differ in matched plan. @see planMatches
+ * @return {string[]} Matched plans keys
+ */
+export function findSimilarPlansKeys( planKey, diff = {} ) {
+	const plan = getPlan( planKey );
+	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
+	if ( ! plan ) {
+		return [];
+	}
+	return findPlansKeys( {
+		...pick( plan, 'type', 'group', 'term' ),
+		...diff,
+	} );
+}
+
+/**
+ * Finds all keys of plans matching a query
+ *
+ * For example:
+ *
+ * > findPlansKeys( { term: TERM_BIENNIALLY } );
+ * [PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS, PLAN_BUSINESS_2_YEARS]
+ *
+ * @param {object} query @see planMatches
+ * @return {string[]} Matched plans keys
+ */
+export function findPlansKeys( query = {} ) {
+	const plans = getPlans();
+	return Object.keys( plans ).filter( k => planMatches( plans[ k ], query ) );
+}
+
+/**
+ * Matches plan specified by `planKey` against `query`.
+ * Only compares `type`, `group`, and `term` properties.
+ *
+ * For example:
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_ANNUALLY, group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+ * true
+ *
+ * > planMatches( TYPE_BUSINESS, { term: TERM_BIENNIALLY } );
+ * false
+ *
+ * @param {string|object} planKey Plan to match
+ * @param {object} query Properties that should match
+ * @return {bool} Does `planKey` match?
+ */
+export function planMatches( planKey, query = {} ) {
+	const acceptedKeys = [ 'type', 'group', 'term' ];
+	const unknownKeys = difference( Object.keys( query ), acceptedKeys );
+	if ( unknownKeys.length ) {
+		throw new Error(
+			`planMatches can only match against ${ acceptedKeys.join( ',' ) }, ` +
+				`but unknown keys ${ unknownKeys.join( ',' ) } were passed.`
+		);
+	}
+
+	// @TODO: make getPlan() throw an error on failure. This is going to be a larger change with a separate PR.
+	const plan = getPlan( planKey ) || {};
+	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
+	return match( 'type' ) && match( 'group' ) && match( 'term' );
 }
 
 export const isPlanFeaturesEnabled = () => {
