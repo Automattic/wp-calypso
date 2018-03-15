@@ -170,7 +170,7 @@ class Pages extends Component {
 
 	updateShadowStatus = ( globalID, shadowStatus ) =>
 		new Promise( resolve =>
-			this.setState( state => {
+			this.setState( ( state, props ) => {
 				if ( shadowStatus ) {
 					// add or update the `globalID` key in the `shadowItems` map
 					return {
@@ -190,7 +190,7 @@ class Pages extends Component {
 				// if the last shadow item just got removed, start showing the up-to-date post
 				// list as specified by props.
 				if ( size( newShadowItems ) === 0 ) {
-					newState.pages = this.props.pages;
+					newState.pages = props.pages;
 				}
 
 				return newState;
