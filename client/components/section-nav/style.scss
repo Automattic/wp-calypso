@@ -53,15 +53,15 @@
 	font-weight: 600;
 	cursor: pointer;
 
-	&:after {
-		@include noticon( '\f431', 20px );
-		line-height: 16px;
-		color: rgba( $gray, 0.5 );
+	.gridicons-chevron-down {
+		fill: $gray-darken-20;
+		flex-shrink: 0;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	.section-nav.is-open & {
-		&:after {
-			content: '\f432';
+		.gridicons-chevron-down {
+			transform: rotate( -180deg );
 		}
 	}
 
@@ -80,6 +80,7 @@
 
 .section-nav__mobile-header-text {
 	width: 0;
+	margin-right: 4px;
 	flex: 1 0 auto;
 	overflow: hidden;
 	white-space: nowrap;
