@@ -21,17 +21,12 @@ import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selecto
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 const enhanceContextWithLogin = context => {
-	const {
-		params: { flow, isJetpack, socialService, twoFactorAuthType },
-		path,
-		query: { back_to },
-	} = context;
+	const { params: { flow, isJetpack, socialService, twoFactorAuthType }, path } = context;
 
 	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
 
 	context.primary = (
 		<WPLogin
-			backTo={ back_to }
 			isJetpack={ isJetpack === 'jetpack' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
