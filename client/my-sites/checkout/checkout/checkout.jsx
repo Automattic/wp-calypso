@@ -8,7 +8,6 @@ import i18n, { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 
 /**
  * Internal dependencies
@@ -61,27 +60,23 @@ import { loadTrackingTool } from 'state/analytics/actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 
-const Checkout = createReactClass( {
-	displayName: 'Checkout',
-
-	propTypes: {
+class Checkout extends React.Component {
+	static propTypes = {
 		cards: PropTypes.array.isRequired,
 		couponCode: PropTypes.string,
 		selectedFeature: PropTypes.string,
-	},
+	};
 
-	getInitialState: function() {
-		return {
-			previousCart: null,
-		};
-	},
+	state = {
+		previousCart: null,
+	};
 
-	componentWillMount: function() {
+	componentWillMount() {
 		resetTransaction();
 		this.props.recordApplePayStatus();
-	},
+	}
 
-	componentDidMount: function() {
+	componentDidMount() {
 		if ( this.redirectIfEmptyCart() ) {
 			return;
 		}
@@ -96,9 +91,9 @@ const Checkout = createReactClass( {
 
 		window.scrollTo( 0, 0 );
 		this.props.loadTrackingTool( 'HotJar' );
-	},
+	}
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
 			if ( this.props.product ) {
 				this.addProductToCart();
@@ -106,15 +101,15 @@ const Checkout = createReactClass( {
 
 			this.trackPageView();
 		}
-	},
+	}
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		if ( ! this.props.cart.hasLoadedFromServer ) {
 			return false;
 		}
 
-		const previousCart = this.state.previousCart,
-			nextCart = this.props.cart;
+		const previousCart = this.state.previousCart;
+		const nextCart = this.props.cart;
 
 		if ( ! isEqual( previousCart, nextCart ) ) {
 			this.redirectIfEmptyCart();
@@ -129,7 +124,7 @@ const Checkout = createReactClass( {
 		) {
 			this.setDomainDetailsForGsuiteCart();
 		}
-	},
+	}
 
 	setDomainDetailsForGsuiteCart() {
 		const { contactDetails, cart } = this.props;
@@ -142,9 +137,9 @@ const Checkout = createReactClass( {
 		if ( domainReceiptId ) {
 			setDomainDetails( contactDetails );
 		}
-	},
+	}
 
-	trackPageView: function( props ) {
+	trackPageView( props ) {
 		props = props || this.props;
 
 		analytics.tracks.recordEvent( 'calypso_checkout_page_view', {
@@ -153,14 +148,14 @@ const Checkout = createReactClass( {
 		} );
 
 		recordViewCheckout( props.cart );
-	},
+	}
 
 	getProductSlugFromSynonym( slug ) {
 		if ( 'no-ads' === slug ) {
 			return 'no-adverts/no-adverts.php';
 		}
 		return slug;
-	},
+	}
 
 	addProductToCart() {
 		if ( this.props.purchaseId ) {
@@ -171,7 +166,7 @@ const Checkout = createReactClass( {
 		if ( this.props.couponCode ) {
 			applyCoupon( this.props.couponCode );
 		}
-	},
+	}
 
 	addRenewItemToCart() {
 		const { product, purchaseId, selectedSiteSlug } = this.props;
@@ -194,7 +189,7 @@ const Checkout = createReactClass( {
 		);
 
 		addItem( cartItem );
-	},
+	}
 
 	addNewItemToCart() {
 		const planSlug = getUpgradePlanSlugFromPath( this.props.product, this.props.selectedSite );
@@ -218,9 +213,9 @@ const Checkout = createReactClass( {
 		if ( cartItem ) {
 			addItem( cartItem );
 		}
-	},
+	}
 
-	redirectIfEmptyCart: function() {
+	redirectIfEmptyCart() {
 		const { selectedSiteSlug, transaction } = this.props;
 		let redirectTo = '/plans/';
 
@@ -254,7 +249,7 @@ const Checkout = createReactClass( {
 		page.redirect( redirectTo );
 
 		return true;
-	},
+	}
 
 	/**
 	 * Purchases are of the format { [siteId]: [ { productId: ... } ] }
@@ -263,9 +258,9 @@ const Checkout = createReactClass( {
 	 * @param {Object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
 	 * @returns {Array} of product objects [ { productId: ... }, ... ]
 	 */
-	flattenPurchases: function( purchases ) {
+	flattenPurchases( purchases ) {
 		return flatten( Object.values( purchases ) );
-	},
+	}
 
 	getEligibleDomainFromCart() {
 		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
@@ -275,9 +270,9 @@ const Checkout = createReactClass( {
 		);
 
 		return domainsForGSuite;
-	},
+	}
 
-	getCheckoutCompleteRedirectPath() {
+	getCheckoutCompleteRedirectPath = () => {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
 		const domainReceiptId = get(
@@ -347,9 +342,9 @@ const Checkout = createReactClass( {
 					this.props.selectedFeature
 				}/${ selectedSiteSlug }/${ receiptId }`
 			: `/checkout/thank-you/${ selectedSiteSlug }/${ receiptId }`;
-	},
+	};
 
-	handleCheckoutCompleteRedirect: function() {
+	handleCheckoutCompleteRedirect = () => {
 		let product, purchasedProducts, renewalItem;
 
 		const {
@@ -454,9 +449,9 @@ const Checkout = createReactClass( {
 		}
 
 		page( redirectPath );
-	},
+	};
 
-	content: function() {
+	content() {
 		const { selectedSite } = this.props;
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
@@ -481,25 +476,25 @@ const Checkout = createReactClass( {
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 			/>
 		);
-	},
+	}
 
-	paymentMethodsAbTestFilter: function() {
+	paymentMethodsAbTestFilter() {
 		// This methods can be used to filter payment methods
 		// For example, for the purpose of AB tests.
 
 		return this.props.paymentMethods;
-	},
+	}
 
-	isLoading: function() {
-		const isLoadingCart = ! this.props.cart.hasLoadedFromServer,
-			isLoadingProducts = this.props.isProductsListFetching;
+	isLoading() {
+		const isLoadingCart = ! this.props.cart.hasLoadedFromServer;
+		const isLoadingProducts = this.props.isProductsListFetching;
 
 		return isLoadingCart || isLoadingProducts;
-	},
+	}
 
 	needsDomainDetails() {
-		const cart = this.props.cart,
-			transaction = this.props.transaction;
+		const cart = this.props.cart;
+		const transaction = this.props.transaction;
 
 		if ( cart && cartItems.hasOnlyRenewalItems( cart ) ) {
 			return false;
@@ -512,7 +507,7 @@ const Checkout = createReactClass( {
 				cartItems.hasGoogleApps( cart ) ||
 				cartItems.hasTransferProduct( cart ) )
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -527,8 +522,8 @@ const Checkout = createReactClass( {
 				</div>
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state, props ) => {
