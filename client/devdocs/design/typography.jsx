@@ -20,6 +20,9 @@ export default class Typography extends React.PureComponent {
 		const interfaceTitle = {
 			display: 'block',
 			margin: '8px 0',
+			fontFamily:
+				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
+				'"Cantarell", "Helvetica Neue", sans-serif',
 			fontSize: '24px',
 			fontWeight: '300',
 			lineHeight: '32px',
@@ -28,6 +31,9 @@ export default class Typography extends React.PureComponent {
 		const interfaceSubtitle = {
 			display: 'block',
 			margin: '8px 0',
+			fontFamily:
+				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
+				'"Cantarell", "Helvetica Neue", sans-serif',
 			fontSize: '21px',
 			fontWeight: '300',
 			lineHeight: '32px',
@@ -36,6 +42,9 @@ export default class Typography extends React.PureComponent {
 		const interfaceBodyCopy = {
 			display: 'block',
 			margin: '8px 0',
+			fontFamily:
+				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
+				'"Cantarell", "Helvetica Neue", sans-serif',
 			fontSize: '14px',
 			fontWeight: '400',
 			lineHeight: '1.5',
@@ -44,6 +53,9 @@ export default class Typography extends React.PureComponent {
 		const interfaceLabel = {
 			display: 'block',
 			margin: '8px 0',
+			fontFamily:
+				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
+				'"Cantarell", "Helvetica Neue", sans-serif',
 			fontSize: '13px',
 			fontWeight: '600',
 			lineHeight: '18px',
@@ -52,6 +64,9 @@ export default class Typography extends React.PureComponent {
 		const interfaceCaption = {
 			display: 'block',
 			margin: '8px 0',
+			fontFamily:
+				'-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", ' +
+				'"Cantarell", "Helvetica Neue", sans-serif',
 			fontSize: '11px',
 			fontWeight: '400',
 			lineHeight: '16px',
