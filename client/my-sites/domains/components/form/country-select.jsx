@@ -46,6 +46,7 @@ const CountrySelect = createReactClass( {
 		const countriesList = this.props.countriesList.get();
 		let options = [];
 		let { value } = this.props;
+		let dividerCount = 1;
 		value = value || '';
 
 		if ( isEmpty( countriesList ) ) {
@@ -57,13 +58,13 @@ const CountrySelect = createReactClass( {
 		} else {
 			options = options.concat( [
 				{ key: 'select-country', label: this.props.translate( 'Select Country' ), value: '' },
-				{ key: 'divider1', label: '', disabled: 'disabled', value: '-' },
+				{ key: 'divider' + dividerCount, label: '', disabled: 'disabled', value: '-' },
 			] );
 
 			options = options.concat(
 				countriesList.map( ( country, index ) => {
 					if ( isEmpty( country.code ) ) {
-						return { key: 'divider2', label: '', disabled: 'disabled', value: '-' };
+						return { key: 'divider' + ++dividerCount, label: '', disabled: 'disabled', value: '-' };
 					}
 
 					return {
