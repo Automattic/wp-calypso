@@ -89,6 +89,7 @@
 	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, 0.5 ),
 		0 1px 2px $gray-lighten-30;
 	margin: 0 auto 24px;
+	position: relative;
 
 	.docs-example__wrapper-header-title {
 		font-family: $code;
@@ -209,10 +210,9 @@
 // This is really dumb right now.
 .docs__design-toggle,
 .design__toggle {
-	float: right;
-		top: -82px;
-		right: -22px;
-    position: relative;
+	top: 10px;
+	right: 24px;
+    position: absolute;
 }
 
 // Some components/blocks need some space to look right
