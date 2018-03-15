@@ -1,7 +1,6 @@
 .inline-help__popover.popover {
 	@include breakpoint( "<660px" ) {
-		position: fixed;
-			top: 47px !important;
+			top: 0 !important;
 			right: 0 !important;
 			bottom: 0 !important;
 			left: 0 !important;
@@ -20,6 +19,22 @@
 		}
 	}
 
+	p {
+		font-size: 12px;
+
+		@include breakpoint( ">660px" ) {
+			font-size: 14px;
+		}
+	}
+
+	a, button {
+		font-size: 12px;
+
+		@include breakpoint( ">660px" ) {
+			font-size: 14px;
+		}
+	}
+
 	@include breakpoint( ">660px" ) {
 		width: 320px;
 
@@ -31,39 +46,15 @@
 	&.is-top .popover__arrow:before,
 	&.is-top-left .popover__arrow:before,
 	&.is-top-right .popover__arrow:before {
-		border-top: 10px solid #f3f6f8;
-	}
-
-	.inline-help__button {
-		text-align: left;
-		font-weight: 400;
-		width: 100%;
-		background: $gray-light;
-		border-top: 1px solid $gray-lighten-20;
-		padding: 16px 16px 16px 48px;
-		font-size: 16px;
-		line-height: 1;
-		position: relative;
-		border-radius: 0 0 4px 4px;
-
-		@include breakpoint( ">660px" ) {
-			font-size: 14px;
-			padding: 12px 16px 12px 48px;
-		}
-
-		.gridicon {
-			position: absolute;
-				top: 13px;
-				left: 13px;
-
-			@include breakpoint( ">660px" ) {
-				top: 8px;
-			}
-		}
+		border-top: 10px solid $gray-light;
 	}
 }
 
-.inline-help__heading {
+.inline-help__search {
+	.is-help-active & {
+		display: none;
+	}
+
 	.search-card {
 		border-radius: 4px 4px 0 0;
 		margin: 0;
@@ -105,19 +96,132 @@
 	}
 }
 
+.inline-help__contact {
+	display: none;
+
+	overflow-y: auto;
+	max-height: 70vh;	
+
+	.is-help-active & {
+		display: block;
+	}
+
+	.help-contact__form {
+		margin: 0;
+		padding: 16px;
+		box-shadow: none;
+		text-align: left;
+		border-radius: 4px 4px 0 0;
+
+		.sites-dropdown__wrapper {
+			max-width: 100%;
+
+			.site__content {
+				padding: 8px;
+			}
+		}
+
+		button {
+			width: 100%;
+		}
+
+		.help-contact-confirmation {
+			min-height: auto;
+			height: auto;
+
+			.help-contact-confirmation__contents {
+				margin: 20px 0;
+			}
+		}
+	}
+
+	.help-contact-form__site-selection {
+		margin-bottom: 8px;
+	}
+
+	.sites-dropdown {
+		.site-selector .search {
+			top: 51px;
+		}
+		.site-selector__sites {
+			max-height: 20vh;
+		}
+		.sites-dropdown__wrapper:hover {
+			border-bottom-width: 1px;
+		}
+	}
+}
+
+.inline-help__footer {
+	background: $gray-light;
+	border-top: 1px solid $gray-lighten-20;
+	border-radius: 0 0 4px 4px;
+
+	.button.is-borderless.inline-help__more-button,
+	.button.is-borderless.inline-help__contact-button,
+	.button.is-borderless.inline-help__cancel-button {
+		text-align: left;
+		width: 50%;
+		position: relative;
+		padding: 12px 8px 12px 46px;
+
+		.gridicon.inline-help__gridicon-left {
+			margin: 0;
+			position: absolute;
+				top: 11px;
+				left: 13px;
+		}
+
+		.gridicon.inline-help__gridicon-right {
+			margin: 0;
+			position: absolute;
+				top: 11px;
+				right: 13px;
+		}
+
+		&:hover {
+			color: $blue-medium;
+
+			.gridicon {
+				fill: $blue-medium;
+			}
+		}
+	}
+
+	.button.is-borderless.inline-help__contact-button {
+		padding-right: 24px;
+	}
+
+	// Hide/Show buttons as needed
+	.inline-help__cancel-button {
+		display: none;
+	}
+
+	.is-help-active & {
+		.inline-help__more-button,
+		.inline-help__contact-button {
+			display: none;
+		}
+
+		.inline-help__cancel-button {
+			display: block;
+		}
+	}
+}
+
 .inline-help__results-list {
 	list-style: none;
 	text-align: left;
 	margin: 0;
+	padding: 8px 0;
 }
 
 .inline-help__results-item {
 	margin: 0;
-	font-size: 18px;
-	border-top: 1px solid $border-ultra-light-gray;
+	font-size: 14px;
 
 	@include breakpoint( ">660px" ) {
-		font-size: 14px;
+		font-size: 18px;
 		line-height: 1.3;
 	}
 
@@ -127,10 +231,12 @@
 		font-weight: normal;
 		line-height: 1.4;
 		display: block;
-		padding: 14px 16px;
+		padding: 8px 16px;
 
 		&:hover {
 			cursor: pointer;
+			color: $blue-medium;
+			background: lighten( $gray, 35% );
 		}
 	}
 
@@ -146,13 +252,13 @@
 }
 
 .inline-help__empty-results {
-	padding: 16px;
+	padding: 16px 0 0 0;
 	margin: 0;
 	font-size: 14px;
 	color: $gray;
 	font-style: italic;
 
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( ">660px" ) {
 		font-size: 16px;
 	}
 }
@@ -167,8 +273,8 @@
 
 // PlaceholderLines component
 .inline-help__results-placeholder {
-	margin: 26px 16px;
-	min-height: 140px;
+	margin: 16px;
+	min-height: 120px;
 }
 
 .inline-help__results-placeholder-item {

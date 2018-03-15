@@ -4,7 +4,8 @@
  * External dependencies
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import page from 'page';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
@@ -80,6 +81,14 @@ const startShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Fri, 29 Dec 2017 00
 const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
+	static propTypes = {
+		compact: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		compact: false,
+	};
+
 	state = {
 		confirmation: null,
 		isSubmitting: false,
@@ -106,6 +115,7 @@ class HelpContact extends React.Component {
 	};
 
 	startHappychat = contactForm => {
+		this.recordCompactSubmit( 'happychat' );
 		this.props.openHappychat();
 		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
 
@@ -117,7 +127,21 @@ class HelpContact extends React.Component {
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
 
-		page( '/help' );
+		this.setState( {
+			isSubmitting: false,
+			confirmation: {
+				title: this.props.translate( "We're on it!" ),
+				message: this.props.translate(
+					"We've received your message, and you'll hear back from " +
+						'one of our Happiness Engineers shortly.'
+				),
+			},
+		} );
+		this.clearSavedContactForm();
+
+		if ( ! this.props.compact ) {
+			page( '/help' );
+		}
 	};
 
 	prepareDirectlyWidget = () => {
@@ -131,13 +155,16 @@ class HelpContact extends React.Component {
 	};
 
 	submitDirectlyQuestion = contactForm => {
+		this.recordCompactSubmit( 'directly' );
 		const { display_name, email } = this.props.currentUser;
 
 		this.props.askDirectlyQuestion( contactForm.message, display_name, email );
 
 		this.clearSavedContactForm();
 
-		page( '/help' );
+		if ( ! this.props.compact ) {
+			page( '/help' );
+		}
 	};
 
 	submitKayakoTicket = contactForm => {
@@ -153,6 +180,7 @@ class HelpContact extends React.Component {
 		const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 		this.setState( { isSubmitting: true } );
+		this.recordCompactSubmit( 'kayako' );
 
 		wpcom.submitKayakoTicket(
 			subject,
@@ -195,6 +223,7 @@ class HelpContact extends React.Component {
 		const { currentUserLocale } = this.props;
 
 		this.setState( { isSubmitting: true } );
+		this.recordCompactSubmit( 'forums' );
 
 		wpcom.submitSupportForumsTopic(
 			subject,
@@ -269,6 +298,14 @@ class HelpContact extends React.Component {
 		return SUPPORT_FORUM;
 	};
 
+	recordCompactSubmit = variation => {
+		if ( this.props.compact ) {
+			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+				support_variation: variation,
+			} );
+		}
+	};
+
 	getContactFormPropsVariation = variationSlug => {
 		const { isSubmitting } = this.state;
 		const { currentUserLocale, hasMoreThanOneSite, translate } = this.props;
@@ -311,6 +348,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
 					showSiteField: hasMoreThanOneSite,
+					showQASuggestions: true,
 				};
 
 			case SUPPORT_TICKET:
@@ -321,6 +359,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: true,
 					showHowYouFeelField: true,
 					showSiteField: hasMoreThanOneSite,
+					showQASuggestions: true,
 				};
 
 			case SUPPORT_DIRECTLY:
@@ -346,6 +385,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
 					showSiteField: false,
+					showQASuggestions: true,
 				};
 
 			default:
@@ -370,6 +410,7 @@ class HelpContact extends React.Component {
 					showHowCanWeHelpField: false,
 					showHowYouFeelField: false,
 					showSiteField: false,
+					showQASuggestions: true,
 				};
 		}
 	};
@@ -389,6 +430,8 @@ class HelpContact extends React.Component {
 			SUPPORT_FORUM !== variationSlug;
 
 		return {
+			compact: this.props.compact,
+			selectedSite: this.props.selectedSite,
 			disabled: isSubmitting,
 			showHelpLanguagePrompt: showHelpLanguagePrompt,
 			valueLink: {
@@ -426,6 +469,19 @@ class HelpContact extends React.Component {
 		return (
 			this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly
 		);
+	};
+
+	// Modifies passed props for the "compact" contact form style.
+	contactFormPropsCompactFilter = props => {
+		if ( this.props.compact ) {
+			return Object.assign( props, {
+				showSubjectField: false,
+				showHowCanWeHelpField: false,
+				showHowYouFeelField: false,
+				showQASuggestions: false,
+			} );
+		}
+		return props;
 	};
 
 	/**
@@ -481,7 +537,7 @@ class HelpContact extends React.Component {
 
 		const contactFormProps = Object.assign(
 			this.getContactFormCommonProps( supportVariation ),
-			this.getContactFormPropsVariation( supportVariation )
+			this.contactFormPropsCompactFilter( this.getContactFormPropsVariation( supportVariation ) )
 		);
 
 		const currentDate = i18n.moment();
@@ -521,18 +577,24 @@ class HelpContact extends React.Component {
 	};
 
 	render() {
-		return (
-			<Main className="help-contact">
-				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
-					{ this.props.translate( 'Contact Us' ) }
-				</HeaderCake>
-				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
+		const content = (
+			<Fragment>
+				{ ! this.props.compact && (
+					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
+						{ this.props.translate( 'Contact Us' ) }
+					</HeaderCake>
+				) }
+				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases userId={ this.props.currentUser.ID } />
-			</Main>
+			</Fragment>
 		);
+		if ( this.props.compact ) {
+			return content;
+		}
+		return <Main className="help-contact">{ content }</Main>;
 	}
 }
 

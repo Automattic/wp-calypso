@@ -31,6 +31,7 @@ import wpcomLib from 'lib/wp';
 import HelpResults from 'me/help/help-results';
 import { bumpStat, recordTracksEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { generateSubjectFromMessage } from './utils';
 
 /**
  * Module variables
@@ -255,8 +256,9 @@ export class HelpContactForm extends React.PureComponent {
 	 * @param  {object} event Event object
 	 */
 	submitForm = () => {
-		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
-		const { additionalSupportOption, currentUserLocale } = this.props;
+		const { howCanWeHelp, howYouFeel, message } = this.state;
+		const { additionalSupportOption, currentUserLocale, compact } = this.props;
+		const subject = compact ? generateSubjectFromMessage( message ) : this.state.subject;
 
 		if ( additionalSupportOption && additionalSupportOption.enabled ) {
 			this.props.recordTracksEvent( 'calypso_happychat_a_b_english_chat_selected', {
@@ -313,6 +315,7 @@ export class HelpContactForm extends React.PureComponent {
 			showHowYouFeelField,
 			showSubjectField,
 			showSiteField,
+			showQASuggestions,
 			showHelpLanguagePrompt,
 			translate,
 		} = this.props;
@@ -388,9 +391,9 @@ export class HelpContactForm extends React.PureComponent {
 					</div>
 				) }
 
-				<FormLabel>{ translate( 'What are you trying to do?' ) }</FormLabel>
+				<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
 				<FormTextarea
-					placeholder={ translate( 'Please be descriptive' ) }
+					placeholder={ translate( 'Ask away! Help will be with you soon.' ) }
 					name="message"
 					value={ this.state.message }
 					onChange={ this.handleChange }
@@ -402,12 +405,14 @@ export class HelpContactForm extends React.PureComponent {
 					</strong>
 				) }
 
-				<HelpResults
-					header={ translate( 'Do you want the answer to any of these questions?' ) }
-					helpLinks={ this.state.qanda }
-					iconTypeDescription="book"
-					onClick={ this.trackSibylClick }
-				/>
+				{ showQASuggestions && (
+					<HelpResults
+						header={ translate( 'Do you want the answer to any of these questions?' ) }
+						helpLinks={ this.state.qanda }
+						iconTypeDescription="book"
+						onClick={ this.trackSibylClick }
+					/>
+				) }
 
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>
 					{ buttonLabel }
