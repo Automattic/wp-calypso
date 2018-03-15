@@ -53,6 +53,11 @@ const communityTranslatorJumpstart = {
 	isEnabled() {
 		const currentUser = user.get();
 
+		// disabling the CT for locale variants until the GlotPress API can handle them
+		if ( !! currentUser.localeVariant ) {
+			return false;
+		}
+
 		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
 			return false;
 		}
@@ -127,8 +132,8 @@ const communityTranslatorJumpstart = {
 	},
 
 	init() {
-		const languageJson = i18n.getLocale() || { '': {} },
-			localeCode = languageJson[ '' ].localeSlug;
+		const languageJson = i18n.getLocale() || { '': {} };
+		const { localeSlug: localeCode } = languageJson[ '' ];
 
 		if ( localeCode && languageJson ) {
 			this.updateTranslationData( localeCode, languageJson );

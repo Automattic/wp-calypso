@@ -14,6 +14,7 @@ import {
 	getLocaleFromPath,
 	isDefaultLocale,
 	removeLocaleFromPath,
+	isLocaleVariant,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -214,6 +215,21 @@ describe( 'utils', () => {
 
 		test( 'should return the parent slug since the given variant does not exist', () => {
 			expect( getLanguage( 'fr', 'fr_formal' ).langSlug ).to.equal( 'fr' );
+		} );
+	} );
+
+	describe( '#isLocaleVariant', () => {
+		test( 'should return false by default', () => {
+			expect( isLocaleVariant( 'lol' ) ).to.be.false;
+			expect( isLocaleVariant() ).to.be.false;
+		} );
+
+		test( 'should detect a locale variant', () => {
+			expect( isLocaleVariant( 'de_formal' ) ).to.be.true;
+		} );
+
+		test( 'should detect a root language', () => {
+			expect( isLocaleVariant( 'de' ) ).to.be.false;
 		} );
 	} );
 } );
