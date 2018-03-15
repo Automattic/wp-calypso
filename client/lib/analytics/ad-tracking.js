@@ -580,10 +580,12 @@ export function recordViewCheckout( cart ) {
  */
 export function recordOrder( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordOrder: skipping as ad tracking is disallowed' );
 		return;
 	}
 
 	// load the ecommerce plugin
+	debug( 'recordOrder: ga ecommerce plugin load' );
 	window.ga( 'require', 'ecommerce' );
 
 	// Purchase tracking happens in one of three ways:
@@ -604,6 +606,7 @@ export function recordOrder( cart, orderId ) {
 	} );
 
 	// Ensure we submit the cart to Google Analytics
+	debug( 'recordOrder: ga ecommerce send' );
 	window.ga( 'ecommerce:send' );
 
 	// 3. Fire a single tracking event without any details about what was purchased
@@ -660,13 +663,15 @@ function recordProduct( product, orderId ) {
 
 	try {
 		// Google Analytics
-		window.ga( 'ecommerce:addItem', {
+		const item = {
 			id: orderId,
 			name: product.product_slug,
 			price: product.cost,
 			currency: product.currency,
 			quantity: 1,
-		} );
+		};
+		debug( 'recordProduct: ga ecommerce add item', item );
+		window.ga( 'ecommerce:addItem', item );
 
 		// Google AdWords
 		if ( isAdwordsEnabled ) {
@@ -1195,15 +1200,18 @@ function criteoSiteType() {
  */
 function recordOrderInGoogleAnalytics( cart, orderId ) {
 	if ( ! isAdTrackingAllowed() ) {
+		debug( 'recordOrderInGoogleAnalytics: skipping as ad tracking is disallowed' );
 		return;
 	}
 
-	window.ga( 'ecommerce:addTransaction', {
+	const transaction = {
 		id: orderId,
 		affiliation: 'WordPress.com',
 		revenue: cart.total_cost,
 		currency: cart.currency,
-	} );
+	};
+	debug( 'recordOrderInGoogleAnalytics: ga ecommerce add transaction', transaction );
+	window.ga( 'ecommerce:addTransaction', transaction );
 }
 
 /**
