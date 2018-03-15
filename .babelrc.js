@@ -18,7 +18,7 @@ const config = {
 				targets: {
 					browsers: [ 'last 2 versions', 'Safari >= 10', 'iOS >= 10', 'not ie <= 10' ],
 				},
-				exclude: [ 'transform-classes' ], // transform-classes is added manually later.
+				exclude: [ 'transform-classes', 'transform-regenerator', 'transform-template-literals' ], // transform-classes is added manually later.
 			},
 		],
 		'@babel/stage-2',
@@ -30,6 +30,7 @@ const config = {
 		// see: http://new.babeljs.io/docs/en/next/v7-migration.html#babel-plugin-proposal-class-properties
 		[ '@babel/plugin-proposal-class-properties', { loose: true } ],
 		[ '@babel/plugin-transform-classes', { loose: false } ],
+		[ '@babel/plugin-transform-template-literals', { loose: true } ],
 		! isCalypso && 'add-module-exports',
 		isCalypso && [
 			path.join(
