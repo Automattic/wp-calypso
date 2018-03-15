@@ -164,6 +164,17 @@ export default {
 		delayApiRequestUntilComplete: true,
 	},
 
+	'domains-store': {
+		stepName: 'domains',
+		apiRequestFunction: createSiteWithCart,
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		props: {
+			isDomainOnly: false,
+			forceDesignType: 'store',
+		},
+		delayApiRequestUntilComplete: true,
+	},
+
 	'domains-theme-preselected': {
 		stepName: 'domains-theme-preselected',
 		apiRequestFunction: createSiteWithCart,
