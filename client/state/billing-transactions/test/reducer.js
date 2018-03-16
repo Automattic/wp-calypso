@@ -274,6 +274,7 @@ describe( 'reducer', () => {
 			const state = individualTransactions( currentState, {
 				type: BILLING_RECEIPT_REQUEST_FAILURE,
 				receiptId,
+				error: true,
 			} );
 
 			expect( state.requesting[ receiptId ] ).to.eql( false );

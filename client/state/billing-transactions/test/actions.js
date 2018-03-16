@@ -11,6 +11,7 @@ import sinon from 'sinon';
 import {
 	requestBillingTransaction,
 	requestBillingTransactions,
+	clearBillingTransactionError,
 	sendBillingReceiptEmail,
 } from '../actions';
 import {
@@ -213,12 +214,27 @@ describe( 'actions', () => {
 
 			test( 'should dispatch failure action', () => {
 				return requestBillingTransaction( receiptId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: BILLING_RECEIPT_REQUEST_FAILURE,
-						receiptId,
-					} );
+					expect( spy ).to.have.been.calledWith(
+						sinon.match( {
+							type: BILLING_RECEIPT_REQUEST_FAILURE,
+							receiptId,
+							error: sinon.match( {
+								error: 'authorization_required',
+							} ),
+						} )
+					);
 				} );
 			} );
+		} );
+	} );
+
+	describe( '#clearBillingTransactionError', () => {
+		const receiptId = 12345678;
+		const action = clearBillingTransactionError( receiptId );
+		expect( action ).to.deep.equal( {
+			type: BILLING_RECEIPT_REQUEST_FAILURE,
+			receiptId,
+			error: false,
 		} );
 	} );
 } );

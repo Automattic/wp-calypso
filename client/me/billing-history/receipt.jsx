@@ -16,18 +16,22 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { billingHistory } from 'me/purchases/paths';
+import { billingHistory, billingHistoryReceipt } from 'me/purchases/paths';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import tableRows from './table-rows';
 import { groupDomainProducts } from './utils';
 import {
 	getPastBillingTransaction,
 	getPastBillingTransactions,
-	isPastBillingTransactionError,
+	getPastBillingTransactionError,
 	isRequestingBillingTransaction,
 } from 'state/selectors';
-import { requestBillingTransaction } from 'state/billing-transactions/actions';
+import {
+	requestBillingTransaction,
+	clearBillingTransactionError,
+} from 'state/billing-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { errorNotice } from 'state/notices/actions';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -58,9 +62,26 @@ class BillingReceipt extends React.Component {
 			transaction,
 			transactionFetchError,
 			transactionId,
+			translate,
 		} = this.props;
 
 		if ( transactionFetchError ) {
+			if ( 'invalid_receipt' === transactionFetchError.error ) {
+				this.props.errorNotice(
+					translate( 'Could not find Receipt #%s', { args: transactionId } ),
+					{
+						displayOnNextPage: true,
+					}
+				);
+			} else {
+				this.props.clearBillingTransactionError( transactionId );
+				this.props.errorNotice( translate( 'There was a problem when fetching the receipt' ), {
+					displayOnNextPage: true,
+					button: translate( 'Try again' ),
+					href: billingHistoryReceipt( transactionId ),
+				} );
+			}
+
 			page.redirect( billingHistory );
 			return;
 		}
@@ -306,7 +327,7 @@ export default connect(
 
 		return {
 			transaction: getPastBillingTransaction( state, ownProps.transactionId ),
-			transactionFetchError: isPastBillingTransactionError( state, ownProps.transactionId ),
+			transactionFetchError: getPastBillingTransactionError( state, ownProps.transactionId ),
 			requestingBillingTransaction: isRequestingBillingTransaction( state, ownProps.transactionId ),
 			totalTransactions: transactions ? transactions.length : null,
 		};
@@ -314,5 +335,7 @@ export default connect(
 	{
 		recordGoogleEvent,
 		requestBillingTransaction,
+		clearBillingTransactionError,
+		errorNotice,
 	}
 )( localize( BillingReceipt ) );

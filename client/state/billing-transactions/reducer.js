@@ -66,11 +66,11 @@ export const individualTransactions = createReducer(
 				[ receiptId ]: true,
 			},
 		} ),
-		[ BILLING_RECEIPT_REQUEST_FAILURE ]: ( state, { receiptId } ) => ( {
+		[ BILLING_RECEIPT_REQUEST_FAILURE ]: ( state, { receiptId, error } ) => ( {
 			...state,
 			errors: {
 				...state.errors,
-				[ receiptId ]: true,
+				[ receiptId ]: error,
 			},
 			requesting: {
 				...state.requesting,

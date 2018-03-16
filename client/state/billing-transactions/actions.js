@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
@@ -64,13 +62,20 @@ export const requestBillingTransaction = receiptId => dispatch => {
 				receipt,
 			} );
 		} )
-		.catch( () => {
+		.catch( error => {
 			dispatch( {
 				type: BILLING_RECEIPT_REQUEST_FAILURE,
 				receiptId,
+				error,
 			} );
 		} );
 };
+
+export const clearBillingTransactionError = receiptId => ( {
+	type: BILLING_RECEIPT_REQUEST_FAILURE,
+	receiptId,
+	error: false,
+} );
 
 export const sendBillingReceiptEmail = receiptId => {
 	return dispatch => {

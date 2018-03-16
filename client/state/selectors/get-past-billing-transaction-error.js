@@ -14,8 +14,8 @@ import { get } from 'lodash';
  * @param  {String}  id      ID of the transaction
  * @return {?Object}         The transaction object
  */
-const isPastBillingTransactionError = ( state, id ) => {
+const getPastBillingTransactionError = ( state, id ) => {
 	return get( state, [ 'billingTransactions', 'individualTransactions', 'errors', id ], false );
 };
 
-export default isPastBillingTransactionError;
+export default getPastBillingTransactionError;
