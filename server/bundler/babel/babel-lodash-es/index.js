@@ -1,6 +1,6 @@
 /** @format */
 
-const types = require( 'babel-types' );
+const types = require( '@babel/types' );
 
 module.exports = function() {
 	return {
