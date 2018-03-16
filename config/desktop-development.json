@@ -1,6 +1,6 @@
 {
 	"env": "development",
-	"env_id": "desktop",
+	"env_id": "desktop-development",
 	"client_slug": "desktop",
 	"directly_rtm_widget_environment": "sandbox",
 	"hostname": "calypso.localhost",
