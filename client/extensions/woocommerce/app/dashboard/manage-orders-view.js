@@ -33,6 +33,7 @@ import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/gen
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
 import ShareWidget from 'woocommerce/components/share-widget';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
+import StatsWidget from './widgets/stats-widget';
 
 class ManageOrdersView extends Component {
 	static propTypes = {
@@ -152,6 +153,35 @@ class ManageOrdersView extends Component {
 		);
 	};
 
+	// TODO Remove this check once the dashboard stats widget is launched in production.
+	possiblyRenderReportsWidget = () => {
+		const { site, translate, orders } = this.props;
+
+		if ( config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) ) {
+			return null;
+		}
+
+		return (
+			<DashboardWidget
+				className="dashboard__reports-widget"
+				image="/calypso/images/extensions/woocommerce/woocommerce-reports.svg"
+				imagePosition="left"
+				title={ translate( 'Reports' ) }
+			>
+				<p>
+					{ translate(
+						'See a detailed breakdown of how your store is doing on the stats screen.'
+					) }
+				</p>
+				<p>
+					<Button href={ getLink( '/store/stats/orders/week/:site', site ) }>
+						{ orders.length ? translate( 'View full reports' ) : translate( 'View reports' ) }
+					</Button>
+				</p>
+			</DashboardWidget>
+		);
+	};
+
 	render() {
 		const { site, translate, orders, user } = this.props;
 		return (
@@ -175,23 +205,8 @@ class ManageOrdersView extends Component {
 					{ this.possiblyRenderReviewsWidget() }
 				</DashboardWidgetRow>
 
-				<DashboardWidget
-					className="dashboard__reports-widget"
-					image="/calypso/images/extensions/woocommerce/woocommerce-reports.svg"
-					imagePosition="left"
-					title={ translate( 'Reports' ) }
-				>
-					<p>
-						{ translate(
-							'See a detailed breakdown of how your store is doing on the stats screen.'
-						) }
-					</p>
-					<p>
-						<Button href={ getLink( '/store/stats/orders/week/:site', site ) }>
-							{ orders.length ? translate( 'View full reports' ) : translate( 'View reports' ) }
-						</Button>
-					</p>
-				</DashboardWidget>
+				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
+				{ this.possiblyRenderReportsWidget() }
 
 				{ this.possiblyRenderShareWidget() }
 			</div>

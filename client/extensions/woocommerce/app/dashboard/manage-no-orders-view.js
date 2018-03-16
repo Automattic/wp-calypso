@@ -4,6 +4,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
@@ -16,6 +17,7 @@ import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ShareWidget from 'woocommerce/components/share-widget';
+import StatsWidget from './widgets/stats-widget';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import QuerySettingsProducts from 'woocommerce/components/query-settings-products';
 import { getProductsSettingValue } from 'woocommerce/state/sites/settings/products/selectors';
@@ -44,6 +46,11 @@ class ManageNoOrdersView extends Component {
 
 	renderStatsWidget = () => {
 		const { site, translate } = this.props;
+
+		if ( config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) ) {
+			return null;
+		}
+
 		const trackClick = () => {
 			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 				action: 'view-stats',
@@ -113,6 +120,7 @@ class ManageNoOrdersView extends Component {
 					{ this.renderStatsWidget() }
 					{ this.renderViewAndTestWidget() }
 				</DashboardWidgetRow>
+				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
 			</div>
 		);
 	}

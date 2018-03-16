@@ -130,7 +130,7 @@ DashboardWidget.propTypes = {
 	imageFlush: PropTypes.bool,
 	imagePosition: PropTypes.oneOf( [ 'bottom', 'left', 'right', 'top' ] ),
 	onSettingsClose: PropTypes.func,
-	title: PropTypes.string,
+	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	settingsPanel: PropTypes.element,
 	width: PropTypes.oneOf( [ 'half', 'full', 'third', 'two-thirds' ] ),
 };
