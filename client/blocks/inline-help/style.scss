@@ -147,7 +147,7 @@
 	display: none;
 
 	overflow-y: auto;
-	max-height: 70vh;	
+	max-height: 70vh;
 
 	.is-help-active & {
 		display: block;
@@ -298,30 +298,6 @@
 	}
 }
 
-.inline-help__popover.popover .inline-help__more-button,
-.inline-help__popover.popover .inline-help__support-button {
-	text-align: left;
-	font-weight: 400;
-	width: 50%;
-	background: $gray-light;
-	border-top: 1px solid $gray-lighten-20;
-	padding: 16px 16px 16px 48px;
-	font-size: 16px;
-	line-height: 1;
-	position: relative;
-	border-radius: 0 0 4px 4px;
-
-	@include breakpoint( ">660px" ) {
-		font-size: 14px;
-	}
-
-	.gridicon {
-		position: absolute;
-			top: 11px;
-			left: 13px;
-	}
-}
-
 .inline-help__empty-results {
 	padding: 16px 0 0 0;
 	margin: 0;
@@ -335,7 +311,7 @@
 }
 
 .layout.is-section-help .inline-help {
-	
+
 }
 
 // PlaceholderLines component
