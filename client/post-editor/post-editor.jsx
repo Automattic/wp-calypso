@@ -635,7 +635,7 @@ export const PostEditor = createReactClass( {
 		page.back( this.getAllPostsUrl() );
 	},
 
-	getAllPostsUrl: function() {
+	getAllPostsUrl: function( context ) {
 		const { type, selectedSite } = this.props;
 		const site = selectedSite;
 
@@ -655,6 +655,10 @@ export const PostEditor = createReactClass( {
 			path += '/my';
 		}
 
+		if ( context === 'trashed' ) {
+			path += '/trashed';
+		}
+
 		if ( site ) {
 			path = addSiteFragment( path, site.slug );
 		}
@@ -668,21 +672,14 @@ export const PostEditor = createReactClass( {
 		} );
 	},
 
-	onTrashingPost: function( error ) {
-		var isPage = utils.isPage( this.state.post );
+	onTrashingPost: function() {
+		const { type } = this.props;
 
-		if ( error ) {
-			this.setState( {
-				notice: {
-					status: 'is-error',
-					message: 'trashFailure',
-				},
-			} );
-		} else {
-			recordStat( isPage ? 'page_trashed' : 'post_trashed' );
-			recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
-			this.props.markSaved();
-		}
+		recordStat( type + '_trashed' );
+		recordEvent( 'page' === type ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
+		this.props.markSaved();
+
+		page( this.getAllPostsUrl( 'trashed' ) );
 	},
 
 	onSaveTrashed: function( status, callback ) {
