@@ -40,6 +40,9 @@ class ProductListItem extends Component {
 	handleTrashClick = () => this.props.onTrashClick( this.props.paymentId );
 
 	formatPrice( price, currency = 'USD' ) {
+		if ( isNaN( price ) ) {
+			return `---- ${ currency }`;
+		}
 		const { integer, fraction } = getCurrencyObject( price, currency );
 		return `${ integer }${ fraction } ${ currency }`;
 	}
