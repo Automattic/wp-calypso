@@ -9,6 +9,7 @@
 	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 	border: 1px solid darken( $blue-wordpress, 5 );
 	transition: all 0.2s ease-in-out;
+	z-index: z-index( 'root', '.floating-help' );
 
 	.gridicon {
 		fill: $white;
