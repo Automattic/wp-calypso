@@ -245,7 +245,7 @@ class DomainSearchResults extends React.Component {
 
 	render() {
 		return (
-			<div className="domain-search-results">
+			<div className="domain-search-results" aria-live="polite" aria-relevant="additions">
 				{ this.renderDomainAvailability() }
 				{ this.renderDomainSuggestions() }
 			</div>
