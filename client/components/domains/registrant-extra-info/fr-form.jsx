@@ -59,6 +59,7 @@ function renderValidationError( message ) {
 class RegistrantExtraInfoFrForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object,
+		ccTldDetails: PropTypes.object,
 		contactDetailsValidationErrors: PropTypes.object,
 		isVisible: PropTypes.bool,
 		onSubmit: PropTypes.func,
@@ -86,7 +87,7 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 
 		this.props.updateContactDetailsCache( {
 			extra: {
-				registrantType: defaultRegistrantType,
+				fr: { registrantType: defaultRegistrantType },
 			},
 		} );
 	}
@@ -102,12 +103,12 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	};
 
 	handleChangeContactExtraEvent = event => {
-		this.updateContactDetails( `extra.${ event.target.id }`, event.target.value );
+		this.updateContactDetails( `extra.fr.${ event.target.id }`, event.target.value );
 	};
 
 	render() {
-		const { contactDetails, contactDetailsValidationErrors, translate } = this.props;
-		const registrantType = get( contactDetails, 'extra.registrantType', defaultRegistrantType );
+		const { ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
+		const registrantType = get( ccTldDetails, 'registrantType', defaultRegistrantType );
 		const formIsValid = isEmpty( contactDetailsValidationErrors );
 
 		return (
@@ -148,13 +149,13 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 	}
 
 	renderOrganizationFields() {
-		const { contactDetails, contactDetailsValidationErrors, translate } = this.props;
+		const { contactDetails, ccTldDetails, contactDetailsValidationErrors, translate } = this.props;
 		const { registrantVatId, sirenSiret, trademarkNumber } = defaults(
 			{},
-			contactDetails.extra,
+			ccTldDetails,
 			emptyValues
 		);
-		const validationErrors = get( contactDetailsValidationErrors, 'extra', {} );
+		const validationErrors = get( contactDetailsValidationErrors, 'extra.fr', {} );
 		const registrantVatIdValidationMessage =
 			validationErrors.registrantVatId &&
 			renderValidationError(
@@ -301,6 +302,7 @@ export default connect(
 		const contactDetails = getContactDetailsCache( state );
 		return {
 			contactDetails,
+			ccTldDetails: get( contactDetails, 'extra.fr', {} ),
 			contactDetailsValidationErrors: validateContactDetails( contactDetails ),
 		};
 	},
