@@ -294,9 +294,10 @@ if ( shouldMinify ) {
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
 			cache: 'docker' !== process.env.CONTAINER,
+			exclude: /debug/,
 			parallel: true,
-			uglifyOptions: { ecma: 5 },
 			sourceMap: Boolean( process.env.SOURCEMAP ),
+			uglifyOptions: { ecma: 5 },
 		} )
 	);
 }
