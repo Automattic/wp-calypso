@@ -18,10 +18,10 @@ export default localize( ( { translate, link, onClick = noop } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="help"
-				title={ translate( 'Get personalized help' ) }
+				title={ translate( 'Concierge orientation' ) }
 				description={ translate(
-					'Schedule a one-on-one orientation with a Happiness Engineer ' +
-						'to set up your site and learn more about WordPress.com.'
+					'Schedule a one-on-one orientation session to set up your site ' +
+						'and learn more about WordPress.com.'
 				) }
 				buttonText={ translate( 'Schedule a session' ) }
 				href={ link }

@@ -25,6 +25,9 @@ export default localize( ( { selectedSite, translate, onClick = noop } ) => {
 			<PurchaseDetail
 				icon="house"
 				title={ translate( 'Return to your Jetpack dashboard' ) }
+				description={ translate(
+					'Access your Jetpack Dashboard from your self-hosted WordPress site’s wp-admin.'
+				) }
 				buttonText={ translate( 'Go back to %(site)s', { args: { site: selectedSite.name } } ) }
 				href={ adminURL }
 				onClick={ onClick }

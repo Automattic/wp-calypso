@@ -19,13 +19,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon="plugins"
 				title={ translate( 'Automatic Updates' ) }
 				description={ translate(
-					'Keep your plugins securely updated and manage your site from ' +
-						'{{a}}mobile apps{{/a}}.',
-					{
-						components: {
-							a: <a href="https://apps.wordpress.com/" />,
-						},
-					}
+					'Keep your plugins up-to-date, hassle-free.',
 				) }
 				buttonText={ translate( 'Configure auto updates' ) }
 				href={ `/plugins/manage/${ selectedSite.slug }` }

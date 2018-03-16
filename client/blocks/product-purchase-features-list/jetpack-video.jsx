@@ -19,8 +19,8 @@ export default localize( ( { translate } ) => {
 				icon="image-multiple"
 				title={ translate( 'Video Hosting' ) }
 				description={ translate(
-					"High-speed video hosting that doesn't eat up your server space. " +
-						'High-definition and no third-party ads.'
+					'High-speed, high-definition video hosting that uses your server space efficiently, ' + 
+						' and comes with no third-party ads.'
 				) }
 			/>
 		</div>

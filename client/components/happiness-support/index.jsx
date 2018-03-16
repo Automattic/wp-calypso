@@ -47,8 +47,8 @@ export class HappinessSupport extends Component {
 	getHeadingText() {
 		const { isJetpackFreePlan, translate } = this.props;
 		return isJetpackFreePlan
-			? translate( 'Find answers in our documentation' )
-			: translate( 'Enjoy priority support from our Happiness Engineers' );
+			? translate( 'Support documentation' )
+			: translate( 'Priority support' );
 	}
 
 	getSupportText() {
@@ -58,11 +58,11 @@ export class HappinessSupport extends Component {
 		};
 		return isJetpackFreePlan
 			? translate(
-					'{{strong}}Need help?{{/strong}} Search our support site to find out more about how to make the most of your Jetpack site.', // eslint-disable-line max-len
+					'{{strong}}Need help?{{/strong}} Search our support site to find out about your site, your account, and how to make the most of WordPress.', // eslint-disable-line max-len
 					{ components }
 				)
 			: translate(
-					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account, or how to do just about anything.', // eslint-disable-line max-len
+					'{{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.', // eslint-disable-line max-len
 					{ components }
 				);
 	}

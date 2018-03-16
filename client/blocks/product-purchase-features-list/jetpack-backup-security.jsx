@@ -21,7 +21,7 @@ const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
 			icon="flag"
 			title={ translate( 'Site Security' ) }
 			description={ translate(
-				'Your site is being securely backed up and scanned with real-time sync.'
+				'Your site is safe with secure backups and real-time scans.'
 			) }
 			buttonText={
 				backupEngine === 'rewind'
