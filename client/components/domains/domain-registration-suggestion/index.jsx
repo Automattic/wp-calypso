@@ -7,14 +7,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { includes, isNumber } from 'lodash';
+import { isNumber } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import DomainSuggestion from 'components/domains/domain-suggestion';
-import Gridicon from 'gridicons';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import {
 	shouldBundleDomainWithPlan,
@@ -22,53 +22,7 @@ import {
 	hasDomainInCart,
 } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-
-const newTLDs = [
-	'.art',
-	'.bar',
-	'.beer',
-	'.buzz',
-	'.cab',
-	'.casa',
-	'.click',
-	'.coffee',
-	'.cooking',
-	'.design',
-	'.fashion',
-	'.fishing',
-	'.fit',
-	'.garden',
-	'.gift',
-	'.golf',
-	'.group',
-	'.help',
-	'.horse',
-	'.hospital',
-	'.ink',
-	'.jetzt',
-	'.link',
-	'.lol',
-	'.miami',
-	'.mom',
-	'.money',
-	'.movie',
-	'.network',
-	'.photo',
-	'.pics',
-	'.rest',
-	'.rodeo',
-	'.sexy',
-	'.style',
-	'.surf',
-	'.tattoo',
-	'.vip',
-	'.vodka',
-	'.wedding',
-	'.wiki',
-	'.work',
-	'.wtf',
-	'.yoga',
-];
+import { isNewTLD, isTestTLD } from 'components/domains/domain-registration-suggestion/utility';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
@@ -135,14 +89,12 @@ class DomainRegistrationSuggestion extends React.Component {
 		let buttonClasses, buttonContent;
 
 		if ( domain ) {
-			const testTLDs = [ '.de' ];
-
 			// Grab everything from the first dot, so 'example.co.uk' will
 			// match '.co.uk' but not '.uk'
 			// This won't work if we add subdomains.
 			const tld = domain.substring( domain.indexOf( '.' ) );
 
-			if ( includes( newTLDs, tld ) ) {
+			if ( isNewTLD( tld ) ) {
 				domainFlags.push(
 					<DomainSuggestionFlag
 						key={ `${ domain }-new` }
@@ -152,7 +104,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				);
 			}
 
-			if ( includes( testTLDs, tld ) ) {
+			if ( isTestTLD( tld ) ) {
 				domainFlags.push(
 					<DomainSuggestionFlag
 						key={ `${ domain }-testing` }
