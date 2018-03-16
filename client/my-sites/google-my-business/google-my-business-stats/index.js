@@ -124,7 +124,7 @@ class Stats extends Component {
 								className="google-my-business-stats__feature-image"
 							/>
 							<p>
-								Businesses with recent photos typically receive more clicks to their business
+								Listings with recent photos typically drive more view to their business
 								websites.
 							</p>
 						</div>
