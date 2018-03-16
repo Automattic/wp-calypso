@@ -68,14 +68,14 @@ class BillingReceipt extends React.Component {
 		if ( transactionFetchError ) {
 			if ( 'invalid_receipt' === transactionFetchError.error ) {
 				this.props.errorNotice(
-					translate( 'Could not find Receipt #%s', { args: transactionId } ),
+					translate( "Sorry, we couldn't find receipt #%s", { args: transactionId } ),
 					{
 						displayOnNextPage: true,
 					}
 				);
 			} else {
 				this.props.clearBillingTransactionError( transactionId );
-				this.props.errorNotice( translate( 'There was a problem when fetching the receipt' ), {
+				this.props.errorNotice( translate( 'Sorry, we had a problem loading that receipt.' ), {
 					displayOnNextPage: true,
 					button: translate( 'Try again' ),
 					href: billingHistoryReceipt( transactionId ),
