@@ -13,6 +13,9 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 
 export default localize( ( { selectedSite, translate } ) => {
+	const adSettingsUrl = selectedSite.jetpack
+		? '/settings/traffic/' + selectedSite.slug
+		: '/ads/settings/' + selectedSite.slug;
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -23,7 +26,7 @@ export default localize( ( { selectedSite, translate } ) => {
 						'WordAds lets you earn money by displaying promotional content.'
 				) }
 				buttonText={ translate( 'Start earning' ) }
-				href={ '/ads/settings/' + selectedSite.slug }
+				href={ adSettingsUrl }
 			/>
 		</div>
 	);
