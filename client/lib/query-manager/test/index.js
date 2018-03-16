@@ -8,19 +8,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import QueryManager, { DELETE_PATCH_KEY } from '../';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'QueryManager', () => {
-	let sandbox, manager;
-
-	useSandbox( _sandbox => ( sandbox = _sandbox ) );
+	let manager;
 
 	beforeEach( () => {
 		manager = new QueryManager();
-	} );
-
-	afterEach( () => {
-		sandbox.restore();
 	} );
 
 	describe( '#constructor()', () => {
@@ -272,19 +265,23 @@ describe( 'QueryManager', () => {
 
 		test( 'should omit an item that returns undefined from #mergeItem()', () => {
 			manager = manager.receive( { ID: 144 } );
-			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
+			jest.spyOn( QueryManager, 'mergeItem' );
+			QueryManager.mergeItem.mockReturnValue( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
 			expect( newManager.getItems() ).to.eql( [] );
+			QueryManager.mergeItem.mockRestore();
 		} );
 
 		test( "should do nothing if #mergeItem() returns undefined but the item didn't exist", () => {
 			manager = manager.receive();
-			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
+			jest.spyOn( QueryManager, 'mergeItem' );
+			QueryManager.mergeItem.mockReturnValue( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager ).to.equal( newManager );
+			QueryManager.mergeItem.mockRestore();
 		} );
 
 		test( 'should replace a received item when key already exists', () => {
@@ -330,13 +327,15 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it no longer matches', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			sandbox.stub( QueryManager, 'matches' ).returns( false );
+			jest.spyOn( QueryManager, 'matches' );
+			QueryManager.matches.mockReturnValue( false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
 			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 } ] );
 			expect( newManager.getItems() ).to.eql( [ { ID: 144, changed: true } ] );
 			expect( newManager.getItems( {} ) ).to.eql( [] );
+			QueryManager.matches.mockRestore();
 		} );
 
 		test( 'should be order sensitive to tracked query items', () => {
@@ -348,13 +347,15 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it is omitted from items', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
+			jest.spyOn( QueryManager, 'mergeItem' );
+			QueryManager.mergeItem.mockReturnValue( undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).to.eql( [ { ID: 144 } ] );
 			expect( manager.getItems( {} ) ).to.eql( [ { ID: 144 } ] );
 			expect( newManager.getItems() ).to.eql( [] );
 			expect( newManager.getItems( {} ) ).to.eql( [] );
+			QueryManager.mergeItem.mockRestore();
 		} );
 
 		test( 'should track an item that previous did not match', () => {
@@ -367,10 +368,12 @@ describe( 'QueryManager', () => {
 
 		test( 'should compare items appended to query set', () => {
 			manager = manager.receive( [ { ID: 140 }, { ID: 160 } ], { query: {} } );
-			sandbox.stub( QueryManager, 'compare', ( query, a, b ) => a.ID - b.ID );
+			jest.spyOn( QueryManager, 'compare' );
+			QueryManager.compare.mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			manager = manager.receive( { ID: 150 } );
 
 			expect( manager.getItems( {} ) ).to.eql( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
+			QueryManager.compare.mockRestore();
 		} );
 
 		test( 'should accept an optional total found count', () => {
@@ -418,11 +421,13 @@ describe( 'QueryManager', () => {
 
 		test( 'should decrement found count if removing an unmatched item', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
-			sandbox.stub( QueryManager, 'matches' ).returns( false );
+			jest.spyOn( QueryManager, 'matches' );
+			QueryManager.matches.mockReturnValue( false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getFound( {} ) ).to.equal( 1 );
 			expect( newManager.getFound( {} ) ).to.equal( 0 );
+			QueryManager.matches.mockRestore();
 		} );
 
 		test( 'should not change found count if merging items into existing query', () => {
@@ -434,8 +439,9 @@ describe( 'QueryManager', () => {
 			expect( newManager.getItems( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
-		it( 'should sort items when merging queries', () => {
-			sandbox.stub( QueryManager, 'compare', ( query, a, b ) => a.ID - b.ID );
+		test( 'should sort items when merging queries', () => {
+			jest.spyOn( QueryManager, 'compare' );
+			QueryManager.compare.mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
 				item =>
 					( manager = manager.receive( item, {
@@ -443,11 +449,11 @@ describe( 'QueryManager', () => {
 						query: {},
 					} ) )
 			);
-			// console.log( manager.data.queries );
 			expect( manager.getItems( {} ) ).to.eql( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
+			QueryManager.compare.mockRestore();
 		} );
 
-		it( 'should sort when extended using subclassed static compare', () => {
+		test( 'should sort when extended using subclassed static compare', () => {
 			let sortingManager = new class extends QueryManager {
 				static compare( query, a, b ) {
 					return a.ID - b.ID;
