@@ -4809,7 +4809,7 @@
         "ignore": "3.3.5",
         "imurmurhash": "0.1.4",
         "inquirer": "0.12.0",
-        "is-my-json-valid": "2.17.1",
+        "is-my-json-valid": "2.17.2",
         "is-resolvable": "1.1.0",
         "js-yaml": "3.11.0",
         "json-stable-stringify": "1.0.1",
@@ -7818,12 +7818,17 @@
         "lower-case": "1.1.4"
       }
     },
+    "is-my-ip-valid": {
+      "version": "1.0.0",
+      "integrity": "sha512-gmh/eWXROncUzRnIa1Ubrt5b8ep/MGSnfAUI3aRp+sqTCs1tv1Isl8d8F6JmkN3dXKc3ehZMrtiPN9eL03NuaQ=="
+    },
     "is-my-json-valid": {
-      "version": "2.17.1",
-      "integrity": "sha512-Q2khNw+oBlWuaYvEEHtKSw/pCxD2L5Rc1C+UQme9X6JdRDh7m5D7HkozA0qa3DUkQ6VzCnEm8mVIQPyIRkI5sQ==",
+      "version": "2.17.2",
+      "integrity": "sha512-IBhBslgngMQN8DDSppmgDv7RNrlFotuuDsKcrCP3+HbFaVivIBU7u9oiiErw8sH4ynx3+gOGQ3q2otkgiSi6kg==",
       "requires": {
         "generate-function": "2.0.0",
         "generate-object-property": "1.2.0",
+        "is-my-ip-valid": "1.0.0",
         "jsonpointer": "4.0.1",
         "xtend": "4.0.1"
       }
@@ -12736,7 +12741,7 @@
             "ignore": "3.3.5",
             "imurmurhash": "0.1.4",
             "inquirer": "0.12.0",
-            "is-my-json-valid": "2.17.1",
+            "is-my-json-valid": "2.17.2",
             "is-resolvable": "1.1.0",
             "js-yaml": "3.11.0",
             "json-stable-stringify": "1.0.1",
