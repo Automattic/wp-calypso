@@ -40,8 +40,8 @@ const LayoutLoggedOut = ( {
 	useOAuth2Layout,
 } ) => {
 	const classes = {
-		[ 'is-group-' + section.group ]: !! section,
-		[ 'is-section-' + section.name ]: !! section,
+		[ 'is-group-' + section.group ]: !! ( section && section.group ),
+		[ 'is-section-' + section.name ]: !! ( section && section.name ),
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
