@@ -109,7 +109,7 @@ describe( 'selectors', () => {
 							2916284: {
 								categories: new TermQueryManager( {
 									queries: {
-										'[["search","ribs"]]': {
+										'{"search":"ribs"}': {
 											itemKeys: [ 123, 124 ],
 											found: 2,
 										},
@@ -143,7 +143,7 @@ describe( 'selectors', () => {
 							2916284: {
 								categories: new TermQueryManager( {
 									queries: {
-										'[["search","ribs"]]': {
+										'{"search":"ribs"}': {
 											itemKeys: [ 123, 124 ],
 											found: 2,
 										},
@@ -195,7 +195,7 @@ describe( 'selectors', () => {
 								category: new TermQueryManager( {
 									items: {},
 									queries: {
-										'[["search","ribs"]]': {
+										'{"search":"ribs"}': {
 											itemKeys: [],
 										},
 									},
@@ -230,7 +230,7 @@ describe( 'selectors', () => {
 										},
 									},
 									queries: {
-										'[["search","ribs"]]': {
+										'{"search":"ribs"}': {
 											itemKeys: [ 111 ],
 										},
 									},
@@ -291,7 +291,7 @@ describe( 'selectors', () => {
 										},
 									},
 									queries: {
-										'[["search","i"]]': {
+										'{"search":"i"}': {
 											itemKeys: [ 123, 124 ],
 											found: 2,
 										},
@@ -329,7 +329,7 @@ describe( 'selectors', () => {
 										},
 									},
 									queries: {
-										'[["search","i"]]': {
+										'{"search":"i"}': {
 											itemKeys: [ 123, 124 ],
 											found: 2,
 										},
@@ -412,7 +412,7 @@ describe( 'selectors', () => {
 										},
 									},
 									queries: {
-										'[["search","i"]]': {
+										'{"search":"i"}': {
 											itemKeys: [ 123, 124 ],
 											found: 2,
 										},
@@ -450,7 +450,7 @@ describe( 'selectors', () => {
 										},
 									},
 									queries: {
-										'[["search","i"]]': {
+										'{"search":"i"}': {
 											itemKeys: [ 123, 124 ],
 											found: 2,
 										},
@@ -477,7 +477,7 @@ describe( 'selectors', () => {
 								category: new TermQueryManager( {
 									items: {},
 									queries: {
-										'[["search","unappetizing"]]': {
+										'{"search":"unappetizing"}': {
 											itemKeys: [],
 											found: 0,
 										},
@@ -693,7 +693,7 @@ describe( 'selectors', () => {
 										},
 									},
 									queries: {
-										'[["search","ribs"]]': {
+										'{"search":"ribs"}': {
 											itemKeys: [ 111 ],
 											found: 4,
 										},

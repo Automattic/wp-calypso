@@ -633,7 +633,7 @@ describe( 'reducer', () => {
 							},
 						},
 						queries: {
-							'[["search","Hello"]]': {
+							'{"search":"Hello"}': {
 								itemKeys: [ 841 ],
 								found: 1,
 							},
@@ -659,7 +659,7 @@ describe( 'reducer', () => {
 							},
 						},
 						queries: {
-							'[["search","Hello"]]': {
+							'{"search":"Hello"}': {
 								itemKeys: [ 841 ],
 								found: 1,
 							},
@@ -684,7 +684,7 @@ describe( 'reducer', () => {
 						},
 					},
 					queries: {
-						'[["search","Hello"]]': {
+						'{"search":"Hello"}': {
 							found: 1,
 							itemKeys: [ 841 ],
 						},
@@ -1639,7 +1639,7 @@ describe( 'reducer', () => {
 						},
 					},
 					queries: {
-						'[["search","Hello"]]': {
+						'{"search":"Hello"}': {
 							itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
 							found: 1,
 						},
@@ -1663,7 +1663,7 @@ describe( 'reducer', () => {
 						},
 					},
 					queries: {
-						'[["search","Hello"]]': {
+						'{"search":"Hello"}': {
 							itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
 							found: 1,
 						},
@@ -1688,7 +1688,7 @@ describe( 'reducer', () => {
 							},
 						},
 						queries: {
-							'[["search","Hello"]]': {
+							'{"search":"Hello"}': {
 								found: 1,
 								itemKeys: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
 							},
