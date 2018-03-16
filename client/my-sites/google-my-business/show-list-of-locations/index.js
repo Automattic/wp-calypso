@@ -27,26 +27,27 @@ class ShowListOfLocation extends Component {
 	state = { locations: [ { placeholder: true }, { placeholder: true } ] };
 
 	componentDidMount() {
-		const self = this;
-		setTimeout( () => {
-			self.setState( {
-				locations: [
-					{
-						title: "Cate's Cookies",
-						img: '/calypso/images/google-my-business/cookies.png',
-						text: '345 North Avenue, Talihassee, FL 34342, USA',
-						verified: true,
-					},
-					{
-						title: 'Pinch Bakeshop',
-						img: '/calypso/images/google-my-business/pinch.png',
-						text: '234 Piedmont Drive, Talihassee, FL 34342, USA',
-						verified: false,
-					},
-				],
-			} );
-		}, 1000 );
+		setTimeout( () => this.loadListings(), 1000 );
 	}
+
+	loadListings = () => {
+		this.setState( {
+			locations: [
+				{
+					title: "Cate's Cookies",
+					img: '/calypso/images/google-my-business/cookies.png',
+					text: '345 North Avenue, Talihassee, FL 34342, USA',
+					verified: true,
+				},
+				{
+					title: 'Pinch Bakeshop',
+					img: '/calypso/images/google-my-business/pinch.png',
+					text: '234 Piedmont Drive, Talihassee, FL 34342, USA',
+					verified: false,
+				},
+			],
+		} );
+	};
 
 	goBack = () => {
 		page.back( `/google-my-business/${ this.props.siteId }` );
