@@ -53,13 +53,6 @@ $devdocs-max-width: 720px;
 .main.devdocs.devdocs__components {
 	// Make way for showing big components and multiple columns
 	max-width: 100%;
-
-	// Keep the search and header cake at the same max-width
-	// as other sections.
-	.search-card,
-	.header-cake {
-		max-width: $devdocs-max-width;
-	}
 }
 
 .design__collection {
@@ -148,6 +141,7 @@ $devdocs-max-width: 720px;
 			display: table;
 			margin: auto;
 			min-width: ( $devdocs-max-width / 2 );
+			width: 100%;
 		}
 
 		// Some components use a card and the extra margin
@@ -541,4 +535,6 @@ a.docs-example__doc-edit-link {
 	text-align: center;
 	text-decoration: underline;
 	float: right;
+	position: relative;
+	top: -20px;
 }
