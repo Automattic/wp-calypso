@@ -19,7 +19,7 @@ function FormattedHeader( { headerText, subHeaderText } ) {
 	} );
 
 	return (
-		<header className={ classes }>
+		<header id={ 'formatted-header' } className={ classes }>
 			<h1 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h1>
 			{ subHeaderText && (
 				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
