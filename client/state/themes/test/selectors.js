@@ -330,7 +330,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Sixteen"]]': {
+									'{"search":"Sixteen"}': {
 										itemKeys: [ 'twentysixteen' ],
 									},
 								},
@@ -355,7 +355,7 @@ describe( 'themes selectors', () => {
 									twentyfifteen,
 								},
 								queries: {
-									'[["search","Fifteen"]]': {
+									'{"search":"Fifteen"}': {
 										itemKeys: [ 'twentyfifteen', undefined ],
 										found: 2,
 									},
@@ -490,7 +490,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Sixteen"]]': {
+									'{"search":"Sixteen"}': {
 										itemKeys: [ 'twentysixteen' ],
 										found: 1,
 									},
@@ -514,7 +514,7 @@ describe( 'themes selectors', () => {
 							2916284: new ThemeQueryManager( {
 								items: {},
 								queries: {
-									'[["search","Umpteen"]]': {
+									'{"search":"Umpteen"}': {
 										itemKeys: [],
 										found: 0,
 									},
@@ -562,7 +562,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Sixteen"]]': {
+									'{"search":"Sixteen"}': {
 										itemKeys: [ 'sixteen' ],
 										found: 1,
 									},
@@ -591,7 +591,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Twenty"]]': {
+									'{"search":"Twenty"}': {
 										itemKeys: [ 'twentysixteen' ],
 										found: 7,
 									},
@@ -618,7 +618,7 @@ describe( 'themes selectors', () => {
 							2916284: new ThemeQueryManager( {
 								items: {},
 								queries: {
-									'[["search","Umpteen"]]': {
+									'{"search":"Umpteen"}': {
 										itemKeys: [],
 										found: 0,
 									},
@@ -653,7 +653,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Twenty"]]': {
+									'{"search":"Twenty"}': {
 										itemKeys: [ 'twentysixteen' ],
 										found: 7,
 									},
@@ -698,7 +698,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Twenty"]]': {
+									'{"search":"Twenty"}': {
 										itemKeys: [ 'twentysixteen' ],
 										found: 7,
 									},
@@ -727,7 +727,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Twenty"]]': {
+									'{"search":"Twenty"}': {
 										itemKeys: [ 'twentysixteen' ],
 										found: 7,
 									},
@@ -756,7 +756,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Sixteen"]]': {
+									'{"search":"Sixteen"}': {
 										itemKeys: [ 'twentysixteen' ],
 										found: 1,
 									},
@@ -791,7 +791,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Twenty"]]': {
+									'{"search":"Twenty"}': {
 										itemKeys: [ 'twentysixteen' ],
 										found: 7,
 									},
@@ -853,7 +853,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[]': {
+									'{}': {
 										itemKeys: [ 'twentyfifteen', 'twentysixteen' ],
 									},
 								},
@@ -878,7 +878,7 @@ describe( 'themes selectors', () => {
 									twentysixteen,
 								},
 								queries: {
-									'[["search","Sixteen"]]': {
+									'{"search":"Sixteen"}': {
 										itemKeys: [ 'twentysixteen', undefined ],
 										found: 2,
 									},

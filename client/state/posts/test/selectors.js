@@ -302,7 +302,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Ribs"]]': {
+									'{"search":"Ribs"}': {
 										itemKeys: [ 841 ],
 									},
 								},
@@ -339,7 +339,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Sweet"]]': {
+									'{"search":"Sweet"}': {
 										itemKeys: [ 1204, undefined ],
 										found: 2,
 									},
@@ -450,7 +450,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [ 841 ],
 										found: 1,
 									},
@@ -474,7 +474,7 @@ describe( 'selectors', () => {
 							2916284: new PostQueryManager( {
 								items: {},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [],
 										found: 0,
 									},
@@ -521,7 +521,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [ 841 ],
 										found: 1,
 									},
@@ -552,7 +552,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [ 841 ],
 										found: 4,
 									},
@@ -576,7 +576,7 @@ describe( 'selectors', () => {
 							2916284: new PostQueryManager( {
 								items: {},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [],
 										found: 0,
 									},
@@ -623,7 +623,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [ 841 ],
 										found: 4,
 									},
@@ -654,7 +654,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [ 841 ],
 										found: 4,
 									},
@@ -685,7 +685,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Hello"]]': {
+									'{"search":"Hello"}': {
 										itemKeys: [ 841 ],
 										found: 1,
 									},
@@ -773,7 +773,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[]': {
+									'{}': {
 										itemKeys: [ 841, 413 ],
 									},
 								},
@@ -824,7 +824,7 @@ describe( 'selectors', () => {
 									},
 								},
 								queries: {
-									'[["search","Sweet"]]': {
+									'{"search":"Sweet"}': {
 										itemKeys: [ 1204, undefined ],
 										found: 2,
 									},
@@ -2438,7 +2438,6 @@ describe( 'selectors', () => {
 
 			expect( slug ).to.eql( '🙈🙊🙉' );
 		} );
-
 		test( 'should return edited slug if post is not published', () => {
 			const slug = getEditedPostSlug(
 				{
@@ -2471,10 +2470,8 @@ describe( 'selectors', () => {
 				2916284,
 				841
 			);
-
 			expect( slug ).to.eql( 'jedi' );
 		} );
-
 		test( 'should return suggested-slug if post is not published', () => {
 			const slug = getEditedPostSlug(
 				{
@@ -2500,10 +2497,8 @@ describe( 'selectors', () => {
 				2916284,
 				841
 			);
-
 			expect( slug ).to.eql( 'chewbacca' );
 		} );
-
 		test( 'should return slug if post is not published and slug is set', () => {
 			const slug = getEditedPostSlug(
 				{
@@ -2530,10 +2525,8 @@ describe( 'selectors', () => {
 				2916284,
 				841
 			);
-
 			expect( slug ).to.eql( 'jedi' );
 		} );
-
 		test( 'should return edited slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
@@ -2566,10 +2559,8 @@ describe( 'selectors', () => {
 				2916284,
 				841
 			);
-
 			expect( slug ).to.eql( 'ewok' );
 		} );
-
 		test( 'should return an empty edited slug if post is published', () => {
 			const slug = getEditedPostSlug(
 				{
@@ -2602,11 +2593,9 @@ describe( 'selectors', () => {
 				2916284,
 				841
 			);
-
 			expect( slug ).to.eql( '' );
 		} );
 	} );
-
 	describe( 'getSitePostsByTerm()', () => {
 		test( 'should return an array of post objects for the site matching the termId', () => {
 			const postObjects = {
@@ -2637,7 +2626,6 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-
 			expect( getSitePostsByTerm( state, 2916284, 'category', 10 ) ).to.have.members( [
 				postObjects[ 2916284 ][ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
 			] );

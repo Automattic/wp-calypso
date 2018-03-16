@@ -31,7 +31,7 @@ describe( 'QueryManager', () => {
 					152: { ID: 152 },
 				},
 				queries: {
-					'[]': {
+					'{}': {
 						itemKeys: [ 152 ],
 						found: 1,
 					},
