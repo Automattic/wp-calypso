@@ -116,7 +116,7 @@ export class MoreFiltersControl extends Component {
 					<Gridicon icon="chevron-down" size={ 24 } />
 				</Button>
 
-				{ this.renderPopover() }
+				{ this.state.showPopover && this.renderPopover() }
 			</div>
 		);
 	}
