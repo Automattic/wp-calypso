@@ -206,8 +206,8 @@ class ThemeShowcase extends React.Component {
 
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 
+		// We don't want to advertise the theme that's already active.
 		const themeBanners = omit(
-			// We don't want to advertise the theme that's already active.
 			{
 				'photo-blog': PhotoBlogBanner,
 				'small-business': SmallBusinessBanner,
