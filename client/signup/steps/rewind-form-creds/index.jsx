@@ -87,7 +87,7 @@ class RewindFormCreds extends Component {
 				stepContent={ this.stepContent() }
 				hideFormattedHeader={ true }
 				hideSkip={ true }
-				hideBack={ true }
+				hideBack={ false }
 			/>
 		);
 	}

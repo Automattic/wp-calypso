@@ -7,7 +7,7 @@
 .rewind-switch__card, .rewind-auto-config__card {
 	text-align: center;
 	margin: 1px auto;
-	max-width: 640px;
+	max-width: 670px;
 }
 
 .rewind-migrate__card {
@@ -23,6 +23,14 @@
 	align-items: center;
 	flex-direction: column;
 	padding: 4rem 4rem 3rem;
+	margin-top: 48px;
+
+	& + .step-wrapper__buttons .navigation-link {
+		position: absolute;
+		top: -6px;
+		left: 32px;
+		margin: 0;
+	}
 }
 
 .rewind-switch__heading {
