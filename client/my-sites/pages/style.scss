@@ -119,10 +119,6 @@
 
 .page__main {
 	flex-grow: 1;
-
-	&.is-shadow {
-		opacity: 0.5;
-	}
 }
 
 .page__title,
@@ -164,14 +160,19 @@
 	}
 }
 
-.page .updated-confirmation .conf-alert {
-	width: auto;
-	.undo {
-		display: inline;
-	}
+.page__shadow-notice-cover {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: z-index( 'root', '.page__shadow-notice-cover' );
+	background-color: rgba(255, 255, 255, 0.8);
+	display: flex;
+	align-items: center;
 }
 
-.page__shadow-notice {
-	position: absolute;
-	right: 24px;
+.notice.is-compact.page__shadow-notice {
+	margin-left: auto;
+	margin-right: 24px;
 }

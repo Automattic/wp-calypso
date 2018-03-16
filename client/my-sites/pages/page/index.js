@@ -47,18 +47,20 @@ function sleep( ms ) {
 }
 
 const ShadowNotice = localize( ( { shadowStatus, onUndoClick, translate } ) => (
-	<Notice
-		className="page__shadow-notice"
-		isCompact
-		inline
-		text={ shadowStatus.text }
-		status={ shadowStatus.status }
-		icon={ shadowStatus.icon }
-	>
-		{ shadowStatus.undo && (
-			<NoticeAction onClick={ onUndoClick }>{ translate( 'Undo' ) }</NoticeAction>
-		) }
-	</Notice>
+	<div className="page__shadow-notice-cover">
+		<Notice
+			className="page__shadow-notice"
+			isCompact
+			inline
+			text={ shadowStatus.text }
+			status={ shadowStatus.status }
+			icon={ shadowStatus.icon }
+		>
+			{ shadowStatus.undo && (
+				<NoticeAction onClick={ onUndoClick }>{ translate( 'Undo' ) }</NoticeAction>
+			) }
+		</Notice>
+	</div>
 ) );
 
 class Page extends Component {
@@ -395,15 +397,11 @@ class Page extends Component {
 			<div className={ classNames( hierarchyIndentClasses ) } />
 		);
 
-		const mainClasses = classNames( 'page__main', {
-			'is-shadow': this.props.shadowStatus,
-		} );
-
 		return (
 			<CompactCard className={ classNames( cardClasses ) }>
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }
-				<div className={ mainClasses }>
+				<div className="page__main">
 					<a
 						className="page__title"
 						href={ canEdit ? editLinkForPage( page, site ) : page.URL }
