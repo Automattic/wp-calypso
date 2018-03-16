@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import page from 'page';
+import classnames from 'classnames';
 import { trim } from 'lodash';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 
@@ -62,7 +63,6 @@ import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
 import VideoEditor from 'blocks/video-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
-import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
 import ReaderRecommendedSites from 'blocks/reader-recommended-sites/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
@@ -97,8 +97,13 @@ export default class AppComponents extends React.Component {
 	};
 
 	render() {
+		const className = classnames( 'devdocs', 'devdocs__blocks', {
+			'is-single': this.props.component,
+			'is-list': ! this.props.component,
+		} );
+
 		return (
-			<Main className="design design__blocks">
+			<Main className={ className }>
 				<DocumentHead title="Blocks" />
 				{ this.props.component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
@@ -155,7 +160,7 @@ export default class AppComponents extends React.Component {
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
-					<ReaderCombinedCard />
+
 					<ReaderRecommendedSites />
 					<PlanPrice />
 					<PostShare />

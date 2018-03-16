@@ -57,16 +57,17 @@ const Collection = ( {
 			summary.push(
 				<span key={ `instance-link-${ showCounter }` } className="design__instance-link">
 					<a href={ exampleLink }>{ exampleName }</a>
-					,&nbsp;
 				</span>
 			);
 		}
 
 		return (
-			<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
-				{ example }
+			<div>
+				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
+					{ example }
+				</DocsExampleWrapper>
 				{ component && <ReadmeViewer readmeFilePath={ example.props.readmeFilePath } /> }
-			</DocsExampleWrapper>
+			</div>
 		);
 	} );
 
@@ -75,8 +76,8 @@ const Collection = ( {
 			{ showCounter > 1 &&
 				filter && (
 					<div className="design__instance-links">
-						<span>Showing </span>
-						{ summary }...
+						<span className="design__instance-links-label">Results:</span>
+						{ summary }
 					</div>
 				) }
 			{ /*
