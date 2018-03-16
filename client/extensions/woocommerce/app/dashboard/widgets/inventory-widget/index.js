@@ -113,7 +113,7 @@ class InventoryWidget extends Component {
 		const lowProducts = this.getLowStockProducts();
 		if ( ! lowProducts.length ) {
 			return (
-				<p className="dashboard-widgets__message-ok">
+				<p className="inventory-widget__message-ok">
 					{ translate(
 						'{{strong}}Looking good!{{/strong}} None of your products are currently at low stock levels.',
 						{ components: { strong: <strong /> } }
@@ -123,7 +123,7 @@ class InventoryWidget extends Component {
 		}
 		return (
 			<Fragment>
-				<p className="dashboard-widgets__message-low">
+				<p className="inventory-widget__message-low">
 					{ translate( 'Some of your products are running low on inventory.' ) }
 				</p>
 				{ this.renderLowStock( lowProducts ) }
