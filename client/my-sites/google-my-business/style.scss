@@ -21,4 +21,8 @@
 	.form-text-input {
 		margin-bottom: 1em;
 	}
+
+	.is-placeholder {
+		@include placeholder();
+	}
 }

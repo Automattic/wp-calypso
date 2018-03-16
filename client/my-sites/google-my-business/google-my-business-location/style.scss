@@ -1,5 +1,17 @@
-.google-my-business-location__header {
+.google-my-business h2.google-my-business-location__header { /*too specific*/
+	font-size: 16px;
 	font-weight: bold;
+	margin: 0;
+
+	&.is-placeholder {
+		margin-bottom: 0.5em;
+		width: 80%;
+	}
+}
+
+.google-my-business-location__text-wrapper {
+	flex-grow: 1;
+	margin-bottom: 1em;
 }
 
 .google-my-business-location__verified {
@@ -14,10 +26,6 @@
 
 .google-my-business-location__content {
 	display: flex;
-}
-
-.google-my-business-location__text {
-	margin-bottom: 1em;
 }
 
 .google-my-business-location__image {

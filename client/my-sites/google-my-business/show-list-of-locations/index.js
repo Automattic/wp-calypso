@@ -24,6 +24,30 @@ class ShowListOfLocation extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	state = { locations: [ { placeholder: true }, { placeholder: true } ] };
+
+	componentDidMount() {
+		const self = this;
+		setTimeout( () => {
+			self.setState( {
+				locations: [
+					{
+						title: "Cate's Cookies",
+						img: '/calypso/images/google-my-business/cookies.png',
+						text: '345 North Avenue, Talihassee, FL 34342, USA',
+						verified: true,
+					},
+					{
+						title: 'Pinch Bakeshop',
+						img: '/calypso/images/google-my-business/pinch.png',
+						text: '234 Piedmont Drive, Talihassee, FL 34342, USA',
+						verified: false,
+					},
+				],
+			} );
+		}, 1000 );
+	}
+
 	goBack = () => {
 		page.back( `/google-my-business/${ this.props.siteId }` );
 	};
@@ -34,7 +58,7 @@ class ShowListOfLocation extends Component {
 		const statsHref = '/google-my-business/stats/' + siteId;
 
 		return (
-			<div className="show-list-of-locations">
+			<div className="google-my-business show-list-of-locations">
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -43,33 +67,18 @@ class ShowListOfLocation extends Component {
 					<h1>{ translate( 'Select the listing you would like to connect to' ) }</h1>
 				</CompactCard>
 
-				<CompactCard>
-					<GoogleMyBusinessLocation
-						title="Cate's Cookies"
-						img="/calypso/images/google-my-business/cookies.png"
-						text={
-							<div>
-								345 North Avenue<br />Talihassee, FL 34342<br />USA
-							</div>
-						}
-						href={ statsHref }
-						verified={ true }
-					/>
-				</CompactCard>
-
-				<CompactCard>
-					<GoogleMyBusinessLocation
-						title="Pinch Bakeshop"
-						img="/calypso/images/google-my-business/pinch.png"
-						text={
-							<div>
-								234 Piedmont Drive<br />Talihassee, FL 34342<br />USA
-							</div>
-						}
-						href={ statsHref }
-						verified={ false }
-					/>
-				</CompactCard>
+				{ this.state.locations.map( ( location, index ) => (
+					<CompactCard key={ index }>
+						<GoogleMyBusinessLocation
+							title={ location.title }
+							img={ location.img }
+							text={ <div>{ location.text }</div> }
+							href={ statsHref }
+							verified={ location.verified }
+							placeholder={ location.placeholder }
+						/>
+					</CompactCard>
+				) ) }
 
 				<Card className="show-list-of-locations__search">
 					{ translate(
