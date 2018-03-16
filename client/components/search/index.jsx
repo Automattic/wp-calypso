@@ -347,7 +347,7 @@ class Search extends Component {
 						type="search"
 						id={ 'search-component-' + this.instanceId }
 						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						aria-describedBy={ this.props.describedBy }
+						aria-describedby={ this.props.describedBy }
 						aria-label={ inputLabel ? inputLabel : i18n.translate( 'Search' ) }
 						aria-hidden={ ! isOpenUnpinnedOrQueried }
 						className={ inputClass }
