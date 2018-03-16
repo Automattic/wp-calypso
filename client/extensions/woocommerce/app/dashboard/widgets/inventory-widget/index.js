@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-// import Button from 'components/button';
 import {
 	areSettingsProductsLoaded,
 	getProductsSettingValue,
@@ -106,10 +105,7 @@ class InventoryWidget extends Component {
 	};
 
 	renderContents = () => {
-		const { isLowStockEnabled, translate } = this.props;
-		if ( ! isLowStockEnabled ) {
-			return null;
-		}
+		const { translate } = this.props;
 		const lowProducts = this.getLowStockProducts();
 		if ( ! lowProducts.length ) {
 			return (
@@ -155,8 +151,6 @@ export default connect(
 	state => {
 		const site = getSelectedSiteWithFallback( state );
 		const isLoaded = areSettingsProductsLoaded( state );
-		const isLowStockEnabled =
-			'yes' === getProductsSettingValue( state, 'woocommerce_notify_low_stock' );
 		const lowStockThreshold = parseInt(
 			getProductsSettingValue( state, 'woocommerce_notify_low_stock_amount' ) || 0
 		);
@@ -165,12 +159,10 @@ export default connect(
 		);
 		const shouldManageStock =
 			'yes' === getProductsSettingValue( state, 'woocommerce_manage_stock' );
-		// woocommerce_stock_email_recipient
 		const products = getAllProducts( state );
 
 		return {
 			isLoaded,
-			isLowStockEnabled,
 			lowStockThreshold,
 			noStockThreshold,
 			products,
