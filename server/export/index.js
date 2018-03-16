@@ -9,24 +9,28 @@ import { resolve, join } from 'path';
 import { writeFile } from 'fs';
 import { pick, partial } from 'lodash';
 import { createElement } from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToString, renderToStaticMarkup } from 'react-dom/server';
 import filenamify from 'filenamify';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'state/document-head/selectors';
+import { setLocale } from 'state/ui/language/actions';
 import sections from '../../client/sections';
 import { createReduxStore } from 'state';
 import { getCurrentBranchName, getCurrentCommitShortChecksum } from '../pages/index';
 import { generateStaticUrls, staticFilesUrls } from '../pages/static-files';
+import { ReduxWrappedLoggedOutLayout } from '../../client/controller/index.node';
 
 import Shell from 'document';
+import { enhanceContextWithLogin } from 'login/controller';
 
 const getDefaultContext = () => {
 	const calypsoEnv = config( 'env_id' );
@@ -57,6 +61,8 @@ const getDefaultContext = () => {
 		devDocsURL: '/devdocs',
 		store,
 		config: config.ssrConfig,
+		// enhanced context
+		params: {},
 	};
 
 	if ( calypsoEnv === 'wpcalypso' ) {
@@ -133,6 +139,25 @@ sections.forEach( section => {
 
 	if ( section.css ) {
 		context.sectionCss = section.css;
+	}
+
+	// full page rendering (only login at the moment)
+	if (
+		section.name === 'login' &&
+		config.isEnabled( 'server-side-rendering' ) &&
+		isDefaultLocale( context.lang ) &&
+		section.isomorphic
+	) {
+		context.path = '/log-in';
+		enhanceContextWithLogin( context );
+		context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );
+		const props = {
+			store: context.store,
+			primary: context.primary,
+			secondary: context.secondary,
+			redirectUri: context.originalUrl,
+		};
+		context.renderedLayout = renderToString( createElement( ReduxWrappedLoggedOutLayout, props ) );
 	}
 
 	const filename = `${ filenamify( `${ section.name }_${ section.module }`, {
