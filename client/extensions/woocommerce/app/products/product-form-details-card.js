@@ -5,6 +5,7 @@
  */
 
 import React, { Component } from 'react';
+import config from 'config';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { trim, isNumber } from 'lodash';
@@ -116,7 +117,7 @@ export default class ProductFormDetailsCard extends Component {
 
 		let productReviewsWidget = null;
 
-		if ( isNumber( product.id ) ) {
+		if ( isNumber( product.id ) && config.isEnabled( 'woocommerce/extension-reviews' ) ) {
 			productReviewsWidget = <ProductReviewsWidget product={ product } />;
 		}
 
