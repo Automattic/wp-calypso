@@ -4,7 +4,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -78,14 +77,8 @@ class ManageOrdersView extends Component {
 		if ( ! ordersLoaded ) {
 			this.props.fetchOrders( siteId );
 		}
-		// TODO This check can be removed when we launch reviews.
-		if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
-			this.props.fetchReviews( siteId, { status: 'pending' } );
-		}
-	};
 
-	shouldShowPendingReviews = () => {
-		return config.isEnabled( 'woocommerce/extension-reviews' ) && this.props.pendingReviews;
+		this.props.fetchReviews( siteId, { status: 'pending' } );
 	};
 
 	possiblyRenderProcessOrdersWidget = () => {
@@ -98,7 +91,7 @@ class ManageOrdersView extends Component {
 			count: orders.length,
 		} );
 		const classes = classNames( 'dashboard__process-orders-container', {
-			'has-reviews': this.shouldShowPendingReviews(),
+			'has-reviews': this.props.pendingReviews,
 		} );
 		return (
 			<DashboardWidgetRow className={ classes }>
@@ -122,11 +115,12 @@ class ManageOrdersView extends Component {
 	};
 
 	possiblyRenderReviewsWidget = () => {
-		if ( ! this.shouldShowPendingReviews() ) {
+		const { site, pendingReviews, translate } = this.props;
+
+		if ( ! pendingReviews ) {
 			return null;
 		}
 
-		const { site, pendingReviews, translate } = this.props;
 		const countText = translate( '%d pending review', '%d pending reviews', {
 			args: [ pendingReviews ],
 			count: pendingReviews,
