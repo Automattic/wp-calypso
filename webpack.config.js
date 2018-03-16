@@ -11,7 +11,6 @@ const _ = require( 'lodash' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
-const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
@@ -251,15 +250,6 @@ if ( isDevelopment ) {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' );
-	webpackConfig.plugins.unshift(
-		new HardSourceWebpackPlugin( {
-			cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ),
-		} )
 	);
 }
 
