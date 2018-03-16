@@ -68,7 +68,10 @@ class StoreSidebar extends Component {
 		this.props.fetchSetupChoices( siteId );
 		this.props.fetchOrders( siteId );
 
-		this.props.fetchReviews( siteId, { status: 'pending' } );
+		// TODO This check can be removed when we launch reviews.
+		if ( config.isEnabled( 'woocommerce/extension-reviews' ) ) {
+			this.props.fetchReviews( siteId, { status: 'pending' } );
+		}
 
 		if ( ! productsLoaded ) {
 			this.props.fetchProducts( siteId, { page: 1 } );
