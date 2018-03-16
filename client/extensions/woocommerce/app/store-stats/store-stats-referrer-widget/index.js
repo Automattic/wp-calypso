@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, sortBy } from 'lodash';
+import { find } from 'lodash';
 import { max as d3Max } from 'd3-array';
 import { localize } from 'i18n-calypso';
 
@@ -21,6 +21,7 @@ import TableItem from 'woocommerce/components/table/table-item';
 import HorizontalBar from 'woocommerce/components/d3/horizontal-bar';
 import Card from 'components/card';
 import ErrorPanel from 'my-sites/stats/stats-error';
+import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
 
 class StoreStatsReferrerWidget extends Component {
 	static propTypes = {
@@ -75,7 +76,7 @@ class StoreStatsReferrerWidget extends Component {
 				</Card>
 			);
 		}
-		const sortedAndTrimmedData = sortBy( selectedData.data, d => -d.sales ).slice( 0, 5 );
+		const sortedAndTrimmedData = sortBySales( selectedData.data, 5 );
 		const extent = [ 0, d3Max( sortedAndTrimmedData.map( d => d.sales ) ) ];
 		const header = (
 			<TableRow isHeader>
