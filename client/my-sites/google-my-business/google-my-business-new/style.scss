@@ -1,0 +1,10 @@
+.google-my-business-new__button {
+	@include breakpoint( '<480px' ) {
+		text-align: center;
+		width: 100%;
+	}
+}
+
+.google-my-business-new__button-primary {
+	margin: 0 1em 1em 0;
+}

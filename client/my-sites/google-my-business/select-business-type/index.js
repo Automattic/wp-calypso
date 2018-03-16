@@ -44,8 +44,12 @@ class SelectBusinessType extends Component {
 		page.back( `/stats/day/${ this.props.siteId }` );
 	};
 
-	handleGoogleResponse = () => {
+	handleGoogleResponseVerified = () => {
 		page.redirect( `/google-my-business/show-list-of-locations/${ this.props.siteId }` );
+	};
+
+	handleGoogleResponse = () => {
+		page.redirect( `/google-my-business/new/${ this.props.siteId }` );
 	};
 
 	render() {
@@ -99,6 +103,19 @@ class SelectBusinessType extends Component {
 							clientId={ config( 'google_oauth_client_id' ) }
 							scope="https://www.googleapis.com/auth/plus.business.manage"
 							responseHandler={ this.handleGoogleResponse }
+							uxMode={ 'popup' }
+							redirectUri={ '' }
+							isPrimary={ true }
+							hideGoogleIcon={ true }
+						/>
+						<br />
+						<br />
+						(For demo purposes - connect to an account with verified listing)
+						<GoogleLoginButton
+							className="select-business-type__cta-card-button"
+							clientId={ config( 'google_oauth_client_id' ) }
+							scope="https://www.googleapis.com/auth/plus.business.manage"
+							responseHandler={ this.handleGoogleResponseVerified }
 							uxMode={ 'popup' }
 							redirectUri={ '' }
 							isPrimary={ true }

@@ -13,12 +13,12 @@ import {
 	selectBusinessType,
 	showListOfLocations,
 	searchForALocation,
-	create,
 	stats,
 	address,
 	category,
 	connections,
 	verify,
+	newGMB,
 } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
@@ -113,6 +113,16 @@ export default function() {
 			siteSelection,
 			navigation,
 			verify,
+			makeLayout,
+			clientRender
+		);
+
+		page( '/google-my-business/new', siteSelection, sites, makeLayout, clientRender );
+		page(
+			'/google-my-business/new/:site_id/',
+			siteSelection,
+			navigation,
+			newGMB,
 			makeLayout,
 			clientRender
 		);
