@@ -184,7 +184,7 @@ export function serverRender( req, res ) {
 	}
 
 	context.head = { title, metas, links };
-	context.ssrConfig = config.ssrConfig;
+	context.clientData = config.clientData;
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.send( renderJsx( 'desktop', context ) );
