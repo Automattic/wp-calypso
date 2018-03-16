@@ -1,5 +1,7 @@
 /** @format */
 
+/* eslint-disable import/no-nodejs-modules */
+
 /**
  * External dependencies
  */
