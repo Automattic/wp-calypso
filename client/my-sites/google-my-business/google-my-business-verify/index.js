@@ -56,14 +56,16 @@ class GoogleMyBusinessVerify extends Component {
 						7843 Saxon Wood Road<br />
 						Richmond, Virginia 23234
 					</p>
-					<Button primary href={ href }>
+					<Button primary href={ href } className="google-my-business-verify__button">
 						{ translate( 'Verify by mail' ) }
 					</Button>
 				</CompactCard>
 				<CompactCard>
 					<h2>{ translate( 'Verify later' ) }</h2>
 					<p>{ translate( "You can't fully manage your listing until you're verified" ) }</p>
-					<Button href={ href }>{ translate( 'Verify later' ) }</Button>
+					<Button href={ href } className="google-my-business-verify__button">
+						{ translate( 'Verify later' ) }
+					</Button>
 				</CompactCard>
 
 				<StepNavigation value={ 100 } total={ 100 } backHref={ backHref } />
