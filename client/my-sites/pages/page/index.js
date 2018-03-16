@@ -46,6 +46,21 @@ function sleep( ms ) {
 	return new Promise( r => setTimeout( r, ms ) );
 }
 
+const ShadowNotice = localize( ( { shadowStatus, onUndoClick, translate } ) => (
+	<Notice
+		className="page__shadow-notice"
+		isCompact
+		inline
+		text={ shadowStatus.text }
+		status={ shadowStatus.status }
+		icon={ shadowStatus.icon }
+	>
+		{ shadowStatus.undo && (
+			<NoticeAction onClick={ onUndoClick }>{ translate( 'Undo' ) }</NoticeAction>
+		) }
+	</Notice>
+) );
+
 class Page extends Component {
 	static propTypes = {
 		// connected
@@ -317,32 +332,8 @@ class Page extends Component {
 
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
-	renderShadowNotice() {
-		if ( ! this.props.shadowStatus ) {
-			return null;
-		}
-
-		const { translate } = this.props;
-		const { status, icon, text, undo } = this.props.shadowStatus;
-
-		return (
-			<Notice
-				className="page__shadow-notice"
-				isCompact
-				inline
-				status={ status }
-				icon={ icon }
-				text={ text }
-			>
-				{ undo && (
-					<NoticeAction onClick={ this.undoPostStatus }>{ translate( 'Undo' ) }</NoticeAction>
-				) }
-			</Notice>
-		);
-	}
-
 	render() {
-		const { page, site = {}, translate } = this.props;
+		const { page, site = {}, shadowStatus, translate } = this.props;
 		const title = page.title || translate( '(no title)' );
 		const canEdit = utils.userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
@@ -379,6 +370,10 @@ class Page extends Component {
 				{ sendToTrashItem }
 				{ moreInfoItem }
 			</EllipsisMenu>
+		);
+
+		const shadowNotice = shadowStatus && (
+			<ShadowNotice shadowStatus={ shadowStatus } onUndoClick={ this.undoPostStatus } />
 		);
 
 		const cardClasses = {
@@ -431,7 +426,7 @@ class Page extends Component {
 					/>
 				</div>
 				{ ellipsisMenu }
-				{ this.renderShadowNotice() }
+				{ shadowNotice }
 			</CompactCard>
 		);
 	}
