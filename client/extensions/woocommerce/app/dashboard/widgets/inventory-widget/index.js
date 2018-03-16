@@ -140,7 +140,7 @@ class InventoryWidget extends Component {
 			width: this.props.width,
 			className: this.getClasses(),
 			title: translate( 'Inventory Alerts' ),
-			settingsPanel: <InventoryControls />,
+			settingsPanel: InventoryControls,
 		};
 		if ( this.shouldShowImage() ) {
 			props.image = '/calypso/images/extensions/woocommerce/woocommerce-relaxed.svg';
