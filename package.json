@@ -246,7 +246,7 @@
   },
   "devDependencies": {
     "5to6-codemod": "5to6/5to6-codemod#v1.7.0",
-    "babel-eslint": "8.2.2",
+    "babel-eslint": "7.2.3",
     "babel-plugin-transform-builtin-extend": "1.1.2",
     "cash-touch": "0.2.0",
     "chai": "3.5.0",
