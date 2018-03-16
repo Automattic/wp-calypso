@@ -567,7 +567,9 @@ const pollForLabelsPurchase = ( orderId, siteId, dispatch, getState, labels ) =>
 
 	if ( ! every( labels, { status: 'PURCHASED' } ) ) {
 		setTimeout( () => {
-			const statusTasks = labels.map( ( label ) => labelStatusTask( orderId, siteId, label.label_id, 0 ) );
+			const statusTasks = labels.map( ( label ) => {
+				return label.status === 'PURCHASED' ? label : labelStatusTask( orderId, siteId, label.label_id, 0 );
+			} );
 
 			Promise.all( statusTasks )
 				.then( ( pollResponse ) => pollForLabelsPurchase( orderId, siteId, dispatch, getState, pollResponse ) )
