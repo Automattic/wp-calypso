@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { isNaN } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -16,6 +17,7 @@ import {
 	getProductsSettingValue,
 } from 'woocommerce/state/sites/settings/products/selectors';
 import Button from 'components/button';
+import { errorNotice } from 'state/notices/actions';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -24,6 +26,7 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Range from 'components/forms/range';
+import { updateSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';
 
 class InventoryControls extends Component {
 	static propTypes = {
@@ -48,11 +51,45 @@ class InventoryControls extends Component {
 	}
 
 	setValue = name => event => {
-		this.setState( { [ name ]: event.target.value } );
+		const value = parseInt( event.target.value );
+		this.setState( { [ name ]: isNaN( value ) ? 0 : value } );
 	};
 
 	setChecked = name => () => {
 		this.setState( state => ( { [ name ]: ! state[ name ] } ) );
+	};
+
+	saveSettings = event => {
+		event.preventDefault();
+		const { site, translate } = this.props;
+		this.props.save(
+			site.ID,
+			[
+				{
+					id: 'woocommerce_notify_low_stock_amount',
+					value: this.state.lowStockThreshold,
+				},
+				{
+					id: 'woocommerce_notify_no_stock_amount',
+					value: this.state.noStockThreshold,
+				},
+				{
+					id: 'woocommerce_notify_low_stock',
+					value: this.state.notifyLowStockEnabled ? 'yes' : 'no',
+				},
+				{
+					id: 'woocommerce_notify_no_stock',
+					value: this.state.notifyNoStockEnabled ? 'yes' : 'no',
+				},
+			],
+			false,
+			errorNotice( translate( 'Unable to save settings.' ), { duration: 8000 } )
+		);
+
+		// Give a little time between "Save" & closing
+		setTimeout( () => {
+			this.props.close();
+		}, 150 );
 	};
 
 	render() {
@@ -132,32 +169,39 @@ class InventoryControls extends Component {
 					</FormLabel>
 				</FormFieldset>
 
-				<Button primary>{ translate( 'Save' ) }</Button>
+				<Button onClick={ this.saveSettings } primary>
+					{ translate( 'Save' ) }
+				</Button>
 			</div>
 		);
 	}
 }
 
-export default connect( state => {
-	const site = getSelectedSiteWithFallback( state );
-	const isLoaded = areSettingsProductsLoaded( state );
-	const lowStockThreshold = parseInt(
-		getProductsSettingValue( state, 'woocommerce_notify_low_stock_amount' ) || 0
-	);
-	const noStockThreshold = parseInt(
-		getProductsSettingValue( state, 'woocommerce_notify_no_stock_amount' ) || 0
-	);
-	const notifyLowStockEnabled =
-		'yes' === getProductsSettingValue( state, 'woocommerce_notify_low_stock' );
-	const notifyNoStockEnabled =
-		'yes' === getProductsSettingValue( state, 'woocommerce_notify_no_stock' );
+export default connect(
+	state => {
+		const site = getSelectedSiteWithFallback( state );
+		const isLoaded = areSettingsProductsLoaded( state );
+		const lowStockThreshold = parseInt(
+			getProductsSettingValue( state, 'woocommerce_notify_low_stock_amount' )
+		);
+		const noStockThreshold = parseInt(
+			getProductsSettingValue( state, 'woocommerce_notify_no_stock_amount' )
+		);
+		const notifyLowStockEnabled =
+			'yes' === getProductsSettingValue( state, 'woocommerce_notify_low_stock' );
+		const notifyNoStockEnabled =
+			'yes' === getProductsSettingValue( state, 'woocommerce_notify_no_stock' );
 
-	return {
-		isLoaded,
-		lowStockThreshold,
-		noStockThreshold,
-		notifyLowStockEnabled,
-		notifyNoStockEnabled,
-		site,
-	};
-} )( localize( InventoryControls ) );
+		return {
+			isLoaded,
+			lowStockThreshold: isNaN( lowStockThreshold ) ? 0 : lowStockThreshold,
+			noStockThreshold: isNaN( noStockThreshold ) ? 0 : noStockThreshold,
+			notifyLowStockEnabled,
+			notifyNoStockEnabled,
+			site,
+		};
+	},
+	{
+		save: updateSettingsProducts,
+	}
+)( localize( InventoryControls ) );
