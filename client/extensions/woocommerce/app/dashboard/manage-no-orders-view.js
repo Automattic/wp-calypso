@@ -17,7 +17,7 @@ import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getTotalProducts } from 'woocommerce/state/sites/products/selectors';
-import InventoryWidget from './dashboard-widgets/inventory';
+import InventoryWidget from './widgets/inventory-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import StatsWidget from './widgets/stats-widget';
 import { recordTrack } from 'woocommerce/lib/analytics';

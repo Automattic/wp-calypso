@@ -31,7 +31,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
-import InventoryWidget from './dashboard-widgets/inventory';
+import InventoryWidget from './widgets/inventory-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import StatsWidget from './widgets/stats-widget';
