@@ -25,6 +25,7 @@ class DomainProductPrice extends React.Component {
 		freeWithPlan: PropTypes.bool,
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		showExpandedPrice: PropTypes.bool,
 	};
 
 	renderFreeWithPlan() {
@@ -62,9 +63,17 @@ class DomainProductPrice extends React.Component {
 	}
 
 	renderIncludedInPremium() {
-		const textLabel = config.isEnabled( 'domains/kracken-ui' )
-			? this.props.translate( 'Included in Paid Plans' )
-			: this.props.translate( 'Included in WordPress.com Premium' );
+		const { translate, showExpandedPrice } = this.props;
+
+		let textLabel = this.props.translate( 'Included in WordPress.com Premium' );
+
+		const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
+		if ( isKrackenUI ) {
+			textLabel = showExpandedPrice
+				? translate( 'Price included in paid plans' )
+				: translate( 'Included in paid plans' );
+		}
+
 		return (
 			<div className="domain-product-price is-with-plans-only">
 				<small className="domain-product-price__premium-text" ref="subMessage">

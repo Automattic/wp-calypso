@@ -27,6 +27,7 @@ class DomainSuggestion extends React.Component {
 		domain: PropTypes.string,
 		hidePrice: PropTypes.bool,
 		showChevron: PropTypes.bool,
+		showExpandedPrice: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -34,10 +35,19 @@ class DomainSuggestion extends React.Component {
 			? { primary: true }
 			: { borderless: true },
 		showChevron: ! config.isEnabled( 'domains/kracken-ui' ),
+		showExpandedPrice: false,
 	};
 
 	render() {
-		const { hidePrice, price, isAdded, extraClasses, children, priceRule } = this.props;
+		const {
+			children,
+			extraClasses,
+			hidePrice,
+			isAdded,
+			price,
+			priceRule,
+			showExpandedPrice,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -60,7 +70,13 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className="domain-suggestion__content">
 					{ children }
-					{ ! hidePrice && <DomainProductPrice rule={ priceRule } price={ price } /> }
+					{ ! hidePrice && (
+						<DomainProductPrice
+							price={ price }
+							rule={ priceRule }
+							showExpandedPrice={ showExpandedPrice }
+						/>
+					) }
 				</div>
 				<Button className="domain-suggestion__action" { ...this.props.buttonProps }>
 					{ this.props.buttonContent }
