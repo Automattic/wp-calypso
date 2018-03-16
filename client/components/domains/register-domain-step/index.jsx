@@ -14,8 +14,11 @@ import {
 	get,
 	includes,
 	isEmpty,
+	mapKeys,
 	noop,
+	pickBy,
 	reject,
+	snakeCase,
 	startsWith,
 	times,
 	uniqBy,
@@ -28,6 +31,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { checkDomainAvailability, getFixedDomainSearch } from 'lib/domains';
@@ -39,6 +43,7 @@ import DomainTransferSuggestion from 'components/domains/domain-transfer-suggest
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
+import SearchFilters from 'components/domains/search-filters';
 import { getCurrentUser } from 'state/current-user/selectors';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
@@ -63,6 +68,10 @@ let searchStackTimer = null;
 let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
+
+function isNumberString( string ) {
+	return /^[0-9_]+$/.test( string );
+}
 
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
@@ -163,6 +172,7 @@ class RegisterDomainStep extends React.Component {
 
 		return {
 			clickedExampleSuggestion: false,
+			filters: this.getInitialFiltersState(),
 			lastQuery: suggestion,
 			lastDomainSearched: null,
 			lastDomainStatus: null,
@@ -172,6 +182,14 @@ class RegisterDomainStep extends React.Component {
 			notice: null,
 			searchResults: null,
 			subdomainSearchResults: null,
+		};
+	}
+
+	getInitialFiltersState() {
+		return {
+			excludeDashes: true,
+			maxCharacters: '',
+			showExactMatchesOnly: false,
 		};
 	}
 
@@ -279,9 +297,10 @@ class RegisterDomainStep extends React.Component {
 
 	render() {
 		const queryObject = getQueryObject( this.props );
+		const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
 
 		return (
-			<div className="register-domain-step">
+			<div className={ `register-domain-step ${ isKrackenUI ? 'is-kracken-ui' : '' }` }>
 				<div className="register-domain-step__search">
 					<SearchCard
 						ref={ this.bindSearchCardReference }
@@ -298,6 +317,16 @@ class RegisterDomainStep extends React.Component {
 						maxLength={ 60 }
 					/>
 				</div>
+				{ isKrackenUI && (
+					<div className="register-domain-step__filter">
+						<SearchFilters
+							filters={ this.state.filters }
+							onChange={ this.onFiltersChange }
+							onFiltersReset={ this.onFiltersReset }
+							onFiltersSubmit={ this.repeatSearch }
+						/>
+					</div>
+				) }
 				{ this.state.notice && (
 					<Notice
 						text={ this.state.notice }
@@ -334,7 +363,36 @@ class RegisterDomainStep extends React.Component {
 		this.props.onSave( this.state );
 	};
 
-	onSearchChange = searchQuery => {
+	repeatSearch = () => {
+		this.onSearchChange( this.state.lastQuery, () => this.onSearch( this.state.lastQuery ) );
+	};
+
+	getSetFiltersForAPI() {
+		const { filters } = this.state;
+		return {
+			...mapKeys(
+				pickBy( filters, value => isNumberString( value ) || typeof value === 'boolean' ),
+				( value, key ) => snakeCase( key )
+			),
+		};
+	}
+
+	onFiltersChange = newFilters => {
+		this.setState( {
+			filters: newFilters,
+		} );
+	};
+
+	onFiltersReset = () => {
+		this.setState(
+			{
+				filters: this.getInitialFiltersState(),
+			},
+			this.repeatSearch
+		);
+	};
+
+	onSearchChange = ( searchQuery, callback = noop ) => {
 		if ( ! this._isMounted ) {
 			return;
 		}
@@ -342,16 +400,20 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
 
 		this.props.onDomainSearchChange( searchQuery );
-		this.setState( {
-			exactMatchDomain: null,
-			lastQuery: searchQuery,
-			lastDomainSearched: null,
-			loadingResults: loadingResults,
-			loadingSubdomainResults: loadingResults,
-			notice: null,
-			searchResults: null,
-			subdomainSearchResults: null,
-		} );
+
+		this.setState(
+			{
+				exactMatchDomain: null,
+				lastQuery: searchQuery,
+				lastDomainSearched: null,
+				loadingResults: loadingResults,
+				loadingSubdomainResults: loadingResults,
+				notice: null,
+				searchResults: null,
+				subdomainSearchResults: null,
+			},
+			callback
+		);
 	};
 
 	getTldWeightOverrides() {
@@ -426,6 +488,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: this.getTldWeightOverrides(),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
+			...this.getSetFiltersForAPI(),
 		};
 
 		domains
@@ -527,6 +590,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: null,
 			vendor: 'wpcom',
 			vertical: this.props.surveyVertical,
+			...this.getSetFiltersForAPI(),
 		};
 
 		domains
