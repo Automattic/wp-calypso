@@ -1,6 +1,11 @@
 /** @format */
 
-export default {
+/**
+ * External dependencies
+ */
+import deepFreeze from 'deep-freeze';
+
+export const queryManagerSchema = deepFreeze( {
 	additionalProperties: false,
 	required: [ 'data', 'options' ],
 	type: 'object',
@@ -41,4 +46,6 @@ export default {
 			},
 		},
 	},
-};
+} );
+
+export default queryManagerSchema;
