@@ -2,7 +2,8 @@
 /**
  * External dependencies
  */
-import { sortBy, toPairs, fromPairs, omitBy } from 'lodash';
+import deterministicStringify from 'json-stable-stringify';
+import { omitBy } from 'lodash';
 
 /**
  * QueryKey manages the serialization and deserialization of a query key for
@@ -66,9 +67,7 @@ export default class QueryKey {
 		// key ordering in the original object, to ensure that:
 		//
 		// QueryKey.stringify( { a: 1, b: 2 } ) === QueryKey.stringify( { b: 2, a: 1 } )
-		const stableQuery = sortBy( toPairs( prunedQuery ), pair => pair[ 0 ] );
-
-		return JSON.stringify( stableQuery );
+		return deterministicStringify( prunedQuery );
 	}
 
 	/**
@@ -78,6 +77,6 @@ export default class QueryKey {
 	 * @return {Object}     Query object
 	 */
 	static parse( key ) {
-		return this.omit( fromPairs( JSON.parse( key ) ) );
+		return this.omit( JSON.parse( key ) );
 	}
 }

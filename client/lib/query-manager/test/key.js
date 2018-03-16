@@ -43,7 +43,7 @@ describe( 'QueryKey', () => {
 		test( 'should return a JSON string of the object', () => {
 			const key = QueryKey.stringify( { ok: true } );
 
-			expect( key ).toBe( '[["ok",true]]' );
+			expect( key ).toBe( '{"ok":true}' );
 		} );
 
 		test( 'should prune by omission behavior', () => {
@@ -54,7 +54,7 @@ describe( 'QueryKey', () => {
 
 			const key = QueryKeyWithOmission.stringify( { ok: true, foo: null } );
 
-			expect( key ).toBe( '[]' );
+			expect( key ).toBe( '{}' );
 		} );
 
 		test( 'should return the same string for two objects with different property creation order', () => {
@@ -67,7 +67,7 @@ describe( 'QueryKey', () => {
 
 	describe( '.parse()', () => {
 		test( 'should return an object of the JSON string', () => {
-			const query = QueryKey.parse( '[["ok",true]]' );
+			const query = QueryKey.parse( '{"ok":true}' );
 
 			expect( query ).toEqual( { ok: true } );
 		} );
@@ -78,7 +78,7 @@ describe( 'QueryKey', () => {
 				static OMIT_NULL_VALUES = true;
 			}
 
-			const query = QueryKeyWithOmission.parse( '[["ok",true],["foo",null]]' );
+			const query = QueryKeyWithOmission.parse( '{"foo":null,"ok":true}' );
 
 			expect( query ).toEqual( {} );
 		} );
