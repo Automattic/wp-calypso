@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteOnPaidPlan from 'state/selectors/is-site-on-paid-plan';
 import classNames from 'classnames';
-import { endsWith, get, includes, times } from 'lodash';
+import { endsWith, get, includes, times, first } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,6 +19,7 @@ import { endsWith, get, includes, times } from 'lodash';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
+import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
 import Card from 'components/card';
@@ -196,7 +197,9 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
+		const { suggestions } = this.props;
 		let suggestionCount;
+		let featuredSuggestionElement;
 		let suggestionElements;
 		let unavailableOffer;
 
@@ -209,7 +212,28 @@ class DomainSearchResults extends React.Component {
 				</div>
 			);
 
-			suggestionElements = this.props.suggestions.map( function( suggestion, i ) {
+			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+			const bestAlternativeSuggestions = suggestions.filter(
+				suggestion => suggestion.isBestAlternative
+			);
+			const regularSuggestions = suggestions.filter(
+				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+			);
+
+			featuredSuggestionElement = (
+				<FeaturedDomainSuggestions
+					cart={ this.props.cart }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					isSignupStep={ this.props.isSignupStep }
+					key="featured"
+					onButtonClick={ this.props.onClickResult }
+					primarySuggestion={ first( bestMatchSuggestions ) }
+					query={ this.props.lastDomainSearched }
+					secondarySuggestion={ first( bestAlternativeSuggestions ) }
+					selectedSite={ this.props.selectedSite }
+				/>
+			);
+			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
 				if ( suggestion.is_placeholder ) {
 					return <DomainSuggestion.Placeholder key={ 'suggestion-' + i } />;
 				}
@@ -231,7 +255,7 @@ class DomainSearchResults extends React.Component {
 						onButtonClick={ this.props.onClickResult }
 					/>
 				);
-			}, this );
+			} );
 
 			if ( this.props.offerUnavailableOption && this.props.siteDesignType !== DESIGN_TYPE_STORE ) {
 				unavailableOffer = (
@@ -248,6 +272,7 @@ class DomainSearchResults extends React.Component {
 		return (
 			<div className="domain-search-results__domain-suggestions">
 				{ suggestionCount }
+				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
 			</div>

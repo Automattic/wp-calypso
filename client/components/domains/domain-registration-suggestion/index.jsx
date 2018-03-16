@@ -105,26 +105,9 @@ class DomainRegistrationSuggestion extends React.Component {
 			}
 		}
 
-		if ( suggestion.isRecommended ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-recommended` }
-					content={ translate( 'Recommended' ) }
-					status="success"
-				/>
-			);
-		}
 		return domainFlags;
 	}
 
-		if ( suggestion.isBestAlternative ) {
-			domainFlags.push(
-				<DomainSuggestionFlag
-					key={ `${ domain }-best-alternative` }
-					content={ translate( 'Best Alternative' ) }
-				/>
-			);
-		}
 	getButtonProps() {
 		const {
 			cart,
