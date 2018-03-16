@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Delta from 'woocommerce/components/delta';
-import formatCurrency from 'lib/format-currency';
+import { formatValue } from 'woocommerce/app/store-stats/utils';
 import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
 import Sparkline from 'woocommerce/components/d3/sparkline';
 import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
@@ -28,7 +28,7 @@ class StatsWidgetStat extends Component {
 		type: PropTypes.string.isRequired,
 		data: PropTypes.array.isRequired,
 		date: PropTypes.string.isRequired,
-		delta: PropTypes.object.isRequired,
+		delta: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ).isRequired,
 	};
 
 	renderDelta = () => {
@@ -54,23 +54,10 @@ class StatsWidgetStat extends Component {
 		);
 	};
 
-	renderValue = ( value, data ) => {
-		const { type } = this.props;
-		switch ( type ) {
-			case 'currency':
-				return formatCurrency( value, data.currency );
-			case 'percent':
-				return value + '%';
-			case 'number':
-			default:
-				return Math.round( value * 100 ) / 100;
-		}
-	};
-
 	render() {
-		const { data, site, date, attribute, label, requesting } = this.props;
+		const { data, site, date, attribute, label, requesting, type } = this.props;
 
-		if ( requesting || ! site.ID || ! data.length ) {
+		if ( requesting || ! site.ID || ! data || ! data.length ) {
 			return (
 				<div className="stats-widget__box-contents stats-type-stat">
 					<StatsModulePlaceholder isLoading />
@@ -92,7 +79,7 @@ class StatsWidgetStat extends Component {
 					<span className="stats-widget__box-label">{ label }</span>
 					<div className="stats-widget__box-value-and-delta">
 						<span className="stats-widget__box-value">
-							{ this.renderValue( value, data[ index ] ) }
+							{ formatValue( value, type, data[ index ].currency ) }
 						</span>
 						{ this.renderDelta() }
 					</div>

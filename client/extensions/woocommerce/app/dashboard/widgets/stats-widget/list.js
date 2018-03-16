@@ -5,25 +5,22 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { getLink } from 'woocommerce/lib/nav-utils';
 import List from 'woocommerce/app/store-stats/store-stats-list';
 import Module from 'woocommerce/app/store-stats/store-stats-module';
 
 const StatsWidgetList = ( {
 	site,
-	translate,
-	unit,
 	values,
-	statSlug,
 	statType,
 	emptyMessage,
 	fetchedData,
 	query,
+	viewLink,
+	viewText,
 } ) => {
 	return (
 		<div className="stats-widget__box-contents stats-type-list">
@@ -43,13 +40,15 @@ const StatsWidgetList = ( {
 				/>
 			</Module>
 
-			{ fetchedData.length > 0 && (
-				<div className="stats-widget__more">
-					<a href={ getLink( `/store/stats/${ statSlug }/${ unit }/:site`, site ) }>
-						{ translate( 'More' ) }
-					</a>
-				</div>
-			) }
+			{ ( viewLink &&
+				fetchedData &&
+				Array.isArray( fetchedData ) &&
+				fetchedData.length && (
+					<div className="stats-widget__more">
+						<a href={ viewLink }>{ viewText }</a>
+					</div>
+				) ) ||
+				null }
 		</div>
 	);
 };
@@ -61,11 +60,12 @@ StatsWidgetList.propTypes = {
 	} ),
 	unit: PropTypes.string.isRequired,
 	values: PropTypes.array.isRequired,
-	statSlug: PropTypes.string.isRequired,
 	statType: PropTypes.string.isRequired,
 	emptyMessage: PropTypes.string.isRequired,
 	query: PropTypes.object,
 	fetchedData: PropTypes.array,
+	viewLink: PropTypes.string.isRequired,
+	viewText: PropTypes.string.isRequired,
 };
 
-export default localize( StatsWidgetList );
+export default StatsWidgetList;

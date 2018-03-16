@@ -6,7 +6,7 @@
 
 import { find, includes, forEach, findIndex, round } from 'lodash';
 import classnames from 'classnames';
-import { moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -155,6 +155,8 @@ export function formatValue( value, format, code ) {
 			return formatCurrency( value, code );
 		case 'number':
 			return Math.round( value * 100 ) / 100;
+		case 'percent':
+			return translate( '%(percentage)s%% ', { args: { percentage: value }, context: 'percent' } );
 		case 'text':
 		default:
 			return value;
@@ -171,7 +173,7 @@ export function formatValue( value, format, code ) {
  */
 export function getDelta( deltas, selectedDate, stat ) {
 	const selectedDeltas = find( deltas, item => item.period === selectedDate );
-	return selectedDeltas[ stat ];
+	return ( selectedDeltas && selectedDeltas[ stat ] ) || [];
 }
 
 /**
@@ -184,10 +186,9 @@ export function getDelta( deltas, selectedDate, stat ) {
  * @return {object} - Object containing data from calculateDelta
  */
 export function getDeltaFromData( data, selectedDate, stat, unit ) {
-	if ( data.length < 3 ) {
+	if ( ! data || ! Array.isArray( data ) || data.length < 3 ) {
 		return {};
 	}
-
 	let delta = {};
 	let previousItem = false;
 

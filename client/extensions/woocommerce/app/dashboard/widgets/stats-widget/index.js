@@ -4,15 +4,17 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
+import config from 'config';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { moment, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { sortBy, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import { dashboardListLimit } from 'woocommerce/app/store-stats/constants';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import { getLink } from 'woocommerce/lib/nav-utils';
@@ -57,7 +59,7 @@ class StatsWidget extends Component {
 	};
 
 	dateForDisplay = () => {
-		const { translate, unit } = this.props;
+		const { translate, unit, moment } = this.props;
 
 		const localizedDate = moment( moment().format( 'YYYY-MM-DD' ) );
 		let formattedDate;
@@ -99,9 +101,9 @@ class StatsWidget extends Component {
 		const { site, translate, unit } = this.props;
 
 		const options = [
-			{ value: 'day', label: 'day' },
-			{ value: 'week', label: 'week' },
-			{ value: 'month', label: 'month' },
+			{ value: 'day', label: translate( 'day' ) },
+			{ value: 'week', label: translate( 'week' ) },
+			{ value: 'month', label: translate( 'month' ) },
 		];
 
 		const dateDisplay = this.dateForDisplay();
@@ -109,10 +111,10 @@ class StatsWidget extends Component {
 		return (
 			<Fragment>
 				<span>
-					{ translate( '%(siteName)s in the last {{timePeriodSelector/}}', {
+					{ translate( '%(siteName)s in the last {{timePeriod/}}', {
 						args: { siteName: site.name },
 						components: {
-							timePeriodSelector: (
+							timePeriod: (
 								<SelectDropdown
 									options={ options }
 									initialSelected={ unit }
@@ -130,14 +132,9 @@ class StatsWidget extends Component {
 	};
 
 	renderOrders = () => {
-		const { site, translate, unit, orderData, queries } = this.props;
+		const { site, translate, moment, unit, orderData, queries } = this.props;
 		const date = getEndPeriod( moment().format( 'YYYY-MM-DD' ), unit );
-		const delta =
-			( orderData &&
-				orderData.deltas &&
-				orderData.deltas.length &&
-				getDelta( orderData.deltas, date, 'orders' ) ) ||
-			{};
+		const delta = getDelta( orderData.deltas, date, 'orders' );
 		return (
 			<Stat
 				site={ site }
@@ -154,14 +151,9 @@ class StatsWidget extends Component {
 	};
 
 	renderSales = () => {
-		const { site, translate, unit, orderData, queries } = this.props;
+		const { site, translate, moment, unit, orderData, queries } = this.props;
 		const date = getEndPeriod( moment().format( 'YYYY-MM-DD' ), unit );
-		const delta =
-			( orderData &&
-				orderData.deltas &&
-				orderData.deltas.length &&
-				getDelta( orderData.deltas, date, 'total_sales' ) ) ||
-			{};
+		const delta = getDelta( orderData.deltas, date, 'total_sales' );
 		return (
 			<Stat
 				site={ site }
@@ -178,7 +170,7 @@ class StatsWidget extends Component {
 	};
 
 	renderVisitors = () => {
-		const { site, translate, unit, visitorData, queries } = this.props;
+		const { site, translate, moment, unit, visitorData, queries } = this.props;
 		const date = getStartPeriod( moment().format( 'YYYY-MM-DD' ), unit );
 		const delta = getDeltaFromData( visitorData, date, 'visitors', unit );
 		return (
@@ -197,7 +189,7 @@ class StatsWidget extends Component {
 	};
 
 	renderConversionRate = () => {
-		const { site, translate, unit, visitorData, orderData, queries } = this.props;
+		const { site, translate, moment, unit, visitorData, orderData, queries } = this.props;
 		const date = getUnitPeriod( moment().format( 'YYYY-MM-DD' ), unit );
 		const data = getConversionRateData( visitorData, orderData.data, unit );
 		const delta = getDeltaFromData( data, date, 'conversionRate', unit );
@@ -237,14 +229,19 @@ class StatsWidget extends Component {
 					)
 				: translate( 'No referral activity has been recorded for this time period.' );
 
+		const viewLink = config.isEnabled( 'woocommerce/extension-referrers' )
+			? getLink( `/store/stats/referrers/${ unit }/:site`, site )
+			: '';
+
 		return (
 			<List
 				site={ site }
-				statSlug="referrers"
 				statType="statsStoreReferrers"
 				unit={ unit }
 				values={ values }
 				query={ referrerQuery }
+				viewText={ translate( 'View referrers' ) }
+				viewLink={ viewLink }
 				fetchedData={ fetchedData }
 				emptyMessage={ emptyMessage }
 			/>
@@ -262,12 +259,13 @@ class StatsWidget extends Component {
 		return (
 			<List
 				site={ site }
-				statSlug="products"
 				statType="statsTopEarners"
 				unit={ unit }
 				values={ values }
 				query={ topEarnersQuery }
 				fetchedData={ topEarnersData }
+				viewText={ translate( 'View top products' ) }
+				viewLink={ getLink( `/store/stats/products/${ unit }/:site`, site ) }
 				emptyMessage={ translate( 'No products have been sold in this time period.' ) }
 			/>
 		);
@@ -275,6 +273,11 @@ class StatsWidget extends Component {
 
 	queryData = () => {
 		const { site, queries } = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
 		const { orderQuery, topEarnersQuery, referrerQuery, visitorQuery } = queries;
 		return (
 			<Fragment>
@@ -288,7 +291,7 @@ class StatsWidget extends Component {
 	};
 
 	render() {
-		const { site, translate } = this.props;
+		const { site, translate, unit } = this.props;
 		return (
 			<div className="stats-widget">
 				{ this.queryData() }
@@ -308,9 +311,9 @@ class StatsWidget extends Component {
 								"You can view more detailed stats and reports on your site's main dashboard."
 							) }
 						</span>
-						<a href={ getLink( '/store/stats/orders/day/:site', site ) }>
+						<Button href={ getLink( `/store/stats/orders/${ unit }/:site`, site ) }>
 							{ translate( 'View full stats' ) }
-						</a>
+						</Button>
 					</div>
 				</DashboardWidget>
 			</div>
