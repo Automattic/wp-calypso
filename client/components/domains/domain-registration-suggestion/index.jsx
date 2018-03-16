@@ -73,20 +73,10 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( this.props.suggestion );
 	};
 
-	render() {
-		const {
-			cart,
-			domainsWithPlansOnly,
-			isSignupStep,
-			selectedSite,
-			suggestion,
-			translate,
-		} = this.props;
+	getDomainFlags() {
+		const { suggestion, translate } = this.props;
 		const domain = suggestion.domain_name;
-		const isAdded = hasDomainInCart( cart, domain );
 		const domainFlags = [];
-
-		let buttonClasses, buttonContent;
 
 		if ( domain ) {
 			// Grab everything from the first dot, so 'example.co.uk' will
@@ -124,6 +114,8 @@ class DomainRegistrationSuggestion extends React.Component {
 				/>
 			);
 		}
+		return domainFlags;
+	}
 
 		if ( suggestion.isBestAlternative ) {
 			domainFlags.push(
@@ -133,6 +125,19 @@ class DomainRegistrationSuggestion extends React.Component {
 				/>
 			);
 		}
+	getButtonProps() {
+		const {
+			cart,
+			domainsWithPlansOnly,
+			isSignupStep,
+			selectedSite,
+			suggestion,
+			translate,
+		} = this.props;
+		const domain = suggestion.domain_name;
+		const isAdded = hasDomainInCart( cart, domain );
+
+		let buttonClasses, buttonContent;
 
 		if ( isAdded ) {
 			buttonClasses = 'added';
@@ -147,21 +152,28 @@ class DomainRegistrationSuggestion extends React.Component {
 						} )
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
+		return {
+			buttonClasses,
+			buttonContent,
+		};
+	}
+
+	render() {
+		const { cart, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
+		const { domain_name: domain } = suggestion;
 
 		return (
 			<DomainSuggestion
 				priceRule={ getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion ) }
 				price={ suggestion.product_slug && suggestion.cost }
 				domain={ domain }
-				buttonClasses={ buttonClasses }
-				buttonContent={ buttonContent }
-				cart={ cart }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
+				{ ...this.getButtonProps() }
 			>
 				<h3>
 					{ domain }
-					{ domainFlags }
+					{ this.getDomainFlags() }
 				</h3>
 			</DomainSuggestion>
 		);
