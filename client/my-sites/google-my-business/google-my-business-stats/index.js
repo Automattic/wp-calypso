@@ -56,30 +56,17 @@ class Stats extends Component {
 
 							<div className="google-my-business-stats__text">
 								<div className="google-my-business-stats__header">Cate's Cookies</div>
+								<div className="google-my-business-stats__address">
+									<div className="google-my-business-stats__listing-detail">
+										345 North Avenue<br />Talihassee, FL 34342<br />USA
+									</div>
+								</div>
 								<div className="google-my-business-stats__verified">
 									<Gridicon icon="checkmark-circle" size={ 18 } /> Verified
 								</div>
 							</div>
 						</div>
 
-						<div className="google-my-business-stats__listing-detail">
-							<Gridicon icon="phone" size={ 18 } /> (865) 367-2746
-						</div>
-						<div className="google-my-business-stats__listing-detail">
-							<Gridicon icon="time" size={ 18 } /> 9:00 AM - 6:00 PM
-						</div>
-						<div className="google-my-business-stats__listing-detail">
-							<Gridicon icon="globe" size={ 18 } /> www.catescookies.com
-						</div>
-						<div className="google-my-business-stats__address">
-							<Gridicon icon="location" size={ 18 } />
-							<div className="google-my-business-stats__listing-detail">
-								345 North Avenue<br />Talihassee, FL 34342<br />USA
-							</div>
-						</div>
-						<div className="google-my-business-stats__listing-detail">
-							<Gridicon icon="tag" size={ 18 } /> Bakery
-						</div>
 						<Button
 							className="google-my-business-stats__listing-button"
 							href="https://business.google.com"
@@ -124,8 +111,7 @@ class Stats extends Component {
 								className="google-my-business-stats__feature-image"
 							/>
 							<p>
-								Listings with recent photos typically drive more view to their business
-								websites.
+								Listings with recent photos typically drive more view to their business websites.
 							</p>
 						</div>
 						<Button primary className="google-my-business-stats__feature-button">

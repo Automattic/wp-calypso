@@ -1,5 +1,5 @@
 .google-my-business-stats {
-	
+
 	.section-header__label {
 		line-height: 1.4em;
 	}
@@ -17,6 +17,10 @@
 	width: 60px;
 }
 
+.google-my-business-stats__text {
+	margin-bottom: 1em;
+}
+
 .google-my-business-stats__header {
 	font-weight: 600;
 }
@@ -29,7 +33,7 @@
 
 .google-my-business-stats {
 	.gridicon {
-		vertical-align: baseline;
+		vertical-align: text-bottom;
 	}
 }
 
