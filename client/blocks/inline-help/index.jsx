@@ -118,7 +118,7 @@ class InlineHelp extends Component {
 				title={ translate( 'Help' ) }
 				ref={ this.inlineHelpToggleRef }
 			>
-				<Gridicon icon="help-outline" />
+				<Gridicon icon="help-outline" size={ 36} />
 				{ showInlineHelp && (
 					<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
 						) }
