@@ -88,8 +88,8 @@ class SelectBusinessType extends Component {
 						</h2>
 						<p>
 							{ translate(
-								'My business has a physical location customers can visit, ' +
-									'or provides goods and services to local customers, or both.'
+								'You have a physical location customers can visit, ' +
+									'or provide goods and services to local customers, or both.'
 							) }
 						</p>
 					</div>
