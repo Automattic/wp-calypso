@@ -5,11 +5,12 @@
  */
 
 import React from 'react';
+import { map, chunk } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DelayRender from 'devdocs/delay-render';
+import LazyRender from 'react-lazily-render';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
 import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
@@ -36,7 +37,7 @@ const shouldShowInstance = ( example, filter, component ) => {
 const Collection = ( {
 	children,
 	component,
-	examplesToMount = 20,
+	examplesToMount = 10,
 	filter,
 	section = 'design',
 } ) => {
@@ -82,30 +83,20 @@ const Collection = ( {
 						{ summary }
 					</div>
 				) }
-			{ /*
-				The entire list of examples for `/devdocs/blocks` and
-				`/devdocs/design` takes a long time to mount, so we use
-				`DelayRender` to render just the first few components.
-				This means the page change feels a lot faster, especially
-				on lower-end machines and on Firefox.
-			*/ }
-			{ examples.length <= examplesToMount ? (
-				examples
-			) : (
-				<React.Fragment>
-					{ examples.slice( 0, examplesToMount ) }
 
-					<DelayRender>
+			{ /* Load first chunk, lazy load all others as needed. */ }
+
+			{ examples.slice( 0, examplesToMount ) }
+
+			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), exampleGroup => {
+				return (
+					<LazyRender>
 						{ shouldRender =>
-							shouldRender ? (
-								examples.slice( examplesToMount )
-							) : (
-								<Placeholder count={ examplesToMount } />
-							)
+							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
 						}
-					</DelayRender>
-				</React.Fragment>
-			) }
+					</LazyRender>
+				);
+			} ) }
 		</div>
 	);
 };
