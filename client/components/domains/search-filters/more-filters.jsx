@@ -189,9 +189,9 @@ export class MoreFiltersControl extends Component {
 					errorMessages={ this.getOverallValidationErrors() }
 				>
 					<div className="search-filters__buttons">
-						<Button onClick={ this.handleFiltersReset }>Reset</Button>
+						<Button onClick={ this.handleFiltersReset }>{ translate( 'Reset' ) }</Button>
 						<Button primary onClick={ this.handleFiltersSubmit }>
-							Apply
+							{ translate( 'Apply' ) }
 						</Button>
 					</div>
 				</ValidationFieldset>
