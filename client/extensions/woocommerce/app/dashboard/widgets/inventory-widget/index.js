@@ -29,8 +29,10 @@ import TableItem from 'woocommerce/components/table/table-item';
 class InventoryWidget extends Component {
 	static propTypes = {
 		isLoaded: PropTypes.bool.isRequired,
-		isLowStockEnabled: PropTypes.bool.isRequired,
 		lowStockThreshold: PropTypes.number.isRequired,
+		noStockThreshold: PropTypes.number.isRequired,
+		products: PropTypes.array,
+		shouldManageStock: PropTypes.bool.isRequired,
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
