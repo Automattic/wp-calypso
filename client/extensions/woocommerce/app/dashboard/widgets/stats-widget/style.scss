@@ -32,6 +32,7 @@
 	.stats-widget__footer {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 
 		span {
 			color: $gray-text-min;
