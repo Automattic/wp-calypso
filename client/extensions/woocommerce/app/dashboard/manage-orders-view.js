@@ -184,7 +184,7 @@ class ManageOrdersView extends Component {
 	}
 
 	renderInventoryWidget = () => {
-		return <InventoryWidget width="third" />;
+		return <InventoryWidget width="full" />;
 	};
 
 	render() {
@@ -212,10 +212,7 @@ class ManageOrdersView extends Component {
 
 				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
 
-				<DashboardWidgetRow>
-					{ this.renderInventoryWidget() }
-					{ this.possiblyRenderReportsWidget() }
-				</DashboardWidgetRow>
+				{ this.renderInventoryWidget() }
 
 				{ this.possiblyRenderShareWidget() }
 			</div>

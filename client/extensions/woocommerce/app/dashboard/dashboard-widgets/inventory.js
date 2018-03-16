@@ -35,7 +35,7 @@ class InventoryWidget extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
-		width: PropTypes.oneOf( [ 'half', 'third' ] ).isRequired,
+		width: PropTypes.oneOf( [ 'half', 'full' ] ).isRequired,
 	};
 
 	componentDidMount() {
@@ -62,6 +62,13 @@ class InventoryWidget extends Component {
 			'has-low-stock': lowProducts.length > 0,
 			'has-no-stock': noProducts.length > 0,
 		} );
+	};
+
+	shouldShowImage = () => {
+		const { width } = this.props;
+		const lowProducts = this.getLowStockProducts();
+		// Show the image on full-width, or if there are no products
+		return 'full' === width || ! lowProducts.length;
 	};
 
 	renderRow = ( p, i ) => {
@@ -130,15 +137,17 @@ class InventoryWidget extends Component {
 			return null;
 		}
 
-		return (
-			<DashboardWidget
-				width={ this.props.width }
-				className={ this.getClasses() }
-				title={ translate( 'Inventory Alerts' ) }
-			>
-				{ this.renderContents() }
-			</DashboardWidget>
-		);
+		const props = {
+			width: this.props.width,
+			className: this.getClasses(),
+			title: translate( 'Inventory Alerts' ),
+		};
+		if ( this.shouldShowImage() ) {
+			props.image = '/calypso/images/extensions/woocommerce/woocommerce-relaxed.svg';
+			props.imagePosition = 'right';
+		}
+
+		return <DashboardWidget { ...props }>{ this.renderContents() }</DashboardWidget>;
 	}
 }
 
