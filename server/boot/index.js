@@ -110,7 +110,7 @@ function setup() {
 	app.use( require( 'api' )() );
 
 	// attach the pages module
-	app.use( pages() );
+	app.use( pages.default() );
 
 	return app;
 }
