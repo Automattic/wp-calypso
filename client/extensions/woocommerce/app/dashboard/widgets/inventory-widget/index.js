@@ -44,7 +44,7 @@ class InventoryWidget extends Component {
 		if ( site && site.ID ) {
 			this.props.fetchSettingsProducts( site.ID );
 			// Get all products
-			this.props.fetchProducts( site.ID, { offset: 0 } );
+			this.props.fetchProducts( site.ID, { offset: 0, per_page: 100 } );
 		}
 	}
 
