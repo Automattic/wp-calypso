@@ -1262,16 +1262,21 @@
       "integrity": "sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg=="
     },
     "babel-eslint": {
-      "version": "8.2.2",
-      "integrity": "sha512-Qt2lz2egBxNYWqN9JIO2z4NOOf8i4b5JS6CFoYrOZZTDssueiV1jH/jsefyg+86SeNY3rB361/mi3kE1WK2WYQ==",
+      "version": "7.2.3",
+      "integrity": "sha1-sv4tgBJkcPXBlELcdXJTqJdxCCc=",
       "dev": true,
       "requires": {
-        "@babel/code-frame": "7.0.0-beta.40",
-        "@babel/traverse": "7.0.0-beta.40",
-        "@babel/types": "7.0.0-beta.40",
-        "babylon": "7.0.0-beta.40",
-        "eslint-scope": "3.7.1",
-        "eslint-visitor-keys": "1.0.0"
+        "babel-code-frame": "6.26.0",
+        "babel-traverse": "6.26.0",
+        "babel-types": "6.26.0",
+        "babylon": "6.18.0"
+      },
+      "dependencies": {
+        "babylon": {
+          "version": "6.18.0",
+          "integrity": "sha512-q/UEjfGJ2Cm3oKV71DJz9d25TPnq5rhBVL2Q4fA5wcC3jcrdn7+SssEybFIxwAvvP+YCsCYNKughoF33GxgycQ==",
+          "dev": true
+        }
       }
     },
     "babel-generator": {
@@ -2567,7 +2572,7 @@
       "integrity": "sha512-iO5MiK7MZXejqfnCK8onktxxb+mcW+KMiL/5gGF/UCWvVgPzbgbkA5cyYfqj/IIHHo7X1z0znrSHPw9AIfpvrw==",
       "requires": {
         "caniuse-lite": "1.0.30000815",
-        "electron-to-chromium": "1.3.38"
+        "electron-to-chromium": "1.3.39"
       }
     },
     "bser": {
@@ -4145,7 +4150,7 @@
           "dev": true,
           "requires": {
             "caniuse-db": "1.0.30000815",
-            "electron-to-chromium": "1.3.38"
+            "electron-to-chromium": "1.3.39"
           }
         },
         "source-map": {
@@ -4331,8 +4336,8 @@
       "dev": true
     },
     "electron-to-chromium": {
-      "version": "1.3.38",
-      "integrity": "sha1-SSNLAMBZL2KSH5QmvM7+4j3ghrs="
+      "version": "1.3.39",
+      "integrity": "sha1-16RpZAnKCZXidQFW2mEsIhr62E0="
     },
     "elliptic": {
       "version": "6.4.0",
@@ -5109,20 +5114,6 @@
       "requires": {
         "requireindex": "1.2.0"
       }
-    },
-    "eslint-scope": {
-      "version": "3.7.1",
-      "integrity": "sha1-PWPD7f2gLgbgGkUq2IyqzHzctug=",
-      "dev": true,
-      "requires": {
-        "esrecurse": "4.2.1",
-        "estraverse": "4.2.0"
-      }
-    },
-    "eslint-visitor-keys": {
-      "version": "1.0.0",
-      "integrity": "sha512-qzm/XxIbxm/FHyH341ZrbnMUpe+5Bocte9xkmFMzPMjRaZMcXww+MpBptFvtU+79L362nqiLhekCxCxDPaUMBQ==",
-      "dev": true
     },
     "esmangle-evaluator": {
       "version": "1.0.1",
@@ -15107,7 +15098,7 @@
           "dev": true,
           "requires": {
             "caniuse-db": "1.0.30000815",
-            "electron-to-chromium": "1.3.38"
+            "electron-to-chromium": "1.3.39"
           }
         },
         "chalk": {
