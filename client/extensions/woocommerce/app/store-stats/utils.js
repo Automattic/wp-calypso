@@ -4,9 +4,9 @@
  * External dependencies
  */
 
-import { find, includes } from 'lodash';
+import { find, includes, forEach, findIndex, round } from 'lodash';
 import classnames from 'classnames';
-import { moment } from 'i18n-calypso';
+import { moment, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -64,23 +64,33 @@ export function calculateDelta( item, previousItem, attr, unit ) {
 }
 
 /**
- * Given a startDate query parameter, determine which date to send the backend on a request for data.
- * Calculate a queryDate as the first date in each block of periods counting back from today. The number
+ * Calculate a date as the first date in each block of periods counting back from today. The number
  * of periods in a block is determined in the UNITS constants config.
+ *
+ * @param {string} date - Date to calculate from
+ * @param {string} unit - Unit to use in calculation
+ * @return {string} - YYYY-MM-DD format of the date to be queried
+ */
+export function getStartDate( date, unit ) {
+	const unitConfig = UNITS[ unit ];
+	const today = moment();
+	const startDate = moment( date ); // Defaults to today if startDate undefined
+	const duration = moment.duration( today - startDate )[ unitConfig.durationFn ]();
+	const validDuration = duration > 0 ? duration : 0;
+	const unitQuantity = unitConfig.quantity;
+	const periods = Math.floor( validDuration / unitQuantity ) * unitQuantity;
+	return today.subtract( periods, unitConfig.label ).format( 'YYYY-MM-DD' );
+}
+
+/**
+ * Given a startDate query parameter, determine which date to send the backend on a request for data.
  *
  * @param {object} context - Object supplied by page function
  * @return {string} - YYYY-MM-DD format of the date to be queried
  */
 export function getQueryDate( context ) {
 	const { unit } = context.params;
-	const unitConfig = UNITS[ unit ];
-	const today = moment();
-	const startDate = moment( context.query.startDate ); // Defaults to today if startDate undefined
-	const duration = moment.duration( today - startDate )[ unitConfig.durationFn ]();
-	const validDuration = duration > 0 ? duration : 0;
-	const unitQuantity = unitConfig.quantity;
-	const periods = Math.floor( validDuration / unitQuantity ) * unitQuantity;
-	return today.subtract( periods, unitConfig.label ).format( 'YYYY-MM-DD' );
+	return getStartDate( context.query.startDate, unit );
 }
 
 /**
@@ -114,6 +124,24 @@ export function getEndPeriod( date, unit ) {
 }
 
 /**
+ * Given a full date YYYY-MM-DD and unit ('day', 'week', 'month', 'year') return the first date
+ * for the period formatted as YYYY-MM-DD
+ *
+ * @param {string} date - string date in YYYY-MM-DD format
+ * @param {string} unit - string representing unit required for API eg. ('day', 'week', 'month', 'year')
+ * @return {string} - YYYY-MM-DD format of the date to be queried
+ */
+export function getStartPeriod( date, unit ) {
+	return unit === 'week'
+		? moment( date )
+				.startOf( 'isoWeek' )
+				.format( 'YYYY-MM-DD' )
+		: moment( date )
+				.startOf( unit )
+				.format( 'YYYY-MM-DD' );
+}
+
+/**
  * Given a value and format option of 'text', 'number' and 'currency' return a formatted value.
  *
  * @param {(string|number)} value - string or number to be formatted
@@ -127,6 +155,8 @@ export function formatValue( value, format, code ) {
 			return formatCurrency( value, code );
 		case 'number':
 			return Math.round( value * 100 ) / 100;
+		case 'percent':
+			return translate( '%(percentage)s%% ', { args: { percentage: value }, context: 'percent' } );
 		case 'text':
 		default:
 			return value;
@@ -143,5 +173,60 @@ export function formatValue( value, format, code ) {
  */
 export function getDelta( deltas, selectedDate, stat ) {
 	const selectedDeltas = find( deltas, item => item.period === selectedDate );
-	return selectedDeltas[ stat ];
+	return ( selectedDeltas && selectedDeltas[ stat ] ) || [];
+}
+
+/**
+ * Given a date, an array of data, and a stat, return a delta object for the specific stat.
+ *
+ * @param {array} data - an array of API data, must contain at least 3 rows
+ * @param {string} selectedDate - string of date in 'YYYY-MM-DD'
+ * @param {string} stat - string of stat to be referenced
+ * @param {string} unit - unit/period format for the data provided
+ * @return {object} - Object containing data from calculateDelta
+ */
+export function getDeltaFromData( data, selectedDate, stat, unit ) {
+	if ( ! data || ! Array.isArray( data ) || data.length < 3 ) {
+		return {};
+	}
+	let delta = {};
+	let previousItem = false;
+
+	forEach( data, function( item ) {
+		if ( previousItem ) {
+			if ( item.period === selectedDate ) {
+				delta = calculateDelta( item, previousItem, stat, unit );
+			}
+			previousItem = item;
+		} else {
+			previousItem = item;
+		}
+	} );
+
+	return delta;
+}
+
+/**
+ * Given visitor data and order data, get a list conversion rate by period.
+ *
+ * @param {array} visitorData - an array of API data from the 'visits' stat endpoint
+ * @param {array} orderData -  an array of API data from the orders endpoint
+ * @param {string} unit - unit/period format for the data provided
+ * @return {object} - Object containing data from calculateDelta
+ */
+export function getConversionRateData( visitorData, orderData, unit ) {
+	return visitorData.map( visitorRow => {
+		const datePeriod = getEndPeriod( visitorRow.period, unit );
+		const unitPeriod = getUnitPeriod( visitorRow.period, unit );
+		const index = findIndex( orderData, d => d.period === datePeriod );
+		const orders = orderData[ index ] && orderData[ index ].orders;
+
+		if ( visitorRow.visitors > 0 && orderData[ index ] ) {
+			return {
+				period: unitPeriod,
+				conversionRate: round( orders / visitorRow.visitors * 100, 2 ),
+			};
+		}
+		return { period: unitPeriod, conversionRate: 0 };
+	} );
 }

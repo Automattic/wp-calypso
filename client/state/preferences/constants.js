@@ -12,4 +12,5 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	editorAdvancedVisible: false,
 	editorConfirmationDisabledSites: [],
 	colorScheme: 'default',
+	'store-dashboardStatsWidgetUnit': 'week',
 };
