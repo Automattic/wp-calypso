@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { handleResponse, installJetpackPlugin } from '../';
+import { handleError, handleSuccess, installJetpackPlugin } from '../';
 import {
 	jetpackRemoteInstallComplete,
 	jetpackRemoteInstallUpdateError,
@@ -15,11 +15,8 @@ const password = 'hGhrskf145kst';
 
 const SUCCESS_RESPONSE = { status: true };
 const FAILURE_RESPONSE = {
-	status: false,
-	error: {
-		code: 'COULD_NOT_LOGIN',
-		message: 'extra info',
-	},
+	error: 'COULD_NOT_LOGIN',
+	message: 'extra info',
 };
 
 describe( 'installJetpackPlugin', () => {
@@ -29,14 +26,16 @@ describe( 'installJetpackPlugin', () => {
 	} );
 } );
 
-describe( 'handleResponse', () => {
-	test( 'should return jetpackRemoteInstallComplete on success', () => {
-		const result = handleResponse( { url }, SUCCESS_RESPONSE );
-		expect( result ).toEqual( expect.objectContaining( jetpackRemoteInstallComplete( url ) ) );
+describe( 'handleSuccess', () => {
+	test( 'should return jetpackRemoteInstallComplete', () => {
+		const result = handleSuccess( { url }, SUCCESS_RESPONSE );
+		expect( result ).toEqual( jetpackRemoteInstallComplete( url ) );
 	} );
+} );
 
-	test( 'should return JetpackRemoteInstallUpdateError on failure', () => {
-		const result = handleResponse( { url }, FAILURE_RESPONSE );
+describe( 'handleError', () => {
+	test( 'should return JetpackRemoteInstallUpdateError', () => {
+		const result = handleError( { url }, FAILURE_RESPONSE );
 		expect( result ).toEqual(
 			expect.objectContaining(
 				jetpackRemoteInstallUpdateError( url, 'COULD_NOT_LOGIN', 'extra info' )
