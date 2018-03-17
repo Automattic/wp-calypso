@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { each, find, findIndex, get, includes, mapValues, omit, round, sortBy, sumBy, without } from 'lodash';
+import { each, find, findIndex, get, includes, isEqual, mapValues, omit, round, sortBy, sumBy, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -604,17 +604,21 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION ] = ( stat
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS ] = ( state, { requestData } ) => {
 	return { ...state,
 		form: { ...state.form,
 			rates: { ...state.form.rates,
-				retrievalInProgress: true,
+				retrievalInProgress: requestData,
 			},
 		},
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates, requestData } ) => {
+	if ( ! isEqual( requestData, state.form.rates.retrievalInProgress ) ) {
+		return state;
+	}
+
 	return { ...state,
 		form: { ...state.form,
 			rates: {
@@ -637,11 +641,15 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates } )
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED ] = ( state, { requestData } ) => {
+	if ( ! isEqual( requestData, state.form.rates.retrievalInProgress ) ) {
+		return state;
+	}
+
 	return { ...state,
 		form: { ...state.form,
 			rates: { ...state.form.rates,
-				retrievalInProgress: false,
+				retrievalInProgress: null,
 			},
 		},
 	};

@@ -9,7 +9,14 @@ import {
 } from '../action-types';
 
 export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
-	dispatch( { orderId, siteId, type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS } );
+	const requestData = { orderId, siteId, origin, destination, packages };
+	dispatch( {
+		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS,
+		requestData,
+		siteId,
+		orderId,
+	} );
+
 	return new Promise( ( resolve, reject ) => {
 		let error = null;
 		const setError = ( err ) => error = err;
@@ -17,6 +24,7 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 			dispatch( {
 				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES,
 				rates: json.rates,
+				requestData,
 				siteId,
 				orderId,
 			} );
@@ -25,6 +33,7 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 			if ( ! saving ) {
 				dispatch( {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
+					requestData,
 					siteId,
 					orderId,
 				} );
