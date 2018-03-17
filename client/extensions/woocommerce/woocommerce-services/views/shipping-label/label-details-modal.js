@@ -38,7 +38,7 @@ const DetailsDialog = ( props ) => {
 
 	const renderReceiptLink = () => {
 		if ( ! canManagePayments || ! receiptId ) {
-			return <span />;
+			return null;
 		}
 
 		return <a
