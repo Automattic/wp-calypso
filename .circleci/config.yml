@@ -81,6 +81,6 @@ jobs:
 # We need to work around this bit because
 # the notification system in 2.0 is a bit flakey
 # and is not yet working as expected.
-# notify:
-#   webhooks:
-#     - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
+notify:
+  webhooks:
+    - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
