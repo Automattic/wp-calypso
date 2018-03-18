@@ -2,7 +2,7 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import config from 'config';
 import Gridicon from 'gridicons';
 import page from 'page';
@@ -19,6 +19,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormattedHeader from 'components/formatted-header';
 import FormPasswordInput from 'components/forms/form-password-input';
 import HelpButton from './help-button';
+import JetpackConnectNotices from './jetpack-connect-notices';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
@@ -29,6 +30,13 @@ import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { REMOTE_PATH_AUTH } from './constants';
+
+import {
+	ACTIVATE_FAILURE,
+	INSTALL_FAILURE,
+	INVALID_PERMISSIONS,
+	LOGIN_FAILURE,
+} from './connection-notice-types';
 
 export class OrgCredentialsForm extends Component {
 	state = {
@@ -57,8 +65,8 @@ export class OrgCredentialsForm extends Component {
 		this.props.jetpackRemoteInstall( siteToConnect, this.state.username, this.state.password );
 	};
 
-	componentWillReceiveProps() {
-		const { installError } = this.props;
+	componentWillReceiveProps( nextProps ) {
+		const { installError } = nextProps;
 
 		if ( installError ) {
 			this.setState( { isSubmitting: false } );
@@ -76,13 +84,10 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	componentDidUpdate() {
-		const { installError, isResponseCompleted, siteToConnect } = this.props;
+		const { isResponseCompleted, siteToConnect } = this.props;
 
 		if ( isResponseCompleted ) {
 			externalRedirect( addCalypsoEnvQueryArg( siteToConnect + REMOTE_PATH_AUTH ) );
-		}
-		if ( installError ) {
-			//handle errors
 		}
 	}
 
@@ -110,12 +115,39 @@ export class OrgCredentialsForm extends Component {
 		);
 	}
 
+	getError( installError ) {
+		if ( installError === 'LOGIN_FAILURE' ) {
+			return LOGIN_FAILURE;
+		}
+		if ( installError === 'ACTIVATE_FAILURE' ) {
+			return ACTIVATE_FAILURE;
+		}
+		if ( installError === 'INSTALL_FAILURE' ) {
+			return INSTALL_FAILURE;
+		}
+		if ( installError === 'FORBIDDEN' ) {
+			return INVALID_PERMISSIONS;
+		}
+	}
+
+	renderNotice() {
+		const { installError } = this.props;
+		return (
+			<div className="jetpack-connect__notice">
+				{ installError ? (
+					<JetpackConnectNotices noticeType={ this.getError( installError ) } />
+				) : null }
+			</div>
+		);
+	}
+
 	formFields() {
 		const { translate } = this.props;
 		const { isSubmitting, password, username } = this.state;
 
 		return (
-			<div>
+			<Fragment>
+				{ this.renderNotice() }
 				<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
@@ -146,7 +178,7 @@ export class OrgCredentialsForm extends Component {
 					</div>
 					{ isSubmitting ? <Spinner /> : null }
 				</div>
-			</div>
+			</Fragment>
 		);
 	}
 
