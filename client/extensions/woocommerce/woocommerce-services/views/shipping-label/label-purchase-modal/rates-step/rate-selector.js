@@ -74,6 +74,7 @@ class RateSelector extends React.Component {
 				) }
 			>
 				{ serverErrors &&
+					! isLoading &&
 					isEmpty( packageRates ) &&
 					packageName && <p className="rates-step__package-heading">{ packageName }</p> }
 				{ ( ! isEmpty( packageRates ) || isLoading ) && (
@@ -87,6 +88,7 @@ class RateSelector extends React.Component {
 					/>
 				) }
 				{ serverErrors &&
+					! isLoading &&
 					serverErrors.map( ( serverError, index ) => (
 						<FieldError type="server-error" key={ index } text={ serverError } />
 					) ) }
