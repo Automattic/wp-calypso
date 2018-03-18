@@ -1,7 +1,7 @@
-Query Jetpack Onboarding Settings
-=================================
+Query Jetpack Settings
+======================
 
-`<QueryJetpackOnboardingSettings />` is a React component used in managing network requests for Jetpack Onboarding Settings.
+`<QueryJetpackSettings />` is a React component used in managing network requests for Jetpack Settings.
 
 ## Usage
 
@@ -13,12 +13,12 @@ import { connect } from 'react-redux';
 import { map } from 'lodash';
 
 import { getJetpackOnboardingSettings } from 'state/selectors';
-import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
-function MyJetpackOnboardingSettings( { settings, siteId } ) {
+function MyJetpackSettings( { settings, siteId } ) {
 	return (
 		<div>
-			<QueryJetpackOnboardingSettings siteId={ siteId } />
+			<QueryJetpackSettings siteId={ siteId } />
 			{ map( settings, ( value, name ) => (
 				<div>{ name }: { value.toString() }</div>
 			) }
@@ -30,7 +30,7 @@ export default connect(
 	( state, { siteId } ) => ( {
 		settings: getJetpackOnboardingSettings( state, siteId )
 	} )
-)( MyJetpackOnboardingSettings );
+)( MyJetpackSettings );
 ```
 
 ## Props
@@ -42,7 +42,7 @@ export default connect(
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-A query to use when requesting Jetpack Onboarding Settings.
+A query to use when requesting Jetpack Settings.
 
 ### `siteId`
 
@@ -51,4 +51,4 @@ A query to use when requesting Jetpack Onboarding Settings.
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The site ID for which Jetpack Onboarding Settings should be requested.
+The site ID for which Jetpack Settings should be requested.

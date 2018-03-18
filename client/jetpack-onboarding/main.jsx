@@ -16,7 +16,7 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
@@ -164,7 +164,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 				   * the site is a connected Jetpack site or not, and a network request that uses
 				   * the wrong argument can mess up our request tracking quite badly. */
 				this.state.hasFinishedRequestingSite && (
-					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
+					<QueryJetpackSettings query={ jpoAuth } siteId={ siteId } />
 				) }
 				{ siteId ? (
 					<Wizard

@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { isRequestingJetpackOnboardingSettings } from 'state/selectors';
 import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
-class QueryJetpackOnboardingSettings extends Component {
+class QueryJetpackSettings extends Component {
 	static propTypes = {
 		query: PropTypes.object,
 		siteId: PropTypes.number,
@@ -50,4 +50,4 @@ export default connect(
 		requestingSettings: isRequestingJetpackOnboardingSettings( state, siteId, query ),
 	} ),
 	{ requestJetpackSettings }
-)( QueryJetpackOnboardingSettings );
+)( QueryJetpackSettings );
