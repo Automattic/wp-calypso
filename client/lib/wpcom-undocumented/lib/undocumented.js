@@ -145,21 +145,6 @@ Undocumented.prototype.jetpackModuleDeactivate = function( siteId, moduleSlug, f
 };
 
 /*
- * Retrieve all Jetpack settings of a site with id siteId
- *
- * @param {int} [siteId]
- * @param {Function} fn
- * @api public
- */
-Undocumented.prototype.fetchJetpackSettings = function( siteId, fn ) {
-	return this.wpcom.req.get(
-		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
-		{ path: '/jetpack/v4/settings/' },
-		fn
-	);
-};
-
-/*
  * Update any Jetpack settings on the site with id siteId to the specified settings
  *
  * @param {int} [siteId]
