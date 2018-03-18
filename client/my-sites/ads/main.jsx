@@ -22,6 +22,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AdsEarnings from 'my-sites/ads/form-earnings';
 import AdsSettings from 'my-sites/ads/form-settings';
 import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import { isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
@@ -146,7 +147,8 @@ class AdsMain extends Component {
 					</div>
 					{ this.props.wordAdsError && (
 						<Notice
-							status="is-error ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-error"
 							onDismissClick={ this.handleDismissWordAdsError }
 						>
 							{ this.props.wordAdsError }
@@ -154,7 +156,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'mature' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate(
 								'Your site has been identified as serving mature content. ' +
@@ -171,7 +174,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'spam' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate(
 								'Your site has been identified as serving automatically created or copied content. ' +
@@ -181,7 +185,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'private' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate(
 								'Your site is marked as private. It needs to be public so that visitors can see the ads.'
@@ -194,7 +199,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'other' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate( 'Your site cannot participate in WordAds program.' ) }
 						/>
@@ -233,7 +239,11 @@ class AdsMain extends Component {
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
-		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
+		} else if (
+			! site.options.wordads &&
+			isWordadsInstantActivationEligible( site ) &&
+			! isBusiness( site.plan )
+		) {
 			component = this.renderInstantActivationToggle( component );
 		}
 
