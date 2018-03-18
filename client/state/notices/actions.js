@@ -11,6 +11,7 @@ const { uniqueId } = impureLodash;
  * Internal dependencies
  */
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
+import { extendAction } from 'state/utils';
 
 export function removeNotice( noticeId ) {
 	return {
@@ -44,3 +45,8 @@ export const errorNotice = createNotice.bind( null, 'is-error' );
 export const infoNotice = createNotice.bind( null, 'is-info' );
 export const warningNotice = createNotice.bind( null, 'is-warning' );
 export const plainNotice = createNotice.bind( null, 'is-plain' );
+
+// Higher-order action creator: modify the wrapped creator to return actions with the
+// `notices.skip` meta, so that it's ignored by the notices middleware.
+export const withoutNotice = actionCreator => ( ...args ) =>
+	extendAction( actionCreator( ...args ), { meta: { notices: { skip: true } } } );

@@ -5,7 +5,7 @@
 	flex: 2 0 0%;
 	margin: 80px 0 0;
 	background-color: $gray-light;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 
 	@include breakpoint( ">660px" ) {
 		display: block;
@@ -40,7 +40,7 @@
 	}
 
 	.segmented-control__item .segmented-control__link {
-		border-color: lighten( $gray, 20% );
+		border-color: $gray-lighten-20;
 	}
 
 	.segmented-control__item:first-of-type .segmented-control__link {
@@ -49,7 +49,7 @@
 
 	.segmented-control__item:last-of-type .segmented-control__link {
 		border-bottom-right-radius: 0;
-		border-left-color: lighten( $gray, 20% );
+		border-left-color: $gray-lighten-20;
 	}
 
 	.segmented-control__item.is-selected .segmented-control__link {
@@ -84,10 +84,10 @@
 	height: 28px;
 	/*rtl:ignore*/
 	transform: translate( 25%, -25% );
-	border: 1px solid lighten( $gray, 10% );
+	border: 1px solid $gray-lighten-10;
 	border-radius: 50%;
 	background-color: $gray-light;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 	cursor: pointer;
 }
 
@@ -194,14 +194,14 @@ input.editor-media-modal-gallery__caption[type="text"] {
 			lighten( $gray, 25% ) 40%,
 			transparent 40%,
 			transparent 42%,
-			lighten( $gray, 20% ) 42%
+			$gray-lighten-20 42%
 		);
 	}
 
 	&::after {
 		top: calc( 146px + 2% );
 		height: 240px;
-		background: lighten( $gray, 10% );
+		background: $gray-lighten-10;
 	}
 
 	&.is-loading::before,
@@ -291,7 +291,7 @@ input[type].editor-media-modal-gallery__input-width-auto {
 
 .editor-media-modal-gallery__preview-individual .wp-caption-dd {
 	background: $gray-light;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 14px;
 	line-height: 1.7;
 	padding: 16px;

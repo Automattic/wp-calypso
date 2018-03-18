@@ -27,17 +27,17 @@
 
 	&.is-disabled {
 		background: $gray-light;
-		border-color: lighten( $gray, 30% );
-		color: lighten( $gray, 10% );
+		border-color: $gray-lighten-30;
+		color: $gray-lighten-10;
 		opacity: 1;
-		-webkit-text-fill-color: lighten( $gray, 10% );
+		-webkit-text-fill-color: $gray-lighten-10;
 
 		&:hover {
 			cursor: default;
 		}
 
 		&::placeholder {
-			color: lighten( $gray, 10% );
+			color: $gray-lighten-10;
 		}
 	}
 

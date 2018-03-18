@@ -27,10 +27,9 @@ const SetupTos = ( { autoConfigure, canAutoconfigure, reset, translate, goToNext
 							"host's server?"
 					)
 				: translate(
-						'By adding your site credentials, you are giving ' +
-							'WordPress.com access to perform automatic actions on your ' +
-							'server including backing up your site, restoring your site, ' +
-							'as well as manually accessing your site in case of an emergency.'
+						'By adding credentials, you are providing us with access to your server ' +
+							'to perform automatic actions (such as backing up or restoring your site) ' +
+							'or to manually access your site in case of an emergency.'
 					) }
 		</div>
 		<div className="credentials-setup-flow__tos-buttons">

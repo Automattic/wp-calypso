@@ -5,7 +5,6 @@
  */
 import {
 	SERIALIZE,
-	DESERIALIZE,
 	HAPPYCHAT_OPEN,
 	HAPPYCHAT_MINIMIZING,
 	HAPPYCHAT_BLUR,
@@ -13,7 +12,7 @@ import {
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+import { combineReducers } from 'state/utils';
 
 /**
  * Tracks the current message the user has typed into the happychat client
@@ -50,11 +49,6 @@ export const lostFocusAt = ( state = null, action ) => {
 				return Date.now();
 			}
 			return state;
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, { type: [ 'null', 'number' ] } ) ) {
-				return state;
-			}
-			return null;
 		case HAPPYCHAT_BLUR:
 			return Date.now();
 		case HAPPYCHAT_FOCUS:
@@ -62,7 +56,7 @@ export const lostFocusAt = ( state = null, action ) => {
 	}
 	return state;
 };
-lostFocusAt.hasCustomPersistence = true;
+lostFocusAt.schema = { type: 'number' };
 
 const isOpen = ( state = false, action ) => {
 	switch ( action.type ) {

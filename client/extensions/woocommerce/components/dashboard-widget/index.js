@@ -76,8 +76,7 @@ class DashboardWidget extends Component {
 			'has-settings-panel': hasSettingsPanel,
 		} );
 
-		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		const imageComponent = <img className="dashboard-widget__image" src={ image } />;
+		const imageComponent = <img className="dashboard-widget__image" src={ image } alt="" />;
 
 		return (
 			<Card className={ classes }>
@@ -131,7 +130,7 @@ DashboardWidget.propTypes = {
 	imageFlush: PropTypes.bool,
 	imagePosition: PropTypes.oneOf( [ 'bottom', 'left', 'right', 'top' ] ),
 	onSettingsClose: PropTypes.func,
-	title: PropTypes.string,
+	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	settingsPanel: PropTypes.element,
 	width: PropTypes.oneOf( [ 'half', 'full', 'third', 'two-thirds' ] ),
 };

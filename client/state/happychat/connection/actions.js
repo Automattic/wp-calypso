@@ -15,6 +15,7 @@ import {
 	HAPPYCHAT_IO_RECEIVE_DISCONNECT,
 	HAPPYCHAT_IO_RECEIVE_ERROR,
 	HAPPYCHAT_IO_RECEIVE_INIT,
+	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_RECONNECTING,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
@@ -106,6 +107,18 @@ export const receiveReconnecting = () => ( { type: HAPPYCHAT_IO_RECEIVE_RECONNEC
  */
 export const receiveAccept = isAvailable => ( {
 	type: HAPPYCHAT_IO_RECEIVE_ACCEPT,
+	isAvailable,
+} );
+
+/**
+ * Returns an action object for the accept event indicating the system availability,
+ * as it was received from Happychat.
+ *
+ * @param  { Object } isAvailable Whether Happychat is available
+ * @return { Object } Action object
+ */
+export const receiveLocalizedSupport = isAvailable => ( {
+	type: HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	isAvailable,
 } );
 

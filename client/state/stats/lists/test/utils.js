@@ -18,6 +18,7 @@ import {
 	rangeOfPeriod,
 	buildExportArray,
 	isAutoRefreshAllowedForQuery,
+	parseStoreStatsReferrers,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -1963,6 +1964,52 @@ describe( 'utils', () => {
 						value: 3939,
 					},
 				] );
+			} );
+		} );
+
+		describe( 'parseStoreStatsReferrers', () => {
+			const validData = {
+				data: [
+					{ date: 'monday', data: [ [ 'green', 4 ], [ 'red', 8 ] ] },
+					{ date: 'tuesday', data: [ [ 'orange', 12 ], [ 'blue', 16 ] ] },
+				],
+				fields: [ 'color', 'age' ],
+			};
+
+			test( 'should return empty array for malformed payload', () => {
+				const noPayload = parseStoreStatsReferrers( undefined );
+				const noData = parseStoreStatsReferrers( {} );
+				const dataNotArray = parseStoreStatsReferrers( { data: {} } );
+
+				expect( Array.isArray( noPayload ) ).to.eql( true );
+				expect( noPayload.length ).to.eql( 0 );
+				expect( Array.isArray( noData ) ).to.eql( true );
+				expect( noData.length ).to.eql( 0 );
+				expect( Array.isArray( dataNotArray ) ).to.eql( true );
+				expect( dataNotArray.length ).to.eql( 0 );
+			} );
+
+			test( 'should an array of objects with all fields', () => {
+				const parsedData = parseStoreStatsReferrers( validData );
+
+				expect( parsedData.length ).to.eql( validData.data.length );
+
+				const { fields } = validData;
+				const firstRecord = parsedData[ 0 ];
+
+				// Make sure all fields are present
+				firstRecord.data.forEach( d => {
+					expect( d[ fields[ 0 ] ] ).to.not.be.undefined;
+					expect( d[ fields[ 1 ] ] ).to.not.be.undefined;
+				} );
+
+				// Make sure values are correctly lined up
+				firstRecord.data.forEach( ( d, idx ) => {
+					expect( d.color ).to.eql( validData.data[ 0 ].data[ idx ][ 0 ] );
+					expect( d.age ).to.eql( validData.data[ 0 ].data[ idx ][ 1 ] );
+				} );
+
+				expect( firstRecord.date ).to.eql( 'monday' );
 			} );
 		} );
 	} );

@@ -8,12 +8,13 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get, head, isEmpty, map } from 'lodash';
+import { get, head, isEmpty, last, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import EditorRevisionsListHeader from './header';
+import EditorRevisionsListNavigation from './navigation';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
@@ -25,22 +26,20 @@ class EditorRevisionsList extends PureComponent {
 		siteId: PropTypes.number,
 		revisions: PropTypes.array.isRequired,
 		selectedRevisionId: PropTypes.number,
+		nextIsDisabled: PropTypes.bool,
+		prevIsDisabled: PropTypes.bool,
 	};
 
 	selectRevision = revisionId => {
 		this.props.selectPostRevision( revisionId );
 	};
 
-	trySelectingFirstRevision = () => {
-		const { revisions } = this.props;
-		if ( ! revisions.length ) {
+	trySelectingLatestRevision = () => {
+		const { latestRevisionId } = this.props;
+		if ( ! latestRevisionId ) {
 			return;
 		}
-		const firstRevision = head( revisions );
-		if ( ! firstRevision.id ) {
-			return;
-		}
-		this.selectRevision( firstRevision.id );
+		this.selectRevision( latestRevisionId );
 	};
 
 	componentDidMount() {
@@ -51,7 +50,7 @@ class EditorRevisionsList extends PureComponent {
 		KeyboardShortcuts.on( 'move-selection-down', this.selectPreviousRevision );
 
 		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingFirstRevision();
+			this.trySelectingLatestRevision();
 		}
 	}
 
@@ -62,7 +61,7 @@ class EditorRevisionsList extends PureComponent {
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.selectedRevisionId ) {
-			this.trySelectingFirstRevision();
+			this.trySelectingLatestRevision();
 		}
 		if ( this.props.selectedRevisionId !== prevProps.selectedRevisionId ) {
 			this.scrollToSelectedItem();
@@ -77,22 +76,47 @@ class EditorRevisionsList extends PureComponent {
 		if ( ! ( scrollerNode && selectedNode && listNode ) ) {
 			return;
 		}
-		const { bottom: selectedBottom, top: selectedTop } = selectedNode.getBoundingClientRect();
-		const { top: listTop } = listNode.getBoundingClientRect();
 		const {
+			top: selectedTop,
+			right: selectedRight,
+			bottom: selectedBottom,
+			left: selectedLeft,
+		} = selectedNode.getBoundingClientRect();
+		const {
+			top: listTop,
+			left: listLeft,
+			width: listWidth,
+			height: listHeight,
+		} = listNode.getBoundingClientRect();
+		const {
+			top: scrollerTop,
 			bottom: scrollerBottom,
 			height: scrollerHeight,
-			top: scrollerTop,
+			left: scrollerLeft,
+			right: scrollerRight,
+			width: scrollerWidth,
 		} = scrollerNode.getBoundingClientRect();
 
-		const isAboveBounds = selectedTop < scrollerTop;
-		const isBelowBounds = selectedBottom > scrollerBottom;
+		if ( listWidth > listHeight ) {
+			const isLeftOfBounds = selectedLeft < scrollerLeft;
+			const isRightOfBounds = selectedRight > scrollerRight;
 
-		const targetWhenAbove = selectedTop - listTop;
-		const targetWhenBelow = Math.abs( scrollerHeight - ( selectedBottom - listTop ) );
+			const targetWhenLeft = selectedLeft - listLeft;
+			const targetWhenRight = Math.abs( scrollerWidth - ( selectedRight - listLeft ) );
 
-		if ( isAboveBounds || isBelowBounds ) {
-			scrollerNode.scrollTop = isAboveBounds ? targetWhenAbove : targetWhenBelow;
+			if ( isLeftOfBounds || isRightOfBounds ) {
+				scrollerNode.scrollLeft = isLeftOfBounds ? targetWhenLeft : targetWhenRight;
+			}
+		} else {
+			const isAboveBounds = selectedTop < scrollerTop;
+			const isBelowBounds = selectedBottom > scrollerBottom;
+
+			const targetWhenAbove = selectedTop - listTop;
+			const targetWhenBelow = Math.abs( scrollerHeight - ( selectedBottom - listTop ) );
+
+			if ( isAboveBounds || isBelowBounds ) {
+				scrollerNode.scrollTop = isAboveBounds ? targetWhenAbove : targetWhenBelow;
+			}
 		}
 	}
 
@@ -107,7 +131,15 @@ class EditorRevisionsList extends PureComponent {
 	};
 
 	render() {
-		const { comparisons, postId, revisions, selectedRevisionId, siteId } = this.props;
+		const {
+			comparisons,
+			nextIsDisabled,
+			prevIsDisabled,
+			postId,
+			revisions,
+			selectedRevisionId,
+			siteId,
+		} = this.props;
 		const classes = classNames( 'editor-revisions-list', {
 			'is-loading': isEmpty( revisions ),
 		} );
@@ -115,6 +147,12 @@ class EditorRevisionsList extends PureComponent {
 		return (
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
+				<EditorRevisionsListNavigation
+					nextIsDisabled={ nextIsDisabled }
+					prevIsDisabled={ prevIsDisabled }
+					selectNextRevision={ this.selectNextRevision }
+					selectPreviousRevision={ this.selectPreviousRevision }
+				/>
 				<div className="editor-revisions-list__scroller">
 					<ul className="editor-revisions-list__list">
 						{ map( revisions, revision => {
@@ -141,9 +179,19 @@ class EditorRevisionsList extends PureComponent {
 }
 
 export default connect(
-	( state, { comparisons, selectedRevisionId } ) => {
+	( state, { comparisons, revisions, selectedRevisionId } ) => {
 		const { nextRevisionId, prevRevisionId } = get( comparisons, [ selectedRevisionId ], {} );
+		const latestRevisionId = get( head( revisions ), 'id' );
+		const latestRevisionIsSelected = latestRevisionId === selectedRevisionId;
+		const earliestRevisionIsSelected =
+			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
+		const nextIsDisabled = latestRevisionIsSelected || revisions.length === 1;
+		const prevIsDisabled = earliestRevisionIsSelected || revisions.length === 1;
+
 		return {
+			latestRevisionId,
+			prevIsDisabled,
+			nextIsDisabled,
 			nextRevisionId,
 			prevRevisionId,
 		};

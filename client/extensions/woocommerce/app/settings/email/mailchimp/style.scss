@@ -102,7 +102,7 @@
 	.mailchimp__setup-dialog-progress {
 		margin: 0 -16px 16px;
 		padding: 16px;
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid $gray-lighten-30;
 		display: flex;
 		align-items: center;
 		background: lighten( $gray-light, 1% );
@@ -192,7 +192,7 @@
 &.is-busy {
 	animation: button__busy-animation 3000ms infinite linear;
 	background-size: 120px 100%;
-	background-image: linear-gradient( -45deg, lighten( $gray, 30% ) 28%, $white 28%, $white 72%, lighten( $gray, 30% ) 72%);
+	background-image: linear-gradient( -45deg, $gray-lighten-30 28%, $white 28%, $white 72%, $gray-lighten-30 72%);
 }
 
 .mailchimp__dashboard{
@@ -217,8 +217,8 @@
 }
 
 .mailchimp__dashboard-title-and-slogan {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 	flex-grow: 1;
 	padding: 16px;
 	display: flex;
@@ -231,8 +231,8 @@
 }
 
 .mailchimp__dashboard-sync-status {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 	flex-grow: 0;
 	width: 255px;
 	font-size: 12px;
@@ -296,7 +296,7 @@
 	font-weight: 600;
 	padding: 4px 16px;
 	background: $gray-light;
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 
 	@include breakpoint( ">480px" ) {
 		padding-left: 24px;
@@ -382,11 +382,11 @@
 }
 
 .mailchimp__dashboard-settings-preview-view {
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	padding: 12px;
 	margin-top: 4px;
 	font-size: 13px;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 
 	.form-label {
 		margin: 0;

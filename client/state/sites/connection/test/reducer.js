@@ -87,7 +87,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -171,7 +171,7 @@ describe( 'reducer', () => {
 			} );
 			const state = requesting( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {

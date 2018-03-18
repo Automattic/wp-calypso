@@ -16,11 +16,7 @@
 
 	.stats-period-navigation__previous, .stats-period-navigation__next {
 		cursor: pointer;
-		color: darken( $gray, 20% );
-
-		@include breakpoint( "<660px" ) {
-			display: none;
-		}
+		color: $gray-darken-20;
 
 		&:hover {
 			color: $blue-medium;

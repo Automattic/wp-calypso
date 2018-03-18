@@ -37,7 +37,7 @@
 	}
 
 	&:last-child {
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid $gray-lighten-30;
 		border-radius: 0 0 3px 3px;
 	}
 }
@@ -61,7 +61,7 @@
 }
 
 .checkout-thank-you__features-header {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 24px;
 	font-weight: 300;
 	line-height: 32px;

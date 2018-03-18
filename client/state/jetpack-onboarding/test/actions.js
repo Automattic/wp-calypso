@@ -7,12 +7,14 @@ import {
 	receiveJetpackOnboardingCredentials,
 	requestJetpackOnboardingSettings,
 	saveJetpackOnboardingSettings,
+	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
 } from '../actions';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
@@ -36,7 +38,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestJetpackOnboardingSettings()', () => {
-		test( 'should return a jetpack onboarding settings request action object', () => {
+		test( 'should return a jetpack settings request action object', () => {
 			const siteId = 12345678;
 			const action = requestJetpackOnboardingSettings( siteId );
 
@@ -53,7 +55,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveJetpackOnboardingSettings()', () => {
-		test( 'should return a jetpack onboarding settings save action object', () => {
+		test( 'should return a jetpack settings save action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
@@ -74,8 +76,25 @@ describe( 'actions', () => {
 		} );
 	} );
 
+	describe( 'saveJetpackOnboardingSettingsSuccess()', () => {
+		test( 'should return a jetpack onboarding settings save action success object', () => {
+			const settings = {
+				siteTitle: 'My awesome site title',
+				siteDescription: 'Not just another WordPress site',
+			};
+			const siteId = 12345678;
+			const action = saveJetpackOnboardingSettingsSuccess( siteId, settings );
+
+			expect( action ).toEqual( {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+				siteId,
+				settings,
+			} );
+		} );
+	} );
+
 	describe( 'updateJetpackOnboardingSettings()', () => {
-		test( 'should return a jetpack onboarding settings update action object', () => {
+		test( 'should return a jetpack settings update action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',

@@ -123,7 +123,9 @@ export class CartItem extends React.Component {
 		let info = null;
 
 		if ( isGoogleApps( cartItem ) && cartItem.extra.google_apps_users ) {
-			info = cartItem.extra.google_apps_users.map( user => <div>{ user.email }</div> );
+			info = cartItem.extra.google_apps_users.map( user => (
+				<div key={ `user-${ user.email }` }>{ user.email }</div>
+			) );
 		} else if ( isCredits( cartItem ) ) {
 			info = null;
 		} else if ( getIncludedDomain( cartItem ) ) {
@@ -218,7 +220,7 @@ export class CartItem extends React.Component {
 
 		if ( canRemoveFromCart( cart, cartItem ) ) {
 			return (
-				<button className="remove-item" onClick={ this.removeFromCart }>
+				<button className="cart__remove-item" onClick={ this.removeFromCart }>
 					<Gridicon icon="cross-small" />
 				</button>
 			);

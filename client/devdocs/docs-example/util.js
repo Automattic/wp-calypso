@@ -19,6 +19,10 @@ const getComponentName = docsExample => {
 		return '';
 	}
 
+	if ( docsExample.props.asyncName ) {
+		return docsExample.props.asyncName;
+	}
+
 	if ( ! docsExample.type || ( ! docsExample.type.displayName && ! docsExample.type.name ) ) {
 		return console.trace( 'Component must be defined' );
 	}

@@ -12,7 +12,7 @@
 .wpcom-plan-price__billing-period {
 	font-size: 12px;
 	font-style: italic;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 }
 
 .plan-header .plan-price__discount,

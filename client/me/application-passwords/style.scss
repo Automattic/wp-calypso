@@ -19,7 +19,7 @@
 }
 
 .application-passwords__new-password-display {
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	border: 1px solid $border-ultra-light-gray;
 	font-size: 200%;
 	font-weight: 600;
@@ -32,7 +32,7 @@
 }
 
 .application-passwords__new-password-message {
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	font-size: .9em;
 }
 

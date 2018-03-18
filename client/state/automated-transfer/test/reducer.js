@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { transferStates } from '../constants';
-import { status, fetchingStatus } from '../reducer';
+import reducer, { status, fetchingStatus } from '../reducer';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
@@ -47,20 +47,32 @@ describe( 'state', () => {
 
 					expect( fetchingStatus( null, action ) ).to.be.true;
 				} );
+			} );
 
-				test( "should never persist whether it's fetching status", () => {
-					expect(
-						fetchingStatus( true, {
-							type: SERIALIZE,
-						} )
-					).to.be.null;
+			test( 'should persist all state keys except fetchingStatus', () => {
+				const SITE_ID = 12345;
+				const AT_STATE = {
+					[ SITE_ID ]: {
+						status: 'backfilling',
+						eligibility: {
+							eligibilityHolds: [],
+							eligibilityWarnings: [],
+							lastUpdate: 1000000000,
+						},
+						fetchingStatus: true,
+					},
+				};
 
-					expect(
-						fetchingStatus( true, {
-							type: DESERIALIZE,
-						} )
-					).to.be.false;
-				} );
+				const serialized = reducer( AT_STATE, { type: SERIALIZE } );
+				expect( serialized[ SITE_ID ] ).to.have.property( 'status' );
+				expect( serialized[ SITE_ID ] ).to.have.property( 'eligibility' );
+				expect( serialized[ SITE_ID ] ).to.not.have.property( 'fetchingStatus' );
+
+				const deserialized = reducer( AT_STATE, { type: DESERIALIZE } );
+				expect( deserialized[ SITE_ID ] ).to.have.property( 'status' );
+				expect( deserialized[ SITE_ID ] ).to.have.property( 'eligibility' );
+				// The non-persisted property has default value, persisted value is ignored
+				expect( deserialized[ SITE_ID ] ).to.have.property( 'fetchingStatus', false );
 			} );
 		} );
 	} );

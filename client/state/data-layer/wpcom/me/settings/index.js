@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { isEmpty, keys, merge, noop } from 'lodash';
+import { isEmpty, keys, mapValues, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,16 +22,15 @@ import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'state/action-types';
  * Decodes entities in those specific user settings properties
  * that the REST API returns already HTML-encoded
  */
+const PROPERTIES_TO_DECODE = new Set( [ 'display_name', 'description', 'user_URL' ] );
 function fromApi( apiResponse ) {
-	const decodedValues = {
-		display_name: apiResponse.display_name && decodeEntities( apiResponse.display_name ),
-		description: apiResponse.description && decodeEntities( apiResponse.description ),
-		user_URL: apiResponse.user_URL && decodeEntities( apiResponse.user_URL ),
-	};
+	return mapValues( apiResponse, ( value, name ) => {
+		if ( PROPERTIES_TO_DECODE.has( name ) ) {
+			return decodeEntities( value );
+		}
 
-	// Some keys in the `decodedValues` can be undefined, and _.merge will ignore them,
-	// while Object.assign or object spread operator wouldn't.
-	return merge( {}, apiResponse, decodedValues );
+		return value;
+	} );
 }
 
 /*

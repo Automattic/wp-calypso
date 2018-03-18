@@ -1,0 +1,119 @@
+.shipping-services {
+	margin-bottom: 24px;
+
+	.foldable-card {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: 100%;
+	}
+}
+
+.shipping-services__inner {
+	margin-top: 16px;
+
+	&.is-error .card,
+	& > .is-error .card:not( .is-expanded ) {
+		border-top: 1px;
+		border-right: 1px;
+		border-left: 1px;
+		border-color: $alert-red;
+		border-style: solid;
+
+		&:last-child {
+			border-bottom: 1px solid $alert-red;
+		}
+
+		&.is-expanded {
+			border: 1px solid $alert-red;
+		}
+	}
+}
+
+.shipping-services__entry {
+	align-items: center;
+	display: flex;
+	width: 100%;
+
+	@include breakpoint( '<480px' ) {
+		padding: 4px 0;
+		border-bottom: 1px solid $gray-light;
+
+		&:last-child {
+			border-bottom: 0;
+		}
+	}
+
+	&.shipping-services__entry-header-container {
+		display: inline-block;
+		box-sizing: border-box;
+		border-bottom: 1px solid lighten( $gray, 30% );
+		padding-bottom: 8px;
+		margin-bottom: 4px;
+
+		.shipping-services__entry-header {
+			display: inline-block;
+			margin-left: 0;
+			font-weight: bold;
+		}
+
+		.shipping-services__entry-price-adjustment {
+			float: right;
+			@include breakpoint( '>480px' ) {
+				padding-right: 8px;
+			}
+		}
+
+		.shipping-services__entry-price-adjustment-info {
+			float: right;
+			margin-left: 4px;
+			height: 0;
+		}
+	}
+
+	.form-checkbox {
+		margin-right: 8px;
+
+		.gridicon {
+			top: 0;
+		}
+	}
+
+	.shipping-services__entry-title {
+		flex-basis: 70%;
+		font-size: 13px;
+	}
+
+	.form-text-input {
+		flex-basis: 10%;
+		margin: 8px;
+		padding: 6px 12px;
+		font-size: 13px;
+		min-width: 42px;
+	}
+
+	.form-select {
+		flex-basis: 20%;
+		padding: 6px 32px 5px 14px;
+		line-height: 22px;
+		font-size: 13px;
+		box-shadow: none;
+
+		&:disabled {
+			color: lighten( $gray, 10% );
+			background-color: $gray-light;
+			border-color: lighten( $gray, 30% );
+		}
+	}
+
+	&.wcc-error {
+		input[type=text],
+		.gridicon {
+			color: red;
+		}
+	}
+}
+
+.shipping-services__delivery-estimate {
+	color: darken( $gray, 10% );
+	margin-left: 3px;
+}

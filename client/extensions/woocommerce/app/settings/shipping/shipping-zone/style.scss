@@ -1,10 +1,3 @@
-.sticky-panel + .shipping-zone__locations-container,
-.sticky-panel + .shipping-zone__methods-container {
-	@include breakpoint( ">660px" ) {
-		margin-top: 58px;
-	}
-}
-
 .shipping-zone__name {
 	display: flex;
 	flex-direction: row;
@@ -209,6 +202,21 @@
 	@include breakpoint( ">660px" ) {
 		width: 660px;
 	}
+
+	.dialog__content:last-child {
+		margin-bottom: 0;
+	}
+
+	.dialog__content {
+		display: flex;
+		flex-direction: column;
+		padding: 24px 0;
+
+		> div {
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+	}
 }
 
 .shipping-zone__method-delete {
@@ -223,7 +231,7 @@
 .shipping-zone__method-container {
 	position: relative;
 	padding: 20px;
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 	margin-bottom: 24px;
 
 	.form-text-input-with-affixes {
@@ -246,7 +254,7 @@
 	}
 
 	input:disabled {
-		border-color: lighten( $gray, 20% );
+		border-color: $gray-lighten-20;
 	}
 }
 
@@ -256,19 +264,26 @@
 }
 
 .shipping-zone__method-dialog-header {
-	padding: 0 0 16px 0;
+	padding-bottom: 16px;
 	font-size: 18px;
 	display: flex;
 	justify-content: space-between;
+	flex-shrink: 0;
 
 	.form-fieldset {
 		margin-bottom: 0;
 	}
+}
 
-	& + .form-fieldset,
-	& + .form-fieldset .form-fieldset:last-child {
-		margin-bottom: 0;
-	}
+.shipping-zone__method-dialog-type-field {
+	flex-shrink: 0;
+}
+
+.shipping-zone__method-dialog-content {
+	overflow-y: auto;
+	// 1px padding to show the box-shadow border
+	padding-top: 1px;
+	padding-bottom: 1px;
 }
 
 .shipping-zone__enable {
@@ -336,7 +351,7 @@
 }
 
 .shipping-zone__location-dialog-list-item:hover {
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 }
 
 .shipping-zone__location-dialog-list-item-checkbox {

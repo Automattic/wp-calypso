@@ -11,8 +11,9 @@ Simply pass a site ID and an array of media items.
 import React from 'react';
 import GalleryShortcode from 'components/gallery-shortcode';
 
-export default React.createClass( {
-	displayName: 'MyComponent',
+
+export default class extends React.Component {
+	static displayName = 'MyComponent';
 
 	render() {
 		return (
@@ -22,7 +23,7 @@ export default React.createClass( {
 				className="my-component" />
 		);
 	}
-} );
+}
 ```
 
 ## Props

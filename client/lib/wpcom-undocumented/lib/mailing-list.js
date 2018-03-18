@@ -111,10 +111,10 @@ function createSubscriberResourceUrl( category, emailAddress, method ) {
 }
 
 function createRequestBody( hmac, context ) {
-	return JSON.stringify( {
+	return {
 		hmac: hmac,
 		context: context,
-	} );
+	};
 }
 
 /*!

@@ -34,11 +34,11 @@ const mapDispatchToProps = {
 	toggleEnabled
 };
 
-const YourReactClass = React.createClass( {
-	toggleEnabled() {
+class YourReactClass extends React.Component {
+	toggleEnabled = () => {
 		this.props.toggleEnabled();
 	}
-} );
+}
 
 export default connect(
 	mapStateToProps,

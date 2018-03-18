@@ -151,7 +151,7 @@ class SocialLogin extends Component {
 	}
 
 	render() {
-		const title = this.props.translate( 'Social Login', { textOnly: true } );
+		const title = this.props.translate( 'Social Login' );
 
 		return (
 			<Main className="social-login">

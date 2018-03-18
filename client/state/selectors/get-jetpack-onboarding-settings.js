@@ -14,5 +14,5 @@ import { get } from 'lodash';
  * @return {?Object}          An object containing the currently known onboarding settings of the site.
  */
 export default function getJetpackOnboardingSettings( state, siteId ) {
-	return get( state.jetpackOnboarding.settings, siteId, null );
+	return get( state.jetpackOnboarding.settings, [ siteId, 'onboarding' ], null );
 }

@@ -26,9 +26,6 @@ function setup() {
 	// for nginx
 	app.enable( 'trust proxy' );
 
-	// template engine
-	app.set( 'view engine', 'pug' );
-
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
 

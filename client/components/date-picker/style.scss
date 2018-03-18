@@ -36,7 +36,7 @@ $date-picker_nav_button_size: 20px;
 	width: 100%;
 
 	&:after {
-		@include long-content-fade( $color: darken( $gray, 30% ) );
+		@include long-content-fade( $color: $gray-darken-30 );
 	}
 }
 
@@ -54,6 +54,36 @@ $date-picker_nav_button_size: 20px;
 	white-space: nowrap;
 	height: 18px;
 	line-height: 18px;
+}
+
+.date-picker__nav-bar {
+	height: 26px;
+	text-align: center;
+	top: 11px;
+	z-index: z-index( '.popover', '.date-picker__nav-bar' );
+}
+
+.date-picker__previous-month,
+.date-picker__next-month {
+	float: right;
+	padding: 1px 8px;
+	font-size: 12px;
+	text-transform: capitalize;
+	cursor: pointer;
+	z-index: 2;
+	order-width: 1px;
+
+	&:hover {
+		color: $blue-medium;
+	}
+}
+
+.date-picker__previous-month {
+	float: left;
+}
+
+.date-picker__next-month {
+	float: right;
 }
 
 .DayPicker-Month {
@@ -89,26 +119,6 @@ $date-picker_nav_button_size: 20px;
 	}
 }
 
-.DayPicker-NavButton--prev {
-	color: $gray;
-	left: 0;
-
-	&:before {
-		@include noticon( '\f431' );
-		transform: rotate( 90deg );
-	}
-}
-
-.DayPicker-NavButton--next {
-	color: $gray;
-	right: 0;
-
-	&:before {
-		@include noticon( '\f432' );
-		transform: rotate( 90deg );
-	}
-}
-
 .DayPicker-Caption {
 	display: table-caption;
 	text-align: center;
@@ -141,7 +151,7 @@ $date-picker_nav_button_size: 20px;
 	font-size: 11px;
 	text-align: center;
 	font-weight: 600;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	text-transform: uppercase;
 
 	abbr {
@@ -206,7 +216,7 @@ $date-picker_nav_button_size: 20px;
 	background-color: $gray-dark;
 
 	&:hover {
-		background-color: darken( $gray, 20% );
+		background-color: $gray-darken-20;
 	}
 }
 
@@ -218,7 +228,7 @@ $date-picker_nav_button_size: 20px;
 
 // `disabled` day
 .DayPicker-Day--disabled:not(.DayPicker-Day--outside) .date-picker__day {
-	color: lighten( $gray, 20% );
+	color: $gray-lighten-20;
 	cursor: default;
 }
 
@@ -247,7 +257,7 @@ $date-picker_nav_button_size: 20px;
 }
 
 .DayPicker-Day--events.DayPicker-Day--disabled:not(.DayPicker-Day--is-selected) .date-picker__day {
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 }
 
 @keyframes isSelectedDay {

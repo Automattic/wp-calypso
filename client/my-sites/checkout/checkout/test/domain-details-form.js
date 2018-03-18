@@ -16,9 +16,12 @@ import React from 'react';
  */
 import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
 import { domainRegistration, domainPrivacyProtection } from 'lib/cart-values/cart-items';
-import { useSandbox } from 'test/helpers/use-sinon';
 
-jest.mock( 'lib/analytics', () => {} );
+jest.mock( 'lib/analytics', () => ( {
+	pageView: {
+		record: () => {},
+	},
+} ) );
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
 } ) );
@@ -43,13 +46,6 @@ describe( 'Domain Details Form', () => {
 		},
 		contactDetails: {},
 		translate: identity,
-	};
-
-	const propsWithCountry = {
-		...defaultProps,
-		contactDetails: {
-			countryCode: 'AU',
-		},
 	};
 
 	const domainProduct = domainRegistration( {
@@ -140,55 +136,5 @@ describe( 'Domain Details Form', () => {
 		const wrapper = shallow( <DomainDetailsForm { ...mixedSupportProps } /> );
 
 		expect( wrapper.find( 'PrivacyProtection' ) ).to.have.length( 1 );
-	} );
-
-	describe( 'Google Apps Form UI state', () => {
-		let needsOnlyGoogleAppsDetailsStub;
-
-		useSandbox( sandbox => {
-			needsOnlyGoogleAppsDetailsStub = sandbox.stub(
-				DomainDetailsForm.prototype,
-				'needsOnlyGoogleAppsDetails'
-			);
-		} );
-
-		test( 'should not render GAppsFieldset component when the cart does not contain a Google App', () => {
-			needsOnlyGoogleAppsDetailsStub.returns( false );
-			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
-
-			expect( wrapper.find( 'GAppsFields' ) ).to.have.length( 0 );
-			expect( wrapper.find( '.checkout__domain-contact-details-fields' ) ).to.have.length( 1 );
-		} );
-
-		test( 'should render GAppsFieldset component when the cart contains only a Google App', () => {
-			needsOnlyGoogleAppsDetailsStub.returns( true );
-
-			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
-
-			expect( wrapper.find( 'GAppsFieldset' ) ).to.have.length( 1 );
-			expect( wrapper.find( '.checkout__domain-contact-details-fields' ) ).to.have.length( 0 );
-		} );
-	} );
-
-	describe( 'Country selection', () => {
-		test( 'should not render address fieldset when a country code is not available', () => {
-			const wrapper = shallow( <DomainDetailsForm { ...defaultProps } /> );
-
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).to.have.length( 0 );
-		} );
-
-		test( 'should not render address fieldset when no country selected', () => {
-			const wrapper = shallow(
-				<DomainDetailsForm { ...defaultProps } contactDetails={ { countryCode: '' } } />
-			);
-
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).to.have.length( 0 );
-		} );
-
-		test( 'should render address fieldset when a valid countryCode is selected', () => {
-			const wrapper = shallow( <DomainDetailsForm { ...propsWithCountry } /> );
-
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).to.have.length( 1 );
-		} );
 	} );
 } );

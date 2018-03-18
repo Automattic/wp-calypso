@@ -10,7 +10,7 @@
 	}
 
 	&:disabled {
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 	}
 
 	&:focus {

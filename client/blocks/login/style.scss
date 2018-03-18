@@ -1,9 +1,20 @@
+.login {
+
+	.jetpack-logo__icon { fill: $green-jetpack }
+	&.is-jetpack {
+		.button.is-primary {
+			background-color: $green-jetpack;
+			border-color: darken( $green-jetpack, 5% );
+		}
+	}
+}
+
 .card.login__form,
 .login__form-social .card {
 	margin-bottom: 0;
 }
 
-.login__form-userdata {
+.login__form .login__form-userdata {
 	label {
 		color: $gray-dark;
 		display: block;
@@ -109,7 +120,7 @@
 }
 
 .wp-login__links {
-	a {
+	a, button {
 		font-size: 14px;
 
 		&:hover {
@@ -118,6 +129,15 @@
 	}
 	.gridicon {
 		vertical-align: text-bottom;
+	}
+}
+
+.wp-login__site-return-link {
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+	&::after {
+		@include long-content-fade($color: $gray-light);
 	}
 }
 
@@ -133,6 +153,15 @@
 
 .card.two-factor-authentication__form-action {
 	background: $white;
+
+	button {
+		color: $link-highlight;
+		cursor: pointer;
+
+		&:hover {
+			color: $blue-medium;
+		}
+	}
 }
 
 .two-factor-authentication__small-print {

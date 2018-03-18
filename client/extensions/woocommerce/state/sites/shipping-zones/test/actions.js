@@ -25,7 +25,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/shipping/zones&_method=get', json: true } )
+				.query( { path: '/wc/v3/shipping/zones&_via_calypso&_method=get', json: true } )
 				.reply( 200, {
 					data: [
 						{

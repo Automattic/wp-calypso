@@ -22,7 +22,7 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import FieldError from '../../components/field-error';
 import inputFilters from './input-filters';
 
-const renderDimensionsInput = ( dimensionsName, dimensionsStr, updateField ) => {
+const renderDimensionsInput = ( dimensionsName, dimensionsStr, dimensionsUnit, updateField ) => {
 	const { length, width, height } = inputFilters.parseDimensions( dimensionsStr );
 	const onChange = event => {
 		const name = event.target.name;
@@ -35,7 +35,13 @@ const renderDimensionsInput = ( dimensionsName, dimensionsStr, updateField ) => 
 		updateField( dimensionsName, allDimensions.join( ' x ' ) );
 	};
 
-	return <FormDimensionsInput dimensions={ { width, height, length } } onChange={ onChange } />;
+	return (
+		<FormDimensionsInput
+			dimensionsUnit={ dimensionsUnit }
+			dimensions={ { width, height, length } }
+			onChange={ onChange }
+		/>
+	);
 };
 
 const OuterDimensionsToggle = ( { siteId, toggleOuterDimensions, translate } ) => {
@@ -132,7 +138,12 @@ const EditPackage = props => {
 						args: { dimensionUnit },
 					} ) }
 				</FormLabel>
-				{ renderDimensionsInput( 'inner_dimensions', inner_dimensions, updateField ) }
+				{ renderDimensionsInput(
+					'inner_dimensions',
+					inner_dimensions,
+					dimensionUnit,
+					updateField
+				) }
 				{ fieldInfo( 'inner_dimensions' ) }
 				{ ! isOuterDimensionsVisible ? (
 					<OuterDimensionsToggle { ...{ siteId, toggleOuterDimensions, translate } } />
@@ -145,7 +156,12 @@ const EditPackage = props => {
 							args: { dimensionUnit },
 						} ) }
 					</FormLabel>
-					{ renderDimensionsInput( 'outer_dimensions', outer_dimensions, updateField ) }
+					{ renderDimensionsInput(
+						'outer_dimensions',
+						outer_dimensions,
+						dimensionUnit,
+						updateField
+					) }
 					{ fieldInfo( 'outer_dimensions' ) }
 				</FormFieldset>
 			) : null }

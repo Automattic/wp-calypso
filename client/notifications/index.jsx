@@ -29,7 +29,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from 'notifications-panel';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { getCurrentLocaleSlug, getCurrentLocaleVariant } from 'state/selectors';
 
 /**
  * Returns whether or not the browser session
@@ -213,6 +213,17 @@ export class Notifications extends Component {
 					page( '/me/notifications' );
 				},
 			],
+			EDIT_COMMENT: [
+				( store, { siteId, postId, commentId } ) => {
+					this.props.checkToggle();
+					this.props.recordTracksEvent( 'calypso_notifications_edit_comment', {
+						site_id: siteId,
+						post_id: postId,
+						comment_id: commentId,
+					} );
+					page( `/comment/${ siteId }/${ commentId }?action=edit` );
+				},
+			],
 		};
 
 		return (
@@ -237,7 +248,7 @@ export class Notifications extends Component {
 
 export default connect(
 	state => ( {
-		currentLocaleSlug: getCurrentLocaleSlug( state ),
+		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 	} ),
 	{ recordTracksEvent }
 )( Notifications );

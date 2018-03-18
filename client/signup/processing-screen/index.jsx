@@ -293,7 +293,11 @@ export class SignupProcessingScreen extends Component {
 			return accumulator || ( step.providedDependencies && step.providedDependencies.designType );
 		}, null );
 
-		return config.isEnabled( 'onboarding-checklist' ) && 'blog' === designType;
+		return (
+			config.isEnabled( 'onboarding-checklist' ) &&
+			'blog' === designType &&
+			[ 'personal', 'premium', 'business' ].indexOf( this.props.flowName ) === -1
+		);
 	}
 
 	renderActionButton() {

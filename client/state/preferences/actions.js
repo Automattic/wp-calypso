@@ -86,11 +86,11 @@ export const savePreference = ( key, value ) => dispatch => {
 		value,
 	} );
 
-	const payload = JSON.stringify( {
+	const payload = {
 		[ USER_SETTING_KEY ]: {
 			[ key ]: value,
 		},
-	} );
+	};
 
 	return wpcom
 		.me()

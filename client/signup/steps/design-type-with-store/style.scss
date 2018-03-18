@@ -43,7 +43,7 @@
 .design-type-with-store__choice {
 	transition: all 100ms ease-in-out;
 	position: relative;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	border-bottom: 0;
 	margin: 0 10px;
 
@@ -86,7 +86,7 @@
 
 	&:last-of-type {
 		margin-bottom: 20px;
-		border: 1px solid lighten( $gray, 20% );
+		border: 1px solid $gray-lighten-20;
 		border-bottom-right-radius: 6px;
 		border-bottom-left-radius: 6px;
 
@@ -115,8 +115,8 @@
 		position: absolute;
 		top: 20px;
 		right: 15px;
-		border-top: 2px solid lighten( $gray, 20% );
-		border-right: 2px solid lighten( $gray, 20% );
+		border-top: 2px solid $gray-lighten-20;
+		border-right: 2px solid $gray-lighten-20;
 		transform: rotate(45deg);
 	}
 
@@ -145,7 +145,7 @@
 @include breakpoint( ">480px" ) {
 	.design-type-with-store__choice-copy {
 		padding: 15px;
-		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+		border-top: 1px solid transparentize( $gray-lighten-20, .5 );
 	}
 }
 

@@ -13,12 +13,12 @@ import { noop } from 'lodash';
  */
 import ReaderMain from 'components/reader-main';
 import DocumentHead from 'components/data/document-head';
-import ReaderFullPostBack from './back';
+import BackButton from 'components/back-button';
 
 const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 	return (
 		<ReaderMain className="reader-full-post reader-full-post__unavailable">
-			<ReaderFullPostBack onBackClick={ onBackClick } />
+			<BackButton onClick={ onBackClick } />
 			<DocumentHead title={ translate( 'Post unavailable' ) } />
 			<div className="reader-full-post__content">
 				<div className="reader-full-post__story">

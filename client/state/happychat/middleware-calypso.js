@@ -16,6 +16,7 @@ import {
 	EXPORT_COMPLETE,
 	EXPORT_FAILURE,
 	EXPORT_STARTED,
+	HAPPYCHAT_IO_RECEIVE_STATUS,
 	IMPORTS_IMPORT_START,
 	JETPACK_CONNECT_AUTHORIZE,
 	MEDIA_DELETE,
@@ -27,16 +28,21 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
+import {
+	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
+	HAPPYCHAT_CHAT_STATUS_PENDING,
+} from 'state/happychat/constants';
 import { sendEvent, sendLog, sendPreferences } from 'state/happychat/connection/actions';
+import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
 import getGroups from 'state/happychat/selectors/get-groups';
 import getSkills from 'state/happychat/selectors/get-skills';
 import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
-import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentRoute } from 'state/selectors';
 
-const getRouteSetMessage = ( state, action ) => {
-	const currentUser = getCurrentUser( state );
-	return `Looking at https://wordpress.com${ action.path }?support_user=${ currentUser.username }`;
+const getRouteSetMessage = ( state, path ) => {
+	return `Looking at https://wordpress.com${ path }`;
 };
 
 export const getEventMessageFromActionData = action => {
@@ -138,6 +144,18 @@ export default store => next => action => {
 	sendActionLogsAndEvents( store, action );
 
 	switch ( action.type ) {
+		case HAPPYCHAT_IO_RECEIVE_STATUS:
+			// When the Happychat chat status transitions from "pending" to "assigned", this indicates
+			// a chat has just started. Send the current route to the operator for context on where
+			// the customer initiated their chat request from.
+			if (
+				getHappychatChatStatus( state ) === HAPPYCHAT_CHAT_STATUS_PENDING &&
+				action.status === HAPPYCHAT_CHAT_STATUS_ASSIGNED
+			) {
+				dispatch( sendEvent( getRouteSetMessage( state, getCurrentRoute( state ) ) ) );
+			}
+			break;
+
 		case HELP_CONTACT_FORM_SITE_SELECT:
 			if ( isHappychatClientConnected( state ) ) {
 				const locales = getCurrentUserLocale( state );
@@ -150,7 +168,7 @@ export default store => next => action => {
 
 		case ROUTE_SET:
 			isHappychatClientConnected( state ) && isHappychatChatAssigned( state )
-				? dispatch( sendEvent( getRouteSetMessage( state, action ) ) )
+				? dispatch( sendEvent( getRouteSetMessage( state, action.path ) ) )
 				: noop;
 			break;
 	}

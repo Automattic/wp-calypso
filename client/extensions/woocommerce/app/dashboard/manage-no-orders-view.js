@@ -1,22 +1,26 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from 'config';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import BasicWidget from 'woocommerce/components/basic-widget';
+import Button from 'components/button';
+import DashboardWidget from 'woocommerce/components/dashboard-widget';
+import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import ShareWidget from 'woocommerce/components/share-widget';
-import WidgetGroup from 'woocommerce/components/widget-group';
+import StatsWidget from './widgets/stats-widget';
 import { recordTrack } from 'woocommerce/lib/analytics';
+import QuerySettingsProducts from 'woocommerce/components/query-settings-products';
+import { getProductsSettingValue } from 'woocommerce/state/sites/settings/products/selectors';
 
 class ManageNoOrdersView extends Component {
 	static propTypes = {
@@ -42,17 +46,23 @@ class ManageNoOrdersView extends Component {
 
 	renderStatsWidget = () => {
 		const { site, translate } = this.props;
+
+		if ( config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) ) {
+			return null;
+		}
+
 		const trackClick = () => {
 			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 				action: 'view-stats',
 			} );
-			page.redirect( getLink( '/store/stats/orders/day/:site', site ) );
+			page.redirect( getLink( '/store/stats/orders/week/:site', site ) );
 		};
 		return (
-			<BasicWidget
-				buttonLabel={ translate( 'View stats' ) }
-				onButtonClick={ trackClick }
+			<DashboardWidget
 				className="dashboard__stats-widget"
+				image="/calypso/images/extensions/woocommerce/woocommerce-sample-graph.svg"
+				imagePosition="bottom"
+				imageFlush
 				title={ translate( 'Looking for stats?' ) }
 			>
 				<p>
@@ -61,22 +71,23 @@ class ManageNoOrdersView extends Component {
 							' Keep an eye on revenue, order totals, popular products, and more.'
 					) }
 				</p>
-			</BasicWidget>
+				<Button onClick={ trackClick }>{ translate( 'View stats' ) }</Button>
+			</DashboardWidget>
 		);
 	};
 
 	renderViewAndTestWidget = () => {
-		const { site, translate } = this.props;
+		const { site, translate, shopPageId } = this.props;
 		const trackClick = () => {
 			recordTrack( 'calypso_woocommerce_dashboard_action_click', {
 				action: 'view-and-test',
 			} );
 		};
+
+		const shopUrl = shopPageId && site.URL + '?p=' + shopPageId;
+
 		return (
-			<BasicWidget
-				buttonLabel={ translate( 'View & test your store' ) }
-				buttonLink={ site.URL }
-				onButtonClick={ trackClick }
+			<DashboardWidget
 				className="dashboard__view-and-test-widget"
 				title={ translate( 'Test all the things' ) }
 			>
@@ -92,21 +103,34 @@ class ManageNoOrdersView extends Component {
 							' a product to your cart, and attempt to check out using different addresses.'
 					) }
 				</p>
-			</BasicWidget>
+				<Button onClick={ trackClick } href={ shopUrl } disabled={ ! shopUrl }>
+					{ translate( 'View & test your store' ) }
+				</Button>
+			</DashboardWidget>
 		);
 	};
 
-	render = () => {
+	render() {
+		const { site } = this.props;
 		return (
 			<div className="dashboard__manage-no-orders">
+				<QuerySettingsProducts siteId={ site && site.ID } />
 				{ this.renderShareWidget() }
-				<WidgetGroup>
+				<DashboardWidgetRow>
 					{ this.renderStatsWidget() }
 					{ this.renderViewAndTestWidget() }
-				</WidgetGroup>
+				</DashboardWidgetRow>
+				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
 			</div>
 		);
+	}
+}
+
+function mapStateToProps( state ) {
+	const shopPageId = getProductsSettingValue( state, 'woocommerce_shop_page_id' );
+	return {
+		shopPageId,
 	};
 }
 
-export default localize( ManageNoOrdersView );
+export default connect( mapStateToProps )( localize( ManageNoOrdersView ) );

@@ -29,7 +29,7 @@
 			border-right-width: 0;
 
 			& + .form-text-input-with-affixes__suffix {
-				border-left: 1px solid lighten( $gray, 20% );
+				border-left: 1px solid $gray-lighten-20;
 			}
 		}
 	}
@@ -51,8 +51,8 @@
 .form-text-input-with-affixes__suffix {
 	position: relative;
 	background: $gray-light;
-	border: 1px solid lighten( $gray, 20% );
-	color: darken( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
+	color: $gray-darken-20;
 	padding: 8px 14px;
 	white-space: nowrap;
 	flex: 1 0 auto;
@@ -84,7 +84,7 @@
 	& + input[type="text"],
 	& + input[type="number"] {
 		&:disabled {
-			border-left-color: lighten( $gray, 20% );
+			border-left-color: $gray-lighten-20;
 			border-right-width: 1px;
 		}
 	}

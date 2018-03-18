@@ -6,7 +6,7 @@
 
 import deterministicStringify from 'json-stable-stringify';
 import sha1 from 'hash.js/lib/hash/sha/1';
-import qs from 'querystring';
+import { parse, stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export const generateKey = ( params, applyHash = true ) => {
 
 	if ( params.query ) {
 		// sort parameters alphabetically
-		key += '-' + deterministicStringify( qs.parse( params.query ) );
+		key += '-' + deterministicStringify( parse( params.query ) );
 	}
 
 	if ( applyHash ) {
@@ -44,9 +44,9 @@ export const generateKey = ( params, applyHash = true ) => {
  * @return {String}        - pageSeriesKey string
  */
 export const generatePageSeriesKey = reqParams => {
-	const queryParams = qs.parse( reqParams.query );
+	const queryParams = parse( reqParams.query );
 	delete queryParams.page_handle;
-	const paramsWithoutPage = Object.assign( {}, reqParams, { query: qs.stringify( queryParams ) } );
+	const paramsWithoutPage = Object.assign( {}, reqParams, { query: stringify( queryParams ) } );
 	return generateKey( paramsWithoutPage );
 };
 
@@ -56,7 +56,7 @@ export const generatePageSeriesKey = reqParams => {
  * @return {Object} - request params in a more usable format
  */
 export const normalizeRequestParams = reqParams => {
-	const query = qs.parse( reqParams.query );
+	const query = parse( reqParams.query );
 	const normalizedParams = Object.assign( {}, reqParams, { query } );
 	delete normalizedParams.supports_args;
 	delete normalizedParams.supports_progress;

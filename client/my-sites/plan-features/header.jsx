@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { get, noop } from 'lodash';
@@ -35,7 +33,6 @@ import {
 	PLAN_PERSONAL,
 	getPlanClass,
 } from 'lib/plans/constants';
-import { abtest } from 'lib/abtest';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -56,7 +53,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderPlansHeader() {
-		const { newPlan, planType, popular, selectedPlan, title, translate } = this.props;
+		const { newPlan, bestValue, planType, popular, selectedPlan, title, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -67,12 +64,16 @@ class PlanFeaturesHeader extends Component {
 				) }
 				{ popular && ! selectedPlan && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
 				{ newPlan && ! selectedPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
+				{ bestValue && ! selectedPlan && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 				{ this.isPlanCurrent() && <Ribbon>{ translate( 'Your Plan' ) }</Ribbon> }
 				<div className="plan-features__header-figure">
 					<PlanIcon plan={ planType } />
 				</div>
 				<div className="plan-features__header-text">
-					<h4 className="plan-features__header-title">{ title }</h4>
+					<h4 className="plan-features__header-title">
+						{ title }
+						{ this.getCreditLabel() }
+					</h4>
 					{ this.getPlanFeaturesPrices() }
 					{ this.getBillingTimeframe() }
 				</div>
@@ -81,7 +82,7 @@ class PlanFeaturesHeader extends Component {
 	}
 
 	renderSignupHeader() {
-		const { planType, popular, newPlan, title, audience, translate } = this.props;
+		const { planType, popular, newPlan, bestValue, title, audience, translate } = this.props;
 
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
@@ -90,6 +91,7 @@ class PlanFeaturesHeader extends Component {
 				<header className={ headerClasses } onClick={ this.props.onClick }>
 					{ newPlan && <Ribbon>{ translate( 'New' ) }</Ribbon> }
 					{ popular && <Ribbon>{ translate( 'Popular' ) }</Ribbon> }
+					{ bestValue && <Ribbon>{ translate( 'Best Value' ) }</Ribbon> }
 					<div className="plan-features__header-text">
 						<h4 className="plan-features__header-title">{ title }</h4>
 						{ audience }
@@ -100,10 +102,39 @@ class PlanFeaturesHeader extends Component {
 				</div>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
-					{ 'promoteYearly' === abtest( 'promoteYearlyJetpackPlanSavings' ) &&
-						this.getIntervalDiscount() }
+					{ this.getIntervalDiscount() }
 				</div>
 			</div>
+		);
+	}
+
+	getCreditLabel() {
+		const {
+			available,
+			discountPrice,
+			site,
+			showModifiedPricingDisplay,
+			rawPrice,
+			relatedMonthlyPlan,
+		} = this.props;
+
+		if ( ! showModifiedPricingDisplay || ! available || this.isPlanCurrent() ) {
+			return null;
+		}
+
+		if ( ! discountPrice && ! relatedMonthlyPlan ) {
+			return null;
+		}
+
+		if ( relatedMonthlyPlan && relatedMonthlyPlan.raw_price * 12 === rawPrice ) {
+			return null;
+		}
+
+		// Note: Don't make this translatable because it's only visible to English-language users
+		return (
+			<span className="plan-features__header-credit-label">
+				{ site.jetpack ? 'Discount available' : 'Credit available' }
+			</span>
 		);
 	}
 
@@ -186,6 +217,7 @@ class PlanFeaturesHeader extends Component {
 			relatedMonthlyPlan,
 			site,
 			isInSignup,
+			showModifiedPricingDisplay,
 		} = this.props;
 
 		if ( isPlaceholder && ! isInSignup ) {
@@ -223,7 +255,9 @@ class PlanFeaturesHeader extends Component {
 				<span className="plan-features__header-price-group">
 					<PlanPrice
 						currencyCode={ currencyCode }
-						rawPrice={ originalPrice }
+						rawPrice={
+							showModifiedPricingDisplay && this.isPlanCurrent() ? rawPrice : originalPrice
+						}
 						isInSignup={ isInSignup }
 						original
 					/>
@@ -274,6 +308,7 @@ class PlanFeaturesHeader extends Component {
 }
 
 PlanFeaturesHeader.propTypes = {
+	available: PropTypes.bool,
 	billingTimeFrame: PropTypes.string.isRequired,
 	current: PropTypes.bool,
 	onClick: PropTypes.func,
@@ -292,6 +327,7 @@ PlanFeaturesHeader.propTypes = {
 	] ).isRequired,
 	popular: PropTypes.bool,
 	newPlan: PropTypes.bool,
+	bestValue: PropTypes.bool,
 	rawPrice: PropTypes.number,
 	discountPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
@@ -313,6 +349,7 @@ PlanFeaturesHeader.defaultProps = {
 	onClick: noop,
 	popular: false,
 	newPlan: false,
+	bestValue: false,
 	isPlaceholder: false,
 	site: {},
 	basePlansPath: null,

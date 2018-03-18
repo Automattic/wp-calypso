@@ -14,7 +14,7 @@
 }
 
 .billing-history__transactions thead {
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-lighten-30;
 }
 
 .billing-history__transactions thead .header-row {
@@ -41,7 +41,7 @@
 	padding: 3px 9px;
 	background-color: $white;
 	border-radius: 15px;
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	transition: width 0.25s ease-out;
 	outline: 0;
 
@@ -60,7 +60,7 @@
 	color: $gray-dark;
 	font-size: 14px;
 	height: 66px;
-	border-bottom: 1px solid lighten( $gray, 30% );
+	border-bottom: 1px solid $gray-lighten-30;
 
 	&:last-child {
 		border-bottom: none;
@@ -336,7 +336,7 @@
 		}
 
 		strong {
-			color: darken( $gray, 20% );
+			color: $gray-darken-20;
 			display: block;
 			font-size: 12px;
 			font-weight: 600;
@@ -420,7 +420,7 @@
 
 		tbody tr {
 			td {
-				border-bottom: 1px solid lighten( $gray, 30% );
+				border-bottom: 1px solid $gray-lighten-30;
 			}
 
 			&:last-child td {

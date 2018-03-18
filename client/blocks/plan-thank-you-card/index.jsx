@@ -89,8 +89,26 @@ class PlanThankYouCard extends Component {
 		return translate( 'Thank you for your purchase!' );
 	}
 
+	renderButtonText() {
+		const { buttonText, translate } = this.props;
+		if ( buttonText ) {
+			return buttonText;
+		}
+
+		return translate( 'Visit Your Site' );
+	}
+
+	getButtonUrl() {
+		const { buttonUrl, siteUrl } = this.props;
+		if ( buttonUrl ) {
+			return buttonUrl;
+		}
+
+		return siteUrl;
+	}
+
 	render() {
-		const { siteUrl, siteId, translate } = this.props;
+		const { siteId } = this.props;
 		return (
 			<div className={ classnames( 'plan-thank-you-card', this.getPlanClass() ) }>
 				<QuerySites siteId={ siteId } />
@@ -101,8 +119,8 @@ class PlanThankYouCard extends Component {
 					price={ this.renderPlanPrice() }
 					heading={ this.renderHeading() }
 					description={ this.renderDescription() }
-					buttonUrl={ siteUrl }
-					buttonText={ translate( 'Visit Your Site' ) }
+					buttonUrl={ this.getButtonUrl() }
+					buttonText={ this.renderButtonText() }
 					icon={ this.renderPlanIcon() }
 					action={ this.renderAction() }
 				/>
@@ -112,13 +130,15 @@ class PlanThankYouCard extends Component {
 }
 
 PlanThankYouCard.propTypes = {
+	action: PropTypes.node,
+	buttonText: PropTypes.string,
+	buttonUrl: PropTypes.string,
+	description: PropTypes.string,
 	heading: PropTypes.string,
 	plan: PropTypes.object,
 	siteId: PropTypes.number.isRequired,
 	siteUrl: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	action: PropTypes.node,
-	description: PropTypes.string,
 };
 
 export default connect( ( state, ownProps ) => {

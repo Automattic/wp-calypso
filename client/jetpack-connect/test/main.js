@@ -7,8 +7,10 @@
  * External dependencies
  */
 import page from 'page';
+import React from 'react';
 import { externalRedirect } from 'lib/route';
-import { noop } from 'lodash';
+import { identity, noop } from 'lodash';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
@@ -22,7 +24,8 @@ const REQUIRED_PROPS = {
 	getJetpackSiteByUrl: noop,
 	isRequestingSites: false,
 	jetpackConnectSite: undefined,
-	recordTracksEvent: jest.fn(),
+	recordTracksEvent: noop,
+	translate: identity,
 };
 
 jest.mock( 'page', () => ( {
@@ -34,22 +37,40 @@ jest.mock( 'lib/route/path', () => ( {
 } ) );
 
 describe( 'JetpackConnectMain', () => {
-	describe( 'makeSafeRedirectionFunction', () => {
-		const component = new JetpackConnectMain( REQUIRED_PROPS );
+	beforeEach( () => {
+		externalRedirect.mockReset();
+		page.redirect.mockReset();
+	} );
 
-		beforeEach( () => {
-			component.redirecting = false;
+	describe( 'cleanUrl', () => {
+		test( 'should prepare entered urls for network access', () => {
+			const cleanUrl = new JetpackConnectMain( REQUIRED_PROPS ).cleanUrl;
+			const results = [
+				{ input: '', expected: '' },
+				{ input: 'a', expected: 'http://a' },
+				{ input: 'example.com', expected: 'http://example.com' },
+				{ input: '  example.com   ', expected: 'http://example.com' },
+				{ input: 'http://example.com/', expected: 'http://example.com' },
+				{ input: 'eXAmple.com', expected: 'http://example.com' },
+				{ input: 'example.com/wp-admin', expected: 'http://example.com' },
+			];
+
+			results.forEach( ( { input, expected } ) => expect( cleanUrl( input ) ).toBe( expected ) );
 		} );
+	} );
 
-		test( 'should make a function that can calls the wrappe function', () => {
+	describe( 'makeSafeRedirectionFunction', () => {
+		test( 'should make a function that can calls the wrapper function', () => {
+			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
 			const innerFunc = jest.fn();
-			const wrapperFunc = component.makeSafeRedirectionFunction( innerFunc );
+			const wrapperFunc = component.instance().makeSafeRedirectionFunction( innerFunc );
 			expect( () => wrapperFunc() ).not.toThrow();
 		} );
 
 		test( 'should protect against multiple calls', () => {
 			const innerFunc = jest.fn();
-			const wrapperFunc = component.makeSafeRedirectionFunction( innerFunc );
+			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
+			const wrapperFunc = component.instance().makeSafeRedirectionFunction( innerFunc );
 			wrapperFunc();
 			wrapperFunc();
 			wrapperFunc();
@@ -57,67 +78,10 @@ describe( 'JetpackConnectMain', () => {
 		} );
 	} );
 
-	describe( 'goToPluginActivation', () => {
-		const component = new JetpackConnectMain( REQUIRED_PROPS );
-
-		beforeEach( () => {
-			component.redirecting = false;
-			component.props.recordTracksEvent.mockReset();
-			externalRedirect.mockReset();
-		} );
-
-		test( 'should fire redirect', () => {
-			component.goToPluginActivation( 'example.com' );
-
-			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-
-		test( 'should dispatch analytics', () => {
-			const url = 'example.com';
-			component.goToPluginActivation( url );
-
-			expect( component.props.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-			expect( component.props.recordTracksEvent.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-	} );
-
-	describe( 'goToPluginInstall', () => {
-		const component = new JetpackConnectMain( REQUIRED_PROPS );
-
-		beforeEach( () => {
-			component.redirecting = false;
-			component.props.recordTracksEvent.mockReset();
-			externalRedirect.mockReset();
-		} );
-
-		test( 'should fire redirect', () => {
-			component.goToPluginInstall( 'example.com' );
-
-			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
-			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-
-		test( 'should dispatch analytics', () => {
-			const url = 'example.com';
-			component.goToPluginInstall( url );
-
-			expect( component.props.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-			expect( component.props.recordTracksEvent.mock.calls[ 0 ] ).toMatchSnapshot();
-		} );
-	} );
-
 	describe( 'goToRemoteAuth', () => {
-		const component = new JetpackConnectMain( REQUIRED_PROPS );
-
-		beforeEach( () => {
-			component.redirecting = false;
-			component.props.recordTracksEvent.mockReset();
-			externalRedirect.mockReset();
-		} );
-
 		test( 'should fire redirect', () => {
-			component.goToRemoteAuth( 'example.com' );
+			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
+			component.instance().goToRemoteAuth( 'example.com' );
 
 			expect( externalRedirect ).toHaveBeenCalledTimes( 1 );
 			expect( externalRedirect.mock.calls[ 0 ] ).toMatchSnapshot();
@@ -125,27 +89,22 @@ describe( 'JetpackConnectMain', () => {
 
 		test( 'should dispatch analytics', () => {
 			const url = 'example.com';
-			component.goToRemoteAuth( url );
+			const spy = jest.fn();
+			const component = shallow(
+				<JetpackConnectMain { ...REQUIRED_PROPS } recordTracksEvent={ spy } />
+			);
+			spy.mockReset();
+			component.instance().goToRemoteAuth( url );
 
-			expect( component.props.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-			expect( component.props.recordTracksEvent.mock.calls[ 0 ] ).toMatchSnapshot();
+			expect( spy ).toHaveBeenCalledTimes( 1 );
+			expect( spy.mock.calls[ 0 ] ).toMatchSnapshot();
 		} );
 	} );
 
 	describe( 'goToPlans', () => {
-		const component = new JetpackConnectMain( {
-			...REQUIRED_PROPS,
-			recordTracksEvent: jest.fn(),
-		} );
-
-		beforeEach( () => {
-			component.redirecting = false;
-			component.props.recordTracksEvent.mockReset();
-			page.redirect.mockReset();
-		} );
-
 		test( 'should fire redirect', () => {
-			component.goToPlans( 'example.com' );
+			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
+			component.instance().goToPlans( 'example.com' );
 
 			expect( page.redirect ).toHaveBeenCalledTimes( 1 );
 			expect( page.redirect ).toHaveBeenCalledWith( '/jetpack/connect/plans/example.com' );
@@ -153,7 +112,8 @@ describe( 'JetpackConnectMain', () => {
 
 		test( 'should redirect to a site slug', () => {
 			const url = 'https://example.com/sub-directory-install';
-			component.goToPlans( url );
+			const component = shallow( <JetpackConnectMain { ...REQUIRED_PROPS } /> );
+			component.instance().goToPlans( url );
 
 			expect( page.redirect ).toHaveBeenCalledWith(
 				'/jetpack/connect/plans/example.com::sub-directory-install'
@@ -162,10 +122,15 @@ describe( 'JetpackConnectMain', () => {
 
 		test( 'should dispatch analytics', () => {
 			const url = 'example.com';
-			component.goToPlans( url );
+			const spy = jest.fn();
+			const component = shallow(
+				<JetpackConnectMain { ...REQUIRED_PROPS } recordTracksEvent={ spy } />
+			);
+			spy.mockReset();
+			component.instance().goToPlans( url );
 
-			expect( component.props.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-			expect( component.props.recordTracksEvent.mock.calls[ 0 ] ).toMatchSnapshot();
+			expect( spy ).toHaveBeenCalledTimes( 1 );
+			expect( spy.mock.calls[ 0 ] ).toMatchSnapshot();
 		} );
 	} );
 } );

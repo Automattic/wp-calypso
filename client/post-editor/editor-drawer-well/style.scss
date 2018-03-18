@@ -13,11 +13,11 @@
 	min-height: 150px;
 	padding: 24px;
 	margin: 0;
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	cursor: pointer;
 
 	&:hover {
-		border-color: lighten( $gray, 10% );
+		border-color: $gray-lighten-10;
 		color: $gray-dark;
 	}
 }

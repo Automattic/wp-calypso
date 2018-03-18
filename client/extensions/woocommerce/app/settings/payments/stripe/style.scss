@@ -14,7 +14,7 @@
 		.stripe__connect-account-logo-container {
 			align-items: center;
 			background: $white;
-			border: 1px solid lighten( $gray, 20% );
+			border: 1px solid $gray-lighten-20;
 			display: flex;
 			height: 46px;
 			justify-content: center;

@@ -207,7 +207,7 @@ describe( 'reducer', () => {
 		test( 'should never persist state', () => {
 			const state = queryRequests( deepFreeze( state1 ), { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should never load persisted state', () => {
@@ -280,7 +280,7 @@ describe( 'reducer', () => {
 		test( 'should never persist state', () => {
 			const state = mediaItemRequests( deepFreeze( state1 ), { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should never load persisted state', () => {

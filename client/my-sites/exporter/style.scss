@@ -171,7 +171,7 @@
 	height: 48px;
 	padding: 14px;
 	border-radius: 50%;
-	background-color: darken( $gray, 20% );
+	background-color: $gray-darken-20;
 	color: $gray-light;
 
 	@include breakpoint( ">660px" ) {

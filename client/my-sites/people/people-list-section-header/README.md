@@ -1,7 +1,7 @@
 PeopleListSectionHeader
 =============
 
-This component is responsible for displaying the "add" button the section header above each list of people.
+This component is responsible for displaying the "invite" button the section header above each list of people.
 
 ### Properties
 - `label` - (string) The text to be displayed as a label for the section header

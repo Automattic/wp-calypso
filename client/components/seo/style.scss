@@ -13,18 +13,18 @@
 	margin: 0;
 	padding: 8px 0;
 	background-color: $gray-light;
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	border-bottom: 0;
 	font-size: 11px;
 	line-height: 1;
 	font-weight: bold;
 	text-transform: uppercase;
 	text-align: center;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 }
 
 .seo-search-preview__display {
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	font-family: arial, sans-serif;
 	padding: 10px 20px;
 	word-wrap: break-word;

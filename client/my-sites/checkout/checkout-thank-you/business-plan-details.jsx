@@ -44,7 +44,7 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature, purcha
 						'your site and learn more about WordPress.com.'
 				) }
 				buttonText={ i18n.translate( 'Schedule a session' ) }
-				href={ 'https://calendly.com/wordpressdotcom/wordpress-com-business-site-setup/' }
+				href={ `/me/concierge/${ selectedSite.slug }/book` }
 				onClick={ trackOnboardingButtonClick }
 			/>
 

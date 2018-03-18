@@ -8,11 +8,12 @@ import { every } from 'lodash';
 /**
  * Internal Dependencies
  */
-import PostStore from 'lib/feed-post-store';
 import XPostHelper, { isXPost } from 'reader/xpost-helper';
 import { setLastStoreId } from 'reader/controller-helper';
 import { fillGap } from 'lib/feed-stream-store/actions';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { reduxGetState } from 'lib/redux-bridge';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
 export function isSpecialClick( event ) {
 	return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
@@ -42,7 +43,7 @@ export function showSelectedPost( { store, replaceHistory, postKey, comments } )
 		return;
 	}
 
-	const post = PostStore.get( postKey );
+	const post = getPostByKey( reduxGetState(), postKey );
 
 	if ( isXPost( post ) && ! replaceHistory ) {
 		return showFullXPost( XPostHelper.getXPostMetadata( post ) );

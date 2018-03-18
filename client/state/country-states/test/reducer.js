@@ -120,7 +120,7 @@ describe( 'reducer', () => {
 		test( 'should never persist state', () => {
 			const state = isFetching( true, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should never load persisted state', () => {

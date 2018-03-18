@@ -21,7 +21,7 @@
 		left: 0;
 	transform: translateY( -50% );
 	line-height: 1;
-	fill: darken( $gray, 20% );
+	fill: $gray-darken-20;
 
 	.gridicon {
 		margin-top: 3px;

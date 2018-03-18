@@ -1,7 +1,7 @@
 .vertical-nav-item {
 	.gridicon {
 		box-sizing: border-box;
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 		display: block;
 		height: 100%;
 		position: absolute;

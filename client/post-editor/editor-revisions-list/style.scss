@@ -5,18 +5,18 @@
 .editor-revisions-list {
 	position: relative;
 	background: $gray-light;
-	flex-basis: 120px;
+	flex-basis: 162px;
 	flex-grow: 0;
 	flex-shrink: 0;
 
 	@include breakpoint( '>660px' ) {
 		border-left: 1px solid darken($sidebar-bg-color, 5%);
-		z-index: 1; // Put the list above the action-buttons:before overlay gradient. -shaun
+		z-index: 1; // Put the list above the action-buttons::before overlay gradient. -shaun
 		flex-basis: 230px;
 	}
 
 	@include breakpoint( '<660px' ) {
-		&:after {
+		&::after {
 			$editor-revisions-list-fade-height: 20px;
 			content: '';
 			position: absolute;
@@ -60,10 +60,96 @@
 	}
 }
 
+// Revision Navigation Buttons
+.editor-revisions-list__navigation {
+	display: flex;
+	flex-direction: row-reverse;
+	height: 40px;
+	color: $gray-text-min;
+	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
+	.button:first-child,
+	.button:last-child {
+		border-radius: 0;
+	}
+
+	@include breakpoint( '>660px' ) {
+		flex-direction: row;
+		height: 24px;
+	}
+}
+
+.editor-revisions-list__prev-button,
+.editor-revisions-list__next-button {
+	display: inline-block;
+	width: 50%;
+	height: 40px;
+	vertical-align: middle;
+	background: transparent;
+	border: none;
+	&.button:disabled,
+	&.button[disabled],
+	&.button.disabled {
+		background: transparent;
+		color: lighten($gray-text-min, 30%);
+		border-color: darken($sidebar-bg-color, 5%);
+	}
+	.gridicon {
+		transform: rotate(-90deg);
+	}
+
+	@include breakpoint( '>660px' ) {
+		height: 24px;
+		.gridicon {
+			transform: none;
+		}
+	}
+}
+
+.button-group {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:first-child,
+	.editor-revisions-list__next-button {
+		&:focus {
+			box-shadow: none;
+		}
+	}
+}
+
+.accessible-focus {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:first-child,
+	.editor-revisions-list__next-button {
+		&:focus {
+			outline: solid 2px $blue-light;
+			outline-offset: -2px;
+		}
+	}
+}
+
+@include breakpoint( '<660px' ) {
+	.editor-revisions-list__next-button,
+	.editor-revisions-list__next-button:hover,
+	.editor-revisions-list__next-button:active {
+		border-right: 1px solid darken($sidebar-bg-color, 5%);
+	}
+}
+
+@include breakpoint( '>660px' ) {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:hover {
+		border-right: 1px solid darken($sidebar-bg-color, 5%);
+	}
+	.button-group {
+		.editor-revisions-list__prev-button:first-child:active {
+			border-right: 1px solid darken($sidebar-bg-color, 5%);
+		}
+	}
+}
+
 // Scrollable Box for Revisions List
 .editor-revisions-list__scroller {
 	position: absolute;
-	top: 47px;
+	top: 72px;
 	right: 0;
 	bottom: 0;
 	left: 0;
@@ -71,6 +157,7 @@
 	-webkit-overflow-scrolling: touch;
 
 	@include breakpoint( '<660px' ) {
+		top: 88px;
 		overflow-y: hidden;
 	}
 }
@@ -84,7 +171,7 @@
 		white-space: nowrap;
 	}
 
-	&:before {
+	&::before {
 		content: '';
 		display: block;
 		box-sizing: border-box;
@@ -101,7 +188,7 @@
 }
 
 // Individual Revision List Item
-.editor-revisions-list.is-loading .editor-revisions-list__list:before,
+.editor-revisions-list.is-loading .editor-revisions-list__list::before,
 .editor-revisions-list__button {
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 	border-right: 1px solid darken($sidebar-bg-color, 5%);
@@ -112,7 +199,7 @@
 	padding: 8px 16px;
 	margin: 0;
 	min-height: 73px;
-	width: 60vw;
+	width: 45vw;
 
 	@include breakpoint( '>660px' ) {
 		display: block;

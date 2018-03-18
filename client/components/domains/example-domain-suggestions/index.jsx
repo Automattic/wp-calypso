@@ -18,13 +18,13 @@ import { DESIGN_TYPE_STORE } from 'signup/constants';
 
 class DomainSuggestionsExample extends React.Component {
 	static propTypes = {
-		mapDomainUrl: PropTypes.string.isRequired,
+		url: PropTypes.string.isRequired,
 	};
 
 	render() {
 		const { translate, siteDesignType } = this.props;
 
-		const showDomainMappingOption = siteDesignType !== DESIGN_TYPE_STORE;
+		const showDomainOption = siteDesignType !== DESIGN_TYPE_STORE;
 
 		/* eslint-disable max-len */
 		return (
@@ -34,9 +34,9 @@ class DomainSuggestionsExample extends React.Component {
 						'A domain name is what people type into their browser to visit your site.'
 					) }
 				</p>
-				{ showDomainMappingOption && (
+				{ showDomainOption && (
 					<p className="example-domain-suggestions__mapping-information">
-						<a onClick={ this.props.recordClick } href={ this.props.mapDomainUrl }>
+						<a onClick={ this.props.recordClick } href={ this.props.url }>
 							{ translate( 'Already own a domain?' ) }
 						</a>
 					</p>
@@ -70,8 +70,7 @@ class DomainSuggestionsExample extends React.Component {
 	}
 }
 
-const recordClick = () =>
-	recordTracksEvent( 'calypso_example_domain_suggestions_mapping_link_click' );
+const recordClick = () => recordTracksEvent( 'calypso_example_domain_suggestions_link_click' );
 
 export default connect(
 	state => ( {

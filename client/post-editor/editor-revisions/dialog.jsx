@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { closePostRevisionsDialog, selectPostRevision } from 'state/posts/revisions/actions';
 import EditorRevisions from 'post-editor/editor-revisions';
 import Dialog from 'components/dialog';
+import CloseOnEscape from 'components/close-on-escape';
 
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {
@@ -93,6 +94,7 @@ class PostRevisionsDialog extends PureComponent {
 				isVisible={ isVisible }
 				onClose={ closeDialog }
 			>
+				<CloseOnEscape onEscape={ closeDialog } />
 				<EditorRevisions />
 			</Dialog>
 		);

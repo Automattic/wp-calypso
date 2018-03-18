@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Card from 'components/card';
+import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -70,12 +71,16 @@ class StatsMostPopular extends Component {
 						{ ! percent &&
 							! requesting && (
 								<div className="most-popular__empty">
-									<span className="most-popular__notice">
-										{ translate( 'No popular day and time recorded', {
+									<Notice
+										className="most-popular__notice"
+										status="is-warning"
+										isCompact="true"
+										text={ translate( 'No popular day and time recorded', {
 											context: 'Message on stats insights page when no most popular data exists.',
 											comment: 'Should be limited to 32 characters to prevent wrapping',
 										} ) }
-									</span>
+										showDismiss={ false }
+									/>
 								</div>
 							) }
 					</div>

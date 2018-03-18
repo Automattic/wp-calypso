@@ -77,6 +77,13 @@ class FormAnalyticsStores extends Component {
 			{
 				key: 'ec_track_add_to_cart',
 				label: translate( 'Add to cart events' ),
+				explanation: translate(
+					'Before enabling these, turn on eCommerce in your Google Analytics dashboard.'
+				),
+				link: {
+					label: translate( 'Learn how' ),
+					url: 'https://support.google.com/analytics/answer/1009612#Enable',
+				},
 			},
 		];
 

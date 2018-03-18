@@ -22,12 +22,10 @@ const LocalPickupMethod = ( { id, cost, currency, translate, actions } ) => {
 	const onCostChange = event => actions.setShippingCost( id, event.target.value );
 
 	return (
-		<div className="shipping-methods__method-container shipping-methods__local-pickup">
-			<FormFieldSet>
-				<FormLabel>{ translate( 'How much will you charge for local pickup?' ) }</FormLabel>
-				<PriceInput currency={ currency } value={ cost } onChange={ onCostChange } />
-			</FormFieldSet>
-		</div>
+		<FormFieldSet>
+			<FormLabel>{ translate( 'How much will you charge for local pickup?' ) }</FormLabel>
+			<PriceInput currency={ currency } value={ cost } onChange={ onCostChange } />
+		</FormFieldSet>
 	);
 };
 

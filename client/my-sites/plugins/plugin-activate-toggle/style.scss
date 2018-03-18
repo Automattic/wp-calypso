@@ -12,11 +12,11 @@
 }
 
 .plugin-activate-toggle__disabled {
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 }
 
 .plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
-	color: lighten( $gray, 30% );
+	color: $gray-lighten-30;
 }
 
 .plugin-activate-toggle__label {

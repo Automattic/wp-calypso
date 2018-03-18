@@ -21,14 +21,13 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-	SITES_RECEIVE,
+	SITE_RECEIVE,
 } from 'state/action-types';
 
 jest.mock( 'lib/localforage', () => require( 'lib/localforage/localforage-bypass' ) );
 
 describe( 'actions', () => {
-	const mySitesPath =
-		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
+	const mySitesPath = '/rest/v1.1/me/sites';
 
 	describe( '#confirmJetpackInstallStatus()', () => {
 		test( 'should dispatch confirm status action when called', () => {
@@ -129,7 +128,7 @@ describe( 'actions', () => {
 					.reply(
 						200,
 						{
-							sites: [ client_id ],
+							ID: client_id,
 						},
 						{
 							'Content-Type': 'application/json',
@@ -186,8 +185,8 @@ describe( 'actions', () => {
 
 				return authorize( queryObject )( spy ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
-						type: SITES_RECEIVE,
-						sites: [ client_id ],
+						type: SITE_RECEIVE,
+						site: { ID: client_id },
 					} );
 				} );
 			} );
@@ -199,9 +198,6 @@ describe( 'actions', () => {
 				return authorize( queryObject )( spy ).then( () => {
 					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-						data: {
-							sites: [ client_id ],
-						},
 					} );
 				} );
 			} );

@@ -14,6 +14,7 @@ describe( 'lib/string/areEqualIgnoringWhitespaceAndCase', () => {
 	test( 'should match', () => {
 		const pairs = [
 			// actual, expected
+			[ null, null ],
 			[ '', '' ],
 			[ 'hi there', 'Hi There' ],
 			[ 'hithere', 'Hi There' ],

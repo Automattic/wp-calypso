@@ -5,6 +5,7 @@
  */
 
 import { omit } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,6 +24,7 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_SUCCESS,
 	SITES_REQUEST_FAILURE,
+	SITE_PLUGIN_UPDATED,
 } from 'state/action-types';
 
 /**
@@ -89,7 +91,7 @@ export function requestSites() {
 				fields:
 					'ID,URL,name,capabilities,jetpack,visible,is_private,is_vip,icon,plan,jetpack_modules,single_user_site,is_multisite,options', //eslint-disable-line max-len
 				options:
-					'is_mapped_domain,unmapped_url,admin_url,is_redirect,is_automated_transfer,allowed_file_types,show_on_front,main_network_site,jetpack_version,software_version,default_post_format,created_at,frame_nonce,publicize_permanently_disabled,page_on_front,page_for_posts,advanced_seo_front_page_description,advanced_seo_title_formats,verification_services_codes,podcasting_archive,is_domain_only,default_sharing_status,default_likes_enabled,wordads,upgraded_filetypes_enabled,videopress_enabled,permalink_structure,gmt_offset,is_wpcom_store,signup_is_store,has_pending_automated_transfer,woocommerce_is_active,design_type', //eslint-disable-line max-len
+					'is_mapped_domain,unmapped_url,admin_url,is_redirect,is_automated_transfer,allowed_file_types,show_on_front,main_network_site,jetpack_version,software_version,default_post_format,created_at,frame_nonce,publicize_permanently_disabled,page_on_front,page_for_posts,advanced_seo_front_page_description,advanced_seo_title_formats,verification_services_codes,podcasting_archive,is_domain_only,default_sharing_status,default_likes_enabled,wordads,upgraded_filetypes_enabled,videopress_enabled,permalink_structure,gmt_offset,is_wpcom_store,signup_is_store,has_pending_automated_transfer,woocommerce_is_active,design_type,site_goals', //eslint-disable-line max-len
 			} )
 			.then( response => {
 				dispatch( receiveSites( response.sites ) );
@@ -124,7 +126,17 @@ export function requestSite( siteFragment ) {
 			.site( siteFragment )
 			.get()
 			.then( site => {
+				// If we can't manage the site, don't add it to state.
+				if ( ! ( site && site.capabilities ) ) {
+					return dispatch( {
+						type: SITE_REQUEST_FAILURE,
+						siteId: siteFragment,
+						error: i18n.translate( 'No access to manage the site' ),
+					} );
+				}
+
 				dispatch( receiveSite( omit( site, '_headers' ) ) );
+
 				dispatch( {
 					type: SITE_REQUEST_SUCCESS,
 					siteId: siteFragment,
@@ -172,3 +184,8 @@ export function deleteSite( siteId ) {
 			} );
 	};
 }
+
+export const sitePluginUpdated = siteId => ( {
+	type: SITE_PLUGIN_UPDATED,
+	siteId,
+} );

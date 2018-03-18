@@ -84,6 +84,7 @@ export const CONTEXT = deepFreeze( {
 export const TRANSACTION = deepFreeze( {
 	errors: {},
 	newCardFormFields: {},
+	newCardRawDetails: {},
 	step: { name: 'before-submit' },
 	domainDetails: null,
 } );

@@ -49,6 +49,10 @@ function getTransferStatus( domainFromApi ) {
 		return transferStatus.COMPLETED;
 	}
 
+	if ( domainFromApi.transfer_status === 'pending_start' ) {
+		return transferStatus.PENDING_START;
+	}
+
 	return null;
 }
 

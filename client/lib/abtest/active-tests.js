@@ -1,14 +1,5 @@
 /** @format */
 export default {
-	multiDomainRegistrationV1: {
-		datestamp: '20200721',
-		variations: {
-			singlePurchaseFlow: 10,
-			popupCart: 45,
-			keepSearchingInGapps: 45,
-		},
-		defaultVariation: 'singlePurchaseFlow',
-	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
@@ -55,23 +46,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: 'any',
 	},
-	unlimitedThemeNudge: {
-		datestamp: '20171016',
-		variations: {
-			hide: 50,
-			show: 50,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	signupSiteSegmentStep: {
-		datestamp: '20170329',
-		variations: {
-			control: 0,
-			variant: 100,
-		},
-		defaultVariation: 'control',
-	},
 	checklistThankYouForFreeUser: {
 		datestamp: '20171204',
 		variations: {
@@ -90,23 +64,75 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	gsuiteUpsellV2: {
-		datestamp: '20171225',
+	domainSuggestionTestV6: {
+		datestamp: '20180315',
+		variations: {
+			group_0: 1, // Default group
+			group_1: 1000,
+			group_2: 1000,
+			group_3: 1000,
+			group_4: 1000,
+		},
+		defaultVariation: 'group_0',
+		allowExistingUsers: true,
+	},
+	minimizedFreePlanForSignedUser: {
+		datestamp: '20180308',
+		variations: {
+			original: 50,
+			minimized: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	minimizedFreePlanForUnsignedUser: {
+		datestamp: '20180308',
+		variations: {
+			original: 50,
+			minimized: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	upgradePricingDisplayV2: {
+		datestamp: '20180305',
 		variations: {
 			original: 50,
 			modified: 50,
 		},
 		defaultVariation: 'original',
+	},
+	domainSearchPrefill: {
+		datestamp: '20180315',
+		variations: {
+			noPrefill: 50,
+			withSiteTitle: 50,
+		},
+		defaultVariation: 'noPrefill',
 		allowExistingUsers: true,
 	},
-
-	// Must run at least 1 full week from commit time
-	// 2018-01-24 to 2018-01-31
-	promoteYearlyJetpackPlanSavings: {
-		datestamp: '20180124',
+	redesignedSidebarBanner: {
+		datestamp: '20180222',
 		variations: {
-			original: 50,
-			promoteYearly: 50,
+			newBanner: 50,
+			oldBanner: 50,
+		},
+		defaultVariation: 'oldBanner',
+	},
+	siteGoalsShuffle: {
+		datestamp: '20180214',
+		variations: {
+			control: 50,
+			variant: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	inlineHelpWithContactForm: {
+		datestamp: '20180306',
+		variations: {
+			original: 90,
+			inlinecontact: 10,
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,

@@ -23,7 +23,7 @@
 	display: inline-block;
 	position: relative;
 	height: 9px;
-	background-color: lighten( $gray, 20% );
+	background-color: $gray-lighten-20;
 	border-radius: 4.5px;
 
 	&.is-compact {

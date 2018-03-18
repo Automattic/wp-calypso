@@ -10,13 +10,13 @@ CreditCardNumberInput
 import React from 'react';
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
 
-React.createClass( {
-	render: function() {
+class MyComponent extends React.Component {
+	render() {
 		return (
 			<CreditCardNumberInput value={ this.state.card.number } />
 		);
 	}
-} );
+}
 ```
 
 ## Properties

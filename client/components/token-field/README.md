@@ -55,18 +55,18 @@ The `value` property is handled in a manner similar to controlled form component
 ### Example
 
 ```jsx
-React.createClass( {
-	render: function() {
+class MyComponent extends React.Component {
+	onTokensChange: ( event ) => {
+		this.setState( { tokens: event.value } );
+	}
+
+	render() {
 		return (
 			<TokenField
 				value={ this.state.tokens }
 				onChange={ this.onTokensChange }
 				suggestions={ this.state.suggestions } />
 		);
-	},
-
-	onTokensChange: function( event ) {
-		this.setState( { tokens: event.value } );
 	}
-} );
+}
 ```

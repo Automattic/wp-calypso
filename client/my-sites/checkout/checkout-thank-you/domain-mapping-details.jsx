@@ -5,40 +5,44 @@
  */
 
 import React from 'react';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
-import { MAP_EXISTING_DOMAIN } from 'lib/url/support';
+import { isSubdomain } from 'lib/domains';
+import { isBusiness } from 'lib/products-values';
+import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
+import { getSelectedSite } from 'state/ui/selectors';
 
-const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
+const DomainMappingDetails = ( {
+	domain,
+	isBusinessPlan,
+	isSubdomainMapping,
+	isRootDomainWithUs,
+	registrarSupportUrl,
+	selectedSiteDomain,
+	translate,
+} ) => {
+	if ( isSubdomainMapping && isRootDomainWithUs ) {
+		return null;
+	}
+
 	const registrarSupportLink = registrarSupportUrl ? (
 		<a target="_blank" rel="noopener noreferrer" href={ registrarSupportUrl } />
 	) : (
 		<span />
 	);
-	const description = (
+
+	let instructions = (
 		<div>
 			<p>
 				{ translate(
-					'Your domain {{em}}%(domain)s{{/em}} has to be configured to work with WordPress.com.',
-					{
-						args: { domain },
-						components: { em: <em /> },
-					}
-				) }
-			</p>
-			<p>
-				{ translate(
-					'If you already did this yourself, or if the domain was already configured for you, no further action is needed.'
-				) }
-			</p>
-			<p>
-				{ translate(
-					"If not, you will need to log into {{registrarSupportLink}}your registrar's site{{/registrarSupportLink}} " +
-						'(where you purchased the domain originally) and change the "Name Servers" to:',
+					'To point your domain at your WordPress.com site, log in to your ' +
+						"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
+						'(where you purchased the domain), and update your name servers to:',
 					{
 						components: {
 							registrarSupportLink: registrarSupportLink,
@@ -51,11 +55,61 @@ const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
 				<li>ns2.wordpress.com</li>
 				<li>ns3.wordpress.com</li>
 			</ul>
-			<p>
-				{ translate(
-					'Once you make the change, just wait a few hours and the domain should start loading your site automatically.'
-				) }
-			</p>
+		</div>
+	);
+
+	if ( isSubdomainMapping ) {
+		instructions = (
+			<div>
+				<p>
+					{ translate(
+						'To point your domain at your WordPress.com site, log in to your ' +
+							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
+							'(where you purchased the domain), and edit the DNS records to add a CNAME record:',
+						{
+							components: {
+								registrarSupportLink: registrarSupportLink,
+							},
+						}
+					) }
+				</p>
+				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
+					<li>
+						{ domain }. IN CNAME { selectedSiteDomain }.
+					</li>
+				</ul>
+			</div>
+		);
+	}
+
+	if ( isSubdomainMapping && isBusinessPlan ) {
+		instructions = (
+			<div>
+				<p>
+					{ translate(
+						'To point your domain at your WordPress.com site, log in to your ' +
+							"{{registrarSupportLink}}domain provider's site{{/registrarSupportLink}} " +
+							'(where you purchased the domain), and edit the DNS records to add these NS records:',
+						{
+							components: {
+								registrarSupportLink: registrarSupportLink,
+							},
+						}
+					) }
+				</p>
+				<ul className="checkout-thank-you__domain-mapping-details-nameservers">
+					<li>{ domain }. IN NS ns1.wordpress.com.</li>
+					<li>{ domain }. IN NS ns2.wordpress.com.</li>
+					<li>{ domain }. IN NS ns3.wordpress.com.</li>
+				</ul>
+			</div>
+		);
+	}
+
+	const description = (
+		<div>
+			{ instructions }
+			<p>{ translate( 'If you already did this, no further action is required.' ) }</p>
 		</div>
 	);
 
@@ -65,7 +119,7 @@ const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
 				icon="cog"
 				description={ description }
 				buttonText={ translate( 'Learn more' ) }
-				href={ MAP_EXISTING_DOMAIN }
+				href={ isSubdomainMapping ? MAP_SUBDOMAIN : MAP_EXISTING_DOMAIN }
 				target="_blank"
 				rel="noopener noreferrer"
 				isRequired
@@ -74,4 +128,13 @@ const DomainMappingDetails = ( { domain, registrarSupportUrl, translate } ) => {
 	);
 };
 
-export default localize( DomainMappingDetails );
+const mapStateToProps = ( state, { domain } ) => {
+	const selectedSite = getSelectedSite( state );
+	return {
+		isBusinessPlan: isBusiness( selectedSite.plan ),
+		isSubdomainMapping: isSubdomain( domain ),
+		selectedSiteDomain: selectedSite.domain,
+	};
+};
+
+export default connect( mapStateToProps )( localize( DomainMappingDetails ) );

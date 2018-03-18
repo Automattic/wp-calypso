@@ -13,12 +13,6 @@
 		margin-top: 16px;
 	}
 
-	.search {
-		@include breakpoint( ">660px" ) {
-			margin-top: 58px;
-		}
-	}
-
 	.promotions__list-placeholder {
 		@include placeholder();
 		background: $white;
@@ -105,4 +99,3 @@
 	}
 
 }
-

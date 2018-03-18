@@ -119,7 +119,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -209,7 +209,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -285,7 +285,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -342,7 +342,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -400,7 +400,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -448,7 +448,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {
@@ -550,7 +550,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should not load persisted state', () => {

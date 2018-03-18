@@ -15,7 +15,7 @@ import {
 	arePaymentMethodsLoaded,
 } from 'woocommerce/state/sites/payment-methods/selectors';
 
-const getPaymentMethodsEdits = ( state, siteId ) => {
+export const getPaymentMethodsEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'payments', siteId, 'methods' ] );
 };
 

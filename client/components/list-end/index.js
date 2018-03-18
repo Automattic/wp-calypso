@@ -5,9 +5,12 @@
  */
 
 import React from 'react';
+import Gridicon from 'gridicons';
 
-// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-const listEnd = <div className="list-end" />;
 export default function ListEnd() {
-	return listEnd;
+	return (
+		<div className="list-end">
+			<Gridicon icon="my-sites" />
+		</div>
+	);
 }

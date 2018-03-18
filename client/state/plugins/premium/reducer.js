@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { forEach } from 'lodash';
+import { mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +18,8 @@ import {
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
 	SERIALIZE,
-	DESERIALIZE,
 } from 'state/action-types';
-import { combineReducers, isValidStateWithSchema } from 'state/utils';
+import { combineReducers } from 'state/utils';
 import { pluginInstructionSchema } from './schema';
 
 /*
@@ -71,27 +70,20 @@ export function plugins( state = {}, action ) {
 			}
 			return state;
 		case SERIALIZE:
-			const processedState = {};
 			// Save the error state as a string message.
-			forEach( state, ( pluginList, key ) => {
-				processedState[ key ] = pluginList.map( item => {
+			return mapValues( state, pluginList =>
+				pluginList.map( item => {
 					if ( item.error !== null ) {
 						return Object.assign( {}, item, { error: item.error.toString() } );
 					}
 					return item;
-				} );
-			} );
-			return processedState;
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, pluginInstructionSchema ) ) {
-				return {};
-			}
-			return state;
+				} )
+			);
 		default:
 			return state;
 	}
 }
-plugins.hasCustomPersistence = true;
+plugins.schema = pluginInstructionSchema;
 
 /*
  * Tracks the list of premium plugin objects for a single site

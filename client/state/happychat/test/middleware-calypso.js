@@ -18,8 +18,9 @@ import { selectSiteId } from 'state/help/actions';
 import { setRoute } from 'state/ui/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import getGroups from 'state/happychat/selectors/get-groups';
-import { sendPreferences } from 'state/happychat/connection/actions';
+import { receiveStatus, sendPreferences } from 'state/happychat/connection/actions';
 import {
+	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
@@ -98,6 +99,50 @@ describe( 'middleware', () => {
 			} );
 		} );
 
+		describe( 'HAPPYCHAT_IO_RECEIVE_STATUS', () => {
+			let state;
+			beforeEach( () => {
+				state = {
+					happychat: {
+						chat: { status: HAPPYCHAT_CHAT_STATUS_DEFAULT },
+					},
+					ui: { route: { path: { current: '/happychat' } } },
+				};
+
+				store.getState.mockReturnValue( state );
+			} );
+
+			test( 'should dispatch an event message when going from pending to assigned chat status', () => {
+				// First set the status to pending
+				state.happychat.chat.status = HAPPYCHAT_CHAT_STATUS_PENDING;
+				// Now set the status to assigned
+				actionMiddleware( receiveStatus( HAPPYCHAT_CHAT_STATUS_ASSIGNED ) );
+				// This should have sent a routing message
+				expect( store.dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						type: HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
+						payload: expect.objectContaining( {
+							text: 'Looking at https://wordpress.com/happychat',
+						} ),
+					} )
+				);
+			} );
+
+			test( 'should not dispatch an event message when going from other chat statuses to assigned chat status', () => {
+				// Set the status to assigned (from default)
+				actionMiddleware( receiveStatus( HAPPYCHAT_CHAT_STATUS_ASSIGNED ) );
+
+				// Re-set status to abandoned and then to assigned again
+				state.happychat.chat.status = HAPPYCHAT_CHAT_STATUS_ABANDONED;
+				actionMiddleware( receiveStatus( HAPPYCHAT_CHAT_STATUS_ASSIGNED ) );
+
+				// No routing event messages should have shown
+				expect( store.dispatch ).not.toHaveBeenCalledWith(
+					expect.objectContaining( { type: HAPPYCHAT_IO_SEND_MESSAGE_EVENT } )
+				);
+			} );
+		} );
+
 		describe( 'ROUTE_SET', () => {
 			const action = setRoute( '/me' );
 
@@ -127,7 +172,7 @@ describe( 'middleware', () => {
 			test( 'should dispatch a sendEvent action if client connected and chat assigned', () => {
 				actionMiddleware( action );
 				expect( store.dispatch.mock.calls[ 0 ][ 0 ].payload.text ).toBe(
-					'Looking at https://wordpress.com/me?support_user=Link'
+					'Looking at https://wordpress.com/me'
 				);
 			} );
 

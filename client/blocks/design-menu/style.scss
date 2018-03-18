@@ -29,7 +29,7 @@
 .design-menu {
 	transform: translateX( 0 );
 	transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	position: fixed;
 		top: 0;
 		bottom: 0;

@@ -247,9 +247,7 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			domainsController.redirectToAddMappingIfVipSite(),
 			jetPackWarning,
-			domainsController.domainSearch,
-			makeLayout,
-			clientRender
+			domainsController.redirectToDomainSearchSuggestion
 		);
 
 		page(
@@ -292,6 +290,17 @@ export default function() {
 			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
 			jetPackWarning,
 			domainsController.transferDomain,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
+			siteSelection,
+			navigation,
+			domainsController.redirectIfNoSite( '/domains/manage' ),
+			jetPackWarning,
+			domainsController.transferDomainPrecheck,
 			makeLayout,
 			clientRender
 		);

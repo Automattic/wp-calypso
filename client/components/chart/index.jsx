@@ -12,6 +12,8 @@ import { noop, throttle } from 'lodash';
  */
 import BarContainer from './bar-container';
 import { hasTouch } from 'lib/touch-detect';
+import Tooltip from 'components/tooltip';
+import Notice from 'components/notice';
 
 class Chart extends React.Component {
 	state = {
@@ -20,6 +22,7 @@ class Chart extends React.Component {
 		maxBars: 100, // arbitrarily high number. This will be calculated by resize method
 		width: 650,
 		yMax: 0,
+		isTooltipVisible: false,
 	};
 
 	static propTypes = {
@@ -42,7 +45,11 @@ class Chart extends React.Component {
 		this.resize = throttle( this.resize, 400 );
 		window.addEventListener( 'resize', this.resize );
 
-		this.resize( this.props );
+		const { data, loading } = this.props;
+
+		if ( data && data.length && ! loading ) {
+			this.resize( this.props );
+		}
 	}
 
 	componentWillUnmount() {
@@ -99,9 +106,26 @@ class Chart extends React.Component {
 		} );
 	};
 
+	setTooltip = ( tooltipContext, tooltipPosition, tooltipData ) => {
+		if ( ! tooltipContext || ! tooltipPosition || ! tooltipData ) {
+			return this.setState( { isTooltipVisible: false } );
+		}
+
+		this.setState( { tooltipContext, tooltipPosition, tooltipData, isTooltipVisible: true } );
+	};
+
 	render() {
 		const { barClick, translate, numberFormat } = this.props;
-		const { data, isEmptyChart, width, yMax } = this.state;
+		const {
+			data,
+			isEmptyChart,
+			width,
+			yMax,
+			isTooltipVisible,
+			tooltipContext,
+			tooltipPosition,
+			tooltipData,
+		} = this.state;
 
 		return (
 			<div ref={ this.storeChart } className="chart">
@@ -120,18 +144,33 @@ class Chart extends React.Component {
 					barClick={ barClick }
 					data={ data }
 					yAxisMax={ yMax }
-					chartWidth={ width }
 					isTouch={ hasTouch() }
+					chartWidth={ width }
+					setTooltip={ this.setTooltip }
 				/>
+				{ isTooltipVisible && (
+					<Tooltip
+						className="chart__tooltip"
+						id="popover__chart-bar"
+						context={ tooltipContext }
+						isVisible={ isTooltipVisible }
+						position={ tooltipPosition }
+					>
+						<ul>{ tooltipData }</ul>
+					</Tooltip>
+				) }
 				{ isEmptyChart && (
 					<div className="chart__empty">
-						{ /* @todo this message needs to either use a <Notice> or make a custom "chart__notice" class */ }
-						<span className="chart__empty-notice">
-							{ translate( 'No activity this period', {
+						<Notice
+							className="chart__empty-notice"
+							status="is-warning"
+							isCompact
+							text={ translate( 'No activity this period', {
 								context: 'Message on empty bar chart in Stats',
 								comment: 'Should be limited to 32 characters to prevent wrapping',
 							} ) }
-						</span>
+							showDismiss={ false }
+						/>
 					</div>
 				) }
 			</div>

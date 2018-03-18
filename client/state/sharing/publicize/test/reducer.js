@@ -78,7 +78,7 @@ describe( 'reducer', () => {
 				const persistedState = fetchingConnection( state, {
 					type: SERIALIZE,
 				} );
-				expect( persistedState ).to.eql( {} );
+				expect( persistedState ).to.be.undefined;
 			} );
 		} );
 	} );
@@ -131,7 +131,7 @@ describe( 'reducer', () => {
 				const persistedState = fetchingConnections( state, {
 					type: SERIALIZE,
 				} );
-				expect( persistedState ).to.eql( {} );
+				expect( persistedState ).to.be.undefined;
 			} );
 		} );
 	} );

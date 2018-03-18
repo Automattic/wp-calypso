@@ -2,84 +2,29 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { zip } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import Card from 'components/card';
 import page from 'page';
-import FeedPostStore from 'lib/feed-post-store';
-import { fetchPost } from 'lib/feed-post-store/actions';
 import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import cssSafeUrl from 'lib/css-safe-url';
+import QueryReaderPost from 'components/data/query-reader-post';
+import { getPostsByKeys } from 'state/reader/posts/selectors';
 
+function getPostUrl( post ) {
+	return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
+}
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 class FeedFeatured extends React.PureComponent {
 	static displayName = 'FeedFeatured';
-
-	getStateFromStores = ( store = this.props.store ) => {
-		const posts = store.get().map( postKey => {
-			const post = FeedPostStore.get( postKey );
-
-			if ( this.shouldFetch( post ) ) {
-				fetchPost( postKey );
-				return { post };
-			}
-
-			const source = this.getSourcePost( post ),
-				url = this.getPostUrl( source || post );
-
-			return {
-				post,
-				source,
-				url,
-			};
-		} );
-
-		return {
-			posts,
-		};
-	};
-
-	updateState = store => {
-		this.setState( this.getStateFromStores( store ) );
-	};
-
-	componentDidMount() {
-		this.props.store.on( 'change', this.updateState );
-		FeedPostStore.on( 'change', this.updateState );
-	}
-
-	componentWillUnmount() {
-		this.props.store.off( 'change', this.updateState );
-		FeedPostStore.off( 'change', this.updateState );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.store !== this.props.store ) {
-			this.updateState();
-		}
-	}
-
-	shouldFetch = post => {
-		return ! post || post._state === 'minimal';
-	};
-
-	getSourcePost = post => {
-		const data = getDiscoverSourceData( post );
-
-		if ( ! data ) {
-			return null;
-		}
-
-		return FeedPostStore.get( data );
-	};
-
-	getPostUrl = post => {
-		return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
-	};
 
 	handleClick = postData => {
 		const post = postData.post;
@@ -91,9 +36,11 @@ class FeedFeatured extends React.PureComponent {
 	};
 
 	renderPosts = () => {
-		return this.state.posts.map( postData => {
-			const post = postData.post,
-				postState = post._state;
+		const { posts, sources } = this.props;
+		return zip( posts, sources ).map( ( [ post, source ] ) => {
+			const url = getPostUrl( source || post );
+			const postData = { post, source, url };
+			const postState = post._state;
 
 			switch ( postState ) {
 				case 'minimal':
@@ -122,19 +69,22 @@ class FeedFeatured extends React.PureComponent {
 		} );
 	};
 
-	state = this.getStateFromStores();
-
 	render() {
-		if ( ! this.state.posts ) {
-			return null;
+		const { posts, translate, postsStore } = this.props;
+		if ( ! posts ) {
+			return (
+				<Fragment>
+					{ postsStore.get().map( postKey => <QueryReaderPost postKey={ postKey } /> ) }
+				</Fragment>
+			);
 		}
 
 		return (
 			<Card className="reader__featured-card">
 				<div className="reader__featured-header">
-					<div className="reader__featured-title">{ this.props.translate( 'Highlights' ) }</div>
+					<div className="reader__featured-title">{ translate( 'Highlights' ) }</div>
 					<div className="reader__featured-description">
-						{ this.props.translate( 'What we’re reading this week.' ) }
+						{ translate( 'What we’re reading this week.' ) }
 					</div>
 				</div>
 
@@ -144,4 +94,15 @@ class FeedFeatured extends React.PureComponent {
 	}
 }
 
-export default localize( FeedFeatured );
+function mapStateToProps( state, ownProps ) {
+	const { postsStore } = ownProps;
+	const postKeys = postsStore.get();
+	const posts = getPostsByKeys( state, postKeys );
+
+	const sourcePostKeys = posts.map( getDiscoverSourceData );
+	const sources = getPostsByKeys( state, sourcePostKeys );
+
+	return { posts, sources };
+}
+
+export default connect( mapStateToProps )( localize( FeedFeatured ) );

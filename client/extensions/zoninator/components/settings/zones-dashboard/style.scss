@@ -5,7 +5,7 @@
 	&.is-placeholder {
 		width: 38%;
 		height: 22px;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -17,7 +17,7 @@
 
 	&.is-placeholder {
 		margin: 7px 0 0;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

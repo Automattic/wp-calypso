@@ -81,8 +81,6 @@ export const PostEditor = createReactClass( {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		editorModePreference: PropTypes.string,
 		editorSidebarPreference: PropTypes.string,
-		user: PropTypes.object,
-		userUtils: PropTypes.object,
 		editPath: PropTypes.string,
 		markChanged: PropTypes.func.isRequired,
 		markSaved: PropTypes.func.isRequired,
@@ -324,8 +322,6 @@ export const PostEditor = createReactClass( {
 						post={ this.state.post }
 						savedPost={ this.state.savedPost }
 						site={ site }
-						user={ this.props.user }
-						userUtils={ this.props.userUtils }
 						toggleSidebar={ this.toggleSidebar }
 						onMoreInfoAboutEmailVerify={ this.onMoreInfoAboutEmailVerify }
 						allPostsUrl={ this.getAllPostsUrl() }
@@ -442,7 +438,6 @@ export const PostEditor = createReactClass( {
 							postId={ this.props.postId }
 							externalUrl={ this.getExternalUrl() }
 							editUrl={ this.props.editPath }
-							defaultViewportDevice={ this.state.isPostPublishPreview ? 'computer' : 'tablet' }
 							revision={ get( this.state, 'post.revisions.length', 0 ) }
 						/>
 					) : null }
@@ -831,6 +826,8 @@ export const PostEditor = createReactClass( {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		}
 
+		this.hideNotice();
+
 		this.setState( {
 			showPreview: false,
 			isPostPublishPreview: false,
@@ -943,8 +940,6 @@ export const PostEditor = createReactClass( {
 				message,
 			},
 		} );
-
-		window.scrollTo( 0, 0 );
 	},
 
 	setPostDate: function( date ) {
@@ -953,9 +948,7 @@ export const PostEditor = createReactClass( {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( { date: dateValue } );
 
-		if ( siteId && postId ) {
-			this.props.editPost( siteId, postId, { date: dateValue } );
-		}
+		this.props.editPost( siteId, postId, { date: dateValue } );
 
 		analytics.tracks.recordEvent( 'calypso_editor_publish_date_change', {
 			context: 'open' === this.state.confirmationSidebar ? 'confirmation-sidebar' : 'post-settings',

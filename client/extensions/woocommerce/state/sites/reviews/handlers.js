@@ -5,7 +5,7 @@
  */
 
 import { get, omitBy, omit } from 'lodash';
-import qs from 'querystring';
+import { stringify } from 'qs';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -47,7 +47,7 @@ export default {
 export function handleReviewsRequest( { dispatch }, action ) {
 	const { siteId, query } = action;
 	const requestQuery = { ...DEFAULT_QUERY, ...query };
-	const queryString = qs.stringify( omitBy( requestQuery, val => '' === val ) );
+	const queryString = stringify( omitBy( requestQuery, val => '' === val ) );
 
 	dispatch( request( siteId, action ).get( `products/reviews?${ queryString }&_envelope` ) );
 }

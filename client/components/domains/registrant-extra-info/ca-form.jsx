@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { camelCase, difference, isEmpty, keys, map, pick } from 'lodash';
+import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getContactDetailsExtraCache } from 'state/selectors';
+import { getContactDetailsCache } from 'state/selectors';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -23,7 +23,9 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { Input } from 'my-sites/domains/components/form';
 import { disableSubmitButton } from './with-contact-details-validation';
+import wp from 'lib/wp';
 
+const wpcom = wp.undocumented();
 const ciraAgreementUrl = 'https://services.cira.ca/agree/agreement/agreementVersion2.0.jsp';
 const defaultValues = {
 	lang: 'EN',
@@ -33,10 +35,10 @@ const defaultValues = {
 
 export class RegistrantExtraInfoCaForm extends React.PureComponent {
 	static propTypes = {
-		contactDetailsExtra: PropTypes.object.isRequired,
+		contactDetails: PropTypes.object.isRequired,
+		ccTldDetails: PropTypes.object.isRequired,
 		userWpcomLang: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
-		getFieldProps: PropTypes.func.isRequired,
 	};
 
 	constructor( props ) {
@@ -83,15 +85,18 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 			</option>
 		) );
 
-		this.legalTypes = legalTypes;
 		this.legalTypeOptions = legalTypeOptions;
+		this.state = {
+			errorMessages: {},
+		};
+		this.validateContactDetails = debounce( this.validateContactDetails, 333 );
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'lang', 'legalType', 'ciraAgreementAccepted' ],
-			keys( this.props.contactDetailsExtra )
+			keys( this.props.ccTldDetails )
 		);
 
 		// Bail early as we already have the details from a previous purchase.
@@ -105,85 +110,92 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( {
-			extra: pick( defaultValues, neededRequiredDetails ),
+			extra: {
+				ca: pick( defaultValues, neededRequiredDetails ),
+			},
 		} );
 	}
 
-	handleChangeEvent = event => {
-		const { target } = event;
-		let value = target.value;
-
-		if ( target.type === 'checkbox' ) {
-			value = target.checked;
-		}
-
-		this.props.updateContactDetailsCache( {
-			extra: { [ camelCase( event.target.id ) ]: value },
-		} );
+	validateContactDetails = contactDetails => {
+		wpcom.validateDomainContactInformation(
+			contactDetails,
+			this.props.getDomainNames(),
+			( error, data ) => {
+				this.setState( {
+					errorMessages: ( data && data.messages ) || {},
+				} );
+			}
+		);
 	};
 
-	renderOrganizationField( organizationFieldProps ) {
-		// These props include all the values and callbacks we need to
-		// have this organization field behave the same as the field in the
-		// parent (domain-details-form), particularly around the
-		// formState and back end validation
+	handleChangeEvent = event => {
+		const { value, name, checked, type, id } = event.target;
+		const newContactDetails = {};
 
-		const { translate } = this.props;
-		const className = 'registrant-extra-info';
+		if ( name === 'organization' ) {
+			newContactDetails[ name ] = value;
+			this.validateContactDetails( {
+				...this.props.contactDetails,
+				[ name ]: value,
+			} );
+		} else {
+			newContactDetails.extra = {
+				ca: { [ camelCase( id ) ]: type === 'checkbox' ? checked : value },
+			};
+		}
 
+		this.props.updateContactDetailsCache( { ...newContactDetails } );
+	};
+
+	shouldRenderOrganizationField() {
+		return this.props.ccTldDetails && this.props.ccTldDetails.legalType === 'CCO';
+	}
+
+	organizationFieldIsValid() {
+		if ( this.shouldRenderOrganizationField() ) {
+			return (
+				! isEmpty( this.props.contactDetails.organization ) &&
+				isEmpty( this.state.errorMessages.organization )
+			);
+		}
+		return true;
+	}
+
+	getOrganizationErrorMessage() {
+		let message = ( this.state.errorMessages.organization || [] ).join( '\n' );
+		if ( isEmpty( this.props.contactDetails.organization ) ) {
+			message = this.props.translate(
+				'An organization name is required for Canadian corporations'
+			);
+		}
+		return message;
+	}
+
+	renderOrganizationField() {
+		const { translate, contactDetails } = this.props;
 		return (
 			<FormFieldset>
 				<Input
-					className={ className }
+					name="organization"
+					className="registrant-extra-info__organization"
+					value={ contactDetails.organization || '' }
+					isError={ ! this.organizationFieldIsValid() }
+					errorMessage={ this.getOrganizationErrorMessage() }
 					label={ translate( 'Organization' ) }
-					{ ...organizationFieldProps }
+					onChange={ this.handleChangeEvent }
 				/>
 			</FormFieldset>
 		);
 	}
 
-	/*
-	 * We've already got most of the validation we need from the server, we
-	 * just need to add a check for the empty field.
-	 * We're doing that one rule here because we're handling the organization
-	 * through flux and the legal type through redux, and with this check that
-	 * straddles the boundary, the cleanest approach is to handle it here in the
-	 * component.
-	 */
-	validateOrganizationIsNotEmpty( organizationFieldProps ) {
-		const { translate } = this.props;
-		const requiredFieldError = {
-			isError: true,
-			errorMessage: translate( 'An organization name is required for Canadian corporations' ),
-		};
-
-		return organizationFieldProps.value
-			? organizationFieldProps
-			: Object.assign( {}, organizationFieldProps, requiredFieldError );
-	}
-
 	render() {
-		const { getFieldProps, translate } = this.props;
+		const { translate, children } = this.props;
 		const { legalType, ciraAgreementAccepted } = {
 			...defaultValues,
-			...this.props.contactDetailsExtra,
+			...this.props.ccTldDetails,
 		};
-
-		const rawFieldProps = getFieldProps( 'organization', true );
-
-		// We have to validate the organization name for the CCO legal
-		// type to avoid OpenSRS rejecting them and causing errors during
-		// payments
-		const organizationFieldProps = this.validateOrganizationIsNotEmpty( rawFieldProps );
-
-		const doesntNeedOrganizationField = legalType !== 'CCO';
-		const organizationFieldIsValid =
-			doesntNeedOrganizationField || ! organizationFieldProps.isError;
-
-		const formIsValid = ciraAgreementAccepted && organizationFieldIsValid;
-		const validatingSubmitButton = formIsValid
-			? this.props.children
-			: disableSubmitButton( this.props.children );
+		const formIsValid = ciraAgreementAccepted && this.organizationFieldIsValid();
+		const validatingSubmitButton = formIsValid ? children : disableSubmitButton( children );
 
 		return (
 			<form className="registrant-extra-info__form">
@@ -225,7 +237,7 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 						) }
 					</FormLabel>
 				</FormFieldset>
-				{ doesntNeedOrganizationField || this.renderOrganizationField( organizationFieldProps ) }
+				{ this.shouldRenderOrganizationField() && this.renderOrganizationField() }
 				{ validatingSubmitButton }
 			</form>
 		);
@@ -233,9 +245,13 @@ export class RegistrantExtraInfoCaForm extends React.PureComponent {
 }
 
 export default connect(
-	state => ( {
-		contactDetailsExtra: getContactDetailsExtraCache( state ),
-		userWpcomLang: getCurrentUserLocale( state ),
-	} ),
+	state => {
+		const contactDetails = getContactDetailsCache( state );
+		return {
+			contactDetails,
+			ccTldDetails: get( contactDetails, 'extra.ca', {} ),
+			userWpcomLang: getCurrentUserLocale( state ),
+		};
+	},
 	{ updateContactDetailsCache }
 )( localize( RegistrantExtraInfoCaForm ) );

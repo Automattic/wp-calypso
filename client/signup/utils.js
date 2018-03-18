@@ -166,11 +166,11 @@ export function getThemeForSiteGoals( siteGoals ) {
 	return 'pub/independent-publisher-2';
 }
 
-export function getSiteTypeForSiteGoals( siteGoals ) {
+export function getSiteTypeForSiteGoals( siteGoals, flow ) {
 	const siteGoalsValue = siteGoals.split( ',' );
 
 	//Identify stores for the store signup flow
-	if ( siteGoals === 'sell' ) {
+	if ( siteGoals === 'sell' || flow === 'store-nux' ) {
 		return 'store';
 	}
 

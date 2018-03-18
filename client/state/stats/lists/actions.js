@@ -9,7 +9,6 @@ import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
-	SITE_STATS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -27,13 +26,14 @@ import { includes } from 'lodash';
  * @param  {Array}  data     Stat Data
  * @return {Object}          Action object
  */
-export function receiveSiteStats( siteId, statType, query, data ) {
+export function receiveSiteStats( siteId, statType, query, data, date ) {
 	return {
 		type: SITE_STATS_RECEIVE,
 		statType,
 		siteId,
 		query,
 		data,
+		date,
 	};
 }
 
@@ -62,6 +62,7 @@ export function requestSiteStats( siteId, statType, query ) {
 				'statsTopCategories',
 				'statsTopCoupons',
 				'statsTopEarners',
+				'statsStoreReferrers',
 			],
 			statType
 		);
@@ -69,16 +70,7 @@ export function requestSiteStats( siteId, statType, query ) {
 		const site = isUndocumented ? wpcom.undocumented().site( siteId ) : wpcom.site( siteId );
 
 		return site[ statType ]( options )
-			.then( data => {
-				dispatch( receiveSiteStats( siteId, statType, query, data ) );
-				dispatch( {
-					type: SITE_STATS_REQUEST_SUCCESS,
-					statType,
-					siteId,
-					query,
-					date: Date.now(),
-				} );
-			} )
+			.then( data => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )
 			.catch( error => {
 				dispatch( {
 					type: SITE_STATS_REQUEST_FAILURE,

@@ -17,6 +17,7 @@ import { PaymentBox } from '../payment-box';
 
 jest.mock( 'lib/cart-values', () => ( {
 	isPaymentMethodEnabled: jest.fn( false ),
+	paymentMethodName: jest.fn( false ),
 } ) );
 
 describe( 'PaymentBox', () => {

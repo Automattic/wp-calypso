@@ -47,10 +47,14 @@ const StoreStatsList = ( { data, values } ) => {
 StoreStatsList.propTypes = {
 	data: PropTypes.array.isRequired,
 	values: PropTypes.array.isRequired,
+	fetchedData: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ),
 };
 
-export default connect( ( state, { siteId, statType, query } ) => {
+export default connect( ( state, { siteId, statType, query, fetchedData } ) => {
+	const data = fetchedData
+		? fetchedData
+		: getSiteStatsNormalizedData( state, siteId, statType, query );
 	return {
-		data: getSiteStatsNormalizedData( state, siteId, statType, query ),
+		data,
 	};
 } )( StoreStatsList );

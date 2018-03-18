@@ -7,6 +7,7 @@ import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
@@ -16,9 +17,10 @@ export const receiveJetpackOnboardingCredentials = ( siteId, credentials ) => ( 
 	credentials,
 } );
 
-export const requestJetpackOnboardingSettings = siteId => ( {
+export const requestJetpackOnboardingSettings = ( siteId, query ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	siteId,
+	query,
 	meta: {
 		dataLayer: {
 			trackRequest: true,
@@ -35,6 +37,12 @@ export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
 			trackRequest: true,
 		},
 	},
+} );
+
+export const saveJetpackOnboardingSettingsSuccess = ( siteId, settings ) => ( {
+	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+	siteId,
+	settings,
 } );
 
 export const updateJetpackOnboardingSettings = ( siteId, settings ) => ( {

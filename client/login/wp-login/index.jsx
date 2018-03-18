@@ -3,35 +3,35 @@
 /**
  * External dependencies
  */
-
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { startCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { startCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import DocumentHead from 'components/data/document-head';
-import LoginLinks from './login-links';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
-import Main from 'components/main';
+import GlobalNotices from 'components/global-notices';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoginBlock from 'blocks/login';
-import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
-import GlobalNotices from 'components/global-notices';
+import LoginLinks from './login-links';
+import Main from 'components/main';
 import notices from 'notices';
 import PrivateSite from './private-site';
+import { addLocaleToWpcomUrl } from 'lib/i18n-utils';
+import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { recordPageViewWithClientId as recordPageView } from 'state/analytics/actions';
 
 export class Login extends React.Component {
 	static propTypes = {
 		clientId: PropTypes.string,
 		isLoggedIn: PropTypes.bool.isRequired,
+		isJetpack: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -43,6 +43,8 @@ export class Login extends React.Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 	};
+
+	static defaultProps = { isJetpack: false };
 
 	componentDidMount() {
 		this.recordPageView( this.props );
@@ -135,6 +137,7 @@ export class Login extends React.Component {
 		const {
 			clientId,
 			isLoggedIn,
+			isJetpack,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -153,6 +156,7 @@ export class Login extends React.Component {
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
 				clientId={ clientId }
+				isJetpack={ isJetpack }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
@@ -170,7 +174,7 @@ export class Login extends React.Component {
 					{ this.renderLocaleSuggestions() }
 
 					<DocumentHead
-						title={ translate( 'Log In', { textOnly: true } ) }
+						title={ translate( 'Log In' ) }
 						link={ [ { rel: 'canonical', href: canonicalUrl } ] }
 					/>
 
@@ -182,8 +186,8 @@ export class Login extends React.Component {
 						{ ! socialConnect && (
 							<LoginLinks
 								locale={ locale }
-								twoFactorAuthType={ twoFactorAuthType }
 								privateSite={ privateSite }
+								twoFactorAuthType={ twoFactorAuthType }
 							/>
 						) }
 					</div>

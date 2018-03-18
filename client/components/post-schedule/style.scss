@@ -14,10 +14,10 @@
 	position: absolute;
 	z-index: z-index( '.popover', '.post-schedule__header' );
 	top: 11px;
-	font-size: 18px;
-	font-weight: 300;
-	width: 80%;
-	margin: 0 10%;
+	font-size: 16px;
+	font-weight: 500;
+	width: 47%;
+	margin: 0 27%;
 
 	&:first-letter {
 		text-transform: uppercase;
@@ -56,11 +56,11 @@
 	display: inline-block;
 	position: relative;
 	text-align: center;
-	font-size: 12px;
+	font-weight: 300;
 	height: 20px;
 	line-height: 20px;
 	padding: 0 5px;
-	margin-left: 10px;
+	margin-left: 5px;
 	cursor: pointer;
 }
 
@@ -71,7 +71,7 @@
 	left: 0;
 	height: 16px;
 	cursor: pointer;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 
 	&:hover {
 		color: $gray;
@@ -94,14 +94,14 @@
 
 hr.post-schedule__hr {
 	height: 1px;
-	background: lighten( $gray, 30% );
+	background: $gray-lighten-30;
 	margin: 0 -16px;
 }
 
 input[type="text"].post-schedule__clock-time {
 	height: 28px;
 	display: inline-block;
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	width: 42px;
 	text-align: center;
 	padding: 0;

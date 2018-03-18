@@ -14,7 +14,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
 import JetpackLogo from 'components/jetpack-logo';
-import ReaderBack from 'blocks/reader-full-post/back';
+import BackButton from 'components/back-button';
 import SiteUrlInput from '../site-url-input';
 import WordPressLogo from 'components/wordpress-logo';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -56,7 +56,7 @@ class JetpackNewSite extends Component {
 	render() {
 		return (
 			<div>
-				<ReaderBack onBackClick={ this.handleBack } />
+				<BackButton onClick={ this.handleBack } />
 				<div className="jetpack-new-site__main jetpack-new-site">
 					<div className="jetpack-new-site__header">
 						<h2 className="jetpack-new-site__header-title">
@@ -72,13 +72,13 @@ class JetpackNewSite extends Component {
 						<Card className="jetpack-new-site__wpcom-site">
 							<WordPressLogo />
 							<h3 className="jetpack-new-site__card-title">
-								{ this.props.translate( 'Create a new shiny WordPress.com site' ) }
+								{ this.props.translate( 'Create a shiny new WordPress.com site' ) }
 							</h3>
 							<div className="jetpack-new-site__card-description">
 								<p>
 									{ this.props.translate(
-										'Start telling your story in just 2 minutes. Pick a visual theme and a domain — ' +
-											'we’ll take care of the entire setup. If you need help we’ve got you covered with 24/7 support.'
+										"Tell us what type of site you need and we'll get you setup. " +
+											'If you need help we’ve got you covered with 24/7 support.'
 									) }
 								</p>
 							</div>
@@ -106,6 +106,7 @@ class JetpackNewSite extends Component {
 								onSubmit={ this.handleJetpackSubmit }
 								handleOnClickTos={ this.handleOnClickTos }
 								url={ this.state.jetpackUrl }
+								autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
 							/>
 						</Card>
 						<Card className="jetpack-new-site__mobile">
@@ -125,6 +126,7 @@ class JetpackNewSite extends Component {
 									onSubmit={ this.handleJetpackSubmit }
 									handleOnClickTos={ this.handleOnClickTos }
 									url={ this.state.jetpackUrl }
+									autoFocus={ false } // eslint-disable-line jsx-a11y/no-autofocus
 								/>
 							</div>
 						</Card>

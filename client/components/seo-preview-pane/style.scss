@@ -58,7 +58,7 @@
 	@include breakpoint( ">660px" ) {
 		width: 250px;
 		min-width: 250px;
-		border-right: 1px solid lighten( $gray, 20% );
+		border-right: 1px solid $gray-lighten-20;
 	}
 }
 

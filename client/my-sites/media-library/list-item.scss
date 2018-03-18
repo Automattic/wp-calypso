@@ -2,7 +2,7 @@
 	position: relative;
 	display: inline-block;
 	cursor: pointer;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	user-select: none;
 
 	&.is-selected::after {
@@ -50,31 +50,22 @@
 	overflow: hidden;
 	height: 0;
 	padding-bottom: 100%;
-	background-color: lighten( $gray, 20% );
+	background-color: $gray-lighten-20;
 }
 
 .media-library__list-item:hover .media-library__list-item-figure {
 	box-shadow: 0 0 0 1px $gray,
-				0 2px 4px lighten( $gray, 20% );
+				0 2px 4px $gray-lighten-20;
 }
 
 .media-library__list-item.is-selected .media-library__list-item-figure {
 	box-shadow: 0 0 0 2px $blue-medium,
-				0 4px 6px lighten( $gray, 20% );
+				0 4px 6px $gray-lighten-20;
 }
 
 .media-library__list-item.is-placeholder .media-library__list-item-figure {
-	background-color: lighten( $gray, 20% );
+	background-color: $gray-lighten-20;
 	animation: loading-fade 1.6s ease-in-out infinite;
-
-	&::before {
-		@include noticon( '\f473', 80px );
-		position: absolute;
-			left: 50%;
-			top: 50%;
-		transform: translate( -50%, -50% );
-		color: white;
-	}
 }
 
 .media-library__list-item.is-transient .media-library__list-item-figure::after {

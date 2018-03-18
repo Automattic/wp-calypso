@@ -19,25 +19,33 @@
 		}
 	}
 
-	.steps__summary-columns {
-		display: flex;
-		justify-content: center;
-		font-size: 14px;
-		margin-top: 30px;
+	.steps__illustration {
+		display: block;
+		margin: 10px auto 20px;
+		max-width: 80%;
+	}
 
-		@include breakpoint( '<480px' ) {
-			display: block;
-			text-align: center;
+	.steps__description {
+		color: $gray-darken-20;
+		font-size: 12px;
+		margin-bottom: 30px;
+		text-align: center;
+
+		p {
+			margin-bottom: 0;
 		}
 	}
 
-	.steps__summary-column {
-		margin: 0 60px 20px;
+	.steps__summary-columns {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-around;
+		font-size: 14px;
+		margin-top: 30px;
+	}
 
-		@include breakpoint( '<480px' ) {
-			display: inline-block;
-			text-align: left;
-		}
+	.steps__summary-column {
+		margin: 0 20px 20px;
 	}
 
 	.steps__summary-heading {
@@ -45,7 +53,7 @@
 		margin-bottom: 20px;
 	}
 
-	.steps__summary-entry {
+	.jetpack-onboarding__summary-entry {
 		margin-bottom: 20px;
 
 		.gridicon {
@@ -61,7 +69,7 @@
 
 		&.completed,
 		&.completed a {
-			color: darken($gray, 20%);
+			color: $gray-darken-20;
 		}
 
 		&.todo,
@@ -77,15 +85,28 @@
 			margin: 0 8px 20px;
 		}
 	}
+
+	.jetpack-logo {
+		display: block;
+		margin: 20px auto;
+
+		.jetpack-logo__icon {
+			fill: $green-jetpack;
+		}
+	}
 }
 
 .jetpack-onboarding__disclaimer {
 	text-align: center;
 	font-size: 12px;
 
+	a {
+		display: inline-block;
+	}
+
 	.gridicon {
 		position: relative;
 		top: 4px;
-		margin-right: 12px;
+		margin-right: 8px;
 	}
 }

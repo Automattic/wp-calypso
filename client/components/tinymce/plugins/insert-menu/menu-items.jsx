@@ -27,7 +27,7 @@ export const GridiconButton = ( { icon, label, e2e } ) => (
 export const menuItems = [
 	{
 		name: 'insert_media_item',
-		item: <GridiconButton icon="add-image" label={ i18n.translate( 'Media' ) } e2e="media" />,
+		item: <GridiconButton icon="image" label={ i18n.translate( 'Media' ) } e2e="media" />,
 		cmd: 'wpcomAddMedia',
 	},
 ];
@@ -38,7 +38,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			name: 'insert_from_google',
 			item: (
 				<GridiconButton
-					icon="add-image"
+					icon="shutter"
 					label={ i18n.translate( 'Media from Google' ) }
 					e2e="google-media"
 				/>
@@ -51,7 +51,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			name: 'insert_from_pexels',
 			item: (
 				<GridiconButton
-					icon="add-image"
+					icon="image-multiple"
 					label={ i18n.translate( 'Free photo library' ) }
 					e2e="stock-media-pexels"
 				/>
@@ -64,7 +64,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 menuItems.push( {
 	name: 'insert_contact_form',
 	item: (
-		<GridiconButton icon="mention" label={ i18n.translate( 'Contact Form' ) } e2e="contact-form" />
+		<GridiconButton icon="mention" label={ i18n.translate( 'Contact form' ) } e2e="contact-form" />
 	),
 	cmd: 'wpcomContactForm',
 } );
@@ -75,7 +75,7 @@ if ( config.isEnabled( 'simple-payments' ) ) {
 		item: (
 			<GridiconButton
 				icon="money"
-				label={ i18n.translate( 'Payment Button' ) }
+				label={ i18n.translate( 'Payment button' ) }
 				e2e="payment-button"
 			/>
 		),

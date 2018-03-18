@@ -65,6 +65,24 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		},
 	};
 
+	const deLangAtCountryState = {
+		geo: {
+			geo: {
+				country_short: 'AT',
+			},
+		},
+
+		users: {
+			items: {
+				73705554: { ID: 73705554, login: 'testonesite2014', localeSlug: 'de' },
+			},
+		},
+
+		currentUser: {
+			id: 73705554,
+		},
+	};
+
 	const nlCountryState = {
 		geo: {
 			geo: {
@@ -138,6 +156,14 @@ describe( 'getCurrentUserPaymentMethods()', () => {
 		expect( getCurrentUserPaymentMethods( deLangDeCountryState ) ).to.eql( [
 			'credit-card',
 			'giropay',
+			'paypal',
+		] );
+	} );
+
+	test( 'de-AT should return CC, EPS, Paypal', () => {
+		expect( getCurrentUserPaymentMethods( deLangAtCountryState ) ).to.eql( [
+			'credit-card',
+			'eps',
 			'paypal',
 		] );
 	} );

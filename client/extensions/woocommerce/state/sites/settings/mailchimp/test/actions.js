@@ -40,7 +40,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/mailchimp&_method=get', json: true } )
+				.query( { path: '/wc/v3/mailchimp&_via_calypso&_method=get', json: true } )
 				.reply( 200, {
 					data: {
 						mailchimp_api_key: '6e46d0621d-us16',
@@ -108,7 +108,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/mailchimp/api_key&_method=put', json: true } )
+				.query( { path: '/wc/v3/mailchimp/api_key&_via_calypso&_method=put', json: true } )
 				.reply( 200, {
 					data: {
 						mailchimp_api_key: '12345testing',
@@ -160,7 +160,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/mailchimp/store_info&_method=put', json: true } )
+				.query( { path: '/wc/v3/mailchimp/store_info&_via_calypso&_method=put', json: true } )
 				.reply( 200, {
 					data: {
 						mailchimp_api_key: '12345testing',
@@ -222,7 +222,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/mailchimp/store_info&_method=put', json: true } )
+				.query( { path: '/wc/v3/mailchimp/store_info&_via_calypso&_method=put', json: true } )
 				.reply( 200, {
 					data: {
 						mailchimp_api_key: '12345testing',
@@ -293,7 +293,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/mailchimp/sync&_method=get', json: true } )
+				.query( { path: '/wc/v3/mailchimp/sync&_via_calypso&_method=get', json: true } )
 				.reply( 200, {
 					data: {
 						last_updated_time: '2017-10-17T22:22:44',

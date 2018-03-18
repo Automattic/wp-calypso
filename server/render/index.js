@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
 import Lru from 'lru';
-import { pick } from 'lodash';
+import { get, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -21,11 +22,12 @@ import {
 	getDocumentHeadLink,
 } from 'state/document-head/selectors';
 import isRTL from 'state/selectors/is-rtl';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { getCurrentLocaleSlug, getCurrentLocaleVariant } from 'state/selectors';
 import { reducer } from 'state';
 import { SERIALIZE } from 'state/action-types';
 import stateCache from 'state-cache';
 import { getCacheKey } from 'isomorphic-routing';
+import { logToLogstash } from 'state/logstash/actions';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -43,14 +45,37 @@ function bumpStat( group, name ) {
 }
 
 /**
+ * Render JSX template to a markup string.
+ *
+ * @param {string} view - JSX template to render (basename)
+ * @param {object} props - Properties which got passed to the JSX template
+ * @return {string} Rendered markup
+ */
+export function renderJsx( view, props ) {
+	const requireComponent = require.context( '../../client/document', true, /\.jsx$/ );
+	const component = requireComponent( './' + view + '.jsx' ).default;
+	const doctype = `<!DOCTYPE html><!--
+	<3
+	             _
+	    ___ __ _| |_   _ _ __  ___  ___
+	   / __/ _\` | | | | | '_ \\/ __|/ _ \\
+	  | (_| (_| | | |_| | |_) \\__ \\ (_) |
+	   \\___\\__,_|_|\\__, | .__/|___/\\___/
+	               |___/|_|
+-->`;
+	return doctype + ReactDomServer.renderToStaticMarkup( React.createElement( component, props ) );
+}
+
+/**
  * Render and cache supplied React element to a markup string.
  * Cache is keyed by stringified element by default.
  *
  * @param {object} element - React element to be rendered to html
  * @param {string} key - (optional) custom key
+ * @param {object} req - Request object
  * @return {string} The rendered Layout
  */
-export function render( element, key = JSON.stringify( element ) ) {
+export function render( element, key = JSON.stringify( element ), req ) {
 	try {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
@@ -59,6 +84,24 @@ export function render( element, key = JSON.stringify( element ) ) {
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
+			if (
+				( config.isEnabled( 'ssr/sample-log-cache-misses' ) && Math.random() < 0.001 ) ||
+				config.isEnabled( 'ssr/always-log-cache-misses' )
+			) {
+				// Log 0.1% of cache misses
+				req.context.store.dispatch(
+					logToLogstash( {
+						feature: 'calypso_ssr',
+						message: 'render cache miss',
+						extra: {
+							key,
+							'existing-keys': markupCache.keys,
+							'user-agent': get( req.headers, 'user-agent', '' ),
+							path: req.context.path,
+						},
+					} )
+				);
+			}
 			renderedLayout = ReactDomServer.renderToString( element );
 			markupCache.set( key, renderedLayout );
 		}
@@ -91,7 +134,8 @@ export function serverRender( req, res ) {
 	}
 
 	if ( ! isDefaultLocale( context.lang ) ) {
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
+		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + langFileName + '.js';
 	}
 
 	if (
@@ -99,9 +143,14 @@ export function serverRender( req, res ) {
 		context.layout &&
 		! context.user &&
 		cacheKey &&
-		isDefaultLocale( context.lang )
+		isDefaultLocale( context.lang ) &&
+		! context.query.email_address // Don't do SSR when PIIs are present at the request
 	) {
-		context.renderedLayout = render( context.layout, req.error ? req.error.message : cacheKey );
+		context.renderedLayout = render(
+			context.layout,
+			req.error ? req.error.message : cacheKey,
+			req
+		);
 	}
 
 	if ( context.store ) {
@@ -129,6 +178,7 @@ export function serverRender( req, res ) {
 		}
 
 		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+
 		const isLocaleRTL = isRTL( context.store.getState() );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
@@ -137,10 +187,11 @@ export function serverRender( req, res ) {
 	context.config = config.ssrConfig;
 
 	if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop', context );
-	} else {
-		res.render( 'index', context );
+		res.send( renderJsx( 'desktop', context ) );
+		return;
 	}
+
+	res.send( renderJsx( 'index', context ) );
 }
 
 export function serverRenderError( err, req, res, next ) {
@@ -150,7 +201,7 @@ export function serverRenderError( err, req, res, next ) {
 		}
 		req.error = err;
 		res.status( err.status || 500 );
-		res.render( '500', req.context );
+		res.send( renderJsx( '500', req.context ) );
 		return;
 	}
 

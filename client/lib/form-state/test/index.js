@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { assign, constant, mapValues, zipObject } from 'lodash';
-import assert from 'assert';
+import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 
 /**
  * Internal dependencies

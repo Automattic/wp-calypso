@@ -114,7 +114,7 @@ describe( 'selectors', () => {
 		} );
 
 		if ( isEnabled( 'jetpack/happychat' ) ) {
-			test( 'should return JPOP group if within the jetpackConnect section', () => {
+			test( 'should return JPOP group if within the jetpack-connect section', () => {
 				const state = {
 					...userState,
 					sites: {
@@ -124,7 +124,7 @@ describe( 'selectors', () => {
 					},
 					ui: {
 						section: {
-							name: 'jetpackConnect',
+							name: 'jetpack-connect',
 						},
 					},
 				};
@@ -132,7 +132,7 @@ describe( 'selectors', () => {
 				expect( getGroups( state ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
 			} );
 		} else {
-			test.skip( 'should not return JPOP group if within the jetpackConnect section' );
+			test.skip( 'should not return JPOP group if within the jetpack-connect section' );
 		}
 	} );
 } );

@@ -26,7 +26,8 @@ const REGEXP_VALID_PROTOCOL = /^https?:$/;
  *
  * @type {Number}
  */
-const IMAGE_SCALE_FACTOR = get( global.window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
+const IMAGE_SCALE_FACTOR =
+	get( typeof window !== 'undefined' && window, 'devicePixelRatio', 1 ) > 1 ? 2 : 1;
 
 /**
  * Query parameters to be treated as image dimensions

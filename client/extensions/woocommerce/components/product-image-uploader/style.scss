@@ -45,7 +45,7 @@
 		}
 
 		.gridicon {
-			color: darken( $gray, 10% );
+			color: $gray-darken-10;
 		}
 
 		p {
@@ -54,7 +54,7 @@
 
 		&:hover {
 			.gridicon {
-				color: darken( $gray, 30% );
+				color: $gray-darken-30;
 			}
 		}
 	}
@@ -112,13 +112,13 @@
 			top: 50%;
 			left: 50%;
 			transform: translate( -50%, -50% );
-			color: darken( $gray, 10% );
+			color: $gray-darken-10;
 		}
 	}
 
 	&:hover {
 		.gridicon {
-			color: darken( $gray, 30% );
+			color: $gray-darken-30;
 		}
 	}
 }

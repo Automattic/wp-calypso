@@ -1,97 +1,476 @@
-.devdocs,
-.design,
-.wizard-component {
-	font-size: 18px;
-	line-height: 1.618;
-	color: $gray-dark;
-	margin: 0 auto;
-	max-width: 960px;
-	padding: 1.777em 8.184em;
+$devdocs-max-width: 720px;
 
-	@include breakpoint( "<960px" ) {
-		padding: 24px;
-		max-width: 100%;
-	}
-}
-
-.is-section-devdocs-start .layout__primary {
-	margin-left: 0;
-}
-
+// Sidebar Title
 .devdocs__title {
-	color: darken( $gray, 20% );
-	font-weight: 300;
-	font-size: 24px;
-	padding: 24px;
+    color: $gray-darken-30;
+    font-weight: 300;
+    font-size: 24px;
+    padding: 24px;
 }
 
-.devdocs__result.card {
-	padding: 16px 0;
-}
 
-.devdocs__result-header {
-	overflow: hidden;
-	padding: 0 18px;
-}
+// Search
+.devdocs__result {
+	.devdocs__result-title {
+		font-weight: bold;
+		font-size: 18px;
 
-.devdocs__result-title {
-	clear: none;
-	float: left;
-}
+		.devdocs__result-link {
+			text-decoration: underline;
 
-.devdocs__result-link {
-	font-size: 18px;
-}
-
-.devdocs__result-path {
-	font-size: ( 12 / 15 ) * 1em;
-	clear: none;
-	color: $gray;
-	float: right;
-	margin: 8px 0 0;
-}
-
-.devdocs__result-snippet {
-	p {
-		margin-bottom: 0;
+			&:hover {
+				color: $blue-medium;
+			}
+		}
 	}
-	margin: 0;
-	margin-top: 10px;
-	border-top: 1px solid lighten( $gray, 20% );
-	padding: 9px 18px;
-	font-size: ( 13 / 15 ) * 0.8em;
-	background-color: $white;
+
+	.devdocs__result-path {
+		font-size: 14px;
+		font-family: $code;
+		color: $gray-text-min;
+	}
+
+	.devdocs__result-snippet {
+		font-size: 15px;
+		color: $gray-text;
+		margin-top: 4px;
+
+		mark {
+			background: rgba( $blue-light, 0.4 );
+			padding: 2px;
+			border-radius: 3px;
+		}
+
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
 }
 
-.devdocs__doc {
+
+// Block and Component examples
+.main.devdocs.devdocs__blocks,
+.main.devdocs.devdocs__components {
+	// Make way for showing big components and multiple columns
+	max-width: 100%;
+}
+
+.design__collection {
+
+	// Use multiple columns when listing components
+	.main.devdocs.is-list & {
+		column-gap: 24px;
+
+		// Show 2 columns for big screens
+		@include breakpoint( '>1280px' ) {
+			column-count: 2;
+		}
+
+		@media ( min-width: 2000px ) {
+			column-count: 3;
+		}
+	}
+}
+
+// We show a list of links for results above
+// the actual examples.
+.design__instance-links {
+	margin-bottom: 24px;
+}
+
+.design__instance-links-label {
+	display: block;
+	font-size: 13px;
+	font-weight: 600;
+	margin: 8px;
+	color: $gray-text-min;
+}
+
+.design__instance-link {
+	display: inline-block;
+	background: $white;
+	text-decoration: underline;
+	border-radius: 3px;
+	padding: 3px 6px;
+	margin: 0 6px 4px 0;
+	font-family: $code;
+	box-shadow: 0 1px 2px rgba( $gray-dark, 0.05 );
+}
+
+// The wrapper containing the actual examples
+.docs-example__wrapper {
+	box-sizing: border-box;
+	background: $white;
+	box-shadow: 0 1px 2px $gray-lighten-30;
+	border: 1px solid rgba( $gray-lighten-20, 0.65 );
+	margin: 0 auto 24px;
+	position: relative;
+
+	.docs-example__wrapper-header-title {
+		font-family: $code;
+		font-size: 18px;
+		font-weight: 300;
+		letter-spacing: 1px;
+		border-bottom: 1px solid rgba( $gray-lighten-20, 0.65 );
+
+		a, a:visited {
+			text-decoration: underline;
+
+			&:hover {
+				color: $blue-wordpress;
+			}
+		}
+	}
+
+	.docs-example__wrapper-content {
+		background: $gray-light;
+		padding: 16px;
+		box-shadow: inset 0 2px 1px rgba( $gray-dark, 0.075 );
+
+		// Grid background
+		background-image: linear-gradient( rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
+		linear-gradient( 90deg, rgba( $gray-dark, 0.05 ) 1px, transparent 1px ),
+		linear-gradient( rgba( $gray-dark, 0.025 ) 1px, transparent 1px ),
+		linear-gradient( 90deg, rgba( $gray-dark, 0.025 ) 1px, transparent 1px );
+		background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
+		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+
+		// A wrapper inside a wrapper to help reliably center
+		// component and block examples.
+		.docs-example__wrapper-content-centering {
+			display: table;
+			margin: auto;
+			min-width: ( $devdocs-max-width / 2 );
+			width: 100%;
+		}
+
+		// Some components use a card and the extra margin
+		// looks strange.
+		.card {
+			margin-bottom: 0;
+		}
+	}
+
+	// Styles specific to the single component view
+	.main.devdocs.is-single & {
+		.docs-example__wrapper-header-title {
+			padding: 16px 24px;
+		}
+	}
+
+	// How examples look in the lists of components view
+	.main.devdocs.is-list & {
+		break-inside: avoid;
+
+		.docs-example__wrapper-header-title a {
+			padding: 16px 24px;
+			display: block;
+		}
+
+		.docs-example__wrapper-content {
+			padding: 32px;
+			overflow: hidden;
+		}
+
+		// When we only have room for one column we
+		// set the max-width to line up with search
+		@include breakpoint( '<1280px' ) {
+			max-width: $devdocs-max-width;
+		}
+
+		@media ( min-width: 2000px ) {
+			padding-top: 60px;
+
+			.docs-example__wrapper-header-title a {
+				position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					left: 0;
+			}
+
+			.docs-example__wrapper-content {
+				height: 140px;
+				overflow: hidden;
+				pointer-events: none;
+			}
+
+			&:hover {
+				border-color: $blue-light;
+
+				.docs-example__wrapper-content {
+					opacity: 0.7;
+				}
+			}
+		}
+	}
+}
+
+
+// README.md Viewer
+.docs-example__readme-viewer {
+	break-inside: avoid;
+
+	p, li {
+		font-size: 1.5rem;
+	}
+
+	p {
+		margin-bottom: 0.5rem;
+	}
+
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+
+		th, td {
+			border-bottom: 1px solid transparentize( $gray-lighten-20, 0.5 );
+			text-align: left;
+		}
+
+		th {
+			color: $blue-dark;
+			font-size: 0.75em;
+			padding: 0.25em 3em 0.25em 0;
+		}
+
+		td {
+			font-size: 0.83em;
+			padding: 1.17em 3em 1.17em 0;
+		}
+	}
+
 	h1, h2, h3, h4, h5, h6 {
-		font-family: $serif;
-		font-weight: 700;
-		line-height: 1.5em;
-		margin-bottom: 0.6em;
+		display: block;
+		margin-bottom: 0.5em;
+		margin-left: 0;
 	}
 
 	h1 {
-		color: $blue-wordpress;
-		font-size: 47px;
-		line-height: 1.333;
+		font-size: 1.33em;
 	}
 
 	h2 {
-		font-size: 1.777em;
+		font-size: 1.17em;
+	}
+
+	h3 {
+    	font-size: 1em;
+	}
+
+	h4 {
+		font-size: 0.83em;
+	}
+
+	h5 {
+		font-size: 0.67em;
+	}
+
+	h6 {
+		font-size: 0.5em;
+	}
+}
+
+.docs-example__readme-viewer-not-available {
+	font-family: $sans;
+	text-align: center;
+	color: $gray-text-min;
+}
+
+
+// Some components/blocks use a button to toggle variants
+.docs__design-toggle {
+	top: 10px;
+	right: 24px;
+	z-index: 1;
+    position: absolute;
+}
+
+// Some components/blocks need some space to look right
+.docs__design-button-row,
+.design__button-row {
+    margin-bottom: 20px;
+}
+
+// !important's :(
+.docs__design-button-row .button,
+.design__button-row .button {
+    margin-right: 16px !important;
+}
+
+.docs__design-button-row .button-group .button,
+.docs__design-button-row .split-button__main {
+    margin-right: 0 !important;
+}
+
+.docs__design-button-group-row {
+    margin-bottom: 20px;
+}
+
+
+// State Selectors
+.docs-selectors__results {
+	list-style: none;
+	margin: 0;
+
+	li {
+		display: block;
+	}
+}
+
+.docs-selectors__result {
+	max-width: $devdocs-max-width;
+	margin: auto;
+
+	.docs-selectors__result-name {
+		font-family: $code;
+		text-decoration: underline;
+		font-weight: bold;
+		font-size: 16px;
+	}
+
+	.docs-selectors__result-description {
+		margin: 0;
+	}
+
+	.docs-selectors__result-io {
+		display: none;
+		font-size: 16px;
+
+		.docs-selectors__result-arguments {
+			flex: 3;
+			margin-right: 8px;
+		}
+
+		.docs-selectors__result-return {
+			flex: 2;
+			margin-left: 8px;
+		}
+
+		.docs-selectors__result-arguments,
+		.docs-selectors__result-return {
+			color: $gray-dark;
+			background: $gray-lighten-30;
+			border-radius: 4px;
+			padding: 16px 24px;
+		}
+
+		.docs-selectors__result-label {
+			display: block;
+			margin-bottom: 32px;
+			font-weight: 600;
+		}
+
+		.docs-selectors__result-arguments-content {
+			display: flex;
+			padding-top: 16px;
+			margin-bottom: 24px;
+			border-top: 1px solid $gray-lighten-20;
+
+			.docs-selectors__result-arguments-name {
+				width: 30%;
+				margin-right: 24px;
+				text-align: right;
+			}
+		}
+
+		.docs-selectors__result-arguments-name,
+		.docs-selectors__result-arguments-name strong,
+		.docs-selectors__param-type {
+			font-family: $code;
+			color: $gray-dark;
+		}
+
+		.docs-selectors__result-arguments-name strong {
+			color: $gray-dark;
+			background: $white;
+			border-radius: 3px;
+			display: inline-block;
+			padding: 2px 8px;
+			margin-left: -8px;
+			margin-bottom: 12px;
+		}
+
+		.docs-selectors__param-type {
+			font-size: 14px;
+		}
+
+		p {
+			margin: 0;
+			padding-top: 4px;
+			font-size: 15px;
+		}
+	}
+
+	&.is-expanded {
+		.docs-selectors__result-io {
+			display: flex;
+			margin: 24px 0 8px;
+		}
+	}
+}
+
+// Documentation — Copy-heavy things like Contributing and Typography
+.devdocs__doc-content,
+.docs-example__readme-viewer {
+	max-width: $devdocs-max-width;
+	margin: 32px auto;
+	font-size: 16px;
+	font-family: $serif;
+
+	a {
+		text-decoration: underline;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		font-weight: 600;
+		line-height: 1.2;
+		margin: 32px 0 16px;
+		font-size: 21px;
+		color: $gray-darken-30;
+	}
+
+	h1 {
+		color: $gray-dark;
+		font-size: 54px;
+		line-height: 1.4;
+		margin-top: 0;
+	}
+
+	h2 {
+		font-size: 32px;
+		color: $gray-dark;
+	}
+
+	h3 {
+		font-size: 24px;
+	}
+
+	p, li {
+		line-height: 1.6;
+	}
+
+	ul, ol {
+		margin: 0 0 32px 48px;
+	}
+
+	li {
+		margin-bottom: 8px;
 	}
 
 	pre {
-		padding: (12 / 15) * 1em;
+		padding: 8px;
 		background: $white;
 		background-color: $white;
+		color: $blue-dark;
 	}
 
 	code {
-		font-size: (13 / 15) * 1em;
+		font-size: 15px;
 		background-color: $white;
-		padding: 0.2em;
+		padding: 2px 6px;
 		border-radius: 3px;
+		color: $blue-dark;
 	}
 
 	pre > code {
@@ -105,9 +484,9 @@
 	.label {
 		$invert: $white;
 		font-weight: bold;
-		font-size: 12px;
-		padding: 1px 5px 2px 5px;
-		border-radius: 2px;
+		font-size: 15px;
+		padding: 1px 5px 2px;
+		border-radius: 3px;
 
 		&.status-awaiting-fixes {
 			background: #ea652d;
@@ -130,78 +509,32 @@
 
 	video {
 		max-width: 100%;
-		margin-bottom: 1em;
+		margin-bottom: 24px;
 	}
 }
 
-.devdocs__doc-header {
-	font-size: 13px;
+.design__typography-interface-example {
+	font-family: $sans;
 
-	a {
-		float: right;
+	h2 {
+		margin-top: 16px;
 	}
 }
 
-.devdocs__doc-content {
-	margin-top: 48px;
+.design__typography-content-example {
+	font-family: $serif;
+
+	h2 {
+		margin-top: 16px;
+	}
 }
 
-.devdocs__welcome {
-	color: $gray-dark;
-}
-
-.devdocs__welcome-title {
-	font-size: 28px;
-	font-weight: 600;
-	margin-bottom: 24px;
-}
-
-.devdocs__welcome-illustration {
-	float: right;
-	margin-top: -120px;
-}
-
-
-.docs__popover-hover-example__bullet {
-	list-style: none;
-	float: left;
-	cursor: pointer;
-	width: 25px;
-	height: 25px;
-	line-height: 25px;
+// At the end of documentation and reademe's
+a.devdocs__doc-edit-link,
+a.docs-example__doc-edit-link {
 	text-align: center;
-	font-size: 10px;
-	background-color: #e0ffe0;
-
-	&:hover {
-		background-color: $gray;
-		color: $white;
-	}
-
-	&:nth-child(4n) {
-		background-color: #e0ffff;
-
-		&:hover {
-			background-color: $gray;
-			color: $white;
-		}
-	}
-
-	&:nth-child(4n + 1) {
-		background-color: #e0e0ff;
-
-		&:hover {
-			background-color: $gray;
-			color: $white;
-		}
-	}
-
-	&:nth-child(4n + 2) {
-		background-color: #ffffe0;
-
-		&:hover {
-			background-color: $gray;
-			color: $white;
-		}
-	}
+	text-decoration: underline;
+	float: right;
+	position: relative;
+	top: -20px;
 }

@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, get, values } from 'lodash';
+import { find, get } from 'lodash';
 
 /**
  * Returns true if a network request is in-progress for the specified site ID,
@@ -29,12 +29,7 @@ export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
  * @return {Array?}           Post type taxonomies
  */
 export function getPostTypeTaxonomies( state, siteId, postType ) {
-	const taxonomies = get( state.postTypes.taxonomies.items, [ siteId, postType ] );
-	if ( ! taxonomies ) {
-		return null;
-	}
-
-	return values( taxonomies );
+	return get( state.postTypes.taxonomies.items, [ siteId, postType ], null );
 }
 
 /**
@@ -49,9 +44,5 @@ export function getPostTypeTaxonomies( state, siteId, postType ) {
  */
 export function getPostTypeTaxonomy( state, siteId, postType, taxonomyName ) {
 	const taxonomies = getPostTypeTaxonomies( state, siteId, postType );
-	if ( ! taxonomies ) {
-		return null;
-	}
-
 	return find( taxonomies, { name: taxonomyName } ) || null;
 }

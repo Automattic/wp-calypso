@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import qs from 'querystring';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -105,7 +105,7 @@ class EditorLocation extends React.Component {
 
 		const src =
 			GOOGLE_MAPS_BASE_URL +
-			qs.stringify( {
+			stringify( {
 				markers: this.props.coordinates.join( ',' ),
 				zoom: 8,
 				size: '400x300',

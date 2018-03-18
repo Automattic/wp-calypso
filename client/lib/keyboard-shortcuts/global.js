@@ -30,6 +30,7 @@ function GlobalShortcuts() {
 }
 
 GlobalShortcuts.prototype.bindShortcuts = function() {
+	KeyboardShortcuts.on( 'open-help', this.openHelp.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-reader', this.goToReader.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-my-likes', this.goToMyLikes.bind( this ) );
 	KeyboardShortcuts.on( 'go-to-stats', this.goToStats.bind( this ) );
@@ -43,6 +44,12 @@ GlobalShortcuts.prototype.bindShortcuts = function() {
 
 GlobalShortcuts.prototype.setSelectedSite = function( site ) {
 	this.selectedSite = site;
+};
+
+GlobalShortcuts.prototype.openHelp = function() {
+	if ( this.showInlineHelp ) {
+		this.showInlineHelp();
+	}
 };
 
 GlobalShortcuts.prototype.goToReader = function() {

@@ -6,6 +6,7 @@
 
 export ButtonRow from './button-row';
 export combineTours from './combine-tours';
+export ConditionalBlock from './conditional-block';
 export Continue from './continue';
 export Link from './link';
 export makeTour from './make-tour';

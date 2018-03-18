@@ -63,5 +63,17 @@ describe( 'index', () => {
 
 			expect( url ).to.equal( '/log-in?email_address=foo%40bar.com' );
 		} );
+
+		test( 'should return the login url with encoded OAuth2 client ID param', () => {
+			const url = login( { isNative: true, oauth2ClientId: 12345 } );
+
+			expect( url ).to.equal( '/log-in?client_id=12345' );
+		} );
+
+		test( 'should return the login url for Jetpack specific login', () => {
+			const url = login( { isNative: true, isJetpack: true } );
+
+			expect( url ).to.equal( '/log-in/jetpack' );
+		} );
 	} );
 } );

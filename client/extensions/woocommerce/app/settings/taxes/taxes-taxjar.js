@@ -6,7 +6,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -16,7 +15,6 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Card from 'components/card';
 import ExternalLink from 'components/external-link';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import Main from 'components/main';
 import SettingsNavigation from '../navigation';
 
 class SettingsTaxesTaxJar extends Component {
@@ -30,7 +28,7 @@ class SettingsTaxesTaxJar extends Component {
 	};
 
 	render = () => {
-		const { className, site, translate } = this.props;
+		const { site, translate } = this.props;
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/settings/:site/', site ) }>{ translate( 'Settings' ) }</a>,
@@ -43,7 +41,7 @@ class SettingsTaxesTaxJar extends Component {
 		const pluginUrl = getLink( '/plugins/taxjar-simplified-taxes-for-woocommerce/:site', site );
 
 		return (
-			<Main className={ classNames( 'settings-taxes', className ) } wideLayout>
+			<div>
 				<ActionHeader breadcrumbs={ breadcrumbs } />
 				<SettingsNavigation activeSection="taxes" />
 				<div>
@@ -83,7 +81,7 @@ class SettingsTaxesTaxJar extends Component {
 						</p>
 					</Card>
 				</div>
-			</Main>
+			</div>
 		);
 	};
 }

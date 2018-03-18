@@ -14,8 +14,14 @@ import { getRequest } from 'state/selectors';
 
 export default function getJetpackOnboardingPendingSteps( state, siteId, steps ) {
 	const stepActionsMap = {
+		[ STEPS.CONTACT_FORM ]: {
+			addContactForm: true,
+		},
 		[ STEPS.WOOCOMMERCE ]: {
 			installWooCommerce: true,
+		},
+		[ STEPS.STATS ]: {
+			stats: true,
 		},
 	};
 
@@ -24,7 +30,7 @@ export default function getJetpackOnboardingPendingSteps( state, siteId, steps )
 		( result, stepName ) => {
 			result[ stepName ] = getRequest(
 				state,
-				saveJetpackOnboardingSettings( siteId, stepActionsMap[ stepName ] )
+				saveJetpackOnboardingSettings( siteId, { onboarding: stepActionsMap[ stepName ] } )
 			).isLoading;
 			return result;
 		},

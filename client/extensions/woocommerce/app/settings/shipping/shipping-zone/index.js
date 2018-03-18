@@ -15,6 +15,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import accept from 'lib/accept';
 import Main from 'components/main';
 import QueryShippingZones, {
 	areShippingZonesFullyLoaded,
@@ -117,16 +118,26 @@ class Shipping extends Component {
 	onDelete() {
 		const { translate, actions } = this.props;
 
-		const successAction = successNotice( translate( 'Shipping Zone deleted.' ), {
-			duration: 4000,
-			displayOnNextPage: true,
-		} );
-
-		const failureAction = errorNotice(
-			translate( 'There was a problem deleting the Shipping Zone. Please try again.' )
+		const areYouSure = translate(
+			'Are you sure you want to permanently delete this shipping zone?'
 		);
 
-		actions.createShippingZoneDeleteActionList( successAction, failureAction );
+		accept( areYouSure, function( accepted ) {
+			if ( ! accepted ) {
+				return;
+			}
+
+			const successAction = successNotice( translate( 'Shipping Zone deleted.' ), {
+				duration: 4000,
+				displayOnNextPage: true,
+			} );
+
+			const failureAction = errorNotice(
+				translate( 'There was a problem deleting the Shipping Zone. Please try again.' )
+			);
+
+			actions.createShippingZoneDeleteActionList( successAction, failureAction );
+		} );
 	}
 
 	render() {

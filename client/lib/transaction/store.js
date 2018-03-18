@@ -37,6 +37,7 @@ function createInitialTransaction() {
 	return {
 		errors: {},
 		newCardFormFields: {},
+		newCardRawDetails: {},
 		step: { name: BEFORE_SUBMIT },
 		domainDetails: null,
 	};
@@ -64,14 +65,24 @@ function setStep( step ) {
 }
 
 function setNewCreditCardDetails( options ) {
-	if ( ! _transaction.payment.newCardDetails ) {
-		return;
+	// Store the card details on the transaction object. These can be used to
+	// repopulate the new credit card form and payment object with the correct
+	// default values if the credit card form ever needs to be built again.
+	const transactionUpdates = {
+		newCardFormFields: { $merge: options.maskedDetails },
+		newCardRawDetails: { $merge: options.rawDetails },
+	};
+
+	// If the new card is the active payment method, populate the payment
+	// object now. (If it isn't, any code which later switches to this payment
+	// method is responsible for using the above data to populate the payment
+	// object correctly, e.g. by calling newCardPayment() and passing in the
+	// transaction.newCardRawDetails object from above.)
+	if ( _transaction.payment.newCardDetails ) {
+		transactionUpdates.payment = { newCardDetails: { $merge: options.rawDetails } };
 	}
 
-	var newTransaction = update( _transaction, {
-		payment: { newCardDetails: { $merge: options.rawDetails } },
-		newCardFormFields: { $merge: options.maskedDetails },
-	} );
+	const newTransaction = update( _transaction, transactionUpdates );
 
 	replaceData( newTransaction );
 }

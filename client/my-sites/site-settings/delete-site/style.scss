@@ -14,7 +14,7 @@
 
 .delete-site__content-list {
 	margin: 0 0 20px;
-	border: solid 1px lighten( $gray, 20% );
+	border: solid 1px $gray-lighten-20;
 	border-radius: 4px;
 	list-style: none;
 	text-align: left;
@@ -24,7 +24,7 @@
 	box-sizing: border-box;
 	width: 100%;
 	padding: 12px 16px;
-	border-top: solid 1px lighten( $gray, 20% );
+	border-top: solid 1px $gray-lighten-20;
 	font-size: 14px;
 	line-height: 18px;
 	color: $gray-dark;

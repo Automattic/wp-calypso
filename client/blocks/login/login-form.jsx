@@ -8,10 +8,11 @@ import { capitalize, defer, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -51,6 +52,7 @@ import SocialLoginForm from './social';
 export class LoginForm extends Component {
 	static propTypes = {
 		accountType: PropTypes.string,
+		disableAutoFocus: PropTypes.bool,
 		fetchMagicLoginRequestEmail: PropTypes.func.isRequired,
 		formUpdate: PropTypes.func.isRequired,
 		getAuthAccountType: PropTypes.func.isRequired,
@@ -80,40 +82,32 @@ export class LoginForm extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.state.isFormDisabledWhileLoading ) {
-			if ( window && window.calypsoLoadStartTime && window.calypsoLoadStartTime[ 'log-in' ] ) {
-				this.props.recordTracksEvent( 'calypso_load_end', {
-					elapsed_ms: window.performance.now() - window.calypsoLoadStartTime[ 'log-in' ].startTimestamp,
-					path: '/log-in',
-				} );
-
-				delete window.calypsoLoadStartTime[ 'log-in' ];
-			}
-		}
-
+		const { disableAutoFocus } = this.props;
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			this.usernameOrEmail && this.usernameOrEmail.focus();
+			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
 		} );
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { requestError } = this.props;
+		const { disableAutoFocus, requestError } = this.props;
 
 		if ( prevProps.requestError || ! requestError ) {
 			return;
 		}
 
 		if ( requestError.field === 'password' ) {
-			defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && defer( () => this.password && this.password.focus() );
 		}
 
 		if ( requestError.field === 'usernameOrEmail' ) {
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
+		const { disableAutoFocus } = this.props;
+
 		if (
 			this.props.socialAccountIsLinking !== nextProps.socialAccountIsLinking &&
 			nextProps.socialAccountIsLinking
@@ -126,11 +120,11 @@ export class LoginForm extends Component {
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
 			this.setState( { password: '' } );
 
-			defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
-			defer( () => this.password && this.password.focus() );
+			! disableAutoFocus && defer( () => this.password && this.password.focus() );
 		}
 
 		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
@@ -211,7 +205,16 @@ export class LoginForm extends Component {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			this.props.getAuthAccountType( this.state.usernameOrEmail );
+			// Google Chrome on iOS will autofill without sending events, leading the user
+			// to see a filled box but getting an error. We fetch the value directly from
+			// the DOM as a workaround.
+			const usernameOrEmail = ReactDom.findDOMNode( this.usernameOrEmail ).value;
+
+			this.props.getAuthAccountType( usernameOrEmail );
+
+			this.setState( {
+				usernameOrEmail,
+			} );
 
 			return;
 		}
@@ -266,7 +269,7 @@ export class LoginForm extends Component {
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			signupUrl =
 				'/start/wpcc?' +
-				qs.stringify( {
+				stringify( {
 					oauth2_client_id: oauth2Client.id,
 					oauth2_redirect: redirectTo,
 				} );
@@ -304,7 +307,7 @@ export class LoginForm extends Component {
 										: this.props.translate( 'Change Username' ) }
 								</a>
 							) : (
-								this.props.translate( 'Email Address' )
+								this.props.translate( 'Email Address or Username' )
 							) }
 						</label>
 

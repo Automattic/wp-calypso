@@ -6,7 +6,7 @@
 }
 
 .product-categories__list-container {
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	border-bottom: 0;
 }
 
@@ -59,10 +59,6 @@
 }
 
 .product-categories__form {
-	@include breakpoint( ">660px" ) {
-		margin-top: 58px;
-	}
-
 	&.is-placeholder div {
 		@include placeholder();
 		background: $white;
@@ -132,7 +128,7 @@
 		cursor: pointer;
 
 		figure {
-			border: 1px solid lighten( $gray, 30% );
+			border: 1px solid $gray-lighten-30;
 		}
 
 		img {
@@ -173,13 +169,13 @@
 		width: 28px;
 		height: 28px;
 		transform: translate( 25%, -25% );
-		border: 1px solid lighten( $gray, 10% );
+		border: 1px solid $gray-lighten-10;
 		border-radius: 50%;
 		background-color: $gray-light;
 		cursor: pointer;
 
 		&:hover {
-			background: lighten( $gray, 30% );
+			background: $gray-lighten-30;
 		}
 	}
 
@@ -191,11 +187,10 @@
 		width: 24px;
 		height: 24px;
 		margin: 0;
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 
 		&:hover {
 			color: $gray;
 		}
 	}
 }
-

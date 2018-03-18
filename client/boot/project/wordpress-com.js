@@ -24,9 +24,7 @@ import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
 import translatorJumpstart from 'lib/translator-jumpstart';
-import nuxWelcome from 'layout/nux-welcome';
 import emailVerification from 'components/email-verification';
-import { isDesktop } from 'lib/viewport';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { pruneStaleRecords } from 'lib/wp/sync-handler';
 import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
@@ -157,18 +155,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
-		// If `?welcome` is present, and `?tour` isn't, show the welcome message
-		if (
-			! context.query.tour &&
-			context.querystring === 'welcome' &&
-			context.pathname.indexOf( '/me/next' ) === -1
-		) {
-			// show welcome message, persistent for full sized screens
-			nuxWelcome.setWelcome( isDesktop() );
-		} else {
-			nuxWelcome.clearTempWelcome();
-		}
-
 		// Bump general stat tracking overall Newdash usage
 		analytics.mc.bumpStat( { newdash_pageviews: 'route' } );
 
@@ -240,6 +226,14 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 	) {
 		asyncRequire( 'lib/abtest/test-helper', testHelper => {
 			testHelper( document.querySelector( '.environment.is-tests' ) );
+		} );
+	}
+	if (
+		config.isEnabled( 'dev/preferences-helper' ) &&
+		document.querySelector( '.environment.is-prefs' )
+	) {
+		asyncRequire( 'lib/preferences-helper', prefHelper => {
+			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
 		} );
 	}
 }

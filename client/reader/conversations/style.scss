@@ -1,6 +1,6 @@
 // Conversations intro
 .conversations__intro {
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	color: $blue-dark;
 	display: flex;
 	min-height: 140px;
@@ -62,7 +62,7 @@
 	width: 24px;
 
 	.conversations__intro-close-icon {
-		fill: lighten( $gray, 10% );
+		fill: $gray-lighten-10;
 		position: absolute;
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
@@ -71,7 +71,7 @@
 
 		&:hover {
 			cursor: pointer;
-			fill: darken( $gray, 20% );
+			fill: $gray-darken-20;
 		}
 	}
 }

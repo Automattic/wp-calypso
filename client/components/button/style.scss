@@ -16,7 +16,7 @@ button {
 
 .button {
 	background: $white;
-	border-color: lighten( $gray, 20% );
+	border-color: $gray-lighten-20;
 	border-style: solid;
 	border-width: 1px 1px 2px;
 	color: $gray-dark;
@@ -38,7 +38,7 @@ button {
 	appearance: none;
 
 	&:hover {
-		border-color: lighten( $gray, 10% );
+		border-color: $gray-lighten-10;
 		color: $gray-dark;
 	}
 	&:active {
@@ -50,9 +50,9 @@ button {
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 		background: $white;
-		border-color: lighten( $gray, 30% );
+		border-color: $gray-lighten-30;
 		cursor: default;
 
 		&:active {
@@ -70,12 +70,11 @@ button {
 		line-height: 1;
 
 		&:disabled {
-			color: lighten( $gray, 30% );
+			color: $gray-lighten-30;
 		}
 		.gridicon {
 			top: 5px;
 			margin-top: -8px;
-			margin-right: 4px;
 		}
 		// Make the left margin of the small plus icon visually less huge
 		.gridicons-plus-small {
@@ -93,7 +92,7 @@ button {
 	&.is-busy {
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, lighten( $gray, 30% ) 28%, $white 28%, $white 72%, lighten( $gray, 30% ) 72%);
+		background-image: linear-gradient( -45deg, $gray-lighten-30 28%, $white 28%, $white 72%, $gray-lighten-30 72%);
 	}
 	&.hidden {
 		display: none;
@@ -104,6 +103,10 @@ button {
 		margin-top: -2px;
 		width: 18px;
 		height: 18px;
+
+		&:not(:last-child) {
+			margin-right: 4px;
+		}
 	}
 }
 
@@ -124,9 +127,9 @@ button {
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 		background: $white;
-		border-color: lighten( $gray, 30% );
+		border-color: $gray-lighten-30;
 	}
 	&.is-busy {
 		background-size: 120px 100%;
@@ -151,7 +154,7 @@ button {
 	&[disabled],
 	&:disabled {
 		color: lighten( $alert-red, 30% );
-		border-color: lighten( $gray, 30% );
+		border-color: $gray-lighten-30;
 	}
 }
 
@@ -168,6 +171,11 @@ button {
 	&:disabled {
 		background: lighten( $alert-red, 20% );
 		border-color: tint( $alert-red, 30% );
+	}
+	&.is-busy {
+		background-size: 120px 100%;
+		background-image: linear-gradient( -45deg, $alert-red 28%, darken( $alert-red, 5% ) 28%, darken( $alert-red, 5% ) 72%, $alert-red 72%);
+		border-color: darken( $alert-red, 8% );
 	}
 }
 
@@ -191,7 +199,7 @@ button {
 
 	&[disabled],
 	&:disabled {
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 		cursor: default;
 
 		&:active {
@@ -208,6 +216,20 @@ button {
 
 		&[disabled] {
 			color: lighten( $alert-red, 30% );
+		}
+	}
+
+	&.is-primary {
+		color: $blue-wordpress;
+
+		&:focus,
+		&:hover,
+		&:active {
+			color: $link-highlight;
+		}
+
+		&[disabled] {
+			color: $gray-lighten-30;
 		}
 	}
 
@@ -290,21 +312,6 @@ button {
 		box-shadow: none;
 	}
 }
-
-// Positions and resets font styles of noticons applied to buttons
-.button.noticon {
-	line-height: inherit;
-
-	&:before {
-		display: inline-block;
-		vertical-align: middle;
-		margin-top: -2px;
-		font-size: 16px;
-		font-style: normal;
-		font-weight: normal;
-	}
-}
-
 
 @keyframes button__busy-animation {
   0%   { background-position: 240px 0; }

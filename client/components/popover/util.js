@@ -342,18 +342,4 @@ const constrainLeft = function( off, el ) {
 	return off;
 };
 
-const isElement = obj => {
-	try {
-		//Using W3 DOM2 (works for FF, Opera and Chrom)
-		return obj instanceof HTMLElement;
-	} catch ( error ) {
-		return (
-			typeof obj === 'object' &&
-			obj.nodeType === 1 &&
-			typeof obj.style === 'object' &&
-			typeof obj.ownerDocument === 'object'
-		);
-	}
-};
-
-export { constrainLeft, bindWindowListeners, unbindWindowListeners, suggested, offset, isElement };
+export { constrainLeft, bindWindowListeners, unbindWindowListeners, suggested, offset };

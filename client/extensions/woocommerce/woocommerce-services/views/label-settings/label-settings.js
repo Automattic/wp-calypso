@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, isBoolean } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -23,9 +24,13 @@ import FormSelect from 'components/forms/form-select';
 import Notice from 'components/notice';
 import PaymentMethod, { getPaymentMethodTitle } from './label-payment-method';
 import { getOrigin } from 'woocommerce/lib/nav-utils';
-import { setFormDataValue } from '../../state/label-settings/actions';
+import {
+	openAddCardDialog,
+	fetchSettings,
+} from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import {
 	areSettingsFetching,
+	areSettingsLoaded,
 	getEmailReceipts,
 	getLabelSettingsStoreOptions,
 	getMasterUserInfo,
@@ -35,7 +40,9 @@ import {
 	isPristine,
 	userCanEditSettings,
 	userCanManagePayments,
-} from '../../state/label-settings/selectors';
+} from 'woocommerce/woocommerce-services/state/label-settings/selectors';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import AddCardDialog from 'woocommerce/woocommerce-services/views/label-settings/add-credit-card-modal';
 
 class ShippingLabels extends Component {
 	componentWillMount() {
@@ -126,12 +133,22 @@ class ShippingLabels extends Component {
 		);
 	};
 
+	onVisibilityChange = () => {
+		if ( ! document.hidden ) {
+			this.props.fetchSettings( this.props.siteId );
+		}
+		if ( this.addCreditCardWindow && this.addCreditCardWindow.closed ) {
+			document.removeEventListener( 'visibilitychange', this.onVisibilityChange );
+		}
+	};
+
 	renderPaymentsSection = () => {
 		const {
 			siteId,
 			canEditPayments,
 			paymentMethods,
 			selectedPaymentMethod,
+			isReloading,
 			translate,
 		} = this.props;
 
@@ -177,7 +194,7 @@ class ShippingLabels extends Component {
 		}
 
 		const onPaymentMethodChange = value =>
-			this.props.setFormDataValue( siteId, 'selected_payment_method_id', value );
+			this.props.setValue( 'selected_payment_method_id', value );
 
 		let description, buttonLabel;
 		if ( paymentMethods.length ) {
@@ -205,13 +222,38 @@ class ShippingLabels extends Component {
 			);
 		};
 
+		const openDialog = () => {
+			this.props.openAddCardDialog( siteId );
+		};
+
+		const onAddCardExternal = () => {
+			this.addCreditCardWindow = window.open( getOrigin() + '/me/purchases/add-credit-card' );
+			document.addEventListener( 'visibilitychange', this.onVisibilityChange );
+		};
+
 		return (
 			<div>
 				{ this.renderPaymentPermissionNotice() }
 				<p className="label-settings__credit-card-description">{ description }</p>
-				{ paymentMethods.map( renderPaymentMethod ) }
-				<Button href={ getOrigin() + '/me/purchases/add-credit-card' } target="_blank" compact>
+
+				<QueryStoredCards />
+				{ isReloading ? (
+					<div className="label-settings__placeholder">
+						<PaymentMethod selected={ false } isLoading={ true } />
+						<PaymentMethod selected={ false } isLoading={ true } />
+					</div>
+				) : (
+					paymentMethods.map( renderPaymentMethod )
+				) }
+
+				<AddCardDialog siteId={ siteId } />
+
+				{ /* Render two buttons with internal/external classNames to conditionally show them in Calypso or wp-admin using CSS */ }
+				<Button className="label-settings__internal" onClick={ openDialog } compact>
 					{ buttonLabel }
+				</Button>
+				<Button className="label-settings__external" onClick={ onAddCardExternal } compact>
+					{ buttonLabel } <Gridicon icon="external" />
 				</Button>
 			</div>
 		);
@@ -219,7 +261,6 @@ class ShippingLabels extends Component {
 
 	renderEmailReceiptsSection = () => {
 		const {
-			siteId,
 			emailReceipts,
 			translate,
 			masterUserName,
@@ -233,7 +274,7 @@ class ShippingLabels extends Component {
 			return null;
 		}
 
-		const onChange = () => this.props.setFormDataValue( siteId, 'email_receipts', ! emailReceipts );
+		const onChange = () => this.props.setValue( 'email_receipts', ! emailReceipts );
 
 		return (
 			<FormFieldSet>
@@ -264,14 +305,13 @@ class ShippingLabels extends Component {
 	};
 
 	renderContent = () => {
-		const { siteId, canEditSettings, isLoading, paperSize, storeOptions, translate } = this.props;
+		const { canEditSettings, isLoading, paperSize, storeOptions, translate } = this.props;
 
 		if ( isLoading ) {
 			return this.renderPlaceholder();
 		}
 
-		const onPaperSizeChange = event =>
-			this.props.setFormDataValue( siteId, 'paper_size', event.target.value );
+		const onPaperSizeChange = event => this.props.setValue( 'paper_size', event.target.value );
 		const paperSizes = getPaperSizes( storeOptions.origin_country );
 
 		return (
@@ -309,12 +349,14 @@ class ShippingLabels extends Component {
 
 ShippingLabels.propTypes = {
 	siteId: PropTypes.number.isRequired,
+	setValue: PropTypes.func.isRequired,
 };
 
 export default connect(
 	( state, { siteId } ) => {
 		return {
-			isLoading: areSettingsFetching( state, siteId ),
+			isLoading: areSettingsFetching( state, siteId ) && ! areSettingsLoaded( state, siteId ),
+			isReloading: areSettingsFetching( state, siteId ) && areSettingsLoaded( state, siteId ),
 			pristine: isPristine( state, siteId ),
 			paymentMethods: getPaymentMethods( state, siteId ),
 			selectedPaymentMethod: getSelectedPaymentMethodId( state, siteId ),
@@ -330,7 +372,8 @@ export default connect(
 	dispatch =>
 		bindActionCreators(
 			{
-				setFormDataValue,
+				openAddCardDialog,
+				fetchSettings,
 			},
 			dispatch
 		)

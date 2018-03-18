@@ -1,0 +1,104 @@
+/** @format */
+
+.simple-site-rename-form__dialog {
+	text-align: left;
+	max-width: 400px;
+	color: darken($gray, 20%);
+}
+
+.simple-site-rename-form__copy-addition {
+	color: $alert-green;
+}
+
+.simple-site-rename-form__copy-deletion {
+	color: $alert-red;
+}
+
+.card.simple-site-rename-form__content {
+	margin-bottom: 0;
+}
+
+.simple-site-rename-form__info {
+	color: $gray-text-min;
+	flex-basis: 400px;
+	flex-shrink: 1;
+	margin: 5px 0 0 0;
+	padding: 0;
+	text-align: center;
+	word-break: break-word;
+
+	@include breakpoint( '>660px' ) {
+		margin-right: 15px;
+		text-align: left;
+	}
+
+	span {
+		font-size: 12px;
+		margin: 0;
+
+		@include breakpoint( '>660px' ) {
+			margin-left: 24px;
+		}
+	}
+
+	.gridicon {
+		float: left;
+
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
+	}
+}
+
+.simple-site-rename-form__footer {
+	align-items: center;
+	border-top-color: $gray-light;
+	display: flex;
+	justify-content: space-between;
+
+	margin-top: 24px;
+
+	button {
+		flex-shrink: 0;
+		margin-left: auto;
+	}
+
+	p {
+		font-size: 12px;
+		margin: 0;
+
+		@include breakpoint( '>660px' ) {
+			margin-left: 24px;
+		}
+	}
+
+	@include breakpoint( '<660px' ) {
+		flex-direction: column-reverse;
+
+		em {
+			margin-top: 10px;
+		}
+
+		button {
+			width: 100%;
+		}
+	}
+}
+
+.simple-site-rename-form__confirmation-detail {
+	.gridicon {
+		float: left;
+
+		@include breakpoint( '<660px' ) {
+			display: none;
+		}
+	}
+
+	.simple-site-rename-form__confirmation-detail-copy {
+		word-break: break-word;
+
+		@include breakpoint( '>660px' ) {
+			margin-left: 24px;
+		}
+	}
+}

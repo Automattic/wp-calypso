@@ -17,8 +17,6 @@ import { localize } from 'i18n-calypso';
  */
 import SectionHeader from 'components/section-header';
 import Button from 'components/button';
-import ButtonGroup from 'components/button-group';
-import Tooltip from 'components/tooltip';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 
@@ -34,17 +32,6 @@ class PeopleListSectionHeader extends Component {
 	static defaultProps = {
 		isFollower: false,
 	};
-
-	constructor( props ) {
-		super( props );
-		this.state = {
-			addPeopleTooltip: false,
-		};
-	}
-
-	showAddTooltip = () => this.setState( { addPeopleTooltip: true } );
-
-	hideAddTooltip = () => this.setState( { addPeopleTooltip: false } );
 
 	getAddLink() {
 		const siteSlug = get( this.props, 'site.slug' );
@@ -66,27 +53,10 @@ class PeopleListSectionHeader extends Component {
 			<SectionHeader className={ classes } count={ count } label={ label }>
 				{ children }
 				{ siteLink && (
-					<ButtonGroup>
-						<Button
-							compact
-							href={ siteLink }
-							className="people-list-section-header__add-button"
-							onMouseEnter={ this.showAddTooltip }
-							onMouseLeave={ this.hideAddTooltip }
-							ref="addPeopleButton"
-							aria-label={ translate( 'Invite user', { context: 'button label' } ) }
-						>
-							<Gridicon icon="plus-small" size={ 18 } />
-							<Gridicon icon="user" size={ 18 } />
-							<Tooltip
-								isVisible={ this.state.addPeopleTooltip }
-								context={ this.refs && this.refs.addPeopleButton }
-								position="bottom"
-							>
-								{ translate( 'Invite user', { context: 'button tooltip' } ) }
-							</Tooltip>
-						</Button>
-					</ButtonGroup>
+					<Button compact href={ siteLink } className="people-list-section-header__add-button">
+						<Gridicon icon="user-add" />
+						{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
+					</Button>
 				) }
 			</SectionHeader>
 		);

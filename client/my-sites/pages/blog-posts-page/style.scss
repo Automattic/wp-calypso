@@ -38,6 +38,6 @@
 	margin: 0 33px 0 0;
 
 	&.is-disabled {
-		color: lighten( $gray, 10% );
+		color: $gray-lighten-10;
 	}
 }

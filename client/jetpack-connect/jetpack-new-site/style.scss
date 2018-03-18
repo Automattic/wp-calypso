@@ -44,8 +44,8 @@
 	&:hover {
 		z-index: 3;
 		transform: scale(1.075);
-		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% ), 0 7px 18px transparentize( lighten( $gray, 15% ), .5 );
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30, 0 7px 18px transparentize( lighten( $gray, 15% ), .5 );
 		transition: transform .25s ease, box-shadow .35s ease, z-index .175s ease;
 	}
 
@@ -90,7 +90,6 @@
 }
 
 .jetpack-new-site__wpcom-site {
-	
 	.button {
 		align-self: flex-end;
 		width: 100%;
@@ -112,7 +111,7 @@
 			position: absolute;
 			top: 8px;
 			left: 8px;
-			color: lighten( $gray, 20% );
+			color: $gray-lighten-20;
 		}
 
 		.form-text-input {
@@ -138,24 +137,24 @@
 	}
 
 	.button {
-		width: 100%;
+		background-color: $green-jetpack;
+		border-color: darken($green-jetpack, 5%);
 		margin-top: 16px;
-		background: $green-jetpack;
-		border-color: darken( $green-jetpack, 15% );
+		width: 100%;
 
 		&:hover,
 		&:focus {
-			border-color: darken( $green-jetpack, 30% );
+			border-color: darken($green-jetpack, 30%);
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px lighten( $green-jetpack, 25% );
+			box-shadow: 0 0 0 2px lighten($green-jetpack, 25%);
 		}
 
 		&[disabled],
 		&:disabled {
-			background: tint( $green-jetpack, 50% );
-			border-color: tint( $green-jetpack, 35% );
+			background: tint($green-jetpack, 50%);
+			border-color: tint($green-jetpack, 35%);
 			color: $white;
 		}
 	}
@@ -198,7 +197,7 @@
 		z-index: 1;
 		width: 100%;
 		height: 1px;
-		background: transparentize( lighten( $gray, 20% ), .5 );
+		background: transparentize( $gray-lighten-20, .5 );
 	}
 
 	span {

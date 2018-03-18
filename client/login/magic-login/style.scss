@@ -58,7 +58,7 @@
 .magic-login__footer {
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 		display: block;
 		line-height: 4em;
 		font-size: 14px;

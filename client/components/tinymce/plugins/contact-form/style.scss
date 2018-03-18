@@ -87,7 +87,7 @@
 }
 
 .editor-contact-form-modal-field__remove {
-	color: lighten( $gray, 20% );
+	color: $gray-lighten-20;
 	cursor: pointer;
 	transition: color 200ms;
 
@@ -102,8 +102,7 @@
 
 .editor-contact-form-modal-field__edit-wrapper-button {
 	width: 100%;
-	margin-top: 15px;
-	margin-bottom: 20px;
+	height: 100%;
 }
 
 .editor-contact-form-modal-field__edit-wrapper.foldable-card__expand .editor-contact-form-modal-field__edit {

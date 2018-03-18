@@ -12,8 +12,8 @@ flexbox container.
 ```jsx
 import PlanPrice from 'my-sites/plan-price';
 
-export default React.createClass( {
-	displayName: 'MyPlanPrice',
+export default class extends React.Component {
+	static displayName = 'MyPlanPrice';
 
 	render() {
 		return (
@@ -23,8 +23,7 @@ export default React.createClass( {
 			</span>
 		);
 	}
-} );
-
+}
 ```
 
 ## Props

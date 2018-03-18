@@ -24,6 +24,11 @@ jest.mock( 'page', () => ( {
 jest.mock( 'reader/controller-helper', () => ( {
 	setLastStoreId: jest.fn(),
 } ) );
+jest.mock( 'lib/redux-bridge', () => ( {
+	reduxGetState: function() {
+		return { reader: { posts: { items: {} } } };
+	},
+} ) );
 
 describe( 'reader utils', () => {
 	beforeEach( () => {

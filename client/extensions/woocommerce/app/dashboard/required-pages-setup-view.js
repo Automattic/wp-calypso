@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
-import SetupHeader from './setup-header';
+import SetupHeader from './setup/header';
 import { setUpStorePages } from 'woocommerce/state/sites/setup-choices/actions';
 
 class RequiredPagesSetupView extends Component {
@@ -36,7 +36,7 @@ class RequiredPagesSetupView extends Component {
 	render = () => {
 		const { translate } = this.props;
 		return (
-			<div className="card dashboard__setup-wrapper">
+			<div className="card dashboard__setup-wrapper setup__wrapper">
 				<SetupHeader
 					imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 					imageWidth={ 160 }

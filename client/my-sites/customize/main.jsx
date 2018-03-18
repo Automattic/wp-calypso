@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import url from 'url';
-import Qs from 'qs';
+import { stringify } from 'qs';
 import { cloneDeep, get, startsWith } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
@@ -188,9 +188,9 @@ class Customize extends React.Component {
 
 		//needed to load the customizer correctly when su'd
 		if ( wpcom.addSupportParams ) {
-			return Qs.stringify( wpcom.addSupportParams( query ) );
+			return stringify( wpcom.addSupportParams( query ) );
 		}
-		return Qs.stringify( query );
+		return stringify( query );
 	};
 
 	listenToCustomizer = () => {

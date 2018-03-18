@@ -54,7 +54,7 @@ class AccountSettingsRootView extends Component {
 			);
 		}
 
-		return <LabelSettings siteId={ siteId } />;
+		return <LabelSettings siteId={ siteId } setValue={ this.setValue } />;
 	};
 
 	render() {

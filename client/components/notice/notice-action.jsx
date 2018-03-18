@@ -31,6 +31,7 @@ export default class extends React.Component {
 
 		if ( this.props.external ) {
 			attributes.target = '_blank';
+			attributes.rel = 'noopener noreferrer';
 		}
 
 		return (

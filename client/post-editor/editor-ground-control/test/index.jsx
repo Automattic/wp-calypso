@@ -28,7 +28,6 @@ jest.mock( 'lib/posts/actions', () => ( {
 	recordEvent: () => {},
 	recordStat: () => {},
 } ) );
-jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'post-editor/edit-post-status', () => require( 'components/empty-component' ) );
 jest.mock( 'post-editor/editor-status-label', () => require( 'components/empty-component' ) );
 

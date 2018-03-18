@@ -13,7 +13,7 @@ import createReactClass from 'create-react-class';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import analytics from 'lib/analytics';
 import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
@@ -28,9 +28,6 @@ import { fetchReceiptCompleted } from 'state/receipts/actions';
 import { getExitCheckoutUrl } from 'lib/checkout';
 import { hasDomainDetails } from 'lib/store-transactions';
 import notices from 'notices';
-/* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
 import { managePurchase } from 'me/purchases/paths';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
@@ -61,10 +58,11 @@ import { canAddGoogleApps } from 'lib/domains';
 import { getDomainNameFromReceiptOrCart } from 'lib/domains/utils';
 import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
+import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
+import QueryProducts from 'components/data/query-products-list';
 
 const Checkout = createReactClass( {
 	displayName: 'Checkout',
-	mixins: [ observe( 'sites', 'productsList' ) ],
 
 	propTypes: {
 		cards: PropTypes.array.isRequired,
@@ -101,12 +99,12 @@ const Checkout = createReactClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if (
-			! this.props.cart.hasLoadedFromServer &&
-			nextProps.cart.hasLoadedFromServer &&
-			this.props.product
-		) {
-			this.addProductToCart();
+		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
+			if ( this.props.product ) {
+				this.addProductToCart();
+			}
+
+			this.trackPageView();
 		}
 	},
 
@@ -123,8 +121,6 @@ const Checkout = createReactClass( {
 			this.setState( { previousCart: nextCart } );
 		}
 
-		// Although this is a part of the gsuiteUpsellTake2 A/B test,
-		// the `abtest()` is not called here to make the data more accurate.
 		if (
 			this.props.isNewlyCreatedSite &&
 			this.props.contactDetails &&
@@ -271,6 +267,16 @@ const Checkout = createReactClass( {
 		return flatten( Object.values( purchases ) );
 	},
 
+	getEligibleDomainFromCart() {
+		const domainRegistrations = cartItems.getDomainRegistrations( this.props.cart );
+		const domainsInSignupContext = filter( domainRegistrations, { extra: { context: 'signup' } } );
+		const domainsForGSuite = filter( domainsInSignupContext, ( { meta } ) =>
+			canAddGoogleApps( meta )
+		);
+
+		return domainsForGSuite;
+	},
+
 	getCheckoutCompleteRedirectPath() {
 		let renewalItem;
 		const { cart, selectedSiteSlug, transaction: { step: { data: receipt } } } = this.props;
@@ -303,15 +309,17 @@ const Checkout = createReactClass( {
 			return '/checkout/thank-you/features';
 		}
 
-		if (
-			this.props.isEligibleForCheckoutToChecklist &&
-			'show' === abtest( 'checklistThankYouForPaidUser' )
-		) {
-			return `/checklist/${ selectedSiteSlug }/paid`;
+		if ( domainReceiptId && receiptId ) {
+			// DO NOT assign the test here.
+			if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
+				return `/checklist/${ selectedSiteSlug }/gsuite`;
+			}
+			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
 		}
 
-		if ( domainReceiptId && receiptId && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
-			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
+		// NOTE: This test assignment should precede the G Suite
+		if ( this.props.isEligibleForCheckoutToChecklist ) {
+			abtest( 'checklistThankYouForPaidUser' );
 		}
 
 		if (
@@ -320,15 +328,18 @@ const Checkout = createReactClass( {
 			cartItems.hasDomainRegistration( cart ) &&
 			isEmpty( receipt.failed_purchases )
 		) {
-			const domainsForGsuite = filter( cartItems.getDomainRegistrations( cart ), ( { meta } ) =>
-				canAddGoogleApps( meta )
-			);
+			const domainsForGSuite = this.getEligibleDomainFromCart();
 
-			if ( domainsForGsuite.length && abtest( 'gsuiteUpsellV2' ) === 'modified' ) {
+			if ( domainsForGSuite.length ) {
 				return `/checkout/${ selectedSiteSlug }/with-gsuite/${
-					domainsForGsuite[ 0 ].meta
+					domainsForGSuite[ 0 ].meta
 				}/${ receiptId }`;
 			}
+		}
+
+		// DO NOT assign the test here.
+		if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
+			return `/checklist/${ selectedSiteSlug }/paid`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
@@ -464,7 +475,7 @@ const Checkout = createReactClass( {
 				transaction={ this.props.transaction }
 				cards={ this.props.cards }
 				paymentMethods={ this.paymentMethodsAbTestFilter() }
-				products={ this.props.productsList.get() }
+				products={ this.props.productsList }
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
@@ -481,12 +492,12 @@ const Checkout = createReactClass( {
 
 	isLoading: function() {
 		const isLoadingCart = ! this.props.cart.hasLoadedFromServer,
-			isLoadingProducts = ! this.props.productsList.hasLoadedFromServer();
+			isLoadingProducts = this.props.isProductsListFetching;
 
 		return isLoadingCart || isLoadingProducts;
 	},
 
-	needsDomainDetails: function() {
+	needsDomainDetails() {
 		const cart = this.props.cart,
 			transaction = this.props.transaction;
 
@@ -503,10 +514,11 @@ const Checkout = createReactClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div className="main main-column" role="main">
 				<div className="checkout">
+					<QueryProducts />
 					<QueryContactDetailsCache />
 					<QueryStoredCards />
 					<QueryGeo />
@@ -537,6 +549,8 @@ export default connect(
 				selectedSiteId,
 				props.cart
 			),
+			productsList: getProductsList( state ),
+			isProductsListFetching: isProductsListFetching( state ),
 		};
 	},
 	{

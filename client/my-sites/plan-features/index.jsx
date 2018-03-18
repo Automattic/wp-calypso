@@ -6,8 +6,9 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import { map, reduce, noop, compact } from 'lodash';
+import { map, reduce, noop, compact, filter, reject } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -18,6 +19,8 @@ import { localize } from 'i18n-calypso';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesActions from './actions';
+import PlanFeaturesBottom from './bottom';
+import PlanFeaturesSummary from './summary';
 import {
 	isCurrentPlanPaid,
 	isCurrentSitePlan,
@@ -26,12 +29,13 @@ import {
 } from 'state/sites/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getCurrentUserCurrencyCode, getCurrentUserId } from 'state/current-user/selectors';
 import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import { getPlanRawPrice, getPlan, getPlanSlug, getPlanBySlug } from 'state/plans/selectors';
 import {
 	isPopular,
 	isNew,
+	isBestValue,
 	isMonthly,
 	getPlanFeaturesObject,
 	getPlanClass,
@@ -46,17 +50,21 @@ import Notice from 'components/notice';
 import SpinnerLine from 'components/spinner-line';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
+import formatCurrency from 'lib/format-currency';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 
 class PlanFeatures extends Component {
 	render() {
-		const { planProperties, isInSignup } = this.props;
+		const { planProperties, isInSignup, showModifiedPricingDisplay, site } = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
 		);
-		const planClasses = classNames( 'plan-features', { 'plan-features--signup': isInSignup } );
+		const planClasses = classNames( 'plan-features', {
+			'plan-features--signup': isInSignup,
+			'abtest-pricing-display': showModifiedPricingDisplay,
+		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
 		let mobileView, planDescriptions;
 		let bottomButtons = null;
@@ -71,6 +79,7 @@ class PlanFeatures extends Component {
 
 		return (
 			<div className={ planWrapperClasses } ref={ this.setScrollLeft }>
+				{ showModifiedPricingDisplay && ! site.jetpack && this.renderCreditNotice() }
 				<div className={ planClasses }>
 					{ this.renderUpgradeDisabledNotice() }
 					<div className="plan-features__content">
@@ -79,6 +88,7 @@ class PlanFeatures extends Component {
 							<tbody>
 								<tr>{ this.renderPlanHeaders() }</tr>
 								{ planDescriptions }
+								<tr>{ showModifiedPricingDisplay && this.renderCreditSummary() }</tr>
 								<tr>{ this.renderTopButtons() }</tr>
 								{ this.renderPlanFeatureRows() }
 								{ bottomButtons }
@@ -86,6 +96,7 @@ class PlanFeatures extends Component {
 						</table>
 					</div>
 				</div>
+				{ isInSignup && this.renderFarBottomAction() }
 			</div>
 		);
 	}
@@ -95,9 +106,76 @@ class PlanFeatures extends Component {
 
 		// center plans
 		if ( isInSignup && plansWrapper ) {
-			displayJetpackPlans ? ( plansWrapper.scrollLeft = 190 ) : ( plansWrapper.scrollLeft = 495 );
+			displayJetpackPlans ? ( plansWrapper.scrollLeft = 312 ) : ( plansWrapper.scrollLeft = 495 );
 		}
 	};
+
+	renderCreditNotice() {
+		const { canPurchase, hasPlaceholders, maxCredits, translate } = this.props;
+		const bannerContainer = document.querySelector( '.plans-features-main__notice' );
+
+		if ( hasPlaceholders || ! canPurchase || ! bannerContainer || ! maxCredits.amount ) {
+			return null;
+		}
+
+		return ReactDOM.createPortal(
+			<Notice
+				className="plan-features__notice-credits"
+				showDismiss={ false }
+				icon="info-outline"
+				status="is-success"
+			>
+				{ translate(
+					'You have {{b}}%(credits)s{{/b}} in upgrade credits available! ' +
+						'Apply the value of your current plan towards an upgrade before your credits expire!',
+					{
+						args: {
+							credits: formatCurrency( maxCredits.amount, maxCredits.currencyCode ),
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</Notice>,
+			bannerContainer
+		);
+	}
+
+	renderCreditSummary() {
+		const { canPurchase, planProperties, site, sitePlan } = this.props;
+
+		return map( planProperties, properties => {
+			const {
+				available,
+				currencyCode,
+				current,
+				discountPrice,
+				planConstantObj,
+				planName,
+				rawPrice,
+				relatedMonthlyPlan,
+			} = properties;
+
+			return (
+				<td key={ planName } className="plan-features__table-item">
+					<PlanFeaturesSummary
+						available={ available }
+						canPurchase={ canPurchase }
+						currencyCode={ currencyCode }
+						current={ current }
+						currentPlanTitle={ sitePlan.product_name_short }
+						discountPrice={ discountPrice }
+						planTitle={ planConstantObj.getTitle() }
+						planType={ planName }
+						rawPrice={ rawPrice }
+						relatedMonthlyPlan={ relatedMonthlyPlan }
+						site={ site }
+					/>
+				</td>
+			);
+		} );
+	}
 
 	renderUpgradeDisabledNotice() {
 		const { canPurchase, hasPlaceholders, translate } = this.props;
@@ -150,24 +228,28 @@ class PlanFeatures extends Component {
 				planName,
 				popular,
 				newPlan,
+				bestValue,
 				relatedMonthlyPlan,
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				showModifiedPricingDisplay,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
+						available={ available }
 						current={ current }
 						currencyCode={ currencyCode }
 						popular={ popular }
 						newPlan={ newPlan }
+						bestValue={ bestValue }
 						title={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
 						discountPrice={ discountPrice }
-						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
+						billingTimeFrame={ planConstantObj.getBillingTimeFrame( getABTestVariation ) }
 						hideMonthly={ hideMonthly }
 						isPlaceholder={ isPlaceholder }
 						site={ site }
@@ -175,6 +257,7 @@ class PlanFeatures extends Component {
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
+						showModifiedPricingDisplay={ showModifiedPricingDisplay }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -216,16 +299,19 @@ class PlanFeatures extends Component {
 			selectedPlan,
 			site,
 			siteType,
+			showModifiedPricingDisplay,
 		} = this.props;
 
 		return map( planProperties, properties => {
 			const {
+				available,
 				currencyCode,
 				current,
 				planConstantObj,
 				planName,
 				popular,
 				newPlan,
+				bestValue,
 				relatedMonthlyPlan,
 				isPlaceholder,
 				hideMonthly,
@@ -233,7 +319,7 @@ class PlanFeatures extends Component {
 			const { rawPrice, discountPrice } = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			let audience = planConstantObj.getAudience();
-			let billingTimeFrame = planConstantObj.getBillingTimeFrame();
+			let billingTimeFrame = planConstantObj.getBillingTimeFrame( getABTestVariation );
 
 			if ( isInSignup && ! displayJetpackPlans ) {
 				switch ( siteType ) {
@@ -252,13 +338,14 @@ class PlanFeatures extends Component {
 			}
 
 			if ( isInSignup && displayJetpackPlans ) {
-				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
+				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame( abtest );
 			}
 
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesHeader
 						audience={ audience }
+						available={ available }
 						basePlansPath={ basePlansPath }
 						billingTimeFrame={ billingTimeFrame }
 						current={ current }
@@ -268,6 +355,7 @@ class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isPlaceholder={ isPlaceholder }
 						newPlan={ newPlan }
+						bestValue={ bestValue }
 						planType={ planName }
 						popular={ popular }
 						rawPrice={ rawPrice }
@@ -275,6 +363,7 @@ class PlanFeatures extends Component {
 						site={ site }
 						selectedPlan={ selectedPlan }
 						title={ planConstantObj.getTitle() }
+						showModifiedPricingDisplay={ showModifiedPricingDisplay }
 					/>
 				</td>
 			);
@@ -470,6 +559,54 @@ class PlanFeatures extends Component {
 		} );
 	}
 
+	renderFarBottomAction() {
+		const {
+			canPurchase,
+			isInSignup,
+			isLandingPage,
+			freePlanProperties,
+			site,
+			selectedPlan,
+		} = this.props;
+		const {
+			available,
+			current,
+			onUpgradeClick,
+			planName,
+			primaryUpgrade,
+			isPlaceholder,
+			planConstantObj,
+			popular,
+		} =
+			freePlanProperties || {};
+
+		if ( ! freePlanProperties ) {
+			return null;
+		}
+
+		return (
+			<PlanFeaturesBottom>
+				<PlanFeaturesActions
+					available={ available }
+					canPurchase={ canPurchase }
+					className={ getPlanClass( planName ) }
+					current={ current }
+					freePlan={ isFreePlan( planName ) }
+					isInSignup={ isInSignup }
+					isLandingPage={ isLandingPage }
+					isPlaceholder={ isPlaceholder }
+					isPopular={ popular }
+					manageHref={ `/plans/my-plan/${ site.slug }` }
+					planName={ planConstantObj.getTitle() }
+					planType={ planName }
+					primaryUpgrade={ primaryUpgrade }
+					onUpgradeClick={ onUpgradeClick }
+					selectedPlan={ selectedPlan }
+				/>
+			</PlanFeaturesBottom>
+		);
+	}
+
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -498,6 +635,36 @@ PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 };
 
+function filterFreePlan( { planName } ) {
+	return isFreePlan( planName );
+}
+
+function getMaxCredits( planProperties, isJetpack ) {
+	return planProperties.reduce(
+		( prev, prop ) => {
+			let current = 0;
+			if ( prop.discountPrice ) {
+				current = prop.rawPrice - prop.discountPrice;
+				if ( ! isJetpack ) {
+					current = current * 12;
+				}
+			} else if ( prop.relatedMonthlyPlan ) {
+				current = prop.relatedMonthlyPlan.raw_price * 12 - prop.rawPrice;
+			}
+
+			if ( current > prev.amount ) {
+				return {
+					amount: current,
+					currencyCode: prop.currencyCode,
+				};
+			}
+
+			return prev;
+		},
+		{ amount: 0, currencyCode: '' }
+	);
+}
+
 export default connect(
 	( state, ownProps ) => {
 		const {
@@ -516,7 +683,9 @@ export default connect(
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
-		const planProperties = compact(
+		const isLoggedIn = !! getCurrentUserId( state );
+		let freePlanProperties = null;
+		let planProperties = compact(
 			map( plans, plan => {
 				let isPlaceholder = false;
 				const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -530,6 +699,7 @@ export default connect(
 					: null;
 				const popular = isPopular( plan ) && ! isPaid;
 				const newPlan = isNew( plan ) && ! isPaid;
+				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
 				const showMonthlyPrice = ! relatedMonthlyPlan && showMonthly;
 				let planFeatures = getPlanFeaturesObject( planConstantObj.getFeatures( abtest ) );
@@ -596,23 +766,45 @@ export default connect(
 					planObject: planObject,
 					popular: popular,
 					newPlan: newPlan,
+					bestValue: bestValue,
 					hideMonthly: false,
 					primaryUpgrade:
 						( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) ||
 						( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) ||
 						popular ||
 						newPlan ||
+						bestValue ||
 						plans.length === 1,
 					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
-					relatedMonthlyPlan: relatedMonthlyPlan,
+					relatedMonthlyPlan,
 				};
 			} )
 		);
 
+		if ( isInSignup ) {
+			const isInTest =
+				abtest(
+					isLoggedIn ? 'minimizedFreePlanForSignedUser' : 'minimizedFreePlanForUnsignedUser'
+				) === 'minimized';
+			if ( isInTest ) {
+				freePlanProperties = filter( planProperties, filterFreePlan );
+				freePlanProperties = freePlanProperties[ 0 ] || null;
+				planProperties = reject( planProperties, filterFreePlan );
+			}
+		}
+
+		const maxCredits = getMaxCredits( planProperties, ownProps.site.jetpack );
+		const showModifiedPricingDisplay =
+			! isInSignup && !! maxCredits.amount && abtest( 'upgradePricingDisplayV2' ) === 'modified';
+
 		return {
 			canPurchase,
 			planProperties,
+			freePlanProperties,
 			siteType,
+			sitePlan,
+			maxCredits,
+			showModifiedPricingDisplay,
 		};
 	},
 	{

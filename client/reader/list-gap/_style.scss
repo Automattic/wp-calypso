@@ -1,5 +1,5 @@
 .reader-list-gap {
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 	cursor: pointer;
 	margin-bottom: 16px;
 	padding: 30px 0;
@@ -25,7 +25,7 @@
 	}
 
 	&::before {
-		background: linear-gradient(-135deg, lighten( $gray, 30% ) 8px, transparent 0) 0 8px, linear-gradient( 135deg, lighten( $gray, 30% ) 8px, transparent 0) 0 8px;
+		background: linear-gradient(-135deg, $gray-lighten-30 8px, transparent 0) 0 8px, linear-gradient( 135deg, $gray-lighten-30 8px, transparent 0) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;

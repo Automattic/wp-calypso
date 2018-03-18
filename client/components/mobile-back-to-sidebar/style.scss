@@ -4,7 +4,7 @@
 	padding: 15px 0 15px 36px;
 	position: relative;
 	background: $white;
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 	cursor: pointer;
 
 	@include breakpoint( ">660px" ) {

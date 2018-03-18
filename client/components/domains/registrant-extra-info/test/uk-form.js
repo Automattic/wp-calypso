@@ -13,6 +13,7 @@ import { RegistrantExtraInfoUkForm } from '../uk-form';
 import FormInputValidation from 'components/forms/form-input-validation';
 
 const mockProps = {
+	contactDetails: {},
 	step: 'uk',
 	translate: identity,
 	updateContactDetailsCache: identity,
@@ -23,10 +24,12 @@ describe( 'uk-form', () => {
 		test( 'should render the correct registation errors', () => {
 			const testProps = {
 				...mockProps,
-				contactDetails: { extra: { registrantType: 'LLP' } },
+				ccTldDetails: { registrantType: 'LLP' },
 				validationErrors: {
 					extra: {
-						registrationNumber: [ 'testErrorCode' ],
+						uk: {
+							registrationNumber: [ 'testErrorCode' ],
+						},
 					},
 				},
 			};
@@ -36,14 +39,16 @@ describe( 'uk-form', () => {
 			expect( error.props() ).toHaveProperty( 'text', 'There was a problem with this field.' );
 		} );
 
-		test( 'should render multiple registation errors', () => {
+		test( 'should render multiple registration errors', () => {
 			const testProps = {
 				...mockProps,
-				contactDetails: { extra: { registrantType: 'LLP' } },
+				ccTldDetails: { registrantType: 'LLP' },
 				validationErrors: {
 					extra: {
-						registrationNumber: [ 'testErrorCode', 'testErrorCode' ],
-						tradingName: [ 'testErrorCode' ],
+						uk: {
+							registrationNumber: [ 'testErrorCode', 'testErrorCode' ],
+							tradingName: [ 'testErrorCode' ],
+						},
 					},
 				},
 			};
@@ -56,10 +61,12 @@ describe( 'uk-form', () => {
 		test( 'should convert error code to user-facing string', () => {
 			const testProps = {
 				...mockProps,
-				contactDetails: { extra: { registrantType: 'LLP' } },
+				ccTldDetails: { registrantType: 'LLP' },
 				validationErrors: {
 					extra: {
-						registrationNumber: [ 'dotukRegistrationNumberFormat' ],
+						uk: {
+							registrationNumber: [ 'dotukRegistrationNumberFormat' ],
+						},
 					},
 				},
 			};
@@ -75,10 +82,12 @@ describe( 'uk-form', () => {
 		test( 'Should disable submit button with validation errors', () => {
 			const testProps = {
 				...mockProps,
-				contactDetails: { extra: { registrantType: 'LLP' } },
+				ccTldDetails: { registrantType: 'LLP' },
 				validationErrors: {
 					extra: {
-						registrationNumber: [ 'dotukRegistrationNumberFormat' ],
+						uk: {
+							registrationNumber: [ 'dotukRegistrationNumberFormat' ],
+						},
 					},
 				},
 			};
@@ -95,10 +104,12 @@ describe( 'uk-form', () => {
 		test( 'Should not disable submit button with irrelevant validation errors', () => {
 			const testProps = {
 				...mockProps,
-				contactDetails: { extra: { registrantType: 'IND' } },
+				ccTldDetails: { registrantType: 'IND' },
 				validationErrors: {
 					extra: {
-						registrationNumber: [ 'dotukRegistrationNumberFormat' ],
+						uk: {
+							registrationNumber: [ 'dotukRegistrationNumberFormat' ],
+						},
 					},
 				},
 			};

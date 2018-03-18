@@ -5,6 +5,6 @@
 
 .social-icons--disabled {
 	path {
-		fill: lighten( $gray, 30% );
+		fill: $gray-lighten-30;
 	}
 }

@@ -31,6 +31,8 @@ import { getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import ChecklistBanner from './checklist-banner';
+import GoogleMyBusinessStatsNudge from 'blocks/google-my-business-stats-nudge';
+import { isGoogleMyBusinessStatsNudgeVisible as isGoogleMyBusinessStatsNudgeVisibleSelector } from 'state/selectors';
 
 class StatsSite extends Component {
 	constructor( props ) {
@@ -66,7 +68,16 @@ class StatsSite extends Component {
 	};
 
 	render() {
-		const { date, isJetpack, hasPodcasts, siteId, slug, translate } = this.props;
+		const {
+			date,
+			hasPodcasts,
+			isGoogleMyBusinessStatsNudgeVisible,
+			isJetpack,
+			siteId,
+			slug,
+			translate,
+		} = this.props;
+
 		const charts = [
 			{
 				attr: 'views',
@@ -132,6 +143,10 @@ class StatsSite extends Component {
 				/>
 				<div id="my-stats-content">
 					{ config.isEnabled( 'onboarding-checklist' ) && <ChecklistBanner siteId={ siteId } /> }
+					{ config.isEnabled( 'google-my-business' ) &&
+						isGoogleMyBusinessStatsNudgeVisible && (
+							<GoogleMyBusinessStatsNudge siteSlug={ slug } siteId={ siteId } />
+						) }
 					<ChartTabs
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
@@ -226,6 +241,10 @@ export default connect(
 		return {
 			isJetpack,
 			hasPodcasts: getSiteOption( state, siteId, 'podcasting_archive' ),
+			isGoogleMyBusinessStatsNudgeVisible: isGoogleMyBusinessStatsNudgeVisibleSelector(
+				state,
+				siteId
+			),
 			siteId,
 			slug: getSelectedSiteSlug( state ),
 		};

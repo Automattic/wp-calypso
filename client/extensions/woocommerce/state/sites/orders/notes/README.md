@@ -5,13 +5,21 @@ This module is used to manage order notes on a site.
 
 ## Actions
 
-### `fetchNotes( siteId: number, orderId: number )`
+### `fetchNotes( siteId: number, orderId: number, onSuccess: object, onFailure: object )`
 
 Fetch notes from the remote site. Does not run if this order's notes are loading or already loaded.
 
-### `createNote( siteId: number, orderId: number, note: object )`
+### `createNote( siteId: number, orderId: number, note: object, onSuccess: object, onFailure: object )`
 
 Create a note for an order on the remote site.
+
+### `onSuccess`, `onFailure`
+
+These parameters should be actions dispatched in the case of success or failure. For example,
+
+```js
+	onSuccess: successNotice( translate( 'Note created for order.' ) ),
+```
 
 ## Reducer
 

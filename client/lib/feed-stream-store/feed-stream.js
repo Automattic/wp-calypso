@@ -21,15 +21,15 @@ import debugFactory from 'debug';
  * Internal Dependencies
  */
 import Emitter from 'lib/mixins/emitter';
-import FeedPostStore from 'lib/feed-post-store';
 import * as FeedStreamActions from './actions';
 import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
 import { keyToString, keysAreEqual } from './post-key';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { COMMENTS_RECEIVE } from 'state/action-types';
+import { getPostByKey } from 'state/reader/posts/selectors';
 
 const debug = debugFactory( 'calypso:feed-store:post-list-store' );
 
@@ -142,7 +142,7 @@ export default class FeedStream {
 
 	getAll() {
 		return map( this.postKeys, function( key ) {
-			return key.isGap ? key : FeedPostStore.get( key );
+			return key.isGap ? key : getPostByKey( reduxGetState(), key );
 		} );
 	}
 
@@ -181,7 +181,7 @@ export default class FeedStream {
 		if ( postKey.isGap === true ) {
 			return true;
 		}
-		const post = FeedPostStore.get( postKey );
+		const post = getPostByKey( reduxGetState(), postKey );
 		return (
 			post && post._state !== 'error' && post._state !== 'pending' && post._state !== 'minimal'
 		);

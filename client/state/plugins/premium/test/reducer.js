@@ -27,6 +27,7 @@ import {
 	PLUGIN_SETUP_CONFIGURE,
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
+	SERIALIZE,
 } from 'state/action-types';
 
 describe( 'premium reducer', () => {
@@ -190,6 +191,49 @@ describe( 'premium reducer', () => {
 				error: { name: 'ErrorCode', message: 'Something went wrong.' },
 			} );
 			expect( state ).to.eql( { 'one.site': siteWithError } );
+		} );
+
+		test( 'should serialize non-error state using identity function', () => {
+			const originalState = deepFreeze( {
+				'one.site': [
+					{
+						slug: 'vaultpress',
+						name: 'VaultPress',
+						key: 'vp-api-key',
+						status: 'done',
+						error: null,
+					},
+				],
+			} );
+
+			const nextState = plugins( originalState, { type: SERIALIZE } );
+			expect( nextState ).eql( originalState );
+		} );
+
+		test( 'should serialize just the error for errored plugins', () => {
+			const originalState = deepFreeze( {
+				'error-site': [
+					{
+						slug: 'vaultpress',
+						name: 'VaultPress',
+						key: 'vp-api-key',
+						status: 'done',
+						error: { name: 'ErrorCode', message: 'Something went wrong.' },
+					},
+				],
+			} );
+			const nextState = plugins( originalState, { type: SERIALIZE } );
+			expect( nextState ).eql( {
+				'error-site': [
+					{
+						slug: 'vaultpress',
+						name: 'VaultPress',
+						key: 'vp-api-key',
+						status: 'done',
+						error: '[object Object]',
+					},
+				],
+			} );
 		} );
 	} );
 } );

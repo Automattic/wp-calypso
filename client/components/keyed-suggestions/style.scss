@@ -1,18 +1,3 @@
-
-/*
- * Suggestions start out invisible, and they show up only when triggered.
- */
-.keyed-suggestions {
-	display: none;
-}
-
-.has-keyed-suggestions {
-	.keyed-suggestions {
-		display: block;
-	}
-}
-
-
 /*
  * Suggestions list
  */

@@ -24,7 +24,7 @@ import analytics from 'lib/analytics';
 
 class NpsSurvey extends Component {
 	static propTypes = {
-		onDismissed: PropTypes.func,
+		onClose: PropTypes.func,
 		name: PropTypes.string,
 	};
 

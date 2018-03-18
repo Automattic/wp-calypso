@@ -14,16 +14,16 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-function renderTrashButton( onTrash, promotion, isBusy, translate ) {
+function renderTrashButton( onTrash, isBusy, label ) {
 	return onTrash && (
 		<Button borderless scary onClick={ onTrash }>
 			<Gridicon icon="trash" />
-			<span>{ translate( 'Delete' ) }</span>
+			<span>{ label }</span>
 		</Button>
 	);
 }
 
-function renderSaveButton( onSave, promotion, isBusy, translate ) {
+function renderSaveButton( onSave, isBusy, label ) {
 	if ( 'undefined' === typeof onSave ) {
 		// 'Save' not allowed here.
 		return null;
@@ -31,25 +31,20 @@ function renderSaveButton( onSave, promotion, isBusy, translate ) {
 
 	const saveDisabled = false === onSave;
 
-	const saveLabel = ( promotion && ! isObject( promotion.id )
-		? translate( 'Update' )
-		: translate( 'Save & Publish' )
-	);
-
 	return (
 		<Button primary onClick={ onSave || noop } disabled={ saveDisabled } busy={ isBusy }>
-			{ saveLabel }
+			{ label }
 		</Button>
 	);
 }
 
 const PromotionHeader = ( { promotion, onSave, onTrash, isBusy, translate, site } ) => {
-	const trashButton = renderTrashButton( onTrash, promotion, isBusy, translate );
-	const saveButton = renderSaveButton( onSave, promotion, isBusy, translate );
+	const existing = ( promotion && ! isObject( promotion.id ) );
+	const trashButton = renderTrashButton( onTrash, isBusy, translate( 'Delete' ) );
+	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & Publish' );
+	const saveButton = renderSaveButton( onSave, isBusy, saveLabel );
 
-	const currentCrumb = promotion && ! isObject( promotion.id )
-		? ( <span>{ translate( 'Edit Promotion' ) }</span> )
-		: ( <span>{ translate( 'Add Promotion' ) }</span> );
+	const currentCrumb = existing ? ( <span>{ translate( 'Edit Promotion' ) }</span> ) : ( <span>{ translate( 'Add Promotion' ) }</span> );
 
 	const breadcrumbs = [
 		( <a href={ getLink( '/store/promotions/:site/', site ) }>{ translate( 'Promotions' ) }</a> ),
@@ -57,7 +52,7 @@ const PromotionHeader = ( { promotion, onSave, onTrash, isBusy, translate, site 
 	];
 
 	return (
-		<ActionHeader breadcrumbs={ breadcrumbs }>
+		<ActionHeader breadcrumbs={ breadcrumbs } primaryLabel={ saveLabel }>
 			{ trashButton }
 			{ saveButton }
 		</ActionHeader>
@@ -82,4 +77,3 @@ PromotionHeader.propTypes = {
 };
 
 export default localize( PromotionHeader );
-

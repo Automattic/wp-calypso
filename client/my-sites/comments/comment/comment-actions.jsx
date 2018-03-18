@@ -14,6 +14,7 @@ import { get, includes, isEqual, isUndefined, noop } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
+import scrollTo from 'lib/scroll-to';
 import { getMinimumComment } from 'my-sites/comments/comment/utils';
 import {
 	bumpStat,
@@ -44,6 +45,7 @@ export class CommentActions extends Component {
 		commentId: PropTypes.number,
 		canModerateComment: PropTypes.bool,
 		commentsListQuery: PropTypes.object,
+		getCommentOffsetTop: PropTypes.func,
 		redirect: PropTypes.func,
 		toggleEditMode: PropTypes.func,
 		toggleReply: PropTypes.func,
@@ -140,6 +142,11 @@ export class CommentActions extends Component {
 
 	toggleApproved = () => this.setStatus( this.props.commentIsApproved ? 'unapproved' : 'approved' );
 
+	toggleEditMode = () => {
+		this.props.toggleEditMode();
+		scrollTo( { x: 0, y: this.props.getCommentOffsetTop() } );
+	};
+
 	toggleLike = () => {
 		const { commentIsLiked, commentStatus, like, unlike } = this.props;
 
@@ -161,7 +168,6 @@ export class CommentActions extends Component {
 			canModerateComment,
 			commentIsApproved,
 			commentIsLiked,
-			toggleEditMode,
 			toggleReply,
 			translate,
 		} = this.props;
@@ -241,7 +247,7 @@ export class CommentActions extends Component {
 					<Button
 						borderless
 						className="comment__action comment__action-pencil"
-						onClick={ toggleEditMode }
+						onClick={ this.toggleEditMode }
 						tabIndex="0"
 						disabled={ ! canModerateComment }
 					>

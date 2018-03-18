@@ -6,27 +6,35 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import config from 'config';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
 import CompactCard from 'components/card/compact';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
 import Timezone from 'components/timezone';
 import Site from 'blocks/site';
 import { localize } from 'i18n-calypso';
 import { updateConciergeSignupForm } from 'state/concierge/actions';
-import { getConciergeSignupForm } from 'state/selectors';
+import { getConciergeSignupForm, getUserSettings } from 'state/selectors';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getLanguage } from 'lib/i18n-utils';
 
 class InfoStep extends Component {
 	static propTypes = {
+		currentUserLocale: PropTypes.string.isRequired,
 		signupForm: PropTypes.object,
+		userSettings: PropTypes.object,
 		onComplete: PropTypes.func.isRequired,
 		site: PropTypes.object.isRequired,
 	};
@@ -43,28 +51,68 @@ class InfoStep extends Component {
 	};
 
 	canSubmitForm = () => {
-		const { signupForm } = this.props;
-		if ( ! signupForm.message ) {
-			return false;
-		}
-		return !! signupForm.message.trim();
+		const { signupForm: { firstname, message } } = this.props;
+
+		return !! firstname.trim() && !! message.trim();
 	};
 
 	componentDidMount() {
+		const { userSettings, signupForm: { firstname, lastname } } = this.props;
+
 		this.props.recordTracksEvent( 'calypso_concierge_book_info_step' );
+
+		if ( ! firstname && ! lastname ) {
+			// Prefill the firstname & lastname fields by user settings.
+			this.props.updateConciergeSignupForm( {
+				...this.props.signupForm,
+				firstname: userSettings.first_name,
+				lastname: userSettings.last_name,
+			} );
+		}
 	}
 
 	render() {
-		const { signupForm: { message, timezone }, translate } = this.props;
+		const {
+			currentUserLocale,
+			signupForm: { firstname, lastname, message, timezone },
+			translate,
+		} = this.props;
+		const language = getLanguage( currentUserLocale ).name;
+		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
+		const noticeText = translate(
+			'All Concierge Sessions are in English (%(language)s is not available)',
+			{
+				args: { language },
+			}
+		);
 
 		return (
 			<div>
 				<PrimaryHeader />
+				{ ! isEnglish && <Notice showDismiss={ false } text={ noticeText } /> }
 				<CompactCard className="book__info-step-site-block">
 					<Site siteId={ this.props.site.ID } />
 				</CompactCard>
 
 				<CompactCard>
+					<FormFieldset>
+						<FormLabel htmlFor="firstname">{ translate( 'First Name' ) }</FormLabel>
+						<FormTextInput
+							name="firstname"
+							placeholder={ translate( 'What may we call you?' ) }
+							onChange={ this.setFieldValue }
+							value={ firstname }
+						/>
+					</FormFieldset>
+					<FormFieldset>
+						<FormLabel htmlFor="lastname">{ translate( 'Last Name' ) }</FormLabel>
+						<FormTextInput
+							name="lastname"
+							placeholder={ translate( 'Optionally, please tell us your last name.' ) }
+							onChange={ this.setFieldValue }
+							value={ lastname }
+						/>
+					</FormFieldset>
 					<FormFieldset>
 						<FormLabel>{ translate( "What's your timezone?" ) }</FormLabel>
 						<Timezone
@@ -83,11 +131,20 @@ class InfoStep extends Component {
 							{ translate( 'What are you hoping to accomplish with your site?' ) }
 						</FormLabel>
 						<FormTextarea
-							placeholder={ translate( 'Please be descriptive' ) }
+							placeholder={ translate(
+								'Sell products and services? Generate leads? Something else entirely?' +
+									" Be as specific as you can! It helps us provide the information you're looking for."
+							) }
 							name="message"
 							onChange={ this.setFieldValue }
 							value={ message }
 						/>
+
+						{ ! isEnglish && (
+							<FormSettingExplanation>
+								{ translate( 'Please respond in English.' ) }
+							</FormSettingExplanation>
+						) }
 					</FormFieldset>
 
 					<FormButton
@@ -106,7 +163,9 @@ class InfoStep extends Component {
 
 export default connect(
 	state => ( {
+		currentUserLocale: getCurrentUserLocale( state ),
 		signupForm: getConciergeSignupForm( state ),
+		userSettings: getUserSettings( state ),
 	} ),
 	{
 		updateConciergeSignupForm,

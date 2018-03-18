@@ -321,6 +321,22 @@ UndocumentedSite.prototype.statsOrders = function( query ) {
 };
 
 /**
+ * Requests Store referrer stats
+ *
+ * @param {object} query query parameters
+ * @return {Promise} A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.statsStoreReferrers = function( query ) {
+	return this.wpcom.req.get(
+		{
+			path: `/sites/${ this._id }/stats/events-by-referrer`,
+			apiNamespace: 'wpcom/v2',
+		},
+		query
+	);
+};
+
+/**
  * Requests Store top-sellers stats
  *
  * @param {object} query query parameters
@@ -381,6 +397,24 @@ UndocumentedSite.prototype.statsTopCoupons = function( query ) {
 			apiNamespace: 'wpcom/v2',
 		},
 		query
+	);
+};
+
+/**
+ * Delete site invites
+ *
+ * @param {array}     inviteIds  An array of inviteIds for deletion.
+ * @return {Promise}             A Promise to resolve when complete.
+ */
+UndocumentedSite.prototype.deleteInvites = function( inviteIds ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ this._id }/invites/delete`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{
+			invite_ids: inviteIds,
+		}
 	);
 };
 

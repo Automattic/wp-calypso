@@ -79,7 +79,6 @@ export default {
 		this.setState( { submittingForm: true } );
 		this.props.userSettings.saveSettings(
 			function( error, response ) {
-				this.setState( { submittingForm: false } );
 				if ( error ) {
 					debug( 'Error saving settings: ' + JSON.stringify( error ) );
 
@@ -89,6 +88,7 @@ export default {
 					} else {
 						notices.error( this.props.translate( 'There was a problem saving your changes.' ) );
 					}
+					this.setState( { submittingForm: false } );
 				} else {
 					this.props.markSaved && this.props.markSaved();
 
@@ -100,8 +100,8 @@ export default {
 						} );
 						return;
 					}
-
-					this.setState( { showNotice: true } );
+					// if we set submittingForm too soon the UI updates before the response is handled
+					this.setState( { showNotice: true, submittingForm: false } );
 					this.showNotice();
 					debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 				}

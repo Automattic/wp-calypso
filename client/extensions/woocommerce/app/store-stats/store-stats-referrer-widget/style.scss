@@ -1,0 +1,9 @@
+.store-stats-referrer-widget  {
+	&.table.is-compact-table th.table-heading.is-title-cell,
+	&.table.is-compact-table td.table-item.is-title-cell {
+		width: 30%;
+	}
+	&.table.is-compact-table th.table-heading {
+		text-align: left;
+	}
+}

@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { requesting, items } from '../reducer';
+import { receivePostTypeTaxonomies } from '../actions';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
@@ -169,16 +170,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: {
-					post: {
-						category: {
-							name: 'category',
-							label: 'Categories',
-						},
-						post_tag: {
-							name: 'post_tag',
-							label: 'Tags',
-						},
-					},
+					post: [ { name: 'category', label: 'Categories' }, { name: 'post_tag', label: 'Tags' } ],
 				},
 			} );
 		} );
@@ -200,7 +192,27 @@ describe( 'reducer', () => {
 
 			expect( updatedState ).to.eql( {
 				2916284: {
-					page: {},
+					page: [],
+				},
+			} );
+		} );
+
+		test( 'should accumulate items for multiple sites and post types', () => {
+			const actions = [
+				receivePostTypeTaxonomies( 2916284, 'page', [ { name: 'page_tag1', label: 'Tag 1' } ] ),
+				receivePostTypeTaxonomies( 2916285, 'page', [ { name: 'page_tag2', label: 'Tag 2' } ] ),
+				receivePostTypeTaxonomies( 2916284, 'post', [ { name: 'post_tag', label: 'Tag' } ] ),
+			];
+
+			const finalState = actions.reduce( items, undefined );
+
+			expect( finalState ).to.eql( {
+				2916284: {
+					page: [ { name: 'page_tag1', label: 'Tag 1' } ],
+					post: [ { name: 'post_tag', label: 'Tag' } ],
+				},
+				2916285: {
+					page: [ { name: 'page_tag2', label: 'Tag 2' } ],
 				},
 			} );
 		} );
@@ -208,16 +220,16 @@ describe( 'reducer', () => {
 		test( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					post: {
-						category: {
+					post: [
+						{
 							name: 'category',
 							label: 'Categories',
 						},
-						post_tag: {
+						{
 							name: 'post_tag',
 							label: 'Tags',
 						},
-					},
+					],
 				},
 			} );
 			const state = items( original, { type: SERIALIZE } );
@@ -228,16 +240,16 @@ describe( 'reducer', () => {
 		test( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					post: {
-						category: {
+					post: [
+						{
 							name: 'category',
 							label: 'Categories',
 						},
-						post_tag: {
+						{
 							name: 'post_tag',
 							label: 'Tags',
 						},
-					},
+					],
 				},
 			} );
 			const state = items( original, { type: DESERIALIZE } );
@@ -248,9 +260,7 @@ describe( 'reducer', () => {
 		test( 'should not load invalid persisted state', () => {
 			const original = deepFreeze( {
 				2916284: {
-					post: {
-						category: true,
-					},
+					post: [ true ],
 				},
 			} );
 			const state = items( original, { type: DESERIALIZE } );

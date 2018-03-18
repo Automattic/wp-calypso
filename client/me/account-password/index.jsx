@@ -6,7 +6,6 @@
 
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, head, isEmpty } from 'lodash';
-import { bindActionCreators } from 'redux';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import debugFactory from 'debug';
@@ -27,14 +26,13 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormInputValidation from 'components/forms/form-input-validation';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
-/* eslint-enable no-restricted-imports */
-import eventRecorder from 'me/event-recorder';
 import { errorNotice } from 'state/notices/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 const AccountPassword = createReactClass( {
 	displayName: 'AccountPassword',
 
-	mixins: [ observe( 'accountPasswordData' ), eventRecorder ],
+	mixins: [ observe( 'accountPasswordData' ) ],
 
 	componentDidMount: function() {
 		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
@@ -81,6 +79,19 @@ const AccountPassword = createReactClass( {
 			pendingValidation: true,
 			isUnsaved: '' !== newPassword,
 		} );
+	},
+
+	handleSaveButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Save Password Button' );
+	},
+
+	handleGenerateButtonClick() {
+		this.props.recordGoogleEvent( 'Me', 'Clicked on Generate Strong Password Button' );
+		this.generateStrongPassword();
+	},
+
+	handleNewPasswordFieldFocus() {
+		this.props.recordGoogleEvent( 'Me', 'Focused on New Password Field' );
 	},
 
 	submitForm: function( event ) {
@@ -149,7 +160,7 @@ const AccountPassword = createReactClass( {
 						id="password"
 						name="password"
 						onChange={ this.handlePasswordChange }
-						onFocus={ this.recordFocusEvent( 'New Password Field' ) }
+						onFocus={ this.handleNewPasswordFieldFocus }
 						value={ this.state.password }
 						submitting={ this.state.savingPassword }
 					/>
@@ -169,7 +180,7 @@ const AccountPassword = createReactClass( {
 							this.state.pendingValidation ||
 							this.props.accountPasswordData.passwordValidationFailed()
 						}
-						onClick={ this.recordClickEvent( 'Save Password Button' ) }
+						onClick={ this.handleSaveButtonClick }
 					>
 						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save Password' ) }
 					</FormButton>
@@ -177,10 +188,7 @@ const AccountPassword = createReactClass( {
 					<FormButton
 						className="button"
 						isPrimary={ false }
-						onClick={ this.recordClickEvent(
-							'Generate Strong Password Button',
-							this.generateStrongPassword
-						) }
+						onClick={ this.handleGenerateButtonClick }
 						type="button"
 					>
 						{ translate( 'Generate strong password' ) }
@@ -191,7 +199,6 @@ const AccountPassword = createReactClass( {
 	},
 } );
 
-export default compose(
-	connect( null, dispatch => bindActionCreators( { errorNotice }, dispatch ) ),
-	localize
-)( AccountPassword );
+export default compose( connect( null, { errorNotice, recordGoogleEvent } ), localize )(
+	AccountPassword
+);

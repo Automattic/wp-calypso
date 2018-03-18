@@ -44,6 +44,7 @@ import makeContentLinksSafe from 'lib/post-normalizer/rule-content-make-links-sa
  */
 export const READER_CONTENT_WIDTH = 800,
 	PHOTO_ONLY_MIN_WIDTH = 440,
+	PHOTO_ONLY_MAX_CHARACTER_COUNT = 85,
 	GALLERY_MIN_IMAGES = 4,
 	GALLERY_MIN_IMAGE_WIDTH = 100;
 
@@ -59,7 +60,7 @@ export function imageIsBigEnoughForGallery( image ) {
 	return image.width >= GALLERY_MIN_IMAGE_WIDTH;
 }
 
-const hasShortContent = post => getCharacterCount( post ) <= 100;
+const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
 
 /**
  * Attempt to classify the post into a display type

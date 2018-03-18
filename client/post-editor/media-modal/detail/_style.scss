@@ -16,7 +16,7 @@
 .editor-media-modal-detail__preview-wrapper {
 	flex: 0 0 35%;
 	position: relative;
-	border-bottom: 1px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-20;
 	background-color: $gray-light;
 	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
 
@@ -78,7 +78,7 @@
 	}
 
 	&:hover {
-		background-color: rgba( darken( $gray, 20% ), 0.9 );
+		background-color: rgba( $gray-darken-20, 0.9 );
 	}
 }
 
@@ -203,7 +203,7 @@
 			top: 0;
 			bottom: 0;
 		width: 80%;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

@@ -56,6 +56,20 @@ export default class DevdocsSidebar extends React.PureComponent {
 							link="/devdocs/.github/CONTRIBUTING.md"
 							selected={ this.isItemSelected( '/devdocs/.github/CONTRIBUTING.md' ) }
 						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="heading"
+							label="Typography"
+							link="/devdocs/typography"
+							selected={ this.isItemSelected( '/devdocs/typography' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="types"
+							label="Icons"
+							link="/devdocs/docs/icons.md"
+							selected={ this.isItemSelected( '/devdocs/docs/icons.md' ) }
+						/>
 					</ul>
 				</SidebarMenu>
 				<SidebarHeading>Live Docs</SidebarHeading>
@@ -81,20 +95,6 @@ export default class DevdocsSidebar extends React.PureComponent {
 							label="State Selectors"
 							link="/devdocs/selectors"
 							selected={ this.isItemSelected( '/devdocs/selectors', false ) }
-						/>
-						<SidebarItem
-							className="devdocs__navigation-item"
-							icon="heading"
-							label="Typography"
-							link="/devdocs/typography"
-							selected={ this.isItemSelected( '/devdocs/typography' ) }
-						/>
-						<SidebarItem
-							className="devdocs__navigation-item"
-							icon="types"
-							label="Icons"
-							link="/devdocs/docs/icons.md"
-							selected={ this.isItemSelected( '/devdocs/docs/icons.md' ) }
 						/>
 					</ul>
 				</SidebarMenu>

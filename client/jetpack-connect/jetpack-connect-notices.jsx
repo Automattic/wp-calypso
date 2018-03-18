@@ -92,9 +92,8 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case NOT_ACTIVE_JETPACK:
-				noticeValues.icon = 'block';
-				noticeValues.text = translate( 'Jetpack is deactivated.' );
-				return noticeValues;
+				// in use in remote install, which automatically redirects to install
+				return null;
 
 			case OUTDATED_JETPACK:
 				noticeValues.icon = 'block';
@@ -113,10 +112,8 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case NOT_JETPACK:
-				noticeValues.status = 'is-notice';
-				noticeValues.icon = 'status';
-				noticeValues.text = translate( "Jetpack couldn't be found." );
-				return noticeValues;
+				// Not notice required, we will move on to installation
+				return null;
 
 			case WORDPRESS_DOT_COM:
 				noticeValues.text = translate( "Oops, that's us." );

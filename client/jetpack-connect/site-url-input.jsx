@@ -27,11 +27,13 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 		onSubmit: PropTypes.func,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
+		autoFocus: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onChange: noop,
 		url: '',
+		autoFocus: true,
 	};
 
 	focusInput = noop;
@@ -107,7 +109,7 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 	}
 
 	render() {
-		const { isError, isFetching, onChange, onSubmit, translate, url } = this.props;
+		const { isError, isFetching, onChange, onSubmit, translate, url, autoFocus } = this.props;
 		const hasError = isError && 'notExists' !== isError;
 
 		return (
@@ -119,14 +121,14 @@ class JetpackConnectSiteUrlInput extends PureComponent {
 						ref={ this.refInput }
 						id="siteUrl"
 						autoCapitalize="off"
-						autoFocus="autofocus"
+						autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						onChange={ onChange }
 						disabled={ isFetching }
-						placeholder={ translate( 'http://www.yoursite.com' ) }
+						placeholder={ 'http://yourjetpack.blog' }
 						onKeyUp={ this.handleKeyPress }
 						value={ url }
 					/>
-					{ isFetching ? <Spinner duration={ 30 } /> : null }
+					{ isFetching ? <Spinner /> : null }
 				</div>
 				<Card className="jetpack-connect__connect-button-card">
 					{ this.renderTermsOfServiceLink() }

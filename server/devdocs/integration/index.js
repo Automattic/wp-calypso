@@ -94,7 +94,7 @@ describe( 'devdocs', () => {
 	test( 'should return documents with relative paths', done => {
 		getDocument(
 			'client/components/infinite-list',
-			'../../lib/mixins/infinite-scroll/README.md',
+			'../infinite-scroll/README.md',
 			( err, res ) => {
 				expect( err ).toBeNull();
 				expect( res.statusCode ).toBe( 200 );
@@ -105,7 +105,7 @@ describe( 'devdocs', () => {
 	} );
 
 	test( 'should return the README.md by default', done => {
-		getDocument( 'client/lib/mixins/infinite-scroll', ( err, res ) => {
+		getDocument( 'client/components/infinite-scroll', ( err, res ) => {
 			expect( err ).toBeNull();
 			expect( res.statusCode ).toBe( 200 );
 			expect( res.text ).toContain( '<h1 id="infinite-scroll">' );

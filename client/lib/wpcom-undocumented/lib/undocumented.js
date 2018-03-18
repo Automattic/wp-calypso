@@ -176,30 +176,6 @@ Undocumented.prototype.updateJetpackSettings = function( siteId, settings, fn ) 
 };
 
 /**
- * Update WordPress core install on the site with id siteId
- *
- * @param {int} [siteId] The site ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
-	debug( '/sites/:site_id:/core/update query' );
-	return this.wpcom.req.post( { path: '/sites/' + siteId + '/core/update' }, fn );
-};
-
-/**
- * Get the updates info for the site with id siteId
- *
- * @param {int} [siteId] The site ID
- * @param {Function} fn The callback function
- * @api public
- */
-Undocumented.prototype.getAvailableUpdates = function( siteId, fn ) {
-	debug( '/sites/:site_id:/updates query' );
-	return this.wpcom.req.get( { path: '/sites/' + siteId + '/updates' }, fn );
-};
-
-/**
  * Fetches settings for the Monitor module.
  *
  * @param {int} [siteId] The site ID
@@ -271,12 +247,8 @@ Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
  */
 Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
 	return this.wpcom.req.get(
-		{
-			path: '/jetpack-blogs/' + siteId + '/rest-api/',
-			body: {
-				path: '/jetpack/v4/connection/',
-			},
-		},
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/connection/' },
 		fn
 	);
 };
@@ -290,12 +262,8 @@ Undocumented.prototype.getJetpackConnectionStatus = function( siteId, fn ) {
  */
 Undocumented.prototype.getJetpackUserConnectionData = function( siteId, fn ) {
 	return this.wpcom.req.get(
-		{
-			path: '/jetpack-blogs/' + siteId + '/rest-api/',
-			body: {
-				path: '/jetpack/v4/connection/data/',
-			},
-		},
+		{ path: '/jetpack-blogs/' + siteId + '/rest-api/' },
+		{ path: '/jetpack/v4/connection/data/' },
 		fn
 	);
 };
@@ -401,6 +369,7 @@ Undocumented.prototype.sendInvites = function( siteId, usernamesOrEmails, role, 
 			invitees: usernamesOrEmails,
 			role: role,
 			message: message,
+			source: 'calypso',
 		},
 		fn
 	);
@@ -515,6 +484,24 @@ Undocumented.prototype.restartInboundTransfer = function( siteId, domain, fn ) {
 	return this.wpcom.req.get(
 		{
 			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-restart/${ siteId }`,
+		},
+		fn
+	);
+};
+
+/**
+ * Starts an inbound domain transfer that is in the pending_start state.
+ *
+ * @param {int|string} siteId The site ID
+ * @param {string} domain The domain name
+ * @param {Function} fn The callback function
+ * @returns {Promise} A promise that resolves when the request completes
+ * @api public
+ */
+Undocumented.prototype.startInboundTransfer = function( siteId, domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/domains/${ encodeURIComponent( domain ) }/inbound-transfer-start/${ siteId }`,
 		},
 		fn
 	);
@@ -1218,14 +1205,14 @@ function addReaderContentWidth( params ) {
 
 Undocumented.prototype.readFollowing = function( query, fn ) {
 	debug( '/read/following' );
-	query.apiVersion = '1.3';
+	query.apiVersion = '1.2';
 	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/following', query, fn );
 };
 
 Undocumented.prototype.readA8C = function( query, fn ) {
 	debug( '/read/a8c' );
-	query.apiVersion = '1.3';
+	query.apiVersion = '1.2';
 	addReaderContentWidth( query );
 	return this.wpcom.req.get( '/read/a8c', query, fn );
 };
@@ -1263,7 +1250,7 @@ Undocumented.prototype.discoverFeed = function( query, fn ) {
 Undocumented.prototype.readFeedPosts = function( query, fn ) {
 	var params = omit( query, 'ID' );
 	debug( '/read/feed/' + query.ID + '/posts' );
-	params.apiVersion = '1.3';
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(
@@ -1276,7 +1263,7 @@ Undocumented.prototype.readFeedPosts = function( query, fn ) {
 Undocumented.prototype.readFeedPost = function( query, fn ) {
 	var params = omit( query, [ 'feedId', 'postId' ] );
 	debug( '/read/feed/' + query.feedId + '/posts/' + query.postId );
-	params.apiVersion = '1.3';
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(
@@ -1299,11 +1286,7 @@ Undocumented.prototype.readSearch = function( query, fn ) {
 Undocumented.prototype.readTagPosts = function( query, fn ) {
 	var params = omit( query, 'tag' );
 	debug( '/read/tags/' + query.tag + '/posts' );
-	if ( config.isEnabled( 'reader/tags-with-elasticsearch' ) ) {
-		params.apiVersion = '1.3';
-	} else {
-		params.apiVersion = '1.2';
-	}
+	params.apiVersion = '1.2';
 	addReaderContentWidth( params );
 
 	return this.wpcom.req.get(
@@ -1450,20 +1433,22 @@ Undocumented.prototype.readSitePostRelated = function( query, fn ) {
  *
  * @param {string} name - The name of the A/B test. No leading 'abtest_' needed
  * @param {string} variation - The variation the user is assigned to
- * @param {Function} fn - Function to invoke when request is complete
+ * @param {Function} callback - Function to invoke when request is complete
  * @api public
+ * @returns {Object} wpcomRequest
  */
-Undocumented.prototype.saveABTestData = function( name, variation, fn ) {
-	var data = {
-		name: name,
-		variation: variation,
+Undocumented.prototype.saveABTestData = function( name, variation, callback ) {
+	const body = {
+		name,
+		variation,
 	};
+	debug( `POST /me/abtests with ${ JSON.stringify( body ) }` );
 	return this.wpcom.req.post(
 		{
 			path: '/me/abtests',
-			body: data,
+			body,
 		},
-		fn
+		callback
 	);
 };
 
@@ -1573,17 +1558,6 @@ Undocumented.prototype.sitesNew = function( query, fn ) {
 		},
 		fn
 	);
-};
-
-/**
- * Fetch the locales relevant to the current user, based on their IP and browser setting
- *
- * @param {Function} fn - Function to invoke when the request is complete
- */
-Undocumented.prototype.getLocaleSuggestions = function( fn ) {
-	debug( '/locale-guess' );
-
-	return this.wpcom.req.get( { path: '/locale-guess' }, fn );
 };
 
 Undocumented.prototype.themes = function( siteId, query, fn ) {
@@ -2069,14 +2043,7 @@ Undocumented.prototype.uploadExportFile = function( siteId, params ) {
  */
 Undocumented.prototype.getHelpLinks = function( searchQuery, fn ) {
 	debug( 'help-search/ searchQuery' );
-
-	return this.wpcom.req.get(
-		'/help/search',
-		{
-			query: searchQuery,
-		},
-		fn
-	);
+	return this.wpcom.req.get( '/help/search', { query: searchQuery }, fn );
 };
 
 Undocumented.prototype.getQandA = function( query, site, fn ) {
@@ -2504,6 +2471,35 @@ Undocumented.prototype.getFeaturedPlugins = function( fn ) {
 };
 
 /**
- * Expose `Undocumented` module
+ * Fetch a nonce to use in the `updateSiteName` call
+ * @param {int}   siteId  The ID of the site for which to get a nonce.
+ * @returns {Promise}     A promise
  */
+Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
+	return this.wpcom.req.get( {
+		path: `/sites/${ siteId }/site-rename/nonce`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+/**
+ * Request a new .wordpress.com subdomain change with the option to discard the current.
+ *
+ * @param {int} [siteId] The siteId for which to rename
+ * @param {object} [blogname]	The desired new subdomain
+ * @param {bool} [discard]			Should the old blog name be discarded?
+ * @param {string} [nonce]		A nonce provided by the API
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.updateSiteName = function( siteId, blogname, discard, nonce ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/site-rename`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		{ blogname, discard, nonce }
+	);
+};
+
 export default Undocumented;

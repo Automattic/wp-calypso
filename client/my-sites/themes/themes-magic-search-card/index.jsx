@@ -181,7 +181,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	searchTokens = input => {
 		//We are not able to scroll overlay on Edge so just create empty div
-		if ( global.window && /(Edge)/.test( global.window.navigator.userAgent ) ) {
+		if ( typeof window !== 'undefined' && /(Edge)/.test( window.navigator.userAgent ) ) {
 			return <div />;
 		}
 
@@ -270,7 +270,9 @@ class ThemesMagicSearchCard extends React.Component {
 				initialValue={ this.state.searchInput }
 				value={ this.state.searchInput }
 				ref="url-search"
-				placeholder={ translate( 'What kind of theme are you looking for?' ) }
+				placeholder={ translate(
+					"I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"
+				) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
@@ -304,19 +306,18 @@ class ThemesMagicSearchCard extends React.Component {
 						onClick={ this.handleClickInside }
 					>
 						{ searchField }
-						{ ! isMobile() &&
-							this.state.searchInput !== '' && (
-								<div className="themes-magic-search-card__icon">
-									<Gridicon
-										icon="cross"
-										className="themes-magic-search-card__icon-close"
-										tabIndex="0"
-										onClick={ this.clearSearch }
-										aria-controls={ 'search-component-magic-search' }
-										aria-label={ translate( 'Clear Search' ) }
-									/>
-								</div>
-							) }
+						{ this.state.searchInput !== '' && (
+							<div className="themes-magic-search-card__icon">
+								<Gridicon
+									icon="cross"
+									className="themes-magic-search-card__icon-close"
+									tabIndex="0"
+									onClick={ this.clearSearch }
+									aria-controls={ 'search-component-magic-search' }
+									aria-label={ translate( 'Clear Search' ) }
+								/>
+							</div>
+						) }
 						{ isPremiumThemesEnabled &&
 							showTierThemesControl && (
 								<SegmentedControl

@@ -6,7 +6,7 @@ Important mainly for low end mobile devices.
 
 ## When to use
 
-There is simpler implementation of infinite scroll - the [infinite scroll](../../lib/mixins/infinite-scroll/) mixin. Use `InfiniteList` when:
+There is simpler implementation of infinite scroll - the [InfiniteScroll](../infinite-scroll/) component. Use `InfiniteList` when:
 
 * items contain images or other media
 * you expect that user will scroll a lot
@@ -35,27 +35,27 @@ If you need to track when user scrolls to another page, do it in `fetchNextPage`
 
 ```jsx
 
-const Listing = React.createClass( {
+class Listing extends React.Component {
 	...
-	fetchNextPage: funciton ( options ) {
+	fetchNextPage: ( options ) => {
 		if ( options.triggeredByScroll ) {
 			// track analytics events
 		}
 		actions.fetchNextPage();
-	},
+	}
 
-	getItemRef: function( item ) {
+	getItemRef: ( item ) => {
 		return 'item-' + item.id;
-	},
+	}
 
-	renderItem: function( item ) {
+	renderItem: ( item ) => {
 		var itemKey = this.getItemRef( item );
 		return (
 			<Item ref={ itemKey } key={ itemKey } ... />
 		);
-	},
+	}
 
-	renderLoadingPlaceholders: function() {
+	renderLoadingPlaceholders: () => {
 		var count = this.props.list.get().length ? 2 : this.props.list.perPage,
 			placeholders = [];
 		times( count, function( i ) {
@@ -63,9 +63,9 @@ const Listing = React.createClass( {
 		});
 
 		return placeholders;
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<InfiniteList className="main main-column reader__content" role="main"
 				items={ this.state.items }
@@ -80,9 +80,7 @@ const Listing = React.createClass( {
 			/>
 		);
 	}
-
-} );
-
+}
 ```
 
 If you need reset scroll state of `InfiniteList` component, e.g. because the using component received list with different content, assign it different `key`, so that React creates new instance for it.

@@ -27,12 +27,12 @@ describe( 'state/application reducer', () => {
 
 		test( 'never persists online state', () => {
 			const state = connectionState( 'ONLINE', { type: SERIALIZE } );
-			expect( state ).to.eql( 'CHECKING' );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'never persists offline state', () => {
 			const state = connectionState( 'OFFLINE', { type: SERIALIZE } );
-			expect( state ).to.eql( 'CHECKING' );
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'always uses initialState, even if given offline', () => {

@@ -46,6 +46,8 @@ export default createSelector(
 				return !! get( settings, 'businessAddress' );
 			case STEPS.WOOCOMMERCE:
 				return !! get( settings, 'installWooCommerce' );
+			case STEPS.STATS:
+				return !! get( settings, 'stats' );
 			default:
 				return false;
 		}

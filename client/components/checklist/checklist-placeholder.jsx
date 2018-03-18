@@ -15,7 +15,7 @@ export default function ChecklistPlaceholder() {
 	return (
 		<Card compact className="checklist__task is-placeholder">
 			<div className="checklist__task-primary">
-				<h5 className="checklist__task-title">Task title</h5>
+				<h3 className="checklist__task-title">Task title</h3>
 				<p className="checklist__task-description">This is an example</p>
 				<small className="checklist__task-duration">Estimated time</small>
 			</div>

@@ -283,7 +283,6 @@ class PluginInformation extends React.Component {
 							{ Object.keys( actionLinks ).map( ( linkTitle, index ) => (
 								<Button
 									compact
-									icon
 									href={ actionLinks[ linkTitle ] }
 									target="_blank"
 									key={ 'action-link-' + index }

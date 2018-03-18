@@ -25,7 +25,6 @@ import {
 	isPaidWithPayPalDirect,
 	isRenewing,
 	isSubscription,
-	hasPaymentMethod,
 	paymentLogoType,
 } from 'lib/purchases';
 import { isMonthly } from 'lib/plans/constants';
@@ -189,7 +188,7 @@ class PurchaseMeta extends Component {
 			return <span className="manage-purchase__detail">{ translate( 'Included with plan' ) }</span>;
 		}
 
-		if ( hasPaymentMethod( purchase ) ) {
+		if ( typeof purchase.payment.type !== 'undefined' ) {
 			let paymentInfo = null;
 
 			if ( isPaidWithCreditCard( purchase ) ) {

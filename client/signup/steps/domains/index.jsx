@@ -6,7 +6,7 @@ import React from 'react';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith } from 'lodash';
+import { defer, endsWith, get } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
@@ -32,6 +32,9 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
+import { getDomainSearchPrefill } from 'state/signup/steps/domains/selectors';
+import { setDomainSearchPrefill } from 'state/signup/steps/domains/actions';
+import { abtest } from 'lib/abtest';
 
 const productsList = productsListFactory();
 
@@ -46,6 +49,7 @@ class DomainsStep extends React.Component {
 		positionInFlow: PropTypes.number.isRequired,
 		queryObject: PropTypes.object,
 		signupProgress: PropTypes.array.isRequired,
+		domainSearchPrefill: PropTypes.string,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
@@ -178,7 +182,9 @@ class DomainsStep extends React.Component {
 					stepSectionName: this.props.stepSectionName,
 				},
 				this.getThemeArgs()
-			)
+			),
+			[],
+			{ domainItem }
 		);
 
 		this.props.goToNextStep();
@@ -202,7 +208,9 @@ class DomainsStep extends React.Component {
 					stepSectionName: this.props.stepSectionName,
 				},
 				this.getThemeArgs()
-			)
+			),
+			[],
+			{ domainItem }
 		);
 
 		this.props.goToNextStep();
@@ -224,6 +232,11 @@ class DomainsStep extends React.Component {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
 
+		const suggestion =
+			'withSiteTitle' === abtest( 'domainSearchPrefill' ) && !! this.props.domainSearchPrefill
+				? this.props.domainSearchPrefill
+				: get( this.props, 'queryObject.new', '' );
+
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -243,11 +256,15 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' }
+				suggestion={ suggestion }
 				designType={ this.props.signupDependencies && this.props.signupDependencies.designType }
+				onDomainSearchChange={ this.handleDomainSearchChange }
 			/>
 		);
 	};
+
+	handleDomainSearchChange = newSearchValue =>
+		this.props.setDomainSearchPrefill( newSearchValue, true );
 
 	mappingForm = () => {
 		const initialState = this.props.step ? this.props.step.mappingForm : undefined,
@@ -302,6 +319,10 @@ class DomainsStep extends React.Component {
 		const backUrl = this.props.stepSectionName
 			? getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() )
 			: undefined;
+		let fallbackSubHeaderText = translate(
+			"Enter your site's name, or some key words that describe it - " +
+				"we'll use this to create your new site's address."
+		);
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -309,6 +330,9 @@ class DomainsStep extends React.Component {
 
 		if ( 'transfer' === this.props.stepSectionName ) {
 			content = this.transferForm();
+			fallbackSubHeaderText = translate(
+				'Use a domain you already own with your new WordPress.com site.'
+			);
 		}
 
 		if ( ! this.props.stepSectionName ) {
@@ -335,10 +359,7 @@ class DomainsStep extends React.Component {
 				signupProgress={ this.props.signupProgress }
 				subHeaderText={ translate( "First up, let's find a domain." ) }
 				fallbackHeaderText={ translate( "Let's give your site an address." ) }
-				fallbackSubHeaderText={ translate(
-					"Enter your site's name, or some key words that describe it - " +
-						"we'll use this to create your new site's address."
-				) }
+				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={ content }
 			/>
 		);
@@ -385,11 +406,13 @@ export default connect(
 			: true,
 		surveyVertical: getSurveyVertical( state ),
 		designType: getDesignType( state ),
+		domainSearchPrefill: getDomainSearchPrefill( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
 		recordAddDomainButtonClickInTransferDomain,
+		setDomainSearchPrefill,
 		submitDomainStepSelection,
 	}
 )( localize( DomainsStep ) );

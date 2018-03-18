@@ -14,6 +14,8 @@ import { localize } from 'i18n-calypso';
 import ActivityActor from './activity-actor';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
+import Gridicon from 'gridicons';
+import HappychatButton from 'components/happychat/button';
 import SplitButton from 'components/split-button';
 import FoldableCard from 'components/foldable-card';
 import FormattedBlock from 'components/notes-formatted-block';
@@ -72,19 +74,22 @@ class ActivityLogItem extends Component {
 	}
 
 	renderItemAction() {
-		const {
-			createBackup,
-			createRewind,
-			disableRestore,
-			disableBackup,
-			hideRestore,
-			translate,
-			activity: { activityIsRewindable },
-		} = this.props;
+		const { hideRestore, activity: { activityIsRewindable, activityName } } = this.props;
 
-		if ( hideRestore || ! activityIsRewindable ) {
-			return null;
+		switch ( activityName ) {
+			case 'plugin__update_failed':
+			case 'rewind__backup_error':
+			case 'rewind__scan_result_found':
+				return this.renderHelpAction();
 		}
+
+		if ( ! hideRestore && activityIsRewindable ) {
+			return this.renderRewindAction();
+		}
+	}
+
+	renderRewindAction() {
+		const { createBackup, createRewind, disableRestore, disableBackup, translate } = this.props;
 
 		return (
 			<div className="activity-log-item__action">
@@ -108,6 +113,24 @@ class ActivityLogItem extends Component {
 			</div>
 		);
 	}
+
+	/**
+	 * Displays a button for users to get help. Tracks button click.
+	 *
+	 * @returns {Object} Get help button.
+	 */
+	renderHelpAction = () => (
+		<HappychatButton
+			className="activity-log-item__help-action"
+			borderless={ false }
+			onClick={ this.handleTrackHelp }
+		>
+			<Gridicon icon="chat" size={ 18 } />
+			{ this.props.translate( 'Get Help' ) }
+		</HappychatButton>
+	);
+
+	handleTrackHelp = () => this.props.trackHelp( this.props.activity.activityName );
 
 	render() {
 		const {
@@ -255,6 +278,8 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 			)
 		)
 	),
+	trackHelp: activityName =>
+		dispatch( recordTracksEvent( 'calypso_activitylog_event_get_help', { activityName } ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );

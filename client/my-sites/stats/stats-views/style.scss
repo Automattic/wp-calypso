@@ -35,11 +35,11 @@
 	}
 
 	&.level-0 {
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 	}
 
 	&.level-1 {
-		background-color: lighten( $gray, 20% );
+		background-color: $gray-lighten-20;
 	}
 
 	&.level-2 {

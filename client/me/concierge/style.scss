@@ -18,7 +18,7 @@
 
 .shared__available-time-card-header-icon {
 	color: $gray;
-	border: 1px solid lighten($gray, 20%);
+	border: 1px solid $gray-lighten-20;
 	border-radius: 100%;
 	padding: 6px;
 	margin-right: 12px;

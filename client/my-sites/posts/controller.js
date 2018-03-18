@@ -32,7 +32,7 @@ export default {
 		const siteID = getSiteFragment( context.path );
 		const author = context.params.author === 'my' ? getCurrentUserId( state ) : null;
 		let statusSlug = author ? context.params.status : context.params.author;
-		let search = context.query.s;
+		let search = context.query.s || '';
 		const category = context.query.category;
 		const tag = context.query.tag;
 		const basePath = sectionify( context.path );
@@ -57,7 +57,11 @@ export default {
 		statusSlug = ! statusSlug || statusSlug === 'my' || statusSlug === siteID ? '' : statusSlug;
 		debug( 'statusSlug: `%s`', statusSlug );
 
-		search = 'undefined' !== typeof search ? search : '';
+		// Disable search in all-sites mode because it doesn't work.
+		if ( ! siteId ) {
+			search = '';
+		}
+
 		debug( 'search: `%s`', search );
 
 		if ( shouldRedirectMyPosts() ) {

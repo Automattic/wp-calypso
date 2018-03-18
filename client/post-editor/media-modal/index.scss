@@ -203,7 +203,7 @@
 	float: left;
 	margin: 4px 12px 12px 0;
 	border-radius: 50%;
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-lighten-30;
 	color: $gray-dark;
 }
 
@@ -217,7 +217,7 @@
 .editor-media-modal__gallery-help-actions {
 	overflow-y: hidden;
 	padding: 8px 16px;
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 }
 
 .editor-media-modal__gallery-help-remember-dismiss {

@@ -46,6 +46,16 @@ export const http = (
 ) => {
 	const version = apiNamespace ? { apiNamespace } : { apiVersion };
 
+	if ( process.env.NODE_ENV === 'development' ) {
+		if ( ! ( action || onSuccess ) ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				'No success handler or default action supplied to the http action. You probably want one or the other. Path: %s',
+				path
+			);
+		}
+	}
+
 	return {
 		type: WPCOM_HTTP_REQUEST,
 		body,

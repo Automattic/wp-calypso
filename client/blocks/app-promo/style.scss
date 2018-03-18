@@ -23,7 +23,7 @@
 	cursor: pointer;
 
 	svg {
-		fill: lighten( $gray, 20% );
+		fill: $gray-lighten-20;
 	}
 }
 
@@ -34,8 +34,8 @@
 	background-color: $white;
 	color: $blue-medium;
 	font-size: 12px;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 
 	&:hover {
 		text-decoration: underline;

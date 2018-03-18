@@ -157,12 +157,15 @@ ShippingZoneLocationList.propTypes = {
 };
 
 export default connect(
-	state => {
-		const loaded = areShippingZonesFullyLoaded( state ) && areSettingsGeneralLoaded( state );
+	( state, ownProps ) => {
+		const loaded =
+			areShippingZonesFullyLoaded( state, ownProps.siteId ) &&
+			areSettingsGeneralLoaded( state, ownProps.siteId );
 		return {
 			loaded,
-			fetchError: areSettingsGeneralLoadError( state ), // TODO: add shipping zones/methods fetch errors too
-			locations: loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20 ),
+			fetchError: areSettingsGeneralLoadError( state, ownProps.siteId ), // TODO: add shipping zones/methods fetch errors too
+			locations:
+				loaded && getCurrentlyEditingShippingZoneLocationsList( state, 20, ownProps.siteId ),
 		};
 	},
 	( dispatch, ownProps ) => ( {

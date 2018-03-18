@@ -19,19 +19,9 @@ The file of the example component should reside into a `/docs` folder in the sam
 
 #### Component name convention
 
-By convention the name of example component should ends with the `Example` word so for in the Popover case the name should be `PopoverExample`. The Devdocs-design component will take over to clean and show the right name in the web page.
+By convention the name of example component should ends with the `Example` word so for in the Popover case the name should be `PopoverExample`. The Devdocs-design component will take over to clean and show the right name in the web page. 
 
-If the example component is created using `React.createClass` then use `displayName` to define its name:
-
-```js
-module.exports = React.createClass( {
-	displayName: 'PopoverExample',
-
-	// ...
-} );
-```
-
-If you use ES6 `class` then define the name as a static `displayName` property:
+When using ES6 `class`, define the name as a static `displayName` property:
 
 ```es6
 class PopoverExample extends PureComponent {

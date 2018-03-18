@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
+import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { mount, shallow } from 'enzyme';
 import { noop, uniq } from 'lodash';
 import React from 'react';

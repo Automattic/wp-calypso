@@ -19,4 +19,5 @@ export default Object.freeze( {
 	shouldPause: PropTypes.bool.isRequired,
 	step: PropTypes.string.isRequired,
 	lastAction: PropTypes.object,
+	store: PropTypes.object,
 } );

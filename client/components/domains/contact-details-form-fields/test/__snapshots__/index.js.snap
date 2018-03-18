@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ContactDetailsFormFields default fields should render 1`] = `
+<FormFieldset
+  className="contact-details-form-fields"
+>
+  <div
+    className="contact-details-form-fields__container first-name"
+  >
+    <Input
+      additionalClasses="contact-details-form-fields__field"
+      autoComplete="on"
+      autoFocus={false}
+      disabled={false}
+      errorMessage=""
+      eventFormName="Domain contact details form"
+      isError={false}
+      label="First Name"
+      labelClass="contact-details-form-fields__label"
+      name="first-name"
+      onChange={[Function]}
+      value="Osso"
+    />
+  </div>
+  <div
+    className="contact-details-form-fields__container last-name"
+  >
+    <Input
+      additionalClasses="contact-details-form-fields__field"
+      autoComplete="on"
+      autoFocus={false}
+      disabled={false}
+      errorMessage=""
+      eventFormName="Domain contact details form"
+      isError={false}
+      label="Last Name"
+      labelClass="contact-details-form-fields__label"
+      name="last-name"
+      onChange={[Function]}
+      value="Buco"
+    />
+  </div>
+  <div
+    className="contact-details-form-fields__contact-details"
+  >
+    <div
+      className="contact-details-form-fields__container organization"
+    >
+      <HiddenInput
+        additionalClasses="contact-details-form-fields__field"
+        disabled={false}
+        errorMessage=""
+        eventFormName="Domain contact details form"
+        inputRef={[Function]}
+        isError={false}
+        label="Organization"
+        labelClass="contact-details-form-fields__label"
+        name="organization"
+        onChange={[Function]}
+        text="+ Add organization name"
+        value="Il pagliaccio del comune"
+      />
+    </div>
+    <div
+      className="contact-details-form-fields__container email"
+    >
+      <Input
+        additionalClasses="contact-details-form-fields__field"
+        autoComplete="on"
+        autoFocus={false}
+        disabled={false}
+        errorMessage=""
+        eventFormName="Domain contact details form"
+        isError={false}
+        label="Email"
+        labelClass="contact-details-form-fields__label"
+        name="email"
+        onChange={[Function]}
+        value="osso@buco.com"
+      />
+    </div>
+    <div
+      className="contact-details-form-fields__container phone"
+    >
+      <FormPhoneMediaInput
+        additionalClasses="contact-details-form-fields__field"
+        countriesList={
+          DomainRegistrationCountriesList {
+            "initialized": false,
+            "key": "DomainRegistrationCountriesList",
+          }
+        }
+        countryCode="US"
+        disabled={false}
+        errorMessage=""
+        eventFormName="Domain contact details form"
+        isError={false}
+        label="Phone"
+        labelClass="contact-details-form-fields__label"
+        name="phone"
+        onChange={[Function]}
+        value="+3398067382"
+      />
+    </div>
+    <div
+      className="contact-details-form-fields__container country-code"
+    >
+      <CountrySelect
+        additionalClasses="contact-details-form-fields__field"
+        countriesList={
+          DomainRegistrationCountriesList {
+            "initialized": false,
+            "key": "DomainRegistrationCountriesList",
+          }
+        }
+        disabled={false}
+        errorMessage=""
+        eventFormName="Domain contact details form"
+        inputRef={[Function]}
+        isError={false}
+        label="Country"
+        labelClass="contact-details-form-fields__label"
+        name="country-code"
+        onChange={[Function]}
+        value="IT"
+      />
+    </div>
+    <RegionAddressFieldsets
+      countryCode="IT"
+      getFieldProps={[Function]}
+      hasCountryStates={false}
+      shouldAutoFocusAddressField={false}
+      translate={[Function]}
+    />
+  </div>
+  <div
+    className="contact-details-form-fields__extra-fields"
+  />
+  <DomainManagementFormFooter>
+    <FormButton
+      className="contact-details-form-fields__submit-button"
+      disabled={false}
+      isPrimary={true}
+      isSubmitting={false}
+      onClick={[Function]}
+      type="submit"
+    >
+      Submit
+    </FormButton>
+  </DomainManagementFormFooter>
+</FormFieldset>
+`;

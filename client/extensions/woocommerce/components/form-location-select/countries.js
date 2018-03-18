@@ -16,7 +16,7 @@ import { bindActionCreators } from 'redux';
 import {
 	areLocationsLoaded,
 	getContinents,
-	getCountries,
+	getCountriesByContinent,
 } from 'woocommerce/state/sites/locations/selectors';
 import {
 	areSettingsGeneralLoaded,
@@ -81,7 +81,13 @@ class FormCountrySelectFromApi extends Component {
 		return (
 			<div>
 				<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
-				<FormSelect id="country" name="country" onChange={ onChange } value={ value }>
+				<FormSelect
+					autoComplete="country-code"
+					id="country"
+					name="country"
+					onChange={ onChange }
+					value={ value }
+				>
 					<option key="default" value="" disabled>
 						{ translate( 'Select Country' ) }
 					</option>
@@ -104,7 +110,7 @@ export default connect(
 		const isLoaded = areLocationsLoaded( state, siteId );
 		const continents = getContinents( state, siteId );
 		continents.forEach( continent => {
-			const countries = getCountries( state, continent.code, siteId );
+			const countries = getCountriesByContinent( state, continent.code, siteId );
 			locationsList.push(
 				...countries.map( country => ( {
 					...country,

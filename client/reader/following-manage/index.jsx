@@ -8,7 +8,7 @@ import { trim, debounce, random, take, reject, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal Dependencies
@@ -79,7 +79,7 @@ class FollowingManage extends Component {
 		) {
 			let searchUrl = '/following/manage';
 			if ( newValue ) {
-				searchUrl += '?' + qs.stringify( { q: newValue } );
+				searchUrl += '?' + stringify( { q: newValue } );
 				recordTrack( 'calypso_reader_following_manage_search_performed', {
 					query: newValue,
 				} );

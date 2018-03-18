@@ -5,10 +5,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
+import classnames from 'classnames';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 import { trim } from 'lodash';
+import Gridicons from 'gridicons/example';
 
 /**
  * Internal dependencies
@@ -24,6 +26,7 @@ import SearchCard from 'components/search-card';
  * Docs examples
  */
 import Accordions from 'components/accordion/docs/example';
+import BackButton from 'components/back-button/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
@@ -45,13 +48,13 @@ import ExternalLink from 'components/external-link/docs/example';
 import FAQ from 'components/faq/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
+import FocusableExample from 'components/focusable/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
 import FormattedHeader from 'components/formatted-header/docs/example';
 import FormFields from 'components/forms/docs/example';
 import Gauge from 'components/gauge/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
 import Gravatar from 'components/gravatar/docs/example';
-import Gridicons from 'gridicons/build/example';
 import HeaderButton from 'components/header-button/docs/example';
 import Headers from 'components/header-cake/docs/example';
 import ImagePreloader from 'components/image-preloader/docs/example';
@@ -116,8 +119,13 @@ class DesignAssets extends React.Component {
 		const { componentsUsageStats = {}, component } = this.props;
 		const { filter } = this.state;
 
+		const className = classnames( 'devdocs', 'devdocs__components', {
+			'is-single': this.props.component,
+			'is-list': ! this.props.component,
+		} );
+
 		return (
-			<Main className="design">
+			<Main className={ className }>
 				<DocumentHead title="UI Components" />
 
 				{ component ? (
@@ -130,6 +138,7 @@ class DesignAssets extends React.Component {
 						initialValue={ filter }
 						placeholder="Search components…"
 						analyticsGroup="Docs"
+						className="design__ui-components-search"
 					/>
 				) }
 
@@ -138,6 +147,7 @@ class DesignAssets extends React.Component {
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
 					/>
+					<BackButton readmeFilePath="back-button" />
 					<Banner readmeFilePath="banner" />
 					<BulkSelect readmeFilePath="bulk-select" />
 					<ButtonGroups readmeFilePath="button-group" />
@@ -159,6 +169,7 @@ class DesignAssets extends React.Component {
 					<FAQ readmeFilePath="faq" />
 					<FeatureGate readmeFilePath="feature-example" />
 					<FilePickers readmeFilePath="file-picker" />
+					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />

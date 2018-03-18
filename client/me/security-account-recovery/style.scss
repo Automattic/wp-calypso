@@ -46,7 +46,7 @@
 .security-account-recovery-contact__placeholder-heading,
 .security-account-recovery-contact__placeholder-text {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-lighten-30;
 	line-height: 1;
 	margin-bottom: .5em;
 }
@@ -91,7 +91,7 @@
 	padding: 9px 0;
 
 	&:hover {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 	}
 
 	.gridicon {

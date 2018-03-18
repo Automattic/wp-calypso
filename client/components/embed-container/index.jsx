@@ -85,7 +85,7 @@ function embedInstagram( domNode ) {
 	debug( 'processing instagram for', domNode );
 	if ( typeof instgrm !== 'undefined' ) {
 		try {
-			global.instgrm.Embeds.process();
+			window.instgrm.Embeds.process();
 		} catch ( e ) {}
 		return;
 	}
@@ -101,7 +101,7 @@ function embedTwitter( domNode ) {
 
 	if ( typeof twttr !== 'undefined' ) {
 		try {
-			global.twttr.widgets.load( domNode );
+			window.twttr.widgets.load( domNode );
 		} catch ( e ) {}
 		return;
 	}

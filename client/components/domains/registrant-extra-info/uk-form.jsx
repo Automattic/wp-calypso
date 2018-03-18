@@ -23,7 +23,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import WithContactDetailsValidation, {
 	disableSubmitButton,
 } from './with-contact-details-validation';
-import contactDetailsUkSchema from './uk-schema';
 
 const defaultValues = {
 	registrantType: 'IND',
@@ -32,6 +31,7 @@ const defaultValues = {
 export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	static propTypes = {
 		contactDetails: PropTypes.object.isRequired,
+		ccTldDetails: PropTypes.object.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -45,11 +45,11 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 				comment: 'Refers to UK legal concept of self-employment/sole proprietorship',
 			} ),
 			PTNR: translate( 'UK Partnership' ),
+			LTD: translate( 'UK Limited Company' ),
 			LLP: translate( 'UK Limited Liability Partnership' ),
 			CRC: translate( 'UK Corporation by Royal Charter' ),
 			FCORP: translate( 'Non-UK Corporation' ),
 			IP: translate( 'UK Industrial/Provident Registered Company' ),
-			LTD: translate( 'UK Limited Company' ),
 			PLC: translate( 'UK Public Limited Company' ),
 			SCH: translate( 'UK School' ),
 			GOV: translate( 'UK Government Body' ),
@@ -80,7 +80,7 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		// Add defaults to redux state to make accepting default values work.
 		const neededRequiredDetails = difference(
 			[ 'registrantType' ],
-			keys( this.props.contactDetails.extra )
+			keys( this.props.ccTldDetails )
 		);
 
 		// Bail early as we already have the details from a previous purchase.
@@ -89,13 +89,17 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		}
 
 		this.props.updateContactDetailsCache( {
-			extra: pick( defaultValues, neededRequiredDetails ),
+			extra: {
+				uk: pick( defaultValues, neededRequiredDetails ),
+			},
 		} );
 	}
 
 	handleChangeEvent = event => {
 		this.props.updateContactDetailsCache( {
-			extra: { [ camelCase( event.target.id ) ]: event.target.value },
+			extra: {
+				uk: { [ camelCase( event.target.id ) ]: event.target.value },
+			},
 		} );
 	};
 
@@ -111,9 +115,13 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	}
 
 	renderTradingNameField() {
-		const { contactDetails, translate } = this.props;
-		const tradingName = get( contactDetails, [ 'extra', 'tradingName' ], '' );
-		const tradingNameErrors = get( this.props.validationErrors, [ 'extra', 'tradingName' ], [] );
+		const { ccTldDetails, translate } = this.props;
+		const tradingName = get( ccTldDetails, 'tradingName', '' );
+		const tradingNameErrors = get(
+			this.props.validationErrors,
+			[ 'extra', 'uk', 'tradingName' ],
+			[]
+		);
 		const isError = ! isEmpty( tradingNameErrors );
 
 		return (
@@ -139,11 +147,11 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 	}
 
 	renderRegistrationNumberField() {
-		const { contactDetails, translate } = this.props;
-		const registrationNumber = get( contactDetails, [ 'extra', 'registrationNumber' ], '' );
+		const { ccTldDetails, translate } = this.props;
+		const registrationNumber = get( ccTldDetails, 'registrationNumber', '' );
 		const registrationNumberErrors = get(
 			this.props.validationErrors,
-			[ 'extra', 'registrationNumber' ],
+			[ 'extra', 'uk', 'registrationNumber' ],
 			[]
 		);
 
@@ -195,14 +203,14 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 		const { translate, validationErrors } = this.props;
 		const { registrantType } = {
 			...defaultValues,
-			...this.props.contactDetails.extra,
+			...this.props.ccTldDetails,
 		};
 
 		const relevantExtraFields = filter( [
 			this.isTradingNameRequired( registrantType ) && 'tradingName',
 			this.isRegistrationNumberRequired( registrantType ) && 'registrationNumber',
 		] );
-		const relevantErrors = pick( ( validationErrors || {} ).extra, relevantExtraFields );
+		const relevantErrors = pick( get( validationErrors, 'extra.uk', {} ), relevantExtraFields );
 		const isValid = isEmpty( relevantErrors );
 
 		return (
@@ -239,13 +247,17 @@ export class RegistrantExtraInfoUkForm extends React.PureComponent {
 }
 
 export const ValidatedRegistrantExtraInfoUkForm = WithContactDetailsValidation(
-	contactDetailsUkSchema,
+	'uk',
 	RegistrantExtraInfoUkForm
 );
 
 export default connect(
-	state => ( {
-		contactDetails: getContactDetailsCache( state ),
-	} ),
+	state => {
+		const contactDetails = getContactDetailsCache( state );
+		return {
+			contactDetails,
+			ccTldDetails: get( contactDetails, 'extra.uk', {} ),
+		};
+	},
 	{ updateContactDetailsCache }
 )( localize( ValidatedRegistrantExtraInfoUkForm ) );

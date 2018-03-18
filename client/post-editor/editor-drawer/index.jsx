@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, get } from 'lodash';
+import { flow, get, overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import { isBusiness, isEnterprise } from 'lib/products-values';
+import { isBusiness, isEnterprise, isJetpackPremium } from 'lib/products-values';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -48,6 +48,7 @@ import { getFirstConflictingPlugin } from 'lib/seo';
 /**
  * Constants
  */
+const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium );
 
 /**
  * A mapping of post type to hard-coded post types support. These values are
@@ -187,7 +188,10 @@ class EditorDrawer extends Component {
 			<AccordionSection>
 				<EditorDrawerLabel
 					labelText={ translate( 'Excerpt' ) }
-					helpText={ translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
+					helpText={ translate(
+						'An excerpt is a short summary you can add to your posts. ' +
+							"Some themes show excerpts alongside post titles on your site's homepage and archive pages."
+					) }
 				>
 					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
 						<FormTextarea
@@ -269,10 +273,7 @@ class EditorDrawer extends Component {
 			}
 		}
 
-		const { plan } = site;
-		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-
-		if ( ! hasBusinessPlan ) {
+		if ( ! hasSupportingPlan( site.plan ) ) {
 			return;
 		}
 

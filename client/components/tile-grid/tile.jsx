@@ -19,9 +19,11 @@ export default class extends React.PureComponent {
 		buttonLabel: PropTypes.string,
 		className: PropTypes.string,
 		description: PropTypes.string,
+		highlighted: PropTypes.bool,
 		href: PropTypes.string,
 		image: PropTypes.string,
 		onClick: PropTypes.func,
+		e2eType: PropTypes.string,
 	};
 
 	render() {
@@ -30,14 +32,28 @@ export default class extends React.PureComponent {
 			buttonLabel,
 			className,
 			description,
+			highlighted,
 			href,
 			image,
 			onClick,
+			e2eType,
 		} = this.props;
-		const tileClassName = classNames( 'tile-grid__item', className );
+		const tileClassName = classNames(
+			'tile-grid__item',
+			{
+				'is-highlighted': highlighted,
+			},
+			className
+		);
 
 		return (
-			<Card className={ tileClassName } href={ href } onClick={ onClick } tabIndex="-1">
+			<Card
+				className={ tileClassName }
+				href={ href }
+				onClick={ onClick }
+				tabIndex="-1"
+				data-e2e-type={ e2eType }
+			>
 				{ image && (
 					<div className="tile-grid__image">
 						<img src={ image } />
@@ -45,7 +61,10 @@ export default class extends React.PureComponent {
 				) }
 				<div className="tile-grid__item-copy">
 					{ buttonLabel && (
-						<Button className={ classNames( 'tile-grid__cta', buttonClassName ) } compact>
+						<Button
+							className={ classNames( 'tile-grid__cta', buttonClassName ) }
+							compact={ !! description }
+						>
 							{ buttonLabel }
 						</Button>
 					) }

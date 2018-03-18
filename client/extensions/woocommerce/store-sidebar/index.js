@@ -189,9 +189,8 @@ class StoreSidebar extends Component {
 
 		const { site, siteSuffix, translate } = this.props;
 		const link = '/store/promotions' + siteSuffix;
-		const validLinks = [ '/store/promotions', '/store/promotion' ];
-
-		const selected = this.isItemLinkSelected( validLinks );
+		const addLink = '/store/promotion' + siteSuffix;
+		const selected = this.isItemLinkSelected( [ link, addLink ] );
 		const classes = classNames( {
 			promotions: true,
 			'is-placeholder': ! site,
@@ -204,7 +203,11 @@ class StoreSidebar extends Component {
 				icon="gift"
 				label={ translate( 'Promotions' ) }
 				link={ link }
-			/>
+			>
+				<SidebarButton disabled={ ! site } href={ addLink }>
+					{ translate( 'Add' ) }
+				</SidebarButton>
+			</SidebarItem>
 		);
 	};
 

@@ -165,6 +165,11 @@ export function fetchDomains( siteId ) {
 		} );
 }
 
+/**
+ * Gets the current WHOIS data for `domainName` from the backend
+ *
+ * @param {String} domainName - current domain name
+ */
 export function fetchWhois( domainName ) {
 	const whois = WhoisStore.getByDomainName( domainName );
 
@@ -193,12 +198,21 @@ export function fetchWhois( domainName ) {
 	} );
 }
 
-export function updateWhois( domainName, contactInformation, transferLock, onComplete ) {
-	wpcom.updateWhois( domainName, contactInformation, transferLock, ( error, data ) => {
+/**
+ * Posts new WHOIS contact information data for `domainName` to the backend
+ *
+ * @param {String} domainName - current domain name
+ * @param {Object} registrantContactDetails - registrant contact details to be sent to server
+ * @param {Boolean} transferLock - state of opt-out of the 60-day transfer lock checkbox
+ * @param {Function} onComplete - callback after HTTP action
+ */
+export function updateWhois( domainName, registrantContactDetails, transferLock, onComplete ) {
+	wpcom.updateWhois( domainName, registrantContactDetails, transferLock, ( error, data ) => {
 		if ( ! error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_UPDATE_COMPLETED,
 				domainName,
+				registrantContactDetails,
 			} );
 
 			// For WWD the update may take longer
@@ -207,6 +221,7 @@ export function updateWhois( domainName, contactInformation, transferLock, onCom
 				Dispatcher.handleServerAction( {
 					type: ActionTypes.WHOIS_UPDATE_COMPLETED,
 					domainName,
+					registrantContactDetails,
 				} );
 			}, 60000 );
 		}

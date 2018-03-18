@@ -8,7 +8,7 @@ import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import i18n from 'i18n-calypso';
 import page from 'page';
-import qs from 'querystring';
+import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
 import { map, pick, reduce, startsWith } from 'lodash';
 
@@ -18,7 +18,6 @@ import { map, pick, reduce, startsWith } from 'lodash';
 import actions from 'lib/posts/actions';
 import { addSiteFragment } from 'lib/route';
 import User from 'lib/user';
-import userUtils from 'lib/user/utils';
 import analytics from 'lib/analytics';
 import { decodeEntities } from 'lib/formatting';
 import PostEditor from './post-editor';
@@ -55,10 +54,7 @@ function determinePostType( context ) {
 }
 
 function renderEditor( context ) {
-	context.primary = React.createElement( PostEditor, {
-		user: user,
-		userUtils: userUtils,
-	} );
+	context.primary = React.createElement( PostEditor );
 }
 
 function maybeRedirect( context ) {
@@ -309,7 +305,7 @@ export default {
 		}
 
 		const redirectPath = addSiteFragment( context.pathname, currentUser.primarySiteSlug );
-		const queryString = qs.stringify( context.query );
+		const queryString = stringify( context.query );
 		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
 
 		page.redirect( redirectWithParams );

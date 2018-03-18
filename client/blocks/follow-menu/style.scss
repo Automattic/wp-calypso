@@ -1,0 +1,107 @@
+$follow-menu-gray-disabled: lighten( $gray, 20% );
+
+.follow-menu {
+
+	.gridicons-reader-follow {
+		display: inline;
+		pointer-events: auto;
+	}
+
+	.gridicons-reader-following {
+		display: none;
+	}
+
+	.gridicon.follow-menu__icon {
+		fill: $blue-medium;
+		top: 5px;
+	}
+
+	.follow-menu__label {
+		color: $blue-medium;
+		padding-left: 3px;
+
+		&:hover {
+			color: $blue-medium;
+		}
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
+	}
+
+	.follow-menu__button {
+		border-color: $blue-medium;
+
+		&:hover {
+			border-color: $blue-medium;
+		}
+
+		&.is-compact {
+
+			.gridicon.follow-menu__icon {
+				top: 6px;
+			}
+
+			.gridicon.gridicons-chevron-down {
+				left: 1px;
+			}
+
+			.follow-menu__label {
+				padding-left: 0;
+			}
+		}
+	}
+
+	&.is-following {
+
+		.gridicons-reader-follow {
+			display: none;
+		}
+
+		.gridicons-reader-following {
+			display: inline;
+			pointer-events: auto;
+		}
+
+		.follow-menu__icon {
+			fill: $alert-green;
+		}
+
+		.follow-menu__label {
+			color: $alert-green;
+		}
+
+		.follow-menu__button {
+			border-color: $alert-green;
+		}
+	}
+
+	&.is-disabled {
+
+		@include no-select();
+		border-color: $follow-menu-gray-disabled;
+		color: $follow-menu-gray-disabled;
+		pointer-events: none;
+
+		.follow-menu__label {
+			color: $follow-menu-gray-disabled;
+		}
+
+		.follow-menu__icon {
+			fill: $follow-menu-gray-disabled;
+		}
+
+		.follow-menu__button {
+			border-color: $follow-menu-gray-disabled;
+		}
+
+		&:hover {
+			color: $follow-menu-gray-disabled;
+			cursor: default;
+
+			.follow-menu__icon {
+				fill: $follow-menu-gray-disabled;
+			}
+		}
+	}
+}

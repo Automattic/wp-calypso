@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import qs from 'querystring';
+import { parse, stringify } from 'qs';
 import store from 'store';
 
 export const GUEST_TICKET_LOCALFORAGE_KEY = 'guest_sandbox_ticket';
@@ -39,10 +39,10 @@ export const injectGuestSandboxTicketHandler = wpcom => {
 			const ticket = getTicket();
 
 			if ( ticket ) {
-				const query = qs.parse( params.query );
+				const query = parse( params.query );
 
 				params = Object.assign( {}, params, {
-					query: qs.stringify( Object.assign( query, { store_sandbox_ticket: ticket.value } ) ),
+					query: stringify( Object.assign( query, { store_sandbox_ticket: ticket.value } ) ),
 				} );
 			}
 
@@ -61,7 +61,7 @@ const initialize = () => {
 
 	deleteOldTicket();
 
-	const queryObject = qs.decode( window.location.search.replace( '?', '' ) );
+	const queryObject = parse( window.location.search.replace( '?', '' ) );
 
 	if ( queryObject.guest_ticket ) {
 		store.set( GUEST_TICKET_LOCALFORAGE_KEY, {

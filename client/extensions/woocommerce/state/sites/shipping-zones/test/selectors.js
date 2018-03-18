@@ -4,12 +4,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { getAPIShippingZones, areShippingZonesLoaded, areShippingZonesLoading } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 const preInitializedState = {
 	extensions: {
@@ -108,6 +110,15 @@ const loadedEmptyState = {
 const loadingStateWithUi = { ...loadingState, ui: { selectedSiteId: 123 } };
 
 describe( 'selectors', () => {
+	let wcsEnabledStub;
+	beforeEach( () => {
+		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( false );
+	} );
+
+	afterEach( () => {
+		wcsEnabledStub.restore();
+	} );
+
 	describe( '#areShippingZonesLoading', () => {
 		test( 'should return false when woocommerce state is not available.', () => {
 			expect( areShippingZonesLoading( preInitializedState, 123 ) ).to.be.false;

@@ -40,7 +40,7 @@ class Help extends React.PureComponent {
 	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
-				link: 'https://en.support.wordpress.com/com-vs-org/',
+				link: 'https://en.support.wordpress.com/business-plan/',
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
 					'Learn more about installing a custom theme or plugin using the Business plan.'

@@ -12,6 +12,7 @@ import {
 	getCurrentUserId,
 	getCurrentUser,
 	getCurrentUserLocale,
+	getCurrentUserLocaleVariant,
 	getCurrentUserDate,
 	isValidCapability,
 	getCurrentUserCurrencyCode,
@@ -97,6 +98,53 @@ describe( 'selectors', () => {
 			} );
 
 			expect( locale ).to.equal( 'fr' );
+		} );
+	} );
+
+	describe( '#getCurrentUserLocaleVariant', () => {
+		test( 'should return null if the current user is not set', () => {
+			const locale = getCurrentUserLocaleVariant( {
+				currentUser: {
+					id: null,
+				},
+			} );
+
+			expect( locale ).to.be.null;
+		} );
+
+		test( 'should return null if the current user locale slug is not set', () => {
+			const locale = getCurrentUserLocaleVariant( {
+				users: {
+					items: {
+						73705554: { ID: 73705554, login: 'testonesite2014' },
+					},
+				},
+				currentUser: {
+					id: 73705554,
+				},
+			} );
+
+			expect( locale ).to.be.null;
+		} );
+
+		test( 'should return the current user locale variant slug', () => {
+			const locale = getCurrentUserLocaleVariant( {
+				users: {
+					items: {
+						73705554: {
+							ID: 73705554,
+							login: 'testonesite2014',
+							localeSlug: 'fr',
+							localeVariant: 'fr_formal',
+						},
+					},
+				},
+				currentUser: {
+					id: 73705554,
+				},
+			} );
+
+			expect( locale ).to.equal( 'fr_formal' );
 		} );
 	} );
 

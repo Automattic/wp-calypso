@@ -82,6 +82,24 @@ Link text for navigating to the next step in the wizard.
 
 Whether to hide the navigation links.
 
+### `onBackClick`
+
+<table>
+	<tr><td>Type</td><td>Function</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+A callback to be called when the "Back" navigation link is clicked.
+
+### `onForwardClick`
+
+<table>
+	<tr><td>Type</td><td>Function</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+A callback to be called when the "Forward" navigation link is clicked.
+
 ### `steps`
 
 <table>

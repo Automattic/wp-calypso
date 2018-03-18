@@ -12,7 +12,6 @@ import {
 	addMethodToShippingZone,
 	openShippingZoneMethod,
 	cancelShippingZoneMethod,
-	closeShippingZoneMethod,
 	removeMethodFromShippingZone,
 	changeShippingZoneMethodType,
 	changeShippingZoneMethodTitle,
@@ -21,6 +20,7 @@ import {
 } from '../actions';
 import { setShippingCost } from '../flat-rate/actions';
 import reducer, { initialState } from '../reducer';
+import { WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE } from 'woocommerce/state/action-types';
 
 const siteId = 123;
 
@@ -196,6 +196,12 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'closeShippingZoneMethod', () => {
+		// The real closeShippingZoneMethod is a thunk now, but this test is only concerned with the reducer
+		const closeShippingZoneMethod = _siteId => ( {
+			type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CLOSE,
+			siteId: _siteId,
+		} );
+
 		test( 'should mark the method as closed', () => {
 			const state = {
 				creates: [],

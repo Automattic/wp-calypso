@@ -5,13 +5,13 @@
 	height: 18px;
 	margin: 0;
 	padding: 0;
-	background: lighten( $gray, 20% );
+	background: $gray-lighten-20;
 	background: linear-gradient(
 		to bottom,
 		transparent,
 		transparent 8px,
-		lighten( $gray, 20% ) 8px,
-		lighten( $gray, 20% ) 10px,
+		$gray-lighten-20 8px,
+		$gray-lighten-20 10px,
 		transparent 10px
 	);
 }

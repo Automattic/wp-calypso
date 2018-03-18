@@ -19,22 +19,16 @@ import Button from 'components/button';
 import CompactCard from 'components/card/compact';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enrichedSurveyData';
-import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initialSurveyState';
-import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/isSurveyFilledIn';
-import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/stepsForProductAndSurvey';
-import nextStep from 'components/marketing-survey/cancel-purchase-form/nextStep';
-import previousStep from 'components/marketing-survey/cancel-purchase-form/previousStep';
+import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import initialSurveyState from 'components/marketing-survey/cancel-purchase-form/initial-survey-state';
+import isSurveyFilledIn from 'components/marketing-survey/cancel-purchase-form/is-survey-filled-in';
+import stepsForProductAndSurvey from 'components/marketing-survey/cancel-purchase-form/steps-for-product-and-survey';
+import nextStep from 'components/marketing-survey/cancel-purchase-form/next-step';
+import previousStep from 'components/marketing-survey/cancel-purchase-form/previous-step';
 import { INITIAL_STEP, FINAL_STEP } from 'components/marketing-survey/cancel-purchase-form/steps';
 import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
 import { getPurchase, isDataLoading } from '../utils';
-import {
-	isDomainRegistration,
-	isPlan,
-	isBusiness,
-	isGoogleApps,
-	isJetpackPlan,
-} from 'lib/products-values';
+import { isDomainRegistration, isPlan, isBusiness, isGoogleApps } from 'lib/products-values';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -90,9 +84,10 @@ class RemovePurchase extends Component {
 	recordEvent = ( name, properties = {} ) => {
 		const product_slug = get( this.props, 'selectedPurchase.productSlug' );
 		const cancellation_flow = 'remove';
+		const is_atomic = this.props.isAutomatedTransferSite;
 		this.props.recordTracksEvent(
 			name,
-			Object.assign( { cancellation_flow, product_slug }, properties )
+			Object.assign( { cancellation_flow, product_slug, is_atomic }, properties )
 		);
 	};
 
@@ -170,8 +165,6 @@ class RemovePurchase extends Component {
 		const { isDomainOnlySite, selectedSite, translate } = this.props;
 
 		if ( ! isDomainRegistration( purchase ) && config.isEnabled( 'upgrades/removal-survey' ) ) {
-			this.recordEvent( 'calypso_purchases_cancel_form_submit' );
-
 			const survey = wpcom
 				.marketing()
 				.survey( 'calypso-remove-purchase', this.props.selectedSite.ID );
@@ -201,6 +194,8 @@ class RemovePurchase extends Component {
 				} )
 				.catch( err => debug( err ) ); // shouldn't get here
 		}
+
+		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		this.props.removePurchase( purchase.id, user.get().ID ).then( () => {
 			const productName = getName( purchase );
@@ -328,7 +323,7 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { selectedPurchase, translate } = this.props;
+		const { selectedPurchase, selectedSite, translate } = this.props;
 		const buttons = {
 			cancel: {
 				action: 'cancel',
@@ -384,12 +379,12 @@ class RemovePurchase extends Component {
 			>
 				<CancelPurchaseForm
 					chatInitiated={ this.chatInitiated }
-					productName={ getName( selectedPurchase ) }
-					surveyStep={ this.state.surveyStep }
-					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
 					defaultContent={ this.renderPlanDialogText() }
 					onInputChange={ this.onSurveyChange }
-					isJetpack={ isJetpackPlan( selectedPurchase ) }
+					purchase={ selectedPurchase }
+					selectedSite={ selectedSite }
+					showSurvey={ config.isEnabled( 'upgrades/removal-survey' ) }
+					surveyStep={ this.state.surveyStep }
 				/>
 			</Dialog>
 		);
@@ -460,7 +455,7 @@ class RemovePurchase extends Component {
 				<p>
 					{ translate(
 						'To cancel your %(productName)s plan, please contact our support team' +
-							'-- a Happiness Engineer will take care of it.',
+							' — a Happiness Engineer will take care of it.',
 						{
 							args: { productName },
 						}

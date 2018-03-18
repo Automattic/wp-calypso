@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import page from 'page';
+import classnames from 'classnames';
 import { trim } from 'lodash';
 import { slugToCamelCase } from 'devdocs/docs-example/util';
 
@@ -27,6 +28,7 @@ import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
+import FollowMenu from 'blocks/follow-menu/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
@@ -50,7 +52,7 @@ import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
-import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
+import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
 import PostShare from 'blocks/post-share/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
@@ -61,7 +63,6 @@ import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
 import VideoEditor from 'blocks/video-editor/docs/example';
 import ReaderPostCard from 'blocks/reader-post-card/docs/example';
-import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
 import ReaderRecommendedSites from 'blocks/reader-recommended-sites/docs/example';
 import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
 import DailyPostButton from 'blocks/daily-post-button/docs/example';
@@ -81,6 +82,7 @@ import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dia
 import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'blocks/conversation-follow-button/docs/example';
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
+import SiteRenamer from 'blocks/simple-site-rename-form/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -95,8 +97,13 @@ export default class AppComponents extends React.Component {
 	};
 
 	render() {
+		const className = classnames( 'devdocs', 'devdocs__blocks', {
+			'is-single': this.props.component,
+			'is-list': ! this.props.component,
+		} );
+
 		return (
-			<Main className="design design__blocks">
+			<Main className={ className }>
 				<DocumentHead title="Blocks" />
 				{ this.props.component ? (
 					<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
@@ -122,6 +129,7 @@ export default class AppComponents extends React.Component {
 					<DisconnectJetpackDialog />
 					<CreditCardForm />
 					<FollowButton />
+					<FollowMenu />
 					<HappinessSupport />
 					<ImageEditor />
 					<VideoEditor />
@@ -142,7 +150,7 @@ export default class AppComponents extends React.Component {
 					<PlanCompareCard />
 					<FeatureComparison />
 					<DomainTip />
-					<RelatedPostCardv2 />
+					<RelatedPostCard />
 					<PostItem />
 					<PostStatus />
 					<PostTime />
@@ -152,7 +160,7 @@ export default class AppComponents extends React.Component {
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
-					<ReaderCombinedCard />
+
 					<ReaderRecommendedSites />
 					<PlanPrice />
 					<PostShare />
@@ -176,6 +184,7 @@ export default class AppComponents extends React.Component {
 					<ConversationCaterpillar />
 					<ConversationFollowButton />
 					<ColorSchemePicker />
+					{ isEnabled( 'site-address-editor/devdocs' ) && <SiteRenamer /> }
 				</Collection>
 			</Main>
 		);

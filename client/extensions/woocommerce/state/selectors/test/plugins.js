@@ -48,8 +48,8 @@ describe( 'plugins', () => {
 			configStub.restore();
 		} );
 
-		it( 'should be false if the plugin list is being requested', () => {
-			expect( isWcsEnabled( getState( false ), siteId ) ).to.be.false;
+		it( 'should be null if the plugin list is being requested', () => {
+			expect( isWcsEnabled( getState( false ), siteId ) ).to.be.null;
 		} );
 
 		it( 'should be false if the plugin is not installed', () => {

@@ -8,8 +8,10 @@ import {
 	WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_DATA_VALUE,
 	WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY,
+	WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG,
+	WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG,
 } from '../action-types';
-import { getLabelSettingsForm, getLabelSettingsFormData } from './selectors';
+import { getLabelSettingsFormData } from './selectors';
 
 export const initForm = ( siteId, storeOptions, formData, formMeta ) => {
 	return {
@@ -37,12 +39,7 @@ export const setFormMetaProperty = ( siteId, key, value ) => {
 	};
 };
 
-export const fetchSettings = siteId => ( dispatch, getState ) => {
-	const form = getLabelSettingsForm( getState(), siteId );
-
-	if ( form && ( form.data || form.meta.isFetching ) ) {
-		return;
-	}
+export const fetchSettings = siteId => dispatch => {
 	dispatch( setFormMetaProperty( siteId, 'isFetching', true ) );
 
 	api
@@ -77,4 +74,12 @@ export const restorePristineSettings = siteId => {
 		type: WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE,
 		siteId,
 	};
+};
+
+export const openAddCardDialog = siteId => {
+	return { type: WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG, siteId };
+};
+
+export const closeAddCardDialog = siteId => {
+	return { type: WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG, siteId };
 };

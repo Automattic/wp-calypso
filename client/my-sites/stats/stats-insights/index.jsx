@@ -67,7 +67,7 @@ const StatsInsights = props => {
 							<LatestPostSummary />
 							<MostPopular />
 							{ tagsList }
-							<AnnualSiteStats />
+							<AnnualSiteStats isWidget />
 						</div>
 						<div className="stats__module-column">
 							<Reach />

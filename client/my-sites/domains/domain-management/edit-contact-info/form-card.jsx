@@ -4,26 +4,18 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { deburr, endsWith, get, includes, isEqual, keys, omit, pick, snakeCase } from 'lodash';
 import page from 'page';
-import { bindActionCreators } from 'redux';
+import { endsWith, get, isEqual, omit, includes, snakeCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
+
 import Card from 'components/card';
-import FormButton from 'components/forms/form-button';
-import FormCountrySelect from 'my-sites/domains/components/form/country-select';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormStateSelect from 'my-sites/domains/components/form/state-select';
-import FormInput from 'my-sites/domains/components/form/input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
-import ValidationErrorList from 'notices/validation-error-list';
-import { forDomainRegistrations as countriesList } from 'lib/countries-list';
-import formState from 'lib/form-state';
 import notices from 'notices';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { updateWhois } from 'lib/upgrades/actions';
@@ -34,6 +26,7 @@ import { registrar as registrarNames } from 'lib/domains/constants';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import Dialog from 'components/dialog';
 import { getCurrentUser } from 'state/current-user/selectors';
+import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
 
 const wpcom = wp.undocumented();
 
@@ -48,61 +41,40 @@ class EditContactInfoFormCard extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.fieldNames = [
-			'first-name',
-			'last-name',
-			'organization',
-			'email',
-			'phone',
-			'fax',
-			'country-code',
-			'address-1',
-			'address-2',
-			'city',
-			'state',
-			'postal-code',
-		];
-
 		this.state = {
-			form: null,
 			notice: null,
 			formSubmitting: false,
-			hasUnmounted: false,
 			transferLock: true,
 			showNonDaConfirmationDialog: false,
+			hasEmailChanged: false,
+			requiresConfirmation: false,
+			haveContactDetailsChanged: false,
+			newContactDetails: null,
 		};
+
+		this.contactFormFieldValues = this.getContactFormFieldValues();
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		return (
+			! isEqual( this.state, nextState ) ||
+			! isEqual( this.props.contactInformation, nextProps.contactInformation )
+		);
 	}
 
 	componentWillMount() {
-		const contactInformation = omit( this.props.contactInformation, [
-			'countryName',
-			'stateName',
-		] );
-
-		this.formStateController = formState.Controller( {
-			initialFields: contactInformation,
-			sanitizerFunction: this.sanitize,
-			validatorFunction: this.validate,
-			onNewState: this.setFormState,
-			onError: this.handleFormControllerError,
-		} );
-
 		this.setState( {
-			form: this.formStateController.getInitialState(),
-			hasUnmounted: false,
 			transferLock: true,
 		} );
 	}
 
-	componentWillUnmount() {
-		this.setState( {
-			hasUnmounted: true,
-		} );
+	getContactFormFieldValues() {
+		return omit( this.props.contactInformation, [ 'countryName', 'stateName', 'type' ] );
 	}
 
-	validate = ( formValues, onComplete ) => {
+	validate = ( fieldValues, onComplete ) => {
 		wpcom.validateDomainContactInformation(
-			formValues,
+			fieldValues,
 			[ this.props.selectedDomain.name ],
 			( error, data ) => {
 				if ( error ) {
@@ -114,75 +86,23 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	};
 
-	sanitize = ( fieldValues, onComplete ) => {
-		const sanitizedFieldValues = Object.assign( {}, fieldValues );
+	requiresConfirmation( newContactDetails ) {
+		const { firstName, lastName, organization, email } = this.props.contactInformation;
+		const isWwdDomain = this.props.selectedDomain.registrar === registrarNames.WWD;
 
-		this.fieldNames.forEach( fieldName => {
-			if ( typeof fieldValues[ fieldName ] === 'string' ) {
-				// TODO: Deep
-				sanitizedFieldValues[ fieldName ] = deburr( fieldValues[ fieldName ].trim() );
-				if ( fieldName === 'postal-code' ) {
-					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
-				}
-			}
-		} );
-
-		onComplete( sanitizedFieldValues );
-	};
-
-	setFormState = state => {
-		if ( this.state.hasUnmounted ) {
-			return;
-		}
-
-		const messages = formState.getErrorMessages( state );
-
-		if ( messages.length > 0 ) {
-			const notice = notices.error( <ValidationErrorList messages={ messages } /> );
-			this.setState( {
-				form: state,
-				notice: notice,
-			} );
-		} else {
-			if ( this.state.notice ) {
-				notices.removeNotice( this.state.notice );
-			}
-			this.setState( {
-				form: state,
-				notice: null,
-			} );
-		}
-	};
-
-	requiresConfirmation() {
-		const { firstName, lastName, organization, email } = this.props.contactInformation,
-			isWwdDomain = this.props.selectedDomain.registrar === registrarNames.WWD,
-			primaryFieldsChanged = ! (
-				firstName === formState.getFieldValue( this.state.form, 'first-name' ) &&
-				lastName === formState.getFieldValue( this.state.form, 'last-name' ) &&
-				organization === formState.getFieldValue( this.state.form, 'organization' ) &&
-				email === formState.getFieldValue( this.state.form, 'email' )
-			);
+		const primaryFieldsChanged = ! (
+			firstName === newContactDetails.firstName &&
+			lastName === newContactDetails.lastName &&
+			organization === newContactDetails.organization &&
+			email === newContactDetails.email
+		);
 		return isWwdDomain && primaryFieldsChanged;
 	}
 
-	hasEmailChanged() {
-		return (
-			this.props.contactInformation.email !== formState.getFieldValue( this.state.form, 'email' )
-		);
-	}
-
-	handleFormControllerError = error => {
-		if ( error ) {
-			throw error;
-		}
-	};
-
-	handleDialogClose = () => {
-		this.setState( { showNonDaConfirmationDialog: false } );
-	};
+	handleDialogClose = () => this.setState( { showNonDaConfirmationDialog: false } );
 
 	renderTransferLockOptOut() {
+		const { translate } = this.props;
 		return (
 			<div>
 				<FormLabel>
@@ -192,7 +112,7 @@ class EditContactInfoFormCard extends React.Component {
 						onChange={ this.onTransferLockOptOutChange }
 					/>
 					<span>
-						{ this.props.translate( 'Opt-out of the {{link}}60-day transfer lock{{/link}}.', {
+						{ translate( 'Opt-out of the {{link}}60-day transfer lock{{/link}}.', {
 							components: {
 								link: (
 									<a
@@ -205,6 +125,7 @@ class EditContactInfoFormCard extends React.Component {
 						} ) }
 					</span>
 				</FormLabel>
+				<DesignatedAgentNotice saveButtonLabel={ translate( 'Save Contact Info' ) } />
 			</div>
 		);
 	}
@@ -229,31 +150,34 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	renderDialog() {
-		const { translate } = this.props,
-			strong = <strong />,
-			buttons = [
-				{
-					action: 'cancel',
-					label: this.props.translate( 'Cancel' ),
-				},
-				{
-					action: 'confirm',
-					label: this.props.translate( 'Request Confirmation' ),
-					onClick: this.saveContactInfo,
-					isPrimary: true,
-				},
-			],
-			currentEmail = this.props.contactInformation.email,
-			wpcomEmail = this.props.currentUser.email;
+		const { translate } = this.props;
+		const { hasEmailChanged, newContactDetails = {} } = this.state;
+		const strong = <strong />;
+		const buttons = [
+			{
+				action: 'cancel',
+				label: translate( 'Cancel' ),
+			},
+			{
+				action: 'confirm',
+				label: translate( 'Request Confirmation' ),
+				onClick: this.saveContactInfo,
+				isPrimary: true,
+			},
+		];
+		const currentEmail = this.props.contactInformation.email;
+		const wpcomEmail = this.props.currentUser.email;
 
 		let text;
-		if ( this.hasEmailChanged() ) {
-			const newEmail = formState.getFieldValue( this.state.form, 'email' );
 
+		if ( hasEmailChanged && newContactDetails.email ) {
 			text = translate(
 				'We’ll email you at {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}} ' +
 					'with a link to confirm the new details. The change won’t go live until we receive confirmation from both emails.',
-				{ args: { oldEmail: currentEmail, newEmail }, components: { strong } }
+				{
+					args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
+					components: { strong },
+				}
 			);
 		} else {
 			text = translate(
@@ -275,249 +199,71 @@ class EditContactInfoFormCard extends React.Component {
 		);
 	}
 
-	render() {
-		const { translate } = this.props;
-		const saveButtonLabel = translate( 'Save Contact Info' );
-		const canUseDesignatedAgent = this.props.selectedDomain.transferLockOnWhoisUpdateOptional;
-		const currentContactInformation = formState.getAllFieldValues( this.state.form );
-		const initialContactInformation = pick(
-			this.props.contactInformation,
-			keys( currentContactInformation )
-		);
-		const isSaveButtonDisabled =
-			this.state.formSubmitting || isEqual( initialContactInformation, currentContactInformation );
-
-		return (
-			<Card>
-				<form>
-					<div className="edit-contact-info__form-content">
-						{ this.getField( FormInput, {
-							name: 'first-name',
-							autoFocus: true,
-							label: translate( 'First Name', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'last-name',
-							label: translate( 'Last Name', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'organization',
-							label: translate( 'Organization', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'email',
-							label: translate( 'Email', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'phone',
-							label: translate( 'Phone', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.hasFaxField()
-							? this.getField( FormInput, {
-									name: 'fax',
-									label: translate( 'Fax', {
-										context: 'Domain Edit Contact Info form.',
-										textOnly: true,
-									} ),
-								} )
-							: null }
-						{ this.getField( FormCountrySelect, {
-							countriesList,
-							name: 'country-code',
-							label: translate( 'Country', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'address-1',
-							label: translate( 'Address', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'address-2',
-							label: translate( 'Address Line 2', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'city',
-							label: translate( 'City', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormStateSelect, {
-							countryCode: formState.getFieldValue( this.state.form, 'countryCode' ),
-							name: 'state',
-							label: translate( 'State', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-						{ this.getField( FormInput, {
-							name: 'postal-code',
-							label: translate( 'Postal Code', {
-								context: 'Domain Edit Contact Info form.',
-								textOnly: true,
-							} ),
-						} ) }
-					</div>
-
-					{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
-					{ canUseDesignatedAgent && <DesignatedAgentNotice saveButtonLabel={ saveButtonLabel } /> }
-
-					<FormFooter>
-						<FormButton
-							disabled={ isSaveButtonDisabled }
-							onClick={
-								this.requiresConfirmation()
-									? this.showNonDaConfirmationDialog
-									: this.saveContactInfo
-							}
-						>
-							{ saveButtonLabel }
-						</FormButton>
-
-						<FormButton
-							type="button"
-							isPrimary={ false }
-							disabled={ this.state.formSubmitting }
-							onClick={ this.goToContactsPrivacy }
-						>
-							{ translate( 'Cancel' ) }
-						</FormButton>
-					</FormFooter>
-				</form>
-				{ this.renderDialog() }
-			</Card>
-		);
-	}
-
-	getField( Component, props ) {
-		const { name } = props;
-		const unmodifiableFields = get(
-			this.props,
-			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
-			[]
-		);
-		const isDisabled =
-			this.state.formSubmitting ||
-			formState.isFieldDisabled( this.state.form, name ) ||
-			includes( unmodifiableFields, snakeCase( name ) );
-
-		return (
-			<Component
-				{ ...props }
-				additionalClasses="edit-contact-info__form-field"
-				disabled={ isDisabled }
-				isError={ formState.isFieldInvalid( this.state.form, name ) }
-				value={ formState.getFieldValue( this.state.form, name ) }
-				onChange={ this.onChange }
-			/>
-		);
-	}
-
-	hasFaxField() {
+	needsFax() {
 		const NETHERLANDS_TLD = '.nl';
 
 		return (
 			endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) ||
-			this.props.contactInformation.fax
+			!! this.props.contactInformation.fax
 		);
 	}
 
-	onChange = event => {
-		const { name, value } = event.target;
+	onTransferLockOptOutChange = event => this.setState( { transferLock: ! event.target.checked } );
 
-		if ( this.isCountryField( name ) ) {
-			this.resetStateField();
-		}
-
-		this.formStateController.handleFieldChange( {
-			name,
-			value,
-		} );
-	};
-
-	onTransferLockOptOutChange = event => {
-		this.setState( { transferLock: ! event.target.checked } );
-	};
-
-	isCountryField( name ) {
-		return name === 'country-code';
-	}
-
-	resetStateField() {
-		this.formStateController.handleFieldChange( {
-			name: 'state',
-			value: '',
-			hideError: true,
-		} );
-	}
-
-	goToContactsPrivacy = () => {
+	goToContactsPrivacy = () =>
 		page(
 			domainManagementContactsPrivacy(
 				this.props.selectedSite.slug,
 				this.props.selectedDomain.name
 			)
 		);
+
+	showNonDaConfirmationDialog = () => this.setState( { showNonDaConfirmationDialog: true } );
+
+	handleContactDetailsChange = newContactDetails => {
+		const { email } = newContactDetails;
+		this.setState( {
+			newContactDetails,
+			haveContactDetailsChanged: ! isEqual( this.contactFormFieldValues, newContactDetails ),
+			hasEmailChanged: get( this.props, 'contactInformation.email' ) !== email,
+		} );
 	};
 
-	saveContactInfo = event => {
-		event.preventDefault && event.preventDefault();
+	saveContactInfo = () => {
+		const { selectedDomain } = this.props;
+		const { formSubmitting, transferLock, newContactDetails } = this.state;
 
-		if ( this.state.formSubmitting ) {
+		if ( formSubmitting ) {
 			return;
 		}
 
-		this.setState( {
-			formSubmitting: true,
-			showNonDaConfirmationDialog: false,
-		} );
-
-		this.formStateController.handleSubmit( hasErrors => {
-			if ( hasErrors ) {
-				this.setState( { formSubmitting: false } );
-				return;
+		this.setState(
+			{
+				formSubmitting: true,
+				showNonDaConfirmationDialog: false,
+			},
+			() => {
+				updateWhois( selectedDomain.name, newContactDetails, transferLock, this.onWhoisUpdate );
 			}
-			updateWhois(
-				this.props.selectedDomain.name,
-				formState.getAllFieldValues( this.state.form ),
-				this.state.transferLock,
-				this.onWhoisUpdate
-			);
-		} );
-	};
-
-	showNonDaConfirmationDialog = event => {
-		event.preventDefault();
-		this.setState( { showNonDaConfirmationDialog: true } );
+		);
 	};
 
 	onWhoisUpdate = ( error, data ) => {
-		this.setState( { formSubmitting: false } );
+		this.setState( {
+			formSubmitting: false,
+		} );
+
 		if ( data && data.success ) {
-			if ( ! this.requiresConfirmation() ) {
+			this.contactFormFieldValues = this.getContactFormFieldValues();
+
+			this.setState( {
+				haveContactDetailsChanged: ! isEqual(
+					this.contactFormFieldValues,
+					this.state.newContactDetails
+				),
+			} );
+
+			if ( ! this.state.requiresConfirmation ) {
 				this.props.successNotice(
 					this.props.translate(
 						'The contact info has been updated. ' +
@@ -527,18 +273,17 @@ class EditContactInfoFormCard extends React.Component {
 				return;
 			}
 
-			const currentEmail = this.props.contactInformation.email,
-				strong = <strong />;
+			const currentEmail = this.props.contactInformation.email;
+			const strong = <strong />;
+			const { hasEmailChanged, newContactDetails = {} } = this.state;
 			let message;
 
-			if ( this.hasEmailChanged() ) {
-				const newEmail = formState.getFieldValue( this.state.form, 'email' );
-
+			if ( hasEmailChanged && newContactDetails.email ) {
 				message = this.props.translate(
 					'Emails have been sent to {{strong}}%(oldEmail)s{{/strong}} and {{strong}}%(newEmail)s{{/strong}}. ' +
 						"Please ensure they're both confirmed to finish this process.",
 					{
-						args: { oldEmail: currentEmail, newEmail },
+						args: { oldEmail: currentEmail, newEmail: newContactDetails.email },
 						components: { strong },
 					}
 				);
@@ -565,9 +310,70 @@ class EditContactInfoFormCard extends React.Component {
 			);
 		}
 	};
+
+	handleSubmitButtonClick = newContactDetails => {
+		this.setState(
+			{
+				requiresConfirmation: this.requiresConfirmation( newContactDetails ),
+				newContactDetails,
+			},
+			() => {
+				if ( this.state.requiresConfirmation ) {
+					this.showNonDaConfirmationDialog();
+				} else {
+					this.saveContactInfo();
+				}
+			}
+		);
+	};
+
+	getIsFieldDisabled = name => {
+		const unmodifiableFields = get(
+			this.props,
+			[ 'selectedDomain', 'whoisUpdateUnmodifiableFields' ],
+			[]
+		);
+		return this.state.formSubmitting || includes( unmodifiableFields, snakeCase( name ) );
+	};
+
+	shouldDisableSubmitButton() {
+		const { haveContactDetailsChanged, formSubmitting } = this.state;
+		return formSubmitting === true || haveContactDetailsChanged === false;
+	}
+
+	render() {
+		const { selectedDomain, translate } = this.props;
+		const canUseDesignatedAgent = selectedDomain.transferLockOnWhoisUpdateOptional;
+
+		return (
+			<Card>
+				<form>
+					<ContactDetailsFormFields
+						eventFormName="Edit Contact Info"
+						contactDetails={ this.contactFormFieldValues }
+						needsFax={ this.needsFax() }
+						getIsFieldDisabled={ this.getIsFieldDisabled }
+						onContactDetailsChange={ this.handleContactDetailsChange }
+						onSubmit={ this.handleSubmitButtonClick }
+						onValidate={ this.validate }
+						labelTexts={ { submitButton: translate( 'Save Contact Info' ) } }
+						onCancel={ this.goToContactsPrivacy }
+						disableSubmitButton={ this.shouldDisableSubmitButton() }
+					>
+						{ canUseDesignatedAgent && this.renderTransferLockOptOut() }
+					</ContactDetailsFormFields>
+				</form>
+				{ this.renderDialog() }
+			</Card>
+		);
+	}
 }
 
 export default connect(
-	state => ( { currentUser: getCurrentUser( state ) } ),
-	dispatch => bindActionCreators( { successNotice }, dispatch )
+	state => ( {
+		currentUser: getCurrentUser( state ),
+	} ),
+	{
+		successNotice,
+	}
 )( localize( EditContactInfoFormCard ) );

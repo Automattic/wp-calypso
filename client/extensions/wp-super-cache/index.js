@@ -17,7 +17,7 @@ import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	const validTabSlugs = compact( map( Tabs, ( { slug } ) => slug ) ).join( '|' );
-	page( '/extensions/wp-super-cache', sites, makeLayout, clientRender );
+	page( '/extensions/wp-super-cache', siteSelection, sites, makeLayout, clientRender );
 	page(
 		`/extensions/wp-super-cache/:tab(${ validTabSlugs })?/:site`,
 		siteSelection,

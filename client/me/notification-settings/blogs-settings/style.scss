@@ -39,7 +39,7 @@
 .blogs-settings__header-expand {
 	@extend %notification-settings-blog-settings-flexbox;
 	display: none;
-	color: lighten( $gray, 30% );
+	color: $gray-lighten-30;
 
 	@include breakpoint( ">480px" ) {
 		display: flex;
@@ -67,9 +67,9 @@
 
 .notification-settings-blog-settings-placeholder__blog__content__icon {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-lighten-30;
 	position: relative;
-	background: lighten( $gray, 20% );
+	background: $gray-lighten-20;
 	border: 1px solid white;
 	height: 32px;
 	width: 32px;
@@ -92,7 +92,7 @@
 
 .notification-settings-blog-settings-placeholder__blog__info__title {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-lighten-30;
 	width: 150px;
 	display: block;
 	font-weight: 400;
@@ -101,7 +101,7 @@
 
 .notification-settings-blog-settings-placeholder__blog__info__domain {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: lighten( $gray, 30% );
+	background-color: $gray-lighten-30;
 	display: block;
 	width: 250px;
 	font: {
@@ -120,7 +120,7 @@
 
 	em {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		width: 160px;
 		height: 22px;
 	}

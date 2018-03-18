@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,18 +12,37 @@ import { localize } from 'i18n-calypso';
  */
 import Gridicon from 'gridicons';
 
-const JetpackOnboardingDisclaimer = ( { translate } ) => (
-	<p className="jetpack-onboarding__disclaimer">
-		<Gridicon icon="info-outline" size={ 18 } />
-		{ translate(
-			'By continuing, you agree to our {{link}}fascinating terms and conditions{{/link}}.',
-			{
-				components: {
-					link: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
-				},
-			}
-		) }
-	</p>
-);
+class JetpackOnboardingDisclaimer extends React.PureComponent {
+	static propTypes = {
+		recordJpoEvent: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+	};
+
+	handleTosClick = () => {
+		this.props.recordJpoEvent( 'calypso_jpo_tos_clicked' );
+	};
+
+	render() {
+		const { translate } = this.props;
+
+		return (
+			<p className="jetpack-onboarding__disclaimer">
+				<Gridicon icon="info-outline" size={ 18 } />
+				{ translate( 'By continuing, you agree to our {{link}}Terms of Service{{/link}}.', {
+					components: {
+						link: (
+							<a
+								href="//wordpress.com/tos/"
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ this.handleTosClick }
+							/>
+						),
+					},
+				} ) }
+			</p>
+		);
+	}
+}
 
 export default localize( JetpackOnboardingDisclaimer );

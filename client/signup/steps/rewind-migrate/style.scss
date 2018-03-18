@@ -1,0 +1,55 @@
+.flow-progress-indicator__rewind-setup,
+.flow-progress-indicator__rewind-auto-config,
+.flow-progress-indicator__rewind-switch {
+	display: none;
+}
+
+.rewind-switch__card, .rewind-auto-config__card {
+	text-align: center;
+	margin: 1px auto;
+	max-width: 640px;
+}
+
+.rewind-migrate__card {
+	img {
+		max-width: 200px;
+		display: block;
+		margin: 2rem auto;
+	}
+}
+
+.rewind-switch__content {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	padding: 4rem 4rem 3rem;
+}
+
+.rewind-switch__heading {
+	display: inline-block;
+	font-size: 2.5rem;
+	font-weight: 300;
+	letter-spacing: .15rem;
+	color: $gray-dark;
+}
+
+.rewind-switch__description {
+	max-width: 600px;
+	color: $gray-text-min;
+	font-size: 1.35rem;
+	font-weight: 100;
+	line-height: 2.5rem;
+}
+
+.rewind-migrate__warning {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+
+	p {
+		max-width: 600px;
+		font-style: italic;
+		font-size: 12px;
+		color: $gray;
+	}
+}

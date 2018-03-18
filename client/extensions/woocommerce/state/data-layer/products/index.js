@@ -4,14 +4,14 @@
  */
 import debugFactory from 'debug';
 import { isUndefined, mapValues, omitBy } from 'lodash';
-import qs from 'querystring';
+import { stringify } from 'qs';
 import warn from 'lib/warn';
 
 /**
  * Internal dependencies
  */
 import { dispatchWithProps } from 'woocommerce/state/helpers';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'woocommerce/state/wc-api/utils';
 import { get, post, put } from 'woocommerce/state/data-layer/request/actions';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
@@ -122,7 +122,7 @@ export function handleProductRequest( { dispatch }, action ) {
 
 export function productsRequest( { dispatch }, action ) {
 	const { siteId, params } = action;
-	const queryString = qs.stringify( omitBy( params, val => '' === val ) );
+	const queryString = stringify( omitBy( params, val => '' === val ) );
 
 	dispatch( request( siteId, action ).getWithHeaders( `products?${ queryString }` ) );
 }

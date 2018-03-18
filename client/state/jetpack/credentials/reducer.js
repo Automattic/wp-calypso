@@ -20,14 +20,16 @@ export const items = keyedReducer( 'siteId', ( state, { type, credentials } ) =>
 } );
 items.schema = itemsSchema;
 
-export const updateRequesting = keyedReducer( 'siteId', ( state, { type } ) => {
+export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {
 		case JETPACK_CREDENTIALS_UPDATE:
-			return true;
+			return 'pending';
 
 		case JETPACK_CREDENTIALS_UPDATE_SUCCESS:
+			return 'success';
+
 		case JETPACK_CREDENTIALS_UPDATE_FAILURE:
-			return false;
+			return 'failed';
 	}
 
 	return state;
@@ -35,5 +37,5 @@ export const updateRequesting = keyedReducer( 'siteId', ( state, { type } ) => {
 
 export const reducer = combineReducers( {
 	items,
-	updateRequesting,
+	requestStatus,
 } );

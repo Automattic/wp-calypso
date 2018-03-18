@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Gridicon from 'gridicons';
 import { localize } from 'i18n-calypso';
-import { every, find, findIndex, get, noop } from 'lodash';
+import { every, find, findIndex, get, isNaN, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -344,6 +344,7 @@ class OrderDetailsTable extends Component {
 
 		const showTax = this.shouldShowTax();
 		const initialShippingValue = getCurrencyFormatDecimal( order.shipping_total, order.currency );
+		const currentShippingValue = getOrderShippingTotal( order );
 		const refundValue = getOrderRefundTotal( order );
 		const totalTaxValue = getOrderTotalTax( order );
 		const totalValue = isEditing ? getOrderTotal( order ) + totalTaxValue : order.total;
@@ -386,7 +387,7 @@ class OrderDetailsTable extends Component {
 						currency={ order.currency }
 						label={ translate( 'Shipping' ) }
 						initialValue={ initialShippingValue }
-						value={ getOrderShippingTotal( order ) }
+						value={ isNaN( currentShippingValue ) ? '' : currentShippingValue }
 						taxValue={ getOrderShippingTax( order ) }
 						showTax={ showTax }
 						isEditable={ isEditing }

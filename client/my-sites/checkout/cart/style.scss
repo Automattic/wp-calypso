@@ -1,5 +1,5 @@
 .cart__header {
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 
 	&.is-compact {
 		padding: 11px 15px;
@@ -17,7 +17,7 @@
 	.cart-item {
 		list-style: none;
 		display: block;
-		border-bottom: 1px solid lighten( $gray, 30% );
+		border-bottom: 1px solid $gray-lighten-30;
 		padding-bottom: 15px;
 		margin-bottom: 15px;
 		position: relative;
@@ -34,7 +34,7 @@
 		}
 
 		.product-domain {
-			color: darken( $gray, 10% );
+			color: $gray-darken-10;
 			display: block;
 			font-size: 12px;
 			text-overflow: ellipsis;
@@ -46,7 +46,7 @@
 		}
 
 		.product-price {
-			color: darken( $gray, 10% );
+			color: $gray-darken-10;
 			display: block;
 			font-size: 13px;
 		}
@@ -67,7 +67,7 @@
 			font-style: italic;
 		}
 
-		.remove-item {
+		.cart__remove-item {
 			box-shadow: none;
 			cursor: pointer;
 			color: $alert-red;
@@ -79,11 +79,19 @@
 			position: absolute;
 			right: 0;
 			top: 0;
+
+			&:focus {
+				outline: none;
+
+				.accessible-focus & {
+					box-shadow: inset 0 0 0 2px $blue-light;
+				}
+			}
 		}
 	}
 
 	.cart-item__loading-placeholder {
-		.remove-item {
+		.cart__remove-item {
 			@include placeholder(23%);
 			border-radius: 0;
 			width: 25px;
@@ -91,7 +99,7 @@
 	}
 
 	.cart-total {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 		font-weight: 600;
 		font-size: 14px;
 
@@ -121,7 +129,7 @@
 
 		form {
 			display: block;
-			border-top: 1px solid lighten( $gray, 30% );
+			border-top: 1px solid $gray-lighten-30;
 			margin: 15px -15px 0 -15px;
 			padding: 15px 15px 0 15px;
 
@@ -156,7 +164,7 @@
 
 .cart__cart-ad {
 	background: lighten( $gray, 34% );
-	border: 1px solid lighten( $gray, 30% );
+	border: 1px solid $gray-lighten-30;
 	border-radius: 4px;
 	font-size: 12px;
 	margin: 15px 15px 0px 15px;
@@ -197,6 +205,14 @@
 		position: absolute;
 		    top: 12px;
 		    right: 12px;
+	}
+
+	&:focus {
+		outline: none;
+
+		.accessible-focus & {
+			box-shadow: inset 0 0 0 2px $blue-light;
+		}
 	}
 }
 
@@ -266,7 +282,7 @@ div.popover-cart__popover {
 	}
 
 	.cart-total {
-		border-top: 1px solid lighten( $gray, 30% );
+		border-top: 1px solid $gray-lighten-30;
 		font-size: 16px;
 		padding: 15px;
 	}
@@ -284,7 +300,7 @@ div.popover-cart__popover {
 .popover-cart__mobile-cart {
 
 	background-color: $white;
-	border: 1px solid lighten( $gray, 20% );
+	border: 1px solid $gray-lighten-20;
 	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
 		0 0 56px rgba( 0, 0, 0, 0.075 );
 	margin: -1px;
@@ -312,7 +328,7 @@ div.popover-cart__popover {
 	}
 
 	.cart-total {
-		border-top: 1px solid lighten( $gray, 30% );
+		border-top: 1px solid $gray-lighten-30;
 		font-size: 16px;
 		padding: 15px;
 	}

@@ -4,12 +4,12 @@
  * External dependencies
  */
 
-import qs from 'querystring';
+import { parse, stringify } from 'qs';
 
 /**
  * Internal dependencies
  */
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getCurrentUserLocale, getCurrentUserLocaleVariant } from 'state/current-user/selectors';
 
 /**
  * Module variables
@@ -47,7 +47,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	let localeQueryParam;
-	const query = qs.parse( params.query );
+	const query = parse( params.query );
 
 	if ( params.apiNamespace ) {
 		// v2 api request
@@ -57,7 +57,7 @@ export function addLocaleQueryParam( params ) {
 	}
 
 	return Object.assign( params, {
-		query: qs.stringify( Object.assign( query, localeQueryParam ) ),
+		query: stringify( Object.assign( query, localeQueryParam ) ),
 	} );
 }
 
@@ -88,7 +88,9 @@ export function injectLocalization( wpcom ) {
  */
 export function bindState( store ) {
 	function setLocaleFromState() {
-		setLocale( getCurrentUserLocale( store.getState() ) );
+		setLocale(
+			getCurrentUserLocaleVariant( store.getState() ) || getCurrentUserLocale( store.getState() )
+		);
 	}
 
 	store.subscribe( setLocaleFromState );

@@ -9,7 +9,7 @@
 			bottom: 12px;
 			left: 10px;
 		animation: pulse-light 0.8s ease-in-out infinite;
-		background: lighten( $gray, 20% );
+		background: $gray-lighten-20;
 	}
 
 	.focus-sidebar & {

@@ -6,7 +6,11 @@
 
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
-import { reducer as form } from 'redux-form';
+// import the reducer directly from a submodule to prevent bundling the whole Redux Form
+// library into the `build` chunk.
+// TODO: change this back to `from 'redux-form'` after upgrade to Webpack 4.0 and a version
+//       of Redux Form that uses the `sideEffects: false` flag
+import form from 'redux-form/es/reducer';
 import { mapValues } from 'lodash';
 
 /**
@@ -39,9 +43,11 @@ import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import i18n from './i18n/reducer';
 import invites from './invites/reducer';
+import inlineHelpSearchResults from './inline-help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpackOnboarding from './jetpack-onboarding/reducer';
 import jetpack from './jetpack/reducer';
+import jetpackRemoteInstall from './jetpack-remote-install/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import happinessEngineers from './happiness-engineers/reducer';
@@ -72,6 +78,7 @@ import signup from './signup/reducer';
 import simplePayments from './simple-payments/reducer';
 import sites from './sites/reducer';
 import siteRoles from './site-roles/reducer';
+import siteRename from './site-rename/reducer';
 import siteSettings from './site-settings/reducer';
 import stats from './stats/reducer';
 import storedCards from './stored-cards/reducer';
@@ -124,10 +131,12 @@ const reducers = {
 	happychat,
 	help,
 	i18n,
+	inlineHelpSearchResults,
 	invites,
 	jetpackConnect,
 	jetpackOnboarding,
 	jetpack,
+	jetpackRemoteInstall,
 	jetpackSync,
 	jitm,
 	login,
@@ -155,6 +164,7 @@ const reducers = {
 	signup,
 	sites,
 	siteRoles,
+	siteRename,
 	siteSettings,
 	simplePayments,
 	stats,

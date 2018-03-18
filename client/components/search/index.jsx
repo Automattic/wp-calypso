@@ -18,6 +18,7 @@ import Gridicon from 'gridicons';
 import analytics from 'lib/analytics';
 import Spinner from 'components/spinner';
 import { isMobile } from 'lib/viewport';
+import TranslatableString from 'components/translatable/proptype';
 
 /**
  * Internal variables
@@ -41,7 +42,7 @@ class Search extends Component {
 		additionalClasses: PropTypes.string,
 		initialValue: PropTypes.string,
 		value: PropTypes.string,
-		placeholder: PropTypes.string,
+		placeholder: TranslatableString,
 		pinned: PropTypes.bool,
 		delaySearch: PropTypes.bool,
 		delayTimeout: PropTypes.number,

@@ -78,8 +78,8 @@
 	height: 150px;
 	margin-bottom: 24px;
 
-	border: 5px solid lighten( $gray, 30% );
-	fill: lighten( $gray, 10% );
+	border: 5px solid $gray-lighten-30;
+	fill: $gray-lighten-10;
 	font-size: 14px;
 	font-weight: 600;
 	color: $gray;
@@ -194,5 +194,5 @@
 
 .importer__mapping-relation {
 	float: left;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 }

@@ -20,13 +20,20 @@ export const DEFAULT_GRIDICON = 'info-outline';
 /**
  * Transforms API response into array of activities
  *
- * @param  {object} apiResponse                      API response body
- * @param  {array}  apiResponse.current.orderedItems Array of item objects
- * @return {array}                                   Array of proccessed item objects
+ * @param  {object} apiResponse API response body
+ * @return {object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
 export function transformer( apiResponse ) {
 	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
-	return map( orderedItems, processItem );
+	return Object.assign(
+		{
+			items: map( orderedItems, processItem ),
+			oldestItemTs: get( apiResponse, [ 'oldestItemTs' ], Infinity ),
+			totalItems: get( apiResponse, [ 'totalItems' ], orderedItems.length ),
+		},
+		apiResponse.nextAfter && { nextAfter: apiResponse.nextAfter },
+		apiResponse.prevBefore && { prevBefore: apiResponse.prevBefore }
+	);
 }
 
 /**

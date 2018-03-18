@@ -2,6 +2,7 @@
 /**
  **** WARNING: No ES6 modules here. Not transpiled! ****
  */
+/* eslint-disable import/no-nodejs-modules */
 
 /**
  * External dependencies
@@ -10,7 +11,6 @@ const _ = require( 'lodash' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
-const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
@@ -42,6 +42,10 @@ const babelPresetEnv = _.find( babelConfig.presets, preset => preset[ 0 ] === 'e
 babelPresetEnv[ 1 ].modules = false;
 _.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
 
+// remove the babel-lodash-es plugin from env.test -- it's needed only for Jest tests.
+// The Webpack-using NODE_ENV=test build doesn't need it, as there is a special loader for that.
+_.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) );
+
 /**
  * This function scans the /client/extensions directory in order to generate a map that looks like this:
  * {
@@ -52,6 +56,7 @@ _.remove( babelConfig.plugins, elem => elem === 'add-module-exports' );
  *
  * Providing webpack with these aliases instead of telling it to scan client/extensions for every
  * module resolution speeds up builds significantly.
+ * @returns {Object} a mapping of extension name to path
  */
 function getAliasesForExtensions() {
 	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
@@ -112,6 +117,14 @@ const webpackConfig = {
 				loader: [ 'happypack/loader' ],
 			},
 			{
+				test: /node_modules[\/\\](redux-form|react-redux)[\/\\]es/,
+				loader: 'babel-loader',
+				options: {
+					babelrc: false,
+					plugins: [ path.join( __dirname, 'server', 'bundler', 'babel', 'babel-lodash-es' ) ],
+				},
+			},
+			{
 				test: /extensions[\/\\]index/,
 				exclude: path.join( __dirname, 'node_modules' ),
 				loader: path.join( __dirname, 'server', 'bundler', 'extensions-loader' ),
@@ -155,27 +168,21 @@ const webpackConfig = {
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
+				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
 			},
 			getAliasesForExtensions()
 		),
 	},
-	node: {
-		console: false,
-		process: true,
-		global: true,
-		Buffer: true,
-		__filename: 'mock',
-		__dirname: 'mock',
-		fs: 'empty',
-		crypto: false,
-	},
+	node: false,
 	plugins: _.compact( [
 		new webpack.DefinePlugin( {
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			PROJECT_NAME: JSON.stringify( config( 'project' ) ),
+			global: 'window',
 		} ),
+		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		new webpack.IgnorePlugin( /^props$/ ),
 		new CopyWebpackPlugin( [
 			{ from: 'node_modules/flag-icon-css/flags/4x3', to: 'images/flags' },
@@ -236,6 +243,10 @@ if ( calypsoEnv === 'desktop' ) {
 	// NOTE: order matters. vendor must be before manifest.
 	webpackConfig.plugins = webpackConfig.plugins.concat( [
 		new webpack.optimize.CommonsChunkPlugin( { name: 'vendor', minChunks: Infinity } ),
+		new webpack.optimize.CommonsChunkPlugin( {
+			async: 'tinymce',
+			minChunks: ( { resource } ) => resource && /node_modules[\/\\]tinymce/.test( resource ),
+		} ),
 		new webpack.optimize.CommonsChunkPlugin( { name: 'manifest' } ),
 	] );
 
@@ -266,15 +277,6 @@ if ( isDevelopment ) {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' );
-	webpackConfig.plugins.unshift(
-		new HardSourceWebpackPlugin( {
-			cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ),
-		} )
 	);
 }
 

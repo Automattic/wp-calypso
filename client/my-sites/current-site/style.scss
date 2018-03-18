@@ -7,7 +7,7 @@
 	margin: 0;
 	padding: 0;
 	box-shadow: none;
-	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
+	background: transparent;
 
 	&.is-loading {
 		.site-icon {
@@ -15,7 +15,7 @@
 		}
 
 		.site__title {
-			color: darken( $gray, 20% );
+			color: $gray-darken-20;
 			line-height: 35px;
 		}
 
@@ -42,74 +42,36 @@
 	}
 }
 
-.current-site__view-site {
-	padding: 11px 16px;
-	color: $gray-dark;
-	box-sizing: border-box;
-	white-space: nowrap;
-	overflow: hidden;
-	display: flex;
-	border-top: 1px solid darken( $gray-light, 10% );
-
-	&:focus {
-		outline: none;
+.current-site {
+	.site,
+	.all-sites {
+		background: $white;
+		border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
 	}
-
-	-webkit-tap-highlight-color: rgba( $gray-dark, .2 );
-
-	.gridicon {
-		fill: $gray;
-	}
-
-	.notouch &:hover:not(.selected) {
-		background-color: $gray-light;
-
-		.current-site__view-site-text {
-			color: $blue-medium;
-		}
-		.gridicon {
-			fill: $blue-medium;
-		}
-	}
-
-	&.selected {
-		background-color: $sidebar-selected-color;
-
-		.current-site__view-site-text {
-			color: $white;
-		}
-
-		.gridicon {
-			fill: $white;
-		}
-	}
-}
-
-.current-site__view-site-text {
-	display: flex;
-	align-self: center;
-	color: $gray-dark;
-	font-size: 14px;
-	width: 100%;
 }
 
 .current-site__switch-sites {
+	display: block;
 	background: var( --current-site-switch-sites-background );
 	border-bottom: 1px solid darken( $sidebar-bg-color, 5% );
-	display: block;
-	box-sizing: border-box;
-	cursor: pointer;
-	position: relative;
 
-	.button {
-		text-align: left;
-		padding: 16px;
+	.button.is-borderless {
+		display: block;
 		width: 100%;
-		height: 46px;
-	}
+		text-align: left;
+		padding: 12px 8px 12px 44px;
+		position: relative;
+		font-weight: normal;
+		color: $gray-text;
 
-	@include breakpoint( "<660px" ) {
-		background-color: $gray-light;
+		.gridicon {
+			height: 24px;
+			width: 24px;
+			fill: $gray-text;
+			position: absolute;
+				top: 12px;
+				left: 14px;
+		}
 	}
 
 	&:hover {
@@ -117,23 +79,18 @@
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			color: $sidebar-text-color;
+			color: $blue-medium;
+
+			.gridicon {
+				fill: $blue-medium;
+			}
 		}
 	}
 }
 
-.current-site .notice {
-	margin: 0 8px 8px;
-}
-
-.current-site .notice.is-compact {
+.sidebar .notice.is-compact {
 	display: flex;
-	margin: 0;
-	border-radius: 0;
-
-	@include breakpoint( "<660px" ) {
-		padding: 0 24px;
-	}
+	margin: 4px;
 
 	.notice__text {
 		width: 100%;
@@ -143,9 +100,5 @@
 
 	.notice__action {
 		margin-left: auto;
-	}
-
-	.notice__icon-wrapper {
-		border-radius: 0;
 	}
 }

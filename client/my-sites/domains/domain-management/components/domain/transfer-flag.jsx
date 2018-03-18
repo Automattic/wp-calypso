@@ -34,6 +34,9 @@ class DomainTransferFlag extends PureComponent {
 			case transferStatus.PENDING_OWNER:
 				message = translate( 'Email Confirmation Required' );
 				break;
+			case transferStatus.PENDING_START:
+				message = translate( 'Action Required' );
+				break;
 			case transferStatus.CANCELLED:
 				status = 'is-error';
 				message = translate( 'Transfer Failed' );

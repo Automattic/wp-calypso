@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { isEmpty, round } from 'lodash';
+import { find, isEmpty, round } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -20,16 +20,17 @@ import {
 	areTaxCalculationsEnabled,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
+import {
+	areLocationsLoaded,
+	getAllCountries,
+	getCountryName,
+	getStates,
+} from 'woocommerce/state/sites/locations/selectors';
 import { areTaxRatesLoaded, getTaxRates } from 'woocommerce/state/sites/meta/taxrates/selectors';
 import Card from 'components/card';
-import {
-	DESTINATION_BASED_SALES_TAX,
-	NO_SALES_TAX,
-	ORIGIN_BASED_SALES_TAX,
-} from 'woocommerce/lib/countries/constants';
-import { getCountryData, getStateData } from 'woocommerce/lib/countries';
 import ExtendedHeader from 'woocommerce/components/extended-header';
 import ExternalLink from 'components/external-link';
+import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import FormToggle from 'components/forms/form-toggle';
 import Notice from 'components/notice';
@@ -44,8 +45,12 @@ class TaxesRates extends Component {
 		siteId: PropTypes.number.isRequired,
 	};
 
-	maybeFetchRates = props => {
-		const { address, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
+	maybeFetchRatesAndLocations = props => {
+		const { address, loadedLocations, loadedSettingsGeneral, loadedTaxRates, siteId } = props;
+
+		if ( ! loadedLocations ) {
+			this.props.fetchLocations( siteId );
+		}
 
 		if ( loadedSettingsGeneral && ! loadedTaxRates ) {
 			this.props.fetchTaxRates( siteId, address );
@@ -53,50 +58,35 @@ class TaxesRates extends Component {
 	};
 
 	componentDidMount = () => {
-		this.maybeFetchRates( this.props );
+		this.maybeFetchRatesAndLocations( this.props );
 	};
 
-	componentWillReceiveProps = nextProps => {
-		this.maybeFetchRates( nextProps );
+	componentDidUpdate = () => {
+		this.maybeFetchRatesAndLocations( this.props );
 	};
 
-	renderInfo = () => {
-		const { address, translate } = this.props;
-		const countryData = getCountryData( address.country );
-		if ( ! countryData ) {
-			return (
-				<p>
-					{ translate( 'Error: Your country ( %(country)s ) is not recognized', {
-						args: { country: address.country },
-					} ) }
-				</p>
-			);
+	renderLocation = () => {
+		const {
+			areTaxesEnabled,
+			countryName,
+			loadedSettingsGeneral,
+			loadedLocations,
+			stateName,
+			translate,
+		} = this.props;
+
+		if ( ! areTaxesEnabled || ! loadedSettingsGeneral || ! loadedLocations ) {
+			return null;
 		}
 
-		const countryName = countryData.name;
-		const stateData = getStateData( address.country, address.state );
-		if ( ! stateData ) {
+		if ( isEmpty( stateName ) ) {
 			return (
 				<p>
 					{ translate(
-						'Error: Your country ( %(countryName)s ) was recognized, but ' +
-							'your state ( %(state)s ) was not. ',
-						{ args: { countryName, state: address.state } }
-					) }
-				</p>
-			);
-		}
-
-		const stateName = stateData.name;
-
-		if ( NO_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<p>
-					{ translate(
-						'Since your store is located in {{strong}}%(stateName)s, ' +
-							"%(countryName)s{{/strong}} you're not required to collect sales tax.",
+						"The following tax rates are in effect at your store's " +
+							'{{strong}}%(countryName)s{{/strong}} location',
 						{
-							args: { stateName, countryName },
+							args: { countryName },
 							components: { strong: <strong /> },
 						}
 					) }
@@ -104,27 +94,11 @@ class TaxesRates extends Component {
 			);
 		}
 
-		if ( ORIGIN_BASED_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<p>
-					{ translate(
-						"Since your store is located in {{strong}}%(stateName)s, %(countryName)s{{/strong}} you're " +
-							'required to charge sales tax based on your business address.',
-						{
-							args: { stateName, countryName },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
-			);
-		}
-
-		// Default - DESTINATION_BASED_SALES_TAX
 		return (
 			<p>
 				{ translate(
-					"Since your store is located in {{strong}}%(stateName)s, %(countryName)s{{/strong}} you're " +
-						"required to charge sales tax based on the customer's shipping address.",
+					"The following tax rates are in effect at your store's " +
+						'{{strong}}%(stateName)s, %(countryName)s{{/strong}} location',
 					{
 						args: { stateName, countryName },
 						components: { strong: <strong /> },
@@ -135,23 +109,14 @@ class TaxesRates extends Component {
 	};
 
 	renderCalculationStatus = () => {
-		const { address, areTaxesEnabled, translate } = this.props;
-		const stateData = getStateData( address.country, address.state );
-
-		if ( ! stateData ) {
-			return null;
-		}
-
-		if ( NO_SALES_TAX === stateData.salesTaxBasis ) {
-			return null;
-		}
+		const { areTaxesEnabled, translate } = this.props;
 
 		if ( ! areTaxesEnabled ) {
 			return (
-				<Notice showDismiss={ false } status="is-error">
+				<Notice showDismiss={ false } status="is-warning">
 					{ translate(
 						'Sales taxes are not currently being charged. Unless ' +
-							'your products are exempt from sales tax we recommend that you ' +
+							'your store or products are exempt from sales tax we recommend that you ' +
 							'{{strong}}enable automatic tax calculation and charging{{/strong}}',
 						{
 							components: { strong: <strong /> },
@@ -161,41 +126,19 @@ class TaxesRates extends Component {
 			);
 		}
 
-		if ( DESTINATION_BASED_SALES_TAX === stateData.salesTaxBasis ) {
-			return (
-				<div className="taxes__taxes-calculate">
-					<Gridicon icon="checkmark" />
-					{ translate(
-						"We'll automatically calculate and charge the " +
-							'correct rate of tax for you each time a customer checks out.'
-					) }
-				</div>
-			);
-		}
-
 		return (
 			<div className="taxes__taxes-calculate">
 				<Gridicon icon="checkmark" />
 				{ translate(
-					"We'll automatically calculate and charge sales tax " +
-						'at the following rate each time a customer checks out.'
+					"We'll automatically calculate and charge sales tax " + 'each time a customer checks out.'
 				) }
 			</div>
 		);
 	};
 
 	possiblyRenderRates = () => {
-		const { address, areTaxesEnabled, taxRates, translate } = this.props;
+		const { areTaxesEnabled, taxRates, translate } = this.props;
 		if ( ! areTaxesEnabled ) {
-			return null;
-		}
-
-		const stateData = getStateData( address.country, address.state );
-		if ( ! stateData ) {
-			return null;
-		}
-
-		if ( ORIGIN_BASED_SALES_TAX !== stateData.salesTaxBasis ) {
 			return null;
 		}
 
@@ -203,7 +146,7 @@ class TaxesRates extends Component {
 			return (
 				<Notice showDismiss={ false } status="is-error">
 					{ translate(
-						'The WordPress.com sales tax rate service is not ' + 'available for this site.'
+						'The WordPress.com sales tax rate service is not available for this site.'
 					) }
 				</Notice>
 			);
@@ -302,8 +245,8 @@ class TaxesRates extends Component {
 					</FormToggle>
 				</ExtendedHeader>
 				<Card>
-					{ this.renderInfo() }
 					{ this.renderCalculationStatus() }
+					{ this.renderLocation() }
 					{ this.possiblyRenderRates() }
 					{ this.renderPolicyNotice() }
 				</Card>
@@ -314,16 +257,33 @@ class TaxesRates extends Component {
 
 function mapStateToProps( state, ownProps ) {
 	const address = getStoreLocation( state, ownProps.siteId );
-	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
 	const areTaxesEnabled = areTaxCalculationsEnabled( state, ownProps.siteId );
+	const countries = getAllCountries( state, ownProps.siteId );
+	const loadedLocations = areLocationsLoaded( state, ownProps.siteId );
+	const loadedSettingsGeneral = areSettingsGeneralLoaded( state, ownProps.siteId );
 	const loadedTaxRates = areTaxRatesLoaded( state, ownProps.siteId );
+	const storeLocation = getStoreLocation( state, ownProps.siteId );
 	const taxRates = getTaxRates( state, ownProps.siteId );
+
+	let countryName = '';
+	let stateName = '';
+
+	if ( loadedSettingsGeneral && loadedLocations ) {
+		countryName = getCountryName( state, storeLocation.country, ownProps.siteId );
+		const states = getStates( state, storeLocation.country, ownProps.siteId );
+		const storeState = find( states, { code: storeLocation.state } );
+		stateName = storeState ? storeState.name : '';
+	}
 
 	return {
 		address,
 		areTaxesEnabled,
+		countries,
+		countryName,
+		loadedLocations,
 		loadedSettingsGeneral,
 		loadedTaxRates,
+		stateName,
 		taxRates,
 	};
 }
@@ -331,6 +291,7 @@ function mapStateToProps( state, ownProps ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			fetchLocations,
 			fetchTaxRates,
 		},
 		dispatch

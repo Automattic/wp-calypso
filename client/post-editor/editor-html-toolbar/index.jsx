@@ -502,7 +502,7 @@ export class EditorHtmlToolbar extends Component {
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openMediaModal }
 				>
-					<Gridicon icon="add-image" />
+					<Gridicon icon="image" />
 					<span data-e2e-insert-type="media">{ translate( 'Media' ) }</span>
 				</div>
 
@@ -511,7 +511,7 @@ export class EditorHtmlToolbar extends Component {
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
 					>
-						<Gridicon icon="add-image" />
+						<Gridicon icon="shutter" />
 						<span data-e2e-insert-type="google-media">{ translate( 'Media from Google' ) }</span>
 					</div>
 				) }
@@ -521,7 +521,7 @@ export class EditorHtmlToolbar extends Component {
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }
 					>
-						<Gridicon icon="add-image" />
+						<Gridicon icon="image-multiple" />
 						<span data-e2e-insert-type="pexels">{ translate( 'Free photo library' ) }</span>
 					</div>
 				) }
@@ -531,7 +531,7 @@ export class EditorHtmlToolbar extends Component {
 					onClick={ this.openContactFormDialog }
 				>
 					<Gridicon icon="mention" />
-					<span data-e2e-insert-type="contact-form">{ translate( 'Contact Form' ) }</span>
+					<span data-e2e-insert-type="contact-form">{ translate( 'Contact form' ) }</span>
 				</div>
 
 				{ config.isEnabled( 'simple-payments' ) && (
@@ -540,7 +540,7 @@ export class EditorHtmlToolbar extends Component {
 						onClick={ this.openSimplePaymentsDialog }
 					>
 						<Gridicon icon="money" />
-						<span data-e2e-insert-type="payment-button">{ translate( 'Payment Button' ) }</span>
+						<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
 					</div>
 				) }
 			</div>

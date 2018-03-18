@@ -9,6 +9,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import config from 'config';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +27,11 @@ import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import Placeholder from 'my-sites/site-settings/placeholder';
+
+const hasActiveImports = imports =>
+	!! find( imports, ( { importerState } ) => {
+		return importerState !== appStates.INACTIVE && importerState !== appStates.READY_FOR_UPLOAD;
+	} );
 
 class SiteSettingsImport extends Component {
 	static propTypes = {
@@ -102,6 +108,14 @@ class SiteSettingsImport extends Component {
 			}
 		);
 
+		const wpImports = this.getImports( WORDPRESS );
+		const mediumImports = config.isEnabled( 'manage/import/medium' )
+			? this.getImports( MEDIUM )
+			: [];
+
+		const hasWpActiveImports = hasActiveImports( wpImports );
+		const hasMediumActiveImports = hasActiveImports( mediumImports );
+
 		return (
 			<Main>
 				<HeaderCake backHref={ '/settings/general/' + siteSlug }>
@@ -129,18 +143,26 @@ class SiteSettingsImport extends Component {
 							</header>
 						</CompactCard>
 
-						{ this.getImports( WORDPRESS ).map( ( importerStatus, key ) => (
-							<WordPressImporter { ...{ key, site, importerStatus } } />
-						) ) }
+						{ ( ! hasMediumActiveImports || hasWpActiveImports ) &&
+							wpImports.map( ( importerStatus, key ) => (
+								<WordPressImporter { ...{ key, site, importerStatus } } />
+							) ) }
 
-						{ config.isEnabled( 'manage/import/medium' ) &&
-							this.getImports( MEDIUM ).map( ( importerStatus, key ) => (
+						{ ( ! hasWpActiveImports || hasMediumActiveImports ) &&
+							mediumImports.map( ( importerStatus, key ) => (
 								<MediumImporter { ...{ key, site, importerStatus } } />
 							) ) }
 
-						<CompactCard href={ adminUrl + 'import.php' } target="_blank" rel="noopener noreferrer">
-							{ translate( 'Other importers' ) }
-						</CompactCard>
+						{ ! hasWpActiveImports &&
+							! hasMediumActiveImports && (
+								<CompactCard
+									href={ adminUrl + 'import.php' }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ translate( 'Other importers' ) }
+								</CompactCard>
+							) }
 					</EmailVerificationGate>
 				) }
 			</Main>

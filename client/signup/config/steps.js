@@ -262,11 +262,31 @@ export default {
 
 	'creds-confirm': {
 		stepName: 'creds-confirm',
-		providesDependencies: [],
+		providesDependencies: [ 'rewindconfig' ],
 	},
 
 	'creds-permission': {
 		stepName: 'creds-permission',
+		providesDependencies: [ 'rewindconfig' ],
+	},
+
+	'rewind-migrate': {
+		stepName: 'rewind-migrate',
+		providesDependencies: [ 'rewindconfig' ],
+	},
+
+	'rewind-were-backing': {
+		stepName: 'rewind-were-backing',
 		providesDependencies: [],
+	},
+
+	'rewind-add-creds': {
+		stepName: 'rewind-add-creds',
+		providesDependencies: [],
+	},
+
+	'rewind-form-creds': {
+		stepName: 'rewind-form-creds',
+		providesDependencies: [ 'rewindconfig' ],
 	},
 };

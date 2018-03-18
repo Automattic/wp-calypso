@@ -17,7 +17,6 @@
 	}
 
 	.select-dropdown__header {
-		padding: 0 #{ $side-margin + 20 }px 0 #{ $side-margin }px;
 		max-width: ( $sidebar-width-max - $accordion-padding * 2 );
 
 		@include breakpoint( "<660px" ) {
@@ -72,7 +71,7 @@
 	&.is-touch,
 	&:hover {
 		.editor-visibility__label {
-			color: darken( $gray, 10% );
+			color: $gray-darken-10;
 		}
 	}
 

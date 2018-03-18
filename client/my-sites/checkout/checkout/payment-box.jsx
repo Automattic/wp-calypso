@@ -18,7 +18,7 @@ import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import analytics from 'lib/analytics';
-import cartValues from 'lib/cart-values';
+import cartValues, { paymentMethodName } from 'lib/cart-values';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -35,96 +35,33 @@ export class PaymentBox extends PureComponent {
 		};
 	}
 
-	getPaymentProviderName( method ) {
-		switch ( method ) {
-			case 'ideal':
-				return 'iDEAL';
-			case 'giropay':
-				return 'Giropay';
-			case 'bancontact':
-				return 'Bancontact';
-			case 'p24':
-				return 'Przelewy24';
-			case 'alipay':
-				return 'Alipay';
-			case 'credit-card':
-				return translate( 'Credit or debit card' );
-			case 'paypal':
-				return 'PayPal';
-		}
-
-		return method;
-	}
-
 	getPaymentProviderLabel( method ) {
+		let labelLogo = (
+			<img
+				src={ `/calypso/images/upgrades/${ method }.svg` }
+				alt={ paymentMethodName( method ) }
+				className={ `checkout__${ method }` }
+			/>
+		);
+
+		let labelAdditionalText = '';
+
 		switch ( method ) {
-			case 'paypal':
-				return (
-					<div className="checkout__provider">
-						<img
-							src="/calypso/images/upgrades/paypal.svg"
-							alt="PayPal"
-							className="checkout__paypal"
-						/>
-					</div>
-				);
 			case 'credit-card':
-				return (
-					<div className="checkout__provider">
-						<Gridicon icon="credit-card" className="checkout__credit-card" />
-						{ this.getPaymentProviderName( method ) }
-					</div>
-				);
+				labelLogo = <Gridicon icon="credit-card" className="checkout__credit-card" />;
+				labelAdditionalText = paymentMethodName( method );
+				break;
 			case 'ideal':
-				return (
-					<div className="checkout__provider">
-						<img src="/calypso/images/upgrades/ideal.svg" alt="iDEAL" className="checkout__ideal" />
-						{ this.getPaymentProviderName( method ) }
-					</div>
-				);
-			case 'giropay':
-				return (
-					<div className="checkout__provider">
-						<img
-							src="/calypso/images/upgrades/giropay.svg"
-							alt="Giropay"
-							className="checkout__giropay"
-						/>
-					</div>
-				);
-			case 'bancontact':
-				return (
-					<div className="checkout__provider">
-						<img
-							src="/calypso/images/upgrades/bancontact.svg"
-							alt="Bancontact"
-							className="checkout__bancontact"
-						/>
-					</div>
-				);
-			case 'p24':
-				return (
-					<div className="checkout__provider">
-						<img
-							src="/calypso/images/upgrades/p24.svg"
-							alt="Przelewy24"
-							className="checkout__p24"
-						/>
-					</div>
-				);
-			case 'alipay':
-				return (
-					<div className="checkout__provider">
-						<img
-							src="/calypso/images/upgrades/alipay.svg"
-							alt="Alipay"
-							className="checkout__alipay"
-						/>
-					</div>
-				);
+				labelAdditionalText = paymentMethodName( method );
+				break;
 		}
 
-		return <span>{ this.getPaymentProviderName( method ) }</span>;
+		return (
+			<div className="checkout__provider">
+				{ labelLogo }
+				{ labelAdditionalText }
+			</div>
+		);
 	}
 
 	paymentMethod( method ) {
@@ -161,7 +98,7 @@ export class PaymentBox extends PureComponent {
 		const titleText = this.props.currentPaymentMethod
 			? translate( 'Pay with %(paymentMethod)s', {
 					args: {
-						paymentMethod: this.getPaymentProviderName( this.props.currentPaymentMethod ),
+						paymentMethod: paymentMethodName( this.props.currentPaymentMethod ),
 					},
 				} )
 			: translate( 'Loading…' );

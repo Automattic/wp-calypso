@@ -15,7 +15,7 @@ import { capitalPDangit } from 'lib/formatting';
  */
 import TransactionsHeader from './transactions-header';
 import tableRows from './table-rows';
-
+import { groupDomainProducts } from './utils';
 import SearchCard from 'components/search-card';
 
 class TransactionsTable extends React.Component {
@@ -105,19 +105,23 @@ class TransactionsTable extends React.Component {
 	}
 
 	serviceName = transaction => {
-		var item, name;
-
 		if ( ! transaction.items ) {
-			name = this.serviceNameDescription( transaction );
-		} else if ( transaction.items.length === 1 ) {
-			item = transaction.items[ 0 ];
-			item.plan = capitalPDangit( titleCase( item.variation ) );
-			name = this.serviceNameDescription( item );
-		} else {
-			name = <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
+			return this.serviceNameDescription( transaction );
 		}
 
-		return name;
+		const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
+			transaction.items,
+			this.props.translate
+		);
+
+		if ( moreTransactionItems.length > 0 ) {
+			return <strong>{ this.props.translate( 'Multiple items' ) }</strong>;
+		}
+
+		return this.serviceNameDescription( {
+			...transactionItem,
+			plan: capitalPDangit( titleCase( transactionItem.variation ) ),
+		} );
 	};
 
 	serviceNameDescription = transaction => {

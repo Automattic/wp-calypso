@@ -171,7 +171,7 @@ Framed this way, we can consider two types of data components: app components an
 
 An app component wraps a visual component, connecting it to the global application state. We use the [`react-redux` library](https://github.com/reactjs/react-redux) to assist in creating bindings between React components and the Redux store instance.
 
-Below is an example of an app component. It retrieves an array of posts for a given site and passes the posts to the component for rendering. If you're unfamiliar with the stateless function syntax for declaring components, refer to the [React 0.14 upgrade guide](https://facebook.github.io/react/blog/2015/10/07/react-v0.14.html#stateless-functional-components) for more information.
+Below is an example of an app component that retrieves an array of posts for a given site and renders them. (This example uses the stateless function syntax for declaring components: see the [React 0.14 upgrade guide](https://facebook.github.io/react/blog/2015/10/07/react-v0.14.html#stateless-functional-components) if you're unfamiliar with it.)
 
 ```jsx
 function PostsList( { posts } ) {
@@ -191,12 +191,15 @@ export default connect( ( state, ownProps ) => {
 } )( PostsList );
 ```
 
-The `connect` function accepts two arguments, and they each serve a distinct purpose. Both pass props to the app component, and are respectively used to provide data and handle behavior on behalf of the component.
+In this example, the `PostsList` function defines the visual `PostsList` component. 
+It expects an array of `posts` passed as a prop, which it renders as a `ul`. The `connect` function wraps this purely presentational component to produce an app component.
 
-1. `mapStateToProps`: A function which, given the store state, returns props to be passed to the app component. This is used to satisfy the need to make data available to the component.
-2. `mapDispatchToProps`: A function which, given the store dispatch method, returns props to be passed to the app component. This is used to satisfy the need to allow the component to update the store state.
+`connect` accepts two arguments. Both pass props to the component. The first argument provides data; the second sets the component up to handle behavior.
 
-As an example, consider a component which renders a Delete button for a given post. We want to display the post title as a label in the delete button, and allow the component to trigger the post deletion when clicked.
+1. `mapStateToProps`: A function which, given the store state, returns props to be passed to the app component. This argument allows us to pass store data to the component.
+2. `mapDispatchToProps`: A function which, given the store dispatch method, also returns props to be passed to the app component. This argument can enable the component to update the store state.
+
+In the example above we only pass the first argument, `mapStateToProps`. As another example, consider a component which renders a Delete button for a given post. We want to display the post title as a label in the delete button, and allow the component to trigger the post deletion when clicked.
 
 ```jsx
 import React from 'react';
@@ -223,6 +226,10 @@ export default connect(
 	}
 )( localize( PostDeleteButton ) );
 ```
+
+In this example we pass both arguments to `connect`. 
+
+`connect` is a [currying](https://www.sitepoint.com/currying-in-functional-javascript/) function: after we invoke it with the `mapStateToProps` and `mapDispatchToProps` arguments we call it a second time, this time passing the `PostDeleteButton` visual component. `connect` takes this component class and returns a new one which is connected to the store. The resulting component can have additional props which were not defined in the original class.
 
 At this point, you might observe that the visual elements rendered in `<PostDeleteButton />` aren't very specific to posts and could probably be reused in different contexts. This is a good observation to make, and in this case it might make sense to split the visual component to its own separate file (e.g. `client/components/delete-button/index.jsx`). You should try to identify these opportunities as often as possible. Since the `connect` wrapping function is detached from the component declaration in the file above, it should not be difficult to separate the two.
 

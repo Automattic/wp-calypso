@@ -33,8 +33,9 @@ function setLocaleInDOM( localeSlug, isRTL ) {
 }
 
 let lastRequestedLocale = null;
-export default function switchLocale( localeSlug ) {
-	const language = getLanguage( localeSlug );
+export default function switchLocale( localeSlug, localeVariant ) {
+	// check if the language exists in config.languages
+	const language = getLanguage( localeSlug, localeVariant );
 
 	if ( ! language ) {
 		return;
@@ -46,13 +47,18 @@ export default function switchLocale( localeSlug ) {
 		return;
 	}
 
-	lastRequestedLocale = localeSlug;
+	const { langSlug: targetLocaleSlug, parentLangSlug } = language;
 
-	if ( isDefaultLocale( localeSlug ) ) {
-		i18n.configure( { defaultLocaleSlug: localeSlug } );
-		setLocaleInDOM( localeSlug, !! language.rtl );
+	// variant lang objects contain references to their parent lang, which is what we want to tell the browser we're running
+	const domLocaleSlug = parentLangSlug || targetLocaleSlug;
+
+	lastRequestedLocale = targetLocaleSlug;
+
+	if ( isDefaultLocale( targetLocaleSlug ) ) {
+		i18n.configure( { defaultLocaleSlug: targetLocaleSlug } );
+		setLocaleInDOM( domLocaleSlug, !! language.rtl );
 	} else {
-		request.get( languageFileUrl( localeSlug ) ).end( function( error, response ) {
+		request.get( languageFileUrl( targetLocaleSlug ) ).end( function( error, response ) {
 			if ( error ) {
 				debug(
 					'Encountered an error loading locale file for ' +
@@ -64,13 +70,13 @@ export default function switchLocale( localeSlug ) {
 
 			// Handle race condition when we're requested to switch to a different
 			// locale while we're in the middle of request, we should abondon result
-			if ( localeSlug !== lastRequestedLocale ) {
+			if ( targetLocaleSlug !== lastRequestedLocale ) {
 				return;
 			}
 
 			i18n.setLocale( response.body );
 
-			setLocaleInDOM( localeSlug, !! language.rtl );
+			setLocaleInDOM( domLocaleSlug, !! language.rtl );
 		} );
 	}
 }

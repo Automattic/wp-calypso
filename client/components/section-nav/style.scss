@@ -10,8 +10,8 @@
 	margin: 0 0 17px 0;
 	background: $white;
 	box-sizing: border-box;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+		0 1px 2px $gray-lighten-30;
 
 	&.is-empty .section-nav__panel {
 		visibility: hidden;
@@ -53,15 +53,15 @@
 	font-weight: 600;
 	cursor: pointer;
 
-	&:after {
-		@include noticon( '\f431', 20px );
-		line-height: 16px;
-		color: rgba( $gray, 0.5 );
+	.gridicons-chevron-down {
+		fill: $gray-darken-20;
+		flex-shrink: 0;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	.section-nav.is-open & {
-		&:after {
-			content: '\f432';
+		.gridicons-chevron-down {
+			transform: rotate( -180deg );
 		}
 	}
 
@@ -80,6 +80,7 @@
 
 .section-nav__mobile-header-text {
 	width: 0;
+	margin-right: 4px;
 	flex: 1 0 auto;
 	overflow: hidden;
 	white-space: nowrap;
@@ -106,7 +107,7 @@
 	@include breakpoint( "<480px" ) {
 		.section-nav.is-open & {
 			padding-bottom: 15px;
-			border-top: solid 1px lighten( $gray, 20% );
+			border-top: solid 1px $gray-lighten-20;
 			background: linear-gradient(to bottom, $gray-light 0%, $white 4px);
 		}
 	}
@@ -126,7 +127,7 @@
 	position: relative;
 	margin-top: 16px;
 	padding-top: 16px;
-	border-top: solid 1px lighten( $gray, 20% );
+	border-top: solid 1px $gray-lighten-20;
 
 	&:first-child {
 		padding-top: 0;
@@ -265,7 +266,7 @@
 
 	&[disabled],
 	.notouch &[disabled]:hover {
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 		cursor: default;
 	}
 
@@ -283,8 +284,9 @@
 
 	&:focus {
 		outline: none;
+
 		.accessible-focus & {
-			outline: solid $gray 1px;
+			box-shadow: inset 0 0 0 2px $blue-light;
 		}
 	}
 

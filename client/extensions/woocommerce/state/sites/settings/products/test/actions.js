@@ -44,7 +44,7 @@ describe( 'actions', () => {
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
 				.query( {
-					path: '/wc/v3/settings/products/batch&_method=post',
+					path: '/wc/v3/settings/products/batch&_via_calypso&_method=post',
 					json: true,
 					body: { update: settingsPayload },
 				} )
@@ -102,7 +102,7 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
-				.query( { path: '/wc/v3/settings/products&_method=get', json: true } )
+				.query( { path: '/wc/v3/settings/products&_via_calypso&_method=get', json: true } )
 				.reply( 200, {
 					data: [
 						{
@@ -217,7 +217,7 @@ describe( 'actions', () => {
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/123/rest-api/' )
 				.query( {
-					path: '/wc/v3/settings/products/batch&_method=post',
+					path: '/wc/v3/settings/products/batch&_via_calypso&_method=post',
 					json: true,
 					body: { update: settingsPayload },
 				} )

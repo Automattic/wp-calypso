@@ -1,0 +1,12 @@
+.settings-form__row {
+	display: flex;
+
+	& > * {
+		flex-grow: 1;
+		margin-right: 16px;
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}

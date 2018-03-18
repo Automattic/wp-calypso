@@ -65,7 +65,7 @@
 		position: relative;
 		border-radius: 0;
 		height: 8px;
-		background-color: lighten( $gray, 20% );
+		background-color: $gray-lighten-20;
 	}
 
 	.progress-bar__progress {

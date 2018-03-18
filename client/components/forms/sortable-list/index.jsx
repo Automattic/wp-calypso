@@ -41,8 +41,10 @@ class SortableList extends React.Component {
 	}
 
 	componentDidMount() {
-		document.addEventListener( 'mousemove', this.onMouseMove );
-		document.addEventListener( 'mouseup', this.onMouseUp );
+		if ( ! hasTouch() ) {
+			document.addEventListener( 'mousemove', this.onMouseMove );
+			document.addEventListener( 'mouseup', this.onMouseUp );
+		}
 	}
 
 	componentWillUnmount() {

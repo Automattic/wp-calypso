@@ -2,7 +2,7 @@ client/config
 =============
 
 This module reads config data from `window.configData` (passed from the Node.js
-server via the Pug template file) and initializes a `config` object that is
+server in the HTML response) and initializes a `config` object that is
 used to read these values.
 
 You can read more about how to use `config` in the

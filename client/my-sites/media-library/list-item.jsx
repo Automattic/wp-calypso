@@ -98,18 +98,18 @@ export default class extends React.Component {
 	};
 
 	render() {
-		var classes, props, style, title;
+		let title, selectedNumber;
 
-		classes = classNames( 'media-library__list-item', {
+		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! this.props.media,
 			'is-selected': -1 !== this.props.selectedIndex,
 			'is-transient': this.props.media && this.props.media.transient,
 			'is-small': this.props.scale <= 0.125,
 		} );
 
-		props = omit( this.props, Object.keys( this.constructor.propTypes ) );
+		const props = omit( this.props, Object.keys( this.constructor.propTypes ) );
 
-		style = assign(
+		const style = assign(
 			{
 				width: this.props.scale * 100 + '%',
 			},
@@ -121,7 +121,8 @@ export default class extends React.Component {
 		}
 
 		if ( -1 !== this.props.selectedIndex ) {
-			props[ 'data-selected-number' ] = this.props.selectedIndex + 1;
+			selectedNumber = this.props.selectedIndex + 1;
+			props[ 'data-selected-number' ] = selectedNumber > 99 ? '99+' : selectedNumber;
 		}
 
 		return (

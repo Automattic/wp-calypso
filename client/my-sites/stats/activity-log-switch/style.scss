@@ -1,0 +1,129 @@
+// Activity Log Migration
+.activity-log-switch {
+	box-sizing: border-box;
+	position: static;
+	text-align: center;
+	width: 100%;
+	max-width: 960px;
+	color: $gray-text-min;
+
+	@include breakpoint( "<660px" ) {
+		background: transparent;
+		padding: 14px;
+	}
+}
+
+.activity-log-switch__header {
+	position: relative;
+	padding: 12px 24px 48px;
+	text-align: center;
+
+	@include breakpoint( ">660px" ) {
+		padding-bottom: 72px;
+	}
+}
+
+.activity-log-switch__header-header {
+	font-size: 24px;
+	font-weight: 400;
+	text-align: center;
+	padding: 12px 24px 48px;
+
+	& ~ img {
+		max-width: 200px;
+	}
+}
+
+.activity-log-switch__header-text {
+	font-size: 18px;
+	font-weight: 300;
+	margin: 24px 64px 32px;
+}
+
+.activity-log-switch__no-thanks {
+	display: inline-block;
+	margin-top: 8px;
+}
+
+.activity-log-switch__features-header {
+	color: $gray-darken-20;
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 32px;
+	margin: 48px 48px 24px 48px;
+}
+
+.activity-log-switch__feature {
+	display: flex;
+	flex-wrap: wrap;
+	border-radius: 3px;
+	max-width: 700px;
+	margin: 16px auto;
+	padding: 32px;
+}
+
+.activity-log-switch__feature-content {
+	@include breakpoint( ">960px" ) {
+		flex-basis: 66%;
+		text-align: left;
+	}
+
+	@include breakpoint( "<960px" ) {
+		order: 2;
+	}
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+.activity-log-switch__feature-heading {
+	color: $gray-darken-10;
+	font-size: 21px;
+	margin-bottom: 8px;
+	width: 100%;
+
+	@include breakpoint( "<960px" ) {
+		order: 1;
+	}
+}
+
+.activity-log-switch__img {
+	max-width: 33%;
+	max-height: 110px;
+	box-sizing: border-box;
+
+	@include breakpoint( "<960px" ) {
+		order: 0;
+		max-width: none;
+		height: 90px;
+		width: 100%;
+		margin-bottom: 16px;
+	}
+
+	&.is-backup {
+		padding: 0 8%;
+	}
+
+	&.is-security-issue {
+		padding: 0 4%;
+	}
+}
+
+.activity-log-switch__placeholder {
+	.activity-log-switch__header-header {
+		padding-bottom: 0;
+		@include placeholder();
+	}
+
+	.activity-log-switch__header-text {
+		height: 100px;
+		@include placeholder();
+	}
+}
+.activity-log-switch__img-placeholder {
+	max-width: 150px;
+	height: 100px;
+	margin: 0 auto;
+	@include placeholder();
+}

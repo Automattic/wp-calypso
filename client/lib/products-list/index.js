@@ -7,7 +7,6 @@
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:ProductsList' );
-import store from 'store';
 
 /**
  * Internal dependencies
@@ -45,7 +44,13 @@ ProductsList.prototype.get = function() {
 	if ( ! this.data ) {
 		debug( 'First time loading ProductsList, check store' );
 
-		data = store.get( 'ProductsList' );
+		if ( typeof localStorage !== 'undefined' ) {
+			try {
+				data = JSON.parse( localStorage.getItem( 'ProductsList' ) );
+			} catch ( e ) {
+				// in case of bad data, do nothing, leave data undefined and just fetch again
+			}
+		}
 
 		if ( data ) {
 			this.initialize( data );
@@ -93,7 +98,9 @@ ProductsList.prototype.fetch = function() {
 
 			this.emit( 'change' );
 
-			store.set( 'ProductsList', productsList );
+			if ( typeof localStorage !== 'undefined' ) {
+				localStorage.setItem( 'ProductsList', JSON.stringify( productsList ) );
+			}
 		}.bind( this )
 	);
 };

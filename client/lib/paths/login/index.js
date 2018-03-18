@@ -9,6 +9,7 @@ import { addLocaleToPath, addLocaleToWpcomUrl } from 'lib/i18n-utils';
 import config, { isEnabled } from 'config';
 
 export function login( {
+	isJetpack,
 	isNative,
 	locale,
 	redirectTo,
@@ -16,6 +17,7 @@ export function login( {
 	socialConnect,
 	emailAddress,
 	socialService,
+	oauth2ClientId,
 } = {} ) {
 	let url = config( 'login_url' );
 
@@ -24,14 +26,12 @@ export function login( {
 
 		if ( socialService ) {
 			url += '/' + socialService + '/callback';
-		}
-
-		if ( twoFactorAuthType ) {
+		} else if ( twoFactorAuthType ) {
 			url += '/' + twoFactorAuthType;
-		}
-
-		if ( socialConnect ) {
+		} else if ( socialConnect ) {
 			url += '/social-connect';
+		} else if ( isJetpack ) {
+			url += '/jetpack';
 		}
 	}
 
@@ -49,6 +49,10 @@ export function login( {
 
 	if ( emailAddress ) {
 		url = addQueryArgs( { email_address: emailAddress }, url );
+	}
+
+	if ( oauth2ClientId && ! isNaN( oauth2ClientId ) ) {
+		url = addQueryArgs( { client_id: oauth2ClientId }, url );
 	}
 
 	return url;

@@ -2,7 +2,7 @@
 	&.is-placeholder {
 		.user__name {
 			animation: pulse-light 0.8s ease-in-out infinite;
-			background: lighten( $gray, 20% );
+			background: $gray-lighten-20;
 			display: inline-block;
 			height: 14px;
 			width: 100px;

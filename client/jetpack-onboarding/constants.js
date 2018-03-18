@@ -14,6 +14,7 @@ import JetpackOnboardingContactFormStep from './steps/contact-form';
 import JetpackOnboardingHomepageStep from './steps/homepage';
 import JetpackOnboardingSiteTitleStep from './steps/site-title';
 import JetpackOnboardingSiteTypeStep from './steps/site-type';
+import JetpackOnboardingStatsStep from './steps/stats';
 import JetpackOnboardingSummaryStep from './steps/summary';
 import JetpackOnboardingWoocommerceStep from './steps/woocommerce';
 
@@ -24,6 +25,7 @@ export const JETPACK_ONBOARDING_STEPS = {
 	CONTACT_FORM: 'contact-form',
 	BUSINESS_ADDRESS: 'business-address',
 	WOOCOMMERCE: 'woocommerce',
+	STATS: 'stats',
 	SUMMARY: 'summary',
 };
 
@@ -34,6 +36,7 @@ export const JETPACK_ONBOARDING_STEP_TITLES = {
 	[ JETPACK_ONBOARDING_STEPS.CONTACT_FORM ]: translate( 'Contact Us Form' ),
 	[ JETPACK_ONBOARDING_STEPS.BUSINESS_ADDRESS ]: translate( 'Business Address' ),
 	[ JETPACK_ONBOARDING_STEPS.WOOCOMMERCE ]: translate( 'Add a Store' ),
+	[ JETPACK_ONBOARDING_STEPS.STATS ]: translate( 'Jetpack Stats' ),
 	[ JETPACK_ONBOARDING_STEPS.SUMMARY ]: translate( 'Summary' ),
 };
 
@@ -44,5 +47,6 @@ export const JETPACK_ONBOARDING_COMPONENTS = {
 	[ JETPACK_ONBOARDING_STEPS.CONTACT_FORM ]: <JetpackOnboardingContactFormStep />,
 	[ JETPACK_ONBOARDING_STEPS.BUSINESS_ADDRESS ]: <JetpackOnboardingBusinessAddressStep />,
 	[ JETPACK_ONBOARDING_STEPS.WOOCOMMERCE ]: <JetpackOnboardingWoocommerceStep />,
+	[ JETPACK_ONBOARDING_STEPS.STATS ]: <JetpackOnboardingStatsStep />,
 	[ JETPACK_ONBOARDING_STEPS.SUMMARY ]: <JetpackOnboardingSummaryStep />,
 };

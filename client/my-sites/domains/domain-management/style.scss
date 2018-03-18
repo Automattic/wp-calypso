@@ -82,7 +82,7 @@
 
 		.domain-management-list-item__title,
 		.domain-management-list-item__meta {
-			color: lighten( $gray, 20% );
+			color: $gray-lighten-20;
 		}
 	}
 }
@@ -91,6 +91,11 @@
 	cursor: pointer;
 	display: block;
 	overflow: hidden;
+
+	.domain__primary-flag {
+		vertical-align: middle;
+		margin-left: 8px;
+	}
 }
 
 .domain-management-list-item__title {
@@ -162,7 +167,7 @@ input[type=radio].domain-management-list-item__radio {
 
 .domain-management-list-item__busy-message {
 	text-transform: uppercase;
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-weight: 600;
 	font-size: 12px;
 	text-overflow: ellipsis;
@@ -188,7 +193,7 @@ input[type=radio].domain-management-list-item__radio {
 	}
 
 	.primary-domain-notice {
-		background: lighten( $gray, 30% );
+		background: $gray-lighten-30;
 		font-size: 13px;
 		color: $gray-dark;
 		&::before {
@@ -216,7 +221,7 @@ input[type=radio].domain-management-list-item__radio {
 	.contact-display {
 		h2 {
 			background-color: $gray-light;
-			border: 1px solid lighten( $gray, 30% );
+			border: 1px solid $gray-lighten-30;
 			border-bottom: 0;
 			color: $gray;
 			font-size: 11px;
@@ -229,7 +234,7 @@ input[type=radio].domain-management-list-item__radio {
 		}
 
 		.contact-display-content {
-			border: 1px solid lighten( $gray, 30% );
+			border: 1px solid $gray-lighten-30;
 			color: lighten( $gray-dark, 20% );
 			font-size: 12px;
 			line-height: 140%;
@@ -255,10 +260,6 @@ input[type=radio].domain-management-list-item__radio {
 		padding: 3px 10px 3px 5px;
 		white-space: nowrap;
 
-		.noticon {
-			margin-right: 5px;
-		}
-
 		&.is-warning {
 			cursor: pointer;
 		}
@@ -267,6 +268,7 @@ input[type=radio].domain-management-list-item__radio {
 	.edit__transfer-text-fail {
 		font-size: 18px;
 		font-weight: 500;
+		margin-bottom: 1em;
 	}
 
 	.edit__transfer-button-fail {
@@ -276,8 +278,8 @@ input[type=radio].domain-management-list-item__radio {
 		width: 100%;
 
 		&.is-busy:disabled {
-			border-color: lighten( $gray, 20% );
-			color: darken( $gray, 20% );
+			border-color: $gray-lighten-20;
+			color: $gray-darken-20;
 		}
 
 		@include breakpoint( '>480px' ) {
@@ -346,66 +348,6 @@ input[type=radio].domain-management-list-item__radio {
 	margin: 5px 0;
 }
 
-.edit-contact-info__form-content {
-	margin-bottom: 20px;
-	overflow: auto;
-
-	.edit-contact-info__form-field {
-		margin-top: 15px;
-		position: relative;
-
-		input[type=text] {
-			margin: 0;
-		}
-
-		select {
-			width: 100%;
-		}
-
-		input[ disabled ], select[ disabled ] {
-			cursor: not-allowed;
-		}
-	}
-
-	.first-name {
-		margin-top: 0;
-	}
-
-	@include breakpoint( ">660px" ) {
-		.last-name {
-			margin-top: 0;
-		}
-
-		.edit-contact-info__form-field {
-			float: left;
-			width: 100%;
-		}
-
-		.last-name,
-		.phone,
-		.postal-code {
-			float: right;
-		}
-
-		.email,
-		.first-name,
-		.last-name,
-		.phone {
-			width: calc( 50% - 7px );
-		}
-
-		.city,
-		.postal-code,
-		.state {
-			width: calc( 33% - 8px );
-		}
-
-		.state {
-			margin-left: 14px;
-		}
-	}
-}
-
 .dns__details,
 .custom-nameservers-form__explanation,
 .email-forwarding__explanation,
@@ -425,7 +367,7 @@ input[type=radio].domain-management-list-item__radio {
 
 	&.fetching input[type=text] {
 		animation: pulse-light 0.8s ease-in-out infinite;
-		background: lighten( $gray, 20% );
+		background: $gray-lighten-20;
 	}
 }
 
@@ -570,7 +512,7 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card__header {
-	border-bottom: 2px solid lighten( $gray, 20% );
+	border-bottom: 1px solid $gray-lighten-30;
 	display: block;
 	overflow: auto;
 	padding: 16px 16px 20px;
@@ -622,7 +564,6 @@ ul.email-forwarding__list {
 }
 
 .privacy-protection-card__content {
-	background: $gray-light;
 	clear: both;
 	display: block;
 	overflow: auto;
@@ -656,7 +597,7 @@ ul.email-forwarding__list {
 	}
 
 	h5 {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 		font-size: 12px;
 		line-height: 130%;
 		margin: 9px 0;
@@ -669,9 +610,11 @@ ul.email-forwarding__list {
 			margin-bottom: 0;
 		}
 
-		.noticon {
-			color: $alert-green;
+		.gridicon {
+			fill: $alert-green;
 			margin-right: 5px;
+			position: relative;
+				top: 4px;
 		}
 	}
 }
@@ -818,10 +761,6 @@ ul.email-forwarding__list {
 	}
 
 	.vertical-nav-item {
-		.noticon {
-			display: none;
-		}
-
 		span:nth-of-type( 1 ) {
 			@include placeholder();
 		}
@@ -904,12 +843,12 @@ ul.domain-connect__dns-list
 }
 
 .domain-only-site__settings-notice {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	margin-top: 30px;
 	text-align: center;
 
 	&::before {
-		background: lighten( $gray, 20% );
+		background: $gray-lighten-20;
 		content: '';
 		display: block;
 		height: 1px;

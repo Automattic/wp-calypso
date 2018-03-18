@@ -14,7 +14,10 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import AuthCaptureToggle from 'woocommerce/components/auth-capture-toggle';
-import { deauthorizeAccount } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
+import {
+	clearCompletedNotification,
+	deauthorizeAccount,
+} from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import Dialog from 'components/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -22,10 +25,12 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import {
 	getIsDeauthorizing,
+	getNotifyCompleted,
 	getStripeConnectAccount,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getStripeSampleStatementDescriptor } from './payment-method-stripe-utils';
+import Notice from 'components/notice';
 import PaymentMethodEditFormToggle from '../payment-method-edit-form-toggle';
 import StripeConnectAccount from './payment-method-stripe-connect-account';
 
@@ -79,6 +84,36 @@ class PaymentMethodStripeConnectedDialog extends Component {
 	onDeauthorize = () => {
 		const { siteId } = this.props;
 		this.props.deauthorizeAccount( siteId );
+	};
+
+	onDismissNotice = () => {
+		const { siteId } = this.props;
+		this.props.clearCompletedNotification( siteId );
+	};
+
+	notifyConnectionCompleted = () => {
+		const { stripeConnectAccount, translate } = this.props;
+		const { email, isActivated } = stripeConnectAccount;
+
+		let text;
+		if ( isActivated ) {
+			text = translate( 'Stripe is now connected! You can start accepting payments!' );
+		} else {
+			text = translate(
+				'Stripe is now connected. An email from Stripe has been sent ' +
+					'to %(email)s to activate the account.',
+				{ args: { email } }
+			);
+		}
+
+		return (
+			<Notice
+				onDismissClick={ this.onDismissNotice }
+				showDismiss
+				status="is-success"
+				text={ text }
+			/>
+		);
 	};
 
 	renderMoreSettings = () => {
@@ -166,7 +201,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 	};
 
 	render() {
-		const { isDeauthorizing, stripeConnectAccount, translate } = this.props;
+		const { isDeauthorizing, notifyCompleted, stripeConnectAccount, translate } = this.props;
 
 		return (
 			<Dialog
@@ -175,6 +210,7 @@ class PaymentMethodStripeConnectedDialog extends Component {
 				isVisible
 			>
 				<div className="stripe__method-edit-header">{ translate( 'Manage Stripe' ) }</div>
+				{ notifyCompleted && this.notifyConnectionCompleted() }
 				<StripeConnectAccount
 					isDeauthorizing={ isDeauthorizing }
 					onDeauthorize={ this.onDeauthorize }
@@ -190,9 +226,12 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site.ID || false;
 	const isDeauthorizing = getIsDeauthorizing( state, siteId );
+	const notifyCompleted = getNotifyCompleted( state, siteId );
 	const stripeConnectAccount = getStripeConnectAccount( state, siteId );
+
 	return {
 		isDeauthorizing,
+		notifyCompleted,
 		siteId,
 		stripeConnectAccount,
 	};
@@ -201,6 +240,7 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
+			clearCompletedNotification,
 			deauthorizeAccount,
 		},
 		dispatch

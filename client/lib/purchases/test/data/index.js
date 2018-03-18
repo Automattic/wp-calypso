@@ -74,6 +74,28 @@ const PLAN_PURCHASE = {
 	isDomainRegistration: false,
 };
 
+const PLAN_PURCHASE_WITH_CREDITS = {
+	id: 4002,
+	payment: {
+		type: 'credits',
+		countryCode: 'US',
+		countryName: 'United States',
+	},
+	productId: 2006,
+	productName: 'Personal',
+	productSlug: 'jetpack_personal_monthly',
+};
+
+const PLAN_PURCHASE_WITH_PAYPAL = {
+	id: 4003,
+	payment: {
+		type: 'paypal',
+	},
+	productId: 2006,
+	productName: 'Personal',
+	productSlug: 'jetpack_personal_monthly',
+};
+
 export default {
 	DOMAIN_PURCHASE,
 	DOMAIN_PURCHASE_PENDING_TRANSFER,
@@ -84,4 +106,6 @@ export default {
 	PLAN_PURCHASE,
 	SITE_REDIRECT_PURCHASE,
 	SITE_REDIRECT_PURCHASE_EXPIRED,
+	PLAN_PURCHASE_WITH_CREDITS,
+	PLAN_PURCHASE_WITH_PAYPAL,
 };

@@ -47,13 +47,15 @@ class PostsMain extends React.Component {
 			'is-multisite': ! this.props.siteId,
 			'is-single-site': this.props.siteId,
 		} );
+		const status = mapStatus( statusSlug );
 		const query = {
 			author,
 			category,
 			number: 20, // max supported by /me/posts endpoint for all-sites mode
+			order: status === 'future' ? 'ASC' : 'DESC',
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
-			status: mapStatus( statusSlug ),
+			status,
 			tag,
 			type: 'post',
 		};

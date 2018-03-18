@@ -10,12 +10,20 @@ import { expect } from 'chai';
  */
 import {
 	SERIALIZE,
+	DESERIALIZE,
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'state/action-types';
-import { lostFocusAt, currentMessage } from '../reducer';
+import { lostFocusAt as lostFocusAtWithoutValidation, currentMessage } from '../reducer';
+import { withSchemaValidation } from 'state/utils';
+jest.mock( 'lib/warn', () => () => {} );
+
+const lostFocusAt = withSchemaValidation(
+	lostFocusAtWithoutValidation.schema,
+	lostFocusAtWithoutValidation
+);
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;
@@ -31,6 +39,15 @@ describe( 'reducers', () => {
 
 		test( 'SERIALIZEs to Date.now() if state is null', () => {
 			expect( lostFocusAt( null, { type: SERIALIZE } ) ).to.eql( NOW );
+		} );
+
+		test( 'DESERIALIZEs a valid value', () => {
+			expect( lostFocusAt( 1, { type: DESERIALIZE } ) ).eql( 1 );
+		} );
+
+		test( 'does not DESERIALIZEs invalid values', () => {
+			expect( lostFocusAt( {}, { type: DESERIALIZE } ) ).eql( null );
+			expect( lostFocusAt( '1', { type: DESERIALIZE } ) ).eql( null );
 		} );
 
 		test( 'returns Date.now() on HAPPYCHAT_BLUR actions', () => {

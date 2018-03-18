@@ -129,3 +129,5 @@ export const chartTabs = [
 	{ label: translate( 'Orders' ), attr: 'orders', type: 'number' },
 	{ label: translate( 'Average Order Value' ), attr: 'avg_order_value', type: 'currency' },
 ];
+
+export const dashboardListLimit = 3;

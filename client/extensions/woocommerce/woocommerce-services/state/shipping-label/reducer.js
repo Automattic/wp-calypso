@@ -619,10 +619,11 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates } )
 		form: { ...state.form,
 			rates: {
 				values: mapValues( rates, ( rate ) => {
-					const selected = find(
-						get( rate, 'rates', [] ),
-						( r ) => r.is_selected
-					);
+					const packageRates = get( rate, 'rates', [] );
+					const selected =
+						packageRates.length === 1
+							? packageRates[ 0 ]
+							: find( packageRates, ( r ) => r.is_selected );
 
 					if ( selected ) {
 						return selected.service_id;

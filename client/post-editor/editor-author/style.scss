@@ -1,6 +1,6 @@
 .editor-author.is-placeholder .editor-author__name {
 	animation: pulse-light 0.8s ease-in-out infinite;
-	background: lighten( $gray, 20% );
+	background: $gray-lighten-20;
 	display: inline-block;
 	height: 14px;
 	width: 100px;
@@ -13,7 +13,7 @@
 }
 
 .editor-author__name {
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	font-size: 13px;
 	margin: 0 8px;
 

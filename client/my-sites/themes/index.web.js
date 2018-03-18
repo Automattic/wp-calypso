@@ -22,7 +22,7 @@ export default function( router ) {
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( isLoggedIn ) {
 			if ( config.isEnabled( 'manage/themes/upload' ) ) {
-				router( '/themes/upload', sites, makeLayout );
+				router( '/themes/upload', siteSelection, sites, makeLayout );
 				router( '/themes/upload/:site_id?', siteSelection, upload, navigation, makeLayout );
 			}
 			const loggedInRoutes = [

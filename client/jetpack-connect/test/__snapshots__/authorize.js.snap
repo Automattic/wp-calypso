@@ -83,7 +83,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           Return to %(sitename)s
         </LoggedOutFormLinkItem>
         <LoggedOutFormLinkItem
-          href="https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fexample.com%2F"
+          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F"
         >
           Sign in as a different user
         </LoggedOutFormLinkItem>

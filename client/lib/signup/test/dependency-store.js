@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
+import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import { createStore } from 'redux';
 
 /**

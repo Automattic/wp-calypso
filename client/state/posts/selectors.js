@@ -5,7 +5,7 @@
  */
 import { filter, find, has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
-import moment from 'moment-timezone';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -409,6 +409,14 @@ export const isEditedPostDirty = createSelector(
 			}
 
 			if ( post ) {
+				switch ( key ) {
+					case 'date': {
+						return ! moment( value ).isSame( post.date );
+					}
+					case 'parent': {
+						return get( post, 'parent.ID', 0 ) !== value;
+					}
+				}
 				return post[ key ] !== value;
 			}
 

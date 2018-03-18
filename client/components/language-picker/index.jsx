@@ -18,6 +18,7 @@ import { getGeoCountryShort } from 'state/geo/selectors';
 import QueryGeo from 'components/data/query-geo';
 import LanguagePickerModal from './modal';
 import QueryLanguageNames from 'components/data/query-language-names';
+import { getLanguageCodeLabels } from './utils';
 
 export class LanguagePicker extends PureComponent {
 	static propTypes = {
@@ -87,9 +88,15 @@ export class LanguagePicker extends PureComponent {
 		}
 	};
 
-	handleClose = () => {
-		this.setState( { open: false } );
+	handleKeyPress = event => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.props.onClick( event );
+			this.toggleOpen();
+		}
 	};
+
+	handleClose = () => this.setState( { open: false } );
 
 	renderPlaceholder() {
 		const classes = classNames( 'language-picker', 'is-loading' );
@@ -129,12 +136,19 @@ export class LanguagePicker extends PureComponent {
 			return this.renderPlaceholder();
 		}
 
-		const [ langCode, langSubcode ] = language.langSlug.split( '-' );
-		const langName = language.name;
 		const { disabled, translate } = this.props;
+		const langName = language.name;
+		const { langCode, langSubcode } = getLanguageCodeLabels( language.langSlug );
 
 		return (
-			<div className="language-picker" onClick={ this.handleClick } disabled={ disabled }>
+			<div
+				tabIndex="0"
+				role="button"
+				className="language-picker"
+				onKeyPress={ this.handleKeyPress }
+				onClick={ this.handleClick }
+				disabled={ disabled }
+			>
 				<div className="language-picker__icon">
 					<div className="language-picker__icon-inner">
 						{ langCode }

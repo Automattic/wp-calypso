@@ -12,12 +12,15 @@ import page from 'page';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import RefreshFeedHeader from 'blocks/reader-feed-header';
+import ReaderFeedHeader from 'blocks/reader-feed-header';
 import EmptyContent from './empty';
 import Stream from 'reader/stream';
 import FeedError from 'reader/feed-error';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
+import isSiteBlocked from 'state/selectors/is-site-blocked';
+import SiteBlocked from 'reader/site-blocked';
+
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import FeedFeatured from './featured';
@@ -44,7 +47,8 @@ class SiteStream extends React.Component {
 	};
 
 	render() {
-		const { site, feed, featuredStore } = this.props;
+		const { site, feed, featuredStore, isBlocked, siteId } = this.props;
+
 		// check for redirect
 		if ( site && site.prefer_feed && site.feed_ID ) {
 			page.replace( '/read/feeds/' + site.feed_ID );
@@ -53,11 +57,15 @@ class SiteStream extends React.Component {
 		const emptyContent = <EmptyContent />;
 		const title = site ? site.name : this.props.translate( 'Loading Site' );
 
+		if ( isBlocked ) {
+			return <SiteBlocked title={ title } siteId={ siteId } />;
+		}
+
 		if ( ( site && site.is_error ) || ( feed && feed.is_error ) ) {
 			return <FeedError sidebarTitle={ title } />;
 		}
 
-		const featuredContent = featuredStore && <FeedFeatured store={ featuredStore } />;
+		const featuredContent = featuredStore && <FeedFeatured postsStore={ featuredStore } />;
 
 		return (
 			<Stream
@@ -70,7 +78,7 @@ class SiteStream extends React.Component {
 				shouldCombineCards={ false }
 			>
 				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: title } ) } />
-				<RefreshFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
+				<ReaderFeedHeader site={ site } feed={ feed } showBack={ this.props.showBack } />
 				{ featuredContent }
 				{ ! site && <QueryReaderSite siteId={ this.props.siteId } /> }
 				{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }
@@ -84,5 +92,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		site: site,
 		feed: site && site.feed_ID && getFeed( state, site.feed_ID ),
+		isBlocked: isSiteBlocked( state, ownProps.siteId ),
 	};
 } )( localize( SiteStream ) );

@@ -3,9 +3,10 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -17,9 +18,20 @@ import CompactCard from 'components/card/compact';
 import PeopleProfile from 'my-sites/people/people-profile';
 import analytics from 'lib/analytics';
 import config from 'config';
+import {
+	isRequestingInviteResend,
+	didInviteResendSucceed,
+	didInviteDeletionSucceed,
+} from 'state/invites/selectors';
+import { resendInvite } from 'state/invites/actions';
 
 class PeopleListItem extends React.PureComponent {
 	static displayName = 'PeopleListItem';
+
+	static propTypes = {
+		site: PropTypes.object,
+		invite: PropTypes.object,
+	};
 
 	navigateToUser = () => {
 		window.scrollTo( 0, 0 );
@@ -45,29 +57,63 @@ class PeopleListItem extends React.PureComponent {
 		);
 	};
 
-	getCardLink = () => {
+	maybeGetCardLink = () => {
 		const { invite, site, type, user } = this.props;
+
+		if ( 'invite-details' === type ) {
+			return null;
+		}
+
 		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
 		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
 
 		return type === 'invite' ? inviteLink : editLink;
 	};
 
+	onResend = event => {
+		const { requestingResend, resendSuccess, siteId, inviteKey } = this.props;
+
+		// Prevents navigation to invite-details screen and onClick event.
+		event.preventDefault();
+		event.stopPropagation();
+
+		if ( requestingResend || resendSuccess ) {
+			return null;
+		}
+
+		this.props.resendInvite( siteId, inviteKey );
+	};
+
 	renderInviteStatus = () => {
-		const { invite, translate } = this.props;
+		const { type, invite, translate, requestingResend, resendSuccess } = this.props;
 		const { isPending } = invite;
-		const statusClasses = {
+		const className = classNames( 'people-list-item__invite-status', {
 			'is-pending': isPending,
-		};
-		const className = classNames( 'people-list-item__invite-status', statusClasses );
+			'is-invite-details': type === 'invite-details',
+		} );
+		const buttonClassName = classNames( 'people-list-item__invite-resend', {
+			'is-success': resendSuccess,
+		} );
 
 		return (
 			<div className={ className }>
-				{ ! isPending && <Gridicon icon="checkmark" size={ 18 } /> }
-				{ isPending ? translate( 'Pending' ) : translate( 'Accepted' ) }
+				{ type === 'invite-details' &&
+					( isPending ? (
+						translate( 'Pending' )
+					) : (
+						<React.Fragment>
+							<Gridicon icon="checkmark" size={ 18 } />
+							{ translate( 'Accepted' ) }
+						</React.Fragment>
+					) ) }
 				{ isPending && (
-					<Button className="people-list-item__invite-resend" compact>
-						{ translate( 'Resend Invite' ) }
+					<Button
+						className={ buttonClassName }
+						onClick={ this.onResend }
+						busy={ requestingResend }
+						compact
+					>
+						{ resendSuccess ? translate( 'Invite Sent!' ) : translate( 'Resend Invite' ) }
 					</Button>
 				) }
 			</div>
@@ -75,16 +121,34 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	render() {
-		const { className, invite, onRemove, translate, type, user } = this.props;
+		const { className, invite, onRemove, translate, type, user, inviteWasDeleted } = this.props;
+
+		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
+
+		if ( isInvite && inviteWasDeleted ) {
+			// After an invite is deleted and the user is returned to the
+			// invites list, the invite can occasionally reappear in the next
+			// API call, so we need to check for this situation and avoid
+			// rendering an invite that we know is actually deleted.
+			return null;
+		}
+
+		const classes = classNames(
+			'people-list-item',
+			{
+				'is-invite': isInvite,
+				'is-invite-details': type === 'invite-details',
+			},
+			className
+		);
 		const canLinkToProfile = this.canLinkToProfile();
 		const tagName = canLinkToProfile ? 'a' : 'span';
-		const isInvite = invite && 'invite' === type;
 
 		return (
 			<CompactCard
-				className={ classNames( 'people-list-item', className ) }
+				className={ classes }
 				tagName={ tagName }
-				href={ this.getCardLink() }
+				href={ this.maybeGetCardLink() }
 				onClick={ canLinkToProfile && this.navigateToUser }
 			>
 				<div className="people-list-item__profile-container">
@@ -95,11 +159,18 @@ class PeopleListItem extends React.PureComponent {
 
 				{ onRemove && (
 					<div className="people-list-item__actions">
-						<button className="button is-link people-list-item__remove-button" onClick={ onRemove }>
+						<Button
+							compact
+							scary
+							borderless
+							className="people-list-item__remove-button"
+							onClick={ onRemove }
+						>
+							<Gridicon icon="trash" />
 							{ translate( 'Remove', {
 								context: 'Verb: Remove a user or follower from the blog.',
 							} ) }
-						</button>
+						</Button>
 					</div>
 				) }
 			</CompactCard>
@@ -107,4 +178,21 @@ class PeopleListItem extends React.PureComponent {
 	}
 }
 
-export default localize( PeopleListItem );
+export default connect(
+	( state, ownProps ) => {
+		const { site, invite } = ownProps;
+
+		const siteId = site && site.ID;
+		const inviteKey = invite && invite.key;
+		const inviteWasDeleted = inviteKey && didInviteDeletionSucceed( state, siteId, inviteKey );
+
+		return {
+			requestingResend: isRequestingInviteResend( state, siteId, inviteKey ),
+			resendSuccess: didInviteResendSucceed( state, siteId, inviteKey ),
+			siteId,
+			inviteKey,
+			inviteWasDeleted,
+		};
+	},
+	{ resendInvite }
+)( localize( PeopleListItem ) );

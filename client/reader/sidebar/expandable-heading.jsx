@@ -12,6 +12,7 @@ import React from 'react';
  */
 import Count from 'components/count';
 import SidebarHeading from 'layout/sidebar/heading';
+import TranslatableString from 'components/translatable/proptype';
 
 const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
 	<SidebarHeading onClick={ onClick }>
@@ -22,7 +23,7 @@ const ExpandableSidebarHeading = ( { title, count, onClick } ) => (
 );
 
 ExpandableSidebarHeading.propTypes = {
-	title: PropTypes.string.isRequired,
+	title: TranslatableString.isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 };

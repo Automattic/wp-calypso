@@ -3,31 +3,31 @@
 /**
  * External dependencies
  */
-
-import React from 'react';
-import { parse as parseUrl } from 'url';
 import page from 'page';
-import qs from 'qs';
-import { map } from 'lodash';
+import { parse } from 'qs';
+import React from 'react';
+import { includes, map } from 'lodash';
+import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
-import WPLogin from './wp-login';
-import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
+import MagicLogin from './magic-login';
+import WPLogin from './wp-login';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 
 const enhanceContextWithLogin = context => {
-	const { path, params: { flow, twoFactorAuthType, socialService } } = context;
+	const { params: { flow, isJetpack, socialService, twoFactorAuthType }, path } = context;
 
-	context.cacheQueryKeys = [ 'client_id' ];
+	context.cacheQueryKeys = [ 'client_id', 'signup_flow' ];
 
 	context.primary = (
 		<WPLogin
+			isJetpack={ isJetpack === 'jetpack' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
@@ -54,7 +54,7 @@ export function login( context, next ) {
 		}
 
 		const parsedRedirectUrl = parseUrl( redirect_to );
-		const redirectQueryString = qs.parse( parsedRedirectUrl.query );
+		const redirectQueryString = parse( parsedRedirectUrl.query );
 
 		if ( client_id !== redirectQueryString.client_id ) {
 			recordTracksEvent( 'calypso_login_phishing_attempt', context.query );
@@ -112,8 +112,8 @@ export function magicLoginUse( context, next ) {
 }
 
 export function redirectDefaultLocale( context, next ) {
-	// only redirect `/log-in/en` to `/log-in`
-	if ( context.pathname !== '/log-in/en' ) {
+	// Only handle simple routes
+	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
 		return next();
 	}
 
@@ -132,5 +132,27 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	context.redirect( '/log-in' );
+	if ( context.params.isJetpack === 'jetpack' ) {
+		context.redirect( '/log-in/jetpack' );
+	} else {
+		context.redirect( '/log-in' );
+	}
+}
+
+export function redirectJetpack( context, next ) {
+	const { isJetpack } = context.params;
+	const { redirect_to } = context.query;
+
+	/**
+	 * Send arrivals from the jetpack connect process (when site user email matches
+	 * a wpcom account) to the jetpack branded login.
+	 *
+	 * A direct redirect to /log-in/jetpack is not currently done at jetpack.wordpress.com
+	 * because the iOS app relies on seeing a request to /log-in$ to show its
+	 * native credentials form.
+	 */
+	if ( isJetpack !== 'jetpack' && includes( redirect_to, 'jetpack/connect' ) ) {
+		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
+	}
+	next();
 }

@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
+import assert from 'assert'; // eslint-disable-line import/no-nodejs-modules
 import deepFreeze from 'deep-freeze';
 import React from 'react';
 import TestUtils from 'react-dom/test-utils';

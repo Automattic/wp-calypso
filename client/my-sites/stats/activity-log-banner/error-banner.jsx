@@ -27,7 +27,7 @@ class ErrorBanner extends PureComponent {
 		siteId: PropTypes.number.isRequired,
 		timestamp: PropTypes.string,
 		downloadId: PropTypes.number,
-		requestedRestoreActivityId: PropTypes.string,
+		requestedRestoreId: PropTypes.string,
 		createBackup: PropTypes.func,
 		rewindRestore: PropTypes.func,
 
@@ -42,22 +42,16 @@ class ErrorBanner extends PureComponent {
 		errorCode: '',
 		failureReason: '',
 		downloadId: undefined,
-		requestedRestoreActivityId: undefined,
+		requestedRestoreId: undefined,
 	};
 
 	handleClickRestart = () => {
-		const {
-			siteId,
-			downloadId,
-			requestedRestoreActivityId,
-			rewindRestore,
-			createBackup,
-		} = this.props;
+		const { siteId, downloadId, requestedRestoreId, rewindRestore, createBackup } = this.props;
 		if ( downloadId ) {
 			return createBackup( siteId, downloadId );
 		}
-		if ( requestedRestoreActivityId ) {
-			return rewindRestore( siteId, requestedRestoreActivityId );
+		if ( requestedRestoreId ) {
+			return rewindRestore( siteId, requestedRestoreId );
 		}
 	};
 

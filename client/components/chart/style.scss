@@ -26,7 +26,7 @@
 		top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-30;
 }
 
 // Y-axis marker lines inside each chart__bar
@@ -37,7 +37,7 @@
 		top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid rgba( lighten( $gray, 30% ), .1 );
+	border-top: 1px solid rgba( $gray-lighten-30, .1 );
 }
 
 .chart__bar-marker,
@@ -61,7 +61,7 @@
 	height: 200px;
 	padding: 0 20px 0 10px;
 	font-size: 11px;
-	color: darken( $gray, 10% );
+	color: $gray-darken-10;
 	margin-bottom: 30px;
 }
 
@@ -85,7 +85,7 @@
 	font-size: 0; // 1
 	padding: 5px 0;
 	min-height: 18px;
-	color: darken( $gray, 30% );
+	color: $gray-darken-30;
 }
 
 .chart__x-axis-label {
@@ -109,7 +109,7 @@
 	width: 1px;
 	height: 5px;
 	background: $gray-light;
-	background-image: linear-gradient(to bottom, $gray-light 0%, lighten( $gray, 20% ) 100%);
+	background-image: linear-gradient(to bottom, $gray-light 0%, $gray-lighten-20 100%);
 }
 
 // Bar wrapper
@@ -140,12 +140,12 @@
 
 
 	&.is-weekend {
-		background-color: rgba( lighten( $gray, 30% ), .5 );
+		background-color: rgba( $gray-lighten-30, .5 );
 	}
 
 	&:hover {
 		cursor: pointer;
-		background-color: rgba( lighten( $gray, 30% ), .3 );
+		background-color: rgba( $gray-lighten-30, .3 );
 	}
 
 	&.is-selected {
@@ -193,7 +193,7 @@
 		z-index: z-index( 'root', '.chart__bar-section.is-ghost::after' );
 		width: 100%;
 		height: 40px;
-		background-image: linear-gradient(to bottom, $transparent, rgba( lighten( $gray, 30% ), .5 ) ); // TODO: needs to use default color for gradient
+		background-image: linear-gradient(to bottom, $transparent, rgba( $gray-lighten-30, .5 ) ); // TODO: needs to use default color for gradient
 
 		.chart__bar:hover & {
 			display: none;
@@ -321,34 +321,7 @@
 }
 
 .chart__empty-notice {
-	position: relative;
-		top: 97px;
-	padding: 11px 24px;
-	margin-bottom: 24px;
-	border-radius: 1px;
-	background: #fff;
-	box-sizing: border-box;
-	font-size: 14px;
-	line-height: 1.4285;
-	animation: appear .3s ease-in-out;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
-
-	@include breakpoint( ">660px" ) {
-		padding: 13px 48px;
-		font-size: inherit;
-
-		&::before {
-			@include noticon-style;
-			content: '\f456';
-			position: absolute;
-				top: 23px;
-				left: 20px;
-			margin: -12px 0px 0 -8px;
-			font-size: 24px;
-			line-height: 1;
-		}
-	}
+	top: 97px;
 }
 
 // Chart tooltip
@@ -383,7 +356,7 @@
 					text-align: right;
 					float: right;
 					min-width: 22px;
-					color: lighten( $gray, 20% );
+					color: $gray-lighten-20;
 				}
 
 				.label {
@@ -446,7 +419,7 @@
 
 		.label {
 			text-transform: none;
-			color: lighten( $gray, 20% );
+			color: $gray-lighten-20;
 			overflow: hidden;
 			letter-spacing: 0;
 			height: 19px;

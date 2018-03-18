@@ -47,7 +47,7 @@ $theme-info-height: 54px;
 	}
 
 	&.is-placeholder {
-		background-color: lighten( $gray, 20% );
+		background-color: $gray-lighten-20;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -99,7 +99,7 @@ $theme-info-height: 54px;
 
 .theme__upsell-icon svg {
 	transform: scale( 0.8 );
-	border: 2px solid lighten( $gray, 10% );
+	border: 2px solid $gray-lighten-10;
 	border-radius: 100%;
 	display: inline-block;
 	width: 22px;
@@ -139,7 +139,8 @@ $theme-info-height: 54px;
 	opacity: 0.0;
 	transition: all 200ms ease-in-out;
 
-	&:hover {
+	&:hover,
+	&:focus {
 		opacity: 1.0;
 
 		span {
@@ -208,12 +209,12 @@ $theme-info-height: 54px;
 	bottom: 54px;
 	width: 100%;
 	padding-top: 36%;
-	background: lighten( $gray, 20% );
+	background: $gray-lighten-20;
 
 	.gridicon {
 		display: block;
 		margin: -5% auto;
-		fill: lighten( $gray, 30% );
+		fill: $gray-lighten-30;
 	}
 }
 

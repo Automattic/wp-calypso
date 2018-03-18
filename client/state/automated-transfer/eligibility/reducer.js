@@ -10,19 +10,25 @@ import { property, sortBy } from 'lodash';
  * Internal dependencies
  */
 import { AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as UPDATE } from 'state/action-types';
-import { combineReducers } from 'state/utils';
 
-export const eligibilityHolds = ( state = [], action ) =>
-	UPDATE === action.type ? sortBy( action.eligibilityHolds ) : state;
+const initialState = {
+	eligibilityHolds: [],
+	eligibilityWarnings: [],
+	lastUpdate: 0,
+};
 
-export const eligibilityWarnings = ( state = [], action ) =>
-	UPDATE === action.type ? sortBy( action.eligibilityWarnings, property( 'name' ) ) : state;
+const eligibilityReducer = ( state = initialState, action ) => {
+	switch ( action.type ) {
+		case UPDATE:
+			return {
+				eligibilityHolds: sortBy( action.eligibilityHolds ),
+				eligibilityWarnings: sortBy( action.eligibilityWarnings, property( 'name' ) ),
+				lastUpdate: action.lastUpdate,
+			};
+	}
 
-export const lastUpdate = ( state = 0, action ) =>
-	UPDATE === action.type ? action.lastUpdate : state;
+	return state;
+};
+eligibilityReducer.hasCustomPersistence = true; // the parent reducer will verify the schema
 
-export default combineReducers( {
-	eligibilityHolds,
-	eligibilityWarnings,
-	lastUpdate,
-} );
+export default eligibilityReducer;

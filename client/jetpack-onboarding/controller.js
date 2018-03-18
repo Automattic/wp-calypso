@@ -19,7 +19,11 @@ export const onboarding = ( context, next ) => {
 
 	// We validate siteSlug inside the component
 	context.primary = (
-		<JetpackOnboardingMain siteSlug={ context.params.site } stepName={ context.params.stepName } />
+		<JetpackOnboardingMain
+			action={ context.query.action }
+			siteSlug={ context.params.site }
+			stepName={ context.params.stepName }
+		/>
 	);
 	next();
 };

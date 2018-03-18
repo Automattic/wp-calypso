@@ -25,7 +25,7 @@
 }
 
 .site-title-example__description {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	text-align: right;
 	margin-bottom: 8px;
 	display: inline-block;

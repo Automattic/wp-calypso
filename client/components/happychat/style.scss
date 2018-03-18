@@ -61,7 +61,7 @@
 
 	&.is-open {
 		display: block;
-		background: lighten( $gray, 30% );
+		background: $gray-lighten-30;
 		bottom: 0;
 		z-index: z-index( 'root', '.happychat__container.is-open' );
 	}
@@ -85,7 +85,7 @@
 
 .happychat__notice {
 	padding: 12px;
-	border-top: 1px solid lighten( $gray, 20% );
+	border-top: 1px solid $gray-lighten-20;
 	color: $white;
 	background-color: lighten( $gray-dark, 20% );
 	margin: 0;
@@ -115,7 +115,7 @@
 
 	::-webkit-scrollbar-thumb {
 		border-radius: 10px;
-		background-color: lighten( $gray, 10% );
+		background-color: $gray-lighten-10;
 		border: 3px solid transparent;
 		background-clip: padding-box;
 
@@ -134,10 +134,10 @@
 
 .layout .happychat .happychat__container.is-open.is-minimizing {
 	box-shadow: none;
-	border-top: 1px solid lighten( $gray, 20% );
-	border-left: 1px solid lighten( $gray, 20% );
-	border-right: 1px solid lighten( $gray, 20% );
-	background: lighten( $gray, 30% );
+	border-top: 1px solid $gray-lighten-20;
+	border-left: 1px solid $gray-lighten-20;
+	border-right: 1px solid $gray-lighten-20;
+	background: $gray-lighten-30;
 	animation: happychat-minimize .5s 1 forwards;
 
 	> .happychat__composer,
@@ -157,6 +157,21 @@
 
 .layout.is-group-editor .happychat .happychat__container.is-open.is-minimizing {
 	animation: happychat-minimize-right .5s 1 forwards;
+}
+
+.layout.has-no-sidebar .happychat .happychat__container.is-open.is-minimizing {
+	animation: happychat-fade-out-right .5s 1 forwards;
+
+	> .happychat__composer,
+	> .happychat__welcome,
+	> .happychat__conversation,
+	> .happychat__title .happychat__active-toolbar * {
+		visibility: visible;
+	}
+
+	> .happychat__title {
+		animation: none;
+	}
 }
 
 @keyframes happychat-disappear {
@@ -202,6 +217,17 @@
 	100% {
 		max-height: 0;
 		bottom: -34px;
+	}
+}
+
+@keyframes happychat-fade-out-right {	// for cases where the left sidebar does not exist (full page views)
+	0% {
+		opacity: 1;
+		transform: translateX(0px);
+	}
+	100% {
+		opacity: 0;
+		transform: translateX(280px);
 	}
 }
 

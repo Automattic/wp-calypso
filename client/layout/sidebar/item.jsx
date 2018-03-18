@@ -14,12 +14,11 @@ import Gridicon from 'gridicons';
  */
 import { isExternal } from 'lib/url';
 import { preload } from 'sections-preload';
+import TranslatableString from 'components/translatable/proptype';
 
-export default class extends React.Component {
-	static displayName = 'SidebarItem';
-
+export default class SidebarItem extends React.Component {
 	static propTypes = {
-		label: PropTypes.string.isRequired,
+		label: TranslatableString.isRequired,
 		className: PropTypes.string,
 		link: PropTypes.string.isRequired,
 		onNavigate: PropTypes.func,

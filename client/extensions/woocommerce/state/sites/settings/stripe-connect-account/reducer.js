@@ -9,6 +9,7 @@
  */
 import { createReducer } from 'state/utils';
 import {
+	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE,
 	WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE,
@@ -35,6 +36,18 @@ function connectAccountClearError( state = {} ) {
 }
 
 /**
+ * Updates state to clear the completed state from a previous connect or create action
+ *
+ * @param  {Object} state  Current state
+ * @return {Object}        Updated state
+ */
+function connectAccountClearCompletedNotification( state = {} ) {
+	return Object.assign( {}, state, {
+		notifyCompleted: false,
+	} );
+}
+
+/**
  * Updates state to indicate account creation is in progress
  *
  * @param  {Object} state  Current state
@@ -44,6 +57,7 @@ function connectAccountCreate( state = {} ) {
 	return Object.assign( {}, state, {
 		error: '',
 		isCreating: true,
+		notifyCompleted: false,
 	} );
 }
 
@@ -66,6 +80,7 @@ function connectAccountCreateComplete( state = {}, action ) {
 		isRequesting: false,
 		lastName: '',
 		logo: '',
+		notifyCompleted: true,
 	} );
 }
 
@@ -184,6 +199,7 @@ function connectAccountOAuthConnect( state = {} ) {
 	return Object.assign( {}, state, {
 		error: '',
 		isOAuthConnecting: true,
+		notifyCompleted: false,
 	} );
 }
 
@@ -206,10 +222,12 @@ function connectAccountOAuthConnectComplete( state = {}, action ) {
 		isRequesting: false,
 		lastName: '',
 		logo: '',
+		notifyCompleted: true,
 	} );
 }
 
 export default createReducer( null, {
+	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_COMPLETED_NOTIFICATION ]: connectAccountClearCompletedNotification,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CLEAR_ERROR ]: connectAccountClearError,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE ]: connectAccountCreate,
 	[ WOOCOMMERCE_SETTINGS_STRIPE_CONNECT_ACCOUNT_CREATE_COMPLETE ]: connectAccountCreateComplete,

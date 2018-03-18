@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { Provider } from 'react-redux';
 import { renderToString } from 'react-dom/server';
 
 /**
@@ -10,12 +11,24 @@ import { renderToString } from 'react-dom/server';
  */
 import LayoutLoggedOut from '../logged-out';
 
+jest.mock( 'lib/abtest', () => ( {
+	abtest: () => '',
+} ) );
+jest.mock( 'lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'lib/user', () => () => {
+	return {
+		get() {
+			return {};
+		},
+	};
+} );
+
 describe( 'index', () => {
 	describe( 'when trying to renderToString() LayoutLoggedOut ', () => {
 		test( "doesn't throw an exception", () => {
 			expect( () => {
 				renderToString(
-					<LayoutLoggedOut
+					<Provider
 						store={ {
 							dispatch: () => {},
 							getState: () => ( {
@@ -23,7 +36,9 @@ describe( 'index', () => {
 							} ),
 							subscribe: () => {},
 						} }
-					/>
+					>
+						<LayoutLoggedOut />
+					</Provider>
 				);
 			} ).not.toThrow();
 		} );

@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'gridicons';
 import HappychatButton from 'components/happychat/button';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const ActivityLogConfirmDialog = ( {
@@ -25,6 +27,7 @@ const ActivityLogConfirmDialog = ( {
 	supportLink,
 	title,
 	translate,
+	happychatEvent,
 } ) => (
 	<div className="activity-log-item activity-log-item__restore-confirm">
 		<div className="activity-log-item__type">
@@ -60,7 +63,10 @@ const ActivityLogConfirmDialog = ( {
 							{ translate( 'More info' ) }
 						</span>
 					</Button>
-					<HappychatButton className="activity-log-confirm-dialog__more-info-link">
+					<HappychatButton
+						className="activity-log-confirm-dialog__more-info-link"
+						onClick={ happychatEvent }
+					>
 						<Gridicon icon="chat" />
 						<span className="activity-log-confirm-dialog__more-info-link-text">
 							{ translate( 'Any Questions?' ) }
@@ -73,4 +79,8 @@ const ActivityLogConfirmDialog = ( {
 );
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export default localize( ActivityLogConfirmDialog );
+const mapDispatchToProps = {
+	happychatEvent: () => recordTracksEvent( 'calypso_activitylog_confirm_dialog' ),
+};
+
+export default connect( null, mapDispatchToProps )( localize( ActivityLogConfirmDialog ) );

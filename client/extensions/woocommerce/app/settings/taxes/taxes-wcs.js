@@ -7,7 +7,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -18,6 +17,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import {
 	areSettingsGeneralLoaded,
 	areTaxCalculationsEnabled,
+	getShipToCountrySetting,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import {
 	areTaxSettingsLoaded,
@@ -28,7 +28,6 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import Main from 'components/main';
 import { ProtectFormGuard } from 'lib/protect-form';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import SettingsNavigation from '../navigation';
@@ -59,6 +58,9 @@ class SettingsTaxesWooCommerceServices extends Component {
 		siteSlug: PropTypes.string.isRequired,
 		siteId: PropTypes.number.isRequired,
 		taxesEnabled: PropTypes.bool,
+		shipToCountry: PropTypes.shape( {
+			value: PropTypes.string,
+		} ),
 	};
 
 	componentDidMount = () => {
@@ -174,12 +176,13 @@ class SettingsTaxesWooCommerceServices extends Component {
 				onCheckboxChange={ this.onCheckboxChange }
 				pricesIncludeTaxes={ this.state.pricesIncludeTaxes }
 				shippingIsTaxable={ this.state.shippingIsTaxable }
+				shipToCountry={ this.props.shipToCountry }
 			/>
 		);
 	};
 
 	render = () => {
-		const { className, loaded, siteId, siteSlug, translate } = this.props;
+		const { loaded, siteId, siteSlug, translate } = this.props;
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/settings/:site/', { slug: siteSlug } ) }>
@@ -189,7 +192,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		];
 
 		return (
-			<Main className={ classNames( 'settings-taxes', className ) } wideLayout>
+			<div>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
 					<TaxSettingsSaveButton onSave={ this.onSave } />
 				</ActionHeader>
@@ -199,7 +202,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 				{ loaded && this.renderRates() }
 				{ loaded && this.renderOptions() }
 				<ProtectFormGuard isChanged={ ! this.state.pristine } />
-			</Main>
+			</div>
 		);
 	};
 }
@@ -207,12 +210,14 @@ class SettingsTaxesWooCommerceServices extends Component {
 function mapStateToProps( state ) {
 	const loaded = areTaxSettingsLoaded( state ) && areSettingsGeneralLoaded( state );
 	const pricesIncludeTaxes = getPricesIncludeTax( state );
+	const shipToCountry = getShipToCountrySetting( state );
 	const shippingIsTaxable = ! getShippingIsTaxFree( state ); // note the inversion
 	const taxesEnabled = areTaxCalculationsEnabled( state );
 
 	return {
 		loaded,
 		pricesIncludeTaxes,
+		shipToCountry,
 		shippingIsTaxable,
 		taxesEnabled,
 	};

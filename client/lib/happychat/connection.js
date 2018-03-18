@@ -16,6 +16,7 @@ import {
 	receiveDisconnect,
 	receiveError,
 	receiveInit,
+	receiveLocalizedSupport,
 	receiveMessage,
 	receiveReconnecting,
 	receiveStatus,
@@ -72,6 +73,7 @@ class Connection {
 						.on( 'reconnecting', () => dispatch( receiveReconnecting() ) )
 						.on( 'status', status => dispatch( receiveStatus( status ) ) )
 						.on( 'accept', accept => dispatch( receiveAccept( accept ) ) )
+						.on( 'localized-support', accept => dispatch( receiveLocalizedSupport( accept ) ) )
 						.on( 'message', message => dispatch( receiveMessage( message ) ) );
 				} )
 				.catch( e => reject( e ) );

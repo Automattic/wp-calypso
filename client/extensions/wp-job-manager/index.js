@@ -27,7 +27,7 @@ export default function() {
 	const jobSubmissionSlug = get( Tabs, 'JOB_SUBMISSION.slug', '' );
 	const pagesSlug = get( Tabs, 'PAGES.slug', '' );
 
-	page( '/extensions/wp-job-manager', sites, makeLayout, clientRender );
+	page( '/extensions/wp-job-manager', siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/extensions/wp-job-manager/:site',
 		siteSelection,

@@ -53,6 +53,14 @@ const originNotifications = [
 		subtitle: translate( 'If recipients reply to store emails they will be sent to this address.' ),
 		checkEmail: true,
 	},
+	{
+		field: 'email',
+		option: 'woocommerce_email_footer_text',
+		title: translate( 'Footer text' ),
+		subtitle: translate(
+			"The text to appear in the footer of store emails. {site_title} can be used to show your site's name."
+		),
+	},
 ];
 
 const internalNotifications = [

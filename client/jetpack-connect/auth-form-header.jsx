@@ -106,7 +106,7 @@ export class AuthFormHeader extends Component {
 
 		switch ( this.getState() ) {
 			case 'logged-out':
-				return translate( 'Create your account' );
+				return translate( 'Create an account to set up Jetpack' );
 			case 'logged-in-success':
 				return translate( 'You are connected!' );
 			case 'logged-in':

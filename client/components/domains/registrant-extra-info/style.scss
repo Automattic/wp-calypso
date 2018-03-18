@@ -14,7 +14,7 @@
 	display: flex;
 
 	.registrant-extra-info__optional-label {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 		font-weight: 200;
 		margin-left: 5px;
 	}

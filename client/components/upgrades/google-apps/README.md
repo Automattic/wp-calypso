@@ -14,8 +14,8 @@ import productsListFactory from 'lib/products-list';
 
 const productsList = productsListFactory();
 
-React.createClass( {
-	render: function() {
+class MyComponent extends React.Component {
+	render() {
 		return <GoogleApps
 			productsList={ productsList }
 			domain={ domain }
@@ -23,7 +23,7 @@ React.createClass( {
 			onAddGoogleApps={ handleAddGoogleApps }
 			onClickSkip={ handleClickSkip } />
 	}
-} );
+}
 ```
 
 ## Props

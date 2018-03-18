@@ -10,7 +10,7 @@
 		position: relative;
 
 		&:before {
-			background-color: lighten( $gray, 20% );
+			background-color: $gray-lighten-20;
 			content: " ";
 			display: block;
 			height: 1px;
@@ -61,7 +61,7 @@
 				}
 
 				.gridicon {
-					background: lighten( $gray, 20% );
+					background: $gray-lighten-20;
 					color: $gray;
 				}
 
@@ -72,9 +72,9 @@
 
 			.gridicon {
 				background: $white;
-				border: 1px lighten( $gray, 20% ) solid;
+				border: 1px $gray-lighten-20 solid;
 				border-radius: 50%;
-				color: lighten( $gray, 20% );
+				color: $gray-lighten-20;
 				display: block;
 				margin: 0 auto;
 				position: relative;
@@ -88,7 +88,7 @@
 			}
 
 			label {
-				color: lighten( $gray, 20% );
+				color: $gray-lighten-20;
 				display: inline-block;
 				font-size: 14px;
 				line-height: 1;

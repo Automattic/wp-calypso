@@ -12,6 +12,7 @@ import {
 	areSettingsGeneralLoaded,
 	areSettingsGeneralLoading,
 	getPaymentCurrencySettings,
+	getShipToCountrySetting,
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
@@ -48,13 +49,22 @@ const currencySetting = {
 	default: 'GBP',
 	value: 'USD',
 };
+
+const shipToCountrySetting = {
+	id: 'woocommerce_ship_to_countries',
+	label: 'Shipping location(s)',
+	type: 'select',
+	default: '',
+	value: 'disabled',
+};
+
 const loadedState = {
 	extensions: {
 		woocommerce: {
 			sites: {
 				123: {
 					settings: {
-						general: [ currencySetting ],
+						general: [ currencySetting, shipToCountrySetting ],
 					},
 				},
 			},
@@ -117,6 +127,16 @@ describe( 'selectors', () => {
 
 		test( 'should get the siteId from the UI tree if not provided.', () => {
 			expect( getPaymentCurrencySettings( loadedStateWithUi ) ).to.eql( currencySetting );
+		} );
+	} );
+
+	describe( 'getShipToCountrySetting', () => {
+		test( 'should get the setting from state.', () => {
+			expect( getShipToCountrySetting( loadedState, 123 ) ).to.eql( shipToCountrySetting );
+		} );
+
+		test( 'should get the siteId from the UI tree if not provided.', () => {
+			expect( getShipToCountrySetting( loadedStateWithUi ) ).to.eql( shipToCountrySetting );
 		} );
 	} );
 } );

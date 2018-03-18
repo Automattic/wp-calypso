@@ -22,6 +22,7 @@ describe( 'reducer', () => {
 			'isRequestingContactDetailsCache',
 			'isRequestingWhois',
 			'isSaving',
+			'validationSchemas',
 		] );
 	} );
 

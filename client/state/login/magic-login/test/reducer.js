@@ -68,12 +68,12 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		test( 'should be false on SERIALIZE', () => {
+		test( 'should not persist on SERIALIZE', () => {
 			const state = isFetchingAuth( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be true on fetch', () => {
@@ -112,12 +112,12 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		test( 'should be false on SERIALIZE', () => {
+		test( 'should not persist on SERIALIZE', () => {
 			const state = isFetchingEmail( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be true on fetch', () => {
@@ -156,12 +156,12 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		test( 'should be false on SERIALIZE', () => {
+		test( 'should not persist on SERIALIZE', () => {
 			const state = requestAuthSuccess( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be false on fetch', () => {
@@ -201,12 +201,12 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		test( 'should be null on SERIALIZE', () => {
+		test( 'should not persist on SERIALIZE', () => {
 			const state = requestAuthError( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be null on fetch', () => {
@@ -246,12 +246,12 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		test( 'should be null on SERIALIZE', () => {
+		test( 'should not persist on SERIALIZE', () => {
 			const state = requestEmailError( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be null on fetch', () => {
@@ -298,12 +298,12 @@ describe( 'reducer', () => {
 			expect( state ).to.be.false;
 		} );
 
-		test( 'should be false on SERIALIZE', () => {
+		test( 'should not persist on SERIALIZE', () => {
 			const state = requestEmailSuccess( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be false on fetch action', () => {
@@ -342,12 +342,12 @@ describe( 'reducer', () => {
 			expect( state ).to.be.null;
 		} );
 
-		test( 'should be null on SERIALIZE', () => {
+		test( 'should not persist on SERIALIZE', () => {
 			const state = currentView( undefined, {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.be.undefined;
 		} );
 
 		test( 'should be check email page on show check email', () => {

@@ -4,7 +4,7 @@
  */
 
 import { isEmpty, pick } from 'lodash';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -71,8 +71,6 @@ function getEnhancedContext( req, res ) {
 		pathname: req.path,
 		params: req.params,
 		query: req.query,
-		protocol: req.protocol,
-		host: req.headers.host,
 		redirect: res.redirect.bind( res ),
 		res,
 	} );
@@ -104,6 +102,6 @@ export function getCacheKey( context ) {
 	return (
 		context.pathname +
 		'?' +
-		qs.stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
+		stringify( cachedQueryParams, { sort: ( a, b ) => a.localCompare( b ) } )
 	);
 }

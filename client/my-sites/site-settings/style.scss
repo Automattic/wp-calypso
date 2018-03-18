@@ -233,7 +233,9 @@
 .site-settings__writing-settings,
 .site-settings__traffic-settings,
 .site-settings__security-settings,
-.manage-connection {
+.manage-connection,
+.seo-settings__site-verification,
+.seo-settings__help {
 	.form-toggle__label {
 		display: flex;
 		align-items: center;
@@ -359,7 +361,7 @@
 .has-divider, .site-settings__has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px 24px;
-	border: 1px lighten( $gray, 30% ) solid;
+	border: 1px $gray-lighten-30 solid;
 	border-width: 1px 0;
 
 	&.is-top-only {
@@ -406,7 +408,7 @@
 
 	&.is-expanded .foldable-card__content {
 		padding: 8px 24px 24px;
-		border-top: 1px lighten( $gray, 20% ) solid;
+		border-top: 1px $gray-lighten-20 solid;
 	}
 
 	&.is-expanded.is-top-level .foldable-card__content {
@@ -468,6 +470,19 @@
 	}
 }
 
+button.site-settings__general-settings-set-guessed-timezone.button.is-borderless.is-compact {
+	text-decoration: underline;
+	color: $blue-wordpress;
+	font-style: inherit;
+	font-weight: 400;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $link-highlight;
+		box-shadow: none;
+	}
+}
 .site-settings__jetpack-dev-mode-notice .notice {
 	animation: none;
 }

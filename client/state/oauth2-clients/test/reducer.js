@@ -113,11 +113,11 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should not persist state', () => {
-		const newState = reducer( undefined, {
+		const newState = reducer( initialClientsData, {
 			type: SERIALIZE,
 		} );
 
-		expect( newState ).to.deep.equal( initialClientsData );
+		expect( newState ).to.be.undefined;
 	} );
 
 	test( 'should not load persisted state', () => {

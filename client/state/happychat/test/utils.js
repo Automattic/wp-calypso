@@ -20,7 +20,7 @@ describe( 'auth promise', () => {
 		},
 		ui: {
 			section: {
-				name: 'jetpackConnect',
+				name: 'jetpack-connect',
 			},
 		},
 	};

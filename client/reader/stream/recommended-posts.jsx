@@ -4,18 +4,20 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, partial, some } from 'lodash';
+import { connect } from 'react-redux';
+import { map, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
  */
-import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import PostStore from 'lib/feed-post-store';
+import { RelatedPostCard } from 'blocks/reader-related-card';
 import { recordAction, recordTrackForPost } from 'reader/stats';
 import Button from 'components/button';
 import { dismissPost } from 'lib/feed-stream-store/actions';
+import QueryReaderPost from 'components/data/query-reader-post';
+import { getPostsByKeys } from 'state/reader/posts/selectors';
 
 function dismissRecommendation( uiIndex, storeId, post ) {
 	recordTrackForPost( 'calypso_reader_recommended_post_dismissed', post, {
@@ -43,42 +45,32 @@ function handlePostClick( uiIndex, post ) {
 }
 
 export class RecommendedPosts extends React.PureComponent {
-	state = {
-		posts: map( this.props.recommendations, PostStore.get.bind( PostStore ) ),
+	static propTypes = {
+		index: PropTypes.number,
+		translate: PropTypes.func,
+		recommendations: PropTypes.array,
 	};
 
-	updatePosts = ( props = this.props ) => {
-		const posts = map( props.recommendations, PostStore.get.bind( PostStore ) );
-		if ( some( posts, ( post, i ) => post !== this.state.posts[ i ] ) ) {
-			this.setState( { posts } );
-		}
-	};
-
-	componentWillMount() {
-		PostStore.on( 'change', this.updatePosts );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.updatePosts( nextProps );
-	}
-
-	componentWillUnmount() {
-		PostStore.off( 'change', this.updatePosts );
-	}
-
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
+		const { posts, recommendations } = this.props;
 		return (
 			<div className="reader-stream__recommended-posts">
+				<QueryReaderPost postKey={ recommendations[ 0 ] } />
+				<QueryReaderPost postKey={ recommendations[ 1 ] } />
 				<h1 className="reader-stream__recommended-posts-header">
 					<Gridicon icon="thumbs-up" size={ 18 } />
 					&nbsp;
 					{ this.props.translate( 'Recommended Posts' ) }
 				</h1>
 				<ul className="reader-stream__recommended-posts-list">
-					{ map( this.state.posts, ( post, index ) => {
+					{ map( posts, ( post, index ) => {
 						const uiIndex = this.props.index + index;
 						return (
-							<li className="reader-stream__recommended-posts-list-item" key={ post.global_ID }>
+							<li
+								className="reader-stream__recommended-posts-list-item"
+								key={ `${ index }-${ post && post.global_ID }` }
+							>
 								<div className="reader-stream__recommended-post-dismiss">
 									<Button
 										borderless
@@ -103,10 +95,6 @@ export class RecommendedPosts extends React.PureComponent {
 	}
 }
 
-RecommendedPosts.propTypes = {
-	index: PropTypes.number,
-	translate: PropTypes.func,
-	recommendations: PropTypes.array,
-};
-
-export default localize( RecommendedPosts );
+export default connect( ( state, ownProps ) => ( {
+	posts: getPostsByKeys( state, ownProps.recommendations ),
+} ) )( localize( RecommendedPosts ) );

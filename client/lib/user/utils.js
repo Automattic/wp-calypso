@@ -62,12 +62,6 @@ const userUtils = {
 	isLoggedIn() {
 		return Boolean( user.data );
 	},
-
-	needsVerificationForSite( site ) {
-		// do not allow publish for unverified e-mails,
-		// but allow if the site is VIP
-		return ! user.get().email_verified && ! ( site && site.is_vip );
-	},
 };
 
 export default userUtils;

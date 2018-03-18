@@ -28,7 +28,7 @@
 			top: 1px;
 			bottom: 1px;
 		width: 60%;
-		background-color: lighten( $gray, 20% );
+		background-color: $gray-lighten-20;
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }

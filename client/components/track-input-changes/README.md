@@ -12,7 +12,7 @@ action of making a change to a text field.
 ### Usage
 
 ```js
-export default React.createClass( {
+export default class extends React.Component {
 	render() {
 		return (
 			<TrackInputChanges onNewValue={ this.recordSomeStat }>
@@ -24,5 +24,5 @@ export default React.createClass( {
 			</TrackInputChanges>
 		);
 	}
-} );
+}
 ```

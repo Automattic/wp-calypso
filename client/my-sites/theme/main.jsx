@@ -25,7 +25,6 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
-import ThemesRelatedCard from './themes-related-card';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import Button from 'components/button';
 import SectionNav from 'components/section-nav';
@@ -327,7 +326,6 @@ class ThemeSheet extends React.Component {
 					isWpcomTheme={ isWpcomTheme }
 				/>
 				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
-				{ isWpcomTheme && this.renderRelatedThemes() }
 				{ isWpcomTheme && this.renderNextTheme() }
 			</div>
 		);
@@ -471,10 +469,6 @@ class ThemeSheet extends React.Component {
 			return i18n.translate( 'Activate this design' );
 		}
 		return defaultOption.label;
-	};
-
-	renderRelatedThemes = () => {
-		return <ThemesRelatedCard currentTheme={ this.props.id } />;
 	};
 
 	renderRetired = () => {

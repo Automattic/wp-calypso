@@ -31,7 +31,7 @@ export function ensureStoreLoading( store, context ) {
 		if ( context && context.query && context.query.at ) {
 			const startDate = moment( context.query.at );
 			if ( startDate.isValid() ) {
-				store.startDate = startDate.format();
+				store.startDate = startDate.toISOString();
 			}
 		}
 		fetchNextPage( store.id );

@@ -37,6 +37,7 @@ import JetpackThankYouCard from './jetpack-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
 	isChargeback,
+	isDelayedDomainTransfer,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
@@ -65,7 +66,11 @@ import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import ThankYouCard from 'components/thank-you-card';
-import { domainManagementEmail, domainManagementList } from 'my-sites/domains/paths';
+import {
+	domainManagementEmail,
+	domainManagementList,
+	domainManagementTransferInPrecheck,
+} from 'my-sites/domains/paths';
 import config from 'config';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
@@ -75,6 +80,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 import { hasSitePendingAutomatedTransfer, isSiteAutomatedTransfer } from 'state/selectors';
+import { recordStartTransferClickInThankYou } from 'state/domains/actions';
 
 function getPurchases( props ) {
 	return [
@@ -257,20 +263,28 @@ class CheckoutThankYou extends React.Component {
 	};
 
 	render() {
-		let purchases = [],
-			failedPurchases = [],
-			wasJetpackPlanPurchased = false,
-			wasDotcomPlanPurchased = false;
+		const { translate } = this.props;
+		let purchases = [];
+		let failedPurchases = [];
+		let wasJetpackPlanPurchased = false;
+		let wasDotcomPlanPurchased = false;
+		let delayedTransferPurchase = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasDotcomPlanPurchased = purchases.some( isDotComPlan );
+			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
-		if ( ! purchases.length && ! failedPurchases.length && ! this.isGenericReceipt() ) {
+		if (
+			! purchases.length &&
+			! failedPurchases.length &&
+			! this.isGenericReceipt() &&
+			! this.props.selectedSite
+		) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return <WordPressLogo className="wpcom-site__logo" />;
@@ -295,12 +309,24 @@ class CheckoutThankYou extends React.Component {
 					<AtomicStoreThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
-		} else if ( this.isNewUser() && wasDotcomPlanPurchased ) {
+		} else if ( wasDotcomPlanPurchased && ( delayedTransferPurchase || this.isNewUser() ) ) {
+			let planProps = {};
+			if ( delayedTransferPurchase ) {
+				planProps = {
+					action: (
+						<a className="thank-you-card__button" onClick={ this.startTransfer }>
+							{ translate( 'Start Domain Transfer' ) }
+						</a>
+					),
+					description: translate( "Now let's get your domain transferred." ),
+				};
+			}
+
 			// streamlined paid NUX thanks page
 			return (
 				<Main className="checkout-thank-you">
 					{ this.renderConfirmationNotice() }
-					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
+					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
 		} else if ( wasJetpackPlanPurchased && config.isEnabled( 'plans/jetpack-config-v2' ) ) {
@@ -322,20 +348,20 @@ class CheckoutThankYou extends React.Component {
 					<ThankYouCard
 						name={ domainName }
 						price={ this.props.receipt.data.displayPrice }
-						heading={ this.props.translate( 'Thank you for your purchase!' ) }
-						description={ this.props.translate(
+						heading={ translate( 'Thank you for your purchase!' ) }
+						description={ translate(
 							"That looks like a great domain. Now it's time to get it all set up."
 						) }
 						buttonUrl={ domainManagementList( domainName ) }
-						buttonText={ this.props.translate( 'Go To Your Domain' ) }
+						buttonText={ translate( 'Go To Your Domain' ) }
 					/>
 				</Main>
 			);
 		}
 
 		const goBackText = this.props.selectedSite
-			? this.props.translate( 'Back to my site' )
-			: this.props.translate( 'Register Domain' );
+			? translate( 'Back to my site' )
+			: translate( 'Register Domain' );
 
 		// standard thanks page
 		return (
@@ -354,6 +380,18 @@ class CheckoutThankYou extends React.Component {
 			</Main>
 		);
 	}
+
+	startTransfer = event => {
+		event.preventDefault();
+
+		const { selectedSite } = this.props;
+		const purchases = getPurchases( this.props );
+		const delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
+
+		this.props.recordStartTransferClickInThankYou( delayedTransferPurchase.meta );
+
+		page( domainManagementTransferInPrecheck( selectedSite.slug, delayedTransferPurchase.meta ) );
+	};
 
 	/**
 	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
@@ -401,15 +439,20 @@ class CheckoutThankYou extends React.Component {
 	};
 
 	productRelatedMessages = () => {
-		const { selectedSite, sitePlans } = this.props,
-			purchases = getPurchases( this.props ),
-			failedPurchases = getFailedPurchases( this.props ),
-			hasFailedPurchases = failedPurchases.length > 0,
-			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain(),
-			registrarSupportUrl =
-				! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
-					? null
-					: primaryPurchase.registrarSupportUrl;
+		const { selectedSite, sitePlans } = this.props;
+		const purchases = getPurchases( this.props );
+		const failedPurchases = getFailedPurchases( this.props );
+		const hasFailedPurchases = failedPurchases.length > 0;
+		const [
+			ComponentClass,
+			primaryPurchase,
+			domain,
+		] = this.getComponentAndPrimaryPurchaseAndDomain();
+		const registrarSupportUrl =
+			! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
+				? null
+				: get( primaryPurchase, 'registrarSupportUrl', null );
+		const isRootDomainWithUs = get( primaryPurchase, 'isRootDomainWithUs', false );
 
 		if ( ! this.isDataLoaded() ) {
 			return (
@@ -451,6 +494,7 @@ class CheckoutThankYou extends React.Component {
 							domain={ domain }
 							purchases={ purchases }
 							failedPurchases={ failedPurchases }
+							isRootDomainWithUs={ isRootDomainWithUs }
 							registrarSupportUrl={ registrarSupportUrl }
 							selectedSite={ selectedSite }
 							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
@@ -495,6 +539,9 @@ export default connect(
 			},
 			loadTrackingTool( name ) {
 				dispatch( loadTrackingTool( name ) );
+			},
+			recordStartTransferClickInThankYou( domain ) {
+				dispatch( recordStartTransferClickInThankYou( domain ) );
 			},
 		};
 	}

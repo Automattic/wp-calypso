@@ -1,12 +1,3 @@
-.dashboard__manage-has-orders,
-.dashboard__manage-no-orders,
-.dashboard__placeholder,
-.dashboard__setup-wrapper {
-	@include breakpoint( ">660px" ) {
-		margin-top: 58px;
-	}
-}
-
 .dashboard__placeholder .card {
 	@include placeholder();
 }
@@ -23,237 +14,6 @@
 .dashboard__placeholder-large {
 	margin-bottom: 16px;
 	height: 200px;
-}
-
-.dashboard__setup-header {
-	text-align: center;
-	padding-top: 16px;
-
-	img {
-		max-width: 160px;
-		margin-bottom: 12px;
-	}
-
-	.dashboard__setup-header-title {
-		margin: 0 auto 6px;
-		max-width: 450px;
-	}
-
-	.dashboard__setup-header-subtitle {
-		color: $gray-text-min;
-		margin: 0 auto 32px;
-		max-width: 400px;
-	}
-
-	.button {
-		margin-bottom: 8px;
-	}
-}
-
-.dashboard__setup-confirm .dashboard__setup-header-subtitle {
-	color: $gray-dark;
-	max-width: 490px;
-}
-
-.dashboard__setup-task {
-	padding: 16px;
-	margin-left: -16px;
-	margin-right: -16px;
-	border-top: 1px solid lighten( $gray, 30% );
-	display: flex;
-	position: relative;
-
-	&.is-checked {
-		background: lighten( $gray, 35% );
-
-		.dashboard__setup-task-label {
-			h2 {
-				color: darken( $gray, 25% );
-				margin-bottom: 6px;
-
-				@include breakpoint( ">960px" ) {
-					margin-bottom: 0;
-				}
-			}
-
-			p {
-				display: none;
-			}
-		}
-
-		@include breakpoint( ">480px" ) {
-			padding-top: 16px;
-			padding-bottom: 16px;
-		}
-	}
-
-	&:before {
-		content: "";
-		display: block;
-		position: absolute;
-		top: 0;
-		left: 27px;
-		bottom: 0;
-		width: 1px;
-		background: lighten( $gray, 30% );
-	}
-
-	@include breakpoint( ">480px" ) {
-		margin-left: -24px;
-		margin-right: -24px;
-		padding: 24px;
-
-		&:before {
-			left: 36px;
-		}
-	}
-
-	@include breakpoint( ">960px" ) {
-		align-items: center;
-
-		&:before {
-			left: 42px;
-		}
-	}
-
-	.dashboard__setup-task-status:not(.dashboard__setup-task-status .gridicon){
-		background-color: black;
-		color: black;
-	}
-
-	.dashboard__setup-task-status:empty {
-		background:  lighten( $gray, 30% );
-		border: 4px solid $white;
-		box-sizing: border-box;
-	}
-
-	.dashboard__setup-task-status {
-		background:  $alert-green;
-		height: 24px;
-		text-align: center;
-		width: 24px;
-		flex-shrink: 0;
-		border-radius: 100%;
-		z-index: 3;
-		margin-right: 24px;
-		margin-top: 2px;
-
-		@include breakpoint( ">960px" ) {
-			height: 36px;
-			width: 36px;
-		}
-
-		.gridicon {
-			height: 18px;
-			width: 18px;
-			padding: 3px;
-			color: $white;
-
-			@include breakpoint( ">960px" ) {
-				padding: 6px;
-				height: 24px;
-				width: 24px;
-			}
-		}
-	}
-
-	.dashboard__setup-task-label-and-actions {
-		@include breakpoint( ">960px" ) {
-			display: flex;
-			align-items: center;
-			width: 100%;
-		}
-	}
-
-	.dashboard__setup-task-label {
-		flex: 2;
-
-		h2 {
-			color: $gray-text;
-			font-size: 20px;
-		}
-
-		p {
-			color: $gray-text-min;
-			font-size: 14px;
-			margin-bottom: 12px;
-		}
-	}
-
-	.dashboard__setup-task-actions {
-		display: flex;
-		align-items: center;
-
-		@include breakpoint( ">960px" ) {
-			display: block;
-			text-align: right;
-			width: 320px;
-		}
-
-		.dashboard__setup-task-primary-actions {
-			.button {
-				white-space: nowrap;
-				margin-right: 8px;
-
-				@include breakpoint( ">960px" ) {
-					margin: 2px 0 2px 8px;
-				}
-
-				&.is-borderless {
-					color: $blue-wordpress;
-
-					&:hover {
-						color: $link-highlight;
-					}
-				}
-			}
-		}
-
-		.dashboard__setup-task-secondary-actions {
-			.button {
-				padding: 0;
-				font-size: 12px;
-				font-weight: normal;
-			}
-		}
-	}
-}
-
-.dashboard__location {
-	padding: 16px;
-
-	@include breakpoint( ">960px" ) {
-		padding: 32px 32px 16px 32px;
-	}
-}
-
-.dashboard__location .dashboard__setup-footer {
-	padding: 16px 32px 0 32px;
-}
-
-.dashboard__setup-footer {
-	align-items: center;
-	border-top: none;
-	display: flex;
-	justify-content: center;
-	border-top: 1px solid lighten( $gray, 30% );
-	padding: 24px 24px 0 24px;
-	margin-left: -24px;
-	margin-right: -24px;
-
-	@include breakpoint( ">960px" ) {
-		margin-left: -32px;
-		margin-right: -32px;
-		padding: 32px 32px 0 32px;
-	}
-}
-
-.dashboard__stats-widget {
-	background-image: url( '/calypso/images/extensions/woocommerce/woocommerce-sample-graph.svg' );
-	background-position: center bottom;
-	background-repeat: no-repeat;
-	background-size: 120%;
-	min-height: 290px;
 }
 
 .dashboard__manage-has-orders-header {
@@ -275,103 +35,118 @@
 }
 
 .dashboard__manage-has-orders {
-	@include breakpoint( ">960px" ) {
-		margin-top: 58px;
+	h2 {
+		font-size: 24px;
+		line-height: 1.2em;
+		margin-bottom: 16px;
 	}
-	.dashboard__reports-widget {
-		overflow: hidden;
-		text-align: center;
 
-		@include breakpoint( ">960px" ) {
-			text-align: left;
-			padding-left: 48px;
+	.dashboard__reports-widget .dashboard-widget__image {
+		margin-right: 10%;
+		width: calc( 35% - 8px ) !important;
+		margin-bottom: 16px;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 0;
 		}
 
-		.dashboard__reports-widget-content-wrapper {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
+		@include breakpoint( "<660px" ) {
+			margin-right: auto;
+			margin-left: auto;
+			width: 80% !important;
+		}
 
-			@include breakpoint( ">960px" ) {
-				flex-direction: row;
+		& + .dashboard-widget__children {
+			@include breakpoint( ">660px" ) {
+				width: calc( 65% - 34px) !important;
 			}
 		}
+	}
 
-		@include breakpoint( ">960px" ) {
-			text-align: left;
+	.dashboard-widget__row {
+		@include breakpoint( "<960px" ) {
+			flex-direction: column;
+		}
+	}
+
+	.dashboard-widget__row.dashboard__process-orders-container {
+		margin-bottom: 10px;
+		min-width: 100%;
+		background: $white;
+		box-shadow: 0 0 0 1px transparentize( $gray-lighten-20, .5 ),
+			0 1px 2px $gray-lighten-30;
+		flex-direction: row;
+
+		@include breakpoint( "<480px" ) {
+			flex-direction: column;
 		}
 
-		h2 {
-			font-size: 24px;
-			line-height: 1.2em;
+		@include breakpoint( ">480px" ) {
 			margin-bottom: 16px;
 		}
 
-		.dashboard__reports-widget-content {
-			@include breakpoint( ">960px" ) {
-				order: 0;
+		&.has-reviews {
+			min-width: calc( 75% - 16px );
+		}
+
+		.dashboard-widget {
+			text-align: center;
+			box-shadow: none;
+			background-color: transparent;
+			margin: 0;
+
+			.dashboard__process-orders-value {
+				display: block;
+				font-size: 24px;
+			}
+
+			&.dashboard__process-orders-revenue .dashboard__process-orders-value {
+				color: $alert-green;
+			}
+
+			.dashboard__process-orders-label {
+				color: $gray-text-min;
 			}
 		}
 
-		img {
-			margin-bottom: 1.5em;
-			max-width: 200px;
-			margin-top: 1em;
-
-			@include breakpoint( ">960px" ) {
-				margin-bottom: 0;
-				order: 1;
-				transform: translateY( 31px );
-				margin-top: 0;
-				width: 360px;
-				height: 180px;
-				max-width: none;
-			}
-		}
-
-		p {
-			color: $gray-text-min;
-			font-size: 14px;
-
-			&:last-child {
-				margin-bottom: 0;
-			}
+		.dashboard__process-orders-action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 	}
-}
 
-@include breakpoint( ">960px" ) {
-	.dashboard__queue-widgets {
+	.dashboard-widget.dashboard__reviews-widget {
 		display: flex;
-
-		div {
-			flex-grow: 1;
-		}
-
-		div:nth-child( 2 ) {
-			margin-left: 8px;
-		}
-	}
-}
-
-.dashboard__reviews-widget {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	min-width: 30%;
-
-
-	div {
-		min-width: 50%;
+		justify-content: space-between;
+		align-items: center;
+		min-width: 25%;
+		width: 100%;
 		text-align: center;
 
-		span:first-child {
-			display: block;
-			font-size: 24px;
+		@include breakpoint( ">960px" ) {
+			margin-left: 16px;
 		}
 
-		span:nth-child( 2 ) {
-			color: $gray-text-min;
+		.dashboard-widget__title {
+			margin-bottom: 12px;
+		}
+
+		.dashboard-widget__content {
+			width: 100%;
+		}
+
+		.dashboard-widget__children {
+			@include breakpoint( "<960px" ) {
+				display: flex;
+				align-items: stretch;
+
+				.dashboard-widget__title,
+				.button {
+					flex: 1 0 50%;
+					margin: auto;
+				}
+			}
 		}
 	}
 }

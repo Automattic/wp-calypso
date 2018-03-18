@@ -1,7 +1,3 @@
-// Custom breakpoints needed to match Related Posts
-$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
-
 .reader-recommended-sites {
 
 	@include breakpoint( "<660px" ) {
@@ -10,7 +6,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-recommended-sites__header {
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 	font-size: 14px;
 	font-weight: 600;
 	letter-spacing: 0.01em;
@@ -23,111 +19,64 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.gridicon {
-		fill: lighten( $gray, 10% );
+		fill: $gray-lighten-10;
 		margin-right: 5px;
-		position: relative;
-			left: -2px;
-			top: 2px;
 	}
 }
 
 .reader-recommended-sites__list {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	margin: 0 0 20px;
 	padding: 0;
 
-	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-direction: column;
-	}
-
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( ">960px" ) {
 		flex-direction: row;
-		flex: 0;
-	}
-
-	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex-direction: column;
-		flex: 0;
 	}
 }
 
 .reader-recommended-sites__site-list-item {
 	display: flex;
 	flex: 1 1 0%;
-	flex-direction: column;
+	flex-direction: row;
 	list-style-type: none;
-	margin-top: -40px;
+	width: 100%;
 
-	@media #{$reader-related-card-v2-breakpoint-medium} {
-		flex-direction: row;
-		flex: 0 1 auto;
-		margin-top: 0;
-
-		& + & {
-			margin-top: 10px;
-		}
+	@include breakpoint( ">960px" ) {
+		align-items: flex-end;
+		flex-direction: column;
+		margin-top: -40px;
 	}
 
-	@media #{$reader-related-card-v2-breakpoint-small} {
-		flex-direction: row;
-		flex: 0 1 auto;
-		margin-top: 0;
-
-		& + & {
-			margin-top: 10px;
-		}
-	}
-
-	> :nth-child(2) {
-		flex: 1 1 auto;
+	> :last-child {
+		width: 100%;
 	}
 
 	.reader-recommended-sites__recommended-site-dismiss {
-		align-items: flex-start;
-		display: flex;
-		height: 30px;
-		justify-content: flex-end;
+		width: 30px;
 
-		.button.is-borderless {
-			padding: 0;
-			position: relative;
-			z-index: 0;
-			top: 5px;
-
-			@include breakpoint( ">660px" ) {
-				top: -2px;
-				right: -2px;
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-medium}{
-				right: 0;
-			}
-
-			@media #{$reader-related-card-v2-breakpoint-small}{
-				top: 8px;
-			}
+		@include breakpoint( ">960px" ) {
+			display: flex;
+			justify-content: flex-end;
 		}
 
-		.button.is-borderless .gridicon,
-		.gridicon,
-		.gridicons-cross {
-			fill: lighten( $gray, 10% );
-			width: 14px;
-			height: 14px;
+		.button {
+			padding: 0;
+
+			&.is-borderless .gridicon {
+				fill: $gray-lighten-10;
+				width: 14px;
+				height: 14px;
+				top: 0;
+			}
 		}
 	}
 
 	.reader-subscription-list-item {
-		padding: 5px 0;
-		position: relative;
+		margin: 0;
 
-		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin: 0 0 0 10px;
-		}
-
-		@include breakpoint( "<660px" ) {
-			margin: 10px 0 0 10px;
+		@include breakpoint( "<960px" ) {
+			padding: 0 0 20px;
 		}
 
 		.follow-button .follow-button__label {
@@ -136,37 +85,19 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 				display: none;
 			}
 		}
-
-		.gridicon.gridicons-reader-follow {
-
-			@include breakpoint( "<960px" ) {
-				left: 4px;
-			}
-		}
 	}
 
 	&:first-child {
-		margin-right: 20px;
 
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			margin-right: 0;
+		@include breakpoint( ">960px" ) {
+			margin-right: 20px;
 		}
 	}
 
 	&:last-child {
-		margin-left: 20px;
 
-		@media #{$reader-related-card-v2-breakpoint-small} {
-			margin-left: 0;
-		}
-	}
-
-	&:first-child,
-	&:last-child {
-
-		@media #{$reader-related-card-v2-breakpoint-medium} {
-			margin-left: 0;
-			margin-right: 0;
+		@include breakpoint( ">960px" ) {
+			margin-left: 20px;
 		}
 	}
 
@@ -175,24 +106,8 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		margin-right: 0;
 	}
 
-	.reader-subscription-list-item__byline {
-		margin-right: 0;
-		padding-right: 0;
-	}
-
-	.reader-subscription-list-item__options {
-		position: absolute;
-			right: 0;
-	}
-
 	.reader-subscription-list-item__site-title {
 		color: $blue-medium;
-		width: calc( 100% - 20px );
-		word-break: break-all;
-
-		@include breakpoint( ">960px" ) {
-			width: calc( 100% - 70px );
-		}
 	}
 
 	.reader-subscription-list-item__by-text,
@@ -206,23 +121,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		width: 100%;
 
 		&:not(.is-placeholder) {
-			&::after {
-				@include long-content-fade( $size: 20% );
-			}
-		}
 
-		&.is-placeholder {
-			margin-top: 2px;
+			&::after {
+				@include long-content-fade( $size: 35px );
+			}
 		}
 	}
 
-	.reader-subscription-list-item.reader-subscription-list-item__placeholder {
-		.reader-subscription-list-item__site-url.is-placeholder {
-			margin-top: 2px;
-		}
-
-		.reader-subscription-list-item__site-excerpt.is-placeholder {
-			max-width: 70%;
-		}
+	.reader-subscription-list-item.reader-subscription-list-item__placeholder .reader-subscription-list-item__site-url.is-placeholder {
+		margin-top: 2px;
 	}
 }

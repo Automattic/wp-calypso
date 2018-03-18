@@ -8,7 +8,7 @@
 		.people-profile__role-badge,
 		.gravatar.is-placeholder {
 			color: transparent;
-			background-color: lighten( $gray, 30% );
+			background-color: $gray-lighten-30;
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -45,10 +45,9 @@
 }
 
 .people-profile__username {
-	font-family: $serif;
 	color: $gray-dark;
 	font-size: 16px;
-	font-weight: 700;
+	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
 	overflow: hidden;
@@ -63,7 +62,7 @@
 }
 
 .people-profile__login {
-	color: $gray-dark;
+	color: $gray-text-min;
 	font-size: 13px;
 
 	@include breakpoint( '>480px' ) {
@@ -78,10 +77,9 @@
 }
 
 .people-profile__subscribed {
-	color: $gray;
-	font-size: 11px;
+	color: $gray-text-min;
+	font-size: 12px;
 	margin-top: 4px;
-	text-transform: uppercase;
 }
 
 .people-profile__role-badge {
@@ -89,7 +87,7 @@
 	background: $white;
 	border: 1px solid $gray;
 	border-radius: 2px;
-	color: $gray;
+	color: $gray-text-min;
 	display: inline-block;
 	font-size: 11px;
 	margin-left: 8px;

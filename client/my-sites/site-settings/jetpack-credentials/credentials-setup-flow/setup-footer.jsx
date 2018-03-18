@@ -81,6 +81,6 @@ export default connect(
 		happychatIsAvailable: isHappychatAvailable( state ),
 	} ),
 	{
-		happychatEvent: () => recordTracksEvent( 'rewind_credentials_get_help' ),
+		happychatEvent: () => recordTracksEvent( 'calypso_rewind_credentials_get_help' ),
 	}
 )( localize( SetupFooter ) );

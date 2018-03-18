@@ -260,7 +260,7 @@
 
 		&,
 		li {
-			border-color: lighten( $gray, 30% );
+			border-color: $gray-lighten-30;
 		}
 
 		a {

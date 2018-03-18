@@ -30,7 +30,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should index post types by site ID, post type name pairing', () => {
-			const state = items( null, {
+			const state = items( undefined, {
 				type: POST_TYPES_RECEIVE,
 				siteId: 2916284,
 				types: [ { name: 'post', label: 'Posts' }, { name: 'page', label: 'Pages' } ],

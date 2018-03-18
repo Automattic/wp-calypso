@@ -14,7 +14,7 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import Intervals from './intervals';
 import FollowersCount from 'blocks/followers-count';
-import { isSiteAutomatedTransfer, isSiteStore } from 'state/selectors';
+import { isSiteStore } from 'state/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { navItems, intervals as intervalConstants } from './constants';
 
@@ -29,10 +29,10 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = item => {
-		const { isStore, isAtomic, isJetpack } = this.props;
+		const { isStore, isJetpack } = this.props;
 		switch ( item ) {
 			case 'activity':
-				return isJetpack && ! isAtomic;
+				return isJetpack;
 			case 'store':
 				return isStore;
 			default:
@@ -76,7 +76,6 @@ class StatsNavigation extends Component {
 export default connect( ( state, { siteId } ) => {
 	return {
 		isJetpack: isJetpackSite( state, siteId ),
-		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isStore: isSiteStore( state, siteId ),
 		siteId,
 	};

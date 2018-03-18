@@ -17,7 +17,7 @@ export default function() {
 	if ( isEnabled( 'jetpack/onboarding' ) ) {
 		const validStepNames = values( JETPACK_ONBOARDING_STEPS );
 		page(
-			`/jetpack/onboarding/:stepName(${ validStepNames.join( '|' ) })?/:site`,
+			`/jetpack/start/:stepName(${ validStepNames.join( '|' ) })?/:site`,
 			onboarding,
 			makeLayout,
 			clientRender

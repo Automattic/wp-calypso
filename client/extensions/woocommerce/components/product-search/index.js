@@ -29,6 +29,7 @@ import {
 class ProductSearch extends Component {
 	static propTypes = {
 		singular: PropTypes.bool,
+		showRegularPrice: PropTypes.bool,
 		value: PropTypes.oneOfType( [ PropTypes.array, PropTypes.number ] ),
 		onChange: PropTypes.func.isRequired,
 		products: PropTypes.array,
@@ -132,7 +133,7 @@ class ProductSearch extends Component {
 	};
 
 	renderList = () => {
-		const { isLoading, products, singular, value } = this.props;
+		const { isLoading, products, singular, value, showRegularPrice } = this.props;
 		if ( isLoading ) {
 			return this.renderPlaceholder();
 		}
@@ -149,6 +150,7 @@ class ProductSearch extends Component {
 					onChange={ onChange }
 					product={ product }
 					singular={ singular }
+					showRegularPrice={ showRegularPrice }
 					value={ value }
 				/>
 			);

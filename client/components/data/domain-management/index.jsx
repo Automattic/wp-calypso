@@ -59,7 +59,7 @@ const DomainManagementData = createReactClass( {
 		const { selectedSite: prevSite } = this.props;
 		const { selectedSite: nextSite } = nextProps;
 
-		if ( nextSite !== prevSite ) {
+		if ( nextSite && nextSite !== prevSite ) {
 			fetchDomains( nextSite.ID );
 		}
 	},

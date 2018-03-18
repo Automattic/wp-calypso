@@ -62,8 +62,8 @@
 	height: 200px;
 
 	&.is-uploaded, &.is-uploading {
-		border: 1px solid lighten( $gray, 10% );
-		background-color: lighten( $gray, 30% );
+		border: 1px solid $gray-lighten-10;
+		background-color: $gray-lighten-30;
 	}
 }
 
@@ -83,13 +83,13 @@
 	width: 24px;
 	height: 24px;
 	transform: translate(50%, -50%);
-	border: 1px solid lighten( $gray, 10% );
+	border: 1px solid $gray-lighten-10;
 	border-radius: 50%;
 	background-color: $gray-light;
 	cursor: pointer;
 
 	&:hover {
-		border-color: darken( $gray, 10% );
+		border-color: $gray-darken-10;
 	}
 }
 
@@ -101,10 +101,10 @@
 	width: 20px;
 	height: 20px;
 	margin: 0;
-	color: lighten( $gray, 10% );
+	color: $gray-lighten-10;
 
 	&:hover {
-		color: darken( $gray, 10% );
+		color: $gray-darken-10;
 	}
 }
 

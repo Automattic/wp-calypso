@@ -17,7 +17,7 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-function renderViewButton( product, translate ) {
+function renderViewButton( product, label ) {
 	const url = product && product.permalink;
 	return (
 		// TODO: Do more to validate this URL?
@@ -29,28 +29,25 @@ function renderViewButton( product, translate ) {
 			rel="noopener noreferrer"
 		>
 			<Gridicon icon="visible" />
-			<span>{ translate( 'View' ) }</span>
+			<span>{ label }</span>
 		</Button>
 	);
 }
 
-function renderTrashButton( onTrash, product, isBusy, translate ) {
+function renderTrashButton( onTrash, isBusy, label ) {
 	return (
 		onTrash && (
 			<Button borderless scary onClick={ onTrash ? onTrash : undefined }>
 				<Gridicon icon="trash" />
-				<span>{ translate( 'Delete' ) } </span>
+				<span>{ label } </span>
 			</Button>
 		)
 	);
 }
 
-function renderSaveButton( onSave, product, isBusy, translate ) {
+function renderSaveButton( onSave, isBusy, label ) {
 	const saveExists = 'undefined' !== typeof onSave;
 	const saveDisabled = false === onSave;
-
-	const saveLabel =
-		product && ! isObject( product.id ) ? translate( 'Update' ) : translate( 'Save & Publish' );
 
 	return (
 		saveExists && (
@@ -60,7 +57,7 @@ function renderSaveButton( onSave, product, isBusy, translate ) {
 				disabled={ saveDisabled }
 				busy={ isBusy }
 			>
-				{ saveLabel }
+				{ label }
 			</Button>
 		)
 	);
@@ -68,10 +65,10 @@ function renderSaveButton( onSave, product, isBusy, translate ) {
 
 const ProductHeader = ( { viewEnabled, onTrash, onSave, isBusy, translate, site, product } ) => {
 	const existing = product && ! isObject( product.id );
-
-	const viewButton = viewEnabled && renderViewButton( product, translate );
-	const trashButton = renderTrashButton( onTrash, product, isBusy, translate );
-	const saveButton = renderSaveButton( onSave, product, isBusy, translate );
+	const viewButton = viewEnabled && renderViewButton( product, translate( 'View' ) );
+	const trashButton = renderTrashButton( onTrash, isBusy, translate( 'Delete' ) );
+	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save & Publish' );
+	const saveButton = renderSaveButton( onSave, isBusy, saveLabel );
 
 	const currentCrumb =
 		product && existing ? (
@@ -86,7 +83,7 @@ const ProductHeader = ( { viewEnabled, onTrash, onSave, isBusy, translate, site,
 	];
 
 	return (
-		<ActionHeader breadcrumbs={ breadcrumbs }>
+		<ActionHeader breadcrumbs={ breadcrumbs } primaryLabel={ saveLabel }>
 			{ trashButton }
 			{ viewButton }
 			{ saveButton }

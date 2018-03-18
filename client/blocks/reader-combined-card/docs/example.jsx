@@ -3,25 +3,33 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import ReaderCombinedCardBlock from 'blocks/reader-combined-card';
+import { ReaderCombinedCard, combinedCardPostKeyToKeys } from 'blocks/reader-combined-card';
 import { posts, feed, site } from 'blocks/reader-post-card/docs/fixtures';
 
-const postKey = { blogId: site.ID };
+const postKey = {
+	blogId: site.ID,
+	postIds: posts.map( ( { global_ID } ) => global_ID ),
+};
 
-const ReaderCombinedCard = () => (
+const ReaderCombinedCardExample = () => (
 	<div className="design-assets__group">
 		<div>
-			<ReaderCombinedCardBlock postKey={ postKey } posts={ posts } feed={ feed } site={ site } />
+			<ReaderCombinedCard
+				postKey={ postKey }
+				postKeys={ combinedCardPostKeyToKeys( postKey ) }
+				posts={ posts }
+				feed={ feed }
+				site={ site }
+			/>
 		</div>
 	</div>
 );
 
-ReaderCombinedCard.displayName = 'ReaderCombinedCard';
+ReaderCombinedCardExample.displayName = 'ReaderCombinedCard';
 
-export default ReaderCombinedCard;
+export default ReaderCombinedCardExample;

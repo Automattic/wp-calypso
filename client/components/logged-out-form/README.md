@@ -13,8 +13,8 @@ import config from 'config';
 import Button from 'components/button';
 import FormTextInput from 'components/forms/form-text-input';
 
-const MyLoggedOutForm = React.createClass( {
-	handleSubmit( event ) {
+class MyLoggedOutForm extends React.Component {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		// Handle form submit
@@ -37,6 +37,5 @@ const MyLoggedOutForm = React.createClass( {
 			</LoggedOutFormLinks>
 		);
 	}
-} );
-
+} 
 ```

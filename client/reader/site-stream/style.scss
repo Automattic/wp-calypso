@@ -48,7 +48,7 @@
 		min-height: 152px;
 
 		&:hover {
-			background-color: darken( $gray, 30% );
+			background-color: $gray-darken-30;
 		}
 	}
 }

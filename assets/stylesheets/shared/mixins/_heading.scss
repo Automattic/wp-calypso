@@ -3,7 +3,7 @@
 // ==========================================================================
 
 @mixin heading {
-	color: darken( $gray, 20% );
+	color: $gray-darken-20;
 	font-size: 2rem;
 	font-weight: 300;
 	margin: 1em 0;

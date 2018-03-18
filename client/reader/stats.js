@@ -68,9 +68,6 @@ function getLocation( path ) {
 	if ( path.indexOf( '/recommendations/mine' ) === 0 ) {
 		return 'recommended_foryou';
 	}
-	if ( path.indexOf( '/recommendations' ) === 0 ) {
-		return 'recommended_topics';
-	}
 	if ( path.indexOf( '/following/edit' ) === 0 ) {
 		return 'following_edit';
 	}
@@ -199,6 +196,10 @@ export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
+	if ( ! blogId || ! blogUrl || ! postId ) {
+		return;
+	}
+
 	const params = {
 		ref: 'http://wordpress.com/',
 		reader: 1,

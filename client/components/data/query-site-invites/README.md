@@ -36,7 +36,7 @@ function MyInvitesList( { invites } ) {
 export default connect(
 	state => {
 		return {
-			invites: getInvitesForSite( state, SITE_ID ),
+			pendingInvites: getPendingInvitesForSite( state, SITE_ID ),
 		};
 	}
 )( MyInvitesList );

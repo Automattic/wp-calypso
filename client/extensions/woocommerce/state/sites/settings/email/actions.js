@@ -106,7 +106,7 @@ export const emailSettingsSubmitSettings = ( siteId, settings ) => dispatch => {
 	// disable if user has emptied the input field
 	forEach( [ 'email_new_order', 'email_cancelled_order', 'email_failed_order' ], option => {
 		if ( get( settings, [ option, 'recipient', 'value' ], '' ).trim() === '' ) {
-			if ( has( settings[ option ], 'enabled ' ) ) {
+			if ( has( settings, [ option, 'enabled' ] ) ) {
 				settings[ option ].enabled.value = 'no';
 			}
 		}

@@ -136,7 +136,6 @@ class FollowingManageSubscriptions extends Component {
 								followSource: READER_SUBSCRIPTIONS,
 							} }
 							width={ width }
-							passthroughProp={ sortOrder }
 							totalCount={ sortedFollows.length }
 							windowScrollerRef={ this.props.windowScrollerRef }
 							rowRenderer={ siteRowRenderer }
@@ -144,10 +143,12 @@ class FollowingManageSubscriptions extends Component {
 					) }
 					{ noSitesMatchQuery && (
 						<span>
-							{ translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
-								components: { italic: <i /> },
-								args: query,
-							} ) }
+							{ query
+								? translate( 'Sorry, no followed sites match {{italic}}%s.{{/italic}}', {
+										components: { italic: <i /> },
+										args: query,
+									} )
+								: translate( 'Sorry, no followed sites found.' ) }
 						</span>
 					) }
 				</div>

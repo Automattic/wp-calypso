@@ -10,7 +10,7 @@ import { mapValues, omit } from 'lodash';
  * Internal dependencies
  */
 import ThemeQueryManager from 'lib/query-manager/theme';
-import { combineReducers, createReducer, isValidStateWithSchema } from 'state/utils';
+import { combineReducers, createReducer } from 'state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -325,22 +325,20 @@ export const queries = ( () => {
 			},
 			[ SERIALIZE ]: state => {
 				const serializedState = mapValues( state, ( { data, options } ) => ( { data, options } ) );
-				return { ...serializedState, _timestamp: Date.now() };
+				serializedState._timestamp = Date.now();
+				return serializedState;
 			},
 			[ DESERIALIZE ]: state => {
 				if ( state._timestamp && state._timestamp + MAX_THEMES_AGE < Date.now() ) {
 					return {};
 				}
 				const noTimestampState = omit( state, '_timestamp' );
-				if ( ! isValidStateWithSchema( noTimestampState, queriesSchema ) ) {
-					return {};
-				}
-
 				return mapValues( noTimestampState, ( { data, options } ) => {
 					return new ThemeQueryManager( data, options );
 				} );
 			},
-		}
+		},
+		queriesSchema
 	);
 } )();
 

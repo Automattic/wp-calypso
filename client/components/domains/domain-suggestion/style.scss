@@ -1,3 +1,5 @@
+/** @format */
+
 .domain-suggestion {
 	box-sizing: border-box;
 	display: flex;
@@ -5,7 +7,7 @@
 
 	@include clear-fix;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		padding: 15px 20px;
 
 		.domain-product-price {
@@ -23,10 +25,11 @@
 	}
 
 	&.is-added {
-		background-color: lighten( $gray, 35% );
+		background-color: lighten($gray, 35%);
 
 		.domain-suggestion__content {
-			h3, .domain-product-price {
+			h3,
+			.domain-product-price {
 				color: $gray;
 			}
 		}
@@ -37,7 +40,7 @@
 	width: 100%;
 	min-height: 32px;
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		display: flex;
 		margin: 8px 0 0 0;
 	}
@@ -69,12 +72,12 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		color: transparent;
 		min-height: 44px;
 	}
 
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( '>660px' ) {
 		.is-placeholder & {
 			margin-right: 50%;
 			min-height: 22px;
@@ -82,7 +85,7 @@
 			margin-bottom: 9px;
 		}
 
-		.is-placeholder:nth-of-type(2n+1) & {
+		.is-placeholder:nth-of-type(2n + 1) & {
 			margin-right: 52%;
 		}
 
@@ -94,7 +97,7 @@
 	> h3 {
 		word-break: break-all;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( '>660px' ) {
 			width: 75%;
 		}
 
@@ -110,9 +113,17 @@
 	text-align: center;
 	color: $blue-medium;
 
+	// NOTE: .is-kracken-ui can be removed once feature is deployed.
+	.is-kracken-ui &.is-primary {
+		color: $white;
+		padding-left: 3em;
+		padding-right: 3em;
+		margin-left: 1em;
+	}
+
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: lighten( $gray, 30% );
+		background-color: $gray-lighten-30;
 		border: none;
 		border-radius: 0;
 		color: transparent;
@@ -122,13 +133,12 @@
 }
 
 .domain-suggestion__chevron {
-
 	margin-left: 10px;
 	flex: 1 0 auto;
 	color: $gray;
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		color: lighten( $gray, 30% );
+		color: $gray-lighten-30;
 	}
 }

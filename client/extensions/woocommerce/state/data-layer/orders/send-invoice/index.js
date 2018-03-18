@@ -10,19 +10,12 @@ import {
 } from 'woocommerce/state/sites/orders/send-invoice/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_ORDER_INVOICE_SEND } from 'woocommerce/state/action-types';
+import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
 export const fetch = action => {
 	const { siteId, orderId } = action;
 	return request( siteId, action ).post( `orders/${ orderId }/send_invoice` );
 };
-
-export function fromApi( response ) {
-	// Check if the request failed at the remote site.
-	if ( ! response.data ) {
-		throw new Error( 'Unable to send invoice', response );
-	}
-	return response;
-}
 
 export const onError = ( action, error ) => dispatch => {
 	const { siteId, orderId } = action;
@@ -43,6 +36,6 @@ export const onSuccess = ( action, { data } ) => dispatch => {
 
 export default {
 	[ WOOCOMMERCE_ORDER_INVOICE_SEND ]: [
-		dispatchRequestEx( { fetch, onSuccess, onError, fromApi } ),
+		dispatchRequestEx( { fetch, onSuccess, onError, fromApi: verifyResponseHasData } ),
 	],
 };

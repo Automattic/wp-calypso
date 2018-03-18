@@ -12,7 +12,6 @@ import React from 'react';
  */
 import DocService from './service';
 import DocumentHead from 'components/data/document-head';
-import CompactCard from 'components/card/compact';
 import highlight from 'lib/highlight';
 
 export default class extends React.Component {
@@ -103,12 +102,14 @@ export default class extends React.Component {
 		return (
 			<div className="devdocs devdocs__doc">
 				{ title ? <DocumentHead title={ title } /> : null }
-				<CompactCard className="devdocs__doc-header">
-					Path: <code>{ this.props.path }</code>
-					<a href={ editURL } target="_blank" rel="noopener noreferrer">
-						Improve this document on GitHub &rarr;
-					</a>
-				</CompactCard>
+				<a
+					className="devdocs__doc-edit-link"
+					href={ editURL }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Improve this document on GitHub
+				</a>
 				<div
 					className="devdocs__doc-content"
 					ref="body"

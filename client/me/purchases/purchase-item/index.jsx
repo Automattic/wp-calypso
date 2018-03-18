@@ -20,6 +20,7 @@ import {
 	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning,
+	subscribedWithinPastWeek,
 } from 'lib/purchases';
 import {
 	isDomainProduct,
@@ -66,8 +67,9 @@ class PurchaseItem extends Component {
 
 		if ( isExpiring( purchase ) ) {
 			if ( purchase.expiryMoment < moment().add( 30, 'days' ) ) {
+				const status = subscribedWithinPastWeek( purchase ) ? 'is-info' : 'is-error';
 				return (
-					<Notice isCompact status="is-error" icon="notice">
+					<Notice isCompact status={ status } icon="notice">
 						{ translate( 'Expires %(timeUntilExpiry)s', {
 							args: {
 								timeUntilExpiry: purchase.expiryMoment.fromNow(),

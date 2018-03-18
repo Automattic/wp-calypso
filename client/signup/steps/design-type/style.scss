@@ -13,9 +13,9 @@
 	cursor: pointer;
 
 	h2 {
-		color: darken( $gray, 20% );
+		color: $gray-darken-20;
 		padding-left: 15px;
-		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+		border-top: 1px solid transparentize( $gray-lighten-20, .5 );
 		line-height: 1.5em;
 		padding-top: 1em;
 		padding-bottom: 1em;
@@ -65,7 +65,7 @@
 	@at-root #{&}-copy {
 		text-align: center;
 		padding: 15px;
-		border-top: 1px solid transparentize( lighten( $gray, 20% ), .5 );
+		border-top: 1px solid transparentize( $gray-lighten-20, .5 );
 
 		@include breakpoint( "<480px" ) {
 			text-align: left;

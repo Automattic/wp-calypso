@@ -57,6 +57,10 @@
 	.form-fieldset:last-child {
 		margin-bottom: 0;
 	}
+
+	.label-settings__external {
+		display: none;
+	}
 }
 
 .label-settings__placeholder {
@@ -89,5 +93,14 @@
 	.gridicon {
 		fill: transparent;
 		stroke: transparent;
+	}
+}
+
+&.dialog.card.add-credit-card-modal .dialog__content {
+	max-width: 720px;
+	padding: 0;
+	
+	.header-cake {
+		margin-bottom: 0;
 	}
 }
