@@ -21,6 +21,7 @@ import { isEnabled } from 'config';
 /**
  * Docs examples
  */
+import ActionCard from 'blocks/action-card/docs/example';
 import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import CalendarButton from 'blocks/calendar-button/docs/example';
 import CalendarPopover from 'blocks/calendar-popover/docs/example';
@@ -122,6 +123,7 @@ export default class AppComponents extends React.Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
+					<ActionCard />
 					<AuthorSelector />
 					<CalendarButton />
 					<CalendarPopover />

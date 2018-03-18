@@ -14,7 +14,7 @@ import page from 'page';
  */
 import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
-import CTACard from './cta-card';
+import ActionCard from 'blocks/action-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -71,7 +71,7 @@ class SelectBusinessType extends Component {
 					/>
 				</CompactCard>
 
-				<CTACard
+				<ActionCard
 					headerText={ translate( 'Physical Location or Service Area', {
 						comment: 'In the context of a business activity, brick and mortar or online service',
 					} ) }
@@ -89,7 +89,7 @@ class SelectBusinessType extends Component {
 					buttonOnClick={ this.trackCreateMyListingClick }
 				/>
 
-				<CTACard
+				<ActionCard
 					headerText={ translate( 'Online Only', {
 						comment: 'In the context of a business activity, as opposed to a brick and mortar',
 					} ) }

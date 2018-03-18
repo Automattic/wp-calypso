@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import CompactCard from 'components/card/compact';
 import Button from 'components/button';
 
-const CTACard = ( {
+const ActionCard = ( {
 	headerText,
 	mainText,
 	buttonPrimary,
@@ -23,12 +23,12 @@ const CTACard = ( {
 	buttonHref,
 	buttonOnClick,
 } ) => (
-	<CompactCard className="select-business-type__cta-card">
-		<div className="select-business-type__cta-card-main">
-			<h2 className="select-business-type__cta-card-heading">{ headerText }</h2>
+	<CompactCard className="action-card">
+		<div className="action-card__main">
+			<h2 className="action-card__heading">{ headerText }</h2>
 			<p>{ mainText }</p>
 		</div>
-		<div className="select-business-type__cta-card-button-container">
+		<div className="action-card__button-container">
 			<Button
 				primary={ buttonPrimary }
 				href={ buttonHref }
@@ -41,7 +41,7 @@ const CTACard = ( {
 	</CompactCard>
 );
 
-CTACard.propTypes = {
+ActionCard.propTypes = {
 	headerText: PropTypes.string.isRequired,
 	mainText: PropTypes.string.isRequired,
 	buttonPrimary: PropTypes.bool,
@@ -52,4 +52,4 @@ CTACard.propTypes = {
 	buttonTarget: PropTypes.string,
 };
 
-export default CTACard;
+export default ActionCard;
