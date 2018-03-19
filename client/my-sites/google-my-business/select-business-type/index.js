@@ -17,6 +17,7 @@ import CompactCard from 'components/card/compact';
 import CTACard from './cta-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
+import ExternalLink from 'components/external-link';
 
 class SelectBusinessType extends Component {
 	static propTypes = {
@@ -38,7 +39,9 @@ class SelectBusinessType extends Component {
 	};
 
 	trackGoogleMyBusinessLinkClick = () => {
-		this.props.recordTracksEvent( 'calypso_google_my_business_select_business_type_link_click' );
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_business_type_google_my_business_link_click'
+		);
 	};
 
 	goBack = () => {
@@ -62,15 +65,16 @@ class SelectBusinessType extends Component {
 
 						<p>
 							{ translate(
-								'{{a}}Google My Business{{/a}} lists your local business on Google Search and Google Maps. ' +
+								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
 									'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
-										a: (
-											<a
+										link: (
+											<ExternalLink
 												href="https://www.google.com/business/"
 												target="_blank"
 												rel="noopener noreferrer"
+												icon={ true }
 												onClick={ this.trackGoogleMyBusinessLinkClick }
 											/>
 										),
