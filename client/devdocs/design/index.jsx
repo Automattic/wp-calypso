@@ -144,7 +144,7 @@ class DesignAssets extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
-					<ActionCard />
+					<ActionCard readmeFilePath="action-card" />
 					<Accordions
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"

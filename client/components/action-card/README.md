@@ -27,78 +27,54 @@ render() {
 ## Props
 
 ### `headerText`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>Yes</td></tr>
-</table>
+  - **Type:** `String`
+  - **Required:** `yes`
 
 Header text of the card
 
 ### `mainText`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>Yes</td></tr>
-</table>
+  - **Type:** `String`
+  - **Required:** `yes`
 
 Text that describes the header
 
 ### `buttonText`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>Yes</td></tr>
-</table>
+  - **Type:** `String`
+  - **Required:** `yes`
 
 Label for the call to action button
 
 ### `buttonIcon`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>undefined</code></td></tr>	
-</table>
+  - **Type:** `String`
+  - **Required:** `no`
+  - **Default:** `undefined`
 
 GridIcon name to place on the button
 
 ### `buttonPrimary`
-
-<table>
-	<tr><td>Type</td><td>bool</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>undefined</code></td></tr>
-</table>
+  - **Type:** `bool`
+  - **Required:** `no`
+  - **Default:** `undefined`
 
 Whether pass true to the button's primary attribute
 
 ### `buttonHref`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>undefined</code></td></tr>
-</table>
+  - **Type:** `String`
+  - **Required:** `no`
+  - **Default:** `undefined`
 
 Href to pass to the button
 
 ### `buttonTarget`
-
-<table>
-	<tr><td>Type</td><td>String</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>undefined</code></td></tr>
-</table>
+  - **Type:** `String`
+  - **Required:** `no`
+  - **Default:** `undefined`
 
 Button target, to use in conjunction with `buttonHref`
 
 ### `buttonOnClick`
-
-<table>
-	<tr><td>Type</td><td>Function</td></tr>
-	<tr><td>Required</td><td>No</td></tr>
-	<tr><td>Default</td><td><code>undefined</code></td></tr>
-</table>
+  - **Type:** `Function`
+  - **Required:** `no`
+  - **Default:** `undefined`
 
 Button onClick handler
