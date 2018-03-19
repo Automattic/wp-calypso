@@ -21,7 +21,14 @@ const StatsWidgetList = ( {
 	query,
 	viewLink,
 	viewText,
+	onViewClick,
 } ) => {
+	const onView = () => {
+		if ( onViewClick ) {
+			onViewClick( statType );
+		}
+	};
+
 	return (
 		<div className="stats-widget__box-contents stats-type-list">
 			<Module
@@ -45,7 +52,9 @@ const StatsWidgetList = ( {
 				Array.isArray( fetchedData ) &&
 				fetchedData.length && (
 					<div className="stats-widget__more">
-						<a href={ viewLink }>{ viewText }</a>
+						<a href={ viewLink } onClick={ onView }>
+							{ viewText }
+						</a>
 					</div>
 				) ) ||
 				null }
@@ -66,6 +75,7 @@ StatsWidgetList.propTypes = {
 	fetchedData: PropTypes.array,
 	viewLink: PropTypes.string.isRequired,
 	viewText: PropTypes.string.isRequired,
+	onViewClick: PropTypes.func,
 };
 
 export default StatsWidgetList;
