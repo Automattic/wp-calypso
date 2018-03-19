@@ -25,7 +25,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
-import { externalRedirect } from 'lib/route';
+import { addQueryArgs, externalRedirect } from 'lib/route';
 import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
@@ -215,10 +215,15 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	footerLink() {
-		const { translate } = this.props;
+		const { siteToConnect, translate } = this.props;
+		const manualInstallUrl = addQueryArgs(
+			{ url: siteToConnect },
+			'/jetpack/connect/instructions'
+		);
+
 		return (
 			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
+				<LoggedOutFormLinkItem href={ manualInstallUrl }>
 					{ translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
 				<HelpButton label={ 'Get help connecting your site' } />
