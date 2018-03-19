@@ -33,8 +33,9 @@ export class Comment extends Component {
 		postId: PropTypes.number,
 		commentId: PropTypes.number,
 		commentsListQuery: PropTypes.object,
-		isEditMode: PropTypes.bool,
+		isAtMaxDepth: PropTypes.bool,
 		isBulkMode: PropTypes.bool,
+		isEditMode: PropTypes.bool,
 		isPostView: PropTypes.bool,
 		isSelected: PropTypes.bool,
 		redirect: PropTypes.func,
@@ -151,6 +152,7 @@ export class Comment extends Component {
 			commentId,
 			commentIsPending,
 			commentsListQuery,
+			isAtMaxDepth,
 			isBulkMode,
 			isLoading,
 			isPostView,
@@ -162,6 +164,7 @@ export class Comment extends Component {
 		const { isEditMode, isReplyVisible } = this.state;
 
 		const classes = classNames( 'comment', {
+			'is-at-max-depth': isAtMaxDepth,
 			'is-bulk-mode': isBulkMode,
 			'is-edit-mode': isEditMode,
 			'is-placeholder': isLoading,
