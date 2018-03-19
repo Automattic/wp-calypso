@@ -1,4 +1,4 @@
-.action-card {
+.card.action-card {
 	display: flex;
 
 	@include breakpoint( '<960px' ) {
