@@ -20,7 +20,9 @@ const tracksDebug = debug( 'calypso:analytics:tracks' );
 
 class TracksOptOut extends React.Component {
 	static propTypes = {
-		userSettings: PropTypes.object.isRequired,
+		userSettings: PropTypes.shape( {
+			getSetting: PropTypes.func.isRequired,
+		} ).isRequired,
 		setTracksOptOut: PropTypes.func.isRequired,
 	};
 
@@ -36,11 +38,17 @@ class TracksOptOut extends React.Component {
 		if ( this.props.userSettings !== nextProps.userSettings ) {
 			this.props.userSettings.off( 'change', this.syncTracksOptOut );
 			nextProps.userSettings.on( 'change', this.syncTracksOptOut );
+
+			// In case we get the prop AFTER it already triggered its first `change` event
+			const optOut = this.props.userSettings.getSetting( 'tracks_opt_out' );
+			const nextOptOut = nextProps.userSettings.getSetting( 'tracks_opt_out' );
+			if ( optOut !== nextOptOut && typeof nextOptOut === 'boolean' ) {
+				this.syncTracksOptOut( nextOptOut );
+			}
 		}
 	}
 
-	syncTracksOptOut = () => {
-		const isOptedOut = this.props.userSettings.getSetting( 'tracks_opt_out' );
+	syncTracksOptOut = ( isOptedOut = this.props.userSettings.getSetting( 'tracks_opt_out' ) ) => {
 		tracksDebug( `Syncing tracks opt out status to \`${ isOptedOut }\`` );
 		this.props.setTracksOptOut( isOptedOut );
 	};
