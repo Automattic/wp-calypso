@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -65,6 +66,10 @@ class ProductListItem extends Component {
 			translate,
 		} = this.props;
 		const radioId = `simple-payments-list-item-radio-${ paymentId }`;
+		const labelClasses = classnames( {
+			'editor-simple-payments-modal__list-label': true,
+			'is-error': isNaN( price ),
+		} );
 
 		return (
 			<CompactCard className="editor-simple-payments-modal__list-item">
@@ -75,7 +80,7 @@ class ProductListItem extends Component {
 					checked={ isSelected }
 					onChange={ this.handleRadioChange }
 				/>
-				<label className="editor-simple-payments-modal__list-label" htmlFor={ radioId }>
+				<label className={ labelClasses } htmlFor={ radioId }>
 					<div className="editor-simple-payments-modal__list-name">{ title }</div>
 					<div>{ this.formatPrice( price, currency ) }</div>
 				</label>
