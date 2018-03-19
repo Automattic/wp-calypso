@@ -37,6 +37,12 @@ class SelectBusinessType extends Component {
 		);
 	};
 
+	trackGoogleMyBusinessLinkClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_business_type_link_click'
+		);
+	}
+
 	goBack = () => {
 		page.back( `/stats/day/${ this.props.siteId }` );
 	};
@@ -58,8 +64,18 @@ class SelectBusinessType extends Component {
 
 						<p>
 							{ translate(
-								'Google My Business lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area.'
+								'{{a}}Google My Business{{/a}} lists your local business on Google Search and Google Maps. ' +
+									'It works for businesses that have a physical location or serve a local area.',
+								{
+									components: {
+										a: <a
+											href="https://www.google.com/business/"
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ this.trackGoogleMyBusinessLinkClick }
+										/>,
+									},
+								}
 							) }
 						</p>
 					</div>
