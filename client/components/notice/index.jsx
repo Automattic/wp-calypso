@@ -17,6 +17,7 @@ export class Notice extends Component {
 		duration: 0,
 		icon: null,
 		isCompact: false,
+		isInline: false,
 		onDismissClick: noop,
 		status: null,
 		text: null,
@@ -27,6 +28,7 @@ export class Notice extends Component {
 		duration: PropTypes.number,
 		icon: PropTypes.string,
 		isCompact: PropTypes.bool,
+		isInline: PropTypes.bool,
 		onDismissClick: PropTypes.func,
 		showDismiss: PropTypes.bool,
 		status: PropTypes.oneOf( [ 'is-error', 'is-info', 'is-success', 'is-warning', 'is-plain' ] ),
@@ -81,14 +83,16 @@ export class Notice extends Component {
 			className,
 			icon,
 			isCompact,
+			isInline,
 			onDismissClick,
-			showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
+			showDismiss = ! ( isCompact || isInline ), // by default, show on normal notices, don't show on compact or inline ones
 			status,
 			text,
 			translate,
 		} = this.props;
 		const classes = classnames( 'notice', status, className, {
 			'is-compact': isCompact,
+			'is-inline': isInline,
 			'is-dismissable': showDismiss,
 		} );
 
