@@ -45,14 +45,6 @@ export class OrgCredentialsForm extends Component {
 		isSubmitting: false,
 	};
 
-	getInitialFields() {
-		return {
-			username: '',
-			password: '',
-			isSubmitting: false,
-		};
-	}
-
 	handleSubmit = event => {
 		const { siteToConnect } = this.props;
 		event.preventDefault();
