@@ -16,8 +16,6 @@ import {
 	getAccountRecoveryEmail,
 } from 'state/account-recovery/settings/selectors';
 
-import { dispatchError } from '../utils';
-
 const getUpdateSuccessMessage = ( target, getState ) => {
 	switch ( target ) {
 		case 'phone':
@@ -122,38 +120,31 @@ const getResentFailedMessage = target => {
 	}
 };
 
-export const onAccountRecoverySettingsFetchFailed = dispatchError(
-	translate( 'An error occurred while fetching your account recovery settings.' )
-);
+export const onAccountRecoverySettingsFetchFailed = () =>
+	errorNotice( translate( 'An error occurred while fetching your account recovery settings.' ) );
 
-export const onAccountRecoverySettingsUpdateSuccess = ( dispatch, { target }, getState ) =>
+export const onAccountRecoverySettingsUpdateSuccess = ( { target } ) => ( dispatch, getState ) =>
 	dispatch( successNotice( getUpdateSuccessMessage( target, getState ) ) );
 
-export const onAccountRecoverySettingsUpdateFailed = ( dispatch, { target } ) =>
-	dispatch( errorNotice( getUpdateErrorMessage( target ) ) );
+export const onAccountRecoverySettingsUpdateFailed = ( { target } ) =>
+	errorNotice( getUpdateErrorMessage( target ) );
 
-export const onAccountRecoverySettingsDeleteSuccess = ( dispatch, { target } ) =>
-	dispatch( successNotice( getDeleteSuccessMessage( target ) ) );
+export const onAccountRecoverySettingsDeleteSuccess = ( { target } ) =>
+	successNotice( getDeleteSuccessMessage( target ) );
 
-export const onAccountRecoverySettingsDeleteFailed = ( dispatch, { target } ) =>
-	dispatch( errorNotice( getDeleteErrorMessage( target ) ) );
+export const onAccountRecoverySettingsDeleteFailed = ( { target } ) =>
+	errorNotice( getDeleteErrorMessage( target ) );
 
-export const onResentAccountRecoveryEmailValidationSuccess = ( dispatch, { target } ) =>
-	dispatch( successNotice( getResentSuccessMessage( target ) ) );
+export const onResentAccountRecoveryEmailValidationSuccess = ( { target } ) =>
+	successNotice( getResentSuccessMessage( target ) );
 
-export const onResentAccountRecoveryEmailValidationFailed = ( dispatch, { target } ) =>
-	dispatch( errorNotice( getResentFailedMessage( target ) ) );
+export const onResentAccountRecoveryEmailValidationFailed = ( { target } ) =>
+	errorNotice( getResentFailedMessage( target ) );
 
-export const onAccountRecoveryPhoneValidationSuccess = dispatch =>
-	dispatch(
-		successNotice( translate( 'Your recovery SMS number has been validated successfully.' ) )
-	);
+export const onAccountRecoveryPhoneValidationSuccess = () =>
+	successNotice( translate( 'Your recovery SMS number has been validated successfully.' ) );
 
-export const onAccountRecoveryPhoneValidationFailed = dispatch =>
-	dispatch(
-		errorNotice(
-			translate(
-				'There was a problem validating your recovery SMS number. Please try again later.'
-			)
-		)
+export const onAccountRecoveryPhoneValidationFailed = () =>
+	errorNotice(
+		translate( 'There was a problem validating your recovery SMS number. Please try again later.' )
 	);
