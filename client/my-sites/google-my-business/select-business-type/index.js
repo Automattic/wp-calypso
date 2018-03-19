@@ -38,10 +38,8 @@ class SelectBusinessType extends Component {
 	};
 
 	trackGoogleMyBusinessLinkClick = () => {
-		this.props.recordTracksEvent(
-			'calypso_google_my_business_select_business_type_link_click'
-		);
-	}
+		this.props.recordTracksEvent( 'calypso_google_my_business_select_business_type_link_click' );
+	};
 
 	goBack = () => {
 		page.back( `/stats/day/${ this.props.siteId }` );
@@ -68,12 +66,14 @@ class SelectBusinessType extends Component {
 									'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
-										a: <a
-											href="https://www.google.com/business/"
-											target="_blank"
-											rel="noopener noreferrer"
-											onClick={ this.trackGoogleMyBusinessLinkClick }
-										/>,
+										a: (
+											<a
+												href="https://www.google.com/business/"
+												target="_blank"
+												rel="noopener noreferrer"
+												onClick={ this.trackGoogleMyBusinessLinkClick }
+											/>
+										),
 									},
 								}
 							) }
@@ -92,10 +92,10 @@ class SelectBusinessType extends Component {
 						comment: 'In the context of a business activity, brick and mortar or online service',
 					} ) }
 					mainText={ translate(
-						'My business has a physical location customers can visit, ' +
+						'Your business has a physical location customers can visit, ' +
 							'or provides goods and services to local customers, or both.'
 					) }
-					buttonText={ translate( 'Create My Listing', {
+					buttonText={ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
 					} ) }
 					buttonIcon="external"
