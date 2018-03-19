@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { includes } from 'lodash';
+import { includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,8 +40,8 @@ const LayoutLoggedOut = ( {
 	useOAuth2Layout,
 } ) => {
 	const classes = {
-		[ 'is-group-' + section.group ]: !! ( section && section.group ),
-		[ 'is-section-' + section.name ]: !! ( section && section.name ),
+		[ 'is-group-' + section.group ]: !! get( section, 'group' ),
+		[ 'is-section-' + section.name ]: !! get( section, 'name' ),
 		'focus-content': true,
 		'has-no-sidebar': ! hasSidebar( section ),
 		'has-no-masterbar': masterbarIsHidden,
