@@ -15,6 +15,7 @@ import {
 	isDefaultLocale,
 	removeLocaleFromPath,
 	isLocaleVariant,
+	hasTranslationSet,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -230,6 +231,21 @@ describe( 'utils', () => {
 
 		test( 'should detect a root language', () => {
 			expect( isLocaleVariant( 'de' ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#hasTranslationSet', () => {
+		test( 'should return false by default', () => {
+			expect( hasTranslationSet() ).to.be.false;
+		} );
+
+		test( 'should return false for elements in the exception list', () => {
+			expect( hasTranslationSet( 'en' ) ).to.be.false;
+			expect( hasTranslationSet( 'sr_latin' ) ).to.be.false;
+		} );
+
+		test( 'should return true for languages not in the exception list', () => {
+			expect( hasTranslationSet( 'de' ) ).to.be.true;
 		} );
 	} );
 } );
