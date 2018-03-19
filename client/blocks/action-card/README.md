@@ -1,31 +1,30 @@
 Action Card
-=========
-This is a card component that has a call to action button
+===========
 
-#### How to use:
+This is a [`Card` component](../../components/card) that has a call-to-action button.
 
-```js
+## Usage
+
+```es6
 import ActionCard from 'blocks/action-card';
 
-render: function() {
-  return (
-	<ActionCard
-		headerText={ 'Header' }
-		mainText={ 'Some text' }
-		buttonText={ 'Call to action!' }
-		buttonIcon="external"
-		buttonPrimary={ true }
-		buttonHref="https://wordpress.com"
-		buttonTarget="_blank"
-		buttonOnClick={ noop }
-	/>;
-  );
+render() {
+	return (
+		<ActionCard
+			headerText={ 'Header' }
+			mainText={ 'Some text' }
+			buttonText={ 'Call to action!' }
+			buttonIcon="external"
+			buttonPrimary={ true }
+			buttonHref="https://wordpress.com"
+			buttonTarget="_blank"
+			buttonOnClick={ noop }
+		/>;
+	);
 }
 ```
 
 ## Props
-
-Below is a list of supported props.
 
 ### `headerText`
 
