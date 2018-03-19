@@ -293,7 +293,7 @@ if ( shouldMinify ) {
 					 * Enable when the following is resolved:
 					 * https://github.com/mishoo/UglifyJS2/issues/3010
 					 */
-					conditionals: false,
+					collapse_vars: false,
 				},
 				ecma: 5,
 			},
