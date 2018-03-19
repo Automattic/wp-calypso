@@ -3,10 +3,10 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import config from 'config';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import page from 'page';
 
 /**
@@ -16,6 +16,8 @@ import Button from 'components/button';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import { getLink } from 'woocommerce/lib/nav-utils';
+import { getTotalProducts } from 'woocommerce/state/sites/products/selectors';
+import InventoryWidget from './widgets/inventory-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import StatsWidget from './widgets/stats-widget';
 import { recordTrack } from 'woocommerce/lib/analytics';
@@ -64,6 +66,7 @@ class ManageNoOrdersView extends Component {
 				imagePosition="bottom"
 				imageFlush
 				title={ translate( 'Looking for stats?' ) }
+				width="half"
 			>
 				<p>
 					{ translate(
@@ -74,6 +77,10 @@ class ManageNoOrdersView extends Component {
 				<Button onClick={ trackClick }>{ translate( 'View stats' ) }</Button>
 			</DashboardWidget>
 		);
+	};
+
+	renderInventoryWidget = () => {
+		return <InventoryWidget width="half" />;
 	};
 
 	renderViewAndTestWidget = () => {
@@ -90,6 +97,7 @@ class ManageNoOrdersView extends Component {
 			<DashboardWidget
 				className="dashboard__view-and-test-widget"
 				title={ translate( 'Test all the things' ) }
+				width="half"
 			>
 				<p>
 					{ translate(
@@ -111,13 +119,13 @@ class ManageNoOrdersView extends Component {
 	};
 
 	render() {
-		const { site } = this.props;
+		const { hasProducts, site } = this.props;
 		return (
 			<div className="dashboard__manage-no-orders">
 				<QuerySettingsProducts siteId={ site && site.ID } />
 				{ this.renderShareWidget() }
 				<DashboardWidgetRow>
-					{ this.renderStatsWidget() }
+					{ hasProducts ? this.renderInventoryWidget() : this.renderStatsWidget() }
 					{ this.renderViewAndTestWidget() }
 				</DashboardWidgetRow>
 				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
@@ -126,11 +134,7 @@ class ManageNoOrdersView extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
-	const shopPageId = getProductsSettingValue( state, 'woocommerce_shop_page_id' );
-	return {
-		shopPageId,
-	};
-}
-
-export default connect( mapStateToProps )( localize( ManageNoOrdersView ) );
+export default connect( state => ( {
+	hasProducts: getTotalProducts( state ) > 0,
+	shopPageId: getProductsSettingValue( state, 'woocommerce_shop_page_id' ),
+} ) )( localize( ManageNoOrdersView ) );

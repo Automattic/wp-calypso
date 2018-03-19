@@ -3,6 +3,7 @@
 
 .woocommerce {
 	@import 'app/dashboard/style';
+	@import 'app/dashboard/widgets/inventory-widget/style';
 	@import 'app/dashboard/setup/style';
 	@import 'app/order/style';
 	@import 'app/order/order-created/style';
