@@ -20,12 +20,10 @@ export default localize( ( { isBusinessPlan, translate } ) => {
 				title={ translate( 'Advertising removed' ) }
 				description={
 					isBusinessPlan
-						? translate(
-								'All WordPress.com advertising has been removed from your site.'
-							)
+						? translate( 'All WordPress.com advertising has been removed from your site.' )
 						: translate(
 								'All WordPress.com advertising has been removed from your site. ' +
-									' Upgrade to remove the WordPress.com footer credit.'
+									'Upgrade to remove the WordPress.com footer credit.'
 							)
 				}
 			/>

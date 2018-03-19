@@ -32,8 +32,8 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon={ <img alt="" src="/calypso/images/upgrades/customize-theme.svg" /> }
 				title={ translate( 'Advanced customization' ) }
 				description={ translate(
-					"Change your site’s appearance in a few clicks, with an expanded selection" +
-						"of fonts and colors, and access to custom CSS."
+					"Change your site's appearance in a few clicks, with an expanded " +
+						'selection of fonts and colors, and access to custom CSS.'
 				) }
 				buttonText={ translate( 'Start customizing' ) }
 				href={ getCustomizeLink( selectedSite ) }
