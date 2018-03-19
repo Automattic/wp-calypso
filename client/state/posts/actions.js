@@ -229,19 +229,20 @@ export function savePost( siteId, postId = null, post ) {
 		const method = postId ? 'update' : 'add';
 		const saveResult = postHandle[ method ]( { apiVersion: '1.2' }, normalizedPost );
 
-		saveResult
-			.then( savedPost => {
+		saveResult.then(
+			savedPost => {
 				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
 				dispatch( receivePost( savedPost ) );
-			} )
-			.catch( error => {
+			},
+			error => {
 				dispatch( {
 					type: POST_SAVE_FAILURE,
 					siteId,
 					postId,
 					error,
 				} );
-			} );
+			}
+		);
 
 		return saveResult;
 	};
@@ -280,19 +281,20 @@ export function trashPost( siteId, postId ) {
 			.post( postId )
 			.delete();
 
-		trashResult
-			.then( savedPost => {
+		trashResult.then(
+			savedPost => {
 				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
 				dispatch( receivePost( savedPost ) );
-			} )
-			.catch( error => {
+			},
+			error => {
 				dispatch( {
 					type: POST_SAVE_FAILURE,
 					siteId,
 					postId,
 					error,
 				} );
-			} );
+			}
+		);
 
 		return trashResult;
 	};
@@ -320,22 +322,23 @@ export function deletePost( siteId, postId ) {
 			.post( postId )
 			.delete();
 
-		deleteResult
-			.then( () => {
+		deleteResult.then(
+			() => {
 				dispatch( {
 					type: POST_DELETE_SUCCESS,
 					siteId,
 					postId,
 				} );
-			} )
-			.catch( error => {
+			},
+			error => {
 				dispatch( {
 					type: POST_DELETE_FAILURE,
 					siteId,
 					postId,
 					error,
 				} );
-			} );
+			}
+		);
 
 		return deleteResult;
 	};
@@ -362,23 +365,24 @@ export function restorePost( siteId, postId ) {
 			.post( postId )
 			.restore();
 
-		restoreResult
-			.then( restoredPost => {
+		restoreResult.then(
+			restoredPost => {
 				dispatch( {
 					type: POST_RESTORE_SUCCESS,
 					siteId,
 					postId,
 				} );
 				dispatch( receivePost( restoredPost ) );
-			} )
-			.catch( error => {
+			},
+			error => {
 				dispatch( {
 					type: POST_RESTORE_FAILURE,
 					siteId,
 					postId,
 					error,
 				} );
-			} );
+			}
+		);
 
 		return restoreResult;
 	};
