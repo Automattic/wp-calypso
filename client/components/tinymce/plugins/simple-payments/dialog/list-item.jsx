@@ -19,6 +19,7 @@ import { getCurrencyObject } from 'lib/format-currency';
 import CompactCard from 'components/card/compact';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FormRadio from 'components/forms/form-radio';
+import log from 'lib/catch-js-errors/log';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ProductImage from './product-image';
 
@@ -41,6 +42,11 @@ class ProductListItem extends Component {
 
 	formatPrice( price, currency = 'USD' ) {
 		if ( isNaN( price ) ) {
+			log( 'Simple Payments: invalid price value', {
+				siteId: this.props.siteId,
+				paymentId: this.props.paymentId,
+				price,
+			} );
 			return `---- ${ currency }`;
 		}
 		const { integer, fraction } = getCurrencyObject( price, currency );
