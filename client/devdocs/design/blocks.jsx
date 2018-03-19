@@ -122,7 +122,6 @@ export default class AppComponents extends React.Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
-					<ActionCard />
 					<AuthorSelector />
 					<CalendarButton />
 					<CalendarPopover />
