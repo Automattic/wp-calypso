@@ -145,7 +145,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
 				   * the site is a connected Jetpack site or not, and a network request that uses
 				   * the wrong argument can mess up our request tracking quite badly. */
-				this.state.hasFinishedRequestingSite && (
+				( this.state.hasFinishedRequestingSite || jpoAuth ) && (
 					<QueryJetpackOnboardingSettings query={ jpoAuth } siteId={ siteId } />
 				) }
 				{ siteId ? (
