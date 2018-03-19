@@ -8,7 +8,7 @@ import config from 'config';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { localize, moment } from 'i18n-calypso';
 import { sortBy, find } from 'lodash';
 
 /**
@@ -21,7 +21,6 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import { getPreference } from 'state/preferences/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
-import { getQueries } from './queries';
 import {
 	getUnitPeriod,
 	getStartPeriod,
@@ -29,6 +28,7 @@ import {
 	getDeltaFromData,
 	getEndPeriod,
 	getConversionRateData,
+	getQueries,
 } from 'woocommerce/app/store-stats/utils';
 import List from './list';
 import QueryPreferences from 'components/data/query-preferences';
@@ -59,7 +59,7 @@ class StatsWidget extends Component {
 	};
 
 	dateForDisplay = () => {
-		const { translate, unit, moment } = this.props;
+		const { translate, unit } = this.props;
 
 		const localizedDate = moment( moment().format( 'YYYY-MM-DD' ) );
 		let formattedDate;
@@ -132,7 +132,7 @@ class StatsWidget extends Component {
 	};
 
 	renderOrders = () => {
-		const { site, translate, moment, unit, orderData, queries } = this.props;
+		const { site, translate, unit, orderData, queries } = this.props;
 		const date = getEndPeriod( moment().format( 'YYYY-MM-DD' ), unit );
 		const delta = getDelta( orderData.deltas, date, 'orders' );
 		return (
@@ -151,7 +151,7 @@ class StatsWidget extends Component {
 	};
 
 	renderSales = () => {
-		const { site, translate, moment, unit, orderData, queries } = this.props;
+		const { site, translate, unit, orderData, queries } = this.props;
 		const date = getEndPeriod( moment().format( 'YYYY-MM-DD' ), unit );
 		const delta = getDelta( orderData.deltas, date, 'total_sales' );
 		return (
@@ -170,7 +170,7 @@ class StatsWidget extends Component {
 	};
 
 	renderVisitors = () => {
-		const { site, translate, moment, unit, visitorData, queries } = this.props;
+		const { site, translate, unit, visitorData, queries } = this.props;
 		const date = getStartPeriod( moment().format( 'YYYY-MM-DD' ), unit );
 		const delta = getDeltaFromData( visitorData, date, 'visitors', unit );
 		return (
@@ -189,7 +189,7 @@ class StatsWidget extends Component {
 	};
 
 	renderConversionRate = () => {
-		const { site, translate, moment, unit, visitorData, orderData, queries } = this.props;
+		const { site, translate, unit, visitorData, orderData, queries } = this.props;
 		const date = getUnitPeriod( moment().format( 'YYYY-MM-DD' ), unit );
 		const data = getConversionRateData( visitorData, orderData.data, unit );
 		const delta = getDeltaFromData( data, date, 'conversionRate', unit );
@@ -325,7 +325,10 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const unit = getPreference( state, 'store-dashboardStatsWidgetUnit' );
 
-	const queries = getQueries( unit );
+	const queries = getQueries( unit, moment().format( 'YYYY-MM-DD' ), {
+		referrerQuery: { quantity: 1 },
+		topEarnersQuery: { limit: dashboardListLimit },
+	} );
 	const { orderQuery, topEarnersQuery, referrerQuery, visitorQuery } = queries;
 
 	const orderData = getSiteStatsNormalizedData( state, site.ID, 'statsOrders', orderQuery );

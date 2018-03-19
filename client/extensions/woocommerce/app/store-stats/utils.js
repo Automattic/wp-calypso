@@ -230,3 +230,52 @@ export function getConversionRateData( visitorData, orderData, unit ) {
 		return { period: unitPeriod, conversionRate: 0 };
 	} );
 }
+
+/**
+ * Given a unit and basedate, generate the queries needed for QuerySiteStats and getSiteStatsNormalizedData.
+ * An optional overrides object can be passed to change values. Currently accepted:
+ * orderQuery, referrerQuery, topEarnersQuery, visitorQuery.
+ *
+ * @param {string} unit - unit/period format for the data provided
+ * @param {string} baseDate - string of date in 'YYYY-MM-DD'
+ * @param {object} overrides - Object of query overrides. Example: { referrerQuery: { quantity: 1 }
+ * @return {object} - Object containing data from calculateDelta
+ */
+export function getQueries( unit, baseDate, overrides = {} ) {
+	const baseQuery = { unit };
+
+	const orderQuery = {
+		...baseQuery,
+		date: getUnitPeriod( baseDate, unit ),
+		quantity: UNITS[ unit ].quantity,
+		...( overrides.orderQuery || {} ),
+	};
+
+	const referrerQuery = {
+		...baseQuery,
+		date: getUnitPeriod( baseDate, unit ),
+		quantity: UNITS[ unit ].quantity,
+		...( overrides.referrerQuery || {} ),
+	};
+
+	const topEarnersQuery = {
+		...baseQuery,
+		date: getUnitPeriod( baseDate, unit ),
+		limit: 10,
+		...( overrides.topEarnersQuery || {} ),
+	};
+
+	const visitorQuery = {
+		...baseQuery,
+		date: baseDate,
+		quantity: UNITS[ unit ].quantity,
+		...( overrides.visitorQuery || {} ),
+	};
+
+	return {
+		orderQuery,
+		referrerQuery,
+		topEarnersQuery,
+		visitorQuery,
+	};
+}
