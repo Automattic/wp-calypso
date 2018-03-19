@@ -6,6 +6,11 @@
 		.dashboard-widget__children {
 			overflow: scroll;
 			max-height: 190px;
+
+			@include breakpoint( "<660px" ) {
+				overflow: visible;
+				max-height: none;
+			}
 		}
 
 		&:after {
@@ -20,23 +25,19 @@
 		}
 
 		.dashboard-widget__image {
-			margin-bottom: 16px;
+			margin-bottom: 0;
 			width: 25%;
 
-			@include breakpoint( ">660px" ) {
-				margin-bottom: 0;
+			@include breakpoint( "<960px" ) {
+				display: none;
 			}
+		}
 
-			@include breakpoint( "<660px" ) {
-				margin-right: auto;
-				margin-left: auto;
-				width: 80% !important;
-			}
+		.dashboard-widget__children {
+			width: 75%;
 
-			& + .dashboard-widget__children {
-				@include breakpoint( ">660px" ) {
-					width: 75%;
-				}
+			@include breakpoint( "<960px" ) {
+				width: 100%;
 			}
 		}
 	}
