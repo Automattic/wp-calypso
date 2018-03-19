@@ -17,7 +17,6 @@ import noticesMiddleware, {
 	onPostRestoreFailure,
 	onPostSaveSuccess,
 } from '../middleware';
-import { dispatchSuccess, dispatchError } from '../utils';
 import PostQueryManager from 'lib/query-manager/post';
 import {
 	NOTICE_CREATE,
@@ -64,41 +63,6 @@ describe( 'middleware', () => {
 			noticesMiddleware( store )( noop )( withoutNotice( dummyCreator )( 'World' ) );
 
 			sinon.assert.notCalled( dispatchSpy );
-		} );
-	} );
-
-	describe( 'utility', () => {
-		let dispatch;
-		useSandbox( sandbox => {
-			dispatch = sandbox.spy();
-		} );
-
-		describe( 'dispatchSuccess()', () => {
-			test( 'should return a function which upon being called dispatches the specified success message', () => {
-				dispatchSuccess( 'Success!' )( dispatch );
-
-				sinon.assert.calledWithMatch( dispatch, {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-success',
-						text: 'Success!',
-					},
-				} );
-			} );
-		} );
-
-		describe( 'dispatchError()', () => {
-			test( 'should return a function which upon being called dispatches the specified error message', () => {
-				dispatchError( 'Error!' )( dispatch );
-
-				sinon.assert.calledWithMatch( dispatch, {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: 'Error!',
-					},
-				} );
-			} );
 		} );
 	} );
 
