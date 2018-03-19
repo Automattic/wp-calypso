@@ -17,7 +17,7 @@ import {
 	getProductsSettingValue,
 } from 'woocommerce/state/sites/settings/products/selectors';
 import Button from 'components/button';
-import { errorNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'state/notices/actions';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -82,7 +82,7 @@ class InventoryControls extends Component {
 					value: this.state.notifyNoStockEnabled ? 'yes' : 'no',
 				},
 			],
-			false,
+			successNotice( translate( 'Stock notification settings saved.' ), { duration: 8000 } ),
 			errorNotice( translate( 'Unable to save settings.' ), { duration: 8000 } )
 		);
 
