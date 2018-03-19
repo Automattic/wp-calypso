@@ -14,7 +14,7 @@ import page from 'page';
  */
 import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
-import ActionCard from 'blocks/action-card';
+import ActionCard from 'components/action-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 

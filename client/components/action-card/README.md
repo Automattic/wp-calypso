@@ -5,7 +5,7 @@ This is a card component that has a call to action button
 #### How to use:
 
 ```js
-import ActionCard from 'blocks/action-card';
+import ActionCard from 'component/action-card';
 
 render: function() {
   return (
