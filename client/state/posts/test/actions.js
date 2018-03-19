@@ -4,7 +4,6 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
