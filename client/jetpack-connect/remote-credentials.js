@@ -25,6 +25,7 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import MainWrapper from './main-wrapper';
 import Spinner from 'components/spinner';
 import { addCalypsoEnvQueryArg } from './utils';
+import { dismissUrl } from 'state/jetpack-connect/actions';
 import { externalRedirect } from 'lib/route';
 import { jetpackRemoteInstall } from 'state/jetpack-remote-install/actions';
 import { getJetpackRemoteInstallErrorCode, isJetpackRemoteInstallComplete } from 'state/selectors';
@@ -40,18 +41,11 @@ import {
 
 export class OrgCredentialsForm extends Component {
 	state = {
-		username: '',
-		password: '',
 		isSubmitting: false,
+		password: '',
+		showNotice: false,
+		username: '',
 	};
-
-	getInitialFields() {
-		return {
-			username: '',
-			password: '',
-			isSubmitting: false,
-		};
-	}
 
 	handleSubmit = event => {
 		const { siteToConnect } = this.props;
@@ -69,7 +63,10 @@ export class OrgCredentialsForm extends Component {
 		const { installError } = nextProps;
 
 		if ( installError ) {
-			this.setState( { isSubmitting: false } );
+			this.setState( {
+				isSubmitting: false,
+				showNotice: true,
+			} );
 		}
 	}
 
@@ -130,12 +127,20 @@ export class OrgCredentialsForm extends Component {
 		}
 	}
 
+	removeNotice() {
+		this.setState( { showNotice: false } );
+	}
+
 	renderNotice() {
 		const { installError } = this.props;
+
 		return (
 			<div className="jetpack-connect__notice">
 				{ installError ? (
-					<JetpackConnectNotices noticeType={ this.getError( installError ) } />
+					<JetpackConnectNotices
+						noticeType={ this.getError( installError ) }
+						onDismissClick={ this.removeNotice() }
+					/>
 				) : null }
 			</div>
 		);
@@ -274,5 +279,8 @@ export default connect(
 			siteToConnect,
 		};
 	},
-	{ jetpackRemoteInstall }
+	{
+		dismissUrl,
+		jetpackRemoteInstall,
+	}
 )( localize( OrgCredentialsForm ) );
