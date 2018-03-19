@@ -9,7 +9,7 @@ import {
 } from '../action-types';
 
 export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
-	const requestData = { orderId, siteId, origin, destination, packages };
+	const requestData = { origin, destination, packages };
 	dispatch( {
 		type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS,
 		requestData,
@@ -46,7 +46,7 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 		};
 
 		setIsSaving( true );
-		api.post( siteId, api.url.getLabelRates( orderId ), { origin, destination, packages } )
+		api.post( siteId, api.url.getLabelRates( orderId ), requestData )
 			.then( setSuccess )
 			.catch( setError )
 			.then( () => setIsSaving( false ) );
