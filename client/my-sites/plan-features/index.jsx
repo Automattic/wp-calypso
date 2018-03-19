@@ -781,11 +781,8 @@ export default connect(
 			} )
 		);
 
-		if ( isInSignup ) {
-			const isInTest =
-				abtest(
-					isLoggedIn ? 'minimizedFreePlanForSignedUser' : 'minimizedFreePlanForUnsignedUser'
-				) === 'minimized';
+		if ( isInSignup && ! isLoggedIn ) {
+			const isInTest = abtest( 'minimizedFreePlanForUnsignedUser' ) === 'minimized';
 			if ( isInTest ) {
 				freePlanProperties = filter( planProperties, filterFreePlan );
 				freePlanProperties = freePlanProperties[ 0 ] || null;
