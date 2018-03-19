@@ -20,6 +20,13 @@
 		margin-bottom: 0;
 		text-align: right;
 	}
+
+	@include breakpoint( '<480px' ) {
+		.button {
+			text-align: center;
+			width: 100%;
+		}
+	}
 }
 
 .action-card__heading {
