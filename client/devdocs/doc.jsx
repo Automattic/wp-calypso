@@ -93,9 +93,9 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const editURL =
-			encodeURI( 'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path ) +
-			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
+		const editURL = encodeURI(
+			'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path
+		);
 		const titleMatches = this.state.body.length && this.state.body.match( /<h1[^>]+>(.+)<\/h1>/ );
 		const title = titleMatches && titleMatches[ 1 ];
 
