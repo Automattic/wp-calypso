@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import { clone, difference, get, isEqual, map, omit, reduce, values } from 'lodash';
 
 /**
@@ -12,6 +13,7 @@ import QueryKey from './key';
 /**
  * Constants
  */
+const debug = debugFactory( 'calypso:query-manager' );
 
 /**
  * Object key name for property used in indicating that an item is intended to
@@ -317,6 +319,11 @@ export default class QueryManager {
 				}
 
 				if ( nextQueryFound >= 0 ) {
+					debug(
+						'[%s] Preparing received query found count: %d',
+						receivedQueryKey,
+						nextQueryFound
+					);
 					nextReceivedQuery.found = nextQueryFound;
 				}
 
@@ -367,6 +374,7 @@ export default class QueryManager {
 
 							// Decrement found count for query
 							if ( shouldAdjustFoundCount && Number.isFinite( memo[ queryKey ].found ) ) {
+								debug( '[%s] Decrementing found count: %d--', queryKey, memo[ queryKey ].found );
 								memo[ queryKey ].found--;
 							}
 						}
@@ -381,6 +389,7 @@ export default class QueryManager {
 
 						// Increment found count for query
 						if ( shouldAdjustFoundCount && Number.isFinite( memo[ queryKey ].found ) ) {
+							debug( '[%s] Incrementing found count: %d++', queryKey, memo[ queryKey ].found );
 							memo[ queryKey ].found++;
 						}
 
