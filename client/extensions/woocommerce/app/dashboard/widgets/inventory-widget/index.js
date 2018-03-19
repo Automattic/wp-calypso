@@ -76,7 +76,7 @@ class InventoryWidget extends Component {
 		const { noStockThreshold, site, translate } = this.props;
 		const outOfStock = parseInt( p.stock_quantity ) <= noStockThreshold;
 		const classes = classNames( 'dashboard-widgets__row', { 'is-out-of-stock': outOfStock } );
-		const link = getLink( `/store/product/:site/${ p.ID }`, site );
+		const link = getLink( `/store/product/:site/${ p.id }`, site );
 		return (
 			<TableRow key={ i } className={ classes }>
 				<TableItem isTitle>
