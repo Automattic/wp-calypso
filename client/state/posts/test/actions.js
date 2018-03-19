@@ -124,16 +124,17 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch posts receive action when request completes', () => {
+		test( 'should dispatch posts receive action when request completes', done => {
 			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch posts posts request success action when request completes', () => {
+		test( 'should dispatch success action when posts request completes', done => {
 			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
@@ -142,10 +143,11 @@ describe( 'actions', () => {
 					found: 2,
 					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch posts request success action with query results', () => {
+		test( 'should dispatch posts request success action with query results', done => {
 			return requestSitePosts( 2916284, { search: 'Hello' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
@@ -154,10 +156,11 @@ describe( 'actions', () => {
 					found: 1,
 					posts: [ { ID: 841, title: 'Hello World' } ],
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch failure action when request fails', done => {
 			return requestSitePosts( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_FAILURE,
@@ -165,6 +168,7 @@ describe( 'actions', () => {
 					query: {},
 					error: sinon.match( { message: 'User cannot access this private blog.' } ),
 				} );
+				done();
 			} );
 		} );
 	} );
@@ -180,12 +184,13 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		test( 'should dispatch posts receive action when request completes', () => {
+		test( 'should dispatch posts receive action when request completes', done => {
 			return requestAllSitesPosts()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 841, title: 'Hello World' }, { ID: 413, title: 'Ribs & Chicken' } ],
 				} );
+				done();
 			} );
 		} );
 	} );
@@ -213,26 +218,28 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch posts receive action when request completes', () => {
+		test( 'should dispatch posts receive action when request completes', done => {
 			return requestSitePost( 2916284, 413 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ sinon.match( { ID: 413, title: 'Ribs & Chicken' } ) ],
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch posts posts request success action when request completes', () => {
+		test( 'should dispatch posts posts request success action when request completes', done => {
 			return requestSitePost( 2916284, 413 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postId: 413,
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch fail action when request fails', done => {
 			return requestSitePost( 2916284, 420 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_REQUEST_FAILURE,
@@ -240,6 +247,7 @@ describe( 'actions', () => {
 					postId: 420,
 					error: sinon.match( { message: 'Unknown post' } ),
 				} );
+				done();
 			} );
 		} );
 	} );
@@ -320,7 +328,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post save save success action when request completes for new post', () => {
+		test( 'should dispatch success action when saving new post succeeds', done => {
 			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
@@ -332,10 +340,11 @@ describe( 'actions', () => {
 						title: 'Hello World',
 					} ),
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch received post action when request completes for new post', () => {
+		test( 'should dispatch received post action when saving new post succeeds', done => {
 			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -346,6 +355,7 @@ describe( 'actions', () => {
 						} ),
 					],
 				} );
+				done();
 			} );
 		} );
 
@@ -362,7 +372,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post save save success action when request completes for existing post', () => {
+		test( 'should dispatch success action when saving existing post succeeds', done => {
 			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
@@ -374,10 +384,11 @@ describe( 'actions', () => {
 						title: 'Updated',
 					} ),
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch received post action when request completes for existing post', () => {
+		test( 'should dispatch received post action when saving existing post succeeds', done => {
 			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -388,33 +399,38 @@ describe( 'actions', () => {
 						} ),
 					],
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch failure action when error occurs while saving new post', () => {
-			return savePost( 77203074, null, { title: 'Hello World' } )( spy )
-				.catch( noop )
-				.then( () => {
+		test( 'should dispatch failure action when saving new post fails', done => {
+			return savePost( 77203074, null, { title: 'Hello World' } )( spy ).catch( () => {
+				// wait for catch handler within savePost()
+				setTimeout( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: POST_SAVE_FAILURE,
 						siteId: 77203074,
 						postId: null,
 						error: sinon.match( { message: 'User cannot edit posts' } ),
 					} );
+					done();
 				} );
+			} );
 		} );
 
-		test( 'should dispatch failure action when error occurs while saving existing post', () => {
-			return savePost( 77203074, 102, { title: 'Hello World' } )( spy )
-				.catch( noop )
-				.then( () => {
+		test( 'should dispatch failure action when saving existing post fails', done => {
+			return savePost( 77203074, 102, { title: 'Hello World' } )( spy ).catch( () => {
+				// wait for catch handler within savePost()
+				setTimeout( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: POST_SAVE_FAILURE,
 						siteId: 77203074,
 						postId: 102,
 						error: sinon.match( { message: 'User cannot edit post' } ),
 					} );
+					done();
 				} );
+			} );
 		} );
 	} );
 
@@ -459,27 +475,30 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post delete request success action when request completes', () => {
+		test( 'should dispatch success action when deleting post succeeds', done => {
 			return deletePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_DELETE_SUCCESS,
 					siteId: 2916284,
 					postId: 13640,
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch post delete request failure action when request fails', () => {
-			return deletePost( 77203074, 102 )( spy )
-				.catch( noop )
-				.then( () => {
+		test( 'should dispatch failure action when deleting post fails', done => {
+			return deletePost( 77203074, 102 )( spy ).catch( () => {
+				// wait for catch handler within savePost()
+				setTimeout( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: POST_DELETE_FAILURE,
 						siteId: 77203074,
 						postId: 102,
 						error: sinon.match( { message: 'User cannot delete posts' } ),
 					} );
+					done();
 				} );
+			} );
 		} );
 	} );
 
@@ -509,36 +528,40 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch the received post when request completes successfully', () => {
+		test( 'should dispatch the received post when request completes successfully', done => {
 			return restorePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 13640, status: 'draft' } ],
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch post restore request success action when request completes', () => {
+		test( 'should dispatch success action when restoring post succeeds', done => {
 			return restorePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_RESTORE_SUCCESS,
 					siteId: 2916284,
 					postId: 13640,
 				} );
+				done();
 			} );
 		} );
 
-		test( 'should dispatch post restore request failure action when request fails', () => {
-			return restorePost( 77203074, 102 )( spy )
-				.catch( noop )
-				.then( () => {
+		test( 'should dispatch failure action when restoring post fails', done => {
+			return restorePost( 77203074, 102 )( spy ).catch( () => {
+				// wait for catch handler within restorePost()
+				setTimeout( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: POST_RESTORE_FAILURE,
 						siteId: 77203074,
 						postId: 102,
 						error: sinon.match( { message: 'User cannot restore trashed posts' } ),
 					} );
+					done();
 				} );
+			} );
 		} );
 	} );
 
