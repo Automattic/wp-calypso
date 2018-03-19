@@ -509,8 +509,8 @@ class ActivityLog extends Component {
 					/>
 				) }
 				{ this.renderErrorMessage() }
-				{ this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
+				{ this.renderMonthNavigation() }
 				{ isEmpty( logs ) ? (
 					noLogsContent
 				) : (
