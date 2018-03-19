@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { isEqual, isObject, omit } from 'lodash';
+import { isEqual, isObject, size } from 'lodash';
 
 /**
  * Internal dependencies
@@ -65,7 +65,7 @@ const AddressFields = ( props ) => {
 	}
 
 	const fieldErrors = isObject( errors ) ? errors : {};
-	const generalErrorOnly = fieldErrors.general && Object.keys( omit( fieldErrors, 'general' ) ).length === 0;
+	const generalErrorOnly = fieldErrors.general && size( fieldErrors ) === 1;
 	const getId = ( fieldName ) => group + '_' + fieldName;
 	const getValue = ( fieldName ) => values[ fieldName ] ? decodeEntities( values[ fieldName ] ) : '';
 	const updateValue = ( fieldName ) => ( newValue ) => props.updateAddressValue( orderId, siteId, group, fieldName, newValue );
