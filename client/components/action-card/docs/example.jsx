@@ -13,7 +13,6 @@ import { noop } from 'lodash';
 import ActionCard from '../index';
 
 function ActionCardExample( props ) {
-	const { translate } = props;
 	return (
 		<ActionCard
 			headerText={ 'This is a header text' }
