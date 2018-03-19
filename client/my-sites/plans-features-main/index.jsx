@@ -437,6 +437,7 @@ PlansFeaturesMain.propTypes = {
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
 	intervalType: PropTypes.string,
+	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
@@ -450,8 +451,9 @@ PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
 	hideFreePlan: false,
 	intervalType: 'yearly',
-	site: {},
+	isChatAvailable: false,
 	showFAQ: true,
+	site: {},
 };
 
 export default connect(
