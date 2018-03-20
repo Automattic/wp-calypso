@@ -55,6 +55,7 @@ const ShadowNotice = localize( ( { shadowStatus, onUndoClick, translate } ) => (
 			text={ shadowStatus.text }
 			status={ shadowStatus.status }
 			icon={ shadowStatus.icon }
+			isLoading={ shadowStatus.isLoading }
 		>
 			{ shadowStatus.undo && (
 				<NoticeAction onClick={ onUndoClick }>{ translate( 'Undo' ) }</NoticeAction>
@@ -434,7 +435,7 @@ class Page extends Component {
 	}
 
 	async performUpdate( { action, progressNotice, successNotice, errorNotice, undo } ) {
-		await this.changeShadowStatus( progressNotice );
+		await this.changeShadowStatus( { ...progressNotice, isLoading: true } );
 		try {
 			await action();
 			if ( undo === 'undo' ) {
