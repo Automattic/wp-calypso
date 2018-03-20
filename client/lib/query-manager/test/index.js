@@ -408,6 +408,19 @@ describe( 'QueryManager', () => {
 			expect( manager.getFound( {} ) ).to.equal( 1 );
 		} );
 
+		test( 'should not replace the previous found count if flag is false', () => {
+			manager = manager.receive( [], { query: {}, found: 0 } );
+			const newManager = manager.receive( { ID: 144 }, { adjustCounts: false } );
+
+			expect( manager.getFound( {} ) ).to.equal( 0 );
+			expect( newManager.getFound( {} ) ).to.equal( 0 );
+		} );
+
+		test( 'should set the default value of `adjustCounts` to true', () => {
+			const newManager = manager.receive( { ID: 144 } );
+			expect( newManager.options.adjustCounts ).to.be.true;
+		} );
+
 		test( 'should increment found count if adding a matched item', () => {
 			manager = manager.receive( [], { query: {}, found: 0 } );
 			const newManager = manager.receive( { ID: 144 } );

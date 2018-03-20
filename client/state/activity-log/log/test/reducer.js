@@ -83,6 +83,7 @@ describe( 'reducer', () => {
 					},
 					options: {
 						itemKey: 'activityId',
+						adjustCounts: true,
 					},
 				},
 			} );

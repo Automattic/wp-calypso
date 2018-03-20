@@ -310,14 +310,17 @@ export const queries = ( () => {
 		{
 			[ THEMES_REQUEST_SUCCESS ]: ( state, { siteId, query, themes, found } ) => {
 				return applyToManager(
-					// Always 'patch' to avoid overwriting existing fields when receiving
-					// from a less rich endpoint such as /mine
 					state,
 					siteId,
 					'receive',
 					true,
 					themes,
-					{ query, found, patch: true }
+					// Always 'patch' to avoid overwriting existing fields when receiving
+					// from a less rich endpoint such as /mine
+					// Also disable 'adjustCounts' to use the initial `founnd` counts and do not
+					// increment them when switching filters
+					// context: https://github.com/Automattic/wp-calypso/issues/15833
+					{ query, found, patch: true, adjustCounts: false }
 				);
 			},
 			[ THEME_DELETE_SUCCESS ]: ( state, { siteId, themeId } ) => {

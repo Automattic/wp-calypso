@@ -608,6 +608,7 @@ describe( 'reducer', () => {
 					siteId: 2916284,
 					query: { search: 'Hello' },
 					found: 1,
+					adjustCounts: true,
 					posts: [
 						{
 							ID: 841,
@@ -641,6 +642,7 @@ describe( 'reducer', () => {
 					},
 					options: {
 						itemKey: 'ID',
+						adjustCounts: true,
 					},
 				},
 			} );
@@ -1241,7 +1243,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.an.instanceof( PostQueryManager );
 			expect( state.data ).to.eql( { items: {}, queries: {} } );
-			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
+			expect( state.options ).to.eql( { itemKey: 'global_ID', adjustCounts: true } );
 		} );
 
 		test( 'should track post query request success', () => {
@@ -1615,6 +1617,7 @@ describe( 'reducer', () => {
 					siteId: null,
 					query: { search: 'Hello' },
 					found: 1,
+					adjustCounts: true,
 					posts: [
 						{
 							ID: 841,
@@ -1647,6 +1650,7 @@ describe( 'reducer', () => {
 				},
 				options: {
 					itemKey: 'global_ID',
+					adjustCounts: true,
 				},
 			} );
 		} );
@@ -1706,7 +1710,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.an.instanceof( PostQueryManager );
 			expect( state.data ).to.eql( { items: {}, queries: {} } );
-			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
+			expect( state.options ).to.eql( { itemKey: 'global_ID', adjustCounts: true } );
 		} );
 	} );
 } );

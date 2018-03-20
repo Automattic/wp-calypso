@@ -85,6 +85,9 @@ export const logItemsSchema = {
 				itemKey: {
 					type: 'string',
 				},
+				adjustCounts: {
+					type: 'boolean',
+				},
 			},
 		},
 		oldestItemTs: {
