@@ -76,13 +76,11 @@ function update( changeFunction ) {
 	const isFetchingProductsList = isProductsListFetching( reduxState );
 	const productsList = getProductsList( reduxState );
 
-	if ( ! productsList && ! isFetchingProductsList ) {
-		reduxDispatch( requestProductsList ).then( () => update( changeFunction ) );
+	if ( ! productsList ) {
+		if ( ! isFetchingProductsList ) {
+			reduxDispatch( requestProductsList );
+		}
 
-		return;
-	}
-
-	if ( ! productsList && isFetchingProductsList ) {
 		setTimeout( () => update( changeFunction ), 300 );
 
 		return;
