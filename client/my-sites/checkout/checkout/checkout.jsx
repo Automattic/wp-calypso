@@ -39,7 +39,13 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import { addItem, applyCoupon, resetTransaction, setDomainDetails } from 'lib/upgrades/actions';
+import {
+	addItem,
+	removeItem,
+	applyCoupon,
+	resetTransaction,
+	setDomainDetails,
+} from 'lib/upgrades/actions';
 import {
 	getContactDetailsCache,
 	getCurrentUserPaymentMethods,
@@ -61,6 +67,7 @@ import { loadTrackingTool } from 'state/analytics/actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
 import { PLAN_PREMIUM, PLAN_BUSINESS } from '../../../lib/plans/constants';
+import { getPlan } from '../../../lib/plans';
 
 class Checkout extends React.Component {
 	static propTypes = {
@@ -151,6 +158,10 @@ class Checkout extends React.Component {
 
 		recordViewCheckout( props.cart );
 	}
+
+	getPlanProducts() {
+		return this.props.cart.products.filter( p => getPlan( p.product_slug ) );
+	},
 
 	getProductSlugFromSynonym( slug ) {
 		if ( 'no-ads' === slug ) {
@@ -483,16 +494,39 @@ class Checkout extends React.Component {
 	}
 
 	renderTermPicker() {
+		const planInCart = this.getPlanProducts()[ 0 ];
+		if ( ! planInCart ) {
+			return false;
+		}
+
+		const availableTerms = [ PLAN_BUSINESS, PLAN_PREMIUM ];
+
 		return (
 			<React.Fragment>
 				<TermPicker
-					plans={ [ PLAN_PREMIUM, PLAN_BUSINESS ] }
-					initialValue={ PLAN_BUSINESS }
+					plans={ availableTerms }
+					initialValue={ planInCart.product_slug }
+					onChange={ this.handleTermChange }
 					key="picker"
 				/>
 				<hr className="term-picker-separator" key="separator" />
 			</React.Fragment>
 		);
+	},
+
+	handleTermChange( e ) {
+		// Remove all cart items that are plans
+		const selectedPlans = this.props.cart.products.filter( p => getPlan( p.product_slug ) );
+		selectedPlans.forEach( removeItem );
+
+		const planSlug = e.value;
+		const cartItem = getCartItemForPlan( planSlug );
+		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			product_slug: cartItem.product_slug,
+			free_trial: cartItem.free_trial,
+			from_section: 'checkout',
+		} );
+		addItem( cartItem );
 	},
 
 	paymentMethodsAbTestFilter() {
