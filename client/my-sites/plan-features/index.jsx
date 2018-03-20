@@ -64,6 +64,7 @@ class PlanFeatures extends Component {
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 			'abtest-pricing-display': showModifiedPricingDisplay,
+			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'mobile',
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
 		let mobileView, planDescriptions;
