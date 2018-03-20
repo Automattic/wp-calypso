@@ -644,12 +644,19 @@
 	position: relative;
 	margin-bottom: 22px;
 	margin-top: 22px;
+
+	.spinner {
+		z-index: z-index(
+			'root',
+			'.jetpack-connect__password-container .jetpack-connect__creds-form-spinner'
+		);
+	}
 }
 
 .jetpack-connect__password-form {
 	position: relative;
 
-	.gridicon {
+	.gridicons-lock {
 		position: absolute;
 		z-index: z-index('root', '.jetpack-connect__password-form .gridicon');
 		left: 8px;
@@ -660,6 +667,11 @@
 
 .jetpack-connect__password-form-input {
 	text-indent: 27px;
+}
+
+.jetpack-connect__creds-form-spinner {
+	margin-top: -10px;
+	margin-bottom: -10px;
 }
 
 .jetpack-connect__navigation {
