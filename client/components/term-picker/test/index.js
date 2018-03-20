@@ -34,18 +34,8 @@ describe( 'TermPicker basic tests', () => {
 		},
 	];
 
-	test( 'should display nothing if no plans are specified', () => {
-		const picker = shallow( <TermPicker productsWithPrices={ [] } /> );
-		assert.lengthOf( picker.find( '*' ), 0 );
-	} );
-
-	test( 'should display nothing if a single plans is specified', () => {
-		const picker = shallow( <TermPicker productsWithPrices={ [ {} ] } /> );
-		assert.lengthOf( picker.find( '*' ), 0 );
-	} );
-
 	test( 'should have term-picker class', () => {
-		const picker = shallow( <TermPicker productsWithPrices={ productsWithPrices } /> );
+		const picker = shallow( <TermPicker productsWithPrices={ [] } /> );
 		assert.lengthOf( picker.find( '.term-picker' ), 1 );
 	} );
 

@@ -39,10 +39,6 @@ export class TermPicker extends React.Component {
 
 	render() {
 		const { productsWithPrices } = this.props;
-		if ( productsWithPrices.length <= 1 ) {
-			return false;
-		}
-
 		return (
 			<div className="term-picker">
 				<div className="term-picker__header">Choose the length of your subscription</div>
@@ -79,7 +75,7 @@ export class TermPicker extends React.Component {
 		this.setState( {
 			checked: value,
 		} );
-		this.props.onChange( value );
+		this.props.onChange( { value } );
 	};
 }
 
