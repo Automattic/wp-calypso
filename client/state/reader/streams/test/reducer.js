@@ -7,98 +7,149 @@ import deepfreeze from 'deep-freeze';
 /**
  * Internal Dependencies
  */
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { receivePage, selectItem } from '../actions';
-import streamsReducer, { items, selected } from '../reducer';
+import {
+	receivePage,
+	selectItem,
+	receiveUpdates,
+	selectNextItem,
+	selectPrevItem,
+	requestPage,
+} from '../actions';
+import { items, selected, pendingItems, pageHandle, isRequesting, lastPage } from '../reducer';
 
 jest.mock( 'lib/warn', () => () => {} );
 
+const blogPost = { ID: '1', site_ID: '2' };
+const feedPost = { feed_item_ID: '2', feed_ID: '2' };
+
+const blogPostKey = { postId: '1', blogId: '2' };
+const feedPostKey = { postId: '2', feedId: '2' };
+
 describe( 'streams.items reducer', () => {
 	it( 'should return an empty object by default', () => {
-		expect( items( undefined, {} ) ).toEqual( {} );
+		expect( items( undefined, {} ) ).toEqual( [] );
 	} );
 
-	it( 'should put a stream under the right key', () => {
-		const startState = deepfreeze( {} );
-		const action = receivePage( {
-			streamKey: 'following',
-			query: {},
-			posts: [ { global_ID: 1234 } ],
-		} );
-		expect( items( startState, action ) ).toEqual( {
-			following: [ { global_ID: 1234 } ],
-		} );
+	it( 'should accept new posts', () => {
+		const prevState = deepfreeze( [] );
+		const action = receivePage( { posts: [ blogPost, feedPost ] } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toEqual( [ blogPostKey, feedPostKey ] );
 	} );
 
-	it( 'should add new posts to existing stream', () => {
-		const startState = deepfreeze( {
-			following: [ { global_ID: 42 } ],
-		} );
-		const action = receivePage( {
-			streamKey: 'following',
-			query: {},
-			posts: [ { global_ID: 1234 } ],
-		} );
-		expect( items( startState, action ) ).toEqual( {
-			following: [ { global_ID: 42 }, { global_ID: 1234 } ],
-		} );
+	it( 'should add new posts to existing items', () => {
+		const prevState = deepfreeze( [ blogPostKey ] );
+		const action = receivePage( { posts: [ feedPost ] } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toEqual( [ blogPostKey, feedPostKey ] );
+	} );
+
+	it( 'should return referentially equal state if there are no new items', () => {
+		const prevState = deepfreeze( [ blogPostKey ] );
+		const action = receivePage( { posts: [ blogPost ] } );
+		const nextState = items( prevState, action );
+
+		expect( nextState ).toBe( prevState );
+	} );
+} );
+
+describe( 'streams.pendingItems reducer', () => {
+	it( 'should return an empty object by default', () => {
+		expect( items( undefined, {} ) ).toEqual( [] );
+	} );
+
+	it( 'should accept new posts', () => {
+		const prevState = deepfreeze( [] );
+		const action = receiveUpdates( { posts: [ blogPost, feedPost ] } );
+		const nextState = pendingItems( prevState, action );
+
+		expect( nextState ).toEqual( [ blogPostKey, feedPostKey ] );
 	} );
 } );
 
 describe( 'streams.selected reducer', () => {
-	it( 'should return an empty object by default', () => {
-		expect( selected( undefined, {} ) ).toEqual( {} );
+	const streamItems = [ blogPostKey, feedPostKey ];
+	it( 'should return null by default', () => {
+		expect( selected( undefined, {} ) ).toEqual( null );
 	} );
 
-	it( 'should store the index requested for nonexistent stream', () => {
-		expect( selected( undefined, selectItem( { streamKey: 'following', index: 7 } ) ) ).toEqual( {
-			following: 7,
-		} );
+	it( 'should store the selected postKey', () => {
+		const action = selectItem( { postKey: blogPostKey } );
+		const state = selected( undefined, action );
+
+		expect( state ).toBe( blogPostKey );
 	} );
 
 	it( 'should update the index for a stream', () => {
-		const prevState = { following: 10 };
-		const action = selectItem( { streamKey: 'following', index: 7 } );
-		expect( selected( prevState, action ) ).toEqual( {
-			following: 7,
-		} );
+		const prevState = blogPostKey;
+		const action = selectItem( { postKey: feedPostKey } );
+		const nextState = selected( prevState, action );
+		expect( nextState ).toBe( feedPostKey );
+	} );
+
+	it( 'should return state unchanged if at last item and trying to select next one', () => {
+		const prevState = feedPostKey;
+		const action = selectNextItem( { items: streamItems } );
+		const nextState = selected( prevState, action );
+		expect( nextState ).toBe( prevState );
+	} );
+
+	it( 'should select previous item', () => {
+		const prevState = feedPostKey;
+		const action = selectPrevItem( { items: streamItems } );
+		const nextState = selected( prevState, action );
+		expect( nextState ).toBe( blogPostKey );
+	} );
+
+	it( 'should return state unchanged if at first item and trying to select previous item', () => {
+		const prevState = blogPostKey;
+		const action = selectPrevItem( { items: streamItems } );
+		const nextState = selected( prevState, action );
+		expect( nextState ).toBe( prevState );
 	} );
 } );
 
-describe( 'streams combined reducer', () => {
-	const saveAction = { type: SERIALIZE };
-	const loadAction = { type: DESERIALIZE };
-
-	const validState = deepfreeze( {
-		items: { following: [ {} ], 'feed:123': [ {}, {} ] },
-		selected: { following: 0, 'feed:123': 42, elmo: 'is red' },
+describe( 'streams.pageHandle', () => {
+	it( 'should default to null', () => {
+		expect( pageHandle( undefined, {} ) ).toBe( null );
 	} );
 
-	const invalidState = deepfreeze( {
-		items: { chickens: Infinity },
-		selected: { chickens: Infinity },
+	it( 'should get set to the returning action on pageRecieve', () => {
+		const action = receivePage( { posts: [], pageHandle: 'chicken' } );
+		expect( pageHandle( undefined, action ) ).toBe( 'chicken' );
+	} );
+} );
+
+describe( 'streams.isRequesting', () => {
+	it( 'should default to false', () => {
+		expect( isRequesting( undefined, {} ) ).toBe( false );
 	} );
 
-	it( 'should serialize any items data', () => {
-		expect( streamsReducer( validState, saveAction ).items ).toEqual( validState.items );
-		expect( streamsReducer( invalidState, saveAction ).items ).toEqual( invalidState.items );
+	it( 'should set to true after request is initiated', () => {
+		const action = requestPage( { streamKey: 'following' } );
+		expect( isRequesting( undefined, action ) ).toBe( true );
 	} );
 
-	it( 'should deserialize valid items data', () => {
-		expect( streamsReducer( validState, loadAction ).items ).toEqual( validState.items );
+	it( 'should set to false after page is received', () => {
+		const action = receivePage( { streamKey: 'following' } );
+		expect( isRequesting( true, action ) ).toBe( false );
+	} );
+} );
+
+describe( 'streams.lastPage', () => {
+	it( 'should default to false', () => {
+		expect( lastPage( undefined, {} ) ).toBe( false );
 	} );
 
-	it( 'should not deserialize invalid items data', () => {
-		expect( streamsReducer( invalidState, loadAction ).items ).toEqual( {} );
+	it( 'should set to true if next page has no items', () => {
+		const action = receivePage( { streamKey: 'following', posts: [] } );
+		expect( lastPage( undefined, action ) ).toBe( true );
 	} );
 
-	it( 'should never serialize the selected data', () => {
-		expect( streamsReducer( validState, saveAction ).selected ).toBeUndefined();
-		expect( streamsReducer( invalidState, saveAction ).selected ).toBeUndefined();
-	} );
-
-	it( 'should never deserialize the selected data', () => {
-		expect( streamsReducer( validState, loadAction ).selected ).toEqual( {} );
-		expect( streamsReducer( invalidState, loadAction ).selected ).toEqual( {} );
+	it( 'should maintain false if the last request had more items', () => {
+		const action = receivePage( { streamKey: 'following', posts: [ feedPost ] } );
+		expect( lastPage( false, action ) ).toBe( false );
 	} );
 } );
