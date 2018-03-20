@@ -1,4 +1,4 @@
-@keyframes notice-loading-fade {
+@keyframes notice-loading-pulse {
 	0% { opacity: 0; }
 	50% { opacity: .5; }
 	100% { opacity: 0; }
@@ -48,7 +48,7 @@
 		.notice__icon-wrapper::after {
 			content: '';
 			background-color: $white;
-			animation: notice-loading-fade 1.6s ease-in-out infinite;
+			animation: notice-loading-pulse 0.8s ease-in-out infinite;
 			position: absolute;
 			top: 0;
 			bottom: 0;
