@@ -69,9 +69,11 @@ class PlanFeatures extends Component {
 		let mobileView, planDescriptions;
 		let bottomButtons = null;
 
-		if ( ! isInSignup ) {
+		if ( abtest( 'mobilePlansTablesOnSignup' ) === 'mobile' ) {
 			mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
+		}
 
+		if ( ! isInSignup ) {
 			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
 
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
