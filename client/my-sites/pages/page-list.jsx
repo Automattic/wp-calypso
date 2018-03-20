@@ -333,7 +333,9 @@ class Pages extends Component {
 	}
 
 	renderChronological( { pages, site } ) {
-		if ( ! this.props.query.search ) {
+		const { search, status } = this.props.query;
+
+		if ( ! search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
 		}
@@ -357,15 +359,14 @@ class Pages extends Component {
 			this.addLoadingRows( rows, 1 );
 		}
 
-		const blogPostsPage = site &&
-			this.props.query.status === 'publish,private' && (
-				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
-			);
+		const showBlogPostsPage = site && status === 'publish,private' && ! search;
 
 		return (
 			<div id="pages" className="pages__page-list">
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
-				{ blogPostsPage }
+				{ showBlogPostsPage && (
+					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				) }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
 			</div>
