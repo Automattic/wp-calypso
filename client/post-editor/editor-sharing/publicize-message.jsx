@@ -60,8 +60,12 @@ class PublicizeMessage extends Component {
 		stats.recordEvent( 'Publicize Sharing Message Changed' );
 	};
 
+	shouldPreFillMessage() {
+		return ! this.state.userHasEditedMessage && '' === this.props.message;
+	}
+
 	getMessage() {
-		if ( ! this.state.userHasEditedMessage ) {
+		if ( this.shouldPreFillMessage() ) {
 			return this.props.preFilledMessage;
 		}
 		return this.props.message;
