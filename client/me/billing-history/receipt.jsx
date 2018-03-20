@@ -322,13 +322,13 @@ class BillingReceipt extends React.Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	( state, { transactionId } ) => {
 		const transactions = getPastBillingTransactions( state );
 
 		return {
-			transaction: getPastBillingTransaction( state, ownProps.transactionId ),
-			transactionFetchError: getPastBillingTransactionError( state, ownProps.transactionId ),
-			requestingBillingTransaction: isRequestingBillingTransaction( state, ownProps.transactionId ),
+			transaction: getPastBillingTransaction( state, transactionId ),
+			transactionFetchError: getPastBillingTransactionError( state, transactionId ),
+			requestingBillingTransaction: isRequestingBillingTransaction( state, transactionId ),
 			totalTransactions: transactions ? transactions.length : null,
 		};
 	},
