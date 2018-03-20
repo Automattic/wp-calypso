@@ -454,7 +454,6 @@
 	// be more specific in scope to override the panel mode
 	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ) .happychat__container.is-open {
 		position: fixed;
-		z-index: 0; // place it under the notifications drawer
 		height: calc( 100% - 47px );
 		bottom: 0;
 		right: 0;
