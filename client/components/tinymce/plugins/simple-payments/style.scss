@@ -186,6 +186,10 @@
 	min-width: 0;
 	font-family: $serif;
 	font-weight: bold;
+
+	&.is-error {
+		color: $alert-red;
+	}
 }
 
 .editor-simple-payments-modal__list-name {

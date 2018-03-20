@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ import { getCurrencyObject } from 'lib/format-currency';
 import CompactCard from 'components/card/compact';
 import EllipsisMenu from 'components/ellipsis-menu';
 import FormRadio from 'components/forms/form-radio';
+import log from 'lib/catch-js-errors/log';
 import PopoverMenuItem from 'components/popover/menu-item';
 import ProductImage from './product-image';
 
@@ -40,6 +42,14 @@ class ProductListItem extends Component {
 	handleTrashClick = () => this.props.onTrashClick( this.props.paymentId );
 
 	formatPrice( price, currency = 'USD' ) {
+		if ( isNaN( price ) ) {
+			log( 'Simple Payments: invalid price value', {
+				siteId: this.props.siteId,
+				paymentId: this.props.paymentId,
+				price,
+			} );
+			return `---- ${ currency }`;
+		}
 		const { integer, fraction } = getCurrencyObject( price, currency );
 		return `${ integer }${ fraction } ${ currency }`;
 	}
@@ -56,6 +66,10 @@ class ProductListItem extends Component {
 			translate,
 		} = this.props;
 		const radioId = `simple-payments-list-item-radio-${ paymentId }`;
+		const labelClasses = classnames( {
+			'editor-simple-payments-modal__list-label': true,
+			'is-error': isNaN( price ),
+		} );
 
 		return (
 			<CompactCard className="editor-simple-payments-modal__list-item">
@@ -66,7 +80,7 @@ class ProductListItem extends Component {
 					checked={ isSelected }
 					onChange={ this.handleRadioChange }
 				/>
-				<label className="editor-simple-payments-modal__list-label" htmlFor={ radioId }>
+				<label className={ labelClasses } htmlFor={ radioId }>
 					<div className="editor-simple-payments-modal__list-name">{ title }</div>
 					<div>{ this.formatPrice( price, currency ) }</div>
 				</label>
