@@ -28,14 +28,14 @@ export function getSiteFragment( path ) {
 	// last (most sections) and second-to-last (post ID is last in editor)
 
 	// Check last and second-to-last piece for site slug
-	for ( let i = 2; i > 0; i-- ) {
+	for ( let i = 1; i < 3; i++ ) {
 		const piece = pieces[ pieces.length - i ];
 		if ( piece && -1 !== piece.indexOf( '.' ) ) {
 			return piece;
 		}
 	}
 
-	// Check last and second-to-last piece for numeric site ID
+	// Check second-to-last and last piece for numeric site ID
 	for ( let i = 2; i > 0; i-- ) {
 		const piece = parseInt( pieces[ pieces.length - i ], 10 );
 		if ( Number.isSafeInteger( piece ) ) {
