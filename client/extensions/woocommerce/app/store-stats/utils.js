@@ -258,11 +258,11 @@ export function getQueries( unit, baseDate, overrides = {} ) {
 		...( overrides.referrerQuery || {} ),
 	};
 
-	const topEarnersQuery = {
+	const topListQuery = {
 		...baseQuery,
 		date: getUnitPeriod( baseDate, unit ),
 		limit: 10,
-		...( overrides.topEarnersQuery || {} ),
+		...( overrides.topListQuery || {} ),
 	};
 
 	const visitorQuery = {
@@ -275,7 +275,7 @@ export function getQueries( unit, baseDate, overrides = {} ) {
 	return {
 		orderQuery,
 		referrerQuery,
-		topEarnersQuery,
+		topListQuery,
 		visitorQuery,
 	};
 }

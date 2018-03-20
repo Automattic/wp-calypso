@@ -254,7 +254,7 @@ class StatsWidget extends Component {
 
 	renderProducts = () => {
 		const { site, translate, unit, topEarnersData, queries, viewStats } = this.props;
-		const { topEarnersQuery } = queries;
+		const { topListQuery } = queries;
 		const values = [
 			{ key: 'name', title: translate( 'Product' ), format: 'text' },
 			{ key: 'total', title: translate( 'Sales' ), format: 'currency' },
@@ -266,7 +266,7 @@ class StatsWidget extends Component {
 				statType="statsTopEarners"
 				unit={ unit }
 				values={ values }
-				query={ topEarnersQuery }
+				query={ topListQuery }
 				fetchedData={ topEarnersData }
 				viewText={ translate( 'View top products' ) }
 				viewLink={ getLink( `/store/stats/products/${ unit }/:site`, site ) }
@@ -283,12 +283,12 @@ class StatsWidget extends Component {
 			return null;
 		}
 
-		const { orderQuery, topEarnersQuery, referrerQuery, visitorQuery } = queries;
+		const { orderQuery, topListQuery, referrerQuery, visitorQuery } = queries;
 		return (
 			<Fragment>
 				<QueryPreferences />
 				<QuerySiteStats statType="statsOrders" siteId={ site.ID } query={ orderQuery } />
-				<QuerySiteStats statType="statsTopEarners" siteId={ site.ID } query={ topEarnersQuery } />
+				<QuerySiteStats statType="statsTopEarners" siteId={ site.ID } query={ topListQuery } />
 				<QuerySiteStats statType="statsStoreReferrers" siteId={ site.ID } query={ referrerQuery } />
 				<QuerySiteStats statType="statsVisits" siteId={ site.ID } query={ visitorQuery } />
 			</Fragment>
@@ -340,9 +340,9 @@ function mapStateToProps( state ) {
 
 	const queries = getQueries( unit, moment().format( 'YYYY-MM-DD' ), {
 		referrerQuery: { quantity: 1 },
-		topEarnersQuery: { limit: dashboardListLimit },
+		topListQuery: { limit: dashboardListLimit },
 	} );
-	const { orderQuery, topEarnersQuery, referrerQuery, visitorQuery } = queries;
+	const { orderQuery, topListQuery, referrerQuery, visitorQuery } = queries;
 
 	const orderData = getSiteStatsNormalizedData( state, site.ID, 'statsOrders', orderQuery );
 	const visitorData = getSiteStatsNormalizedData( state, site.ID, 'statsVisits', visitorQuery );
@@ -350,7 +350,7 @@ function mapStateToProps( state ) {
 		state,
 		site.ID,
 		'statsTopEarners',
-		topEarnersQuery
+		topListQuery
 	);
 	const referrerData = getSiteStatsNormalizedData(
 		state,
