@@ -65,7 +65,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 				/>
 				<SectionHeader
 					className="google-my-business-stats-nudge__header"
-					label={ this.props.translate( 'Recommendation from WordPress.com' ) }
+					label={ this.props.translate( 'Recommendations from WordPress.com' ) }
 				/>
 
 				<div className="google-my-business-stats-nudge__body">
