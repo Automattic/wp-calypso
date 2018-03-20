@@ -108,6 +108,7 @@ class Pages extends Component {
 		page: 0,
 		pages: [],
 		trackScrollPage: function() {},
+		query: {},
 	};
 
 	state = {
@@ -198,8 +199,8 @@ class Pages extends Component {
 		);
 
 	getNoContentMessage() {
-		const { query = {}, translate, site, siteId } = this.props;
-		const { search, status = 'published' } = query;
+		const { query, translate, site, siteId } = this.props;
+		const { search, status } = query;
 
 		if ( search ) {
 			return (
@@ -289,23 +290,21 @@ class Pages extends Component {
 	}
 
 	renderPagesList( { pages } ) {
-		const { site } = this.props;
-		const status = this.props.status || 'published';
+		const { site, lastPage, query } = this.props;
 
 		// Pages only display hierarchically for published pages on single-sites when
 		// there are 100 or fewer pages and no more pages to load (last page).
 		// Pages are not displayed hierarchically for search.
-		if (
+		const showHierarchical =
 			site &&
-			status === 'published' &&
-			this.props.lastPage &&
+			query.status === 'publish,private' &&
+			lastPage &&
 			pages.length <= 100 &&
-			! this.props.search
-		) {
-			return this.renderHierarchical( { pages, site } );
-		}
+			! query.search;
 
-		return this.renderChronological( { pages, site } );
+		return showHierarchical
+			? this.renderHierarchical( { pages, site } )
+			: this.renderChronological( { pages, site } );
 	}
 
 	renderHierarchical( { pages, site } ) {
@@ -334,7 +333,9 @@ class Pages extends Component {
 	}
 
 	renderChronological( { pages, site } ) {
-		if ( ! this.props.search ) {
+		const { search, status } = this.props.query;
+
+		if ( ! search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
 		}
@@ -358,15 +359,14 @@ class Pages extends Component {
 			this.addLoadingRows( rows, 1 );
 		}
 
-		const blogPostsPage = site &&
-			status === 'published' && (
-				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
-			);
+		const showBlogPostsPage = site && status === 'publish,private' && ! search;
 
 		return (
 			<div id="pages" className="pages__page-list">
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
-				{ blogPostsPage }
+				{ showBlogPostsPage && (
+					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				) }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
 			</div>
