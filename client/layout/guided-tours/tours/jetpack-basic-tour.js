@@ -34,9 +34,9 @@ const scrollSidebarToTop = () => scrollTo( { y: 0, container: getScrollableSideb
 
 // note that this tour checks for a non-existent feature flag.
 // this is kept as an example, while making sure it never gets triggered
-export const MainTour = makeTour(
+export const JetpackBasicTour = makeTour(
 	<Tour
-		name="main"
+		name="jetpackBasicTour"
 		version="20160601"
 		path="/"
 		when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }
