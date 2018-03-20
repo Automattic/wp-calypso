@@ -12,8 +12,6 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getSiteDomain } from 'state/sites/selectors';
 import { getInviteForSite } from 'state/invites/selectors';
-import { canCurrentUser } from 'state/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
 import { restorePost } from 'state/posts/actions';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
@@ -152,22 +150,13 @@ export const onPostRestoreFailure = action => ( dispatch, getState ) => {
 
 const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully restored' ) );
 
-export function onPostSaveSuccess( dispatch, { post, savedPost }, getState ) {
+export function onPostSaveSuccess( dispatch, { post, savedPost } ) {
 	switch ( post.status ) {
 		case 'trash':
-			const state = getState();
-			const userId = getCurrentUserId( state );
-			const isAuthor = savedPost.author && savedPost.author.ID === userId;
-			const canRestore = canCurrentUser(
-				state,
-				savedPost.site_ID,
-				isAuthor ? 'delete_posts' : 'delete_others_posts'
-			);
-
 			dispatch(
 				successNotice( translate( 'Post successfully moved to trash.' ), {
-					button: canRestore ? translate( 'Undo' ) : null,
-					onClick: restorePost( savedPost.site_ID, savedPost.ID ),
+					button: translate( 'Undo' ),
+					onClick: () => dispatch( restorePost( savedPost.site_ID, savedPost.ID ) ),
 				} )
 			);
 			break;
