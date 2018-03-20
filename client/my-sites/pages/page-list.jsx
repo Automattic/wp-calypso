@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
+import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -110,6 +110,20 @@ class Pages extends Component {
 		trackScrollPage: function() {},
 	};
 
+	state = {
+		pages: this.props.pages,
+		shadowItems: {},
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		if (
+			nextProps.pages !== this.props.pages &&
+			( size( this.state.shadowItems ) === 0 || ! isEqual( nextProps.query, this.props.query ) )
+		) {
+			this.setState( { pages: nextProps.pages, shadowItems: {} } );
+		}
+	}
+
 	fetchPages = options => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
@@ -153,6 +167,35 @@ class Pages extends Component {
 
 		return markedPages;
 	}
+
+	updateShadowStatus = ( globalID, shadowStatus ) =>
+		new Promise( resolve =>
+			this.setState( ( state, props ) => {
+				if ( shadowStatus ) {
+					// add or update the `globalID` key in the `shadowItems` map
+					return {
+						shadowItems: {
+							...state.shadowItems,
+							[ globalID ]: shadowStatus,
+						},
+					};
+				}
+
+				// remove `globalID` from the `shadowItems` map
+				const newShadowItems = without( state.shadowItems, globalID );
+				const newState = {
+					shadowItems: newShadowItems,
+				};
+
+				// if the last shadow item just got removed, start showing the up-to-date post
+				// list as specified by props.
+				if ( size( newShadowItems ) === 0 ) {
+					newState.pages = props.pages;
+				}
+
+				return newState;
+			}, resolve )
+		);
 
 	getNoContentMessage() {
 		const { query = {}, translate, site, siteId } = this.props;
@@ -271,6 +314,8 @@ class Pages extends Component {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
+					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
+					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					site={ site }
 					multisite={ false }
@@ -302,6 +347,7 @@ class Pages extends Component {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
+					onShadow={ this.handleShadow }
 					page={ page }
 					multisite={ this.props.siteId === null }
 				/>
@@ -336,7 +382,8 @@ class Pages extends Component {
 	}
 
 	render() {
-		const { hasSites, loading, pages } = this.props;
+		const { hasSites, loading } = this.props;
+		const { pages } = this.state;
 
 		if ( pages.length && hasSites ) {
 			return this.renderPagesList( { pages } );

@@ -6,20 +6,20 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
-import { flow, get, includes, partial } from 'lodash';
+import { flow, get, includes, noop, partial } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import updatePostStatus from 'components/update-post-status';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'gridicons';
-import PopoverMenu from 'components/popover/menu';
+import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import SiteIcon from 'blocks/site-icon';
 import { editLinkForPage, statsLinkForPage } from '../helpers';
 import * as utils from 'lib/posts/utils';
@@ -33,12 +33,35 @@ import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
+import { withoutNotice } from 'state/notices/actions';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
 function preloadEditor() {
 	preload( 'post-editor' );
 }
+
+function sleep( ms ) {
+	return new Promise( r => setTimeout( r, ms ) );
+}
+
+const ShadowNotice = localize( ( { shadowStatus, onUndoClick, translate } ) => (
+	<div className="page__shadow-notice-cover">
+		<Notice
+			className="page__shadow-notice"
+			isCompact
+			inline
+			text={ shadowStatus.text }
+			status={ shadowStatus.status }
+			icon={ shadowStatus.icon }
+		>
+			{ shadowStatus.undo && (
+				<NoticeAction onClick={ onUndoClick }>{ translate( 'Undo' ) }</NoticeAction>
+			) }
+		</Notice>
+	</div>
+) );
 
 class Page extends Component {
 	static propTypes = {
@@ -51,24 +74,10 @@ class Page extends Component {
 		recordEditPage: PropTypes.func.isRequired,
 		recordViewPage: PropTypes.func.isRequired,
 		recordStatsPage: PropTypes.func.isRequired,
-
-		// connected via updatePostStatus
-		buildUpdateTemplate: PropTypes.func.isRequired,
-		togglePageActions: PropTypes.func.isRequired,
-		updatePostStatus: PropTypes.func.isRequired,
-		updated: PropTypes.bool.isRequired,
-		updatedStatus: PropTypes.string,
-		previousStatus: PropTypes.string,
-		showMoreOptions: PropTypes.bool.isRequired,
-		showPageActions: PropTypes.bool.isRequired,
 	};
 
-	togglePageActions = () => {
-		this.props.togglePageActions();
-		// TODO check previous impl for race conditions
-		if ( this.props.showPageActions ) {
-			this.props.recordMoreOptions();
-		}
+	static defaultProps = {
+		onShadowStatusChange: noop,
 	};
 
 	// Construct a link to the Site the page belongs too
@@ -323,8 +332,10 @@ class Page extends Component {
 		);
 	}
 
+	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
+
 	render() {
-		const { page, site = {}, translate } = this.props;
+		const { page, site = {}, shadowStatus, translate } = this.props;
 		const title = page.title || translate( '(no title)' );
 		const canEdit = utils.userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
@@ -346,12 +357,11 @@ class Page extends Component {
 			sendToTrashItem ||
 			moreInfoItem;
 
-		const popoverMenu = hasMenuItems && (
-			<PopoverMenu
-				isVisible={ this.props.showPageActions }
-				onClose={ this.togglePageActions }
-				position={ 'bottom left' }
-				context={ this.refs && this.refs.popoverMenuButton }
+		const ellipsisMenu = hasMenuItems && (
+			<EllipsisMenu
+				className="page__actions-toggle"
+				position="bottom left"
+				onToggle={ this.handleMenuToggle }
 			>
 				{ editItem }
 				{ publishItem }
@@ -361,19 +371,11 @@ class Page extends Component {
 				{ restoreItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
-			</PopoverMenu>
+			</EllipsisMenu>
 		);
 
-		const ellipsisGridicon = hasMenuItems && (
-			<Gridicon
-				icon="ellipsis"
-				className={ classNames( {
-					'page__actions-toggle': true,
-					'is-active': this.props.showPageActions,
-				} ) }
-				onClick={ this.togglePageActions }
-				ref="popoverMenuButton"
-			/>
+		const shadowNotice = shadowStatus && (
+			<ShadowNotice shadowStatus={ shadowStatus } onUndoClick={ this.undoPostStatus } />
 		);
 
 		const cardClasses = {
@@ -421,41 +423,153 @@ class Page extends Component {
 						siteUrl={ this.props.multisite && this.getSiteDomain() }
 					/>
 				</div>
-				{ ellipsisGridicon }
-				{ popoverMenu }
-				<ReactCSSTransitionGroup
-					transitionName="updated-trans"
-					transitionEnterTimeout={ 300 }
-					transitionLeaveTimeout={ 300 }
-				>
-					{ this.props.buildUpdateTemplate() }
-				</ReactCSSTransitionGroup>
+				{ ellipsisMenu }
+				{ shadowNotice }
 			</CompactCard>
 		);
 	}
 
+	changeShadowStatus( shadowStatus ) {
+		return this.props.onShadowStatusChange( this.props.page.global_ID, shadowStatus );
+	}
+
+	async performUpdate( { action, progressNotice, successNotice, errorNotice, undo } ) {
+		await this.changeShadowStatus( progressNotice );
+		try {
+			await action();
+			if ( undo === 'undo' ) {
+				// This update was actually undo. Reset the shadow status immediately
+				await this.changeShadowStatus( false );
+				return;
+			}
+			await this.changeShadowStatus( { ...successNotice, undo } );
+			if ( undo ) {
+				// If undo is offered, keep the success notice displayed indefinitely
+				return;
+			}
+		} catch ( error ) {
+			await this.changeShadowStatus( errorNotice );
+		}
+		// remove the success/error notice after 5 seconds
+		await sleep( 5000 );
+		await this.changeShadowStatus( false );
+	}
+
+	updatePostStatus( status ) {
+		const { page, translate } = this.props;
+
+		switch ( status ) {
+			case 'delete':
+				this.performUpdate( {
+					action: () => this.props.deletePost( page.site_ID, page.ID ),
+					progressNotice: {
+						status: 'is-error',
+						icon: 'trash',
+						text: translate( 'Deleting…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page deleted.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to delete page.' ),
+					},
+				} );
+				return;
+
+			case 'trash':
+				this.performUpdate( {
+					action: () => this.props.trashPost( page.site_ID, page.ID, page ),
+					undo: page.status !== 'trash' ? 'restore' : 'undo',
+					progressNotice: {
+						status: 'is-error',
+						icon: 'trash',
+						text: translate( 'Trashing…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page trashed.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to trash page.' ),
+					},
+				} );
+				return;
+
+			case 'restore':
+				this.performUpdate( {
+					action: () => this.props.restorePost( page.site_ID, page.ID ),
+					undo: page.status === 'trash' ? 'trash' : 'undo',
+					progressNotice: {
+						status: 'is-warning',
+						icon: 'history',
+						text: translate( 'Restoring…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page restored.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to restore page.' ),
+					},
+				} );
+				return;
+
+			case 'publish':
+				this.performUpdate( {
+					action: () => this.props.savePost( page.site_ID, page.ID, { status } ),
+					progressNotice: {
+						status: 'is-info',
+						icon: 'reader',
+						text: translate( 'Publishing…' ),
+					},
+					successNotice: {
+						status: 'is-success',
+						text: translate( 'Page published.' ),
+					},
+					errorNotice: {
+						status: 'is-error',
+						text: translate( 'Failed to publish page.' ),
+					},
+				} );
+		}
+	}
+
 	updateStatusPublish = () => {
-		this.props.updatePostStatus( 'publish' );
+		this.updatePostStatus( 'publish' );
 		this.props.recordEvent( 'Clicked Publish Page' );
 	};
 
 	updateStatusTrash = () => {
-		this.props.updatePostStatus( 'trash' );
+		this.updatePostStatus( 'trash' );
 		this.props.recordEvent( 'Clicked Move to Trash' );
 	};
 
 	updateStatusRestore = () => {
-		this.props.updatePostStatus( 'restore' );
+		this.updatePostStatus( 'restore' );
 		this.props.recordEvent( 'Clicked Restore' );
 	};
 
 	updateStatusDelete = () => {
-		this.props.updatePostStatus( 'delete' );
+		const deleteWarning = this.props.translate( 'Delete this page permanently?' );
+		if ( typeof window === 'object' && window.confirm( deleteWarning ) ) {
+			this.updatePostStatus( 'delete' );
+		}
 		this.props.recordEvent( 'Clicked Delete Page' );
 	};
 
 	copyPage = () => {
 		this.props.recordEvent( 'Clicked Copy Page' );
+	};
+
+	handleMenuToggle = isVisible => {
+		if ( isVisible ) {
+			// record a GA event when the menu is opened
+			this.props.recordMoreOptions();
+		}
 	};
 }
 
@@ -479,6 +593,10 @@ const mapState = ( state, props ) => {
 };
 
 const mapDispatch = {
+	savePost: withoutNotice( savePost ),
+	deletePost: withoutNotice( deletePost ),
+	trashPost: withoutNotice( trashPost ),
+	restorePost: withoutNotice( restorePost ),
 	setPreviewUrl,
 	setLayoutFocus,
 	recordEvent,
@@ -489,4 +607,4 @@ const mapDispatch = {
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 };
 
-export default flow( localize, updatePostStatus, connect( mapState, mapDispatch ) )( Page );
+export default flow( localize, connect( mapState, mapDispatch ) )( Page );
