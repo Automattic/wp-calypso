@@ -26,7 +26,7 @@ import { action as ActionTypes } from './constants';
 import PollerPool from 'lib/data-poller';
 import { setLastStoreId } from 'reader/controller-helper';
 import * as stats from 'reader/stats';
-import { keyToString, keysAreEqual } from './post-key';
+import { keyToString, keysAreEqual } from 'reader/post-key';
 import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
 import { COMMENTS_RECEIVE } from 'state/action-types';
 import { getPostByKey } from 'state/reader/posts/selectors';

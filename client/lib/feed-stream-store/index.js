@@ -12,7 +12,7 @@ import PagedStream from './paged-stream';
 import FeedStreamCache from './feed-stream-cache';
 import analytics from 'lib/analytics';
 import wpcom from 'lib/wp';
-import { keyToString, keysAreEqual } from './post-key';
+import { keyToString, keysAreEqual } from 'reader/post-key';
 
 const wpcomUndoc = wpcom.undocumented();
 

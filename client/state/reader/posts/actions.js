@@ -12,7 +12,7 @@ import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
 import analytics, { mc } from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import wpcom from 'lib/wp';
-import { keyForPost } from 'lib/feed-stream-store/post-key';
+import { keyForPost } from 'reader/post-key';
 import { pageViewForPost } from 'reader/stats';
 import { hasPostBeenSeen } from './selectors';
 
