@@ -50,6 +50,8 @@ class CreditsPaymentBox extends React.Component {
 					</div>
 				</div>
 
+				{ this.props.children }
+
 				<TermsOfService />
 
 				<div className="payment-box-actions">
