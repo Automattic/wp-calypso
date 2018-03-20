@@ -33,7 +33,6 @@ import {
 } from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { requestSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
@@ -112,7 +111,6 @@ class Dashboard extends Component {
 	fetchStoreData = () => {
 		const { siteId, productsLoaded } = this.props;
 		this.props.fetchOrders( siteId );
-		this.props.requestSettings( siteId );
 
 		if ( ! productsLoaded ) {
 			const params = { page: 1 };
@@ -301,7 +299,6 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchOrders,
 			fetchProducts,
-			requestSettings,
 		},
 		dispatch
 	);
