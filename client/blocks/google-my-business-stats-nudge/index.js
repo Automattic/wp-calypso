@@ -106,7 +106,7 @@ class GoogleMyBusinessStatsNudge extends Component {
 
 export default connect(
 	( state, ownProps ) => ( {
-		isDismissed: isGoogleMyBusinessStatsNudgeDismissed( state, ownProps.siteId ),
+		isDismissed: false, //isGoogleMyBusinessStatsNudgeDismissed( state, ownProps.siteId ),
 		dismissCount: getGoogleMyBusinessStatsNudgeDismissCount( state, ownProps.siteId ),
 	} ),
 	{
