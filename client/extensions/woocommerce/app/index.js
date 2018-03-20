@@ -25,6 +25,7 @@ import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import { getSiteFragment } from 'lib/route';
+import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
 
 class App extends Component {
 	static propTypes = {
@@ -109,6 +110,7 @@ class App extends Component {
 				<DocumentHead title={ documentTitle } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
 				{ children }
+				<WooCommerceColophon />
 			</div>
 		);
 	};
