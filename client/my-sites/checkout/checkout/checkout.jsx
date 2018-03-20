@@ -14,6 +14,7 @@ import React from 'react';
  */
 import { abtest, getABTestVariation } from 'lib/abtest';
 import analytics from 'lib/analytics';
+import config from 'config';
 import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -488,7 +489,7 @@ class Checkout extends React.Component {
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
 			>
-				{ this.renderTermPicker() }
+				{ config.isEnabled( 'upgrades/2-year-plans' ) && this.renderTermPicker() }
 			</SecurePaymentForm>
 		);
 	}

@@ -168,6 +168,7 @@
 		"try/single-cdn": true,
 		"ui/first-view": true,
 		"ui/first-view/reset-route": true,
+		"upgrades/2-year-plans": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -28,14 +29,16 @@ const SecurePaymentFormPlaceholder = () => {
 				</div>
 				<div className="placeholder-row placeholder" />
 			</div>
-			<div className="payment-box-section">
-				<div className="placeholder-col-narrow placeholder-inline-pad">
-					<div className="placeholder" />
+			{ config.isEnabled( 'upgrades/2-year-plans' ) && (
+				<div className="payment-box-section">
+					<div className="placeholder-col-narrow placeholder-inline-pad">
+						<div className="placeholder" />
+					</div>
+					<div className="placeholder-col-narrow">
+						<div className="placeholder" />
+					</div>
 				</div>
-				<div className="placeholder-col-narrow">
-					<div className="placeholder" />
-				</div>
-			</div>
+			) }
 			<div className="payment-box-hr" />
 			<div className="placeholder-button-container">
 				<div className="placeholder-col-narrow">
