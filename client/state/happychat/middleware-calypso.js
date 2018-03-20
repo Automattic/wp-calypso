@@ -40,6 +40,7 @@ import isHappychatChatAssigned from 'state/happychat/selectors/is-happychat-chat
 import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { getCurrentRoute } from 'state/selectors';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 const getRouteSetMessage = ( state, path ) => {
 	return `Looking at https://wordpress.com${ path }`;
@@ -152,7 +153,12 @@ export default store => next => action => {
 				getHappychatChatStatus( state ) === HAPPYCHAT_CHAT_STATUS_PENDING &&
 				action.status === HAPPYCHAT_CHAT_STATUS_ASSIGNED
 			) {
-				dispatch( sendEvent( getRouteSetMessage( state, getCurrentRoute( state ) ) ) );
+				dispatch(
+					withAnalytics(
+						recordTracksEvent( 'calypso_happychat_start' ),
+						sendEvent( getRouteSetMessage( state, getCurrentRoute( state ) ) )
+					)
+				);
 			}
 			break;
 
