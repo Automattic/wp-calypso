@@ -1,21 +1,33 @@
 /** @format */
-const themeSchema = {
+
+/**
+ * Internal dependencies
+ */
+import { withItemsSchema } from 'lib/query-manager/schema';
+
+const themesSchema = {
 	title: 'Theme',
 	type: 'object',
-	properties: {
-		id: { type: 'string' },
-		name: { type: 'string' },
-		author: { type: 'string' },
-		screenshot: { type: 'string' },
-		stylesheet: { type: 'string' },
-		demo_uri: { type: 'string' },
-		author_uri: { type: 'string' },
-		price: {
-			type: 'string',
+	patternProperties: {
+		'^\\w+$': {
+			additionalProperties: false,
+			required: [ 'id', 'name', 'author', 'screenshot' ],
+			type: 'object',
+			properties: {
+				author: { type: 'string' },
+				author_uri: { type: 'string' },
+				demo_uri: { type: 'string' },
+				id: { type: 'string' },
+				name: { type: 'string' },
+				price: { type: 'string' },
+				screenshot: { type: 'string' },
+				stylesheet: { type: 'string' },
+			},
 		},
 	},
-	required: [ 'id', 'name', 'author', 'screenshot' ],
 };
+
+const themeQueryManagerSchema = withItemsSchema( themesSchema );
 
 export const queriesSchema = {
 	type: 'object',
@@ -24,51 +36,7 @@ export const queriesSchema = {
 	},
 	patternProperties: {
 		// Site ID
-		'^(wpcom|wporg|\\d+)$': {
-			type: 'object',
-			properties: {
-				data: {
-					type: 'object',
-					required: [ 'items', 'queries' ],
-					properties: {
-						items: {
-							description: 'Themes, keyed by ID',
-							type: 'object',
-							patternProperties: {
-								'^\\w+$': themeSchema,
-							},
-						},
-						queries: {
-							patternProperties: {
-								// Query key pairs
-								'^\\[.*\\]$': {
-									type: 'object',
-									required: [ 'itemKeys' ],
-									properties: {
-										itemKeys: {
-											type: 'array',
-										},
-										found: {
-											type: 'number',
-										},
-									},
-								},
-							},
-							additionalProperties: false,
-						},
-					},
-				},
-				options: {
-					type: 'object',
-					required: [ 'itemKey' ],
-					properties: {
-						itemKey: {
-							type: 'string',
-						},
-					},
-				},
-			},
-		},
+		'^(wpcom|wporg|\\d+)$': themeQueryManagerSchema,
 	},
 	additionalProperties: false,
 };
