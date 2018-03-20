@@ -245,15 +245,6 @@ export default {
 	},
 
 	domainManagementTransferToOtherSite( pageContext, next ) {
-		const state = pageContext.store.getState();
-		const siteId = getSelectedSiteId( state );
-		const isAutomatedTransfer = isSiteAutomatedTransfer( state, siteId );
-		if ( isAutomatedTransfer ) {
-			const siteSlug = getSelectedSiteSlug( state );
-			page.redirect( `/domains/manage/${ siteSlug }` );
-			return;
-		}
-
 		pageContext.primary = (
 			<TransferData
 				component={ DomainManagement.TransferToOtherSite }
