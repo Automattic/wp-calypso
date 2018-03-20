@@ -15,17 +15,11 @@ import Gridicon from 'gridicons';
  * Internal Dependencies
  */
 import config from 'config';
-import { abtest } from 'lib/abtest';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
-import Popover from 'components/popover';
-import InlineHelpSearchResults from './inline-help-search-results';
-import InlineHelpSearchCard from './inline-help-search-card';
-import HelpContact from 'me/help/help-contact';
-import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
-import { getHelpSelectedSite } from 'state/help/selectors';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import AsyncLoad from 'components/async-load';
 
 /**
  * Module variables
@@ -35,6 +29,10 @@ const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 	? getGlobalKeyboardShortcuts()
 	: null;
 const debug = debugFactory( 'calypso:inline-help' );
+
+const InlineHelpPopover = props => (
+	<AsyncLoad { ...props } require="blocks/inline-help/popover" placeholder={ null } />
+);
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -47,36 +45,35 @@ class InlineHelp extends Component {
 
 	state = {
 		showInlineHelp: false,
-		showContactForm: false,
-	};
-
-	openResult = href => {
-		if ( ! href ) {
-			return;
-		}
-
-		this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', {
-			search_query: this.props.searchQuery,
-			result_url: href,
-		} );
-
-		window.location = href;
 	};
 
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
-			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp.bind( this );
+			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
 	}
 
-	componentDidUpdate( prevProps, prevState ) {
-		if ( prevState.showContactForm && prevProps.searchQuery !== this.props.searchQuery ) {
-			this.toggleContactForm();
+	componentWillUnmount() {
+		if ( globalKeyboardShortcuts ) {
+			globalKeyboardShortcuts.showInlineHelp = null;
 		}
-		if ( ! prevProps.isHappychatOpen && this.props.isHappychatOpen ) {
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
 			this.closeInlineHelp();
 		}
 	}
+
+	preloaded = false;
+
+	// Preload the async chunk on mouse hover or touch start
+	preload = () => {
+		if ( ! this.preloaded ) {
+			asyncRequire( 'blocks/inline-help/popover' );
+			this.preloaded = true;
+		}
+	};
 
 	toggleInlineHelp = () => {
 		const { showInlineHelp } = this.state;
@@ -107,101 +104,34 @@ class InlineHelp extends Component {
 		this.inlineHelpToggle = node;
 	};
 
-	moreHelpClicked = () => {
-		this.closeInlineHelp();
-		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
-	};
-
-	toggleContactForm = () => {
-		if ( this.state.showContactForm ) {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_hide' );
-		} else {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_contact_show' );
-		}
-		this.setState( { showContactForm: ! this.state.showContactForm } );
-	};
-
 	render() {
 		const { translate } = this.props;
-		const { showContactForm, showInlineHelp } = this.state;
+		const { showInlineHelp } = this.state;
 		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
-		const popoverClasses = { 'is-help-active': showContactForm };
-		const showContactButton = abtest( 'inlineHelpWithContactForm' ) === 'inlinecontact';
 		return (
 			<Button
 				className={ classNames( 'inline-help', inlineHelpButtonClasses ) }
 				onClick={ this.handleHelpButtonClicked }
+				onTouchStart={ this.preload }
+				onMouseEnter={ this.preload }
 				borderless
 				title={ translate( 'Help' ) }
 				ref={ this.inlineHelpToggleRef }
 			>
 				<Gridicon icon="help-outline" />
-
-				<Popover
-					isVisible={ this.state.showInlineHelp }
-					onClose={ this.closeInlineHelp }
-					position="top right"
-					context={ this.inlineHelpToggle }
-					className={ classNames( 'inline-help__popover', popoverClasses ) }
-				>
-					<div className="inline-help__search">
-						<InlineHelpSearchCard openResult={ this.openResult } query={ this.props.searchQuery } />
-						<InlineHelpSearchResults
-							openResult={ this.openResult }
-							searchQuery={ this.props.searchQuery }
-						/>
-					</div>
-
-					<div className="inline-help__contact">
-						<HelpContact compact={ true } selectedSite={ this.props.selectedSite } />
-					</div>
-
-					<div className="inline-help__footer">
-						<Button
-							onClick={ this.moreHelpClicked }
-							className="inline-help__more-button"
-							borderless
-							href="/help"
-						>
-							<Gridicon icon="help" className="inline-help__gridicon-left" />
-							{ translate( 'More help' ) }
-						</Button>
-
-						{ showContactButton && (
-							<Button
-								onClick={ this.toggleContactForm }
-								className="inline-help__contact-button"
-								borderless
-							>
-								<Gridicon icon="chat" className="inline-help__gridicon-left" />
-								{ translate( 'Contact us' ) }
-								<Gridicon icon="chevron-right" className="inline-help__gridicon-right" />
-							</Button>
-						) }
-
-						<Button
-							onClick={ this.toggleContactForm }
-							className="inline-help__cancel-button"
-							borderless
-						>
-							<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-							{ translate( 'Back' ) }
-						</Button>
-					</div>
-				</Popover>
+				{ showInlineHelp && (
+					<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
+				) }
 			</Button>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	searchQuery: getSearchQuery( state ),
-	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	selectedSite: getHelpSelectedSite( state ),
-	isHappychatOpen: isHappychatOpen( state ),
-} );
-const mapDispatchToProps = {
-	recordTracksEvent,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );
+export default connect(
+	state => ( {
+		isHappychatOpen: isHappychatOpen( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( InlineHelp ) );
