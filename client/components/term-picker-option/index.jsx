@@ -8,6 +8,7 @@ import React from 'react';
 import Badge from '../badge';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../../lib/plans/constants';
 
 export default class TermPickerOption extends React.Component {
 	static propTypes = {
@@ -15,19 +16,21 @@ export default class TermPickerOption extends React.Component {
 		savePercent: PropTypes.number.isRequired,
 		price: PropTypes.string.isRequired,
 		pricePerMonth: PropTypes.string.isRequired,
-		isActive: PropTypes.bool.isRequired,
-		onChange: PropTypes.func.isRequired,
+		checked: PropTypes.bool.isRequired,
+		value: PropTypes.any.isRequired,
+		onCheck: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
-		isActive: false,
-		onChange: () => null,
+		checked: false,
+		savePercent: 0,
+		onCheck: () => null,
 	};
 
 	render() {
-		const { term, savePercent, price, pricePerMonth, isActive, onChange } = this.props;
+		const { savePercent, price, pricePerMonth, checked } = this.props;
 		const className = classnames( 'term-picker-option', {
-			'term-picker-option--active': isActive,
+			'term-picker-option--active': checked,
 		} );
 		return (
 			<label className={ className }>
@@ -35,17 +38,17 @@ export default class TermPickerOption extends React.Component {
 					<input
 						type="radio"
 						className="term-picker-option__radio"
-						checked={ isActive }
-						onChange={ onChange }
+						checked={ checked }
+						onChange={ this.handleChange }
 					/>
 				</div>
 
 				<div className="term-picker-option__content">
 					<div className="term-picker-option__header">
-						<div className="term-picker-option__term">{ term }</div>
+						<div className="term-picker-option__term">{ this.getTermText() }</div>
 						<div className="term-picker-option__discount">
 							{ savePercent ? (
-								<Badge type={ isActive ? 'success' : 'warning' }>Save { savePercent }%</Badge>
+								<Badge type={ checked ? 'success' : 'warning' }>Save { savePercent }%</Badge>
 							) : (
 								false
 							) }
@@ -53,10 +56,33 @@ export default class TermPickerOption extends React.Component {
 					</div>
 					<div className="term-picker-option__description">
 						<div className="term-picker-option__price">{ price }</div>
-						<div className="term-picker-option__side-note">{ pricePerMonth }</div>
+						<div className="term-picker-option__side-note">
+							{ savePercent ? 'only ' + pricePerMonth + ' / month' : pricePerMonth + ' / month' }
+						</div>
 					</div>
 				</div>
 			</label>
 		);
+	}
+
+	handleChange = e => {
+		if ( e.target.checked ) {
+			this.props.onCheck( {
+				value: this.props.value,
+			} );
+		}
+	};
+
+	getTermText() {
+		switch ( this.props.term ) {
+			case TERM_BIENNIALLY:
+				return '2 years';
+
+			case TERM_ANNUALLY:
+				return '1 year';
+
+			case TERM_MONTHLY:
+				return 'month';
+		}
 	}
 }

@@ -1,23 +1,23 @@
-Feature Example
-=======
+TermPickerOption
+==========
 
-Feature Example is a component used to render an mocked example of any feature. It renders whatever children it receives. The example is covered by a layer of fading gradient that gives the user a sense of UI that they are missing.
+Term picker option component: represents a term that user could pick when choosing his plan
+(monthly, yearly, biennially)
 
-## Usage
+### `index.jsx`
 
-```jsx
+Given basic information, this component creates a representation of given term.
 
-import React from 'react';
-import ExternalLink from 'components/feature-example';
-import EmptyContent from 'components/empty-content';
+#### Props
 
-class MyComponent extends React.Component {
-	render() {
-		return (
-			<FeatureExample>
-				<EmptyContent />
-			</FeatureExample>
-		);
-	}
-}
-```
+* `term`: string - TERM_* constant from lib/plans/constants.jsx
+* `savePercent` number ( optional ) - e.g. 60 for 60% - when displayed with other terms,
+                                      if may be useful to say that one option is 40% cheaper
+                                      then the other.
+* `price`: string - e.g. $60 - a formatted full price that is going to be charged to the user
+* `pricePerMonth`: string - e.g. $5 - a formatted effective price per month
+* `checked`: bool - if this option should be checked (selected)
+* `value`: any - value that is going to be passed to onChecked callback
+* `onCheck`: function({value}) => void ( optional ) A callback called when this term is checked (selected)
+
+For a complete list of props along with their types, please refer to the `TermPickerOption` component's `propTypes` member.

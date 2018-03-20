@@ -362,6 +362,7 @@ const SecurePaymentForm = createReactClass( {
 			<div className="secure-payment-form">
 				{ this.renderGetDotBlogNotice() }
 				{ this.renderPaymentBox() }
+				{ this.props.children }
 			</div>
 		);
 	},

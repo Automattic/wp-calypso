@@ -1,0 +1,16 @@
+.term-picker {
+	display: flex;
+	align-items: flex-start;
+	flex-flow: row wrap;
+	justify-content: space-between;
+
+	&__header {
+		margin-bottom: 10px;
+		flex-basis: 100%;
+	}
+
+	&__option-container {
+		flex-basis: calc(50% - 10px);
+	}
+}
+
