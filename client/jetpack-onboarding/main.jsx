@@ -69,12 +69,19 @@ class JetpackOnboardingMain extends React.PureComponent {
 	}
 
 	retrieveOnboardingCredentials() {
-		const { isConnected, siteId, siteSlug } = this.props;
+		const { isConnected, isRequestingWhetherConnected, jpoAuth, siteId, siteSlug } = this.props;
 		const { hasFinishedRequestingSite } = this.state;
+		const isMissingCredentials =
+			! isRequestingWhetherConnected && ! hasFinishedRequestingSite && ! jpoAuth;
 
 		// If we are not connected and missing the Jetpack onboarding credentials,
 		// redirect back to wp-admin so we can obtain them again.
-		if ( hasFinishedRequestingSite && ! isConnected && ! siteId && siteSlug ) {
+		if (
+			( hasFinishedRequestingSite || isMissingCredentials ) &&
+			! isConnected &&
+			! siteId &&
+			siteSlug
+		) {
 			const siteDomain = siteSlug.replace( '::', '/' );
 			const url = addQueryArgs(
 				{
