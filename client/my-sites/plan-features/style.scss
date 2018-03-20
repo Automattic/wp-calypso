@@ -651,7 +651,8 @@ $plan-features-sidebar-width: 272px;
 	
 	@include breakpoint( "<660px" ) {
 	
-		.signup__steps & {
+		.signup__steps &,
+		.jetpack-connect__plans & {
 			width: auto;
 		}
 
@@ -668,6 +669,10 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features__table {
 			display: none !important;
+		}
+
+		.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
+			padding-top: 0;
 		}
 	}
 }
