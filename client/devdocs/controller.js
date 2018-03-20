@@ -19,6 +19,7 @@ import config from 'config';
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/master/index.js#L12
 import AsyncLoad from './devdocs-async-load';
 import DocsComponent from './main';
+import Playground from './playground/';
 import { login } from 'lib/paths';
 import SingleDocComponent from './doc';
 import DevWelcome from './welcome';
@@ -26,6 +27,7 @@ import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
 import WizardComponent from './wizard-component';
+import { loadScript } from 'lib/load-script';
 
 const devdocs = {
 	/*
@@ -96,6 +98,26 @@ const devdocs = {
 	wizard: function( context, next ) {
 		context.primary = <WizardComponent stepName={ context.params.stepName } />;
 		next();
+	},
+
+	// UI components
+	playground: function( context ) {
+		// load code mirror code
+		loadScript( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.js' );
+		loadScript(
+			'//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/mode/javascript/javascript.min.js'
+		);
+
+		ReactDom.render(
+			React.createElement(
+				ReduxProvider,
+				{ store: context.store },
+				React.createElement( Playground, {
+					component: context.params.component,
+				} )
+			),
+			document.getElementById( 'primary' )
+		);
 	},
 
 	// App Blocks
