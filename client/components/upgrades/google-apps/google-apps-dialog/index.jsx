@@ -26,6 +26,8 @@ import {
 import { getAnnualPrice, getMonthlyPrice } from 'lib/google-apps';
 import { recordTracksEvent, recordGoogleEvent, composeAnalytics } from 'state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import QueryProducts from 'components/data/query-products-list';
+import { getProductsList } from 'state/products-list/selectors';
 
 class GoogleAppsDialog extends React.Component {
 	static propTypes = {
@@ -55,14 +57,14 @@ class GoogleAppsDialog extends React.Component {
 	}
 
 	render() {
-		const productsList = this.props.productsList && this.props.productsList.get();
-		const { currencyCode } = this.props;
+		const { currencyCode, productsList } = this.props;
 		const price = get( productsList, [ 'gapps', 'prices', currencyCode ], 0 );
 		const annualPrice = getAnnualPrice( price, currencyCode );
 		const monthlyPrice = getMonthlyPrice( price, currencyCode );
 
 		return (
 			<form className="google-apps-dialog" onSubmit={ this.handleFormSubmit }>
+				<QueryProducts />
 				<CompactCard>{ this.header() }</CompactCard>
 				<CompactCard>
 					<GoogleAppsProductDetails
@@ -257,6 +259,7 @@ const recordFormSubmit = section =>
 export default connect(
 	state => ( {
 		currencyCode: getCurrentUserCurrencyCode( state ),
+		productsList: getProductsList( state ),
 	} ),
 	{
 		recordAddEmailButtonClick,

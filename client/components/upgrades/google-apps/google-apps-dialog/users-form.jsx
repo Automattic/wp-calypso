@@ -56,7 +56,7 @@ class GoogleAppsUsersForm extends React.Component {
 						name="email"
 						value={ get( user, 'email.value', '' ) }
 						suffix={ '@' + domain }
-						isError={ emailError }
+						isError={ !! emailError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
 						onClick={ this.recordInputFocusEmail }
@@ -70,7 +70,7 @@ class GoogleAppsUsersForm extends React.Component {
 						name="firstName"
 						value={ get( user, 'firstName.value', '' ) }
 						maxLength={ 60 }
-						isError={ firstNameError }
+						isError={ !! firstNameError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
 						onClick={ this.recordInputFocusFirstName }
@@ -86,7 +86,7 @@ class GoogleAppsUsersForm extends React.Component {
 						name="lastName"
 						value={ get( user, 'lastName.value', '' ) }
 						maxLength={ 60 }
-						isError={ lastNameError }
+						isError={ !! lastNameError }
 						onChange={ this.updateInputField }
 						onBlur={ onBlur }
 						onClick={ this.recordInputFocusLastName }
