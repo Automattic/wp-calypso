@@ -238,12 +238,7 @@ class GoogleVoucherDetails extends Component {
 					icon={ <img src="/calypso/images/upgrades/adwords.svg" /> }
 					title={ translate( 'Google AdWords credit' ) }
 					description={ translate(
-						'Use your {{strong}}$100{{/strong}} in credit with Google to bring the right traffic to your most important Posts and Pages.',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
+						'Use a $100 credit with Google to bring traffic to your most important Posts and Pages.'
 					) }
 					body={ body }
 				/>

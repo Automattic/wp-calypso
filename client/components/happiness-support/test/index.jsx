@@ -32,16 +32,14 @@ describe( 'HappinessSupport', () => {
 	test( 'should render translated heading content', () => {
 		const heading = wrapper.find( 'h3' );
 		expect( heading ).to.have.length( 1 );
-		expect( heading.props().children ).to.equal(
-			'Translated: Enjoy priority support from our Happiness Engineers'
-		);
+		expect( heading.props().children ).to.equal( 'Translated: Priority support' );
 	} );
 
 	test( 'should render translated help content', () => {
 		const content = wrapper.find( 'p.happiness-support__text' );
 		expect( content ).to.have.length( 1 );
 		expect( content.props().children ).to.equal(
-			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site, your account, or how to do just about anything.' // eslint-disable-line max-len
+			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.' // eslint-disable-line max-len
 		);
 	} );
 

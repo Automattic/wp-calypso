@@ -17,10 +17,10 @@ export default localize( ( { selectedSite, translate } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="search"
-				title={ translate( 'Search' ) }
+				title={ translate( 'Jetpack search' ) }
 				description={ translate(
 					'Replace the default WordPress search with better results ' +
-						'and filtering that will help your users find what they are looking for.'
+						'and filtering powered by Elasticsearch.'
 				) }
 				buttonText={ translate( 'Enable Search in Traffic Settings' ) }
 				href={ '/settings/traffic/' + selectedSite.slug }

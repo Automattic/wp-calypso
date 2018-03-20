@@ -17,9 +17,9 @@ export default localize( ( { selectedSite, translate } ) => {
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon={ <img alt="" src="/calypso/images/upgrades/customize-theme.svg" /> }
-				title={ translate( 'Try a New Theme' ) }
+				title={ translate( 'Premium themes' ) }
 				description={ translate(
-					"You've now got access to every premium theme, at no extra cost - that's hundreds of new options. Give one a try!"
+					'Access hundreds of beautifully designed premium themes at no extra cost.'
 				) }
 				buttonText={ translate( 'Browse premium themes' ) }
 				href={ '/themes/' + selectedSite.slug }
