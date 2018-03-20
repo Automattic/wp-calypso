@@ -48,8 +48,11 @@ export class PageViewTracker extends React.Component {
 		clearTimeout( this.state.timer );
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.props.selectedSiteId !== nextProps.selectedSiteId ) {
+	componentDidUpdate( prevProps ) {
+		if (
+			prevProps.path !== this.props.path ||
+			prevProps.selectedSiteId !== this.props.selectedSiteId
+		) {
 			this.queuePageView();
 		}
 	}
