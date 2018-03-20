@@ -16,6 +16,7 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
@@ -141,6 +142,8 @@ class JetpackOnboardingMain extends React.PureComponent {
 				<DocumentHead
 					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
 				/>
+				{ /* If we're logged out, we cannot query "all of the user's sites" but have to be specific */ }
+				<QuerySites siteId={ siteId } />
 				{ /* We only allow querying of site settings once we know that we have finished
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
 				   * the site is a connected Jetpack site or not, and a network request that uses
