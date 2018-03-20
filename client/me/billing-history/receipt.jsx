@@ -16,7 +16,7 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { billingHistory, billingHistoryReceipt } from 'me/purchases/paths';
+import { billingHistory } from 'me/purchases/paths';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import tableRows from './table-rows';
 import { groupDomainProducts } from './utils';
@@ -62,26 +62,9 @@ class BillingReceipt extends React.Component {
 			transaction,
 			transactionFetchError,
 			transactionId,
-			translate,
 		} = this.props;
 
 		if ( transactionFetchError ) {
-			if ( 'invalid_receipt' === transactionFetchError.error ) {
-				this.props.errorNotice(
-					translate( "Sorry, we couldn't find receipt #%s", { args: transactionId } ),
-					{
-						displayOnNextPage: true,
-					}
-				);
-			} else {
-				this.props.clearBillingTransactionError( transactionId );
-				this.props.errorNotice( translate( 'Sorry, we had a problem loading that receipt.' ), {
-					displayOnNextPage: true,
-					button: translate( 'Try again' ),
-					href: billingHistoryReceipt( transactionId ),
-				} );
-			}
-
 			page.redirect( billingHistory );
 			return;
 		}
