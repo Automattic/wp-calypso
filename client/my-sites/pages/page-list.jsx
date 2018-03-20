@@ -316,7 +316,6 @@ class Pages extends Component {
 					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
 					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
-					site={ site }
 					multisite={ false }
 					hierarchical={ true }
 					hierarchyLevel={ page.indentLevel || 0 }
@@ -348,7 +347,8 @@ class Pages extends Component {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
-					onShadow={ this.handleShadow }
+					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
+					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					multisite={ this.props.siteId === null }
 				/>
