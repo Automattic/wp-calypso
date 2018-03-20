@@ -1,36 +1,3 @@
-.select-business-type__cta-card {
-	display: flex;
-
-	@include breakpoint( '<960px' ) {
-		display: block;
-	}
-}
-
-.select-business-type__cta-card-main {
-	flex: 2 1;
-}
-
-.select-business-type__cta-card-button-container {
-	align-self: center;
-	flex: 1;
-	margin-bottom: 16px;
-	text-align: left;
-
-	@include breakpoint( '>960px' ) {
-		margin-bottom: 0;
-		text-align: right;
-	}
-}
-
-.select-business-type__cta-card-heading {
-	font-size: 21px;
-	margin: 5px 0;
-
-	@include breakpoint( '>960px' ) {
-		margin: 10px 0;
-	}
-}
-
 .select-business-type {
 	.header-cake {
 		margin-bottom: 0;

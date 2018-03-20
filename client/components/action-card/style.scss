@@ -1,0 +1,39 @@
+.card.action-card {
+	display: flex;
+
+	@include breakpoint( '<960px' ) {
+		display: block;
+	}
+}
+
+.action-card__main {
+	flex: 2 1;
+}
+
+.action-card__button-container {
+	align-self: center;
+	flex: 1;
+	margin-bottom: 16px;
+	text-align: left;
+
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 0;
+		text-align: right;
+	}
+
+	@include breakpoint( '<480px' ) {
+		.button {
+			text-align: center;
+			width: 100%;
+		}
+	}
+}
+
+.action-card__heading {
+	font-size: 21px;
+	margin: 5px 0;
+
+	@include breakpoint( '>960px' ) {
+		margin: 10px 0;
+	}
+}

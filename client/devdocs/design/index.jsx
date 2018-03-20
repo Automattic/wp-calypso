@@ -25,6 +25,7 @@ import SearchCard from 'components/search-card';
 /**
  * Docs examples
  */
+import ActionCard from 'components/action-card/docs/example';
 import Accordions from 'components/accordion/docs/example';
 import BackButton from 'components/back-button/docs/example';
 import Banner from 'components/banner/docs/example';
@@ -143,6 +144,7 @@ class DesignAssets extends React.Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
+					<ActionCard readmeFilePath="action-card" />
 					<Accordions
 						componentUsageStats={ componentsUsageStats.accordion }
 						readmeFilePath="accordion"
