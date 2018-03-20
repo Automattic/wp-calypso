@@ -133,11 +133,6 @@
  */
 
 .layout .happychat .happychat__container.is-open.is-minimizing {
-	box-shadow: none;
-	border-top: 1px solid $gray-lighten-20;
-	border-left: 1px solid $gray-lighten-20;
-	border-right: 1px solid $gray-lighten-20;
-	background: $gray-lighten-30;
 	animation: happychat-minimize .5s 1 forwards;
 
 	> .happychat__composer,
@@ -155,25 +150,6 @@
 
 }
 
-.layout.is-group-editor .happychat .happychat__container.is-open.is-minimizing {
-	animation: happychat-minimize-right .5s 1 forwards;
-}
-
-.layout.has-no-sidebar .happychat .happychat__container.is-open.is-minimizing {
-	animation: happychat-fade-out-right .5s 1 forwards;
-
-	> .happychat__composer,
-	> .happychat__welcome,
-	> .happychat__conversation,
-	> .happychat__title .happychat__active-toolbar * {
-		visibility: visible;
-	}
-
-	> .happychat__title {
-		animation: none;
-	}
-}
-
 @keyframes happychat-disappear {
 	0% {
 		top: 0px;
@@ -189,45 +165,19 @@
 @keyframes happychat-minimize {
 	0% {
 		max-height: 220px;
-		bottom: 0px;
 	}
-	99%, 100% {
-		right: calc( 100% - 229px ); // small sidebar
-		width: 34px;
-		max-height: 34px;
-		bottom: 0px;
-	}
-	100% {
-		max-height: 0;
-		bottom: -34px;
-	}
-}
-
-@keyframes happychat-minimize-right {	// for right hand sidebars
-	0% {
-		max-height: 220px;
-		bottom: 0px;
-	}
-	99%, 100% {
-		right: 0px;	// 273 (sidebar width) + 40 (button width)
-		width: 34px;
-		max-height: 34px;
-		bottom: 0px;
-	}
-	100% {
-		max-height: 0;
-		bottom: -34px;
-	}
-}
-
-@keyframes happychat-fade-out-right {	// for cases where the left sidebar does not exist (full page views)
-	0% {
+	50% {
 		opacity: 1;
-		transform: translateX(0px);
+	}
+	99%, 100% {
+		right: 25px;
+		width: 34px;
+		max-height: 34px;
+		bottom: 70px;
+		opacity: 0;
 	}
 	100% {
-		opacity: 0;
-		transform: translateX(280px);
+		max-height: 0;
 	}
 }
 
@@ -235,17 +185,19 @@
 	@keyframes happychat-minimize {
 		0% {
 			max-height: 100%;
-			bottom: 0px;
+		}
+		50% {
+			opacity: 1;
 		}
 		99%, 100% {
-			right: calc( 100% - 273px ); // large sidebar
+			right: 25px;
 			width: 34px;
 			max-height: 34px;
-			bottom: 0px;
+			bottom: 70px;
+			opacity: 0;
 		}
 		100% {
 			max-height: 0;
-			bottom: -34px;
 		}
 	}
 }

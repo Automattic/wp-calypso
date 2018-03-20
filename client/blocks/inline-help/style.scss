@@ -1,7 +1,64 @@
-.button.is-borderless.inline-help {
+.inline-help {
 	position: fixed;
 		right: 24px;
-		bottom: 24px;
+		bottom: 16px;
+
+	.button.inline-help__happychat-button {
+		position: relative;
+		bottom: 60px;
+		right: 5px;
+
+		line-height: 1;
+		padding: 5px 4px 1px 4px;
+		border-radius: 100%;
+		background: $blue-wordpress;
+		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+		border: 1px solid darken( $blue-wordpress, 5 );
+
+		.gridicon {
+			fill: $white;
+			margin: 0;
+			top: 0;
+			height: auto;
+			width: auto;
+		}
+
+		&.is-active {
+			background: $blue-medium;
+			border-color: darken( $blue-medium, 5 )
+		}
+	}
+
+	.inline-help__happychat-button.has-unread {
+		color: $gray-dark;
+		position: relative;
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 6px;
+			left: 3px;
+			width: 10px;
+			height: 10px;
+			border: 2px solid $gray-lighten-30;
+			border-radius: 50%;
+			background: $orange-jazzy;
+
+			@include breakpoint( "<660px" ) {
+				top: 14px;
+				left: 11px;
+			}
+
+		}
+
+	}
+}
+
+.button.is-borderless.inline-help__button {
+	position: relative;
+		left: 34px;
+		bottom: 16px;
 	line-height: 1;
 	padding: 1px 4px 2px 1px;
 	border-radius: 100%;
@@ -87,7 +144,7 @@
 
 		position: fixed;
 			top: auto !important;
-			bottom: 64px !important;
+			bottom: 72px !important;
 	}
 
 	&.is-top .popover__arrow:before,
@@ -308,10 +365,6 @@
 	@include breakpoint( ">660px" ) {
 		font-size: 16px;
 	}
-}
-
-.layout.is-section-help .inline-help {
-
 }
 
 // PlaceholderLines component

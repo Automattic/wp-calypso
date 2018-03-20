@@ -56,31 +56,11 @@
 	flex-shrink: 0;
 	padding-left: 10px;
 
-	.button {
-		&.inline-help {
-			border-radius: 0;
-			border-left: 1px solid #c8d7e1;
-			flex: 0 1 60px;
-			margin-right: 0;
-			margin-left: auto;
-			outline: 0;
+	.button.is-active {
+		background: $blue-medium;
 
-			@include breakpoint( "<660px" ) {
-				flex: 0 1 56px;
-			}
-
-			.gridicon {
-				margin: 0 auto;
-				float: none;
-			}
-		}
-
-		&.is-active {
-			background: $blue-medium;
-
-			.gridicon {
-				fill: $white;
-			}
+		.gridicon {
+			fill: $white;
 		}
 	}
 }

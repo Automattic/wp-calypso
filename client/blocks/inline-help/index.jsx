@@ -18,8 +18,15 @@ import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
+import Popover from 'components/popover';
+import InlineHelpSearchResults from './inline-help-search-results';
+import InlineHelpSearchCard from './inline-help-search-card';
+import HelpContact from 'me/help/help-contact';
+import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
+import { getHelpSelectedSite } from 'state/help/selectors';
+import HappychatButton from 'components/happychat/button';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import AsyncLoad from 'components/async-load';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 
 /**
  * Module variables
@@ -109,27 +116,34 @@ class InlineHelp extends Component {
 		const { showInlineHelp } = this.state;
 		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
 		return (
-			<Button
-				className={ classNames( 'inline-help', inlineHelpButtonClasses ) }
-				onClick={ this.handleHelpButtonClicked }
+			<div className="inline-help">
+				<Button
+					className={ classNames( inlineHelpButtonClasses ) }
+					onClick={ this.handleHelpButtonClicked }
 				onTouchStart={ this.preload }
 				onMouseEnter={ this.preload }
-				borderless
-				title={ translate( 'Help' ) }
-				ref={ this.inlineHelpToggleRef }
-			>
-				<Gridicon icon="help-outline" size={ 36} />
+					borderless
+					title={ translate( 'Help' ) }
+					ref={ this.inlineHelpToggleRef }
+				>
+					<Gridicon icon="help-outline" size={ 36 } />
 				{ showInlineHelp && (
 					<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
-						) }
-						</Button>
+							) }
+                </Button>
+				{ this.props.isHappychatButtonVisible &&
+					config.isEnabled( 'happychat' ) && (
+						<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
+					) }
+			</div>
 		);
 	}
 }
 
 export default connect(
 	state => ( {
-	isHappychatOpen: isHappychatOpen( state ),
+		isHappychatButtonVisible: hasActiveHappychatSession( state ),
+		isHappychatOpen: isHappychatOpen( state ),
 	} ),
 	{
 	recordTracksEvent,
