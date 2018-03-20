@@ -128,4 +128,13 @@ export default {
 		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
+	mobilePlansTablesOnSignup: {
+		datestamp: '20180320',
+		variations: {
+			original: 50,
+			mobile: 50,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
 };
