@@ -31,6 +31,7 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getPaymentCurrencySettings } from 'woocommerce/state/sites/settings/general/selectors';
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
+import InventoryWidget from './widgets/inventory-widget';
 import ShareWidget from 'woocommerce/components/share-widget';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import StatsWidget from './widgets/stats-widget';
@@ -180,6 +181,10 @@ class ManageOrdersView extends Component {
 				</p>
 			</DashboardWidget>
 		);
+	}
+
+	renderInventoryWidget = () => {
+		return <InventoryWidget width="full" />;
 	};
 
 	render() {
@@ -206,7 +211,8 @@ class ManageOrdersView extends Component {
 				</DashboardWidgetRow>
 
 				{ config.isEnabled( 'woocommerce/extension-dashboard-stats-widget' ) && <StatsWidget /> }
-				{ this.possiblyRenderReportsWidget() }
+
+				{ this.renderInventoryWidget() }
 
 				{ this.possiblyRenderShareWidget() }
 			</div>

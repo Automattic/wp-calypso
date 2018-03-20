@@ -216,7 +216,7 @@ export function savePostSuccess( siteId, postId = null, savedPost, post ) {
  * @return {Function}        Action thunk
  */
 export function savePost( siteId, postId = null, post ) {
-	return async dispatch => {
+	return dispatch => {
 		dispatch( {
 			type: POST_SAVE,
 			siteId,
@@ -224,22 +224,27 @@ export function savePost( siteId, postId = null, post ) {
 			post,
 		} );
 
-		let postHandle = wpcom.site( siteId ).post( postId );
+		const postHandle = wpcom.site( siteId ).post( postId );
 		const normalizedPost = normalizePostForApi( post );
-		postHandle = postHandle[ postId ? 'update' : 'add' ].bind( postHandle );
-		return postHandle( { apiVersion: '1.2' }, normalizedPost )
-			.then( savedPost => {
+		const method = postId ? 'update' : 'add';
+		const saveResult = postHandle[ method ]( { apiVersion: '1.2' }, normalizedPost );
+
+		saveResult.then(
+			savedPost => {
 				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
 				dispatch( receivePost( savedPost ) );
-			} )
-			.catch( error => {
+			},
+			error => {
 				dispatch( {
 					type: POST_SAVE_FAILURE,
 					siteId,
 					postId,
 					error,
 				} );
-			} );
+			}
+		);
+
+		return saveResult;
 	};
 }
 
@@ -252,7 +257,47 @@ export function savePost( siteId, postId = null, post ) {
  * @return {Function}        Action thunk
  */
 export function trashPost( siteId, postId ) {
-	return savePost( siteId, postId, { status: 'trash' } );
+	return dispatch => {
+		// Trashing post is almost equivalent to saving the post with status field set to `trash`
+		// and the action behaves like it was doing exactly that -- it dispatches the `POST_SAVE_*`
+		// actions with the right properties.
+		//
+		// But what we really do is to call the `wpcom.site().post().delete()` method, i.e., sending
+		// a `POST /sites/:site/posts/:post/delete` request. The difference is that an explicit delete
+		// will set a `_wp_trash_meta_status` meta property on the post and a later `restore` call
+		// can restore the original post status, i.e., `publish`. Without this, the post will be always
+		// recovered as `draft`.
+		const post = { status: 'trash' };
+
+		dispatch( {
+			type: POST_SAVE,
+			siteId,
+			postId,
+			post,
+		} );
+
+		const trashResult = wpcom
+			.site( siteId )
+			.post( postId )
+			.delete();
+
+		trashResult.then(
+			savedPost => {
+				dispatch( savePostSuccess( siteId, postId, savedPost, post ) );
+				dispatch( receivePost( savedPost ) );
+			},
+			error => {
+				dispatch( {
+					type: POST_SAVE_FAILURE,
+					siteId,
+					postId,
+					error,
+				} );
+			}
+		);
+
+		return trashResult;
+	};
 }
 
 /**
@@ -272,25 +317,30 @@ export function deletePost( siteId, postId ) {
 			postId,
 		} );
 
-		return wpcom
+		const deleteResult = wpcom
 			.site( siteId )
 			.post( postId )
-			.delete()
-			.then( () => {
+			.delete();
+
+		deleteResult.then(
+			() => {
 				dispatch( {
 					type: POST_DELETE_SUCCESS,
 					siteId,
 					postId,
 				} );
-			} )
-			.catch( error => {
+			},
+			error => {
 				dispatch( {
 					type: POST_DELETE_FAILURE,
 					siteId,
 					postId,
 					error,
 				} );
-			} );
+			}
+		);
+
+		return deleteResult;
 	};
 }
 
@@ -310,26 +360,31 @@ export function restorePost( siteId, postId ) {
 			postId,
 		} );
 
-		return wpcom
+		const restoreResult = wpcom
 			.site( siteId )
 			.post( postId )
-			.restore()
-			.then( restoredPost => {
+			.restore();
+
+		restoreResult.then(
+			restoredPost => {
 				dispatch( {
 					type: POST_RESTORE_SUCCESS,
 					siteId,
 					postId,
 				} );
 				dispatch( receivePost( restoredPost ) );
-			} )
-			.catch( error => {
+			},
+			error => {
 				dispatch( {
 					type: POST_RESTORE_FAILURE,
 					siteId,
 					postId,
 					error,
 				} );
-			} );
+			}
+		);
+
+		return restoreResult;
 	};
 }
 

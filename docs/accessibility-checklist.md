@@ -7,7 +7,7 @@ For more background and resources, see [Accessibility](accessibility.md).
 ## Testing Tools
 
 * Do all `jsx-a11y` linting rules pass?
-* Give it a once-over using the [aXe browser extension](https://www.deque.com/products/axe/) to spot any obvious issues.
+* Give it a once-over using the [aXe browser extension](https://www.deque.com/axe/) to spot any obvious issues.
 
 ## General Readability
 
@@ -35,4 +35,4 @@ Try navigating the page using only your keyboard.
 * Do any visually-hidden elements have `aria-hidden` tags to hide them from screen readers?
 * Do all links have descriptive text (saying where they go as opposed to something like "click here")?
 * Do any modals or error messages provide useful feedback (via `aria-live` or similar tags)?
-* If on a Mac, enable [VoiceOver](https://help.apple.com/voiceover/info/guide/10.12/) and try navigating the page.
+* If on a Mac, enable [VoiceOver](https://help.apple.com/voiceover/info/guide/10.13/) and try navigating the page.

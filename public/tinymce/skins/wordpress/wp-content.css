@@ -426,6 +426,7 @@ audio {
 	border: none;
 	padding: 0;
 	width: 300px;
+	min-width: 0;
 	margin: 0 auto 10px;
 }
 
@@ -433,6 +434,7 @@ audio {
 .wpview-type-contact-form-field legend {
 	text-align: left;
 	width: 100%;
+	word-wrap: break-word;
 }
 
 .wpview-type-contact-form-field label {

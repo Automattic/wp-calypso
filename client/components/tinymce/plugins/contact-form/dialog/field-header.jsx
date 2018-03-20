@@ -78,14 +78,16 @@ class ContactFormDialogFieldHeader extends React.Component {
 	};
 
 	render() {
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div>
+			<div className="editor-contact-form-modal-field-header">
 				<div>{ this.props.label }</div>
 				<div>
 					<small>{ this.getLegend() }</small>
 				</div>
 			</div>
 		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
