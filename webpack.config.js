@@ -217,7 +217,6 @@ if ( calypsoEnv === 'desktop' ) {
 } else {
 	// vendor chunk
 	webpackConfig.entry.vendor = [
-		'babel-polyfill',
 		'classnames',
 		'create-react-class',
 		'gridicons',
