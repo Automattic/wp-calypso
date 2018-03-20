@@ -36,7 +36,7 @@ const scrollSidebarToTop = () => scrollTo( { y: 0, container: getScrollableSideb
 // this is kept as an example, while making sure it never gets triggered
 export const JetpackBasicTour = makeTour(
 	<Tour
-		name="jetpackBasicTour"
+		name="jetpack"
 		version="20160601"
 		path="/"
 		when={ and( isNewUser, isEnabled( 'guided-tours/jetpack-basic' ) ) }
