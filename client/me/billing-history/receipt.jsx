@@ -266,18 +266,14 @@ class BillingReceipt extends React.Component {
 				</Card>
 
 				<Card compact className="billing-history__receipt-links">
-					<a
-						href={ transaction.support }
-						className="billing-history__support-button button is-primary"
-						onClick={ this.handleSupportLinkClick }
-					>
+					<Button href={ transaction.support } primary onClick={ this.handleSupportLinkClick }>
 						{ translate( 'Contact %(transactionService)s Support', {
 							args: {
 								transactionService: transaction.service,
 							},
 							context: 'transactionService is a website, such as WordPress.com.',
 						} ) }
-					</a>
+					</Button>
 					<Button onClick={ this.handlePrintLinkClick }>{ translate( 'Print Receipt' ) }</Button>
 				</Card>
 			</div>
