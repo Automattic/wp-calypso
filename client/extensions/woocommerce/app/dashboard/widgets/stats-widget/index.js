@@ -33,9 +33,11 @@ import {
 import List from './list';
 import QueryPreferences from 'components/data/query-preferences';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { recordTrack } from 'woocommerce/lib/analytics';
 import { savePreference } from 'state/preferences/actions';
 import SelectDropdown from 'components/select-dropdown';
 import Stat from './stat';
+import { withAnalytics } from 'state/analytics/actions';
 
 class StatsWidget extends Component {
 	static propTypes = {
@@ -51,6 +53,7 @@ class StatsWidget extends Component {
 		visitorData: PropTypes.array,
 		productData: PropTypes.array,
 		saveDashboardUnit: PropTypes.func,
+		viewStats: PropTypes.func,
 	};
 
 	handleTimePeriodChange = option => {
@@ -209,7 +212,7 @@ class StatsWidget extends Component {
 	};
 
 	renderReferrers = () => {
-		const { site, translate, unit, referrerData, queries } = this.props;
+		const { site, translate, unit, referrerData, queries, viewStats } = this.props;
 		const { referrerQuery } = queries;
 
 		const row = find( referrerData, d => d.date === referrerQuery.date );
@@ -242,6 +245,7 @@ class StatsWidget extends Component {
 				query={ referrerQuery }
 				viewText={ translate( 'View referrers' ) }
 				viewLink={ viewLink }
+				onViewClick={ viewStats }
 				fetchedData={ fetchedData }
 				emptyMessage={ emptyMessage }
 			/>
@@ -249,7 +253,7 @@ class StatsWidget extends Component {
 	};
 
 	renderProducts = () => {
-		const { site, translate, unit, topEarnersData, queries } = this.props;
+		const { site, translate, unit, topEarnersData, queries, viewStats } = this.props;
 		const { topEarnersQuery } = queries;
 		const values = [
 			{ key: 'name', title: translate( 'Product' ), format: 'text' },
@@ -266,6 +270,7 @@ class StatsWidget extends Component {
 				fetchedData={ topEarnersData }
 				viewText={ translate( 'View top products' ) }
 				viewLink={ getLink( `/store/stats/products/${ unit }/:site`, site ) }
+				onViewClick={ viewStats }
 				emptyMessage={ translate( 'No products have been sold in this time period.' ) }
 			/>
 		);
@@ -292,6 +297,11 @@ class StatsWidget extends Component {
 
 	render() {
 		const { site, translate, unit } = this.props;
+
+		const bumpStat = () => {
+			this.props.viewStats( 'full' );
+		};
+
 		return (
 			<div className="stats-widget">
 				{ this.queryData() }
@@ -311,7 +321,10 @@ class StatsWidget extends Component {
 								"You can view more detailed stats and reports on your site's main dashboard."
 							) }
 						</span>
-						<Button href={ getLink( `/store/stats/orders/${ unit }/:site`, site ) }>
+						<Button
+							href={ getLink( `/store/stats/orders/${ unit }/:site`, site ) }
+							onClick={ bumpStat }
+						>
 							{ translate( 'View full stats' ) }
 						</Button>
 					</div>
@@ -360,7 +373,16 @@ function mapStateToProps( state ) {
 function mapDispatchToProps( dispatch ) {
 	return bindActionCreators(
 		{
-			saveDashboardUnit: value => savePreference( 'store-dashboardStatsWidgetUnit', value ),
+			saveDashboardUnit: value => {
+				recordTrack( 'calypso_woocommerce_dashboard_widget_stats_unit_change', { unit: value } );
+				return savePreference( 'store-dashboardStatsWidgetUnit', value );
+			},
+			viewStats: slug =>
+				withAnalytics(
+					recordTrack( 'calypso_woocommerce_dashboard_action_click', {
+						action: 'stats-widget-view-' + slug,
+					} )
+				),
 		},
 		dispatch
 	);
