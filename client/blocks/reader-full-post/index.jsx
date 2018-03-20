@@ -38,7 +38,7 @@ import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { getSiteName } from 'reader/get-helpers';
-import { keyForPost } from 'lib/feed-stream-store/post-key';
+import { keyForPost } from 'reader/post-key';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';

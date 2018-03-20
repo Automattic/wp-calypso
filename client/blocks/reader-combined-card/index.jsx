@@ -16,7 +16,7 @@ import { getStreamUrl } from 'reader/route';
 import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderCombinedCardPost from './post';
-import { keysAreEqual, keyForPost } from 'lib/feed-stream-store/post-key';
+import { keysAreEqual, keyForPost } from 'reader/post-key';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import { recordTrack } from 'reader/stats';

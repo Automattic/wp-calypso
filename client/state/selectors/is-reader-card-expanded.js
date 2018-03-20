@@ -4,7 +4,7 @@
  * Internal dependencies
  */
 
-import { keyToString } from 'lib/feed-stream-store/post-key';
+import { keyToString } from 'reader/post-key';
 
 export default function isReaderCardExpanded( state, postKey ) {
 	const key = keyToString( postKey );

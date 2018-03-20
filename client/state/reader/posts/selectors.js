@@ -8,7 +8,7 @@ import { keyBy, some, get } from 'lodash';
  * Internal depedencies
  */
 import treeSelect from 'lib/tree-select';
-import { keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
+import { keyToString, keyForPost } from 'reader/post-key';
 
 /**
  * Returns a single post.

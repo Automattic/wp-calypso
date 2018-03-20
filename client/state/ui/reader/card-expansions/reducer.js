@@ -6,7 +6,7 @@
 
 import { createReducer } from 'state/utils';
 import { READER_EXPAND_CARD, READER_RESET_CARD_EXPANSIONS } from 'state/action-types';
-import { keyToString } from 'lib/feed-stream-store/post-key';
+import { keyToString } from 'reader/post-key';
 
 export default createReducer(
 	{},
