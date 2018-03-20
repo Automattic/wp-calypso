@@ -642,9 +642,9 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: abtest => {
 			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
-				return '/month, billed annually';
+				return '/month, billed monthly';
 			}
-			return i18n.translate( 'per month, billed yearly' );
+			return i18n.translate( 'per month, billed monthly' );
 		},
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
@@ -726,9 +726,9 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: abtest => {
 			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
-				return '/month, billed annually';
+				return '/month, billed monthly';
 			}
-			return i18n.translate( 'per month, billed yearly' );
+			return i18n.translate( 'per month, billed monthly' );
 		},
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
@@ -853,9 +853,9 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: abtest => {
 			if ( abtest && abtest( 'upgradePricingDisplayV2' ) === 'modified' ) {
 				// Note: Don't make this translatable because it's only visible to English-language users
-				return '/month, billed annually';
+				return '/month, billed monthly';
 			}
-			return i18n.translate( 'per month, billed yearly' );
+			return i18n.translate( 'per month, billed monthly' );
 		},
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 	},
