@@ -39,7 +39,7 @@ export const JetpackBasicTour = makeTour(
 		name="jetpackBasicTour"
 		version="20160601"
 		path="/"
-		when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }
+		when={ and( isNewUser, isEnabled( 'guided-tours/jetpack-basic' ) ) }
 	>
 		<Step name="init" placement="right">
 			{ ( { translate } ) => (
