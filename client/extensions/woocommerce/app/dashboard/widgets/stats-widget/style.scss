@@ -61,6 +61,10 @@
 		white-space: nowrap;
 	}
 
+	.stats-widget__box-label-tooltip {
+		cursor: help;
+	}
+
 	.table.is-compact-table .table-item {
 		font-size: 14px;
 		color: $gray-darken-20;
