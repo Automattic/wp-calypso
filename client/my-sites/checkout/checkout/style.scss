@@ -376,6 +376,35 @@
 		}
 	}
 
+	// Term-picker rules
+	// -----------------------------------
+
+	.term-picker {
+		margin-top: 15px;
+	}
+
+	.term-picker-separator {
+		display: none;
+		position: relative;
+		// Parent overflow is hidden, so 80px here is an arbitrary number
+		// to make sure this element will cover entire width of the parent.
+		// If it's wider, it's okay too.
+		width: calc(100% + 80px * 2);
+		left: -80px;
+		margin-top: 1.7em;
+		margin-top: 1.7em;
+		margin-bottom: 1.7em;
+		background: #EAF1F5;
+	}
+
+	.term-picker + .term-picker-separator {
+		display: block;
+	}
+
+	.term-picker-box ~ .checkout__payment-box-actions {
+		margin-top: 0;
+	}
+
 	// PayPal Payment Box
 	// -----------------------------------
 

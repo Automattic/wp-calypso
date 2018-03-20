@@ -46,8 +46,9 @@ export class TermPicker extends React.Component {
 		return (
 			<div className="term-picker">
 				<div className="term-picker__header">Choose the length of your subscription</div>
-
-				{ productsWithPrices.map( p => this.renderProduct( p ) ) }
+				<div className="term-picker__options">
+					{ productsWithPrices.map( p => this.renderProduct( p ) ) }
+				</div>
 			</div>
 		);
 	}

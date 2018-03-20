@@ -1,16 +1,26 @@
 .term-picker {
-	display: flex;
-	align-items: flex-start;
-	flex-flow: row wrap;
-	justify-content: space-between;
+  &__header {
+    margin-bottom: 10px;
+    flex-basis: 100%;
+    font-size: 16px;
+  }
 
-	&__header {
-		margin-bottom: 10px;
-		flex-basis: 100%;
-	}
+  &__options {
+    display: flex;
+    align-items: flex-start;
+    flex-flow: row wrap;
+    justify-content: space-between;
+  }
 
-	&__option-container {
-		flex-basis: calc(50% - 10px);
-	}
+  &__option-container {
+    flex-basis: calc(50% - 10px);
+
+    @include breakpoint('<960px') {
+      flex-basis: calc(100%);
+      &:not(:first-child) {
+        margin-top: 20px;
+      }
+    }
+  }
 }
 
