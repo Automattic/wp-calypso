@@ -17,6 +17,9 @@ import CompactCard from 'components/card/compact';
 import CTACard from './cta-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
+import config from 'config';
+import GoogleLoginButton from 'components/social-buttons/google';
+import { preventWidows as preventWidowFormatting } from 'lib/formatting';
 
 class SelectBusinessType extends Component {
 	static propTypes = {
@@ -39,6 +42,14 @@ class SelectBusinessType extends Component {
 
 	goBack = () => {
 		page.back( `/stats/day/${ this.props.siteId }` );
+	};
+
+	handleGoogleResponseVerified = () => {
+		page.redirect( `/google-my-business/show-list-of-locations/${ this.props.siteId }` );
+	};
+
+	handleGoogleResponse = () => {
+		page.redirect( `/google-my-business/new/${ this.props.siteId }` );
 	};
 
 	render() {
@@ -71,30 +82,56 @@ class SelectBusinessType extends Component {
 					/>
 				</CompactCard>
 
-				<CTACard
-					headerText={ translate( 'Physical Location or Service Area', {
-						comment: 'In the context of a business activity, brick and mortar or online service',
-					} ) }
-					mainText={ translate(
-						'My business has a physical location customers can visit, ' +
-							'or provides goods and services to local customers, or both.'
-					) }
-					buttonText={ translate( 'Create My Listing', {
-						comment: 'Call to Action to add a business listing to Google My Business',
-					} ) }
-					buttonIcon="external"
-					buttonPrimary={ true }
-					buttonHref="https://www.google.com/business/"
-					buttonTarget="_blank"
-					buttonOnClick={ this.trackCreateMyListingClick }
-				/>
+				<CompactCard className="select-business-type__cta-card">
+					<div className="select-business-type__cta-card-main">
+						<h2 className="select-business-type__explanation-heading">
+							{ translate( 'Physical Location or Service Area', {
+								comment:
+									'In the context of a business activity, brick and mortar or online service',
+							} ) }
+						</h2>
+						<p>
+							{ translate(
+								'You have a physical location customers can visit, ' +
+									'or provide goods and services to local customers, or both.'
+							) }
+						</p>
+					</div>
+					<div className="select-business-type__cta-card-button-container">
+						<GoogleLoginButton
+							className="select-business-type__cta-card-button"
+							clientId={ config( 'google_oauth_client_id' ) }
+							scope="https://www.googleapis.com/auth/plus.business.manage"
+							responseHandler={ this.handleGoogleResponse }
+							uxMode={ 'popup' }
+							redirectUri={ '' }
+							isPrimary={ true }
+							hideGoogleIcon={ true }
+						/>
+						<br />
+						<br />
+						(For demo purposes - connect to an account with verified listing)
+						<GoogleLoginButton
+							className="select-business-type__cta-card-button"
+							clientId={ config( 'google_oauth_client_id' ) }
+							scope="https://www.googleapis.com/auth/plus.business.manage"
+							responseHandler={ this.handleGoogleResponseVerified }
+							uxMode={ 'popup' }
+							redirectUri={ '' }
+							isPrimary={ true }
+							hideGoogleIcon={ true }
+						/>
+					</div>
+				</CompactCard>
 
 				<CTACard
 					headerText={ translate( 'Online Only', {
 						comment: 'In the context of a business activity, as opposed to a brick and mortar',
 					} ) }
-					mainText={ translate(
-						"Don't provide in-person services? Learn more about reaching your customers online."
+					mainText={ preventWidowFormatting(
+						translate(
+							"Don't provide in-person services? Learn more about reaching your customers online."
+						)
 					) }
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
 					buttonHref={ '/settings/traffic/' + siteId }

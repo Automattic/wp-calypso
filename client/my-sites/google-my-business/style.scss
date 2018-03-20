@@ -1,1 +1,28 @@
+@import './google-my-business-address/style';
+@import './google-my-business-location/style';
+@import './google-my-business-new/style';
+@import './google-my-business-stats/style';
+@import './search-for-a-location/style';
 @import './select-business-type/style';
+@import './show-list-of-locations/style';
+@import './step-navigation/style';
+
+.google-my-business {
+	padding-bottom: 56px;
+
+	h2,
+	.form-legend {
+		font-size: 20px;
+		font-weight: 400;
+		margin-bottom: 10px;
+	}
+
+	.form-tel-input,
+	.form-text-input {
+		margin-bottom: 1em;
+	}
+
+	.is-placeholder {
+		@include placeholder();
+	}
+}
