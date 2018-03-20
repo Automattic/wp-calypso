@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getUnitPeriod } from './utils';
+import { getQueries } from './utils';
 import JetpackColophon from 'components/jetpack-colophon';
 import List from './store-stats-list';
 import Main from 'components/main';
@@ -40,37 +40,32 @@ class StoreStatsListView extends Component {
 
 	render() {
 		const { siteId, slug, selectedDate, type, unit } = this.props;
-		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
-		const listviewQuery = {
-			unit,
-			date: unitSelectedDate,
-			limit: 100,
-		};
+		const { topListQuery } = getQueries( unit, selectedDate, { topListQuery: { limit: 100 } } );
 		const statType = listType[ type ].statType;
 		return (
 			<Main className="store-stats__list-view woocommerce" wideLayout>
 				{ siteId && (
-					<QuerySiteStats statType={ statType } siteId={ siteId } query={ listviewQuery } />
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ topListQuery } />
 				) }
 				<StoreStatsPeriodNav
 					type={ type }
 					selectedDate={ selectedDate }
 					unit={ unit }
 					slug={ slug }
-					query={ listviewQuery }
+					query={ topListQuery }
 					statType={ statType }
 					title={ listType[ type ].title }
 				/>
 				<Module
 					siteId={ siteId }
 					emptyMessage={ listType[ type ].empty }
-					query={ listviewQuery }
+					query={ topListQuery }
 					statType={ statType }
 				>
 					<List
 						siteId={ siteId }
 						values={ listType[ type ].values }
-						query={ listviewQuery }
+						query={ topListQuery }
 						statType={ statType }
 					/>
 				</Module>
