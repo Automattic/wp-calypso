@@ -108,6 +108,7 @@ class Pages extends Component {
 		page: 0,
 		pages: [],
 		trackScrollPage: function() {},
+		query: {},
 	};
 
 	state = {
@@ -289,19 +290,13 @@ class Pages extends Component {
 	}
 
 	renderPagesList( { pages } ) {
-		const { site } = this.props;
+		const { site, lastPage, query } = this.props;
 		const status = this.props.status || 'published';
 
 		// Pages only display hierarchically for published pages on single-sites when
 		// there are 100 or fewer pages and no more pages to load (last page).
 		// Pages are not displayed hierarchically for search.
-		if (
-			site &&
-			status === 'published' &&
-			this.props.lastPage &&
-			pages.length <= 100 &&
-			! this.props.search
-		) {
+		if ( site && status === 'published' && lastPage && pages.length <= 100 && ! query.search ) {
 			return this.renderHierarchical( { pages, site } );
 		}
 
@@ -334,7 +329,7 @@ class Pages extends Component {
 	}
 
 	renderChronological( { pages, site } ) {
-		if ( ! this.props.search ) {
+		if ( ! this.props.query.search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
 		}
