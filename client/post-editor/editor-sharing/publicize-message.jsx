@@ -27,6 +27,7 @@ class PublicizeMessage extends Component {
 		requireCount: PropTypes.bool,
 		displayMessageHeading: PropTypes.bool,
 		onChange: PropTypes.func,
+		preFilledMessage: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -35,10 +36,18 @@ class PublicizeMessage extends Component {
 		acceptableLength: 280,
 		requireCount: false,
 		displayMessageHeading: true,
+		preFilledMessage: '',
 	};
+	constructor() {
+		super( ...arguments );
+		this.state = {
+			userHasEditedMessage: false,
+		};
+	}
 
 	onChange = event => {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		this.setState( { userHasEditedMessage: true } );
 		if ( this.props.onChange ) {
 			this.props.onChange( event.target.value );
 		} else {
@@ -50,6 +59,13 @@ class PublicizeMessage extends Component {
 		stats.recordStat( 'sharing_message_changed' );
 		stats.recordEvent( 'Publicize Sharing Message Changed' );
 	};
+
+	getMessage() {
+		if ( ! this.state.userHasEditedMessage ) {
+			return this.props.preFilledMessage;
+		}
+		return this.props.message;
+	}
 
 	renderInfoPopover() {
 		return (
@@ -70,14 +86,13 @@ class PublicizeMessage extends Component {
 	renderTextarea() {
 		const placeholder =
 			this.props.preview || this.props.translate( 'Write a message for your audience here.' );
-
 		if ( this.props.requireCount ) {
 			return (
 				<CountedTextarea
 					disabled={ this.props.disabled }
-					value={ this.props.message }
 					placeholder={ placeholder }
 					countPlaceholderLength={ true }
+					value={ this.getMessage() }
 					onChange={ this.onChange }
 					showRemainingCharacters={ true }
 					acceptableLength={ this.props.acceptableLength }
@@ -88,13 +103,15 @@ class PublicizeMessage extends Component {
 			);
 		} else {
 			return (
-				<FormTextarea
-					disabled={ this.props.disabled }
-					value={ this.props.message }
-					placeholder={ placeholder }
-					onChange={ this.onChange }
-					className="editor-sharing__message-input"
-				/>
+				<div>
+					<FormTextarea
+						disabled={ this.props.disabled }
+						value={ this.getMessage() }
+						placeholder={ placeholder }
+						onChange={ this.onChange }
+						className="editor-sharing__message-input"
+					/>
+				</div>
 			);
 		}
 	}
