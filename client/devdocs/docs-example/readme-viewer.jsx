@@ -36,7 +36,9 @@ class ReadmeViewer extends Component {
 		const editLink = (
 			<a
 				className="docs-example__doc-edit-link"
-				href={ `https://github.com/Automattic/wp-calypso/edit/master/client/${ section }/${ readmeFilePath }/README.md` }
+				href={ `https://github.com/Automattic/wp-calypso/edit/master/client/${
+					section === 'blocks' ? 'blocks' : 'components'
+				}/${ readmeFilePath }/README.md` }
 			>
 				Improve this document on GitHub
 			</a>
