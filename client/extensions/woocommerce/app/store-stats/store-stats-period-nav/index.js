@@ -54,7 +54,7 @@ const StoreStatsPeriodNav = ( {
 			</StatsPeriodNavigation>
 			<Intervals
 				selected={ unit }
-				pathTemplate={ `/store/stats/referrers/{{ interval }}/${ slug }` }
+				pathTemplate={ `/store/stats/${ type }/{{ interval }}/${ slug }` }
 				standalone
 			/>
 		</Fragment>
