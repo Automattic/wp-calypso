@@ -6,9 +6,9 @@ import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-	BILLING_RECEIPT_REQUEST,
-	BILLING_RECEIPT_REQUEST_FAILURE,
-	BILLING_RECEIPT_REQUEST_SUCCESS,
+	BILLING_TRANSACTION_REQUEST,
+	BILLING_TRANSACTION_REQUEST_FAILURE,
+	BILLING_TRANSACTION_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -45,34 +45,34 @@ export const requestBillingTransactions = () => {
 	};
 };
 
-export const requestBillingTransaction = receiptId => dispatch => {
+export const requestBillingTransaction = transactionId => dispatch => {
 	dispatch( {
-		type: BILLING_RECEIPT_REQUEST,
-		receiptId,
+		type: BILLING_TRANSACTION_REQUEST,
+		transactionId,
 	} );
 
 	return wp
 		.undocumented()
 		.me()
-		.getReceipt( receiptId, { format: 'display' } )
+		.getReceipt( transactionId, { format: 'display' } )
 		.then( receipt => {
 			dispatch( {
-				type: BILLING_RECEIPT_REQUEST_SUCCESS,
-				receiptId,
+				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+				transactionId,
 				receipt,
 			} );
 		} )
 		.catch( error => {
 			dispatch( {
-				type: BILLING_RECEIPT_REQUEST_FAILURE,
-				receiptId,
+				type: BILLING_TRANSACTION_REQUEST_FAILURE,
+				transactionId,
 				error,
 			} );
 		} );
 };
 
 export const clearBillingTransactionError = receiptId => ( {
-	type: BILLING_RECEIPT_REQUEST_FAILURE,
+	type: BILLING_TRANSACTION_REQUEST_FAILURE,
 	receiptId,
 	error: false,
 } );

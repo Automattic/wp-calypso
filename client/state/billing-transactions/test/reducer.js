@@ -19,9 +19,9 @@ import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-	BILLING_RECEIPT_REQUEST,
-	BILLING_RECEIPT_REQUEST_FAILURE,
-	BILLING_RECEIPT_REQUEST_SUCCESS,
+	BILLING_TRANSACTION_REQUEST,
+	BILLING_TRANSACTION_REQUEST_FAILURE,
+	BILLING_TRANSACTION_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -246,39 +246,39 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#individualTransactions', () => {
-		const receiptId = 345;
+		const transactionId = 345;
 
 		const currentState = {};
 
-		test( 'BILLING_RECEIPT_REQUEST', () => {
+		test( 'BILLING_TRANSACTION_REQUEST', () => {
 			const state = individualTransactions( currentState, {
-				type: BILLING_RECEIPT_REQUEST,
-				receiptId,
+				type: BILLING_TRANSACTION_REQUEST,
+				transactionId,
 			} );
 
-			expect( state.requesting[ receiptId ] ).to.eql( true );
+			expect( state.requesting[ transactionId ] ).to.eql( true );
 		} );
 
-		test( 'BILLING_RECEIPT_REQUEST_SUCCESS', () => {
+		test( 'BILLING_TRANSACTION_REQUEST_SUCCESS', () => {
 			const state = individualTransactions( currentState, {
-				type: BILLING_RECEIPT_REQUEST_SUCCESS,
-				receiptId,
+				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+				transactionId,
 				receipt: { data: 'test receipt' },
 			} );
 
-			expect( state.requesting[ receiptId ] ).to.eql( false );
-			expect( state.receipts[ receiptId ] ).to.eql( { data: 'test receipt' } );
+			expect( state.requesting[ transactionId ] ).to.eql( false );
+			expect( state.receipts[ transactionId ] ).to.eql( { data: 'test receipt' } );
 		} );
 
-		test( 'BILLING_RECEIPT_REQUEST_FAILURE', () => {
+		test( 'BILLING_TRANSACTION_REQUEST_FAILURE', () => {
 			const state = individualTransactions( currentState, {
-				type: BILLING_RECEIPT_REQUEST_FAILURE,
-				receiptId,
+				type: BILLING_TRANSACTION_REQUEST_FAILURE,
+				transactionId,
 				error: true,
 			} );
 
-			expect( state.requesting[ receiptId ] ).to.eql( false );
-			expect( state.errors[ receiptId ] ).to.eql( true );
+			expect( state.requesting[ transactionId ] ).to.eql( false );
+			expect( state.errors[ transactionId ] ).to.eql( true );
 		} );
 	} );
 } );
