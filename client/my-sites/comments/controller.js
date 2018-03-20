@@ -62,6 +62,7 @@ export const siteComments = ( context, next ) => {
 
 	context.primary = (
 		<CommentsManagement
+			analyticsPath="/comments/:status/:site"
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			siteFragment={ siteFragment }
@@ -90,6 +91,7 @@ export const postComments = ( context, next ) => {
 
 	context.primary = (
 		<CommentsManagement
+			analyticsPath="/comments/:status/:site/:post"
 			changePage={ changePage( path ) }
 			page={ pageNumber }
 			postId={ postId }
