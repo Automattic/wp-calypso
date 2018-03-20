@@ -6,6 +6,7 @@
 import { getCacheKey, getEnhancedContext } from '..';
 import { pick } from 'lodash';
 
+jest.mock( 'store/store', () => ( { get: () => {} } ) );
 jest.mock( 'redux-form/es/reducer', () => require( 'lodash' ).identity );
 
 describe( 'getEnhancedContext', () => {
