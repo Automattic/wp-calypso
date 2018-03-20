@@ -118,4 +118,8 @@
 			margin-right: 8px;
 		}
 	}
+
+	.form-checkbox:checked:before {
+		margin-top: 0;
+	}
 }
