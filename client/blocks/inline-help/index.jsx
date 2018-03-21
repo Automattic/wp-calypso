@@ -18,15 +18,10 @@ import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
-import Popover from 'components/popover';
-import InlineHelpSearchResults from './inline-help-search-results';
-import InlineHelpSearchCard from './inline-help-search-card';
-import HelpContact from 'me/help/help-contact';
-import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
-import { getHelpSelectedSite } from 'state/help/selectors';
 import HappychatButton from 'components/happychat/button';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
+import AsyncLoad from 'components/async-load';
 
 /**
  * Module variables
@@ -114,7 +109,7 @@ class InlineHelp extends Component {
 	render() {
 		const { translate } = this.props;
 		const { showInlineHelp } = this.state;
-		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
+		const inlineHelpButtonClasses = { 'inline-help__button': true, 'is-active': showInlineHelp };
 		return (
 			<div className="inline-help">
 				<Button
@@ -146,6 +141,6 @@ export default connect(
 		isHappychatOpen: isHappychatOpen( state ),
 	} ),
 	{
-	recordTracksEvent,
+		recordTracksEvent,
 	}
 )( localize( InlineHelp ) );
