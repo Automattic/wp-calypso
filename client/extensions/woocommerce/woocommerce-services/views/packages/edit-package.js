@@ -182,7 +182,9 @@ const EditPackage = props => {
 					{ fieldInfo( 'box_weight' ) }
 				</div>
 				<div className="packages__add-package-weight">
-					<FormLabel htmlFor="max_weight">{ translate( 'Max weight package can hold' ) }</FormLabel>
+					<FormLabel htmlFor="max_weight">
+						{ translate( 'Max weight of package and contents' ) }
+					</FormLabel>
 					<FormTextInputWithAffixes
 						id="max_weight"
 						name="max_weight"
@@ -197,9 +199,7 @@ const EditPackage = props => {
 					{ fieldInfo( 'max_weight' ) }
 				</div>
 				<FormSettingExplanation>
-					{ translate(
-						'Defines both the weight of the empty package and the max weight it can hold'
-					) }
+					{ translate( 'Defines both the weight of the empty package and its maximum weight' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		</div>
