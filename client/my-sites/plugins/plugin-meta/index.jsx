@@ -223,16 +223,30 @@ class PluginMeta extends Component {
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
 		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
 		const unsupportedPlugins = [
-			'nginx-helper',
-			'w3-total-cache',
-			'wp-rocket',
-			'wp-super-cache',
-			'bwp-minify',
-			'wordpress-database-reset',
-			'wordpress-reset',
-			'wp-reset',
+			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
+			'better-wp-security',
+			'bwp-minify',
+			'e-mail-broadcasting',
+			'file-manager',
+			'mailit',
+			'nginx-helper',
+			'reset-wp',
+			'send-email-from-admin',
+			'w3-total-cache',
+			'wordpress-database-reset',
+			'wordpress-reset',
+			'wp-clone-by-wp-academy',
+			'wp-fastest-cache',
+			'wp-prefix-changer',
+			'wp-reset',
+			'wp-rocket',
+			'wp-super-cache',
+			'wp-staging',
+			'wp-super-cache',
+			'wpmu-database-reset',
+			'z-inventory-manager',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
