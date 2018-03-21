@@ -17,6 +17,7 @@ import { ContactDetailsFormFields } from '../';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: x => x,
+	translate: x => x,
 } ) );
 
 describe( 'ContactDetailsFormFields', () => {
