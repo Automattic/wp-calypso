@@ -5,19 +5,24 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
+import { noop, trim } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import FormTextArea from 'components/forms/form-textarea';
 import RecommendationSelect from './recommendation-select';
-import { submitNpsSurvey, submitNpsSurveyWithNoScore } from 'state/nps-survey/actions';
+import {
+	submitNpsSurvey,
+	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
+} from 'state/nps-survey/actions';
 import { successNotice } from 'state/notices/actions';
 import { hasAnsweredNpsSurvey } from 'state/nps-survey/selectors';
 import analytics from 'lib/analytics';
@@ -30,6 +35,8 @@ class NpsSurvey extends Component {
 
 	state = {
 		score: null,
+		feedback: '',
+		showFeedbackForm: false,
 	};
 
 	handleRecommendationSelectChange = score => {
@@ -38,12 +45,25 @@ class NpsSurvey extends Component {
 
 	handleFinishClick = () => {
 		this.props.submitNpsSurvey( this.props.name, this.state.score );
-		this.onClose( this.showThanksNotice );
+		this.setState( { showFeedbackForm: true } );
 	};
 
 	handleDismissClick = () => {
 		this.props.submitNpsSurveyWithNoScore( this.props.name );
 		this.onClose( noop );
+	};
+
+	handleTextBoxChange = event => {
+		this.setState( { feedback: trim( event.target.value ) } );
+	};
+
+	handleSendFeedbackClick = () => {
+		this.props.sendNpsSurveyFeedback( this.props.name, this.state.feedback );
+		this.onClose( this.showThanksNotice );
+	};
+
+	handleFeedbackFormClose = () => {
+		this.onClose( this.showThanksNotice );
 	};
 
 	showThanksNotice = () => {
@@ -64,9 +84,81 @@ class NpsSurvey extends Component {
 		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
 	}
 
-	render() {
+	renderScoreForm() {
 		const { translate } = this.props;
 
+		return (
+			<Fragment>
+				<div className="nps-survey__question">
+					{ translate(
+						'How likely are you to recommend WordPress.com to your friends, family, or colleagues?'
+					) }
+				</div>
+				<div className="nps-survey__recommendation-select-wrapper">
+					<RecommendationSelect
+						value={ this.state.score }
+						disabled={ this.props.hasAnswered }
+						onChange={ this.handleRecommendationSelectChange }
+					/>
+				</div>
+				<div className="nps-survey__buttons">
+					<Button
+						primary
+						className="nps-survey__finish-button"
+						disabled={ this.props.hasAnswered }
+						onClick={ this.handleFinishClick }
+					>
+						{ translate( 'Finish' ) }
+					</Button>
+					<Button
+						borderless
+						className="nps-survey__not-answer-button"
+						disabled={ this.props.hasAnswered }
+						onClick={ this.handleDismissClick }
+					>
+						{ translate( "I'd rather not answer" ) }
+					</Button>
+				</div>
+			</Fragment>
+		);
+	}
+
+	renderFeedbackForm() {
+		const { translate } = this.props;
+
+		return (
+			<Fragment>
+				<div className="nps-survey__question">
+					{ translate( 'What is the most important reason for your score?' ) }
+				</div>
+				<div className="nps-survey__recommendation-select-wrapper">
+					<FormTextArea
+						onChange={ this.handleTextBoxChange }
+						placeholder="Please input your thoughts here"
+					/>
+				</div>
+				<div className="nps-survey__buttons">
+					<Button
+						primary
+						className="nps-survey__finish-button"
+						disabled={ ! this.state.feedback }
+						onClick={ this.handleSendFeedbackClick }
+					>
+						{ translate( 'Send Feedback' ) }
+					</Button>
+					<Button
+						borderless
+						className="nps-survey__not-answer-button"
+						onClick={ this.handleFeedbackFormClose }
+					>
+						{ translate( 'Close the survey immediately' ) }
+					</Button>
+				</div>
+			</Fragment>
+		);
+	}
+
+	render() {
 		const className = classNames( 'nps-survey', {
 			'is-recommendation-selected': Number.isInteger( this.state.score ),
 			'is-submitted': this.props.hasAnswered,
@@ -75,36 +167,7 @@ class NpsSurvey extends Component {
 		return (
 			<Card className={ className }>
 				<div className="nps-survey__question-screen">
-					<div className="nps-survey__question">
-						{ translate(
-							'How likely are you to recommend WordPress.com to your friends, family, or colleagues?'
-						) }
-					</div>
-					<div className="nps-survey__recommendation-select-wrapper">
-						<RecommendationSelect
-							value={ this.state.score }
-							disabled={ this.props.hasAnswered }
-							onChange={ this.handleRecommendationSelectChange }
-						/>
-					</div>
-					<div className="nps-survey__buttons">
-						<Button
-							primary
-							className="nps-survey__finish-button"
-							disabled={ this.props.hasAnswered }
-							onClick={ this.handleFinishClick }
-						>
-							{ translate( 'Finish' ) }
-						</Button>
-						<Button
-							borderless
-							className="nps-survey__not-answer-button"
-							disabled={ this.props.hasAnswered }
-							onClick={ this.handleDismissClick }
-						>
-							{ translate( "I'd rather not answer" ) }
-						</Button>
-					</div>
+					{ this.state.showFeedbackForm ? this.renderFeedbackForm() : this.renderScoreForm() }
 				</div>
 			</Card>
 		);
@@ -120,5 +183,6 @@ const mapStateToProps = state => {
 export default connect( mapStateToProps, {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
+	sendNpsSurveyFeedback,
 	successNotice,
 } )( localize( NpsSurvey ) );
