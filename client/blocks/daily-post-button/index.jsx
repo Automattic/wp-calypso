@@ -21,8 +21,6 @@ import Button from 'components/button';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';
-import { getPrimarySiteId } from 'state/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 function getPingbackAttributes( post ) {
@@ -176,12 +174,12 @@ export class DailyPostButton extends React.Component {
 
 export default connect(
 	state => {
-		const primarySiteId = getPrimarySiteId( state );
+		const primarySiteId = null;
 		const user = getCurrentUser( state );
 		const visibleSiteCount = get( user, 'visible_site_count', 0 );
 		return {
 			canParticipate: !! primarySiteId,
-			primarySiteSlug: getSiteSlug( state, primarySiteId ),
+			primarySiteSlug: null,
 			onlyOneSite: visibleSiteCount === 1,
 		};
 	},

@@ -107,7 +107,6 @@ class MasterbarLoggedIn extends React.Component {
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
-				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				{ ! domainOnlySite && (
 					<Publish
 						user={ this.props.user }
@@ -153,12 +152,11 @@ export default connect(
 	state => {
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
-		const siteId = getSelectedSiteId( state ) || getPrimarySiteId( state );
 
 		return {
 			isNotificationsShowing: isNotificationsOpen( state ),
-			siteSlug: getSiteSlug( state, siteId ),
-			domainOnlySite: isDomainOnlySite( state, siteId ),
+			siteSlug: '',
+			domainOnlySite: false,
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent }

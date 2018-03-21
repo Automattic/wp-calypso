@@ -128,12 +128,9 @@ class MasterbarDrafts extends Component {
 
 export default connect(
 	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const draftCount = getMyPostCount( state, selectedSiteId, 'post', 'draft' );
-
 		return {
-			selectedSiteId,
-			draftCount,
+			selectedSiteId: null,
+			draftCount: 0,
 		};
 	},
 	{ recordTracksEvent }
