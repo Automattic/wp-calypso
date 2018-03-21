@@ -94,6 +94,12 @@
 			fill: $green-jetpack;
 		}
 	}
+
+	.steps__summary-illustration {
+		display: block;
+		margin: 0 auto;
+		max-width: 300px;
+	}
 }
 
 .jetpack-onboarding__disclaimer {
