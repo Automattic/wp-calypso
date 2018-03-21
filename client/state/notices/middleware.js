@@ -25,6 +25,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
+	BILLING_TRANSACTION_REQUEST_FAILURE,
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
@@ -58,7 +59,7 @@ import {
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
 } from 'state/action-types';
-import { purchasesRoot } from 'me/purchases/paths';
+import { purchasesRoot, billingHistoryReceipt } from 'me/purchases/paths';
 
 import {
 	onAccountRecoverySettingsFetchFailed,
@@ -300,6 +301,26 @@ const onSiteDeleteFailure = ( { error } ) => {
 	return errorNotice( error.message );
 };
 
+const onBillingTransactionRequestFailure = ( { transactionId, error } ) => {
+	if ( 'invalid_receipt' === error.error ) {
+		return errorNotice(
+			translate( "Sorry, we couldn't find receipt #%s", { args: transactionId } ),
+			{
+				id: `transaction-fetch-${ transactionId }`,
+				displayOnNextPage: true,
+				duration: 5000,
+			}
+		);
+	}
+
+	return errorNotice( translate( 'Sorry, we had a problem loading that receipt.' ), {
+		id: `transaction-fetch-${ transactionId }`,
+		displayOnNextPage: true,
+		button: translate( 'Try again' ),
+		href: billingHistoryReceipt( transactionId ),
+	} );
+};
+
 /**
  * Handler action type mapping
  */
@@ -316,6 +337,7 @@ export const handlers = {
 	[ ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED ]: onAccountRecoveryPhoneValidationFailed,
 	[ BILLING_RECEIPT_EMAIL_SEND_FAILURE ]: onBillingReceiptEmailSendFailure,
 	[ BILLING_RECEIPT_EMAIL_SEND_SUCCESS ]: onBillingReceiptEmailSendSuccess,
+	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: onBillingTransactionRequestFailure,
 	[ GRAVATAR_RECEIVE_IMAGE_FAILURE ]: onGravatarReceiveImageFailure,
 	[ GRAVATAR_UPLOAD_REQUEST_FAILURE ]: onGravatarUploadRequestFailure,
 	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: onGravatarUploadRequestSuccess,
