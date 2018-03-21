@@ -30,27 +30,8 @@
 	}
 
 	.button.inline-help__happychat-button.has-unread {
-		color: $gray-dark;
-
-		&:after {
-			content: "";
-			display: block;
-			position: absolute;
-			top: 6px;
-			left: 3px;
-			width: 10px;
-			height: 10px;
-			border: 2px solid $gray-lighten-30;
-			border-radius: 50%;
-			background: $orange-jazzy;
-
-			@include breakpoint( "<660px" ) {
-				top: 14px;
-				left: 11px;
-			}
-
-		}
-
+		background-color: $orange-jazzy;
+		border-color: $orange-jazzy;
 	}
 }
 
