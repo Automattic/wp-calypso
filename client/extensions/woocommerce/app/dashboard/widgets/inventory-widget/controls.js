@@ -55,6 +55,19 @@ class InventoryControls extends Component {
 		this.setState( { [ name ]: isNaN( value ) ? 0 : value } );
 	};
 
+	increaseValue = name => () => {
+		const value = this.state[ name ];
+		this.setState( { [ name ]: value + 1 } );
+	};
+
+	decreaseValue = name => () => {
+		const value = this.state[ name ];
+		if ( value < 1 ) {
+			return;
+		}
+		this.setState( { [ name ]: value - 1 } );
+	};
+
 	setChecked = name => () => {
 		this.setState( state => ( { [ name ]: ! state[ name ] } ) );
 	};
@@ -96,6 +109,22 @@ class InventoryControls extends Component {
 		}, 150 );
 	};
 
+	renderPlus = name => {
+		return (
+			<span onClick={ this.increaseValue( name ) } tabIndex="-1" aria-hidden>
+				<Gridicon icon="plus-small" />
+			</span>
+		);
+	};
+
+	renderMinus = name => {
+		return (
+			<span onClick={ this.decreaseValue( name ) } tabIndex="-1" aria-hidden>
+				<Gridicon icon="minus-small" />
+			</span>
+		);
+	};
+
 	render() {
 		const { translate } = this.props;
 		const {
@@ -117,8 +146,9 @@ class InventoryControls extends Component {
 							onChange={ this.setValue( 'lowStockThreshold' ) }
 						/>
 						<Range
-							minContent={ <Gridicon icon="minus-small" /> }
-							maxContent={ <Gridicon icon="plus-small" /> }
+							minContent={ this.renderMinus( 'lowStockThreshold' ) }
+							maxContent={ this.renderPlus( 'lowStockThreshold' ) }
+							aria-describedby="low_stock_amount_help"
 							max="100"
 							value={ lowStockThreshold }
 							onChange={ this.setValue( 'lowStockThreshold' ) }
@@ -140,8 +170,9 @@ class InventoryControls extends Component {
 							onChange={ this.setValue( 'noStockThreshold' ) }
 						/>
 						<Range
-							minContent={ <Gridicon icon="minus-small" /> }
-							maxContent={ <Gridicon icon="plus-small" /> }
+							minContent={ this.renderMinus( 'noStockThreshold' ) }
+							maxContent={ this.renderPlus( 'noStockThreshold' ) }
+							aria-describedby="no_stock_amount_help"
 							max="100"
 							value={ noStockThreshold }
 							onChange={ this.setValue( 'noStockThreshold' ) }
