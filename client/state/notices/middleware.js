@@ -8,7 +8,7 @@ import { get, truncate, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice, removeNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getSiteDomain } from 'state/sites/selectors';
 import { getInviteForSite } from 'state/invites/selectors';
@@ -153,10 +153,15 @@ const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully 
 export function onPostSaveSuccess( dispatch, { post, savedPost } ) {
 	switch ( post.status ) {
 		case 'trash':
+			const noticeId = 'trash_' + savedPost.global_ID;
 			dispatch(
 				successNotice( translate( 'Post successfully moved to trash.' ), {
+					id: noticeId,
 					button: translate( 'Undo' ),
-					onClick: () => dispatch( restorePost( savedPost.site_ID, savedPost.ID ) ),
+					onClick: () => {
+						dispatch( removeNotice( noticeId ) );
+						dispatch( restorePost( savedPost.site_ID, savedPost.ID ) );
+					},
 				} )
 			);
 			break;
