@@ -36,7 +36,7 @@ class Document extends React.Component {
 			urls,
 			hasSecondary,
 			sectionGroup,
-			config,
+			clientData,
 			isFluidWidth,
 			sectionCss,
 			env,
@@ -60,7 +60,7 @@ class Document extends React.Component {
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
-			( config ? config : '' );
+			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };` : '' );
 
 		return (
 			<html

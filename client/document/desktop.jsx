@@ -26,7 +26,7 @@ class Desktop extends React.Component {
 			lang,
 			urls,
 			hasSecondary,
-			config,
+			clientData,
 			isFluidWidth,
 			env,
 			isDebug,
@@ -107,11 +107,11 @@ class Desktop extends React.Component {
 							} }
 						/>
 					) }
-					{ config && (
+					{ clientData && (
 						<script
 							type="text/javascript"
 							dangerouslySetInnerHTML={ {
-								__html: config,
+								__html: `var configData = ${ jsonStringifyForHtml( clientData ) };`,
 							} }
 						/>
 					) }
