@@ -1,5 +1,7 @@
 /** @format */
 
+// TODO: Move this under /calypso-rest-api/
+
 /**
  * External dependencies
  */
@@ -11,6 +13,7 @@ import { uniqueId } from 'lodash';
  */
 import { WOOCOMMERCE_API_REQUEST } from 'woocommerce/state/action-types';
 
+// TODO: Add namespace as a parameter to make this general-purpose
 function _createRequestAction( method, siteId, path, body, onSuccessAction, onFailureAction ) {
 	const action = {
 		type: WOOCOMMERCE_API_REQUEST,

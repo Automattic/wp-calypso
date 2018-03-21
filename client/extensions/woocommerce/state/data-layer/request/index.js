@@ -1,5 +1,7 @@
 /** @format */
 
+// TODO: Convert this approach to a more general-purpose REST API one.
+
 /**
  * External dependencies
  */
