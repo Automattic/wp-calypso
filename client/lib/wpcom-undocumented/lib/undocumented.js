@@ -2489,11 +2489,29 @@ Undocumented.prototype.getRequestSiteRenameNonce = function( siteId ) {
 };
 
 /**
- * Request a new .wordpress.com subdomain change with the option to discard the current.
+ * Request server-side validation (including an availibility check) of the given site address.
  *
  * @param {int} [siteId] The siteId for which to rename
- * @param {object} [blogname]	The desired new subdomain
- * @param {bool} [discard]			Should the old blog name be discarded?
+ * @param {object} [siteAddress]	The site address to validate
+ * @returns {Promise}  A promise
+ */
+Undocumented.prototype.checkSiteAddressValidation = function( siteId, siteAddress ) {
+	return this.wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/site-rename/validate`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{},
+		{ blogname: siteAddress }
+	);
+};
+
+/**
+ * Request a new .wordpress.com site address change with the option to discard the current.
+ *
+ * @param {int} [siteId] The siteId for which to rename
+ * @param {object} [blogname]	The desired new site address
+ * @param {bool} [discard]			Should the old site address name be discarded?
  * @param {string} [nonce]		A nonce provided by the API
  * @returns {Promise}  A promise
  */
