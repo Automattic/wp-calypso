@@ -35,8 +35,14 @@ class EditorPageParent extends Component {
 	};
 
 	state = {
-		isTopLevel: true,
+		isTopLevel: ! this.props.parentId,
 	};
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.parentId !== nextProps.parentId ) {
+			this.setState( { isTopLevel: ! nextProps.parentId } );
+		}
+	}
 
 	updatePageParent = item => {
 		const { siteId, postId } = this.props;
@@ -79,9 +85,11 @@ class EditorPageParent extends Component {
 							context: 'Editor: Page being edited is top level i.e. has no parent',
 						} ) }
 					</span>
-					<span className="editor-page-parent__top-level-description">
-						{ translate( 'Disable to select a parent page' ) }
-					</span>
+					{ isTopLevel && (
+						<span className="editor-page-parent__top-level-description">
+							{ translate( 'Disable to select a parent page' ) }
+						</span>
+					) }
 				</FormLabel>
 				{ ! isTopLevel && (
 					<div className="editor-page-parent__parent-tree-selector">
