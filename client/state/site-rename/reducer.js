@@ -1,9 +1,18 @@
 /** @format */
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers, createReducer } from 'state/utils';
 import {
+	SITE_ADDRESS_AVAILABILITY_REQUEST,
+	SITE_ADDRESS_AVAILABILITY_SUCCESS,
+	SITE_ADDRESS_AVAILABILITY_ERROR,
+	SITE_ADDRESS_AVAILABILITY_ERROR_CLEAR,
 	SITE_RENAME_REQUEST,
 	SITE_RENAME_REQUEST_FAILURE,
 	SITE_RENAME_REQUEST_SUCCESS,
@@ -68,7 +77,52 @@ export const status = createReducer(
 	}
 );
 
+export const validation = createReducer(
+	{},
+	{
+		[ SITE_ADDRESS_AVAILABILITY_REQUEST ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: {
+				...get( state, siteId, {} ),
+				pending: true,
+				error: null,
+				isAvailable: null,
+			},
+		} ),
+		[ SITE_ADDRESS_AVAILABILITY_SUCCESS ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: {
+				...get( state, siteId, {} ),
+				pending: false,
+				error: null,
+				isAvailable: true,
+			},
+		} ),
+		[ SITE_ADDRESS_AVAILABILITY_ERROR ]: ( state, { siteId, errorType, message } ) => ( {
+			...state,
+			[ siteId ]: {
+				...get( state, siteId, {} ),
+				isAvailable: false,
+				pending: false,
+				error: {
+					errorType,
+					message,
+				},
+			},
+		} ),
+		[ SITE_ADDRESS_AVAILABILITY_ERROR_CLEAR ]: ( state, { siteId } ) => ( {
+			...state,
+			[ siteId ]: {
+				...get( state, siteId, {} ),
+				error: null,
+				isAvailable: null,
+			},
+		} ),
+	}
+);
+
 export default combineReducers( {
+	validation,
 	status,
 	requesting,
 } );
