@@ -16,6 +16,7 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
@@ -141,6 +142,16 @@ class JetpackOnboardingMain extends React.PureComponent {
 				<DocumentHead
 					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
 				/>
+				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
+				   * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
+				   * finished fetching site details, which will tell us whether the site is connected,
+				   * which we need in turn to conditionally send JPO auth credentials (see below).
+				   * However, if we're logged out, we cannot `<QuerySites allSites />`,
+				   * since the concept of "all of a user's sites" doesn't make sense if there is no user.
+				   * We also cannot `<QuerySites siteId={ siteId } />` prior to having obtained the `siteId`
+				   * through JPO -- a Catch-22 situation.
+				   * Fortunately, querying by `siteSlug` works, since it's supported by underlying actions. */ }
+				<QuerySites siteId={ siteSlug } />
 				{ /* We only allow querying of site settings once we know that we have finished
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
 				   * the site is a connected Jetpack site or not, and a network request that uses
@@ -188,8 +199,11 @@ export default connect(
 		const settings = getJetpackOnboardingSettings( state, siteId );
 		const isBusiness = get( settings, 'siteType' ) === 'business';
 
+		// We really want `isRequestingSite( state, siteSlug )` (not `siteId`).
+		// For the rationale, see the comment right above the `<QuerySites />` component
+		// further up in this file.
 		const isRequestingWhetherConnected =
-			isRequestingSite( state, siteId ) || isRequestingSites( state );
+			isRequestingSite( state, siteSlug ) || isRequestingSites( state );
 		const isConnected = isJetpackSite( state, siteId );
 		const selectedSiteId = getSelectedSiteId( state );
 		const isSiteSelected = selectedSiteId === siteId;
