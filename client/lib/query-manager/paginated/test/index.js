@@ -407,7 +407,7 @@ describe( 'PaginatedQueryManager', () => {
 			] );
 		} );
 
-		it( 'handles items missing from the first page', () => {
+		test( 'handles items missing from the first page', () => {
 			manager = manager.receive( [ { ID: 1 }, { ID: 3 } ], {
 				query: { search: 'title', number: 3 },
 				found: 5, // The API found 6 results and decremented 1.
@@ -451,7 +451,7 @@ describe( 'PaginatedQueryManager', () => {
 			] );
 		} );
 
-		it( 'handles items missing from the first and last pages', () => {
+		test( 'handles items missing from the first and last pages', () => {
 			manager = manager.receive( [ { ID: 1 }, { ID: 3 } ], {
 				query: { search: 'title', number: 3 },
 				found: 8, // The API found 9 results and decremented 1.
