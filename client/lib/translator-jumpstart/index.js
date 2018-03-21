@@ -24,7 +24,7 @@ const debug = debugModule( 'calypso:community-translator' );
 
 const user = new User(),
 	communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
-	communityTranslatorVersion = '1.160728',
+	communityTranslatorVersion = '1.160729',
 	// lookup for the translation set slug on GP
 	translateSetSlugs = {
 		de_formal: 'formal',
