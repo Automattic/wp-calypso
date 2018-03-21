@@ -25,5 +25,6 @@ export const INVALID_PERMISSIONS = 'invalidPermissions';
 export const RETRY_AUTH = 'retryAuth';
 export const RETRYING_AUTH = 'retryingAuth';
 export const SECRET_EXPIRED = 'secretExpired';
+export const UNKNOWN_REMOTE_INSTALL_ERROR = 'unknownRemoteInstallError';
 export const USER_IS_ALREADY_CONNECTED_TO_SITE = 'userIsAlreadyConnectedToSite';
 export const WORDPRESS_DOT_COM = 'wordpress.com';

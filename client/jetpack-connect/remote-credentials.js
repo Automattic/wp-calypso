@@ -36,6 +36,7 @@ import {
 	INSTALL_FAILURE,
 	INVALID_PERMISSIONS,
 	LOGIN_FAILURE,
+	UNKNOWN_REMOTE_INSTALL_ERROR,
 } from './connection-notice-types';
 
 export class OrgCredentialsForm extends Component {
@@ -120,6 +121,7 @@ export class OrgCredentialsForm extends Component {
 		if ( installError === 'FORBIDDEN' ) {
 			return INVALID_PERMISSIONS;
 		}
+		return UNKNOWN_REMOTE_INSTALL_ERROR;
 	}
 
 	renderNotice() {

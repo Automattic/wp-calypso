@@ -31,6 +31,7 @@ import {
 	RETRY_AUTH,
 	RETRYING_AUTH,
 	SECRET_EXPIRED,
+	UNKNOWN_REMOTE_INSTALL_ERROR,
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
@@ -64,6 +65,7 @@ export class JetpackConnectNotices extends Component {
 			RETRY_AUTH,
 			RETRYING_AUTH,
 			SECRET_EXPIRED,
+			UNKNOWN_REMOTE_INSTALL_ERROR,
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 		] ).isRequired,
@@ -277,6 +279,26 @@ export class JetpackConnectNotices extends Component {
 				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'notice';
+				return noticeValues;
+
+			case UNKNOWN_REMOTE_INSTALL_ERROR:
+				noticeValues.text = translate(
+					'Something went wrong. You can try again, {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
+						'or {{support}}contact support{{/support}} for help.',
+					{
+						components: {
+							manualInstall: (
+								<a
+									href={ this.getHelperUrl( 'manual' ) }
+									onClick={ this.trackManualInstallClick }
+								/>
+							),
+							support: (
+								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
+							),
+						},
+					}
+				);
 				return noticeValues;
 		}
 	}
