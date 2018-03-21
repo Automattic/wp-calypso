@@ -101,6 +101,9 @@ class Search extends Component {
 			isOpen: !! this.props.isOpen,
 			hasFocus: false,
 		};
+
+		this.closeListener = keyListener.bind( this, 'closeSearch' );
+		this.openListener = keyListener.bind( this, 'openSearch' );
 	}
 
 	setOpenIconRef = openIcon => ( this.openIcon = openIcon );
@@ -108,15 +111,6 @@ class Search extends Component {
 	setSearchInputRef = input => ( this.searchInput = input );
 
 	setOverlayRef = overlay => ( this.overlay = overlay );
-
-	componentWillMount() {
-		this.setState( {
-			instanceId: ++Search.instances,
-		} );
-
-		this.closeListener = keyListener.bind( this, 'closeSearch' );
-		this.openListener = keyListener.bind( this, 'openSearch' );
-	}
 
 	componentWillReceiveProps( nextProps ) {
 		if (
