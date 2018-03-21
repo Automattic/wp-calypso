@@ -17,7 +17,6 @@ import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
 import ActivityLogSwitch from '../activity-log-switch';
-import ActivityLogUpgradeNotice from '../activity-log-upgrade-notice';
 import Banner from 'components/banner';
 import DatePicker from 'my-sites/stats/stats-date-picker';
 import EmptyContent from 'components/empty-content';
@@ -480,8 +479,6 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteId &&
-					rewindState.reason === 'missing_plan' && <ActivityLogUpgradeNotice siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
