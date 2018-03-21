@@ -1,0 +1,86 @@
+version: 2
+jobs:
+  build:
+    parallelism: 4
+    working_directory: ~/wp-calypso
+    docker:
+      - image: circleci/node:8.9.4-browsers
+        environment:
+          CIRCLE_ARTIFACTS: /tmp/artifacts
+          CIRCLE_TEST_REPORTS: /tmp/test_results
+
+    steps:
+      - checkout
+
+      - run:
+          name: Create Directories for Results and Artifacts
+          command: |
+            mkdir -p $CIRCLE_ARTIFACTS
+            mkdir -p $CIRCLE_TEST_REPORTS
+
+      - restore_cache:
+          key: v1-{{ .Branch }}-{{ checksum "npm-shrinkwrap.json" }}
+
+      - run: npm install
+
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ checksum "npm-shrinkwrap.json" }}
+          paths:
+            - "node_modules"
+
+      - run: NODE_ENV=test npm run build-server
+
+      - run:
+          command: |
+            npm run translate; mkdir -p $CIRCLE_ARTIFACTS/translate
+            mv calypso-strings.pot $CIRCLE_ARTIFACTS/translate
+
+      - run:
+          command: |
+            git clone https://github.com/Automattic/gp-localci-client.git
+            bash gp-localci-client/generate-new-strings-pot.sh $CIRCLE_BRANCH $CIRCLE_SHA1 $CIRCLE_ARTIFACTS/translate
+            rm -rf gp-localci-client
+
+      - run:
+          name: Run Integration Tests
+          command: |
+            bin/run-integration $(circleci tests glob "bin/**/integration/*.js" "client/**/integration/*.js" "server/**/integration/*.js" | circleci tests split --split-by=timings)
+
+      - run:
+          name: Lint
+          command: npm run lint:config-defaults
+
+      - run:
+          name: Lint Client and Server
+          command: |
+            ./node_modules/.bin/eslint-eslines $(circleci tests glob "client/**/*.js" "client/**/*.jsx" "server/**/*.js" "server/**/*.jsx" | circleci tests split)
+
+      - run:
+          name: Run Client Tests
+          command: |
+              npm run test-client:ci $(circleci tests glob "client/**/test/*.js" "client/**/test/*.jsx" | circleci tests split --split-by=timings)
+
+      - run:
+          name: Run Server Tests
+          command: |
+              npm run test-server:ci $(circleci tests glob "server/**/test/*.js" "server/**/test/*.jsx" | circleci tests split --split-by=timings)
+
+      - run:
+          name: Gather Test Results
+          command: |
+            find . -type f -regex  ".*/test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/ \;
+          when: always
+
+      - store_test_results:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/test_results
+      - store_artifacts:
+          path: /tmp/artifacts
+
+# We need to work around this bit because
+# the notification system in 2.0 is a bit flakey
+# and is not yet working as expected.
+notify:
+  webhooks:
+    - url: https://translate.wordpress.com/api/localci/-relay-new-strings-to-gh
