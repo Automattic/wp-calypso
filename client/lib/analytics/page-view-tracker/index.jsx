@@ -7,15 +7,16 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight, noop } from 'lodash';
+import { flowRight, get, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { getSiteFragment } from 'lib/route';
 import { recordPageView } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { hasLoadedSites } from 'state/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Module variables
@@ -29,8 +30,8 @@ export class PageViewTracker extends React.Component {
 		delay: PropTypes.number,
 		path: PropTypes.string.isRequired,
 		recorder: PropTypes.func,
+		hasSelectedSiteLoaded: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
-		sitesLoaded: PropTypes.bool,
 		title: PropTypes.string.isRequired,
 	};
 
@@ -58,11 +59,11 @@ export class PageViewTracker extends React.Component {
 	}
 
 	queuePageView = () => {
-		const { delay = 0, path, recorder = noop, sitesLoaded, title } = this.props;
+		const { delay = 0, path, recorder = noop, isSelectedSiteLoaded, title } = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( ! sitesLoaded || this.state.timer ) {
+		if ( ! isSelectedSiteLoaded || this.state.timer ) {
 			return;
 		}
 
@@ -80,10 +81,16 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
-const mapStateToProps = state => ( {
-	selectedSiteId: getSelectedSiteId( state ),
-	sitesLoaded: hasLoadedSites( state ),
-} );
+const mapStateToProps = state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
+	const currentSlug = getSiteFragment( get( window, 'location.pathname', '' ) );
+	const hasSelectedSiteLoaded = ! currentSlug || currentSlug === selectedSiteSlug;
+	return {
+		hasSelectedSiteLoaded,
+		selectedSiteId,
+	};
+};
 
 const mapDispatchToProps = dispatch => ( {
 	recorder: flowRight( dispatch, recordPageView ),
