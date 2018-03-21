@@ -16,6 +16,14 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveApplicationPasswords } from 'state/application-passwords/actions';
 
+export function fromApi( response ) {
+	if ( ! response.application_passwords ) {
+		throw new Error( 'An error has occurred while requesting application passwords.', response );
+	}
+
+	return response.application_passwords;
+}
+
 /**
  * Dispatches a request to fetch application passwords of the current user
  *
@@ -35,11 +43,11 @@ export const requestApplicationPasswords = action =>
 /**
  * Dispatches a user application passwords receive action when the request succeeded.
  *
- * @param   {Object} action Redux action
- * @param   {Object} data   Response from the endpoint
+ * @param   {Object} action       Redux action
+ * @param   {Object} appPasswords Application passwords
  * @returns {Object} Dispatched user application passwords receive action
  */
-export const handleRequestSuccess = ( action, { application_passwords: appPasswords } ) =>
+export const handleRequestSuccess = ( action, appPasswords ) =>
 	receiveApplicationPasswords( appPasswords );
 
 const requestHandler = {
@@ -48,6 +56,7 @@ const requestHandler = {
 			fetch: requestApplicationPasswords,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
+			fromApi,
 		} ),
 	],
 };
