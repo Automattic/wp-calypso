@@ -203,13 +203,16 @@ describe( 'middleware', () => {
 				const noticeAction = onPostSaveSuccess( {
 					type: POST_SAVE_SUCCESS,
 					post: { status: 'trash' },
+					savedPost: { global_ID: 'asdfjkl' },
 				} );
 
 				expect( noticeAction ).toMatchObject( {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-success',
-						text: 'Post successfully moved to trash',
+						noticeId: 'trash_asdfjkl',
+						text: 'Post successfully moved to trash.',
+						button: 'Undo',
 					},
 				} );
 			} );
