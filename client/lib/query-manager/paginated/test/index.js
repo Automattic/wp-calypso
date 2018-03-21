@@ -4,7 +4,6 @@
  * Internal dependencies
  */
 import PaginatedQueryManager from '../';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
  * Provide subclass with compare method implementation for testing
@@ -16,16 +15,10 @@ class TestCustomQueryManager extends PaginatedQueryManager {
 }
 
 describe( 'PaginatedQueryManager', () => {
-	let sandbox, manager;
-
-	useSandbox( _sandbox => ( sandbox = _sandbox ) );
-
+	let manager;
 	beforeEach( () => {
 		manager = new TestCustomQueryManager();
-	} );
-
-	afterEach( () => {
-		sandbox.restore();
+		jest.restoreAllMocks();
 	} );
 
 	describe( '.hasQueryPaginationKeys()', () => {
@@ -264,7 +257,7 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( [ { ID: 176 }, { ID: 184 } ], {
 				query: { search: 'title', number: 2, page: 3 },
 			} );
-			sandbox.stub( PaginatedQueryManager, 'matches' ).returns( false );
+			jest.spyOn( PaginatedQueryManager, 'matches' ).mockImplementation( () => false );
 			manager = manager.receive( { ID: 160, changed: true } );
 
 			expect( manager.getFound( { search: 'title' } ) ).toBe( 5 );

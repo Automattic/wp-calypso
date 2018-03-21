@@ -4,19 +4,13 @@
  * Internal dependencies
  */
 import QueryManager, { DELETE_PATCH_KEY } from '../';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'QueryManager', () => {
-	let sandbox, manager;
-
-	useSandbox( _sandbox => ( sandbox = _sandbox ) );
+	let manager;
 
 	beforeEach( () => {
 		manager = new QueryManager();
-	} );
-
-	afterEach( () => {
-		sandbox.restore();
+		jest.restoreAllMocks();
 	} );
 
 	describe( '#constructor()', () => {
@@ -268,7 +262,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should omit an item that returns undefined from #mergeItem()', () => {
 			manager = manager.receive( { ID: 144 } );
-			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
+			jest.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).toEqual( [ { ID: 144 } ] );
@@ -277,7 +271,7 @@ describe( 'QueryManager', () => {
 
 		test( "should do nothing if #mergeItem() returns undefined but the item didn't exist", () => {
 			manager = manager.receive();
-			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
+			jest.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager ).toBe( newManager );
@@ -326,7 +320,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it no longer matches', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			sandbox.stub( QueryManager, 'matches' ).returns( false );
+			jest.spyOn( QueryManager, 'matches' ).mockImplementation( () => false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getItems() ).toEqual( [ { ID: 144 } ] );
@@ -344,7 +338,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it is omitted from items', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			sandbox.stub( QueryManager, 'mergeItem' ).returns( undefined );
+			jest.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).toEqual( [ { ID: 144 } ] );
@@ -363,7 +357,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should compare items appended to query set', () => {
 			manager = manager.receive( [ { ID: 140 }, { ID: 160 } ], { query: {} } );
-			sandbox.stub( QueryManager, 'compare', ( query, a, b ) => a.ID - b.ID );
+			jest.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			manager = manager.receive( { ID: 150 } );
 
 			expect( manager.getItems( {} ) ).toEqual( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
@@ -414,7 +408,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should decrement found count if removing an unmatched item', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
-			sandbox.stub( QueryManager, 'matches' ).returns( false );
+			jest.spyOn( QueryManager, 'matches' ).mockImplementation( () => false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getFound( {} ) ).toBe( 1 );
@@ -431,7 +425,7 @@ describe( 'QueryManager', () => {
 		} );
 
 		it( 'should sort items when merging queries', () => {
-			sandbox.stub( QueryManager, 'compare', ( query, a, b ) => a.ID - b.ID );
+			jest.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
 				item =>
 					( manager = manager.receive( item, {
@@ -439,7 +433,6 @@ describe( 'QueryManager', () => {
 						query: {},
 					} ) )
 			);
-			// console.log( manager.data.queries );
 			expect( manager.getItems( {} ) ).toEqual( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
 		} );
 
@@ -456,7 +449,6 @@ describe( 'QueryManager', () => {
 						query: {},
 					} ) )
 			);
-			// console.log( sortingManager.data.queries );
 			expect( sortingManager.getItems( {} ) ).toEqual( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
 		} );
 	} );
