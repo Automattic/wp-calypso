@@ -75,12 +75,16 @@ const CountrySelect = createReactClass( {
 			);
 		}
 
+		const validationId = `validation-field-${ this.props.name }`;
+
 		return (
 			<div className={ classes }>
 				<div>
 					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 
 					<FormSelect
+						aria-invalid={ this.props.isError }
+						aria-describedby={ validationId }
 						name={ this.props.name }
 						id={ this.props.name }
 						value={ value }
@@ -100,7 +104,7 @@ const CountrySelect = createReactClass( {
 				</div>
 
 				{ this.props.errorMessage && (
-					<FormInputValidation text={ this.props.errorMessage } isError />
+					<FormInputValidation id={ validationId } text={ this.props.errorMessage } isError />
 				) }
 			</div>
 		);

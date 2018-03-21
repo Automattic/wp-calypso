@@ -63,6 +63,7 @@ class StateSelect extends Component {
 			inputRef,
 			selectText,
 		} = this.props;
+		const validationId = `validation-field-${ this.props.name }`;
 
 		return (
 			<div>
@@ -75,6 +76,8 @@ class StateSelect extends Component {
 							{ this.props.label }
 						</FormLabel>
 						<FormSelect
+							aria-invalid={ isError }
+							aria-describedby={ validationId }
 							ref="input"
 							id={ `${ this.constructor.name }-${ this.instance }` }
 							name={ name }
@@ -94,7 +97,9 @@ class StateSelect extends Component {
 								</option>
 							) ) }
 						</FormSelect>
-						{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
+						{ errorMessage && (
+							<FormInputValidation id={ validationId } text={ errorMessage } isError />
+						) }
 					</div>
 				) }
 			</div>
