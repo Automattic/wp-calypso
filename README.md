@@ -8,6 +8,7 @@ It’s built with JavaScript – a very light [node](https://nodejs.org) plus [e
 
 You can read more about Calypso at [developer.wordpress.com/calypso](https://developer.wordpress.com/calypso/).
 
+
 ## Getting Started
 
 You can try out the user-side of Calypso on [WordPress.com](https://wordpress.com/) (a lot of the logged-in area is Calypso; if in doubt, view source), you can poke around the code here on GitHub, or you can install it and run it locally. The latter is the most fun.
