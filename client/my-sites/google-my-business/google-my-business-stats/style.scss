@@ -5,6 +5,12 @@
 	}
 }
 
+.google-my-business-stats__details {
+	@include breakpoint( '>480px' ) {
+		display: flex;
+	}
+}
+
 .google-my-business-stats__container {
 	display: flex;
 }
@@ -41,6 +47,11 @@
 	margin-bottom: 1em;
 }
 
+.google-my-business-stats__listing-button-wrapper {
+	flex-grow: 1;
+	text-align: right;
+}
+
 .google-my-business-stats__listing-button {
 	.gridicon {
 		margin-left: 1em;
@@ -61,7 +72,6 @@
 .google-my-business-stats__stat-title {
 	font-size: 18px;
 	line-height: 3;
-	text-align: center;
 }
 
 .google-my-business-stats__search-type {
@@ -99,12 +109,16 @@
 	@include breakpoint( '>660px' ) {
 		font-size: 20px;
 	}
+
+	p {
+		margin-bottom: 1em;
+	}
 }
 
 .google-my-business-stats__feature-image {
 	float: right;
 	margin: 0 0 1em 1em;
-	max-width: 200px;
+	max-width: 250px;
 	width: 50%;
 }
 
@@ -124,11 +138,6 @@
 
 .google-my-business-stats__not-enough-data {
 	line-height: 3em;
-	text-align: center;
-
-	img {
-		width: 175px;
-	}
 }
 
 .google-my-business-stats__empty-title {
@@ -148,7 +157,6 @@
 
 .google-my-business-stats__searches-pie-chart {
 	display: block;
-	margin: auto;
 	max-width: 150px;
 	width: 100%;
 }

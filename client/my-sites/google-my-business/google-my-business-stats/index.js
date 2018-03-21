@@ -40,13 +40,14 @@ class Stats extends Component {
 
 	render() {
 		const { translate } = this.props;
+		const notEnoughData = true;
 		return (
 			<Main wideLayout>
 				<SidebarNavigation title="Stats" />
 				<div className="google-my-business-stats google-my-business">
 					<StatsNavigation selectedItem={ 'google-my-business' } />
 
-					<Card>
+					<Card className="google-my-business-stats__details">
 						<div className="google-my-business-stats__container">
 							<img
 								src="/calypso/images/google-my-business/cookies.png"
@@ -67,14 +68,16 @@ class Stats extends Component {
 							</div>
 						</div>
 
-						<Button
-							className="google-my-business-stats__listing-button"
-							href="https://business.google.com"
-							target="_blank"
-						>
-							Update Listing
-							<Gridicon icon="external" />
-						</Button>
+						<div className="google-my-business-stats__listing-button-wrapper">
+							<Button
+								className="google-my-business-stats__listing-button"
+								href="https://business.google.com"
+								target="_blank"
+							>
+								Update Listing
+								<Gridicon icon="external" />
+							</Button>
+						</div>
 					</Card>
 
 					<SectionHeader label={ translate( 'How customers search for your business' ) } />
@@ -175,13 +178,15 @@ class Stats extends Component {
 						<p className="google-my-business-stats__description">
 							The places where customers request driving directions to your business.
 						</p>
-						<FormFieldset>
-							<FormSelect className="google-my-business-stats__select">
-								<option>{ translate( '1 week' ) }</option>
-								<option>{ translate( '1 month' ) }</option>
-								<option>{ translate( '1 quarter' ) }</option>
-							</FormSelect>
-						</FormFieldset>
+						{ ! notEnoughData && (
+							<FormFieldset>
+								<FormSelect className="google-my-business-stats__select">
+									<option>{ translate( '1 week' ) }</option>
+									<option>{ translate( '1 month' ) }</option>
+									<option>{ translate( '1 quarter' ) }</option>
+								</FormSelect>
+							</FormFieldset>
+						) }
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
@@ -194,17 +199,19 @@ class Stats extends Component {
 						<p className="google-my-business-stats__description">
 							When and how many times customers call your business
 						</p>
-						<FormFieldset>
-							<FormSelect className="google-my-business-stats__select">
-								<option>{ translate( 'Time of day' ) }</option>
-								<option>{ translate( 'Day of week' ) }</option>
-							</FormSelect>
-							<FormSelect className="google-my-business-stats__select">
-								<option>{ translate( '1 week' ) }</option>
-								<option>{ translate( '1 month' ) }</option>
-								<option>{ translate( '1 quarter' ) }</option>
-							</FormSelect>
-						</FormFieldset>
+						{ ! notEnoughData && (
+							<FormFieldset>
+								<FormSelect className="google-my-business-stats__select">
+									<option>{ translate( 'Time of day' ) }</option>
+									<option>{ translate( 'Day of week' ) }</option>
+								</FormSelect>
+								<FormSelect className="google-my-business-stats__select">
+									<option>{ translate( '1 week' ) }</option>
+									<option>{ translate( '1 month' ) }</option>
+									<option>{ translate( '1 quarter' ) }</option>
+								</FormSelect>
+							</FormFieldset>
+						) }
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
@@ -234,13 +241,15 @@ class Stats extends Component {
 						<p className="google-my-business-stats__description">
 							How many customers return to your website?
 						</p>
-						<FormFieldset>
-							<FormSelect className="google-my-business-stats__select">
-								<option>{ translate( '1 week' ) }</option>
-								<option>{ translate( '1 month' ) }</option>
-								<option>{ translate( '1 quarter' ) }</option>
-							</FormSelect>
-						</FormFieldset>
+						{ ! notEnoughData && (
+							<FormFieldset>
+								<FormSelect className="google-my-business-stats__select">
+									<option>{ translate( '1 week' ) }</option>
+									<option>{ translate( '1 month' ) }</option>
+									<option>{ translate( '1 quarter' ) }</option>
+								</FormSelect>
+							</FormFieldset>
+						) }
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
@@ -253,13 +262,15 @@ class Stats extends Component {
 						<p className="google-my-business-stats__description">
 							The most popular times for your customers to visit your website.
 						</p>
-						<FormFieldset>
-							<FormSelect className="google-my-business-stats__select">
-								<option>{ translate( '1 week' ) }</option>
-								<option>{ translate( '1 month' ) }</option>
-								<option>{ translate( '1 quarter' ) }</option>
-							</FormSelect>
-						</FormFieldset>
+						{ ! notEnoughData && (
+							<FormFieldset>
+								<FormSelect className="google-my-business-stats__select">
+									<option>{ translate( '1 week' ) }</option>
+									<option>{ translate( '1 month' ) }</option>
+									<option>{ translate( '1 quarter' ) }</option>
+								</FormSelect>
+							</FormFieldset>
+						) }
 						<div className="google-my-business-stats__not-enough-data">
 							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
 							<br />
