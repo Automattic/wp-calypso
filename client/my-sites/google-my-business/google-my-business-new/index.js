@@ -34,7 +34,7 @@ class GoogleMyBusinessNew extends Component {
 		const backHref = '/stats/' + siteId;
 
 		return (
-			<Main className="google-my-business google-my-business-new">
+			<Main className="google-my-business google-my-business-new" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>

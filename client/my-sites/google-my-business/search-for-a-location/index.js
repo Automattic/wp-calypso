@@ -89,7 +89,7 @@ class SearchForALocation extends Component {
 			} );
 
 		return (
-			<Main className="google-my-business search-for-a-location">
+			<Main className="google-my-business search-for-a-location" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>

@@ -167,7 +167,7 @@ class GoogleMyBusinessCategory extends Component {
 			'https://support.google.com/business/answer/7249669?hl=en&_ga=2.170244832.1172336099.1521039613-786824372.1502702633';
 
 		return (
-			<Main className="google-my-business google-my-business-category">
+			<Main className="google-my-business google-my-business-category" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>

@@ -17,6 +17,7 @@ import CompactCard from 'components/card/compact';
 import GoogleMyBusinessLocation from '../google-my-business-location';
 import HeaderCake from 'components/header-cake';
 import { recordTracksEvent } from 'state/analytics/actions';
+import Main from 'components/main';
 
 class ShowListOfLocation extends Component {
 	static propTypes = {
@@ -59,7 +60,7 @@ class ShowListOfLocation extends Component {
 		const statsHref = '/google-my-business/stats/' + siteId;
 
 		return (
-			<div className="google-my-business show-list-of-locations">
+			<Main className="google-my-business show-list-of-locations" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -91,7 +92,7 @@ class ShowListOfLocation extends Component {
 						}
 					) }
 				</Card>
-			</div>
+			</Main>
 		);
 	}
 }

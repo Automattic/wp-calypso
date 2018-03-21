@@ -41,7 +41,7 @@ class Stats extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			<Main>
+			<Main wideLayout>
 				<SidebarNavigation title="Stats" />
 				<div className="google-my-business-stats google-my-business">
 					<StatsNavigation selectedItem={ 'google-my-business' } />

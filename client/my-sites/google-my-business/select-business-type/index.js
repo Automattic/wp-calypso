@@ -56,7 +56,7 @@ class SelectBusinessType extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<Main className="select-business-type">
+			<Main className="select-business-type" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>

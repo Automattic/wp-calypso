@@ -15,6 +15,7 @@ import Stats from './google-my-business-stats';
 import Address from './google-my-business-address';
 import Category from './google-my-business-category';
 import Connections from './google-my-business-connections';
+import Confirm from './google-my-business-confirm';
 import Verify from './google-my-business-verify';
 import New from './google-my-business-new';
 
@@ -69,5 +70,11 @@ export function verify( context, next ) {
 export function newGMB( context, next ) {
 	const { params } = context;
 	context.primary = <New siteId={ params.site_id } />;
+	next();
+}
+
+export function confirm( context, next ) {
+	const { params } = context;
+	context.primary = <Confirm siteId={ params.site_id } />;
 	next();
 }

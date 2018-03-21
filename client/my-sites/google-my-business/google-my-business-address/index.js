@@ -299,10 +299,13 @@ class GoogleMyBusinessAddress extends Component {
 		const { translate, siteId } = this.props;
 		const nextHref = '/google-my-business/category/' + siteId;
 		const backHref = '/google-my-business/search-for-a-location/' + siteId;
-		const learnMore = 'https://support.google.com/business/answer/3038163?hl=en&p=service_area&_ga=2.114817351.1172336099.1521039613-786824372.1502702633&visit_id=1-636566421185268799-1331387176&rd=1';
+		const learnMore =
+			'https://support.google.com/business/answer/3038163?hl' +
+			'=en&p=service_area&_ga=2.114817351.1172336099.1521039613-786824372' +
+			'.1502702633&visit_id=1-636566421185268799-1331387176&rd=1';
 
 		return (
-			<Main className="google-my-business google-my-business-address">
+			<Main className="google-my-business google-my-business-address" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>

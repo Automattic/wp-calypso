@@ -35,22 +35,23 @@ class GoogleMyBusinessConnections extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const nextHref = '/google-my-business/verify/' + siteId;
+		const nextHref = '/google-my-business/confirm/' + siteId;
 		const backHref = '/google-my-business/category/' + siteId;
 
 		return (
-			<Main className="google-my-business google-my-business-connections">
+			<Main className="google-my-business google-my-business-connections" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
 				<Card>
 					<FormFieldset>
-						<FormLegend>Make connections (optional)</FormLegend>
+						<FormLegend>{ translate( 'Make connections (optional)' ) }</FormLegend>
 
 						<p>
-							Providing current info will help customers get in touch and learn more about your
-							business
+							{ translate(
+								'Providing current info will help customers get in touch and learn more about your business'
+							) }
 						</p>
 
 						<FormLabel>{ translate( 'Phone number' ) }</FormLabel>
