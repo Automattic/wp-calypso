@@ -36,6 +36,7 @@ class CreditCardForm extends Component {
 		saveStoredCard: PropTypes.func,
 		successCallback: PropTypes.func.isRequired,
 		showUsedForExistingPurchasesInfo: PropTypes.bool,
+		autoFocus: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -43,6 +44,7 @@ class CreditCardForm extends Component {
 		initialValues: {},
 		saveStoredCard: null,
 		showUsedForExistingPurchasesInfo: false,
+		autoFocus: true,
 	};
 
 	state = {
@@ -230,7 +232,7 @@ class CreditCardForm extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, autoFocus } = this.props;
 		return (
 			<form onSubmit={ this.onSubmit } ref={ this.storeForm }>
 				<Card className="credit-card-form__content">
@@ -240,6 +242,7 @@ class CreditCardForm extends Component {
 						eventFormName="Edit Card Details Form"
 						onFieldChange={ this.onFieldChange }
 						getErrorMessage={ this.getErrorMessage }
+						autoFocus={ autoFocus }
 					/>
 					<div className="credit-card-form__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />

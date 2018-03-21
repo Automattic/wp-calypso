@@ -27,12 +27,14 @@ export class CreditCardFormFields extends React.Component {
 		eventFormName: PropTypes.string,
 		onFieldChange: PropTypes.func,
 		getErrorMessage: PropTypes.func,
+		autoFocus: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		eventFormName: 'Credit card input',
 		onFieldChange: noop,
 		getErrorMessage: noop,
+		autoFocus: true,
 	};
 
 	constructor( props ) {
@@ -191,7 +193,7 @@ export class CreditCardFormFields extends React.Component {
 	}
 
 	render() {
-		const { translate, countriesList } = this.props;
+		const { translate, countriesList, autoFocus } = this.props;
 		const ebanxDetailsRequired = this.shouldRenderEbanx();
 		const creditCardFormFieldsExtrasClassNames = classNames( {
 			'credit-card-form-fields__extras': true,
@@ -201,7 +203,7 @@ export class CreditCardFormFields extends React.Component {
 		return (
 			<div className="credit-card-form-fields">
 				{ this.createField( 'name', Input, {
-					autoFocus: true,
+					autoFocus,
 					label: translate( 'Name on Card', {
 						context: 'Card holder name label on credit card form',
 					} ),
