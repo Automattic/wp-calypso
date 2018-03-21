@@ -233,25 +233,6 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	/**
-	 * Determine if the additional form is ready to submit
-	 * @return {bool} Return true if the additional support option can be used
-	 */
-	canSubmitAdditionalForm = () => {
-		const { disabled } = this.props;
-		const { subject, message } = this.state;
-
-		if ( disabled ) {
-			return false;
-		}
-
-		if ( ! subject.trim() ) {
-			return false;
-		}
-
-		return !! message.trim();
-	};
-
-	/**
 	 * Start a chat using the info set in state
 	 * @param  {object} event Event object
 	 */
@@ -286,8 +267,9 @@ export class HelpContactForm extends React.PureComponent {
 	 * @param  {object} event Event object
 	 */
 	submitAdditionalForm = () => {
-		const { howCanWeHelp, howYouFeel, message, subject } = this.state;
+		const { howCanWeHelp, howYouFeel, message } = this.state;
 		const { currentUserLocale } = this.props;
+		const subject = generateSubjectFromMessage( message );
 
 		this.props.recordTracksEvent( 'calypso_happychat_a_b_native_ticket_selected', {
 			locale: currentUserLocale,
@@ -379,8 +361,7 @@ export class HelpContactForm extends React.PureComponent {
 					</div>
 				) }
 
-				{ ( showSubjectField ||
-					( additionalSupportOption && additionalSupportOption.enabled ) ) && (
+				{ showSubjectField && (
 					<div className="help-contact-form__subject">
 						<FormLabel>{ translate( 'Subject' ) }</FormLabel>
 						<FormTextInput
@@ -421,7 +402,7 @@ export class HelpContactForm extends React.PureComponent {
 				{ additionalSupportOption &&
 					additionalSupportOption.enabled && (
 						<FormButton
-							disabled={ ! this.canSubmitAdditionalForm() }
+							disabled={ ! this.canSubmitForm() }
 							type="button"
 							onClick={ this.submitAdditionalForm }
 						>
