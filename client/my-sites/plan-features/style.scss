@@ -643,3 +643,36 @@ $plan-features-sidebar-width: 272px;
 		background: darken( #44d0a3, 20% );
 	}
 }
+
+/**
+ * A/B test for horizontal vs vertical scroll
+ */
+.has-mobile-table.plan-features--signup {
+	
+	@include breakpoint( "<660px" ) {
+	
+		.signup__steps &,
+		.jetpack-connect__plans & {
+			width: auto;
+		}
+
+		.plan-features__graphic {
+			float: right;
+			width: 50px;
+			height: 50px;
+			margin: 16px 20px;
+		}
+
+		.plan-features__pricing {
+			margin: 20px 20px -12px;
+		}
+
+		.plan-features__table {
+			display: none !important;
+		}
+
+		.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
+			padding-top: 0;
+		}
+	}
+}

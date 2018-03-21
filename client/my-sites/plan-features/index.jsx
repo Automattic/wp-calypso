@@ -64,17 +64,22 @@ class PlanFeatures extends Component {
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 			'abtest-pricing-display': showModifiedPricingDisplay,
+			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'mobile',
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
 		let mobileView, planDescriptions;
 		let bottomButtons = null;
 
 		if ( ! isInSignup ) {
-			mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
-
 			planDescriptions = <tr>{ this.renderPlanDescriptions() }</tr>;
 
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
+		}
+
+		mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
+
+		if ( isInSignup && abtest( 'mobilePlansTablesOnSignup' ) === 'original' ) {
+			mobileView = '';
 		}
 
 		return (
