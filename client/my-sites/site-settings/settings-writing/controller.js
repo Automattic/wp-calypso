@@ -11,6 +11,7 @@ import React from 'react';
  */
 import WritingMain from 'my-sites/site-settings/settings-writing/main';
 import Taxonomies from 'my-sites/site-settings/taxonomies';
+import PodcastDetails from 'my-sites/site-settings/podcast-details';
 
 export default {
 	writing( context, next ) {
@@ -23,6 +24,11 @@ export default {
 			taxonomy: context.params.taxonomy,
 			postType: 'post',
 		} );
+		next();
+	},
+
+	podcast( context, next ) {
+		context.primary = React.createElement( PodcastDetails );
 		next();
 	},
 };
