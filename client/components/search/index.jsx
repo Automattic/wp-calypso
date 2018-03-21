@@ -103,6 +103,12 @@ class Search extends Component {
 		};
 	}
 
+	setOpenIconRef = openIcon => ( this.openIcon = openIcon );
+
+	setSearchInputRef = input => ( this.searchInput = input );
+
+	setOverlayRef = overlay => ( this.overlay = overlay );
+
 	componentWillMount() {
 		this.setState( {
 			instanceId: ++Search.instances,
@@ -214,9 +220,7 @@ class Search extends Component {
 
 	blur = () => this.searchInput.blur();
 
-	clear = () => {
-		this.setState( { keyword: '' } );
-	};
+	clear = () => this.setState( { keyword: '' } );
 
 	onBlur = event => {
 		if ( this.props.onBlur ) {
@@ -340,7 +344,7 @@ class Search extends Component {
 				<Spinner />
 				<div
 					className="search__icon-navigation"
-					ref={ openIcon => ( this.openIcon = openIcon ) } // eslint-disable-line react/jsx-no-bind
+					ref={ this.setOpenIconRef }
 					onClick={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon ? this.openListener : null }
@@ -357,7 +361,7 @@ class Search extends Component {
 						placeholder={ placeholder }
 						role="search"
 						value={ searchValue }
-						ref={ input => ( this.searchInput = input ) } //eslint-disable-line react/jsx-no-bind
+						ref={ this.setSearchInputRef }
 						onChange={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
@@ -381,10 +385,7 @@ class Search extends Component {
 
 	renderStylingDiv = () => {
 		return (
-			<div
-				className="search__text-overlay"
-				ref={ overlay => ( this.overlay = overlay ) } //eslint-disable-line react/jsx-no-bind
-			>
+			<div className="search__text-overlay" ref={ this.setOverlayRef }>
 				{ this.props.overlayStyling( this.state.keyword ) }
 			</div>
 		);
