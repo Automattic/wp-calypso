@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -36,7 +32,7 @@ describe( 'PaginatedQueryManager', () => {
 		test( 'should return false if not passed a query', () => {
 			const hasKeys = PaginatedQueryManager.hasQueryPaginationKeys();
 
-			expect( hasKeys ).to.be.false;
+			expect( hasKeys ).toBe( false );
 		} );
 
 		test( 'should return false if query has no pagination keys', () => {
@@ -44,7 +40,7 @@ describe( 'PaginatedQueryManager', () => {
 				search: 'title',
 			} );
 
-			expect( hasKeys ).to.be.false;
+			expect( hasKeys ).toBe( false );
 		} );
 
 		test( 'should return true if query has pagination keys', () => {
@@ -53,7 +49,7 @@ describe( 'PaginatedQueryManager', () => {
 				number: 2,
 			} );
 
-			expect( hasKeys ).to.be.true;
+			expect( hasKeys ).toBe( true );
 		} );
 	} );
 
@@ -62,30 +58,30 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( { ID: 144 } );
 			manager = manager.receive( { ID: 152 }, { query: {} } );
 
-			expect( manager.getItems() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItems() ).toEqual( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
 		test( 'should return null if query is unknown', () => {
 			manager = manager.receive( { ID: 144 } );
 
-			expect( manager.getItems( {} ) ).to.be.null;
+			expect( manager.getItems( {} ) ).toBeNull();
 		} );
 
 		test( 'should return a page subset of query items', () => {
 			manager = manager.receive( { ID: 144 }, { query: { number: 1 } } );
 			manager = manager.receive( { ID: 152 }, { query: { number: 1, page: 2 } } );
 
-			expect( manager.getItems( { number: 1, page: 1 } ) ).to.eql( [ { ID: 144 } ] );
-			expect( manager.getItems( { number: 1, page: 2 } ) ).to.eql( [ { ID: 152 } ] );
-			expect( manager.getItems( { number: 2, page: 1 } ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
-			expect( manager.getItems( { number: 2, page: 2 } ) ).to.eql( [] );
+			expect( manager.getItems( { number: 1, page: 1 } ) ).toEqual( [ { ID: 144 } ] );
+			expect( manager.getItems( { number: 1, page: 2 } ) ).toEqual( [ { ID: 152 } ] );
+			expect( manager.getItems( { number: 2, page: 1 } ) ).toEqual( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItems( { number: 2, page: 2 } ) ).toEqual( [] );
 		} );
 
 		test( 'should return page subset for non-sequentially received query', () => {
 			manager = manager.receive( { ID: 152 }, { query: { page: 2, number: 1 } } );
 
-			expect( manager.getItems( { number: 1, page: 1 } ) ).to.eql( [ undefined ] );
-			expect( manager.getItems( { number: 1, page: 2 } ) ).to.eql( [ { ID: 152 } ] );
+			expect( manager.getItems( { number: 1, page: 1 } ) ).toEqual( [ undefined ] );
+			expect( manager.getItems( { number: 1, page: 2 } ) ).toEqual( [ { ID: 152 } ] );
 		} );
 	} );
 
@@ -93,32 +89,32 @@ describe( 'PaginatedQueryManager', () => {
 		test( 'should return null if not passed a query', () => {
 			manager = manager.receive( { ID: 144 } );
 
-			expect( manager.getItemsIgnoringPage() ).to.be.null;
+			expect( manager.getItemsIgnoringPage() ).toBeNull();
 		} );
 
 		test( 'should return null if query is unknown', () => {
 			manager = manager.receive( { ID: 144 } );
 
-			expect( manager.getItemsIgnoringPage( {} ) ).to.be.null;
+			expect( manager.getItemsIgnoringPage( {} ) ).toBeNull();
 		} );
 
 		test( 'should return all pages of query items', () => {
 			manager = manager.receive( { ID: 144 }, { query: { number: 1 } } );
 			manager = manager.receive( { ID: 152 }, { query: { number: 1, page: 2 } } );
 
-			expect( manager.getItemsIgnoringPage( {} ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItemsIgnoringPage( {} ) ).toEqual( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
 		test( 'should exclude undefined items by default', () => {
 			manager = manager.receive( { ID: 144 }, { query: { number: 1 }, found: 2 } );
 
-			expect( manager.getItemsIgnoringPage( {} ) ).to.eql( [ { ID: 144 } ] );
+			expect( manager.getItemsIgnoringPage( {} ) ).toEqual( [ { ID: 144 } ] );
 		} );
 
 		test( 'should include undefined items when opting to includeFiller argument', () => {
 			manager = manager.receive( { ID: 144 }, { query: { number: 1 }, found: 2 } );
 
-			expect( manager.getItemsIgnoringPage( {}, true ) ).to.eql( [ { ID: 144 }, undefined ] );
+			expect( manager.getItemsIgnoringPage( {}, true ) ).toEqual( [ { ID: 144 }, undefined ] );
 		} );
 	} );
 
@@ -126,25 +122,25 @@ describe( 'PaginatedQueryManager', () => {
 		test( 'should return null if the query is unknown', () => {
 			manager = manager.receive( { ID: 144 } );
 
-			expect( manager.getNumberOfPages( {} ) ).to.be.null;
+			expect( manager.getNumberOfPages( {} ) ).toBeNull();
 		} );
 
 		test( 'should return null if the query is known, but found was not provided', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
 
-			expect( manager.getNumberOfPages( {} ) ).to.be.null;
+			expect( manager.getNumberOfPages( {} ) ).toBeNull();
 		} );
 
 		test( 'should return the number of pages assuming the default query number per page', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, found: 30 } );
 
-			expect( manager.getNumberOfPages( {} ) ).to.equal( 2 );
+			expect( manager.getNumberOfPages( {} ) ).toBe( 2 );
 		} );
 
 		test( 'should return the number of pages with an explicit number per page', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, found: 30 } );
 
-			expect( manager.getNumberOfPages( { number: 7 } ) ).to.equal( 5 );
+			expect( manager.getNumberOfPages( { number: 7 } ) ).toBe( 5 );
 		} );
 	} );
 
@@ -153,7 +149,7 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( { ID: 144 } );
 			const newManager = manager.receive( { ID: 144 } );
 
-			expect( manager ).to.equal( newManager );
+			expect( manager ).toBe( newManager );
 		} );
 
 		test( 'should update a single changed item', () => {
@@ -163,7 +159,7 @@ describe( 'PaginatedQueryManager', () => {
 				{ query: { search: 'title', number: 1 } }
 			);
 
-			expect( manager.getItems( { search: 'title', number: 1 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 1 } ) ).toEqual( [
 				{ ID: 144, changed: true },
 			] );
 		} );
@@ -172,8 +168,8 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( { ID: 144 }, { query: { search: 'title', number: 1 } } );
 			manager = manager.receive( { ID: 152 }, { query: { search: 'title', number: 1, page: 2 } } );
 
-			expect( manager.getItems( { search: 'title', number: 1 } ) ).to.eql( [ { ID: 144 } ] );
-			expect( manager.getItemsIgnoringPage( { search: 'title', number: 1 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 1 } ) ).toEqual( [ { ID: 144 } ] );
+			expect( manager.getItemsIgnoringPage( { search: 'title', number: 1 } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 152 },
 			] );
@@ -185,12 +181,14 @@ describe( 'PaginatedQueryManager', () => {
 			} );
 			manager = manager.receive( { ID: 144, changed: true }, { query: { number: 1 } } );
 
-			expect( manager.getItemsIgnoringPage( {} ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( {} ) ).toEqual( [
 				{ ID: 144, changed: true },
 				{ ID: 152 },
 			] );
-			expect( manager.getItems( { number: 1, page: 1 } ) ).to.eql( [ { ID: 144, changed: true } ] );
-			expect( manager.getItems( { number: 1, page: 2 } ) ).to.eql( [ { ID: 152 } ] );
+			expect( manager.getItems( { number: 1, page: 1 } ) ).toEqual( [
+				{ ID: 144, changed: true },
+			] );
+			expect( manager.getItems( { number: 1, page: 2 } ) ).toEqual( [ { ID: 152 } ] );
 		} );
 
 		test( 'should include filler undefined entries for yet-to-be-received items', () => {
@@ -199,7 +197,7 @@ describe( 'PaginatedQueryManager', () => {
 				found: 4,
 			} );
 
-			expect( manager.getItemsIgnoringPage( { number: 1 }, true ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { number: 1 }, true ) ).toEqual( [
 				undefined,
 				{ ID: 144 },
 				undefined,
@@ -213,7 +211,7 @@ describe( 'PaginatedQueryManager', () => {
 				found: 2,
 			} );
 
-			expect( manager.getItems( { number: 20 } ) ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
+			expect( manager.getItems( { number: 20 } ) ).toEqual( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
 		test( 'should replace the existing page subset of a received query', () => {
@@ -224,12 +222,12 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( { ID: 160 }, { query: { search: 'title', number: 1, page: 3 } } );
 			manager = manager.receive( { ID: 154 }, { query: { search: 'title', number: 1, page: 2 } } );
 
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 154 },
 				{ ID: 160 },
 			] );
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 3 );
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 3 );
 		} );
 
 		test( 'should de-dupe if receiving a page includes existing item key', () => {
@@ -246,10 +244,10 @@ describe( 'PaginatedQueryManager', () => {
 				{ query: { search: 'title', number: 1, page: 1 }, found: 1 }
 			);
 
-			expect( manager.getItems( { search: 'title', number: 1 } ) ).to.eql( [ { ID: 152 } ] );
-			expect( manager.getItems( { search: 'title', number: 1, page: 2 } ) ).to.eql( [] );
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 1 );
-			expect( manager.getNumberOfPages( { search: 'title' } ) ).to.equal( 1 );
+			expect( manager.getItems( { search: 'title', number: 1 } ) ).toEqual( [ { ID: 152 } ] );
+			expect( manager.getItems( { search: 'title', number: 1, page: 2 } ) ).toEqual( [] );
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 1 );
+			expect( manager.getNumberOfPages( { search: 'title' } ) ).toBe( 1 );
 		} );
 
 		test( 'should adjust for the difference in found after an item is removed', () => {
@@ -269,12 +267,12 @@ describe( 'PaginatedQueryManager', () => {
 			sandbox.stub( PaginatedQueryManager, 'matches' ).returns( false );
 			manager = manager.receive( { ID: 160, changed: true } );
 
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 5 );
-			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 5 );
+			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).toEqual( [
 				{ ID: 168 },
 				{ ID: 176 },
 			] );
-			expect( manager.getItems( { search: 'title', number: 2, page: 3 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 2, page: 3 } ) ).toEqual( [
 				{ ID: 184 },
 			] );
 		} );
@@ -295,21 +293,21 @@ describe( 'PaginatedQueryManager', () => {
 			} );
 			manager = manager.receive( { ID: 154 } );
 
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 7 );
-			expect( manager.getNumberOfPages( { search: 'title', number: 2 } ) ).to.equal( 4 );
-			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 7 );
+			expect( manager.getNumberOfPages( { search: 'title', number: 2 } ) ).toBe( 4 );
+			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 152 },
 			] );
-			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).toEqual( [
 				{ ID: 154 },
 				{ ID: 160 },
 			] );
-			expect( manager.getItems( { search: 'title', number: 2, page: 3 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 2, page: 3 } ) ).toEqual( [
 				{ ID: 168 },
 				{ ID: 176 },
 			] );
-			expect( manager.getItems( { search: 'title', number: 2, page: 4 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 2, page: 4 } ) ).toEqual( [
 				{ ID: 184 },
 			] );
 		} );
@@ -347,8 +345,8 @@ describe( 'PaginatedQueryManager', () => {
 				],
 				{ query: { page: 1 }, found: 28 }
 			);
-			expect( customizedManager.getNumberOfPages( {} ) ).to.equal( 2 );
-			expect( customizedManager.getItems( { page: 1 } ) ).eql( [
+			expect( customizedManager.getNumberOfPages( {} ) ).toBe( 2 );
+			expect( customizedManager.getItems( { page: 1 } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 152 },
 				{ ID: 162 },
@@ -386,12 +384,12 @@ describe( 'PaginatedQueryManager', () => {
 				found: 4,
 			} );
 
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 4 );
-			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 4 );
+			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 152 },
 			] );
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 152 },
 			] );
@@ -400,16 +398,16 @@ describe( 'PaginatedQueryManager', () => {
 				query: { search: 'title', number: 2, page: 2 },
 			} );
 
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 4 );
-			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 4 );
+			expect( manager.getItems( { search: 'title', number: 2, page: 1 } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 152 },
 			] );
-			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 2, page: 2 } ) ).toEqual( [
 				{ ID: 160 },
 				undefined,
 			] );
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 144 },
 				{ ID: 152 },
 				{ ID: 160 },
@@ -424,13 +422,13 @@ describe( 'PaginatedQueryManager', () => {
 
 			// We would like for "found" to be 6, but at this point we don't
 			// have this information yet.
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 5 );
-			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 5 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				undefined,
 			] );
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 			] );
@@ -440,18 +438,18 @@ describe( 'PaginatedQueryManager', () => {
 				found: 6,
 			} );
 
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 6 );
-			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 6 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				undefined,
 			] );
-			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).toEqual( [
 				{ ID: 4 },
 				{ ID: 5 },
 				{ ID: 6 },
 			] );
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				{ ID: 4 },
@@ -468,13 +466,13 @@ describe( 'PaginatedQueryManager', () => {
 
 			// We would like for "found" to be 9, but at this point we don't
 			// have this information yet.
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 8 );
-			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 8 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				undefined,
 			] );
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 			] );
@@ -484,18 +482,18 @@ describe( 'PaginatedQueryManager', () => {
 				found: 9,
 			} );
 
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 9 );
-			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 9 );
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				undefined,
 			] );
-			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).toEqual( [
 				{ ID: 4 },
 				{ ID: 5 },
 				{ ID: 6 },
 			] );
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				{ ID: 4 },
@@ -511,27 +509,27 @@ describe( 'PaginatedQueryManager', () => {
 			// We should remember the previous, higher "found" count of 9.  For
 			// the purpose of determining the total number of pages, it is more
 			// accurate.
-			expect( manager.getFound( { search: 'title' } ) ).to.equal( 9 );
+			expect( manager.getFound( { search: 'title' } ) ).toBe( 9 );
 			// TODO - Pagination split has changed by this point (the
 			// `undefined` item has moved to the end of page 2).  Not sure why,
 			// and it is unlikely to cause problems in practice since we call
 			// `getItemsIgnoringPage`.
-			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 3, page: 1 } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				{ ID: 4 },
 			] );
-			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 3, page: 2 } ) ).toEqual( [
 				{ ID: 5 },
 				{ ID: 6 },
 				undefined,
 			] );
-			expect( manager.getItems( { search: 'title', number: 3, page: 3 } ) ).to.eql( [
+			expect( manager.getItems( { search: 'title', number: 3, page: 3 } ) ).toEqual( [
 				{ ID: 7 },
 				{ ID: 9 },
 				undefined,
 			] );
-			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).to.eql( [
+			expect( manager.getItemsIgnoringPage( { search: 'title' } ) ).toEqual( [
 				{ ID: 1 },
 				{ ID: 3 },
 				{ ID: 4 },

@@ -1,8 +1,4 @@
 /** @format */
-/**
- * External dependencies
- */
-import { expect } from 'chai';
 
 /**
  * Internal dependencies
@@ -33,7 +29,7 @@ describe( 'TermQueryManager', () => {
 					DEFAULT_TERM
 				);
 
-				expect( isMatch ).to.be.false;
+				expect( isMatch ).toBe( false );
 			} );
 
 			test( 'should return true for an empty search', () => {
@@ -44,7 +40,7 @@ describe( 'TermQueryManager', () => {
 					DEFAULT_TERM
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true for a matching name search', () => {
@@ -55,7 +51,7 @@ describe( 'TermQueryManager', () => {
 					DEFAULT_TERM
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should return true for a matching slug search', () => {
@@ -66,7 +62,7 @@ describe( 'TermQueryManager', () => {
 					DEFAULT_TERM
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 
 			test( 'should search case-insensitive', () => {
@@ -77,7 +73,7 @@ describe( 'TermQueryManager', () => {
 					DEFAULT_TERM
 				);
 
-				expect( isMatch ).to.be.true;
+				expect( isMatch ).toBe( true );
 			} );
 		} );
 	} );
@@ -91,7 +87,7 @@ describe( 'TermQueryManager', () => {
 					} )
 				);
 
-				expect( sorted ).to.eql( [ { name: 'Cars' }, { name: 'Food' } ] );
+				expect( sorted ).toEqual( [ { name: 'Cars' }, { name: 'Food' } ] );
 			} );
 
 			test( 'should reverse order when specified as descending', () => {
@@ -102,7 +98,7 @@ describe( 'TermQueryManager', () => {
 					} )
 				);
 
-				expect( sorted ).to.eql( [ { name: 'Food' }, { name: 'Cars' } ] );
+				expect( sorted ).toEqual( [ { name: 'Food' }, { name: 'Cars' } ] );
 			} );
 		} );
 
@@ -115,7 +111,7 @@ describe( 'TermQueryManager', () => {
 						} )
 					);
 
-					expect( sorted ).to.eql( [ { name: 'Cars' }, { name: 'Food' } ] );
+					expect( sorted ).toEqual( [ { name: 'Cars' }, { name: 'Food' } ] );
 				} );
 			} );
 
@@ -132,7 +128,7 @@ describe( 'TermQueryManager', () => {
 						} )
 					);
 
-					expect( sorted ).to.eql( [ unusedTerm, DEFAULT_TERM ] );
+					expect( sorted ).toEqual( [ unusedTerm, DEFAULT_TERM ] );
 				} );
 			} );
 		} );
