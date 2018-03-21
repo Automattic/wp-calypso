@@ -15,10 +15,8 @@ describe( 'isRequestingBillingTransaction()', () => {
 		billingTransactions: {
 			requesting: false,
 			individualTransactions: {
-				requesting: {
-					123: false,
-					435: true,
-				},
+				123: { requesting: false },
+				435: { requesting: true },
 			},
 		},
 	};

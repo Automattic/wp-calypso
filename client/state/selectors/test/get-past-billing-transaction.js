@@ -68,12 +68,30 @@ describe( 'getPastBillingTransaction()', () => {
 
 		const testState = clone( state );
 		testState.billingTransactions.individualTransactions = {
-			receipts: {
-				999999: individualTransaction,
-			},
+			999999: { data: individualTransaction },
 		};
 
-		const output = getPastBillingTransaction( testState, '999999' );
+		const output = getPastBillingTransaction( testState, 999999 );
 		expect( output ).to.eql( individualTransaction );
+	} );
+
+	test( 'should return null for individual transaction that is being fetched', () => {
+		const testState = clone( state );
+		testState.billingTransactions.individualTransactions = {
+			999999: { requesting: true },
+		};
+
+		const output = getPastBillingTransaction( testState, 999999 );
+		expect( output ).to.eql( null );
+	} );
+
+	test( 'should return null for individual transaction that failed to fetch', () => {
+		const testState = clone( state );
+		testState.billingTransactions.individualTransactions = {
+			999999: { error: true },
+		};
+
+		const output = getPastBillingTransaction( testState, 999999 );
+		expect( output ).to.eql( null );
 	} );
 } );

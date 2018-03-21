@@ -291,9 +291,14 @@ const onSiteDeleteFailure = ( dispatch, { error } ) => {
 };
 
 const onBillingTransactionRequestFailure = ( dispatch, { transactionId, error } ) => {
+	if ( ! error ) {
+		return;
+	}
+
 	if ( 'invalid_receipt' === error.error ) {
 		return dispatch(
 			errorNotice( translate( "Sorry, we couldn't find receipt #%s", { args: transactionId } ), {
+				id: transactionId,
 				displayOnNextPage: true,
 				duration: 5000,
 			} )
@@ -302,10 +307,10 @@ const onBillingTransactionRequestFailure = ( dispatch, { transactionId, error } 
 
 	return dispatch(
 		errorNotice( translate( 'Sorry, we had a problem loading that receipt.' ), {
+			id: transactionId,
 			displayOnNextPage: true,
 			button: translate( 'Try again' ),
 			href: billingHistoryReceipt( transactionId ),
-			duration: 5000,
 		} )
 	);
 };

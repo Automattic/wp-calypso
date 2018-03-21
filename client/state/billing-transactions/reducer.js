@@ -8,9 +8,6 @@ import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-	BILLING_TRANSACTION_REQUEST,
-	BILLING_TRANSACTION_REQUEST_FAILURE,
-	BILLING_TRANSACTION_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -18,6 +15,7 @@ import {
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { billingTransactionsSchema } from './schema';
+import individualTransactions from './individual-transactions/reducer';
 
 /**
  * Returns the updated items state after an action has been dispatched.
@@ -48,48 +46,6 @@ export const requesting = createReducer( false, {
 	[ BILLING_TRANSACTIONS_REQUEST_FAILURE ]: () => false,
 	[ BILLING_TRANSACTIONS_REQUEST_SUCCESS ]: () => false,
 } );
-
-/**
- * Returns an updated subtree for individual receipts that are not found in the receipt list
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export const individualTransactions = createReducer(
-	{},
-	{
-		[ BILLING_TRANSACTION_REQUEST ]: ( state, { transactionId } ) => ( {
-			...state,
-			requesting: {
-				...state.requesting,
-				[ transactionId ]: true,
-			},
-		} ),
-		[ BILLING_TRANSACTION_REQUEST_FAILURE ]: ( state, { transactionId, error } ) => ( {
-			...state,
-			errors: {
-				...state.errors,
-				[ transactionId ]: error,
-			},
-			requesting: {
-				...state.requesting,
-				[ transactionId ]: false,
-			},
-		} ),
-		[ BILLING_TRANSACTION_REQUEST_SUCCESS ]: ( state, { transactionId, receipt } ) => ( {
-			...state,
-			receipts: {
-				...state.receipts,
-				[ transactionId ]: receipt,
-			},
-			requesting: {
-				...state.requesting,
-				[ transactionId ]: false,
-			},
-		} ),
-	}
-);
 
 /**
  * Returns the updated sending email requests state after an action has been dispatched.

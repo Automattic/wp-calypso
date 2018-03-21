@@ -9,19 +9,11 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import reducer, {
-	requesting,
-	items,
-	sendingReceiptEmail,
-	individualTransactions,
-} from '../reducer';
+import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-	BILLING_TRANSACTION_REQUEST,
-	BILLING_TRANSACTION_REQUEST_FAILURE,
-	BILLING_TRANSACTION_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -242,43 +234,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {} );
-		} );
-	} );
-
-	describe( '#individualTransactions', () => {
-		const transactionId = 345;
-
-		const currentState = {};
-
-		test( 'BILLING_TRANSACTION_REQUEST', () => {
-			const state = individualTransactions( currentState, {
-				type: BILLING_TRANSACTION_REQUEST,
-				transactionId,
-			} );
-
-			expect( state.requesting[ transactionId ] ).to.eql( true );
-		} );
-
-		test( 'BILLING_TRANSACTION_REQUEST_SUCCESS', () => {
-			const state = individualTransactions( currentState, {
-				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
-				transactionId,
-				receipt: { data: 'test receipt' },
-			} );
-
-			expect( state.requesting[ transactionId ] ).to.eql( false );
-			expect( state.receipts[ transactionId ] ).to.eql( { data: 'test receipt' } );
-		} );
-
-		test( 'BILLING_TRANSACTION_REQUEST_FAILURE', () => {
-			const state = individualTransactions( currentState, {
-				type: BILLING_TRANSACTION_REQUEST_FAILURE,
-				transactionId,
-				error: true,
-			} );
-
-			expect( state.requesting[ transactionId ] ).to.eql( false );
-			expect( state.errors[ transactionId ] ).to.eql( true );
 		} );
 	} );
 } );

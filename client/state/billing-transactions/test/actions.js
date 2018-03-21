@@ -8,19 +8,11 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import {
-	requestBillingTransaction,
-	requestBillingTransactions,
-	clearBillingTransactionError,
-	sendBillingReceiptEmail,
-} from '../actions';
+import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-	BILLING_TRANSACTION_REQUEST,
-	BILLING_TRANSACTION_REQUEST_FAILURE,
-	BILLING_TRANSACTION_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
@@ -168,73 +160,6 @@ describe( 'actions', () => {
 					} );
 				} );
 			} );
-		} );
-	} );
-
-	describe( '#requestBillingTransaction', () => {
-		const transactionId = 12345678;
-
-		describe( 'success', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display' )
-					.reply( 200, { data: 'receipt' } );
-			} );
-
-			test( 'should dispatch request action', () => {
-				requestBillingTransaction( transactionId )( spy );
-
-				expect( spy ).to.have.been.calledWith( {
-					type: BILLING_TRANSACTION_REQUEST,
-					transactionId,
-				} );
-			} );
-
-			test( 'should dispatch success action', () => {
-				return requestBillingTransaction( transactionId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: BILLING_TRANSACTION_REQUEST_SUCCESS,
-						transactionId,
-						receipt: { data: 'receipt' },
-					} );
-				} );
-			} );
-		} );
-
-		describe( 'failure', () => {
-			useNock( nock => {
-				nock( 'https://public-api.wordpress.com:443' )
-					.persist()
-					.get( '/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display' )
-					.reply( 403, {
-						error: 'authorization_required',
-					} );
-			} );
-
-			test( 'should dispatch failure action', () => {
-				return requestBillingTransaction( transactionId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith(
-						sinon.match( {
-							type: BILLING_TRANSACTION_REQUEST_FAILURE,
-							transactionId,
-							error: sinon.match( {
-								error: 'authorization_required',
-							} ),
-						} )
-					);
-				} );
-			} );
-		} );
-	} );
-
-	describe( '#clearBillingTransactionError', () => {
-		const receiptId = 12345678;
-		const action = clearBillingTransactionError( receiptId );
-		expect( action ).to.deep.equal( {
-			type: BILLING_TRANSACTION_REQUEST_FAILURE,
-			receiptId,
-			error: false,
 		} );
 	} );
 } );

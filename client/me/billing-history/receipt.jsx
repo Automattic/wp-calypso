@@ -17,29 +17,24 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { billingHistory } from 'me/purchases/paths';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import QueryBillingTransaction from 'components/data/query-billing-transaction';
 import tableRows from './table-rows';
 import { groupDomainProducts } from './utils';
-import {
-	getPastBillingTransaction,
-	getPastBillingTransactions,
-	getPastBillingTransactionError,
-	isRequestingBillingTransaction,
-} from 'state/selectors';
+import { getPastBillingTransaction, isPastBillingTransactionError } from 'state/selectors';
 import {
 	requestBillingTransaction,
 	clearBillingTransactionError,
-} from 'state/billing-transactions/actions';
+} from 'state/billing-transactions/individual-transactions/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { errorNotice } from 'state/notices/actions';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
-		this.fetchTransactionOrRedirect();
+		this.redirectIfInvalidTransaction();
 	}
 
 	componentDidUpdate() {
-		this.fetchTransactionOrRedirect();
+		this.redirectIfInvalidTransaction();
 	}
 
 	recordClickEvent = action => {
@@ -55,23 +50,15 @@ class BillingReceipt extends React.Component {
 		window.print();
 	};
 
-	fetchTransactionOrRedirect() {
-		const {
-			requestingBillingTransaction,
-			totalTransactions,
-			transaction,
-			transactionFetchError,
-			transactionId,
-		} = this.props;
+	redirectIfInvalidTransaction() {
+		const { transactionFetchError } = this.props;
 
-		if ( transactionFetchError ) {
-			page.redirect( billingHistory );
+		if ( ! transactionFetchError ) {
 			return;
 		}
 
-		if ( ! transaction && totalTransactions !== null && ! requestingBillingTransaction ) {
-			this.props.requestBillingTransaction( transactionId );
-		}
+		this.props.clearBillingTransactionError();
+		page.redirect( billingHistory );
 	}
 
 	ref() {
@@ -281,7 +268,7 @@ class BillingReceipt extends React.Component {
 	}
 
 	render() {
-		const { transaction, translate } = this.props;
+		const { transaction, transactionId, translate } = this.props;
 
 		return (
 			<Main>
@@ -290,7 +277,7 @@ class BillingReceipt extends React.Component {
 					path="/me/purchases/billing/receipt"
 					title="Me > Billing History > Receipt"
 				/>
-				<QueryBillingTransactions />
+				<QueryBillingTransaction transactionId={ transactionId } />
 
 				{ this.renderTitle() }
 
@@ -301,16 +288,10 @@ class BillingReceipt extends React.Component {
 }
 
 export default connect(
-	( state, { transactionId } ) => {
-		const transactions = getPastBillingTransactions( state );
-
-		return {
-			transaction: getPastBillingTransaction( state, transactionId ),
-			transactionFetchError: getPastBillingTransactionError( state, transactionId ),
-			requestingBillingTransaction: isRequestingBillingTransaction( state, transactionId ),
-			totalTransactions: transactions ? transactions.length : null,
-		};
-	},
+	( state, { transactionId } ) => ( {
+		transaction: getPastBillingTransaction( state, transactionId ),
+		transactionFetchError: isPastBillingTransactionError( state, transactionId ),
+	} ),
 	{
 		recordGoogleEvent,
 		requestBillingTransaction,
