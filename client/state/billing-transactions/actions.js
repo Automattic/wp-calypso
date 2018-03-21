@@ -1,9 +1,7 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,

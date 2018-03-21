@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import { clone } from 'lodash';
 import { expect } from 'chai';
 import { moment } from 'i18n-calypso';
 
@@ -56,5 +57,41 @@ describe( 'getPastBillingTransaction()', () => {
 			'12345678'
 		);
 		expect( output ).to.be.null;
+	} );
+
+	test( 'should return a billing transaction that has been fetched individually', () => {
+		const individualTransaction = {
+			id: '999999',
+			amount: '$1.23',
+			date: '2017-01-01T11:22:33+0000',
+		};
+
+		const testState = clone( state );
+		testState.billingTransactions.individualTransactions = {
+			999999: { data: individualTransaction },
+		};
+
+		const output = getPastBillingTransaction( testState, 999999 );
+		expect( output ).to.eql( individualTransaction );
+	} );
+
+	test( 'should return null for individual transaction that is being fetched', () => {
+		const testState = clone( state );
+		testState.billingTransactions.individualTransactions = {
+			999999: { requesting: true },
+		};
+
+		const output = getPastBillingTransaction( testState, 999999 );
+		expect( output ).to.eql( null );
+	} );
+
+	test( 'should return null for individual transaction that failed to fetch', () => {
+		const testState = clone( state );
+		testState.billingTransactions.individualTransactions = {
+			999999: { error: true },
+		};
+
+		const output = getPastBillingTransaction( testState, 999999 );
+		expect( output ).to.eql( null );
 	} );
 } );
