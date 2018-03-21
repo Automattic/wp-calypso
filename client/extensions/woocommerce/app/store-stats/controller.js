@@ -104,6 +104,7 @@ export default function StatsController( context, next ) {
 					placeholder={ placeholder }
 					require="extensions/woocommerce/app/store-stats/referrers"
 					query={ referrerQuery }
+					referrer={ context.query.referrer }
 					{ ...props }
 				/>
 			);
