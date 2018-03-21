@@ -38,6 +38,7 @@ export const UnavailabilityNotice = ( {
 					) }
 				/>
 			);
+
 		case 'no_connected_jetpack':
 			return (
 				<Banner
