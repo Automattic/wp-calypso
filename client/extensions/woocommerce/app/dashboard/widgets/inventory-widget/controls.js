@@ -59,6 +59,10 @@ class InventoryControls extends Component {
 		this.setState( state => ( { [ name ]: ! state[ name ] } ) );
 	};
 
+	close = () => {
+		this.props.close();
+	};
+
 	saveSettings = event => {
 		event.preventDefault();
 		const { site, translate } = this.props;
@@ -88,7 +92,7 @@ class InventoryControls extends Component {
 
 		// Give a little time between "Save" & closing
 		setTimeout( () => {
-			this.props.close();
+			this.close();
 		}, 150 );
 	};
 
@@ -169,6 +173,7 @@ class InventoryControls extends Component {
 					</FormLabel>
 				</FormFieldset>
 
+				<Button onClick={ this.close }>{ translate( 'Cancel' ) }</Button>
 				<Button onClick={ this.saveSettings } primary>
 					{ translate( 'Save' ) }
 				</Button>

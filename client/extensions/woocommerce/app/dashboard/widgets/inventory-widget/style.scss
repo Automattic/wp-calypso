@@ -122,4 +122,8 @@
 	.form-checkbox:checked:before {
 		margin-top: 0;
 	}
+
+	.button + .button {
+		margin-left: 8px;
+	}
 }
