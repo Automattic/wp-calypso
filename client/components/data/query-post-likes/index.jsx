@@ -12,12 +12,23 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { requestPostLikes } from 'state/posts/likes/actions';
+import getPostLikeLastUpdated from 'state/selectors/get-post-like-last-updated';
+import getPostLikes from 'state/selectors/get-post-likes';
 
 class QueryPostLikes extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		postId: PropTypes.number.isRequired,
-		requestPostLikes: PropTypes.func,
+		needsLikers: PropTypes.bool,
+		hasPostLikes: PropTypes.bool,
+		maxAgeSeconds: PropTypes.number, // max age of likes data in milliseconds
+		lastUpdated: PropTypes.number, // timestamp of when the like data was last updated
+		requestPostLikes: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		maxAgeSeconds: 90,
+		needsLikers: false,
 	};
 
 	componentDidMount() {
@@ -30,8 +41,22 @@ class QueryPostLikes extends Component {
 		}
 	}
 
-	request( { requestPostLikes: rpl, siteId, postId } ) {
-		rpl( siteId, postId );
+	request( {
+		requestPostLikes: requestLikes,
+		siteId,
+		postId,
+		maxAgeSeconds,
+		hasPostLikes,
+		needsLikers,
+		lastUpdated,
+	} ) {
+		if (
+			! lastUpdated ||
+			Date.now() - lastUpdated > maxAgeSeconds * 1000 ||
+			( needsLikers && ! hasPostLikes )
+		) {
+			requestLikes( siteId, postId, maxAgeSeconds );
+		}
 	}
 
 	render() {
@@ -39,4 +64,10 @@ class QueryPostLikes extends Component {
 	}
 }
 
-export default connect( null, { requestPostLikes } )( QueryPostLikes );
+export default connect(
+	( state, { siteId, postId } ) => ( {
+		lastUpdated: getPostLikeLastUpdated( state, siteId, postId ),
+		hasPostLikes: getPostLikes( state, siteId, postId ) !== null,
+	} ),
+	{ requestPostLikes }
+)( QueryPostLikes );

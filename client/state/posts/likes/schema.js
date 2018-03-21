@@ -16,5 +16,9 @@ export default {
 			type: 'number',
 			description: 'The total of post likes',
 		},
+		lastUpdated: {
+			type: 'number',
+			description: 'When we last updated the liker info',
+		},
 	},
 };
