@@ -19,7 +19,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormToggle from 'components/forms/form-toggle';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -248,7 +248,7 @@ class TermFormDialog extends Component {
 
 	renderParentSelector() {
 		const { labels, siteId, taxonomy, translate, terms } = this.props;
-		const { searchTerm, selectedParent } = this.state;
+		const { isTopLevel, searchTerm, selectedParent } = this.state;
 		const query = {};
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
@@ -264,28 +264,42 @@ class TermFormDialog extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ labels.parent_item }</FormLegend>
 				<FormLabel>
-					<FormCheckbox
-						ref="topLevel"
-						checked={ this.state.isTopLevel }
-						onChange={ this.onTopLevelChange }
-					/>
+					<FormToggle checked={ isTopLevel } onChange={ this.onTopLevelChange } />
 					<span>
-						{ translate( 'Top level', { context: 'Terms: New term being created is top level' } ) }
+						{ translate( 'Top level %(term)s', {
+							args: { term: labels.singular_name },
+							context: 'Terms: New term being created is top level',
+						} ) }
 					</span>
+					{ isTopLevel && (
+						<span className="term-form-dialog__top-level-description">
+							{ translate( 'Disable to select a %(parentTerm)s', {
+								args: { parentTerm: labels.parent_item },
+							} ) }
+						</span>
+					) }
 				</FormLabel>
-				<TermTreeSelectorTerms
-					siteId={ siteId }
-					taxonomy={ taxonomy }
-					isError={ isError }
-					onSearch={ this.onSearch }
-					onChange={ this.onParentChange }
-					query={ query }
-					selected={ selectedParent }
-					hideTermAndChildren={ hideTermAndChildren }
-				/>
-				{ isError && <FormInputValidation isError text={ this.state.errors.parent } /> }
+				{ ! isTopLevel && (
+					<div className="term-form-dialog__parent-tree-selector">
+						<FormLegend>
+							{ translate( 'Choose a %(parentTerm)s', {
+								args: { parentTerm: labels.parent_item },
+							} ) }
+						</FormLegend>
+						<TermTreeSelectorTerms
+							siteId={ siteId }
+							taxonomy={ taxonomy }
+							isError={ isError }
+							onSearch={ this.onSearch }
+							onChange={ this.onParentChange }
+							query={ query }
+							selected={ selectedParent }
+							hideTermAndChildren={ hideTermAndChildren }
+						/>
+						{ isError && <FormInputValidation isError text={ this.state.errors.parent } /> }
+					</div>
+				) }
 			</FormFieldset>
 		);
 	}
