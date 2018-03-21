@@ -5,7 +5,6 @@
  */
 
 import React, { Component } from 'react';
-import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, noop } from 'lodash';
@@ -24,6 +23,7 @@ import TranslatableString from 'components/translatable/proptype';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
+let instanceCount = 0;
 
 function keyListener( methodToCall, event ) {
 	switch ( event.key ) {
@@ -35,9 +35,6 @@ function keyListener( methodToCall, event ) {
 }
 
 class Search extends Component {
-	static displayName = 'Search';
-	static instances = 0;
-
 	static propTypes = {
 		additionalClasses: PropTypes.string,
 		initialValue: PropTypes.string,
@@ -93,11 +90,18 @@ class Search extends Component {
 		hideOpenIcon: false,
 	};
 
-	state = {
-		keyword: this.props.initialValue || '',
-		isOpen: !! this.props.isOpen,
-		hasFocus: false,
-	};
+	constructor( props ) {
+		super( props );
+
+		instanceCount++;
+		this.instanceId = instanceCount;
+
+		this.state = {
+			keyword: this.props.initialValue || '',
+			isOpen: !! this.props.isOpen,
+			hasFocus: false,
+		};
+	}
 
 	componentWillMount() {
 		this.setState( {
@@ -173,10 +177,10 @@ class Search extends Component {
 	}
 
 	scrollOverlay = () => {
-		this.refs.overlay &&
+		this.overlay &&
 			window.requestAnimationFrame( () => {
-				if ( this.refs.overlay && this.refs.searchInput ) {
-					this.refs.overlay.scrollLeft = this.getScrollLeft( this.refs.searchInput );
+				if ( this.overlay && this.searchInput ) {
+					this.overlay.scrollLeft = this.getScrollLeft( this.searchInput );
 				}
 			} );
 	};
@@ -205,19 +209,10 @@ class Search extends Component {
 	focus = () => {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
 		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
-		setTimeout(
-			() => this.refs.searchInput && ReactDom.findDOMNode( this.refs.searchInput ).focus(),
-			0
-		);
+		setTimeout( () => this.searchInput && this.searchInput.focus(), 0 );
 	};
 
-	blur = () => {
-		ReactDom.findDOMNode( this.refs.searchInput ).blur();
-	};
-
-	getCurrentSearchValue = () => {
-		return ReactDom.findDOMNode( this.refs.searchInput ).value;
-	};
+	blur = () => this.searchInput.blur();
 
 	clear = () => {
 		this.setState( { keyword: '' } );
@@ -231,9 +226,9 @@ class Search extends Component {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = () => {
+	onChange = event => {
 		this.setState( {
-			keyword: this.getCurrentSearchValue(),
+			keyword: event.target.value,
 		} );
 	};
 
@@ -254,18 +249,16 @@ class Search extends Component {
 			return;
 		}
 
-		const input = ReactDom.findDOMNode( this.refs.searchInput );
-
 		this.setState( {
 			keyword: '',
 			isOpen: this.props.isOpen || false,
 		} );
 
-		input.value = ''; // will not trigger onChange
-		input.blur();
+		this.searchInput.value = ''; // will not trigger onChange
+		this.searchInput.blur();
 
 		if ( this.props.pinned ) {
-			ReactDom.findDOMNode( this.refs.openIcon ).focus();
+			this.openIcon.focus();
 		}
 
 		this.props.onSearchClose( event );
@@ -300,13 +293,15 @@ class Search extends Component {
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
 	onFocus = () => {
-		const input = ReactDom.findDOMNode( this.refs.searchInput ),
-			setValue = input.value;
+		if ( ! this.searchInput ) {
+			return;
+		}
 
+		const setValue = this.searchInput.value;
 		if ( setValue ) {
 			// Firefox needs clear or won't move cursor to end
-			input.value = '';
-			input.value = setValue;
+			this.searchInput.value = '';
+			this.searchInput.value = setValue;
 		}
 
 		this.setState( { hasFocus: true } );
@@ -345,11 +340,11 @@ class Search extends Component {
 				<Spinner />
 				<div
 					className="search__icon-navigation"
-					ref="openIcon"
+					ref={ openIcon => ( this.openIcon = openIcon ) } // eslint-disable-line react/jsx-no-bind
 					onClick={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon ? this.openListener : null }
-					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }
 				>
 					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
@@ -357,16 +352,13 @@ class Search extends Component {
 				<div className={ fadeDivClass }>
 					<input
 						type="search"
-						id={ 'search-component-' + this.state.instanceId }
+						id={ 'search-component-' + this.instanceId }
 						className={ inputClass }
 						placeholder={ placeholder }
 						role="search"
 						value={ searchValue }
-						ref="searchInput"
-						onInput={
-							this.onChange
-							/* onChange has bug IE11 React15 https://github.com/facebook/react/issues/7027 */
-						}
+						ref={ input => ( this.searchInput = input ) } //eslint-disable-line react/jsx-no-bind
+						onChange={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onMouseUp={ this.props.onClick }
@@ -389,7 +381,10 @@ class Search extends Component {
 
 	renderStylingDiv = () => {
 		return (
-			<div className="search__text-overlay" ref="overlay">
+			<div
+				className="search__text-overlay"
+				ref={ overlay => ( this.overlay = overlay ) } //eslint-disable-line react/jsx-no-bind
+			>
 				{ this.props.overlayStyling( this.state.keyword ) }
 			</div>
 		);
@@ -403,7 +398,7 @@ class Search extends Component {
 					onClick={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
-					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }
 				>
 					<Gridicon icon="cross" className="search__close-icon" />
