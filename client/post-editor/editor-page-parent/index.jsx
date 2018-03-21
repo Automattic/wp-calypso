@@ -15,6 +15,7 @@ import { get } from 'lodash';
  */
 import PostSelector from 'my-sites/post-selector';
 import FormLabel from 'components/forms/form-label';
+import FormLegend from 'components/forms/form-legend';
 import FormToggle from 'components/forms/form-toggle/compact';
 import AccordionSection from 'components/accordion/section';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -33,19 +34,33 @@ class EditorPageParent extends Component {
 		labels: PropTypes.object,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.boundUpdatePageParent = this.updatePageParent.bind( this );
-	}
+	state = {
+		isTopLevel: true,
+	};
 
-	updatePageParent( item ) {
+	updatePageParent = item => {
 		const { siteId, postId } = this.props;
-		const parentId = item && item.ID ? item.ID : 0;
+		const parentId = get( item, 'ID' );
+
+		if ( ! parentId ) {
+			return this.setState(
+				( { isTopLevel } ) => ( { isTopLevel: ! isTopLevel } ),
+				() => {
+					if ( this.state.isTopLevel ) {
+						this.props.editPost( siteId, postId, { parent: 0 } );
+					}
+				}
+			);
+		}
+
+		this.setState( { isTopLevel: false } );
 		this.props.editPost( siteId, postId, { parent: parentId } );
-	}
+	};
 
 	render() {
 		const { parentId, translate, postId, siteId, postType, labels } = this.props;
+		const { isTopLevel } = this.state;
+
 		return (
 			<AccordionSection className="editor-page-parent">
 				<FormLabel>
@@ -54,25 +69,33 @@ class EditorPageParent extends Component {
 					</span>
 				</FormLabel>
 				<FormLabel className="editor-page-parent__top-level">
+					<FormToggle
+						checked={ isTopLevel }
+						onChange={ this.updatePageParent }
+						aria-label={ translate( 'Toggle to set as top level' ) }
+					/>
 					<span className="editor-page-parent__top-level-label">
 						{ translate( 'Top level', {
 							context: 'Editor: Page being edited is top level i.e. has no parent',
 						} ) }
 					</span>
-					<FormToggle
-						checked={ ! parentId }
-						onChange={ this.boundUpdatePageParent }
-						aria-label={ translate( 'Toggle to set as top level' ) }
-					/>
+					<span className="editor-page-parent__top-level-description">
+						{ translate( 'Disable to select a parent page' ) }
+					</span>
 				</FormLabel>
-				<PostSelector
-					type={ postType }
-					siteId={ siteId }
-					onChange={ this.boundUpdatePageParent }
-					selected={ parentId }
-					excludeTree={ postId }
-					emptyMessage={ labels.not_found || translate( 'You have no other pages yet.' ) }
-				/>
+				{ ! isTopLevel && (
+					<div className="editor-page-parent__parent-tree-selector">
+						<FormLegend>{ translate( 'Choose a parent page' ) }</FormLegend>
+						<PostSelector
+							type={ postType }
+							siteId={ siteId }
+							onChange={ this.updatePageParent }
+							selected={ parentId }
+							excludeTree={ postId }
+							emptyMessage={ labels.not_found || translate( 'You have no other pages yet.' ) }
+						/>
+					</div>
+				) }
 			</AccordionSection>
 		);
 	}
