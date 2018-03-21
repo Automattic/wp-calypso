@@ -15,8 +15,12 @@ class QuerySourcePaymentTransactionDetail extends React.Component {
 	componentDidMount() {
 		this.props.fetchSourcePaymentTransactionDetail( this.props.orderId );
 	}
+
+	render() {
+		return null;
+	}
 }
 
-export default connect( () => {}, {
+export default connect( () => ( {} ), {
 	fetchSourcePaymentTransactionDetail,
 } )( QuerySourcePaymentTransactionDetail );
