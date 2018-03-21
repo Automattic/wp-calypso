@@ -14,6 +14,7 @@ import {
 	jetpackRemoteInstallUpdateError,
 } from 'state/jetpack-remote-install/actions';
 import { JETPACK_REMOTE_INSTALL } from 'state/action-types';
+import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 export const installJetpackPlugin = action =>
 	http(
@@ -29,10 +30,17 @@ export const installJetpackPlugin = action =>
 	);
 
 export const handleResponse = ( { url }, data ) => {
+	const logToTracks = withAnalytics(
+		recordTracksEvent( 'calypso_jpc_remote_install_api_response', {
+			remote_site_url: url,
+			data: JSON.stringify( data ),
+		} )
+	);
+
 	if ( data.status ) {
-		return jetpackRemoteInstallComplete( url );
+		return logToTracks( jetpackRemoteInstallComplete( url ) );
 	}
-	return jetpackRemoteInstallUpdateError( url, data.error.code, data.error.message );
+	return logToTracks( jetpackRemoteInstallUpdateError( url, data.error.code, data.error.message ) );
 };
 
 export default {
