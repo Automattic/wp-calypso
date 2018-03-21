@@ -4,6 +4,12 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
+const translate = x => x;
+jest.mock( 'i18n-calypso', () => ( {
+	localize: Comp => props => <Comp { ...props } translate={ translate } />,
+	numberFormat: x => x,
+} ) );
+
 /**
  * External dependencies
  */
@@ -35,12 +41,21 @@ describe( 'TermPicker basic tests', () => {
 	];
 
 	test( 'should have term-picker class', () => {
-		const picker = shallow( <TermPicker productsWithPrices={ [] } /> );
+		const picker = shallow(
+			<TermPicker productsWithPrices={ [] } currencyCode={ 'USD' } translate={ translate } />
+		);
 		assert.lengthOf( picker.find( '.term-picker' ), 1 );
 	} );
 
 	test( 'should contain as many <TermPickerOption/> as products passed', () => {
-		const picker = shallow( <TermPicker productsWithPrices={ productsWithPrices } /> );
+		const picker = shallow(
+			<TermPicker
+				productsWithPrices={ productsWithPrices }
+				currencyCode={ 'USD' }
+				translate={ translate }
+			/>
+		);
+		assert.equal( picker.html(), 'abc' );
 		assert.lengthOf( picker.find( 'TermPickerOption' ), 2 );
 	} );
 
@@ -49,6 +64,8 @@ describe( 'TermPicker basic tests', () => {
 			<TermPicker
 				productsWithPrices={ productsWithPrices }
 				initialValue={ PLAN_BUSINESS_2_YEARS }
+				currencyCode={ 'USD' }
+				translate={ translate }
 			/>
 		);
 		assert.equal(

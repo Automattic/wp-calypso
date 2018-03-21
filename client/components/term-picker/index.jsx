@@ -6,6 +6,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { localize } from 'i18n-calypso';
 import TermPickerOption from '../term-picker-option';
 import formatCurrency from 'lib/format-currency';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
@@ -24,6 +25,7 @@ export class TermPicker extends React.Component {
 		currencyCode: PropTypes.string.isRequired,
 		productsWithPrices: PropTypes.array.isRequired,
 		onChange: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -38,10 +40,17 @@ export class TermPicker extends React.Component {
 	}
 
 	render() {
-		const { productsWithPrices } = this.props;
+		const { productsWithPrices, translate } = this.props;
 		return (
 			<div className="term-picker">
-				<div className="term-picker__header">Choose the length of your subscription</div>
+				<div className="term-picker__header">
+					{ translate( 'Choose the length of your subscription', {
+						comment:
+							'We offer a way to change billing term from default bill every 1 year to something ' +
+							'else like bill once every 2 years - this is related header.',
+					} ) }
+				</div>
+
 				<div className="term-picker__options">
 					{ productsWithPrices.map( p => this.renderProduct( p ) ) }
 				</div>
@@ -156,4 +165,4 @@ export default connect(
 		requestPlans,
 		requestProductsList,
 	}
-)( TermPickerContainer );
+)( localize( TermPickerContainer ) );
