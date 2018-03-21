@@ -9,7 +9,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import currySelector from '../';
+import currySelector, { quickTest } from '../';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {
@@ -33,12 +33,26 @@ describe( 'index', () => {
 		arity3SelectorCurried = currySelector( arity3Selector );
 	} );
 
-	test( 'allows the given selector to function as usual when arity is filled', () => {} );
+
+	// test( 'allows the given selector to function as usual when arity is filled', () => {
+	test( 'does a quick test...', () => {
+		const actual = quickTest();
+		const expected = {
+			colorSchemePreference: 'blue!',
+			siteCommentCount1: 11,
+			siteCommentCount2: 22,
+			siteCommentCount3: 33,
+		};
+
+		expect( actual.colorSchemePreference ).to.equal( 'blue!' );
+		expect( actual.siteCommentCount1 ).to.equal( 11 );
+		expect( actual.siteCommentCount2 ).to.equal( 22 );
+		expect( actual.siteCommentCount3 ).to.equal( 33 );
+	} );
 
 	test( 'treats the state arguement as the last arguement when arity -1 is given', () => {
 		const matchingPost = {
 			id: '11111',
-			title: 'Howdy World!',
 			title: 'Howdy World!',
 		};
 		const nonMatchingPost = {
@@ -57,7 +71,6 @@ describe( 'index', () => {
 	test( 'should create a function which returns the expected value when called', () => {
 		const matchingPost = {
 			id: '11111',
-			title: 'Howdy World!',
 			title: 'Howdy World!',
 		};
 		const nonMatchingPost = {
