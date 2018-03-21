@@ -45,6 +45,12 @@ class JetpackOnboardingSummaryStep extends React.PureComponent {
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<Card>
+					<img
+						className="steps__summary-illustration"
+						src="/calypso/images/illustrations/fireworks.svg"
+						alt=""
+					/>
+
 					<div className="steps__summary-columns">
 						<div className="steps__summary-column">
 							<h3 className="steps__summary-heading">{ translate( "Steps you've completed:" ) }</h3>
