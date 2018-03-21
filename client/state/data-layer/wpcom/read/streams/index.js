@@ -30,11 +30,11 @@ import { errorNotice } from 'state/notices/actions';
  * `site:1234`
  * `search:a:value` ( prefix is `search`, suffix is `a:value` )
  *
- * @param  {String} streamId The stream ID to break apart
+ * @param  {String} streamKey The stream ID to break apart
  * @return {String}          The stream ID suffix
  */
-function streamIdSuffix( streamId ) {
-	return streamId.substring( streamId.indexOf( ':' ) + 1 );
+function streamKeySuffix( streamKey ) {
+	return streamKey.substring( streamKey.indexOf( ':' ) + 1 );
 }
 
 function getSeedForQuery() {
@@ -50,21 +50,21 @@ const streamApis = {
 	},
 	search: {
 		path: () => '/read/search',
-		query: ( { query, streamId } ) => {
-			return { ...query, q: streamIdSuffix( streamId ) };
+		query: ( { query, streamKey } ) => {
+			return { ...query, q: streamKeySuffix( streamKey ) };
 		},
 	},
 	feed: {
-		path: ( { streamId } ) => `/read/feed/${ streamIdSuffix( streamId ) }/posts`,
+		path: ( { streamKey } ) => `/read/feed/${ streamKeySuffix( streamKey ) }/posts`,
 	},
 	site: {
-		path: ( { streamId } ) => `/read/sites/${ streamIdSuffix( streamId ) }/posts`,
+		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/posts`,
 	},
 	conversations: {
 		path: () => '/read/conversations',
 	},
 	featured: {
-		path: ( { streamId } ) => `/read/sites/${ streamIdSuffix( streamId ) }/featured`,
+		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
 	},
 	a8c: {
 		match: /^a8c$/,
@@ -111,11 +111,11 @@ const streamApis = {
  * @returns {object} http action for data-layer to dispatch
  */
 export function requestPage( action ) {
-	const { payload: { streamId, streamType } } = action;
+	const { payload: { streamKey, streamType } } = action;
 	const api = streamApis[ streamType ];
 
 	if ( ! api ) {
-		warn( `Unable to determine api path for ${ streamId }` );
+		warn( `Unable to determine api path for ${ streamKey }` );
 		return;
 	}
 
@@ -142,8 +142,8 @@ export function fromApi( data ) {
 }
 
 export function handlePage( action, posts ) {
-	const { streamId, query } = action.payload;
-	return receivePage( { streamId, query, posts } );
+	const { streamKey, query } = action.payload;
+	return receivePage( { streamKey, query, posts } );
 }
 
 export function handleError() {
