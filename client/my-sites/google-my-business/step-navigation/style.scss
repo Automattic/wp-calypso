@@ -13,7 +13,9 @@
 	}
 
 	.progress-bar {
-		margin: 7px 1em;
+		flex-grow: 1;
+		margin: 15px 1em 0;
+		width: auto;
 	}
 
 	a {
@@ -21,8 +23,12 @@
 	}
 }
 
+.step-navigation__back {
+	line-height: 38px;
+}
+
 .step-navigation__left-arrow {
-	margin-right: 0.5em;
+	margin: 7px 0.5em 0 0;
 }
 
 .step-navigation__right-arrow {
