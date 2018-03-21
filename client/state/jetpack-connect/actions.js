@@ -14,6 +14,7 @@ import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
+import { createSocialUser } from 'state/login/actions';
 import { receiveDeletedSite, receiveSite } from 'state/sites/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
@@ -191,6 +192,37 @@ export function retryAuth( url, attemptNumber ) {
 				},
 				url + REMOTE_PATH_AUTH
 			)
+		);
+	};
+}
+
+export function createSocialAccount( socialInfo ) {
+	return dispatch => {
+		dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount' ) );
+
+		dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
+		/**
+		 * @TODO (sirreal) update to `jetpack-connect` when D11099-code lands
+		 *
+		 * The signup flow is required and affects some post signup activity.
+		 * `account` should be safe until patch lands.
+		 */
+		return createSocialUser( socialInfo, 'account' /* 'jetpack-connect' */ )( dispatch ).then(
+			( { username, bearerToken } ) => {
+				dispatch( recordTracksEvent( 'calypso_jpc_social_createaccount_success' ) );
+				dispatch( {
+					type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
+					userData: { username },
+					data: { bearer_token: bearerToken },
+				} );
+			},
+			error =>
+				dispatch(
+					recordTracksEvent( 'calypso_jpc_social_createaccount_error', {
+						error: JSON.stringify( error ),
+						error_code: error.code,
+					} )
+				)
 		);
 	};
 }
