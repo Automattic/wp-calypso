@@ -4,6 +4,7 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
+const translate = x => x;
 jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
 		<Comp

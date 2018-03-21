@@ -6,14 +6,24 @@ jest.mock( 'lib/abtest', () => ( {
 
 const translate = x => x;
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
-		<Comp
-			{ ...props }
-			translate={ function( x ) {
-				return x;
-			} }
-		/>
-	),
+	localize: ComposedComponent => {
+		const React = require( 'react' );
+		const componentName = ComposedComponent.displayName || ComposedComponent.name || '';
+		return class Wrapper extends React.Component {
+			static displayName = componentName;
+
+			render() {
+				return (
+					<ComposedComponent
+						{ ...this.props }
+						translate={ function( x ) {
+							return x;
+						} }
+					/>
+				);
+			}
+		};
+	},
 	numberFormat: x => x,
 } ) );
 
@@ -62,7 +72,6 @@ describe( 'TermPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.equal( picker.html(), 'abc' );
 		assert.lengthOf( picker.find( 'TermPickerOption' ), 2 );
 	} );
 
