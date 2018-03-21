@@ -28,13 +28,7 @@ describe( 'PageViewTracker', () => {
 		const recorder = spy();
 
 		mount(
-			<PageViewTracker
-				path="/test"
-				title="test"
-				recorder={ recorder }
-				selectSiteId={ 12345678 }
-				sitesLoaded
-			/>
+			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
 		);
 
 		expect( recorder ).to.have.been.calledOnce;
@@ -49,8 +43,7 @@ describe( 'PageViewTracker', () => {
 				path="/test"
 				title="test"
 				recorder={ recorder }
-				selectSiteId={ 12345678 }
-				sitesLoaded
+				hasSelectedSiteLoaded
 			/>
 		);
 
@@ -65,13 +58,7 @@ describe( 'PageViewTracker', () => {
 		const recorder = spy();
 
 		mount(
-			<PageViewTracker
-				path="/test"
-				title="test"
-				recorder={ recorder }
-				selectSiteId={ 12345678 }
-				sitesLoaded
-			/>
+			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
 		);
 
 		expect( recorder ).to.have.been.calledWith( '/test', 'test' );

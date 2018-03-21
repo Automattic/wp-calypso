@@ -59,11 +59,11 @@ export class PageViewTracker extends React.Component {
 	}
 
 	queuePageView = () => {
-		const { delay = 0, path, recorder = noop, isSelectedSiteLoaded, title } = this.props;
+		const { delay = 0, path, recorder = noop, hasSelectedSiteLoaded, title } = this.props;
 
 		debug( `Queuing Page View: "${ title }" at "${ path }" with ${ delay }ms delay` );
 
-		if ( ! isSelectedSiteLoaded || this.state.timer ) {
+		if ( ! hasSelectedSiteLoaded || this.state.timer ) {
 			return;
 		}
 
