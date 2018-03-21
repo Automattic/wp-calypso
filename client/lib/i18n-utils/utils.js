@@ -50,6 +50,19 @@ export function isLocaleVariant( locale ) {
 }
 
 /**
+ * Checks against a list of locales that don't have any GP translation sets
+ *
+ * @param {string} locale - locale slug (eg: 'fr')
+ * @return {boolean} true when the locale is a member of the exception list
+ */
+export function hasTranslationSet( locale ) {
+	if ( ! isString( locale ) ) {
+		return false;
+	}
+	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
+}
+
+/**
  * Matches and returns language from config.languages based on the given localeSlug and localeVariant
  * @param  {String} localeSlug locale slug of the language to match
  * @param  {String?} localeVariant local variant of the language to match. It takes precedence if exists.

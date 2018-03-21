@@ -43,7 +43,7 @@ import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { getLanguage, isLocaleVariant } from 'lib/i18n-utils';
+import { getLanguage, isLocaleVariant, hasTranslationSet } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
 import _user from 'lib/user';
 
@@ -105,7 +105,9 @@ const Account = createReactClass( {
 		this.updateUserSetting( 'language', value );
 		const redirect =
 			value !== originalLanguage || value !== originalLocaleVariant ? '/me/account' : false;
-		this.setState( { redirect, localeVariantSelected: isLocaleVariant( value ) } );
+		// store any selected locale variant so we can test it against those with no GP translation sets
+		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
+		this.setState( { redirect, localeVariantSelected } );
 	},
 
 	updateColorScheme( colorScheme ) {
@@ -147,23 +149,26 @@ const Account = createReactClass( {
 		return !! this.state.emailValidationError;
 	},
 
-	// this is a temporary check to exclude the CT from locale variants
 	shouldDisplayCommunityTranslator() {
 		const locale = this.getUserSetting( 'language' );
 
-		if ( ! locale || locale === 'en' ) {
+		// disable for locales
+		if ( ! locale || ! hasTranslationSet( locale ) ) {
 			return false;
 		}
 
-		// if the user has selected a locale variant
-		if ( this.state.localeVariantSelected ) {
-			return false;
-		}
-
-		// if the user hasn't yet selected a language, and the currently saved locale is a variant
+		// disable for locale variants with no official GP translation sets
 		if (
-			typeof this.state.localeVariantSelected !== 'boolean' &&
-			this.getUserSetting( 'locale_variant' )
+			this.state.localeVariantSelected &&
+			! hasTranslationSet( this.state.localeVariantSelected )
+		) {
+			return false;
+		}
+
+		// if the user hasn't yet selected a language, and the locale variants has no official GP translation set
+		if (
+			typeof this.state.localeVariantSelected !== 'string' &&
+			! hasTranslationSet( this.getUserSetting( 'locale_variant' ) )
 		) {
 			return false;
 		}
