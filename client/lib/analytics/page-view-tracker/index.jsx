@@ -7,7 +7,7 @@
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { flowRight, get, noop } from 'lodash';
+import { flowRight, get, isNumber, noop } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -86,7 +86,12 @@ const mapStateToProps = state => {
 	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 	const currentSlug =
 		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
-	const hasSelectedSiteLoaded = ! currentSlug || currentSlug === selectedSiteSlug;
+
+	const hasSelectedSiteLoaded =
+		! currentSlug ||
+		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
+		currentSlug === selectedSiteSlug;
+
 	return {
 		hasSelectedSiteLoaded,
 		selectedSiteId,
