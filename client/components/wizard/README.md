@@ -73,6 +73,24 @@ to one of the values in the `steps` array (see below).
 
 Link text for navigating to the next step in the wizard.
 
+### `hideBackLink`
+
+<table>
+	<tr><td>Type</td><td>Boolean</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Whether to intentionally hide the back link.
+
+### `hideForwardLink`
+
+<table>
+	<tr><td>Type</td><td>Boolean</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Whether to intentionally hide the forward link.
+
 ### `hideNavigation`
 
 <table>
