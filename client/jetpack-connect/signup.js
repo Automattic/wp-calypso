@@ -13,9 +13,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -23,7 +23,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/route';
 import AuthFormHeader from './auth-form-header';
 import config from 'config';
 import HelpButton from './help-button';
@@ -33,6 +32,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
+import { addQueryArgs } from 'lib/route';
 import { authQueryPropTypes } from './utils';
 import { createAccount as createAccountAction } from 'state/jetpack-connect/actions';
 import { getAuthorizationData } from 'state/jetpack-connect/selectors';
@@ -96,9 +96,9 @@ export class JetpackSignup extends Component {
 
 		return (
 			<WpcomLoginForm
-				log={ userData.username }
 				authorization={ 'Bearer ' + bearerToken }
 				emailAddress={ this.props.authQuery.userEmail }
+				log={ userData.username }
 				redirectTo={ addQueryArgs( { auth_approved: true }, window.location.href ) }
 			/>
 		);
@@ -165,7 +165,7 @@ export default connect(
 		authorizationData: getAuthorizationData( state ),
 	} ),
 	{
-		recordTracksEvent: recordTracksEventAction,
 		createAccount: createAccountAction,
+		recordTracksEvent: recordTracksEventAction,
 	}
 )( localize( JetpackSignup ) );
