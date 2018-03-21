@@ -118,6 +118,9 @@ class StoreStats extends Component {
 							}
 						>
 							<StoreStatsReferrerWidget
+								unit={ unit }
+								querystring={ querystring }
+								slug={ slug }
 								siteId={ siteId }
 								query={ referrerQuery }
 								statType="statsStoreReferrers"

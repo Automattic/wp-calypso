@@ -30,6 +30,9 @@ class StoreStatsReferrerWidget extends Component {
 		siteId: PropTypes.number,
 		statType: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string.isRequired,
+		unit: PropTypes.string.isRequired,
+		querystring: PropTypes.string,
+		slug: PropTypes.string,
 	};
 
 	isPreCollection( selectedData ) {
@@ -66,7 +69,8 @@ class StoreStatsReferrerWidget extends Component {
 	}
 
 	render() {
-		const { data, selectedDate, translate } = this.props;
+		const { data, selectedDate, translate, unit, slug, querystring } = this.props;
+		const basePath = `/store/stats/referrers/${ unit }/${ slug }`;
 		const selectedData = find( data, d => d.date === selectedDate ) || { data: [] };
 		if ( selectedData.data.length === 0 ) {
 			const messages = this.getEmptyDataMessage( selectedData );
@@ -89,9 +93,14 @@ class StoreStatsReferrerWidget extends Component {
 		return (
 			<Table className="store-stats-referrer-widget" header={ header } compact>
 				{ sortedAndTrimmedData.map( d => {
+					const refQuery = `referrer=${ d.referrer }`;
+					const fullQuery = querystring ? `?${ querystring }&${ refQuery }` : `?${ refQuery }`;
+					const href = `${ basePath }${ fullQuery }`;
 					return (
 						<TableRow key={ d.referrer }>
-							<TableItem isTitle>{ d.referrer }</TableItem>
+							<TableItem isTitle>
+								<a href={ href }>{ d.referrer }</a>
+							</TableItem>
 							<TableItem>
 								<HorizontalBar
 									extent={ extent }
