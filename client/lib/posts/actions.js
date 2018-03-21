@@ -11,7 +11,6 @@ import { assign, clone, defer, fromPairs } from 'lodash';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import PostsStore from './posts-store';
 import PostEditStore from './post-edit-store';
 import PreferencesStore from 'lib/preferences/store';
 import * as utils from './utils';
@@ -371,13 +370,7 @@ PostActions = {
 		}
 
 		postHandle[ isNew ? 'add' : 'update' ]( query, changedAttributes, function( error, data ) {
-			var original, currentMode;
-
-			currentMode = PreferencesStore.get( 'editor-mode' );
-
-			if ( ! error ) {
-				original = PostsStore.get( data.global_ID );
-			}
+			const currentMode = PreferencesStore.get( 'editor-mode' );
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_BEING_EDITED',
@@ -387,7 +380,6 @@ PostActions = {
 				// it
 				rawContent: mode === currentMode ? rawContent : null,
 				isNew: isNew,
-				original: original,
 				post: data,
 				site,
 			} );
@@ -439,16 +431,9 @@ PostActions = {
 	},
 
 	receiveUpdate: function( site, callback, error, data ) {
-		var original;
-
-		if ( ! error ) {
-			original = PostsStore.get( data.global_ID );
-		}
-
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_UPDATED_POST',
 			error: error,
-			original: original,
 			post: data,
 			site,
 		} );
