@@ -99,3 +99,27 @@
 		}
 	}
 }
+
+.inventory-widget__controls {
+	padding: 16px;
+	max-width: 300px;
+
+	.inventory-widget__control {
+		margin-bottom: 8px;
+		text-align: left;
+	}
+
+	.inventory-widget__range-input {
+		display: flex;
+		align-items: center;
+
+		.form-text-input {
+			max-width: 50px;
+			margin-right: 8px;
+		}
+	}
+
+	.form-checkbox:checked:before {
+		margin-top: 0;
+	}
+}

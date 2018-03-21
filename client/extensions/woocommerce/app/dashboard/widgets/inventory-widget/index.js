@@ -22,6 +22,7 @@ import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products
 import { getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
+import InventoryControls from './controls';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
@@ -139,6 +140,7 @@ class InventoryWidget extends Component {
 			width: this.props.width,
 			className: this.getClasses(),
 			title: translate( 'Inventory Alerts' ),
+			settingsPanel: InventoryControls,
 		};
 		if ( this.shouldShowImage() ) {
 			props.image = '/calypso/images/extensions/woocommerce/woocommerce-relaxed.svg';

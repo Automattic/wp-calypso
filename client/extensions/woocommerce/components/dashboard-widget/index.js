@@ -60,7 +60,6 @@ class DashboardWidget extends Component {
 			image,
 			imageFlush,
 			imagePosition,
-			settingsPanel,
 			title,
 			translate,
 			width,
@@ -69,7 +68,8 @@ class DashboardWidget extends Component {
 		const isTopImage = image && 'top' === imagePosition;
 		const imageClassName = image ? `is-${ imagePosition }` : null;
 		const widthClassName = `is-${ width }-width`;
-		const hasSettingsPanel = ! isUndefined( settingsPanel );
+		const SettingsPanel = this.props.settingsPanel;
+		const hasSettingsPanel = ! isUndefined( SettingsPanel );
 
 		const classes = classNames( 'dashboard-widget', className, imageClassName, widthClassName, {
 			'is-flush-image': imageFlush,
@@ -106,7 +106,7 @@ class DashboardWidget extends Component {
 						onClose={ this.onSettingsPanelClose }
 						position="bottom left"
 					>
-						{ settingsPanel }
+						<SettingsPanel close={ this.onSettingsPanelClose } />
 					</Popover>
 				) }
 				<div className="dashboard-widget__content">
@@ -131,7 +131,7 @@ DashboardWidget.propTypes = {
 	imagePosition: PropTypes.oneOf( [ 'bottom', 'left', 'right', 'top' ] ),
 	onSettingsClose: PropTypes.func,
 	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-	settingsPanel: PropTypes.element,
+	settingsPanel: PropTypes.func,
 	width: PropTypes.oneOf( [ 'half', 'full', 'third', 'two-thirds' ] ),
 };
 
