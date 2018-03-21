@@ -19,6 +19,9 @@ import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
+import { getPreference } from 'state/preferences/selectors';
+import { savePreference, setPreference } from 'state/preferences/actions';
+
 class EditorRevisionsList extends PureComponent {
 	static propTypes = {
 		comparisons: PropTypes.object,
@@ -43,6 +46,7 @@ class EditorRevisionsList extends PureComponent {
 	};
 
 	componentDidMount() {
+		savePreference( 'colorScheme', 'default' );
 		// Make sure that scroll position in the editor is not preserved.
 		window.scrollTo( 0, 0 );
 
@@ -121,6 +125,7 @@ class EditorRevisionsList extends PureComponent {
 	}
 
 	selectNextRevision = () => {
+		console.log( 'selectNextRevision' );
 		const { nextRevisionId } = this.props;
 		nextRevisionId && this.selectRevision( nextRevisionId );
 	};
@@ -187,6 +192,8 @@ export default connect(
 			! latestRevisionIsSelected && get( last( revisions ), 'id' ) === selectedRevisionId;
 		const nextIsDisabled = latestRevisionIsSelected || revisions.length === 1;
 		const prevIsDisabled = earliestRevisionIsSelected || revisions.length === 1;
+
+		console.log( getPreference( state, 'colorScheme' ) );
 
 		return {
 			latestRevisionId,
