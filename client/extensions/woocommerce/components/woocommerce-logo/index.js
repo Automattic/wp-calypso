@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const WooCommerceLogo = ( { height, width } ) => {
+const WooCommerceLogo = ( { height = 32, width = 120 } ) => {
 	return (
 		<svg
 			className="woocommerce-logo"
@@ -55,8 +55,8 @@ const WooCommerceLogo = ( { height, width } ) => {
 };
 
 WooCommerceLogo.propTypes = {
-	height: PropTypes.number.isRequired,
-	width: PropTypes.number.isRequired,
+	height: PropTypes.number,
+	width: PropTypes.number,
 };
 
 export default WooCommerceLogo;
