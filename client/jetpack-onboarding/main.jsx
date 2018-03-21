@@ -142,8 +142,8 @@ class JetpackOnboardingMain extends React.PureComponent {
 				<DocumentHead
 					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
 				/>
-				{ /* It is also important to use <QuerySites siteId={ siteSlug } /> here, however wrong that seems.
-				   * The reason is that we rely on an isRequestingSite() check to tell whether we've
+				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
+				   * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
 				   * finished fetching site details, which will tell us whether the site is connected,
 				   * which we need in turn to conditionally send JPO auth credentials (see below).
 				   * However, if we're logged out, we cannot `<QuerySites allSites />`,
