@@ -24,7 +24,7 @@ describe( 'reducer', () => {
 		};
 
 		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].locations ).to.eql( LOADING );
+		expect( newSiteData[ siteId ].data.locations ).to.eql( LOADING );
 	} );
 
 	test( 'should store data from the action', () => {
@@ -65,6 +65,6 @@ describe( 'reducer', () => {
 		};
 		const newState = reducer( {}, action );
 		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].locations ).to.deep.equal( locations );
+		expect( newState[ siteId ].data.locations ).to.deep.equal( locations );
 	} );
 } );

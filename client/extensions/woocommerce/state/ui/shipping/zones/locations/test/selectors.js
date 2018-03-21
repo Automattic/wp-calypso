@@ -104,7 +104,7 @@ const createEditState = ( { zoneLocations, locationEdits } ) =>
 				methodIds: [],
 			} ) ),
 			shippingZoneLocations: zoneLocations,
-			locations,
+			data: { locations },
 		},
 		ui: {
 			shipping: {
@@ -165,7 +165,7 @@ describe( 'selectors', () => {
 			expect( getShippingZoneLocationsWithEdits( state ) ).to.be.null;
 		} );
 
-		test( 'should return null when there is no zone currently being edited', () => {
+		test( 'should return empty arrays when there is no zone currently being edited', () => {
 			const state = createState( {
 				site: {
 					shippingZones: [],

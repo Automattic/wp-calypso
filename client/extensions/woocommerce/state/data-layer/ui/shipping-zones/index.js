@@ -51,7 +51,7 @@ import { getZoneLocationsPriority } from 'woocommerce/state/sites/shipping-zone-
 import { getAPIShippingZones } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { getStoreLocation } from 'woocommerce/state/sites/settings/general/selectors';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
-import { getCountryName } from 'woocommerce/state/sites/locations/selectors';
+import { getCountryName } from 'woocommerce/state/sites/data/locations/selectors';
 import { isDefaultShippingZoneCreated } from 'woocommerce/state/sites/setup-choices/selectors';
 import { setCreatedDefaultShippingZone } from 'woocommerce/state/sites/setup-choices/actions';
 import { recordTrack } from 'woocommerce/lib/analytics';

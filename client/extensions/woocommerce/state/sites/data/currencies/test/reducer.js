@@ -24,7 +24,7 @@ describe( 'reducer', () => {
 		};
 
 		const newSiteData = reducer( {}, action );
-		expect( newSiteData[ siteId ].currencies ).to.eql( LOADING );
+		expect( newSiteData[ siteId ].data.currencies ).to.eql( LOADING );
 	} );
 
 	test( 'should store data from the action', () => {
@@ -40,6 +40,6 @@ describe( 'reducer', () => {
 		};
 		const newState = reducer( {}, action );
 		expect( newState[ siteId ] ).to.exist;
-		expect( newState[ siteId ].currencies ).to.deep.equal( currencies );
+		expect( newState[ siteId ].data.currencies ).to.deep.equal( currencies );
 	} );
 } );

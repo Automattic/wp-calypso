@@ -5,7 +5,7 @@
  */
 
 import request from 'woocommerce/state/sites/request';
-import { setError } from '../status/wc-api/actions';
+import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
 	WOOCOMMERCE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,

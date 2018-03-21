@@ -16,9 +16,12 @@ import AddressView from 'woocommerce/components/address-view';
 import Button from 'components/button';
 import Card from 'components/card';
 import CustomerAddressDialog from './dialog';
-import { areLocationsLoaded, getAllCountries } from 'woocommerce/state/sites/locations/selectors';
+import {
+	areLocationsLoaded,
+	getAllCountries,
+} from 'woocommerce/state/sites/data/locations/selectors';
 import { editOrder } from 'woocommerce/state/ui/orders/actions';
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
