@@ -6,7 +6,14 @@ jest.mock( 'lib/abtest', () => ( {
 
 const translate = x => x;
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => <Comp { ...props } translate={ translate } />,
+	localize: Comp => props => (
+		<Comp
+			{ ...props }
+			translate={ function( x ) {
+				return x;
+			} }
+		/>
+	),
 	numberFormat: x => x,
 } ) );
 
