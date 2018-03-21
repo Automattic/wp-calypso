@@ -33,7 +33,6 @@ import {
 } from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { requestSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
@@ -50,7 +49,6 @@ import StoreLocationSetupView from './setup/store-location';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup';
-import MailChimp from 'woocommerce/app/settings/email/mailchimp/index.js';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import warn from 'lib/warn';
 
@@ -67,7 +65,6 @@ class Dashboard extends Component {
 			URL: PropTypes.string.isRequired,
 		} ),
 		siteId: PropTypes.number,
-		mailChimpConfigured: PropTypes.bool,
 		fetchOrders: PropTypes.func,
 		requestSyncStatus: PropTypes.func,
 		setupChoicesLoading: PropTypes.bool,
@@ -112,7 +109,6 @@ class Dashboard extends Component {
 	fetchStoreData = () => {
 		const { siteId, productsLoaded } = this.props;
 		this.props.fetchOrders( siteId );
-		this.props.requestSettings( siteId );
 
 		if ( ! productsLoaded ) {
 			const params = { page: 1 };
@@ -233,13 +229,7 @@ class Dashboard extends Component {
 			manageView = <ManageExternalView site={ selectedSite } />;
 		}
 
-		return (
-			<div>
-				{ manageView }
-				{ ! this.props.mailChimpConfigured &&
-					manageInCalypso && <MailChimp site={ selectedSite } redirectToSettings dashboardView /> }
-			</div>
-		);
+		return <div>{ manageView }</div>;
 	};
 
 	render() {
@@ -301,7 +291,6 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchOrders,
 			fetchProducts,
-			requestSettings,
 		},
 		dispatch
 	);
