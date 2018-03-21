@@ -4,7 +4,7 @@
 		bottom: 16px;
 
 	.button.inline-help__happychat-button {
-		position: relative;
+		position: absolute;
 		bottom: 60px;
 		right: 5px;
 
@@ -29,9 +29,8 @@
 		}
 	}
 
-	.inline-help__happychat-button.has-unread {
+	.button.inline-help__happychat-button.has-unread {
 		color: $gray-dark;
-		position: relative;
 
 		&:after {
 			content: "";
@@ -56,9 +55,9 @@
 }
 
 .button.is-borderless.inline-help__button {
-	position: relative;
-		left: 34px;
-		bottom: 16px;
+	position: absolute;
+		right: 0px;
+		bottom: 0px;
 	line-height: 1;
 	padding: 1px 4px 2px 1px;
 	border-radius: 100%;
