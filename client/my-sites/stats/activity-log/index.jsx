@@ -480,7 +480,8 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
+				{ siteId &&
+					rewindState.reason === 'missing_plan' && <ActivityLogUpgradeNotice siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (

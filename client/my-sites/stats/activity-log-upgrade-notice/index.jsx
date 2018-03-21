@@ -9,10 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QuerySitePlans from 'components/data/query-site-plans';
 import Banner from 'components/banner';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { isCurrentPlanPaid } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getRewindState } from 'state/selectors';
 
 class ActivityLogUpgradeNotice extends Component {
 	static propTypes = {
@@ -20,25 +19,23 @@ class ActivityLogUpgradeNotice extends Component {
 
 		// Connected props
 		siteSlug: PropTypes.string.isRequired,
-		hasPlan: PropTypes.bool.isRequired,
+		needsPlan: PropTypes.bool.isRequired,
 
 		// localize
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		if ( null === this.props.hasPlan || this.props.hasPlan ) {
+		if ( ! this.props.needsPlan ) {
 			return false;
 		}
 
 		const {
-			siteId,
 			siteSlug,
 			translate,
 		} = this.props;
 
 		return [
-			<QuerySitePlans siteId={ siteId } />,
 			<Banner
 				plan="personal-bundle"
 				href={ `/plans/${ siteSlug }` }
@@ -52,8 +49,8 @@ class ActivityLogUpgradeNotice extends Component {
 export default connect(
 	( state, { siteId } ) => {
 		return {
-			siteSlug: getSelectedSiteSlug( state, siteId ),
-			hasPlan: isCurrentPlanPaid( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ),
+			needsPlan: getRewindState( state, siteId ).reason === 'missing_plan',
 		};
 	}
 )( localize( ActivityLogUpgradeNotice ) );
