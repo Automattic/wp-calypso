@@ -7,8 +7,8 @@
 import React from 'react';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 
@@ -116,6 +116,16 @@ class Notices extends React.PureComponent {
 					>
 						<NoticeAction href="#">More</NoticeAction>
 					</Notice>
+				</div>
+				<div>
+					<Notice
+						status="is-info"
+						icon="reader"
+						isLoading
+						text="I'm a notice that's loading…"
+						showDismiss={ false }
+						isCompact={ this.state.compactNotices ? true : null }
+					/>
 				</div>
 			</div>
 		);

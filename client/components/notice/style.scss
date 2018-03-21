@@ -1,3 +1,9 @@
+@keyframes notice-loading-pulse {
+	0% { opacity: 0; }
+	50% { opacity: .5; }
+	100% { opacity: 0; }
+}
+
 .notice {
 	display: flex;
 	position: relative;
@@ -38,6 +44,19 @@
 		}
 	}
 
+	&.is-loading {
+		.notice__icon-wrapper::after {
+			content: '';
+			background-color: $white;
+			animation: notice-loading-pulse 0.8s ease-in-out infinite;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+	}
+
 	.notice__dismiss {
 		overflow: hidden;
 	}
@@ -53,6 +72,7 @@
 }
 
 .notice__icon-wrapper {
+	position: relative;
 	background: $gray-text-min;
 	color: $white;
 	display: flex;
