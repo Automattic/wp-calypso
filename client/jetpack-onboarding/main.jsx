@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact, get } from 'lodash';
+import { compact, get, includes } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -112,13 +112,15 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} );
 	};
 
-	getSkipLinkText() {
-		const { stepName, stepsCompleted, translate } = this.props;
+	shouldHideForwardLink() {
+		const { stepName, stepsCompleted } = this.props;
+		const stepsWithSuccessScreens = [ STEPS.CONTACT_FORM, STEPS.BUSINESS_ADDRESS, STEPS.STATS ];
 
-		if ( get( stepsCompleted, stepName ) ) {
-			return translate( 'Next' );
+		if ( ! includes( stepsWithSuccessScreens, stepName ) ) {
+			return false;
 		}
-		return null;
+
+		return get( stepsCompleted, stepName, false );
 	}
 
 	render() {
@@ -165,7 +167,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						basePath="/jetpack/start"
 						baseSuffix={ siteSlug }
 						components={ COMPONENTS }
-						forwardText={ this.getSkipLinkText() }
+						hideForwardLink={ this.shouldHideForwardLink() }
 						hideNavigation={ stepName === STEPS.SUMMARY }
 						isRequestingSettings={ isRequestingSettings }
 						isRequestingWhetherConnected={ isRequestingWhetherConnected }
