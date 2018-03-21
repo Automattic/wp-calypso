@@ -20,8 +20,8 @@ export const fetchSourcePaymentTransactionDetail = action =>
 		{
 			method: 'GET',
 			path: '/me/transactions/source-payment',
-			apiNamespace: 'wpcom/v1',
-			body: toApi( action ),
+			apiNamespace: 'rest/v1',
+			query: toApi( action ),
 		},
 		action
 	);
