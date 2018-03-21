@@ -242,6 +242,10 @@ class CreditCardForm extends Component {
 						eventFormName="Edit Card Details Form"
 						onFieldChange={ this.onFieldChange }
 						getErrorMessage={ this.getErrorMessage }
+						// "This prop can reduce usability and accessibility",
+						// but it's already enabled by default and this just
+						// provides a way to disable it, so...
+						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus={ autoFocus }
 					/>
 					<div className="credit-card-form__card-terms">
