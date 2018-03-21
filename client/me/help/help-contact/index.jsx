@@ -51,7 +51,7 @@ import {
 	askQuestion as askDirectlyQuestion,
 	initialize as initializeDirectly,
 } from 'state/help/directly/actions';
-import { getSitePlan, isCurrentPlanPaid, isRequestingSites } from 'state/sites/selectors';
+import { getSitePlan, isRequestingSites } from 'state/sites/selectors';
 import {
 	hasUserAskedADirectlyQuestion,
 	isDirectlyFailed,
@@ -268,11 +268,7 @@ class HelpContact extends React.Component {
 		}
 
 		// if the happychat connection is able to accept chats, use it
-		return (
-			this.props.isHappychatAvailable &&
-			this.props.isHappychatUserEligible &&
-			this.props.isSelectedHelpSiteOnPaidPlan
-		);
+		return this.props.isHappychatAvailable && this.props.isHappychatUserEligible;
 	};
 
 	shouldUseDirectly = () => {
@@ -620,7 +616,6 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && helpSelectedSiteId,
 			isRequestingSites: isRequestingSites( state ),
-			isSelectedHelpSiteOnPaidPlan: isCurrentPlanPaid( state, helpSelectedSiteId ),
 			selectedSitePlanSlug: selectedSitePlan && selectedSitePlan.product_slug,
 		};
 	},
