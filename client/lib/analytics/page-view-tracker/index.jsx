@@ -84,7 +84,8 @@ export class PageViewTracker extends React.Component {
 const mapStateToProps = state => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
-	const currentSlug = getSiteFragment( get( window, 'location.pathname', '' ) );
+	const currentSlug =
+		typeof window === 'undefined' ? '' : getSiteFragment( get( window, 'location.pathname', '' ) );
 	const hasSelectedSiteLoaded = ! currentSlug || currentSlug === selectedSiteSlug;
 	return {
 		hasSelectedSiteLoaded,
