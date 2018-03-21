@@ -123,68 +123,68 @@ export default class AppComponents extends React.Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
-					<AuthorSelector />
-					<CalendarButton />
-					<CalendarPopover />
-					<CommentButtons />
+					<AuthorSelector readmeFilePath="author-selector" />
+					<CalendarButton readmeFilePath="calendar-button" />
+					<CalendarPopover readmeFilePath="calendar-popover" />
+					<CommentButtons readmeFilePath="comment-button" />
 					<DisconnectJetpackDialog />
-					<CreditCardForm />
-					<FollowButton />
-					<FollowMenu />
+					<CreditCardForm readmeFilePath="credit-card-form" />
+					<FollowButton readmeFilePath="follow-button" />
+					<FollowMenu readmeFilePath="follow-menu" />
 					<HappinessSupport />
-					<ImageEditor />
-					<VideoEditor />
-					<LikeButtons />
+					<ImageEditor readmeFilePath="image-editor" />
+					<VideoEditor readmeFilePath="video-editor" />
+					<LikeButtons readmeFilePath="like-button" />
 					<Login />
 					<PostEditButton />
-					<PlanStorage />
+					<PlanStorage readmeFilePath="plan-storage" />
 					<PostSchedule />
 					<PostSelector />
 					<AllSites />
-					<Site />
+					<Site readmeFilePath="site" />
 					<SitePlaceholder />
 					<SitesDropdown />
-					<SiteIcon />
+					<SiteIcon readmeFilePath="site-icon" />
 					<Theme />
 					<ThemesListExample />
-					<UpgradeNudge />
+					<UpgradeNudge readmeFilePath="upgrade-nudge-expanded" />
 					<PlanCompareCard />
 					<FeatureComparison />
 					<DomainTip />
 					<RelatedPostCard />
-					<PostItem />
-					<PostStatus />
-					<PostTime />
-					<ReaderAuthorLink />
+					<PostItem readmeFilePath="post-item" />
+					<PostStatus readmeFilePath="post-status" />
+					<PostTime readmeFilePath="post-time" />
+					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
-					<ReaderSiteStreamLink />
+					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
 					<ReaderCombinedCard />
 					<ReaderRecommendedSites />
 					<PlanPrice />
-					<PostShare />
-					<PlanThankYouCard />
-					<DismissibleCard />
-					<ReaderAvatar />
+					<PostShare readmeFilePath="post-share" />
+					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />
+					<DismissibleCard readmeFilePath="dismissible-card" />
+					<ReaderAvatar readmeFilePath="reader-avatar" />
 					<ReaderPostOptionsMenu readmeFilePath="reader-post-options-menu" />
-					<DailyPostButton />
-					<PostLikes />
-					<ReaderFeaturedVideo />
-					{ isEnabled( 'nps-survey/devdocs' ) && <NpsSurvey /> }
-					<ReaderExportButton />
-					<ReaderImportButton />
+					<DailyPostButton readmeFilePath="daily-post-button" />
+					<PostLikes readmeFilePath="post-likes" />
+					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
+					{ isEnabled( 'nps-survey/devdocs' ) && <NpsSurvey readmeFilePath="nps-survey" /> }
+					<ReaderExportButton readmeFilePath="reader-export-button" />
+					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
 					<SimplePaymentsDialog />
-					<ReaderShare />
-					<ReaderEmailSettings />
-					<UploadImage />
+					<ReaderShare readmeFilePath="reader-share" />
+					<ReaderEmailSettings readmeFilePath="reader-email-settings" />
+					<UploadImage readmeFilePath="upload-image" />
 					<ConversationCommentList />
 					<PostComment />
-					<ConversationCaterpillar />
+					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
-					<ColorSchemePicker />
+					<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					{ isEnabled( 'site-address-editor/devdocs' ) && <SiteRenamer /> }
 				</Collection>
 			</Main>
