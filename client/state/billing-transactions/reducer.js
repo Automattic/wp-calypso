@@ -15,6 +15,7 @@ import {
 } from 'state/action-types';
 import { combineReducers, createReducer } from 'state/utils';
 import { billingTransactionsSchema } from './schema';
+import individualTransactions from './individual-transactions/reducer';
 
 /**
  * Returns the updated items state after an action has been dispatched.
@@ -76,4 +77,5 @@ export default combineReducers( {
 	items,
 	requesting,
 	sendingReceiptEmail,
+	individualTransactions,
 } );
