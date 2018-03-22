@@ -2,7 +2,7 @@
 export default {
 	type: 'object',
 	additionalProperties: false,
-	required: [ 'likes', 'iLike', 'found' ],
+	required: [ 'iLike', 'found' ],
 	properties: {
 		likes: {
 			type: 'array',
@@ -15,6 +15,10 @@ export default {
 		found: {
 			type: 'number',
 			description: 'The total of post likes',
+		},
+		lastUpdated: {
+			type: 'number',
+			description: 'When we last updated the liker info',
 		},
 	},
 };

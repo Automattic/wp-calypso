@@ -15,6 +15,7 @@ import wpcom from 'lib/wp';
 import { keyForPost } from 'reader/post-key';
 import { pageViewForPost } from 'reader/stats';
 import { hasPostBeenSeen } from './selectors';
+import { receiveLikes } from 'state/posts/likes/actions';
 
 function trackRailcarRender( post ) {
 	analytics.tracks.recordEvent( 'calypso_traintracks_render', post.railcar );
@@ -50,6 +51,18 @@ export const receivePosts = posts => dispatch => {
 	toReload.forEach( post => dispatch( reloadPost( post ) ) );
 
 	const normalizedPosts = compact( toProcess ).map( runFastRules );
+
+	// dispatch post like additions before the posts. Cuts down on rerenders a bit.
+	forEach( normalizedPosts, post => {
+		if ( ! post.is_external ) {
+			dispatch(
+				receiveLikes( post.site_ID, post.ID, {
+					iLike: Boolean( post.i_like ),
+					found: +post.like_count,
+				} )
+			);
+		}
+	} );
 
 	// save the posts after running the fast rules
 	dispatch( {

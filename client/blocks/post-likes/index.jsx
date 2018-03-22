@@ -88,7 +88,7 @@ class PostLikes extends React.PureComponent {
 
 		return (
 			<div className={ classes }>
-				<QueryPostLikes siteId={ siteId } postId={ postId } />
+				<QueryPostLikes siteId={ siteId } postId={ postId } needsLikers={ true } />
 				{ isLoading && (
 					<span key="placeholder" className="post-likes__count is-loading">
 						…

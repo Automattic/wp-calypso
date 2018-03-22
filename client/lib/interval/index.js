@@ -22,13 +22,7 @@ export const EVERY_MINUTE = 60 * 1000;
 export default class Interval extends Component {
 	static propTypes = {
 		onTick: PropTypes.func.isRequired,
-		period: PropTypes.oneOf( [
-			EVERY_SECOND,
-			EVERY_FIVE_SECONDS,
-			EVERY_TEN_SECONDS,
-			EVERY_THIRTY_SECONDS,
-			EVERY_MINUTE,
-		] ).isRequired,
+		period: PropTypes.number.isRequired,
 	};
 
 	tick = () => {
