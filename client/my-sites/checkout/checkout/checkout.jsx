@@ -67,8 +67,7 @@ import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
-import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from '../../../lib/plans/constants';
-import { getPlan } from '../../../lib/plans';
+import { getPlan, findPlansKeys } from '../../../lib/plans';
 
 class Checkout extends React.Component {
 	static propTypes = {
@@ -500,7 +499,15 @@ class Checkout extends React.Component {
 			return false;
 		}
 
-		const availableTerms = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS ];
+		const currentPlan = getPlan( planInCart.product_slug );
+		const availableTerms = findPlansKeys( {
+			group: currentPlan.group,
+			type: currentPlan.type,
+		} );
+
+		if ( ! availableTerms.length ) {
+			return false;
+		}
 
 		return (
 			<React.Fragment>
