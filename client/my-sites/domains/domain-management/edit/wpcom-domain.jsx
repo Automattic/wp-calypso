@@ -6,7 +6,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { flow, get } from 'lodash';
+import { flow, get, isEmpty } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -46,20 +46,21 @@ const WpcomDomain = createReactClass( {
 		if ( isEnabled( 'site-address-editor' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
 			if ( ! domain.currentUserCanManage ) {
 				return (
-					/**
-					 * See: `NonOwnerCard` for other `domain.currentUserCanManage` usage
-					 * Unfortunately, we don't know the domain owner here & the above component takes an annotated list of domains.
-					 * @TODO Derive the owner from the state tree and display them so customers know who to contact.
-					 * @TODO Should this be a more basic `<Card />` instead of a `<Notice />` or wrapped in one?
-					 * @TODO Finalize copy
-					 */
-					<Notice
-						status="is-info"
-						showDismiss={ false }
-						text={ translate(
-							'The site address can only be changed by the site owner. Please contact them if you would like to change it.'
+					<Notice status="is-info" showDismiss={ false }>
+						{ translate(
+							'The site address can only be changed by the site owner. ' +
+								'Please contact them if you would like to change it.',
+							{ components: { br: <br /> } }
 						) }
-					/>
+						{ ! isEmpty( domain.owner ) && (
+							<p>
+								{ translate( 'Owner: {{em}}%(owner)s{{/em}}', {
+									args: { owner: domain.owner },
+									components: { em: <em /> },
+								} ) }
+							</p>
+						) }
+					</Notice>
 				);
 			}
 
