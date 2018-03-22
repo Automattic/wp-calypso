@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { difference } from 'lodash';
 import PropTypes from 'prop-types';
 
 /**
@@ -147,7 +146,7 @@ const computeProductsWithPrices = ( state, plans ) => {
 		);
 	};
 
-	const retval = plans
+	return plans
 		.map( planSlug => {
 			const plan = getPlan( planSlug );
 			const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -169,15 +168,6 @@ const computeProductsWithPrices = ( state, plans ) => {
 		} )
 		.filter( p => p.priceFull )
 		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
-
-	if ( retval.length !== plans.length ) {
-		const missing = difference( plans, retval.map( ( { planSlug } ) => planSlug ) );
-		console.error(
-			`price could not be computed for the following plans: ${ missing.join( ', ' ) }`
-		);
-	}
-
-	return retval;
 };
 
 export default connect(
