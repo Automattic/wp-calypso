@@ -28,6 +28,7 @@ import { getMenusUrl } from 'state/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
 import wpcom from 'lib/wp';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:my-sites:customize' );
 
@@ -263,6 +264,7 @@ class Customize extends React.Component {
 	renderErrorPage = error => {
 		return (
 			<div className="main main-column customize" role="main">
+				<PageViewTracker path="/customize/:site" title={ 'Customizer' } />
 				<SidebarNavigation />
 				<EmptyContent
 					title={ error.title }
@@ -297,6 +299,7 @@ class Customize extends React.Component {
 		if ( ! this.props.site ) {
 			return (
 				<div className="main main-column customize is-iframe" role="main">
+					<PageViewTracker path="/customize/:site" title={ 'Customizer' } />
 					<CustomizerLoadingPanel />
 				</div>
 			);
@@ -322,6 +325,7 @@ class Customize extends React.Component {
 			// waitForLoading above) then an error will be shown.
 			return (
 				<div className="main main-column customize is-iframe" role="main">
+					<PageViewTracker path="/customize/:site" title={ 'Customizer' } />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
 					<iframe className={ iframeClassName } src={ iframeUrl } />
 				</div>
