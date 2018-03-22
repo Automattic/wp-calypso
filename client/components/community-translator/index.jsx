@@ -51,7 +51,8 @@ class CommunityTranslator extends Component {
 
 	setLanguage() {
 		this.languageJson = i18n.getLocale() || { '': {} };
-		this.localeCode = this.languageJson[ '' ].localeSlug;
+		const { localeSlug, localeVariant } = this.languageJson[ '' ];
+		this.localeCode = localeVariant || localeSlug;
 		this.currentLocale = find( languages, lang => lang.langSlug === this.localeCode );
 	}
 
@@ -130,6 +131,7 @@ class CommunityTranslator extends Component {
 		}
 
 		// Has no translation in current locale
+		// Must be a string to be a valid DOM attribute value
 		if ( isEmpty( this.languageJson[ key ] ) ) {
 			props.untranslated = 'true';
 		}

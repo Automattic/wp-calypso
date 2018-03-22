@@ -46,9 +46,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage, isLocaleVariant, hasTranslationSet } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
 import _user from 'lib/user';
-import {
-	canDisplayCommunityTranslator,
-} from 'components/community-translator/utils';
+import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 
 const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
@@ -620,7 +618,8 @@ const Account = createReactClass( {
 					{ this.thankTranslationContributors() }
 				</FormFieldset>
 
-				{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) && this.communityTranslator() }
+				{ canDisplayCommunityTranslator( this.getUserSetting( 'language' ) ) &&
+					this.communityTranslator() }
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) &&
 					supportsCssCustomProperties() && (

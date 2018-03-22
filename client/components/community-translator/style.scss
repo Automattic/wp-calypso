@@ -5,6 +5,9 @@
 	&.is-untranslated {
 		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
 	}
+	&:hover {
+		border-bottom: 1px dotted $gray-lighten-30;
+	}
 }
 
 .community-translator__dialog {
@@ -12,7 +15,7 @@
 }
 
 .community-translator__dialog-header {
-	margin-bottom: 7px;
+	margin-bottom: 14px;
 	font-weight: bold;
 	border-bottom: 1px solid $gray-lighten-30;
 	padding-bottom: 7px;

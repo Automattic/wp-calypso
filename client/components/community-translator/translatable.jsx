@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -15,9 +15,9 @@ import Dialog from 'components/dialog';
 import Button from 'components/button';
 import TranslatableField from './translatable-field';
 import TranslatedSuccess from './translated-success';
-import { getTranslationData, getTranslationGlotPressUrl, submitTranslation } from './utils.js';
+import { getTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
 
-class Translatable extends Component {
+export class Translatable extends Component {
 	state = {
 		showDialog: false,
 		originalData: {},
@@ -40,7 +40,14 @@ class Translatable extends Component {
 		} );
 	};
 
-	closeDialog = () => this.setState( { showDialog: false } );
+	closeDialog = () => {
+		this.setState( {
+			showDialog: false,
+			submissionSuccess: false,
+			formState: this.state.submissionSuccess ? {} : this.state.formState,
+			originalData: this.state.submissionSuccess ? {} : this.state.originalData,
+		} );
+	};
 
 	openDialog = event => {
 		event.preventDefault();
@@ -49,11 +56,11 @@ class Translatable extends Component {
 
 		const { singular, context, plural, locale } = this.props;
 		! this.hasDataLoaded() &&
-			getTranslationData( locale.langSlug, { singular, context, plural } ).then( originalData =>
+			getTranslationData( locale, { singular, context, plural } ).then( originalData =>
 				this.setState( {
 					error: originalData.error,
 					originalData,
-					translationUrl: getTranslationGlotPressUrl( originalData.originalId, locale.langSlug ),
+					translationUrl: getTranslationPermaLink( originalData.originalId, locale ),
 					formState: {
 						translatedSingular: originalData.translatedSingular,
 						translatedPlural: originalData.translatedPlural,
@@ -69,7 +76,7 @@ class Translatable extends Component {
 		submitTranslation(
 			this.state.originalData.originalId,
 			this.state.formState,
-			this.props.locale.langSlug
+			this.props.locale
 		).then( originalData => {
 			this.setState( {
 				error: originalData.error,
@@ -83,7 +90,7 @@ class Translatable extends Component {
 	getDialogButtons = () => {
 		const buttons = [
 			<Button primary onClick={ this.closeDialog }>
-				{ this.props.translate( 'Close', { textOnly: true } ) }
+				{ translate( 'Close', { textOnly: true } ) }
 			</Button>,
 		];
 		! this.state.submissionSuccess &&
@@ -111,14 +118,16 @@ class Translatable extends Component {
 
 		if ( this.state.originalData.error ) {
 			return (
-				<p className="community-translator__string-container">
-					{' '}
-					{ this.state.originalData.error }{' '}
-				</p>
+				<p className="community-translator__string-container">{ this.state.originalData.error }</p>
 			);
 		}
+
 		return [
+			this.state.originalData.comment && (
+				<p key="translationComment">{ this.state.originalData.comment }</p>
+			),
 			<TranslatableField
+				key="translatedSingular"
 				originalString={ this.props.singular }
 				title="Singular"
 				fieldName="translatedSingular"
@@ -129,6 +138,7 @@ class Translatable extends Component {
 
 			this.state.formState.translatedPlural && (
 				<TranslatableField
+					key="translatedPlural"
 					originalString={ this.props.plural }
 					title="Plural"
 					fieldName="translatedPlural"
@@ -201,4 +211,4 @@ class Translatable extends Component {
 	}
 }
 
-export default localize( Translatable );
+export default Translatable;
