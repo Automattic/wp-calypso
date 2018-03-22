@@ -33,7 +33,7 @@ class QueryPostLikes extends Component {
 	};
 
 	componentDidMount() {
-		this.request( this.props );
+		this.request();
 		this.restartInterval( this.props.maxAgeSeconds );
 	}
 
@@ -58,15 +58,17 @@ class QueryPostLikes extends Component {
 		this.checkInterval = setInterval( this.request, intervalWithJitter );
 	};
 
-	request = ( {
-		requestPostLikes: requestLikes,
-		siteId,
-		postId,
-		maxAgeSeconds,
-		hasPostLikes,
-		needsLikers,
-		lastUpdated,
-	} ) => {
+	request = (
+		{
+			requestPostLikes: requestLikes,
+			siteId,
+			postId,
+			maxAgeSeconds,
+			hasPostLikes,
+			needsLikers,
+			lastUpdated,
+		} = this.props
+	) => {
 		if (
 			! lastUpdated ||
 			Date.now() - lastUpdated > maxAgeSeconds * 1000 ||
