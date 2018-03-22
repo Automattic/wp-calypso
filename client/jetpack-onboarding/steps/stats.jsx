@@ -22,6 +22,10 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingStatsStep extends React.Component {
+	state = {
+		justActivatedStats: false,
+	};
+
 	componentDidUpdate() {
 		this.maybeActivateStats();
 	}
@@ -59,6 +63,20 @@ class JetpackOnboardingStatsStep extends React.Component {
 		this.props.saveJpoSettings( this.props.siteId, {
 			stats: true,
 		} );
+
+		this.setState( {
+			justActivatedStats: true,
+		} );
+	}
+
+	getSuccessTitle() {
+		const { translate } = this.props;
+
+		if ( this.state.justActivatedStats ) {
+			return translate( 'Success! Jetpack is now collecting valuable stats.' );
+		}
+
+		return translate( "Jetpack provides you with detailed stats about your site's reach." );
 	}
 
 	renderActionTile() {
@@ -87,7 +105,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 	}
 
 	render() {
-		const { activatedStats, basePath, getForwardUrl, siteId, translate } = this.props;
+		const { activatedStats, basePath, getForwardUrl, siteId } = this.props;
 
 		return (
 			<div className="steps__main">
@@ -104,7 +122,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 						href={ getForwardUrl() }
 						illustration="/calypso/images/illustrations/jetpack-stats.svg"
 						onClick={ this.handleStatsNextButton }
-						title={ translate( 'Success! Jetpack is now collecting valuable stats.' ) }
+						title={ this.getSuccessTitle() }
 					/>
 				) : (
 					this.renderActionTile()
