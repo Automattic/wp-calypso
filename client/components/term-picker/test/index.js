@@ -84,19 +84,13 @@ describe( 'TermPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.equal(
-			picker
-				.find( 'TermPickerOption' )
-				.first()
-				.props().checked,
-			false
-		);
-		assert.equal(
-			picker
-				.find( 'TermPickerOption' )
-				.last()
-				.props().checked,
-			true
-		);
+
+		const first = picker.find( 'TermPickerOption' ).first();
+		assert.equal( first.props().value, PLAN_BUSINESS );
+		assert.equal( first.props().checked, false );
+
+		const last = picker.find( 'TermPickerOption' ).last();
+		assert.equal( last.props().value, PLAN_BUSINESS_2_YEARS );
+		assert.equal( last.props().checked, true );
 	} );
 } );
