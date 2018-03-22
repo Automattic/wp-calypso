@@ -15,7 +15,6 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
 const AssetsPlugin = require( 'assets-webpack-plugin' );
-const UglifyJsPlugin = require( 'uglifyjs-webpack-plugin' );
 const prism = require( 'prismjs' );
 
 /**
@@ -281,14 +280,7 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 }
 
 if ( shouldMinify ) {
-	webpackConfig.plugins.push(
-		new UglifyJsPlugin( {
-			cache: 'docker' !== process.env.CONTAINER,
-			parallel: true,
-			uglifyOptions: { ecma: 5 },
-			sourceMap: Boolean( process.env.SOURCEMAP ),
-		} )
-	);
+	babelConfig.presets.push( 'babel-minify' );
 }
 
 module.exports = webpackConfig;
