@@ -159,18 +159,21 @@ class PodcastingDetails extends Component {
 					<Card>
 						<QueryTerms siteId={ siteId } taxonomy="category" />
 						<TermTreeSelector
+							className="podcasting-details__category-selector"
 							taxonomy="category"
 							selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
 							onChange={ this.onCategorySelected }
 						/>
-						{ this.renderTextField( {
-							key: 'podcasting_title',
-							label: translate( 'Title' ),
-						} ) }
-						{ this.renderTextField( {
-							key: 'podcasting_subtitle',
-							label: translate( 'Subtitle' ),
-						} ) }
+						<div className="podcasting-details__basic-settings">
+							{ this.renderTextField( {
+								key: 'podcasting_title',
+								label: translate( 'Title' ),
+							} ) }
+							{ this.renderTextField( {
+								key: 'podcasting_subtitle',
+								label: translate( 'Subtitle' ),
+							} ) }
+						</div>
 						{ this.renderTopics() }
 						{ this.renderExplicitContent() }
 						{ this.renderTextField( {
