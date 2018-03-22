@@ -97,7 +97,7 @@ class OrderActionHeader extends Component {
 		const onSuccess = dispatch => {
 			dispatch(
 				successNotice(
-					translate( 'Order successfully updated. {{ordersLink}}View Orders{{/ordersLink}}.', {
+					translate( 'Order successfully updated. {{ordersLink}}View all orders{{/ordersLink}}.', {
 						components: {
 							ordersLink: <a href={ getLink( '/store/orders/:site/', site ) } />,
 						},

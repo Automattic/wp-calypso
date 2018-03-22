@@ -76,7 +76,7 @@ class Order extends Component {
 			};
 			dispatch(
 				successNotice(
-					translate( 'Order successfully created. {{ordersLink}}View Orders{{/ordersLink}}.', {
+					translate( 'Order successfully created. {{ordersLink}}View all orders{{/ordersLink}}.', {
 						components: {
 							ordersLink: <a href={ getLink( '/store/orders/:site/', site ) } />,
 						},
