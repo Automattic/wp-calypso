@@ -11,7 +11,7 @@ const themesSchema = {
 	type: 'object',
 	patternProperties: {
 		'^[\\w-]+$': {
-			additionalProperties: false,
+			additionalProperties: true,
 			required: [ 'id', 'name', 'author', 'screenshot' ],
 			type: 'object',
 			properties: {
