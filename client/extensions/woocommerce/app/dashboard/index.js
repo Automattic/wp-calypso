@@ -5,7 +5,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get, isEmpty } from 'lodash';
@@ -15,6 +14,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
+import {
+	areCountsLoaded,
+	getCountNewOrders,
+	getCountProducts,
+} from 'woocommerce/state/sites/data/counts/selectors';
 import {
 	areSettingsGeneralLoading,
 	getStoreLocation,
@@ -27,36 +31,31 @@ import {
 	getFinishedPageSetup,
 	isStoreSetupComplete,
 } from 'woocommerce/state/sites/setup-choices/selectors';
-import {
-	areOrdersLoading,
-	getNewOrdersWithoutPayPalPending,
-} from 'woocommerce/state/sites/orders/selectors';
-import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
-import { fetchProducts } from 'woocommerce/state/sites/products/actions';
+import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import {
-	getTotalProducts,
-	areProductsLoading,
-	areProductsLoaded,
-} from 'woocommerce/state/sites/products/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import Main from 'components/main';
 import ManageExternalView from './manage-external-view';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import Placeholder from './placeholder';
-import StoreLocationSetupView from './setup/store-location';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup';
+import StoreLocationSetupView from './setup/store-location';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import warn from 'lib/warn';
 
 class Dashboard extends Component {
 	static propTypes = {
 		className: PropTypes.string,
+		fetchCounts: PropTypes.func,
 		finishedInitialSetup: PropTypes.bool,
+		finishedInstallOfRequiredPlugins: PropTypes.bool,
+		finishedPageSetup: PropTypes.bool,
+		hasCounts: PropTypes.bool,
 		hasOrders: PropTypes.bool,
+		hasProducts: PropTypes.bool,
 		isSetupComplete: PropTypes.bool,
 		loading: PropTypes.bool,
 		selectedSite: PropTypes.shape( {
@@ -64,10 +63,11 @@ class Dashboard extends Component {
 			slug: PropTypes.string.isRequired,
 			URL: PropTypes.string.isRequired,
 		} ),
-		siteId: PropTypes.number,
-		fetchOrders: PropTypes.func,
-		requestSyncStatus: PropTypes.func,
+		setStoreAddressDuringInitialSetup: PropTypes.bool,
+		settingsGeneralLoading: PropTypes.bool,
 		setupChoicesLoading: PropTypes.bool,
+		siteId: PropTypes.number,
+		storeLocation: PropTypes.object,
 	};
 
 	state = {
@@ -78,7 +78,7 @@ class Dashboard extends Component {
 		const { siteId } = this.props;
 
 		if ( siteId ) {
-			this.fetchStoreData();
+			this.fetchData();
 		}
 	}
 
@@ -87,9 +87,16 @@ class Dashboard extends Component {
 		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
 		if ( siteId && oldSiteId !== siteId ) {
-			this.fetchStoreData();
+			this.fetchData();
 		}
 	}
+
+	fetchData = () => {
+		const { siteId, hasCounts } = this.props;
+		if ( ! hasCounts ) {
+			this.props.fetchCounts( siteId );
+		}
+	};
 
 	// If the user 1) has set the store address in StoreLocationSetupView
 	// and 2) we have a redirectURL, don't render but go ahead and
@@ -107,28 +114,25 @@ class Dashboard extends Component {
 	}
 
 	fetchStoreData = () => {
-		const { finishedInstallOfRequiredPlugins, productsLoaded, siteId } = this.props;
+		const { finishedInstallOfRequiredPlugins, hasCounts, siteId } = this.props;
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
 			return;
 		}
 
-		this.props.fetchOrders( siteId );
-
-		if ( ! productsLoaded ) {
-			const params = { page: 1 };
-			this.props.fetchProducts( siteId, params, null, null );
+		if ( ! hasCounts ) {
+			this.props.fetchCounts( siteId );
 		}
 	};
 
 	getBreadcrumb = () => {
 		const {
+			finishedInitialSetup,
 			finishedInstallOfRequiredPlugins,
 			finishedPageSetup,
-			finishedInitialSetup,
+			hasProducts,
 			setStoreAddressDuringInitialSetup,
 			translate,
-			hasProducts,
 		} = this.props;
 
 		if ( ! finishedInstallOfRequiredPlugins ) {
@@ -161,8 +165,8 @@ class Dashboard extends Component {
 			hasProducts,
 			selectedSite,
 			setStoreAddressDuringInitialSetup,
-			setupChoicesLoading,
 			settingsGeneralLoading,
+			setupChoicesLoading,
 			storeLocation,
 		} = this.props;
 
@@ -253,32 +257,35 @@ class Dashboard extends Component {
 function mapStateToProps( state ) {
 	const selectedSite = getSelectedSiteWithFallback( state );
 	const siteId = selectedSite ? selectedSite.ID : null;
+
+	// Data from calypso-preferences
 	const setupChoicesLoading = areSetupChoicesLoading( state );
-	const settingsGeneralLoading = areSettingsGeneralLoading( state, siteId );
-	const loading =
-		areOrdersLoading( state ) ||
-		setupChoicesLoading ||
-		areProductsLoading( state ) ||
-		settingsGeneralLoading;
-	const hasOrders = getNewOrdersWithoutPayPalPending( state ).length > 0;
-	const hasProducts = getTotalProducts( state ) > 0;
-	const productsLoaded = areProductsLoaded( state );
-	const finishedInitialSetup = getFinishedInitialSetup( state );
-	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
 	const finishedPageSetup = getFinishedPageSetup( state );
 	const setStoreAddressDuringInitialSetup = getSetStoreAddressDuringInitialSetup( state );
 	const isSetupComplete = isStoreSetupComplete( state );
+	const finishedInitialSetup = getFinishedInitialSetup( state );
+	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
+
+	// Data from settings/general
+	const settingsGeneralLoading = areSettingsGeneralLoading( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
+
+	// Data from data/counts
+	const hasCounts = areCountsLoaded( state );
+	const hasOrders = getCountNewOrders( state ) > 0;
+	const hasProducts = getCountProducts( state ) > 0;
+
+	const loading = setupChoicesLoading || ! hasCounts || settingsGeneralLoading;
 
 	return {
 		finishedInitialSetup,
 		finishedInstallOfRequiredPlugins,
 		finishedPageSetup,
+		hasCounts,
 		hasOrders,
 		hasProducts,
 		isSetupComplete,
 		loading,
-		productsLoaded,
 		selectedSite,
 		setStoreAddressDuringInitialSetup,
 		settingsGeneralLoading,
@@ -288,14 +295,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			fetchOrders,
-			fetchProducts,
-		},
-		dispatch
-	);
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( Dashboard ) );
+export default connect( mapStateToProps, { fetchCounts } )( localize( Dashboard ) );
