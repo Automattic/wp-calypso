@@ -236,7 +236,7 @@ class ThemeSheet extends React.Component {
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
-		const photonSrc = photon( screenshotFull, { width } );
+		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
 			<img
 				className="theme__sheet-img"
