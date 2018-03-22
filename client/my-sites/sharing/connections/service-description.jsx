@@ -148,6 +148,17 @@ class SharingServiceDescription extends Component {
 					}
 				);
 			},
+			google_my_business: function() {
+				if ( this.props.numberOfConnections > 0 ) {
+					return this.props.translate( 'Manage your connected Google My Business locations', {
+						comment: 'Description for Google My Business when one or more accounts are connected',
+					} );
+				}
+
+				return this.props.translate( 'Manage your Google My Business locations', {
+					comment: 'Description for Google My Business when no accounts are connected',
+				} );
+			},
 		} ),
 		numberOfConnections: 0,
 		translate: identity,
