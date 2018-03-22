@@ -41,8 +41,8 @@ class BlogPostsPage extends React.Component {
 			return pageTitle;
 		}
 		return pageId
-			? `#${ pageId } ${ this.props.translate( '(no title)' ) }`
-			: this.props.translate( '(no title)' );
+			? `${ this.props.translate( 'Untitled' ) } (#${ pageId })`
+			: this.props.translate( 'Untitled' );
 	};
 
 	getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {

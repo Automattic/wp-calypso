@@ -337,7 +337,7 @@ class Page extends Component {
 
 	render() {
 		const { page, site = {}, shadowStatus, translate } = this.props;
-		const title = page.title || translate( '(no title)' );
+		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page );
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 
@@ -382,6 +382,7 @@ class Page extends Component {
 		const cardClasses = {
 			page: true,
 			'is-indented': this.props.hierarchical && this.props.hierarchyLevel > 0,
+			'is-untitled': ! page.title,
 		};
 
 		const hierarchyIndentClasses = {
