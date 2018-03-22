@@ -51,7 +51,7 @@ export default function StatsController( context, next ) {
 		path: context.pathname,
 		queryDate: getQueryDate( context ),
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
-		queryParams: context.query,
+		queryParams: context.query || {},
 	};
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
@@ -104,7 +104,6 @@ export default function StatsController( context, next ) {
 					placeholder={ placeholder }
 					require="extensions/woocommerce/app/store-stats/referrers"
 					query={ referrerQuery }
-					referrer={ context.query.referrer }
 					{ ...props }
 				/>
 			);

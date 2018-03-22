@@ -50,9 +50,9 @@ class StoreStatsReferrerWidget extends Component {
 	}
 
 	getEmptyDataMessage( selectedData ) {
-		const { slugAndQuery, translate } = this.props;
+		const { translate, slug, queryParams } = this.props;
 		if ( ! this.hasNosaraJobRun( selectedData ) ) {
-			const href = `/store/stats/orders/week${ slugAndQuery }`;
+			const href = `/store/stats/orders${ getWidgetPath( 'week', slug, queryParams ) }`;
 			const primary = translate( 'Data is being processed – check back soon' );
 			const secondary = translate(
 				'Expand to a {{a}}wider{{/a}} view to see your latest referrers',
