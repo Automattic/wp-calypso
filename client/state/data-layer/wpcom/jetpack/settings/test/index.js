@@ -88,7 +88,7 @@ describe( 'announceRequestFailure()', () => {
 	const siteId = 12345678;
 	const siteUrl = 'http://yourgroovydomain.com';
 
-	test( 'should trigger an error notice with an action button when request fails', () => {
+	test( 'should trigger an error notice with an action button when request fails for an unconnected site', () => {
 		const getState = () => ( {
 			jetpackOnboarding: {
 				credentials: {
@@ -96,6 +96,39 @@ describe( 'announceRequestFailure()', () => {
 						siteUrl,
 						token: 'abcd1234',
 						userEmail: 'example@yourgroovydomain.com',
+					},
+				},
+			},
+			sites: {
+				items: {},
+			},
+		} );
+
+		announceRequestFailure( { dispatch, getState }, { siteId } );
+
+		expect( dispatch ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				notice: expect.objectContaining( {
+					button: 'Visit site admin',
+					href: siteUrl + '/wp-admin/admin.php?page=jetpack',
+					noticeId: `jpo-communication-error-${ siteId }`,
+					status: 'is-error',
+					text: 'Something went wrong.',
+				} ),
+			} )
+		);
+	} );
+
+	test( 'should trigger an error notice with an action button when request fails for a connected site', () => {
+		const getState = () => ( {
+			jetpackOnboarding: {
+				credentials: {},
+			},
+			sites: {
+				items: {
+					[ siteId ]: {
+						ID: siteId,
+						URL: siteUrl,
 					},
 				},
 			},
@@ -125,6 +158,9 @@ describe( 'announceRequestFailure()', () => {
 						userEmail: 'example@yourgroovydomain.com',
 					},
 				},
+			},
+			sites: {
+				items: {},
 			},
 		} );
 

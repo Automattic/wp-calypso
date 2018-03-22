@@ -16,7 +16,7 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
-import { getUnconnectedSiteUrl } from 'state/selectors';
+import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
@@ -66,7 +66,8 @@ export const requestJetpackOnboardingSettings = ( { dispatch }, action ) => {
 };
 
 export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => {
-	const url = getUnconnectedSiteUrl( getState(), siteId );
+	const state = getState();
+	const url = getSiteUrl( state, siteId ) || getUnconnectedSiteUrl( state, siteId );
 	const noticeOptions = {
 		id: `jpo-communication-error-${ siteId }`,
 	};
