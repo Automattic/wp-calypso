@@ -115,17 +115,17 @@ class InlineHelp extends Component {
 				<Button
 					className={ classNames( inlineHelpButtonClasses ) }
 					onClick={ this.handleHelpButtonClicked }
-				onTouchStart={ this.preload }
-				onMouseEnter={ this.preload }
+					onTouchStart={ this.preload }
+					onMouseEnter={ this.preload }
 					borderless
 					title={ translate( 'Help' ) }
 					ref={ this.inlineHelpToggleRef }
 				>
 					<Gridicon icon="help-outline" size={ 36 } />
-				{ showInlineHelp && (
-					<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
-							) }
-                </Button>
+					{ showInlineHelp && (
+						<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
+					) }
+        </Button>
 				{ this.props.isHappychatButtonVisible &&
 					config.isEnabled( 'happychat' ) && (
 						<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
