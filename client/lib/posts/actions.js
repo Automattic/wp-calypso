@@ -6,23 +6,18 @@
 
 import store from 'store';
 import { assign, clone, defer, fromPairs } from 'lodash';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import PostsStore from './posts-store';
 import PostEditStore from './post-edit-store';
-import postListStoreFactory from './post-list-store-factory';
 import PreferencesStore from 'lib/preferences/store';
 import * as utils from './utils';
 import versionCompare from 'lib/version-compare';
 import Dispatcher from 'dispatcher';
 import { recordSaveEvent } from './stats';
 import { normalizeTermsForApi } from 'state/posts/utils';
-
-const debug = debugFactory( 'calypso:posts' );
 
 var PostActions;
 
@@ -375,13 +370,7 @@ PostActions = {
 		}
 
 		postHandle[ isNew ? 'add' : 'update' ]( query, changedAttributes, function( error, data ) {
-			var original, currentMode;
-
-			currentMode = PreferencesStore.get( 'editor-mode' );
-
-			if ( ! error ) {
-				original = PostsStore.get( data.global_ID );
-			}
+			const currentMode = PreferencesStore.get( 'editor-mode' );
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_BEING_EDITED',
@@ -391,7 +380,6 @@ PostActions = {
 				// it
 				rawContent: mode === currentMode ? rawContent : null,
 				isNew: isNew,
-				original: original,
 				post: data,
 				site,
 			} );
@@ -442,130 +430,14 @@ PostActions = {
 		postHandle.restore( PostActions.receiveUpdate.bind( null, site, callback ) );
 	},
 
-	queryPosts: function( options, postListStoreId = 'default' ) {
-		Dispatcher.handleViewAction( {
-			type: 'QUERY_POSTS',
-			options: options,
-			postListStoreId: postListStoreId,
-		} );
-	},
-
-	/**
-	 * Fetch next page of posts from the user's sites via the WordPress.com REST API.
-	 *
-	 * @api public
-	 */
-	fetchNextPage: function( postListStoreId = 'default' ) {
-		const postListStore = postListStoreFactory( postListStoreId );
-
-		if ( postListStore.isLastPage() || postListStore.isFetchingNextPage() ) {
-			return;
-		}
-
-		Dispatcher.handleViewAction( {
-			type: 'FETCH_NEXT_POSTS_PAGE',
-			postListStoreId: postListStoreId,
-		} );
-
-		const id = postListStore.getID();
-		const params = postListStore.getNextPageParams();
-		const siteId = postListStore.getSiteId();
-
-		if ( siteId ) {
-			wpcom
-				.site( siteId )
-				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
-		} else {
-			wpcom.me().postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
-		}
-	},
-
-	receivePage: function( id, postListStoreId, error, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_POSTS_PAGE',
-			id: id,
-			postListStoreId: postListStoreId,
-			error: error,
-			data: data,
-		} );
-	},
-
-	fetchUpdated: function( postListStoreId = 'default' ) {
-		const postListStore = postListStoreFactory( postListStoreId );
-
-		if ( postListStore.isFetchingNextPage() ) {
-			return;
-		}
-
-		Dispatcher.handleViewAction( {
-			type: 'FETCH_UPDATED_POSTS',
-			postListStoreId: postListStoreId,
-		} );
-
-		const id = postListStore.getID();
-		const params = postListStore.getUpdatesParams();
-		const siteId = postListStore.getSiteId();
-
-		if ( siteId ) {
-			debug(
-				'Fetching posts that have been updated for %s since %s %o',
-				siteId,
-				params.modified_after,
-				params
-			);
-			wpcom
-				.site( siteId )
-				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
-		} else {
-			debug( 'Fetching posts that have been updated since %s %o', params.modified_after, params );
-			wpcom.me().postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
-		}
-	},
-
-	receiveUpdated: function( id, postListStoreId, error, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_UPDATED_POSTS',
-			id: id,
-			postListStoreId: postListStoreId,
-			error: error,
-			data: data,
-		} );
-	},
-
 	receiveUpdate: function( site, callback, error, data ) {
-		var original;
-
-		if ( ! error ) {
-			original = PostsStore.get( data.global_ID );
-		}
-
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_UPDATED_POST',
 			error: error,
-			original: original,
 			post: data,
 			site,
 		} );
 		callback( error, data );
-	},
-
-	fetchCounts: function( siteId, options ) {
-		Dispatcher.handleViewAction( {
-			type: 'FETCH_POST_COUNTS',
-			siteId: siteId,
-		} );
-
-		wpcom
-			.undocumented()
-			.site( siteId )
-			.postCounts( options, function( error, data ) {
-				Dispatcher.handleServerAction( {
-					type: 'RECEIVE_POST_COUNTS',
-					error: error,
-					data: data,
-					siteId: siteId,
-				} );
-			} );
 	},
 };
 
