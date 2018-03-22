@@ -19,10 +19,6 @@ import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 /* eslint-disable no-restricted-imports */
 import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import GlobalNotices from 'components/global-notices';
-import notices from 'notices';
-import translator from 'lib/translator-jumpstart';
-import TranslatorLauncher from './community-translator/launcher';
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
 import SitesListNotices from 'lib/sites-list/notices';
@@ -40,12 +36,9 @@ import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
-import NpsSurveyNotice from 'layout/nps-survey-notice';
 import AppBanner from 'blocks/app-banner';
 import { getPreference } from 'state/preferences/selectors';
-import JITM from 'blocks/jitm';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
-import SupportUser from 'support/support-user';
 
 /* eslint-disable react/no-deprecated */
 const Layout = createReactClass( {
@@ -115,22 +108,13 @@ const Layout = createReactClass( {
 				<DocumentHead />
 				<SitesListNotices />
 				<QueryPreferences />
-				{ config.isEnabled( 'nps-survey/notice' ) && <NpsSurveyNotice /> }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<div className={ loadingClass }>
 					<PulsingDot active={ this.props.isLoading } />
 				</div>
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
-					{ config.isEnabled( 'jitms' ) && <JITM /> }
-					<GlobalNotices
-						id="notices"
-						notices={ notices.list }
-						forcePinned={ 'post' === this.props.section.name }
-					/>
-
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
@@ -138,13 +122,7 @@ const Layout = createReactClass( {
 						{ this.props.primary }
 					</div>
 				</div>
-				<TranslatorLauncher
-					isEnabled={ translator.isEnabled() }
-					isActive={ translator.isActivated() }
-				/>
 				{ this.renderPreview() }
-				{ config.isEnabled( 'happychat' ) &&
-					this.props.chatIsOpen && <AsyncLoad require="components/happychat" /> }
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
@@ -160,7 +138,7 @@ export default connect( state => {
 	return {
 		masterbarIsHidden: ! masterbarIsVisible( state ),
 		isLoading,
-		isSupportUser: state.support.isSupportUser,
+		isSupportUser: false,
 		section,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),

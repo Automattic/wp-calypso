@@ -13,16 +13,12 @@ import React from 'react';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
-import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
 import config from 'config';
 import { preload } from 'sections-helper';
-import ResumeEditing from 'my-sites/resume-editing';
-import { getPrimarySiteId, isDomainOnlySite, isNotificationsOpen } from 'state/selectors';
+import { isNotificationsOpen } from 'state/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
 
@@ -107,16 +103,6 @@ class MasterbarLoggedIn extends React.Component {
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
-				{ ! domainOnlySite && (
-					<Publish
-						user={ this.props.user }
-						isActive={ this.isActive( 'post' ) }
-						className="masterbar__item-new"
-						tooltip={ translate( 'Create a New Post' ) }
-					>
-						{ translate( 'Write' ) }
-					</Publish>
-				) }
 				<Item
 					tipTarget="me"
 					url="/me"

@@ -22,49 +22,19 @@ import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
 import applicationPasswords from './application-passwords/reducer';
 import navigationMiddleware from './navigation/middleware';
-import noticesMiddleware from './notices/middleware';
+import application from './application/reducer';
 import comments from './comments/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
-import domains from './domains/reducer';
-import geo from './geo/reducer';
-import googleAppsUsers from './google-apps-users/reducer';
-import googleMyBusiness from './google-my-business/reducer';
-import help from './help/reducer';
-import i18n from './i18n/reducer';
-import invites from './invites/reducer';
-import inlineHelpSearchResults from './inline-help/reducer';
-import jetpackConnect from './jetpack-connect/reducer';
-import jetpack from './jetpack/reducer';
-import jetpackRemoteInstall from './jetpack-remote-install/reducer';
-import jetpackSync from './jetpack-sync/reducer';
-import jitm from './jitm/reducer';
-import happinessEngineers from './happiness-engineers/reducer';
-import happychat from './happychat/reducer';
-import login from './login/reducer';
-import media from './media/reducer';
-import notices from './notices/reducer';
-import npsSurvey from './nps-survey/reducer';
-import oauth2Clients from './oauth2-clients/reducer';
-import orderTransactions from './order-transactions/reducer';
-import pageTemplates from './page-templates/reducer';
-import plans from './plans/reducer';
-import plugins from './plugins/reducer';
-import postFormats from './post-formats/reducer';
-import posts from './posts/reducer';
-import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
 import privacyPolicy from './privacy-policy/reducer';
 import productsList from './products-list/reducer';
 import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
-=======
 import media from './media/reducer';
 import notices from './notices/reducer';
 import preferences from './preferences/reducer';
->>>>>>> Calypso: isolate Reader
 import reader from './reader/reducer';
-import support from './support/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import config from 'config';
@@ -74,16 +44,14 @@ import config from 'config';
  */
 
 const reducers = {
+	application,
 	comments,
 	currentUser,
 	documentHead,
 	form,
-	media,
-	notices,
 	preferences,
 	reader,
 	ui,
-	support,
 	users,
 };
 
@@ -114,8 +82,6 @@ export function createReduxStore( initialState = {} ) {
 		// responses. Therefore we need to inject the data layer
 		// as early as possible into the middleware chain.
 		require( './data-layer/wpcom-api-middleware.js' ).default,
-		noticesMiddleware,
-		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isBrowser &&
 			config.isEnabled( 'restore-last-location' ) &&
