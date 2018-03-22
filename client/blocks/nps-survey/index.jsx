@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
+import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -17,6 +18,7 @@ import { noop, trim } from 'lodash';
 import Button from 'components/button';
 import Card from 'components/card';
 import FormTextArea from 'components/forms/form-textarea';
+import ScreenReaderText from 'components/screen-reader-text';
 import RecommendationSelect from './recommendation-select';
 import {
 	submitNpsSurvey,
@@ -49,7 +51,9 @@ class NpsSurvey extends Component {
 	};
 
 	handleDismissClick = () => {
-		this.props.submitNpsSurveyWithNoScore( this.props.name );
+		if ( ! this.props.hasAnswered ) {
+			this.props.submitNpsSurveyWithNoScore( this.props.name );
+		}
 		this.onClose( noop );
 	};
 
@@ -108,7 +112,7 @@ class NpsSurvey extends Component {
 						disabled={ this.props.hasAnswered }
 						onClick={ this.handleFinishClick }
 					>
-						{ translate( 'Finish' ) }
+						{ translate( 'Submit' ) }
 					</Button>
 					<Button
 						borderless
@@ -116,7 +120,7 @@ class NpsSurvey extends Component {
 						disabled={ this.props.hasAnswered }
 						onClick={ this.handleDismissClick }
 					>
-						{ translate( "I'd rather not answer" ) }
+						{ translate( 'Close' ) }
 					</Button>
 				</div>
 			</Fragment>
@@ -144,14 +148,14 @@ class NpsSurvey extends Component {
 						disabled={ ! this.state.feedback }
 						onClick={ this.handleSendFeedbackClick }
 					>
-						{ translate( 'Send Feedback' ) }
+						{ translate( 'Submit' ) }
 					</Button>
 					<Button
 						borderless
 						className="nps-survey__not-answer-button"
 						onClick={ this.handleFeedbackFormClose }
 					>
-						{ translate( 'Close the survey immediately' ) }
+						{ translate( 'Close' ) }
 					</Button>
 				</div>
 			</Fragment>
@@ -159,6 +163,7 @@ class NpsSurvey extends Component {
 	}
 
 	render() {
+		const { translate } = this.props;
 		const className = classNames( 'nps-survey', {
 			'is-recommendation-selected': Number.isInteger( this.state.score ),
 			'is-submitted': this.props.hasAnswered,
@@ -166,6 +171,16 @@ class NpsSurvey extends Component {
 
 		return (
 			<Card className={ className }>
+				<Button
+					borderless
+					className="nps-survey__close-button"
+					onClick={
+						this.state.showFeedbackForm ? this.handleFeedbackFormClose : this.handleDismissClick
+					}
+				>
+					<Gridicon icon="cross" />
+					<ScreenReaderText>{ translate( 'Close' ) }</ScreenReaderText>
+				</Button>
 				<div className="nps-survey__question-screen">
 					{ this.state.showFeedbackForm ? this.renderFeedbackForm() : this.renderScoreForm() }
 				</div>
