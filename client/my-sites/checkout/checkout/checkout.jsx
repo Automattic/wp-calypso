@@ -161,7 +161,7 @@ class Checkout extends React.Component {
 
 	getPlanProducts() {
 		return this.props.cart.products.filter( p => getPlan( p.product_slug ) );
-	},
+	}
 
 	getProductSlugFromSynonym( slug ) {
 		if ( 'no-ads' === slug ) {
@@ -522,7 +522,7 @@ class Checkout extends React.Component {
 				<hr className="term-picker-separator" key="separator" />
 			</React.Fragment>
 		);
-	},
+	}
 
 	handleTermChange( e ) {
 		// Remove all cart items that are plans
@@ -537,7 +537,7 @@ class Checkout extends React.Component {
 			from_section: 'checkout',
 		} );
 		addItem( cartItem );
-	},
+	}
 
 	paymentMethodsAbTestFilter() {
 		// This methods can be used to filter payment methods
