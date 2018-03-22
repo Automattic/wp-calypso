@@ -11,7 +11,7 @@ import React from 'react';
  */
 import WritingMain from 'my-sites/site-settings/settings-writing/main';
 import Taxonomies from 'my-sites/site-settings/taxonomies';
-import PodcastDetails from 'my-sites/site-settings/podcasting-details';
+import PodcastingDetails from 'my-sites/site-settings/podcasting-details';
 
 export default {
 	writing( context, next ) {
@@ -27,8 +27,8 @@ export default {
 		next();
 	},
 
-	podcast( context, next ) {
-		context.primary = React.createElement( PodcastDetails );
+	podcasting( context, next ) {
+		context.primary = React.createElement( PodcastingDetails );
 		next();
 	},
 };

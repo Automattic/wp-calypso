@@ -38,15 +38,15 @@ export default function() {
 		);
 	}
 
-	if ( config.isEnabled( 'manage/site-settings/podcasts' ) ) {
-		page( '/settings/podcast', siteSelection, sites, makeLayout, clientRender );
+	if ( config.isEnabled( 'manage/site-settings/podcasting' ) ) {
+		page( '/settings/podcasting', siteSelection, sites, makeLayout, clientRender );
 
 		page(
-			'/settings/podcast/:site_id',
+			'/settings/podcasting/:site_id',
 			siteSelection,
 			navigation,
 			settingsController.setScroll,
-			controller.podcast,
+			controller.podcasting,
 			makeLayout,
 			clientRender
 		);

@@ -134,14 +134,14 @@ class PodcastDetails extends Component {
 				className="main main-column" // eslint-disable-line
 				role="main"
 			>
-				<DocumentHead title={ translate( 'Podcast Details' ) } />
+				<DocumentHead title={ translate( 'Podcasting Settings' ) } />
 				<form id="site-settings" onSubmit={ handleSubmitForm }>
 					<HeaderCake
 						actionButton={ this.renderSaveButton() }
 						backHref={ writingHref }
 						backText={ translate( 'Writing' ) }
 					>
-						<h1>{ translate( 'Podcast Details' ) }</h1>
+						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
 					<Card>
 						{ this.renderTextField( {
