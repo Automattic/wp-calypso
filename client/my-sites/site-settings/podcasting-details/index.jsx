@@ -235,7 +235,9 @@ const connectComponent = connect( ( state, ownProps ) => {
 	if ( podcastingCategorySlug && podcastingCategorySlug !== '0' ) {
 		const categories = getTerms( state, siteId, 'category' );
 		if ( categories && categories.length ) {
-			let podcastingCategory = find( categories, c => c.slug === podcastingCategorySlug );
+			// This is not a bound selector
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			const podcastingCategory = find( categories, c => c.slug === podcastingCategorySlug );
 			if ( podcastingCategory ) {
 				podcastingCategoryId = podcastingCategory.ID;
 			}
