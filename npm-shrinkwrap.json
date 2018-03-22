@@ -99,8 +99,8 @@
       }
     },
     "@types/node": {
-      "version": "8.10.0",
-      "integrity": "sha512-7IGHZQfRfa0bCd7zUBVUGFKFn31SpaLDFfNoCAqkTGQO5JlHC9BwQA/CG9KZlABFxIUtXznyFgechjPQEGrUTg==",
+      "version": "9.6.0",
+      "integrity": "sha512-h3YZbOq2+ZoDFI1z8Zx0Ck/xRWkOESVaLdgLdd/c25mMQ1Y2CAkILu9ny5A15S5f32gGcQdaUIZ2jzYr8D7IFg==",
       "dev": true
     },
     "JSONStream": {
@@ -814,16 +814,13 @@
         "babel-runtime": "6.26.0"
       }
     },
-    "babel-minify": {
-      "version": "0.3.0",
-      "integrity": "sha512-LrNEcK+vUkMC+2UERDI+03khMM10Oz60Q422nL6DLhJ9H5/0UJAhCfp3elVciCdaj507AEkiXLtkF585Oe9NFg==",
+    "babel-minify-webpack-plugin": {
+      "version": "0.3.1",
+      "integrity": "sha512-Johg6Ju0Gxevk2R55eutMqnyXwlyUzCtwunBpiyNzoxGnKum+x5nfNuYZYHGd5Bmc1gmhjwzb7GkxHWOtYWmtQ==",
       "requires": {
         "babel-core": "6.26.0",
         "babel-preset-minify": "0.3.0",
-        "fs-readdir-recursive": "1.1.0",
-        "mkdirp": "0.5.1",
-        "util.promisify": "1.0.0",
-        "yargs-parser": "8.1.0"
+        "webpack-sources": "1.1.0"
       },
       "dependencies": {
         "babel-core": {
@@ -5213,8 +5210,9 @@
       }
     },
     "fs-readdir-recursive": {
-      "version": "1.1.0",
-      "integrity": "sha512-GNanXlVr2pf02+sPN40XN8HG+ePaNcvM0q5mZBd668Obwb0yD5GiUbZOFgwn8kGMY6I3mdyDJzieUy3PTYyTRA=="
+      "version": "0.1.2",
+      "integrity": "sha1-MVtPuMHKW4xH3v7zGdBz2tNWgFk=",
+      "dev": true
     },
     "fs.realpath": {
       "version": "1.0.0",
@@ -7647,6 +7645,11 @@
             "color-convert": "1.9.1"
           }
         },
+        "camelcase": {
+          "version": "4.1.0",
+          "integrity": "sha1-1UVjW+HjPFQmScaRc+Xeas+uNN0=",
+          "dev": true
+        },
         "chalk": {
           "version": "2.3.2",
           "integrity": "sha512-ZM4j2/ld/YZDc3Ma8PgN7gyAk+kHMMMyzLNryCPGhWrsfAuDVeuid5bpRFTDgMH9JBK2lA4dyyAkkZYF/WcqDQ==",
@@ -7793,6 +7796,14 @@
             "which-module": "2.0.0",
             "y18n": "3.2.1",
             "yargs-parser": "8.1.0"
+          }
+        },
+        "yargs-parser": {
+          "version": "8.1.0",
+          "integrity": "sha512-yP+6QqN8BmrgW2ggLtTbdrOyBNSI7zBa4IykmiV5R1wl1JWNxQvWhMfMdmzIYtKU7oP3OOInY/tl2ov3BDjnJQ==",
+          "dev": true,
+          "requires": {
+            "camelcase": "4.1.0"
           }
         }
       }
@@ -8372,6 +8383,11 @@
             "color-convert": "1.9.1"
           }
         },
+        "camelcase": {
+          "version": "4.1.0",
+          "integrity": "sha1-1UVjW+HjPFQmScaRc+Xeas+uNN0=",
+          "dev": true
+        },
         "chalk": {
           "version": "2.3.2",
           "integrity": "sha512-ZM4j2/ld/YZDc3Ma8PgN7gyAk+kHMMMyzLNryCPGhWrsfAuDVeuid5bpRFTDgMH9JBK2lA4dyyAkkZYF/WcqDQ==",
@@ -8479,6 +8495,14 @@
             "which-module": "2.0.0",
             "y18n": "3.2.1",
             "yargs-parser": "8.1.0"
+          }
+        },
+        "yargs-parser": {
+          "version": "8.1.0",
+          "integrity": "sha512-yP+6QqN8BmrgW2ggLtTbdrOyBNSI7zBa4IykmiV5R1wl1JWNxQvWhMfMdmzIYtKU7oP3OOInY/tl2ov3BDjnJQ==",
+          "dev": true,
+          "requires": {
+            "camelcase": "4.1.0"
           }
         }
       }
@@ -8815,11 +8839,6 @@
             "minimist": "1.2.0",
             "repeating": "1.1.3"
           }
-        },
-        "fs-readdir-recursive": {
-          "version": "0.1.2",
-          "integrity": "sha1-MVtPuMHKW4xH3v7zGdBz2tNWgFk=",
-          "dev": true
         },
         "globals": {
           "version": "6.4.1",
@@ -10631,6 +10650,7 @@
     "object.getownpropertydescriptors": {
       "version": "2.0.3",
       "integrity": "sha1-h1jIRvW0B62rDyNuCYbxSwUcqhY=",
+      "dev": true,
       "requires": {
         "define-properties": "1.1.2",
         "es-abstract": "1.11.0"
@@ -10920,7 +10940,7 @@
       "integrity": "sha512-rgO9Zg5LLLkfJF9E6CCmXlSE4UVceloys8JrFqCcHloC3usd/kJCyPDwH2SOlzix2j3xaP9sUX3e8+kvkuleAA==",
       "dev": true,
       "requires": {
-        "@types/node": "8.10.0"
+        "@types/node": "9.6.0"
       }
     },
     "parsejson": {
@@ -13666,13 +13686,6 @@
             "y18n": "3.2.1",
             "yargs-parser": "5.0.0"
           }
-        },
-        "yargs-parser": {
-          "version": "5.0.0",
-          "integrity": "sha1-J17PDX/+Bcd+ZOfIbkzZS/DhIoo=",
-          "requires": {
-            "camelcase": "3.0.0"
-          }
         }
       }
     },
@@ -15814,6 +15827,7 @@
     "util.promisify": {
       "version": "1.0.0",
       "integrity": "sha512-i+6qA2MPhvoKLuxnJNpXAGhg7HphQOSUq2LKMZD0m15EiskXUkMvKdF4Uui0WYeCUGea+o2cw/ZuwehtfsrNkA==",
+      "dev": true,
       "requires": {
         "define-properties": "1.1.2",
         "object.getownpropertydescriptors": "2.0.3"
@@ -17118,15 +17132,15 @@
       }
     },
     "yargs-parser": {
-      "version": "8.1.0",
-      "integrity": "sha512-yP+6QqN8BmrgW2ggLtTbdrOyBNSI7zBa4IykmiV5R1wl1JWNxQvWhMfMdmzIYtKU7oP3OOInY/tl2ov3BDjnJQ==",
+      "version": "5.0.0",
+      "integrity": "sha1-J17PDX/+Bcd+ZOfIbkzZS/DhIoo=",
       "requires": {
-        "camelcase": "4.1.0"
+        "camelcase": "3.0.0"
       },
       "dependencies": {
         "camelcase": {
-          "version": "4.1.0",
-          "integrity": "sha1-1UVjW+HjPFQmScaRc+Xeas+uNN0="
+          "version": "3.0.0",
+          "integrity": "sha1-MvxLn82vhF/N9+c7uXysImHwqwo="
         }
       }
     },
