@@ -52,10 +52,8 @@ export const pendingItems = ( state = [], action ) => {
 			const { posts } = action.payload;
 			const postKeys = posts.map( keyForPost );
 
-			const newState = uniqBy( [ ...postKeys, ...state ], keyToString );
-			if ( newState.length > state.length ) {
-				return newState;
-			}
+			const newState = uniqBy( postKeys, keyToString );
+			return newState;
 	}
 	return state;
 };

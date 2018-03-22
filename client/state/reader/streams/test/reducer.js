@@ -67,6 +67,15 @@ describe( 'streams.pendingItems reducer', () => {
 
 		expect( nextState ).toEqual( [ blogPostKey, feedPostKey ] );
 	} );
+
+	it( 'should overwrite previous pending posts with the current set', () => {
+		const newKey = { feed_item_ID: '3', feed_ID: '4' };
+		const prevState = deepfreeze( [ blogPostKey, feedPostKey ] );
+		const action = receiveUpdates( { posts: [ newKey ] } );
+		const nextState = pendingItems( prevState, action );
+
+		expect( nextState ).toEqual( [ { postId: '3', feedId: '4' } ] );
+	} );
 } );
 
 describe( 'streams.selected reducer', () => {
