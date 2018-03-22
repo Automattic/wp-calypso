@@ -103,7 +103,7 @@ export default function waitForImagesToLoad( post ) {
 
 		// convert to image objects to start the load process
 		// only check the first x images
-		const NUMBER_OF_IMAGES_TO_CHECK = 15;
+		const NUMBER_OF_IMAGES_TO_CHECK = 10;
 		let promises = map( take( imagesToCheck, NUMBER_OF_IMAGES_TO_CHECK ), imageUrl => {
 			if ( imageUrl in knownImages ) {
 				return Promise.resolve( knownImages[ imageUrl ] );
