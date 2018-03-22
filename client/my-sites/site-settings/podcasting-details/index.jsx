@@ -25,7 +25,7 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import categories from './categories';
 
-class PodcastDetails extends Component {
+class PodcastingDetails extends Component {
 	renderExplicitContent() {
 		const { fields, handleSelect, isRequestingSettings, translate } = this.props;
 
@@ -202,5 +202,5 @@ const connectComponent = connect( state => {
 } );
 
 export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	localize( PodcastDetails )
+	localize( PodcastingDetails )
 );
