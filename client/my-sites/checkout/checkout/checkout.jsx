@@ -519,7 +519,7 @@ class Checkout extends React.Component {
 					onChange={ this.handleTermChange }
 					key="picker"
 				/>
-				<hr className="term-picker-separator" key="separator" />
+				<hr className="checkout__term-picker-separator" key="separator" />
 			</React.Fragment>
 		);
 	}

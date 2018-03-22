@@ -383,7 +383,7 @@
 		margin-top: 15px;
 	}
 
-	.term-picker-separator {
+	&__term-picker-separator {
 		display: none;
 		position: relative;
 		// Parent overflow is hidden, so 80px here is an arbitrary number
