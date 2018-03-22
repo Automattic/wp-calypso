@@ -100,13 +100,13 @@ export class TermPickerOption extends React.Component {
 		const { term, translate } = this.props;
 		switch ( term ) {
 			case TERM_BIENNIALLY:
-				return translate( '2 years' );
+				return translate( '%s year', '%s years', { count: 2, args: '2' } );
 
 			case TERM_ANNUALLY:
-				return translate( '1 year' );
+				return translate( '%s year', '%s years', { count: 1, args: '1' } );
 
 			case TERM_MONTHLY:
-				return translate( '1 month' );
+				return translate( '%s month', '%s months', { count: 1, args: '1' } );
 		}
 	}
 }
