@@ -150,7 +150,7 @@ export const onPostRestoreFailure = action => ( dispatch, getState ) => {
 
 const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully restored' ) );
 
-export function onPostSaveSuccess( dispatch, { post, savedPost } ) {
+export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
 	switch ( post.status ) {
 		case 'trash':
 			const noticeId = 'trash_' + savedPost.global_ID;
@@ -170,7 +170,7 @@ export function onPostSaveSuccess( dispatch, { post, savedPost } ) {
 			dispatch( successNotice( translate( 'Post successfully published' ) ) );
 			break;
 	}
-}
+};
 
 export const onPublicizeConnectionCreate = ( { connection } ) =>
 	successNotice(
