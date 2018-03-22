@@ -30,7 +30,7 @@ import {
 	topCategories,
 	topCoupons,
 } from 'woocommerce/app/store-stats/constants';
-import { getUnitPeriod, getEndPeriod, getQueries } from './utils';
+import { getUnitPeriod, getEndPeriod, getQueries, getWidgetPath } from './utils';
 import QuerySiteStats from 'components/data/query-site-stats';
 import config from 'config';
 import StoreStatsReferrerWidget from './store-stats-referrer-widget';
@@ -39,21 +39,20 @@ class StoreStats extends Component {
 	static propTypes = {
 		path: PropTypes.string.isRequired,
 		queryDate: PropTypes.string,
-		querystring: PropTypes.string,
+		queryParams: PropTypes.object.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
 		unit: PropTypes.string.isRequired,
 	};
 
 	render() {
-		const { path, queryDate, selectedDate, siteId, slug, unit, querystring } = this.props;
+		const { path, queryDate, selectedDate, siteId, slug, unit, queryParams } = this.props;
 		const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 		const endSelectedDate = getEndPeriod( selectedDate, unit );
 		const { orderQuery, referrerQuery } = getQueries( unit, queryDate );
 		const { topListQuery } = getQueries( unit, selectedDate );
 		const topWidgets = [ topProducts, topCategories, topCoupons ];
-		const slugAndQuery = `/${ slug }${ querystring ? '?' + querystring : '' }`;
-		const widgetPath = `/${ unit }${ slugAndQuery }`;
+		const widgetPath = getWidgetPath( unit, slug, queryParams );
 
 		return (
 			<Main className="store-stats woocommerce" wideLayout={ true }>
@@ -119,13 +118,12 @@ class StoreStats extends Component {
 						>
 							<StoreStatsReferrerWidget
 								unit={ unit }
-								querystring={ querystring }
+								queryParams={ queryParams }
 								slug={ slug }
 								siteId={ siteId }
 								query={ referrerQuery }
 								statType="statsStoreReferrers"
 								selectedDate={ unitSelectedDate }
-								slugAndQuery={ slugAndQuery }
 							/>
 						</Module>
 					</div>
