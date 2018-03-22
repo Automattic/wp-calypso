@@ -11,6 +11,8 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../../lib/plans/constants';
 
+let componentNumber = 0;
+
 export class TermPickerOption extends React.Component {
 	static propTypes = {
 		term: PropTypes.string.isRequired,
@@ -29,15 +31,21 @@ export class TermPickerOption extends React.Component {
 		onCheck: () => null,
 	};
 
+	constructor( props ) {
+		super( props );
+		this.htmlId = 'term-option-' + ++componentNumber;
+	}
+
 	render() {
 		const { savePercent, price, term, checked } = this.props;
 		const className = classnames( 'term-picker-option', {
 			'term-picker-option--active': checked,
 		} );
 		return (
-			<label className={ className }>
+			<label className={ className } htmlFor={ this.htmlId }>
 				<div className="term-picker-option__radio-wrapper">
 					<input
+						id={ this.htmlId }
 						type="radio"
 						className="term-picker-option__radio"
 						checked={ checked }
