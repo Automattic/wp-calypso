@@ -16,6 +16,7 @@ import i18n from 'i18n-calypso';
 import classNames from 'classnames';
 import titlecase from 'to-title-case';
 import Gridicon from 'gridicons';
+import { head, split } from 'lodash';
 
 /**
  * Internal dependencies
@@ -193,7 +194,9 @@ class ThemeSheet extends React.Component {
 
 	getFullLengthScreenshot() {
 		if ( this.isLoaded() ) {
-			return this.props.screenshots[ 0 ];
+			// Results are being returned with photon params like `?w=…`. This makes the photon
+			// module abort and return null. Strip query string.
+			return head( split( head( this.props.screenshots ), '?', 1 ) );
 		}
 		return null;
 	}
