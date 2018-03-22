@@ -424,7 +424,7 @@ describe( 'QueryManager', () => {
 			expect( newManager.getItems( {} ) ).toEqual( [ { ID: 144 }, { ID: 152 } ] );
 		} );
 
-		it( 'should sort items when merging queries', () => {
+		test( 'should sort items when merging queries', () => {
 			jest.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
 				item =>
@@ -436,7 +436,7 @@ describe( 'QueryManager', () => {
 			expect( manager.getItems( {} ) ).toEqual( [ { ID: 2 }, { ID: 3 }, { ID: 4 } ] );
 		} );
 
-		it( 'should sort when extended using subclassed static compare', () => {
+		test( 'should sort when extended using subclassed static compare', () => {
 			let sortingManager = new class extends QueryManager {
 				static compare( query, a, b ) {
 					return a.ID - b.ID;
