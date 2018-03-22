@@ -35,8 +35,8 @@ class GoogleMyBusinessConnections extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const nextHref = '/google-my-business/confirm/' + siteId;
-		const backHref = '/google-my-business/category/' + siteId;
+		const nextHref = '/google-my-business/create/confirm/' + siteId;
+		const backHref = '/google-my-business/create/category/' + siteId;
 
 		return (
 			<Main className="google-my-business google-my-business-connections" wideLayout>

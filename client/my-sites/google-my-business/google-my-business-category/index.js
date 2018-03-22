@@ -161,8 +161,8 @@ class GoogleMyBusinessCategory extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const nextHref = '/google-my-business/connections/' + siteId;
-		const backHref = '/google-my-business/address/' + siteId;
+		const nextHref = '/google-my-business/create/connections/' + siteId;
+		const backHref = '/google-my-business/create/address/' + siteId;
 		const learnMore =
 			'https://support.google.com/business/answer/7249669?hl=en&_ga=2.170244832.1172336099.1521039613-786824372.1502702633';
 
@@ -172,7 +172,7 @@ class GoogleMyBusinessCategory extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<CompactCard>
+				<CompactCard className="is-animated-content">
 					<FormFieldset>
 						<FormLegend>What kind of business do you run?</FormLegend>
 

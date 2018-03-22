@@ -18,6 +18,7 @@ import Connections from './google-my-business-connections';
 import Confirm from './google-my-business-confirm';
 import Verify from './google-my-business-verify';
 import New from './google-my-business-new';
+import GoogleMyBusinessCreate from './google-my-business-create';
 
 export function selectBusinessType( context, next ) {
 	const { params } = context;
@@ -33,7 +34,11 @@ export function showListOfLocations( context, next ) {
 
 export function searchForALocation( context, next ) {
 	const { params } = context;
-	context.primary = <SearchForALocation siteId={ params.site_id } />;
+	context.primary = (
+		<GoogleMyBusinessCreate>
+			<SearchForALocation siteId={ params.site_id } />
+		</GoogleMyBusinessCreate>
+	);
 	next();
 }
 
@@ -45,19 +50,31 @@ export function stats( context, next ) {
 
 export function address( context, next ) {
 	const { params } = context;
-	context.primary = <Address siteId={ params.site_id } />;
+	context.primary = (
+		<GoogleMyBusinessCreate>
+			<Address siteId={ params.site_id } />
+		</GoogleMyBusinessCreate>
+	);
 	next();
 }
 
 export function category( context, next ) {
 	const { params } = context;
-	context.primary = <Category siteId={ params.site_id } />;
+	context.primary = (
+		<GoogleMyBusinessCreate>
+			<Category siteId={ params.site_id } />
+		</GoogleMyBusinessCreate>
+	);
 	next();
 }
 
 export function connections( context, next ) {
 	const { params } = context;
-	context.primary = <Connections siteId={ params.site_id } />;
+	context.primary = (
+		<GoogleMyBusinessCreate>
+			<Connections siteId={ params.site_id } />
+		</GoogleMyBusinessCreate>
+	);
 	next();
 }
 
@@ -75,6 +92,38 @@ export function newGMB( context, next ) {
 
 export function confirm( context, next ) {
 	const { params } = context;
-	context.primary = <Confirm siteId={ params.site_id } />;
+	context.primary = (
+		<GoogleMyBusinessCreate>
+			<Confirm siteId={ params.site_id } />
+		</GoogleMyBusinessCreate>
+	);
+	next();
+}
+
+export function create( context, next ) {
+	const { params } = context;
+	const path = params.path;
+	let component;
+	if ( path === 'confirm' ) {
+		component = <Confirm key={ path } siteId={ params.site_id } />;
+	}
+
+	if ( path === 'connections' ) {
+		component = <Connections key={ path } siteId={ params.site_id } />;
+	}
+
+	if ( path === 'category' ) {
+		component = <Category key={ path } siteId={ params.site_id } />;
+	}
+
+	if ( path === 'address' ) {
+		component = <Address key={ path } siteId={ params.site_id } />;
+	}
+
+	if ( path === 'search' ) {
+		component = <SearchForALocation key={ path } siteId={ params.site_id } />;
+	}
+
+	context.primary = <GoogleMyBusinessCreate>{ component }</GoogleMyBusinessCreate>;
 	next();
 }

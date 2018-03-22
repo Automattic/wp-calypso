@@ -31,7 +31,7 @@ class SearchForALocation extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = { predictions: [] };
+	state = { predictions: [], shouldShowBox: true };
 
 	componentWillMount() {
 		loadScript(
@@ -67,7 +67,7 @@ class SearchForALocation extends Component {
 	render() {
 		const { translate, siteId } = this.props;
 		const { predictions } = this.state;
-		const nextHref = '/google-my-business/address/' + siteId;
+		const nextHref = '/google-my-business/create/address/' + siteId;
 		const backHref = '/google-my-business/show-list-of-locations/' + siteId;
 		const tosHref =
 			'https://www.google.com/intl/en/+/policy/pages-services.html?_ga=2.180297060.1172336099.1521039613-786824372.1502702633';
@@ -93,7 +93,7 @@ class SearchForALocation extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<CompactCard className="search-for-a-location__search-section">
+				<CompactCard className="search-for-a-location__search-section is-animated-content">
 					<FormFieldset>
 						<FormLegend className="search-for-a-location__legend">
 							{ translate( "What's the name of your business?" ) }

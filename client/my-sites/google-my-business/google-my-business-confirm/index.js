@@ -31,7 +31,7 @@ class GoogleMyBusinessConfirm extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const backHref = '/google-my-business/connections/' + siteId;
+		const backHref = '/google-my-business/create/connections/' + siteId;
 		const nextHref = '/google-my-business/verify/' + siteId;
 
 		return (

@@ -1,0 +1,11 @@
+.google-my-business-confirm__list {
+	line-height: 2em;
+	list-style: none;
+	margin: 0;
+
+	.gridicon {
+		color: $alert-green;
+		margin-right: 10px;
+		vertical-align: text-bottom;
+	}
+}

@@ -20,6 +20,7 @@ import {
 	verify,
 	newGMB,
 	confirm,
+	create,
 } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
@@ -128,12 +129,12 @@ export default function() {
 			clientRender
 		);
 
-		page( '/google-my-business/confirm', siteSelection, sites, makeLayout, clientRender );
+		page( '/google-my-business/create/:path', siteSelection, sites, makeLayout, clientRender );
 		page(
-			'/google-my-business/confirm/:site_id/',
+			'/google-my-business/create/:path/:site_id/',
 			siteSelection,
 			navigation,
-			confirm,
+			create,
 			makeLayout,
 			clientRender
 		);
