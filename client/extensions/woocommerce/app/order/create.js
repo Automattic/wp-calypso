@@ -70,11 +70,19 @@ class Order extends Component {
 	saveOrder = () => {
 		const { site, siteId, order, translate } = this.props;
 		const onSuccess = ( dispatch, orderId ) => {
+			const successOpts = {
+				duration: 8000,
+				displayOnNextPage: true,
+			};
 			dispatch(
-				successNotice( translate( 'Order successfully created.' ), {
-					duration: 8000,
-					displayOnNextPage: true,
-				} )
+				successNotice(
+					translate( 'Order successfully created. {{ordersLink}}View Orders{{/ordersLink}}.', {
+						components: {
+							ordersLink: <a href={ getLink( '/store/orders/:site/', site ) } />,
+						},
+					} ),
+					successOpts
+				)
 			);
 			// Send invoice if the order is awaiting payment and there is an email
 			if ( isOrderWaitingPayment( order.status ) && get( order, 'billing.email', false ) ) {
