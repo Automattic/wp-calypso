@@ -223,32 +223,60 @@ class PluginMeta extends Component {
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
 		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
 		const unsupportedPlugins = [
+			// "reset" - break/interfere with provided functionality
 			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
 			'better-wp-security',
-			'bwp-minify',
-			'e-mail-broadcasting',
-			'file-manager',
+			'duplicator',
 			'file-manager-advanced',
-			'mailit',
-			'nginx-helper',
+			'file-manager',
 			'reset-wp',
-			'send-email-from-admin',
-			'w3-total-cache',
-			'wordfence',
 			'wordpress-database-reset',
 			'wordpress-reset',
 			'wp-clone-by-wp-academy',
-			'wp-fastest-cache',
 			'wp-prefix-changer',
 			'wp-reset',
-			'wp-rocket',
-			'wp-super-cache',
-			'wp-staging',
-			'wp-super-cache',
 			'wpmu-database-reset',
 			'z-inventory-manager',
+
+			// backup
+			'backup-wd',
+			'backupwordpress',
+			'backwpup',
+			'updraftplus',
+			'wp-db-backup',
+
+			// caching
+			'quick-cache',
+			'w3-total-cache',
+			'wp-cache',
+			'wp-fastest-cache',
+			'wp-rocket',
+			'wp-super-cache',
+
+			// sql heavy
+			'page-visit-counter',
+			'post-views-counter',
+			'wp-postviews',
+			'wp-statistics',
+
+			// security
+			'wordfence',
+
+			// spam
+			'e-mail-broadcasting',
+			'mailit',
+			'send-email-from-admin',
+
+			// cloning/staging
+			'wp-staging',
+
+			// misc
+			'automatic-video-posts',
+			'bwp-minify',
+			'nginx-helper',
+			'video-importer',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
