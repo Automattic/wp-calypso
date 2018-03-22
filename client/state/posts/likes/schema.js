@@ -2,7 +2,7 @@
 export default {
 	type: 'object',
 	additionalProperties: false,
-	required: [ 'likes', 'iLike', 'found' ],
+	required: [ 'iLike', 'found' ],
 	properties: {
 		likes: {
 			type: 'array',
