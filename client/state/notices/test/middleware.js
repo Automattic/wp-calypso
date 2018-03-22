@@ -3,9 +3,10 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
+import sinon from 'sinon';
 import { noop } from 'lodash';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
 /**
  * Internal dependencies
@@ -16,7 +17,6 @@ import noticesMiddleware, {
 	onPostRestoreFailure,
 	onPostSaveSuccess,
 } from '../middleware';
-import { dispatchSuccess, dispatchError } from '../utils';
 import PostQueryManager from 'lib/query-manager/post';
 import {
 	NOTICE_CREATE,
@@ -29,16 +29,19 @@ import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'middleware', () => {
 	describe( 'noticesMiddleware()', () => {
-		let store;
+		let store, dispatchSpy;
 		useSandbox( sandbox => {
-			store = createStore( () => 'Hello' );
-			sandbox.spy( store, 'dispatch' );
+			const spyMiddleware = () => next => {
+				dispatchSpy = sandbox.spy( next );
+				return action => dispatchSpy( action );
+			};
+
+			store = applyMiddleware( thunk, spyMiddleware )( createStore )( () => 'Hello' );
 		} );
 
 		beforeAll( () => {
-			handlers.DUMMY_TYPE = ( dispatch, action, getState ) => {
+			handlers.DUMMY_TYPE = action => ( dispatch, getState ) =>
 				dispatch( successNotice( `${ getState() } ${ action.target }` ) );
-			};
 		} );
 
 		afterAll( () => {
@@ -50,7 +53,7 @@ describe( 'middleware', () => {
 		test( 'should trigger the observer corresponding to the dispatched action type', () => {
 			noticesMiddleware( store )( noop )( dummyCreator( 'World' ) );
 
-			expect( store.dispatch ).to.have.been.calledWithMatch( {
+			sinon.assert.calledWithMatch( dispatchSpy, {
 				type: NOTICE_CREATE,
 				notice: { text: 'Hello World' },
 			} );
@@ -59,42 +62,7 @@ describe( 'middleware', () => {
 		test( 'should not trigger the observer when meta.notices.skip is set to true', () => {
 			noticesMiddleware( store )( noop )( withoutNotice( dummyCreator )( 'World' ) );
 
-			expect( store.dispatch ).to.not.have.been.called;
-		} );
-	} );
-
-	describe( 'utility', () => {
-		let dispatch;
-		useSandbox( sandbox => {
-			dispatch = sandbox.spy();
-		} );
-
-		describe( 'dispatchSuccess()', () => {
-			test( 'should return a function which upon being called dispatches the specified success message', () => {
-				dispatchSuccess( 'Success!' )( dispatch );
-
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-success',
-						text: 'Success!',
-					},
-				} );
-			} );
-		} );
-
-		describe( 'dispatchError()', () => {
-			test( 'should return a function which upon being called dispatches the specified error message', () => {
-				dispatchError( 'Error!' )( dispatch );
-
-				expect( dispatch ).to.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-					notice: {
-						status: 'is-error',
-						text: 'Error!',
-					},
-				} );
-			} );
+			sinon.assert.notCalled( dispatchSpy );
 		} );
 	} );
 
@@ -106,32 +74,30 @@ describe( 'middleware', () => {
 
 		describe( 'onPostDeleteFailure()', () => {
 			test( 'should dispatch error notice with truncated title if known', () => {
-				onPostDeleteFailure(
-					dispatch,
-					{
-						type: POST_DELETE_FAILURE,
-						siteId: 2916284,
-						postId: 841,
-					},
-					() => ( {
-						posts: {
-							queries: {
-								2916284: new PostQueryManager( {
-									items: {
-										841: {
-											ID: 841,
-											site_ID: 2916284,
-											global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-											title: 'Hello World, This Should Be Truncated',
-										},
+				const getState = () => ( {
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										title: 'Hello World, This Should Be Truncated',
 									},
-								} ),
-							},
+								},
+							} ),
 						},
-					} )
-				);
+					},
+				} );
 
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				onPostDeleteFailure( {
+					type: POST_DELETE_FAILURE,
+					siteId: 2916284,
+					postId: 841,
+				} )( dispatch, getState );
+
+				sinon.assert.calledWithMatch( dispatch, {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-error',
@@ -141,21 +107,19 @@ describe( 'middleware', () => {
 			} );
 
 			test( 'should dispatch error notice with unknown title', () => {
-				onPostDeleteFailure(
-					dispatch,
-					{
-						type: POST_DELETE_FAILURE,
-						siteId: 2916284,
-						postId: 841,
+				const getState = () => ( {
+					posts: {
+						queries: {},
 					},
-					() => ( {
-						posts: {
-							queries: {},
-						},
-					} )
-				);
+				} );
 
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				onPostDeleteFailure( {
+					type: POST_DELETE_FAILURE,
+					siteId: 2916284,
+					postId: 841,
+				} )( dispatch, getState );
+
+				sinon.assert.calledWithMatch( dispatch, {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-error',
@@ -167,32 +131,30 @@ describe( 'middleware', () => {
 
 		describe( 'onPostRestoreFailure()', () => {
 			test( 'should dispatch error notice with truncated title if known', () => {
-				onPostRestoreFailure(
-					dispatch,
-					{
-						type: POST_RESTORE_FAILURE,
-						siteId: 2916284,
-						postId: 841,
-					},
-					() => ( {
-						posts: {
-							queries: {
-								2916284: new PostQueryManager( {
-									items: {
-										841: {
-											ID: 841,
-											site_ID: 2916284,
-											global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-											title: 'Hello World, This Should Be Truncated',
-										},
+				const getState = () => ( {
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										title: 'Hello World, This Should Be Truncated',
 									},
-								} ),
-							},
+								},
+							} ),
 						},
-					} )
-				);
+					},
+				} );
 
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				onPostRestoreFailure( {
+					type: POST_RESTORE_FAILURE,
+					siteId: 2916284,
+					postId: 841,
+				} )( dispatch, getState );
+
+				sinon.assert.calledWithMatch( dispatch, {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-error',
@@ -202,21 +164,19 @@ describe( 'middleware', () => {
 			} );
 
 			test( 'should dispatch error notice with unknown title', () => {
-				onPostRestoreFailure(
-					dispatch,
-					{
-						type: POST_RESTORE_FAILURE,
-						siteId: 2916284,
-						postId: 841,
+				const getState = () => ( {
+					posts: {
+						queries: {},
 					},
-					() => ( {
-						posts: {
-							queries: {},
-						},
-					} )
-				);
+				} );
 
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				onPostRestoreFailure( {
+					type: POST_RESTORE_FAILURE,
+					siteId: 2916284,
+					postId: 841,
+				} )( dispatch, getState );
+
+				sinon.assert.calledWithMatch( dispatch, {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-error',
@@ -228,7 +188,7 @@ describe( 'middleware', () => {
 
 		describe( 'onPostSaveSuccess()', () => {
 			test( 'should not dispatch if status has no corresponding text', () => {
-				onPostSaveSuccess( dispatch, {
+				const noticeAction = onPostSaveSuccess( {
 					type: POST_SAVE_SUCCESS,
 					post: {
 						title: 'Hello World',
@@ -236,18 +196,16 @@ describe( 'middleware', () => {
 					},
 				} );
 
-				expect( dispatch ).to.not.have.been.calledWithMatch( {
-					type: NOTICE_CREATE,
-				} );
+				expect( noticeAction ).toBeNull;
 			} );
 
 			test( 'should dispatch success notice for trash', () => {
-				onPostSaveSuccess( dispatch, {
+				const noticeAction = onPostSaveSuccess( {
 					type: POST_SAVE_SUCCESS,
 					post: { status: 'trash' },
 				} );
 
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				expect( noticeAction ).toMatchObject( {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-success',
@@ -257,12 +215,12 @@ describe( 'middleware', () => {
 			} );
 
 			test( 'should dispatch success notice for publish', () => {
-				onPostSaveSuccess( dispatch, {
+				const noticeAction = onPostSaveSuccess( {
 					type: POST_SAVE_SUCCESS,
 					post: { status: 'publish' },
 				} );
 
-				expect( dispatch ).to.have.been.calledWithMatch( {
+				expect( noticeAction ).toMatchObject( {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-success',
