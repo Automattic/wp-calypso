@@ -75,7 +75,7 @@ export class TermPickerOption extends React.Component {
 		const { savePercent, checked, translate } = this.props;
 		return (
 			<Badge type={ checked ? 'success' : 'warning' }>
-				{ translate( 'Save %(percent)s%', {
+				{ translate( 'Save %(percent)s%%', {
 					args: {
 						percent: savePercent,
 					},
