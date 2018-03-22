@@ -25,11 +25,6 @@ export const DEFAULT_GRIDICON = 'info-outline';
  */
 export function transformer( apiResponse ) {
 	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
-	const nextPage =
-		apiResponse.page &&
-		apiResponse.totalPages &&
-		apiResponse.page < apiResponse.totalPages &&
-		apiResponse.page + 1;
 
 	return Object.assign(
 		{
@@ -37,9 +32,7 @@ export function transformer( apiResponse ) {
 			oldestItemTs: get( apiResponse, [ 'oldestItemTs' ], Infinity ),
 			totalItems: get( apiResponse, [ 'totalItems' ], orderedItems.length ),
 		},
-		apiResponse.nextAfter && { nextAfter: apiResponse.nextAfter },
-		nextPage && { nextPage },
-		apiResponse.prevBefore && { prevBefore: apiResponse.prevBefore }
+		apiResponse.nextAfter && { nextAfter: apiResponse.nextAfter }
 	);
 }
 
