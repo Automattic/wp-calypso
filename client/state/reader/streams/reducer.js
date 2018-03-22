@@ -7,7 +7,7 @@ import { keyedReducer, combineReducers } from 'state/utils';
 import { itemsSchema } from './schema';
 import { READER_STREAMS_PAGE_RECEIVE, READER_STREAMS_SELECT_ITEM } from 'state/action-types';
 
-export const items = keyedReducer( 'payload.streamId', ( state = [], action ) => {
+export const items = keyedReducer( 'payload.streamKey', ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_STREAMS_PAGE_RECEIVE:
 			const { posts } = action.payload;
@@ -30,7 +30,7 @@ export const items = keyedReducer( 'payload.streamId', ( state = [], action ) =>
 
 items.schema = itemsSchema;
 
-export const selected = keyedReducer( 'payload.streamId', ( state = [], action ) => {
+export const selected = keyedReducer( 'payload.streamKey', ( state = [], action ) => {
 	switch ( action.type ) {
 		case READER_STREAMS_SELECT_ITEM:
 			return action.payload.index;

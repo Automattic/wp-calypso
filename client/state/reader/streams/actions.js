@@ -18,68 +18,68 @@ import {
  * This action will fetch a range of posts for a stream and then dispatch
  * READER_STREAM_PAGE_RECEIVE when the page returns. This is usually used to
  * fetch the next page of results, but could be used to fetch arbitrary ranges.
- * @param  {string} streamId The stream to fetch posts for
+ * @param  {string} streamKey The stream to fetch posts for
  * @param  {object} query    The query for posts. Parameters vary by stream type.
  * @return {object}          The action object
  */
-export function requestPage( { streamId, query } ) {
-	const indexOfColon = streamId.indexOf( ':' );
-	const streamType = indexOfColon === -1 ? streamId : streamId.substring( 0, indexOfColon );
+export function requestPage( { streamKey, query } ) {
+	const indexOfColon = streamKey.indexOf( ':' );
+	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return {
 		type: READER_STREAMS_PAGE_REQUEST,
 		payload: {
-			streamId,
+			streamKey,
 			query,
 			streamType,
 		},
 	};
 }
 
-export function receivePage( { streamId, query, posts } ) {
+export function receivePage( { streamKey, query, posts } ) {
 	return {
 		type: READER_STREAMS_PAGE_RECEIVE,
 		payload: {
-			streamId,
+			streamKey,
 			query,
 			posts,
 		},
 	};
 }
 
-export function showUpdates( { streamId } ) {
+export function showUpdates( { streamKey } ) {
 	return {
 		type: READER_STREAMS_SHOW_UPDATES,
 		payload: {
-			streamId,
+			streamKey,
 		},
 	};
 }
 
-export function selectItem( { streamId, index } ) {
+export function selectItem( { streamKey, index } ) {
 	return {
 		type: READER_STREAMS_SELECT_ITEM,
 		payload: {
-			streamId,
+			streamKey,
 			index,
 		},
 	};
 }
 
-export function fillGap( { streamId, gap } ) {
+export function fillGap( { streamKey, gap } ) {
 	return {
 		type: READER_STREAMS_FILL_GAP,
 		payload: {
-			streamId,
+			streamKey,
 			gap,
 		},
 	};
 }
 
-export function dismissPost( { streamId, postId } ) {
+export function dismissPost( { streamKey, postId } ) {
 	return {
 		type: READER_STREAMS_DISMISS_POST,
 		payload: {
-			streamId,
+			streamKey,
 			postId,
 		},
 	};

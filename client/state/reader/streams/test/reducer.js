@@ -21,7 +21,7 @@ describe( 'streams.items reducer', () => {
 	it( 'should put a stream under the right key', () => {
 		const startState = deepfreeze( {} );
 		const action = receivePage( {
-			streamId: 'following',
+			streamKey: 'following',
 			query: {},
 			posts: [ { global_ID: 1234 } ],
 		} );
@@ -35,7 +35,7 @@ describe( 'streams.items reducer', () => {
 			following: [ { global_ID: 42 } ],
 		} );
 		const action = receivePage( {
-			streamId: 'following',
+			streamKey: 'following',
 			query: {},
 			posts: [ { global_ID: 1234 } ],
 		} );
@@ -51,14 +51,14 @@ describe( 'streams.selected reducer', () => {
 	} );
 
 	it( 'should store the index requested for nonexistent stream', () => {
-		expect( selected( undefined, selectItem( { streamId: 'following', index: 7 } ) ) ).toEqual( {
+		expect( selected( undefined, selectItem( { streamKey: 'following', index: 7 } ) ) ).toEqual( {
 			following: 7,
 		} );
 	} );
 
 	it( 'should update the index for a stream', () => {
 		const prevState = { following: 10 };
-		const action = selectItem( { streamId: 'following', index: 7 } );
+		const action = selectItem( { streamKey: 'following', index: 7 } );
 		expect( selected( prevState, action ) ).toEqual( {
 			following: 7,
 		} );
