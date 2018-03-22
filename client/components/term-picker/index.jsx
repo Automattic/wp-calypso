@@ -24,6 +24,7 @@ import { getPlanDiscountedRawPrice } from '../../state/sites/plans/selectors';
 import { getSelectedSiteId } from '../../state/ui/selectors';
 import { abtest } from 'lib/abtest';
 import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
+import { TERM_MONTHLY } from 'lib/plans/constants';
 
 export class TermPicker extends React.Component {
 	static propTypes = {
@@ -74,7 +75,7 @@ export class TermPicker extends React.Component {
 					checked={ planSlug === this.state.checked }
 					price={ myFormatCurrency( p.priceFull, this.props.currencyCode ) }
 					pricePerMonth={ myFormatCurrency( p.priceMonthly, this.props.currencyCode ) }
-					savePercent={ Math.round( 100 * ( 1 - p.priceFull / this.getHighestPrice() ) ) }
+					savePercent={ Math.round( 100 * ( 1 - p.priceMonthly / this.getHighestMonthlyPrice() ) ) }
 					value={ planSlug }
 					onCheck={ this.handleCheck }
 				/>
@@ -82,8 +83,8 @@ export class TermPicker extends React.Component {
 		);
 	};
 
-	getHighestPrice() {
-		return Math.max( ...this.props.productsWithPrices.map( p => Number( p.priceFull ) ) );
+	getHighestMonthlyPrice() {
+		return Math.max( ...this.props.productsWithPrices.map( p => Number( p.priceMonthly ) ) );
 	}
 
 	handleCheck = ( { value } ) => {
@@ -133,9 +134,18 @@ const computeProductsWithPrices = ( state, plans ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const products = getProductsList( state );
 
-	const computePrice = ( planSlug, planProductId, isMonthly ) =>
-		getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, { isMonthly } ) ||
-		getPlanRawPrice( state, planProductId, isMonthly );
+	const computePrice = ( planSlug, planProductId, isMonthlyPreference ) => {
+		// @TODO: In another PR getPlanDiscountedRawPrice and getPlanRawPrice should be
+		//			  updated to not divide jetpack monthly plans price by 12 if monthly price
+		//        is requested. This may have system-wide consequences and requires delicate
+		//        attention out of scope of this code.
+		const plan = getPlan( planSlug );
+		const isMonthly = isMonthlyPreference && plan.term !== TERM_MONTHLY;
+		return (
+			getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, { isMonthly } ) ||
+			getPlanRawPrice( state, planProductId, isMonthly )
+		);
+	};
 
 	const retval = plans
 		.map( planSlug => {
@@ -157,11 +167,12 @@ const computeProductsWithPrices = ( state, plans ) => {
 				priceMonthly: computePrice( object.planSlug, productId, true ),
 			};
 		} )
-		.filter( p => p.priceFull );
+		.filter( p => p.priceFull )
+		.sort( ( a, b ) => b.priceMonthly - a.priceMonthly );
 
 	if ( retval.length !== plans.length ) {
 		const missing = difference( plans, retval.map( ( { planSlug } ) => planSlug ) );
-		throw new Error(
+		console.error(
 			`price could not be computed for the following plans: ${ missing.join( ', ' ) }`
 		);
 	}
