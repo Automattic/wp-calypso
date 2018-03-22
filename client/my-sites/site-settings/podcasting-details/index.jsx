@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight, map, pick, toPairs } from 'lodash';
+import { map, toPairs, pick, get, find, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,9 +21,12 @@ import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryTerms from 'components/data/query-terms';
+import TermTreeSelector from 'blocks/term-tree-selector';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
 import categories from './categories';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getTerms, isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
@@ -48,14 +51,20 @@ class PodcastingDetails extends Component {
 	}
 
 	renderSaveButton() {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
+		const {
+			handleSubmitForm,
+			isRequestingSettings,
+			isSavingSettings,
+			isRequestingCategories,
+			translate,
+		} = this.props;
 		return (
 			<Button
 				compact={ true }
 				onClick={ handleSubmitForm }
 				primary={ true }
 				type="submit"
-				disabled={ isRequestingSettings || isSavingSettings }
+				disabled={ isRequestingSettings || isSavingSettings || isRequestingCategories }
 			>
 				{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 			</Button>
@@ -126,7 +135,11 @@ class PodcastingDetails extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, siteSlug, translate } = this.props;
+		const { handleSubmitForm, siteSlug, siteId, podcastingCategoryId, translate } = this.props;
+		if ( ! siteId ) {
+			return null;
+		}
+
 		const writingHref = `/settings/writing/${ siteSlug }`;
 
 		return (
@@ -144,6 +157,12 @@ class PodcastingDetails extends Component {
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
 					<Card>
+						<QueryTerms siteId={ siteId } taxonomy="category" />
+						<TermTreeSelector
+							taxonomy="category"
+							selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
+							onChange={ this.onCategorySelected }
+						/>
 						{ this.renderTextField( {
 							key: 'podcasting_title',
 							label: translate( 'Title' ),
@@ -176,6 +195,14 @@ class PodcastingDetails extends Component {
 			</div>
 		);
 	}
+
+	onCategorySelected = category => {
+		const { onChangeField } = this.props;
+
+		const event = { target: { value: category.slug } };
+
+		onChangeField( 'podcasting_archive' )( event );
+	};
 }
 
 const getFormSettings = settings => {
@@ -195,12 +222,31 @@ const getFormSettings = settings => {
 	] );
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+
+	let podcastingCategoryId = null;
+
+	// Retrieve podcasting category ID from saved category slug (if any)
+	const podcastingCategorySlug = get( ownProps.fields, 'podcasting_archive' );
+	if ( podcastingCategorySlug && podcastingCategorySlug !== '0' ) {
+		const categories = getTerms( state, siteId, 'category' );
+		if ( categories && categories.length ) {
+			let podcastingCategory = find( categories, c => c.slug === podcastingCategorySlug );
+			if ( podcastingCategory ) {
+				podcastingCategoryId = podcastingCategory.ID;
+			}
+		}
+	}
+
 	return {
+		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		podcastingCategoryId,
+		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 	};
 } );
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
+export default flowRight( wrapSettingsForm( getFormSettings ), connectComponent )(
 	localize( PodcastingDetails )
 );
