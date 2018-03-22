@@ -13,6 +13,7 @@ import config from 'config';
 import PaymentBox from './payment-box.jsx';
 
 const SecurePaymentFormPlaceholder = () => {
+	/*eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<PaymentBox classSet="selected is-empty" contentClassSet="selected is-empty">
 			<div className="payment-box-section">
@@ -47,6 +48,7 @@ const SecurePaymentFormPlaceholder = () => {
 			</div>
 		</PaymentBox>
 	);
+	/*eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default SecurePaymentFormPlaceholder;
