@@ -130,7 +130,7 @@ export const continuePolling = ( { dispatch, getState }, action ) => {
 
 			const meta = { meta: { dataLayer: { isWatching: true } } };
 			const searchAfter = nextAfter || thisState.nextAfter;
-			const number = nextAfter ? 100 : 1;
+			const number = nextAfter ? 100 : 1; // if we didn't get a new `nextAfter` then force one through the limit
 			const sortOrder = 'asc';
 
 			if ( searchAfter ) {
