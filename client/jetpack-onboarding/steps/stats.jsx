@@ -76,7 +76,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 			return translate( 'Success! Jetpack is now collecting valuable stats.' );
 		}
 
-		return translate( 'Jetpack also provides you with helpful stats about your site visitors.' );
+		return translate( "Jetpack provides you with detailed stats about your site's reach." );
 	}
 
 	renderActionTile() {
