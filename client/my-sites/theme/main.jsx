@@ -17,6 +17,7 @@ import classNames from 'classnames';
 import titlecase from 'to-title-case';
 import Gridicon from 'gridicons';
 import { head, split } from 'lodash';
+import photon from 'photon';
 
 /**
  * Internal dependencies
@@ -233,8 +234,15 @@ class ThemeSheet extends React.Component {
 	renderScreenshot() {
 		const { demo_uri, retired, isActive, isWpcomTheme } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
+		const width = 735;
+		// Photon may return null, allow fallbacks
+		const photonSrc = photon( screenshotFull, { width } );
 		const img = screenshotFull && (
-			<img className="theme__sheet-img" src={ screenshotFull + '?w=680' } />
+			<img
+				className="theme__sheet-img"
+				src={ photonSrc || screenshotFull }
+				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }
+			/>
 		);
 
 		if ( demo_uri && ! retired ) {
