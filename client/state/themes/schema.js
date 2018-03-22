@@ -7,9 +7,10 @@ import { withItemsSchema } from 'lib/query-manager/schema';
 
 const themesSchema = {
 	title: 'Theme',
+	additionalProperties: false,
 	type: 'object',
 	patternProperties: {
-		'^\\w+$': {
+		'^[\\w-]+$': {
 			additionalProperties: false,
 			required: [ 'id', 'name', 'author', 'screenshot' ],
 			type: 'object',
