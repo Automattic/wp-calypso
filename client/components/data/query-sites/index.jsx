@@ -82,7 +82,11 @@ class QuerySites extends Component {
 QuerySites.propTypes = {
 	allSites: PropTypes.bool,
 	primaryAndRecent: PropTypes.bool,
-	siteId: PropTypes.number,
+	siteId: PropTypes.oneOfType( [
+		PropTypes.number,
+		// The actions and selectors we use also work with site slugs. Needed by jetpack-onboarding/main.
+		PropTypes.string,
+	] ),
 	requestingSites: PropTypes.bool,
 	requestingSite: PropTypes.bool,
 	requestSites: PropTypes.func,
