@@ -14,4 +14,8 @@
 .directly-rtm.is-minimized {
 	height: calc(102px + 30px) !important;
 	width: calc(102px + 20px) !important;
+	position: fixed;
+	right: -22px;
+	bottom: 98px;
+	z-index: z-index( 'root', '.directly-rtm.is-minimized' );
 }
