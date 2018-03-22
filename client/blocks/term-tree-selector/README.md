@@ -1,7 +1,7 @@
 TermTreeSelector
 ============
 
-The `TermTreeSelector` component renders a hierarchical list of Terms with corresponding form actions (radio or checkboxes) and a search box for filtering.
+The `TermTreeSelector` component renders a hierarchical list of terms from the currently selected site with corresponding form actions (radio or checkboxes) and a search box for filtering.
 
 Under the hood, it uses [`<QueryTerms />`](../../components/data/query-terms) to ensure that the requested term data is always made available to the global application terms state.
 
@@ -10,19 +10,10 @@ Under the hood, it uses [`<QueryTerms />`](../../components/data/query-terms) to
 ```jsx
 import TermSelector from 'blocks/term-tree-selector';
 
-<TermTreeSelector siteId={ this.props.siteId } taxonomy="category" />
+<TermTreeSelector taxonomy="category" />
 ```
 
 ## Props
-
-### `siteId`
-
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>Yes</td></tr>
-</table>
-
-The site ID for which terms should be queried.
 
 ### `taxonomy`
 
