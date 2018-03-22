@@ -223,16 +223,60 @@ class PluginMeta extends Component {
 		// Pressable prevents installation of some plugins, so we need to disable AT for them.
 		// More info here: https://kb.pressable.com/faq/does-pressable-restrict-any-plugins/
 		const unsupportedPlugins = [
-			'nginx-helper',
-			'w3-total-cache',
-			'wp-rocket',
-			'wp-super-cache',
-			'bwp-minify',
-			'wordpress-database-reset',
-			'wordpress-reset',
-			'wp-reset',
+			// "reset" - break/interfere with provided functionality
+			'advanced-database-cleaner',
 			'advanced-reset-wp',
 			'advanced-wp-reset',
+			'better-wp-security',
+			'duplicator',
+			'file-manager-advanced',
+			'file-manager',
+			'reset-wp',
+			'wordpress-database-reset',
+			'wordpress-reset',
+			'wp-clone-by-wp-academy',
+			'wp-prefix-changer',
+			'wp-reset',
+			'wpmu-database-reset',
+			'z-inventory-manager',
+
+			// backup
+			'backup-wd',
+			'backupwordpress',
+			'backwpup',
+			'updraftplus',
+			'wp-db-backup',
+
+			// caching
+			'quick-cache',
+			'w3-total-cache',
+			'wp-cache',
+			'wp-fastest-cache',
+			'wp-rocket',
+			'wp-super-cache',
+
+			// sql heavy
+			'page-visit-counter',
+			'post-views-counter',
+			'wp-postviews',
+			'wp-statistics',
+
+			// security
+			'wordfence',
+
+			// spam
+			'e-mail-broadcasting',
+			'mailit',
+			'send-email-from-admin',
+
+			// cloning/staging
+			'wp-staging',
+
+			// misc
+			'automatic-video-posts',
+			'bwp-minify',
+			'nginx-helper',
+			'video-importer',
 		];
 
 		return includes( unsupportedPlugins, plugin.slug );
