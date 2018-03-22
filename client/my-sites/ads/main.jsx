@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { find } from 'lodash';
+import { capitalize, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -40,6 +40,7 @@ import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class AdsMain extends Component {
 	static propTypes = {
@@ -224,13 +225,13 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { section, site, translate } = this.props;
 
 		if ( ! this.canAccess() ) {
 			return null;
 		}
 
-		let component = this.getComponent( this.props.section );
+		let component = this.getComponent( section );
 		let notice = null;
 
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
@@ -249,6 +250,10 @@ class AdsMain extends Component {
 
 		return (
 			<Main className="ads">
+				<PageViewTracker
+					path={ `/ads/${ section }/:site` }
+					title={ `WordAds ${ capitalize( section ) }` }
+				/>
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
