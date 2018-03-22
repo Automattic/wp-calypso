@@ -3,11 +3,9 @@
 /**
  * External dependencies
  */
-
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import { connect } from 'react-redux';
-import { random } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,6 +13,7 @@ import { random } from 'lodash';
 import { requestPostLikes } from 'state/posts/likes/actions';
 import getPostLikeLastUpdated from 'state/selectors/get-post-like-last-updated';
 import getPostLikes from 'state/selectors/get-post-likes';
+import Interval from 'lib/interval';
 
 class QueryPostLikes extends Component {
 	static propTypes = {
@@ -34,29 +33,13 @@ class QueryPostLikes extends Component {
 
 	componentDidMount() {
 		this.request();
-		this.restartInterval( this.props.maxAgeSeconds );
-	}
-
-	componentWillUnmount() {
-		if ( this.checkInterval ) {
-			clearInterval( this.checkInterval );
-		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId ) {
 			this.request( nextProps );
-			this.restartInterval( nextProps.maxAgeSeconds );
 		}
 	}
-
-	restartInterval = seconds => {
-		if ( this.checkInterval ) {
-			clearInterval( this.checkInterval );
-		}
-		const intervalWithJitter = random( seconds, Math.ceil( seconds * 1.25 ) ) * 1000;
-		this.checkInterval = setInterval( this.request, intervalWithJitter );
-	};
 
 	request = (
 		{
@@ -79,7 +62,7 @@ class QueryPostLikes extends Component {
 	};
 
 	render() {
-		return null;
+		return <Interval period={ this.props.maxAgeSeconds + 1 } onTick={ this.request } />;
 	}
 }
 
