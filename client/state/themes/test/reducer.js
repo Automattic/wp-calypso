@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -43,7 +42,6 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
 
 const twentysixteen = {
 	id: 'twentysixteen',
@@ -68,36 +66,34 @@ const mood = {
 };
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
-		sandbox.stub( console, 'warn' );
-	} );
-
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'queries',
-			'queryRequests',
-			'queryRequestErrors',
-			'lastQuery',
-			'themeInstalls',
-			'themeRequests',
-			'themeRequestErrors',
-			'activeThemes',
-			'activeThemeRequests',
-			'activationRequests',
-			'completedActivationRequests',
-			'themesUI',
-			'uploadTheme',
-			'themePreviewOptions',
-			'themePreviewVisibility',
-			'themeFilters',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'activationRequests',
+				'activeThemeRequests',
+				'activeThemes',
+				'completedActivationRequests',
+				'lastQuery',
+				'queries',
+				'queryRequestErrors',
+				'queryRequests',
+				'themeFilters',
+				'themeInstalls',
+				'themePreviewOptions',
+				'themePreviewVisibility',
+				'themeRequestErrors',
+				'themeRequests',
+				'themesUI',
+				'uploadTheme',
+			] )
+		);
 	} );
 
 	describe( '#queryRequests()', () => {
 		test( 'should default to an empty object', () => {
 			const state = queryRequests( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		// TODO: Delete test? no site-specific search?
@@ -108,7 +104,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' },
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': true,
 			} );
 		} );
@@ -119,7 +115,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' },
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				'{"search":"Hello"}': true,
 			} );
 		} );
@@ -135,7 +131,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello W' },
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': true,
 				'2916284:{"search":"Hello W"}': true,
 			} );
@@ -150,7 +146,7 @@ describe( 'reducer', () => {
 				themes: [ mood ],
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Mood"}': false,
 			} );
 		} );
@@ -163,7 +159,7 @@ describe( 'reducer', () => {
 				error: new Error(),
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': false,
 			} );
 		} );
@@ -173,7 +169,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = queryRequestErrors( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should create empty mapping on success if previous state was empty', () => {
@@ -183,7 +179,7 @@ describe( 'reducer', () => {
 				query: { search: 'Twenty' },
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {},
 			} );
 		} );
@@ -196,7 +192,7 @@ describe( 'reducer', () => {
 				error: 'Request error',
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					'2916284:{"search":"Twenty"}': 'Request error',
 				},
@@ -217,7 +213,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {},
 			} );
 		} );
@@ -237,7 +233,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					'2916284:{"blerch":"Twenty"}': 'Invalid query!',
 					'2916284:{"search":"Twenty"}': 'System error',
@@ -250,7 +246,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track theme query request success', () => {
@@ -262,9 +258,9 @@ describe( 'reducer', () => {
 				themes: [ mood ],
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( ThemeQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Mood' } ) ).to.deep.equal( [ mood ] );
+			expect( state ).toHaveProperty( '2916284' );
+			expect( state[ 2916284 ] ).toBeInstanceOf( ThemeQueryManager );
+			expect( state[ 2916284 ].getItems( { search: 'Mood' } ) ).toEqual( [ mood ] );
 		} );
 
 		test( 'should accumulate query request success', () => {
@@ -285,10 +281,10 @@ describe( 'reducer', () => {
 				themes: [ twentysixteen ],
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( ThemeQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Twenty' } ) ).to.have.length( 1 );
-			expect( state[ 2916284 ].getItems( { search: 'Twenty Six' } ) ).to.have.length( 1 );
+			expect( state ).toHaveProperty( '2916284' );
+			expect( state[ 2916284 ] ).toBeInstanceOf( ThemeQueryManager );
+			expect( state[ 2916284 ].getItems( { search: 'Twenty' } ) ).toHaveLength( 1 );
+			expect( state[ 2916284 ].getItems( { search: 'Twenty Six' } ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should return the same state if successful request has no changes', () => {
@@ -302,7 +298,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( queries( deepFreeze( {} ), action ) );
 			const state = queries( original, action );
 
-			expect( state ).to.equal( original );
+			expect( state ).toBe( original );
 		} );
 
 		test( 'should persist state', () => {
@@ -321,7 +317,7 @@ describe( 'reducer', () => {
 			// _timestamp is not part of the data
 			delete state._timestamp;
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					data: {
 						items: {
@@ -363,7 +359,7 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: DESERIALIZE } );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: new ThemeQueryManager(
 					{
 						items: {
@@ -382,13 +378,17 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
+			jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 			const original = deepFreeze( {
 				2916284: '{INVALID',
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
+
+			// eslint-disable-next-line no-console
+			console.warn.mockReset();
 		} );
 	} );
 
@@ -396,7 +396,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = lastQuery( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store last query', () => {
@@ -406,8 +406,8 @@ describe( 'reducer', () => {
 				query: { search: 'Sixteen' },
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state ).to.deep.equal( {
+			expect( state ).toHaveProperty( '2916284' );
+			expect( state ).toEqual( {
 				2916284: {
 					search: 'Sixteen',
 				},
@@ -428,8 +428,8 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state ).to.deep.equal( {
+			expect( state ).toHaveProperty( '2916284' );
+			expect( state ).toEqual( {
 				2916284: {
 					search: 'orange color',
 				},
@@ -441,7 +441,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = themeRequests( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should map site ID, theme ID to true value if request in progress', () => {
@@ -451,7 +451,7 @@ describe( 'reducer', () => {
 				themeId: 841,
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: true,
 				},
@@ -472,7 +472,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: true,
 					413: true,
@@ -494,7 +494,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: false,
 				},
@@ -515,7 +515,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: false,
 				},
@@ -541,7 +541,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = themeRequestErrors( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should create empyt mapping on success if previous state was empty', () => {
@@ -551,7 +551,7 @@ describe( 'reducer', () => {
 				themeId: 'twentysixteen',
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {},
 			} );
 		} );
@@ -564,7 +564,7 @@ describe( 'reducer', () => {
 				error: 'Request error',
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					vivaro: 'Request error',
 				},
@@ -585,7 +585,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {},
 			} );
 		} );
@@ -605,7 +605,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: {
 					twentysixteennnnn: 'No such theme!',
 					twentysixteen: 'System error',
@@ -618,7 +618,7 @@ describe( 'reducer', () => {
 				type: SERIALIZE,
 			} );
 
-			expect( state ).to.deep.equal( themeError );
+			expect( state ).toEqual( themeError );
 		} );
 
 		test( 'loads persisted state', () => {
@@ -626,7 +626,7 @@ describe( 'reducer', () => {
 				type: DESERIALIZE,
 			} );
 
-			expect( state ).to.deep.equal( themeError );
+			expect( state ).toEqual( themeError );
 		} );
 	} );
 
@@ -634,7 +634,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = activeThemes( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track active theme request success', () => {
@@ -652,8 +652,8 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.keys( [ '2211667' ] );
-			expect( state ).to.deep.equal( { 2211667: 'rebalance' } );
+			expect( state ).toHaveProperty( '2211667' );
+			expect( state ).toEqual( { 2211667: 'rebalance' } );
 		} );
 
 		test( 'should track active theme request success and overwrite old theme', () => {
@@ -671,8 +671,8 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.keys( [ '2211667' ] );
-			expect( state ).to.deep.equal( { 2211667: 'twentysixteen' } );
+			expect( state ).toHaveProperty( '2211667' );
+			expect( state ).toEqual( { 2211667: 'twentysixteen' } );
 		} );
 
 		test( 'should track theme activate request success', () => {
@@ -682,14 +682,14 @@ describe( 'reducer', () => {
 				siteId: 2211888,
 			} );
 
-			expect( state ).to.have.keys( [ '2211888' ] );
-			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
+			expect( state ).toHaveProperty( '2211888' );
+			expect( state ).toEqual( { 2211888: 'twentysixteen' } );
 		} );
 
 		test( 'should persist state', () => {
 			const state = activeThemes( { 2211888: 'twentysixteen' }, { type: SERIALIZE } );
 
-			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
+			expect( state ).toEqual( { 2211888: 'twentysixteen' } );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -698,23 +698,27 @@ describe( 'reducer', () => {
 			} );
 
 			const state = activeThemes( original, { type: DESERIALIZE } );
-			expect( state ).to.deep.equal( { 2211888: 'twentysixteen' } );
+			expect( state ).toEqual( { 2211888: 'twentysixteen' } );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
+			jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 			const original = deepFreeze( {
 				2916284: 1234,
 			} );
 
 			const state = activeThemes( original, { type: DESERIALIZE } );
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
+
+			// eslint-disable-next-line no-console
+			console.warn.mockReset();
 		} );
 	} );
 
 	describe( '#activationRequests', () => {
 		test( 'should default to an empty object', () => {
 			const state = activationRequests( undefined, {} );
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should map site ID to true value if request in progress', () => {
@@ -723,7 +727,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -739,7 +743,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: true,
 				2916285: true,
 			} );
@@ -757,7 +761,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: false,
 			} );
 		} );
@@ -775,7 +779,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: false,
 			} );
 		} );
@@ -785,7 +789,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = themeInstalls( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should map site ID, theme ID to true value if request in progress', () => {
@@ -795,7 +799,7 @@ describe( 'reducer', () => {
 				themeId: 'karuna',
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2211667: {
 					karuna: true,
 				},
@@ -816,7 +820,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2211667: {
 					karuna: true,
 				},
@@ -840,7 +844,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2211667: {
 					karuna: false,
 				},
@@ -862,7 +866,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2211667: {
 					karuna: false,
 				},
@@ -874,7 +878,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = completedActivationRequests( undefined, {} );
 
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track theme activate request success', () => {
@@ -883,8 +887,8 @@ describe( 'reducer', () => {
 				siteId: 2211667,
 			} );
 
-			expect( state ).to.have.keys( [ '2211667' ] );
-			expect( state ).to.deep.equal( { 2211667: true } );
+			expect( state ).toHaveProperty( '2211667' );
+			expect( state ).toEqual( { 2211667: true } );
 		} );
 
 		test( 'should track theme clear activated', () => {
@@ -893,15 +897,15 @@ describe( 'reducer', () => {
 				siteId: 2211667,
 			} );
 
-			expect( state ).to.have.keys( [ '2211667' ] );
-			expect( state ).to.deep.equal( { 2211667: false } );
+			expect( state ).toHaveProperty( '2211667' );
+			expect( state ).toEqual( { 2211667: false } );
 		} );
 	} );
 
 	describe( '#activeThemeRequests', () => {
 		test( 'should default to an empty object', () => {
 			const state = activeThemeRequests( undefined, {} );
-			expect( state ).to.deep.equal( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should map site ID to true value if request in progress', () => {
@@ -910,7 +914,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -926,7 +930,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: true,
 				2916285: true,
 			} );
@@ -944,7 +948,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: false,
 			} );
 		} );
@@ -961,7 +965,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.deep.equal( {
+			expect( state ).toEqual( {
 				2916284: false,
 			} );
 		} );
