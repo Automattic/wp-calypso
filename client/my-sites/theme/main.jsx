@@ -47,6 +47,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
+	getCanonicalTheme,
 	getPremiumThemePrice,
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
@@ -56,7 +57,6 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
-import { getCanonicalTheme } from 'state/themes/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
