@@ -4,7 +4,7 @@
  */
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { get, isEmpty, noop } from 'lodash';
+import { get, isEmpty, noop, omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React, { Component } from 'react';
 import page from 'page';
@@ -14,7 +14,12 @@ import page from 'page';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
+import {
+	areSettingsGeneralLoaded,
+	getPaymentCurrencySettings,
+} from 'woocommerce/state/sites/settings/general/selectors';
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
+import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
@@ -34,18 +39,37 @@ import { recordTrack } from 'woocommerce/lib/analytics';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
 class Order extends Component {
+	possiblyFetchDefaultCurrency( props ) {
+		const { currencyCode, orderEdits, settingsGeneralLoaded, siteId } = props;
+		if ( siteId ) {
+			if ( ! settingsGeneralLoaded ) {
+				this.props.fetchSettingsGeneral( siteId );
+			} else if ( isEmpty( orderEdits.currency ) ) {
+				this.props.editOrder( siteId, { currency: currencyCode } );
+			}
+		}
+	}
+
 	componentDidMount() {
 		const { siteId } = this.props;
 
 		if ( siteId ) {
 			this.props.editOrder( siteId, {} );
 		}
+
+		this.possiblyFetchDefaultCurrency( this.props );
 	}
 
 	componentWillReceiveProps( newProps ) {
 		if ( this.props.siteId !== newProps.siteId ) {
 			this.props.editOrder( newProps.siteId, {} );
 		}
+
+		this.possiblyFetchDefaultCurrency( newProps );
+	}
+
+	componentDidUpdate() {
+		this.possiblyFetchDefaultCurrency( this.props );
 	}
 
 	componentWillUnmount() {
@@ -139,18 +163,35 @@ export default connect(
 		const siteId = site ? site.ID : false;
 		const orderId = getCurrentlyEditingOrderId( state );
 		const isSaving = isOrderUpdating( state, orderId );
-		const hasOrderEdits = ! isEmpty( getOrderEdits( state ) );
+		const orderEdits = getOrderEdits( state );
+		const hasOrderEdits = ! isEmpty( omit( orderEdits, [ 'currency' ] ) );
 		const order = getOrderWithEdits( state );
+		const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
+		const currencySettings = getPaymentCurrencySettings( state, siteId );
+		const currencyCode = currencySettings.value || 'USD';
 
 		return {
+			currencyCode,
 			hasOrderEdits,
 			isSaving,
 			order,
+			orderEdits,
 			orderId,
+			settingsGeneralLoaded,
 			site,
 			siteId,
 		};
 	},
 	dispatch =>
-		bindActionCreators( { clearOrderEdits, editOrder, saveOrder, sendOrderInvoice }, dispatch )
+		bindActionCreators(
+			{
+				clearOrderEdits,
+				editOrder,
+				fetchSettingsGeneral,
+				getPaymentCurrencySettings,
+				saveOrder,
+				sendOrderInvoice,
+			},
+			dispatch
+		)
 )( localize( Order ) );
