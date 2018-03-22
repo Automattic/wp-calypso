@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { debounce, noop } from 'lodash';
+import { debounce, noop, uniqueId } from 'lodash';
 import i18n from 'i18n-calypso';
 import Gridicon from 'gridicons';
 
@@ -23,7 +23,6 @@ import TranslatableString from 'components/translatable/proptype';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
-let instanceCount = 0;
 
 function keyListener( methodToCall, event ) {
 	switch ( event.key ) {
@@ -93,8 +92,7 @@ class Search extends Component {
 	constructor( props ) {
 		super( props );
 
-		instanceCount++;
-		this.instanceId = instanceCount;
+		this.instanceId = uniqueId();
 
 		this.state = {
 			keyword: this.props.initialValue || '',
