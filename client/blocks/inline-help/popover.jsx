@@ -79,7 +79,7 @@ class InlineHelpPopover extends Component {
 			<Popover
 				isVisible
 				onClose={ this.props.onClose }
-				position="top right"
+				position="top left"
 				context={ this.props.context }
 				className={ classNames( 'inline-help__popover', popoverClasses ) }
 			>
