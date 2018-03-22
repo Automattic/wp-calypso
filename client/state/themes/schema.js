@@ -27,6 +27,10 @@ const themesSchema = {
 				price: { type: 'string' },
 				screenshot: { type: 'string' },
 				stylesheet: { type: 'string' },
+				tags: {
+					type: 'array',
+					items: { type: 'string' },
+				},
 				taxonomies: { type: 'object' },
 				theme_uri: { type: 'string' },
 				update: { type: [ 'null', 'object' ] },
