@@ -50,6 +50,13 @@
 	}
 }
 
+.simple-site-rename-form__only-owner-info {
+	.gridicon {
+		float: left;
+		margin-right: 5px;
+	}
+}
+
 .simple-site-rename-form__footer {
 	align-items: center;
 	border-top-color: $gray-light;

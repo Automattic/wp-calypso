@@ -6,7 +6,7 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
-import { flow, get, isEmpty } from 'lodash';
+import { flow, get } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -16,7 +16,6 @@ import { isEnabled } from 'config';
 import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card';
 import Header from './card/header';
-import Notice from 'components/notice';
 import Property from './card/property';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -34,7 +33,7 @@ const WpcomDomain = createReactClass( {
 	},
 
 	getEditSiteAddressBlock() {
-		const { domain, translate } = this.props;
+		const { domain } = this.props;
 
 		/**
 		 * Hide Edit site address for .blog subdomains as this is unsupported for now.
@@ -44,26 +43,6 @@ const WpcomDomain = createReactClass( {
 		}
 
 		if ( isEnabled( 'site-address-editor' ) && get( domain, 'type' ) === domainTypes.WPCOM ) {
-			if ( ! domain.currentUserCanManage ) {
-				return (
-					<Notice status="is-info" showDismiss={ false }>
-						{ translate(
-							'The site address can only be changed by the site owner. ' +
-								'Please contact them if you would like to change it.',
-							{ components: { br: <br /> } }
-						) }
-						{ ! isEmpty( domain.owner ) && (
-							<p>
-								{ translate( 'Owner: {{em}}%(owner)s{{/em}}', {
-									args: { owner: domain.owner },
-									components: { em: <em /> },
-								} ) }
-							</p>
-						) }
-					</Notice>
-				);
-			}
-
 			return <SiteRenamer currentDomain={ domain } />;
 		}
 

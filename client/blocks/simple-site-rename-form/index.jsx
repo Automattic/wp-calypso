@@ -122,6 +122,22 @@ export class SimpleSiteRenameForm extends Component {
 		const isDisabled =
 			! domainFieldValue || !! domainFieldError || domainFieldValue === currentDomainPrefix;
 
+		if ( ! currentDomain.currentUserCanManage ) {
+			return (
+				<div className="simple-site-rename-form simple-site-rename-form__only-owner-info">
+					<Gridicon icon="info" />
+					{ translate( 'Only the site owner%(ownerInfo)s can edit this domain name.', {
+						args: {
+							ownerInfo: isEmpty( currentDomain.owner )
+								? ''
+								: ` ({{strong}}${ currentDomain.owner }{{/strong}})`,
+						},
+						components: { strong: <strong /> },
+					} ) }
+				</div>
+			);
+		}
+
 		return (
 			<div className="simple-site-rename-form">
 				<ConfirmationDialog
