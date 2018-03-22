@@ -165,12 +165,18 @@ const computeProductsWithPrices = ( state, plans ) => {
 };
 
 export default connect(
-	( state, { plans } ) => ( {
-		productsWithPrices: computeProductsWithPrices( state, plans ),
-		fetchingPlans: ! plans && isRequestingPlans( state ),
-		fetchingProducts: ! getProductsList( state ) && isProductsListFetching( state ),
-		currencyCode: getCurrentUserCurrencyCode( state ),
-	} ),
+	( state, { plans } ) => {
+		const fetchingProducts = ! getProductsList( state ) && isProductsListFetching( state );
+		const fetchingPlans = ! plans && isRequestingPlans( state );
+		const fetchingDeps = fetchingProducts || fetchingPlans;
+
+		return {
+			fetchingPlans,
+			fetchingProducts,
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			productsWithPrices: fetchingDeps ? [] : computeProductsWithPrices( state, plans ),
+		};
+	},
 	{
 		requestPlans,
 		requestProductsList,
