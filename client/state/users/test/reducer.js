@@ -9,7 +9,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { USER_RECEIVE } from 'state/action-types';
+import { USER_RECEIVE, USER_DELETE_RECEIVE } from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -56,6 +56,21 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				73705554: { ID: 73705554, login: 'testtwosites2014' },
+			} );
+		} );
+
+		test( 'should remove deleted user', () => {
+			const original = Object.freeze( {
+				73705554: { ID: 73705554, login: 'testonesite2014' },
+				12345678: { ID: 12345678, login: 'testonesite2018' },
+			} );
+			const state = items( original, {
+				type: USER_DELETE_RECEIVE,
+				userId: 73705554,
+			} );
+
+			expect( state ).to.eql( {
+				12345678: { ID: 12345678, login: 'testonesite2018' },
 			} );
 		} );
 	} );

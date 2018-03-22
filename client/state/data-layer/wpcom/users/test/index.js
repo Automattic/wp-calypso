@@ -10,9 +10,21 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import { DEFAULT_PER_PAGE, fetchUsers, normalizeUser, receiveSuccess } from '../';
+import {
+	DEFAULT_PER_PAGE,
+	fetchUsers,
+	normalizeUser,
+	receiveUsers,
+	deleteUser,
+	receiveDeleteUser,
+} from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveUser, requestUsers } from 'state/users/actions';
+import {
+	receiveUser,
+	requestUsers,
+	deleteUser as deleteUserAction,
+	receiveDeletedUser,
+} from 'state/users/actions';
 
 describe( '#normalizeRevision', () => {
 	test( 'should rename `id`, `name` and `slug`', () => {
@@ -92,12 +104,12 @@ describe( '#fetchUsers', () => {
 	} );
 } );
 
-describe( '#receiveSuccess', () => {
+describe( '#receiveUsers', () => {
 	test( 'should normalize the users and dispatch `receiveUser` for each one', () => {
 		const action = requestUsers( 12345678, [ 10, 11 ] );
 		const dispatch = sinon.spy();
 
-		receiveSuccess( { dispatch }, action, [ { id: 10 }, { id: 11 } ] );
+		receiveUsers( { dispatch }, action, [ { id: 10 }, { id: 11 } ] );
 
 		expect( dispatch ).to.have.been.called.twice;
 		expect( dispatch ).to.have.been.calledWith(
@@ -121,7 +133,7 @@ describe( '#receiveSuccess', () => {
 		const action = requestUsers( 12345678, ids );
 		const dispatch = sinon.spy();
 
-		receiveSuccess(
+		receiveUsers(
 			{ dispatch },
 			{
 				...action,
@@ -171,7 +183,7 @@ describe( '#receiveSuccess', () => {
 		};
 		const dispatch = sinon.spy();
 
-		receiveSuccess(
+		receiveUsers(
 			{ dispatch },
 			{
 				...action,
@@ -206,5 +218,39 @@ describe( '#receiveSuccess', () => {
 				}
 			)
 		);
+	} );
+} );
+
+describe( '#deleteUser', () => {
+	test( 'should dispatch HTTP request to users delete endpoint', () => {
+		const action = deleteUserAction( 12345678, 1 );
+		const dispatch = sinon.spy();
+
+		deleteUser( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.calledOnce;
+
+		expect( dispatch ).to.have.been.calledWith(
+			http(
+				{
+					path: '/sites/12345678/users/1/delete',
+					method: 'POST',
+					apiNamespace: '1.1',
+				},
+				action
+			)
+		);
+	} );
+} );
+
+describe( '#receiveDeleteUser', () => {
+	test( 'should dispatch `receiveDeletedUser`', () => {
+		const action = deleteUserAction( 12345678, 1 );
+		const dispatch = sinon.spy();
+
+		receiveDeleteUser( { dispatch }, action );
+
+		expect( dispatch ).to.have.been.called.twice;
+		expect( dispatch ).to.have.been.calledWith( receiveDeletedUser( 1 ) );
 	} );
 } );
