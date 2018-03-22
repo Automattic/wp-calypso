@@ -1,39 +1,29 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
-import request from 'woocommerce/state/sites/request';
 import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
 	WOOCOMMERCE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { areLocationsLoaded, areLocationsLoading } from './selectors';
 
-export const fetchLocations = siteId => ( dispatch, getState ) => {
-	if ( areLocationsLoaded( getState(), siteId ) || areLocationsLoading( getState(), siteId ) ) {
-		return;
-	}
-
-	const getAction = {
+export function fetchLocations( siteId ) {
+	return {
 		type: WOOCOMMERCE_LOCATIONS_REQUEST,
 		siteId,
 	};
+}
 
-	dispatch( getAction );
+export function locationsFailure( siteId, error = false ) {
+	const action = fetchLocations( siteId );
+	return setError( siteId, action, error );
+}
 
-	return request( siteId )
-		.get( 'data/continents' )
-		.then( data => {
-			dispatch( {
-				type: WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
-				siteId,
-				data,
-			} );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
-		} );
-};
+export function locationsReceive( siteId, data ) {
+	return {
+		type: WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
+		siteId,
+		data,
+	};
+}
