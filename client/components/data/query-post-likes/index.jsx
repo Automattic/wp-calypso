@@ -27,21 +27,36 @@ class QueryPostLikes extends Component {
 	};
 
 	static defaultProps = {
-		maxAgeSeconds: 90,
+		maxAgeSeconds: 60 * 5,
 		needsLikers: false,
 	};
 
 	componentDidMount() {
 		this.request( this.props );
+		this.restartInterval( this.props.maxAgeSeconds );
+	}
+
+	componentWillUnmount() {
+		if ( this.checkInterval ) {
+			clearInterval( this.checkInterval );
+		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId ) {
 			this.request( nextProps );
 		}
+		this.restartInterval( nextProps.maxAgeSeconds );
 	}
 
-	request( {
+	restartInterval = seconds => {
+		if ( this.checkInterval ) {
+			clearInterval( this.checkInterval );
+		}
+		this.checkInterval = setInterval( this.request, seconds * 1000 + 10 );
+	};
+
+	request = ( {
 		requestPostLikes: requestLikes,
 		siteId,
 		postId,
@@ -49,7 +64,7 @@ class QueryPostLikes extends Component {
 		hasPostLikes,
 		needsLikers,
 		lastUpdated,
-	} ) {
+	} ) => {
 		if (
 			! lastUpdated ||
 			Date.now() - lastUpdated > maxAgeSeconds * 1000 ||
@@ -57,7 +72,7 @@ class QueryPostLikes extends Component {
 		) {
 			requestLikes( siteId, postId, maxAgeSeconds );
 		}
-	}
+	};
 
 	render() {
 		return null;
