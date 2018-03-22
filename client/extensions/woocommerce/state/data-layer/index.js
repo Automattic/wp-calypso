@@ -9,6 +9,7 @@ import { addHandlers } from 'state/data-layer/extensions-middleware';
 import actionList from './action-list';
 import coupons from '../sites/coupons/handlers';
 import customers from './customers';
+import currencies from './data/currencies';
 import orderNotes from './orders/notes';
 import orderRefunds from './orders/refunds';
 import orders from './orders';
@@ -34,6 +35,7 @@ const handlers = mergeHandlers(
 	actionList,
 	coupons,
 	customers,
+	currencies,
 	orderNotes,
 	orderRefunds,
 	orders,

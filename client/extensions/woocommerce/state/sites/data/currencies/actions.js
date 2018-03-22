@@ -1,39 +1,29 @@
 /** @format */
-
 /**
  * Internal dependencies
  */
-
-import request from 'woocommerce/state/sites/request';
-import { setError } from '../status/wc-api/actions';
+import { setError } from 'woocommerce/state/sites/status/wc-api/actions';
 import {
 	WOOCOMMERCE_CURRENCIES_REQUEST,
 	WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { areCurrenciesLoaded, areCurrenciesLoading } from './selectors';
 
-export const fetchCurrencies = siteId => ( dispatch, getState ) => {
-	if ( areCurrenciesLoaded( getState(), siteId ) || areCurrenciesLoading( getState(), siteId ) ) {
-		return;
-	}
-
-	const getAction = {
+export function fetchCurrencies( siteId ) {
+	return {
 		type: WOOCOMMERCE_CURRENCIES_REQUEST,
 		siteId,
 	};
+}
 
-	dispatch( getAction );
+export function currenciesFailure( siteId, error = false ) {
+	const action = fetchCurrencies( siteId );
+	return setError( siteId, action, error );
+}
 
-	return request( siteId )
-		.get( 'data/currencies' )
-		.then( data => {
-			dispatch( {
-				type: WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
-				siteId,
-				data,
-			} );
-		} )
-		.catch( err => {
-			dispatch( setError( siteId, getAction, err ) );
-		} );
-};
+export function currenciesReceive( siteId, data ) {
+	return {
+		type: WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,
+		siteId,
+		data,
+	};
+}
