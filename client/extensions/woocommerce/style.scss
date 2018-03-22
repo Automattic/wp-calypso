@@ -62,8 +62,9 @@
 	@import 'woocommerce-services/style';
 
 	.main {
-		@include breakpoint( ">660px" ) {
-			padding-top: 35px;
+		padding-top: 35px;
+		@include breakpoint( "<660px" ) {
+			padding-top: 72px;
 		}
 	}
 
