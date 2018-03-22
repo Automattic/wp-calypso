@@ -3,10 +3,15 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { connect } from 'react-redux';
 import { difference } from 'lodash';
-import React from 'react';
 import PropTypes from 'prop-types';
+
+/**
+ * Internal Dependencies
+ */
+import { getPlansBySiteId, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { localize } from 'i18n-calypso';
 import TermPickerOption from '../term-picker-option';
 import formatCurrency from 'lib/format-currency';
@@ -166,9 +171,12 @@ const computeProductsWithPrices = ( state, plans ) => {
 
 export default connect(
 	( state, { plans } ) => {
+		const selectedSiteId = getSelectedSiteId( state );
 		const fetchingProducts = ! getProductsList( state ) && isProductsListFetching( state );
 		const fetchingPlans = ! plans && isRequestingPlans( state );
-		const fetchingDeps = fetchingProducts || fetchingPlans;
+		const fetchingSitePlans =
+			! getPlansBySiteId( selectedSiteId ) || isRequestingSitePlans( state, selectedSiteId );
+		const fetchingDeps = fetchingProducts || fetchingPlans || fetchingSitePlans;
 
 		return {
 			fetchingPlans,
