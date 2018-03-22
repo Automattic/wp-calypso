@@ -524,7 +524,7 @@ class Checkout extends React.Component {
 		);
 	}
 
-	handleTermChange( e ) {
+	handleTermChange = e => {
 		// Remove all cart items that are plans
 		const selectedPlans = this.props.cart.products.filter( p => getPlan( p.product_slug ) );
 		selectedPlans.forEach( removeItem );
@@ -537,7 +537,7 @@ class Checkout extends React.Component {
 			from_section: 'checkout',
 		} );
 		addItem( cartItem );
-	}
+	};
 
 	paymentMethodsAbTestFilter() {
 		// This methods can be used to filter payment methods
