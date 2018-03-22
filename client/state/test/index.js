@@ -11,6 +11,8 @@ import { createReduxStore } from '../';
 import currentUser from 'state/current-user/reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
+jest.mock( 'store/store', () => ( { get: () => {} } ) );
+
 describe( 'index', () => {
 	describe( 'createReduxStore', () => {
 		test( 'can be called without specifying initialState', () => {

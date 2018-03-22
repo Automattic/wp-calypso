@@ -16,6 +16,7 @@ import { THEMES_REQUEST_FAILURE } from 'state/action-types';
 import { receiveThemes } from 'state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 
+jest.mock( 'store/store', () => ( { get: () => {} } ) );
 jest.mock( 'components/popover', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
 jest.mock( 'lib/analytics', () => ( {} ) );

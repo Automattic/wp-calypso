@@ -12,6 +12,8 @@ import { spy, stub } from 'sinon';
 import { addHandlers, removeHandlers, configureMiddleware } from '../extensions-middleware';
 import { bypassDataLayer } from '../utils';
 
+jest.mock( 'store/store', () => ( { get: () => {} } ) );
+
 describe( 'Calypso Extensions Data Layer Middleware', () => {
 	let next;
 	let store;
