@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { random } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +28,7 @@ class QueryPostLikes extends Component {
 	};
 
 	static defaultProps = {
-		maxAgeSeconds: 60 * 5,
+		maxAgeSeconds: 120,
 		needsLikers: false,
 	};
 
@@ -45,15 +46,16 @@ class QueryPostLikes extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.siteId !== nextProps.siteId || this.props.postId !== nextProps.postId ) {
 			this.request( nextProps );
+			this.restartInterval( nextProps.maxAgeSeconds );
 		}
-		this.restartInterval( nextProps.maxAgeSeconds );
 	}
 
 	restartInterval = seconds => {
 		if ( this.checkInterval ) {
 			clearInterval( this.checkInterval );
 		}
-		this.checkInterval = setInterval( this.request, seconds * 1000 + 10 );
+		const intervalWithJitter = random( seconds, Math.ceil( seconds * 1.25 ) ) * 1000;
+		this.checkInterval = setInterval( this.request, intervalWithJitter );
 	};
 
 	request = ( {
