@@ -13,7 +13,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -172,7 +172,7 @@ class GoogleMyBusinessCategory extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card>
+				<CompactCard>
 					<FormFieldset>
 						<FormLegend>What kind of business do you run?</FormLegend>
 
@@ -206,7 +206,7 @@ class GoogleMyBusinessCategory extends Component {
 							suggest={ this.selectSuggestion }
 						/>
 					</FormFieldset>
-				</Card>
+				</CompactCard>
 
 				<StepNavigation value={ 50 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</Main>

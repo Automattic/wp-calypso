@@ -1,5 +1,4 @@
 .step-navigation {
-	background-color: $gray-lighten-30;
 	color: $blue-dark;
 	display: flex;
 	font-size: 14px;
@@ -21,16 +20,4 @@
 	a {
 		display: flex;
 	}
-}
-
-.step-navigation__back {
-	line-height: 38px;
-}
-
-.step-navigation__left-arrow {
-	margin: 7px 0.5em 0 0;
-}
-
-.step-navigation__right-arrow {
-	margin-left: 0.5em;
 }

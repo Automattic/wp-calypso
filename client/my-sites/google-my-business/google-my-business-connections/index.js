@@ -13,7 +13,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
@@ -44,7 +44,7 @@ class GoogleMyBusinessConnections extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card>
+				<CompactCard>
 					<FormFieldset>
 						<FormLegend>{ translate( 'Make connections (optional)' ) }</FormLegend>
 
@@ -60,7 +60,7 @@ class GoogleMyBusinessConnections extends Component {
 						<FormLabel>{ translate( 'Website' ) }</FormLabel>
 						<FormTextInput value={ this.props.siteId } />
 					</FormFieldset>
-				</Card>
+				</CompactCard>
 
 				<StepNavigation value={ 70 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</Main>

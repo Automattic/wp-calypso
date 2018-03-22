@@ -14,7 +14,7 @@ import page from 'page';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import Card from 'components/card';
+import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -310,7 +310,7 @@ class GoogleMyBusinessAddress extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card>
+				<CompactCard>
 					<FormFieldset>
 						<FormLegend>Where are you located?</FormLegend>
 
@@ -351,7 +351,7 @@ class GoogleMyBusinessAddress extends Component {
 							</span>
 						</div>
 					</FormFieldset>
-				</Card>
+				</CompactCard>
 
 				<StepNavigation value={ 20 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</Main>

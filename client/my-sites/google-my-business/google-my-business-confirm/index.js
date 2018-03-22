@@ -14,7 +14,7 @@ import Gridicon from 'gridicons';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import Card from 'components/card/compact';
+import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import StepNavigation from '../step-navigation';
@@ -40,7 +40,7 @@ class GoogleMyBusinessConfirm extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card>
+				<CompactCard>
 					<h2>{ translate( 'Verify your connection to this business' ) }</h2>
 					<p>
 						{ translate(
@@ -68,7 +68,7 @@ class GoogleMyBusinessConfirm extends Component {
 							{ translate( 'Track business analytics' ) }
 						</li>
 					</ul>
-				</Card>
+				</CompactCard>
 
 				<StepNavigation value={ 100 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</Main>

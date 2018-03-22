@@ -14,7 +14,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
-import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
@@ -94,7 +93,7 @@ class SearchForALocation extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card className="search-for-a-location__search-section">
+				<CompactCard className="search-for-a-location__search-section">
 					<FormFieldset>
 						<FormLegend className="search-for-a-location__legend">
 							{ translate( "What's the name of your business?" ) }
@@ -114,7 +113,7 @@ class SearchForALocation extends Component {
 							},
 						} ) }
 					</p>
-				</Card>
+				</CompactCard>
 
 				<StepNavigation value={ 10 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</Main>
