@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { difference } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
@@ -131,7 +132,7 @@ const computeProductsWithPrices = ( state, plans ) => {
 		getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, { isMonthly } ) ||
 		getPlanRawPrice( state, planProductId, isMonthly );
 
-	return plans
+	const retval = plans
 		.map( planSlug => {
 			const plan = getPlan( planSlug );
 			const planConstantObj = applyTestFiltersToPlansList( plan, abtest );
@@ -152,6 +153,15 @@ const computeProductsWithPrices = ( state, plans ) => {
 			};
 		} )
 		.filter( p => p.priceFull );
+
+	if ( retval.length !== plans.length ) {
+		const missing = difference( plans, retval.map( ( { planSlug } ) => planSlug ) );
+		throw new Error(
+			`price could not be computed for the following plans: ${ missing.join( ', ' ) }`
+		);
+	}
+
+	return retval;
 };
 
 export default connect(
