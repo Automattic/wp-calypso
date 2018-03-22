@@ -154,6 +154,7 @@ class Popover extends Component {
 					! this.domContext ||
 					! isVisible
 				) {
+					this.isUpdatingPosition = false;
 					return;
 				}
 
