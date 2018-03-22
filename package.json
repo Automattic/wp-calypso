@@ -23,7 +23,7 @@
     "autosize": "3.0.15",
     "babel-core": "6.25.0",
     "babel-loader": "7.1.1",
-    "babel-minify": "0.3.0",
+    "babel-minify-webpack-plugin": "0.3.1",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-plugin-syntax-jsx": "6.18.0",
     "babel-plugin-transform-class-properties": "6.24.1",
