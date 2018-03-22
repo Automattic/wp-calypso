@@ -499,13 +499,15 @@ class Checkout extends React.Component {
 			return false;
 		}
 
-		const currentPlan = getPlan( planInCart.product_slug );
-		const availableTerms = findPlansKeys( {
-			group: currentPlan.group,
-			type: currentPlan.type,
-		} );
+		const currentPlan = getPlan( this.props.selectedSite.plan.product_slug );
 
-		if ( ! availableTerms.length ) {
+		const chosenPlan = getPlan( planInCart.product_slug );
+		const availableTerms = findPlansKeys( {
+			group: chosenPlan.group,
+			type: chosenPlan.type,
+		} ).filter( p => getPlan( p ).availableFor( currentPlan ) );
+
+		if ( availableTerms.length < 2 ) {
 			return false;
 		}
 
