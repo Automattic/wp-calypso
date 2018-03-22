@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { filter, get } from 'lodash';
 import classNames from 'classnames';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -37,27 +36,8 @@ import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
 import PaymentMethods from 'blocks/payment-methods';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { selectSiteId } from 'state/help/actions';
 
 class PlansFeaturesMain extends Component {
-	componentWillUpdate( nextProps ) {
-		/**
-		 * Happychat does not update with the selected site right now :(
-		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
-		 * page, for example between a Jetpack and Simple site.
-		 *
-		 * @TODO: When happychat correctly handles site switching, remove selectSiteId action.
-		 */
-		const siteId = get( this.props, [ 'site', 'ID' ] );
-		const nextSiteId = get( nextProps, [ 'site', 'ID' ] );
-		if ( siteId !== nextSiteId && nextSiteId ) {
-			this.props.selectSiteId( nextSiteId );
-		}
-	}
-
 	getPlanFeatures() {
 		const {
 			basePlansPath,
@@ -159,14 +139,7 @@ class PlansFeaturesMain extends Component {
 	}
 
 	getJetpackFAQ() {
-		const { isChatAvailable, translate } = this.props;
-
-		const helpLink =
-			isEnabled( 'jetpack/happychat' ) && isChatAvailable ? (
-				<HappychatButton className="plans-features-main__happychat-button" />
-			) : (
-				<a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" />
-			);
+		const { translate } = this.props;
 
 		return (
 			<FAQ>
@@ -217,9 +190,17 @@ class PlansFeaturesMain extends Component {
 				<FAQItem
 					question={ translate( 'Have more questions?' ) }
 					answer={ translate(
-						'No problem! Feel free to {{helpLink}}get in touch{{/helpLink}} with our Happiness Engineers.',
+						'No problem! Feel free to {{a}}get in touch{{/a}} with our Happiness Engineers.',
 						{
-							components: { helpLink },
+							components: {
+								a: (
+									<a
+										href="https://jetpack.com/contact-support/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
 						}
 					) }
 				/>
@@ -228,14 +209,7 @@ class PlansFeaturesMain extends Component {
 	}
 
 	getFAQ() {
-		const { isChatAvailable, site, translate } = this.props;
-
-		const helpLink =
-			isEnabled( 'happychat' ) && isChatAvailable ? (
-				<HappychatButton className="plans-features-main__happychat-button" />
-			) : (
-				<a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" />
-			);
+		const { site, translate } = this.props;
 
 		return (
 			<FAQ>
@@ -356,9 +330,13 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Have more questions?' ) }
 					answer={ translate(
 						'Need help deciding which plan works for you? Our happiness engineers are available for' +
-							' any questions you may have. {{helpLink}}Get help{{/helpLink}}.',
+							' any questions you may have. {{a}}Get help{{/a}}.',
 						{
-							components: { helpLink },
+							components: {
+								a: (
+									<a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" />
+								),
+							},
 						}
 					) }
 				/>
@@ -418,7 +396,6 @@ class PlansFeaturesMain extends Component {
 
 		return (
 			<div className="plans-features-main">
-				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ displayJetpackPlans ? this.getIntervalTypeToggle() : null }
 				<QueryPlans />
@@ -437,7 +414,6 @@ PlansFeaturesMain.propTypes = {
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
 	intervalType: PropTypes.string,
-	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
@@ -451,14 +427,8 @@ PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
 	hideFreePlan: false,
 	intervalType: 'yearly',
-	isChatAvailable: false,
-	showFAQ: true,
 	site: {},
+	showFAQ: true,
 };
 
-export default connect(
-	state => ( {
-		isChatAvailable: isHappychatAvailable( state ),
-	} ),
-	{ selectSiteId }
-)( localize( PlansFeaturesMain ) );
+export default localize( PlansFeaturesMain );
