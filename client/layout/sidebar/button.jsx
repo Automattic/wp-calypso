@@ -19,6 +19,11 @@ class SidebarButton extends React.Component {
 		href: PropTypes.string,
 		onClick: PropTypes.func,
 		preloadSectionName: PropTypes.string,
+		forceTargetInternal: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		forceTargetInternal: false,
 	};
 
 	_preloaded = false;
@@ -28,6 +33,14 @@ class SidebarButton extends React.Component {
 			this._preloaded = true;
 			preload( this.props.preloadSectionName );
 		}
+	};
+
+	getTarget = () => {
+		if ( this.props.forceTargetInternal ) {
+			return null;
+		}
+
+		return isExternal( this.props.href ) ? '_blank' : null;
 	};
 
 	render() {
@@ -40,7 +53,7 @@ class SidebarButton extends React.Component {
 				rel={ isExternal( this.props.href ) ? 'external' : null }
 				onClick={ this.props.onClick }
 				href={ this.props.href }
-				target={ isExternal( this.props.href ) ? '_blank' : null }
+				target={ this.getTarget() }
 				className="sidebar__button"
 				onMouseEnter={ this.preload }
 				data-tip-target={ this.props.tipTarget }
