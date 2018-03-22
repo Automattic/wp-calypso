@@ -113,7 +113,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
