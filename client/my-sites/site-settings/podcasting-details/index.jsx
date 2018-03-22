@@ -24,7 +24,7 @@ import HeaderCake from 'components/header-cake';
 import QueryTerms from 'components/data/query-terms';
 import TermTreeSelector from 'blocks/term-tree-selector';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import categories from './categories';
+import podcastingTopics from './topics';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getTerms, isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 
@@ -100,18 +100,18 @@ class PodcastingDetails extends Component {
 				disabled={ isRequestingSettings }
 			>
 				<option value="0">None</option>
-				{ map( toPairs( categories ), ( [ category, subcategories ] ) => {
+				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
 					// The keys for podcasting in iTunes use &amp;
-					const catKey = category.replace( '&', '&amp;' );
+					const topicKey = topic.replace( '&', '&amp;' );
 					return [
-						<option key={ catKey } value={ catKey }>
-							{ category }
+						<option key={ topicKey } value={ topicKey }>
+							{ topic }
 						</option>,
-						...map( subcategories, subcategory => {
-							const subcatKey = catKey + ',' + subcategory.replace( '&', '&amp;' );
+						...map( subtopics, subtopic => {
+							const subtopicKey = topicKey + ',' + subtopic.replace( '&', '&amp;' );
 							return (
-								<option key={ subcatKey } value={ subcatKey }>
-									{ category } » { subcategory }
+								<option key={ subtopicKey } value={ subtopicKey }>
+									{ topic } » { subtopic }
 								</option>
 							);
 						} ),
