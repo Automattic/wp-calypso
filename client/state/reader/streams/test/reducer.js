@@ -76,6 +76,23 @@ describe( 'streams.pendingItems reducer', () => {
 
 		expect( nextState ).toEqual( [ { postId: '3', feedId: '4' } ] );
 	} );
+
+	it( 'should return the original state when no new changes come in', () => {
+		const newKey = { feed_item_ID: '3', feed_ID: '4' };
+		const prevState = deepfreeze( [ { postId: '3', feedId: '4' } ] );
+		const action = receiveUpdates( { posts: [ newKey ] } );
+		const nextState = pendingItems( prevState, action );
+
+		expect( nextState ).toBe( prevState );
+	} );
+
+	it( 'should notice changes when the length is equal, but the keys are different', () => {
+		const prevState = deepfreeze( [ blogPostKey, feedPostKey ] );
+		const action = receiveUpdates( { posts: [ feedPost, blogPost ] } );
+		const nextState = pendingItems( prevState, action );
+
+		expect( nextState ).toEqual( [ feedPostKey, blogPostKey ] );
+	} );
 } );
 
 describe( 'streams.selected reducer', () => {

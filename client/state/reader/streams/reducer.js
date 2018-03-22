@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { uniqBy, findIndex } from 'lodash';
+import { findIndex, uniqBy, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,7 +52,14 @@ export const pendingItems = ( state = [], action ) => {
 			const { posts } = action.payload;
 			const postKeys = posts.map( keyForPost );
 
-			return uniqBy( postKeys, keyToString );
+			const newState = uniqBy( postKeys, keyToString );
+			if ( newState.length !== state.length ) {
+				return newState;
+			}
+			const hasChanges = some( newState, ( key, idx ) => ! keysAreEqual( key, state[ idx ] ) );
+			if ( hasChanges ) {
+				return newState;
+			}
 	}
 	return state;
 };
