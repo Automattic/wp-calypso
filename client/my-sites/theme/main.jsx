@@ -191,12 +191,12 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	getFullLengthScreenshot = () => {
+	getFullLengthScreenshot() {
 		if ( this.isLoaded() ) {
 			return this.props.screenshots[ 0 ];
 		}
 		return null;
-	};
+	}
 
 	previewAction = event => {
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
@@ -209,7 +209,7 @@ class ThemeSheet extends React.Component {
 		return preview.action( this.props.id );
 	};
 
-	renderPreviewButton = demo_uri => {
+	renderPreviewButton( demo_uri ) {
 		return (
 			<a
 				className="theme__sheet-preview-link"
@@ -225,9 +225,9 @@ class ThemeSheet extends React.Component {
 				</span>
 			</a>
 		);
-	};
+	}
 
-	renderScreenshot = () => {
+	renderScreenshot() {
 		const { demo_uri, retired, isActive, isWpcomTheme } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const img = screenshotFull && (
@@ -244,7 +244,7 @@ class ThemeSheet extends React.Component {
 		}
 
 		return <div className="theme__sheet-screenshot">{ img }</div>;
-	};
+	}
 
 	renderSectionNav = currentSection => {
 		const filterStrings = {
