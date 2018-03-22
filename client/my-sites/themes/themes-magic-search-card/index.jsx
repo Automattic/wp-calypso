@@ -8,7 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
-import { debounce, intersection, difference, includes } from 'lodash';
+import { debounce, intersection, difference, includes, partial } from 'lodash';
 import classNames from 'classnames';
 import Gridicon from 'gridicons';
 
@@ -40,6 +40,8 @@ class ThemesMagicSearchCard extends React.Component {
 	constructor( props ) {
 		super( props );
 
+		this.suggestionComponentsRefs = {};
+
 		this.state = {
 			isMobile: isMobile(),
 			searchIsOpen: false,
@@ -48,6 +50,11 @@ class ThemesMagicSearchCard extends React.Component {
 			searchInput: this.props.search,
 		};
 	}
+
+	setSuggestionsRefs = ( key, suggestionComponent ) =>
+		( this.suggestionComponentsRefs[ key ] = suggestionComponent );
+
+	setSearchItemRef = search => ( this.searchInput = search );
 
 	componentWillMount() {
 		this.onResize = debounce( () => {
@@ -80,15 +87,15 @@ class ThemesMagicSearchCard extends React.Component {
 		//We need this logic because we are working togheter with different modules.
 		//that provide suggestions to the input depending on what is currently in input
 		const target = this.state.editedSearchElement !== '' ? 'suggestions' : 'welcome';
-		if ( this.refs[ target ] ) {
+		if ( this.suggestionComponentsRefs[ target ] ) {
 			// handleKeyEvent functions return bool that infroms if suggestion was picked
 			// We need that because we cannot rely on input state because it is updated
 			// asynchronously and we are not able to observe what was changed during handleKeyEvent
-			inputUpdated = this.refs[ target ].handleKeyEvent( event );
+			inputUpdated = this.suggestionComponentsRefs[ target ].handleKeyEvent( event );
 		}
 
 		if ( event.key === 'Enter' && ! inputUpdated && this.isPreviousCharWhitespace() ) {
-			this.refs[ 'url-search' ].blur();
+			this.searchInput.blur();
 			this.setState( { searchIsOpen: false } );
 		}
 	};
@@ -99,7 +106,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	// Check if char before cursor in input is a space.
 	isPreviousCharWhitespace = () => {
-		const { value, selectionStart } = this.refs[ 'url-search' ].refs.searchInput;
+		const { value, selectionStart } = this.searchInput;
 		const cursorPosition = value.slice( 0, selectionStart ).length;
 		return value[ cursorPosition - 1 ] === ' ';
 	};
@@ -139,8 +146,7 @@ class ThemesMagicSearchCard extends React.Component {
 		const val = input;
 		window.requestAnimationFrame( () => {
 			this.setState( {
-				cursorPosition: val.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart )
-					.length,
+				cursorPosition: val.slice( 0, this.searchInput.selectionStart ).length,
 			} );
 			const tokens = input.split( /(\s+)/ );
 
@@ -219,7 +225,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	updateInput = updatedInput => {
 		this.setState( { searchInput: updatedInput } );
-		this.refs[ 'url-search' ].clear();
+		this.searchInput.clear();
 	};
 
 	suggest = suggestion => {
@@ -233,7 +239,7 @@ class ThemesMagicSearchCard extends React.Component {
 	};
 
 	focusOnInput = () => {
-		this.refs[ 'url-search' ].focus();
+		this.searchInput.focus();
 	};
 
 	clearSearch = () => {
@@ -269,7 +275,7 @@ class ThemesMagicSearchCard extends React.Component {
 				onSearch={ this.props.onSearch }
 				initialValue={ this.state.searchInput }
 				value={ this.state.searchInput }
-				ref="url-search"
+				ref={ this.setSearchItemRef }
 				placeholder={ translate(
 					"I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"
 				) }
@@ -331,7 +337,7 @@ class ThemesMagicSearchCard extends React.Component {
 				<div onClick={ this.handleClickInside }>
 					{ renderSuggestions && (
 						<KeyedSuggestions
-							ref="suggestions"
+							ref={ partial( this.setSuggestionsRefs, 'suggestions' ) }
 							terms={ this.props.filters }
 							input={ this.state.editedSearchElement }
 							suggest={ this.suggest }
@@ -339,7 +345,7 @@ class ThemesMagicSearchCard extends React.Component {
 					) }
 					{ ! renderSuggestions && (
 						<MagicSearchWelcome
-							ref="welcome"
+							ref={ partial( this.setSuggestionsRefs, 'welcome' ) }
 							taxonomies={ filtersKeys }
 							topSearches={ [] }
 							suggestionsCallback={ this.insertTextInInput }
