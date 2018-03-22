@@ -78,4 +78,17 @@ describe( 'auth promise', () => {
 			} );
 		} );
 	} );
+
+	test( 'should return a rejected promise if there is no current user', () => {
+		const noUserState = {
+			currentUser: {},
+			users: {},
+			ui: {
+				section: {
+					name: 'jetpack-connect',
+				},
+			},
+		};
+		expect( getHappychatAuth( noUserState )() ).rejects.toThrow();
+	} );
 } );
