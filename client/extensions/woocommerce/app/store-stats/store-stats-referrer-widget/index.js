@@ -22,6 +22,7 @@ import HorizontalBar from 'woocommerce/components/d3/horizontal-bar';
 import Card from 'components/card';
 import ErrorPanel from 'my-sites/stats/stats-error';
 import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
+import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
 
 class StoreStatsReferrerWidget extends Component {
 	static propTypes = {
@@ -31,7 +32,7 @@ class StoreStatsReferrerWidget extends Component {
 		statType: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string.isRequired,
 		unit: PropTypes.string.isRequired,
-		querystring: PropTypes.string,
+		queryParams: PropTypes.object.isRequired,
 		slug: PropTypes.string,
 	};
 
@@ -69,8 +70,8 @@ class StoreStatsReferrerWidget extends Component {
 	}
 
 	render() {
-		const { data, selectedDate, translate, unit, slug, querystring } = this.props;
-		const basePath = `/store/stats/referrers/${ unit }/${ slug }`;
+		const { data, selectedDate, translate, unit, slug, queryParams } = this.props;
+		const basePath = '/store/stats/referrers';
 		const selectedData = find( data, d => d.date === selectedDate ) || { data: [] };
 		if ( selectedData.data.length === 0 ) {
 			const messages = this.getEmptyDataMessage( selectedData );
@@ -93,9 +94,12 @@ class StoreStatsReferrerWidget extends Component {
 		return (
 			<Table className="store-stats-referrer-widget" header={ header } compact>
 				{ sortedAndTrimmedData.map( d => {
-					const refQuery = `referrer=${ d.referrer }`;
-					const fullQuery = querystring ? `?${ querystring }&${ refQuery }` : `?${ refQuery }`;
-					const href = `${ basePath }${ fullQuery }`;
+					const widgetPath = getWidgetPath(
+						unit,
+						slug,
+						Object.assign( {}, { referrer: d.referrer }, queryParams )
+					);
+					const href = `${ basePath }${ widgetPath }`;
 					return (
 						<TableRow key={ d.referrer }>
 							<TableItem isTitle>

@@ -46,12 +46,12 @@ export default function StatsController( context, next ) {
 	);
 
 	const props = {
-		querystring: context.querystring,
 		type: context.params.type,
 		unit: context.params.unit,
 		path: context.pathname,
 		queryDate: getQueryDate( context ),
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
+		queryParams: context.query,
 	};
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );

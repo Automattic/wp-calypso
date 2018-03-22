@@ -32,7 +32,6 @@ class StoreStatsListView extends Component {
 		path: PropTypes.string.isRequired,
 		selectedDate: PropTypes.string,
 		siteId: PropTypes.number,
-		querystring: PropTypes.string,
 		type: PropTypes.string.isRequired,
 		unit: PropTypes.string.isRequired,
 		slug: PropTypes.string.isRequired,
