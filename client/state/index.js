@@ -86,6 +86,7 @@ import support from './support/reducer';
 import terms from './terms/reducer';
 import timezones from './timezones/reducer';
 import themes from './themes/reducer';
+import twoStep from './two-step/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import userDevices from './user-devices/reducer';
@@ -173,6 +174,7 @@ const reducers = {
 	terms,
 	timezones,
 	themes,
+	twoStep,
 	ui,
 	users,
 	userDevices,

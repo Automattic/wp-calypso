@@ -19,7 +19,6 @@ import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
@@ -48,7 +47,7 @@ class Security extends React.Component {
 
 				<SecuritySectionNav path={ this.props.path } />
 
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 				<Card className="me-security-settings security__settings">
 					<p>
 						{ translate(

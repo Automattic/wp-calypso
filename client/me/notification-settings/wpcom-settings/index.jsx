@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
 import Card from 'components/card';
@@ -153,7 +152,7 @@ class WPCOMNotifications extends React.Component {
 		return (
 			<Main>
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 
 				<Navigation path={ this.props.path } />
 

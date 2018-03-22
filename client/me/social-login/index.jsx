@@ -22,7 +22,6 @@ import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
 import { isRequesting, getRequestError } from 'state/login/selectors';
@@ -160,7 +159,7 @@ class SocialLogin extends Component {
 
 				<SecuritySectionNav path={ this.props.path } />
 
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 
 				{ this.renderContent() }
 			</Main>

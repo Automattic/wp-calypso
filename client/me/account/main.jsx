@@ -35,7 +35,6 @@ import FormSectionHeading from 'components/forms/form-section-heading';
 import FormRadio from 'components/forms/form-radio';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import observe from 'lib/mixins/data-observe';
@@ -783,7 +782,7 @@ const Account = createReactClass( {
 		return (
 			<Main className="account">
 				<MeSidebarNavigation />
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<ReauthRequired />
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>
