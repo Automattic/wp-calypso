@@ -57,6 +57,9 @@ class InventoryControls extends Component {
 
 	increaseValue = name => () => {
 		const value = this.state[ name ];
+		if ( value >= 99 ) {
+			return;
+		}
 		this.setState( { [ name ]: value + 1 } );
 	};
 
@@ -149,7 +152,7 @@ class InventoryControls extends Component {
 							minContent={ this.renderMinus( 'lowStockThreshold' ) }
 							maxContent={ this.renderPlus( 'lowStockThreshold' ) }
 							aria-describedby="low_stock_amount_help"
-							max="100"
+							max="99"
 							value={ lowStockThreshold }
 							onChange={ this.setValue( 'lowStockThreshold' ) }
 						/>
@@ -173,7 +176,7 @@ class InventoryControls extends Component {
 							minContent={ this.renderMinus( 'noStockThreshold' ) }
 							maxContent={ this.renderPlus( 'noStockThreshold' ) }
 							aria-describedby="no_stock_amount_help"
-							max="100"
+							max="99"
 							value={ noStockThreshold }
 							onChange={ this.setValue( 'noStockThreshold' ) }
 						/>
