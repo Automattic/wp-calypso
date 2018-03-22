@@ -6,8 +6,7 @@
 import deepFreeze from 'deep-freeze';
 import { cloneDeepWith } from 'lodash';
 
-// Do not export this object without ensuring it cannot be mutated
-const queryManagerSchema = {
+const queryManagerSchema = deepFreeze( {
 	additionalProperties: false,
 	required: [ 'data', 'options' ],
 	type: 'object',
@@ -48,7 +47,7 @@ const queryManagerSchema = {
 			},
 		},
 	},
-};
+} );
 
 /**
  * Get a queryManagerSchema with a customized items schema
@@ -64,4 +63,4 @@ export function withItemsSchema( itemsSchema ) {
 	} );
 }
 
-export default deepFreeze( queryManagerSchema );
+export default queryManagerSchema;
