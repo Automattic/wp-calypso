@@ -3,20 +3,18 @@
 }
 
 .credentials-configured__header {
-	width: 85%;
+	align-items: center;
+	display: flex;
 }
 
 .credentials-configured__header-gridicon {
 	display: inline-block;
-	vertical-align: middle;
+	flex-shrink: 0;
 	margin-right: 10px;
 }
 
-.credentials-configured__header-configured-text,
 .credentials-configured__header-text {
 	display: inline-block;
-	vertical-align: middle;
-	width: 85%;
 	color: $gray-dark;
 }
 
@@ -30,7 +28,6 @@
 }
 
 .credentials-configured__header-description {
-	width: 500px;
 	color: $gray;
 	font-size: 1.3rem;
 }
