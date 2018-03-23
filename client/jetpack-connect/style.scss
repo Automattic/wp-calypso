@@ -626,7 +626,6 @@
 }
 
 .jetpack-connect__credentials-submit {
-	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
@@ -666,7 +665,9 @@
 }
 
 .jetpack-connect__password-form-input {
-	text-indent: 27px;
+	&[type='password'] {
+		padding-left: 40px;
+	}
 }
 
 .jetpack-connect__creds-form-spinner {
