@@ -5,9 +5,6 @@
  */
 
 import { PREVIEW_SITE_SET, PREVIEW_URL_CLEAR, PREVIEW_URL_SET } from 'state/action-types';
-
-import { clearCustomizations } from 'state/preview/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 export function setPreviewUrl( url ) {
@@ -31,9 +28,7 @@ export function setAllSitesPreviewSiteId( siteId ) {
 }
 
 export function closePreview() {
-	return ( dispatch, getState ) => {
-		const selectedSiteId = getSelectedSiteId( getState() );
-		dispatch( clearCustomizations( selectedSiteId ) );
+	return dispatch => {
 		dispatch( clearPreviewUrl() );
 		dispatch( setLayoutFocus( 'content' ) );
 	};
