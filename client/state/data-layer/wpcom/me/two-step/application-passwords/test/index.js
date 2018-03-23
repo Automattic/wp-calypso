@@ -3,7 +3,7 @@
 /**
  * Internal dependencies
  */
-import { fromApi, handleRequestSuccess, requestApplicationPasswords } from '../';
+import { apiTransformer, handleRequestSuccess, requestApplicationPasswords } from '../';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { receiveApplicationPasswords } from 'state/application-passwords/actions';
 
@@ -37,12 +37,8 @@ describe( 'handleRequestSuccess()', () => {
 	} );
 } );
 
-describe( 'fromApi()', () => {
-	test( 'should throw an error for an unsuccessful request', () => {
-		expect( () => fromApi( { error: 'This is some error' } ) ).toThrow();
-	} );
-
-	test( 'should return application_passwords from original response for a successful request', () => {
-		expect( fromApi( { application_passwords: appPasswords } ) ).toEqual( appPasswords );
+describe( 'apiTransformer()', () => {
+	test( 'should transform original response for a successful request', () => {
+		expect( apiTransformer( { application_passwords: appPasswords } ) ).toEqual( appPasswords );
 	} );
 } );

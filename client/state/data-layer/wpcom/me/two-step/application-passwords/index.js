@@ -10,19 +10,14 @@ import { noop } from 'lodash';
  */
 import deleteHandler from './delete';
 import newHandler from './new';
+import schema from './schema';
 import { APPLICATION_PASSWORDS_REQUEST } from 'state/action-types';
-import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx, makeParser } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { mergeHandlers } from 'state/action-watchers/utils';
 import { receiveApplicationPasswords } from 'state/application-passwords/actions';
 
-export function fromApi( response ) {
-	if ( ! response.application_passwords ) {
-		throw new Error( 'An error has occurred while requesting application passwords.', response );
-	}
-
-	return response.application_passwords;
-}
+export const apiTransformer = data => data.application_passwords;
 
 /**
  * Dispatches a request to fetch application passwords of the current user
@@ -56,7 +51,7 @@ const requestHandler = {
 			fetch: requestApplicationPasswords,
 			onSuccess: handleRequestSuccess,
 			onError: noop,
-			fromApi,
+			fromApi: makeParser( schema, {}, apiTransformer ),
 		} ),
 	],
 };
