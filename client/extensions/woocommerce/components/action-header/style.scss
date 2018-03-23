@@ -35,6 +35,13 @@
 		top: 47px;
 		left: 229px;
 	}
+
+	@include breakpoint( "<660px" ) {
+		position: fixed;
+		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+		width: 100%;
+		top: 47px;
+	}
 }
 
 .action-header__back-to-sidebar {
