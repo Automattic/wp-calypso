@@ -786,13 +786,11 @@ export default connect(
 			} )
 		);
 
+		// Minimize the free plan for the unsigned users
 		if ( isInSignup && ! isLoggedIn ) {
-			const isInTest = abtest( 'minimizedFreePlanForUnsignedUser' ) === 'minimized';
-			if ( isInTest ) {
-				freePlanProperties = filter( planProperties, filterFreePlan );
-				freePlanProperties = freePlanProperties[ 0 ] || null;
-				planProperties = reject( planProperties, filterFreePlan );
-			}
+			freePlanProperties = filter( planProperties, filterFreePlan );
+			freePlanProperties = freePlanProperties[ 0 ] || null;
+			planProperties = reject( planProperties, filterFreePlan );
 		}
 
 		const maxCredits = getMaxCredits( planProperties, ownProps.site.jetpack );
