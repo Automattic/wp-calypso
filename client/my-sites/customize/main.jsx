@@ -47,7 +47,7 @@ class Customize extends React.Component {
 
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
-		site: PropTypes.object.isRequired,
+		site: PropTypes.object,
 		pathname: PropTypes.string.isRequired,
 		prevPath: PropTypes.string,
 		query: PropTypes.object,
