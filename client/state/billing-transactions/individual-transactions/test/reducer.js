@@ -4,6 +4,7 @@
  */
 import { requesting, error, data } from '../reducer';
 import {
+	BILLING_TRANSACTION_CLEAR_ERROR,
 	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
@@ -52,7 +53,7 @@ describe( 'individualTransactions reducer', () => {
 	} );
 
 	describe( 'error', () => {
-		test( 'true if an error object exists on the action', () => {
+		test( 'true on BILLING_TRANSACTION_REQUEST_FAILURE', () => {
 			const state = error( false, {
 				type: BILLING_TRANSACTION_REQUEST_FAILURE,
 				transactionId,
@@ -62,11 +63,10 @@ describe( 'individualTransactions reducer', () => {
 			expect( state ).toBe( true );
 		} );
 
-		test( 'false when an action error field is set to falsey', () => {
+		test( 'false on BILLING_TRANSACTION_CLEAR_ERROR', () => {
 			const state = error( true, {
-				type: BILLING_TRANSACTION_REQUEST_FAILURE,
+				type: BILLING_TRANSACTION_CLEAR_ERROR,
 				transactionId,
-				error: false,
 			} );
 
 			expect( state ).toBe( false );

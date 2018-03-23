@@ -4,6 +4,7 @@
  * Internal dependencies
  */
 import {
+	BILLING_TRANSACTION_CLEAR_ERROR,
 	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
@@ -34,7 +35,8 @@ export const requesting = createReducer( false, {
  * @return {Object}        Updated state
  */
 export const error = createReducer( false, {
-	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: ( state, action ) => Boolean( action.error ),
+	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: () => true,
+	[ BILLING_TRANSACTION_CLEAR_ERROR ]: () => false,
 } );
 
 /**

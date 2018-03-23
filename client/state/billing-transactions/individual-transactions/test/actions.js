@@ -4,6 +4,7 @@
  */
 import { requestBillingTransaction, clearBillingTransactionError } from '../actions';
 import {
+	BILLING_TRANSACTION_CLEAR_ERROR,
 	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
@@ -80,9 +81,8 @@ describe( 'actions', () => {
 		const receiptId = 12345678;
 		const action = clearBillingTransactionError( receiptId );
 		expect( action ).toEqual( {
-			type: BILLING_TRANSACTION_REQUEST_FAILURE,
+			type: BILLING_TRANSACTION_CLEAR_ERROR,
 			receiptId,
-			error: false,
 		} );
 	} );
 } );
