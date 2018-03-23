@@ -8,10 +8,11 @@ import { get, truncate, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice, removeNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import { getSiteDomain } from 'state/sites/selectors';
 import { getInviteForSite } from 'state/invites/selectors';
+import { restorePost } from 'state/posts/actions';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
@@ -149,20 +150,27 @@ export const onPostRestoreFailure = action => ( dispatch, getState ) => {
 
 const onPostRestoreSuccess = () => successNotice( translate( 'Post successfully restored' ) );
 
-export function onPostSaveSuccess( action ) {
-	let text;
-	switch ( action.post.status ) {
+export const onPostSaveSuccess = ( { post, savedPost } ) => dispatch => {
+	switch ( post.status ) {
 		case 'trash':
-			text = translate( 'Post successfully moved to trash' );
+			const noticeId = 'trash_' + savedPost.global_ID;
+			dispatch(
+				successNotice( translate( 'Post successfully moved to trash.' ), {
+					id: noticeId,
+					button: translate( 'Undo' ),
+					onClick: () => {
+						dispatch( removeNotice( noticeId ) );
+						dispatch( restorePost( savedPost.site_ID, savedPost.ID ) );
+					},
+				} )
+			);
 			break;
 
 		case 'publish':
-			text = translate( 'Post successfully published' );
+			dispatch( successNotice( translate( 'Post successfully published' ) ) );
 			break;
 	}
-
-	return text ? successNotice( text ) : null;
-}
+};
 
 export const onPublicizeConnectionCreate = ( { connection } ) =>
 	successNotice(
