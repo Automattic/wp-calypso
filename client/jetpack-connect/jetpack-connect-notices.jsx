@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -339,9 +340,8 @@ export class JetpackConnectNotices extends Component {
 export default connect(
 	state => {
 		const jetpackConnectSite = getConnectingSite( state );
-		const siteToConnect = jetpackConnectSite.url;
 		return {
-			siteToConnect,
+			siteToConnect: get( jetpackConnectSite, 'url', '' ),
 		};
 	},
 	{ recordTracksEvent }
