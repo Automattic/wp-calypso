@@ -7,7 +7,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import page from 'page';
 import Gridicon from 'gridicons';
 
 /**
@@ -15,9 +14,6 @@ import Gridicon from 'gridicons';
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import CompactCard from 'components/card/compact';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import StepNavigation from '../step-navigation';
 
 class GoogleMyBusinessConfirm extends Component {
 	static propTypes = {
@@ -25,21 +21,11 @@ class GoogleMyBusinessConfirm extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteId }` );
-	};
-
 	render() {
-		const { translate, siteId } = this.props;
-		const backHref = '/google-my-business/create/connections/' + siteId;
-		const nextHref = '/google-my-business/verify/' + siteId;
+		const { translate } = this.props;
 
 		return (
-			<Main className="google-my-business google-my-business-confirm" wideLayout>
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
-				</HeaderCake>
-
+			<div className="google-my-business-confirm">
 				<CompactCard>
 					<h2>{ translate( 'Verify your connection to this business' ) }</h2>
 					<p>
@@ -69,9 +55,7 @@ class GoogleMyBusinessConfirm extends Component {
 						</li>
 					</ul>
 				</CompactCard>
-
-				<StepNavigation value={ 100 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
-			</Main>
+			</div>
 		);
 	}
 }

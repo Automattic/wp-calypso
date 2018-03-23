@@ -12,14 +12,9 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import {
 	selectBusinessType,
 	showListOfLocations,
-	searchForALocation,
-	stats,
-	address,
-	category,
-	connections,
 	verify,
 	newGMB,
-	confirm,
+	stats,
 	create,
 } from './controller';
 import config from 'config';
@@ -53,58 +48,12 @@ export default function() {
 			clientRender
 		);
 
-		page(
-			'/google-my-business/search-for-a-location',
-			siteSelection,
-			sites,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/google-my-business/search-for-a-location/:site_id/',
-			siteSelection,
-			navigation,
-			searchForALocation,
-			makeLayout,
-			clientRender
-		);
-
 		page( '/google-my-business/stats', siteSelection, sites, makeLayout, clientRender );
 		page(
 			'/google-my-business/stats/:site_id/',
 			siteSelection,
 			navigation,
 			stats,
-			makeLayout,
-			clientRender
-		);
-
-		page( '/google-my-business/address', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/google-my-business/address/:site_id/',
-			siteSelection,
-			navigation,
-			address,
-			makeLayout,
-			clientRender
-		);
-
-		page( '/google-my-business/category', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/google-my-business/category/:site_id/',
-			siteSelection,
-			navigation,
-			category,
-			makeLayout,
-			clientRender
-		);
-
-		page( '/google-my-business/connections', siteSelection, sites, makeLayout, clientRender );
-		page(
-			'/google-my-business/connections/:site_id/',
-			siteSelection,
-			navigation,
-			connections,
 			makeLayout,
 			clientRender
 		);

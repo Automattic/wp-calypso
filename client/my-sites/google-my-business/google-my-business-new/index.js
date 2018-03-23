@@ -30,7 +30,7 @@ class GoogleMyBusinessNew extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const nextHref = '/google-my-business/search-for-a-location/' + siteId;
+		const nextHref = '/google-my-business/create/search/' + siteId;
 		const backHref = '/stats/' + siteId;
 
 		return (

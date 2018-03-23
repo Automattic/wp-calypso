@@ -56,7 +56,7 @@ class ShowListOfLocation extends Component {
 
 	render() {
 		const { translate, siteId } = this.props;
-		const searchHref = '/google-my-business/search-for-a-location/' + siteId;
+		const searchHref = '/google-my-business/create/search/' + siteId;
 		const statsHref = '/google-my-business/stats/' + siteId;
 
 		return (

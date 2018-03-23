@@ -7,20 +7,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import CompactCard from 'components/card/compact';
-import HeaderCake from 'components/header-cake';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
-import Main from 'components/main';
 import SearchCard from 'components/search-card';
-import StepNavigation from '../step-navigation';
 import Suggestions from 'components/suggestions';
 
 class GoogleMyBusinessCategory extends Component {
@@ -155,23 +151,13 @@ class GoogleMyBusinessCategory extends Component {
 		} );
 	};
 
-	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteId }` );
-	};
-
 	render() {
-		const { translate, siteId } = this.props;
-		const nextHref = '/google-my-business/create/connections/' + siteId;
-		const backHref = '/google-my-business/create/address/' + siteId;
+		const { translate } = this.props;
 		const learnMore =
 			'https://support.google.com/business/answer/7249669?hl=en&_ga=2.170244832.1172336099.1521039613-786824372.1502702633';
 
 		return (
-			<Main className="google-my-business google-my-business-category" wideLayout>
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
-				</HeaderCake>
-
+			<div className="google-my-business-category">
 				<CompactCard className="is-animated-content">
 					<FormFieldset>
 						<FormLegend>What kind of business do you run?</FormLegend>
@@ -207,9 +193,7 @@ class GoogleMyBusinessCategory extends Component {
 						/>
 					</FormFieldset>
 				</CompactCard>
-
-				<StepNavigation value={ 50 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
-			</Main>
+			</div>
 		);
 	}
 }

@@ -8,20 +8,16 @@ import PropTypes from 'prop-types';
 import { loadScript } from 'lib/load-script';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import CompactCard from 'components/card/compact';
-import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
-import StepNavigation from '../step-navigation';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
-import Main from 'components/main';
 
 let autocompleteService = {};
 
@@ -41,10 +37,6 @@ class SearchForALocation extends Component {
 			}
 		);
 	}
-
-	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteId }` );
-	};
 
 	updatePredictions = predictions => {
 		this.setState( {
@@ -68,7 +60,6 @@ class SearchForALocation extends Component {
 		const { translate, siteId } = this.props;
 		const { predictions } = this.state;
 		const nextHref = '/google-my-business/create/address/' + siteId;
-		const backHref = '/google-my-business/show-list-of-locations/' + siteId;
 		const tosHref =
 			'https://www.google.com/intl/en/+/policy/pages-services.html?_ga=2.180297060.1172336099.1521039613-786824372.1502702633';
 		const predictionsMarkup =
@@ -88,11 +79,7 @@ class SearchForALocation extends Component {
 			} );
 
 		return (
-			<Main className="google-my-business search-for-a-location" wideLayout>
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
-				</HeaderCake>
-
+			<div className="search-for-a-location">
 				<CompactCard className="search-for-a-location__search-section is-animated-content">
 					<FormFieldset>
 						<FormLegend className="search-for-a-location__legend">
@@ -114,9 +101,7 @@ class SearchForALocation extends Component {
 						} ) }
 					</p>
 				</CompactCard>
-
-				<StepNavigation value={ 10 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
-			</Main>
+			</div>
 		);
 	}
 }

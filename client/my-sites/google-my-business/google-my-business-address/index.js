@@ -8,14 +8,12 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
-import page from 'page';
 
 /**
  * Internal dependencies
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import CompactCard from 'components/card/compact';
-import HeaderCake from 'components/header-cake';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
@@ -23,8 +21,6 @@ import FormStateSelector from 'components/forms/us-state-selector';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import FormToggle from 'components/forms/form-toggle';
-import Main from 'components/main';
-import StepNavigation from '../step-navigation';
 
 class GoogleMyBusinessAddress extends Component {
 	static propTypes = {
@@ -291,25 +287,15 @@ class GoogleMyBusinessAddress extends Component {
 		'Zimbabwe',
 	];
 
-	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteId }` );
-	};
-
 	render() {
-		const { translate, siteId } = this.props;
-		const nextHref = '/google-my-business/create/category/' + siteId;
-		const backHref = '/google-my-business/create/search/' + siteId;
+		const { translate } = this.props;
 		const learnMore =
 			'https://support.google.com/business/answer/3038163?hl' +
 			'=en&p=service_area&_ga=2.114817351.1172336099.1521039613-786824372' +
 			'.1502702633&visit_id=1-636566421185268799-1331387176&rd=1';
 
 		return (
-			<Main className="google-my-business google-my-business-address" wideLayout>
-				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
-					{ translate( 'Google My Business' ) }
-				</HeaderCake>
-
+			<div className="google-my-business-address">
 				<CompactCard className="is-animated-content">
 					<FormFieldset>
 						<FormLegend>Where are you located?</FormLegend>
@@ -352,9 +338,7 @@ class GoogleMyBusinessAddress extends Component {
 						</div>
 					</FormFieldset>
 				</CompactCard>
-
-				<StepNavigation value={ 20 } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
-			</Main>
+			</div>
 		);
 	}
 }
