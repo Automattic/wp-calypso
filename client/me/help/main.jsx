@@ -37,7 +37,7 @@ const debug = debugModule( 'calypso:help-search' );
 
 const getSupportLocale = () => {
 	const localeSlug = getLocaleSlug();
-	if ( config( 'support_locales' ).indexOf( getLocaleSlug() ) > -1 ) {
+	if ( config( 'support_locales' ).indexOf( localeSlug ) > -1 ) {
 		return localeSlug;
 	}
 	return 'en';
