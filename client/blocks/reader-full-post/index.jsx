@@ -93,8 +93,6 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
-
-		this.initAMP();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -495,75 +493,29 @@ export class FullPostView extends React.Component {
 	};
 
 	renderPostAMP() {
-		// const { post, site, referralPost } = this.props;
-		// const siteName = getSiteName( { site, post } );
-		// const commentCount = get( post, 'discussion.comment_count' );
-		// const startingCommentId = this.getCommentIdFromUrl();
-		// const relatedPostsFromOtherSitesTitle = translate(
-		// 	'More on {{wpLink}}WordPress.com{{/wpLink}}',
-		// 	{
-		// 		components: {
-		// 			/* eslint-disable */
-		// 			wpLink: <a href="/" className="reader-related-card__link" />,
-		// 			/* eslint-enable */
-		// 		},
-		// 	}
-		// );
+		const { post } = this.props;
+		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 
-		// var viewerEl = document.getElementsByTagName("viewer")[0];
-		// var ampDocEl = document.getElementsByTagName("ampdoc")[0];
-		// var viewer;
-		// function initViewer() {
-		// 	var ampDocUrl = ampDocEl.getAttribute('url');
-		// 	var viewerHost = document.getElementById('viewerHost');
-		// 	viewer = new Viewer(viewerHost, ampDocUrl);
-		// 	viewer.setViewerShowAndHide(showViewer, hideViewer, isViewerHidden);
-		// 	ampDocEl.addEventListener('click', openAmpDocInViewer);
-		// }
-		// function hideViewer() {
-		// 	viewerEl.classList.add('hidden');
-		// }
-		// function showViewer() {
-		// 	viewerEl.classList.remove('hidden');
-		// }
-		// function isViewerHidden() {
-		// 	return viewerEl.classList.contains('hidden');
-		// }
-		// function openAmpDocInViewer() {
-		// 	viewer.attach();
-		// 	showViewer();
-		// }
-		// window.onload = initViewer();
+		// initialize AMP viewer if we have a post and container already
+		if ( ! isLoading && ! this.ampViewer && this.ampViewerContainer ) {
+			this.ampViewer = new AmpViewer( this.ampViewerContainer, 'https://ampproject.org' ); //post.URL
 
-		return (
-			<div
-				style={ { position: 'relative' } }
-				className="reader-full-post__amp-container"
-				ref={ this.storeAmpViewerContainerRef }
-			/>
-		);
-	}
-
-	storeAmpViewerContainerRef = el => {
-		this.ampViewerContainer = el;
-	};
-
-	initAMP() {
-		// called on document mount
-		if ( this.ampViewerContainer ) {
-			this.ampViewer = new AmpViewer( this.ampViewerContainer, 'https://www.ampproject.org' );
-
-			// listen for when the document is loaded and has a height so we can adjust the
-			// iframe size
-			// const viewerMessaging = new ViewerMessaging( window, this.ampViewer.
-
+			// listen for when the document is loaded and has a height so we can adjust the iframe size
 			this.ampViewer.addListener( 'documentHeight', data => {
 				this.ampViewerContainer.setAttribute( 'style', `height:${ data.height }px` );
 			} );
 
 			this.ampViewer.attach();
 		}
+
+		return (
+			<div className="reader-full-post__amp-container" ref={ this.storeAmpViewerContainerRef } />
+		);
 	}
+
+	storeAmpViewerContainerRef = el => {
+		this.ampViewerContainer = el;
+	};
 
 	removeAMP() {
 		// called on document mount
