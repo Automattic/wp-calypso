@@ -125,15 +125,16 @@ export class SimpleSiteRenameForm extends Component {
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
 				<div className="simple-site-rename-form simple-site-rename-form__only-owner-info">
-					<Gridicon icon="info" />
-					{ translate( 'Only the site owner%(ownerInfo)s can edit this domain name.', {
-						args: {
-							ownerInfo: isEmpty( currentDomain.owner )
-								? ''
-								: ` ({{strong}}${ currentDomain.owner }{{/strong}})`,
-						},
-						components: { strong: <strong /> },
-					} ) }
+					<Gridicon icon="info-outline" />
+					{ isEmpty( currentDomain.owner )
+						? translate( 'Only the site owner can edit this domain name.' )
+						: translate(
+								'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
+								{
+									args: { ownerInfo: currentDomain.owner },
+									components: { strong: <strong /> },
+								}
+							) }
 				</div>
 			);
 		}
