@@ -18,7 +18,7 @@ import { combineReducers, createReducer, keyedReducer } from 'state/utils';
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @return {Boolean}        Updated state
  */
 export const requesting = createReducer( false, {
 	[ BILLING_TRANSACTION_REQUEST ]: () => true,
@@ -32,7 +32,7 @@ export const requesting = createReducer( false, {
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
- * @return {Object}        Updated state
+ * @return {Boolean}        Updated state
  */
 export const error = createReducer( false, {
 	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: () => true,
