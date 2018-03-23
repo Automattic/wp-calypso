@@ -15,6 +15,11 @@
  */
 
 /**
+ * External Dependencies
+ */
+import EventEmitter from 'events';
+
+/**
  * Internal Dependencies
  */
 import { History } from './history';
@@ -26,7 +31,7 @@ import { parseUrl } from './utils/url';
 /**
  * This file is a Viewer for AMP Documents.
  */
-class Viewer {
+class Viewer extends EventEmitter {
 
 	/**
 	 * @param {!Element} hostElement the element to attatch the iframe to.
@@ -35,6 +40,8 @@ class Viewer {
 	 * @param {boolean|undefined} opt_prerender Whether to pre-render the content
 	 */
 	constructor( hostElement, ampDocUrl, opt_referrer, opt_prerender ) {
+		super();
+
 		/** @private {ViewerMessaging} */
 		this.viewerMessaging_ = null;
 
@@ -100,7 +107,7 @@ class Viewer {
 
 			this.iframe_.src = ampDocCachedUrl;
 			this.hostElement_.appendChild( this.iframe_ );
-			this.history_.pushState( this.ampDocUrl_ );
+			// this.history_.pushState( this.ampDocUrl_ );
 		} );
 	}
 
@@ -181,12 +188,13 @@ class Viewer {
 	 */
 	messageHandler_( name, data, rsvp ) {
 		log( 'messageHandler: ', name, data, rsvp );
+		this.emit( name, data );
 		switch ( name ) {
 			case 'pushHistory':
-				this.history_.pushState( this.ampDocUrl_, data );
+				// this.history_.pushState( this.ampDocUrl_, data );
 				return Promise.resolve();
 			case 'popHistory':
-				this.history_.goBack();
+				// this.history_.goBack();
 				return Promise.resolve();
 			case 'cancelFullOverlay':
 			case 'documentLoaded':

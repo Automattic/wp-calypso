@@ -535,7 +535,13 @@ export class FullPostView extends React.Component {
 		// }
 		// window.onload = initViewer();
 
-		return <container ref={ this.storeAmpViewerContainerRef } />;
+		return (
+			<div
+				style={ { position: 'relative' } }
+				className="reader-full-post__amp-container"
+				ref={ this.storeAmpViewerContainerRef }
+			/>
+		);
 	}
 
 	storeAmpViewerContainerRef = el => {
@@ -546,6 +552,15 @@ export class FullPostView extends React.Component {
 		// called on document mount
 		if ( this.ampViewerContainer ) {
 			this.ampViewer = new AmpViewer( this.ampViewerContainer, 'https://www.ampproject.org' );
+
+			// listen for when the document is loaded and has a height so we can adjust the
+			// iframe size
+			// const viewerMessaging = new ViewerMessaging( window, this.ampViewer.
+
+			this.ampViewer.addListener( 'documentHeight', data => {
+				this.ampViewerContainer.setAttribute( 'style', `height:${ data.height }px` );
+			} );
+
 			this.ampViewer.attach();
 		}
 	}
