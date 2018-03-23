@@ -83,28 +83,41 @@ class Stats extends Component {
 
 					<SectionHeader label={ translate( 'How customers search for your business' ) } />
 					<Card>
-						<img
-							src="/calypso/images/google-my-business/pie-chart.svg"
-							alt="Pie chart"
-							className="google-my-business-stats__searches-pie-chart"
-						/>
-						<div className="google-my-business-stats__stat-title">451 Total searches</div>
-						<div className="google-my-business-stats__search-type">
-							<span className="google-my-business-stats__search-type-direct" />
-							Direct<br />
-							362 (60%)<br />
-							<span className="google-my-business-stats__search-type-description">
-								Customers who find your listing searching for your business name or address
-							</span>
-						</div>
+						<FormFieldset>
+							<FormSelect className="google-my-business-stats__select">
+								<option>{ translate( '1 week' ) }</option>
+								<option>{ translate( '1 month' ) }</option>
+								<option>{ translate( '1 quarter' ) }</option>
+							</FormSelect>
+						</FormFieldset>
+						<div className="google-my-business-stats__searches">
+							<div className="google-my-business-stats__searches-data">
+								<img
+									src="/calypso/images/google-my-business/pie-chart.svg"
+									alt="Pie chart"
+									className="google-my-business-stats__searches-pie-chart"
+								/>
+								<div className="google-my-business-stats__stat-title">451 Total searches</div>
+							</div>
+							<div className="google-my-business-stats__searches-data">
+								<div className="google-my-business-stats__search-type">
+									<span className="google-my-business-stats__search-type-direct" />
+									Direct<br />
+									362 (60%)<br />
+									<span className="google-my-business-stats__search-type-description">
+										Customers who find your listing searching for your business name or address
+									</span>
+								</div>
 
-						<div className="google-my-business-stats__search-type">
-							<span className="google-my-business-stats__search-type-discovery" />
-							Discovery<br />
-							89 (40%)<br />
-							<span className="google-my-business-stats__search-type-description">
-								Customers who find your listing searching for a category, product, or service
-							</span>
+								<div className="google-my-business-stats__search-type">
+									<span className="google-my-business-stats__search-type-discovery" />
+									Discovery<br />
+									89 (40%)<br />
+									<span className="google-my-business-stats__search-type-description">
+										Customers who find your listing searching for a category, product, or service
+									</span>
+								</div>
+							</div>
 						</div>
 					</Card>
 

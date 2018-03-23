@@ -48,7 +48,7 @@ class GoogleMyBusinessVerify extends Component {
 				</CompactCard>
 				<CompactCard>
 					<h2>{ translate( 'Postcard by mail' ) }</h2>
-					<p>{ translate( 'Have a postcard with your code mailed to this address' ) }</p>
+					<p>{ translate( 'Have a postcard with your code mailed to this address. It should arrive in one to two weeks.' ) }</p>
 					<p>
 						Mike Shelton<br />
 						7843 Saxon Wood Road<br />

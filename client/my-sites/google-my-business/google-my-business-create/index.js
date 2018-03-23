@@ -19,6 +19,7 @@ import Category from '../google-my-business-category';
 import Connections from '../google-my-business-connections';
 import Confirm from '../google-my-business-confirm';
 import HeaderCake from 'components/header-cake';
+import Card from 'components/card';
 import Main from 'components/main';
 import StepNavigation from '../step-navigation';
 
@@ -79,7 +80,7 @@ class GoogleMyBusinessCreate extends Component {
 					transitionLeaveTimeout={ 200 }
 					transitionName="google-my-business-create__animation"
 				>
-					<div className="google-my-business-create__animation" key={ path }>
+					<div key={ path }>
 						<StepComponent siteId={ siteId } />
 					</div>
 				</ReactCSSTransitionGroup>

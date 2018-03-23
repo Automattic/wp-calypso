@@ -73,6 +73,8 @@
 .google-my-business-stats__stat-title {
 	font-size: 18px;
 	line-height: 3;
+	margin-right: 3em;
+	white-space: nowrap;
 }
 
 .google-my-business-stats__search-type {
@@ -134,7 +136,9 @@
 }
 
  .google-my-business-stats__select {
- 	width: 100%;
+	@include breakpoint( '<480px' ) {
+ 		width: 100%;
+ 	}
  }
 
 .google-my-business-stats__empty-title {
@@ -150,6 +154,18 @@
 
 .google-my-business-stats__description {
 	color: $gray-darken-20;
+}
+
+.google-my-business-stats__searches {
+	@include breakpoint( '>480px' ) {
+		display: flex;
+	}
+}
+
+.google-my-business-stats__searches-data {
+	@include breakpoint( '>480px' ) {
+		flex-basis: 1;
+	}
 }
 
 .google-my-business-stats__searches-pie-chart {
