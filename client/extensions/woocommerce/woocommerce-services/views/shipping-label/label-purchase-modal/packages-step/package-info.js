@@ -188,7 +188,11 @@ const PackageInfo = ( props ) => {
 						{ pckgErrors.weight && <FieldError text={ pckgErrors.weight } /> }
 					</div>
 					<div className="packages-step__package-signature">
-						<FormLabel htmlFor={ `signature_${ packageId }` }>{ translate( 'Require Signature' ) }</FormLabel>
+						<FormLabel htmlFor={ `signature_${ packageId }` }>
+							{ translate( 'Require Signature', {
+								comment: 'Whether or not this package requires a signature during delivery.',
+							} ) }
+						</FormLabel>
 						<FormSelect
 							id={ `weight_${ packageId }` }
 							value={ pckg.signature || 'no' }
@@ -196,7 +200,11 @@ const PackageInfo = ( props ) => {
 						>
 							<option value={ 'no' } key={ 'no' }>{ translate( 'No' ) }</option> )
 							<option value={ 'yes' } key={ 'yes' }>{ translate( 'Yes' ) }</option> )
-							<option value={ 'adult' } key={ 'adult' }>{ translate( 'Yes, from an adult' ) }</option> )
+							<option value={ 'adult' } key={ 'adult' }>
+								{ translate( 'Yes, from an adult', {
+									comment: 'Package requires signature from an adult during delivery.',
+								} ) }
+							</option> )
 						</FormSelect>
 					</div>
 				</FormFieldset>
