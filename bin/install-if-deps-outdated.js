@@ -15,7 +15,7 @@ const spawnSync = require( 'child_process' ).spawnSync;
 
 const needsInstall = () => {
 	try {
-		const shrinkwrapTime = fs.statSync( 'npm-shrinkwrap.json' ).mtime;
+		const shrinkwrapTime = fs.statSync( 'yarn.lock' ).mtime;
 		const nodeModulesTime = fs.statSync( 'node_modules' ).mtime;
 		return shrinkwrapTime - nodeModulesTime > 1000; // In Windows, directory mtime has less precision than file mtime
 	} catch ( e ) {
@@ -24,7 +24,7 @@ const needsInstall = () => {
 };
 
 if ( needsInstall() ) {
-	const installResult = spawnSync( 'npm', [ 'install' ], {
+	const installResult = spawnSync( 'yarn', [ 'install' ], {
 		shell: true,
 		stdio: 'inherit',
 	} ).status;
