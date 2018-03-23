@@ -92,7 +92,7 @@ class SelectBusinessType extends Component {
 					<img
 						className="select-business-type__explanation-image"
 						src="/calypso/images/google-my-business/business-local.svg"
-						alt="Local business illustration"
+						alt={ translate( 'Local business illustration' ) }
 					/>
 				</CompactCard>
 
