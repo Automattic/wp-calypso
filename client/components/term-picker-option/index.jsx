@@ -71,6 +71,20 @@ export class TermPickerOption extends React.Component {
 		);
 	}
 
+	getTermText() {
+		const { term, translate } = this.props;
+		switch ( term ) {
+			case TERM_BIENNIALLY:
+				return translate( '%s year', '%s years', { count: 2, args: '2' } );
+
+			case TERM_ANNUALLY:
+				return translate( '%s year', '%s years', { count: 1, args: '1' } );
+
+			case TERM_MONTHLY:
+				return translate( '%s month', '%s months', { count: 1, args: '1' } );
+		}
+	}
+
 	renderSaveBadge() {
 		const { savePercent, checked, translate } = this.props;
 		return (
@@ -103,20 +117,6 @@ export class TermPickerOption extends React.Component {
 			} );
 		}
 	};
-
-	getTermText() {
-		const { term, translate } = this.props;
-		switch ( term ) {
-			case TERM_BIENNIALLY:
-				return translate( '%s year', '%s years', { count: 2, args: '2' } );
-
-			case TERM_ANNUALLY:
-				return translate( '%s year', '%s years', { count: 1, args: '1' } );
-
-			case TERM_MONTHLY:
-				return translate( '%s month', '%s months', { count: 1, args: '1' } );
-		}
-	}
 }
 
 export default localize( TermPickerOption );
