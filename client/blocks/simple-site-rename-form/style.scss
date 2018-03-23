@@ -51,9 +51,20 @@
 }
 
 .simple-site-rename-form__only-owner-info {
+	margin: 0 auto 10px;
+	padding: 16px;
+
+	@include breakpoint( '<660px' ) {
+		margin: 0;
+	}
+
 	.gridicon {
 		float: left;
-		margin-right: 5px;
+		margin: auto 12px auto 10px;
+
+		@include breakpoint( '<660px' ) {
+			margin: auto 6px auto 4px;
+		}
 	}
 }
 
