@@ -50,6 +50,12 @@ export const getHappychatAuth = state => () => {
 
 	const user = getCurrentUser( state );
 
+	if ( ! user ) {
+		return Promise.reject(
+			'Failed to start an authenticated Happychat session: No current user found'
+		);
+	}
+
 	const happychatUser = {
 		signer_user_id: user.ID,
 		locale,

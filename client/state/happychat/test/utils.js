@@ -43,17 +43,15 @@ describe( 'auth promise', () => {
 		} );
 
 		test( 'should return a fulfilled Promise', () => {
-			getHappychatAuth( state )().then( user => {
-				expect( user ).toMatchObject( {
-					url: config( 'happychat_url' ),
-					user: {
-						signer_user_id: state.users.items[ 3 ].ID,
-						locale: state.users.items[ 3 ].localeSlug,
-						groups: [ 'jpop' ],
-						jwt: 'jwt',
-						geoLocation: { city: 'Lugo' },
-					},
-				} );
+			expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
+				url: config( 'happychat_url' ),
+				user: {
+					signer_user_id: state.users.items[ 3 ].ID,
+					locale: state.users.items[ 3 ].localeSlug,
+					groups: [ 'jpop' ],
+					jwt: 'jwt',
+					geoLocation: { city: 'Lugo' },
+				},
 			} );
 		} );
 	} );
@@ -71,11 +69,22 @@ describe( 'auth promise', () => {
 		} );
 
 		test( 'should return a rejected Promise', () => {
-			getHappychatAuth( state )().catch( error => {
-				expect( error ).toBe(
-					'Failed to start an authenticated Happychat session: failed request'
-				);
-			} );
+			expect( getHappychatAuth( state )() ).rejects.toThrow(
+				'Failed to start an authenticated Happychat session: failed request'
+			);
 		} );
+	} );
+
+	test( 'should return a rejected promise if there is no current user', () => {
+		const noUserState = {
+			currentUser: {},
+			users: {},
+			ui: {
+				section: {
+					name: 'jetpack-connect',
+				},
+			},
+		};
+		expect( getHappychatAuth( noUserState )() ).rejects.toThrow();
 	} );
 } );
