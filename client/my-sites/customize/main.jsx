@@ -22,6 +22,7 @@ import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
 import EmptyContent from 'components/empty-content';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Actions from 'my-sites/customize/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { themeActivated } from 'state/themes/actions';
 import { getCustomizerFocus } from './panels';
 import { getMenusUrl } from 'state/selectors';
@@ -263,6 +264,7 @@ class Customize extends React.Component {
 	renderErrorPage = error => {
 		return (
 			<div className="main main-column customize" role="main">
+				<PageViewTracker path="/customize/:site" title="Customizer" />
 				<SidebarNavigation />
 				<EmptyContent
 					title={ error.title }
@@ -297,6 +299,7 @@ class Customize extends React.Component {
 		if ( ! this.props.site ) {
 			return (
 				<div className="main main-column customize is-iframe" role="main">
+					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel />
 				</div>
 			);
@@ -322,6 +325,7 @@ class Customize extends React.Component {
 			// waitForLoading above) then an error will be shown.
 			return (
 				<div className="main main-column customize is-iframe" role="main">
+					<PageViewTracker path="/customize/:site" title="Customizer" />
 					<CustomizerLoadingPanel isLoaded={ this.state.iframeLoaded } />
 					<iframe className={ iframeClassName } src={ iframeUrl } />
 				</div>
