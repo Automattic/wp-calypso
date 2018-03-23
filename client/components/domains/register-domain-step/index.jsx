@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import async from 'async';
 import {
 	compact,
 	find,
@@ -422,17 +421,17 @@ class RegisterDomainStep extends React.Component {
 		return designType && designType === 'blog' ? 'design_type_blog' : null;
 	}
 
-	checkDomainAvailability = ( domain, timestamp ) => callback => {
+	checkDomainAvailability = async ( domain, timestamp ) => {
 		if (
 			! domain.match(
 				/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
 			)
 		) {
 			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
-			return callback();
+			return;
 		}
 		if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
-			return callback();
+			return;
 		}
 
 		checkDomainAvailability(
@@ -469,12 +468,13 @@ class RegisterDomainStep extends React.Component {
 				);
 
 				this.props.onDomainsAvailabilityChange( true );
-				callback( null, isDomainAvailable ? result : null );
+				console.error( result );
+				return isDomainAvailable ? result : null;
 			}
 		);
 	};
 
-	getDomainsSuggestions = ( domain, timestamp ) => callback => {
+	getDomainsSuggestions = async ( domain, timestamp ) => {
 		const suggestionQuantity =
 			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
 				? SUGGESTION_QUANTITY - 1
@@ -491,7 +491,7 @@ class RegisterDomainStep extends React.Component {
 			...this.getSetFiltersForAPI(),
 		};
 
-		domains
+		return domains
 			.suggestions( query )
 			.then( domainSuggestions => {
 				this.props.onDomainsAvailabilityChange( true );
@@ -506,7 +506,7 @@ class RegisterDomainStep extends React.Component {
 					this.props.analyticsSection
 				);
 
-				callback( null, domainSuggestions );
+				return domainSuggestions;
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
@@ -527,11 +527,11 @@ class RegisterDomainStep extends React.Component {
 					-1,
 					this.props.analyticsSection
 				);
-				callback( error, null );
+				return new Error( error );
 			} );
 	};
 
-	handleDomainSuggestions = domain => ( error, result ) => {
+	handleDomainSuggestions = domain => ( [ _, result ] ) => {
 		if (
 			! this.state.loadingResults ||
 			domain !== this.state.lastDomainSearched ||
@@ -673,13 +673,10 @@ class RegisterDomainStep extends React.Component {
 			searchVendor = testGroup;
 		}
 
-		async.parallel(
-			[
-				this.checkDomainAvailability( domain, timestamp ),
-				this.getDomainsSuggestions( domain, timestamp ),
-			],
-			this.handleDomainSuggestions( domain )
-		);
+		Promise.all( [
+			this.checkDomainAvailability( domain, timestamp ),
+			this.getDomainsSuggestions( domain, timestamp ),
+		] ).then( this.handleDomainSuggestions( domain ) );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			this.getSubdomainSuggestions( domain, timestamp );

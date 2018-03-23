@@ -1,13 +1,15 @@
 /** @format */
+
 /**
  * External Dependencies
  */
-import async from 'async';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:post-normalizer' );
+
 /**
  * Internal dependencies
  */
+import { promisify } from '../../utils';
 
 function debugForPost( post ) {
 	return function( msg ) {
@@ -23,7 +25,7 @@ function debugForPost( post ) {
  * @param {function} callback A node-style callback, invoked when the transformation is complete, or when the first error occurs.
  * If successful, the callback is invoked with `(null, theMutatedPost)`
  */
-function normalizePost( post, transforms, callback ) {
+async function normalizePost( post, transforms, callback ) {
 	if ( ! callback ) {
 		throw new Error( 'must supply a callback' );
 	}
@@ -33,26 +35,19 @@ function normalizePost( post, transforms, callback ) {
 		return;
 	}
 
-	let normalizedPost = Object.assign( {}, post ),
-		postDebug = debugForPost( post );
+	const normalizedPost = Object.assign( {}, post );
+	const postDebug = debugForPost( post );
 
 	postDebug( 'running transforms' );
-
-	async.eachSeries(
-		transforms,
-		function( transform, transformCallback ) {
+	for ( const transform of transforms ) {
+		try {
 			postDebug( 'running transform ' + ( transform.name || 'anonymous' ) );
-			transform( normalizedPost, transformCallback );
-		},
-		function( err ) {
-			postDebug( 'transforms complete' );
-			if ( err ) {
-				callback( err );
-			} else {
-				callback( null, normalizedPost );
-			}
+			await promisify( transform )( normalizedPost );
+		} catch ( err ) {
+			callback( err );
 		}
-	);
+	}
+	callback( null, normalizedPost );
 }
 
 function wrapSync( fn ) {

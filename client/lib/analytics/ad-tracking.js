@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import async from 'async';
 import cookie from 'cookie';
 import debugFactory from 'debug';
 import { assign, clone, cloneDeep, noop } from 'lodash';
@@ -16,8 +15,9 @@ import { v4 as uuid } from 'uuid';
 import config from 'config';
 import productsValues from 'lib/products-values';
 import userModule from 'lib/user';
-import { loadScript } from 'lib/load-script';
+import { loadScript as loadScriptCallback } from 'lib/load-script';
 import { shouldSkipAds } from 'lib/analytics/utils';
+import { promisify } from '../../utils';
 
 /**
  * Module variables
@@ -253,87 +253,63 @@ function setupOutbrainGlobal() {
 	api.queue = [];
 }
 
+const loadScript = promisify( loadScriptCallback );
+
 function loadTrackingScripts( callback ) {
 	hasStartedFetchingScripts = true;
 
 	const scripts = [];
 
 	if ( isFacebookEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( FACEBOOK_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( FACEBOOK_TRACKING_SCRIPT_URL ) );
 	}
 
 	if ( isAdwordsEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( GOOGLE_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( GOOGLE_TRACKING_SCRIPT_URL ) );
 	}
 
 	if ( isBingEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( BING_TRACKING_SCRIPT_URL ) );
 	}
 
 	if ( isCriteoEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( CRITEO_TRACKING_SCRIPT_URL ) );
 	}
 
 	if ( isQuantcastEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( quantcastAsynchronousTagURL(), onComplete );
-		} );
+		scripts.push( loadScript( quantcastAsynchronousTagURL() ) );
 	}
 
 	if ( isYahooEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( YAHOO_TRACKING_SCRIPT_URL ) );
 	}
 
 	if ( isTwitterEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( TWITTER_TRACKING_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( TWITTER_TRACKING_SCRIPT_URL ) );
 	}
 
 	if ( isLinkedinEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( LINKED_IN_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( LINKED_IN_SCRIPT_URL ) );
 	}
 
 	if ( isMediaWallahEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( MEDIA_WALLAH_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( MEDIA_WALLAH_SCRIPT_URL ) );
 	}
 
 	if ( isQuoraEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( QUORA_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( QUORA_SCRIPT_URL ) );
 	}
 
 	if ( isYandexEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( YANDEX_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( YANDEX_SCRIPT_URL ) );
 	}
 
 	if ( isOutbrainEnabled ) {
-		scripts.push( function( onComplete ) {
-			loadScript( OUTBRAIN_SCRIPT_URL, onComplete );
-		} );
+		scripts.push( loadScript( OUTBRAIN_SCRIPT_URL ) );
 	}
 
-	async.series( scripts, function( error ) {
-		if ( error ) {
-			debug( 'Some scripts failed to load: ', error );
-		} else {
+	Promise.all( scripts ).then(
+		() => {
 			// init Facebook
 			if ( isFacebookEnabled ) {
 				window.fbq( 'init', TRACKING_IDS.facebookInit );
@@ -384,8 +360,9 @@ function loadTrackingScripts( callback ) {
 				callback();
 			}
 			debug( 'Scripts loaded successfully' );
-		}
-	} );
+		},
+		error => debug( 'Some scripts failed to load: ', error )
+	);
 }
 
 /**

@@ -5,7 +5,6 @@
  */
 import debugFactory from 'debug';
 import { assign, defer, get, isEmpty, isNull, omitBy, pick, startsWith } from 'lodash';
-import async from 'async';
 import { parse as parseURL } from 'url';
 import page from 'page';
 
@@ -31,6 +30,7 @@ import { getUserExperience } from 'state/signup/steps/user-experience/selectors'
 import { requestSites } from 'state/sites/actions';
 import { supportsPrivacyProtectionPurchase } from 'lib/cart-values/cart-items';
 import { getProductsList } from 'state/products-list/selectors';
+import { promisify } from '../../utils';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -225,16 +225,13 @@ function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
 }
 
 export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
-	async.parallel(
-		[
-			callback => fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ),
-			callback => {
-				user.once( 'change', callback );
-				user.fetch();
-			},
-		],
-		onComplete
-	);
+	Promise.all( [
+		promisify( fetchSitesUntilSiteAppears )( siteSlug, reduxStore ),
+		new Promise( resolve => {
+			user.once( 'change', resolve );
+			user.fetch();
+		} ),
+	] ).then( onComplete );
 }
 
 export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
