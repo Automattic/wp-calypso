@@ -13,16 +13,6 @@
 	}
 }
 
-
-.select-business-type__explanation-heading {
-	font-size: 21px;
-	margin: 5px 0;
-
-	@include breakpoint( '>960px' ) {
-		margin: 10px 0;
-	}
-}
-
 .select-business-type__explanation-image {
 	max-width: 200px;
 	margin-bottom: 10px;

@@ -53,18 +53,19 @@ class SelectBusinessType extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<Main className="select-business-type">
+			<Main className="google-my-business select-business-type">
 				<PageViewTracker
 					path="/google-my-business/:site/select-business-type"
 					title="Google My Business > Select Business Type"
 				/>
+
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
 				<CompactCard className="select-business-type__explanation">
 					<div className="select-business-type__explanation-main">
-						<h1 className="select-business-type__explanation-heading">
+						<h1>
 							{ translate( 'Which type of business are you?' ) }
 						</h1>
 
