@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
 import Main from 'components/main';
 import StatsNavigation from 'blocks/stats-navigation';
@@ -132,6 +133,7 @@ class StatsSite extends Component {
 
 		return (
 			<Main wideLayout={ true }>
+				<DocumentHead title={ translate( 'Stats' ) } />
 				<PrivacyPolicyBanner />
 				<StatsFirstView />
 				<SidebarNavigation />
