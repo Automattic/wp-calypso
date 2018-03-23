@@ -60,8 +60,8 @@ class Security2faDisable extends Component {
 				<div>
 					<p>
 						{ translate(
-							'Your account is currently protected by Two-Step ' +
-								'Authentication. While enabled, logging in to WordPress.com ' +
+							"You've enabled Two-Step Authentication. " +
+								'While enabled, logging in to WordPress.com ' +
 								'requires you to enter a unique passcode, sent via text message, ' +
 								'in addition to your username and password.'
 						) }
@@ -69,9 +69,11 @@ class Security2faDisable extends Component {
 
 					<p>
 						{ translate(
-							'Authentication codes are currently being sent to {{strong}}%(smsNumber)s{{/strong}}. ' +
-								'If you wish to change this number, please disable Two-Step Authentication, ' +
-								'then go through the setup wizard again.',
+							"You're all set to receive authentication codes at " +
+								'{{strong}}%(smsNumber)s{{/strong}}. ' +
+								'Want to switch to a different number? No problem! ' +
+								"You'll need to disable Two-Step Authentication, " +
+								'then complete the setup process again on another device.',
 							{
 								components: {
 									strong: <strong />,
@@ -129,8 +131,8 @@ class Security2faDisable extends Component {
 					<p>
 						{ translate(
 							'You are about to disable Two-Step Authentication. ' +
-								'This means we will no longer ask for your authentication code ' +
-								'when you sign into your %(userlogin)s account.',
+								'This means we will no longer ask for your authentication ' +
+								'code when you sign into your %(userlogin)s account.',
 							{
 								args: {
 									userlogin: userSettings.settings.user_login,
@@ -141,17 +143,17 @@ class Security2faDisable extends Component {
 					<p>
 						{ translate(
 							'This will also disable your Application Passwords, ' +
-								'though they will be available again if you choose to re-enable ' +
-								'Two-Step Authentication in the future. If you do choose to ' +
-								're-enable it, please note that you will need to generate ' +
-								'new backup codes.'
+								'though you can access them again if you ever re-enable ' +
+								'Two-Step Authentication. If you decide to re-enable ' +
+								"Two-Step Authentication, keep in mind you'll need to " +
+								'generate new backup codes.'
 						) }
 					</p>
 					<p>
 						{ translate(
-							'To verify that you wish to disable Two-Step ' +
-								'Authentication, please enter the verification code from your ' +
-								'device or a backup code and click "Disable Two-Step."'
+							'To verify that you wish to disable Two-Step Authentication, ' +
+								'enter the verification code from your device or a backup code, ' +
+								'and click "Disable Two-Step.'
 						) }
 					</p>
 					<Security2faCodePrompt
