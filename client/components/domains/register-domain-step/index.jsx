@@ -434,44 +434,45 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		checkDomainAvailability(
-			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
-			( error, result ) => {
-				const timeDiff = Date.now() - timestamp;
-				const status = get( result, 'status', error );
-				const domainChecked = get( result, 'domain_name', domain );
+		return new Promise( resolve => {
+			checkDomainAvailability(
+				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				( error, result ) => {
+					const timeDiff = Date.now() - timestamp;
+					const status = get( result, 'status', error );
+					const domainChecked = get( result, 'domain_name', domain );
 
-				const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
-				const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
-				const isDomainTransferrable = TRANSFERRABLE === status;
+					const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
+					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+					const isDomainTransferrable = TRANSFERRABLE === status;
 
-				this.setState( {
-					exactMatchDomain: domainChecked,
-					lastDomainStatus: status,
-					lastDomainIsTransferrable: isDomainTransferrable,
-				} );
-				if ( isDomainAvailable ) {
-					this.setState( { notice: null } );
-				} else {
-					this.showValidationErrorMessage(
+					this.setState( {
+						exactMatchDomain: domainChecked,
+						lastDomainStatus: status,
+						lastDomainIsTransferrable: isDomainTransferrable,
+					} );
+					if ( isDomainAvailable ) {
+						this.setState( { notice: null } );
+					} else {
+						this.showValidationErrorMessage(
+							domain,
+							status,
+							get( result, 'other_site_domain', null )
+						);
+					}
+
+					this.props.recordDomainAvailabilityReceive(
 						domain,
 						status,
-						get( result, 'other_site_domain', null )
+						timeDiff,
+						this.props.analyticsSection
 					);
+
+					this.props.onDomainsAvailabilityChange( true );
+					resolve( isDomainAvailable ? result : null );
 				}
-
-				this.props.recordDomainAvailabilityReceive(
-					domain,
-					status,
-					timeDiff,
-					this.props.analyticsSection
-				);
-
-				this.props.onDomainsAvailabilityChange( true );
-				console.error( result );
-				return isDomainAvailable ? result : null;
-			}
-		);
+			);
+		} );
 	};
 
 	getDomainsSuggestions = async ( domain, timestamp ) => {
@@ -527,11 +528,11 @@ class RegisterDomainStep extends React.Component {
 					-1,
 					this.props.analyticsSection
 				);
-				return new Error( error );
+				throw error;
 			} );
 	};
 
-	handleDomainSuggestions = domain => ( [ _, result ] ) => {
+	handleDomainSuggestions = domain => result => {
 		if (
 			! this.state.loadingResults ||
 			domain !== this.state.lastDomainSearched ||

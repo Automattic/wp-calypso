@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, isFunction, noop } from 'lodash';
+import { endsWith, get, isEmpty, noop } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import { stringify } from 'qs';
