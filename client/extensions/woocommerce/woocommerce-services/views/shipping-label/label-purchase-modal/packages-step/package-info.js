@@ -198,9 +198,9 @@ const PackageInfo = ( props ) => {
 							value={ pckg.signature || 'no' }
 							onChange={ onSignatureChange }
 						>
-							<option value={ 'no' } key={ 'no' }>{ translate( 'No' ) }</option> )
-							<option value={ 'yes' } key={ 'yes' }>{ translate( 'Yes' ) }</option> )
-							<option value={ 'adult' } key={ 'adult' }>
+							<option value={ 'no' }>{ translate( 'No' ) }</option> )
+							<option value={ 'yes' }>{ translate( 'Yes' ) }</option> )
+							<option value={ 'adult' }>
 								{ translate( 'Yes, from an adult', {
 									comment: 'Package requires signature from an adult during delivery.',
 								} ) }
