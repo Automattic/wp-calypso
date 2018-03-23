@@ -1,11 +1,49 @@
-.google-my-business-confirm__list {
-	line-height: 2em;
-	list-style: none;
-	margin: 0;
+.google-my-business-create__animation {
+	position: absolute;
+	left: 0;
+	right: 0;
+	overflow: hidden;
+}
 
-	.gridicon {
-		color: $alert-green;
-		margin-right: 10px;
-		vertical-align: text-bottom;
+.google-my-business-create__animation-enter {
+	opacity: 0.01;
+
+	.is-animated-content {
+		transform: translate3d( 0, 32px, 0 );
+	}
+}
+
+.google-my-business-create__animation-enter.google-my-business-create__animation-enter-active,
+.google-my-business-create__animation-leave.google-my-business-create__animation-leave-active {
+	pointer-events: none;
+}
+
+.google-my-business-create__animation-enter.google-my-business-create__animation-enter-active {
+	opacity: 1;
+	transition: 0.2s ease-in-out;
+	transition-delay: 0.4s;
+
+	.is-animated-content {
+		transform: translate3d( 0, 0, 0 );
+		transition: 0.2s ease-in-out;
+		transition-delay: 0.4s;
+	}
+}
+
+.google-my-business-create__animation-leave {
+	opacity: 1;
+
+	.is-animated-content {
+		transform: translate3d( 0, 0, 0 );
+	}
+}
+
+.google-my-business-create__animation-leave.google-my-business-create__animation-leave-active {
+	opacity: 0.01;
+	transition: 0.2s ease-in-out;
+
+	.is-animated-content {
+		transform: translate3d( 0, 32px, 0 ) scale( 0.9 );
+		transition: 0.2s ease-in-out;
 	}
 }

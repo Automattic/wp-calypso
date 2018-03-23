@@ -4,7 +4,6 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
@@ -68,7 +67,6 @@ class GoogleMyBusinessCreate extends Component {
 		const backHref = currentPath ? currentPath.back + siteId : null;
 		const nextHref = currentPath ? currentPath.next + siteId : null;
 		const value = currentPath ? currentPath.value : null;
-		console.log( value );
 
 		return (
 			<Main className="google-my-business-create google-my-business" wideLayout>
@@ -79,9 +77,11 @@ class GoogleMyBusinessCreate extends Component {
 				<ReactCSSTransitionGroup
 					transitionEnterTimeout={ 600 }
 					transitionLeaveTimeout={ 200 }
-					transitionName="gmb__step"
+					transitionName="google-my-business-create__animation"
 				>
-					<StepComponent key={ path } siteId={ siteId } />
+					<div className="google-my-business-create__animation" key={ path }>
+						<StepComponent siteId={ siteId } />
+					</div>
 				</ReactCSSTransitionGroup>
 
 				<StepNavigation value={ value } total={ 100 } backHref={ backHref } nextHref={ nextHref } />

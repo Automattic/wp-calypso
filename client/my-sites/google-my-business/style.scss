@@ -1,5 +1,6 @@
 @import './google-my-business-address/style';
 @import './google-my-business-location/style';
+@import './google-my-business-create/style';
 @import './google-my-business-confirm/style';
 @import './google-my-business-new/style';
 @import './google-my-business-stats/style';
@@ -8,8 +9,13 @@
 @import './show-list-of-locations/style';
 @import './step-navigation/style';
 
+.is-section-google-my-business .layout__content {
+	overflow: visible;
+}
+
 .google-my-business {
 	padding-bottom: 56px;
+	position: relative;
 
 	h2,
 	.form-legend {
@@ -25,56 +31,5 @@
 
 	.is-placeholder {
 		@include placeholder();
-	}
-}
-
-
-.gmb__step {
-	position: absolute;
-	left: 0;
-	right: 0;
-	overflow: hidden;
-}
-
-.gmb__step-enter {
-	opacity: 0.01;
-
-	.is-animated-content {
-		transform: translate3d( 0, 32px, 0 );
-	}
-}
-
-.gmb__step-enter.gmb__step-enter-active,
-.gmb__step-leave.gmb__step-leave-active {
-	pointer-events: none;
-}
-
-.gmb__step-enter.gmb__step-enter-active {
-	opacity: 1;
-	transition: 0.2s ease-in-out;
-	transition-delay: 0.2s;
-
-	.is-animated-content {
-		transform: translate3d( 0, 0, 0 );
-		transition: 0.2s ease-in-out;
-		transition-delay: 0.2s;
-	}
-}
-
-.gmb__step-leave {
-	opacity: 1;
-
-	.is-animated-content {
-		transform: translate3d( 0, 0, 0 );
-	}
-}
-
-.gmb__step-leave.gmb__step-leave-active {
-	opacity: 0.01;
-	transition: 0.2s ease-in-out;
-
-	.is-animated-content {
-		transform: translate3d( 0, 32px, 0 ) scale( 0.9 );
-		transition: 0.2s ease-in-out;
 	}
 }
