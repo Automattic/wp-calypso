@@ -77,6 +77,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 					<ul>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="code"
+							label="Playground"
+							link="/devdocs/playground"
+							selected={ '/devdocs/playground' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="layout-blocks"
 							label="UI Components"
 							link="/devdocs/design"

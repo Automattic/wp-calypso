@@ -1,0 +1,4 @@
+<ButtonGroup>
+	<Button compact={ true }>Do thing</Button>
+	<Button compact={ true }>Do another thing</Button>
+</ButtonGroup>
