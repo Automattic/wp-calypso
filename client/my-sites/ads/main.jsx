@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import page from 'page';
-import { find } from 'lodash';
+import { capitalize, find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -40,9 +40,13 @@ import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'components/data/document-head';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class AdsMain extends Component {
 	static propTypes = {
+		isJetpack: PropTypes.bool,
 		isRequestingWordadsStatus: PropTypes.bool.isRequired,
 		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
 		requestingWordAdsApproval: PropTypes.bool.isRequired,
@@ -224,13 +228,13 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { isJetpack, section, site, translate } = this.props;
 
 		if ( ! this.canAccess() ) {
 			return null;
 		}
 
-		let component = this.getComponent( this.props.section );
+		let component = this.getComponent( section );
 		let notice = null;
 
 		if ( this.props.requestingWordAdsApproval || this.props.wordAdsSuccess ) {
@@ -247,8 +251,19 @@ class AdsMain extends Component {
 			component = this.renderInstantActivationToggle( component );
 		}
 
+		const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
+		const layoutTitles = {
+			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
+			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+		};
+
 		return (
 			<Main className="ads">
+				<PageViewTracker
+					path={ `/ads/${ section }/:site` }
+					title={ `${ adsProgramName } ${ capitalize( section ) }` }
+				/>
+				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
@@ -286,6 +301,7 @@ const mapStateToProps = state => {
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
 		isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 	};
 };
 
