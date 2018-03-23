@@ -194,7 +194,7 @@ const PackageInfo = ( props ) => {
 							} ) }
 						</FormLabel>
 						<FormSelect
-							id={ `weight_${ packageId }` }
+							id={ `signature_${ packageId }` }
 							value={ pckg.signature || 'no' }
 							onChange={ onSignatureChange }
 						>
