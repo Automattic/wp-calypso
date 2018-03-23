@@ -40,7 +40,7 @@ class ThemesMagicSearchCard extends React.Component {
 	constructor( props ) {
 		super( props );
 
-		this.suggestionComponentsRefs = {};
+		this.suggestionsRefs = {};
 
 		this.state = {
 			isMobile: isMobile(),
@@ -52,9 +52,9 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	setSuggestionsRefs = ( key, suggestionComponent ) =>
-		( this.suggestionComponentsRefs[ key ] = suggestionComponent );
+		( this.suggestionsRefs[ key ] = suggestionComponent );
 
-	setSearchItemRef = search => ( this.searchInput = search );
+	setSearchInputRef = search => ( this.searchInputRef = search );
 
 	componentWillMount() {
 		this.onResize = debounce( () => {
@@ -87,15 +87,15 @@ class ThemesMagicSearchCard extends React.Component {
 		//We need this logic because we are working togheter with different modules.
 		//that provide suggestions to the input depending on what is currently in input
 		const target = this.state.editedSearchElement !== '' ? 'suggestions' : 'welcome';
-		if ( this.suggestionComponentsRefs[ target ] ) {
+		if ( this.suggestionsRefs[ target ] ) {
 			// handleKeyEvent functions return bool that infroms if suggestion was picked
 			// We need that because we cannot rely on input state because it is updated
 			// asynchronously and we are not able to observe what was changed during handleKeyEvent
-			inputUpdated = this.suggestionComponentsRefs[ target ].handleKeyEvent( event );
+			inputUpdated = this.suggestionsRefs[ target ].handleKeyEvent( event );
 		}
 
 		if ( event.key === 'Enter' && ! inputUpdated && this.isPreviousCharWhitespace() ) {
-			this.searchInput.blur();
+			this.searchInputRef.blur();
 			this.setState( { searchIsOpen: false } );
 		}
 	};
@@ -106,7 +106,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	// Check if char before cursor in input is a space.
 	isPreviousCharWhitespace = () => {
-		const { value, selectionStart } = this.searchInput;
+		const { value, selectionStart } = this.searchInputRef.searchInput;
 		const cursorPosition = value.slice( 0, selectionStart ).length;
 		return value[ cursorPosition - 1 ] === ' ';
 	};
@@ -146,7 +146,7 @@ class ThemesMagicSearchCard extends React.Component {
 		const val = input;
 		window.requestAnimationFrame( () => {
 			this.setState( {
-				cursorPosition: val.slice( 0, this.searchInput.selectionStart ).length,
+				cursorPosition: val.slice( 0, this.searchInputRef.searchInput.selectionStart ).length,
 			} );
 			const tokens = input.split( /(\s+)/ );
 
@@ -225,7 +225,7 @@ class ThemesMagicSearchCard extends React.Component {
 
 	updateInput = updatedInput => {
 		this.setState( { searchInput: updatedInput } );
-		this.searchInput.clear();
+		this.searchInputRef.clear();
 	};
 
 	suggest = suggestion => {
@@ -239,7 +239,7 @@ class ThemesMagicSearchCard extends React.Component {
 	};
 
 	focusOnInput = () => {
-		this.searchInput.focus();
+		this.searchInputRef.focus();
 	};
 
 	clearSearch = () => {
@@ -275,7 +275,7 @@ class ThemesMagicSearchCard extends React.Component {
 				onSearch={ this.props.onSearch }
 				initialValue={ this.state.searchInput }
 				value={ this.state.searchInput }
-				ref={ this.setSearchItemRef }
+				ref={ this.setSearchInputRef }
 				placeholder={ translate(
 					"I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"
 				) }
