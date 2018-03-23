@@ -112,10 +112,17 @@
 }
 
 .packages-step__package-weight {
-	width: 140px;
+	width: 180px;
 	margin-bottom: 10px;
 	float: left;
-	margin-right: 65px;
+	margin-right: 15px;
+}
+
+@-moz-document url-prefix() { /* fix the width in Firefox */
+	.packages-step__package-weight {
+		width: 135px;
+		margin-right: 65px;
+	}
 }
 
 .packages-step__package-weight-unit {
@@ -123,6 +130,6 @@
 }
 
 .packages-step__package-signature {
-	width: 190px;
+	width: 180px;
 	float: left;
 }
