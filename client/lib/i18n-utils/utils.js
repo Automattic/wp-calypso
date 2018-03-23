@@ -51,6 +51,8 @@ export function isLocaleVariant( locale ) {
 
 /**
  * Checks against a list of locales that don't have any GP translation sets
+ * A 'translation set' refers to a collection of strings to be translated see:
+ * https://glotpress.blog/the-manual/translation-sets/
  * @param {string} locale - locale slug (eg: 'fr')
  * @return {boolean} true when the locale is a member of the exception list
  */
