@@ -14,7 +14,6 @@ import { isEmpty, map, some } from 'lodash';
  */
 import Button from 'components/button';
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
-import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormLegend from 'components/forms/form-legend';
 import FormSelect from 'components/forms/form-select';
@@ -173,41 +172,39 @@ const PackageInfo = ( props ) => {
 			</div>
 
 			<div>
-				<FormFieldset>
-					<div className="packages-step__package-weight">
-						<FormLabel htmlFor={ `weight_${ packageId }` }>{ translate( 'Total Weight' ) }</FormLabel>
-						<FormTextInputWithAffixes
-							id={ `weight_${ packageId }` }
-							placeholder={ translate( '0' ) }
-							value={ pckg.weight || '' }
-							onChange={ onWeightChange }
-							isError={ Boolean( pckgErrors.weight ) }
-							type="number"
-							noWrap
-							suffix={ weightUnit } />
-						{ pckgErrors.weight && <FieldError text={ pckgErrors.weight } /> }
-					</div>
-					<div className="packages-step__package-signature">
-						<FormLabel htmlFor={ `signature_${ packageId }` }>
-							{ translate( 'Require Signature', {
-								comment: 'Whether or not this package requires a signature during delivery.',
+				<div className="packages-step__package-weight">
+					<FormLabel htmlFor={ `weight_${ packageId }` }>{ translate( 'Total Weight' ) }</FormLabel>
+					<FormTextInputWithAffixes
+						id={ `weight_${ packageId }` }
+						placeholder={ translate( '0' ) }
+						value={ pckg.weight || '' }
+						onChange={ onWeightChange }
+						isError={ Boolean( pckgErrors.weight ) }
+						type="number"
+						noWrap
+						suffix={ weightUnit } />
+					{ pckgErrors.weight && <FieldError text={ pckgErrors.weight } /> }
+				</div>
+				<div className="packages-step__package-signature">
+					<FormLabel htmlFor={ `signature_${ packageId }` }>
+						{ translate( 'Require Signature', {
+							comment: 'Whether or not this package requires a signature during delivery.',
+						} ) }
+					</FormLabel>
+					<FormSelect
+						id={ `signature_${ packageId }` }
+						value={ pckg.signature || 'no' }
+						onChange={ onSignatureChange }
+					>
+						<option value={ 'no' }>{ translate( 'No' ) }</option> )
+						<option value={ 'yes' }>{ translate( 'Yes' ) }</option> )
+						<option value={ 'adult' }>
+							{ translate( 'Yes, from an adult', {
+								comment: 'Package requires signature from an adult during delivery.',
 							} ) }
-						</FormLabel>
-						<FormSelect
-							id={ `signature_${ packageId }` }
-							value={ pckg.signature || 'no' }
-							onChange={ onSignatureChange }
-						>
-							<option value={ 'no' }>{ translate( 'No' ) }</option> )
-							<option value={ 'yes' }>{ translate( 'Yes' ) }</option> )
-							<option value={ 'adult' }>
-								{ translate( 'Yes, from an adult', {
-									comment: 'Package requires signature from an adult during delivery.',
-								} ) }
-							</option> )
-						</FormSelect>
-					</div>
-				</FormFieldset>
+						</option> )
+					</FormSelect>
+				</div>
 			</div>
 		</div>
 	);
