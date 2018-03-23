@@ -25,7 +25,7 @@ const TermPickerOptionExample = () => (
 		<TermPickerOption
 			term={ TERM_BIENNIALLY }
 			price="$24"
-			pricePerMonth="$2"
+			pricePerMonth="$1"
 			savePercent={ 6 }
 			checked={ false }
 		/>
