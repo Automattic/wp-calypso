@@ -32,7 +32,9 @@ import { getConnectingSite } from 'state/jetpack-connect/selectors';
 import { REMOTE_PATH_AUTH } from './constants';
 
 import {
+	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
+	INSTALL_FAILURE,
 	INSTALL_RESPONSE_ERROR,
 	INVALID_PERMISSIONS,
 	LOGIN_FAILURE,
@@ -109,11 +111,17 @@ export class OrgCredentialsForm extends Component {
 	}
 
 	getError( installError ) {
+		if ( installError === 'ACTIVATION_FAILURE' ) {
+			return ACTIVATION_FAILURE;
+		}
 		if ( installError === 'LOGIN_FAILURE' ) {
 			return LOGIN_FAILURE;
 		}
 		if ( installError === 'ACTIVATION_RESPONSE_ERROR' ) {
 			return ACTIVATION_RESPONSE_ERROR;
+		}
+		if ( installError === 'INSTALL_FAILURE' ) {
+			return INSTALL_FAILURE;
 		}
 		if ( installError === 'INSTALL_RESPONSE_ERROR' ) {
 			return INSTALL_RESPONSE_ERROR;

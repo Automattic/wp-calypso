@@ -5,11 +5,13 @@
  *
  * These notice types are indicators of Jetpack Connection status.
  */
+export const ACTIVATION_FAILURE = 'unableToActivateInvalidVersion';
 export const ACTIVATION_RESPONSE_ERROR = 'unableToActivate';
 export const ALREADY_CONNECTED = 'alreadyConnected';
 export const ALREADY_CONNECTED_BY_OTHER_USER = 'alreadyConnectedByOtherUser';
 export const ALREADY_OWNED = 'alreadyOwned';
 export const DEFAULT_AUTHORIZE_ERROR = 'defaultAuthorizeError';
+export const INSTALL_FAILURE = 'unableToInstallInvalidVersion';
 export const INSTALL_RESPONSE_ERROR = 'unableToInstall';
 export const IS_DOT_COM = 'isDotCom';
 export const JETPACK_IS_DISCONNECTED = 'jetpackIsDisconnected';
