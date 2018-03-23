@@ -200,13 +200,13 @@ describe( 'middleware', () => {
 			} );
 
 			test( 'should dispatch success notice for trash', () => {
-				const noticeAction = onPostSaveSuccess( {
+				onPostSaveSuccess( {
 					type: POST_SAVE_SUCCESS,
 					post: { status: 'trash' },
 					savedPost: { global_ID: 'asdfjkl' },
-				} );
+				} )( dispatch );
 
-				expect( noticeAction ).toMatchObject( {
+				sinon.assert.calledWithMatch( dispatch, {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-success',
@@ -218,12 +218,12 @@ describe( 'middleware', () => {
 			} );
 
 			test( 'should dispatch success notice for publish', () => {
-				const noticeAction = onPostSaveSuccess( {
+				onPostSaveSuccess( {
 					type: POST_SAVE_SUCCESS,
 					post: { status: 'publish' },
-				} );
+				} )( dispatch );
 
-				expect( noticeAction ).toMatchObject( {
+				sinon.assert.calledWithMatch( dispatch, {
 					type: NOTICE_CREATE,
 					notice: {
 						status: 'is-success',
