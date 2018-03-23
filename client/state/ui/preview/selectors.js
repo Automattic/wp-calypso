@@ -57,7 +57,3 @@ export function getPreviewSiteId( state ) {
 
 	return state.ui.preview.currentPreviewSiteId;
 }
-
-export function getActiveDesignTool( state ) {
-	return state.ui.preview.activeDesignTool;
-}

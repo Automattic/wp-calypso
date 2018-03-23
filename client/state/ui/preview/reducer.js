@@ -8,7 +8,6 @@ import {
 	PREVIEW_SITE_SET,
 	PREVIEW_URL_CLEAR,
 	PREVIEW_URL_SET,
-	PREVIEW_TOOL_SET,
 	PREVIEW_TYPE_SET,
 	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
@@ -43,17 +42,8 @@ export function currentPreviewType( state = defaultPreviewType, action ) {
 	return state;
 }
 
-export function activeDesignTool( state = null, action ) {
-	switch ( action.type ) {
-		case PREVIEW_TOOL_SET:
-			return action.id;
-	}
-	return state;
-}
-
 export default combineReducers( {
 	currentPreviewSiteId,
 	currentPreviewUrl,
 	currentPreviewType,
-	activeDesignTool,
 } );

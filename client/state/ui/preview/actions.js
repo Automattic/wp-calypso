@@ -6,7 +6,6 @@
 
 import {
 	PREVIEW_SITE_SET,
-	PREVIEW_TOOL_SET,
 	PREVIEW_TYPE_RESET,
 	PREVIEW_TYPE_SET,
 	PREVIEW_URL_CLEAR,
@@ -57,12 +56,5 @@ export function closePreview() {
 		dispatch( clearPreviewUrl() );
 		dispatch( resetPreviewType() );
 		dispatch( setLayoutFocus( 'content' ) );
-	};
-}
-
-export function setActiveDesignTool( id ) {
-	return {
-		type: PREVIEW_TOOL_SET,
-		id,
 	};
 }
