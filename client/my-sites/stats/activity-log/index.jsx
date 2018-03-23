@@ -20,6 +20,7 @@ import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogUpgradeNotice from '../activity-log-upgrade-notice';
 import Banner from 'components/banner';
 import DatePicker from 'my-sites/stats/stats-date-picker';
+import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -595,6 +596,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
+				<DocumentHead title={ translate( 'Stats' ) } />
 				<QueryRewindState siteId={ siteId } />
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />

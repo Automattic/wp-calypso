@@ -132,9 +132,6 @@ export default {
 	insights: function( context, next ) {
 		const basePath = sectionify( context.path );
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
-
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
 		context.primary = <StatsInsights followList={ new FollowList() } />;
