@@ -46,7 +46,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 					<Tile
 						buttonLabel={ translate( 'Personal site' ) }
 						description={ translate(
-							'To share your ideas, stories, photographs, or creative projects with your followers.'
+							'Share your ideas, stories, photographs, or creative projects with your followers.'
 						) }
 						image={ '/calypso/images/illustrations/type-personal.svg' }
 						highlighted={ siteType === 'personal' }
@@ -57,7 +57,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 					<Tile
 						buttonLabel={ translate( 'Business site' ) }
 						description={ translate(
-							'To promote your business, organization, or brand, sell products or services, or connect with your audience.'
+							'Promote your business, organization, or brand, sell products or services, or connect with your audience.'
 						) }
 						image={ '/calypso/images/illustrations/type-business.svg' }
 						highlighted={ siteType === 'business' }
