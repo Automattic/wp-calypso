@@ -67,28 +67,30 @@ class CredentialsConfigured extends Component {
 		if ( canAutoconfigure ) {
 			return (
 				<CompactCard className="credentials-configured" onClick={ this.toggleRevoking } href="#">
-					<Gridicon
-						icon="checkmark-circle"
-						size={ 48 }
-						className="credentials-configured__header-gridicon"
-					/>
-					<div className="credentials-configured__header-configured-text">
-						{ translate( 'Backups and security scans are configured and active.' ) }
+					<div className="credentials-configured__info">
+						<Gridicon
+							icon="checkmark-circle"
+							size={ 48 }
+							className="credentials-configured__info-gridicon"
+						/>
+						<div className="credentials-configured__info-text">
+							{ translate( 'Backups and security scans are configured and active.' ) }
+						</div>
 					</div>
 				</CompactCard>
 			);
 		}
 
 		const header = (
-			<div className="credentials-configured__header">
+			<div className="credentials-configured__info">
 				<Gridicon
 					icon="checkmark-circle"
 					size={ 48 }
-					className="credentials-configured__header-gridicon"
+					className="credentials-configured__info-gridicon"
 				/>
-				<div className="credentials-configured__header-text">
-					<h3 className="credentials-configured__header-protocol">{ translate( 'Connected' ) }</h3>
-					<h4 className="credentials-configured__header-description">
+				<div className="credentials-configured__info-text">
+					<h3 className="credentials-configured__info-protocol">{ translate( 'Connected' ) }</h3>
+					<h4 className="credentials-configured__info-description">
 						{ translate(
 							'Your site is being backed up in real time and regularly scanned for security threats.'
 						) }
