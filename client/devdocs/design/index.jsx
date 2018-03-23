@@ -28,6 +28,7 @@ import SearchCard from 'components/search-card';
 import ActionCard from 'components/action-card/docs/example';
 import Accordions from 'components/accordion/docs/example';
 import BackButton from 'components/back-button/docs/example';
+import Badge from 'components/badge/docs/example';
 import Banner from 'components/banner/docs/example';
 import BulkSelect from 'components/bulk-select/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
@@ -155,6 +156,7 @@ class DesignAssets extends React.Component {
 					<ButtonGroups readmeFilePath="button-group" />
 					<Buttons componentUsageStats={ componentsUsageStats.button } readmeFilePath="button" />
 					<SplitButton readmeFilePath="split-button" />
+					<Badge />
 					<Cards readmeFilePath="card" />
 					<Checklist />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />

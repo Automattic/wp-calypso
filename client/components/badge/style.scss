@@ -1,0 +1,22 @@
+.badge {
+	display: inline-block;
+	border-radius: 100px;
+	padding: 2px 11px;
+	text-align: center;
+	font-size: 14px;
+	line-height: 18px;
+}
+
+.badge--warning {
+	color: #535d56;
+	background-color: #fcd56d;
+}
+
+.badge--success {
+	color: #fff;
+	background-color: #19b76e;
+}
+
+.docs__design-badge-row {
+	margin-bottom: 20px;
+}
