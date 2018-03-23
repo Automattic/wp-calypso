@@ -1,0 +1,37 @@
+.new-account__card {
+	display: flex;
+	flex-direction: column;
+}
+
+.new-account__illustration {
+	margin-bottom: 10px;
+	max-width: 200px;
+
+	@include breakpoint( '>960px' ) {
+		max-width: 300px;
+	}
+}
+
+.new-account__actions {
+	display: flex;
+
+	@include breakpoint( '<480px' ) {
+		flex-direction: column;
+	}
+}
+
+.new-account__actions .button {
+	@include breakpoint( '<480px' ) {
+		text-align: center;
+	}
+
+	&.is-primary {
+		@include breakpoint( '<480px' ) {
+			margin-bottom: 1em;
+		}
+
+		@include breakpoint( '>480px' ) {
+			margin-right: 1em;
+		}
+	}
+}
