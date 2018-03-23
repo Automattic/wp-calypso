@@ -4,7 +4,6 @@
  * External dependencies
  */
 
-import { SyncHandler, syncOptOut } from './sync-handler';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wp' );
 
@@ -16,43 +15,24 @@ import config from 'config';
 import wpcomSupport from 'lib/wp/support';
 import { injectLocalization } from './localization';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
-import * as oauthToken from 'lib/oauth-token';
-import wpcomXhrWrapper from 'lib/wpcom-xhr-wrapper';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 
-const addSyncHandlerWrapper = config.isEnabled( 'sync-handler' );
 let wpcom;
 
-if ( config.isEnabled( 'oauth' ) ) {
-	const requestHandler = addSyncHandlerWrapper
-		? new SyncHandler( wpcomXhrWrapper )
-		: wpcomXhrWrapper;
+wpcom = wpcomUndocumented( wpcomProxyRequest );
 
-	wpcom = wpcomUndocumented( oauthToken.getToken(), requestHandler );
-} else {
-	const requestHandler = addSyncHandlerWrapper
-		? new SyncHandler( wpcomProxyRequest )
-		: wpcomProxyRequest;
-
-	wpcom = wpcomUndocumented( requestHandler );
-
-	// Upgrade to "access all users blogs" mode
-	wpcom.request(
-		{
-			metaAPI: { accessAllUsersBlogs: true },
-		},
-		function( error ) {
-			if ( error ) {
-				throw error;
-			}
-			debug( 'Proxy now running in "access all user\'s blogs" mode' );
+// Upgrade to "access all users blogs" mode
+wpcom.request(
+	{
+		metaAPI: { accessAllUsersBlogs: true },
+	},
+	function( error ) {
+		if ( error ) {
+			throw error;
 		}
-	);
-}
-
-if ( addSyncHandlerWrapper ) {
-	wpcom = syncOptOut( wpcom );
-}
+		debug( 'Proxy now running in "access all user\'s blogs" mode' );
+	}
+);
 
 if ( config.isEnabled( 'support-user' ) ) {
 	wpcom = wpcomSupport( wpcom );
