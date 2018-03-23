@@ -113,6 +113,18 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
+		// if we have an AMP container but no AMP viewer, init AMP
+		if ( ! this.ampViewer && this.ampViewerContainer ) {
+			this.ampViewer = new AmpViewer( this.ampViewerContainer, this.props.post.meta.links.amp ); //'https://ampproject.org'
+
+			// listen for when the document is loaded and has a height so we can adjust the iframe size
+			this.ampViewer.addListener( 'documentHeight', data => {
+				this.ampViewerContainer.setAttribute( 'style', `height:${ data.height }px` );
+			} );
+
+			this.ampViewer.attach();
+		}
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -304,7 +316,7 @@ export class FullPostView extends React.Component {
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
-		const isAMP = true;
+		const isAMP = ! isLoading && post.meta.links.amp;
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
@@ -492,22 +504,8 @@ export class FullPostView extends React.Component {
 		this.commentsWrapper = el;
 	};
 
+	// this won't get called unless the post is already loaded and we have an AMP link
 	renderPostAMP() {
-		const { post } = this.props;
-		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
-
-		// initialize AMP viewer if we have a post and container already
-		if ( ! isLoading && ! this.ampViewer && this.ampViewerContainer ) {
-			this.ampViewer = new AmpViewer( this.ampViewerContainer, 'https://ampproject.org' ); //post.URL
-
-			// listen for when the document is loaded and has a height so we can adjust the iframe size
-			this.ampViewer.addListener( 'documentHeight', data => {
-				this.ampViewerContainer.setAttribute( 'style', `height:${ data.height }px` );
-			} );
-
-			this.ampViewer.attach();
-		}
-
 		return (
 			<div className="reader-full-post__amp-container" ref={ this.storeAmpViewerContainerRef } />
 		);
