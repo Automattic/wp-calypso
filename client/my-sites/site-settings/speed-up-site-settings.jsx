@@ -53,6 +53,7 @@ class SpeedUpSiteSettings extends Component {
 					<FormFieldset className="site-settings__formfieldset">
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
+								{ translate( 'Hosts your image files on the global WordPress.com servers.' ) }{' '}
 								<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon">
 									{ translate( 'Learn more' ) }
 								</ExternalLink>
@@ -75,6 +76,9 @@ class SpeedUpSiteSettings extends Component {
 						<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
 							<div className="site-settings__info-link-container">
 								<InfoPopover position="left">
+									{ translate(
+										"Delays the loading of images until they are visible in the visitor's browser."
+									) }{' '}
 									<ExternalLink target="_blank" icon href="https://jetpack.com/support/lazy-images">
 										{ translate( 'Learn more' ) }
 									</ExternalLink>

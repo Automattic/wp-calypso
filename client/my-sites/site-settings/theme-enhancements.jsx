@@ -132,8 +132,15 @@ class ThemeEnhancements extends Component {
 
 				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
 					<InfoPopover position="left">
-						<ExternalLink href="https://jetpack.com/support/infinite-scroll" icon target="_blank">
-							{ translate( 'Learn more about Infinite Scroll.' ) }
+						{ translate(
+							'Loads the next posts automatically when the reader approaches the bottom of the page.'
+						) }{' '}
+						<ExternalLink
+							href="https://jetpack.com/support/infinite-scroll"
+							icon={ false }
+							target="_blank"
+						>
+							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>
@@ -165,8 +172,16 @@ class ThemeEnhancements extends Component {
 			<FormFieldset>
 				<div className="theme-enhancements__info-link-container site-settings__info-link-container">
 					<InfoPopover position="left">
-						<ExternalLink href="https://jetpack.com/support/mobile-theme" icon target="_blank">
-							{ translate( 'Learn more about Mobile Theme.' ) }
+						{ translate(
+							'Enables a lightweight, mobile-friendly theme ' +
+								'that will be displayed to visitors on mobile devices.'
+						) }{' '}
+						<ExternalLink
+							href="https://jetpack.com/support/mobile-theme"
+							icon={ false }
+							target="_blank"
+						>
+							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</InfoPopover>
 				</div>

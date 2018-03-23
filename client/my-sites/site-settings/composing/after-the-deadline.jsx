@@ -220,12 +220,16 @@ class AfterTheDeadline extends Component {
 				<div className="composing__module-settings site-settings__child-settings">
 					<div className="composing__info-link-container site-settings__info-link-container">
 						<InfoPopover position="left">
+							{ translate(
+								'Checks your content for correct grammar and spelling, ' +
+									'misused words, and style while you write.'
+							) }{' '}
 							<ExternalLink
 								href="https://jetpack.com/support/spelling-and-grammar/"
-								icon
+								icon={ false }
 								target="_blank"
 							>
-								{ translate( 'Learn more about After the Deadline.' ) }
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>

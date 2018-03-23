@@ -39,8 +39,16 @@ const Masterbar = ( {
 				<FormFieldset>
 					<div className="masterbar__info-link-container site-settings__info-link-container">
 						<InfoPopover position="left">
-							<ExternalLink href="https://jetpack.com/support/masterbar/" icon target="_blank">
-								{ translate( 'Learn more about the WordPress.com Toolbar.' ) }
+							{ translate(
+								'Adds a toolbar with links to all your sites, notifications, ' +
+									'your WordPress.com profile, and the Reader.'
+							) }{' '}
+							<ExternalLink
+								href="https://jetpack.com/support/masterbar/"
+								icon={ false }
+								target="_blank"
+							>
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>

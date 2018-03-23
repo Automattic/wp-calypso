@@ -82,8 +82,13 @@ class MediaSettings extends Component {
 				<FormFieldset className="site-settings__formfieldset has-divider is-top-only">
 					<div className="site-settings__info-link-container">
 						<InfoPopover position="left">
-							<ExternalLink target="_blank" icon href="https://jetpack.com/support/videopress/">
-								{ translate( 'Learn more about VideoPress.' ) }
+							{ translate( 'Hosts your video files on the global WordPress.com servers.' ) }{' '}
+							<ExternalLink
+								target="_blank"
+								icon={ false }
+								href="https://jetpack.com/support/videopress/"
+							>
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>
@@ -197,7 +202,12 @@ class MediaSettings extends Component {
 						<FormFieldset>
 							<div className="site-settings__info-link-container">
 								<InfoPopover position="left">
-									<ExternalLink target="_blank" icon href="https://jetpack.com/support/photon">
+									{ translate( 'Hosts your image files on the global WordPress.com servers.' ) }{' '}
+									<ExternalLink
+										target="_blank"
+										icon={ false }
+										href="https://jetpack.com/support/photon"
+									>
 										{ translate( 'Learn more' ) }
 									</ExternalLink>
 								</InfoPopover>
@@ -214,8 +224,16 @@ class MediaSettings extends Component {
 					<FormFieldset className={ carouselFieldsetClasses }>
 						<div className="site-settings__info-link-container">
 							<InfoPopover position="left">
-								<ExternalLink target="_blank" icon href="https://jetpack.com/support/carousel">
-									{ translate( 'Learn more about Carousel.' ) }
+								{ translate(
+									'Replaces the standard WordPress galleries with a ' +
+										'full-screen photo browsing experience, including comments and EXIF metadata.'
+								) }{' '}
+								<ExternalLink
+									target="_blank"
+									icon={ false }
+									href="https://jetpack.com/support/carousel"
+								>
+									{ translate( 'Learn more' ) }
 								</ExternalLink>
 							</InfoPopover>
 						</div>

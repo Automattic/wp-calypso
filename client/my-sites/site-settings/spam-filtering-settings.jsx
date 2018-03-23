@@ -97,12 +97,13 @@ const SpamFilteringSettings = ( {
 				<div className="spam-filtering__settings site-settings__child-settings">
 					<div className="spam-filtering__info-link-container site-settings__info-link-container">
 						<InfoPopover>
+							{ translate( 'Removes spam from comments and contact forms.' ) }{' '}
 							<ExternalLink
 								target="_blank"
-								icon
+								icon={ false }
 								href={ 'https://jetpack.com/features/security/spam-filtering/' }
 							>
-								{ translate( 'Learn more about spam filtering.' ) }
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>

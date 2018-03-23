@@ -44,8 +44,11 @@ const Sso = ( {
 				<FormFieldset>
 					<div className="sso__info-link-container site-settings__info-link-container">
 						<InfoPopover position="left">
-							<ExternalLink href="https://jetpack.com/support/sso" icon target="_blank">
-								{ translate( 'Learn more about WordPress.com Secure Sign On.' ) }
+							{ translate(
+								'Allows registered users to log in to your site with their WordPress.com accounts.'
+							) }
+							<ExternalLink href="https://jetpack.com/support/sso" icon={ false } target="_blank">
+								{ translate( 'Learn more' ) }
 							</ExternalLink>
 						</InfoPopover>
 					</div>

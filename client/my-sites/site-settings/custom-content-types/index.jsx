@@ -172,9 +172,44 @@ class CustomContentTypes extends Component {
 							</ExternalLink>
 						</InfoPopover>
 					</div>
-
 					{ this.renderBlogPostSettings() }
+				</FormFieldset>
+
+				<FormFieldset>
+					<div className="custom-content-types__info-link-container site-settings__info-link-container">
+						<InfoPopover position="left">
+							{ translate(
+								'Adds the Testimonial custom post type, allowing you to collect, organize, ' +
+									'and display testimonials on your site.'
+							) }{' '}
+							<ExternalLink
+								target="_blank"
+								icon
+								href="https://jetpack.com/support/custom-content-types/"
+							>
+								{ translate( 'Learn more' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
 					{ this.renderTestimonialSettings() }
+				</FormFieldset>
+
+				<FormFieldset>
+					<div className="custom-content-types__info-link-container site-settings__info-link-container">
+						<InfoPopover position="left">
+							{ translate(
+								'Adds the Portfolio custom post type, allowing you to ' +
+									'manage and showcase projects on your site.'
+							) }{' '}
+							<ExternalLink
+								target="_blank"
+								icon
+								href="https://jetpack.com/support/custom-content-types/"
+							>
+								{ translate( 'Learn more' ) }
+							</ExternalLink>
+						</InfoPopover>
+					</div>
 					{ this.renderPortfolioSettings() }
 				</FormFieldset>
 			</Card>
