@@ -17,6 +17,7 @@ import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
+import { decodeEntities } from 'lib/formatting';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormSelect from 'components/forms/form-select';
@@ -82,7 +83,7 @@ class PodcastingDetails extends Component {
 					id={ key }
 					name={ key }
 					type="text"
-					value={ fields[ key ] || '' }
+					value={ decodeEntities( fields[ key ] ) || '' }
 					onChange={ onChangeField( key ) }
 					disabled={ isRequestingSettings }
 				/>
