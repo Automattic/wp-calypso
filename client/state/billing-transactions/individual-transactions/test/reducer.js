@@ -71,6 +71,15 @@ describe( 'individualTransactions reducer', () => {
 
 			expect( state ).toBe( false );
 		} );
+
+		test( 'false on BILLING_TRANSACTION_REQUEST_SUCCESS', () => {
+			const state = error( true, {
+				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+				transactionId,
+			} );
+
+			expect( state ).toBe( false );
+		} );
 	} );
 
 	describe( 'data', () => {

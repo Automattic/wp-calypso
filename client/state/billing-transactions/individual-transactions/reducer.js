@@ -36,6 +36,7 @@ export const requesting = createReducer( false, {
  */
 export const error = createReducer( false, {
 	[ BILLING_TRANSACTION_REQUEST_FAILURE ]: () => true,
+	[ BILLING_TRANSACTION_REQUEST_SUCCESS ]: () => false,
 	[ BILLING_TRANSACTION_CLEAR_ERROR ]: () => false,
 } );
 
