@@ -94,14 +94,11 @@ describe( 'individualTransactions reducer', () => {
 		} );
 
 		test( 'overwrites existing data', () => {
-			const state = data(
-				{ amount: 123 },
-				{
-					type: BILLING_TRANSACTION_RECEIVE,
-					transactionId,
-					receipt: { amount: 456, refunded: true },
-				}
-			);
+			const state = data( Object.freeze( { amount: 123 } ), {
+				type: BILLING_TRANSACTION_RECEIVE,
+				transactionId,
+				receipt: { amount: 456, refunded: true },
+			} );
 
 			expect( state ).toEqual( { amount: 456, refunded: true } );
 		} );
