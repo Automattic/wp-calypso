@@ -35,7 +35,8 @@ const HorizontalBar = ( { className, data, extent, currency, height, width } ) =
 			.attr( 'fill', 'white' )
 			.text( formatValue( data, numberFormat, currency ) );
 		const textMargin = data === 0 ? 0 : 5;
-		const isOffsetText = xPos - ( text.node().getBoundingClientRect().width + textMargin ) <= 0;
+		const isOffsetText =
+			xPos + ( text.node().getBoundingClientRect().width + textMargin * 2 ) <= scale( extent[ 1 ] );
 		text
 			.attr( 'class', isOffsetText ? 'is-offset-text' : '' )
 			.attr( 'text-anchor', isOffsetText ? 'start' : 'end' )
