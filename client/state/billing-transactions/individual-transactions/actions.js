@@ -4,6 +4,7 @@
  */
 import {
 	BILLING_TRANSACTION_REQUEST,
+	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -22,6 +23,10 @@ export const requestBillingTransaction = transactionId => dispatch => {
 		.then( receipt => {
 			dispatch( {
 				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+				transactionId,
+			} );
+			dispatch( {
+				type: BILLING_TRANSACTION_RECEIVE,
 				transactionId,
 				receipt,
 			} );

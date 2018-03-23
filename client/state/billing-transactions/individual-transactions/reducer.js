@@ -4,6 +4,7 @@
  * Internal dependencies
  */
 import {
+	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
@@ -45,7 +46,7 @@ export const error = createReducer( false, {
  * @return {Object}        Updated state
  */
 export const data = createReducer( null, {
-	[ BILLING_TRANSACTION_REQUEST_SUCCESS ]: ( state, { receipt } ) => receipt,
+	[ BILLING_TRANSACTION_RECEIVE ]: ( state, { receipt } ) => receipt,
 } );
 
 export default keyedReducer(

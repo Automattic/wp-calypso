@@ -4,6 +4,7 @@
  */
 import { requestBillingTransaction, clearBillingTransactionError } from '../actions';
 import {
+	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
@@ -37,6 +38,11 @@ describe( 'actions', () => {
 				return requestBillingTransaction( transactionId )( dispatch ).then( () => {
 					expect( dispatch ).toHaveBeenCalledWith( {
 						type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+						transactionId,
+					} );
+
+					expect( dispatch ).toHaveBeenCalledWith( {
+						type: BILLING_TRANSACTION_RECEIVE,
 						transactionId,
 						receipt: { data: 'receipt' },
 					} );

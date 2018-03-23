@@ -4,6 +4,7 @@
  */
 import { requesting, error, data } from '../reducer';
 import {
+	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
@@ -29,6 +30,24 @@ describe( 'individualTransactions reducer', () => {
 			} );
 
 			expect( state ).toBe( true );
+		} );
+
+		test( 'false on success', () => {
+			const state = requesting( true, {
+				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+				transactionId,
+			} );
+
+			expect( state ).toBe( false );
+		} );
+
+		test( 'false on error', () => {
+			const state = requesting( true, {
+				type: BILLING_TRANSACTION_REQUEST_FAILURE,
+				transactionId,
+			} );
+
+			expect( state ).toBe( false );
 		} );
 	} );
 
@@ -57,7 +76,7 @@ describe( 'individualTransactions reducer', () => {
 	describe( 'data', () => {
 		test( 'returns receipt data', () => {
 			const state = data( null, {
-				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+				type: BILLING_TRANSACTION_RECEIVE,
 				transactionId,
 				receipt: { amount: 123 },
 			} );
@@ -69,7 +88,7 @@ describe( 'individualTransactions reducer', () => {
 			const state = data(
 				{ amount: 123 },
 				{
-					type: BILLING_TRANSACTION_REQUEST_SUCCESS,
+					type: BILLING_TRANSACTION_RECEIVE,
 					transactionId,
 					receipt: { amount: 456, refunded: true },
 				}
