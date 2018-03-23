@@ -14,6 +14,7 @@ import React from 'react';
  */
 import { abtest, getABTestVariation } from 'lib/abtest';
 import analytics from 'lib/analytics';
+import config from 'config';
 import { cartItems } from 'lib/cart-values';
 import { clearSitePlans } from 'state/sites/plans/actions';
 import { clearPurchases } from 'state/purchases/actions';
@@ -31,6 +32,7 @@ import { managePurchase } from 'me/purchases/paths';
 import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryGeo from 'components/data/query-geo';
+import TermPicker from 'components/term-picker';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
 import { AUTO_RENEWAL } from 'lib/url/support';
@@ -38,7 +40,13 @@ import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
 } from 'lib/store-transactions/step-types';
-import { addItem, applyCoupon, resetTransaction, setDomainDetails } from 'lib/upgrades/actions';
+import {
+	addItem,
+	removeItem,
+	applyCoupon,
+	resetTransaction,
+	setDomainDetails,
+} from 'lib/upgrades/actions';
 import {
 	getContactDetailsCache,
 	getCurrentUserPaymentMethods,
@@ -59,6 +67,7 @@ import { fetchSitesAndUser } from 'lib/signup/step-actions';
 import { loadTrackingTool } from 'state/analytics/actions';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import QueryProducts from 'components/data/query-products-list';
+import { getPlan, findPlansKeys } from '../../../lib/plans';
 
 class Checkout extends React.Component {
 	static propTypes = {
@@ -148,6 +157,10 @@ class Checkout extends React.Component {
 		} );
 
 		recordViewCheckout( props.cart );
+	}
+
+	getPlanProducts() {
+		return this.props.cart.products.filter( p => getPlan( p.product_slug ) );
 	}
 
 	getProductSlugFromSynonym( slug ) {
@@ -474,9 +487,57 @@ class Checkout extends React.Component {
 				selectedSite={ selectedSite }
 				redirectTo={ this.getCheckoutCompleteRedirectPath }
 				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
-			/>
+			>
+				{ config.isEnabled( 'upgrades/2-year-plans' ) && this.renderTermPicker() }
+			</SecurePaymentForm>
 		);
 	}
+
+	renderTermPicker() {
+		const planInCart = this.getPlanProducts()[ 0 ];
+		if ( ! planInCart ) {
+			return false;
+		}
+
+		const currentPlanSlug = this.props.selectedSite.plan.product_slug;
+
+		const chosenPlan = getPlan( planInCart.product_slug );
+		const availableTerms = findPlansKeys( {
+			group: chosenPlan.group,
+			type: chosenPlan.type,
+		} ).filter( p => getPlan( p ).availableFor( currentPlanSlug ) );
+
+		if ( availableTerms.length < 2 ) {
+			return false;
+		}
+
+		return (
+			<React.Fragment>
+				<TermPicker
+					plans={ availableTerms }
+					initialValue={ planInCart.product_slug }
+					onChange={ this.handleTermChange }
+					key="picker"
+				/>
+				<hr className="checkout__term-picker-separator" key="separator" />
+			</React.Fragment>
+		);
+	}
+
+	handleTermChange = e => {
+		// Remove all cart items that are plans
+		const selectedPlans = this.props.cart.products.filter( p => getPlan( p.product_slug ) );
+		selectedPlans.forEach( removeItem );
+
+		const planSlug = e.value;
+		const cartItem = getCartItemForPlan( planSlug );
+		analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
+			product_slug: cartItem.product_slug,
+			free_trial: cartItem.free_trial,
+			from_section: 'checkout',
+		} );
+		addItem( cartItem );
+	};
 
 	paymentMethodsAbTestFilter() {
 		// This methods can be used to filter payment methods

@@ -118,6 +118,7 @@
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,
+		"upgrades/2-year-plans": false,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,

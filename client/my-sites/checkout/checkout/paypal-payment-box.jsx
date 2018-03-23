@@ -168,6 +168,8 @@ class PaypalPaymentBox extends React.Component {
 					</div>
 				</div>
 
+				{ this.props.children }
+
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription(
 						this.props.cart
