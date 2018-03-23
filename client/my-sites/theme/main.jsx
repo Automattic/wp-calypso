@@ -232,13 +232,16 @@ class ThemeSheet extends React.Component {
 	}
 
 	renderScreenshot() {
-		const { demo_uri, retired, isActive, isWpcomTheme } = this.props;
+		const { demo_uri, retired, isActive, isWpcomTheme, name: themeName } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
 		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
 			<img
+				alt={ i18n.translate( 'Screenshot of the %(themeName)s theme', {
+					args: { themeName },
+				} ) }
 				className="theme__sheet-img"
 				src={ photonSrc || screenshotFull }
 				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }
