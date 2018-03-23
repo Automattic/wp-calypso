@@ -112,11 +112,11 @@ describe( 'actions', () => {
 	} );
 
 	test( '#clearBillingTransactionError', () => {
-		const receiptId = 12345678;
-		const action = clearBillingTransactionError( receiptId );
+		const transactionId = 12345678;
+		const action = clearBillingTransactionError( transactionId );
 		expect( action ).toEqual( {
 			type: BILLING_TRANSACTION_CLEAR_ERROR,
-			receiptId,
+			transactionId,
 		} );
 	} );
 } );
