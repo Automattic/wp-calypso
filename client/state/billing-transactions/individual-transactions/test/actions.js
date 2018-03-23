@@ -17,11 +17,45 @@ describe( 'actions', () => {
 		const transactionId = 12345678;
 
 		describe( 'success', () => {
+			const receiptData = {
+				id: '18689989',
+				service: 'Store Services',
+				amount: '$6.45',
+				icon: 'https://developer.files.wordpress.com/2018/02/wpcom-logo-420.png',
+				date: '2017-09-26T14:50:12+0000',
+				desc: '',
+				org: 'Automattic, Inc',
+				url: 'https://wordpress.org/plugins/woocommerce-services/',
+				support: 'https://woocommerce.com/my-account/create-a-ticket/',
+				pay_ref: 'stripe:1234',
+				pay_part: 'stripe',
+				cc_type: 'mastercard',
+				cc_num: '4444',
+				cc_name: 'name surname',
+				cc_email: '',
+				credit: '',
+				items: [
+					{
+						id: '22956711',
+						type: 'new purchase',
+						type_localized: 'New Purchase',
+						domain: '',
+						amount: '$6.45',
+						raw_amount: 6.45,
+						currency: 'USD',
+						product: 'connect-label',
+						product_slug: 'connect-label',
+						variation: 'Shipping Label',
+						variation_slug: 'connect-label-usps',
+					},
+				],
+			};
+
 			useNock( nock => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/billing-history/receipt/' + transactionId + '?format=display' )
-					.reply( 200, { data: 'receipt' } );
+					.reply( 200, receiptData );
 			} );
 
 			test( 'should dispatch request action', () => {
@@ -45,7 +79,7 @@ describe( 'actions', () => {
 					expect( dispatch ).toHaveBeenCalledWith( {
 						type: BILLING_TRANSACTION_RECEIVE,
 						transactionId,
-						receipt: { data: 'receipt' },
+						receipt: receiptData,
 					} );
 				} );
 			} );
