@@ -50,6 +50,7 @@
 .google-my-business-stats__listing-button-wrapper {
 	flex-grow: 1;
 	text-align: right;
+	align-self: center;
 }
 
 .google-my-business-stats__listing-button {
@@ -107,7 +108,7 @@
 .google-my-business-stats__feature {
 	font-size: 16px;
 	@include breakpoint( '>660px' ) {
-		font-size: 20px;
+		font-size: 21px;
 	}
 
 	p {
@@ -117,8 +118,8 @@
 
 .google-my-business-stats__feature-image {
 	float: right;
-	margin: 0 0 1em 1em;
-	max-width: 250px;
+	margin: 1em;
+	max-width: 220px;
 	width: 50%;
 }
 
@@ -135,10 +136,6 @@
  .google-my-business-stats__select {
  	width: 100%;
  }
-
-.google-my-business-stats__not-enough-data {
-	line-height: 3em;
-}
 
 .google-my-business-stats__empty-title {
 	font-weight: bold;
@@ -159,4 +156,19 @@
 	display: block;
 	max-width: 150px;
 	width: 100%;
+}
+
+.google-my-business-stats__not-enough-data-description {
+	color: $gray-darken-20;
+	margin: auto;
+	max-width: 300px;
+	padding-bottom: 1em;
+	text-align: center;
+}
+
+.not-enough-data {
+	font-size: 18px;
+	font-weight: 400;
+	padding-top: 1em;
+	text-align: center;
 }

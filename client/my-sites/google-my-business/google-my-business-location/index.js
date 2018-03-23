@@ -28,7 +28,7 @@ const GoogleMyBusinessLocation = ( {
 	img,
 	placeholder,
 } ) => (
-	<div>
+	<div className="google-my-business-location">
 		<div className="google-my-business-location__content">
 			<img
 				src={ img ? img : '/calypso/images/google-my-business/spacer.png' }
@@ -54,12 +54,14 @@ const GoogleMyBusinessLocation = ( {
 				) : null }
 			</div>
 		</div>
-		<Button
-			href={ href }
-			className={ getClassName( 'google-my-business-location__button', placeholder ) }
-		>
-			{ translate( 'Connect location' ) }
-		</Button>
+		<div className="google-my-business-location__button">
+			<Button
+				href={ href }
+				className={ getClassName( 'google-my-business-location__button', placeholder ) }
+			>
+				{ translate( 'Connect location' ) }
+			</Button>
+		</div>
 	</div>
 );
 

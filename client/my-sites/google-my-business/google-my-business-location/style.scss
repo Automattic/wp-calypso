@@ -9,6 +9,17 @@
 	}
 }
 
+.google-my-business-location {
+	@include breakpoint( '>960px' ) {
+		display: flex;
+		justify-content: space-between;
+	}
+}
+
+.google-my-business-location__button {
+	align-self: center;
+}
+
 .google-my-business-location__text-wrapper {
 	flex-grow: 1;
 	margin-bottom: 1em;

@@ -23,6 +23,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormSelect from 'components/forms/form-select';
 import { createNotice } from 'state/notices/actions';
+import NotEnoughData from './not-enough-data';
 
 class Stats extends Component {
 	static propTypes = {
@@ -187,10 +188,11 @@ class Stats extends Component {
 								</FormSelect>
 							</FormFieldset>
 						) }
-						<div className="google-my-business-stats__not-enough-data">
-							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-							<br />
-							{ translate( "We don't have enough data" ) }
+						<NotEnoughData />
+						<div className="google-my-business-stats__not-enough-data-description">
+							{ translate(
+								'Once customers start requesting driving details these stats will appear here'
+							) }
 						</div>
 					</Card>
 
@@ -212,10 +214,11 @@ class Stats extends Component {
 								</FormSelect>
 							</FormFieldset>
 						) }
-						<div className="google-my-business-stats__not-enough-data">
-							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-							<br />
-							{ translate( "We don't have enough data" ) }
+						<NotEnoughData />
+						<div className="google-my-business-stats__not-enough-data-description">
+							{ translate(
+								'Once customers start calling you from Google these stats will appear here'
+							) }
 						</div>
 					</Card>
 
@@ -250,10 +253,11 @@ class Stats extends Component {
 								</FormSelect>
 							</FormFieldset>
 						) }
-						<div className="google-my-business-stats__not-enough-data">
-							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-							<br />
-							{ translate( "We don't have enough data" ) }
+						<NotEnoughData />
+						<div className="google-my-business-stats__not-enough-data-description">
+							{ translate(
+								'Once customers start returning to your website, stats will appear here'
+							) }
 						</div>
 					</Card>
 
@@ -271,10 +275,11 @@ class Stats extends Component {
 								</FormSelect>
 							</FormFieldset>
 						) }
-						<div className="google-my-business-stats__not-enough-data">
-							<img src="/calypso/images/google-my-business/not-enough-data.svg" />
-							<br />
-							{ translate( "We don't have enough data" ) }
+						<NotEnoughData />
+						<div className="google-my-business-stats__not-enough-data-description">
+							{ translate(
+								'Once customers start visiting your website, these stats will appear here'
+							) }
 						</div>
 					</Card>
 
