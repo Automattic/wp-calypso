@@ -41,7 +41,7 @@ export const requestBillingTransaction = transactionId => dispatch => {
 		} );
 };
 
-export const clearBillingTransactionError = receiptId => ( {
+export const clearBillingTransactionError = transactionId => ( {
 	type: BILLING_TRANSACTION_CLEAR_ERROR,
-	receiptId,
+	transactionId,
 } );
