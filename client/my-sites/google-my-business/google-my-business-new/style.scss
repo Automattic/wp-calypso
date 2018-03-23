@@ -1,3 +1,7 @@
+.google-my-business-new__text {
+	max-width: 660px;
+}
+
 .google-my-business-new__button {
 	@include breakpoint( '<480px' ) {
 		text-align: center;

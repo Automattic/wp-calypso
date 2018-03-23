@@ -34,35 +34,37 @@ class GoogleMyBusinessNew extends Component {
 		const backHref = '/stats/' + siteId;
 
 		return (
-			<Main className="google-my-business google-my-business-new" wideLayout>
+			<Main className="google-my-business-new google-my-business" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
 				<Card>
-					<img
-						className="select-business-type__explanation-image"
-						src="/calypso/images/google-my-business/business-local.svg"
-						alt="Local business illustration"
-					/>
-					<h2>{ translate( 'It looks like you might be new to Google My Business' ) }</h2>
-					<p>
-						{ translate(
-							'Google My Business lists your local business on Google Search and Google Maps. ' +
-								'It works for businesses that have a physical location or serve a local area'
-						) }
-					</p>
+					<div className="google-my-business-new__text">
+						<img
+							className="select-business-type__explanation-image"
+							src="/calypso/images/google-my-business/business-local.svg"
+							alt="Local business illustration"
+						/>
+						<h2>{ translate( 'It looks like you might be new to Google My Business' ) }</h2>
+						<p>
+							{ translate(
+								'Google My Business lists your local business on Google Search and Google Maps. ' +
+									'It works for businesses that have a physical location or serve a local area'
+							) }
+						</p>
 
-					<Button
-						primary
-						className="google-my-business-new__button google-my-business-new__button-primary"
-						href={ nextHref }
-					>
-						{ translate( 'Create My Listing' ) }
-					</Button>
-					<Button className="google-my-business-new__button" href={ backHref }>
-						{ translate( 'No thanks' ) }
-					</Button>
+						<Button
+							primary
+							className="google-my-business-new__button google-my-business-new__button-primary"
+							href={ nextHref }
+						>
+							{ translate( 'Create My Listing' ) }
+						</Button>
+						<Button className="google-my-business-new__button" href={ backHref }>
+							{ translate( 'No thanks' ) }
+						</Button>
+					</div>
 				</Card>
 			</Main>
 		);
