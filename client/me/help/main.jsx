@@ -63,7 +63,7 @@ class Help extends React.PureComponent {
 				),
 			},
 			{
-				link: `https://${ getSupportLocale() }.support.wordpress.com/start`,
+				link: `https://${ getSupportLocale() }.support.wordpress.com/start/`,
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
