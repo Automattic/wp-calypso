@@ -19,8 +19,6 @@ import config from 'config';
 import { preload } from 'sections-helper';
 import { isNotificationsOpen } from 'state/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getStatsPathForTab } from 'lib/route';
-import { domainManagementList } from 'my-sites/domains/paths';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -31,11 +29,6 @@ class MasterbarLoggedIn extends React.Component {
 		siteSlug: PropTypes.string,
 	};
 
-	clickMySites = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
-		this.props.setNextLayoutFocus( 'sidebar' );
-	};
-
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
 		this.props.setNextLayoutFocus( 'content' );
@@ -43,10 +36,6 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
-	};
-
-	preloadMySites = () => {
-		preload( this.props.domainOnlySite ? 'domains' : 'stats' );
 	};
 
 	preloadReader = () => {
@@ -71,26 +60,10 @@ class MasterbarLoggedIn extends React.Component {
 	};
 
 	render() {
-		const { domainOnlySite, siteSlug, translate } = this.props,
-			mySitesUrl = domainOnlySite
-				? domainManagementList( siteSlug )
-				: getStatsPathForTab( 'day', siteSlug );
+		const { translate } = this.props;
 
 		return (
 			<Masterbar>
-				<Item
-					url={ mySitesUrl }
-					tipTarget="my-sites"
-					icon={ this.wordpressIcon() }
-					onClick={ this.clickMySites }
-					isActive={ this.isActive( 'sites' ) }
-					tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
-					preloadSection={ this.preloadMySites }
-				>
-					{ this.props.user.get().site_count > 1
-						? translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
-						: translate( 'My Site', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-				</Item>
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
@@ -142,7 +115,6 @@ export default connect(
 		return {
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: '',
-			domainOnlySite: false,
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent }
