@@ -18,6 +18,7 @@ import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
@@ -127,6 +128,11 @@ class PodcastingDetails extends Component {
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor="podcasting_category_1">{ translate( 'Podcast Topics' ) }</FormLabel>
+				<FormSettingExplanation>
+					{ translate(
+						'Choose how your podcast should be categorized within iTunes and other podcasting services.'
+					) }
+				</FormSettingExplanation>
 				{ this.renderTopicSelector( 'podcasting_category_1' ) }
 				{ this.renderTopicSelector( 'podcasting_category_2' ) }
 				{ this.renderTopicSelector( 'podcasting_category_3' ) }
@@ -156,14 +162,22 @@ class PodcastingDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
-					<Card>
-						<QueryTerms siteId={ siteId } taxonomy="category" />
-						<TermTreeSelector
-							className="podcasting-details__category-selector"
-							taxonomy="category"
-							selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
-							onChange={ this.onCategorySelected }
-						/>
+					<Card className="podcasting-details__wrapper">
+						<FormFieldset className="podcasting-details__category-selector">
+							<QueryTerms siteId={ siteId } taxonomy="category" />
+							{ /* Add name to TermTreeSelector, label, and explanation */ }
+							<FormLabel htmlFor="">{ translate( 'Podcast Category' ) }</FormLabel>
+							<FormSettingExplanation>
+								{ translate(
+									'Posts published in this category will be included in your podcast feed.'
+								) }
+							</FormSettingExplanation>
+							<TermTreeSelector
+								taxonomy="category"
+								selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
+								onChange={ this.onCategorySelected }
+							/>
+						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
 							{ this.renderTextField( {
 								key: 'podcasting_title',

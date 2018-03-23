@@ -1,9 +1,16 @@
+.podcasting-details__wrapper .form-setting-explanation {
+	margin-bottom: 6px;
+}
+
 .podcasting-details__category-selector {
-    width: 300px;
+	box-sizing: border-box;
+	float: left;
+	width: 35%;
 }
 
 .podcasting-details__basic-settings {
-    position: absolute;
-    top: 24px; // matches <Card> padding
-    margin-left: 300px;
+	box-sizing: border-box;
+	float: left;
+	width: 64%;
+	padding-left: 24px;
 }
