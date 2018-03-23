@@ -24,14 +24,17 @@ export const getEditURL = function( post, site ) {
 };
 
 export const getPreviewURL = function( site, post ) {
-	let parsed, previewUrl;
+	let parsed, parsedPostUrl, parsedPostPreview, previewUrl;
 
 	if ( ! post || ! post.URL || post.status === 'trash' ) {
 		return '';
 	}
 
 	if ( post.preview_URL ) {
-		previewUrl = post.preview_URL;
+		parsedPostUrl = url.parse( post.URL, true );
+		parsedPostPreview = url.parse( post.preview_URL, true );
+		parsedPostUrl.search = parsedPostPreview.search;
+		previewUrl = url.format( parsedPostUrl );
 	} else if ( post.status === 'publish' ) {
 		previewUrl = post.URL;
 	} else {
