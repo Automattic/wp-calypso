@@ -48,7 +48,7 @@ import { hasDomainCredit } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-class ProductPurchaseFeaturesList extends Component {
+export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes.oneOf( [
 			PLAN_FREE,
