@@ -414,5 +414,6 @@ describe( 'Label purchase form reducer', () => {
 		const state = reducer( initialState, action );
 
 		expect( state[ orderId ].form.packages.selected.weight_0_custom1.signature ).to.eql( 'yes' );
+		expect( state[ orderId ].form.packages.saved ).to.be.false;
 	} );
 } );
