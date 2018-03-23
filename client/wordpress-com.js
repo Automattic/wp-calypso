@@ -20,13 +20,6 @@ const sections = [
 		secondary: true,
 	},
 	{
-		name: 'paladin',
-		paths: [ '/paladin' ],
-		module: 'my-sites/paladin',
-		group: 'sites',
-		secondary: true,
-	},
-	{
 		name: 'me',
 		paths: [ '/me' ],
 		module: 'me',

@@ -114,7 +114,6 @@
 		"nps-survey/dev-trigger": true,
 		"nps-survey/notice": true,
 		"preview-layout": true,
-		"paladin": true,
 		"network-connection": true,
 		"notifications2beta": true,
 		"notifications/link-to-reader": true,
