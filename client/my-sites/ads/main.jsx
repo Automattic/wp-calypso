@@ -41,9 +41,12 @@ import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/st
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'components/data/document-head';
+import { isJetpackSite } from 'state/sites/selectors';
 
 class AdsMain extends Component {
 	static propTypes = {
+		isJetpack: PropTypes.bool,
 		isRequestingWordadsStatus: PropTypes.bool.isRequired,
 		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
 		requestingWordAdsApproval: PropTypes.bool.isRequired,
@@ -225,7 +228,7 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { section, site, translate } = this.props;
+		const { isJetpack, section, site, translate } = this.props;
 
 		if ( ! this.canAccess() ) {
 			return null;
@@ -248,12 +251,19 @@ class AdsMain extends Component {
 			component = this.renderInstantActivationToggle( component );
 		}
 
+		const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
+		const layoutTitles = {
+			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
+			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
+		};
+
 		return (
 			<Main className="ads">
 				<PageViewTracker
 					path={ `/ads/${ section }/:site` }
-					title={ `WordAds ${ capitalize( section ) }` }
+					title={ `${ adsProgramName } ${ capitalize( section ) }` }
 				/>
+				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
 				<SectionNav selectedText={ this.getSelectedText() }>
 					<NavTabs>
@@ -291,6 +301,7 @@ const mapStateToProps = state => {
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
 		isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 	};
 };
 
