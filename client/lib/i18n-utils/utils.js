@@ -51,15 +51,11 @@ export function isLocaleVariant( locale ) {
 
 /**
  * Checks against a list of locales that don't have any GP translation sets
- *
  * @param {string} locale - locale slug (eg: 'fr')
  * @return {boolean} true when the locale is a member of the exception list
  */
-export function hasTranslationSet( locale ) {
-	if ( ! isString( locale ) ) {
-		return false;
-	}
-	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
+export function hasNoGlotPressTranslationSet( locale ) {
+	return [ 'en', 'sr_latin' ].indexOf( locale ) > -1;
 }
 
 /**

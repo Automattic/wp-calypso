@@ -18,7 +18,7 @@ import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
-import { hasTranslationSet } from 'lib/i18n-utils';
+import { hasNoGlotPressTranslationSet } from 'lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
 
@@ -63,13 +63,13 @@ const communityTranslatorJumpstart = {
 		if (
 			! currentUser ||
 			! currentUser.localeSlug ||
-			! hasTranslationSet( currentUser.localeSlug )
+			hasNoGlotPressTranslationSet( currentUser.localeSlug )
 		) {
 			return false;
 		}
 
 		// disable for locale variants with no official GP translation sets
-		if ( currentUser.localeVariant && ! hasTranslationSet( currentUser.localeVariant ) ) {
+		if ( currentUser.localeVariant && hasNoGlotPressTranslationSet( currentUser.localeVariant ) ) {
 			return false;
 		}
 
