@@ -11,7 +11,7 @@ export {
 	getLocaleFromPath,
 	isDefaultLocale,
 	isLocaleVariant,
-	hasNoGlotPressTranslationSet,
+	canBeTranslated,
 	removeLocaleFromPath,
 } from './utils';
 

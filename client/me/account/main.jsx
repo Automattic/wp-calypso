@@ -43,7 +43,7 @@ import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'state/notices/actions';
-import { getLanguage, isLocaleVariant, hasNoGlotPressTranslationSet } from 'lib/i18n-utils';
+import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
 import { isRequestingMissingSites } from 'state/selectors';
 import _user from 'lib/user';
 
@@ -153,14 +153,14 @@ const Account = createReactClass( {
 		const locale = this.getUserSetting( 'language' );
 
 		// disable for locales
-		if ( ! locale || hasNoGlotPressTranslationSet( locale ) ) {
+		if ( ! locale || ! canBeTranslated( locale ) ) {
 			return false;
 		}
 
 		// disable for locale variants with no official GP translation sets
 		if (
 			this.state.localeVariantSelected &&
-			hasNoGlotPressTranslationSet( this.state.localeVariantSelected )
+			! canBeTranslated( this.state.localeVariantSelected )
 		) {
 			return false;
 		}
@@ -168,7 +168,7 @@ const Account = createReactClass( {
 		// if the user hasn't yet selected a language, and the locale variants has no official GP translation set
 		if (
 			typeof this.state.localeVariantSelected !== 'string' &&
-			hasNoGlotPressTranslationSet( this.getUserSetting( 'locale_variant' ) )
+			! canBeTranslated( this.getUserSetting( 'locale_variant' ) )
 		) {
 			return false;
 		}

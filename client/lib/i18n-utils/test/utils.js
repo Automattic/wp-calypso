@@ -15,7 +15,7 @@ import {
 	isDefaultLocale,
 	removeLocaleFromPath,
 	isLocaleVariant,
-	hasNoGlotPressTranslationSet,
+	canBeTranslated,
 } from 'lib/i18n-utils';
 
 jest.mock( 'config', () => key => {
@@ -234,18 +234,18 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( '#hasNoGlotPressTranslationSet', () => {
-		test( 'should return false by default', () => {
-			expect( hasNoGlotPressTranslationSet() ).to.be.false;
+	describe( '#canBeTranslated', () => {
+		test( 'should return true by default', () => {
+			expect( canBeTranslated() ).to.be.true;
 		} );
 
-		test( 'should return true for elements in the exception list', () => {
-			expect( hasNoGlotPressTranslationSet( 'en' ) ).to.be.true;
-			expect( hasNoGlotPressTranslationSet( 'sr_latin' ) ).to.be.true;
+		test( 'should return false for elements in the exception list', () => {
+			expect( canBeTranslated( 'en' ) ).to.be.false;
+			expect( canBeTranslated( 'sr_latin' ) ).to.be.false;
 		} );
 
-		test( 'should return false for languages not in the exception list', () => {
-			expect( hasNoGlotPressTranslationSet( 'de' ) ).to.be.false;
+		test( 'should return true for languages not in the exception list', () => {
+			expect( canBeTranslated( 'de' ) ).to.be.true;
 		} );
 	} );
 } );

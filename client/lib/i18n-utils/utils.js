@@ -54,10 +54,10 @@ export function isLocaleVariant( locale ) {
  * A 'translation set' refers to a collection of strings to be translated see:
  * https://glotpress.blog/the-manual/translation-sets/
  * @param {string} locale - locale slug (eg: 'fr')
- * @return {boolean} true when the locale is a member of the exception list
+ * @return {boolean} true when the locale is NOT a member of the exception list
  */
-export function hasNoGlotPressTranslationSet( locale ) {
-	return [ 'en', 'sr_latin' ].indexOf( locale ) > -1;
+export function canBeTranslated( locale ) {
+	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
 }
 
 /**
