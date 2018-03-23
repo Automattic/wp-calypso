@@ -56,6 +56,8 @@ export const sitesSchema = {
 						wp_version: { type: 'string' },
 					},
 				},
+				lang: { type: 'string' },
+				post_count: { type: 'number' },
 			},
 		},
 	},
