@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -38,6 +39,7 @@ import {
 import Notice from 'components/notice';
 import { addQueryArgs } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 export class JetpackConnectNotices extends Component {
 	static propTypes = {
@@ -86,13 +88,13 @@ export class JetpackConnectNotices extends Component {
 		}
 	}
 
-	trackManualInstallClick() {
+	trackManualInstallClick = () => {
 		this.props.recordTracksEvent( 'calypso_remote_install_manual_install_click' );
-	}
+	};
 
-	trackSupportClick() {
+	trackSupportClick = () => {
 		this.props.recordTracksEvent( 'calypso_remote_install_support_click' );
-	}
+	};
 
 	getNoticeValues() {
 		const { noticeType, onDismissClick, translate } = this.props;
@@ -335,10 +337,12 @@ export class JetpackConnectNotices extends Component {
 		return null;
 	}
 }
-export default connect( state => {
-	const jetpackConnectSite = getConnectingSite( state );
-	const siteToConnect = jetpackConnectSite.url;
-	return {
-		siteToConnect,
-	};
-} )( localize( JetpackConnectNotices ) );
+export default connect(
+	state => {
+		const jetpackConnectSite = getConnectingSite( state );
+		return {
+			siteToConnect: get( jetpackConnectSite, 'url', '' ),
+		};
+	},
+	{ recordTracksEvent }
+)( localize( JetpackConnectNotices ) );
