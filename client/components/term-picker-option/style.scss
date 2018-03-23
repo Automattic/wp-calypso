@@ -1,11 +1,11 @@
 .term-picker-option {
-  --padding-size: 18px;
+  $padding-size: 18px;
 
   display: flex;
   width: 100%;
   cursor: pointer;
 
-  padding: var(--padding-size);
+  padding: $padding-size;
   border-radius: 5px;
 
   background: #FFF;
@@ -65,13 +65,13 @@
     color: #59849D;
     margin-left: 5px;
   }
-}
 
-.term-picker-option:not( .term-picker-option--active ) {
-  border: 1px solid #c5d8e2;
-  padding: calc(var(--padding-size) + 2px);
-}
+  &:not( .term-picker-option--active ) {
+    border: 1px solid #c5d8e2;
+    padding: $padding-size + 2px;
+  }
 
-.term-picker-option--active {
-  border: 3px solid #4ab866;
+  &--active {
+    border: 3px solid #4ab866;
+  }
 }
