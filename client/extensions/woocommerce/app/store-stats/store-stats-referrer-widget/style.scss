@@ -1,9 +1,18 @@
-.store-stats-referrer-widget  {
-	&.table.is-compact-table th.table-heading.is-title-cell,
-	&.table.is-compact-table td.table-item.is-title-cell {
-		width: 30%;
-	}
-	&.table.is-compact-table th.table-heading {
-		text-align: left;
+.store-stats-referrer-widget.card  {
+		padding: 0;
+
+		.table {
+			box-shadow: none;
+			margin-bottom: 0;
+		}
+
+	.table-row.is-selected,
+	.table-row.is-selected:hover {
+		color: $white;
+		background-color: $blue-wordpress;
+
+		.table-item__cell-title::after {
+			background-image: linear-gradient(to right, rgba(255,255,255,0) 0%, $blue-wordpress 90%);
+		}
 	}
 }
