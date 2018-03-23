@@ -21,7 +21,6 @@ import observe from 'lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
 import config from 'config';
 import PulsingDot from 'components/pulsing-dot';
-import SitesListNotices from 'lib/sites-list/notices';
 import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
 
@@ -106,7 +105,6 @@ const Layout = createReactClass( {
 		return (
 			<div className={ sectionClass }>
 				<DocumentHead />
-				<SitesListNotices />
 				<QueryPreferences />
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
