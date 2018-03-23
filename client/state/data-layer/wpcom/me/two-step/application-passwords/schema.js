@@ -11,6 +11,7 @@ export default {
 					name: { type: 'string' },
 				},
 				required: [ 'ID', 'generated', 'name' ],
+				additionalProperties: false,
 			},
 		},
 	},
