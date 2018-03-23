@@ -132,8 +132,11 @@ class Security2faDisable extends Component {
 						{ translate(
 							'You are about to disable Two-Step Authentication. ' +
 								'This means we will no longer ask for your authentication ' +
-								'code when you sign into your %(userlogin)s account.',
+								'code when you sign into your {{strong}}%(userlogin)s{{/strong}} account.',
 							{
+								components: {
+									strong: <strong />,
+								},
 								args: {
 									userlogin: userSettings.settings.user_login,
 								},
