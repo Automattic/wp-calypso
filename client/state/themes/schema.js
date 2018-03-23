@@ -1,46 +1,21 @@
 /** @format */
-
-/**
- * Internal dependencies
- */
-import { withItemsSchema } from 'lib/query-manager/schema';
-
-const themesSchema = {
+const themeSchema = {
 	title: 'Theme',
-	additionalProperties: false,
 	type: 'object',
-	patternProperties: {
-		'^[\\w-]+$': {
-			additionalProperties: true,
-			required: [ 'id', 'name', 'author', 'screenshot' ],
-			type: 'object',
-			properties: {
-				active: { type: 'boolean' },
-				author: { type: 'string' },
-				author_uri: { type: 'string' },
-				autoupdate: { type: 'boolean' },
-				autoupdate_translation: { type: 'boolean' },
-				demo_uri: { type: 'string' },
-				description: { type: 'string' },
-				id: { type: 'string' },
-				name: { type: 'string' },
-				price: { type: 'string' },
-				screenshot: { type: 'string' },
-				stylesheet: { type: 'string' },
-				tags: {
-					type: 'array',
-					items: { type: 'string' },
-				},
-				taxonomies: { type: 'object' },
-				theme_uri: { type: 'string' },
-				update: { type: [ 'null', 'object' ] },
-				version: { type: 'string' },
-			},
+	properties: {
+		id: { type: 'string' },
+		name: { type: 'string' },
+		author: { type: 'string' },
+		screenshot: { type: 'string' },
+		stylesheet: { type: 'string' },
+		demo_uri: { type: 'string' },
+		author_uri: { type: 'string' },
+		price: {
+			type: 'string',
 		},
 	},
+	required: [ 'id', 'name', 'author', 'screenshot' ],
 };
-
-const themeQueryManagerSchema = withItemsSchema( themesSchema );
 
 export const queriesSchema = {
 	type: 'object',
@@ -49,7 +24,51 @@ export const queriesSchema = {
 	},
 	patternProperties: {
 		// Site ID
-		'^(wpcom|wporg|\\d+)$': themeQueryManagerSchema,
+		'^(wpcom|wporg|\\d+)$': {
+			type: 'object',
+			properties: {
+				data: {
+					type: 'object',
+					required: [ 'items', 'queries' ],
+					properties: {
+						items: {
+							description: 'Themes, keyed by ID',
+							type: 'object',
+							patternProperties: {
+								'^\\w+$': themeSchema,
+							},
+						},
+						queries: {
+							patternProperties: {
+								// Query key pairs
+								'^\\[.*\\]$': {
+									type: 'object',
+									required: [ 'itemKeys' ],
+									properties: {
+										itemKeys: {
+											type: 'array',
+										},
+										found: {
+											type: 'number',
+										},
+									},
+								},
+							},
+							additionalProperties: false,
+						},
+					},
+				},
+				options: {
+					type: 'object',
+					required: [ 'itemKey' ],
+					properties: {
+						itemKey: {
+							type: 'string',
+						},
+					},
+				},
+			},
+		},
 	},
 	additionalProperties: false,
 };

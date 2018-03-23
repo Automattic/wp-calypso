@@ -1,10 +1,4 @@
 /** @format */
-
-/**
- * Internal dependencies
- */
-import queryManagerSchema from 'lib/query-manager/schema';
-
 export const itemsSchema = {
 	type: 'object',
 	patternProperties: {
@@ -20,6 +14,48 @@ export const itemsSchema = {
 	additionalProperties: false,
 };
 
+const queryManagerSchema = {
+	type: 'object',
+	properties: {
+		data: {
+			type: 'object',
+			required: [ 'items', 'queries' ],
+			properties: {
+				items: {
+					type: 'object',
+				},
+				queries: {
+					patternProperties: {
+						// Query key pairs
+						'^\\[.*\\]$': {
+							type: 'object',
+							required: [ 'itemKeys' ],
+							properties: {
+								itemKeys: {
+									type: 'array',
+								},
+								found: {
+									type: 'number',
+								},
+							},
+						},
+					},
+					additionalProperties: false,
+				},
+			},
+		},
+		options: {
+			type: 'object',
+			required: [ 'itemKey' ],
+			properties: {
+				itemKey: {
+					type: 'string',
+				},
+			},
+		},
+	},
+};
+
 export const queriesSchema = {
 	type: 'object',
 	patternProperties: {
@@ -29,4 +65,4 @@ export const queriesSchema = {
 	additionalProperties: false,
 };
 
-export { queryManagerSchema as allSitesQueriesSchema };
+export const allSitesQueriesSchema = queryManagerSchema;
