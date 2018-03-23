@@ -53,7 +53,7 @@ class SelectBusinessType extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<Main className="google-my-business select-business-type">
+			<Main className="google-my-business select-business-type" wideLayout>
 				<PageViewTracker
 					path="/google-my-business/:site/select-business-type"
 					title="Google My Business > Select Business Type"

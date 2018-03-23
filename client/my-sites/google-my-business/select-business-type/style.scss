@@ -15,16 +15,18 @@
 
 .select-business-type__explanation-image {
 	max-width: 200px;
-	margin-bottom: 10px;
+
+	@include breakpoint( '<960px' ) {
+		margin-bottom: 10px;
+	}
 
 	@include breakpoint( '>960px' ) {
-		align-self: center;
+		margin-left: 50px;
 		max-width: 300px;
 	}
 }
 
 .select-business-type__explanation-main {
-	margin-right: 50px;
 	max-width: 540px;
 	flex: 2 1;
 }
