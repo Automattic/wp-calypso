@@ -85,6 +85,7 @@ const PackageInfo = ( props ) => {
 	};
 
 	const onAddItem = () => props.openAddItem( orderId, siteId );
+
 	const renderAddItemButton = () => {
 		if ( isIndividualPackage ) {
 			return null;
@@ -155,7 +156,10 @@ const PackageInfo = ( props ) => {
 		);
 	};
 
-	const onWeightChange = ( event ) => props.updatePackageWeight( orderId, siteId, packageId, event.target.value );
+	const onWeightChange = ( event ) => {
+		props.updatePackageWeight( orderId, siteId, packageId, event.target.value );
+	};
+
 	const onSignatureChange = ( event ) => {
 		props.setPackageSignature( orderId, siteId, packageId, event.target.value );
 	};
