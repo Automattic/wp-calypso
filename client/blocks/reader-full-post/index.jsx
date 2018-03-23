@@ -490,9 +490,9 @@ export class FullPostView extends React.Component {
 		);
 	}
 
-	storeCommentsWrapperRef( el ) {
+	storeCommentsWrapperRef = el => {
 		this.commentsWrapper = el;
-	}
+	};
 
 	renderPostAMP() {
 		// const { post, site, referralPost } = this.props;
@@ -538,9 +538,9 @@ export class FullPostView extends React.Component {
 		return <container ref={ this.storeAmpViewerContainerRef } />;
 	}
 
-	storeAmpViewerContainerRef( el ) {
+	storeAmpViewerContainerRef = el => {
 		this.ampViewerContainer = el;
-	}
+	};
 
 	initAMP() {
 		// called on document mount
