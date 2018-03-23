@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { getSiteFragment, sectionify } from 'lib/route';
+import { getSiteFragment } from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import trackScrollPage from 'lib/track-scroll-page';
@@ -22,7 +22,6 @@ const controller = {
 		const siteID = getSiteFragment( context.path );
 		let status = context.params.status;
 		const search = context.query.s;
-		const basePath = sectionify( context.path );
 		let analyticsPageTitle = 'Pages';
 		let baseAnalyticsPath;
 
@@ -31,9 +30,9 @@ const controller = {
 		context.store.dispatch( setTitle( i18n.translate( 'Site Pages', { textOnly: true } ) ) );
 
 		if ( siteID ) {
-			baseAnalyticsPath = basePath + '/:site';
+			baseAnalyticsPath = status ? `/pages/${ status }/:site` : '/pages/:site';
 		} else {
-			baseAnalyticsPath = basePath;
+			baseAnalyticsPath = status ? `/pages/${ status }` : '/pages';
 		}
 
 		if ( status.length ) {
