@@ -7,39 +7,28 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import DesignPreview from 'my-sites/design-preview';
 import UrlPreview from 'blocks/url-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { getCurrentPreviewType } from 'state/ui/preview/selectors';
 
 class SitePreview extends Component {
+	static propTypes = {
+		showPreview: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showPreview: false,
+	};
+
 	render() {
-		const components = {
-			'design-preview': DesignPreview,
-			'site-preview': UrlPreview,
-		};
-		const Preview = components[ this.props.currentPreviewType ] || noop;
-		return <Preview showPreview={ this.props.showPreview } />;
+		return <UrlPreview showPreview={ this.props.showPreview } />;
 	}
 }
 
-SitePreview.propTypes = {
-	currentPreviewType: PropTypes.string,
-	showPreview: PropTypes.bool,
-};
-
-SitePreview.defaultProps = {
-	currentPreviewType: 'site-preview',
-	showPreview: false,
-};
-
 const mapStateToProps = state => ( {
-	currentPreviewType: getCurrentPreviewType( state ),
 	showPreview: getCurrentLayoutFocus( state ) === 'preview',
 } );
 

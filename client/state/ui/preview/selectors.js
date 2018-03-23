@@ -21,7 +21,7 @@ export function getCurrentPreviewType( state ) {
  * @param  {Object}  state Global state tree
  * @return {?String}  The url or null
  *
- * @see client/components/design-preview
+ * @see client/blocks/site-preview
  */
 export function getPreviewUrl( state ) {
 	return state.ui.preview.currentPreviewUrl;
