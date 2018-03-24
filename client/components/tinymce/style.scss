@@ -761,8 +761,14 @@ div.mce-path {
 	margin: 2px 0 0 -13px #{"/*rtl:ignore*/"};
 	border: none;
 	color: $gray;
+
+	// Displaying the icon by using an svg file is a temporary solution to remove Noticons. 
 	&::before {
-		@include noticon( '\f431' , 16px );
+		display: block;
+		content: url("/calypso/images/tinymce-icons/gridicons-chevron-down.svg");
+		width: 14px;
+		height: 14px;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 }
 
@@ -776,7 +782,7 @@ div.mce-path {
 
 .mce-panel .mce-active i.mce-caret {
 	&::before {
-		content: '\f432';
+		transform: rotate( 180deg );
 	}
 }
 
