@@ -570,13 +570,6 @@ div.mce-path {
 
 .mce-path .mce-divider {
 	visibility: hidden;
-
-	&::before {
-		@include noticon( '\f429', 20px );
-		color: $gray;
-		margin: 0 -8px 0 4px;
-		visibility: visible;
-	}
 }
 
 .mce-path,
@@ -762,7 +755,7 @@ div.mce-path {
 	border: none;
 	color: $gray;
 
-	// Displaying the icon by using an svg file is a temporary solution to remove Noticons. 
+	// Displaying the icon by using an svg file is a temporary solution to remove Noticons.
 	&::before {
 		display: block;
 		content: url("/calypso/images/tinymce-icons/gridicons-chevron-down.svg");
