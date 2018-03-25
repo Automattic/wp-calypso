@@ -29,17 +29,14 @@ import {
 	getJetpackOnboardingCompletedSteps,
 	getJetpackOnboardingSettings,
 	getJpoUserHash,
-	getRequest,
 	getSiteId,
 	getUnconnectedSite,
 	getUnconnectedSiteIdBySlug,
+	isRequestingJetpackOnboardingSettings,
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import {
-	requestJetpackOnboardingSettings,
-	saveJetpackOnboardingSettings,
-} from 'state/jetpack-onboarding/actions';
+import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
@@ -222,10 +219,7 @@ export default connect(
 			};
 		}
 
-		const isRequestingSettings = getRequest(
-			state,
-			requestJetpackOnboardingSettings( siteId, jpoAuth )
-		).isLoading;
+		const isRequestingSettings = isRequestingJetpackOnboardingSettings( state, siteId, jpoAuth );
 
 		const userIdHashed = getJpoUserHash( state, siteId );
 
