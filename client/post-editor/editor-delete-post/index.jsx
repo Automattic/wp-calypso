@@ -80,8 +80,8 @@ class EditorDeletePost extends React.Component {
 	};
 
 	render() {
-		const { postId, postStatus, translate } = this.props;
-		if ( ! postId || postStatus === 'trash' ) {
+		const { canDelete, postId, postStatus, translate } = this.props;
+		if ( ! canDelete || ! postId || postStatus === 'trash' ) {
 			return null;
 		}
 
