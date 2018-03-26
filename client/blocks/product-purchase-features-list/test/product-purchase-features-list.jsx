@@ -102,19 +102,6 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
 	} );
 
-	/*
-	For Upcoming PR:
-	test( 'should render WP personal features for WP personal plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
-
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL_2_YEARS }/> );
-		expect( spy ).toHaveBeenCalled();
-		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
-	} );
-	*/
-
 	test( 'should render WP premium features for WP premium plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
@@ -125,19 +112,6 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
 	} );
 
-	/*
-	For Upcoming PR:
-	test( 'should render WP premium features for WP premium plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
-
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM_2_YEARS }/> );
-		expect( spy ).toHaveBeenCalled();
-		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
-	} );
-	*/
-
 	test( 'should render WP business features for WP business plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
@@ -147,19 +121,6 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		expect( spyWrong ).not.toHaveBeenCalled();
 		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
 	} );
-
-	/*
-	For Upcoming PR:
-	test( 'should render WP business features for WP business plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
-
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS_2_YEARS }/> );
-		expect( spy ).toHaveBeenCalled();
-		expect( spyWrong ).not.toHaveBeenCalled();
-		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
-	} );
-	*/
 
 	test( 'should render Jetpack free features for jetpack free plans', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackFreeFeatures' );
@@ -243,32 +204,3 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		assert.notEqual( comp.find( '.product-purchase-features-list' ).children().length, 0 );
 	} );
 } );
-
-/*
-For Upcoming PR:
-describe( 'ProductPurchaseFeaturesList feature functions', () => {
-	const props = {
-		plan: PLAN_FREE,
-		isPlaceholder: false,
-		selectedSite: {
-			plan: PLAN_FREE,
-		},
-	};
-
-	test( 'getBusinessFeatures() should pass proper plan type to VideoAudioPosts child component',
-		() => {
-			const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS }/> );
-			const audioPosts = comp.find( 'VideoAudioPosts' );
-			assert.lengthOf( audioPosts, 1 );
-			assert.equal( audioPosts.props().type, TYPE_BUSINESS );
-		} );
-
-	test( 'getPremiumFeatures() should pass proper plan type to VideoAudioPosts child component',
-		() => {
-			const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM }/> );
-			const audioPosts = comp.find( 'VideoAudioPosts' );
-			assert.lengthOf( audioPosts, 1 );
-			assert.equal( audioPosts.props().type, TYPE_PREMIUM );
-		} );
-} );
-*/
