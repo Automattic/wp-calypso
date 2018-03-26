@@ -8,7 +8,7 @@
   padding: $padding-size;
   border-radius: 5px;
 
-  background: #FFF;
+  background: $white;
 
   .term-picker-option__radio-wrapper {
     width: 21px;
@@ -58,20 +58,20 @@
   }
 
   .term-picker-option__price {
-    color: #4f646e;
+    color: $gray-dark;
   }
 
   .term-picker-option__side-note {
-    color: #59849D;
+    color: $gray;
     margin-left: 5px;
   }
 
   &:not( .term-picker-option--active ) {
-    border: 1px solid #c5d8e2;
+    border: 1px solid $gray;
     padding: $padding-size + 2px;
   }
 
   &--active {
-    border: 3px solid #4ab866;
+    border: 3px solid $alert-green;
   }
 }
