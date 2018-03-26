@@ -421,7 +421,7 @@ class RegisterDomainStep extends React.Component {
 		return designType && designType === 'blog' ? 'design_type_blog' : null;
 	}
 
-	checkDomainAvailability = async ( domain, timestamp ) => {
+	checkDomainAvailability = ( domain, timestamp ) => {
 		if (
 			! domain.match(
 				/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
@@ -475,7 +475,7 @@ class RegisterDomainStep extends React.Component {
 		} );
 	};
 
-	getDomainsSuggestions = async ( domain, timestamp ) => {
+	getDomainsSuggestions = ( domain, timestamp ) => {
 		const suggestionQuantity =
 			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
 				? SUGGESTION_QUANTITY - 1
