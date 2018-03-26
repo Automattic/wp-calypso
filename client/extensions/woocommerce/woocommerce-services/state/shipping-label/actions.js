@@ -202,6 +202,8 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 	const formState = getShippingLabel( state, orderId, siteId ).form;
 	const { origin, destination, packages } = formState;
 
+	dispatch( NoticeActions.removeNotice( 'wcs-label-rates' ) );
+
 	return getRates(
 		orderId,
 		siteId,
@@ -213,7 +215,11 @@ const tryGetLabelRates = ( orderId, siteId, dispatch, getState ) => {
 		.then( () => expandFirstErroneousStep( orderId, siteId, dispatch, getState ) )
 		.catch( error => {
 			console.error( error );
-			dispatch( NoticeActions.errorNotice( error.toString() ) );
+			dispatch( NoticeActions.errorNotice( error.toString(), {
+				id: 'wcs-label-rates',
+				button: translate( 'Retry' ),
+				onClick: () => tryGetLabelRates( orderId, siteId, dispatch, getState ),
+			} ) );
 		} );
 };
 
