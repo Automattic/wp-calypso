@@ -64,7 +64,6 @@ import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
-import getPostLikeCount from 'state/selectors/get-post-like-count';
 import isLikedPost from 'state/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 
@@ -148,6 +147,11 @@ export class FullPostView extends React.Component {
 	};
 
 	handleLike = () => {
+		// cannot like posts backed by rss feeds
+		if ( ! this.props.post || this.props.post.is_external ) {
+			return;
+		}
+
 		const { site_ID: siteId, ID: postId } = this.props.post;
 		let liked = this.props.liked;
 
@@ -321,7 +325,7 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			<ReaderMain className={ classNames( classes ) }>
-				{ blogId && <QueryPostLikes siteId={ blogId } postId={ postId } /> }
+				{ site && <QueryPostLikes siteId={ post.site_ID } postId={ post.ID } /> }
 				{ ! post || post._state === 'pending' ? (
 					<DocumentHead title={ translate( 'Loading' ) } />
 				) : (
@@ -492,8 +496,7 @@ export default connect(
 
 		const props = {
 			post,
-			likeCount: getPostLikeCount( state, siteId, postId ),
-			liked: isLikedPost( state, siteId, postId ),
+			liked: isLikedPost( state, siteId, post.ID ),
 		};
 
 		if ( ! isExternal && siteId ) {
