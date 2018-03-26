@@ -10,6 +10,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
+import { get, isNull } from 'lodash';
 
 /**
  * Internal dependencies
@@ -112,7 +113,7 @@ export default connect(
 		const post = getEditedPost( state, siteId, postId );
 
 		const userId = getCurrentUserId( state );
-		const isAuthor = post.author && post.author.ID === userId;
+		const isAuthor = ! isNull( userId ) && get( post, [ 'author', 'ID' ], null ) === userId;
 
 		return {
 			siteId,
