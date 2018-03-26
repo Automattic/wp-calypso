@@ -29,6 +29,7 @@ import { getUserPurchases, isFetchingUserPurchases } from 'state/purchases/selec
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import config from 'config';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Module variables
@@ -235,6 +236,7 @@ class Help extends React.PureComponent {
 
 		return (
 			<Main className="help">
+				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }

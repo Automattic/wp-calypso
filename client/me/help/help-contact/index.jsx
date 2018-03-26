@@ -62,6 +62,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import { getLanguage, isDefaultLocale } from 'lib/i18n-utils';
 import { recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 /**
  * Module variables
@@ -570,6 +571,7 @@ class HelpContact extends React.Component {
 	render() {
 		const content = (
 			<Fragment>
+				<PageViewTracker path="/help/contact" title="Help > Contact" />
 				{ ! this.props.compact && (
 					<HeaderCake onClick={ this.backToHelp } isCompact={ true }>
 						{ this.props.translate( 'Contact Us' ) }

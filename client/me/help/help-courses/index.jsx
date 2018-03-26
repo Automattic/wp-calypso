@@ -25,6 +25,7 @@ import {
 	isFetchingUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class Courses extends Component {
 	componentWillMount() {
@@ -48,6 +49,7 @@ class Courses extends Component {
 
 		return (
 			<Main className="help-courses">
+				<PageViewTracker path="/help/courses" title="Help > Courses" />
 				<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
 					{ translate( 'Courses' ) }
 				</HeaderCake>
