@@ -176,8 +176,9 @@ export function sendNpsSurveyFeedbackSuccess() {
 	};
 }
 
-export function sendNpsSurveyFeedbackFailure() {
+export function sendNpsSurveyFeedbackFailure( err ) {
 	return {
 		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
+		error: err,
 	};
 }
