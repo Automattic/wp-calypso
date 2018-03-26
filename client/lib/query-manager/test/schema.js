@@ -5,6 +5,14 @@
  */
 import queryManagerSchema, { withItemsSchema } from '../schema';
 
+describe( 'queryManagerSchema', () => {
+	test( 'should throw error when attempting to mutate', () => {
+		expect(
+			() => ( queryManagerSchema.properties.data.properties.items = { type: 'null' } )
+		).toThrow( TypeError );
+	} );
+} );
+
 describe( 'withItemsSchema', () => {
 	it( 'should return a new schema', () => {
 		expect( withItemsSchema( {} ) ).not.toBe( queryManagerSchema );
