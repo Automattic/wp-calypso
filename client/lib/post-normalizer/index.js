@@ -45,6 +45,7 @@ async function normalizePost( post, transforms, callback ) {
 			await promisify( transform )( normalizedPost );
 		} catch ( err ) {
 			callback( err );
+			return;
 		}
 	}
 	callback( null, normalizedPost );
