@@ -260,7 +260,7 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 		assert.equal( audioPosts.props().plan, PLAN_BUSINESS );
 	} );
 
-	test( 'getBusinessFeatures() should pass proper plan type to VideoAudioPosts child component', () => {
+	test( 'getBusinessFeatures() should pass proper plan type to VideoAudioPosts child component when 2-years plan is used', () => {
 		const comp = shallow(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS_2_YEARS } />
 		);
