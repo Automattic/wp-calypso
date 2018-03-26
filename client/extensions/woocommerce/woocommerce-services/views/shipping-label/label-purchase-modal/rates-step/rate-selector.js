@@ -21,7 +21,7 @@ import { updateRate } from 'woocommerce/woocommerce-services/state/shipping-labe
 import {
 	getShippingLabel,
 	isLoaded,
-	getFormErrors,
+	getRatesErrors,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
 class RateSelector extends React.Component {
@@ -53,6 +53,7 @@ class RateSelector extends React.Component {
 			selectedRate,
 			packageRates,
 			errors,
+			isReturn,
 			translate,
 		} = this.props;
 
@@ -65,7 +66,8 @@ class RateSelector extends React.Component {
 				rateObject.title + ' (' + formatCurrency( rateObject.rate, 'USD' ) + ')';
 		} );
 
-		const onRateUpdate = value => this.props.updateRate( orderId, siteId, packageId, value );
+		const onRateUpdate = value =>
+			this.props.updateRate( orderId, siteId, packageId, value, isReturn );
 		return (
 			<div
 				className={ classNames(
@@ -100,12 +102,14 @@ class RateSelector extends React.Component {
 const mapStateToProps = ( state, { orderId, siteId, packageId } ) => {
 	const loaded = isLoaded( state, orderId, siteId );
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	const ratesForm = shippingLabel.form.rates;
+	const isReturn = shippingLabel.returnDialog != null;
+	const form = isReturn ? shippingLabel.returnDialog : shippingLabel.form;
 	return {
-		isLoading: ratesForm.retrievalInProgress,
-		errors: loaded && getFormErrors( state, orderId, siteId ).rates,
-		selectedRate: ratesForm.values[ packageId ] || '', // Store owner selected rate, not customer
-		packageRates: get( ratesForm.available, [ packageId, 'rates' ], [] ),
+		isLoading: form.rates.retrievalInProgress,
+		errors: loaded && getRatesErrors( state, orderId, siteId ),
+		selectedRate: get( form.rates.values, packageId, '' ), // Store owner selected rate, not customer
+		packageRates: get( form.rates.available, [ packageId, 'rates' ], [] ),
+		isReturn,
 	};
 };
 

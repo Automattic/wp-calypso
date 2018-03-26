@@ -70,7 +70,7 @@ export const hasRefreshedLabelStatus = ( state, orderId, siteId = getSelectedSit
 
 export const getForm = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const shippingLabel = getShippingLabel( state, orderId, siteId );
-	return shippingLabel && shippingLabel.form;
+	return shippingLabel && ( shippingLabel.returnDialog || shippingLabel.form );
 };
 
 /**
@@ -179,7 +179,11 @@ const getPackagesErrors = ( values ) => mapValues( values, ( pckg ) => {
 	return errors;
 } );
 
-export const getRatesErrors = ( { values: selectedRates, available: allRates } ) => {
+export const getRatesErrors = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
+	const shippingLabel = getShippingLabel( state, orderId, siteId );
+	const form = shippingLabel.returnDialog || shippingLabel.form;
+	const { values: selectedRates, available: allRates } = form.rates;
+
 	return {
 		server: mapValues( allRates, ( rate ) => {
 			if ( ! rate.errors ) {
@@ -212,7 +216,9 @@ export const getFormErrors = createSelector(
 
 		const shippingLabel = getShippingLabel( state, orderId, siteId );
 		const { countriesData } = shippingLabel.storeOptions;
-		const { form, paperSize } = shippingLabel;
+		const { paperSize } = shippingLabel;
+		const form = shippingLabel.returnDialog || shippingLabel.form;
+
 		if ( isEmpty( form ) ) {
 			return;
 		}
@@ -220,7 +226,7 @@ export const getFormErrors = createSelector(
 			origin: getAddressErrors( form.origin, countriesData ),
 			destination: getAddressErrors( form.destination, countriesData ),
 			packages: getPackagesErrors( form.packages.selected ),
-			rates: getRatesErrors( form.rates ),
+			rates: getRatesErrors( state, orderId, siteId ),
 			sidebar: getSidebarErrors( paperSize ),
 		};
 	},
@@ -271,11 +277,11 @@ export const getFirstErroneousStep = ( state, orderId, siteId = getSelectedSiteI
 export const canPurchase = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const form = getForm( state, orderId, siteId );
 
-	if ( getShippingLabel( state, orderId, siteId ).returnDialog ) {
-		const errors = getFormErrors( state, orderId, siteId );
+	const returnDialog = getShippingLabel( state, orderId, siteId ).returnDialog;
+	if ( returnDialog != null ) {
 		return (
 			! isEmpty( form ) &&
-			! hasNonEmptyLeaves( errors.rates ) &&
+			! hasNonEmptyLeaves( getRatesErrors( state, orderId, siteId ) ) &&
 			! form.rates.retrievalInProgress &&
 			! isEmpty( form.rates.available )
 		);

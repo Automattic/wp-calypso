@@ -44,6 +44,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_DETAILS_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_RETURN_DIALOG,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_RETURN_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_PACKAGE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_ITEM_MOVE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_MOVE_ITEM,
@@ -110,7 +111,6 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_EXIT_PRINTING_FLOW ] = ( state, { 
 	}
 	return { ...state,
 		showPurchaseDialog: false,
-		returnDialog: null,
 		form: { ...state.form,
 			isSubmitting: false,
 		},
@@ -536,13 +536,15 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SAVE_PACKAGES ] = ( state ) => {
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE ] = ( state, { packageId, value } ) => {
-	const newRates = { ...state.form.rates.values };
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_UPDATE_RATE ] = ( state, { packageId, value, isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
+
+	const newRates = { ...state[ subtree ].rates.values };
 	newRates[ packageId ] = value;
 
 	return { ...state,
-		form: { ...state.form,
-			rates: { ...state.form.rates,
+		[ subtree ]: { ...state[ subtree ],
+			rates: { ...state[ subtree ].rates,
 				values: newRates,
 			},
 		},
@@ -569,18 +571,21 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_FULFILL_ORDER ] = ( state, { v
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_REQUEST ] = ( state, { isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
 	return { ...state,
-		form: { ...state.form,
+		[ subtree ]: { ...state[ subtree ],
 			isSubmitting: true,
 		},
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE ] = ( state, { response, error } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE ] = ( state, { response, error, isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
+
 	if ( error ) {
 		return { ...state,
-			form: { ...state.form,
+			[ subtree ]: { ...state[ subtree ],
 				isSubmitting: false,
 			},
 		};
@@ -596,9 +601,10 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_PURCHASE_RESPONSE ] = ( state, { r
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION ] = ( state, { fileData, labels } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION ] = ( state, { fileData, labels, isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
 	return { ...state,
-		form: { ...state.form,
+		[ subtree ]: { ...state[ subtree ],
 			needsPrintConfirmation: true,
 			fileData,
 			labelsToPrint: labels,
@@ -606,19 +612,21 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SHOW_PRINT_CONFIRMATION ] = ( stat
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS ] = ( state, { isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
 	return { ...state,
-		form: { ...state.form,
-			rates: { ...state.form.rates,
+		[ subtree ]: { ...state[ subtree ],
+			rates: { ...state[ subtree ].rates,
 				retrievalInProgress: true,
 			},
 		},
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates } ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates, isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
 	return { ...state,
-		form: { ...state.form,
+		[ subtree ]: { ...state[ subtree ],
 			rates: {
 				values: mapValues( rates, ( rate ) => {
 					const packageRates = get( rate, 'rates', [] );
@@ -639,21 +647,23 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_RATES ] = ( state, { rates } )
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED ] = ( state, { isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
 	return { ...state,
-		form: { ...state.form,
-			rates: { ...state.form.rates,
+		[ subtree ]: { ...state[ subtree ],
+			rates: { ...state[ subtree ].rates,
 				retrievalInProgress: false,
 			},
 		},
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES ] = ( state ) => {
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLEAR_AVAILABLE_RATES ] = ( state, { isReturn } ) => {
+	const subtree = isReturn ? 'returnDialog' : 'form';
 	return { ...state,
-		form: { ...state.form,
+		[ subtree ]: { ...state[ subtree ],
 			needsPrintConfirmation: false,
-			rates: { ...state.form.rates,
+			rates: { ...state[ subtree ].rates,
 				available: {},
 			},
 		},
@@ -784,7 +794,14 @@ reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_RETURN_DIALOG ] = ( state, { 
 	return { ...state,
 		returnDialog: {
 			labelId,
+			rates: {},
 		},
+	};
+};
+
+reducers[ WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_RETURN_DIALOG ] = ( state, { force } ) => {
+	return { ...state,
+		returnDialog: ! force && state.returnDialog.isSubmitting ? state.returnDialog : null,
 	};
 };
 
