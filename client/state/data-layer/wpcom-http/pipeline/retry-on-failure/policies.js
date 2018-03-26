@@ -6,14 +6,9 @@ export const exponentialBackoff = ( { delay = 1000, maxAttempts = 3 } = {} ) => 
 	allowedMethods: [ 'GET' ],
 } );
 
-export const explicitPost = () => ( {
-	name: 'EXPLICITY_POST',
-	allowedMethods: [ 'POST' ],
-} );
-
 export const exponentialBackoffExplicitPost = ( { delay, maxAttempts } = {} ) => ( {
 	...exponentialBackoff( delay, maxAttempts ),
-	...explicitPost(),
+	allowedMethods: [ 'POST' ],
 	name: 'EXPONENTIAL_BACKOFF_EXPLICIT_POST',
 } );
 
