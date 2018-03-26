@@ -20,6 +20,7 @@ import MeSidebarNavigation from 'me/sidebar-navigation';
 import ReauthRequired from 'me/reauth-required';
 import SecuritySectionNav from 'me/security-section-nav';
 import twoStepAuthorization from 'lib/two-step-authorization';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
@@ -43,6 +44,7 @@ class Security extends React.Component {
 
 		return (
 			<Main className="security">
+				<PageViewTracker path="/me/security" title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
 				<MeSidebarNavigation />
 
