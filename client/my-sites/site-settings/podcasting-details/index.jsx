@@ -166,8 +166,7 @@ class PodcastingDetails extends Component {
 					<Card className="podcasting-details__wrapper">
 						<FormFieldset className="podcasting-details__category-selector">
 							<QueryTerms siteId={ siteId } taxonomy="category" />
-							{ /* Add name to TermTreeSelector, label, and explanation */ }
-							<FormLabel htmlFor="">{ translate( 'Podcast Category' ) }</FormLabel>
+							<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
 							<FormSettingExplanation>
 								{ translate(
 									'Posts published in this category will be included in your podcast feed.'
@@ -177,6 +176,8 @@ class PodcastingDetails extends Component {
 								taxonomy="category"
 								selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
 								onChange={ this.onCategorySelected }
+								addTerm={ true }
+								onAddTermSuccess={ this.onCategorySelected }
 							/>
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
