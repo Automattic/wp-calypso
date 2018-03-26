@@ -3,49 +3,55 @@
 /**
  * External dependencies
  */
+import deepFreeze from 'deep-freeze';
 import { cloneDeepWith } from 'lodash';
 
-const queryManagerSchema = Object.freeze( {
+const queryManagerSchema = deepFreeze( {
 	additionalProperties: false,
-	required: Object.freeze( [ 'data', 'options' ] ),
+	required: [ 'data', 'options' ],
 	type: 'object',
-	properties: Object.freeze( {
-		data: Object.freeze( {
+	properties: {
+		data: {
 			additionalProperties: false,
 			type: 'object',
-			properties: Object.freeze( {
-				items: Object.freeze( { type: 'object' } ),
-				queries: Object.freeze( {
+			properties: {
+				items: { type: 'object' },
+				queries: {
 					additionalProperties: false,
 					type: 'object',
-					patternProperties: Object.freeze( {
+					patternProperties: {
 						// Stringified query objects are the keys
-						'^\\[.*\\]$': Object.freeze( {
-							required: Object.freeze( [ 'itemKeys' ] ),
+						'^\\[.*\\]$': {
+							required: [ 'itemKeys' ],
 							type: 'object',
-							properties: Object.freeze( {
-								itemKeys: Object.freeze( {
+							properties: {
+								itemKeys: {
 									type: 'array',
-									items: Object.freeze( { type: Object.freeze( [ 'string', 'integer' ] ) } ),
-								} ),
-								found: Object.freeze( {
+									items: {
+										// Typical valid object keys
+										// `null` is important for PagingQueryManager
+										// It fills array with undefined (matches null)
+										type: [ 'integer', 'null', 'string' ],
+									},
+								},
+								found: {
 									type: 'integer',
-								} ),
-							} ),
-						} ),
-					} ),
-				} ),
-			} ),
-		} ),
-		options: Object.freeze( {
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		options: {
 			additionalProperties: true,
-			required: Object.freeze( [ 'itemKey' ] ),
+			required: [ 'itemKey' ],
 			type: 'object',
-			properties: Object.freeze( {
-				itemKey: Object.freeze( { type: 'string' } ),
-			} ),
-		} ),
-	} ),
+			properties: {
+				itemKey: { type: 'string' },
+			},
+		},
+	},
 } );
 
 /**
