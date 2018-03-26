@@ -15,6 +15,7 @@ import reducer, {
 	surveyState,
 	surveyName,
 	score,
+	feedback,
 } from '../reducer';
 import {
 	NPS_SURVEY_SET_ELIGIBILITY,
@@ -25,6 +26,9 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUESTING,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_FAILURE,
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
+	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
@@ -35,6 +39,7 @@ describe( 'reducer', () => {
 			'surveyState',
 			'surveyName',
 			'score',
+			'feedback',
 		] );
 	} );
 
@@ -190,6 +195,50 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.equal( null );
+		} );
+	} );
+
+	describe( '#feedback()', () => {
+		test( 'should default to null', () => {
+			const state = feedback( undefined, {} );
+
+			expect( state ).to.be.null;
+		} );
+
+		test( 'should track the feedback if submitting', () => {
+			const state = feedback( undefined, {
+				type: NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+				surveyName: 'boo',
+				feedback: 'feedback for testing',
+			} );
+
+			expect( state ).to.equal( 'feedback for testing' );
+		} );
+
+		test( 'should track if submitting', () => {
+			const state = surveyState( undefined, {
+				type: NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
+				surveyName: 'boo',
+				feedback: 'feedback for testing',
+			} );
+
+			expect( state ).to.equal( SUBMITTING );
+		} );
+
+		test( 'should track if submitted', () => {
+			const state = surveyState( undefined, {
+				type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
+			} );
+
+			expect( state ).to.equal( SUBMITTED );
+		} );
+
+		test( 'should track if failed to submit', () => {
+			const state = surveyState( undefined, {
+				type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
+			} );
+
+			expect( state ).to.equal( SUBMIT_FAILURE );
 		} );
 	} );
 } );

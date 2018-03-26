@@ -22,7 +22,7 @@ import {
 	NPS_SURVEY_SUBMIT_WITH_NO_SCORE_REQUEST_SUCCESS,
 	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
-	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILTURE,
+	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 } from 'state/action-types';
 import { NPS_SURVEY_RAND_MAX } from './constants';
 
@@ -178,6 +178,6 @@ export function sendNpsSurveyFeedbackSuccess() {
 
 export function sendNpsSurveyFeedbackFailure() {
 	return {
-		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILTURE,
+		type: NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 	};
 }
