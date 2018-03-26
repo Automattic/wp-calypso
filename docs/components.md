@@ -6,7 +6,15 @@ Our use of composition is one that embraces CSS reusability, with the cascade as
 
 ## Glossary
 
-This document focuses on UI components, not data containers or other non-UI pieces. That is, React components that directly render HTML elements and require the addition of class attributes for styling. We have essentially two kinds of these:
+You will encounter the following types of components in Calypso:
+
+* [UI components](../client/components/README.md) (UI primitives)
+* [Blocks](../client/blocks/README.md) (components which are connected to state, or otherwise directly represent application entities)
+* [Query components](./our-approach-to-data.md#query-components) (which handle data querying but don’t render anything)
+* Higher-order components (which encapsulate and provide functionality)
+* Section components (which are domain specific and not meant to be reused)
+
+This document only focuses on UI components, i.e. React components that directly render HTML elements and require the addition of class attributes for styling. We have essentially two kinds of these:
 
 * `component/index.jsx`
 * `component/sub-component.jsx`
