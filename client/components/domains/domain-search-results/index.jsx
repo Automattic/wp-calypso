@@ -176,11 +176,7 @@ class DomainSearchResults extends React.Component {
 		}
 
 		return (
-			<div
-				className="domain-search-results__domain-availability"
-				aria-live="polite"
-				aria-relevant="additions"
-			>
+			<div className="domain-search-results__domain-availability">
 				<div className={ availabilityElementClasses }>
 					{ availabilityElement }
 					{ domainSuggestionElement }
