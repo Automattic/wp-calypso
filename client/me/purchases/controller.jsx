@@ -40,8 +40,6 @@ export default {
 	addCardDetails( context, next ) {
 		setTitle( context, titles.addCardDetails );
 
-		recordPurchasesPageView( paths.addCardDetails(), 'Add Card Details' );
-
 		context.primary = <AddCardDetails purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
 		next();
 	},
@@ -84,8 +82,6 @@ export default {
 
 	editCardDetails( context, next ) {
 		setTitle( context, titles.editCardDetails );
-
-		recordPurchasesPageView( paths.editCardDetails(), 'Edit Card Details' );
 
 		context.primary = (
 			<EditCardDetails

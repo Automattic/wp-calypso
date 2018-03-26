@@ -26,6 +26,7 @@ import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -67,6 +68,10 @@ class EditCardDetails extends PurchaseCardDetails {
 
 		return (
 			<Main>
+				<PageViewTracker
+					path="/me/purchases/:site/:purchaseId/payment/edit"
+					title="Purchases > Edit Card Details"
+				/>
 				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.editCardDetails }</HeaderCake>
 
 				<CreditCardForm
