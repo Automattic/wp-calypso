@@ -12,7 +12,7 @@ import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/action-types';
 import analytics, { mc } from 'lib/analytics';
 import { runFastRules, runSlowRules } from './normalization-rules';
 import wpcom from 'lib/wp';
-import { keyForPost } from 'reader/post-key';
+import { keyForPost, keyToString } from 'reader/post-key';
 import { pageViewForPost } from 'reader/stats';
 import { hasPostBeenSeen } from './selectors';
 import { receiveLikes } from 'state/posts/likes/actions';
@@ -84,10 +84,25 @@ export const receivePosts = posts => dispatch => {
 	return Promise.resolve( normalizedPosts );
 };
 
+const requestsInFlight = new Set();
 export const fetchPost = postKey => dispatch => {
+	const requestKey = keyToString( postKey );
+	if ( requestsInFlight.has( requestKey ) ) {
+		return;
+	}
+	requestsInFlight.add( requestKey );
+	function removeKey() {
+		requestsInFlight.delete( requestKey );
+	}
 	return fetchForKey( postKey )
-		.then( data => dispatch( receivePosts( [ data ] ) ) )
-		.catch( error => dispatch( receiveErrorForPostKey( error, postKey ) ) );
+		.then( data => {
+			removeKey();
+			return dispatch( receivePosts( [ data ] ) );
+		} )
+		.catch( error => {
+			removeKey();
+			return dispatch( receiveErrorForPostKey( error, postKey ) );
+		} );
 };
 
 function receiveErrorForPostKey( error, postKey ) {
