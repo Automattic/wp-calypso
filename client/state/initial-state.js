@@ -105,6 +105,10 @@ function isLoggedIn() {
 	return !! userData && userData.ID;
 }
 
+function getReduxStateKey() {
+	return 'redux-state-' + user.get().ID;
+}
+
 export function persistOnChange( reduxStore, serializeState = serialize ) {
 	let state;
 
@@ -121,11 +125,9 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 			state = nextState;
 
-			localforage
-				.setItem( 'redux-state-' + user.get().ID, serializeState( state ) )
-				.catch( setError => {
-					debug( 'failed to set redux-store state', setError );
-				} );
+			localforage.setItem( getReduxStateKey(), serializeState( state ) ).catch( setError => {
+				debug( 'failed to set redux-store state', setError );
+			} );
 		},
 		SERIALIZE_THROTTLE,
 		{ leading: false, trailing: true }
@@ -164,7 +166,7 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 
 	if ( shouldPersist ) {
 		return localforage
-			.getItem( 'redux-state-' + user.get().ID )
+			.getItem( getReduxStateKey() )
 			.then( loadInitialState )
 			.catch( loadInitialStateFailed )
 			.then( persistOnChange )
