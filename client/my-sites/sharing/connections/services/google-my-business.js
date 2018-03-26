@@ -24,14 +24,10 @@ export class GoogleMyBusiness extends SharingService {
 		deleteStoredKeyringConnection: () => {},
 	};
 
+	// override `createOrUpdateConnection` to ignore connection update, this is only useful for publicize services
 	createOrUpdateConnection = () => {};
 
-	/**
-	 * Deletes the passed connections.
-	 *
-	 * @param {Array} connections Optional. Connections to be deleted.
-	 *                            Default: All connections for this service.
-	 */
+	// override `removeConnection` to remove the keyring connection instead of the publicize one
 	removeConnection = () => {
 		this.setState( { isDisconnecting: true } );
 		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
