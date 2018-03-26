@@ -14,7 +14,6 @@ import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import queryKey from 'state/reader/feed-searches/query-key';
-import { bypassDataLayer } from 'state/data-layer/utils';
 
 export function fromApi( apiResponse ) {
 	const feeds = map( apiResponse.feeds, feed => ( {
@@ -54,7 +53,7 @@ export function requestReadFeedSearch( action ) {
 
 export function receiveReadFeedSearchSuccess( action, data ) {
 	const { feeds, total } = data;
-	return bypassDataLayer( receiveFeedSearch( queryKey( action.payload ), feeds, total ) );
+	return receiveFeedSearch( queryKey( action.payload ), feeds, total );
 }
 
 export function receiveReadFeedSearchError( action ) {
