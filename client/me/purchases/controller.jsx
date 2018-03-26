@@ -68,8 +68,6 @@ export default {
 	confirmCancelDomain( context, next ) {
 		setTitle( context, titles.confirmCancelDomain );
 
-		recordPurchasesPageView( paths.confirmCancelDomain(), 'Confirm Cancel Domain' );
-
 		context.primary = (
 			<ConfirmCancelDomain purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);

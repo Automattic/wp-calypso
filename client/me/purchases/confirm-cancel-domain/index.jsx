@@ -40,6 +40,7 @@ import SelectDropdown from 'components/select-dropdown';
 import { setAllSitesSelected } from 'state/ui/actions';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -265,6 +266,10 @@ class ConfirmCancelDomain extends React.Component {
 
 		return (
 			<Main className="confirm-cancel-domain">
+				<PageViewTracker
+					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
+					title="Purchases > Confirm Cancel Domain"
+				/>
 				<HeaderCake onClick={ this.goToCancelPurchase }>{ titles.confirmCancelDomain }</HeaderCake>
 				<Card>
 					<FormSectionHeading className="is-primary">
