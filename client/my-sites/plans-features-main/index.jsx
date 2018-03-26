@@ -40,7 +40,7 @@ import PaymentMethods from 'blocks/payment-methods';
 import HappychatButton from 'components/happychat/button';
 import HappychatConnection from 'components/happychat/connection-connected';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { selectSiteId } from 'state/help/actions';
+import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
 
 class PlansFeaturesMain extends Component {
 	componentWillUpdate( nextProps ) {
@@ -49,12 +49,12 @@ class PlansFeaturesMain extends Component {
 		 * This ensures that Happychat groups are correct in case we switch sites while on the plans
 		 * page, for example between a Jetpack and Simple site.
 		 *
-		 * @TODO: When happychat correctly handles site switching, remove selectSiteId action.
+		 * @TODO: When happychat correctly handles site switching, remove selectHappychatSiteId action.
 		 */
 		const siteId = get( this.props, [ 'site', 'ID' ] );
 		const nextSiteId = get( nextProps, [ 'site', 'ID' ] );
 		if ( siteId !== nextSiteId && nextSiteId ) {
-			this.props.selectSiteId( nextSiteId );
+			this.props.selectHappychatSiteId( nextSiteId );
 		}
 	}
 
@@ -460,5 +460,5 @@ export default connect(
 	state => ( {
 		isChatAvailable: isHappychatAvailable( state ),
 	} ),
-	{ selectSiteId }
+	{ selectHappychatSiteId }
 )( localize( PlansFeaturesMain ) );
