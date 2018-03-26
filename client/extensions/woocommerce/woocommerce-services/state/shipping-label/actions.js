@@ -878,7 +878,10 @@ export const fetchLabelsStatus = ( orderId, siteId ) => ( dispatch, getState ) =
 					error,
 				} );
 				if ( error ) {
-					dispatch( NoticeActions.errorNotice( error.toString() ) );
+					dispatch( NoticeActions.errorNotice(
+						`Failed to retrieve shipping label refund status. ${ error }`,
+						{ id: 'wcs-fetch-label-status' }
+					) );
 				}
 			}
 		};
