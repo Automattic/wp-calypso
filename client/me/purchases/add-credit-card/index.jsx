@@ -21,6 +21,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import titles from 'me/purchases/titles';
 import { billingHistory } from 'me/purchases/paths';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class AddCreditCard extends Component {
 	static propTypes = {
@@ -43,6 +44,7 @@ class AddCreditCard extends Component {
 	render() {
 		return (
 			<Main>
+				<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
 				<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
 				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>

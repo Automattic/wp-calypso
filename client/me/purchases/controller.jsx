@@ -47,8 +47,6 @@ export default {
 	},
 
 	addCreditCard( context, next ) {
-		recordPurchasesPageView( paths.addCreditCard, 'Add Credit Card' );
-
 		context.primary = <AddCreditCard />;
 		next();
 	},
