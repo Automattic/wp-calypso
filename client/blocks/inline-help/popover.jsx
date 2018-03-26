@@ -36,12 +36,6 @@ class InlineHelpPopover extends Component {
 		showContactForm: false,
 	};
 
-	componentWillReceiveProps( nextProps ) {
-		if ( this.state.showContactForm && this.props.searchQuery !== nextProps.searchQuery ) {
-			this.toggleContactForm();
-		}
-	}
-
 	openResult = href => {
 		if ( ! href ) {
 			return;
