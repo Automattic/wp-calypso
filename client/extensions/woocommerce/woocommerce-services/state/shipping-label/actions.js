@@ -70,6 +70,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REFUND_RESPONSE,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_REPRINT_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
+	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CLOSE_REPRINT_DIALOG,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_CONFIRM_REPRINT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_OPEN_DETAILS_DIALOG,
@@ -944,21 +945,40 @@ export const openReprintDialog = ( orderId, siteId, labelId ) => ( dispatch, get
 		orderId,
 		siteId,
 	} );
+
+	dispatch( NoticeActions.removeNotice( 'wcs-reprint-label' ) );
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
 	const printUrl = getPrintURL( shippingLabel.paperSize, [ { labelId } ] );
 
-	api.get( siteId, printUrl ).then( fileData => {
-		const shippingLabelAfter = getShippingLabel( getState(), orderId, siteId );
-		if ( shippingLabel.paperSize === shippingLabelAfter.paperSize ) {
+	api
+		.get( siteId, printUrl )
+		.then( fileData => {
+			const shippingLabelAfter = getShippingLabel( getState(), orderId, siteId );
+			if ( shippingLabel.paperSize === shippingLabelAfter.paperSize ) {
+				dispatch( {
+					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
+					labelId,
+					orderId,
+					siteId,
+					fileData,
+				} );
+			}
+		} )
+		.catch( error => {
 			dispatch( {
-				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_READY,
+				type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_REPRINT_DIALOG_ERROR,
 				labelId,
 				orderId,
 				siteId,
-				fileData,
 			} );
-		}
-	} );
+			dispatch(
+				NoticeActions.errorNotice( error.toString(), {
+					id: 'wcs-reprint-label',
+					button: translate( 'Retry' ),
+					onClick: () => dispatch( openReprintDialog( orderId, siteId, labelId ) ),
+				} )
+			);
+		} );
 };
 
 export const closeReprintDialog = ( orderId, siteId ) => {
