@@ -664,10 +664,11 @@ function recordProduct( product, orderId ) {
 	try {
 		// Google Analytics
 		const item = {
+			currency: product.currency,
 			id: orderId,
 			name: product.product_slug,
 			price: product.cost,
-			currency: product.currency,
+			sku: product.product_slug,
 			quantity: 1,
 		};
 		debug( 'recordProduct: ga ecommerce add item', item );
