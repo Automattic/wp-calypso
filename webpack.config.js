@@ -102,8 +102,8 @@ const webpackConfig = {
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
-		chunkFilename: '[name].[chunkhash].min.js', // ditto
+		filename: '[name].[chunkhash].opt.js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].opt.js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	module: {
@@ -285,8 +285,18 @@ if ( shouldMinify ) {
 		new UglifyJsPlugin( {
 			cache: 'docker' !== process.env.CONTAINER,
 			parallel: true,
-			uglifyOptions: { ecma: 5 },
 			sourceMap: Boolean( process.env.SOURCEMAP ),
+			uglifyOptions: {
+				compress: {
+					/**
+					 * Produces inconsistent results
+					 * Enable when the following is resolved:
+					 * https://github.com/mishoo/UglifyJS2/issues/3010
+					 */
+					collapse_vars: false,
+				},
+				ecma: 5,
+			},
 		} )
 	);
 }
