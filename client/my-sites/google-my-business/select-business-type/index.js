@@ -8,20 +8,24 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
  */
 import ActionCard from 'components/action-card';
+import Button from 'components/button';
 import Card from 'components/card';
 import CardHeading from 'components/card-heading';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import ExternalLink from 'components/external-link';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake';
+import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { canCurrentUser } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
@@ -33,6 +37,12 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 	goBack = () => {
 		page.back( `/stats/day/${ this.props.siteSlug }` );
+	};
+
+	handleConnect = () => {
+		const { siteSlug } = this.props;
+
+		page.redirect( `/google-my-business/new/${ siteSlug }` );
 	};
 
 	trackCreateYourListingClick = () => {
@@ -54,26 +64,36 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	renderLocalBusinessCard() {
-		const { siteSlug, translate } = this.props;
+		const { canUserManageOptions, translate } = this.props;
 
-		let buttonProps = {};
+		let connectButton;
 
-		if ( config.isEnabled( 'google-my-business' ) ) {
-			buttonProps = {
-				buttonHref: `/google-my-business/new/${ siteSlug }`,
-				buttonText: translate( 'Continue With Google', {
-					comment: 'Call to Action to connect to Google My Business',
-				} ),
-			};
+		if ( config.isEnabled( 'google-my-business' ) && canUserManageOptions ) {
+			connectButton = (
+				<KeyringConnectButton
+					serviceId="google_my_business"
+					onClick={ this.trackCreateMyListingClick }
+					onConnect={ this.handleConnect }
+				>
+					{ translate( 'Create Your Listing', {
+						comment: 'Call to Action to add a business listing to Google My Business',
+					} ) }
+				</KeyringConnectButton>
+			);
 		} else {
-			buttonProps = {
-				buttonHref: 'https://business.google.com/create',
-				buttonIcon: 'external',
-				buttonTarget: '_blank',
-				buttonText: translate( 'Create Your Listing', {
-					comment: 'Call to Action to add a business listing to Google My Business',
-				} ),
-			};
+			connectButton = (
+				<Button
+					primary
+					href="https://www.google.com/business/"
+					target="_blank"
+					onClick={ this.trackCreateMyListingClick }
+				>
+					{ translate( 'Create Your Listing', {
+						comment: 'Call to Action to add a business listing to Google My Business',
+					} ) }{' '}
+					<Gridicon icon="external" />
+				</Button>
+			);
 		}
 
 		return (
@@ -85,10 +105,9 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					'Your business has a physical location customers can visit, ' +
 						'or provides goods and services to local customers, or both.'
 				) }
-				buttonPrimary={ true }
-				buttonOnClick={ this.trackCreateYourListingClick }
-				{ ...buttonProps }
-			/>
+			>
+				{ connectButton }
+			</ActionCard>
 		);
 	}
 
@@ -170,6 +189,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 
 export default connect(
 	state => ( {
+		canUserManageOptions: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
