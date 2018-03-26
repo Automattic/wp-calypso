@@ -16,6 +16,7 @@ import Gridicon from 'gridicons';
  */
 import Button from 'components/button';
 import TermFormDialog from 'blocks/term-form-dialog';
+import QueryTaxonomies from 'components/data/query-taxonomies';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
@@ -50,7 +51,7 @@ class TermSelectorAddTerm extends Component {
 	};
 
 	render() {
-		const { labels, onSuccess, postType, terms, taxonomy } = this.props;
+		const { siteId, labels, onSuccess, postType, terms, taxonomy } = this.props;
 		const totalTerms = terms ? terms.length : 0;
 		const classes = classNames( 'term-tree-selector__add-term', {
 			'is-compact': totalTerms < 8,
@@ -58,6 +59,7 @@ class TermSelectorAddTerm extends Component {
 
 		return (
 			<div className={ classes }>
+				{ siteId && <QueryTaxonomies { ...{ siteId, postType } } /> }
 				<Button borderless compact onClick={ this.openDialog }>
 					<Gridicon icon="folder" /> { labels.add_new_item }
 				</Button>
@@ -79,6 +81,7 @@ export default connect( ( state, { taxonomy, postType } ) => {
 	const labels = get( taxonomyDetails, 'labels', {} );
 
 	return {
+		siteId,
 		terms: getTerms( state, siteId, taxonomy ),
 		labels,
 	};
