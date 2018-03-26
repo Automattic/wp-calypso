@@ -1,26 +1,27 @@
-/**
- * /*
- * 	External Deps
- *
- * @format
- */
+/** @format */
 
-import React from 'react';
+/**
+ * External dependencies
+ */
 import page from 'page';
 import { translate } from 'i18n-calypso';
 
-/*
-	Internal deps
-*/
+/**
+ * Internal dependencies
+ */
 import config from 'config';
 import controller from 'me/controller';
-import Happychat from './main';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import { makeLayout, render as clientRender } from 'controller';
+import HappychatClient from 'happychat-client';
 
 const renderChat = ( context, next ) => {
 	context.store.dispatch( setDocumentHeadTitle( translate( 'Chat', { textOnly: true } ) ) );
-	context.primary = <Happychat />;
+	HappychatClient.open( {
+		nodeId: 'primary',
+		accessToken: 'your-happychat-client-oauth-token',
+		entry: 'chat',
+	} );
 	next();
 };
 

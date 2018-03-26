@@ -259,6 +259,7 @@
     "eslint-plugin-react": "7.1.0",
     "eslint-plugin-wpcalypso": "3.4.1",
     "glob": "7.0.3",
+    "happychat-client": "0.0.1",
     "husky": "0.13.3",
     "ignore": "3.3.5",
     "jest": "22.0.3",
