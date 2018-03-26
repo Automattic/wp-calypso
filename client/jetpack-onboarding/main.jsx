@@ -28,10 +28,10 @@ import {
 import {
 	getJetpackOnboardingCompletedSteps,
 	getJetpackOnboardingSettings,
+	getJpoUserHash,
 	getRequest,
 	getSiteId,
 	getUnconnectedSite,
-	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -227,7 +227,7 @@ export default connect(
 			requestJetpackOnboardingSettings( siteId, jpoAuth )
 		).isLoading;
 
-		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
+		const userIdHashed = getJpoUserHash( state, siteId );
 
 		const steps = compact( [
 			STEPS.SITE_TITLE,
