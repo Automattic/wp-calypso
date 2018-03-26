@@ -396,7 +396,7 @@ class TransferDomainStep extends React.Component {
 		} );
 	};
 
-	getAvailability = async () => {
+	getAvailability = () => {
 		const domain = getFixedDomainSearch( this.state.searchQuery );
 
 		return new Promise( resolve => {
@@ -471,7 +471,7 @@ class TransferDomainStep extends React.Component {
 		} );
 	};
 
-	getInboundTransferStatus = async () => {
+	getInboundTransferStatus = () => {
 		this.setState( { submittingWhois: true } );
 
 		return new Promise( resolve => {

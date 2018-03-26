@@ -674,10 +674,12 @@ class RegisterDomainStep extends React.Component {
 			searchVendor = testGroup;
 		}
 
-		Promise.all( [
+		const domainSuggestions = Promise.all( [
 			this.checkDomainAvailability( domain, timestamp ),
 			this.getDomainsSuggestions( domain, timestamp ),
-		] ).then( this.handleDomainSuggestions( domain ) );
+		] );
+		domainSuggestions.then( this.handleDomainSuggestions( domain ) );
+		domainSuggestions.catch( () => this.handleDomainSuggestions( domain )( [] ) ); // errors should pretend that the list of suggestions is empty
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			this.getSubdomainSuggestions( domain, timestamp );
