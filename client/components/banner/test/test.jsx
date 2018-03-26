@@ -14,6 +14,11 @@ jest.mock( 'components/card', () => {
 	return class Card extends React.Component {};
 } );
 
+jest.mock( 'lib/analytics/track-component-view', () => {
+	const React = require( 'react' );
+	return class TrackComponentView extends React.Component {};
+} );
+
 jest.mock( 'i18n-calypso', () => ( {
 	localize: Comp => props => (
 		<Comp
@@ -84,6 +89,76 @@ describe( 'Banner basic tests', () => {
 	test( 'should not have .has-call-to-action class if callToAction is false', () => {
 		const comp = shallow( <Banner { ...props } callToAction={ false } /> );
 		assert.lengthOf( comp.find( '.has-call-to-action' ), 0 );
+	} );
+
+	test( 'should render a <Button /> when callToAction is specified', () => {
+		const comp = shallow( <Banner { ...props } callToAction={ 'Buy something!' } /> );
+		assert.lengthOf( comp.find( 'Button' ), 1 );
+	} );
+
+	test( 'should not render a <Button /> when callToAction is not specified', () => {
+		const comp = shallow( <Banner { ...props } /> );
+		assert.lengthOf( comp.find( 'Button' ), 0 );
+	} );
+
+	test( 'should render a <PlanPrice /> when price is specified', () => {
+		const comp = shallow( <Banner { ...props } price={ 100 } /> );
+		assert.lengthOf( comp.find( 'PlanPrice' ), 1 );
+	} );
+
+	test( 'should render two <PlanPrice /> components when there are two prices', () => {
+		const comp = shallow( <Banner { ...props } price={ [ 100, 80 ] } /> );
+		assert.lengthOf( comp.find( 'PlanPrice' ), 2 );
+	} );
+
+	test( 'should render no <PlanPrice /> components when there are no prices', () => {
+		const comp = shallow( <Banner { ...props } /> );
+		assert.lengthOf( comp.find( 'PlanPrice' ), 0 );
+	} );
+
+	test( 'should render a .banner__description when description is specified', () => {
+		const comp = shallow( <Banner { ...props } description="test" /> );
+		assert.lengthOf( comp.find( '.banner__description' ), 1 );
+	} );
+
+	test( 'should not render a .banner__description when description is not specified', () => {
+		const comp = shallow( <Banner { ...props } /> );
+		assert.lengthOf( comp.find( '.banner__description' ), 0 );
+	} );
+
+	test( 'should render a .banner__list when list is specified', () => {
+		const comp = shallow( <Banner { ...props } list={ [ 'test1', 'test2' ] } /> );
+		assert.lengthOf( comp.find( '.banner__list' ), 1 );
+		assert.lengthOf( comp.find( '.banner__list li' ), 2 );
+		assert.include(
+			comp
+				.find( '.banner__list li' )
+				.at( 0 )
+				.text(),
+			'test1'
+		);
+		assert.include(
+			comp
+				.find( '.banner__list li' )
+				.at( 1 )
+				.text(),
+			'test2'
+		);
+	} );
+
+	test( 'should not render a .banner__list when description is not specified', () => {
+		const comp = shallow( <Banner { ...props } /> );
+		assert.lengthOf( comp.find( '.banner__list' ), 0 );
+	} );
+
+	test( 'should record Tracks event when event is specified', () => {
+		const comp = shallow( <Banner { ...props } event="test" /> );
+		assert.lengthOf( comp.find( 'TrackComponentView' ), 1 );
+	} );
+
+	test( 'should not record Tracks event when event is not specified', () => {
+		const comp = shallow( <Banner { ...props } /> );
+		assert.lengthOf( comp.find( 'TrackComponentView' ), 0 );
 	} );
 } );
 
