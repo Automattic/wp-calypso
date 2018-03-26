@@ -1,5 +1,31 @@
 /** @format */
 
+jest.mock( 'lib/plans/constants', () => ( {
+	GROUP_WPCOM: 'GROUP_WPCOM',
+	GROUP_JETPACK: 'GROUP_JETPACK',
+
+	TERM_MONTHLY: 'TERM_MONTHLY',
+	TERM_ANNUALLY: 'TERM_ANNUALLY',
+	TERM_BIENNIALLY: 'TERM_BIENNIALLY',
+
+	TYPE_FREE: 'TYPE_FREE',
+	TYPE_PERSONAL: 'TYPE_PERSONAL',
+	TYPE_PREMIUM: 'TYPE_PREMIUM',
+	TYPE_BUSINESS: 'TYPE_BUSINESS',
+
+	PLANS_LIST: {
+		jetpack_premium_monthly: {
+			term: 'TERM_MONTHLY',
+		},
+		value_bundle: {
+			term: 'TERM_ANNUALLY',
+		},
+		'personal-bundle-2y': {
+			term: 'TERM_BIENNIALLY',
+		},
+	},
+} ) );
+
 /**
  * External dependencies
  */
