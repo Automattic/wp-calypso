@@ -46,6 +46,12 @@ const ReturnDialog = props => {
 			additionalClassNames="label-return-modal woocommerce wcc-root"
 		>
 			<FormSectionHeading>{ translate( 'Create return shipping label' ) }</FormSectionHeading>
+			<p>
+				{ translate(
+					'You can purchase a return label for this package to send to the customer, ' +
+						'who can then print it and mail the package back. (If necessary, the paper size can be changed later.)'
+				) }
+			</p>
 			<RateSelector
 				id={ 'return_rates' }
 				siteId={ siteId }
