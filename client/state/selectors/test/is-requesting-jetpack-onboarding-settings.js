@@ -38,7 +38,7 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 		expect( output ).toBe( false );
 	} );
 
-	test( 'should return null if that site is not known', () => {
+	test( 'should return false if that site is not known', () => {
 		const siteId = 87654321;
 		const action = requestJetpackOnboardingSettings( 12345678 );
 		const state = {
@@ -50,6 +50,6 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 		};
 
 		const output = isRequestingJetpackOnboardingSettings( state, siteId );
-		expect( output ).toBe( null );
+		expect( output ).toBe( false );
 	} );
 } );

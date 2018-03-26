@@ -21,5 +21,9 @@ import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actio
  * @return {?Boolean}            Whether Jetpack settings are currently being requested
  */
 export default function isRequestingJetpackOnboardingSettings( state, siteId, query ) {
-	return get( getRequest( state, requestJetpackOnboardingSettings( siteId, query ) ), 'isLoading' );
+	return get(
+		getRequest( state, requestJetpackOnboardingSettings( siteId, query ) ),
+		'isLoading',
+		false
+	);
 }
