@@ -69,7 +69,7 @@ class EditCardDetails extends PurchaseCardDetails {
 		return (
 			<Main>
 				<PageViewTracker
-					path="/me/purchases/:site/:purchaseId/payment/edit"
+					path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
 					title="Purchases > Edit Card Details"
 				/>
 				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.editCardDetails }</HeaderCake>
