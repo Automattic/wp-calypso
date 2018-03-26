@@ -14,7 +14,7 @@ import page from 'page';
  */
 import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 
-const TableRow = ( { className, isHeader, href, children, ...props } ) => {
+const TableRow = ( { className, isHeader, href, children, afterHref, ...props } ) => {
 	const rowClasses = classnames( 'table-row', className, {
 		'is-header': isHeader,
 	} );
@@ -29,6 +29,9 @@ const TableRow = ( { className, isHeader, href, children, ...props } ) => {
 
 	const goToHref = () => {
 		page( href );
+		if ( afterHref ) {
+			afterHref();
+		}
 	};
 
 	return (
@@ -46,6 +49,7 @@ const TableRow = ( { className, isHeader, href, children, ...props } ) => {
 };
 
 TableRow.propTypes = {
+	afterHref: PropTypes.func,
 	className: PropTypes.string,
 	href: PropTypes.string,
 	isHeader: PropTypes.bool,

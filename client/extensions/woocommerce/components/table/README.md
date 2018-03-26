@@ -50,6 +50,7 @@ render: function() {
 * `className`: Classes added to top level element.
 * `isHeader`: Establishes row as being used for table head.
 * `href`: Optional link, if set, the row becomes clickable/focusable.
+* `afterHref`: Optional function to be executed after link has been clicked.
 
 #### Props `<TableItem/>`
 
