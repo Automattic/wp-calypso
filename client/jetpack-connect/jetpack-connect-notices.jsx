@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
+	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -36,6 +37,7 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
+import { JETPACK_MINIMUM_WORDPRESS_VERSION } from './constants';
 import Notice from 'components/notice';
 import { addQueryArgs } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
@@ -47,6 +49,7 @@ export class JetpackConnectNotices extends Component {
 		// instead of showing a notice.
 		onTerminalError: PropTypes.func,
 		noticeType: PropTypes.oneOf( [
+			ACTIVATION_FAILURE,
 			ACTIVATION_RESPONSE_ERROR,
 			ALREADY_CONNECTED,
 			ALREADY_CONNECTED_BY_OTHER_USER,
@@ -112,6 +115,18 @@ export class JetpackConnectNotices extends Component {
 		}
 
 		switch ( noticeType ) {
+			case ACTIVATION_FAILURE:
+				noticeValues.text = translate(
+					'We were unable to activate Jetpack. Please upgrade to the latest version ' +
+						'of WordPress. Jetpack needs version %(jetpackWPVersion)s or higher.',
+					{
+						args: {
+							jetpackWPVersion: JETPACK_MINIMUM_WORDPRESS_VERSION,
+						},
+					}
+				);
+				return noticeValues;
+
 			case ACTIVATION_RESPONSE_ERROR:
 				noticeValues.text = translate(
 					'We were unable to activate Jetpack. You can either {{manualInstall}}install Jetpack manually{{/manualInstall}} ' +
