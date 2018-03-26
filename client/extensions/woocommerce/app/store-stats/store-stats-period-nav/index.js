@@ -7,6 +7,7 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -15,9 +16,18 @@ import HeaderCake from 'components/header-cake';
 import StatsPeriodNavigation from 'my-sites/stats/stats-period-navigation';
 import Intervals from 'blocks/stats-navigation/intervals';
 import DatePicker from 'my-sites/stats/stats-date-picker';
+import { getWidgetPath } from 'woocommerce/app/store-stats/utils';
 
-const goBack = () => {
-	window && window.history.back();
+const goBack = ( unit, slug, queryParams ) => {
+	const { startDate } = queryParams;
+	const query = startDate ? { startDate } : {};
+	const widgetPath = getWidgetPath( unit, slug, query );
+	const url = `/store/stats/orders${ widgetPath }`;
+	return () => {
+		setTimeout( () => {
+			page( url );
+		} );
+	};
 };
 
 const StoreStatsPeriodNav = ( {
@@ -29,10 +39,11 @@ const StoreStatsPeriodNav = ( {
 	query,
 	title,
 	statType,
+	queryParams,
 } ) => {
 	return (
 		<Fragment>
-			<HeaderCake onClick={ goBack }>{ title }</HeaderCake>
+			<HeaderCake onClick={ goBack( unit, slug, queryParams ) }>{ title }</HeaderCake>
 			<StatsPeriodNavigation
 				date={ selectedDate }
 				period={ unit }
@@ -69,6 +80,7 @@ StoreStatsPeriodNav.propTypes = {
 	query: PropTypes.object.isRequired,
 	title: PropTypes.string,
 	statType: PropTypes.string.isRequired,
+	queryParams: PropTypes.object,
 };
 
 export default localize( StoreStatsPeriodNav );

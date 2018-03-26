@@ -295,7 +295,7 @@ export function getQueries( unit, baseDate, overrides = {} ) {
  * @return {string} - widget path url portion
  */
 export function getWidgetPath( unit, slug, urlQuery ) {
-	const query = Object.keys( urlQuery ).reduce( ( querystring, param, index ) => {
+	const query = Object.keys( urlQuery || {} ).reduce( ( querystring, param, index ) => {
 		return `${ querystring }${ index === 0 ? '?' : '&' }${ param }=${ urlQuery[ param ] }`;
 	}, '' );
 	return `/${ unit }/${ slug }${ query }`;

@@ -25,7 +25,7 @@ import { sortBySales } from './helpers';
 
 const STAT_TYPE = 'statsStoreReferrers';
 
-const Referrers = ( { siteId, query, data, selectedDate, unit, slug, translate } ) => {
+const Referrers = ( { siteId, query, data, selectedDate, unit, slug, translate, queryParams } ) => {
 	const unitSelectedDate = getUnitPeriod( selectedDate, unit );
 	const selectedData = find( data, d => d.date === unitSelectedDate ) || { data: [] };
 	const sortedData = sortBySales( selectedData.data );
@@ -40,6 +40,7 @@ const Referrers = ( { siteId, query, data, selectedDate, unit, slug, translate }
 				query={ query }
 				statType={ STAT_TYPE }
 				title={ translate( 'Store Referrers' ) }
+				queryParams={ queryParams }
 			/>
 			<Module
 				siteId={ siteId }
