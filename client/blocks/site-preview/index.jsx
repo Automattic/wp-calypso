@@ -32,14 +32,11 @@ class SitePreview extends Component {
 		closePreview: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = { previewCount: 0 };
-		this.previewCounter = 0;
-		this.onClosePreview = this.onClosePreview.bind( this );
-		this.getPreviewUrl = this.getPreviewUrl.bind( this );
-		this.getBasePreviewUrl = this.getBasePreviewUrl.bind( this );
-	}
+	state = {
+		previewCount: 0,
+	};
+
+	previewCounter = 0;
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
@@ -51,10 +48,6 @@ class SitePreview extends Component {
 			this.previewCounter > 0 && this.setState( { previewCount: this.previewCounter } );
 			this.previewCounter += 1;
 		}
-	}
-
-	onClosePreview() {
-		this.props.closePreview();
 	}
 
 	getPreviewUrl() {
@@ -93,7 +86,7 @@ class SitePreview extends Component {
 				showExternal={ true }
 				showClose={ true }
 				showPreview={ this.props.showPreview }
-				onClose={ this.onClosePreview }
+				onClose={ this.props.closePreview }
 				showSEO={ ! this.props.isDomainOnlySite }
 			/>
 		);
