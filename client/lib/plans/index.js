@@ -20,8 +20,9 @@ import {
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 import {
-	TERM_ANNUALLY,
 	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
 	TYPE_BUSINESS,
 	TYPE_FREE,
 	TYPE_PERSONAL,
@@ -308,6 +309,25 @@ export function planMatches( planKey, query = {} ) {
 	const plan = getPlan( planKey ) || {};
 	const match = key => ! ( key in query ) || plan[ key ] === query[ key ];
 	return match( 'type' ) && match( 'group' ) && match( 'term' );
+}
+
+export function calculateMonthlyPriceForPlan( planSlug, termPrice ) {
+	return calculateMonthlyPrice( getPlan( planSlug ).term, termPrice );
+}
+
+export function calculateMonthlyPrice( term, termPrice ) {
+	let divisor;
+	if ( term === TERM_MONTHLY ) {
+		divisor = 1;
+	} else if ( term === TERM_ANNUALLY ) {
+		divisor = 12;
+	} else if ( term === TERM_BIENNIALLY ) {
+		divisor = 24;
+	} else {
+		throw new Error( `Unknown term: ${ term }` );
+	}
+
+	return parseFloat( ( termPrice / divisor ).toFixed( 2 ) );
 }
 
 export const isPlanFeaturesEnabled = () => {
