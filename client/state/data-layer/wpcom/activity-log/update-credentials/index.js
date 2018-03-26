@@ -149,7 +149,7 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 					"Our service isn't working at the moment. We'll get it up and " +
 						'running as fast as we can, so please try again later.'
 				),
-				{ button: translate( 'Try again' ), onClick: () => dispatch( action ) }
+				{ button: translate( 'Try again' ), duration: 20000, onClick: () => dispatch( action ) }
 			);
 			spreadHappiness(
 				'Rewind Credentials: update request failed on timeout (could be us or remote site)'
