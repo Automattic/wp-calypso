@@ -52,8 +52,6 @@ export default {
 	cancelPrivacyProtection( context, next ) {
 		setTitle( context, titles.cancelPrivacyProtection );
 
-		recordPurchasesPageView( paths.cancelPrivacyProtection(), 'Cancel Privacy Protection' );
-
 		context.primary = (
 			<CancelPrivacyProtection purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
 		);
