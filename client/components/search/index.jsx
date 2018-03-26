@@ -97,9 +97,9 @@ class Search extends Component {
 		this.instanceId = uniqueId();
 
 		this.state = {
-			keyword: this.props.initialValue || '',
-			isOpen: !! this.props.isOpen,
-			hasFocus: false,
+			keyword: props.initialValue || '',
+			isOpen: !! props.isOpen,
+			hasFocus: props.autoFocus,
 		};
 
 		this.closeListener = keyListener.bind( this, 'closeSearch' );
