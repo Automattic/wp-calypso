@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
+import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 
 class QueryLocations extends Component {
 	static propTypes = {

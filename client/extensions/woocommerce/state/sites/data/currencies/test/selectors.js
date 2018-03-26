@@ -21,7 +21,7 @@ const loadedState = {
 		woocommerce: {
 			sites: {
 				123: {
-					currencies,
+					data: { currencies },
 				},
 			},
 		},
@@ -36,7 +36,7 @@ const loadingState = {
 		woocommerce: {
 			sites: {
 				123: {
-					currencies: LOADING,
+					data: { currencies: LOADING },
 				},
 			},
 		},

@@ -83,7 +83,7 @@ const loadedState = {
 		woocommerce: {
 			sites: {
 				123: {
-					locations,
+					data: { locations },
 				},
 			},
 		},
@@ -98,7 +98,7 @@ const loadingState = {
 		woocommerce: {
 			sites: {
 				123: {
-					locations: LOADING,
+					data: { locations: LOADING },
 				},
 			},
 		},
