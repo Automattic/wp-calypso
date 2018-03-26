@@ -91,7 +91,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	const priceBreakdown = getTotalPriceBreakdown( state, orderId, siteId );
 	return {
 		loaded,
-		form: loaded && shippingLabel.form,
+		form: loaded && ( shippingLabel.returnDialog || shippingLabel.form ),
 		canPurchase: loaded && canPurchase( state, orderId, siteId ),
 		ratesTotal: priceBreakdown ? priceBreakdown.total : 0,
 	};

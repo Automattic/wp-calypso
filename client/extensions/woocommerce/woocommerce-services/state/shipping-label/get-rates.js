@@ -8,8 +8,8 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
 } from '../action-types';
 
-export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
-	dispatch( { orderId, siteId, type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS } );
+export default ( orderId, siteId, dispatch, origin, destination, packages, isReturn ) => {
+	dispatch( { orderId, siteId, type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_IN_PROGRESS, isReturn } );
 	return new Promise( ( resolve, reject ) => {
 		let error = null;
 		const setError = ( err ) => error = err;
@@ -19,6 +19,7 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 				rates: json.rates,
 				siteId,
 				orderId,
+				isReturn,
 			} );
 		};
 		const setIsSaving = ( saving ) => {
@@ -27,6 +28,7 @@ export default ( orderId, siteId, dispatch, origin, destination, packages ) => {
 					type: WOOCOMMERCE_SERVICES_SHIPPING_LABEL_RATES_RETRIEVAL_COMPLETED,
 					siteId,
 					orderId,
+					isReturn,
 				} );
 				if ( error ) {
 					setTimeout( () => reject( error ), 0 );
