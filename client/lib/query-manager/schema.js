@@ -28,7 +28,10 @@ const queryManagerSchema = deepFreeze( {
 								itemKeys: {
 									type: 'array',
 									items: {
-										type: [ 'string', 'integer' ],
+										// Typical valid object keys
+										// `null` is important for PagingQueryManager
+										// It fills array with undefined (matches null)
+										type: [ 'integer', 'null', 'string' ],
 									},
 								},
 								found: {
