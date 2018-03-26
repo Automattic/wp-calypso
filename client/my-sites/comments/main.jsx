@@ -31,6 +31,7 @@ import { NEWEST_FIRST } from './constants';
 
 export class CommentsManagement extends Component {
 	static propTypes = {
+		analyticsPath: PropTypes.string,
 		comments: PropTypes.array,
 		page: PropTypes.number,
 		postId: PropTypes.number,
@@ -61,6 +62,7 @@ export class CommentsManagement extends Component {
 
 	render() {
 		const {
+			analyticsPath,
 			changePage,
 			page,
 			postId,
@@ -78,7 +80,7 @@ export class CommentsManagement extends Component {
 		return (
 			<Main className="comments" wideLayout>
 				{ showJetpackUpdateScreen && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-				<PageViewTracker path="/comments/:status/:site" title="Comments" />
+				<PageViewTracker path={ analyticsPath } title="Comments" />
 				<DocumentHead title={ translate( 'Comments' ) } />
 				{ showJetpackUpdateScreen && (
 					<EmptyContent

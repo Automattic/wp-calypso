@@ -27,28 +27,28 @@ export default class extends React.Component {
 	getNavtabs = () => {
 		const tabs = [
 			{
-				title: i18n.translate( 'Password', { textOnly: true } ),
+				title: i18n.translate( 'Password' ),
 				path: '/me/security',
 			},
 			config.isEnabled( 'signup/social-management' )
 				? {
-						title: i18n.translate( 'Social Login', { textOnly: true } ),
+						title: i18n.translate( 'Social Login' ),
 						path: '/me/security/social-login',
 					}
 				: null,
 			{
-				title: i18n.translate( 'Two-Step Authentication', { textOnly: true } ),
+				title: i18n.translate( 'Two-Step Authentication' ),
 				path: '/me/security/two-step',
 			},
 			{
 				title: config.isEnabled( 'signup/social-management' )
 					? // This was shortened from 'Connected Applications' due to space constraints.
-						i18n.translate( 'Connected Apps', { textOnly: true } )
-					: i18n.translate( 'Connected Applications', { textOnly: true } ),
+						i18n.translate( 'Connected Apps' )
+					: i18n.translate( 'Connected Applications' ),
 				path: '/me/security/connected-applications',
 			},
 			{
-				title: i18n.translate( 'Account Recovery', { textOnly: true } ),
+				title: i18n.translate( 'Account Recovery' ),
 				path: '/me/security/account-recovery',
 			},
 		].filter( tab => tab !== null );
@@ -67,7 +67,7 @@ export default class extends React.Component {
 			found = find( this.getNavtabs(), { path: filteredPath } );
 
 		if ( 'undefined' !== typeof found ) {
-			text = found.title;
+			text = String( found.title );
 		}
 
 		return text;

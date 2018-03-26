@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -21,19 +20,24 @@ import { getSiteSlug, getSiteTitle } from 'state/sites/selectors';
 import { addItem, removeItem } from 'lib/upgrades/actions';
 import { cartItems } from 'lib/cart-values';
 import { isDotComPlan } from 'lib/products-values';
+import { getABTestVariation } from 'lib/abtest';
 
 export class GsuiteNudge extends React.Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		receiptId: PropTypes.number.isRequired,
-		productsList: PropTypes.object.isRequired,
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
 	handleClickSkip = () => {
 		const { siteSlug, receiptId } = this.props;
 
-		page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
+		// DO NOT assign the test here.
+		if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
+			page( `/checklist/${ siteSlug }/paid` );
+		} else {
+			page( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
+		}
 	};
 
 	handleAddGoogleApps = googleAppsCartItem => {
@@ -70,7 +74,6 @@ export class GsuiteNudge extends React.Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<GoogleAppsDialog
 					domain={ this.props.domain }
-					productsList={ this.props.productsList }
 					onClickSkip={ this.handleClickSkip }
 					onAddGoogleApps={ this.handleAddGoogleApps }
 				/>

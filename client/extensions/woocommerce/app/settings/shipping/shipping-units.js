@@ -55,8 +55,8 @@ const ShippingUnits = ( {
 	const dimensionsLabels = unit => {
 		const labels = {
 			m: translate( 'Meters' ),
-			cm: translate( 'Centimetres' ),
-			mm: translate( 'Milimetres' ),
+			cm: translate( 'Centimeters' ),
+			mm: translate( 'Millimeters' ),
 			in: translate( 'Inches' ),
 			yd: translate( 'Yards' ),
 		};

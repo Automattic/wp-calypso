@@ -4,6 +4,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -18,10 +19,20 @@ import {
 } from '../selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import { createState } from 'woocommerce/state/test/helpers';
+import * as plugins from 'woocommerce/state/selectors/plugins';
 
 const emptyZoneLocations = { country: [], continent: [], state: [], postcode: [] };
 
 describe( 'selectors', () => {
+	let wcsEnabledStub;
+	beforeEach( () => {
+		wcsEnabledStub = sinon.stub( plugins, 'isWcsEnabled' ).returns( true );
+	} );
+
+	afterEach( () => {
+		wcsEnabledStub.restore();
+	} );
+
 	describe( 'getShippingZones', () => {
 		test( 'should return an empty list when the zones are being loaded', () => {
 			const state = createState( {

@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import ConnectIntro from '../connect-intro';
 import ConnectSuccess from '../connect-success';
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -98,7 +97,6 @@ class JetpackOnboardingContactFormStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Contact Form ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.CONTACT_FORM, ':site' ].join( '/' ) }
 					title="Contact Form ‹ Jetpack Start"

@@ -228,20 +228,6 @@ export class ContactDetailsFormFields extends Component {
 		}
 	}
 
-	focusAddressField() {
-		const inputRef = this.inputRefs[ 'address-1' ] || null;
-		if ( inputRef ) {
-			inputRef.focus();
-			return;
-		}
-		// The preference is to fire an inputRef callback
-		// when the previous and next countryCodes don't match,
-		// rather than set a flag.
-		// Multiple renders triggered by formState via `this.setFormState`
-		// prevent it.
-		this.shouldAutoFocusAddressField = true;
-	}
-
 	handleSubmitButtonClick = event => {
 		event.preventDefault();
 		this.formStateController.handleSubmit( hasErrors => {
@@ -270,7 +256,6 @@ export class ContactDetailsFormFields extends Component {
 					phoneCountryCode: value,
 				} );
 			}
-			this.focusAddressField();
 		}
 
 		this.formStateController.handleFieldChange( {

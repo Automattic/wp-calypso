@@ -98,6 +98,7 @@ class MasterbarLoggedOut extends PureComponent {
 		}
 
 		let signupUrl = config( 'signup_url' );
+		const signupFlow = get( currentQuery, 'signup_flow' );
 		if (
 			// Match locales like `/log-in/jetpack/es`
 			startsWith( currentRoute, '/log-in/jetpack' )
@@ -118,6 +119,8 @@ class MasterbarLoggedOut extends PureComponent {
 			}
 		} else if ( 'jetpack-connect' === sectionName ) {
 			signupUrl = '/jetpack/new';
+		} else if ( signupFlow ) {
+			signupUrl += '/' + signupFlow;
 		}
 
 		return (

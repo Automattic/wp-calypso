@@ -14,7 +14,79 @@ import {
 	getLocaleFromPath,
 	isDefaultLocale,
 	removeLocaleFromPath,
+	isLocaleVariant,
+	hasTranslationSet,
 } from 'lib/i18n-utils';
+
+jest.mock( 'config', () => key => {
+	if ( 'i18n_default_locale_slug' === key ) {
+		return 'en';
+	}
+
+	if ( 'languages' === key ) {
+		return [
+			{ value: 420, langSlug: 'ast', name: 'Asturianu', wpLocale: 'ast', territories: [ '039' ] },
+			{
+				value: 1,
+				langSlug: 'en',
+				name: 'English',
+				wpLocale: 'en_US',
+				popular: 1,
+				territories: [ '019' ],
+			},
+			{
+				value: 19,
+				langSlug: 'es',
+				name: 'Español',
+				wpLocale: 'es_ES',
+				popular: 2,
+				territories: [ '019', '039' ],
+			},
+			{
+				value: 24,
+				langSlug: 'fr',
+				name: 'Français',
+				wpLocale: 'fr_FR',
+				popular: 5,
+				territories: [ '155' ],
+			},
+			{
+				value: 36,
+				langSlug: 'ja',
+				name: '日本語',
+				wpLocale: 'ja',
+				popular: 7,
+				territories: [ '030' ],
+			},
+			{
+				value: 438,
+				langSlug: 'pt-br',
+				name: 'Português do Brasil',
+				wpLocale: 'pt_BR',
+				popular: 3,
+				territories: [ '019' ],
+			},
+			{
+				value: 15,
+				langSlug: 'de',
+				name: 'Deutsch',
+				wpLocale: 'de_DE',
+				popular: 4,
+				territories: [ '155' ],
+			},
+			{
+				value: 900,
+				langSlug: 'de_formal',
+				name: 'Deutsch',
+				wpLocale: 'de_DE_formal',
+				parentLangSlug: 'de',
+				popular: 4,
+				territories: [ '155' ],
+			},
+			{ value: 58, langSlug: 'pl', name: 'Polski', wpLocale: 'pl_PL', territories: [ '151' ] },
+		];
+	}
+} );
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {
@@ -136,6 +208,44 @@ describe( 'utils', () => {
 
 		test( 'should return a language with a three letter country code', () => {
 			expect( getLanguage( 'ast' ).langSlug ).to.equal( 'ast' );
+		} );
+
+		test( 'should return the variant', () => {
+			expect( getLanguage( 'de', 'de_formal' ).langSlug ).to.equal( 'de_formal' );
+		} );
+
+		test( 'should return the parent slug since the given variant does not exist', () => {
+			expect( getLanguage( 'fr', 'fr_formal' ).langSlug ).to.equal( 'fr' );
+		} );
+	} );
+
+	describe( '#isLocaleVariant', () => {
+		test( 'should return false by default', () => {
+			expect( isLocaleVariant( 'lol' ) ).to.be.false;
+			expect( isLocaleVariant() ).to.be.false;
+		} );
+
+		test( 'should detect a locale variant', () => {
+			expect( isLocaleVariant( 'de_formal' ) ).to.be.true;
+		} );
+
+		test( 'should detect a root language', () => {
+			expect( isLocaleVariant( 'de' ) ).to.be.false;
+		} );
+	} );
+
+	describe( '#hasTranslationSet', () => {
+		test( 'should return false by default', () => {
+			expect( hasTranslationSet() ).to.be.false;
+		} );
+
+		test( 'should return false for elements in the exception list', () => {
+			expect( hasTranslationSet( 'en' ) ).to.be.false;
+			expect( hasTranslationSet( 'sr_latin' ) ).to.be.false;
+		} );
+
+		test( 'should return true for languages not in the exception list', () => {
+			expect( hasTranslationSet( 'de' ) ).to.be.true;
 		} );
 	} );
 } );

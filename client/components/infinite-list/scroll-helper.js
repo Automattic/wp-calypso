@@ -451,7 +451,7 @@ class ScrollHelper {
 		debug( 'fetching next page', this.containerBottom, this.bottomPlaceholderHeight );
 
 		// Consider all page fetches once user starts scrolling as triggered by scroll
-		// Same condition check is in lib/mixins/infinite-scroll loadNextPage
+		// Same condition check is in components/infinite-scroll checkScrollPosition
 		if ( this.scrollPosition > this.contextHeight ) {
 			triggeredByScroll = true;
 		}

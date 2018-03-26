@@ -21,6 +21,8 @@ class Wizard extends Component {
 		baseSuffix: PropTypes.string,
 		components: PropTypes.objectOf( PropTypes.element ).isRequired,
 		forwardText: PropTypes.string,
+		hideBackLink: PropTypes.bool,
+		hideForwardLink: PropTypes.bool,
 		hideNavigation: PropTypes.bool,
 		onBackClick: PropTypes.func,
 		onForwardClick: PropTypes.func,
@@ -31,6 +33,8 @@ class Wizard extends Component {
 	static defaultProps = {
 		basePath: '',
 		baseSuffix: '',
+		hideBackLink: false,
+		hideForwardLink: false,
 		hideNavigation: false,
 	};
 
@@ -76,6 +80,8 @@ class Wizard extends Component {
 			basePath,
 			components,
 			forwardText,
+			hideBackLink,
+			hideForwardLink,
 			hideNavigation,
 			onBackClick,
 			onForwardClick,
@@ -106,23 +112,25 @@ class Wizard extends Component {
 				{ ! hideNavigation &&
 					totalSteps > 1 && (
 						<div className="wizard__navigation-links">
-							{ stepIndex > 0 && (
-								<NavigationLink
-									direction="back"
-									href={ backUrl }
-									text={ backText }
-									onClick={ onBackClick }
-								/>
-							) }
+							{ ! hideBackLink &&
+								stepIndex > 0 && (
+									<NavigationLink
+										direction="back"
+										href={ backUrl }
+										text={ backText }
+										onClick={ onBackClick }
+									/>
+								) }
 
-							{ stepIndex < totalSteps - 1 && (
-								<NavigationLink
-									direction="forward"
-									href={ forwardUrl }
-									text={ forwardText }
-									onClick={ onForwardClick }
-								/>
-							) }
+							{ ! hideForwardLink &&
+								stepIndex < totalSteps - 1 && (
+									<NavigationLink
+										direction="forward"
+										href={ forwardUrl }
+										text={ forwardText }
+										onClick={ onForwardClick }
+									/>
+								) }
 						</div>
 					) }
 			</div>

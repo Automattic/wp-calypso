@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import page from 'page';
 import { find } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -21,6 +22,7 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AdsEarnings from 'my-sites/ads/form-earnings';
 import AdsSettings from 'my-sites/ads/form-settings';
 import { canAccessWordads, isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import { isBusiness } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
 import Card from 'components/card';
@@ -33,6 +35,8 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
+import { canCurrentUser } from 'state/selectors';
+import { getSiteFragment } from 'lib/route';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -44,10 +48,34 @@ class AdsMain extends Component {
 		requestingWordAdsApproval: PropTypes.bool.isRequired,
 		requestWordAdsApproval: PropTypes.func.isRequired,
 		section: PropTypes.string.isRequired,
-		site: PropTypes.object.isRequired,
+		site: PropTypes.object,
 		wordAdsError: PropTypes.string,
 		wordAdsSuccess: PropTypes.bool,
 	};
+
+	componentDidMount() {
+		this.redirectToStats();
+	}
+
+	componentDidUpdate() {
+		this.redirectToStats();
+	}
+
+	canAccess() {
+		const { canManageOptions, site } = this.props;
+		return site && canManageOptions && canAccessWordads( site );
+	}
+
+	redirectToStats() {
+		const { siteSlug } = this.props;
+		const siteFragment = getSiteFragment( page.current );
+
+		if ( ! this.canAccess() && siteSlug ) {
+			page( '/stats/' + siteSlug );
+		} else if ( ! siteFragment ) {
+			page( '/stats/' );
+		}
+	}
 
 	getSelectedText() {
 		const selected = find( this.getFilters(), { path: this.props.path } );
@@ -119,7 +147,8 @@ class AdsMain extends Component {
 					</div>
 					{ this.props.wordAdsError && (
 						<Notice
-							status="is-error ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-error"
 							onDismissClick={ this.handleDismissWordAdsError }
 						>
 							{ this.props.wordAdsError }
@@ -127,7 +156,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'mature' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate(
 								'Your site has been identified as serving mature content. ' +
@@ -144,7 +174,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'spam' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate(
 								'Your site has been identified as serving automatically created or copied content. ' +
@@ -154,7 +185,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'private' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate(
 								'Your site is marked as private. It needs to be public so that visitors can see the ads.'
@@ -167,7 +199,8 @@ class AdsMain extends Component {
 					) }
 					{ this.props.isUnsafe === 'other' && (
 						<Notice
-							status="is-warning ads__activate-notice"
+							classname="ads__activate-notice"
+							status="is-warning"
 							showDismiss={ false }
 							text={ translate( 'Your site cannot participate in WordAds program.' ) }
 						/>
@@ -191,7 +224,12 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { site, translate } = this.props;
+
+		if ( ! this.canAccess() ) {
+			return null;
+		}
+
 		let component = this.getComponent( this.props.section );
 		let notice = null;
 
@@ -202,8 +240,9 @@ class AdsMain extends Component {
 				</Notice>
 			);
 		} else if (
-			! this.props.site.options.wordads &&
-			isWordadsInstantActivationEligible( this.props.site )
+			! site.options.wordads &&
+			isWordadsInstantActivationEligible( site ) &&
+			! isBusiness( site.plan )
 		) {
 			component = this.renderInstantActivationToggle( component );
 		}
@@ -241,6 +280,7 @@ const mapStateToProps = state => {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),

@@ -6,11 +6,10 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Gridicon from 'gridicons';
-import { flowRight } from 'lodash';
+import { flowRight, isEqual, size, without } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +18,7 @@ import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
 import { preload } from 'sections-preload';
-import infiniteScroll from 'lib/mixins/infinite-scroll';
+import InfiniteScroll from 'components/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
 import Placeholder from './placeholder';
@@ -87,12 +86,8 @@ export default class PageList extends Component {
 	}
 }
 
-const Pages = createReactClass( {
-	displayName: 'Pages',
-
-	mixins: [ infiniteScroll( 'fetchPages' ) ],
-
-	propTypes: {
+class Pages extends Component {
+	static propTypes = {
 		incrementPage: PropTypes.func.isRequired,
 		lastPage: PropTypes.bool,
 		loading: PropTypes.bool.isRequired,
@@ -104,20 +99,33 @@ const Pages = createReactClass( {
 		hasSites: PropTypes.bool.isRequired,
 		trackScrollPage: PropTypes.func.isRequired,
 		query: PropTypes.object,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			perPage: 100,
-			loading: false,
-			lastPage: false,
-			page: 0,
-			pages: [],
-			trackScrollPage: function() {},
-		};
-	},
+	static defaultProps = {
+		perPage: 100,
+		loading: false,
+		lastPage: false,
+		page: 0,
+		pages: [],
+		trackScrollPage: function() {},
+		query: {},
+	};
 
-	fetchPages( options ) {
+	state = {
+		pages: this.props.pages,
+		shadowItems: {},
+	};
+
+	componentWillReceiveProps( nextProps ) {
+		if (
+			nextProps.pages !== this.props.pages &&
+			( size( this.state.shadowItems ) === 0 || ! isEqual( nextProps.query, this.props.query ) )
+		) {
+			this.setState( { pages: nextProps.pages, shadowItems: {} } );
+		}
+	}
+
+	fetchPages = options => {
 		if ( this.props.loading || this.props.lastPage ) {
 			return;
 		}
@@ -125,7 +133,7 @@ const Pages = createReactClass( {
 			this.props.trackScrollPage( this.props.page + 1 );
 		}
 		this.props.incrementPage();
-	},
+	};
 
 	_insertTimeMarkers( pages ) {
 		const markedPages = [],
@@ -159,11 +167,40 @@ const Pages = createReactClass( {
 		}, this );
 
 		return markedPages;
-	},
+	}
+
+	updateShadowStatus = ( globalID, shadowStatus ) =>
+		new Promise( resolve =>
+			this.setState( ( state, props ) => {
+				if ( shadowStatus ) {
+					// add or update the `globalID` key in the `shadowItems` map
+					return {
+						shadowItems: {
+							...state.shadowItems,
+							[ globalID ]: shadowStatus,
+						},
+					};
+				}
+
+				// remove `globalID` from the `shadowItems` map
+				const newShadowItems = without( state.shadowItems, globalID );
+				const newState = {
+					shadowItems: newShadowItems,
+				};
+
+				// if the last shadow item just got removed, start showing the up-to-date post
+				// list as specified by props.
+				if ( size( newShadowItems ) === 0 ) {
+					newState.pages = props.pages;
+				}
+
+				return newState;
+			}, resolve )
+		);
 
 	getNoContentMessage() {
-		const { query = {}, translate, site, siteId } = this.props;
-		const { search, status = 'published' } = query;
+		const { query, translate, site, siteId } = this.props;
+		const { search, status } = query;
 
 		if ( search ) {
 			return (
@@ -228,7 +265,7 @@ const Pages = createReactClass( {
 				illustrationWidth={ attributes.illustrationWidth }
 			/>
 		);
-	},
+	}
 
 	addLoadingRows( rows, count ) {
 		for ( let i = 0; i < count; i++ ) {
@@ -239,7 +276,7 @@ const Pages = createReactClass( {
 				<Placeholder.Page key={ 'placeholder-page-' + i } multisite={ ! this.props.site } />
 			);
 		}
-	},
+	}
 
 	renderLoading() {
 		const rows = [];
@@ -250,27 +287,25 @@ const Pages = createReactClass( {
 				{ rows }
 			</div>
 		);
-	},
+	}
 
 	renderPagesList( { pages } ) {
-		const { site } = this.props;
-		const status = this.props.status || 'published';
+		const { site, lastPage, query } = this.props;
 
 		// Pages only display hierarchically for published pages on single-sites when
 		// there are 100 or fewer pages and no more pages to load (last page).
 		// Pages are not displayed hierarchically for search.
-		if (
+		const showHierarchical =
 			site &&
-			status === 'published' &&
-			this.props.lastPage &&
+			query.status === 'publish,private' &&
+			lastPage &&
 			pages.length <= 100 &&
-			! this.props.search
-		) {
-			return this.renderHierarchical( { pages, site } );
-		}
+			! query.search;
 
-		return this.renderChronological( { pages, site } );
-	},
+		return showHierarchical
+			? this.renderHierarchical( { pages, site } )
+			: this.renderChronological( { pages, site } );
+	}
 
 	renderHierarchical( { pages, site } ) {
 		pages = sortPagesHierarchically( pages );
@@ -278,8 +313,9 @@ const Pages = createReactClass( {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
+					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
+					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
-					site={ site }
 					multisite={ false }
 					hierarchical={ true }
 					hierarchyLevel={ page.indentLevel || 0 }
@@ -293,10 +329,12 @@ const Pages = createReactClass( {
 				{ rows }
 			</div>
 		);
-	},
+	}
 
 	renderChronological( { pages, site } ) {
-		if ( ! this.props.search ) {
+		const { search, status } = this.props.query;
+
+		if ( ! search ) {
 			// we're listing in reverse chrono. use the markers.
 			pages = this._insertTimeMarkers( pages );
 		}
@@ -309,6 +347,8 @@ const Pages = createReactClass( {
 			return (
 				<Page
 					key={ 'page-' + page.global_ID }
+					shadowStatus={ this.state.shadowItems[ page.global_ID ] }
+					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					multisite={ this.props.siteId === null }
 				/>
@@ -319,19 +359,19 @@ const Pages = createReactClass( {
 			this.addLoadingRows( rows, 1 );
 		}
 
-		const blogPostsPage = site &&
-			status === 'published' && (
-				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
-			);
+		const showBlogPostsPage = site && status === 'publish,private' && ! search;
 
 		return (
 			<div id="pages" className="pages__page-list">
-				{ blogPostsPage }
+				<InfiniteScroll nextPageMethod={ this.fetchPages } />
+				{ showBlogPostsPage && (
+					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
+				) }
 				{ rows }
 				{ this.props.lastPage && pages.length ? <ListEnd /> : null }
 			</div>
 		);
-	},
+	}
 
 	renderNoContent() {
 		return (
@@ -339,10 +379,11 @@ const Pages = createReactClass( {
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
-	},
+	}
 
 	render() {
-		const { hasSites, loading, pages } = this.props;
+		const { hasSites, loading } = this.props;
+		const { pages } = this.state;
 
 		if ( pages.length && hasSites ) {
 			return this.renderPagesList( { pages } );
@@ -353,8 +394,8 @@ const Pages = createReactClass( {
 		}
 
 		return this.renderLoading();
-	},
-} );
+	}
+}
 
 const mapState = ( state, { query, siteId } ) => ( {
 	hasSites: hasInitializedSites( state ),

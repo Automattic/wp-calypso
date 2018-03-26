@@ -17,7 +17,6 @@ import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import accept from 'lib/accept';
 import { ProtectFormGuard } from 'lib/protect-form';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
@@ -207,7 +206,6 @@ class ProductUpdate extends React.Component {
 
 		return (
 			<Main className={ className } wideLayout>
-				<SidebarNavigation />
 				<ProductHeader
 					site={ site }
 					product={ product }

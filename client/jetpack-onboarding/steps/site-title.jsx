@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackOnboardingDisclaimer from '../disclaimer';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -68,7 +67,6 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Site Title ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.SITE_TITLE, ':site' ].join( '/' ) }
 					title="Site Title ‹ Jetpack Start"
@@ -79,7 +77,7 @@ class JetpackOnboardingSiteTitleStep extends React.PureComponent {
 				<Card className="steps__form">
 					<img
 						className="steps__illustration"
-						src={ '/calypso/images/illustrations/site-title.svg' }
+						src={ '/calypso/images/illustrations/jetpack-start.svg' }
 						alt=""
 					/>
 

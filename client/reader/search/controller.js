@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import page from 'page';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -26,7 +26,7 @@ const analyticsPageTitle = 'Reader';
 function replaceSearchUrl( newValue, sort ) {
 	let searchUrl = '/read/search';
 	if ( newValue ) {
-		searchUrl += '?' + qs.stringify( { q: newValue, sort } );
+		searchUrl += '?' + stringify( { q: newValue, sort } );
 	}
 	page.replace( searchUrl );
 }

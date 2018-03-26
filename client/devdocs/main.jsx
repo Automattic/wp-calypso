@@ -30,6 +30,7 @@ const DEFAULT_FILES = [
 	'docs/coding-guidelines/javascript.md',
 	'docs/coding-guidelines/css.md',
 	'docs/coding-guidelines/html.md',
+	'docs/accessibility.md',
 ];
 
 /**
@@ -175,7 +176,7 @@ export default class Devdocs extends React.Component {
 
 	render() {
 		return (
-			<Main className="devdocs">
+			<Main className="devdocs devdocs__search">
 				<DocumentHead title="Calypso Docs" />
 
 				<SearchCard

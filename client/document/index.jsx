@@ -7,6 +7,7 @@
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
 import { get } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -15,6 +16,7 @@ import { default as appConfig } from 'config';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
+import WordPressLogo from 'components/wordpress-logo';
 
 class Document extends React.Component {
 	render() {
@@ -34,7 +36,7 @@ class Document extends React.Component {
 			urls,
 			hasSecondary,
 			sectionGroup,
-			config,
+			clientData,
 			isFluidWidth,
 			sectionCss,
 			env,
@@ -58,7 +60,7 @@ class Document extends React.Component {
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
 				: '' ) +
-			( config ? config : '' );
+			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };` : '' );
 
 		return (
 			<html
@@ -67,8 +69,8 @@ class Document extends React.Component {
 				className={ classNames( { 'is-fluid-width': isFluidWidth } ) }
 			>
 				<Head title={ head.title } faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-					{ head.metas.map( props => <meta { ...props } /> ) }
-					{ head.links.map( props => <link { ...props } /> ) }
+					{ head.metas.map( ( props, index ) => <meta { ...props } key={ index } /> ) }
+					{ head.links.map( ( props, index ) => <link { ...props } key={ index } /> ) }
 
 					<link
 						rel="stylesheet"
@@ -106,7 +108,7 @@ class Document extends React.Component {
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
-									<div className="wpcom-site__logo noticon noticon-wordpress" />
+									<WordPressLogo size={ 72 } className="wpcom-site__logo" />
 									{ hasSecondary && (
 										<Fragment>
 											<div className="layout__secondary" />
@@ -145,7 +147,9 @@ class Document extends React.Component {
 								href={ feedbackURL }
 								title="Report an issue"
 								target="_blank"
-							/>
+							>
+								<Gridicon icon="bug" size={ 18 } />
+							</a>
 						</div>
 					) }
 

@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import { find, isString } from 'lodash';
 import { parse } from 'url';
 
 /**
@@ -10,8 +10,14 @@ import { parse } from 'url';
  */
 import config from 'config';
 
-const localeRegex = /^[A-Z]{2,3}$/i;
-const localeWithRegionRegex = /^[A-Z]{2,3}-[A-Z]{2,3}$/i;
+/**
+ * a locale can consist of three component
+ * aa: language code
+ * -bb: regional code
+ * _cc: variant suffix
+ * while the language code is mandatory, the other two are optional.
+ */
+const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
 
 function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
@@ -29,16 +35,53 @@ export function isDefaultLocale( locale ) {
 	return locale === config( 'i18n_default_locale_slug' );
 }
 
-export function getLanguage( langSlug ) {
-	let language;
+/**
+ * Checks if provided locale has a parentLangSlug and is therefore a locale variant
+ *
+ * @param {string} locale - locale slug (eg: 'fr')
+ * @return {boolean} true when the locale has a parentLangSlug
+ */
+export function isLocaleVariant( locale ) {
+	if ( ! isString( locale ) ) {
+		return false;
+	}
+	const language = getLanguage( locale );
+	return !! language && isString( language.parentLangSlug );
+}
 
-	if ( localeRegex.test( langSlug ) || localeWithRegionRegex.test( langSlug ) ) {
-		language =
+/**
+ * Checks against a list of locales that don't have any GP translation sets
+ *
+ * @param {string} locale - locale slug (eg: 'fr')
+ * @return {boolean} true when the locale is a member of the exception list
+ */
+export function hasTranslationSet( locale ) {
+	if ( ! isString( locale ) ) {
+		return false;
+	}
+	return [ 'en', 'sr_latin' ].indexOf( locale ) === -1;
+}
+
+/**
+ * Matches and returns language from config.languages based on the given localeSlug and localeVariant
+ * @param  {String} localeSlug locale slug of the language to match
+ * @param  {String?} localeVariant local variant of the language to match. It takes precedence if exists.
+ * @return {Object|undefined} An object containing the locale data or undefined.
+ */
+export function getLanguage( localeSlug, localeVariant = null ) {
+	// if a localeVariant is given, we should use it. Otherwise, use localeSlug
+	const langSlug = localeVariant || localeSlug;
+
+	if ( localeRegex.test( langSlug ) ) {
+		// Find for the langSlug first. If we can't find it, split it and find its parent slug.
+		// Please see the comment above `localeRegex` to see why we can split by - or _ and find the parent slug.
+		return (
 			find( config( 'languages' ), { langSlug } ) ||
-			find( config( 'languages' ), { langSlug: langSlug.split( '-' )[ 0 ] } );
+			find( config( 'languages' ), { langSlug: langSlug.split( /[-_]/ )[ 0 ] } )
+		);
 	}
 
-	return language;
+	return undefined;
 }
 
 /**

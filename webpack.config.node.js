@@ -9,7 +9,6 @@
  */
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
-const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const _ = require( 'lodash' );
@@ -182,15 +181,6 @@ const webpackConfig = {
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[\/\\]desktop$/, 'lodash/noop' )
-	);
-}
-
-if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' );
-	webpackConfig.plugins.unshift(
-		new HardSourceWebpackPlugin( {
-			cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ),
-		} )
 	);
 }
 

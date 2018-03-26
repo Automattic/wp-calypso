@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -8,8 +9,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
-	INLINE_HELP_OPEN_SELECTED_RESULT,
-	INLINE_HELP_DID_OPEN_SELECTED_RESULT,
 } from 'state/action-types';
 
 /**
@@ -67,32 +66,6 @@ export function selectPreviousResult() {
 	return dispatch => {
 		dispatch( {
 			type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
-		} );
-	};
-}
-
-/**
- * Opens the selected result in the inline help results list.
- *
- * @return {Function}        Action thunk
- */
-export function openResult() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_OPEN_SELECTED_RESULT,
-		} );
-	};
-}
-
-/**
- * Opens the selected result in the inline help results list.
- *
- * @return {Function}        Action thunk
- */
-export function didOpenResult() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_DID_OPEN_SELECTED_RESULT,
 		} );
 	};
 }

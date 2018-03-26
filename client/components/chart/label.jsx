@@ -6,20 +6,14 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import userModule from 'lib/user';
+import { isRtl as isRtlSelector } from 'state/selectors';
 
-/**
- * Module variables
- */
-const user = userModule();
-
-export default class extends React.Component {
-	static displayName = 'ModuleChartLabel';
-
+class ModuleChartLabel extends React.Component {
 	static propTypes = {
 		width: PropTypes.number.isRequired,
 		x: PropTypes.number.isRequired,
@@ -27,10 +21,10 @@ export default class extends React.Component {
 	};
 
 	render() {
-		const dir = user.isRTL() ? 'right' : 'left';
-		let labelStyle;
+		const { isRtl } = this.props;
 
-		labelStyle = {
+		const dir = isRtl ? 'right' : 'left';
+		const labelStyle = {
 			width: this.props.width + 'px',
 		};
 
@@ -43,3 +37,5 @@ export default class extends React.Component {
 		);
 	}
 }
+
+export default connect( state => ( { isRtl: isRtlSelector( state ) } ) )( ModuleChartLabel );

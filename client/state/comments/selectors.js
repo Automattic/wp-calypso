@@ -113,7 +113,13 @@ export const getPostCommentsTree = treeSelect(
 	( [ allItems ], siteId, postId, status = 'approved', authorId ) => {
 		const items = filter( allItems, item => {
 			//only return pending comments that match the comment author
-			if ( authorId && item.status === 'unapproved' && get( item, 'author.ID' ) !== authorId ) {
+			const commentAuthorId = get( item, 'author.ID' );
+			if (
+				authorId &&
+				commentAuthorId &&
+				item.status === 'unapproved' &&
+				commentAuthorId !== authorId
+			) {
 				return false;
 			}
 			if ( status !== 'all' ) {

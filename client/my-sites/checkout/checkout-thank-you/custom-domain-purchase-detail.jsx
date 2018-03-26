@@ -21,12 +21,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
 				title={ translate( 'Select your custom domain' ) }
 				description={ translate(
-					'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +
-						'with a custom domain to personalize your site. Does not apply to premium domains.',
-					{
-						args: { siteDomain: selectedSite.domain },
-						components: { em: <em /> },
-					}
+					'Your plan includes a free custom domain, which gives your site a more professional, branded feel.'
 				) }
 				buttonText={ translate( 'Claim your free domain' ) }
 				href={ `/domains/add/${ selectedSite.slug }` }

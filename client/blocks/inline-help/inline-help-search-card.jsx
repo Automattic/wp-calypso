@@ -1,3 +1,4 @@
+/** @format */
 /**
  * External dependencies
  */
@@ -13,8 +14,15 @@ import debugFactory from 'debug';
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import SearchCard from 'components/search-card';
-import { isRequestingInlineHelpSearchResultsForQuery } from 'state/inline-help/selectors';
-import { openResult, requestInlineHelpSearchResults, selectNextResult, selectPreviousResult } from 'state/inline-help/actions';
+import {
+	getInlineHelpCurrentlySelectedLink,
+	isRequestingInlineHelpSearchResultsForQuery,
+} from 'state/inline-help/selectors';
+import {
+	requestInlineHelpSearchResults,
+	selectNextResult,
+	selectPreviousResult,
+} from 'state/inline-help/actions';
 
 /**
  * Module variables
@@ -23,6 +31,7 @@ const debug = debugFactory( 'calypso:inline-help' );
 
 class InlineHelpSearchCard extends Component {
 	static propTypes = {
+		openResult: PropTypes.func.isRequired,
 		translate: PropTypes.func,
 		query: PropTypes.string,
 	};
@@ -52,7 +61,7 @@ class InlineHelpSearchCard extends Component {
 				this.props.selectNextResult();
 				break;
 			case 'Enter':
-				this.props.openResult();
+				this.props.openResult( this.props.selectedLink );
 				break;
 		}
 	};
@@ -72,16 +81,17 @@ class InlineHelpSearchCard extends Component {
 				onKeyDown={ this.onKeyDown }
 				placeholder={ this.props.translate( 'Search for help…' ) }
 				autoFocus // eslint-disable-line jsx-a11y/no-autofocus
-				delaySearch={ true } />
+				delaySearch={ true }
+			/>
 		);
 	}
 }
 
 const mapStateToProps = ( state, ownProps ) => ( {
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.query ),
+	selectedLink: getInlineHelpCurrentlySelectedLink( state ),
 } );
 const mapDispatchToProps = {
-	openResult,
 	recordTracksEvent,
 	requestInlineHelpSearchResults,
 	selectNextResult,

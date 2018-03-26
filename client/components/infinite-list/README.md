@@ -6,7 +6,7 @@ Important mainly for low end mobile devices.
 
 ## When to use
 
-There is simpler implementation of infinite scroll - the [infinite scroll](../../lib/mixins/infinite-scroll/) mixin. Use `InfiniteList` when:
+There is simpler implementation of infinite scroll - the [InfiniteScroll](../infinite-scroll/) component. Use `InfiniteList` when:
 
 * items contain images or other media
 * you expect that user will scroll a lot
@@ -79,8 +79,8 @@ class Listing extends React.Component {
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 			/>
 		);
-	} 
-} 
+	}
+}
 ```
 
 If you need reset scroll state of `InfiniteList` component, e.g. because the using component received list with different content, assign it different `key`, so that React creates new instance for it.

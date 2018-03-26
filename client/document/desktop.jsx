@@ -6,6 +6,7 @@
 
 import React, { Fragment } from 'react';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import classNames from 'classnames';
 import { jsonStringifyForHtml } from '../../server/sanitize';
 import Head from '../components/head';
 import getStylesheet from './utils/stylesheet';
+import WordPressLogo from 'components/wordpress-logo';
 
 class Desktop extends React.Component {
 	render() {
@@ -24,7 +26,7 @@ class Desktop extends React.Component {
 			lang,
 			urls,
 			hasSecondary,
-			config,
+			clientData,
 			isFluidWidth,
 			env,
 			isDebug,
@@ -59,7 +61,7 @@ class Desktop extends React.Component {
 						<div className="layout">
 							<div className="masterbar" />
 							<div className="layout__content">
-								<div className="wpcom-site__logo noticon noticon-wordpress" />
+								<WordPressLogo size={ 72 } className="wpcom-site__logo" />
 								{ hasSecondary && (
 									<Fragment>
 										<div className="layout__secondary" />
@@ -91,7 +93,9 @@ class Desktop extends React.Component {
 								href={ feedbackURL }
 								title="Report an issue"
 								target="_blank"
-							/>
+							>
+								<Gridicon icon="bug" size={ 18 } />
+							</a>
 						</div>
 					) }
 
@@ -103,11 +107,11 @@ class Desktop extends React.Component {
 							} }
 						/>
 					) }
-					{ config && (
+					{ clientData && (
 						<script
 							type="text/javascript"
 							dangerouslySetInnerHTML={ {
-								__html: config,
+								__html: `var configData = ${ jsonStringifyForHtml( clientData ) };`,
 							} }
 						/>
 					) }

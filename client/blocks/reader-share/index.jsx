@@ -9,7 +9,7 @@ import { defer } from 'lodash';
 import config from 'config';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import qs from 'qs';
+import { stringify } from 'qs';
 import page from 'page';
 import SocialLogo from 'social-logos';
 import { localize } from 'i18n-calypso';
@@ -80,7 +80,7 @@ function buildQuerystringForPost( post ) {
 	args.text = post.excerpt;
 	args.url = post.URL;
 
-	return qs.stringify( args );
+	return stringify( args );
 }
 
 class ReaderShare extends React.Component {

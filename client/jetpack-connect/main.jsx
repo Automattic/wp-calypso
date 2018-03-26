@@ -7,19 +7,16 @@ import config from 'config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'gridicons';
 import { concat, flowRight, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import Card from 'components/card';
 import FormattedHeader from 'components/formatted-header';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
-import JetpackInstallStep from './install-step';
 import LocaleSuggestions from 'components/locale-suggestions';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
@@ -29,7 +26,7 @@ import SiteUrlInput from './site-url-input';
 import versionCompare from 'lib/version-compare';
 import { addCalypsoEnvQueryArg } from './utils';
 import { addQueryArgs, externalRedirect, untrailingslashit } from 'lib/route';
-import { checkUrl, confirmJetpackInstallStatus, dismissUrl } from 'state/jetpack-connect/actions';
+import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -41,9 +38,7 @@ import {
 	JPC_PATH_PLANS,
 	JPC_PATH_REMOTE_INSTALL,
 	MINIMUM_JETPACK_VERSION,
-	REMOTE_PATH_ACTIVATE,
 	REMOTE_PATH_AUTH,
-	REMOTE_PATH_INSTALL,
 } from './constants';
 import {
 	ALREADY_CONNECTED,
@@ -67,8 +62,6 @@ export class JetpackConnectMain extends Component {
 		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
 		url: PropTypes.string,
 	};
-
-	redirecting = false;
 
 	/* eslint-disable indent */
 	state = this.props.url
@@ -116,11 +109,11 @@ export class JetpackConnectMain extends Component {
 		if (
 			this.getStatus() === NOT_CONNECTED_JETPACK &&
 			this.isCurrentUrlFetched() &&
-			! this.redirecting
+			! this.state.redirecting
 		) {
 			return this.goToRemoteAuth( this.state.currentUrl );
 		}
-		if ( this.getStatus() === ALREADY_OWNED && ! this.redirecting ) {
+		if ( this.getStatus() === ALREADY_OWNED && ! this.state.redirecting ) {
 			if ( this.props.isMobileAppFlow ) {
 				return this.redirectToMobileApp( 'already-connected' );
 			}
@@ -133,9 +126,11 @@ export class JetpackConnectMain extends Component {
 			this.checkUrl( this.state.currentUrl );
 		}
 
-		if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
-			if ( includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ) {
+		if ( includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], this.getStatus() ) ) {
+			if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 				this.goToRemoteInstall( JPC_PATH_REMOTE_INSTALL );
+			} else {
+				this.goToInstallInstructions( '/jetpack/connect/instructions' );
 			}
 		}
 	}
@@ -144,8 +139,8 @@ export class JetpackConnectMain extends Component {
 
 	makeSafeRedirectionFunction( func ) {
 		return url => {
-			if ( ! this.redirecting ) {
-				this.redirecting = true;
+			if ( ! this.state.redirecting ) {
+				this.setState( { redirecting: true } );
 				func( url );
 			}
 		};
@@ -168,30 +163,21 @@ export class JetpackConnectMain extends Component {
 		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_AUTH ) );
 	} );
 
-	goToPluginInstall = this.makeSafeRedirectionFunction( url => {
-		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-			url: url,
-			type: 'plugin_install',
-		} );
-
-		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_INSTALL ) );
-	} );
-
-	goToPluginActivation = this.makeSafeRedirectionFunction( url => {
-		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
-			url: url,
-			type: 'plugin_activation',
-		} );
-
-		externalRedirect( addCalypsoEnvQueryArg( url + REMOTE_PATH_ACTIVATE ) );
-	} );
-
 	goToRemoteInstall = this.makeSafeRedirectionFunction( url => {
 		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
 			url: url,
 			type: 'remote_install',
 		} );
 		page.redirect( url );
+	} );
+
+	goToInstallInstructions = this.makeSafeRedirectionFunction( url => {
+		const urlWithQuery = addQueryArgs( { url: this.state.currentUrl }, url );
+		this.props.recordTracksEvent( 'calypso_jpc_success_redirect', {
+			url: urlWithQuery,
+			type: 'install_instructions',
+		} );
+		page( urlWithQuery );
 	} );
 
 	redirectToMobileApp = this.makeSafeRedirectionFunction( reason => {
@@ -249,23 +235,6 @@ export class JetpackConnectMain extends Component {
 		}
 	};
 
-	installJetpack = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
-			jetpack_funnel: this.state.currentUrl,
-			type: 'install_jetpack',
-		} );
-
-		this.goToPluginInstall( this.state.currentUrl );
-	};
-
-	activateJetpack = () => {
-		this.props.recordTracksEvent( 'calypso_jpc_instructions_click', {
-			jetpack_funnel: this.state.currentUrl,
-			type: 'activate_jetpack',
-		} );
-		this.goToPluginActivation( this.state.currentUrl );
-	};
-
 	checkProperty( propName ) {
 		return (
 			this.state.currentUrl &&
@@ -274,10 +243,6 @@ export class JetpackConnectMain extends Component {
 			this.isCurrentUrlFetched() &&
 			this.props.jetpackConnectSite.data[ propName ]
 		);
-	}
-
-	isRedirecting() {
-		return this.props.jetpackConnectSite && this.redirecting && this.isCurrentUrlFetched();
 	}
 
 	getStatus() {
@@ -403,24 +368,6 @@ export class JetpackConnectMain extends Component {
 		return includes( FLOW_TYPES, this.props.type );
 	}
 
-	getInstructionsData( status ) {
-		const { translate } = this.props;
-		return {
-			headerTitle:
-				NOT_JETPACK === status
-					? translate( 'Ready for installation' )
-					: translate( 'Ready for activation' ),
-			headerSubtitle: translate( "We'll need you to complete a few manual steps." ),
-			steps:
-				NOT_JETPACK === status
-					? [ 'installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall' ]
-					: [ 'activateJetpack', 'connectJetpack' ],
-			buttonOnClick: NOT_JETPACK === status ? this.installJetpack : this.activateJetpack,
-			buttonText:
-				NOT_JETPACK === status ? translate( 'Install Jetpack' ) : translate( 'Activate Jetpack' ),
-		};
-	}
-
 	renderFooter() {
 		const { translate } = this.props;
 		return (
@@ -428,11 +375,6 @@ export class JetpackConnectMain extends Component {
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
 					{ translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
-				{ this.isInstall() ? null : (
-					<LoggedOutFormLinkItem href="/start">
-						{ translate( 'Start a new site on WordPress.com' ) }
-					</LoggedOutFormLinkItem>
-				) }
 				<HelpButton />
 			</LoggedOutFormLinks>
 		);
@@ -460,7 +402,7 @@ export class JetpackConnectMain extends Component {
 					onSubmit={ this.handleUrlSubmit }
 					isError={ this.getStatus() }
 					isFetching={
-						this.isCurrentUrlFetching() || this.isRedirecting() || this.state.waitingForSites
+						this.isCurrentUrlFetching() || this.state.redirecting || this.state.waitingForSites
 					}
 					isInstall={ this.isInstall() }
 				/>
@@ -476,7 +418,7 @@ export class JetpackConnectMain extends Component {
 		return <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />;
 	}
 
-	renderSiteEntry() {
+	render() {
 		const status = this.getStatus();
 		return (
 			<MainWrapper>
@@ -506,72 +448,6 @@ export class JetpackConnectMain extends Component {
 			</a>
 		);
 	}
-
-	renderBackButton() {
-		const { translate } = this.props;
-		return (
-			<Button
-				compact
-				borderless
-				className="jetpack-connect__back-button"
-				onClick={ this.dismissUrl }
-			>
-				<Gridicon icon="arrow-left" size={ 18 } />
-				{ translate( 'Back' ) }
-			</Button>
-		);
-	}
-
-	renderInstructions( instructionsData ) {
-		const jetpackVersion = this.checkProperty( 'jetpackVersion' ),
-			isInstall = this.isInstall(),
-			{ currentUrl } = this.state;
-		return (
-			<MainWrapper isWide>
-				{ this.renderLocaleSuggestions() }
-				<div className="jetpack-connect__install">
-					<FormattedHeader
-						headerText={ instructionsData.headerTitle }
-						subHeaderText={ instructionsData.headerSubtitle }
-					/>
-					<div className="jetpack-connect__install-steps">
-						{ instructionsData.steps.map( ( stepName, key ) => {
-							return (
-								<JetpackInstallStep
-									key={ 'instructions-step-' + key }
-									stepName={ stepName }
-									jetpackVersion={ jetpackVersion }
-									isInstall={ isInstall }
-									currentUrl={ currentUrl }
-									confirmJetpackInstallStatus={ this.props.confirmJetpackInstallStatus }
-									onClick={ instructionsData.buttonOnClick }
-								/>
-							);
-						} ) }
-					</div>
-					<Button onClick={ instructionsData.buttonOnClick } primary>
-						{ instructionsData.buttonText }
-					</Button>
-					<div className="jetpack-connect__navigation">{ this.renderBackButton() }</div>
-				</div>
-				<LoggedOutFormLinks>
-					<HelpButton />
-				</LoggedOutFormLinks>
-			</MainWrapper>
-		);
-	}
-
-	render() {
-		const status = this.getStatus();
-		if (
-			includes( [ NOT_JETPACK, NOT_ACTIVE_JETPACK ], status ) &&
-			! this.props.jetpackConnectSite.isDismissed &&
-			! config.isEnabled( 'jetpack/connect/remote-install' )
-		) {
-			return this.renderInstructions( this.getInstructionsData( status ) );
-		}
-		return this.renderSiteEntry();
-	}
 }
 
 const connectComponent = connect(
@@ -593,7 +469,6 @@ const connectComponent = connect(
 	},
 	{
 		checkUrl,
-		confirmJetpackInstallStatus,
 		dismissUrl,
 		recordTracksEvent,
 	}

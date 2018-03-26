@@ -4,11 +4,13 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { isRemovable, isCancelable } from '../index';
+import { isRemovable, isCancelable, isPaidWithCredits, subscribedWithinPastWeek } from '../index';
+
 import {
 	DOMAIN_PURCHASE,
 	DOMAIN_PURCHASE_PENDING_TRANSFER,
@@ -19,6 +21,8 @@ import {
 	PLAN_PURCHASE,
 	SITE_REDIRECT_PURCHASE,
 	SITE_REDIRECT_PURCHASE_EXPIRED,
+	PLAN_PURCHASE_WITH_CREDITS,
+	PLAN_PURCHASE_WITH_PAYPAL,
 } from './data';
 
 describe( 'index', () => {
@@ -66,6 +70,40 @@ describe( 'index', () => {
 
 		test( 'should not be cancelable if domain is pending transfer', () => {
 			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).to.be.false;
+		} );
+	} );
+	describe( '#isPaidWithCredits', () => {
+		test( 'should be true when paid with credits', () => {
+			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_CREDITS ) ).to.be.true;
+		} );
+		test( 'should false when not paid with credits', () => {
+			expect( isPaidWithCredits( PLAN_PURCHASE_WITH_PAYPAL ) ).to.be.false;
+		} );
+		test( 'should be false when payment not set on purchase', () => {
+			expect( isPaidWithCredits( {} ) ).to.be.false;
+		} );
+	} );
+	describe( '#subscribedWithinPastWeek', () => {
+		test( 'should return false when no subscribed date', () => {
+			expect( subscribedWithinPastWeek( {} ) ).to.be.false;
+		} );
+		test( 'should return false when subscribed more than 1 week ago', () => {
+			expect(
+				subscribedWithinPastWeek( {
+					subscribedDate: moment()
+						.subtract( 8, 'days' )
+						.format(),
+				} )
+			).to.be.false;
+		} );
+		test( 'should return true when subscribed less than 1 week ago', () => {
+			expect(
+				subscribedWithinPastWeek( {
+					subscribedDate: moment()
+						.subtract( 3, 'days' )
+						.format(),
+				} )
+			).to.be.true;
 		} );
 	} );
 } );

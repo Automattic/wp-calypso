@@ -6,6 +6,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import afterLayoutFlush from 'lib/after-layout-flush';
+
 const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
 
 /**
@@ -42,18 +47,22 @@ export default EnhancedComponent =>
 			height: 0,
 		};
 
-		handleResize = ( props = this.props ) => {
+		handleResize = afterLayoutFlush( ( props = this.props ) => {
 			const domElement = props.domTarget || this.setRef || this.divRef;
 
 			if ( domElement ) {
 				const dimensions = domElement.getClientRects()[ 0 ];
+				if ( ! dimensions ) {
+					return;
+				}
+
 				const { width, height } = dimensions;
 				const overflowX = domElement.scrollWidth > domElement.clientWidth + OVERFLOW_BUFFER;
 				const overflowY = domElement.scrollHeight > domElement.clientHeight + OVERFLOW_BUFFER;
 
 				this.setState( { width, height, overflowX, overflowY } );
 			}
-		};
+		} );
 
 		componentDidMount() {
 			this.resizeEventListener = window.addEventListener(
@@ -62,9 +71,11 @@ export default EnhancedComponent =>
 			);
 			this.handleResize();
 		}
+
 		componentWillReceiveProps( nextProps ) {
 			this.handleResize( nextProps );
 		}
+
 		componentWillUnmount() {
 			window.removeEventListener( 'resize', this.resizeEventListener );
 		}
@@ -73,6 +84,7 @@ export default EnhancedComponent =>
 			this.divRef = ref;
 			this.handleResize();
 		};
+
 		setWithDimensionsRef = ref => {
 			this.setRef = ref;
 			this.handleResize();

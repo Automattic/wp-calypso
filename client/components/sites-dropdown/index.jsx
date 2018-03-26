@@ -96,16 +96,17 @@ export class SitesDropdown extends PureComponent {
 						) }
 						{ this.props.hasMultipleSites && <Gridicon icon="chevron-down" /> }
 					</div>
-					{ this.props.hasMultipleSites && this.state.open &&
-						<SiteSelector
-							autoFocus={ true }
-							onClose={ this.onClose }
-							onSiteSelect={ this.selectSite }
-							selected={ this.state.selectedSiteId }
-							hideSelected={ true }
-							filter={ this.props.filter && this.siteFilter }
-						/>
-					}
+					{ this.props.hasMultipleSites &&
+						this.state.open && (
+							<SiteSelector
+								autoFocus={ true }
+								onClose={ this.onClose }
+								onSiteSelect={ this.selectSite }
+								selected={ this.state.selectedSiteId }
+								hideSelected={ true }
+								filter={ this.props.filter && this.siteFilter }
+							/>
+						) }
 				</div>
 			</div>
 		);

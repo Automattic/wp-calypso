@@ -1,4 +1,5 @@
 /** @format */
+
 export function createReceiptObject( data ) {
 	return {
 		receiptId: data.receipt_id,
@@ -16,6 +17,7 @@ export function createReceiptObject( data ) {
 				productNameShort: purchase.product_name_short,
 				registrarSupportUrl: purchase.registrar_support_url,
 				isEmailVerified: Boolean( purchase.is_email_verified ),
+				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),
 			};
 		} ),
 		failedPurchases: ( data.failedPurchases || [] ).map( purchase => {

@@ -5,17 +5,3 @@
 .jetpack-credentials .foldable-card.card.is-expanded {
 	margin: 0;
 }
-
-.jetpack-credentials__connected {
-	float: right;
-	background: $alert-green;
-	padding: 4px 8px;
-	border-radius: 2px;
-	font-size: 12px;
-	color: $white;
-}
-
-.jetpack-credentials__connected-checkmark {
-	vertical-align: top;
-	margin-right: 4px;
-}

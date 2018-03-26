@@ -10,6 +10,7 @@
 		margin-bottom: 8px;
 
 		.selected {
+
 			.menu-link-icon,
 			.sidebar__menu-action .gridicon,
 			.sidebar-dynamic-menu-action-icon {
@@ -18,6 +19,22 @@
 
 			.sidebar-streams__edit-icon {
 				fill: $white;
+			}
+
+			.gridicon {
+
+				@include breakpoint( "<660px" ) {
+					fill: $blue-medium;
+				}
+			}
+
+			li > a,
+			li > a:visited,
+			:not( .sidebar__button ) {
+
+				@include breakpoint( "<660px" ) {
+					color: $blue-medium;
+				}
 			}
 		}
 
@@ -39,7 +56,7 @@
 		}
 
 		.sidebar-streams__team {
-			margin-top: -1px; // Removes extra top border in team subs for <480px
+			border-top: 0;
 		}
 	}
 
@@ -254,7 +271,7 @@
 				left: auto;
 				right: 0;
 				top: 0;
-			padding: 8px 13px;
+			padding: 8px 0 8px 13px;
 		}
 	}
 

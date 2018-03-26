@@ -4,7 +4,7 @@
  * External dependencies
  */
 import request from 'superagent';
-import { get, defer } from 'lodash';
+import { get, defer, replace } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -138,7 +138,7 @@ export const loginUserWithTwoFactorVerificationCode = ( twoStepCode, twoFactorAu
 		.send( {
 			user_id: getTwoFactorUserId( getState() ),
 			auth_type: twoFactorAuthType,
-			two_step_code: twoStepCode,
+			two_step_code: replace( twoStepCode, /\s/g, '' ),
 			two_step_nonce: getTwoFactorAuthNonce( getState(), twoFactorAuthType ),
 			remember_me: true,
 			client_id: config( 'wpcom_signup_id' ),

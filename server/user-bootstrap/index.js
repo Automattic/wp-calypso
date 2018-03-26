@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import qs from 'qs';
+import { stringify } from 'qs';
 import superagent from 'superagent';
 import debugFactory from 'debug';
 import crypto from 'crypto';
@@ -25,7 +25,7 @@ const debug = debugFactory( 'calypso:bootstrap' ),
 		meta: 'flags',
 		abtests: getActiveTestNames( { appendDatestamp: true, asCSV: true } ),
 	},
-	url = `${ API_PATH }?${ qs.stringify( apiQuery ) }`;
+	url = `${ API_PATH }?${ stringify( apiQuery ) }`;
 
 module.exports = function( authCookieValue, geoCountry, callback ) {
 	// create HTTP Request object

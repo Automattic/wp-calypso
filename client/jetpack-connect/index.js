@@ -97,6 +97,14 @@ export default function() {
 	}
 
 	page(
+		'/jetpack/connect/instructions',
+		controller.setMasterbar,
+		controller.instructions,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/jetpack/connect/store/:interval(yearly|monthly)?',
 		controller.plansLanding,
 		makeLayout,

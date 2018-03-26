@@ -68,9 +68,6 @@ function getLocation( path ) {
 	if ( path.indexOf( '/recommendations/mine' ) === 0 ) {
 		return 'recommended_foryou';
 	}
-	if ( path.indexOf( '/recommendations' ) === 0 ) {
-		return 'recommended_topics';
-	}
 	if ( path.indexOf( '/following/edit' ) === 0 ) {
 		return 'following_edit';
 	}

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { trim } from 'lodash';
+import { trim, isFunction } from 'lodash';
 import warn from 'lib/warn';
 import debugFactory from 'debug';
 
@@ -104,8 +104,15 @@ export function couponDeleteSuccess( { dispatch }, action ) {
 function apiError( { dispatch }, action, error ) {
 	warn( 'Coupon API Error: ', error );
 
-	if ( action.failureAction ) {
-		dispatch( action.failureAction );
+	const { failureAction } = action;
+	if ( ! failureAction ) {
+		return;
+	}
+
+	if ( isFunction( failureAction ) ) {
+		dispatch( failureAction( error ) );
+	} else {
+		dispatch( failureAction );
 	}
 }
 

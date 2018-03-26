@@ -33,7 +33,6 @@ import {
 } from 'woocommerce/state/sites/orders/selectors';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
-import { requestSettings } from 'woocommerce/state/sites/settings/mailchimp/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	getTotalProducts,
@@ -46,11 +45,10 @@ import ManageExternalView from './manage-external-view';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
 import Placeholder from './placeholder';
-import StoreLocationSetupView from './store-location-setup-view';
+import StoreLocationSetupView from './setup/store-location';
 import RequiredPagesSetupView from './required-pages-setup-view';
 import RequiredPluginsInstallView from './required-plugins-install-view';
-import SetupTasksView from './setup-tasks-view';
-import MailChimp from 'woocommerce/app/settings/email/mailchimp/index.js';
+import SetupTasksView from './setup';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import warn from 'lib/warn';
 
@@ -67,7 +65,6 @@ class Dashboard extends Component {
 			URL: PropTypes.string.isRequired,
 		} ),
 		siteId: PropTypes.number,
-		mailChimpConfigured: PropTypes.bool,
 		fetchOrders: PropTypes.func,
 		requestSyncStatus: PropTypes.func,
 		setupChoicesLoading: PropTypes.bool,
@@ -77,27 +74,27 @@ class Dashboard extends Component {
 		redirectURL: false,
 	};
 
-	componentDidMount = () => {
+	componentDidMount() {
 		const { siteId } = this.props;
 
 		if ( siteId ) {
 			this.fetchStoreData();
 		}
-	};
+	}
 
-	componentDidUpdate = prevProps => {
+	componentDidUpdate( prevProps ) {
 		const { siteId } = this.props;
 		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
 		if ( siteId && oldSiteId !== siteId ) {
 			this.fetchStoreData();
 		}
-	};
+	}
 
 	// If the user 1) has set the store address in StoreLocationSetupView
 	// and 2) we have a redirectURL, don't render but go ahead and
 	// redirect (i.e. to the WooCommerce Setup Wizard in wp-admin)
-	shouldComponentUpdate = ( nextProps, nextState ) => {
+	shouldComponentUpdate( nextProps, nextState ) {
 		const { setStoreAddressDuringInitialSetup } = nextProps;
 		const { redirectURL } = nextState;
 
@@ -107,12 +104,11 @@ class Dashboard extends Component {
 		}
 
 		return true;
-	};
+	}
 
 	fetchStoreData = () => {
 		const { siteId, productsLoaded } = this.props;
 		this.props.fetchOrders( siteId );
-		this.props.requestSettings( siteId );
 
 		if ( ! productsLoaded ) {
 			const params = { page: 1 };
@@ -233,16 +229,10 @@ class Dashboard extends Component {
 			manageView = <ManageExternalView site={ selectedSite } />;
 		}
 
-		return (
-			<div>
-				{ manageView }
-				{ ! this.props.mailChimpConfigured &&
-					manageInCalypso && <MailChimp site={ selectedSite } redirectToSettings dashboardView /> }
-			</div>
-		);
+		return <div>{ manageView }</div>;
 	};
 
-	render = () => {
+	render() {
 		const { className, isSetupComplete, loading, selectedSite, siteId } = this.props;
 
 		return (
@@ -255,7 +245,7 @@ class Dashboard extends Component {
 				<QuerySettingsGeneral siteId={ siteId } />
 			</Main>
 		);
-	};
+	}
 }
 
 function mapStateToProps( state ) {
@@ -301,7 +291,6 @@ function mapDispatchToProps( dispatch ) {
 		{
 			fetchOrders,
 			fetchProducts,
-			requestSettings,
 		},
 		dispatch
 	);

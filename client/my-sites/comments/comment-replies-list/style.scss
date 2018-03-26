@@ -1,3 +1,6 @@
+/** @format */
 .comment-replies-list {
-	margin-left: 56px;
+	&.is-nested {
+		margin-left: 56px;
+	}
 }

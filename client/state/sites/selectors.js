@@ -365,9 +365,9 @@ export function isRequestingSites( state ) {
  * Returns true if a network request is in progress to fetch the specified, or
  * false otherwise.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {Boolean}        Whether request is in progress
+ * @param  {Object}           state  Global state tree
+ * @param  {(Number|String)}  siteId Site ID or slug
+ * @return {Boolean}          Whether request is in progress
  */
 export function isRequestingSite( state, siteId ) {
 	return !! state.sites.requesting[ siteId ];
@@ -1131,4 +1131,14 @@ export function isNewSite( state, siteId ) {
  */
 export function hasAllSitesList( state ) {
 	return !! state.sites.hasAllSitesList;
+}
+
+/**
+ * Returns the updates object for a site
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Object} Available updates for the site
+ */
+export function getUpdatesBySiteId( state, siteId ) {
+	return get( getRawSite( state, siteId ), 'updates', null );
 }

@@ -20,8 +20,7 @@ import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getUpdatesBySiteId } from 'state/sites/updates/selectors';
+import { getUpdatesBySiteId, isJetpackSite } from 'state/sites/selectors';
 import {
 	canCurrentUser,
 	getSiteConnectionStatus,

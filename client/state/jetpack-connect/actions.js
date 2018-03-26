@@ -312,7 +312,9 @@ export function authorize( queryObject ) {
 					error: null,
 				} );
 				// Update the user now that we are fully connected.
-				userFactory().fetch();
+				const user = userFactory();
+				user.fetching = false;
+				user.fetch();
 				// Site may not be accessible yet, so force fetch from wpcom
 				return wpcom.site( client_id ).get( {
 					force: 'wpcom',

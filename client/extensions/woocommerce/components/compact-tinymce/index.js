@@ -16,10 +16,10 @@ import 'tinymce/plugins/lists/plugin.js';
  * Internal dependencies
  */
 import i18n from 'components/tinymce/i18n';
-import userFactory from 'lib/user';
 import { wpautop } from 'lib/formatting';
 // TinyMCE plugins & dependencies
 import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
+import { isRtl as isRtlSelector, getCurrentLocaleSlug } from 'state/selectors';
 
 class CompactTinyMCE extends Component {
 	static contextTypes = {
@@ -77,8 +77,18 @@ class CompactTinyMCE extends Component {
 			}
 		}.bind( this );
 
-		this.localize();
-		const user = userFactory();
+		const store = this.context.store;
+		let isRtl = false;
+		let localeSlug = 'en';
+
+		if ( store ) {
+			const state = store.getState();
+
+			isRtl = isRtlSelector( state );
+			localeSlug = getCurrentLocaleSlug( state );
+		}
+
+		this.localize( isRtl, localeSlug );
 
 		tinymce.init( {
 			selector: '#' + this._id,
@@ -86,9 +96,9 @@ class CompactTinyMCE extends Component {
 			skin: 'lightgray',
 			body_class: 'description',
 			content_css: '/calypso/tinymce/skins/woocommerce/content.css',
-			language: user.get() ? user.get().localeSlug : 'en',
+			language: localeSlug,
 			language_url: this.DUMMY_LANG_URL,
-			directionality: user.isRTL() ? 'rtl' : 'ltr',
+			directionality: isRtl ? 'rtl' : 'ltr',
 			relative_urls: false,
 			remove_script_host: false,
 			convert_urls: false,
@@ -146,20 +156,14 @@ class CompactTinyMCE extends Component {
 		this.textarea = ref;
 	};
 
-	localize() {
-		const user = userFactory();
-		const userData = user.get();
+	localize( isRtl, localeSlug ) {
 		let i18nStrings = i18n;
 
-		if ( ! userData ) {
-			return;
-		}
-
-		if ( user.isRTL() ) {
+		if ( isRtl ) {
 			i18nStrings = assign( { _dir: 'rtl' }, i18nStrings );
 		}
 
-		tinymce.addI18n( userData.localeSlug, i18nStrings );
+		tinymce.addI18n( localeSlug, i18nStrings );
 
 		// Stop TinyMCE from trying to load the lang script by marking as done
 		tinymce.ScriptLoader.markDone( this.DUMMY_LANG_URL );

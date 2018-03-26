@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import DayItem from 'components/date-picker/day';
+import DatePickerNavBar from 'components/date-picker/nav-bar';
 
 /* Internal dependencies
  */
@@ -80,7 +81,8 @@ class DatePicker extends PureComponent {
 		const { moment } = this.props;
 		const localeData = moment().localeData();
 		const firstDayOfWeek = localeData.firstDayOfWeek();
-		const weekdays = moment.weekdaysMin();
+		const weekdaysMin = moment.weekdaysMin();
+		const weekdays = moment.weekdays();
 		const locale = {
 			formatDay: function( date ) {
 				return moment( date ).format( 'llll' );
@@ -91,17 +93,19 @@ class DatePicker extends PureComponent {
 			},
 
 			formatWeekdayShort: function( day ) {
-				return get( weekdays, day, ' ' )[ 0 ];
+				return get( weekdaysMin, day, ' ' )[ 0 ];
 			},
 
 			formatWeekdayLong: function( day ) {
-				return moment()
-					.weekday( day )
-					.format( 'dddd' );
+				return weekdays[ day ];
 			},
 
 			getFirstDayOfWeek: function() {
 				return firstDayOfWeek;
+			},
+
+			formatMonthShort: function( month ) {
+				return moment( month.toISOString() ).format( 'MMM' );
 			},
 		};
 
@@ -192,6 +196,7 @@ class DatePicker extends PureComponent {
 				onMonthChange={ this.props.onMonthChange }
 				enableOutsideDays={ this.props.enableOutsideDays }
 				onCaptionClick={ this.setCalendarMonth }
+				navbarElement={ <DatePickerNavBar /> }
 			/>
 		);
 	}

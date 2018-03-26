@@ -10,12 +10,13 @@
 .tag-stream__header-follow {
 	display: flex;
 	justify-content: flex-end;
+	min-height: 20px;
 }
 
 .tag-stream__header .follow-button {
 
 	@include breakpoint( "<660px" ) {
-		margin: 12px 0 0 15px;
+		margin: 12px 20px 0 15px;
 	}
 }
 

@@ -3,7 +3,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, findIndex, identity, noop, times } from 'lodash';
+import { find, findIndex, get, identity, noop, times } from 'lodash';
 import Gridicon from 'gridicons';
 import page from 'page';
 import React from 'react';
@@ -462,7 +462,7 @@ const undoChangePrimary = domain =>
 
 export default connect(
 	( state, ownProps ) => {
-		const siteId = ownProps.selectedSite.ID;
+		const siteId = get( ownProps, 'selectedSite.ID', null );
 
 		return {
 			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),

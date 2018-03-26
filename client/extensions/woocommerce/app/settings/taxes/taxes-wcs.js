@@ -7,7 +7,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -29,7 +28,6 @@ import ExtendedHeader from 'woocommerce/components/extended-header';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
 import { fetchTaxSettings, updateTaxSettings } from 'woocommerce/state/sites/settings/tax/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import Main from 'components/main';
 import { ProtectFormGuard } from 'lib/protect-form';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 import SettingsNavigation from '../navigation';
@@ -184,7 +182,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 	};
 
 	render = () => {
-		const { className, loaded, siteId, siteSlug, translate } = this.props;
+		const { loaded, siteId, siteSlug, translate } = this.props;
 
 		const breadcrumbs = [
 			<a href={ getLink( '/store/settings/:site/', { slug: siteSlug } ) }>
@@ -194,7 +192,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 		];
 
 		return (
-			<Main className={ classNames( 'settings-taxes', className ) } wideLayout>
+			<div>
 				<ActionHeader breadcrumbs={ breadcrumbs }>
 					<TaxSettingsSaveButton onSave={ this.onSave } />
 				</ActionHeader>
@@ -204,7 +202,7 @@ class SettingsTaxesWooCommerceServices extends Component {
 				{ loaded && this.renderRates() }
 				{ loaded && this.renderOptions() }
 				<ProtectFormGuard isChanged={ ! this.state.pristine } />
-			</Main>
+			</div>
 		);
 	};
 }

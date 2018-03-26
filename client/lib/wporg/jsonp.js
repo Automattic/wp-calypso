@@ -10,7 +10,7 @@
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'jsonp' );
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Module exports.
@@ -81,7 +81,7 @@ function jsonp( url, query, fn ) {
 	};
 
 	// add qs component
-	url += '=' + enc( id ) + '?' + qs.stringify( query );
+	url += '=' + enc( id ) + '?' + stringify( query );
 
 	debug( 'jsonp req "%s"', url );
 

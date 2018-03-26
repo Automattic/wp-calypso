@@ -24,9 +24,9 @@ import {
 	showUpdates,
 	shufflePosts,
 } from 'lib/feed-stream-store/actions';
-import LikeStore from 'lib/like-store/like-store';
-import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeHelper from 'reader/like-helper';
+import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
+import isLikedPost from 'state/selectors/is-liked-post';
 import ListEnd from 'components/list-end';
 import InfiniteList from 'components/infinite-list';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
@@ -39,7 +39,7 @@ import PostLifecycle from './post-lifecycle';
 import { showSelectedPost } from 'reader/utils';
 import getBlockedSites from 'state/selectors/get-blocked-sites';
 import { getReaderFollows } from 'state/selectors';
-import { keysAreEqual, keyToString, keyForPost } from 'lib/feed-stream-store/post-key';
+import { keysAreEqual, keyToString, keyForPost } from 'reader/post-key';
 import { resetCardExpansions } from 'state/ui/reader/card-expansions/actions';
 import { combineCards, injectRecommendations, RECS_PER_BLOCK } from './utils';
 import { reduxGetState } from 'lib/redux-bridge';
@@ -279,13 +279,13 @@ class ReaderStream extends React.Component {
 	};
 
 	toggleLikeAction( siteId, postId ) {
-		const liked = LikeStore.isPostLikedByCurrentUser( siteId, postId );
+		const liked = isLikedPost( reduxGetState(), siteId, postId );
 		if ( liked === null ) {
 			// unknown... ignore for now
 			return;
 		}
 
-		const toggler = liked ? unlikePost : likePost;
+		const toggler = liked ? this.props.unlikePost : this.props.likePost;
 		toggler( siteId, postId );
 	}
 
@@ -518,6 +518,6 @@ export default localize(
 			blockedSites: getBlockedSites( state ),
 			totalSubs: getReaderFollows( state ).length,
 		} ),
-		{ resetCardExpansions }
+		{ resetCardExpansions, likePost, unlikePost }
 	)( ReaderStream )
 );

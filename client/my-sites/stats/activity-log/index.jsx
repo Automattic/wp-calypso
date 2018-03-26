@@ -17,9 +17,9 @@ import ActivityLogBanner from 'my-sites/stats/activity-log-banner';
 import ActivityLogDay from '../activity-log-day';
 import ActivityLogDayPlaceholder from '../activity-log-day/placeholder';
 import ActivityLogSwitch from '../activity-log-switch';
-import ActivityLogUpgradeNotice from '../activity-log-upgrade-notice';
 import Banner from 'components/banner';
 import DatePicker from 'my-sites/stats/stats-date-picker';
+import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import JetpackColophon from 'components/jetpack-colophon';
@@ -480,7 +480,6 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'activity' } siteId={ siteId } slug={ slug } />
-				{ siteId && <ActivityLogUpgradeNotice siteId={ siteId } /> }
 				{ siteId &&
 					'unavailable' === rewindState.state && <UnavailabilityNotice siteId={ siteId } /> }
 				{ 'awaitingCredentials' === rewindState.state && (
@@ -509,8 +508,8 @@ class ActivityLog extends Component {
 					/>
 				) }
 				{ this.renderErrorMessage() }
-				{ this.renderMonthNavigation() }
 				{ this.renderActionProgress() }
+				{ this.renderMonthNavigation() }
 				{ isEmpty( logs ) ? (
 					noLogsContent
 				) : (
@@ -595,6 +594,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
+				<DocumentHead title={ translate( 'Stats' ) } />
 				<QueryRewindState siteId={ siteId } />
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />

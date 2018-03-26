@@ -24,6 +24,7 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_SUCCESS,
 	SITES_REQUEST_FAILURE,
+	SITE_PLUGIN_UPDATED,
 } from 'state/action-types';
 
 /**
@@ -183,3 +184,8 @@ export function deleteSite( siteId ) {
 			} );
 	};
 }
+
+export const sitePluginUpdated = siteId => ( {
+	type: SITE_PLUGIN_UPDATED,
+	siteId,
+} );

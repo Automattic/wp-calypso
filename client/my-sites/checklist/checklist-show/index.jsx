@@ -27,6 +27,7 @@ import { requestGuidedTour } from 'state/ui/guided-tours/actions';
 import ChecklistShowShare from './share';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import userFactory from 'lib/user';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -136,12 +137,15 @@ class ChecklistShow extends PureComponent {
 		const completed = tasks && ! find( tasks, { completed: false } );
 
 		let title = 'Site Checklist';
+		let path = '/checklist/:site';
 		if ( displayMode ) {
 			title = 'Thank You';
+			path += `/${ displayMode }`;
 		}
 
 		return (
 			<Main className="checklist-show">
+				<PageViewTracker path={ path } title={ title } />
 				<SidebarNavigation />
 				<DocumentHead title={ title } />
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }

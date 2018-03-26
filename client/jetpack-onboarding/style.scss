@@ -21,7 +21,8 @@
 
 	.steps__illustration {
 		display: block;
-		margin: 0 auto 20px;
+		margin: 10px auto 20px;
+		max-width: 80%;
 	}
 
 	.steps__description {
@@ -37,23 +38,14 @@
 
 	.steps__summary-columns {
 		display: flex;
-		justify-content: center;
+		flex-wrap: wrap;
+		justify-content: space-around;
 		font-size: 14px;
 		margin-top: 30px;
-
-		@include breakpoint( '<480px' ) {
-			display: block;
-			text-align: center;
-		}
 	}
 
 	.steps__summary-column {
-		margin: 0 60px 20px;
-
-		@include breakpoint( '<480px' ) {
-			display: inline-block;
-			text-align: left;
-		}
+		margin: 0 20px 20px;
 	}
 
 	.steps__summary-heading {
@@ -101,6 +93,12 @@
 		.jetpack-logo__icon {
 			fill: $green-jetpack;
 		}
+	}
+
+	.steps__summary-illustration {
+		display: block;
+		margin: 20px auto;
+		max-width: 300px;
 	}
 }
 

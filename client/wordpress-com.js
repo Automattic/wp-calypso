@@ -113,7 +113,7 @@ const sections = [
 	},
 	{
 		name: 'settings-writing',
-		paths: [ '/settings/writing', '/settings/taxonomies' ],
+		paths: [ '/settings/writing', '/settings/taxonomies', '/settings/podcasting' ],
 		module: 'my-sites/site-settings/settings-writing',
 		secondary: true,
 		group: 'sites',
@@ -303,22 +303,6 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
-	paths: [ '/recommendations/posts' ],
-	module: 'reader/recommendations',
-	secondary: true,
-	group: 'reader',
-} );
-
-sections.push( {
-	name: 'reader',
-	paths: [ '/recommendations' ],
-	module: 'reader/recommendations',
-	secondary: true,
-	group: 'reader',
-} );
-
-sections.push( {
-	name: 'reader',
 	paths: [ '/discover' ],
 	module: 'reader/discover',
 	secondary: true,
@@ -351,7 +335,7 @@ sections.push( {
 
 sections.push( {
 	name: 'reader',
-	paths: [ '/read/search' ],
+	paths: [ '/read/search', '/recommendations' ],
 	module: 'reader/search',
 	secondary: true,
 	group: 'reader',

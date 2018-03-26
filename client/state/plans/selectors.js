@@ -10,6 +10,7 @@ import { get, find } from 'lodash';
  * Internal Dependencies
  */
 import createSelector from 'lib/create-selector';
+import { calculateMonthlyPriceForPlan } from 'lib/plans';
 
 /**
  * Return WordPress plans getting from state object
@@ -65,7 +66,10 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	if ( get( plan, 'raw_price', -1 ) < 0 ) {
 		return null;
 	}
-	return isMonthly ? parseFloat( ( plan.raw_price / 12 ).toFixed( 2 ) ) : plan.raw_price;
+
+	return isMonthly
+		? calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price )
+		: plan.raw_price;
 }
 
 /**

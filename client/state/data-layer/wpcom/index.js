@@ -17,6 +17,7 @@ import jetpackInstall from './jetpack-install';
 import jetpackSettings from './jetpack/settings';
 import localeGuess from './locale-guess';
 import login2fa from './login-2fa';
+import logstash from './logstash';
 import me from './me';
 import meta from './meta';
 import plans from './plans';
@@ -43,6 +44,7 @@ export const handlers = mergeHandlers(
 	jetpackSettings,
 	localeGuess,
 	login2fa,
+	logstash,
 	me,
 	meta,
 	plans,

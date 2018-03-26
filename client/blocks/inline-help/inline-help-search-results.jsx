@@ -1,7 +1,7 @@
+/** @format */
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity, isEmpty } from 'lodash';
@@ -20,12 +20,12 @@ import {
 	getInlineHelpSearchResultsForQuery,
 	getSelectedResult,
 	isRequestingInlineHelpSearchResultsForQuery,
-	shouldOpenSelectedResult,
 } from 'state/inline-help/selectors';
-import { didOpenResult, setSearchResults } from 'state/inline-help/actions';
+import { setSearchResults } from 'state/inline-help/actions';
 
 class InlineHelpSearchResults extends Component {
 	static propTypes = {
+		openResult: PropTypes.func.isRequired,
 		translate: PropTypes.func,
 		searchQuery: PropTypes.string,
 	};
@@ -69,7 +69,7 @@ class InlineHelpSearchResults extends Component {
 			},
 		];
 		return helpfulResults;
-	}
+	};
 
 	renderSearchResults() {
 		if ( isEmpty( this.props.searchQuery ) ) {
@@ -79,9 +79,7 @@ class InlineHelpSearchResults extends Component {
 
 		if ( this.props.isSearching ) {
 			// search, but no results so far
-			return (
-				<PlaceholderLines />
-			);
+			return <PlaceholderLines />;
 		}
 
 		if ( isEmpty( this.props.searchResults ) ) {
@@ -104,9 +102,7 @@ class InlineHelpSearchResults extends Component {
 	renderContextHelp() {
 		const links = this.getContextResults();
 		return (
-			<ul className="inline-help__results-list">
-				{ links && links.map( this.renderHelpLink ) }
-			</ul>
+			<ul className="inline-help__results-list">{ links && links.map( this.renderHelpLink ) }</ul>
 		);
 	}
 
@@ -121,31 +117,16 @@ class InlineHelpSearchResults extends Component {
 			return false;
 		}
 		return selectedLink.link;
-	}
+	};
 
 	componentDidMount() {
 		this.props.setSearchResults( '', this.getContextResults() );
 	}
 
-	componentWillUpdate( nextProps ) {
-		if ( nextProps.shouldOpenSelectedResult ) {
-			const url = this.getSelectedUrl();
-			this.followHelpLink( url )();
-			this.props.didOpenResult();
-			window.location = url;
-			return;
-		}
-	}
-
-	followHelpLink = ( url ) => {
-		const payload = {
-			search_query: this.props.searchQuery,
-			result_url: url,
-		};
-		return () => {
-			this.props.recordTracksEvent( 'calypso_inlinehelp_link_open', payload );
-		};
-	}
+	onHelpLinkClick = event => {
+		event.preventDefault();
+		this.props.openResult( event.target.href );
+	};
 
 	renderHelpLink = ( link, index ) => {
 		const classes = { 'is-selected': this.props.selectedResult === index };
@@ -153,19 +134,22 @@ class InlineHelpSearchResults extends Component {
 			<li key={ link.link } className={ classNames( 'inline-help__results-item', classes ) }>
 				<a
 					href={ link.link }
-					onClick={ this.followHelpLink( link.link ) }
+					onClick={ this.onHelpLinkClick }
 					title={ decodeEntities( link.description ) }
 				>
 					{ preventWidows( decodeEntities( link.title ) ) }
 				</a>
 			</li>
 		);
-	}
+	};
 
 	render() {
 		return (
 			<div>
-				<QueryInlineHelpSearch query={ this.props.searchQuery } requesting={ this.props.isSearching } />
+				<QueryInlineHelpSearch
+					query={ this.props.searchQuery }
+					requesting={ this.props.isSearching }
+				/>
 				{ this.renderSearchResults() }
 			</div>
 		);
@@ -175,13 +159,13 @@ class InlineHelpSearchResults extends Component {
 const mapStateToProps = ( state, ownProps ) => ( {
 	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 	isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-	shouldOpenSelectedResult: shouldOpenSelectedResult( state ),
 	selectedResult: getSelectedResult( state ),
 } );
 const mapDispatchToProps = {
-	didOpenResult,
 	recordTracksEvent,
 	setSearchResults,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelpSearchResults ) );
+export default connect( mapStateToProps, mapDispatchToProps )(
+	localize( InlineHelpSearchResults )
+);

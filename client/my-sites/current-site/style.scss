@@ -88,18 +88,9 @@
 	}
 }
 
-.current-site .notice {
-	margin: 0 8px 8px;
-}
-
-.current-site .notice.is-compact {
+.sidebar .notice.is-compact {
 	display: flex;
-	margin: 0;
-	border-radius: 0;
-
-	@include breakpoint( "<660px" ) {
-		padding: 0 24px;
-	}
+	margin: 4px;
 
 	.notice__text {
 		width: 100%;
@@ -109,9 +100,5 @@
 
 	.notice__action {
 		margin-left: auto;
-	}
-
-	.notice__icon-wrapper {
-		border-radius: 0;
 	}
 }

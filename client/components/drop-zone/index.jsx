@@ -18,6 +18,7 @@ import { identity, includes, noop, without } from 'lodash';
  */
 import RootChild from 'components/root-child';
 import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
+import TranslatableString from 'components/translatable/proptype';
 
 export class DropZone extends React.Component {
 	static propTypes = {
@@ -27,7 +28,7 @@ export class DropZone extends React.Component {
 		onDrop: PropTypes.func,
 		onVerifyValidTransfer: PropTypes.func,
 		onFilesDrop: PropTypes.func,
-		textLabel: PropTypes.string,
+		textLabel: TranslatableString,
 		translate: PropTypes.func,
 		showDropZone: PropTypes.func.isRequired,
 		hideDropZone: PropTypes.func.isRequired,

@@ -95,7 +95,7 @@ const SiteSettingsTraffic = ( {
 					fields={ fields }
 				/>
 			) }
-			<SeoSettingsHelpCard />
+			<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
 			<SeoSettingsMain />
 			<AnalyticsSettings />
 			<Sitemaps

@@ -1,41 +1,14 @@
 .share-widget__container {
-	align-items: center;
-	background-color: $white;
-	display: flex;
-	flex-direction: column;
-	padding: 24px;
-	padding-bottom: 0;
-
-	@include breakpoint( ">960px" ) {
-		padding: 48px 48px 72px;
-		padding-bottom: 0;
-	}
-
-	img {
-		margin-top: 12px;
-
-		@include breakpoint( ">960px" ) {
-			height: 90px;
-		}
-	}
-
-	h2 {
-		font-size: 24px;
-		text-align: center;
-		line-height: 1.2em;
-		margin-bottom: 16px;
-	}
-
-	p {
-		color: $gray-text-min;
-		font-size: 14px;
-		text-align: center;
+	@include breakpoint( ">660px" ) {
+		padding-top: 48px;
 	}
 
 	ul.share-widget__services {
 		list-style-type: none;
-		margin: 0;
+		margin: 0 auto;
+		max-width: 480px;
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: space-between;
 
 		li.share-widget__service {
@@ -46,15 +19,18 @@
 				display: block;
 
 				&:hover {
-					transform: translateY( -4px ) scale( 1.05 );
+					transform: translateY( -4px );
 				}
 			}
 		}
 	}
+
+	img {
+		max-width: 600px;
+	}
 }
 
 .share-widget__service .social-logo {
-
 	&.facebook {
 		color: $color-facebook;
 	}

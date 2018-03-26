@@ -95,6 +95,10 @@ button.foldable-card__action {
 	align-items: center;
 	flex: 1 1;
 	justify-content: flex-end;
+
+	@include breakpoint( '<480px' ) {
+		flex: 0 1;
+	}
 }
 
 .foldable-card__expand {

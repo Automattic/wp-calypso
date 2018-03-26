@@ -17,23 +17,20 @@ import ActionHeader from 'woocommerce/components/action-header';
 import Button from 'components/button';
 import { getLink } from 'woocommerce/lib/nav-utils';
 
-function renderDeleteButton( onDelete, category, translate ) {
+function renderDeleteButton( onDelete, label ) {
 	return (
 		onDelete && (
 			<Button borderless scary onClick={ onDelete ? onDelete : undefined }>
 				<Gridicon icon="trash" />
-				<span>{ translate( 'Delete' ) } </span>
+				<span>{ label } </span>
 			</Button>
 		)
 	);
 }
 
-function renderSaveButton( onSave, isBusy, category, translate ) {
+function renderSaveButton( onSave, isBusy, label ) {
 	const saveExists = 'undefined' !== typeof onSave;
 	const saveDisabled = false === onSave;
-
-	const saveLabel =
-		category && ! isObject( category.id ) ? translate( 'Update' ) : translate( 'Save' );
 
 	return (
 		saveExists && (
@@ -43,7 +40,7 @@ function renderSaveButton( onSave, isBusy, category, translate ) {
 				disabled={ saveDisabled }
 				busy={ isBusy }
 			>
-				{ saveLabel }
+				{ label }
 			</Button>
 		)
 	);
@@ -51,9 +48,9 @@ function renderSaveButton( onSave, isBusy, category, translate ) {
 
 const ProductCategoryHeader = ( { onDelete, onSave, translate, site, category, isBusy } ) => {
 	const existing = category && ! isObject( category.id );
-
-	const deleteButton = renderDeleteButton( onDelete, category, translate );
-	const saveButton = renderSaveButton( onSave, isBusy, category, translate );
+	const deleteButton = renderDeleteButton( onDelete, translate( 'Delete' ) );
+	const saveLabel = existing ? translate( 'Update' ) : translate( 'Save' );
+	const saveButton = renderSaveButton( onSave, isBusy, saveLabel );
 
 	const currentCrumb =
 		category && existing ? (
@@ -72,7 +69,7 @@ const ProductCategoryHeader = ( { onDelete, onSave, translate, site, category, i
 	];
 
 	return (
-		<ActionHeader breadcrumbs={ breadcrumbs }>
+		<ActionHeader breadcrumbs={ breadcrumbs } primaryLabel={ saveLabel }>
 			{ deleteButton }
 			{ saveButton }
 		</ActionHeader>

@@ -79,8 +79,12 @@ const getSavePaymentMethodsSteps = ( state, siteId ) => {
 
 	const actions = [];
 	const edits = getPaymentMethodsEdits( state, siteId );
-	const { updates } = edits;
-	updates.forEach( update => {
+
+	if ( ! edits || ! edits.updates ) {
+		return [];
+	}
+
+	edits.updates.forEach( update => {
 		const { id, ...settings } = update;
 
 		const method = {

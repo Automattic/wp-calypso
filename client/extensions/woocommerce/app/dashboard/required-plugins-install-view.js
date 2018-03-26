@@ -23,8 +23,8 @@ import { getPlugins } from 'state/plugins/installed/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import SetupHeader from './setup-header';
-import SetupNotices from './setup-notices';
+import SetupHeader from './setup/header';
+import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
 import { hasSitePendingAutomatedTransfer } from 'state/selectors';
 import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
@@ -65,36 +65,31 @@ class RequiredPluginsInstallView extends Component {
 
 	constructor( props ) {
 		super( props );
+		const { automatedTransferStatus } = this.props;
 		this.state = {
 			engineState: props.skipConfirmation ? 'INITIALIZING' : 'CONFIRMING',
 			toActivate: [],
 			toInstall: [],
 			workingOn: '',
-			progress: 0,
+			progress: automatedTransferStatus ? transferStatusesToTimes[ automatedTransferStatus ] : 0,
 			totalSeconds: this.getTotalSeconds(),
 		};
 		this.updateTimer = false;
 	}
 
-	componentDidMount = () => {
-		const { hasPendingAT, automatedTransferStatus } = this.props;
+	componentDidMount() {
+		const { hasPendingAT } = this.props;
 
 		this.createUpdateTimer();
-
-		if ( automatedTransferStatus ) {
-			this.setState( {
-				progress: transferStatusesToTimes[ automatedTransferStatus ],
-			} );
-		}
 
 		if ( hasPendingAT ) {
 			this.startSetup();
 		}
-	};
+	}
 
-	componentWillUnmount = () => {
+	componentWillUnmount() {
 		this.destroyUpdateTimer();
-	};
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		const { automatedTransferStatus: currentATStatus, siteId, hasPendingAT } = this.props;
@@ -354,7 +349,7 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	getPluginInstallationTime() {
+	getPluginInstallationTime = () => {
 		const { pluginInstallationTotalSteps } = this.state;
 
 		if ( pluginInstallationTotalSteps ) {
@@ -363,7 +358,7 @@ class RequiredPluginsInstallView extends Component {
 
 		// If there's some error, return 3 seconds for a single plugin installation time.
 		return 3;
-	}
+	};
 
 	startSetup = () => {
 		const { hasPendingAT } = this.props;
@@ -382,7 +377,7 @@ class RequiredPluginsInstallView extends Component {
 	renderConfirmScreen = () => {
 		const { translate } = this.props;
 		return (
-			<div className="dashboard__setup-wrapper">
+			<div className="dashboard__setup-wrapper setup__wrapper">
 				<SetupNotices />
 				<div className="card dashboard__setup-confirm">
 					<SetupHeader
@@ -402,7 +397,7 @@ class RequiredPluginsInstallView extends Component {
 		);
 	};
 
-	getTotalSeconds() {
+	getTotalSeconds = () => {
 		const { hasPendingAT } = this.props;
 
 		if ( hasPendingAT ) {
@@ -410,9 +405,9 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		return TIME_TO_PLUGIN_INSTALLATION;
-	}
+	};
 
-	render = () => {
+	render() {
 		const { site, translate, hasPendingAT } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
@@ -421,7 +416,7 @@ class RequiredPluginsInstallView extends Component {
 		}
 
 		return (
-			<div className="dashboard__setup-wrapper">
+			<div className="dashboard__setup-wrapper setup__wrapper">
 				<SetupNotices />
 				<div className="card dashboard__plugins-install-view">
 					{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
@@ -436,7 +431,7 @@ class RequiredPluginsInstallView extends Component {
 				</div>
 			</div>
 		);
-	};
+	}
 }
 
 function mapStateToProps( state ) {

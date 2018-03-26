@@ -300,6 +300,26 @@ export function parseUnitPeriods( unit, period ) {
 	}
 }
 
+export function parseStoreStatsReferrers( payload ) {
+	if ( ! payload || ! payload.data || ! payload.fields || ! Array.isArray( payload.data ) ) {
+		return [];
+	}
+	const { fields } = payload;
+	return payload.data.map( record => {
+		return {
+			date: record.date,
+			data: record.data.map( referrer => {
+				const obj = {};
+				referrer.forEach( ( value, i ) => {
+					const key = fields[ i ];
+					obj[ key ] = value;
+				} );
+				return obj;
+			} ),
+		};
+	} );
+}
+
 export const normalizers = {
 	/**
 	 * Returns a normalized payload from `/sites/{ site }/stats`
@@ -850,6 +870,10 @@ export const normalizers = {
 			data: parseOrdersChartData( payload ),
 			deltas: parseOrderDeltas( payload ),
 		};
+	},
+
+	statsStoreReferrers( payload ) {
+		return parseStoreStatsReferrers( payload );
 	},
 
 	statsTopSellers( payload ) {

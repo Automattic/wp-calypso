@@ -75,7 +75,6 @@ button {
 		.gridicon {
 			top: 5px;
 			margin-top: -8px;
-			margin-right: 4px;
 		}
 		// Make the left margin of the small plus icon visually less huge
 		.gridicons-plus-small {
@@ -104,6 +103,10 @@ button {
 		margin-top: -2px;
 		width: 18px;
 		height: 18px;
+
+		&:not(:last-child) {
+			margin-right: 4px;
+		}
 	}
 }
 
@@ -309,21 +312,6 @@ button {
 		box-shadow: none;
 	}
 }
-
-// Positions and resets font styles of noticons applied to buttons
-.button.noticon {
-	line-height: inherit;
-
-	&:before {
-		display: inline-block;
-		vertical-align: middle;
-		margin-top: -2px;
-		font-size: 16px;
-		font-style: normal;
-		font-weight: normal;
-	}
-}
-
 
 @keyframes button__busy-animation {
   0%   { background-position: 240px 0; }

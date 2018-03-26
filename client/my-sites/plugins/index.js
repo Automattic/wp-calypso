@@ -83,7 +83,6 @@ export default function() {
 			'/plugins/manage/:site?',
 			siteSelection,
 			navigation,
-			pluginsController.redirectSimpleSitesToPluginBrowser,
 			pluginsController.plugins,
 			makeLayout,
 			clientRender
@@ -93,7 +92,6 @@ export default function() {
 			'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 			siteSelection,
 			navigation,
-			pluginsController.redirectSimpleSitesToPluginBrowser,
 			pluginsController.jetpackCanUpdate,
 			pluginsController.plugins,
 			makeLayout,

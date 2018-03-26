@@ -53,7 +53,7 @@ class SimplePaymentsDialogNavigation extends Component {
 				label={ translate( 'Payment Buttons' ) }
 				count={ paymentButtons.length }
 			>
-				<Button compact icon onClick={ this.onChangeTabs( 'form' ) }>
+				<Button compact onClick={ this.onChangeTabs( 'form' ) }>
 					<Gridicon icon="plus-small" /> { translate( 'Add New' ) }
 				</Button>
 			</SectionHeader>

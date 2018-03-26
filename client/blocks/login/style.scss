@@ -132,6 +132,15 @@
 	}
 }
 
+.wp-login__site-return-link {
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+	&::after {
+		@include long-content-fade($color: $gray-light);
+	}
+}
+
 .two-factor-authentication__auth-code-preview {
 	width: 100%;
 	display: block;

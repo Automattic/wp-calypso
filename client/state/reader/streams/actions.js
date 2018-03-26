@@ -8,8 +8,12 @@ import {
 	READER_STREAMS_PAGE_RECEIVE,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_STREAMS_SELECT_ITEM,
+	READER_STREAMS_SELECT_FIRST_ITEM,
+	READER_STREAMS_SELECT_NEXT_ITEM,
+	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_FILL_GAP,
 	READER_STREAMS_DISMISS_POST,
+	READER_STREAMS_UPDATES_RECEIVE,
 } from 'state/action-types';
 
 /**
@@ -18,69 +22,86 @@ import {
  * This action will fetch a range of posts for a stream and then dispatch
  * READER_STREAM_PAGE_RECEIVE when the page returns. This is usually used to
  * fetch the next page of results, but could be used to fetch arbitrary ranges.
- * @param  {string} streamId The stream to fetch posts for
+ * @param  {string} streamKey The stream to fetch posts for
  * @param  {object} query    The query for posts. Parameters vary by stream type.
  * @return {object}          The action object
  */
-export function requestPage( { streamId, query } ) {
-	const indexOfColon = streamId.indexOf( ':' );
-	const streamType = indexOfColon === -1 ? streamId : streamId.substring( 0, indexOfColon );
+export function requestPage( { streamKey, pageHandle } ) {
+	const indexOfColon = streamKey.indexOf( ':' );
+	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return {
 		type: READER_STREAMS_PAGE_REQUEST,
 		payload: {
-			streamId,
-			query,
+			streamKey,
+			pageHandle,
 			streamType,
 		},
 	};
 }
 
-export function receivePage( { streamId, query, posts } ) {
+export function receivePage( { streamKey, pageHandle, posts } ) {
 	return {
 		type: READER_STREAMS_PAGE_RECEIVE,
 		payload: {
-			streamId,
-			query,
+			streamKey,
 			posts,
+			pageHandle,
 		},
 	};
 }
 
-export function showUpdates( { streamId } ) {
+export function showUpdates( { streamKey } ) {
 	return {
 		type: READER_STREAMS_SHOW_UPDATES,
-		payload: {
-			streamId,
-		},
+		payload: { streamKey },
 	};
 }
 
-export function selectItem( { streamId, index } ) {
+export function receiveUpdates( { streamKey, posts } ) {
+	return {
+		type: READER_STREAMS_UPDATES_RECEIVE,
+		payload: { streamKey, posts },
+	};
+}
+
+export function selectItem( { streamKey, postKey } ) {
 	return {
 		type: READER_STREAMS_SELECT_ITEM,
-		payload: {
-			streamId,
-			index,
-		},
+		payload: { streamKey, postKey },
 	};
 }
 
-export function fillGap( { streamId, gap } ) {
+export function selectFirstItem( { streamKey, items } ) {
+	return {
+		type: READER_STREAMS_SELECT_FIRST_ITEM,
+		payload: { streamKey, items },
+	};
+}
+
+export function selectNextItem( { streamKey, items } ) {
+	return {
+		type: READER_STREAMS_SELECT_NEXT_ITEM,
+		payload: { streamKey, items },
+	};
+}
+
+export function selectPrevItem( { streamKey, items } ) {
+	return {
+		type: READER_STREAMS_SELECT_PREV_ITEM,
+		payload: { streamKey, items },
+	};
+}
+
+export function fillGap( { streamKey, gap } ) {
 	return {
 		type: READER_STREAMS_FILL_GAP,
-		payload: {
-			streamId,
-			gap,
-		},
+		payload: { streamKey, gap },
 	};
 }
 
-export function dismissPost( { streamId, postId } ) {
+export function dismissPost( { streamKey, postId } ) {
 	return {
 		type: READER_STREAMS_DISMISS_POST,
-		payload: {
-			streamId,
-			postId,
-		},
+		payload: { streamKey, postId },
 	};
 }

@@ -38,7 +38,7 @@ class DnsTemplates extends React.Component {
 						}
 					),
 					placeholder: 'google-site-verification=...',
-					validationPattern: /^google-site-verification=\w{43}$/,
+					validationPattern: /^google-site-verification=[A-Za-z0-9_-]{43}$/,
 					dnsTemplateProvider: dnsTemplates.G_SUITE.PROVIDER,
 					dnsTemplateService: dnsTemplates.G_SUITE.SERVICE,
 				},

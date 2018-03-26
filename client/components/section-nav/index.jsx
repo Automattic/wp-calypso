@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { isEqual, includes } from 'lodash';
+import Gridicon from 'gridicons';
 
 /**
  * Internal Dependencies
@@ -63,6 +64,7 @@ class SectionNav extends Component {
 		return (
 			<div className="section-nav__mobile-header" onClick={ this.toggleMobileOpenState }>
 				<span className="section-nav__mobile-header-text">{ this.props.selectedText }</span>
+				<Gridicon icon="chevron-down" size={ 18 } />
 			</div>
 		);
 	};

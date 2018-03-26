@@ -24,10 +24,10 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
+import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isBusiness, isEnterprise, isJetpackBusiness, isJetpackPremium } from 'lib/products-values';
-import { activateModule } from 'state/jetpack/modules/actions';
 import {
 	getSiteOption,
 	isJetpackMinimumVersion,
@@ -96,7 +96,6 @@ class GoogleAnalyticsForm extends Component {
 			handleSubmitForm,
 			isRequestingSettings,
 			isSavingSettings,
-			jetpackModuleActive,
 			jetpackVersionSupportsModule,
 			showUpgradeNudge,
 			site,
@@ -110,7 +109,6 @@ class GoogleAnalyticsForm extends Component {
 			translate,
 			uniqueEventTracker,
 		} = this.props;
-		const activateGoogleAnalytics = () => this.props.activateModule( siteId, 'google-analytics' );
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 		const isJetpackUnsupported = siteIsJetpack && ! jetpackVersionSupportsModule;
 		const analyticsSupportUrl = siteIsJetpack
@@ -138,7 +136,7 @@ class GoogleAnalyticsForm extends Component {
 			: translate( 'Enable Google Analytics by upgrading to the Business plan' );
 
 		return (
-			<form id="site-settings" onSubmit={ handleSubmitForm }>
+			<form id="analytics" onSubmit={ handleSubmitForm }>
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				{ isJetpackUnsupported &&
@@ -150,21 +148,6 @@ class GoogleAnalyticsForm extends Component {
 						>
 							<NoticeAction href={ `/plugins/jetpack/${ siteSlug }` }>
 								{ translate( 'Update Now' ) }
-							</NoticeAction>
-						</Notice>
-					) }
-
-				{ siteIsJetpack &&
-					jetpackModuleActive === false &&
-					! isJetpackUnsupported &&
-					! showUpgradeNudge && (
-						<Notice
-							status="is-warning"
-							showDismiss={ false }
-							text={ translate( 'The Google Analytics module is disabled in Jetpack.' ) }
-						>
-							<NoticeAction onClick={ activateGoogleAnalytics }>
-								{ translate( 'Enable' ) }
 							</NoticeAction>
 						</Notice>
 					) }
@@ -194,6 +177,19 @@ class GoogleAnalyticsForm extends Component {
 					/>
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">
+						{ siteIsJetpack && (
+							<fieldset>
+								<JetpackModuleToggle
+									siteId={ siteId }
+									moduleSlug="google-analytics"
+									label={ translate(
+										'Track your WordPress site statistics with Google Analytics.'
+									) }
+									disabled={ isRequestingSettings || isSavingSettings }
+								/>
+							</fieldset>
+						) }
+
 						<fieldset>
 							<FormLabel htmlFor="wgaCode">
 								{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
@@ -328,7 +324,6 @@ const mapStateToProps = state => {
 		showUpgradeNudge: ! isGoogleAnalyticsEligible,
 		enableForm: isGoogleAnalyticsEligible && googleAnalyticsEnabled,
 		jetpackManagementUrl,
-		jetpackModuleActive,
 		jetpackVersionSupportsModule,
 		sitePlugins,
 		siteSupportsBasicEcommerceTracking,
@@ -337,14 +332,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const connectComponent = connect(
-	mapStateToProps,
-	{
-		activateModule,
-	},
-	null,
-	{ pure: false }
-);
+const connectComponent = connect( mapStateToProps, null, null, { pure: false } );
 
 const getFormSettings = partialRight( pick, [ 'wga' ] );
 

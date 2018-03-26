@@ -132,7 +132,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch posts posts request success action when request completes', () => {
+		test( 'should dispatch success action when posts request completes', () => {
 			return requestSitePosts( 2916284 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_SUCCESS,
@@ -156,7 +156,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch fail action when request fails', () => {
+		test( 'should dispatch failure action when request fails', () => {
 			return requestSitePosts( 77203074 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_REQUEST_FAILURE,
@@ -319,7 +319,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post save save success action when request completes for new post', () => {
+		test( 'should dispatch success action when saving new post succeeds', () => {
 			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
@@ -334,7 +334,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch received post action when request completes for new post', () => {
+		test( 'should dispatch received post action when saving new post succeeds', () => {
 			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -361,7 +361,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post save save success action when request completes for existing post', () => {
+		test( 'should dispatch success action when saving existing post succeeds', () => {
 			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
@@ -376,7 +376,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch received post action when request completes for existing post', () => {
+		test( 'should dispatch received post action when saving existing post succeeds', () => {
 			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
@@ -390,25 +390,27 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch failure action when error occurs while saving new post', () => {
-			return savePost( 77203074, null, { title: 'Hello World' } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_FAILURE,
-					siteId: 77203074,
-					postId: null,
-					error: sinon.match( { message: 'User cannot edit posts' } ),
-				} );
+		test( 'should dispatch failure action when saving new post fails', done => {
+			savePost( 77203074, null, { title: 'Hello World' } )( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_SAVE_FAILURE,
+						siteId: 77203074,
+						postId: null,
+						error: sinon.match( { message: 'User cannot edit posts' } ),
+					} );
+					done();
 			} );
 		} );
 
-		test( 'should dispatch failure action when error occurs while saving existing post', () => {
-			return savePost( 77203074, 102, { title: 'Hello World' } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_SAVE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot edit post' } ),
-				} );
+		test( 'should dispatch failure action when saving existing post fails', done => {
+			savePost( 77203074, 102, { title: 'Hello World' } )( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_SAVE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: sinon.match( { message: 'User cannot edit post' } ),
+					} );
+					done();
 			} );
 		} );
 	} );
@@ -454,7 +456,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post delete request success action when request completes', () => {
+		test( 'should dispatch success action when deleting post succeeds', () => {
 			return deletePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_DELETE_SUCCESS,
@@ -464,14 +466,15 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post delete request failure action when request fails', () => {
-			return deletePost( 77203074, 102 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_DELETE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot delete posts' } ),
-				} );
+		test( 'should dispatch failure action when deleting post fails', done => {
+			deletePost( 77203074, 102 )( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_DELETE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: sinon.match( { message: 'User cannot delete posts' } ),
+					} );
+					done();
 			} );
 		} );
 	} );
@@ -511,7 +514,7 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post restore request success action when request completes', () => {
+		test( 'should dispatch success action when restoring post succeeds', () => {
 			return restorePost( 2916284, 13640 )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_RESTORE_SUCCESS,
@@ -521,14 +524,15 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch post restore request failure action when request fails', () => {
-			return restorePost( 77203074, 102 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: POST_RESTORE_FAILURE,
-					siteId: 77203074,
-					postId: 102,
-					error: sinon.match( { message: 'User cannot restore trashed posts' } ),
-				} );
+		test( 'should dispatch failure action when restoring post fails', done => {
+			restorePost( 77203074, 102 )( spy ).catch( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: POST_RESTORE_FAILURE,
+						siteId: 77203074,
+						postId: 102,
+						error: sinon.match( { message: 'User cannot restore trashed posts' } ),
+					} );
+					done();
 			} );
 		} );
 	} );

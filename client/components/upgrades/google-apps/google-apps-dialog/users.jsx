@@ -8,6 +8,7 @@ import React from 'react';
 import { clone } from 'lodash';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -45,6 +46,7 @@ class GoogleAppsUsers extends React.Component {
 				{ allUserInputs }
 
 				<button className="google-apps-dialog__add-another-user-button" onClick={ this.addUser }>
+					<Gridicon icon="plus" />
 					{ translate( 'Add Another User' ) }
 				</button>
 			</div>
@@ -55,11 +57,12 @@ class GoogleAppsUsers extends React.Component {
 		return (
 			<GoogleAppsUsersForm
 				domain={ this.props.domain }
-				onBlur={ this.props.onBlur }
-				user={ user }
 				index={ index }
-				updateField={ this.updateField }
+				key={ `google-apps-user-form-${ index }` }
+				onBlur={ this.props.onBlur }
 				recordInputFocus={ this.recordInputFocus }
+				user={ user }
+				updateField={ this.updateField }
 			/>
 		);
 	};

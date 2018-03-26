@@ -153,6 +153,7 @@ export class EditorPublishDate extends React.Component {
 						</div>
 					) }
 				</div>
+				<Gridicon className="editor-publish-date__header-chevron" icon="chevron-down" size={ 18 } />
 			</div>
 		);
 	}

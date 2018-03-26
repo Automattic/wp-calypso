@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import qs from 'qs';
+import { stringify } from 'qs';
 import { debounce } from 'lodash';
 import page from 'page';
 import url from 'url';
@@ -53,8 +53,7 @@ const devdocs = {
 				delete query.term;
 			}
 
-			const queryString = qs
-				.stringify( query )
+			const queryString = stringify( query )
 				.replace( /%20/g, '+' )
 				.trim();
 

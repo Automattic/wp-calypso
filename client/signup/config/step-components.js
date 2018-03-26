@@ -36,6 +36,7 @@ export default {
 	'design-type-with-store': DesignTypeWithStoreComponent,
 	'design-type-with-store-nux': DesignTypeWithAtomicStoreComponent,
 	domains: DomainsStepComponent,
+	'domains-store': DomainsStepComponent,
 	'domain-only': DomainsStepComponent,
 	'domains-theme-preselected': DomainsStepComponent,
 	'jetpack-user': UserSignupComponent,

@@ -44,6 +44,18 @@ export const sitesSchema = {
 					},
 				},
 				single_user_site: { type: 'boolean' },
+				updates: {
+					type: 'object',
+					properties: {
+						jp_version: { type: 'string' },
+						plugins: { type: 'number' },
+						themes: { type: 'number' },
+						total: { type: 'number' },
+						translations: { type: 'number' },
+						wordpress: { type: 'number' },
+						wp_version: { type: 'string' },
+					},
+				},
 			},
 		},
 	},

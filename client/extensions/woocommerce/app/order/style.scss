@@ -7,10 +7,6 @@
 		box-sizing: border-box;
 	}
 
-	@include breakpoint( '>660px' ) {
-		margin-top: 58px;
-	}
-
 	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;

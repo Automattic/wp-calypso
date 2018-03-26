@@ -166,9 +166,7 @@ const ConnectedApplications = createReactClass( {
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
 
-				<DocumentHead
-					title={ this.props.translate( 'Connected Applications', { textOnly: true } ) }
-				/>
+				<DocumentHead title={ this.props.translate( 'Connected Applications' ) } />
 
 				{ this.renderConnectedAppsList() }
 			</Main>

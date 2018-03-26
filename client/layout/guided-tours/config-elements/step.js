@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { defer, get, isFunction } from 'lodash';
 import debugFactory from 'debug';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -60,6 +61,8 @@ export default class Step extends Component {
 		style: PropTypes.object,
 		canSkip: PropTypes.bool,
 		wait: PropTypes.func,
+		onTargetDisappear: PropTypes.func,
+		children: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -69,6 +72,12 @@ export default class Step extends Component {
 	static contextTypes = contextTypes;
 
 	state = { initialized: false };
+
+	/**
+	 * A mutation observer to watch whether the target exists
+	 * @type {object}
+	 */
+	observer = null;
 
 	/**
 	 * Flag to determine if we're repositioning the Step dialog
@@ -92,10 +101,12 @@ export default class Step extends Component {
 		this.mounted = true;
 		this.wait( this.props, this.context ).then( () => {
 			window.addEventListener( 'resize', this.onScrollOrResize );
+			this.watchTarget();
 		} );
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
+		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 		this.wait( nextProps, nextContext ).then( () => {
 			this.setStepSection( nextContext );
 			this.quitIfInvalidRoute( nextProps, nextContext );
@@ -103,8 +114,8 @@ export default class Step extends Component {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 			this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || window;
 			this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
-			const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
 			this.setStepPosition( nextProps, shouldScrollTo );
+			this.watchTarget();
 		} );
 	}
 
@@ -116,6 +127,8 @@ export default class Step extends Component {
 		if ( this.scrollContainer ) {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}
+
+		this.unwatchTarget();
 	}
 
 	/*
@@ -142,6 +155,35 @@ export default class Step extends Component {
 			this.setState( state );
 		} else {
 			this.state = { ...this.state, ...state };
+		}
+	}
+
+	watchTarget() {
+		if (
+			! this.props.target ||
+			! this.props.onTargetDisappear ||
+			typeof MutationObserver === 'undefined'
+		) {
+			return;
+		}
+
+		if ( ! this.observer ) {
+			this.observer = new MutationObserver( () => {
+				const target = document.querySelector( `[data-tip-target="${ this.props.target }"]` );
+				if ( ! target ) {
+					this.props.onTargetDisappear( {
+						quit: () => this.context.quit( this.context ),
+						next: () => this.skipToNext( this.props, this.context ),
+					} );
+				}
+			} );
+			this.observer.observe( document.body, { childList: true, subtree: true } );
+		}
+	}
+
+	unwatchTarget() {
+		if ( this.observer ) {
+			this.observer.disconnect();
 		}
 	}
 
@@ -235,16 +277,21 @@ export default class Step extends Component {
 		return this.stepSection && path && this.stepSection !== pathToSection( path );
 	}
 
-	skipIfInvalidContext( props, context ) {
-		const { canSkip, when } = props;
-		const { branching, isValid, next, step, tour, tourVersion } = context;
+	skipToNext( props, context ) {
+		const { branching, next, step, tour, tourVersion } = context;
 
 		this.setAnalyticsTimestamp( context );
 
-		if ( when && ! isValid( when ) && canSkip ) {
-			const nextStepName = props.next || anyFrom( branching[ step ] );
-			const skipping = this.shouldSkipAnalytics();
-			next( { tour, tourVersion, step, nextStepName, skipping } );
+		const nextStepName = props.next || anyFrom( branching[ step ] );
+		const skipping = this.shouldSkipAnalytics();
+		next( { tour, tourVersion, step, nextStepName, skipping } );
+	}
+
+	skipIfInvalidContext( props, context ) {
+		const { canSkip, when } = props;
+
+		if ( when && ! context.isValid( when ) && canSkip ) {
+			this.skipToNext( props, context );
 		}
 	}
 
@@ -281,7 +328,9 @@ export default class Step extends Component {
 	}
 
 	render() {
-		const { when, children } = this.props;
+		// `children` is a render prop where the value is not the usual JSX markup,
+		// but a React component to render, i.e., function or a class.
+		const { when, children: ContentComponent } = this.props;
 		const { isLastStep } = this.context;
 
 		if ( ! this.state.initialized ) {
@@ -321,7 +370,7 @@ export default class Step extends Component {
 
 		return (
 			<Card className={ classNames( ...classes ) } style={ style }>
-				{ children }
+				<ContentComponent translate={ translate } />
 			</Card>
 		);
 	}

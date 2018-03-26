@@ -1,7 +1,3 @@
-// Custom breakpoints
-$reader-related-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$reader-related-card-breakpoint-small: "( max-width: 535px )";
-
 .reader-related-card__heading {
 	color: $gray;
 	font-size: 14px;
@@ -19,11 +15,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	&::after{
 		@include long-content-fade( $size: 35px );
 	}
-
-	@include breakpoint( "<660px" ) {
-		margin-bottom: 0;
-		padding-bottom: 20px;
-	}
 }
 
 .reader-related-card__link,
@@ -38,20 +29,12 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card__list {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	margin: 0;
 	padding: 0;
 
-	@media #{$reader-related-card-breakpoint-medium} {
-		display: block;
-	}
-
-	@include breakpoint( "<660px" ) {
+	@include breakpoint( ">480px" ) {
 		flex-direction: row;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		display: block;
 	}
 }
 
@@ -80,14 +63,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	&:first-child,
 	&:last-child {
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			margin: 0 0 20px 0;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			margin: 0 0 20px 0;
-		}
-
 		@include breakpoint( "<480px" ) {
 			margin: 0 0 20px 0;
 		}
@@ -105,16 +80,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	padding: 0;
 
 	@include breakpoint( "<480px" ) {
-		display: flex;
-		flex-direction: column;
-	}
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		display: flex;
-		flex-direction: column;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
 		display: flex;
 		flex-direction: column;
 	}
@@ -145,14 +110,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 		display: block;
 		overflow: hidden;
 
-		@media #{$reader-related-card-breakpoint-medium} {
-			display: flex;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			display: flex;
-		}
-
 		&::after {
 			@include long-content-fade( $size: 35px );
 				bottom: 0;
@@ -163,21 +120,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	}
 
 	&.has-thumbnail {
-
-		.reader-related-card__meta {
-			margin-bottom: 16px;
-		}
-
-		.reader-related-card__site-info {
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex: 3 0 0;
-			}
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex: 3 0 0;
-			}
-		}
 
 		.reader-related-card__title {
 			font-size: 17px;
@@ -195,25 +137,22 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card__blocks {
 	border-top: 1px solid $gray-lighten-20;
-	padding-top: 11px;
+	margin-top: 30px;
 
-	.reader-related-card__post {
-		max-height: 206px;
+	@include breakpoint( "<480px" ) {
+		margin-top: 0;
+	}
 
-		&::after {
-			@include long-content-fade( $size: 35px );
-			bottom: 0;
-			height: 22px;
-			top: inherit;
-			visibility: visible;
-		}
+	.reader-related-card__post::after  {
+
+		@include long-content-fade( $size: 35px );
+		bottom: 0;
+		height: 22px;
+		top: inherit;
+		visibility: visible;
 	}
 
 	&.is-same-site {
-
-		.reader-related-card {
-			margin-top: -6px;
-		}
 
 		.reader-related-card__meta {
 			display: none !important; // Hides meta info from "More In Site"
@@ -223,172 +162,30 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 			margin: 0 0 14px;
 		}
 
-		.has-thumbnail {
-
-			.reader-related-card__post {
-				max-height: 17px * 1.6 * 4;
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					max-height: 17px * 1.6 * 4;
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					max-height: 17px * 1.6 * 4;
-				}
-			}
-		}
-
-		.reader-related-card__post {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex: 3 0 0;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex: 3 0 0;
-			}
-		}
-
-		.reader-related-card.has-thumbnail {
-			margin-top: 0;
+		.has-thumbnail .reader-related-card__post {
+			max-height: 17px * 1.6 * 4;
 		}
 	}
 
 	&.is-other-site {
-		margin-top: 30px;
 
 		.reader-related-card__post {
-			max-height: 17px * 1.6 * 7.5;
+			max-height: 17px * 1.6 * 4;
 
-			@media #{$reader-related-card-breakpoint-medium} {
-				max-height: 17px * 1.6 * 4;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				max-height: 17px * 1.6 * 4;
-			}
-
-			@include breakpoint( "<480px" ) {
-				max-height: 17px * 1.6 * 4;
-			}
-		}
-
-		.reader-related-card__featured-image {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				margin: 0 15px 0 0;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				margin: 0 15px 0 0;
-			}
-		}
-
-		.reader-related-card__meta {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				position: absolute;
-				width: 100%;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				position: absolute;
-			}
-		}
-
-		.reader-related-card__post {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				margin-top: 50px;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				margin-top: 50px;
+			@include breakpoint( ">480px" ) {
+				max-height: 17px * 1.6 * 7.5;
 			}
 		}
 
 		.has-thumbnail {
 
-			.reader-related-card__site-info {
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					margin-top: 20px;
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					margin-top: 20px;
-				}
-			}
-
-			.reader-related-card__meta {
-				margin-bottom: 19px;
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					margin-top: -4px;
-					right: 0;
-					width: calc( 100% - 97px );
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					margin-top: -4px;
-					right: 0;
-					width: calc( 100% - 97px );
-				}
-			}
-
 			.reader-related-card__post {
 				max-height: 17px * 1.6 * 4;
-
-				@media #{$reader-related-card-breakpoint-medium} {
-					flex: 3 0 0;
-					margin-top: 25px;
-					max-height: 17px * 1.6 * 4.7;
-				}
-
-				@media #{$reader-related-card-breakpoint-small} {
-					flex: 3 0 0;
-					margin-top: 25px;
-					max-height: 17px * 1.6 * 4.7;
-				}
 			}
-		}
-
-		.reader-related-card {
-			margin-top: -5px;
 		}
 
 		.reader-related-card__featured-image {
 			margin: 0 0 14px;
-		}
-	}
-
-	&.is-same-site,
-	&.is-other-site {
-
-		.reader-related-card {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex-direction: row;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex-direction: row;
-			}
-		}
-
-		.reader-related-card__featured-image {
-
-			@media #{$reader-related-card-breakpoint-medium} {
-				flex: 0 0 80px;
-				margin: 0 15px 0 0;
-				width: 80px;
-			}
-
-			@media #{$reader-related-card-breakpoint-small} {
-				flex: 0 0 80px;
-				margin: 0 15px 0 0;
-				width: 80px;
-			}
 		}
 	}
 }
@@ -442,59 +239,23 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	display: flex;
 	font-weight: 500;
 	max-height: 14px * 1.75;
-	max-width: 200px;
 	overflow: hidden;
 	overflow-wrap: break-word;
 	position: relative;
 	text-overflow: ellipsis;
-	white-space: nowrap;
 	word-wrap: break-word;
 
 	&::after {
 		@include long-content-fade( $size: 15% );
 	}
-
-	@include breakpoint( "<960px" ) {
-		max-width: 145px;
-	}
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		max-width: 200px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		max-width: 145px;
-	}
-
-	@media #{$reader-related-card-breakpoint-small} {
-		max-width: 200px;
-	}
-
-	@include breakpoint( "<480px" ) {
-		max-width: 110px;
-	}
 }
 
 .reader-related-card__featured-image {
 	border: 1px solid $gray-lighten-30;
-	min-height: 153px;
+	min-height: 78px;
 
-	@media #{$reader-related-card-breakpoint-small} {
-		flex: 1 1 0;
-		height: auto;
-		margin: 0 15px 0 0;
-		min-height: 78px;
-	}
-
-	@media #{$reader-related-card-breakpoint-medium} {
-		height: auto;
-		flex: 1 1 0;
-		margin: 0 15px 0 0;
-		min-height: 78px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		min-height: 78px;
+	@include breakpoint( ">960px" ) {
+		min-height: 153px;
 	}
 }
 
@@ -512,24 +273,20 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 25px;
+	overflow: hidden;
+	max-height: 16px * 1.5 * 2;
+	word-wrap: break-word;
 
-	// Clamp to 2 lines on narrow viewports
-	@include breakpoint( "<660px" ) {
-		overflow: hidden;
-		max-height: 16px * 1.5 * 2;
-		word-wrap: break-word;
-
-		&::after {
-			@include long-content-fade( $size: 35px );
-			top: 16px * 1.4;
-			height: 16px * 1.4;
-		}
+	&::after {
+		@include long-content-fade( $size: 35px );
+		top: 16px * 1.4;
+		height: 16px * 1.4;
 	}
 
 	// Clamp to 3 lines on larger viewports
 	@include breakpoint( ">660px" ) {
 		overflow: hidden;
-		max-height: 17px * 1.56 * 3;
+		max-height: 17px * 1.48 * 3;
 		word-wrap: break-word;
 
 		&::after {
@@ -613,17 +370,6 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 		border: 0;
 	}
 
-	.reader-related-card__site-info {
-
-		@media #{$reader-related-card-breakpoint-medium} {
-			flex: 3 0 0;
-		}
-
-		@media #{$reader-related-card-breakpoint-small} {
-			flex: 3 0 0;
-		}
-	}
-
 	.reader-related-card__post {
 		// Clobber the long-content-fade
 		&::after {
@@ -633,6 +379,7 @@ $reader-related-card-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card__meta.is-placeholder {
+
 	.reader-related-card__byline-author,
 	.reader-related-card__byline-site {
 		@include placeholder;

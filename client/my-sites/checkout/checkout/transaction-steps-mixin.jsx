@@ -130,6 +130,7 @@ const TransactionStepsMixin = {
 
 		cartItems.getDomainRegistrations( cart ).forEach( function( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_domain_registration', {
+				domain_name: cartItem.meta,
 				domain_tld: getTld( cartItem.meta ),
 				success: success,
 			} );

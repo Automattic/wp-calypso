@@ -24,9 +24,7 @@ import { getSiteFragment, normalize } from 'lib/route';
 import { isLegacyRoute } from 'lib/route/legacy-routes';
 import superProps from 'lib/analytics/super-props';
 import translatorJumpstart from 'lib/translator-jumpstart';
-import nuxWelcome from 'layout/nux-welcome';
 import emailVerification from 'components/email-verification';
-import { isDesktop } from 'lib/viewport';
 import { init as pushNotificationsInit } from 'state/push-notifications/actions';
 import { pruneStaleRecords } from 'lib/wp/sync-handler';
 import { setReduxStore as setSupportUserReduxStore } from 'lib/user/support-user-interop';
@@ -155,18 +153,6 @@ export function setupMiddlewares( currentUser, reduxStore ) {
 		// Focus UI on the content on page navigation
 		if ( ! config.isEnabled( 'code-splitting' ) ) {
 			context.store.dispatch( activateNextLayoutFocus() );
-		}
-
-		// If `?welcome` is present, and `?tour` isn't, show the welcome message
-		if (
-			! context.query.tour &&
-			context.querystring === 'welcome' &&
-			context.pathname.indexOf( '/me/next' ) === -1
-		) {
-			// show welcome message, persistent for full sized screens
-			nuxWelcome.setWelcome( isDesktop() );
-		} else {
-			nuxWelcome.clearTempWelcome();
 		}
 
 		// Bump general stat tracking overall Newdash usage

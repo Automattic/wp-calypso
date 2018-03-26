@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'gridicons';
 
 /**
  * Internal dependencies
@@ -124,6 +125,7 @@ class SharingConnection extends Component {
 		) {
 			return (
 				<a onClick={ this.refresh } className="sharing-connection__account-action reconnect">
+					<Gridicon icon="notice" size={ 18 } />
 					{ this.props.translate( 'Reconnect' ) }
 				</a>
 			);

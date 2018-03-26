@@ -32,7 +32,7 @@ const ImageThumb = ( { width, height, src, alt, placeholder, ...props } ) => {
 
 	return (
 		<div className={ imageClasses } style={ style }>
-			<img src={ src } style={ style } alt={ alt } { ...props } />
+			<img src={ src } alt={ alt } { ...props } />
 		</div>
 	);
 };

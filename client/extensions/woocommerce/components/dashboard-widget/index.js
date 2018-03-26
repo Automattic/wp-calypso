@@ -60,7 +60,6 @@ class DashboardWidget extends Component {
 			image,
 			imageFlush,
 			imagePosition,
-			settingsPanel,
 			title,
 			translate,
 			width,
@@ -69,15 +68,15 @@ class DashboardWidget extends Component {
 		const isTopImage = image && 'top' === imagePosition;
 		const imageClassName = image ? `is-${ imagePosition }` : null;
 		const widthClassName = `is-${ width }-width`;
-		const hasSettingsPanel = ! isUndefined( settingsPanel );
+		const SettingsPanel = this.props.settingsPanel;
+		const hasSettingsPanel = ! isUndefined( SettingsPanel );
 
 		const classes = classNames( 'dashboard-widget', className, imageClassName, widthClassName, {
 			'is-flush-image': imageFlush,
 			'has-settings-panel': hasSettingsPanel,
 		} );
 
-		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-		const imageComponent = <img className="dashboard-widget__image" src={ image } />;
+		const imageComponent = <img className="dashboard-widget__image" src={ image } alt="" />;
 
 		return (
 			<Card className={ classes }>
@@ -107,7 +106,7 @@ class DashboardWidget extends Component {
 						onClose={ this.onSettingsPanelClose }
 						position="bottom left"
 					>
-						{ settingsPanel }
+						<SettingsPanel close={ this.onSettingsPanelClose } />
 					</Popover>
 				) }
 				<div className="dashboard-widget__content">
@@ -131,8 +130,8 @@ DashboardWidget.propTypes = {
 	imageFlush: PropTypes.bool,
 	imagePosition: PropTypes.oneOf( [ 'bottom', 'left', 'right', 'top' ] ),
 	onSettingsClose: PropTypes.func,
-	title: PropTypes.string,
-	settingsPanel: PropTypes.element,
+	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+	settingsPanel: PropTypes.func,
 	width: PropTypes.oneOf( [ 'half', 'full', 'third', 'two-thirds' ] ),
 };
 

@@ -15,7 +15,6 @@ import domains from './domains/reducer';
 import guidedTransfer from './guided-transfer/reducer';
 import monitor from './monitor/reducer';
 import vouchers from './vouchers/reducer';
-import updates from './updates/reducer';
 import sharingButtons from './sharing-buttons/reducer';
 import mediaStorage from './media-storage/reducer';
 import blogStickers from './blog-stickers/reducer';
@@ -38,6 +37,7 @@ import {
 	SITES_REQUEST_SUCCESS,
 	THEME_ACTIVATE_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
+	SITE_PLUGIN_UPDATED,
 } from 'state/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import { combineReducers, createReducer, keyedReducer } from 'state/utils';
@@ -204,6 +204,26 @@ export function items( state = null, action ) {
 
 			return state;
 		}
+
+		case SITE_PLUGIN_UPDATED: {
+			const { siteId } = action;
+			const siteUpdates = get( state[ siteId ], 'updates' );
+			if ( ! siteUpdates ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					updates: {
+						...siteUpdates,
+						plugins: siteUpdates.plugins - 1,
+						total: siteUpdates.total - 1,
+					},
+				},
+			};
+		}
 	}
 
 	return state;
@@ -294,7 +314,6 @@ export default combineReducers( {
 	guidedTransfer,
 	monitor,
 	vouchers,
-	updates,
 	requesting,
 	sharingButtons,
 	blogStickers,

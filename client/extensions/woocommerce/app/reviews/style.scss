@@ -6,9 +6,13 @@
 }
 
 .reviews__filter-nav {
-	margin-top: 58px;
 	.section-nav {
 		margin-top: 8px;
+	}
+
+	.search,
+	.search .search__open-icon {
+		z-index: initial;
 	}
 }
 

@@ -288,19 +288,6 @@
 	}
 }
 
-.sharing-service__glyph.noticon {
-	color: $white;
-	font-size: 32px;
-	margin: 0;
-	line-height: 1;
-	width: auto;
-	height: auto;
-
-	@include breakpoint( "<660px" ) {
-		font-size: 16px;
-	}
-}
-
 @mixin sharing-service( $name, $color ) {
 	.sharing-service.#{ $name } .sharing-service__icon {
 		background: $color;
@@ -411,10 +398,6 @@
 	width: 36px;
 	border: 1px solid $gray-light;
 	color: white;
-
-	&.is-fallback::before {
-		@include noticon( '\f304', 40px );
-	}
 }
 
 .sharing-connection__account-status {
@@ -487,9 +470,10 @@
 .sharing-connection__account-action.reconnect {
 	color: $alert-yellow;
 
-	&:before {
-		@include noticon( '\f414', 16px );
-		margin-right: 8px;
+	.gridicon {
+		margin-right: 4px;
+		position: relative;
+			top: 3px;
 	}
 }
 
@@ -521,11 +505,6 @@
 
 	.sharing-buttons-add {
 		float: right;
-
-		.noticon {
-			font-size: 32px;
-			margin: 7px -18px -2px 0  #{"/*rtl:ignore*/"};
-		}
 
 		&.inactive {
 			opacity: 0.3;
@@ -721,20 +700,10 @@
 		display: inline-flex;
 	}
 
-	&.is-edit::before {
-		@include noticon( '\f411', 16px );
-		margin-right: 4px;
-	}
-
 	&:disabled {
 		cursor: default;
 		border-color: $gray-lighten-30;
 		color: $gray-lighten-30;
-	}
-
-	&.is-add::before {
-		@include noticon( '\f510', 16px );
-		margin-right: 4px;
 	}
 
 	&.is-top::after,

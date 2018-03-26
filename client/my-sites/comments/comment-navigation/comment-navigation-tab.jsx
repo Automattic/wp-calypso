@@ -7,10 +7,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
-export const CommentNavigationTab = ( { children, className, onClick } ) => (
-	<div className={ classNames( 'comment-navigation__tab', className ) } onClick={ onClick }>
-		{ children }
-	</div>
+export const CommentNavigationTab = ( { children, className } ) => (
+	<div className={ classNames( 'comment-navigation__tab', className ) }>{ children }</div>
 );
 
 export default CommentNavigationTab;

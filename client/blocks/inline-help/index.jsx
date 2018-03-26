@@ -1,7 +1,7 @@
+/** @format */
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity } from 'lodash';
@@ -18,17 +18,21 @@ import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
-import Popover from 'components/popover';
-import InlineHelpSearchResults from './inline-help-search-results';
-import InlineHelpSearchCard from './inline-help-search-card';
-import { getInlineHelpSearchResultsForQuery, getSearchQuery } from 'state/inline-help/selectors';
+import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import AsyncLoad from 'components/async-load';
 
 /**
  * Module variables
  */
 const globalKeyBoardShortcutsEnabled = config.isEnabled( 'keyboard-shortcuts' );
-const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled ? getGlobalKeyboardShortcuts() : null;
+const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
+	? getGlobalKeyboardShortcuts()
+	: null;
 const debug = debugFactory( 'calypso:inline-help' );
+
+const InlineHelpPopover = props => (
+	<AsyncLoad { ...props } require="blocks/inline-help/popover" placeholder={ null } />
+);
 
 class InlineHelp extends Component {
 	static propTypes = {
@@ -45,9 +49,31 @@ class InlineHelp extends Component {
 
 	componentDidMount() {
 		if ( globalKeyboardShortcuts ) {
-			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp.bind( this );
+			globalKeyboardShortcuts.showInlineHelp = this.showInlineHelp;
 		}
 	}
+
+	componentWillUnmount() {
+		if ( globalKeyboardShortcuts ) {
+			globalKeyboardShortcuts.showInlineHelp = null;
+		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.props.isHappychatOpen && nextProps.isHappychatOpen ) {
+			this.closeInlineHelp();
+		}
+	}
+
+	preloaded = false;
+
+	// Preload the async chunk on mouse hover or touch start
+	preload = () => {
+		if ( ! this.preloaded ) {
+			asyncRequire( 'blocks/inline-help/popover' );
+			this.preloaded = true;
+		}
+	};
 
 	toggleInlineHelp = () => {
 		const { showInlineHelp } = this.state;
@@ -78,49 +104,34 @@ class InlineHelp extends Component {
 		this.inlineHelpToggle = node;
 	};
 
-	moreHelpClicked = () => {
-		this.closeInlineHelp();
-		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
-	}
-
 	render() {
 		const { translate } = this.props;
-		const classes = { 'is-active': this.state.showInlineHelp };
+		const { showInlineHelp } = this.state;
+		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
 		return (
 			<Button
-				className={ classNames( 'inline-help', classes ) }
+				className={ classNames( 'inline-help', inlineHelpButtonClasses ) }
 				onClick={ this.handleHelpButtonClicked }
+				onTouchStart={ this.preload }
+				onMouseEnter={ this.preload }
 				borderless
 				title={ translate( 'Help' ) }
 				ref={ this.inlineHelpToggleRef }
 			>
 				<Gridicon icon="help-outline" />
-				<Popover
-					isVisible={ this.state.showInlineHelp }
-					onClose={ this.closeInlineHelp }
-					position="top right"
-					context={ this.inlineHelpToggle }
-					className="inline-help__popover"
-				>
-					<div className="inline-help__heading">
-						<InlineHelpSearchCard query={ this.props.searchQuery } />
-						<InlineHelpSearchResults searchQuery={ this.props.searchQuery } />
-						<Button onClick={ this.moreHelpClicked } className="inline-help__button" borderless href="/help">
-							<Gridicon icon="help" /> { translate( 'More help' ) }
-						</Button>
-					</div>
-				</Popover>
+				{ showInlineHelp && (
+					<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
+				) }
 			</Button>
 		);
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	searchQuery: getSearchQuery( state ),
-	searchResults: getInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
-} );
-const mapDispatchToProps = {
-	recordTracksEvent,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineHelp ) );
+export default connect(
+	state => ( {
+		isHappychatOpen: isHappychatOpen( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( InlineHelp ) );

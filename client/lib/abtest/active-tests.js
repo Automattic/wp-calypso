@@ -1,14 +1,5 @@
 /** @format */
 export default {
-	multiDomainRegistrationV1: {
-		datestamp: '20200721',
-		variations: {
-			singlePurchaseFlow: 10,
-			popupCart: 45,
-			keepSearchingInGapps: 45,
-		},
-		defaultVariation: 'singlePurchaseFlow',
-	},
 	signupAtomicStoreVsPressable: {
 		datestamp: '20171101',
 		variations: {
@@ -74,7 +65,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	domainSuggestionTestV6: {
-		datestamp: '20180301',
+		datestamp: '20180315',
 		variations: {
 			group_0: 1, // Default group
 			group_1: 1000,
@@ -85,22 +76,21 @@ export default {
 		defaultVariation: 'group_0',
 		allowExistingUsers: true,
 	},
-	minimizeFreePlan: {
-		datestamp: '20180219',
-		variations: {
-			original: 50,
-			minimized: 50,
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: true,
-	},
-	upgradePricingDisplay: {
-		datestamp: '20180213',
+	upgradePricingDisplayV2: {
+		datestamp: '20180305',
 		variations: {
 			original: 50,
 			modified: 50,
 		},
 		defaultVariation: 'original',
+	},
+	domainSearchPrefill: {
+		datestamp: '20180315',
+		variations: {
+			noPrefill: 50,
+			withSiteTitle: 50,
+		},
+		defaultVariation: 'noPrefill',
 		allowExistingUsers: true,
 	},
 	redesignedSidebarBanner: {
@@ -118,6 +108,24 @@ export default {
 			variant: 50,
 		},
 		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	inlineHelpWithContactForm: {
+		datestamp: '20180306',
+		variations: {
+			original: 90,
+			inlinecontact: 10,
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	mobilePlansTablesOnSignup: {
+		datestamp: '20180320',
+		variations: {
+			original: 50,
+			mobile: 50,
+		},
+		defaultVariation: 'original',
 		allowExistingUsers: true,
 	},
 };

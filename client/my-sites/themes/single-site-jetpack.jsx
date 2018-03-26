@@ -20,7 +20,7 @@ import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
 import { connectOptions } from './theme-options';
 import Banner from 'components/banner';
-import { PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
@@ -34,7 +34,6 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 
 const ConnectedThemesSelection = connectOptions( props => {
 	return (
@@ -93,10 +92,12 @@ const ConnectedSingleSiteJetpack = connectOptions( props => {
 			{ ! requestingSitePlans &&
 				! hasUnlimitedPremiumThemes && (
 					<Banner
-						plan={ PLAN_JETPACK_PREMIUM }
+						plan={ PLAN_JETPACK_BUSINESS }
 						title={ translate( 'Access all our premium themes with our Professional plan!' ) }
 						description={ translate(
-							'Get advanced customization, more storage space, and video support along with all your new themes.'
+							'In addition to more than 100 premium themes, ' +
+								'get Elasticsearch-powered site search, real-time offsite backups, ' +
+								'and security scanning.'
 						) }
 						event="themes_plans_free_personal_premium"
 					/>

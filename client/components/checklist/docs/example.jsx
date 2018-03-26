@@ -10,6 +10,7 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Checklist from '../';
 
 export default class ChecklistExample extends Component {
@@ -99,9 +100,9 @@ export default class ChecklistExample extends Component {
 
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.togglePlaceholder }>
+				<Button className="docs__design-toggle" onClick={ this.togglePlaceholder }>
 					{ toggleText }
-				</a>
+				</Button>
 				<div style={ { clear: 'both' } } />
 				<Checklist
 					tasks={ this.state.tasks }

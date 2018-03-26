@@ -56,6 +56,36 @@ $date-picker_nav_button_size: 20px;
 	line-height: 18px;
 }
 
+.date-picker__nav-bar {
+	height: 26px;
+	text-align: center;
+	top: 11px;
+	z-index: z-index( '.popover', '.date-picker__nav-bar' );
+}
+
+.date-picker__previous-month,
+.date-picker__next-month {
+	float: right;
+	padding: 1px 8px;
+	font-size: 12px;
+	text-transform: capitalize;
+	cursor: pointer;
+	z-index: 2;
+	order-width: 1px;
+
+	&:hover {
+		color: $blue-medium;
+	}
+}
+
+.date-picker__previous-month {
+	float: left;
+}
+
+.date-picker__next-month {
+	float: right;
+}
+
 .DayPicker-Month {
 	display: table;
 	width: 100%;
@@ -86,26 +116,6 @@ $date-picker_nav_button_size: 20px;
 
 	&:before {
 		height: $date-picker_nav_button_size;
-	}
-}
-
-.DayPicker-NavButton--prev {
-	color: $gray;
-	left: 0;
-
-	&:before {
-		@include noticon( '\f431' );
-		transform: rotate( 90deg );
-	}
-}
-
-.DayPicker-NavButton--next {
-	color: $gray;
-	right: 0;
-
-	&:before {
-		@include noticon( '\f432' );
-		transform: rotate( 90deg );
 	}
 }
 

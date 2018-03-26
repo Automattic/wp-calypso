@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { find, filter, some, every } from 'lodash';
+import { every, filter, find, includes, some } from 'lodash';
 
 export const isRequesting = function( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
@@ -67,14 +67,14 @@ export const isInstalling = function( state, siteId, whitelist = false ) {
 
 	// If any plugin is not done/waiting/error'd, it's in an installing state.
 	return some( pluginList, item => {
-		return -1 === [ 'done', 'wait' ].indexOf( item.status ) && item.error === null;
+		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
 	} );
 };
 
 export const getActivePlugin = function( state, siteId, whitelist = false ) {
 	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	const plugin = find( pluginList, item => {
-		return -1 === [ 'done', 'wait' ].indexOf( item.status ) && item.error === null;
+		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
 	} );
 	if ( typeof plugin === 'undefined' ) {
 		return false;

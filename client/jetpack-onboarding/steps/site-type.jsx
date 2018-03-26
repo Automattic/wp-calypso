@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
@@ -36,7 +35,6 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Site Type ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.SITE_TYPE, ':site' ].join( '/' ) }
 					title="Site Type ‹ Jetpack Start"
@@ -48,7 +46,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 					<Tile
 						buttonLabel={ translate( 'Personal site' ) }
 						description={ translate(
-							'To share your ideas, stories, photographs, or creative projects with your followers.'
+							'Share your ideas, stories, photographs, or creative projects with your followers.'
 						) }
 						image={ '/calypso/images/illustrations/type-personal.svg' }
 						highlighted={ siteType === 'personal' }
@@ -59,7 +57,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 					<Tile
 						buttonLabel={ translate( 'Business site' ) }
 						description={ translate(
-							'To promote your business, organization, or brand, sell products or services, or connect with your audience.'
+							'Promote your business, organization, or brand, sell products or services, or connect with your audience.'
 						) }
 						image={ '/calypso/images/illustrations/type-business.svg' }
 						highlighted={ siteType === 'business' }

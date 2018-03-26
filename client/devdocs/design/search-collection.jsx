@@ -5,13 +5,16 @@
  */
 
 import React from 'react';
+import { map, chunk } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import LazyRender from 'react-lazily-render';
 import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import { camelCaseToSlug, getComponentName } from 'devdocs/docs-example/util';
 import ReadmeViewer from 'devdocs/docs-example/readme-viewer';
+import Placeholder from 'devdocs/devdocs-async-load/placeholder';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );
@@ -31,7 +34,13 @@ const shouldShowInstance = ( example, filter, component ) => {
 	return ! filter || searchPattern.toLowerCase().indexOf( filter ) > -1;
 };
 
-const Collection = ( { children, filter, section = 'design', component } ) => {
+const Collection = ( {
+	children,
+	component,
+	examplesToMount = 10,
+	filter,
+	section = 'design',
+} ) => {
 	let showCounter = 0;
 	const summary = [];
 
@@ -49,16 +58,19 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 			summary.push(
 				<span key={ `instance-link-${ showCounter }` } className="design__instance-link">
 					<a href={ exampleLink }>{ exampleName }</a>
-					,&nbsp;
 				</span>
 			);
 		}
 
 		return (
-			<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
-				{ example }
-				{ component && <ReadmeViewer readmeFilePath={ example.props.readmeFilePath } /> }
-			</DocsExampleWrapper>
+			<div>
+				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
+					{ example }
+				</DocsExampleWrapper>
+				{ component && (
+					<ReadmeViewer section={ section } readmeFilePath={ example.props.readmeFilePath } />
+				) }
+			</div>
 		);
 	} );
 
@@ -67,11 +79,24 @@ const Collection = ( { children, filter, section = 'design', component } ) => {
 			{ showCounter > 1 &&
 				filter && (
 					<div className="design__instance-links">
-						<span>Showing </span>
-						{ summary }...
+						<span className="design__instance-links-label">Results:</span>
+						{ summary }
 					</div>
 				) }
-			{ examples }
+
+			{ /* Load first chunk, lazy load all others as needed. */ }
+
+			{ examples.slice( 0, examplesToMount ) }
+
+			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), exampleGroup => {
+				return (
+					<LazyRender>
+						{ shouldRender =>
+							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
+						}
+					</LazyRender>
+				);
+			} ) }
 		</div>
 	);
 };

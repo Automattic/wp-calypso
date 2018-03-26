@@ -34,11 +34,11 @@ function PrimaryAndRecentSites() {
 ### `siteId`
 
 <table>
-	<tr><th>Type</th><td>Number</td></tr>
+	<tr><th>Type</th><td>Number or String</td></tr>
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-An optional prop specifying a single site to be requested.
+An optional prop specifying a single site to be requested. Can be either a site ID or slug.
 
 ### `primaryAndRecent`
 

@@ -11,7 +11,6 @@ const _ = require( 'lodash' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
 const fs = require( 'fs' );
 const HappyPack = require( 'happypack' );
-const HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 const NameAllModulesPlugin = require( 'name-all-modules-plugin' );
@@ -57,6 +56,7 @@ _.remove( babelConfig.env.test.plugins, elem => /babel-lodash-es/.test( elem ) )
  *
  * Providing webpack with these aliases instead of telling it to scan client/extensions for every
  * module resolution speeds up builds significantly.
+ * @returns {Object} a mapping of extension name to path
  */
 function getAliasesForExtensions() {
 	const extensionsDirectory = path.join( __dirname, 'client', 'extensions' );
@@ -102,8 +102,8 @@ const webpackConfig = {
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[chunkhash].min.js', // prefer the chunkhash, which depends on the chunk, not the entire build
-		chunkFilename: '[name].[chunkhash].min.js', // ditto
+		filename: '[name].[chunkhash].opt.js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].opt.js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	module: {
@@ -168,6 +168,7 @@ const webpackConfig = {
 		modules: [ path.join( __dirname, 'client' ), 'node_modules' ],
 		alias: Object.assign(
 			{
+				'gridicons/example': 'gridicons/dist/example',
 				'react-virtualized': 'react-virtualized/dist/commonjs',
 				'social-logos/example': 'social-logos/build/example',
 			},
@@ -221,12 +222,14 @@ if ( calypsoEnv === 'desktop' ) {
 		'gridicons',
 		'i18n-calypso',
 		'immutable',
+		'localforage',
 		'lodash',
 		'moment',
 		'page',
 		'prop-types',
 		'react',
 		'react-dom',
+		'react-modal',
 		'react-redux',
 		'redux',
 		'redux-thunk',
@@ -279,22 +282,23 @@ if ( ! config.isEnabled( 'desktop' ) ) {
 	);
 }
 
-if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' );
-	webpackConfig.plugins.unshift(
-		new HardSourceWebpackPlugin( {
-			cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ),
-		} )
-	);
-}
-
 if ( shouldMinify ) {
 	webpackConfig.plugins.push(
 		new UglifyJsPlugin( {
 			cache: 'docker' !== process.env.CONTAINER,
 			parallel: true,
-			uglifyOptions: { ecma: 5 },
 			sourceMap: Boolean( process.env.SOURCEMAP ),
+			uglifyOptions: {
+				compress: {
+					/**
+					 * Produces inconsistent results
+					 * Enable when the following is resolved:
+					 * https://github.com/mishoo/UglifyJS2/issues/3010
+					 */
+					collapse_vars: false,
+				},
+				ecma: 5,
+			},
 		} )
 	);
 }

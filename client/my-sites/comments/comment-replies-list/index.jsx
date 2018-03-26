@@ -27,12 +27,13 @@ export class CommentRepliesList extends Component {
 		this.setState( ( { showAllReplies } ) => ( { showAllReplies: ! showAllReplies } ) );
 
 	render() {
+		const maxDepth = 2;
 		const { siteId, commentParentId, depth, replies, translate } = this.props;
 		const { showAllReplies } = this.state;
 
 		const repliesToShow = showAllReplies ? replies : take( replies, 5 );
 
-		const classes = classNames( { 'comment-replies-list': depth < 2 } );
+		const classes = classNames( 'comment-replies-list', { 'is-nested': depth < maxDepth } );
 
 		return (
 			<div className={ classes }>
@@ -53,9 +54,10 @@ export class CommentRepliesList extends Component {
 				{ map( repliesToShow, ( { commentId } ) => (
 					<Comment
 						commentId={ commentId }
+						isAtMaxDepth={ depth >= maxDepth }
+						isPostView={ true }
 						key={ `comment-${ siteId }-${ commentParentId }-${ commentId }` }
 						refreshCommentData={ true }
-						isPostView={ true }
 					/>
 				) ) }
 			</div>

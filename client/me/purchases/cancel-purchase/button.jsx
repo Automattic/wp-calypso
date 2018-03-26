@@ -268,8 +268,6 @@ class CancelPurchaseButton extends Component {
 
 		this.props.clearPurchases();
 
-		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
-
 		page.redirect( purchasesRoot );
 	};
 
@@ -301,6 +299,8 @@ class CancelPurchaseButton extends Component {
 				enrichedSurveyData( surveyData, moment(), selectedSite, purchase )
 			);
 		}
+
+		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 
 		if ( refundable ) {
 			cancelAndRefundPurchase(

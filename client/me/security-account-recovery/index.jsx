@@ -59,7 +59,7 @@ const SecurityAccountRecovery = props => (
 
 		<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-		<DocumentHead title={ props.translate( 'Account Recovery', { textOnly: true } ) } />
+		<DocumentHead title={ props.translate( 'Account Recovery' ) } />
 
 		<CompactCard>
 			<p className="security-account-recovery__text">

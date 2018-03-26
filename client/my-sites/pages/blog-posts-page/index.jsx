@@ -35,6 +35,10 @@ class BlogPostsPage extends React.Component {
 			.shift();
 	}
 
+	getPageTitle = pageId =>
+		this.getPageProperty( { pageId, property: 'title' } ) ||
+		`#${ pageId } ${ this.props.translate( '(no title)' ) }`;
+
 	getPostsPageLink( { isStaticHomePageWithNoPostsPage, isCurrentlySetAsHomepage } ) {
 		if ( isStaticHomePageWithNoPostsPage ) {
 			return null;
@@ -57,10 +61,7 @@ class BlogPostsPage extends React.Component {
 					{ this.props.translate( 'Not in use.' ) + ' ' }
 					{ this.props.translate( '"%(pageTitle)s" is the front page.', {
 						args: {
-							pageTitle: this.getPageProperty( {
-								pageId: this.props.frontPage,
-								property: 'title',
-							} ),
+							pageTitle: this.getPageTitle( this.props.frontPage ),
 						},
 					} ) }
 				</span>
@@ -80,7 +81,7 @@ class BlogPostsPage extends React.Component {
 			<span>
 				{ translate( '"%(pageTitle)s" page is showing your latest posts.', {
 					args: {
-						pageTitle: this.getPageProperty( { pageId: this.props.postsPage, property: 'title' } ),
+						pageTitle: this.getPageTitle( this.props.postsPage ),
 					},
 				} ) }
 			</span>

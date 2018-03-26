@@ -88,9 +88,7 @@ class MasterbarLoggedIn extends React.Component {
 					icon={ this.wordpressIcon() }
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
-					tooltip={ translate( 'View a list of your sites and access their dashboards', {
-						textOnly: true,
-					} ) }
+					tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
 					preloadSection={ this.preloadMySites }
 				>
 					{ this.props.user.get().site_count > 1
@@ -104,7 +102,7 @@ class MasterbarLoggedIn extends React.Component {
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
-					tooltip={ translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
+					tooltip={ translate( 'Read the blogs and topics you follow' ) }
 					preloadSection={ this.preloadReader }
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
@@ -115,7 +113,7 @@ class MasterbarLoggedIn extends React.Component {
 						user={ this.props.user }
 						isActive={ this.isActive( 'post' ) }
 						className="masterbar__item-new"
-						tooltip={ translate( 'Create a New Post', { textOnly: true } ) }
+						tooltip={ translate( 'Create a New Post' ) }
 					>
 						{ translate( 'Write' ) }
 					</Publish>
@@ -127,9 +125,7 @@ class MasterbarLoggedIn extends React.Component {
 					onClick={ this.clickMe }
 					isActive={ this.isActive( 'me' ) }
 					className="masterbar__item-me"
-					tooltip={ translate( 'Update your profile, personal settings, and more', {
-						textOnly: true,
-					} ) }
+					tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 					preloadSection={ this.preloadMe }
 				>
 					<Gravatar user={ this.props.user.get() } alt="Me" size={ 18 } />
@@ -142,7 +138,7 @@ class MasterbarLoggedIn extends React.Component {
 					isShowing={ this.props.isNotificationsShowing }
 					isActive={ this.isActive( 'notifications' ) }
 					className="masterbar__item-notifications"
-					tooltip={ translate( 'Manage your notifications', { textOnly: true } ) }
+					tooltip={ translate( 'Manage your notifications' ) }
 				>
 					<span className="masterbar__item-notifications-label">
 						{ translate( 'Notifications', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }

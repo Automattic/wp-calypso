@@ -1,15 +1,18 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from 'config';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 import url from 'url';
+
+/**
+ * Internal dependencies
+ */
+import DashboardWidget from 'woocommerce/components/dashboard-widget';
 
 class ShareWidget extends Component {
 	static propTypes = {
@@ -112,17 +115,24 @@ class ShareWidget extends Component {
 		);
 	};
 
-	render = () => {
+	render() {
 		const { text, title, urlToShare } = this.props;
+		// just `share-widget` gets blocked by ad-blockers
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="share-widget__container card">
-				<h2>{ title }</h2>
+			<DashboardWidget
+				className="share-widget__container"
+				title={ title }
+				image="/calypso/images/extensions/woocommerce/woocommerce-share.svg"
+				imagePosition="bottom"
+				imageFlush
+			>
 				<p>{ text }</p>
 				{ this.renderServiceIcons( urlToShare ) }
-				<img src="/calypso/images/extensions/woocommerce/woocommerce-share.svg" />
-			</div>
+			</DashboardWidget>
 		);
-	};
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
 }
 
 export default localize( ShareWidget );

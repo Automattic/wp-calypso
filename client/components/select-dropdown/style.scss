@@ -53,8 +53,11 @@ $compact-header-height: 35;
 .select-dropdown__header {
 	height: #{ $header-height }px;
 	line-height: #{ $header-height - 3 }px;
-	padding: 0 32px 0 #{ $side-margin }px;
+	padding: 0 #{ $side-margin }px 0 #{ $side-margin }px;
 	box-sizing: border-box;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 
 	border-style: solid;
 	border-color: $gray-lighten-20;
@@ -68,33 +71,17 @@ $compact-header-height: 35;
 	transition: background-color 0.2s ease;
 	cursor: pointer;
 
-	// down-arrow
-	&::after {
-		@include noticon('\f431', 22px);
-
-		display: block;
-		width: 20px;
-		line-height: #{ $header-height - 1 }px;
-		color: rgba( $gray, 0.5 );
-
-		position: absolute;
-			right: 14px;
-			top: 0px;
-
-		.is-compact & {
-			right: 5px;
-			line-height: #{ $compact-header-height }px;
-		}
-	}
-
-	.has-count & {
-		padding-right: 75px;
+	.gridicons-chevron-down {
+		fill: $gray-darken-20;
+		margin: 0;
+		flex-shrink: 0;
+		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	.is-compact & {
 		height: #{$compact-header-height }px;
 		line-height: #{$compact-header-height - 3 }px;
-		color: $gray-text-min;
+		padding-right: #{ $side-margin / 2 }px;
 		font-size: 12px;
 
 		.count {
@@ -109,8 +96,8 @@ $compact-header-height: 35;
 		box-shadow: none;
 		background-color: $gray-light;
 
-		&::after {
-			content: '\f432';
+		.gridicons-chevron-down {
+			transform: rotate( -180deg );
 		}
 	}
 
@@ -123,6 +110,17 @@ $compact-header-height: 35;
 		right: 40px;
 		top: #{ ( $header-height - 18 - 2 ) / 2 }px;
 	}
+}
+
+.select-dropdown__header-text {
+	display: block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+	.has-count & {
+		padding-right: 40px;
+	}
 
 	.gridicon {
 		margin-right: #{ ( $side-margin / 2 ) }px;
@@ -133,13 +131,6 @@ $compact-header-height: 35;
 			top: 2px;
 		}
 	}
-}
-
-.select-dropdown__header-text {
-	display: block;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
 }
 
 .select-dropdown__options {
@@ -269,7 +260,7 @@ $compact-header-height: 35;
 
 .select-dropdown__label {
 	display: block;
-	color: $gray-lighten-10;
+	color: $gray-text-min;
 	line-height: 20px;
 
 	label {

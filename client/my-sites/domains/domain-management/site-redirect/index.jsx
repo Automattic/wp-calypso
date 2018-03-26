@@ -74,20 +74,20 @@ class SiteRedirect extends React.Component {
 		event.preventDefault();
 
 		updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl, success => {
-				this.props.updateSiteRedirectClick(
-					this.props.selectedDomainName,
-					this.state.redirectUrl,
-					success
-				);
+			this.props.updateSiteRedirectClick(
+				this.props.selectedDomainName,
+				this.state.redirectUrl,
+				success
+			);
 
-				if ( success ) {
-					page(
-						domainManagementRedirectSettings(
-							this.props.selectedSite.slug,
-							trim( trimEnd( this.state.redirectUrl, '/' ) )
-						)
-					);
-				}
+			if ( success ) {
+				page(
+					domainManagementRedirectSettings(
+						this.props.selectedSite.slug,
+						trim( trimEnd( this.state.redirectUrl, '/' ) )
+					)
+				);
+			}
 		} );
 	};
 

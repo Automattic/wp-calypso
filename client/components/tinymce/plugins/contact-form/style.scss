@@ -73,6 +73,14 @@
 	.card {
 		border-radius: 4px;
 	}
+	.foldable-card__main {
+		min-width: 0;
+		word-wrap: break-word;
+	}
+}
+
+.editor-contact-form-modal-field-header {
+	width: 100%;
 }
 
 .editor-contact-form-modal-settings {

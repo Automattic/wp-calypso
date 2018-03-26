@@ -14,9 +14,10 @@ import page from 'page';
  */
 import HeaderCake from 'components/header-cake';
 import CompactCard from 'components/card/compact';
-import CTACard from './cta-card';
+import ActionCard from 'components/action-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
+import ExternalLink from 'components/external-link';
 
 class SelectBusinessType extends Component {
 	static propTypes = {
@@ -27,13 +28,19 @@ class SelectBusinessType extends Component {
 
 	trackCreateMyListingClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_test_google_my_business_select_business_type_create_my_listing_button_click'
+			'calypso_google_my_business_select_business_type_create_my_listing_button_click'
 		);
 	};
 
 	trackOptimizeYourSEOClick = () => {
 		this.props.recordTracksEvent(
-			'calypso_test_google_my_business_select_business_type_optimize_your_seo_button_click'
+			'calypso_google_my_business_select_business_type_optimize_your_seo_button_click'
+		);
+	};
+
+	trackGoogleMyBusinessLinkClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_google_my_business_select_business_type_google_my_business_link_click'
 		);
 	};
 
@@ -58,8 +65,21 @@ class SelectBusinessType extends Component {
 
 						<p>
 							{ translate(
-								'Google My Business lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area.'
+								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
+									'It works for businesses that have a physical location or serve a local area.',
+								{
+									components: {
+										link: (
+											<ExternalLink
+												href="https://www.google.com/business/"
+												target="_blank"
+												rel="noopener noreferrer"
+												icon={ true }
+												onClick={ this.trackGoogleMyBusinessLinkClick }
+											/>
+										),
+									},
+								}
 							) }
 						</p>
 					</div>
@@ -71,15 +91,15 @@ class SelectBusinessType extends Component {
 					/>
 				</CompactCard>
 
-				<CTACard
+				<ActionCard
 					headerText={ translate( 'Physical Location or Service Area', {
 						comment: 'In the context of a business activity, brick and mortar or online service',
 					} ) }
 					mainText={ translate(
-						'My business has a physical location customers can visit, ' +
+						'Your business has a physical location customers can visit, ' +
 							'or provides goods and services to local customers, or both.'
 					) }
-					buttonText={ translate( 'Create My Listing', {
+					buttonText={ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
 					} ) }
 					buttonIcon="external"
@@ -89,7 +109,7 @@ class SelectBusinessType extends Component {
 					buttonOnClick={ this.trackCreateMyListingClick }
 				/>
 
-				<CTACard
+				<ActionCard
 					headerText={ translate( 'Online Only', {
 						comment: 'In the context of a business activity, as opposed to a brick and mortar',
 					} ) }

@@ -28,6 +28,7 @@ class StoreStatsModule extends Component {
 		siteId: PropTypes.number,
 		statType: PropTypes.string,
 		query: PropTypes.object,
+		fetchedData: PropTypes.oneOfType( [ PropTypes.array, PropTypes.object ] ),
 	};
 
 	state = {
@@ -71,8 +72,10 @@ class StoreStatsModule extends Component {
 	}
 }
 
-export default connect( ( state, { siteId, statType, query } ) => {
-	const statsData = getSiteStatsNormalizedData( state, siteId, statType, query );
+export default connect( ( state, { siteId, statType, query, fetchedData } ) => {
+	const statsData = fetchedData
+		? fetchedData
+		: getSiteStatsNormalizedData( state, siteId, statType, query );
 	return {
 		data: statType === 'statsOrders' ? statsData.data : statsData,
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),

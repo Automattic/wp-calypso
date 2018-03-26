@@ -9,7 +9,7 @@ import store from 'store';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:user' );
 import config from 'config';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -238,12 +238,7 @@ User.prototype.getAvatarUrl = function( options ) {
 	options = options || {};
 	options = Object.assign( {}, options, default_options );
 
-	return avatar + '?' + qs.stringify( options );
-};
-
-User.prototype.isRTL = function() {
-	const language = this.getLanguage();
-	return language && language.rtl;
+	return avatar + '?' + stringify( options );
 };
 
 /**

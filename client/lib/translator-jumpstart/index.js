@@ -18,12 +18,17 @@ import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
+import { hasTranslationSet } from 'lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
 
 const user = new User(),
 	communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
-	communityTranslatorVersion = '1.160728',
+	communityTranslatorVersion = '1.160729',
+	// lookup for the translation set slug on GP
+	translateSetSlugs = {
+		de_formal: 'formal',
+	},
 	translationDataFromPage = {
 		localeCode: 'en',
 		languageName: 'English',
@@ -32,6 +37,7 @@ const user = new User(),
 		glotPress: {
 			url: 'https://translate.wordpress.com',
 			project: 'test',
+			translation_set_slug: 'default',
 		},
 	};
 
@@ -39,7 +45,7 @@ const user = new User(),
  * Local variables
  */
 
-var injectUrl,
+let injectUrl,
 	initialized,
 	previousEnabledSetting,
 	_shouldWrapTranslations = false;
@@ -53,7 +59,17 @@ const communityTranslatorJumpstart = {
 	isEnabled() {
 		const currentUser = user.get();
 
-		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
+		// disable for locales
+		if (
+			! currentUser ||
+			! currentUser.localeSlug ||
+			! hasTranslationSet( currentUser.localeSlug )
+		) {
+			return false;
+		}
+
+		// disable for locale variants with no official GP translation sets
+		if ( currentUser.localeVariant && ! hasTranslationSet( currentUser.localeVariant ) ) {
 			return false;
 		}
 
@@ -91,6 +107,11 @@ const communityTranslatorJumpstart = {
 			return displayedTranslationFromPage;
 		}
 
+		if ( 'boolean' === typeof optionsFromPage.textOnly && optionsFromPage.textOnly ) {
+			debug( 'respecting textOnly for string "' + originalFromPage + '"' );
+			return displayedTranslationFromPage;
+		}
+
 		const props = {
 			className: 'translatable',
 			'data-singular': originalFromPage,
@@ -122,11 +143,11 @@ const communityTranslatorJumpstart = {
 	},
 
 	init() {
-		const languageJson = i18n.getLocale() || { '': {} },
-			localeCode = languageJson[ '' ].localeSlug;
+		const languageJson = i18n.getLocale() || { '': {} };
+		const { localeSlug: localeCode, localeVariant } = languageJson[ '' ];
 
 		if ( localeCode && languageJson ) {
-			this.updateTranslationData( localeCode, languageJson );
+			this.updateTranslationData( localeCode, languageJson, localeVariant );
 		} else {
 			debug( 'trying to initialize translator without loaded language' );
 		}
@@ -153,7 +174,7 @@ const communityTranslatorJumpstart = {
 		initialized = true;
 	},
 
-	updateTranslationData( localeCode, languageJson ) {
+	updateTranslationData( localeCode, languageJson, localeVariant = null ) {
 		const languages = config( 'languages' );
 
 		if ( translationDataFromPage.localeCode === localeCode ) {
@@ -185,6 +206,8 @@ const communityTranslatorJumpstart = {
 		} else {
 			translationDataFromPage.glotPress.project = 'test';
 		}
+		translationDataFromPage.glotPress.translation_set_slug =
+			translateSetSlugs[ localeVariant ] || 'default';
 	},
 
 	setInjectionURL( jsFile ) {

@@ -47,6 +47,14 @@ class CheckoutThankYouHeader extends PureComponent {
 			return translate( 'Some items failed.' );
 		}
 
+		if (
+			primaryPurchase &&
+			isDomainMapping( primaryPurchase ) &&
+			! primaryPurchase.isRootDomainWithUs
+		) {
+			return preventWidows( translate( 'Almost done!' ) );
+		}
+
 		if ( primaryPurchase && isChargeback( primaryPurchase ) ) {
 			return translate( 'Thank you!' );
 		}
@@ -98,9 +106,23 @@ class CheckoutThankYouHeader extends PureComponent {
 		}
 
 		if ( isDomainMapping( primaryPurchase ) ) {
+			if ( primaryPurchase.isRootDomainWithUs ) {
+				return translate(
+					'Your domain {{strong}}%(domain)s{{/strong}} was added to your site. ' +
+						'We have set everything up for you, but it may take a little while to start working.',
+					{
+						args: {
+							domain: primaryPurchase.meta,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			}
+
 			return translate(
-				'Your domain {{strong}}%(domainName)s{{/strong}} was added to your site. ' +
-					'It may take a little while to start working – see below for more information.',
+				'Follow the instructions below to finish setting up your domain {{strong}}%(domainName)s{{/strong}}.',
 				{
 					args: { domainName: primaryPurchase.meta },
 					components: { strong: <strong /> },
@@ -252,7 +274,11 @@ class CheckoutThankYouHeader extends PureComponent {
 		let svg = 'thank-you.svg';
 		if ( hasFailedPurchases ) {
 			svg = 'items-failed.svg';
-		} else if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
+		} else if (
+			primaryPurchase &&
+			( ( isDomainMapping( primaryPurchase ) && ! primaryPurchase.isRootDomainWithUs ) ||
+				isDelayedDomainTransfer( primaryPurchase ) )
+		) {
 			svg = 'publish-button.svg';
 		} else if ( primaryPurchase && isDomainTransfer( primaryPurchase ) ) {
 			svg = 'check-emails-desktop.svg';
@@ -261,7 +287,7 @@ class CheckoutThankYouHeader extends PureComponent {
 		return (
 			<div className={ classNames( 'checkout-thank-you__header', classes ) }>
 				<div className="checkout-thank-you__header-icon">
-					<img src={ `/calypso/images/upgrades/${ svg }` } />
+					<img src={ `/calypso/images/upgrades/${ svg }` } alt="" />
 				</div>
 				<div className="checkout-thank-you__header-content">
 					<div className="checkout-thank-you__header-copy">

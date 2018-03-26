@@ -6,7 +6,7 @@
 
 import cookie from 'cookie';
 import debug from 'debug';
-import qs from 'qs';
+import { parse } from 'qs';
 import url from 'url';
 import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } from 'lodash';
 
@@ -318,7 +318,7 @@ const analytics = {
 			// so we can analyze their performance with our analytics tools
 			if ( window.location ) {
 				const parsedUrl = url.parse( window.location.href );
-				const urlParams = qs.parse( parsedUrl.query );
+				const urlParams = parse( parsedUrl.query );
 				const utmParams = pickBy( urlParams, function( value, key ) {
 					return startsWith( key, 'utm_' );
 				} );
@@ -350,6 +350,10 @@ const analytics = {
 
 		setAnonymousUserId: function( anonId ) {
 			window._tkq.push( [ 'identifyAnonUser', anonId ] );
+		},
+
+		setOptOut: function( isOptingOut ) {
+			window._tkq.push( [ 'setOptOut', isOptingOut ] );
 		},
 	},
 

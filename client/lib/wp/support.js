@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-
-import qs from 'qs';
+import { parse, stringify } from 'qs';
 
 export default function wpcomSupport( wpcom ) {
 	let supportUser = '';
@@ -18,14 +17,14 @@ export default function wpcomSupport( wpcom ) {
 	 */
 	const addSupportData = function( params ) {
 		// Unwind the query string
-		let query = qs.parse( params.query );
+		const query = parse( params.query );
 
 		// Inject the credentials
 		query.support_user = supportUser;
 		query._support_token = supportToken;
 
 		return Object.assign( {}, params, {
-			query: qs.stringify( query ),
+			query: stringify( query ),
 		} );
 	};
 

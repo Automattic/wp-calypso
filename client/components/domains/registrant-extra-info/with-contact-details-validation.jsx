@@ -121,7 +121,7 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 			}
 
 			// This is pretty fast, but is a candidate for memoization
-			debug( 'validating contactDetails' );
+			debug( 'validating contactDetails', this.props.contactDetails );
 			let isValid = false;
 			try {
 				isValid = this.validate( this.props.contactDetails );
@@ -154,6 +154,7 @@ export default function WithContactDetailsValidation( tld, WrappedComponent ) {
 
 			// TODO: error codes => localized strings
 			const result = formatIMJVErrors( this.validate.errors, this.props.validationSchema );
+			debug( 'validation errors:', result );
 
 			return result;
 		}

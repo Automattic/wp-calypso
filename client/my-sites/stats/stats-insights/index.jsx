@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import StatsNavigation from 'blocks/stats-navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AllTime from 'my-sites/stats/all-time/';
@@ -53,6 +54,7 @@ const StatsInsights = props => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main wideLayout>
+			<DocumentHead title={ translate( 'Stats' ) } />
 			<StatsFirstView />
 			<SidebarNavigation />
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />

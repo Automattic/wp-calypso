@@ -140,25 +140,6 @@
 
 
 /*
- * Suggestions
- */
-.themes-magic-search {
-
-	.themes-magic-search-card__welcome {
-		display: none;
-	}
-
-	&.has-keyed-suggestions {
-		.themes-magic-search-card__welcome,
-		.suggestions {
-			display: block;
-			margin-top: 5px;
-		}
-	}
-}
-
-
-/*
  * Suggestions: Welcome Card
  */
 .themes-magic-search-card__welcome {

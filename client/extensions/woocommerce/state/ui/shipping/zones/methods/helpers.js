@@ -4,7 +4,7 @@
  * External dependencies
  */
 
-import { findIndex, remove } from 'lodash';
+import { findIndex, merge, remove } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,7 +53,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		if ( -1 === index ) {
 			mergedState.creates.push( create );
 		} else {
-			mergedState.creates[ index ] = { ...mergedState.creates[ index ], ...create };
+			mergedState.creates[ index ] = merge( {}, mergedState.creates[ index ], create );
 		}
 	} );
 
@@ -62,7 +62,7 @@ export const mergeMethodEdits = ( zoneMethodEdits, currentMethodEdits ) => {
 		if ( -1 === index ) {
 			mergedState.updates.push( update );
 		} else {
-			mergedState.updates[ index ] = { ...mergedState.updates[ index ], ...update };
+			mergedState.updates[ index ] = merge( {}, mergedState.updates[ index ], update );
 		}
 	} );
 

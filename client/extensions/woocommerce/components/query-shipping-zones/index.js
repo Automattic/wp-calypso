@@ -18,6 +18,7 @@ import { fetchLocations } from 'woocommerce/state/sites/locations/actions';
 import { areShippingZonesLoaded } from 'woocommerce/state/sites/shipping-zones/selectors';
 import { areShippingMethodsLoaded } from 'woocommerce/state/sites/shipping-methods/selectors';
 import { areLocationsLoaded } from 'woocommerce/state/sites/locations/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 class QueryShippingZones extends Component {
 	fetch( siteId ) {
@@ -50,17 +51,17 @@ QueryShippingZones.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export const areShippingZonesFullyLoaded = state => {
+export const areShippingZonesFullyLoaded = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return (
-		areShippingMethodsLoaded( state ) &&
-		areShippingZonesLoaded( state ) &&
-		areLocationsLoaded( state )
+		areShippingMethodsLoaded( state, siteId ) &&
+		areShippingZonesLoaded( state, siteId ) &&
+		areLocationsLoaded( state, siteId )
 	);
 };
 
 export default connect(
-	state => ( {
-		loaded: areShippingZonesFullyLoaded( state ),
+	( state, ownProps ) => ( {
+		loaded: areShippingZonesFullyLoaded( state, ownProps.siteId ),
 	} ),
 	dispatch => ( {
 		actions: bindActionCreators(

@@ -10,6 +10,10 @@
 			padding: 0 24px;
 		}
 
+		@include breakpoint( "<960px" ) {
+			margin-right: 5px;
+		}
+
 		.sidebar-banner__icon-wrapper {
 			flex: 0 0 auto;
 			padding: 5px 5px 2px;
@@ -54,6 +58,10 @@
 			box-sizing: border-box;
 			overflow: visible;
 			padding: 2px 8px 3px 8px;
+			@include breakpoint( "<960px" ) {
+				padding-left: 5px;
+				padding-right: 5px;
+			}
 			height: 24px;
 			line-height: 18px;
 			background-color: $alert-green;

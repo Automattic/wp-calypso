@@ -23,7 +23,6 @@ class JetpackInstallStep extends Component {
 	static propTypes = {
 		confirmJetpackInstallStatus: PropTypes.func.isRequired,
 		currentUrl: PropTypes.string,
-		isInstall: PropTypes.bool.isRequired,
 		jetpackVersion: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		onClick: PropTypes.func,
 	};
@@ -68,7 +67,7 @@ class JetpackInstallStep extends Component {
 	}
 
 	getStep( stepName ) {
-		const { currentUrl, isInstall, jetpackVersion, onClick, translate } = this.props;
+		const { currentUrl, jetpackVersion, onClick, translate } = this.props;
 
 		const isLegacyVersion =
 			jetpackVersion && versionCompare( jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '<' );
@@ -80,21 +79,17 @@ class JetpackInstallStep extends Component {
 		const steps = {
 			installJetpack: {
 				title: translate( '1. Install Jetpack' ),
-				text: isInstall
-					? translate(
-							"You will be redirected to your site's dashboard to install " +
-								'Jetpack. Click the blue "Install Now" button.'
-						)
-					: translate(
-							"You will be redirected to the Jetpack plugin page on your site's " +
-								'dashboard to install Jetpack. Click the blue install button.'
-						),
+				text: translate(
+					"Click the green “Install Jetpack” button below. You'll be redirected to the " +
+						"Jetpack plugin page on your site’s wp-admin dashboard, where you'll " +
+						'then click the blue “Install Now” button.'
+				),
 				action: this.renderAlreadyHaveJetpackButton(),
 				example: <JetpackExampleInstall url={ currentUrl } onClick={ onClick } />,
 			},
 			activateJetpackAfterInstall: {
 				title: translate( '2. Activate Jetpack' ),
-				text: translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ),
+				text: translate( 'Next, click the blue “Activate Plugin” button to activate Jetpack.' ),
 				action: null,
 				example: (
 					<JetpackExampleActivate url={ currentUrl } isInstall={ true } onClick={ onClick } />
@@ -102,17 +97,15 @@ class JetpackInstallStep extends Component {
 			},
 			connectJetpackAfterInstall: {
 				title: translate( '3. Connect Jetpack' ),
-				text: translate(
-					'Finally, click the "Connect to WordPress.com" button to finish the process.'
-				),
+				text: translate( 'Finally, click the “Set up Jetpack” button to finish the process.' ),
 				action: null,
 				example: jetpackConnectExample,
 			},
 			activateJetpack: {
 				title: translate( '1. Activate Jetpack' ),
 				text: translate(
-					"You will be redirected to your site's dashboard to activate Jetpack. " +
-						'Click the blue "Activate" link. '
+					"You'll be redirected to the Plugins page on your site’s wp-admin " +
+						"dashboard, where you'll then Click the blue “Activate” link. "
 				),
 				action: this.renderNotJetpackButton(),
 				example: (
@@ -121,9 +114,7 @@ class JetpackInstallStep extends Component {
 			},
 			connectJetpack: {
 				title: translate( '2. Connect Jetpack' ),
-				text: translate(
-					'Then click the "Connect to WordPress.com" button to finish the process.'
-				),
+				text: translate( 'Then click the “Set up Jetpack” button to finish the process.' ),
 				action: null,
 				example: jetpackConnectExample,
 			},

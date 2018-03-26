@@ -238,7 +238,7 @@ class SiteSettingsFormGeneral extends Component {
 					onClick={ eventTracker( 'Clicked Language Field' ) }
 				/>
 				<FormSettingExplanation>
-					{ translate( 'Language this blog is primarily written in.' ) }&nbsp;
+					{ translate( 'The site\'s primary language.' ) }&nbsp;
 					<a href={ config.isEnabled( 'me/account' ) ? '/me/account' : '/settings/account/' }>
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
@@ -424,7 +424,15 @@ class SiteSettingsFormGeneral extends Component {
 	}
 
 	Timezone() {
-		const { fields, isRequestingSettings, translate, supportsLanguageSelection } = this.props;
+		const {
+			fields,
+			isRequestingSettings,
+			translate,
+			supportsLanguageSelection,
+			moment,
+		} = this.props;
+		const guessedTimezone = moment.tz.guess();
+		const setGuessedTimezone = this.onTimezoneSelect.bind( this, guessedTimezone );
 
 		return (
 			<FormFieldset
@@ -439,7 +447,25 @@ class SiteSettingsFormGeneral extends Component {
 				/>
 
 				<FormSettingExplanation>
-					{ translate( 'Choose a city in your timezone.' ) }
+					{ translate( 'Choose a city in your timezone.' ) }{' '}
+					{ translate(
+						'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
+						{
+							args: {
+								timezoneName: guessedTimezone,
+							},
+							components: {
+								button: (
+									<Button
+										onClick={ setGuessedTimezone }
+										borderless
+										compact
+										className="site-settings__general-settings-set-guessed-timezone"
+									/>
+								),
+							},
+						}
+					) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
@@ -573,7 +599,8 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteSlug: getSelectedSiteSlug( state ),
-			supportsLanguageSelection: ! siteIsJetpack,
+			supportsLanguageSelection:
+				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.9-alpha' ),
 			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},

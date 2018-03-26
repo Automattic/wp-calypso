@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { compact, get } from 'lodash';
+import { compact, get, includes } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -13,28 +13,31 @@ import { recordTracksEvent } from 'state/analytics/actions';
  * Internal dependencies
  */
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
+import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
+import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
+	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
 } from './constants';
 import {
 	getJetpackOnboardingCompletedSteps,
 	getJetpackOnboardingSettings,
-	getRequest,
+	getJpoUserHash,
 	getSiteId,
 	getUnconnectedSite,
-	getUnconnectedSiteUserHash,
 	getUnconnectedSiteIdBySlug,
+	isRequestingJetpackOnboardingSettings,
 } from 'state/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import {
-	requestJetpackOnboardingSettings,
-	saveJetpackOnboardingSettings,
-} from 'state/jetpack-onboarding/actions';
+import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import { setSelectedSiteId } from 'state/ui/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
 	static propTypes = {
@@ -49,10 +52,12 @@ class JetpackOnboardingMain extends React.PureComponent {
 
 	componentDidMount() {
 		this.retrieveOnboardingCredentials();
+		this.setSelectedSite();
 	}
 
 	componentDidUpdate() {
 		this.retrieveOnboardingCredentials();
+		this.setSelectedSite();
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -81,6 +86,20 @@ class JetpackOnboardingMain extends React.PureComponent {
 		}
 	}
 
+	setSelectedSite() {
+		const { hasFinishedRequestingSite } = this.state;
+		const { isConnected, isSiteSelected, siteId } = this.props;
+
+		if ( ! hasFinishedRequestingSite ) {
+			return;
+		}
+
+		if ( isConnected && ! isSiteSelected ) {
+			// If the site we're onboarding is connected and not selected, select it
+			this.props.setSelectedSiteId( siteId );
+		}
+	}
+
 	getNavigationLinkClickHandler = direction => () => {
 		const { recordJpoEvent, stepName } = this.props;
 
@@ -90,13 +109,15 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} );
 	};
 
-	getSkipLinkText() {
-		const { stepName, stepsCompleted, translate } = this.props;
+	shouldHideForwardLink() {
+		const { stepName, stepsCompleted } = this.props;
+		const stepsWithSuccessScreens = [ STEPS.CONTACT_FORM, STEPS.BUSINESS_ADDRESS, STEPS.STATS ];
 
-		if ( get( stepsCompleted, stepName ) ) {
-			return translate( 'Next' );
+		if ( ! includes( stepsWithSuccessScreens, stepName ) ) {
+			return false;
 		}
-		return null;
+
+		return get( stepsCompleted, stepName, false );
 	}
 
 	render() {
@@ -112,10 +133,24 @@ class JetpackOnboardingMain extends React.PureComponent {
 			siteSlug,
 			stepName,
 			steps,
+			translate,
 		} = this.props;
 
 		return (
 			<Main className="jetpack-onboarding">
+				<DocumentHead
+					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
+				/>
+				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
+				   * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
+				   * finished fetching site details, which will tell us whether the site is connected,
+				   * which we need in turn to conditionally send JPO auth credentials (see below).
+				   * However, if we're logged out, we cannot `<QuerySites allSites />`,
+				   * since the concept of "all of a user's sites" doesn't make sense if there is no user.
+				   * We also cannot `<QuerySites siteId={ siteId } />` prior to having obtained the `siteId`
+				   * through JPO -- a Catch-22 situation.
+				   * Fortunately, querying by `siteSlug` works, since it's supported by underlying actions. */ }
+				<QuerySites siteId={ siteSlug } />
 				{ /* We only allow querying of site settings once we know that we have finished
 				   * querying data for the given site. The `jpoAuth` connected prop depends on whether
 				   * the site is a connected Jetpack site or not, and a network request that uses
@@ -129,7 +164,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						basePath="/jetpack/start"
 						baseSuffix={ siteSlug }
 						components={ COMPONENTS }
-						forwardText={ this.getSkipLinkText() }
+						hideForwardLink={ this.shouldHideForwardLink() }
 						hideNavigation={ stepName === STEPS.SUMMARY }
 						isRequestingSettings={ isRequestingSettings }
 						isRequestingWhetherConnected={ isRequestingWhetherConnected }
@@ -144,7 +179,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 						steps={ steps }
 					/>
 				) : (
-					<div className="jetpack-onboarding__loading wpcom-site__logo noticon noticon-wordpress" />
+					<WordPressLogo size={ 72 } className="jetpack-onboarding__loading wpcom-site__logo" />
 				) }
 			</Main>
 		);
@@ -163,9 +198,14 @@ export default connect(
 		const settings = getJetpackOnboardingSettings( state, siteId );
 		const isBusiness = get( settings, 'siteType' ) === 'business';
 
+		// We really want `isRequestingSite( state, siteSlug )` (not `siteId`).
+		// For the rationale, see the comment right above the `<QuerySites />` component
+		// further up in this file.
 		const isRequestingWhetherConnected =
-			isRequestingSite( state, siteId ) || isRequestingSites( state );
+			isRequestingSite( state, siteSlug ) || isRequestingSites( state );
 		const isConnected = isJetpackSite( state, siteId );
+		const selectedSiteId = getSelectedSiteId( state );
+		const isSiteSelected = selectedSiteId === siteId;
 
 		let jpoAuth;
 
@@ -179,12 +219,10 @@ export default connect(
 			};
 		}
 
-		const isRequestingSettings = getRequest(
-			state,
-			requestJetpackOnboardingSettings( siteId, jpoAuth )
-		).isLoading;
+		const isRequestingSettings = isRequestingJetpackOnboardingSettings( state, siteId, jpoAuth );
 
-		const userIdHashed = getUnconnectedSiteUserHash( state, siteId );
+		const userIdHashed = getJpoUserHash( state, siteId );
+
 		const steps = compact( [
 			STEPS.SITE_TITLE,
 			STEPS.SITE_TYPE,
@@ -202,6 +240,7 @@ export default connect(
 			isConnected,
 			isRequestingSettings,
 			isRequestingWhetherConnected,
+			isSiteSelected,
 			siteId,
 			siteSlug,
 			settings,
@@ -210,12 +249,13 @@ export default connect(
 			userIdHashed,
 		};
 	},
-	{ recordTracksEvent, saveJetpackOnboardingSettings },
+	{ recordTracksEvent, saveJetpackOnboardingSettings, setSelectedSiteId },
 	(
 		{ siteId, jpoAuth, userIdHashed, ...stateProps },
 		{
 			recordTracksEvent: recordTracksEventAction,
 			saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
+			...dispatchProps
 		},
 		ownProps
 	) => ( {
@@ -234,6 +274,7 @@ export default connect(
 			saveJetpackOnboardingSettingsAction( s, {
 				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
 			} ),
+		...dispatchProps,
 		...ownProps,
 	} )
 )( localize( JetpackOnboardingMain ) );

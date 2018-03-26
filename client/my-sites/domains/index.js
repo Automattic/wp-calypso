@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetPackWarning, navigation, siteSelection, sites } from 'my-sites/controller';
+import { navigation, siteSelection, sites } from 'my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
 import SiftScience from 'lib/siftscience';
@@ -30,7 +30,7 @@ function getCommonHandlers( {
 	}
 
 	if ( warnIfJetpack ) {
-		handlers.push( jetPackWarning );
+		handlers.push( domainsController.jetpackNoDomainsWarning );
 	}
 
 	return handlers;
@@ -192,7 +192,7 @@ export default function() {
 			siteSelection,
 			domainsController.domainsAddHeader,
 			domainsController.redirectToAddMappingIfVipSite(),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			sites,
 			makeLayout,
 			clientRender
@@ -202,7 +202,7 @@ export default function() {
 			'/domains/add/mapping',
 			siteSelection,
 			domainsController.domainsAddHeader,
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			sites,
 			makeLayout,
 			clientRender
@@ -212,7 +212,7 @@ export default function() {
 			'/domains/add/transfer',
 			siteSelection,
 			domainsController.domainsAddHeader,
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			sites,
 			makeLayout,
 			clientRender
@@ -222,7 +222,7 @@ export default function() {
 			'/domains/add/site-redirect',
 			siteSelection,
 			domainsController.domainsAddRedirectHeader,
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			sites,
 			makeLayout,
 			clientRender
@@ -234,7 +234,7 @@ export default function() {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			domainsController.redirectToAddMappingIfVipSite(),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			domainsController.domainSearch,
 			makeLayout,
 			clientRender
@@ -246,7 +246,7 @@ export default function() {
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
 			domainsController.redirectToAddMappingIfVipSite(),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			domainsController.redirectToDomainSearchSuggestion
 		);
 
@@ -255,7 +255,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add' ),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			domainsController.googleAppsWithRegistration,
 			makeLayout,
 			clientRender
@@ -266,7 +266,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/mapping' ),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			domainsController.mapDomain,
 			makeLayout,
 			clientRender
@@ -277,7 +277,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			domainsController.siteRedirect,
 			makeLayout,
 			clientRender
@@ -288,7 +288,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/add/transfer' ),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			domainsController.transferDomain,
 			makeLayout,
 			clientRender
@@ -299,7 +299,7 @@ export default function() {
 			siteSelection,
 			navigation,
 			domainsController.redirectIfNoSite( '/domains/manage' ),
-			jetPackWarning,
+			domainsController.jetpackNoDomainsWarning,
 			domainsController.transferDomainPrecheck,
 			makeLayout,
 			clientRender
@@ -312,7 +312,7 @@ export default function() {
 		'/domains/:site',
 		siteSelection,
 		navigation,
-		jetPackWarning,
+		domainsController.jetpackNoDomainsWarning,
 		domainManagementController.domainManagementIndex,
 		makeLayout,
 		clientRender

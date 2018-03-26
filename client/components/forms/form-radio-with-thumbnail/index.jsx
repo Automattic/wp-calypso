@@ -11,6 +11,7 @@ import classnames from 'classnames';
  */
 import FormRadio from 'components/forms/form-radio';
 import FormLabel from 'components/forms/form-label';
+import TranslatableString from 'components/translatable/proptype';
 
 const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 	const { cssClass, cssColor, imageUrl } = thumbnail;
@@ -32,7 +33,7 @@ const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 };
 
 FormRadioWithThumbnail.propTypes = {
-	label: PropTypes.string,
+	label: TranslatableString,
 	thumbnail: PropTypes.object.isRequired,
 };
 

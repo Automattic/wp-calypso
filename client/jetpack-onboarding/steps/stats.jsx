@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import ConnectIntro from '../connect-intro';
 import ConnectSuccess from '../connect-success';
-import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import JetpackLogo from 'components/jetpack-logo';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -23,6 +22,10 @@ import { isJetpackSite } from 'state/sites/selectors';
 import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingStatsStep extends React.Component {
+	state = {
+		justActivatedStats: false,
+	};
+
 	componentDidUpdate() {
 		this.maybeActivateStats();
 	}
@@ -60,6 +63,20 @@ class JetpackOnboardingStatsStep extends React.Component {
 		this.props.saveJpoSettings( this.props.siteId, {
 			stats: true,
 		} );
+
+		this.setState( {
+			justActivatedStats: true,
+		} );
+	}
+
+	getSuccessTitle() {
+		const { translate } = this.props;
+
+		if ( this.state.justActivatedStats ) {
+			return translate( 'Success! Jetpack is now collecting valuable stats.' );
+		}
+
+		return translate( "Jetpack provides you with detailed stats about your site's reach." );
 	}
 
 	renderActionTile() {
@@ -88,11 +105,10 @@ class JetpackOnboardingStatsStep extends React.Component {
 	}
 
 	render() {
-		const { activatedStats, basePath, getForwardUrl, siteId, translate } = this.props;
+		const { activatedStats, basePath, getForwardUrl, siteId } = this.props;
 
 		return (
 			<div className="steps__main">
-				<DocumentHead title={ translate( 'Jetpack Stats ‹ Jetpack Start' ) } />
 				<PageViewTracker
 					path={ [ basePath, STEPS.STATS, ':site' ].join( '/' ) }
 					title="Jetpack Stats ‹ Jetpack Start"
@@ -106,7 +122,7 @@ class JetpackOnboardingStatsStep extends React.Component {
 						href={ getForwardUrl() }
 						illustration="/calypso/images/illustrations/jetpack-stats.svg"
 						onClick={ this.handleStatsNextButton }
-						title={ translate( 'Success! Jetpack is now collecting valuable stats.' ) }
+						title={ this.getSuccessTitle() }
 					/>
 				) : (
 					this.renderActionTile()

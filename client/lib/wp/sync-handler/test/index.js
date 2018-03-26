@@ -5,7 +5,7 @@
 import { expect } from 'chai';
 import localforageMock from 'localforage';
 import { defer } from 'lodash';
-import querystring from 'querystring';
+import { parse } from 'qs';
 import { spy } from 'sinon';
 
 /**
@@ -212,7 +212,7 @@ describe( 'sync-handler', () => {
 			wpcomOptOut
 				.skipLocalSyncResult()
 				.site( postListSiteId )
-				.postsList( querystring.parse( postListParams.query ), callback );
+				.postsList( parse( postListParams.query ), callback );
 
 			defer( () => {
 				expect( callback ).to.have.been.calledOnce;

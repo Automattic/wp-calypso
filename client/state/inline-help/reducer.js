@@ -1,3 +1,4 @@
+/** @format */
 /**
  * Internal dependencies
  */
@@ -8,8 +9,6 @@ import {
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 	INLINE_HELP_SELECT_NEXT_RESULT,
 	INLINE_HELP_SELECT_PREVIOUS_RESULT,
-	INLINE_HELP_OPEN_SELECTED_RESULT,
-	INLINE_HELP_DID_OPEN_SELECTED_RESULT,
 } from 'state/action-types';
 
 export function requesting( state = {}, action ) {
@@ -66,16 +65,6 @@ export const search = createReducer(
 			}
 			return Object.assign( {}, state, {
 				selectedResult: -1,
-			} );
-		},
-		[ INLINE_HELP_OPEN_SELECTED_RESULT ]: state => {
-			return Object.assign( {}, state, {
-				shouldOpenSelectedResult: true,
-			} );
-		},
-		[ INLINE_HELP_DID_OPEN_SELECTED_RESULT ]: state => {
-			return Object.assign( {}, state, {
-				shouldOpenSelectedResult: false,
 			} );
 		},
 	}
