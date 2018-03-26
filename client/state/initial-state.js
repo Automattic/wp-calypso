@@ -106,6 +106,9 @@ function isLoggedIn() {
 }
 
 function getReduxStateKey() {
+	if ( ! isLoggedIn() ) {
+		return 'redux-state-logged-out';
+	}
 	return 'redux-state-' + user.get().ID;
 }
 
@@ -114,10 +117,6 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 
 	const throttledSaveState = throttle(
 		function() {
-			if ( ! isLoggedIn() ) {
-				return;
-			}
-
 			const nextState = reduxStore.getState();
 			if ( state && nextState === state ) {
 				return;
@@ -143,8 +142,7 @@ export function persistOnChange( reduxStore, serializeState = serialize ) {
 }
 
 export default function createReduxStoreFromPersistedInitialState( reduxStoreReady ) {
-	const shouldPersist =
-		config.isEnabled( 'persist-redux' ) && isLoggedIn() && ! isSupportUserSession();
+	const shouldPersist = config.isEnabled( 'persist-redux' ) && ! isSupportUserSession();
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => localforage.clear( () => location.reload( true ) );
