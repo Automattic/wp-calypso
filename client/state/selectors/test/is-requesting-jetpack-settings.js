@@ -4,10 +4,10 @@
  * Internal dependencies
  */
 import { getRequestKey } from 'state/data-layer/wpcom-http/utils';
-import { isRequestingJetpackOnboardingSettings } from 'state/selectors';
+import { isRequestingJetpackSettings } from 'state/selectors';
 import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
-describe( 'isRequestingJetpackOnboardingSettings()', () => {
+describe( 'isRequestingJetpackSettings()', () => {
 	test( 'should return true if settings are currently being requested', () => {
 		const siteId = 87654321;
 		const action = requestJetpackSettings( siteId );
@@ -19,7 +19,7 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 			},
 		};
 
-		const output = isRequestingJetpackOnboardingSettings( state, siteId );
+		const output = isRequestingJetpackSettings( state, siteId );
 		expect( output ).toBe( true );
 	} );
 
@@ -34,7 +34,7 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 			},
 		};
 
-		const output = isRequestingJetpackOnboardingSettings( state, siteId );
+		const output = isRequestingJetpackSettings( state, siteId );
 		expect( output ).toBe( false );
 	} );
 
@@ -49,7 +49,7 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 			},
 		};
 
-		const output = isRequestingJetpackOnboardingSettings( state, siteId );
+		const output = isRequestingJetpackSettings( state, siteId );
 		expect( output ).toBe( false );
 	} );
 
@@ -65,7 +65,7 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 			},
 		};
 
-		const output = isRequestingJetpackOnboardingSettings( state, siteId, query );
+		const output = isRequestingJetpackSettings( state, siteId, query );
 		expect( output ).toBe( true );
 	} );
 
@@ -81,7 +81,7 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 			},
 		};
 
-		const output = isRequestingJetpackOnboardingSettings( state, siteId, query );
+		const output = isRequestingJetpackSettings( state, siteId, query );
 		expect( output ).toBe( false );
 	} );
 } );

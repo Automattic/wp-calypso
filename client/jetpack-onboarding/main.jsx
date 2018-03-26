@@ -34,7 +34,7 @@ import {
 	getSiteId,
 	getUnconnectedSite,
 	getUnconnectedSiteIdBySlug,
-	isRequestingJetpackOnboardingSettings,
+	isRequestingJetpackSettings,
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
@@ -227,7 +227,7 @@ export default connect(
 			};
 		}
 
-		const isRequestingSettings = isRequestingJetpackOnboardingSettings( state, siteId, jpoAuth );
+		const isRequestingSettings = isRequestingJetpackSettings( state, siteId, jpoAuth );
 
 		const userIdHashed = getJpoUserHash( state, siteId );
 

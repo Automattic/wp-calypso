@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingJetpackOnboardingSettings } from 'state/selectors';
+import { isRequestingJetpackSettings } from 'state/selectors';
 import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackSettings extends Component {
@@ -47,7 +47,7 @@ class QueryJetpackSettings extends Component {
 
 export default connect(
 	( state, { query, siteId } ) => ( {
-		requestingSettings: isRequestingJetpackOnboardingSettings( state, siteId, query ),
+		requestingSettings: isRequestingJetpackSettings( state, siteId, query ),
 	} ),
 	{ requestJetpackSettings }
 )( QueryJetpackSettings );
