@@ -20,7 +20,7 @@ import WebPreview from 'components/web-preview';
 
 const debug = debugFactory( 'calypso:site-preview' );
 
-class UrlPreview extends Component {
+class SitePreview extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		showPreview: PropTypes.bool,
@@ -116,4 +116,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps, { closePreview } )( UrlPreview );
+export default connect( mapStateToProps, { closePreview } )( SitePreview );
