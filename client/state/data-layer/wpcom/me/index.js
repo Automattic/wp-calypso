@@ -14,6 +14,7 @@ import settings from './settings';
 import sendVerificationEmail from './send-verification-email';
 import countries from './transactions/supported-countries';
 import twoStep from './two-step';
+import sourcePayment from './transactions/source-payment';
 
 export default mergeHandlers(
 	block,
@@ -22,5 +23,6 @@ export default mergeHandlers(
 	notification,
 	settings,
 	sendVerificationEmail,
-	twoStep
+	twoStep,
+	sourcePayment
 );

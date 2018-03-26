@@ -26,14 +26,11 @@ export const fetchSourcePaymentTransactionDetail = action =>
 		action
 	);
 
-export const onSuccess = ( action, data ) => {
-	console.log( '------------------', action, data );
-
+export const onSuccess = () => {
 	return {};
 };
 
-export const onError = ( action, data ) =>
-	errorNotice( translate( 'Sorry. Something went wrong!' ) );
+export const onError = () => errorNotice( translate( 'Sorry. Something went wrong!' ) );
 
 export default {
 	[ SOURCE_PAYMENT_TRANSACTION_DETAIL_FETCH ]: [
