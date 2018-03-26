@@ -61,8 +61,6 @@ export default {
 	cancelPurchase( context, next ) {
 		setTitle( context, titles.cancelPurchase );
 
-		recordPurchasesPageView( paths.cancelPurchase(), 'Cancel Purchase' );
-
 		context.primary = <CancelPurchase purchaseId={ parseInt( context.params.purchaseId, 10 ) } />;
 		next();
 	},
