@@ -64,7 +64,6 @@ import postFormats from './post-formats/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
-import preview from './preview/reducer';
 import privacyPolicy from './privacy-policy/reducer';
 import productsList from './products-list/reducer';
 import pushNotifications from './push-notifications/reducer';
@@ -151,7 +150,6 @@ const reducers = {
 	posts,
 	postTypes,
 	preferences,
-	preview,
 	privacyPolicy,
 	productsList,
 	purchases,
