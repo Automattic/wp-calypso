@@ -24,9 +24,12 @@ import {
 } from '../constants';
 import { getConciergeAppointmentDetails, getConciergeSignupForm } from 'state/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class ConciergeCancel extends Component {
 	static propTypes = {
+		analyticsPath: PropTypes.string,
+		analyticsTitle: PropTypes.string,
 		appointmentId: PropTypes.string.isRequired,
 		siteSlug: PropTypes.string.isRequired,
 	};
@@ -106,7 +109,13 @@ class ConciergeCancel extends Component {
 	};
 
 	render() {
-		return <Main> { this.getDisplayComponent() } </Main>;
+		const { analyticsPath, analyticsTitle } = this.props;
+		return (
+			<Main>
+				<PageViewTracker path={ analyticsPath } title={ analyticsTitle } />
+				{ this.getDisplayComponent() }
+			</Main>
+		);
 	}
 }
 
