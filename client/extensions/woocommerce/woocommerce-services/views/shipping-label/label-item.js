@@ -112,7 +112,7 @@ class LabelItem extends Component {
 							},
 						} ) }
 					</span>
-					{ label.showDetails && label.returningLabelIndex == null && this.renderLabelDetails( label ) }
+					{ label.showDetails && this.renderLabelDetails( label ) }
 				</p>
 				{ label.showDetails &&
 					<p className="shipping-label__item-tracking">
@@ -125,16 +125,17 @@ class LabelItem extends Component {
 						{ this.renderReprint( label ) }
 					</p>
 				}
-				{ label.showDetails &&
+				{ label.returningLabelIndex == null ? (
 					<p className="shipping-label__item-actions">
-						{ label.returningLabelIndex == null
-							? this.renderReturn( label )
-							: translate( 'Return for Label #%(labelIndex)s', {
-								args: { labelIndex: label.returningLabelIndex + 1 },
-							} )
-						}
+						{ label.showDetails ? this.renderReturn( label ) : null }
 					</p>
-				}
+				) : (
+					<p>
+						{ translate( 'Return for Label #%(labelIndex)s', {
+							args: { labelIndex: label.returningLabelIndex + 1 },
+						} ) }
+					</p>
+				) }
 			</div>
 		);
 	}

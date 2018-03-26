@@ -682,21 +682,24 @@ const purchaseReturnLabel = ( orderId, siteId, dispatch, getState ) => {
 
 	Promise.resolve().then( () => {
 		const state = getShippingLabel( getState(), orderId, siteId );
-		const form = state.returnDialog;
+		const { available, values } = state.returnDialog.rates;
 		const pckgId = 'return';
-		const rate = find( form.rates.available[ pckgId ].rates, { service_id: form.rates.values[ pckgId ] } );
+		const rate = find( available[ pckgId ].rates, { service_id: values[ pckgId ] } );
+		const label = find( state.labels, { label_id: state.returnDialog.labelId } );
+
 		const formData = {
 			async: true,
-			origin: form.origin.values,
-			destination: form.destination.values,
+			origin: state.form.origin.values,
+			destination: state.form.destination.values,
 			packages: [ {
 				returning: state.returnDialog.labelId,
-				shipment_id: form.rates.available[ pckgId ].shipment_id,
+				shipment_id: available[ pckgId ].shipment_id,
 				rate_id: rate.rate_id,
-				service_id: form.rates.values[ pckgId ],
+				service_id: values[ pckgId ],
 				carrier_id: rate.carrier_id,
 				service_name: rate.title,
-				products: [],
+				box_id: label.box_id,
+				products: label.product_ids,
 			} ],
 		};
 
