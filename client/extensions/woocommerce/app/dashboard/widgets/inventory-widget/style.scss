@@ -117,9 +117,21 @@
 			max-width: 50px;
 			margin-right: 8px;
 		}
+
+		.gridicon {
+			display: block;
+		}
+
+		.range__content > span {
+			cursor: pointer;
+		}
 	}
 
 	.form-checkbox:checked:before {
 		margin-top: 0;
+	}
+
+	.button + .button {
+		margin-left: 8px;
 	}
 }
