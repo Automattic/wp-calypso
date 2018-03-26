@@ -7,11 +7,11 @@
 }
 
 .badge--warning {
-	color: #535d56;
-	background-color: #fcd56d;
+	color: $gray-dark;
+	background-color: $alert-yellow;
 }
 
 .badge--success {
-	color: #fff;
-	background-color: #19b76e;
+	color: $gray-dark;
+	background-color: $alert-green;
 }
