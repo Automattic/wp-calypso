@@ -1,6 +1,7 @@
 /** @format */
 // Initialize polyfills before any dependencies are loaded
 import './polyfills';
+import 'babel-polyfill';
 
 if ( process.env.NODE_ENV === 'development' ) {
 	require( 'lib/wrap-es6-functions' ).default();
