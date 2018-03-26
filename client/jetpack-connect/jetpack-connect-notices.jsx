@@ -37,7 +37,7 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 } from './connection-notice-types';
-import { JETPACK_WORDPRESS_VERSION } from './constants';
+import { JETPACK_MINIMUM_WORDPRESS_VERSION } from './constants';
 import Notice from 'components/notice';
 import { addQueryArgs } from 'lib/route';
 import { getConnectingSite } from 'state/jetpack-connect/selectors';
@@ -121,7 +121,7 @@ export class JetpackConnectNotices extends Component {
 						'of WordPress. Jetpack needs version %(jetpackWPVersion)s or higher.',
 					{
 						args: {
-							jetpackWPVersion: JETPACK_WORDPRESS_VERSION,
+							jetpackWPVersion: JETPACK_MINIMUM_WORDPRESS_VERSION,
 						},
 					}
 				);
