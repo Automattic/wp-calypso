@@ -52,4 +52,36 @@ describe( 'isRequestingJetpackOnboardingSettings()', () => {
 		const output = isRequestingJetpackOnboardingSettings( state, siteId );
 		expect( output ).toBe( false );
 	} );
+
+	test( 'should return true if settings are currently being requested for a matching site ID and query', () => {
+		const siteId = 87654321;
+		const query = { foo: 'bar' };
+		const action = requestJetpackOnboardingSettings( siteId, query );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
+				},
+			},
+		};
+
+		const output = isRequestingJetpackOnboardingSettings( state, siteId, query );
+		expect( output ).toBe( true );
+	} );
+
+	test( 'should return false if settings are currently being requested for matching site ID and non-matching query', () => {
+		const siteId = 87654321;
+		const query = { foo: 'bar' };
+		const action = requestJetpackOnboardingSettings( siteId, { foo: 'baz' } );
+		const state = {
+			dataRequests: {
+				[ getRequestKey( action ) ]: {
+					status: 'pending',
+				},
+			},
+		};
+
+		const output = isRequestingJetpackOnboardingSettings( state, siteId, query );
+		expect( output ).toBe( false );
+	} );
 } );
