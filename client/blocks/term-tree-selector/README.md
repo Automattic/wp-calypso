@@ -103,3 +103,33 @@ An optional classname to apply to the term selector wrapping element.
 </table>
 
 An optional height to apply to the term selector results element
+
+### `addTerm`
+
+<table>
+	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>false</code></td></tr>
+</table>
+
+Optionally show an "Add New {Taxonomy}" button that toggles the `TermFormDialog`
+
+### `postType`
+
+<table>
+	<tr><th>Type</th><td>String</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>'post'</code></td></tr>
+</table>
+
+Post type for which to display taxonomies.
+
+### `onAddTermSuccess`
+
+<table>
+	<tr><th>Type</th><td>Function</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>() => {}</code></td></tr>
+</table>
+
+A function to invoke when a new term is successfully added. The function will be passed the new term.
