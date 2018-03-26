@@ -13,5 +13,5 @@
 
 .badge--success {
 	color: $gray-dark;
-	background-color: $alert-green;
+	background-color: lighten( $alert-green, 15%);
 }
