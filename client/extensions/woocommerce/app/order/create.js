@@ -39,17 +39,6 @@ import { recordTrack } from 'woocommerce/lib/analytics';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 
 class Order extends Component {
-	possiblyFetchDefaultCurrency( props ) {
-		const { currencyCode, orderEdits, settingsGeneralLoaded, siteId } = props;
-		if ( siteId ) {
-			if ( ! settingsGeneralLoaded ) {
-				this.props.fetchSettingsGeneral( siteId );
-			} else if ( isEmpty( orderEdits.currency ) ) {
-				this.props.editOrder( siteId, { currency: currencyCode } );
-			}
-		}
-	}
-
 	componentDidMount() {
 		const { siteId } = this.props;
 
@@ -64,8 +53,6 @@ class Order extends Component {
 		if ( this.props.siteId !== newProps.siteId ) {
 			this.props.editOrder( newProps.siteId, {} );
 		}
-
-		this.possiblyFetchDefaultCurrency( newProps );
 	}
 
 	componentDidUpdate() {
@@ -75,6 +62,19 @@ class Order extends Component {
 	componentWillUnmount() {
 		// Removing this component should clear any pending edits
 		this.props.clearOrderEdits( this.props.siteId );
+	}
+
+	possiblyFetchDefaultCurrency( props ) {
+		// Once we have the default currency for the store, we need to add it to
+		// the order edits to ensure the order is created with that same currency
+		const { currencyCode, orderEdits, settingsGeneralLoaded, siteId } = props;
+		if ( siteId ) {
+			if ( ! settingsGeneralLoaded ) {
+				this.props.fetchSettingsGeneral( siteId );
+			} else if ( isEmpty( orderEdits.currency ) ) {
+				this.props.editOrder( siteId, { currency: currencyCode } );
+			}
+		}
 	}
 
 	triggerInvoice = ( siteId, orderId ) => {
@@ -164,6 +164,9 @@ export default connect(
 		const orderId = getCurrentlyEditingOrderId( state );
 		const isSaving = isOrderUpdating( state, orderId );
 		const orderEdits = getOrderEdits( state );
+		// Although we need to always set the currency in the order edits in
+		// order to have the order created with the correct currency, we need to
+		// omit it here to avoid FormProtect thinking we have unsaved edits
 		const hasOrderEdits = ! isEmpty( omit( orderEdits, [ 'currency' ] ) );
 		const order = getOrderWithEdits( state );
 		const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
@@ -188,7 +191,6 @@ export default connect(
 				clearOrderEdits,
 				editOrder,
 				fetchSettingsGeneral,
-				getPaymentCurrencySettings,
 				saveOrder,
 				sendOrderInvoice,
 			},
