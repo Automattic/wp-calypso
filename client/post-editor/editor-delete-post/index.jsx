@@ -119,7 +119,7 @@ export default connect(
 			siteId,
 			post,
 			postId,
-			postStatus: post.status,
+			postStatus: get( post, 'status', null ),
 			canDelete: canCurrentUser( state, siteId, isAuthor ? 'delete_posts' : 'delete_others_posts' ),
 		};
 	},
