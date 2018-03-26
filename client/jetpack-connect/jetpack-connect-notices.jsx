@@ -18,7 +18,6 @@ import {
 	ALREADY_CONNECTED_BY_OTHER_USER,
 	ALREADY_OWNED,
 	DEFAULT_AUTHORIZE_ERROR,
-	INSTALL_FAILURE,
 	INSTALL_RESPONSE_ERROR,
 	IS_DOT_COM,
 	JETPACK_IS_DISCONNECTED,
@@ -56,7 +55,6 @@ export class JetpackConnectNotices extends Component {
 			ALREADY_CONNECTED_BY_OTHER_USER,
 			ALREADY_OWNED,
 			DEFAULT_AUTHORIZE_ERROR,
-			INSTALL_FAILURE,
 			INSTALL_RESPONSE_ERROR,
 			IS_DOT_COM,
 			LOGIN_FAILURE,
@@ -204,18 +202,6 @@ export class JetpackConnectNotices extends Component {
 							support: (
 								<a href={ this.getHelperUrl( 'support' ) } onClick={ this.trackSupportClick } />
 							),
-						},
-					}
-				);
-				return noticeValues;
-
-			case INSTALL_FAILURE:
-				noticeValues.text = translate(
-					'We were unable to install Jetpack. Please upgrade to the latest version ' +
-						'of WordPress. Jetpack needs version %(jetpackWPVersion)s or higher.',
-					{
-						args: {
-							jetpackWPVersion: JETPACK_WORDPRESS_VERSION,
 						},
 					}
 				);

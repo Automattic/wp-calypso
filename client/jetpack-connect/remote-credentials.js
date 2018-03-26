@@ -34,7 +34,6 @@ import { REMOTE_PATH_AUTH } from './constants';
 import {
 	ACTIVATION_FAILURE,
 	ACTIVATION_RESPONSE_ERROR,
-	INSTALL_FAILURE,
 	INSTALL_RESPONSE_ERROR,
 	INVALID_PERMISSIONS,
 	LOGIN_FAILURE,
@@ -119,9 +118,6 @@ export class OrgCredentialsForm extends Component {
 		}
 		if ( installError === 'ACTIVATION_RESPONSE_ERROR' ) {
 			return ACTIVATION_RESPONSE_ERROR;
-		}
-		if ( installError === 'INSTALL_FAILURE' ) {
-			return INSTALL_FAILURE;
 		}
 		if ( installError === 'INSTALL_RESPONSE_ERROR' ) {
 			return INSTALL_RESPONSE_ERROR;
