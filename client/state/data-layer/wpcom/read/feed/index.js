@@ -10,19 +10,34 @@ import { map, truncate } from 'lodash';
 import { READER_FEED_SEARCH_REQUEST } from 'state/action-types';
 import { receiveFeedSearch } from 'state/reader/feed-searches/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequestEx } from 'state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'state/notices/actions';
 import { translate } from 'i18n-calypso';
 import queryKey from 'state/reader/feed-searches/query-key';
+import { bypassDataLayer } from 'state/data-layer/utils';
 
-export function initiateFeedSearch( store, action ) {
+export function fromApi( apiResponse ) {
+	const feeds = map( apiResponse.feeds, feed => ( {
+		...feed,
+		feed_URL: feed.subscribe_URL,
+	} ) );
+
+	const total = apiResponse.total > 200 ? 200 : apiResponse.total;
+
+	return {
+		feeds,
+		total,
+	};
+}
+
+export function requestReadFeedSearch( action ) {
 	if ( ! ( action.payload && action.payload.query ) ) {
 		return;
 	}
 
 	const path = '/read/feed';
-	store.dispatch(
-		http( {
+	return http(
+		{
 			path,
 			method: 'GET',
 			apiVersion: '1.1',
@@ -32,35 +47,31 @@ export function initiateFeedSearch( store, action ) {
 				exclude_followed: action.payload.excludeFollowed,
 				sort: action.payload.sort,
 			},
-			onSuccess: action,
-			onFailure: action,
-		} )
+		},
+		action
 	);
 }
 
-export function receiveFeeds( store, action, apiResponse ) {
-	const feeds = map( apiResponse.feeds, feed => ( {
-		...feed,
-		feed_URL: feed.subscribe_URL,
-	} ) );
-
-	const total = apiResponse.total > 200 ? 200 : apiResponse.total;
-	store.dispatch( receiveFeedSearch( queryKey( action.payload ), feeds, total ) );
+export function receiveReadFeedSearchSuccess( action, data ) {
+	const { feeds, total } = data;
+	return bypassDataLayer( receiveFeedSearch( queryKey( action.payload ), feeds, total ) );
 }
 
-export function receiveError( store, action, error ) {
-	if ( process.env.NODE_ENV === 'development' ) {
-		console.error( action, error ); // eslint-disable-line no-console
-	}
-
+export function receiveReadFeedSearchError( action ) {
 	const errorText = translate( 'Could not get results for query: %(query)s', {
 		args: { query: truncate( action.payload.query, { length: 50 } ) },
 	} );
-	store.dispatch( errorNotice( errorText ) );
+
+	return errorNotice( errorText );
 }
 
 export default {
 	[ READER_FEED_SEARCH_REQUEST ]: [
-		dispatchRequest( initiateFeedSearch, receiveFeeds, receiveError ),
+		dispatchRequestEx( {
+			fetch: requestReadFeedSearch,
+			onSuccess: receiveReadFeedSearchSuccess,
+			onError: receiveReadFeedSearchError,
+			fromApi,
+		} ),
 	],
 };
