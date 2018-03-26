@@ -18,7 +18,7 @@ import { addQueryArgs } from 'lib/route';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import WebPreview from 'components/web-preview';
 
-const debug = debugFactory( 'calypso:design-preview' );
+const debug = debugFactory( 'calypso:site-preview' );
 
 class UrlPreview extends Component {
 	static propTypes = {
