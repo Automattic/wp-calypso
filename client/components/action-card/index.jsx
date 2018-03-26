@@ -22,6 +22,7 @@ const ActionCard = ( {
 	buttonTarget,
 	buttonHref,
 	buttonOnClick,
+	children
 } ) => (
 	<CompactCard className="action-card">
 		<div className="action-card__main">
@@ -29,14 +30,14 @@ const ActionCard = ( {
 			<p>{ mainText }</p>
 		</div>
 		<div className="action-card__button-container">
-			<Button
+			{ children || <Button
 				primary={ buttonPrimary }
 				href={ buttonHref }
 				target={ buttonTarget }
 				onClick={ buttonOnClick }
 			>
 				{ buttonText } { buttonIcon && <Gridicon icon={ buttonIcon } /> }
-			</Button>
+			</Button> }
 		</div>
 	</CompactCard>
 );
