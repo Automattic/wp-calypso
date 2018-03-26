@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import DocumentHead from 'components/data/document-head';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import SiteOverview from './stats-site-overview';
 import SiteOverviewPlaceholder from './stats-overview-placeholder';
@@ -33,7 +34,7 @@ class StatsOverview extends Component {
 	};
 
 	render() {
-		const { moment, path, period, sites } = this.props;
+		const { moment, path, period, sites, translate } = this.props;
 		const statsPath = path === '/stats' ? '/stats/day' : path;
 		const sitesSorted = sites.map( site => {
 			let momentSiteZone = moment();
@@ -96,6 +97,7 @@ class StatsOverview extends Component {
 
 		return (
 			<Main wideLayout>
+				<DocumentHead title={ translate( 'Stats' ) } />
 				<StatsFirstView />
 				<SidebarNavigation />
 				<StatsNavigation selectedItem={ 'traffic' } interval={ period } />
