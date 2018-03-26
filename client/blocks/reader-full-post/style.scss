@@ -587,3 +587,11 @@
 	margin-bottom: 16px;
 	min-height: 200px;
 }
+
+.reader-full-post__amp-container {
+	position: relative;
+	iframe {
+		height: 100%;
+		width: 100%;
+	}
+}

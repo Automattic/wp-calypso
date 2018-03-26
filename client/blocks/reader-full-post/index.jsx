@@ -4,7 +4,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -65,6 +64,7 @@ import config from 'config';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
+import AmpViewer from './amp/viewer';
 
 export class FullPostView extends React.Component {
 	static propTypes = {
@@ -113,6 +113,18 @@ export class FullPostView extends React.Component {
 		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
+
+		// if we have an AMP container but no AMP viewer, init AMP
+		if ( ! this.ampViewer && this.ampViewerContainer ) {
+			this.ampViewer = new AmpViewer( this.ampViewerContainer, this.props.post.meta.links.amp ); //'https://ampproject.org'
+
+			// listen for when the document is loaded and has a height so we can adjust the iframe size
+			this.ampViewer.addListener( 'documentHeight', data => {
+				this.ampViewerContainer.setAttribute( 'style', `height:${ data.height }px` );
+			} );
+
+			this.ampViewer.attach();
+		}
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -127,6 +139,8 @@ export class FullPostView extends React.Component {
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
+
+		this.removeAMP();
 	}
 
 	handleBack = event => {
@@ -208,7 +222,7 @@ export class FullPostView extends React.Component {
 
 		this._scrolling = true;
 		setTimeout( () => {
-			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );
+			const commentsNode = this.commentsWrapper;
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
 					x: 0,
@@ -217,7 +231,7 @@ export class FullPostView extends React.Component {
 					onComplete: () => {
 						// check to see if the comment node moved while we were scrolling
 						// and scroll to the end position
-						const commentsNodeAfterScroll = ReactDom.findDOMNode( this.refs.commentsWrapper );
+						const commentsNodeAfterScroll = this.commentsWrapper;
 						if ( commentsNodeAfterScroll && commentsNodeAfterScroll.offsetTop ) {
 							window.scrollTo( 0, commentsNodeAfterScroll.offsetTop - 48 );
 						}
@@ -290,17 +304,6 @@ export class FullPostView extends React.Component {
 
 		const siteName = getSiteName( { site, post } );
 		const classes = { 'reader-full-post': true };
-		const showRelatedPosts = post && ! post.is_external && post.site_ID;
-		const relatedPostsFromOtherSitesTitle = translate(
-			'More on {{wpLink}}WordPress.com{{/wpLink}}',
-			{
-				components: {
-					/* eslint-disable */
-					wpLink: <a href="/" className="reader-related-card__link" />,
-					/* eslint-enable */
-				},
-			}
-		);
 
 		if ( post.site_ID ) {
 			classes[ 'blog-' + post.site_ID ] = true;
@@ -311,10 +314,9 @@ export class FullPostView extends React.Component {
 
 		const externalHref = isDiscoverPost( referralPost ) ? referralPost.URL : post.URL;
 		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
-		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
-
+		const isAMP = ! isLoading && post.meta.links.amp;
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
@@ -380,103 +382,144 @@ export class FullPostView extends React.Component {
 							) }
 						</div>
 					</div>
-					<Emojify>
-						<article className="reader-full-post__story" ref="article">
-							<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
-
-							{ post.featured_image &&
-								! isFeaturedImageInContent( post ) && (
-									<FeaturedImage src={ post.featured_image } />
-								) }
-							{ isLoading && <ReaderFullPostContentPlaceholder /> }
-							{ post.use_excerpt ? (
-								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
-							) : (
-								<EmbedContainer>
-									<AutoDirection>
-										<div
-											className="reader-full-post__story-content"
-											dangerouslySetInnerHTML={ { __html: post.content } }
-										/>
-									</AutoDirection>
-								</EmbedContainer>
-							) }
-
-							{ post.use_excerpt &&
-								! isDiscoverPost( post ) && (
-									<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
-								) }
-							{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
-							{ isDailyPostChallengeOrPrompt( post ) && (
-								<DailyPostButton post={ post } site={ site } />
-							) }
-
-							<ReaderPostActions
-								post={ post }
-								site={ site }
-								onCommentClick={ this.handleCommentClick }
-								fullPost={ true }
-							/>
-
-							{ showRelatedPosts && (
-								<RelatedPostsFromSameSite
-									siteId={ +post.site_ID }
-									postId={ +post.ID }
-									title={ translate( 'More in {{ siteLink /}}', {
-										components: {
-											siteLink: (
-												<a
-													href={ getStreamUrlFromPost( post ) }
-													/* eslint-disable wpcalypso/jsx-classname-namespace */
-													className="reader-related-card__link"
-													/* eslint-enable wpcalypso/jsx-classname-namespace */
-												>
-													{ siteName }
-												</a>
-											),
-										},
-									} ) }
-									/* eslint-disable wpcalypso/jsx-classname-namespace */
-									className="is-same-site"
-									/* eslint-enable wpcalypso/jsx-classname-namespace */
-									onPostClick={ this.handleRelatedPostFromSameSiteClicked }
-								/>
-							) }
-
-							<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
-								{ shouldShowComments( post ) && (
-									<Comments
-										showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
-										ref="commentsList"
-										post={ post }
-										initialSize={ startingCommentId ? commentCount : 10 }
-										pageSize={ 25 }
-										startingCommentId={ startingCommentId }
-										commentCount={ commentCount }
-										maxDepth={ 1 }
-										commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-										showConversationFollowButton={ true }
-										followSource={ READER_FULL_POST }
-									/>
-								) }
-							</div>
-
-							{ showRelatedPosts && (
-								<RelatedPostsFromOtherSites
-									siteId={ +post.site_ID }
-									postId={ +post.ID }
-									title={ relatedPostsFromOtherSitesTitle }
-									/* eslint-disable wpcalypso/jsx-classname-namespace */
-									className="is-other-site"
-									/* eslint-enable wpcalypso/jsx-classname-namespace */
-									onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
-								/>
-							) }
-						</article>
-					</Emojify>
+					{ isAMP ? this.renderPostAMP() : this.renderPost() }
 				</div>
 			</ReaderMain>
 		);
+	}
+
+	renderPost() {
+		const { post, site, referralPost } = this.props;
+		const siteName = getSiteName( { site, post } );
+		const commentCount = get( post, 'discussion.comment_count' );
+		const startingCommentId = this.getCommentIdFromUrl();
+		const relatedPostsFromOtherSitesTitle = translate(
+			'More on {{wpLink}}WordPress.com{{/wpLink}}',
+			{
+				components: {
+					/* eslint-disable */
+					wpLink: <a href="/" className="reader-related-card__link" />,
+					/* eslint-enable */
+				},
+			}
+		);
+		const isLoading = ! post || post._state === 'pending' || post._state === 'minimal';
+		const showRelatedPosts = post && ! post.is_external && post.site_ID;
+		return (
+			<Emojify>
+				<article className="reader-full-post__story">
+					<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
+
+					{ post.featured_image &&
+						! isFeaturedImageInContent( post ) && <FeaturedImage src={ post.featured_image } /> }
+					{ isLoading && <ReaderFullPostContentPlaceholder /> }
+					{ post.use_excerpt ? (
+						<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+					) : (
+						<EmbedContainer>
+							<AutoDirection>
+								<div
+									className="reader-full-post__story-content"
+									dangerouslySetInnerHTML={ { __html: post.content } }
+								/>
+							</AutoDirection>
+						</EmbedContainer>
+					) }
+
+					{ post.use_excerpt &&
+						! isDiscoverPost( post ) && (
+							<PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+						) }
+					{ isDiscoverSitePick( post ) && <DiscoverSiteAttribution post={ post } /> }
+					{ isDailyPostChallengeOrPrompt( post ) && (
+						<DailyPostButton post={ post } site={ site } />
+					) }
+
+					<ReaderPostActions
+						post={ post }
+						site={ site }
+						onCommentClick={ this.handleCommentClick }
+						fullPost={ true }
+					/>
+
+					{ showRelatedPosts && (
+						<RelatedPostsFromSameSite
+							siteId={ +post.site_ID }
+							postId={ +post.ID }
+							title={ translate( 'More in {{ siteLink /}}', {
+								components: {
+									siteLink: (
+										<a
+											href={ getStreamUrlFromPost( post ) }
+											/* eslint-disable wpcalypso/jsx-classname-namespace */
+											className="reader-related-card__link"
+											/* eslint-enable wpcalypso/jsx-classname-namespace */
+										>
+											{ siteName }
+										</a>
+									),
+								},
+							} ) }
+							/* eslint-disable wpcalypso/jsx-classname-namespace */
+							className="is-same-site"
+							/* eslint-enable wpcalypso/jsx-classname-namespace */
+							onPostClick={ this.handleRelatedPostFromSameSiteClicked }
+						/>
+					) }
+
+					<div className="reader-full-post__comments-wrapper" ref={ this.storeCommentsWrapperRef }>
+						{ shouldShowComments( post ) && (
+							<Comments
+								showNestingReplyArrow={ config.isEnabled( 'reader/nesting-arrow' ) }
+								post={ post }
+								initialSize={ startingCommentId ? commentCount : 10 }
+								pageSize={ 25 }
+								startingCommentId={ startingCommentId }
+								commentCount={ commentCount }
+								maxDepth={ 1 }
+								commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+								showConversationFollowButton={ true }
+								followSource={ READER_FULL_POST }
+							/>
+						) }
+					</div>
+
+					{ showRelatedPosts && (
+						<RelatedPostsFromOtherSites
+							siteId={ +post.site_ID }
+							postId={ +post.ID }
+							title={ relatedPostsFromOtherSitesTitle }
+							/* eslint-disable wpcalypso/jsx-classname-namespace */
+							className="is-other-site"
+							/* eslint-enable wpcalypso/jsx-classname-namespace */
+							onPostClick={ this.handleRelatedPostFromOtherSiteClicked }
+						/>
+					) }
+				</article>
+			</Emojify>
+		);
+	}
+
+	storeCommentsWrapperRef = el => {
+		this.commentsWrapper = el;
+	};
+
+	// this won't get called unless the post is already loaded and we have an AMP link
+	renderPostAMP() {
+		return (
+			<div className="reader-full-post__amp-container" ref={ this.storeAmpViewerContainerRef } />
+		);
+	}
+
+	storeAmpViewerContainerRef = el => {
+		this.ampViewerContainer = el;
+	};
+
+	removeAMP() {
+		// called on document mount
+		if ( this.ampViewer ) {
+			this.ampViewer.unAttach();
+		}
 	}
 }
 
