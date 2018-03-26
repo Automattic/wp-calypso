@@ -67,7 +67,7 @@ class CurrentSite extends Component {
 			cartItems.hasStaleItem( CartStore.get() ) &&
 			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000
 		) {
-			this.props.infoNotice( this.props.translate( "'You cart is awaiting for payment" ), {
+			this.props.infoNotice( this.props.translate( 'You cart is awaiting payment' ), {
 				id: staleCartItemNoticeId,
 				isPersistent: false,
 				duration: 10000,
