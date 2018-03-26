@@ -82,6 +82,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 import { addItems } from 'lib/upgrades/actions';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -458,6 +459,10 @@ class ManagePurchase extends Component {
 					<QueryCanonicalTheme siteId={ selectedSiteId } themeId={ selectedPurchase.meta } />
 				) }
 				<Main className={ classes }>
+					<PageViewTracker
+						path="/me/purchases/:site/:purchaseId"
+						title="Purchases > Manage Purchase"
+					/>
 					<HeaderCake onClick={ goToList }>{ titles.managePurchase }</HeaderCake>
 					{
 						<PurchaseNotice

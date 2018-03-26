@@ -19,7 +19,6 @@ import EditCardDetails from './payment/edit-card-details';
 import Main from 'components/main';
 import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
-import * as paths from './paths';
 import PurchasesHeader from './purchases-list/header';
 import PurchasesList from './purchases-list';
 import { concatTitle, recordPageView } from 'lib/react-helpers';
@@ -89,16 +88,12 @@ export default {
 	list( context, next ) {
 		setTitle( context );
 
-		recordPurchasesPageView( paths.purchasesRoot );
-
 		context.primary = <PurchasesList noticeType={ context.params.noticeType } />;
 		next();
 	},
 
 	managePurchase( context, next ) {
 		setTitle( context, titles.managePurchase );
-
-		recordPurchasesPageView( paths.managePurchase(), 'Manage Purchase' );
 
 		context.primary = (
 			<ManagePurchase
