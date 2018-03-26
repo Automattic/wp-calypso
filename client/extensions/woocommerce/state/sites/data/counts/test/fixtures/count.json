@@ -1,0 +1,25 @@
+{
+	"orders": {
+		"wc-pending": 2,
+		"wc-processing": 3,
+		"wc-on-hold": 1,
+		"wc-completed": 1,
+		"wc-cancelled": 0,
+		"wc-refunded": 2,
+		"wc-failed": 0
+	},
+	"products": {
+		"all": 5,
+		"low-inventory": 2,
+		"out-of-stock": 1
+	},
+	"reviews": {
+		"approved": 1,
+		"awaiting_moderation": 1,
+		"spam": 0,
+		"trash": 0,
+		"post-trashed": 0,
+		"total_comments": 2,
+		"all": 2
+	}
+}
