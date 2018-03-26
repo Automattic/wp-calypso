@@ -12,18 +12,15 @@ import { partial } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getPlan } from 'lib/plans';
 import {
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLANS_LIST,
+	GROUP_WPCOM,
+	GROUP_JETPACK,
+	TYPE_BUSINESS,
+	TYPE_PREMIUM,
+	TYPE_PERSONAL,
+	TYPE_FREE,
 } from 'lib/plans/constants';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
@@ -50,19 +47,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 export class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
-		plan: PropTypes.oneOf( [
-			PLAN_FREE,
-			PLAN_PERSONAL,
-			PLAN_PREMIUM,
-			PLAN_BUSINESS,
-			PLAN_JETPACK_FREE,
-			PLAN_JETPACK_BUSINESS,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-		] ).isRequired,
+		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 		isPlaceholder: PropTypes.bool,
 	};
 
@@ -71,7 +56,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	};
 
 	getBusinessFeatures() {
-		const { selectedSite, planHasDomainCredit } = this.props;
+		const { selectedSite, plan, planHasDomainCredit } = this.props;
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
@@ -94,17 +79,13 @@ export class ProductPurchaseFeaturesList extends Component {
 			<GoogleAnalyticsStats selectedSite={ selectedSite } key="googleAnalyticsStatsFeature" />,
 			<AdvertisingRemoved isBusinessPlan key="advertisingRemovedFeature" />,
 			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts
-				selectedSite={ selectedSite }
-				key="videoAudioPostsFeature"
-				plan={ PLAN_BUSINESS }
-			/>,
+			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" plan={ plan } />,
 			<FindNewTheme selectedSite={ selectedSite } key="findNewThemeFeature" />,
 		];
 	}
 
 	getPremiumFeatures() {
-		const { selectedSite, planHasDomainCredit } = this.props;
+		const { selectedSite, plan, planHasDomainCredit } = this.props;
 
 		return [
 			<CustomDomain
@@ -115,11 +96,7 @@ export class ProductPurchaseFeaturesList extends Component {
 			<AdvertisingRemoved isBusinessPlan={ false } key="advertisingRemovedFeature" />,
 			<GoogleVouchers selectedSite={ selectedSite } key="googleVouchersFeature" />,
 			<CustomizeTheme selectedSite={ selectedSite } key="customizeThemeFeature" />,
-			<VideoAudioPosts
-				selectedSite={ selectedSite }
-				key="videoAudioPostsFeature"
-				plan={ PLAN_PREMIUM }
-			/>,
+			<VideoAudioPosts selectedSite={ selectedSite } key="videoAudioPostsFeature" plan={ plan } />,
 			isWordadsInstantActivationEligible( selectedSite ) ? (
 				<MonetizeSite selectedSite={ selectedSite } key="monetizeSiteFeature" />
 			) : null,
@@ -206,27 +183,24 @@ export class ProductPurchaseFeaturesList extends Component {
 			return null;
 		}
 
-		switch ( plan ) {
-			case PLAN_BUSINESS:
-				return this.getBusinessFeatures();
-			case PLAN_PREMIUM:
-				return this.getPremiumFeatures();
-			case PLAN_PERSONAL:
-				return this.getPersonalFeatures();
-			case PLAN_JETPACK_FREE:
-				return this.getJetpackFreeFeatures();
-			case PLAN_JETPACK_PREMIUM:
-			case PLAN_JETPACK_PREMIUM_MONTHLY:
-				return this.getJetpackPremiumFeatures();
-			case PLAN_JETPACK_PERSONAL:
-			case PLAN_JETPACK_PERSONAL_MONTHLY:
-				return this.getJetpackPersonalFeatures();
-			case PLAN_JETPACK_BUSINESS:
-			case PLAN_JETPACK_BUSINESS_MONTHLY:
-				return this.getJetpackBusinessFeatures();
-			default:
-				return null;
-		}
+		const { group, type } = getPlan( plan );
+		const lookup = {
+			[ GROUP_WPCOM ]: {
+				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
+				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
+				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
+			},
+			[ GROUP_JETPACK ]: {
+				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),
+				[ TYPE_PREMIUM ]: () => this.getJetpackPremiumFeatures(),
+				[ TYPE_PERSONAL ]: () => this.getJetpackPersonalFeatures(),
+				[ TYPE_FREE ]: () => this.getJetpackFreeFeatures(),
+			},
+		};
+
+		const lookupGroup = lookup[ group ];
+		const callback = lookupGroup ? lookupGroup[ type ] : null;
+		return callback ? callback() : null;
 	}
 
 	render() {
