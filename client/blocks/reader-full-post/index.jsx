@@ -284,7 +284,7 @@ export class FullPostView extends React.Component {
 	render() {
 		const { post, site, feed, referralPost, referral, blogId, feedId, postId } = this.props;
 
-		if ( post._state === 'error' ) {
+		if ( post.is_error ) {
 			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
 		}
 
