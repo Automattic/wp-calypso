@@ -9,7 +9,8 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import config, { isEnabled } from 'config';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
+import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 import { userCan } from 'lib/site/utils';
 
 /**
@@ -40,7 +41,7 @@ export function isATEnabled( site ) {
 
 	// Site has Business plan
 	const planSlug = get( site, 'plan.product_slug' );
-	if ( planSlug !== PLAN_BUSINESS ) {
+	if ( ! planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) ) {
 		return false;
 	}
 
