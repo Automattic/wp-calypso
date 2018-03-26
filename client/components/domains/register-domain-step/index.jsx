@@ -146,7 +146,6 @@ class RegisterDomainStep extends React.Component {
 		onAddDomain: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		designType: PropTypes.string,
-		onDomainSearchChange: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -155,7 +154,6 @@ class RegisterDomainStep extends React.Component {
 		onSave: noop,
 		onAddMapping: noop,
 		onAddDomain: noop,
-		onDomainSearchChange: noop,
 	};
 
 	constructor( props ) {
@@ -398,8 +396,6 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		const loadingResults = Boolean( getFixedDomainSearch( searchQuery ) );
-
-		this.props.onDomainSearchChange( searchQuery );
 
 		this.setState(
 			{
