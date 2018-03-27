@@ -688,27 +688,19 @@
 }
 
 .jetpack-connect__plan-info {
-	margin-top: 35px;
 	text-align: center;
-	width: 93%;
+	max-width: 360px;
+	margin-top: 35px;
+	padding-top: 30px;
 	padding-bottom: 30px;
-
-	@include breakpoint( '>480px' ) {
-		width: 100%;
-	}
-
-	@include breakpoint( '>960px' ) {
-		width: 93%;
-	}
 }
 
 .jetpack-connect__plan-info-illustration {
-	padding-top: 30px;
-	width: 250px;
+	max-width: 200px;
 }
 
 .jetpack-connect__plan-info-buttons {
-	.button {
-		margin-right: 10px;
+	.button + .button {
+		margin-left: 10px;
 	}
 }
