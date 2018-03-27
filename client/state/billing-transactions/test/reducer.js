@@ -33,6 +33,7 @@ describe( 'reducer', () => {
 			'requesting',
 			'items',
 			'sendingReceiptEmail',
+			'individualTransactions',
 		] );
 	} );
 
