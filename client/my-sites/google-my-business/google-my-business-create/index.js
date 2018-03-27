@@ -85,7 +85,11 @@ class GoogleMyBusinessCreate extends Component {
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
-				<TransitionGroup>{ this.getStep() }</TransitionGroup>
+
+				<div className="google-my-business-create__transition-group">
+					<TransitionGroup>{ this.getStep() }</TransitionGroup>
+				</div>
+
 				<StepNavigation value={ value } total={ 100 } backHref={ backHref } nextHref={ nextHref } />
 			</Main>
 		);

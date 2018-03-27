@@ -14,6 +14,18 @@ import { Transition } from 'react-transition-group';
 
 import AnimateHeight from 'react-animate-height';
 
+const duration = 200;
+
+const defaultStyle = {
+	transition: `opacity ${ duration }ms ease-in-out`,
+	opacity: 0,
+};
+
+const transitionStyles = {
+	entering: { opacity: 0 },
+	entered: { opacity: 1 },
+};
+
 class Animation extends Component {
 	state = {
 		height: 0,
@@ -25,13 +37,13 @@ class Animation extends Component {
 
 	handleEntering = () => {
 		console.log( 'handleEntering' );
+		this.setState( {
+			height: 'auto',
+		} );
 	};
 
 	handleEntered = () => {
 		console.log( 'handleEntered' );
-		this.setState( {
-			height: 'auto',
-		} );
 	};
 
 	handleExit = () => {
@@ -54,7 +66,7 @@ class Animation extends Component {
 			<Transition
 				in={ this.props.in }
 				appear={ true }
-				timeout={ 500 }
+				timeout={ 200 }
 				onEnter={ this.handleEnter }
 				onEntering={ this.handleEntering }
 				onEntered={ this.handleEntered }
@@ -62,9 +74,18 @@ class Animation extends Component {
 				onExiting={ this.handleExiting }
 				onExited={ this.handleExited }
 			>
-				<AnimateHeight duration={ 500 } height={ this.state.height }>
-					{ this.props.children }
-				</AnimateHeight>
+				{ state => (
+					<div
+						style={ {
+							...defaultStyle,
+							...transitionStyles[ state ],
+						} }
+					>
+						<AnimateHeight duration={ 200 } height={ this.state.height }>
+							{ this.props.children }
+						</AnimateHeight>
+					</div>
+				) }
 			</Transition>
 		);
 	}
