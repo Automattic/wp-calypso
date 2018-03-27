@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getRequest } from 'state/selectors';
+import { isRequestingJetpackOnboardingSettings } from 'state/selectors';
 import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
 
 class QueryJetpackOnboardingSettings extends Component {
@@ -47,8 +47,7 @@ class QueryJetpackOnboardingSettings extends Component {
 
 export default connect(
 	( state, { query, siteId } ) => ( {
-		requestingSettings: getRequest( state, requestJetpackOnboardingSettings( siteId, query ) )
-			.isLoading,
+		requestingSettings: isRequestingJetpackOnboardingSettings( state, siteId, query ),
 	} ),
 	{ requestJetpackOnboardingSettings }
 )( QueryJetpackOnboardingSettings );
