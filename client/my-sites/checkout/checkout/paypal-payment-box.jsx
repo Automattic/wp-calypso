@@ -21,13 +21,14 @@ import SubscriptionText from './subscription-text';
 import TermsOfService from './terms-of-service';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
+import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();
 
-class PaypalPaymentBox extends React.Component {
+export class PaypalPaymentBox extends React.Component {
 	static displayName = 'PaypalPaymentBox';
 
 	state = {
@@ -138,9 +139,12 @@ class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const hasBusinessPlanInCart = some( this.props.cart.products, {
-			product_slug: PLAN_BUSINESS,
-		} );
+		const hasBusinessPlanInCart = some( this.props.cart.products, ( { product_slug } ) =>
+			planMatches( product_slug, {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
+		);
 		const showPaymentChatButton = this.props.presaleChatAvailable && hasBusinessPlanInCart,
 			paymentButtonClasses = 'payment-box__payment-buttons';
 
