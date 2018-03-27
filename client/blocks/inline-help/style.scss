@@ -108,7 +108,7 @@
 	p {
 		font-size: 12px;
 
-	@include breakpoint( ">660px" ) {
+		@include breakpoint( ">660px" ) {
 			font-size: 14px;
 		}
 	}
