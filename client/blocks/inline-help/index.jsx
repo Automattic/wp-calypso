@@ -125,7 +125,7 @@ class InlineHelp extends Component {
 					{ showInlineHelp && (
 						<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
 					) }
-        </Button>
+				</Button>
 				{ this.props.isHappychatButtonVisible &&
 					config.isEnabled( 'happychat' ) && (
 						<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
