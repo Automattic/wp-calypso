@@ -46,19 +46,11 @@ export default function() {
 		clientRender
 	);
 
-	page(
-		paths.purchasesRoot,
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.list,
-		makeLayout,
-		clientRender
-	);
+	page( paths.purchasesRoot, meController.sidebar, controller.list, makeLayout, clientRender );
 
 	page(
 		paths.managePurchase(),
 		meController.sidebar,
-		controller.noSitesMessage,
 		siteSelection,
 		controller.managePurchase,
 		makeLayout,
@@ -68,7 +60,6 @@ export default function() {
 	page(
 		paths.cancelPurchase(),
 		meController.sidebar,
-		controller.noSitesMessage,
 		siteSelection,
 		controller.cancelPurchase,
 		makeLayout,
@@ -78,7 +69,6 @@ export default function() {
 	page(
 		paths.cancelPrivacyProtection(),
 		meController.sidebar,
-		controller.noSitesMessage,
 		siteSelection,
 		controller.cancelPrivacyProtection,
 		makeLayout,
@@ -88,7 +78,6 @@ export default function() {
 	page(
 		paths.confirmCancelDomain(),
 		meController.sidebar,
-		controller.noSitesMessage,
 		siteSelection,
 		controller.confirmCancelDomain,
 		makeLayout,
@@ -98,7 +87,6 @@ export default function() {
 	page(
 		paths.addCardDetails(),
 		meController.sidebar,
-		controller.noSitesMessage,
 		siteSelection,
 		controller.addCardDetails,
 		makeLayout,
@@ -108,7 +96,6 @@ export default function() {
 	page(
 		paths.editCardDetails(),
 		meController.sidebar,
-		controller.noSitesMessage,
 		siteSelection,
 		controller.editCardDetails,
 		makeLayout,
