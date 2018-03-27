@@ -13,13 +13,11 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
-
 import { cartItems } from 'lib/cart-values';
 import { getSiteBySlug } from 'state/sites/selectors';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import QueryPlans from 'components/data/query-plans';
-
 import QuerySitePlans from 'components/data/query-site-plans';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { isEnabled } from 'config';
