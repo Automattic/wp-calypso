@@ -70,7 +70,7 @@ describe( 'getPastBillingTransaction()', () => {
 		};
 
 		const output = getPastBillingTransaction( testState, 999999 );
-		expect( output ).toEqual( individualTransaction );
+		expect( output ).toBe( individualTransaction );
 	} );
 
 	test( 'should return null for individual transaction that is being fetched', () => {
