@@ -190,8 +190,8 @@ class Plans extends Component {
 	}
 
 	handleInfoButtonClick = info => {
-		this.props.recordTracksEvent( 'calypso_jpc_help_' + info + '_click', {
-			site_type: 'connected',
+		this.props.recordTracksEvent( 'calypso_jpc_help_click', {
+			site_type: info,
 		} );
 	};
 
