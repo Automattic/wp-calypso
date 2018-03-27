@@ -15,6 +15,7 @@ import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import { getDecoratedSiteDomains } from 'state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
+import { isSiteAutomatedTransfer } from 'state/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 const ruleWhiteList = [
@@ -29,8 +30,9 @@ const ruleWhiteList = [
 	'transferStatus',
 ];
 
-const CurrentSiteDomainWarnings = ( { domains, isJetpack, selectedSite } ) => {
-	if ( ! selectedSite || isJetpack ) {
+const CurrentSiteDomainWarnings = ( { domains, isAtomic, isJetpack, selectedSite } ) => {
+	if ( ! selectedSite || ( isJetpack && ! isAtomic ) ) {
+		// Simple and Atomic sites. Not Jetpack sites.
 		return null;
 	}
 
@@ -60,6 +62,7 @@ export default connect( state => {
 	return {
 		domains: getDecoratedSiteDomains( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
+		isAtomic: isSiteAutomatedTransfer( state, selectedSiteId ),
 		selectedSite: getSelectedSite( state ),
 	};
 } )( CurrentSiteDomainWarnings );
