@@ -9,18 +9,21 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import debugFactory from 'debug';
+import titlecase from 'to-title-case';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import config from 'config';
+import DocumentHead from 'components/data/document-head';
 import notices from 'notices';
 import urlSearch from 'lib/url-search';
 import Main from 'components/main';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import PageList from './page-list';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Search from 'components/search';
 import SectionNav from 'components/section-nav';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -32,7 +35,8 @@ class PagesMain extends React.Component {
 	static displayName = 'Pages';
 
 	static propTypes = {
-		trackScrollPage: PropTypes.func.isRequired,
+		status: PropTypes.string,
+		search: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -52,8 +56,26 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { doSearch, search, translate } = this.props;
-		const status = this.props.status || 'published';
+		const { doSearch, search, translate, siteId } = this.props;
+		let status = this.props.status || '';
+		let analyticsPageTitle = 'Pages';
+		let baseAnalyticsPath = '/pages';
+
+		if ( status ) {
+			baseAnalyticsPath += '/:status';
+		}
+
+		if ( siteId ) {
+			baseAnalyticsPath += '/:site';
+		}
+
+		if ( status.length ) {
+			analyticsPageTitle += ' > ' + titlecase( status );
+		} else {
+			analyticsPageTitle += ' > Published';
+			status = 'published';
+		}
+
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
 			drafts: translate( 'Drafts', { context: 'Filter label for pages list' } ),
@@ -80,6 +102,8 @@ class PagesMain extends React.Component {
 		};
 		return (
 			<Main classname="pages">
+				<PageViewTracker path={ baseAnalyticsPath } title={ analyticsPageTitle } />
+				<DocumentHead title={ translate( 'Site Pages' ) } />
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
