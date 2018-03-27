@@ -77,5 +77,7 @@ export default combineReducers( {
 	items,
 	requesting,
 	sendingReceiptEmail,
+	//individual transactions contains transactions that are not part of the items tree.
+	//TODO: if pagination is implemented, address potential data duplication between individualTransactions and items
 	individualTransactions,
 } );

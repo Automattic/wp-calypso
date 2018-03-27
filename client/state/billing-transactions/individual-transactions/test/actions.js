@@ -4,7 +4,7 @@
  */
 import { requestBillingTransaction, clearBillingTransactionError } from '../actions';
 import {
-	BILLING_TRANSACTION_CLEAR_ERROR,
+	BILLING_TRANSACTION_ERROR_CLEAR,
 	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
@@ -115,7 +115,7 @@ describe( 'actions', () => {
 		const transactionId = 12345678;
 		const action = clearBillingTransactionError( transactionId );
 		expect( action ).toEqual( {
-			type: BILLING_TRANSACTION_CLEAR_ERROR,
+			type: BILLING_TRANSACTION_ERROR_CLEAR,
 			transactionId,
 		} );
 	} );

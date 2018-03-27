@@ -3,7 +3,7 @@
  * Internal dependencies
  */
 import {
-	BILLING_TRANSACTION_CLEAR_ERROR,
+	BILLING_TRANSACTION_ERROR_CLEAR,
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
@@ -42,6 +42,6 @@ export const requestBillingTransaction = transactionId => dispatch => {
 };
 
 export const clearBillingTransactionError = transactionId => ( {
-	type: BILLING_TRANSACTION_CLEAR_ERROR,
+	type: BILLING_TRANSACTION_ERROR_CLEAR,
 	transactionId,
 } );
