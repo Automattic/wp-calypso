@@ -198,9 +198,8 @@ class FollowingManage extends Component {
 				<MobileBackToSidebar>
 					<h1>{ translate( 'Streams' ) }</h1>
 				</MobileBackToSidebar>
-				{ ! searchResults && (
-					<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
-				) }
+				{ ! searchResults &&
+					sitesQuery && <QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } /> }
 				{ this.shouldRequestMoreRecs() && (
 					<QueryReaderRecommendedSites
 						seed={ recommendationsSeed }
