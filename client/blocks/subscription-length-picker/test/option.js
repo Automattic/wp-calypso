@@ -28,12 +28,12 @@ import { TERM_1_YEAR } from 'lib/plans/constants';
 /**
  * Internal dependencies
  */
-import { TermPickerOption } from '../index';
+import { SubscriptionLength } from '../option';
 
 describe( 'TermPickerOpton basic tests', () => {
 	test( 'should have term-picker-option class', () => {
 		const option = shallow(
-			<TermPickerOption
+			<SubscriptionLength
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }
@@ -44,7 +44,7 @@ describe( 'TermPickerOpton basic tests', () => {
 	} );
 	test( 'should display save badge if savePercent is specified', () => {
 		const option = shallow(
-			<TermPickerOption
+			<SubscriptionLength
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }
@@ -56,7 +56,7 @@ describe( 'TermPickerOpton basic tests', () => {
 	} );
 	test( 'should say "{price} / month" if savePercent is not specified', () => {
 		const option = shallow(
-			<TermPickerOption
+			<SubscriptionLength
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }
@@ -67,7 +67,7 @@ describe( 'TermPickerOpton basic tests', () => {
 	} );
 	test( 'should say "only {price} / month" if savePercent is specified', () => {
 		const option = shallow(
-			<TermPickerOption
+			<SubscriptionLength
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }

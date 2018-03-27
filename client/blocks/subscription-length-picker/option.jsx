@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import Badge from '../badge';
+import Badge from 'components/badge';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -13,7 +13,7 @@ import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '../../lib/plans/co
 
 let componentNumber = 0;
 
-export class TermPickerOption extends React.Component {
+export class SubscriptionLengthOption extends React.Component {
 	static propTypes = {
 		term: PropTypes.string.isRequired,
 		savePercent: PropTypes.number.isRequired,
@@ -33,36 +33,36 @@ export class TermPickerOption extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		this.htmlId = 'term-option-' + ++componentNumber;
+		this.htmlId = 'subscription-option-' + ++componentNumber;
 	}
 
 	render() {
 		const { savePercent, price, term, checked } = this.props;
-		const className = classnames( 'term-picker-option', {
-			'term-picker-option--active': checked,
+		const className = classnames( 'subscription-length-option', {
+			'subscription-length-option--active': checked,
 		} );
 		return (
 			<label className={ className } htmlFor={ this.htmlId }>
-				<div className="term-picker-option__radio-wrapper">
+				<div className="subscription-length-option__radio-wrapper">
 					<input
 						id={ this.htmlId }
 						type="radio"
-						className="term-picker-option__radio"
+						className="subscription-length-option__radio"
 						checked={ checked }
 						onChange={ this.handleChange }
 					/>
 				</div>
 
-				<div className="term-picker-option__content">
-					<div className="term-picker-option__header">
-						<div className="term-picker-option__term">{ this.getTermText() }</div>
-						<div className="term-picker-option__discount">
+				<div className="subscription-length-option__content">
+					<div className="subscription-length-option__header">
+						<div className="subscription-length-option__term">{ this.getTermText() }</div>
+						<div className="subscription-length-option__discount">
 							{ savePercent ? this.renderSaveBadge() : false }
 						</div>
 					</div>
-					<div className="term-picker-option__description">
-						<div className="term-picker-option__price">{ price }</div>
-						<div className="term-picker-option__side-note">
+					<div className="subscription-length-option__description">
+						<div className="subscription-length-option__price">{ price }</div>
+						<div className="subscription-length-option__side-note">
 							{ term !== TERM_MONTHLY ? this.renderPricePerMonth() : false }
 						</div>
 					</div>
@@ -119,4 +119,4 @@ export class TermPickerOption extends React.Component {
 	};
 }
 
-export default localize( TermPickerOption );
+export default localize( SubscriptionLengthOption );
