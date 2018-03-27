@@ -15,7 +15,6 @@ import { dispatchRequestEx, getData, getError } from 'state/data-layer/wpcom-htt
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getActivityLogs } from 'state/selectors';
 
 const POLL_INTERVAL = 8000;
 const pollingSites = new Map();
@@ -47,11 +46,18 @@ export const togglePolling = ( { dispatch, getState }, { isWatching, siteId } ) 
 	pollingSites.set( siteId, {} );
 
 	// kick off the first polling
+	//
+	// we start by grabbing one event - this is a result of the way
+	// that the backend is currently sending events with truncated
+	// timestamps. we end up always getting the latest event in the
+	// response. therefore, by setting a number of one we'll get that
+	// event initially and it will return a `nextAfter` value which
+	// we'll subsequently use to poll with a higher `number` value
 	dispatch(
 		merge(
 			activityLogRequest( siteId, {
 				dateStart: Date.now(),
-				number: 100,
+				number: 1,
 				sortOrder: 'asc',
 			} ),
 			{ meta: { dataLayer: { isWatching: true } } }
@@ -84,6 +90,7 @@ export const togglePolling = ( { dispatch, getState }, { isWatching, siteId } ) 
  * @param {object} action incoming action
  */
 export const continuePolling = ( { dispatch, getState }, action ) => {
+	// ignore any updates which weren't triggered by the polling system
 	if ( ! get( action, 'meta.dataLayer.isWatching' ) ) {
 		return;
 	}
@@ -123,34 +130,18 @@ export const continuePolling = ( { dispatch, getState }, action ) => {
 
 			const meta = { meta: { dataLayer: { isWatching: true } } };
 			const searchAfter = nextAfter || thisState.nextAfter;
+			const number = nextAfter ? 100 : 1; // if we didn't get a new `nextAfter` then force one through the limit
+			const sortOrder = 'asc';
 
 			if ( searchAfter ) {
-				dispatch(
-					merge(
-						activityLogRequest( siteId, { searchAfter, number: 100, sortOrder: 'asc' } ),
-						meta
-					)
-				);
+				dispatch( merge( activityLogRequest( siteId, { searchAfter, number, sortOrder } ), meta ) );
 				return;
 			}
 
-			// use a specific value from the returned sort order
-			// right now this is highly coupled to the API response
-			// @TODO make sort order work properly here
-			const newestActivity = ( newest, next ) => Math.max( newest, next.activityTs );
-			const events = getActivityLogs( getState(), siteId ) || [];
-			const dateStart = events.reduce( newestActivity, -Infinity );
-
-			dispatch(
-				merge(
-					activityLogRequest( siteId, {
-						dateStart: dateStart > -Infinity ? dateStart : Date.now(),
-						number: 100,
-						sortOrder: 'asc',
-					} ),
-					meta
-				)
-			);
+			// if we have no sort order after which to search
+			// then we resort to the previous timestamp
+			const { dateStart } = action.params;
+			dispatch( merge( activityLogRequest( siteId, { dateStart, number, sortOrder } ), meta ) );
 		}, POLL_INTERVAL );
 
 		pollingSites.set( siteId, {
@@ -188,13 +179,28 @@ export const handleActivityLogRequest = action => {
 };
 
 export const receiveActivityLog = ( action, data ) => {
-	return activityLogUpdate(
+	const stateUpdate = activityLogUpdate(
 		action.siteId,
 		data.items,
 		data.totalItems,
 		data.oldestItemTs,
 		action.params
 	);
+
+	// if we have no further pages to fetch (nothing more to do)
+	// or if we are receiving a polling action (polling will handle next action)
+	// then let it be and inject into state
+	if ( ! data.hasOwnProperty( 'nextAfter' ) || get( action, 'meta.dataLayer.isWatching' ) ) {
+		return stateUpdate;
+	}
+
+	return [
+		activityLogRequest(
+			action.siteId,
+			merge( {}, action.params, { searchAfter: data.nextAfter } )
+		),
+		stateUpdate,
+	];
 };
 
 export const receiveActivityLogError = () =>

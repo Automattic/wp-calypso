@@ -25,14 +25,14 @@ export const DEFAULT_GRIDICON = 'info-outline';
  */
 export function transformer( apiResponse ) {
 	const orderedItems = get( apiResponse, [ 'current', 'orderedItems' ], [] );
+
 	return Object.assign(
 		{
 			items: map( orderedItems, processItem ),
 			oldestItemTs: get( apiResponse, [ 'oldestItemTs' ], Infinity ),
 			totalItems: get( apiResponse, [ 'totalItems' ], orderedItems.length ),
 		},
-		apiResponse.nextAfter && { nextAfter: apiResponse.nextAfter },
-		apiResponse.prevBefore && { prevBefore: apiResponse.prevBefore }
+		apiResponse.nextAfter && { nextAfter: apiResponse.nextAfter }
 	);
 }
 
