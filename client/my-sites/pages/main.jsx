@@ -62,7 +62,7 @@ class PagesMain extends React.Component {
 		let baseAnalyticsPath = '/pages';
 
 		if ( status ) {
-			baseAnalyticsPath += '/:status';
+			baseAnalyticsPath += `/${ status }`;
 		}
 
 		if ( siteId ) {
