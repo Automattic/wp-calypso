@@ -9,23 +9,15 @@ import { assign, difference, isEmpty, pick } from 'lodash';
  * Internal dependencies
  */
 import {
-	JETPACK_PLANS,
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
-	PLAN_PERSONAL,
-	PLAN_FREE,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_HOST_BUNDLE,
 	PLAN_WPCOM_ENTERPRISE,
 	PLAN_CHARGEBACK,
 	PLAN_MONTHLY_PERIOD,
+	GROUP_JETPACK,
+	GROUP_WPCOM,
+	TYPE_FREE,
 } from 'lib/plans/constants';
+import { isPersonalPlan, isPremiumPlan, isBusinessPlan, planMatches } from 'lib/plans';
 import { domainProductSlugs } from 'lib/domains/constants';
 
 import schema from './schema.json';
@@ -83,14 +75,14 @@ export function isFreePlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === PLAN_FREE;
+	return planMatches( product.product_slug, { type: TYPE_FREE, group: GROUP_WPCOM } );
 }
 
 export function isFreeJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return product.product_slug === PLAN_JETPACK_FREE;
+	return planMatches( product.product_slug, { type: TYPE_FREE, group: GROUP_JETPACK } );
 }
 
 export function isFreeTrial( product ) {
@@ -101,30 +93,24 @@ export function isFreeTrial( product ) {
 }
 
 export function isPersonal( product ) {
-	const personalProducts = [ PLAN_PERSONAL, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return personalProducts.indexOf( product.product_slug ) >= 0;
+	return isPersonalPlan( product.product_slug );
 }
 
 export function isPremium( product ) {
-	const premiumProducts = [ PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return premiumProducts.indexOf( product.product_slug ) >= 0;
+	return isPremiumPlan( product.product_slug );
 }
 
 export function isBusiness( product ) {
-	const businessProducts = [ PLAN_BUSINESS, PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ];
-
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return businessProducts.indexOf( product.product_slug ) >= 0;
+	return isBusinessPlan( product.product_slug );
 }
 
 export function isEnterprise( product ) {
@@ -138,7 +124,7 @@ export function isJetpackPlan( product ) {
 	product = formatProduct( product );
 	assertValidProduct( product );
 
-	return JETPACK_PLANS.indexOf( product.product_slug ) >= 0;
+	return planMatches( product.product_slug, { group: GROUP_JETPACK } );
 }
 
 export function isJetpackBusiness( product ) {
