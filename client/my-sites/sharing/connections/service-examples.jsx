@@ -214,7 +214,8 @@ class SharingServiceExamples extends Component {
 					alt: this.props.translate( 'Manage Google My Business locations', { textOnly: true } ),
 				},
 				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to manage your Google My Business locations directly from WordPress.com.',
+					'{{strong}}Connect{{/strong}} to view stats and other useful information from your' +
+						'Google My Business account inside WordPress.com.',
 					{
 						components: {
 							strong: <strong />,
