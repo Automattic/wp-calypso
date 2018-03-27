@@ -1,0 +1,20 @@
+.podcasting-details__wrapper .form-setting-explanation {
+	margin-bottom: 6px;
+}
+
+.podcasting-details__category-selector {
+	@include breakpoint( ">960px" ) {
+		box-sizing: border-box;
+		float: left;
+		width: 35%;
+		padding-right: 24px;
+	}
+}
+
+.podcasting-details__basic-settings {
+	@include breakpoint( ">960px" ) {
+		box-sizing: border-box;
+		float: left;
+		width: 63%;
+	}
+}

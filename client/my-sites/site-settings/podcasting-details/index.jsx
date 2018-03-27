@@ -7,7 +7,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flowRight, map, pick, toPairs } from 'lodash';
+import { map, toPairs, pick, get, find, flowRight } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,15 +17,20 @@ import Card from 'components/card';
 import DocumentHead from 'components/data/document-head';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInput from 'components/forms/form-text-input';
+import { decodeEntities } from 'lib/formatting';
 import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormSelect from 'components/forms/form-select';
 import FormTextarea from 'components/forms/form-textarea';
 import HeaderCake from 'components/header-cake';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import QueryTerms from 'components/data/query-terms';
+import TermTreeSelector from 'blocks/term-tree-selector';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import categories from './categories';
+import podcastingTopics from './topics';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getTerms, isRequestingTermsForQueryIgnoringPage } from 'state/terms/selectors';
 
-class PodcastDetails extends Component {
+class PodcastingDetails extends Component {
 	renderExplicitContent() {
 		const { fields, handleSelect, isRequestingSettings, translate } = this.props;
 
@@ -48,14 +53,20 @@ class PodcastDetails extends Component {
 	}
 
 	renderSaveButton() {
-		const { handleSubmitForm, isRequestingSettings, isSavingSettings, translate } = this.props;
+		const {
+			handleSubmitForm,
+			isRequestingSettings,
+			isSavingSettings,
+			isRequestingCategories,
+			translate,
+		} = this.props;
 		return (
 			<Button
 				compact={ true }
 				onClick={ handleSubmitForm }
 				primary={ true }
 				type="submit"
-				disabled={ isRequestingSettings || isSavingSettings }
+				disabled={ isRequestingSettings || isSavingSettings || isRequestingCategories }
 			>
 				{ isSavingSettings ? translate( 'Saving…' ) : translate( 'Save Settings' ) }
 			</Button>
@@ -72,7 +83,7 @@ class PodcastDetails extends Component {
 					id={ key }
 					name={ key }
 					type="text"
-					value={ fields[ key ] || '' }
+					value={ decodeEntities( fields[ key ] ) || '' }
 					onChange={ onChangeField( key ) }
 					disabled={ isRequestingSettings }
 				/>
@@ -91,18 +102,18 @@ class PodcastDetails extends Component {
 				disabled={ isRequestingSettings }
 			>
 				<option value="0">None</option>
-				{ map( toPairs( categories ), ( [ category, subcategories ] ) => {
+				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
 					// The keys for podcasting in iTunes use &amp;
-					const catKey = category.replace( '&', '&amp;' );
+					const topicKey = topic.replace( '&', '&amp;' );
 					return [
-						<option key={ catKey } value={ catKey }>
-							{ category }
+						<option key={ topicKey } value={ topicKey }>
+							{ topic }
 						</option>,
-						...map( subcategories, subcategory => {
-							const subcatKey = catKey + ',' + subcategory.replace( '&', '&amp;' );
+						...map( subtopics, subtopic => {
+							const subtopicKey = topicKey + ',' + subtopic.replace( '&', '&amp;' );
 							return (
-								<option key={ subcatKey } value={ subcatKey }>
-									{ category } » { subcategory }
+								<option key={ subtopicKey } value={ subtopicKey }>
+									{ topic } » { subtopic }
 								</option>
 							);
 						} ),
@@ -118,6 +129,11 @@ class PodcastDetails extends Component {
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor="podcasting_category_1">{ translate( 'Podcast Topics' ) }</FormLabel>
+				<FormSettingExplanation>
+					{ translate(
+						'Choose how your podcast should be categorized within iTunes and other podcasting services.'
+					) }
+				</FormSettingExplanation>
 				{ this.renderTopicSelector( 'podcasting_category_1' ) }
 				{ this.renderTopicSelector( 'podcasting_category_2' ) }
 				{ this.renderTopicSelector( 'podcasting_category_3' ) }
@@ -126,7 +142,11 @@ class PodcastDetails extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, siteSlug, translate } = this.props;
+		const { handleSubmitForm, siteSlug, siteId, podcastingCategoryId, translate } = this.props;
+		if ( ! siteId ) {
+			return null;
+		}
+
 		const writingHref = `/settings/writing/${ siteSlug }`;
 
 		return (
@@ -143,15 +163,33 @@ class PodcastDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
-					<Card>
-						{ this.renderTextField( {
-							key: 'podcasting_title',
-							label: translate( 'Title' ),
-						} ) }
-						{ this.renderTextField( {
-							key: 'podcasting_subtitle',
-							label: translate( 'Subtitle' ),
-						} ) }
+					<Card className="podcasting-details__wrapper">
+						<FormFieldset className="podcasting-details__category-selector">
+							<QueryTerms siteId={ siteId } taxonomy="category" />
+							<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
+							<FormSettingExplanation>
+								{ translate(
+									'Posts published in this category will be included in your podcast feed.'
+								) }
+							</FormSettingExplanation>
+							<TermTreeSelector
+								taxonomy="category"
+								selected={ podcastingCategoryId ? [ podcastingCategoryId ] : [] }
+								onChange={ this.onCategorySelected }
+								addTerm={ true }
+								onAddTermSuccess={ this.onCategorySelected }
+							/>
+						</FormFieldset>
+						<div className="podcasting-details__basic-settings">
+							{ this.renderTextField( {
+								key: 'podcasting_title',
+								label: translate( 'Title' ),
+							} ) }
+							{ this.renderTextField( {
+								key: 'podcasting_subtitle',
+								label: translate( 'Subtitle' ),
+							} ) }
+						</div>
 						{ this.renderTopics() }
 						{ this.renderExplicitContent() }
 						{ this.renderTextField( {
@@ -176,6 +214,14 @@ class PodcastDetails extends Component {
 			</div>
 		);
 	}
+
+	onCategorySelected = category => {
+		const { onChangeField } = this.props;
+
+		const event = { target: { value: category.slug } };
+
+		onChangeField( 'podcasting_archive' )( event );
+	};
 }
 
 const getFormSettings = settings => {
@@ -195,12 +241,33 @@ const getFormSettings = settings => {
 	] );
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state, ownProps ) => {
+	const siteId = getSelectedSiteId( state );
+
+	let podcastingCategoryId = null;
+
+	// Retrieve podcasting category ID from saved category slug (if any)
+	const podcastingCategorySlug = get( ownProps.fields, 'podcasting_archive' );
+	if ( podcastingCategorySlug && podcastingCategorySlug !== '0' ) {
+		const categories = getTerms( state, siteId, 'category' );
+		if ( categories && categories.length ) {
+			// This is not a bound selector
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			const podcastingCategory = find( categories, c => c.slug === podcastingCategorySlug );
+			if ( podcastingCategory ) {
+				podcastingCategoryId = podcastingCategory.ID;
+			}
+		}
+	}
+
 	return {
+		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		podcastingCategoryId,
+		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 	};
 } );
 
-export default flowRight( connectComponent, wrapSettingsForm( getFormSettings ) )(
-	localize( PodcastDetails )
+export default flowRight( wrapSettingsForm( getFormSettings ), connectComponent )(
+	localize( PodcastingDetails )
 );
