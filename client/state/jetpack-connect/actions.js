@@ -47,6 +47,7 @@ import { addQueryArgs, externalRedirect } from 'lib/route';
 import { urlToSlug } from 'lib/url';
 import { clearPlan, persistSession } from 'jetpack-connect/persistence-utils';
 import { REMOTE_PATH_AUTH } from 'jetpack-connect/constants';
+import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'state/sites/constants';
 
 /**
  *  Local variables;
@@ -318,10 +319,8 @@ export function authorize( queryObject ) {
 				// Site may not be accessible yet, so force fetch from wpcom
 				return wpcom.site( client_id ).get( {
 					force: 'wpcom',
-					fields:
-						'ID,URL,name,capabilities,jetpack,visible,is_private,is_vip,icon,plan,jetpack_modules,single_user_site,is_multisite,options', //eslint-disable-line max-len
-					options:
-						'is_mapped_domain,unmapped_url,admin_url,is_redirect,is_automated_transfer,allowed_file_types,show_on_front,main_network_site,jetpack_version,software_version,default_post_format,created_at,frame_nonce,publicize_permanently_disabled,page_on_front,page_for_posts,advanced_seo_front_page_description,advanced_seo_title_formats,verification_services_codes,podcasting_archive,is_domain_only,default_sharing_status,default_likes_enabled,wordads,upgraded_filetypes_enabled,videopress_enabled,permalink_structure,gmt_offset,design_type', //eslint-disable-line max-len
+					fields: SITE_REQUEST_FIELDS,
+					options: SITE_REQUEST_OPTIONS,
 				} );
 			} )
 			.then( data => {
