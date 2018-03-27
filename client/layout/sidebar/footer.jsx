@@ -4,17 +4,13 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import React from 'react';
 
-class SidebarFooter extends Component {
-	render() {
-		if ( ! this.props.children ) {
-			return null;
-		}
-		return <div className="sidebar__footer">{ this.props.children }</div>;
+const SidebarFooter = ( { children } ) => {
+	if ( ! children ) {
+		return null;
 	}
-}
+	return <div className="sidebar__footer">{ children }</div>;
+};
 
-export default connect()( localize( SidebarFooter ) );
+export default SidebarFooter;
