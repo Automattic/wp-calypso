@@ -11,6 +11,10 @@
 	color: $gray-dark;
 	background: $white;
 	border-bottom: 1px solid $gray-lighten-20;
+	position: fixed;
+	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+	top: 47px;
+	left: 0px;
 
 	@include breakpoint( ">480px" ) {
 		padding: 8px 24px 8px 0;
@@ -18,29 +22,14 @@
 
 	@include breakpoint( ">660px" ) {
 		padding: 5px 16px;
+		padding-left: 0;
 		margin: 0;
-	}
+		margin-left: 40px;
+		z-index: z-index( 'root', '.layout__secondary' );
 
-	@include breakpoint( ">960px" ) {
-		position: fixed;
-		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-		width: calc(100% - 273px);
-		top: 47px;
-		left: 273px;
-	}
-	@include breakpoint( "660px-960px" ) {
-		position: fixed;
-		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-		width: calc(100% - 229px);
-		top: 47px;
-		left: 229px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		position: fixed;
-		z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-		width: 100%;
-		top: 47px;
+		.gridicons-chevron-left {
+			display: none;
+		}
 	}
 }
 
@@ -48,10 +37,6 @@
 	flex-grow: 0;
 	flex-shrink: 0;
 	min-width: 40px;
-
-	@include breakpoint( ">660px" ) {
-		display: none;
-	}
 }
 
 .action-header__content {
@@ -59,6 +44,10 @@
 	flex-shrink: 0;
 	display: flex;
 	justify-content: flex-start;
+
+	@include breakpoint( ">660px" ) {
+		margin-left: -32px;
+	}
 
 	.site-icon {
 		margin-right: 8px;
