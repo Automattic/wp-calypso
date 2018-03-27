@@ -113,11 +113,12 @@ export default {
 	checkoutPending: function( context, next ) {
 		const { routePath, routeParams } = sectionifyWithRoutes( context.path, checkoutPendingRoutes );
 		const orderId = Number( context.params.orderId );
+		const siteSlug = context.params.site;
 
 		analytics.pageView.record( routePath, 'Checkout Pending', routeParams );
 		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-		context.primary = <CheckoutPendingComponent orderId={ orderId } />;
+		context.primary = <CheckoutPendingComponent orderId={ orderId } siteSlug={ siteSlug } />;
 
 		next();
 	},
