@@ -208,7 +208,7 @@
       "integrity": "sha1-x1iICGF1cgNKrmJICvJrHU0cs80=",
       "dev": true,
       "requires": {
-        "stable": "0.1.6"
+        "stable": "0.1.7"
       }
     },
     "amdefine": {
@@ -9700,7 +9700,7 @@
         "log-update": "1.0.2",
         "ora": "0.2.3",
         "p-map": "1.2.0",
-        "rxjs": "5.5.9",
+        "rxjs": "5.5.10",
         "stream-to-observable": "0.1.0",
         "strip-ansi": "3.0.1"
       },
@@ -14370,8 +14370,8 @@
       }
     },
     "rxjs": {
-      "version": "5.5.9",
-      "integrity": "sha512-DHG9AHmCmgaFWgjBcXp6NxFDmh3MvIA62GqTWmLnTzr/3oZ6h5hLD8NA+9j+GF0jEwklNIpI4KuuyLG8UWMEvQ==",
+      "version": "5.5.10",
+      "integrity": "sha512-SRjimIDUHJkon+2hFo7xnvNC4ZEHGzCRwh9P7nzX3zPkCGFEg/tuElrNR7L/rZMagnK2JeH2jQwPRpmyXyLB6A==",
       "requires": {
         "symbol-observable": "1.0.1"
       }
@@ -15422,8 +15422,8 @@
       }
     },
     "stable": {
-      "version": "0.1.6",
-      "integrity": "sha1-kQ9dKu17Ugxud3SZwfMuE5/eyxA=",
+      "version": "0.1.7",
+      "integrity": "sha512-LmxBix+nUtyihSBpxXAhRakYEy49fan2suysdS1fUZcKjI+krXmH8DCZJ3yfngfrOnIFNU8O73EgNTzO2jI53w==",
       "dev": true
     },
     "stack-utils": {
@@ -16572,10 +16572,6 @@
       "requires": {
         "safe-buffer": "5.1.1"
       }
-    },
-    "tween.js": {
-      "version": "16.3.1",
-      "integrity": "sha1-5VUw3c+d6RObi1glTRyeUMdy30U="
     },
     "tweetnacl": {
       "version": "0.14.5",
