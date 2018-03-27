@@ -65,7 +65,7 @@ export function processItem( item ) {
 		rewindId: item.rewind_id,
 		activityName: item.name,
 		activityStatus: item.status,
-		activityTargetTs: get( item, 'object.target_ts', undefined ),
+		activityTargetTs: get( item, 'object.target_ts', null ),
 		activityTitle: item.summary,
 		activityTs: Date.parse( published ),
 		activityDescription: parseBlock( item.content ),
