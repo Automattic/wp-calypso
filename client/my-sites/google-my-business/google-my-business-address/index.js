@@ -296,7 +296,7 @@ class GoogleMyBusinessAddress extends Component {
 
 		return (
 			<div className="google-my-business-address">
-				<CompactCard className="is-animated-content">
+				<CompactCard>
 					<FormFieldset>
 						<FormLegend>Where are you located?</FormLegend>
 
@@ -314,7 +314,7 @@ class GoogleMyBusinessAddress extends Component {
 						<FormTextInput />
 
 						<FormLabel>{ translate( 'State' ) }</FormLabel>
-						<FormStateSelector
+						<FormStateSelector /*this needs to change depending on the country*/
 							name="state"
 							onChange={ noop }
 							className="form-select google-my-business-address__form-select"

@@ -158,7 +158,7 @@ class GoogleMyBusinessCategory extends Component {
 
 		return (
 			<div className="google-my-business-category">
-				<CompactCard className="is-animated-content">
+				<CompactCard>
 					<FormFieldset>
 						<FormLegend>What kind of business do you run?</FormLegend>
 
@@ -184,6 +184,7 @@ class GoogleMyBusinessCategory extends Component {
 							onKeyDown={ this.handleKeyDown }
 							placeholder="Type something..."
 							value={ this.state.category }
+							className="google-my-business-category__search-card"
 						/>
 						<Suggestions
 							ref={ this.setSuggestionsRef }

@@ -80,7 +80,7 @@ class SearchForALocation extends Component {
 
 		return (
 			<div className="search-for-a-location">
-				<CompactCard className="search-for-a-location__search-section is-animated-content">
+				<CompactCard className="search-for-a-location__search-section">
 					<FormFieldset>
 						<FormLegend className="search-for-a-location__legend">
 							{ translate( "What's the name of your business?" ) }
