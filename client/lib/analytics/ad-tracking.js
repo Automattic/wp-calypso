@@ -33,15 +33,15 @@ const isFloodlightEnabled = true;
 const isAdwordsEnabled = true;
 const isFacebookEnabled = true;
 const isBingEnabled = true;
-const isYahooEnabled = true;
 const isGeminiEnabled = true;
 const isQuantcastEnabled = true;
 const isTwitterEnabled = true;
 const isAolEnabled = true;
 const isExperianEnabled = true;
 const isLinkedinEnabled = true;
-let isYandexEnabled = true;
 const isOutbrainEnabled = true;
+const isYahooEnabled = false;
+let isYandexEnabled = false;
 const isCriteoEnabled = false;
 const isAtlasEnabled = false;
 const isPandoraEnabled = false;
@@ -67,7 +67,10 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	ADWORDS_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
 	ADWORDS_CONVERSION_ID_JETPACK = config( 'google_adwords_conversion_id_jetpack' ),
-	YAHOO_GEMINI_PIXEL_URL = 'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
+	YAHOO_GEMINI_CONVERSION_PIXEL_URL =
+		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088&ec=wordpresspurchase',
+	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL =
+		'https://sp.analytics.yahoo.com/spp.pl?a=10000&.yp=10014088',
 	ONE_BY_AOL_CONVERSION_PIXEL_URL =
 		'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
 	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL =
@@ -463,7 +466,7 @@ function only_retarget() {
 
 	// Yahoo Gemini
 	if ( isGeminiEnabled ) {
-		new Image().src = YAHOO_GEMINI_PIXEL_URL;
+		new Image().src = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 	}
 
 	// One by AOL
@@ -612,7 +615,7 @@ export function recordOrder( cart, orderId ) {
 
 	// Yahoo Gemini
 	if ( isGeminiEnabled ) {
-		new Image().src = YAHOO_GEMINI_PIXEL_URL;
+		new Image().src = YAHOO_GEMINI_CONVERSION_PIXEL_URL;
 	}
 
 	if ( isAolEnabled ) {
