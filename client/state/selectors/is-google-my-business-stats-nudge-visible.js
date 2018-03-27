@@ -5,7 +5,8 @@
  */
 import createSelector from 'lib/create-selector';
 import { getSiteOption, getSitePlanSlug } from 'state/sites/selectors';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { TYPE_BUSINESS, GROUP_WPCOM } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
 
 const WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 
@@ -31,8 +32,11 @@ const siteHasPromoteGoal = createSelector(
  * @param  {String}  siteId The Site ID
  * @return {Boolean} True if site has business plan
  */
-const siteHasBusinessPlan = createSelector(
-	( state, siteId ) => getSitePlanSlug( state, siteId ) === PLAN_BUSINESS,
+export const siteHasBusinessPlan = createSelector(
+	( state, siteId ) => {
+		const slug = getSitePlanSlug( state, siteId );
+		return planMatches( slug, { group: GROUP_WPCOM, type: TYPE_BUSINESS } );
+	},
 	( state, siteId ) => [ getSitePlanSlug( state, siteId ) ]
 );
 
