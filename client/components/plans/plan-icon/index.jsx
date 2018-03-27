@@ -47,5 +47,5 @@ export default class PlanIcon extends Component {
 
 PlanIcon.propTypes = {
 	classNames: PropTypes.string,
-	plan: PropTypes.oneOf( Object.keys( PLANS_LIST ).isRequired ),
+	plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 };
