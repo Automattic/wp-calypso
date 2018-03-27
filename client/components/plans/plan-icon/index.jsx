@@ -15,6 +15,11 @@ import { PLANS_LIST, getPlanClass } from 'lib/plans/constants';
 import { isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
 
 export default class PlanIcon extends Component {
+	static propTypes = {
+		classNames: PropTypes.string,
+		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ).isRequired ),
+	};
+
 	getIcon( planName ) {
 		const { plan, className } = this.props;
 		const planClass = getPlanClass( plan );
@@ -44,8 +49,3 @@ export default class PlanIcon extends Component {
 		return this.getIcon( 'free' );
 	}
 }
-
-PlanIcon.propTypes = {
-	classNames: PropTypes.string,
-	plan: PropTypes.oneOf( Object.keys( PLANS_LIST ).isRequired ),
-};
