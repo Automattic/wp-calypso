@@ -42,7 +42,7 @@ describe( 'getPastBillingTransaction()', () => {
 
 	test( 'should return null for an unknown billing transaction', () => {
 		const output = getPastBillingTransaction( state, '87654321' );
-		expect( output ).toEqual( null );
+		expect( output ).toBeNull();
 	} );
 
 	test( 'should return null if billing transactions have not been fetched yet', () => {
@@ -54,7 +54,7 @@ describe( 'getPastBillingTransaction()', () => {
 			},
 			'12345678'
 		);
-		expect( output ).toEqual( null );
+		expect( output ).toBeNull();
 	} );
 
 	test( 'should return a billing transaction that has been fetched individually', () => {
@@ -80,7 +80,7 @@ describe( 'getPastBillingTransaction()', () => {
 		};
 
 		const output = getPastBillingTransaction( testState, 999999 );
-		expect( output ).toEqual( null );
+		expect( output ).toBeNull();
 	} );
 
 	test( 'should return null for individual transaction that failed to fetch', () => {
@@ -90,6 +90,6 @@ describe( 'getPastBillingTransaction()', () => {
 		};
 
 		const output = getPastBillingTransaction( testState, 999999 );
-		expect( output ).toEqual( null );
+		expect( output ).toBeNull();
 	} );
 } );
