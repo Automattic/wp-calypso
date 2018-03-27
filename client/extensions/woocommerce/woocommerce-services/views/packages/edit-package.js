@@ -16,7 +16,6 @@ import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FieldError from '../../components/field-error';
@@ -198,9 +197,6 @@ const EditPackage = props => {
 					/>
 					{ fieldInfo( 'max_weight' ) }
 				</div>
-				<FormSettingExplanation>
-					{ translate( 'Defines both the weight of the empty package and its maximum weight' ) }
-				</FormSettingExplanation>
 			</FormFieldset>
 		</div>
 	);
