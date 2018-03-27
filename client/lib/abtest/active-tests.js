@@ -113,8 +113,8 @@ export default {
 	inlineHelpWithContactForm: {
 		datestamp: '20180306',
 		variations: {
-			original: 90,
-			inlinecontact: 10,
+			original: 0,
+			inlinecontact: 100,
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,
