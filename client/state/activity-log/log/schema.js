@@ -35,7 +35,7 @@ const activityItemsSchema = {
 				activityStatus: {
 					oneOf: [ { type: 'string' }, { type: 'null' } ],
 				},
-				activityTargetTs: { type: 'number' },
+				activityTargetTs: { type: [ 'null', 'number' ] },
 				activityTitle: { type: 'string' },
 				activityTs: { type: 'integer' },
 				actorAvatarUrl: { type: 'string' },
