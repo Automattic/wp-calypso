@@ -9,6 +9,10 @@ import PropTypes from 'prop-types';
 export class HappychatConnection extends Component {
 	componentDidMount() {
 		if ( this.props.isHappychatEnabled && this.props.isConnectionUninitialized ) {
+			/**
+			 * @TODO: When happychat correctly handles site switching, remove manual
+			 * selectSiteId action from client/my-sites/plans-features-main/index.jsx
+			 */
 			this.props.initConnection( this.props.getAuth() );
 		}
 	}
