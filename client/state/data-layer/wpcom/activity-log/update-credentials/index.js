@@ -116,7 +116,7 @@ export const failure = ( { dispatch, getState }, action, error ) => {
 	};
 
 	const { translate } = i18n;
-	const baseOptions = { duration: 4000, id: action.noticeId };
+	const baseOptions = { duration: 10000, id: action.noticeId };
 
 	const announce = ( message, options ) =>
 		dispatch( errorNotice( message, options ? { ...baseOptions, ...options } : baseOptions ) );
