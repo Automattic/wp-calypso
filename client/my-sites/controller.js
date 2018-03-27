@@ -310,15 +310,20 @@ export function siteSelection( context, next ) {
 	const hasOneSite = currentUser.visible_site_count === 1;
 	const allSitesPath = sectionify( context.path, siteFragment );
 
+	// See https://github.com/Automattic/wp-calypso/issues/23517
+	// Avoid recording non-normalized paths in page view stats (e.g. /post/1)
+	const pathParts = basePath.split( '/' );
+	const rootPath = pathParts.length > 2 ? `/${ pathParts[ 1 ] }` : basePath;
+
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
+		return analytics.pageView.record( rootPath, sitesPageTitleForAnalytics + ' > No Sites' );
 	}
 
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
 		return analytics.pageView.record(
-			basePath,
+			rootPath,
 			`${ sitesPageTitleForAnalytics } > All Sites Hidden`
 		);
 	}
