@@ -3,14 +3,18 @@
 }
 
 .podcasting-details__category-selector {
-	box-sizing: border-box;
-	float: left;
-	width: 35%;
+	@include breakpoint( ">960px" ) {
+		box-sizing: border-box;
+		float: left;
+		width: 35%;
+		padding-right: 24px;
+	}
 }
 
 .podcasting-details__basic-settings {
-	box-sizing: border-box;
-	float: left;
-	width: 64%;
-	padding-left: 24px;
+	@include breakpoint( ">960px" ) {
+		box-sizing: border-box;
+		float: left;
+		width: 63%;
+	}
 }
