@@ -679,7 +679,8 @@ class RegisterDomainStep extends React.Component {
 			this.getDomainsSuggestions( domain, timestamp ),
 		] );
 		domainSuggestions.then( this.handleDomainSuggestions( domain ) );
-		domainSuggestions.catch( () => this.handleDomainSuggestions( domain )( [] ) ); // errors should pretend that the list of suggestions is empty
+		// errors are handled by pretending that the list of suggestions is empty
+		domainSuggestions.catch( () => this.handleDomainSuggestions( domain )( [] ) );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			this.getSubdomainSuggestions( domain, timestamp );
