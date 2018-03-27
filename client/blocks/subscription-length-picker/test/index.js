@@ -57,7 +57,7 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 		},
 	];
 
-	test( 'should have term-picker class', () => {
+	test( 'should have subscription-length-picker class', () => {
 		const picker = shallow(
 			<SubscriptionLengthPicker
 				productsWithPrices={ [] }
@@ -65,10 +65,10 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.lengthOf( picker.find( '.term-picker' ), 1 );
+		assert.lengthOf( picker.find( '.subscription-length-picker' ), 1 );
 	} );
 
-	test( 'should contain as many <SubscriptionLengthPickerOption/> as products passed', () => {
+	test( 'should contain as many <SubscriptionLengthOption/> as products passed', () => {
 		const picker = shallow(
 			<SubscriptionLengthPicker
 				productsWithPrices={ productsWithPrices }
@@ -76,10 +76,10 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 				translate={ translate }
 			/>
 		);
-		assert.lengthOf( picker.find( 'SubscriptionLengthPickerOption' ), 2 );
+		assert.lengthOf( picker.find( 'SubscriptionLengthOption' ), 2 );
 	} );
 
-	test( 'should mark appropriate SubscriptionLengthPickerOption as checked', () => {
+	test( 'should mark appropriate SubscriptionLengthOption as checked', () => {
 		const picker = shallow(
 			<SubscriptionLengthPicker
 				productsWithPrices={ productsWithPrices }
@@ -89,11 +89,11 @@ describe( 'SubscriptionLengthPicker basic tests', () => {
 			/>
 		);
 
-		const first = picker.find( 'SubscriptionLengthPickerOption' ).first();
+		const first = picker.find( 'SubscriptionLengthOption' ).first();
 		assert.equal( first.props().value, PLAN_BUSINESS );
 		assert.equal( first.props().checked, false );
 
-		const last = picker.find( 'SubscriptionLengthPickerOption' ).last();
+		const last = picker.find( 'SubscriptionLengthOption' ).last();
 		assert.equal( last.props().value, PLAN_BUSINESS_2_YEARS );
 		assert.equal( last.props().checked, true );
 	} );

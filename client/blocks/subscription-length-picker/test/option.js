@@ -28,23 +28,23 @@ import { TERM_1_YEAR } from 'lib/plans/constants';
 /**
  * Internal dependencies
  */
-import { SubscriptionLength } from '../option';
+import { SubscriptionLengthOption } from '../option';
 
 describe( 'TermPickerOpton basic tests', () => {
 	test( 'should have term-picker-option class', () => {
 		const option = shallow(
-			<SubscriptionLength
+			<SubscriptionLengthOption
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }
 				translate={ translate }
 			/>
 		);
-		assert.lengthOf( option.find( '.term-picker-option' ), 1 );
+		assert.lengthOf( option.find( '.subscription-length-option' ), 1 );
 	} );
 	test( 'should display save badge if savePercent is specified', () => {
 		const option = shallow(
-			<SubscriptionLength
+			<SubscriptionLengthOption
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }
@@ -56,18 +56,21 @@ describe( 'TermPickerOpton basic tests', () => {
 	} );
 	test( 'should say "{price} / month" if savePercent is not specified', () => {
 		const option = shallow(
-			<SubscriptionLength
+			<SubscriptionLengthOption
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }
 				translate={ translate }
 			/>
 		);
-		assert.equal( option.find( '.term-picker-option__side-note' ).text(), '%(price)s / month' );
+		assert.equal(
+			option.find( '.subscription-length-option__side-note' ).text(),
+			'%(price)s / month'
+		);
 	} );
 	test( 'should say "only {price} / month" if savePercent is specified', () => {
 		const option = shallow(
-			<SubscriptionLength
+			<SubscriptionLengthOption
 				term={ TERM_1_YEAR }
 				price={ 120 }
 				pricePerMonth={ 10 }
@@ -76,7 +79,7 @@ describe( 'TermPickerOpton basic tests', () => {
 			/>
 		);
 		assert.equal(
-			option.find( '.term-picker-option__side-note' ).text(),
+			option.find( '.subscription-length-option__side-note' ).text(),
 			'only %(price)s / month'
 		);
 	} );
