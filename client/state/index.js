@@ -20,6 +20,7 @@ import { combineReducers } from 'state/utils';
 import actionLogger from './action-log';
 import activityLog from './activity-log/reducer';
 import analyticsTracking from './analytics/reducer';
+import applicationPasswords from './application-passwords/reducer';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import extensionsModule from 'extensions';
@@ -110,6 +111,7 @@ const reducers = {
 	accountRecovery,
 	activityLog,
 	application,
+	applicationPasswords,
 	automatedTransfer,
 	billingTransactions,
 	checklist,
