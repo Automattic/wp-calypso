@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ class Pagination extends Component {
 		perPage: PropTypes.number.isRequired,
 		total: PropTypes.number,
 		pageClick: PropTypes.func.isRequired,
+		compact: PropTypes.bool,
 	};
 
 	getPageList = ( page, pageCount ) => {
@@ -51,7 +53,7 @@ class Pagination extends Component {
 	};
 
 	render() {
-		const { page, pageClick, perPage, total } = this.props;
+		const { page, pageClick, perPage, total, compact } = this.props;
 		const pageCount = Math.ceil( total / perPage );
 
 		if ( pageCount <= 1 ) {
@@ -67,12 +69,13 @@ class Pagination extends Component {
 					currentPage={ page }
 					totalPages={ pageCount }
 					pageClick={ pageClick }
+					compact={ compact }
 				/>
 			);
 		} );
 
 		return (
-			<div className="pagination">
+			<div className={ classnames( 'pagination', { 'is-compact': compact } ) }>
 				<ul className="pagination__list">{ pageListRendered }</ul>
 			</div>
 		);

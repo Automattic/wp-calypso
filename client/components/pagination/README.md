@@ -9,7 +9,7 @@ import Pagination from 'components/pagination';
 
 render: function() {
 	return (
-		<Pagination page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;	
+		<Pagination compact={ <Boolean> } page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;	
 	);
 }
 ```
@@ -20,3 +20,6 @@ render: function() {
 * `perPage`: Number of records shown per page
 * `total`: Total number of records
 * `pageClick`: Function called when a pagination item is clicked - the page clicked is provided as an argument
+
+#### Optional Props
+* `compact`: Render a smaller version
