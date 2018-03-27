@@ -7,7 +7,7 @@ import url from 'url';
 import debugModule from 'debug';
 import page from 'page';
 import React from 'react';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { CSSTransition } from 'react-transition-group';
 import {
 	assign,
 	defer,
@@ -531,14 +531,14 @@ class Signup extends React.Component {
 							flowName={ this.props.flowName }
 						/>
 					) }
-				<ReactCSSTransitionGroup
+				<CSSTransition
 					className="signup__steps"
 					transitionName="signup__step"
 					transitionEnterTimeout={ 500 }
 					transitionLeaveTimeout={ 300 }
 				>
 					{ this.currentStep() }
-				</ReactCSSTransitionGroup>
+				</CSSTransition>
 				{ this.loginForm() }
 			</span>
 		);

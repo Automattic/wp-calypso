@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { filter, find, get, isEqual, map, orderBy, slice } from 'lodash';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { CSSTransition } from 'react-transition-group';
 
 /**
  * Internal dependencies
@@ -194,7 +194,7 @@ export class CommentTree extends Component {
 					toggleSelectAll={ this.toggleSelectAll }
 				/>
 
-				<ReactCSSTransitionGroup
+				<CSSTransition
 					className="comment-tree__transition-wrapper comment-list__transition-wrapper"
 					transitionEnterTimeout={ 150 }
 					transitionLeaveTimeout={ 150 }
@@ -227,7 +227,7 @@ export class CommentTree extends Component {
 							title={ emptyMessageTitle }
 						/>
 					) }
-				</ReactCSSTransitionGroup>
+				</CSSTransition>
 
 				{ ! showPlaceholder &&
 					! showEmptyContent && (

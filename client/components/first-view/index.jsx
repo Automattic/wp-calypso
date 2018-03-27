@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import { CSSTransition } from 'react-transition-group';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 
@@ -56,7 +56,7 @@ class FirstView extends React.PureComponent {
 
 		return (
 			<RootChild className={ classes }>
-				<ReactCSSTransitionGroup
+				<CSSTransition
 					transitionName="first-view-transition"
 					component={ TransitionGroupComponent }
 					transitionEnter={ false }
@@ -85,7 +85,7 @@ class FirstView extends React.PureComponent {
 							</div>
 						</Card>
 					) }
-				</ReactCSSTransitionGroup>
+				</CSSTransition>
 			</RootChild>
 		);
 	}

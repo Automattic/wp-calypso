@@ -8,9 +8,9 @@
 .google-my-business-create__animation-enter {
 	opacity: 0.01;
 
-	.is-animated-content {
+	/*.is-animated-content {
 		transform: translate3d( 0, 32px, 0 );
-	}
+	}*/
 }
 
 .google-my-business-create__animation-enter.google-my-business-create__animation-enter-active,
@@ -20,14 +20,14 @@
 
 .google-my-business-create__animation-enter.google-my-business-create__animation-enter-active {
 	opacity: 1;
-	transition: 0.2s ease-in-out;
-	transition-delay: 0.4s;
+	transition: 1s ease-in-out;
+	transition-delay: 1s;
 
-	.is-animated-content {
+	/*.is-animated-content {
 		transform: translate3d( 0, 0, 0 );
 		transition: 0.2s ease-in-out;
-		transition-delay: 0.4s;
-	}
+		transition-delay: 1s;
+	}*/
 }
 
 .google-my-business-create__animation-leave {
@@ -40,10 +40,10 @@
 
 .google-my-business-create__animation-leave.google-my-business-create__animation-leave-active {
 	opacity: 0.01;
-	transition: 0.2s ease-in-out;
+	transition: 1s ease-in-out;
 
-	.is-animated-content {
+	/*.is-animated-content {
 		transform: translate3d( 0, 32px, 0 ) scale( 0.9 );
 		transition: 0.2s ease-in-out;
-	}
+	}*/
 }

@@ -6,7 +6,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactCSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+import CSSTransition from 'react-transition-group';
 import { localize } from 'i18n-calypso';
 import pageRouter from 'page';
 import { connect } from 'react-redux';
@@ -423,13 +423,13 @@ class Page extends Component {
 				</div>
 				{ ellipsisGridicon }
 				{ popoverMenu }
-				<ReactCSSTransitionGroup
+				<CSSTransition
 					transitionName="updated-trans"
 					transitionEnterTimeout={ 300 }
 					transitionLeaveTimeout={ 300 }
 				>
 					{ this.props.buildUpdateTemplate() }
-				</ReactCSSTransitionGroup>
+				</CSSTransition>
 			</CompactCard>
 		);
 	}
