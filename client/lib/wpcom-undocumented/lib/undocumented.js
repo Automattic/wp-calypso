@@ -1236,12 +1236,6 @@ Undocumented.prototype.readA8cConversations = function( query, fn ) {
 	return this.wpcom.req.get( '/read/conversations', params, fn );
 };
 
-Undocumented.prototype.readFeed = function( query, fn ) {
-	var params = omit( query, 'ID' );
-	debug( '/read/feed' );
-	return this.wpcom.req.get( '/read/feed/' + encodeURIComponent( query.ID ), params, fn );
-};
-
 Undocumented.prototype.discoverFeed = function( query, fn ) {
 	debug( '/read/feed' );
 	return this.wpcom.req.get( '/read/feed/', query, fn );
