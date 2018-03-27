@@ -58,6 +58,7 @@ import {
 	getSiteGmtOffset,
 	getSiteTimezoneValue,
 	getOldestItemTs,
+	isRewinding,
 } from 'state/selectors';
 
 const flushEmptyDays = days => [
@@ -443,6 +444,7 @@ class ActivityLog extends Component {
 			logs,
 			moment,
 			requestData,
+			rewinding,
 			rewindState,
 			siteId,
 			slug,
@@ -450,6 +452,7 @@ class ActivityLog extends Component {
 		} = this.props;
 
 		const disableRestore =
+			rewinding ||
 			includes( [ 'queued', 'running' ], get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
@@ -617,6 +620,7 @@ export default connect(
 		return {
 			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
+			rewinding: isRewinding( state, siteId ),
 			logRequestQuery,
 			logs: getActivityLogs(
 				state,
