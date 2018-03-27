@@ -32,9 +32,7 @@ const activityItemsSchema = {
 				activityIsDiscarded: { type: 'boolean' },
 				activityIsRewindable: { type: 'boolean' },
 				activityName: { type: 'string' },
-				activityStatus: {
-					oneOf: [ { type: 'string' }, { type: 'null' } ],
-				},
+				activityStatus: { type: [ 'null', 'string' ] },
 				activityTargetTs: { type: [ 'null', 'number' ] },
 				activityTitle: { type: 'string' },
 				activityTs: { type: 'integer' },
