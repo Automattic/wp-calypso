@@ -44,6 +44,8 @@ export function transformer( apiResponse ) {
  */
 export function processItem( item ) {
 	const { actor, object, published } = item;
+	const activityMeta =
+		'2' === get( item, [ 'object', 'error_code' ], '' ) ? { errorCode: 'bad_credentials' } : {};
 
 	return Object.assign(
 		{
@@ -66,6 +68,7 @@ export function processItem( item ) {
 			activityTitle: item.summary,
 			activityTs: Date.parse( published ),
 			activityDescription: parseBlock( item.content ),
+			activityMeta,
 		},
 		item.rewind_id && { rewindId: item.rewind_id },
 		item.status && { activityStatus: item.status },
