@@ -1,14 +1,14 @@
 SubscriptionLengthPicker
 ==========
 
-isplays a list of terms (monthly, yearly, biennially).
+Displays a list of terms (monthly, yearly, biennially).
 
 ### `index.jsx`
 
-Given an array of plans, this component creates a corresponding list of TermPickerOption components to allow
+Given an array of plans, this component creates a corresponding list of SubscriptionLengthOption components to allow
 selection of desired term.
 
-Each item in the `plans` array must be a constant from lib/plans/contants.jsx`.
+Each item in the `plans` array must be a constant from lib/plans/constants.jsx`.
 
 #### Props
 
