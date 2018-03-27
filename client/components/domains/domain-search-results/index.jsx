@@ -16,6 +16,7 @@ import { endsWith, get, includes, times, first } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
 import DomainSuggestion from 'components/domains/domain-suggestion';
@@ -212,27 +213,32 @@ class DomainSearchResults extends React.Component {
 				</div>
 			);
 
-			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
-			const bestAlternativeSuggestions = suggestions.filter(
-				suggestion => suggestion.isBestAlternative
-			);
-			const regularSuggestions = suggestions.filter(
-				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
-			);
+			const isKrackenUI = config.isEnabled( 'domains/kracken-ui' );
+			let regularSuggestions = suggestions;
 
-			featuredSuggestionElement = (
-				<FeaturedDomainSuggestions
-					cart={ this.props.cart }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					isSignupStep={ this.props.isSignupStep }
-					key="featured"
-					onButtonClick={ this.props.onClickResult }
-					primarySuggestion={ first( bestMatchSuggestions ) }
-					query={ this.props.lastDomainSearched }
-					secondarySuggestion={ first( bestAlternativeSuggestions ) }
-					selectedSite={ this.props.selectedSite }
-				/>
-			);
+			if ( isKrackenUI ) {
+				regularSuggestions = suggestions.filter(
+					suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+				);
+				const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+				const bestAlternativeSuggestions = suggestions.filter(
+					suggestion => suggestion.isBestAlternative
+				);
+				featuredSuggestionElement = (
+					<FeaturedDomainSuggestions
+						cart={ this.props.cart }
+						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+						isSignupStep={ this.props.isSignupStep }
+						key="featured"
+						onButtonClick={ this.props.onClickResult }
+						primarySuggestion={ first( bestMatchSuggestions ) }
+						query={ this.props.lastDomainSearched }
+						secondarySuggestion={ first( bestAlternativeSuggestions ) }
+						selectedSite={ this.props.selectedSite }
+					/>
+				);
+			}
+
 			suggestionElements = regularSuggestions.map( ( suggestion, i ) => {
 				if ( suggestion.is_placeholder ) {
 					return <DomainSuggestion.Placeholder key={ 'suggestion-' + i } />;

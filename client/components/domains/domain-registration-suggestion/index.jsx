@@ -14,6 +14,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import DomainSuggestion from 'components/domains/domain-suggestion';
 import DomainSuggestionFlag from 'components/domains/domain-suggestion-flag';
 import {
@@ -100,6 +101,27 @@ class DomainRegistrationSuggestion extends React.Component {
 						key={ `${ domain }-testing` }
 						content={ 'Testing only' }
 						status="warning"
+					/>
+				);
+			}
+		}
+
+		if ( ! config.isEnabled( 'domains/kracken-ui' ) ) {
+			if ( suggestion.isRecommended ) {
+				domainFlags.push(
+					<DomainSuggestionFlag
+						key={ `${ domain }-recommended` }
+						content={ translate( 'Recommended' ) }
+						status="success"
+					/>
+				);
+			}
+
+			if ( suggestion.isBestAlternative ) {
+				domainFlags.push(
+					<DomainSuggestionFlag
+						key={ `${ domain }-best-alternative` }
+						content={ translate( 'Best Alternative' ) }
 					/>
 				);
 			}
