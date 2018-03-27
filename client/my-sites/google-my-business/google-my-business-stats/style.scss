@@ -188,3 +188,15 @@
 	padding-top: 1em;
 	text-align: center;
 }
+
+@include breakpoint( '>480px' ) {
+	.google-my-business-stats__data-group {
+		column-width: 420px;
+		column-gap: 16px;
+	}
+
+	.google-my-business-stats__data-box {
+		display: inline-block;
+		width: 100%;
+	}
+}
