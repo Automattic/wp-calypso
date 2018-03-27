@@ -3,7 +3,7 @@
  *
  * @format
  */
-import { isUndefined } from 'lodash';
+import { isUndefined, isEmpty } from 'lodash';
 import i18n from 'i18n-calypso';
 import { CPF } from 'cpf_cnpj';
 
@@ -23,6 +23,18 @@ export function isEbanxEnabledForCountry( countryCode = '' ) {
 	return (
 		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
 		isPaymentMethodEnabled( CartStore.get(), 'ebanx' )
+	);
+}
+
+/**
+ *
+ * @param {String} countryCode - a two-letter country code, e.g., 'DE', 'BR'
+ * @returns {Boolean} Whether the country requires additional fields
+ */
+export function shouldRenderAdditionalEbanxFields( countryCode = '' ) {
+	return (
+		! isUndefined( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ] ) &&
+		! isEmpty( PAYMENT_PROCESSOR_EBANX_COUNTRIES[ countryCode ].requiredFields )
 	);
 }
 
