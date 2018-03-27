@@ -39,7 +39,6 @@ import {
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
-import { updateSettings } from 'state/jetpack/settings/actions';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import PlanStorageBar from 'blocks/plan-storage/bar';
@@ -263,34 +262,29 @@ class MediaSettings extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
-		const isVideoPressAvailable =
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
-			hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'photon'
+	);
+	const isVideoPressAvailable =
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
+		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
-		return {
-			carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
-			isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
-			isVideoPressAvailable,
-			mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
-			mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			selectedSiteId,
-			sitePlanSlug,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-		};
-	},
-	{
-		updateSettings,
-	}
-)( localize( MediaSettings ) );
+	return {
+		carouselActive: !! isJetpackModuleActive( state, selectedSiteId, 'carousel' ),
+		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
+		isVideoPressAvailable,
+		mediaStorageLimit: getMediaStorageLimit( state, selectedSiteId ),
+		mediaStorageUsed: getMediaStorageUsed( state, selectedSiteId ),
+		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		selectedSiteId,
+		sitePlanSlug,
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+	};
+} )( localize( MediaSettings ) );
