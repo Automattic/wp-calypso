@@ -17,7 +17,7 @@ import { isPersonalPlan, isPremiumPlan, isBusinessPlan } from 'lib/plans';
 export default class PlanIcon extends Component {
 	static propTypes = {
 		classNames: PropTypes.string,
-		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ).isRequired ),
+		plan: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 	};
 
 	getIcon( planName ) {
