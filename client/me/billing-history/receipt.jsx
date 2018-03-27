@@ -266,7 +266,7 @@ class BillingReceipt extends React.Component {
 			<Main>
 				<DocumentHead title={ translate( 'Billing History' ) } />
 				<PageViewTracker
-					path="/me/purchases/billing/receipt"
+					path="/me/purchases/billing/:receipt"
 					title="Me > Billing History > Receipt"
 				/>
 				<QueryBillingTransactions />
