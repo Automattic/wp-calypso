@@ -28,6 +28,7 @@ import { requestPostTypes } from 'state/post-types/actions';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
 import FeedSettings from 'my-sites/site-settings/feed-settings';
+import PodcastingLink from 'my-sites/site-settings/podcasting-details/link';
 import Masterbar from './masterbar';
 import MediaSettings from './media-settings';
 import ThemeEnhancements from './theme-enhancements';
@@ -168,6 +169,11 @@ class SiteSettingsFormWriting extends Component {
 					onChangeField={ onChangeField }
 				/>
 
+				{ ! siteIsJetpack &&
+					config.isEnabled( 'manage/site-settings/podcasting' ) && (
+						<PodcastingLink fields={ fields } />
+					) }
+
 				{ jetpackSettingsUI && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
@@ -269,6 +275,7 @@ const getFormSettings = settings => {
 		'time_format',
 		'timezone_string',
 		'lazy-images',
+		'podcasting_archive',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values
