@@ -44,7 +44,7 @@
 		color: $alert-yellow;
 	}
 
-	.is-error {
+	.is-error:not(.notice) {
 		color: $alert-red;
 	}
 
