@@ -46,7 +46,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 
 class AdsMain extends Component {
 	static propTypes = {
-		isJetpack: PropTypes.bool,
+		adsProgramName: PropTypes.string,
 		isRequestingWordadsStatus: PropTypes.bool.isRequired,
 		isUnsafe: PropTypes.oneOf( wordadsUnsafeValues ),
 		requestingWordAdsApproval: PropTypes.bool.isRequired,
@@ -228,7 +228,7 @@ class AdsMain extends Component {
 	}
 
 	render() {
-		const { isJetpack, section, site, translate } = this.props;
+		const { adsProgramName, section, site, translate } = this.props;
 
 		if ( ! this.canAccess() ) {
 			return null;
@@ -251,7 +251,6 @@ class AdsMain extends Component {
 			component = this.renderInstantActivationToggle( component );
 		}
 
-		const adsProgramName = isJetpack ? 'Ads' : 'WordAds';
 		const layoutTitles = {
 			earnings: translate( '%(wordads)s Earnings', { args: { wordads: adsProgramName } } ),
 			settings: translate( '%(wordads)s Settings', { args: { wordads: adsProgramName } } ),
@@ -301,7 +300,7 @@ const mapStateToProps = state => {
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
 		isRequestingWordadsStatus: isRequestingWordadsStatus( state, siteId ),
-		isJetpack: isJetpackSite( state, siteId ),
+		adsProgramName: isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds',
 	};
 };
 
