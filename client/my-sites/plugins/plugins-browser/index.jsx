@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import createReactClass from 'create-react-class';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
@@ -48,18 +47,30 @@ import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 
-const PluginsBrowser = createReactClass( {
-	displayName: 'PluginsBrowser',
-	_SHORT_LIST_LENGTH: 6,
-	visibleCategories: [ 'new', 'popular', 'featured' ],
+/**
+ * Module variables
+ */
+const SHORT_LIST_LENGTH = 6;
+const visibleCategories = [ 'new', 'popular', 'featured' ];
+
+export class PluginsBrowser extends Component {
+	constructor( props ) {
+		super( props );
+
+		const pluginsList = this.getPluginsLists( this.props.search );
+
+		this.state = {
+			...pluginsList,
+		};
+	}
 
 	reinitializeSearch() {
 		this.WrappedSearch = props => <Search { ...props } />;
-	},
+	}
 
 	componentWillMount() {
 		this.reinitializeSearch();
-	},
+	}
 
 	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
@@ -69,25 +80,21 @@ const PluginsBrowser = createReactClass( {
 				search_query: this.props.search,
 			} );
 		}
-	},
-
-	getInitialState() {
-		return this.getPluginsLists( this.props.search );
-	},
+	}
 
 	componentWillUnmount() {
 		PluginsListStore.removeListener( 'change', this.refreshLists );
-	},
+	}
 
 	componentWillReceiveProps( newProps ) {
 		this.refreshLists( newProps.search );
-	},
+	}
 
-	refreshLists( search ) {
+	refreshLists = search => {
 		this.setState( this.getPluginsLists( search || this.props.search ) );
-	},
+	};
 
-	fetchNextPagePlugins() {
+	fetchNextPagePlugins = () => {
 		const category = this.props.search ? 'search' : this.props.category;
 
 		if ( ! category ) {
@@ -108,29 +115,31 @@ const PluginsBrowser = createReactClass( {
 		}
 
 		PluginsActions.fetchNextCategoryPage( category, this.props.search );
-	},
+	};
 
 	getPluginsLists( search ) {
-		const shortLists = {},
-			fullLists = {};
-		this.visibleCategories.forEach( category => {
+		const shortLists = {};
+		const fullLists = {};
+
+		visibleCategories.forEach( category => {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
+
 		fullLists.search = PluginsListStore.getSearchList( search );
 		return {
 			shortLists: shortLists,
 			fullLists: fullLists,
 		};
-	},
+	}
 
 	getPluginsShortList( listName ) {
 		return get( this.state.shortLists, [ listName, 'list' ], [] );
-	},
+	}
 
 	getPluginsFullList( listName ) {
 		return get( this.state.fullLists, [ listName, 'list' ], [] );
-	},
+	}
 
 	getPluginBrowserContent() {
 		if ( this.props.search ) {
@@ -140,7 +149,7 @@ const PluginsBrowser = createReactClass( {
 			return this.getFullListView( this.props.category );
 		}
 		return this.getShortListsView();
-	},
+	}
 
 	translateCategory( category ) {
 		switch ( category ) {
@@ -157,7 +166,7 @@ const PluginsBrowser = createReactClass( {
 					context: 'Category description for the plugin browser.',
 				} );
 		}
-	},
+	}
 
 	getFullListView( category ) {
 		const isFetching = get( this.state.fullLists, [ category, 'fetching' ], true );
@@ -174,7 +183,7 @@ const PluginsBrowser = createReactClass( {
 				/>
 			);
 		}
-	},
+	}
 
 	getSearchListView( searchTerm ) {
 		const isFetching = get( this.state.fullLists, 'search.fetching', true );
@@ -210,7 +219,7 @@ const PluginsBrowser = createReactClass( {
 				} ) }
 			/>
 		);
-	},
+	}
 
 	getPluginSingleListView( category ) {
 		const listLink = '/plugins/' + category + '/';
@@ -221,14 +230,14 @@ const PluginsBrowser = createReactClass( {
 				title={ this.translateCategory( category ) }
 				site={ this.props.siteSlug }
 				expandedListLink={
-					this.getPluginsFullList( category ).length > this._SHORT_LIST_LENGTH ? listLink : false
+					this.getPluginsFullList( category ).length > SHORT_LIST_LENGTH ? listLink : false
 				}
-				size={ this._SHORT_LIST_LENGTH }
+				size={ SHORT_LIST_LENGTH }
 				showPlaceholders={ get( this.state.fullLists, [ category, 'fetching' ] ) !== false }
 				currentSites={ this.props.sites }
 			/>
 		);
-	},
+	}
 
 	isWpcomPluginActive( plugin ) {
 		return (
@@ -236,7 +245,7 @@ const PluginsBrowser = createReactClass( {
 			( 'premium' === plugin.plan && this.props.hasPremiumPlan ) ||
 			( 'business' === plugin.plan && this.props.hasBusinessPlan )
 		);
-	},
+	}
 
 	getWpcomFeaturesAsJetpackPluginsList( searchTerm ) {
 		// show only for Simple sites
@@ -282,7 +291,7 @@ const PluginsBrowser = createReactClass( {
 			isPreinstalled: this.isWpcomPluginActive( plugin ),
 			upgradeLink: '/plans/' + siteSlug + ( plugin.feature ? `?feature=${ plugin.feature }` : '' ),
 		} ) );
-	},
+	}
 
 	getShortListsView() {
 		return (
@@ -292,7 +301,7 @@ const PluginsBrowser = createReactClass( {
 				{ this.getPluginSingleListView( 'new' ) }
 			</span>
 		);
-	},
+	}
 
 	getSearchBox() {
 		const { WrappedSearch } = this;
@@ -308,7 +317,7 @@ const PluginsBrowser = createReactClass( {
 				analyticsGroup="PluginsBrowser"
 			/>
 		);
-	},
+	}
 
 	getNavigationBar() {
 		const site = this.props.siteSlug ? '/' + this.props.siteSlug : '';
@@ -344,14 +353,12 @@ const PluginsBrowser = createReactClass( {
 				{ this.getSearchBox() }
 			</SectionNav>
 		);
-	},
+	}
 
-	handleSuggestedSearch( term ) {
-		return () => {
-			this.reinitializeSearch();
-			this.props.doSearch( term );
-		};
-	},
+	handleSuggestedSearch = term => () => {
+		this.reinitializeSearch();
+		this.props.doSearch( term );
+	};
 
 	getSearchBar() {
 		const suggestedSearches = [
@@ -377,14 +384,14 @@ const PluginsBrowser = createReactClass( {
 				{ this.getSearchBox() }
 			</SectionNav>
 		);
-	},
+	}
 
 	shouldShowManageButton() {
 		if ( this.props.isJetpackSite ) {
 			return true;
 		}
 		return ! this.props.selectedSiteId && this.props.hasJetpackSites;
-	},
+	}
 
 	renderManageButton() {
 		if ( ! this.shouldShowManageButton() ) {
@@ -399,11 +406,11 @@ const PluginsBrowser = createReactClass( {
 				href={ '/plugins/manage' + site }
 			/>
 		);
-	},
+	}
 
-	handleUploadPluginButtonClick() {
+	handleUploadPluginButtonClick = () => {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
-	},
+	};
 
 	renderUploadPluginButton() {
 		if ( ! isEnabled( 'manage/plugins/upload' ) ) {
@@ -422,7 +429,7 @@ const PluginsBrowser = createReactClass( {
 				onClick={ this.handleUploadPluginButtonClick }
 			/>
 		);
-	},
+	}
 
 	getPageHeaderView() {
 		if ( this.props.hideSearchForm ) {
@@ -442,7 +449,7 @@ const PluginsBrowser = createReactClass( {
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	},
+	}
 
 	getMockPluginItems() {
 		return (
@@ -453,11 +460,11 @@ const PluginsBrowser = createReactClass( {
 				size={ 12 }
 			/>
 		);
-	},
+	}
 
 	renderDocumentHead() {
 		return <DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
-	},
+	}
 
 	renderJetpackManageError() {
 		const { selectedSiteId } = this.props;
@@ -476,7 +483,7 @@ const PluginsBrowser = createReactClass( {
 				/>
 			</MainComponent>
 		);
-	},
+	}
 
 	renderUpgradeNudge() {
 		if ( ! this.props.selectedSiteId || this.props.isJetpackSite || this.props.hasBusinessPlan ) {
@@ -491,7 +498,7 @@ const PluginsBrowser = createReactClass( {
 				title={ this.props.translate( 'Upgrade to the Business plan to install plugins.' ) }
 			/>
 		);
-	},
+	}
 
 	render() {
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
@@ -517,8 +524,8 @@ const PluginsBrowser = createReactClass( {
 				{ this.getPluginBrowserContent() }
 			</MainComponent>
 		);
-	},
-} );
+	}
+}
 
 export default flow(
 	localize,
