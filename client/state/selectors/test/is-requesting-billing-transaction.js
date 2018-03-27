@@ -25,21 +25,21 @@ describe( 'isRequestingBillingTransaction()', () => {
 		testState.billingTransactions.requesting = true;
 
 		const output = isRequestingBillingTransaction( testState, '123' );
-		expect( output ).toEqual( true );
+		expect( output ).toBe( true );
 	} );
 
 	test( 'returns false for data that is not being requested', () => {
 		const output = isRequestingBillingTransaction( state, '123' );
-		expect( output ).toEqual( false );
+		expect( output ).toBe( false );
 	} );
 
 	test( 'returns true for data that is being requested', () => {
 		const output = isRequestingBillingTransaction( state, '435' );
-		expect( output ).toEqual( true );
+		expect( output ).toBe( true );
 	} );
 
 	test( 'returns false for unknown id', () => {
 		const output = isRequestingBillingTransaction( state, '679' );
-		expect( output ).toEqual( false );
+		expect( output ).toBe( false );
 	} );
 } );
