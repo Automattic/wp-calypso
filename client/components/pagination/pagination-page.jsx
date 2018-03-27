@@ -21,6 +21,7 @@ class PaginationPage extends Component {
 		currentPage: PropTypes.number.isRequired,
 		totalPages: PropTypes.number.isRequired,
 		pageClick: PropTypes.func.isRequired,
+		compact: PropTypes.bool,
 	};
 
 	clickHandler = event => {
@@ -50,7 +51,7 @@ class PaginationPage extends Component {
 	};
 
 	render() {
-		const { translate, currentPage, numberFormat, pageNumber, totalPages } = this.props;
+		const { translate, currentPage, numberFormat, pageNumber, totalPages, compact } = this.props;
 
 		switch ( pageNumber ) {
 			case 'more':
@@ -67,7 +68,7 @@ class PaginationPage extends Component {
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage <= 1 }>
 							<Gridicon icon="arrow-left" size={ 18 } />
-							{ translate( 'Previous' ) }
+							{ ! compact && translate( 'Previous' ) }
 						</Button>
 					</li>
 				);
@@ -79,7 +80,7 @@ class PaginationPage extends Component {
 				return (
 					<li className={ listClass }>
 						<Button borderless onClick={ this.clickHandler } disabled={ currentPage >= totalPages }>
-							{ translate( 'Next' ) }
+							{ ! compact && translate( 'Next' ) }
 							<Gridicon icon="arrow-right" size={ 18 } />
 						</Button>
 					</li>
