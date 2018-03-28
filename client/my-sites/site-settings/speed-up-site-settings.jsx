@@ -20,7 +20,6 @@ import {
 	isJetpackSiteInDevelopmentMode,
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { updateSettings } from 'state/jetpack/settings/actions';
 import { getSiteSlug } from 'state/sites/selectors';
 import InfoPopover from 'components/info-popover';
 
@@ -100,23 +99,18 @@ class SpeedUpSiteSettings extends Component {
 	}
 }
 
-export default connect(
-	state => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
-		const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
-			state,
-			selectedSiteId,
-			'photon'
-		);
+export default connect( state => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
+	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(
+		state,
+		selectedSiteId,
+		'photon'
+	);
 
-		return {
-			photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
-			selectedSiteId,
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-		};
-	},
-	{
-		updateSettings,
-	}
-)( localize( SpeedUpSiteSettings ) );
+	return {
+		photonModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
+		selectedSiteId,
+		siteSlug: getSiteSlug( state, selectedSiteId ),
+	};
+} )( localize( SpeedUpSiteSettings ) );
