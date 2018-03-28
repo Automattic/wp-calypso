@@ -55,26 +55,38 @@ class PagesMain extends React.Component {
 		this._setWarning( this.props.site );
 	}
 
-	render() {
-		const { doSearch, search, translate, siteId } = this.props;
-		let status = this.props.status || '';
-		let analyticsPageTitle = 'Pages';
-		let baseAnalyticsPath = '/pages';
+	getAnalyticsPath() {
+		const { status, siteId } = this.props;
+		const basePath = '/pages';
+
+		if ( siteId && status ) {
+			return `${ basePath }/${ status }/:site`;
+		}
 
 		if ( status ) {
-			baseAnalyticsPath += `/${ status }`;
+			return `${ basePath }/${ status }`;
 		}
 
 		if ( siteId ) {
-			baseAnalyticsPath += '/:site';
+			return `${ basePath }/:site`;
 		}
 
-		if ( status.length ) {
-			analyticsPageTitle += ' > ' + titlecase( status );
-		} else {
-			analyticsPageTitle += ' > Published';
-			status = 'published';
+		return basePath;
+	}
+
+	getAnalyticsTitle() {
+		const { status } = this.props;
+
+		if ( status && status.length ) {
+			return `Pages > ${ titlecase( status ) }`;
 		}
+
+		return 'Pages > Published';
+	}
+
+	render() {
+		const { doSearch, search, translate } = this.props;
+		const status = this.props.status || 'published';
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -102,7 +114,7 @@ class PagesMain extends React.Component {
 		};
 		return (
 			<Main classname="pages">
-				<PageViewTracker path={ baseAnalyticsPath } title={ analyticsPageTitle } />
+				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Site Pages' ) } />
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
