@@ -7,6 +7,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import sinon from 'sinon';
 import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';
@@ -15,12 +16,8 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import { EditorDiscussion } from '../';
-import { edit as editPost } from 'lib/posts/actions';
 
 jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/posts/actions', () => ( {
-	edit: require( 'sinon' ).spy(),
-} ) );
 jest.mock( 'lib/posts/stats', () => ( {
 	recordEvent: () => {},
 	recordStat: () => {},
@@ -30,6 +27,7 @@ jest.mock( 'lib/posts/stats', () => ( {
  * Module variables
  */
 const DUMMY_SITE = {
+	ID: 1,
 	options: {
 		default_comment_status: true,
 		default_ping_status: false,
@@ -49,18 +47,12 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		test( 'should return the site default comments open if site exists and post is new', () => {
-			const site = {
-					options: {
-						default_comment_status: true,
-						default_ping_status: false,
-					},
-				},
-				post = {
-					type: 'post',
-				};
+			const post = {
+				type: 'post',
+			};
 
 			const tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion site={ site } post={ post } isNew />
+				<EditorDiscussion site={ DUMMY_SITE } post={ post } isNew />
 			);
 
 			expect( tree.getDiscussionSetting() ).to.eql( {
@@ -138,12 +130,9 @@ describe( 'EditorDiscussion', function() {
 		};
 
 		test( 'should include modified comment status on the post object', () => {
+			const editPost = sinon.spy();
 			const tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion
-					post={ post }
-					site={ DUMMY_SITE }
-					setDiscussionSettings={ function() {} }
-				/>
+				<EditorDiscussion post={ post } site={ DUMMY_SITE } editPost={ editPost } />
 			);
 			const checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
 			TestUtils.Simulate.change( checkbox, {
@@ -153,7 +142,7 @@ describe( 'EditorDiscussion', function() {
 				},
 			} );
 
-			expect( editPost ).to.have.been.calledWith( {
+			expect( editPost ).to.have.been.calledWith( DUMMY_SITE.ID, null, {
 				discussion: {
 					comment_status: 'open',
 					ping_status: 'open',
@@ -162,12 +151,9 @@ describe( 'EditorDiscussion', function() {
 		} );
 
 		test( 'should include modified ping status on the post object', () => {
+			const editPost = sinon.spy();
 			const tree = TestUtils.renderIntoDocument(
-				<EditorDiscussion
-					post={ post }
-					site={ DUMMY_SITE }
-					setDiscussionSettings={ function() {} }
-				/>
+				<EditorDiscussion post={ post } site={ DUMMY_SITE } editPost={ editPost } />
 			);
 			const checkbox = ReactDom.findDOMNode( tree ).querySelector( '[name=ping_status]' );
 			TestUtils.Simulate.change( checkbox, {
@@ -177,7 +163,7 @@ describe( 'EditorDiscussion', function() {
 				},
 			} );
 
-			expect( editPost ).to.have.been.calledWith( {
+			expect( editPost ).to.have.been.calledWith( DUMMY_SITE.ID, null, {
 				discussion: {
 					comment_status: 'closed',
 					ping_status: 'closed',
