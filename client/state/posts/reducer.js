@@ -48,6 +48,7 @@ import revisions from './revisions/reducer';
 import {
 	getSerializedPostsQuery,
 	isTermsEqual,
+	isDiscussionEqual,
 	mergeIgnoringArrays,
 	normalizePostForState,
 } from './utils';
@@ -417,8 +418,11 @@ export function edits( state = {}, action ) {
 						memoState,
 						[ post.site_ID, post.ID ],
 						omitBy( postEdits, ( value, key ) => {
-							if ( key === 'terms' ) {
-								return isTermsEqual( value, post[ key ] );
+							switch ( key ) {
+								case 'terms':
+									return isTermsEqual( value, post[ key ] );
+								case 'discussion':
+									return isDiscussionEqual( value, post[ key ] );
 							}
 							return isEqual( post[ key ], value );
 						} )

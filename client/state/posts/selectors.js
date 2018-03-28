@@ -15,6 +15,7 @@ import {
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
+	isDiscussionEqual,
 	mergeIgnoringArrays,
 	normalizePostForEditing,
 	normalizePostForDisplay,
@@ -415,6 +416,9 @@ export const isEditedPostDirty = createSelector(
 					}
 					case 'parent': {
 						return get( post, 'parent.ID', 0 ) !== value;
+					}
+					case 'discussion': {
+						return ! isDiscussionEqual( value, post.discussion );
 					}
 				}
 				return post[ key ] !== value;
