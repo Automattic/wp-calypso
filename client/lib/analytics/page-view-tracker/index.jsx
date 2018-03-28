@@ -17,6 +17,7 @@ import { getSiteFragment } from 'lib/route';
 import { recordPageView } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { hasInitializedSites } from 'state/selectors';
 
 /**
  * Module variables
@@ -90,7 +91,8 @@ const mapStateToProps = state => {
 	const hasSelectedSiteLoaded =
 		! currentSlug ||
 		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
-		currentSlug === selectedSiteSlug;
+		currentSlug === selectedSiteSlug ||
+		hasInitializedSites( state );
 
 	return {
 		hasSelectedSiteLoaded,
