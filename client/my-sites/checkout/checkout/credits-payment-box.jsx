@@ -17,13 +17,19 @@ import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
 import CartToggle from './cart-toggle';
+import { planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 
-class CreditsPaymentBox extends React.Component {
+export class CreditsPaymentBox extends React.Component {
 	content = () => {
 		const { cart, transactionStep, presaleChatAvailable } = this.props;
-		const hasBusinessPlanInCart = some( cart.products, { product_slug: PLAN_BUSINESS } );
+		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
+			planMatches( product_slug, {
+				type: TYPE_BUSINESS,
+				group: GROUP_WPCOM,
+			} )
+		);
 		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
 
 		return (
