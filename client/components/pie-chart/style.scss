@@ -21,3 +21,17 @@
 .pie-chart__legend-sample-2 {
 	fill: $blue-light;
 }
+
+.pie-chart__legend-item {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+}
+
+.pie-chart__legend-item-sample {
+	padding-right: 4px;
+}
+
+// .pie-chart__legend-item-detail {
+// 	padding-left: 20px;
+// }

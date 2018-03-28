@@ -20,11 +20,12 @@ class LegendItem extends React.Component {
 	render() {
 		const { name, sectionNumber, value, percent, description } = this.props;
 		return (
-			<div className={ `pie-chart__legend-item` }>
+			<div className={ 'pie-chart__legend-item' }>
 				<svg
 					height={ COLOR_SAMPLE_SIZE }
 					width={ COLOR_SAMPLE_SIZE }
 					viewBox={ `0 0 ${ COLOR_SAMPLE_SIZE } ${ COLOR_SAMPLE_SIZE }` }
+					className={ 'pie-chart__legend-item-sample' }
 				>
 					<circle
 						className={ `pie-chart__legend-sample-${ sectionNumber }` }
@@ -33,11 +34,16 @@ class LegendItem extends React.Component {
 						r={ COLOR_SAMPLE_SIZE / 2 }
 					/>
 				</svg>
-				<div>
-					<h3>{ name }</h3>
-					<p>{ value }</p>
-					<p>{ percent ? `(${ percent })` : '' }</p>
-					<p>{ description ? description : '' }</p>
+				<div className={ 'pie-chart__legend-item-detail' }>
+					<div className={ 'pie-chart__legend-item-detail-name' }>{ name }</div>
+					<p className={ 'pie-chart__legend-item-detail-value' }>
+						{ percent ? `${ value } (${ percent })` : `${ value }` }
+					</p>
+					{ description ? (
+						<p className={ 'pie-chart__legend-item-detail-description' }>{ description }</p>
+					) : (
+						''
+					) }
 				</div>
 			</div>
 		);
