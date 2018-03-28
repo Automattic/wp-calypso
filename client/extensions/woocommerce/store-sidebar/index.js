@@ -27,7 +27,10 @@ import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getNewOrdersWithoutPayPalPending } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
+import {
+	getSetStoreAddressDuringInitialSetup,
+	getFinishedInstallOfRequiredPlugins,
+} from 'woocommerce/state/sites/setup-choices/selectors';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
@@ -233,6 +236,7 @@ class StoreSidebar extends Component {
 	render = () => {
 		const {
 			finishedAddressSetup,
+			finishedInstallOfRequiredPlugins,
 			hasProducts,
 			path,
 			settingsGeneralLoaded,
@@ -270,7 +274,7 @@ class StoreSidebar extends Component {
 						{ showAllSidebarItems && this.settings() }
 					</ul>
 				</SidebarMenu>
-				<QuerySettingsGeneral siteId={ siteId } />
+				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Sidebar>
 		);
 	};
@@ -278,6 +282,7 @@ class StoreSidebar extends Component {
 
 function mapStateToProps( state ) {
 	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
+	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
 	const hasProducts = getTotalProducts( state ) > 0;
 	const orders = getNewOrdersWithoutPayPalPending( state );
 	const productsLoaded = areProductsLoaded( state );
@@ -289,6 +294,7 @@ function mapStateToProps( state ) {
 
 	return {
 		finishedAddressSetup,
+		finishedInstallOfRequiredPlugins,
 		hasProducts,
 		orders,
 		totalPendingReviews,

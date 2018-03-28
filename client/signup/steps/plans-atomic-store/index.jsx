@@ -50,7 +50,8 @@ class PlansAtomicStoreStep extends Component {
 				stepName,
 				goToNextStep,
 				translate,
-				signupDependencies: { designType, domainItem },
+				signupDependencies: { domainItem },
+				designType,
 			} = this.props,
 			privacyItem =
 				cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
@@ -65,7 +66,7 @@ class PlansAtomicStoreStep extends Component {
 			// If we're inside the store signup flow and the cart item is a Business Plan,
 			// set a flag on it. It will trigger Automated Transfer when the product is being
 			// activated at the end of the checkout process.
-			if ( designType === 'store' && cartItem.product_slug === PLAN_BUSINESS ) {
+			if ( designType === DESIGN_TYPE_STORE && cartItem.product_slug === PLAN_BUSINESS ) {
 				cartItem.extra = Object.assign( cartItem.extra || {}, {
 					is_store_signup: true,
 				} );
