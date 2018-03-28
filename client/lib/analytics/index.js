@@ -16,7 +16,7 @@ import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } fr
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { doNotTrack, isPiiUrl, shouldReportOmitBlogId } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
 	retarget,
@@ -262,11 +262,7 @@ const analytics = {
 	},
 
 	tracks: {
-		recordEvent: function( eventName, eventProperties ) {
-			let superProperties;
-
-			eventProperties = eventProperties || {};
-
+		recordEvent: function( eventName, eventProperties = {} ) {
 			if ( process.env.NODE_ENV !== 'production' ) {
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
@@ -287,20 +283,28 @@ const analytics = {
 				return;
 			}
 
+			let actualProperties = {};
+
 			if ( _superProps ) {
 				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				superProperties = _superProps.getAll( _selectedSite, _siteCount );
-				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
+				const superProperties = _superProps.getAll( _selectedSite, _siteCount );
+				actualProperties = {
+					...eventProperties,
+					..._superProps.getAll( _selectedSite, _siteCount ),
+					blog_id: shouldReportOmitBlogId( eventProperties.path ) ? null : superProperties.blog_id,
+				};
+			} else {
+				actualProperties = { ...eventProperties };
 			}
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			eventProperties = omit( eventProperties, isUndefined );
+			actualProperties = omit( actualProperties, isUndefined );
 
-			tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
+			tracksDebug( 'Recording event "%s" with actual props %o', eventName, actualProperties );
 
-			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
-			analytics.emit( 'record-event', eventName, eventProperties );
+			window._tkq.push( [ 'recordEvent', eventName, actualProperties ] );
+			analytics.emit( 'record-event', eventName, actualProperties );
 		},
 
 		recordPageView: function( urlPath, params ) {

@@ -5,6 +5,12 @@
  */
 
 import debugFactory from 'debug';
+import { some } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { NO_BLOG_ID_PATHS } from 'lib/analytics/constants';
 
 /**
  * Module variables
@@ -95,3 +101,16 @@ export function shouldSkipAds() {
 	debug( `Is Skipping Ads: ${ result }` );
 	return result;
 }
+
+/**
+ * Check if a path should report the currently selected site ID.
+ *
+ * Some paths should never report it because it's used
+ * to tell general admin and site-specific activities apart.
+ *
+ * @param {String} path The tracked path.
+ * @returns {Boolean} If the report should null `blog_id`.
+ */
+export const shouldReportOmitBlogId = path =>
+	'/' === path ||
+	( !! path && some( NO_BLOG_ID_PATHS, noBlogIdPath => path.indexOf( noBlogIdPath ) === 0 ) );
