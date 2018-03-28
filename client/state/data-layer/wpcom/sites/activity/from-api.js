@@ -43,33 +43,36 @@ export function transformer( apiResponse ) {
  * @return {object}       Processed Activity item ready for use in UI
  */
 export function processItem( item ) {
-	const published = item.published;
-	const actor = item.actor;
+	const { actor, object, published } = item;
 
-	return {
-		/* activity actor */
-		actorAvatarUrl: get( actor, 'icon.url', DEFAULT_GRAVATAR_URL ),
-		actorName: get( actor, 'name', '' ),
-		actorRemoteId: get( actor, 'external_user_id', 0 ),
-		actorRole: get( actor, 'role', '' ),
-		actorType: get( actor, 'type', '' ),
-		actorWpcomId: get( actor, 'wpcom_user_id', 0 ),
+	return Object.assign(
+		{
+			/* activity actor */
+			actorAvatarUrl: get( actor, 'icon.url', DEFAULT_GRAVATAR_URL ),
+			actorName: get( actor, 'name', '' ),
+			actorRemoteId: get( actor, 'external_user_id', 0 ),
+			actorRole: get( actor, 'role', '' ),
+			actorType: get( actor, 'type', '' ),
+			actorWpcomId: get( actor, 'wpcom_user_id', 0 ),
 
-		/* base activity info */
-		activityDate: published,
-		activityGroup: ( item.name || '' ).split( '__', 1 )[ 0 ], // split always returns at least one item
-		activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
-		activityId: item.activity_id,
-		activityIsDiscarded: item.is_discarded,
-		activityIsRewindable: item.is_rewindable,
-		rewindId: item.rewind_id,
-		activityName: item.name,
-		activityStatus: item.status,
-		activityTargetTs: get( item, 'object.target_ts', null ),
-		activityTitle: item.summary,
-		activityTs: Date.parse( published ),
-		activityDescription: parseBlock( item.content ),
-	};
+			/* base activity info */
+			activityDate: published,
+			activityGroup: ( item.name || '' ).split( '__', 1 )[ 0 ], // split always returns at least one item
+			activityIcon: get( item, 'gridicon', DEFAULT_GRIDICON ),
+			activityId: item.activity_id,
+			activityIsDiscarded: item.is_discarded,
+			activityIsRewindable: item.is_rewindable,
+			rewindId: item.rewind_id,
+			activityName: item.name,
+			activityStatus: item.status,
+			activityTitle: item.summary,
+			activityTs: Date.parse( published ),
+			activityDescription: parseBlock( item.content ),
+		},
+		object.hasOwnProperty( 'activityTargetTs' ) && {
+			activityTargetTs: object.target_ts,
+		}
+	);
 }
 
 // fromApi default export
