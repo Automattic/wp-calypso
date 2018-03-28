@@ -255,114 +255,123 @@ function setupOutbrainGlobal() {
 
 const loadScript = promisify( loadScriptCallback );
 
-function loadTrackingScripts( callback ) {
+async function loadTrackingScripts( callback ) {
 	hasStartedFetchingScripts = true;
 
 	const scripts = [];
 
 	if ( isFacebookEnabled ) {
-		scripts.push( loadScript( FACEBOOK_TRACKING_SCRIPT_URL ) );
+		scripts.push( FACEBOOK_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isAdwordsEnabled ) {
-		scripts.push( loadScript( GOOGLE_TRACKING_SCRIPT_URL ) );
+		scripts.push( GOOGLE_TRACKING_SCRIPT_URL );
 	}
+	scripts.push( 'chicken://example' );
 
 	if ( isBingEnabled ) {
-		scripts.push( loadScript( BING_TRACKING_SCRIPT_URL ) );
+		scripts.push( BING_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isCriteoEnabled ) {
-		scripts.push( loadScript( CRITEO_TRACKING_SCRIPT_URL ) );
+		scripts.push( CRITEO_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isQuantcastEnabled ) {
-		scripts.push( loadScript( quantcastAsynchronousTagURL() ) );
+		scripts.push( quantcastAsynchronousTagURL() );
 	}
 
 	if ( isYahooEnabled ) {
-		scripts.push( loadScript( YAHOO_TRACKING_SCRIPT_URL ) );
+		scripts.push( YAHOO_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isTwitterEnabled ) {
-		scripts.push( loadScript( TWITTER_TRACKING_SCRIPT_URL ) );
+		scripts.push( TWITTER_TRACKING_SCRIPT_URL );
 	}
 
 	if ( isLinkedinEnabled ) {
-		scripts.push( loadScript( LINKED_IN_SCRIPT_URL ) );
+		scripts.push( LINKED_IN_SCRIPT_URL );
 	}
 
 	if ( isMediaWallahEnabled ) {
-		scripts.push( loadScript( MEDIA_WALLAH_SCRIPT_URL ) );
+		scripts.push( MEDIA_WALLAH_SCRIPT_URL );
 	}
 
 	if ( isQuoraEnabled ) {
-		scripts.push( loadScript( QUORA_SCRIPT_URL ) );
+		scripts.push( QUORA_SCRIPT_URL );
 	}
 
 	if ( isYandexEnabled ) {
-		scripts.push( loadScript( YANDEX_SCRIPT_URL ) );
+		scripts.push( YANDEX_SCRIPT_URL );
 	}
 
 	if ( isOutbrainEnabled ) {
-		scripts.push( loadScript( OUTBRAIN_SCRIPT_URL ) );
+		scripts.push( OUTBRAIN_SCRIPT_URL );
 	}
 
-	Promise.all( scripts ).then(
-		() => {
-			// init Facebook
-			if ( isFacebookEnabled ) {
-				window.fbq( 'init', TRACKING_IDS.facebookInit );
-			}
+	let hasError = false;
+	for ( const src of scripts ) {
+		try {
+			await loadScript( src );
+		} catch ( error ) {
+			hasError = true;
+			debug( 'A tracking script failed to load: ', error );
+		}
+	}
 
-			// init Bing
-			if ( isBingEnabled ) {
-				const bingConfig = {
-					ti: TRACKING_IDS.bingInit,
-					q: window.uetq,
-				};
+	if ( hasError ) {
+		return;
+	}
 
-				if ( typeof UET !== 'undefined' ) {
-					// bing's script creates the UET global for us
-					window.uetq = new UET( bingConfig ); // eslint-disable-line
-					window.uetq.push( 'pageLoad' );
-				}
-			}
+	// init Facebook
+	if ( isFacebookEnabled ) {
+		window.fbq( 'init', TRACKING_IDS.facebookInit );
+	}
 
-			// init Twitter
-			if ( isTwitterEnabled ) {
-				window.twq( 'init', TRACKING_IDS.twitterPixelId );
-			}
+	// init Bing
+	if ( isBingEnabled ) {
+		const bingConfig = {
+			ti: TRACKING_IDS.bingInit,
+			q: window.uetq,
+		};
 
-			// init Media Wallah
-			if ( isMediaWallahEnabled ) {
-				initMediaWallah();
-			}
+		if ( typeof UET !== 'undefined' ) {
+			// bing's script creates the UET global for us
+			window.uetq = new UET( bingConfig ); // eslint-disable-line
+			window.uetq.push( 'pageLoad' );
+		}
+	}
 
-			// init Quora
-			if ( isQuoraEnabled ) {
-				window.qp( 'init', TRACKING_IDS.quoraPixelId );
-			}
+	// init Twitter
+	if ( isTwitterEnabled ) {
+		window.twq( 'init', TRACKING_IDS.twitterPixelId );
+	}
 
-			// init Yandex counter
-			if ( isYandexEnabled ) {
-				if ( window.Ya ) {
-					window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
-				} else {
-					debug( "Error: Yandex's window.Ya not ready or missing" );
-					isYandexEnabled = false;
-				}
-			}
+	// init Media Wallah
+	if ( isMediaWallahEnabled ) {
+		initMediaWallah();
+	}
 
-			hasFinishedFetchingScripts = true;
+	// init Quora
+	if ( isQuoraEnabled ) {
+		window.qp( 'init', TRACKING_IDS.quoraPixelId );
+	}
 
-			if ( typeof callback === 'function' ) {
-				callback();
-			}
-			debug( 'Scripts loaded successfully' );
-		},
-		error => debug( 'Some scripts failed to load: ', error )
-	);
+	// init Yandex counter
+	if ( isYandexEnabled ) {
+		if ( window.Ya ) {
+			window.yaCounter45268389 = new window.Ya.Metrika( { id: 45268389 } );
+		} else {
+			debug( "Error: Yandex's window.Ya not ready or missing" );
+			isYandexEnabled = false;
+		}
+	}
+
+	hasFinishedFetchingScripts = true;
+
+	if ( typeof callback === 'function' ) {
+		callback();
+	}
 }
 
 /**
