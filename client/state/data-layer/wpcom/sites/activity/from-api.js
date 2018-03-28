@@ -62,12 +62,12 @@ export function processItem( item ) {
 			activityId: item.activity_id,
 			activityIsDiscarded: item.is_discarded,
 			activityIsRewindable: item.is_rewindable,
-			rewindId: item.rewind_id,
 			activityName: item.name,
 			activityTitle: item.summary,
 			activityTs: Date.parse( published ),
 			activityDescription: parseBlock( item.content ),
 		},
+		item.hasOwnProperty( 'rewind_id' ) && { rewindId: item.rewind_id },
 		item.hasOwnProperty( 'status' ) && { activityStatus: item.status },
 		object.hasOwnProperty( 'target_ts' ) && { activityTargetTs: object.target_ts }
 	);
