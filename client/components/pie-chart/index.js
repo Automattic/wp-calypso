@@ -12,6 +12,8 @@ import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
  */
 import D3Base from 'components/d3-base';
 
+const NUM_COLOR_SECTIONS = 3;
+
 class PieChart extends React.Component {
 	static propTypes = {
 		data: PropTypes.array.isRequired,
@@ -19,7 +21,6 @@ class PieChart extends React.Component {
 	};
 
 	drawChart() {
-		const NUM_COLOR_SECTIONS = 3;
 		const { data, radius } = this.props;
 
 		const arcs = d3Pie().value( d => d.value )( data );
@@ -34,19 +35,29 @@ class PieChart extends React.Component {
 			<g transform={ `translate(${ radius }, ${ radius })` }>
 				{ paths.map( path => {
 					sectionNum = ( sectionNum + 1 ) % NUM_COLOR_SECTIONS;
-					return <path d={ path } className={ `chart-section-${ sectionNum }` } />;
+					return <path d={ path } className={ `pie-chart__chart-section-${ sectionNum }` } />;
 				} ) }
 			</g>
 		);
 	}
 
 	render() {
-		const { radius } = this.props;
+		const { radius, data } = this.props;
 		return (
 			<div>
 				<D3Base width={ radius * 2 } height={ radius * 2 }>
 					{ this.drawChart() }
 				</D3Base>
+				<div className={ 'pie-chart__legend' }>
+					{ data.map( ( dataum, i ) => {
+						const sectionNum = i % NUM_COLOR_SECTIONS;
+						return (
+							<div key={ i } className={ `pie-chart__legend-section-${ sectionNum }` }>
+								{ dataum.name }
+							</div>
+						);
+					} ) }
+				</div>
 			</div>
 		);
 	}

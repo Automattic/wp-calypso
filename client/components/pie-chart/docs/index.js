@@ -17,7 +17,7 @@ export default class extends React.Component {
 
 	render() {
 		return (
-			<Card max-height={ '300px;' }>
+			<Card>
 				<PieChart
 					data={ [
 						{
@@ -33,7 +33,7 @@ export default class extends React.Component {
 							name: 'Series 3',
 						},
 					] }
-					radius={ 150 }
+					radius={ 200 }
 				/>
 			</Card>
 		);
