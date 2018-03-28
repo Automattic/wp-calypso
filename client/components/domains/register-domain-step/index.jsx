@@ -311,7 +311,7 @@ class RegisterDomainStep extends React.Component {
 						onBlur={ this.save }
 						placeholder={ this.props.translate( 'Enter a name or keyword' ) }
 						autoFocus={ true }
-						describedBy={ 'formatted-header' }
+						describedBy={ 'step-header' }
 						delaySearch={ true }
 						delayTimeout={ 1000 }
 						dir="ltr"
