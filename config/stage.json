@@ -33,7 +33,7 @@
 		"external-media": true,
 		"external-media/google-photos": true,
 		"external-media/free-photo-library": true,
-		"google-my-business": true,
+		"google-my-business": false,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,
