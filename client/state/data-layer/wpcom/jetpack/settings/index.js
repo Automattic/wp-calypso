@@ -19,7 +19,7 @@ import {
 import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
 	saveJetpackSettingsSuccess,
-	updateJetpackOnboardingSettings,
+	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
 import { trailingslashit } from 'lib/route';
 
@@ -34,7 +34,7 @@ export const fromApi = response => {
 };
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
-	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
+	dispatch( updateJetpackSettings( siteId, settings ) );
 };
 
 /**
@@ -91,7 +91,7 @@ export const saveJetpackSettings = ( { dispatch }, action ) => {
 
 	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
-	dispatch( updateJetpackOnboardingSettings( siteId, settingsWithoutCredentials ) );
+	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
 
 	return dispatch(
 		http(
