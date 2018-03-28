@@ -38,7 +38,7 @@ const HelpContactClosed = ( { compact, translate } ) => {
 	if ( compact ) {
 		return (
 			<FoldableCard
-				className="help-contact-closed is-comTpact"
+				className="help-contact-closed"
 				clickableHeader={ true }
 				compact={ true }
 				header={ closureHeading }
