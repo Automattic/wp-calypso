@@ -11,6 +11,7 @@ import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
  * Internal dependencies
  */
 import D3Base from 'components/d3-base';
+import LegendItem from './legend-item';
 
 const NUM_COLOR_SECTIONS = 3;
 
@@ -33,9 +34,15 @@ class PieChart extends React.Component {
 		let sectionNum = -1;
 		return (
 			<g transform={ `translate(${ radius }, ${ radius })` }>
-				{ paths.map( path => {
+				{ paths.map( ( path, index ) => {
 					sectionNum = ( sectionNum + 1 ) % NUM_COLOR_SECTIONS;
-					return <path d={ path } className={ `pie-chart__chart-section-${ sectionNum }` } />;
+					return (
+						<path
+							key={ index.toString() }
+							d={ path }
+							className={ `pie-chart__chart-section-${ sectionNum }` }
+						/>
+					);
 				} ) }
 			</g>
 		);
@@ -49,12 +56,15 @@ class PieChart extends React.Component {
 					{ this.drawChart() }
 				</D3Base>
 				<div className={ 'pie-chart__legend' }>
-					{ data.map( ( dataum, i ) => {
-						const sectionNum = i % NUM_COLOR_SECTIONS;
+					{ data.map( ( datum, index ) => {
+						const sectionNumber = index % NUM_COLOR_SECTIONS;
 						return (
-							<div key={ i } className={ `pie-chart__legend-section-${ sectionNum }` }>
-								{ dataum.name }
-							</div>
+							<LegendItem
+								key={ index.toString() }
+								name={ datum.name }
+								value={ datum.value }
+								sectionNumber={ sectionNumber }
+							/>
 						);
 					} ) }
 				</div>
