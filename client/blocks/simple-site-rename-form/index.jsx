@@ -25,6 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 
 const SUBDOMAIN_LENGTH_MINIMUM = 4;
 const SUBDOMAIN_LENGTH_MAXIMUM = 50;
+const ADDRESS_CHANGE_SUPPORT_URL = 'https://support.wordpress.com/changing-blog-address/';
 
 export class SimpleSiteRenameForm extends Component {
 	static propTypes = {
@@ -149,9 +150,13 @@ export class SimpleSiteRenameForm extends Component {
 								<Gridicon icon="info-outline" size={ 18 } />
 								<p>
 									{ translate(
-										'Once changed, the current site address %(currentDomainName)s will no longer be available.',
+										'Once changed, the current site address %(currentDomainName)s will no longer be available. ' +
+											'{{link}}Be sure to read our support page before making the change.{{/link}}',
 										{
 											args: { currentDomainName },
+											components: {
+												link: <a href={ ADDRESS_CHANGE_SUPPORT_URL } />,
+											},
 										}
 									) }
 								</p>
