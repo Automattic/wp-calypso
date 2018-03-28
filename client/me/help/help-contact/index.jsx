@@ -75,7 +75,7 @@ const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
-const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 22 Mar 2018 00:00:00 +0000' );
+const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 29 Mar 2018 00:00:00 +0000' );
 const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
