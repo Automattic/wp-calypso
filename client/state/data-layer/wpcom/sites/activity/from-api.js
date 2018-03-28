@@ -69,9 +69,7 @@ export function processItem( item ) {
 			activityTs: Date.parse( published ),
 			activityDescription: parseBlock( item.content ),
 		},
-		object.hasOwnProperty( 'activityTargetTs' ) && {
-			activityTargetTs: object.target_ts,
-		}
+		object.hasOwnProperty( 'target_ts' ) && { activityTargetTs: object.target_ts }
 	);
 }
 
