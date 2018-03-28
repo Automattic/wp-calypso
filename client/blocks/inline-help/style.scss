@@ -106,6 +106,12 @@
 		display: block;
 	}
 
+	.help-contact-form {
+		button {
+			width: 100%;
+		}
+	}
+
 	.help-contact__form {
 		margin: 0;
 		padding: 16px;
@@ -119,10 +125,6 @@
 			.site__content {
 				padding: 8px;
 			}
-		}
-
-		button {
-			width: 100%;
 		}
 
 		.help-contact-confirmation {

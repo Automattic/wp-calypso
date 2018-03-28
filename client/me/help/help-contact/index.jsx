@@ -75,10 +75,8 @@ const SUPPORT_HAPPYCHAT = 'SUPPORT_HAPPYCHAT';
 const SUPPORT_TICKET = 'SUPPORT_TICKET';
 const SUPPORT_FORUM = 'SUPPORT_FORUM';
 
-const startShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Sun, 17 Dec 2017 00:00:00 +0000' );
-const stopShowingChristmas2017ClosureNoticeAt = i18n.moment( 'Tue, 26 Dec 2017 00:00:00 +0000' );
-const startShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Fri, 29 Dec 2017 00:00:00 +0000' );
-const stopShowingNewYear2018ClosureNoticeAt = i18n.moment( 'Tue, 2 Jan 2018 00:00:00 +0000' );
+const startShowingEaster2018ClosureNoticeAt = i18n.moment( 'Thu, 29 Mar 2018 00:00:00 +0000' );
+const stopShowingEaster2018ClosureNoticeAt = i18n.moment( 'Mon, 2 Apr 2018 00:00:00 +0000' );
 
 class HelpContact extends React.Component {
 	static propTypes = {
@@ -486,7 +484,7 @@ class HelpContact extends React.Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { translate, selectedSitePlanSlug } = this.props;
+		const { compact, translate, selectedSitePlanSlug } = this.props;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -538,25 +536,22 @@ class HelpContact extends React.Component {
 
 		const currentDate = i18n.moment();
 
-		// Customers sent to Directly and Forum are not affected by the Christmas closures
-		const isUserAffectedByChristmas2017Closure =
+		// Customers sent to Directly and Forum are not affected by live chat closures
+		const isUserAffectedByLiveChatClosure =
 			supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
-		const isClosureNoticeInEffect =
-			currentDate.isBetween(
-				startShowingChristmas2017ClosureNoticeAt,
-				stopShowingChristmas2017ClosureNoticeAt
-			) ||
-			currentDate.isBetween(
-				startShowingNewYear2018ClosureNoticeAt,
-				stopShowingNewYear2018ClosureNoticeAt
-			);
+		const isClosureNoticeInEffect = currentDate.isBetween(
+			startShowingEaster2018ClosureNoticeAt,
+			stopShowingEaster2018ClosureNoticeAt
+		);
 
-		const shouldShowClosureNotice = isUserAffectedByChristmas2017Closure && isClosureNoticeInEffect;
+		const shouldShowClosureNotice = isUserAffectedByLiveChatClosure && isClosureNoticeInEffect;
 
 		return (
 			<div>
-				{ shouldShowClosureNotice && <HelpContactClosed sitePlanSlug={ selectedSitePlanSlug } /> }
+				{ shouldShowClosureNotice && (
+					<HelpContactClosed compact={ compact } sitePlanSlug={ selectedSitePlanSlug } />
+				) }
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice
 						status="is-warning"
