@@ -19,6 +19,7 @@ import postTypes from './post-types';
 import posts from './posts';
 import rewind from './rewind';
 import simplePayments from './simple-payments';
+import users from './users';
 
 export default mergeHandlers(
 	activity,
@@ -33,5 +34,6 @@ export default mergeHandlers(
 	postTypes,
 	posts,
 	rewind,
-	simplePayments
+	simplePayments,
+	users
 );
