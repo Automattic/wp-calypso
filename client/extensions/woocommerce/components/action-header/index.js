@@ -13,6 +13,7 @@ import { isArray } from 'lodash';
  */
 import ActionButtons from './actions';
 import Button from 'components/button';
+import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import SiteIcon from 'blocks/site-icon';
@@ -43,6 +44,8 @@ class ActionHeader extends React.Component {
 	render() {
 		const { children, primaryLabel, site } = this.props;
 
+		const link = getLink( 'https://:site/', site );
+
 		return (
 			<header className="action-header">
 				<Button
@@ -53,9 +56,15 @@ class ActionHeader extends React.Component {
 					<Gridicon icon="chevron-left" />
 				</Button>
 				<div className="action-header__content">
-					<SiteIcon site={ site } />
+					<a href={ link }>
+						<SiteIcon site={ site } />
+					</a>
 					<div className="action-header__details">
-						{ site && <p className="action-header__site-title">{ site.title }</p> }
+						{ site && (
+							<p className="action-header__site-title">
+								<a href={ link }>{ site.title }</a>
+							</p>
+						) }
 						{ this.renderBreadcrumbs() }
 					</div>
 				</div>
