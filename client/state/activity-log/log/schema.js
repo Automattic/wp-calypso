@@ -33,7 +33,7 @@ const activityItemsSchema = {
 				activityIsRewindable: { type: 'boolean' },
 				activityName: { type: 'string' },
 				activityStatus: { type: [ 'null', 'string' ] },
-				activityTargetTs: { type: [ 'null', 'number' ] },
+				activityTargetTs: { type: 'number' },
 				activityTitle: { type: 'string' },
 				activityTs: { type: 'integer' },
 				actorAvatarUrl: { type: 'string' },
