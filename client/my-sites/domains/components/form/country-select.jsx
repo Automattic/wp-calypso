@@ -63,11 +63,11 @@ const CountrySelect = createReactClass( {
 			options = options.concat(
 				countriesList.map( ( country, index ) => {
 					if ( isEmpty( country.code ) ) {
-						return { key: 'divider2', label: '', disabled: 'disabled', value: '-' };
+						return { key: index, label: '', disabled: 'disabled', value: '-' };
 					}
 
 					return {
-						key: `country-select-${ index }-${ country.code }`,
+						key: index,
 						label: country.name,
 						value: country.code,
 					};
