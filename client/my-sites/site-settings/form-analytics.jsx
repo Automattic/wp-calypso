@@ -38,17 +38,14 @@ import {
 } from 'state/sites/selectors';
 import { isJetpackModuleActive } from 'state/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	FEATURE_GOOGLE_ANALYTICS,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_BUSINESS,
-} from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, TYPE_BUSINESS, TERM_ANNUALLY } from 'lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 
 const validateGoogleAnalyticsCode = code => ! code || code.match( /^UA-\d+-\d+$/i );
 const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
-class GoogleAnalyticsForm extends Component {
+export class GoogleAnalyticsForm extends Component {
 	state = {
 		isCodeValid: true,
 	};
@@ -165,14 +162,17 @@ class GoogleAnalyticsForm extends Component {
 					) }
 				</SectionHeader>
 
-				{ showUpgradeNudge ? (
+				{ showUpgradeNudge && site && site.plan ? (
 					<Banner
 						description={ translate(
 							"Add your unique tracking ID to monitor your site's performance in Google Analytics."
 						) }
 						event={ 'google_analytics_settings' }
 						feature={ FEATURE_GOOGLE_ANALYTICS }
-						plan={ siteIsJetpack ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
+						plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
+							type: TYPE_BUSINESS,
+							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
+						} ) }
 						title={ nudgeTitle }
 					/>
 				) : (
