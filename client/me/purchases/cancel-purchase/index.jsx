@@ -45,7 +45,6 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import ProductLink from 'me/purchases/product-link';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 const user = userFactory();
 
@@ -184,10 +183,6 @@ class CancelPurchase extends React.Component {
 
 		return (
 			<Main className="cancel-purchase">
-				<PageViewTracker
-					path="/me/purchases/:site/:purchaseId/cancel"
-					title="Purchases > Cancel Purchase"
-				/>
 				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
 					{ titles.cancelPurchase }
 				</HeaderCake>
