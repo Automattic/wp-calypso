@@ -64,18 +64,6 @@ export default {
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
 	},
-	domainSuggestionTestV6: {
-		datestamp: '20180315',
-		variations: {
-			group_0: 1, // Default group
-			group_1: 1000,
-			group_2: 1000,
-			group_3: 1000,
-			group_4: 1000,
-		},
-		defaultVariation: 'group_0',
-		allowExistingUsers: true,
-	},
 	upgradePricingDisplayV2: {
 		datestamp: '20180305',
 		variations: {
@@ -126,6 +114,19 @@ export default {
 			mobile: 50,
 		},
 		defaultVariation: 'original',
+		allowExistingUsers: true,
+	},
+	domainSuggestionKrakenV313: {
+		datestamp: '20180329',
+		variations: {
+			group_0: 1, // Default group
+			group_1: 1000,
+			group_2: 1000,
+			group_3: 1000,
+			group_4: 1000,
+			group_5: 1000,
+		},
+		defaultVariation: 'group_0',
 		allowExistingUsers: true,
 	},
 };
