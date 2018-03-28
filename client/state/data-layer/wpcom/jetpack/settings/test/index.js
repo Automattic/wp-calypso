@@ -7,7 +7,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import {
 	MAX_WOOCOMMERCE_INSTALL_RETRIES,
 	requestJetpackSettings,
-	saveJetpackOnboardingSettings,
+	saveJetpackSettings,
 	handleSaveSuccess,
 	announceRequestFailure,
 	announceSaveFailure,
@@ -19,7 +19,7 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 import {
-	saveJetpackOnboardingSettingsSuccess,
+	saveJetpackSettingsSuccess,
 	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
 
@@ -178,7 +178,7 @@ describe( 'announceRequestFailure()', () => {
 	} );
 } );
 
-describe( 'saveJetpackOnboardingSettings()', () => {
+describe( 'saveJetpackSettings()', () => {
 	const dispatch = jest.fn();
 	const token = 'abcd1234';
 	const userEmail = 'example@yourgroovydomain.com';
@@ -202,7 +202,7 @@ describe( 'saveJetpackOnboardingSettings()', () => {
 	};
 
 	test( 'should dispatch an action for POST HTTP request to save Jetpack settings, omitting JPO credentials', () => {
-		saveJetpackOnboardingSettings( { dispatch }, action );
+		saveJetpackSettings( { dispatch }, action );
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			http(
@@ -237,7 +237,7 @@ describe( 'handleSaveSuccess()', () => {
 		handleSaveSuccess( { dispatch }, { siteId, settings } );
 
 		expect( dispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( saveJetpackOnboardingSettingsSuccess( siteId, settings ) )
+			expect.objectContaining( saveJetpackSettingsSuccess( siteId, settings ) )
 		);
 	} );
 } );
@@ -285,7 +285,7 @@ describe( 'retryOrAnnounceSaveFailure()', () => {
 		message: 'cURL error 28: Operation timed out after 5001 milliseconds with 0 bytes received',
 	};
 
-	test( 'should trigger saveJetpackOnboardingSettings upon first WooCommerce install timeout', () => {
+	test( 'should trigger saveJetpackSettings upon first WooCommerce install timeout', () => {
 		retryOrAnnounceSaveFailure( { dispatch }, action, error );
 
 		expect( dispatch ).toHaveBeenCalledWith(

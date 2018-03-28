@@ -18,7 +18,7 @@ import {
 } from 'state/action-types';
 import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
-	saveJetpackOnboardingSettingsSuccess,
+	saveJetpackSettingsSuccess,
 	updateJetpackOnboardingSettings,
 } from 'state/jetpack-onboarding/actions';
 import { trailingslashit } from 'lib/route';
@@ -86,7 +86,7 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
-export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
+export const saveJetpackSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
 	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
@@ -115,7 +115,7 @@ export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
 // the save request has finished. Tracking those requests is necessary for
 // displaying an up to date progress indicator for some steps.
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
-	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
+	dispatch( saveJetpackSettingsSuccess( siteId, settings ) );
 
 export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(
@@ -168,6 +168,6 @@ export default {
 		),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
+		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
 };

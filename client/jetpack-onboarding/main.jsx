@@ -36,7 +36,7 @@ import {
 } from 'state/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isRequestingSite, isRequestingSites } from 'state/sites/selectors';
-import { saveJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 
 class JetpackOnboardingMain extends React.PureComponent {
@@ -249,12 +249,12 @@ export default connect(
 			userIdHashed,
 		};
 	},
-	{ recordTracksEvent, saveJetpackOnboardingSettings, setSelectedSiteId },
+	{ recordTracksEvent, saveJetpackSettings, setSelectedSiteId },
 	(
 		{ siteId, jpoAuth, userIdHashed, ...stateProps },
 		{
 			recordTracksEvent: recordTracksEventAction,
-			saveJetpackOnboardingSettings: saveJetpackOnboardingSettingsAction,
+			saveJetpackSettings: saveJetpackSettingsAction,
 			...dispatchProps
 		},
 		ownProps
@@ -271,7 +271,7 @@ export default connect(
 				...additionalProperties,
 			} ),
 		saveJpoSettings: ( s, settings ) =>
-			saveJetpackOnboardingSettingsAction( s, {
+			saveJetpackSettingsAction( s, {
 				onboarding: { ...settings, ...get( jpoAuth, 'onboarding' ) },
 			} ),
 		...dispatchProps,
