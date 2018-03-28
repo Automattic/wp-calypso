@@ -85,6 +85,10 @@
 	}
 }
 
+.simple-site-rename-form__address-field {
+	z-index: z-index('root', '.simple-site-rename-form__address-field');
+}
+
 .simple-site-rename-form__confirmation-detail {
 	.gridicon {
 		float: left;
