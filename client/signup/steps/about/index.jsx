@@ -281,6 +281,8 @@ class AboutStep extends Component {
 		const userExperienceInput = this.state.userExperience;
 		const siteTopicInput = formState.getFieldValue( this.state.form, 'siteTopic' );
 
+		const eventAttributes = {};
+
 		//Site Title
 		if ( siteTitleInput !== '' ) {
 			siteTitleValue = siteTitleInput;
@@ -288,19 +290,13 @@ class AboutStep extends Component {
 			this.props.setDomainSearchPrefill( siteTitleValue );
 		}
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-			field: 'Site title',
-			value: siteTitleInput || 'N/A',
-		} );
+		eventAttributes.site_title = siteTitleInput || 'N/A';
 
 		//Site Topic
 		const englishSiteTopicInput =
 			findKey( hints, siteTopic => siteTopic === siteTopicInput ) || siteTopicInput;
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-			field: 'Site topic',
-			value: englishSiteTopicInput || 'N/A',
-		} );
+		eventAttributes.site_topic = englishSiteTopicInput || 'N/A';
 
 		this.props.setSurvey( {
 			vertical: englishSiteTopicInput,
@@ -314,16 +310,10 @@ class AboutStep extends Component {
 		designType = getSiteTypeForSiteGoals( siteGoalsInput, this.props.flowName );
 
 		for ( let i = 0; i < siteGoalsArray.length; i++ ) {
-			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-				field: 'Site goals',
-				value: siteGoalsArray[ i ],
-			} );
+			eventAttributes[ `site_goal_${ siteGoalsArray[ i ] }` ] = true;
 		}
 
-		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-			field: 'Site goal selections',
-			value: siteGoalsGroup,
-		} );
+		eventAttributes.site_goal_selections = siteGoalsGroup;
 
 		//SET SITETYPE
 		this.props.setDesignType( designType );
@@ -334,12 +324,10 @@ class AboutStep extends Component {
 		//User Experience
 		if ( ! user.get() && userExperienceInput !== '' ) {
 			this.props.setUserExperience( userExperienceInput );
-
-			this.props.recordTracksEvent( 'calypso_signup_actions_user_input', {
-				field: 'User Experience',
-				value: userExperienceInput,
-			} );
+			eventAttributes.user_experience = userExperienceInput;
 		}
+
+		this.props.recordTracksEvent( 'calypso_signup_actions_user_input', eventAttributes );
 
 		//Store
 		const nextFlowName = designType === DESIGN_TYPE_STORE ? 'store-nux' : this.props.flowName;
