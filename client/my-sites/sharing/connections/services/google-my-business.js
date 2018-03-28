@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { last, isEqual } from 'lodash';
+import { last, isEqual, memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -137,6 +137,13 @@ export class GoogleMyBusiness extends SharingService {
 	}
 }
 
+const addKeyringConnectionIdToConnections = memoize( connections =>
+	connections.map( connection => ( {
+		...connection,
+		keyring_connection_ID: connection.ID,
+	} ) )
+);
+
 export default connectFor(
 	GoogleMyBusiness,
 	( state, props ) => {
@@ -144,10 +151,7 @@ export default connectFor(
 			...props,
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
-			siteUserConnections: props.keyringConnections.map( connection => ( {
-				...connection,
-				keyring_connection_ID: connection.ID,
-			} ) ),
+			siteUserConnections: addKeyringConnectionIdToConnections( props.keyringConnections ),
 		};
 	},
 	{
