@@ -10,7 +10,6 @@ The `CompactCard` component slightly modifies the `Card` component.
 
 ```jsx
 import Card from 'components/card';
-import CompactCard from 'components/card/compact';
 
 render: function() {
   return (
@@ -19,9 +18,13 @@ render: function() {
         <span>Your stuff in a Card</span>
       </Card>
 
-      <CompactCard>
-        <span>Your stuff in a CompactCard</span>
-      </CompactCard>
+      <Card compact>
+        <span>Your stuff in a compact Card</span>
+      </Card>
+
+      <Card formatted>
+        <h1>Your stuff in a formatted Card</h1>
+      </Card>
     </div>
   );
 }
@@ -34,4 +37,5 @@ render: function() {
 * `tagName` (Optional): Allows you to control the tag name of the card wrapper (only if `href` is not specified).
 * `target` (Optional): If set and used with `href` then this controls where the link opens. It also changes the Gridicon to "external"
 * `compact` (Optional): Whether the card should be rendered as compact
+* `formatted` (Optional): Whether the card should modify child heading elements
 * `highlight` (Optional): The specific highlight of this card. Can be one of the following: `false` (no highlight, default), `info`, `success`, `error` or `warning`.
