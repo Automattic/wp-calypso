@@ -368,6 +368,8 @@ class AboutStep extends Component {
 
 	renderGoalCheckboxes() {
 		const { translate, siteGoalsArray } = this.props;
+		// Note that the key attributes will be used in the name of a tracks event attribute so can not
+		// contain whitespace.
 		const options = {
 			shareOption: {
 				key: 'share',
