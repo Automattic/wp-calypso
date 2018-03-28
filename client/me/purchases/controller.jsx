@@ -35,7 +35,7 @@ function setTitle( context, ...title ) {
 	context.store.dispatch( setDocumentHeadTitle( concatTitle( titles.purchases, ...title ) ) );
 }
 
-const userHasNoSites = user.get().site_count <= 0;
+const userHasNoSites = () => user.get().site_count <= 0;
 
 function noSites( context, analyticsPath ) {
 	setTitle( context );
@@ -52,7 +52,7 @@ function noSites( context, analyticsPath ) {
 
 export default {
 	addCardDetails( context, next ) {
-		if ( userHasNoSites ) {
+		if ( userHasNoSites() ) {
 			return noSites( context, '/me/purchases/:site/:purchaseId/payment/add' );
 		}
 
@@ -68,7 +68,7 @@ export default {
 	},
 
 	cancelPrivacyProtection( context, next ) {
-		if ( userHasNoSites ) {
+		if ( userHasNoSites() ) {
 			return noSites( context, '/me/purchases/:site/:purchaseId/cancel-privacy-protection' );
 		}
 
@@ -81,7 +81,7 @@ export default {
 	},
 
 	cancelPurchase( context, next ) {
-		if ( userHasNoSites ) {
+		if ( userHasNoSites() ) {
 			return noSites( context, '/me/purchases/:site/:purchaseId/cancel' );
 		}
 
@@ -92,7 +92,7 @@ export default {
 	},
 
 	confirmCancelDomain( context, next ) {
-		if ( userHasNoSites ) {
+		if ( userHasNoSites() ) {
 			return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
 		}
 
@@ -105,7 +105,7 @@ export default {
 	},
 
 	editCardDetails( context, next ) {
-		if ( userHasNoSites ) {
+		if ( userHasNoSites() ) {
 			return noSites( context, '/me/purchases/:site/:purchaseId/payment/edit/:cardId' );
 		}
 
@@ -121,7 +121,7 @@ export default {
 	},
 
 	list( context, next ) {
-		if ( userHasNoSites ) {
+		if ( userHasNoSites() ) {
 			return noSites( context, '/me/purchases' );
 		}
 
@@ -132,7 +132,7 @@ export default {
 	},
 
 	managePurchase( context, next ) {
-		if ( userHasNoSites ) {
+		if ( userHasNoSites() ) {
 			return noSites( context, '/me/purchases/:site/:purchaseId' );
 		}
 
