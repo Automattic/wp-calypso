@@ -358,43 +358,6 @@ const Account = createReactClass( {
 		}
 	},
 
-	renderHolidaySnow() {
-		// Note that years and months below are zero indexed
-		const { translate } = this.props;
-		const today = this.props.moment();
-		const startDate = this.props.moment( {
-			year: today.year(),
-			month: 11,
-			day: 1,
-		} );
-		const endDate = this.props.moment( {
-			year: today.year(),
-			month: 0,
-			day: 4,
-		} );
-
-		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
-			return;
-		}
-
-		return (
-			<FormFieldset>
-				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
-				<FormLabel>
-					<FormCheckbox
-						checked={ this.getUserSetting( 'holidaysnow' ) }
-						onChange={ this.updateUserSettingCheckbox }
-						disabled={ this.getDisabledState() }
-						id="holidaysnow"
-						name="holidaysnow"
-						onClick={ this.getCheckboxHandler( 'Holiday Snow' ) }
-					/>
-					<span>{ translate( 'Show snowfall on WordPress.com sites.' ) }</span>
-				</FormLabel>
-			</FormFieldset>
-		);
-	},
-
 	renderJoinDate() {
 		const { translate } = this.props;
 		const dateMoment = i18n.moment( user.get().date );
@@ -618,8 +581,6 @@ const Account = createReactClass( {
 							<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 						</FormFieldset>
 					) }
-
-				{ this.renderHolidaySnow() }
 
 				<FormButton
 					isSubmitting={ this.state.submittingForm }

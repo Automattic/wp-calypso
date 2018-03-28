@@ -25,7 +25,6 @@ import config from 'config';
 import notices from 'notices';
 import FormInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
@@ -315,46 +314,6 @@ class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	holidaySnowOption() {
-		// Note that years and months below are zero indexed
-		const {
-				fields,
-				handleToggle,
-				isRequestingSettings,
-				moment,
-				supportsHolidaySnowOption,
-				translate,
-			} = this.props,
-			today = moment(),
-			startDate = moment( { year: today.year(), month: 11, day: 1 } ),
-			endDate = moment( { year: today.year(), month: 0, day: 4 } );
-
-		if ( ! supportsHolidaySnowOption ) {
-			return null;
-		}
-
-		if ( today.isBefore( startDate, 'day' ) && today.isAfter( endDate, 'day' ) ) {
-			return null;
-		}
-
-		return (
-			<FormFieldset>
-				<FormLegend>{ translate( 'Holiday Snow' ) }</FormLegend>
-				<ul>
-					<li>
-						<CompactFormToggle
-							checked={ !! fields.holidaysnow }
-							disabled={ isRequestingSettings }
-							onChange={ handleToggle( 'holidaysnow' ) }
-						>
-							{ translate( 'Show falling snow on my blog until January 4th.' ) }
-						</CompactFormToggle>
-					</li>
-				</ul>
-			</FormFieldset>
-		);
-	}
-
 	netNeutralityOption() {
 		const {
 			fields,
@@ -513,7 +472,6 @@ class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
-						{ this.holidaySnowOption() }
 					</form>
 				</Card>
 
@@ -601,7 +559,6 @@ const connectComponent = connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			supportsLanguageSelection:
 				! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '5.9-alpha' ),
-			supportsHolidaySnowOption: ! siteIsJetpack || isJetpackMinimumVersion( state, siteId, '4.0' ),
 		};
 	},
 	null,
@@ -617,7 +574,6 @@ const getFormSettings = settings => {
 		timezone_string: '',
 		blog_public: '',
 		admin_url: '',
-		holidaysnow: false,
 		net_neutrality: false,
 	};
 
@@ -632,8 +588,6 @@ const getFormSettings = settings => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-
-		holidaysnow: !! settings.holidaysnow,
 
 		net_neutrality: settings.net_neutrality,
 	};
