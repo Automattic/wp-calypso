@@ -33,6 +33,9 @@ import ThemeSelectionComponent from 'signup/steps/theme-selection';
 import UserSignupComponent from 'signup/steps/user';
 import PlansStepWithoutFreePlan from 'signup/steps/plans-without-free';
 import PlansAtomicStoreComponent from 'signup/steps/plans-atomic-store';
+import BusinessInformationComponent from 'signup/steps/business-information';
+import BusinessAddOnsComponent from 'signup/steps/business-add-ons';
+import ThemeStyleComponent from 'signup/steps/theme-style';
 
 export default {
 	about: AboutStepComponent,
@@ -81,4 +84,7 @@ export default {
 	'themes-site-selected': ThemeSelectionComponent,
 	user: UserSignupComponent,
 	'oauth2-user': UserSignupComponent,
+	'business-information': BusinessInformationComponent,
+	'business-add-ons': BusinessAddOnsComponent,
+	style: ThemeStyleComponent,
 };

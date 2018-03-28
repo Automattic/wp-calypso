@@ -31,6 +31,16 @@ export function generateFlows( { getSiteDestination = noop, getPostsDestination 
 			},
 		},
 
+		'business-quicksilver': {
+			steps: [ 'about', 'business-information', 'business-add-ons', 'style', 'domains', 'user' ],
+			destination: getSiteDestination,
+			description: 'An intelligent business signup flow.',
+			lastModified: '2018-03-28',
+			meta: {
+				skipBundlingPlan: true,
+			},
+		},
+
 		premium: {
 			steps: [ 'about', 'themes', 'domains', 'user' ],
 			destination: function( dependencies ) {
