@@ -331,63 +331,12 @@ form.sidebar__button input {
 	line-height: 2.1;
 	margin-right: auto;
 
-	&.inline-help {
-		border-radius: 0;
-		border-left: 1px solid #c8d7e1;
-		flex: 0 1 40px;
-		margin-right: 0;
-		margin-left: auto;
-		outline: 0;
-
-		@include breakpoint( "<660px" ) {
-			flex: 0 1 56px;
-		}
-	}
-
 	&.is-active {
 		background: $blue-medium;
 
 		.gridicon {
 			fill: $white;
 		}
-	}
-
-	&.sidebar__footer-chat {
-		border-left: 1px solid darken( $sidebar-bg-color, 10% );
-		flex: 0 1 40px;
-		margin-right: 0;
-		margin-left: 0;
-		outline: 0;
-
-		@include breakpoint( "<660px" ) {
-			flex: 0 1 56px;
-		}
-
-	}
-
-	&.sidebar__footer-chat.has-unread {
-		color: $gray-dark;
-		position: relative;
-
-		&:after {
-			content: "";
-			display: block;
-			position: absolute;
-			top: 6px;
-			left: 3px;
-			width: 10px;
-			height: 10px;
-			border: 2px solid $gray-lighten-30;
-			border-radius: 50%;
-			background: $orange-jazzy;
-
-			@include breakpoint( "<660px" ) {
-				top: 14px;
-				left: 11px;
-			}
-
-		}
-
 	}
 
 	&:hover {
