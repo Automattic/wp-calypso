@@ -15,7 +15,11 @@
 	@include breakpoint( ">660px" ) {
 		text-align: left;
 	}
+	flex-direction: column;
+}
 
+.current-plan__header-content-main {
+	flex-direction: row;
 }
 
 .current-plan__header-icon {
@@ -25,13 +29,13 @@
 	margin-left: 20px;
 	margin-right: 40px;
 	display: flex;
-	flex-direction: row;
 }
 
 .current-plan__header-copy {
 	width: 100%;
 	text-align: left;
 	margin-top: -20px;
+	margin-bottom: 40px;
 }
 
 .current-plan__header-heading,
@@ -115,7 +119,7 @@
 }
 
 .current-plan__text {
-	margin-top: 50px;
-	margin-bottom: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	text-align: center;
 }

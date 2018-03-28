@@ -25,7 +25,6 @@
 	background-color: $white;
 	border-radius: 0;
 	margin: 0;
-	padding: 32px;
 }
 
 .product-purchase-features-list__item .happiness-support {
@@ -33,4 +32,5 @@
 		0 1px 2px $gray-lighten-30;
 	box-sizing: border-box;
 	color: $gray-text-min;
+	padding: 32px;
 }

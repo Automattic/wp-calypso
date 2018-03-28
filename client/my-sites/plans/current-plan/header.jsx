@@ -78,25 +78,27 @@ export class CurrentPlanHeader extends Component {
 		return (
 			<div className="current-plan__header">
 				<div className="current-plan__header-content">
-					<div className="current-plan__header-icon">
-						{ currentPlanSlug && <PlanIcon plan={ currentPlanSlug } /> }
-					</div>
-					<div className="current-plan__header-copy">
-						<h1
-							className={ classNames( 'current-plan__header-heading', {
-								'is-placeholder': isPlaceholder,
-							} ) }
-						>
-							{ title }
-						</h1>
+					<div className="current-plan__header-content-main">
+						<div className="current-plan__header-icon">
+							{ currentPlanSlug && <PlanIcon plan={ currentPlanSlug } /> }
+						</div>
+						<div className="current-plan__header-copy">
+							<h1
+								className={ classNames( 'current-plan__header-heading', {
+									'is-placeholder': isPlaceholder,
+								} ) }
+							>
+								{ title }
+							</h1>
 
-						<h2
-							className={ classNames( 'current-plan__header-text', {
-								'is-placeholder': isPlaceholder,
-							} ) }
-						>
-							{ tagLine }
-						</h2>
+							<h2
+								className={ classNames( 'current-plan__header-text', {
+									'is-placeholder': isPlaceholder,
+								} ) }
+							>
+								{ tagLine }
+							</h2>
+						</div>
 					</div>
 					{ this.renderPurchaseInfo() }
 					{ includePlansLink && (
