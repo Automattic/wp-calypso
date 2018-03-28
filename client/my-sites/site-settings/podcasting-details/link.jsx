@@ -32,7 +32,7 @@ class PodcastingLink extends Component {
 					</div>
 					<div className="podcasting-details__link-info">
 						{ translate(
-							'Publish a podcast feed to Apple Podcasts and other podcasting services'
+							'Publish a podcast feed to Apple Podcasts and other podcasting services.'
 						) }
 					</div>
 				</Card>
