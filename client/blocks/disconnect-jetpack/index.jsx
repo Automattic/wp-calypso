@@ -84,7 +84,7 @@ class DisconnectJetpack extends PureComponent {
 				);
 				features.push(
 					translate(
-						'{{icon/}} Brute force attack protection and uptime monitoring',
+						'{{icon/}} Brute force attack protection and downtime monitoring',
 						this.getIcon( 'lock' )
 					)
 				);

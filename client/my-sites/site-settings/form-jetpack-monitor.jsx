@@ -136,7 +136,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 				<QueryJetpackModules siteId={ siteId } />
 				<QuerySiteMonitorSettings siteId={ siteId } />
 
-				<SectionHeader label={ translate( 'Jetpack Monitor' ) } />
+				<SectionHeader label={ translate( 'Downtime Monitoring' ) } />
 
 				<Card className="jetpack-monitor-settings">
 					<div className="site-settings__info-link-container">
@@ -150,7 +150,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 					<JetpackModuleToggle
 						siteId={ siteId }
 						moduleSlug="monitor"
-						label={ translate( "Monitor your site's uptime" ) }
+						label={ translate( "Monitor your site's downtime" ) }
 						disabled={ this.disableForm() }
 					/>
 
