@@ -12,7 +12,6 @@
 	page-break-inside: avoid; // For Firefox
 	break-inside: avoid-column; // For IE
 	-webkit-column-break-inside: avoid; // For others
-
 	padding-top: 12px;
 	max-width: 150%;
 
@@ -21,12 +20,10 @@
 	}
 }
 
-.product-purchase-features-list__item .purchase-detail, .product-purchase-features-list__item-hc {
+.product-purchase-features-list__item .purchase-detail,
+.product-purchase-features-list__item .happiness-support {
 	background-color: $white;
 	border-radius: 0;
 	margin: 0;
-}
-
-.product-purchase-features-list__item-hc {
 	padding: 32px;
 }

@@ -94,8 +94,8 @@ class CurrentPlan extends Component {
 			isLoading = this.isLoading();
 
 		const planConstObj = getPlan( currentPlanSlug ),
-			planFeaturesHeader = translate( '%s plan features', {
-				args: planConstObj.getTitle(),
+			planFeaturesHeader = translate( '%(planName)s plan features', {
+				args: { planName: planConstObj.getTitle() },
 			} );
 
 		const { title, tagLine } = this.getHeaderWording( planConstObj );
@@ -146,7 +146,7 @@ class CurrentPlan extends Component {
 							'is-placeholder': { isLoading },
 						} ) }
 					>
-						<h1 class="current-plan__header-heading">{ planFeaturesHeader }</h1>
+						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
 					</div>
 					<ProductPurchaseFeaturesList plan={ currentPlanSlug } isPlaceholder={ isLoading } />
 				</Fragment>
