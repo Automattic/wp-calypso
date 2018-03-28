@@ -7,6 +7,11 @@
 import { filter, values } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import createSelector from 'lib/create-selector';
+
+/**
  * Returns an array of keyring connection objects.
  *
  * @param  {Object} state Global state tree
@@ -34,9 +39,10 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
  * @param  {String} service Service slug.
  * @return {Array}         Keyring connections, if known.
  */
-export function getKeyringConnectionsByName( state, service ) {
-	return filter( getKeyringConnections( state ), { service } );
-}
+export const getKeyringConnectionsByName = createSelector(
+	( state, service ) => filter( getKeyringConnections( state ), { service } ),
+	state => [ state.sharing.keyring.items ]
+);
 
 /**
  * Returns an array of keyring connection objects for a specific user.
