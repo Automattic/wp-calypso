@@ -48,8 +48,8 @@ import Banner from 'components/banner';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 
+// eslint-disable-next-line react/prefer-es6-class
 export const PluginsBrowser = createReactClass( {
-	// eslint-disable-line react/prefer-es6-class
 	displayName: 'PluginsBrowser',
 	_SHORT_LIST_LENGTH: 6,
 	visibleCategories: [ 'new', 'popular', 'featured' ],
