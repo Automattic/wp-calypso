@@ -237,12 +237,7 @@ class EditorDrawer extends Component {
 
 		return (
 			<AccordionSection>
-				<AsyncLoad
-					require="post-editor/editor-discussion"
-					site={ this.props.site }
-					post={ this.props.post }
-					isNew={ this.props.isNew }
-				/>
+				<AsyncLoad require="post-editor/editor-discussion" isNew={ this.props.isNew } />
 			</AccordionSection>
 		);
 	}
