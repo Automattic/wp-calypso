@@ -45,7 +45,7 @@ const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) 
  * @param   {Object}   action         Redux action
  * @returns {Object}   Dispatched http action
  */
-export const requestJetpackOnboardingSettings = ( { dispatch }, action ) => {
+export const requestJetpackSettings = ( { dispatch }, action ) => {
 	const { siteId, query } = action;
 
 	return dispatch(
@@ -159,7 +159,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
 		dispatchRequest(
-			requestJetpackOnboardingSettings,
+			requestJetpackSettings,
 			receiveJetpackOnboardingSettings,
 			announceRequestFailure,
 			{

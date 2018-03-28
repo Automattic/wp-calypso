@@ -5,7 +5,7 @@
  */
 import {
 	receiveJetpackOnboardingCredentials,
-	requestJetpackOnboardingSettings,
+	requestJetpackSettings,
 	saveJetpackOnboardingSettings,
 	saveJetpackOnboardingSettingsSuccess,
 	updateJetpackOnboardingSettings,
@@ -37,10 +37,10 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'requestJetpackOnboardingSettings()', () => {
+	describe( 'requestJetpackSettings()', () => {
 		test( 'should return a jetpack settings request action object', () => {
 			const siteId = 12345678;
-			const action = requestJetpackOnboardingSettings( siteId );
+			const action = requestJetpackSettings( siteId );
 
 			expect( action ).toEqual( {
 				type: JETPACK_ONBOARDING_SETTINGS_REQUEST,

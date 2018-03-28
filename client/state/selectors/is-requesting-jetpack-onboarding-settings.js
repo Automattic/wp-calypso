@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getRequest } from 'state/selectors';
-import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actions';
+import { requestJetpackSettings } from 'state/jetpack-onboarding/actions';
 
 /**
  * Returns true if we are currently making a request to fetch the Jetpack settings. False otherwise
@@ -20,9 +20,5 @@ import { requestJetpackOnboardingSettings } from 'state/jetpack-onboarding/actio
  * @return {Boolean}             Whether Jetpack settings are currently being requested
  */
 export default function isRequestingJetpackOnboardingSettings( state, siteId, query ) {
-	return get(
-		getRequest( state, requestJetpackOnboardingSettings( siteId, query ) ),
-		'isLoading',
-		false
-	);
+	return get( getRequest( state, requestJetpackSettings( siteId, query ) ), 'isLoading', false );
 }
