@@ -69,7 +69,7 @@ export function processItem( item ) {
 		},
 		item.hasOwnProperty( 'rewind_id' ) && { rewindId: item.rewind_id },
 		item.hasOwnProperty( 'status' ) && { activityStatus: item.status },
-		object.hasOwnProperty( 'target_ts' ) && { activityTargetTs: object.target_ts }
+		object && object.hasOwnProperty( 'target_ts' ) && { activityTargetTs: object.target_ts }
 	);
 }
 
