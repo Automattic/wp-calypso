@@ -612,8 +612,21 @@ class PlanFeatures extends Component {
 		);
 	}
 
+	// Function to filter small screens
+	// Used in AB test: mobilePlansTablesOnSignup_20180320
+	// Returns 1 if screen is less than, or equal to, 660 pixels wide
+	isSmallScreen() {
+		if ( window.matchMedia( '(max-width: 660px)' ).matches ) {
+			return '1';
+		}
+
+		return '0';
+	}
+
 	componentWillMount() {
-		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
+		this.props.recordTracksEvent( 'calypso_wp_plans_test_view', {
+			small_screen: this.isSmallScreen(),
+		} );
 		retargetViewPlans();
 	}
 }
