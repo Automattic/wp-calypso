@@ -1117,6 +1117,94 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		test( 'should remove discussion edits after they are saved', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							discussion: {
+								comment_status: 'open',
+								ping_status: 'open',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							discussion: {
+								comment_status: 'open',
+								comments_open: true,
+								ping_status: 'open',
+								pings_open: true,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+					},
+				},
+			} );
+		} );
+
+		test( 'should keep discussion edits if they are not yet present in the saved post', () => {
+			const state = edits(
+				deepFreeze( {
+					2916284: {
+						841: {
+							title: 'Hello World',
+							type: 'post',
+							discussion: {
+								comment_status: 'closed',
+								ping_status: 'open',
+							},
+						},
+					},
+				} ),
+				{
+					type: POSTS_RECEIVE,
+					posts: [
+						{
+							ID: 841,
+							site_ID: 2916284,
+							type: 'post',
+							title: 'Hello',
+							discussion: {
+								comment_status: 'open',
+								comments_open: true,
+								ping_status: 'open',
+								pings_open: true,
+							},
+						},
+					],
+				}
+			);
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: {
+						title: 'Hello World',
+						discussion: {
+							comment_status: 'closed',
+							ping_status: 'open',
+						},
+					},
+				},
+			} );
+		} );
+
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
 			const original = deepFreeze( {} );
 			const state = edits( original, {

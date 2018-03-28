@@ -1954,6 +1954,86 @@ describe( 'selectors', () => {
 
 			expect( isDirty ).to.be.false;
 		} );
+
+		test( 'should return true if discussion options change', () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										discussion: {
+											comment_status: 'open',
+											comments_open: true,
+											ping_status: 'open',
+											pings_open: true,
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									discussion: {
+										comment_status: 'closed',
+										ping_status: 'open',
+									},
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.true;
+		} );
+
+		test( "should return false if discussion options didn't change", () => {
+			const isDirty = isEditedPostDirty(
+				{
+					posts: {
+						queries: {
+							2916284: new PostQueryManager( {
+								items: {
+									841: {
+										ID: 841,
+										site_ID: 2916284,
+										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+										discussion: {
+											comment_status: 'open',
+											comments_open: true,
+											ping_status: 'open',
+											pings_open: true,
+										},
+									},
+								},
+							} ),
+						},
+						edits: {
+							2916284: {
+								841: {
+									discussion: {
+										comment_status: 'open',
+										ping_status: 'open',
+									},
+								},
+							},
+						},
+					},
+				},
+				2916284,
+				841
+			);
+
+			expect( isDirty ).to.be.false;
+		} );
 	} );
 
 	describe( 'getPostPreviewUrl()', () => {
