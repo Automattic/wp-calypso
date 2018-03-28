@@ -67,10 +67,9 @@ export function processItem( item ) {
 			activityTs: Date.parse( published ),
 			activityDescription: parseBlock( item.content ),
 		},
-		item.hasOwnProperty( 'rewind_id' ) && { rewindId: item.rewind_id },
-		// API may return `null` status. Do not populate with null value
+		item.rewind_id && { rewindId: item.rewind_id },
 		item.status && { activityStatus: item.status },
-		object && object.hasOwnProperty( 'target_ts' ) && { activityTargetTs: object.target_ts }
+		object && object.target_ts && { activityTargetTs: object.target_ts }
 	);
 }
 
