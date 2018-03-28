@@ -25,7 +25,6 @@
 		padding-left: 0;
 		margin: 0;
 		margin-left: 40px;
-		z-index: z-index( 'root', '.layout__secondary' );
 
 		.gridicons-chevron-left {
 			display: none;
@@ -84,6 +83,10 @@
 	// Triggers the width of the list, so ActionButtons correctly measures the space.
 	overflow: hidden;
 	text-align: right;
+
+	@include breakpoint( ">660px" ) {
+		margin-right: 40px;
+	}
 
 	.action-header__actions-list {
 		display: flex;
