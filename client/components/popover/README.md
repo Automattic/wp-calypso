@@ -1,40 +1,47 @@
 Popover
 =======
 
-`Popover` is a react component that can be used to show any content in a popover.
+`Popover` is a react component that can be used to show any content in a
+popover.
 
 ### Properties
 
 #### `autoPosition { bool } - default: true`
 
-Defines if the Popover should be automatically positioned under specific circumstances. For instance when the window is scrolled, the viewport is resized, etc.
+Defines if the Popover should be automatically positioned under specific
+circumstances. For instance when the window is scrolled, the viewport is
+resized, etc.
 
 #### `autoRtl { bool } - default: true`
 
-Defines if the Popover should automatically be adjusted for right-to-left contexts.
-`autoRtl={ true }` will swap `right` and `left` position props in RTL context.
+Defines if the Popover should automatically be adjusted for right-to-left
+contexts. `autoRtl={ true }` will swap `right` and `left` position props in RTL
+context.
 
 #### `className { string } - optional`
 
-Set a custom className for the main container. Keep in mind that `popover` className will be always added to the instance.
+Set a custom className for the main container. Keep in mind that `popover`
+className will be always added to the instance.
 
 #### `closeOnEsc { bool } - default: true`
 
 #### `context { DOMElement | ref }`
 
-The `context` property must be set to a DOMElement or React ref to the element the popover
-should be attached to (point to).
+The `context` property must be set to a DOMElement or React ref to the element
+the popover should be attached to (point to).
 
 #### `id { string } - optional`
 
-Use this optional property to set a Popover identifier among all of the Popover instances.
-This property has been thought for development purpose.
+Use this optional property to set a Popover identifier among all of the Popover
+instances. This property has been thought for development purpose.
 
 #### `ignoreContext`
 
-The `ignoreContext` lets you specify a component that you want to be on the inside clickOutside context. 
-So a context that you want to ignore. In most cases this is not needed but if you want to also have a label 
-that can trigger the opening and closing of the Popover then you need to pass in the label component as a reference.
+The `ignoreContext` lets you specify a component that you want to be on the
+inside clickOutside context. So a context that you want to ignore. In most
+cases this is not needed but if you want to also have a label
+that can trigger the opening and closing of the Popover then you need to pass
+in the label component as a reference.
 
 #### `isVisible { bool } default - false`
 
@@ -57,10 +64,15 @@ The `position` property can be one of the following values:
 - `left`
 - `right`
 
+This describes the position of the popover relative to the thing it is pointing
+at. If the arrow is supposed to point at something to the top and left of the
+Popover, the correct value for `position` is `bottom right`.
+
 #### `rootClassName { string } - optional`
 
-The `<Popover />` component is mounted into a `<ReactChild />` component at the root of the `<body>`.
-use this property if you want to add a cuestom css class to this root element.
+The `<Popover />` component is mounted into a `<ReactChild />` component at the
+root of the `<body>`. Use this property if you want to add a cuestom css class
+to this root element.
 
 #### `showDelay { number } - default: 0 (false)`
 
@@ -80,20 +92,22 @@ This function will be executed when the popover is shown.
 PopoverMenu
 ===========
 
-`PopoverMenu` is a component based on `Popover` used to show a menu of actions in a popover.
-It is fully keyboard accessible.
+`PopoverMenu` is a component based on `Popover` used to show a menu of actions
+in a popover. It is fully keyboard accessible.
 
 
 PopoverMenuItem
 ===============
 
-`PopoverMenuItem` is a component used to represent a single item in a `PopoverMenu`.
+`PopoverMenuItem` is a component used to represent a single item in a
+`PopoverMenu`.
 
 ### Properties
 
 #### `href { string } - optional`
 
-If set, `PopoverMenuItem` will be rendered as a link; otherwise, it will be rendered as a button.
+If set, `PopoverMenuItem` will be rendered as a link; otherwise, it will be
+rendered as a button.
 
 #### `className { string } - optional`
 
@@ -109,7 +123,8 @@ If set, a `Gridicon` is rendered, where its `icon` prop is set to this value.
 
 #### `focusOnHover { bool } - default: true`
 
-Defines whether or not the `PopoverMenuItem` should receive the focus when it is hovered over.
+Defines whether or not the `PopoverMenuItem` should receive the focus when it
+is hovered over.
 
 #### `children { node } - optional`
 
