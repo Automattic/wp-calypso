@@ -7,6 +7,10 @@
 		box-sizing: border-box;
 	}
 
+	.order-activity-log__note-meta .gridicon {
+		box-sizing: unset;
+	}
+
 	@include breakpoint( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;
