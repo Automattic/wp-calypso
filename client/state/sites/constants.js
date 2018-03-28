@@ -16,7 +16,6 @@ export const SITE_REQUEST_FIELDS = [
 	'single_user_site',
 	'visible',
 	'lang',
-	'post_count',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
