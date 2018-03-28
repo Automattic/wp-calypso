@@ -5,12 +5,8 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import Gridicon from 'gridicons';
+import { localize } from 'i18n-calypso';
 
 class JetpackOnboardingDisclaimer extends React.PureComponent {
 	static propTypes = {
