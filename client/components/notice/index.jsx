@@ -109,11 +109,13 @@ export class Notice extends Component {
 				</span>
 				{ text ? children : null }
 				{ showDismiss && (
-					<Button borderless className="notice__dismiss" onClick={ onDismissClick }>
+					<Button
+						borderless
+						className="notice__dismiss"
+						onClick={ onDismissClick }
+						aria-label={ translate( 'Dismiss' ) }
+					>
 						<Gridicon icon="cross" size={ 24 } />
-						<span className="notice__screen-reader-text screen-reader-text">
-							{ translate( 'Dismiss' ) }
-						</span>
 					</Button>
 				) }
 			</div>
