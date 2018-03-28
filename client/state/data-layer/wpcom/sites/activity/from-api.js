@@ -64,11 +64,11 @@ export function processItem( item ) {
 			activityIsRewindable: item.is_rewindable,
 			rewindId: item.rewind_id,
 			activityName: item.name,
-			activityStatus: item.status,
 			activityTitle: item.summary,
 			activityTs: Date.parse( published ),
 			activityDescription: parseBlock( item.content ),
 		},
+		item.hasOwnProperty( 'status' ) && { activityStatus: item.status },
 		object.hasOwnProperty( 'target_ts' ) && { activityTargetTs: object.target_ts }
 	);
 }
