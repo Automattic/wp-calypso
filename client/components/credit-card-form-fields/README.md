@@ -63,3 +63,7 @@ A function that checks if a given field is valid or not. The function is passed 
 ### `onFieldChange`
 
 A function invoked when the value of an input field changes. This provides access to the raw value as well as the masked value if the corresponding field.
+
+### `autoFocus`
+
+Whether the first field (cardholder name) should steal the focus when this component is rendered.  Default `true`.
