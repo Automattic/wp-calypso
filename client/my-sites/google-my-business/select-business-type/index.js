@@ -55,7 +55,7 @@ class SelectBusinessType extends Component {
 		return (
 			<Main className="select-business-type">
 				<PageViewTracker
-					path={ '/google-my-business/:site_id/select-business-type' }
+					path="/google-my-business/:site/select-business-type"
 					title="Google My Business > Select Business Type"
 				/>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
