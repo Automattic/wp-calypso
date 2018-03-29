@@ -6,7 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { last, isEqual } from 'lodash';
+import { last, isEqual, memoize } from 'lodash';
 
 /**
  * Internal dependencies
@@ -103,6 +103,13 @@ class GoogleMyBusinessConnectButton extends SharingService {
 	}
 }
 
+const addKeyringConnectionIdToConnections = memoize( connections =>
+	connections.map( connection => ( {
+		...connection,
+		keyring_connection_ID: connection.ID,
+	} ) )
+);
+
 // `connectFor` HOC requires the `service` props to be passed
 // Therefore we need to wrap the resulting component into a parent component
 const GoogleMyBusinessConnectButtonConnected = connectFor(
@@ -113,10 +120,7 @@ const GoogleMyBusinessConnectButtonConnected = connectFor(
 			removableConnections: props.keyringConnections,
 			fetchConnection: props.requestKeyringConnections,
 			service: getKeyringServiceByName( state, 'google_my_business' ),
-			siteUserConnections: props.keyringConnections.map( connection => ( {
-				...connection,
-				keyring_connection_ID: connection.ID,
-			} ) ),
+			siteUserConnections: addKeyringConnectionIdToConnections( props.keyringConnections ),
 		};
 	},
 	{
