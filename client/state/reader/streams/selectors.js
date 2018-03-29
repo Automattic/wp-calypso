@@ -72,6 +72,10 @@ export const getTransformedStreamItems = treeSelect(
 	}
 );
 
+/*
+ * shouldRequestRecs is used for calculating whether or not we need more recommendations
+ * to display in-stream recs for a stream.
+ */
 export function shouldRequestRecs( state, streamKey, recsStreamKey ) {
 	if ( ! recsStreamKey ) {
 		return false;
@@ -81,6 +85,9 @@ export function shouldRequestRecs( state, streamKey, recsStreamKey ) {
 	const items = getStream( state, streamKey ).items;
 	const recs = getStream( state, recsStreamKey ).items;
 
-	// do we have enough recs? if we have a store, but not enough recs, we should fetch some more...
+	if ( recs.length === 0 ) {
+		return true;
+	}
+
 	return recs.length < items.length * ( RECS_PER_BLOCK / getDistanceBetweenRecs( totalSubs ) );
 }
