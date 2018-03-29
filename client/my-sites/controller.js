@@ -305,20 +305,24 @@ function getPrimarySiteSlug( state ) {
 export function siteSelection( context, next ) {
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
+	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = user.get();
 	const hasOneSite = currentUser.visible_site_count === 1;
 	const allSitesPath = sectionify( context.path, siteFragment );
 
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return analytics.pageView.record( '/sites', sitesPageTitleForAnalytics + ' > No Sites' );
+		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
+			basePath: basePath,
+		} );
 	}
 
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
 		return analytics.pageView.record(
-			'/sites',
-			`${ sitesPageTitleForAnalytics } > All Sites Hidden`
+			'/no-sites',
+			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
+			{ basePath: basePath }
 		);
 	}
 
