@@ -48,8 +48,8 @@ const ReturnDialog = props => {
 			<FormSectionHeading>{ translate( 'Create return shipping label' ) }</FormSectionHeading>
 			<p>
 				{ translate(
-					'You can purchase a return label for this package to send to the customer, ' +
-						'who can then print it and mail the package back. (If necessary, the paper size can be changed later.)'
+					'Purchase a return label for this package so your customers can easily return the item(s) purchased from you. ' +
+						'Once created, you can send the label to your customer, where they can print it out and mail the package back.'
 				) }
 			</p>
 			<RateSelector
