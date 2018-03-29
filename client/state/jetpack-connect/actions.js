@@ -200,26 +200,23 @@ export function createAccount( userData ) {
 	return dispatch => {
 		dispatch( recordTracksEvent( 'calypso_jpc_create_account', {} ) );
 
-		dispatch( {
-			type: JETPACK_CONNECT_CREATE_ACCOUNT,
-			userData: userData,
-		} );
+		dispatch( { type: JETPACK_CONNECT_CREATE_ACCOUNT } );
 		wpcom.undocumented().usersNew( userData, ( error, data ) => {
 			if ( error ) {
 				dispatch(
 					recordTracksEvent( 'calypso_jpc_create_account_error', {
-						error_code: error.code,
 						error: JSON.stringify( error ),
+						error_code: error.code,
 					} )
 				);
 			} else {
-				dispatch( recordTracksEvent( 'calypso_jpc_create_account_success', {} ) );
+				dispatch( recordTracksEvent( 'calypso_jpc_create_account_success' ) );
 			}
 			dispatch( {
 				type: JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
-				userData: userData,
-				data: data,
-				error: error,
+				data,
+				error,
+				userData,
 			} );
 		} );
 	};
