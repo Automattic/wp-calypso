@@ -93,6 +93,7 @@ class JetpackThankYouCard extends Component {
 	state = {
 		completedJetpackFeatures: {},
 		installInitiatedPlugins: new Set(),
+		installedPlugins: null,
 	};
 
 	trackConfigFinished( eventName, options = null ) {
@@ -118,10 +119,23 @@ class JetpackThankYouCard extends Component {
 		return plugins.length === filter( plugins, { wporg: true } ).length;
 	}
 
+	refreshPlugins = () =>
+		this.setState( { installedPlugins: PluginsStore.getSitePlugins( this.props.selectedSite ) } );
+
 	componentDidMount() {
+		const { isSiteMainNetworkSite, isSiteMultiSite, selectedSite } = this.props;
+
 		window.addEventListener( 'beforeunload', this.warnIfNotFinished );
 		this.props.requestSites();
 		analytics.tracks.recordEvent( 'calypso_plans_autoconfig_start' );
+
+		// Multi-site networks may have plugin administration enabled for individual site
+		// administrators. If required plugins are already installed on the network, we can attempt
+		// to activate them. Fetching site plugins will answer these questions.
+		if ( isSiteMultiSite && ! isSiteMainNetworkSite ) {
+			PluginsStore.on( 'change', this.refreshPlugins );
+			PluginsStore.getSitePlugins( selectedSite );
+		}
 
 		page.exit( '/checkout/thank-you/*', ( context, next ) => {
 			const confirmText = this.warnIfNotFinished( {} );
@@ -143,6 +157,7 @@ class JetpackThankYouCard extends Component {
 
 	componentWillUnmount() {
 		window.removeEventListener( 'beforeunload', this.warnIfNotFinished );
+		PluginsStore.removeListener( 'change', this.refreshPlugins );
 	}
 
 	componentDidUpdate() {
