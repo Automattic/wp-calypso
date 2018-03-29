@@ -18,7 +18,9 @@ import config from 'config';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
 import Button from 'components/button';
+import HappychatButton from 'components/happychat/button';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
+import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
 import AsyncLoad from 'components/async-load';
 
 /**
@@ -107,28 +109,35 @@ class InlineHelp extends Component {
 	render() {
 		const { translate } = this.props;
 		const { showInlineHelp } = this.state;
-		const inlineHelpButtonClasses = { 'is-active': showInlineHelp };
+		const inlineHelpButtonClasses = { 'inline-help__button': true, 'is-active': showInlineHelp };
 		return (
-			<Button
-				className={ classNames( 'inline-help', inlineHelpButtonClasses ) }
-				onClick={ this.handleHelpButtonClicked }
-				onTouchStart={ this.preload }
-				onMouseEnter={ this.preload }
-				borderless
-				title={ translate( 'Help' ) }
-				ref={ this.inlineHelpToggleRef }
-			>
-				<Gridicon icon="help-outline" />
-				{ showInlineHelp && (
-					<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
-				) }
-			</Button>
+			<div className="inline-help">
+				<Button
+					className={ classNames( inlineHelpButtonClasses ) }
+					onClick={ this.handleHelpButtonClicked }
+					onTouchStart={ this.preload }
+					onMouseEnter={ this.preload }
+					borderless
+					title={ translate( 'Help' ) }
+					ref={ this.inlineHelpToggleRef }
+				>
+					<Gridicon icon="help-outline" size={ 36 } />
+					{ showInlineHelp && (
+						<InlineHelpPopover context={ this.inlineHelpToggle } onClose={ this.closeInlineHelp } />
+					) }
+				</Button>
+				{ this.props.isHappychatButtonVisible &&
+					config.isEnabled( 'happychat' ) && (
+						<HappychatButton className="inline-help__happychat-button" allowMobileRedirect />
+					) }
+			</div>
 		);
 	}
 }
 
 export default connect(
 	state => ( {
+		isHappychatButtonVisible: hasActiveHappychatSession( state ),
 		isHappychatOpen: isHappychatOpen( state ),
 	} ),
 	{

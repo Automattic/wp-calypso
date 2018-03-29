@@ -1,9 +1,99 @@
+.inline-help {
+	position: fixed;
+		right: 24px;
+		bottom: 36px;
+
+	z-index: z-index( 'root', '.floating-help' );
+
+	.button.inline-help__happychat-button {
+		position: absolute;
+		bottom: 60px;
+		right: 5px;
+
+		line-height: 0;
+		padding: 1px;
+		border-radius: 100%;
+		background: $blue-wordpress;
+		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+		border: 1px solid darken( $blue-wordpress, 5 );
+
+		.gridicon {
+			fill: $white;
+			margin: 2px;
+			top: 0;
+			height: 24px;
+			width: 24px;
+		}
+
+		&.is-active {
+			background: $blue-medium;
+			border-color: darken( $blue-medium, 5 )
+		}
+	}
+
+	.button.inline-help__happychat-button.has-unread {
+		background-color: $orange-jazzy;
+		border-color: $orange-jazzy;
+	}
+}
+
+.button.is-borderless.inline-help__button {
+	position: absolute;
+		right: 0px;
+		bottom: 0px;
+	line-height: 0;
+	padding: 1px;
+	border-radius: 100%;
+	background: $blue-wordpress;
+	box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+	border: 1px solid darken( $blue-wordpress, 5 );
+	transition: all 0.2s ease-in-out;
+
+	.gridicon {
+		fill: $white;
+		margin: 0;
+		top: 0;
+		height: 36px;
+		width: 36px;
+
+		g {
+			transform: none;
+		}
+	}
+
+	&:hover:not(.is-active) {
+		animation: wiggle .8s .5s ease-in-out infinite;
+		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.3 );
+	}
+
+	&.is-active {
+		background: $blue-medium;
+		border-color: darken( $blue-medium, 5 )
+	}
+}
+
+@keyframes wiggle {
+	0% {
+		transform: rotate( 0 );
+	}
+	40% {
+		transform: rotate( 15deg );
+	}
+	50% {
+		transform: rotate( -15deg );
+	}
+	100% {
+		transform: rotate( 0 );
+	}
+}
+
 .inline-help__popover.popover {
 	@include breakpoint( "<660px" ) {
 			top: 0 !important;
 			right: 0 !important;
 			bottom: 0 !important;
 			left: 0 !important;
+			position: fixed;
 		background: rgba( $gray-light, 0.8 );
 
 		.popover__arrow {
@@ -40,7 +130,7 @@
 
 		position: fixed;
 			top: auto !important;
-			bottom: 35px !important;
+			bottom: 76px !important;
 	}
 
 	&.is-top .popover__arrow:before,
@@ -100,7 +190,7 @@
 	display: none;
 
 	overflow-y: auto;
-	max-height: 70vh;	
+	max-height: 70vh;
 
 	.is-help-active & {
 		display: block;
@@ -262,14 +352,6 @@
 
 	@include breakpoint( ">660px" ) {
 		font-size: 16px;
-	}
-}
-
-.layout.is-section-help .sidebar .inline-help {
-	background: $gray-text-min;
-
-	.gridicon {
-		fill: $white;
 	}
 }
 
