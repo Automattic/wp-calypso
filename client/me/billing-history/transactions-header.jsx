@@ -14,6 +14,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownLabel from 'components/select-dropdown/label';
 import tableRows from './table-rows';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -225,39 +228,17 @@ class TransactionsHeader extends React.Component {
 	}
 
 	renderAppsPopover() {
-		const isVisible = 'apps' === this.state.activePopover;
-		const classes = classNames( {
-			'filter-popover': true,
-			'is-popped': isVisible,
-		} );
-		const appPickers = this.getApps().map( function( app ) {
-			return this.renderAppPicker( app, app, 'Specific App' );
-		}, this );
-
 		return (
-			<div className={ classes }>
-				<strong
-					className="filter-popover-toggle app-toggle"
-					onClick={ this.handleAppsPopoverLinkClick }
-				>
-					{ this.props.translate( 'All Apps' ) }
-					<Gridicon icon="chevron-down" size={ 18 } />
-				</strong>
-				<div className="filter-popover-content app-list">
-					<table>
-						<thead>
-							<tr>
-								<th>{ this.props.translate( 'App Name' ) }</th>
-								<th>{ this.props.translate( 'Transactions' ) }</th>
-							</tr>
-						</thead>
-						<tbody>
-							{ this.renderAppPicker( this.props.translate( 'All Apps' ), 'all' ) }
-							{ appPickers }
-						</tbody>
-					</table>
-				</div>
-			</div>
+			<SelectDropdown
+				selectedText={ this.props.translate( 'All Apps' ) }
+				onClick={ this.handleAppsPopoverLinkClick }
+			>
+				<DropdownLabel>{ this.props.translate( 'App Name' ) }</DropdownLabel>
+				{ this.renderAppSelectDropdown( this.props.translate( 'All Apps' ), 'all' ) }
+				{ this.getApps().map( function( app ) {
+					return this.renderAppSelectDropdown( app, app, 'Specific App' );
+				}, this ) }
+			</SelectDropdown>
 		);
 	}
 
@@ -267,20 +248,17 @@ class TransactionsHeader extends React.Component {
 
 	renderAppPicker( title, app, analyticsEvent ) {
 		const filter = { app };
-		const classes = classNames( {
-			'app-picker': true,
-			selected: app === this.props.filter.app,
-		} );
+		const selected = app === this.props.filter.app;
 
 		return (
-			<tr
+			<DropdownItem
 				key={ app }
-				className={ classes }
+				selected={ selected }
 				onClick={ this.getAppPopoverItemClickHandler( analyticsEvent, filter ) }
+				count={ this.getFilterCount( filter ) }
 			>
-				<td className="descriptor">{ title }</td>
-				<td className="transactions-header__count">{ this.getFilterCount( filter ) }</td>
-			</tr>
+				{ title }
+			</DropdownItem>
 		);
 	}
 }
