@@ -38,7 +38,7 @@ export class CurrentPlanHeader extends Component {
 	};
 
 	renderPurchaseInfo() {
-		const { currentPlan, currentPlanSlug, selectedSite, isExpiring, translate } = this.props;
+		const { currentPlan, selectedSite, isExpiring, translate } = this.props;
 
 		if ( ! currentPlan || this.isJetpackFreePlan() ) {
 			return null;
