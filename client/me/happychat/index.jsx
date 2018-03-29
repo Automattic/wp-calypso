@@ -14,12 +14,18 @@ import controller from 'me/controller';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import { makeLayout, render as clientRender } from 'controller';
 import HappychatClient from 'happychat-client';
+import wpcom from 'lib/wp';
 
 const renderChat = ( context, next ) => {
 	context.store.dispatch( setDocumentHeadTitle( translate( 'Chat', { textOnly: true } ) ) );
 	HappychatClient.open( {
 		nodeId: 'primary',
-		accessToken: 'your-happychat-client-oauth-token',
+		authentication: {
+			type: 'wpcom-proxy-iframe',
+			options: {
+				proxy: wpcom,
+			},
+		},
 		entry: 'chat',
 	} );
 	next();
