@@ -913,7 +913,7 @@ export const confirmReprint = ( orderId, siteId ) => ( dispatch, getState ) => {
 	const state = getShippingLabel( getState(), orderId, siteId );
 
 	const label = find( state.labels, { label_id: state.reprintDialog.labelId } );
-	const isReturn = label.returning_label_id != null;
+	const isReturn = Boolean( label.returning_label_id );
 
 	printDocument( state.reprintDialog.fileData, getPDFFileName( orderId, isReturn ? 'return-reprint' : 'reprint' ), isReturn )
 		.catch( ( error ) => {
@@ -932,7 +932,7 @@ export const updatePaperSize = ( orderId, siteId, value ) => ( dispatch, getStat
 	} );
 
 	const shippingLabel = getShippingLabel( getState(), orderId, siteId );
-	if ( shippingLabel.reprintDialog != null ) {
+	if ( shippingLabel.reprintDialog ) {
 		dispatch( openReprintDialog( orderId, siteId, shippingLabel.reprintDialog.labelId ) );
 	}
 };
