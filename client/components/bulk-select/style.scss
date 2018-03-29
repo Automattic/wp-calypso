@@ -29,4 +29,16 @@ input[type=checkbox].bulk-select__box {
 	min-width: 16px;
 	padding: 0;
 	width: 16px;
+	background-color: $blue-medium;
+	border-color: $blue-medium;
+
+	&:before {
+		content: url( "/calypso/images/checkbox-icons/mixedmark.svg" );
+		width: 12px;
+		height: 12px;
+		margin: 1px auto;
+		display: inline-block;
+		speak: none;
+		background-color: $blue-medium;
+	}
 }

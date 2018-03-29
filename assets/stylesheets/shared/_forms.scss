@@ -159,19 +159,23 @@ input[type=radio] + span {
 }
 
 input[type=checkbox] {
-	&:checked:before {
-		@include clear-text;
+	border-radius: 2px;
 
-		content: '\f418';
-		margin: -4px 0 0 -5px;
-		float: left;
-		display: inline-block;
-		vertical-align: middle;
-		width: 16px;
-		font: 400 23px/1 Noticons;
-		speak: none;
-		color: $blue-medium;
+	&:checked {
+		border-color: $blue-medium;
+		background-color: $blue-medium;
 	}
+
+	&:checked:before {
+		content: url( "/calypso/images/checkbox-icons/checkmark.svg" );
+		width: 12px;
+		height: 12px;
+		margin: 1px auto;
+		display: inline-block;
+		speak: none;
+		background-color: $blue-medium;
+	}
+
 	&:disabled:checked:before {
 		color: $gray-lighten-10;
 	}

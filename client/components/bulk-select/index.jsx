@@ -54,7 +54,6 @@ export default class extends React.Component {
 				<span className="bulk-select__container">
 					<input type="checkbox" className={ inputClasses } checked={ isChecked } readOnly />
 					<Count count={ this.props.selectedElements } />
-					{ this.getStateIcon() }
 				</span>
 			</span>
 		);
