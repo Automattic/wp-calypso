@@ -206,6 +206,26 @@ describe( 'route', function() {
 				expect( route.getSiteFragment( '/stats/day/1000000000000000000000' ) ).to.be.false;
 			} );
 		} );
+		describe( 'for me paths', function() {
+			test( 'should return the correct site fragment when working with purchases', function() {
+				expect(
+					route.getSiteFragment(
+						'/me/purchases/example.wordpress.com/12345678/cancel-privacy-protection'
+					)
+				).to.equal( 'example.wordpress.com' );
+				expect(
+					route.getSiteFragment( '/me/purchases/2916284/12345678/cancel-privacy-protection' )
+				).to.equal( 2916284 );
+				expect(
+					route.getSiteFragment(
+						'/me/purchases/example.wordpress.com/12345678/payment/edit/87654321'
+					)
+				).to.equal( 'example.wordpress.com' );
+				expect(
+					route.getSiteFragment( '/me/purchases/2916284/12345678/payment/edit/87654321' )
+				).to.equal( 2916284 );
+			} );
+		} );
 	} );
 
 	describe( 'addSiteFragment', function() {
