@@ -1325,7 +1325,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Standard Security Tools' ),
 		getDescription: () =>
 			i18n.translate(
-				'Brute force protection, uptime monitoring, secure sign on, ' +
+				'Brute force protection, downtime monitoring, secure sign on, ' +
 					'and automatic updates for your plugins.'
 			),
 	},
