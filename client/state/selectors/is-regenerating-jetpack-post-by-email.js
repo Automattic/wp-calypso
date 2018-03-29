@@ -3,8 +3,13 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
+import { getRequest } from 'state/selectors';
 
 /**
  * Returns true if we are currently making a request to regenerate the Post By Email address. False otherwise
@@ -15,5 +20,9 @@ import { get } from 'lodash';
  * @return {?Boolean}            Whether Post by Email address is currently being updated
  */
 export default function isRegeneratingJetpackPostByEmail( state, siteId ) {
-	return get( state.jetpack.settings.requests, [ siteId, 'regeneratingPostByEmail' ], null );
+	return get(
+		getRequest( state, saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } ) ),
+		'isLoading',
+		false
+	);
 }
