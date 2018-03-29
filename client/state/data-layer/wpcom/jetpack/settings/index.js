@@ -18,8 +18,8 @@ import {
 } from 'state/action-types';
 import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
-	saveJetpackOnboardingSettingsSuccess,
-	updateJetpackOnboardingSettings,
+	saveJetpackSettingsSuccess,
+	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
 import { trailingslashit } from 'lib/route';
 
@@ -34,7 +34,7 @@ export const fromApi = response => {
 };
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
-	dispatch( updateJetpackOnboardingSettings( siteId, settings ) );
+	dispatch( updateJetpackSettings( siteId, settings ) );
 };
 
 /**
@@ -45,7 +45,7 @@ const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) 
  * @param   {Object}   action         Redux action
  * @returns {Object}   Dispatched http action
  */
-export const requestJetpackOnboardingSettings = ( { dispatch }, action ) => {
+export const requestJetpackSettings = ( { dispatch }, action ) => {
 	const { siteId, query } = action;
 
 	return dispatch(
@@ -86,12 +86,12 @@ export const announceRequestFailure = ( { dispatch, getState }, { siteId } ) => 
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
-export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
+export const saveJetpackSettings = ( { dispatch }, action ) => {
 	const { settings, siteId } = action;
 
 	// We don't want Jetpack Onboarding credentials in our Jetpack Settings Redux state.
 	const settingsWithoutCredentials = omit( settings, [ 'onboarding.jpUser', 'onboarding.token' ] );
-	dispatch( updateJetpackOnboardingSettings( siteId, settingsWithoutCredentials ) );
+	dispatch( updateJetpackSettings( siteId, settingsWithoutCredentials ) );
 
 	return dispatch(
 		http(
@@ -115,7 +115,7 @@ export const saveJetpackOnboardingSettings = ( { dispatch }, action ) => {
 // the save request has finished. Tracking those requests is necessary for
 // displaying an up to date progress indicator for some steps.
 export const handleSaveSuccess = ( { dispatch }, { siteId, settings } ) =>
-	dispatch( saveJetpackOnboardingSettingsSuccess( siteId, settings ) );
+	dispatch( saveJetpackSettingsSuccess( siteId, settings ) );
 
 export const announceSaveFailure = ( { dispatch }, { siteId } ) =>
 	dispatch(
@@ -159,7 +159,7 @@ export const retryOrAnnounceSaveFailure = ( { dispatch }, action, { message: err
 export default {
 	[ JETPACK_ONBOARDING_SETTINGS_REQUEST ]: [
 		dispatchRequest(
-			requestJetpackOnboardingSettings,
+			requestJetpackSettings,
 			receiveJetpackOnboardingSettings,
 			announceRequestFailure,
 			{
@@ -168,6 +168,6 @@ export default {
 		),
 	],
 	[ JETPACK_ONBOARDING_SETTINGS_SAVE ]: [
-		dispatchRequest( saveJetpackOnboardingSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
+		dispatchRequest( saveJetpackSettings, handleSaveSuccess, retryOrAnnounceSaveFailure ),
 	],
 };

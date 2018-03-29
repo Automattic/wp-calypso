@@ -5,10 +5,10 @@
  */
 import {
 	receiveJetpackOnboardingCredentials,
-	requestJetpackOnboardingSettings,
-	saveJetpackOnboardingSettings,
-	saveJetpackOnboardingSettingsSuccess,
-	updateJetpackOnboardingSettings,
+	requestJetpackSettings,
+	saveJetpackSettings,
+	saveJetpackSettingsSuccess,
+	updateJetpackSettings,
 } from '../actions';
 import {
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
@@ -37,10 +37,10 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'requestJetpackOnboardingSettings()', () => {
+	describe( 'requestJetpackSettings()', () => {
 		test( 'should return a jetpack settings request action object', () => {
 			const siteId = 12345678;
-			const action = requestJetpackOnboardingSettings( siteId );
+			const action = requestJetpackSettings( siteId );
 
 			expect( action ).toEqual( {
 				type: JETPACK_ONBOARDING_SETTINGS_REQUEST,
@@ -54,14 +54,14 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'saveJetpackOnboardingSettings()', () => {
+	describe( 'saveJetpackSettings()', () => {
 		test( 'should return a jetpack settings save action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
 			};
 			const siteId = 12345678;
-			const action = saveJetpackOnboardingSettings( siteId, settings );
+			const action = saveJetpackSettings( siteId, settings );
 
 			expect( action ).toEqual( {
 				type: JETPACK_ONBOARDING_SETTINGS_SAVE,
@@ -76,14 +76,14 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'saveJetpackOnboardingSettingsSuccess()', () => {
+	describe( 'saveJetpackSettingsSuccess()', () => {
 		test( 'should return a jetpack onboarding settings save action success object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
 			};
 			const siteId = 12345678;
-			const action = saveJetpackOnboardingSettingsSuccess( siteId, settings );
+			const action = saveJetpackSettingsSuccess( siteId, settings );
 
 			expect( action ).toEqual( {
 				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
@@ -93,14 +93,14 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'updateJetpackOnboardingSettings()', () => {
+	describe( 'updateJetpackSettings()', () => {
 		test( 'should return a jetpack settings update action object', () => {
 			const settings = {
 				siteTitle: 'My awesome site title',
 				siteDescription: 'Not just another WordPress site',
 			};
 			const siteId = 12345678;
-			const action = updateJetpackOnboardingSettings( siteId, settings );
+			const action = updateJetpackSettings( siteId, settings );
 
 			expect( action ).toEqual( {
 				type: JETPACK_ONBOARDING_SETTINGS_UPDATE,

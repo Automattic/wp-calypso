@@ -17,7 +17,7 @@ export const receiveJetpackOnboardingCredentials = ( siteId, credentials ) => ( 
 	credentials,
 } );
 
-export const requestJetpackOnboardingSettings = ( siteId, query ) => ( {
+export const requestJetpackSettings = ( siteId, query ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_REQUEST,
 	siteId,
 	query,
@@ -28,7 +28,7 @@ export const requestJetpackOnboardingSettings = ( siteId, query ) => ( {
 	},
 } );
 
-export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
+export const saveJetpackSettings = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_SAVE,
 	siteId,
 	settings,
@@ -39,13 +39,13 @@ export const saveJetpackOnboardingSettings = ( siteId, settings ) => ( {
 	},
 } );
 
-export const saveJetpackOnboardingSettingsSuccess = ( siteId, settings ) => ( {
+export const saveJetpackSettingsSuccess = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	siteId,
 	settings,
 } );
 
-export const updateJetpackOnboardingSettings = ( siteId, settings ) => ( {
+export const updateJetpackSettings = ( siteId, settings ) => ( {
 	type: JETPACK_ONBOARDING_SETTINGS_UPDATE,
 	siteId,
 	settings,
