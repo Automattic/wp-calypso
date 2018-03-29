@@ -6,6 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import Gridicon from 'gridicons';
 import { connect } from 'react-redux';
 import { get, map, noop, without } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,7 +14,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gridicon from 'gridicons';
 import Spinner from 'components/spinner';
 import {
 	getJetpackOnboardingCompletedSteps,

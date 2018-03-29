@@ -3,12 +3,12 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import React from 'react';
 import JetpackOnboardingBusinessAddressStep from './steps/business-address';
 import JetpackOnboardingContactFormStep from './steps/contact-form';
 import JetpackOnboardingHomepageStep from './steps/homepage';
