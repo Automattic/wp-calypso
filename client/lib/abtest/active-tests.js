@@ -84,15 +84,6 @@ export default {
 		},
 		defaultVariation: 'original',
 	},
-	domainSearchPrefill: {
-		datestamp: '20180315',
-		variations: {
-			noPrefill: 50,
-			withSiteTitle: 50,
-		},
-		defaultVariation: 'noPrefill',
-		allowExistingUsers: true,
-	},
 	redesignedSidebarBanner: {
 		datestamp: '20180222',
 		variations: {

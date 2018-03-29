@@ -33,9 +33,6 @@ import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
-import { getDomainSearchPrefill } from 'state/signup/steps/domains/selectors';
-import { setDomainSearchPrefill } from 'state/signup/steps/domains/actions';
-import { abtest } from 'lib/abtest';
 
 const productsList = productsListFactory();
 
@@ -51,7 +48,6 @@ class DomainsStep extends React.Component {
 		positionInFlow: PropTypes.number.isRequired,
 		queryObject: PropTypes.object,
 		signupProgress: PropTypes.array.isRequired,
-		domainSearchPrefill: PropTypes.string,
 		step: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
@@ -247,11 +243,6 @@ class DomainsStep extends React.Component {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 		const includeDotBlogSubdomain = this.props.flowName === 'subdomain';
 
-		const suggestion =
-			'withSiteTitle' === abtest( 'domainSearchPrefill' ) && !! this.props.domainSearchPrefill
-				? this.props.domainSearchPrefill
-				: get( this.props, 'queryObject.new', '' );
-
 		return (
 			<RegisterDomainStep
 				path={ this.props.path }
@@ -271,15 +262,11 @@ class DomainsStep extends React.Component {
 				isSignupStep
 				showExampleSuggestions
 				surveyVertical={ this.props.surveyVertical }
-				suggestion={ suggestion }
+				suggestion={ get( this.props, 'queryObject.new', '' ) }
 				designType={ this.getDesignType() }
-				onDomainSearchChange={ this.handleDomainSearchChange }
 			/>
 		);
 	};
-
-	handleDomainSearchChange = newSearchValue =>
-		this.props.setDomainSearchPrefill( newSearchValue, true );
 
 	mappingForm = () => {
 		const initialState = this.props.step ? this.props.step.mappingForm : undefined,
@@ -421,13 +408,11 @@ export default connect(
 			: true,
 		surveyVertical: getSurveyVertical( state ),
 		designType: getDesignType( state ),
-		domainSearchPrefill: getDomainSearchPrefill( state ),
 	} ),
 	{
 		recordAddDomainButtonClick,
 		recordAddDomainButtonClickInMapDomain,
 		recordAddDomainButtonClickInTransferDomain,
-		setDomainSearchPrefill,
 		submitDomainStepSelection,
 		setDesignType,
 	}
