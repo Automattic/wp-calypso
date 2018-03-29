@@ -312,14 +312,17 @@ export function siteSelection( context, next ) {
 
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return analytics.pageView.record( basePath, sitesPageTitleForAnalytics + ' > No Sites' );
+		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
+			base_path: basePath,
+		} );
 	}
 
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
 		return analytics.pageView.record(
-			basePath,
-			`${ sitesPageTitleForAnalytics } > All Sites Hidden`
+			'/no-sites',
+			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
+			{ base_path: basePath }
 		);
 	}
 
