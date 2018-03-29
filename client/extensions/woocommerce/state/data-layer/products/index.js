@@ -12,7 +12,6 @@ import warn from 'lib/warn';
  */
 import { dispatchWithProps } from 'woocommerce/state/helpers';
 import { dispatchRequest } from 'woocommerce/state/wc-api/utils';
-import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import {
 	fetchProducts,
 	fetchProductsFailure,
@@ -61,7 +60,6 @@ export function apiError( { dispatch }, action, error ) {
 function updatedAction( siteId, originatingAction, successAction, sentData ) {
 	return ( dispatch, getState, { data: receivedData } ) => {
 		dispatch( productUpdated( siteId, receivedData, originatingAction ) );
-		dispatch( fetchCounts( siteId ) );
 
 		const props = { sentData, receivedData };
 		dispatchWithProps( dispatch, getState, successAction, props );
