@@ -30,7 +30,7 @@ import {
 } from 'state/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { saveSiteSettings } from 'state/site-settings/actions';
-import { updateSettings } from 'state/jetpack/settings/actions';
+import { saveJetpackSettings } from 'state/jetpack-onboarding/actions';
 import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -160,7 +160,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				const fieldsToUpdate = /^error_/.test( fields.lang_id )
 					? omit( fields, 'lang_id' )
 					: fields;
-				this.props.updateSettings( siteId, pick( fieldsToUpdate, settingsFields.jetpack ) );
+				this.props.saveJetpackSettings( siteId, pick( fieldsToUpdate, settingsFields.jetpack ) );
 			}
 		};
 
@@ -315,7 +315,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 					removeNotice,
 					saveSiteSettings,
 					successNotice,
-					updateSettings,
+					saveJetpackSettings,
 				},
 				dispatch
 			);
