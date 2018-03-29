@@ -15,6 +15,7 @@ export const SITE_REQUEST_FIELDS = [
 	'plan',
 	'single_user_site',
 	'visible',
+	'lang',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
