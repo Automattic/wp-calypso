@@ -248,6 +248,7 @@ class PluginMeta extends Component {
 			'wp-db-backup',
 
 			// caching
+			'comet-cache',
 			'quick-cache',
 			'w3-total-cache',
 			'wp-cache',
@@ -256,8 +257,11 @@ class PluginMeta extends Component {
 			'wp-super-cache',
 
 			// sql heavy
+			'another-wordpress-classifieds-plugin',
+			'native-ads-adnow',
 			'page-visit-counter',
 			'post-views-counter',
+			'tokenad',
 			'wp-postviews',
 			'wp-statistics',
 
