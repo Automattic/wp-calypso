@@ -22,6 +22,7 @@ import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
+	JETPACK_ONBOARDING_ANALYTICS_TITLES as ANALYTICS_TITLES,
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
@@ -138,11 +139,15 @@ class JetpackOnboardingMain extends React.PureComponent {
 		} = this.props;
 		const basePath = '/jetpack/start';
 		const pageTitle = get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' );
+		const analyticsPageTitle = get( ANALYTICS_TITLES, stepName ) + ' ‹ ' + 'Jetpack Start';
 
 		return (
 			<Main className="jetpack-onboarding">
 				<DocumentHead title={ pageTitle } />
-				<PageViewTracker path={ [ basePath, stepName, ':site' ].join( '/' ) } title={ pageTitle } />
+				<PageViewTracker
+					path={ [ basePath, stepName, ':site' ].join( '/' ) }
+					title={ analyticsPageTitle }
+				/>
 
 				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
 				   * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
