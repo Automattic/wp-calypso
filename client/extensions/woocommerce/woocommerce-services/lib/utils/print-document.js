@@ -61,6 +61,7 @@ export default ( { b64Content, mimeType }, fileName, download = false ) => {
 
 	switch ( getPDFSupport( download ) ) {
 		case 'native':
+			// Browsers other than IE and Mobile Safari will prompt for download or start it automatically.
 			if ( download ) {
 				// Adapted from https://gist.github.com/rudiedirkx/2623261
 				const link = document.createElement( 'a' );
@@ -74,7 +75,7 @@ export default ( { b64Content, mimeType }, fileName, download = false ) => {
 				return Promise.resolve();
 			}
 
-			// Happy case where everything can happen automatically. Supported in Chrome and Safari
+			// Happy case where loading and printing can happen automatically. Supported in Chrome and Safari
 			return loadDocumentInFrame( blobUrl )
 				.then( () => {
 					iframe.contentWindow.print();

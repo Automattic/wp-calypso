@@ -13,6 +13,8 @@ import { get, includes, memoize } from 'lodash';
  * PDFs at all.
  */
 export default memoize( download => {
+	// If downloading, we can rely on the "native" download attribute if it's available, but if
+	// it isn't, proceed with the fallback strategy for manual downloading.
 	if ( download && 'download' in document.createElement( 'a' ) ) {
 		return 'native';
 	}
@@ -35,6 +37,7 @@ export default memoize( download => {
 		return 'addon';
 	}
 
+	// If printing, reaching this point means we can rely on native PDF support
 	if ( ! download && navigator.mimeTypes[ 'application/pdf' ] ) {
 		return 'native';
 	}
