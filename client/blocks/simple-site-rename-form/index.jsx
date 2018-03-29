@@ -167,8 +167,8 @@ export class SimpleSiteRenameForm extends Component {
 								<Gridicon icon="info-outline" size={ 18 } />
 								<p>
 									{ translate(
-										'Once changed, the current site address %(currentDomainName)s will no longer be available. ' +
-											'{{link}}Be sure to read our support page before making the change.{{/link}}',
+										'Once you change your site address, %(currentDomainName)s will no longer be available. ' +
+											'{{link}}Before you confirm the change, please read this important information.{{/link}}',
 										{
 											args: { currentDomainName },
 											components: {
