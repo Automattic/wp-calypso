@@ -8,51 +8,8 @@ import {
 	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL,
 	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
 	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_FAILURE,
-	JETPACK_SETTINGS_UPDATE,
-	JETPACK_SETTINGS_UPDATE_SUCCESS,
-	JETPACK_SETTINGS_UPDATE_FAILURE,
 } from 'state/action-types';
 import wp from 'lib/wp';
-import { sanitizeSettings, filterSettingsByActiveModules } from './utils';
-
-/**
- * Update the Jetpack settings for a certain site.
- *
- * @param  {Int}      siteId      ID of the site.
- * @param  {Object}   settings    New settings.
- * @return {Function}             Action thunk to update the Jetpack settings when called.
- */
-export const updateSettings = ( siteId, settings ) => {
-	return dispatch => {
-		dispatch( {
-			type: JETPACK_SETTINGS_UPDATE,
-			siteId,
-			settings,
-		} );
-
-		return wp
-			.undocumented()
-			.updateJetpackSettings(
-				siteId,
-				filterSettingsByActiveModules( sanitizeSettings( settings ) )
-			)
-			.then( () => {
-				dispatch( {
-					type: JETPACK_SETTINGS_UPDATE_SUCCESS,
-					siteId,
-					settings,
-				} );
-			} )
-			.catch( error => {
-				dispatch( {
-					type: JETPACK_SETTINGS_UPDATE_FAILURE,
-					siteId,
-					settings,
-					error: error.message,
-				} );
-			} );
-	};
-};
 
 /**
  * Regenerate the target email of Post by Email.
