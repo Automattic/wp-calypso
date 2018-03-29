@@ -58,9 +58,7 @@ class ActivityLogDay extends Component {
 		} );
 
 	closeDayAndDialogs = () => {
-		const { closeDialog } = this.props;
-		closeDialog( 'restore' );
-		closeDialog( 'backup' );
+		this.props.closeDialog();
 		this.closeDayOnly();
 	};
 
