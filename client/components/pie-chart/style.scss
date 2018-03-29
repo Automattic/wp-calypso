@@ -26,6 +26,12 @@
 	padding-right: 7px;
 }
 
+.pie-chart__chart {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .pie-chart__legend-item {
 	display: flex;
 	flex-direction: column;

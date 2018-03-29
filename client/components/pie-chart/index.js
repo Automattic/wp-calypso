@@ -55,9 +55,11 @@ class PieChart extends Component {
 		const dataTotal = data.reduce( ( pv, cv ) => pv + cv.value, 0 );
 		return (
 			<div>
-				<D3Base width={ radius * 2 } height={ radius * 2 }>
-					{ this.drawChart() }
-				</D3Base>
+				<div className={ 'pie-chart__chart' }>
+					<D3Base width={ radius * 2 } height={ radius * 2 }>
+						{ this.drawChart() }
+					</D3Base>
+				</div>
 				<h2 className={ 'pie-chart__title' }>{ `${ dataTotal } Total ${
 					plural ? plural : ''
 				}` }</h2>

@@ -16,7 +16,12 @@ export default class D3Base extends Component {
 	render() {
 		const { width, height } = this.props;
 		return (
-			<svg viewBox={ `0 0 ${ width } ${ height }` } preserveAspectRatio={ 'xMidYMid meet' }>
+			<svg
+				width={ width }
+				height={ height }
+				viewBox={ `0 0 ${ width } ${ height }` }
+				preserveAspectRatio={ 'xMidYMid meet' }
+			>
 				{ this.props.children }
 			</svg>
 		);

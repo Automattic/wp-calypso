@@ -37,7 +37,7 @@ export default class extends Component {
 						},
 					] }
 					radius={ 200 }
-					plural={ 'Searches' }
+					plural={ 'Data Points' }
 				/>
 			</Card>
 		);
