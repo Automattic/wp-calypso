@@ -46,6 +46,7 @@ export const READER_CONTENT_WIDTH = 800,
 	PHOTO_ONLY_MIN_WIDTH = 440,
 	PHOTO_ONLY_MAX_CHARACTER_COUNT = 85,
 	GALLERY_MIN_IMAGES = 4,
+	GALLERY_MIN_IMAGE_WIDTH = 300,
 	MIN_IMAGE_WIDTH = 144,
 	MIN_IMAGE_HEIGHT = 72;
 
@@ -58,7 +59,7 @@ function getCharacterCount( post ) {
 }
 
 export function imageIsBigEnoughForGallery( image ) {
-	return image.width >= MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
+	return image.width >= GALLERY_MIN_IMAGE_WIDTH;
 }
 
 const hasShortContent = post => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
