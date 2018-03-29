@@ -47,6 +47,12 @@ export function getOffsetItem( state, currentItem, offset ) {
 export const getNextItem = ( state, currentItem ) => getOffsetItem( state, currentItem, 1 );
 export const getPreviousItem = ( state, currentItem ) => getOffsetItem( state, currentItem, -1 );
 
+/*
+ * getTransformedStreamItems performs the transformations from raw state to data suitable for
+ * Reader cards. That means injecting recs and combining cards.
+ * Signature is:
+ * function( state, { streamKey: string, recsStreamKey: string, shouldCombine: boolean }): Array
+ */
 export const getTransformedStreamItems = treeSelect(
 	( state, { streamKey, recsStreamKey } ) => [
 		getStream( state, streamKey ).items,
@@ -61,6 +67,7 @@ export const getTransformedStreamItems = treeSelect(
 		if ( recs.length > 0 ) {
 			items = injectRecommendations( items, recs, getDistanceBetweenRecs( follows.length ) );
 		}
+
 		if ( shouldCombine ) {
 			items = combineCards( items );
 		}
