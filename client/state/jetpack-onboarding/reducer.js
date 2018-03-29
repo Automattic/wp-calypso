@@ -13,6 +13,7 @@ import { jetpackOnboardingCredentialsSchema, jetpackSettingsSchema } from './sch
 import {
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
 
@@ -34,6 +35,15 @@ export const settingsReducer = keyedReducer(
 	createReducer(
 		{},
 		{
+			[ JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS ]: (
+				state,
+				{ settings: { post_by_email_address } }
+			) => {
+				if ( post_by_email_address !== state.post_by_email_address ) {
+					return { ...state, post_by_email_address };
+				}
+				return state;
+			},
 			[ JETPACK_ONBOARDING_SETTINGS_UPDATE ]: ( state, { settings } ) =>
 				merge( {}, state, settings ),
 		},

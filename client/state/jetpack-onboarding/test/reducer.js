@@ -13,6 +13,7 @@ import {
 	DESERIALIZE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_ONBOARDING_CREDENTIALS_RECEIVE,
+	JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 	SERIALIZE,
 } from 'state/action-types';
@@ -205,6 +206,27 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {
 				...initialState,
 				[ siteId ]: newSettings,
+			} );
+		} );
+
+		test( 'should update post-by-email address after regenerating', () => {
+			const siteId = 12345678;
+			const newSettings = {
+				post_by_email_address: 'example1234@automattic.com',
+			};
+			const initialState = deepFreeze( {
+				[ siteId ]: settings,
+				[ 87654321 ]: settings,
+			} );
+			const state = settingsReducer( initialState, {
+				type: JETPACK_ONBOARDING_SETTINGS_SAVE_SUCCESS,
+				siteId,
+				settings: newSettings,
+			} );
+
+			expect( state ).toEqual( {
+				...initialState,
+				[ siteId ]: { ...settings, ...newSettings },
 			} );
 		} );
 
