@@ -22,6 +22,7 @@ import DomainSuggestion from 'components/domains/domain-suggestion';
 import { isNextDomainFree } from 'lib/cart-values/cart-items';
 import Notice from 'components/notice';
 import Card from 'components/card';
+import ScreenReaderText from 'components/screen-reader-text';
 import { getTld } from 'lib/domains';
 import { domainAvailability } from 'lib/domains/constants';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
@@ -195,10 +196,19 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
+		let suggestionCount;
 		let suggestionElements;
 		let unavailableOffer;
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
+			suggestionCount = (
+				<div aria-live="polite">
+					<ScreenReaderText>
+						{ this.props.translate( '%s domains found', { args: this.props.suggestions.length } ) }
+					</ScreenReaderText>
+				</div>
+			);
+
 			suggestionElements = this.props.suggestions.map( function( suggestion, i ) {
 				if ( suggestion.is_placeholder ) {
 					return <DomainSuggestion.Placeholder key={ 'suggestion-' + i } />;
@@ -237,6 +247,7 @@ class DomainSearchResults extends React.Component {
 
 		return (
 			<div className="domain-search-results__domain-suggestions">
+				{ suggestionCount }
 				{ suggestionElements }
 				{ unavailableOffer }
 			</div>

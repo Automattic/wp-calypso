@@ -102,7 +102,11 @@ class StepWrapper extends Component {
 		return (
 			<div className={ classes }>
 				{ ! hideFormattedHeader && (
-					<FormattedHeader headerText={ this.headerText() } subHeaderText={ this.subHeaderText() }>
+					<FormattedHeader
+						id={ 'step-header' }
+						headerText={ this.headerText() }
+						subHeaderText={ this.subHeaderText() }
+					>
 						{ headerButton }
 					</FormattedHeader>
 				) }
