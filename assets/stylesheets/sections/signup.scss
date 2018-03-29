@@ -10,6 +10,8 @@
 @import 'signup/navigation-link/style';
 @import 'signup/processing-screen/style';
 @import 'signup/step-wrapper/style';
+
+/** Steps **/
 @import 'signup/steps/about/style';
 @import 'signup/steps/clone-start/style';
 @import 'signup/steps/clone-destination/style';
@@ -25,15 +27,17 @@
 @import 'signup/steps/design-type-with-store/style';
 @import 'signup/steps/design-type/style';
 @import 'signup/steps/domains/style';
-@import 'signup/steps/site-or-domain/style';
-@import 'signup/steps/site-picker/style';
-@import 'signup/steps/survey/style';
 @import 'signup/steps/plans/style';
 @import 'signup/steps/plans-atomic-store/style';
-@import 'signup/steps/site/style';
 @import 'signup/steps/rebrand-cities-welcome/style';
 @import 'signup/steps/rewind-migrate/style';
 @import 'signup/steps/rewind-were-backing/style';
 @import 'signup/steps/rewind-add-creds/style';
 @import 'signup/steps/rewind-form-creds/style';
+@import 'signup/steps/site/style';
+@import 'signup/steps/site-or-domain/style';
+@import 'signup/steps/site-picker/style';
+@import 'signup/steps/survey/style';
+@import 'signup/steps/theme-style/style';
+
 @import 'signup/validation-fieldset/style';
