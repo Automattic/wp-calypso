@@ -3,7 +3,6 @@
  * External dependencies
  */
 import { findIndex } from 'lodash';
-import treeSelect from 'lib/tree-select';
 
 /**
  * Internal dependencies
@@ -16,6 +15,7 @@ import {
 	RECS_PER_BLOCK,
 } from 'reader/stream/utils';
 import { getReaderFollows } from 'state/selectors';
+import treeSelect from 'lib/tree-select';
 
 const emptyStream = { items: [], pendingItems: [], lastPage: false, isRequesting: false };
 
@@ -27,9 +27,9 @@ export const getCurrentStream = state => state.ui.reader.currentStream;
  * For example: in order to get the next item directly after the current one you can do: getOffsetItem( state, currentItem, 1 )
  * If the offset would be out of bounds, this function returns null;
  */
-function getOffsetItem( state, currentItem, offset ) {
+export function getOffsetItem( state, currentItem, offset ) {
 	const streamKey = getCurrentStream( state );
-	if ( ! streamKey ) {
+	if ( ! streamKey || ! state.reader.streams[ streamKey ] ) {
 		return null;
 	}
 

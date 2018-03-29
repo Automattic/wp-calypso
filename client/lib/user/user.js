@@ -29,7 +29,6 @@ function User() {
 	if ( ! ( this instanceof User ) ) {
 		return new User();
 	}
-
 	this.initialize();
 }
 
