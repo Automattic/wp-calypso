@@ -57,7 +57,6 @@ export const sitesSchema = {
 					},
 				},
 				lang: { type: 'string' },
-				post_count: { type: 'number' },
 			},
 		},
 	},
