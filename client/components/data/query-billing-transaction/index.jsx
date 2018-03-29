@@ -5,13 +5,12 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import QueryBillingTransactions from '../query-billing-transactions';
 import { getPastBillingTransaction, isRequestingBillingTransaction } from 'state/selectors';
 import { requestBillingTransaction } from 'state/billing-transactions/individual-transactions/actions';
 
@@ -35,7 +34,7 @@ class QueryBillingTransaction extends Component {
 	}
 
 	render() {
-		return <QueryBillingTransactions />;
+		return null;
 	}
 }
 

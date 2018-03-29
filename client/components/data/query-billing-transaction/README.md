@@ -1,7 +1,7 @@
 Query Billing Transaction
 ================
 
-`<QueryBillingTransaction transactionId={ transactionId } />` is a React component used to ensure that a single transaction is fetched and ready to display. It also renders a `<QueryBillingTransactions />` component to first check if the requested `transactionId` is included in the most recent and cached transactions.
+`<QueryBillingTransaction transactionId={ transactionId } />` is a React component used to ensure that a single transaction is fetched and ready to display.
 
 ## Usage
 
@@ -10,7 +10,7 @@ Render the component and pass `transactionId` as a prop. It does not accept any 
 ```jsx
 import React from 'react';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
-import MyBillingTransactionsList from './list';
+import Receipt from './receipt';
 
 export default function MyBillingTransaction( { transactionId, transaction } ) {
 	return (
@@ -29,7 +29,6 @@ export default function MyBillingTransaction( { transactionId, transaction } ) {
 <table>
 	<tr><th>Type</th><td>String</td></tr>
 	<tr><th>Required</th><td>Yes</td></tr>
-	<tr><th>Default</th><td><code>null</code></td></tr>
 </table>
 
-The transaction ID to be retrieved.
+ID of the transaction to be retrieved.
