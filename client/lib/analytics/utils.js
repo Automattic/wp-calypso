@@ -112,6 +112,8 @@ export function shouldSkipAds() {
  * @returns {Boolean} If the report should null `blog_id`.
  */
 export const shouldReportOmitBlogId = path =>
-	'/' === path ||
-	'/me' === path ||
-	( !! path && some( NO_BLOG_ID_PATHS, noBlogIdPath => path.indexOf( noBlogIdPath ) === 0 ) );
+	!! path &&
+	some(
+		NO_BLOG_ID_PATHS,
+		noBlogIdPath => path === noBlogIdPath || path.indexOf( noBlogIdPath + '/' ) === 0
+	);
