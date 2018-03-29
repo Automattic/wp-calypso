@@ -37,7 +37,6 @@
 		"help/courses": true,
 		"jetpack/api-cache": true,
 		"jetpack/happychat": true,
-		"jetpack/onboarding": true,
 		"jitms": true,
 		"keyboard-shortcuts": true,
 		"login/native-login-links": true,
