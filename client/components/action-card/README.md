@@ -24,6 +24,8 @@ render() {
 }
 ```
 
+Optionally, children can be provided to be rendered instead the call to action Button.
+
 ## Props
 
 ### `headerText`
