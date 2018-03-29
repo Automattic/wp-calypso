@@ -101,7 +101,7 @@ export const continuePolling = ( { dispatch, getState }, action ) => {
 	if ( undefined !== error ) {
 		pollingSites.delete( siteId );
 
-		dispatch( recordTracksEvent( 'calypso_activity_log_polling_fail', { siteId } ) );
+		dispatch( recordTracksEvent( 'calypso_activity_log_polling_fail', { site_id: siteId } ) );
 		return;
 	}
 

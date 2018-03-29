@@ -117,7 +117,7 @@ const Account = createReactClass( {
 		// TODO: the API should provide a default value, which would make this line obsolete
 		update( this.props.userSettings.settings, colorSchemeKey, value => value || 'default' );
 
-		this.props.recordTracksEvent( 'calypso_color_schemes_select', { colorScheme } );
+		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.updateUserSetting( colorSchemeKey, colorScheme );
 	},
 
@@ -266,7 +266,7 @@ const Account = createReactClass( {
 		this.recordClickEvent( 'Save Account Settings Button' );
 		if ( has( unsavedSettings, colorSchemeKey ) ) {
 			this.props.recordTracksEvent( 'calypso_color_schemes_save', {
-				colorScheme: get( unsavedSettings, colorSchemeKey ),
+				color_scheme: get( unsavedSettings, colorSchemeKey ),
 			} );
 		}
 	},

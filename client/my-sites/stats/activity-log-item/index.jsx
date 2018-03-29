@@ -264,7 +264,7 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_confirm', { actionId: rewindId } ),
+				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: rewindId } ),
 				rewindBackup( siteId, rewindId )
 			)
 		)
@@ -273,13 +273,15 @@ const mapDispatchToProps = ( dispatch, { activityId, siteId } ) => ( {
 		scrollTo( { x: 0, y: 0, duration: 250 } ),
 		dispatch(
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', { actionId: rewindId } ),
+				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: rewindId } ),
 				rewindRestore( siteId, rewindId )
 			)
 		)
 	),
 	trackHelp: activityName =>
-		dispatch( recordTracksEvent( 'calypso_activitylog_event_get_help', { activityName } ) ),
+		dispatch(
+			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
+		),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ActivityLogItem ) );

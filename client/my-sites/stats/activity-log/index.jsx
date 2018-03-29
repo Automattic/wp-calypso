@@ -646,7 +646,7 @@ export default connect(
 			} ),
 		createBackup: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_backup_confirm', { actionId } ),
+				recordTracksEvent( 'calypso_activitylog_backup_confirm', { action_id: actionId } ),
 				rewindBackup( siteId, actionId )
 			),
 		dismissBackup: siteId =>
@@ -661,7 +661,7 @@ export default connect(
 			),
 		rewindRestore: ( siteId, actionId ) =>
 			withAnalytics(
-				recordTracksEvent( 'calypso_activitylog_restore_confirm', { actionId } ),
+				recordTracksEvent( 'calypso_activitylog_restore_confirm', { action_id: actionId } ),
 				rewindRestore( siteId, actionId )
 			),
 	}
