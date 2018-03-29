@@ -262,7 +262,11 @@ const analytics = {
 	},
 
 	tracks: {
-		recordEvent: function( eventName, eventProperties = {} ) {
+		recordEvent: function( eventName, eventProperties ) {
+			let superProperties;
+
+			eventProperties = eventProperties || {};
+
 			if ( process.env.NODE_ENV !== 'production' ) {
 				for ( const key in eventProperties ) {
 					if ( isObjectLike( eventProperties[ key ] ) && typeof console !== 'undefined' ) {
@@ -283,27 +287,21 @@ const analytics = {
 				return;
 			}
 
-			let actualProperties = {};
-
 			if ( _superProps ) {
 				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
 				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
-				actualProperties = {
-					...eventProperties,
-					..._superProps.getAll( site, _siteCount ),
-				};
-			} else {
-				actualProperties = { ...eventProperties };
+				superProperties = _superProps.getAll( site, _siteCount );
+				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
 			// Remove properties that have an undefined value
 			// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-			actualProperties = omit( actualProperties, isUndefined );
+			eventProperties = omit( eventProperties, isUndefined );
 
-			tracksDebug( 'Recording event "%s" with actual props %o', eventName, actualProperties );
+			tracksDebug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
-			window._tkq.push( [ 'recordEvent', eventName, actualProperties ] );
-			analytics.emit( 'record-event', eventName, actualProperties );
+			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
+			analytics.emit( 'record-event', eventName, eventProperties );
 		},
 
 		recordPageView: function( urlPath, params ) {
