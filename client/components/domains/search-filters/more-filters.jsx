@@ -126,11 +126,12 @@ export class MoreFiltersControl extends Component {
 
 		return (
 			<Popover
+				autoPosition={ false }
 				className="search-filters__popover"
 				context={ this.button }
 				isVisible={ this.state.showPopover }
-				position="bottom right"
 				onClose={ this.togglePopover }
+				position="bottom right"
 			>
 				<ValidationFieldset
 					className="search-filters__text-input-fieldset"
