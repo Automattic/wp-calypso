@@ -25,13 +25,14 @@ import QueryConciergeAvailableTimes from 'components/data/query-concierge-availa
 import QueryUserSettings from 'components/data/query-user-settings';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TYPE_BUSINESS } from 'lib/plans/constants';
 import { getConciergeAvailableTimes, getUserSettings } from 'state/selectors';
 import { WPCOM_CONCIERGE_SCHEDULE_ID } from './constants';
 import { getSite } from 'state/sites/selectors';
 import Upsell from './shared/upsell';
 
-class ConciergeMain extends Component {
+export class ConciergeMain extends Component {
 	constructor( props ) {
 		super( props );
 
@@ -58,7 +59,7 @@ class ConciergeMain extends Component {
 			return <Skeleton />;
 		}
 
-		if ( site.plan.product_slug !== PLAN_BUSINESS ) {
+		if ( ! planMatches( site.plan.product_slug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) ) {
 			return <Upsell site={ site } />;
 		}
 
