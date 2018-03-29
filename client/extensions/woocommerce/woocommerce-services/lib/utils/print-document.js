@@ -62,6 +62,7 @@ export default ( { b64Content, mimeType }, fileName, download = false ) => {
 	switch ( getPDFSupport( download ) ) {
 		case 'native':
 			if ( download ) {
+				// Adapted from https://gist.github.com/rudiedirkx/2623261
 				const link = document.createElement( 'a' );
 				link.setAttribute( 'href', blobUrl );
 				link.setAttribute( 'download', fileName );
