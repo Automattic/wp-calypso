@@ -14,7 +14,6 @@ import {
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_RECEIVE,
-	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
@@ -83,14 +82,6 @@ export const items = createReducer(
 					...state[ siteId ],
 					...modulesActivationState,
 					...normalizeSettings( moduleSettings ),
-				},
-			} );
-		},
-		[ JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS ]: ( state, { siteId, email } ) => {
-			return Object.assign( {}, state, {
-				[ siteId ]: {
-					...state[ siteId ],
-					post_by_email_address: email,
 				},
 			} );
 		},

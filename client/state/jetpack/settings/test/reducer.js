@@ -20,7 +20,6 @@ import {
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_RECEIVE,
-	JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
 	JETPACK_SETTINGS_REQUEST,
 	JETPACK_SETTINGS_REQUEST_FAILURE,
 	JETPACK_SETTINGS_REQUEST_SUCCESS,
@@ -219,28 +218,6 @@ describe( 'reducer', () => {
 					minileven: true,
 					wp_mobile_excerpt: true,
 					some_other_option: '123',
-				},
-			} );
-		} );
-
-		test( 'should update the post_by_email_address setting after a successful post by email update', () => {
-			const siteId = 12345678,
-				stateIn = {
-					12345678: {
-						setting_123: 'test',
-						post_by_email_address: 'example1234@automattic.com',
-					},
-				},
-				action = {
-					type: JETPACK_SETTINGS_REGENERATE_POST_BY_EMAIL_SUCCESS,
-					siteId,
-					email: 'example5678@automattic.com',
-				};
-			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut ).to.eql( {
-				12345678: {
-					setting_123: 'test',
-					post_by_email_address: 'example5678@automattic.com',
 				},
 			} );
 		} );
