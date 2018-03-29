@@ -111,7 +111,7 @@ export class PlansFeaturesMain extends Component {
 		const group = displayJetpackPlans ? GROUP_JETPACK : GROUP_WPCOM;
 		const personalPlan = findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ];
 		const plans = [
-			findPlansKeys( { type: TYPE_FREE, group } )[ 0 ],
+			findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
 			personalPlan,
 			findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 			findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
