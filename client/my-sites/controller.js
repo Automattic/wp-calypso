@@ -313,7 +313,7 @@ export function siteSelection( context, next ) {
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
 		return analytics.pageView.record( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
-			basePath: basePath,
+			base_path: basePath,
 		} );
 	}
 
@@ -322,7 +322,7 @@ export function siteSelection( context, next ) {
 		return analytics.pageView.record(
 			'/no-sites',
 			`${ sitesPageTitleForAnalytics } > All Sites Hidden`,
-			{ basePath: basePath }
+			{ base_path: basePath }
 		);
 	}
 
