@@ -113,4 +113,5 @@ export function shouldSkipAds() {
  */
 export const shouldReportOmitBlogId = path =>
 	'/' === path ||
+	'/me' === path ||
 	( !! path && some( NO_BLOG_ID_PATHS, noBlogIdPath => path.indexOf( noBlogIdPath ) === 0 ) );
