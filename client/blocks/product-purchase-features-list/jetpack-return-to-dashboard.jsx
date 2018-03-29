@@ -14,24 +14,27 @@ import { untrailingslashit } from 'lib/route';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { selectedSite, translate, onClick = noop } ) => {
-	let adminURL = get( selectedSite, 'options.admin_url', '' );
-	if ( adminURL ) {
-		adminURL = untrailingslashit( adminURL ) + '/admin.php?page=jetpack';
-	}
+export default localize(
+	( { isButtonPrimary = true, selectedSite, translate, onClick = noop } ) => {
+		let adminURL = get( selectedSite, 'options.admin_url', '' );
+		if ( adminURL ) {
+			adminURL = untrailingslashit( adminURL ) + '/admin.php?page=jetpack';
+		}
 
-	return (
-		<div className="product-purchase-features-list__item">
-			<PurchaseDetail
-				icon="house"
-				title={ translate( 'Return to your Jetpack dashboard' ) }
-				description={ translate(
-					'Access your Jetpack Dashboard from your self-hosted WordPress site’s wp-admin.'
-				) }
-				buttonText={ translate( 'Go back to %(site)s', { args: { site: selectedSite.name } } ) }
-				href={ adminURL }
-				onClick={ onClick }
-			/>
-		</div>
-	);
-} );
+		return (
+			<div className="product-purchase-features-list__item">
+				<PurchaseDetail
+					icon="house"
+					title={ translate( 'Return to your Jetpack dashboard' ) }
+					description={ translate(
+						'Access your Jetpack Dashboard from your self-hosted WordPress site’s wp-admin.'
+					) }
+					buttonText={ translate( 'Go back to %(site)s', { args: { site: selectedSite.name } } ) }
+					href={ adminURL }
+					onClick={ onClick }
+					primary={ isButtonPrimary }
+				/>
+			</div>
+		);
+	}
+);

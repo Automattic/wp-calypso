@@ -22,6 +22,7 @@ export default class PurchaseDetail extends PureComponent {
 		description: PropTypes.oneOfType( [ PropTypes.array, PropTypes.string, PropTypes.object ] ),
 		href: PropTypes.string,
 		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		primary: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		isRequired: PropTypes.bool,
 		isSubmitting: PropTypes.bool,
@@ -33,11 +34,21 @@ export default class PurchaseDetail extends PureComponent {
 	};
 
 	static defaultProps = {
+		primary: true,
 		onClick: noop,
 	};
 
 	renderPurchaseButton() {
-		const { buttonText, isPlaceholder, isSubmitting, href, onClick, target, rel } = this.props;
+		const {
+			buttonText,
+			primary,
+			isPlaceholder,
+			isSubmitting,
+			href,
+			onClick,
+			target,
+			rel,
+		} = this.props;
 
 		if ( ! buttonText && ! isPlaceholder ) {
 			return null;
@@ -48,6 +59,7 @@ export default class PurchaseDetail extends PureComponent {
 				disabled={ isSubmitting }
 				href={ href }
 				onClick={ onClick }
+				primary={ primary }
 				target={ target }
 				rel={ rel }
 				text={ buttonText }

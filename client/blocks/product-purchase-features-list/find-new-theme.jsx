@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import PurchaseDetail from 'components/purchase-detail';
 
-export default localize( ( { selectedSite, translate } ) => {
+export default localize( ( { isButtonPrimary = true, selectedSite, translate } ) => {
 	return (
 		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
@@ -23,6 +23,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				) }
 				buttonText={ translate( 'Browse premium themes' ) }
 				href={ '/themes/' + selectedSite.slug }
+				primary={ isButtonPrimary }
 			/>
 		</div>
 	);

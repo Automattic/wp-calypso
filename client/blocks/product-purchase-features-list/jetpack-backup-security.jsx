@@ -14,15 +14,19 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getRewindState } from 'state/selectors';
 
-const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
+const JetpackBackupSecurity = ( {
+	backupEngine,
+	isButtonPrimary = true,
+	site,
+	siteId,
+	translate,
+} ) => (
 	<div className="product-purchase-features-list__item">
 		<QueryRewindState siteId={ siteId } />
 		<PurchaseDetail
 			icon="flag"
 			title={ translate( 'Site Security' ) }
-			description={ translate(
-				'Your site is safe with secure backups and real-time scans.'
-			) }
+			description={ translate( 'Your site is safe with secure backups and real-time scans.' ) }
 			buttonText={
 				backupEngine === 'rewind'
 					? translate( 'View Activity Log' )
@@ -33,6 +37,7 @@ const JetpackBackupSecurity = ( { backupEngine, site, siteId, translate } ) => (
 					? `/stats/activity/${ site.slug }`
 					: 'https://dashboard.vaultpress.com'
 			}
+			primary={ isButtonPrimary }
 		/>
 	</div>
 );
