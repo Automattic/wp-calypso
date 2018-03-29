@@ -35,12 +35,7 @@ const ReturnDialog = props => {
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
-		<BuyAndPrintButton
-			key="purchase"
-			siteId={ props.siteId }
-			orderId={ props.orderId }
-			download={ true }
-		/>,
+		<BuyAndPrintButton key="purchase" siteId={ props.siteId } orderId={ props.orderId } download />,
 	];
 
 	return (
