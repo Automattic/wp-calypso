@@ -18,6 +18,7 @@ import ActionCard from 'components/action-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 
 class SelectBusinessType extends Component {
 	static propTypes = {
@@ -53,6 +54,10 @@ class SelectBusinessType extends Component {
 
 		return (
 			<Main className="select-business-type">
+				<PageViewTracker
+					path="/google-my-business/:site/select-business-type"
+					title="Google My Business > Select Business Type"
+				/>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
