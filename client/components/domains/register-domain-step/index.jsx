@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import async from 'async';
 import {
 	compact,
 	find,
@@ -418,59 +417,61 @@ class RegisterDomainStep extends React.Component {
 		return designType && designType === 'blog' ? 'design_type_blog' : null;
 	}
 
-	checkDomainAvailability = ( domain, timestamp ) => callback => {
+	checkDomainAvailability = ( domain, timestamp ) => {
 		if (
 			! domain.match(
 				/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i
 			)
 		) {
 			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
-			return callback();
+			return;
 		}
 		if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
-			return callback();
+			return;
 		}
 
-		checkDomainAvailability(
-			{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
-			( error, result ) => {
-				const timeDiff = Date.now() - timestamp;
-				const status = get( result, 'status', error );
-				const domainChecked = get( result, 'domain_name', domain );
+		return new Promise( resolve => {
+			checkDomainAvailability(
+				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				( error, result ) => {
+					const timeDiff = Date.now() - timestamp;
+					const status = get( result, 'status', error );
+					const domainChecked = get( result, 'domain_name', domain );
 
-				const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
-				const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
-				const isDomainTransferrable = TRANSFERRABLE === status;
+					const { AVAILABLE, TRANSFERRABLE, UNKNOWN } = domainAvailability;
+					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+					const isDomainTransferrable = TRANSFERRABLE === status;
 
-				this.setState( {
-					exactMatchDomain: domainChecked,
-					lastDomainStatus: status,
-					lastDomainIsTransferrable: isDomainTransferrable,
-				} );
-				if ( isDomainAvailable ) {
-					this.setState( { notice: null } );
-				} else {
-					this.showValidationErrorMessage(
+					this.setState( {
+						exactMatchDomain: domainChecked,
+						lastDomainStatus: status,
+						lastDomainIsTransferrable: isDomainTransferrable,
+					} );
+					if ( isDomainAvailable ) {
+						this.setState( { notice: null } );
+					} else {
+						this.showValidationErrorMessage(
+							domain,
+							status,
+							get( result, 'other_site_domain', null )
+						);
+					}
+
+					this.props.recordDomainAvailabilityReceive(
 						domain,
 						status,
-						get( result, 'other_site_domain', null )
+						timeDiff,
+						this.props.analyticsSection
 					);
+
+					this.props.onDomainsAvailabilityChange( true );
+					resolve( isDomainAvailable ? result : null );
 				}
-
-				this.props.recordDomainAvailabilityReceive(
-					domain,
-					status,
-					timeDiff,
-					this.props.analyticsSection
-				);
-
-				this.props.onDomainsAvailabilityChange( true );
-				callback( null, isDomainAvailable ? result : null );
-			}
-		);
+			);
+		} );
 	};
 
-	getDomainsSuggestions = ( domain, timestamp ) => callback => {
+	getDomainsSuggestions = ( domain, timestamp ) => {
 		const suggestionQuantity =
 			this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain
 				? SUGGESTION_QUANTITY - 1
@@ -487,7 +488,7 @@ class RegisterDomainStep extends React.Component {
 			...this.getSetFiltersForAPI(),
 		};
 
-		domains
+		return domains
 			.suggestions( query )
 			.then( domainSuggestions => {
 				this.props.onDomainsAvailabilityChange( true );
@@ -502,7 +503,7 @@ class RegisterDomainStep extends React.Component {
 					this.props.analyticsSection
 				);
 
-				callback( null, domainSuggestions );
+				return domainSuggestions;
 			} )
 			.catch( error => {
 				const timeDiff = Date.now() - timestamp;
@@ -523,11 +524,11 @@ class RegisterDomainStep extends React.Component {
 					-1,
 					this.props.analyticsSection
 				);
-				callback( error, null );
+				throw error;
 			} );
 	};
 
-	handleDomainSuggestions = domain => ( error, result ) => {
+	handleDomainSuggestions = domain => result => {
 		if (
 			! this.state.loadingResults ||
 			domain !== this.state.lastDomainSearched ||
@@ -669,13 +670,14 @@ class RegisterDomainStep extends React.Component {
 			searchVendor = testGroup;
 		}
 
-		async.parallel(
-			[
-				this.checkDomainAvailability( domain, timestamp ),
-				this.getDomainsSuggestions( domain, timestamp ),
-			],
-			this.handleDomainSuggestions( domain )
-		);
+		const domainSuggestions = Promise.all( [
+			this.checkDomainAvailability( domain, timestamp ),
+			this.getDomainsSuggestions( domain, timestamp ),
+		] );
+
+		domainSuggestions
+			.catch( () => [] ) // handle the error and return an empty list
+			.then( this.handleDomainSuggestions( domain ) );
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			this.getSubdomainSuggestions( domain, timestamp );
