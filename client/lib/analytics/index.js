@@ -287,11 +287,10 @@ const analytics = {
 
 			if ( _superProps ) {
 				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				const superProperties = _superProps.getAll( _selectedSite, _siteCount );
+				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
 				actualProperties = {
 					...eventProperties,
-					..._superProps.getAll( _selectedSite, _siteCount ),
-					blog_id: shouldReportOmitBlogId( eventProperties.path ) ? null : superProperties.blog_id,
+					..._superProps.getAll( site, _siteCount ),
 				};
 			} else {
 				actualProperties = { ...eventProperties };
