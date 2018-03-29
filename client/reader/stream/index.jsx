@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
-import { defer, findLast, noop, times, clamp, identity, map } from 'lodash';
+import { defer, findLast, noop, times, identity, map } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
