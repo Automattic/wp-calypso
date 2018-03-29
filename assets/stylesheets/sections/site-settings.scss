@@ -7,6 +7,8 @@
 @import '../shared/mixins/placeholder';
 @import '../shared/typography';
 
+@import 'my-sites/site-settings/style';
+
 @import 'my-sites/site-settings/action-panel/style';
 @import 'my-sites/site-settings/amp/style';
 @import 'my-sites/site-settings/comment-display-settings/style';
@@ -24,7 +26,6 @@
 @import 'my-sites/site-settings/related-posts/style';
 @import 'my-sites/site-settings/site-icon-setting/style';
 @import 'my-sites/site-settings/site-tools/style';
-@import 'my-sites/site-settings/style';
 @import 'my-sites/site-settings/taxonomies/style';
 @import 'my-sites/site-settings/theme-setup-dialog/style';
 @import 'my-sites/site-settings/theme-setup/style';
