@@ -101,8 +101,8 @@ class CheckoutPending extends PureComponent {
 				<EmptyContent
 					illustration={ '/calypso/images/illustrations/almost-there.svg' }
 					illustrationWidth={ 500 }
-					title={ 'Processing …' }
-					line={ translate( 'Please wait while we are processing your order.' ) }
+					title={ 'Processing…' }
+					line={ translate( "Almost there -- we're currently finalizing your order." ) }
 				/>
 			</Main>
 		);
