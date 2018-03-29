@@ -67,8 +67,13 @@ class StoreSidebar extends Component {
 		}
 	};
 
-	fetchData = ( { siteId, productsLoaded } ) => {
+	fetchData = ( { siteId, productsLoaded, finishedInstallOfRequiredPlugins } ) => {
 		this.props.fetchSetupChoices( siteId );
+
+		if ( ! finishedInstallOfRequiredPlugins ) {
+			return;
+		}
+
 		this.props.fetchOrders( siteId );
 
 		this.props.fetchReviews( siteId, { status: 'pending' } );

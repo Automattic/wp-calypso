@@ -107,7 +107,12 @@ class Dashboard extends Component {
 	}
 
 	fetchStoreData = () => {
-		const { siteId, productsLoaded } = this.props;
+		const { siteId, productsLoaded, finishedInstallOfRequiredPlugins } = this.props;
+
+		if ( ! finishedInstallOfRequiredPlugins ) {
+			return;
+		}
+
 		this.props.fetchOrders( siteId );
 
 		if ( ! productsLoaded ) {
