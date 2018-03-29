@@ -111,10 +111,6 @@ class ReaderStream extends React.Component {
 	};
 
 	scrollToSelectedPost( animate ) {
-		if ( this.animation ) {
-			this.animation.stop();
-			this.animation = undefined;
-		}
 		const HEADER_OFFSET = -80; // a fixed position header means we can't just scroll the element into view.
 		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.is-selected' );
 		if ( selectedNode ) {
@@ -125,7 +121,7 @@ class ReaderStream extends React.Component {
 			const boundingClientRect = selectedNode.getBoundingClientRect();
 			const scrollY = parseInt( windowTop + boundingClientRect.top + HEADER_OFFSET, 10 );
 			if ( animate ) {
-				this.animation = scrollTo( {
+				scrollTo( {
 					x: 0,
 					y: scrollY,
 					duration: 200,
@@ -316,7 +312,7 @@ class ReaderStream extends React.Component {
 
 	renderLoadingPlaceholders = () => {
 		const { items } = this.props;
-		const count = items.length ? 2 : 4; // @TODO: figure out what numbers should go here and make sensible const
+		const count = items.length === 0 ? 2 : 4; // @TODO: figure out what numbers should go here and make sensible const
 
 		return times( count, i => {
 			if ( this.props.placeholderFactory ) {
