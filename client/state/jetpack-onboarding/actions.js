@@ -50,3 +50,12 @@ export const updateJetpackSettings = ( siteId, settings ) => ( {
 	siteId,
 	settings,
 } );
+
+/**
+ * Regenerate the target email of Post by Email.
+ *
+ * @param  {Int}     siteId  ID of the site.
+ * @return {Object}          Action object to regenerate the email when dispatched.
+ */
+export const regeneratePostByEmail = siteId =>
+	saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } );
