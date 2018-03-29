@@ -87,7 +87,10 @@ describe( '#retryOnFailure', () => {
 	} );
 
 	test( 'should requeue only up to `maxAttempts`', () => {
-		const originalRequest = { ...getSites, options: { retryPolicy: { maxAttempts: 3 } } };
+		const originalRequest = {
+			...getSites,
+			options: { retryPolicy: { maxAttempts: 3, allowedMethods: [ 'GET' ] } },
+		};
 		const inbound = { nextError, originalRequest, store };
 		const retryIt = retryWithDelay( 1337 );
 
