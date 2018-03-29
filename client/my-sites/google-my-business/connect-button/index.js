@@ -6,7 +6,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { last, isEqual, memoize } from 'lodash';
+import { last, isEqual, memoize, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,13 +28,13 @@ class GoogleMyBusinessConnectButton extends SharingService {
 
 	static defaultProps = {
 		...SharingService.defaultProps,
-		deleteStoredKeyringConnection: () => {},
-		onClick: () => {},
-		onConnect: () => {},
+		deleteStoredKeyringConnection: noop,
+		onClick: noop,
+		onConnect: noop,
 	};
 
 	// override `createOrUpdateConnection` to ignore connection update, this is only useful for publicize services
-	createOrUpdateConnection = () => {};
+	createOrUpdateConnection = noop;
 
 	// override `removeConnection` to remove the keyring connection instead of the publicize one
 	removeConnection = () => {
