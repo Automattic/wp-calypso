@@ -14,7 +14,12 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import { hasCustomDomain } from 'lib/site/utils';
 
-const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
+const CustomDomainPurchaseDetail = ( {
+	isButtonPrimary = true,
+	selectedSite,
+	hasDomainCredit,
+	translate,
+} ) => {
 	if ( hasDomainCredit && selectedSite.plan.user_is_owner ) {
 		return (
 			<PurchaseDetail
@@ -25,12 +30,14 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 				) }
 				buttonText={ translate( 'Claim your free domain' ) }
 				href={ `/domains/add/${ selectedSite.slug }` }
+				primary={ isButtonPrimary }
 			/>
 		);
 	} else if ( ! hasDomainCredit && hasCustomDomain( selectedSite ) ) {
 		const actionButton = {};
 		actionButton.buttonText = translate( 'Manage my domains' );
 		actionButton.href = `/domains/manage/${ selectedSite.slug }`;
+		actionButton.primary = { isButtonPrimary };
 		return (
 			<PurchaseDetail
 				icon={ <img src="/calypso/images/upgrades/custom-domain.svg" /> }
@@ -45,9 +52,8 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 				{ ...actionButton }
 			/>
 		);
-	} else {
-		return null;
 	}
+	return null;
 };
 
 CustomDomainPurchaseDetail.propTypes = {

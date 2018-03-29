@@ -65,14 +65,19 @@ export class ProductPurchaseFeaturesList extends Component {
 					showLiveChatButton
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
 				/>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<CustomDomain
+					isButtonPrimary={ false }
+					selectedSite={ selectedSite }
+					hasDomainCredit={ planHasDomainCredit }
+				/>
 				<BusinessOnboarding
+					isButtonPrimary={ false }
 					onClick={ this.props.recordBusinessOnboardingClick }
 					link={ `/me/concierge/${ selectedSite.slug }/book` }
 				/>
 				{ isEnabled( 'manage/plugins/upload' ) && <UploadPlugins selectedSite={ selectedSite } /> }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
+					<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
 				) }
 				<JetpackSearch selectedSite={ selectedSite } />
 				<GoogleVouchers selectedSite={ selectedSite } />
@@ -91,13 +96,17 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<AdvertisingRemoved isBusinessPlan={ false } />
+				<CustomDomain
+					isButtonPrimary={ false }
+					selectedSite={ selectedSite }
+					hasDomainCredit={ planHasDomainCredit }
+				/>
+				<AdvertisingRemoved isButtonPrimary={ false } isBusinessPlan={ false } />
 				<GoogleVouchers selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
+					<MonetizeSite isButtonPrimary={ false } selectedSite={ selectedSite } />
 				) }
 			</Fragment>
 		);
@@ -109,8 +118,12 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<AdvertisingRemoved isBusinessPlan={ false } />
+				<CustomDomain
+					isButtonPrimary={ false }
+					selectedSite={ selectedSite }
+					hasDomainCredit={ planHasDomainCredit }
+				/>
+				<AdvertisingRemoved isButtonPrimary={ false } isBusinessPlan={ false } />
 			</Fragment>
 		);
 	}
