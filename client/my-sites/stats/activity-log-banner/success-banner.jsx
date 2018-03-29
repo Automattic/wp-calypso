@@ -68,7 +68,7 @@ class SuccessBanner extends PureComponent {
 
 	trackDownload = () =>
 		this.props.recordTracksEvent( 'calypso_activitylog_backup_download', {
-			downloadCount: this.props.downloadCount,
+			download_count: this.props.downloadCount,
 		} );
 
 	render() {

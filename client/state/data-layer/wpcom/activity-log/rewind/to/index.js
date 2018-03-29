@@ -43,7 +43,7 @@ export const receiveRestoreSuccess = ( { siteId, timestamp }, restoreId ) => [
 export const receiveRestoreError = ( { siteId, timestamp }, error ) =>
 	error.hasOwnProperty( 'schemaErrors' )
 		? withAnalytics(
-				recordTracksEvent( 'calypso_rewind_to_missing_restore_id', { siteId, timestamp } ),
+				recordTracksEvent( 'calypso_rewind_to_missing_restore_id', { site_id: siteId, timestamp } ),
 				errorNotice(
 					translate(
 						"Oops, something went wrong. We've been notified and are working on resolving this issue."
