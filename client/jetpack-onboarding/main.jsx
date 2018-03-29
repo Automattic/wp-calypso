@@ -15,12 +15,14 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryJetpackOnboardingSettings from 'components/data/query-jetpack-onboarding-settings';
 import QuerySites from 'components/data/query-sites';
 import Wizard from 'components/wizard';
 import WordPressLogo from 'components/wordpress-logo';
 import { addQueryArgs, externalRedirect } from 'lib/route';
 import {
+	JETPACK_ONBOARDING_ANALYTICS_TITLES as ANALYTICS_TITLES,
 	JETPACK_ONBOARDING_COMPONENTS as COMPONENTS,
 	JETPACK_ONBOARDING_STEPS as STEPS,
 	JETPACK_ONBOARDING_STEP_TITLES as STEP_TITLES,
@@ -135,12 +137,18 @@ class JetpackOnboardingMain extends React.PureComponent {
 			steps,
 			translate,
 		} = this.props;
+		const basePath = '/jetpack/start';
+		const pageTitle = get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' );
+		const analyticsPageTitle = get( ANALYTICS_TITLES, stepName ) + ' ‹ ' + 'Jetpack Start';
 
 		return (
 			<Main className="jetpack-onboarding">
-				<DocumentHead
-					title={ get( STEP_TITLES, stepName ) + ' ‹ ' + translate( 'Jetpack Start' ) }
+				<DocumentHead title={ pageTitle } />
+				<PageViewTracker
+					path={ [ basePath, stepName, ':site' ].join( '/' ) }
+					title={ analyticsPageTitle }
 				/>
+
 				{ /* It is important to use `<QuerySites siteId={ siteSlug } />` here, however wrong that seems.
 				   * The reason is that we rely on an `isRequestingSite()` check to tell whether we've
 				   * finished fetching site details, which will tell us whether the site is connected,
@@ -161,7 +169,7 @@ class JetpackOnboardingMain extends React.PureComponent {
 				{ siteId ? (
 					<Wizard
 						action={ action }
-						basePath="/jetpack/start"
+						basePath={ basePath }
 						baseSuffix={ siteSlug }
 						components={ COMPONENTS }
 						hideForwardLink={ this.shouldHideForwardLink() }

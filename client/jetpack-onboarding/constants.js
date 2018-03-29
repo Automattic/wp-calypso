@@ -40,6 +40,18 @@ export const JETPACK_ONBOARDING_STEP_TITLES = {
 	[ JETPACK_ONBOARDING_STEPS.SUMMARY ]: translate( 'Summary' ),
 };
 
+// We need the non-translated version of the titles for accurately tracking page views
+export const JETPACK_ONBOARDING_ANALYTICS_TITLES = {
+	[ JETPACK_ONBOARDING_STEPS.SITE_TITLE ]: 'Site Title & Description',
+	[ JETPACK_ONBOARDING_STEPS.SITE_TYPE ]: 'Type of Site',
+	[ JETPACK_ONBOARDING_STEPS.HOMEPAGE ]: 'Type of Homepage',
+	[ JETPACK_ONBOARDING_STEPS.CONTACT_FORM ]: 'Contact Us Form',
+	[ JETPACK_ONBOARDING_STEPS.BUSINESS_ADDRESS ]: 'Business Address',
+	[ JETPACK_ONBOARDING_STEPS.WOOCOMMERCE ]: 'Add a Store',
+	[ JETPACK_ONBOARDING_STEPS.STATS ]: 'Jetpack Stats',
+	[ JETPACK_ONBOARDING_STEPS.SUMMARY ]: 'Summary',
+};
+
 export const JETPACK_ONBOARDING_COMPONENTS = {
 	[ JETPACK_ONBOARDING_STEPS.SITE_TITLE ]: <JetpackOnboardingSiteTitleStep />,
 	[ JETPACK_ONBOARDING_STEPS.SITE_TYPE ]: <JetpackOnboardingSiteTypeStep />,

@@ -11,10 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Tile from 'components/tile-grid/tile';
 import TileGrid from 'components/tile-grid';
-import { JETPACK_ONBOARDING_STEPS as STEPS } from '../constants';
 
 class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	handleSiteTypeSelection = siteType => () => {
@@ -27,7 +25,7 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 	};
 
 	render() {
-		const { basePath, getForwardUrl, settings, translate } = this.props;
+		const { getForwardUrl, settings, translate } = this.props;
 		const headerText = translate( "Let's shape your new site." );
 		const subHeaderText = translate( 'What kind of site do you need? Choose an option below:' );
 		const forwardUrl = getForwardUrl();
@@ -35,11 +33,6 @@ class JetpackOnboardingSiteTypeStep extends React.PureComponent {
 
 		return (
 			<div className="steps__main">
-				<PageViewTracker
-					path={ [ basePath, STEPS.SITE_TYPE, ':site' ].join( '/' ) }
-					title="Site Type ‹ Jetpack Start"
-				/>
-
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 
 				<TileGrid>
