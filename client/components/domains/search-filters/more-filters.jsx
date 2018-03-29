@@ -22,7 +22,7 @@ import Button from 'components/button';
 
 export class MoreFiltersControl extends Component {
 	static propTypes = {
-		excludeDashes: PropTypes.bool,
+		includeDashes: PropTypes.bool,
 		maxCharacters: PropTypes.string,
 		onChange: PropTypes.func,
 		onFiltersReset: PropTypes.func,
@@ -32,7 +32,7 @@ export class MoreFiltersControl extends Component {
 
 	static defaultProps = {
 		maxCharacters: '',
-		excludeDashes: true,
+		includeDashes: true,
 		showExactMatchesOnly: false,
 	};
 
@@ -49,7 +49,7 @@ export class MoreFiltersControl extends Component {
 
 	getFiltercounts() {
 		return (
-			( ! this.props.excludeDashes && 1 ) +
+			( this.props.includeDashes && 1 ) +
 			( this.props.showExactMatchesOnly && 1 ) +
 			( this.props.maxCharacters !== '' && 1 )
 		);
@@ -122,7 +122,7 @@ export class MoreFiltersControl extends Component {
 	}
 
 	renderPopover() {
-		const { excludeDashes, maxCharacters, showExactMatchesOnly, translate } = this.props;
+		const { includeDashes, maxCharacters, showExactMatchesOnly, translate } = this.props;
 
 		return (
 			<Popover
@@ -169,18 +169,16 @@ export class MoreFiltersControl extends Component {
 						</span>
 					</FormLabel>
 
-					<FormLabel className="search-filters__label" htmlFor="search-filters-exclude-dashes">
+					<FormLabel className="search-filters__label" htmlFor="search-filters-include-dashes">
 						<FormInputCheckbox
 							className="search-filters__checkbox"
-							checked={ excludeDashes }
-							id="search-filters-exclude-dashes"
-							name="excludeDashes"
+							checked={ includeDashes }
+							id="search-filters-include-dashes"
+							name="includeDashes"
 							onChange={ this.handleOnChange }
-							value="excludeDashes"
+							value="includeDashes"
 						/>
-						<span className="search-filters__checkbox-label">
-							{ translate( 'Exclude dashes' ) }
-						</span>
+						<span className="search-filters__checkbox-label">{ translate( 'Enable dashes' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
