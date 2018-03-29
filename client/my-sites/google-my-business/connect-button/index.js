@@ -23,6 +23,7 @@ class GoogleMyBusinessConnectButton extends SharingService {
 		deleteStoredKeyringConnection: PropTypes.func,
 		onClick: PropTypes.func,
 		onConnect: PropTypes.func,
+		children: PropTypes.node.isRequired,
 	};
 
 	static defaultProps = {
