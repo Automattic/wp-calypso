@@ -55,12 +55,6 @@ import {
  */
 import { CurrentPlanHeader } from '../header';
 
-describe( 'CurrentPlanHeader basic tests', () => {
-	test( 'should not blow up and have proper CSS class', () => {
-		expect( true ).toBe( true );
-	} );
-} );
-
 const props = {
 	selectedSite: {
 		jetpack: false,
