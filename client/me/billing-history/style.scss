@@ -80,7 +80,7 @@
 }
 
 .billing-history__header-row {
-	padding: 8px 0;
+	height: 59px;
 }
 
 .billing-history__transaction td {
@@ -511,4 +511,9 @@
 			display: none;
 		}
 	}
+}
+
+.billing-history__transactions-header-select-dropdown {
+	padding: 8px 12px;
+	position: absolute;
 }
