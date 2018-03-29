@@ -19,20 +19,8 @@ import PlanPrice from 'my-sites/plan-price';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import Ribbon from 'components/ribbon';
 import PlanIcon from 'components/plans/plan-icon';
-import {
-	PLAN_FREE,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_PERSONAL,
-	getPlanClass,
-} from 'lib/plans/constants';
+import { TYPE_FREE, PLANS_LIST, getPlanClass } from 'lib/plans/constants';
+import { planMatches } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -40,7 +28,7 @@ import { getYearlyPlanByMonthly } from 'lib/plans';
 import { isMobile } from 'lib/viewport';
 import { planLevelsMatch } from 'lib/plans/index';
 
-class PlanFeaturesHeader extends Component {
+export class PlanFeaturesHeader extends Component {
 	render() {
 		const { isInSignup } = this.props;
 		let content = this.renderPlansHeader();
@@ -141,7 +129,7 @@ class PlanFeaturesHeader extends Component {
 	getDiscountTooltipMessage() {
 		const { currencyCode, currentSitePlan, translate, rawPrice } = this.props;
 
-		if ( currentSitePlan.productSlug === PLAN_FREE ) {
+		if ( planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } ) ) {
 			return translate( 'Price for the next 12 months' );
 		}
 
@@ -178,7 +166,12 @@ class PlanFeaturesHeader extends Component {
 			);
 		}
 
-		if ( isSiteAT || ! site.jetpack || this.props.planType === PLAN_JETPACK_FREE || hideMonthly ) {
+		if (
+			isSiteAT ||
+			! site.jetpack ||
+			planMatches( this.props.planType, { type: TYPE_FREE } ) ||
+			hideMonthly
+		) {
 			return (
 				<p className={ timeframeClasses }>
 					{ ! isPlaceholder ? billingTimeFrame : '' }
@@ -314,19 +307,7 @@ PlanFeaturesHeader.propTypes = {
 	billingTimeFrame: PropTypes.string.isRequired,
 	current: PropTypes.bool,
 	onClick: PropTypes.func,
-	planType: PropTypes.oneOf( [
-		PLAN_FREE,
-		PLAN_PREMIUM,
-		PLAN_BUSINESS,
-		PLAN_JETPACK_FREE,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-		PLAN_PERSONAL,
-	] ).isRequired,
+	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 	popular: PropTypes.bool,
 	newPlan: PropTypes.bool,
 	bestValue: PropTypes.bool,
