@@ -10,7 +10,6 @@ import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
 /**
  * Internal dependencies
  */
-import D3Base from 'components/d3-base';
 import LegendItem from './legend-item';
 
 const NUM_COLOR_SECTIONS = 3;
@@ -56,9 +55,14 @@ class PieChart extends Component {
 		return (
 			<div>
 				<div className={ 'pie-chart__chart' }>
-					<D3Base width={ radius * 2 } height={ radius * 2 }>
+					<svg
+						width={ radius * 2 }
+						height={ radius * 2 }
+						viewBox={ `0 0 ${ radius * 2 } ${ radius * 2 }` }
+						preserveAspectRatio={ 'xMidYMid meet' }
+					>
 						{ this.drawChart() }
-					</D3Base>
+					</svg>
 				</div>
 				<h2 className={ 'pie-chart__title' }>{ `${ dataTotal } Total ${
 					plural ? plural : ''
@@ -72,7 +76,7 @@ class PieChart extends Component {
 								name={ datum.name }
 								value={ datum.value }
 								sectionNumber={ sectionNumber }
-								percent={ datum.value / dataTotal * 100 }
+								percent={ parseFloat( datum.value / dataTotal * 100 ).toFixed( 2 ) }
 								description={ datum.description }
 							/>
 						);
