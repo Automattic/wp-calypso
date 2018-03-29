@@ -51,6 +51,7 @@ export class PageViewTracker extends React.Component {
 
 	componentDidUpdate( prevProps ) {
 		if (
+			prevProps.currentUrl !== this.props.currentUrl ||
 			prevProps.path !== this.props.path ||
 			prevProps.selectedSiteId !== this.props.selectedSiteId
 		) {
@@ -92,7 +93,10 @@ const mapStateToProps = state => {
 		( isNumber( currentSlug ) && currentSlug === selectedSiteId ) ||
 		currentSlug === selectedSiteSlug;
 
+	const currentUrl = 'undefined' !== typeof window && get( window, 'location.pathname', false );
+
 	return {
+		currentUrl,
 		hasSelectedSiteLoaded,
 		selectedSiteId,
 	};
