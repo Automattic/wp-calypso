@@ -747,13 +747,6 @@
 	float: right;
 }
 .checkout__payment-box-container {
-
-	.checkout__payment-box-title {
-		padding: 20px 16px 14px 20px;
-		font-weight: bold;
-		display: none;
-	}
-
 	.select-dropdown__option {
 		&:first-child {
 			display: none;
@@ -772,6 +765,7 @@
 		}
 
 		.section-nav-tab__link {
+			background: transparent;
 			color: $blue-wordpress;
 			font-weight: bold;
 		}
@@ -850,25 +844,7 @@
 		}
 	}
 
-	@media (min-width: 481px) {
-		div.section-nav {
-			.section-nav-tabs__list {
-				.checkout__payment-box-title {
-					display: block;
-				}
-			}
-			.section-nav-tab {
-				&.is-selected {
-					.section-nav-tab__link {
-						color: $blue-wordpress;
-						background-color: transparent;
-					}
-				}
-			}
-		}
-	}
-
-	@media (max-width: 480px) {
+	@include breakpoint( '<480px' ) {
 		.is-open .section-nav__panel {
 			padding-bottom: 0;
 		}
