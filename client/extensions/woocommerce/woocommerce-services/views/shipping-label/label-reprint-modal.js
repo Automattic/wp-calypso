@@ -44,7 +44,7 @@ const ReprintDialog = ( props ) => {
 			buttons={ buttons }
 			additionalClassNames="label-reprint-modal woocommerce wcc-root">
 			<FormSectionHeading>
-				{ download ? translate( 'Redownload shipping label' ) : translate( 'Reprint shipping label' ) }
+				{ download ? translate( 'Download shipping label' ) : translate( 'Reprint shipping label' ) }
 			</FormSectionHeading>
 			<p>
 				{ download
