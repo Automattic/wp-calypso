@@ -1,5 +1,12 @@
+/** @format */
+
 .search-filters__popover {
 	width: 28em;
+
+	// Use increased specificty to override default z-index for popovers
+	&.popover {
+		z-index: z-index('.popover', '.search-filters__popover');
+	}
 
 	.popover__inner {
 		padding: 2em;

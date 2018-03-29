@@ -364,7 +364,7 @@ class RegisterDomainStep extends React.Component {
 		this.onSearchChange( this.state.lastQuery, () => this.onSearch( this.state.lastQuery ) );
 	};
 
-	getSetFiltersForAPI() {
+	getActiveFiltersForAPI() {
 		const { filters } = this.state;
 		return {
 			...mapKeys(
@@ -485,7 +485,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: this.getTldWeightOverrides(),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
-			...this.getSetFiltersForAPI(),
+			...this.getActiveFiltersForAPI(),
 		};
 
 		return domains
@@ -587,7 +587,7 @@ class RegisterDomainStep extends React.Component {
 			tld_weight_overrides: null,
 			vendor: 'wpcom',
 			vertical: this.props.surveyVertical,
-			...this.getSetFiltersForAPI(),
+			...this.getActiveFiltersForAPI(),
 		};
 
 		domains
