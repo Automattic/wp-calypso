@@ -18,14 +18,17 @@ import { stringify } from 'qs';
 import {
 	checkDomainAvailability,
 	checkInboundTransferStatus,
+	getDomainPrice,
+	getDomainProductSlug,
 	getFixedDomainSearch,
 	getTld,
 	startInboundTransfer,
 } from 'lib/domains';
+import { getProductsList } from 'state/products-list/selectors';
 import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import Notice from 'components/notice';
 import Card from 'components/card';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -39,6 +42,7 @@ import TransferRestrictionMessage from 'components/domains/transfer-domain-step/
 import { fetchDomains } from 'lib/upgrades/actions';
 import { domainManagementTransferIn } from 'my-sites/domains/paths';
 import { errorNotice } from 'state/notices/actions';
+import QueryProducts from 'components/data/query-products-list';
 
 class TransferDomainStep extends React.Component {
 	static propTypes = {
@@ -131,9 +135,16 @@ class TransferDomainStep extends React.Component {
 		const { translate } = this.props;
 		const { searchQuery, submittingAvailability, submittingWhois } = this.state;
 		const submitting = submittingAvailability || submittingWhois;
+		const productSlug = getDomainProductSlug( searchQuery );
+		const domainProductPrice = getDomainPrice(
+			productSlug,
+			this.props.productsList,
+			this.props.currencyCode
+		);
 
 		return (
 			<div>
+				<QueryProducts />
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
@@ -173,6 +184,7 @@ class TransferDomainStep extends React.Component {
 							onBlur={ this.save }
 							onChange={ this.setSearchQuery }
 							onFocus={ this.recordInputFocus }
+							suffix={ domainProductPrice }
 							autoFocus
 						/>
 					</div>
@@ -530,7 +542,9 @@ const recordMapDomainButtonClick = section =>
 export default connect(
 	state => ( {
 		currentUser: getCurrentUser( state ),
+		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSite: getSelectedSite( state ),
+		productsList: getProductsList( state ),
 	} ),
 	{
 		errorNotice,
