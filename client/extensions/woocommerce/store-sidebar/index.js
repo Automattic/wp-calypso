@@ -16,23 +16,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Count from 'components/count';
+import { areAllRequiredPluginsActive } from 'woocommerce/state/selectors/plugins';
 import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
+import Count from 'components/count';
 import { fetchOrders } from 'woocommerce/state/sites/orders/actions';
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { fetchReviews } from 'woocommerce/state/sites/reviews/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getNewOrdersWithoutPayPalPending } from 'woocommerce/state/sites/orders/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import {
-	getSetStoreAddressDuringInitialSetup,
-	getFinishedInstallOfRequiredPlugins,
-} from 'woocommerce/state/sites/setup-choices/selectors';
+import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
 import { getTotalProducts, areProductsLoaded } from 'woocommerce/state/sites/products/selectors';
 import { getTotalReviews } from 'woocommerce/state/sites/reviews/selectors';
+import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
 import Sidebar from 'layout/sidebar';
 import SidebarButton from 'layout/sidebar/button';
@@ -56,28 +55,23 @@ class StoreSidebar extends Component {
 		}
 	};
 
-	componentWillReceiveProps = newProps => {
-		const { site } = this.props;
+	componentWillReceiveProps = ( { siteId } ) => {
+		const oldSiteId = this.props.siteId;
 
-		const newSiteId = newProps.site ? newProps.site.ID : null;
-		const oldSiteId = site ? site.ID : null;
-
-		if ( newSiteId && oldSiteId !== newSiteId ) {
-			this.fetchData( { ...newProps, siteId: newSiteId } );
+		if ( oldSiteId !== siteId ) {
+			this.fetchData();
 		}
 	};
 
-	fetchData = ( { siteId, productsLoaded, finishedInstallOfRequiredPlugins } ) => {
-		this.props.fetchSetupChoices( siteId );
-
-		if ( ! finishedInstallOfRequiredPlugins ) {
+	fetchData = () => {
+		const { allRequiredPluginsActive, pluginsLoaded, productsLoaded, siteId } = this.props;
+		// We don't want to fetch data until we know that plugins are loaded and we have all plugins active
+		if ( ! pluginsLoaded || ! allRequiredPluginsActive ) {
 			return;
 		}
 
 		this.props.fetchOrders( siteId );
-
 		this.props.fetchReviews( siteId, { status: 'pending' } );
-
 		if ( ! productsLoaded ) {
 			this.props.fetchProducts( siteId, { page: 1 } );
 		}
@@ -240,10 +234,11 @@ class StoreSidebar extends Component {
 
 	render = () => {
 		const {
+			allRequiredPluginsActive,
 			finishedAddressSetup,
-			finishedInstallOfRequiredPlugins,
 			hasProducts,
 			path,
+			pluginsLoaded,
 			settingsGeneralLoaded,
 			site,
 			siteId,
@@ -265,6 +260,8 @@ class StoreSidebar extends Component {
 			}
 		}
 
+		const shouldLoadSettings = pluginsLoaded && allRequiredPluginsActive;
+
 		return (
 			<Sidebar className="store-sidebar__sidebar">
 				<StoreGroundControl site={ site } />
@@ -279,7 +276,7 @@ class StoreSidebar extends Component {
 						{ showAllSidebarItems && this.settings() }
 					</ul>
 				</SidebarMenu>
-				{ finishedInstallOfRequiredPlugins && <QuerySettingsGeneral siteId={ siteId } /> }
+				{ shouldLoadSettings && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Sidebar>
 		);
 	};
@@ -287,7 +284,6 @@ class StoreSidebar extends Component {
 
 function mapStateToProps( state ) {
 	const finishedAddressSetup = getSetStoreAddressDuringInitialSetup( state );
-	const finishedInstallOfRequiredPlugins = getFinishedInstallOfRequiredPlugins( state );
 	const hasProducts = getTotalProducts( state ) > 0;
 	const orders = getNewOrdersWithoutPayPalPending( state );
 	const productsLoaded = areProductsLoaded( state );
@@ -296,14 +292,17 @@ function mapStateToProps( state ) {
 	const totalPendingReviews = getTotalReviews( state, { status: 'pending' } );
 	const settingsGeneralLoaded = areSettingsGeneralLoaded( state, siteId );
 	const storeLocation = getStoreLocation( state, siteId );
+	const pluginsLoaded = arePluginsLoaded( state, siteId );
+	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
 
 	return {
+		allRequiredPluginsActive,
 		finishedAddressSetup,
-		finishedInstallOfRequiredPlugins,
 		hasProducts,
 		orders,
 		totalPendingReviews,
 		productsLoaded,
+		pluginsLoaded,
 		settingsGeneralLoaded,
 		site,
 		siteId,
