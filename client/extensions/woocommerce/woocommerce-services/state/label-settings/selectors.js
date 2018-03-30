@@ -101,6 +101,11 @@ export const getPaymentMethods = ( state, siteId = getSelectedSiteId( state ) ) 
 		.sort( ( a, b ) => b.payment_method_id - a.payment_method_id );
 };
 
+export const getPaymentMethodsWarning = ( state, siteId = getSelectedSiteId( state ) ) => {
+	const meta = getLabelSettingsFormMeta( state, siteId );
+	return meta && meta.warnings && meta.warnings.payment_methods;
+};
+
 export const getMasterUserInfo = ( state, siteId = getSelectedSiteId( state ) ) => {
 	const meta = getLabelSettingsFormMeta( state, siteId );
 	return {
