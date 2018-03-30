@@ -18,6 +18,11 @@ import {
 } from 'state/action-types';
 import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
+	filterSettingsByActiveModules,
+	normalizeSettings,
+	sanitizeSettings,
+} from 'state/jetpack/settings/utils';
+import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
 } from 'state/jetpack-onboarding/actions';
@@ -30,8 +35,10 @@ export const fromApi = response => {
 		throw new Error( 'missing settings' );
 	}
 
-	return response.data;
+	return normalizeSettings( response.data );
 };
+
+export const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
 	dispatch( updateJetpackSettings( siteId, settings ) );
@@ -101,7 +108,7 @@ export const saveJetpackSettings = ( { dispatch }, action ) => {
 				path: '/jetpack-blogs/' + siteId + '/rest-api/',
 				body: {
 					path: '/jetpack/v4/settings/',
-					body: JSON.stringify( settings ),
+					body: JSON.stringify( toApi( settings ) ),
 					json: true,
 				},
 			},

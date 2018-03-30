@@ -13,11 +13,17 @@ import {
 	announceSaveFailure,
 	retryOrAnnounceSaveFailure,
 	fromApi,
+	toApi,
 } from '../';
 import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
+import {
+	filterSettingsByActiveModules,
+	normalizeSettings,
+	sanitizeSettings,
+} from 'state/jetpack/settings/utils';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
@@ -336,10 +342,23 @@ describe( 'fromApi', () => {
 		expect( () => fromApi( response ) ).toThrow( 'missing settings' );
 	} );
 
-	test( 'should return data if present', () => {
-		const response = { data: { onboarding: { siteTitle: 'Yet Another Site Title' } } };
-		expect( fromApi( response ) ).toEqual( {
+	test( 'should return normalized data if present', () => {
+		const settings = {
+			jetpack_portfolio: true,
 			onboarding: { siteTitle: 'Yet Another Site Title' },
-		} );
+		};
+		expect( fromApi( { data: settings } ) ).toEqual( normalizeSettings( settings ) );
+	} );
+} );
+
+describe( 'toApi', () => {
+	test( 'should apply filterSettingsByActiveModules and sanitizeSettings', () => {
+		const settings = {
+			jetpack_portfolio: true,
+			onboarding: { siteTitle: 'Yet Another Site Title' },
+		};
+		expect( toApi( settings ) ).toEqual(
+			filterSettingsByActiveModules( sanitizeSettings( settings ) )
+		);
 	} );
 } );
