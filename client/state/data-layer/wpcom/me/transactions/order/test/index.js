@@ -14,7 +14,7 @@ jest.mock( 'lib/impure-lodash', () => ( {
 } ) );
 
 describe( 'wpcom-api', () => {
-	describe( 'me/order-transactions', () => {
+	describe( 'me/transactions/order', () => {
 		describe( 'fetchOrderTransaction()', () => {
 			test( 'should return the expected http request action.', () => {
 				const action = {
@@ -25,7 +25,7 @@ describe( 'wpcom-api', () => {
 					http(
 						{
 							method: 'GET',
-							path: `/me/order-transactions/${ action.orderId }`,
+							path: `/me/transactions/order/${ action.orderId }`,
 							apiNamespace: 'rest/v1',
 						},
 						action

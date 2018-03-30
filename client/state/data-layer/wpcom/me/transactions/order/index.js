@@ -19,7 +19,7 @@ export const fetchOrderTransaction = action =>
 	http(
 		{
 			method: 'GET',
-			path: `/me/order-transactions/${ action.orderId }`,
+			path: `/me/transactions/order/${ action.orderId }`,
 			apiNamespace: 'rest/v1',
 		},
 		action
