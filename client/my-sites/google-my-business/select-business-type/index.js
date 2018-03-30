@@ -13,7 +13,7 @@ import page from 'page';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import CompactCard from 'components/card/compact';
+import Card from 'components/card';
 import ActionCard from 'components/action-card';
 import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -63,7 +63,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<CompactCard className="gmb-select-business-type__explanation">
+				<Card className="gmb-select-business-type__explanation">
 					<div className="gmb-select-business-type__explanation-main">
 						<h1 className="gmb-select-business-type__heading">
 							{ translate( 'Which type of business are you?' ) }
@@ -95,7 +95,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 						src="/calypso/images/google-my-business/business-local.svg"
 						alt={ translate( 'Local business illustration' ) }
 					/>
-				</CompactCard>
+				</Card>
 
 				<ActionCard
 					headerText={ translate( 'Physical Location or Service Area', {
