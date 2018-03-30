@@ -8,7 +8,6 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 
 /**
@@ -24,7 +23,6 @@ import DocumentHead from 'components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import { getSiteFragment } from 'lib/route';
 import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
 
 class App extends Component {
@@ -32,7 +30,6 @@ class App extends Component {
 		siteId: PropTypes.number,
 		documentTitle: PropTypes.string,
 		canUserManageOptions: PropTypes.bool.isRequired,
-		currentRoute: PropTypes.string.isRequired,
 		isAtomicSite: PropTypes.bool.isRequired,
 		hasPendingAutomatedTransfer: PropTypes.bool.isRequired,
 		children: PropTypes.element.isRequired,
@@ -72,18 +69,8 @@ class App extends Component {
 			canUserManageOptions,
 			isAtomicSite,
 			hasPendingAutomatedTransfer,
-			currentRoute,
 			translate,
 		} = this.props;
-
-		// TODO This is temporary, until we have a valid "all sites" path to show.
-		// Calypso will detect if a user doesn't have access to a site at all, and redirects to the 'all sites'
-		// version of that URL. We don't want to render anything right now, so continue redirecting to my-sites.
-		if ( ! getSiteFragment( currentRoute ) ) {
-			this.redirect();
-			return null;
-		}
-
 		if ( ! siteId ) {
 			return null;
 		}
@@ -129,7 +116,6 @@ function mapStateToProps( state ) {
 		canUserManageOptions,
 		isAtomicSite,
 		hasPendingAutomatedTransfer,
-		currentRoute: page.current,
 	};
 }
 
