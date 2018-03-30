@@ -196,7 +196,13 @@ class PodcastingDetails extends Component {
 								onChange={ this.onCategorySelected }
 								addTerm={ true }
 								onAddTermSuccess={ this.onCategorySelected }
+								height={ 200 }
 							/>
+							{ isPodcastingEnabled && (
+								<Button onClick={ this.handleClearCategory } scary>
+									{ translate( 'Disable Podcast' ) }
+								</Button>
+							) }
 						</FormFieldset>
 						<div className="podcasting-details__basic-settings">
 							{ this.renderTextField( {
