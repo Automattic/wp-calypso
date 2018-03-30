@@ -17,7 +17,11 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
 import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
-import { normalizeSettings } from 'state/jetpack/settings/utils';
+import {
+	normalizeSettings,
+	sanitizeSettings,
+	filterSettingsByActiveModules,
+} from 'state/jetpack/settings/utils';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
@@ -32,6 +36,10 @@ export const fromApi = response => {
 	}
 
 	return normalizeSettings( response.data );
+};
+
+export const toApi = settings => {
+	return filterSettingsByActiveModules( sanitizeSettings( settings ) );
 };
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
@@ -102,7 +110,7 @@ export const saveJetpackSettings = ( { dispatch }, action ) => {
 				path: '/jetpack-blogs/' + siteId + '/rest-api/',
 				body: {
 					path: '/jetpack/v4/settings/',
-					body: JSON.stringify( settings ),
+					body: JSON.stringify( toApi( settings ) ),
 					json: true,
 				},
 			},
