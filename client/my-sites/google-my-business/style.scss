@@ -1,13 +1,12 @@
-.google-my-business {
-	h1 {
-		font-size: 21px;
-		font-weight: 400;
-		margin-bottom: 5px;
-		margin-top: 5px;
+.gmb-select-business-type__heading,
+.gmb-new-account__heading {
+	font-size: 24px;
+	font-weight: 400;
+	margin-bottom: 5px;
+	margin-top: 5px;
 
-		@include breakpoint( '>960px' ) {
-			margin-bottom: 10px;
-			margin-top: 10px;
-		}
+	@include breakpoint( '>960px' ) {
+		margin-bottom: 10px;
+		margin-top: 10px;
 	}
 }

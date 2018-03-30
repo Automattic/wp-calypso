@@ -53,7 +53,7 @@ class SelectBusinessType extends Component {
 		const { translate, siteId } = this.props;
 
 		return (
-			<Main className="google-my-business select-business-type" wideLayout>
+			<Main className="gmb-select-business-type" wideLayout>
 				<PageViewTracker
 					path="/google-my-business/:site/select-business-type"
 					title="Google My Business > Select Business Type"
@@ -63,9 +63,9 @@ class SelectBusinessType extends Component {
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<CompactCard className="select-business-type__explanation">
-					<div className="select-business-type__explanation-main">
-						<h1>
+				<CompactCard className="gmb-select-business-type__explanation">
+					<div className="gmb-select-business-type__explanation-main">
+						<h1 className="gmb-select-business-type__heading">
 							{ translate( 'Which type of business are you?' ) }
 						</h1>
 
@@ -91,7 +91,7 @@ class SelectBusinessType extends Component {
 					</div>
 
 					<img
-						className="select-business-type__explanation-image"
+						className="gmb-select-business-type__illustration"
 						src="/calypso/images/google-my-business/business-local.svg"
 						alt={ translate( 'Local business illustration' ) }
 					/>

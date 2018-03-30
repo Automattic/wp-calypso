@@ -49,19 +49,19 @@ class NewAccount extends Component {
 		const { translate } = this.props;
 
 		return (
-			<Main className="google-my-business new-account" wideLayout>
+			<Main className="gmb-new-account" wideLayout>
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
 
-				<Card className="new-account__card">
+				<Card className="gmb-new-account__card">
 					<img
 						alt={ translate( 'Local business illustration' ) }
-						className="new-account__illustration"
+						className="gmb-new-account__illustration"
 						src="/calypso/images/google-my-business/business-local.svg"
 					/>
 
-					<h1>
+					<h1 className="gmb-new-account__heading">
 						{ translate( 'It looks like you might be new to Google My Business' ) }
 					</h1>
 
@@ -72,7 +72,7 @@ class NewAccount extends Component {
 						) }
 					</p>
 
-					<div className="new-account__actions">
+					<div className="gmb-new-account__actions">
 						<Button primary onClick={ this.trackCreateMyListingClick }>
 							{ translate( 'Create My Listing' ) }
 						</Button>

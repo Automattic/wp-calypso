@@ -1,9 +1,11 @@
-.new-account__card {
+@import 'my-sites/google-my-business/style';
+
+.gmb-new-account__card {
 	display: flex;
 	flex-direction: column;
 }
 
-.new-account__illustration {
+.gmb-new-account__illustration {
 	margin-bottom: 10px;
 	max-width: 200px;
 
@@ -12,7 +14,7 @@
 	}
 }
 
-.new-account__actions {
+.gmb-new-account__actions {
 	display: flex;
 
 	@include breakpoint( '<480px' ) {
@@ -20,7 +22,7 @@
 	}
 }
 
-.new-account__actions .button {
+.gmb-new-account__actions .button {
 	@include breakpoint( '<480px' ) {
 		text-align: center;
 	}

@@ -1,10 +1,12 @@
-.select-business-type {
+@import 'my-sites/google-my-business/style';
+
+.gmb-select-business-type {
 	.header-cake {
 		margin-bottom: 0;
 	}
 }
 
-.select-business-type__explanation.card {
+.gmb-select-business-type__explanation.card {
 	display: flex;
 	margin-bottom: 16px;
 
@@ -13,7 +15,7 @@
 	}
 }
 
-.select-business-type__explanation-image {
+.gmb-select-business-type__illustration {
 	max-width: 200px;
 
 	@include breakpoint( '<960px' ) {
@@ -26,7 +28,7 @@
 	}
 }
 
-.select-business-type__explanation-main {
+.gmb-select-business-type__explanation-main {
 	max-width: 540px;
 	flex: 2 1;
 }
