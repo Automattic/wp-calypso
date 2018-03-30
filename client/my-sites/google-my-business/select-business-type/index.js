@@ -19,11 +19,12 @@ import Main from 'components/main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteId: PropTypes.string.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -46,11 +47,11 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	};
 
 	goBack = () => {
-		page.back( `/stats/day/${ this.props.siteId }` );
+		page.back( `/stats/day/${ this.props.siteSlug }` );
 	};
 
 	render() {
-		const { translate, siteId } = this.props;
+		const { siteSlug, translate } = this.props;
 
 		return (
 			<Main className="gmb-select-business-type" wideLayout>
@@ -72,7 +73,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 						<p>
 							{ translate(
 								'{{link}}Google My Business{{/link}} lists your local business on Google Search and Google Maps. ' +
-									'It works for businesses that have a physical location or serve a local area.',
+								'It works for businesses that have a physical location or serve a local area.',
 								{
 									components: {
 										link: (
@@ -103,7 +104,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 					} ) }
 					mainText={ translate(
 						'Your business has a physical location customers can visit, ' +
-							'or provides goods and services to local customers, or both.'
+						'or provides goods and services to local customers, or both.'
 					) }
 					buttonText={ translate( 'Create Your Listing', {
 						comment: 'Call to Action to add a business listing to Google My Business',
@@ -123,7 +124,7 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 						"Don't provide in-person services? Learn more about reaching your customers online."
 					) }
 					buttonText={ translate( 'Optimize Your SEO', { comment: 'Call to Action button' } ) }
-					buttonHref={ '/settings/traffic/' + siteId }
+					buttonHref={ `/settings/traffic/${ siteSlug }` }
 					buttonOnClick={ this.trackOptimizeYourSEOClick }
 				/>
 			</Main>
@@ -131,4 +132,11 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 	}
 }
 
-export default connect( undefined, { recordTracksEvent } )( localize( GoogleMyBusinessSelectBusinessType ) );
+export default connect(
+	state => ( {
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( GoogleMyBusinessSelectBusinessType ) );

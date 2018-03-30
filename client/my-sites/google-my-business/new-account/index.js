@@ -16,12 +16,13 @@ import Button from 'components/button';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { recordPageViewWithClientId as recordPageView, recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
-		siteId: PropTypes.string.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -30,7 +31,7 @@ class GoogleMyBusinessNewAccount extends Component {
 	}
 
 	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteId }` );
+		page.back( `/google-my-business/${ this.props.siteSlug }` );
 	};
 
 	trackCreateMyListingClick = () => {
@@ -46,7 +47,7 @@ class GoogleMyBusinessNewAccount extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { siteSlug, translate } = this.props;
 
 		return (
 			<Main className="gmb-new-account" wideLayout>
@@ -77,7 +78,7 @@ class GoogleMyBusinessNewAccount extends Component {
 							{ translate( 'Create My Listing' ) }
 						</Button>
 
-						<Button href={ `/stats/${ this.props.siteId }` } onClick={ this.trackNoThanksClick }>
+						<Button href={ `/stats/${ siteSlug }` } onClick={ this.trackNoThanksClick }>
 							{ translate( 'No thanks' ) }
 						</Button>
 					</div>
@@ -87,4 +88,12 @@ class GoogleMyBusinessNewAccount extends Component {
 	}
 }
 
-export default connect( undefined, { recordPageView, recordTracksEvent } )( localize( GoogleMyBusinessNewAccount ) );
+export default connect(
+	state => ( {
+		siteSlug: getSelectedSiteSlug( state ),
+	} ),
+	{
+		recordPageView,
+		recordTracksEvent,
+	}
+)( localize( GoogleMyBusinessNewAccount ) );

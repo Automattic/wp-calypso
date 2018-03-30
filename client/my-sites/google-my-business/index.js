@@ -23,7 +23,7 @@ export default function() {
 	);
 
 	page(
-		'/google-my-business/:site_id/select-business-type',
+		'/google-my-business/:site/select-business-type',
 		siteSelection,
 		navigation,
 		selectBusinessType,
@@ -33,7 +33,7 @@ export default function() {
 
 	if ( config.isEnabled( 'google-my-business' ) ) {
 		page(
-			'/google-my-business/:site_id/new',
+			'/google-my-business/:site/new',
 			siteSelection,
 			navigation,
 			newAccount,
