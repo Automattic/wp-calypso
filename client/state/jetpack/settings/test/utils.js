@@ -163,6 +163,18 @@ describe( 'utils', () => {
 			} );
 		} );
 
+		test( 'should include post_by_email_address in sanitized settings if it equals "regenerate"', () => {
+			const settings = {
+				some_other_setting: 123,
+				post_by_email_address: 'regenerate',
+			};
+
+			expect( sanitizeSettings( settings ) ).to.eql( {
+				some_other_setting: 123,
+				post_by_email_address: 'regenerate',
+			} );
+		} );
+
 		test( 'should omit akismet from sanitized settings', () => {
 			const settings = {
 				some_other_setting: 123,
