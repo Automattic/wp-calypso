@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -18,16 +19,6 @@ import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 
 class PrivacyProtection extends Component {
-	hasDomainPartOfPlan = () => {
-		const cart = this.props.cart;
-		return cart.has_bundle_credit || cartItems.hasPlan( cart );
-	};
-
-	getPrivacyProtectionCost() {
-		const products = this.props.productsList;
-		return products.private_whois.cost_display;
-	}
-
 	enablePrivacy = () => {
 		this.props.onRadioSelect( true );
 	};
@@ -41,6 +32,11 @@ class PrivacyProtection extends Component {
 		const freeWithPlan = cartItems.hasOnlyBundledDomainProducts( this.props.cart );
 		const { translate } = this.props;
 		const numberOfDomainRegistrations = domainRegistrations.length;
+		const privacyProtectionCost = get(
+			this.props,
+			'productsList.private_whois.cost_display',
+			false
+		);
 
 		return (
 			<div>
@@ -87,10 +83,11 @@ class PrivacyProtection extends Component {
 											'free-with-plan': freeWithPlan,
 										} ) }
 									>
-										{ translate( '%(cost)s/year', '%(cost)s per domain/year', {
-											args: { cost: this.getPrivacyProtectionCost() },
-											count: numberOfDomainRegistrations,
-										} ) }
+										{ privacyProtectionCost &&
+											translate( '%(cost)s/year', '%(cost)s per domain/year', {
+												args: { cost: privacyProtectionCost },
+												count: numberOfDomainRegistrations,
+											} ) }
 									</span>
 									{ freeWithPlan && (
 										<span className="checkout__privacy-protection-free-text">
