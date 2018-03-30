@@ -18,9 +18,9 @@ import {
 } from 'state/action-types';
 import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
 import {
+	filterSettingsByActiveModules,
 	normalizeSettings,
 	sanitizeSettings,
-	filterSettingsByActiveModules,
 } from 'state/jetpack/settings/utils';
 import {
 	saveJetpackSettingsSuccess,
