@@ -18,7 +18,7 @@ import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import { recordPageViewWithClientId as recordPageView, recordTracksEvent } from 'state/analytics/actions';
 
-class NewAccount extends Component {
+class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.string.isRequired,
@@ -87,4 +87,4 @@ class NewAccount extends Component {
 	}
 }
 
-export default connect( undefined, { recordPageView, recordTracksEvent } )( localize( NewAccount ) );
+export default connect( undefined, { recordPageView, recordTracksEvent } )( localize( GoogleMyBusinessNewAccount ) );

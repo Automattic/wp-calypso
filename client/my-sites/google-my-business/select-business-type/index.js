@@ -20,7 +20,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-class SelectBusinessType extends Component {
+class GoogleMyBusinessSelectBusinessType extends Component {
 	static propTypes = {
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteId: PropTypes.string.isRequired,
@@ -131,4 +131,4 @@ class SelectBusinessType extends Component {
 	}
 }
 
-export default connect( undefined, { recordTracksEvent } )( localize( SelectBusinessType ) );
+export default connect( undefined, { recordTracksEvent } )( localize( GoogleMyBusinessSelectBusinessType ) );
