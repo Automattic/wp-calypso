@@ -1,11 +1,8 @@
 /** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,6 +10,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { areAllRequiredPluginsActive } from 'woocommerce/state/selectors/plugins';
 import {
 	canCurrentUser,
 	isSiteAutomatedTransfer,
@@ -22,7 +20,9 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
 
 class App extends Component {
@@ -35,13 +35,9 @@ class App extends Component {
 		children: PropTypes.element.isRequired,
 	};
 
-	componentDidMount = () => {
-		const { siteId } = this.props;
-
-		if ( siteId ) {
-			this.props.fetchSetupChoices( siteId );
-		}
-	};
+	componentDidMount() {
+		this.fetchData( this.props );
+	}
 
 	componentWillReceiveProps( newProps ) {
 		if ( this.props.children !== newProps.children ) {
@@ -53,19 +49,43 @@ class App extends Component {
 		const { siteId } = this.props;
 		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
-		if ( siteId && oldSiteId !== siteId ) {
-			this.props.fetchSetupChoices( siteId );
+		if ( oldSiteId !== siteId ) {
+			this.fetchData( this.props );
 		}
 	}
 
-	redirect = () => {
+	fetchData( { allRequiredPluginsActive, pluginsLoaded, siteId } ) {
+		if ( ! siteId ) {
+			return;
+		}
+
+		if ( ! pluginsLoaded || ! allRequiredPluginsActive ) {
+			return;
+		}
+
+		this.props.fetchSetupChoices( siteId );
+	}
+
+	redirect() {
 		window.location.href = '/stats/day';
-	};
+	}
+
+	maybeRenderChildren() {
+		const { allRequiredPluginsActive, children, pluginsLoaded } = this.props;
+		if ( ! pluginsLoaded ) {
+			return null;
+		}
+
+		if ( pluginsLoaded && ! allRequiredPluginsActive ) {
+			return <RequiredPluginsInstallView skipConfirmation />;
+		}
+
+		return children;
+	}
 
 	render = () => {
 		const {
 			siteId,
-			children,
 			canUserManageOptions,
 			isAtomicSite,
 			hasPendingAutomatedTransfer,
@@ -96,7 +116,7 @@ class App extends Component {
 			<div className={ className }>
 				<DocumentHead title={ documentTitle } />
 				<QueryJetpackPlugins siteIds={ [ siteId ] } />
-				{ children }
+				{ this.maybeRenderChildren() }
 				<WooCommerceColophon />
 			</div>
 		);
@@ -105,27 +125,21 @@ class App extends Component {
 
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
-	const canUserManageOptions =
-		( siteId && canCurrentUser( state, siteId, 'manage_options' ) ) || false;
-	const isAtomicSite = ( siteId && !! isSiteAutomatedTransfer( state, siteId ) ) || false;
-	const hasPendingAutomatedTransfer =
-		( siteId && !! hasSitePendingAutomatedTransfer( state, siteId ) ) || false;
+	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const isAtomicSite = !! isSiteAutomatedTransfer( state, siteId );
+	const hasPendingAutomatedTransfer = !! hasSitePendingAutomatedTransfer( state, siteId );
+
+	const pluginsLoaded = arePluginsLoaded( state, siteId );
+	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
 
 	return {
 		siteId,
-		canUserManageOptions,
-		isAtomicSite,
-		hasPendingAutomatedTransfer,
+		allRequiredPluginsActive,
+		canUserManageOptions: siteId ? canUserManageOptions : false,
+		isAtomicSite: siteId ? isAtomicSite : false,
+		hasPendingAutomatedTransfer: siteId ? hasPendingAutomatedTransfer : false,
+		pluginsLoaded,
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
-	return bindActionCreators(
-		{
-			fetchSetupChoices,
-		},
-		dispatch
-	);
-}
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( App ) );
+export default connect( mapStateToProps, { fetchSetupChoices } )( localize( App ) );
