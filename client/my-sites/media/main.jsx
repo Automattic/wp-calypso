@@ -6,6 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { localize } from 'i18n-calypso';
 
@@ -15,7 +16,9 @@ import { localize } from 'i18n-calypso';
 import MediaLibrary from 'my-sites/media-library';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Dialog from 'components/dialog';
+import DocumentHead from 'components/data/document-head';
 import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
+import { getSelectedSite } from 'state/ui/selectors';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaActions from 'lib/media/actions';
@@ -23,6 +26,7 @@ import { getMimeType } from 'lib/media/utils';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
 import accept from 'lib/accept';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import searchUrl from 'lib/search-url';
 
 class Media extends Component {
@@ -268,10 +272,28 @@ class Media extends Component {
 		MediaActions.delete( site.ID, selected );
 	};
 
+	getAnalyticsPath = () => {
+		const { filter, selectedSite } = this.props;
+		let analyticsPath = '/media';
+
+		if ( filter ) {
+			analyticsPath += `/${ filter }`;
+		}
+
+		if ( selectedSite && selectedSite.ID ) {
+			analyticsPath += '/:site';
+		}
+
+		return analyticsPath;
+	};
+
 	render() {
+		const { translate } = this.props;
 		const site = this.props.selectedSite;
 		return (
 			<div ref="container" className="main main-column media" role="main">
+				<DocumentHead title={ translate( 'Media' ) } />
+				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<SidebarNavigation />
 				{ ( this.state.editedImageItem !== null ||
 					this.state.editedVideoItem !== null ||
@@ -336,4 +358,8 @@ class Media extends Component {
 	}
 }
 
-export default localize( Media );
+const mapStateToProps = state => ( {
+	selectedSite: getSelectedSite( state ),
+} );
+
+export default connect( mapStateToProps )( localize( Media ) );
