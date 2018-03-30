@@ -76,6 +76,12 @@ class PlanFeatures extends Component {
 			bottomButtons = <tr>{ this.renderBottomButtons() }</tr>;
 		}
 
+		// Check if user is in signup flow & small screens
+		// Used in AB test: mobilePlansTablesOnSignup_20180330
+		if ( isInSignup && window.matchMedia( '(max-width: 660px)' ).matches ) {
+			this.props.recordTracksEvent( 'calypso_wp_plans_verticalabtest_view' );
+		}
+
 		mobileView = <div className="plan-features__mobile">{ this.renderMobileView() }</div>;
 
 		if ( isInSignup && abtest( 'mobilePlansTablesOnSignup' ) === 'original' ) {
