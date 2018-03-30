@@ -16,8 +16,9 @@ import Button from 'components/button';
 import Card from 'components/card';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordPageViewWithClientId as recordPageView, recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class GoogleMyBusinessNewAccount extends Component {
 	static propTypes = {
@@ -25,10 +26,6 @@ class GoogleMyBusinessNewAccount extends Component {
 		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
-
-	componentDidMount() {
-		this.props.recordPageView( '/google-my-business/:site/new', 'Google My Business > New' );
-	}
 
 	goBack = () => {
 		page.back( `/google-my-business/${ this.props.siteSlug }/select-business-type` );
@@ -51,6 +48,11 @@ class GoogleMyBusinessNewAccount extends Component {
 
 		return (
 			<Main className="gmb-new-account" wideLayout>
+				<PageViewTracker
+					path="/google-my-business/:site/new"
+					title="Google My Business > New"
+				/>
+
 				<HeaderCake isCompact={ false } alwaysShowActionText={ false } onClick={ this.goBack }>
 					{ translate( 'Google My Business' ) }
 				</HeaderCake>
@@ -93,7 +95,6 @@ export default connect(
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
 	{
-		recordPageView,
 		recordTracksEvent,
 	}
 )( localize( GoogleMyBusinessNewAccount ) );

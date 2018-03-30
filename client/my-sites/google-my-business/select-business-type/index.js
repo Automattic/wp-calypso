@@ -28,6 +28,10 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
+	goBack = () => {
+		page.back( `/stats/day/${ this.props.siteSlug }` );
+	};
+
 	trackCreateMyListingClick = () => {
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_business_type_create_my_listing_button_click'
@@ -44,10 +48,6 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 		this.props.recordTracksEvent(
 			'calypso_google_my_business_select_business_type_google_my_business_link_click'
 		);
-	};
-
-	goBack = () => {
-		page.back( `/stats/day/${ this.props.siteSlug }` );
 	};
 
 	render() {
