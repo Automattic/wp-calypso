@@ -21,10 +21,9 @@ import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
-import { purchasesRoot } from 'me/purchases/paths';
-import { getPastBillingTransactions, getUpcomingBillingTransactions } from 'state/selectors';
+import { getPastBillingTransactions } from 'state/selectors';
 
-const BillingHistory = ( { pastTransactions, upcomingTransactions, translate } ) => (
+const BillingHistory = ( { pastTransactions, translate } ) => (
 	<Main className="billing-history">
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
@@ -32,16 +31,13 @@ const BillingHistory = ( { pastTransactions, upcomingTransactions, translate } )
 		<QueryBillingTransactions />
 		<PurchasesHeader section={ 'billing' } />
 		<Card className="billing-history__receipts">
-			<BillingHistoryTable transactions={ pastTransactions } />
-		</Card>
-		<Card href={ purchasesRoot }>
-			{ translate( 'Go to "Purchases" to add or cancel a plan.' ) }
+			<BillingHistoryTable />
 		</Card>
 		{ pastTransactions && (
 			<div>
 				<SectionHeader label={ translate( 'Upcoming Charges' ) } />
 				<Card className="billing-history__upcoming-charges">
-					<UpcomingChargesTable transactions={ upcomingTransactions } />
+					<UpcomingChargesTable />
 				</Card>
 			</div>
 		) }
@@ -51,5 +47,4 @@ const BillingHistory = ( { pastTransactions, upcomingTransactions, translate } )
 
 export default connect( state => ( {
 	pastTransactions: getPastBillingTransactions( state ),
-	upcomingTransactions: getUpcomingBillingTransactions( state ),
 } ) )( localize( BillingHistory ) );
