@@ -50,6 +50,10 @@ export function isRequesting( state, siteId ) {
 	return state.plugins.installed.isRequesting[ siteId ];
 }
 
+export function isLoaded( state, siteId ) {
+	return false === state.plugins.installed.isRequesting[ siteId ];
+}
+
 export function isRequestingForSites( state, sites ) {
 	// As long as any sites have isRequesting true, we consider this group requesting
 	return some( sites, siteId => isRequesting( state, siteId ) );
