@@ -3,21 +3,18 @@
 /**
  * Internal dependencies
  */
-import {
-	SOURCE_PAYMENT_TRANSACTION_DETAIL_FETCH,
-	SOURCE_PAYMENT_TRANSACTION_DETAIL_SET,
-} from 'state/action-types';
-import detailReducer from '../reducer';
+import { ORDER_TRANSACTION_FETCH, ORDER_TRANSACTION_SET } from 'state/action-types';
+import orderTransactions from '../reducer';
 
-describe( 'state/transactions/source-payment/reducer', () => {
-	describe( 'detailReducer()', () => {
+describe( 'state/order-transactions/reducer', () => {
+	describe( 'orderTransactions()', () => {
 		test( 'should store the detail field on receiving the set action.', () => {
 			const orderId = 123;
 			const detail = {
 				status: 'great-status!',
 			};
-			const state = detailReducer( undefined, {
-				type: SOURCE_PAYMENT_TRANSACTION_DETAIL_SET,
+			const state = orderTransactions( undefined, {
+				type: ORDER_TRANSACTION_SET,
 				orderId,
 				detail,
 			} );
@@ -35,8 +32,8 @@ describe( 'state/transactions/source-payment/reducer', () => {
 				},
 			};
 
-			const updated = detailReducer( state, {
-				type: SOURCE_PAYMENT_TRANSACTION_DETAIL_FETCH,
+			const updated = orderTransactions( state, {
+				type: ORDER_TRANSACTION_FETCH,
 				orderId,
 			} );
 

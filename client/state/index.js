@@ -58,6 +58,7 @@ import media from './media/reducer';
 import notices from './notices/reducer';
 import npsSurvey from './nps-survey/reducer';
 import oauth2Clients from './oauth2-clients/reducer';
+import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
@@ -86,7 +87,6 @@ import support from './support/reducer';
 import terms from './terms/reducer';
 import timezones from './timezones/reducer';
 import themes from './themes/reducer';
-import transactions from './transactions/reducer';
 import ui from './ui/reducer';
 import users from './users/reducer';
 import userDevices from './user-devices/reducer';
@@ -146,6 +146,7 @@ const reducers = {
 	notices,
 	npsSurvey,
 	oauth2Clients,
+	orderTransactions,
 	pageTemplates,
 	plugins,
 	plans,
@@ -174,7 +175,6 @@ const reducers = {
 	terms,
 	timezones,
 	themes,
-	transactions,
 	ui,
 	users,
 	userDevices,
