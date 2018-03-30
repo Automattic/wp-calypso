@@ -31,7 +31,7 @@ class GoogleMyBusinessNewAccount extends Component {
 	}
 
 	goBack = () => {
-		page.back( `/google-my-business/${ this.props.siteSlug }` );
+		page.back( `/google-my-business/${ this.props.siteSlug }/select-business-type` );
 	};
 
 	trackCreateMyListingClick = () => {
