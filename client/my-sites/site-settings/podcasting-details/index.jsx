@@ -199,7 +199,7 @@ class PodcastingDetails extends Component {
 								height={ 200 }
 							/>
 							{ isPodcastingEnabled && (
-								<Button onClick={ this.handleClearCategory } scary>
+								<Button onClick={ this.onCategoryCleared } scary>
 									{ translate( 'Disable Podcast' ) }
 								</Button>
 							) }
@@ -245,6 +245,12 @@ class PodcastingDetails extends Component {
 		const event = { target: { value: category.slug } };
 
 		onChangeField( 'podcasting_archive' )( event );
+	};
+
+	onCategoryCleared = () => {
+		const { onChangeField } = this.props;
+
+		onChangeField( 'podcasting_archive' )( { target: { value: '' } } );
 	};
 }
 
