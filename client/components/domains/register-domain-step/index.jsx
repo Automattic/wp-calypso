@@ -50,8 +50,22 @@ import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
 } from 'state/domains/suggestions/selectors';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+
 import { abtest } from 'lib/abtest';
+import {
+	getStrippedDomainBase,
+	getTldWeightOverrides,
+	isFreeOrUnknownSuggestion,
+	isNumberString,
+} from 'components/domains/register-domain-step/utility';
+import {
+	recordDomainAvailabilityReceive,
+	recordMapDomainButtonClick,
+	recordSearchFormSubmit,
+	recordSearchFormView,
+	recordSearchResultsReceive,
+	recordTransferDomainButtonClick,
+} from 'components/domains/register-domain-step/analytics';
 
 const domains = wpcom.domains();
 
@@ -67,10 +81,6 @@ let searchStackTimer = null;
 let lastSearchTimestamp = null;
 let searchCount = 0;
 let recordSearchFormSubmitWithDispatch;
-
-function isNumberString( string ) {
-	return /^[0-9_]+$/.test( string );
-}
 
 function getQueryObject( props ) {
 	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
@@ -223,7 +233,7 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		if ( error && error.error ) {
-			//don't modify global state
+			// don't modify global state
 			const queryObject = getQueryObject( nextProps );
 			if ( queryObject ) {
 				this.showValidationErrorMessage( queryObject.query, error.error );
@@ -412,12 +422,6 @@ class RegisterDomainStep extends React.Component {
 		);
 	};
 
-	getTldWeightOverrides() {
-		const { designType } = this.props;
-
-		return designType && designType === 'blog' ? 'design_type_blog' : null;
-	}
-
 	checkDomainAvailability = ( domain, timestamp ) => {
 		if (
 			! domain.match(
@@ -483,7 +487,7 @@ class RegisterDomainStep extends React.Component {
 			quantity: suggestionQuantity,
 			include_wordpressdotcom: false,
 			include_dotblogsubdomain: false,
-			tld_weight_overrides: this.getTldWeightOverrides(),
+			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: searchVendor,
 			vertical: this.props.surveyVertical,
 			...this.getActiveFiltersForAPI(),
@@ -544,15 +548,13 @@ class RegisterDomainStep extends React.Component {
 			return suggestion.domain_name;
 		} );
 
-		const isFreeOrUnknown = suggestion =>
-			suggestion.is_free === true || suggestion.status === domainAvailability.UNKNOWN;
-		const strippedDomainBase = this.getStrippedDomainBase( domain );
+		const strippedDomainBase = getStrippedDomainBase( domain );
 		const exactMatchBeforeTld = suggestion =>
 			suggestion.domain_name === this.state.exactMatchDomain ||
 			startsWith( suggestion.domain_name, `${ strippedDomainBase }.` );
 		const bestAlternative = suggestion =>
 			! exactMatchBeforeTld( suggestion ) && suggestion.isRecommended !== true;
-		const availableSuggestions = reject( suggestions, isFreeOrUnknown );
+		const availableSuggestions = reject( suggestions, isFreeOrUnknownSuggestion );
 
 		const recommendedSuggestion = find( availableSuggestions, exactMatchBeforeTld );
 		if ( recommendedSuggestion ) {
@@ -684,16 +686,6 @@ class RegisterDomainStep extends React.Component {
 			this.getSubdomainSuggestions( domain, timestamp );
 		}
 	};
-
-	getStrippedDomainBase( domain ) {
-		let strippedDomainBase = domain;
-		const lastIndexOfDot = strippedDomainBase.lastIndexOf( '.' );
-
-		if ( lastIndexOfDot !== -1 ) {
-			strippedDomainBase = strippedDomainBase.substring( 0, lastIndexOfDot );
-		}
-		return strippedDomainBase.replace( /[ .]/g, '' );
-	}
 
 	initialSuggestions() {
 		let domainRegistrationSuggestions;
@@ -884,80 +876,6 @@ class RegisterDomainStep extends React.Component {
 		this.setState( { notice: message, noticeSeverity: severity } );
 	}
 }
-
-const recordMapDomainButtonClick = section =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Search', 'Clicked "Map it" Button' ),
-		recordTracksEvent( 'calypso_domain_search_results_mapping_button_click', { section } )
-	);
-
-const recordTransferDomainButtonClick = ( section, source ) =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Search', 'Clicked "Use a Domain I own" Button' ),
-		recordTracksEvent( 'calypso_domain_search_results_transfer_button_click', { section, source } )
-	);
-
-const recordSearchFormSubmit = ( searchBoxValue, section, timeDiffFromLastSearch, count, vendor ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Search',
-			'Submitted Search Form',
-			'Search Box Value',
-			searchBoxValue
-		),
-		recordTracksEvent( 'calypso_domain_search', {
-			search_box_value: searchBoxValue,
-			seconds_from_last_search: timeDiffFromLastSearch,
-			search_count: count,
-			search_vendor: vendor,
-			section,
-		} )
-	);
-
-const recordSearchFormView = section =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Search', 'Landed on Search' ),
-		recordTracksEvent( 'calypso_domain_search_pageview', { section } )
-	);
-
-const recordSearchResultsReceive = (
-	searchQuery,
-	searchResults,
-	responseTimeInMs,
-	resultCount,
-	section
-) =>
-	composeAnalytics(
-		recordGoogleEvent( 'Domain Search', 'Receive Results', 'Response Time', responseTimeInMs ),
-		recordTracksEvent( 'calypso_domain_search_results_suggestions_receive', {
-			search_query: searchQuery,
-			results: searchResults.join( ';' ),
-			response_time_ms: responseTimeInMs,
-			result_count: resultCount,
-			section,
-		} )
-	);
-
-const recordDomainAvailabilityReceive = (
-	searchQuery,
-	availableStatus,
-	responseTimeInMs,
-	section
-) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Search',
-			'Domain Availability Result',
-			'Domain Available Status',
-			availableStatus
-		),
-		recordTracksEvent( 'calypso_domain_search_results_availability_receive', {
-			search_query: searchQuery,
-			available_status: availableStatus,
-			response_time: responseTimeInMs,
-			section,
-		} )
-	);
 
 export default connect(
 	( state, props ) => {
