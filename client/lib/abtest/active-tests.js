@@ -102,7 +102,7 @@ export default {
 		datestamp: '20180320',
 		variations: {
 			original: 50,
-			mobile: 50,
+			vertical: 50,
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,
