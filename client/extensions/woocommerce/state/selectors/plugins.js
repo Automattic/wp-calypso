@@ -2,13 +2,14 @@
 /**
  * External dependencies
  */
-import { find } from 'lodash';
+import { every, find, keys } from 'lodash';
 /**
  * Internal dependencies
  */
 import config from 'config';
-import { getSelectedSiteWithFallback } from '../sites/selectors';
 import { getPlugins, isRequestingForSites } from 'state/plugins/installed/selectors';
+import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
+import { getSelectedSiteWithFallback } from '../sites/selectors';
 
 export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state ) ) => {
 	if ( ! config.isEnabled( 'woocommerce/extension-wcservices' ) ) {
@@ -23,4 +24,20 @@ export const isWcsEnabled = ( state, siteId = getSelectedSiteWithFallback( state
 
 	const plugins = getPlugins( state, siteIds, 'active' );
 	return Boolean( find( plugins, { slug: 'woocommerce-services' } ) );
+};
+
+export const areAllRequiredPluginsActive = (
+	state,
+	siteId = getSelectedSiteWithFallback( state )
+) => {
+	const siteIds = [ siteId ];
+
+	if ( isRequestingForSites( state, siteIds ) ) {
+		return null;
+	}
+
+	const requiredPlugins = keys( getRequiredPluginsList() );
+	const plugins = getPlugins( state, siteIds, 'active' );
+
+	return every( requiredPlugins, slug => !! find( plugins, { slug } ) );
 };
