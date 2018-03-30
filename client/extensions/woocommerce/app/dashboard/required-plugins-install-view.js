@@ -20,6 +20,7 @@ import Button from 'components/button';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
+import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
@@ -131,16 +132,6 @@ class RequiredPluginsInstallView extends Component {
 		}
 	};
 
-	getRequiredPluginsList = () => {
-		const { translate } = this.props;
-
-		return {
-			woocommerce: translate( 'WooCommerce' ),
-			'woocommerce-gateway-stripe': translate( 'WooCommerce Stripe Gateway' ),
-			'woocommerce-services': translate( 'WooCommerce Services' ),
-		};
-	};
-
 	doInitialization = () => {
 		const { site, sitePlugins, wporg } = this.props;
 		const { workingOn } = this.state;
@@ -171,7 +162,7 @@ class RequiredPluginsInstallView extends Component {
 
 		// Iterate over the required plugins, fetching plugin
 		// data from wordpress.org for each into state
-		const requiredPlugins = this.getRequiredPluginsList();
+		const requiredPlugins = getRequiredPluginsList();
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug in requiredPlugins ) {
 			const pluginData = getPlugin( wporg, requiredPluginSlug );
