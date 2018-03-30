@@ -23,12 +23,8 @@ export default function() {
 	);
 
 	page(
-		'/google-my-business/:site/select-business-type',
-		siteSelection,
-		navigation,
-		selectBusinessType,
-		makeLayout,
-		clientRender
+		'/google-my-business/:site',
+		context => page.redirect( `/google-my-business/${ context.params.site }/select-business-type` )
 	);
 
 	if ( config.isEnabled( 'google-my-business' ) ) {
@@ -41,4 +37,13 @@ export default function() {
 			clientRender
 		);
 	}
+
+	page(
+		'/google-my-business/:site/select-business-type',
+		siteSelection,
+		navigation,
+		selectBusinessType,
+		makeLayout,
+		clientRender
+	);
 }
