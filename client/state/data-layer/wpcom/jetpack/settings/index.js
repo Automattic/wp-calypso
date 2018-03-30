@@ -17,6 +17,7 @@ import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 } from 'state/action-types';
 import { getSiteUrl, getUnconnectedSiteUrl } from 'state/selectors';
+import { normalizeSettings } from 'state/jetpack/settings/utils';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
@@ -30,7 +31,7 @@ export const fromApi = response => {
 		throw new Error( 'missing settings' );
 	}
 
-	return response.data;
+	return normalizeSettings( response.data );
 };
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
