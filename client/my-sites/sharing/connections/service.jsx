@@ -495,6 +495,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
+				service,
 				siteId,
 				siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
 			};
