@@ -42,11 +42,11 @@ function streamKeySuffix( streamKey ) {
 
 const PER_PAGE = 6;
 
-export const getQueryString = ( { metaExtras, extras0 } = {} ) => ( extras = {} ) => {
-	const meta = `post,discover_original_post${ !! metaExtras ? ',' + metaExtras : '' }`;
-	return { orderBy: 'date', meta, ...extras, ...extras0 };
+export const getQueryString = ( extras = {} ) => {
+	const meta = 'post,discover_original_post';
+	return { orderBy: 'date', meta, ...extras };
 };
-const defaultQueryFn = getQueryString();
+const defaultQueryFn = getQueryString;
 
 // Each object is a composed of:
 //   path: a function that given the action, returns The API path to hit
@@ -79,7 +79,7 @@ const streamApis = {
 	},
 	'conversations-a8c': {
 		path: () => '/read/conversations',
-		query: getQueryString( { extras0: { index: 'a8c' } } ),
+		query: extras => getQueryString( { ...extras, index: 'a8c' } ),
 	},
 	likes: {
 		path: () => '/read/liked',
@@ -146,14 +146,9 @@ export function requestPage( action ) {
 	} );
 }
 
-/**
- * Transform the response from the API
- * @param  {Object} data The data from the API request
- * @return {Object}      The transformed data
- */
 export function fromApi( data ) {
+	// TODO: is there any transformation to do here?
 	return data;
-	// return ( data && data.posts ) || [];
 }
 
 export function handlePage( action, data ) {
