@@ -58,6 +58,7 @@ class RequiredPluginsInstallView extends Component {
 		site: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
 		} ),
+		title: PropTypes.string,
 	};
 
 	constructor( props ) {
@@ -395,7 +396,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	render() {
-		const { hasPendingAT, translate } = this.props;
+		const { hasPendingAT, title, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
@@ -409,7 +410,7 @@ class RequiredPluginsInstallView extends Component {
 					<SetupHeader
 						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 						imageWidth={ 160 }
-						title={ translate( 'Building your store' ) }
+						title={ title || translate( 'Building your store' ) }
 						subtitle={ translate( "Give us a minute and we'll move right along." ) }
 					>
 						<ProgressBar value={ progress } total={ totalSeconds } isPulsing />

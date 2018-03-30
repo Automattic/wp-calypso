@@ -71,13 +71,15 @@ class App extends Component {
 	}
 
 	maybeRenderChildren() {
-		const { allRequiredPluginsActive, children, pluginsLoaded } = this.props;
+		const { allRequiredPluginsActive, children, pluginsLoaded, translate } = this.props;
 		if ( ! pluginsLoaded ) {
 			return null;
 		}
 
 		if ( pluginsLoaded && ! allRequiredPluginsActive ) {
-			return <RequiredPluginsInstallView skipConfirmation />;
+			return (
+				<RequiredPluginsInstallView title={ translate( 'Updating your store' ) } skipConfirmation />
+			);
 		}
 
 		return children;
