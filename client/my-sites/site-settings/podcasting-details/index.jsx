@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { map, toPairs, pick, get, find, flowRight } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -32,7 +33,13 @@ import { getTerms, isRequestingTermsForQueryIgnoringPage } from 'state/terms/sel
 
 class PodcastingDetails extends Component {
 	renderExplicitContent() {
-		const { fields, handleSelect, isRequestingSettings, translate } = this.props;
+		const {
+			fields,
+			handleSelect,
+			isRequestingSettings,
+			translate,
+			isPodcastingEnabled,
+		} = this.props;
 
 		return (
 			<FormFieldset>
@@ -42,7 +49,7 @@ class PodcastingDetails extends Component {
 					name="podcasting_explicit"
 					onChange={ handleSelect }
 					value={ fields.podcasting_explicit || 'no' }
-					disabled={ isRequestingSettings }
+					disabled={ isRequestingSettings || ! isPodcastingEnabled }
 				>
 					<option value="no">{ translate( 'No' ) }</option>
 					<option value="yes">{ translate( 'Yes' ) }</option>
@@ -74,7 +81,7 @@ class PodcastingDetails extends Component {
 	}
 
 	renderTextField( { FormComponent = FormInput, key, label } ) {
-		const { fields, isRequestingSettings, onChangeField } = this.props;
+		const { fields, isRequestingSettings, onChangeField, isPodcastingEnabled } = this.props;
 
 		return (
 			<FormFieldset>
@@ -85,21 +92,21 @@ class PodcastingDetails extends Component {
 					type="text"
 					value={ decodeEntities( fields[ key ] ) || '' }
 					onChange={ onChangeField( key ) }
-					disabled={ isRequestingSettings }
+					disabled={ isRequestingSettings || ! isPodcastingEnabled }
 				/>
 			</FormFieldset>
 		);
 	}
 
 	renderTopicSelector( key ) {
-		const { fields, handleSelect, isRequestingSettings } = this.props;
+		const { fields, handleSelect, isRequestingSettings, isPodcastingEnabled } = this.props;
 		return (
 			<FormSelect
 				id={ key }
 				name={ key }
 				onChange={ handleSelect }
 				value={ fields[ key ] || 0 }
-				disabled={ isRequestingSettings }
+				disabled={ isRequestingSettings || ! isPodcastingEnabled }
 			>
 				<option value="0">None</option>
 				{ map( toPairs( podcastingTopics ), ( [ topic, subtopics ] ) => {
@@ -142,10 +149,21 @@ class PodcastingDetails extends Component {
 	}
 
 	render() {
-		const { handleSubmitForm, siteSlug, siteId, podcastingCategoryId, translate } = this.props;
+		const {
+			handleSubmitForm,
+			siteSlug,
+			siteId,
+			podcastingCategoryId,
+			translate,
+			isPodcastingEnabled,
+		} = this.props;
 		if ( ! siteId ) {
 			return null;
 		}
+
+		const classes = classNames( 'podcasting-details__wrapper', {
+			'is-disabled': ! isPodcastingEnabled,
+		} );
 
 		const writingHref = `/settings/writing/${ siteSlug }`;
 
@@ -163,7 +181,7 @@ class PodcastingDetails extends Component {
 					>
 						<h1>{ translate( 'Podcasting Settings' ) }</h1>
 					</HeaderCake>
-					<Card className="podcasting-details__wrapper">
+					<Card className={ classes }>
 						<FormFieldset className="podcasting-details__category-selector">
 							<QueryTerms siteId={ siteId } taxonomy="category" />
 							<FormLabel>{ translate( 'Podcast Category' ) }</FormLabel>
@@ -260,10 +278,16 @@ const connectComponent = connect( ( state, ownProps ) => {
 		}
 	}
 
+	const isPodcastingEnabled = !! (
+		podcastingCategoryId ||
+		( podcastingCategorySlug && podcastingCategorySlug !== '0' )
+	);
+
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		podcastingCategoryId,
+		isPodcastingEnabled,
 		isRequestingCategories: isRequestingTermsForQueryIgnoringPage( state, siteId, 'category', {} ),
 	};
 } );
