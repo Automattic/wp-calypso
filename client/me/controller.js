@@ -30,8 +30,7 @@ export default {
 	},
 
 	profile( context, next ) {
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		const ProfileComponent = require( 'me/profile' ).default;
 
@@ -43,8 +42,7 @@ export default {
 	},
 
 	apps( context, next ) {
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		context.primary = React.createElement( AppsComponent, {
 			userSettings: userSettings,
@@ -56,8 +54,7 @@ export default {
 	nextSteps( context, next ) {
 		const isWelcome = 'welcome' === context.params.welcome;
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( isWelcome ) {
 			context.store.dispatch( setSection( null, { hasSidebar: false } ) );
