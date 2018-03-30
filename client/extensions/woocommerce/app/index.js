@@ -46,10 +46,15 @@ class App extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { siteId } = this.props;
+		const { allRequiredPluginsActive, pluginsLoaded, siteId } = this.props;
 		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
-		if ( oldSiteId !== siteId ) {
+		// If the site has changed, or plugin status has changed, re-fetch data
+		if (
+			siteId !== oldSiteId ||
+			prevProps.allRequiredPluginsActive !== allRequiredPluginsActive ||
+			prevProps.pluginsLoaded !== pluginsLoaded
+		) {
 			this.fetchData( this.props );
 		}
 	}
@@ -59,6 +64,7 @@ class App extends Component {
 			return;
 		}
 
+		// We don't know yet if we can get a response
 		if ( ! pluginsLoaded || ! allRequiredPluginsActive ) {
 			return;
 		}

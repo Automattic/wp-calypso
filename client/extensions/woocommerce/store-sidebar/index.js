@@ -55,13 +55,19 @@ class StoreSidebar extends Component {
 		}
 	};
 
-	componentWillReceiveProps = ( { siteId } ) => {
-		const oldSiteId = this.props.siteId;
+	componentDidUpdate( prevProps ) {
+		const { allRequiredPluginsActive, pluginsLoaded, siteId } = this.props;
+		const oldSiteId = prevProps.siteId ? prevProps.siteId : null;
 
-		if ( oldSiteId !== siteId ) {
+		// If the site has changed, or plugin status has changed, re-fetch data
+		if (
+			siteId !== oldSiteId ||
+			prevProps.allRequiredPluginsActive !== allRequiredPluginsActive ||
+			prevProps.pluginsLoaded !== pluginsLoaded
+		) {
 			this.fetchData();
 		}
-	};
+	}
 
 	fetchData = () => {
 		const { allRequiredPluginsActive, pluginsLoaded, productsLoaded, siteId } = this.props;
