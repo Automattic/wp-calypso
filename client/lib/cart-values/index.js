@@ -40,6 +40,14 @@ function applyCoupon( coupon ) {
 	};
 }
 
+function updateCartPaymentCountry( paymentCountry ) {
+	return function( cart ) {
+		return update( cart, {
+			payment_country: { $set: paymentCountry },
+		} );
+	};
+}
+
 function canRemoveFromCart( cart, cartItem ) {
 	if ( productsValues.isCredits( cartItem ) ) {
 		return false;
@@ -229,6 +237,7 @@ export {
 	isPaymentMethodEnabled,
 	paymentMethodClassName,
 	paymentMethodName,
+	updateCartPaymentCountry,
 };
 
 export default {

@@ -20,6 +20,7 @@ export {
 	removeItem,
 	removePrivacyFromAllDomains,
 	showCartOnMobile,
+	updateCartPaymentCountry,
 } from './cart';
 
 export {

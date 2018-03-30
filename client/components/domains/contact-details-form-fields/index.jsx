@@ -24,11 +24,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getCountryStates } from 'state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
+import { Input, HiddenInput } from 'my-sites/domains/components/form';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
 import FormButton from 'components/forms/form-button';
 import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
+import PaymentCountrySelect from 'components/payment-country-select';
 import { countries } from 'components/phone-input/data';
 import { forDomainRegistrations as countriesList } from 'lib/countries-list';
 import formState from 'lib/form-state';
@@ -240,24 +241,29 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handleFieldChange = event => {
-		const { name, value } = event.target;
+	updateCountry = ( fieldName, fieldValue ) => {
 		const { phone = {} } = this.state.form;
 
-		if ( name === 'country-code' ) {
-			this.formStateController.handleFieldChange( {
-				name: 'state',
-				value: '',
-				hideError: true,
+		// Update fields that depend on the country.
+		this.formStateController.handleFieldChange( {
+			name: 'state',
+			value: '',
+			hideError: true,
+		} );
+		if ( fieldValue && ! phone.value ) {
+			this.setState( {
+				phoneCountryCode: fieldValue,
 			} );
-
-			if ( value && ! phone.value ) {
-				this.setState( {
-					phoneCountryCode: value,
-				} );
-			}
 		}
 
+		this.formStateController.handleFieldChange( {
+			name: fieldName,
+			value: fieldValue,
+		} );
+	};
+
+	handleFieldChange = event => {
+		const { name, value } = event.target;
 		this.formStateController.handleFieldChange( {
 			name,
 			value,
@@ -353,10 +359,12 @@ export class ContactDetailsFormFields extends Component {
 
 				{ this.createField(
 					'country-code',
-					CountrySelect,
+					PaymentCountrySelect,
 					{
 						label: translate( 'Country' ),
 						countriesList,
+						onChange: noop,
+						onCountrySelected: this.updateCountry,
 					},
 					true
 				) }
