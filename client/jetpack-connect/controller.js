@@ -282,7 +282,9 @@ export function plansLanding( context, next ) {
 
 	context.store.dispatch( setTitle( translate( 'Plans', { textOnly: true } ) ) );
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
+	analytics.tracks.recordEvent( 'calypso_plans_view', {
+		small_screen: isSmallScreen(),
+	} );
 	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
@@ -322,4 +324,15 @@ export function plansSelection( context, next ) {
 		</CheckoutData>
 	);
 	next();
+}
+
+// Function to filter small screens
+// Used in AB test: mobilePlansTablesOnSignup_20180320
+// Returns 1 if screen is less than, or equal to, 660 pixels wide
+function isSmallScreen() {
+	if ( window.matchMedia( '(max-width: 660px)' ).matches ) {
+		return '1';
+	}
+
+	return '0';
 }
