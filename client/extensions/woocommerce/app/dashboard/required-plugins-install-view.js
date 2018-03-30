@@ -1,10 +1,7 @@
 /** @format */
-/** @format */
-
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -23,7 +20,6 @@ import { getPlugins } from 'state/plugins/installed/selectors';
 import { getRequiredPluginsList } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import ProgressBar from 'components/progress-bar';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
@@ -399,7 +395,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	render() {
-		const { site, translate, hasPendingAT } = this.props;
+		const { hasPendingAT, translate } = this.props;
 		const { engineState, progress, totalSeconds } = this.state;
 
 		if ( ! hasPendingAT && 'CONFIRMING' === engineState ) {
@@ -410,7 +406,6 @@ class RequiredPluginsInstallView extends Component {
 			<div className="dashboard__setup-wrapper setup__wrapper">
 				<SetupNotices />
 				<div className="card dashboard__plugins-install-view">
-					{ site && <QueryJetpackPlugins siteIds={ [ site.ID ] } /> }
 					<SetupHeader
 						imageSource={ '/calypso/images/extensions/woocommerce/woocommerce-store-creation.svg' }
 						imageWidth={ 160 }
