@@ -20,10 +20,10 @@ import QueryKeyringServices from 'components/data/query-keyring-services';
 class GoogleMyBusinessConnectButton extends SharingService {
 	static propTypes = {
 		...SharingService.propTypes,
+		children: PropTypes.node.isRequired,
 		deleteStoredKeyringConnection: PropTypes.func,
 		onClick: PropTypes.func,
 		onConnect: PropTypes.func,
-		children: PropTypes.node.isRequired,
 	};
 
 	static defaultProps = {
@@ -42,7 +42,7 @@ class GoogleMyBusinessConnectButton extends SharingService {
 		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	onClick = () => {
+	handleClick = () => {
 		this.performAction();
 		this.props.onClick();
 	};
@@ -97,7 +97,7 @@ class GoogleMyBusinessConnectButton extends SharingService {
 		}
 
 		return (
-			<Button primary={ primary } scary={ warning } onClick={ this.onClick } disabled={ isPending }>
+			<Button primary={ primary } scary={ warning } onClick={ this.handleClick } disabled={ isPending }>
 				{ label }
 			</Button>
 		);
