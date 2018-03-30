@@ -6,6 +6,7 @@ This is a [`Card` component](../../components/card) that has a call-to-action bu
 ## Usage
 
 ```es6
+import { noop } from 'lodash';
 import ActionCard from 'blocks/action-card';
 
 render() {
@@ -24,59 +25,73 @@ render() {
 }
 ```
 
-Optionally, children can be provided to be rendered instead the call to action Button.
-
 ## Props
 
+### `children`
+
+  - **Type:** `React node`
+  - **Required:** `no`
+  - **Default:** `undefined`
+
+If a child is passed, it will be used in place of the button (hence rendering button props useless).
+
 ### `headerText`
+
   - **Type:** `String`
   - **Required:** `yes`
 
-Header text of the card
+Header text of the card.
 
 ### `mainText`
+
   - **Type:** `String`
   - **Required:** `yes`
 
-Text that describes the header
+Text appearing below the header.
 
 ### `buttonText`
+
   - **Type:** `String`
   - **Required:** `yes`
 
-Label for the call to action button
+Label of the button.
 
 ### `buttonIcon`
+
   - **Type:** `String`
   - **Required:** `no`
   - **Default:** `undefined`
 
-GridIcon name to place on the button
+Name of the GridIcon icon to place on the button.
 
 ### `buttonPrimary`
+
   - **Type:** `bool`
   - **Required:** `no`
   - **Default:** `undefined`
 
-Whether pass true to the button's primary attribute
+Flag indicating if the button is primary or not.
 
 ### `buttonHref`
+
   - **Type:** `String`
   - **Required:** `no`
   - **Default:** `undefined`
 
-Href to pass to the button
+Button `href` attribute.
 
 ### `buttonTarget`
+
   - **Type:** `String`
   - **Required:** `no`
   - **Default:** `undefined`
 
-Button target, to use in conjunction with `buttonHref`
+Button `target` attribute, to use in conjunction with the `buttonHref` prop.
 
 ### `buttonOnClick`
+
   - **Type:** `Function`
   - **Required:** `no`
   - **Default:** `undefined`
 
-Button onClick handler
+Button click event handler.
