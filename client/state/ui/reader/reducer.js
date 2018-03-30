@@ -13,7 +13,7 @@ import cardExpansions from './card-expansions/reducer';
  * Holds the last viewed stream for the purposes of keyboard navigation
  */
 export const currentStream = ( state = null, action ) =>
-	action.type === READER_VIEW_STREAM ? action.payload.streamKey : state;
+	action && action.type === READER_VIEW_STREAM ? action.streamKey : state;
 
 export default combineReducers( {
 	sidebar,
