@@ -36,28 +36,64 @@
 }
 
 .editor-revisions-list__header {
-	$editor-revisions-list-header-height: 46px;
 	$editor-revisions-list-header-font-size: 16px;
+	display: flex;
 	padding: 0 16px;
-	height: $editor-revisions-list-header-height;
-	line-height: $editor-revisions-list-header-height;
+	height: 48px;
+	box-sizing: border-box;
 	color: $gray-text-min;
 	background: $white;
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 
-	.editor-revisions-list.is-loading & {
-		position: relative;
+	@include breakpoint( '>1040px' ) {
+		height: 40px;
+		border-bottom: 0;
+	}
 
-		&:before {
+	.editor-revisions-list.is-loading & {
+		&::before {
 			content: '';
 			display: block;
-			position: absolute;
-			top: ($editor-revisions-list-header-height - $editor-revisions-list-header-font-size) / 2;
 			width: 50%;
 			height: $editor-revisions-list-header-font-size;
+			align-self: center;
 			@include placeholder(23%);
 		}
 	}
+}
+
+.editor-revisions-list__count {
+	align-self: center;
+}
+
+@include breakpoint ('>1040px') {
+	.editor-revisions-list.is-loading {
+		.editor-revisions-list__header::before {
+			align-self: flex-end;
+		}
+	}
+	.editor-revisions-list__count {
+		align-self: flex-end;
+	}
+}
+
+// Diff View Buttons
+.editor-revisions-list__view-buttons {
+	display: none;
+	@include breakpoint( '>1040px' ) {
+		display: flex;
+		height: 60px;
+		align-items: center;
+		padding: 0 16px;
+		box-sizing: border-box;
+		background: #fff;
+		border-bottom: 1px solid #d9e3ea;
+	}
+}
+
+.editor-revisions-list__unified-button,
+.editor-revisions-list__split-button {
+	width: 50%;
 }
 
 // Revision Navigation Buttons
@@ -65,6 +101,7 @@
 	display: flex;
 	flex-direction: row-reverse;
 	height: 40px;
+	box-sizing: border-box;
 	color: $gray-text-min;
 	border-bottom: 1px solid darken($sidebar-bg-color, 5%);
 	.button:first-child,
@@ -159,6 +196,10 @@
 	@include breakpoint( '<660px' ) {
 		top: 88px;
 		overflow-y: hidden;
+	}
+
+	@include breakpoint( '>1040px' ) {
+		top: 124px;
 	}
 }
 

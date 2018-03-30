@@ -14,6 +14,7 @@ import { get, head, isEmpty, last, map } from 'lodash';
  * Internal dependencies
  */
 import EditorRevisionsListHeader from './header';
+import EditorRevisionsListViewButtons from './view-buttons';
 import EditorRevisionsListNavigation from './navigation';
 import EditorRevisionsListItem from './item';
 import { selectPostRevision } from 'state/posts/revisions/actions';
@@ -147,6 +148,7 @@ class EditorRevisionsList extends PureComponent {
 		return (
 			<div className={ classes }>
 				<EditorRevisionsListHeader numRevisions={ revisions.length } />
+				<EditorRevisionsListViewButtons />
 				<EditorRevisionsListNavigation
 					nextIsDisabled={ nextIsDisabled }
 					prevIsDisabled={ prevIsDisabled }
