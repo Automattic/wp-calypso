@@ -5,12 +5,6 @@
  */
 
 import debugFactory from 'debug';
-import { some } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import { NO_BLOG_ID_PATHS } from 'lib/analytics/constants';
 
 /**
  * Module variables
@@ -102,6 +96,8 @@ export function shouldSkipAds() {
 	return result;
 }
 
+const SITE_FRAGMENT_REGEX = /\/:site(\/|$)/;
+
 /**
  * Check if a path should report the currently selected site ID.
  *
@@ -111,9 +107,9 @@ export function shouldSkipAds() {
  * @param {String} path The tracked path.
  * @returns {Boolean} If the report should null `blog_id`.
  */
-export const shouldReportOmitBlogId = path =>
-	!! path &&
-	some(
-		NO_BLOG_ID_PATHS,
-		noBlogIdPath => path === noBlogIdPath || path.indexOf( noBlogIdPath + '/' ) === 0
-	);
+export const shouldReportOmitBlogId = path => {
+	if ( ! path ) {
+		return true;
+	}
+	return ! SITE_FRAGMENT_REGEX.test( path );
+};
