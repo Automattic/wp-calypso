@@ -15,7 +15,7 @@ import { makeLayout, render as clientRender } from 'controller';
 
 export default function() {
 	page(
-		'/posts/:author?/:status?/:domain?',
+		'/posts/:author(my)?/:status(published|drafts|scheduled|trashed)?/:domain?',
 		siteSelection,
 		navigation,
 		postsController.posts,
