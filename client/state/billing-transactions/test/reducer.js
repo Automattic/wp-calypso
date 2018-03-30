@@ -34,6 +34,7 @@ describe( 'reducer', () => {
 			'items',
 			'sendingReceiptEmail',
 			'individualTransactions',
+			'transactionFilters',
 		] );
 	} );
 
