@@ -13,12 +13,17 @@ import {
 	announceSaveFailure,
 	retryOrAnnounceSaveFailure,
 	fromApi,
+	toApi,
 } from '../';
 import {
 	JETPACK_ONBOARDING_SETTINGS_SAVE,
 	JETPACK_ONBOARDING_SETTINGS_UPDATE,
 } from 'state/action-types';
-import { normalizeSettings } from 'state/jetpack/settings/utils';
+import {
+	filterSettingsByActiveModules,
+	normalizeSettings,
+	sanitizeSettings,
+} from 'state/jetpack/settings/utils';
 import {
 	saveJetpackSettingsSuccess,
 	updateJetpackSettings,
@@ -343,5 +348,17 @@ describe( 'fromApi', () => {
 			onboarding: { siteTitle: 'Yet Another Site Title' },
 		};
 		expect( fromApi( { data: settings } ) ).toEqual( normalizeSettings( settings ) );
+	} );
+} );
+
+describe( 'toApi', () => {
+	test( 'should apply filterSettingsByActiveModules and sanitizeSettings', () => {
+		const settings = {
+			jetpack_portfolio: true,
+			onboarding: { siteTitle: 'Yet Another Site Title' },
+		};
+		expect( toApi( settings ) ).toEqual(
+			filterSettingsByActiveModules( sanitizeSettings( settings ) )
+		);
 	} );
 } );
