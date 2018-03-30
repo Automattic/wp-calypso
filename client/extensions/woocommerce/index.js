@@ -249,6 +249,8 @@ function addTracksContext( context, next ) {
 }
 
 export default function() {
+	page( '/store', siteSelection, sites, makeLayout, clientRender );
+
 	// Add pages that use the store navigation
 	getStorePages().forEach( function( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {
