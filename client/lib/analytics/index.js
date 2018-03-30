@@ -16,7 +16,7 @@ import { assign, isObjectLike, isUndefined, omit, pickBy, startsWith, times } fr
 import config from 'config';
 import emitter from 'lib/mixins/emitter';
 import { ANALYTICS_SUPER_PROPS_UPDATE } from 'state/action-types';
-import { doNotTrack, isPiiUrl } from 'lib/analytics/utils';
+import { doNotTrack, isPiiUrl, shouldReportOmitBlogId } from 'lib/analytics/utils';
 import { loadScript } from 'lib/load-script';
 import {
 	retarget,
@@ -289,7 +289,8 @@ const analytics = {
 
 			if ( _superProps ) {
 				_dispatch && _dispatch( { type: ANALYTICS_SUPER_PROPS_UPDATE } );
-				superProperties = _superProps.getAll( _selectedSite, _siteCount );
+				const site = shouldReportOmitBlogId( eventProperties.path ) ? null : _selectedSite;
+				superProperties = _superProps.getAll( site, _siteCount );
 				eventProperties = assign( {}, eventProperties, superProperties ); // assign to a new object so we don't modify the argument
 			}
 
