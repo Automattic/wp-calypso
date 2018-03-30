@@ -38,7 +38,7 @@ export const fromApi = response => {
 	return normalizeSettings( response.data );
 };
 
-export const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
+const toApi = settings => filterSettingsByActiveModules( sanitizeSettings( settings ) );
 
 const receiveJetpackOnboardingSettings = ( { dispatch }, { siteId }, settings ) => {
 	dispatch( updateJetpackSettings( siteId, settings ) );
