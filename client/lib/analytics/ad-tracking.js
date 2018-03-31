@@ -267,7 +267,6 @@ async function loadTrackingScripts( callback ) {
 	if ( isAdwordsEnabled ) {
 		scripts.push( GOOGLE_TRACKING_SCRIPT_URL );
 	}
-	scripts.push( 'chicken://example' );
 
 	if ( isBingEnabled ) {
 		scripts.push( BING_TRACKING_SCRIPT_URL );
