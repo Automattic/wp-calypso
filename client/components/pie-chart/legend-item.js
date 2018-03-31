@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 
-const COLOR_SAMPLE_SIZE = 30;
+const SVG_SIZE = 30;
 
 class LegendItem extends Component {
 	static propTypes = {
@@ -23,16 +23,14 @@ class LegendItem extends Component {
 			<div className={ 'pie-chart__legend-item' }>
 				<div className={ 'pie-chart__legend-item-title' }>
 					<svg
-						height={ COLOR_SAMPLE_SIZE }
-						width={ COLOR_SAMPLE_SIZE }
-						viewBox={ `0 0 ${ COLOR_SAMPLE_SIZE } ${ COLOR_SAMPLE_SIZE }` }
-						className={ 'pie-chart__legend-item-title-sample' }
+						className={ 'pie-chart__legend-item-title-sample-drawing' }
+						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 					>
 						<circle
 							className={ `pie-chart__legend-sample-${ sectionNumber }` }
-							cx={ COLOR_SAMPLE_SIZE / 2 }
-							cy={ COLOR_SAMPLE_SIZE / 2 }
-							r={ COLOR_SAMPLE_SIZE / 2 }
+							cx={ SVG_SIZE / 2 }
+							cy={ SVG_SIZE / 2 }
+							r={ SVG_SIZE / 2 }
 						/>
 					</svg>
 					<div className={ 'pie-chart__legend-item-title-name' }>{ name }</div>

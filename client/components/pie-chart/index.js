@@ -39,9 +39,9 @@ class PieChart extends Component {
 					sectionNum = ( sectionNum + 1 ) % NUM_COLOR_SECTIONS;
 					return (
 						<path
+							className={ `pie-chart__chart-section-${ sectionNum }` }
 							key={ index.toString() }
 							d={ path }
-							className={ `pie-chart__chart-section-${ sectionNum }` }
 						/>
 					);
 				} ) }
@@ -56,9 +56,9 @@ class PieChart extends Component {
 			<div>
 				<div className={ 'pie-chart__chart' }>
 					<svg
+						className={ 'pie-chart__chart-drawing' }
 						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
 						preserveAspectRatio={ 'xMidYMid meet' }
-						className={ 'pie-chart__chart-drawing' }
 					>
 						{ this.drawChart() }
 					</svg>

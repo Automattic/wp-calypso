@@ -22,10 +22,6 @@
 	fill: $blue-light;
 }
 
-.pie-chart__legend-item-title-sample {
-	padding-right: 7px;
-}
-
 .pie-chart__chart {
 	display: flex;
 	flex-direction: column;
@@ -41,7 +37,7 @@
 .pie-chart__legend-item-title {
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
+	align-items: center;
 }
 
 .pie-chart__legend-item-sample {
@@ -58,8 +54,15 @@
 	font-size: 20px;
 }
 
+.pie-chart__legend-item-title-sample-drawing {
+	height: 20px;
+	width: 20px;
+	padding-right: 7px;
+}
+
 .pie-chart__legend-item-detail {
-	padding-left: 37px;
+	// .pie-chart__legend-item-title-sample-drawing padding-right + width
+	padding-left: 32px;
 }
 
 .pie-chart__legend-item-detail-value {
