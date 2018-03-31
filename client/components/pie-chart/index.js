@@ -24,7 +24,10 @@ class PieChart extends Component {
 	drawChart() {
 		const { data } = this.props;
 
-		const arcs = d3Pie().value( d => d.value )( data );
+		const arcs = d3Pie()
+			.startAngle( Math.PI )
+			.startAngle( -Math.PI )
+			.value( d => d.value )( data );
 		const arcGen = d3Arc()
 			.innerRadius( 0 )
 			.outerRadius( SVG_SIZE / 2 );
@@ -51,6 +54,7 @@ class PieChart extends Component {
 
 	render() {
 		const { data, plural } = this.props;
+		// const dataSorted = data.sort((a, b) => a - b );
 		const dataTotal = data.reduce( ( pv, cv ) => pv + cv.value, 0 );
 		return (
 			<div>
@@ -63,9 +67,7 @@ class PieChart extends Component {
 						{ this.drawChart() }
 					</svg>
 				</div>
-				<h2 className={ 'pie-chart__title' }>{ `${ dataTotal } Total ${
-					plural ? plural : ''
-				}` }</h2>
+				<h2 className={ 'pie-chart__title' }>{ `${ dataTotal } ${ plural ? plural : '' }` }</h2>
 				<div className={ 'pie-chart__legend' }>
 					{ data.map( ( datum, index ) => {
 						const sectionNumber = index % NUM_COLOR_SECTIONS;
@@ -75,7 +77,7 @@ class PieChart extends Component {
 								name={ datum.name }
 								value={ datum.value }
 								sectionNumber={ sectionNumber }
-								percent={ parseFloat( datum.value / dataTotal * 100 ).toFixed( 2 ) }
+								percent={ Math.round( datum.value / dataTotal * 100 ) }
 								description={ datum.description }
 							/>
 						);

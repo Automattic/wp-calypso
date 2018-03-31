@@ -21,22 +21,18 @@ export default class extends Component {
 				<PieChart
 					data={ [
 						{
-							value: 2,
-							name: 'Series 1',
-							description: 'The first series of data',
+							value: 362,
+							name: 'Direct',
+							description: 'Customers wh find your listing searching for your business or address',
 						},
 						{
-							value: 1,
-							name: 'Series 2',
-							description: 'The second series of data',
-						},
-						{
-							value: 5,
-							name: 'Series 3',
-							description: 'The final series of data',
+							value: 189,
+							name: 'Discovery',
+							description:
+								'Customers who find your listing searching for a category, product, or service',
 						},
 					] }
-					plural={ 'Data Points' }
+					plural={ 'Total Searches' }
 				/>
 			</Card>
 		);
