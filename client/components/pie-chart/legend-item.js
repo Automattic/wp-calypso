@@ -14,7 +14,7 @@ class LegendItem extends Component {
 		sectionNumber: PropTypes.number.isRequired,
 		value: PropTypes.number.isRequired,
 		description: PropTypes.string,
-		percent: PropTypes.number,
+		percent: PropTypes.string,
 	};
 
 	render() {

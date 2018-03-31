@@ -36,7 +36,6 @@ export default class extends Component {
 							description: 'The final series of data',
 						},
 					] }
-					radius={ 200 }
 					plural={ 'Data Points' }
 				/>
 			</Card>
