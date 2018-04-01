@@ -379,6 +379,8 @@ function setUpCSP( req, res, next ) {
 			"'report-sample'",
 			"'unsafe-eval'",
 			'stats.wp.com',
+			'https://widgets.wp.com',
+			'*.wordpress.com',
 			'https://apis.google.com',
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			`'nonce-${ req.context.analyticsScriptNonce }'`,
@@ -388,7 +390,14 @@ function setUpCSP( req, res, next ) {
 		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
-		'img-src': [ "'self'", '*.wp.com', 'https://www.google-analytics.com' ],
+		'img-src': [
+			"'self'",
+			'*.wp.com',
+			'*.files.wordpress.com',
+			'*.gravatar.com',
+			'https://www.google-analytics.com',
+			'https://amplifypixel.outbrain.com',
+		],
 		'frame-src': [ "'self'", 'https://public-api.wordpress.com', 'https://accounts.google.com/' ],
 		'font-src': [
 			"'self'",
@@ -397,7 +406,7 @@ function setUpCSP( req, res, next ) {
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],
-		'connect-src': [ "'self'", 'https://wordpress.com/' ],
+		'connect-src': [ "'self'", 'https://*.wordpress.com/', 'https://*.wp.com' ],
 		'report-uri': [ '/cspreport' ],
 	};
 
