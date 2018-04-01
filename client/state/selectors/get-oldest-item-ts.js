@@ -9,8 +9,8 @@ import { get } from 'lodash';
  *
  * @param  {Object}        state  Global state tree
  * @param  {number|string} siteId The site ID
- * @return {number}               Timestamp of oldest logged event, otherwise Infinity.
+ * @return {number}               Timestamp of oldest logged event, otherwise null.
  */
 export default function getOldestItemTs( state, siteId ) {
-	return get( state, [ 'activityLog', 'oldestItemTs', siteId ], Infinity );
+	return get( state, [ 'activityLog', 'oldestItemTs', siteId ], null );
 }
