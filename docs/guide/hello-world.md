@@ -85,14 +85,14 @@ import page from 'page';
  */
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection } from 'my-sites/controller';
-import { helloWorld } from './controller';
+import Controller from './controller';
 
 export default () => {
 	page(
 		'/hello-world/:domain?',
 		siteSelection,
 		navigation,
-		helloWorld,
+		Controller.helloWorld,
 		makeLayout,
 		clientRender
 	);
