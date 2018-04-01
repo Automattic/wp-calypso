@@ -13,7 +13,6 @@ import React from 'react';
 import ChecklistShow from '../checklist-show';
 
 export function show( context, next ) {
-	const { params } = context;
-	context.primary = <ChecklistShow displayMode={ params.displayMode } />;
+	context.primary = <ChecklistShow />;
 	next();
 }

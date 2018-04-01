@@ -307,7 +307,7 @@ class Checkout extends React.Component {
 		if ( domainReceiptId && receiptId ) {
 			// DO NOT assign the test here.
 			if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
-				return `/checklist/${ selectedSiteSlug }/gsuite`;
+				return `/checklist/${ selectedSiteSlug }?d=gsuite`;
 			}
 			return `/checkout/thank-you/${ selectedSiteSlug }/${ domainReceiptId }/with-gsuite/${ receiptId }`;
 		}
@@ -334,7 +334,7 @@ class Checkout extends React.Component {
 
 		// DO NOT assign the test here.
 		if ( 'show' === getABTestVariation( 'checklistThankYouForPaidUser' ) ) {
-			return `/checklist/${ selectedSiteSlug }/paid`;
+			return `/checklist/${ selectedSiteSlug }?d=paid`;
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
