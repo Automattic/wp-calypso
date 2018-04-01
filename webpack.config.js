@@ -174,6 +174,10 @@ const webpackConfig = {
 			},
 			getAliasesForExtensions()
 		),
+		// This is needed because babel doesn't play well with symlinks, this allows node_modules to
+		// work as symlinks (`npm link`) needed when developing one of the dependencies.
+		// Reference https://github.com/babel/babel-loader/issues/149
+		symlinks: false,
 	},
 	node: false,
 	plugins: _.compact( [
