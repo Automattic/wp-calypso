@@ -166,7 +166,7 @@
     "wpcom-xhr-request": "1.1.1"
   },
   "engines": {
-    "node": "8.9.4",
+    "node": "8.11.0",
     "npm": "5.6.0"
   },
   "scripts": {
