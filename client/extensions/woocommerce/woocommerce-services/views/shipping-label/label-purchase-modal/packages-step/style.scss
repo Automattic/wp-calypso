@@ -10,12 +10,23 @@
 .packages-step__contents {
 	display: flex;
 	padding-bottom: 24px;
+	flex-direction: column;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
 }
 
 .packages-step__list {
-	width: 35%;
-	padding: 0 24px 0 0;
+	width: auto;
+	padding: 0 0 24px 0;
 	flex-shrink: 0;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+		width: 35%;
+		padding: 0 24px 0 0;
+	}
 }
 
 .packages-step__list-header {
