@@ -156,10 +156,10 @@ export class FullPostView extends React.Component {
 		let liked = this.props.liked;
 
 		if ( liked ) {
-			this.props.unlikePost( siteId, postId );
+			this.props.unlikePost( siteId, postId, { source: 'reader' } );
 			liked = false;
 		} else {
-			this.props.likePost( siteId, postId );
+			this.props.likePost( siteId, postId, { source: 'reader' } );
 			liked = true;
 		}
 
@@ -383,6 +383,7 @@ export class FullPostView extends React.Component {
 									postId={ +post.ID }
 									fullPost={ true }
 									tagName="div"
+									likeSource={ 'reader' }
 								/>
 							) }
 						</div>

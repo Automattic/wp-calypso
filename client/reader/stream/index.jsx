@@ -286,7 +286,7 @@ class ReaderStream extends React.Component {
 		}
 
 		const toggler = liked ? this.props.unlikePost : this.props.likePost;
-		toggler( siteId, postId );
+		toggler( siteId, postId, { source: 'reader' } );
 	}
 
 	isPostFullScreen() {

@@ -36,7 +36,13 @@ class ReaderLikeButton extends React.Component {
 	};
 
 	render() {
-		return <LikeButtonContainer { ...this.props } onLikeToggle={ this.recordLikeToggle } />;
+		return (
+			<LikeButtonContainer
+				{ ...this.props }
+				onLikeToggle={ this.recordLikeToggle }
+				likeSource="reader"
+			/>
+		);
 	}
 }
 
