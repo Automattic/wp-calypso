@@ -363,8 +363,9 @@ export class HelpContactForm extends React.PureComponent {
 
 				{ showSubjectField && (
 					<div className="help-contact-form__subject">
-						<FormLabel>{ translate( 'Subject' ) }</FormLabel>
+						<FormLabel htmlFor="subject">{ translate( 'Subject' ) }</FormLabel>
 						<FormTextInput
+							id="subject"
 							name="subject"
 							value={ this.state.subject }
 							onChange={ this.handleChange }
@@ -372,9 +373,10 @@ export class HelpContactForm extends React.PureComponent {
 					</div>
 				) }
 
-				<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
+				<FormLabel htmlFor="message">{ translate( 'How can we help?' ) }</FormLabel>
 				<FormTextarea
 					placeholder={ translate( 'Ask away! Help will be with you soon.' ) }
+					id="message"
 					name="message"
 					value={ this.state.message }
 					onChange={ this.handleChange }
