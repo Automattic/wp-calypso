@@ -3,7 +3,6 @@
 /**
  * External dependencies
  */
-
 import debugFactory from 'debug';
 import { omit, pick } from 'lodash';
 
