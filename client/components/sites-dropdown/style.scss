@@ -25,7 +25,7 @@
 	overflow: hidden;
 	position: relative;
 	width: 300px;
-	transition: all .15s ease-in-out;
+	transition: all 0.2s ease-in;
 	z-index: 1;
 
 	@include breakpoint( "<660px" ) {
