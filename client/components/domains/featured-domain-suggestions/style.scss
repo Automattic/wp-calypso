@@ -2,4 +2,8 @@
 
 .featured-domain-suggestions {
 	display: flex;
+
+	@include breakpoint( '<660px' ) {
+		flex-flow: wrap;
+	}
 }

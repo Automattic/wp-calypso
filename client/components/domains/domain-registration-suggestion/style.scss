@@ -4,15 +4,10 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 50%;
+	width: 100%;
 
 	.domain-suggestion__content {
 		flex-direction: column;
-	}
-
-	.domain-suggestion__action.button.is-primary {
-		width: 100%;
-		margin-left: 0;
 	}
 
 	.domain-registration-suggestion__title,
@@ -27,7 +22,8 @@
 		font-weight: 600;
 	}
 
-	.domain-product-price {
+	// .card used to increase specificity
+	&.card .domain-product-price {
 		align-items: left;
 		margin: 0 0 0.5em 0;
 		order: 1;
@@ -47,7 +43,14 @@
 		}
 	}
 
-	.domain-suggestion__action {
+	// .card increases specificity
+	&.card .domain-suggestion__action {
 		margin-top: 1em;
+
+		// Increase specificity
+		&.button.is-primary {
+			width: 100%;
+			margin-left: 0;
+		}
 	}
 }
