@@ -12,6 +12,7 @@ import Gridicon from 'gridicons';
 /**
  * Internal dependencies
  */
+import { NoticeAnnouncement } from './announcement';
 import Button from 'components/button';
 
 export class Notice extends Component {
@@ -101,6 +102,7 @@ export class Notice extends Component {
 
 		return (
 			<div className={ classes }>
+				<NoticeAnnouncement { ...this.props } />
 				<span className="notice__icon-wrapper">
 					<Gridicon className="notice__icon" icon={ icon || this.getIcon() } size={ 24 } />
 				</span>

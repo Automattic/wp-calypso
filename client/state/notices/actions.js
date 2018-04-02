@@ -28,6 +28,7 @@ export function createNotice( status, text, options = {} ) {
 		isPersistent: options.isPersistent || false,
 		displayOnNextPage: options.displayOnNextPage || false,
 		status: status,
+		spokenMessage: '',
 		text: text,
 		button: options.button,
 		href: options.href,
