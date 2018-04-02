@@ -99,10 +99,10 @@ export default {
 		allowExistingUsers: true,
 	},
 	mobilePlansTablesOnSignup: {
-		datestamp: '20180320',
+		datestamp: '20180330',
 		variations: {
 			original: 50,
-			mobile: 50,
+			vertical: 50,
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true,

@@ -55,6 +55,17 @@ import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import { abtest, getABTestVariation } from 'lib/abtest';
 
 class PlanFeatures extends Component {
+	componentDidMount() {
+		const { basePlansPath, isInSignup } = this.props;
+		// Check if user is in signup flow & small screens
+		// Used in AB test: mobilePlansTablesOnSignup_20180330
+		if ( isInSignup && window.matchMedia( '(max-width: 660px)' ).matches ) {
+			this.props.recordTracksEvent( 'calypso_wp_plans_verticalabtest_view', {
+				base_plans_path: basePlansPath,
+			} );
+		}
+	}
+
 	render() {
 		const { planProperties, isInSignup, showModifiedPricingDisplay, site } = this.props;
 		const tableClasses = classNames(
@@ -64,7 +75,7 @@ class PlanFeatures extends Component {
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 			'abtest-pricing-display': showModifiedPricingDisplay,
-			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'mobile',
+			'has-mobile-table': abtest( 'mobilePlansTablesOnSignup' ) === 'vertical',
 		} );
 		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
 		let mobileView, planDescriptions;
